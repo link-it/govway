@@ -26,13 +26,11 @@ package org.openspcoop2.pools.pdd.db;
 import java.sql.Connection;
 import java.util.HashSet;
 
-
-import org.apache.commons.dbcp.datasources.SharedPoolDataSource;
-
-import org.apache.commons.dbcp.cpdsadapter.DriverAdapterCPDS;
-
+import org.apache.commons.dbcp2.cpdsadapter.DriverAdapterCPDS;
+import org.apache.commons.dbcp2.datasources.SharedPoolDataSource;
 import org.openspcoop2.pools.core.commons.Costanti;
 import org.openspcoop2.pools.core.commons.OpenSPCoopFactoryException;
+import org.openspcoop2.utils.resources.GestoreJNDI;
 
 
 /**
@@ -113,11 +111,6 @@ public class DBPool {
 			/* utilizzo o meno di una cache per le PreparedStatement */
 			commonsPoolDataSource.setPoolPreparedStatements(configuration.isPreparedStatementPool());
 
-			// controls the maximum number of objects that can be borrowed from the pool at one time. 
-			// When non-positive, there is no limit to the number of objects that may be active at one time. 
-			// When maxActive is exceeded, the pool is said to be exhausted.
-			commonsPoolDataSource.setMaxActive(configuration.getPool_max()); // Default:8   Serve per fissare la Max dimensione del Pool
-
 			// controls the maximum number of objects that can sit idle in the pool at any time. 
 			// When negative, there is no limit to the number of objects that may be idle at one time.
 			commonsPoolDataSource.setMaxIdle(configuration.getPool_min());  // Default: 8   Serve per fissare la minima dimensione del Pool
@@ -176,9 +169,14 @@ public class DBPool {
 			SharedPoolDataSource ds = new SharedPoolDataSource();
 
 			// NomeJNDI del connectionPoolDataSource
-			String jndiNameConnectionPoolDataSource = DBPool.buildConnectionPoolDataSourceJNDIName(configuration.getJndiName());
-			ds.setDataSourceName(jndiNameConnectionPoolDataSource);
-			//ds.setConnectionPoolDataSource(cpds);
+			if(configuration.getJndiName().startsWith(GestoreJNDI.LOCAL_TREE_JNDI_PREFIX)){
+				//System.out.println("------------------------------------------------------- Associazione Locale");
+				ds.setConnectionPoolDataSource(cpds);
+			}
+			else{
+				String jndiNameConnectionPoolDataSource = DBPool.buildConnectionPoolDataSourceJNDIName(configuration.getJndiName());
+				ds.setDataSourceName(jndiNameConnectionPoolDataSource);
+			}
 			
 			//ds.setJndiEnvironment("java.naming.factory.initial","org.jnp.interfaces.NamingContextFactory");
 			//ds.setJndiEnvironment("java.naming.factory.url.pkgs","org.jnp.interfaces");
@@ -215,15 +213,15 @@ public class DBPool {
 				ds.setDefaultTransactionIsolation(DBPool.TRANSACTION_READ_COMMITTED);
 			}
 
-
 			// controls the maximum number of objects that can be borrowed from the pool at one time. 
 			// When non-positive, there is no limit to the number of objects that may be active at one time. 
 			// When maxActive is exceeded, the pool is said to be exhausted.
-			ds.setMaxActive(configuration.getPool_max()); // Default:8   Serve per fissare la Max dimensione del Pool
-
+			ds.setMaxTotal(configuration.getPool_max()); // Default:8   Serve per fissare la Max dimensione del Pool
+			ds.setDefaultMaxTotal(configuration.getPool_max());
+			
 			// controls the maximum number of objects that can sit idle in the pool at any time. 
 			// When negative, there is no limit to the number of objects that may be idle at one time.
-			ds.setMaxIdle(configuration.getPool_min());  // Default: 8   Serve per fissare la minima dimensione del Pool
+			ds.setDefaultMaxIdle(configuration.getPool_min());  // Default: 8   Serve per fissare la minima dimensione del Pool
 
 			// Returns the minimum number of objects allowed in the pool before the evictor thread (if active) spawns new objects. 
 			// (Note no objects are created when: numActive + numIdle >= maxActive)
@@ -256,18 +254,18 @@ public class DBPool {
 		// public static final byte 	WHEN_EXHAUSTED_GROW 	2
 			 */
 			if(configuration.getWhen_exhausted_blockingTimeout()>0)
-				ds.setMaxWait(configuration.getWhen_exhausted_blockingTimeout()); //Default: -1L
+				ds.setDefaultMaxWaitMillis(configuration.getWhen_exhausted_blockingTimeout()); //Default: -1L
 			
 			// When testOnBorrow is set, the pool will attempt to validate each object before it is returned from the borrowObject() method. 
 			// (Using the provided factory's PoolableObjectFactory.validateObject(java.lang.Object) method.) 
 			// Objects that fail to validate will be dropped from the pool, and a different object will be borrowed.
-			ds.setTestOnBorrow(configuration.isValidation_testOnGet()); //Default: false
+			ds.setDefaultTestOnBorrow(configuration.isValidation_testOnGet()); //Default: false
 
 			// When testOnReturn is set, the pool will attempt to validate each object before it is returned to the pool 
 			// in the returnObject(java.lang.Object) method. 
 			// (Using the provided factory's PoolableObjectFactory.validateObject(java.lang.Object)  method.) 
 			// Objects that fail to validate will be dropped from the pool.
-			ds.setTestOnReturn(configuration.isValidation_testOnRelease()); //Default: false
+			ds.setDefaultTestOnReturn(configuration.isValidation_testOnRelease()); //Default: false
 			
 			
 			// Optionally, one may configure the pool to examine and possibly evict objects as they sit idle in the pool. 
@@ -276,7 +274,7 @@ public class DBPool {
 			if( configuration.isIdle_abilitato() ){
 				// - testWhileIdle, indicates whether or not idle objects should be validated using the factory's 
 				// PoolableObjectFactory.validateObject(java.lang.Object) method. Objects that fail to validate will be dropped from the pool.
-				ds.setTestWhileIdle(configuration.isIdle_validateObject()); //Default: false
+				ds.setDefaultTestWhileIdle(configuration.isIdle_validateObject()); //Default: false
 			}
 
 			/*

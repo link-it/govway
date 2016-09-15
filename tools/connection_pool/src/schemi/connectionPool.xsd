@@ -48,7 +48,6 @@
 		            <xsd:simpleType>	
 	          	        <xsd:restriction base="xsd:string">
 	               		    <xsd:enumeration value="block"/>
-		       		    <xsd:enumeration value="grow"/>
 		                    <xsd:enumeration value="fail"/>
 	          	        </xsd:restriction>
 	     	            </xsd:simpleType>

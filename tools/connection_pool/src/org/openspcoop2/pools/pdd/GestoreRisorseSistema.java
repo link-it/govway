@@ -26,12 +26,11 @@ package org.openspcoop2.pools.pdd;
 import java.util.Vector;
 
 
-import org.apache.commons.dbcp.cpdsadapter.DriverAdapterCPDS;
-import org.apache.commons.dbcp.datasources.SharedPoolDataSource;
-
 import org.slf4j.Logger;
 import org.openspcoop2.pools.core.commons.Costanti;
 import org.openspcoop2.pools.core.driver.DriverRisorseSistemaException;
+import org.apache.commons.dbcp2.cpdsadapter.DriverAdapterCPDS;
+import org.apache.commons.dbcp2.datasources.SharedPoolDataSource;
 import org.openspcoop2.pools.core.Datasource;
 import org.openspcoop2.pools.pdd.db.DBInfo;
 import org.openspcoop2.pools.pdd.db.DBPool;
@@ -164,6 +163,13 @@ public class GestoreRisorseSistema {
 		if(this.logConsole!=null)
 			this.logConsole.error(msg);
 	}
+	
+	private void logError(String msg, Exception e){
+		if(this.logCore!=null)
+			this.logCore.error(msg,e);
+		if(this.logConsole!=null)
+			this.logConsole.error(msg,e);
+	}
 
 
 
@@ -200,7 +206,7 @@ public class GestoreRisorseSistema {
 				try{
 					dataSourceConfigurazione = this.risorseSistema.getDataSource(i);
 				}catch(Exception e){
-					logError("[GestoreRisorseSistema] Riscontrato errore durante la lettura della configurazione per un datasource: "+e.toString());
+					logError("[GestoreRisorseSistema] Riscontrato errore durante la lettura della configurazione per un datasource: "+e.toString(),e);
 					continue;
 				}
 				// CreazioneDBInfo
@@ -276,7 +282,7 @@ public class GestoreRisorseSistema {
 
 				}catch(Exception e){
 					logError("[GestoreRisorseSistema] Riscontrato errore durante l'inizializzazione del connectionPoolDataSource["+jndiNameConnectionPoolDataSource
-							+"]: "+e.getMessage());
+							+"]: "+e.getMessage(),e);
 					continue;
 				}
 				//	Bind JNDI ConnectionPoolingDataSource
@@ -288,7 +294,7 @@ public class GestoreRisorseSistema {
 						}
 					}catch(Exception e){
 						logError("[GestoreRisorseSistema] Riscontrato errore durante la registrazione JNDI del connectionPoolDataSource["
-								+jndiNameConnectionPoolDataSource+"]: "+e.getMessage());
+								+jndiNameConnectionPoolDataSource+"]: "+e.getMessage(),e);
 						continue;
 					}
 				}
@@ -300,7 +306,7 @@ public class GestoreRisorseSistema {
 							+DBPool.getStatoConnessioni(ds,dataSourceConfigurazione.getJndiName()));
 				}catch(Exception e){
 					logError("[GestoreRisorseSistema] Riscontrato errore durante l'inizializzazione del pool["+dataSourceConfigurazione.getJndiName()
-							+"]: "+e.getMessage());
+							+"]: "+e.getMessage(),e);
 					continue;
 				}
 				// Bind JNDI
@@ -312,7 +318,7 @@ public class GestoreRisorseSistema {
 						}
 					}catch(Exception e){
 						logError("[GestoreRisorseSistema] Riscontrato errore durante la registrazione JNDI del DataSource ["
-								+dataSourceConfigurazione.getJndiName()+"]: "+e.getMessage());
+								+dataSourceConfigurazione.getJndiName()+"]: "+e.getMessage(),e);
 						continue;
 					}
 				}
@@ -332,7 +338,7 @@ public class GestoreRisorseSistema {
 				try{
 					qfConf = this.risorseSistema.getConnectionFactory(i);
 				}catch(Exception e){
-					logError("[GestoreRisorseSistema] Riscontrato errore durante la lettura della configurazione per una connection factory: "+e.toString());
+					logError("[GestoreRisorseSistema] Riscontrato errore durante la lettura della configurazione per una connection factory: "+e.toString(),e);
 					continue;
 				}
 				
@@ -430,7 +436,7 @@ public class GestoreRisorseSistema {
 								+((org.openspcoop2.pools.pdd.jms.session.ConnectionFactory)qm).getStatoConnessioni());
 					}catch(Exception e){
 						logError("[GestoreRisorseSistema] Riscontrato errore durante l'inizializzazione del pool["+qfConf.getJndiName()
-								+"]: "+e.getMessage());
+								+"]: "+e.getMessage(),e);
 						continue;
 					}
 				}else{
@@ -441,7 +447,7 @@ public class GestoreRisorseSistema {
 								+((org.openspcoop2.pools.pdd.jms.connectionsession.ConnectionFactory)qm).getStatoConnessioni());
 					}catch(Exception e){
 						logError("[GestoreRisorseSistema] Riscontrato errore durante l'inizializzazione del pool["+qfConf.getJndiName()
-								+"]: "+e.getMessage());
+								+"]: "+e.getMessage(),e);
 						continue;
 					}
 				}
@@ -454,7 +460,7 @@ public class GestoreRisorseSistema {
 						}
 					}catch(Exception e){
 						logError("[GestoreRisorseSistema] Riscontrato errore durante la registrazione JNDI del DataSource ["
-								+qfConf.getJndiName()+"]: "+e.getMessage());
+								+qfConf.getJndiName()+"]: "+e.getMessage(),e);
 						continue;
 					}
 				}
@@ -488,14 +494,14 @@ public class GestoreRisorseSistema {
 						jndi.unbind(jndidsUnbind,this.logCore,this.logConsole);
 						logInfo("Rilasciata (unbind) DataSource ["+jndidsUnbind+"]");
 					}catch(Exception e){
-						logError("Operazione di UNBIND del DataSource ["+jndidsUnbind+"] non riuscita: "+e.getMessage());
+						logError("Operazione di UNBIND del DataSource ["+jndidsUnbind+"] non riuscita: "+e.getMessage(),e);
 					}
 					String jndiNameConnectionPoolDataSource = DBPool.buildConnectionPoolDataSourceJNDIName(jndidsUnbind);
 					try{
 						jndi.unbind(jndiNameConnectionPoolDataSource,this.logCore,this.logConsole);
 						logInfo("Rilasciata (unbind) ConnectionPoolDataSource ["+jndiNameConnectionPoolDataSource+".CommonsPoolDataSource"+"]");
 					}catch(Exception e){
-						logError("Operazione di UNBIND del ConnectionPoolDataSource ["+jndiNameConnectionPoolDataSource+"] non riuscita: "+e.getMessage());
+						logError("Operazione di UNBIND del ConnectionPoolDataSource ["+jndiNameConnectionPoolDataSource+"] non riuscita: "+e.getMessage(),e);
 					}
 				}
 			}
@@ -517,13 +523,13 @@ public class GestoreRisorseSistema {
 						jndi.unbind(jndiqmUnbind,this.logCore,this.logConsole);
 						logInfo("Rilasciata (unbind) ConnectionFactory ["+jndiqmUnbind+"]");
 					}catch(Exception e){
-						logError("Operazione di UNBIND della ConnectionFactory ["+jndiqmUnbind+"] non riuscita: "+e.getMessage());
+						logError("Operazione di UNBIND della ConnectionFactory ["+jndiqmUnbind+"] non riuscita: "+e.getMessage(),e);
 					}
 				}
 			}
 
 		}catch(Exception e){
-			logError("Operazione di UNBIND dei pool per le risorse di sistema non riuscita: "+e.getMessage());
+			logError("Operazione di UNBIND dei pool per le risorse di sistema non riuscita: "+e.getMessage(),e);
 		}
 	}
 	

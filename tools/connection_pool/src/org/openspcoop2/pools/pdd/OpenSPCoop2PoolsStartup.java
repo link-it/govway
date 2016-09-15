@@ -24,6 +24,9 @@
 package org.openspcoop2.pools.pdd;
 
 
+import java.io.InputStream;
+import java.util.Properties;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -50,10 +53,10 @@ public class OpenSPCoop2PoolsStartup implements ServletContextListener {
 
 	/** Logger utilizzato per segnalazione di errori. */
 	private static Logger logger = //LogUtilities.getLogger("InizializzazioneOpenSPCoop");
-			LoggerWrapperFactory.getLogger("openspcoop2Pools");
+			null;
 	
 	private static Logger loggerConsole = //LogUtilities.getLogger(OpenSPCoop2PoolsStartup.ID_MODULO);
-			LoggerWrapperFactory.getLogger("openspcoop2Pools");
+			null;
 
 	
 	/** Context della Servlet */
@@ -90,13 +93,77 @@ public class OpenSPCoop2PoolsStartup implements ServletContextListener {
 		try{
 			java.util.Properties loggerProperties = new java.util.Properties();
 			loggerProperties.load(OpenSPCoop2PoolsStartup.class.getResourceAsStream("/openspcoop2_pools.log4j2.properties"));
-			LoggerWrapperFactory.setLogConfiguration(loggerProperties);
-			OpenSPCoop2PoolsStartup.logger = LoggerWrapperFactory.getLogger("openspcoop2Pools");
+			
+			boolean appendActualConfiguration = false;
+			try{
+				InputStream is = OpenSPCoop2PoolsStartup.class.getResourceAsStream("/openspcoop2_pools.properties");
+				try{
+					if(is!=null){
+						Properties p = new Properties();
+						p.load(is);
+						
+						String tmpAppendActualConfiguration = p.getProperty("appendLog4j");
+						if(tmpAppendActualConfiguration!=null){
+							appendActualConfiguration = "true".equalsIgnoreCase(tmpAppendActualConfiguration.trim());
+						}
+					}
+				}finally{
+					try{
+						if(is!=null){
+							is.close();
+						}
+					}catch(Exception eClose){}
+				}
+
+			}catch(Exception e){}
+			
+			if(appendActualConfiguration){
+				System.out.println("[OpenSPCoop2Pools] Attendo inizializzazione PdDOpenSPCoop prima di appender la configurazione Log4J ...");
+				int i=0;
+				int limit = 60;
+				Class<?> openspcoop2Startup = Class.forName("org.openspcoop2.pdd.services.OpenSPCoop2Startup");
+				Object o = openspcoop2Startup.getField("initializeLog").get(null);
+				boolean initialize = false;
+				if(o!=null){
+					initialize = (Boolean) o;
+				}
+				while(initialize==false && i<limit){
+					try{
+						Thread.sleep(1000);
+					}catch(Exception e){}
+					
+					o = openspcoop2Startup.getField("initializeLog").get(null);
+					if(o!=null){
+						initialize = (Boolean) o;
+					}
+					
+					i++;
+					if(i%10==0){
+						System.out.println("[OpenSPCoop2Pools] Attendo inizializzazione PdDOpenSPCoop ...");
+					}
+				}
+				
+				if(initialize==false){
+					throw new Exception("[OpenSPCoop2Pools] Inizializzazione OpenSPCoop non rilevata");
+				}
+				
+				System.out.println("[OpenSPCoop2Pools] Configurazione Log4J ...");
+				LoggerWrapperFactory.setLogConfiguration(loggerProperties,true);
+				System.out.println("[OpenSPCoop2Pools] Configurazione Log4J aggiunta");
+			}
+			else{
+				LoggerWrapperFactory.setLogConfiguration(loggerProperties);
+			}		
+						
 		}catch(Exception e){
+			OpenSPCoop2PoolsStartup.loggerConsole = LoggerWrapperFactory.getLogger("openspcoop2Pools");
 			OpenSPCoop2PoolsStartup.loggerConsole.error("Inizializzazione logger non riuscita",e);
 		}
 			
 		
+		OpenSPCoop2PoolsStartup.logger = LoggerWrapperFactory.getLogger("openspcoop2Pools");
+		OpenSPCoop2PoolsStartup.loggerConsole = LoggerWrapperFactory.getLogger("openspcoop2Pools");
+
 		
 		
 		

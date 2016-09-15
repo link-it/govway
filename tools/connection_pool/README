@@ -1,4 +1,4 @@
 Per l'utilizzo in jbossas versione 4, 5 o 6 è necessario installare, nella directory delle librerie condivise, i seguenti jars:
-- commons-dbcp-1.4.jar 
-- commons-pool-1.6.jar
+- commons-dbcp2-2.1.1.jar
+- commons-pool2-2.4.2.jar
 - openspcoop2_pools-driver_*.jar

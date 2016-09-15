@@ -115,6 +115,11 @@ public class LoaderLogger {
 					System.out.println("[LoaderConsole] Attendo inizializzazione PdDOpenSPCoop ...");
 				}
 			}
+			
+			if(OpenSPCoop2Startup.initialize==false){
+				throw new UtilsException("[LoaderConsole] Inizializzazione OpenSPCoop non rilevata");
+			}
+			
 			System.out.println("[LoaderConsole] Configurazione Log4J ...");
 			LoggerWrapperFactory.setLogConfiguration(loggerProperties,true);
 			System.out.println("[LoaderConsole] Configurazione Log4J aggiunta");

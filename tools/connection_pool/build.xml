@@ -9,6 +9,7 @@
 	<import file="./ant/openspcoop2-pools-build.xml" />
 	<import file="./ant/openspcoop2-pools-war.xml" />
 	<import file="${openspcoop2}/ant/commons/as-check.xml" />
+	<import file="${openspcoop2}/ant/commons/utils.xml" />
 
 	<!-- directory root -->
 	<property name="svn_rootDir" location="${openspcoop2}" />
@@ -75,9 +76,10 @@
 		<or>
 			<equals arg1="${as}" arg2="jboss7"/>
 			<matches string="${as}" pattern="wildfly.*"/>
+			<matches string="${as}" pattern="tomcat.*"/>
 		</or>
 		<then>
-			<var name="commons_pool_jar" value="commons-pool-1.6.jar"/>
+			<var name="commons_pool_jar" value="commons-pool2-2.4.2.jar"/>
 		</then>
 	</if>
 	<!-- commons_dbcp -->
@@ -85,9 +87,10 @@
 		<or>
 			<equals arg1="${as}" arg2="jboss7"/>
 			<matches string="${as}" pattern="wildfly.*"/>
+			<matches string="${as}" pattern="tomcat.*"/>
 		</or>
 		<then>
-			<var name="commons_dbcp_jar" value="commons-dbcp-1.4.jar"/>
+			<var name="commons_dbcp_jar" value="commons-dbcp2-2.1.1.jar"/>
 		</then>
 	</if>
 	<!-- jboss_classloading -->
@@ -164,6 +167,74 @@
 	<!-- alias -->
 	<target name="build" depends="compile_openspcoop2Pools,war_openspcoop2Pools"/>
 	<target name="clean" depends="clean_openspcoop2Pools"/>
+	
+	
+	<!-- Plugins -->
+	<target name="build_plugin" depends="build"/>
+	<target name="plugin">
+		
+		<delete dir="${build_openspcoop2Pools}/pluginSRC"/>
+		<delete dir="${build_openspcoop2Pools}/pluginDEST"/>
+		<delete dir="${dist_openspcoop2Pools}/openspcoop2Pools_plugin.zip"/>
+		<mkdir dir="${build_openspcoop2Pools}/pluginSRC"/>
+		<mkdir dir="${build_openspcoop2Pools}/pluginDEST/core/deploy/application_plugins/META-INF/jboss-deployment-structure"/>
+		<mkdir dir="${build_openspcoop2Pools}/pluginDEST/core/deploy/plugins/"/>
+		<unzip src="${dist_openspcoop2Pools}/openspcoop2Pools.war" dest="${build_openspcoop2Pools}/pluginSRC"/>
+		
+		<basename property="jar.driverJDBC" file="${driverJDBC}"/>
+		<move todir="${build_openspcoop2Pools}/pluginDEST/core/deploy/plugins/">
+			<fileset dir="${build_openspcoop2Pools}/pluginSRC/WEB-INF/lib">
+				<include name="commons-dbcp2-2.1.1.jar"/>
+				<include name="commons-pool2-2.4.2.jar"/>
+				<include name="openspcoop2_pools-core_BUILD-12200.jar"/>
+				<include name="openspcoop2_pools-driver_BUILD-12200.jar"/>
+				<include name="${jar.driverJDBC}"/>
+			</fileset>
+		</move>
+		<delete>
+			<fileset dir="${build_openspcoop2Pools}/pluginSRC/WEB-INF/lib">
+				<include name="*.jar"/>
+			</fileset>
+		</delete>
+		
+		<move todir="${build_openspcoop2Pools}/pluginDEST/core/deploy/plugins/">
+			<fileset dir="${build_openspcoop2Pools}/pluginSRC/WEB-INF/classes">
+				<include name="*.properties"/>
+				<exclude name="log4j2.properties"/>
+			</fileset>
+		</move>
+		<delete file="${build_openspcoop2Pools}/pluginSRC/WEB-INF/classes/log4j2.properties" />
+        <antcall target="set_property">
+            <param name="file" value="${build_openspcoop2Pools}/pluginDEST/core/deploy/plugins/openspcoop2_pools.properties"/>
+                <param name="token" value="appendLog4j"/>
+                <param name="value" value="true"/>
+        </antcall>
+
+		<delete file="${build_openspcoop2Pools}/pluginSRC/WEB-INF/jboss-deployment-structure.xml" />
+		<copy file="${src_openspcoop2Pools}/META-INF/application.openspcoop2Pools.xml" todir="${build_openspcoop2Pools}/pluginDEST/core/deploy/application_plugins/META-INF" />
+		<if>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<then>
+				<copy file="${src_openspcoop2Pools}/META-INF/jboss-deployment-structure.openspcoop2Pools.jboss7.xml" 
+					todir="${build_openspcoop2Pools}/pluginDEST/core/deploy/application_plugins/META-INF/jboss-deployment-structure" />
+			</then>
+		</if>
+		<if>
+			<matches string="${as}" pattern="wildfly.*"/>
+			<then>
+				<copy file="${src_openspcoop2Pools}/META-INF/jboss-deployment-structure.openspcoop2Pools.wildfly.xml" 
+					todir="${build_openspcoop2Pools}/pluginDEST/core/deploy/application_plugins/META-INF/jboss-deployment-structure" />
+			</then>
+		</if>
+		
+		<zip destfile="${build_openspcoop2Pools}/pluginDEST/core/deploy/application_plugins/openspcoop2Pools.war" basedir="${build_openspcoop2Pools}/pluginSRC"/>
+			
+		<zip destfile="${dist_openspcoop2Pools}/openspcoop2Pools_plugin.zip" basedir="${build_openspcoop2Pools}/pluginDEST"/>
+		<delete dir="${build_openspcoop2Pools}/pluginSRC"/>
+		<delete dir="${build_openspcoop2Pools}/pluginDEST"/>
+		
+	</target>
+	
 	
 
 </project>

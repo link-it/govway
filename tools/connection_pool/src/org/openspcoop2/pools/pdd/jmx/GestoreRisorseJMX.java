@@ -124,14 +124,22 @@ public class GestoreRisorseJMX {
 	public void registerMBeanMonitoraggioRisorseDataSources(String [] jndiName)throws RisorseJMXException{
 		for(int i=0; i<jndiName.length; i++){
 			try{
+				String jmxName = jndiName[i];
+				while(jmxName.contains(":/")){
+					jmxName = jmxName.replace(":/", "_");
+				}
+				while(jmxName.contains("/")){
+					jmxName = jmxName.replace("/", "_");
+				}
+				
 				Hashtable<String,String> attributi = new Hashtable<String,String>();
 				attributi.put(Costanti.JMX_TYPE, Costanti.JMX_MONITORAGGIO_DATASOURCE);
-				attributi.put("name", jndiName[i]);
+				attributi.put("name", jmxName);
 				javax.management.ObjectName jmxNameMonitoraggio = 
 					new javax.management.ObjectName(Costanti.JMX_DOMINIO,attributi);
 
 				this.log.debug("Registrato Mbean col nome "+jmxNameMonitoraggio.getCanonicalName());
-				this.mbeanServer.registerMBean(new org.openspcoop2.pools.pdd.jmx.MonitoraggioRisorseDatasource(jndiName[i]), jmxNameMonitoraggio);
+				this.mbeanServer.registerMBean(new org.openspcoop2.pools.pdd.jmx.MonitoraggioRisorseDatasource(jmxName), jmxNameMonitoraggio);
 				this.jmxNames.add(jmxNameMonitoraggio);
 			}catch(Exception e){
 				this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX MonitoraggioRisorse per i datasources: "+e.getMessage(),e);
@@ -149,14 +157,22 @@ public class GestoreRisorseJMX {
 	public void registerMBeanMonitoraggioRisorseConnectionFactories(String [] jndiName)throws RisorseJMXException{
 		for(int i=0; i<jndiName.length; i++){
 			try{
+				String jmxName = jndiName[i];
+				while(jmxName.contains(":/")){
+					jmxName = jmxName.replace(":/", "_");
+				}
+				while(jmxName.contains("/")){
+					jmxName = jmxName.replace("/", "_");
+				}
+				
 				Hashtable<String,String> attributi = new Hashtable<String,String>();
 				attributi.put(Costanti.JMX_TYPE, Costanti.JMX_MONITORAGGIO_CONNECTION_FACTORY);
-				attributi.put("name", jndiName[i]);
+				attributi.put("name", jmxName);
 				javax.management.ObjectName jmxNameMonitoraggio = 
 					new javax.management.ObjectName(Costanti.JMX_DOMINIO,attributi);
 
 				this.log.debug("Registrato Mbean col nome "+jmxNameMonitoraggio.getCanonicalName());
-				this.mbeanServer.registerMBean(new org.openspcoop2.pools.pdd.jmx.MonitoraggioRisorseConnectionFactory(jndiName[i]), jmxNameMonitoraggio);
+				this.mbeanServer.registerMBean(new org.openspcoop2.pools.pdd.jmx.MonitoraggioRisorseConnectionFactory(jmxName), jmxNameMonitoraggio);
 				this.jmxNames.add(jmxNameMonitoraggio);
 			}catch(Exception e){
 				this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX MonitoraggioRisorse per le connection factories: "+e.getMessage(),e);

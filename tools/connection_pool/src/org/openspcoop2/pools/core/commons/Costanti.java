@@ -23,7 +23,6 @@
 
 package org.openspcoop2.pools.core.commons;
 
-import org.apache.commons.pool.impl.GenericObjectPool;
 
 /**
  * Costanti
@@ -34,12 +33,6 @@ import org.apache.commons.pool.impl.GenericObjectPool;
  */
 public class Costanti {
 
-	 /** Comportamento in caso di risorsa non disponibile in un pool: Bloccante */
-    public static final byte EXAUSTED_BEHAVIOUR_BLOCK = GenericObjectPool.WHEN_EXHAUSTED_BLOCK;
-    /** Comportamento in caso di risorsa non disponibile: Aumenta la dimensione del pool  */
-    public static final byte EXAUSTED_BEHAVIOUR_GROW = GenericObjectPool.WHEN_EXHAUSTED_GROW;
-    /** Comportamento in caso di risorsa non disponibile: Fallisce, lanciando una eccezione  */
-    public static final byte EXAUSTED_BEHAVIOUR_FAIL = GenericObjectPool.WHEN_EXHAUSTED_FAIL;
 
     /** tipo di transaction isolation: none */
     public final static String TRANSACTION_ISOLATION_NONE = "none";

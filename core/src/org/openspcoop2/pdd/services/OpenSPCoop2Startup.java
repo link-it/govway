@@ -130,6 +130,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 	/** Indicazione su una corretta inizializzazione */
 	public static boolean initialize = false;
+	
+	/** Indicazione su una corretta inizializzazione della configurazione del Logging (Utile per l'integrazione con il pool utils via reflection) */
+	public static boolean initializeLog = false;
 
 	/** Timer per la gestione della funzionalita' 'RiscontriScaduti' */
 	private TimerGestoreBusteNonRiscontrate timerRiscontri;
@@ -345,6 +348,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			Utilities.log = logCore;
 			Utilities.freeMemoryLog = propertiesReader.getFreeMemoryLog();
+			
+			OpenSPCoop2Startup.initializeLog = true;
 
 			
 			

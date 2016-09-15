@@ -119,6 +119,11 @@ public class ControlStationLogger {
 					System.out.println("[PddConsole] Attendo inizializzazione PdDOpenSPCoop ...");
 				}
 			}
+			
+			if(OpenSPCoop2Startup.initialize==false){
+				throw new UtilsException("[PddConsole] Inizializzazione OpenSPCoop non rilevata");
+			}
+			
 			System.out.println("[PddConsole] Configurazione Log4J ...");
 			LoggerWrapperFactory.setLogConfiguration(loggerProperties,true);
 			System.out.println("[PddConsole] Configurazione Log4J aggiunta");

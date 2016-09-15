@@ -8,7 +8,7 @@
 	<!-- ApplicationServer version -->
 	<property name="as" value="jboss/wildfly/tomcat" />
 	  
-	<!-- Driver JDBC (Necessario in jboss7, wildfly8) -->
+	<!-- Driver JDBC (Necessario in jboss7, wildfly) -->
 	<property name="driverJDBC" value="PATH_DRIVER_JDBC" />
 
 	<!-- OpenSPCoop2 libs -->

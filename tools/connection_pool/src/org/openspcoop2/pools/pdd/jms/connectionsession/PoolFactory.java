@@ -23,8 +23,10 @@
 
 package org.openspcoop2.pools.pdd.jms.connectionsession;
 
-import org.apache.commons.pool.BasePoolableObjectFactory; 
 import org.slf4j.Logger;
+import org.apache.commons.pool2.BasePooledObjectFactory;
+import org.apache.commons.pool2.PooledObject;
+import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.openspcoop2.pools.core.commons.OpenSPCoopFactoryException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.GestoreJNDI;
@@ -44,7 +46,7 @@ import javax.jms.ConnectionFactory;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class PoolFactory extends BasePoolableObjectFactory<org.openspcoop2.pools.pdd.jms.connectionsession.Connection>{	
+public class PoolFactory extends BasePooledObjectFactory<org.openspcoop2.pools.pdd.jms.connectionsession.Connection>{	
 
 	/** ConnectionFactory */
 	private ConnectionFactory qcf;
@@ -127,9 +129,9 @@ public class PoolFactory extends BasePoolableObjectFactory<org.openspcoop2.pools
 
 		// Logger
 		try{
-			java.util.Properties loggerProperties = new java.util.Properties();
-			loggerProperties.load(PoolFactory.class.getResourceAsStream("/openspcoop2_pools.log4j2.properties"));
-			LoggerWrapperFactory.setLogConfiguration(loggerProperties);
+//			java.util.Properties loggerProperties = new java.util.Properties();
+//			loggerProperties.load(PoolFactory.class.getResourceAsStream("/openspcoop2_pools.log4j2.properties"));
+//			LoggerWrapperFactory.setLogConfiguration(loggerProperties);
 			this.logger = LoggerWrapperFactory.getLogger("openspcoop2Pools");
 		}catch(Exception e){
 			this.logger = LoggerWrapperFactory.getLogger("openspcoop2Pools");
@@ -218,17 +220,11 @@ public class PoolFactory extends BasePoolableObjectFactory<org.openspcoop2.pools
 	}
 
 
-
-	/**
-	 * makeObject
-	 *
-	 * @return Un oggetto JMSObject contenente una connessione e sessione appena creata
-	 * 
-	 */
-	@Override public org.openspcoop2.pools.pdd.jms.connectionsession.Connection makeObject() throws Exception{	
+	@Override
+	public org.openspcoop2.pools.pdd.jms.connectionsession.Connection create() throws Exception {
 		Connection con = null;
 		Session s = null;
-		this.logger.debug("MAKE OBJECT pool ["+this.jndiName+"]");
+		this.logger.debug("CREATE OBJECT pool ["+this.jndiName+"]");
 		try{
 
 			// check ConnectionFactory
@@ -278,7 +274,7 @@ public class PoolFactory extends BasePoolableObjectFactory<org.openspcoop2.pools
 			return jms;
 
 		}catch(Exception e){
-			this.logger.error("MakeObject pool ["+this.jndiName+"] error["+e.getMessage()+"]",e);
+			this.logger.error("Create pool ["+this.jndiName+"] error["+e.getMessage()+"]",e);
 			try{
 				if(s!=null)
 					s.close();
@@ -287,21 +283,45 @@ public class PoolFactory extends BasePoolableObjectFactory<org.openspcoop2.pools
 				if(con!=null)
 					con.close();
 			}catch(Exception eClose){}
-			throw new OpenSPCoopFactoryException("MakeObject["+e.getMessage()+"]");
+			throw new OpenSPCoopFactoryException("CreateObject["+e.getMessage()+"]");
 		}
+	}
+
+	@Override
+	public PooledObject<org.openspcoop2.pools.pdd.jms.connectionsession.Connection> wrap(
+			org.openspcoop2.pools.pdd.jms.connectionsession.Connection jms) {
+		this.logger.debug("WRAP OBJECT pool ["+this.jndiName+"]");
+		return new DefaultPooledObject<org.openspcoop2.pools.pdd.jms.connectionsession.Connection>(jms);
+	}
+
+	/**
+	 * makeObject
+	 *
+	 * @return Un oggetto JMSObject contenente una connessione e sessione appena creata
+	 * 
+	 */
+	@Override 
+	public PooledObject<org.openspcoop2.pools.pdd.jms.connectionsession.Connection> makeObject() throws Exception{	
+		this.logger.debug("MAKE OBJECT pool ["+this.jndiName+"]");
+		return wrap(this.create());
 	}
 
 
 	/**
 	 * activateObject
 	 *
-	 * @param jms Un oggetto JMSObject contenente una connessione e sessione appena creata
+	 * @param param Un oggetto JMSObject contenente una connessione e sessione appena creata
 	 * 
 	 */
-	@Override public void activateObject(org.openspcoop2.pools.pdd.jms.connectionsession.Connection jms) throws Exception{ 
+	@Override 
+	public void activateObject(PooledObject<org.openspcoop2.pools.pdd.jms.connectionsession.Connection> param) throws Exception{ 
 		this.logger.debug("ACTIVATE OBJECT pool ["+this.jndiName+"]");
 		try{
 			// Controllo dell'oggetto ricevuto
+			if(param == null){
+				throw new OpenSPCoopFactoryException("ParamNull");
+			}
+			org.openspcoop2.pools.pdd.jms.connectionsession.Connection jms = param.getObject();
 			if(jms == null){
 				throw new OpenSPCoopFactoryException("JMSObjectNull");
 			}
@@ -319,13 +339,18 @@ public class PoolFactory extends BasePoolableObjectFactory<org.openspcoop2.pools
 	/**
 	 * passivateObject
 	 *
-	 * @param jms Un oggetto JMSObject contenente una connessione e sessione attiva
+	 * @param param Un oggetto JMSObject contenente una connessione e sessione attiva
 	 * 
 	 */
-	@Override public void passivateObject(org.openspcoop2.pools.pdd.jms.connectionsession.Connection jms) throws Exception {
+	@Override 
+	public void passivateObject(PooledObject<org.openspcoop2.pools.pdd.jms.connectionsession.Connection> param) throws Exception {
 		this.logger.debug("PASSIVATE OBJECT pool ["+this.jndiName+"]");
 		try{
 			// Controllo dell'oggetto ricevuto
+			if(param == null){
+				throw new OpenSPCoopFactoryException("ParamNull");
+			}
+			org.openspcoop2.pools.pdd.jms.connectionsession.Connection jms = param.getObject();
 			if(jms == null){
 				throw new OpenSPCoopFactoryException("JMSObjectNull");
 			}
@@ -363,14 +388,20 @@ public class PoolFactory extends BasePoolableObjectFactory<org.openspcoop2.pools
 	/**
 	 * validateObject
 	 *
-	 * @param jms Un oggetto JMSObject contenente una connessione e sessione attiva
+	 * @param param Un oggetto JMSObject contenente una connessione e sessione attiva
 	 * 
 	 */
-	@Override public boolean validateObject(org.openspcoop2.pools.pdd.jms.connectionsession.Connection jms){
+	@Override 
+	public boolean validateObject(PooledObject<org.openspcoop2.pools.pdd.jms.connectionsession.Connection> param){
 		this.logger.debug("VALIDATE OBJECT pool ["+this.jndiName+"]");
 		if(this.validationJMSObject){
 			try{
 				// Controllo dell'oggetto ricevuto
+				if(param == null){
+					this.logger.error("VALIDAZIONE non riuscita pool ["+this.jndiName+"]: parameter is null");
+					return false;
+				}
+				org.openspcoop2.pools.pdd.jms.connectionsession.Connection jms = param.getObject();
 				if(jms == null){
 					this.logger.error("VALIDAZIONE non riuscita pool ["+this.jndiName+"]: risorsa is null");
 					return false;
@@ -431,12 +462,17 @@ public class PoolFactory extends BasePoolableObjectFactory<org.openspcoop2.pools
 		}
 	}
 
-	@Override public void destroyObject(org.openspcoop2.pools.pdd.jms.connectionsession.Connection jms) throws Exception{
+	@Override 
+	public void destroyObject(PooledObject<org.openspcoop2.pools.pdd.jms.connectionsession.Connection> param) throws Exception{
 		this.logger.debug("DESTROY OBJECT pool ["+this.jndiName+"]");
 		try{
 			StringBuffer eccezioni = new StringBuffer();
 			
 			// Controllo dell'oggetto ricevuto
+			if(param == null){
+				throw new OpenSPCoopFactoryException("ParamNull");
+			}
+			org.openspcoop2.pools.pdd.jms.connectionsession.Connection jms = param.getObject();
 			if(jms == null){
 				throw new OpenSPCoopFactoryException("JMSObjectNull");
 			}

@@ -23,10 +23,13 @@
 
 package org.openspcoop2.utils.resources;
 
+import java.util.Hashtable;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 
+import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
 
 /**
@@ -42,7 +45,7 @@ public class GestoreJNDI {
 
 	private java.util.Properties contextProperties;
 
-
+		
 	/**
 	 * Costruttore
 	 *
@@ -59,6 +62,10 @@ public class GestoreJNDI {
 		this.contextProperties = new java.util.Properties();
 	}
 
+	
+	
+	private static Hashtable<String, Object> localTreeJNDI = new Hashtable<String, Object>();
+	public static String LOCAL_TREE_JNDI_PREFIX = "local:/openspcoop2/";
 
 
 	/**
@@ -67,6 +74,22 @@ public class GestoreJNDI {
 	 * @param fullPath Nome dell'oggetto da ricercare nell'albero JNDI
 	 */
 	public Object lookup(String fullPath) throws Exception {
+		
+		if(fullPath!=null && fullPath.startsWith(LOCAL_TREE_JNDI_PREFIX)){
+		
+			//System.out.println("-------------------------------- LOCAL LOOKUP ["+fullPath+"]");
+			
+			Object o = null;
+			synchronized (localTreeJNDI) {
+				o = localTreeJNDI.get(fullPath);
+			}
+			if(o==null){
+				throw new UtilsException("LocalResource ["+fullPath+"] not found");
+			}
+			return o;
+			
+		}
+		
 		// Inizializzo Contesto
 		InitialContext ctx = null;
 		try{
@@ -106,6 +129,23 @@ public class GestoreJNDI {
 		return unbind(fullPath, log, null);
 	}
 	public boolean unbind(String fullPath,Logger log,Logger logConsole) {
+		
+		if(fullPath!=null && fullPath.startsWith(LOCAL_TREE_JNDI_PREFIX)){
+			
+			//System.out.println("-------------------------------- LOCAL UNBIND ["+fullPath+"]");
+			
+			Object o = null;
+			synchronized (localTreeJNDI) {
+				o = localTreeJNDI.remove(fullPath);
+			}
+			if(log!=null)
+				log.warn("LocalResource ["+fullPath+"] not found");
+			if(logConsole!=null)
+				logConsole.warn("LocalResource ["+fullPath+"] not found");
+			return o!=null;
+			
+		}
+		
 		Context currentContext = null;
 		try{
 			currentContext = new InitialContext() ;
@@ -170,6 +210,28 @@ public class GestoreJNDI {
 		return bind(fullPath, toBind, log, null);
 	}
 	public boolean bind(String fullPath,Object toBind,Logger log,Logger logConsole) {
+		
+		if(fullPath!=null && fullPath.startsWith(LOCAL_TREE_JNDI_PREFIX)){
+			
+			//System.out.println("-------------------------------- LOCAL BIND ["+fullPath+"]");
+			
+			synchronized (localTreeJNDI) {
+				
+				if(localTreeJNDI.containsKey(fullPath)){
+					if(log!=null)
+						log.warn("LocalResource ["+fullPath+"] already exists");
+					if(logConsole!=null)
+						logConsole.warn("LocalResource ["+fullPath+"] already exists");
+					return false;
+				}
+				
+				localTreeJNDI.put(fullPath, toBind);
+				return true;
+			}
+			
+		}
+		
+		
 		Context currentContext = null;
 		try{
 

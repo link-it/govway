@@ -23,16 +23,14 @@
 
 package org.openspcoop2.pools.pdd.jms.connectionsession;
 
-import org.apache.commons.pool.impl.GenericObjectPool.Config;
-import org.apache.commons.pool.impl.GenericObjectPool;
-
 import org.slf4j.Logger;
 
 import java.util.Hashtable;
 
 import javax.jms.Session;
 
-
+import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.openspcoop2.pools.core.commons.Costanti;
 import org.openspcoop2.pools.core.commons.OpenSPCoopFactoryException;
 import org.openspcoop2.pools.pdd.jms.JMSInfo;
@@ -86,9 +84,9 @@ public class ConnectionSessionJMSPool implements java.io.Serializable  {
 
 		if(ConnectionSessionJMSPool.staticLogger==null){
 			try{
-				java.util.Properties loggerProperties = new java.util.Properties();
-				loggerProperties.load(ConnectionSessionJMSPool.class.getResourceAsStream("/openspcoop2_pools.log4j2.properties"));
-				LoggerWrapperFactory.setLogConfiguration(loggerProperties);
+//				java.util.Properties loggerProperties = new java.util.Properties();
+//				loggerProperties.load(ConnectionSessionJMSPool.class.getResourceAsStream("/openspcoop2_pools.log4j2.properties"));
+//				LoggerWrapperFactory.setLogConfiguration(loggerProperties);
 				ConnectionSessionJMSPool.staticLogger = LoggerWrapperFactory.getLogger("openspcoop2Pools");
 			}catch(Exception e){
 				ConnectionSessionJMSPool.staticLogger = LoggerWrapperFactory.getLogger("openspcoop2Pools");
@@ -110,7 +108,7 @@ public class ConnectionSessionJMSPool implements java.io.Serializable  {
 		this.jndiName = configuration.getJndiName();
 
 		// Configurazione del Pool
-		Config configPool = new Config();
+		GenericObjectPoolConfig configPool = new GenericObjectPoolConfig();
 		setConfigurazione(configPool,configuration);
 
 		// User e Password
@@ -243,15 +241,15 @@ public class ConnectionSessionJMSPool implements java.io.Serializable  {
 	 *
 	 * 
 	 */
-	public void setConfigurazione(Config configPool,JMSInfo configuration) {	
+	public void setConfigurazione(GenericObjectPoolConfig configPool,JMSInfo configuration) {	
 		// controls the maximum number of objects that can be borrowed from the pool at one time. 
 		// When non-positive, there is no limit to the number of objects that may be active at one time. 
 		// When maxActive is exceeded, the pool is said to be exhausted.
-		configPool.maxActive = configuration.getPool_max(); // Default:8   Serve per fissare la Max dimensione del Pool
+		configPool.setMaxTotal(configuration.getPool_max()); // Default:8   Serve per fissare la Max dimensione del Pool
 
 		// controls the maximum number of objects that can sit idle in the pool at any time. 
 		// When negative, there is no limit to the number of objects that may be idle at one time.
-		configPool.maxIdle = configuration.getPool_min();  // Default: 8   Serve per fissare la minima dimensione del Pool
+		configPool.setMaxIdle(configuration.getPool_min());  // Default: 8   Serve per fissare la minima dimensione del Pool
 
 		// Returns the minimum number of objects allowed in the pool before the evictor thread (if active) spawns new objects. 
 		// (Note no objects are created when: numActive + numIdle >= maxActive)
@@ -267,33 +265,28 @@ public class ConnectionSessionJMSPool implements java.io.Serializable  {
 		//  after which a NoSuchElementException will be thrown. 
 		//  If maxWait is non-positive, the borrowObject() method will block indefinitely.
 		if(configuration.getWhen_exhausted_action() == null){
-			configPool.whenExhaustedAction = Costanti.EXAUSTED_BEHAVIOUR_BLOCK; 
+			configPool.setBlockWhenExhausted(true);
 		}else if(Costanti.WHEN_EXHAUSTED_BLOCK.equalsIgnoreCase(configuration.getWhen_exhausted_action()) ){
-			configPool.whenExhaustedAction =Costanti.EXAUSTED_BEHAVIOUR_BLOCK; 
-		}else if(Costanti.WHEN_EXHAUSTED_GROW.equalsIgnoreCase(configuration.getWhen_exhausted_action()) ){
-			configPool.whenExhaustedAction =Costanti.EXAUSTED_BEHAVIOUR_GROW; 
+			configPool.setBlockWhenExhausted(true);
 		}else if(Costanti.WHEN_EXHAUSTED_FAIL.equalsIgnoreCase(configuration.getWhen_exhausted_action()) ){
-			configPool.whenExhaustedAction =Costanti.EXAUSTED_BEHAVIOUR_FAIL; 
+			configPool.setBlockWhenExhausted(false);
 		}else{
-			configPool.whenExhaustedAction =Costanti.EXAUSTED_BEHAVIOUR_BLOCK; 
+			configPool.setBlockWhenExhausted(true);
 		}
-		// default: 1
-		// public static final byte 	WHEN_EXHAUSTED_BLOCK 	1
-		// public static final byte 	WHEN_EXHAUSTED_FAIL 	0
-		// public static final byte 	WHEN_EXHAUSTED_GROW 	2
-		if(configuration.getWhen_exhausted_blockingTimeout()>0)
-			configPool.maxWait = configuration.getWhen_exhausted_blockingTimeout(); //Default: -1L
+		if(configuration.getWhen_exhausted_blockingTimeout()>0){
+			configPool.setMaxWaitMillis(configuration.getWhen_exhausted_blockingTimeout()); //Default: -1L
+		}
 
 		// When testOnBorrow is set, the pool will attempt to validate each object before it is returned from the borrowObject() method. 
 		// (Using the provided factory's PoolableObjectFactory.validateObject(java.lang.Object) method.) 
 		// Objects that fail to validate will be dropped from the pool, and a different object will be borrowed.
-		configPool.testOnBorrow = configuration.isValidation_testOnGet(); //Default: false
+		configPool.setTestOnBorrow(configuration.isValidation_testOnGet()); //Default: false
 
 		// When testOnReturn is set, the pool will attempt to validate each object before it is returned to the pool 
 		// in the returnObject(java.lang.Object) method. 
 		// (Using the provided factory's PoolableObjectFactory.validateObject(java.lang.Object)  method.) 
 		// Objects that fail to validate will be dropped from the pool.
-		configPool.testOnReturn = configuration.isValidation_testOnRelease(); //Default: false
+		configPool.setTestOnReturn(configuration.isValidation_testOnRelease()); //Default: false
 
 		// Optionally, one may configure the pool to examine and possibly evict objects as they sit idle in the pool. 
 		// This is performed by an "idle object eviction" thread, which runs asychronously. 
@@ -302,16 +295,16 @@ public class ConnectionSessionJMSPool implements java.io.Serializable  {
 			// - timeBetweenEvictionRunsMillis,  indicates how long the eviction thread should sleep before 
 			// "runs" of examining idle objects. 
 			//   When non-positive, no eviction thread will be launched.
-			configPool.timeBetweenEvictionRunsMillis = configuration.getIdle_timeBetweenEvictionRuns() ; //Default: -1L
+			configPool.setTimeBetweenEvictionRunsMillis(configuration.getIdle_timeBetweenEvictionRuns()) ; //Default: -1L
 			// - numTestsPerEvictionRun, The default number of objects to examine per run in the idle object evictor.
-			configPool.numTestsPerEvictionRun= configuration.getIdle_numTestsPerEvictionRun(); //Default: 3
+			configPool.setNumTestsPerEvictionRun(configuration.getIdle_numTestsPerEvictionRun()); //Default: 3
 			// - minEvictableIdleTimeMillis,  specifies the minimum amount of time that an object may sit idle in the pool 
 			// before it is eligable for eviction due to idle time. 
 			// When non-positive, no object will be dropped from the pool due to idle time alone.
-			configPool.minEvictableIdleTimeMillis = configuration.getIdle_idleObjectTimeout(); //Default: 1800000L
+			configPool.setMinEvictableIdleTimeMillis(configuration.getIdle_idleObjectTimeout()); //Default: 1800000L
 			// - testWhileIdle, indicates whether or not idle objects should be validated using the factory's 
 			// PoolableObjectFactory.validateObject(java.lang.Object) method. Objects that fail to validate will be dropped from the pool.
-			configPool.testWhileIdle = configuration.isIdle_validateObject(); //Default: false
+			configPool.setTestWhileIdle(configuration.isIdle_validateObject()); //Default: false
 		}
 	}
 
