@@ -1,3 +1,15 @@
+2016-09-16  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	Risolto Bug OP-545
+	I Datasource di riferimento sia generati dall'installer che presenti nella versione sorgente, per le versioni di Tomcat 8 e 9 
+	presentavano dei parametri non più supportati a causa dell'aggiornamento delle librerie apache commons pool e commons dbcp interne a Tomcat
+	(passaggio alla versione 2 delle librerie).
+	I Warning sollevati dal servlet container sono i seguenti:
+	WARNING Property maxActive is not used in DBCP2, use maxTotal instead.        
+	WARNING Property maxWait is not used in DBCP2 , use maxWaitMillis instead.        
+	Il problema è stato risolto
+
 2016-09-15  Andrea Poli <apoli@link.it>
 
 	* [OpenSPCoopPools, Pdd, Utils]
