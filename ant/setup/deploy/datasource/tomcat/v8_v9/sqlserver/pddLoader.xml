@@ -1,0 +1,24 @@
+<Context>
+
+	<!-- Datasouce utilizzato dall'applicazione grafica pddConsole della PdD OpenSPCoop2 -->
+
+	<Resource name="org.openspcoop2.dataSource.pddConsole" auth="Container"
+	          type="javax.sql.DataSource"
+	          driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+	          url="jdbc:sqlserver://@HOST@:@PORT@;databaseName=@DATABASE@"
+	          username="@USERNAME@" password="@PASSWORD@"
+	          initialSize="5"
+	          maxTotal="20"
+	          minIdle="5" maxIdle="20"
+	          maxWaitMillis="30000" defaultTransactionIsolation="READ_COMMITTED"
+	          validationQuery="SELECT 1"
+	          validationQueryTimeout="10"
+	          testOnBorrow="true" testOnReturn="false"
+	          testWhileIdle="true" minEvictableIdleTimeMillis="300000"
+	          numTestsPerEvictionRun="10" timeBetweenEvictionRunsMillis="60000"
+	          poolPreparedStatements="true" maxOpenPreparedStatements="100"/>
+
+
+
+
+</Context>

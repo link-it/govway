@@ -52,16 +52,15 @@
 			<option value="jboss5" text="JBoss 5.x"/>
 	    		<option value="jboss4" text="JBoss 4.x"/>
 		-->
-            
-            	<!-- Il valore viene mappato sempre in tomcat 6 -->
-           	 <!-- Se si introduce un nuovo valore, occhio a sistemare la maschera preinstallazioneCheckCompatibilita -->
-            	<option value="tomcat6" text="Apache Tomcat 9.x"/>
-            	<option value="tomcat6" text="Apache Tomcat 8.x"/>
-            	<option value="tomcat6" text="Apache Tomcat 7.x"/>
+           
+		<!-- Se si introduce un nuovo valore, occhio a sistemare la maschera preinstallazioneCheckCompatibilita --> 
+            	<option value="tomcat9" text="Apache Tomcat 9.x"/>
+            	<option value="tomcat8" text="Apache Tomcat 8.x"/>
+            	<option value="tomcat7" text="Apache Tomcat 7.x"/>
             	<option value="tomcat6" text="Apache Tomcat 6.x"/>
             	<!-- 
 			Deprecati
-			<option value="tomcat6" text="Apache Tomcat 5.x"/> 
+			<option value="tomcat5" text="Apache Tomcat 5.x"/> 
 		-->
         </large-select>
         
@@ -160,7 +159,7 @@
 
     </page>
 
-    <page name="preinstallazioneCheckCompatibilita" type="input" displayText="Compatibilità interfacce OpenSPCoop-v1" ifProperty="(${antinstaller_protocollo_spcoop}=true) AND (${antinstaller_as}=tomcat6) AND (${antinstaller_backward_compatibility}=true)">
+    <page name="preinstallazioneCheckCompatibilita" type="input" displayText="Compatibilità interfacce OpenSPCoop-v1" ifProperty="(${antinstaller_protocollo_spcoop}=true) AND (${antinstaller_backward_compatibility}=true) AND (${antinstaller_as}=tomcat5) OR (${antinstaller_as}=tomcat6) OR (${antinstaller_as}=tomcat7) OR (${antinstaller_as}=tomcat8) OR (${antinstaller_as}=tomcat9) ">
 
 	<comment displayText="Attenzione: la scelta dell'Application Server Tomcat impedisce l'attivazione delle interfacce di compatibilità."/>
 	<comment displayText="Tornare al pannello precedente e scegliere un Application Server differente"/>

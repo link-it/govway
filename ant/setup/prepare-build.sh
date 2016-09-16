@@ -2,7 +2,7 @@
 # Gli application server jboss4, jboss5 e jboss6 sono stati deprecati dalla versione 2.3
 AS_VERSION=jboss7,wildfly8,wildfly9,wildfly10,tomcat6
 # Per tomcat qualsiasi versione venga generata è uguale.
-# L'importante che anche il setup associo alla label abbia la solita versione
+# L'importante che anche il build.xml del setup associ poi lo stesso valore per qualsiasi scelta di tomcat venga fatta
 
 ROOT=../../
 CORE=${ROOT}/core

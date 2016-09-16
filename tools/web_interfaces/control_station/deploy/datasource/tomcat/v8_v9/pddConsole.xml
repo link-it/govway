@@ -1,0 +1,129 @@
+<Context>
+
+	<!-- Datasouce utilizzato dall'applicazione grafica pddConsole della PdD OpenSPCoop2 -->
+
+	<Resource name="org.openspcoop2.dataSource.pddConsole" auth="Container"
+	          type="javax.sql.DataSource"
+	          driverClassName="DriverJDBC"
+	          url="ConnectionURL"
+	          username="pddConsole" password="pddConsole"
+	          initialSize="10"
+	          maxTotal="50"
+	          minIdle="10" maxIdle="50"
+	          maxWaitMillis="30000" defaultTransactionIsolation="READ_COMMITTED"
+	          validationQuery="SELECT VALIDAZIONE DELLA CONNESSIONE"
+	          validationQueryTimeout="10"
+	          testOnBorrow="true" testOnReturn="false"
+	          testWhileIdle="true" minEvictableIdleTimeMillis="300000"
+	          numTestsPerEvictionRun="10" timeBetweenEvictionRunsMillis="60000"
+	          poolPreparedStatements="true" maxOpenPreparedStatements="100"/>
+
+	<!-- 
+		postgresql:
+		driverClassName="org.postgresql.Driver"
+		url="jdbc:postgresql://localhost/pddConsole"
+		validationQuery="SELECT 1"
+	-->
+
+	<!-- 
+		mysql:
+		driverClassName="com.mysql.jdbc.Driver"
+		url="jdbc:mysql://localhost/pddConsole?zeroDateTimeBehavior=convertToNull"
+		validationQuery="SELECT 1"
+	-->
+
+	<!-- 
+		oracle:
+		driverClassName="oracle.jdbc.OracleDriver"
+		url="jdbc:oracle:thin:@localhost:1521:XE"
+		validationQuery="SELECT 1 FROM DUAL"
+	-->
+
+	<!-- 
+		hsql:
+		driverClassName="org.hsqldb.jdbcDriver"
+		url="jdbc:hsqldb:hsql://localhost[:1701(jboss),9001(standalone)][/pddConsole]"
+		validationQuery="SELECT 1"
+	-->
+
+	<!-- 
+		sqlserver:
+		driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+		url="jdbc:sqlserver://localhost:1433;databaseName=pddConsole"
+		validationQuery="SELECT 1"
+	-->
+
+	<!-- 
+		db2:
+		driverClassName="com.ibm.db2.jcc.DB2Driver"
+		url="jdbc:db2://localhost:50000/pddConsole"
+		validationQuery="SELECT 1 from SYSIBM.SYSDUMMY1"
+	-->
+
+
+
+
+	<!-- Datasource per i dati della porta di dominio OpenSPCoop2 -->
+
+	<Resource name="org.openspcoop2.dataSource" auth="Container"
+	          type="javax.sql.DataSource"
+	          driverClassName="DriverJDBC"
+	          url="ConnectionURL"
+	          username="openspcoop2" password="openspcoop2"
+	          initialSize="10"
+	          maxTotal="50"
+	          minIdle="10" maxIdle="50"
+	          maxWaitMillis="30000" defaultTransactionIsolation="READ_COMMITTED"
+	          validationQuery="SELECT VALIDAZIONE DELLA CONNESSIONE"
+	          validationQueryTimeout="10"
+	          testOnBorrow="true" testOnReturn="false"
+	          testWhileIdle="true" minEvictableIdleTimeMillis="300000"
+	          numTestsPerEvictionRun="10" timeBetweenEvictionRunsMillis="60000"
+	          poolPreparedStatements="true" maxOpenPreparedStatements="100"/>
+
+	<!-- 
+		postgresql:
+		driverClassName="org.postgresql.Driver"
+		url="jdbc:postgresql://localhost/openspcoop2"
+		validationQuery="SELECT 1"
+	-->
+
+	<!-- 
+		mysql:
+		driverClassName="com.mysql.jdbc.Driver"
+		url="jdbc:mysql://localhost/openspcoop2?zeroDateTimeBehavior=convertToNull"
+		validationQuery="SELECT 1"
+	-->
+
+	<!-- 
+		oracle:
+		driverClassName="oracle.jdbc.OracleDriver"
+		url="jdbc:oracle:thin:@localhost:1521:XE"
+		validationQuery="SELECT 1 FROM DUAL"
+	-->
+
+	<!-- 
+		hsql:
+		driverClassName="org.hsqldb.jdbcDriver"
+		url="jdbc:hsqldb:hsql://localhost[:1701(jboss),9001(standalone)][/openspcoop2]"
+		validationQuery="SELECT 1"
+	-->
+
+	<!-- 
+		sqlserver:
+		driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+		url="jdbc:sqlserver://localhost:1433;databaseName=openspcoop2"
+		validationQuery="SELECT 1"
+	-->
+
+	<!-- 
+		db2:
+		driverClassName="com.ibm.db2.jcc.DB2Driver"
+		url="jdbc:db2://localhost:50000/openspcoop2"
+		validationQuery="SELECT 1 from SYSIBM.SYSDUMMY1"
+	-->
+
+
+
+
+</Context>

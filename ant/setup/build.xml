@@ -53,7 +53,7 @@
 		Informazioni preliminari
 			antinstaller_directory_lavoro_openspcoop=/var/openspcoop2
 			antinstaller_tipo_database=postgresql
-			antinstaller_as=jboss5
+			antinstaller_as=jboss5  -> Trasformata poi nel build reale subito sotto attraverso la variabile build_for_as
 			
 		Il Database
 			antinstaller_driver_jdbc=org.postgresql.Driver
@@ -92,6 +92,17 @@
 			<var name="datasource_console_name" value="java:/comp/env/org.openspcoop2.dataSource.pddConsole"/>
 		</else>
 	</if>
+	<if>
+		<or>
+			<matches string="${antinstaller_as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="build_for_as" value="tomcat6"/>
+		</then>
+		<else>
+			<var name="build_for_as" value="${antinstaller_as}"/>
+		</else>
+	</if>
 	
 	<target name="setup" depends="clean,init">
 
@@ -126,12 +137,12 @@
 	<target name="_setup_pdd">
 		<if>
 			<or>
-				<matches string="${antinstaller_as}" pattern="jboss.*"/>
-				<matches string="${antinstaller_as}" pattern="wildfly.*"/>
+				<matches string="${build_for_as}" pattern="jboss.*"/>
+				<matches string="${build_for_as}" pattern="wildfly.*"/>
 			</or>
 			<then>
 				<!-- unzip -->
-				<unzip src="${deploy_sw}/${antinstaller_as}/OpenSPCoop2.ear" dest="${tmp_archivi}/OpenSPCoop2.ear"/>
+				<unzip src="${deploy_sw}/${build_for_as}/OpenSPCoop2.ear" dest="${tmp_archivi}/OpenSPCoop2.ear"/>
 				<!-- configuration -->
 				<antcall target="pdd_openspcoop2_properties_settings">
 				    <param name="file" value="${tmp_archivi}/OpenSPCoop2.ear/properties/openspcoop2.properties"/>
@@ -187,12 +198,12 @@
 				<!-- Ripristino jar -->
 				<antcall target="ripristina_jar">
 				    <param name="archiveFile" value="${tmp_archivi}/OpenSPCoop2.ear"/>
-					<param name="as" value="${antinstaller_as}"/>
+					<param name="as" value="${build_for_as}"/>
 				</antcall>
 			</then>
 			<else>
 				<!-- unzip -->
-				<unzip src="${deploy_sw}/${antinstaller_as}/openspcoop2.war" dest="${tmp_archivi}/openspcoop2.war"/>
+				<unzip src="${deploy_sw}/${build_for_as}/openspcoop2.war" dest="${tmp_archivi}/openspcoop2.war"/>
 				<!-- configuration -->
 				<antcall target="pdd_openspcoop2_properties_settings">
 				    <param name="file" value="${tmp_archivi}/openspcoop2.war/WEB-INF/classes/openspcoop2.properties"/>
@@ -246,7 +257,7 @@
 				<!-- Ripristino jar -->
 				<antcall target="ripristina_jar">
 				    <param name="archiveFile" value="${tmp_archivi}/openspcoop2.war"/>
-					<param name="as" value="${antinstaller_as}"/>
+					<param name="as" value="${build_for_as}"/>
 				</antcall>
 			</else>
 		</if>		
@@ -385,14 +396,14 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 	<target name="setup_datasource" depends="_setup_datasource"/>
 	<target name="_setup_datasource">
 		<if>
-			<matches string="${antinstaller_as}" pattern="jboss.*"/>
+			<matches string="${build_for_as}" pattern="jboss.*"/>
 			<then>
 				<var name="jboss_datasource_dir_name" value=""/>
 				<if>
 					<or>
-						<equals arg1="${antinstaller_as}" arg2="jboss4" />
-						<equals arg1="${antinstaller_as}" arg2="jboss5" />
-						<equals arg1="${antinstaller_as}" arg2="jboss6" />
+						<equals arg1="${build_for_as}" arg2="jboss4" />
+						<equals arg1="${build_for_as}" arg2="jboss5" />
+						<equals arg1="${build_for_as}" arg2="jboss6" />
 					</or>
 					<then>
 						<var name="jboss_datasource_dir_name" value="v4_v5_v6"/>
@@ -412,7 +423,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 			</then>
 		</if>
 		<if>
-			<matches string="${antinstaller_as}" pattern="wildfly.*"/>
+			<matches string="${build_for_as}" pattern="wildfly.*"/>
 			<then>		
 				<copy file="${deploy_ds}/wildfly/${antinstaller_tipo_database}/openspcoop2-ds.xml" todir="${tmp_ds}"/>
 				<antcall target="ds_settings">
@@ -425,17 +436,31 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 			</then>
 		</if>
 		<if>
-			<matches string="${antinstaller_as}" pattern="tomcat.*"/>
-			<then>	
-				<copy file="${deploy_ds}/tomcat/${antinstaller_tipo_database}/openspcoop2.xml" todir="${tmp_ds}"/>
+			<matches string="${build_for_as}" pattern="tomcat.*"/>
+			<then>
+				<var name="tomcat_datasource_dir_name" value=""/>
+				<if>
+					<or>
+						<equals arg1="${antinstaller_as}" arg2="tomcat5" />
+						<equals arg1="${antinstaller_as}" arg2="tomcat6" />
+						<equals arg1="${antinstaller_as}" arg2="tomcat7" />
+					</or>
+					<then>
+						<var name="tomcat_datasource_dir_name" value="v5_v6_v7"/>
+					</then>
+					<else>
+						<var name="tomcat_datasource_dir_name" value="v8_v9"/>
+					</else>
+				</if>		
+				<copy file="${deploy_ds}/tomcat/${tomcat_datasource_dir_name}/${antinstaller_tipo_database}/openspcoop2.xml" todir="${tmp_ds}"/>
 				<antcall target="ds_settings">
 				    <param name="file" value="${tmp_ds}/openspcoop2.xml"/>
 				</antcall>
-				<copy file="${deploy_ds}/tomcat/${antinstaller_tipo_database}/pddLoader.xml" todir="${tmp_ds}"/>
+				<copy file="${deploy_ds}/tomcat/${tomcat_datasource_dir_name}/${antinstaller_tipo_database}/pddLoader.xml" todir="${tmp_ds}"/>
 				<antcall target="ds_settings">
 				    <param name="file" value="${tmp_ds}/pddLoader.xml"/>
 				</antcall>
-				<copy file="${deploy_ds}/tomcat/${antinstaller_tipo_database}/pddConsole.xml" todir="${tmp_ds}"/>
+				<copy file="${deploy_ds}/tomcat/${tomcat_datasource_dir_name}/${antinstaller_tipo_database}/pddConsole.xml" todir="${tmp_ds}"/>
 				<antcall target="ds_settings">
 				    <param name="file" value="${tmp_ds}/pddConsole.xml"/>
 				</antcall>
@@ -446,7 +471,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 	<target name="setup_pddConsole" depends="_setup_pddConsole"/>
 	<target name="_setup_pddConsole">
 		<!-- unzip -->
-		<unzip src="${deploy_sw}/${antinstaller_as}/pddConsole.war" dest="${tmp_archivi}/pddConsole.war"/>
+		<unzip src="${deploy_sw}/${build_for_as}/pddConsole.war" dest="${tmp_archivi}/pddConsole.war"/>
 		<!-- configuration -->
 		<antcall target="pddConsole_console_properties_settings">
 		    <param name="file" value="${tmp_archivi}/pddConsole.war/WEB-INF/classes/console.properties"/>
@@ -504,14 +529,14 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 		<!-- Ripristino jar -->
 		<antcall target="ripristina_jar">
 		    <param name="archiveFile" value="${tmp_archivi}/pddConsole.war"/>
-			<param name="as" value="${antinstaller_as}"/>
+			<param name="as" value="${build_for_as}"/>
 			<param name="archiveType" value="WAR"/>
 		</antcall>
 	</target>
 	
 	<target name="setup_loader" depends="_setup_loader"/>
 	<target name="_setup_loader">
-		<unzip src="${deploy_sw}/${antinstaller_as}/pddLoader.war" dest="${tmp_archivi}/pddLoader.war"/>
+		<unzip src="${deploy_sw}/${build_for_as}/pddLoader.war" dest="${tmp_archivi}/pddLoader.war"/>
 		<antcall target="loader_properties_settings">
 		    <param name="file" value="${tmp_archivi}/pddLoader.war/WEB-INF/classes/loader.properties"/>
 		</antcall>
@@ -564,7 +589,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 		<!-- Ripristino jar -->
 		<antcall target="ripristina_jar">
 		    <param name="archiveFile" value="${tmp_archivi}/pddLoader.war"/>
-			<param name="as" value="${antinstaller_as}"/>
+			<param name="as" value="${build_for_as}"/>
 			<param name="archiveType" value="WAR"/>
 		</antcall>
 	</target>
@@ -578,20 +603,20 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				<istrue value="${antinstaller_backward_compatibility}"/>
 			</and>
 			<then>
-				<unzip src="${deploy_sw}/${antinstaller_as}/OpenSPCoopV1BackwardCompatibility.war" dest="${tmp_archivi}/OpenSPCoopV1BackwardCompatibility.war"/>
+				<unzip src="${deploy_sw}/${build_for_as}/OpenSPCoopV1BackwardCompatibility.war" dest="${tmp_archivi}/OpenSPCoopV1BackwardCompatibility.war"/>
 				
 				<!-- Ripristino jar -->
 				<antcall target="ripristina_jar">
 				    <param name="archiveFile" value="${tmp_archivi}/OpenSPCoopV1BackwardCompatibility.war"/>
-					<param name="as" value="${antinstaller_as}"/>
+					<param name="as" value="${build_for_as}"/>
 					<param name="archiveType" value="WAR"/>
 				</antcall>
 				
 				<!-- Sposto configurazioni nella PdD -->
 				<if>
 					<or>
-						<matches string="${antinstaller_as}" pattern="jboss.*"/>
-						<matches string="${antinstaller_as}" pattern="wildfly.*"/>
+						<matches string="${build_for_as}" pattern="jboss.*"/>
+						<matches string="${build_for_as}" pattern="wildfly.*"/>
 					</or>
 					<then>
 						<move todir="${tmp_archivi}/OpenSPCoop2.ear/lib">
