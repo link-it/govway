@@ -240,4 +240,8 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			this.identity = new Identity(this.req);
 		}
 	} 
+	
+	public HttpServletRequest getHttpServletRequest(){
+		return this.req;
+	}
 }
