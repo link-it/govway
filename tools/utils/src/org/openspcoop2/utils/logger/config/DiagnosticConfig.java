@@ -87,58 +87,79 @@ public class DiagnosticConfig {
 	}
 
 
+	// Istanza statica per motivi di performance
+	private static Properties staticProperties = null;
 	
 	public static void validate(DiagnosticConfig config) throws UtilsException{
-		if(config==null){
-			throw new UtilsException("Diagnostic Configuration undefined");
+		if(staticProperties==null){
+			_validate(config);
 		}
-		if(config.getThrowExceptionPlaceholderFailedResolution()==null){
-			throw new UtilsException("Diagnostic configuration (property ThrowExceptionPlaceholderFailedResolution) undefined");
+	}
+	public static Properties readProperties(DiagnosticConfig config) throws UtilsException{
+		if(staticProperties==null){
+			return _readProperties(config);
 		}
-		int diagnosticConfigMode = 0;
-		if(config.getDiagnosticConfigFile()!=null){
-			diagnosticConfigMode++;
-		}
-		if(config.getDiagnosticConfigName()!=null){
-			diagnosticConfigMode++;
-		}
-		if(config.getDiagnosticConfigURI()!=null){
-			diagnosticConfigMode++;
-		}
-		if(config.getDiagnosticConfigURL()!=null){
-			diagnosticConfigMode++;
-		}
-		if(config.getDiagnosticConfigProperties()!=null){
-			diagnosticConfigMode++;
-		}
-		if(diagnosticConfigMode==0){
-			throw new UtilsException("Diagnostic configuration uncorrect: source diagnostic configuration file undefined");
-		}
-		if(diagnosticConfigMode>1){
-			throw new UtilsException("Diagnostic configuration uncorrect: found multiple source diagnostic configuration file");
+		return staticProperties;
+	}
+	
+	private static void _validate(DiagnosticConfig config) throws UtilsException{
+		if(staticProperties==null){
+			if(config==null){
+				throw new UtilsException("Diagnostic Configuration undefined");
+			}
+			if(config.getThrowExceptionPlaceholderFailedResolution()==null){
+				throw new UtilsException("Diagnostic configuration (property ThrowExceptionPlaceholderFailedResolution) undefined");
+			}
+			int diagnosticConfigMode = 0;
+			if(config.getDiagnosticConfigFile()!=null){
+				diagnosticConfigMode++;
+			}
+			if(config.getDiagnosticConfigName()!=null){
+				diagnosticConfigMode++;
+			}
+			if(config.getDiagnosticConfigURI()!=null){
+				diagnosticConfigMode++;
+			}
+			if(config.getDiagnosticConfigURL()!=null){
+				diagnosticConfigMode++;
+			}
+			if(config.getDiagnosticConfigProperties()!=null){
+				diagnosticConfigMode++;
+			}
+			if(diagnosticConfigMode==0){
+				throw new UtilsException("Diagnostic configuration uncorrect: source diagnostic configuration file undefined");
+			}
+			if(diagnosticConfigMode>1){
+				throw new UtilsException("Diagnostic configuration uncorrect: found multiple source diagnostic configuration file");
+			}
 		}
 	}
 	
-	public static Properties readProperties(DiagnosticConfig config) throws UtilsException{
-		if(config==null){
-			throw new UtilsException("Diagnostic Configuration undefined");
+	private static synchronized Properties _readProperties(DiagnosticConfig config) throws UtilsException{
+		
+		if(staticProperties==null){
+		
+			if(config==null){
+				throw new UtilsException("Diagnostic Configuration undefined");
+			}
+			Properties diagProperties = null;
+			if(config.getDiagnosticConfigFile()!=null){
+				diagProperties = AbstractBaseDiagnosticManagerCore.getProperties(config.getDiagnosticConfigFile());
+			}
+			else if(config.getDiagnosticConfigName()!=null){
+				diagProperties = AbstractBaseDiagnosticManagerCore.getProperties(config.getDiagnosticConfigName());
+			}
+			else if(config.getDiagnosticConfigURI()!=null){
+				diagProperties = AbstractBaseDiagnosticManagerCore.getProperties(config.getDiagnosticConfigURI());
+			}
+			else if(config.getDiagnosticConfigURL()!=null){
+				diagProperties = AbstractBaseDiagnosticManagerCore.getProperties(config.getDiagnosticConfigURL());
+			}
+			else if(config.getDiagnosticConfigProperties()!=null){
+				diagProperties = config.getDiagnosticConfigProperties();
+			}
+			staticProperties = diagProperties;
 		}
-		Properties diagProperties = null;
-		if(config.getDiagnosticConfigFile()!=null){
-			diagProperties = AbstractBaseDiagnosticManagerCore.getProperties(config.getDiagnosticConfigFile());
-		}
-		else if(config.getDiagnosticConfigName()!=null){
-			diagProperties = AbstractBaseDiagnosticManagerCore.getProperties(config.getDiagnosticConfigName());
-		}
-		else if(config.getDiagnosticConfigURI()!=null){
-			diagProperties = AbstractBaseDiagnosticManagerCore.getProperties(config.getDiagnosticConfigURI());
-		}
-		else if(config.getDiagnosticConfigURL()!=null){
-			diagProperties = AbstractBaseDiagnosticManagerCore.getProperties(config.getDiagnosticConfigURL());
-		}
-		else if(config.getDiagnosticConfigProperties()!=null){
-			diagProperties = config.getDiagnosticConfigProperties();
-		}
-		return diagProperties;
+		return staticProperties;
 	}
 }

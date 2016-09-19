@@ -76,51 +76,68 @@ public class Log4jConfig {
 	}
 
 	
+	// Istanza statica per motivi di performance
+	private static boolean logInitialized = false;
+	
 	public static void validate(Log4jConfig config) throws UtilsException{
-		if(config==null){
-			throw new UtilsException("Log4j configuration undefined (with enabled mode)");
+		if(logInitialized==false){
+			_validate(config);
 		}
-		int log4jConfigMode = 0;
-		if(config.getLog4jConfigFile()!=null){
-			log4jConfigMode++;
+	}
+	public static void setConfigurationLogger(Log4jConfig config) throws UtilsException{
+		if(logInitialized==false){
+			_setConfigurationLogger(config);
 		}
-		if(config.getLog4jConfigName()!=null){
-			log4jConfigMode++;
-		}
-		if(config.getLog4jConfigURI()!=null){
-			log4jConfigMode++;
-		}
-		if(config.getLog4jConfigURL()!=null){
-			log4jConfigMode++;
-		}
-		if(config.getLog4jConfigProperties()!=null){
-			log4jConfigMode++;
-		}	
-		if(log4jConfigMode==0){
-			throw new UtilsException("Log4j configuration uncorrect: source log4j configuration file undefined");
-		}
-		if(log4jConfigMode>1){
-			throw new UtilsException("Log4j configuration uncorrect: found multiple source log4j configuration file");
-		}
-
 	}
 	
-	public static void setConfigurationLogger(Log4jConfig config) throws UtilsException{
-		
-		if(config.getLog4jConfigFile()!=null){
-			LoggerWrapperFactory.setLogConfiguration(config.getLog4jConfigFile());
+	private static void _validate(Log4jConfig config) throws UtilsException{
+		if(logInitialized == false){
+			if(config==null){
+				throw new UtilsException("Log4j configuration undefined (with enabled mode)");
+			}
+			int log4jConfigMode = 0;
+			if(config.getLog4jConfigFile()!=null){
+				log4jConfigMode++;
+			}
+			if(config.getLog4jConfigName()!=null){
+				log4jConfigMode++;
+			}
+			if(config.getLog4jConfigURI()!=null){
+				log4jConfigMode++;
+			}
+			if(config.getLog4jConfigURL()!=null){
+				log4jConfigMode++;
+			}
+			if(config.getLog4jConfigProperties()!=null){
+				log4jConfigMode++;
+			}	
+			if(log4jConfigMode==0){
+				throw new UtilsException("Log4j configuration uncorrect: source log4j configuration file undefined");
+			}
+			if(log4jConfigMode>1){
+				throw new UtilsException("Log4j configuration uncorrect: found multiple source log4j configuration file");
+			}
 		}
-		else if(config.getLog4jConfigName()!=null){
-			LoggerWrapperFactory.setLogConfiguration(config.getLog4jConfigName());
-		}
-		else if(config.getLog4jConfigURI()!=null){
-			LoggerWrapperFactory.setLogConfiguration(config.getLog4jConfigURI());
-		}
-		else if(config.getLog4jConfigURL()!=null){
-			LoggerWrapperFactory.setLogConfiguration(config.getLog4jConfigURL());
-		}
-		else if(config.getLog4jConfigProperties()!=null){
-			LoggerWrapperFactory.setLogConfiguration(config.getLog4jConfigProperties());
+	}
+	
+	private static synchronized void _setConfigurationLogger(Log4jConfig config) throws UtilsException{
+		if(logInitialized == false){
+			if(config.getLog4jConfigFile()!=null){
+				LoggerWrapperFactory.setLogConfiguration(config.getLog4jConfigFile());
+			}
+			else if(config.getLog4jConfigName()!=null){
+				LoggerWrapperFactory.setLogConfiguration(config.getLog4jConfigName());
+			}
+			else if(config.getLog4jConfigURI()!=null){
+				LoggerWrapperFactory.setLogConfiguration(config.getLog4jConfigURI());
+			}
+			else if(config.getLog4jConfigURL()!=null){
+				LoggerWrapperFactory.setLogConfiguration(config.getLog4jConfigURL());
+			}
+			else if(config.getLog4jConfigProperties()!=null){
+				LoggerWrapperFactory.setLogConfiguration(config.getLog4jConfigProperties());
+			}
+			logInitialized = true;
 		}
 	}
 }
