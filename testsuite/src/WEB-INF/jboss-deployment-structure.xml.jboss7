@@ -17,6 +17,11 @@
     	</exclusions>
     </deployment>
     <module name="deployment.custom">
+        <!-- 
+                        Indicazione di BouncyCastle tra le risorse disponibili (necessario per il Security Provider su jboss 7)
+                        Utile per keystore di tipo P12 per non far scaturire un errore simile al seguente:
+                        Message-Security(Sender): Security processing failed. ; error constructing MAC: java.lang.SecurityException: JCE cannot authenticate the provider BC
+        -->
         <resources>
                 <resource-root path="WEB-INF/lib/bcprov-ext-jdk15on-155.jar" use-physical-code-source="true"/>
         </resources>

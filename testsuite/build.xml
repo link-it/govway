@@ -122,7 +122,7 @@
 			<equals arg1="${as}" arg2="jboss7"/>
 			<matches string="${as}" pattern="wildfly.*"/>
 		</or>
-		<then>
+		<then>			
 			<var name="jboss_deployment_structure" value="jboss-deployment-structure.xml" />
 		</then>
 	</if>

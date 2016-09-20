@@ -60,6 +60,21 @@
 			</then>
 		</if>
 
+		<!-- jboss-deployment-structure -->
+		<if>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<then>
+				<copy file="${src_testsuite}/WEB-INF/jboss-deployment-structure.xml.${as}" tofile="${build_testsuite}/tmp/jboss-deployment-structure.xml" />
+			</then>
+		</if>
+		<if>
+			<matches string="${as}" pattern="wildfly.*"/>
+			<then>
+				<copy file="${src_testsuite}/WEB-INF/jboss-deployment-structure.xml.wildfly" tofile="${build_testsuite}/tmp/jboss-deployment-structure.xml" />
+			</then>
+		</if>
+
+		
 		<war destfile="${dist_testsuite}/OpenSPCoop2TestSuite.war" webxml="${src_testsuite}/WEB-INF/web.xml">
 
 			<!-- Informazioni sulla versione -->
@@ -71,6 +86,8 @@
 			<webinf dir="${src_testsuite}/WEB-INF">
 				<include name="${jboss_classloading}" />
 				<include name="${jboss_scanning}" />
+			</webinf>
+			<webinf dir="${build_testsuite}/tmp">
 				<include name="${jboss_deployment_structure}" />
 			</webinf>
 			

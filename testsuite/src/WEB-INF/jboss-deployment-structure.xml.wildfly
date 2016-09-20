@@ -1,0 +1,56 @@
+<jboss-deployment-structure>
+	<deployment>
+    	<!-- Exclusions allow you to prevent the server from automatically adding some dependencies     -->
+    	<dependencies>
+            <module name="deployment.custom" />
+        </dependencies> 
+    	<exclusions>
+        	<module name="org.apache.cxf" />
+        	<module name="org.springframework.spring" />
+		<module name="org.slf4j" />
+		<module name="org.apache.log4j" />
+		<module name="org.apache.commons.logging"/>		
+ 		<module name="org.jboss.as.webservices" />
+		<module name="org.jboss.ws" />
+		<module name="org.jboss.ws.*" />
+		<module name="javaee.api" />
+    	</exclusions>
+    </deployment>
+    <module name="deployment.custom">
+        <!-- 
+                        Indicazione di BouncyCastle tra le risorse disponibili (necessario per il Security Provider su jboss 7)
+                        Utile per keystore di tipo P12 per non far scaturire un errore simile al seguente:
+                        Message-Security(Sender): Security processing failed. ; error constructing MAC: java.lang.SecurityException: JCE cannot authenticate the provider BC
+        NOTA: su wildfly non sembra necessario e fa scaturire un errore sulla testsuite se utilizzato come il seguente: 
+		java.lang.IllegalAccessError: tried to access method org.bouncycastle.asn1.ASN1Primitive.<init>()V from class org.bouncycastle.asn1.ASN1Sequence
+	<resources>
+                <resource-root path="WEB-INF/lib/bcprov-ext-jdk15on-155.jar" use-physical-code-source="true"/>
+        </resources>
+	-->
+        <dependencies>
+            <module name="javaee.api" export="true">
+                <imports>
+			<!-- Del modulo javaee.api elimino i seguenti sotto moduli -->
+					 
+			<!-- org.apache.santuario.xmlsec -->
+			<exclude path="javax/xml/crypto/**" />
+			<exclude path="org/apache/jcp/**" />
+			<exclude path="org/apache/xml/security/**" />
+					 
+			<!-- org.apache.xalan (importato da org.apache.santuario.xmlsec) -->
+			<exclude path="org/apache/xml/serializer/**" />
+		        <exclude path="org/apache/bcel/**" />
+			<exclude path="org/apache/xalan/**" />
+			<exclude path="org/apache/xml/**" />
+			<exclude path="org/apache/xpath/**" />
+			<exclude path="trax/**" />
+			<exclude path="java_cup/**" />
+			<exclude path="META-INF/services/javax.xml.transform.TransformerFactory" />                         
+			<exclude path="META-INF/services/javax.xml.xpath.XPathFactory" />
+			<exclude path="META-INF/services/org.apache.xalan.extensions.bsf.BSFManager" />
+			<exclude path="META-INF/services/org.apache.xml.dtm.DTMManager" />
+                </imports>
+            </module>
+        </dependencies>
+    </module>
+</jboss-deployment-structure>
