@@ -5,28 +5,28 @@ CREATE SEQUENCE seq_connettori MINVALUE 1 MAXVALUE 9223372036854775807 START WIT
 CREATE TABLE connettori
 (
 	-- (disabilitato,http,jms)
-	endpointtype VARCHAR(255) NOT NULL,
-	nome_connettore VARCHAR(255) NOT NULL,
+	endpointtype VARCHAR2(255) NOT NULL,
+	nome_connettore VARCHAR2(255) NOT NULL,
 	-- url nel caso http
-	url VARCHAR(255),
+	url VARCHAR2(255),
 	-- nome coda jms
-	nome VARCHAR(255),
+	nome VARCHAR2(255),
 	-- tipo coda jms (queue,topic)
-	tipo VARCHAR(255),
+	tipo VARCHAR2(255),
 	-- utente di una connessione jms
-	utente VARCHAR(255),
+	utente VARCHAR2(255),
 	-- password per una connessione jms
-	password VARCHAR(255),
+	password VARCHAR2(255),
 	-- context property: initial_content
-	initcont VARCHAR(255),
+	initcont VARCHAR2(255),
 	-- context property: url_pkg
-	urlpkg VARCHAR(255),
+	urlpkg VARCHAR2(255),
 	-- context property: provider_url
-	provurl VARCHAR(255),
+	provurl VARCHAR2(255),
 	-- ConnectionFactory JMS
-	connection_factory VARCHAR(255),
+	connection_factory VARCHAR2(255),
 	-- Messaggio JMS inviato come text/byte message
-	send_as VARCHAR(255),
+	send_as VARCHAR2(255),
 	-- 1/0 (true/false) abilita il debug tramite il connettore
 	debug NUMBER,
 	-- 1/0 (true/false) indica se il connettore e' gestito tramite le proprieta' custom
@@ -61,8 +61,8 @@ CREATE SEQUENCE seq_connettori_custom MINVALUE 1 MAXVALUE 9223372036854775807 ST
 
 CREATE TABLE connettori_custom
 (
-	name VARCHAR(255) NOT NULL,
-	value VARCHAR(255) NOT NULL,
+	name VARCHAR2(255) NOT NULL,
+	value VARCHAR2(255) NOT NULL,
 	id_connettore NUMBER NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
@@ -92,9 +92,9 @@ CREATE SEQUENCE seq_connettori_properties MINVALUE 1 MAXVALUE 922337203685477580
 CREATE TABLE connettori_properties
 (
 	-- nome connettore personalizzato attraverso file properties
-	nome_connettore VARCHAR(255) NOT NULL,
+	nome_connettore VARCHAR2(255) NOT NULL,
 	-- location del file properties
-	path VARCHAR(255) NOT NULL,
+	path VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints

@@ -4,10 +4,10 @@ CREATE SEQUENCE seq_users MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 I
 
 CREATE TABLE users
 (
-	login VARCHAR(255) NOT NULL,
-	password VARCHAR(255) NOT NULL,
-	tipo_interfaccia VARCHAR(255) NOT NULL,
-	permessi VARCHAR(255) NOT NULL,
+	login VARCHAR2(255) NOT NULL,
+	password VARCHAR2(255) NOT NULL,
+	tipo_interfaccia VARCHAR2(255) NOT NULL,
+	permessi VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints

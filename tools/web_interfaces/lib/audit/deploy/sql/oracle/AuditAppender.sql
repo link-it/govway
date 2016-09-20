@@ -4,19 +4,19 @@ CREATE SEQUENCE seq_audit_operations MINVALUE 1 MAXVALUE 9223372036854775807 STA
 
 CREATE TABLE audit_operations
 (
-	tipo_operazione VARCHAR(255) NOT NULL,
+	tipo_operazione VARCHAR2(255) NOT NULL,
 	-- non definito in caso di LOGIN/LOGOUT
-	tipo VARCHAR(255),
+	tipo VARCHAR2(255),
 	-- non definito in caso di LOGIN/LOGOUT
 	object_id CLOB,
 	object_old_id CLOB,
-	utente VARCHAR(255) NOT NULL,
-	stato VARCHAR(255) NOT NULL,
+	utente VARCHAR2(255) NOT NULL,
+	stato VARCHAR2(255) NOT NULL,
 	-- Dettaglio oggetto in gestione (Rappresentazione tramite JSON o XML format)
 	object_details CLOB,
 	-- Class, serve eventualmente per riottenere l'oggetto dal dettaglio
 	-- non definito in caso di LOGIN/LOGOUT
-	object_class VARCHAR(255),
+	object_class VARCHAR2(255),
 	-- Eventuale messaggio di errore
 	error CLOB,
 	time_request TIMESTAMP NOT NULL,
@@ -51,7 +51,7 @@ CREATE SEQUENCE seq_audit_binaries MINVALUE 1 MAXVALUE 9223372036854775807 START
 
 CREATE TABLE audit_binaries
 (
-	binary_id VARCHAR(255) NOT NULL,
+	binary_id VARCHAR2(255) NOT NULL,
 	checksum NUMBER NOT NULL,
 	id_audit_operation NUMBER NOT NULL,
 	time_rec TIMESTAMP,

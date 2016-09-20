@@ -4,20 +4,20 @@ CREATE SEQUENCE seq_soggetti MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 
 
 CREATE TABLE soggetti
 (
-	nome_soggetto VARCHAR(255) NOT NULL,
-	tipo_soggetto VARCHAR(255) NOT NULL,
-	descrizione VARCHAR(255),
-	identificativo_porta VARCHAR(255),
+	nome_soggetto VARCHAR2(255) NOT NULL,
+	tipo_soggetto VARCHAR2(255) NOT NULL,
+	descrizione VARCHAR2(255),
+	identificativo_porta VARCHAR2(255),
 	-- 1/0 (true/false) svolge attivita di router
 	is_router NUMBER,
 	id_connettore NUMBER NOT NULL,
-	superuser VARCHAR(255),
-	server VARCHAR(255),
+	superuser VARCHAR2(255),
+	server VARCHAR2(255),
 	-- 1/0 (true/false) indica se il soggetto e' privato/pubblico
 	privato NUMBER,
 	ora_registrazione TIMESTAMP,
-	profilo VARCHAR(255),
-	codice_ipa VARCHAR(255) NOT NULL,
+	profilo VARCHAR2(255),
+	codice_ipa VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints

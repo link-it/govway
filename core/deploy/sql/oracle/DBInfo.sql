@@ -4,7 +4,7 @@ CREATE TABLE db_info
 (
 	major_version NUMBER NOT NULL,
 	minor_version NUMBER NOT NULL,
-	notes VARCHAR(255) NOT NULL,
+	notes VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints

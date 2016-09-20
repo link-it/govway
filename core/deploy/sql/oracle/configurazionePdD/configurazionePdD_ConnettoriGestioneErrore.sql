@@ -5,9 +5,9 @@ CREATE SEQUENCE seq_gestione_errore MINVALUE 1 MAXVALUE 9223372036854775807 STAR
 CREATE TABLE gestione_errore
 (
 	-- accetta/rispedisci
-	comportamento_default VARCHAR(255),
-	cadenza_rispedizione VARCHAR(255),
-	nome VARCHAR(255) NOT NULL,
+	comportamento_default VARCHAR2(255),
+	cadenza_rispedizione VARCHAR2(255),
+	nome VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
@@ -38,8 +38,8 @@ CREATE TABLE gestione_errore_trasporto
 	valore_massimo NUMBER,
 	valore_minimo NUMBER,
 	-- accetta/rispedisci
-	comportamento VARCHAR(255),
-	cadenza_rispedizione VARCHAR(255),
+	comportamento VARCHAR2(255),
+	cadenza_rispedizione VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints
@@ -66,12 +66,12 @@ CREATE SEQUENCE seq_gestione_errore_soap MINVALUE 1 MAXVALUE 9223372036854775807
 CREATE TABLE gestione_errore_soap
 (
 	id_gestione_errore NUMBER NOT NULL,
-	fault_actor VARCHAR(255),
-	fault_code VARCHAR(255),
-	fault_string VARCHAR(255),
+	fault_actor VARCHAR2(255),
+	fault_code VARCHAR2(255),
+	fault_string VARCHAR2(255),
 	-- accetta/rispedisci
-	comportamento VARCHAR(255),
-	cadenza_rispedizione VARCHAR(255),
+	comportamento VARCHAR2(255),
+	cadenza_rispedizione VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints

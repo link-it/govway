@@ -4,11 +4,11 @@ CREATE SEQUENCE seq_registri MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 
 
 CREATE TABLE registri
 (
-	nome VARCHAR(255) NOT NULL,
-	location VARCHAR(255) NOT NULL,
-	tipo VARCHAR(255) NOT NULL,
-	utente VARCHAR(255),
-	password VARCHAR(255),
+	nome VARCHAR2(255) NOT NULL,
+	location VARCHAR2(255) NOT NULL,
+	tipo VARCHAR2(255) NOT NULL,
+	utente VARCHAR2(255),
+	password VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
@@ -35,12 +35,12 @@ CREATE SEQUENCE seq_routing MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1
 
 CREATE TABLE routing
 (
-	tipo VARCHAR(255),
-	nome VARCHAR(255),
+	tipo VARCHAR2(255),
+	nome VARCHAR2(255),
 	-- registro/gateway
-	tiporotta VARCHAR(255) NOT NULL,
-	tiposoggrotta VARCHAR(255),
-	nomesoggrotta VARCHAR(255),
+	tiporotta VARCHAR2(255) NOT NULL,
+	tiposoggrotta VARCHAR2(255),
+	nomesoggrotta VARCHAR2(255),
 	-- foreign key per i registri(id)
 	registrorotta NUMBER,
 	is_default NUMBER NOT NULL,
@@ -69,57 +69,57 @@ CREATE SEQUENCE seq_configurazione MINVALUE 1 MAXVALUE 9223372036854775807 START
 CREATE TABLE configurazione
 (
 	-- Cadenza inoltro Riscontri/BusteAsincrone
-	cadenza_inoltro VARCHAR(255) NOT NULL,
+	cadenza_inoltro VARCHAR2(255) NOT NULL,
 	-- Validazione Buste
-	validazione_stato VARCHAR(255),
-	validazione_controllo VARCHAR(255),
-	validazione_profilo VARCHAR(255),
-	validazione_manifest VARCHAR(255),
+	validazione_stato VARCHAR2(255),
+	validazione_controllo VARCHAR2(255),
+	validazione_profilo VARCHAR2(255),
+	validazione_manifest VARCHAR2(255),
 	-- Validazione Contenuti Applicativi
 	-- abilitato/disabilitato/warningOnly
-	validazione_contenuti_stato VARCHAR(255),
+	validazione_contenuti_stato VARCHAR2(255),
 	-- wsdl/openspcoop/xsd
-	validazione_contenuti_tipo VARCHAR(255),
+	validazione_contenuti_tipo VARCHAR2(255),
 	-- abilitato/disabilitato
-	validazione_contenuti_mtom VARCHAR(255),
+	validazione_contenuti_mtom VARCHAR2(255),
 	-- Livello Log Messaggi Diagnostici
-	msg_diag_severita VARCHAR(255) NOT NULL,
-	msg_diag_severita_log4j VARCHAR(255) NOT NULL,
+	msg_diag_severita VARCHAR2(255) NOT NULL,
+	msg_diag_severita_log4j VARCHAR2(255) NOT NULL,
 	-- Tracciamento Buste
-	tracciamento_buste VARCHAR(255),
-	tracciamento_dump VARCHAR(255),
-	tracciamento_dump_bin_pd VARCHAR(255),
-	tracciamento_dump_bin_pa VARCHAR(255),
+	tracciamento_buste VARCHAR2(255),
+	tracciamento_dump VARCHAR2(255),
+	tracciamento_dump_bin_pd VARCHAR2(255),
+	tracciamento_dump_bin_pa VARCHAR2(255),
 	-- Autenticazione IntegrationManager
-	auth_integration_manager VARCHAR(255),
+	auth_integration_manager VARCHAR2(255),
 	-- Cache per l'accesso ai registri
-	statocache VARCHAR(255),
-	dimensionecache VARCHAR(255),
-	algoritmocache VARCHAR(255),
-	idlecache VARCHAR(255),
-	lifecache VARCHAR(255),
+	statocache VARCHAR2(255),
+	dimensionecache VARCHAR2(255),
+	algoritmocache VARCHAR2(255),
+	idlecache VARCHAR2(255),
+	lifecache VARCHAR2(255),
 	-- Cache per l'accesso alla configurazione
-	config_statocache VARCHAR(255),
-	config_dimensionecache VARCHAR(255),
-	config_algoritmocache VARCHAR(255),
-	config_idlecache VARCHAR(255),
-	config_lifecache VARCHAR(255),
+	config_statocache VARCHAR2(255),
+	config_dimensionecache VARCHAR2(255),
+	config_algoritmocache VARCHAR2(255),
+	config_idlecache VARCHAR2(255),
+	config_lifecache VARCHAR2(255),
 	-- Cache per l'accesso ai dati di autorizzazione
-	auth_statocache VARCHAR(255),
-	auth_dimensionecache VARCHAR(255),
-	auth_algoritmocache VARCHAR(255),
-	auth_idlecache VARCHAR(255),
-	auth_lifecache VARCHAR(255),
+	auth_statocache VARCHAR2(255),
+	auth_dimensionecache VARCHAR2(255),
+	auth_algoritmocache VARCHAR2(255),
+	auth_idlecache VARCHAR2(255),
+	auth_lifecache VARCHAR2(255),
 	-- connessione su cui vengono inviate le risposte
 	-- reply: connessione esistente (es. http reply)
 	-- new: nuova connessione
-	mod_risposta VARCHAR(255),
+	mod_risposta VARCHAR2(255),
 	-- Gestione dell'indirizzo
-	indirizzo_telematico VARCHAR(255),
+	indirizzo_telematico VARCHAR2(255),
 	-- Gestione Manifest
-	gestione_manifest VARCHAR(255),
+	gestione_manifest VARCHAR2(255),
 	-- Routing Table
-	routing_enabled VARCHAR(255) NOT NULL,
+	routing_enabled VARCHAR2(255) NOT NULL,
 	-- Gestione errore di default per la Porta di Dominio
 	-- FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un eventuale tipologia di gestione dell'errore di default durante l'utilizzo di un connettore
 	id_ge_cooperazione NUMBER,
@@ -151,7 +151,7 @@ CREATE SEQUENCE seq_msgdiag_appender MINVALUE 1 MAXVALUE 9223372036854775807 STA
 
 CREATE TABLE msgdiag_appender
 (
-	tipo VARCHAR(255) NOT NULL,
+	tipo VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints
@@ -177,8 +177,8 @@ CREATE SEQUENCE seq_msgdiag_appender_prop MINVALUE 1 MAXVALUE 922337203685477580
 CREATE TABLE msgdiag_appender_prop
 (
 	id_appender NUMBER NOT NULL,
-	nome VARCHAR(255) NOT NULL,
-	valore VARCHAR(255) NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
+	valore VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
@@ -208,7 +208,7 @@ CREATE SEQUENCE seq_tracce_appender MINVALUE 1 MAXVALUE 9223372036854775807 STAR
 
 CREATE TABLE tracce_appender
 (
-	tipo VARCHAR(255) NOT NULL,
+	tipo VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints
@@ -234,8 +234,8 @@ CREATE SEQUENCE seq_tracce_appender_prop MINVALUE 1 MAXVALUE 9223372036854775807
 CREATE TABLE tracce_appender_prop
 (
 	id_appender NUMBER NOT NULL,
-	nome VARCHAR(255) NOT NULL,
-	valore VARCHAR(255) NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
+	valore VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
@@ -265,9 +265,9 @@ CREATE SEQUENCE seq_msgdiag_ds MINVALUE 1 MAXVALUE 9223372036854775807 START WIT
 
 CREATE TABLE msgdiag_ds
 (
-	nome VARCHAR(255) NOT NULL,
-	nome_jndi VARCHAR(255) NOT NULL,
-	tipo_database VARCHAR(255) NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
+	nome_jndi VARCHAR2(255) NOT NULL,
+	tipo_database VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
@@ -295,8 +295,8 @@ CREATE SEQUENCE seq_msgdiag_ds_prop MINVALUE 1 MAXVALUE 9223372036854775807 STAR
 CREATE TABLE msgdiag_ds_prop
 (
 	id_prop NUMBER NOT NULL,
-	nome VARCHAR(255) NOT NULL,
-	valore VARCHAR(255) NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
+	valore VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
@@ -326,9 +326,9 @@ CREATE SEQUENCE seq_tracce_ds MINVALUE 1 MAXVALUE 9223372036854775807 START WITH
 
 CREATE TABLE tracce_ds
 (
-	nome VARCHAR(255) NOT NULL,
-	nome_jndi VARCHAR(255) NOT NULL,
-	tipo_database VARCHAR(255) NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
+	nome_jndi VARCHAR2(255) NOT NULL,
+	tipo_database VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
@@ -356,8 +356,8 @@ CREATE SEQUENCE seq_tracce_ds_prop MINVALUE 1 MAXVALUE 9223372036854775807 START
 CREATE TABLE tracce_ds_prop
 (
 	id_prop NUMBER NOT NULL,
-	nome VARCHAR(255) NOT NULL,
-	valore VARCHAR(255) NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
+	valore VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
@@ -387,7 +387,7 @@ CREATE SEQUENCE seq_servizi_pdd MINVALUE 1 MAXVALUE 9223372036854775807 START WI
 
 CREATE TABLE servizi_pdd
 (
-	componente VARCHAR(255) NOT NULL,
+	componente VARCHAR2(255) NOT NULL,
 	-- Stato dei servizi attivi sulla Porta di Dominio
 	stato NUMBER,
 	-- fk/pk columns
@@ -420,16 +420,16 @@ CREATE SEQUENCE seq_servizi_pdd_filtri MINVALUE 1 MAXVALUE 9223372036854775807 S
 CREATE TABLE servizi_pdd_filtri
 (
 	id_servizio_pdd NUMBER NOT NULL,
-	tipo_filtro VARCHAR(255) NOT NULL,
-	tipo_soggetto_fruitore VARCHAR(255),
-	soggetto_fruitore VARCHAR(255),
-	identificativo_porta_fruitore VARCHAR(255),
-	tipo_soggetto_erogatore VARCHAR(255),
-	soggetto_erogatore VARCHAR(255),
-	identificativo_porta_erogatore VARCHAR(255),
-	tipo_servizio VARCHAR(255),
-	servizio VARCHAR(255),
-	azione VARCHAR(255),
+	tipo_filtro VARCHAR2(255) NOT NULL,
+	tipo_soggetto_fruitore VARCHAR2(255),
+	soggetto_fruitore VARCHAR2(255),
+	identificativo_porta_fruitore VARCHAR2(255),
+	tipo_soggetto_erogatore VARCHAR2(255),
+	soggetto_erogatore VARCHAR2(255),
+	identificativo_porta_erogatore VARCHAR2(255),
+	tipo_servizio VARCHAR2(255),
+	servizio VARCHAR2(255),
+	azione VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- check constraints
@@ -459,8 +459,8 @@ CREATE SEQUENCE seq_pdd_sys_props MINVALUE 1 MAXVALUE 9223372036854775807 START 
 
 CREATE TABLE pdd_sys_props
 (
-	nome VARCHAR(255) NOT NULL,
-	valore VARCHAR(255) NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
+	valore VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints

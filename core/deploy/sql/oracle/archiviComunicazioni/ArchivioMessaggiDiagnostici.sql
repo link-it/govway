@@ -3,20 +3,20 @@ CREATE SEQUENCE seq_msgdiagnostici MINVALUE 1 MAXVALUE 9223372036854775807 START
 CREATE TABLE msgdiagnostici
 (
 	gdo TIMESTAMP NOT NULL,
-	pdd_codice VARCHAR(255) NOT NULL,
-	pdd_tipo_soggetto VARCHAR(255) NOT NULL,
-	pdd_nome_soggetto VARCHAR(255) NOT NULL,
-	idfunzione VARCHAR(255) NOT NULL,
+	pdd_codice VARCHAR2(255) NOT NULL,
+	pdd_tipo_soggetto VARCHAR2(255) NOT NULL,
+	pdd_nome_soggetto VARCHAR2(255) NOT NULL,
+	idfunzione VARCHAR2(255) NOT NULL,
 	severita NUMBER NOT NULL,
 	messaggio CLOB NOT NULL,
 	-- Eventuale id della richiesta in gestione (informazione non definita dalla specifica)
-	idmessaggio VARCHAR(255),
+	idmessaggio VARCHAR2(255),
 	-- Eventuale id della risposta correlata alla richiesta (informazione non definita dalla specifica)
-	idmessaggio_risposta VARCHAR(255),
+	idmessaggio_risposta VARCHAR2(255),
 	-- Codice del diagnostico emesso
-	codice VARCHAR(255) NOT NULL,
+	codice VARCHAR2(255) NOT NULL,
 	-- Protocollo (puo' non essere presente per i diagnostici di 'servizio' della porta)
-	protocollo VARCHAR(255),
+	protocollo VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- check constraints
@@ -47,29 +47,29 @@ CREATE SEQUENCE seq_msgdiag_correlazione MINVALUE 1 MAXVALUE 9223372036854775807
 CREATE TABLE msgdiag_correlazione
 (
 	-- Dati di Correlazione con i messaggi diagnostici
-	idmessaggio VARCHAR(255) NOT NULL,
-	pdd_codice VARCHAR(255) NOT NULL,
-	pdd_tipo_soggetto VARCHAR(255) NOT NULL,
-	pdd_nome_soggetto VARCHAR(255) NOT NULL,
+	idmessaggio VARCHAR2(255) NOT NULL,
+	pdd_codice VARCHAR2(255) NOT NULL,
+	pdd_tipo_soggetto VARCHAR2(255) NOT NULL,
+	pdd_nome_soggetto VARCHAR2(255) NOT NULL,
 	-- Data di registrazione
 	gdo TIMESTAMP NOT NULL,
 	-- nome porta delegata/applicativa
-	porta VARCHAR(255),
+	porta VARCHAR2(255),
 	-- (1/0 true/false) True se siamo in un contesto di porta delegata, False se in un contesto di porta applicativa
 	delegata NUMBER NOT NULL,
-	tipo_fruitore VARCHAR(255) NOT NULL,
-	fruitore VARCHAR(255) NOT NULL,
-	tipo_erogatore VARCHAR(255) NOT NULL,
-	erogatore VARCHAR(255) NOT NULL,
-	tipo_servizio VARCHAR(255) NOT NULL,
-	servizio VARCHAR(255) NOT NULL,
+	tipo_fruitore VARCHAR2(255) NOT NULL,
+	fruitore VARCHAR2(255) NOT NULL,
+	tipo_erogatore VARCHAR2(255) NOT NULL,
+	erogatore VARCHAR2(255) NOT NULL,
+	tipo_servizio VARCHAR2(255) NOT NULL,
+	servizio VARCHAR2(255) NOT NULL,
 	versione_servizio NUMBER NOT NULL,
-	azione VARCHAR(255),
+	azione VARCHAR2(255),
 	-- Identificatore correlazione applicativa
-	id_correlazione_applicativa VARCHAR(255),
-	id_correlazione_risposta VARCHAR(255),
+	id_correlazione_applicativa VARCHAR2(255),
+	id_correlazione_risposta VARCHAR2(255),
 	-- Protocollo
-	protocollo VARCHAR(255) NOT NULL,
+	protocollo VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints
@@ -98,7 +98,7 @@ CREATE TABLE msgdiag_correlazione_sa
 (
 	id_correlazione NUMBER NOT NULL,
 	-- Identita ServizioApplicativo
-	servizio_applicativo VARCHAR(255) NOT NULL,
+	servizio_applicativo VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	-- fk/pk keys constraints
 	CONSTRAINT fk_msgdiag_correlazione_sa_1 FOREIGN KEY (id_correlazione) REFERENCES msgdiag_correlazione(id) ON DELETE CASCADE,

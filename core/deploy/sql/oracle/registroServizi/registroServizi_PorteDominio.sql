@@ -4,14 +4,14 @@ CREATE SEQUENCE seq_pdd MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INC
 
 CREATE TABLE pdd
 (
-	nome VARCHAR(255) NOT NULL,
-	descrizione VARCHAR(255),
-	implementazione VARCHAR(255),
-	subject VARCHAR(255),
+	nome VARCHAR2(255) NOT NULL,
+	descrizione VARCHAR2(255),
+	implementazione VARCHAR2(255),
+	subject VARCHAR2(255),
 	-- client auth: disabilitato/abilitato
-	client_auth VARCHAR(255),
+	client_auth VARCHAR2(255),
 	ora_registrazione TIMESTAMP,
-	superuser VARCHAR(255),
+	superuser VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints

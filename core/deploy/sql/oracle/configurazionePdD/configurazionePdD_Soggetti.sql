@@ -4,15 +4,15 @@ CREATE SEQUENCE seq_soggetti MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 
 
 CREATE TABLE soggetti
 (
-	nome_soggetto VARCHAR(255) NOT NULL,
-	tipo_soggetto VARCHAR(255) NOT NULL,
-	descrizione VARCHAR(255),
-	identificativo_porta VARCHAR(255),
+	nome_soggetto VARCHAR2(255) NOT NULL,
+	tipo_soggetto VARCHAR2(255) NOT NULL,
+	descrizione VARCHAR2(255),
+	identificativo_porta VARCHAR2(255),
 	-- 1/0 (true/false) svolge attivita di router
 	is_router NUMBER,
-	superuser VARCHAR(255),
-	pd_url_prefix_rewriter VARCHAR(255),
-	pa_url_prefix_rewriter VARCHAR(255),
+	superuser VARCHAR2(255),
+	pd_url_prefix_rewriter VARCHAR2(255),
+	pa_url_prefix_rewriter VARCHAR2(255),
 	ora_registrazione TIMESTAMP,
 	-- fk/pk columns
 	id NUMBER NOT NULL,

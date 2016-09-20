@@ -4,54 +4,54 @@ CREATE SEQUENCE seq_porte_applicative MINVALUE 1 MAXVALUE 9223372036854775807 ST
 
 CREATE TABLE porte_applicative
 (
-	nome_porta VARCHAR(255) NOT NULL,
-	descrizione VARCHAR(255),
+	nome_porta VARCHAR2(255) NOT NULL,
+	descrizione VARCHAR2(255),
 	-- Soggetto Virtuale
 	id_soggetto_virtuale NUMBER,
-	tipo_soggetto_virtuale VARCHAR(255),
-	nome_soggetto_virtuale VARCHAR(255),
+	tipo_soggetto_virtuale VARCHAR2(255),
+	nome_soggetto_virtuale VARCHAR2(255),
 	-- Servizio
 	id_servizio NUMBER,
-	tipo_servizio VARCHAR(255),
-	servizio VARCHAR(255),
+	tipo_servizio VARCHAR2(255),
+	servizio VARCHAR2(255),
 	id_accordo NUMBER,
 	id_port_type NUMBER,
 	-- azione
-	azione VARCHAR(255),
+	azione VARCHAR2(255),
 	-- disable/packaging/unpackaging/verify
-	mtom_request_mode VARCHAR(255),
+	mtom_request_mode VARCHAR2(255),
 	-- disable/packaging/unpackaging/verify
-	mtom_response_mode VARCHAR(255),
+	mtom_response_mode VARCHAR2(255),
 	-- abilitato/disabilitato (se abilitato le WSSproperties sono presenti nelle tabelle ...._ws_request/response)
-	ws_security VARCHAR(255),
+	ws_security VARCHAR2(255),
 	-- abilitato/disabilitato
-	ws_security_mtom_req VARCHAR(255),
+	ws_security_mtom_req VARCHAR2(255),
 	-- abilitato/disabilitato
-	ws_security_mtom_res VARCHAR(255),
+	ws_security_mtom_res VARCHAR2(255),
 	-- abilitato/disabilitato
-	ricevuta_asincrona_sim VARCHAR(255),
+	ricevuta_asincrona_sim VARCHAR2(255),
 	-- abilitato/disabilitato
-	ricevuta_asincrona_asim VARCHAR(255),
+	ricevuta_asincrona_asim VARCHAR2(255),
 	-- abilitato/disabilitato/warningOnly
-	validazione_contenuti_stato VARCHAR(255),
+	validazione_contenuti_stato VARCHAR2(255),
 	-- wsdl/openspcoop/xsd
-	validazione_contenuti_tipo VARCHAR(255),
+	validazione_contenuti_tipo VARCHAR2(255),
 	-- abilitato/disabilitato
-	validazione_contenuti_mtom VARCHAR(255),
+	validazione_contenuti_mtom VARCHAR2(255),
 	-- lista di tipi separati dalla virgola
-	integrazione VARCHAR(255),
+	integrazione VARCHAR2(255),
 	-- scadenza correlazione applicativa
-	scadenza_correlazione_appl VARCHAR(255),
+	scadenza_correlazione_appl VARCHAR2(255),
 	-- abilitato/disabilitato
-	allega_body VARCHAR(255),
+	allega_body VARCHAR2(255),
 	-- abilitato/disabilitato
-	scarta_body VARCHAR(255),
+	scarta_body VARCHAR2(255),
 	-- abilitato/disabilitato
-	gestione_manifest VARCHAR(255),
+	gestione_manifest VARCHAR2(255),
 	-- abilitato/disabilitato
-	stateless VARCHAR(255),
-	behaviour VARCHAR(255),
-	autorizzazione_contenuto VARCHAR(255),
+	stateless VARCHAR2(255),
+	behaviour VARCHAR2(255),
+	autorizzazione_contenuto VARCHAR2(255),
 	-- proprietario porta applicativa
 	id_soggetto NUMBER NOT NULL,
 	ora_registrazione TIMESTAMP,
@@ -118,8 +118,8 @@ CREATE SEQUENCE seq_pa_properties MINVALUE 1 MAXVALUE 9223372036854775807 START 
 CREATE TABLE pa_properties
 (
 	id_porta NUMBER NOT NULL,
-	nome VARCHAR(255) NOT NULL,
-	valore VARCHAR(255) NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
+	valore VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
@@ -150,9 +150,9 @@ CREATE SEQUENCE seq_pa_mtom_request MINVALUE 1 MAXVALUE 9223372036854775807 STAR
 CREATE TABLE pa_mtom_request
 (
 	id_porta NUMBER NOT NULL,
-	nome VARCHAR(255) NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
 	pattern CLOB NOT NULL,
-	content_type VARCHAR(255),
+	content_type VARCHAR2(255),
 	required NUMBER NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
@@ -182,9 +182,9 @@ CREATE SEQUENCE seq_pa_mtom_response MINVALUE 1 MAXVALUE 9223372036854775807 STA
 CREATE TABLE pa_mtom_response
 (
 	id_porta NUMBER NOT NULL,
-	nome VARCHAR(255) NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
 	pattern CLOB NOT NULL,
-	content_type VARCHAR(255),
+	content_type VARCHAR2(255),
 	required NUMBER NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
@@ -214,7 +214,7 @@ CREATE SEQUENCE seq_pa_ws_request MINVALUE 1 MAXVALUE 9223372036854775807 START 
 CREATE TABLE pa_ws_request
 (
 	id_porta NUMBER NOT NULL,
-	nome VARCHAR(255) NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
 	valore CLOB NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
@@ -244,7 +244,7 @@ CREATE SEQUENCE seq_pa_ws_response MINVALUE 1 MAXVALUE 9223372036854775807 START
 CREATE TABLE pa_ws_response
 (
 	id_porta NUMBER NOT NULL,
-	nome VARCHAR(255) NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
 	valore CLOB NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
@@ -274,13 +274,13 @@ CREATE SEQUENCE seq_pa_correlazione MINVALUE 1 MAXVALUE 9223372036854775807 STAR
 CREATE TABLE pa_correlazione
 (
 	id_porta NUMBER NOT NULL,
-	nome_elemento VARCHAR(255),
+	nome_elemento VARCHAR2(255),
 	-- modalita di scelta user input, content-based, url-based, disabilitato
-	mode_correlazione VARCHAR(255),
+	mode_correlazione VARCHAR2(255),
 	-- pattern utilizzato solo per content/url based
 	pattern CLOB,
 	-- blocca/accetta
-	identificazione_fallita VARCHAR(255),
+	identificazione_fallita VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints
@@ -307,13 +307,13 @@ CREATE SEQUENCE seq_pa_correlazione_risposta MINVALUE 1 MAXVALUE 922337203685477
 CREATE TABLE pa_correlazione_risposta
 (
 	id_porta NUMBER NOT NULL,
-	nome_elemento VARCHAR(255),
+	nome_elemento VARCHAR2(255),
 	-- modalita di scelta user input, content-based, url-based, disabilitato
-	mode_correlazione VARCHAR(255),
+	mode_correlazione VARCHAR2(255),
 	-- pattern utilizzato solo per content/url based
 	pattern CLOB,
 	-- blocca/accetta
-	identificazione_fallita VARCHAR(255),
+	identificazione_fallita VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints

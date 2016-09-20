@@ -4,17 +4,17 @@ CREATE SEQUENCE seq_documenti MINVALUE 1 MAXVALUE 9223372036854775807 START WITH
 
 CREATE TABLE documenti
 (
-	ruolo VARCHAR(255) NOT NULL,
+	ruolo VARCHAR2(255) NOT NULL,
 	-- tipo (es. xsd,xml...)
-	tipo VARCHAR(255) NOT NULL,
+	tipo VARCHAR2(255) NOT NULL,
 	-- nome documento
-	nome VARCHAR(255) NOT NULL,
+	nome VARCHAR2(255) NOT NULL,
 	-- contenuto documento
 	contenuto BLOB NOT NULL,
 	-- idOggettoProprietarioDocumento
 	id_proprietario NUMBER NOT NULL,
 	-- tipoProprietario
-	tipo_proprietario VARCHAR(255) NOT NULL,
+	tipo_proprietario VARCHAR2(255) NOT NULL,
 	ora_registrazione TIMESTAMP NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
@@ -52,9 +52,9 @@ CREATE SEQUENCE seq_accordi MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1
 
 CREATE TABLE accordi
 (
-	nome VARCHAR(255) NOT NULL,
-	descrizione VARCHAR(255),
-	profilo_collaborazione VARCHAR(255),
+	nome VARCHAR2(255) NOT NULL,
+	descrizione VARCHAR2(255),
+	profilo_collaborazione VARCHAR2(255),
 	wsdl_definitorio CLOB,
 	wsdl_concettuale CLOB,
 	wsdl_logico_erogatore CLOB,
@@ -62,21 +62,21 @@ CREATE TABLE accordi
 	spec_conv_concettuale CLOB,
 	spec_conv_erogatore CLOB,
 	spec_conv_fruitore CLOB,
-	filtro_duplicati VARCHAR(255),
-	conferma_ricezione VARCHAR(255),
-	identificativo_collaborazione VARCHAR(255),
-	consegna_in_ordine VARCHAR(255),
-	scadenza VARCHAR(255),
-	superuser VARCHAR(255),
+	filtro_duplicati VARCHAR2(255),
+	conferma_ricezione VARCHAR2(255),
+	identificativo_collaborazione VARCHAR2(255),
+	consegna_in_ordine VARCHAR2(255),
+	scadenza VARCHAR2(255),
+	superuser VARCHAR2(255),
 	-- id del soggetto referente
 	id_referente NUMBER,
-	versione VARCHAR(255),
+	versione VARCHAR2(255),
 	-- 1/0 (vero/falso) indica se questo accordo di servizio e' utilizzabile in mancanza di azioni associate
 	utilizzo_senza_azione NUMBER,
 	-- 1/0 (true/false) indica se il soggetto e' privato/pubblico
 	privato NUMBER,
 	ora_registrazione TIMESTAMP,
-	stato VARCHAR(255) NOT NULL,
+	stato VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- check constraints
@@ -114,16 +114,16 @@ CREATE SEQUENCE seq_accordi_azioni MINVALUE 1 MAXVALUE 9223372036854775807 START
 CREATE TABLE accordi_azioni
 (
 	id_accordo NUMBER NOT NULL,
-	nome VARCHAR(255) NOT NULL,
-	profilo_collaborazione VARCHAR(255),
-	filtro_duplicati VARCHAR(255),
-	conferma_ricezione VARCHAR(255),
-	identificativo_collaborazione VARCHAR(255),
-	consegna_in_ordine VARCHAR(255),
-	scadenza VARCHAR(255),
-	correlata VARCHAR(255),
+	nome VARCHAR2(255) NOT NULL,
+	profilo_collaborazione VARCHAR2(255),
+	filtro_duplicati VARCHAR2(255),
+	conferma_ricezione VARCHAR2(255),
+	identificativo_collaborazione VARCHAR2(255),
+	consegna_in_ordine VARCHAR2(255),
+	scadenza VARCHAR2(255),
+	correlata VARCHAR2(255),
 	-- ridefinito/default
-	profilo_azione VARCHAR(255),
+	profilo_azione VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
@@ -152,18 +152,18 @@ CREATE SEQUENCE seq_port_type MINVALUE 1 MAXVALUE 9223372036854775807 START WITH
 CREATE TABLE port_type
 (
 	id_accordo NUMBER NOT NULL,
-	nome VARCHAR(255) NOT NULL,
-	descrizione VARCHAR(255),
-	profilo_collaborazione VARCHAR(255),
-	filtro_duplicati VARCHAR(255),
-	conferma_ricezione VARCHAR(255),
-	identificativo_collaborazione VARCHAR(255),
-	consegna_in_ordine VARCHAR(255),
-	scadenza VARCHAR(255),
+	nome VARCHAR2(255) NOT NULL,
+	descrizione VARCHAR2(255),
+	profilo_collaborazione VARCHAR2(255),
+	filtro_duplicati VARCHAR2(255),
+	conferma_ricezione VARCHAR2(255),
+	identificativo_collaborazione VARCHAR2(255),
+	consegna_in_ordine VARCHAR2(255),
+	scadenza VARCHAR2(255),
 	-- ridefinito/default
-	profilo_pt VARCHAR(255),
+	profilo_pt VARCHAR2(255),
 	-- document/RPC
-	soap_style VARCHAR(255),
+	soap_style VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
@@ -192,28 +192,28 @@ CREATE SEQUENCE seq_port_type_azioni MINVALUE 1 MAXVALUE 9223372036854775807 STA
 CREATE TABLE port_type_azioni
 (
 	id_port_type NUMBER NOT NULL,
-	nome VARCHAR(255) NOT NULL,
-	profilo_collaborazione VARCHAR(255),
-	filtro_duplicati VARCHAR(255),
-	conferma_ricezione VARCHAR(255),
-	identificativo_collaborazione VARCHAR(255),
-	consegna_in_ordine VARCHAR(255),
-	scadenza VARCHAR(255),
-	correlata_servizio VARCHAR(255),
-	correlata VARCHAR(255),
+	nome VARCHAR2(255) NOT NULL,
+	profilo_collaborazione VARCHAR2(255),
+	filtro_duplicati VARCHAR2(255),
+	conferma_ricezione VARCHAR2(255),
+	identificativo_collaborazione VARCHAR2(255),
+	consegna_in_ordine VARCHAR2(255),
+	scadenza VARCHAR2(255),
+	correlata_servizio VARCHAR2(255),
+	correlata VARCHAR2(255),
 	-- ridefinito/default
-	profilo_pt_azione VARCHAR(255),
+	profilo_pt_azione VARCHAR2(255),
 	-- document/rpc
-	soap_style VARCHAR(255),
-	soap_action VARCHAR(255),
+	soap_style VARCHAR2(255),
+	soap_action VARCHAR2(255),
 	-- literal/encoded
-	soap_use_msg_input VARCHAR(255),
+	soap_use_msg_input VARCHAR2(255),
 	-- namespace utilizzato per RPC
-	soap_namespace_msg_input VARCHAR(255),
+	soap_namespace_msg_input VARCHAR2(255),
 	-- literal/encoded
-	soap_use_msg_output VARCHAR(255),
+	soap_use_msg_output VARCHAR2(255),
 	-- namespace utilizzato per RPC
-	soap_namespace_msg_output VARCHAR(255),
+	soap_namespace_msg_output VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
@@ -244,11 +244,11 @@ CREATE TABLE operation_messages
 	id_port_type_azione NUMBER NOT NULL,
 	-- true(1)/false(0), true indica un input-message, false un output-message
 	input_message NUMBER,
-	name VARCHAR(255) NOT NULL,
-	element_name VARCHAR(255),
-	element_namespace VARCHAR(255),
-	type_name VARCHAR(255),
-	type_namespace VARCHAR(255),
+	name VARCHAR2(255) NOT NULL,
+	element_name VARCHAR2(255),
+	element_namespace VARCHAR2(255),
+	type_name VARCHAR2(255),
+	type_namespace VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints
@@ -281,15 +281,15 @@ CREATE SEQUENCE seq_accordi_cooperazione MINVALUE 1 MAXVALUE 9223372036854775807
 
 CREATE TABLE accordi_cooperazione
 (
-	nome VARCHAR(255) NOT NULL,
-	descrizione VARCHAR(255),
+	nome VARCHAR2(255) NOT NULL,
+	descrizione VARCHAR2(255),
 	-- id del soggetto referente
 	id_referente NUMBER,
-	versione VARCHAR(255),
-	stato VARCHAR(255) NOT NULL,
+	versione VARCHAR2(255),
+	stato VARCHAR2(255) NOT NULL,
 	-- 1/0 (true/false) indica se il soggetto e' privato/pubblico
 	privato NUMBER,
-	superuser VARCHAR(255),
+	superuser VARCHAR2(255),
 	ora_registrazione TIMESTAMP,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
@@ -360,25 +360,25 @@ CREATE SEQUENCE seq_servizi MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1
 
 CREATE TABLE servizi
 (
-	nome_servizio VARCHAR(255) NOT NULL,
-	tipo_servizio VARCHAR(255) NOT NULL,
+	nome_servizio VARCHAR2(255) NOT NULL,
+	tipo_servizio VARCHAR2(255) NOT NULL,
 	id_soggetto NUMBER NOT NULL,
 	id_accordo NUMBER NOT NULL,
-	servizio_correlato VARCHAR(255),
+	servizio_correlato VARCHAR2(255),
 	id_connettore NUMBER NOT NULL,
 	wsdl_implementativo_erogatore CLOB,
 	wsdl_implementativo_fruitore CLOB,
-	superuser VARCHAR(255),
+	superuser VARCHAR2(255),
 	-- 1/0 (true/false) indica se il soggetto e' privato/pubblico
 	privato NUMBER,
 	ora_registrazione TIMESTAMP,
-	port_type VARCHAR(255),
-	profilo VARCHAR(255),
-	descrizione VARCHAR(255),
-	stato VARCHAR(255) NOT NULL,
+	port_type VARCHAR2(255),
+	profilo VARCHAR2(255),
+	descrizione VARCHAR2(255),
+	stato VARCHAR2(255) NOT NULL,
 	-- identificativi accordo di servizio parte specifica
-	aps_nome VARCHAR(255),
-	aps_versione VARCHAR(255),
+	aps_nome VARCHAR2(255),
+	aps_versione VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- check constraints
@@ -423,10 +423,10 @@ CREATE TABLE servizi_fruitori
 	wsdl_implementativo_erogatore CLOB,
 	wsdl_implementativo_fruitore CLOB,
 	ora_registrazione TIMESTAMP,
-	profilo VARCHAR(255),
+	profilo VARCHAR2(255),
 	-- client auth: disabilitato/abilitato
-	client_auth VARCHAR(255),
-	stato VARCHAR(255) NOT NULL,
+	client_auth VARCHAR2(255),
+	stato VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- check constraints
@@ -462,7 +462,7 @@ CREATE SEQUENCE seq_servizi_azioni MINVALUE 1 MAXVALUE 9223372036854775807 START
 
 CREATE TABLE servizi_azioni
 (
-	nome_azione VARCHAR(255) NOT NULL,
+	nome_azione VARCHAR2(255) NOT NULL,
 	id_servizio NUMBER NOT NULL,
 	id_connettore NUMBER NOT NULL,
 	-- fk/pk columns
@@ -529,7 +529,7 @@ CREATE TABLE acc_serv_componenti
 (
 	id_servizio_composto NUMBER NOT NULL,
 	id_servizio_componente NUMBER NOT NULL,
-	azione VARCHAR(255),
+	azione VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints

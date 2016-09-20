@@ -7,7 +7,7 @@ CREATE TABLE audit_conf
 	audit_engine NUMBER NOT NULL,
 	enabled NUMBER NOT NULL,
 	dump NUMBER NOT NULL,
-	dump_format VARCHAR(255) NOT NULL,
+	dump_format VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints
@@ -39,12 +39,12 @@ CREATE SEQUENCE seq_audit_filters MINVALUE 1 MAXVALUE 9223372036854775807 START 
 CREATE TABLE audit_filters
 (
 	-- Filter
-	username VARCHAR(255),
-	tipo_operazione VARCHAR(255),
-	tipo VARCHAR(255),
-	stato VARCHAR(255),
+	username VARCHAR2(255),
+	tipo_operazione VARCHAR2(255),
+	tipo VARCHAR2(255),
+	stato VARCHAR2(255),
 	-- Filtri basati su contenuto utilizzabili solo se il dump della configurazione generale e' abilitato
-	dump_search VARCHAR(255),
+	dump_search VARCHAR2(255),
 	-- 1(espressione regolare)/0(semplice stringa da ricercare)
 	dump_expr NUMBER NOT NULL,
 	-- Action
@@ -85,8 +85,8 @@ CREATE SEQUENCE seq_audit_appender MINVALUE 1 MAXVALUE 9223372036854775807 START
 
 CREATE TABLE audit_appender
 (
-	name VARCHAR(255) NOT NULL,
-	class VARCHAR(255) NOT NULL,
+	name VARCHAR2(255) NOT NULL,
+	class VARCHAR2(255) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
@@ -113,8 +113,8 @@ CREATE SEQUENCE seq_audit_appender_prop MINVALUE 1 MAXVALUE 9223372036854775807 
 
 CREATE TABLE audit_appender_prop
 (
-	name VARCHAR(255) NOT NULL,
-	value VARCHAR(255) NOT NULL,
+	name VARCHAR2(255) NOT NULL,
+	value VARCHAR2(255) NOT NULL,
 	id_audit_appender NUMBER NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
