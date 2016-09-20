@@ -1,3 +1,11 @@
+2016-09-20  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Aggiunta funzionalità OP-435
+	Tutti gli script sql per oracle sono stati modificati per utilizzare il tipo VARCHAR2 al posto del tipo VARCHAR.
+	La modifica è stata introdotta per rispettare le indicazioni presenti nella documentazione di Oracle:
+	"Currently VARCHAR behaves exactly the same as VARCHAR2. However, this type should not be used as it is reserved for future usage."
+
 2016-09-16  Andrea Poli <apoli@link.it>
 
 	* [InstallerVersioneBinaria]
