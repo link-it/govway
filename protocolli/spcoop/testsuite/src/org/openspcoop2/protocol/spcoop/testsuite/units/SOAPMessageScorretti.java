@@ -2217,8 +2217,16 @@ public class SOAPMessageScorretti {
 				ecc2.setCheckDescrizioneTramiteMatchEsatto(false);
 				eccezioni.add(ecc2);
 
+                                org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc3 = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+                                ecc3.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA));
+                                ecc3.setDescrizione("The element type \"soapenv:Body\" must be terminated by the matching end-tag");
+                                ecc3.setCheckDescrizioneTramiteMatchEsatto(false);
+                                eccezioni.add(ecc3);
+
 				Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)); 
-				String identificativiFunzione = "ConsegnaContenutiApplicativi";
+                                String[] identificativiFunzione = new String[2];
+                                identificativiFunzione[0] = "ConsegnaContenutiApplicativi";
+                                identificativiFunzione[1] = "RicezioneBusteSOAP";
 				Utilities.verificaFaultOpenSPCoopDetail(error, 
 						CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,TipoPdD.APPLICATIVA,identificativiFunzione, 
 						eccezioni, new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>(), false);
@@ -2240,6 +2248,11 @@ public class SOAPMessageScorretti {
 		err.setMsgErrore("was expecting a close tag for element <soapenv:Body>");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 
+                ErroreAttesoOpenSPCoopLogCore err2a = new ErroreAttesoOpenSPCoopLogCore();
+                err2a.setIntervalloInferiore(dataInizioTest);
+                err2a.setIntervalloSuperiore(dataFineTest);
+                err2a.setMsgErrore("parsingExceptionRisposta");
+                this.erroriAttesiOpenSPCoopCore.add(err2a);
 
 		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
 		err2.setIntervalloInferiore(dataInizioTest);
@@ -2321,8 +2334,16 @@ public class SOAPMessageScorretti {
 				ecc2.setCheckDescrizioneTramiteMatchEsatto(false);
 				eccezioni.add(ecc2);
 
+                                org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc3 = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+                                ecc3.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA));
+                                ecc3.setDescrizione("The end-tag for element type \"helloworld\" must end with a '>' delimiter");
+                                ecc3.setCheckDescrizioneTramiteMatchEsatto(false);
+                                eccezioni.add(ecc3);
+
 				Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error));
-				String identificativiFunzione = "ConsegnaContenutiApplicativi";
+                                String[] identificativiFunzione = new String[2];
+                                identificativiFunzione[0] = "ConsegnaContenutiApplicativi";
+                                identificativiFunzione[1] = "RicezioneBusteSOAP";
 				Utilities.verificaFaultOpenSPCoopDetail(error, 
 						CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,TipoPdD.APPLICATIVA,identificativiFunzione, 
 						eccezioni, new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>(), false);
@@ -2337,6 +2358,12 @@ public class SOAPMessageScorretti {
 		}
 
 		Date dataFineTest = DateManager.getDate();
+
+                ErroreAttesoOpenSPCoopLogCore err2a = new ErroreAttesoOpenSPCoopLogCore();
+                err2a.setIntervalloInferiore(dataInizioTest);
+                err2a.setIntervalloSuperiore(dataFineTest);
+                err2a.setMsgErrore("parsingExceptionRisposta");
+                this.erroriAttesiOpenSPCoopCore.add(err2a);
 
 		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
 		err2.setIntervalloInferiore(dataInizioTest);
@@ -2418,8 +2445,16 @@ public class SOAPMessageScorretti {
 				ecc2.setCheckDescrizioneTramiteMatchEsatto(false);
 				eccezioni.add(ecc2);
 
-				Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)); 
-				String identificativiFunzione = "ConsegnaContenutiApplicativi";
+                                org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc3 = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+                                ecc3.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA));
+                                ecc3.setDescrizione("The end-tag for element type \"b\" must end with a '>' delimiter");
+                                ecc3.setCheckDescrizioneTramiteMatchEsatto(false);
+                                eccezioni.add(ecc3);
+
+				Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error));
+                                String[] identificativiFunzione = new String[2];
+                                identificativiFunzione[0] = "ConsegnaContenutiApplicativi";
+                                identificativiFunzione[1] = "RicezioneBusteSOAP";
 				Utilities.verificaFaultOpenSPCoopDetail(error, 
 						CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,TipoPdD.APPLICATIVA,identificativiFunzione, 
 						eccezioni, new ArrayList<org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail>(), false);
@@ -2440,6 +2475,12 @@ public class SOAPMessageScorretti {
 		err.setIntervalloSuperiore(dataFineTest);
 		err.setMsgErrore("Unexpected close tag </helloworld>; expected </b>");
 		this.erroriAttesiOpenSPCoopCore.add(err);
+
+                ErroreAttesoOpenSPCoopLogCore err2a = new ErroreAttesoOpenSPCoopLogCore();
+                err2a.setIntervalloInferiore(dataInizioTest);
+                err2a.setIntervalloSuperiore(dataFineTest);
+                err2a.setMsgErrore("parsingExceptionRisposta");
+                this.erroriAttesiOpenSPCoopCore.add(err2a);
 
 		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
 		err2.setIntervalloInferiore(dataInizioTest);
