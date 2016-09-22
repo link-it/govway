@@ -1366,54 +1366,75 @@ public class JDBCUtilities {
 		rootTablePKExpresion.sortOrder(SortOrder.ASC).addOrder(updateFields.get(0).getField()); 
 		
 		// column ids
-		ISQLQueryObject sqlQueryObjectSelect = sqlQueryObjectUpdate.newSQLQueryObject();
-		sqlQueryObjectSelect.setANDLogicOperator(true);
-		try{
-			List<IField> columnIds = mapTableToPKColumn.get(table);
-			if(columnIds!=null && columnIds.size()>0){
-				List<Map<String, Object>> valueIds = null;
-				if(serviceSingleObject!=null){
-					valueIds = serviceSingleObject.select(jdbcProperties, log, connection, sqlQueryObjectSelect, rootTablePKExpresion, 
-							true, columnIds.toArray(new IField[]{}));
-				}
-				else if(serviceWithoutId!=null){
-					valueIds = serviceWithoutId.select(jdbcProperties, log, connection, sqlQueryObjectSelect, rootTablePKExpresion, 
-							true, columnIds.toArray(new IField[]{}));
-				}
-				else if(serviceWithId!=null){
-					valueIds = serviceWithId.select(jdbcProperties, log, connection, sqlQueryObjectSelect, rootTablePKExpresion, 
-							true, columnIds.toArray(new IField[]{}));
-				}
-				// Questo controllo e' sbagliato. Devo poter aggiornare dei singoli campi su piu' righe di oggetti interni. 
-				// Se voglio identificare esattamente una sola riga di un oggetto interno devo usare la condition
-				// Mentre l'oggetto "daoInterface" lo identifico esattamente (o grazie all'id, o grazie all'oggetto stesso e quindi l'id long, o grazie alla singola istanza) 
-//				if(valueIds.size()>1){
-//					throw new ServiceException("Cannot exists more columns with PK column ids (table:"+table+"), found: "+valueIds.size());
-//				}
+		if(rootTable.equals(table) && condition==null){
+			
+			// Se sto aggiornando la root table, e non vi sono condizioni dinamiche (le quali possono riferire anche tabelle interne)
+			// non serve effettuare una ulteriore query che identifica gli id, ma posso applicare direttamente il where delle root columns.
+			if(rootTableListPKColumns!=null && rootTableIdValues!=null){
 				StringBuffer bfRowIdentification = new StringBuffer();
 				bfRowIdentification.append("( ");
-				for (int i = 0; i < valueIds.size(); i++) {
+				for (int i = 0; i < rootTableListPKColumns.size(); i++) {
 					if(i>0){
-						bfRowIdentification.append(" OR ");
+						bfRowIdentification.append(" AND ");
 					}
-					Map<String, Object> mapColumnValue = valueIds.get(i);
-					bfRowIdentification.append("( ");
-					for (int j = 0; j < columnIds.size(); j++) {
-						if(j>0){
-							bfRowIdentification.append(" AND ");
-						}
-						IField columnId = columnIds.get(j);
-						bfRowIdentification.append(sqlConverter.toColumn(columnId, true)).append("=?");
-						lstObjectsUpdate.add(new JDBCObject(mapColumnValue.get(columnId.getFieldName()), columnId.getFieldType()));
-					}	
-					bfRowIdentification.append(" )");
+					IField columnId = rootTableListPKColumns.get(i);
+					bfRowIdentification.append(sqlConverter.toColumn(columnId, true)).append("=?");
+					lstObjectsUpdate.add(new JDBCObject(rootTableIdValues.get(i), columnId.getFieldType()));
 				}
 				bfRowIdentification.append(" )");
 				sqlQueryObjectUpdate.addWhereCondition(bfRowIdentification.toString());
 			}
-		}catch(NotFoundException notFound){
-			update = false;
-			log.debug("UpdateField["+table+"]: NotFound");
+		}
+		else{
+			ISQLQueryObject sqlQueryObjectSelect = sqlQueryObjectUpdate.newSQLQueryObject();
+			sqlQueryObjectSelect.setANDLogicOperator(true);
+			try{
+				List<IField> columnIds = mapTableToPKColumn.get(table);
+				if(columnIds!=null && columnIds.size()>0){
+					List<Map<String, Object>> valueIds = null;
+					if(serviceSingleObject!=null){
+						valueIds = serviceSingleObject.select(jdbcProperties, log, connection, sqlQueryObjectSelect, rootTablePKExpresion, 
+								true, columnIds.toArray(new IField[]{}));
+					}
+					else if(serviceWithoutId!=null){
+						valueIds = serviceWithoutId.select(jdbcProperties, log, connection, sqlQueryObjectSelect, rootTablePKExpresion, 
+								true, columnIds.toArray(new IField[]{}));
+					}
+					else if(serviceWithId!=null){
+						valueIds = serviceWithId.select(jdbcProperties, log, connection, sqlQueryObjectSelect, rootTablePKExpresion, 
+								true, columnIds.toArray(new IField[]{}));
+					}
+					// Questo controllo e' sbagliato. Devo poter aggiornare dei singoli campi su piu' righe di oggetti interni. 
+					// Se voglio identificare esattamente una sola riga di un oggetto interno devo usare la condition
+					// Mentre l'oggetto "daoInterface" lo identifico esattamente (o grazie all'id, o grazie all'oggetto stesso e quindi l'id long, o grazie alla singola istanza) 
+	//				if(valueIds.size()>1){
+	//					throw new ServiceException("Cannot exists more columns with PK column ids (table:"+table+"), found: "+valueIds.size());
+	//				}
+					StringBuffer bfRowIdentification = new StringBuffer();
+					bfRowIdentification.append("( ");
+					for (int i = 0; i < valueIds.size(); i++) {
+						if(i>0){
+							bfRowIdentification.append(" OR ");
+						}
+						Map<String, Object> mapColumnValue = valueIds.get(i);
+						bfRowIdentification.append("( ");
+						for (int j = 0; j < columnIds.size(); j++) {
+							if(j>0){
+								bfRowIdentification.append(" AND ");
+							}
+							IField columnId = columnIds.get(j);
+							bfRowIdentification.append(sqlConverter.toColumn(columnId, true)).append("=?");
+							lstObjectsUpdate.add(new JDBCObject(mapColumnValue.get(columnId.getFieldName()), columnId.getFieldType()));
+						}	
+						bfRowIdentification.append(" )");
+					}
+					bfRowIdentification.append(" )");
+					sqlQueryObjectUpdate.addWhereCondition(bfRowIdentification.toString());
+				}
+			}catch(NotFoundException notFound){
+				update = false;
+				log.debug("UpdateField["+table+"]: NotFound");
+			}
 		}
 			
 		if(update){
