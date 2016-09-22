@@ -170,7 +170,7 @@
 	
 	
 	<!-- Plugins -->
-	<target name="build_plugin" depends="build"/>
+	<target name="build_plugin" depends="build,plugin"/>
 	<target name="plugin">
 		
 		<delete dir="${build_openspcoop2Pools}/pluginSRC"/>
