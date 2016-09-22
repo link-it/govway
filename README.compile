@@ -31,6 +31,7 @@ In questo file sono documentate le modalità di ricompilazione del software Open
 
     Esempio: 
     	tar xzf openspcoop2-external-lib-2.3.tgz
+	cp openspcoop2-external-lib-2.3/lib/* lib/
 
 2.3 Compilare il Software tramite il comando ant
 
