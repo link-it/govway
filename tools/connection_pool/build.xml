@@ -186,8 +186,8 @@
 			<fileset dir="${build_openspcoop2Pools}/pluginSRC/WEB-INF/lib">
 				<include name="commons-dbcp2-2.1.1.jar"/>
 				<include name="commons-pool2-2.4.2.jar"/>
-				<include name="openspcoop2_pools-core_BUILD-12200.jar"/>
-				<include name="openspcoop2_pools-driver_BUILD-12200.jar"/>
+				<include name="openspcoop2_pools-core_*.jar"/>
+				<include name="openspcoop2_pools-driver_*.jar"/>
 				<include name="${jar.driverJDBC}"/>
 			</fileset>
 		</move>
