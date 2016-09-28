@@ -1988,33 +1988,29 @@ public class ConfigurazionePdDReader {
 		if(paConSoggetti.size() ==0)
 			throw new DriverConfigurazioneNotFound("PorteApplicative contenenti SoggettiVirtuali di ["+idPA.getIdPA()+"] non trovate");
 
-		java.util.Vector<IDSoggetto> soggettiRealiTrovati = new java.util.Vector<IDSoggetto>();
-		java.util.Vector<String> serviziApplicativiTrovati = new java.util.Vector<String>();
-		java.util.Vector<PortaApplicativa> paTrovate = new java.util.Vector<PortaApplicativa>();
+		java.util.List<SoggettoVirtualeServizioApplicativo> trovati = new java.util.ArrayList<SoggettoVirtualeServizioApplicativo>();
 
 		for (Enumeration<?> e = paConSoggetti.keys() ; e.hasMoreElements() ;) {
 			IDSoggetto soggReale = (IDSoggetto) e.nextElement();
 			PortaApplicativa pa = paConSoggetti.get(soggReale);
 			for(int k=0; k<pa.sizeServizioApplicativoList(); k++){
-				serviziApplicativiTrovati.add(pa.getServizioApplicativo(k).getNome());
-				soggettiRealiTrovati.add(soggReale);
-				paTrovate.add(pa);
+				
+				SoggettoVirtualeServizioApplicativo sa = new SoggettoVirtualeServizioApplicativo();
+				sa.setNomeServizioApplicativo(pa.getServizioApplicativo(k).getNome());
+				sa.setIdSoggettoReale(soggReale);
+				sa.setPortaApplicativa(pa);
+				trovati.add(sa);
+				
 			}
 		}
 
-		if(soggettiRealiTrovati.size() == 0)
+		if(trovati.size() == 0)
 			throw new DriverConfigurazioneNotFound("PorteApplicative contenenti SoggettiVirtuali di ["+idPA.getIdPA()+"] non trovati soggetti virtuali");
 		else{
-			IDSoggetto [] soggettiReali = new IDSoggetto[soggettiRealiTrovati.size()];
-			String [] serviziApplicativi = new String[serviziApplicativiTrovati.size()];
-			PortaApplicativa [] porteApplicative = new PortaApplicativa[paTrovate.size()];
-			soggettiReali = soggettiRealiTrovati.toArray(soggettiReali);
-			serviziApplicativi = serviziApplicativiTrovati.toArray(serviziApplicativi);
-			porteApplicative = paTrovate.toArray(porteApplicative);
 			SoggettoVirtuale soggVirtuale = new SoggettoVirtuale();
-			soggVirtuale.setSoggettiReali(soggettiReali);
-			soggVirtuale.setServiziApplicativi(serviziApplicativi);
-			soggVirtuale.setPorteApplicative(porteApplicative);
+			for (SoggettoVirtualeServizioApplicativo soggettoVirtualeServizioApplicativo : trovati) {
+				soggVirtuale.addServizioApplicativo(soggettoVirtualeServizioApplicativo);
+			}
 			return soggVirtuale;
 		}
 	}

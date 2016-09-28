@@ -1563,7 +1563,11 @@ public class EJBUtils {
 								this.msgDiag.getLivello(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI,"servizioApplicativoNonDefinito"),
 								this.msgDiag.getCodice(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI,"servizioApplicativoNonDefinito"));
 					}
-					serviziApplicativiConfigurazione = soggettiVirtuali.getServiziApplicativi();
+					boolean GESTISCI_BEHAVIOUR = true;
+					List<String> idServiziApplicativiVirtuali = soggettiVirtuali.getIdServiziApplicativi(GESTISCI_BEHAVIOUR,gestoreMessaggi,busta);
+					if(idServiziApplicativiVirtuali.size()>0){
+						serviziApplicativiConfigurazione = idServiziApplicativiVirtuali.toArray(new String[1]);
+					}
 					soggettiRealiMappatiInUnSoggettoVirtuale = soggettiVirtuali;
 				}else{
 					serviziApplicativiConfigurazione  = this.configurazionePdDReader.getServiziApplicativi(pa);
@@ -1575,7 +1579,7 @@ public class EJBUtils {
 
 
 			/* ----- Controllo esistenza di almeno un servizio applicativo ----- */
-			if( serviziApplicativiConfigurazione.length < 1){
+			if( serviziApplicativiConfigurazione==null || serviziApplicativiConfigurazione.length < 1){
 				throw new EJBUtilsConsegnaException(this.msgDiag,MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI,"servizioApplicativoNonDefinito");
 			}
 			List<String> serviziApplicativiAbilitati = new ArrayList<String>();
@@ -1588,6 +1592,8 @@ public class EJBUtils {
 				idServiziApplicativiAbilitati.add(idSA);
 			}
 			if(singleFilterBehaviour!=null){
+				// Dentro qua non si passa se siamo in modalità soggetto virtuale
+				// Il behaviuor sul filtro è gestito direttamente dentro il metodo soggettiVirtuali.getIdServiziApplicativi() sopra
 				idServiziApplicativiAbilitati = singleFilterBehaviour.aggiornaDestinatariAbilitati(idServiziApplicativiAbilitati);
 				serviziApplicativiAbilitati = new ArrayList<String>();
 				for (IDServizioApplicativo idServizioApplicativo : idServiziApplicativiAbilitati) {
@@ -1755,6 +1761,18 @@ public class EJBUtils {
 		// Fase di Registrazione
 		for (String servizioApplicativo : serviziApplicativi) {
 
+			// effettuo correzioni dovute al Soggetto Virtuale
+			if(soggettiRealiMappatiInUnSoggettoVirtuale!=null){
+				
+				String oldDominio = richiestaApplicativa.getIDServizio().getSoggettoErogatore().getCodicePorta();
+				richiestaApplicativa.getIDServizio().setSoggettoErogatore(soggettiRealiMappatiInUnSoggettoVirtuale.getSoggettoReale(servizioApplicativo));
+				richiestaApplicativa.getIDServizio().getSoggettoErogatore().setCodicePorta(oldDominio);
+				
+				richiestaApplicativa.setIdPAbyNome(soggettiRealiMappatiInUnSoggettoVirtuale.getIDPortaApplicativa(servizioApplicativo));
+				
+				servizioApplicativo = soggettiRealiMappatiInUnSoggettoVirtuale.getNomeServizioApplicativo(servizioApplicativo);
+			}
+			
 			this.msgDiag.highDebug("[EJBUtils] Creazione ObjectMessage for send nell'infrastruttura.");
 			ConsegnaContenutiApplicativiMessage consegnaMSG = new ConsegnaContenutiApplicativiMessage();
 			consegnaMSG.setBusta(busta);
@@ -1769,19 +1787,9 @@ public class EJBUtils {
 			}
 			consegnaMSG.setBehaviourForwardToConfiguration(behaviourForwardToConfiguration);
 			
-			
 			// Aggiungo costante servizio applicativo
 			this.msgDiag.addKeyword(CostantiPdD.KEY_SA_EROGATORE, servizioApplicativo);
 			
-			// identificativo Soggetto Erogatore
-			if(soggettiRealiMappatiInUnSoggettoVirtuale!=null){
-				String oldDominio = richiestaApplicativa.getIDServizio().getSoggettoErogatore().getCodicePorta();
-				richiestaApplicativa.getIDServizio().setSoggettoErogatore(soggettiRealiMappatiInUnSoggettoVirtuale.getSoggettoReale(servizioApplicativo));
-				richiestaApplicativa.getIDServizio().getSoggettoErogatore().setCodicePorta(oldDominio);
-				
-				richiestaApplicativa.setIdPAbyNome(soggettiRealiMappatiInUnSoggettoVirtuale.getIdentificativoPA(servizioApplicativo));
-			}
-
 			// identificativo Porta Applicativa
 			richiestaApplicativa.setServizioApplicativo(servizioApplicativo);
 			
@@ -1885,6 +1893,18 @@ public class EJBUtils {
 		// Fase di Consegna
 		for (String servizioApplicativo : serviziApplicativi) {
 			
+			// effettuo correzioni dovute al Soggetto Virtuale
+			if(soggettiRealiMappatiInUnSoggettoVirtuale!=null){
+				
+				String oldDominio = richiestaApplicativa.getIDServizio().getSoggettoErogatore().getCodicePorta();
+				richiestaApplicativa.getIDServizio().setSoggettoErogatore(soggettiRealiMappatiInUnSoggettoVirtuale.getSoggettoReale(servizioApplicativo));
+				richiestaApplicativa.getIDServizio().getSoggettoErogatore().setCodicePorta(oldDominio);
+				
+				richiestaApplicativa.setIdPAbyNome(soggettiRealiMappatiInUnSoggettoVirtuale.getIDPortaApplicativa(servizioApplicativo));
+				
+				servizioApplicativo = soggettiRealiMappatiInUnSoggettoVirtuale.getNomeServizioApplicativo(servizioApplicativo);
+			}
+			
 			boolean servizioApplicativoConConnettore = mapServizioApplicativoConConnettore.get(servizioApplicativo);
 			boolean sbustamento_soap = mapSbustamentoSoap.get(servizioApplicativo);
 			boolean sbustamento_informazioni_protocollo = mapSbustamentoInformazioniProtocollo.get(servizioApplicativo);
@@ -1892,20 +1912,10 @@ public class EJBUtils {
 			String tipoConsegna = mapTipoConsegna.get(servizioApplicativo);
 			Timestamp oraRegistrazioneMessaggio = mapOraRegistrazione.get(servizioApplicativo);
 			ConsegnaContenutiApplicativiMessage consegnaMSG = mapConsegnaContenutiApplicativiMessage.get(servizioApplicativo);
-			
-			
+					
 			// Aggiungo costante servizio applicativo
 			this.msgDiag.addKeyword(CostantiPdD.KEY_SA_EROGATORE, servizioApplicativo);
 			
-			// identificativo Soggetto Erogatore
-			if(soggettiRealiMappatiInUnSoggettoVirtuale!=null){
-				String oldDominio = richiestaApplicativa.getIDServizio().getSoggettoErogatore().getCodicePorta();
-				richiestaApplicativa.getIDServizio().setSoggettoErogatore(soggettiRealiMappatiInUnSoggettoVirtuale.getSoggettoReale(servizioApplicativo));
-				richiestaApplicativa.getIDServizio().getSoggettoErogatore().setCodicePorta(oldDominio);
-				
-				richiestaApplicativa.setIdPAbyNome(soggettiRealiMappatiInUnSoggettoVirtuale.getIdentificativoPA(servizioApplicativo));
-			}
-
 			// identificativo Porta Applicativa
 			richiestaApplicativa.setServizioApplicativo(servizioApplicativo);
 			

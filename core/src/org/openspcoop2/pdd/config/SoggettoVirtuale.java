@@ -23,9 +23,20 @@
 
 package org.openspcoop2.pdd.config;
 
-import org.openspcoop2.core.config.PortaApplicativa;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openspcoop2.core.id.IDPortaApplicativaByNome;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.pdd.core.GestoreMessaggi;
+import org.openspcoop2.pdd.core.behaviour.Behaviour;
+import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToFilter;
+import org.openspcoop2.pdd.core.behaviour.IBehaviour;
+import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.utils.resources.Loader;
+
+
 
 /**
  * Classe utilizzata per raccogliere le informazioni su servizi applicativi e 
@@ -38,13 +49,8 @@ import org.openspcoop2.core.id.IDSoggetto;
 
 public class SoggettoVirtuale  {
 
-	/** Nome dei servizi reali */
-	private IDSoggetto [] soggettiReali;
-	/** Nome dei servizi applicativi associato al soggetto Virtuale*/
-	private String [] serviziApplicativi;
-	/** Nome della PA da cui sono stati estratti i servizi applicativi associato al soggetto Virtuale*/
-	private PortaApplicativa [] porteApplicative;
-
+	private List<SoggettoVirtualeServizioApplicativo> soggettoVirtuale_serviziApplicativi = new ArrayList<SoggettoVirtualeServizioApplicativo>();
+	private int count = 0;
 
 	/* ********  C O S T R U T T O R E  ******** */
 
@@ -57,115 +63,113 @@ public class SoggettoVirtuale  {
 	}
 
 
-
-
-
-	/* ********  S E T T E R   ******** */
-	/**
-	 * Imposta il nome dei soggetti reali
-	 *
-	 * @param nomi Nome dei soggetti reali
-	 * 
-	 */    
-	public void setSoggettiReali(IDSoggetto [] nomi) {
-		this.soggettiReali = nomi;
+	public synchronized void addServizioApplicativo(SoggettoVirtualeServizioApplicativo sa){
+		this.count++;
+		sa.setId("SoggettoVirtuale-SA-"+this.count);
+		this.soggettoVirtuale_serviziApplicativi.add(sa);
 	}
-	/**
-	 * Imposta il nome dei servizi applicativi
-	 *
-	 * @param nomi Nome dei servizi applicativi
-	 * 
-	 */    
-	public void setServiziApplicativi(String [] nomi) {
-		this.serviziApplicativi = nomi;
-	}
-	public void setPorteApplicative(PortaApplicativa[] porteApplicative) {
-		this.porteApplicative = porteApplicative;
-	}
-
-
-
-
-
-
-	/* ********  G E T T E R   ******** */
-	/**
-	 * Ritorna il nome dei soggetti reali
-	 *
-	 * @return Nome dei soggetti reali
-	 * 
-	 */    
-	public IDSoggetto[] getSoggettiReali() {
-		return this.soggettiReali;
-	}
-	/**
-	 * Ritorna il nome dei soggetti reali in singola copia
-	 *
-	 * @return Nome dei soggetti reali
-	 * 
-	 */    
-	public IDSoggetto[] getSoggettiRealiSenzaDuplicati() {
-		java.util.Vector<IDSoggetto> soggettiSenzaDuplicati = new java.util.Vector<IDSoggetto>();
-		for(int i=0;i<this.soggettiReali.length;i++){
+	
+	
+	public List<IDSoggetto> getSoggettiRealiSenzaDuplicati() {
+		List<IDSoggetto> list = new ArrayList<IDSoggetto>();
+		for (SoggettoVirtualeServizioApplicativo sa : this.soggettoVirtuale_serviziApplicativi) {
 			boolean find = false;
-			for(int j=0;j<soggettiSenzaDuplicati.size();j++){
-				if( (this.soggettiReali[i].getTipo().equals(soggettiSenzaDuplicati.get(j).getTipo())) &&
-						(this.soggettiReali[i].getNome().equals(soggettiSenzaDuplicati.get(j).getNome())) ){
+			for (IDSoggetto giaTrovato : list) {
+				if( (sa.getIdSoggettoReale().getTipo().equals(giaTrovato.getTipo())) &&
+						(sa.getIdSoggettoReale().getNome().equals(giaTrovato.getNome())) ){
 					find = true;
 					break;
 				}
 			}
 			if(find == false){
-				soggettiSenzaDuplicati.add(this.soggettiReali[i]);
+				list.add(sa.getIdSoggettoReale());
 			}
 		}
-
-		IDSoggetto[] soggettiSenzaDuplicatiArray = new IDSoggetto[soggettiSenzaDuplicati.size()];
-		soggettiSenzaDuplicatiArray = soggettiSenzaDuplicati.toArray(soggettiSenzaDuplicatiArray);
-		return soggettiSenzaDuplicatiArray;
-	}
-	/**
-	 * Ritornaa il nome dei servizi applicativi
-	 *
-	 * @return Nome dei servizi applicativi
-	 * 
-	 */    
-	public String[] getServiziApplicativi() {
-		return this.serviziApplicativi;
+		return list;
 	}
 	
-	public IDSoggetto getSoggettoReale(String servizioApplicativo){
-		for (int i = 0; i < this.serviziApplicativi.length; i++) {
-			if(this.serviziApplicativi[i].equals(servizioApplicativo)){
-				return this.soggettiReali[i];
+	public List<String> getIdServiziApplicativi(boolean gestisciBehaviuorPerFiltri,GestoreMessaggi gestoreMessaggi,Busta busta) throws Exception{
+		List<String> list = new ArrayList<String>();
+		for (SoggettoVirtualeServizioApplicativo sa : this.soggettoVirtuale_serviziApplicativi) {
+
+			boolean filtrato = false;
+			
+			if(gestisciBehaviuorPerFiltri){
+				
+				if(sa.getPortaApplicativa().getBehaviour()!=null){
+					String tipoBehaviour = ClassNameProperties.getInstance().getBehaviour(sa.getPortaApplicativa().getBehaviour());
+					if(tipoBehaviour==null){
+						throw new Exception("Tipo di behaviour ["+sa.getPortaApplicativa().getBehaviour()+"] sconosciuto");
+					}
+					IBehaviour behaviourImpl = (IBehaviour) Loader.getInstance().newInstance(tipoBehaviour);
+					
+					Busta bustaConSoggettiReali = busta.clone();
+					// Inverto mitt-dest
+					// il mittente e' il SoggettoVirtuale
+					bustaConSoggettiReali.setMittente(busta.getDestinatario()); 
+					bustaConSoggettiReali.setTipoMittente(busta.getTipoDestinatario()); 
+					// sogg. destinatario reale	
+					bustaConSoggettiReali.setDestinatario(sa.getIdSoggettoReale().getNome());
+					bustaConSoggettiReali.setTipoDestinatario(sa.getIdSoggettoReale().getTipo());
+					
+					Behaviour behaviour = behaviourImpl.behaviour(gestoreMessaggi, bustaConSoggettiReali);
+					if(behaviour!=null && behaviour.getForwardTo()!=null &&
+							behaviour.getForwardTo().size()==1){
+						BehaviourForwardToFilter filter = behaviour.getForwardTo().get(0).getFilter();
+						
+						if(filter!=null){
+							// Provo a vedere se il sa è filtrato
+							List<IDServizioApplicativo> saAttuale = new ArrayList<IDServizioApplicativo>();
+							IDServizioApplicativo idSA = new IDServizioApplicativo();
+							idSA.setIdSoggettoProprietario(sa.getIdSoggettoReale());
+							idSA.setNome(sa.getNomeServizioApplicativo());
+							saAttuale.add(idSA);
+							List<IDServizioApplicativo> saFiltrato = filter.aggiornaDestinatariAbilitati(saAttuale);
+							if(saFiltrato.size()<=0){
+								filtrato=true;
+							}
+						}
+					}
+				}
+						
+			}
+			
+			if(filtrato==false){
+				list.add(sa.getId());
+			}
+		}
+		return list;
+	}
+	
+	public String getNomeServizioApplicativo(String idServizioApplicativo){
+		for (SoggettoVirtualeServizioApplicativo sa : this.soggettoVirtuale_serviziApplicativi) {
+			if(sa.getId().equals(idServizioApplicativo)){
+				return sa.getNomeServizioApplicativo();
 			}
 		}
 		return null;
 	}
 	
-	public PortaApplicativa[] getPorteApplicative() {
-		return this.porteApplicative;
+	public IDSoggetto getSoggettoReale(String idServizioApplicativo){
+		for (SoggettoVirtualeServizioApplicativo sa : this.soggettoVirtuale_serviziApplicativi) {
+			if(sa.getId().equals(idServizioApplicativo)){
+				return sa.getIdSoggettoReale();
+			}
+		}
+		return null;
 	}
 	
-	public IDPortaApplicativaByNome getIdentificativoPA(String servizioApplicativo) {
-		for (int i = 0; i < this.serviziApplicativi.length; i++) {
-			if(this.serviziApplicativi[i].equals(servizioApplicativo)){
-				PortaApplicativa pa = this.porteApplicative[i];
+	public IDPortaApplicativaByNome getIDPortaApplicativa(String idServizioApplicativo){
+		for (SoggettoVirtualeServizioApplicativo sa : this.soggettoVirtuale_serviziApplicativi) {
+			if(sa.getId().equals(idServizioApplicativo)){
 				IDPortaApplicativaByNome idPA = new IDPortaApplicativaByNome();
-				idPA.setNome(pa.getNome());
-				idPA.setSoggetto(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
+				idPA.setNome(sa.getPortaApplicativa().getNome());
+				idPA.setSoggetto(new IDSoggetto(sa.getPortaApplicativa().getTipoSoggettoProprietario(), sa.getPortaApplicativa().getNomeSoggettoProprietario()));
 				return idPA;
 			}
 		}
 		return null;
 	}
 	
-	public PortaApplicativa getPortaApplicativa(String servizioApplicativo) {
-		for (int i = 0; i < this.serviziApplicativi.length; i++) {
-			if(this.serviziApplicativi[i].equals(servizioApplicativo)){
-				return this.porteApplicative[i];
-			}
-		}
-		return null;
-	}
+
 }
