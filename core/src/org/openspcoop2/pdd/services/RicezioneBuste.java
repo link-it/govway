@@ -214,8 +214,9 @@ public class RicezioneBuste {
 	/** IGestoreIntegrazionePA: lista di gestori, ordinati per priorita' minore */
 	//private static java.util.Hashtable<String, IGestoreIntegrazionePA> gestoriIntegrazionePA = new java.util.Hashtable<String, IGestoreIntegrazionePA>();
 	// E' stato aggiunto lo stato dentro l'oggetto.
-	private static String[] defaultGestoriIntegrazionePA = null;
-	private static Hashtable<String, String[]> defaultPerProtocolloGestoreIntegrazionePA = null;
+	// Sono public perchè utilizzati da altre implementazioni come ad es. AdapterJMS 
+	public static String[] defaultGestoriIntegrazionePA = null;
+	public static Hashtable<String, String[]> defaultPerProtocolloGestoreIntegrazionePA = null;
 	
 	
 	/** Factory per la creazione di messaggi SOAP */
@@ -1047,6 +1048,7 @@ public class RicezioneBuste {
 			logCore.debug("InformazioniServizioTramiteURLMapping: "+is.toString());		
 		} catch (ProtocolException e) {
 			msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+			logCore.error(msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"identificazionePAErrore"),e);
 			msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"identificazionePAErrore");
 			setSOAPFault_intestazione(ErroriIntegrazione.ERRORE_450_PA_INESISTENTE.getErroreIntegrazione());
 			openspcoopstate.releaseResource();

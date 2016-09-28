@@ -23,6 +23,8 @@
 
 package org.openspcoop2.pdd.config;
 
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDSoggetto;
 
 /**
@@ -40,6 +42,8 @@ public class SoggettoVirtuale  {
 	private IDSoggetto [] soggettiReali;
 	/** Nome dei servizi applicativi associato al soggetto Virtuale*/
 	private String [] serviziApplicativi;
+	/** Nome della PA da cui sono stati estratti i servizi applicativi associato al soggetto Virtuale*/
+	private PortaApplicativa [] porteApplicative;
 
 
 	/* ********  C O S T R U T T O R E  ******** */
@@ -50,15 +54,6 @@ public class SoggettoVirtuale  {
 	 * 
 	 */
 	public SoggettoVirtuale(){
-	}
-	/**
-	 * Costruttore. 
-	 *
-	 * 
-	 */
-	public SoggettoVirtuale(IDSoggetto[] soggettiReali,String[] serviziApplicativi){
-		this.soggettiReali = soggettiReali;
-		this.serviziApplicativi = serviziApplicativi;
 	}
 
 
@@ -83,6 +78,9 @@ public class SoggettoVirtuale  {
 	 */    
 	public void setServiziApplicativi(String [] nomi) {
 		this.serviziApplicativi = nomi;
+	}
+	public void setPorteApplicative(PortaApplicativa[] porteApplicative) {
+		this.porteApplicative = porteApplicative;
 	}
 
 
@@ -140,6 +138,32 @@ public class SoggettoVirtuale  {
 		for (int i = 0; i < this.serviziApplicativi.length; i++) {
 			if(this.serviziApplicativi[i].equals(servizioApplicativo)){
 				return this.soggettiReali[i];
+			}
+		}
+		return null;
+	}
+	
+	public PortaApplicativa[] getPorteApplicative() {
+		return this.porteApplicative;
+	}
+	
+	public IDPortaApplicativaByNome getIdentificativoPA(String servizioApplicativo) {
+		for (int i = 0; i < this.serviziApplicativi.length; i++) {
+			if(this.serviziApplicativi[i].equals(servizioApplicativo)){
+				PortaApplicativa pa = this.porteApplicative[i];
+				IDPortaApplicativaByNome idPA = new IDPortaApplicativaByNome();
+				idPA.setNome(pa.getNome());
+				idPA.setSoggetto(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
+				return idPA;
+			}
+		}
+		return null;
+	}
+	
+	public PortaApplicativa getPortaApplicativa(String servizioApplicativo) {
+		for (int i = 0; i < this.serviziApplicativi.length; i++) {
+			if(this.serviziApplicativi[i].equals(servizioApplicativo)){
+				return this.porteApplicative[i];
 			}
 		}
 		return null;

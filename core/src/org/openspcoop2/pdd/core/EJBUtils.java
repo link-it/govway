@@ -1433,7 +1433,8 @@ public class EJBUtils {
 			int sizeNuoviMessaggiViaBehaviour = -1;
 			BehaviourForwardToFilter singleFilterBehaviour = null;
 			boolean behaviourResponseTo = false;
-			if(pa.getBehaviour()!=null && !"".equals(pa.getBehaviour())){
+			// pa is null nel caso di soggetto virtuale
+			if(pa!=null && pa.getBehaviour()!=null && !"".equals(pa.getBehaviour())){
 				String tipoBehaviour = ClassNameProperties.getInstance().getBehaviour(pa.getBehaviour());
 				if(tipoBehaviour==null){
 					throw new Exception("Tipo di behaviour ["+pa.getBehaviour()+"] sconosciuto");
@@ -1563,6 +1564,7 @@ public class EJBUtils {
 								this.msgDiag.getCodice(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI,"servizioApplicativoNonDefinito"));
 					}
 					serviziApplicativiConfigurazione = soggettiVirtuali.getServiziApplicativi();
+					soggettiRealiMappatiInUnSoggettoVirtuale = soggettiVirtuali;
 				}else{
 					serviziApplicativiConfigurazione  = this.configurazionePdDReader.getServiziApplicativi(pa);
 					if(serviziApplicativiConfigurazione == null){ 
@@ -1776,6 +1778,8 @@ public class EJBUtils {
 				String oldDominio = richiestaApplicativa.getIDServizio().getSoggettoErogatore().getCodicePorta();
 				richiestaApplicativa.getIDServizio().setSoggettoErogatore(soggettiRealiMappatiInUnSoggettoVirtuale.getSoggettoReale(servizioApplicativo));
 				richiestaApplicativa.getIDServizio().getSoggettoErogatore().setCodicePorta(oldDominio);
+				
+				richiestaApplicativa.setIdPAbyNome(soggettiRealiMappatiInUnSoggettoVirtuale.getIdentificativoPA(servizioApplicativo));
 			}
 
 			// identificativo Porta Applicativa
@@ -1898,6 +1902,8 @@ public class EJBUtils {
 				String oldDominio = richiestaApplicativa.getIDServizio().getSoggettoErogatore().getCodicePorta();
 				richiestaApplicativa.getIDServizio().setSoggettoErogatore(soggettiRealiMappatiInUnSoggettoVirtuale.getSoggettoReale(servizioApplicativo));
 				richiestaApplicativa.getIDServizio().getSoggettoErogatore().setCodicePorta(oldDominio);
+				
+				richiestaApplicativa.setIdPAbyNome(soggettiRealiMappatiInUnSoggettoVirtuale.getIdentificativoPA(servizioApplicativo));
 			}
 
 			// identificativo Porta Applicativa

@@ -1990,6 +1990,7 @@ public class ConfigurazionePdDReader {
 
 		java.util.Vector<IDSoggetto> soggettiRealiTrovati = new java.util.Vector<IDSoggetto>();
 		java.util.Vector<String> serviziApplicativiTrovati = new java.util.Vector<String>();
+		java.util.Vector<PortaApplicativa> paTrovate = new java.util.Vector<PortaApplicativa>();
 
 		for (Enumeration<?> e = paConSoggetti.keys() ; e.hasMoreElements() ;) {
 			IDSoggetto soggReale = (IDSoggetto) e.nextElement();
@@ -1997,6 +1998,7 @@ public class ConfigurazionePdDReader {
 			for(int k=0; k<pa.sizeServizioApplicativoList(); k++){
 				serviziApplicativiTrovati.add(pa.getServizioApplicativo(k).getNome());
 				soggettiRealiTrovati.add(soggReale);
+				paTrovate.add(pa);
 			}
 		}
 
@@ -2005,11 +2007,14 @@ public class ConfigurazionePdDReader {
 		else{
 			IDSoggetto [] soggettiReali = new IDSoggetto[soggettiRealiTrovati.size()];
 			String [] serviziApplicativi = new String[serviziApplicativiTrovati.size()];
+			PortaApplicativa [] porteApplicative = new PortaApplicativa[paTrovate.size()];
 			soggettiReali = soggettiRealiTrovati.toArray(soggettiReali);
 			serviziApplicativi = serviziApplicativiTrovati.toArray(serviziApplicativi);
+			porteApplicative = paTrovate.toArray(porteApplicative);
 			SoggettoVirtuale soggVirtuale = new SoggettoVirtuale();
 			soggVirtuale.setSoggettiReali(soggettiReali);
 			soggVirtuale.setServiziApplicativi(serviziApplicativi);
+			soggVirtuale.setPorteApplicative(porteApplicative);
 			return soggVirtuale;
 		}
 	}
