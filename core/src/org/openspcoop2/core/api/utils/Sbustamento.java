@@ -189,6 +189,15 @@ public class Sbustamento {
 			}
 			if(this.apiObject.getUrlParameters()!=null && this.apiObject.getUrlParameters().sizeUrlParameterList()>0){
 				for (UrlParameter urlParameter : this.apiObject.getUrlParameters().getUrlParameterList()) {
+					if(urlParameter.getNome()==null || urlParameter.getBase()==null){
+//						if(urlParameter.getNome()==null){
+//							System.out.println("PARAMETRO NOME IS NULL");
+//						}
+//						if(urlParameter.getBase()==null){
+//							System.out.println("PARAMETRO ["+urlParameter.getNome()+"] CON VALUE NULL");
+//						}
+						continue;
+					}
 					parameters.put(urlParameter.getNome(), urlParameter.getBase());
 				}
 			}

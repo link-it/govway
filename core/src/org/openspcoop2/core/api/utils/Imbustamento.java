@@ -40,6 +40,7 @@ import org.openspcoop2.core.api.constants.CostantiApi;
 import org.openspcoop2.core.api.constants.MessageType;
 import org.openspcoop2.core.api.constants.MethodType;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.message.Costanti;
 import org.openspcoop2.message.MailcapActivationReader;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -149,6 +150,10 @@ public class Imbustamento {
 //						else
 //							throw new Exception("Http don't support body in "+method.name()+" response method");
 //					}
+					
+					if(contentType==null){
+						contentType = Costanti.CONTENT_TYPE_APPLICATION_OCTET_STREAM;
+					}
 					
 					OpenSPCoop2Message message = SoapUtils.
 						imbustamentoMessaggioConAttachment(soapVersion,originalContent,contentType,
