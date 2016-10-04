@@ -81,7 +81,9 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 	
 	private static Severity diagnosticSeverity = Severity.DEBUG_HIGH;
 	public static void setDiagnosticSeverity(Severity logSeverity) {
-		diagnosticSeverity = logSeverity;
+		if(logSeverity!=null){
+			diagnosticSeverity = logSeverity;
+		}
 	}
 	private static boolean emitDiagnostic(Severity severity){
 		return severity.intValue() <= diagnosticSeverity.intValue();
@@ -89,7 +91,9 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 	
 	private static Severity eventSeverity = Severity.DEBUG_HIGH;
 	public static void setEventSeverity(Severity logSeverity) {
-		eventSeverity = logSeverity;
+		if(logSeverity!=null){
+			eventSeverity = logSeverity;
+		}
 	}
 	private static boolean emitEvent(Severity severity){
 		return severity.intValue() <= eventSeverity.intValue();

@@ -41,6 +41,14 @@ public class Log4JLoggerWithProxyContext extends AbstractLog4JLogger  {
 
 	public Log4JLoggerWithProxyContext(MultiLoggerConfig config) throws UtilsException {
 		super(config.getDiagnosticConfig(),config.getLog4jConfig());
+		if(config.isLog4jLoggerEnabled()){
+			if(config.getDiagnosticSeverityFilter()!=null){
+				AbstractLog4JLogger.setDiagnosticSeverity(config.getDiagnosticSeverityFilter());
+			}
+			if(config.getEventSeverityFilter()!=null){
+				AbstractLog4JLogger.setEventSeverity(config.getEventSeverityFilter());
+			}
+		}
 	}
 
 	public Log4JLoggerWithProxyContext(DiagnosticConfig diagnosticConfig, Log4jConfig logConfig) throws UtilsException {
