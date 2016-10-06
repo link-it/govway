@@ -1,3 +1,14 @@
+2016-10-06  Andrea Poli <apoli@link.it>
+
+	* [WebServiceConfig, WebServiceDiagnostica, WebServiceMonitor, WebServiceRegistry, WebServiceTracciamento]
+	Risolto Bug OP-551
+	Corretto problema presente nei filtri dei WebServices di OpenSPCoop2.
+	Gli elementi interni ai filtri possedevano erroneamente un valore di default, 
+	mentre la definizione xsd del filtro esposta dal WS non li possedeva.
+	Questo disallineamento comportava che l'oggetto search filter ricevuto in input veniva "arricchito" 
+	con i valori di default per tutti i parametri non specificati che possedevano un default value.
+	Il fix è stato realizzato eliminando tutti i default value negli oggetti SearchFilter dei webservices.
+
 2016-10-04  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 2.3
