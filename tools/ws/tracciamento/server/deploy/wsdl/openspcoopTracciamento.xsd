@@ -138,7 +138,9 @@
         <xsd:simpleContent>
             <xsd:extension base="xsd:string">
                 <xsd:attribute name="tipo" type="xsd:string" use="optional"/>
-                <xsd:attribute default="1" name="versione" type="xsd:integer" use="optional"/>
+                <xsd:attribute default="1" name="versione" type="xsd:integer" use="optional">
+                    
+                </xsd:attribute>
             </xsd:extension>
         </xsd:simpleContent>
     </xsd:complexType>

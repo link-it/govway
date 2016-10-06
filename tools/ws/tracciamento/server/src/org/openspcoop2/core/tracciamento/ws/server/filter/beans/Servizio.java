@@ -30,7 +30,7 @@ package org.openspcoop2.core.tracciamento.ws.server.filter.beans;
  *     &lt;sequence>
  *         &lt;element name="base" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" default="new Integer("1")" />
+ *         &lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
  *     &lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -88,8 +88,8 @@ public class Servizio extends org.openspcoop2.utils.beans.BaseBean implements Se
 	
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="integer")
-  @XmlElement(name="versione",required=false,nillable=false,defaultValue="1")
-	private Integer versione = new Integer("1");
+  @XmlElement(name="versione",required=false,nillable=false)
+	private Integer versione;
 	
 	public void setVersione(Integer versione){
 		this.versione = versione;

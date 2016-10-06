@@ -30,9 +30,9 @@ package org.openspcoop2.core.registry.ws.server.filter;
  *     &lt;sequence>
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="implementazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" default=""standard"" />
+ *         &lt;element name="implementazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="subject" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="client-auth" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" minOccurs="0" maxOccurs="1" default="(StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato")" />
+ *         &lt;element name="client-auth" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="orCondition" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="new Boolean("false")" />
@@ -104,8 +104,8 @@ public class SearchFilterPortaDominio extends org.openspcoop2.utils.beans.BaseBe
 	
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="implementazione",required=false,nillable=false,defaultValue="standard")
-	private String implementazione = "standard";
+  @XmlElement(name="implementazione",required=false,nillable=false)
+	private String implementazione;
 	
 	public void setImplementazione(String implementazione){
 		this.implementazione = implementazione;
@@ -129,8 +129,8 @@ public class SearchFilterPortaDominio extends org.openspcoop2.utils.beans.BaseBe
 	}
 	
 	
-	@XmlElement(name="client-auth",required=false,nillable=false,defaultValue="disabilitato")
-	private StatoFunzionalita clientAuth = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
+	@XmlElement(name="client-auth",required=false,nillable=false)
+	private StatoFunzionalita clientAuth;
 	
 	public void setClientAuth(StatoFunzionalita clientAuth){
 		this.clientAuth = clientAuth;

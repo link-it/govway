@@ -30,12 +30,12 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
  *     &lt;sequence>
  *         &lt;element name="credenziali" type="{http://www.openspcoop2.org/core/config/management}credenziali" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="connettore" type="{http://www.openspcoop2.org/core/config/management}connettore" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="sbustamento-soap" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" default="(StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato")" />
- *         &lt;element name="sbustamento-informazioni-protocollo" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" default="(StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato")" />
- *         &lt;element name="get-message" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" default="(StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato")" />
- *         &lt;element name="autenticazione" type="{http://www.openspcoop2.org/core/config}InvocazioneServizioTipoAutenticazione" minOccurs="0" maxOccurs="1" default="(InvocazioneServizioTipoAutenticazione) InvocazioneServizioTipoAutenticazione.toEnumConstantFromString("none")" />
- *         &lt;element name="invio-per-riferimento" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" default="(StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato")" />
- *         &lt;element name="risposta-per-riferimento" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" default="(StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato")" />
+ *         &lt;element name="sbustamento-soap" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="sbustamento-informazioni-protocollo" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="get-message" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="autenticazione" type="{http://www.openspcoop2.org/core/config}InvocazioneServizioTipoAutenticazione" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="invio-per-riferimento" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="risposta-per-riferimento" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  *     &lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -99,8 +99,8 @@ public class RispostaAsincrona extends org.openspcoop2.utils.beans.BaseBean impl
 	}
 	
 	
-	@XmlElement(name="sbustamento-soap",required=false,nillable=false,defaultValue="disabilitato")
-	private StatoFunzionalita sbustamentoSoap = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
+	@XmlElement(name="sbustamento-soap",required=false,nillable=false)
+	private StatoFunzionalita sbustamentoSoap;
 	
 	public void setSbustamentoSoap(StatoFunzionalita sbustamentoSoap){
 		this.sbustamentoSoap = sbustamentoSoap;
@@ -111,8 +111,8 @@ public class RispostaAsincrona extends org.openspcoop2.utils.beans.BaseBean impl
 	}
 	
 	
-	@XmlElement(name="sbustamento-informazioni-protocollo",required=false,nillable=false,defaultValue="abilitato")
-	private StatoFunzionalita sbustamentoInformazioniProtocollo = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
+	@XmlElement(name="sbustamento-informazioni-protocollo",required=false,nillable=false)
+	private StatoFunzionalita sbustamentoInformazioniProtocollo;
 	
 	public void setSbustamentoInformazioniProtocollo(StatoFunzionalita sbustamentoInformazioniProtocollo){
 		this.sbustamentoInformazioniProtocollo = sbustamentoInformazioniProtocollo;
@@ -123,8 +123,8 @@ public class RispostaAsincrona extends org.openspcoop2.utils.beans.BaseBean impl
 	}
 	
 	
-	@XmlElement(name="get-message",required=false,nillable=false,defaultValue="disabilitato")
-	private StatoFunzionalita getMessage = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
+	@XmlElement(name="get-message",required=false,nillable=false)
+	private StatoFunzionalita getMessage;
 	
 	public void setGetMessage(StatoFunzionalita getMessage){
 		this.getMessage = getMessage;
@@ -135,8 +135,8 @@ public class RispostaAsincrona extends org.openspcoop2.utils.beans.BaseBean impl
 	}
 	
 	
-	@XmlElement(name="autenticazione",required=false,nillable=false,defaultValue="none")
-	private InvocazioneServizioTipoAutenticazione autenticazione = (InvocazioneServizioTipoAutenticazione) InvocazioneServizioTipoAutenticazione.toEnumConstantFromString("none");
+	@XmlElement(name="autenticazione",required=false,nillable=false)
+	private InvocazioneServizioTipoAutenticazione autenticazione;
 	
 	public void setAutenticazione(InvocazioneServizioTipoAutenticazione autenticazione){
 		this.autenticazione = autenticazione;
@@ -147,8 +147,8 @@ public class RispostaAsincrona extends org.openspcoop2.utils.beans.BaseBean impl
 	}
 	
 	
-	@XmlElement(name="invio-per-riferimento",required=false,nillable=false,defaultValue="disabilitato")
-	private StatoFunzionalita invioPerRiferimento = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
+	@XmlElement(name="invio-per-riferimento",required=false,nillable=false)
+	private StatoFunzionalita invioPerRiferimento;
 	
 	public void setInvioPerRiferimento(StatoFunzionalita invioPerRiferimento){
 		this.invioPerRiferimento = invioPerRiferimento;
@@ -159,8 +159,8 @@ public class RispostaAsincrona extends org.openspcoop2.utils.beans.BaseBean impl
 	}
 	
 	
-	@XmlElement(name="risposta-per-riferimento",required=false,nillable=false,defaultValue="disabilitato")
-	private StatoFunzionalita rispostaPerRiferimento = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
+	@XmlElement(name="risposta-per-riferimento",required=false,nillable=false)
+	private StatoFunzionalita rispostaPerRiferimento;
 	
 	public void setRispostaPerRiferimento(StatoFunzionalita rispostaPerRiferimento){
 		this.rispostaPerRiferimento = rispostaPerRiferimento;

@@ -318,9 +318,13 @@
 		<!-- end-extensions -->
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
-		<xsd:attribute default="standard" name="implementazione" type="xsd:string"/>
+		<xsd:attribute default="standard" name="implementazione" type="xsd:string">
+			
+		</xsd:attribute>
 		<xsd:attribute name="subject" type="xsd:string"/>
-		<xsd:attribute default="disabilitato" name="client-auth" type="StatoFunzionalita"/>
+		<xsd:attribute default="disabilitato" name="client-auth" type="StatoFunzionalita">
+			
+		</xsd:attribute>
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
 			
 		</xsd:attribute>

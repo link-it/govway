@@ -29,8 +29,8 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
  * &lt;complexType name="invocazione-porta">
  *     &lt;sequence>
  *         &lt;element name="gestione-errore" type="{http://www.openspcoop2.org/core/config/management}invocazione-porta-gestione-errore" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="invio-per-riferimento" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" default="(StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato")" />
- *         &lt;element name="sbustamento-informazioni-protocollo" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" default="(StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato")" />
+ *         &lt;element name="invio-per-riferimento" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="sbustamento-informazioni-protocollo" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  *     &lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -75,8 +75,8 @@ public class InvocazionePorta extends org.openspcoop2.utils.beans.BaseBean imple
 	}
 	
 	
-	@XmlElement(name="invio-per-riferimento",required=false,nillable=false,defaultValue="disabilitato")
-	private StatoFunzionalita invioPerRiferimento = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
+	@XmlElement(name="invio-per-riferimento",required=false,nillable=false)
+	private StatoFunzionalita invioPerRiferimento;
 	
 	public void setInvioPerRiferimento(StatoFunzionalita invioPerRiferimento){
 		this.invioPerRiferimento = invioPerRiferimento;
@@ -87,8 +87,8 @@ public class InvocazionePorta extends org.openspcoop2.utils.beans.BaseBean imple
 	}
 	
 	
-	@XmlElement(name="sbustamento-informazioni-protocollo",required=false,nillable=false,defaultValue="abilitato")
-	private StatoFunzionalita sbustamentoInformazioniProtocollo = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
+	@XmlElement(name="sbustamento-informazioni-protocollo",required=false,nillable=false)
+	private StatoFunzionalita sbustamentoInformazioniProtocollo;
 	
 	public void setSbustamentoInformazioniProtocollo(StatoFunzionalita sbustamentoInformazioniProtocollo){
 		this.sbustamentoInformazioniProtocollo = sbustamentoInformazioniProtocollo;

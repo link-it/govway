@@ -40,7 +40,7 @@ package org.openspcoop2.core.diagnostica.ws.server.filter;
  *         &lt;element name="azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="identificativo-correlazione-richiesta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="identificativo-correlazione-risposta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="correlazione-applicativa-and-match" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="new Boolean("false")" />
+ *         &lt;element name="correlazione-applicativa-and-match" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="protocollo" type="{http://www.openspcoop2.org/core/diagnostica/management}protocollo" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="filtro-servizio-applicativo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="filtro-informazioni-diagnostici" type="{http://www.openspcoop2.org/core/diagnostica/management}filtro-informazioni-diagnostici" minOccurs="0" maxOccurs="1" />
@@ -254,8 +254,8 @@ public class SearchFilterInformazioniProtocolloTransazione extends org.openspcoo
 	
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="boolean")
-  @XmlElement(name="correlazione-applicativa-and-match",required=false,nillable=false,defaultValue="false")
-	private Boolean correlazioneApplicativaAndMatch = new Boolean("false");
+  @XmlElement(name="correlazione-applicativa-and-match",required=false,nillable=false)
+	private Boolean correlazioneApplicativaAndMatch;
 	
 	public void setCorrelazioneApplicativaAndMatch(Boolean correlazioneApplicativaAndMatch){
 		this.correlazioneApplicativaAndMatch = correlazioneApplicativaAndMatch;

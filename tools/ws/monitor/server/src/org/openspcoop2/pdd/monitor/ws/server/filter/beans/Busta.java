@@ -28,7 +28,7 @@ package org.openspcoop2.pdd.monitor.ws.server.filter.beans;
  * <pre>
  * &lt;complexType name="busta">
  *     &lt;sequence>
- *         &lt;element name="attesa-riscontro" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="new Boolean("false")" />
+ *         &lt;element name="attesa-riscontro" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="mittente" type="{http://www.openspcoop2.org/pdd/monitor/management}busta-soggetto" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="destinatario" type="{http://www.openspcoop2.org/pdd/monitor/management}busta-soggetto" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="servizio" type="{http://www.openspcoop2.org/pdd/monitor/management}busta-servizio" minOccurs="0" maxOccurs="1" />
@@ -74,8 +74,8 @@ public class Busta extends org.openspcoop2.utils.beans.BaseBean implements Seria
 	private static final long serialVersionUID = -1L;
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="boolean")
-  @XmlElement(name="attesa-riscontro",required=false,nillable=false,defaultValue="false")
-	private Boolean attesaRiscontro = new Boolean("false");
+  @XmlElement(name="attesa-riscontro",required=false,nillable=false)
+	private Boolean attesaRiscontro;
 	
 	public void setAttesaRiscontro(Boolean attesaRiscontro){
 		this.attesaRiscontro = attesaRiscontro;

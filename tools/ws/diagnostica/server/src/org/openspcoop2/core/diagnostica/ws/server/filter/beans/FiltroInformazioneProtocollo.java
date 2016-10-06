@@ -30,14 +30,14 @@ package org.openspcoop2.core.diagnostica.ws.server.filter.beans;
  *     &lt;sequence>
  *         &lt;element name="tipo-porta" type="{http://www.openspcoop2.org/core/diagnostica}TipoPdD" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="nome-porta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="ricerca-solo-messaggi-correlati-informazioni-protocollo" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="new Boolean("false")" />
+ *         &lt;element name="ricerca-solo-messaggi-correlati-informazioni-protocollo" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="fruitore" type="{http://www.openspcoop2.org/core/diagnostica/management}soggetto" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="erogatore" type="{http://www.openspcoop2.org/core/diagnostica/management}soggetto" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="servizio" type="{http://www.openspcoop2.org/core/diagnostica/management}servizio" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="identificativo-correlazione-richiesta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="identificativo-correlazione-risposta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="correlazione-applicativa-and-match" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="new Boolean("false")" />
+ *         &lt;element name="correlazione-applicativa-and-match" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="servizio-applicativo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *     &lt;/sequence>
  * &lt;/complexType>
@@ -106,8 +106,8 @@ public class FiltroInformazioneProtocollo extends org.openspcoop2.utils.beans.Ba
 	
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="boolean")
-  @XmlElement(name="ricerca-solo-messaggi-correlati-informazioni-protocollo",required=false,nillable=false,defaultValue="false")
-	private Boolean ricercaSoloMessaggiCorrelatiInformazioniProtocollo = new Boolean("false");
+  @XmlElement(name="ricerca-solo-messaggi-correlati-informazioni-protocollo",required=false,nillable=false)
+	private Boolean ricercaSoloMessaggiCorrelatiInformazioniProtocollo;
 	
 	public void setRicercaSoloMessaggiCorrelatiInformazioniProtocollo(Boolean ricercaSoloMessaggiCorrelatiInformazioniProtocollo){
 		this.ricercaSoloMessaggiCorrelatiInformazioniProtocollo = ricercaSoloMessaggiCorrelatiInformazioniProtocollo;
@@ -194,8 +194,8 @@ public class FiltroInformazioneProtocollo extends org.openspcoop2.utils.beans.Ba
 	
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="boolean")
-  @XmlElement(name="correlazione-applicativa-and-match",required=false,nillable=false,defaultValue="false")
-	private Boolean correlazioneApplicativaAndMatch = new Boolean("false");
+  @XmlElement(name="correlazione-applicativa-and-match",required=false,nillable=false)
+	private Boolean correlazioneApplicativaAndMatch;
 	
 	public void setCorrelazioneApplicativaAndMatch(Boolean correlazioneApplicativaAndMatch){
 		this.correlazioneApplicativaAndMatch = correlazioneApplicativaAndMatch;

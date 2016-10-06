@@ -72,7 +72,7 @@
                     <xsd:appinfo>
                         <linkit:generator
                             xmlns:linkit="http://www.link.it/project_generator">
-                            <linkit:ws-field-mapping transient="true" filter="true"/>
+                            <linkit:ws-field-mapping transient="true" filter="true" filter-use-default="false"/>
                         </linkit:generator>
                     </xsd:appinfo>
                 </xsd:annotation>
@@ -94,7 +94,7 @@
                     <xsd:appinfo>
                         <linkit:generator
                             xmlns:linkit="http://www.link.it/project_generator">
-                            <linkit:ws-field-mapping transient="true" filter="true"/>
+                            <linkit:ws-field-mapping transient="true" filter="true" filter-use-default="false"/>
                         </linkit:generator>
                     </xsd:appinfo>
                 </xsd:annotation>
@@ -292,7 +292,16 @@
         <xsd:simpleContent>
             <xsd:extension base="xsd:string">
                 <xsd:attribute name="tipo" type="xsd:string" use="optional"/>
-                <xsd:attribute name="versione" type="xsd:integer" use="optional" default="1"/>
+                <xsd:attribute name="versione" type="xsd:integer" use="optional" default="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:ws-field-mapping filter-use-default="false"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:attribute>
             </xsd:extension>
         </xsd:simpleContent>
     </xsd:complexType>

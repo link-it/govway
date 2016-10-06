@@ -120,7 +120,9 @@
 		<xsd:simpleContent>
 			<xsd:extension base="xsd:string">
 				<xsd:attribute name="tipo" type="xsd:string"/>
-				<xsd:attribute default="1" name="versione" type="xsd:integer"/>
+				<xsd:attribute default="1" name="versione" type="xsd:integer">
+					
+				</xsd:attribute>
 			</xsd:extension>
 		</xsd:simpleContent>
 	</xsd:complexType>
@@ -130,14 +132,18 @@
 		<xsd:sequence>
 			<xsd:element minOccurs="0" name="tipo-porta" type="TipoPdD"/>
 			<xsd:element minOccurs="0" name="nome-porta" type="xsd:string"/>
-			<xsd:element default="false" minOccurs="0" name="ricerca-solo-messaggi-correlati-informazioni-protocollo" type="xsd:boolean"/>
+			<xsd:element default="false" minOccurs="0" name="ricerca-solo-messaggi-correlati-informazioni-protocollo" type="xsd:boolean">
+				
+			</xsd:element>
 			<xsd:element minOccurs="0" name="fruitore" type="soggetto"/>
 			<xsd:element minOccurs="0" name="erogatore" type="soggetto"/>
 			<xsd:element minOccurs="0" name="servizio" type="servizio"/>
 			<xsd:element minOccurs="0" name="azione" type="xsd:string"/>
 			<xsd:element minOccurs="0" name="identificativo-correlazione-richiesta" type="xsd:string"/>
 			<xsd:element minOccurs="0" name="identificativo-correlazione-risposta" type="xsd:string"/>
-			<xsd:element default="false" minOccurs="0" name="correlazione-applicativa-and-match" type="xsd:boolean"/>
+			<xsd:element default="false" minOccurs="0" name="correlazione-applicativa-and-match" type="xsd:boolean">
+				
+			</xsd:element>
 			<xsd:element minOccurs="0" name="servizio-applicativo" type="xsd:string"/>
 		</xsd:sequence>
 	</xsd:complexType>

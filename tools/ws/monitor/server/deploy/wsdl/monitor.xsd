@@ -169,7 +169,9 @@
 	
 	<xsd:complexType name="busta">
 		<xsd:sequence>
-			<xsd:element default="false" minOccurs="0" name="attesa-riscontro" type="xsd:boolean"/>
+			<xsd:element default="false" minOccurs="0" name="attesa-riscontro" type="xsd:boolean">
+				
+			</xsd:element>
 			<xsd:element minOccurs="0" name="mittente" type="busta-soggetto"/>
 			<xsd:element minOccurs="0" name="destinatario" type="busta-soggetto"/>
 			<xsd:element minOccurs="0" name="servizio" type="busta-servizio"/>

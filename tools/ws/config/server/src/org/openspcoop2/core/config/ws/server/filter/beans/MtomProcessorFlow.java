@@ -28,7 +28,7 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
  * <pre>
  * &lt;complexType name="mtom-processor-flow">
  *     &lt;sequence>
- *         &lt;element name="mode" type="{http://www.openspcoop2.org/core/config}MTOMProcessorType" minOccurs="0" maxOccurs="1" default="(MTOMProcessorType) MTOMProcessorType.toEnumConstantFromString("disable")" />
+ *         &lt;element name="mode" type="{http://www.openspcoop2.org/core/config}MTOMProcessorType" minOccurs="0" maxOccurs="1" />
  *     &lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -58,8 +58,8 @@ public class MtomProcessorFlow extends org.openspcoop2.utils.beans.BaseBean impl
 	
 	private static final long serialVersionUID = -1L;
 	
-	@XmlElement(name="mode",required=false,nillable=false,defaultValue="disable")
-	private MTOMProcessorType mode = (MTOMProcessorType) MTOMProcessorType.toEnumConstantFromString("disable");
+	@XmlElement(name="mode",required=false,nillable=false)
+	private MTOMProcessorType mode;
 	
 	public void setMode(MTOMProcessorType mode){
 		this.mode = mode;

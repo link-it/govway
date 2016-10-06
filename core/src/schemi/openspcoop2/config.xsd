@@ -80,7 +80,16 @@
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="identificativo-porta" type="xsd:string"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
-		<xsd:attribute name="router" type="xsd:boolean" default="false"/>
+		<xsd:attribute name="router" type="xsd:boolean" default="false">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 		<xsd:attribute name="pd-url-prefix-rewriter">
 			<xsd:simpleType>
 				<xsd:restriction base="xsd:string">
@@ -207,17 +216,80 @@
 				</xsd:appinfo>
 			</xsd:annotation>
 		</xsd:attribute>
-		<xsd:attribute name="autenticazione" type="xsd:string" default="ssl"/>
-		<xsd:attribute name="autorizzazione" type="xsd:string" default="openspcoop"/>
+		<xsd:attribute name="autenticazione" type="xsd:string" default="ssl">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="autorizzazione" type="xsd:string" default="openspcoop">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 		<xsd:attribute name="autorizzazione-contenuto" type="xsd:string"/>
-		<xsd:attribute name="ricevuta-asincrona-simmetrica" type="StatoFunzionalita" default="abilitato"/>
-		<xsd:attribute name="ricevuta-asincrona-asimmetrica" type="StatoFunzionalita" default="abilitato"/>
+		<xsd:attribute name="ricevuta-asincrona-simmetrica" type="StatoFunzionalita" default="abilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="ricevuta-asincrona-asimmetrica" type="StatoFunzionalita" default="abilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 		<xsd:attribute name="integrazione" type="xsd:string"/>
-		<xsd:attribute name="allega-body" type="StatoFunzionalita" default="disabilitato"/>
-		<xsd:attribute name="scarta-body" type="StatoFunzionalita" default="disabilitato"/>
+		<xsd:attribute name="allega-body" type="StatoFunzionalita" default="disabilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="scarta-body" type="StatoFunzionalita" default="disabilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 		<xsd:attribute name="gestione-manifest" type="StatoFunzionalita" />
 		<xsd:attribute name="stateless" type="StatoFunzionalita" />
-		<xsd:attribute name="local-forward" type="StatoFunzionalita" default="disabilitato"/>
+		<xsd:attribute name="local-forward" type="StatoFunzionalita" default="disabilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
 			<xsd:annotation>
 				<xsd:appinfo>
@@ -248,7 +320,16 @@
 		<xsd:attribute name="identificazione" type="PortaDelegataAzioneIdentificazione" default="static"/>
 		<xsd:attribute name="pattern" type="xsd:string"/>
 		<xsd:attribute name="nome" type="xsd:string"/>
-		<xsd:attribute name="force-wsdl-based" type="StatoFunzionalita" default="disabilitato"/>
+		<xsd:attribute name="force-wsdl-based" type="StatoFunzionalita" default="disabilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 	</xsd:complexType>
 
 
@@ -343,11 +424,47 @@
 		<!-- end-extensions -->
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
-		<xsd:attribute name="ricevuta-asincrona-simmetrica" type="StatoFunzionalita" default="abilitato"/>
-		<xsd:attribute name="ricevuta-asincrona-asimmetrica" type="StatoFunzionalita" default="abilitato"/>
+		<xsd:attribute name="ricevuta-asincrona-simmetrica" type="StatoFunzionalita" default="abilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="ricevuta-asincrona-asimmetrica" type="StatoFunzionalita" default="abilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 		<xsd:attribute name="integrazione" type="xsd:string"/>
-		<xsd:attribute name="allega-body" type="StatoFunzionalita" default="disabilitato"/>
-		<xsd:attribute name="scarta-body" type="StatoFunzionalita" default="disabilitato"/>
+		<xsd:attribute name="allega-body" type="StatoFunzionalita" default="disabilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="scarta-body" type="StatoFunzionalita" default="disabilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 		<xsd:attribute name="gestione-manifest" type="StatoFunzionalita" />
 		<xsd:attribute name="stateless" type="StatoFunzionalita" />
 		<xsd:attribute name="behaviour" type="xsd:string" use="optional"/>
@@ -436,8 +553,26 @@
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="credenziali" type="credenziali"/>
 			<xsd:element name="gestione-errore" type="invocazione-porta-gestione-errore" maxOccurs="1" minOccurs="0"/>
 		</xsd:sequence>
-		<xsd:attribute name="invio-per-riferimento" type="StatoFunzionalita" default="disabilitato"/>
-		<xsd:attribute name="sbustamento-informazioni-protocollo" type="StatoFunzionalita" default="abilitato" use="optional"/>
+		<xsd:attribute name="invio-per-riferimento" type="StatoFunzionalita" default="disabilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="sbustamento-informazioni-protocollo" type="StatoFunzionalita" default="abilitato" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 	</xsd:complexType>
 	<xsd:complexType name="invocazione-porta-gestione-errore">
 		<xsd:attribute name="fault" type="FaultIntegrazioneTipo" default="soap"/>
@@ -462,12 +597,66 @@
 				</xsd:annotation>
 			</xsd:element>
 		</xsd:sequence>
-		<xsd:attribute name="sbustamento-soap" type="StatoFunzionalita" default="disabilitato"/>
-		<xsd:attribute name="sbustamento-informazioni-protocollo" type="StatoFunzionalita" default="abilitato" use="optional"/>
-		<xsd:attribute name="get-message" type="StatoFunzionalita" default="disabilitato"/>
-		<xsd:attribute name="autenticazione" type="InvocazioneServizioTipoAutenticazione" default="none"/>
-		<xsd:attribute name="invio-per-riferimento" type="StatoFunzionalita" default="disabilitato"/>
-		<xsd:attribute name="risposta-per-riferimento" type="StatoFunzionalita" default="disabilitato"/>
+		<xsd:attribute name="sbustamento-soap" type="StatoFunzionalita" default="disabilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="sbustamento-informazioni-protocollo" type="StatoFunzionalita" default="abilitato" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="get-message" type="StatoFunzionalita" default="disabilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="autenticazione" type="InvocazioneServizioTipoAutenticazione" default="none">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="invio-per-riferimento" type="StatoFunzionalita" default="disabilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="risposta-per-riferimento" type="StatoFunzionalita" default="disabilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 	</xsd:complexType>
 	<!-- ServizioApplicativo.RispostaAsincrona -->
 	<xsd:complexType name="risposta-asincrona">
@@ -486,12 +675,66 @@
 				</xsd:annotation>
 			</xsd:element>
 		</xsd:sequence>
-		<xsd:attribute name="sbustamento-soap" type="StatoFunzionalita" default="disabilitato"/>
-		<xsd:attribute name="sbustamento-informazioni-protocollo" type="StatoFunzionalita" default="abilitato" use="optional"/>
-		<xsd:attribute name="get-message" type="StatoFunzionalita" default="disabilitato"/>
-		<xsd:attribute name="autenticazione" type="InvocazioneServizioTipoAutenticazione" default="none"/>
-		<xsd:attribute name="invio-per-riferimento" type="StatoFunzionalita" default="disabilitato"/>
-		<xsd:attribute name="risposta-per-riferimento" type="StatoFunzionalita" default="disabilitato"/>
+		<xsd:attribute name="sbustamento-soap" type="StatoFunzionalita" default="disabilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="sbustamento-informazioni-protocollo" type="StatoFunzionalita" default="abilitato" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="get-message" type="StatoFunzionalita" default="disabilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="autenticazione" type="InvocazioneServizioTipoAutenticazione" default="none">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="invio-per-riferimento" type="StatoFunzionalita" default="disabilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="risposta-per-riferimento" type="StatoFunzionalita" default="disabilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 	</xsd:complexType>
 
 
@@ -530,8 +773,26 @@
 	
 	<!-- Validazione XSD -->
 	<xsd:complexType name="validazione-contenuti-applicativi">
-		<xsd:attribute name="stato" type="StatoFunzionalitaConWarning" default="disabilitato"/>
-		<xsd:attribute name="tipo" type="ValidazioneContenutiApplicativiTipo" default="xsd"/>
+		<xsd:attribute name="stato" type="StatoFunzionalitaConWarning" default="disabilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="tipo" type="ValidazioneContenutiApplicativiTipo" default="xsd">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 		<xsd:attribute name="accept-mtom-message" type="StatoFunzionalita" use="optional" default="disabilitato">
 			<xsd:annotation>
 				<xsd:appinfo>
@@ -662,7 +923,16 @@
 				</xsd:annotation>
 			</xsd:element>
 		</xsd:sequence>
-		<xsd:attribute name="mode" type="MTOMProcessorType" default="disable"/>
+		<xsd:attribute name="mode" type="MTOMProcessorType" default="disable">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 	</xsd:complexType>
 	<xsd:complexType name="mtom-processor-flow-parameter">
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>

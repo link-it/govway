@@ -38,11 +38,11 @@ package org.openspcoop2.core.config.ws.server.filter;
  *         &lt;element name="stato-message-security" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="ricevuta-asincrona-simmetrica" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" default="(StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato")" />
- *         &lt;element name="ricevuta-asincrona-asimmetrica" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" default="(StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato")" />
+ *         &lt;element name="ricevuta-asincrona-simmetrica" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="ricevuta-asincrona-asimmetrica" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="integrazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="allega-body" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" default="(StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato")" />
- *         &lt;element name="scarta-body" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" default="(StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato")" />
+ *         &lt;element name="allega-body" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="scarta-body" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="gestione-manifest" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="stateless" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="behaviour" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
@@ -235,8 +235,8 @@ public class SearchFilterPortaApplicativa extends org.openspcoop2.utils.beans.Ba
 	}
 	
 	
-	@XmlElement(name="ricevuta-asincrona-simmetrica",required=false,nillable=false,defaultValue="abilitato")
-	private StatoFunzionalita ricevutaAsincronaSimmetrica = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
+	@XmlElement(name="ricevuta-asincrona-simmetrica",required=false,nillable=false)
+	private StatoFunzionalita ricevutaAsincronaSimmetrica;
 	
 	public void setRicevutaAsincronaSimmetrica(StatoFunzionalita ricevutaAsincronaSimmetrica){
 		this.ricevutaAsincronaSimmetrica = ricevutaAsincronaSimmetrica;
@@ -247,8 +247,8 @@ public class SearchFilterPortaApplicativa extends org.openspcoop2.utils.beans.Ba
 	}
 	
 	
-	@XmlElement(name="ricevuta-asincrona-asimmetrica",required=false,nillable=false,defaultValue="abilitato")
-	private StatoFunzionalita ricevutaAsincronaAsimmetrica = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
+	@XmlElement(name="ricevuta-asincrona-asimmetrica",required=false,nillable=false)
+	private StatoFunzionalita ricevutaAsincronaAsimmetrica;
 	
 	public void setRicevutaAsincronaAsimmetrica(StatoFunzionalita ricevutaAsincronaAsimmetrica){
 		this.ricevutaAsincronaAsimmetrica = ricevutaAsincronaAsimmetrica;
@@ -272,8 +272,8 @@ public class SearchFilterPortaApplicativa extends org.openspcoop2.utils.beans.Ba
 	}
 	
 	
-	@XmlElement(name="allega-body",required=false,nillable=false,defaultValue="disabilitato")
-	private StatoFunzionalita allegaBody = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
+	@XmlElement(name="allega-body",required=false,nillable=false)
+	private StatoFunzionalita allegaBody;
 	
 	public void setAllegaBody(StatoFunzionalita allegaBody){
 		this.allegaBody = allegaBody;
@@ -284,8 +284,8 @@ public class SearchFilterPortaApplicativa extends org.openspcoop2.utils.beans.Ba
 	}
 	
 	
-	@XmlElement(name="scarta-body",required=false,nillable=false,defaultValue="disabilitato")
-	private StatoFunzionalita scartaBody = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
+	@XmlElement(name="scarta-body",required=false,nillable=false)
+	private StatoFunzionalita scartaBody;
 	
 	public void setScartaBody(StatoFunzionalita scartaBody){
 		this.scartaBody = scartaBody;

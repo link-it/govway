@@ -32,7 +32,7 @@ package org.openspcoop2.core.config.ws.server.filter;
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="identificativo-porta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="router" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="new Boolean("false")" />
+ *         &lt;element name="router" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="pd-url-prefix-rewriter" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="pa-url-prefix-rewriter" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
@@ -133,8 +133,8 @@ public class SearchFilterSoggetto extends org.openspcoop2.utils.beans.BaseBean i
 	
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="boolean")
-  @XmlElement(name="router",required=false,nillable=false,defaultValue="false")
-	private Boolean router = new Boolean("false");
+  @XmlElement(name="router",required=false,nillable=false)
+	private Boolean router;
 	
 	public void setRouter(Boolean router){
 		this.router = router;

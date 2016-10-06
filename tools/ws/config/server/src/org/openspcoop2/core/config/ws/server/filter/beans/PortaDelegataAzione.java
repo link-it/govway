@@ -31,7 +31,7 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
  *         &lt;element name="identificazione" type="{http://www.openspcoop2.org/core/config}PortaDelegataAzioneIdentificazione" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="pattern" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="force-wsdl-based" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" default="(StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato")" />
+ *         &lt;element name="force-wsdl-based" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  *     &lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -103,8 +103,8 @@ public class PortaDelegataAzione extends org.openspcoop2.utils.beans.BaseBean im
 	}
 	
 	
-	@XmlElement(name="force-wsdl-based",required=false,nillable=false,defaultValue="disabilitato")
-	private StatoFunzionalita forceWsdlBased = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
+	@XmlElement(name="force-wsdl-based",required=false,nillable=false)
+	private StatoFunzionalita forceWsdlBased;
 	
 	public void setForceWsdlBased(StatoFunzionalita forceWsdlBased){
 		this.forceWsdlBased = forceWsdlBased;

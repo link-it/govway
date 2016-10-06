@@ -635,9 +635,27 @@
 		<!-- end-extensions -->
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
-		<xsd:attribute name="implementazione" type="xsd:string" default="standard"/>
+		<xsd:attribute name="implementazione" type="xsd:string" default="standard">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 		<xsd:attribute name="subject" type="xsd:string"/>
-		<xsd:attribute name="client-auth" type="StatoFunzionalita" default="disabilitato"/>
+		<xsd:attribute name="client-auth" type="StatoFunzionalita" default="disabilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
 			<xsd:annotation>
 				<xsd:appinfo>

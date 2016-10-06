@@ -29,7 +29,7 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
  * &lt;complexType name="validazione-contenuti-applicativi">
  *     &lt;sequence>
  *         &lt;element name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalitaConWarning" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="tipo" type="{http://www.openspcoop2.org/core/config}ValidazioneContenutiApplicativiTipo" minOccurs="0" maxOccurs="1" default="(ValidazioneContenutiApplicativiTipo) ValidazioneContenutiApplicativiTipo.toEnumConstantFromString("xsd")" />
+ *         &lt;element name="tipo" type="{http://www.openspcoop2.org/core/config}ValidazioneContenutiApplicativiTipo" minOccurs="0" maxOccurs="1" />
  *     &lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -73,8 +73,8 @@ public class ValidazioneContenutiApplicativi extends org.openspcoop2.utils.beans
 	}
 	
 	
-	@XmlElement(name="tipo",required=false,nillable=false,defaultValue="xsd")
-	private ValidazioneContenutiApplicativiTipo tipo = (ValidazioneContenutiApplicativiTipo) ValidazioneContenutiApplicativiTipo.toEnumConstantFromString("xsd");
+	@XmlElement(name="tipo",required=false,nillable=false)
+	private ValidazioneContenutiApplicativiTipo tipo;
 	
 	public void setTipo(ValidazioneContenutiApplicativiTipo tipo){
 		this.tipo = tipo;

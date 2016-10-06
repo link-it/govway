@@ -38,7 +38,9 @@
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="identificativo-porta" type="xsd:string"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
-		<xsd:attribute default="false" name="router" type="xsd:boolean"/>
+		<xsd:attribute default="false" name="router" type="xsd:boolean">
+			
+		</xsd:attribute>
 		<xsd:attribute name="pd-url-prefix-rewriter">
 			<xsd:simpleType>
 				<xsd:restriction base="xsd:string">
@@ -99,17 +101,31 @@
 		<xsd:attribute name="location" type="xsd:string">
 			
 		</xsd:attribute>
-		<xsd:attribute default="ssl" name="autenticazione" type="xsd:string"/>
-		<xsd:attribute default="openspcoop" name="autorizzazione" type="xsd:string"/>
+		<xsd:attribute default="ssl" name="autenticazione" type="xsd:string">
+			
+		</xsd:attribute>
+		<xsd:attribute default="openspcoop" name="autorizzazione" type="xsd:string">
+			
+		</xsd:attribute>
 		<xsd:attribute name="autorizzazione-contenuto" type="xsd:string"/>
-		<xsd:attribute default="abilitato" name="ricevuta-asincrona-simmetrica" type="StatoFunzionalita"/>
-		<xsd:attribute default="abilitato" name="ricevuta-asincrona-asimmetrica" type="StatoFunzionalita"/>
+		<xsd:attribute default="abilitato" name="ricevuta-asincrona-simmetrica" type="StatoFunzionalita">
+			
+		</xsd:attribute>
+		<xsd:attribute default="abilitato" name="ricevuta-asincrona-asimmetrica" type="StatoFunzionalita">
+			
+		</xsd:attribute>
 		<xsd:attribute name="integrazione" type="xsd:string"/>
-		<xsd:attribute default="disabilitato" name="allega-body" type="StatoFunzionalita"/>
-		<xsd:attribute default="disabilitato" name="scarta-body" type="StatoFunzionalita"/>
+		<xsd:attribute default="disabilitato" name="allega-body" type="StatoFunzionalita">
+			
+		</xsd:attribute>
+		<xsd:attribute default="disabilitato" name="scarta-body" type="StatoFunzionalita">
+			
+		</xsd:attribute>
 		<xsd:attribute name="gestione-manifest" type="StatoFunzionalita"/>
 		<xsd:attribute name="stateless" type="StatoFunzionalita"/>
-		<xsd:attribute default="disabilitato" name="local-forward" type="StatoFunzionalita"/>
+		<xsd:attribute default="disabilitato" name="local-forward" type="StatoFunzionalita">
+			
+		</xsd:attribute>
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
 			
 		</xsd:attribute>
@@ -133,7 +149,9 @@
 		<xsd:attribute default="static" name="identificazione" type="PortaDelegataAzioneIdentificazione"/>
 		<xsd:attribute name="pattern" type="xsd:string"/>
 		<xsd:attribute name="nome" type="xsd:string"/>
-		<xsd:attribute default="disabilitato" name="force-wsdl-based" type="StatoFunzionalita"/>
+		<xsd:attribute default="disabilitato" name="force-wsdl-based" type="StatoFunzionalita">
+			
+		</xsd:attribute>
 	</xsd:complexType>
 
 
@@ -176,11 +194,19 @@
 		<!-- end-extensions -->
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
-		<xsd:attribute default="abilitato" name="ricevuta-asincrona-simmetrica" type="StatoFunzionalita"/>
-		<xsd:attribute default="abilitato" name="ricevuta-asincrona-asimmetrica" type="StatoFunzionalita"/>
+		<xsd:attribute default="abilitato" name="ricevuta-asincrona-simmetrica" type="StatoFunzionalita">
+			
+		</xsd:attribute>
+		<xsd:attribute default="abilitato" name="ricevuta-asincrona-asimmetrica" type="StatoFunzionalita">
+			
+		</xsd:attribute>
 		<xsd:attribute name="integrazione" type="xsd:string"/>
-		<xsd:attribute default="disabilitato" name="allega-body" type="StatoFunzionalita"/>
-		<xsd:attribute default="disabilitato" name="scarta-body" type="StatoFunzionalita"/>
+		<xsd:attribute default="disabilitato" name="allega-body" type="StatoFunzionalita">
+			
+		</xsd:attribute>
+		<xsd:attribute default="disabilitato" name="scarta-body" type="StatoFunzionalita">
+			
+		</xsd:attribute>
 		<xsd:attribute name="gestione-manifest" type="StatoFunzionalita"/>
 		<xsd:attribute name="stateless" type="StatoFunzionalita"/>
 		<xsd:attribute name="behaviour" type="xsd:string" use="optional"/>
@@ -238,8 +264,12 @@
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="credenziali" type="credenziali"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="gestione-errore" type="invocazione-porta-gestione-errore"/>
 		</xsd:sequence>
-		<xsd:attribute default="disabilitato" name="invio-per-riferimento" type="StatoFunzionalita"/>
-		<xsd:attribute default="abilitato" name="sbustamento-informazioni-protocollo" type="StatoFunzionalita" use="optional"/>
+		<xsd:attribute default="disabilitato" name="invio-per-riferimento" type="StatoFunzionalita">
+			
+		</xsd:attribute>
+		<xsd:attribute default="abilitato" name="sbustamento-informazioni-protocollo" type="StatoFunzionalita" use="optional">
+			
+		</xsd:attribute>
 	</xsd:complexType>
 	<xsd:complexType name="invocazione-porta-gestione-errore">
 		<xsd:attribute default="soap" name="fault" type="FaultIntegrazioneTipo"/>
@@ -256,12 +286,24 @@
 				
 			</xsd:element>
 		</xsd:sequence>
-		<xsd:attribute default="disabilitato" name="sbustamento-soap" type="StatoFunzionalita"/>
-		<xsd:attribute default="abilitato" name="sbustamento-informazioni-protocollo" type="StatoFunzionalita" use="optional"/>
-		<xsd:attribute default="disabilitato" name="get-message" type="StatoFunzionalita"/>
-		<xsd:attribute default="none" name="autenticazione" type="InvocazioneServizioTipoAutenticazione"/>
-		<xsd:attribute default="disabilitato" name="invio-per-riferimento" type="StatoFunzionalita"/>
-		<xsd:attribute default="disabilitato" name="risposta-per-riferimento" type="StatoFunzionalita"/>
+		<xsd:attribute default="disabilitato" name="sbustamento-soap" type="StatoFunzionalita">
+			
+		</xsd:attribute>
+		<xsd:attribute default="abilitato" name="sbustamento-informazioni-protocollo" type="StatoFunzionalita" use="optional">
+			
+		</xsd:attribute>
+		<xsd:attribute default="disabilitato" name="get-message" type="StatoFunzionalita">
+			
+		</xsd:attribute>
+		<xsd:attribute default="none" name="autenticazione" type="InvocazioneServizioTipoAutenticazione">
+			
+		</xsd:attribute>
+		<xsd:attribute default="disabilitato" name="invio-per-riferimento" type="StatoFunzionalita">
+			
+		</xsd:attribute>
+		<xsd:attribute default="disabilitato" name="risposta-per-riferimento" type="StatoFunzionalita">
+			
+		</xsd:attribute>
 	</xsd:complexType>
 	<!-- ServizioApplicativo.RispostaAsincrona -->
 	<xsd:complexType name="risposta-asincrona">
@@ -272,12 +314,24 @@
 				
 			</xsd:element>
 		</xsd:sequence>
-		<xsd:attribute default="disabilitato" name="sbustamento-soap" type="StatoFunzionalita"/>
-		<xsd:attribute default="abilitato" name="sbustamento-informazioni-protocollo" type="StatoFunzionalita" use="optional"/>
-		<xsd:attribute default="disabilitato" name="get-message" type="StatoFunzionalita"/>
-		<xsd:attribute default="none" name="autenticazione" type="InvocazioneServizioTipoAutenticazione"/>
-		<xsd:attribute default="disabilitato" name="invio-per-riferimento" type="StatoFunzionalita"/>
-		<xsd:attribute default="disabilitato" name="risposta-per-riferimento" type="StatoFunzionalita"/>
+		<xsd:attribute default="disabilitato" name="sbustamento-soap" type="StatoFunzionalita">
+			
+		</xsd:attribute>
+		<xsd:attribute default="abilitato" name="sbustamento-informazioni-protocollo" type="StatoFunzionalita" use="optional">
+			
+		</xsd:attribute>
+		<xsd:attribute default="disabilitato" name="get-message" type="StatoFunzionalita">
+			
+		</xsd:attribute>
+		<xsd:attribute default="none" name="autenticazione" type="InvocazioneServizioTipoAutenticazione">
+			
+		</xsd:attribute>
+		<xsd:attribute default="disabilitato" name="invio-per-riferimento" type="StatoFunzionalita">
+			
+		</xsd:attribute>
+		<xsd:attribute default="disabilitato" name="risposta-per-riferimento" type="StatoFunzionalita">
+			
+		</xsd:attribute>
 	</xsd:complexType>
 
 
@@ -316,8 +370,12 @@
 	
 	<!-- Validazione XSD -->
 	<xsd:complexType name="validazione-contenuti-applicativi">
-		<xsd:attribute default="disabilitato" name="stato" type="StatoFunzionalitaConWarning"/>
-		<xsd:attribute default="xsd" name="tipo" type="ValidazioneContenutiApplicativiTipo"/>
+		<xsd:attribute default="disabilitato" name="stato" type="StatoFunzionalitaConWarning">
+			
+		</xsd:attribute>
+		<xsd:attribute default="xsd" name="tipo" type="ValidazioneContenutiApplicativiTipo">
+			
+		</xsd:attribute>
 		<xsd:attribute default="disabilitato" name="accept-mtom-message" type="StatoFunzionalita" use="optional">
 			
 		</xsd:attribute> <!-- il default e' il true/false a seconda della funzionalita' packaging/unpackaging MTOM -->
@@ -405,7 +463,9 @@
 				
 			</xsd:element>
 		</xsd:sequence>
-		<xsd:attribute default="disable" name="mode" type="MTOMProcessorType"/>
+		<xsd:attribute default="disable" name="mode" type="MTOMProcessorType">
+			
+		</xsd:attribute>
 	</xsd:complexType>
 	<xsd:complexType name="mtom-processor-flow-parameter">
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>

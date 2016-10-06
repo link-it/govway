@@ -120,7 +120,7 @@
 					<xsd:appinfo>
 						<linkit:generator
 							xmlns:linkit="http://www.link.it/project_generator">
-							<linkit:ws-field-mapping transient="true" filter="true"/>
+							<linkit:ws-field-mapping transient="true" filter="true" filter-use-default="false"/>
 						</linkit:generator>
 					</xsd:appinfo>
 				</xsd:annotation>
@@ -215,7 +215,16 @@
 		<xsd:simpleContent>
 			<xsd:extension base="xsd:string">
 				<xsd:attribute name="tipo" type="xsd:string" />
-				<xsd:attribute name="versione" type="xsd:integer" default="1"/>
+				<xsd:attribute name="versione" type="xsd:integer" default="1">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:ws-field-mapping filter-use-default="false"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:attribute>
 			</xsd:extension>
 		</xsd:simpleContent>
 	</xsd:complexType>
@@ -225,14 +234,32 @@
 		<xsd:sequence>
 			<xsd:element name="tipo-porta" type="TipoPdD" minOccurs="0" />
 			<xsd:element name="nome-porta" type="xsd:string" minOccurs="0"/>
-			<xsd:element name="ricerca-solo-messaggi-correlati-informazioni-protocollo" type="xsd:boolean" default="false" minOccurs="0" />
+			<xsd:element name="ricerca-solo-messaggi-correlati-informazioni-protocollo" type="xsd:boolean" default="false" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter-use-default="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
 			<xsd:element name="fruitore" type="soggetto" minOccurs="0" />
 			<xsd:element name="erogatore" type="soggetto" minOccurs="0" />
 			<xsd:element name="servizio" type="servizio" minOccurs="0" />
 			<xsd:element name="azione" type="xsd:string" minOccurs="0"/>
 			<xsd:element name="identificativo-correlazione-richiesta" type="xsd:string" minOccurs="0"/>
 			<xsd:element name="identificativo-correlazione-risposta" type="xsd:string" minOccurs="0"/>
-			<xsd:element name="correlazione-applicativa-and-match" type="xsd:boolean" default="false" minOccurs="0" />
+			<xsd:element name="correlazione-applicativa-and-match" type="xsd:boolean" default="false" minOccurs="0" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter-use-default="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
 			<xsd:element name="servizio-applicativo" type="xsd:string" minOccurs="0"/>
 		</xsd:sequence>
 	</xsd:complexType>

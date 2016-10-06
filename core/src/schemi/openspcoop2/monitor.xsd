@@ -371,7 +371,16 @@
 	
 	<xsd:complexType name="busta">
 		<xsd:sequence>
-			<xsd:element name="attesa-riscontro" type="xsd:boolean" minOccurs="0" default="false" />
+			<xsd:element name="attesa-riscontro" type="xsd:boolean" minOccurs="0" default="false" >
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:ws-field-mapping filter-use-default="false"/>
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
 			<xsd:element name="mittente" type="busta-soggetto" minOccurs="0" />
 			<xsd:element name="destinatario" type="busta-soggetto" minOccurs="0" />
 			<xsd:element name="servizio" type="busta-servizio" minOccurs="0" />
