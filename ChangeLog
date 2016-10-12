@@ -1,3 +1,12 @@
+2016-10-12  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	Aggiunta funzionalità OP-554
+	L'application server JBoss7 e WildFly richiedono obbligatoriamente un prefisso java:/ da associare ai nomi JNDI dei datasource.
+	Il prodotto funziona correttamente sia che i datasource siano registrati nel nome jndi con prefisso java:/ che senza.
+	Per non creare incomprensioni, visto che da console degli application server non è possibile creare i datasource senza tale prefisso, 
+	sono stati corretti i datasource di riferimento del prodotto in modo che i nomi jndi contengono tale prefisso.
+
 2016-10-06  Andrea Poli <apoli@link.it>
 
 	* [WebServiceConfig, WebServiceDiagnostica, WebServiceMonitor, WebServiceRegistry, WebServiceTracciamento]
