@@ -120,15 +120,19 @@ public class Password {
 	}
 
 	public boolean checkPw(String password, String pwcrypt) {
-		boolean checkPwS = false;
-
-		// MD5Crypt md5c = new MD5Crypt();
-		String salt = pwcrypt.substring(3, 11);
-		String newPw = MD5Crypt.crypt(password, salt);
-		if (newPw.equals(pwcrypt)) {
-			checkPwS = true;
+		try{
+			boolean checkPwS = false;
+	
+			// MD5Crypt md5c = new MD5Crypt();
+			String salt = pwcrypt.substring(3, 11);
+			String newPw = MD5Crypt.crypt(password, salt);
+			if (newPw.equals(pwcrypt)) {
+				checkPwS = true;
+			}
+	
+			return checkPwS;
+		}catch(Throwable e){
+			return false;
 		}
-
-		return checkPwS;
 	}
 }
