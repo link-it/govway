@@ -5,7 +5,7 @@
       <subsystem xmlns="urn:jboss:domain:datasources:1.0">
          <datasources>
              ...
-		<datasource jta="false" use-ccm="false" jndi-name="java:/org.openspcoop2.dataSource.msgDiagnostici" use-java-context="false" pool-name="org.openspcoop2.dataSource.msgDiagnostici" enabled="true">
+		<datasource jta="false" use-ccm="false" jndi-name="java:/org.openspcoop2.dataSource.msgDiagnostici" pool-name="org.openspcoop2.dataSource.msgDiagnostici" enabled="true">
 
 			<!-- Connection URL -->
 			<connection-url>ConnectionURL</connection-url>

@@ -5,7 +5,7 @@
       <subsystem xmlns="urn:jboss:domain:datasources:1.0">
          <datasources>
              ...
-		<datasource jta="false" use-ccm="false" jndi-name="java:/org.openspcoop2.dataSource.tracciamento" use-java-context="false" pool-name="org.openspcoop2.dataSource.tracciamento" enabled="true">
+		<datasource jta="false" use-ccm="false" jndi-name="java:/org.openspcoop2.dataSource.tracciamento" pool-name="org.openspcoop2.dataSource.tracciamento" enabled="true">
 
 			<!-- Connection URL -->
 			<connection-url>ConnectionURL</connection-url>

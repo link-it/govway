@@ -1,7 +1,7 @@
 <datasources xmlns="http://www.jboss.org/deployments/schema">
 
 	<!-- Maggiori informazioni: http://docs.jboss.org/deployments/userguide/1.0/en-US/html_single/#datasources -->
-	<datasource jta="false" use-ccm="false" jndi-name="org.openspcoop2.dataSource" use-java-context="false" pool-name="org.openspcoop2.dataSource">
+	<datasource jta="false" use-ccm="false" jndi-name="java:/org.openspcoop2.dataSource" pool-name="org.openspcoop2.dataSource">
 
 		<!-- Connection URL -->
 		<connection-url>jdbc:mysql://@HOST@:@PORT@/@DATABASE@?zeroDateTimeBehavior=convertToNull</connection-url>
