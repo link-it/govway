@@ -23,6 +23,7 @@ package org.openspcoop2.utils.logger;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -69,6 +70,10 @@ public class DiagnosticManager {
 		dmNew.loggerForCallback = this.loggerForCallback;
 		
 		return dmNew;
+	}
+	
+	public Enumeration<String> getFunctions(){
+		return this.diagnosticProperties.getMappingFunctionToCode().keys();
 	}
 	
 	public String getDefaultFunction() {

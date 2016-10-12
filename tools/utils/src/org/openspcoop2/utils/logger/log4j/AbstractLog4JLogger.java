@@ -21,9 +21,13 @@
 package org.openspcoop2.utils.logger.log4j;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.logging.log4j.Level;
-import org.slf4j.Logger;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.logger.AbstractBasicLogger;
@@ -36,6 +40,7 @@ import org.openspcoop2.utils.logger.beans.Property;
 import org.openspcoop2.utils.logger.config.DiagnosticConfig;
 import org.openspcoop2.utils.logger.config.Log4jConfig;
 import org.openspcoop2.utils.logger.constants.Severity;
+import org.slf4j.Logger;
 
 /**
  * Log4JLogger
@@ -72,12 +77,38 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 		if(this.logEvent==null){
 			throw new UtilsException("Category [event] not found; expected in log4j configuration");
 		}
+		
 	}
 
 	protected Logger logTransaction;
 	protected org.apache.logging.log4j.Logger logDiagnostic;
+	protected Hashtable<String, org.apache.logging.log4j.Logger> mapFunctionToLogDiagnostic = null;
 	protected Logger logDump;
 	protected Logger logEvent;
+	
+	private synchronized void initLogFunctionToDiagnostic(){
+		if(this.mapFunctionToLogDiagnostic==null){
+				
+			List<String> loggers = new ArrayList<String>();
+			org.apache.logging.log4j.core.LoggerContext context = (org.apache.logging.log4j.core.LoggerContext) org.apache.logging.log4j.LogManager.getContext(false);
+			Iterator<String> it = context.getConfiguration().getLoggers().keySet().iterator();
+			while (it.hasNext()) {
+				String logger = (String) it.next();
+				loggers.add(logger);
+			}
+
+			this.mapFunctionToLogDiagnostic = new Hashtable<String, org.apache.logging.log4j.Logger>();
+			Enumeration<String> functions = this.diagnosticManager.getFunctions();
+			while (functions.hasMoreElements()) {
+				String function = (String) functions.nextElement();
+				//System.out.println("FUNCTION ["+function+"] ");
+				if(loggers.contains("diagnostic."+function)){
+					//System.out.println("REGISTRO");
+					this.mapFunctionToLogDiagnostic.put(function, LoggerWrapperFactory.getLoggerImpl("diagnostic."+function));
+				}
+			}
+		}
+	}
 	
 	private static Severity diagnosticSeverity = Severity.DEBUG_HIGH;
 	public static void setDiagnosticSeverity(Severity logSeverity) {
@@ -289,7 +320,16 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 		showMsg.append(diagnostic.getMessage());
 		showMsg.append("\n");
 
-		this.logDiagnostic.log(this.convertToPriority(diagnostic.getSeverity()), showMsg.toString());
+		org.apache.logging.log4j.Logger log = this.logDiagnostic;
+		
+		if(this.mapFunctionToLogDiagnostic==null){
+			this.initLogFunctionToDiagnostic();
+		}
+		if(this.mapFunctionToLogDiagnostic.containsKey(diagnostic.getFunction())){
+			log = this.mapFunctionToLogDiagnostic.get(diagnostic.getFunction());
+		}
+		
+		log.log(this.convertToPriority(diagnostic.getSeverity()), showMsg.toString());
 
 	}
 	

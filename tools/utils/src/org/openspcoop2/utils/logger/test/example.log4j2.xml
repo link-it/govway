@@ -20,6 +20,15 @@
 			</Policies>
 			<DefaultRolloverStrategy max="5" />
 		</RollingFile>
+		<RollingFile name="diagnostic.inoltro.rollingFile" 
+					fileName="/var/tmp/diagnostic_inoltro.log" 
+					filePattern="/var/tmp/diagnostic_inoltro.log.%i">
+			<PatternLayout pattern="%m %n %n" />
+			<Policies>
+				<SizeBasedTriggeringPolicy size="5 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="5" />
+		</RollingFile>
 		<RollingFile name="dump.rollingFile" 
 					fileName="/var/tmp/dump.log" 
 					filePattern="/var/tmp/dump.log.%i">
@@ -45,6 +54,9 @@
 		</Logger>
 		<Logger name="diagnostic" level="ALL" additivity="false">
 			<AppenderRef ref="diagnostic.rollingFile" />
+		</Logger>
+		<Logger name="diagnostic.inoltro" level="ALL" additivity="false">
+			<AppenderRef ref="diagnostic.inoltro.rollingFile" />
 		</Logger>
 		<Logger name="dump" level="ALL" additivity="false">
 			<AppenderRef ref="dump.rollingFile" />
