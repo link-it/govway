@@ -1,3 +1,12 @@
+2016-10-19  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Risolto Bug OP-556
+	Modificato script ant di utilità generale del progetto (ant/commons/as-check.xml)
+	utilizzato dai componenti per riconoscere il tipo di ApplicationServer indicato dall'utente.
+	Lo script è stato modificato per correggere il problema:
+	   java.lang.NoClassDefFoundError: org/mozilla/javascript/Scriptable
+
 2016-10-12  Andrea Poli <apoli@link.it>
 
 	* [InstallerVersioneBinaria]
