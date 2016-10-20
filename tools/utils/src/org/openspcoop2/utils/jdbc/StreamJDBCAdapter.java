@@ -116,6 +116,11 @@ public class StreamJDBCAdapter extends AbstractJDBCAdapter {
 	/* ***** UTILITIES ****** */
 	
 	private byte[] readIs(InputStream is,String indice) throws UtilsException{
+		
+		if(is==null){
+			return null;
+		}
+		
 		ByteArrayOutputStream os = null;
     	try {
     		os = new ByteArrayOutputStream();
@@ -139,7 +144,7 @@ public class StreamJDBCAdapter extends AbstractJDBCAdapter {
     			if(os!=null)
     				os.close();
     		}catch(Exception io){}
-    		throw new UtilsException("StreamJDBCAppender error, reading binary parameter [indice:"+indice+"]"+e.getMessage());
+    		throw new UtilsException("StreamJDBCAppender error, reading binary parameter [indice:"+indice+"]"+e.getMessage(),e);
     	}
 	}
     

@@ -272,6 +272,12 @@ public class TestJDBCAdapter {
 					}
 				}
 	    		
+	    		// campo nullo
+	    		byte[] readVuoto = jdbcAdapter.getBinaryData(rsQuery, "contenuto_vuoto");
+	    		if(readVuoto!=null){
+	    			throw new Exception("Campo riletto da database non risulta null??");
+	    		}
+	    		
 	    	}else{
 	    		throw new Exception("Nessuna insert effettuata");
 	    	}
@@ -295,6 +301,12 @@ public class TestJDBCAdapter {
 								fTmpLettoDaDB.getAbsolutePath()+"]");
 					}
 				}
+	    		
+	    		// campo nullo
+	    		byte[] readVuoto = jdbcAdapter.getBinaryData(rsQuery, 3);
+	    		if(readVuoto!=null){
+	    			throw new Exception("Campo riletto da database non risulta null??");
+	    		}
 	    		
 	    	}else{
 	    		throw new Exception("Nessuna insert effettuata");
