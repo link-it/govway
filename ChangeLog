@@ -1,6 +1,18 @@
 2016-10-20  Andrea Poli <apoli@link.it>
 
 	* [Utils]
+	Risolto Bug OP-560
+	Su database SQLServer utilizzando l'interfaccia JDBCAdapter per leggere i bytes da database, 
+	se la colonna possedeva un valore null si otteneva il seguente errore:
+	Caused by: org.openspcoop2.utils.UtilsException: StreamJDBCAppender error, reading binary parameter [indice:post_process_content]null
+	at org.openspcoop2.utils.jdbc.StreamJDBCAdapter.readIs(StreamJDBCAdapter.java:140)
+	at org.openspcoop2.utils.jdbc.StreamJDBCAdapter.getBinaryData(StreamJDBCAdapter.java:80)
+	...
+	Il problema è stato risolto.
+
+2016-10-20  Andrea Poli <apoli@link.it>
+
+	* [Utils]
 	Risolto Bug OP-558
 	Durante il salvataggio dei bytes su database SQLServer tramite l'interfaccia org.openspcoop2.utils.jdbc.StreamJDBCAdapter.setBinaryData
 	avveniva il seguente errore errore se veniva fornito un valore null nel contenuto da salvare:
