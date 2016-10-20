@@ -60,7 +60,8 @@ public class TestJDBCAdapter {
 		 * postgresql
 		 * CREATE TABLE prova_bytes (
 		 *      descrizione VARCHAR(255) NOT NULL,
-		 *      contenuto BYTEA NOT NULL
+		 *      contenuto BYTEA NOT NULL,
+		 * 		contenuto_vuoto BYTEA
 		 * );
 		 * ---------------------------
 		 * 
@@ -68,7 +69,8 @@ public class TestJDBCAdapter {
 		 * mysql
 		 * CREATE TABLE prova_bytes (
 		 *      descrizione VARCHAR(255) NOT NULL,
-		 * 		contenuto MEDIUMBLOB NOT NULL
+		 * 		contenuto MEDIUMBLOB NOT NULL,
+		 * 		contenuto_vuoto MEDIUMBLOB
 		 * );
 		 * ---------------------------
 		 * 
@@ -76,7 +78,8 @@ public class TestJDBCAdapter {
 		 * oracle
 		 * CREATE TABLE prova_bytes (
 		 *      descrizione VARCHAR(255) NOT NULL,
-		 * 		contenuto BLOB NOT NULL
+		 * 		contenuto BLOB NOT NULL,
+		 * 		contenuto_vuoto BLOB
 		 * );
 		 * ---------------------------
 		 * 
@@ -84,7 +87,8 @@ public class TestJDBCAdapter {
 		 * hsql
 		 * CREATE TABLE prova_bytes (
 		 *      descrizione VARCHAR(255) NOT NULL,
-		 * 		contenuto VARBINARY(16777215) NOT NULL
+		 * 		contenuto VARBINARY(16777215) NOT NULL,
+		 * 		contenuto_vuoto VARBINARY(16777215)
 		 * );
 		 * ---------------------------
 		 * 
@@ -92,7 +96,8 @@ public class TestJDBCAdapter {
 		 * sqlserver
 		 * CREATE TABLE prova_bytes (
 		 *      descrizione VARCHAR(255) NOT NULL,
-		 * 		contenuto VARBINARY(MAX) NOT NULL
+		 * 		contenuto VARBINARY(MAX) NOT NULL,
+		 * 		contenuto_vuoto VARBINARY(MAX) 
 		 * );
 		 * ---------------------------
 		 * 
@@ -100,7 +105,8 @@ public class TestJDBCAdapter {
 		 * db2
 		 * CREATE TABLE prova_bytes (
 		 *      descrizione VARCHAR(255) NOT NULL,
-		 * 		contenuto BLOB NOT NULL
+		 * 		contenuto BLOB NOT NULL,
+		 * 		contenuto_vuoto BLOB
 		 * );
 		 * ---------------------------
 		 */
@@ -192,7 +198,12 @@ public class TestJDBCAdapter {
 			
 			testInputStream(con, tipoDatabase, false, false);
 			
-	    }finally{
+	    }
+		catch(Exception e){
+			e.printStackTrace(System.out);
+			throw e;
+		}
+		finally{
 	    	try{
 	    		con.close();
 	    	}catch(Exception eClose){}
@@ -232,10 +243,12 @@ public class TestJDBCAdapter {
 	    	sqlQuery.addInsertTable("prova_bytes");
 	    	sqlQuery.addInsertField("descrizione", "?");
 	    	sqlQuery.addInsertField("contenuto", "?");
+	    	sqlQuery.addInsertField("contenuto_vuoto", "?");
 	    	
 	    	stmtInsert = con.prepareStatement(sqlQuery.createSQLInsert());
 	    	stmtInsert.setString(1, "descrizione di esempio");
 	    	jdbcAdapter.setBinaryData(stmtInsert, 2, data);
+	    	jdbcAdapter.setBinaryData(stmtInsert, 3, null);
 	    	int row = stmtInsert.executeUpdate();
 	    	log.info("Documento PDF inserito: "+row);
 	    	

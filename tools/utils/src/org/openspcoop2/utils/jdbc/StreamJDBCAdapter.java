@@ -91,17 +91,19 @@ public class StreamJDBCAdapter extends AbstractJDBCAdapter {
      */
     @Override
 	public void setBinaryData(PreparedStatement s, int index, byte[] data) throws UtilsException,SQLException{
-    	ByteArrayInputStream bin = null;
-    	try{
-    		if(data!=null)
+    	
+    	if(data!=null && data.length>0){
+	    	ByteArrayInputStream bin = null;
+	    	try{
     			bin = new ByteArrayInputStream(data);
-    		else{
-    			bin = new ByteArrayInputStream("".getBytes());
-    		}
-    	}catch (Exception e) {
-    		throw new UtilsException("StreamJDBCAppender error, set binary parameter [indice:"+index+"]"+e.getMessage());
-    	}	
-    	s.setBinaryStream(index, bin , data.length);
+	    	}catch (Exception e) {
+	    		throw new UtilsException("StreamJDBCAppender error, set binary parameter [indice:"+index+"]"+e.getMessage());
+	    	}	
+	    	s.setBinaryStream(index, bin , data.length);
+    	}
+    	else{
+    		s.setBinaryStream(index, null , 0);
+    	}
     }
     
     
