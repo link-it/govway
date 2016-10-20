@@ -1,3 +1,13 @@
+2016-10-20  Andrea Poli <apoli@link.it>
+
+	* [Utils]
+	Risolto Bug OP-558
+	Durante il salvataggio dei bytes su database SQLServer tramite l'interfaccia org.openspcoop2.utils.jdbc.StreamJDBCAdapter.setBinaryData
+	avveniva il seguente errore errore se veniva fornito un valore null nel contenuto da salvare:
+	java.lang.NullPointerException
+		at org.openspcoop2.utils.jdbc.StreamJDBCAdapter.setBinaryData(StreamJDBCAdapter.java:104)
+	Il problema è stato risolto.
+
 2016-10-19  Andrea Poli <apoli@link.it>
 
 	* [Pdd]
