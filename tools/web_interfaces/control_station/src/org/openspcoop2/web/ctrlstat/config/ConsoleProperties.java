@@ -292,7 +292,7 @@ public class ConsoleProperties {
 						Type[]types = ms[i].getGenericParameterTypes();
 	
 						if(types!=null && types.length==1){
-							if( (types[0].toString().equals("class org.slf4j.Logger")) ){
+							if( (types[0].toString().equals("class org.slf4j.Logger") || types[0].toString().equals("interface org.slf4j.Logger")) ){
 								mFactory = ms[i];
 								break;
 							}
@@ -332,7 +332,7 @@ public class ConsoleProperties {
 						Type[]types = ms[i].getGenericParameterTypes();
 	
 						if(types!=null && types.length==3){
-							if( (types[0].toString().equals("class org.slf4j.Logger")) && 
+							if( (types[0].toString().equals("class org.slf4j.Logger") || types[0].toString().equals("interface org.slf4j.Logger")) && 
 									(types[1].toString().equals("class "+classLicenseValidatorFactory)) && 
 									(types[2].toString().equals("boolean")) ){
 								m = ms[i];
