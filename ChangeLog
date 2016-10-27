@@ -1,3 +1,15 @@
+2016-10-27  Andrea Poli <apoli@link.it>
+
+	* [Pdd, PddConsole]
+	Risolto Bug OP-562
+	Attuati i seguenti miglioramenti agli indici:
+	- Invertito ordine (DESC) di alcuni indici creati su colonne di tipo TIMESTAMP
+	- Aggiunta keyword 'UNIQUE' per gli indici creati su vincoli di univocità
+	- Aggiunti nuovi indici sulle tracce per la ricerca attraverso la correlazione applicativa ed il campo 'gdo'
+	- Aggiunti nuovi indici sui diagnostici per la ricerca attraverso la correlazione applicativa
+	- Aggiunti nuovi indici sulle colonne 'object_id' e 'object_old_id' per l'auditing (e modificato tipo da TEXT a VARCHAR(4000))
+	- Aggiunto nuovo indice solamente sulla colonna 'timereq' delle operazioni registrate
+
 2016-10-20  Andrea Poli <apoli@link.it>
 
 	* [Utils]
