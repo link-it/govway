@@ -42,7 +42,7 @@
                             <linkit:sql-table-index-field name="idmessaggio"/>
                         </linkit:sql-table-index>
                         <linkit:sql-table-index name="MSG_DIAG_GDO">
-                            <linkit:sql-table-index-field name="gdo"/>
+                            <linkit:sql-table-index-field name="gdo" order="DESC" ignoreTypeCompatibility="true"/>
                         </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
@@ -183,11 +183,15 @@
                             <linkit:sql-table-index-field name="delegata"/>
                         </linkit:sql-table-index>
                         <linkit:sql-table-index name="MSG_CORR_GDO">
-                            <linkit:sql-table-index-field name="gdo"/>
+                            <linkit:sql-table-index-field name="gdo" order="DESC" ignoreTypeCompatibility="true"/>
                         </linkit:sql-table-index>
                         <linkit:sql-table-index name="MSG_CORR_APP">
                             <linkit:sql-table-index-field name="id_correlazione_applicativa"/>
                             <linkit:sql-table-index-field name="delegata"/>
+                        </linkit:sql-table-index>
+			<linkit:sql-table-index name="MSG_CORR_APP_RISP">
+                            <linkit:sql-table-index-field name="id_correlazione_risposta"/>
+			    <linkit:sql-table-index-field name="delegata"/>
                         </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>

@@ -254,7 +254,7 @@ CREATE TABLE servizi_pdd
 );
 
 -- index
-CREATE INDEX index_servizi_pdd_1 ON servizi_pdd (componente);
+CREATE UNIQUE INDEX index_servizi_pdd_1 ON servizi_pdd (componente);
 
 
 
@@ -298,6 +298,6 @@ CREATE TABLE pdd_sys_props
 );
 
 -- index
-CREATE INDEX index_pdd_sys_props_1 ON pdd_sys_props (nome,valore);
+CREATE UNIQUE INDEX index_pdd_sys_props_1 ON pdd_sys_props (nome,valore);
 
 

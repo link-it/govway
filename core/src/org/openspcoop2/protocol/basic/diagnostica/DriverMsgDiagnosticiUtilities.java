@@ -83,6 +83,48 @@ public class DriverMsgDiagnosticiUtilities {
 		return sqlQueryObjectDelete;
 	}
 	
+	private static boolean isJoinWithCorrelazione(FiltroRicercaDiagnostici filter, TipoRicercaDiagnostici tipoRicerca){
+		return isJoinWith(filter, tipoRicerca, false);
+	}
+	private static boolean isJoinWithCorrelazioneSA(FiltroRicercaDiagnostici filter, TipoRicercaDiagnostici tipoRicerca){
+		return isJoinWith(filter, tipoRicerca, true);
+	}
+	private static boolean isJoinWith(FiltroRicercaDiagnostici filter, TipoRicercaDiagnostici tipoRicerca, boolean correlazioneSA){
+		
+		boolean joinWithCorrelazioneSA = false;
+		boolean joinWithCorrelazione = false;
+		
+		switch (tipoRicerca) {
+		case MSGDIAGNOSTICI:
+		case COUNT_MSGDIAGNOSTICI:
+		case DELETE_MSGDIAGNOSTICI:
+			joinWithCorrelazioneSA = DriverMsgDiagnosticiUtilities.isDefined(filter.getServizioApplicativo());
+			joinWithCorrelazione = false;
+			joinWithCorrelazione = (DriverMsgDiagnosticiUtilities.isDefined(filter.isDelegata())) || 
+					(DriverMsgDiagnosticiUtilities.isDefined(filter.getNomePorta())) ||
+					(DriverMsgDiagnosticiUtilities.isDefined(filter.getRicercaSoloMessaggiCorrelatiInformazioniProtocollo()) && filter.getRicercaSoloMessaggiCorrelatiInformazioniProtocollo()) ||
+					(DriverMsgDiagnosticiUtilities.isDefined(filter.getInformazioniProtocollo())) ||
+					joinWithCorrelazioneSA ||
+					(DriverMsgDiagnosticiUtilities.isDefined(filter.getCorrelazioneApplicativa())) ||
+					(DriverMsgDiagnosticiUtilities.isDefined(filter.getCorrelazioneApplicativaRisposta())) ||
+					(DriverMsgDiagnosticiUtilities.isDefined(filter.getFiltroSoggetti()));
+			break;
+		case MSGDIAGNOSTICI_CORRELAZIONE:
+		case COUNT_MSGDIAGNOSTICI_CORRELAZIONE:
+		case DELETE_MSGDIAGNOSTICI_CORRELAZIONE:
+			joinWithCorrelazioneSA = true;
+			joinWithCorrelazione = true;
+			break;
+		}
+		
+		if(correlazioneSA){
+			return joinWithCorrelazioneSA;
+		}
+		else{
+			return joinWithCorrelazione;
+		}
+	}
+	
 	private static ISQLQueryObject createSQLQueryObj(FiltroRicercaDiagnostici filter,String tipoDatabase,TipoRicercaDiagnostici tipoRicerca) throws SQLQueryObjectException{
 		
 		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
@@ -116,31 +158,8 @@ public class DriverMsgDiagnosticiUtilities {
 			break;
 		}
 		
-		boolean joinWithCorrelazioneSA = false;
-		boolean joinWithCorrelazione = false;
-		
-		switch (tipoRicerca) {
-		case MSGDIAGNOSTICI:
-		case COUNT_MSGDIAGNOSTICI:
-		case DELETE_MSGDIAGNOSTICI:
-			joinWithCorrelazioneSA = DriverMsgDiagnosticiUtilities.isDefined(filter.getServizioApplicativo());
-			joinWithCorrelazione = false;
-			joinWithCorrelazione = (DriverMsgDiagnosticiUtilities.isDefined(filter.isDelegata())) || 
-					(DriverMsgDiagnosticiUtilities.isDefined(filter.getNomePorta())) ||
-					(DriverMsgDiagnosticiUtilities.isDefined(filter.getRicercaSoloMessaggiCorrelatiInformazioniProtocollo()) && filter.getRicercaSoloMessaggiCorrelatiInformazioniProtocollo()) ||
-					(DriverMsgDiagnosticiUtilities.isDefined(filter.getInformazioniProtocollo())) ||
-					joinWithCorrelazioneSA ||
-					(DriverMsgDiagnosticiUtilities.isDefined(filter.getCorrelazioneApplicativa())) ||
-					(DriverMsgDiagnosticiUtilities.isDefined(filter.getCorrelazioneApplicativaRisposta())) ||
-					(DriverMsgDiagnosticiUtilities.isDefined(filter.getFiltroSoggetti()));
-			break;
-		case MSGDIAGNOSTICI_CORRELAZIONE:
-		case COUNT_MSGDIAGNOSTICI_CORRELAZIONE:
-		case DELETE_MSGDIAGNOSTICI_CORRELAZIONE:
-			joinWithCorrelazioneSA = true;
-			joinWithCorrelazione = true;
-			break;
-		}
+		boolean joinWithCorrelazioneSA = isJoinWithCorrelazioneSA(filter, tipoRicerca);
+		boolean joinWithCorrelazione = isJoinWithCorrelazione(filter, tipoRicerca);
 		
 		
 		//from
@@ -174,6 +193,18 @@ public class DriverMsgDiagnosticiUtilities {
 		//data fine
 		if(DriverMsgDiagnosticiUtilities.isDefined(filter.getDataFine())){
 			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+".gdo<=?");
+		}
+		
+		if(joinWithCorrelazione){
+			// FIX: per utilizzare gli indici. E' necessario filtrare anche sulla colonna gdo della tabella MSG_DIAGNOSTICI_CORRELAZIONE
+			//data inizio
+			if(DriverMsgDiagnosticiUtilities.isDefined(filter.getDataInizio())){
+				sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".gdo>=?");
+			}
+			//data fine
+			if(DriverMsgDiagnosticiUtilities.isDefined(filter.getDataFine())){
+				sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE+".gdo<=?");
+			}
 		}
 		
 		if(DriverMsgDiagnosticiUtilities.isDefined(filter.isDelegata())){
@@ -361,13 +392,27 @@ public class DriverMsgDiagnosticiUtilities {
 	
 	private static final String format = "yyyy-MM-dd_HH:mm:ss.SSS";
 	
-	public static int setValuesSearchMessaggiDiagnostici(FiltroRicercaDiagnostici filter,Object object,int startIndex) throws SQLQueryObjectException, SQLException{
-		return DriverMsgDiagnosticiUtilities.setValuesSearch(filter, object,true,startIndex);
+	public static int setValues_searchMessaggiDiagnostici(FiltroRicercaDiagnostici filter,Object object,int startIndex) throws SQLQueryObjectException, SQLException{
+		return DriverMsgDiagnosticiUtilities.setValuesSearch(filter, object,startIndex, TipoRicercaDiagnostici.MSGDIAGNOSTICI);
 	}
-	public static int setValuesSearchMsgDiagCorrelazione(FiltroRicercaDiagnostici filter,Object object,int startIndex) throws SQLQueryObjectException, SQLException{
-		return DriverMsgDiagnosticiUtilities.setValuesSearch(filter, object, false,startIndex);
+	public static int setValues_countMessaggiDiagnostici(FiltroRicercaDiagnostici filter,Object object,int startIndex) throws SQLQueryObjectException, SQLException{
+		return DriverMsgDiagnosticiUtilities.setValuesSearch(filter, object,startIndex, TipoRicercaDiagnostici.COUNT_MSGDIAGNOSTICI);
 	}
-	private static int setValuesSearch(FiltroRicercaDiagnostici filter,Object object,boolean diagnostici,int startIndex) throws SQLQueryObjectException, SQLException{
+	public static int setValues_deleteMessaggiDiagnostici(FiltroRicercaDiagnostici filter,Object object,int startIndex) throws SQLQueryObjectException, SQLException{
+		return DriverMsgDiagnosticiUtilities.setValuesSearch(filter, object,startIndex, TipoRicercaDiagnostici.DELETE_MSGDIAGNOSTICI);
+	}
+	
+	public static int setValues_searchMsgDiagCorrelazione(FiltroRicercaDiagnostici filter,Object object,int startIndex) throws SQLQueryObjectException, SQLException{
+		return DriverMsgDiagnosticiUtilities.setValuesSearch(filter, object,startIndex, TipoRicercaDiagnostici.MSGDIAGNOSTICI_CORRELAZIONE);
+	}
+	public static int setValues_countMsgDiagCorrelazione(FiltroRicercaDiagnostici filter,Object object,int startIndex) throws SQLQueryObjectException, SQLException{
+		return DriverMsgDiagnosticiUtilities.setValuesSearch(filter, object,startIndex, TipoRicercaDiagnostici.COUNT_MSGDIAGNOSTICI_CORRELAZIONE);
+	}
+	public static int setValues_deleteMsgDiagCorrelazione(FiltroRicercaDiagnostici filter,Object object,int startIndex) throws SQLQueryObjectException, SQLException{
+		return DriverMsgDiagnosticiUtilities.setValuesSearch(filter, object,startIndex, TipoRicercaDiagnostici.DELETE_MSGDIAGNOSTICI_CORRELAZIONE);
+	}
+		
+	private static int setValuesSearch(FiltroRicercaDiagnostici filter,Object object,int startIndex, TipoRicercaDiagnostici tipoRicerca) throws SQLQueryObjectException, SQLException{
 		
 		
 		SimpleDateFormat dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
@@ -402,6 +447,22 @@ public class DriverMsgDiagnosticiUtilities {
 				pstmt.setTimestamp(startIndex++, new Timestamp(filter.getDataFine().getTime()));
 			if(query!=null)
 				query.replaceFirst("\\?","'"+dateformat.format(filter.getDataFine())+"'");
+		}
+		if(isJoinWithCorrelazione(filter, tipoRicerca)){
+			//data inizio
+			if(DriverMsgDiagnosticiUtilities.isDefined(filter.getDataInizio())){
+				if(pstmt!=null)
+					pstmt.setTimestamp(startIndex++, new Timestamp(filter.getDataInizio().getTime()));
+				if(query!=null)
+					query.replaceFirst("\\?","'"+dateformat.format(filter.getDataInizio())+"'");
+			}
+			//data fine
+			if(DriverMsgDiagnosticiUtilities.isDefined(filter.getDataFine())){
+				if(pstmt!=null)
+					pstmt.setTimestamp(startIndex++, new Timestamp(filter.getDataFine().getTime()));
+				if(query!=null)
+					query.replaceFirst("\\?","'"+dateformat.format(filter.getDataFine())+"'");
+			}
 		}
 		
 		if(DriverMsgDiagnosticiUtilities.isDefined(filter.isDelegata())){

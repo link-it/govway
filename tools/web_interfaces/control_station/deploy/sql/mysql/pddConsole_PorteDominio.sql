@@ -37,6 +37,6 @@ CREATE TABLE pdd
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
 
 -- index
-CREATE INDEX index_pdd_1 ON pdd (nome);
+CREATE UNIQUE INDEX index_pdd_1 ON pdd (nome);
 
 

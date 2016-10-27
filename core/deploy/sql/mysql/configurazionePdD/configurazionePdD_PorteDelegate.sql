@@ -88,7 +88,7 @@ CREATE TABLE porte_delegate
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
 
 -- index
-CREATE INDEX index_porte_delegate_1 ON porte_delegate (id_soggetto,nome_porta);
+CREATE UNIQUE INDEX index_porte_delegate_1 ON porte_delegate (id_soggetto,nome_porta);
 
 
 

@@ -1,5 +1,7 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
 -- DROP INDEX audit_filter;
+-- DROP INDEX audit_object_old_id;
+-- DROP INDEX audit_object_id;
 -- DROP INDEX audit_filter_time;
 DROP TRIGGER trg_audit_binaries;
 DROP TRIGGER trg_audit_operations;

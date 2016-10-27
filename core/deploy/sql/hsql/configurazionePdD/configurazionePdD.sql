@@ -300,7 +300,7 @@ CREATE TABLE servizi_pdd
 );
 
 -- index
-CREATE INDEX index_servizi_pdd_1 ON servizi_pdd (componente);
+CREATE UNIQUE INDEX index_servizi_pdd_1 ON servizi_pdd (componente);
 
 ALTER TABLE servizi_pdd ALTER COLUMN stato SET DEFAULT 1;
 
@@ -355,7 +355,7 @@ CREATE TABLE pdd_sys_props
 );
 
 -- index
-CREATE INDEX index_pdd_sys_props_1 ON pdd_sys_props (nome,valore);
+CREATE UNIQUE INDEX index_pdd_sys_props_1 ON pdd_sys_props (nome,valore);
 CREATE TABLE pdd_sys_props_init_seq (id BIGINT);
 INSERT INTO pdd_sys_props_init_seq VALUES (NEXT VALUE FOR seq_pdd_sys_props);
 

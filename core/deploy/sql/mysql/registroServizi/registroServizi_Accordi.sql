@@ -27,7 +27,7 @@ CREATE TABLE documenti
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
 
 -- index
-CREATE INDEX index_documenti_1 ON documenti (ruolo,tipo,nome,id_proprietario,tipo_proprietario);
+CREATE UNIQUE INDEX index_documenti_1 ON documenti (ruolo,tipo,nome,id_proprietario,tipo_proprietario);
 CREATE INDEX INDEX_DOC_SEARCH ON documenti (id_proprietario);
 
 
@@ -73,7 +73,7 @@ CREATE TABLE accordi
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
 
 -- index
-CREATE INDEX index_accordi_1 ON accordi (nome,id_referente,versione);
+CREATE UNIQUE INDEX index_accordi_1 ON accordi (nome,id_referente,versione);
 
 
 
@@ -100,7 +100,7 @@ CREATE TABLE accordi_azioni
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
 
 -- index
-CREATE INDEX index_accordi_azioni_1 ON accordi_azioni (id_accordo,nome);
+CREATE UNIQUE INDEX index_accordi_azioni_1 ON accordi_azioni (id_accordo,nome);
 
 
 
@@ -129,7 +129,7 @@ CREATE TABLE port_type
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
 
 -- index
-CREATE INDEX index_port_type_1 ON port_type (id_accordo,nome);
+CREATE UNIQUE INDEX index_port_type_1 ON port_type (id_accordo,nome);
 
 
 
@@ -168,7 +168,7 @@ CREATE TABLE port_type_azioni
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
 
 -- index
-CREATE INDEX index_port_type_azioni_1 ON port_type_azioni (id_port_type,nome);
+CREATE UNIQUE INDEX index_port_type_azioni_1 ON port_type_azioni (id_port_type,nome);
 
 
 
@@ -220,7 +220,7 @@ CREATE TABLE accordi_cooperazione
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
 
 -- index
-CREATE INDEX index_accordi_cooperazione_1 ON accordi_cooperazione (nome,versione);
+CREATE UNIQUE INDEX index_accordi_cooperazione_1 ON accordi_cooperazione (nome,versione);
 
 
 
@@ -281,7 +281,7 @@ CREATE TABLE servizi
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
 
 -- index
-CREATE INDEX index_servizi_1 ON servizi (nome_servizio,tipo_servizio,id_soggetto);
+CREATE UNIQUE INDEX index_servizi_1 ON servizi (nome_servizio,tipo_servizio,id_soggetto);
 CREATE INDEX INDEX_APS ON servizi (aps_nome,aps_versione,id_soggetto);
 
 
@@ -313,7 +313,7 @@ CREATE TABLE servizi_fruitori
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
 
 -- index
-CREATE INDEX index_servizi_fruitori_1 ON servizi_fruitori (id_servizio,id_soggetto);
+CREATE UNIQUE INDEX index_servizi_fruitori_1 ON servizi_fruitori (id_servizio,id_soggetto);
 
 
 
@@ -333,7 +333,7 @@ CREATE TABLE servizi_azioni
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
 
 -- index
-CREATE INDEX index_servizi_azioni_1 ON servizi_azioni (nome_azione,id_servizio);
+CREATE UNIQUE INDEX index_servizi_azioni_1 ON servizi_azioni (nome_azione,id_servizio);
 
 
 
@@ -354,7 +354,7 @@ CREATE TABLE acc_serv_composti
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
 
 -- index
-CREATE INDEX index_acc_serv_composti_1 ON acc_serv_composti (id_accordo);
+CREATE UNIQUE INDEX index_acc_serv_composti_1 ON acc_serv_composti (id_accordo);
 CREATE INDEX INDEX_AC_SC ON acc_serv_composti (id_accordo_cooperazione);
 
 

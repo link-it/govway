@@ -27,7 +27,7 @@ CREATE TABLE msgdiagnostici
 
 -- index
 CREATE INDEX MSG_DIAG_ID ON msgdiagnostici (idmessaggio);
-CREATE INDEX MSG_DIAG_GDO ON msgdiagnostici (gdo);
+CREATE INDEX MSG_DIAG_GDO ON msgdiagnostici (gdo DESC);
 CREATE TRIGGER trg_msgdiagnostici
 BEFORE
 insert on msgdiagnostici
@@ -78,8 +78,9 @@ CREATE TABLE msgdiag_correlazione
 
 -- index
 CREATE INDEX MSG_CORR_INDEX ON msgdiag_correlazione (idmessaggio,delegata);
-CREATE INDEX MSG_CORR_GDO ON msgdiag_correlazione (gdo);
+CREATE INDEX MSG_CORR_GDO ON msgdiag_correlazione (gdo DESC);
 CREATE INDEX MSG_CORR_APP ON msgdiag_correlazione (id_correlazione_applicativa,delegata);
+CREATE INDEX MSG_CORR_APP_RISP ON msgdiag_correlazione (id_correlazione_risposta,delegata);
 CREATE TRIGGER trg_msgdiag_correlazione
 BEFORE
 insert on msgdiag_correlazione

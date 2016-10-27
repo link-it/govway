@@ -1,11 +1,11 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX index_porte_applicative_1;
 -- DROP INDEX INDEX_PA_WSSRES;
 -- DROP INDEX INDEX_PA_WSSREQ;
 -- DROP INDEX INDEX_PA_MTOMTRES;
 -- DROP INDEX INDEX_PA_MTOMTREQ;
 -- DROP INDEX INDEX_PA_PROP;
 -- DROP INDEX INDEX_PA_SA;
--- DROP INDEX index_porte_applicative_1;
 DROP TABLE pa_correlazione_risposta_init_seq;
 DROP TABLE pa_correlazione_risposta;
 DROP TABLE pa_correlazione_init_seq;

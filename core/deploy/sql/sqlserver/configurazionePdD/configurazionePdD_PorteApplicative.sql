@@ -63,7 +63,7 @@ CREATE TABLE porte_applicative
 );
 
 -- index
-CREATE INDEX index_porte_applicative_1 ON porte_applicative (id_soggetto,nome_porta);
+CREATE UNIQUE INDEX index_porte_applicative_1 ON porte_applicative (id_soggetto,nome_porta);
 
 
 

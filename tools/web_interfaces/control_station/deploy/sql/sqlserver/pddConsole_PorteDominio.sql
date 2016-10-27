@@ -36,6 +36,6 @@ CREATE TABLE pdd
 );
 
 -- index
-CREATE INDEX index_pdd_1 ON pdd (nome);
+CREATE UNIQUE INDEX index_pdd_1 ON pdd (nome);
 
 

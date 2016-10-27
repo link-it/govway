@@ -1,3 +1,8 @@
+2016-10-27  Andrea Poli <apoli@link.it>
+
+        Attuati i seguenti miglioramenti agli indici:
+        - Aggiunta keyword 'UNIQUE' per gli indici creati su vincoli di univocità
+
 2015-02-12  Poli Andrea (poli@link.it)
 
 	Aggiunta colonna 'protocollo_gestione' nella tabella pdd per poter differenziare il protocollo

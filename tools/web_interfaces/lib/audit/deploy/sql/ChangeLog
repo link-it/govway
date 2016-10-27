@@ -1,3 +1,11 @@
+2016-10-27  Andrea Poli <apoli@link.it>
+
+	Modificato il tipo delle colonne 'object_id' e 'object_old_id' rispettivamente da TEXT a VARCHAR(4000).
+        Attuati i seguenti miglioramenti agli indici:
+        - Invertito ordine (DESC) di alcuni indici creati su colonne di tipo TIMESTAMP
+        - Aggiunta keyword 'UNIQUE' per gli indici creati su vincoli di univocità
+        - Aggiunti nuovi indici sulle colonne 'object_id' e 'object_old_id'
+
 2014-12-16  Poli Andrea (poli@link.it)
 
 	Migliori indici su tabella audit_filter:

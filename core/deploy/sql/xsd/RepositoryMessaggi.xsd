@@ -47,7 +47,7 @@
                             <linkit:sql-table-pk-field name="tipo"/>
                         </linkit:sql-table-primary-key>
                         <linkit:sql-table-index name="MESSAGGI_SEARCH">
-                            <linkit:sql-table-index-field name="ora_registrazione"/>
+                            <linkit:sql-table-index-field name="ora_registrazione" ignoreTypeCompatibility="true"/>
                             <linkit:sql-table-index-field name="riferimento_msg"/>
                             <linkit:sql-table-index-field name="tipo"/>
                             <linkit:sql-table-index-field name="proprietario"/>
@@ -563,10 +563,10 @@
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="CORRELAZIONE_APPLICATIVA" sequence-cycle="true"> 
                         <linkit:sql-table-index name="CORR_APPL_SCADUTE">
-                            <linkit:sql-table-index-field name="scadenza"/>
+                            <linkit:sql-table-index-field name="scadenza" ignoreTypeCompatibility="true"/>
                         </linkit:sql-table-index>
                         <linkit:sql-table-index name="CORR_APPL_OLD">
-                            <linkit:sql-table-index-field name="ora_registrazione"/>
+                            <linkit:sql-table-index-field name="ora_registrazione" ignoreTypeCompatibility="true"/>
                         </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>

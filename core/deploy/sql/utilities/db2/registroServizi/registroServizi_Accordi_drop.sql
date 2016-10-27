@@ -1,20 +1,20 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
--- DROP INDEX INDEX_AC_SC_SC;
--- DROP INDEX INDEX_AC_SC;
 -- DROP INDEX index_acc_serv_composti_1;
 -- DROP INDEX index_servizi_azioni_1;
 -- DROP INDEX index_servizi_fruitori_1;
--- DROP INDEX INDEX_APS;
 -- DROP INDEX index_servizi_1;
--- DROP INDEX INDEX_AC_COOP_PAR;
 -- DROP INDEX index_accordi_cooperazione_1;
--- DROP INDEX INDEX_OP_MESSAGES;
 -- DROP INDEX index_port_type_azioni_1;
 -- DROP INDEX index_port_type_1;
 -- DROP INDEX index_accordi_azioni_1;
 -- DROP INDEX index_accordi_1;
--- DROP INDEX INDEX_DOC_SEARCH;
 -- DROP INDEX index_documenti_1;
+-- DROP INDEX INDEX_AC_SC_SC;
+-- DROP INDEX INDEX_AC_SC;
+-- DROP INDEX INDEX_APS;
+-- DROP INDEX INDEX_AC_COOP_PAR;
+-- DROP INDEX INDEX_OP_MESSAGES;
+-- DROP INDEX INDEX_DOC_SEARCH;
 DROP TABLE acc_serv_componenti;
 DROP TABLE acc_serv_composti;
 DROP TABLE servizi_azioni;

@@ -31,8 +31,8 @@ CREATE TABLE soggetti
 );
 
 -- index
-CREATE INDEX index_soggetti_1 ON soggetti (nome_soggetto,tipo_soggetto);
-CREATE INDEX index_soggetti_2 ON soggetti (codice_ipa);
+CREATE UNIQUE INDEX index_soggetti_1 ON soggetti (nome_soggetto,tipo_soggetto);
+CREATE UNIQUE INDEX index_soggetti_2 ON soggetti (codice_ipa);
 
 ALTER TABLE soggetti ALTER COLUMN is_router SET DEFAULT 0;
 ALTER TABLE soggetti ALTER COLUMN privato SET DEFAULT 0;

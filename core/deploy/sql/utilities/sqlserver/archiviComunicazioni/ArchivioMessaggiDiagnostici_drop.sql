@@ -1,4 +1,5 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX MSG_CORR_APP_RISP ON msgdiag_correlazione ;
 -- DROP INDEX MSG_CORR_APP ON msgdiag_correlazione ;
 -- DROP INDEX MSG_CORR_GDO ON msgdiag_correlazione ;
 -- DROP INDEX MSG_CORR_INDEX ON msgdiag_correlazione ;

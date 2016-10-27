@@ -1,2 +1,9 @@
-2012-04-11      Andrea Poli <apoli@link.it>
+2016-10-27  Andrea Poli <apoli@link.it>
+
+        Attuati i seguenti miglioramenti agli indici:
+        - Invertito ordine (DESC) di alcuni indici creati su colonne di tipo TIMESTAMP
+	- Aggiunto ulteriore indice solamente sulla colonna 'timereq' delle operazioni registrate
+
+2012-04-11  Andrea Poli <apoli@link.it>
+
         Creato file ChangeLog per l'sql

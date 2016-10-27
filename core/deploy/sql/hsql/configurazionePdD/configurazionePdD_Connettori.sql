@@ -40,7 +40,7 @@ CREATE TABLE connettori
 );
 
 -- index
-CREATE INDEX index_connettori_1 ON connettori (nome_connettore);
+CREATE UNIQUE INDEX index_connettori_1 ON connettori (nome_connettore);
 
 ALTER TABLE connettori ALTER COLUMN debug SET DEFAULT 0;
 ALTER TABLE connettori ALTER COLUMN custom SET DEFAULT 0;
@@ -88,7 +88,7 @@ CREATE TABLE connettori_properties
 );
 
 -- index
-CREATE INDEX index_connettori_properties_1 ON connettori_properties (nome_connettore);
+CREATE UNIQUE INDEX index_connettori_properties_1 ON connettori_properties (nome_connettore);
 CREATE TABLE connettori_properties_init_seq (id BIGINT);
 INSERT INTO connettori_properties_init_seq VALUES (NEXT VALUE FOR seq_connettori_properties);
 

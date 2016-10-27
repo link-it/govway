@@ -65,6 +65,9 @@ CREATE INDEX TRACCE_SEARCH_ID ON tracce (id_messaggio,pdd_codice);
 CREATE INDEX TRACCE_SEARCH_RIF ON tracce (rif_messaggio,pdd_codice);
 CREATE INDEX TRACCE_SEARCH_ID_SOGGETTO ON tracce (id_messaggio,pdd_tipo_soggetto,pdd_nome_soggetto);
 CREATE INDEX TRACCE_SEARCH_RIF_SOGGETTO ON tracce (rif_messaggio,pdd_tipo_soggetto,pdd_nome_soggetto);
+CREATE INDEX TRACCE_SEARCH_ID_APPL ON tracce (correlazione_applicativa);
+CREATE INDEX TRACCE_SEARCH_ID_APPL_RISP ON tracce (correlazione_risposta);
+CREATE INDEX TRACCE_SEARCH_GDO ON tracce (gdo DESC);
 
 ALTER TABLE tracce MODIFY is_arrived DEFAULT 0;
 

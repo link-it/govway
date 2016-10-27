@@ -21,6 +21,6 @@ CREATE TABLE soggetti
 );
 
 -- index
-CREATE INDEX index_soggetti_1 ON soggetti (nome_soggetto,tipo_soggetto);
+CREATE UNIQUE INDEX index_soggetti_1 ON soggetti (nome_soggetto,tipo_soggetto);
 
 

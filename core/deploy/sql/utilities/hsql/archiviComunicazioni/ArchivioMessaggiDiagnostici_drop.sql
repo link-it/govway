@@ -1,4 +1,5 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX MSG_CORR_APP_RISP;
 -- DROP INDEX MSG_CORR_APP;
 -- DROP INDEX MSG_CORR_GDO;
 -- DROP INDEX MSG_CORR_INDEX;

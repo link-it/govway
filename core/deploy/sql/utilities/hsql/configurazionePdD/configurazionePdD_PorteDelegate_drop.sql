@@ -1,10 +1,10 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX index_porte_delegate_1;
 -- DROP INDEX INDEX_PD_WSSRES;
 -- DROP INDEX INDEX_PD_WSSREQ;
 -- DROP INDEX INDEX_PD_MTOMTRES;
 -- DROP INDEX INDEX_PD_MTOMTREQ;
 -- DROP INDEX INDEX_PD_SA;
--- DROP INDEX index_porte_delegate_1;
 DROP TABLE pd_correlazione_risposta_init_seq;
 DROP TABLE pd_correlazione_risposta;
 DROP TABLE pd_correlazione_init_seq;

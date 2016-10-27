@@ -28,7 +28,7 @@ CREATE TABLE documenti
 );
 
 -- index
-CREATE INDEX index_documenti_1 ON documenti (ruolo,tipo,nome,id_proprietario,tipo_proprietario);
+CREATE UNIQUE INDEX index_documenti_1 ON documenti (ruolo,tipo,nome,id_proprietario,tipo_proprietario);
 CREATE INDEX INDEX_DOC_SEARCH ON documenti (id_proprietario);
 
 ALTER TABLE documenti ALTER COLUMN ora_registrazione SET DEFAULT CURRENT_TIMESTAMP;
@@ -80,7 +80,7 @@ CREATE TABLE accordi
 );
 
 -- index
-CREATE INDEX index_accordi_1 ON accordi (nome,id_referente,versione);
+CREATE UNIQUE INDEX index_accordi_1 ON accordi (nome,id_referente,versione);
 
 ALTER TABLE accordi ALTER COLUMN id_referente SET DEFAULT 0;
 ALTER TABLE accordi ALTER COLUMN versione SET DEFAULT '';
@@ -119,7 +119,7 @@ CREATE TABLE accordi_azioni
 );
 
 -- index
-CREATE INDEX index_accordi_azioni_1 ON accordi_azioni (id_accordo,nome);
+CREATE UNIQUE INDEX index_accordi_azioni_1 ON accordi_azioni (id_accordo,nome);
 CREATE TABLE accordi_azioni_init_seq (id BIGINT);
 INSERT INTO accordi_azioni_init_seq VALUES (NEXT VALUE FOR seq_accordi_azioni);
 
@@ -152,7 +152,7 @@ CREATE TABLE port_type
 );
 
 -- index
-CREATE INDEX index_port_type_1 ON port_type (id_accordo,nome);
+CREATE UNIQUE INDEX index_port_type_1 ON port_type (id_accordo,nome);
 CREATE TABLE port_type_init_seq (id BIGINT);
 INSERT INTO port_type_init_seq VALUES (NEXT VALUE FOR seq_port_type);
 
@@ -195,7 +195,7 @@ CREATE TABLE port_type_azioni
 );
 
 -- index
-CREATE INDEX index_port_type_azioni_1 ON port_type_azioni (id_port_type,nome);
+CREATE UNIQUE INDEX index_port_type_azioni_1 ON port_type_azioni (id_port_type,nome);
 CREATE TABLE port_type_azioni_init_seq (id BIGINT);
 INSERT INTO port_type_azioni_init_seq VALUES (NEXT VALUE FOR seq_port_type_azioni);
 
@@ -257,7 +257,7 @@ CREATE TABLE accordi_cooperazione
 );
 
 -- index
-CREATE INDEX index_accordi_cooperazione_1 ON accordi_cooperazione (nome,versione);
+CREATE UNIQUE INDEX index_accordi_cooperazione_1 ON accordi_cooperazione (nome,versione);
 
 ALTER TABLE accordi_cooperazione ALTER COLUMN id_referente SET DEFAULT 0;
 ALTER TABLE accordi_cooperazione ALTER COLUMN versione SET DEFAULT '';
@@ -332,7 +332,7 @@ CREATE TABLE servizi
 );
 
 -- index
-CREATE INDEX index_servizi_1 ON servizi (nome_servizio,tipo_servizio,id_soggetto);
+CREATE UNIQUE INDEX index_servizi_1 ON servizi (nome_servizio,tipo_servizio,id_soggetto);
 CREATE INDEX INDEX_APS ON servizi (aps_nome,aps_versione,id_soggetto);
 
 ALTER TABLE servizi ALTER COLUMN privato SET DEFAULT 0;
@@ -372,7 +372,7 @@ CREATE TABLE servizi_fruitori
 );
 
 -- index
-CREATE INDEX index_servizi_fruitori_1 ON servizi_fruitori (id_servizio,id_soggetto);
+CREATE UNIQUE INDEX index_servizi_fruitori_1 ON servizi_fruitori (id_servizio,id_soggetto);
 
 ALTER TABLE servizi_fruitori ALTER COLUMN ora_registrazione SET DEFAULT CURRENT_TIMESTAMP;
 ALTER TABLE servizi_fruitori ALTER COLUMN stato SET DEFAULT 'finale';
@@ -400,7 +400,7 @@ CREATE TABLE servizi_azioni
 );
 
 -- index
-CREATE INDEX index_servizi_azioni_1 ON servizi_azioni (nome_azione,id_servizio);
+CREATE UNIQUE INDEX index_servizi_azioni_1 ON servizi_azioni (nome_azione,id_servizio);
 CREATE TABLE servizi_azioni_init_seq (id BIGINT);
 INSERT INTO servizi_azioni_init_seq VALUES (NEXT VALUE FOR seq_servizi_azioni);
 
@@ -425,7 +425,7 @@ CREATE TABLE acc_serv_composti
 );
 
 -- index
-CREATE INDEX index_acc_serv_composti_1 ON acc_serv_composti (id_accordo);
+CREATE UNIQUE INDEX index_acc_serv_composti_1 ON acc_serv_composti (id_accordo);
 CREATE INDEX INDEX_AC_SC ON acc_serv_composti (id_accordo_cooperazione);
 CREATE TABLE acc_serv_composti_init_seq (id BIGINT);
 INSERT INTO acc_serv_composti_init_seq VALUES (NEXT VALUE FOR seq_acc_serv_composti);

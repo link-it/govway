@@ -60,6 +60,15 @@
                             <linkit:sql-table-index-field name="pdd_tipo_soggetto"/>
                             <linkit:sql-table-index-field name="pdd_nome_soggetto"/>
                         </linkit:sql-table-index>
+                        <linkit:sql-table-index name="TRACCE_SEARCH_ID_APPL">
+                            <linkit:sql-table-index-field name="correlazione_applicativa"/>
+                        </linkit:sql-table-index>
+                        <linkit:sql-table-index name="TRACCE_SEARCH_ID_APPL_RISP">
+                            <linkit:sql-table-index-field name="correlazione_risposta"/>
+                        </linkit:sql-table-index>
+                        <linkit:sql-table-index name="TRACCE_SEARCH_GDO">
+                            <linkit:sql-table-index-field name="gdo" order="DESC" ignoreTypeCompatibility="true"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>

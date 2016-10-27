@@ -46,7 +46,10 @@
                             <linkit:sql-table-index-column name="id"/>
                             <linkit:sql-table-index-field name="deleted"/>
                             <linkit:sql-table-index-field name="hostname"/>
-                            <linkit:sql-table-index-field name="timereq"/>
+                            <linkit:sql-table-index-field name="timereq" order="DESC" ignoreTypeCompatibility="true"/>
+                        </linkit:sql-table-index>
+                        <linkit:sql-table-index name="operations_gdo">
+                            <linkit:sql-table-index-field name="timereq" order="DESC" ignoreTypeCompatibility="true"/>
                         </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>

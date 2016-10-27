@@ -60,6 +60,6 @@ CREATE TABLE servizi_applicativi
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
 
 -- index
-CREATE INDEX index_servizi_applicativi_1 ON servizi_applicativi (nome,id_soggetto);
+CREATE UNIQUE INDEX index_servizi_applicativi_1 ON servizi_applicativi (nome,id_soggetto);
 
 

@@ -39,15 +39,19 @@
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="audit_operations" sequence-cycle="true">
-			<linkit:sql-table-index name="audit_filter_time">
-			    <linkit:sql-table-index-field name="time_request"/>
-			</linkit:sql-table-index>
+                        <linkit:sql-table-index name="audit_filter_time">
+                            <linkit:sql-table-index-field name="time_request" order="DESC" ignoreTypeCompatibility="true"/>
+                        </linkit:sql-table-index>
+                        <linkit:sql-table-index name="audit_object_id">
+                            <linkit:sql-table-index-field name="object_id"/>
+                        </linkit:sql-table-index>
+                        <linkit:sql-table-index name="audit_object_old_id">
+                            <linkit:sql-table-index-field name="object_old_id"/>
+                        </linkit:sql-table-index>
                         <linkit:sql-table-index name="audit_filter">
                             <linkit:sql-table-index-field name="tipo_operazione"/>
                             <linkit:sql-table-index-field name="tipo"/>
-                            <!-- L'indice su una colonna 'text' non e' permesso in tutti i database 
-				<linkit:sql-table-index-field name="object_id"/> 
-			    -->
+                            <linkit:sql-table-index-field name="object_id"/>
                             <linkit:sql-table-index-field name="utente"/>
                             <linkit:sql-table-index-field name="stato"/>
                         </linkit:sql-table-index>
@@ -78,23 +82,23 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="object_id" type="xsd:string" minOccurs="0">
+                <xsd:element name="object_id" type="string-max-4000" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="object_id" text="true"/>
+                                <linkit:sql-column-mapping name="object_id" />
                                 <linkit:sql-column-comment><![CDATA[non definito in caso di LOGIN/LOGOUT]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="object_old_id" type="xsd:string" minOccurs="0">
+                <xsd:element name="object_old_id" type="string-max-4000" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="object_old_id" text="true"/>
+                                <linkit:sql-column-mapping name="object_old_id" />
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -260,6 +264,15 @@ non definito in caso di LOGIN/LOGOUT]]></linkit:sql-column-comment>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+
+
+
+    <!-- Vincoli per riuscire ad utilizzare indici -->
+    <xsd:simpleType name="string-max-4000">
+        <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="4000" />
+        </xsd:restriction>
+    </xsd:simpleType>
 
 
 </xsd:schema>

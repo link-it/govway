@@ -21,7 +21,8 @@ CREATE TABLE operations
 
 -- index
 CREATE INDEX operations_superuser ON operations (superuser);
-CREATE INDEX operations_precedenti ON operations (id,deleted,hostname,timereq);
+CREATE INDEX operations_precedenti ON operations (id,deleted,hostname,timereq DESC);
+CREATE INDEX operations_gdo ON operations (timereq DESC);
 
 ALTER TABLE operations ALTER COLUMN deleted SET DEFAULT 0;
 

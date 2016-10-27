@@ -54,14 +54,14 @@
                             <linkit:sql-table-pk-field name="tipo"/>
                         </linkit:sql-table-primary-key>
                         <linkit:sql-table-index name="REP_BUSTE_SEARCH">
-                            <linkit:sql-table-index-field name="scadenza_busta"/>
+                            <linkit:sql-table-index-field name="scadenza_busta" ignoreTypeCompatibility="true"/>
                             <linkit:sql-table-index-field name="tipo"/>
                             <linkit:sql-table-index-field name="history"/>
                             <linkit:sql-table-index-field name="profilo"/>
                             <linkit:sql-table-index-field name="pdd"/>
                         </linkit:sql-table-index>
                         <linkit:sql-table-index name="REP_BUSTE_SEARCH_RA">
-                            <linkit:sql-table-index-field name="scadenza_busta"/>
+                            <linkit:sql-table-index-field name="scadenza_busta" ignoreTypeCompatibility="true"/>
                             <linkit:sql-table-index-field name="tipo"/>
                             <linkit:sql-table-index-field name="repository_access"/>
                         </linkit:sql-table-index>
@@ -808,7 +808,7 @@
                             <linkit:sql-table-pk-field name="id_messaggio"/>
                         </linkit:sql-table-primary-key>
                         <linkit:sql-table-index name="RISCONTRI_NON_RICEVUTI">
-                            <linkit:sql-table-index-field name="data_invio"/>
+                            <linkit:sql-table-index-field name="data_invio" ignoreTypeCompatibility="true"/>
                         </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
@@ -1091,7 +1091,7 @@
                             <linkit:sql-table-index-field name="ricevuta_asincrona"/>
                         </linkit:sql-table-index>
                         <linkit:sql-table-index name="ASINCRONO_NON_RICEVUTE">
-                            <linkit:sql-table-index-field name="ora_registrazione"/>
+                            <linkit:sql-table-index-field name="ora_registrazione" ignoreTypeCompatibility="true"/>
                             <linkit:sql-table-index-field name="tipo"/>
                             <linkit:sql-table-index-field name="ricevuta_asincrona"/>
                             <linkit:sql-table-index-field name="ricevuta_applicativa"/>

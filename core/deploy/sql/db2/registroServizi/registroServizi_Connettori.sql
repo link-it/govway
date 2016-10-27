@@ -38,7 +38,7 @@ CREATE TABLE connettori
 );
 
 -- index
-CREATE INDEX index_connettori_1 ON connettori (nome_connettore);
+CREATE UNIQUE INDEX index_connettori_1 ON connettori (nome_connettore);
 
 
 
@@ -74,6 +74,6 @@ CREATE TABLE connettori_properties
 );
 
 -- index
-CREATE INDEX index_connettori_properties_1 ON connettori_properties (nome_connettore);
+CREATE UNIQUE INDEX index_connettori_properties_1 ON connettori_properties (nome_connettore);
 
 

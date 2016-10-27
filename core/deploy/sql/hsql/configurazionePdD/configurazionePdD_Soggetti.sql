@@ -23,7 +23,7 @@ CREATE TABLE soggetti
 );
 
 -- index
-CREATE INDEX index_soggetti_1 ON soggetti (nome_soggetto,tipo_soggetto);
+CREATE UNIQUE INDEX index_soggetti_1 ON soggetti (nome_soggetto,tipo_soggetto);
 
 ALTER TABLE soggetti ALTER COLUMN is_router SET DEFAULT 0;
 ALTER TABLE soggetti ALTER COLUMN ora_registrazione SET DEFAULT CURRENT_TIMESTAMP;

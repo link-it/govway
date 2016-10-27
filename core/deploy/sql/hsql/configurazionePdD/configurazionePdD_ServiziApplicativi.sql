@@ -61,7 +61,7 @@ CREATE TABLE servizi_applicativi
 );
 
 -- index
-CREATE INDEX index_servizi_applicativi_1 ON servizi_applicativi (nome,id_soggetto);
+CREATE UNIQUE INDEX index_servizi_applicativi_1 ON servizi_applicativi (nome,id_soggetto);
 
 ALTER TABLE servizi_applicativi ALTER COLUMN sbustamentorisp SET DEFAULT 0;
 ALTER TABLE servizi_applicativi ALTER COLUMN sbustamento_protocol_info_risp SET DEFAULT 1;

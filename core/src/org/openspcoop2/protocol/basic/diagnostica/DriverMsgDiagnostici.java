@@ -304,12 +304,12 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 			sqlObj = DriverMsgDiagnosticiUtilities.createSQLQueryObj_countMessaggiDiagnostici(filtro, this.tipoDatabase);
 			
 			StringWrapper sqlDebug = new StringWrapper(sqlObj.createSQLQuery());
-			DriverMsgDiagnosticiUtilities.setValuesSearchMessaggiDiagnostici(filtro, sqlDebug, 1);
+			DriverMsgDiagnosticiUtilities.setValues_countMessaggiDiagnostici(filtro, sqlDebug, 1);
 			this.log.debug("Query : "+sqlDebug);
 			
 			String sql = sqlObj.createSQLQuery();
 			stmt=con.prepareStatement(sql);
-			DriverMsgDiagnosticiUtilities.setValuesSearchMessaggiDiagnostici(filtro, stmt, 1);
+			DriverMsgDiagnosticiUtilities.setValues_countMessaggiDiagnostici(filtro, stmt, 1);
 
 			rs=stmt.executeQuery();
 			if(rs.next()){
@@ -375,12 +375,12 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 			sqlObj = DriverMsgDiagnosticiUtilities.createSQLQueryObj_searchMessaggiDiagnostici(filtro, this.tipoDatabase);
 			
 			StringWrapper sqlDebug = new StringWrapper(sqlObj.createSQLQuery());
-			DriverMsgDiagnosticiUtilities.setValuesSearchMessaggiDiagnostici(filtro, sqlDebug, 1);
+			DriverMsgDiagnosticiUtilities.setValues_searchMessaggiDiagnostici(filtro, sqlDebug, 1);
 			this.log.debug("Query : "+sqlDebug);
 			
 			String sql = sqlObj.createSQLQuery();
 			stmt=con.prepareStatement(sql);
-			DriverMsgDiagnosticiUtilities.setValuesSearchMessaggiDiagnostici(filtro, stmt, 1);
+			DriverMsgDiagnosticiUtilities.setValues_searchMessaggiDiagnostici(filtro, stmt, 1);
 
 			rs=stmt.executeQuery();
 			while(rs.next()){
@@ -453,12 +453,12 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 			sqlObj = DriverMsgDiagnosticiUtilities.createSQLQueryObj_deleteMessaggiDiagnostici(filter, this.tipoDatabase);
 			
 			StringWrapper sqlDebug = new StringWrapper(sqlObj.createSQLDelete());
-			DriverMsgDiagnosticiUtilities.setValuesSearchMessaggiDiagnostici(filter, sqlDebug, 1);
+			DriverMsgDiagnosticiUtilities.setValues_deleteMessaggiDiagnostici(filter, sqlDebug, 1);
 			this.log.debug("Query : "+sqlDebug);
 			
 			String sql = sqlObj.createSQLDelete();
 			stmt=con.prepareStatement(sql);
-			DriverMsgDiagnosticiUtilities.setValuesSearchMessaggiDiagnostici(filter, stmt, 1);
+			DriverMsgDiagnosticiUtilities.setValues_deleteMessaggiDiagnostici(filter, stmt, 1);
 			
 			deleted = stmt.executeUpdate();		
 			
@@ -522,12 +522,12 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 			sqlObj = DriverMsgDiagnosticiUtilities.createSQLQueryObj_countMsgDiagCorrelazione(filtro, this.tipoDatabase);
 		
 			StringWrapper sqlDebug = new StringWrapper(sqlObj.createSQLQuery());
-			DriverMsgDiagnosticiUtilities.setValuesSearchMsgDiagCorrelazione(filtro, sqlDebug, 1);
+			DriverMsgDiagnosticiUtilities.setValues_countMsgDiagCorrelazione(filtro, sqlDebug, 1);
 			this.log.debug("Query : "+sqlDebug);
 			
 			String sql = sqlObj.createSQLQuery();
 			stmt=con.prepareStatement(sql);
-			DriverMsgDiagnosticiUtilities.setValuesSearchMsgDiagCorrelazione(filtro, stmt, 1);
+			DriverMsgDiagnosticiUtilities.setValues_countMsgDiagCorrelazione(filtro, stmt, 1);
 
 			rs=stmt.executeQuery();
 			if(rs.next()){
@@ -593,12 +593,12 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 			sqlObj = DriverMsgDiagnosticiUtilities.createSQLQueryObj_searchMsgDiagCorrelazione(filtro, this.tipoDatabase);
 			
 			StringWrapper sqlDebug = new StringWrapper(sqlObj.createSQLQuery());
-			DriverMsgDiagnosticiUtilities.setValuesSearchMsgDiagCorrelazione(filtro, sqlDebug, 1);
+			DriverMsgDiagnosticiUtilities.setValues_searchMsgDiagCorrelazione(filtro, sqlDebug, 1);
 			this.log.debug("Query : "+sqlDebug);
 			
 			String sql = sqlObj.createSQLQuery();
 			stmt=con.prepareStatement(sql);
-			DriverMsgDiagnosticiUtilities.setValuesSearchMsgDiagCorrelazione(filtro, stmt, 1);
+			DriverMsgDiagnosticiUtilities.setValues_searchMsgDiagCorrelazione(filtro, stmt, 1);
 
 			rs=stmt.executeQuery();
 			while(rs.next()){
@@ -672,12 +672,12 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 			sqlObj = DriverMsgDiagnosticiUtilities.createSQLQueryObj_deleteMsgDiagCorrelazione(filter, this.tipoDatabase);
 			
 			StringWrapper sqlDebug = new StringWrapper(sqlObj.createSQLDelete());
-			DriverMsgDiagnosticiUtilities.setValuesSearchMsgDiagCorrelazione(filter, sqlDebug, 1);
+			DriverMsgDiagnosticiUtilities.setValues_deleteMsgDiagCorrelazione(filter, sqlDebug, 1);
 			this.log.debug("Query : "+sqlDebug);
 			
 			String sql = sqlObj.createSQLDelete();
 			stmt=con.prepareStatement(sql);
-			DriverMsgDiagnosticiUtilities.setValuesSearchMsgDiagCorrelazione(filter, stmt, 1);
+			DriverMsgDiagnosticiUtilities.setValues_deleteMsgDiagCorrelazione(filter, stmt, 1);
 			deleted = stmt.executeUpdate();		
 			
 			stmt.close();

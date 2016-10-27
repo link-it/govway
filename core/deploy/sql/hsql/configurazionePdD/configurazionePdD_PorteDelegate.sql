@@ -89,7 +89,7 @@ CREATE TABLE porte_delegate
 );
 
 -- index
-CREATE INDEX index_porte_delegate_1 ON porte_delegate (id_soggetto,nome_porta);
+CREATE UNIQUE INDEX index_porte_delegate_1 ON porte_delegate (id_soggetto,nome_porta);
 
 ALTER TABLE porte_delegate ALTER COLUMN ora_registrazione SET DEFAULT CURRENT_TIMESTAMP;
 
