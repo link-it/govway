@@ -339,9 +339,17 @@ public class MessageSecurityReceiver_soapbox implements IMessageSecurityReceiver
 				innerMsg = innerExc.getMessage();
 			}
 			
-			String messaggio = new String(msg);
-			if(innerMsg!=null && !innerMsg.equals(msg)){
-				messaggio = messaggio + " ; " + innerMsg;
+			String messaggio = null;
+			if(msg!=null){
+				messaggio = new String(msg);
+				if(innerMsg!=null && !innerMsg.equals(msg)){
+					messaggio = messaggio + " ; " + innerMsg;
+				}
+			}
+			else{
+				if(innerMsg!=null){
+					messaggio = innerMsg;
+				}
 			}
 			
 			wssException.setMsgErrore(messaggio);
@@ -456,9 +464,10 @@ public class MessageSecurityReceiver_soapbox implements IMessageSecurityReceiver
 	@Override
 	public void cleanDirtyElements(
 			org.openspcoop2.security.message.MessageSecurityContext messageSecurityContext,
-			OpenSPCoop2Message message, List<Reference> elementsToClean)
+			OpenSPCoop2Message message, List<Reference> elementsToClean,
+			boolean detachHeaderWSSecurity)
 			throws SecurityException {
-		WSSUtilities.cleanDirtyElements(messageSecurityContext, message, elementsToClean);
+		WSSUtilities.cleanDirtyElements(messageSecurityContext, message, elementsToClean, detachHeaderWSSecurity);
 		
 	}
 

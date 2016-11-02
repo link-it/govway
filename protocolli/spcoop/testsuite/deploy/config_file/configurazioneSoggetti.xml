@@ -1516,6 +1516,337 @@
         </porta-delegata>
         
         
+
+        <!-- Funzionalita' SAML 2.0 -->
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSaml20Unsigned" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20Unsigned" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="/etc/openspcoop2/properties/saml20Unsigned.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSaml20Signed" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20Signed" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="/etc/openspcoop2/properties/saml20Signed.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSaml20SignedP12" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20SignedP12" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="/etc/openspcoop2/properties/saml20SignedP12.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+ 	<porta-delegata gestione-manifest="abilitato" nome="WSSSaml20SignedSendKey" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20SignedSendKey" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="/etc/openspcoop2/properties/saml20SignedSendKey.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSaml20SignedP12SendKey" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20SignedP12SendKey" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="/etc/openspcoop2/properties/saml20SignedP12SendKey.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+	<porta-delegata gestione-manifest="abilitato" nome="WSSSaml20SignedHolderOfKey" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20SignedHolderOfKey" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="/etc/openspcoop2/properties/saml20SignedHolderOfKey.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSaml20SignedHolderOfKeyP12" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20SignedHolderOfKeyP12" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="/etc/openspcoop2/properties/saml20SignedHolderOfKeyP12.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+	<porta-delegata gestione-manifest="abilitato" nome="WSSSaml20OnlySubject" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20OnlySubject" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="/etc/openspcoop2/properties/saml20UnsignedOnlySubject.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSaml20OnlyAuthn" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20OnlyAuthn" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="/etc/openspcoop2/properties/saml20UnsignedOnlyAuthn.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+	<porta-delegata gestione-manifest="abilitato" nome="WSSSaml20OnlyAuthz" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20OnlyAuthz" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="/etc/openspcoop2/properties/saml20UnsignedOnlyAuthz.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+	<porta-delegata gestione-manifest="abilitato" nome="WSSSaml20SignedDetachWSSDisable" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20SignedDetachWSSDisable" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="/etc/openspcoop2/properties/saml20Signed.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+		<!-- Il servizio echo ritornerà esattamente la stessa assertion firmata prodotta nella fase di richiesta, 
+			nella PA detachHeaderWSSecurity=false -->
+                <response-flow> 
+                    <parameter nome="action" valore="SAMLTokenSigned" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="detachHeaderWSSecurity" valore="true"/> <!-- Stavolta lo ripulisco -->
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+
+
+	<!-- Funzionalita' SAML 1.1 -->
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSaml11Unsigned" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11Unsigned" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="saml11Unsigned.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSaml11Signed" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11Signed" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="saml11Signed.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSaml11SignedP12" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11SignedP12" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="saml11SignedP12.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+ 	<porta-delegata gestione-manifest="abilitato" nome="WSSSaml11SignedSendKey" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11SignedSendKey" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="saml11SignedSendKey.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSaml11SignedP12SendKey" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11SignedP12SendKey" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="saml11SignedP12SendKey.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+	<porta-delegata gestione-manifest="abilitato" nome="WSSSaml11SignedHolderOfKey" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11SignedHolderOfKey" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="saml11SignedHolderOfKey.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSaml11SignedHolderOfKeyP12" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11SignedHolderOfKeyP12" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="saml11SignedHolderOfKeyP12.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSaml11OnlySubject" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11OnlySubject" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="saml11UnsignedOnlySubject.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSaml11OnlyAuthn" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11OnlyAuthn" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="saml11UnsignedOnlyAuthn.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+	<porta-delegata gestione-manifest="abilitato" nome="WSSSaml11OnlyAuthz" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11OnlyAuthz" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="saml11UnsignedOnlyAuthz.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+	<porta-delegata gestione-manifest="abilitato" nome="WSSSaml11SignedDetachWSSDisable" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11SignedDetachWSSDisable" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="saml11Signed.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+		<!-- Il servizio echo ritornerà esattamente la stessa assertion firmata prodotta nella fase di richiesta, 
+			nella PA detachHeaderWSSecurity=false -->
+                <response-flow> 
+                    <parameter nome="action" valore="SAMLTokenSigned" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="detachHeaderWSSecurity" valore="true"/> <!-- Stavolta lo ripulisco -->
+                </response-flow>
+            </message-security>
+        </porta-delegata>
         
         
         
@@ -4393,6 +4724,298 @@
         
         
         
+
+
+
+
+
+	<!-- Funzionalita' SAML 2.0 -->	
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20Unsigned">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20Unsigned" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="validateSamlSubjectConfirmation" valore="false" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20Signed">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20Signed" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenSigned" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20SignedP12">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20SignedP12" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenSigned" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-truststore-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
+ 	<porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20SignedSendKey">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20SignedSendKey" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenSigned" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20SignedP12SendKey">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20SignedP12SendKey" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenSigned" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-truststore-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
+	<porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20SignedHolderOfKey">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20SignedHolderOfKey" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+        </porta-applicativa>
+
+	<porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20SignedHolderOfKeyP12">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20SignedHolderOfKeyP12" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20OnlySubject">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20OnlySubject" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="validateSamlSubjectConfirmation" valore="false" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20OnlyAuthn">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20OnlyAuthn" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="validateSamlSubjectConfirmation" valore="false" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
+ 	<porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20OnlyAuthz">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20OnlyAuthz" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="validateSamlSubjectConfirmation" valore="false" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20SignedDetachWSSDisable">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20SignedDetachWSSDisable" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenSigned" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="detachHeaderWSSecurity" valore="false"/>
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
+
+	<!-- Funzionalita' SAML 1.1 -->	
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11Unsigned">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11Unsigned" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="validateSamlSubjectConfirmation" valore="false" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11Signed">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11Signed" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenSigned" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11SignedP12">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11SignedP12" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenSigned" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-truststore-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
+ 	<porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11SignedSendKey">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11SignedSendKey" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenSigned" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11SignedP12SendKey">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11SignedP12SendKey" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenSigned" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-truststore-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
+	<porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11SignedHolderOfKey">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11SignedHolderOfKey" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+        </porta-applicativa>
+
+	<porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11SignedHolderOfKeyP12">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11SignedHolderOfKeyP12" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11OnlySubject">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11OnlySubject" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="validateSamlSubjectConfirmation" valore="false" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11OnlyAuthn">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11OnlyAuthn" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="validateSamlSubjectConfirmation" valore="false" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
+ 	<porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11OnlyAuthz">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11OnlyAuthz" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="validateSamlSubjectConfirmation" valore="false" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11SignedDetachWSSDisable">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11SignedDetachWSSDisable" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenSigned" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="detachHeaderWSSecurity" valore="false"/>
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
+
+
+
+
         
         
         

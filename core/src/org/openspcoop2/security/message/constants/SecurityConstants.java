@@ -182,6 +182,9 @@ public class SecurityConstants {
     public static final String TIMESTAMP_SOAPBOX_TTL_DEFAULT = "300";
 	public static final String TIMESTAMP_SOAPBOX_FUTURE_TTL_DEFAULT =  "60";
 
+	public static final String SAML_PROF_FILE =  "samlPropFile";
+	public static final String SAML_CALLBACK_REF = ConfigurationConstants.SAML_CALLBACK_REF;
+	
 	
 	// Do not perform any action, do nothing. Only applies to DOM code.
 	public static final String ACTION_NO_SECURITY = WSHandlerConstants.NO_SECURITY;
@@ -226,6 +229,8 @@ public class SecurityConstants {
     public static final String IS_BSP_COMPLIANT = ConfigurationConstants.IS_BSP_COMPLIANT;
     
     public static final String AUTHORIZATION_CLASS = "authorizationClass";
+    
+    public static final String DETACH_HEADER_WSS = "detachHeaderWSSecurity";
     
     public static final String TRUE = "true";
     public static final String FALSE = "false";

@@ -28,6 +28,7 @@
 	<archive path="/op2_3.0.dev/lib/cxf/cxf-rt-frontend-simple-3.1.7.jar"/>
 	<archive path="/op2_3.0.dev/lib/cxf/cxf-rt-frontend-jaxws-3.1.7.jar" />
 	<archive path="/op2_3.0.dev/lib/cxf/cxf-rt-security-3.1.7.jar" />
+	<archive path="/op2_3.0.dev/lib/cxf/cxf-rt-security-saml-3.1.7.jar" />
 	<archive path="/op2_3.0.dev/lib/cxf/cxf-rt-transports-http-3.1.7.jar"/>
 	<archive path="/op2_3.0.dev/lib/cxf/cxf-rt-transports-http-jetty-3.1.7.jar"/>
 	<archive path="/op2_3.0.dev/lib/cxf/cxf-rt-wsdl-3.1.7.jar"/>
@@ -123,6 +124,7 @@
         <archive path="/op2_3.0.dev/lib/opensaml/opensaml-xacml-saml-impl-3.2.0.jar"/>
         <archive path="/op2_3.0.dev/lib/opensaml/opensaml-xmlsec-api-3.2.0.jar"/>
         <archive path="/op2_3.0.dev/lib/opensaml/opensaml-xmlsec-impl-3.2.0.jar"/>
+	<archive path="/op2_3.0.dev/lib/opensaml/java-support-7.2.0.jar"/>
 	<!-- reports -->
 	<archive path="/op2_3.0.dev/lib/reports/dynamicreports-core-4.1.1.jar"/>
         <archive path="/op2_3.0.dev/lib/reports/itext-2.1.7.js5.jar"/>
@@ -166,6 +168,7 @@
 	<archive path="/op2_3.0.dev/lib/shared/saxon9-xqj-7-0-7.jar"/>
 	<archive path="/op2_3.0.dev/lib/shared/xmlunit-1.6.jar"/>
 	<archive path="/op2_3.0.dev/lib/shared/guava-19.0.jar"/>
+	<archive path="/op2_3.0.dev/lib/shared/joda-time-2.9.4.jar"/>
 	<!-- soapbox -->
         <archive path="/op2_3.0.dev/lib/soapbox/ultraesb-core-1.7.1.jar"/>
         <archive path="/op2_3.0.dev/lib/soapbox/ultraesb-api-1.7.1.jar"/>

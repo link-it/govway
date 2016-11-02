@@ -43,6 +43,8 @@ import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.IMessageSecuritySender;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.security.message.saml.SAMLBuilderConfig;
+import org.openspcoop2.security.message.saml.SAMLCallbackHandler;
 import org.openspcoop2.utils.Utilities;
 
 /**
@@ -91,16 +93,29 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 				innerMsg = innerExc.getMessage();
 			}
 			
-			String messaggio = new String(msg);
-			if(innerMsg!=null && !innerMsg.equals(msg)){
-				messaggio = messaggio + " ; " + innerMsg;
+			String messaggio = null;
+			if(msg!=null){
+				messaggio = new String(msg);
+				if(innerMsg!=null && !innerMsg.equals(msg)){
+					messaggio = messaggio + " ; " + innerMsg;
+				}
+			}
+			else{
+				if(innerMsg!=null){
+					messaggio = innerMsg;
+				}
 			}
 			
 			// L'if scopre l'eventuale motivo preciso riguardo al fallimento della cifratura/firma.
 			if(Utilities.existsInnerException(e, WSSecurityException.class)){
 				Throwable t = Utilities.getLastInnerException(e);
 				if(t instanceof WSSecurityException){
-					messaggio = messaggio + " ; " + t.getMessage();
+					if(messaggio!=null){
+						messaggio = messaggio + " ; " + t.getMessage();
+					}
+					else{
+						messaggio = t.getMessage();
+					}
 				}
 			}
 			
@@ -122,9 +137,20 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 				if (SecurityConstants.ENCRYPTION_USER.equals(key) && SecurityConstants.USE_REQ_SIG_CERT.equals(value)) {
 					// value = ...;
 				}
-				msgCtx.put(key, value);
-				if(SecurityConstants.MUST_UNDERSTAND.equals(key)){
-					mustUnderstand = true;
+				
+				// src/site/xdoc/migration/wss4j20.xml:the "samlPropFile" and "samlPropRefId" configuration tags have been removed. 
+				// Per ottenere lo stesso effetto di poter utilizzare tale file di proprietà, si converta la proprietà nella nuova voce: 'samlCallbackRef'
+				if(SecurityConstants.SAML_PROF_FILE.equals(key)){
+					//System.out.println("CONVERT ["+key+"] ["+value+"] ...");
+					SAMLBuilderConfig config = SAMLBuilderConfig.getSamlConfig(value);
+					SAMLCallbackHandler samlCallbackHandler = new SAMLCallbackHandler(config);
+					msgCtx.put(SecurityConstants.SAML_CALLBACK_REF, samlCallbackHandler);
+				}
+				else{
+					msgCtx.put(key, value);
+					if(SecurityConstants.MUST_UNDERSTAND.equals(key)){
+						mustUnderstand = true;
+					}
 				}
 			}
 		}

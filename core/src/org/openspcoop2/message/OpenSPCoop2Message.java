@@ -163,7 +163,7 @@ public interface OpenSPCoop2Message {
 	
 	public abstract List<Reference> getWSSDirtyElements(String actor, boolean mustUnderstand) throws SOAPException, WSSecurityException;
 	
-	public abstract void cleanWSSDirtyElements(String actor, boolean mustUnderstand, List<Reference> elementsToClean) throws SOAPException, WSSecurityException;
+	public abstract void cleanWSSDirtyElements(String actor, boolean mustUnderstand, List<Reference> elementsToClean, boolean detachHeaderWSSecurity) throws SOAPException, WSSecurityException;
 	
 	/* Errors */
 	

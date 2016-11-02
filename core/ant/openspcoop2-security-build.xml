@@ -51,6 +51,7 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.security.message.constants" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.security.message.authorization" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.security.message.signature" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.security.message.saml" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.security.message.utils" />
 				<antcall target="compile_src_openspcoop2">
 					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>

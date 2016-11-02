@@ -128,6 +128,8 @@
 				<include name="json-lib-2.4-jdk15.jar" /> <!--jmx mini console -->
 				<include name="ezmorph-1.0.6.jar" /> <!--jmx mini console -->
 				<include name="xom-1.2.10.jar" /> <!--jmx mini console -->
+				<include name="joda-time-2.9.4.jar" />
+				<include name="guava-19.0.jar"/>
 			</lib>
 			<lib dir="${required_lib}/jminix">
 				<include name="*.jar"/>

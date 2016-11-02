@@ -209,6 +209,9 @@ Il test inoltre richiede l'installazione dei seguenti file di properties in /etc
    - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/properties/soapbox_pa_signature_truststore.properties
    - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/properties/soapbox_pd_signature_keystore.properties
    - protocolli/spcoop/testsuite/deploy/wss_soapbox_examples/properties/soapbox_pd_signature_truststore.properties
+Infine il test richiede l'installazione delle configurazioni relative a SAML:
+   - copia in /etc/openspcoop2/properties dei files presenti in protocolli/spcoop/testsuite/deploy/saml_examples/saml20
+   - copia all'interno dell'archivio della PdD dei files presenti in protocolli/spcoop/testsuite/deploy/saml_examples/saml11
 
 ** Connettori **
 

@@ -556,9 +556,17 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 				innerMsg = innerExc.getMessage();
 			}
 			
-			String messaggio = msg;//new String(msg);
-			if(innerMsg!=null && !innerMsg.equals(msg)){
-				messaggio = messaggio + " ; " + innerMsg;
+			String messaggio = null;
+			if(msg!=null){
+				messaggio = new String(msg);
+				if(innerMsg!=null && !innerMsg.equals(msg)){
+					messaggio = messaggio + " ; " + innerMsg;
+				}
+			}
+			else{
+				if(innerMsg!=null){
+					messaggio = innerMsg;
+				}
 			}
 			
 			// L'if scopre l'eventuale motivo preciso riguardo al fallimento della cifratura/firma.

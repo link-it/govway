@@ -84,7 +84,8 @@ public interface IMessageSecurityReceiver {
 	public void checkEncryptionPartElements(Map<QName, QName> notResolved, OpenSPCoop2Message message, List<SubErrorCodeSecurity> erroriRilevati) throws SecurityException;
 			
 	
-	public void cleanDirtyElements(MessageSecurityContext messageSecurityContext,OpenSPCoop2Message message, List<Reference> elementsToClean) throws SecurityException;
+	public void cleanDirtyElements(MessageSecurityContext messageSecurityContext,OpenSPCoop2Message message, List<Reference> elementsToClean,
+			boolean detachHeaderWSSecurity) throws SecurityException;
 	
 	public String getCertificate() throws SecurityException;
 	

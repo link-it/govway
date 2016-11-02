@@ -224,7 +224,13 @@ public class MessageSecurityReceiver_impl extends MessageSecurityReceiver{
             // ** Pulizia elementi "toccati" da MessageSecurity per pulirli ** /
 			// NOTA: Clean dipendente dall'implementazione
 			try{
-				receiverInterface.cleanDirtyElements(this.messageSecurityContext, message, elementsToClean);
+				boolean detachValue = true; // per default l'header WSS viene eliminato
+				Object detach = this.messageSecurityContext.getIncomingProperties().get(SecurityConstants.DETACH_HEADER_WSS);
+				if(detach!=null){
+					detachValue = Boolean.parseBoolean((String)detach);
+				}
+				
+				receiverInterface.cleanDirtyElements(this.messageSecurityContext, message, elementsToClean, detachValue);
 			} catch (SecurityException e) {
 				this.messageSecurityContext.getLog().error("Errore durante il clean del messaggio: " + e.getMessage(), e);
 				throw new Exception("Errore durante la cleanMessage: " + e.getMessage());

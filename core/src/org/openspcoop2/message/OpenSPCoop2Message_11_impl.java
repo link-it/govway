@@ -406,12 +406,14 @@ public class OpenSPCoop2Message_11_impl extends Message1_1_FIX_Impl implements o
 	
 
 	@Override
-	public void cleanWSSDirtyElements(String actor, boolean mustUnderstand, List<Reference> references) throws SOAPException, WSSecurityException {
+	public void cleanWSSDirtyElements(String actor, boolean mustUnderstand, List<Reference> references, boolean detachHeaderWSSecurity) throws SOAPException, WSSecurityException {
 		// Prendo il security Header di mia competenza
         SOAPElement security = (SOAPElement) WSSecurityUtil.getSecurityHeader(this.soapPartImpl, actor);
         
         // Rimuovo l'header Security
-        security.detachNode();
+        if(detachHeaderWSSecurity){
+        	security.detachNode();
+        }
         
         boolean found;
         

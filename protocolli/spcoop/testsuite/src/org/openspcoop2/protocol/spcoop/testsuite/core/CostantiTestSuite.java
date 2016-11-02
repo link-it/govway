@@ -1187,6 +1187,50 @@ public class CostantiTestSuite {
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_BUG18_ClientMUActor_PdDActor_Signature="WSSSignature_ClientMustUnderstand1eActorClient_PdDActorOpenSPCoop";
     /** ENTITA SPCOOP: Nome Azione WSS del Servizio RichiestaStatoAvanzamento WSS Annidamento*/
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ANNIDAMENTO="WSSAnnidamento";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml20Unsigned del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_UNSIGNED="WSSSaml20Unsigned";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml20Signed del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_SIGNED="WSSSaml20Signed";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml20SignedP12 del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_SIGNED_P12="WSSSaml20SignedP12";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml20SignedSendKey del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_SIGNED_SEND_KEY="WSSSaml20SignedSendKey";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml20SignedP12SendKey del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_SIGNED_P12_SEND_KEY="WSSSaml20SignedP12SendKey";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml20SignedHolderOfKey del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_SIGNED_HOLDER_OF_KEY="WSSSaml20SignedHolderOfKey";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml20SignedHolderOfKeyP12 del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_SIGNED_HOLDER_OF_KEY_P12="WSSSaml20SignedHolderOfKeyP12";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml20OnlySubject del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_ONLY_SUBJECT="WSSSaml20OnlySubject";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml20OnlyAuthn del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_ONLY_AUTHN="WSSSaml20OnlyAuthn";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml20OnlyAuthz del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_ONLY_AUTHZ="WSSSaml20OnlyAuthz";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml20SignedDetachWSSDisable del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_DETACH="WSSSaml20SignedDetachWSSDisable";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml11Unsigned del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_UNSIGNED="WSSSaml11Unsigned";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml11Signed del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_SIGNED="WSSSaml11Signed";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml11SignedP12 del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_SIGNED_P12="WSSSaml11SignedP12";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml11SignedSendKey del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_SIGNED_SEND_KEY="WSSSaml11SignedSendKey";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml11SignedP12SendKey del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_SIGNED_P12_SEND_KEY="WSSSaml11SignedP12SendKey";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml11SignedHolderOfKey del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_SIGNED_HOLDER_OF_KEY="WSSSaml11SignedHolderOfKey";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml11SignedHolderOfKeyP12 del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_SIGNED_HOLDER_OF_KEY_P12="WSSSaml11SignedHolderOfKeyP12";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml11OnlySubject del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_ONLY_SUBJECT="WSSSaml11OnlySubject";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml11OnlyAuthn del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_ONLY_AUTHN="WSSSaml11OnlyAuthn";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml11OnlyAuthz del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_ONLY_AUTHZ="WSSSaml11OnlyAuthz";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml11SignedDetachWSSDisable del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_DETACH="WSSSaml11SignedDetachWSSDisable";
     /** ENTITA SPCOOP: Nome Azione WSSSoapBoxCifrataFirmata del Servizio RichiestaStatoAvanzamento */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SOAPBOX_ENCRYPT_SIGNATURE="WSSSoapBoxCifrataFirmata";
     /** ENTITA SPCOOP: Nome Azione WSSSoapBoxFirmataCifrata del Servizio RichiestaStatoAvanzamento */

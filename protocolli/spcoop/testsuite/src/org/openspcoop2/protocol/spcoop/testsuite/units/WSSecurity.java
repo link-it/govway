@@ -2235,4 +2235,121 @@ public class WSSecurity {
 		}
 	}
 	
+	
+	
+	
+	
+	
+	/***
+	 * Test per SAML 2.0
+	 */
+	Repository repositorySincronoWSS_SAML20=new Repository();
+	@DataProvider (name="SincronoWSS_SAML20_invocazione")
+	public Object[][]testSincronoWSS_SAML20_invocazione()throws Exception{
+		return new Object[][]{
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_UNSIGNED},	
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_SIGNED},
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_SIGNED_P12},	
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_SIGNED_SEND_KEY},
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_SIGNED_P12_SEND_KEY},	
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_SIGNED_HOLDER_OF_KEY},
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_SIGNED_HOLDER_OF_KEY_P12},	
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_ONLY_SUBJECT},
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_ONLY_AUTHN},
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_ONLY_AUTHZ},	
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_DETACH}	
+		};
+	}
+	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".SAML20"},dataProvider="SincronoWSS_SAML20_invocazione",
+			description="Test per il profilo di collaborazione Sincrono con WSSecurity SAML 2.0")
+	public void sincronoWSS_SAML20(String azione) throws Exception{
+		this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoWSS_SAML20,azione,addIDUnivoco);
+		
+		String id=this.repositorySincronoWSS_SAML20.getNext();
+		
+		// Check Fruitore
+		DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data, id, 
+					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					azione, false,null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+		
+		// Check Erogatore
+		data = DatabaseProperties.getDatabaseComponentErogatore();
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data, id, 
+					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					azione, true,null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	
+	
+	
+	
+	/***
+	 * Test per SAML 1.1
+	 */
+	Repository repositorySincronoWSS_SAML11=new Repository();
+	@DataProvider (name="SincronoWSS_SAML11_invocazione")
+	public Object[][]testSincronoWSS_SAML11_invocazione()throws Exception{
+		return new Object[][]{
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_UNSIGNED},	
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_SIGNED},
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_SIGNED_P12},	
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_SIGNED_SEND_KEY},
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_SIGNED_P12_SEND_KEY},	
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_SIGNED_HOLDER_OF_KEY},
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_SIGNED_HOLDER_OF_KEY_P12},	
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_ONLY_SUBJECT},
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_ONLY_AUTHN},
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_ONLY_AUTHZ},	
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_DETACH}	
+		};
+	}
+	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".SAML11"},dataProvider="SincronoWSS_SAML11_invocazione",
+			description="Test per il profilo di collaborazione Sincrono con WSSecurity SAML 1.1")
+	public void sincronoWSS_SAML11(String azione) throws Exception{
+		this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoWSS_SAML11,azione,addIDUnivoco);
+		
+		String id=this.repositorySincronoWSS_SAML11.getNext();
+		
+		// Check Fruitore
+		DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data, id, 
+					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					azione, false,null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+		
+		// Check Erogatore
+		data = DatabaseProperties.getDatabaseComponentErogatore();
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data, id, 
+					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					azione, true,null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	
+	
 }
