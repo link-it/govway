@@ -7,7 +7,7 @@
 	in un file di properties associabile alla singola Porta Delegata o Porta Applicativa tramite la proprietà 'samlPropFile'.
 	Con questa funzionalità nella maggior parte dei casi in cui serve generare una asserzione SAML
 	non si dovrà ricorrere all'implementazione di una classe java di Callback.
-	Aggiunti jar joda-time-1.6.2.jar, xmltooling-1.3.2.jar e esapi-2.0GA.jar necessari per generare e verificare asserzioni SAML.
+	Aggiunti jar joda-time-2.9.4.jar, java-support-7.2.0.jar e cxf-rt-security-saml-3.1.7.jar necessari per generare e verificare asserzioni SAML.
 	Aggiunta inoltre la possibilità di non effettuare il detach dell'header WSSecurity tramite l'opzione 'detachHeaderWSSecurity=false'.
 
 2016-10-27  Andrea Poli <apoli@link.it>
