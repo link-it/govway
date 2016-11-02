@@ -1,3 +1,15 @@
+2016-10-31  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Aggiunta funzionalità OP-566
+	E' adesso possibile creare asserzioni SAML (1.1 e 2.0) senza dover implementare una classe java.
+	Tutti i parametri dell'asserzione SAML (Subject, AuthnStatement e Attributi) sono indicabili
+	in un file di properties associabile alla singola Porta Delegata o Porta Applicativa tramite la proprietà 'samlPropFile'.
+	Con questa funzionalità nella maggior parte dei casi in cui serve generare una asserzione SAML
+	non si dovrà ricorrere all'implementazione di una classe java di Callback.
+	Aggiunti jar joda-time-1.6.2.jar, xmltooling-1.3.2.jar e esapi-2.0GA.jar necessari per generare e verificare asserzioni SAML.
+	Aggiunta inoltre la possibilità di non effettuare il detach dell'header WSSecurity tramite l'opzione 'detachHeaderWSSecurity=false'.
+
 2016-10-27  Andrea Poli <apoli@link.it>
 
 	* [Pdd, PddConsole]
