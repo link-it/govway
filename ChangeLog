@@ -1,3 +1,10 @@
+2016-11-08  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Aggiunta funzionalità OP-352
+	E' stata integrata nella PdD la possibilità di effettuare 
+	la firma e la cifratura degli attachments attraverso wss4j.
+
 2016-10-31  Andrea Poli <apoli@link.it>
 
 	* [Pdd]
