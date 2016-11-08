@@ -488,11 +488,15 @@ public class Utilities {
 		while((temp=buff1.read())!=-1){
 			int temp2=buff2.read();
 			if(temp2==-1){
-				//System.out.println("RET 1");
+				System.out.println("a1["+att.getContentId()+"]["+att.getContentType()+"]");
+				System.out.println("a2["+att2.getContentId()+"]["+att2.getContentType()+"]");
+				System.out.println("RET 1");
 				return false;
 			}
 			if(temp!=temp2){
-				//System.out.println("RET 2 ["+temp+"]!=["+temp2+"]");
+				System.out.println("a1["+att.getContentId()+"]["+att.getContentType()+"]");
+				System.out.println("a2["+att2.getContentId()+"]["+att2.getContentType()+"]");
+				System.out.println("RET 2 ["+temp+"]!=["+temp2+"]");
 				return false;
 			}
 		}
@@ -502,7 +506,9 @@ public class Utilities {
 			while(num!=-1){
 				num=buff2.read();
 			}
-			//System.out.println("RET 3");
+			System.out.println("a1["+att.getContentId()+"]["+att.getContentType()+"]");
+			System.out.println("a2["+att2.getContentId()+"]["+att2.getContentType()+"]");
+			System.out.println("RET 3");
 			return false;
 		}
 		return true;

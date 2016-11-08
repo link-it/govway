@@ -34,6 +34,7 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.cxf.binding.soap.SoapMessage;
+import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.MessageImpl;
@@ -53,6 +54,8 @@ import org.openspcoop2.security.message.SubErrorCodeSecurity;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageUtilities;
 import org.openspcoop2.security.message.engine.WSSUtilities;
+import org.openspcoop2.security.message.utils.AttachmentProcessingPart;
+import org.openspcoop2.security.message.utils.AttachmentsConfigReaderUtils;
 import org.openspcoop2.utils.Utilities;
 
 
@@ -82,17 +85,44 @@ public class MessageSecurityReceiver_wss4j implements IMessageSecurityReceiver{
 	        setIncomingProperties(wssContext,inHandler,msgCtx);
 	        
 	        
+	        // ** Registro attachments da trattare **/
+	        
+	        AttachmentProcessingPart app = AttachmentsConfigReaderUtils.getSecurityOnAttachments(wssContext);
+	        List<Attachment> listAttachments = null;
+	        if(app!=null){
+	        	// Non è possibile effettuare il controllo della posizione puntuale sulla ricezione. 
+	        	// Può essere usato solo per specificare quale attach firmare/cifrare in spedizione
+	        	// Alcune implementazioni modificano l'ordine degli attachments una volta applicata la sicurezza
+	        	if(app.isAllAttachments()==false){
+	        		List<String> cidAttachmentsForSecurity = AttachmentsConfigReaderUtils.getListCIDAttachmentsForSecurity(wssContext);
+	        		listAttachments = org.openspcoop2.security.message.wss4j.WSSUtilities.readAttachments(cidAttachmentsForSecurity, message);
+	        	}
+	        	else{
+	        		listAttachments = org.openspcoop2.security.message.wss4j.WSSUtilities.readAttachments(app, message);
+	        	}
+	        	if(listAttachments!=null && listAttachments.size()>0){
+	        		msgCtx.setAttachments(listAttachments);
+	        	}
+	        }
+	        
+	        
 	        // ** Applico sicurezza tramite CXF **/
+	        
 			inHandler.handleMessage(msgCtx);
 			List<?> results = (List<?>) msgCtx.getContextualProperty(WSHandlerConstants.RECV_RESULTS);
 			wssContext.getLog().debug("Print wssRecever results...");
 			org.openspcoop2.security.message.wss4j.WSSUtilities.printWSResult(wssContext.getLog(), results);
 			
 			
+			// ** Riporto modifica degli attachments **/
+			
+			org.openspcoop2.security.message.wss4j.WSSUtilities.updateAttachments(listAttachments, message);
+			
+			
 			// ** Lettura Subject Certificato **/
+			
 			this.certificate=getPrincipal(msgCtx,wssContext.getActor());
-			
-			
+						
 		} catch (Exception e) {
 			
 			SecurityException wssException = new SecurityException(e.getMessage(), e);
@@ -249,9 +279,9 @@ public class MessageSecurityReceiver_wss4j implements IMessageSecurityReceiver{
 	@Override
 	public Map<QName, QName> checkEncryptSignatureParts(
 			org.openspcoop2.security.message.MessageSecurityContext messageSecurityContext,
-			List<Reference> elementsToClean, int numAttachmentsInMsg,
+			List<Reference> elementsToClean, OpenSPCoop2Message message,
 			List<SubErrorCodeSecurity> codiciErrore) throws SecurityException {
-		return MessageUtilities.checkEncryptSignatureParts(messageSecurityContext, elementsToClean, numAttachmentsInMsg, codiciErrore, SecurityConstants.QNAME_WSS_ELEMENT_SECURITY);
+		return MessageUtilities.checkEncryptSignatureParts(messageSecurityContext, elementsToClean, message, codiciErrore, SecurityConstants.QNAME_WSS_ELEMENT_SECURITY);
 	}
 
 	@Override

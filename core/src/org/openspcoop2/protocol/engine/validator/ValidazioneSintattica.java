@@ -146,6 +146,17 @@ public class ValidazioneSintattica {
 	}
 
 
+	public void updateMsg(OpenSPCoop2Message msg) throws ProtocolException {
+		boolean update = !msg.getClass().getName().equals(this.msg.getClass().getName());
+		if(update){
+			this.msg = msg;
+			if(this.headerProtocollo!=null){
+				org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica validazioneSintattica = this.protocolFactory.createValidazioneSintattica();
+				this.headerProtocollo = validazioneSintattica.getHeaderProtocollo_senzaControlli(this.msg);
+			}
+		}
+	}
+
 	public IProtocolFactory getProtocolFactory(){
 		return this.protocolFactory;
 	}

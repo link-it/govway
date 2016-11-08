@@ -66,6 +66,10 @@ import org.xml.sax.SAXException;
 
 public interface OpenSPCoop2Message {
 	
+	/* Normalize to SAAJ */
+	
+	public OpenSPCoop2Message normalizeToSaajImpl() throws OpenSPCoop2MessageException;
+	
 	/* Metodi SOAP */
 	
 	public SOAPPart getSOAPPart();
@@ -116,7 +120,6 @@ public interface OpenSPCoop2Message {
 	/* SOAP Content Constants */
 	
 	public abstract String createContentID(String ns) throws UnsupportedEncodingException;	
-	public abstract String getContentID(AttachmentPart ap);
 
 	public abstract void addContentTypeParameter(String name,String value) throws SOAPException;	
 	public abstract void removeContentTypeParameter(String name) throws SOAPException;	
@@ -164,6 +167,12 @@ public interface OpenSPCoop2Message {
 	public abstract List<Reference> getWSSDirtyElements(String actor, boolean mustUnderstand) throws SOAPException, WSSecurityException;
 	
 	public abstract void cleanWSSDirtyElements(String actor, boolean mustUnderstand, List<Reference> elementsToClean, boolean detachHeaderWSSecurity) throws SOAPException, WSSecurityException;
+	
+	/* Ws Security (SoapBox) */
+	
+	public abstract String getEncryptedDataHeaderBlockClass();
+	public abstract String getProcessPartialEncryptedMessageClass();
+	public abstract String getSignPartialMessageProcessorClass();
 	
 	/* Errors */
 	

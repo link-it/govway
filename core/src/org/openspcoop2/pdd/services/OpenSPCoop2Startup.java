@@ -482,9 +482,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					OpenSPCoop2Startup.log.info("MessageSecurity Keystore Cache enabled["+propertiesReader.isAbilitataCacheMessageSecurityKeystore()+"] itemLifeSecond["+
 							propertiesReader.getItemLifeSecondCacheMessageSecurityKeystore()+"] size["+
 							propertiesReader.getDimensioneCacheMessageSecurityKeystore()+"]");
-					OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) EncryptedDataHeaderBlock: "+factory.getEncryptedDataHeaderBlockClass());
-					OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) ProcessPartialEncryptedMessage: "+factory.getProcessPartialEncryptedMessageClass());
-					OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) getSignPartialMessageProcessor: "+factory.getSignPartialMessageProcessorClass());
+					OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) EncryptedDataHeaderBlock: "+factory.createEmptySOAPMessage(SOAPVersion.SOAP11).getEncryptedDataHeaderBlockClass());
+					OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) ProcessPartialEncryptedMessage: "+factory.createEmptySOAPMessage(SOAPVersion.SOAP11).getProcessPartialEncryptedMessageClass());
+					OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) getSignPartialMessageProcessor: "+factory.createEmptySOAPMessage(SOAPVersion.SOAP11).getSignPartialMessageProcessorClass());
 				}
 			} catch(Exception e) {
 				this.logError("Inizializzazione Message/DOM/SOAP: "+e.getMessage(), e);

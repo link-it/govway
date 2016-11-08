@@ -37,6 +37,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.SoapUtils;
+import org.openspcoop2.message.reference.Reference;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.security.SecurityException;
@@ -107,6 +108,13 @@ public abstract class MessageSecurityContext{
 		this.useXMLSec = useXMLSec;
 	}
 	
+	private List<Reference> references;
+	public List<Reference> getReferences() {
+		return this.references;
+	}
+	public void setReferences(List<Reference> references) {
+		this.references = references;
+	}
 	
 	/**
 	 * Costruttore. 
@@ -134,6 +142,13 @@ public abstract class MessageSecurityContext{
 	public abstract boolean processOutgoing(OpenSPCoop2Message message);
 	
 
+	/** Function As Client */
+	public void setFunctionAsClient(boolean functionAsClient) {
+		this.functionAsClient = functionAsClient;
+	}
+	public boolean isFunctionAsClient() {
+		return this.functionAsClient;
+	}
 	
 	
 	/** Prefix WSUID */

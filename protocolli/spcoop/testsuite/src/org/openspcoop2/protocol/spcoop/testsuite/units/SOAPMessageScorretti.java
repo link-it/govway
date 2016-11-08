@@ -667,6 +667,8 @@ public class SOAPMessageScorretti {
 			listErroriAttesi.add("Chiusura stream non riuscita");
 			listErroriAttesi.add("Generazione di un risposta errore non riuscita");
 			listErroriAttesi.add("Invalid chunk header");
+			listErroriAttesi.add("ParseError at");
+			listErroriAttesi.add("parsingExceptionRisposta");
 			params[index][3] = listErroriAttesi;
 			index++;
 		}
@@ -688,6 +690,9 @@ public class SOAPMessageScorretti {
 			listErroriAttesi.add("Chiusura stream non riuscita");
 			listErroriAttesi.add("Generazione di un risposta errore non riuscita");
 			listErroriAttesi.add("Invalid chunk header");
+			listErroriAttesi.add("ParseError at");
+			listErroriAttesi.add("parsingExceptionRisposta");
+			listErroriAttesi.add("validazioneSemantica_afterMessageSecurity");
 			params[index][3] = listErroriAttesi;
 			index++;
 		}
@@ -709,6 +714,7 @@ public class SOAPMessageScorretti {
 			listErroriAttesi.add("Chiusura stream non riuscita");
 			listErroriAttesi.add("Generazione di un risposta errore non riuscita");
 			listErroriAttesi.add("Invalid chunk header");
+			listErroriAttesi.add("ParseError at");
 			params[index][3] = listErroriAttesi;
 			index++;
 		}
@@ -730,6 +736,7 @@ public class SOAPMessageScorretti {
 			listErroriAttesi.add("Chiusura stream non riuscita");
 			listErroriAttesi.add("Generazione di un risposta errore non riuscita");
 			listErroriAttesi.add("Invalid chunk header");
+			listErroriAttesi.add("ParseError at");
 			params[index][3] = listErroriAttesi;
 			index++;
 		}
@@ -745,6 +752,7 @@ public class SOAPMessageScorretti {
 			motivoErroreParser.add("Envelope is not supported here. Envelope can not have elements other than Header and Body");
 			motivoErroreParser.add("Unexpected close tag </SOAP-ENV:Body>; expected </soapenv:Envelope>");
 			motivoErroreParser.add("XML document structures must start and end within the same entity");
+			motivoErroreParser.add("The element type \"soapenv:Envelope\" must be terminated by the matching end-tag \"</soapenv:Envelope");
 			params[index][2] = motivoErroreParser;
 			List<String> listErroriAttesi = new ArrayList<String>();
 			listErroriAttesi.add("parsingExceptionRichiesta");
@@ -755,6 +763,8 @@ public class SOAPMessageScorretti {
 			listErroriAttesi.add("Chiusura stream non riuscita");
 			listErroriAttesi.add("Generazione di un risposta errore non riuscita");
 			listErroriAttesi.add("Invalid chunk header");
+			listErroriAttesi.add("ParseError at");
+			listErroriAttesi.add("parsingExceptionRisposta");
 			params[index][3] = listErroriAttesi;
 			index++;
 		}
@@ -776,6 +786,7 @@ public class SOAPMessageScorretti {
 			listErroriAttesi.add("Chiusura stream non riuscita");
 			listErroriAttesi.add("Generazione di un risposta errore non riuscita");
 			listErroriAttesi.add("Invalid chunk header");
+			listErroriAttesi.add("ParseError at");
 			params[index][3] = listErroriAttesi;
 			index++;
 		}
@@ -796,6 +807,8 @@ public class SOAPMessageScorretti {
 			listErroriAttesi.add("Chiusura stream non riuscita");
 			listErroriAttesi.add("Generazione di un risposta errore non riuscita");
 			listErroriAttesi.add("Invalid chunk header");
+			listErroriAttesi.add("ParseError at");
+			listErroriAttesi.add("parsingExceptionRisposta");
 			params[index][3] = listErroriAttesi;
 			index++;
 		}
@@ -817,6 +830,8 @@ public class SOAPMessageScorretti {
 			listErroriAttesi.add("Chiusura stream non riuscita");
 			listErroriAttesi.add("Generazione di un risposta errore non riuscita");
 			listErroriAttesi.add("Invalid chunk header");
+			listErroriAttesi.add("ParseError at");
+			listErroriAttesi.add("parsingExceptionRisposta");
 			params[index][3] = listErroriAttesi;
 			index++;
 		}
@@ -837,6 +852,8 @@ public class SOAPMessageScorretti {
 			listErroriAttesi.add("Chiusura stream non riuscita");
 			listErroriAttesi.add("Generazione di un risposta errore non riuscita");
 			listErroriAttesi.add("Invalid chunk header");
+			listErroriAttesi.add("ParseError at");
+			listErroriAttesi.add("parsingExceptionRisposta");
 			params[index][3] = listErroriAttesi;
 			index++;
 		}
@@ -858,6 +875,8 @@ public class SOAPMessageScorretti {
 			listErroriAttesi.add("Chiusura stream non riuscita");
 			listErroriAttesi.add("Generazione di un risposta errore non riuscita");
 			listErroriAttesi.add("Invalid chunk header");
+			listErroriAttesi.add("ParseError at");
+			listErroriAttesi.add("parsingExceptionRisposta");
 			params[index][3] = listErroriAttesi;
 			index++;
 		}
@@ -878,6 +897,8 @@ public class SOAPMessageScorretti {
 			listErroriAttesi.add("Chiusura stream non riuscita");
 			listErroriAttesi.add("Generazione di un risposta errore non riuscita");
 			listErroriAttesi.add("Invalid chunk header");
+			listErroriAttesi.add("ParseError at");
+			listErroriAttesi.add("parsingExceptionRisposta");
 			params[index][3] = listErroriAttesi;
 			index++;
 		}
@@ -898,6 +919,8 @@ public class SOAPMessageScorretti {
 			listErroriAttesi.add("Chiusura stream non riuscita");
 			listErroriAttesi.add("Generazione di un risposta errore non riuscita");
 			listErroriAttesi.add("Invalid chunk header");
+			listErroriAttesi.add("ParseError at");
+			listErroriAttesi.add("parsingExceptionRisposta");
 			params[index][3] = listErroriAttesi;
 			index++;
 		}
@@ -919,6 +942,8 @@ public class SOAPMessageScorretti {
 			listErroriAttesi.add("Chiusura stream non riuscita");
 			listErroriAttesi.add("Generazione di un risposta errore non riuscita");
 			listErroriAttesi.add("Invalid chunk header");
+			listErroriAttesi.add("ParseError at");
+			listErroriAttesi.add("parsingExceptionRisposta");
 			params[index][3] = listErroriAttesi;
 			index++;
 		}
@@ -940,6 +965,8 @@ public class SOAPMessageScorretti {
 			listErroriAttesi.add("Chiusura stream non riuscita");
 			listErroriAttesi.add("Generazione di un risposta errore non riuscita");
 			listErroriAttesi.add("Invalid chunk header");
+			listErroriAttesi.add("ParseError at");
+			listErroriAttesi.add("parsingExceptionRisposta");
 			params[index][3] = listErroriAttesi;
 			index++;
 		}
@@ -1132,6 +1159,7 @@ public class SOAPMessageScorretti {
 		
 		listErroriAttesi.add("ImbustamentoSOAP");
 		listErroriAttesi.add("Imbustamento messaggio in un messaggio SOAP");
+		listErroriAttesi.add("parsingExceptionRisposta");
 		
 		try{
 		
@@ -1942,7 +1970,13 @@ public class SOAPMessageScorretti {
 		err5.setIntervalloSuperiore(dataFineTest);
 		err5.setMsgErrore("SendResponse error");
 		this.erroriAttesiOpenSPCoopCore.add(err5);
-
+		
+		ErroreAttesoOpenSPCoopLogCore err6 = new ErroreAttesoOpenSPCoopLogCore();
+		err6.setIntervalloInferiore(dataInizioTest);
+		err6.setIntervalloSuperiore(dataFineTest);
+		err6.setMsgErrore("ParseError at");
+		this.erroriAttesiOpenSPCoopCore.add(err6);
+		
 	}
 
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
@@ -2041,6 +2075,12 @@ public class SOAPMessageScorretti {
 		err5.setIntervalloSuperiore(dataFineTest);
 		err5.setMsgErrore("SendResponse error");
 		this.erroriAttesiOpenSPCoopCore.add(err5);
+		
+		ErroreAttesoOpenSPCoopLogCore err6 = new ErroreAttesoOpenSPCoopLogCore();
+		err6.setIntervalloInferiore(dataInizioTest);
+		err6.setIntervalloSuperiore(dataFineTest);
+		err6.setMsgErrore("ParseError at");
+		this.erroriAttesiOpenSPCoopCore.add(err6);
 	}
 
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
@@ -2139,6 +2179,12 @@ public class SOAPMessageScorretti {
 		err5.setIntervalloSuperiore(dataFineTest);
 		err5.setMsgErrore("SendResponse error");
 		this.erroriAttesiOpenSPCoopCore.add(err5);
+		
+		ErroreAttesoOpenSPCoopLogCore err6 = new ErroreAttesoOpenSPCoopLogCore();
+		err6.setIntervalloInferiore(dataInizioTest);
+		err6.setIntervalloSuperiore(dataFineTest);
+		err6.setMsgErrore("ParseError at");
+		this.erroriAttesiOpenSPCoopCore.add(err6);
 	}
 
 	
@@ -2217,11 +2263,11 @@ public class SOAPMessageScorretti {
 				ecc2.setCheckDescrizioneTramiteMatchEsatto(false);
 				eccezioni.add(ecc2);
 
-                                org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc3 = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
-                                ecc3.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA));
-                                ecc3.setDescrizione("The element type \"soapenv:Body\" must be terminated by the matching end-tag");
-                                ecc3.setCheckDescrizioneTramiteMatchEsatto(false);
-                                eccezioni.add(ecc3);
+                org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc3 = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+                ecc3.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA));
+                ecc3.setDescrizione("The element type \"soapenv:Body\" must be terminated by the matching end-tag");
+                ecc3.setCheckDescrizioneTramiteMatchEsatto(false);
+                eccezioni.add(ecc3);
 
 				Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error)); 
                                 String[] identificativiFunzione = new String[2];
@@ -2248,11 +2294,11 @@ public class SOAPMessageScorretti {
 		err.setMsgErrore("was expecting a close tag for element <soapenv:Body>");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 
-                ErroreAttesoOpenSPCoopLogCore err2a = new ErroreAttesoOpenSPCoopLogCore();
-                err2a.setIntervalloInferiore(dataInizioTest);
-                err2a.setIntervalloSuperiore(dataFineTest);
-                err2a.setMsgErrore("parsingExceptionRisposta");
-                this.erroriAttesiOpenSPCoopCore.add(err2a);
+        ErroreAttesoOpenSPCoopLogCore err2a = new ErroreAttesoOpenSPCoopLogCore();
+        err2a.setIntervalloInferiore(dataInizioTest);
+        err2a.setIntervalloSuperiore(dataFineTest);
+        err2a.setMsgErrore("parsingExceptionRisposta");
+        this.erroriAttesiOpenSPCoopCore.add(err2a);
 
 		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
 		err2.setIntervalloInferiore(dataInizioTest);
@@ -2277,6 +2323,12 @@ public class SOAPMessageScorretti {
 		err5.setIntervalloSuperiore(dataFineTest);
 		err5.setMsgErrore("SendResponse error");
 		this.erroriAttesiOpenSPCoopCore.add(err5);
+		
+		ErroreAttesoOpenSPCoopLogCore err6 = new ErroreAttesoOpenSPCoopLogCore();
+		err6.setIntervalloInferiore(dataInizioTest);
+		err6.setIntervalloSuperiore(dataFineTest);
+		err6.setMsgErrore("ParseError at");
+		this.erroriAttesiOpenSPCoopCore.add(err6);
 		
 	}
 
@@ -2334,11 +2386,11 @@ public class SOAPMessageScorretti {
 				ecc2.setCheckDescrizioneTramiteMatchEsatto(false);
 				eccezioni.add(ecc2);
 
-                                org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc3 = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
-                                ecc3.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA));
-                                ecc3.setDescrizione("The end-tag for element type \"helloworld\" must end with a '>' delimiter");
-                                ecc3.setCheckDescrizioneTramiteMatchEsatto(false);
-                                eccezioni.add(ecc3);
+                org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc3 = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+                ecc3.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA));
+                ecc3.setDescrizione("The end-tag for element type \"helloworld\" must end with a '>' delimiter");
+                ecc3.setCheckDescrizioneTramiteMatchEsatto(false);
+                eccezioni.add(ecc3);
 
 				Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error));
                                 String[] identificativiFunzione = new String[2];
@@ -2388,6 +2440,12 @@ public class SOAPMessageScorretti {
 		err5.setIntervalloSuperiore(dataFineTest);
 		err5.setMsgErrore("SendResponse error");
 		this.erroriAttesiOpenSPCoopCore.add(err5);
+		
+		ErroreAttesoOpenSPCoopLogCore err6 = new ErroreAttesoOpenSPCoopLogCore();
+		err6.setIntervalloInferiore(dataInizioTest);
+		err6.setIntervalloSuperiore(dataFineTest);
+		err6.setMsgErrore("ParseError at");
+		this.erroriAttesiOpenSPCoopCore.add(err6);
 	}
 
 	@Test(groups={SOAPMessageScorretti.ID_GRUPPO,
@@ -2445,11 +2503,11 @@ public class SOAPMessageScorretti {
 				ecc2.setCheckDescrizioneTramiteMatchEsatto(false);
 				eccezioni.add(ecc2);
 
-                                org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc3 = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
-                                ecc3.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA));
-                                ecc3.setDescrizione("The end-tag for element type \"b\" must end with a '>' delimiter");
-                                ecc3.setCheckDescrizioneTramiteMatchEsatto(false);
-                                eccezioni.add(ecc3);
+                org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail ecc3 = new org.openspcoop2.protocol.spcoop.testsuite.core.OpenSPCoopDetail();
+                ecc3.setCodice(Utilities.toString(CodiceErroreIntegrazione.CODICE_440_PARSING_EXCEPTION_RISPOSTA));
+                ecc3.setDescrizione("The end-tag for element type \"b\" must end with a '>' delimiter");
+                ecc3.setCheckDescrizioneTramiteMatchEsatto(false);
+                eccezioni.add(ecc3);
 
 				Assert.assertTrue(Utilities.existsOpenSPCoopDetails(error));
                                 String[] identificativiFunzione = new String[2];
@@ -2476,11 +2534,11 @@ public class SOAPMessageScorretti {
 		err.setMsgErrore("Unexpected close tag </helloworld>; expected </b>");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 
-                ErroreAttesoOpenSPCoopLogCore err2a = new ErroreAttesoOpenSPCoopLogCore();
-                err2a.setIntervalloInferiore(dataInizioTest);
-                err2a.setIntervalloSuperiore(dataFineTest);
-                err2a.setMsgErrore("parsingExceptionRisposta");
-                this.erroriAttesiOpenSPCoopCore.add(err2a);
+        ErroreAttesoOpenSPCoopLogCore err2a = new ErroreAttesoOpenSPCoopLogCore();
+        err2a.setIntervalloInferiore(dataInizioTest);
+        err2a.setIntervalloSuperiore(dataFineTest);
+        err2a.setMsgErrore("parsingExceptionRisposta");
+        this.erroriAttesiOpenSPCoopCore.add(err2a);
 
 		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
 		err2.setIntervalloInferiore(dataInizioTest);
@@ -2505,6 +2563,12 @@ public class SOAPMessageScorretti {
 		err5.setIntervalloSuperiore(dataFineTest);
 		err5.setMsgErrore("SendResponse error");
 		this.erroriAttesiOpenSPCoopCore.add(err5);
+		
+		ErroreAttesoOpenSPCoopLogCore err6 = new ErroreAttesoOpenSPCoopLogCore();
+		err6.setIntervalloInferiore(dataInizioTest);
+		err6.setIntervalloSuperiore(dataFineTest);
+		err6.setMsgErrore("ParseError at");
+		this.erroriAttesiOpenSPCoopCore.add(err6);
 	}
 
 
@@ -2613,6 +2677,12 @@ public class SOAPMessageScorretti {
 		err5.setIntervalloSuperiore(dataFineTest);
 		err5.setMsgErrore("SendResponse error");
 		this.erroriAttesiOpenSPCoopCore.add(err5);
+		
+		ErroreAttesoOpenSPCoopLogCore err6 = new ErroreAttesoOpenSPCoopLogCore();
+		err6.setIntervalloInferiore(dataInizioTest);
+		err6.setIntervalloSuperiore(dataFineTest);
+		err6.setMsgErrore("ParseError at");
+		this.erroriAttesiOpenSPCoopCore.add(err6);
 
 
 	}
@@ -2696,6 +2766,12 @@ public class SOAPMessageScorretti {
 		err4.setMsgErrore("SendResponse error");
 		this.erroriAttesiOpenSPCoopCore.add(err4);
 		
+		ErroreAttesoOpenSPCoopLogCore err5 = new ErroreAttesoOpenSPCoopLogCore();
+		err5.setIntervalloInferiore(dataInizioTest);
+		err5.setIntervalloSuperiore(dataFineTest);
+		err5.setMsgErrore("ParseError at");
+		this.erroriAttesiOpenSPCoopCore.add(err5);
+		
 
 	}
 	
@@ -2773,6 +2849,12 @@ public class SOAPMessageScorretti {
 		err3.setIntervalloSuperiore(dataFineTest);
 		err3.setMsgErrore("parsingExceptionRisposta");
 		this.erroriAttesiOpenSPCoopCore.add(err3);
+		
+		ErroreAttesoOpenSPCoopLogCore err4 = new ErroreAttesoOpenSPCoopLogCore();
+		err4.setIntervalloInferiore(dataInizioTest);
+		err4.setIntervalloSuperiore(dataFineTest);
+		err4.setMsgErrore("ParseError at");
+		this.erroriAttesiOpenSPCoopCore.add(err4);
 				
 	}
 	

@@ -679,7 +679,7 @@ public class InoltroRisposte extends GenericLib{
 						contextParameters.setUseActorDefaultIfNotDefined(this.propertiesReader.isGenerazioneActorDefault(implementazionePdDDestinatario));
 						contextParameters.setActorDefault(this.propertiesReader.getActorDefault(implementazionePdDDestinatario));
 						contextParameters.setLog(this.log);
-						contextParameters.setFunctionAsClient(SecurityConstants.SECUIRYT_SERVER);
+						contextParameters.setFunctionAsClient(SecurityConstants.SECURITY_SERVER);
 						contextParameters.setPrefixWsuId(this.propertiesReader.getPrefixWsuId());
 						contextParameters.setIdFruitore(soggettoMittente);
 						contextParameters.setIdServizio(idServizio);

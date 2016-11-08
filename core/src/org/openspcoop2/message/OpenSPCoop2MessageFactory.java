@@ -56,10 +56,9 @@ import org.w3c.dom.Element;
  */
 
 public abstract class OpenSPCoop2MessageFactory {
-	public abstract String getEncryptedDataHeaderBlockClass();
+
 	public abstract String getDocumentBuilderFactoryClass();
-	public abstract String getProcessPartialEncryptedMessageClass();
-	public abstract String getSignPartialMessageProcessorClass();
+
 	private static Logger logger = LoggerWrapperFactory.getLogger(OpenSPCoop2MessageFactory.class);
 	public static String messageFactoryImpl = org.openspcoop2.message.OpenSPCoop2MessageFactory_impl.class.getName();
 	

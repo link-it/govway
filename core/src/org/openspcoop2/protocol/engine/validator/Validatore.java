@@ -733,6 +733,16 @@ public class Validatore  {
 		}
 		return size;
 	}
+	
+	public void updateMsg(OpenSPCoop2Message msg) throws ProtocolException {
+		boolean update = !msg.getClass().getName().equals(this.msg.getClass().getName());
+		if(update){
+			this.msg = msg;
+			if(this.validatoreSintattico!=null){
+				this.validatoreSintattico.updateMsg(msg);
+			}
+		}
+	}
 }
 
 

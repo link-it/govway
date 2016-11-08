@@ -1840,7 +1840,7 @@ public class RicezioneBuste {
 			contextParameters.setUseActorDefaultIfNotDefined(propertiesReader.isGenerazioneActorDefault(implementazionePdDMittente));
 			contextParameters.setActorDefault(propertiesReader.getActorDefault(implementazionePdDMittente));
 			contextParameters.setLog(logCore);
-			contextParameters.setFunctionAsClient(SecurityConstants.SECUIRYT_SERVER);
+			contextParameters.setFunctionAsClient(SecurityConstants.SECURITY_SERVER);
 			contextParameters.setPrefixWsuId(propertiesReader.getPrefixWsuId());
 			contextParameters.setIdFruitore(soggettoFruitore);
 			contextParameters.setPddFruitore(idPdDMittente);
@@ -2650,6 +2650,43 @@ public class RicezioneBuste {
 			boolean presenzaRichiestaProtocollo = validatore.validazioneSemantica_beforeMessageSecurity(false, null);
 			
 			if(validatore.isRilevatiErroriDuranteValidazioneSemantica()==false){
+				
+				try{
+					if(org.openspcoop2.security.message.engine.WSSUtilities.isNormalizeToSaajImpl(messageSecurityContext)){
+						msgDiag.mediumDebug("Normalize to saajImpl");
+						//System.out.println("RicezioneBuste.request.normalize");
+						requestMessage = requestMessage.normalizeToSaajImpl();
+						
+						validatore.updateMsg(requestMessage);
+					}
+				}catch(Exception e){
+					msgDiag.logErroreGenerico(e,"NormalizeRequestToSaajImpl");
+					
+					// Tracciamento richiesta: non ancora registrata
+					if(this.msgContext.isTracciamentoAbilitato()){
+						EsitoElaborazioneMessaggioTracciato esitoTraccia = 
+								EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Riscontrato errore durante la gestione NormalizeRequestToSaajImpl: "+e.getMessage());
+						tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
+								Tracciamento.createLocationString(true,this.msgContext.getFromLocation()),
+								correlazioneApplicativa);
+					}
+					if(this.msgContext.isGestioneRisposta()){
+						
+						parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
+						parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
+						OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+						
+						// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
+
+						parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+						parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
+						sendRispostaBustaErrore(parametriInvioBustaErrore);
+
+					}
+					openspcoopstate.releaseResource();
+					return;
+				}
 				
 				msgDiag.mediumDebug("Lettura informazioni sulla Sicurezza dal Messaggio di richiesta ...");
 				presenzaRichiestaProtocollo = validatore.validazioneSemantica_messageSecurity_readSecurityInfo(messageSecurityContext);
@@ -5041,8 +5078,15 @@ public class RicezioneBuste {
 							pddContext.addObject(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
 							
 							msgDiag.logPersonalizzato("messageSecurity.processamentoRispostaInCorso");
-							
+							messageSecurityContext.setFunctionAsClient(SecurityConstants.SECURITY_CLIENT);
 							messageSecurityContext.setOutgoingProperties(flowPropertiesResponse.messageSecurity.getFlowParameters());
+							
+							if(org.openspcoop2.security.message.engine.WSSUtilities.isNormalizeToSaajImpl(messageSecurityContext)){
+								msgDiag.mediumDebug("Normalize to saajImpl");
+								//System.out.println("RicezioneBuste.response.normalize");
+								responseMessage = responseMessage.normalizeToSaajImpl();
+							}
+							
 							if(messageSecurityContext.processOutgoing(responseMessage) == false){
 								
 								msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , messageSecurityContext.getMsgErrore() );

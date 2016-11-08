@@ -38,7 +38,6 @@ import org.adroitlogic.soapbox.MessageSecurityContext;
 import org.adroitlogic.soapbox.SecurityRequest;
 import org.adroitlogic.ultraesb.core.MessageImpl;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.XMLUtils;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.IMessageSecuritySender;
@@ -209,7 +208,7 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 			
 			SignPartialMessageProcessor signMsgProc = null;
 			if(signature){
-				signMsgProc = (SignPartialMessageProcessor) Class.forName(OpenSPCoop2MessageFactory.getMessageFactory().getSignPartialMessageProcessorClass()).newInstance();
+				signMsgProc = (SignPartialMessageProcessor) Class.forName(message.getSignPartialMessageProcessorClass()).newInstance();
 				signMsgProc.setMessage(message);
 				signMsgProc.setActor(messageSecurityContext.getActor());
 				signMsgProc.setMustUnderstand(mustUnderstand);

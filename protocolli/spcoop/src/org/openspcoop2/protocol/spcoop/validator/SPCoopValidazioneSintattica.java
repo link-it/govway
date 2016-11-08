@@ -3725,7 +3725,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 			
 			while(it.hasNext()){
 				AttachmentPart ap = (AttachmentPart) it.next();
-				contentID.add(msg.getContentID(ap));
+				contentID.add(ap.getContentId());
 				contentLocation.add(ap.getContentLocation());
 				//log.info("Attachments con ID["+ap.getContentId()+"] e Location["+ap.getContentLocation()+"]");
 			}

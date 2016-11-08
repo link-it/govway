@@ -128,7 +128,7 @@ public class MessageSecurityReceiver_impl extends MessageSecurityReceiver{
 			
 			// ** Verifica cifratura/firma elementi richiesti dalla configurazione ** /
 			List<SubErrorCodeSecurity> listaErroriRiscontrati = new ArrayList<SubErrorCodeSecurity>();
-			Map<QName, QName> notResolved = receiverInterface.checkEncryptSignatureParts(this.messageSecurityContext,elementsToClean, message.countAttachments(),listaErroriRiscontrati);
+			Map<QName, QName> notResolved = receiverInterface.checkEncryptSignatureParts(this.messageSecurityContext,elementsToClean, message,listaErroriRiscontrati);
 			if(listaErroriRiscontrati.size()>0){
 				StringBuffer bf = new StringBuffer();
 				for (Iterator<?> iterator = listaErroriRiscontrati.iterator(); iterator.hasNext();) {

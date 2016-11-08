@@ -87,6 +87,8 @@ public class SecurityConstants {
 	public static final String SECURITY_ENGINE_SOAPBOX = "soapbox";
 	public static final String SECURITY_ENGINE_DSS = "dss";
 	
+	public static final String NORMALIZE_TO_SAAJ_IMPL = "normalizeToSaajImpl";
+	
 	public static final String SIGNATURE_ENGINE = "signatureEngine";
 	public static final String SIGNATURE_ENGINE_SUN = "sun";
 	public static final String SIGNATURE_ENGINE_XMLSEC = "xmlSec";
@@ -107,9 +109,16 @@ public class SecurityConstants {
     public static final String MUST_UNDERSTAND = ConfigurationConstants.MUST_UNDERSTAND;
     
     public static final boolean SECURITY_CLIENT = true;
-    public static final boolean SECUIRYT_SERVER = false;
+    public static final boolean SECURITY_SERVER = false;
     
     public static final String USER = ConfigurationConstants.USER;
+    
+    public static final String CID_ATTACH_WSS4j = "cid:Attachments";
+    public static final String NAMESPACE_ATTACH = "Attach";
+    public static final String PART_CONTENT = "Content";
+    public static final String PART_COMPLETE = "Complete";
+    public static final String PART_ELEMENT = "Element";
+    public static final String ATTACHMENT_INDEX_ALL =  "*";
     
     public static final String MULTI_USER_KEYWORD_PORTA_DOMINIO_FRUITORE = "#MultiPropUsePddFruitoreAsAlias#";
     public static final String MULTI_USER_KEYWORD_PORTA_DOMINIO_EROGATORE = "#MultiPropUsePddErogatoreAsAlias#";
@@ -126,11 +135,13 @@ public class SecurityConstants {
     public static final String ENCRYPTION_PARTS = ConfigurationConstants.ENCRYPTION_PARTS;
     public static final String ENCRYPTION_PARTS_VERIFY = "encryptionPartsVerify";
     // ENCRYPTION_ATTACHMENTS_PARTS: {Content/Complete}{indice} 
+    // utilizzo: {Content}{Attach}{*}
+    // o sintassi wss4j {}cid:Attachments
     // Il valore * o '' puo' essere usato come indice per indicare qualsiasi, altrimenti l'indice indica la posizione dell'attachment
-    public static final String ENCRYPTION_NAMESPACE_ATTACH = "Attach";
-    public static final String ENCRYPTION_PART_CONTENT = "Content";
-    public static final String ENCRYPTION_PART_COMPLETE = "Complete";
-    public static final String ENCRYPTION_PART_ELEMENT = "Element";
+    public static final String ENCRYPTION_NAMESPACE_ATTACH = NAMESPACE_ATTACH;
+    public static final String ENCRYPTION_PART_CONTENT = PART_CONTENT;
+    public static final String ENCRYPTION_PART_COMPLETE = PART_COMPLETE;
+    public static final String ENCRYPTION_PART_ELEMENT = PART_ELEMENT;
     public static final String ENCRYPTION_PROPERTY_FILE = ConfigurationConstants.ENC_PROP_FILE;
     public static final String ENCRYPTION_TRUSTSTORE_PROPERTY_FILE = "encryptionTrustStorePropFile";
     public static final String ENCRYPTION_MULTI_PROPERTY_FILE = "encryptionMultiPropFile";
@@ -157,11 +168,13 @@ public class SecurityConstants {
     public static final String SIGNATURE_PARTS = ConfigurationConstants.SIGNATURE_PARTS;
     public static final String SIGNATURE_PARTS_VERIFY = "signaturePartsVerify";
     // SIGNATURE_ATTACHMENTS_PARTS: {Content/Complete}{indice} 
+    // utilizzo: {Content}{Attach}{*}
+    // o sintassi wss4j {}cid:Attachments
     // Il valore * o '' puo' essere usato come indice per indicare qualsiasi, altrimenti l'indice indica la posizione dell'attachment
-    public static final String SIGNATURE_NAMESPACE_ATTACH = "Attach";
-    public static final String SIGNATURE_PART_CONTENT = "Content";
-    public static final String SIGNATURE_PART_COMPLETE = "Complete";
-    public static final String SIGNATURE_PART_ELEMENT = "Element";
+    public static final String SIGNATURE_NAMESPACE_ATTACH = NAMESPACE_ATTACH;
+    public static final String SIGNATURE_PART_CONTENT = PART_CONTENT;
+    public static final String SIGNATURE_PART_COMPLETE = PART_COMPLETE;
+    public static final String SIGNATURE_PART_ELEMENT = PART_ELEMENT;
     public static final String SIGNATURE_PROPERTY_FILE = ConfigurationConstants.SIG_PROP_FILE;
     public static final String SIGNATURE_TRUSTSTORE_PROPERTY_FILE = "signatureTrustStorePropFile";
     public static final String SIGNATURE_MULTI_PROPERTY_FILE = "signatureMultiPropFile";

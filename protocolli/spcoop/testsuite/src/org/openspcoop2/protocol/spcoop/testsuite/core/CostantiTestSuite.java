@@ -1186,7 +1186,43 @@ public class CostantiTestSuite {
     /** ENTITA SPCOOP: Nome Azione WSS del Servizio RichiestaStatoAvanzamento BUG18 WSSSignature_ClientMustUnderstand1eActorClient_PdDActorOpenSPCoop */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_BUG18_ClientMUActor_PdDActor_Signature="WSSSignature_ClientMustUnderstand1eActorClient_PdDActorOpenSPCoop";
     /** ENTITA SPCOOP: Nome Azione WSS del Servizio RichiestaStatoAvanzamento WSS Annidamento*/
-    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ANNIDAMENTO="WSSAnnidamento";
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ANNIDAMENTO="WSSAnnidamento";    
+    /** ENTITA SPCOOP: Nome Azione WSSEncryptAttachments del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH="WSSEncryptAttachments";
+    /** ENTITA SPCOOP: Nome Azione WSSEncryptAttachmentsContent del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH_CONTENT="WSSEncryptAttachmentsContent";
+    /** ENTITA SPCOOP: Nome Azione WSSEncryptAttachmentsElement del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH_ELEMENT="WSSEncryptAttachmentsElement";
+    /** ENTITA SPCOOP: Nome Azione WSSEncryptAttachmentsContentOp2Format del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH_CONTENT_OP2FORMAT="WSSEncryptAttachmentsContentOp2Format";
+    /** ENTITA SPCOOP: Nome Azione WSSEncryptAttachmentsElementOp2Format del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH_ELEMENT_OP2FORMAT="WSSEncryptAttachmentsElementOp2Format";
+    /** ENTITA SPCOOP: Nome Azione WSSEncryptAttachmentsOp2FormatOneOnly del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH_OP2FORMAT_ONEONLY="WSSEncryptAttachmentsOp2FormatOneOnly";
+    /** ENTITA SPCOOP: Nome Azione WSSEncryptP12Attachments del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH_P12="WSSEncryptP12Attachments";    
+    /** ENTITA SPCOOP: Nome Azione WSSSignatureAttachments del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SIGNATURE_ATTACH="WSSSignatureAttachments";
+    /** ENTITA SPCOOP: Nome Azione WSSSignatureAttachmentsContent del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SIGNATURE_ATTACH_CONTENT="WSSSignatureAttachmentsContent";
+    /** ENTITA SPCOOP: Nome Azione WSSSignatureAttachmentsElement del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SIGNATURE_ATTACH_ELEMENT="WSSSignatureAttachmentsElement";
+    /** ENTITA SPCOOP: Nome Azione WSSSignatureAttachmentsContentOp2Format del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SIGNATURE_ATTACH_CONTENT_OP2FORMAT="WSSSignatureAttachmentsContentOp2Format";
+    /** ENTITA SPCOOP: Nome Azione WSSSignatureAttachmentsElementOp2Format del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SIGNATURE_ATTACH_ELEMENT_OP2FORMAT="WSSSignatureAttachmentsElementOp2Format";
+    /** ENTITA SPCOOP: Nome Azione WSSSignatureAttachmentsOp2FormatOneOnly del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SIGNATURE_ATTACH_OP2FORMAT_ONEONLY="WSSSignatureAttachmentsOp2FormatOneOnly";
+    /** ENTITA SPCOOP: Nome Azione WSSSignatureP12Attachments del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SIGNATURE_ATTACH_P12="WSSSignatureP12Attachments";  
+    /** ENTITA SPCOOP: Nome Azione WSSSignatureEncrypt del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SIGNATURE_ENCRYPT="WSSSignatureEncrypt";
+    /** ENTITA SPCOOP: Nome Azione WSSEncryptSignature del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_SIGNATURE="WSSEncryptSignature";
+    /** ENTITA SPCOOP: Nome Azione WSSSignatureEncryptAttachments del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SIGNATURE_ENCRYPT_ATTACHMENTS="WSSSignatureEncryptAttachments";
+    /** ENTITA SPCOOP: Nome Azione WSSEncryptSignatureAttachments del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_SIGNATURE_ATTACHMENTS="WSSEncryptSignatureAttachments";
     /** ENTITA SPCOOP: Nome Azione WSSSaml20Unsigned del Servizio RichiestaStatoAvanzamento */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_UNSIGNED="WSSSaml20Unsigned";
     /** ENTITA SPCOOP: Nome Azione WSSSaml20Signed del Servizio RichiestaStatoAvanzamento */

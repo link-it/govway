@@ -35,7 +35,6 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPFault;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -141,6 +140,7 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.resources.TransportResponseContext;
+import org.slf4j.Logger;
 
 
 /**
@@ -1397,6 +1397,12 @@ public class InoltroBuste extends GenericLib{
 						
 						msgDiag.mediumDebug("Inizializzazione contesto di Message Security della richiesta completata con successo");
 						
+						if(org.openspcoop2.security.message.engine.WSSUtilities.isNormalizeToSaajImpl(messageSecurityContext)){
+							msgDiag.mediumDebug("Normalize to saajImpl");
+							//System.out.println("InoltroBusteEgov.request.normalize");
+							requestMessage = requestMessage.normalizeToSaajImpl();
+						}
+						
 						msgDiag.logPersonalizzato("messageSecurity.processamentoRichiestaInCorso");
 						if(messageSecurityContext.processOutgoing(requestMessage) == false){
 							msgErrore = messageSecurityContext.getMsgErrore();
@@ -2508,7 +2514,7 @@ public class InoltroBuste extends GenericLib{
 								contextParameters.setUseActorDefaultIfNotDefined(this.propertiesReader.isGenerazioneActorDefault(implementazionePdDDestinatario));
 								contextParameters.setActorDefault(this.propertiesReader.getActorDefault(implementazionePdDDestinatario));
 								contextParameters.setLog(this.log);
-								contextParameters.setFunctionAsClient(SecurityConstants.SECURITY_CLIENT);
+								contextParameters.setFunctionAsClient(SecurityConstants.SECURITY_SERVER);
 								contextParameters.setPrefixWsuId(this.propertiesReader.getPrefixWsuId());
 								contextParameters.setIdFruitore(soggettoFruitore);
 								contextParameters.setIdServizio(idServizio);
@@ -2517,8 +2523,17 @@ public class InoltroBuste extends GenericLib{
 								messageSecurityContext = new MessageSecurityFactory().getMessageSecurityContext(contextParameters);
 							}
 							messageSecurityContext.setIncomingProperties(messageSecurityConfig.getFlowParameters());  
+							messageSecurityContext.setFunctionAsClient(SecurityConstants.SECURITY_SERVER);
 							
 							msgDiag.mediumDebug("Inizializzazione contesto di Message Security della richiesta completata con successo");
+							
+							if(responseMessage!=null && org.openspcoop2.security.message.engine.WSSUtilities.isNormalizeToSaajImpl(messageSecurityContext)){
+								msgDiag.mediumDebug("Normalize Response to saajImpl");
+								//System.out.println("InoltroBusteEgov.response.normalize");
+								responseMessage = responseMessage.normalizeToSaajImpl();
+								
+								validatore.updateMsg(responseMessage);
+							}
 							
 						}catch(Exception e){
 							msgDiag.logErroreGenerico(e,"InizializzazioneContestoSicurezzaRisposta");

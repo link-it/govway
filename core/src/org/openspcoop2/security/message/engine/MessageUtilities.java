@@ -21,12 +21,15 @@
 
 package org.openspcoop2.security.message.engine;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
 import javax.xml.namespace.QName;
+import javax.xml.soap.AttachmentPart;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.SoapUtils;
@@ -95,10 +98,19 @@ public class MessageUtilities {
 		}
 	}
 
-	public static Map<QName, QName> checkEncryptSignatureParts(MessageSecurityContext messageSecurityContext,List<Reference> elementsToClean, int numAttachmentsInMsg,
+	public static Map<QName, QName> checkEncryptSignatureParts(MessageSecurityContext messageSecurityContext,List<Reference> elementsToClean, OpenSPCoop2Message message,
 			List<SubErrorCodeSecurity> codiciErrore, QName qnameSecurity) throws SecurityException {
 		
 		try{
+			int numAttachmentsInMsg = message.countAttachments();
+			List<String> cidAttachments = new ArrayList<String>();
+			if(numAttachmentsInMsg>0){
+				Iterator<?> itAttach = message.getAttachments();
+				while (itAttach.hasNext()) {
+					AttachmentPart ap = (AttachmentPart) itAttach.next();
+					cidAttachments.add(ap.getContentId());
+				}
+			}
 		
 			// *** ENCRYPT VERIFY ***
 			Map<QName, QName> notResolvedMap = new HashMap<QName, QName>();
@@ -126,14 +138,43 @@ public class MessageUtilities {
 						boolean checked = false;
 						String[]split2 = split[i].trim().split("}");
 						String tipo = split2[0].trim().substring(1); // Element o Content
-						String namespace = split2[1].trim().substring(1); 
-						String nome = split2[2].trim();
-						if("Element".equals(tipo)) {
-							numElementsEncrypted++;
+						if("".equals(tipo)){
+							// caso speciale wss4j {}cid:Attachments
+							tipo = SecurityConstants.PART_CONTENT;
+						}
+						String namespace = null;
+						String nome = null;
+						boolean attach = false;
+						if(split2.length==3){
+							namespace = split2[1].trim().substring(1); 
+							nome = split2[2].trim();
+							attach = SecurityConstants.ENCRYPTION_NAMESPACE_ATTACH.equals(namespace);
+						}
+						else{
+							// caso speciale wss4j {}cid:Attachments ?
+							if(SecurityConstants.CID_ATTACH_WSS4j.equalsIgnoreCase(split2[1].trim())){
+								namespace = SecurityConstants.ENCRYPTION_NAMESPACE_ATTACH;
+								nome = SecurityConstants.ATTACHMENT_INDEX_ALL;
+								attach = true;
+							}
+							else{
+								throw new Exception("Part ["+split[i]+"] with wrong format");
+							}
+						}
+						if(SecurityConstants.ENCRYPTION_PART_ELEMENT.equals(tipo)) {
+							// incremento solamente se non è un attachments
+							if(!attach){
+								numElementsEncrypted++;
+							}
 						}
 						if(nome.startsWith("{"))
 							nome = nome.substring(1);
 						//System.out.println("CIFRO ["+tipo+"] ["+namespace+"] ["+nome+"]");	
+						
+						List<String> cidAttachmentsEncrypt = new ArrayList<String>();
+						if(cidAttachments!=null && cidAttachments.size()>0){
+							cidAttachmentsEncrypt.addAll(cidAttachments);
+						}
 						
 						for (Reference reference : elementsToClean) {
 						
@@ -141,18 +182,45 @@ public class MessageUtilities {
 								if(AttachmentReference.TYPE_ENCRYPT_ATTACHMENT==reference.getType()){
 									if(SecurityConstants.ENCRYPTION_NAMESPACE_ATTACH.equals(namespace)){
 										numAttachmentsEncrypted++;
-										if(nome.equals("*")) {
+										if(nome.equals(SecurityConstants.ATTACHMENT_INDEX_ALL)) {
 											checked = true;
 											isAllAttachmentEncrypted = true;
 											encryptionReferenceMap.put(reference, true);
 											encryptionPartsMap.put(split[i], checked);
 											// break;
 											// Vanno iterate tutte, dovendole contare
-										}else if(nome.equals(reference.getReference())) {
-											checked = true;
-											encryptionReferenceMap.put(reference, true);
-											encryptionPartsMap.put(split[i], checked);
-											break;
+										}else{
+											int position = -1;
+											try{
+												position = Integer.parseInt(nome);
+											}catch(Exception e){}
+											if(position>0){
+												int refPosition = -1;
+												for (int j = 0; j < cidAttachments.size(); j++) {
+													if(cidAttachments.get(j).equals(reference.getReference())){
+														refPosition = j+1;
+														break;
+													}
+												}
+												//if(refPosition == position){ // Alcune implementazioni durante la spedizione modificano l'ordine degli attachments.
+												// Non è possibile effettuare tale controllo sulla ricezione. Può essere usato solo per specificare quale attach firmare/cifrare in spedizione
+												// verifico solamente che il cid sia presente
+												if(refPosition>0){
+													cidAttachmentsEncrypt.remove((refPosition-1));
+													checked = true;
+													encryptionReferenceMap.put(reference, true);
+													encryptionPartsMap.put(split[i], checked);
+													break;
+												}
+											}
+											else{
+												if(nome.equals(reference.getReference())) {
+													checked = true;
+													encryptionReferenceMap.put(reference, true);
+													encryptionPartsMap.put(split[i], checked);
+													break;
+												}
+											}
 										}
 									}
 								}
@@ -170,7 +238,7 @@ public class MessageUtilities {
 											break;
 										}
 									}
-								} else if(ElementReference.TYPE_ENCRYPT_ELEMENT==reference.getType() && "Element".equals(tipo)) {
+								} else if(ElementReference.TYPE_ENCRYPT_ELEMENT==reference.getType() && SecurityConstants.ENCRYPTION_PART_ELEMENT.equals(tipo)) {
 										// Segnamo l'elemento come checked, e lo aggiungiamo alla lista di elementi da verificare 
 										// dopo la decifratura, visto che allo stato attuale e' imposibile verificarlo
 										checked = true;
@@ -208,8 +276,26 @@ public class MessageUtilities {
 					for (int i = 0; i < split.length; i++) {
 						String[]split2 = split[i].trim().split("}");
 						String tipo = split2[0].trim().substring(1); // Element o Content
-						String namespace = split2[1].trim().substring(1); 
-						String nome = split2[2].trim();
+						if("".equals(tipo)){
+							// caso speciale wss4j {}cid:Attachments
+							tipo = SecurityConstants.PART_CONTENT;
+						}
+						String namespace = null;
+						String nome = null;
+						if(split2.length==3){
+							namespace = split2[1].trim().substring(1); 
+							nome = split2[2].trim();
+						}
+						else{
+							// caso speciale wss4j {}cid:Attachments ?
+							if(SecurityConstants.CID_ATTACH_WSS4j.equalsIgnoreCase(split2[1].trim())){
+								namespace = SecurityConstants.ENCRYPTION_NAMESPACE_ATTACH;
+								nome = SecurityConstants.ATTACHMENT_INDEX_ALL;
+							}
+							else{
+								throw new Exception("Part ["+split[i]+"] with wrong format");
+							}
+						}
 						if(nome.startsWith("{"))
 							nome = nome.substring(1);
 						if(SecurityConstants.ENCRYPTION_PART_CONTENT.equals(tipo)){
@@ -233,7 +319,7 @@ public class MessageUtilities {
 					subCodice.setMsgErrore("All attachments in message (found:"+numAttachmentsInMsg+") must be encrypted, but only "+numAttachmentsEncrypted+" appear to be encrypted");
 					subCodice.setTipo(SecurityConstants.ENCRYPTION_PART_CONTENT);
 					subCodice.setNamespace(SecurityConstants.ENCRYPTION_NAMESPACE_ATTACH);
-					subCodice.setName("*");
+					subCodice.setName(SecurityConstants.ATTACHMENT_INDEX_ALL);
 					codiciErrore.add(subCodice);
 					//throw new Exception("All attachments in message (found:"+numAttachmentsInMsg+") must be encrypted, but only "+numAttachmentsEncrypted+" appear to be encrypted");
 				}
@@ -287,11 +373,34 @@ public class MessageUtilities {
 						boolean checked = false;
 						String[]split2 = split[i].trim().split("}");
 						String tipo = split2[0].trim().substring(1); // Element o Content
-						String namespace = split2[1].trim().substring(1); 
-						String nome = split2[2].trim(); // CID
+						if("".equals(tipo)){
+							// caso speciale wss4j {}cid:Attachments
+							tipo = SecurityConstants.PART_CONTENT;
+						}
+						String namespace = null;
+						String nome = null;
+						if(split2.length==3){
+							namespace = split2[1].trim().substring(1); 
+							nome = split2[2].trim();
+						}
+						else{
+							// caso speciale wss4j {}cid:Attachments ?
+							if(SecurityConstants.CID_ATTACH_WSS4j.equalsIgnoreCase(split2[1].trim())){
+								namespace = SecurityConstants.SIGNATURE_NAMESPACE_ATTACH;
+								nome = SecurityConstants.ATTACHMENT_INDEX_ALL;
+							}
+							else{
+								throw new Exception("Part ["+split[i]+"] with wrong format");
+							}
+						}
 						if(nome.startsWith("{"))
 							nome = nome.substring(1);
 						//System.out.println("CIFRO ["+tipo+"] ["+namespace+"] ["+nome+"]");	
+						
+						List<String> cidAttachmentsSignature = new ArrayList<String>();
+						if(cidAttachments!=null && cidAttachments.size()>0){
+							cidAttachmentsSignature.addAll(cidAttachments);
+						}
 						
 						for (Reference reference : elementsToClean) {
 						
@@ -299,16 +408,43 @@ public class MessageUtilities {
 								if(AttachmentReference.TYPE_SIGN_ATTACHMENT==reference.getType()){
 									if(SecurityConstants.SIGNATURE_NAMESPACE_ATTACH.equals(namespace)){
 										numAttachmentsSigned++;
-										if(nome.equals("*")) {
+										if(nome.equals(SecurityConstants.ATTACHMENT_INDEX_ALL)) {
 											checked = true;
 											isAllAttachmentSigned = true;
 											referenceMap.put(reference, true);
 											// break;
 											// Vanno iterate tutte, dovendole contare
-										}else if(nome.equals(reference.getReference())) {
-											checked = true;
-											referenceMap.put(reference, true);
-											break;
+										}
+										else{
+											int position = -1;
+											try{
+												position = Integer.parseInt(nome);
+											}catch(Exception e){}
+											if(position>0){
+												int refPosition = -1;
+												for (int j = 0; j < cidAttachments.size(); j++) {
+													if(cidAttachments.get(j).equals(reference.getReference())){
+														refPosition = j+1;
+														break;
+													}
+												}
+												//if(refPosition == position){ // Alcune implementazioni durante la spedizione modificano l'ordine degli attachments.
+												// Non è possibile effettuare tale controllo sulla ricezione. Può essere usato solo per specificare quale attach firmare/cifrare in spedizione
+												// verifico solamente che il cid sia presente
+												if(refPosition>0){
+													cidAttachmentsSignature.remove((refPosition-1));
+													checked = true;
+													referenceMap.put(reference, true);
+													break;
+												}
+											}
+											else{
+												if(nome.equals(reference.getReference())) {
+													checked = true;
+													referenceMap.put(reference, true);
+													break;
+												}
+											}
 										}
 									}
 								}
@@ -334,8 +470,26 @@ public class MessageUtilities {
 					if(!signaturePartsMap.get(part)) {
 						String[]split2 = part.trim().split("}");
 						String tipo = split2[0].trim().substring(1); // Element o Content
-						String namespace = split2[1].trim().substring(1); 
-						String nome = split2[2].trim(); // CID
+						if("".equals(tipo)){
+							// caso speciale wss4j {}cid:Attachments
+							tipo = SecurityConstants.PART_CONTENT;
+						}
+						String namespace = null;
+						String nome = null;
+						if(split2.length==3){
+							namespace = split2[1].trim().substring(1); 
+							nome = split2[2].trim();
+						}
+						else{
+							// caso speciale wss4j {}cid:Attachments ?
+							if(SecurityConstants.CID_ATTACH_WSS4j.equalsIgnoreCase(split2[1].trim())){
+								namespace = SecurityConstants.SIGNATURE_NAMESPACE_ATTACH;
+								nome = SecurityConstants.ATTACHMENT_INDEX_ALL;
+							}
+							else{
+								throw new Exception("Part ["+part+"] with wrong format");
+							}
+						}
 						if(nome.startsWith("{"))
 							nome = nome.substring(1);
 						SubErrorCodeSecurity subCodice = new SubErrorCodeSecurity();
@@ -356,7 +510,7 @@ public class MessageUtilities {
 					subCodice.setMsgErrore("All attachments in message (found:"+numAttachmentsInMsg+") must be signed, but only "+numAttachmentsSigned+" appear to be signed");
 					subCodice.setTipo(SecurityConstants.SIGNATURE_PART_CONTENT);
 					subCodice.setNamespace(SecurityConstants.SIGNATURE_NAMESPACE_ATTACH);
-					subCodice.setName("*");
+					subCodice.setName(SecurityConstants.ATTACHMENT_INDEX_ALL);
 					codiciErrore.add(subCodice);
 					//throw new Exception("All attachments in message (found:"+numAttachmentsInMsg+") must be signed, but "+numAttachmentsSigned+" appear to be signed");
 				}

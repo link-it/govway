@@ -1063,6 +1063,190 @@
                 </response-flow>
             </message-security>
         </porta-delegata>
+
+	<!-- Funzionalita' di Encrypt (Attachments) -->
+
+	<porta-delegata gestione-manifest="abilitato" nome="WSSEncryptAttachments" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSEncryptAttachments" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pa" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{}cid:Attachments" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="decryptionPropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{}cid:Attachments" />
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+
+	<porta-delegata gestione-manifest="abilitato" nome="WSSEncryptAttachmentsContent" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSEncryptAttachmentsContent" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pa" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}cid:Attachments" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="decryptionPropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Content}cid:Attachments" />
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+
+	<porta-delegata gestione-manifest="abilitato" nome="WSSEncryptAttachmentsElement" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSEncryptAttachmentsElement" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pa" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Element}cid:Attachments" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="decryptionPropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Element}cid:Attachments" />
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+        
+	<porta-delegata gestione-manifest="abilitato" nome="WSSEncryptAttachmentsContentOp2Format" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSEncryptAttachmentsContentOp2Format" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pa" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="decryptionPropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Content}{Attach}{*}" />
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+
+	<porta-delegata gestione-manifest="abilitato" nome="WSSEncryptAttachmentsElementOp2Format" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSEncryptAttachmentsElementOp2Format" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pa" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Element}{Attach}{*}" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="decryptionPropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Element}{Attach}{*}" />
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+
+	<porta-delegata gestione-manifest="abilitato" nome="WSSEncryptAttachmentsOp2FormatOneOnly" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSEncryptAttachmentsOp2FormatOneOnly" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pa" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Element}{Attach}{1}" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="decryptionPropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Content}{Attach}{2}" />
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSEncryptP12Attachments" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSEncryptP12Attachments" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pa" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pd-truststore-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{}cid:Attachments" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="decryptionPropFile" valore="pd-p12-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{}cid:Attachments" />
+                </response-flow>
+            </message-security>
+        </porta-delegata>
         
         <!-- Funzionalita' di Signature -->
         <porta-delegata gestione-manifest="abilitato" nome="WSSSignature" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
@@ -1092,7 +1276,6 @@
             </message-security>
         </porta-delegata>
         
-        <!-- Funzionalita' di Signature -->
         <porta-delegata gestione-manifest="abilitato" nome="WSSSignatureP12" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
@@ -1116,6 +1299,337 @@
                     <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
                     <parameter nome="signaturePropFile" valore="pd-truststore-crypto.properties" />
                     <parameter nome="mustUnderstand" valore="false" />
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSignatureAttachments" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSignatureAttachments" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="user" valore="pd" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                    <parameter nome="signatureParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio;{}cid:Attachments" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="signatureParts" valore="{}cid:Attachments" />
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSignatureAttachmentsContent" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSignatureAttachmentsContent" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="user" valore="pd" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                    <parameter nome="signatureParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio;{Content}cid:Attachments" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="signatureParts" valore="{Content}cid:Attachments" />
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSignatureAttachmentsElement" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSignatureAttachmentsElement" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="user" valore="pd" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                    <parameter nome="signatureParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio;{Element}cid:Attachments" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="signatureParts" valore="{Element}cid:Attachments" />
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+        
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSignatureAttachmentsContentOp2Format" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSignatureAttachmentsContentOp2Format" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="user" valore="pd" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                    <parameter nome="signatureParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio;{Content}{Attach}{*}" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="signatureParts" valore="{Content}{Attach}{*}" />
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSignatureAttachmentsElementOp2Format" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSignatureAttachmentsElementOp2Format" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="user" valore="pd" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                    <parameter nome="signatureParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio;{Element}{Attach}{*}" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="signatureParts" valore="{Element}{Attach}{*}" />
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+
+       <porta-delegata gestione-manifest="abilitato" nome="WSSSignatureAttachmentsOp2FormatOneOnly" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSignatureAttachmentsOp2FormatOneOnly" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="user" valore="pd" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                    <parameter nome="signatureParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio;{Content}{Attach}{1}" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="signatureParts" valore="{Element}{Attach}{2}" />
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSignatureP12Attachments" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSignatureP12Attachments" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="user" valore="pdP12" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pd-p12-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                    <parameter nome="signatureParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio;{}cid:Attachments" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pd-truststore-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="signatureParts" valore="{}cid:Attachments" />
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+
+        <!-- Funzionalita' Incrociate -->
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSignatureEncrypt" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSignatureEncrypt" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature Encrypt" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pa" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="user" valore="pd" />
+		    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pd-crypto.properties" />
+                    <parameter nome="signatureParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature Encrypt" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="decryptionPropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pd-crypto.properties" />
+                    <parameter nome="signatureParts" valore="{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSEncryptSignature" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSEncryptSignature" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt Signature" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pa" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="user" valore="pd" />
+		    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pd-crypto.properties" />
+                    <parameter nome="signatureParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt Signature" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="decryptionPropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pd-crypto.properties" />
+                    <parameter nome="signatureParts" valore="{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio" />
+
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSignatureEncryptAttachments" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSignatureEncryptAttachments" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature Encrypt" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pa" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="user" valore="pd" />
+		    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pd-crypto.properties" />
+                    <parameter nome="signatureParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio;{Content}{Attach}{*}" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature Encrypt" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="decryptionPropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pd-crypto.properties" />
+		    <parameter nome="signatureParts" valore="{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio;{Element}{Attach}{*}" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Element}{Attach}{*}" />
+                </response-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSEncryptSignatureAttachments" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSEncryptSignatureAttachments" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt Signature" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pa" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="user" valore="pd" />
+		    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pd-crypto.properties" />
+                    <parameter nome="signatureParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio;{Content}{Attach}{*}" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt Signature" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="decryptionPropFile" valore="pd-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pd-crypto.properties" />
+		    <parameter nome="signatureParts" valore="{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio;{Element}{Attach}{*}" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Element}{Attach}{*}" />
                 </response-flow>
             </message-security>
         </porta-delegata>
@@ -1511,6 +2025,8 @@
                     <parameter nome="signaturePropFile" valore="pd-crypto.properties" />
                     <parameter nome="decryptionPropFile" valore="pd-crypto.properties" />
                     <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="signaturePartsVerify"  valore="false" />
+                    <parameter nome="signatureParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio;{Content}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;" />
                 </response-flow>
             </message-security>
         </porta-delegata>
@@ -3981,6 +4497,200 @@
             </message-security>
         </porta-applicativa>
 
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncryptAttachments">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSEncryptAttachments" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <!-- <parameter nome="encryptionKeyIdentifier" valore="X509KeyIdentifier" /> -->
+                    <parameter nome="decryptionPropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{}cid:Attachments" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pd" />
+                    <!-- <parameter nome="encryptionKeyIdentifier" valore="X509KeyIdentifier" /> -->
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{}cid:Attachments" />
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncryptAttachmentsContent">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSEncryptAttachmentsContent" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <!-- <parameter nome="encryptionKeyIdentifier" valore="X509KeyIdentifier" /> -->
+                    <parameter nome="decryptionPropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}cid:Attachments" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pd" />
+                    <!-- <parameter nome="encryptionKeyIdentifier" valore="X509KeyIdentifier" /> -->
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Content}cid:Attachments" />
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncryptAttachmentsElement">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSEncryptAttachmentsElement" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <!-- <parameter nome="encryptionKeyIdentifier" valore="X509KeyIdentifier" /> -->
+                    <parameter nome="decryptionPropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Element}cid:Attachments" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pd" />
+                    <!-- <parameter nome="encryptionKeyIdentifier" valore="X509KeyIdentifier" /> -->
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Element}cid:Attachments" />
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncryptAttachmentsContentOp2Format">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSEncryptAttachmentsContentOp2Format" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <!-- <parameter nome="encryptionKeyIdentifier" valore="X509KeyIdentifier" /> -->
+                    <parameter nome="decryptionPropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pd" />
+                    <!-- <parameter nome="encryptionKeyIdentifier" valore="X509KeyIdentifier" /> -->
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Content}{Attach}{*}" />
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncryptAttachmentsElementOp2Format">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSEncryptAttachmentsElementOp2Format" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <!-- <parameter nome="encryptionKeyIdentifier" valore="X509KeyIdentifier" /> -->
+                    <parameter nome="decryptionPropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Element}{Attach}{*}" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pd" />
+                    <!-- <parameter nome="encryptionKeyIdentifier" valore="X509KeyIdentifier" /> -->
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Element}{Attach}{*}" />
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncryptAttachmentsOp2FormatOneOnly">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSEncryptAttachmentsOp2FormatOneOnly" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <!-- <parameter nome="encryptionKeyIdentifier" valore="X509KeyIdentifier" /> -->
+                    <parameter nome="decryptionPropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Element}{Attach}{1}" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pd" />
+                    <!-- <parameter nome="encryptionKeyIdentifier" valore="X509KeyIdentifier" /> -->
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Content}{Attach}{2}" />
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncryptP12Attachments">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSEncryptP12Attachments" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="decryptionPropFile" valore="pa-p12-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{}cid:Attachments" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pd" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pa-truststore-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="encryptionParts" valore="{}cid:Attachments" />
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+
         <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncryptLocalForwardSoloRichiesta">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptLocalForwardSoloRichiesta" />
@@ -4026,7 +4736,6 @@
             </message-security>
         </porta-applicativa>
         
-        <!-- Funzionalita' di Signature -->
         <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignatureP12">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureP12" />
@@ -4055,6 +4764,209 @@
             </message-security>
         </porta-applicativa>
         
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignatureAttachments">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSignatureAttachments" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="signatureParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio;{}cid:Attachments" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="user" valore="pa" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="signatureParts" valore="{}cid:Attachments" />
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignatureAttachmentsContent">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSignatureAttachmentsContent" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="signatureParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio;{Content}cid:Attachments" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="user" valore="pa" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="signatureParts" valore="{Content}cid:Attachments" />
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignatureAttachmentsElement">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSignatureAttachmentsElement" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="signatureParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio;{Element}cid:Attachments" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="user" valore="pa" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="signatureParts" valore="{Element}cid:Attachments" />
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignatureAttachmentsContentOp2Format">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSignatureAttachmentsContentOp2Format" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="signatureParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio;{Content}{Attach}{*}" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="user" valore="pa" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="signatureParts" valore="{Content}{Attach}{*}" />
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignatureAttachmentsElementOp2Format">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSignatureAttachmentsElementOp2Format" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="signatureParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio;{Element}{Attach}{*}" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="user" valore="pa" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="signatureParts" valore="{Element}{Attach}{*}" />
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignatureAttachmentsOp2FormatOneOnly">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSignatureAttachmentsOp2FormatOneOnly" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="signatureParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio;{Content}{Attach}{1}" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="user" valore="pa" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="signatureParts" valore="{Element}{Attach}{2}" />
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+        
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignatureP12Attachments">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSignatureP12Attachments" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-truststore-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                    <parameter nome="signatureParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio;{}cid:Attachments" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="user" valore="paP12" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pa-p12-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="signatureParts" valore="{}cid:Attachments" />
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+
         <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignatureLocalForwardSolaRichiesta">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureLocalForwardSolaRichiesta" />
@@ -4100,6 +5012,141 @@
             </message-security>
         </porta-applicativa>
         
+	<!-- Funzionalita' Incrociate -->
+	
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignatureEncrypt">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSignatureEncrypt" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature Encrypt" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="decryptionPropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="signatureParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature Encrypt" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pd" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="user" valore="pa" />
+		    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="signatureParts" valore="{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncryptSignature">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSEncryptSignature" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt Signature" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="decryptionPropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="signatureParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt Signature" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pd" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="user" valore="pa" />
+		    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="signatureParts" valore="{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body" />
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignatureEncryptAttachments">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSignatureEncryptAttachments" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Signature Encrypt" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="decryptionPropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="signatureParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio;{Content}{Attach}{*}" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Signature Encrypt" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pd" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="user" valore="pa" />
+		    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="signatureParts" valore="{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio;{Element}{Attach}{*}" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Element}{Attach}{*}" />
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncryptSignatureAttachments">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSEncryptSignatureAttachments" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="Encrypt Signature" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="decryptionPropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+                    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="signatureParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio;{Content}{Attach}{*}" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
+                </request-flow>
+                <response-flow>
+                    <parameter nome="action" valore="Encrypt Signature" />
+                    <parameter nome="timeToLive" valore="600" />
+                    <parameter nome="encryptionUser" valore="pd" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="encryptionPropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="user" valore="pa" />
+		    <parameter nome="signatureKeyIdentifier" valore="DirectReference" />
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="signatureParts" valore="{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio;{Element}{Attach}{*}" />
+		    <parameter nome="encryptionParts" valore="{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Element}{Attach}{*}" />
+                </response-flow>
+            </message-security>
+        </porta-applicativa>
+
+
         <!-- Funzionalita' Timestamp/Encrypt/Signature, con utilizzo del certificato presente nella richiesta -->
         <porta-applicativa gestione-manifest="abilitato" nome="PA_WSS">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
@@ -4701,6 +5748,8 @@
                     <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
                     <parameter nome="decryptionPropFile" valore="pa-crypto.properties" />
                     <parameter nome="mustUnderstand" valore="false" />
+                    <parameter nome="encryptionParts" valore="{Content}{http://www.openspcoop.org}encrypt_content;{Element}{http://www.openspcoop.org}encrypt_element;{Content}{http://www.openspcoop.org}client_sign" />
+                    <parameter nome="signatureParts" valore="{Content}{http://www.openspcoop.org}sign_content;{Element}{http://www.openspcoop.org}sign_element;{Content}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}IntestazioneMessaggio" />
                 </request-flow>
                 <response-flow>
                     <parameter nome="action" valore="Timestamp Encrypt Signature" />

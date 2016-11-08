@@ -451,6 +451,7 @@ public class ClientCore {
 		Iterator<?> parts2=msg2.getAttachments();
 		HashMap<?,?> hash2=putOnHash(parts2);
 		if(vet.size()!=hash2.size()){
+			System.out.println("SIZE DIFFERENTI ("+vet.size()+")!=("+hash2.size()+")");
 			return false;
 		}
 		for(int i=0;i<vet.size();i++){
@@ -465,9 +466,10 @@ public class ClientCore {
 				}
 			}
 			AttachmentPart att2=(AttachmentPart)hash2.get(content);
-			if(att2==null)throw new TestSuiteException("Non esiste un attachment con lo stesso id ["+content+"]");
+			if(att2==null)
+				throw new TestSuiteException("Non esiste un attachment con lo stesso id ["+content+"]");
 			if(!Utilities.equalsAttachment(att, att2)){
-				//System.out.println("ATTACH DIVERSI");
+				System.out.println("ATTACH DIVERSI");
 				return false;
 			}
 

@@ -193,7 +193,7 @@ public class EngineTest {
 			// MANTENERE QUESTA POSSIBILITA CON DOCUMENTAZIONE openspcoop2Message.getSOAPPart().getDomConfig().get
 			
 			// Signature
-			org.openspcoop2.security.message.soapbox.SignPartialMessageProcessor signMsgProc = (SignPartialMessageProcessor) Class.forName(OpenSPCoop2MessageFactory.getMessageFactory().getSignPartialMessageProcessorClass()).newInstance();
+			org.openspcoop2.security.message.soapbox.SignPartialMessageProcessor signMsgProc = (SignPartialMessageProcessor) Class.forName(openspcoop2Message.getSignPartialMessageProcessorClass()).newInstance();
 			signMsgProc.setActor(actorWSS);
 			signMsgProc.setMustUnderstand(mustUnderstand);
 			signMsgProc.setMessage(openspcoop2Message);
@@ -241,7 +241,7 @@ public class EngineTest {
 			
 			// ************* Creo Motori per la gestione PA *********************
 			
-			org.openspcoop2.security.message.soapbox.ProcessPartialEncryptedMessage decryptMsgProc = (ProcessPartialEncryptedMessage) Class.forName(OpenSPCoop2MessageFactory.getMessageFactory().getProcessPartialEncryptedMessageClass()).newInstance();
+			org.openspcoop2.security.message.soapbox.ProcessPartialEncryptedMessage decryptMsgProc = (ProcessPartialEncryptedMessage) Class.forName(openspcoop2Message.getProcessPartialEncryptedMessageClass()).newInstance();
 			decryptMsgProc.setActor(actorWSS);
 			decryptMsgProc.setMustUnderstand(mustUnderstand);
 			decryptMsgProc.setMessage(openspcoop2Message);
@@ -304,7 +304,7 @@ public class EngineTest {
 			List<SubErrorCodeSecurity> listaErroriRiscontrati = new ArrayList<SubErrorCodeSecurity>();
 			
 			Map<QName, QName> notResolvedMap = MessageUtilities.checkEncryptSignatureParts(wssContext, elementsToClean, 
-					openspcoop2Message.countAttachments(), listaErroriRiscontrati, SecurityConstants.QNAME_WSS_ELEMENT_SECURITY);
+					openspcoop2Message, listaErroriRiscontrati, SecurityConstants.QNAME_WSS_ELEMENT_SECURITY);
 			
 			if(listaErroriRiscontrati.size()>0){
 				for (SubErrorCodeSecurity subCodice : listaErroriRiscontrati) {

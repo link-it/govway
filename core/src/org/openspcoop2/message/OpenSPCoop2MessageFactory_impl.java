@@ -128,21 +128,6 @@ public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
 		return new com.sun.xml.messaging.saaj.client.p2p.HttpSOAPConnectionFactory();
 	}
 
-	@Override
-	public String getEncryptedDataHeaderBlockClass() {
-		return com.sun.xml.wss.core.EncryptedDataHeaderBlock.class.getName();
-	}
-
-	@Override
-	public String getProcessPartialEncryptedMessageClass() {
-		return "org.openspcoop2.security.message.soapbox.ProcessPartialEncryptedMessage";
-	}
-
-	@Override
-	public String getSignPartialMessageProcessorClass() {
-		return "org.openspcoop2.security.message.soapbox.SignPartialMessageProcessor";
-	}
-
     @Override
 	public Element convertoForXPathSearch(Element contenutoAsElement){
     	return contenutoAsElement;

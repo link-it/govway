@@ -21,6 +21,7 @@
 
 package org.openspcoop2.security.message.engine;
 
+import java.util.Hashtable;
 import java.util.List;
 
 import org.openspcoop2.message.Costanti;
@@ -54,7 +55,9 @@ public class WSSUtilities {
 			if("".equals(messageSecurityContext.getActor()))
 				actor = null;
 			
-			return message.getWSSDirtyElements(actor, mustUnderstandValue);
+			List<Reference> references = message.getWSSDirtyElements(actor, mustUnderstandValue);
+			messageSecurityContext.setReferences(references);
+			return references;
 			
 		}catch(Exception e){
 			SecurityException sec = new SecurityException(e.getMessage(),e);
@@ -85,6 +88,53 @@ public class WSSUtilities {
 			
 		}catch(Exception e){
 			throw new SecurityException(e.getMessage(),e);
+		}
+	}
+	
+	public static boolean isNormalizeToSaajImpl(MessageSecurityContext wssContext){
+		Hashtable<?,?> wssProperties = null;
+		if(wssContext.isFunctionAsClient())
+			wssProperties = wssContext.getOutgoingProperties();
+		else
+			wssProperties = wssContext.getIncomingProperties();
+		if(wssProperties!=null && wssProperties.containsKey(SecurityConstants.NORMALIZE_TO_SAAJ_IMPL)){
+			return Boolean.parseBoolean((String)wssProperties.get(SecurityConstants.NORMALIZE_TO_SAAJ_IMPL));
+		}
+		
+		// default viene applicata la normalizzazione solo se siamo client e effettuamo operazioni di signature.
+		if(wssProperties!=null && wssProperties.containsKey(SecurityConstants.ACTION)){
+			String action = (String) wssProperties.get(SecurityConstants.ACTION);
+
+			// A volte i problemi di signature verification avvengono anche in ricezione. Per questo motivo si è deciso di normalizzare sia lato client che lato server
+			if ( action.contains(SecurityConstants.SIGNATURE_ACTION) || 
+					action.contains(SecurityConstants.ACTION_SAML_TOKEN_UNSIGNED) || // la decisione di firmare o meno saml è nel file di proprietà
+					action.contains(SecurityConstants.ACTION_SAML_TOKEN_SIGNED) ||
+					action.contains(SecurityConstants.ACTION_USERNAME_TOKEN_SIGNATURE) ||
+					action.contains(SecurityConstants.ACTION_SIGNATURE_DERIVED) ||
+					action.contains(SecurityConstants.ACTION_SIGNATURE_WITH_KERBEROS_TOKEN)){
+				return true;
+			}
+			
+			if(wssContext.isFunctionAsClient() == false){
+				
+				if ( action.contains(SecurityConstants.ENCRYPT_ACTION) && wssProperties.containsKey(SecurityConstants.ENCRYPTION_PARTS) ){
+					
+					String attach = "{"+SecurityConstants.NAMESPACE_ATTACH+"}";
+					String attachAll = attach+"{"+SecurityConstants.ATTACHMENT_INDEX_ALL+"}";
+					String encryptParts = (String) wssProperties.get(SecurityConstants.ENCRYPTION_PARTS);
+					
+					if ( encryptParts!=null &&
+							encryptParts.contains(attach) &&
+							(!encryptParts.contains(attachAll)) ){
+						return true;
+					}
+				}
+			}
+			
+			return false;
+		}
+		else{
+			return false;
 		}
 	}
 }

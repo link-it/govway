@@ -643,6 +643,22 @@ public class MessageUtils {
 				}
 			}
 		}
+		
+		if(tmp==null){
+			if(Utilities.isExceptionInstanceOf("javax.xml.stream.XMLStreamException", e)){
+				tmp = e;
+			}
+			else if(Utilities.existsInnerException(e, "javax.xml.stream.XMLStreamException")){
+				tmp = Utilities.getInnerException(e, "javax.xml.stream.XMLStreamException");
+			}
+			if(tmp!=null){
+				if( ! (tmp.getMessage()!=null && !"".equals(tmp.getMessage()) && !"null".equalsIgnoreCase(tmp.getMessage())) ){
+					// cerco prossima eccezione, in questa c'è null come message
+					tmp = null;
+					found = true;
+				}
+			}
+		}
 
 		if(tmp!=null){
 			return tmp;

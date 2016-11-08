@@ -21,6 +21,7 @@
 
 package org.openspcoop2.message.reference;
 
+import org.apache.commons.lang.StringEscapeUtils;
 
 /**
  * Classe che rappresenta un elemento 
@@ -42,7 +43,8 @@ public class Reference {
 	
 
 	public Reference(int type, String reference) {
-		this.reference = reference;
+		// Le reference possono essere escaped in xml se contengono caratteri speciali
+		this.reference = StringEscapeUtils.unescapeXml(reference);
 		this.type = type;
 	}
 	

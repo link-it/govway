@@ -37,6 +37,7 @@ import org.apache.commons.io.output.NullOutputStream;
 import org.slf4j.Logger;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.message.Costanti;
+import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageException;
 import org.openspcoop2.message.SOAPVersion;
@@ -319,10 +320,16 @@ public class ServletUtils {
 			}
 
 		} catch (Exception ex) {
+			
+			Throwable t = MessageUtils.getParseException(ex);
+			if(t!=null){
+				throw new OpenSPCoop2MessageException(ex);
+			}
+			
 			if(Utilities.existsInnerException(ex, "com.ctc.wstx.exc.WstxUnexpectedCharException") || Utilities.existsInnerException(ex, "com.ctc.wstx.exc.WstxParsingException"))
 				throw new OpenSPCoop2MessageException(ex);
 			else
-				throw new OpenSPCoop2MessageException("BypassMustUnderstand, errore durante il set processed degli header con mustUnderstand='1' e actor non presente: ", 
+				throw new OpenSPCoop2MessageException("BypassMustUnderstand, errore durante il set processed degli header con mustUnderstand='1' e actor non presente: "+ex.getMessage(), 
 					ex);
 		}  finally{
 			// *** GB ***
@@ -348,7 +355,13 @@ public class ServletUtils {
 			return envelope.getNamespaceURI();
 
 		} catch (Exception ex) {
-			throw new OpenSPCoop2MessageException("CheckSoapEnvelopeNamespace, errore durante il controllo del namespace del soap envelope: ", 
+			
+			Throwable t = MessageUtils.getParseException(ex);
+			if(t!=null){
+				throw new OpenSPCoop2MessageException(ex);
+			}
+			
+			throw new OpenSPCoop2MessageException("CheckSoapEnvelopeNamespace, errore durante il controllo del namespace del soap envelope: "+ex.getMessage(), 
 					ex);
 		}  finally{
 			// *** GB ***
@@ -398,6 +411,12 @@ public class ServletUtils {
 				}
 			}
 		}catch(java.lang.Exception e) {
+			
+			Throwable t = MessageUtils.getParseException(e);
+			if(t!=null){
+				throw new UtilsException(e);
+			}
+			
 			if(Utilities.existsInnerException(e, "com.ctc.wstx.exc.WstxUnexpectedCharException"))
 				throw new UtilsException(e);
 			else

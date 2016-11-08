@@ -30,21 +30,6 @@ import java.util.Vector;
 import javax.xml.soap.SOAPException;
 
 import org.apache.axis.AxisFault;
-import org.openspcoop2.testsuite.axis14.Axis14SoapUtils;
-import org.openspcoop2.testsuite.axis14.Axis14WSSBaseUtils;
-import org.openspcoop2.testsuite.clients.ClientCore;
-import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
-import org.openspcoop2.testsuite.clients.ClientOneWay;
-import org.openspcoop2.testsuite.clients.ClientSincrono;
-import org.openspcoop2.testsuite.core.TestSuiteException;
-import org.openspcoop2.testsuite.core.Repository;
-import org.openspcoop2.testsuite.core.asincrono.RepositoryConsegnaRisposteAsincroneSimmetriche;
-import org.openspcoop2.testsuite.core.asincrono.RepositoryCorrelazioneIstanzeAsincrone;
-import org.openspcoop2.testsuite.db.DatabaseComponent;
-import org.openspcoop2.testsuite.db.DatiServizio;
-import org.openspcoop2.testsuite.server.ServerRicezioneRispostaAsincronaSimmetrica;
-import org.openspcoop2.testsuite.units.CooperazioneBase;
-import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
@@ -54,10 +39,26 @@ import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CooperazioneSPCoopBase;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
-import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
-import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
+import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
+import org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
+import org.openspcoop2.testsuite.axis14.Axis14SoapUtils;
+import org.openspcoop2.testsuite.axis14.Axis14WSSBaseUtils;
+import org.openspcoop2.testsuite.clients.ClientCore;
+import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
+import org.openspcoop2.testsuite.clients.ClientOneWay;
+import org.openspcoop2.testsuite.clients.ClientSincrono;
+import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
+import org.openspcoop2.testsuite.core.Repository;
+import org.openspcoop2.testsuite.core.TestSuiteException;
+import org.openspcoop2.testsuite.core.asincrono.RepositoryConsegnaRisposteAsincroneSimmetriche;
+import org.openspcoop2.testsuite.core.asincrono.RepositoryCorrelazioneIstanzeAsincrone;
+import org.openspcoop2.testsuite.db.DatabaseComponent;
+import org.openspcoop2.testsuite.db.DatiServizio;
+import org.openspcoop2.testsuite.server.ServerRicezioneRispostaAsincronaSimmetrica;
+import org.openspcoop2.testsuite.units.CooperazioneBase;
+import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
 import org.openspcoop2.utils.date.DateManager;
 import org.testng.Assert;
 import org.testng.Reporter;
@@ -2234,6 +2235,230 @@ public class WSSecurity {
 			data.close();
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/***
+	 * Test per Encrypt Attachments
+	 */
+	Repository repositorySincronoWSS_ENCRYPT_ATTACH=new Repository();
+	@DataProvider (name="SincronoWSS_ENCRYPT_ATTACH_invocazione")
+	public Object[][]testSincronoWSS_ENCRYPT_ATTACH_invocazione()throws Exception{
+		return new Object[][]{
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH},	
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH_CONTENT},
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH_ELEMENT},	
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH_CONTENT_OP2FORMAT},
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH_ELEMENT_OP2FORMAT},	
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH_OP2FORMAT_ONEONLY},
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_ATTACH_P12}	
+		};
+	}
+	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".ENCRYPT_ATTACH"},dataProvider="SincronoWSS_ENCRYPT_ATTACH_invocazione",
+			description="Test per il profilo di collaborazione Sincrono con WSSecurity Encrypt Attachments")
+	public void sincronoWSS_ENCRYPT_ATTACH(String azione) throws Exception{
+		
+		// Creazione client Sincrono
+		ClientSincrono client=new ClientSincrono(this.repositorySincronoWSS_ENCRYPT_ATTACH);
+		client.setUrlPortaDiDominio(TestSuiteProperties.getInstance().getServizioRicezioneContenutiApplicativiFruitore());
+		client.setPortaDelegata(azione);
+		client.connectToSoapEngine(SOAPVersion.SOAP11);
+		client.setMessageFromFile(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBox(), false,addIDUnivoco);
+		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoXml(),"text/xml");
+		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoBinario(),"application/octet-stream");
+		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoBinario(),"application/pdf");
+		client.run();
+
+		// Test uguaglianza Body (e attachments)
+		Assert.assertTrue(client.isEqualsSentAndResponseMessage());
+		Assert.assertTrue(client.isEqualsSentAndResponseAttachments());
+
+		
+		String id=this.repositorySincronoWSS_ENCRYPT_ATTACH.getNext();
+		
+		// Check Fruitore
+		DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data, id, 
+					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					azione, false,null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+		
+		// Check Erogatore
+		data = DatabaseProperties.getDatabaseComponentErogatore();
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data, id, 
+					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					azione, true,null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/***
+	 * Test per Signature Attachments
+	 */
+	Repository repositorySincronoWSS_SIGNATURE_ATTACH=new Repository();
+	@DataProvider (name="SincronoWSS_SIGNATURE_ATTACH_invocazione")
+	public Object[][]testSincronoWSS_SIGNATURE_ATTACH_invocazione()throws Exception{
+		return new Object[][]{
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SIGNATURE_ATTACH},	
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SIGNATURE_ATTACH_CONTENT},
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SIGNATURE_ATTACH_ELEMENT},	
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SIGNATURE_ATTACH_CONTENT_OP2FORMAT},
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SIGNATURE_ATTACH_ELEMENT_OP2FORMAT},	
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SIGNATURE_ATTACH_OP2FORMAT_ONEONLY},
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SIGNATURE_ATTACH_P12}	
+		};
+	}
+	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".SIGNATURE_ATTACH"},dataProvider="SincronoWSS_SIGNATURE_ATTACH_invocazione",
+			description="Test per il profilo di collaborazione Sincrono con WSSecurity Signature Attachments")
+	public void sincronoWSS_SIGNATURE_ATTACH(String azione) throws Exception{
+		
+		// Creazione client Sincrono
+		ClientSincrono client=new ClientSincrono(this.repositorySincronoWSS_SIGNATURE_ATTACH);
+		client.setUrlPortaDiDominio(TestSuiteProperties.getInstance().getServizioRicezioneContenutiApplicativiFruitore());
+		client.setPortaDelegata(azione);
+		client.connectToSoapEngine(SOAPVersion.SOAP11);
+		client.setMessageFromFile(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBox(), false,addIDUnivoco);
+		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoXml(),"text/xml");
+		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoBinario(),"application/octet-stream");
+		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoBinario(),"application/pdf");
+		client.run();
+
+		// Test uguaglianza Body (e attachments)
+		Assert.assertTrue(client.isEqualsSentAndResponseMessage());
+		Assert.assertTrue(client.isEqualsSentAndResponseAttachments());
+
+		
+		String id=this.repositorySincronoWSS_SIGNATURE_ATTACH.getNext();
+		
+		// Check Fruitore
+		DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data, id, 
+					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					azione, false,null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+		
+		// Check Erogatore
+		data = DatabaseProperties.getDatabaseComponentErogatore();
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data, id, 
+					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					azione, true,null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	
+	
+
+
+	/***
+	 * Test per Encrypt e Signature sia Attachments che senza
+	 */
+	Repository repositorySincronoWSS_INCROCI_SIGN_ENCRYPT_ATTACH=new Repository();
+	@DataProvider (name="SincronoWSS_INCROCI_SIGN_ENCRYPT_ATTACH_invocazione")
+	public Object[][]testSincronoWSS_INCROCI_SIGN_ENCRYPT_ATTACH_invocazione()throws Exception{
+		return new Object[][]{
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SIGNATURE_ENCRYPT},	
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_SIGNATURE},
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SIGNATURE_ENCRYPT_ATTACHMENTS},	
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_ENCRYPT_SIGNATURE_ATTACHMENTS}
+		};
+	}
+	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".INCROCI_SIGN_ENCRYPT_ATTACH"},dataProvider="SincronoWSS_INCROCI_SIGN_ENCRYPT_ATTACH_invocazione",
+			description="Test per il profilo di collaborazione Sincrono con WSSecurity Signature Attachments")
+	public void sincronoWSS_INCROCI_SIGN_ENCRYPT_ATTACH(String azione) throws Exception{
+		
+		// Creazione client Sincrono
+		ClientSincrono client=new ClientSincrono(this.repositorySincronoWSS_INCROCI_SIGN_ENCRYPT_ATTACH);
+		client.setUrlPortaDiDominio(TestSuiteProperties.getInstance().getServizioRicezioneContenutiApplicativiFruitore());
+		client.setPortaDelegata(azione);
+		client.connectToSoapEngine(SOAPVersion.SOAP11);
+		client.setMessageFromFile(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBox(), false,addIDUnivoco);
+		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoXml(),"text/xml");
+		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoBinario(),"application/octet-stream");
+		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoBinario(),"application/pdf");
+		client.run();
+
+		// Test uguaglianza Body (e attachments)
+		Assert.assertTrue(client.isEqualsSentAndResponseMessage());
+		Assert.assertTrue(client.isEqualsSentAndResponseAttachments());
+
+		
+		String id=this.repositorySincronoWSS_INCROCI_SIGN_ENCRYPT_ATTACH.getNext();
+		
+		// Check Fruitore
+		DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data, id, 
+					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					azione, false,null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+		
+		// Check Erogatore
+		data = DatabaseProperties.getDatabaseComponentErogatore();
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data, id, 
+					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					azione, true,null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	
+	
+	
+
+	
+	
 	
 	
 	

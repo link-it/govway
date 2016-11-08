@@ -65,12 +65,12 @@ public interface IMessageSecurityReceiver {
 	 * 
 	 * @param messageSecurityContext MessageSecurityContext
 	 * @param elementsToClean reference (localizzati con il metodo 'getDirtyElements')
-	 * @param numAttachmentsInMsg Numero di attachments presenti nel messaggio
+	 * @param message Messaggio
 	 * @param codiciErrore Lista di errori da valorizzare se durante il controllo si rileva una inconsistenza 
 	 * @return lista di reference per gli elementi che dovrebbero risultare cifrati completamente (Encoding Element)
 	 * @throws SecurityException
 	 */
-	public Map<QName, QName> checkEncryptSignatureParts(MessageSecurityContext messageSecurityContext,List<Reference> elementsToClean, int numAttachmentsInMsg,
+	public Map<QName, QName> checkEncryptSignatureParts(MessageSecurityContext messageSecurityContext,List<Reference> elementsToClean, OpenSPCoop2Message message,
 			List<SubErrorCodeSecurity> codiciErrore) throws SecurityException;
 		
 	/**

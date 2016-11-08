@@ -79,21 +79,21 @@ public class OpenSPCoop2Message_12_impl extends Message1_2_FIX_Impl implements o
 {
 	private ParseException parseException;
 	
-	private long outgoingsize = -1;
-	private long incomingsize = -1;
-	private Long incomingSizeForced = null;
-	private String protocolName;
+	public long outgoingsize = -1;
+	public long incomingsize = -1;
+	public Long incomingSizeForced = null;
+	public String protocolName;
 	
-	private NotifierInputStream notifierInputStream;
+	public NotifierInputStream notifierInputStream;
 	
-	private Map<String, String> contentTypeParamaters = new Hashtable<String, String>();
+	public Map<String, String> contentTypeParamaters = new Hashtable<String, String>();
 	
-	private Map<String, Object> context = new Hashtable<String, Object>();
+	public Map<String, Object> context = new Hashtable<String, Object>();
 	
-	private TransportRequestContext transportRequestContext;
-	private TransportResponseContext transportResponseContext;
+	public TransportRequestContext transportRequestContext;
+	public TransportResponseContext transportResponseContext;
 	
-	private String forcedResponseCode;
+	public String forcedResponseCode;
 	
 	
 	public OpenSPCoop2Message_12_impl() {	
@@ -114,6 +114,14 @@ public class OpenSPCoop2Message_12_impl extends Message1_2_FIX_Impl implements o
 		//Uso una classe creata ad hoc
 		super(msg);
 	}
+	
+	/* Normalize to SAAJ */
+	
+	@Override
+	public OpenSPCoop2Message normalizeToSaajImpl() throws OpenSPCoop2MessageException{
+		return this;
+	}
+	
 	// GetAs 
 	
 	@Override
@@ -140,14 +148,6 @@ public class OpenSPCoop2Message_12_impl extends Message1_2_FIX_Impl implements o
 	@Override
 	public String createContentID(String ns) throws UnsupportedEncodingException{
 		return "<" + org.apache.cxf.attachment.AttachmentUtil.createContentID(ns) + ">";
-	}
-	
-	@Override
-	public String getContentID(AttachmentPart ap) {
-		String cid = ap.getContentId();
-		if(cid != null && cid.startsWith("<") && cid.endsWith(">"))
-			return cid.substring(1, cid.length() -1);
-		return cid;
 	}
 	
 	@Override
@@ -351,7 +351,7 @@ public class OpenSPCoop2Message_12_impl extends Message1_2_FIX_Impl implements o
 			        			// Attachment cifrato
 			        			String referenceAttach = ((SOAPElement) childElementsReference.next()).getAttributeValue(new QName("URI"));
 			        			if(referenceAttach.startsWith("cid:")){
-			 	        			String referenceCID = referenceWithSharp.substring(4);
+			 	        			String referenceCID = referenceAttach.substring(4);
 			 		        		references.add(new AttachmentReference (AttachmentReference.TYPE_ENCRYPT_ATTACHMENT, referenceCID));
 			 	        		}else{
 				        			throw new SOAPException("Element 'CipherReference' with attribute 'cid' wrong "+Costanti.FIND_ERROR_ENCRYPTED_REFERENCES);
@@ -560,6 +560,23 @@ public class OpenSPCoop2Message_12_impl extends Message1_2_FIX_Impl implements o
 		}
 	}
 
+	/* Ws Security (SoapBox) */
+	
+	@Override
+	public String getEncryptedDataHeaderBlockClass() {
+		return com.sun.xml.wss.core.EncryptedDataHeaderBlock.class.getName();
+	}
+
+	@Override
+	public String getProcessPartialEncryptedMessageClass() {
+		return "org.openspcoop2.security.message.soapbox.ProcessPartialEncryptedMessage";
+	}
+
+	@Override
+	public String getSignPartialMessageProcessorClass() {
+		return "org.openspcoop2.security.message.soapbox.SignPartialMessageProcessor";
+	}
+	
 	@Override
 	public void updateContentType() throws SOAPException {
 		if(countAttachments() > 0 && saveRequired()){

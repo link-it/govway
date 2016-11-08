@@ -621,48 +621,58 @@ public class ConnettoreHTTPCORE extends ConnettoreBase {
 			
 			if(this.isResponse!=null){
 				
-				SOAPVersion soapVersionRisposta = null;
-				//Exception soapVersionUnknown = null;
-				IProtocolConfiguration protocolConfiguration = this.getProtocolFactory().createProtocolConfiguration();
-				if(tipoRisposta!=null){
-					try{
-						soapVersionRisposta = ServletUtils.getVersioneSoap(this.logger.getLogger(),tipoRisposta);
-					}catch(Exception e){
-						this.logger.error("SOAPVersion response unknown: "+e.getMessage(),e);
-						//soapVersionUnknown = e;
+				boolean checkContentType = true;
+				if(this.idModulo!=null){
+					if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
+						checkContentType = this.openspcoopProperties.isControlloContentTypeAbilitatoRicezioneBuste();
+					}else{
+						checkContentType = this.openspcoopProperties.isControlloContentTypeAbilitatoRicezioneContenutiApplicativi();
 					}
 				}
 				
-				if(tipoRisposta==null || 
-						soapVersionRisposta==null ||
-						!soapVersionRisposta.equals(this.requestMsg.getVersioneSoap()) || 
-						!ServletUtils.isContentTypeSupported(this.requestMsg.getVersioneSoap(), this.getProtocolFactory())){
-					
-					boolean checkContentType = true;
-					if(this.idModulo!=null){
-						if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
-							checkContentType = this.openspcoopProperties.isControlloContentTypeAbilitatoRicezioneBuste();
-						}else{
-							checkContentType = this.openspcoopProperties.isControlloContentTypeAbilitatoRicezioneContenutiApplicativi();
+				String msgErrore = null;
+				if(this.sbustamentoSoap==false){				
+					SOAPVersion soapVersionRisposta = null;
+					//Exception soapVersionUnknown = null;
+					IProtocolConfiguration protocolConfiguration = this.getProtocolFactory().createProtocolConfiguration();
+					if(tipoRisposta!=null){
+						try{
+							soapVersionRisposta = ServletUtils.getVersioneSoap(this.logger.getLogger(),tipoRisposta);
+						}catch(Exception e){
+							this.logger.error("SOAPVersion response unknown: "+e.getMessage(),e);
+							//soapVersionUnknown = e;
 						}
 					}
-					String msgErrore = null;
+					
+					if(tipoRisposta==null || 
+							soapVersionRisposta==null ||
+							!soapVersionRisposta.equals(this.requestMsg.getVersioneSoap()) || 
+							!ServletUtils.isContentTypeSupported(this.requestMsg.getVersioneSoap(), this.getProtocolFactory())){
+						
+						if(tipoRisposta==null){
+							msgErrore = "Header Content-Type non definito nell'http reply";
+						}
+						else if(soapVersionRisposta==null){
+							msgErrore = "Il valore dell'header HTTP Content-Type definito nell'http reply ("+tipoRisposta
+									+") non rientra tra quelli conosciuti ("+SOAPVersion.getKnownContentTypes()+")";
+						}
+						else if(!soapVersionRisposta.equals(this.requestMsg.getVersioneSoap())){
+							msgErrore = "Header Content-Type definito nell'http reply ("+tipoRisposta+") indica una versione "+soapVersionRisposta.getSoapVersionAsString()
+									+" non compatibile con la versione "+this.requestMsg.getVersioneSoap().getSoapVersionAsString()+" del messaggio di richiesta";
+						}
+						else{
+							msgErrore = "Il valore dell'header HTTP Content-Type definito nell'http reply ("+tipoRisposta
+									+") non rientra tra quelli supportati dal protocollo ("+SOAPVersion.getKnownContentTypes(protocolConfiguration.isSupportoSOAP11(), protocolConfiguration.isSupportoSOAP12())+")";
+						}
+						
+					}
+				}
+				else{
 					if(tipoRisposta==null){
 						msgErrore = "Header Content-Type non definito nell'http reply";
 					}
-					else if(soapVersionRisposta==null){
-						msgErrore = "Il valore dell'header HTTP Content-Type definito nell'http reply ("+tipoRisposta
-								+") non rientra tra quelli conosciuti ("+SOAPVersion.getKnownContentTypes()+")";
-					}
-					else if(!soapVersionRisposta.equals(this.requestMsg.getVersioneSoap())){
-						msgErrore = "Header Content-Type definito nell'http reply ("+tipoRisposta+") indica una versione "+soapVersionRisposta.getSoapVersionAsString()
-								+" non compatibile con la versione "+this.requestMsg.getVersioneSoap().getSoapVersionAsString()+" del messaggio di richiesta";
-					}
-					else{
-						msgErrore = "Il valore dell'header HTTP Content-Type definito nell'http reply ("+tipoRisposta
-								+") non rientra tra quelli supportati dal protocollo ("+SOAPVersion.getKnownContentTypes(protocolConfiguration.isSupportoSOAP11(), protocolConfiguration.isSupportoSOAP12())+")";
-					}
-					
+				}
+				if(msgErrore!=null){
 					if(checkContentType){
 						Exception e = new Exception(msgErrore);
 						this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);

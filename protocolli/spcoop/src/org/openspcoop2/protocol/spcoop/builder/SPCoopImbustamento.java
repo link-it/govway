@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPElement;
@@ -72,6 +73,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.serial.IDSerialGeneratorParameter;
 import org.openspcoop2.utils.id.serial.IDSerialGeneratorType;
+import org.openspcoop2.utils.resources.InputStreamDataSource;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 
 
@@ -797,7 +799,7 @@ public class SPCoopImbustamento {
 			while( iter.hasNext() ){
 				Utilities.printFreeMemory("Imbustamento - Costruzione manifest att " + attach);
 				AttachmentPart p = (AttachmentPart) iter.next();
-				String contentID = msg.getContentID(p);
+				String contentID = p.getContentId();
 				String contentLocation = p.getContentLocation();
 				//String fileName = p.getAttachmentFile();
 				String contentType = p.getContentType();
@@ -860,7 +862,7 @@ public class SPCoopImbustamento {
 			if(proprietaManifestAttachments.isScartaBody() == false){
 				Utilities.printFreeMemory("Imbustamento - Scarta Body");
 				byte [] body = SoapUtils.sbustamentoSOAPEnvelope(msg.getSOAPPart().getEnvelope());
-				AttachmentPart ap = msg.createAttachmentPart();
+				AttachmentPart ap = null;
 				//ByteArrayInputStream isContent = new ByteArrayInputStream(body);
 				//ap.setContent(isContent,"text/xml; charset=UTF-8");
 //					String xmlBody = new String(body);
@@ -882,10 +884,12 @@ public class SPCoopImbustamento {
 				}
 				if(bodyWithMultiRootElement){
 					//System.out.println("OCTECT");
-					ap.setContent(body, Costanti.CONTENT_TYPE_APPLICATION_OCTET_STREAM);
+					InputStreamDataSource isSource = new InputStreamDataSource("ManifestEGov", Costanti.CONTENT_TYPE_APPLICATION_OCTET_STREAM, body);
+					ap = msg.createAttachmentPart(new DataHandler(isSource));
 				}else{
 					//System.out.println("XML");
 					Source streamSource = new DOMSource(this.xmlUtils.newElement(body));
+					ap = msg.createAttachmentPart();
 					ap.setContent(streamSource, "text/xml");
 				}
 				ap.setContentId(msg.createContentID(SPCoopCostanti.NAMESPACE_EGOV));
@@ -898,7 +902,7 @@ public class SPCoopImbustamento {
 						SPCoopCostanti.PREFIX_EGOV,SPCoopCostanti.NAMESPACE_EGOV);
 				// Costruzione Riferimento
 				SOAPElement riferimento = descrizioneMessaggio.addChildElement("Riferimento",SPCoopCostanti.PREFIX_EGOV,SPCoopCostanti.NAMESPACE_EGOV);
-				riferimento.setAttribute("href","cid:" + msg.getContentID(ap)); // xsd:anyURI
+				riferimento.setAttribute("href","cid:" + ap.getContentId()); // xsd:anyURI
 				//riferimento.setAttribute("href",ap.getContentLocation()); // xsd:anyURI // Test Sbustamento con ContentLocation
 				if(isRichiesta){
 					riferimento.setAttribute("role",this.spcoopProperties.getRoleRichiestaManifest()); // xsd:string

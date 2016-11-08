@@ -46,7 +46,7 @@ public class AttachmentProcessingPart extends ProcessingPart<Integer, List<Attac
 	}
 
 	public AttachmentProcessingPart(Integer index, boolean content) {
-		this.allAttachments = true;
+		this.allAttachments = false;
 		this.part = index;
 		this.content = content;
 	}
@@ -64,7 +64,8 @@ public class AttachmentProcessingPart extends ProcessingPart<Integer, List<Attac
 
 		Iterator<?> it = message.getAttachments();
 		if(it.hasNext()==false){
-			throw new Exception("Property "+SecurityConstants.SIGNATURE_PARTS+ " contiene la richiesta di cifrare attachments, ma il messaggio non ne contiene");
+			throw new Exception("Property "+SecurityConstants.SIGNATURE_PARTS+ " o "+SecurityConstants.ENCRYPTION_PARTS+
+					" contiene la richiesta di firmare o cifrare attachments, ma il messaggio non ne contiene");
 		}
 
 		int indexAllegatoEncrypt = 1;

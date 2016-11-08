@@ -40,7 +40,6 @@ import javax.xml.soap.SOAPPart;
 import org.adroitlogic.soapbox.MessageSecurityContext;
 import org.adroitlogic.ultraesb.core.MessageImpl;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.reference.Reference;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
@@ -173,7 +172,7 @@ public class MessageSecurityReceiver_soapbox implements IMessageSecurityReceiver
 
 			ProcessPartialEncryptedMessage decryptMsgProc = null;
 			if(decrypt){
-				decryptMsgProc = (ProcessPartialEncryptedMessage) Class.forName(OpenSPCoop2MessageFactory.getMessageFactory().getProcessPartialEncryptedMessageClass()).newInstance();
+				decryptMsgProc = (ProcessPartialEncryptedMessage) Class.forName(message.getProcessPartialEncryptedMessageClass()).newInstance();
 				decryptMsgProc.setMessage(message);
 				decryptMsgProc.setActor(messageSecurityContext.getActor());
 				decryptMsgProc.setMustUnderstand(mustUnderstand);
@@ -449,9 +448,9 @@ public class MessageSecurityReceiver_soapbox implements IMessageSecurityReceiver
 	@Override
 	public Map<QName, QName> checkEncryptSignatureParts(
 			org.openspcoop2.security.message.MessageSecurityContext messageSecurityContext,
-			List<Reference> elementsToClean, int numAttachmentsInMsg,
+			List<Reference> elementsToClean, OpenSPCoop2Message message,
 			List<SubErrorCodeSecurity> codiciErrore) throws SecurityException {
-		return MessageUtilities.checkEncryptSignatureParts(messageSecurityContext, elementsToClean, numAttachmentsInMsg, codiciErrore, SecurityConstants.QNAME_WSS_ELEMENT_SECURITY);
+		return MessageUtilities.checkEncryptSignatureParts(messageSecurityContext, elementsToClean, message, codiciErrore, SecurityConstants.QNAME_WSS_ELEMENT_SECURITY);
 	}
 
 	@Override

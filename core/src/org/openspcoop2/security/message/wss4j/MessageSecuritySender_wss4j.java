@@ -31,6 +31,7 @@ import java.util.List;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.cxf.binding.soap.SoapMessage;
+import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.MessageImpl;
@@ -45,6 +46,8 @@ import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.saml.SAMLBuilderConfig;
 import org.openspcoop2.security.message.saml.SAMLCallbackHandler;
+import org.openspcoop2.security.message.utils.AttachmentProcessingPart;
+import org.openspcoop2.security.message.utils.AttachmentsConfigReaderUtils;
 import org.openspcoop2.utils.Utilities;
 
 /**
@@ -72,16 +75,41 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 	        msgCtx.setContent(SOAPMessage.class, message);
 	        List<?> results = new ArrayList<Object>();
 	        msgCtx.put(WSHandlerConstants.RECV_RESULTS, results);
+	        
+	        
+	        // ** Localizzo attachments da trattare **/
+	        
+	        AttachmentProcessingPart app = AttachmentsConfigReaderUtils.getSecurityOnAttachments(wssContext);
+	        
+	        
+	        // ** Imposto configurazione nel messaggio **/
+	        // NOTA: farlo dopo getSecurityOnAttachments poichè si modifica la regola di quali attachments trattare.
+	        
 	        setOutgoingProperties(wssContext,msgCtx);
+	        
+	        
+	        // ** Registro attachments da trattare **/
+	        
+	        List<Attachment> listAttachments = null;
+	        if(app!=null){
+	        	listAttachments = org.openspcoop2.security.message.wss4j.WSSUtilities.readAttachments(app, message);
+	        	if(listAttachments!=null && listAttachments.size()>0){
+	        		msgCtx.setAttachments(listAttachments);
+	        	}
+	        }
 	        
 	        
 	        // ** Applico sicurezza tramite CXF **/
 	        
 	        handler.handleMessage(msgCtx);
 	        wssContext.getLog().debug("Print wssSender results...");
-			WSSUtilities.printWSResult(wssContext.getLog(), results);
-	   
+	        org.openspcoop2.security.message.wss4j.WSSUtilities.printWSResult(wssContext.getLog(), results);
 			
+			
+			// ** Riporto modifica degli attachments **/
+			
+			org.openspcoop2.security.message.wss4j.WSSUtilities.updateAttachments(listAttachments, message);
+					
 		}
 		catch(Exception e){
 			
@@ -146,6 +174,9 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 					SAMLCallbackHandler samlCallbackHandler = new SAMLCallbackHandler(config);
 					msgCtx.put(SecurityConstants.SAML_CALLBACK_REF, samlCallbackHandler);
 				}
+				else if(SecurityConstants.ENCRYPTION_PARTS.equals(key) || SecurityConstants.SIGNATURE_PARTS.equals(key)){
+					msgCtx.put(key, normalizeWss4jParts(value));
+				}
 				else{
 					msgCtx.put(key, value);
 					if(SecurityConstants.MUST_UNDERSTAND.equals(key)){
@@ -162,6 +193,31 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 			msgCtx.put(SecurityConstants.ACTOR, wssContext.getActor());
 		}
     }
+    
+    private String normalizeWss4jParts(String parts){
+    	StringBuffer bf = new StringBuffer();
+    	String[]split = ((String)parts).split(";");
+		for (int i = 0; i < split.length; i++) {
+			if(i>0){
+				bf.append(";");
+			}
+			String n = split[i].trim();
+			if(n.contains("{"+SecurityConstants.NAMESPACE_ATTACH+"}")){
+				if(n.startsWith("{"+SecurityConstants.PART_ELEMENT+"}")){
+					bf.append("{"+SecurityConstants.PART_ELEMENT+"}"+SecurityConstants.CID_ATTACH_WSS4j);
+				}
+				else {
+					bf.append("{"+SecurityConstants.PART_CONTENT+"}"+SecurityConstants.CID_ATTACH_WSS4j);
+				}
+			}
+			else{
+				bf.append(n);
+			}
+		}
+		//System.out.println("PRIMA ["+parts+"] DOPO ["+bf.toString()+"]");
+		return bf.toString();
+    }
+ 
 }
 
 

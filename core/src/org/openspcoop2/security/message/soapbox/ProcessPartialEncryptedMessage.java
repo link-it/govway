@@ -84,16 +84,15 @@ import org.adroitlogic.soapbox.MessageSecurityContext;
 import org.adroitlogic.soapbox.Processor;
 import org.adroitlogic.soapbox.SBConstants;
 import org.adroitlogic.soapbox.SecurityFailureException;
-import org.slf4j.Logger;
 import org.apache.xml.security.algorithms.JCEMapper;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.encryption.XMLEncryptionException;
 import org.apache.xml.security.exceptions.Base64DecodingException;
 import org.apache.xml.security.utils.Base64;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.security.message.constants.WSSAttachmentsConstants;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -248,7 +247,7 @@ public class ProcessPartialEncryptedMessage implements Processor {
                 //attachments
                 if(type.equals(WSSAttachmentsConstants.ATTACHMENT_COMPLETE_URI) || type.equals(WSSAttachmentsConstants.ATTACHMENT_CONTENT_ONLY_URI)) {
                 	try {
-                		Class<?> edhb = Class.forName(OpenSPCoop2MessageFactory.getMessageFactory().getEncryptedDataHeaderBlockClass()); 
+                		Class<?> edhb = Class.forName(this.message.getEncryptedDataHeaderBlockClass()); 
                 		
                 		Constructor<?> constructor = edhb.getConstructor(SOAPElement.class);
                 		EncryptedDataHeaderBlock xencEncryptedData = (EncryptedDataHeaderBlock) constructor.newInstance((SOAPElement)encData);

@@ -62,19 +62,34 @@ public class ProcessingPartUtils {
 		for (int i = 0; i < split.length; i++) {
 			String[]split2 = split[i].trim().split("}");
 			String tipo = split2[0].trim().substring(1); // Element o Content
+			if("".equals(tipo)){
+				// caso speciale wss4j {}cid:Attachments
+				tipo = SecurityConstants.PART_CONTENT;
+			}
 			
 			if(!this.processingPartsContentConstant.equals(tipo) && !this.processingPartsElementConstant.equals(tipo)){
 				throw new Exception(this.processingPartsConstant+"["+i+"] possiede un tipo non supportato (supportati:"+this.processingPartsContentConstant
 						+","+this.processingPartsElementConstant+"): "+tipo);
 			}
 			
-			String namespace = split2[1].trim().substring(1);
-			if(this.processingPartsNamespaceAttachConstant.equals(namespace)){
-				String indice = split2[2].trim().substring(1);
-				lst.add(getAttachmentProcessingPart(tipo, indice, i));
-			} else {
-				String nome = split2[2].trim();
-				lst.add(getProcessingPart(tipo, namespace, nome));
+			if(split2.length==3){
+				String namespace = split2[1].trim().substring(1);
+				if(this.processingPartsNamespaceAttachConstant.equals(namespace)){
+					String indice = split2[2].trim().substring(1);
+					lst.add(getAttachmentProcessingPart(tipo, indice, i));
+				} else {
+					String nome = split2[2].trim();
+					lst.add(getProcessingPart(tipo, namespace, nome));
+				}
+			}
+			else {
+				// caso speciale wss4j {}cid:Attachments ?
+				if(SecurityConstants.CID_ATTACH_WSS4j.equalsIgnoreCase(split2[1].trim())){
+					lst.add(getAttachmentProcessingPart(tipo, SecurityConstants.ATTACHMENT_INDEX_ALL, i));
+				}
+				else{
+					throw new Exception("Part ["+split[i]+"] with wrong format");
+				}
 			}
 		}
 		
@@ -89,7 +104,7 @@ public class ProcessingPartUtils {
 	private AttachmentProcessingPart getAttachmentProcessingPart(String tipo, String indice, int indexPart) throws Exception {
 
 		boolean complete = this.processingPartsCompleteConstant.equals(tipo);
-		if("*".equals(indice) || "".equals(indice)){
+		if(SecurityConstants.ATTACHMENT_INDEX_ALL.equals(indice) || "".equals(indice)){
 			return new AttachmentProcessingPart(complete);
 		} else{
 			int indexAllegato = -1;
