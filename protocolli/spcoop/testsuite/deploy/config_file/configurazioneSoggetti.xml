@@ -2365,9 +2365,73 @@
         </porta-delegata>
         
         
-        
-        
-        
+        <!-- Username Token -->
+
+	<porta-delegata gestione-manifest="abilitato" nome="WSSUsernameTokenDigest" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSUsernameTokenDigest" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="UsernameToken" />
+		    <parameter nome="user" valore="pd" />
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+		    <parameter nome="passwordType" valore="PasswordDigest" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+	<porta-delegata gestione-manifest="abilitato" nome="WSSUsernameTokenText" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSUsernameTokenText" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="UsernameToken" />
+		    <parameter nome="user" valore="pd" />
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+		    <parameter nome="passwordType" valore="PasswordText" />
+		    <parameter nome="addUsernameTokenNonce" valore="true" />
+		    <parameter nome="addUsernameTokenCreated" valore="true" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+	<porta-delegata gestione-manifest="abilitato" nome="WSSUsernameTokenNoPassword" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSUsernameTokenNoPassword" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="UsernameToken" />
+		    <parameter nome="user" valore="pd" />
+		    <parameter nome="passwordType" valore="PasswordNone" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+	<porta-delegata gestione-manifest="abilitato" nome="WSSUsernameTokenSignature" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSUsernameTokenSignature" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="UsernameTokenSignature" />
+		    <parameter nome="user" valore="pd" />
+                    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+		    <parameter nome="passwordType" valore="PasswordText" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
         
         
         
@@ -6061,10 +6125,67 @@
             </message-security>
         </porta-applicativa>
 
+	<!-- Username Token -->
 
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSUsernameTokenDigest">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSUsernameTokenDigest" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="UsernameToken" />
+		    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
 
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSUsernameTokenText">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSUsernameTokenText" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="UsernameToken" />
+		    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
 
+	<porta-applicativa gestione-manifest="abilitato" nome="PA_WSSUsernameTokenNoPassword">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSUsernameTokenNoPassword" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="UsernameTokenNoPassword" />
+		    <parameter nome="allowUsernameTokenNoPassword" valore="true" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
 
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSUsernameTokenSignature">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSUsernameTokenSignature" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+<!--
+		TODO: capire come funziona la verifica
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="UsernameTokenSignature" />
+		    <parameter nome="passwordCallbackClass" valore="org.openspcoop2.security.utils.PWCallbackSend" />
+		    <parameter nome="useEncodedPasswords" valore="true" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>	
+            </message-security>
+-->
+        </porta-applicativa>
         
         
         

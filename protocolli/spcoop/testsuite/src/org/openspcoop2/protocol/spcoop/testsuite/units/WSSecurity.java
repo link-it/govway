@@ -2577,4 +2577,54 @@ public class WSSecurity {
 	}
 	
 	
+	
+	
+	/***
+	 * Test per UsernameToken
+	 */
+	Repository repositorySincronoWSS_UsernameToken=new Repository();
+	@DataProvider (name="SincronoWSS_UsernameToken_invocazione")
+	public Object[][]testSincronoWSS_UsernameToken_invocazione()throws Exception{
+		return new Object[][]{
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_USERNAME_TOKEN_DIGEST},	
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_USERNAME_TOKEN_TEXT},
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_USERNAME_TOKEN_NO_PASSWORD},	
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_USERNAME_TOKEN_SIGNATURE}
+		};
+	}
+	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".UsernameToken"},dataProvider="SincronoWSS_UsernameToken_invocazione",
+			description="Test per il profilo di collaborazione Sincrono con WSSecurity Username Token")
+	public void sincronoWSS_UsernameToken(String azione) throws Exception{
+		this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoWSS_UsernameToken,azione,addIDUnivoco);
+		
+		String id=this.repositorySincronoWSS_UsernameToken.getNext();
+		
+		// Check Fruitore
+		DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data, id, 
+					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					azione, false,null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+		
+		// Check Erogatore
+		data = DatabaseProperties.getDatabaseComponentErogatore();
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data, id, 
+					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					azione, true,null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	
+	
 }

@@ -132,6 +132,10 @@
 	<azione nome="WSSSaml11OnlyAuthn"/>
 	<azione nome="WSSSaml11OnlyAuthz"/>
 	<azione nome="WSSSaml11SignedDetachWSSDisable"/>
+	<azione nome="WSSUsernameTokenDigest"/>
+	<azione nome="WSSUsernameTokenText"/>
+	<azione nome="WSSUsernameTokenNoPassword"/>
+	<azione nome="WSSUsernameTokenSignature"/>
         <azione nome="Collaborazione" id-collaborazione="abilitato"/>
         <azione nome="Overhead"/>
         <azione nome="testSoapFaultApplicativo"/>

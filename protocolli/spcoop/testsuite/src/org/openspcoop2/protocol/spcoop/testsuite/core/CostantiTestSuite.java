@@ -1267,6 +1267,14 @@ public class CostantiTestSuite {
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_ONLY_AUTHZ="WSSSaml11OnlyAuthz";
     /** ENTITA SPCOOP: Nome Azione WSSSaml11SignedDetachWSSDisable del Servizio RichiestaStatoAvanzamento */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_DETACH="WSSSaml11SignedDetachWSSDisable";
+    /** ENTITA SPCOOP: Nome Azione WSSUsernameTokenDigest del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_USERNAME_TOKEN_DIGEST="WSSUsernameTokenDigest";
+    /** ENTITA SPCOOP: Nome Azione WSSUsernameTokenText del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_USERNAME_TOKEN_TEXT="WSSUsernameTokenText";
+    /** ENTITA SPCOOP: Nome Azione WSSUsernameTokenNoPassword del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_USERNAME_TOKEN_NO_PASSWORD="WSSUsernameTokenNoPassword";
+    /** ENTITA SPCOOP: Nome Azione WSSUsernameTokenSignature del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_USERNAME_TOKEN_SIGNATURE="WSSUsernameTokenSignature";   
     /** ENTITA SPCOOP: Nome Azione WSSSoapBoxCifrataFirmata del Servizio RichiestaStatoAvanzamento */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SOAPBOX_ENCRYPT_SIGNATURE="WSSSoapBoxCifrataFirmata";
     /** ENTITA SPCOOP: Nome Azione WSSSoapBoxFirmataCifrata del Servizio RichiestaStatoAvanzamento */
