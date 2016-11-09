@@ -1,3 +1,22 @@
+2016-11-09  Andrea Poli <apoli@link.it>
+
+	* [Pdd, PddConsole]
+	Risolto Bug OP-553
+	Durante la configurazione di un connettore HTTPS tramite pddConsole, 
+	veniva proposto come tipo SSL di default il valore 'SSLv3'. Tale versione viene considerata una versione compromessa.
+	Il default è quindi stato modificato in modo da fornire l'implementazione più recente disponibile sulla jvm su cui è in esecuzione la PdD.
+	Inoltre i tipi possibili di SSL impostabili sul connettore HTTPS vengono recuperati dinamicamente leggendo 
+	i protocolli supportati dalla jvm su cui è in esecuzione la PdD.
+	Inoltre è stato affrontato il problema di comprendere effettivamente quale protocollo ssl viene utilizzato, 
+	rispetto al tipo SSL scelto sul connettore. La scelta può variare però a seconda della JVM.
+	Ogni versione di java fornisce i protocolli supportati e per ogni tipo i protocolli effettivamente attivi.
+	Può succedere ad esempio sulla versione 1.7.0_75 di Oracle Corporation che se si utilizza il tipo SSL 'SSLv3',
+	la comunicazione https verrà instaurata tramite 'TLSv1' poichè associato al tipo 'SSLv3' risulta abilitato solamente 'TLSv1'.
+	Per comprendere quindi quali sono i protocolli attivi rispetto ad un SSLType scelto, 
+	è stato aggiunto nella sezione 'Configurazione - Runtime' la voce 'Informazioni SSL' che contengono per ogni SSLType
+	gli effettivi protocolli abilitati nella jvm.
+	Inoltre sempre nella sezione 'Configurazione - Runtime' è stata aggiunta oltre alla versione di java anche le informazioni sul Vendor.
+
 2016-11-08  Andrea Poli <apoli@link.it>
 
 	* [Pdd]

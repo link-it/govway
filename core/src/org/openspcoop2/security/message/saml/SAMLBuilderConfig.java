@@ -42,8 +42,8 @@ import org.openspcoop2.utils.Utilities;
  * SAMLCallbackHandler
  * 	
  * @author Andrea Poli <apoli@link.it>
- * @author $Author: apoli $
- * @version $Rev: 11423 $, $Date: 2016-01-25 16:58:18 +0100 (Mon, 25 Jan 2016) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class SAMLBuilderConfig {
 
