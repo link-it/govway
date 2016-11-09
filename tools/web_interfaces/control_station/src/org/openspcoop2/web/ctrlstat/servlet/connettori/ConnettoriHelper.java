@@ -51,7 +51,10 @@ import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.utils.resources.SSLConstants;
+import org.openspcoop2.utils.resources.SSLUtilities;
 import org.openspcoop2.web.ctrlstat.core.Connettori;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.TipologiaConnettori;
@@ -1700,9 +1703,22 @@ public class ConnettoriHelper extends ConsoleHelper {
 				return false;
 			}
 
+			List<String> tipologie = null;
+			try{
+				tipologie = SSLUtilities.getSSLSupportedProtocols();
+			}catch(Exception e){
+				ControlStationCore.logError(e.getMessage(), e);
+				tipologie = SSLUtilities.getAllSslProtocol();
+			}
+			if(!tipologie.contains(SSLConstants.PROTOCOL_TLS)){
+				tipologie.add(SSLConstants.PROTOCOL_TLS); // retrocompatibilita'
+			}
+			if(!tipologie.contains(SSLConstants.PROTOCOL_SSL)){
+				tipologie.add(SSLConstants.PROTOCOL_SSL); // retrocompatibilita'
+			}
 			if (!httpstipologia.equals("") &&
-					!Utilities.contains(httpstipologia, ConnettoriCostanti.TIPOLOGIE_HTTPS)) {
-				this.pd.setMessage("Il campo Tipologia può assumere uno tra i seguenti valori: "+Utilities.toString(ConnettoriCostanti.TIPOLOGIE_HTTPS, ","));
+					!tipologie.contains(httpstipologia)) {
+				this.pd.setMessage("Il campo Tipologia può assumere uno tra i seguenti valori: "+tipologie);
 				return false;
 			}
 

@@ -441,7 +441,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						this.profilo = "-";
 						this.clientAuth= ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
 						this.httpsurl = "";
-						this.httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_SSLV3_TYPE;
+						this.httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
 						this.httpshostverify = true;
 						this.httpspath = "";
 						this.httpstipo = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TIPOLOGIA_KEYSTORE_TYPE;
@@ -483,7 +483,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						this.httpsalgoritmokey = KeyManagerFactory.getDefaultAlgorithm();
 					}
 					if(this.httpstipologia==null || "".equals(this.httpstipologia)){
-						this.httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_SSLV3_TYPE;
+						this.httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
 					}
 					if(this.httpshostverifyS==null || "".equals(this.httpshostverifyS)){
 						this.httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;

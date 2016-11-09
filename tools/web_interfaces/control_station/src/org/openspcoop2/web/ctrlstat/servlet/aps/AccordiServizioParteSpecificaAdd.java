@@ -656,7 +656,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.portType = "-";
 					this.descrizione = "";
 					this.httpsurl = "";
-					this.httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_SSLV3_TYPE;
+					this.httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
 					this.httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
 					this.httpshostverify = true;
 					this.httpspath = "";
@@ -747,7 +747,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.httpsalgoritmokey = KeyManagerFactory.getDefaultAlgorithm();
 				}
 				if(this.httpstipologia==null || "".equals(this.httpstipologia)){
-					this.httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_SSLV3_TYPE;
+					this.httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
 				}
 				if(this.httpshostverifyS==null || "".equals(this.httpshostverifyS)){
 					this.httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;

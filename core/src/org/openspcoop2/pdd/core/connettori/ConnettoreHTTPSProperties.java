@@ -129,7 +129,7 @@ public class ConnettoreHTTPSProperties extends SSLConfig implements Serializable
 			String tmp = properties.get(CostantiConnettori.CONNETTORE_HTTPS_SSL_TYPE).trim();
 			propertiesHTTPS.setSslType(tmp);
 		}else{
-			propertiesHTTPS.setSslType(CostantiConnettori.CONNETTORE_HTTPS_SSL_TYPE_VALUE_SSLv3); 
+			propertiesHTTPS.setSslType(CostantiConnettori.CONNETTORE_HTTPS_SSL_TYPE_DEFAULT_VALUE); 
 		}
 		
 		return propertiesHTTPS;

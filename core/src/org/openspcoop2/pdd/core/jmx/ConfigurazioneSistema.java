@@ -29,6 +29,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -56,6 +57,8 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.resources.MapReader;
+import org.openspcoop2.utils.resources.SSLConstants;
+import org.openspcoop2.utils.resources.SSLUtilities;
 
 
 /**
@@ -71,8 +74,10 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	public final static String VERSIONE_PDD = "getVersionePdD";
 	public final static String VERSIONE_BASE_DATI = "getVersioneBaseDati";
 	public final static String VERSIONE_JAVA = "getVersioneJava";
+	public final static String VENDOR_JAVA = "getVendorJava";
 	public final static String TIPO_DATABASE = "getTipoDatabase";	
 	public final static String INFORMAZIONI_DATABASE = "getInformazioniDatabase";
+	public final static String INFORMAZIONI_SSL = "getInformazioniSSL";
 	public final static String MESSAGE_FACTORY = "getMessageFactory";
 	public final static String DIRECTORY_CONFIGURAZIONE = "getDirectoryConfigurazione";
 	public final static String PROTOCOLS = "getPluginProtocols";
@@ -165,6 +170,10 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		else if(actionName.equals(VERSIONE_JAVA)){
 			return this.getVersioneJava();
 		}
+		
+		else if(actionName.equals(VENDOR_JAVA)){
+			return this.getVendorJava();
+		}
 
 		else if(actionName.equals(TIPO_DATABASE)){
 			return this.getTipoDatabase();
@@ -172,6 +181,10 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 
 		else if(actionName.equals(INFORMAZIONI_DATABASE)){
 			return this.getInformazioniDatabase();
+		}
+		
+		else if(actionName.equals(INFORMAZIONI_SSL)){
+			return this.getInformazioniSSL(false);
 		}
 		
 		else if(actionName.equals(MESSAGE_FACTORY)){
@@ -219,6 +232,13 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
 		
+		// VENDOR_JAVA
+		MBeanOperationInfo vendorJavaOp = new MBeanOperationInfo(VENDOR_JAVA,"Visualizza le informazioni sul vendor di Java",
+						null,
+						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
+						String.class.getName(),
+						MBeanOperationInfo.ACTION);
+		
 		// TIPO_DATABASE
 		MBeanOperationInfo versioneTipoDatabaseOp = new MBeanOperationInfo(TIPO_DATABASE,"Visualizza il tipo di Database",
 						null,
@@ -228,6 +248,13 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		
 		// INFORMAZIONI_DATABASE
 		MBeanOperationInfo informazioniDatabaseOp = new MBeanOperationInfo(INFORMAZIONI_DATABASE,"Visualizza le informazioni sul Database",
+						null,
+						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
+						String.class.getName(),
+						MBeanOperationInfo.ACTION);
+		
+		// INFORMAZIONI_SSL
+		MBeanOperationInfo informazioniSSLOp = new MBeanOperationInfo(INFORMAZIONI_SSL,"Visualizza le informazioni sulle connessioni SSL",
 						null,
 						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
@@ -265,7 +292,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		MBeanConstructorInfo[] constructors = new MBeanConstructorInfo[]{defaultConstructor};
 
 		// Lista operazioni
-		MBeanOperationInfo[] operations = new MBeanOperationInfo[]{versionePddOp,versioneBaseDatiOp,versioneJavaOp,versioneTipoDatabaseOp,informazioniDatabaseOp,
+		MBeanOperationInfo[] operations = new MBeanOperationInfo[]{versionePddOp,versioneBaseDatiOp,vendorJavaOp,versioneJavaOp,
+				versioneTipoDatabaseOp,informazioniDatabaseOp,informazioniSSLOp,
 				messageFactoryOp,confDirectoryOp,protocolsOp};
 
 		return new MBeanInfo(className,description,attributes,constructors,operations,null);
@@ -358,6 +386,39 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				return v;
 			}
 			throw new Exception("Versione di Java non disponibile");
+
+		}catch(Throwable e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String getVendorJava(){
+		try{
+			String v = System.getProperty("java.vendor");
+			if(v==null || "".equals(v)){
+				v = System.getProperty("java.vm.vendor");
+			}
+			if(v==null || "".equals(v)){
+				v = null;
+			}
+			
+			String name = System.getProperty("java.vm.name");
+			if(name==null || "".equals(name)){
+				name = null;
+			}
+			
+			if(v!=null && name!=null){
+				return v + " " + name;
+			}
+			else if(v!=null){
+				return v;
+			}
+			else if(name!=null){
+				return name;
+			}
+			
+			throw new Exception("Vendor Java non disponibile");
 
 		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
@@ -529,6 +590,60 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String getInformazioniSSL(boolean cipherSuites){
+		try{
+			StringBuffer bf = new StringBuffer();
+			bf.append("SupportedProtocols: "+SSLUtilities.getSSLSupportedProtocols());
+			bf.append("\n");
+			// Molto verboso
+			if(cipherSuites){
+				bf.append("SupportedCipherSuites: "+SSLUtilities.getSSLSupportedCipherSuites());
+				bf.append("\n");
+			}
+			List<String> p = SSLUtilities.getSSLSupportedProtocols();
+			if(p!=null && p.size()>0){
+				for (String protocol : p) {
+					printSSLInfo(protocol, bf, cipherSuites);
+				}
+				// Per retrocompatibilità verifico anche alias SSL e TLS in modo da sapere come si comportano se sono stati associati a delle configurazioni
+				if(p.contains(SSLConstants.PROTOCOL_TLS)==false){
+					printSSLInfo(SSLConstants.PROTOCOL_TLS, bf, cipherSuites);
+				}
+				if(p.contains(SSLConstants.PROTOCOL_SSL)==false){
+					printSSLInfo(SSLConstants.PROTOCOL_SSL, bf, cipherSuites);
+				}
+			}
+
+			if(bf.length()<=0){
+				throw new Exception("Non sono disponibili informazioni sul database");
+			}else{
+				return bf.toString();
+			}
+
+		}catch(Throwable e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	private void printSSLInfo(String protocol,StringBuffer bf,boolean cipherSuites){
+		bf.append(protocol+": ");
+		try{
+			bf.append(SSLUtilities.getSSLEnabledProtocols(protocol));
+		}catch(Exception n){
+			bf.append(n.getMessage());
+		}
+		bf.append("\n");
+		if(cipherSuites){
+			bf.append(protocol+" (CipherSuites): ");
+			try{
+				bf.append(SSLUtilities.getSSLEnabledCipherSuites(protocol));
+			}catch(Exception n){
+				bf.append(n.getMessage());
+			}
+			bf.append("\n");	
 		}
 	}
 	

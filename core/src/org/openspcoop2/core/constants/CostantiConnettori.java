@@ -21,6 +21,8 @@
 
 package org.openspcoop2.core.constants;
 
+import org.openspcoop2.utils.resources.SSLUtilities;
+
 /**
  * CostantiConnettori
  *
@@ -113,10 +115,7 @@ public class CostantiConnettori {
     public static final String CONNETTORE_HTTPS_CLASSNAME_HOSTNAME_VERIFIER = "classNameHostnameVerifier";
     public static final String CONNETTORE_HTTPS_SSL_TYPE = "sslType";
     
-    public static final String CONNETTORE_HTTPS_SSL_TYPE_VALUE_SSL="SSL";
-    public static final String CONNETTORE_HTTPS_SSL_TYPE_VALUE_SSLv3="SSLv3";
-    public static final String CONNETTORE_HTTPS_SSL_TYPE_VALUE_TLS="TLS";
-    public static final String CONNETTORE_HTTPS_SSL_TYPE_VALUE_TLSv1="TLSv1";
+    public static final String CONNETTORE_HTTPS_SSL_TYPE_DEFAULT_VALUE=SSLUtilities.getSafeDefaultProtocol();
 	
     
     /** DIRECT VM PROPERTIES */

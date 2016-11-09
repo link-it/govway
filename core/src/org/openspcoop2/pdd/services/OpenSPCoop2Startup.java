@@ -1198,7 +1198,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			OpenSPCoop2Logger.getLoggerOpenSPCoopConfigurazioneSistema().
 				info(informazioniStatoPorta.formatStatoPorta(infoConfigSistema.getVersionePdD(), 
 						infoConfigSistema.getVersioneBaseDati(), infoConfigSistema.getDirectoryConfigurazione(), 
-						infoConfigSistema.getVersioneJava(), infoConfigSistema.getMessageFactory(),
+						infoConfigSistema.getVersioneJava(), infoConfigSistema.getVendorJava(), infoConfigSistema.getMessageFactory(),
 						LogLevels.toOpenSPCoop2(configurazionePdDReader.getSeverita_msgDiagnostici(),true),
 						LogLevels.toOpenSPCoop2(configurazionePdDReader.getSeveritaLog4J_msgDiagnostici(),true),
 						OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato, OpenSPCoop2Logger.loggerMsgDiagnosticoReadableAbilitato, OpenSPCoop2Logger.loggerIntegrationManagerAbilitato,
@@ -1206,6 +1206,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						configurazionePdDReader.dumpBinarioPD(), configurazionePdDReader.dumpBinarioPA(),
 						OpenSPCoop2Logger.loggerTracciamentoAbilitato, OpenSPCoop2Logger.loggerDumpAbilitato,
 						infoConfigSistema.getInformazioniDatabase(),
+						infoConfigSistema.getInformazioniSSL(true),
 						infoConfigSistema.getPluginProtocols(), 
 						informazioniStatoPortaCache.toArray(new InformazioniStatoPortaCache[1])));
 

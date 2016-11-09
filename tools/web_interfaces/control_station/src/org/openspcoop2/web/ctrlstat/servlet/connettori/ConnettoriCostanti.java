@@ -22,6 +22,8 @@ package org.openspcoop2.web.ctrlstat.servlet.connettori;
 
 import java.util.Vector;
 
+import org.openspcoop2.utils.resources.SSLUtilities;
+
 /**
  * ConnettoriCostanti
  *
@@ -175,8 +177,7 @@ public class ConnettoriCostanti {
 		, DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI };
 	public final static String[] DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_LABEL_MODES = { "Usa valori del TrustStore", "Ridefinisci" };
 	
-	public final static String DEFAULT_CONNETTORE_HTTPS_SSLV3_TYPE = "SSLv3";
-	public final static String[] TIPOLOGIE_HTTPS = { "SSL", "SSLv3", "TLS", "TLSv1" };
+	public final static String DEFAULT_CONNETTORE_HTTPS_TYPE = SSLUtilities.getSafeDefaultProtocol();
 	
 	public final static String DEFAULT_CONNETTORE_HTTPS_TIPOLOGIA_KEYSTORE_TYPE = "jks";
 	public final static String[] TIPOLOGIE_KEYSTORE = { "jks", "pkcs12", "jceks", "bks", "uber", "gkr" };

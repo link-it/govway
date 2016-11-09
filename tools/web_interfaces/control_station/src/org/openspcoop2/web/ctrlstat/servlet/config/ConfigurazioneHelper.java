@@ -3211,6 +3211,31 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		
+		String vendorJava = null;
+		try{
+			vendorJava = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_vendorJava(alias));
+			if(this.isErroreHttp(vendorJava, "vendor di java")){
+				// e' un errore
+				vendorJava = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni sul vendor di java (jmxResourcePdD): "+e.getMessage(),e);
+			vendorJava = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		if(vendorJava!=null){
+			vendorJava = StringEscapeUtils.escapeHtml(vendorJava);
+		}
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VENDOR_JAVA);
+		de.setValue(vendorJava);
+		de.setType(DataElementType.TEXT);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_VENDOR_JAVA);
+		de.setSize(this.getSize());
+		dati.addElement(de);
+		
+		
 		String versioneJava = null;
 		try{
 			versioneJava = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
@@ -3633,6 +3658,60 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 			}
 		}
+		
+		
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_SSL);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		String [] infoSSL = null;
+		try{
+			String tmp = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniSSL(alias));
+			if(this.isErroreHttp(tmp, "informazioni SSL")){
+				// e' un errore
+				tmp = null;
+			}
+			infoSSL = tmp.split("\n");
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni SSL (jmxResourcePdD): "+e.getMessage(),e);
+		}
+		if(infoSSL==null || infoSSL.length<=0){
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+			de.setType(DataElementType.NOTE);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}
+		else{
+			for (int i = 0; i < infoSSL.length; i++) {
+				
+				try{
+					String label = infoSSL[i];
+					String value = "";
+					if(infoSSL[i].contains(":")){
+						label = infoSSL[i].split(":")[0];
+						value = infoSSL[i].split(":")[1];
+					}
+					
+					de = new DataElement();
+					de.setLabel(label);
+					de.setValue(value);
+					de.setType(DataElementType.TEXT);
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_SSL+i);
+					de.setSize(this.getSize());
+					dati.addElement(de);
+				}catch(Exception e){
+					this.log.error("Errore durante la lettura delle informazioni SSL (jmxResourcePdD): "+e.getMessage(),e);
+				}
+			}
+		}
+		
+		
+		
 		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLI);

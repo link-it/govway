@@ -303,6 +303,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_DIAGNOSTICA = "Informazioni Diagnostica";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_TRACCIAMENTO = "Informazioni Tracciamento";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_DATABASE = "Informazioni Database";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_SSL = "Informazioni SSL";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLI = "Informazioni Protocolli";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CACHE = "Cache ";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_DATABASE = "Connessioni Attive al Database";
@@ -379,10 +380,12 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO = "nomeMetodo";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_PDD = "versionePdD";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_BASE_DATI = "versioneBaseDati";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_VENDOR_JAVA = "vendorJava";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_JAVA = "versioneJava";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_MESSAGE_FACTORY = "messageFactory";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_DIRECTORY_CONFIGURAZIONE = "directoryConfigurazione";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_DATABASE = "infoDatabase_";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_SSL = "infoSsl_";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO = "infoProtocollo_";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO_CONTESTO = "infoProtocolloContesto_";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO = "Stato";
@@ -449,6 +452,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER = "Porta di Dominio";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_PDD = "Versione PdD";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_BASE_DATI = "Versione BaseDati";
+	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VENDOR_JAVA = "Vendor Java";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_JAVA = "Versione Java";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_MESSAGE_FACTORY = "Message Factory";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_DIRECTORY_CONFIGURAZIONE = "Directory di Configurazione";

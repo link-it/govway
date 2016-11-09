@@ -369,7 +369,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			String user = "";
 			String password = "";
 			String httpsurl = null;
-			String httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_SSLV3_TYPE ;
+			String httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE ;
 			boolean httpshostverify = true;
 			String httpspath = "";
 			String httpstipo = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TIPOLOGIA_KEYSTORE_TYPE;

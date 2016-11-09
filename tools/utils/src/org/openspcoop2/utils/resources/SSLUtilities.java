@@ -23,11 +23,14 @@ package org.openspcoop2.utils.resources;
 
 import java.io.FileInputStream;
 import java.security.KeyStore;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
@@ -42,7 +45,127 @@ import org.openspcoop2.utils.UtilsException;
  * @version $Rev$, $Date$
  */
 public class SSLUtilities {
-
+	
+	public static List<String> getSSLEnabledProtocols(String sslType) throws UtilsException{
+		try{
+			List<String> p = new ArrayList<String>();
+			SSLContext context = SSLContext.getInstance(sslType);
+			context.init(null,null,null);
+			SSLSocket socket = (SSLSocket)context.getSocketFactory().createSocket();
+			String[] protocols = socket.getEnabledProtocols();
+			for (int i = 0; i < protocols.length; i++) {
+				p.add(protocols[i]);
+			}
+			return p;
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(), e);
+		}
+	}
+	public static List<String> getSSLSupportedProtocols() throws UtilsException{
+		try{
+			List<String> p = new ArrayList<String>();
+			SSLContext defaultContext = SSLContext.getDefault();
+			SSLSocket socket = (SSLSocket)defaultContext.getSocketFactory().createSocket();
+			String[] protocols = socket.getSupportedProtocols();
+			for (int i = 0; i < protocols.length; i++) {
+				p.add(protocols[i]);
+			}
+			return p;
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(), e);
+		}
+	}
+	public static String getSafeDefaultProtocol(){
+		try{
+			return getDefaultProtocol();
+		}catch(Exception e){
+			return SSLConstants.PROTOCOL_TLS;
+		}
+	}
+	public static String getDefaultProtocol() throws UtilsException{
+		// Ritorno l'ultima versione disponibile
+		List<String> p = getSSLSupportedProtocols();
+		if(p.contains(SSLConstants.PROTOCOL_TLS_V1_2)){
+			return SSLConstants.PROTOCOL_TLS_V1_2;
+		}
+		else if(p.contains(SSLConstants.PROTOCOL_TLS_V1_1)){
+			return SSLConstants.PROTOCOL_TLS_V1_1;
+		}
+		else if(p.contains(SSLConstants.PROTOCOL_TLS_V1)){
+			return SSLConstants.PROTOCOL_TLS_V1;
+		}
+		else if(p.contains(SSLConstants.PROTOCOL_TLS)){
+			return SSLConstants.PROTOCOL_TLS;
+		}
+		else if(p.contains(SSLConstants.PROTOCOL_SSL_V3)){
+			return SSLConstants.PROTOCOL_SSL_V3;
+		}
+		else if(p.contains(SSLConstants.PROTOCOL_SSL)){
+			return SSLConstants.PROTOCOL_SSL;
+		}
+		else if(p.contains(SSLConstants.PROTOCOL_SSL_V2_HELLO)){
+			return SSLConstants.PROTOCOL_SSL_V2_HELLO;
+		}
+		else{
+			return p.get(0);
+		}
+	}
+	public static List<String> getAllSslProtocol() {
+		// ritorno in ordine dal più recente al meno recento, più altri eventuali protocolli.
+		List<String> p = new ArrayList<String>();
+		p.add(SSLConstants.PROTOCOL_TLS_V1_2);
+		p.add(SSLConstants.PROTOCOL_TLS_V1_1);
+		p.add(SSLConstants.PROTOCOL_TLS_V1);
+		p.add(SSLConstants.PROTOCOL_TLS); // per retrocompatibilità
+		p.add(SSLConstants.PROTOCOL_SSL_V3);
+		p.add(SSLConstants.PROTOCOL_SSL); // per retrocompatibilità
+		p.add(SSLConstants.PROTOCOL_SSL_V2_HELLO);
+		
+		try{
+			List<String> pTmp = getSSLSupportedProtocols();
+			for (String s : pTmp) {
+				if(p.contains(s)==false){
+					p.add(s);
+				}
+			}
+		}catch(Exception e){
+			// non dovrebbe mai accadere una eccezione
+			e.printStackTrace(System.err);
+		}
+			
+		return  p;
+	}
+	
+	public static List<String> getSSLEnabledCipherSuites(String sslType) throws UtilsException{
+		try{
+			List<String> l = new ArrayList<String>();
+			SSLContext context = SSLContext.getInstance(sslType);
+			context.init(null,null,null);
+			SSLSocket socket = (SSLSocket)context.getSocketFactory().createSocket();
+			String[] cs = socket.getEnabledCipherSuites();
+			for (int i = 0; i < cs.length; i++) {
+				l.add(cs[i]);
+			}
+			return l;
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(), e);
+		}
+	}
+	public static List<String> getSSLSupportedCipherSuites() throws UtilsException{
+		try{
+			List<String> l = new ArrayList<String>();
+			SSLContext defaultContext = SSLContext.getDefault();
+			SSLSocket socket = (SSLSocket)defaultContext.getSocketFactory().createSocket();
+			String[] cs = socket.getSupportedCipherSuites();
+			for (int i = 0; i < cs.length; i++) {
+				l.add(cs[i]);
+			}
+			return l;
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(), e);
+		}
+	}
+		
 	public static SSLContext generateSSLContext(SSLConfig sslConfig, StringBuffer bfLog) throws UtilsException{
 
 		// Gestione https

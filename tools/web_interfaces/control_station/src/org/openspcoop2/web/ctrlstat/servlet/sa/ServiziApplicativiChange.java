@@ -531,7 +531,7 @@ public final class ServiziApplicativiChange extends Action {
 					httpsalgoritmokey = KeyManagerFactory.getDefaultAlgorithm();
 				}
 				if(httpstipologia==null || "".equals(httpstipologia)){
-					httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_SSLV3_TYPE;
+					httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
 				}
 				if(httpshostverifyS==null || "".equals(httpshostverifyS)){
 					httpshostverifyS = "true";

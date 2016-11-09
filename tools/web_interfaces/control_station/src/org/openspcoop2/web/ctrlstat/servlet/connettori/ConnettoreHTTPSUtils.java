@@ -20,10 +20,12 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.connettori;
 
+import java.util.List;
 import java.util.Vector;
 
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
+import org.openspcoop2.utils.resources.SSLUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -271,7 +273,7 @@ public class ConnettoreHTTPSUtils {
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey, String stato,
 			ControlStationCore core,int pageSize, boolean addUrlParameter,
-			String prefix){
+			String prefix) {
 		
 		if(addUrlParameter){
 			DataElement de = new DataElement();
@@ -300,7 +302,18 @@ public class ConnettoreHTTPSUtils {
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
 		de.setType(DataElementType.SELECT);
-		de.setValues(ConnettoriCostanti.TIPOLOGIE_HTTPS);
+		List<String> tipologie = null;
+		try{
+			tipologie = SSLUtilities.getSSLSupportedProtocols();
+		}catch(Exception e){
+			ControlStationCore.logError(e.getMessage(), e);
+			tipologie = SSLUtilities.getAllSslProtocol();
+		}
+		if(httpstipologia!=null && !"".equals(httpstipologia) && 
+				!tipologie.contains(httpstipologia)){
+			tipologie.add(httpstipologia); // per retrocompatibilità delle configurazioni SSL e TLS
+		}
+		de.setValues(tipologie);
 		de.setSelected(httpstipologia);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
 		dati.addElement(de);

@@ -32,31 +32,31 @@ public class InformazioniStatoPorta {
 
 	public String formatStatoPorta(String versionePdD, 
 			String versioneBaseDati,
-			String confDir, String versioneJava, String messageFactory,
+			String confDir, String versioneJava, String vendorJava, String messageFactory,
 			String livelloSeveritaDiagnostici,String livelloSeveritaDiagnosticiLog4j,
 			boolean log4j_diagnostica,  boolean log4j_openspcoop, boolean log4j_integrationManager, 
 			boolean tracciamento, boolean dumpApplicativo, boolean dumpPD, boolean dumpPA,
 			boolean log4j_tracciamento, boolean log4j_dump,
-			String infoDatabase, String infoProtocolli,
+			String infoDatabase, String infoSSL,  String infoProtocolli,
 			InformazioniStatoPortaCache ... cache){
-		return formatStatoPorta(versionePdD, versioneBaseDati, confDir, versioneJava, messageFactory,
+		return formatStatoPorta(versionePdD, versioneBaseDati, confDir, versioneJava, vendorJava, messageFactory,
 				livelloSeveritaDiagnostici, livelloSeveritaDiagnosticiLog4j,
 				log4j_diagnostica, log4j_openspcoop, log4j_integrationManager,
 				tracciamento, dumpApplicativo, dumpPD, dumpPA,
 				log4j_tracciamento, log4j_dump,
-				infoDatabase, infoProtocolli,
+				infoDatabase, infoSSL, infoProtocolli,
 				null,null,null,null,
 				cache);
 	}
 	
 	public String formatStatoPorta(String versionePdD, 
 			String versioneBaseDati,
-			String confDir, String versioneJava, String messageFactory,
+			String confDir, String versioneJava, String vendorJava, String messageFactory,
 			String livelloSeveritaDiagnostici,String livelloSeveritaDiagnosticiLog4j,
 			boolean log4j_diagnostica,  boolean log4j_openspcoop, boolean log4j_integrationManager, 
 			boolean tracciamento, boolean dumpApplicativo, boolean dumpPD, boolean dumpPA, 
 			boolean log4j_tracciamento, boolean log4j_dump,
-			String infoDatabase, String infoProtocolli,
+			String infoDatabase, String infoSSL, String infoProtocolli,
 			String statoConnessioniDB, String statoConnessioniPD, String statoConnessioniPA, String statoConnessioniJMS,
 			InformazioniStatoPortaCache ... cache){
 		
@@ -74,6 +74,8 @@ public class InformazioniStatoPorta {
 		format(bf, versioneBaseDati, "Versione BaseDati");
 		bf.append("\n");
 		format(bf, confDir, "Directory Configurazione");
+		bf.append("\n");
+		format(bf, vendorJava, "Vendor Java");
 		bf.append("\n");
 		format(bf, versioneJava, "Versione Java");
 		bf.append("\n");
@@ -108,6 +110,13 @@ public class InformazioniStatoPorta {
 		bf.append("===========================\n");
 		bf.append("\n");
 		bf.append(infoDatabase);
+		bf.append("\n");
+		
+		bf.append("===========================\n");
+		bf.append("Informazioni SSL\n");
+		bf.append("===========================\n");
+		bf.append("\n");
+		bf.append(infoSSL);
 		bf.append("\n");
 		
 		bf.append("===========================\n");
