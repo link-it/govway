@@ -3867,13 +3867,39 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 				
 				boolean findHRef = false;
 				for(int k=0; k<contentID.size(); k++){
-					if(href.compareTo(contentID.get(k) + "") == 0 || 
-							href.compareTo("cid:"+contentID.get(k) + "") == 0||
-							href.compareTo(contentLocation.get(k) + "") == 0){
+					if(href.equals(contentID.get(k)) || 
+							href.equals("cid:"+contentID.get(k)) ||
+							href.equals(contentLocation.get(k)) ){
 						contentID.remove(k);
 						contentLocation.remove(k);
 						findHRef = true;
 						break;
+					}
+					else{
+						// verifico se per caso l'href fornito non contiene i '<' e '>'.
+						// per retrocompatibilità provo ad aggiungergli io
+						String hrefNew = new String(href);
+						String cidPref = "";
+						if(hrefNew.startsWith("cid:")){
+							hrefNew = hrefNew.substring("cid:".length());
+							cidPref = "cid:";
+						}
+						if(hrefNew.startsWith("<")==false){
+							hrefNew = "<"+hrefNew;
+						}
+						if(hrefNew.endsWith(">")==false){
+							hrefNew = hrefNew + ">";
+						}
+						hrefNew = cidPref + hrefNew;
+						if(hrefNew.equals(href)==false){
+							if(hrefNew.equals(contentID.get(k)) || 
+									hrefNew.equals("cid:"+contentID.get(k)) ){
+								contentID.remove(k);
+								contentLocation.remove(k);
+								findHRef = true;
+								break;
+							}
+						}
 					}
 				}
 				if(findHRef == false){
