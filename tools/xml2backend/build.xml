@@ -44,6 +44,8 @@
 		<pathelement path="${openspcoop2_lib}/shared/mailapi-1.5.6.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/activation-1.1.1.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/concurrent-1.0.jar"/>
+		<pathelement path="${openspcoop2_lib}/shared/xercesImpl-2.11.0.jar"/>
+		<pathelement path="${openspcoop2_lib}/shared/xml-apis-2.11.0.jar"/>
 		<pathelement path="${openspcoop2_lib}/axis14/axis-1.4.jar"/>
 		<pathelement path="${openspcoop2_lib}/javax/javax.servlet.jar"/>
 		<fileset dir="${openspcoop2_lib}/saaj" >

@@ -28,6 +28,7 @@ import javax.xml.transform.Source;
 import javax.xml.validation.Schema;
 
 import org.slf4j.Logger;
+import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.XMLException;
 import org.w3c.dom.Node;
 import org.w3c.dom.ls.LSResourceResolver;
@@ -299,4 +300,9 @@ public class ValidatoreXSD extends  org.openspcoop2.utils.xml.AbstractValidatore
 	}
 
 
+
+	@Override
+	public AbstractXMLUtils getXMLUtils() {
+		return XMLUtils.getInstance();
+	}
 }

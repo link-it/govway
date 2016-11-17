@@ -2033,6 +2033,12 @@ public class RichiesteApplicativeScorrette {
 		err.setMsgErrore("Validazione fallita (elemento {http://schemas.xmlsoap.org/soap/envelope/}AlterazioneMessaggio) [<?xml version=\"1.0\" encoding=\"UTF-8\"?><soapenv:AlterazioneMessaggio xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"/>]: cvc-elt.1: Cannot find the declaration of element 'soapenv:AlterazioneMessaggio'.");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 		
+		ErroreAttesoOpenSPCoopLogCore err_a = new ErroreAttesoOpenSPCoopLogCore();
+		err_a.setIntervalloInferiore(dataInizioTest);
+		err_a.setIntervalloSuperiore(dataFineTest);
+		err_a.setMsgErrore("Validazione fallita (elemento {http://schemas.xmlsoap.org/soap/envelope/}AlterazioneMessaggio) [<?xml version=\"1.0\" encoding=\"UTF-8\"?><soapenv:AlterazioneMessaggio xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"/>]: cvc-elt.1.a: Cannot find the declaration of element 'soapenv:AlterazioneMessaggio'.");
+		this.erroriAttesiOpenSPCoopCore.add(err_a);
+		
 		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
 		err2.setIntervalloInferiore(dataInizioTest);
 		err2.setIntervalloSuperiore(dataFineTest);

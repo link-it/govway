@@ -49,22 +49,6 @@ import org.w3c.dom.NodeList;
 
 public abstract class AbstractXPathExpressionEngine {
 
-	private static javax.xml.xpath.XPathFactory xPathFactory = null;
-	public static javax.xml.xpath.XPathFactory getXPathFactory() throws XPathException{
-		if(AbstractXPathExpressionEngine.xPathFactory==null){
-			AbstractXPathExpressionEngine.initXPathFactory();
-		}
-		return AbstractXPathExpressionEngine.xPathFactory;
-	}
-	public static synchronized void initXPathFactory() throws XPathException{
-		try{
-			if(AbstractXPathExpressionEngine.xPathFactory==null){
-				AbstractXPathExpressionEngine.xPathFactory = javax.xml.xpath.XPathFactory.newInstance();
-			}
-		}catch(Exception e){
-			throw new XPathException("Inizializzazione XPathFactory non riuscita",e);
-		}
-	}
 	
 	
 	private static Logger logger = LoggerWrapperFactory.getLogger(AbstractXPathExpressionEngine.class);
@@ -306,7 +290,7 @@ public abstract class AbstractXPathExpressionEngine {
 		try{
 			
 			// 1. Instantiate an XPathFactory.
-			javax.xml.xpath.XPathFactory factory = AbstractXPathExpressionEngine.getXPathFactory();
+			javax.xml.xpath.XPathFactory factory = this.getXMLUtils().getXPathFactory();
 	
 			// 2. Use the XPathFactory to create a new XPath object
 			javax.xml.xpath.XPath xpath = factory.newXPath();
@@ -435,7 +419,11 @@ public abstract class AbstractXPathExpressionEngine {
 						}catch(Exception e){
 							if(Utilities.existsInnerException(e,com.sun.org.apache.xpath.internal.XPathException.class)){
 								throw new Exception("Valutazione dell'espressione XPATH contenuta in concat_openspcoop ("+params[i]+") ha causato un errore ("+Utilities.getInnerException(e, com.sun.org.apache.xpath.internal.XPathException.class).getMessage()+")",e);
-							}else{
+							}
+							else if(Utilities.existsInnerException(e,org.apache.xpath.XPathException.class)){
+								throw new Exception("Valutazione dell'espressione XPATH contenuta in concat_openspcoop ("+params[i]+") ha causato un errore ("+Utilities.getInnerException(e, org.apache.xpath.XPathException.class).getMessage()+")",e);
+							}
+							else{
 								if(e.getCause()!=null){
 									throw new Exception("Valutazione dell'espressione XPATH contenuta in concat_openspcoop ("+params[i]+") ha causato un errore ("+(Utilities.getLastInnerException(e.getCause())).getMessage()+")",e);
 								}else{
@@ -526,7 +514,11 @@ public abstract class AbstractXPathExpressionEngine {
 				}catch(Exception e){
 					if(Utilities.existsInnerException(e,com.sun.org.apache.xpath.internal.XPathException.class)){
 						throw new Exception("Valutazione dell'espressione XPATH ha causato un errore ("+Utilities.getInnerException(e, com.sun.org.apache.xpath.internal.XPathException.class).getMessage()+")",e);
-					}else{
+					}
+					else if(Utilities.existsInnerException(e,org.apache.xpath.XPathException.class)){
+						throw new Exception("Valutazione dell'espressione XPATH ha causato un errore ("+Utilities.getInnerException(e, org.apache.xpath.XPathException.class).getMessage()+")",e);
+					}
+					else{
 						if(e.getCause()!=null){
 							throw new Exception("Valutazione dell'espressione XPATH ha causato un errore ("+(Utilities.getLastInnerException(e.getCause())).getMessage()+")",e);
 						}else{
@@ -587,7 +579,7 @@ public abstract class AbstractXPathExpressionEngine {
 			path = path.trim();
 				
 			// Instantiate an XPathFactory.
-			javax.xml.xpath.XPathFactory factory = AbstractXPathExpressionEngine.getXPathFactory();
+			javax.xml.xpath.XPathFactory factory = this.getXMLUtils().getXPathFactory();
 	
 			// Use the XPathFactory to create a new XPath object
 			javax.xml.xpath.XPath xpath = factory.newXPath();

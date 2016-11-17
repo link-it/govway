@@ -49,6 +49,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.xpath.XPathFactory;
 
 import org.openspcoop2.utils.UtilsException;
 import org.w3c.dom.Attr;
@@ -76,21 +78,37 @@ import org.xml.sax.SAXException;
 
 public abstract class AbstractXMLUtils {
 
-	
+	// XERCES
 	protected abstract DocumentBuilderFactory newDocumentBuilderFactory() throws XMLException;
-	protected abstract TransformerFactory newTransformerFactory() throws XMLException;
 	protected abstract DatatypeFactory newDatatypeFactory() throws XMLException;
+//	protected abstract javax.xml.parsers.SAXParserFactory newSAXParserFactory() throws XMLException;
+//	protected abstract javax.xml.stream.XMLEventFactory newXMLEventFactory() throws XMLException;
+	protected abstract SchemaFactory newSchemaFactory() throws XMLException;
+	
+	// XALAN
+	protected abstract TransformerFactory newTransformerFactory() throws XMLException;
+	protected abstract XPathFactory newXPathFactory() throws XMLException;
 	
 	
+	// XERCES
 	private DocumentBuilderFactory documentFactory = null;
-
-	private TransformerFactory transformerFactory = null;
-
 	private DatatypeFactory datatypeFactory = null;
+//	private javax.xml.parsers.SAXParserFactory saxParserFactory = null;
+//	private javax.xml.stream.XMLEventFactory xmlEventFactory = null;
+	private SchemaFactory schemaFactory = null;
 	
+	// XALAN	
+	private TransformerFactory transformerFactory = null;
+	private XPathFactory xpathFactory = null;
+	
+	// OTHER
 	private GregorianCalendar gregorianCalendar = null;
 	
-	public synchronized void initBuilder() throws XMLException {
+	
+	
+	// INIT - XERCES
+	
+	public synchronized void initDocumentBuilderFactory() throws XMLException {
 		if(this.documentFactory==null){
 			try {
 				this.documentFactory = newDocumentBuilderFactory();
@@ -99,18 +117,67 @@ public abstract class AbstractXMLUtils {
 			}
 			this.documentFactory.setNamespaceAware(true);
 		}
-		DocumentBuilderFactory.newInstance().getClass().getName();
+	}
+	
+	public synchronized void initDatatypeFactory() throws XMLException {
+		if(this.datatypeFactory==null){
+			try {
+				this.datatypeFactory = newDatatypeFactory();
+			} catch (Exception e) {
+				throw new XMLException(e.getMessage(),e);
+			}
+		}
+	}
+	
+//	public synchronized void initSAXParserFactory() throws XMLException {
+//		if(this.saxParserFactory==null){
+//			try {
+//				this.saxParserFactory = newSAXParserFactory();
+//			} catch (Exception e) {
+//				throw new XMLException(e.getMessage(),e);
+//			}
+//		}
+//	}
+//	
+//	public synchronized void initXMLEventFactory() throws XMLException {
+//		if(this.xmlEventFactory==null){
+//			try {
+//				this.xmlEventFactory = newXMLEventFactory();
+//			} catch (Exception e) {
+//				throw new XMLException(e.getMessage(),e);
+//			}
+//		}
+//	}
+	
+	public synchronized void initSchemaFactory() throws XMLException {
+		if(this.schemaFactory==null){
+			try {
+				this.schemaFactory = newSchemaFactory();
+			} catch (Exception e) {
+				throw new XMLException(e.getMessage(),e);
+			}
+		}
 	}
 
-	public synchronized void initTransformer() throws XMLException {
+	// INIT - XALAN
+	
+	public synchronized void initTransformerFactory() throws XMLException {
 		if(this.transformerFactory==null){
 			this.transformerFactory = newTransformerFactory();
 		}
 	}
 	
+	public synchronized void initXPathFactory() throws XMLException {
+		if(this.xpathFactory==null){
+			this.xpathFactory = newXPathFactory();
+		}
+	}
+	
+	// INIT - OTHER
+	
 	public synchronized void initCalendarConverter() throws XMLException {
 		try{
-			this.datatypeFactory = newDatatypeFactory();
+			this.initDatatypeFactory();
 			this.gregorianCalendar = (GregorianCalendar) Calendar.getInstance(); 
 		} catch (Exception e) {
 			throw new XMLException(e.getMessage(),e);
@@ -118,23 +185,62 @@ public abstract class AbstractXMLUtils {
 		
 	}
 	
-	public DocumentBuilderFactory getDocumentFactory() throws XMLException {
+	
+	// GET - XERCES
+	
+	public DocumentBuilderFactory getDocumentBuilderFactory() throws XMLException {
 		if(this.documentFactory==null){
-			this.initBuilder();
+			this.initDocumentBuilderFactory();
 		}
 		return this.documentFactory;
 	}
+	
+	public DatatypeFactory getDatatypeFactory() throws XMLException {
+		if(this.datatypeFactory==null){
+			this.initDatatypeFactory();
+		}
+		return this.datatypeFactory;
+	}
+	
+//	public javax.xml.parsers.SAXParserFactory getSAXParserFactory() throws XMLException {
+//		if(this.saxParserFactory==null){
+//			this.initSAXParserFactory();
+//		}
+//		return this.saxParserFactory;
+//	}
+//	
+//	public javax.xml.stream.XMLEventFactory getXMLEventFactory() throws XMLException {
+//		if(this.xmlEventFactory==null){
+//			this.initXMLEventFactory();
+//		}
+//		return this.xmlEventFactory;
+//	}
+	
+	public SchemaFactory getSchemaFactory() throws XMLException {
+		if(this.schemaFactory==null){
+			this.initSchemaFactory();
+		}
+		return this.schemaFactory;
+	}
+	
+	
+	// GET - XALAN
 
 	public TransformerFactory getTransformerFactory() throws XMLException {
 		if(this.transformerFactory==null){
-			this.initTransformer();
+			this.initTransformerFactory();
 		}
 		return this.transformerFactory;
 	}
-
-	public DatatypeFactory getDatatypeFactory() {
-		return this.datatypeFactory;
+	
+	public XPathFactory getXPathFactory() throws XMLException {
+		if(this.xpathFactory==null){
+			this.initXPathFactory();
+		}
+		return this.xpathFactory;
 	}
+
+	// GET - OTHER
 	
 	public XMLGregorianCalendar toGregorianCalendar(Date d) throws XMLException {
 		if(this.datatypeFactory==null || this.gregorianCalendar==null){
@@ -192,10 +298,7 @@ public abstract class AbstractXMLUtils {
 		return this.newDocument_engine(errorHandler,entityResolver);
 	}
 	private Document newDocument_engine(ErrorHandler errorHandler,EntityResolver entityResolver) throws IOException,SAXException,ParserConfigurationException,XMLException{
-		if(this.documentFactory==null){
-			this.initBuilder();
-		}
-		DocumentBuilder documentBuilder = this.documentFactory.newDocumentBuilder();
+		DocumentBuilder documentBuilder = this.getDocumentBuilderFactory().newDocumentBuilder();
 		documentBuilder.setErrorHandler(errorHandler);
 		if(entityResolver!=null){
 			documentBuilder.setEntityResolver(entityResolver);
@@ -213,9 +316,6 @@ public abstract class AbstractXMLUtils {
 		return this.newDocument(xml,new XMLErrorHandler(),entityResolver);
 	}
 	public Document newDocument(byte[] xml,ErrorHandler errorHandler,EntityResolver entityResolver) throws IOException,SAXException,ParserConfigurationException,XMLException{
-		if(this.documentFactory==null){
-			this.initBuilder();
-		}
 		ByteArrayInputStream bin = null;
 		try{
 			bin = new ByteArrayInputStream(xml);
@@ -239,10 +339,7 @@ public abstract class AbstractXMLUtils {
 		return this.newDocument(is,new XMLErrorHandler(),entityResolver);
 	}
 	public Document newDocument(InputStream is,ErrorHandler errorHandler,EntityResolver entityResolver) throws IOException,SAXException,ParserConfigurationException, XMLException{
-		if(this.documentFactory==null){
-			this.initBuilder();
-		}	
-		DocumentBuilder documentBuilder = this.documentFactory.newDocumentBuilder();
+		DocumentBuilder documentBuilder = this.getDocumentBuilderFactory().newDocumentBuilder();
 		documentBuilder.setErrorHandler(errorHandler);
 		if(entityResolver!=null)
 			documentBuilder.setEntityResolver(entityResolver);
@@ -259,10 +356,7 @@ public abstract class AbstractXMLUtils {
 		return this.newDocument(f,new XMLErrorHandler(),entityResolver);
 	}
 	public Document newDocument(File f,ErrorHandler errorHandler,EntityResolver entityResolver) throws IOException,SAXException,ParserConfigurationException, XMLException{
-		if(this.documentFactory==null){
-			this.initBuilder();
-		}
-		DocumentBuilder documentBuilder = this.documentFactory.newDocumentBuilder();
+		DocumentBuilder documentBuilder = this.getDocumentBuilderFactory().newDocumentBuilder();
 		documentBuilder.setErrorHandler(errorHandler);
 		if(entityResolver!=null){
 			documentBuilder.setEntityResolver(entityResolver);
@@ -280,10 +374,7 @@ public abstract class AbstractXMLUtils {
 		return this.newDocument(is,new XMLErrorHandler(),entityResolver);
 	}
 	public Document newDocument(InputSource is,ErrorHandler errorHandler,EntityResolver entityResolver) throws IOException,SAXException,ParserConfigurationException, XMLException{
-		if(this.documentFactory==null){
-			this.initBuilder();
-		}
-		DocumentBuilder documentBuilder = this.documentFactory.newDocumentBuilder();
+		DocumentBuilder documentBuilder = this.getDocumentBuilderFactory().newDocumentBuilder();
 		documentBuilder.setErrorHandler(errorHandler);
 		if(entityResolver!=null){
 			documentBuilder.setEntityResolver(entityResolver);
@@ -308,10 +399,7 @@ public abstract class AbstractXMLUtils {
 		return this.newElement_engine(errorHandler,entityResolver);
 	}
 	private Element newElement_engine(ErrorHandler errorHandler,EntityResolver entityResolver) throws IOException,SAXException,ParserConfigurationException, XMLException{
-		if(this.documentFactory==null){
-			this.initBuilder();
-		}
-		DocumentBuilder documentBuilder = this.documentFactory.newDocumentBuilder();
+		DocumentBuilder documentBuilder = this.getDocumentBuilderFactory().newDocumentBuilder();
 		documentBuilder.setErrorHandler(errorHandler);
 		if(entityResolver!=null){
 			documentBuilder.setEntityResolver(entityResolver);
@@ -574,12 +662,9 @@ public abstract class AbstractXMLUtils {
 
 	
 	private void writeNodeTo(Node node,OutputStream os,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException, XMLException, XMLException{
-		if(this.transformerFactory==null){
-			this.initTransformer();
-		}
 		Source source = new DOMSource(node);
 		StreamResult result = new StreamResult(os);
-		Transformer transformer = this.transformerFactory.newTransformer();
+		Transformer transformer = getTransformerFactory().newTransformer();
 		if(omitXMLDeclaration)
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,"yes");
 		transformer.setErrorListener(errorListener);
@@ -587,12 +672,9 @@ public abstract class AbstractXMLUtils {
 		os.flush();
 	}
 	private void writeNodeTo(Node node,Writer writer,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException, XMLException{
-		if(this.transformerFactory==null){
-			this.initTransformer();
-		}
 		Source source = new DOMSource(node);
 		StreamResult result = new StreamResult(writer);
-		Transformer transformer = this.transformerFactory.newTransformer();
+		Transformer transformer = getTransformerFactory().newTransformer();
 		if(omitXMLDeclaration)
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,"yes");
 		transformer.setErrorListener(errorListener);
@@ -600,12 +682,9 @@ public abstract class AbstractXMLUtils {
 		writer.flush();
 	}
 	private void writeNodeTo(Node node,File file,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException, XMLException{
-		if(this.transformerFactory==null){
-			this.initTransformer();
-		}
 		Source source = new DOMSource(node);
 		StreamResult result = new StreamResult(file);
-		Transformer transformer = this.transformerFactory.newTransformer();
+		Transformer transformer = getTransformerFactory().newTransformer();
 		if(omitXMLDeclaration)
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,"yes");
 		transformer.setErrorListener(errorListener);

@@ -296,5 +296,11 @@ public class ValidatoreXSD extends AbstractValidatoreXSD {
 	}
 
 
+	@Override
+	public AbstractXMLUtils getXMLUtils() {
+		return XMLUtils.getInstance();
+	}
+
+
 
 }

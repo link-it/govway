@@ -93,7 +93,7 @@ public class Test {
 		System.out.println("Test #2 (Richiesta GET con tipo XML)");
 		DocumentHttpRequestEntity httpEntity2 = new DocumentHttpRequestEntity();
 		
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilderFactory factory = xmlUtils.getDocumentBuilderFactory();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document document = builder.newDocument();
 		Element root = (Element) document.createElementNS("http://www.openspcoop.org/example/wadl/interno", "test");

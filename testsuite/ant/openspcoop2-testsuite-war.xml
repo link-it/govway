@@ -113,6 +113,8 @@
 				<include name="activation-1.1.1.jar"/>
 				<include name="mailapi-1.5.6.jar"/>
 				<include name="addressing-1.1.jar"/>
+				<include name="${xerces_jar}"/>
+				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>
 				<include name="${xalan_serializer_jar}"/>
 			</lib>

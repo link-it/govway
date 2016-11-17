@@ -119,7 +119,7 @@ public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
 
 	@Override
 	public String getDocumentBuilderFactoryClass() {
-		return com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl.class.getName();
+		return org.apache.xerces.jaxp.DocumentBuilderFactoryImpl.class.getName();
 	}
 
 	@Override

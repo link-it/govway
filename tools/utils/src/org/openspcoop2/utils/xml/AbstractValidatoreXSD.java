@@ -416,7 +416,9 @@ public abstract class AbstractValidatoreXSD {
 	
 	
 	
-	/** ----------------- INIT SCHEMA -----------------
+	/** ----------------- INIT SCHEMA ----------------- **/
+	
+	public abstract AbstractXMLUtils getXMLUtils();
 	
 	/**
 	 * Metodo che si occupa di inizializzare lo schema per la validazione.
@@ -434,28 +436,37 @@ public abstract class AbstractValidatoreXSD {
 			// It comes down to setting the System property "javax.xml.validation.SchemaFactory:http://www.w3.org/2001/XMLSchema" to the value "org.apache.xerces.jaxp.validation.XMLSchemaFactory".
 			// Note that just adding Xerces to your classpath won't fix this, for reasons explained at http://xerces.apache.org/xerces2-j/faq-general.html#faq-4
 			
-			String oldSchemaFactorySetup = null;
-			String propertySystem = "javax.xml.validation.SchemaFactory:"+XMLConstants.W3C_XML_SCHEMA_NS_URI;
+			SchemaFactory factory = null;
 			if(schemaFactory!=null && !AbstractValidatoreXSD.FACTORY_DEFAULT.equals(schemaFactory)){
-				oldSchemaFactorySetup = System.getenv(propertySystem);
-				if(oldSchemaFactorySetup==null){
-					oldSchemaFactorySetup = System.getProperty(propertySystem);
-					if(oldSchemaFactorySetup==null){
-						oldSchemaFactorySetup = "";
-					}
-				}
-				System.setProperty(propertySystem, schemaFactory);
+				factory =  SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+						schemaFactory, this.getClass().getClassLoader());
 			}
-			SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			else{
+				factory = this.getXMLUtils().getSchemaFactory();
+			}
+			
+//			String oldSchemaFactorySetup = null;
+//			String propertySystem = "javax.xml.validation.SchemaFactory:"+XMLConstants.W3C_XML_SCHEMA_NS_URI;
+//			if(schemaFactory!=null && !AbstractValidatoreXSD.FACTORY_DEFAULT.equals(schemaFactory)){
+//				oldSchemaFactorySetup = System.getenv(propertySystem);
+//				if(oldSchemaFactorySetup==null){
+//					oldSchemaFactorySetup = System.getProperty(propertySystem);
+//					if(oldSchemaFactorySetup==null){
+//						oldSchemaFactorySetup = "";
+//					}
+//				}
+//				System.setProperty(propertySystem, schemaFactory);
+//			}
+//			SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			log.info("SchemaFactory["+factory.getClass().getName()+"]");
 			if(lsResourceResolver!=null){
 				factory.setResourceResolver(lsResourceResolver);
 			}
 			this.schema = factory.newSchema(streamSource);
-			if(schemaFactory!=null && !AbstractValidatoreXSD.FACTORY_DEFAULT.equals(schemaFactory) && oldSchemaFactorySetup!=null){
-				log.debug("Ripristino oldSchemaFactory ["+oldSchemaFactorySetup+"]");
-				System.setProperty(propertySystem, oldSchemaFactorySetup);
-			}
+//			if(schemaFactory!=null && !AbstractValidatoreXSD.FACTORY_DEFAULT.equals(schemaFactory) && oldSchemaFactorySetup!=null){
+//				log.debug("Ripristino oldSchemaFactory ["+oldSchemaFactorySetup+"]");
+//				System.setProperty(propertySystem, oldSchemaFactorySetup);
+//			}
 		}catch (Exception e) {
 			throw new Exception("Riscontrato errore durante l'inizializzazione dello schema: "+e.getMessage(),e);
 		}
@@ -471,28 +482,37 @@ public abstract class AbstractValidatoreXSD {
 			// It comes down to setting the System property "javax.xml.validation.SchemaFactory:http://www.w3.org/2001/XMLSchema" to the value "org.apache.xerces.jaxp.validation.XMLSchemaFactory".
 			// Note that just adding Xerces to your classpath won't fix this, for reasons explained at http://xerces.apache.org/xerces2-j/faq-general.html#faq-4
 			
-			String oldSchemaFactorySetup = null;
-			String propertySystem = "javax.xml.validation.SchemaFactory:"+XMLConstants.W3C_XML_SCHEMA_NS_URI;
+			SchemaFactory factory = null;
 			if(schemaFactory!=null && !AbstractValidatoreXSD.FACTORY_DEFAULT.equals(schemaFactory)){
-				oldSchemaFactorySetup = System.getenv(propertySystem);
-				if(oldSchemaFactorySetup==null){
-					oldSchemaFactorySetup = System.getProperty(propertySystem);
-					if(oldSchemaFactorySetup==null){
-						oldSchemaFactorySetup = "";
-					}
-				}
-				System.setProperty(propertySystem, schemaFactory);
+				factory =  SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+						schemaFactory, this.getClass().getClassLoader());
 			}
-			SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			else{
+				factory = this.getXMLUtils().getSchemaFactory();
+			}
+			
+//			String oldSchemaFactorySetup = null;
+//			String propertySystem = "javax.xml.validation.SchemaFactory:"+XMLConstants.W3C_XML_SCHEMA_NS_URI;
+//			if(schemaFactory!=null && !AbstractValidatoreXSD.FACTORY_DEFAULT.equals(schemaFactory)){
+//				oldSchemaFactorySetup = System.getenv(propertySystem);
+//				if(oldSchemaFactorySetup==null){
+//					oldSchemaFactorySetup = System.getProperty(propertySystem);
+//					if(oldSchemaFactorySetup==null){
+//						oldSchemaFactorySetup = "";
+//					}
+//				}
+//				System.setProperty(propertySystem, schemaFactory);
+//			}
+//			SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			log.info("SchemaFactory["+factory.getClass().getName()+"]");
 			if(lsResourceResolver!=null){
 				factory.setResourceResolver(lsResourceResolver);
 			}
 			this.schema = factory.newSchema(streamSource);
-			if(schemaFactory!=null && !AbstractValidatoreXSD.FACTORY_DEFAULT.equals(schemaFactory) && oldSchemaFactorySetup!=null){
-				log.debug("Ripristino oldSchemaFactory ["+oldSchemaFactorySetup+"]");
-				System.setProperty(propertySystem, oldSchemaFactorySetup);
-			}
+//			if(schemaFactory!=null && !AbstractValidatoreXSD.FACTORY_DEFAULT.equals(schemaFactory) && oldSchemaFactorySetup!=null){
+//				log.debug("Ripristino oldSchemaFactory ["+oldSchemaFactorySetup+"]");
+//				System.setProperty(propertySystem, oldSchemaFactorySetup);
+//			}
 		}catch (Exception e) {
 			throw new Exception("Riscontrato errore durante l'inizializzazione dello schema: "+e.getMessage(),e);
 		}

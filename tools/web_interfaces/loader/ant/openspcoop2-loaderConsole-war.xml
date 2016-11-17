@@ -76,6 +76,8 @@
 				<include name="wsdl4j-1.6.3.jar"/>
 				<include name="struts-core-1.3.10.jar"/>
 				<include name="xmldb.jar"/>
+				<include name="${xerces_jar}"/>
+				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>
 				<include name="${xalan_serializer_jar}"/>	
 			</lib>

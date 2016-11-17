@@ -446,8 +446,16 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				
 				// XML
 				org.openspcoop2.message.XMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
-				xmlUtils.initBuilder();
-				xmlUtils.initTransformer();
+				// XML - XERCES
+				xmlUtils.initDocumentBuilderFactory();
+				xmlUtils.initDatatypeFactory();
+//				xmlUtils.initSAXParserFactory();
+//				xmlUtils.initXMLEventFactory();
+				xmlUtils.initSchemaFactory();
+				// XML - XALAN
+				xmlUtils.initTransformerFactory();
+				xmlUtils.initXPathFactory();
+				// INIT - OTHER
 				xmlUtils.initCalendarConverter();
 				
 				// SOAP
@@ -472,9 +480,18 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						OpenSPCoop2Startup.log.info("SOAP1.2 Factory: not implemented");
 					}
 					OpenSPCoop2Startup.log.info("SOAP MessageFactory: "+OpenSPCoop2MessageFactory.getMessageFactory().getSoapMessageFactory().getClass().getName());
-					OpenSPCoop2Startup.log.info("XML DocumentFactory: "+xmlUtils.getDocumentFactory().getClass().getName());
-					OpenSPCoop2Startup.log.info("XML TransformerFactory: "+xmlUtils.getTransformerFactory().getClass().getName());
-					OpenSPCoop2Startup.log.info("XML DatatypeFactory: "+xmlUtils.getDatatypeFactory().getClass().getName());
+	
+					// XML - XERCES
+					OpenSPCoop2Startup.log.info("XERCES - DocumentFactory: "+xmlUtils.getDocumentBuilderFactory().getClass().getName());
+					OpenSPCoop2Startup.log.info("XERCES - DatatypeFactory: "+xmlUtils.getDatatypeFactory().getClass().getName());
+//					OpenSPCoop2Startup.log.info("XERCES - SAXParserFactory: "+xmlUtils.getSAXParserFactory().getClass().getName());
+//					OpenSPCoop2Startup.log.info("XERCES - XMLEventFactory: "+xmlUtils.getXMLEventFactory().getClass().getName());
+					OpenSPCoop2Startup.log.info("XERCES - SchemaFactory: "+xmlUtils.getSchemaFactory().getClass().getName());
+					
+					// XML - XALAN
+					OpenSPCoop2Startup.log.info("XALAN - TransformerFactory: "+xmlUtils.getTransformerFactory().getClass().getName());
+					OpenSPCoop2Startup.log.info("XALAN - XPathFactory: "+xmlUtils.getXPathFactory().getClass().getName());
+
 				}
 				if(propertiesReader.isPrintInfoMessageSecurity()){
 					OpenSPCoop2Startup.log.info("MessageSecurity Context: "+MessageSecurityFactory.messageSecurityContextImplClass);

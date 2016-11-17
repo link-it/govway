@@ -21,9 +21,12 @@
 
 package org.openspcoop2.utils.xml;
 
+import javax.xml.XMLConstants;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.xpath.XPathFactory;
 
 /**	
  * XMLUtils
@@ -47,24 +50,83 @@ public class XMLUtils extends AbstractXMLUtils {
 		return XMLUtils.xmlUtils;
 	}
 	
+	// XERCES
 	@Override
-	protected DocumentBuilderFactory newDocumentBuilderFactory() throws XMLException {
-		return DocumentBuilderFactory.newInstance();
-	}
-
-	@Override
-	protected TransformerFactory newTransformerFactory() throws XMLException {
+	protected DocumentBuilderFactory newDocumentBuilderFactory() throws XMLException{
 		try{
-			return TransformerFactory.newInstance();
+			// force xerces impl
+//			System.setProperty("javax.xml.parsers.DocumentBuilderFactory", org.apache.xerces.jaxp.DocumentBuilderFactoryImpl.class.getName());
+//			return DocumentBuilderFactory.newInstance();
+			return DocumentBuilderFactory.newInstance(org.apache.xerces.jaxp.DocumentBuilderFactoryImpl.class.getName(),this.getClass().getClassLoader());
 		}catch(Exception e){
 			throw new XMLException(e.getMessage(),e);
 		}
 	}
-
 	@Override
-	protected DatatypeFactory newDatatypeFactory() throws XMLException {
+	protected DatatypeFactory newDatatypeFactory() throws XMLException{
 		try{
-			return DatatypeFactory.newInstance();
+			// force xerces impl
+//			System.setProperty("javax.xml.datatype.DatatypeFactory", org.apache.xerces.jaxp.datatype.DatatypeFactoryImpl.class.getName());
+//			return DatatypeFactory.newInstance();
+			return DatatypeFactory.newInstance(org.apache.xerces.jaxp.datatype.DatatypeFactoryImpl.class.getName(), this.getClass().getClassLoader());
+		}catch(Exception e){
+			throw new XMLException(e.getMessage(),e);
+		}
+	}
+	/*
+	@Override
+	protected javax.xml.parsers.SAXParserFactory newSAXParserFactory() throws XMLException{
+		try{
+			// force xerces impl
+//			System.setProperty("javax.xml.parsers.SAXParserFactory", org.apache.xerces.jaxp.SAXParserFactoryImpl.class.getName());
+//			return javax.xml.parsers.SAXParserFactory.newInstance();
+			return javax.xml.parsers.SAXParserFactory.newInstance(org.apache.xerces.jaxp.SAXParserFactoryImpl.class.getName(), this.getClass().getClassLoader());
+		}catch(Exception e){
+			throw new XMLException(e.getMessage(),e);
+		}
+	}
+	@Override
+	protected javax.xml.stream.XMLEventFactory newXMLEventFactory() throws XMLException{
+		try{			
+			// force xerces impl
+//			System.setProperty("javax.xml.stream.XMLEventFactory", org.apache.xerces.stax.XMLEventFactoryImpl.class.getName());
+//			return javax.xml.stream.XMLEventFactory.newFactory();
+			return javax.xml.stream.XMLEventFactory.newFactory(org.apache.xerces.stax.XMLEventFactoryImpl.class.getName(), this.getClass().getClassLoader());
+		}catch(Exception e){
+			throw new XMLException(e.getMessage(),e);
+		}
+	}
+	*/
+	@Override
+	protected SchemaFactory newSchemaFactory() throws XMLException{
+		try{
+			// force xerces impl
+			return SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+					org.apache.xerces.jaxp.validation.XMLSchemaFactory.class.getName(), this.getClass().getClassLoader());
+		}catch(Exception e){
+			throw new XMLException(e.getMessage(),e);
+		}
+	}
+	
+	// XALAN
+	@Override
+	protected TransformerFactory newTransformerFactory() throws XMLException{
+		try{
+			// force xalan impl
+//			System.setProperty("javax.xml.transform.TransformerFactory", org.apache.xalan.processor.TransformerFactoryImpl.class.getName());
+//			return TransformerFactory.newInstance();
+			return TransformerFactory.newInstance(org.apache.xalan.processor.TransformerFactoryImpl.class.getName(), this.getClass().getClassLoader());
+		}catch(Exception e){
+			throw new XMLException(e.getMessage(),e);
+		}
+	}
+	@Override
+	protected XPathFactory newXPathFactory() throws XMLException{
+		try{
+			//return XPathFactory.newInstance();
+			// force xalan impl
+			return XPathFactory.newInstance(XPathFactory.DEFAULT_OBJECT_MODEL_URI,
+					org.apache.xpath.jaxp.XPathFactoryImpl.class.getName(), this.getClass().getClassLoader());
 		}catch(Exception e){
 			throw new XMLException(e.getMessage(),e);
 		}

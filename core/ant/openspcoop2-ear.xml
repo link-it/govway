@@ -75,7 +75,6 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-security-core-4.1.3.RELEASE.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/uddi4j-2.0.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xalan-2.7.1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/xercesImpl-2.11.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xml-resolver-1.2.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlschema-core-2.2.1.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlsec-2.0.7.jar"/>
@@ -526,6 +525,19 @@
 				<var name="xalan_serializer_jar" value="xalan-2.7.1_serializer.jar" />
 			</then>
 		</if>
+		<!-- xerces -->
+		<var name="xerces_jar" value=""/>
+		<var name="xml_apis_jar" value=""/>
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="jboss7"/>
+				<matches string="${as}" pattern="wildfly.*"/>
+			</or>
+			<then>
+				<var name="xerces_jar" value="xercesImpl-2.11.0.jar"/>
+				<var name="xml_apis_jar" value="xml-apis-2.11.0.jar"/>
+			</then>
+		</if>
 		<!-- jaxb_xjc -->
 		<var name="jaxb_xjc_jar" value=""/>
 		<if>
@@ -755,6 +767,8 @@
 				<include name="soap.jar"/>
 				<include name="wsdl4j-1.6.3.jar"/>
 				<include name="uddi4j-2.0.5.jar"/>
+				<include name="${xerces_jar}"/>
+				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>
 				<include name="${xalan_serializer_jar}"/>				
 				<include name="velocity-1.7.jar"/>

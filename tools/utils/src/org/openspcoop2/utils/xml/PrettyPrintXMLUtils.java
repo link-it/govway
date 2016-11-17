@@ -37,7 +37,6 @@ import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -63,12 +62,9 @@ import org.w3c.dom.ls.LSSerializer;
 
 public class PrettyPrintXMLUtils {
 
-	public static TransformerFactory transformerFactory = null;
-
-	public static synchronized void initTransformer() {
-		if(PrettyPrintXMLUtils.transformerFactory==null){
-			PrettyPrintXMLUtils.transformerFactory = TransformerFactory.newInstance();
-		}
+	public static AbstractXMLUtils xmlUtils = XMLUtils.getInstance();
+	public static synchronized void setXMLUtils(AbstractXMLUtils xmlUtilsParam) {
+		xmlUtils = xmlUtilsParam;
 	}
 
 
@@ -324,15 +320,17 @@ public class PrettyPrintXMLUtils {
 	private static void prettyPrintWithTrAX_engine(Node doc,OutputStream os,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException{
 		// Pretty-prints a DOM document to XML using TrAX.
 		// Note that a stylesheet is needed to make formatting reliable.
-		if(PrettyPrintXMLUtils.transformerFactory==null){
-			PrettyPrintXMLUtils.initTransformer();
-		}
 		InputStream is = null;
 		try{
 			is = readPrettyPrintXslt();
 			Source source = new DOMSource(doc);
 			StreamResult result = new StreamResult(os);
-			Transformer transformer = PrettyPrintXMLUtils.transformerFactory.newTransformer(new StreamSource(is));
+			Transformer transformer = null;
+			try{
+				transformer = xmlUtils.getTransformerFactory().newTransformer(new StreamSource(is));
+			}catch(Exception e){
+				throw new TransformerException(e.getMessage(),e);
+			}
 			if(omitXMLDeclaration)
 				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,"yes");
 			transformer.setErrorListener(errorListener);
@@ -349,15 +347,17 @@ public class PrettyPrintXMLUtils {
 	private static void prettyPrintWithTrAX_engine(Node doc,Writer writer,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException{
 		// Pretty-prints a DOM document to XML using TrAX.
 		// Note that a stylesheet is needed to make formatting reliable.
-		if(PrettyPrintXMLUtils.transformerFactory==null){
-			PrettyPrintXMLUtils.initTransformer();
-		}
 		InputStream is = null;
 		try{
 			is = readPrettyPrintXslt();
 			Source source = new DOMSource(doc);
 			StreamResult result = new StreamResult(writer);
-			Transformer transformer = PrettyPrintXMLUtils.transformerFactory.newTransformer(new StreamSource(is));
+			Transformer transformer = null;
+			try{
+				transformer = xmlUtils.getTransformerFactory().newTransformer(new StreamSource(is));
+			}catch(Exception e){
+				throw new TransformerException(e.getMessage(),e);
+			}
 			if(omitXMLDeclaration)
 				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,"yes");
 			transformer.setErrorListener(errorListener);
@@ -374,15 +374,17 @@ public class PrettyPrintXMLUtils {
 	private static void prettyPrintWithTrAX_engine(Node doc,File file,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException{
 		// Pretty-prints a DOM document to XML using TrAX.
 		// Note that a stylesheet is needed to make formatting reliable.
-		if(PrettyPrintXMLUtils.transformerFactory==null){
-			PrettyPrintXMLUtils.initTransformer();
-		}
 		InputStream is = null;
 		try{
 			is = readPrettyPrintXslt();
 			Source source = new DOMSource(doc);
 			StreamResult result = new StreamResult(file);
-			Transformer transformer = PrettyPrintXMLUtils.transformerFactory.newTransformer(new StreamSource(is));
+			Transformer transformer = null;
+			try{
+				transformer = xmlUtils.getTransformerFactory().newTransformer(new StreamSource(is));
+			}catch(Exception e){
+				throw new TransformerException(e.getMessage(),e);
+			}
 			if(omitXMLDeclaration)
 				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,"yes");
 			transformer.setErrorListener(errorListener);

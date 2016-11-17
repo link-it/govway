@@ -21,12 +21,9 @@
 
 package org.openspcoop2.message;
 
-import javax.xml.datatype.DatatypeFactory;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.TransformerFactory;
 
 import org.openspcoop2.utils.resources.Loader;
-import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.XMLException;
 
 /**
@@ -37,7 +34,7 @@ import org.openspcoop2.utils.xml.XMLException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class XMLUtils extends AbstractXMLUtils {
+public class XMLUtils extends org.openspcoop2.utils.xml.XMLUtils {
 
 	private static XMLUtils xmlUtils = null;
 	private static synchronized void init(){
@@ -56,24 +53,6 @@ public class XMLUtils extends AbstractXMLUtils {
 	protected DocumentBuilderFactory newDocumentBuilderFactory() throws XMLException {
 		try{
 			return (DocumentBuilderFactory) Loader.getInstance().forName(OpenSPCoop2MessageFactory.getMessageFactory().getDocumentBuilderFactoryClass()).newInstance();
-		}catch(Exception e){
-			throw new XMLException(e.getMessage(),e);
-		}
-	}
-
-	@Override
-	protected TransformerFactory newTransformerFactory() throws XMLException {
-		try{
-			return TransformerFactory.newInstance();
-		}catch(Exception e){
-			throw new XMLException(e.getMessage(),e);
-		}
-	}
-
-	@Override
-	protected DatatypeFactory newDatatypeFactory() throws XMLException {
-		try{
-			return DatatypeFactory.newInstance();
 		}catch(Exception e){
 			throw new XMLException(e.getMessage(),e);
 		}
