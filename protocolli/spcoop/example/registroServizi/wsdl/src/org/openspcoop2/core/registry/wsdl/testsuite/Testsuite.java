@@ -32,7 +32,7 @@ import org.openspcoop2.core.registry.wsdl.SchemaXSDAccordoServizio;
 import org.openspcoop2.core.registry.wsdl.SplitWSDL;
 import org.openspcoop2.core.registry.wsdl.StandardWSDLOutputMode;
 import org.openspcoop2.core.registry.wsdl.TipoSchemaXSDAccordoServizio;
-import org.openspcoop2.message.XMLUtils;
+import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 import org.openspcoop2.utils.wsdl.WSDLUtilities;

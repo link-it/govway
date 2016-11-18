@@ -37,17 +37,13 @@ public enum IDService implements IEnumeration , Serializable , Cloneable {
 
 	OPENSPCOOP2_SERVLET ("OpenSPCoop2Servlet"),
 	
-	PORTA_DELEGATA_SOAP ("RicezioneContenutiApplicativiSOAP"),
+	PORTA_DELEGATA ("RicezioneContenutiApplicativi"),
 	PORTA_DELEGATA_INTEGRATION_MANAGER ("RicezioneContenutiApplicativiIntegrationManager"),
 	PORTA_DELEGATA_XML_TO_SOAP ("RicezioneContenutiApplicativiHTTP"),
-	PORTA_DELEGATA_API ("RicezioneContenutiApplicativiAPI"),
 	
-	PORTA_APPLICATIVA_SOAP ("RicezioneBusteSOAP"),
-	PORTA_APPLICATIVA_API ("RicezioneBusteAPI"),
+	PORTA_APPLICATIVA ("RicezioneBuste"),
 	
 	INTEGRATION_MANAGER_SOAP ("IntegrationManager"),
-	
-	INTEGRATION_MANAGER_API ("MessageBoxAPI"),
 	
 	CHECK_PDD ("CheckPdD");
 	
@@ -59,31 +55,22 @@ public enum IDService implements IEnumeration , Serializable , Cloneable {
 	private final static String ID_PORTA_DELEGATA_IMBUSTAMENTO_SOAP = "PD2SOAP";
 	private final static String ID_INTEGRATION_MANAGER = "IM00000";
 	private final static String ID_PORTA_DELEGATA_INTEGRATION_MANAGER = "PDIM000";
-	private final static String ID_API_PORTA_DELEGATA = "APIPD00";
-	private final static String ID_API_PORTA_APPLICATIVA = "APIPA00";
-	private final static String ID_API_MESSAGE_BOX = "APIMB00";
 	private final static String ID_CHECK_PDD = "CHKPDD0";
 	
 	public String getCode() throws ProtocolException{
 		switch (this) {
 		case OPENSPCOOP2_SERVLET:
 			return ID_OPENSPCOOP_SERVLET;
-		case PORTA_DELEGATA_SOAP:
+		case PORTA_DELEGATA:
 			return ID_PORTA_DELEGATA;
 		case PORTA_DELEGATA_XML_TO_SOAP:
 			return ID_PORTA_DELEGATA_IMBUSTAMENTO_SOAP;
 		case PORTA_DELEGATA_INTEGRATION_MANAGER:
 			return ID_PORTA_DELEGATA_INTEGRATION_MANAGER;
-		case PORTA_DELEGATA_API:
-			return ID_API_PORTA_DELEGATA;
-		case PORTA_APPLICATIVA_SOAP:
+		case PORTA_APPLICATIVA:
 			return ID_PORTA_APPLICATIVA;
-		case PORTA_APPLICATIVA_API:
-			return ID_API_PORTA_APPLICATIVA;
 		case INTEGRATION_MANAGER_SOAP:
 			return ID_INTEGRATION_MANAGER;
-		case INTEGRATION_MANAGER_API:
-			return ID_API_MESSAGE_BOX;
 		case CHECK_PDD:
 			return ID_CHECK_PDD;
 		}

@@ -26,7 +26,6 @@ package org.openspcoop2.protocol.basic.tracciamento;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPFactory;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.tracciamento.Eccezione;
 import org.openspcoop2.core.tracciamento.Riscontro;
 import org.openspcoop2.core.tracciamento.Trasmissione;
@@ -37,8 +36,9 @@ import org.openspcoop2.core.tracciamento.constants.TipoRilevanzaEccezione;
 import org.openspcoop2.core.tracciamento.constants.TipoTempo;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.SOAPVersion;
-import org.openspcoop2.message.SoapUtils;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.protocol.basic.Utilities;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -50,6 +50,7 @@ import org.openspcoop2.protocol.sdk.constants.SubCodiceErrore;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
+import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
 /**
@@ -75,7 +76,7 @@ public class XMLTracciaBuilder implements org.openspcoop2.protocol.sdk.tracciame
 		this.log = factory.getLogger();
 		this.factory = factory;
 		this.fac = OpenSPCoop2MessageFactory.getMessageFactory();
-		this.xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
+		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 	}
 
 
@@ -96,7 +97,7 @@ public class XMLTracciaBuilder implements org.openspcoop2.protocol.sdk.tracciame
 				if(tracciaObject.getBustaAsByteArray()!=null)
 					tracciaBase.setBustaXml(new String(tracciaObject.getBustaAsByteArray()));
 				else if(tracciaObject.getBustaAsElement()!=null){
-					OpenSPCoop2Message msg = OpenSPCoop2MessageFactory.getMessageFactory().createEmptySOAPMessage(SOAPVersion.SOAP11);
+					OpenSPCoop2Message msg = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.SOAP_11, MessageRole.NONE);
 					tracciaBase.setBustaXml(msg.getAsString(tracciaObject.getBustaAsElement(), false));
 				}
 			}
@@ -179,7 +180,7 @@ public class XMLTracciaBuilder implements org.openspcoop2.protocol.sdk.tracciame
 			byte[]xmlTraccia = org.openspcoop2.core.tracciamento.utils.XMLUtils.generateTraccia(tracciaBase);
 			Element elementTraccia = this.xmlUtils.newElement(xmlTraccia);
 			
-			SOAPFactory sf = SoapUtils.getSoapFactory(SOAPVersion.SOAP11);
+			SOAPFactory sf = SoapUtils.getSoapFactory(MessageType.SOAP_11);
 			SOAPElement traccia =  sf.createElement(elementTraccia);
 					
 			return  traccia;

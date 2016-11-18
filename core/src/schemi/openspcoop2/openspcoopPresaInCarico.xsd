@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/core/integrazione"
+        targetNamespace="http://www.openspcoop2.org/core/integrazione"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:SOAP_ENV="http://schemas.xmlsoap.org/soap/envelope/" elementFormDefault="qualified"
+        attributeFormDefault="unqualified">
+
+        <xsd:annotation>
+                <xsd:appinfo>
+                        <linkit:project_generator xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:info version="1.0" project-name="openspcoop2_presaInCarico">
+                                        <linkit:authors>
+                                                <linkit:author name="Poli Andrea" mail="poli@link.it"/>
+                                        </linkit:authors>
+                                </linkit:info>
+                                <linkit:jax-ws xml-annotations="true" ws="false"/>
+                        </linkit:project_generator>
+                        <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:dao>
+                                        <linkit:xml root-element="esito-richiesta" generate="true"/>
+                                        <linkit:sql>
+                                                <linkit:sql-script generate="false"/>
+                                                <linkit:sql-mapping single-table-mapping="false"
+                                                        on-delete-cascade="false" />
+                                        </linkit:sql>
+                                </linkit:dao>
+                        </linkit:generator>
+                </xsd:appinfo>
+        </xsd:annotation>
+
+        <!-- Contiene il messaggio ritornato dalla Porta di Dominio con presa in carico -->
+        <xsd:element name="esito-richiesta">
+                <xsd:annotation>
+                        <xsd:appinfo>
+                                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                                        <linkit:interface crud="false" />
+                                </linkit:generator>
+                        </xsd:appinfo>
+                </xsd:annotation>
+                <xsd:complexType>
+                        <xsd:sequence>
+                                <xsd:element name="identificativo-messaggio" type="xsd:string"/>
+                        </xsd:sequence>
+                        <xsd:attribute name="stato" type="xsd:string" use="required" fixed="PRESA_IN_CARICO"/>
+                </xsd:complexType>
+        </xsd:element>
+
+</xsd:schema>

@@ -30,7 +30,8 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.reference.Reference;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.soap.reference.Reference;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.security.SecurityException;
@@ -69,13 +70,15 @@ public class MessageSecurityReceiver_impl extends MessageSecurityReceiver{
 			
 			
 			// ** Fix per SOAPFault (quando ci sono le encryptionParts o le signatureParts, la Sicurezza fallisce se c'e' un SOAPFault) **
-			if(message.getSOAPBody().hasFault()){
-				
-				if(MessageSecurityUtilities.processSOAPFault(this.messageSecurityContext.getIncomingProperties()) == false){
-					return true; // non devo applicare la sicurezza.
-				}
-				
-			}	
+			if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
+				if(message.castAsSoap().getSOAPBody().hasFault()){
+					
+					if(MessageSecurityUtilities.processSOAPFault(this.messageSecurityContext.getIncomingProperties()) == false){
+						return true; // non devo applicare la sicurezza.
+					}
+					
+				}	
+			}
 			
 			String action = (String) this.messageSecurityContext.getIncomingProperties().get(SecurityConstants.ACTION);
 			if(action==null || "".equals(action.trim())){
@@ -121,14 +124,20 @@ public class MessageSecurityReceiver_impl extends MessageSecurityReceiver{
 			
 			
 			// ** Raccolgo elementi "toccati" da Security per pulirli ** /
-			List<Reference> elementsToClean = receiverInterface.getDirtyElements(this.messageSecurityContext, message);
+			List<Reference> elementsToClean = null;
+			if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
+				elementsToClean = receiverInterface.getDirtyElements(this.messageSecurityContext, message.castAsSoap());
+			}
 			
 			
 			
 			
 			// ** Verifica cifratura/firma elementi richiesti dalla configurazione ** /
 			List<SubErrorCodeSecurity> listaErroriRiscontrati = new ArrayList<SubErrorCodeSecurity>();
-			Map<QName, QName> notResolved = receiverInterface.checkEncryptSignatureParts(this.messageSecurityContext,elementsToClean, message,listaErroriRiscontrati);
+			Map<QName, QName> notResolved = null;
+			if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
+				notResolved = receiverInterface.checkEncryptSignatureParts(this.messageSecurityContext,elementsToClean, message.castAsSoap(),listaErroriRiscontrati);
+			}
 			if(listaErroriRiscontrati.size()>0){
 				StringBuffer bf = new StringBuffer();
 				for (Iterator<?> iterator = listaErroriRiscontrati.iterator(); iterator.hasNext();) {
@@ -157,8 +166,9 @@ public class MessageSecurityReceiver_impl extends MessageSecurityReceiver{
 			
 			// ** Verifica elementi cifrati come element, possibile solo dopo la decifratura ** //
 			List<SubErrorCodeSecurity> listaErroriInElementi = new ArrayList<SubErrorCodeSecurity>();
-			receiverInterface.checkEncryptionPartElements(notResolved, message, listaErroriInElementi);
-
+			if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
+				receiverInterface.checkEncryptionPartElements(notResolved, message.castAsSoap(), listaErroriInElementi);
+			}
 			if(listaErroriInElementi.size()>0){
 				StringBuffer bf = new StringBuffer();
 				for (Iterator<?> iterator = listaErroriInElementi.iterator(); iterator.hasNext();) {
@@ -229,8 +239,9 @@ public class MessageSecurityReceiver_impl extends MessageSecurityReceiver{
 				if(detach!=null){
 					detachValue = Boolean.parseBoolean((String)detach);
 				}
-				
-				receiverInterface.cleanDirtyElements(this.messageSecurityContext, message, elementsToClean, detachValue);
+				if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
+					receiverInterface.cleanDirtyElements(this.messageSecurityContext, message.castAsSoap(), elementsToClean, detachValue);
+				}
 			} catch (SecurityException e) {
 				this.messageSecurityContext.getLog().error("Errore durante il clean del messaggio: " + e.getMessage(), e);
 				throw new Exception("Errore durante la cleanMessage: " + e.getMessage());

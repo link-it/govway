@@ -21,8 +21,8 @@
 package org.openspcoop2.security.message.engine;
 
 import org.slf4j.Logger;
-import org.openspcoop2.message.XMLUtils;
-import org.openspcoop2.message.XPathExpressionEngine;
+import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.security.message.MessageSecurityDigestReader;
 import org.openspcoop2.security.message.constants.SecurityType;
 import org.openspcoop2.utils.digest.IDigestReader;

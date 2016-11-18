@@ -51,8 +51,10 @@
                             <linkit:sql-table-fk-reference-column name="id"/>
                         </linkit:sql-table-foreign-key>
                         <linkit:sql-table-unique create-index="true">
-                            <linkit:sql-table-unique-field name="id_soggetto"/>
                             <linkit:sql-table-unique-field name="nome_porta"/>
+                        </linkit:sql-table-unique>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-field name="location"/>
                         </linkit:sql-table-unique>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
@@ -76,6 +78,17 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="descrizione"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="location" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="location"/>
+                                <linkit:sql-column-comment><![CDATA[la location sovrascrive il nome di una porta applicativa, nella sua url di invocazione]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -172,7 +185,38 @@
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
-                </xsd:element> 
+                </xsd:element>
+                <xsd:element name="mode_azione" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="mode_azione"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="pattern_azione" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="pattern_azione"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="force_wsdl_based_azione" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="force_wsdl_based_azione"/>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="mtom_request_mode" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>

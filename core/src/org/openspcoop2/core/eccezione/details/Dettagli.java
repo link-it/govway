@@ -20,23 +20,45 @@
  */
 package org.openspcoop2.core.eccezione.details;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 
-/** <p>Java class Dettagli.
+/** <p>Java class for dettagli complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="dettagli">
+ * 		&lt;sequence>
+ * 			&lt;element name="dettaglio" type="{http://www.openspcoop2.org/core/eccezione/details}dettaglio" minOccurs="0" maxOccurs="unbounded"/>
+ * 		&lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "dettagli", 
+  propOrder = {
+  	"dettaglio"
+  }
+)
+
+@XmlRootElement(name = "dettagli")
 
 public class Dettagli extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-
   public Dettagli() {
   }
 
@@ -80,20 +102,12 @@ public class Dettagli extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  @XmlTransient
+  private Long id;
 
+
+
+  @XmlElement(name="dettaglio",required=true,nillable=false)
   protected List<Dettaglio> dettaglio = new ArrayList<Dettaglio>();
 
   /**
@@ -122,7 +136,5 @@ public class Dettagli extends org.openspcoop2.utils.beans.BaseBean implements Se
   public int sizeDettaglio() {
   	return this.dettaglio.size();
   }
-
-  public static final String DETTAGLIO = "dettaglio";
 
 }

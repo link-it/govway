@@ -20,16 +20,19 @@
  */
 package org.openspcoop2.pdd.core.behaviour;
 
+import java.io.ByteArrayInputStream;
+
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPHeaderElement;
 
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.protocol.sdk.Busta;
 
@@ -52,8 +55,8 @@ public class ExampleMultipleMessageWithResponseBustaToBehaviour implements IBeha
 			
 			String xml = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"+
 					"<soapenv:Body><prova>CIAO</prova></soapenv:Body></soapenv:Envelope>";
-			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(SOAPVersion.SOAP11, xml);
-			OpenSPCoop2Message msgReplyTo = pr.getMessage_throwParseException();
+			OpenSPCoop2SoapMessage msgReplyTo = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11, MessageRole.REQUEST,MessageUtilities.getDefaultContentType(MessageType.SOAP_11),
+					new ByteArrayInputStream(xml.getBytes()),null,false,null,null).getMessage_throwParseException().castAsSoap();
 			responseTo.setMessage(msgReplyTo);
 			
 			Busta bustaRisposta = busta.invertiBusta(busta.getTipoOraRegistrazione(), busta.getTipoOraRegistrazioneValue());
@@ -76,7 +79,7 @@ public class ExampleMultipleMessageWithResponseBustaToBehaviour implements IBeha
 				
 				BehaviourForwardTo forwardTo = new BehaviourForwardTo();
 				
-				OpenSPCoop2Message msg = OpenSPCoop2MessageFactory.getMessageFactory().createEmptySOAPMessage(SOAPVersion.SOAP11);
+				OpenSPCoop2SoapMessage msg = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.SOAP_11, MessageRole.REQUEST).castAsSoap();
 				if(msg.getSOAPHeader()==null){
 					msg.getSOAPPart().getEnvelope().addHeader();
 				}

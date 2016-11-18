@@ -36,12 +36,12 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPFault;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.eccezione.router_details.DettaglioRouting;
 import org.openspcoop2.core.eccezione.router_details.Dominio;
 import org.openspcoop2.core.eccezione.router_details.constants.Costanti;
-import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.ValidatoreXSD;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.xml.ValidatoreXSD;
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -280,7 +280,7 @@ public class XMLUtils  {
 	
 	
 	
-	public static DettaglioRouting getDettaglioRouting(Logger log,OpenSPCoop2Message msg)throws XMLUtilsException{
+	public static DettaglioRouting getDettaglioRouting(Logger log,OpenSPCoop2SoapMessage msg)throws XMLUtilsException{
 		try{
 			if(msg==null)
 				throw new XMLUtilsException("Messaggio non presente");
@@ -313,7 +313,7 @@ public class XMLUtils  {
 						try{
 							if(XMLUtils.isDettaglioRouting(elem)){
 								//System.out.println("ITEM ["+elem.getLocalName()+"] TROVATO");
-								org.openspcoop2.message.XMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
+								org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 								byte [] xml = xmlUtils.toByteArray(elem);
 								//System.out.println("XML S: "+new String(xml));
 								DettaglioRouting de = XMLUtils.getDettaglioRouting(log,xml);
@@ -334,7 +334,7 @@ public class XMLUtils  {
 	
 	public static boolean isDettaglioRouting(byte [] doc){
 		try{
-			org.openspcoop2.message.XMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
+			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			return XMLUtils.isDettaglioRouting_engine(elemXML);

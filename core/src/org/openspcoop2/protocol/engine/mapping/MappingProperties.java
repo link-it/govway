@@ -65,11 +65,8 @@ public class MappingProperties {
 		String urlWithoutContext = null;
 		
 		String paContext = null;
-		if(IDService.PORTA_APPLICATIVA_SOAP.equals(idService)){
+		if(IDService.PORTA_APPLICATIVA.equals(idService)){
 			paContext = "/PA";
-		}
-		else if(IDService.PORTA_APPLICATIVA_API.equals(idService)){
-			paContext = "/API/PA";
 		}
 		else{
 			throw new ProtocolException("Service ["+idService+"] non gestito tramite UrlMapping");
@@ -77,7 +74,7 @@ public class MappingProperties {
 		
 		// context con un nome
 		for (int i = 0; i < manifestProtocol.getWeb().sizeContextList(); i++) {
-			String context = manifestProtocol.getWeb().getContext(i);
+			String context = manifestProtocol.getWeb().getContext(i).getName();
 			String prefixProtocol = context + paContext;
 			if(urlWithContext.contains(prefixProtocol)){
 				if(urlWithContext.endsWith(prefixProtocol)){
@@ -209,15 +206,4 @@ public class MappingProperties {
 		return value;
 	}
 	
-	protected Boolean isForceWsdlBased(String protocol, String mappingName, String attribute) {
-		String propertyName = protocol + ".pa." + mappingName + "." + attribute + ".forceWsdlBased";	
-		String value = this.propertiesReader.getProperty(propertyName);
-		if(value != null) {
-			value = value.trim();
-			return Boolean.parseBoolean(value);
-		}
-		else{
-			return null;
-		}
-	}
 }

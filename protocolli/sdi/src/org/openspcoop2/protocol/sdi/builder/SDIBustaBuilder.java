@@ -26,6 +26,7 @@ import it.gov.fatturapa.sdi.messaggi.v1_0.constants.TipiMessaggi;
 import javax.xml.soap.SOAPElement;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.protocol.basic.builder.BustaBuilder;
 import org.openspcoop2.protocol.sdi.config.SDIProperties;
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRiceviFile;
@@ -132,7 +133,8 @@ public class SDIBustaBuilder extends BustaBuilder {
 			}
 			
 			try{
-				if(msg.getSOAPBody()!=null && msg.getSOAPBody().hasFault()){
+				OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
+				if(soapMsg.getSOAPBody()!=null && soapMsg.getSOAPBody().hasFault()){
 					return null;
 				}
 			}catch(Exception e){

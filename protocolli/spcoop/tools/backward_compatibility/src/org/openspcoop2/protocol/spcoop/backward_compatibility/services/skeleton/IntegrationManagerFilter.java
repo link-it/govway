@@ -33,10 +33,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openspcoop2.core.api.constants.MethodType;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.services.connector.ConnectorUtils;
 import org.openspcoop2.protocol.engine.constants.IDService;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
 /**
  * IntegrationManagerFilter
@@ -59,9 +59,9 @@ public class IntegrationManagerFilter implements Filter {
 		HttpServletRequest httpReq = (HttpServletRequest) request;
 		HttpServletResponse httpRes = (HttpServletResponse) response;
 		
-		MethodType method = MethodType.toEnumConstant(httpReq.getMethod());
+		HttpRequestMethod method = HttpRequestMethod.valueOf(httpReq.getMethod());
 		
-		if(MethodType.GET.equals(method)){
+		if(HttpRequestMethod.GET.equals(method)){
 			
 			OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 							

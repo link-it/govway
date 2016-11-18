@@ -32,15 +32,19 @@ import java.util.List;
 
 import javax.xml.soap.SOAPEnvelope;
 
-import org.slf4j.Logger;
-import org.openspcoop2.core.config.constants.CostantiConfigurazione;
-import org.openspcoop2.core.id.IDServizio;
-import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
-import org.openspcoop2.message.DynamicNamespaceContextFactory;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
@@ -56,12 +60,14 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
-import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
+import org.openspcoop2.utils.xml.DynamicNamespaceContext;
+import org.slf4j.Logger;
+import org.w3c.dom.Comment;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
-import org.w3c.dom.Comment;
 
 /**
  * Gestione della correlazione applicativa con gli id
@@ -146,20 +152,8 @@ public class GestoreCorrelazioneApplicativa {
 	
 	/* *********** GESTIONE CORRELAZIONE APPLICATIVA (PORTA DELEGATA) ************ */
 
-
-	/**
-	 * Ritorna true se l'id passato come parametro e' gia' stato precedentemente associato all'id di correlazione identificato grazie ai pattern specificati.
-	 * Se avviene un errore durante la ricerca della correlazione, viene lanciata una eccezione.
-	 *
-	 * @param correlazioneApplicativa Parametri di correlazione applicativa
-	 * @param urlProtocolContext utile per identificazioni url-based.
-	 * @param envelope ByteApplicativo utilizzato per l'invocazione della porta delegata (utile per identificazioni content-based)
-	 * @param headerIntegrazione Header di Integrazione
-	 * @return true se esiste una precedente correlazione, false altrimenti.
-	 * @throws ProtocolException 
-	 */
 	public boolean verificaCorrelazione(CorrelazioneApplicativa correlazioneApplicativa,
-			URLProtocolContext urlProtocolContext,SOAPEnvelope envelope,HeaderIntegrazione headerIntegrazione,boolean readFirstHeaderIntegrazione) throws GestoreMessaggiException, ProtocolException{
+			URLProtocolContext urlProtocolContext,OpenSPCoop2Message message,HeaderIntegrazione headerIntegrazione,boolean readFirstHeaderIntegrazione) throws GestoreMessaggiException, ProtocolException{
 
 		if(correlazioneApplicativa==null){
 			this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
@@ -167,31 +161,70 @@ public class GestoreCorrelazioneApplicativa {
 			throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
 		}
 
+		Element element = null;
+		try{
+			if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
+				OpenSPCoop2SoapMessage soapMessage = message.castAsSoap();
+				element = soapMessage.getSOAPPart().getEnvelope();
+			}
+			else{
+				if(MessageType.XML.equals(message.getMessageType())){
+					OpenSPCoop2RestXmlMessage xml = message.castAsRestXml();
+					element = xml.getContent();	
+				}
+			}
+		}catch(Exception e){
+			throw new GestoreMessaggiException(e.getMessage(),e);
+		}
+		
 		/** Fase di identificazione dell'id di correlazione */
-		boolean checkBody = false;
+		boolean checkElementoInTransito = false;
 		if(correlazioneApplicativa.sizeElementoList()>1){
-			checkBody = true;
+			checkElementoInTransito = true;
 		}
 		else{
 			if(correlazioneApplicativa.sizeElementoList()>0){
 				CorrelazioneApplicativaElemento elemento = correlazioneApplicativa.getElemento(0);
 				if( (elemento.getNome()!=null) && !"".equals(elemento.getNome()) ){
-					checkBody = true;
+					checkElementoInTransito = true;
 				}
 			}
 		}
-		NodeList nListSoapBody = null;
-		if(checkBody){
+		List<Node> nList = null;
+		if(checkElementoInTransito){
 			try{
-				if(envelope==null){
-					throw new Exception("Envelope non presente nel messaggio Soap");
+				if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
+					SOAPEnvelope envelope = (SOAPEnvelope) element;
+					if(envelope==null){
+						throw new Exception("Envelope non presente nel messaggio Soap");
+					}
+					if(envelope.getBody()==null || envelope.getBody().hasChildNodes()==false){
+						throw new Exception("Body applicativo non presente nel messaggio Soap");
+					}
+					NodeList nListSoapBody = envelope.getBody().getChildNodes();
+					if(nListSoapBody==null || nListSoapBody.getLength()==0){
+						throw new Exception("Elementi del Body non presenti?");
+					}
+					nList = new ArrayList<Node>();
+					for (int elem=0; elem<nListSoapBody.getLength(); elem++){
+						Node nodeInEsame =  nListSoapBody.item(elem);
+						if(nodeInEsame instanceof Text || nodeInEsame instanceof Comment){
+							continue;
+						}
+						nList.add(nodeInEsame);
+					}
 				}
-				if(envelope.getBody()==null || envelope.getBody().hasChildNodes()==false){
-					throw new Exception("Body applicativo non presente nel messaggio Soap");
-				}
-				nListSoapBody = envelope.getBody().getChildNodes();
-				if(nListSoapBody==null || nListSoapBody.getLength()==0){
-					throw new Exception("Elementi del Body non presenti?");
+				else{
+					if(MessageType.XML.equals(message.getMessageType())){
+						if(element==null){
+							throw new Exception("Contenuto non presente nel messaggio");
+						}
+						nList = new ArrayList<Node>();
+						nList.add(element);
+					}
+					else{
+						throw new GestoreMessaggiException("MessageType ["+message.getMessageType()+"] non supportato in presenza di specifici elementi");
+					}
 				}
 			}catch(Exception e){
 				this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
@@ -201,7 +234,7 @@ public class GestoreCorrelazioneApplicativa {
 		}
 
 		// XPathExpressionEngine
-		AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.XPathExpressionEngine();
+		AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine();
 		
 		/** Gestioni correlazioni, in modo da avere lo '*' in fondo */
 		java.util.Vector<CorrelazioneApplicativaElemento> c = new java.util.Vector<CorrelazioneApplicativaElemento>();
@@ -233,9 +266,9 @@ public class GestoreCorrelazioneApplicativa {
 		
 		// Calcolo posizione ultimo nodo "buono"
 		int posizioneUltimoNodo = -1;
-		if(checkBody){
-			for (int elem=0; elem<nListSoapBody.getLength(); elem++){
-				Node nodeInEsame =  nListSoapBody.item(elem);
+		if(checkElementoInTransito){
+			for (int elem=0; elem<nList.size(); elem++){
+				Node nodeInEsame =  nList.get(elem);
 				if(nodeInEsame instanceof Text || nodeInEsame instanceof Comment){
 					continue;
 				}
@@ -248,19 +281,19 @@ public class GestoreCorrelazioneApplicativa {
 		
 		// Calcolo nomi
 		List<String> nomiPresentiBody = new ArrayList<String>();
-		if(checkBody){
-			for (int elem=0; elem<nListSoapBody.getLength(); elem++){
+		if(checkElementoInTransito){
+			for (int elem=0; elem<nList.size(); elem++){
 				String elementName = null;
-				Node nodeInEsame =  nListSoapBody.item(elem);
+				Node nodeInEsame =  nList.get(elem);
+				if(nodeInEsame instanceof Text || nodeInEsame instanceof Comment){
+					continue;
+				}
 				try{
 					elementName = nodeInEsame.getLocalName();
 				}catch(Exception e){
 					this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
 							getErrore416_CorrelazioneApplicativaRichiesta("errore durante l'analisi dell'elementName: "+e.getMessage());
 					throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
-				}
-				if(nodeInEsame instanceof Text || nodeInEsame instanceof Comment){
-					continue;
 				}
 				if(elementName==null){
 					continue;
@@ -306,10 +339,15 @@ public class GestoreCorrelazioneApplicativa {
 					matchNodePerCorrelazioneApplicativa = true;
 					nomeElemento = elemento.getNome();
 				}else{
-					// Ricerco elemento con una espressione che potrebbe essere riferita a tutta l'envelope
+					// Ricerco elemento con una espressione
 					try{
-						DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContext(envelope);
-						nomeElemento = xPathEngine.getStringMatchPattern(envelope,dnc,elemento.getNome());
+						// element per verificare se il nodo in transito e quello interessato non dovrebbe essere null
+						// i controlli precedenti dovrebbero garantire di sollevare eccezioni prima
+						if(element==null){
+							throw new Exception("Elemento non disponibile su cui effettuare il match");
+						}
+						DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContext(element);
+						nomeElemento = xPathEngine.getStringMatchPattern(element,dnc,elemento.getNome());
 						if(nomeElemento!=null){
 							matchNodePerCorrelazioneApplicativa = true;
 						}
@@ -372,8 +410,16 @@ public class GestoreCorrelazioneApplicativa {
 					}
 					else{
 						try{
-							DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContext(envelope);
-							idCorrelazioneApplicativa = xPathEngine.getStringMatchPattern(envelope,dnc,elemento.getPattern());
+							if(ServiceBinding.REST.equals(message.getServiceBinding()) && !MessageType.XML.equals(message.getMessageType())){
+								throw new Exception("MessageType ["+message.getMessageType()+"] non supportato con correlazione di tipo '"+
+										CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_CONTENT_BASED.toString()+"'");
+							}
+							if(element==null){
+								throw new Exception("Contenuto non disponibile su cui effettuare una correlazione di tipo '"+
+										CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_CONTENT_BASED.toString()+"'");
+							}
+							DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContext(element);
+							idCorrelazioneApplicativa = xPathEngine.getStringMatchPattern(element,dnc,elemento.getPattern());
 						}catch(Exception e){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.
@@ -472,16 +518,8 @@ public class GestoreCorrelazioneApplicativa {
 	
 	/* *********** GESTIONE CORRELAZIONE APPLICATIVA RISPOSTA (PORTA APPLICATIVA) ************ */
 	
-	/**
-	 * Se avviene un errore durante la ricerca della correlazione, viene lanciata una eccezione.
-	 *
-	 * @param correlazioneApplicativa Parametri di correlazione applicativa
-	 * @param envelope ByteApplicativo utilizzato per l'invocazione della porta delegata (utile per identificazioni content-based)
-	 * @param headerIntegrazione Header di Integrazione
-	 * @throws ProtocolException 
-	 */
 	public void verificaCorrelazioneRisposta(CorrelazioneApplicativaRisposta correlazioneApplicativa,
-			SOAPEnvelope envelope,HeaderIntegrazione headerIntegrazione,boolean readFirstHeaderIntegrazione) throws GestoreMessaggiException, ProtocolException{
+			OpenSPCoop2Message message,HeaderIntegrazione headerIntegrazione,boolean readFirstHeaderIntegrazione) throws GestoreMessaggiException, ProtocolException{
 
 		if(correlazioneApplicativa==null){
 			this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
@@ -489,34 +527,73 @@ public class GestoreCorrelazioneApplicativa {
 			throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory));
 		}
 
+		Element element = null;
+		try{
+			if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
+				OpenSPCoop2SoapMessage soapMessage = message.castAsSoap();
+				element = soapMessage.getSOAPPart().getEnvelope();
+			}
+			else{
+				if(MessageType.XML.equals(message.getMessageType())){
+					OpenSPCoop2RestXmlMessage xml = message.castAsRestXml();
+					element = xml.getContent();	
+				}
+			}
+		}catch(Exception e){
+			throw new GestoreMessaggiException(e.getMessage(),e);
+		}
+		
 		// XPathExpressionEngine
-		AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.XPathExpressionEngine();
+		AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine();
 		
 		/** Fase di identificazione dell'id di correlazione */
-		boolean checkBody = false;
+		boolean checkElementiInTransito = false;
 		if(correlazioneApplicativa.sizeElementoList()>1){
-			checkBody = true;
+			checkElementiInTransito = true;
 		}
 		else{
 			if(correlazioneApplicativa.sizeElementoList()>0){
 				CorrelazioneApplicativaRispostaElemento elemento = correlazioneApplicativa.getElemento(0);
 				if( (elemento.getNome()!=null) && !"".equals(elemento.getNome()) ){
-					checkBody = true;
+					checkElementiInTransito = true;
 				}
 			}
 		}
-		NodeList nListSoapBody = null;
-		if(checkBody){
+		List<Node> nList = null;
+		if(checkElementiInTransito){
 			try{
-				if(envelope==null){
-					throw new Exception("Envelope non presente nel messaggio Soap");
+				if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
+					SOAPEnvelope envelope = (SOAPEnvelope) element;
+					if(envelope==null){
+						throw new Exception("Envelope non presente nel messaggio Soap");
+					}
+					if(envelope.getBody()==null || envelope.getBody().hasChildNodes()==false){
+						throw new Exception("Body applicativo non presente nel messaggio Soap");
+					}
+					NodeList nListSoapBody = envelope.getBody().getChildNodes();
+					if(nListSoapBody==null || nListSoapBody.getLength()==0){
+						throw new Exception("Elementi del Body non presenti?");
+					}
+					nList = new ArrayList<Node>();
+					for (int elem=0; elem<nListSoapBody.getLength(); elem++){
+						Node nodeInEsame =  nListSoapBody.item(elem);
+						if(nodeInEsame instanceof Text || nodeInEsame instanceof Comment){
+							continue;
+						}
+						nList.add(nodeInEsame);
+					}
 				}
-				if(envelope.getBody()==null || envelope.getBody().hasChildNodes()==false){
-					throw new Exception("Body applicativo non presente nel messaggio Soap");
-				}
-				nListSoapBody = envelope.getBody().getChildNodes();
-				if(nListSoapBody==null || nListSoapBody.getLength()==0){
-					throw new Exception("Elementi del Body non presenti?");
+				else{
+					if(MessageType.XML.equals(message.getMessageType())){
+						if(element==null){
+							throw new Exception("Contenuto non presente nel messaggio");
+						}
+						nList = new ArrayList<Node>();
+						nList.add(element);
+					}
+					else{
+						throw new GestoreMessaggiException("MessageType ["+message.getMessageType()+"] non supportato in presenza di specifici elementi");
+					}
 				}
 			}catch(Exception e){
 				this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
@@ -556,9 +633,9 @@ public class GestoreCorrelazioneApplicativa {
 		
 		// Calcolo posizione ultimo nodo "buono"
 		int posizioneUltimoNodo = -1;
-		if(checkBody){
-			for (int elem=0; elem<nListSoapBody.getLength(); elem++){
-				Node nodeInEsame =  nListSoapBody.item(elem);
+		if(checkElementiInTransito){
+			for (int elem=0; elem<nList.size(); elem++){
+				Node nodeInEsame =  nList.get(elem);
 				if(nodeInEsame instanceof Text || nodeInEsame instanceof Comment){
 					continue;
 				}
@@ -571,19 +648,19 @@ public class GestoreCorrelazioneApplicativa {
 		
 		// Calcolo nomi
 		List<String> nomiPresentiBody = new ArrayList<String>();
-		if(checkBody){
-			for (int elem=0; elem<nListSoapBody.getLength(); elem++){
+		if(checkElementiInTransito){
+			for (int elem=0; elem<nList.size(); elem++){
 				String elementName = null;
-				Node nodeInEsame =  nListSoapBody.item(elem);
+				Node nodeInEsame =  nList.get(elem);
+				if(nodeInEsame instanceof Text || nodeInEsame instanceof Comment){
+					continue;
+				}
 				try{
 					elementName = nodeInEsame.getLocalName();
 				}catch(Exception e){
 					this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.
 							getErrore434_CorrelazioneApplicativaRisposta("errore durante l'analisi dell'elementName: "+e.getMessage());
 					throw new GestoreMessaggiException(this.errore.getDescrizione(this.protocolFactory),e);
-				}
-				if(nodeInEsame instanceof Text || nodeInEsame instanceof Comment){
-					continue;
 				}
 				if(elementName==null){
 					continue;
@@ -632,8 +709,13 @@ public class GestoreCorrelazioneApplicativa {
 				}else{
 					// Ricerco elemento con una espressione che potrebbe essere riferita a tutta l'envelope
 					try{
-						DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContext(envelope);
-						nomeElemento = xPathEngine.getStringMatchPattern(envelope,dnc,elemento.getNome());
+						// element per verificare se il nodo in transito e quello interessato non dovrebbe essere null
+						// i controlli precedenti dovrebbero garantire di sollevare eccezioni prima
+						if(element==null){
+							throw new Exception("Elemento non disponibile su cui effettuare il match");
+						}
+						DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContext(element);
+						nomeElemento = xPathEngine.getStringMatchPattern(element,dnc,elemento.getNome());
 						if(nomeElemento!=null){
 							matchNodePerCorrelazioneApplicativa = true;
 						}
@@ -682,8 +764,16 @@ public class GestoreCorrelazioneApplicativa {
 					}
 					else{
 						try{
-							DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContext(envelope);
-							idCorrelazioneApplicativa = xPathEngine.getStringMatchPattern(envelope,dnc,elemento.getPattern());
+							if(ServiceBinding.REST.equals(message.getServiceBinding()) && !MessageType.XML.equals(message.getMessageType())){
+								throw new Exception("MessageType ["+message.getMessageType()+"] non supportato con correlazione di tipo '"+
+										CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_CONTENT_BASED.toString()+"'");
+							}
+							if(element==null){
+								throw new Exception("Contenuto non disponibile su cui effettuare una correlazione di tipo '"+
+										CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_CONTENT_BASED.toString()+"'");
+							}
+							DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContext(element);
+							idCorrelazioneApplicativa = xPathEngine.getStringMatchPattern(element,dnc,elemento.getPattern());
 						}catch(Exception e){
 							if(bloccaIdentificazioneNonRiuscita){
 								this.errore = ErroriIntegrazione.ERRORE_434_CORRELAZIONE_APPLICATIVA_RISPOSTA_ERRORE.

@@ -3,8 +3,8 @@
        targetNamespace="http://www.openspcoop2.org/protocol/manifest"
        xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
        attributeFormDefault="unqualified">
-
-
+       
+       
        <xsd:annotation>
               <xsd:appinfo>
                      <linkit:project_generator xmlns:linkit="http://www.link.it/project_generator">
@@ -39,103 +39,380 @@
               </xsd:annotation>
               <xsd:complexType>
                      <xsd:sequence>
-                            <xsd:element name="protocolName" type="xsd:string"/>
-                            <xsd:element name="factory" type="xsd:string"/>
+                            <xsd:element ref="protocol" />
+                            <xsd:element ref="binding" />
                             <xsd:element ref="web"/>
-                            <xsd:element ref="registroServizi"/>
+                            <xsd:element ref="registry"/>
                             <xsd:element ref="urlMapping"/>
-                            <xsd:element ref="binding"/>
                      </xsd:sequence>
               </xsd:complexType>
        </xsd:element>
-
+       
+       
+       
+       <!-- Elementi principali -->
+       
+       <xsd:element name="protocol">
+              <xsd:complexType>
+                     <xsd:sequence>
+                            <xsd:element name="factory" type="xsd:string"/>
+                     </xsd:sequence>
+                     <xsd:attribute name="name" type="xsd:string" use="required" />
+              </xsd:complexType>
+       </xsd:element>
+       
+       <xsd:element name="binding">
+              <xsd:complexType>
+                     <xsd:sequence>
+                            <xsd:element name="soap" type="SoapConfiguration" minOccurs="0" />
+                            <xsd:element name="rest" type="RestConfiguration" minOccurs="0" />
+                     </xsd:sequence>
+                     <xsd:attribute name="default" type="ServiceBinding" use="optional" />
+              </xsd:complexType>
+       </xsd:element>
+       
        <xsd:element name="web">
               <xsd:complexType>
                      <xsd:sequence>
-                            <xsd:element name="context" type="xsd:string" minOccurs="0"
-                                   maxOccurs="unbounded"/>
-                            <xsd:element name="emptyContext" type="webEmptyContext" minOccurs="0"/>
+                            <xsd:element name="context" type="Context" minOccurs="0" maxOccurs="unbounded"/>
+                            <xsd:element name="emptyContext" type="WebEmptyContext" minOccurs="0"/>
                      </xsd:sequence>
-              </xsd:complexType>
-       </xsd:element>
-       <xsd:complexType name="webEmptyContext">
-              <xsd:attribute name="enabled" type="xsd:boolean"
-                     use="required"/>
-       </xsd:complexType>
-
-       <xsd:element name="registroServizi">
-              <xsd:complexType>
-                     <xsd:sequence>
-                            <xsd:element ref="soggetti"/>
-                            <xsd:element ref="servizi"/>
-                            <xsd:element ref="versioni"/>
-                     </xsd:sequence>
-              </xsd:complexType>
-       </xsd:element>
-
-       <xsd:element name="soggetti">
-              <xsd:complexType>
-                     <xsd:sequence>
-                            <xsd:element name="tipi" type="tipi"/>
-                     </xsd:sequence>
-                     <xsd:attribute name="codiceIPA" type="xsd:boolean" use="optional" default="false"/>
-                     <xsd:attribute name="indirizzoRisposta" type="xsd:boolean" use="optional" default="false"/> <!-- replyToAddress -->
-              </xsd:complexType>
-       </xsd:element>
-
-       <xsd:element name="servizi">
-              <xsd:complexType>
-                     <xsd:sequence>
-                            <xsd:element name="tipi" type="tipi"/>
-                            <xsd:element name="profilo" type="profilo" minOccurs="0"/>
-                            <xsd:element name="funzionalita" type="funzionalita" minOccurs="0"/>
-                     </xsd:sequence>
-                     <xsd:attribute name="wsdlDefinitorio" type="xsd:boolean" use="optional" default="false"/>
-                     <xsd:attribute name="specificaConversazioni" type="xsd:boolean" use="optional" default="false"/>
-              </xsd:complexType>
-       </xsd:element>
-
-       <xsd:complexType name="tipi">
-              <xsd:sequence>
-                     <xsd:element name="tipo" type="xsd:string" maxOccurs="unbounded"/>
-              </xsd:sequence>
-              <xsd:attribute name="default" type="xsd:string" use="optional" />
-       </xsd:complexType>
-       
-       <xsd:element name="versioni">
-              <xsd:complexType>
-                     <xsd:sequence>
-                            <xsd:element name="versione" type="xsd:string" maxOccurs="unbounded"/>
-                     </xsd:sequence>
-                     <xsd:attribute name="default" type="xsd:string" use="optional" />
               </xsd:complexType>
        </xsd:element>
        
-       <xsd:complexType name="profilo">
-              <xsd:attribute name="oneway" type="xsd:boolean" use="optional" default="true"/>
-              <xsd:attribute name="sincrono" type="xsd:boolean" use="optional" default="true"/>
-              <xsd:attribute name="asincronoAsimmetrico" type="xsd:boolean" use="optional" default="false"/>
-              <xsd:attribute name="asincronoSimmetrico" type="xsd:boolean" use="optional" default="false"/>
-       </xsd:complexType>
+       <xsd:element name="registry">
+              <xsd:complexType>
+                     <xsd:sequence>
+                            <xsd:element name="organization" type="Organization"/>
+                            <xsd:element name="service" type="Service"/>
+                            <xsd:element name="versions" type="Versions"/>
+                     </xsd:sequence>
+              </xsd:complexType>
+       </xsd:element>
        
-       <xsd:complexType name="funzionalita">
-              <xsd:attribute name="filtroDuplicati" type="xsd:boolean" use="optional" default="false"/>
-              <xsd:attribute name="confermaRicezione" type="xsd:boolean" use="optional" default="false"/>
-              <xsd:attribute name="collaborazione" type="xsd:boolean" use="optional" default="false"/>
-              <xsd:attribute name="consegnaInOrdine" type="xsd:boolean" use="optional" default="false"/>
-              <xsd:attribute name="scadenza" type="xsd:boolean" use="optional" default="false"/>
-              <xsd:attribute name="manifestAttachments" type="xsd:boolean" use="optional" default="false"/>
-       </xsd:complexType>
-       
-
        <xsd:element name="urlMapping">
               <xsd:complexType>
                      <xsd:sequence>
                             <xsd:element name="file" type="xsd:string"/>
-                            <xsd:element name="tipo" type="urlMappingSourceType"/>
                      </xsd:sequence>
+                     <xsd:attribute name="type" type="urlMappingSourceType" use="required" />
               </xsd:complexType>
        </xsd:element>
+
+
+  
+       <!-- Integration Error -->
+       
+       <xsd:complexType name="IntegrationErrorConfiguration">
+              <xsd:sequence>
+                     <xsd:element name="internal" type="IntegrationErrorCollection" />
+                     <xsd:element name="external" type="IntegrationErrorCollection" />
+              </xsd:sequence>
+       </xsd:complexType>
+       
+       <xsd:complexType name="IntegrationErrorCollection">
+              <xsd:sequence>
+                     <xsd:element name="authentication" type="IntegrationError" minOccurs="0" />
+                     <xsd:element name="authorization" type="IntegrationError" minOccurs="0" />
+                     <xsd:element name="notFound" type="IntegrationError" minOccurs="0" />
+                     <xsd:element name="badRequest" type="IntegrationError" minOccurs="0" />
+                     <xsd:element name="internalError" type="IntegrationError" minOccurs="0" />
+                     <xsd:element name="default" type="DefaultIntegrationError" />
+              </xsd:sequence>
+       </xsd:complexType>
+       
+       <xsd:complexType name="IntegrationError">
+              <xsd:attribute name="httpReturnCode" type="xsd:int" use="required" />
+              <xsd:attribute name="messageType" type="IntegrationErrorMessageType" use="required" />
+       </xsd:complexType>
+       
+       <xsd:complexType name="DefaultIntegrationError">
+              <xsd:attribute name="httpReturnCode" type="xsd:int" use="required" />
+              <xsd:attribute name="messageType" type="DefaultIntegrationErrorMessageType" use="required" />
+       </xsd:complexType>
+       
+ 
+ 
+       <!-- Soap Configuration -->
+       
+       <xsd:complexType name="SoapConfiguration">
+              <xsd:sequence>
+                     <xsd:element name="integrationError" type="IntegrationErrorConfiguration" />
+                     <xsd:element name="mediaTypeCollection" type="SoapMediaTypeCollection" minOccurs="0"/>
+                     <xsd:element name="soapHeaderBypassMustUnderstand" type="SoapHeaderBypassMustUnderstand" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="soap11" type="xsd:boolean" use="required" />
+              <xsd:attribute name="soap11_withAttachments" type="xsd:boolean" use="optional" default="true" />
+              <xsd:attribute name="soap11_mtom" type="xsd:boolean" use="optional" default="true" />
+              <xsd:attribute name="soap12" type="xsd:boolean" use="required" />
+              <xsd:attribute name="soap12_withAttachments" type="xsd:boolean" use="optional" default="true" />
+              <xsd:attribute name="soap12_mtom" type="xsd:boolean" use="optional" default="true" />
+       </xsd:complexType>
+       
+       <xsd:complexType name="SoapMediaTypeCollection">
+              <xsd:sequence>
+                     <xsd:element name="mediaType" type="SoapMediaTypeMapping" minOccurs="0" maxOccurs="unbounded" />
+                     <xsd:element name="default" type="SoapMediaTypeDefaultMapping" minOccurs="0" maxOccurs="1" />
+                     <xsd:element name="undefined" type="SoapMediaTypeUndefinedMapping" minOccurs="0" maxOccurs="1" />
+              </xsd:sequence>
+       </xsd:complexType>   
+       
+       <xsd:complexType name="SoapMediaTypeMapping">
+              <xsd:simpleContent>
+                     <xsd:extension base="xsd:string">
+                            <xsd:attribute name="messageType" type="SoapMessageType" use="required" />
+                            <xsd:attribute name="regExpr" type="xsd:boolean" use="optional" default="false" />
+                     </xsd:extension>
+              </xsd:simpleContent>
+       </xsd:complexType>
+       
+       <xsd:complexType name="SoapMediaTypeDefaultMapping">
+              <xsd:attribute name="messageType" type="SoapMessageType" use="required" />
+       </xsd:complexType>
+       
+       <xsd:complexType name="SoapMediaTypeUndefinedMapping">
+              <xsd:attribute name="messageType" type="SoapMessageType" use="required" />
+       </xsd:complexType>
+       
+       <xsd:complexType name="SoapHeaderBypassMustUnderstand">
+              <xsd:sequence>
+                     <xsd:element name="header" type="SoapHeaderBypassMustUnderstandHeader" maxOccurs="unbounded"/>
+              </xsd:sequence>
+       </xsd:complexType>
+       
+       <xsd:complexType name="SoapHeaderBypassMustUnderstandHeader">
+              <xsd:sequence>
+                     <xsd:element name="localName" type="xsd:string"/>
+                     <xsd:element name="namespace" type="xsd:string"/>
+              </xsd:sequence>
+       </xsd:complexType>
+
+
+
+       <!-- Rest Configuration -->
+      
+       <xsd:complexType name="RestConfiguration">
+              <xsd:sequence>
+                     <xsd:element name="integrationError" type="IntegrationErrorConfiguration" />
+                     <xsd:element name="mediaTypeCollection" type="RestMediaTypeCollection" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="xml" type="xsd:boolean" use="required" />
+              <xsd:attribute name="json" type="xsd:boolean" use="required" />
+              <xsd:attribute name="binary" type="xsd:boolean" use="required" />
+              <xsd:attribute name="mimeMultipart" type="xsd:boolean" use="optional" default="false"/>
+       </xsd:complexType>
+       
+       <xsd:complexType name="RestMediaTypeCollection">
+              <xsd:sequence>
+                     <xsd:element name="mediaType" type="RestMediaTypeMapping" minOccurs="0" maxOccurs="unbounded" />
+                     <xsd:element name="default" type="RestMediaTypeDefaultMapping" minOccurs="0" maxOccurs="1" />
+                     <xsd:element name="undefined" type="RestMediaTypeUndefinedMapping" minOccurs="0" maxOccurs="1" />
+              </xsd:sequence>
+       </xsd:complexType>     
+       
+       <xsd:complexType name="RestMediaTypeMapping">
+              <xsd:simpleContent>
+                     <xsd:extension base="xsd:string">
+                            <xsd:attribute name="messageType" type="RestMessageType" use="required" />
+                            <xsd:attribute name="regExpr" type="xsd:boolean" use="optional" default="false" />
+                     </xsd:extension>
+              </xsd:simpleContent>
+       </xsd:complexType>
+       
+       <xsd:complexType name="RestMediaTypeDefaultMapping">
+              <xsd:attribute name="messageType" type="RestMessageType" use="required" />
+       </xsd:complexType>
+       
+       <xsd:complexType name="RestMediaTypeUndefinedMapping">
+              <xsd:attribute name="messageType" type="RestMessageType" use="required" />
+       </xsd:complexType>
+
+       
+      
+
+       <!-- Context Configuration -->
+
+       <xsd:complexType name="Context">
+              <xsd:sequence>
+                     <xsd:element name="subContext" type="SubContextMapping" minOccurs="0" maxOccurs="unbounded"/>
+                     <xsd:element name="emptySubContext" type="EmptySubContextMapping" minOccurs="0" />
+                     <xsd:element name="soapMediaTypeCollection" type="SoapMediaTypeCollection" minOccurs="0"/>
+                     <xsd:element name="restMediaTypeCollection" type="RestMediaTypeCollection" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="binding" type="ServiceBinding" use="optional" />
+       </xsd:complexType>
+       
+       <xsd:complexType name="WebEmptyContext">
+              <xsd:sequence>
+                     <xsd:element name="subContext" type="SubContextMapping" minOccurs="0" maxOccurs="unbounded"/>
+                     <xsd:element name="emptySubContext" type="EmptySubContextMapping" minOccurs="0" />
+                     <xsd:element name="soapMediaTypeCollection" type="SoapMediaTypeCollection" minOccurs="0"/>
+                     <xsd:element name="restMediaTypeCollection" type="RestMediaTypeCollection" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="enabled" type="xsd:boolean" use="required"/>
+              <xsd:attribute name="binding" type="ServiceBinding" use="optional" />
+       </xsd:complexType>
+       
+       <xsd:complexType name="SubContextMapping">
+              <xsd:simpleContent>
+                     <xsd:extension base="xsd:string">
+                            <xsd:attribute name="function" type="FunctionType" use="optional" />
+                            <xsd:attribute name="messageType" type="MessageType" use="required" />
+                     </xsd:extension>
+              </xsd:simpleContent>
+       </xsd:complexType>
+       <xsd:complexType name="EmptySubContextMapping">
+              <xsd:attribute name="function" type="FunctionType" use="optional" />
+              <xsd:attribute name="messageType" type="MessageType" use="required" />
+       </xsd:complexType>
+
+
+
+       <!-- Organization Configuration -->
+       
+       <xsd:complexType name="Organization">
+              <xsd:sequence>
+                     <xsd:element name="types" type="OrganizationTypes"/>
+              </xsd:sequence>
+              <xsd:attribute name="codeIPA" type="xsd:boolean" use="optional" default="false"/>
+              <xsd:attribute name="replyToAddress" type="xsd:boolean" use="optional" default="false"/> <!-- replyToAddress -->
+       </xsd:complexType>
+       
+       <xsd:complexType name="OrganizationTypes">
+              <xsd:sequence>
+                     <xsd:element name="type" type="OrganizationType" maxOccurs="unbounded"/>
+              </xsd:sequence>
+       </xsd:complexType>
+       
+       <xsd:complexType name="OrganizationType">
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+       </xsd:complexType>
+       
+       
+       
+       <!-- Service Configuration -->
+       
+       <xsd:complexType name="Service">
+              <xsd:sequence>
+                     <xsd:element name="types" type="ServiceTypes"/>
+                     <xsd:element name="profile" type="CollaborationProfile" minOccurs="0"/>
+                     <xsd:element name="functionality" type="Functionality" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="wsdlSchema" type="xsd:boolean" use="optional" default="false"/>
+              <xsd:attribute name="conversations" type="xsd:boolean" use="optional" default="false"/>
+       </xsd:complexType>
+       
+       <xsd:complexType name="ServiceTypes">
+              <xsd:sequence>
+                     <xsd:element name="type" type="ServiceType" maxOccurs="unbounded"/>
+              </xsd:sequence>
+       </xsd:complexType>
+       
+       <xsd:complexType name="ServiceType">
+              <xsd:sequence>
+                     <xsd:element name="soapMediaTypeCollection" type="SoapMediaTypeCollection" minOccurs="0"/>
+                     <xsd:element name="restMediaTypeCollection" type="RestMediaTypeCollection" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="messageType" type="MessageType" use="optional"  />
+              <xsd:attribute name="binding" type="ServiceBinding" use="optional" />
+       </xsd:complexType>
+       
+       <xsd:complexType name="CollaborationProfile">
+              <xsd:attribute name="oneway" type="xsd:boolean" use="optional" default="true"/>
+              <xsd:attribute name="inputOutput" type="xsd:boolean" use="optional" default="true"/>
+              <xsd:attribute name="asyncInputOutput" type="xsd:boolean" use="optional" default="false"/>
+              <xsd:attribute name="polledInputOutput" type="xsd:boolean" use="optional" default="false"/>
+       </xsd:complexType>
+       
+       <xsd:complexType name="Functionality">
+              <xsd:attribute name="duplicateFilter" type="xsd:boolean" use="optional" default="false"/>
+              <xsd:attribute name="acknowledgement" type="xsd:boolean" use="optional" default="false"/>
+              <xsd:attribute name="conversationIdentifier" type="xsd:boolean" use="optional" default="false"/>
+              <xsd:attribute name="deliveryOrder" type="xsd:boolean" use="optional" default="false"/>
+              <xsd:attribute name="expiration" type="xsd:boolean" use="optional" default="false"/>
+              <xsd:attribute name="manifestAttachments" type="xsd:boolean" use="optional" default="false"/>
+       </xsd:complexType>
+       
+       
+       
+       <!-- Version Configuration -->
+       
+       <xsd:complexType name="Versions">
+              <xsd:sequence>
+                     <xsd:element name="version" type="Version" maxOccurs="unbounded"/>
+              </xsd:sequence>
+       </xsd:complexType>
+       
+       <xsd:complexType name="Version">
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+       </xsd:complexType>
+       
+
+
+       <!-- Enumeration -->
+       
+       <xsd:simpleType name="ServiceBinding">
+              <xsd:restriction base="xsd:string">
+                     <xsd:enumeration value="soap"/>
+                     <xsd:enumeration value="rest"/>
+              </xsd:restriction>
+       </xsd:simpleType>
+       
+       <xsd:simpleType name="SoapMessageType">
+              <xsd:restriction base="xsd:string">
+                     <xsd:enumeration value="soap11"/>
+                     <xsd:enumeration value="soap12"/>
+              </xsd:restriction>
+       </xsd:simpleType>
+       
+       <xsd:simpleType name="RestMessageType">
+              <xsd:restriction base="xsd:string">
+                     <xsd:enumeration value="xml"/>
+                     <xsd:enumeration value="json"/>
+                     <xsd:enumeration value="binary"/>
+                     <xsd:enumeration value="mimeMultipart"/>
+              </xsd:restriction>
+       </xsd:simpleType>
+       
+       <xsd:simpleType name="MessageType">
+              <xsd:restriction base="xsd:string">
+                     <xsd:enumeration value="soap11"/>
+                     <xsd:enumeration value="soap12"/>
+                     <xsd:enumeration value="xml"/>
+                     <xsd:enumeration value="json"/>
+                     <xsd:enumeration value="binary"/>
+                     <xsd:enumeration value="mimeMultipart"/>
+              </xsd:restriction>
+       </xsd:simpleType>
+       
+       <xsd:simpleType name="IntegrationErrorMessageType">
+              <xsd:restriction base="xsd:string">
+                     <xsd:enumeration value="soap"/>
+                     <xsd:enumeration value="xml"/>
+                     <xsd:enumeration value="json"/>
+                     <xsd:enumeration value="none"/>
+                     <xsd:enumeration value="sameAsRequest"/>
+              </xsd:restriction>
+       </xsd:simpleType>
+       <xsd:simpleType name="DefaultIntegrationErrorMessageType">
+              <xsd:restriction base="xsd:string">
+                     <xsd:enumeration value="soap"/>
+                     <xsd:enumeration value="xml"/>
+                     <xsd:enumeration value="json"/>
+                     <xsd:enumeration value="none"/>
+              </xsd:restriction>
+       </xsd:simpleType>
+       
+       <xsd:simpleType name="FunctionType">
+              <xsd:restriction base="xsd:string">
+                     <xsd:enumeration value="PD"/>
+                     <xsd:enumeration value="PA"/>
+                     <xsd:enumeration value="PDtoSOAP"/>
+              </xsd:restriction>
+       </xsd:simpleType>
+       
        <xsd:simpleType name="urlMappingSourceType">
               <xsd:restriction base="xsd:string">
                      <xsd:enumeration value="PROPERTIES"/>
@@ -143,27 +420,4 @@
               </xsd:restriction>
        </xsd:simpleType>
        
-       <xsd:element name="binding">
-              <xsd:complexType>
-                     <xsd:sequence>
-                            <xsd:element ref="soapHeaderBypassMustUnderstand" minOccurs="0"/>
-                     </xsd:sequence>
-                     <xsd:attribute name="soap11" type="xsd:boolean" use="required" />
-                     <xsd:attribute name="soap12" type="xsd:boolean" use="required" />
-              </xsd:complexType>
-       </xsd:element>
-       <xsd:element name="soapHeaderBypassMustUnderstand">
-              <xsd:complexType>
-                     <xsd:sequence>
-                            <xsd:element name="header" type="soapHeaderBypassMustUnderstandHeader" maxOccurs="unbounded"/>
-                     </xsd:sequence>
-              </xsd:complexType>
-       </xsd:element>
-       <xsd:complexType name="soapHeaderBypassMustUnderstandHeader">
-              <xsd:sequence>
-                     <xsd:element name="localName" type="xsd:string"/>
-                     <xsd:element name="namespace" type="xsd:string"/>
-              </xsd:sequence>
-       </xsd:complexType>
-
 </xsd:schema>

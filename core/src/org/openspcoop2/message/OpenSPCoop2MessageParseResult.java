@@ -21,6 +21,8 @@
 
 package org.openspcoop2.message;
 
+import org.openspcoop2.message.exception.ParseException;
+
 /**
  * OpenSPCoop2MessageParseResult
  *

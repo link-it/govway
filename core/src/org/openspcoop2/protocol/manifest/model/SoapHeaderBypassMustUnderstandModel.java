@@ -41,7 +41,7 @@ public class SoapHeaderBypassMustUnderstandModel extends AbstractModel<SoapHeade
 	
 		super();
 	
-		this.HEADER = new org.openspcoop2.protocol.manifest.model.SoapHeaderBypassMustUnderstandHeaderModel(new Field("header",org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader.class,"soapHeaderBypassMustUnderstand",SoapHeaderBypassMustUnderstand.class));
+		this.HEADER = new org.openspcoop2.protocol.manifest.model.SoapHeaderBypassMustUnderstandHeaderModel(new Field("header",org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader.class,"SoapHeaderBypassMustUnderstand",SoapHeaderBypassMustUnderstand.class));
 	
 	}
 	
@@ -49,7 +49,7 @@ public class SoapHeaderBypassMustUnderstandModel extends AbstractModel<SoapHeade
 	
 		super(father);
 	
-		this.HEADER = new org.openspcoop2.protocol.manifest.model.SoapHeaderBypassMustUnderstandHeaderModel(new ComplexField(father,"header",org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader.class,"soapHeaderBypassMustUnderstand",SoapHeaderBypassMustUnderstand.class));
+		this.HEADER = new org.openspcoop2.protocol.manifest.model.SoapHeaderBypassMustUnderstandHeaderModel(new ComplexField(father,"header",org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader.class,"SoapHeaderBypassMustUnderstand",SoapHeaderBypassMustUnderstand.class));
 	
 	}
 	

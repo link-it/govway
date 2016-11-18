@@ -24,21 +24,25 @@
 
 package org.openspcoop2.pdd.logger;
 
+import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import javax.mail.BodyPart;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.SoapUtils;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -59,6 +63,9 @@ import org.openspcoop2.protocol.sdk.tracciamento.ITracciamentoOpenSPCoopAppender
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.protocol.sdk.tracciamento.TracciamentoException;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.mime.MimeMultipart;
+import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.slf4j.Logger;
 
 
 /**
@@ -118,9 +125,9 @@ public class Tracciamento {
 	
 	public static String createLocationString(boolean bustaRicevuta,String location){
 		if(bustaRicevuta)
-			return ConnettoreUtils.limitLocation255Character(CostantiPdD.TRACCIAMENTO_IN+CostantiPdD.TRACCIAMENTO_SEPARATOR_LOCATION+location);
+			return ConnettoreUtils.limitLocation255Character(CostantiPdD.TRACCIAMENTO_IN+HttpConstants.SEPARATOR_SOURCE+location);
 		else
-			return ConnettoreUtils.limitLocation255Character(CostantiPdD.TRACCIAMENTO_OUT+CostantiPdD.TRACCIAMENTO_SEPARATOR_LOCATION+location);
+			return ConnettoreUtils.limitLocation255Character(CostantiPdD.TRACCIAMENTO_OUT+HttpConstants.SEPARATOR_SOURCE+location);
 	}
 	
 	
@@ -732,15 +739,33 @@ public class Tracciamento {
 		// Esito
 		traccia.setEsitoElaborazioneMessaggioTracciato(esito);
 		try{
-			if(TipoTraccia.RISPOSTA.equals(tipoTraccia)){
-				SOAPBody body = msg.getSOAPBody();
-				if(body!=null && body.hasFault()){
+			if(TipoTraccia.RISPOSTA.equals(tipoTraccia) && msg!=null){
+				boolean found = false;
+				if(ServiceBinding.SOAP.equals(msg)){
+					SOAPBody body = msg.castAsSoap().getSOAPBody();
+					if(body!=null && body.hasFault()){
+						found = true;
+						StringBuffer bf = new StringBuffer();
+						if(esito.getDettaglio()!=null){
+							bf.append(esito.getDettaglio());
+							bf.append("\n");
+						}
+						bf.append(SoapUtils.toString(body.getFault()));
+						traccia.getEsitoElaborazioneMessaggioTracciato().setDettaglio(bf.toString());
+					}
+				}
+
+				if(!found && MessageRole.FAULT.equals(msg.getMessageRole())){
+					ByteArrayOutputStream bout = new ByteArrayOutputStream();
+					msg.writeTo(bout, false);
+					bout.flush();
+					bout.close();
 					StringBuffer bf = new StringBuffer();
 					if(esito.getDettaglio()!=null){
 						bf.append(esito.getDettaglio());
 						bf.append("\n");
 					}
-					bf.append(SoapUtils.toString(body.getFault()));
+					bf.append(bout.toString());
 					traccia.getEsitoElaborazioneMessaggioTracciato().setDettaglio(bf.toString());
 				}
 			}
@@ -770,26 +795,57 @@ public class Tracciamento {
 		traccia.setBusta(busta);
 		
 		if(msg!=null){
-			java.util.Iterator<?> it = msg.getAttachments();
-		    while(it.hasNext()){
-		    	AttachmentPart ap = 
-		    		(AttachmentPart) it.next();
-		    	Allegato allegato = new Allegato();
-		    	allegato.setContentId(ap.getContentId());
-		    	allegato.setContentLocation(ap.getContentLocation());
-		    	allegato.setContentType(ap.getContentType());
-		    	
-		    	if(securityInfo!=null && ap.getContentId()!=null){
-			    	for (int i = 0; i < securityInfo.sizeListaAllegati(); i++) {
-						Allegato a = securityInfo.getAllegato(i);
-						if(a.getContentId()!=null && a.getContentId().equals(ap.getContentId())){
-							allegato.setDigest(a.getDigest());
+			try{
+				if(ServiceBinding.SOAP.equals(msg)){
+					java.util.Iterator<?> it = msg.castAsSoap().getAttachments();
+				    while(it.hasNext()){
+				    	AttachmentPart ap = 
+				    		(AttachmentPart) it.next();
+				    	Allegato allegato = new Allegato();
+				    	allegato.setContentId(ap.getContentId());
+				    	allegato.setContentLocation(ap.getContentLocation());
+				    	allegato.setContentType(ap.getContentType());
+				    	
+				    	if(securityInfo!=null && ap.getContentId()!=null){
+					    	for (int i = 0; i < securityInfo.sizeListaAllegati(); i++) {
+								Allegato a = securityInfo.getAllegato(i);
+								if(a.getContentId()!=null && a.getContentId().equals(ap.getContentId())){
+									allegato.setDigest(a.getDigest());
+								}
+							}
+				    	}
+				    	
+				    	traccia.addAllegato(allegato);
+				    }
+				}
+				else if(MessageType.MIME_MULTIPART.equals(msg.getMessageType())){
+					MimeMultipart mime = msg.castAsRestMimeMultipart().getContent();
+					if(mime!=null){
+						for (int i = 0; i < mime.countBodyParts(); i++) {
+							BodyPart bodyPart = mime.getBodyPart(i);
+							String contentId = mime.getContentID(bodyPart);
+							
+							Allegato allegato = new Allegato();
+					    	allegato.setContentId(contentId);
+					    	allegato.setContentLocation(mime.getContentLocation(bodyPart));
+					    	allegato.setContentType(bodyPart.getContentType());
+					    	
+					    	if(securityInfo!=null && contentId!=null){
+						    	for (int j = 0; j < securityInfo.sizeListaAllegati(); j++) {
+									Allegato a = securityInfo.getAllegato(j);
+									if(a.getContentId()!=null && a.getContentId().equals(contentId)){
+										allegato.setDigest(a.getDigest());
+									}
+								}
+					    	}
+					    	
+					    	traccia.addAllegato(allegato);
 						}
 					}
-		    	}
-		    	
-		    	traccia.addAllegato(allegato);
-		    }
+				}
+			}catch(Exception e){
+				this.logError("errore durante la registrazione degli allegati nelle tracce", e);
+			}
 		}
 		
 		if(this.pddContext!=null){

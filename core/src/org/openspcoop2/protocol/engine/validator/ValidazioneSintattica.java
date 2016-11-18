@@ -23,11 +23,9 @@
 
 package org.openspcoop2.protocol.engine.validator;
 
-import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeader;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.engine.Configurazione;
@@ -43,6 +41,7 @@ import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneSintatticaResult;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.slf4j.Logger;
 
 /**
  * Classe utilizzata per la validazione sintattica di una busta.
@@ -295,8 +294,8 @@ public class ValidazioneSintattica {
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public void validazioneFault(SOAPBody body) throws ProtocolException{
-		ValidazioneSintatticaResult result = this.protocolFactory.createValidazioneSintattica().validazioneFault(body);
+	public void validazioneFault(OpenSPCoop2Message msg) throws ProtocolException{
+		ValidazioneSintatticaResult result = this.protocolFactory.createValidazioneSintattica().validazioneFault(msg);
 		if(result != null){
 			if(result.getBusta() != null)
 				this.busta = result.getBusta();

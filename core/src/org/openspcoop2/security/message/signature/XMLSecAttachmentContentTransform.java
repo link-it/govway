@@ -32,7 +32,7 @@ import org.apache.xml.security.transforms.Transform;
 import org.apache.xml.security.transforms.TransformSpi;
 import org.apache.xml.security.transforms.TransformationException;
 import org.bouncycastle.util.encoders.Base64;
-import org.openspcoop2.message.XMLUtils;
+import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.security.message.constants.WSSAttachmentsConstants;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.XMLException;

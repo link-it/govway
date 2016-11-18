@@ -24,9 +24,12 @@
 package org.openspcoop2.utils;
 
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.SequenceInputStream;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -52,10 +55,126 @@ import org.apache.xml.security.utils.RFC2253Parser;
 
 public class Utilities {
 
-
+	
 	/** ArrayBuffer utilizzato per la lettura */
 	public static final int DIMENSIONE_BUFFER = 65536;
+	
+	
+	/** String with charset Processing */
+	public static String getAsString(URL url,String charsetName) throws UtilsException{
+		return getAsString(url, charsetName, true);
+	}
+	public static String getAsString(URL url,String charsetName,boolean throwExceptionInputStreamEmpty) throws UtilsException{
+		try{
+			InputStream openStream = null;
+			String content = null;
+			try{
+				openStream = url.openStream();
+				content = Utilities.getAsString(openStream,charsetName,throwExceptionInputStreamEmpty);
+			}finally{
+				try{
+					openStream.close();
+				}catch(Exception e){}
+			}
+			return content;
+		}
+		catch (UtilsException e) {
+			throw e;
+		}
+		catch (java.lang.Exception e) {
+			throw new UtilsException("Utilities.readBytes error "+e.getMessage(),e);
+		}
+	}
+	public static String getAsString(InputStream is,String charsetName) throws UtilsException{
+		return getAsString(is,charsetName,true);
+	}
+	public static String getAsString(InputStream is,String charsetName,boolean throwExceptionInputStreamEmpty) throws UtilsException{
+		try{
+			return Utilities.getAsInputStreamReader(is,charsetName,throwExceptionInputStreamEmpty).toString();			
+		}
+		catch (UtilsException e) {
+			throw e;
+		}
+		catch (java.lang.Exception e) {
+			throw new UtilsException("Utilities.getAsString error "+e.getMessage(),e);
+		}
+	}
+	public static StringBuffer getAsInputStreamReader(InputStream isParam,String charsetName) throws UtilsException{
+		return getAsInputStreamReader(isParam, charsetName, true);
+	}
+	public static StringBuffer getAsInputStreamReader(InputStream isParam,String charsetName,boolean throwExceptionInputStreamEmpty) throws UtilsException{
+		InputStreamReader isr = null;
+		BufferedReader bufferedReader = null;
+		try{
+			if(isParam==null){
+				if(throwExceptionInputStreamEmpty){
+					throw new UtilsException("InputStream is null");
+				}
+				else{
+					return null;
+				}
+			}
+			
+			byte[] b = new byte[1];
+			InputStream is = null;
+			if(isParam.read(b) == -1) {
+				if(throwExceptionInputStreamEmpty){
+					throw new UtilsException("InputStream is empty");
+				}
+				else{
+					return null;
+				}
+			} else {
+				// Metodo alternativo: java.io.PushbackInputStream
+				is = new SequenceInputStream(new ByteArrayInputStream(b),isParam);
+			}
+			
+			isr = new InputStreamReader(is, charsetName);
+			StringBuffer buffer = new StringBuffer();
+			bufferedReader = new BufferedReader(isr);
+	        char[] buf = new char[Utilities.DIMENSIONE_BUFFER];
+	        int numRead=0;
+	        while((numRead=bufferedReader.read(buf)) != -1){
+	            String readData = String.valueOf(buf, 0, numRead);
+	            buffer.append(readData);
+	        }
+	        return buffer;
+			
+		} catch (java.lang.Exception e) {
+			if(e instanceof java.io.IOException){
+				if(isEmpytMessageException(e)==false){
+					throw new UtilsException(e.getMessage(),e);
+				}
+			}
+			else if(existsInnerException(e, java.io.IOException.class)){
+				Throwable tInternal = getInnerException(e, java.io.IOException.class);
+				if(isEmpytMessageException(tInternal)==false){
+					throw new UtilsException(tInternal.getMessage(),e);
+				}
+			}
 
+			Throwable tInternal = getInnerNotEmptyMessageException(e);
+			if(tInternal!=null){
+				throw new UtilsException(tInternal.getMessage(),e);
+			}
+			else{
+				throw new UtilsException("Utilities.getAsString error",e);
+			}
+		
+		} finally{
+			try{
+				if(bufferedReader!=null){
+					bufferedReader.close();
+				}
+				if(isr!=null){
+					isr.close();
+				}
+			}catch(Exception eClose){}
+		}
+	}
+	
+	
+	/** RawBinary Processing */
 	public static byte[] getAsByteArray(URL url) throws UtilsException{
 		return getAsByteArray(url, true);
 	}
@@ -158,9 +277,27 @@ public class Utilities {
 
 
 
+	
+	/** Copy Stream */
+	
+	public static void copy(InputStream is,OutputStream os) throws UtilsException{
+		try{
+			byte [] buffer = new byte[Utilities.DIMENSIONE_BUFFER];
+			int letti = 0;
+			while( (letti=is.read(buffer)) != -1 ){
+				os.write(buffer, 0, letti);
+			}
+			os.flush();
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
+	
 
 
-
+	/** Properties */
+	
 	public static java.util.Properties getAsProperties(InputStream is) throws UtilsException{
 		try{
 			if(is==null){

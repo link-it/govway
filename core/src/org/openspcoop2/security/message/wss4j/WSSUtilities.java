@@ -37,13 +37,13 @@ import org.apache.cxf.attachment.AttachmentImpl;
 import org.apache.cxf.message.Attachment;
 import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
 import org.apache.wss4j.dom.handler.WSHandlerResult;
-import org.openspcoop2.message.Costanti;
-import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.XMLUtils;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.security.message.utils.AttachmentProcessingPart;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.dch.InputStreamDataSource;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
-import org.openspcoop2.utils.resources.InputStreamDataSource;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
 import org.w3c.dom.Node;
 
@@ -75,14 +75,14 @@ public class WSSUtilities {
 		}
 	}
 	
-	public static List<Attachment> readAttachments(List<String> cidAttachmentsForSecurity,OpenSPCoop2Message message) throws Exception{
+	public static List<Attachment> readAttachments(List<String> cidAttachmentsForSecurity,OpenSPCoop2SoapMessage message) throws Exception{
 		List<Attachment> listAttachments = null;
         if(cidAttachmentsForSecurity!=null && cidAttachmentsForSecurity.size()>0){
         	listAttachments = new ArrayList<Attachment>();
         	for (String cid : cidAttachmentsForSecurity) {       		
         		//System.out.println("GET ID ["+cid+"]");
         		MimeHeaders mhs = new MimeHeaders();
-        		mhs.addHeader(Costanti.CONTENT_ID, cid);
+        		mhs.addHeader(HttpConstants.CONTENT_ID, cid);
         		Iterator<?> itAttach = message.getAttachments(mhs);
         		if(itAttach==null){
         			throw new Exception("Attachment with Content-ID ["+cid+"] not found");
@@ -97,7 +97,7 @@ public class WSSUtilities {
         return listAttachments;
 	}
 	
-	public static List<Attachment> readAttachments(AttachmentProcessingPart app,OpenSPCoop2Message message) throws Exception{
+	public static List<Attachment> readAttachments(AttachmentProcessingPart app,OpenSPCoop2SoapMessage message) throws Exception{
         List<Attachment> listAttachments = null;
         if(app!=null){
         	List<AttachmentPart> listApDaTrattare = app.getOutput(message);
@@ -118,7 +118,7 @@ public class WSSUtilities {
 		DataHandler dhNEW = null;
 		byte[]bufferArray = null;
 		String s = null;
-		if(dh.getContentType()!=null && dh.getContentType().startsWith(Costanti.CONTENT_TYPE_PLAIN)){
+		if(dh.getContentType()!=null && dh.getContentType().startsWith(HttpConstants.CONTENT_TYPE_PLAIN)){
 			//System.out.println("STRING");
 			dhNEW = dh;
 		}
@@ -168,21 +168,21 @@ public class WSSUtilities {
 		return at;
 	}
 	
-	public static void updateAttachments(List<Attachment> listAttachments,OpenSPCoop2Message message) throws Exception{
+	public static void updateAttachments(List<Attachment> listAttachments,OpenSPCoop2SoapMessage message) throws Exception{
 		if(listAttachments!=null && listAttachments.size()>0){
 			for (Attachment attachmentPart : listAttachments) {
 				
 				//System.out.println("AP ["+attachmentPart.getId()+"] ["+StringEscapeUtils.unescapeXml(attachmentPart.getId())+"]");
 				
 				MimeHeaders mhs = new MimeHeaders();
-				mhs.addHeader(Costanti.CONTENT_ID, StringEscapeUtils.unescapeXml(attachmentPart.getId()));
+				mhs.addHeader(HttpConstants.CONTENT_ID, StringEscapeUtils.unescapeXml(attachmentPart.getId()));
 				AttachmentPart ap = (AttachmentPart) message.getAttachments(mhs).next();
 				
 				DataHandler dh = attachmentPart.getDataHandler();
 				//System.out.println("AP ["+dh.getContentType()+"] ["+dh.getClass().getName()+"]");
 				byte[]bufferArray = null;
 				String s = null;
-				if(dh.getContentType()!=null && dh.getContentType().startsWith(Costanti.CONTENT_TYPE_PLAIN)){
+				if(dh.getContentType()!=null && dh.getContentType().startsWith(HttpConstants.CONTENT_TYPE_PLAIN)){
 					Object o = dh.getContent();
 					if(o instanceof String){
 						s = (String) o;

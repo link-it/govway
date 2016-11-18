@@ -89,7 +89,7 @@ import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.encryption.XMLEncryptionException;
 import org.apache.xml.security.exceptions.Base64DecodingException;
 import org.apache.xml.security.utils.Base64;
-import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.security.message.constants.WSSAttachmentsConstants;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.slf4j.Logger;
@@ -111,8 +111,8 @@ import com.sun.xml.wss.swa.MimeConstants;
  */
 public class ProcessPartialEncryptedMessage implements Processor {
 
-	protected OpenSPCoop2Message message;
-	public void setMessage(OpenSPCoop2Message message) {
+	protected OpenSPCoop2SoapMessage message;
+	public void setMessage(OpenSPCoop2SoapMessage message) {
 		this.message = message;
 	}
 	protected String actor;

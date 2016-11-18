@@ -20,31 +20,51 @@
  */
 package org.openspcoop2.core.eccezione.errore_applicativo;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class DatiCooperazione.
+/** <p>Java class for dati-cooperazione complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="dati-cooperazione">
+ * 		&lt;sequence>
+ * 			&lt;element name="fruitore" type="{http://www.openspcoop2.org/core/eccezione/errore_applicativo}soggetto" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="erogatore" type="{http://www.openspcoop2.org/core/eccezione/errore_applicativo}soggetto" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="servizio" type="{http://www.openspcoop2.org/core/eccezione/errore_applicativo}servizio" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="servizio-applicativo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "dati-cooperazione", 
+  propOrder = {
+  	"fruitore",
+  	"erogatore",
+  	"servizio",
+  	"azione",
+  	"servizioApplicativo"
+  }
+)
+
+@XmlRootElement(name = "dati-cooperazione")
 
 public class DatiCooperazione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected Soggetto fruitore;
-
-  protected Soggetto erogatore;
-
-  protected Servizio servizio;
-
-  protected String azione;
-
-  protected String servizioApplicativo;
-
-
   public DatiCooperazione() {
   }
 
@@ -86,56 +106,44 @@ public class DatiCooperazione extends org.openspcoop2.utils.beans.BaseBean imple
     this.servizio = servizio;
   }
 
-  public String getAzione() {
-    if(this.azione!=null && ("".equals(this.azione)==false)){
-		return this.azione.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getAzione() {
+    return this.azione;
   }
 
-  public void setAzione(String azione) {
+  public void setAzione(java.lang.String azione) {
     this.azione = azione;
   }
 
-  public String getServizioApplicativo() {
-    if(this.servizioApplicativo!=null && ("".equals(this.servizioApplicativo)==false)){
-		return this.servizioApplicativo.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getServizioApplicativo() {
+    return this.servizioApplicativo;
   }
 
-  public void setServizioApplicativo(String servizioApplicativo) {
+  public void setServizioApplicativo(java.lang.String servizioApplicativo) {
     this.servizioApplicativo = servizioApplicativo;
   }
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  @XmlTransient
+  private Long id;
 
-  public static final String FRUITORE = "fruitore";
 
-  public static final String EROGATORE = "erogatore";
 
-  public static final String SERVIZIO = "servizio";
+  @XmlElement(name="fruitore",required=false,nillable=false)
+  protected Soggetto fruitore;
 
-  public static final String AZIONE = "azione";
+  @XmlElement(name="erogatore",required=false,nillable=false)
+  protected Soggetto erogatore;
 
-  public static final String SERVIZIO_APPLICATIVO = "servizioApplicativo";
+  @XmlElement(name="servizio",required=false,nillable=false)
+  protected Servizio servizio;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="azione",required=false,nillable=false)
+  protected java.lang.String azione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="servizio-applicativo",required=false,nillable=false)
+  protected java.lang.String servizioApplicativo;
 
 }

@@ -41,9 +41,9 @@ public class BindingModel extends AbstractModel<Binding> {
 	
 		super();
 	
-		this.SOAP_HEADER_BYPASS_MUST_UNDERSTAND = new org.openspcoop2.protocol.manifest.model.SoapHeaderBypassMustUnderstandModel(new Field("soapHeaderBypassMustUnderstand",org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand.class,"binding",Binding.class));
-		this.SOAP_11 = new Field("soap11",boolean.class,"binding",Binding.class);
-		this.SOAP_12 = new Field("soap12",boolean.class,"binding",Binding.class);
+		this.SOAP = new org.openspcoop2.protocol.manifest.model.SoapConfigurationModel(new Field("soap",org.openspcoop2.protocol.manifest.SoapConfiguration.class,"binding",Binding.class));
+		this.REST = new org.openspcoop2.protocol.manifest.model.RestConfigurationModel(new Field("rest",org.openspcoop2.protocol.manifest.RestConfiguration.class,"binding",Binding.class));
+		this.DEFAULT = new Field("default",java.lang.String.class,"binding",Binding.class);
 	
 	}
 	
@@ -51,19 +51,19 @@ public class BindingModel extends AbstractModel<Binding> {
 	
 		super(father);
 	
-		this.SOAP_HEADER_BYPASS_MUST_UNDERSTAND = new org.openspcoop2.protocol.manifest.model.SoapHeaderBypassMustUnderstandModel(new ComplexField(father,"soapHeaderBypassMustUnderstand",org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand.class,"binding",Binding.class));
-		this.SOAP_11 = new ComplexField(father,"soap11",boolean.class,"binding",Binding.class);
-		this.SOAP_12 = new ComplexField(father,"soap12",boolean.class,"binding",Binding.class);
+		this.SOAP = new org.openspcoop2.protocol.manifest.model.SoapConfigurationModel(new ComplexField(father,"soap",org.openspcoop2.protocol.manifest.SoapConfiguration.class,"binding",Binding.class));
+		this.REST = new org.openspcoop2.protocol.manifest.model.RestConfigurationModel(new ComplexField(father,"rest",org.openspcoop2.protocol.manifest.RestConfiguration.class,"binding",Binding.class));
+		this.DEFAULT = new ComplexField(father,"default",java.lang.String.class,"binding",Binding.class);
 	
 	}
 	
 	
 
-	public org.openspcoop2.protocol.manifest.model.SoapHeaderBypassMustUnderstandModel SOAP_HEADER_BYPASS_MUST_UNDERSTAND = null;
+	public org.openspcoop2.protocol.manifest.model.SoapConfigurationModel SOAP = null;
 	 
-	public IField SOAP_11 = null;
+	public org.openspcoop2.protocol.manifest.model.RestConfigurationModel REST = null;
 	 
-	public IField SOAP_12 = null;
+	public IField DEFAULT = null;
 	 
 
 	@Override

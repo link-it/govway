@@ -30,7 +30,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.archive.Archive;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
-import org.openspcoop2.protocol.sdk.archive.IRegistryReader;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 
 /**
  *  ArchiveValidator

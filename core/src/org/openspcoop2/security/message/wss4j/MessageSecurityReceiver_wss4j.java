@@ -44,7 +44,9 @@ import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
 import org.apache.wss4j.dom.handler.WSHandlerConstants;
 import org.apache.wss4j.dom.handler.WSHandlerResult;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.reference.Reference;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.soap.reference.Reference;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.security.SecurityException;
@@ -72,8 +74,14 @@ public class MessageSecurityReceiver_wss4j implements IMessageSecurityReceiver{
 
 
 	@Override
-	public void process(MessageSecurityContext wssContext,OpenSPCoop2Message message,Busta busta) throws SecurityException{
+	public void process(MessageSecurityContext wssContext,OpenSPCoop2Message messageParam,Busta busta) throws SecurityException{
 		try{
+			
+			if(ServiceBinding.SOAP.equals(messageParam.getServiceBinding())==false){
+				throw new SecurityException("WSS4J Engine usable only with SOAP Binding");
+			}
+			OpenSPCoop2SoapMessage message = messageParam.castAsSoap();
+			
 			
 			// ** Inizializzo handler CXF **/
 			
@@ -272,21 +280,21 @@ public class MessageSecurityReceiver_wss4j implements IMessageSecurityReceiver{
 	@Override
 	public List<Reference> getDirtyElements(
 			org.openspcoop2.security.message.MessageSecurityContext messageSecurityContext,
-			OpenSPCoop2Message message) throws SecurityException {
+			OpenSPCoop2SoapMessage message) throws SecurityException {
 		return WSSUtilities.getDirtyElements(messageSecurityContext, message);
 	}
 
 	@Override
 	public Map<QName, QName> checkEncryptSignatureParts(
 			org.openspcoop2.security.message.MessageSecurityContext messageSecurityContext,
-			List<Reference> elementsToClean, OpenSPCoop2Message message,
+			List<Reference> elementsToClean, OpenSPCoop2SoapMessage message,
 			List<SubErrorCodeSecurity> codiciErrore) throws SecurityException {
 		return MessageUtilities.checkEncryptSignatureParts(messageSecurityContext, elementsToClean, message, codiciErrore, SecurityConstants.QNAME_WSS_ELEMENT_SECURITY);
 	}
 
 	@Override
 	public void checkEncryptionPartElements(Map<QName, QName> notResolved,
-			OpenSPCoop2Message message,
+			OpenSPCoop2SoapMessage message,
 			List<SubErrorCodeSecurity> erroriRilevati) throws SecurityException {
 		MessageUtilities.checkEncryptionPartElements(notResolved, message, erroriRilevati);
 	}
@@ -294,7 +302,7 @@ public class MessageSecurityReceiver_wss4j implements IMessageSecurityReceiver{
 	@Override
 	public void cleanDirtyElements(
 			org.openspcoop2.security.message.MessageSecurityContext messageSecurityContext,
-			OpenSPCoop2Message message, List<Reference> elementsToClean,
+			OpenSPCoop2SoapMessage message, List<Reference> elementsToClean,
 			boolean detachHeaderWSSecurity)
 			throws SecurityException {
 		WSSUtilities.cleanDirtyElements(messageSecurityContext, message, elementsToClean,detachHeaderWSSecurity);

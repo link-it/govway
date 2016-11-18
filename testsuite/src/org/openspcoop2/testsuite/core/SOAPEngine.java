@@ -50,7 +50,7 @@ import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.ByteArrayOutputStream;
 import org.openspcoop2.message.SOAPVersion;
-import org.openspcoop2.message.SoapUtils;
+import org.openspcoop2.message.soap.SoapUtils;
 
 /**
  * Engine per la gestione/spedizion di messaggi Soap

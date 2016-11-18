@@ -38,6 +38,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.manifest.constants.ServiceBinding;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.diagnostica.IMsgDiagnosticoOpenSPCoopAppender;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciamentoOpenSPCoopAppender;
@@ -249,8 +250,9 @@ public class TimerMonitoraggioRisorse extends Thread{
 					this.logger.debug("Controllo Validazione semantica del Registri dei Servizi");
 					this.registriPdDReader.validazioneSemantica(this.propertiesReader.isControlloRisorseRegistriRaggiungibilitaTotale(), 
 							this.propertiesReader.isValidazioneSemanticaRegistroServiziCheckURI(), 
-							pFactoryManager.getSubjectTypesAsArray(),
-							pFactoryManager.getServiceTypesAsArray(),
+							pFactoryManager.getOrganizationTypesAsArray(),
+							pFactoryManager.getServiceTypesAsArray(ServiceBinding.SOAP),
+							pFactoryManager.getServiceTypesAsArray(ServiceBinding.REST),
 							ClassNameProperties.getInstance().getConnettore(),
 							true,
 							true,

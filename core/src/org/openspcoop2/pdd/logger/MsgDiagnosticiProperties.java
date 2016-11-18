@@ -33,7 +33,7 @@ import org.openspcoop2.pdd.config.MsgDiagnosticiInstanceProperties;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.resources.PropertiesReader;
+import org.openspcoop2.utils.properties.PropertiesReader;
 
 
 /**
@@ -668,7 +668,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"portaDelegataNonEsistente",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"servizioApplicativoFruitore.identificazioneTramiteInfoIntegrazioneNonRiuscita",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"servizioApplicativoFruitore.identificazioneTramiteCredenziali",
-		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"identificazioneDinamicaServizioNonRiuscita",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"identificazioneDinamicaAzioneNonRiuscita",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"servizioApplicativoFruitore.nonAutorizzato",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"servizioApplicativoFruitore.contenuto.nonAutorizzato",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"validazioneContenutiApplicativiRichiestaNonRiuscita",
@@ -849,6 +849,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"validazioneSemantica.afterSecurity",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"parsingExceptionRichiesta",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"parsingExceptionRisposta",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"identificazioneDinamicaAzioneNonRiuscita",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"ricezioneBustaErrore",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"ricezioneBusta.eccezioniNonGravi",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"validazioneNonRiuscita",

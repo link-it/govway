@@ -41,7 +41,10 @@ public class PortaApplicativaAzioneModel extends AbstractModel<PortaApplicativaA
 	
 		super();
 	
+		this.IDENTIFICAZIONE = new Field("identificazione",java.lang.String.class,"porta-applicativa-azione",PortaApplicativaAzione.class);
+		this.PATTERN = new Field("pattern",java.lang.String.class,"porta-applicativa-azione",PortaApplicativaAzione.class);
 		this.NOME = new Field("nome",java.lang.String.class,"porta-applicativa-azione",PortaApplicativaAzione.class);
+		this.FORCE_WSDL_BASED = new Field("force-wsdl-based",java.lang.String.class,"porta-applicativa-azione",PortaApplicativaAzione.class);
 	
 	}
 	
@@ -49,13 +52,22 @@ public class PortaApplicativaAzioneModel extends AbstractModel<PortaApplicativaA
 	
 		super(father);
 	
+		this.IDENTIFICAZIONE = new ComplexField(father,"identificazione",java.lang.String.class,"porta-applicativa-azione",PortaApplicativaAzione.class);
+		this.PATTERN = new ComplexField(father,"pattern",java.lang.String.class,"porta-applicativa-azione",PortaApplicativaAzione.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"porta-applicativa-azione",PortaApplicativaAzione.class);
+		this.FORCE_WSDL_BASED = new ComplexField(father,"force-wsdl-based",java.lang.String.class,"porta-applicativa-azione",PortaApplicativaAzione.class);
 	
 	}
 	
 	
 
+	public IField IDENTIFICAZIONE = null;
+	 
+	public IField PATTERN = null;
+	 
 	public IField NOME = null;
+	 
+	public IField FORCE_WSDL_BASED = null;
 	 
 
 	@Override

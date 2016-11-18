@@ -30,7 +30,7 @@ import javax.servlet.ServletContextListener;
 
 import org.slf4j.Logger;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
-import org.openspcoop2.message.XMLDiff;
+import org.openspcoop2.message.xml.XMLDiff;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.xml.XMLDiffImplType;

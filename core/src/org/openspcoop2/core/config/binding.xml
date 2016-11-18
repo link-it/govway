@@ -68,17 +68,13 @@
   </mapping>
   <mapping name="soggetto-erogatore" class="org.openspcoop2.core.config.PortaDelegataSoggettoErogatore">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
-    <value name="identificazione" field="identificazione" usage="optional" enum-value-method="toString" style="attribute"/>
-    <value name="pattern" field="pattern" usage="optional" style="attribute"/>
     <value name="tipo" field="tipo" usage="required" style="attribute"/>
-    <value name="nome" field="nome" usage="optional" style="attribute"/>
+    <value name="nome" field="nome" usage="required" style="attribute"/>
   </mapping>
   <mapping name="servizio" class="org.openspcoop2.core.config.PortaDelegataServizio">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
-    <value name="identificazione" field="identificazione" default="static" usage="optional" enum-value-method="toString" style="attribute"/>
-    <value name="pattern" field="pattern" usage="optional" style="attribute"/>
     <value name="tipo" field="tipo" usage="required" style="attribute"/>
-    <value name="nome" field="nome" usage="optional" style="attribute"/>
+    <value name="nome" field="nome" usage="required" style="attribute"/>
   </mapping>
   <mapping name="azione" class="org.openspcoop2.core.config.PortaDelegataAzione">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
@@ -111,6 +107,7 @@
     <value name="stato-message-security" field="statoMessageSecurity" usage="optional" style="attribute"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
     <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
+    <value name="location" field="location" usage="optional" style="attribute"/>
     <value name="ricevuta-asincrona-simmetrica" field="ricevutaAsincronaSimmetrica" default="abilitato" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="ricevuta-asincrona-asimmetrica" field="ricevutaAsincronaAsimmetrica" default="abilitato" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="integrazione" field="integrazione" usage="optional" style="attribute"/>
@@ -134,7 +131,10 @@
   </mapping>
   <mapping name="azione" class="org.openspcoop2.core.config.PortaApplicativaAzione">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
-    <value name="nome" field="nome" usage="required" style="attribute"/>
+    <value name="identificazione" field="identificazione" default="static" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="pattern" field="pattern" usage="optional" style="attribute"/>
+    <value name="nome" field="nome" usage="optional" style="attribute"/>
+    <value name="force-wsdl-based" field="forceWsdlBased" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
   </mapping>
   <mapping name="servizio-applicativo" class="org.openspcoop2.core.config.ServizioApplicativo" abstract="false">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>

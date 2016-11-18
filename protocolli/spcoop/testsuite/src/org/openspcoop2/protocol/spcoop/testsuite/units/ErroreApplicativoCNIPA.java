@@ -144,7 +144,7 @@ public class ErroreApplicativoCNIPA {
 			boolean equalsMatch = true;
 			if(username==null){
 				idPorta = Utilities.testSuiteProperties.getIdentitaDefault_dominio();
-				codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_401_PD_INESISTENTE);
+				codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_401_PORTA_INESISTENTE);
 				msg = CostantiErroriIntegrazione.MSG_401_PD_INESISTENTE;
 				equalsMatch = false;
 			}
@@ -169,10 +169,10 @@ public class ErroreApplicativoCNIPA {
 				Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
 				Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
 				
-				byte [] xmlErroreApplicativo =org.openspcoop2.message.XMLUtils.getInstance().toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+				byte [] xmlErroreApplicativo =org.openspcoop2.message.xml.XMLUtils.getInstance().toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
 				response = msgRisposta.getSOAPBody();
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
 						idPorta,"RicezioneContenutiApplicativiSOAP", 
 						codice, 
 						msg, equalsMatch);	
@@ -277,7 +277,7 @@ public class ErroreApplicativoCNIPA {
 			boolean equalsMatch = true;
 			if(username==null){
 				idPorta = Utilities.testSuiteProperties.getIdentitaDefault_dominio();
-				codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_401_PD_INESISTENTE);
+				codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_401_PORTA_INESISTENTE);
 				msg = CostantiErroriIntegrazione.MSG_401_PD_INESISTENTE;
 				equalsMatch = false;
 			}
@@ -294,7 +294,7 @@ public class ErroreApplicativoCNIPA {
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
 						idPorta,"RicezioneContenutiApplicativiHTTP", 
 						codice, 
 						msg, equalsMatch);	
@@ -416,10 +416,10 @@ public class ErroreApplicativoCNIPA {
 				Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
 				Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
 				
-				byte [] xmlErroreApplicativo =org.openspcoop2.message.XMLUtils.getInstance().toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+				byte [] xmlErroreApplicativo =org.openspcoop2.message.xml.XMLUtils.getInstance().toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
 				response = msgRisposta.getSOAPBody();
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
 						idPorta,"RicezioneContenutiApplicativiSOAP", 
 						codice, 
 						msg, equalsMatch);	
@@ -525,7 +525,7 @@ public class ErroreApplicativoCNIPA {
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
 						idPorta,"RicezioneContenutiApplicativiHTTP", 
 						codice, 
 						msg, equalsMatch);	
@@ -730,7 +730,7 @@ public class ErroreApplicativoCNIPA {
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
 
-				Element fault = org.openspcoop2.message.XMLUtils.getInstance().newElement(xmlErroreApplicativo);
+				Element fault = org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo);
 				Assert.assertTrue("Fault".equals(fault.getLocalName()));
 				Assert.assertTrue("http://schemas.xmlsoap.org/soap/envelope/".equals(fault.getNamespaceURI()));
 				
@@ -1125,7 +1125,7 @@ public class ErroreApplicativoCNIPA {
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
 
-				Element fault = org.openspcoop2.message.XMLUtils.getInstance().newElement(xmlErroreApplicativo);
+				Element fault = org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo);
 				Assert.assertTrue("Fault".equals(fault.getLocalName()));
 				Assert.assertTrue("http://schemas.xmlsoap.org/soap/envelope/".equals(fault.getNamespaceURI()));
 				
@@ -1287,10 +1287,10 @@ public class ErroreApplicativoCNIPA {
 				Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
 				Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
 				
-				byte [] xmlErroreApplicativo =org.openspcoop2.message.XMLUtils.getInstance().toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+				byte [] xmlErroreApplicativo =org.openspcoop2.message.xml.XMLUtils.getInstance().toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
 				response = msgRisposta.getSOAPBody();
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
 						idPorta,"InoltroBuste", 
 						codice, 
 						msg, equalsMatch);	
@@ -1396,7 +1396,7 @@ public class ErroreApplicativoCNIPA {
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
 						idPorta,"InoltroBuste", 
 						codice, 
 						msg, equalsMatch);	
@@ -1515,10 +1515,10 @@ public class ErroreApplicativoCNIPA {
 				Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
 				Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
 				
-				byte [] xmlErroreApplicativo =org.openspcoop2.message.XMLUtils.getInstance().toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+				byte [] xmlErroreApplicativo =org.openspcoop2.message.xml.XMLUtils.getInstance().toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
 				response = msgRisposta.getSOAPBody();
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
 						idPorta,"SbustamentoRisposte", 
 						codice, 
 						msg, equalsMatch);	
@@ -1624,7 +1624,7 @@ public class ErroreApplicativoCNIPA {
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
 						idPorta,"SbustamentoRisposte", 
 						codice, 
 						msg, equalsMatch);	
@@ -1747,10 +1747,10 @@ public class ErroreApplicativoCNIPA {
 				Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
 				Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
 				
-				byte [] xmlErroreApplicativo =org.openspcoop2.message.XMLUtils.getInstance().toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+				byte [] xmlErroreApplicativo =org.openspcoop2.message.xml.XMLUtils.getInstance().toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
 				response = msgRisposta.getSOAPBody();
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
 						idPorta,"InoltroBuste", 
 						codice, 
 						msg, equalsMatch);	
@@ -1857,7 +1857,7 @@ public class ErroreApplicativoCNIPA {
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
 						idPorta,"InoltroBuste", 
 						codice, 
 						msg, equalsMatch);	
@@ -1977,10 +1977,10 @@ public class ErroreApplicativoCNIPA {
 				Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
 				Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
 				
-				byte [] xmlErroreApplicativo =org.openspcoop2.message.XMLUtils.getInstance().toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+				byte [] xmlErroreApplicativo =org.openspcoop2.message.xml.XMLUtils.getInstance().toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
 				response = msgRisposta.getSOAPBody();
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
 						idPorta,"SbustamentoRisposte", 
 						codice, 
 						msg, equalsMatch);	
@@ -2087,7 +2087,7 @@ public class ErroreApplicativoCNIPA {
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
 						idPorta,"SbustamentoRisposte", 
 						codice, 
 						msg, equalsMatch);	

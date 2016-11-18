@@ -26,8 +26,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
-import org.openspcoop2.core.config.constants.PortaDelegataServizioIdentificazione;
-import org.openspcoop2.core.config.constants.PortaDelegataSoggettoErogatoreIdentificazione;
 
 /**
  * 

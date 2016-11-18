@@ -23,14 +23,11 @@ package org.openspcoop2.protocol.basic.validator;
 
 import java.util.Vector;
 
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-
-import org.slf4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.slf4j.Logger;
 
 /**
  * ValidazioneConSchema
@@ -63,7 +60,7 @@ public class ValidazioneConSchema implements
 	}
 
 	@Override
-	public void valida(OpenSPCoop2Message message,SOAPElement header, SOAPBody soapBody,
+	public void valida(OpenSPCoop2Message message,
 			boolean isErroreProcessamento,
 			boolean isErroreIntestazione,
 			boolean isMessaggioConAttachments, boolean validazioneManifestAttachments) throws ProtocolException {

@@ -20,25 +20,45 @@
  */
 package org.openspcoop2.core.eccezione.errore_applicativo;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class Soggetto.
+/** <p>Java class for soggetto complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="soggetto">
+ * 		&lt;sequence>
+ * 			&lt;element name="identificativo" type="{http://www.openspcoop2.org/core/eccezione/errore_applicativo}soggetto-identificativo" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="identificativo-porta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "soggetto", 
+  propOrder = {
+  	"identificativo",
+  	"identificativoPorta"
+  }
+)
+
+@XmlRootElement(name = "soggetto")
 
 public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected SoggettoIdentificativo identificativo;
-
-  protected String identificativoPorta;
-
-
   public Soggetto() {
   }
 
@@ -64,37 +84,26 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
     this.identificativo = identificativo;
   }
 
-  public String getIdentificativoPorta() {
-    if(this.identificativoPorta!=null && ("".equals(this.identificativoPorta)==false)){
-		return this.identificativoPorta.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getIdentificativoPorta() {
+    return this.identificativoPorta;
   }
 
-  public void setIdentificativoPorta(String identificativoPorta) {
+  public void setIdentificativoPorta(java.lang.String identificativoPorta) {
     this.identificativoPorta = identificativoPorta;
   }
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  @XmlTransient
+  private Long id;
 
-  public static final String IDENTIFICATIVO = "identificativo";
 
-  public static final String IDENTIFICATIVO_PORTA = "identificativoPorta";
+
+  @XmlElement(name="identificativo",required=true,nillable=false)
+  protected SoggettoIdentificativo identificativo;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="identificativo-porta",required=true,nillable=false)
+  protected java.lang.String identificativoPorta;
 
 }

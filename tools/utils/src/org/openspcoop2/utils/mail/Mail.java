@@ -24,7 +24,7 @@ package org.openspcoop2.utils.mail;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openspcoop2.utils.resources.SSLConfig;
+import org.openspcoop2.utils.transport.http.SSLConfig;
 
 /**
  * Mail

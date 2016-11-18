@@ -68,7 +68,7 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.message.ValidatoreXSD;
+import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
@@ -341,7 +341,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 			}
 
 			if(this.validazioneSemanticaDuranteModificaXML){
-				ValidazioneSemantica validazioneSemantica = new ValidazioneSemantica(this.openspcoop,this.tipiConnettori,this.tipiSoggetti,this.tipiServizi,
+				ValidazioneSemantica validazioneSemantica = new ValidazioneSemantica(this.openspcoop,this.tipiConnettori,
+						this.tipiSoggetti,this.tipiServiziSoap,this.tipiServiziRest,
 						this.tipoMsgDiagnosticiAppender,this.tipoTracciamentoAppender,
 						this.tipoAutenticazione,this.tipoAutorizzazione,
 						this.tipoAutorizzazioneContenuto,this.tipoAutorizzazioneBusteContenuto,
@@ -368,7 +369,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	private boolean validazioneSemanticaDuranteModificaXML = false;
 	private String[] tipiConnettori = null;
 	private String[] tipiSoggetti = null;
-	private String[] tipiServizi = null;
+	private String[] tipiServiziSoap = null;
+	private String[] tipiServiziRest = null;
 	private String[] tipoMsgDiagnosticiAppender = null;
 	private String[] tipoTracciamentoAppender = null;
 	private String[] tipoAutenticazione = null;
@@ -378,7 +380,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	private String[] tipoIntegrazionePD = null;
 	private String[] tipoIntegrazionePA = null;
 	public void abilitazioneValidazioneSemanticaDuranteModificaXML(String[] tipiConnettori,
-			String[] tipiSoggetti,String[] tipiServizi,
+			String[] tipiSoggetti,String[] tipiServiziSoap,String[] tipiServiziRest,
 			String[]tipoMsgDiagnosticiAppender,String[]tipoTracciamentoAppender,
 			String[]tipoAutenticazione,String[]tipoAutorizzazione,
 			String[] tipoAutorizzazioneContenuto,String[] tipoAutorizzazioneBusteContenuto,
@@ -387,7 +389,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		
 		this.tipiConnettori = tipiConnettori;
 		this.tipiSoggetti = tipiSoggetti;
-		this.tipiServizi = tipiServizi;
+		this.tipiServiziSoap = tipiServiziSoap;
+		this.tipiServiziRest = tipiServiziRest;
 		this.tipoMsgDiagnosticiAppender= tipoMsgDiagnosticiAppender;
 		this.tipoTracciamentoAppender=tipoTracciamentoAppender;
 		this.tipoAutenticazione=tipoAutenticazione;
@@ -446,10 +449,10 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	 * 
 	 */
 	@Override
-	public Soggetto getSoggetto(String location) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public Soggetto getSoggettoProprietarioPortaDelegata(String location) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		if(location == null)
-			throw new DriverConfigurazioneException("[getSoggetto] Parametro Non Validi");
+			throw new DriverConfigurazioneException("[getSoggettoProprietarioPortaDelegata] Parametro Non Validi");
 
 		refreshConfigurazioneXML();
 
@@ -473,7 +476,38 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 			}  
 		}  
 
-		throw new DriverConfigurazioneNotFound("[getSoggetto] Soggetto che possiede la porta delegata ["+location+"] non esistente");
+		throw new DriverConfigurazioneNotFound("[getSoggettoProprietarioPortaDelegata] Porta Delegata ["+location+"] non esistente");
+	}
+	
+	@Override
+	public Soggetto getSoggettoProprietarioPortaApplicativa(String location) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+
+		if(location == null)
+			throw new DriverConfigurazioneException("[getSoggettoProprietarioPortaApplicativa] Parametro Non Validi");
+
+		refreshConfigurazioneXML();
+
+		for(int i=0;i<this.openspcoop.sizeSoggettoList();i++){
+			Soggetto soggetto = this.openspcoop.getSoggetto(i);
+
+			//	ricerca PA
+			for(int j=0; j<soggetto.sizePortaApplicativaList() ; j++){
+
+				PortaApplicativa pa = soggetto.getPortaApplicativa(j);
+
+				// Prima controllo un eventuale location fornito. Poi controllo il nome della porta delegata.
+				if(pa.getLocation()!=null){
+					if(pa.getLocation().equals(location)){
+						return soggetto;
+					}
+				}
+				else if(location.equals(pa.getNome())){
+					return soggetto;
+				}
+			}  
+		}  
+
+		throw new DriverConfigurazioneNotFound("[getSoggettoProprietarioPortaApplicativa] Porta Applicativa ["+location+"] non esistente");
 	}
 
 	/**

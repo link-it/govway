@@ -48,7 +48,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.archive.Archive;
 import org.openspcoop2.protocol.sdk.archive.ArchiveMode;
-import org.openspcoop2.protocol.sdk.archive.IRegistryReader;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostantiArchivi;
 import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopContext;
 import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopUtilities;

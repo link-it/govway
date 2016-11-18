@@ -20,25 +20,45 @@
  */
 package org.openspcoop2.core.integrazione;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class EsitoRichiesta.
+/** <p>Java class for esito-richiesta complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="esito-richiesta">
+ * 		&lt;sequence>
+ * 			&lt;element name="identificativo-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * 		&lt;attribute name="stato" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "esito-richiesta", 
+  propOrder = {
+  	"identificativoMessaggio"
+  }
+)
+
+@XmlRootElement(name = "esito-richiesta")
 
 public class EsitoRichiesta extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected String identificativoMessaggio;
-
-  protected String stato;
-
-
   public EsitoRichiesta() {
   }
 
@@ -56,50 +76,47 @@ public class EsitoRichiesta extends org.openspcoop2.utils.beans.BaseBean impleme
 		this.id=new Long(-1);
   }
 
-  public String getIdentificativoMessaggio() {
-    if(this.identificativoMessaggio!=null && ("".equals(this.identificativoMessaggio)==false)){
-		return this.identificativoMessaggio.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getIdentificativoMessaggio() {
+    return this.identificativoMessaggio;
   }
 
-  public void setIdentificativoMessaggio(String identificativoMessaggio) {
+  public void setIdentificativoMessaggio(java.lang.String identificativoMessaggio) {
     this.identificativoMessaggio = identificativoMessaggio;
   }
 
-  public String getStato() {
-    if(this.stato!=null && ("".equals(this.stato)==false)){
-		return this.stato.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getStato() {
+    return this.stato;
   }
 
-  public void setStato(String stato) {
+  public void setStato(java.lang.String stato) {
     this.stato = stato;
   }
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  @XmlTransient
+  private Long id;
 
-  public static final String IDENTIFICATIVO_MESSAGGIO = "identificativoMessaggio";
+  private static org.openspcoop2.core.integrazione.model.EsitoRichiestaModel modelStaticInstance = null;
+  private static synchronized void initModelStaticInstance(){
+	  if(org.openspcoop2.core.integrazione.EsitoRichiesta.modelStaticInstance==null){
+  			org.openspcoop2.core.integrazione.EsitoRichiesta.modelStaticInstance = new org.openspcoop2.core.integrazione.model.EsitoRichiestaModel();
+	  }
+  }
+  public static org.openspcoop2.core.integrazione.model.EsitoRichiestaModel model(){
+	  if(org.openspcoop2.core.integrazione.EsitoRichiesta.modelStaticInstance==null){
+	  		initModelStaticInstance();
+	  }
+	  return org.openspcoop2.core.integrazione.EsitoRichiesta.modelStaticInstance;
+  }
 
-  public static final String STATO = "stato";
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="identificativo-messaggio",required=true,nillable=false)
+  protected java.lang.String identificativoMessaggio;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="stato",required=true)
+  protected java.lang.String stato;
 
 }

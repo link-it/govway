@@ -26,7 +26,7 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.CostantiPdD;
-import org.openspcoop2.utils.resources.RisorseJMXException;
+import org.openspcoop2.utils.jmx.RisorseJMXException;
 
 
 /**
@@ -36,7 +36,7 @@ import org.openspcoop2.utils.resources.RisorseJMXException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class GestoreRisorseJMX extends org.openspcoop2.utils.resources.GestoreRisorseJMX {
+public class GestoreRisorseJMX extends org.openspcoop2.utils.jmx.GestoreRisorseJMX {
 
 	public GestoreRisorseJMX() throws RisorseJMXException {
 		super();

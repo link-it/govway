@@ -35,8 +35,8 @@ import javax.naming.RefAddr;
 
 import org.openspcoop2.utils.UtilsAlreadyExistsException;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.jmx.RisorseJMXException;
 import org.openspcoop2.utils.resources.GestoreJNDI;
-import org.openspcoop2.utils.resources.RisorseJMXException;
 
 /**
  * DatasourceFactory
@@ -50,11 +50,11 @@ public class DataSourceFactory {
 	private static Hashtable<String, org.openspcoop2.utils.datasource.DataSource> mapUUIDtoDatasources = new Hashtable<String, org.openspcoop2.utils.datasource.DataSource>();
 	private static Hashtable<String, String> mapApplicativeIDtoUUID = new Hashtable<String, String>();
 	private static Hashtable<String, String> mapJndiNametoUUID = new Hashtable<String, String>();
-	private static org.openspcoop2.utils.resources.GestoreRisorseJMX gestoreRisorse = null;
+	private static org.openspcoop2.utils.jmx.GestoreRisorseJMX gestoreRisorse = null;
 	
 	private static synchronized void initGestoreRisorseJMX() throws RisorseJMXException{
 		if(gestoreRisorse==null)
-			gestoreRisorse = new org.openspcoop2.utils.resources.GestoreRisorseJMX();
+			gestoreRisorse = new org.openspcoop2.utils.jmx.GestoreRisorseJMX();
 	}
 	
 	public static int sizeDatasources(){

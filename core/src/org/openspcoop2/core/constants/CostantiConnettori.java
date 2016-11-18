@@ -21,7 +21,7 @@
 
 package org.openspcoop2.core.constants;
 
-import org.openspcoop2.utils.resources.SSLUtilities;
+import org.openspcoop2.utils.transport.http.SSLUtilities;
 
 /**
  * CostantiConnettori
@@ -31,16 +31,6 @@ import org.openspcoop2.utils.resources.SSLUtilities;
  * @version $Rev$, $Date$
  */
 public class CostantiConnettori {
-
-	/** HTTP HEADER */
-	
-	public final static String HEADER_HTTP_REDIRECT_LOCATION = "Location";
-	
-	public final static String HEADER_HTTP_AUTHORIZATION = "Authorization";
-	public final static String HEADER_HTTP_AUTHORIZATION_PREFIX_BASIC = "Basic ";
-	
-	// Check per evitare la coppia che ha come chiave null e come valore HTTP OK 200
-	public final static String HEADER_HTTP_RETURN_CODE = "ReturnCode";
 	
 	
 	/** COMMONS PROPERTIES */

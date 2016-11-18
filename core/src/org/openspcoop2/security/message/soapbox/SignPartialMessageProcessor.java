@@ -74,8 +74,8 @@ import org.adroitlogic.soapbox.SecurityConfig;
 import org.adroitlogic.soapbox.SecurityFailureException;
 import org.adroitlogic.soapbox.SignatureRequest;
 import org.apache.wss4j.common.WSS4JConstants;
-import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.XMLUtils;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.security.message.constants.WSSAttachmentsConstants;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.w3c.dom.Document;
@@ -112,8 +112,8 @@ public class SignPartialMessageProcessor implements Processor {
 	protected List<QName> signQNames;
     protected List<Boolean> elementsSignatureContent;
     protected List<AttachmentPart> signAttachments;
-    protected OpenSPCoop2Message message;
-	public void setMessage(OpenSPCoop2Message message) {
+    protected OpenSPCoop2SoapMessage message;
+	public void setMessage(OpenSPCoop2SoapMessage message) {
 		this.message = message;
 	}
 	protected String actor;

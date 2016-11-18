@@ -106,7 +106,7 @@ public interface IConnettore extends ICore {
      * 
      * @return location di inoltro del messaggio
      */
-    public String getLocation();
+    public String getLocation() throws ConnettoreException;
     
     /**
      * Ritorna l'eccezione in caso di errore di processamento

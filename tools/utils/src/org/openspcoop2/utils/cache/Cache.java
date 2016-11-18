@@ -44,8 +44,8 @@ import org.apache.jcs.engine.memory.behavior.IMemoryCache;
 import org.slf4j.Logger;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.resources.CollectionProperties;
-import org.openspcoop2.utils.resources.PropertiesUtilities;
+import org.openspcoop2.utils.properties.CollectionProperties;
+import org.openspcoop2.utils.properties.PropertiesUtilities;
 
 /**
  * Cache

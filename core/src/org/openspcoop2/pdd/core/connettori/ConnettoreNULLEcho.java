@@ -36,6 +36,8 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
@@ -73,26 +75,10 @@ import org.openspcoop2.utils.date.DateManager;
  */
 
 public class ConnettoreNULLEcho extends ConnettoreBase {
-
-	/** Logger utilizzato per debug. */
-	private ConnettoreLogger logger = null;
 	
 	public final static String LOCATION = "openspcoop2://echo";
     
-	/** Proprieta' del connettore */
-	private java.util.Hashtable<String,String> properties;
-	
-	/** Proprieta' urlBased che deve gestire il connettore */
-	private java.util.Properties propertiesUrlBased;
-	
-	/** Busta */
-	private Busta busta;
-	
-	/** Indicazione se siamo in modalita' debug */
-	private boolean debug = false;
 
-	/** Identificativo */
-	private String idMessaggio;
 	
 	
 
@@ -109,26 +95,10 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 	@Override
 	public boolean send(ConnettoreMsg request){
 
-		if(request==null){
-			this.errore = "Messaggio da consegnare is Null (ConnettoreMsg)";
+		if(this.initialize(request, false)==false){
 			return false;
 		}
 		
-		// Raccolta parametri per costruttore logger
-		this.properties = request.getConnectorProperties();
-		if(this.properties == null)
-			this.errore = "Proprieta' del connettore non definite";
-//		if(this.properties.size() == 0)
-//			this.errore = "Proprieta' del connettore non definite";
-		// - Busta
-		this.busta = request.getBusta();
-		if(this.busta!=null)
-			this.idMessaggio=this.busta.getID();
-		// - Debug mode
-		if(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG)!=null){
-			if("true".equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG).trim()))
-				this.debug = true;
-		}
 		
 		boolean generaTrasmissione = false;
 		if(this.properties.get(CostantiConnettori.CONNETTORE_NULL_ECHO_GENERA_TRASMISSIONE)!=null){
@@ -146,21 +116,10 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 				generaTrasmissioneAndataRitorno = true;
 		}
 		
-	
-		// Logger
-		this.logger = new ConnettoreLogger(this.debug, this.idMessaggio, this.getPddContext());
-				
-		// Raccolta altri parametri
-		
-		// Context per invocazioni handler
-		this.outRequestContext = request.getOutRequestContext();
-		this.msgDiagnostico = request.getMsgDiagnostico();
-		this.propertiesUrlBased = request.getPropertiesUrlBased();
 		
 		this.codice = 200;
 		DBManager dbManager = DBManager.getInstance();
 		Resource resource = null;
-		OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
 		
 		StatefulMessage state = new StatefulMessage(null, this.logger.getLogger());
 		
@@ -196,16 +155,17 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 			}
 			
 			ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
-			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(bin,notifierInputStreamParams,false,request.getRequestMessage().getContentType(),
-					null, 
-					properties.isFileCacheEnable(), properties.getAttachmentRepoDir(), properties.getFileThreshold());
+			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(this.requestMsg.getMessageType(),MessageRole.RESPONSE,
+					this.requestMsg.getContentType(),
+					bin,notifierInputStreamParams,
+					this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());
 			// Non funziona con gli attachments: this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(request.getRequestMessage().getVersioneSoap(),(bout.toByteArray()),notifierInputStreamParams);
 			if(pr.getParseException()!=null){
 				this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
 			}
 			this.responseMsg = pr.getMessage_throwParseException();
 			
-			validatoreSintattico = new ValidazioneSintattica(state,this.responseMsg, properties.isReadQualifiedAttribute(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD), protocolFactory); 
+			validatoreSintattico = new ValidazioneSintattica(state,this.responseMsg, this.openspcoopProperties.isReadQualifiedAttribute(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD), protocolFactory); 
 
 			if(validatoreSintattico.verifyProtocolPresence(TipoPdD.APPLICATIVA,null,false) && 
 					!"sdi".equals(protocolFactory.getProtocol())){ // evitare sdi per far funzionare il protocollo sdi con la sonda.
@@ -217,7 +177,7 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 				property.setValidazioneManifestAttachments(false);
 				
 				validatoreProtocollo = new Validatore(this.responseMsg,property,null,
-						properties.isReadQualifiedAttribute(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD), protocolFactory);
+						this.openspcoopProperties.isReadQualifiedAttribute(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD), protocolFactory);
 				
 				if(validatoreProtocollo.validazioneSintattica() == false){
 					throw new Exception("Busta non presente: "+validatoreProtocollo.getErrore().getDescrizione(protocolFactory));
@@ -251,12 +211,12 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 				// rimozione vecchia busta
 				Sbustamento sbustatore = new Sbustamento(protocolFactory);
 				headerProtocolloRisposta = sbustatore.sbustamento(state,this.responseMsg,busta,true, gestioneManifest, 
-						properties.getProprietaManifestAttachments(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD));
+						this.openspcoopProperties.getProprietaManifestAttachments(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD));
 				
 				// Creo busta di risposta solo se la busta di richiesta non conteneva una busta Errore
 				if(!isBustaSPCoopErrore){
 			
-					TipoOraRegistrazione tipoOraRegistrazione = properties.getTipoTempoBusta(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
+					TipoOraRegistrazione tipoOraRegistrazione = this.openspcoopProperties.getTipoTempoBusta(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
 					Busta bustaRisposta = busta.invertiBusta(tipoOraRegistrazione,protocolFactory.createTraduttore().toString(tipoOraRegistrazione));
 				
 					bustaRisposta.setProfiloDiCollaborazione(busta.getProfiloDiCollaborazione());
@@ -270,7 +230,7 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 					
 					if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY.equals(busta.getProfiloDiCollaborazione()) &&
 							busta.isConfermaRicezione() &&
-							properties.isGestioneRiscontri(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD)){
+							this.openspcoopProperties.isGestioneRiscontri(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD)){
 						// Attendono riscontro
 						Riscontro r = new Riscontro();
 						r.setID(busta.getID());
@@ -290,7 +250,7 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 					
 						// get database
 						try{
-							resource = dbManager.getResource(properties.getIdentitaPortaDefault(protocolFactory.getProtocol()),"ConnettoreNullEcho",busta.getID());
+							resource = dbManager.getResource(this.openspcoopProperties.getIdentitaPortaDefault(protocolFactory.getProtocol()),"ConnettoreNullEcho",busta.getID());
 						}catch(Exception e){
 							throw new Exception("Risorsa non ottenibile",e);
 						}
@@ -315,7 +275,7 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 						ProfiloDiCollaborazione profiloCollaborazione = new ProfiloDiCollaborazione(state,protocolFactory);
 						profiloCollaborazione.asincronoSimmetrico_registraRichiestaRicevuta(busta.getID(),busta.getCollaborazione(),
 								busta.getTipoServizioCorrelato(),busta.getServizioCorrelato(),true,
-								properties.getRepositoryIntervalloScadenzaMessaggi());
+								this.openspcoopProperties.getRepositoryIntervalloScadenzaMessaggi());
 					
 						// commit
 						try{
@@ -350,13 +310,13 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 						dominio = protocolFactory.createTraduttore().getIdentificativoPortaDefault(new IDSoggetto(busta.getTipoDestinatario(), busta.getDestinatario()));
 					}
 					String idBustaRisposta = null;
-					Imbustamento imbustatore = new Imbustamento(protocolFactory);
+					Imbustamento imbustatore = new Imbustamento(this.logger.getLogger(), protocolFactory);
 					try{
 						idBustaRisposta = 
 							imbustatore.buildID(state,new IDSoggetto(busta.getTipoDestinatario(), busta.getDestinatario(), dominio), 
 									null, 
-									properties.getGestioneSerializableDB_AttesaAttiva(),
-									properties.getGestioneSerializableDB_CheckInterval(),
+									this.openspcoopProperties.getGestioneSerializableDB_AttesaAttiva(),
+									this.openspcoopProperties.getGestioneSerializableDB_CheckInterval(),
 									Boolean.FALSE);
 					}catch(Exception e){
 						// rilancio
@@ -414,13 +374,16 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 					Integrazione integrazione = new Integrazione();
 					integrazione.setStateless(true);
 					imbustatore.imbustamento(state,this.responseMsg,bustaRisposta,integrazione,gestioneManifest,false,false,
-							properties.getProprietaManifestAttachments(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD));
+							this.openspcoopProperties.getProprietaManifestAttachments(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD));
 
 				}
 				else{
 					// rimuovo il FAULT.
-					if(this.responseMsg.getSOAPBody()!=null && this.responseMsg.getSOAPBody().hasFault()){
-						this.responseMsg.getSOAPBody().removeChild(this.responseMsg.getSOAPBody().getFault());
+					if(this.responseMsg instanceof OpenSPCoop2SoapMessage){
+						OpenSPCoop2SoapMessage soapMessage = this.responseMsg.castAsSoap();
+						if(soapMessage.getSOAPBody()!=null && soapMessage.getSOAPBody().hasFault()){
+							soapMessage.getSOAPBody().removeChild(soapMessage.getSOAPBody().getFault());
+						}
 					}
 				}
 			}
@@ -453,7 +416,7 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 			// *** GB ***
 			
 			// release database
-			dbManager.releaseResource(properties.getIdentitaPortaDefault(protocol),
+			dbManager.releaseResource(this.openspcoopProperties.getIdentitaPortaDefault(protocol),
 					"ConnettoreNullEcho", resource);
 		}
 		
@@ -466,13 +429,8 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
      * @return location di inoltro del messaggio
      */
     @Override
-	public String getLocation(){
-		if(this.propertiesUrlBased != null && this.propertiesUrlBased.size()>0){
-			return ConnettoreUtils.buildLocationWithURLBasedParameter(this.propertiesUrlBased, LOCATION);
-		}
-		else{
-			return LOCATION;
-		}
+	public String getLocation() throws ConnettoreException {
+    	return ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, this.propertiesUrlBased, LOCATION);
     }
     
 }

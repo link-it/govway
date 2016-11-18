@@ -26,7 +26,7 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.openspcoop2.protocol.trasparente.constants.TrasparenteCostanti;
-import org.openspcoop2.utils.resources.InstanceProperties;
+import org.openspcoop2.utils.properties.InstanceProperties;
 
 
 /**

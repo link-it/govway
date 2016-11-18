@@ -26,6 +26,7 @@ import javax.xml.soap.SOAPHeaderElement;
 import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
@@ -110,7 +111,7 @@ public class GestoreIntegrazionePDWSAddressing extends AbstractCore implements I
 						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
 					)
 			){
-				this.utilities.readHeader(inRequestPDMessage.getMessage(), integrazione,
+				this.utilities.readHeader(inRequestPDMessage.getMessage().castAsSoap(), integrazione,
 						UtilitiesIntegrazioneWSAddressing.INTERPRETA_COME_ID_APPLICATIVO, 
 						this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
 			}
@@ -133,7 +134,7 @@ public class GestoreIntegrazionePDWSAddressing extends AbstractCore implements I
 						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
 					)
 			){
-				this.utilities.deleteHeader(inRequestPDMessage.getMessage(),this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
+				this.utilities.deleteHeader(inRequestPDMessage.getMessage().castAsSoap(),this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
 			}
 			else{
 				this.gestoreIntegrazioneOpenSPCoopV2.deleteInRequestHeader(inRequestPDMessage);
@@ -155,7 +156,7 @@ public class GestoreIntegrazionePDWSAddressing extends AbstractCore implements I
 						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
 					)
 			){
-				this.utilities.updateHeader(inRequestPDMessage.getMessage(), 
+				this.utilities.updateHeader(inRequestPDMessage.getMessage().castAsSoap(), 
 					inRequestPDMessage.getSoggettoPropeprietarioPortaDelegata(), idServizio, idMessaggio, 
 					servizioApplicativo, correlazioneApplicativa, this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());  // namespace
 			}
@@ -192,7 +193,7 @@ public class GestoreIntegrazionePDWSAddressing extends AbstractCore implements I
 						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
 					)
 			){
-				this.utilities.readHeader(inResponsePDMessage.getMessage(), integrazione,
+				this.utilities.readHeader(inResponsePDMessage.getMessage().castAsSoap(), integrazione,
 					UtilitiesIntegrazioneWSAddressing.INTERPRETA_COME_ID_BUSTA, 
 					this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
 			}
@@ -215,7 +216,7 @@ public class GestoreIntegrazionePDWSAddressing extends AbstractCore implements I
 						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
 					)
 			){
-				this.utilities.deleteHeader(inResponsePDMessage.getMessage(),this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
+				this.utilities.deleteHeader(inResponsePDMessage.getMessage().castAsSoap(),this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
 			}
 			else{
 				this.gestoreIntegrazioneOpenSPCoopV2.deleteInResponseHeader(inResponsePDMessage);
@@ -237,7 +238,7 @@ public class GestoreIntegrazionePDWSAddressing extends AbstractCore implements I
 						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
 					)
 			){
-				this.utilities.updateHeader(inResponsePDMessage.getMessage(),
+				this.utilities.updateHeader(inResponsePDMessage.getMessage().castAsSoap(),
 					inResponsePDMessage.getSoggettoMittente(),
 					inResponsePDMessage.getServizio(),
 					idMessageRequest,  idMessageResponse,
@@ -269,7 +270,12 @@ public class GestoreIntegrazionePDWSAddressing extends AbstractCore implements I
 					)
 			){
 				
-				OpenSPCoop2Message message = outResponsePDMessage.getMessage();
+				OpenSPCoop2Message msgParam = outResponsePDMessage.getMessage();
+				OpenSPCoop2SoapMessage message = null;
+				if(msgParam!=null){
+					message = msgParam.castAsSoap();
+				}
+				
 				if(message.getSOAPHeader() == null){
 					message.getSOAPPart().getEnvelope().addHeader();
 				}

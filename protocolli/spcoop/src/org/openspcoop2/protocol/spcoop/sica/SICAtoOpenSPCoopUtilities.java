@@ -59,8 +59,8 @@ import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.wsdl.RegistroOpenSPCoopUtilities;
-import org.openspcoop2.message.SoapUtils;
-import org.openspcoop2.message.XMLUtils;
+import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
@@ -511,7 +511,7 @@ public class SICAtoOpenSPCoopUtilities {
 	public static String readConnettoreFromWsdlImplementativo(byte[] wsdlImplementativo) throws SICAToOpenSPCoopUtilitiesException{
 		
 		try{
-			AbstractXMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();		
+			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();		
 			Document documentLogico = xmlUtils.newDocument(wsdlImplementativo);
 			
 			NodeList list = documentLogico.getChildNodes();
@@ -557,7 +557,7 @@ public class SICAtoOpenSPCoopUtilities {
 	public static byte[] saveConnettoreIntoWsdlImplementativo(byte[] wsdlImplementativo,String url) throws SICAToOpenSPCoopUtilitiesException{
 		
 		try{
-			AbstractXMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();		
+			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();		
 			Document documentLogico = xmlUtils.newDocument(wsdlImplementativo);
 			
 			NodeList list = documentLogico.getChildNodes();
@@ -1488,7 +1488,7 @@ public class SICAtoOpenSPCoopUtilities {
 		aspsOpenSPCoop.setServizio(servizioOpenSPCoop);
 		
 		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
-		AbstractXMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();		
+		AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();		
 		WSDLUtilities wsdlUtilities = WSDLUtilities.getInstance(xmlUtils);
 				
 		/* Metadati presenti nel Manifest dell'Accordo di Cooperazione. */
@@ -1855,7 +1855,7 @@ public class SICAtoOpenSPCoopUtilities {
 		boolean wsdlEmptySeNonDefiniti = sicaToOpenspcoopContext.isWSDL_XSD_accordiParteSpecifica_wsdlEmpty();
 		boolean openspcoopToSicaEliminazioneImportParteComune = sicaToOpenspcoopContext.isWSDL_XSD_accordiParteSpecifica_openspcoopToSica_eliminazioneImportParteComune();
 		
-		AbstractXMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();		
+		AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();		
 		
 		Servizio servizioOpenSPCoop = aspsOpenspcoop.getServizio();
 		

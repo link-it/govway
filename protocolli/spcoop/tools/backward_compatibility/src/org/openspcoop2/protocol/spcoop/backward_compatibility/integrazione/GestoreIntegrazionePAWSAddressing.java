@@ -25,6 +25,7 @@ import javax.xml.soap.SOAPHeaderElement;
 
 import org.slf4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
@@ -111,7 +112,7 @@ public class GestoreIntegrazionePAWSAddressing extends AbstractCore implements I
 						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
 					)
 				){
-				this.utilities.readHeader(inRequestPAMessage.getMessage(), integrazione, UtilitiesIntegrazioneWSAddressing.INTERPRETA_COME_ID_BUSTA, this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
+				this.utilities.readHeader(inRequestPAMessage.getMessage().castAsSoap(), integrazione, UtilitiesIntegrazioneWSAddressing.INTERPRETA_COME_ID_BUSTA, this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
 			}
 			else{
 				this.gestoreIntegrazioneOpenSPCoopV2.readInRequestHeader(integrazione, inRequestPAMessage);
@@ -132,7 +133,7 @@ public class GestoreIntegrazionePAWSAddressing extends AbstractCore implements I
 						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
 					)
 				){
-				this.utilities.deleteHeader(inRequestPAMessage.getMessage(), this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
+				this.utilities.deleteHeader(inRequestPAMessage.getMessage().castAsSoap(), this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
 			}
 			else{
 				this.gestoreIntegrazioneOpenSPCoopV2.deleteInRequestHeader(inRequestPAMessage);
@@ -154,7 +155,7 @@ public class GestoreIntegrazionePAWSAddressing extends AbstractCore implements I
 						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
 					)
 				){
-				this.utilities.updateHeader(inRequestPAMessage.getMessage(), 
+				this.utilities.updateHeader(inRequestPAMessage.getMessage().castAsSoap(), 
 						inRequestPAMessage.getSoggettoMittente(),
 						inRequestPAMessage.getServizio(),
 						idMessaggio, servizioApplicativo, correlazioneApplicativa, this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
@@ -184,9 +185,14 @@ public class GestoreIntegrazionePAWSAddressing extends AbstractCore implements I
 					)
 				){
 			
-				OpenSPCoop2Message message = outRequestPAMessage.getMessage();
-				if(message.getSOAPHeader() == null){
-					message.getSOAPPart().getEnvelope().addHeader();
+				OpenSPCoop2Message msgParam = outRequestPAMessage.getMessage();
+				OpenSPCoop2SoapMessage msg = null;
+				if(msgParam!=null){
+					msg = msgParam.castAsSoap();
+				}
+				
+				if(msg.getSOAPHeader() == null){
+					msg.getSOAPPart().getEnvelope().addHeader();
 				}
 				
 				if(integrazione.getBusta()!=null){
@@ -196,24 +202,24 @@ public class GestoreIntegrazionePAWSAddressing extends AbstractCore implements I
 					if(hBusta.getDestinatario()!=null && hBusta.getServizio()!=null){
 						
 						// To
-						SOAPHeaderElement wsaTO = UtilitiesIntegrazioneWSAddressing.buildWSATo(message,this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione(),hBusta.getTipoDestinatario(),hBusta.getDestinatario(), hBusta.getTipoServizio(), hBusta.getServizio());
-						message.addHeaderElement(message.getSOAPHeader(), wsaTO);
+						SOAPHeaderElement wsaTO = UtilitiesIntegrazioneWSAddressing.buildWSATo(msg,this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione(),hBusta.getTipoDestinatario(),hBusta.getDestinatario(), hBusta.getTipoServizio(), hBusta.getServizio());
+						msg.addHeaderElement(msg.getSOAPHeader(), wsaTO);
 						
 						// Action
 						if(hBusta.getAzione()!=null){
-							SOAPHeaderElement wsaAction = UtilitiesIntegrazioneWSAddressing.buildWSAAction(message,this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione(),hBusta.getTipoDestinatario(),hBusta.getDestinatario(), hBusta.getTipoServizio(), hBusta.getServizio(),hBusta.getAzione());
-							message.addHeaderElement(message.getSOAPHeader(), wsaAction);
+							SOAPHeaderElement wsaAction = UtilitiesIntegrazioneWSAddressing.buildWSAAction(msg,this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione(),hBusta.getTipoDestinatario(),hBusta.getDestinatario(), hBusta.getTipoServizio(), hBusta.getServizio(),hBusta.getAzione());
+							msg.addHeaderElement(msg.getSOAPHeader(), wsaAction);
 						}
 					}
 					
 					if(hBusta.getMittente()!=null){
-						SOAPHeaderElement wsaFROM = UtilitiesIntegrazioneWSAddressing.buildWSAFrom(message,this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione(),integrazione.getServizioApplicativo(),hBusta.getTipoMittente(),hBusta.getMittente());
-						message.addHeaderElement(message.getSOAPHeader(), wsaFROM);
+						SOAPHeaderElement wsaFROM = UtilitiesIntegrazioneWSAddressing.buildWSAFrom(msg,this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione(),integrazione.getServizioApplicativo(),hBusta.getTipoMittente(),hBusta.getMittente());
+						msg.addHeaderElement(msg.getSOAPHeader(), wsaFROM);
 					}
 						
 					if(hBusta.getID()!=null){
-						SOAPHeaderElement wsaID = UtilitiesIntegrazioneWSAddressing.buildWSAID(message,this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione(),hBusta.getID());
-						message.addHeaderElement(message.getSOAPHeader(), wsaID);
+						SOAPHeaderElement wsaID = UtilitiesIntegrazioneWSAddressing.buildWSAID(msg,this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione(),hBusta.getID());
+						msg.addHeaderElement(msg.getSOAPHeader(), wsaID);
 					}
 					
 					if(hBusta.getRiferimentoMessaggio()!=null || hBusta.getIdCollaborazione()!=null){
@@ -221,8 +227,8 @@ public class GestoreIntegrazionePAWSAddressing extends AbstractCore implements I
 						if(rif==null){
 							rif = hBusta.getIdCollaborazione();
 						}
-						SOAPHeaderElement wsaRelatesTo = UtilitiesIntegrazioneWSAddressing.buildWSARelatesTo(message,this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione(),rif);
-						message.addHeaderElement(message.getSOAPHeader(), wsaRelatesTo);
+						SOAPHeaderElement wsaRelatesTo = UtilitiesIntegrazioneWSAddressing.buildWSARelatesTo(msg,this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione(),rif);
+						msg.addHeaderElement(msg.getSOAPHeader(), wsaRelatesTo);
 					}
 				}
 				
@@ -251,7 +257,7 @@ public class GestoreIntegrazionePAWSAddressing extends AbstractCore implements I
 						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
 					)
 				){
-				this.utilities.readHeader(inResponsePAMessage.getMessage(), integrazione, UtilitiesIntegrazioneWSAddressing.INTERPRETA_COME_ID_APPLICATIVO, this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
+				this.utilities.readHeader(inResponsePAMessage.getMessage().castAsSoap(), integrazione, UtilitiesIntegrazioneWSAddressing.INTERPRETA_COME_ID_APPLICATIVO, this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
 			}
 			else{
 				this.gestoreIntegrazioneOpenSPCoopV2.readInResponseHeader(integrazione, inResponsePAMessage);
@@ -272,7 +278,7 @@ public class GestoreIntegrazionePAWSAddressing extends AbstractCore implements I
 						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
 					)
 				){
-				this.utilities.deleteHeader(inResponsePAMessage.getMessage(), this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
+				this.utilities.deleteHeader(inResponsePAMessage.getMessage().castAsSoap(), this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());
 			}
 			else{
 				this.gestoreIntegrazioneOpenSPCoopV2.deleteInResponseHeader(inResponsePAMessage);
@@ -294,7 +300,7 @@ public class GestoreIntegrazionePAWSAddressing extends AbstractCore implements I
 						(this.backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaApplicativa() && this.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
 					)
 				){
-				this.utilities.updateHeader(inResponsePAMessage.getMessage(), 
+				this.utilities.updateHeader(inResponsePAMessage.getMessage().castAsSoap(), 
 						inResponsePAMessage.getSoggettoMittente(),
 						inResponsePAMessage.getServizio(),
 						idMessageRequest, idMessageResponse, servizioApplicativo, correlazioneApplicativa, this.backwardCompatibilityProperties.getHeaderSoapActorIntegrazione());

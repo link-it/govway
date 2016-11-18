@@ -25,11 +25,11 @@
 package org.openspcoop2.pdd.core.connettori;
 
 import org.openspcoop2.core.constants.CostantiConnettori;
-import org.openspcoop2.pdd.services.RicezioneBuste;
-import org.openspcoop2.pdd.services.RicezioneBusteSOAP;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
-import org.openspcoop2.pdd.services.connector.DirectVMConnectorInMessage;
-import org.openspcoop2.pdd.services.connector.DirectVMConnectorOutMessage;
+import org.openspcoop2.pdd.services.connector.messages.DirectVMConnectorInMessage;
+import org.openspcoop2.pdd.services.connector.messages.DirectVMConnectorOutMessage;
+import org.openspcoop2.pdd.services.core.RicezioneBuste;
+import org.openspcoop2.pdd.services.service.RicezioneBusteService;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
 
@@ -55,7 +55,7 @@ public class ConnettoreRicezioneBusteDirectVM extends AbstractConnettoreDirectVM
 	}
 	@Override
 	public IDService getIdModuloAsIDService() {
-		return IDService.PORTA_APPLICATIVA_SOAP;
+		return IDService.PORTA_APPLICATIVA;
 	}
 	@Override
 	public String getFunction(){
@@ -63,7 +63,7 @@ public class ConnettoreRicezioneBusteDirectVM extends AbstractConnettoreDirectVM
 	}
 	@Override
 	public void process(DirectVMConnectorInMessage inMessage,DirectVMConnectorOutMessage outMessage) throws ConnectorException{
-		RicezioneBusteSOAP soapConnector = new RicezioneBusteSOAP();
+		RicezioneBusteService soapConnector = new RicezioneBusteService(null); // il generatore di errori verrà creato direttamente dal servizio
 		soapConnector.process(inMessage, outMessage);
 	}
 	@Override

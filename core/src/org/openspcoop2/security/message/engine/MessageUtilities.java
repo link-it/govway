@@ -31,11 +31,11 @@ import java.util.Vector;
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
 
-import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.SoapUtils;
-import org.openspcoop2.message.reference.AttachmentReference;
-import org.openspcoop2.message.reference.ElementReference;
-import org.openspcoop2.message.reference.Reference;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.message.soap.reference.AttachmentReference;
+import org.openspcoop2.message.soap.reference.ElementReference;
+import org.openspcoop2.message.soap.reference.Reference;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.SubErrorCodeSecurity;
@@ -53,7 +53,7 @@ import org.w3c.dom.NodeList;
 public class MessageUtilities {
 
 	
-	public static void checkEncryptionPartElements(Map<QName, QName> notResolved, OpenSPCoop2Message message, List<SubErrorCodeSecurity> listaErroriInElementi) throws SecurityException {
+	public static void checkEncryptionPartElements(Map<QName, QName> notResolved, OpenSPCoop2SoapMessage message, List<SubErrorCodeSecurity> listaErroriInElementi) throws SecurityException {
 		
 		try{
 			
@@ -98,7 +98,7 @@ public class MessageUtilities {
 		}
 	}
 
-	public static Map<QName, QName> checkEncryptSignatureParts(MessageSecurityContext messageSecurityContext,List<Reference> elementsToClean, OpenSPCoop2Message message,
+	public static Map<QName, QName> checkEncryptSignatureParts(MessageSecurityContext messageSecurityContext,List<Reference> elementsToClean, OpenSPCoop2SoapMessage message,
 			List<SubErrorCodeSecurity> codiciErrore, QName qnameSecurity) throws SecurityException {
 		
 		try{

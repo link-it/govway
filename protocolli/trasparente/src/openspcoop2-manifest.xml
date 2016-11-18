@@ -1,39 +1,142 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openspcoop2 xmlns="http://www.openspcoop2.org/protocol/manifest">
 
-    <protocolName>trasparente</protocolName>
+    <protocol name="trasparente">
+    	<factory>org.openspcoop2.protocol.trasparente.TrasparenteFactory</factory>
+    </protocol>
+    
 
-    <factory>org.openspcoop2.protocol.trasparente.TrasparenteFactory</factory>
+
+    <binding>
+    	<soap soap11="true" soap11_withAttachments="true" soap11_mtom="true"
+    		  soap12="true" soap12_withAttachments="true" soap12_mtom="true">
+    		<integrationError>
+    			<internal>
+    				<default httpReturnCode="500" messageType="soap" />
+    			</internal>	
+    			<external>
+    				<default httpReturnCode="500" messageType="soap" />
+    			</external>	
+    		</integrationError>
+    		<mediaTypeCollection>
+    			<mediaType messageType="soap11">text/xml</mediaType>
+    			<default messageType="soap12"/>
+    		</mediaTypeCollection>
+    	</soap>
+    	<rest xml="true" json="true" 
+    		  binary="true" mimeMultipart="true">
+    		<integrationError>
+    			<internal>
+	    			<authentication httpReturnCode="401" messageType="sameAsRequest" />
+	    			<authorization httpReturnCode="403" messageType="sameAsRequest" />
+	    			<notFound httpReturnCode="404" messageType="sameAsRequest" />
+	    			<badRequest httpReturnCode="400" messageType="sameAsRequest" />
+	    			<internalError httpReturnCode="500" messageType="sameAsRequest" />
+	    			<default messageType="xml" />
+    			</internal>
+    			<external>
+	    			<authentication httpReturnCode="401" messageType="none" />
+	    			<authorization httpReturnCode="403" messageType="none" />
+	    			<notFound httpReturnCode="404" messageType="none" />
+	    			<badRequest httpReturnCode="400" messageType="none" />
+	    			<internalError httpReturnCode="500" messageType="none" />
+	    			<default messageType="xml" />
+    			</external>
+    		</integrationError>
+    		<integrationError>
+    			<authentication httpReturnCode="401" messageType="none" />
+    			<authorization httpReturnCode="403" messageType="none" />
+    			<notFound httpReturnCode="404" messageType="none" />
+    			<badRequest httpReturnCode="400" messageType="none" />
+    			<internalError httpReturnCode="500" messageType="sameAsRequest" />
+    			<default messageType="xml" />
+    		</integrationError>
+    		<mediaTypeCollection>
+    			<mediaType messageType="xml">text/xml</mediaType>
+    			<mediaType messageType="xml">application/xml</mediaType>
+    			<mediaType messageType="xml" regExpr="true">.*\+xml</mediaType>
+    			<mediaType messageType="json">text/json</mediaType>
+				<mediaType messageType="json">text/x-json</mediaType>
+    			<mediaType messageType="json">application/json</mediaType>
+    			<mediaType messageType="json">application/x-json</mediaType>
+    			<mediaType messageType="json" regExpr="true">.*\+json</mediaType>
+    			<mediaType messageType="mimeMultipart" regExpr="true">multipart\/related*</mediaType>
+    			<default messageType="binary"/>
+    			<undefined messageType="binary"/>
+    		</mediaTypeCollection>
+    	</rest>
+    </binding>
 
     <web>
-        <context>proxy</context>
+        <context name="api"/>
+
+		<!-- Altri esempi -->
+        <context name="soap" binding="soap">
+        	<soapMediaTypeCollection>
+    			<mediaType messageType="soap11">text/xml</mediaType>
+    			<default messageType="soap12"/>
+    		</soapMediaTypeCollection>
+        </context>
+        <context name="soap11" binding="soap">
+        	<soapMediaTypeCollection>
+    			<default messageType="soap11"/>
+    		</soapMediaTypeCollection>
+        </context>
+        <context name="soap12" binding="soap">
+        	<soapMediaTypeCollection>
+    			<default messageType="soap12"/>
+    		</soapMediaTypeCollection>
+        </context>
+        <context name="rest" binding="rest"/>
+ 		<context name="binary" binding="rest">
+ 			<restMediaTypeCollection>
+ 				<default messageType="binary"/>
+ 				<undefined messageType="binary"/>
+ 			</restMediaTypeCollection>
+ 		</context>
+
     </web>
 
-    <registroServizi>
+    <registry>
 
-        <soggetti>
-            <tipi>
-                <tipo>PROXY</tipo>
-            </tipi>
-        </soggetti>
+        <organization>
+            <types>
+            	<type name="API"/>
+            </types>
+        </organization>
 
-        <servizi>
-            <tipi>
-                <tipo>PROXY</tipo>
-            </tipi>
-        </servizi>
+        <service>
+            <types>
+                <type name="SOAP" binding="soap"/>
+                <type name="SOAP11" binding="soap">
+	                <soapMediaTypeCollection>
+		    			<default messageType="soap11"/>
+		    		</soapMediaTypeCollection>
+                </type>
+                <type name="SOAP12" binding="soap">
+	                <soapMediaTypeCollection>
+		    			<default messageType="soap12"/>
+		    		</soapMediaTypeCollection>
+                </type>
+                <type name="REST" binding="rest"/>
+                <!--  Altri esempi -->
+                <type name="XML" binding="rest">
+                	<restMediaTypeCollection>
+ 						<default messageType="xml"/>
+ 						<undefined messageType="xml"/>
+ 					</restMediaTypeCollection>
+                </type>
+            </types>
+        </service>
 
-        <versioni>
-            <versione>1.0</versione>
-        </versioni>
+        <versions>
+        	<version name="1.0"/>
+        </versions>
 
-    </registroServizi>
+    </registry>
 
-    <urlMapping>
+    <urlMapping type="PROPERTIES">
         <file>/trasparente-url-mapping.properties</file>
-        <tipo>PROPERTIES</tipo>
     </urlMapping>
-
-    <binding soap11="true" soap12="true"/>
 
 </openspcoop2>

@@ -234,23 +234,33 @@ public class TestValidazioneSemantica {
 				tipoSoggettiArray[i]=tipoSoggettiArray[i].trim();
 			}
 			
-			String tipiServizi = commonProperties.getProperty("openspcoop2.tipiServizi");
-			if(tipiServizi==null){
+			String tipiServiziSoap = commonProperties.getProperty("openspcoop2.tipiServizi.soap");
+			if(tipiServiziSoap==null){
 				throw new Exception("Non sono stati definiti i tipi di Servizi supportati");
 			}else{
-				tipiServizi = tipiServizi.trim();
+				tipiServiziSoap = tipiServiziSoap.trim();
 			}
-			String [] tipoServiziArray = tipiServizi.split(",");
-			for (int i = 0; i < tipoServiziArray.length; i++) {
-				tipoServiziArray[i]=tipoServiziArray[i].trim();
+			String [] tipoServiziSoapArray = tipiServiziSoap.split(",");
+			for (int i = 0; i < tipoServiziSoapArray.length; i++) {
+				tipoServiziSoapArray[i]=tipoServiziSoapArray[i].trim();
 			}
 			
+			String tipiServiziRest = commonProperties.getProperty("openspcoop2.tipiServizi.rest");
+			if(tipiServiziRest==null){
+				throw new Exception("Non sono stati definiti i tipi di Servizi supportati");
+			}else{
+				tipiServiziRest = tipiServiziRest.trim();
+			}
+			String [] tipoServiziRestArray = tipiServiziRest.split(",");
+			for (int i = 0; i < tipoServiziRestArray.length; i++) {
+				tipoServiziRestArray[i]=tipoServiziRestArray[i].trim();
+			}
 			
 			String tipiDiagnosticiAppender = commonProperties.getProperty("openspcoop2.diagnostici.appender");
 			if(tipiDiagnosticiAppender==null){
 				throw new Exception("Non sono stati definiti i tipi di appender supportati (diagnostici)");
 			}else{
-				tipiDiagnosticiAppender = tipiServizi.trim();
+				tipiDiagnosticiAppender = tipiDiagnosticiAppender.trim();
 			}
 			String [] tipiDiagnosticiAppenderArray = tipiDiagnosticiAppender.split(",");
 			for (int i = 0; i < tipiDiagnosticiAppenderArray.length; i++) {
@@ -261,7 +271,7 @@ public class TestValidazioneSemantica {
 			if(tipiTracceAppender==null){
 				throw new Exception("Non sono stati definiti i tipi di appender supportati (tracce)");
 			}else{
-				tipiTracceAppender = tipiServizi.trim();
+				tipiTracceAppender = tipiTracceAppender.trim();
 			}
 			String [] tipiTracceAppenderArray = tipiTracceAppender.split(",");
 			for (int i = 0; i < tipiTracceAppenderArray.length; i++) {
@@ -334,7 +344,8 @@ public class TestValidazioneSemantica {
 				tipiIntegrazionePAArray[i]=tipiIntegrazionePAArray[i].trim();
 			}
 						
-			ValidazioneSemantica validatore = new ValidazioneSemantica(configurazione,tipoConnettoriArray,tipoSoggettiArray,tipoServiziArray,
+			ValidazioneSemantica validatore = new ValidazioneSemantica(configurazione,tipoConnettoriArray,
+					tipoSoggettiArray,tipoServiziSoapArray,tipoServiziRestArray,
 					tipiDiagnosticiAppenderArray,tipiTracceAppenderArray,
 					tipiAutenticazioneArray,tipiAutorizzazioneArray,
 					tipiAutorizzazioneContenutoPDArray,tipiAutorizzazioneContenutoPAArray,

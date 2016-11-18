@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.openspcoop2.protocol.manifest.constants.Costanti;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
 
 /**
  * URL Protocol Context
@@ -37,7 +38,7 @@ import org.openspcoop2.utils.UtilsException;
  */
 
 
-public class URLProtocolContext extends org.openspcoop2.utils.resources.TransportRequestContext implements java.io.Serializable {
+public class URLProtocolContext extends HttpServletTransportRequestContext implements java.io.Serializable {
 
 
 	/**
@@ -52,18 +53,13 @@ public class URLProtocolContext extends org.openspcoop2.utils.resources.Transpor
 	public static final String IntegrationManager_ENGINE = "IntegrationManagerEngine";
 	public static final String IntegrationManager_FUNCTION_PD = "IntegrationManager/PD";
 	public static final String IntegrationManager_FUNCTION_MessageBox = "IntegrationManager/MessageBox";
-	public static final String API_ENGINE = "API";
-	public static final String API_FUNCTION_PD = "PD";
-	public static final String API_FUNCTION_PA = "PA";
-	public static final String API_FUNCTION_MessageBox = "MessageBox";
 	public static final String CheckPdD_FUNCTION = "checkPdD";
 	
-	
-	public URLProtocolContext() throws ProtocolException, UtilsException{
+	public URLProtocolContext() throws UtilsException{
 		super();
 	}
-	public URLProtocolContext(HttpServletRequest req,Logger logCore) throws ProtocolException, UtilsException{
-		super();
+	public URLProtocolContext(HttpServletRequest req,Logger logCore, boolean debug) throws ProtocolException, UtilsException{
+		super(req, logCore, debug);
 		
 		String servletContext = req.getContextPath();
 		String urlInvocazione = req.getRequestURI();
@@ -72,26 +68,7 @@ public class URLProtocolContext extends org.openspcoop2.utils.resources.Transpor
 			logCore.debug("SERVLET CONTEXT ["+servletContext+"] URL["+urlInvocazione+"]");
 			// es SERVLET CONTEXT [/openspcoop2] URL[/openspcoop2/dededede]
 		try {
-			
-			// Properties FORM Based
-			this.parametersFormBased = new java.util.Properties();	       
-			java.util.Enumeration<?> en = req.getParameterNames();
-			while(en.hasMoreElements()){
-				String nomeProperty = (String)en.nextElement();
-				this.parametersFormBased.setProperty(nomeProperty,req.getParameter(nomeProperty));
-				//log.info("Proprieta': nome["+nomeProperty+"] valore["+req.getParameter(nomeProperty)+"]");
-			}
-
-			// Hedear Trasporto
-			this.parametersTrasporto = new java.util.Properties();	    
-			java.util.Enumeration<?> enTrasporto = req.getHeaderNames();
-			while(enTrasporto.hasMoreElements()){
-				String nomeProperty = (String)enTrasporto.nextElement();
-				this.parametersTrasporto.setProperty(nomeProperty,req.getHeader(nomeProperty));
-				//log.info("Proprieta' Trasporto: nome["+nomeProperty+"] valore["+req.getHeader(nomeProperty)+"]");
-			}
-			
-			
+					
 			// Altro...
 			if(urlInvocazione.startsWith(servletContext+"/")==false){
 				throw new Exception("OpenSPCoop2 [protocol/]service to be used not supplied (context error)");
@@ -125,7 +102,6 @@ public class URLProtocolContext extends org.openspcoop2.utils.resources.Transpor
 					protocollo.equals(URLProtocolContext.PD_FUNCTION) || 
 					protocollo.equals(URLProtocolContext.PDtoSOAP_FUNCTION) || 
 					protocollo.equals(URLProtocolContext.IntegrationManager_FUNCTION) || 
-					protocollo.equals(URLProtocolContext.API_ENGINE) || 
 					protocollo.equals(URLProtocolContext.CheckPdD_FUNCTION)) {
 				// ContextProtocol Empty
 				if(logCore!=null)
@@ -156,35 +132,13 @@ public class URLProtocolContext extends org.openspcoop2.utils.resources.Transpor
 				}
 
 			}
-			
-			// calcolo eventuale contesto api
-			if(URLProtocolContext.API_ENGINE.equals(function)){
-				if(functionParameters==null){
-					throw new Exception("API Service invocation without context (PD,PA,MessageBox)");
-				}
-				String functionApi = functionParameters;
-				if(functionParameters.contains("/")){
-					functionApi = functionParameters.substring(0, functionParameters.indexOf("/"));
-				}
-				if(API_FUNCTION_PD.equals(functionApi) || API_FUNCTION_PA.equals(functionApi) || API_FUNCTION_MessageBox.equals(functionApi) ){
-					function = URLProtocolContext.API_ENGINE+"/"+functionApi;
-					if(functionParameters.length()>(functionApi+"/").length()){
-						functionParameters = functionParameters.substring((functionApi+"/").length());	
-					}else{
-						functionParameters = null;
-					}
-				}
-			}
-			
+						
 			if(logCore!=null)
 				logCore.debug("Elaborazione finale Protocollo["+protocollo+"] Function["+function+"] FunctionParameters ["+functionParameters+"]");
 			
-			this.webContext = req.getContextPath();
-			this.requestURI = req.getRequestURI();
 			this.protocol = protocollo;
 			this.function = function;
-			this.functionParameters = functionParameters;
-			
+			this.functionParameters = functionParameters;		
 			
 		}catch(Exception e){
 			throw new ProtocolException(e.getMessage(),e);

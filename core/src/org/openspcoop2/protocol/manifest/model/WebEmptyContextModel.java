@@ -41,7 +41,12 @@ public class WebEmptyContextModel extends AbstractModel<WebEmptyContext> {
 	
 		super();
 	
-		this.ENABLED = new Field("enabled",boolean.class,"webEmptyContext",WebEmptyContext.class);
+		this.SUB_CONTEXT = new org.openspcoop2.protocol.manifest.model.SubContextMappingModel(new Field("subContext",org.openspcoop2.protocol.manifest.SubContextMapping.class,"WebEmptyContext",WebEmptyContext.class));
+		this.EMPTY_SUB_CONTEXT = new org.openspcoop2.protocol.manifest.model.EmptySubContextMappingModel(new Field("emptySubContext",org.openspcoop2.protocol.manifest.EmptySubContextMapping.class,"WebEmptyContext",WebEmptyContext.class));
+		this.SOAP_MEDIA_TYPE_COLLECTION = new org.openspcoop2.protocol.manifest.model.SoapMediaTypeCollectionModel(new Field("soapMediaTypeCollection",org.openspcoop2.protocol.manifest.SoapMediaTypeCollection.class,"WebEmptyContext",WebEmptyContext.class));
+		this.REST_MEDIA_TYPE_COLLECTION = new org.openspcoop2.protocol.manifest.model.RestMediaTypeCollectionModel(new Field("restMediaTypeCollection",org.openspcoop2.protocol.manifest.RestMediaTypeCollection.class,"WebEmptyContext",WebEmptyContext.class));
+		this.ENABLED = new Field("enabled",boolean.class,"WebEmptyContext",WebEmptyContext.class);
+		this.BINDING = new Field("binding",java.lang.String.class,"WebEmptyContext",WebEmptyContext.class);
 	
 	}
 	
@@ -49,13 +54,28 @@ public class WebEmptyContextModel extends AbstractModel<WebEmptyContext> {
 	
 		super(father);
 	
-		this.ENABLED = new ComplexField(father,"enabled",boolean.class,"webEmptyContext",WebEmptyContext.class);
+		this.SUB_CONTEXT = new org.openspcoop2.protocol.manifest.model.SubContextMappingModel(new ComplexField(father,"subContext",org.openspcoop2.protocol.manifest.SubContextMapping.class,"WebEmptyContext",WebEmptyContext.class));
+		this.EMPTY_SUB_CONTEXT = new org.openspcoop2.protocol.manifest.model.EmptySubContextMappingModel(new ComplexField(father,"emptySubContext",org.openspcoop2.protocol.manifest.EmptySubContextMapping.class,"WebEmptyContext",WebEmptyContext.class));
+		this.SOAP_MEDIA_TYPE_COLLECTION = new org.openspcoop2.protocol.manifest.model.SoapMediaTypeCollectionModel(new ComplexField(father,"soapMediaTypeCollection",org.openspcoop2.protocol.manifest.SoapMediaTypeCollection.class,"WebEmptyContext",WebEmptyContext.class));
+		this.REST_MEDIA_TYPE_COLLECTION = new org.openspcoop2.protocol.manifest.model.RestMediaTypeCollectionModel(new ComplexField(father,"restMediaTypeCollection",org.openspcoop2.protocol.manifest.RestMediaTypeCollection.class,"WebEmptyContext",WebEmptyContext.class));
+		this.ENABLED = new ComplexField(father,"enabled",boolean.class,"WebEmptyContext",WebEmptyContext.class);
+		this.BINDING = new ComplexField(father,"binding",java.lang.String.class,"WebEmptyContext",WebEmptyContext.class);
 	
 	}
 	
 	
 
+	public org.openspcoop2.protocol.manifest.model.SubContextMappingModel SUB_CONTEXT = null;
+	 
+	public org.openspcoop2.protocol.manifest.model.EmptySubContextMappingModel EMPTY_SUB_CONTEXT = null;
+	 
+	public org.openspcoop2.protocol.manifest.model.SoapMediaTypeCollectionModel SOAP_MEDIA_TYPE_COLLECTION = null;
+	 
+	public org.openspcoop2.protocol.manifest.model.RestMediaTypeCollectionModel REST_MEDIA_TYPE_COLLECTION = null;
+	 
 	public IField ENABLED = null;
+	 
+	public IField BINDING = null;
 	 
 
 	@Override

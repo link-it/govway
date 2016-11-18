@@ -24,6 +24,7 @@ package org.openspcoop2.core.registry.driver;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
@@ -38,6 +39,7 @@ import org.openspcoop2.core.registry.constants.BindingUse;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
+import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.constants.TipiDocumentoCoordinamento;
 import org.openspcoop2.core.registry.constants.TipiDocumentoLivelloServizio;
@@ -117,22 +119,35 @@ public class ValidazioneSemantica {
 		return bf.toString();
 	}
 
-	/** Lista di tipi di servizi validi */
-	private List<String> tipoServizi = new ArrayList<String>();
-	/** Lista dei tipi di servizi ammessi */
-	private String getTipoServizi(){
+	/** Lista di tipi di servizi SOAP validi */
+	private List<String> tipoServiziSoap = new ArrayList<String>();
+	/** Lista dei tipi di servizi SOAP ammessi */
+	private String getTipoServiziSoap(){
 		StringBuffer bf = new StringBuffer();
-		for(int i=0; i<this.tipoServizi.size(); i++){
+		for(int i=0; i<this.tipoServiziSoap.size(); i++){
 			if(i>0)
 				bf.append(",");
-			bf.append(this.tipoServizi.get(i));
+			bf.append(this.tipoServiziSoap.get(i));
+		}
+		return bf.toString();
+	}
+	
+	/** Lista di tipi di servizi REST validi */
+	private List<String> tipoServiziRest = new ArrayList<String>();
+	/** Lista dei tipi di servizi REST ammessi */
+	private String getTipoServiziRest(){
+		StringBuffer bf = new StringBuffer();
+		for(int i=0; i<this.tipoServiziRest.size(); i++){
+			if(i>0)
+				bf.append(",");
+			bf.append(this.tipoServiziRest.get(i));
 		}
 		return bf.toString();
 	}
 
 
 	public ValidazioneSemantica(org.openspcoop2.core.registry.RegistroServizi registro,boolean checkEsistenzaFileDefinitoTramiteURI,
-			String[]tipoConnettori,String[]tipoSoggetti,String[]tipoServizi,Logger log) throws DriverRegistroServiziException{
+			String[]tipoConnettori,String[]tipoSoggetti,String [] tipiServiziSoapValidi, String [] tipiServiziRestValidi,Logger log) throws DriverRegistroServiziException{
 		this.registro = registro;
 		this.checkEsistenzaFileDefinitoTramiteURI = checkEsistenzaFileDefinitoTramiteURI;
 		this.log = log;
@@ -143,6 +158,7 @@ public class ValidazioneSemantica {
 		}else{
 			throw new DriverRegistroServiziException("Tipo di connettori ammissibili non definiti");
 		}
+		
 		if(tipoSoggetti!=null && tipoSoggetti.length>0 ){
 			for(int i=0; i<tipoSoggetti.length; i++){
 				this.tipoSoggetti.add(tipoSoggetti[i]);
@@ -150,20 +166,35 @@ public class ValidazioneSemantica {
 		}else{
 			throw new DriverRegistroServiziException("Tipo di soggetti ammissibili non definiti");
 		}
-		if(tipoServizi!=null && tipoServizi.length>0 ){
-			for(int i=0; i<tipoServizi.length; i++){
-				this.tipoServizi.add(tipoServizi[i]);
+		
+		boolean tipiSoapNonEsistenti = false;
+		if(tipiServiziSoapValidi!=null && tipiServiziSoapValidi.length>0 ){
+			for(int i=0; i<tipiServiziSoapValidi.length; i++){
+				this.tipoServiziSoap.add(tipiServiziSoapValidi[i]);
 			}
 		}else{
-			throw new DriverRegistroServiziException("Tipo di servizi ammissibili non definiti");
+			tipiSoapNonEsistenti = true;
+		}
+		
+		boolean tipiRestNonEsistenti = false;
+		if(tipiServiziRestValidi!=null && tipiServiziRestValidi.length>0 ){
+			for(int i=0; i<tipiServiziRestValidi.length; i++){
+				this.tipoServiziRest.add(tipiServiziRestValidi[i]);
+			}
+		}else{
+			tipiRestNonEsistenti = true;
+		}
+		
+		if(tipiSoapNonEsistenti && tipiRestNonEsistenti){
+			throw new DriverRegistroServiziException("Almeno dei tipo di servizi Soap o Rest ammissibili devono essere definiti");
 		}
 	}
 	
 	
 	
 	public ValidazioneSemantica(org.openspcoop2.core.registry.RegistroServizi registro,boolean checkEsistenzaFileDefinitoTramiteURI,
-			String[]tipoConnettori,String[]tipoSoggetti,String[]tipoServizi) throws DriverRegistroServiziException{
-		this(registro,checkEsistenzaFileDefinitoTramiteURI,tipoConnettori,tipoSoggetti,tipoServizi,null);
+			String[]tipoConnettori,String[]tipoSoggetti,String [] tipiServiziSoapValidi, String [] tipiServiziRestValidi) throws DriverRegistroServiziException{
+		this(registro,checkEsistenzaFileDefinitoTramiteURI,tipoConnettori,tipoSoggetti,tipiServiziSoapValidi,tipiServiziRestValidi,null);
 	}
 
 	private void printMsg(String msg){
@@ -174,6 +205,7 @@ public class ValidazioneSemantica {
 		}
 	}
 
+	private Hashtable<String, ServiceBinding> mappingAccordiToServiceBinding;
 
 	public void validazioneSemantica(boolean showIDOggettiAnalizzati) throws DriverRegistroServiziException {
 
@@ -192,11 +224,13 @@ public class ValidazioneSemantica {
 			printMsg("\n\n------------------------------------AccordiServizioParteComune("+this.registro.sizeAccordoServizioParteComuneList()+")-----------------------------------------------------");
 
 		// accordi di servizio
+		this.mappingAccordiToServiceBinding = new Hashtable<String, ServiceBinding>();
 		for(int i=0; i<this.registro.sizeAccordoServizioParteComuneList();i++){
 			AccordoServizioParteComune as = this.registro.getAccordoServizioParteComune(i);
 			if(showIDOggettiAnalizzati)
 				printMsg("Accordo di servizio parte comune: "+this.idAccordoFactory.getUriFromAccordo(as));
 			validaAccordoServizioParteComune(as);
+			this.mappingAccordiToServiceBinding.put(this.idAccordoFactory.getUriFromAccordo(as), as.getServiceBinding());
 		}
 
 		if(showIDOggettiAnalizzati)
@@ -1172,8 +1206,19 @@ public class ValidazioneSemantica {
 		
 		
 		// Il tipo deve essere uno tra quelli definiti in openspcoop2.properties. Ci puoi accedere attraverso il comando: org.openspcoop.pdd.config.OpenSPCoopProperties.getInstance().getTipiServizi()
-		if(this.tipoServizi.contains(serv.getTipo())==false){
-			this.errori.add("Il tipo del servizio "+serv.getTipo()+"/"+serv.getNome()+" non è valido (tipi utilizzabili: "+this.getTipoServizi()+")");
+		ServiceBinding binding = this.mappingAccordiToServiceBinding.get(asps.getAccordoServizioParteComune());
+		if(binding==null){
+			this.errori.add("Il servizio "+serv.getTipo()+"/"+serv.getNome()+" implementa un accordo parte comune ["+asps.getAccordoServizioParteComune()+"] non esistente");
+		}
+		if(ServiceBinding.SOAP.equals(binding)){
+			if(this.tipoServiziSoap.contains(serv.getTipo())==false){
+				this.errori.add("Il tipo del servizio "+serv.getTipo()+"/"+serv.getNome()+" non è valido (tipi utilizzabili: "+this.getTipoServiziSoap()+")");
+			}
+		}
+		else{
+			if(this.tipoServiziRest.contains(serv.getTipo())==false){
+				this.errori.add("Il tipo del servizio "+serv.getTipo()+"/"+serv.getNome()+" non è valido (tipi utilizzabili: "+this.getTipoServiziRest()+")");
+			}
 		}
 
 		// Il nome del servizio deve possedere i stessi vincoli presenti per il nome di un servizio inserito nell'interfaccia grafica regserv.

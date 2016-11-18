@@ -58,7 +58,7 @@ public class WrapperHttpServletRequest implements HttpServletRequest {
 		Web web = protocolFactory.getManifest().getWeb();
 		if(web.sizeContextList()>0){
 			// uso il primo contesto trovato, uno vale l'altro
-			this.protocolContext = web.getContext(0);
+			this.protocolContext = web.getContext(0).getName();
 		}
 		else if(web.getEmptyContext()!=null && web.getEmptyContext().getEnabled()){
 			this.protocolContext = null; // empty context

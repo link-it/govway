@@ -20,25 +20,41 @@
  */
 package org.openspcoop2.core.eccezione.details;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class DominioSoggetto.
+/** <p>Java class for dominio-soggetto complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="dominio-soggetto">
+ * 		<xsd:simpleContent>
+ * 			<xsd:extension base="{http://www.w3.org/2001/XMLSchema}string">
+ * 				&lt;attribute name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 			</xsd:extension>
+ * 		</xsd:simpleContent>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "dominio-soggetto")
+
+@XmlRootElement(name = "dominio-soggetto")
 
 public class DominioSoggetto extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  public String base;
-
-  protected String tipo;
-
-
   public DominioSoggetto() {
   }
 
@@ -57,44 +73,39 @@ public class DominioSoggetto extends org.openspcoop2.utils.beans.BaseBean implem
   }
 
   public String getBase() {
-    return this.base;
-  }
-
-  public void setBase(String base) {
-    this.base=base;
-  }
-
-  public String getTipo() {
-    if(this.tipo!=null && ("".equals(this.tipo)==false)){
-		return this.tipo.trim();
+    if(this.base!=null && ("".equals(this.base)==false)){
+		return this.base.trim();
 	}else{
 		return null;
 	}
 
   }
 
-  public void setTipo(String tipo) {
+  public void setBase(String base) {
+    this.base=base;
+  }
+
+  public java.lang.String getTipo() {
+    return this.tipo;
+  }
+
+  public void setTipo(java.lang.String tipo) {
     this.tipo = tipo;
   }
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  @XmlTransient
+  private Long id;
 
-  public static final String BASE = "base";
 
-  public static final String TIPO = "tipo";
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @javax.xml.bind.annotation.XmlValue()
+  public String base;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="tipo",required=true)
+  protected java.lang.String tipo;
 
 }

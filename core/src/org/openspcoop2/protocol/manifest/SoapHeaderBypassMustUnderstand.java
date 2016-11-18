@@ -31,14 +31,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/** <p>Java class for soapHeaderBypassMustUnderstand complex type.
+/** <p>Java class for SoapHeaderBypassMustUnderstand complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="soapHeaderBypassMustUnderstand">
+ * &lt;complexType name="SoapHeaderBypassMustUnderstand">
  * 		&lt;sequence>
- * 			&lt;element name="header" type="{http://www.openspcoop2.org/protocol/manifest}soapHeaderBypassMustUnderstandHeader" minOccurs="1" maxOccurs="unbounded"/>
+ * 			&lt;element name="header" type="{http://www.openspcoop2.org/protocol/manifest}SoapHeaderBypassMustUnderstandHeader" minOccurs="1" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -50,13 +50,13 @@ import java.util.List;
  * */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "soapHeaderBypassMustUnderstand", 
+@XmlType(name = "SoapHeaderBypassMustUnderstand", 
   propOrder = {
   	"header"
   }
 )
 
-@XmlRootElement(name = "soapHeaderBypassMustUnderstand")
+@XmlRootElement(name = "SoapHeaderBypassMustUnderstand")
 
 public class SoapHeaderBypassMustUnderstand extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public SoapHeaderBypassMustUnderstand() {

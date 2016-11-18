@@ -111,10 +111,9 @@ public class NotifierInputStream extends InputStream {
 		
 		// Set content type of the stream
 		//try{
-		if(contentType==null){
-			throw new ParseException("ContentType not defined in args");
+		if(contentType!=null){
+			this.contentType = new ContentType(contentType);
 		}
-		this.contentType = new ContentType(contentType);
 		//}catch(Exception e){
 		//	throw new IOException(e.getMessage(),e);
 		//}

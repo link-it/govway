@@ -20,8 +20,7 @@
  */
 package org.openspcoop2.protocol.spcoop.testsuite.core;
 
-import org.openspcoop2.message.Costanti;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
 
 /**

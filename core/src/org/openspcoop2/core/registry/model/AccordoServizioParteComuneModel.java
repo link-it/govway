@@ -57,6 +57,7 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 		this.BYTE_SPECIFICA_CONVERSAZIONE_CONCETTUALE = new Field("byte-specifica-conversazione-concettuale",byte[].class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.BYTE_SPECIFICA_CONVERSAZIONE_EROGATORE = new Field("byte-specifica-conversazione-erogatore",byte[].class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.BYTE_SPECIFICA_CONVERSAZIONE_FRUITORE = new Field("byte-specifica-conversazione-fruitore",byte[].class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
+		this.SERVICE_BINDING = new Field("service-binding",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.NOME = new Field("nome",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.PROFILO_COLLABORAZIONE = new Field("profilo-collaborazione",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
@@ -98,6 +99,7 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 		this.BYTE_SPECIFICA_CONVERSAZIONE_CONCETTUALE = new ComplexField(father,"byte-specifica-conversazione-concettuale",byte[].class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.BYTE_SPECIFICA_CONVERSAZIONE_EROGATORE = new ComplexField(father,"byte-specifica-conversazione-erogatore",byte[].class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.BYTE_SPECIFICA_CONVERSAZIONE_FRUITORE = new ComplexField(father,"byte-specifica-conversazione-fruitore",byte[].class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
+		this.SERVICE_BINDING = new ComplexField(father,"service-binding",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.PROFILO_COLLABORAZIONE = new ComplexField(father,"profilo-collaborazione",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
@@ -152,6 +154,8 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 	public IField BYTE_SPECIFICA_CONVERSAZIONE_EROGATORE = null;
 	 
 	public IField BYTE_SPECIFICA_CONVERSAZIONE_FRUITORE = null;
+	 
+	public IField SERVICE_BINDING = null;
 	 
 	public IField NOME = null;
 	 

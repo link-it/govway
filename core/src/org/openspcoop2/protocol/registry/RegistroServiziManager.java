@@ -114,16 +114,16 @@ public class RegistroServiziManager {
 	}
 	
 	public void validazioneSemantica(boolean controlloTotale,boolean verificaURI, 
-			String[] tipiSoggettiValidi,String [] tipiServiziValidi, String[] tipiConnettoriValidi,
+			String[] tipiSoggettiValidi,String [] tipiServiziSoapValidi, String [] tipiServiziRestValidi, String[] tipiConnettoriValidi,
 			boolean validazioneSemanticaAbilitataXML,boolean validazioneSemanticaAbilitataAltriRegistri,
 			Logger logConsole) throws CoreException{
-		this.registroServiziReader.validazioneSemantica(controlloTotale, verificaURI, tipiSoggettiValidi, tipiServiziValidi, 
+		this.registroServiziReader.validazioneSemantica(controlloTotale, verificaURI, tipiSoggettiValidi, tipiServiziSoapValidi, tipiServiziRestValidi,
 				tipiConnettoriValidi, validazioneSemanticaAbilitataXML, validazioneSemanticaAbilitataAltriRegistri, logConsole);
 	}
 	
 	public void setValidazioneSemanticaModificaRegistroServiziXML(boolean verificaURI, 
-			String[] tipiSoggettiValidi,String [] tipiServiziValidi, String[] tipiConnettoriValidi) throws CoreException{
-		this.registroServiziReader.setValidazioneSemanticaModificaRegistroServiziXML(verificaURI, tipiSoggettiValidi, tipiServiziValidi, tipiConnettoriValidi);
+			String[] tipiSoggettiValidi,String [] tipiServiziSoapValidi, String [] tipiServiziRestValidi, String[] tipiConnettoriValidi) throws CoreException{
+		this.registroServiziReader.setValidazioneSemanticaModificaRegistroServiziXML(verificaURI, tipiSoggettiValidi, tipiServiziSoapValidi, tipiServiziRestValidi, tipiConnettoriValidi);
 	}
 	
 	public void verificaConsistenzaRegistroServizi() throws DriverRegistroServiziException {

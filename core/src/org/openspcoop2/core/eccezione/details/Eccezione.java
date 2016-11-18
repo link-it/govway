@@ -20,31 +20,42 @@
  */
 package org.openspcoop2.core.eccezione.details;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+import org.openspcoop2.core.eccezione.details.constants.TipoEccezione;
 import java.io.Serializable;
 
 
-/** <p>Java class Eccezione.
+/** <p>Java class for eccezione complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="eccezione">
+ * 		&lt;attribute name="codice" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="rilevanza" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="contesto-codifica" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="tipo" type="{http://www.openspcoop2.org/core/eccezione/details}TipoEccezione" use="required"/>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "eccezione")
+
+@XmlRootElement(name = "eccezione")
 
 public class Eccezione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected String codice;
-
-  protected String descrizione;
-
-  protected String rilevanza;
-
-  protected String contestoCodifica;
-
-  protected String tipo;
-
-
   public Eccezione() {
   }
 
@@ -62,95 +73,85 @@ public class Eccezione extends org.openspcoop2.utils.beans.BaseBean implements S
 		this.id=new Long(-1);
   }
 
-  public String getCodice() {
-    if(this.codice!=null && ("".equals(this.codice)==false)){
-		return this.codice.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getCodice() {
+    return this.codice;
   }
 
-  public void setCodice(String codice) {
+  public void setCodice(java.lang.String codice) {
     this.codice = codice;
   }
 
-  public String getDescrizione() {
-    if(this.descrizione!=null && ("".equals(this.descrizione)==false)){
-		return this.descrizione.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getDescrizione() {
+    return this.descrizione;
   }
 
-  public void setDescrizione(String descrizione) {
+  public void setDescrizione(java.lang.String descrizione) {
     this.descrizione = descrizione;
   }
 
-  public String getRilevanza() {
-    if(this.rilevanza!=null && ("".equals(this.rilevanza)==false)){
-		return this.rilevanza.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getRilevanza() {
+    return this.rilevanza;
   }
 
-  public void setRilevanza(String rilevanza) {
+  public void setRilevanza(java.lang.String rilevanza) {
     this.rilevanza = rilevanza;
   }
 
-  public String getContestoCodifica() {
-    if(this.contestoCodifica!=null && ("".equals(this.contestoCodifica)==false)){
-		return this.contestoCodifica.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getContestoCodifica() {
+    return this.contestoCodifica;
   }
 
-  public void setContestoCodifica(String contestoCodifica) {
+  public void setContestoCodifica(java.lang.String contestoCodifica) {
     this.contestoCodifica = contestoCodifica;
   }
 
-  public String getTipo() {
-    if(this.tipo!=null && ("".equals(this.tipo)==false)){
-		return this.tipo.trim();
-	}else{
-		return null;
-	}
-
+  public void set_value_tipo(String value) {
+    this.tipo = (TipoEccezione) TipoEccezione.toEnumConstantFromString(value);
   }
 
-  public void setTipo(String tipo) {
+  public String get_value_tipo() {
+    if(this.tipo == null){
+    	return null;
+    }else{
+    	return this.tipo.toString();
+    }
+  }
+
+  public org.openspcoop2.core.eccezione.details.constants.TipoEccezione getTipo() {
+    return this.tipo;
+  }
+
+  public void setTipo(org.openspcoop2.core.eccezione.details.constants.TipoEccezione tipo) {
     this.tipo = tipo;
   }
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  @XmlTransient
+  private Long id;
 
-  public static final String CODICE = "codice";
 
-  public static final String DESCRIZIONE = "descrizione";
 
-  public static final String RILEVANZA = "rilevanza";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="codice",required=true)
+  protected java.lang.String codice;
 
-  public static final String CONTESTO_CODIFICA = "contestoCodifica";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="descrizione",required=true)
+  protected java.lang.String descrizione;
 
-  public static final String TIPO = "tipo";
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="rilevanza",required=false)
+  protected java.lang.String rilevanza;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="contesto-codifica",required=false)
+  protected java.lang.String contestoCodifica;
+
+  @XmlTransient
+  protected java.lang.String _value_tipo;
+
+  @XmlAttribute(name="tipo",required=true)
+  protected TipoEccezione tipo;
 
 }

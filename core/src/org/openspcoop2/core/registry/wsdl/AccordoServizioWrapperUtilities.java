@@ -36,7 +36,6 @@ import javax.wsdl.extensions.soap.SOAPHeaderFault;
 import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.xml.soap.SOAPEnvelope;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Message;
 import org.openspcoop2.core.registry.MessagePart;
@@ -47,12 +46,15 @@ import org.openspcoop2.core.registry.constants.BindingUse;
 import org.openspcoop2.core.registry.driver.AccordoServizioUtils;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.XMLUtils;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
-import org.openspcoop2.utils.resources.HttpUtilities;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.wsdl.WSDLUtilities;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 
 
@@ -184,7 +186,7 @@ public class AccordoServizioWrapperUtilities {
 	}
 	private javax.wsdl.Definition buildWsdl(String url) throws DriverRegistroServiziException{
 		try{
-			org.openspcoop2.message.XMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
+			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 						
 			// Costruttore WSDL
 			Document document = null;
@@ -615,39 +617,52 @@ public class AccordoServizioWrapperUtilities {
 	public String searchOperationName(boolean isRichiesta, OpenSPCoop2Message message) throws DriverRegistroServiziException{
 		return searchOperationName(isRichiesta, null, message);
 	}
-	public String searchOperationName(boolean isRichiesta, String portType, OpenSPCoop2Message message) throws DriverRegistroServiziException{
+	public String searchOperationName(boolean isRichiesta, String portType, OpenSPCoop2Message messageParam) throws DriverRegistroServiziException{
 		
 		try{
 			if(this.accordoServizioWrapper==null){
 				throw new DriverRegistroServiziException("Accordo Servizio Wrapper non definito");
 			}
-			if(message==null || message.getSOAPPart()==null){
+			if(messageParam==null){
 				throw new DriverRegistroServiziException("Messaggio non fornito");
 			}
-			SOAPEnvelope envelope = message.getSOAPPart().getEnvelope();
-			if(envelope==null){
-				throw new DriverRegistroServiziException("Envelope non fornita");
-			}
-			WSDLValidator wsdlValidator = new WSDLValidator(message.getVersioneSoap(),envelope, this.xmlUtils, this.accordoServizioWrapper, this.logger);
-			for (int i = 0; i < this.accordoServizioWrapper.sizePortTypeList(); i++) {
-				PortType pt = this.accordoServizioWrapper.getPortType(i);
-				if(portType!=null){
-					if(pt.getNome().equals(portType)==false){
-						continue;
-					}
-				}
-				for (int j = 0; j < pt.sizeAzioneList(); j++) {
-					Operation op = pt.getAzione(j);
-					try{
-						//System.out.println("Check azione ["+op.getNome()+"]...");
-						wsdlValidator.wsdlConformanceCheck(isRichiesta, null, op.getNome(), false, true);
-						return op.getNome();
-					}catch(Exception e){
-						this.logger.debug("@@@searchOperationName Azione ["+op.getNome()+"] mismatch: "+e.getMessage());
-						//e.printStackTrace(System.out);
-					}
-				}
+		
+			if(ServiceBinding.SOAP.equals(messageParam.getServiceBinding())==false){
 				
+				OpenSPCoop2SoapMessage message = messageParam.castAsSoap();
+			
+				if(message.getSOAPPart()==null){
+					throw new DriverRegistroServiziException("Messaggio (SOAPPArt) non fornito");
+				}
+				SOAPEnvelope envelope = message.getSOAPPart().getEnvelope();
+				if(envelope==null){
+					throw new DriverRegistroServiziException("Envelope non fornita");
+				}
+				WSDLValidator wsdlValidator = new WSDLValidator(message.getMessageType(),envelope, this.xmlUtils, this.accordoServizioWrapper, this.logger);
+				for (int i = 0; i < this.accordoServizioWrapper.sizePortTypeList(); i++) {
+					PortType pt = this.accordoServizioWrapper.getPortType(i);
+					if(portType!=null){
+						if(pt.getNome().equals(portType)==false){
+							continue;
+						}
+					}
+					for (int j = 0; j < pt.sizeAzioneList(); j++) {
+						Operation op = pt.getAzione(j);
+						try{
+							//System.out.println("Check azione ["+op.getNome()+"]...");
+							wsdlValidator.wsdlConformanceCheck(isRichiesta, null, op.getNome(), false, true);
+							return op.getNome();
+						}catch(Exception e){
+							this.logger.debug("@@@searchOperationName Azione ["+op.getNome()+"] mismatch: "+e.getMessage());
+							//e.printStackTrace(System.out);
+						}
+					}
+					
+				}
+			}
+			else{
+				// TODO
+				return null;
 			}
 			
 			return null;

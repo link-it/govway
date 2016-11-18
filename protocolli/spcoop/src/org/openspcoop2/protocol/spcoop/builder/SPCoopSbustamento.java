@@ -33,19 +33,19 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
-import javax.xml.soap.SOAPMessage;
 
-import org.slf4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.SOAPVersion;
-import org.openspcoop2.message.SoapUtils;
-import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.spcoop.config.SPCoopProperties;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.validator.SPCoopValidazioneSintattica;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -75,7 +75,7 @@ public class SPCoopSbustamento {
 		
 		this.validazioneSintattica = (SPCoopValidazioneSintattica) this.protocolFactory.createValidazioneSintattica();
 		
-		this.xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
+		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 	}
 	
 	/**
@@ -90,19 +90,21 @@ public class SPCoopSbustamento {
 		SOAPHeaderElement header = null;
 		try{
 
+			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
+			
 			// Estraggo header
-			this.validazioneSintattica.setMsg((SOAPMessage)msg);
+			this.validazioneSintattica.setMsg(soapMsg);
 			this.validazioneSintattica.setReadQualifiedAttribute(proprietaManifestAttachments.isReadQualifiedAttribute());
-			headerSOAP = msg.getSOAPHeader();
+			headerSOAP = soapMsg.getSOAPHeader();
 			header = this.validazioneSintattica.getHeaderEGov(headerSOAP);
 			if(header == null){
 			    throw new Exception ("Header eGov non presente");
 			}
 
-			msg.removeHeaderElement(headerSOAP, header);
+			soapMsg.removeHeaderElement(headerSOAP, header);
 			
 			// Remove Manifest
-			if(proprietaManifestAttachments.isGestioneManifest() && msg.countAttachments()>0){
+			if(proprietaManifestAttachments.isGestioneManifest() && soapMsg.countAttachments()>0){
 				this.remove_eGovManifest(msg,proprietaManifestAttachments);
 			}
 
@@ -132,8 +134,10 @@ public class SPCoopSbustamento {
 	 * @param msg Messaggio su cui creare il manifesto
 	 * 
 	 */
-	public OpenSPCoop2Message remove_eGovManifest(OpenSPCoop2Message msg,ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{ 
+	public OpenSPCoop2Message remove_eGovManifest(OpenSPCoop2Message msgParam,ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{ 
 		try{
+			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
+			
 			SOAPBody body = msg.getSOAPBody();
 			SOAPElement descrizione = (SOAPElement) msg.getFirstChildElement(body);
 			java.util.Iterator<?> it = descrizione.getChildElements();
@@ -226,7 +230,7 @@ public class SPCoopSbustamento {
 						//System.out.println("SBUSTAMENTO EMPTY PATCH");
 						continue;
 					}
-					msg.getSOAPBody().addChildElement(SoapUtils.getSoapFactory(SOAPVersion.SOAP11).createElement(element));
+					msg.getSOAPBody().addChildElement(SoapUtils.getSoapFactory(MessageType.SOAP_11).createElement(element));
 				}
 				if(n instanceof Text) {
 					msg.getSOAPBody().addTextNode(n.getTextContent());

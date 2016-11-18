@@ -162,11 +162,11 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
     /* ******** MESSAGGI E CODICI 4XX  ******** */
 
     /** String che contiene un codice di errore OpenSPCoop: PortaDelegataInesistente,401 */
-    CODICE_401_PD_INESISTENTE(401),
+    CODICE_401_PORTA_INESISTENTE(401),
     /** String che contiene un codice di errore OpenSPCoop: AutenticazioneFallita, 402*/
     CODICE_402_AUTENTICAZIONE_FALLITA(402),
-    /** String che contiene un codice di errore OpenSPCoop: PatternRicercaPortaDelegata,403 */
-    CODICE_403_PD_PATTERN_NON_VALIDO(403),
+    /** String che contiene un codice di errore OpenSPCoop: IdentificazioneDinamicaAzioneFallita,403 */
+    CODICE_403_AZIONE_NON_IDENTIFICATA(403),
     /** String che contiene un codice di errore OpenSPCoop: AutorizzazioneFallita, 404*/
     CODICE_404_AUTORIZZAZIONE_FALLITA(404),
     /** String che contiene un codice di errore OpenSPCoop: ServizioSPCoopNonTrovato, 405*/
@@ -254,7 +254,9 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
     /** String che contiene un codice di errore OpenSPCoop: PortaApplicativaInesistente,453 */
     CODICE_453_SA_INESISTENTE(453),
 	/** String che contiene un codice di errore OpenSPCoop: Messaggio di risposta con busta nell'header,454 */
-	CODICE_454_BUSTA_PRESENTE_RISPOSTA_APPLICATIVA(454);
+	CODICE_454_BUSTA_PRESENTE_RISPOSTA_APPLICATIVA(454),
+	/** String che contiene un codice di errore OpenSPCoop: Messaggio di risposta con busta nell'header,455 */
+	CODICE_455_DATI_BUSTA_DIFFERENTI_PA_INVOCATA(455);
     
     private final int codice;
     
@@ -287,9 +289,9 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
     	// recupero il codice
     	try{
 	    	switch (codice) {
-				case 401: return CodiceErroreIntegrazione.CODICE_401_PD_INESISTENTE;
+				case 401: return CodiceErroreIntegrazione.CODICE_401_PORTA_INESISTENTE;
 				case 402: return CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA;
-				case 403: return CodiceErroreIntegrazione.CODICE_403_PD_PATTERN_NON_VALIDO;
+				case 403: return CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA;
 				case 404: return CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA;
 				case 405: return CodiceErroreIntegrazione.CODICE_405_SERVIZIO_NON_TROVATO;
 				case 406: return CodiceErroreIntegrazione.CODICE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI;
@@ -331,6 +333,7 @@ public enum CodiceErroreIntegrazione implements CodiceErrore, Serializable{
 				case 451: return CodiceErroreIntegrazione.CODICE_451_SOGGETTO_INESISTENTE;
 				case 452: return CodiceErroreIntegrazione.CODICE_452_BUSTA_GIA_RICEVUTA;
 				case 453: return CodiceErroreIntegrazione.CODICE_453_SA_INESISTENTE;
+				case 454: return CodiceErroreIntegrazione.CODICE_454_BUSTA_PRESENTE_RISPOSTA_APPLICATIVA;
 				case 500: return CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO;
 				case 501: return CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA;
 				case 502: return CodiceErroreIntegrazione.CODICE_502_IDENTIFICAZIONE_PD;

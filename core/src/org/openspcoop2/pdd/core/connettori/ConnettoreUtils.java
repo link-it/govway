@@ -21,14 +21,18 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
+import java.util.Enumeration;
 import java.util.Properties;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.rest.RestUtilities;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.Busta;
-import org.openspcoop2.utils.resources.TransportUtils;
+import org.openspcoop2.utils.transport.TransportUtils;
+import org.slf4j.Logger;
 
 /**
  * ConnettoreUtils
@@ -40,7 +44,14 @@ import org.openspcoop2.utils.resources.TransportUtils;
  */
 public class ConnettoreUtils {
 
-	public static String getAndReplaceLocationWithBustaValues(ConnettoreMsg connettoreMsg,Busta busta,Logger log){
+	public static String formatLocation(String httpMethod, String location){
+		if(httpMethod!=null)
+			return location+" http-method:"+httpMethod;
+		else
+			return location;
+	}
+	
+	public static String getAndReplaceLocationWithBustaValues(ConnettoreMsg connettoreMsg,Busta busta,Logger log) throws ConnettoreException{
 		
 		String location = null;
 		if(TipiConnettore.NULL.getNome().equals(connettoreMsg.getTipoConnettore())){
@@ -100,8 +111,39 @@ public class ConnettoreUtils {
 		return location;
 	}
 	
-	public static String buildLocationWithURLBasedParameter(Properties propertiesURLBased, String location){
-		return TransportUtils.buildLocationWithURLBasedParameter(propertiesURLBased, location, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
+	public static String buildLocationWithURLBasedParameter(OpenSPCoop2Message msg, Properties propertiesURLBased, String locationParam) throws ConnettoreException{
+		
+		try{
+		
+			Properties p = propertiesURLBased;
+			if(msg.getForwardUrlProperties()!=null && msg.getForwardUrlProperties().size()>0){
+				if(p==null){
+					p = new Properties();
+				}
+				Enumeration<?> keys = msg.getForwardUrlProperties().getKeys();
+				while (keys.hasMoreElements()) {
+					String key = (String) keys.nextElement();
+					String value = msg.getForwardUrlProperties().getProperty(key);
+					if(value!=null){
+						if(p.containsKey(key)){
+							p.remove(key);
+						}
+						p.setProperty(key, value);
+					}
+				}
+			}
+			
+			String location = locationParam;
+			if(ServiceBinding.REST.equals(msg.getServiceBinding())){
+				return RestUtilities.buildUrl(location, p, msg.getTransportRequestContext());
+			}
+			else{
+				return TransportUtils.buildLocationWithURLBasedParameter(p, location, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
+			}
+			
+		}catch(Exception e){
+			throw new ConnettoreException(e.getMessage(),e);
+		}
 	}
 
 	public static String limitLocation255Character(String location){

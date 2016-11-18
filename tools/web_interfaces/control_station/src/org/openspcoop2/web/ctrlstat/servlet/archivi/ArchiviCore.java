@@ -31,13 +31,13 @@ import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.engine.archive.ArchiveRegistryReader;
 import org.openspcoop2.protocol.engine.archive.ArchiveValidator;
 import org.openspcoop2.protocol.engine.archive.DeleterArchiveUtils;
 import org.openspcoop2.protocol.engine.archive.ExporterArchiveUtils;
 import org.openspcoop2.protocol.engine.archive.ImportInformationMissingCollection;
 import org.openspcoop2.protocol.engine.archive.ImportInformationMissingException;
 import org.openspcoop2.protocol.engine.archive.ImporterArchiveUtils;
+import org.openspcoop2.protocol.engine.registry.RegistryReader;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.archive.Archive;
 import org.openspcoop2.protocol.sdk.archive.ArchiveCascadeConfiguration;
@@ -253,7 +253,7 @@ public class ArchiviCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			ArchiveRegistryReader reader = new ArchiveRegistryReader(driver.getDriverRegistroServiziDB(),driver.getDriverConfigurazioneDB());
+			RegistryReader reader = new RegistryReader(driver.getDriverRegistroServiziDB(),driver.getDriverConfigurazioneDB());
 			
 			ArchiveValidator validator = new ArchiveValidator(reader);
 			validator.validateArchive(archive, protocolloEffettivo, validazioneDocumenti, importInformationMissingCollection, userLogin, 
@@ -276,7 +276,7 @@ public class ArchiviCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			ArchiveRegistryReader reader = new ArchiveRegistryReader(driver.getDriverRegistroServiziDB(),driver.getDriverConfigurazioneDB());
+			RegistryReader reader = new RegistryReader(driver.getDriverRegistroServiziDB(),driver.getDriverConfigurazioneDB());
 			
 			IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
 			IArchive archiveEngine = pf.createArchive();

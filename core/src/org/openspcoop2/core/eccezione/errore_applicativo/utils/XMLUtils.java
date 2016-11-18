@@ -36,7 +36,6 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPFault;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.eccezione.errore_applicativo.DatiCooperazione;
 import org.openspcoop2.core.eccezione.errore_applicativo.Dominio;
 import org.openspcoop2.core.eccezione.errore_applicativo.Eccezione;
@@ -44,8 +43,14 @@ import org.openspcoop2.core.eccezione.errore_applicativo.ErroreApplicativo;
 import org.openspcoop2.core.eccezione.errore_applicativo.Servizio;
 import org.openspcoop2.core.eccezione.errore_applicativo.Soggetto;
 import org.openspcoop2.core.eccezione.errore_applicativo.constants.Costanti;
+import org.openspcoop2.core.eccezione.errore_applicativo.utils.serializer.JsonDeserializer;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.ValidatoreXSD;
+import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
+import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.xml.ValidatoreXSD;
+import org.openspcoop2.utils.beans.WriteToSerializerType;
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -269,6 +274,15 @@ public class XMLUtils  {
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
 	}
+	
+	public static ErroreApplicativo getErroreApplicativoFromJson(Logger log,InputStream is) throws XMLUtilsException{
+		try{			
+			JsonDeserializer deserializer = new JsonDeserializer();
+			return deserializer.readErroreApplicativo(is);
+		}catch(Exception e){
+			throw new XMLUtilsException(e.getMessage(),e);
+		}
+	}
 
 	
 	
@@ -310,6 +324,18 @@ public class XMLUtils  {
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
 	}
+	
+	public static String generateErroreApplicativoAsJson(ErroreApplicativo eccezione) throws XMLUtilsException{
+		try{
+			StringBuffer risultatoValidazione = new StringBuffer();
+			if(XMLUtils.validate(eccezione, risultatoValidazione)==false){
+				throw new Exception(risultatoValidazione.toString());
+			}
+			return XMLUtils.generateErroreApplicativoAsJson_engine(eccezione);
+		}catch(Exception e){
+			throw new XMLUtilsException(e.getMessage(),e);
+		}
+	}
 
 	public static void generateErroreApplicativo(ErroreApplicativo eccezione,OutputStream out) throws XMLUtilsException{
 		try{
@@ -329,8 +355,21 @@ public class XMLUtils  {
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			org.openspcoop2.utils.xml.JiBXUtils.objToXml(bout, ErroreApplicativo.class, eccezione);
-			byte[] dichiarazione = bout.toByteArray();
-			return dichiarazione;
+			bout.flush();
+			bout.close();
+			return bout.toByteArray();
+		}catch(Exception e){
+			throw new XMLUtilsException(e.getMessage(),e);
+		}
+	}
+	
+	private static String generateErroreApplicativoAsJson_engine(ErroreApplicativo eccezione) throws XMLUtilsException{
+		try{
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			eccezione.writeTo(bout, WriteToSerializerType.JSON);
+			bout.flush();
+			bout.close();
+			return bout.toString();
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}
@@ -338,8 +377,55 @@ public class XMLUtils  {
 	
 	
 	
-	
 	public static ErroreApplicativo getErroreApplicativo(Logger log,OpenSPCoop2Message msg)throws XMLUtilsException{
+		switch (msg.getMessageType()) {
+		case SOAP_11:
+		case SOAP_12:
+			try{
+				return getErroreApplicativo(log, msg.castAsSoap());
+			}catch(XMLUtilsException e){
+				throw e;
+			}catch(Exception e){
+				throw new XMLUtilsException(e.getMessage(),e);
+			}
+		case XML:
+			try{
+				OpenSPCoop2RestXmlMessage rest = msg.castAsRestXml();
+				if(rest.hasContent()){
+					Element element = rest.getContent();
+					if(XMLUtils.isErroreApplicativo(element)){
+						org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+						byte [] xml = xmlUtils.toByteArray(element);
+						//System.out.println("XML S: "+new String(xml));
+						ErroreApplicativo errore = XMLUtils.getErroreApplicativo(log,xml);
+						return errore;
+					}
+				}
+				return null;
+			}catch(XMLUtilsException e){
+				throw e;
+			}catch(Exception e){
+				throw new XMLUtilsException(e.getMessage(),e);
+			}
+		case JSON:
+			try{
+				OpenSPCoop2RestJsonMessage rest = msg.castAsRestJson();
+				if(rest.hasContent()){
+					String json = rest.getContent();
+					try{
+						ErroreApplicativo errore = XMLUtils.getErroreApplicativoFromJson(log, new ByteArrayInputStream(json.getBytes()));
+						return errore;
+					}catch(Exception e){}
+				}
+				return null;
+			}catch(Exception e){
+				throw new XMLUtilsException(e.getMessage(),e);
+			}
+		default:
+			return null;
+		}
+	}
+	public static ErroreApplicativo getErroreApplicativo(Logger log,OpenSPCoop2SoapMessage msg)throws XMLUtilsException{
 		try{
 			if(msg==null)
 				throw new XMLUtilsException("Messaggio non presente");
@@ -372,7 +458,7 @@ public class XMLUtils  {
 						try{
 							if(XMLUtils.isErroreApplicativo(elem)){
 								//System.out.println("ITEM ["+elem.getLocalName()+"] TROVATO");
-								org.openspcoop2.message.XMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
+								org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 								byte [] xml = xmlUtils.toByteArray(elem);
 								//System.out.println("XML S: "+new String(xml));
 								ErroreApplicativo de = XMLUtils.getErroreApplicativo(log,xml);
@@ -393,7 +479,7 @@ public class XMLUtils  {
 	
 	public static boolean isErroreApplicativo(byte [] doc){
 		try{
-			org.openspcoop2.message.XMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
+			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			return XMLUtils.isErroreApplicativo_engine(elemXML);

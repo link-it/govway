@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.openspcoop2.generic_project.exception.NotAuthorizedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
-import org.openspcoop2.utils.Identity;
+import org.openspcoop2.utils.transport.http.HttpServletCredential;
 
 /**
  * AuthorizationManager
@@ -205,7 +205,7 @@ public class AuthorizationManager {
 			return;
 		}
 		
-		Identity identity = new Identity(httpServletRequest);
+		HttpServletCredential identity = new HttpServletCredential(httpServletRequest,log,true);
 		StringBuffer bf = new StringBuffer();
 		
 		boolean basicOk = false;

@@ -1908,7 +1908,7 @@ public class Integrazione {
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_403]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_PD_PATTERN_NON_VALIDO).equals(error.getFaultCode().getLocalPart()));
+				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_TIPO.replace("TIPO", "SOGGETTO_EROGATORE");
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
@@ -2172,7 +2172,7 @@ public class Integrazione {
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_403]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_PD_PATTERN_NON_VALIDO).equals(error.getFaultCode().getLocalPart()));
+				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_TIPO.replace("TIPO", "SOGGETTO_EROGATORE");
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
@@ -2534,7 +2534,7 @@ public class Integrazione {
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_403]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_PD_PATTERN_NON_VALIDO).equals(error.getFaultCode().getLocalPart()));
+				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_TIPO.replace("TIPO", "SERVIZIO");
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
@@ -3049,7 +3049,7 @@ public class Integrazione {
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_403]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_PD_PATTERN_NON_VALIDO).equals(error.getFaultCode().getLocalPart()));
+				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_TIPO.replace("TIPO", "SOGGETTO_EROGATORE");
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
@@ -3489,7 +3489,7 @@ public class Integrazione {
 			} catch (AxisFault error) {
 				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
 				Reporter.log("Controllo fault code [OPENSPCOOP_ORG_403]");
-				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_PD_PATTERN_NON_VALIDO).equals(error.getFaultCode().getLocalPart()));
+				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_TIPO.replace("TIPO", "AZIONE");
 				Reporter.log("Controllo fault string ["+msgErrore+"]");
 				Assert.assertTrue(msgErrore.equals(error.getFaultString()));

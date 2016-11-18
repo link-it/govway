@@ -54,6 +54,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziCRUD;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
+import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Fruitore;
@@ -63,10 +64,9 @@ import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.ServizioAzione;
 import org.openspcoop2.core.registry.ServizioAzioneFruitore;
 import org.openspcoop2.core.registry.Soggetto;
-import org.openspcoop2.message.ValidatoreXSD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.resources.HttpUtilities;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 /**
  * Classe utilizzata per effettuare query ad un registro WEB, riguardanti specifiche

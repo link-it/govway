@@ -24,8 +24,8 @@ package org.openspcoop2.core.tracciamento.ws.server.config;
 
 import java.util.Properties;
 
+import org.openspcoop2.utils.properties.InstanceProperties;
 import org.slf4j.Logger;
-import org.openspcoop2.utils.resources.InstanceProperties;
 
 /**
 * DatasourceInstanceProperties

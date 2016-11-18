@@ -26,12 +26,12 @@ package org.openspcoop2.protocol.sdi.validator;
 import java.util.List;
 import java.util.Vector;
 
-import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.SoapUtils;
-import org.openspcoop2.message.mtom.MtomXomReference;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.message.soap.mtom.MtomXomReference;
 import org.openspcoop2.protocol.basic.validator.ValidazioneConSchema;
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRiceviFile;
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRiceviNotifica;
@@ -82,7 +82,7 @@ public class SDIValidazioneConSchema extends ValidazioneConSchema {
 	}
 
 	@Override
-	public void valida(OpenSPCoop2Message message,SOAPElement header, SOAPBody soapBody,
+	public void valida(OpenSPCoop2Message messageParam,
 			boolean isErroreProcessamento,
 			boolean isErroreIntestazione,
 			boolean isMessaggioConAttachments, boolean validazioneManifestAttachments) throws ProtocolException {
@@ -93,6 +93,8 @@ public class SDIValidazioneConSchema extends ValidazioneConSchema {
 		List<MtomXomReference> references = null;
 		
 		try{
+			OpenSPCoop2SoapMessage message = messageParam.castAsSoap();
+			
 			references = message.mtomFastUnpackagingForXSDConformance();
 			
 			SOAPElement child = SoapUtils.getNotEmptyFirstChildSOAPElement(message.getSOAPBody());
@@ -102,9 +104,9 @@ public class SDIValidazioneConSchema extends ValidazioneConSchema {
 					SDICostantiServizioTrasmissioneFatture.TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_NAMESPACE.equals(namespace)){
 				AbstractValidatoreXSD validator = null;
 				if(SDICostantiServizioRiceviFile.RICEVI_FILE_RICHIESTA_ROOT_ELEMENT.equals(child.getLocalName())){
-					validator = it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types.utils.SdIXSDValidator.getXSDValidatorTrasmissione_1_0(org.openspcoop2.message.XMLUtils.class,this.log);
+					validator = it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types.utils.SdIXSDValidator.getXSDValidatorTrasmissione_1_0(org.openspcoop2.message.xml.XMLUtils.class,this.log);
 				}else{
-					validator = it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types.utils.SdIXSDValidator.getXSDValidatorTrasmissione_1_1(org.openspcoop2.message.XMLUtils.class,this.log);
+					validator = it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types.utils.SdIXSDValidator.getXSDValidatorTrasmissione_1_1(org.openspcoop2.message.xml.XMLUtils.class,this.log);
 				}
 				try{
 					validator.valida(child);
@@ -120,7 +122,7 @@ public class SDIValidazioneConSchema extends ValidazioneConSchema {
 			}
 			else if(SDICostantiServizioRiceviNotifica.SDI_SERVIZIO_RICEVI_NOTIFICA_NAMESPACE.equals(namespace) ||
 					SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE_NAMESPACE.equals(namespace)){
-				AbstractValidatoreXSD validator = it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.utils.SdIXSDValidator.getXSDValidator(org.openspcoop2.message.XMLUtils.class,this.log);
+				AbstractValidatoreXSD validator = it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.utils.SdIXSDValidator.getXSDValidator(org.openspcoop2.message.xml.XMLUtils.class,this.log);
 				try{
 					validator.valida(child);
 				}catch(Exception e){
@@ -144,6 +146,7 @@ public class SDIValidazioneConSchema extends ValidazioneConSchema {
 		}
 		finally{
 			try{
+				OpenSPCoop2SoapMessage message = messageParam.castAsSoap();
 				message.mtomRestoreAfterXSDConformance(references);
 			}catch(Exception e){
 				this.log.error("Validazione con schema xsd non riuscita non riuscita",e);

@@ -24,6 +24,7 @@
 
 package org.openspcoop2.pdd.core;
 
+import java.io.ByteArrayInputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -32,7 +33,6 @@ import java.util.Vector;
 
 import javax.xml.soap.SOAPBody;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -46,9 +46,13 @@ import org.openspcoop2.core.integrazione.EsitoRichiesta;
 import org.openspcoop2.core.integrazione.utils.EsitoRichiestaXMLUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.ParseException;
-import org.openspcoop2.message.SOAPVersion;
-import org.openspcoop2.message.SoapUtils;
+import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.IntegrationError;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.exception.ParseException;
+import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -73,8 +77,10 @@ import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativiMessage;
 import org.openspcoop2.pdd.mdb.EsitoLib;
 import org.openspcoop2.pdd.mdb.InoltroRisposte;
 import org.openspcoop2.pdd.mdb.InoltroRisposteMessage;
-import org.openspcoop2.pdd.services.RicezioneBusteMessage;
-import org.openspcoop2.pdd.services.RicezioneContenutiApplicativiMessage;
+import org.openspcoop2.pdd.services.RequestInfo;
+import org.openspcoop2.pdd.services.core.RicezioneBusteMessage;
+import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativiMessage;
+import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.builder.DettaglioEccezioneOpenSPCoop2Builder;
@@ -98,6 +104,8 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.slf4j.Logger;
 
 
 /**
@@ -186,11 +194,22 @@ public class EJBUtils {
 	private INodeSender nodeSender = null;
 
 	/** ProtocolFactory */
-	IProtocolFactory protocolFactory = null;
-	IProtocolVersionManager protocolManager = null;
+	private IProtocolFactory protocolFactory = null;
+	private IProtocolVersionManager protocolManager = null;
 	
-	DettaglioEccezioneOpenSPCoop2Builder dettaglioBuilder = null;
+	/** DettaglioEccezioneOpenSPCoop2Builder */
+	private DettaglioEccezioneOpenSPCoop2Builder dettaglioBuilder = null;
 	
+	/** RicezioneBusteExternalErrorGenerator */
+	private RicezioneBusteExternalErrorGenerator generatoreErrorePortaApplicativa = null;
+	private IntegrationError integrationErrorPortaApplicativa = IntegrationError.INTERNAL_ERROR; // default
+	public void setGeneratoreErrorePortaApplicativa(RicezioneBusteExternalErrorGenerator generatoreErrorePortaApplicativa) {
+		this.generatoreErrorePortaApplicativa = generatoreErrorePortaApplicativa;
+	}
+	public void setIntegrationErrorPortaApplicativa(IntegrationError integrationErrorPortaApplicativa) {
+		this.integrationErrorPortaApplicativa = integrationErrorPortaApplicativa;
+	}
+
 	public synchronized void initializeNodeSender(OpenSPCoop2Properties propertiesReader,Logger logCore) throws EJBUtilsException{
 		if(this.nodeSender!=null)
 			return; // inizializzato da un altro thread
@@ -753,7 +772,7 @@ public class EJBUtils {
 
 				// --- Creo lo stato del messaggio,visto che sto' spedendo una risposta generata da OpenSPCoop, 
 				// creando anche un IDResponse)
-				Imbustamento imbustatore = new Imbustamento(this.protocolFactory);
+				Imbustamento imbustatore = new Imbustamento(this.log,this.protocolFactory);
 
 				idRisposta = 
 					imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
@@ -833,7 +852,7 @@ public class EJBUtils {
 			String idSbloccoRicezioneContenutiApplicativi = null;
 			if(consegnaRispostaAsincrona && idModuloInAttesa != null){
 				//	Creo stato per msgSbloccoRicezioneContenutiApplicativi
-				Imbustamento imbustatore = new Imbustamento(this.protocolFactory);
+				Imbustamento imbustatore = new Imbustamento(this.log,this.protocolFactory);
 				idSbloccoRicezioneContenutiApplicativi= 
 					imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
 							this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
@@ -844,9 +863,9 @@ public class EJBUtils {
 				}  
 				msgSbloccoRicezioneContenutiApplicativi = new GestoreMessaggi( this.openSPCoopState, false, idSbloccoRicezioneContenutiApplicativi,Costanti.INBOX,this.msgDiag,this.pddContext);
 				if(this.protocolManager.isHttpEmptyResponseOneWay())
-					msgSbloccoRicezioneContenutiApplicativi.registraMessaggio(org.openspcoop2.message.SoapUtils.build_Soap_Empty(responseMessageError.getVersioneSoap()),correlazioneApplicativa,correlazioneApplicativaRisposta);
+					msgSbloccoRicezioneContenutiApplicativi.registraMessaggio(MessageUtilities.buildEmptyMessage(responseMessageError.getMessageType(), MessageRole.RESPONSE),correlazioneApplicativa,correlazioneApplicativaRisposta);
 				else
-					msgSbloccoRicezioneContenutiApplicativi.registraMessaggio(this.buildOpenSPCoopOK_soapMsg(responseMessageError.getVersioneSoap(),this.idSessione),correlazioneApplicativa,correlazioneApplicativaRisposta);
+					msgSbloccoRicezioneContenutiApplicativi.registraMessaggio(this.buildOpenSPCoopOK(responseMessageError.getMessageType(),this.idSessione),correlazioneApplicativa,correlazioneApplicativaRisposta);
 				msgSbloccoRicezioneContenutiApplicativi.aggiornaRiferimentoMessaggio(this.idSessione);
 				//	--- Aggiorno Proprietario
 				msgSbloccoRicezioneContenutiApplicativi.aggiornaProprietarioMessaggio(idModuloInAttesa);
@@ -994,7 +1013,7 @@ public class EJBUtils {
 				if(idRisposta == null){
 					// Creo ID Risposta
 					
-					Imbustamento imbustatore = new Imbustamento(this.protocolFactory);
+					Imbustamento imbustatore = new Imbustamento(this.log,this.protocolFactory);
 					idRisposta = 
 						imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
 								this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
@@ -1085,7 +1104,7 @@ public class EJBUtils {
 			/* ------- Gestione msgSbloccoRicezioneContenutiApplicativi --------------- */
 			if(consegnaRispostaAsincrona && idModuloInAttesa != null){
 				//	Creo stato per msgSbloccoRicezioneContenutiApplicativi
-				Imbustamento imbustatore = new Imbustamento(this.protocolFactory);
+				Imbustamento imbustatore = new Imbustamento(this.log,this.protocolFactory);
 				String idSbloccoRicezioneContenutiApplicativi= 
 					imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
 							this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
@@ -1096,9 +1115,9 @@ public class EJBUtils {
 				}  
 				msgSbloccoRicezioneContenutiApplicativi = new GestoreMessaggi(this.openSPCoopState, false, idSbloccoRicezioneContenutiApplicativi,Costanti.INBOX,this.msgDiag,this.pddContext);
 				if(this.protocolManager.isHttpEmptyResponseOneWay())
-					msgSbloccoRicezioneContenutiApplicativi.registraMessaggio(org.openspcoop2.message.SoapUtils.build_Soap_Empty(msg.getVersioneSoap()),correlazioneApplicativa,correlazioneApplicativaRisposta);
+					msgSbloccoRicezioneContenutiApplicativi.registraMessaggio(MessageUtilities.buildEmptyMessage(msg.getMessageType(), MessageRole.RESPONSE),correlazioneApplicativa,correlazioneApplicativaRisposta);
 				else
-					msgSbloccoRicezioneContenutiApplicativi.registraMessaggio(this.buildOpenSPCoopOK_soapMsg(msg.getVersioneSoap(),this.idSessione),correlazioneApplicativa,correlazioneApplicativaRisposta);
+					msgSbloccoRicezioneContenutiApplicativi.registraMessaggio(this.buildOpenSPCoopOK(msg.getMessageType(),this.idSessione),correlazioneApplicativa,correlazioneApplicativaRisposta);
 				msgSbloccoRicezioneContenutiApplicativi.aggiornaRiferimentoMessaggio(this.idSessione);
 				//	--- Aggiorno Proprietario
 				msgSbloccoRicezioneContenutiApplicativi.aggiornaProprietarioMessaggio(idModuloInAttesa);
@@ -1143,7 +1162,7 @@ public class EJBUtils {
 	/**
 	 * Spedisce una risposta applicativa  
 	 * al modulo di openspcoop RicezioneContenutiApplicativiXXX, 
-	 * inserendolo all'interno di  un messaggio di tipo {@link org.openspcoop2.pdd.services.RicezioneContenutiApplicativiMessage} e 
+	 * inserendolo all'interno di  un messaggio di tipo {@link org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativiMessage} e 
 	 * spedendolo nella coda 'toRicezioneContenutiApplicativiXXX'.
 	 *
 	 * @param idModuloInAttesa identificativo del modulo 'RicezioneContenutiApplicativiXXX'.
@@ -2113,9 +2132,9 @@ public class EJBUtils {
 			Throwable eProcessamento, ParseException parseException)throws EJBUtilsException,ProtocolException{ 
 
 		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
-		SOAPVersion versioneSoap = (SOAPVersion) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.SOAP_VERSION);
+
 		//Costruisco busta Errore 
-		Imbustamento imbustatore = new Imbustamento(this.protocolFactory);
+		Imbustamento imbustatore = new Imbustamento(this.log,this.protocolFactory);
 
 		String id_bustaErrore = 
 			imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
@@ -2124,7 +2143,7 @@ public class EJBUtils {
 					Boolean.FALSE);
 
 		//ErroreProcessamentoProtocollo: Header
-		busta = imbustatore.buildMessaggioErroreProtocollo_Processamento(errs,busta,id_bustaErrore,this.propertiesReader.getTipoTempoBusta(this.implementazionePdDSoggettoMittente));
+		busta = this.generatoreErrorePortaApplicativa.getImbustamentoErrore().buildMessaggioErroreProtocollo_Processamento(errs,busta,id_bustaErrore,this.propertiesReader.getTipoTempoBusta(this.implementazionePdDSoggettoMittente));
 
 		DettaglioEccezione dettaglioEccezione = null;
 		if(this.protocolManager.isGenerazioneDetailsSOAPFaultProtocollo_EccezioneProcessamento()){
@@ -2132,7 +2151,7 @@ public class EJBUtils {
 		}
 		
 		// Fix Bug 131: eccezione di processamento
-		imbustatore.gestioneListaEccezioniMessaggioErroreProtocolloProcessamento(busta);
+		this.generatoreErrorePortaApplicativa.getImbustamentoErrore().gestioneListaEccezioniMessaggioErroreProtocolloProcessamento(busta);
 		// Fix Bug 131
 		
 		if( !( this.identitaPdD.getNome().equals(busta.getMittente()) && 
@@ -2146,7 +2165,7 @@ public class EJBUtils {
 
 		//ErroreProcessamentoProtocollo: error Msg
 		OpenSPCoop2Message errorMsg = 
-			imbustatore.buildSoapMsgErroreProtocollo_Processamento(dettaglioEccezione, versioneSoap, this.propertiesReader.isForceSoapPrefixCompatibilitaOpenSPCoopV1());
+				this.generatoreErrorePortaApplicativa.buildErroreProcessamento(this.integrationErrorPortaApplicativa, dettaglioEccezione);
 		if(errorMsg == null){
 			throw new EJBUtilsException("EJBUtils.sendRispostaErroreProcessamentoProtocollo error: Costruzione Msg Errore Protocollo fallita.");
 		}
@@ -2198,8 +2217,7 @@ public class EJBUtils {
 			String idCorrelazioneApplicativa,String idCorrelazioneApplicativaRisposta,String servizioApplicativoFruitore)throws EJBUtilsException,ProtocolException{ 
 
 		//Costruisco busta Errore 
-		SOAPVersion versioneSoap = (SOAPVersion) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.SOAP_VERSION);
-		Imbustamento imbustatore = new Imbustamento(this.protocolFactory);
+		Imbustamento imbustatore = new Imbustamento(this.log,this.protocolFactory);
 		String id_bustaErrore = 
 			imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, 
 					(String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID), 
@@ -2208,7 +2226,8 @@ public class EJBUtils {
 					Boolean.FALSE);
 
 		//ErroreValidazioneProtocollo: Header
-		busta = imbustatore.buildMessaggioErroreProtocollo_Validazione(eccezioni,busta,id_bustaErrore,this.propertiesReader.getTipoTempoBusta(this.implementazionePdDSoggettoMittente));	
+		busta = this.generatoreErrorePortaApplicativa.getImbustamentoErrore().
+				buildMessaggioErroreProtocollo_Validazione(eccezioni,busta,id_bustaErrore,this.propertiesReader.getTipoTempoBusta(this.implementazionePdDSoggettoMittente));	
 		if( !( this.identitaPdD.getNome().equals(busta.getMittente()) && 
 				this.identitaPdD.getTipo().equals(busta.getTipoMittente()) ) ){
 			// Il mittente della busta che sara' spedita e' il router
@@ -2219,8 +2238,7 @@ public class EJBUtils {
 		}
 
 		//ErroreValidazioneProtocollo: Msg
-		OpenSPCoop2Message msg = 
-			imbustatore.buildSoapMsgErroreProtocollo_Validazione(versioneSoap, this.propertiesReader.isForceSoapPrefixCompatibilitaOpenSPCoopV1());
+		OpenSPCoop2Message msg = this.generatoreErrorePortaApplicativa.buildErroreIntestazione(this.integrationErrorPortaApplicativa);
 		
 		if(msg == null){
 			throw new EJBUtilsException("EJBUtils.sendRispostaErroreValidazioneProtocollo error: Costruzione messaggio Errore Protocollo fallita.");
@@ -2239,9 +2257,9 @@ public class EJBUtils {
 	public void sendAsRispostaBustaErrore_inoltroSegnalazioneErrore(Busta busta,Vector<Eccezione> eccezioni)throws EJBUtilsException,ProtocolException{ 
 		
 		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
-		SOAPVersion versioneSoap = (SOAPVersion) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.SOAP_VERSION);
+
 		//Costruisco busta Errore 
-		Imbustamento imbustatore = new Imbustamento(this.protocolFactory);
+		Imbustamento imbustatore = new Imbustamento(this.log, this.protocolFactory);
 		String id_bustaErrore = 
 			imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
 					this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
@@ -2250,11 +2268,12 @@ public class EJBUtils {
 
 		//ErroreValidazioneProtocollo: Header
 		// L'inoltro di segnalazione avviene in SbustamentoRisposte quindi devo riferire l'implemenazione della PdD del Soggetto Destinatario
-		busta = imbustatore.buildMessaggioErroreProtocollo_Validazione(eccezioni,busta,id_bustaErrore,this.propertiesReader.getTipoTempoBusta(this.implementazionePdDSoggettoDestinatario));	
+		busta = this.generatoreErrorePortaApplicativa.getImbustamentoErrore().
+				buildMessaggioErroreProtocollo_Validazione(eccezioni,busta,id_bustaErrore,this.propertiesReader.getTipoTempoBusta(this.implementazionePdDSoggettoDestinatario));	
 
 		//ErroreValidazioneProtocollo: Msg
 		OpenSPCoop2Message msg = 
-			imbustatore.buildSoapMsgErroreProtocollo_Validazione(versioneSoap, this.propertiesReader.isForceSoapPrefixCompatibilitaOpenSPCoopV1());
+				this.generatoreErrorePortaApplicativa.buildErroreIntestazione(this.integrationErrorPortaApplicativa);
 		if(msg == null){
 			throw new EJBUtilsException("EJBUtils.sendRispostaErroreProtocollo_BustaRispostaMalformata error: Costruzione Msg Errore Protocollo fallita.");
 		}
@@ -2445,7 +2464,7 @@ public class EJBUtils {
 	 * Spedisce un Messaggio di Sblocco 'Risposta'
 	 * al modulo di openspcoop 'RicezioneBusteXXX', 
 	 * inserendolo all'interno di  un
-	 * messaggio di tipo {@link org.openspcoop2.pdd.services.RicezioneBusteMessage} e 
+	 * messaggio di tipo {@link org.openspcoop2.pdd.services.core.RicezioneBusteMessage} e 
 	 * spedendolo nella coda 'toRicezioneBusteXXX'.
 	 * La spedizione viene naturalmente effettuata solo se <var>idModuloInAttesa</var> e' diverso da null.
 	 * 
@@ -2455,15 +2474,17 @@ public class EJBUtils {
 	public GestoreMessaggi sendSbloccoRicezioneBuste(String idModuloInAttesa)throws EJBUtilsException,ProtocolException{
 		
 		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
-		SOAPVersion versioneSoap = (SOAPVersion) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.SOAP_VERSION);
+		RequestInfo requestInfo = (RequestInfo) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+
 		// ID Busta Sblocco
-		org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = new Imbustamento(this.protocolFactory);
+		org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = new Imbustamento(this.log, this.protocolFactory);
 		String idSblocco =	
 			imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
 					this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 					this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
 					Boolean.FALSE);
-		return sendBustaRisposta(idModuloInAttesa,null,SoapUtils.build_Soap_Empty(versioneSoap),idSblocco,null,null,null,null);
+		return sendBustaRisposta(idModuloInAttesa,null,MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(), MessageRole.RESPONSE)
+				,idSblocco,null,null,null,null);
 	}
 	
 	public GestoreMessaggi sendSOAPFault(String idModuloInAttesa,OpenSPCoop2Message msg)throws EJBUtilsException,ProtocolException{
@@ -2471,7 +2492,7 @@ public class EJBUtils {
 		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
 		
 		// ID Busta Sblocco
-		org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = new Imbustamento(this.protocolFactory);
+		org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = new Imbustamento(this.log, this.protocolFactory);
 		String idSblocco = 
 			imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
 					this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
@@ -2505,7 +2526,7 @@ public class EJBUtils {
 		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
 		
 		// ID Busta Costruita
-		org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = new Imbustamento(this.protocolFactory);
+		org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = new Imbustamento(this.log, this.protocolFactory);
 		String id_busta = 
 			imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
 					this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
@@ -2743,20 +2764,45 @@ public class EJBUtils {
 	 * @return messaggio Soap 'OK' in caso di successo, null altrimenti.
 	 * 
 	 */
-	public OpenSPCoop2Message buildOpenSPCoopOK_soapMsg(SOAPVersion versioneSoap, String id) throws UtilsException{
+	public OpenSPCoop2Message buildOpenSPCoopOK(MessageType messageType, String id) throws UtilsException{
 		try{
 			OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
-			OpenSPCoop2Message responseSOAPMessage = mf.createMessage(versioneSoap);
-			SOAPBody soapBody = responseSOAPMessage.getSOAPBody();
-			
+						
 			EsitoRichiesta esito = new EsitoRichiesta();
 			esito.setIdentificativoMessaggio(id);
 			esito.setStato(org.openspcoop2.core.integrazione.constants.Costanti.PRESA_IN_CARICO);
 			
-			byte[]xmlEsito = EsitoRichiestaXMLUtils.generateEsitoRichiesta(esito);
+			switch (messageType) {
+			case SOAP_11:
+			case SOAP_12:
 			
-			soapBody.addChildElement(responseSOAPMessage.createSOAPElement(xmlEsito));
-			return responseSOAPMessage;
+				OpenSPCoop2Message responseSOAPMessage = mf.createMessage(messageType,MessageRole.RESPONSE);
+				OpenSPCoop2SoapMessage soapMessage = responseSOAPMessage.castAsSoap();
+				SOAPBody soapBody = soapMessage.getSOAPBody();
+				byte[]xmlEsito = EsitoRichiestaXMLUtils.generateEsitoRichiesta(esito);
+				soapBody.addChildElement(soapMessage.createSOAPElement(xmlEsito));
+				return responseSOAPMessage;
+				
+
+			case JSON:
+				
+				byte[] bytes = EsitoRichiestaXMLUtils.generateEsitoRichiestaAsJson(esito).getBytes();
+				OpenSPCoop2MessageParseResult pr = mf.createMessage(messageType, MessageRole.RESPONSE, HttpConstants.CONTENT_TYPE_JSON, 
+						new ByteArrayInputStream(bytes), null, 
+						false, null, null);
+				return pr.getMessage_throwParseException();
+				
+			default:
+				
+				bytes = EsitoRichiestaXMLUtils.generateEsitoRichiesta(esito);
+				pr = mf.createMessage(MessageType.XML, MessageRole.RESPONSE, HttpConstants.CONTENT_TYPE_XML, 
+						new ByteArrayInputStream(bytes), null, 
+						false, null, null);
+				return pr.getMessage_throwParseException();
+				
+			}
+			
+			
 
 		} catch(Exception e) {
 			throw new UtilsException("Creazione MsgOpenSPCoopOK non riuscito: "+e.getMessage(),e);
@@ -2764,24 +2810,6 @@ public class EJBUtils {
 	}
 
 
-	/**
-	 * Metodo che si occupa di costruire un messaggio SOAPElement 'openspcoop OK'. 
-	 *
-	 * @return bytes del messaggio Soap 'OK' in caso di successo, null altrimenti.
-	 * 
-	 */
-	public byte[] buildOpenSPCoopOK(SOAPVersion versioneSoap, String id) throws UtilsException{
-		try{
-			
-			EsitoRichiesta esito = new EsitoRichiesta();
-			esito.setIdentificativoMessaggio(id);
-			esito.setStato(org.openspcoop2.core.integrazione.constants.Costanti.PRESA_IN_CARICO);
-			return EsitoRichiestaXMLUtils.generateEsitoRichiesta(esito);
-
-		} catch(Exception e) {
-			throw new UtilsException("Creazione MsgOpenSPCoopOK non riuscito: "+e.getMessage(),e);
-		}
-	}
 	
 	
 	
@@ -2800,7 +2828,7 @@ public class EJBUtils {
 	 * Spedisce un header Protocollo <var>header</var>
 	 * al modulo di openspcoop 'RicezioneBusteXXX', 
 	 * inserendolo all'interno di  un
-	 * messaggio di tipo {@link org.openspcoop2.pdd.services.RicezioneBusteMessage} e 
+	 * messaggio di tipo {@link org.openspcoop2.pdd.services.core.RicezioneBusteMessage} e 
 	 * spedendolo nella coda 'toRicezioneBusteXXX'.
 	 *
 	 * @param idModuloInAttesa identificativo del modulo 'RicezioneBusteXXX'. 

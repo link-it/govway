@@ -92,15 +92,15 @@ import org.adroitlogic.soapbox.MessageSecurityContext;
 import org.adroitlogic.soapbox.Processor;
 import org.adroitlogic.soapbox.SBConstants;
 import org.adroitlogic.soapbox.SecurityFailureException;
-import org.slf4j.Logger;
 import org.apache.xml.security.encryption.EncryptedData;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.encryption.XMLEncryptionException;
 import org.apache.xml.security.keys.KeyInfo;
 import org.apache.xml.security.utils.Base64;
-import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.security.message.constants.WSSAttachmentsConstants;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -122,8 +122,8 @@ public class EncryptPartialMessageProcessor implements Processor {
 	private List<QName> elements;
 	private List<Boolean> elementsEncryptContent;
 	private Map<AttachmentPart, Boolean> attachments;
-	private OpenSPCoop2Message message;
-	public void setMessage(OpenSPCoop2Message message) {
+	private OpenSPCoop2SoapMessage message;
+	public void setMessage(OpenSPCoop2SoapMessage message) {
 		this.message = message;
 	}
 	private String actor;

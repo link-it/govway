@@ -23,13 +23,12 @@ package org.openspcoop2.protocol.basic.validator;
 
 import java.util.Date;
 
-import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -43,6 +42,7 @@ import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneSintatticaResult;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 
 /**
  * ValidazioneSintattica
@@ -135,7 +135,9 @@ public class ValidazioneSintattica implements
 		
 		boolean hasFault = false;
 		try {
-			hasFault = msg.getSOAPBody().hasFault();
+			if(msg!=null && ServiceBinding.SOAP.equals(msg.getServiceBinding())){
+				hasFault = msg.castAsSoap().getSOAPBody().hasFault();
+			}
 		} catch (Exception e) {
 			throw new ProtocolException(e); 
 		}
@@ -203,7 +205,7 @@ public class ValidazioneSintattica implements
 	}
 
 	@Override
-	public ValidazioneSintatticaResult validazioneFault(SOAPBody body) {
+	public ValidazioneSintatticaResult validazioneFault(OpenSPCoop2Message msg) {
 		return null;
 	}
 
@@ -220,6 +222,11 @@ public class ValidazioneSintattica implements
 		return null;
 	}
 
+	@Override
+	public Busta getBustaProtocollo_senzaControlli(OpenSPCoop2Message msg) throws ProtocolException{
+		return null;
+	}
+	
 	@Override
 	public SOAPElement getHeaderProtocollo(Busta busta) {
 		// TODO Auto-generated method stub

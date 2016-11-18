@@ -35,7 +35,9 @@ import org.adroitlogic.soapbox.SecurityConfig;
 import org.adroitlogic.soapbox.SecurityRequest;
 import org.apache.wss4j.common.token.DOMX509Data;
 import org.apache.wss4j.common.token.DOMX509IssuerSerial;
-import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.security.SecurityException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -52,7 +54,7 @@ import org.w3c.dom.NodeList;
  */
 public class WSSUtils {
 
-	public static void initWSSecurityHeader(OpenSPCoop2Message message,String actor,boolean mustUnderstand) throws SOAPException {
+	public static void initWSSecurityHeader(OpenSPCoop2SoapMessage message,String actor,boolean mustUnderstand) throws SOAPException, MessageException, MessageNotSupportedException {
 
 		if(message.getSOAPHeader()==null){
 			message.getSOAPPart().getEnvelope().addHeader();
@@ -73,7 +75,7 @@ public class WSSUtils {
 		return;
 	}
 
-	public static SOAPHeaderElement getWSSecurityHeader(OpenSPCoop2Message message,String actor,boolean mustUnderstand) throws SOAPException {
+	public static SOAPHeaderElement getWSSecurityHeader(OpenSPCoop2SoapMessage message,String actor,boolean mustUnderstand) throws SOAPException, MessageException, MessageNotSupportedException {
 
 		if(message.getSOAPHeader()==null){
 			message.getSOAPPart().getEnvelope().addHeader();

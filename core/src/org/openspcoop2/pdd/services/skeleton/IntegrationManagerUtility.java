@@ -23,7 +23,12 @@ package org.openspcoop2.pdd.services.skeleton;
 
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
+import org.openspcoop2.protocol.sdk.AbstractEccezioneBuilderParameter;
+import org.openspcoop2.protocol.sdk.EccezioneIntegrazioneBuilderParameters;
+import org.openspcoop2.protocol.sdk.EccezioneProtocolloBuilderParameters;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.w3c.dom.Node;
 
 /**
  * IntegrationManagerUtility
@@ -44,7 +49,7 @@ public class IntegrationManagerUtility {
 			//System.out.println("INIZIALIZZO IM con INPUT PROTOCOL ["+protocol+"]");
 			try{
 				Openspcoop2 manifest = ProtocolFactoryManager.getInstance().getProtocolManifest(protocol);
-				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, manifest.getProtocolName());
+				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, manifest.getProtocol().getName());
 			} catch(ProtocolException e) {
 				throw new RuntimeException(e);
 			}
@@ -64,7 +69,7 @@ public class IntegrationManagerUtility {
 					}
 					//System.out.println("INIZIALIZZO IM con SERVLET PATH ["+servletPath+"]");
 					Openspcoop2 manifest = ProtocolFactoryManager.getInstance().getProtocolManifest(servletPath);
-					protocolName = manifest.getProtocolName();
+					protocolName = manifest.getProtocol().getName();
 				} catch(ProtocolException e) {
 					throw new RuntimeException(e);
 				}
@@ -76,4 +81,39 @@ public class IntegrationManagerUtility {
 		
 	}
 	
+	
+    /**
+	 * Mappa una risposta di errore applicativo XML in una eccezione IntegrationManagerException
+	 *
+	 * @param xml XML su cui effettuare il mapping
+	 * @return la protocol exception
+	 * 
+	 */
+	public static IntegrationManagerException mapXMLIntoProtocolException(IProtocolFactory protocolFactory,String xml,String prefixCodiceErroreApplicativoIntegrazione) throws Exception{
+		org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+		org.w3c.dom.Document document = xmlUtils.newDocument(xml.getBytes());
+		return IntegrationManagerUtility.mapXMLIntoProtocolException(protocolFactory,document.getFirstChild(),prefixCodiceErroreApplicativoIntegrazione);
+	}
+	
+	public static IntegrationManagerException mapXMLIntoProtocolException(IProtocolFactory protocolFactory,Node xml,String prefixCodiceErroreApplicativoIntegrazione) throws Exception{
+		
+		AbstractEccezioneBuilderParameter eccezione = 
+				protocolFactory.createErroreApplicativoBuilder().readErroreApplicativo(xml, prefixCodiceErroreApplicativoIntegrazione);
+		IntegrationManagerException exc = null;
+		if(eccezione instanceof EccezioneProtocolloBuilderParameters){
+			EccezioneProtocolloBuilderParameters eccBusta = (EccezioneProtocolloBuilderParameters) eccezione;
+			exc = new IntegrationManagerException(protocolFactory, eccBusta.getEccezioneProtocollo());
+		}
+		else{
+			EccezioneIntegrazioneBuilderParameters eccIntegrazione = (EccezioneIntegrazioneBuilderParameters) eccezione;
+			exc = new IntegrationManagerException(protocolFactory, eccIntegrazione.getErroreIntegrazione());
+		}
+		
+		exc.setOraRegistrazione(protocolFactory.createTraduttore().getDate_protocolFormat(eccezione.getOraRegistrazione()));
+		exc.setIdentificativoFunzione(eccezione.getIdFunzione());
+		exc.setIdentificativoPorta(eccezione.getDominioPorta().getCodicePorta());
+
+		return exc;
+
+	}
 }

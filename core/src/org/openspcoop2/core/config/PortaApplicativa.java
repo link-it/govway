@@ -59,6 +59,7 @@ import java.util.List;
  * 		&lt;attribute name="stato-message-security" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="location" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="ricevuta-asincrona-simmetrica" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
  * 		&lt;attribute name="ricevuta-asincrona-asimmetrica" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
  * 		&lt;attribute name="integrazione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
@@ -353,6 +354,14 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
 
   public void setDescrizione(java.lang.String descrizione) {
     this.descrizione = descrizione;
+  }
+
+  public java.lang.String getLocation() {
+    return this.location;
+  }
+
+  public void setLocation(java.lang.String location) {
+    this.location = location;
   }
 
   public void set_value_ricevutaAsincronaSimmetrica(String value) {
@@ -677,6 +686,10 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="descrizione",required=false)
   protected java.lang.String descrizione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="location",required=false)
+  protected java.lang.String location;
 
   @XmlTransient
   protected java.lang.String _value_ricevutaAsincronaSimmetrica;

@@ -25,8 +25,10 @@ import java.util.List;
 
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.message.SOAPFaultCode;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.soap.SOAPFaultCode;
+import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 
 
@@ -67,17 +69,16 @@ public enum ErroriIntegrazione {
 	
 	/* 4XX */
 	
-	ERRORE_401_PD_INESISTENTE("La porta delegata invocata non esiste"+
-			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_DELEGATA_PARAMETRI+": "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
-			CodiceErroreIntegrazione.CODICE_401_PD_INESISTENTE),
+	ERRORE_401_PORTA_INESISTENTE("La porta invocata non esiste"+
+			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_PARAMETRI+": "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
+			CodiceErroreIntegrazione.CODICE_401_PORTA_INESISTENTE),
 	
 	ERRORE_402_AUTENTICAZIONE_FALLITA("Autenticazione del servizio applicativo non riuscita: "+
 			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
 			CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA),
 			
-	ERRORE_403_PD_PATTERN_NON_VALIDO("Riscontrato errore durante l'identificazione dei dati di cooperazione associati alla porta delegata ("+
-			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_IDENTIFICAZIONE_DINAMICA_PARAMETRO+") utilizzando il pattern specificato nella configurazione",
-			CodiceErroreIntegrazione.CODICE_403_PD_PATTERN_NON_VALIDO),
+	ERRORE_403_AZIONE_NON_IDENTIFICATA("Identificazione dinamica dell'azione associata alla porta delegata fallita",
+			CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA),
 			
 	ERRORE_404_AUTORIZZAZIONE_FALLITA("Il servizio applicativo "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_IDENTITA_SERVIZIO_APPLICATIVO+
 			" non risulta autorizzato a fruire del servizio richiesto",
@@ -222,7 +223,13 @@ public enum ErroriIntegrazione {
 			CodiceErroreIntegrazione.CODICE_453_SA_INESISTENTE),
 			
 	ERRORE_454_BUSTA_PRESENTE_RISPOSTA_APPLICATIVA("Il messaggio inviato al servizio di consegna contenuti applicativi presenta nell'header una busta",
-			CodiceErroreIntegrazione.CODICE_454_BUSTA_PRESENTE_RISPOSTA_APPLICATIVA);
+			CodiceErroreIntegrazione.CODICE_454_BUSTA_PRESENTE_RISPOSTA_APPLICATIVA),
+	
+	ERRORE_455_DATI_BUSTA_DIFFERENTI_PA_INVOCATA( (CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_OGGETTO_DIVERSO_TRA_BUSTA_E_PA+" ("+
+			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_DATO_BUSTA+") presente nel messaggio di protocollo ricevuto differente da quello definito ("+
+			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_DATO_PA+") nella porta applicativa invocata ("+
+			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_LOCATION+")"),
+			CodiceErroreIntegrazione.CODICE_455_DATI_BUSTA_DIFFERENTI_PA_INVOCATA);
 	
 	
 	private final String descrizione;
@@ -265,9 +272,8 @@ public enum ErroriIntegrazione {
 	}
 	
 	public ErroreIntegrazione getErroreIntegrazione() {
-		if( this.equals(ERRORE_401_PD_INESISTENTE) ||
+		if( this.equals(ERRORE_401_PORTA_INESISTENTE) ||
 			this.equals(ERRORE_402_AUTENTICAZIONE_FALLITA) ||
-			this.equals(ERRORE_403_PD_PATTERN_NON_VALIDO) ||
 			this.equals(ERRORE_404_AUTORIZZAZIONE_FALLITA) ||
 			this.equals(ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE) ||
 			this.equals(ERRORE_417_COSTRUZIONE_VALIDATORE_WSDL_FALLITA) ||
@@ -291,6 +297,7 @@ public enum ErroriIntegrazione {
 			this.equals(ERRORE_436_TIPO_SOGGETTO_FRUITORE_NOT_SUPPORTED_BY_PROTOCOL) ||
 			this.equals(ERRORE_437_TIPO_SOGGETTO_EROGATORE_NOT_SUPPORTED_BY_PROTOCOL) ||
 			this.equals(ERRORE_438_TIPO_SERVIZIO_NOT_SUPPORTED_BY_PROTOCOL) ||
+			this.equals(ERRORE_455_DATI_BUSTA_DIFFERENTI_PA_INVOCATA) ||
 			this.equals(ERRORE_516_CONNETTORE_UTILIZZO_CON_ERRORE) ||
 			this.equals(ERRORE_517_RISPOSTA_RICHIESTA_NON_RITORNATA) ||
 			this.equals(ERRORE_518_RISPOSTA_RICHIESTA_RITORNATA_COME_FAULT) ||
@@ -397,34 +404,34 @@ public enum ErroriIntegrazione {
 	
 	/* 4XX */
 	
-	public ErroreIntegrazione getErrore401_PortaDelegataInesistente(String motivoErroreInvocazione) {
-		return getErrore401_PortaDelegataInesistente(motivoErroreInvocazione, null, null,null);
+	public ErroreIntegrazione getErrore401_PortaInesistente(String motivoErroreInvocazione) {
+		return getErrore401_PortaInesistente(motivoErroreInvocazione, null, null,null);
 	}
-	public ErroreIntegrazione getErrore401_PortaDelegataInesistente(String motivoErroreInvocazione,String location,String urlInvocazione) {
-		return getErrore401_PortaDelegataInesistente(motivoErroreInvocazione, location, urlInvocazione,null);
+	public ErroreIntegrazione getErrore401_PortaInesistente(String motivoErroreInvocazione,String location,String urlInvocazione) {
+		return getErrore401_PortaInesistente(motivoErroreInvocazione, location, urlInvocazione,null);
 	}
-	public ErroreIntegrazione getErrore401_PortaDelegataInesistente(String motivoErroreInvocazione,String servizioApplicativo) {
-		return getErrore401_PortaDelegataInesistente(motivoErroreInvocazione, null, null,servizioApplicativo);
+	public ErroreIntegrazione getErrore401_PortaInesistente(String motivoErroreInvocazione,String servizioApplicativo) {
+		return getErrore401_PortaInesistente(motivoErroreInvocazione, null, null,servizioApplicativo);
 	}
-	public ErroreIntegrazione getErrore401_PortaDelegataInesistente(String motivoErroreInvocazione,String location,String urlInvocazione,String servizioApplicativo) {
-		if(!this.equals(ERRORE_401_PD_INESISTENTE)){
-			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_401_PD_INESISTENTE.name());
+	public ErroreIntegrazione getErrore401_PortaInesistente(String motivoErroreInvocazione,String location,String urlInvocazione,String servizioApplicativo) {
+		if(!this.equals(ERRORE_401_PORTA_INESISTENTE)){
+			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_401_PORTA_INESISTENTE.name());
 		}
 		StringBuffer bf = new StringBuffer();
 		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
 		if(location!=null){
-			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_DELEGATA_LOCATION,location));
+			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_LOCATION,location));
 			bf.append(" pd["+location+"]");
 		}
 		if(urlInvocazione!=null){
-			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_DELEGATA_URL_INVOCAZIONE,urlInvocazione));
+			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_URL_INVOCAZIONE,urlInvocazione));
 			bf.append(" urlInvocazione["+urlInvocazione+"]");
 		}
 		if(servizioApplicativo!=null){
-			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_DELEGATA_SERVIZIO_APPLICATIVO,servizioApplicativo));
+			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_SERVIZIO_APPLICATIVO,servizioApplicativo));
 			bf.append(" servizioApplicativo["+servizioApplicativo+"]");
 		}
-		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_DELEGATA_PARAMETRI,bf.toString()));
+		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_PARAMETRI,bf.toString()));
 		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,motivoErroreInvocazione));
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
@@ -455,16 +462,7 @@ public enum ErroriIntegrazione {
 		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,msgErrore));
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
-	
-	public ErroreIntegrazione getErrore403_IdentificazioneDinamicaPortaDelgata(String posizione) {
-		if(!this.equals(ERRORE_403_PD_PATTERN_NON_VALIDO)){
-			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_403_PD_PATTERN_NON_VALIDO.name());
-		}
-		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
-		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_IDENTIFICAZIONE_DINAMICA_PARAMETRO,posizione));
-		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
-	}
-	
+		
 	public ErroreIntegrazione getErrore404_AutorizzazioneFallita(String servizioApplicativo) {
 		if(!this.equals(ERRORE_404_AUTORIZZAZIONE_FALLITA)){
 			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_404_AUTORIZZAZIONE_FALLITA.name());
@@ -613,34 +611,37 @@ public enum ErroriIntegrazione {
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 	
-	public ErroreIntegrazione getErrore429_ContentTypeNonSupportato(SOAPVersion soap,String contentTypeTrovato, String [] contentTypesSupportati) {
+	public ErroreIntegrazione getErrore429_ContentTypeNonSupportato(String contentTypeTrovato, List<String> contentTypesSupportati) {
 		if(!this.equals(ERRORE_429_CONTENT_TYPE_NON_SUPPORTATO)){
 			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_429_CONTENT_TYPE_NON_SUPPORTATO.name());
 		}
 		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
-		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_SOAP_VERSION,soap.name()));
 		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_CONTENT_TYPE_TROVATO,contentTypeTrovato));
-		if(contentTypesSupportati!=null && contentTypesSupportati.length>0){
+		if(contentTypesSupportati!=null && contentTypesSupportati.size()>0){
 			StringBuffer bf = new StringBuffer();
-			for (int i = 0; i < contentTypesSupportati.length; i++) {
+			for (int i = 0; i < contentTypesSupportati.size(); i++) {
 				if(bf.length()>0){
 					bf.append(", ");
 				}
-				bf.append(contentTypesSupportati[i]);
+				bf.append(contentTypesSupportati.get(i));
 			}
 			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_CONTENT_TYPE_SUPPORTATI,bf.toString()));
 		}
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 	
-	public ErroreIntegrazione getErrore430_SoapNamespaceNonSupportato(SOAPVersion soap, String namespaceTrovato) {
+	public ErroreIntegrazione getErrore430_SoapNamespaceNonSupportato(MessageType messageType, String namespaceTrovato) {
 		if(!this.equals(ERRORE_430_SOAP_ENVELOPE_NAMESPACE_ERROR)){
 			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_430_SOAP_ENVELOPE_NAMESPACE_ERROR.name());
 		}
 		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
-		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_SOAP_VERSION,soap.getSoapVersionAsString()));
+		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_SOAP_VERSION,messageType.getMessageVersionAsString()));
 		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_SOAP_NAMESPACE_TROVATO,namespaceTrovato));
-		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_SOAP_NAMESPACE_SUPPORTATI,soap.getSoapEnvelopeNS()));
+		try{
+			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_SOAP_NAMESPACE_SUPPORTATI,SoapUtils.getSoapEnvelopeNS(messageType)));
+		}catch(Exception e){
+			throw new RuntimeException(e.getMessage(),e);
+		}
 		
 		return newErroreIntegrazione(SOAPFaultCode.VersionMismatch, lista.toArray(new KeyValueObject[lista.size()]));
 	}
@@ -667,19 +668,18 @@ public enum ErroriIntegrazione {
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 	
-	public ErroreIntegrazione getErrore433_ContentTypeNonPresente(SOAPVersion soap, String [] contentTypesSupportati) {
+	public ErroreIntegrazione getErrore433_ContentTypeNonPresente(List<String> contentTypesSupportati) {
 		if(!this.equals(ERRORE_433_CONTENT_TYPE_NON_PRESENTE)){
 			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_433_CONTENT_TYPE_NON_PRESENTE.name());
 		}
 		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
-		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_SOAP_VERSION,soap.name()));
-		if(contentTypesSupportati!=null && contentTypesSupportati.length>0){
+		if(contentTypesSupportati!=null && contentTypesSupportati.size()>0){
 			StringBuffer bf = new StringBuffer();
-			for (int i = 0; i < contentTypesSupportati.length; i++) {
+			for (int i = 0; i < contentTypesSupportati.size(); i++) {
 				if(bf.length()>0){
 					bf.append(", ");
 				}
-				bf.append(contentTypesSupportati[i]);
+				bf.append(contentTypesSupportati.get(i));
 			}
 			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_CONTENT_TYPE_SUPPORTATI,bf.toString()));
 		}
@@ -732,7 +732,7 @@ public enum ErroriIntegrazione {
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 	
-	public ErroreIntegrazione getErrore438_TipoServizioNotSupportedByProtocol(IDServizio servizio,IProtocolFactory protocolFactory) {
+	public ErroreIntegrazione getErrore438_TipoServizioNotSupportedByProtocol(ServiceBinding serviceBinding, IDServizio servizio,IProtocolFactory protocolFactory) {
 		if(!this.equals(ERRORE_438_TIPO_SERVIZIO_NOT_SUPPORTED_BY_PROTOCOL)){
 			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_438_TIPO_SERVIZIO_NOT_SUPPORTED_BY_PROTOCOL.name());
 		}
@@ -741,7 +741,7 @@ public enum ErroriIntegrazione {
 		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_NOME,servizio.getServizio()));
 		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PROTOCOL,protocolFactory.getProtocol()));
 		try{
-			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPI_SUPPORTATI,protocolFactory.createProtocolConfiguration().getTipiServizi().toString()));
+			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPI_SUPPORTATI,protocolFactory.createProtocolConfiguration().getTipiServizi(serviceBinding).toString()));
 		}catch(Exception e){}
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
@@ -768,5 +768,16 @@ public enum ErroriIntegrazione {
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 
+	public ErroreIntegrazione getErrore455DatiBustaDifferentiDatiPAInvocata(String oggetto,String datoBusta, String datoPA, String locationPA) {
+		if(!this.equals(ERRORE_455_DATI_BUSTA_DIFFERENTI_PA_INVOCATA)){
+			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_455_DATI_BUSTA_DIFFERENTI_PA_INVOCATA.name());
+		}
+		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
+		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_OGGETTO_DIVERSO_TRA_BUSTA_E_PA,oggetto));
+		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_DATO_BUSTA,datoBusta));
+		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_DATO_PA,datoPA));
+		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_LOCATION,locationPA));
+		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
+	}
 
 }

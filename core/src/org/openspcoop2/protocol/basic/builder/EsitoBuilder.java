@@ -30,8 +30,10 @@ import javax.xml.soap.SOAPFault;
 import org.slf4j.Logger;
 import org.openspcoop2.core.eccezione.errore_applicativo.Eccezione;
 import org.openspcoop2.core.eccezione.errore_applicativo.ErroreApplicativo;
+import org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione;
 import org.openspcoop2.core.eccezione.errore_applicativo.utils.XMLUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -45,7 +47,7 @@ import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.protocol.utils.EsitoIdentificationModeContextProperty;
 import org.openspcoop2.protocol.utils.EsitoIdentificationModeSoapFault;
-import org.openspcoop2.utils.resources.TransportRequestContext;
+import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.w3c.dom.Node;
 
 /**	
@@ -165,8 +167,8 @@ public class EsitoBuilder implements org.openspcoop2.protocol.sdk.builder.IEsito
 			
 					
 			SOAPBody body = null;
-			if(message!=null){
-				body = message.getSOAPBody();
+			if(message!=null && ServiceBinding.SOAP.equals(message.getServiceBinding())){
+				body = message.castAsSoap().getSOAPBody();
 			}
 			
 			if(informazioniErroriInfrastrutturali==null){
@@ -396,10 +398,10 @@ public class EsitoBuilder implements org.openspcoop2.protocol.sdk.builder.IEsito
 					if(XMLUtils.isErroreApplicativo(childNode)){
 						
 						try{
-							byte[] xml = org.openspcoop2.message.XMLUtils.getInstance().toByteArray(childNode,true);
+							byte[] xml = org.openspcoop2.message.xml.XMLUtils.getInstance().toByteArray(childNode,true);
 							ErroreApplicativo erroreApplicativoObject = XMLUtils.getErroreApplicativo(this.log, xml);
 							Eccezione ecc = erroreApplicativoObject.getEccezione();
-							if(org.openspcoop2.core.eccezione.errore_applicativo.constants.Costanti.TIPO_ECCEZIONE_PROTOCOLLO.equals(ecc.getTipo())){
+							if(TipoEccezione.ECCEZIONE_PROTOCOLLO.equals(ecc.getTipo())){
 								return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
 							}
 							else{

@@ -36,10 +36,12 @@ import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.ParseException;
-import org.openspcoop2.message.SOAPVersion;
-import org.openspcoop2.message.SoapUtils;
-import org.openspcoop2.message.XMLUtils;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.IntegrationError;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.exception.ParseException;
+import org.openspcoop2.message.utils.MessageUtilities;
+import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.config.MTOMProcessorConfig;
 import org.openspcoop2.pdd.config.MessageSecurityConfig;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -49,7 +51,9 @@ import org.openspcoop2.pdd.core.behaviour.Behaviour;
 import org.openspcoop2.pdd.core.state.OpenSPCoopState;
 import org.openspcoop2.pdd.mdb.Imbustamento;
 import org.openspcoop2.pdd.mdb.SbustamentoRisposte;
-import org.openspcoop2.protocol.engine.builder.ErroreApplicativoBuilder;
+import org.openspcoop2.pdd.services.RequestInfo;
+import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
+import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Eccezione;
@@ -82,8 +86,8 @@ public class LocalForwardEngine {
 
 	private LocalForwardParameter localForwardParameter;
 	private EJBUtils ejbUtils = null;
-	private ErroreApplicativoBuilder erroreApplicativoBuilder = null;
-	private SOAPVersion versioneSoap = null;
+	private RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrorePortaDelegata = null;
+	private RicezioneBusteExternalErrorGenerator generatoreErrorePortaApplicativa = null;
 	private Busta busta = null;
 	private IDPortaApplicativaByNome idPAByNome = null;
 	private PortaApplicativa pa = null;
@@ -92,6 +96,7 @@ public class LocalForwardEngine {
 	private PortaDelegata pd =null;
 	private ServizioApplicativo sa = null;
 	private OpenSPCoop2Properties propertiesReader = null;
+	private RequestInfo requestInfo = null;
 	
 	
 	/* ***** COSTRUTTORE ******** */
@@ -166,14 +171,15 @@ public class LocalForwardEngine {
 				if(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(this.richiestaDelegata.getServizioApplicativo())==false)
 					throw e;
 			}
+			
+			this.requestInfo = (RequestInfo) this.localForwardParameter.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+			
 			if(fault==null){
 				fault = this.propertiesReader.getProprietaGestioneErrorePD(this.localForwardParameter.getProtocolFactory().createProtocolManager());
 				fault.setDominio(this.localForwardParameter.getIdentitaPdD().getCodicePorta());
 				fault.setIdModulo(this.localForwardParameter.getIdModulo());
 				this.localForwardParameter.getConfigurazionePdDReader().aggiornaProprietaGestioneErrorePD(fault, this.sa);
 			}
-			
-			this.versioneSoap = (SOAPVersion) this.localForwardParameter.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.SOAP_VERSION);
 			
 			this.ejbUtils = new EJBUtils(this.localForwardParameter.getIdentitaPdD(), TipoPdD.DELEGATA, 
 					this.localForwardParameter.getIdModulo(), this.localForwardParameter.getIdRequest(), this.localForwardParameter.getIdRequest(), Costanti.OUTBOX, 
@@ -183,12 +189,22 @@ public class LocalForwardEngine {
 			this.ejbUtils.setOneWayVersione11(this.localForwardParameter.isOneWayVersione11());
 			this.ejbUtils.setPortaDiTipoStateless_esclusoOneWay11(this.localForwardParameter.isStateless() && !this.localForwardParameter.isOneWayVersione11());
 			
-			this.erroreApplicativoBuilder = new ErroreApplicativoBuilder(this.localForwardParameter.getLog(), this.localForwardParameter.getProtocolFactory(), 
-					this.localForwardParameter.getIdentitaPdD(),soggettoFruitore, idServizio, 
-					this.localForwardParameter.getIdModulo(), fault, 
-					this.versioneSoap,TipoPdD.DELEGATA,servizioApplicativo);
-									
+			this.generatoreErrorePortaDelegata = new RicezioneContenutiApplicativiInternalErrorGenerator(this.localForwardParameter.getLog(), 
+					this.localForwardParameter.getIdModulo(), this.requestInfo);
+			this.generatoreErrorePortaDelegata.updateInformazioniCooperazione(soggettoFruitore, idServizio);
+			this.generatoreErrorePortaDelegata.updateInformazioniCooperazione(servizioApplicativo);
+			this.generatoreErrorePortaDelegata.updateProprietaErroreApplicativo(fault);
+				
+			this.generatoreErrorePortaApplicativa = new RicezioneBusteExternalErrorGenerator(this.localForwardParameter.getLog(), 
+					this.localForwardParameter.getIdModulo(), this.requestInfo);
+			this.generatoreErrorePortaApplicativa.updateInformazioniCooperazione(soggettoFruitore, idServizio);
+			this.generatoreErrorePortaApplicativa.updateInformazioniCooperazione(servizioApplicativo);
+			
+			this.ejbUtils.setGeneratoreErrorePortaApplicativa(this.generatoreErrorePortaApplicativa);
+			
 			this.pa = this.localForwardParameter.getConfigurazionePdDReader().getPortaApplicativa(this.idPAByNome);
+			
+			
 			
 		}catch(Exception e){
 			throw new LocalForwardException(e.getMessage(),e);
@@ -348,7 +364,8 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(erroreIntegrazione.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.erroreApplicativoBuilder.toMessage(erroreIntegrazione,configException,null);
+					this.responseMessageError = this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,
+							erroreIntegrazione,configException,null);
 				}else{
 					Eccezione ecc = Eccezione.getEccezioneValidazione(ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(msgErrore, codiceErroreCooperazione),
 							this.localForwardParameter.getProtocolFactory());
@@ -356,7 +373,8 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(ecc.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.erroreApplicativoBuilder.toMessage(ecc,this.richiestaDelegata.getSoggettoFruitore(),null);
+					this.responseMessageError = this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,
+							ecc,this.richiestaDelegata.getSoggettoFruitore(),null);
 				}
 
 			}
@@ -431,14 +449,17 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().mediumDebug("MessageSecurity init context (PA) ...");
 						
 						if(messageSecurityApply){
+							
+							OpenSPCoop2SoapMessage soapMessage = requestMessage.castAsSoap();
+							
 							// Per poter applicare anche questa config devo rigenerare tutto il messaggio
 //							System.out.println("AAAAAAAAA");
 //							requestMessage.writeTo(System.out, false);
-							DOMSource s = (DOMSource) requestMessage.getSOAPPart().getContent();
+							DOMSource s = (DOMSource) soapMessage.getSOAPPart().getContent();
 							Node n = s.getNode();
 							byte[] bytes = XMLUtils.getInstance().toByteArray(n);
 //							System.out.println("BABA:"+new String(bytes));
-							requestMessage.getSOAPPart().setContent(new DOMSource(XMLUtils.getInstance().newElement(bytes)));
+							soapMessage.getSOAPPart().setContent(new DOMSource(XMLUtils.getInstance().newElement(bytes)));
 //							System.out.println("BBBBB");
 //							requestMessage.writeTo(System.out, false);
 						}
@@ -528,14 +549,16 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(erroreIntegrazione.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.erroreApplicativoBuilder.toMessage(erroreIntegrazione,configException,null);
+					this.responseMessageError = this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,
+							erroreIntegrazione,configException,null);
 				}else{
 					Eccezione ecc = eccezioniSicurezza.get(0); // prendo la prima disponibile.
 					if(logDiagnosticError){
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(ecc.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.erroreApplicativoBuilder.toMessage(ecc,this.richiestaDelegata.getSoggettoFruitore(),null);
+					this.responseMessageError = this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,
+							ecc,this.richiestaDelegata.getSoggettoFruitore(),null);
 				}
 
 			}
@@ -582,10 +605,10 @@ public class LocalForwardEngine {
 				}
 				if(responseToMessage==null){
 					if(this.localForwardParameter.getProtocolFactory().createProtocolManager().isHttpEmptyResponseOneWay()){
-						responseToMessage = SoapUtils.build_Soap_Empty(this.versioneSoap);
+						responseToMessage =  MessageUtilities.buildEmptyMessage(this.requestInfo.getRequestMessageType(),MessageRole.RESPONSE);
 					}
 					else{
-						responseToMessage = this.ejbUtils.buildOpenSPCoopOK_soapMsg(this.versioneSoap, this.localForwardParameter.getIdRequest());
+						responseToMessage = this.ejbUtils.buildOpenSPCoopOK(this.requestInfo.getRequestMessageType(), this.localForwardParameter.getIdRequest());
 					}
 				}
 				msgOK = this.ejbUtils.sendRispostaApplicativaOK(responseToMessage,
@@ -599,9 +622,9 @@ public class LocalForwardEngine {
 				this.localForwardParameter.getMsgDiag().mediumDebug("Invio messaggio 'OK' al modulo di RicezioneContenutiApplicativi...");	
 				
 				if(this.localForwardParameter.getProtocolFactory().createProtocolManager().isHttpEmptyResponseOneWay())
-					msgOK = this.ejbUtils.sendRispostaApplicativaOK(SoapUtils.build_Soap_Empty(this.versioneSoap),this.richiestaDelegata,this.pd,this.sa);
+					msgOK = this.ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(this.requestInfo.getRequestMessageType(),MessageRole.RESPONSE),this.richiestaDelegata,this.pd,this.sa);
 				else
-					msgOK = this.ejbUtils.sendRispostaApplicativaOK(this.ejbUtils.buildOpenSPCoopOK_soapMsg(this.versioneSoap, this.localForwardParameter.getIdRequest()),
+					msgOK = this.ejbUtils.sendRispostaApplicativaOK(this.ejbUtils.buildOpenSPCoopOK(this.requestInfo.getRequestMessageType(), this.localForwardParameter.getIdRequest()),
 							this.richiestaDelegata,this.pd,this.sa);
 			}
 			
@@ -771,7 +794,8 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(erroreIntegrazione.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.erroreApplicativoBuilder.toMessage(erroreIntegrazione,configException,
+					this.responseMessageError = this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,
+							erroreIntegrazione,configException,
 							(responseMessage!=null ? responseMessage.getParseException() : null));
 				}else{
 					Eccezione ecc = Eccezione.getEccezioneValidazione(ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(msgErrore, codiceErroreCooperazione),
@@ -780,7 +804,8 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(ecc.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.erroreApplicativoBuilder.toMessage(ecc,this.richiestaDelegata.getSoggettoFruitore(),null);
+					this.responseMessageError = this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,
+							ecc,this.richiestaDelegata.getSoggettoFruitore(),null);
 				}
 			}
 			if(this.responseMessageError!=null){
@@ -852,14 +877,17 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().mediumDebug("MessageSecurity (PD-Response) ...");
 						
 						if(messageSecurityApply){
+							
+							OpenSPCoop2SoapMessage soapMessage = responseMessage.castAsSoap();
+							
 							// Per poter applicare anche questa config devo rigenerare tutto il messaggio
 //							System.out.println("AAAAAAAAA");
 //							requestMessage.writeTo(System.out, false);
-							DOMSource s = (DOMSource) responseMessage.getSOAPPart().getContent();
+							DOMSource s = (DOMSource) soapMessage.getSOAPPart().getContent();
 							Node n = s.getNode();
 							byte[] bytes = XMLUtils.getInstance().toByteArray(n);
 //							System.out.println("BABA:"+new String(bytes));
-							responseMessage.getSOAPPart().setContent(new DOMSource(XMLUtils.getInstance().newElement(bytes)));
+							soapMessage.getSOAPPart().setContent(new DOMSource(XMLUtils.getInstance().newElement(bytes)));
 //							System.out.println("BBBBB");
 //							requestMessage.writeTo(System.out, false);
 						}
@@ -926,7 +954,8 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(erroreIntegrazione.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.erroreApplicativoBuilder.toMessage(erroreIntegrazione,configException,
+					this.responseMessageError = this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,
+							erroreIntegrazione,configException,
 							(responseMessage!=null ? responseMessage.getParseException() : null));
 				}else{
 					Eccezione ecc = Eccezione.getEccezioneValidazione(ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(msgErrore, codiceErroreCooperazione),
@@ -935,7 +964,8 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(ecc.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.erroreApplicativoBuilder.toMessage(ecc,this.richiestaDelegata.getSoggettoFruitore(),null);
+					this.responseMessageError = this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,
+							ecc,this.richiestaDelegata.getSoggettoFruitore(),null);
 				}
 			}
 			if(this.responseMessageError!=null){
@@ -971,7 +1001,7 @@ public class LocalForwardEngine {
 		try{
 		
 			OpenSPCoop2Message responseMessageError = 
-					this.erroreApplicativoBuilder.toMessage(errore,eErrore,parseException);
+					this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,errore,eErrore,parseException);
 			this.sendErrore(responseMessageError);
 			
 		}catch(Exception e){
@@ -984,7 +1014,7 @@ public class LocalForwardEngine {
 		try{
 		
 			OpenSPCoop2Message responseMessageError = 
-					this.erroreApplicativoBuilder.toMessage(errore,dominio,parseException);
+					this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,errore,dominio,parseException);
 			this.sendErrore(responseMessageError);
 			
 		}catch(Exception e){

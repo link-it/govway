@@ -35,7 +35,7 @@ import org.openspcoop2.core.diagnostica.DominioDiagnostico;
 import org.openspcoop2.core.diagnostica.MessaggioDiagnostico;
 import org.openspcoop2.core.diagnostica.Protocollo;
 import org.openspcoop2.core.diagnostica.constants.CostantiDiagnostica;
-import org.openspcoop2.message.ValidatoreXSD;
+import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -285,7 +285,7 @@ public class XMLUtils  {
 	
 	public static boolean isMessaggioDiagnostico(byte [] doc){
 		try{
-			org.openspcoop2.message.XMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
+			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			return XMLUtils.isMessaggioDiagnostico_engine(elemXML);

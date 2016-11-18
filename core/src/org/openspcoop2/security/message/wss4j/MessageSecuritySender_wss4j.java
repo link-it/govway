@@ -40,6 +40,8 @@ import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.dom.handler.WSHandlerConstants;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.IMessageSecuritySender;
 import org.openspcoop2.security.message.MessageSecurityContext;
@@ -62,8 +64,14 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
 
 	
      @Override
-	public void process(MessageSecurityContext wssContext,OpenSPCoop2Message message) throws SecurityException{
+	public void process(MessageSecurityContext wssContext,OpenSPCoop2Message messageParam) throws SecurityException{
 		try{ 	
+			
+			if(ServiceBinding.SOAP.equals(messageParam.getServiceBinding())==false){
+				throw new SecurityException("WSS4J Engine usable only with SOAP Binding");
+			}
+			OpenSPCoop2SoapMessage message = messageParam.castAsSoap();
+			
 			
 			// ** Inizializzo handler CXF **/
 			

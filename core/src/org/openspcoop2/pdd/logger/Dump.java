@@ -29,14 +29,14 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.constants.TipoMessaggio;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.message.AttachmentsUtils;
-import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.rest.DumpRestMessageUtils;
+import org.openspcoop2.message.soap.DumpSoapMessageUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -49,6 +49,7 @@ import org.openspcoop2.protocol.sdk.dump.Messaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.tracciamento.TracciamentoException;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 
 
 
@@ -118,7 +119,8 @@ public class Dump {
 	public Dump(IDSoggetto dominio, String modulo, TipoPdD tipoPdD, PdDContext pddContext,IState statoRichiesta,IState statoRisposta) throws TracciamentoException{
 		this(dominio, modulo, null, null, null, tipoPdD, pddContext,statoRichiesta,statoRisposta);
 	}
-	public Dump(IDSoggetto dominio, String modulo, String idMessaggio, IDSoggetto fruitore, IDServizio servizio, TipoPdD tipoPdD, PdDContext pddContext,IState statoRichiesta,IState statoRisposta) throws TracciamentoException{
+	public Dump(IDSoggetto dominio, String modulo, String idMessaggio, IDSoggetto fruitore, IDServizio servizio, 
+			TipoPdD tipoPdD, PdDContext pddContext,IState statoRichiesta,IState statoRisposta) throws TracciamentoException{
 		this.dominio = dominio;
 		this.idModulo = modulo;
 		this.idMessaggio = idMessaggio;
@@ -139,6 +141,7 @@ public class Dump {
 		this.statoRisposta = statoRisposta;
 		this.msgDiagErroreDump = new MsgDiagnostico(dominio,modulo,this.statoRichiesta,this.statoRisposta);
 		this.msgDiagErroreDump.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TRACCIAMENTO);
+				
 		// Protocol Factory Manager
 		String protocol = null;
 		try{
@@ -406,13 +409,17 @@ public class Dump {
 				
 				if(msg!=null){
 					// NOTA: Non aggiungere ContentType in Axis. Congela il message nella writeTo e non e' possibile modificarlo.
-					//out.append("] (ContentType:"+msg.getContentType(new org.apache.axis.soap.SOAP11Constants())+") \n");
-					out.append(MessageUtils.dumpMessage(msg, this.properties.isDumpAllAttachments()));
+					if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
+						out.append(DumpSoapMessageUtils.dumpMessage(msg.castAsSoap(), this.properties.isDumpAllAttachments()));
+					}
+					else{
+						out.append(DumpRestMessageUtils.dumpMessage(msg.castAsRest(), this.properties.isDumpAllAttachments()));
+					}
 				}else{
-					if(AttachmentsUtils.messageWithAttachment(msgBytes)){
-						out.append("------ SOAPWithAttachments ------\n");
+					if(org.openspcoop2.utils.mime.MultipartUtils.messageWithAttachment(msgBytes)){
+						out.append("------ MessageWithAttachments ------\n");
 					}else{
-						out.append("------ SOAPEnvelope ------\n");
+						out.append("------ Message ------\n");
 					}
 					out.append(new String(msgBytes));
 				}

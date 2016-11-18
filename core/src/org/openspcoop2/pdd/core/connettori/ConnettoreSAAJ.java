@@ -37,20 +37,22 @@ import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.soap.encoding.soapenc.Base64;
-import org.openspcoop2.core.api.constants.MethodType;
 import org.openspcoop2.core.constants.CostantiConnettori;
-import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.message.OpenSPCoop2MessageProperties;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.CostantiPdD;
-import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
-import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.Charset;
-import org.openspcoop2.utils.resources.HttpUtilities;
-import org.openspcoop2.utils.resources.RFC2047Encoding;
-import org.openspcoop2.utils.resources.RFC2047Utilities;
+import org.openspcoop2.utils.transport.TransportResponseContext;
+import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.openspcoop2.utils.transport.http.RFC2047Encoding;
+import org.openspcoop2.utils.transport.http.RFC2047Utilities;
 
 /**
  * Classe utilizzata per effettuare consegne di messaggi Soap, attraverso
@@ -64,40 +66,9 @@ import org.openspcoop2.utils.resources.RFC2047Utilities;
 
 public class ConnettoreSAAJ extends ConnettoreBase {
 
-	/** Logger utilizzato per debug. */
-	private ConnettoreLogger logger = null;
-
-
-	/* ********  F I E L D S  P R I V A T I  ******** */
-
-	/** Msg di richiesta */
-	private OpenSPCoop2Message requestMsg;
-	/** Proprieta' del connettore */
-	private java.util.Hashtable<String,String> properties;
-	/** Busta */
-	private Busta busta;
-	/** Proprieta' del trasporto che deve gestire il connettore */
-	private java.util.Properties propertiesTrasporto;
-	/** Proprieta' urlBased che deve gestire il connettore */
-	private java.util.Properties propertiesUrlBased;
-	/** Tipo di Autenticazione */
-	//private String tipoAutenticazione;
-	/** Credenziali per l'autenticazione */
-	private Credenziali credenziali;
-	/** Identificativo */
-	private String idMessaggio;
-	
-	/** Indicazione se siamo in modalita' debug */
-	private boolean debug = false;
-
 	/** Connessione */
 	private SOAPConnection connection = null;
-	
-	/** Identificativo Modulo */
-	private String idModulo = null;
-	
-	/** OpenSPCoopProperties */
-	private OpenSPCoop2Properties openspcoopProperties = null;
+
 	
 	
 	
@@ -113,51 +84,7 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 	@Override
 	public boolean send(ConnettoreMsg request){
 
-		this.openspcoopProperties = OpenSPCoop2Properties.getInstance();
-		
-		if(request==null){
-			this.errore = "Messaggio da consegnare is Null (ConnettoreMsg)";
-			return false;
-		}
-
-		// Raccolta parametri per costruttore logger
-		this.properties = request.getConnectorProperties();
-		if(this.properties == null)
-			this.errore = "Proprieta' del connettore non definite";
-		if(this.properties.size() == 0)
-			this.errore = "Proprieta' del connettore non definite";
-		// - Busta
-		this.busta = request.getBusta();
-		if(this.busta!=null)
-			this.idMessaggio=this.busta.getID();
-		// - Debug mode
-		if(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG)!=null){
-			if("true".equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG).trim()))
-				this.debug = true;
-		}
-	
-		// Logger
-		this.logger = new ConnettoreLogger(this.debug, this.idMessaggio, this.getPddContext());
-				
-		// Raccolta altri parametri
-		try{
-			this.requestMsg =  request.getRequestMessage();
-		}catch(Exception e){
-			this.eccezioneProcessamento = e;
-			this.logger.error("Errore durante la lettura del messaggio da consegnare: "+this.readExceptionMessageFromException(e),e);
-			this.errore = "Errore durante la lettura del messaggio da consegnare: "+this.readExceptionMessageFromException(e);
-			return false;
-		}
-		this.propertiesTrasporto = request.getPropertiesTrasporto();
-		this.propertiesUrlBased = request.getPropertiesUrlBased();
-		this.credenziali = request.getCredenziali();
-
-		// Identificativo modulo
-		this.idModulo = request.getIdModulo();
-		
-		// analisi messaggio da spedire
-		if(this.requestMsg==null){
-			this.errore = "Messaggio da consegnare is Null (Msg)";
+		if(this.initialize(request, true)==false){
 			return false;
 		}
 
@@ -166,10 +93,6 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 			this.errore = "Proprieta' '"+CostantiConnettori.CONNETTORE_LOCATION+"' non fornita e richiesta da questo tipo di connettore ["+request.getTipoConnettore()+"]";
 			return false;
 		}
-
-		// Context per invocazioni handler
-		this.outRequestContext = request.getOutRequestContext();
-		this.msgDiagnostico = request.getMsgDiagnostico();
 
 		return sendSAAJ();
 
@@ -217,10 +140,18 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 			if(this.debug)
 				this.logger.debug("Check validita URL...");
 			this.location = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);
+			this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, this.propertiesUrlBased, this.location);
+			
+			// Check tipo di messaggio
+			if(ServiceBinding.SOAP.equals(this.requestMsg.getServiceBinding())==false){
+				throw new Exception("Connettore utilizzabile solamente per tipologia di servizio SOAP");
+			}
+			OpenSPCoop2SoapMessage soapRequestMessage = this.requestMsg.castAsSoap();
+			
 			URL urlTest = new URL( this.location );
 			URLConnection connectionTest = urlTest.openConnection();
 			HttpURLConnection httpConnTest = (HttpURLConnection) connectionTest;
-			httpConnTest.setRequestMethod( MethodType.POST.name() );
+			httpConnTest.setRequestMethod( HttpRequestMethod.POST.name() );
 			httpConnTest.setConnectTimeout(connectionTimeout);
 			httpConnTest.setReadTimeout(readConnectionTimeout);
 			httpConnTest.setDoOutput(true);
@@ -247,87 +178,93 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 			SOAPConnection connection = soapConnFactory.createConnection();
 							    
 			
-			// Creazione URL
-			if(this.debug)
-				this.logger.debug("Creazione URL...");
-			// Impostazione Proprieta urlBased
-			if(this.propertiesUrlBased != null && this.propertiesUrlBased.size()>0){
-				this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.propertiesUrlBased, this.location);
-			}
-			String urlConnection = this.location;
-
 			try{
 				// Impostazione Proprieta del trasporto
-				if(this.requestMsg.getMimeHeaders()!=null){
 												
-					// Header di trasporto
-					if(this.debug)
-						this.logger.debug("Impostazione header di trasporto...");
-					boolean encodingRFC2047 = false;
-					Charset charsetRFC2047 = null;
-					RFC2047Encoding encodingAlgorithmRFC2047 = null;
-					boolean validazioneHeaderRFC2047 = false;
-					if(this.idModulo!=null){
-						if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
-							encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
-							charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
-							encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
-							validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValue_consegnaContenutiApplicativi();
-						}else{
-							encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_inoltroBuste();
-							charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_inoltroBuste();
-							encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_inoltroBuste();
-							validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValue_inoltroBuste();
-						}
+				// Header di trasporto
+				if(this.debug)
+					this.logger.debug("Impostazione header di trasporto...");
+				boolean encodingRFC2047 = false;
+				Charset charsetRFC2047 = null;
+				RFC2047Encoding encodingAlgorithmRFC2047 = null;
+				boolean validazioneHeaderRFC2047 = false;
+				if(this.idModulo!=null){
+					if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
+						encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
+						charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
+						encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
+						validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValue_consegnaContenutiApplicativi();
+					}else{
+						encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_inoltroBuste();
+						charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_inoltroBuste();
+						encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_inoltroBuste();
+						validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValue_inoltroBuste();
 					}
-					if(this.propertiesTrasporto != null){
-						Enumeration<?> enumSPC = this.propertiesTrasporto.keys();
-						while( enumSPC.hasMoreElements() ) {
-							String key = (String) enumSPC.nextElement();
-							if(CostantiPdD.HEADER_HTTP_USER_AGENT.equalsIgnoreCase(key)==false){
-								String value = (String) this.propertiesTrasporto.get(key);
-								if(this.debug)
-									this.logger.info("Set proprieta' ["+key+"]=["+value+"]",false);
-								
-								if(encodingRFC2047){
-									if(RFC2047Utilities.isAllCharactersInCharset(value, charsetRFC2047)==false){
-										String encoded = RFC2047Utilities.encode(new String(value), charsetRFC2047, encodingAlgorithmRFC2047);
-										//System.out.println("@@@@ CODIFICA ["+value+"] in ["+encoded+"]");
-										if(this.debug)
-											this.logger.info("RFC2047 Encoded value in ["+encoded+"] (charset:"+charsetRFC2047+" encoding-algorithm:"+encodingAlgorithmRFC2047+")",false);
-										setRequestHeader(validazioneHeaderRFC2047, key, encoded, this.logger);
-									}
-									else{
-										setRequestHeader(validazioneHeaderRFC2047, key, value, this.logger);
-									}
+				}
+				OpenSPCoop2MessageProperties forwardHeader = 
+						this.requestMsg.getForwardTransportHeader(this.openspcoopProperties.getRESTServicesWhiteListRequestHeaderList());
+				if(forwardHeader!=null && forwardHeader.size()>0){
+					if(this.debug)
+						this.logger.debug("Forward header di trasporto (size:"+forwardHeader.size()+") ...");
+					if(this.propertiesTrasporto==null){
+						this.propertiesTrasporto = new Properties();
+					}
+					Enumeration<?> keys = forwardHeader.getKeys();
+					while (keys.hasMoreElements()) {
+						String key = (String) keys.nextElement();
+						String value = forwardHeader.getProperty(key);
+						if(this.debug)
+							this.logger.debug("Forward Transport Header ["+key+"]=["+value+"]");
+						this.propertiesTrasporto.put(key, value);
+					}
+				}
+				if(this.propertiesTrasporto != null){
+					Enumeration<?> enumSPC = this.propertiesTrasporto.keys();
+					while( enumSPC.hasMoreElements() ) {
+						String key = (String) enumSPC.nextElement();
+						if(CostantiPdD.HEADER_HTTP_USER_AGENT.equalsIgnoreCase(key)==false){
+							String value = (String) this.propertiesTrasporto.get(key);
+							if(this.debug)
+								this.logger.info("Set proprieta' ["+key+"]=["+value+"]",false);
+							
+							if(encodingRFC2047){
+								if(RFC2047Utilities.isAllCharactersInCharset(value, charsetRFC2047)==false){
+									String encoded = RFC2047Utilities.encode(new String(value), charsetRFC2047, encodingAlgorithmRFC2047);
+									//System.out.println("@@@@ CODIFICA ["+value+"] in ["+encoded+"]");
+									if(this.debug)
+										this.logger.info("RFC2047 Encoded value in ["+encoded+"] (charset:"+charsetRFC2047+" encoding-algorithm:"+encodingAlgorithmRFC2047+")",false);
+									setRequestHeader(soapRequestMessage.getSOAPMessage(), validazioneHeaderRFC2047, key, encoded, this.logger);
 								}
 								else{
-									setRequestHeader(validazioneHeaderRFC2047, key, value, this.logger);
+									setRequestHeader(soapRequestMessage.getSOAPMessage(), validazioneHeaderRFC2047, key, value, this.logger);
 								}
+							}
+							else{
+								setRequestHeader(soapRequestMessage.getSOAPMessage(), validazioneHeaderRFC2047, key, value, this.logger);
 							}
 						}
 					}
-					
-					// Authentication BASIC
+				}
+				
+				// Authentication BASIC
+				if(this.debug)
+					this.logger.debug("Impostazione autenticazione...");
+				String user = null;
+				String password = null;
+				if(this.credenziali!=null){
+					user = this.credenziali.getUsername();
+					password = this.credenziali.getPassword();
+				}else{
+					user = this.properties.get(CostantiConnettori.CONNETTORE_USERNAME);
+					password = this.properties.get(CostantiConnettori.CONNETTORE_PASSWORD);
+				}
+				if(user!=null && password!=null){
+					String authentication = user + ":" + password;
+					authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC + 
+					Base64.encode(authentication.getBytes());
+					soapRequestMessage.getSOAPMessage().getMimeHeaders().addHeader(HttpConstants.AUTHORIZATION,authentication);
 					if(this.debug)
-						this.logger.debug("Impostazione autenticazione...");
-					String user = null;
-					String password = null;
-					if(this.credenziali!=null){
-						user = this.credenziali.getUsername();
-						password = this.credenziali.getPassword();
-					}else{
-						user = this.properties.get(CostantiConnettori.CONNETTORE_USERNAME);
-						password = this.properties.get(CostantiConnettori.CONNETTORE_PASSWORD);
-					}
-					if(user!=null && password!=null){
-						String authentication = user + ":" + password;
-						authentication = CostantiConnettori.HEADER_HTTP_AUTHORIZATION_PREFIX_BASIC + 
-						Base64.encode(authentication.getBytes());
-						this.requestMsg.getMimeHeaders().addHeader(CostantiConnettori.HEADER_HTTP_AUTHORIZATION,authentication);
-						if(this.debug)
-							this.logger.info("Impostazione autenticazione (username:"+user+" password:"+password+") ["+authentication+"]",false);
-					}
+						this.logger.info("Impostazione autenticazione (username:"+user+" password:"+password+") ["+authentication+"]",false);
 				}
 				
 				// Impostazione timeout
@@ -339,7 +276,8 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 				if(this.debug)
 					this.logger.debug("Send...");
 				
-				this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(this.requestMsg.getVersioneSoap(),connection.call((SOAPMessage) this.requestMsg,urlConnection));
+				this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().
+						createMessage(this.requestMsg.getMessageType(),MessageRole.RESPONSE,connection.call((SOAPMessage) this.requestMsg,this.location));
 				
 			}catch(javax.xml.soap.SOAPException sendError){
 				this.eccezioneProcessamento = sendError;
@@ -352,10 +290,13 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 			// check consistenza risposta
 			if(this.debug)
 				this.logger.debug("Check consistenza...");
+			SOAPMessage soapResponse = null;
 			if(this.responseMsg!=null){
-				if(this.responseMsg.getSOAPBody()!=null){
-					if(this.responseMsg.getSOAPBody().hasFault() ){
-						if(this.responseMsg.getSOAPBody().getFault().getFaultString().indexOf("Premature end of file") != -1){
+				OpenSPCoop2SoapMessage soapMessageResponse = this.responseMsg.castAsSoap();
+				soapResponse = soapMessageResponse.getSOAPMessage();
+				if(soapMessageResponse.getSOAPBody()!=null){
+					if(soapMessageResponse.getSOAPBody().hasFault() ){
+						if(soapMessageResponse.getSOAPBody().getFault().getFaultString().indexOf("Premature end of file") != -1){
 							// L'errore 'premature end of file' consiste solo nel fatto che una risposta non e' stata ricevuta.
 							this.responseMsg = null;
 						}
@@ -363,15 +304,15 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 				}
 			}
 
-			if(this.responseMsg!=null){
+			if(soapResponse!=null){
 				// Analisi MimeType e ContentLocation della risposta
-				if(this.responseMsg.getMimeHeaders()!=null){
+				if(soapResponse.getMimeHeaders()!=null){
 					
 					if(this.propertiesTrasportoRisposta==null){
 						this.propertiesTrasportoRisposta = new Properties();
 					}
 					
-					Iterator<?> it = this.responseMsg.getMimeHeaders().getAllHeaders();
+					Iterator<?> it = soapResponse.getMimeHeaders().getAllHeaders();
 					while (it.hasNext()) {
 						MimeHeader mh = (MimeHeader) it.next();
 						this.propertiesTrasportoRisposta.put(mh.getName(),mh.getValue());
@@ -391,6 +332,16 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 			if(this.responseMsg!=null && this.contentLength<0){
 				this.contentLength =  this.responseMsg.getIncomingMessageContentLength();
 			}
+			
+			if(this.responseMsg!=null){
+				TransportResponseContext responseContext = new TransportResponseContext();
+				responseContext.setCodiceTrasporto(this.codice+"");
+				responseContext.setContentLength(this.contentLength);
+				responseContext.setParametersTrasporto(this.propertiesTrasportoRisposta);
+				this.responseMsg.setTransportResponseContext(responseContext);
+			}
+			
+			
 			
 			if(this.debug)
 				this.logger.info("Gestione invio/risposta http effettuata con successo",false);
@@ -450,18 +401,18 @@ public class ConnettoreSAAJ extends ConnettoreBase {
     	}	
     }
     
-    private void setRequestHeader(boolean validazioneHeaderRFC2047, String key, String value, ConnettoreLogger logger) {
+    private void setRequestHeader(SOAPMessage soapMessage, boolean validazioneHeaderRFC2047, String key, String value, ConnettoreLogger logger) {
     	
     	if(validazioneHeaderRFC2047){
     		try{
         		RFC2047Utilities.validHeader(key, value);
-        		this.requestMsg.getMimeHeaders().addHeader(key,value);
+        		soapMessage.getMimeHeaders().addHeader(key,value);
         	}catch(UtilsException e){
         		logger.error(e.getMessage(),e);
         	}
     	}
     	else{
-    		this.requestMsg.getMimeHeaders().addHeader(key,value);
+    		soapMessage.getMimeHeaders().addHeader(key,value);
     	}
     	
     }

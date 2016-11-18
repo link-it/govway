@@ -27,7 +27,7 @@ import org.apache.commons.lang.NotImplementedException;
 import org.openspcoop2.core.tracciamento.CodiceEccezione;
 import org.openspcoop2.core.tracciamento.constants.TipoCodificaEccezione;
 import org.openspcoop2.core.tracciamento.constants.TipoRilevanzaEccezione;
-import org.openspcoop2.message.SOAPFaultCode;
+import org.openspcoop2.message.soap.SOAPFaultCode;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ContestoCodificaEccezione;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;

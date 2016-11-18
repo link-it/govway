@@ -41,11 +41,13 @@ import javax.xml.transform.dom.DOMSource;
 import org.adroitlogic.soapbox.MessageSecurityContext;
 import org.adroitlogic.soapbox.SecurityRequest;
 import org.adroitlogic.ultraesb.core.MessageImpl;
-import org.openspcoop2.message.MessageUtils;
-import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
-import org.openspcoop2.message.reference.Reference;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.soap.DumpSoapMessageUtils;
+import org.openspcoop2.message.soap.reference.Reference;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.MessageSecurityContextParameters;
 import org.openspcoop2.security.message.SubErrorCodeSecurity;
@@ -72,8 +74,10 @@ public class EngineTest {
 			QName otherName = new QName("other");
 			QName body = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Body");
 			
-			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageInput, null, false, null, null, true, "/tmp", "1024");
-			OpenSPCoop2Message openspcoop2Message = pr.getMessage_throwParseException();
+			MessageType messageType = MessageType.SOAP_11;
+			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType,MessageRole.REQUEST,
+					org.openspcoop2.message.utils.MessageUtilities.getDefaultContentType(messageType), messageInput, null, false, null, null);
+			OpenSPCoop2SoapMessage openspcoop2Message = pr.getMessage_throwParseException().castAsSoap();
 
 			/* text/plain */
 			AttachmentPart attachmentPart = openspcoop2Message.createAttachmentPart();
@@ -91,7 +95,7 @@ public class EngineTest {
 			openspcoop2Message.addAttachmentPart(attachmentPart2);
 
 			System.out.println("-- MESSAGGIO INIZIALE --\n\n");
-			System.out.println(MessageUtils.dumpMessage(openspcoop2Message, true));
+			System.out.println(DumpSoapMessageUtils.dumpMessage(openspcoop2Message, true));
 			
 			
 			
@@ -211,7 +215,7 @@ public class EngineTest {
 			signMsgProc.process(pdSecConfigAsymmetric, pdMsgSecCtx);
 //			
 			System.out.println("-- MESSAGGIO DOPO AVER APPLICATO LA SICUREZZA --\n\n");
-			System.out.println(MessageUtils.dumpMessage(openspcoop2Message, true));
+			System.out.println(DumpSoapMessageUtils.dumpMessage(openspcoop2Message, true));
 			
 			
 			
@@ -232,8 +236,9 @@ public class EngineTest {
 			//String envelope = openspcoop2Message.getAsString(openspcoop2Message.getSOAPPart().getEnvelope(),false);
 			//String envelope = XMLUtils.getInstance().toString(openspcoop2Message.getSOAPPart().getEnvelope());
 			//InputStream is2 = new ByteArrayInputStream(envelope.getBytes());
-			pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(is2, null, false, contentType, null, true, "/tmp", "1024");	
-			openspcoop2Message = pr.getMessage_throwParseException();
+			pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType,MessageRole.RESPONSE,
+					org.openspcoop2.message.utils.MessageUtilities.getDefaultContentType(messageType), is2, null, false, null, null);
+			openspcoop2Message = pr.getMessage_throwParseException().castAsSoap();
 			
 			
 			
@@ -339,7 +344,7 @@ public class EngineTest {
 			
 			// Aggiorno attachments
 			System.out.println("-- MESSAGGIO DOPO AVER ELIMINATO LA SICUREZZA --\n\n");
-			System.out.println(MessageUtils.dumpMessage(openspcoop2Message, true));
+			System.out.println(DumpSoapMessageUtils.dumpMessage(openspcoop2Message, true));
 			
 			/*(non serve se non si imposta il CONTENT_TRANSFER_ENCODING a base64!!)
 			java.util.Iterator<?> itAp = openspcoop2Message.getAttachments();

@@ -31,10 +31,10 @@ import org.openspcoop2.pdd.core.JMSReceiver;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-import org.openspcoop2.pdd.services.RicezioneBuste;
-import org.openspcoop2.pdd.services.RicezioneBusteMessage;
-import org.openspcoop2.pdd.services.RicezioneContenutiApplicativi;
-import org.openspcoop2.pdd.services.RicezioneContenutiApplicativiMessage;
+import org.openspcoop2.pdd.services.core.RicezioneBuste;
+import org.openspcoop2.pdd.services.core.RicezioneBusteMessage;
+import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
+import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativiMessage;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.Busta;
 

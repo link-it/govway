@@ -25,6 +25,7 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPFault;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.OutResponseContext;
@@ -71,7 +72,11 @@ public class IntegrazioneOutResponse implements OutResponseHandler {
 					(backwardCompatibilityProperties.isSwitchOpenSPCoopV2PortaDelegata() && context.getPddContext().containsKey(Costanti.OPENSPCOOP2_BACKWARD_COMPATIBILITY))
 				){
 			
-				OpenSPCoop2Message msg = context.getMessaggio();
+				OpenSPCoop2Message msgParam = context.getMessaggio();
+				OpenSPCoop2SoapMessage msg = null;
+				if(msgParam!=null){
+					msg = msgParam.castAsSoap();
+				}
 				
 				if(msg!=null && msg.getSOAPBody()!=null && msg.getSOAPBody().hasFault()){
 					OpenSPCoop2Properties openspcoop2Properties = OpenSPCoop2Properties.getInstance();

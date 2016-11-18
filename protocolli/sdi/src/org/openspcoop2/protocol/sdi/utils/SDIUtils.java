@@ -20,8 +20,6 @@
  */
 package org.openspcoop2.protocol.sdi.utils;
 
-import it.gov.fatturapa.sdi.messaggi.v1_0.constants.TipiMessaggi;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -29,9 +27,9 @@ import java.util.Vector;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 
-import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.SoapUtils;
-import org.openspcoop2.message.mtom.MtomXomReference;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.message.soap.mtom.MtomXomReference;
 import org.openspcoop2.protocol.sdi.constants.SDICostanti;
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRiceviNotifica;
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRicezioneFatture;
@@ -54,6 +52,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import it.gov.fatturapa.sdi.messaggi.v1_0.constants.TipiMessaggi;
+
 /**
  * SDIUtils
  * 
@@ -63,7 +63,7 @@ import org.w3c.dom.NodeList;
  */
 public class SDIUtils {
 
-	public static SOAPElement readHeader(OpenSPCoop2Message msg) throws ProtocolException{
+	public static SOAPElement readHeader(OpenSPCoop2SoapMessage msg) throws ProtocolException{
 
 		List<MtomXomReference> xomReference = null;
 		try{
@@ -169,7 +169,7 @@ public class SDIUtils {
 				}
 			}
 			
-			return SoapUtils.getSoapFactory(msg.getVersioneSoap()).createElement(element);
+			return SoapUtils.getSoapFactory(msg.getMessageType()).createElement(element);
 		}catch(Exception e){
 			throw new ProtocolException(e.getMessage(),e);
 		}finally{

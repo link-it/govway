@@ -98,8 +98,12 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.monitor.driver" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.monitor.constants" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.services" />
-				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.services.skeleton" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.services.connector" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.services.connector.messages" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.services.core" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.services.error" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.services.service" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.services.skeleton" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.timers" />
 																							
 				<!-- org.openspcoop.2.pdd -->

@@ -33,7 +33,8 @@ import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.openspcoop2.core.integrazione.EsitoRichiesta;
 import org.openspcoop2.core.integrazione.constants.Costanti;
-import org.openspcoop2.message.ValidatoreXSD;
+import org.openspcoop2.message.xml.ValidatoreXSD;
+import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.openspcoop2.utils.xml.XSDResourceResolver;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -225,6 +226,18 @@ public class EsitoRichiestaXMLUtils  {
 		}
 	}
 	
+	public static String generateEsitoRichiestaAsJson(EsitoRichiesta esitoRichiesta) throws XMLUtilsException{
+		try{
+			StringBuffer risultatoValidazione = new StringBuffer();
+			if(EsitoRichiestaXMLUtils.validate(esitoRichiesta, risultatoValidazione)==false){
+				throw new Exception(risultatoValidazione.toString());
+			}
+			return EsitoRichiestaXMLUtils.generateEsitoRichiestaAsJson_engine(esitoRichiesta);
+		}catch(Exception e){
+			throw new XMLUtilsException(e.getMessage(),e);
+		}
+	}
+	
 	private static byte[] generateEsitoRichiesta_engine(EsitoRichiesta esitoRichiesta) throws XMLUtilsException{
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -236,12 +249,25 @@ public class EsitoRichiestaXMLUtils  {
 		}
 	}
 	
+	private static String generateEsitoRichiestaAsJson_engine(EsitoRichiesta esitoRichiesta) throws XMLUtilsException{
+		try{
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			esitoRichiesta.writeTo(bout, WriteToSerializerType.JSON);
+			bout.flush();
+			bout.close();
+			return bout.toString();
+		}catch(Exception e){
+			throw new XMLUtilsException(e.getMessage(),e);
+		}
+	}
+	
+	
 	
 	
 	
 	public static boolean isEsitoRichiesta(byte [] doc){
 		try{
-			org.openspcoop2.message.XMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
+			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			return EsitoRichiestaXMLUtils.isEsitoRichiesta_engine(elemXML);

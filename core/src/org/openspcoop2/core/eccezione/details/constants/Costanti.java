@@ -34,13 +34,6 @@ public class Costanti {
 	
 	public static final String TARGET_NAMESPACE = "http://www.openspcoop2.org/core/eccezione/details";
 
-	public static final String TIPO_PDD_PORTA_DELEGATA = "PortaDelegata";
-	public static final String TIPO_PDD_PORTA_APPLICATIVA = "PortaApplicativa";
-	public static final String TIPO_PDD_INTEGRATION_MANAGER = "IntegrationManager";
-	public static final String TIPO_PDD_ROUTER = "Router";
-	
-	public static final String TIPO_ECCEZIONE_PROTOCOLLO = "EccezioneProtocollo";
-	public static final String TIPO_ECCEZIONE_INTEGRAZIONE = "EccezioneIntegrazione";
 }
 
 

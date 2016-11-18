@@ -114,7 +114,7 @@ public class EGOVHeader implements SOAPHandler<SOAPMessageContext> {
 	                    .getSOAPPart().getEnvelope();
 	            SOAPHeader header = envelope.getHeader();
 	            XPathExpressionEngine engine = new XPathExpressionEngine();
-	            DynamicNamespaceContext dnc = org.openspcoop2.message.DynamicNamespaceContextFactory.getInstance().getNamespaceContext(header);
+	            DynamicNamespaceContext dnc = org.openspcoop2.message.xml.DynamicNamespaceContextFactory.getInstance().getNamespaceContext(header);
 	            this.idEgov = engine.getStringMatchPattern(header, dnc, "//{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Identificatore/text()");
 	            System.out.println("IDEGOV: "+this.idEgov);
     		 } catch (Exception e) {

@@ -29,7 +29,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.openspcoop2.core.constants.CostantiConnettori;
-import org.openspcoop2.utils.resources.SSLConfig;
+import org.openspcoop2.utils.transport.http.SSLConfig;
 
 /**
  * Classe utilizzata per interprare le proprieta' https

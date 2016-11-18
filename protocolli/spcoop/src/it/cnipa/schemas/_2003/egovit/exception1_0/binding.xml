@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<binding force-classes="true">
+  <mapping name="MessaggioDiErroreApplicativo" class="it.cnipa.schemas._2003.egovit.exception1_0.MessaggioDiErroreApplicativo">
+    <namespace uri="http://www.cnipa.it/schemas/2003/eGovIT/Exception1_0/" default="elements"/>
+    <value name="OraRegistrazione" field="oraRegistrazione" usage="required"/>
+    <value name="IdentificativoPorta" field="identificativoPorta" usage="required"/>
+    <value name="IdentificativoFunzione" field="identificativoFunzione" usage="required"/>
+    <structure field="eccezione" usage="required" map-as="it.cnipa.schemas._2003.egovit.exception1_0.Eccezione"/>
+  </mapping>
+  <mapping name="Eccezione" class="it.cnipa.schemas._2003.egovit.exception1_0.Eccezione">
+    <namespace uri="http://www.cnipa.it/schemas/2003/eGovIT/Exception1_0/" default="elements"/>
+    <structure field="eccezioneBusta" usage="optional" map-as="it.cnipa.schemas._2003.egovit.exception1_0.EccezioneBusta"/>
+    <structure field="eccezioneProcessamento" usage="optional" map-as="it.cnipa.schemas._2003.egovit.exception1_0.EccezioneProcessamento"/>
+  </mapping>
+  <mapping name="EccezioneProcessamento" class="it.cnipa.schemas._2003.egovit.exception1_0.EccezioneProcessamento">
+    <namespace uri="http://www.cnipa.it/schemas/2003/eGovIT/Exception1_0/" default="elements"/>
+    <value name="codiceEccezione" field="codiceEccezione" usage="required" style="attribute"/>
+    <value name="descrizioneEccezione" field="descrizioneEccezione" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="EccezioneBusta" class="it.cnipa.schemas._2003.egovit.exception1_0.EccezioneBusta">
+    <namespace uri="http://www.cnipa.it/schemas/2003/eGovIT/Exception1_0/" default="elements"/>
+    <value name="codiceEccezione" field="codiceEccezione" usage="required" style="attribute"/>
+    <value name="descrizioneEccezione" field="descrizioneEccezione" usage="optional" style="attribute"/>
+  </mapping>
+</binding>

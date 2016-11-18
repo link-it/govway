@@ -83,17 +83,13 @@
 	</xsd:complexType>
 	<!-- PortaDelegata.SoggettoErogatore -->
 	<xsd:complexType name="porta-delegata-soggetto-erogatore">
-		<xsd:attribute name="identificazione" type="PortaDelegataSoggettoErogatoreIdentificazione" default="static"/>
-		<xsd:attribute name="pattern" type="xsd:string"/>
 		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
-		<xsd:attribute name="nome" type="xsd:string"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 	<!-- PortaDelegata.Servizio -->
 	<xsd:complexType name="porta-delegata-servizio">
-		<xsd:attribute name="identificazione" type="PortaDelegataServizioIdentificazione" default="static"/>
-		<xsd:attribute name="pattern" type="xsd:string"/>
 		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
-		<xsd:attribute name="nome" type="xsd:string"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 	<!-- PortaDelegata.Azione -->
 	<xsd:complexType name="porta-delegata-azione">
@@ -121,6 +117,7 @@
 		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
+		<xsd:attribute name="location" type="xsd:string"/>
 		<xsd:attribute name="ricevuta-asincrona-simmetrica" type="StatoFunzionalita" default="abilitato"/>
 		<xsd:attribute name="ricevuta-asincrona-asimmetrica" type="StatoFunzionalita" default="abilitato"/>
 		<xsd:attribute name="integrazione" type="xsd:string"/>
@@ -144,7 +141,19 @@
 	</xsd:complexType>
 	<!-- PortaApplicativa.Azione -->
 	<xsd:complexType name="porta-applicativa-azione">
-		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="identificazione" type="PortaApplicativaAzioneIdentificazione" default="static"/>
+		<xsd:attribute name="pattern" type="xsd:string"/>
+		<xsd:attribute name="nome" type="xsd:string"/>
+		<xsd:attribute name="force-wsdl-based" type="StatoFunzionalita" default="disabilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 	</xsd:complexType>
 
 

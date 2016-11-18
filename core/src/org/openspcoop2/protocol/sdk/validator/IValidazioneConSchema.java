@@ -23,9 +23,6 @@
 
 package org.openspcoop2.protocol.sdk.validator;
 
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -70,7 +67,7 @@ public interface IValidazioneConSchema  {
 	 *
 	 * 
 	 */
-	public void valida(OpenSPCoop2Message message, SOAPElement header, SOAPBody soapBody, boolean isErroreProcessamento, boolean isErroreIntestazione,
+	public void valida(OpenSPCoop2Message message, boolean isErroreProcessamento, boolean isErroreIntestazione,
 			boolean isMessaggioConAttachments, boolean validazioneManifestAttachments) throws ProtocolException;
 
 	/**

@@ -55,11 +55,11 @@ import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.ValidazioneSemantica;
+import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.RegistroServizi;
 import org.openspcoop2.core.registry.Servizio;
-import org.openspcoop2.message.ValidatoreXSD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 
@@ -332,7 +332,8 @@ public class DriverRegistroServiziXML extends BeanUtilities
 			}
 
 			if(this.validazioneSemanticaDuranteModificaXML){
-				ValidazioneSemantica validazioneSemantica = new ValidazioneSemantica(this.registro,this.verificaURI,this.tipiConnettori,this.tipiSoggetti,this.tipiServizi,
+				ValidazioneSemantica validazioneSemantica = new ValidazioneSemantica(this.registro,this.verificaURI,this.tipiConnettori,
+						this.tipiSoggetti,this.tipiServiziSoap,this.tipiServiziRest,
 						this.log);
 				try{
 					validazioneSemantica.validazioneSemantica(false);
@@ -355,14 +356,16 @@ public class DriverRegistroServiziXML extends BeanUtilities
 	private boolean verificaURI = false;
 	private String[] tipiConnettori = null;
 	private String[] tipiSoggetti = null;
-	private String[] tipiServizi = null;
+	private String[] tipiServiziSoap = null;
+	private String[] tipiServiziRest = null;
 	public void abilitazioneValidazioneSemanticaDuranteModificaXML(boolean verificaURI, String[] tipiConnettori,
-			String[] tipiSoggetti,String[] tipiServizi){
+			String[] tipiSoggetti,String [] tipiServiziSoapValidi, String [] tipiServiziRestValidi){
 		this.validazioneSemanticaDuranteModificaXML = true;
 		this.verificaURI = verificaURI;
 		this.tipiConnettori = tipiConnettori;
 		this.tipiSoggetti = tipiSoggetti;
-		this.tipiServizi = tipiServizi;
+		this.tipiServiziSoap = tipiServiziSoapValidi;
+		this.tipiServiziRest = tipiServiziRestValidi;
 	}
 
 

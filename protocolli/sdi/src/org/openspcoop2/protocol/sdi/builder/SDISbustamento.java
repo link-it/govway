@@ -20,9 +20,6 @@
  */
 package org.openspcoop2.protocol.sdi.builder;
 
-import it.gov.fatturapa.sdi.messaggi.v1_0.constants.TipiMessaggi;
-import it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.constants.EsitoNotificaType;
-
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -31,15 +28,16 @@ import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 
-import org.openspcoop2.message.Costanti;
-import org.openspcoop2.message.MailcapActivationReader;
-import org.openspcoop2.message.MessageUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2MessageException;
-import org.openspcoop2.message.SOAPVersion;
-import org.openspcoop2.message.SoapUtils;
-import org.openspcoop2.message.XMLUtils;
-import org.openspcoop2.message.mtom.MTOMUtilities;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.message.exception.MessageNotSupportedException;
+import org.openspcoop2.message.soap.DumpSoapMessageUtils;
+import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.message.soap.TunnelSoapUtils;
+import org.openspcoop2.message.soap.mtom.MTOMUtilities;
+import org.openspcoop2.message.utils.MessageUtilities;
+import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.sdi.constants.SDICostanti;
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRiceviNotifica;
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRicezioneFatture;
@@ -48,9 +46,14 @@ import org.openspcoop2.protocol.sdi.utils.SDIUtils;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.dch.MailcapActivationReader;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import it.gov.fatturapa.sdi.messaggi.v1_0.constants.TipiMessaggi;
+import it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.constants.EsitoNotificaType;
 
 /**
  * SDISbustamento
@@ -69,8 +72,9 @@ public class SDISbustamento {
 		this.xmlUtils = XMLUtils.getInstance();
 	}
 	
-	public SOAPElement sbustamentoRisposta_ServizioSdIRiceviFile_AzioneRiceviFile(Busta busta,OpenSPCoop2Message msg) throws ProtocolException{
+	public SOAPElement sbustamentoRisposta_ServizioSdIRiceviFile_AzioneRiceviFile(Busta busta,OpenSPCoop2Message msgParam) throws ProtocolException{
 		try{
+			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
 			
 			SOAPElement element = null;
 						
@@ -88,12 +92,7 @@ public class SDISbustamento {
 			}
 			
 			// imposto content type
-			if(SOAPVersion.SOAP11.equals(msg.getVersioneSoap())){
-				msg.setContentType(Costanti.CONTENT_TYPE_SOAP_1_1);
-			}
-			else if(SOAPVersion.SOAP12.equals(msg.getVersioneSoap())){
-				msg.setContentType(Costanti.CONTENT_TYPE_SOAP_1_2);
-			}
+			msg.setContentType(MessageUtilities.getDefaultContentType(msg.getMessageType()));
 			
 			return element;
 			
@@ -102,10 +101,11 @@ public class SDISbustamento {
 		}
 	}
 	
-	public SOAPElement sbustamentoRichiesta_ServizioRicezioneFatture_AzioneRiceviFatture(Busta busta,OpenSPCoop2Message msg) throws ProtocolException{
+	public SOAPElement sbustamentoRichiesta_ServizioRicezioneFatture_AzioneRiceviFatture(Busta busta,OpenSPCoop2Message msgParam) throws ProtocolException{
 		
 		try{
-		
+			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
+			
 			SOAPElement element = null;
 			Object ctxFatturaPA = msg.removeContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_FATTURA);
 			String formatoFattura = busta.getProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_FATTURA_PA);
@@ -174,26 +174,21 @@ public class SDISbustamento {
 			}
 				
 			// imposto content type
-			if(SOAPVersion.SOAP11.equals(msg.getVersioneSoap())){
-				msg.setContentType(Costanti.CONTENT_TYPE_SOAP_1_1);
-			}
-			else if(SOAPVersion.SOAP12.equals(msg.getVersioneSoap())){
-				msg.setContentType(Costanti.CONTENT_TYPE_SOAP_1_2);
-			}
+			msg.setContentType(MessageUtilities.getDefaultContentType(msg.getMessageType()));
 			
 			// add Fattura as body
 			if(p7m){
-				org.openspcoop2.utils.resources.MimeTypes mimeTypes = org.openspcoop2.utils.resources.MimeTypes.getInstance();
-				SoapUtils.
-					imbustamentoMessaggioConAttachment(msg,xmlFattura,Costanti.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP,
-							MailcapActivationReader.existsDataContentHandler(Costanti.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP),
+				org.openspcoop2.utils.mime.MimeTypes mimeTypes = org.openspcoop2.utils.mime.MimeTypes.getInstance();
+				TunnelSoapUtils.
+					imbustamentoMessaggioConAttachment(msg,xmlFattura,HttpConstants.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP,
+							MailcapActivationReader.existsDataContentHandler(HttpConstants.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP),
 							mimeTypes.getMimeType(SDICostanti.SDI_TIPO_FATTURA_P7M), SDICostanti.SDI_PROTOCOL_NAMESPACE);
 				
 				// Serve per forzare il tunnel SOAP che altrimenti non viene abilitato ('tunnel openspcoop2') 
-				MessageUtils.dumpMessage(msg, true);
+				DumpSoapMessageUtils.dumpMessage(msg, true);
 
 			}else{
-				soapBody.addChildElement(SoapUtils.getSoapFactory(msg.getVersioneSoap()).createElement(this.xmlUtils.newElement(xmlFattura)));
+				soapBody.addChildElement(SoapUtils.getSoapFactory(msg.getMessageType()).createElement(this.xmlUtils.newElement(xmlFattura)));
 			}
 			
 			
@@ -205,8 +200,10 @@ public class SDISbustamento {
 		
 	}
 	
-	public SOAPElement sbustamentoRisposta_ServizioSdIRiceviNotifica_AzioneNotificaEsito(Busta busta,OpenSPCoop2Message msg) throws ProtocolException{
+	public SOAPElement sbustamentoRisposta_ServizioSdIRiceviNotifica_AzioneNotificaEsito(Busta busta,OpenSPCoop2Message msgParam) throws ProtocolException{
 		try{
+			
+			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
 			
 			SOAPElement element = null;
 			Object ctxNotificaScartoEsitoCommittente = msg.removeContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_MESSAGGIO_SERVIZIO_SDI);
@@ -271,16 +268,11 @@ public class SDISbustamento {
 			}
 			
 			// imposto content type
-			if(SOAPVersion.SOAP11.equals(msg.getVersioneSoap())){
-				msg.setContentType(Costanti.CONTENT_TYPE_SOAP_1_1);
-			}
-			else if(SOAPVersion.SOAP12.equals(msg.getVersioneSoap())){
-				msg.setContentType(Costanti.CONTENT_TYPE_SOAP_1_2);
-			}
+			msg.setContentType(MessageUtilities.getDefaultContentType(msg.getMessageType()));
 			
 			// se esiste uno scarto committente lo aggiungo come body
 			if(xmlNotificaScartoEsitoCommittente!=null){
-				soapBody.addChildElement(SoapUtils.getSoapFactory(msg.getVersioneSoap()).createElement(this.xmlUtils.newElement(xmlNotificaScartoEsitoCommittente)));
+				soapBody.addChildElement(SoapUtils.getSoapFactory(msg.getMessageType()).createElement(this.xmlUtils.newElement(xmlNotificaScartoEsitoCommittente)));
 			}
 			
 			// se lo sdi ha restituito un esito non ok imposto 500 come codice di trasporto verso il client
@@ -305,10 +297,12 @@ public class SDISbustamento {
 	
 	
 	
-	public SOAPElement sbustamentoRichiesta_ServizioTrasmissioneFatture_Notifiche(TipiMessaggi tipoMessaggio, Busta busta,OpenSPCoop2Message msg) throws ProtocolException{
+	public SOAPElement sbustamentoRichiesta_ServizioTrasmissioneFatture_Notifiche(TipiMessaggi tipoMessaggio, Busta busta,OpenSPCoop2Message msgParam) throws ProtocolException{
 		
 		try{
 		
+			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
+			
 			SOAPElement element = null;
 			Object ctxMessaggio = msg.removeContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_MESSAGGIO_SERVIZIO_SDI);
 						
@@ -414,25 +408,20 @@ public class SDISbustamento {
 			}
 			
 			// imposto content type
-			if(SOAPVersion.SOAP11.equals(msg.getVersioneSoap())){
-				msg.setContentType(Costanti.CONTENT_TYPE_SOAP_1_1);
-			}
-			else if(SOAPVersion.SOAP12.equals(msg.getVersioneSoap())){
-				msg.setContentType(Costanti.CONTENT_TYPE_SOAP_1_2);
-			}
+			msg.setContentType(MessageUtilities.getDefaultContentType(msg.getMessageType()));
 			
 			// add Fattura as body
 			if(zip!=null){
-				SoapUtils.
-					imbustamentoMessaggioConAttachment(msg,zip,Costanti.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP,
-							MailcapActivationReader.existsDataContentHandler(Costanti.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP),
-							Costanti.CONTENT_TYPE_ZIP, SDICostanti.SDI_PROTOCOL_NAMESPACE);
+				TunnelSoapUtils.
+					imbustamentoMessaggioConAttachment(msg,zip,HttpConstants.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP,
+							MailcapActivationReader.existsDataContentHandler(HttpConstants.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP),
+							HttpConstants.CONTENT_TYPE_ZIP, SDICostanti.SDI_PROTOCOL_NAMESPACE);
 				
 				// Serve per forzare il tunnel SOAP che altrimenti non viene abilitato ('tunnel openspcoop2') 
-				MessageUtils.dumpMessage(msg, true);
+				DumpSoapMessageUtils.dumpMessage(msg, true);
 
 			}else{
-				soapBody.addChildElement(SoapUtils.getSoapFactory(msg.getVersioneSoap()).createElement(this.xmlUtils.newElement(xmlNotifica)));
+				soapBody.addChildElement(SoapUtils.getSoapFactory(msg.getMessageType()).createElement(this.xmlUtils.newElement(xmlNotifica)));
 			}
 				
 			return element;
@@ -444,20 +433,20 @@ public class SDISbustamento {
 	}
 	
 	
-	private AttachmentPart getAttachmentPart(OpenSPCoop2Message msg,Element e) throws OpenSPCoop2MessageException{
+	private AttachmentPart getAttachmentPart(OpenSPCoop2SoapMessage msg,Element e) throws MessageException, MessageNotSupportedException{
 		String contentId = MTOMUtilities.getCidXomReference(e);
 		MimeHeaders mhs = new MimeHeaders();
-		mhs.addHeader(Costanti.CONTENT_ID, contentId);
+		mhs.addHeader(HttpConstants.CONTENT_ID, contentId);
 		Iterator<?> itAttachments = msg.getAttachments(mhs);
 		if(itAttachments == null || itAttachments.hasNext()==false){
-			throw new OpenSPCoop2MessageException("Found XOM Reference with attribute ["+
-					org.openspcoop2.message.mtom.Costanti.XOP_INCLUDE_ATTRIBUTE_HREF+"]=["+contentId+"] but the message hasn't attachments");
+			throw new MessageException("Found XOM Reference with attribute ["+
+					org.openspcoop2.message.soap.mtom.Costanti.XOP_INCLUDE_ATTRIBUTE_HREF+"]=["+contentId+"] but the message hasn't attachments");
 		}
 		AttachmentPart ap = null;
 		while (itAttachments.hasNext()) {
 			if(ap!=null){
-				throw new OpenSPCoop2MessageException("Found XOM Reference with attribute ["+
-						org.openspcoop2.message.mtom.Costanti.XOP_INCLUDE_ATTRIBUTE_HREF+"]=["+contentId+"] but exists more than one attachment with same id");
+				throw new MessageException("Found XOM Reference with attribute ["+
+						org.openspcoop2.message.soap.mtom.Costanti.XOP_INCLUDE_ATTRIBUTE_HREF+"]=["+contentId+"] but exists more than one attachment with same id");
 			}
 			ap = (AttachmentPart) itAttachments.next();
 		}

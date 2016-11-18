@@ -40,8 +40,8 @@ import org.openspcoop2.pdd.logger.Tracciamento;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorse;
 import org.openspcoop2.pdd.timers.TimerThreshold;
-import org.openspcoop2.utils.Identity;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.transport.http.HttpServletCredential;
 
 /**
  * Servlet che serve per verificare l'installazione di OpenSPCoop.
@@ -92,7 +92,7 @@ public class CheckStatoPdD extends HttpServlet {
 			String username = properties.getCheckPdDReadJMXResourcesUsername();
 			String password = properties.getCheckPdDReadJMXResourcesPassword();
 			if(username!=null && password!=null){
-				Identity identity = new Identity(req);
+				HttpServletCredential identity = new HttpServletCredential(req, log);
 				if(username.equals(identity.getUsername())==false){
 					String msg = "Lettura risorsa ["+resourceName+"] non autorizzata";
 					log.error("[CheckStatoPdD] "+msg+". Richiesta effettuata da un username ["+identity.getUsername()+"]");

@@ -70,6 +70,8 @@ public class ImbustamentoMessage implements GenericMessage {
 
 	/** PdDContext */
 	private PdDContext pddContext;
+	
+	/** GeneratoreErrore */
 
 
 	/* ********  C O S T R U T T O R E  ******** */

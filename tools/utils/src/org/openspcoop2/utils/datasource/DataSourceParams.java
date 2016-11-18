@@ -22,7 +22,7 @@
 package org.openspcoop2.utils.datasource;
 
 import org.openspcoop2.utils.TipiDatabase;
-import org.openspcoop2.utils.resources.CostantiJMX;
+import org.openspcoop2.utils.jmx.CostantiJMX;
 
 /**
  * DatasourceParams

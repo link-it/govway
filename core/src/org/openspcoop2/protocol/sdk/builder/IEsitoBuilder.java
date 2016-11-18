@@ -26,7 +26,7 @@ import java.util.Hashtable;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
-import org.openspcoop2.utils.resources.TransportRequestContext;
+import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 
 /**

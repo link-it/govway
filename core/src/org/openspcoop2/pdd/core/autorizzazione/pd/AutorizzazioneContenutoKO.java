@@ -23,8 +23,9 @@
 package org.openspcoop2.pdd.core.autorizzazione.pd;
 
 
+import java.io.ByteArrayOutputStream;
+
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -47,8 +48,12 @@ public class AutorizzazioneContenutoKO extends AbstractCore implements IAutorizz
     	
     	// Autorizzazzione servizio applicativo
     	try{
-    		byte[] msgBytes = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(msg.getVersioneSoap()).getAsByte(msg.getSOAPBody(), true);
-    		System.out.println("(TestKO) Messaggio ricevuto: "+new String(msgBytes));
+    		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+    		msg.writeTo(bout, false);
+    		bout.flush();
+    		bout.close();
+    		
+    		System.out.println("(TestKO) Messaggio ricevuto: "+bout.toString());
         	
     		String servizioApplicativo = null;
     		if(datiInvocazione.getIdServizioApplicativo()!=null){

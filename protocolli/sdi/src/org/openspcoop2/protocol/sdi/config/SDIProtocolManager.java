@@ -27,7 +27,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.basic.config.BasicManager;
 import org.openspcoop2.protocol.sdi.constants.SDICostanti;
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRiceviFile;
@@ -39,8 +40,8 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.TipoIntegrazione;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
-import org.openspcoop2.utils.resources.TransportRequestContext;
-import org.openspcoop2.utils.resources.TransportResponseContext;
+import org.openspcoop2.utils.transport.TransportRequestContext;
+import org.openspcoop2.utils.transport.TransportResponseContext;
 
 /**
  * Classe che implementa, in base al protocollo SdI, l'interfaccia {@link org.openspcoop2.protocol.sdk.config.IProtocolManager} 
@@ -171,7 +172,7 @@ public class SDIProtocolManager extends BasicManager {
 	
 	
 	@Override
-	public OpenSPCoop2Message updateOpenSPCoop2MessageResponse(SOAPVersion soapVersion,OpenSPCoop2Message msg, Busta busta, 
+	public OpenSPCoop2Message updateOpenSPCoop2MessageResponse(OpenSPCoop2Message msg, Busta busta, 
     		NotifierInputStreamParams notifierInputStreamParams, 
     		TransportRequestContext transportRequestContext, TransportResponseContext transportResponseContext) throws ProtocolException{
     			
@@ -179,7 +180,7 @@ public class SDIProtocolManager extends BasicManager {
 			if(SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE_AZIONE_RICEVI_FATTURE.equals(busta.getAzione())){
 				if(transportResponseContext==null || transportResponseContext.getErrore()==null){
 					// creo un nuovo messaggio, l'imbustamento si occupera' di creare la struttura
-					OpenSPCoop2Message msgR = OpenSPCoop2MessageFactory.getMessageFactory().createEmptySOAPMessage(soapVersion,notifierInputStreamParams);
+					OpenSPCoop2Message msgR = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.SOAP_11,MessageRole.RESPONSE,notifierInputStreamParams);
 					msgR.setTransportRequestContext(transportRequestContext);
 					msgR.setTransportResponseContext(transportResponseContext);
 					return msgR;
@@ -187,7 +188,7 @@ public class SDIProtocolManager extends BasicManager {
 			}
 		}
 		
-		return super.updateOpenSPCoop2MessageResponse(soapVersion, msg, busta, 
+		return super.updateOpenSPCoop2MessageResponse(msg, busta, 
 				notifierInputStreamParams,transportRequestContext,transportResponseContext);
 	}
 	

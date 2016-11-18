@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.pdd.core.jmx.InformazioniStatoPorta;
 import org.openspcoop2.pdd.core.jmx.InformazioniStatoPortaCache;
-import org.openspcoop2.utils.resources.HttpUtilities;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 
 /**

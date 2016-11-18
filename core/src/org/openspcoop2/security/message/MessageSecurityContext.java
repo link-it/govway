@@ -31,19 +31,20 @@ import java.util.List;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 
-import org.slf4j.Logger;
 import org.apache.wss4j.common.ConfigurationConstants;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.SoapUtils;
-import org.openspcoop2.message.reference.Reference;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.message.soap.reference.Reference;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.digest.IDigestReader;
+import org.slf4j.Logger;
 
 /**
  * Classe di base per la gestione della sicurezza
@@ -360,27 +361,33 @@ public abstract class MessageSecurityContext{
 	    	if(msg==null){
 	    		return false;
 	    	}
-	    	SOAPHeader header = msg.getSOAPHeader();
-	    	if(header==null || (SoapUtils.getNotEmptyChildNodes(header).size()==0) ){
-	    		return false;
-	    	}
-	       	java.util.Iterator<?> it = header.examineAllHeaderElements();
-			while( it.hasNext()  ){
-				
-				// Test Header Element
-				SOAPHeaderElement headerElement = (SOAPHeaderElement) it.next();
-				if(   SecurityConstants.WSS_HEADER_ELEMENT.equals(headerElement.getLocalName()) &&
-						SecurityConstants.WSS_HEADER_ELEMENT_NAMESPACE.equals(headerElement.getNamespaceURI()) ){
-						// potenziale header, verifico l'actor
-					if(actor==null){
-						return headerElement.getActor()==null;
-					}else{
-						String actorTrovato = headerElement.getActor();
-						return actor.equals(actorTrovato);
+	    	if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
+		    	SOAPHeader header = msg.castAsSoap().getSOAPHeader();
+		    	if(header==null || (SoapUtils.getNotEmptyChildNodes(header).size()==0) ){
+		    		return false;
+		    	}
+		       	java.util.Iterator<?> it = header.examineAllHeaderElements();
+				while( it.hasNext()  ){
+					
+					// Test Header Element
+					SOAPHeaderElement headerElement = (SOAPHeaderElement) it.next();
+					if(   SecurityConstants.WSS_HEADER_ELEMENT.equals(headerElement.getLocalName()) &&
+							SecurityConstants.WSS_HEADER_ELEMENT_NAMESPACE.equals(headerElement.getNamespaceURI()) ){
+							// potenziale header, verifico l'actor
+						if(actor==null){
+							return headerElement.getActor()==null;
+						}else{
+							String actorTrovato = headerElement.getActor();
+							return actor.equals(actorTrovato);
+						}
 					}
 				}
-			}
-			return false;
+				return false;
+	    	}
+	    	else{
+	    		// TODO
+	    		return true;
+	    	}
     	}catch(Exception e){
     		if(this.log!=null)
     			this.log.error("existsHeaderMessageSecurity error con actor["+actor+"]",e);

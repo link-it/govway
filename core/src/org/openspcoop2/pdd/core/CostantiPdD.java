@@ -23,7 +23,7 @@
 
 package org.openspcoop2.pdd.core;
 
-import org.openspcoop2.utils.resources.CostantiJMX;
+import org.openspcoop2.utils.jmx.CostantiJMX;
 
 
 
@@ -96,20 +96,13 @@ public class CostantiPdD {
     public final static String TRACCIAMENTO_IN = "IN";
     /** Costante che indica una busta in uscita */
     public final static String TRACCIAMENTO_OUT = "OUT";
-    /** Costante che indica il separatore nella location */
-    public final static String TRACCIAMENTO_SEPARATOR_LOCATION = ":";
     
     /** Dati di integresso del messaggio */
     public final static String DATA_INGRESSO_MESSAGGIO_RICHIESTA = "CONTEXT_DATA_INGRESSO_MESSAGGIO_RICHIESTA";
     
     /** Variabile che indica un servizio applicativo anonimo */
     public final static String SERVIZIO_APPLICATIVO_ANONIMO = "Anonimo";
-        
-    /** ContentType supportati */
-    public final static String CONTENT_TYPE = "Content-Type";
-    public final static String CONTENT_TYPE_NON_VALORIZZATO = "Non valorizzato (null)";
-    public final static String CONTENT_TYPE_NON_PRESENTE = "Non presente";
-	    
+        	    
     /** Costante che indica l'header di integrazione per WS*/
     public final static String HEADER_INTEGRAZIONE = "HEADER_INTEGRAZIONE";
     /** Costante che indica la gestione dell'errore per WS*/

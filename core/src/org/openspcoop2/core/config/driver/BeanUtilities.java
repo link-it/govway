@@ -96,7 +96,7 @@ public abstract class BeanUtilities implements IDriverConfigurazioneGet {
 	public boolean verificaSoggetto(String location,Soggetto soggetto,boolean checkID)throws DriverConfigurazioneException{
 		Soggetto beanRegistro = null;
 		try{
-			beanRegistro = this.getSoggetto(location);
+			beanRegistro = this.getSoggettoProprietarioPortaDelegata(location);
 		}catch(DriverConfigurazioneNotFound dNotFound){}
 		if(beanRegistro==null){
 			if(soggetto==null)

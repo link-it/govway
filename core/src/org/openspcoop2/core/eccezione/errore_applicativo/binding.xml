@@ -11,7 +11,7 @@
     <namespace uri="http://www.openspcoop2.org/core/eccezione/errore_applicativo" default="elements"/>
     <value name="identificativo-porta" field="identificativoPorta" usage="required"/>
     <structure field="soggetto" usage="required" map-as="org.openspcoop2.core.eccezione.errore_applicativo.DominioSoggetto"/>
-    <value name="funzione" field="funzione" usage="optional" style="attribute"/>
+    <value name="funzione" field="funzione" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="modulo" field="modulo" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="soggetto" class="org.openspcoop2.core.eccezione.errore_applicativo.DominioSoggetto">
@@ -47,13 +47,13 @@
     <namespace uri="http://www.openspcoop2.org/core/eccezione/errore_applicativo" default="elements"/>
     <value field="base" usage="required" style="text"/>
     <value name="tipo" field="tipo" usage="optional" style="attribute"/>
-    <value name="versione" field="versione" usage="optional" style="attribute"/>
+    <value name="versione" field="versione" default="1" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="eccezione" class="org.openspcoop2.core.eccezione.errore_applicativo.Eccezione">
     <namespace uri="http://www.openspcoop2.org/core/eccezione/errore_applicativo" default="elements"/>
     <structure field="codice" usage="required" map-as="org.openspcoop2.core.eccezione.errore_applicativo.CodiceEccezione"/>
     <value name="descrizione" field="descrizione" usage="required"/>
-    <value name="tipo" field="tipo" usage="required" style="attribute"/>
+    <value name="tipo" field="tipo" usage="required" enum-value-method="toString" style="attribute"/>
   </mapping>
   <mapping name="codice" class="org.openspcoop2.core.eccezione.errore_applicativo.CodiceEccezione">
     <namespace uri="http://www.openspcoop2.org/core/eccezione/errore_applicativo" default="elements"/>

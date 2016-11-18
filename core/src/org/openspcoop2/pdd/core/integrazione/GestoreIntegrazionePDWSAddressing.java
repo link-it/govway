@@ -26,6 +26,8 @@ import javax.xml.soap.SOAPHeaderElement;
 import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -71,7 +73,13 @@ public class GestoreIntegrazionePDWSAddressing extends AbstractCore implements I
 	public void readInRequestHeader(HeaderIntegrazione integrazione,
 			InRequestPDMessage inRequestPDMessage) throws HeaderIntegrazioneException{
 		try{
-			this.utilities.readHeader(inRequestPDMessage.getMessage(), integrazione,
+			OpenSPCoop2Message msg = inRequestPDMessage.getMessage();
+			if(ServiceBinding.SOAP.equals(msg.getServiceBinding())==false){
+				throw new Exception("Non utilizzabile con un Service Binding Rest");
+			}
+			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
+			
+			this.utilities.readHeader(soapMsg, integrazione,
 					UtilitiesIntegrazioneWSAddressing.INTERPRETA_COME_ID_APPLICATIVO, 
 					this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa");
 		}catch(Exception e){
@@ -82,7 +90,13 @@ public class GestoreIntegrazionePDWSAddressing extends AbstractCore implements I
 	@Override
 	public void deleteInRequestHeader(InRequestPDMessage inRequestPDMessage) throws HeaderIntegrazioneException{
 		try{
-			this.utilities.deleteHeader(inRequestPDMessage.getMessage(),this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa");
+			OpenSPCoop2Message msg = inRequestPDMessage.getMessage();
+			if(ServiceBinding.SOAP.equals(msg.getServiceBinding())==false){
+				throw new Exception("Non utilizzabile con un Service Binding Rest");
+			}
+			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
+			
+			this.utilities.deleteHeader(soapMsg,this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa");
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePDSoap, "+e.getMessage(),e);
 		}
@@ -92,7 +106,13 @@ public class GestoreIntegrazionePDWSAddressing extends AbstractCore implements I
 	public void updateInRequestHeader(InRequestPDMessage inRequestPDMessage,IDServizio idServizio,
 			String idMessaggio,String servizioApplicativo,String correlazioneApplicativa) throws HeaderIntegrazioneException{
 		try{
-			this.utilities.updateHeader(inRequestPDMessage.getMessage(), 
+			OpenSPCoop2Message msg = inRequestPDMessage.getMessage();
+			if(ServiceBinding.SOAP.equals(msg.getServiceBinding())==false){
+				throw new Exception("Non utilizzabile con un Service Binding Rest");
+			}
+			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
+			
+			this.utilities.updateHeader(soapMsg, 
 					inRequestPDMessage.getSoggettoPropeprietarioPortaDelegata(), idServizio, idMessaggio, 
 					servizioApplicativo, correlazioneApplicativa, this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa");  // namespace
 		}catch(Exception e){
@@ -117,7 +137,13 @@ public class GestoreIntegrazionePDWSAddressing extends AbstractCore implements I
 	public void readInResponseHeader(HeaderIntegrazione integrazione,
 			InResponsePDMessage inResponsePDMessage) throws HeaderIntegrazioneException{
 		try{
-			this.utilities.readHeader(inResponsePDMessage.getMessage(), integrazione,
+			OpenSPCoop2Message msg = inResponsePDMessage.getMessage();
+			if(ServiceBinding.SOAP.equals(msg.getServiceBinding())==false){
+				throw new Exception("Non utilizzabile con un Service Binding Rest");
+			}
+			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
+			
+			this.utilities.readHeader(soapMsg, integrazione,
 					UtilitiesIntegrazioneWSAddressing.INTERPRETA_COME_ID_BUSTA, 
 					this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa");
 		}catch(Exception e){
@@ -128,7 +154,13 @@ public class GestoreIntegrazionePDWSAddressing extends AbstractCore implements I
 	@Override
 	public void deleteInResponseHeader(InResponsePDMessage inResponsePDMessage) throws HeaderIntegrazioneException{
 		try{
-			this.utilities.deleteHeader(inResponsePDMessage.getMessage(),this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa");
+			OpenSPCoop2Message msg = inResponsePDMessage.getMessage();
+			if(ServiceBinding.SOAP.equals(msg.getServiceBinding())==false){
+				throw new Exception("Non utilizzabile con un Service Binding Rest");
+			}
+			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
+			
+			this.utilities.deleteHeader(soapMsg,this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa");
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePDSoap, "+e.getMessage(),e);
 		}
@@ -138,7 +170,13 @@ public class GestoreIntegrazionePDWSAddressing extends AbstractCore implements I
 	public void updateInResponseHeader(InResponsePDMessage inResponsePDMessage,
 			String idMessageRequest,String idMessageResponse,String servizioApplicativo,String correlazioneApplicativa,String riferimentoCorrelazioneApplicativaRichiesta) throws HeaderIntegrazioneException{
 		try{
-			this.utilities.updateHeader(inResponsePDMessage.getMessage(),
+			OpenSPCoop2Message msg = inResponsePDMessage.getMessage();
+			if(ServiceBinding.SOAP.equals(msg.getServiceBinding())==false){
+				throw new Exception("Non utilizzabile con un Service Binding Rest");
+			}
+			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
+			
+			this.utilities.updateHeader(soapMsg,
 					inResponsePDMessage.getSoggettoMittente(),
 					inResponsePDMessage.getServizio(),
 					idMessageRequest,  idMessageResponse,
@@ -158,9 +196,14 @@ public class GestoreIntegrazionePDWSAddressing extends AbstractCore implements I
 		
 		try{
 			
-			OpenSPCoop2Message message = outResponsePDMessage.getMessage();
-			if(message.getSOAPHeader() == null){
-				message.getSOAPPart().getEnvelope().addHeader();
+			OpenSPCoop2Message msg = outResponsePDMessage.getMessage();
+			if(ServiceBinding.SOAP.equals(msg.getServiceBinding())==false){
+				throw new Exception("Non utilizzabile con un Service Binding Rest");
+			}
+			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
+			
+			if(soapMsg.getSOAPHeader() == null){
+				soapMsg.getSOAPPart().getEnvelope().addHeader();
 			}
 			
 			if(integrazione.getBusta()!=null){
@@ -170,24 +213,24 @@ public class GestoreIntegrazionePDWSAddressing extends AbstractCore implements I
 				if(hBusta.getDestinatario()!=null && hBusta.getServizio()!=null){
 					
 					// To
-					SOAPHeaderElement wsaTO = UtilitiesIntegrazioneWSAddressing.buildWSATo(message,this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa", hBusta.getTipoDestinatario(),hBusta.getDestinatario(), hBusta.getTipoServizio(), hBusta.getServizio());
-					message.addHeaderElement(message.getSOAPHeader(), wsaTO);
+					SOAPHeaderElement wsaTO = UtilitiesIntegrazioneWSAddressing.buildWSATo(soapMsg,this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa", hBusta.getTipoDestinatario(),hBusta.getDestinatario(), hBusta.getTipoServizio(), hBusta.getServizio());
+					soapMsg.addHeaderElement(soapMsg.getSOAPHeader(), wsaTO);
 					
 					// Action
 					if(hBusta.getAzione()!=null){
-						SOAPHeaderElement wsaAction = UtilitiesIntegrazioneWSAddressing.buildWSAAction(message,this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa",hBusta.getTipoDestinatario(),hBusta.getDestinatario(), hBusta.getTipoServizio(), hBusta.getServizio(),hBusta.getAzione());
-						message.addHeaderElement(message.getSOAPHeader(), wsaAction);
+						SOAPHeaderElement wsaAction = UtilitiesIntegrazioneWSAddressing.buildWSAAction(soapMsg,this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa",hBusta.getTipoDestinatario(),hBusta.getDestinatario(), hBusta.getTipoServizio(), hBusta.getServizio(),hBusta.getAzione());
+						soapMsg.addHeaderElement(soapMsg.getSOAPHeader(), wsaAction);
 					}
 				}
 				
 				if(hBusta.getMittente()!=null){
-					SOAPHeaderElement wsaFROM = UtilitiesIntegrazioneWSAddressing.buildWSAFrom(message,this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa",integrazione.getServizioApplicativo(),hBusta.getTipoMittente(),hBusta.getMittente());
-					message.addHeaderElement(message.getSOAPHeader(), wsaFROM);
+					SOAPHeaderElement wsaFROM = UtilitiesIntegrazioneWSAddressing.buildWSAFrom(soapMsg,this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa",integrazione.getServizioApplicativo(),hBusta.getTipoMittente(),hBusta.getMittente());
+					soapMsg.addHeaderElement(soapMsg.getSOAPHeader(), wsaFROM);
 				}
 					
 				if(hBusta.getID()!=null){
-					SOAPHeaderElement wsaID = UtilitiesIntegrazioneWSAddressing.buildWSAID(message,this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa",hBusta.getID());
-					message.addHeaderElement(message.getSOAPHeader(), wsaID);
+					SOAPHeaderElement wsaID = UtilitiesIntegrazioneWSAddressing.buildWSAID(soapMsg,this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa",hBusta.getID());
+					soapMsg.addHeaderElement(soapMsg.getSOAPHeader(), wsaID);
 				}
 				
 				if(hBusta.getRiferimentoMessaggio()!=null || hBusta.getIdCollaborazione()!=null){
@@ -195,8 +238,8 @@ public class GestoreIntegrazionePDWSAddressing extends AbstractCore implements I
 					if(rif==null){
 						rif = hBusta.getIdCollaborazione();
 					}
-					SOAPHeaderElement wsaRelatesTo = UtilitiesIntegrazioneWSAddressing.buildWSARelatesTo(message,this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa",rif);
-					message.addHeaderElement(message.getSOAPHeader(), wsaRelatesTo);
+					SOAPHeaderElement wsaRelatesTo = UtilitiesIntegrazioneWSAddressing.buildWSARelatesTo(soapMsg,this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa",rif);
+					soapMsg.addHeaderElement(soapMsg.getSOAPHeader(), wsaRelatesTo);
 				}
 			}
 			

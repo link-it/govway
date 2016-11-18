@@ -322,7 +322,7 @@ public class RegistroServiziReader {
 	 * @throws CoreException eccezione che contiene il motivo della validazione semantica errata
 	 */
 	protected void validazioneSemantica(boolean controlloTotale,boolean verificaURI, 
-			String[] tipiSoggettiValidi,String [] tipiServiziValidi, String[] tipiConnettoriValidi,
+			String[] tipiSoggettiValidi,String [] tipiServiziSoapValidi, String [] tipiServiziRestValidi, String[] tipiConnettoriValidi,
 			boolean validazioneSemanticaAbilitataXML,boolean validazioneSemanticaAbilitataAltriRegistri,
 			Logger logConsole) throws CoreException{
 		if(controlloTotale){
@@ -340,7 +340,7 @@ public class RegistroServiziReader {
 						BeanUtilities driverRegistro = (BeanUtilities) o;
 						org.openspcoop2.core.registry.RegistroServizi registroServizi = driverRegistro.getImmagineCompletaRegistroServizi();
 						ValidazioneSemantica validazioneSemantica = new ValidazioneSemantica(registroServizi,verificaURI,
-								tipiConnettoriValidi,tipiSoggettiValidi,tipiServiziValidi);
+								tipiConnettoriValidi,tipiSoggettiValidi,tipiServiziSoapValidi,tipiServiziRestValidi);
 						validazioneSemantica.validazioneSemantica(false);
 						if(logConsole!=null){
 							logConsole.info("Validazione semantica del registro dei servizi ["+nomeRegInLista+"] effettuata.");
@@ -367,7 +367,7 @@ public class RegistroServiziReader {
 						BeanUtilities driverRegistro = (BeanUtilities) o;
 						org.openspcoop2.core.registry.RegistroServizi registroServizi = driverRegistro.getImmagineCompletaRegistroServizi();
 						ValidazioneSemantica validazioneSemantica = new ValidazioneSemantica(registroServizi,verificaURI,
-								tipiConnettoriValidi,tipiSoggettiValidi,tipiServiziValidi);
+								tipiConnettoriValidi,tipiSoggettiValidi,tipiServiziSoapValidi,tipiServiziRestValidi);
 						validazioneSemantica.validazioneSemantica(false);
 						if(logConsole!=null){
 							logConsole.info("Validazione semantica del registro dei servizi ["+nomeRegInLista+"] effettuata.");
@@ -389,7 +389,7 @@ public class RegistroServiziReader {
 	
 	
 	protected void setValidazioneSemanticaModificaRegistroServiziXML(boolean verificaURI, 
-			String[] tipiSoggettiValidi,String [] tipiServiziValidi, String[] tipiConnettoriValidi) throws CoreException{
+			String[] tipiSoggettiValidi,String [] tipiServiziSoapValidi, String [] tipiServiziRestValidi, String[] tipiConnettoriValidi) throws CoreException{
 		for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
 			String nomeRegInLista= (String) en.nextElement();
 			try{
@@ -397,7 +397,7 @@ public class RegistroServiziReader {
 				if(o instanceof DriverRegistroServiziXML){
 					DriverRegistroServiziXML driver = (DriverRegistroServiziXML) o;
 					driver.abilitazioneValidazioneSemanticaDuranteModificaXML(verificaURI, 
-							tipiConnettoriValidi,tipiSoggettiValidi,tipiServiziValidi);
+							tipiConnettoriValidi,tipiSoggettiValidi,tipiServiziSoapValidi,tipiServiziRestValidi);
 				}
 			}catch(Exception e){
 				throw new CoreException("[Registro "+nomeRegInLista+"] "+e.getMessage(),e);

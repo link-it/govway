@@ -27,8 +27,9 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPFactory;
 
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.SOAPVersion;
-import org.openspcoop2.message.SoapUtils;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.protocol.basic.tracciamento.XMLTracciaBuilder;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -59,7 +60,7 @@ public class SPCoopXMLTracciaBuilder extends XMLTracciaBuilder implements IXMLTr
 		try{
 			OpenSPCoop2MessageFactory fac = OpenSPCoop2MessageFactory.getMessageFactory();
 			
-			SOAPFactory sf = SoapUtils.getSoapFactory(SOAPVersion.SOAP11);
+			SOAPFactory sf = SoapUtils.getSoapFactory(MessageType.SOAP_11);
 			SOAPElement traccia = sf.createElement("traccia","eGov_IT_Trac","http://www.cnipa.it/schemas/2003/eGovIT/Tracciamento1_0/");
 			
 			SOAPElement GDO =  traccia.addChildElement("GDO","eGov_IT_Trac","http://www.cnipa.it/schemas/2003/eGovIT/Tracciamento1_0/");
@@ -84,13 +85,13 @@ public class SPCoopXMLTracciaBuilder extends XMLTracciaBuilder implements IXMLTr
 			byte[] bustaInByte = tracciaObject.getBustaAsByteArray();
 			if(bustaInDom!=null){
 				// Tracciamento dall'oggetto dom
-				hdrEGov = fac.createEmptySOAPMessage(SOAPVersion.SOAP11).cleanXSITypes(bustaInDom);
+				hdrEGov = bustaInDom;
 			}else if(bustaAsString != null) {
 				// Tracciamento dai byte di una Busta
-				hdrEGov = fac.createMessage(SOAPVersion.SOAP11).createSOAPElement(bustaAsString.getBytes());
+				hdrEGov = fac.createMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().createSOAPElement(bustaAsString.getBytes());
 			}else if(bustaInByte != null) {
 				// Tracciamento dai byte di una Busta
-				hdrEGov = fac.createMessage(SOAPVersion.SOAP11).createSOAPElement(bustaInByte);
+				hdrEGov = fac.createMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().createSOAPElement(bustaInByte);
 			}else if(busta!=null){
 				// Tracciamento dall'oggetto Busta
 				hdrEGov = this.imbustamento.build_eGovHeader(null, busta, false, true); 

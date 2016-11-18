@@ -27,7 +27,16 @@
 				<!-- <echo message="SVN:[${svnant.jar.presente}]"/> -->
 				
 				<!-- org.openspcoop.2.message -->
-				<var name="packagesCompiled" value="org.openspcoop2.message,org.openspcoop2.message.reference,org.openspcoop2.message.mtom" />
+				<var name="packagesCompiled" value="org.openspcoop2.message" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.message.config" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.message.constants" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.message.exception" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.message.utils" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.message.xml" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.message.soap" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.message.soap.mtom" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.message.soap.reference" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.message.rest" />
 				<antcall target="compile_src_openspcoop2">
 					<param name="compile_src_openspcoop2.SVNINFO" value="${svnant.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src}/org/openspcoop2/message"/>

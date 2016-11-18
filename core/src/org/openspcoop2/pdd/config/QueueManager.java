@@ -41,8 +41,8 @@ import org.openspcoop2.pdd.mdb.InoltroBuste;
 import org.openspcoop2.pdd.mdb.InoltroRisposte;
 import org.openspcoop2.pdd.mdb.Sbustamento;
 import org.openspcoop2.pdd.mdb.SbustamentoRisposte;
-import org.openspcoop2.pdd.services.RicezioneBuste;
-import org.openspcoop2.pdd.services.RicezioneContenutiApplicativi;
+import org.openspcoop2.pdd.services.core.RicezioneBuste;
+import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 

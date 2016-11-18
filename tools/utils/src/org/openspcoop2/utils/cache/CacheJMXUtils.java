@@ -23,8 +23,8 @@ package org.openspcoop2.utils.cache;
 
 import org.slf4j.Logger;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.resources.CostantiJMX;
-import org.openspcoop2.utils.resources.RisorseJMXException;
+import org.openspcoop2.utils.jmx.CostantiJMX;
+import org.openspcoop2.utils.jmx.RisorseJMXException;
 
 /**
  * CacheJMXUtils
@@ -38,11 +38,11 @@ public class CacheJMXUtils {
 	private static String JMX_DOMAIN = "org.openspcoop2.utils";
 	private static String JMX_TYPE = CostantiJMX.JMX_TYPE;
 	
-	private static org.openspcoop2.utils.resources.GestoreRisorseJMX gestoreRisorse = null;
+	private static org.openspcoop2.utils.jmx.GestoreRisorseJMX gestoreRisorse = null;
 	
 	private static synchronized void initGestoreRisorseJMX(Logger log) throws RisorseJMXException{
 		if(gestoreRisorse==null)
-			gestoreRisorse = new org.openspcoop2.utils.resources.GestoreRisorseJMX(log);
+			gestoreRisorse = new org.openspcoop2.utils.jmx.GestoreRisorseJMX(log);
 	}
 	
 	public static void register(Logger log,AbstractCacheJmx cache) throws UtilsException{

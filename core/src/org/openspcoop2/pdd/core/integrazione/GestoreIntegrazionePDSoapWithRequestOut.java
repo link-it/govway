@@ -23,6 +23,9 @@ package org.openspcoop2.pdd.core.integrazione;
 
 import javax.xml.soap.SOAPHeaderElement;
 
+import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.constants.TipoIntegrazione;
 
 /**
@@ -43,23 +46,27 @@ public class GestoreIntegrazionePDSoapWithRequestOut extends GestoreIntegrazione
 			OutRequestPDMessage outRequestPDMessage) throws HeaderIntegrazioneException{
 	
 		try{
+			OpenSPCoop2Message msg = outRequestPDMessage.getMessage();
+			if(ServiceBinding.SOAP.equals(msg.getServiceBinding())==false){
+				throw new Exception("Non utilizzabile con un Service Binding Rest");
+			}
+			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
 			
 			SOAPHeaderElement header = this.utilities.buildHeader(integrazione, 
 					this.openspcoopProperties.getHeaderSoapNameIntegrazione(), // header name 
 					this.openspcoopProperties.getHeaderSoapPrefixIntegrazione(), // prefix
 					this.openspcoopProperties.getHeaderSoapActorIntegrazione(), // namespace
 					this.openspcoopProperties.getHeaderSoapActorIntegrazione(), // actor
-					outRequestPDMessage.getMessage(),
+					soapMsg,
 					this.openspcoopProperties.getHeaderSoapExtProtocolInfoNomeElementoIntegrazione(), // nomeElemento ExtInfoProtocol
 					this.openspcoopProperties.getHeaderSoapExtProtocolInfoNomeAttributoIntegrazione(), // nomeAttributo ExtInfoProtocol
 					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outRequestPDMessage.getBustaRichiesta(), true, TipoIntegrazione.SOAP)	
 				);
 			//System.out.println((new org.openspcoop.dao.message.OpenSPCoopMessageFactory().createMessage().getAsString(header)));
-			if(outRequestPDMessage.getMessage().getSOAPHeader() == null){
-				outRequestPDMessage.getMessage().getSOAPPart().getEnvelope().addHeader();
+			if(soapMsg.getSOAPHeader() == null){
+				soapMsg.getSOAPPart().getEnvelope().addHeader();
 			}
-			//outRequestPDMessage.getMessage().getSOAPHeader().addChildElement(header);
-			outRequestPDMessage.getMessage().addHeaderElement(outRequestPDMessage.getMessage().getSOAPHeader(), header);
+			soapMsg.addHeaderElement(soapMsg.getSOAPHeader(), header);
 			
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePDSoap, "+e.getMessage(),e);

@@ -37,25 +37,9 @@ public class CostantiConfigurazione {
     public final static String NONE = "none";
 	
     /** tipo di porta delegata: static */
-    public final static PortaDelegataSoggettoErogatoreIdentificazione PORTA_DELEGATA_SOGGETTO_EROGATORE_STATIC = PortaDelegataSoggettoErogatoreIdentificazione.STATIC;
-    /** tipo di porta delegata: url-based */
-    public final static PortaDelegataSoggettoErogatoreIdentificazione PORTA_DELEGATA_SOGGETTO_EROGATORE_URL_BASED = PortaDelegataSoggettoErogatoreIdentificazione.URL_BASED;
-    /** tipo di porta delegata: content-based */
-    public final static PortaDelegataSoggettoErogatoreIdentificazione PORTA_DELEGATA_SOGGETTO_EROGATORE_CONTENT_BASED = PortaDelegataSoggettoErogatoreIdentificazione.CONTENT_BASED;
-    /** tipo di porta delegata: integration-based */
-    public final static PortaDelegataSoggettoErogatoreIdentificazione PORTA_DELEGATA_SOGGETTO_EROGATORE_INPUT_BASED = PortaDelegataSoggettoErogatoreIdentificazione.INPUT_BASED;
-
-    /** tipo di porta delegata: static */
-    public final static PortaDelegataServizioIdentificazione PORTA_DELEGATA_SERVIZIO_STATIC = PortaDelegataServizioIdentificazione.STATIC;
-    /** tipo di porta delegata: url-based */
-    public final static PortaDelegataServizioIdentificazione PORTA_DELEGATA_SERVIZIO_URL_BASED = PortaDelegataServizioIdentificazione.URL_BASED;
-    /** tipo di porta delegata: content-based */
-    public final static PortaDelegataServizioIdentificazione PORTA_DELEGATA_SERVIZIO_CONTENT_BASED = PortaDelegataServizioIdentificazione.CONTENT_BASED;
-    /** tipo di porta delegata: integration-based */
-    public final static PortaDelegataServizioIdentificazione PORTA_DELEGATA_SERVIZIO_INPUT_BASED = PortaDelegataServizioIdentificazione.INPUT_BASED;
-    
-    /** tipo di porta delegata: static */
     public final static PortaDelegataAzioneIdentificazione PORTA_DELEGATA_AZIONE_STATIC = PortaDelegataAzioneIdentificazione.STATIC;
+    /** tipo di porta delegata: header-based */
+    public final static PortaDelegataAzioneIdentificazione PORTA_DELEGATA_AZIONE_HEADER_BASED = PortaDelegataAzioneIdentificazione.HEADER_BASED;
     /** tipo di porta delegata: url-based */
     public final static PortaDelegataAzioneIdentificazione PORTA_DELEGATA_AZIONE_URL_BASED = PortaDelegataAzioneIdentificazione.URL_BASED;
     /** tipo di porta delegata: content-based */
@@ -66,6 +50,23 @@ public class CostantiConfigurazione {
     public final static PortaDelegataAzioneIdentificazione PORTA_DELEGATA_AZIONE_SOAP_ACTION_BASED = PortaDelegataAzioneIdentificazione.SOAP_ACTION_BASED;
     /** tipo di porta delegata: wsdlBased (solo per azione) */
     public final static PortaDelegataAzioneIdentificazione PORTA_DELEGATA_AZIONE_WSDL_BASED = PortaDelegataAzioneIdentificazione.WSDL_BASED;
+    
+    /** tipo di porta applicativa: static */
+    public final static PortaApplicativaAzioneIdentificazione PORTA_APPLICATIVA_AZIONE_STATIC = PortaApplicativaAzioneIdentificazione.STATIC;
+    /** tipo di porta applicativa: plugin-based */
+    public final static PortaApplicativaAzioneIdentificazione PORTA_APPLICATIVA_AZIONE_PLUGIN_BASED = PortaApplicativaAzioneIdentificazione.PLUGIN_BASED;
+    /** tipo di porta applicativa: header-based */
+    public final static PortaApplicativaAzioneIdentificazione PORTA_APPLICATIVA_AZIONE_HEADER_BASED = PortaApplicativaAzioneIdentificazione.HEADER_BASED;
+    /** tipo di porta applicativa: url-based */
+    public final static PortaApplicativaAzioneIdentificazione PORTA_APPLICATIVA_AZIONE_URL_BASED = PortaApplicativaAzioneIdentificazione.URL_BASED;
+    /** tipo di porta applicativa: content-based */
+    public final static PortaApplicativaAzioneIdentificazione PORTA_APPLICATIVA_AZIONE_CONTENT_BASED = PortaApplicativaAzioneIdentificazione.CONTENT_BASED;
+    /** tipo di porta applicativa: integration-based */
+    public final static PortaApplicativaAzioneIdentificazione PORTA_APPLICATIVA_AZIONE_INPUT_BASED = PortaApplicativaAzioneIdentificazione.INPUT_BASED;
+    /** tipo di porta applicativa: soapAction-based (solo per azione) */
+    public final static PortaApplicativaAzioneIdentificazione PORTA_APPLICATIVA_AZIONE_SOAP_ACTION_BASED = PortaApplicativaAzioneIdentificazione.SOAP_ACTION_BASED;
+    /** tipo di porta applicativa: wsdlBased (solo per azione) */
+    public final static PortaApplicativaAzioneIdentificazione PORTA_APPLICATIVA_AZIONE_WSDL_BASED = PortaApplicativaAzioneIdentificazione.WSDL_BASED;
     
     /** tipo di porta delegata: static */
     public final static CorrelazioneApplicativaRichiestaIdentificazione CORRELAZIONE_APPLICATIVA_RICHIESTA_DISABILITATO = CorrelazioneApplicativaRichiestaIdentificazione.DISABILITATO;
@@ -207,8 +208,8 @@ public class CostantiConfigurazione {
     public final static String VALIDAZIONE_CONTENUTI_APPLICATIVI_PRINT_SEPARATOR = "-";
     public final static String VALIDAZIONE_CONTENUTI_APPLICATIVI_VALIDAZIONE_CON_MTOM = "mtom/xop";
     public final static String VALIDAZIONE_CONTENUTI_APPLICATIVI_VALIDAZIONE_IN_WARNING_MODE = "warningOnly";
-    public final static String VALIDAZIONE_CONTENUTI_APPLICATIVI_VALIDAZIONE_SOAP_BODY_NON_PRESENTE = " (SOAPBody non presente nella risposta)";
-    public final static String VALIDAZIONE_CONTENUTI_APPLICATIVI_VALIDAZIONE_SOAP_FAULT_PRESENTE = " (la risposta contiene un SOAPFault)";
+    public final static String VALIDAZIONE_CONTENUTI_APPLICATIVI_VALIDAZIONE_SOAP_BODY_NON_PRESENTE = " (contenuto non presente nella risposta)";
+    public final static String VALIDAZIONE_CONTENUTI_APPLICATIVI_VALIDAZIONE_SOAP_FAULT_PRESENTE = " (la risposta contiene un Fault)";
 	
     /** tipo di repository */
     public final static String REPOSITORY_BUSTE_DEFAULT = "default";

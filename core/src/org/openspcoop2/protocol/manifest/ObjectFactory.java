@@ -53,17 +53,31 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Soggetti }
+     * Create an instance of {@link RestMediaTypeDefaultMapping }
      */
-    public Soggetti createSoggetti() {
-        return new Soggetti();
+    public RestMediaTypeDefaultMapping createRestMediaTypeDefaultMapping() {
+        return new RestMediaTypeDefaultMapping();
     }
 
     /**
-     * Create an instance of {@link Profilo }
+     * Create an instance of {@link Organization }
      */
-    public Profilo createProfilo() {
-        return new Profilo();
+    public Organization createOrganization() {
+        return new Organization();
+    }
+
+    /**
+     * Create an instance of {@link Protocol }
+     */
+    public Protocol createProtocol() {
+        return new Protocol();
+    }
+
+    /**
+     * Create an instance of {@link ServiceType }
+     */
+    public ServiceType createServiceType() {
+        return new ServiceType();
     }
 
     /**
@@ -74,6 +88,55 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link SoapConfiguration }
+     */
+    public SoapConfiguration createSoapConfiguration() {
+        return new SoapConfiguration();
+    }
+
+    /**
+     * Create an instance of {@link Service }
+     */
+    public Service createService() {
+        return new Service();
+    }
+
+    /**
+     * Create an instance of {@link RestMediaTypeMapping }
+     */
+    public RestMediaTypeMapping createRestMediaTypeMapping() {
+        return new RestMediaTypeMapping();
+    }
+
+    /**
+     * Create an instance of {@link SubContextMapping }
+     */
+    public SubContextMapping createSubContextMapping() {
+        return new SubContextMapping();
+    }
+
+    /**
+     * Create an instance of {@link RestMediaTypeUndefinedMapping }
+     */
+    public RestMediaTypeUndefinedMapping createRestMediaTypeUndefinedMapping() {
+        return new RestMediaTypeUndefinedMapping();
+    }
+
+    /**
+     * Create an instance of {@link ServiceTypes }
+     */
+    public ServiceTypes createServiceTypes() {
+        return new ServiceTypes();
+    }
+
+    /**
+     * Create an instance of {@link DefaultIntegrationError }
+     */
+    public DefaultIntegrationError createDefaultIntegrationError() {
+        return new DefaultIntegrationError();
+    }
+
+    /**
      * Create an instance of {@link Binding }
      */
     public Binding createBinding() {
@@ -81,24 +144,45 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RegistroServizi }
+     * Create an instance of {@link CollaborationProfile }
      */
-    public RegistroServizi createRegistroServizi() {
-        return new RegistroServizi();
+    public CollaborationProfile createCollaborationProfile() {
+        return new CollaborationProfile();
     }
 
     /**
-     * Create an instance of {@link Servizi }
+     * Create an instance of {@link Registry }
      */
-    public Servizi createServizi() {
-        return new Servizi();
+    public Registry createRegistry() {
+        return new Registry();
     }
 
     /**
-     * Create an instance of {@link Tipi }
+     * Create an instance of {@link OrganizationType }
      */
-    public Tipi createTipi() {
-        return new Tipi();
+    public OrganizationType createOrganizationType() {
+        return new OrganizationType();
+    }
+
+    /**
+     * Create an instance of {@link Version }
+     */
+    public Version createVersion() {
+        return new Version();
+    }
+
+    /**
+     * Create an instance of {@link SoapMediaTypeDefaultMapping }
+     */
+    public SoapMediaTypeDefaultMapping createSoapMediaTypeDefaultMapping() {
+        return new SoapMediaTypeDefaultMapping();
+    }
+
+    /**
+     * Create an instance of {@link RestConfiguration }
+     */
+    public RestConfiguration createRestConfiguration() {
+        return new RestConfiguration();
     }
 
     /**
@@ -116,6 +200,20 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Functionality }
+     */
+    public Functionality createFunctionality() {
+        return new Functionality();
+    }
+
+    /**
+     * Create an instance of {@link SoapMediaTypeCollection }
+     */
+    public SoapMediaTypeCollection createSoapMediaTypeCollection() {
+        return new SoapMediaTypeCollection();
+    }
+
+    /**
      * Create an instance of {@link Openspcoop2 }
      */
     public Openspcoop2 createOpenspcoop2() {
@@ -123,17 +221,52 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Versioni }
+     * Create an instance of {@link IntegrationErrorConfiguration }
      */
-    public Versioni createVersioni() {
-        return new Versioni();
+    public IntegrationErrorConfiguration createIntegrationErrorConfiguration() {
+        return new IntegrationErrorConfiguration();
     }
 
     /**
-     * Create an instance of {@link Funzionalita }
+     * Create an instance of {@link RestMediaTypeCollection }
      */
-    public Funzionalita createFunzionalita() {
-        return new Funzionalita();
+    public RestMediaTypeCollection createRestMediaTypeCollection() {
+        return new RestMediaTypeCollection();
+    }
+
+    /**
+     * Create an instance of {@link OrganizationTypes }
+     */
+    public OrganizationTypes createOrganizationTypes() {
+        return new OrganizationTypes();
+    }
+
+    /**
+     * Create an instance of {@link EmptySubContextMapping }
+     */
+    public EmptySubContextMapping createEmptySubContextMapping() {
+        return new EmptySubContextMapping();
+    }
+
+    /**
+     * Create an instance of {@link Versions }
+     */
+    public Versions createVersions() {
+        return new Versions();
+    }
+
+    /**
+     * Create an instance of {@link IntegrationError }
+     */
+    public IntegrationError createIntegrationError() {
+        return new IntegrationError();
+    }
+
+    /**
+     * Create an instance of {@link IntegrationErrorCollection }
+     */
+    public IntegrationErrorCollection createIntegrationErrorCollection() {
+        return new IntegrationErrorCollection();
     }
 
     /**
@@ -144,10 +277,31 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Context }
+     */
+    public Context createContext() {
+        return new Context();
+    }
+
+    /**
+     * Create an instance of {@link SoapMediaTypeMapping }
+     */
+    public SoapMediaTypeMapping createSoapMediaTypeMapping() {
+        return new SoapMediaTypeMapping();
+    }
+
+    /**
      * Create an instance of {@link SoapHeaderBypassMustUnderstand }
      */
     public SoapHeaderBypassMustUnderstand createSoapHeaderBypassMustUnderstand() {
         return new SoapHeaderBypassMustUnderstand();
+    }
+
+    /**
+     * Create an instance of {@link SoapMediaTypeUndefinedMapping }
+     */
+    public SoapMediaTypeUndefinedMapping createSoapMediaTypeUndefinedMapping() {
+        return new SoapMediaTypeUndefinedMapping();
     }
 
 

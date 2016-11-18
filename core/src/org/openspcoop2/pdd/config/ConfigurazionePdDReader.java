@@ -33,10 +33,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
-import javax.xml.soap.SOAPEnvelope;
-
 import org.apache.logging.log4j.Level;
-import org.slf4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.config.AccessoConfigurazione;
@@ -86,9 +83,8 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
-import org.openspcoop2.message.DynamicNamespaceContextFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.mtom.MtomXomPackageInfo;
+import org.openspcoop2.message.soap.mtom.MtomXomPackageInfo;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.GestoreErroreConnettore;
@@ -96,7 +92,8 @@ import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
-import org.openspcoop2.protocol.engine.mapping.ModalitaIdentificazione;
+import org.openspcoop2.protocol.engine.mapping.IdentificazioneDinamicaException;
+import org.openspcoop2.protocol.engine.mapping.ModalitaIdentificazioneAzione;
 import org.openspcoop2.protocol.engine.mapping.OperationFinder;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -104,9 +101,7 @@ import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.regexp.RegularExpressionEngine;
-import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
-import org.openspcoop2.utils.xml.DynamicNamespaceContext;
+import org.slf4j.Logger;
 
 
 /**
@@ -405,8 +400,10 @@ public class ConfigurazionePdDReader {
 				org.openspcoop2.core.config.Openspcoop2 configurazionePdD = driverConfigurazione.getImmagineCompletaConfigurazionePdD();
 				
 				ValidazioneSemantica validazioneSemantica = new ValidazioneSemantica(configurazionePdD,
-						tipiConnettori,ProtocolFactoryManager.getInstance().getSubjectTypesAsArray(),
-						ProtocolFactoryManager.getInstance().getServiceTypesAsArray(),tipiMsgDiagnosticoAppender,tipiTracciamentoAppender,
+						tipiConnettori,ProtocolFactoryManager.getInstance().getOrganizationTypesAsArray(),
+						ProtocolFactoryManager.getInstance().getServiceTypesAsArray(org.openspcoop2.protocol.manifest.constants.ServiceBinding.SOAP),
+						ProtocolFactoryManager.getInstance().getServiceTypesAsArray(org.openspcoop2.protocol.manifest.constants.ServiceBinding.REST),
+						tipiMsgDiagnosticoAppender,tipiTracciamentoAppender,
 						tipiAutenticazione,tipiAutorizzazione,
 						tipiAutorizzazioneContenuto,tipiAutorizzazioneContenutoBuste,
 						tipiIntegrazionePD,tipiIntegrazionePA,validaConfigurazione);
@@ -430,8 +427,9 @@ public class ConfigurazionePdDReader {
 			if(o instanceof DriverConfigurazioneXML){
 				DriverConfigurazioneXML driver = (DriverConfigurazioneXML) o;
 				driver.abilitazioneValidazioneSemanticaDuranteModificaXML(tipiConnettori, 
-						ProtocolFactoryManager.getInstance().getSubjectTypesAsArray(),
-						ProtocolFactoryManager.getInstance().getServiceTypesAsArray(),
+						ProtocolFactoryManager.getInstance().getOrganizationTypesAsArray(),
+						ProtocolFactoryManager.getInstance().getServiceTypesAsArray(org.openspcoop2.protocol.manifest.constants.ServiceBinding.SOAP),
+						ProtocolFactoryManager.getInstance().getServiceTypesAsArray(org.openspcoop2.protocol.manifest.constants.ServiceBinding.REST),
 						tipoMsgDiagnosticiAppender, tipoTracciamentoAppender, tipoAutenticazione, tipoAutorizzazione, 
 						tipiAutorizzazioneContenuto,tipiAutorizzazioneContenutoBuste,
 						tipoIntegrazionePD, tipoIntegrazionePA);
@@ -469,11 +467,29 @@ public class ConfigurazionePdDReader {
 	 * @return Il Soggetto che include la porta delegata fornita come parametro.
 	 * 
 	 */
-	protected IDSoggetto getIDSoggetto(Connection connectionPdD, String location,IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+	protected IDSoggetto getSoggettoProprietarioPortaDelegata(Connection connectionPdD, String location,IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 
-		Soggetto soggetto = this.configurazionePdD.getSoggetto(connectionPdD,location);
+		Soggetto soggetto = this.configurazionePdD.getSoggettoProprietarioPortaDelegata(connectionPdD,location);
 		if(soggetto==null)
 			throw new DriverConfigurazioneNotFound("Soggetto che possiede la porta delegata ["+location+"] non esistente");
+
+		IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipo(),soggetto.getNome());
+		if(soggetto.getIdentificativoPorta() != null){
+			idSoggetto.setCodicePorta(soggetto.getIdentificativoPorta());
+		}else{
+			try{
+				idSoggetto.setCodicePorta(protocolFactory.createTraduttore().getIdentificativoPortaDefault(idSoggetto));
+			}catch(Exception e){
+				throw new DriverConfigurazioneException(e.getMessage(),e);
+			}
+		}
+		return idSoggetto;
+	}
+	protected IDSoggetto getSoggettoProprietarioPortaApplicativa(Connection connectionPdD, String location,IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+
+		Soggetto soggetto = this.configurazionePdD.getSoggettoProprietarioPortaApplicativa(connectionPdD,location);
+		if(soggetto==null)
+			throw new DriverConfigurazioneNotFound("Soggetto che possiede la porta applicativa ["+location+"] non esistente");
 
 		IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipo(),soggetto.getNome());
 		if(soggetto.getIdentificativoPorta() != null){
@@ -1063,22 +1079,11 @@ public class ConfigurazionePdDReader {
 		}
 	}
 	
-	/**
-	 * Restituisce true, se alcuni parametri della porta delegata richiedono una identificazione content-based
-	 *
-	 * @param pd identificatore di una porta delegata
-	 * @return true se alcuni parametri della porta delegata richiedono una identificazione content-based
-	 * 
-	 */
 	protected boolean identificazioneContentBased(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		if(pd==null){
 			throw new DriverConfigurazioneException("Porta Delegata non fornita");
 		}
-		if(CostantiConfigurazione.PORTA_DELEGATA_SOGGETTO_EROGATORE_CONTENT_BASED.equals(pd.getSoggettoErogatore().getIdentificazione())){
-			return true;
-		}else if(CostantiConfigurazione.PORTA_DELEGATA_SERVIZIO_CONTENT_BASED.equals(pd.getServizio().getIdentificazione())){
-			return true;
-		}else if( pd.getAzione() != null  ){
+		if( pd.getAzione() != null  ){
 			if(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_CONTENT_BASED.equals(pd.getAzione().getIdentificazione())){
 				return true;
 			}else{
@@ -1087,229 +1092,61 @@ public class ConfigurazionePdDReader {
 		}else
 			return false;
 	}
+	
+	protected boolean identificazioneInputBased(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		if(pd==null){
+			throw new DriverConfigurazioneException("Porta Delegata non fornita");
+		}
+		if( pd.getAzione() != null  ){
+			if(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_INPUT_BASED.equals(pd.getAzione().getIdentificazione())){
+				return true;
+			}else{
+				return false;
+			}
+		}else
+			return false;
+	}
 
-	/**
-	 * Restituisce il servizio associata alla porta delegata identificata dai parametri. 
-	 *
-	 * @param pd identificatore di una porta delegata
-	 * @param urlProtocolContext parametri di invocazione della porta delegata.
-	 * @param envelope ByteApplicativo utilizzato per l'invocazione della porta delegata
-	 * @param headerIntegrazione Header di Integrazione
-	 * @return La definizione del servizio
-	 * 
-	 */
-	protected IDServizio getIDServizio(RegistroServiziManager registroServiziManager,PortaDelegata pd,URLProtocolContext urlProtocolContext,
-			OpenSPCoop2Message message, SOAPEnvelope envelope,HeaderIntegrazione headerIntegrazione,boolean readFirstHeaderIntegrazione,
-			String soapAction,IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound,Exception { 
+	protected String getAzione(RegistroServiziManager registroServiziManager,PortaDelegata pd,URLProtocolContext urlProtocolContext,
+			OpenSPCoop2Message message, HeaderIntegrazione headerIntegrazione, boolean readFirstHeaderIntegrazione,
+			IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound, IdentificazioneDinamicaException { 
 		
 		try{
 
 			if(pd==null){
 				throw new DriverConfigurazioneException("Porta Delegata non fornita");
 			}
+			IDSoggetto soggettoErogatore = new IDSoggetto(pd.getSoggettoErogatore().getTipo(),pd.getSoggettoErogatore().getNome());
+			IDServizio idServizio = new IDServizio(soggettoErogatore,pd.getServizio().getTipo(),pd.getServizio().getNome());
 			
-			// Calcolo url di invocazione, se esiste un parametro identificato con urlBased
-			String urlInvocazionePD = null;
-			boolean urlBased = false;
-			if( CostantiConfigurazione.PORTA_DELEGATA_SOGGETTO_EROGATORE_URL_BASED.equals(pd.getSoggettoErogatore().getIdentificazione()))
-				urlBased = true;
-			else if(CostantiConfigurazione.PORTA_DELEGATA_SERVIZIO_URL_BASED.equals(pd.getServizio().getIdentificazione()))
-				urlBased = true;
-			else if( pd.getAzione() != null ){
-				if(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_URL_BASED.equals(pd.getAzione().getIdentificazione()))
-					urlBased = true;
+			String azioneHeaderIntegrazione = null;
+			if(headerIntegrazione!=null && headerIntegrazione.getBusta()!=null && headerIntegrazione.getBusta().getAzione()!=null){
+				azioneHeaderIntegrazione = headerIntegrazione.getBusta().getAzione();
 			}
-			if(urlBased){
-				urlInvocazionePD = urlProtocolContext.getUrlInvocazione_formBased();
-			}
-
-			// Calcolo NamespaceContext, se esiste un parametro identificato con contentBased
-			DynamicNamespaceContext dnc = null;
-			if( CostantiConfigurazione.PORTA_DELEGATA_SOGGETTO_EROGATORE_CONTENT_BASED.equals(pd.getSoggettoErogatore().getIdentificazione()))
-				dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContext(envelope);
-			else if(CostantiConfigurazione.PORTA_DELEGATA_SERVIZIO_CONTENT_BASED.equals(pd.getServizio().getIdentificazione()))
-				dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContext(envelope);
-			else if( pd.getAzione() != null ){
-				if(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_CONTENT_BASED.equals(pd.getAzione().getIdentificazione()))
-					dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContext(envelope);
-			}
-			AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.XPathExpressionEngine();
-
 			
-			
-			// ** Soggetto Erogatore **
-			IDSoggetto soggettoErogatore = new IDSoggetto();
-			soggettoErogatore.setTipo(pd.getSoggettoErogatore().getTipo());
-			try{
-				if(CostantiConfigurazione.PORTA_DELEGATA_SOGGETTO_EROGATORE_STATIC.equals(pd.getSoggettoErogatore().getIdentificazione()) || 
-						pd.getSoggettoErogatore().getIdentificazione()==null){ //default is static	
-					// STATIC-BASED
-					soggettoErogatore.setNome(pd.getSoggettoErogatore().getNome());
-				}else{
-					if(readFirstHeaderIntegrazione && headerIntegrazione.getBusta()!=null && headerIntegrazione.getBusta().getDestinatario()!=null){
-						// INTEGRATIONMANAGER INPUT
-						soggettoErogatore.setNome(headerIntegrazione.getBusta().getDestinatario());
-						if(headerIntegrazione.getBusta().getTipoDestinatario()!=null)
-							soggettoErogatore.setTipo(headerIntegrazione.getBusta().getTipoDestinatario());
-					}
-					else{			
-						if(CostantiConfigurazione.PORTA_DELEGATA_SOGGETTO_EROGATORE_URL_BASED.equals(pd.getSoggettoErogatore().getIdentificazione())){			
-							// URL-BASED
-							String sog = RegularExpressionEngine.getStringMatchPattern(urlInvocazionePD, 
-									pd.getSoggettoErogatore().getPattern());
-							if(sog!=null)
-								sog = sog.replaceAll("_", "");
-							soggettoErogatore.setNome(sog);		    
-						}else if(CostantiConfigurazione.PORTA_DELEGATA_SOGGETTO_EROGATORE_CONTENT_BASED.equals(pd.getSoggettoErogatore().getIdentificazione())){
-							// CONTENT-BASED
-							String sog = xPathEngine.getStringMatchPattern(envelope,dnc, 
-									pd.getSoggettoErogatore().getPattern());
-							soggettoErogatore.setNome(sog);	
-						}else if(CostantiConfigurazione.PORTA_DELEGATA_SOGGETTO_EROGATORE_INPUT_BASED.equals(pd.getSoggettoErogatore().getIdentificazione())){
-							// INPUT-BASED
-							if(headerIntegrazione.getBusta()!=null){
-								soggettoErogatore.setNome(headerIntegrazione.getBusta().getDestinatario());
-								if(headerIntegrazione.getBusta().getTipoDestinatario()!=null)
-									soggettoErogatore.setTipo(headerIntegrazione.getBusta().getTipoDestinatario());
-							}
-						}
-					}
-	
+			ModalitaIdentificazioneAzione modalitaIdentificazione = ModalitaIdentificazioneAzione.STATIC;
+			String pattern = null;
+			boolean forceRegistryBased = false;
+			boolean forcePluginBased = false;
+			if( pd.getAzione() != null  ){
+				idServizio.setAzione(pd.getAzione().getNome());
+				pattern = pd.getAzione().getPattern();
+				if( pd.getAzione().getIdentificazione() != null  ){
+					modalitaIdentificazione = ModalitaIdentificazioneAzione.convert(pd.getAzione().getIdentificazione());
 				}
-				try{
-					soggettoErogatore.setCodicePorta(registroServiziManager.getDominio(soggettoErogatore, null, protocolFactory));
-				}catch(Exception e){}
-			}catch(Exception e){
-				throw new PDIdentificazioneDinamicaException(PDIdentificazioneDinamica.SOGGETTO_EROGATORE,e.getMessage(),e);
+				forceRegistryBased = StatoFunzionalita.ABILITATO.equals(pd.getAzione().getForceWsdlBased());
 			}
-
-
-			// *** Servizio ***
-			String servizio = null;
-			String tipoServizio = pd.getServizio().getTipo();
-			try{
-				if(CostantiConfigurazione.PORTA_DELEGATA_SERVIZIO_STATIC.equals(pd.getServizio().getIdentificazione()) || 
-						pd.getServizio().getIdentificazione()==null){ //default is static	
-					// STATIC-BASED
-					servizio = pd.getServizio().getNome();
-				}else{
-					if(readFirstHeaderIntegrazione && headerIntegrazione.getBusta()!=null && headerIntegrazione.getBusta().getServizio()!=null){
-						// INTEGRATIONMANAGER INPUT
-						servizio = headerIntegrazione.getBusta().getServizio();
-						if(headerIntegrazione.getBusta().getTipoServizio()!=null)
-							tipoServizio = headerIntegrazione.getBusta().getTipoServizio();
-					}else{
-						if(CostantiConfigurazione.PORTA_DELEGATA_SERVIZIO_URL_BASED.equals(pd.getServizio().getIdentificazione())){
-							// URL-BASED
-							servizio = RegularExpressionEngine.getStringMatchPattern(urlInvocazionePD, 
-									pd.getServizio().getPattern());		
-						}else if(CostantiConfigurazione.PORTA_DELEGATA_SERVIZIO_CONTENT_BASED.equals(pd.getServizio().getIdentificazione())){
-							// CONTENT-BASED
-							servizio = xPathEngine.getStringMatchPattern(envelope,dnc,pd.getServizio().getPattern());
-						}else if(CostantiConfigurazione.PORTA_DELEGATA_SERVIZIO_INPUT_BASED.equals(pd.getServizio().getIdentificazione())){
-							// INPUT-BASED
-							if(headerIntegrazione.getBusta()!=null){
-								servizio = headerIntegrazione.getBusta().getServizio();
-								if(headerIntegrazione.getBusta().getTipoServizio()!=null)
-									tipoServizio = headerIntegrazione.getBusta().getTipoServizio();
-							}
-						}
-					}
-				}
-			}catch(Exception e){
-				throw new PDIdentificazioneDinamicaException(PDIdentificazioneDinamica.SERVIZIO,e.getMessage(),e);
-			}
-
 			
-			// ** Azione **
-			String azione = null;
-			Exception eAzione = null;
-			try{
-				if( pd.getAzione() != null  ){
-					if(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_STATIC.equals(pd.getAzione().getIdentificazione()) || 
-							pd.getAzione().getIdentificazione()==null){ //default is static	
-						// STATIC-BASED
-						azione = pd.getAzione().getNome();
-					}else{
-						if(readFirstHeaderIntegrazione && headerIntegrazione.getBusta()!=null && headerIntegrazione.getBusta().getAzione()!=null){
-							// INTEGRATIONMANAGER INPUT
-							azione = headerIntegrazione.getBusta().getAzione();
-						}else{
-							if(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_URL_BASED.equals(pd.getAzione().getIdentificazione())){
-								// URL-BASED
-								// L'azione se non viene trovata viene interpretata come null.
-								// VINCOLO RILASCIATO DA 1.3.5
-								//try{
-								azione = RegularExpressionEngine.getStringMatchPattern(urlInvocazionePD, 
-										pd.getAzione().getPattern());
-								//}catch(Exception e){}
-							}else if(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_CONTENT_BASED.equals(pd.getAzione().getIdentificazione())){
-								// CONTENT-BASED
-								//	L'azione se non viene trovata viene interpretata come null.
-								// VINCOLO RILASCIATO DA 1.3.5
-								//try{
-								azione = xPathEngine.getStringMatchPattern(envelope,dnc,pd.getAzione().getPattern());
-								//}catch(Exception e){}
-							}else if(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_INPUT_BASED.equals(pd.getAzione().getIdentificazione())){
-								// INPUT-BASED
-								if(headerIntegrazione.getBusta()!=null){
-									azione = headerIntegrazione.getBusta().getAzione();
-								}
-								// DA 1.3.5
-								else{
-									throw new DriverConfigurazioneNotFound("Azione non indicata negli header di integrazione");
-								}
-							}else if(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_SOAP_ACTION_BASED.equals(pd.getAzione().getIdentificazione())){
-								// SOAP-ACTION-BASED
-								azione = soapAction;
-								azione = azione.trim();
-								// Nota: la soap action potrebbe essere quotata con "" 
-								if(azione.startsWith("\"")){
-									azione = azione.substring(1);
-								}
-								if(azione.endsWith("\"")){
-									azione = azione.substring(0,(azione.length()-1));
-								}	
-								if("".equals(azione)){
-									azione = null;
-									throw new DriverConfigurazioneNotFound("SoapAction vuota ("+soapAction+") non è utilizzabile con una identificazione 'soapActionBased'");
-								}
-							}else if(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_WSDL_BASED.equals(pd.getAzione().getIdentificazione())){
-								IDServizio idServizio = new IDServizio(soggettoErogatore,tipoServizio,	servizio);
-								OperationFinder.checkIDServizioPerRiconoscimentoAzione(idServizio, ModalitaIdentificazione.WSDL_BASED);
-								azione = OperationFinder.searchOperationByRequestMessage(message, registroServiziManager, idServizio, this.log);
-							}
-						}
-					}
-				}
-			}catch(Exception e){
-				eAzione = e;
-			}
-			// Se non ho riconosciuto una azione, provo con la modalita' wsdlBased se e' abilitata.
-			if(azione==null && 
-					(pd.getAzione() != null) && 
-					(StatoFunzionalita.ABILITATO.equals(pd.getAzione().getForceWsdlBased())) ){
-				try{
-					IDServizio idServizio = new IDServizio(soggettoErogatore,tipoServizio,	servizio);
-					OperationFinder.checkIDServizioPerRiconoscimentoAzione(idServizio, ModalitaIdentificazione.WSDL_BASED);
-					azione = OperationFinder.searchOperationByRequestMessage(message, registroServiziManager, idServizio, this.log);
-				}catch(Exception eForceWsdl){
-					this.log.debug("Riconoscimento forzato dell'azione non riuscito: "+eForceWsdl.getMessage(),eForceWsdl);
-				}
-			}
-			// Se non ho riconosciuto una azione a questo punto, e durante il processo standard di riconoscimento era stato sollevata una eccezione
-			// viene rilanciato
-			if(azione==null && eAzione!=null)
-				throw new PDIdentificazioneDinamicaException(PDIdentificazioneDinamica.AZIONE,eAzione.getMessage(),eAzione);
-
+			String azione = OperationFinder.getAzione(registroServiziManager, urlProtocolContext, message, soggettoErogatore, idServizio, 
+					readFirstHeaderIntegrazione, azioneHeaderIntegrazione, protocolFactory, modalitaIdentificazione, 
+					pattern, forceRegistryBased, forcePluginBased, this.log);
 			
-			// Build IDServizio...
-			IDServizio service = new IDServizio(soggettoErogatore,
-					tipoServizio,
-					servizio,azione);
-			return service;
+			// Se non ho riconosciuto una azione a questo punto, 
+			// durante il processo standard di riconoscimento viene sollevata una eccezione IdentificazioneDinamicaException
+			
+			return azione;
 
-		}catch(PDIdentificazioneDinamicaException e){
+		}catch(IdentificazioneDinamicaException e){
 			throw e;
 		}
 		catch(Exception e){
@@ -1942,6 +1779,82 @@ public class ConfigurazionePdDReader {
 	
 	protected PortaApplicativa getPortaApplicativa(Connection connectionPdD,String nomePA, IDSoggetto soggettoProprietario) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		return this.configurazionePdD.getPortaApplicativa(connectionPdD,nomePA, soggettoProprietario);
+	}
+	
+	protected boolean identificazioneContentBased(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		if(pa==null){
+			throw new DriverConfigurazioneException("Porta Applicativa non fornita");
+		}
+		if( pa.getAzione() != null  ){
+			if(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_CONTENT_BASED.equals(pa.getAzione().getIdentificazione())){
+				return true;
+			}else{
+				return false;
+			}
+		}else
+			return false;
+	}
+	
+	protected boolean identificazioneInputBased(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		if(pa==null){
+			throw new DriverConfigurazioneException("Porta Applicativa non fornita");
+		}
+		if( pa.getAzione() != null  ){
+			if(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_INPUT_BASED.equals(pa.getAzione().getIdentificazione())){
+				return true;
+			}else{
+				return false;
+			}
+		}else
+			return false;
+	}
+
+	protected String getAzione(RegistroServiziManager registroServiziManager,PortaApplicativa pa,URLProtocolContext urlProtocolContext,
+			OpenSPCoop2Message message, HeaderIntegrazione headerIntegrazione, boolean readFirstHeaderIntegrazione,
+			IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound, IdentificazioneDinamicaException { 
+		
+		try{
+
+			if(pa==null){
+				throw new DriverConfigurazioneException("Porta Applicativa non fornita");
+			}
+			IDSoggetto soggettoErogatore = new IDSoggetto(pa.getTipoSoggettoProprietario(),pa.getNomeSoggettoProprietario());
+			IDServizio idServizio = new IDServizio(soggettoErogatore,pa.getServizio().getTipo(),pa.getServizio().getNome());
+			
+			String azioneHeaderIntegrazione = null;
+			if(headerIntegrazione!=null && headerIntegrazione.getBusta()!=null && headerIntegrazione.getBusta().getAzione()!=null){
+				azioneHeaderIntegrazione = headerIntegrazione.getBusta().getAzione();
+			}
+			
+			ModalitaIdentificazioneAzione modalitaIdentificazione = ModalitaIdentificazioneAzione.STATIC;
+			String pattern = null;
+			boolean forceRegistryBased = false;
+			boolean forcePluginBased = true; // sulla PA si fa sempre questo controllo?
+			if( pa.getAzione() != null  ){
+				idServizio.setAzione(pa.getAzione().getNome());
+				pattern = pa.getAzione().getPattern();
+				if( pa.getAzione().getIdentificazione() != null  ){
+					modalitaIdentificazione = ModalitaIdentificazioneAzione.convert(pa.getAzione().getIdentificazione());
+				}
+				forceRegistryBased = StatoFunzionalita.ABILITATO.equals(pa.getAzione().getForceWsdlBased());
+			}
+			
+			String azione = OperationFinder.getAzione(registroServiziManager, urlProtocolContext, message, soggettoErogatore, idServizio, 
+					readFirstHeaderIntegrazione, azioneHeaderIntegrazione, protocolFactory, modalitaIdentificazione, 
+					pattern, forceRegistryBased, forcePluginBased, this.log);
+			
+			// Se non ho riconosciuto una azione a questo punto, 
+			// durante il processo standard di riconoscimento viene sollevata una eccezione IdentificazioneDinamicaException
+			
+			return azione;
+
+		}catch(IdentificazioneDinamicaException e){
+			throw e;
+		}
+		catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+
 	}
 	
 	/**

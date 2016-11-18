@@ -20,28 +20,47 @@
  */
 package org.openspcoop2.core.eccezione.router_details;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
-import java.util.Date;
 
 
-/** <p>Java class DettaglioRouting.
+/** <p>Java class for dettaglio-routing complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="dettaglio-routing">
+ * 		&lt;sequence>
+ * 			&lt;element name="dominio" type="{http://www.openspcoop2.org/core/eccezione/router_details}dominio" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="dettaglio" type="{http://www.openspcoop2.org/core/eccezione/router_details}dettaglio" minOccurs="1" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "dettaglio-routing", 
+  propOrder = {
+  	"dominio",
+  	"oraRegistrazione",
+  	"dettaglio"
+  }
+)
+
+@XmlRootElement(name = "dettaglio-routing")
 
 public class DettaglioRouting extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected Dominio dominio;
-
-  protected Date oraRegistrazione;
-
-  protected Dettaglio dettaglio;
-
-
   public DettaglioRouting() {
   }
 
@@ -67,11 +86,11 @@ public class DettaglioRouting extends org.openspcoop2.utils.beans.BaseBean imple
     this.dominio = dominio;
   }
 
-  public Date getOraRegistrazione() {
+  public java.util.Date getOraRegistrazione() {
     return this.oraRegistrazione;
   }
 
-  public void setOraRegistrazione(Date oraRegistrazione) {
+  public void setOraRegistrazione(java.util.Date oraRegistrazione) {
     this.oraRegistrazione = oraRegistrazione;
   }
 
@@ -85,24 +104,32 @@ public class DettaglioRouting extends org.openspcoop2.utils.beans.BaseBean imple
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  @XmlTransient
+  private Long id;
 
-  public static final String DOMINIO = "dominio";
+  private static org.openspcoop2.core.eccezione.router_details.model.DettaglioRoutingModel modelStaticInstance = null;
+  private static synchronized void initModelStaticInstance(){
+	  if(org.openspcoop2.core.eccezione.router_details.DettaglioRouting.modelStaticInstance==null){
+  			org.openspcoop2.core.eccezione.router_details.DettaglioRouting.modelStaticInstance = new org.openspcoop2.core.eccezione.router_details.model.DettaglioRoutingModel();
+	  }
+  }
+  public static org.openspcoop2.core.eccezione.router_details.model.DettaglioRoutingModel model(){
+	  if(org.openspcoop2.core.eccezione.router_details.DettaglioRouting.modelStaticInstance==null){
+	  		initModelStaticInstance();
+	  }
+	  return org.openspcoop2.core.eccezione.router_details.DettaglioRouting.modelStaticInstance;
+  }
 
-  public static final String ORA_REGISTRAZIONE = "oraRegistrazione";
 
-  public static final String DETTAGLIO = "dettaglio";
+  @XmlElement(name="dominio",required=true,nillable=false)
+  protected Dominio dominio;
+
+  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="ora-registrazione",required=true,nillable=false,type=java.lang.String.class)
+  protected java.util.Date oraRegistrazione;
+
+  @XmlElement(name="dettaglio",required=true,nillable=false)
+  protected Dettaglio dettaglio;
 
 }

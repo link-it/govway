@@ -20,185 +20,265 @@
  */
 
 
-
-
 package org.openspcoop2.pdd.services;
 
-import javax.rmi.PortableRemoteObject;
+import java.util.List;
 
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPHeader;
+
+import org.apache.commons.io.output.NullOutputStream;
+import org.openspcoop2.core.constants.TransferLengthModes;
+import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2RestMessage;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.message.exception.ParseExceptionUtils;
+import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
-import org.openspcoop2.pdd.services.skeleton.IntegrationManagerException;
-import org.openspcoop2.pdd.timers.TimerGestoreBusteNonRiscontrate;
-import org.openspcoop2.pdd.timers.TimerGestoreBusteNonRiscontrateHome;
-import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
-import org.openspcoop2.pdd.timers.TimerGestoreMessaggiHome;
-import org.openspcoop2.pdd.timers.TimerGestorePuliziaMessaggiAnomali;
-import org.openspcoop2.pdd.timers.TimerGestorePuliziaMessaggiAnomaliHome;
-import org.openspcoop2.pdd.timers.TimerGestoreRepositoryBuste;
-import org.openspcoop2.pdd.timers.TimerGestoreRepositoryBusteHome;
-import org.openspcoop2.protocol.sdk.AbstractEccezioneBuilderParameter;
-import org.openspcoop2.protocol.sdk.EccezioneIntegrazioneBuilderParameters;
-import org.openspcoop2.protocol.sdk.EccezioneProtocolloBuilderParameters;
+import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
+import org.openspcoop2.pdd.services.connector.messages.ConnectorOutMessage;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.utils.resources.GestoreJNDI;
-import org.w3c.dom.Node;
+import org.openspcoop2.protocol.sdk.builder.InformazioniErroriInfrastrutturali;
+import org.openspcoop2.protocol.sdk.config.IProtocolManager;
+import org.openspcoop2.utils.NameValue;
+import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.transport.http.HttpConstants;
+
 
 /**
- * Libreria contenente metodi utili per lo smistamento delle buste 
- * all'interno dei moduli di openspcoop realizzati tramite servizi.
+ * Libreria utilizzata dalle servlet contenente metodi che implementano 
+ * le funzioni precedentemente implementate negli Handler.
+ * 
  *
- * @author Poli Andrea (apoli@link.it)
+ * @author Nardi Lorenzo (nardi@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-
 public class ServicesUtils {
-    
-  
-   
 
-    /**
-     * Metodo che si occupa di ottenere il EJB utile alla gestione dei Riscontri Scaduti
-     *
-     * @return un EJB utile alla gestione dei riscontri scaduti {@link org.openspcoop2.pdd.timers.TimerGestoreBusteNonRiscontrate}.
-     * 
-     */
-    public static TimerGestoreBusteNonRiscontrate createTimerGestoreBusteNonRiscontrate() throws Exception {
-        
-    	OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
-        	GestoreJNDI jndi = null;
-        	if(properties.getJNDIContext_TimerEJB()==null)
-        		jndi = new GestoreJNDI();
-        	else
-        		jndi = new GestoreJNDI(properties.getJNDIContext_TimerEJB());
-	    
-        	String nomeJNDI = properties.getJNDITimerEJBName().get(TimerGestoreBusteNonRiscontrate.ID_MODULO);
-        	Object objref = jndi.lookup(nomeJNDI);
-        	TimerGestoreBusteNonRiscontrateHome timerHome = 
-        		(TimerGestoreBusteNonRiscontrateHome) PortableRemoteObject.narrow(objref,TimerGestoreBusteNonRiscontrateHome.class);
-        	TimerGestoreBusteNonRiscontrate timerDiServizio = timerHome.create();	
-        
-            return timerDiServizio;
-	    
-        
-    }
-
-
-
-
-    /**
-     * Metodo che si occupa di ottenere il EJB utile alla gestione dei Messaggi
-     *
-     * @return un EJB utile alla gestione dei messaggi {@link org.openspcoop2.pdd.timers.TimerGestoreMessaggi}.
-     * 
-     */
-    public static TimerGestoreMessaggi createTimerGestoreMessaggi() throws Exception {
-       
-    	OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
-        	GestoreJNDI jndi = null;
-        	if(properties.getJNDIContext_TimerEJB()==null)
-        		jndi = new GestoreJNDI();
-        	else
-        		jndi = new GestoreJNDI(properties.getJNDIContext_TimerEJB());
-        	
-	    String nomeJNDI = properties.getJNDITimerEJBName().get(TimerGestoreMessaggi.ID_MODULO);
-	    Object objref = jndi.lookup(nomeJNDI);
-	    TimerGestoreMessaggiHome timerHome = 
-		(TimerGestoreMessaggiHome) PortableRemoteObject.narrow(objref,TimerGestoreMessaggiHome.class);
-	    TimerGestoreMessaggi timerDiServizio = timerHome.create();	
- 
-            return timerDiServizio;
-	    
-       
-    }
-    
-    
-    /**
-     * Metodo che si occupa di ottenere il EJB utile alla gestione dei Messaggi anomali
-     *
-     * @return un EJB utile alla gestione dei messaggi {@link org.openspcoop2.pdd.timers.TimerGestorePuliziaMessaggiAnomali}.
-     * 
-     */
-    public static TimerGestorePuliziaMessaggiAnomali createTimerGestorePuliziaMessaggiAnomali() throws Exception {
-       
-    	OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
-    	GestoreJNDI jndi = null;
-    	if(properties.getJNDIContext_TimerEJB()==null)
-    		jndi = new GestoreJNDI();
-    	else
-    		jndi = new GestoreJNDI(properties.getJNDIContext_TimerEJB());
-        	
-	    String nomeJNDI = properties.getJNDITimerEJBName().get(TimerGestorePuliziaMessaggiAnomali.ID_MODULO);
-	    Object objref = jndi.lookup(nomeJNDI);
-	    TimerGestorePuliziaMessaggiAnomaliHome timerHome = 
-		(TimerGestorePuliziaMessaggiAnomaliHome) PortableRemoteObject.narrow(objref,TimerGestorePuliziaMessaggiAnomaliHome.class);
-	    TimerGestorePuliziaMessaggiAnomali timerDiServizio = timerHome.create();	
- 
-	    return timerDiServizio;
-	    
-       
-    }
-
-    
-    /**
-     * Metodo che si occupa di ottenere il EJB utile alla gestione delle buste
-     *
-     * @return un EJB utile alla gestione delle buste {@link org.openspcoop2.pdd.timers.TimerGestoreRepositoryBuste}.
-     * 
-     */
-    public static TimerGestoreRepositoryBuste createTimerGestoreRepositoryBuste() throws Exception {
-       
-        	OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
-        	GestoreJNDI jndi = null;
-        	if(properties.getJNDIContext_TimerEJB()==null)
-        		jndi = new GestoreJNDI();
-        	else
-        		jndi = new GestoreJNDI(properties.getJNDIContext_TimerEJB());
-        	String nomeJNDI = properties.getJNDITimerEJBName().get(TimerGestoreRepositoryBuste.ID_MODULO);
-        	Object objref = jndi.lookup(nomeJNDI);
-        	TimerGestoreRepositoryBusteHome timerHome = 
-        		(TimerGestoreRepositoryBusteHome) PortableRemoteObject.narrow(objref,TimerGestoreRepositoryBusteHome.class);
-        	TimerGestoreRepositoryBuste timerDiServizio = timerHome.create();	
- 
-        	return timerDiServizio;
-	    
-    }
-    
-
-
-
-    /**
-	 * Mappa una risposta di errore applicativo XML in una eccezione IntegrationManagerException
-	 *
-	 * @param xml XML su cui effettuare il mapping
-	 * @return la protocol exception
-	 * 
-	 */
-	public static IntegrationManagerException mapXMLIntoProtocolException(IProtocolFactory protocolFactory,String xml,String prefixCodiceErroreApplicativoIntegrazione) throws Exception{
-		org.openspcoop2.message.XMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
-		org.w3c.dom.Document document = xmlUtils.newDocument(xml.getBytes());
-		return ServicesUtils.mapXMLIntoProtocolException(protocolFactory,document.getFirstChild(),prefixCodiceErroreApplicativoIntegrazione);
+	public static boolean isConnessioneClientNonDisponibile(Throwable t){
+		if(t instanceof java.net.SocketException){
+			return true;
+		}
+		else if(Utilities.existsInnerException(t, java.net.SocketException.class)){
+			return true;
+		}
+		
+		return false;
 	}
 	
-	public static IntegrationManagerException mapXMLIntoProtocolException(IProtocolFactory protocolFactory,Node xml,String prefixCodiceErroreApplicativoIntegrazione) throws Exception{
+	public static InformazioniErroriInfrastrutturali readInformazioniErroriInfrastrutturali(PdDContext pddContext){
 		
-		AbstractEccezioneBuilderParameter eccezione = 
-				protocolFactory.createErroreApplicativoBuilder().readErroreApplicativo(xml, prefixCodiceErroreApplicativoIntegrazione);
-		IntegrationManagerException exc = null;
-		if(eccezione instanceof EccezioneProtocolloBuilderParameters){
-			EccezioneProtocolloBuilderParameters eccBusta = (EccezioneProtocolloBuilderParameters) eccezione;
-			exc = new IntegrationManagerException(protocolFactory, eccBusta.getEccezioneProtocollo());
-		}
-		else{
-			EccezioneIntegrazioneBuilderParameters eccIntegrazione = (EccezioneIntegrazioneBuilderParameters) eccezione;
-			exc = new IntegrationManagerException(protocolFactory, eccIntegrazione.getErroreIntegrazione());
-		}
+		InformazioniErroriInfrastrutturali informazioniErrori = new InformazioniErroriInfrastrutturali();
 		
-		exc.setOraRegistrazione(protocolFactory.createTraduttore().getDate_protocolFormat(eccezione.getOraRegistrazione()));
-		exc.setIdentificativoFunzione(eccezione.getIdFunzione());
-		exc.setIdentificativoPorta(eccezione.getDominioPorta().getCodicePorta());
+		boolean erroreUtilizzoConnettore = false;
+		if(pddContext!=null){
+			Object o = pddContext.getObject(org.openspcoop2.core.constants.Costanti.ERRORE_UTILIZZO_CONNETTORE);
+			if(o!=null && (o instanceof Boolean)){
+				erroreUtilizzoConnettore = (Boolean) o;
+			}
+		}
+		informazioniErrori.setErroreUtilizzoConnettore(erroreUtilizzoConnettore);
 
-		return exc;
-
+		boolean erroreSOAPFaultServerPortaDelegata = false;
+		if(pddContext!=null){
+			Object o = pddContext.getObject(org.openspcoop2.core.constants.Costanti.ERRORE_SOAP_FAULT_SERVER);
+			if(o!=null && (o instanceof Boolean)){
+				erroreSOAPFaultServerPortaDelegata = (Boolean) o;
+			}
+		}
+		informazioniErrori.setRicevutoSoapFaultServerPortaDelegata(erroreSOAPFaultServerPortaDelegata);
+		
+		boolean erroreContenutoRichiestaNonRiconosciuto = false;
+		if(pddContext!=null){
+			Object o = pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO);
+			if(o!=null && (o instanceof Boolean)){
+				erroreContenutoRichiestaNonRiconosciuto = (Boolean) o;
+			}
+		}
+		informazioniErrori.setContenutoRichiestaNonRiconosciuto(erroreContenutoRichiestaNonRiconosciuto);
+		
+		boolean erroreContenutoRispostaNonRiconosciuto = false;
+		if(pddContext!=null){
+			Object o = pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO);
+			if(o!=null && (o instanceof Boolean)){
+				erroreContenutoRispostaNonRiconosciuto = (Boolean) o;
+			}
+		}
+		informazioniErrori.setContenutoRispostaNonRiconosciuto(erroreContenutoRispostaNonRiconosciuto);
+		
+		return informazioniErrori;
 	}
+	
+	
+
+
+	public static String checkMustUnderstand(OpenSPCoop2SoapMessage message,IProtocolFactory protocolFactory) throws MessageException{
+		SOAPEnvelope envelope = null;
+		SOAPHeader header = null;
+		try {
+			envelope = message.getSOAPPart().getEnvelope();
+			header = envelope.getHeader();
+			
+			//Se non c'e' l'header il controllo e' inutile
+			if(header == null) return null;
+			
+			OpenSPCoop2Properties openspcoopProperties = OpenSPCoop2Properties.getInstance();
+
+			if(openspcoopProperties!=null){
+				if(openspcoopProperties.isBypassFilterMustUnderstandEnabledForAllHeaders()){
+					return null;
+				}else{
+					List<NameValue> filtri = openspcoopProperties.getBypassFilterMustUnderstandProperties(protocolFactory.getProtocol());
+					if(filtri!=null && filtri.size()>0){
+						return ServicesUtils.checkMustUnderstandHeaderElement(header,filtri);
+					}
+				}
+			}
+
+		} catch (Exception ex) {
+			
+			Throwable t = ParseExceptionUtils.getParseException(ex);
+			if(t!=null){
+				throw new MessageException(ex);
+			}
+			
+			if(Utilities.existsInnerException(ex, "com.ctc.wstx.exc.WstxUnexpectedCharException") || Utilities.existsInnerException(ex, "com.ctc.wstx.exc.WstxParsingException"))
+				throw new MessageException(ex);
+			else
+				throw new MessageException("BypassMustUnderstand, errore durante il set processed degli header con mustUnderstand='1' e actor non presente: "+ex.getMessage(), 
+					ex);
+		}  finally{
+			// *** GB ***
+			header = null;
+			envelope = null;
+			// *** GB ***
+		}     	
+		return null;
+	}
+	private static String checkMustUnderstandHeaderElement(SOAPHeader header,List<NameValue> filtri) throws UtilsException{
+		
+		try{
+			StringBuffer bfError = new StringBuffer();
+			if(SoapUtils.checkMustUnderstandHeaderElement(header, filtri, bfError)==false){
+				return bfError.toString();
+			}
+			return null;
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+		
+	}
+	
+	public static String checkSOAPEnvelopeNamespace(OpenSPCoop2SoapMessage message, MessageType messageType) throws MessageException{
+		try {
+			if(SoapUtils.checkSOAPEnvelopeNamespace(message, messageType)==false){
+				return message.getSOAPPart().getEnvelope().getNamespaceURI();
+			}
+			return null;
+		} catch (Exception ex) {
+			throw new MessageException("CheckSoapEnvelopeNamespace, errore durante il controllo del namespace del soap envelope: "+ex.getMessage(),ex);
+		} 
+	}
+
+
+	
+	public static boolean verificaRispostaRelazioneCodiceTrasporto202(IProtocolFactory protocolFactory,OpenSPCoop2Properties openSPCoopProperties,
+			OpenSPCoop2Message responseMessage,boolean gestioneLatoPortaDelegata) throws Exception{
+		
+		if(responseMessage==null){
+			return false;
+		}
+		
+		IProtocolManager protocolManager = protocolFactory.createProtocolManager(); 
+		
+		boolean rispostaPresente = true;
+		if(protocolManager.isHttpEmptyResponseOneWay()){
+			if(ServiceBinding.SOAP.equals(responseMessage.getServiceBinding())){
+				OpenSPCoop2SoapMessage soap = responseMessage.castAsSoap();
+				Object b = soap.getSOAPBody();
+				SOAPBody body = null;
+				if(b != null){
+					body = (SOAPBody) b;
+				}
+				Object h = null;
+				SOAPHeader header = null;
+				if(b==null || body==null || body.getFirstChild()==null ){
+					//potenziale msg inutile.
+					h = soap.getSOAPHeader();
+					if(h!=null){
+						header = (SOAPHeader) h;
+					}
+					if(h==null || header==null || header.getFirstChild()==null ){
+						//System.out.println("MESSAGGIO INUTILE");
+						rispostaPresente = false;
+					}else{
+						if(gestioneLatoPortaDelegata){
+							if( protocolManager.isHttpOneWay_PD_HTTPEmptyResponse() == false ) {
+								// E' possibile impostare una opzione che non torni nulla anche in questo caso
+								rispostaPresente = false;
+							}
+						}
+					}
+				}
+				
+				// *** GB ***
+				body = null;
+				b = null;
+				header = null;
+				h = null;
+				// *** GB ***
+			}
+			else{
+				OpenSPCoop2RestMessage<?> rest = responseMessage.castAsRest();
+				if(rest.hasContent()==false){
+					//System.out.println("MESSAGGIO VUOTO");
+					rispostaPresente = false;
+				}
+			}
+		}
+		
+		return rispostaPresente;
+	}
+		
+	
+	
+	public static void setTransferLength(TransferLengthModes transferLengthMode,
+			ConnectorInMessage connectorInMessage, ConnectorOutMessage connectorOutMessage,
+			OpenSPCoop2Message message) throws Exception{
+		String requestProtocoll = connectorInMessage.getProtocol();
+		if(requestProtocoll!=null && requestProtocoll.endsWith("1.1")){
+			if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(transferLengthMode)){
+				connectorOutMessage.setHeader(HttpConstants.TRANSFER_ENCODING,HttpConstants.TRANSFER_ENCODING_VALUE_CHUNCKED);
+			}
+			else if(TransferLengthModes.CONTENT_LENGTH.equals(transferLengthMode)){
+				if(message!=null){
+					message.writeTo(new NullOutputStream(), false);
+					connectorOutMessage.setContentLength((int)message.getOutgoingMessageContentLength());
+				}
+			}
+		}
+	}
+	public static void setTransferLength(TransferLengthModes transferLengthMode,
+			ConnectorInMessage connectorInMessage, ConnectorOutMessage connectorOutMessage,
+			Long length) throws Exception{
+		String requestProtocoll = connectorInMessage.getProtocol();
+		if(requestProtocoll!=null && requestProtocoll.endsWith("1.1")){
+			if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(transferLengthMode)){
+				connectorOutMessage.setHeader(HttpConstants.TRANSFER_ENCODING,HttpConstants.TRANSFER_ENCODING_VALUE_CHUNCKED);
+			}
+			else if(TransferLengthModes.CONTENT_LENGTH.equals(transferLengthMode)){
+				if(length!=null){
+					connectorOutMessage.setContentLength(length.intValue());
+				}
+			}
+		}
+	}
+	
 }

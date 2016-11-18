@@ -30,7 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.openspcoop2.core.diagnostica.utils.XMLUtils;
-import org.openspcoop2.message.ValidatoreXSD;
+import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.testng.Assert;
 import org.testng.Reporter;

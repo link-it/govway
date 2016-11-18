@@ -1034,7 +1034,7 @@ public class SOAPMessageScorretti {
 						boolean match = false;
 						for (String erroreParser : motivoErroreParser) {
 							try{
-								Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.XMLUtils.getInstance().newElement(xmlErroreApplicativo),
+								Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo),
 										Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativiHTTP", 
 										Utilities.toString(codiceErroreIntegrazione), 
 										erroreParser, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);

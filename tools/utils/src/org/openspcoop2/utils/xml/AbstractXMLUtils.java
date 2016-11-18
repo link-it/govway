@@ -993,5 +993,54 @@ public abstract class AbstractXMLUtils {
 		return null;
 	}
 	
+	public boolean matchLocalName(Node nodo,String nodeName,String prefix,String namespace){
+		if(nodo==null)
+			return false;
+		if(nodo.getNodeName()==null)
+			return false;
+		// Il nodo possiede il prefisso atteso
+		if(nodo.getNodeName().equals(prefix+nodeName))
+			return true;
+		// Il nodo puo' ridefinire il prefisso ridefinendo il namespace
+		String namespaceNodo = nodo.getNamespaceURI();
+		if(namespaceNodo!=null && namespaceNodo.equals(namespace)){
+			String xmlns = nodo.getPrefix();
+			if(xmlns == null){ 
+				xmlns = "";
+			}else if(!xmlns.equals("")){
+				xmlns = xmlns + ":";
+			}
+			if(nodo.getNodeName().equals(xmlns+nodeName))
+				return true;
+		}
+		return false;
+	} 
+	
+	public Node getAttributeNode(Node node,String attributeName){
+		if (node == null)
+		{
+			return null;
+		}
+		NamedNodeMap map = node.getAttributes();
+		if(map==null || map.getLength()==0){
+			return null;
+		}
+		else{
+			return map.getNamedItem(attributeName);
+		}
+	}
+	public Node getQualifiedAttributeNode(Node node,String attributeName,String namespace){
+		if (node == null)
+		{
+			return null;
+		}
+		NamedNodeMap map = node.getAttributes();
+		if(map==null || map.getLength()==0){
+			return null;
+		}
+		else{
+			return map.getNamedItemNS(namespace, attributeName);
+		}
+	}
 	
 }

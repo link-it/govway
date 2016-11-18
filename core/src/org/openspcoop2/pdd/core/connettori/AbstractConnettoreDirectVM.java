@@ -28,16 +28,14 @@ import java.util.Hashtable;
 
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiConnettori;
-import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
+import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
-import org.openspcoop2.pdd.services.connector.DirectVMConnectorInMessage;
-import org.openspcoop2.pdd.services.connector.DirectVMConnectorOutMessage;
-import org.openspcoop2.pdd.services.connector.DirectVMProtocolInfo;
+import org.openspcoop2.pdd.services.connector.messages.DirectVMConnectorInMessage;
+import org.openspcoop2.pdd.services.connector.messages.DirectVMConnectorOutMessage;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.constants.IDService;
-import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 
 /**
@@ -51,32 +49,6 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
  */
 
 public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
-
-	/** Logger utilizzato per debug. */
-	private ConnettoreLogger logger = null;
-
-
-	/* ********  F I E L D S  P R I V A T I  ******** */
-
-	/** Msg di richiesta */
-	private OpenSPCoop2Message requestMsg;
-	/** Proprieta' del connettore */
-	private java.util.Hashtable<String,String> properties;
-	/** Busta */
-	private Busta busta;
-	/** Proprieta' del trasporto che deve gestire il connettore */
-	private java.util.Properties propertiesTrasporto;
-	/** Proprieta' urlBased che deve gestire il connettore */
-	private java.util.Properties propertiesUrlBased;
-	/** Tipo di Autenticazione */
-	//private String tipoAutenticazione;
-	/** Credenziali per l'autenticazione */
-	private Credenziali credenziali;
-	/** Identificativo */
-	private String idMessaggio;
-	
-	/** Indicazione se siamo in modalita' debug */
-	private boolean debug = false;
 
 	
 	
@@ -92,54 +64,10 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 	@Override
 	public boolean send(ConnettoreMsg request){
 
-		if(request==null){
-			this.errore = "Messaggio da consegnare is Null (ConnettoreMsg)";
+		if(this.initialize(request, true)==false){
 			return false;
 		}
 		
-		// Raccolta parametri per costruttore logger
-		this.properties = request.getConnectorProperties();
-		// analsi i parametri specifici per il connettore
-		if(this.properties == null)
-			this.errore = "Proprieta' del connettore non definite";
-		if(this.properties.size() == 0)
-			this.errore = "Proprieta' del connettore non definite";
-		// - Busta
-		this.busta = request.getBusta();
-		if(this.busta!=null)
-			this.idMessaggio=this.busta.getID();
-		// - Debug mode
-		if(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG)!=null){
-			if("true".equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG).trim()))
-				this.debug = true;
-		}
-	
-		// Logger
-		this.logger = new ConnettoreLogger(this.debug, this.idMessaggio, this.getPddContext());
-				
-		// Raccolta altri parametri
-		try{
-			this.requestMsg =  request.getRequestMessage();
-		}catch(Exception e){
-			this.eccezioneProcessamento = e;
-			this.logger.error("Errore durante la lettura del messaggio da consegnare: "+this.readExceptionMessageFromException(e),e);
-			this.errore = "Errore durante la lettura del messaggio da consegnare: "+this.readExceptionMessageFromException(e);
-			return false;
-		}
-		this.propertiesTrasporto = request.getPropertiesTrasporto();
-		this.propertiesUrlBased = request.getPropertiesUrlBased();
-		this.credenziali = request.getCredenziali();
-
-		// analisi messaggio da spedire
-		if(this.requestMsg==null){
-			this.errore = "Messaggio da consegnare is Null (Msg)";
-			return false;
-		}
-		
-		// Context per invocazioni handler
-		this.outRequestContext = request.getOutRequestContext();
-		this.msgDiagnostico = request.getMsgDiagnostico();
-
 		// protocol
 		IProtocolFactory pFactory = null;
 		try{
@@ -216,9 +144,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 		}
 		
 		if(setFormBasedParameter){
-			if(this.propertiesUrlBased != null && this.propertiesUrlBased.size()>0){
-				this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.propertiesUrlBased, this.location);
-			}
+			this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, this.propertiesUrlBased, this.location);
 		}
 	}
 	
@@ -264,6 +190,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 					this.getFunction(), 
 					this.location, this.credenziali,
 					this.getFunctionParameters(),
+					this.requestInfo.getBindingConfig(),
 					directVMProtocolInfo,
 					newPddContext);
 			
@@ -284,6 +211,12 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 				}
 			}catch(Exception e){
 				this.logger.error("Errore avvenuto durante il ripristino del cluster id: "+e.getMessage(),e);
+			}
+			try{
+				this.getPddContext().removeObject(Costanti.REQUEST_INFO);
+				this.getPddContext().addObject(Costanti.REQUEST_INFO,this.requestInfo);
+			}catch(Exception e){
+				this.logger.error("Errore avvenuto durante il ripristino delle informazioni sulla richiesta: "+e.getMessage(),e);
 			}
 			
 			

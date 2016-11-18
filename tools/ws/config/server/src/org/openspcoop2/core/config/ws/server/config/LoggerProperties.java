@@ -29,8 +29,8 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.resources.CollectionProperties;
-import org.openspcoop2.utils.resources.PropertiesUtilities;
+import org.openspcoop2.utils.properties.CollectionProperties;
+import org.openspcoop2.utils.properties.PropertiesUtilities;
 
 /**
  * LoggerProperties

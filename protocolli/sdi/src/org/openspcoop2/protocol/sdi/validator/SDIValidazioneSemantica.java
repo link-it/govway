@@ -28,7 +28,8 @@ import java.util.Vector;
 import javax.xml.soap.SOAPElement;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.SoapUtils;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.protocol.basic.validator.ValidazioneSemantica;
 import org.openspcoop2.protocol.sdi.config.SDIProperties;
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRiceviFile;
@@ -78,7 +79,14 @@ public class SDIValidazioneSemantica extends ValidazioneSemantica {
 			IState state, ProprietaValidazione proprietaValidazione, 
 			RuoloBusta tipoBusta) throws ProtocolException{
 		
-		this.valida(msg,busta,tipoBusta);
+		OpenSPCoop2SoapMessage soapMsg = null;
+		try{
+			soapMsg = msg.castAsSoap();
+		}catch(Exception e){
+			throw new ProtocolException(e.getMessage(),e);
+		}
+		
+		this.valida(soapMsg,busta,tipoBusta);
 		
 		java.util.Vector<Eccezione> erroriValidazione = null;
 		if(this.erroriValidazione.size()>0){
@@ -93,7 +101,7 @@ public class SDIValidazioneSemantica extends ValidazioneSemantica {
 		
 	}
 
-	private void valida(OpenSPCoop2Message msg,Busta busta, RuoloBusta tipoBusta) throws ProtocolException{
+	private void valida(OpenSPCoop2SoapMessage msg,Busta busta, RuoloBusta tipoBusta) throws ProtocolException{
 		try{
 			
 			boolean isRichiesta = RuoloBusta.RICHIESTA.equals(tipoBusta);

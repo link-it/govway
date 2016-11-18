@@ -36,8 +36,8 @@ import javax.xml.soap.SOAPElement;
 
 import org.apache.soap.encoding.soapenc.Base64;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.SoapUtils;
-import org.openspcoop2.message.mtom.MTOMUtilities;
+import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.message.soap.mtom.MTOMUtilities;
 import org.openspcoop2.protocol.sdi.config.SDIProperties;
 import org.openspcoop2.protocol.sdi.constants.SDICostanti;
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRiceviNotifica;

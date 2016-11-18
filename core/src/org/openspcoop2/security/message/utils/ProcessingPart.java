@@ -20,7 +20,7 @@
  */
 package org.openspcoop2.security.message.utils;
 
-import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 
 /**
  * ProcessingPart
@@ -42,7 +42,7 @@ public abstract class ProcessingPart<INPUT, OUTPUT> {
 		this.part = part;
 	}
 	
-	public abstract OUTPUT getOutput(OpenSPCoop2Message msg) throws Exception;
+	public abstract OUTPUT getOutput(OpenSPCoop2SoapMessage msg) throws Exception;
 	
 	public boolean isContent() {
 		return this.content;

@@ -24,9 +24,10 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPHeaderElement;
 
 import org.openspcoop2.core.commons.CoreException;
-import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.protocol.sdk.Busta;
 
@@ -48,7 +49,7 @@ public class ExampleMultipleMessageBehaviour implements IBehaviour {
 				
 				BehaviourForwardTo forwardTo = new BehaviourForwardTo();
 				
-				OpenSPCoop2Message msg = OpenSPCoop2MessageFactory.getMessageFactory().createEmptySOAPMessage(SOAPVersion.SOAP11);
+				OpenSPCoop2SoapMessage msg = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.SOAP_11, MessageRole.REQUEST).castAsSoap();
 				if(msg.getSOAPHeader()==null){
 					msg.getSOAPPart().getEnvelope().addHeader();
 				}

@@ -110,9 +110,8 @@ import org.openspcoop2.core.config.ValidazioneBuste;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
+import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
-import org.openspcoop2.core.config.constants.PortaDelegataServizioIdentificazione;
-import org.openspcoop2.core.config.constants.PortaDelegataSoggettoErogatoreIdentificazione;
 import org.openspcoop2.core.config.constants.RegistroTipo;
 import org.openspcoop2.core.config.constants.RicercaTipologiaErogazione;
 import org.openspcoop2.core.config.constants.RicercaTipologiaFruizione;
@@ -758,21 +757,21 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		}
 	}
 
-	/**
-	 * Restituisce Il soggetto che include la porta delegata identificata da
-	 * <var>location</var>
-	 * 
-	 * @param location
-	 *                Location che identifica una porta delegata
-	 * @return Il Soggetto che include la porta delegata fornita come
-	 *         parametro.
-	 * 
-	 */
+
 	@Override
-	public Soggetto getSoggetto(String location) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+	public Soggetto getSoggettoProprietarioPortaDelegata(String location) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return _getSoggettoProprietarioPorta(location, "getSoggettoProprietarioPortaDelegata", CostantiDB.PORTE_DELEGATE);
+	}
+	
+	@Override
+	public Soggetto getSoggettoProprietarioPortaApplicativa(String location) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return _getSoggettoProprietarioPorta(location, "getSoggettoProprietarioPortaApplicativa", CostantiDB.PORTE_APPLICATIVE);
+	}
+	
+	private Soggetto _getSoggettoProprietarioPorta(String location,String nomeMetodo,String tabella) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 
 		if (location == null)
-			throw new DriverConfigurazioneException("[getSoggetto] Parametro Non Valido");
+			throw new DriverConfigurazioneException("["+nomeMetodo+"] Parametro Non Valido");
 
 		Soggetto Soggetto = null;
 
@@ -783,10 +782,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = getConnectionFromDatasource("getSoggetto(location)");
+				con = getConnectionFromDatasource(nomeMetodo);
 
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -797,7 +796,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+			sqlQueryObject.addFromTable(tabella);
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition("location = ?");
 			sqlQuery = sqlQueryObject.createSQLQuery();
@@ -826,7 +825,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				// come nome_porta la location
 				// e come location null
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+				sqlQueryObject.addFromTable(tabella);
 				sqlQueryObject.addSelectField("*");
 				sqlQueryObject.addWhereCondition("nome_porta = ?");
 				sqlQuery = sqlQueryObject.createSQLQuery();
@@ -848,20 +847,20 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			}
 
 			if (Soggetto == null)
-				throw new DriverConfigurazioneNotFound("[DriverConfigurazioneDB::getSoggetto] Soggetto associato alla porta delegata ["+location+"] non esistente.");
+				throw new DriverConfigurazioneNotFound("[DriverConfigurazioneDB::"+nomeMetodo+"] Soggetto associato alla "+tabella+" ["+location+"] non esistente.");
 
 			return Soggetto;
 
 		} catch (SQLException se) {
 
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getSoggetto] SqlException: " + se.getMessage(),se);
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] SqlException: " + se.getMessage(),se);
 		} catch (DriverConfigurazioneException se) {
 			throw se;
 		} catch (DriverConfigurazioneNotFound se) {
 			throw se;
 		} catch (Exception se) {
 
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getSoggetto] Exception: " + se.getMessage(),se);
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] Exception: " + se.getMessage(),se);
 		}
 		finally {
 
@@ -10909,6 +10908,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			sqlQueryObject.addSelectField("scarta_body");
 			sqlQueryObject.addSelectField("gestione_manifest");
 			sqlQueryObject.addSelectField("azione");
+			sqlQueryObject.addSelectField("mode_azione");
+			sqlQueryObject.addSelectField("pattern_azione");
+			sqlQueryObject.addSelectField("force_wsdl_based_azione");
 			sqlQueryObject.addSelectField("validazione_contenuti_stato");
 			sqlQueryObject.addSelectField("validazione_contenuti_tipo");
 			sqlQueryObject.addSelectField("validazione_contenuti_mtom");
@@ -11003,6 +11005,18 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				}
 				pa.setServizio(paServizio);
 
+				
+				String azione = rs.getString("azione");
+				String modeAzione = rs.getString("mode_azione");
+				if ((azione != null && !"-".equals(azione) && !"".equals(azione)) || (modeAzione!=null && !"".equals(modeAzione)) ) {
+					PortaApplicativaAzione paAzione=new PortaApplicativaAzione();
+					paAzione.setNome(azione);
+					paAzione.setIdentificazione(PortaApplicativaAzioneIdentificazione.toEnumConstant(modeAzione));
+					paAzione.setPattern(rs.getString("pattern_azione"));
+					paAzione.setForceWsdlBased(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("force_wsdl_based_azione")));
+					pa.setAzione(paAzione);
+				}
+				
 				//ricevuta asincrona_(a)simmetrica
 				pa.setRicevutaAsincronaAsimmetrica(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("ricevuta_asincrona_asim")));
 				pa.setRicevutaAsincronaSimmetrica(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("ricevuta_asincrona_sim")));
@@ -11092,16 +11106,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 				// Autorizzazione per contenuto
 				pa.setAutorizzazioneContenuto(rs.getString("autorizzazione_contenuto"));
-
-				String azione = rs.getString("azione");
-				//aggiunto controllo per coerenza su "-" e "",
-				//i valori "-" e "" vengono interpretati come null
-				if (azione != null && !"-".equals(azione) && !"".equals(azione)) {
-					PortaApplicativaAzione paAzione = new PortaApplicativaAzione();
-					paAzione.setNome(azione);
-					pa.setAzione(paAzione);
-				}
-
 
 				//mtom
 				MtomProcessor mtomProcessor = null;
@@ -11465,18 +11469,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			sqlQueryObject.addSelectField("location");
 			sqlQueryObject.addSelectField("nome_porta");
 			sqlQueryObject.addSelectField("id_soggetto_erogatore");
-			sqlQueryObject.addSelectField("mode_soggetto_erogatore");
-			sqlQueryObject.addSelectField("nome_soggetto_erogatore");
 			sqlQueryObject.addSelectField("tipo_soggetto_erogatore");
-			sqlQueryObject.addSelectField("pattern_soggetto_erogatore");
+			sqlQueryObject.addSelectField("nome_soggetto_erogatore");
 			sqlQueryObject.addSelectField("id_servizio");
 			sqlQueryObject.addSelectField("tipo_servizio");
 			sqlQueryObject.addSelectField("nome_servizio");
-			sqlQueryObject.addSelectField("mode_servizio");
-			sqlQueryObject.addSelectField("pattern_servizio");
-			sqlQueryObject.addSelectField("mode_azione");
 			sqlQueryObject.addSelectField("id_azione");
 			sqlQueryObject.addSelectField("nome_azione");
+			sqlQueryObject.addSelectField("mode_azione");
 			sqlQueryObject.addSelectField("pattern_azione");
 			sqlQueryObject.addSelectField("force_wsdl_based_azione");
 			sqlQueryObject.addSelectField("ricevuta_asincrona_asim");
@@ -11532,7 +11532,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				pd.setIdPortType(rs.getLong("id_port_type"));
 
 				//se mode e' settato allora creo oggetto
-				String modeSoggErogatore = rs.getString("mode_soggetto_erogatore");
 				String nomeSoggettoErogatore = rs.getString("nome_soggetto_erogatore");
 				String tipoSoggettoErogatore = rs.getString("tipo_soggetto_erogatore");
 				long idSoggettoErogatoreDB = rs.getLong("id_soggetto_erogatore");
@@ -11548,13 +11547,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					}
 				}
 				PortaDelegataSoggettoErogatore SoggettoErogatore = null;
-				if(idSoggErogatore>0 || (modeSoggErogatore!=null && !modeSoggErogatore.equals(""))){
+				if(idSoggErogatore>0){
 					SoggettoErogatore = new PortaDelegataSoggettoErogatore();
 					SoggettoErogatore.setId(idSoggErogatore);
-					SoggettoErogatore.setIdentificazione(PortaDelegataSoggettoErogatoreIdentificazione.toEnumConstant(modeSoggErogatore));
 					SoggettoErogatore.setNome(nomeSoggettoErogatore);
 					SoggettoErogatore.setTipo(tipoSoggettoErogatore);
-					SoggettoErogatore.setPattern(rs.getString("pattern_soggetto_erogatore"));
 					pd.setSoggettoErogatore(SoggettoErogatore);
 				}else{
 					throw new DriverConfigurazioneException("Soggetto Erogatore della Porta Delegata ["+pd.getNome()+"] non presente.");
@@ -11563,7 +11560,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				//se mode e' settato allora creo oggetto
 				String tipoServizio = rs.getString("tipo_servizio");
 				String nomeServizio = rs.getString("nome_servizio");
-				String mode_servizio = rs.getString("mode_servizio");
 				long idServizioDB = rs.getLong("id_servizio");
 				long idServizio=-1;
 				if( (idServizioDB==-2) || (idServizioDB>0) ){
@@ -11579,13 +11575,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					}
 				}
 				PortaDelegataServizio pdServizio = null;
-				if(idServizio>0 || (mode_servizio!=null && !mode_servizio.equals(""))){
+				if(idServizio>0){
 					pdServizio=new PortaDelegataServizio();
 					pdServizio.setId(idServizio);
 					pdServizio.setNome(nomeServizio);
 					pdServizio.setTipo(tipoServizio);
-					pdServizio.setIdentificazione(PortaDelegataServizioIdentificazione.toEnumConstant(mode_servizio));
-					pdServizio.setPattern(rs.getString("pattern_servizio"));
 				}
 				pd.setServizio(pdServizio);
 

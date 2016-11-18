@@ -20,25 +20,45 @@
  */
 package org.openspcoop2.core.eccezione.router_details;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class Dettaglio.
+/** <p>Java class for dettaglio complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="dettaglio">
+ * 		&lt;sequence>
+ * 			&lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * 		&lt;attribute name="esito" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "dettaglio", 
+  propOrder = {
+  	"descrizione"
+  }
+)
+
+@XmlRootElement(name = "dettaglio")
 
 public class Dettaglio extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected String descrizione;
-
-  protected String esito;
-
-
   public Dettaglio() {
   }
 
@@ -56,50 +76,35 @@ public class Dettaglio extends org.openspcoop2.utils.beans.BaseBean implements S
 		this.id=new Long(-1);
   }
 
-  public String getDescrizione() {
-    if(this.descrizione!=null && ("".equals(this.descrizione)==false)){
-		return this.descrizione.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getDescrizione() {
+    return this.descrizione;
   }
 
-  public void setDescrizione(String descrizione) {
+  public void setDescrizione(java.lang.String descrizione) {
     this.descrizione = descrizione;
   }
 
-  public String getEsito() {
-    if(this.esito!=null && ("".equals(this.esito)==false)){
-		return this.esito.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getEsito() {
+    return this.esito;
   }
 
-  public void setEsito(String esito) {
+  public void setEsito(java.lang.String esito) {
     this.esito = esito;
   }
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  @XmlTransient
+  private Long id;
 
-  public static final String DESCRIZIONE = "descrizione";
 
-  public static final String ESITO = "esito";
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="descrizione",required=true,nillable=false)
+  protected java.lang.String descrizione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="esito",required=false)
+  protected java.lang.String esito;
 
 }

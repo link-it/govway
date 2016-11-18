@@ -24,7 +24,7 @@ package org.openspcoop2.utils.regexp;
 import java.io.File;
 
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.resources.HttpUtilities;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 /**	
  * Contiene utilities

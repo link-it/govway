@@ -28,7 +28,7 @@ import java.util.Vector;
 import javax.xml.soap.SOAPElement;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.SoapUtils;
+import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.protocol.sdi.constants.SDICostanti;
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRiceviFile;
 import org.openspcoop2.protocol.sdk.Busta;

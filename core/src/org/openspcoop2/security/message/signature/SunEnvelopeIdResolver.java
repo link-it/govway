@@ -25,19 +25,18 @@ import java.util.Iterator;
 
 import javax.xml.soap.AttachmentPart;
 
+import org.apache.xml.utils.URI;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.slf4j.Logger;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.sun.org.apache.xml.internal.security.signature.XMLSignatureInput;
 import com.sun.org.apache.xml.internal.security.utils.resolver.ResourceResolverException;
 import com.sun.org.apache.xml.internal.security.utils.resolver.ResourceResolverSpi;
-
-import org.apache.xml.utils.URI;
-import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.security.message.constants.SecurityConstants;
-import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 
 
@@ -52,13 +51,13 @@ public class SunEnvelopeIdResolver extends ResourceResolverSpi {
 
     private static final Logger logger = LoggerWrapperFactory.getLogger(SunEnvelopeIdResolver.class);
   
-    public synchronized static ResourceResolverSpi getInstance(OpenSPCoop2Message message) {
+    public synchronized static ResourceResolverSpi getInstance(OpenSPCoop2SoapMessage message) {
         return new SunEnvelopeIdResolver(message);
     }
 
 //    private AbstractXMLUtils xmlUtils = null;
-    private OpenSPCoop2Message message = null;
-    private SunEnvelopeIdResolver(OpenSPCoop2Message message) {
+    private OpenSPCoop2SoapMessage message = null;
+    private SunEnvelopeIdResolver(OpenSPCoop2SoapMessage message) {
     	this.message = message;
 //    	this.xmlUtils = XMLUtils.getInstance();
     }
@@ -88,7 +87,12 @@ public class SunEnvelopeIdResolver extends ResourceResolverSpi {
         }
 
         if(attach){
-        	Iterator<?> it = this.message.getAttachments();
+        	Iterator<?> it = null;
+        	try{
+        		it = this.message.getAttachments();
+        	}catch(Exception e){
+        		throw new ResourceResolverException("Cannot resoulve uri "+uri.getNodeValue(),e,uri,BaseURI);
+        	}
         	while (it.hasNext()) {
 				AttachmentPart ap = (AttachmentPart) it.next();
 				String contentId = ap.getContentId();

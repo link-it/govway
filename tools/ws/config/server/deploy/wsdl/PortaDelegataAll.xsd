@@ -45,8 +45,6 @@
 	<xsd:element name="porta-delegata-soggetto-erogatore" type="tns:porta-delegata-soggetto-erogatore" />
 	<xsd:complexType name="porta-delegata-soggetto-erogatore">
 		<xsd:sequence>
- 			<xsd:element name="identificazione" type="api:PortaDelegataSoggettoErogatoreIdentificazione" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="pattern" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="tipo" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="nome" type="xsd:string" minOccurs="0" maxOccurs="1" />
 		</xsd:sequence>
@@ -55,8 +53,6 @@
 	<xsd:element name="porta-delegata-servizio" type="tns:porta-delegata-servizio" />
 	<xsd:complexType name="porta-delegata-servizio">
 		<xsd:sequence>
- 			<xsd:element name="identificazione" type="api:PortaDelegataServizioIdentificazione" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="pattern" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="tipo" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="nome" type="xsd:string" minOccurs="0" maxOccurs="1" />
 		</xsd:sequence>

@@ -60,7 +60,7 @@ public class AutorizzazioneOpenSPCoop extends AbstractCore implements IAutorizza
     			return esito;
     		}
     	}catch(DriverConfigurazioneNotFound e){
-    		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_401_PD_INESISTENTE.getErrore401_PortaDelegataInesistente(e.getMessage(), servizioApplicativo));
+    		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.getErrore401_PortaInesistente(e.getMessage(), servizioApplicativo));
 			esito.setServizioAutorizzato(false);
 			return esito;
     	}catch(DriverConfigurazioneException e){

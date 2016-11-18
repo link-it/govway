@@ -51,6 +51,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.registry.RegistryReader;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.archive.Archive;
@@ -80,7 +81,6 @@ import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 public class ExporterArchiveUtils {
 
 	private AbstractArchiveEngine archiveEngine;
-	@SuppressWarnings("unused")
 	private Logger log;
 	private ProtocolFactoryManager protocolFactoryManager;
 	private ArchiveIdCorrelazione idCorrelazione = null;
@@ -95,14 +95,14 @@ public class ExporterArchiveUtils {
 	public void export(String protocol,Archive archive,OutputStream out,ArchiveMode mode) throws Exception{
 		IProtocolFactory protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName(protocol);
 		IArchive archiveEngine = protocolFactory.createArchive();
-		ArchiveRegistryReader archiveRegistryReader = new ArchiveRegistryReader(this.archiveEngine.getDriverRegistroServizi(),this.archiveEngine.getDriverConfigurazione());
+		RegistryReader archiveRegistryReader = new RegistryReader(this.archiveEngine.getDriverRegistroServizi(),this.archiveEngine.getDriverConfigurazione(),this.log);
 		archiveEngine.exportArchive(archive, out, mode, archiveRegistryReader);
 	}
 	
 	public byte[] export(String protocol,Archive archive,ArchiveMode mode) throws Exception{
 		IProtocolFactory protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName(protocol);
 		IArchive archiveEngine = protocolFactory.createArchive();
-		ArchiveRegistryReader archiveRegistryReader = new ArchiveRegistryReader(this.archiveEngine.getDriverRegistroServizi(),this.archiveEngine.getDriverConfigurazione());
+		RegistryReader archiveRegistryReader = new RegistryReader(this.archiveEngine.getDriverRegistroServizi(),this.archiveEngine.getDriverConfigurazione(),this.log);
 		return archiveEngine.exportArchive(archive, mode, archiveRegistryReader);
 	}
 	

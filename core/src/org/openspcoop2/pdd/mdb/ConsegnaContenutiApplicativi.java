@@ -29,13 +29,10 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPFault;
 
-import org.slf4j.Logger;
 import org.apache.soap.encoding.soapenc.Base64;
-import org.openspcoop2.core.api.constants.CostantiApi;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -55,10 +52,16 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.ParseException;
-import org.openspcoop2.message.SOAPVersion;
-import org.openspcoop2.message.SoapUtils;
-import org.openspcoop2.message.mtom.MtomXomReference;
+import org.openspcoop2.message.OpenSPCoop2RestMessage;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.exception.ParseException;
+import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.message.soap.TunnelSoapUtils;
+import org.openspcoop2.message.soap.mtom.MtomXomReference;
+import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -79,7 +82,7 @@ import org.openspcoop2.pdd.core.ProtocolContext;
 import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativi;
 import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToConfiguration;
-import org.openspcoop2.pdd.core.connettori.ConnettoreHTTP;
+import org.openspcoop2.pdd.core.connettori.ConnettoreBaseHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.ConnettoreUtils;
 import org.openspcoop2.pdd.core.connettori.GestoreErroreConnettore;
@@ -103,10 +106,11 @@ import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-import org.openspcoop2.pdd.services.connector.DirectVMProtocolInfo;
+import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
+import org.openspcoop2.pdd.services.RequestInfo;
+import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.engine.builder.Imbustamento;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.ConsegnaInOrdine;
 import org.openspcoop2.protocol.engine.validator.ValidazioneSintattica;
@@ -126,7 +130,8 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.resources.Loader;
-import org.openspcoop2.utils.resources.TransportResponseContext;
+import org.openspcoop2.utils.transport.TransportResponseContext;
+import org.slf4j.Logger;
 import org.w3c.dom.Node;
 
 /**
@@ -286,6 +291,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		/* PddContext */
 		PdDContext pddContext = consegnaContenutiApplicativiMsg.getPddContext();
 		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, pddContext);
+		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		
 		/* Protocol Factory */
 		IProtocolFactory protocolFactory = null;
@@ -763,6 +769,21 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 
 			return esito;
 		}
+		
+		try{
+			RicezioneBusteExternalErrorGenerator generatoreErrorePA = new RicezioneBusteExternalErrorGenerator(this.log,
+					this.idModulo, requestInfo);
+			generatoreErrorePA.updateInformazioniCooperazione(soggettoFruitore, idServizio);
+			generatoreErrorePA.updateInformazioniCooperazione(servizioApplicativoFruitore);
+			generatoreErrorePA.updateTipoPdD(TipoPdD.APPLICATIVA);
+			ejbUtils.setGeneratoreErrorePortaApplicativa(generatoreErrorePA);
+		}catch(Exception e){
+			msgDiag.logErroreGenerico(e, "RicezioneBusteExternalErrorGenerator.instanziazione"); 
+			openspcoopstate.releaseResource();
+			esito.setEsitoInvocazione(false); 
+			esito.setStatoInvocazioneErroreNonGestito(e);
+			return esito;
+		}
 
 		// Oneway versione 11
 		boolean oneWayVersione11 = consegnaContenutiApplicativiMsg.isOneWayVersione11();
@@ -924,7 +945,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		if(existsModuloInAttesaRispostaApplicativa){
 			msgDiag.mediumDebug("Creazione id risposta...");
 			try{
-				Imbustamento imbustatore = new Imbustamento(protocolFactory);
+				org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = new org.openspcoop2.protocol.engine.builder.Imbustamento(this.log,protocolFactory);
 				idMessageResponse = 
 					imbustatore.buildID(openspcoopstate.getStatoRichiesta(),identitaPdD, 
 							(String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID),
@@ -1082,12 +1103,6 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					// consegnaMessage deve contenere il messaggio necessario all'invocazione del metodo pubblicaEvento
 					consegnaMessage = 
 						msgRequest.buildRichiestaPubblicazioneMessaggio_RepositoryMessaggi(soggettoFruitore, tipoServizio,servizio,azione);
-				}
-				if(pd!=null){
-					consegnaMessage.addContextProperty(CostantiApi.NOME_PORTA, pd.getNome());
-				}
-				else if(pa!=null){
-					consegnaMessage.addContextProperty(CostantiApi.NOME_PORTA, pa.getNome());
 				}
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e, "msgRequest.getMessage()");
@@ -1305,7 +1320,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			// Location
 			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connettoreMsg, bustaRichiesta, this.log);
 			if(location!=null){
-				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.buildLocationWithURLBasedParameter(connettoreMsg.getPropertiesUrlBased(), location));
+				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.buildLocationWithURLBasedParameter(consegnaMessage, connettoreMsg.getPropertiesUrlBased(), location));
 			}
 			else{
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, "N.D.");
@@ -1500,7 +1515,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			// L'handler puo' aggiornare le properties che contengono le proprieta' del connettore.
 			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connettoreMsg, bustaRichiesta, this.log);
 			if(location!=null){
-				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.buildLocationWithURLBasedParameter(connettoreMsg.getPropertiesUrlBased(), location));
+				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.buildLocationWithURLBasedParameter(consegnaMessage, connettoreMsg.getPropertiesUrlBased(), location));
 			}
 			else{
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, "N.D.");
@@ -1666,9 +1681,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						// aggiorno
 						location = tmpLocation;
 					
-						if(connectorSender instanceof ConnettoreHTTP){
-							if(((ConnettoreHTTP)connectorSender).isSbustamentoApi()){
-								location = org.openspcoop2.core.api.utils.Utilities.updateLocation(((ConnettoreHTTP)connectorSender).getHttpMethod(), location);
+						if(connectorSender instanceof ConnettoreBaseHTTP){
+							if(ServiceBinding.REST.equals(requestInfo.getServiceBinding())){
+								location = ConnettoreUtils.formatLocation(((ConnettoreBaseHTTP)connectorSender).getHttpMethod(), location);
 							}
 						}
 						msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, location);
@@ -1715,7 +1730,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				if(invokerNonSupportato==false){
 					nParams = connectorSender.getNotifierInputStreamParamsResponse();
 				}
-				responseMessage = protocolFactory.createProtocolManager().updateOpenSPCoop2MessageResponse(consegnaMessage.getVersioneSoap(), responseMessage, 
+				responseMessage = protocolFactory.createProtocolManager().updateOpenSPCoop2MessageResponse(responseMessage, 
 						bustaRichiesta, nParams,
 						consegnaMessage.getTransportRequestContext(),transportResponseContext);
 			} catch (Exception e) {
@@ -1981,29 +1996,32 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				}
 				else{
 					// Controllo Situazione Anomala ISSUE OP-7
-					if(responseMessage!=null && responseMessage.getSOAPPart()!=null && 
-							responseMessage.getSOAPPart().getEnvelope()!=null &&
-							(responseMessage.getSOAPPart().getEnvelope().getBody()==null || (!responseMessage.getSOAPPart().getEnvelope().getBody().hasFault()))){
-						msgDiag.logPersonalizzato("comportamentoAnomalo.erroreConsegna.ricezioneMessaggioDiversoFault");
-						if(isBlockedTransaction_responseMessageWithTransportCodeError){
-							String msgErroreSituazioneAnomale = msgDiag.getMessaggio_replaceKeywords("comportamentoAnomalo.erroreConsegna.ricezioneMessaggioDiversoFault");
-							if(existsModuloInAttesaRispostaApplicativa) {
-								
-								this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
-										ErroriIntegrazione.ERRORE_559_RICEVUTA_RISPOSTA_CON_ERRORE_TRASPORTO.
-											get559_RicevutaRispostaConErroreTrasporto(msgErroreSituazioneAnomale),
-										idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, eInvokerNonSupportato,
-										(responseMessage!=null ? responseMessage.getParseException() : null));
-								
-								esito.setEsitoInvocazione(true); 
-								esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, msgErroreSituazioneAnomale);
-							}else{
-								ejbUtils.rollbackMessage(msgErroreSituazioneAnomale,servizioApplicativo, esito);
-								esito.setEsitoInvocazione(false); 
-								esito.setStatoInvocazione(EsitoLib.ERRORE_NON_GESTITO, msgErroreSituazioneAnomale);
+					if(responseMessage!=null && ServiceBinding.SOAP.equals(responseMessage.getServiceBinding())){
+						OpenSPCoop2SoapMessage soapMessageResponse = responseMessage.castAsSoap();
+						if(soapMessageResponse.getSOAPPart()!=null && 
+								soapMessageResponse.getSOAPPart().getEnvelope()!=null &&
+								(soapMessageResponse.getSOAPPart().getEnvelope().getBody()==null || (!soapMessageResponse.getSOAPPart().getEnvelope().getBody().hasFault()))){
+							msgDiag.logPersonalizzato("comportamentoAnomalo.erroreConsegna.ricezioneMessaggioDiversoFault");
+							if(isBlockedTransaction_responseMessageWithTransportCodeError){
+								String msgErroreSituazioneAnomale = msgDiag.getMessaggio_replaceKeywords("comportamentoAnomalo.erroreConsegna.ricezioneMessaggioDiversoFault");
+								if(existsModuloInAttesaRispostaApplicativa) {
+									
+									this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
+											ErroriIntegrazione.ERRORE_559_RICEVUTA_RISPOSTA_CON_ERRORE_TRASPORTO.
+												get559_RicevutaRispostaConErroreTrasporto(msgErroreSituazioneAnomale),
+											idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, eInvokerNonSupportato,
+											(responseMessage!=null ? responseMessage.getParseException() : null));
+									
+									esito.setEsitoInvocazione(true); 
+									esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, msgErroreSituazioneAnomale);
+								}else{
+									ejbUtils.rollbackMessage(msgErroreSituazioneAnomale,servizioApplicativo, esito);
+									esito.setEsitoInvocazione(false); 
+									esito.setStatoInvocazione(EsitoLib.ERRORE_NON_GESTITO, msgErroreSituazioneAnomale);
+								}
+								openspcoopstate.releaseResource();
+								return esito;
 							}
-							openspcoopstate.releaseResource();
-							return esito;
 						}
 					}
 				}
@@ -2205,7 +2223,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						}
 						else{
 							msgDiag.mediumDebug("Invio messaggio a Ricezione/Consegna ContenutiApplicativi...");
-							msgResponse = ejbUtils.buildAndSendBustaRisposta(richiestaApplicativa.getIdModuloInAttesa(),bustaHTTPReply,SoapUtils.build_Soap_Empty((SOAPVersion) pddContext.getObject(org.openspcoop2.core.constants.Costanti.SOAP_VERSION)),profiloGestione,
+							msgResponse = ejbUtils.buildAndSendBustaRisposta(richiestaApplicativa.getIdModuloInAttesa(),bustaHTTPReply,
+									MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(), MessageRole.RESPONSE),profiloGestione,
 									idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore);
 						}
 					}
@@ -2229,9 +2248,13 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							}
 						}
 						try{
+							if(MessageType.SOAP_11.equals(responseMessage.getMessageType())==false){
+								throw new Exception("Tipo di messaggio ["+responseMessage.getMessageType()+"] non supportato");
+							}
+							
 							// 1. Read IDMessaggio
 							// L'id del messaggio deve essere prelevato dal messaggio di risposta ritornato dal gestore eventi.
-							Node prelevaMessaggioResponse = responseMessage.getSOAPBody().getFirstChild();
+							Node prelevaMessaggioResponse = responseMessage.castAsSoap().getSOAPBody().getFirstChild();
 							if(prelevaMessaggioResponse==null)
 								throw new Exception("Identificativo non presente [prelevaMessaggioResponse]");
 							Node prelevaMessaggioReturn = prelevaMessaggioResponse.getFirstChild();
@@ -2253,12 +2276,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							//	throw new Exception("Messaggio non presente nel repository");
 
 							// 3. prendo body applicativo
-							byte[] bodyApplicativoPrecedentementePubblicato = SoapUtils.sbustamentoMessaggio(msgFromRepository);
+							byte[] bodyApplicativoPrecedentementePubblicato = TunnelSoapUtils.sbustamentoMessaggio(msgFromRepository);
 
 							// 4. Inserimento dei byte del body applicativo al posto dell'ID,
 							//    nel msg ritornato dal GestoreEventi.
 							//    La variabile responseMessage deve contenere il messaggio Soap che sara' ritornato a chi ha richiesto un messaggio
-							responseMessage = gestoreMsgFromRepository.buildRispostaPrelevamentoMessaggio_RepositoryMessaggi(bodyApplicativoPrecedentementePubblicato, (SOAPVersion) pddContext.getObject(org.openspcoop2.core.constants.Costanti.SOAP_VERSION));
+							responseMessage = gestoreMsgFromRepository.buildRispostaPrelevamentoMessaggio_RepositoryMessaggi(bodyApplicativoPrecedentementePubblicato,msgFromRepository.getMessageType());
 							
 						}catch(Exception e){
 							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA, ("risposta per riferimento non costruita, "+e.getMessage()));
@@ -2296,7 +2319,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								&& portaDiTipoStateless
 								&& (!isRicevutaAsincrona) ){
 							rispostaVuotaValidaPerAsincroniStateless_modalitaAsincrona = true;
-							responseMessage = SoapUtils.build_Soap_Empty((SOAPVersion) pddContext.getObject(org.openspcoop2.core.constants.Costanti.SOAP_VERSION)); // Costruisce messaggio vuoto per inserire busta (ricevuta asincrona)
+							responseMessage = MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(), MessageRole.RESPONSE); // Costruisce messaggio vuoto per inserire busta (ricevuta asincrona)
 						}
 						else{
 							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA, ("risposta applicativa attesa ma non ricevuta"));
@@ -2332,7 +2355,23 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 
 							ByteArrayInputStream binXSD = null;
 							try{
-								if(responseMessage.getSOAPBody()!=null && (responseMessage.getSOAPBody().hasFault()==false) ){
+								boolean hasContent = false;
+								boolean isFault = false;
+								if(ServiceBinding.SOAP.equals(responseMessage.getServiceBinding())){
+									OpenSPCoop2SoapMessage soapMsg = responseMessage.castAsSoap();
+									hasContent = soapMsg.getSOAPBody()!=null;
+									if(hasContent){
+										hasContent = SoapUtils.getFirstNotEmptyChildNode(soapMsg.getSOAPBody(), false)!=null;
+									}
+									isFault = hasContent && soapMsg.getSOAPBody().hasFault() || MessageRole.FAULT.equals(responseMessage.getMessageRole());
+								}
+								else{
+									OpenSPCoop2RestMessage<?> restMsg = responseMessage.castAsRest();
+									hasContent = restMsg.hasContent();
+									isFault = MessageRole.FAULT.equals(responseMessage.getMessageRole());
+								}
+								
+								if(hasContent && (isFault==false) ){
 									
 									msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaInCorso");
 									
@@ -2340,7 +2379,10 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									List<MtomXomReference> xomReferences = null;
 									if(StatoFunzionalita.ABILITATO.equals(validazioneContenutoApplicativoApplicativo.getAcceptMtomMessage())){
 										msgDiag.mediumDebug("Validazione xsd della risposta (mtomFastUnpackagingForXSDConformance)...");
-										xomReferences = responseMessage.mtomFastUnpackagingForXSDConformance();
+										if(ServiceBinding.SOAP.equals(responseMessage.getServiceBinding())==false){
+											throw new Exception("Funzionalita 'AcceptMtomMessage' valida solamente per Service Binding SOAP");
+										}
+										xomReferences = responseMessage.castAsSoap().mtomFastUnpackagingForXSDConformance();
 									}
 									
 									// Init Validatore
@@ -2352,7 +2394,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									msgDiag.mediumDebug("Validazione xsd della risposta (initValidator)...");
 									ValidatoreMessaggiApplicativi validatoreMessaggiApplicativi = 
 										new ValidatoreMessaggiApplicativi(registroServiziManager,idSValidazioneXSD,
-												responseMessage.getVersioneSoap(),responseMessage.getSOAPPart().getEnvelope(),readWSDL);
+												responseMessage,readWSDL);
 
 									// Validazione WSDL 
 									if( CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL.equals(validazioneContenutoApplicativoApplicativo.getTipo()) 
@@ -2360,7 +2402,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 											CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.equals(validazioneContenutoApplicativoApplicativo.getTipo())
 									){
 										msgDiag.mediumDebug("Validazione wsdl della risposta ...");
-										validatoreMessaggiApplicativi.validateWithWsdlLogicoImplementativo(false, null);
+										validatoreMessaggiApplicativi.validateWithWsdlLogicoImplementativo(false);
 									}
 									
 									// Validazione XSD
@@ -2370,17 +2412,20 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									// Ripristino struttura messaggio con xom
 									if(xomReferences!=null && xomReferences.size()>0){
 										msgDiag.mediumDebug("Validazione xsd della risposta (mtomRestoreAfterXSDConformance)...");
-										responseMessage.mtomRestoreAfterXSDConformance(xomReferences);
+										if(ServiceBinding.SOAP.equals(responseMessage.getServiceBinding())==false){
+											throw new Exception("Funzionalita 'AcceptMtomMessage' valida solamente per Service Binding SOAP");
+										}
+										responseMessage.castAsSoap().mtomRestoreAfterXSDConformance(xomReferences);
 									}
 
 									msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaEffettuata");
 								}
 								else{
-									if(responseMessage.getSOAPBody()==null){
+									if(hasContent==false){
 										msgDiag.addKeyword(CostantiPdD.KEY_DETAILS_VALIDAZIONE_CONTENUTI,CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_VALIDAZIONE_SOAP_BODY_NON_PRESENTE);
 										msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaDisabilitata");
 									}
-									else if (responseMessage.getSOAPBody().hasFault() ){
+									else if (isFault ){
 										msgDiag.addKeyword(CostantiPdD.KEY_DETAILS_VALIDAZIONE_CONTENUTI,CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_VALIDAZIONE_SOAP_FAULT_PRESENTE);
 										msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaDisabilitata");
 									}
@@ -2492,12 +2537,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 										new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRisposta(),
 												this.log,soggettoFruitore,idServizio, servizioApplicativo,protocolFactory);
 								
-								SOAPEnvelope soapEnvelopeResponse = null;
-								if(responseMessage!=null){
-									soapEnvelopeResponse = responseMessage.getSOAPPart().getEnvelope();
-								}
-								
-								gestoreCorrelazione.verificaCorrelazioneRisposta(correlazioneApplicativaRisposta, soapEnvelopeResponse, headerIntegrazioneRisposta, false);
+								gestoreCorrelazione.verificaCorrelazioneRisposta(correlazioneApplicativaRisposta, responseMessage, headerIntegrazioneRisposta, false);
 								
 								idCorrelazioneApplicativaRisposta = gestoreCorrelazione.getIdCorrelazione();
 								
@@ -2576,9 +2616,15 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						if(richiestaApplicativa!=null){
 							if(scartaBody){
 								try{
-									// E' permesso SOLO per messaggi con attachment
-									if(responseMessage!=null && responseMessage.countAttachments() <= 0){
-										throw new Exception("La funzionalita' e' permessa solo per messaggi SOAP With Attachments");
+									if(responseMessage!=null){
+										if(ServiceBinding.SOAP.equals(responseMessage.getServiceBinding())==false){
+											throw new Exception("Funzionalita 'ScartaBody' valida solamente per Service Binding SOAP");
+										}
+										
+										// E' permesso SOLO per messaggi con attachment
+										if(responseMessage.castAsSoap().countAttachments() <= 0){
+											throw new Exception("La funzionalita' e' permessa solo per messaggi SOAP With Attachments");
+										}
 									}
 								}catch(Exception e){
 									msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
@@ -2599,20 +2645,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							if(allegaBody){
 								try{
 									if(responseMessage!=null){
-										// E' permesso SOLO per messaggi senza attachment
-										if(responseMessage.countAttachments() > 0){
-											throw new Exception("La funzionalita' non e' permessa per messaggi con attachments");
-										}
-	
-										// Metto il contenuto del body in un attachments.
-										byte[] body = SoapUtils.sbustamentoSOAPEnvelope(responseMessage.getSOAPPart().getEnvelope());
-										AttachmentPart ap =  responseMessage.createAttachmentPart();
-										ap.setRawContentBytes(body, 0, body.length, "text/xml");
-										ap.setContentId(responseMessage.createContentID(this.propertiesReader.getHeaderSoapActorIntegrazione()));
-										responseMessage.addAttachmentPart(ap);
-	
-										// Rimuovo contenuti del body
-										responseMessage.getSOAPBody().removeContents();
+										TunnelSoapUtils.allegaBody(responseMessage, this.propertiesReader.getHeaderSoapActorIntegrazione());
 									}
 								}catch(Exception e){
 									msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
@@ -2642,8 +2675,13 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							// Per avere esattamente il solito comportamento dello scenario con protocollo.
 							if(fault==null){
 								// devo 'ignorare' la risposta anche se presente, essendo un profilo oneway.
-								if(responseMessage!=null && responseMessage.getSOAPBody()!=null)
-									responseMessage.getSOAPBody().removeContents();
+								if(responseMessage!=null){
+									if(ServiceBinding.SOAP.equals(responseMessage.getServiceBinding())){
+										SOAPBody body = responseMessage.castAsSoap().getSOAPBody();
+										if(body!=null)
+											body.removeContents();	
+									}
+								}
 							}
 						}
 						

@@ -24,6 +24,7 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
+import java.io.ByteArrayInputStream;
 import java.sql.Connection;
 import java.util.Random;
 import java.util.Vector;
@@ -34,7 +35,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
@@ -64,9 +65,6 @@ import org.openspcoop2.utils.date.DateManager;
  */
 public class ConnettoreStresstest extends ConnettoreBase {
 
-	/** Logger utilizzato per debug. */
-	private ConnettoreLogger logger = null;
-
 	public final static String TIPO = "stresstest";
 	
 	public final static String LOCATION = "openspcoop2://stresstest";
@@ -85,28 +83,13 @@ public class ConnettoreStresstest extends ConnettoreBase {
 	private static final String SOAP_ENVELOPE_RISPOSTA_END = 
 		"<soapenv:Body><prova>test</prova></soapenv:Body></soapenv:Envelope>";
 
-	
-	/** Proprieta' del connettore */
-	private java.util.Hashtable<String,String> properties;
-	
-	/** Busta */
-	private Busta busta;
-	
-	/** Indicazione se siamo in modalita' debug */
-	private boolean debug = false;
-
-	/** Identificativo */
-	private String idMessaggio;
-	
 
     private Resource resource = null;
     private DBManager dbManager = null;
-    private OpenSPCoop2Properties openspcoopProperties = null;
-	
+   
     public ConnettoreStresstest(){
     	super();
     	this.dbManager = DBManager.getInstance();
-    	this.openspcoopProperties = OpenSPCoop2Properties.getInstance();
     }
     
 	
@@ -122,26 +105,8 @@ public class ConnettoreStresstest extends ConnettoreBase {
 	@Override
 	public boolean send(ConnettoreMsg request){
 
-		if(request==null){
-			this.errore = "Messaggio da consegnare is Null (ConnettoreMsg)";
+		if(this.initialize(request, false)==false){
 			return false;
-		}
-		
-		// Raccolta parametri per costruttore logger
-		this.properties = request.getConnectorProperties();
-		if(this.properties == null)
-			this.errore = "Proprieta' del connettore non definite";
-//		if(this.properties.size() == 0)
-//			this.errore = "Proprieta' del connettore non definite";
-		// - Busta
-		this.busta = request.getBusta();
-		if(this.busta!=null)
-			this.idMessaggio=this.busta.getID();
-		
-		// - Debug mode
-		if(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG)!=null){
-			if("true".equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG).trim()))
-				this.debug = true;
 		}
 		
 		// - Header Applicativo nella risposta
@@ -150,16 +115,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
 			if("true".equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_STRESS_TEST_HEADER_APPLICATIVO).trim()))
 				headerApplicativoRisposta = true;
 		}
-	
-		// Logger
-		this.logger = new ConnettoreLogger(this.debug, this.idMessaggio, this.getPddContext());
-				
-		// Raccolta altri parametri
-		
-		// Context per invocazioni handler
-		this.outRequestContext = request.getOutRequestContext();
-		this.msgDiagnostico = request.getMsgDiagnostico();
-		
+			
 		this.codice = 200;
 				
 		try{
@@ -289,13 +245,18 @@ public class ConnettoreStresstest extends ConnettoreBase {
 			}
 			String messaggio = SOAP_ENVELOPE_RISPOSTA.replace("@HDR@", protocolHeader) + SOAP_ENVELOPE_RISPOSTA_END;
 			byte [] messaggioArray = messaggio.getBytes();
-			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(SOAPVersion.SOAP11,messaggioArray,notifierInputStreamParams);
+			
+			ByteArrayInputStream bin = new ByteArrayInputStream(messaggioArray);
+			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(this.requestMsg.getMessageType(),MessageRole.RESPONSE,
+					this.requestMsg.getContentType(),
+					bin,notifierInputStreamParams,
+					this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());
+			// Non funziona con gli attachments: this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(request.getRequestMessage().getVersioneSoap(),(bout.toByteArray()),notifierInputStreamParams);
 			if(pr.getParseException()!=null){
 				this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
 			}
 			this.responseMsg = pr.getMessage_throwParseException();
-			//this.responseMsg = OpenSPCoopMessageFactory.getMessageFactory().createMessage(new SequenceInputStream(new ByteArrayInputStream(messaggio.getBytes()),new FileInputStream("/tmp/eGovResponseTail.xml")),false,"text/xml",null,false,"/tmp","1024");
-			
+						
 			// content length
 			if(this.responseMsg!=null){
 				this.contentLength = messaggioArray.length;
@@ -320,8 +281,8 @@ public class ConnettoreStresstest extends ConnettoreBase {
      * @return location di inoltro del messaggio
      */
     @Override
-	public String getLocation(){
-    	return LOCATION;
+	public String getLocation() throws ConnettoreException {
+    	return ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, this.propertiesUrlBased, LOCATION);
     }
  
     
@@ -463,7 +424,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
 			if(dominio==null)
 				dominio=bustaRichiesta.getDestinatario()+"SPCoopIT";
 			String idBustaRisposta = null;
-			Imbustamento imbustatore = new Imbustamento(this.getProtocolFactory());
+			Imbustamento imbustatore = new Imbustamento(this.logger.getLogger(), this.getProtocolFactory());
 			try{
 				idBustaRisposta = 
 					imbustatore.buildID(state,new IDSoggetto(bustaRichiesta.getTipoDestinatario(), bustaRichiesta.getDestinatario(), dominio), 

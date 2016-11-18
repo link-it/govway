@@ -20,27 +20,48 @@
  */
 package org.openspcoop2.core.eccezione.errore_applicativo;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+import org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione;
 import java.io.Serializable;
 
 
-/** <p>Java class Eccezione.
+/** <p>Java class for eccezione complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="eccezione">
+ * 		&lt;sequence>
+ * 			&lt;element name="codice" type="{http://www.openspcoop2.org/core/eccezione/errore_applicativo}CodiceEccezione" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 		&lt;/sequence>
+ * 		&lt;attribute name="tipo" type="{http://www.openspcoop2.org/core/eccezione/errore_applicativo}TipoEccezione" use="required"/>
+ * &lt;/complexType>
+ * </pre>
  * 
  * @version $Rev$, $Date$
  * 
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (poli@link.it)
  * @author $Author$
- */
+ * */
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "eccezione", 
+  propOrder = {
+  	"codice",
+  	"descrizione"
+  }
+)
+
+@XmlRootElement(name = "eccezione")
 
 public class Eccezione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  private Long id;
-
-  protected CodiceEccezione codice;
-
-  protected String descrizione;
-
-  protected String tipo;
-
-
   public Eccezione() {
   }
 
@@ -66,52 +87,52 @@ public class Eccezione extends org.openspcoop2.utils.beans.BaseBean implements S
     this.codice = codice;
   }
 
-  public String getDescrizione() {
-    if(this.descrizione!=null && ("".equals(this.descrizione)==false)){
-		return this.descrizione.trim();
-	}else{
-		return null;
-	}
-
+  public java.lang.String getDescrizione() {
+    return this.descrizione;
   }
 
-  public void setDescrizione(String descrizione) {
+  public void setDescrizione(java.lang.String descrizione) {
     this.descrizione = descrizione;
   }
 
-  public String getTipo() {
-    if(this.tipo!=null && ("".equals(this.tipo)==false)){
-		return this.tipo.trim();
-	}else{
-		return null;
-	}
-
+  public void set_value_tipo(String value) {
+    this.tipo = (TipoEccezione) TipoEccezione.toEnumConstantFromString(value);
   }
 
-  public void setTipo(String tipo) {
+  public String get_value_tipo() {
+    if(this.tipo == null){
+    	return null;
+    }else{
+    	return this.tipo.toString();
+    }
+  }
+
+  public org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione getTipo() {
+    return this.tipo;
+  }
+
+  public void setTipo(org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione tipo) {
     this.tipo = tipo;
   }
 
   private static final long serialVersionUID = 1L;
 
-	@Override
-	public String serialize(org.openspcoop2.utils.beans.WriteToSerializerType type) throws org.openspcoop2.utils.UtilsException {
-		if(type!=null && org.openspcoop2.utils.beans.WriteToSerializerType.JAXB.equals(type)){
-			throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-		}
-		else{
-			return super.serialize(type);
-		}
-	}
-	@Override
-	public String toXml_Jaxb() throws org.openspcoop2.utils.UtilsException {
-		throw new org.openspcoop2.utils.UtilsException("Jaxb annotations not generated");
-	}
+  @XmlTransient
+  private Long id;
 
-  public static final String CODICE = "codice";
 
-  public static final String DESCRIZIONE = "descrizione";
 
-  public static final String TIPO = "tipo";
+  @XmlElement(name="codice",required=true,nillable=false)
+  protected CodiceEccezione codice;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="descrizione",required=true,nillable=false)
+  protected java.lang.String descrizione;
+
+  @XmlTransient
+  protected java.lang.String _value_tipo;
+
+  @XmlAttribute(name="tipo",required=true)
+  protected TipoEccezione tipo;
 
 }

@@ -41,7 +41,7 @@ public class WebModel extends AbstractModel<Web> {
 	
 		super();
 	
-		this.CONTEXT = new Field("context",java.lang.String.class,"web",Web.class);
+		this.CONTEXT = new org.openspcoop2.protocol.manifest.model.ContextModel(new Field("context",org.openspcoop2.protocol.manifest.Context.class,"web",Web.class));
 		this.EMPTY_CONTEXT = new org.openspcoop2.protocol.manifest.model.WebEmptyContextModel(new Field("emptyContext",org.openspcoop2.protocol.manifest.WebEmptyContext.class,"web",Web.class));
 	
 	}
@@ -50,14 +50,14 @@ public class WebModel extends AbstractModel<Web> {
 	
 		super(father);
 	
-		this.CONTEXT = new ComplexField(father,"context",java.lang.String.class,"web",Web.class);
+		this.CONTEXT = new org.openspcoop2.protocol.manifest.model.ContextModel(new ComplexField(father,"context",org.openspcoop2.protocol.manifest.Context.class,"web",Web.class));
 		this.EMPTY_CONTEXT = new org.openspcoop2.protocol.manifest.model.WebEmptyContextModel(new ComplexField(father,"emptyContext",org.openspcoop2.protocol.manifest.WebEmptyContext.class,"web",Web.class));
 	
 	}
 	
 	
 
-	public IField CONTEXT = null;
+	public org.openspcoop2.protocol.manifest.model.ContextModel CONTEXT = null;
 	 
 	public org.openspcoop2.protocol.manifest.model.WebEmptyContextModel EMPTY_CONTEXT = null;
 	 

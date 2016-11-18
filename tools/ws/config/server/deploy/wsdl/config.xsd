@@ -132,17 +132,13 @@
 	</xsd:complexType>
 	<!-- PortaDelegata.SoggettoErogatore -->
 	<xsd:complexType name="porta-delegata-soggetto-erogatore">
-		<xsd:attribute default="static" name="identificazione" type="PortaDelegataSoggettoErogatoreIdentificazione"/>
-		<xsd:attribute name="pattern" type="xsd:string"/>
 		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
-		<xsd:attribute name="nome" type="xsd:string"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 	<!-- PortaDelegata.Servizio -->
 	<xsd:complexType name="porta-delegata-servizio">
-		<xsd:attribute default="static" name="identificazione" type="PortaDelegataServizioIdentificazione"/>
-		<xsd:attribute name="pattern" type="xsd:string"/>
 		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
-		<xsd:attribute name="nome" type="xsd:string"/>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 	<!-- PortaDelegata.Azione -->
 	<xsd:complexType name="porta-delegata-azione">
@@ -194,6 +190,9 @@
 		<!-- end-extensions -->
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
+		<xsd:attribute name="location" type="xsd:string">
+			
+		</xsd:attribute>
 		<xsd:attribute default="abilitato" name="ricevuta-asincrona-simmetrica" type="StatoFunzionalita">
 			
 		</xsd:attribute>
@@ -227,7 +226,12 @@
 	</xsd:complexType>
 	<!-- PortaApplicativa.Azione -->
 	<xsd:complexType name="porta-applicativa-azione">
-		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute default="static" name="identificazione" type="PortaApplicativaAzioneIdentificazione"/>
+		<xsd:attribute name="pattern" type="xsd:string"/>
+		<xsd:attribute name="nome" type="xsd:string"/>
+		<xsd:attribute default="disabilitato" name="force-wsdl-based" type="StatoFunzionalita">
+			
+		</xsd:attribute>
 	</xsd:complexType>
 
 
@@ -757,25 +761,22 @@
 			<xsd:enumeration value="verify"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-	<xsd:simpleType name="PortaDelegataSoggettoErogatoreIdentificazione">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="static"/>
-			<xsd:enumeration value="urlBased"/>
-			<xsd:enumeration value="contentBased"/>
-			<xsd:enumeration value="inputBased"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	<xsd:simpleType name="PortaDelegataServizioIdentificazione">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="static"/>
-			<xsd:enumeration value="urlBased"/>
-			<xsd:enumeration value="contentBased"/>
-			<xsd:enumeration value="inputBased"/>
-		</xsd:restriction>
-	</xsd:simpleType>
 	<xsd:simpleType name="PortaDelegataAzioneIdentificazione">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="static"/>
+			<xsd:enumeration value="headerBased"/>
+			<xsd:enumeration value="urlBased"/>
+			<xsd:enumeration value="contentBased"/>
+			<xsd:enumeration value="inputBased"/>
+			<xsd:enumeration value="soapActionBased"/>
+			<xsd:enumeration value="wsdlBased"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PortaApplicativaAzioneIdentificazione">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="static"/>
+			<xsd:enumeration value="headerBased"/>
+			<xsd:enumeration value="pluginBased"/>
 			<xsd:enumeration value="urlBased"/>
 			<xsd:enumeration value="contentBased"/>
 			<xsd:enumeration value="inputBased"/>

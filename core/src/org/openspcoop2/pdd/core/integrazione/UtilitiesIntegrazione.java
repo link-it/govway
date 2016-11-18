@@ -33,15 +33,15 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.ValidatoreXSD;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.xml.XSDResourceResolver;
+import org.slf4j.Logger;
 
 
 /**
@@ -338,11 +338,11 @@ public class UtilitiesIntegrazione {
 	
 	
 
-	public void readHeader(OpenSPCoop2Message message,HeaderIntegrazione integrazione,
+	public void readHeader(OpenSPCoop2SoapMessage message,HeaderIntegrazione integrazione,
 			String actorIntegrazione) throws HeaderIntegrazioneException{
 		
 		
-		try{
+		try{			
 			if(actorIntegrazione==null)
 				throw new Exception("Actor non definito");
 			SOAPHeader header = message.getSOAPHeader();
@@ -470,7 +470,7 @@ public class UtilitiesIntegrazione {
 		}
 	}
 
-	public void updateHeader(OpenSPCoop2Message message,IDSoggetto soggettoFruitore,IDServizio idServizio,
+	public void updateHeader(OpenSPCoop2SoapMessage message,IDSoggetto soggettoFruitore,IDServizio idServizio,
 			String idBusta,String servizioApplicativo,
 			String correlazioneApplicativa,String riferimentoCorrelazioneApplicativaRichiesta,
 			String actorIntegrazione,String nomeElemento,String prefix,String namespace,
@@ -482,7 +482,7 @@ public class UtilitiesIntegrazione {
 				proprietaProtocolloNomeElemento, proprietaProtocolloNomeTipoElemento, protocolInfos);
 	}
 	
-	public void updateHeader(OpenSPCoop2Message message,IDSoggetto soggettoFruitore,IDServizio idServizio,
+	public void updateHeader(OpenSPCoop2SoapMessage message,IDSoggetto soggettoFruitore,IDServizio idServizio,
 			String idBusta,String idBustaRisposta,String servizioApplicativo,
 			String correlazioneApplicativa,String riferimentoCorrelazioneApplicativaRichiesta,
 			String actorIntegrazione,String nomeElemento,String prefix,String namespace,
@@ -514,7 +514,7 @@ public class UtilitiesIntegrazione {
 				proprietaProtocolloNomeElemento, proprietaProtocolloNomeTipoElemento, protocolInfos);
 	}
 		
-	public void updateHeader(OpenSPCoop2Message message,HeaderIntegrazione integrazione,
+	public void updateHeader(OpenSPCoop2SoapMessage message,HeaderIntegrazione integrazione,
 			String actorIntegrazione,String nomeElemento,String prefix,String namespace,
 			String proprietaProtocolloNomeElemento,String proprietaProtocolloNomeTipoElemento,
 			Map<String, String> protocolInfos) throws Exception{
@@ -583,16 +583,11 @@ public class UtilitiesIntegrazione {
 	
 	public SOAPHeaderElement buildHeader(HeaderIntegrazione integrazione,String nomeElemento,
 			String prefix,String namespace, String actor, 
-			//SOAPVersion soapVersion,
-			OpenSPCoop2Message m,
+			OpenSPCoop2SoapMessage m,
 			String proprietaProtocolloNomeElemento,String proprietaProtocolloNomeTipoElemento,
 			Map<String, String> protocolInfos) throws HeaderIntegrazioneException{
 
 		try{
-//			OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
-//			
-//			OpenSPCoop2Message m = mf.createMessage(soapVersion);
-			//SOAPHeaderElement header = m.getSOAPHeader().addHeaderElement(new QName(namespace,nomeElemento,prefix));
 			SOAPHeader soapHeader = m.getSOAPHeader();
 			if(soapHeader==null){
 				soapHeader = m.getSOAPPart().getEnvelope().addHeader();
@@ -686,7 +681,7 @@ public class UtilitiesIntegrazione {
 	}
 	
 	
-	public void deleteHeader(OpenSPCoop2Message message,String actorIntegrazione) throws HeaderIntegrazioneException{
+	public void deleteHeader(OpenSPCoop2SoapMessage message,String actorIntegrazione) throws HeaderIntegrazioneException{
 
 		try{
 

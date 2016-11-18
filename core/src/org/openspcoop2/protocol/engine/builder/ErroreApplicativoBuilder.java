@@ -30,8 +30,8 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.ParseException;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.protocol.sdk.AbstractEccezioneBuilderParameter;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.EccezioneIntegrazioneBuilderParameters;
@@ -68,7 +68,7 @@ public class ErroreApplicativoBuilder  {
 	private IProtocolFactory protocolFactory;
 	private IProtocolManager protocolManager;
 	private IErroreApplicativoBuilder erroreApplicativoBuilder;
-	private org.openspcoop2.message.XMLUtils xmlUtils;
+	private org.openspcoop2.message.xml.XMLUtils xmlUtils;
 	private IDSoggetto dominio;
 	public void setDominio(IDSoggetto dominio) {
 		this.dominio = dominio;
@@ -88,7 +88,10 @@ public class ErroreApplicativoBuilder  {
 		this.proprietaErroreApplicato = proprietaErroreApplicato;
 	}
 
-	private SOAPVersion soapVersion;
+	private MessageType messageType;
+	public MessageType getMessageType() {
+		return this.messageType;
+	}
 	private DettaglioEccezioneOpenSPCoop2Builder dettaglioEccezioneOpenSPCoop2Builder;
 
 	private String servizioApplicativo;	
@@ -103,7 +106,7 @@ public class ErroreApplicativoBuilder  {
 
 	public ErroreApplicativoBuilder(Logger aLog, IProtocolFactory protocolFactory,
 			IDSoggetto dominio,IDSoggetto mittente,IDServizio servizio,String idFunzione,
-			ProprietaErroreApplicativo proprietaErroreApplicativo,SOAPVersion soapVersion,
+			ProprietaErroreApplicativo proprietaErroreApplicativo,MessageType messageType,
 			TipoPdD tipoPdD,String servizioApplicativo) throws ProtocolException{
 		if(aLog!=null)
 			this.log = aLog;
@@ -111,7 +114,7 @@ public class ErroreApplicativoBuilder  {
 			this.log = LoggerWrapperFactory.getLogger(ErroreApplicativoBuilder.class);
 		this.protocolFactory = protocolFactory;
 		
-		this.xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
+		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 		
 		this.protocolManager = this.protocolFactory.createProtocolManager();
 		this.erroreApplicativoBuilder = this.protocolFactory.createErroreApplicativoBuilder();
@@ -124,7 +127,7 @@ public class ErroreApplicativoBuilder  {
 		
 		this.proprietaErroreApplicato = proprietaErroreApplicativo;
 		
-		this.soapVersion = soapVersion;
+		this.messageType = messageType;
 
 		this.dettaglioEccezioneOpenSPCoop2Builder = new DettaglioEccezioneOpenSPCoop2Builder(aLog, protocolFactory);
 		
@@ -149,7 +152,7 @@ public class ErroreApplicativoBuilder  {
 		
 		parameters.setProprieta(this.proprietaErroreApplicato);
 		
-		parameters.setVersioneSoap(this.soapVersion);
+		parameters.setMessageType(this.messageType);
 		
 		parameters.setTipoPorta(this.tipoPdD);
 		
@@ -273,19 +276,12 @@ public class ErroreApplicativoBuilder  {
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
-			return this.fac.createFaultMessage(this.soapVersion, "ErroreDiProcessamento");
+			return this.fac.createFaultMessage(this.messageType, "ErroreDiProcessamento");
 		}
 	}
 
 	public OpenSPCoop2Message toMessage(Eccezione eccezione,IDSoggetto soggettoProduceEccezione, ParseException parseException){
-		EccezioneProtocolloBuilderParameters parameters =
-			this.getEccezioneProtocolloBuilderParameters(eccezione, soggettoProduceEccezione , null, parseException);
-		try{
-			return this.erroreApplicativoBuilder.toMessage(parameters);
-		}catch(Exception e){
-			this.log.error("Errore durante la costruzione del messaggio di eccezione busta",e);
-			return this.fac.createFaultMessage(this.soapVersion, "ErroreDiProcessamento");
-		}
+		return toMessage(eccezione, soggettoProduceEccezione, null, parseException);
 	}
 	
 	public OpenSPCoop2Message toMessage(Eccezione eccezione,IDSoggetto soggettoProduceEccezione,DettaglioEccezione dettaglioEccezione, ParseException parseException){
@@ -295,7 +291,7 @@ public class ErroreApplicativoBuilder  {
 			return this.erroreApplicativoBuilder.toMessage(parameters);
 		} catch (Exception e) {
 			this.log.error("Errore durante la costruzione del messaggio di eccezione busta",e);
-			return this.fac.createFaultMessage(this.soapVersion, "ErroreDiProcessamento");
+			return this.fac.createFaultMessage(this.messageType, "ErroreDiProcessamento");
 		}
 	}
 

@@ -105,6 +105,12 @@ public class ConnettoreLogger {
 			this.loggerConnettore.warn(this.buildMsg(msg));
 		}
 	}
+	public void warn(String msg, Throwable t){
+		this.loggerCore.warn(this.buildMsg(msg),t);
+		if(this.debug){
+			this.loggerConnettore.warn(this.buildMsg(msg),t);
+		}
+	}
 
 	public void info(String msg, boolean logInCore){
 		if(logInCore){

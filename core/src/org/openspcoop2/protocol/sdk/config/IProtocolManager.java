@@ -24,15 +24,14 @@ package org.openspcoop2.protocol.sdk.config;
 import java.util.Map;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.SOAPFaultIntegrationGenericInfoMode;
 import org.openspcoop2.protocol.sdk.constants.TipoIntegrazione;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
-import org.openspcoop2.utils.resources.TransportRequestContext;
-import org.openspcoop2.utils.resources.TransportResponseContext;
+import org.openspcoop2.utils.transport.TransportRequestContext;
+import org.openspcoop2.utils.transport.TransportResponseContext;
 
 /**
  * Interfaccia del Manager del Protocollo
@@ -212,25 +211,23 @@ public interface IProtocolManager {
     /**
      * Aggiorna il messaggio in funzione del protocollo
      * 
-     * @param soapVersion soapVersion
      * @param msg messaggio
      * @param busta Busta
      * @return Messaggio aggiornato
      * @throws ProtocolException
      */
-    public OpenSPCoop2Message updateOpenSPCoop2MessageRequest(SOAPVersion soapVersion,OpenSPCoop2Message msg, Busta busta) throws ProtocolException;
+    public OpenSPCoop2Message updateOpenSPCoop2MessageRequest(OpenSPCoop2Message msg, Busta busta) throws ProtocolException;
     
     /**
      * Aggiorna il messaggio in funzione del protocollo
      * 
-     * @param soapVersion soapVersion
      * @param msg messaggio
      * @param busta Busta
      * @param notifierInputStreamParams notifierInputStreamParams
      * @return Messaggio aggiornato
      * @throws ProtocolException
      */
-    public OpenSPCoop2Message updateOpenSPCoop2MessageResponse(SOAPVersion soapVersion,OpenSPCoop2Message msg, Busta busta, 
+    public OpenSPCoop2Message updateOpenSPCoop2MessageResponse(OpenSPCoop2Message msg, Busta busta, 
     		NotifierInputStreamParams notifierInputStreamParams, 
     		TransportRequestContext transportRequestContext, TransportResponseContext transportResponseContext) throws ProtocolException;
     

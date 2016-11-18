@@ -27,7 +27,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.resources.PropertiesReader;
+import org.openspcoop2.utils.properties.PropertiesReader;
 
 /**
  * Contiene un lettore del file di proprieta' di Threads.

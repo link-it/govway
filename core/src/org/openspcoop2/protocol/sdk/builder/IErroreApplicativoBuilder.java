@@ -31,6 +31,8 @@ import org.openspcoop2.protocol.sdk.EccezioneIntegrazioneBuilderParameters;
 import org.openspcoop2.protocol.sdk.EccezioneProtocolloBuilderParameters;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.TipoErroreApplicativo;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
@@ -55,6 +57,9 @@ public interface IErroreApplicativoBuilder {
 		
 	public IProtocolFactory getProtocolFactory();
 
+	
+	// NAMESPACE
+	
 	/**
 	 * Ritorna il namespace che definisce una eccezione di protocollo
 	 * 
@@ -87,6 +92,8 @@ public interface IErroreApplicativoBuilder {
 	
 	
 	
+	// UTILITY DI RICONOSCIMENTO
+	
 	/**
 	 * Indica se il nodo contiene una definizione di errore applicativo
 	 * 
@@ -103,7 +110,10 @@ public interface IErroreApplicativoBuilder {
 	 */
 	public boolean isErroreApplicativo(String namespace, String localName);
 
+		
 	
+	
+	// BUILDER
 	
 	/**
 	 * Costruisce un messaggio SOAP contenente un SOAPFault o un SOAPBody (a seconda della configurazione) generato secondo lo standard del protocollo
@@ -122,6 +132,26 @@ public interface IErroreApplicativoBuilder {
 	 */
 	public OpenSPCoop2Message toMessage(EccezioneIntegrazioneBuilderParameters parameters) throws ProtocolException;
 
+		
+	/**
+	 * Costruisce un SOAPElement contenente un'Eccezione come definito da specifica del protocollo in uso.
+	 * L'elemento restituito sara' inserito nel corpo del messaggio di risposta.
+	 * 
+	 * @param parameters parametri
+	 * @return SOAPElement contenente l'Eccezione in caso di successo. 
+	 * @throws ProtocolException
+	 */
+	public SOAPElement toSoapElement(EccezioneProtocolloBuilderParameters parameters) throws ProtocolException;
+	/**
+	 * Costruisce un SOAPElement contenente un'Eccezione come definito da specifica del protocollo in uso.
+	 * L'elemento restituito sara' inserito nel corpo del messaggio di risposta.
+	 * 
+	 * @param parameters parametri
+	 * @return SOAPElement contenente l'Eccezione in caso di successo. 
+	 * @throws ProtocolException
+	 */
+	public SOAPElement toSoapElement(EccezioneIntegrazioneBuilderParameters parameters) throws ProtocolException;
+	
 	
 	/**
 	 * Costruisce un SOAPElement contenente un'Eccezione come definito da specifica del protocollo in uso.
@@ -131,7 +161,7 @@ public interface IErroreApplicativoBuilder {
 	 * @return SOAPElement contenente l'Eccezione in caso di successo. 
 	 * @throws ProtocolException
 	 */
-	public SOAPElement toElement(EccezioneProtocolloBuilderParameters parameters) throws ProtocolException;
+	public Element toElement(EccezioneProtocolloBuilderParameters parameters) throws ProtocolException;
 	/**
 	 * Costruisce un SOAPElement contenente un'Eccezione come definito da specifica del protocollo in uso.
 	 * L'elemento restituito sara' inserito nel corpo del messaggio di risposta.
@@ -140,82 +170,95 @@ public interface IErroreApplicativoBuilder {
 	 * @return SOAPElement contenente l'Eccezione in caso di successo. 
 	 * @throws ProtocolException
 	 */
-	public SOAPElement toElement(EccezioneIntegrazioneBuilderParameters parameters) throws ProtocolException;
+	public Element toElement(EccezioneIntegrazioneBuilderParameters parameters) throws ProtocolException;
 	
 	
 	/**
-	 * Costruisce un SOAPElement contenente un'Eccezione come definito da specifica del protocollo in uso.
+	 * Costruisce una stringa contenente un'Eccezione come definito da specifica del protocollo in uso.
 	 * L'elemento restituito sara' inserito nel corpo del messaggio di risposta.
 	 * 
+	 * @param tipoErroreApplicativo tipo di errore Applicativo (soap,xml,json)
 	 * @param parameters parametri
 	 * @return l'Eccezione in caso di successo. 
 	 * @throws ProtocolException
 	 */
-	public String toString(EccezioneProtocolloBuilderParameters parameters) throws ProtocolException;
+	public String toString(TipoErroreApplicativo tipoErroreApplicativo, EccezioneProtocolloBuilderParameters parameters) throws ProtocolException;
 	/**
-	 * Costruisce un SOAPElement contenente un'Eccezione come definito da specifica del protocollo in uso.
+	 * Costruisce una stringa contenente un'Eccezione come definito da specifica del protocollo in uso.
 	 * L'elemento restituito sara' inserito nel corpo del messaggio di risposta.
 	 * 
+	 * @param tipoErroreApplicativo tipo di errore Applicativo (soap,xml,json)
 	 * @param parameters parametri
 	 * @return l'Eccezione in caso di successo. 
 	 * @throws ProtocolException
 	 */
-	public String toString(EccezioneIntegrazioneBuilderParameters parameters) throws ProtocolException;
+	public String toString(TipoErroreApplicativo tipoErroreApplicativo, EccezioneIntegrazioneBuilderParameters parameters) throws ProtocolException;
 	
 	
 	/**
-	 * Costruisce un SOAPElement contenente un'Eccezione come definito da specifica del protocollo in uso.
+	 * Costruisce un byte[] contenente un'Eccezione come definito da specifica del protocollo in uso.
 	 * L'elemento restituito sara' inserito nel corpo del messaggio di risposta.
 	 * 
+	 * @param tipoErroreApplicativo tipo di errore Applicativo (soap,xml,json)
 	 * @param parameters parametri
 	 * @return l'Eccezione in caso di successo. 
 	 * @throws ProtocolException
 	 */
-	public byte[] toByteArray(EccezioneProtocolloBuilderParameters parameters) throws ProtocolException;
+	public byte[] toByteArray(TipoErroreApplicativo tipoErroreApplicativo, EccezioneProtocolloBuilderParameters parameters) throws ProtocolException;
 	/**
-	 * Costruisce un SOAPElement contenente un'Eccezione come definito da specifica del protocollo in uso.
+	 * Costruisce un byte[] contenente un'Eccezione come definito da specifica del protocollo in uso.
 	 * L'elemento restituito sara' inserito nel corpo del messaggio di risposta.
 	 * 
+	 * @param tipoErroreApplicativo tipo di errore Applicativo (soap,xml,json)
 	 * @param parameters parametri
 	 * @return l'Eccezione in caso di successo. 
 	 * @throws ProtocolException
 	 */
-	public byte[] toByteArray(EccezioneIntegrazioneBuilderParameters parameters) throws ProtocolException;
+	public byte[] toByteArray(TipoErroreApplicativo tipoErroreApplicativo, EccezioneIntegrazioneBuilderParameters parameters) throws ProtocolException;
 	
 	
+	
+	
+	
+	// PARSER
 	
 	/**
 	 * Si occupa di interpretare l'errore applicativo e di mapparne il codice eccezione e la descrizione nell'oggetto da ritornare
 	 * 
-	 * @param xml errore Applicativo
+	 * @param tipoErroreApplicativo tipo di errore Applicativo (soap,xml,json)
+	 * @param erroreApplicativo errore Applicativo
 	 * @param prefixCodiceErroreApplicativoIntegrazione prefixCodiceErroreApplicativoIntegrazione
 	 * @return AbstractEccezioneBuilderParameter
 	 * @throws ProtocolException
 	 */
-	public AbstractEccezioneBuilderParameter readErroreApplicativo(String xml,String prefixCodiceErroreApplicativoIntegrazione) throws ProtocolException;
+	public AbstractEccezioneBuilderParameter readErroreApplicativo(TipoErroreApplicativo tipoErroreApplicativo, String erroreApplicativo,String prefixCodiceErroreApplicativoIntegrazione) throws ProtocolException;
 	
 	/**
 	 * Si occupa di interpretare l'errore applicativo e di mapparne il codice eccezione e la descrizione nell'oggetto da ritornare
 	 * 
-	 * @param xml errore Applicativo
+	 * @param tipoErroreApplicativo tipo di errore Applicativo (soap,xml,json)
+	 * @param erroreApplicativo errore Applicativo
 	 * @param prefixCodiceErroreApplicativoIntegrazione prefixCodiceErroreApplicativoIntegrazione
 	 * @return AbstractEccezioneBuilderParameter
 	 * @throws ProtocolException
 	 */
-	public AbstractEccezioneBuilderParameter readErroreApplicativo(byte[] xml,String prefixCodiceErroreApplicativoIntegrazione) throws ProtocolException;
+	public AbstractEccezioneBuilderParameter readErroreApplicativo(TipoErroreApplicativo tipoErroreApplicativo, byte[] erroreApplicativo,String prefixCodiceErroreApplicativoIntegrazione) throws ProtocolException;
 	
 	/**
 	 * Si occupa di interpretare l'errore applicativo e di mapparne il codice eccezione e la descrizione nell'oggetto da ritornare
 	 * 
-	 * @param xml errore Applicativo
+	 * @param erroreApplicativo errore Applicativo
 	 * @param prefixCodiceErroreApplicativoIntegrazione prefixCodiceErroreApplicativoIntegrazione
 	 * @return AbstractEccezioneBuilderParameter
 	 * @throws ProtocolException
 	 */
-	public AbstractEccezioneBuilderParameter readErroreApplicativo(Node xml,String prefixCodiceErroreApplicativoIntegrazione) throws ProtocolException;
+	public AbstractEccezioneBuilderParameter readErroreApplicativo(Node erroreApplicativo,String prefixCodiceErroreApplicativoIntegrazione) throws ProtocolException;
 	
 	
 	
+	
+	
+	// INSERT INTO SOAP FAULT
 	
 	/**
 	 * Aggiunge ad un messaggio contenente un SOAPFault le informazioni di un errore applicativo. 
@@ -235,8 +278,6 @@ public interface IErroreApplicativoBuilder {
 	 */	
 	public void insertInSOAPFault(EccezioneIntegrazioneBuilderParameters parameters,
 			OpenSPCoop2Message msg) throws ProtocolException;
-	
-
 	
 	/**
 	 * Aggiunge ad un messaggio contenente un SOAPFault le informazioni di un errore di routing

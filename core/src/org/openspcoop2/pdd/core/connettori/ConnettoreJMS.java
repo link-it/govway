@@ -42,11 +42,7 @@ import javax.naming.InitialContext;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.id.IDServizio;
-import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.SoapUtils;
-import org.openspcoop2.pdd.core.autenticazione.Credenziali;
-import org.openspcoop2.protocol.sdk.Busta;
-import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.message.soap.TunnelSoapUtils;
 
 /**
  * Classe utilizzata per effettuare consegne di messaggi Soap, attraverso
@@ -64,45 +60,10 @@ public class ConnettoreJMS extends ConnettoreBase {
 	/** Cache per le locations */
 	private static Hashtable<String,Destination> locations = new Hashtable<String,Destination>();
 
-	/** Logger utilizzato per debug. */
-	private ConnettoreLogger logger = null;
-
-
-
-	/* ********  F I E L D S  P R I V A T I  ******** */
-
-
-
-
-	/** Msg di richiesta */
-	private OpenSPCoop2Message requestMsg;
-	/** Proprieta' del connettore */
-	private java.util.Hashtable<String,String> properties;
-	/** Indicazione su di un eventuale sbustamento SOAP */
-	private boolean sbustamentoSoap;
-	/** Proprieta' del trasporto che deve gestire il connettore */
-	private java.util.Properties propertiesTrasporto;
-	/** Busta */
-	private Busta busta;
-	/** Tipo di Connettore */
-	private String tipoConnettore;
-
-	/** Identificativo */
-	private String idMessaggio;
-	
-	/** Tipo di Autenticazione */
-	//private String tipoAutenticazione;
-	/** Credenziali per l'autenticazione */
-	private Credenziali credenziali;
-	/** Indicazione se siamo in modalita' debug */
-	private boolean debug = false;
-
 	/** acknowledgeModeSessione */
 	private int acknowledgeModeSessione = javax.jms.Session.AUTO_ACKNOWLEDGE;
 
-	/** Loader loader */
-	private Loader loader = null;
-	
+
 
 	/**
 	 * Si occupa di effettuare la consegna.
@@ -114,60 +75,10 @@ public class ConnettoreJMS extends ConnettoreBase {
 	@Override
 	public boolean send(ConnettoreMsg request){
 
-		this.loader = Loader.getInstance();
+		if(this.initialize(request, true)==false){
+			return false;
+		}
 		
-		if(request==null){
-			this.errore = "Messaggio da consegnare is Null (ConnettoreMsg)";
-			return false;
-		}
-
-		// Context per invocazioni handler
-		this.outRequestContext = request.getOutRequestContext();
-		this.msgDiagnostico = request.getMsgDiagnostico();
-				
-		// Raccolta parametri per costruttore logger
-		this.properties = request.getConnectorProperties();
-		if(this.properties == null)
-			this.errore = "Proprieta' del connettore non definite";
-		if(this.properties.size() == 0)
-			this.errore = "Proprieta' del connettore non definite";
-		// - Busta
-		this.busta = request.getBusta();
-		if(this.busta!=null)
-			this.idMessaggio=this.busta.getID();
-		// - Debug mode
-		if(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG)!=null){
-			if("true".equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG).trim()))
-				this.debug = true;
-		}
-	
-		// Logger
-		this.logger = new ConnettoreLogger(this.debug, this.idMessaggio, this.getPddContext());
-		
-		// Raccolta altri parametri
-		try{
-			this.requestMsg =  request.getRequestMessage();
-		}catch(Exception e){
-			this.eccezioneProcessamento = e;
-			this.logger.error("Errore durante la lettura del messaggio da consegnare: "+this.readExceptionMessageFromException(e),e);
-			this.errore = "Errore durante la lettura del messaggio da consegnare: "+this.readExceptionMessageFromException(e);
-			return false;
-		}
-		this.sbustamentoSoap = request.isSbustamentoSOAP();
-		this.propertiesTrasporto = request.getPropertiesTrasporto();
-
-		//this.tipoAutenticazione = request.getAutenticazione();
-		this.credenziali = request.getCredenziali();
-
-		// analisi messaggio da spedire
-		if(this.requestMsg==null){
-			this.errore = "Messaggio da consegnare is Null (Msg)";
-			return false;
-		}
-
-		// tipoConnetore
-		this.tipoConnettore = request.getTipoConnettore();
-
 		// location
 		if(this.properties.get(CostantiConnettori.CONNETTORE_LOCATION)==null){
 			this.errore = "Proprieta' '"+CostantiConnettori.CONNETTORE_LOCATION+"' non fornita e richiesta da questo tipo di connettore ["+request.getTipoConnettore()+"]";
@@ -267,9 +178,9 @@ public class ConnettoreJMS extends ConnettoreBase {
 			if(this.debug)
 				this.logger.debug("Trasformazione del messaggio in byte...");
 			byte [] consegna = null;
-			if(this.sbustamentoSoap){
+			if(this.isSoap && this.sbustamentoSoap){
 				// richiesto sbustamento
-				consegna = SoapUtils.sbustamentoMessaggio(this.requestMsg);
+				consegna = TunnelSoapUtils.sbustamentoMessaggio(this.requestMsg);
 			}else{
 				// consegna dell'intero soap envelope
 				ByteArrayOutputStream reqBuffer = new ByteArrayOutputStream();

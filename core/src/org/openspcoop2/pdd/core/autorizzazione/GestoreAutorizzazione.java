@@ -328,7 +328,7 @@ public class GestoreAutorizzazione {
 				if(esito!=null && !esito.isNoCache()){
 					if( (esito.isServizioAutorizzato()) || 
 							(CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.equals(esito.getErroreIntegrazione().getCodiceErrore())) || 
-							(CodiceErroreIntegrazione.CODICE_401_PD_INESISTENTE.equals(esito.getErroreIntegrazione().getCodiceErrore())) ){
+							(CodiceErroreIntegrazione.CODICE_401_PORTA_INESISTENTE.equals(esito.getErroreIntegrazione().getCodiceErrore())) ){
 						GestoreAutorizzazione.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
 						try{	
 							org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();

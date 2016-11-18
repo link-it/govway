@@ -114,12 +114,12 @@ public class TunnelSOAP {
 			xmlRichiestaString = xmlRichiestaString.substring(0,(xmlRichiestaString.length()-1));
 		String tmpRichiesta = prefix + xmlRichiestaString + suffix;
 		//System.out.println("RICHIESTA TMP ["+tmpRichiesta+"]");
-		Element xmlRichiesta = org.openspcoop2.message.XMLUtils.getInstance().newElement(tmpRichiesta.getBytes());
+		Element xmlRichiesta = org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(tmpRichiesta.getBytes());
 		MessageElement xmlRichiestaAxis = new MessageElement(xmlRichiesta);
 			
 		String tmpRisposta = prefix + xmlRispostaString + suffix;
 		//System.out.println("RISPOSTA TMP ["+tmpRisposta+"]");
-		Element xmlRisposta = org.openspcoop2.message.XMLUtils.getInstance().newElement(tmpRisposta.getBytes());
+		Element xmlRisposta = org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(tmpRisposta.getBytes());
 		MessageElement xmlRispostaAxis = new MessageElement(xmlRisposta);
 		
 		

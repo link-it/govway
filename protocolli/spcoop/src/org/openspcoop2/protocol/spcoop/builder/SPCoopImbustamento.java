@@ -35,18 +35,18 @@ import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
-import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 
-import org.slf4j.Logger;
-import org.w3c.dom.Node;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.message.Costanti;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.SOAPVersion;
-import org.openspcoop2.message.SoapUtils;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.Eccezione;
@@ -71,10 +71,13 @@ import org.openspcoop2.protocol.spcoop.validator.SPCoopValidazioneSintattica;
 import org.openspcoop2.protocol.utils.IDSerialGenerator;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.dch.InputStreamDataSource;
 import org.openspcoop2.utils.id.serial.IDSerialGeneratorParameter;
 import org.openspcoop2.utils.id.serial.IDSerialGeneratorType;
-import org.openspcoop2.utils.resources.InputStreamDataSource;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
+import org.slf4j.Logger;
+import org.w3c.dom.Node;
 
 
 /**
@@ -108,12 +111,12 @@ public class SPCoopImbustamento {
 		this.spcoopProperties = SPCoopProperties.getInstance(this.log);
 		
 		this.tipiSoggetti = this.factory.createProtocolConfiguration().getTipiSoggetti();
-		this.tipiServizi = this.factory.createProtocolConfiguration().getTipiServizi();
+		this.tipiServizi = this.factory.createProtocolConfiguration().getTipiServizi(ServiceBinding.SOAP);
 		
 		this.validazioneSemantica = (SPCoopValidazioneSemantica) this.factory.createValidazioneSemantica();
 		this.validazioneSintattica = (SPCoopValidazioneSintattica) this.factory.createValidazioneSintattica();
 		
-		this.xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
+		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 		
 		this.traduttore = this.factory.createTraduttore();
 		
@@ -297,19 +300,22 @@ public class SPCoopImbustamento {
 	public SOAPElement build_eGovHeader(OpenSPCoop2Message msg,Busta eGov,boolean verificaPresenzaElementiObbligatori,boolean forzaValidazioneXSDElementiDisabilitata) throws ProtocolException{ 
 		try{
 
-			OpenSPCoop2Message messaggio = msg;
-			if(messaggio==null){
+			OpenSPCoop2SoapMessage soapMsg = null;
+			if(msg==null){
 				OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
-				messaggio = mf.createMessage(SOAPVersion.SOAP11);
+				soapMsg = mf.createMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap();
+			}
+			else{
+				soapMsg = msg.castAsSoap();
 			}
 				
 				
-			SOAPHeader hdr = messaggio.getSOAPHeader();
+			SOAPHeader hdr = soapMsg.getSOAPHeader();
 			if(hdr==null){
-				hdr = messaggio.getSOAPPart().getEnvelope().addHeader(); 
+				hdr = soapMsg.getSOAPPart().getEnvelope().addHeader(); 
 			}
 			QName name = new QName(SPCoopCostanti.NAMESPACE_EGOV, "Intestazione",SPCoopCostanti.PREFIX_EGOV);
-			SOAPHeaderElement eGovHeader = messaggio.newSOAPHeaderElement(hdr, name);
+			SOAPHeaderElement eGovHeader = soapMsg.newSOAPHeaderElement(hdr, name);
 						
 			
 			
@@ -790,11 +796,13 @@ public class SPCoopImbustamento {
 		try{
 
 			// Descrizione
-			SOAPElement descrizione = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(SOAPVersion.SOAP11).getSOAPBody().addChildElement(new QName(SPCoopCostanti.NAMESPACE_EGOV, "Descrizione",SPCoopCostanti.PREFIX_EGOV));
+			SOAPElement descrizione = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().
+					getSOAPBody().addChildElement(new QName(SPCoopCostanti.NAMESPACE_EGOV, "Descrizione",SPCoopCostanti.PREFIX_EGOV));
 			
+			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap(); 
 
 			// Attachments
-			java.util.Iterator<?> iter = msg.getAttachments();
+			java.util.Iterator<?> iter = soapMsg.getAttachments();
 			int attach = 1;
 			while( iter.hasNext() ){
 				Utilities.printFreeMemory("Imbustamento - Costruzione manifest att " + attach);
@@ -861,7 +869,7 @@ public class SPCoopImbustamento {
 			// Body into Attachments
 			if(proprietaManifestAttachments.isScartaBody() == false){
 				Utilities.printFreeMemory("Imbustamento - Scarta Body");
-				byte [] body = SoapUtils.sbustamentoSOAPEnvelope(msg.getSOAPPart().getEnvelope());
+				byte [] body = TunnelSoapUtils.sbustamentoSOAPEnvelope(soapMsg.getSOAPPart().getEnvelope());
 				AttachmentPart ap = null;
 				//ByteArrayInputStream isContent = new ByteArrayInputStream(body);
 				//ap.setContent(isContent,"text/xml; charset=UTF-8");
@@ -876,7 +884,7 @@ public class SPCoopImbustamento {
 					//System.out.println("PATCH ["+new String(body)+"]");
 				}
 				else{
-					List<Node> listNode = SoapUtils.getNotEmptyChildNodes(msg.getSOAPPart().getEnvelope().getBody(), false);
+					List<Node> listNode = SoapUtils.getNotEmptyChildNodes(soapMsg.getSOAPPart().getEnvelope().getBody(), false);
 					if(listNode!=null && listNode.size()>1){
 						//System.out.println("MULTI ELEMENT: "+listNode.size());
 						bodyWithMultiRootElement = true;
@@ -884,17 +892,17 @@ public class SPCoopImbustamento {
 				}
 				if(bodyWithMultiRootElement){
 					//System.out.println("OCTECT");
-					InputStreamDataSource isSource = new InputStreamDataSource("ManifestEGov", Costanti.CONTENT_TYPE_APPLICATION_OCTET_STREAM, body);
-					ap = msg.createAttachmentPart(new DataHandler(isSource));
+					InputStreamDataSource isSource = new InputStreamDataSource("ManifestEGov", HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM, body);
+					ap = soapMsg.createAttachmentPart(new DataHandler(isSource));
 				}else{
 					//System.out.println("XML");
 					Source streamSource = new DOMSource(this.xmlUtils.newElement(body));
-					ap = msg.createAttachmentPart();
+					ap = soapMsg.createAttachmentPart();
 					ap.setContent(streamSource, "text/xml");
 				}
-				ap.setContentId(msg.createContentID(SPCoopCostanti.NAMESPACE_EGOV));
+				ap.setContentId(soapMsg.createContentID(SPCoopCostanti.NAMESPACE_EGOV));
 				//ap.setContentLocation("provaOpenSPCoop"); // Test Sbustamento con ContentLocation
-				msg.addAttachmentPart(ap);
+				soapMsg.addAttachmentPart(ap);
 				//isContent.close();
 				// add OriginalMsg in Manifest
 				// Costruzione DescrizioneMessaggio
@@ -928,8 +936,8 @@ public class SPCoopImbustamento {
 			}
 			Utilities.printFreeMemory("Imbustamento - Add Manifest in Body");
 			// Add Manifest in Body
-			msg.getSOAPBody().removeContents();
-			msg.getSOAPBody().addChildElement(descrizione);
+			soapMsg.getSOAPBody().removeContents();
+			soapMsg.getSOAPBody().addChildElement(descrizione);
 
 
 			return msg;
@@ -990,19 +998,18 @@ public class SPCoopImbustamento {
 			ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{	
 
 		try{
-			// Eliminazione XSI Types
-			headerEGovElement = msg.cleanXSITypes(headerEGovElement);
-
-			SOAPHeader hdr = msg.getSOAPHeader();
+			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
+			
+			SOAPHeader hdr = soapMsg.getSOAPHeader();
 			if(hdr==null){
-				hdr = msg.getSOAPPart().getEnvelope().addHeader(); 
+				hdr = soapMsg.getSOAPPart().getEnvelope().addHeader(); 
 			}
 
-			msg.addHeaderElement(hdr, headerEGovElement);
+			soapMsg.addHeaderElement(hdr, headerEGovElement);
 			Utilities.printFreeMemory("Imbustamento -Header Aggiunto");
 			// Gestione Manifest
 			
-			if (proprietaManifestAttachments!=null && proprietaManifestAttachments.isGestioneManifest() && msg.countAttachments()>0) {
+			if (proprietaManifestAttachments!=null && proprietaManifestAttachments.isGestioneManifest() && soapMsg.countAttachments()>0) {
 				Utilities.printFreeMemory("Imbustamento - Gestione Manifest");
 				this.build_eGovManifest(msg,isRichiesta,proprietaManifestAttachments);
 			}
@@ -1067,14 +1074,17 @@ public class SPCoopImbustamento {
 		SOAPHeaderElement eGovHeaderNEW = null;
 		try{
 			
-			eGovHeaderOLD = this.validazioneSintattica.getHeaderEGov((SOAPMessage) message,readQualifiedAttribute);
+			eGovHeaderOLD = this.validazioneSintattica.getHeaderEGov(message.castAsSoap(),readQualifiedAttribute);
 			if(eGovHeaderOLD==null){
 				throw new ProtocolException("Header eGov non esistente");
 			}
 
+			OpenSPCoop2SoapMessage soapMsg = message.castAsSoap();
+			
 			// Creo nuovo header egov
 			eGovHeaderNEW = 
-				OpenSPCoop2MessageFactory.getMessageFactory().createMessage(SOAPVersion.SOAP11).getSOAPHeader().addHeaderElement(
+				OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().
+					getSOAPHeader().addHeaderElement(
 						new QName(eGovHeaderOLD.getNamespaceURI(),eGovHeaderOLD.getLocalName(),eGovHeaderOLD.getPrefix()));
 			
 			eGovHeaderNEW.setActor(eGovHeaderOLD.getActor());
@@ -1119,7 +1129,7 @@ public class SPCoopImbustamento {
 
 			// NOTA: ho dovuto effettuare una eliminazione, e una ri-creazione, perche' non e' possibile modificare un HeaderElement
 			// Rimozione header egov
-			message.getSOAPHeader().removeChild(eGovHeaderOLD);
+			soapMsg.getSOAPHeader().removeChild(eGovHeaderOLD);
 
 			// Imbustamento nuovo header
 			return this.imbustamentoEGov(message, eGovHeaderNEW, false, null);

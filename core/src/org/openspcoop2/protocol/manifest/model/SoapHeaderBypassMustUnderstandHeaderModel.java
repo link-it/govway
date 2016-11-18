@@ -41,8 +41,8 @@ public class SoapHeaderBypassMustUnderstandHeaderModel extends AbstractModel<Soa
 	
 		super();
 	
-		this.LOCAL_NAME = new Field("localName",java.lang.String.class,"soapHeaderBypassMustUnderstandHeader",SoapHeaderBypassMustUnderstandHeader.class);
-		this.NAMESPACE = new Field("namespace",java.lang.String.class,"soapHeaderBypassMustUnderstandHeader",SoapHeaderBypassMustUnderstandHeader.class);
+		this.LOCAL_NAME = new Field("localName",java.lang.String.class,"SoapHeaderBypassMustUnderstandHeader",SoapHeaderBypassMustUnderstandHeader.class);
+		this.NAMESPACE = new Field("namespace",java.lang.String.class,"SoapHeaderBypassMustUnderstandHeader",SoapHeaderBypassMustUnderstandHeader.class);
 	
 	}
 	
@@ -50,8 +50,8 @@ public class SoapHeaderBypassMustUnderstandHeaderModel extends AbstractModel<Soa
 	
 		super(father);
 	
-		this.LOCAL_NAME = new ComplexField(father,"localName",java.lang.String.class,"soapHeaderBypassMustUnderstandHeader",SoapHeaderBypassMustUnderstandHeader.class);
-		this.NAMESPACE = new ComplexField(father,"namespace",java.lang.String.class,"soapHeaderBypassMustUnderstandHeader",SoapHeaderBypassMustUnderstandHeader.class);
+		this.LOCAL_NAME = new ComplexField(father,"localName",java.lang.String.class,"SoapHeaderBypassMustUnderstandHeader",SoapHeaderBypassMustUnderstandHeader.class);
+		this.NAMESPACE = new ComplexField(father,"namespace",java.lang.String.class,"SoapHeaderBypassMustUnderstandHeader",SoapHeaderBypassMustUnderstandHeader.class);
 	
 	}
 	

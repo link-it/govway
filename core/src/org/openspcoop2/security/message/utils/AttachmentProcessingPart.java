@@ -26,7 +26,7 @@ import java.util.List;
 
 import javax.xml.soap.AttachmentPart;
 
-import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 
 /**
@@ -60,7 +60,7 @@ public class AttachmentProcessingPart extends ProcessingPart<Integer, List<Attac
 	}
 
 	@Override
-	public List<AttachmentPart> getOutput(OpenSPCoop2Message message) throws Exception {
+	public List<AttachmentPart> getOutput(OpenSPCoop2SoapMessage message) throws Exception {
 
 		Iterator<?> it = message.getAttachments();
 		if(it.hasNext()==false){

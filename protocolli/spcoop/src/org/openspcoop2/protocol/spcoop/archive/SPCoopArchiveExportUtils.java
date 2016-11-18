@@ -27,7 +27,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
-import org.openspcoop2.protocol.sdk.archive.IRegistryReader;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopContext;
 
 /**

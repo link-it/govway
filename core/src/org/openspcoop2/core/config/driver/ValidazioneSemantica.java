@@ -28,7 +28,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Attachments;
@@ -94,9 +93,8 @@ import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.FaultIntegrazioneTipo;
 import org.openspcoop2.core.config.constants.GestioneErroreComportamento;
 import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
+import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
-import org.openspcoop2.core.config.constants.PortaDelegataServizioIdentificazione;
-import org.openspcoop2.core.config.constants.PortaDelegataSoggettoErogatoreIdentificazione;
 import org.openspcoop2.core.config.constants.RegistroTipo;
 import org.openspcoop2.core.config.constants.Severita;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -110,6 +108,7 @@ import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.regexp.RegExpUtilities;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
+import org.slf4j.Logger;
 
 
 /**
@@ -155,16 +154,47 @@ public class ValidazioneSemantica {
 		return bf.toString();
 	}
 
-	/** Lista di tipi di servizi validi */
-	private List<String> tipoServizi = new ArrayList<String>();
+	/** Lista di tipi di servizi (soap) validi */
+	private List<String> tipoServiziSoap = new ArrayList<String>();
 	/** Lista dei tipi di servizi ammessi */
-	private String getTipoServizi(){
+	private String getTipoServiziSoap(){  
 		StringBuffer bf = new StringBuffer();
-		for(int i=0; i<this.tipoServizi.size(); i++){
+		for(int i=0; i<this.tipoServiziSoap.size(); i++){
 			if(i>0)
 				bf.append(",");
-			bf.append(this.tipoServizi.get(i));
+			bf.append(this.tipoServiziSoap.get(i));
 		}
+		return bf.toString();
+	}
+	
+	/** Lista di tipi di servizi (rest) validi */
+	private List<String> tipoServiziRest = new ArrayList<String>();
+	/** Lista dei tipi di servizi ammessi */
+	private String getTipoServiziRest(){
+		StringBuffer bf = new StringBuffer();
+		for(int i=0; i<this.tipoServiziRest.size(); i++){
+			if(i>0)
+				bf.append(",");
+			bf.append(this.tipoServiziRest.get(i));
+		}
+		return bf.toString();
+	}
+	
+	private String getTipoServizi(){
+		StringBuffer bf = new StringBuffer();
+		
+		String soap = getTipoServiziSoap();
+		if(soap!=null && !"".equals(soap)){
+			bf.append(soap);
+		}
+		
+		String rest = getTipoServiziRest();
+		if(rest!=null && !"".equals(rest)){
+			if(bf.length()>0)
+				bf.append(",");
+			bf.append(rest);
+		}
+		
 		return bf.toString();
 	}
 	
@@ -275,7 +305,7 @@ public class ValidazioneSemantica {
 	
 
 	public ValidazioneSemantica(org.openspcoop2.core.config.Openspcoop2 configurazione,
-			String[]tipoConnettori,String[]tipoSoggetti,String[]tipoServizi,
+			String[]tipoConnettori,String[]tipoSoggetti,String[]tipoServiziSoap,String[]tipoServiziRest,
 			String[]tipoMsgDiagnosticiAppender,String[]tipoTracciamentoAppender,
 			String[]tipoAutenticazione,String[]tipoAutorizzazione,
 			String[]tipoAutorizzazioneContenuto,String[]tipoAutorizzazioneBusteContenuto,
@@ -298,12 +328,24 @@ public class ValidazioneSemantica {
 		}else{
 			throw new DriverConfigurazioneException("Tipo di soggetti ammissibili non definiti");
 		}
-		if(tipoServizi!=null && tipoServizi.length>0 ){
-			for(int i=0; i<tipoServizi.length; i++){
-				this.tipoServizi.add(tipoServizi[i]);
+		boolean tipiSoapNonEsistenti = false;
+		if(tipoServiziSoap!=null && tipoServiziSoap.length>0 ){
+			for(int i=0; i<tipoServiziSoap.length; i++){
+				this.tipoServiziSoap.add(tipoServiziSoap[i]);
 			}
 		}else{
-			throw new DriverConfigurazioneException("Tipo di servizi ammissibili non definiti");
+			tipiSoapNonEsistenti = true;
+		}
+		boolean tipiRestNonEsistenti = false;
+		if(tipoServiziRest!=null && tipoServiziRest.length>0 ){
+			for(int i=0; i<tipoServiziRest.length; i++){
+				this.tipoServiziRest.add(tipoServiziRest[i]);
+			}
+		}else{
+			tipiRestNonEsistenti = true;			
+		}
+		if(tipiSoapNonEsistenti && tipiRestNonEsistenti){
+			throw new DriverConfigurazioneException("Non sono stati configurati tipo di servizi ne per il service binding Soap ne per Rest");
 		}
 		if(tipoMsgDiagnosticiAppender!=null && tipoMsgDiagnosticiAppender.length>0 ){
 			for(int i=0; i<tipoMsgDiagnosticiAppender.length; i++){
@@ -363,13 +405,13 @@ public class ValidazioneSemantica {
 		}
 	}
 	public ValidazioneSemantica(org.openspcoop2.core.config.Openspcoop2 configurazione,
-			String[]tipoConnettori,String[]tipoSoggetti,String[]tipoServizi,
+			String[]tipoConnettori,String[]tipoSoggetti,String[]tipoServiziSoap,String[]tipoServiziRest,
 			String[]tipoMsgDiagnosticiAppender,String[]tipoTracciamentoAppender,
 			String[]tipoAutenticazione,String[]tipoAutorizzazione,
 			String[]tipoAutorizzazioneContenuto,String[]tipoAutorizzazioneBusteContenuto,
 			String[]tipoIntegrazionePD,String[]tipoIntegrazionePA,
 			boolean validazioneConfigurazione) throws DriverConfigurazioneException{
-		this(configurazione,tipoConnettori,tipoSoggetti,tipoServizi,tipoMsgDiagnosticiAppender,tipoTracciamentoAppender,
+		this(configurazione,tipoConnettori,tipoSoggetti,tipoServiziSoap,tipoServiziRest,tipoMsgDiagnosticiAppender,tipoTracciamentoAppender,
 				tipoAutenticazione,tipoAutorizzazione,tipoAutorizzazioneContenuto,tipoAutorizzazioneBusteContenuto,tipoIntegrazionePD,tipoIntegrazionePA,
 				validazioneConfigurazione,null);
 	}
@@ -544,29 +586,9 @@ public class ValidazioneSemantica {
 				this.errori.add("Il tipo del soggetto erogatore della porta delegata "+idPortaDelegata+" non è valido (Tipi utilizzabili: "+this.getTipoSoggetti()+")");
 			}
 			
-			// XSD: identificazione: static, urlBased, contentBased, inputBased
-			PortaDelegataSoggettoErogatoreIdentificazione identificazione = pdsse.getIdentificazione();
-			if ((identificazione != null) && !identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_SOGGETTO_EROGATORE_STATIC) && 
-					!identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_SOGGETTO_EROGATORE_URL_BASED) && 
-					!identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_SOGGETTO_EROGATORE_CONTENT_BASED) && 
-					!identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_SOGGETTO_EROGATORE_INPUT_BASED)){
-				this.errori.add("La modalita d'identificazione del soggetto erogatore della porta delegata "+idPortaDelegata+" deve assumere uno dei seguente valori: "+
-						CostantiConfigurazione.PORTA_DELEGATA_SOGGETTO_EROGATORE_STATIC+","+
-						CostantiConfigurazione.PORTA_DELEGATA_SOGGETTO_EROGATORE_URL_BASED+","+
-						CostantiConfigurazione.PORTA_DELEGATA_SOGGETTO_EROGATORE_CONTENT_BASED+" o "+
-						CostantiConfigurazione.PORTA_DELEGATA_SOGGETTO_EROGATORE_INPUT_BASED);
-			}
-			if(identificazione==null){
-				identificazione = CostantiConfigurazione.PORTA_DELEGATA_SOGGETTO_EROGATORE_STATIC;
-			}
-			
-			if(CostantiConfigurazione.PORTA_DELEGATA_SOGGETTO_EROGATORE_STATIC.equals(identificazione)){
-				if (pdsse.getNome() == null)
-					this.errori.add("Il soggetto erogatore della porta delegata "+idPortaDelegata+" non contiene la definizione del nome, nonostante la modalita' di identificazione sia "+identificazione);
-			}
-			else if(CostantiConfigurazione.PORTA_DELEGATA_SOGGETTO_EROGATORE_URL_BASED.equals(identificazione) || CostantiConfigurazione.PORTA_DELEGATA_SOGGETTO_EROGATORE_CONTENT_BASED.equals(identificazione)){
-				if (pdsse.getPattern() == null)
-					this.errori.add("Il soggetto erogatore della porta delegata "+idPortaDelegata+" non contiene la definizione del pattern, nonostante la modalita' di identificazione sia "+identificazione);
+			// Nome
+			if (pdsse.getNome() == null){
+				this.errori.add("Il soggetto erogatore della porta delegata "+idPortaDelegata+" non contiene la definizione del nome");
 			}			
 		}
 
@@ -582,34 +604,14 @@ public class ValidazioneSemantica {
 			if (pds.getTipo() == null){
 				this.errori.add("Il servizio della porta delegata "+idPortaDelegata+" non contiene la definizione del tipo.");
 			}
-			else if(this.tipoServizi.contains(pds.getTipo())==false){
+			else if(this.tipoServiziSoap.contains(pds.getTipo())==false && this.tipoServiziRest.contains(pds.getTipo())==false){
 				this.errori.add("Il tipo del servizio della porta delegata "+idPortaDelegata+" non è valido (Tipi utilizzabili: "+this.getTipoServizi()+")");
 			}
 			
-			// XSD: identificazione: static, urlBased, contentBased, inputBased
-			PortaDelegataServizioIdentificazione identificazione = pds.getIdentificazione();
-			if ((identificazione != null) && !identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_SERVIZIO_STATIC) && 
-					!identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_SERVIZIO_URL_BASED) && 
-					!identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_SERVIZIO_CONTENT_BASED) && 
-					!identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_SERVIZIO_INPUT_BASED)){
-				this.errori.add("La modalita d'identificazione del servizio della porta delegata "+idPortaDelegata+" deve assumere uno dei seguente valori: "+
-						CostantiConfigurazione.PORTA_DELEGATA_SERVIZIO_STATIC+","+
-						CostantiConfigurazione.PORTA_DELEGATA_SERVIZIO_URL_BASED+","+
-						CostantiConfigurazione.PORTA_DELEGATA_SERVIZIO_CONTENT_BASED+" o "+
-						CostantiConfigurazione.PORTA_DELEGATA_SERVIZIO_INPUT_BASED);
-			}
-			if(identificazione==null){
-				identificazione = CostantiConfigurazione.PORTA_DELEGATA_SERVIZIO_STATIC;
-			}
-			
-			if(CostantiConfigurazione.PORTA_DELEGATA_SERVIZIO_STATIC.equals(identificazione)){
-				if (pds.getNome() == null)
-					this.errori.add("Il servizio della porta delegata "+idPortaDelegata+" non contiene la definizione del nome, nonostante la modalita' di identificazione sia "+identificazione);
-			}
-			else if(CostantiConfigurazione.PORTA_DELEGATA_SERVIZIO_URL_BASED.equals(identificazione) || CostantiConfigurazione.PORTA_DELEGATA_SERVIZIO_CONTENT_BASED.equals(identificazione)){
-				if (pds.getPattern() == null)
-					this.errori.add("Il servizio della porta delegata "+idPortaDelegata+" non contiene la definizione del pattern, nonostante la modalita' di identificazione sia "+identificazione);
-			}			
+			// Nome
+			if (pds.getNome() == null){
+				this.errori.add("Il servizio della porta delegata "+idPortaDelegata+" non contiene la definizione del nome");
+			}		
 		}
 
 		
@@ -623,13 +625,15 @@ public class ValidazioneSemantica {
 			PortaDelegataAzioneIdentificazione identificazione = pda.getIdentificazione();
 			if ((identificazione != null) && !identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_STATIC) && 
 					!identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_URL_BASED) && 
-					!identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_CONTENT_BASED) && 
+					!identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_CONTENT_BASED) &&
+					!identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_HEADER_BASED) && 
 					!identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_INPUT_BASED) && 
 					!identificazione.equals(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_SOAP_ACTION_BASED)){
 				this.errori.add("La modalita d'identificazione dell'azione della porta delegata "+idPortaDelegata+" deve assumere uno dei seguente valori: "+
 						CostantiConfigurazione.PORTA_DELEGATA_AZIONE_STATIC+", "+
 						CostantiConfigurazione.PORTA_DELEGATA_AZIONE_URL_BASED+", "+
 						CostantiConfigurazione.PORTA_DELEGATA_AZIONE_CONTENT_BASED+", "+
+						CostantiConfigurazione.PORTA_DELEGATA_AZIONE_HEADER_BASED+" o "+
 						CostantiConfigurazione.PORTA_DELEGATA_AZIONE_INPUT_BASED+" o "+
 						CostantiConfigurazione.PORTA_DELEGATA_AZIONE_SOAP_ACTION_BASED);
 			}
@@ -641,7 +645,9 @@ public class ValidazioneSemantica {
 				if (pda.getNome() == null)
 					this.errori.add("L'azione della porta delegata "+idPortaDelegata+" non contiene la definizione del nome, nonostante la modalita' di identificazione sia "+identificazione);
 			}
-			else if(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_URL_BASED.equals(identificazione) || CostantiConfigurazione.PORTA_DELEGATA_AZIONE_CONTENT_BASED.equals(identificazione)){
+			else if(CostantiConfigurazione.PORTA_DELEGATA_AZIONE_URL_BASED.equals(identificazione) || 
+					CostantiConfigurazione.PORTA_DELEGATA_AZIONE_CONTENT_BASED.equals(identificazione) || 
+					CostantiConfigurazione.PORTA_DELEGATA_AZIONE_HEADER_BASED.equals(identificazione)){
 				if (pda.getPattern() == null)
 					this.errori.add("L'azione della porta delegata "+idPortaDelegata+" non contiene la definizione del pattern, nonostante la modalita' di identificazione sia "+identificazione);
 			}			
@@ -890,7 +896,7 @@ public class ValidazioneSemantica {
 				this.errori.add("La porta applicativa ["+idPortaApplicativa+"] possiede la definizione di un servizio erogato per cui non e' stato definito il tipo");
 				checkIDPA = false;
 			}
-			else if(this.tipoServizi.contains(serv.getTipo())==false){
+			else if(this.tipoServiziSoap.contains(serv.getTipo())==false && this.tipoServiziRest.contains(serv.getTipo())==false){
 				this.errori.add("La porta applicativa ["+idPortaApplicativa+"] possiede la definizione di un servizio erogato per cui e' stato definito un tipo non valido (Tipi utilizzabili: "+this.getTipoServizi()+")");
 			}
 			
@@ -908,12 +914,44 @@ public class ValidazioneSemantica {
 		// Azione
 		if(pa.getAzione()!=null){
 			
-			PortaApplicativaAzione azione = pa.getAzione();
+			PortaApplicativaAzione pda = pa.getAzione();
 			
-			if(azione.getNome()==null){
-				this.errori.add("La porta applicativa ["+idPortaApplicativa+"] possiede la definizione di un azione erogata per cui non e' stato definito il nome");
-				checkIDPA = false;
+			// XSD: identificazione: static, urlBased, contentBased, inputBased e soapActionBased
+			PortaApplicativaAzioneIdentificazione identificazione = pda.getIdentificazione();
+			if ((identificazione != null) && !identificazione.equals(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_STATIC) && 
+					!identificazione.equals(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_URL_BASED) && 
+					!identificazione.equals(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_CONTENT_BASED) &&
+					!identificazione.equals(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_HEADER_BASED) && 
+					!identificazione.equals(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_PLUGIN_BASED) && 
+					!identificazione.equals(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_INPUT_BASED) && 
+					!identificazione.equals(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_SOAP_ACTION_BASED)){
+				this.errori.add("La modalita d'identificazione dell'azione della porta applicativa "+idPortaApplicativa+" deve assumere uno dei seguente valori: "+
+						CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_STATIC+", "+
+						CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_URL_BASED+", "+
+						CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_CONTENT_BASED+", "+
+						CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_HEADER_BASED+" o "+
+						CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_PLUGIN_BASED+" o "+
+						CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_INPUT_BASED+" o "+
+						CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_SOAP_ACTION_BASED);
 			}
+			if(identificazione==null){
+				identificazione = CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_STATIC;
+			}
+			
+			if(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_STATIC.equals(identificazione)){
+				if (pda.getNome() == null){
+					this.errori.add("L'azione della porta applicativa "+idPortaApplicativa+" non contiene la definizione del nome, nonostante la modalita' di identificazione sia "+identificazione);
+					checkIDPA = false;
+				}
+			}
+			else if(CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_URL_BASED.equals(identificazione) || 
+					CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_CONTENT_BASED.equals(identificazione) || 
+					CostantiConfigurazione.PORTA_APPLICATIVA_AZIONE_HEADER_BASED.equals(identificazione)){
+				if (pda.getPattern() == null){
+					this.errori.add("L'azione della porta applicativa "+idPortaApplicativa+" non contiene la definizione del pattern, nonostante la modalita' di identificazione sia "+identificazione);
+					checkIDPA = false;
+				}
+			}	
 			
 		}
 		

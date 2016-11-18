@@ -27,7 +27,8 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.reference.Reference;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.soap.reference.Reference;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.security.SecurityException;
 
@@ -58,7 +59,7 @@ public interface IMessageSecurityReceiver {
 	 * @return reference degli elementi
 	 * @throws SecurityException
 	 */
-	public List<Reference> getDirtyElements(MessageSecurityContext messageSecurityContext,OpenSPCoop2Message message) throws SecurityException;
+	public List<Reference> getDirtyElements(MessageSecurityContext messageSecurityContext,OpenSPCoop2SoapMessage message) throws SecurityException;
 	
 	/**
 	 * Verifica cifratura/firma elementi richiesti dalla configurazione, ritornando una lista di reference per gli elementi che dovrebbero risultare cifrati completamente (Encoding Element)
@@ -70,7 +71,7 @@ public interface IMessageSecurityReceiver {
 	 * @return lista di reference per gli elementi che dovrebbero risultare cifrati completamente (Encoding Element)
 	 * @throws SecurityException
 	 */
-	public Map<QName, QName> checkEncryptSignatureParts(MessageSecurityContext messageSecurityContext,List<Reference> elementsToClean, OpenSPCoop2Message message,
+	public Map<QName, QName> checkEncryptSignatureParts(MessageSecurityContext messageSecurityContext,List<Reference> elementsToClean, OpenSPCoop2SoapMessage message,
 			List<SubErrorCodeSecurity> codiciErrore) throws SecurityException;
 		
 	/**
@@ -81,10 +82,10 @@ public interface IMessageSecurityReceiver {
 	 * @param erroriRilevati Lista di errori da valorizzare se durante il controllo si rileva una inconsistenza
 	 * @throws SecurityException
 	 */
-	public void checkEncryptionPartElements(Map<QName, QName> notResolved, OpenSPCoop2Message message, List<SubErrorCodeSecurity> erroriRilevati) throws SecurityException;
+	public void checkEncryptionPartElements(Map<QName, QName> notResolved, OpenSPCoop2SoapMessage message, List<SubErrorCodeSecurity> erroriRilevati) throws SecurityException;
 			
 	
-	public void cleanDirtyElements(MessageSecurityContext messageSecurityContext,OpenSPCoop2Message message, List<Reference> elementsToClean,
+	public void cleanDirtyElements(MessageSecurityContext messageSecurityContext,OpenSPCoop2SoapMessage message, List<Reference> elementsToClean,
 			boolean detachHeaderWSSecurity) throws SecurityException;
 	
 	public String getCertificate() throws SecurityException;

@@ -21,7 +21,6 @@
 
 package org.openspcoop2.pdd.mdb;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -29,13 +28,15 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
+import org.openspcoop2.core.eccezione.details.constants.TipoEccezione;
 import org.openspcoop2.core.eccezione.details.utils.XMLUtils;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.SOAPVersion;
-import org.openspcoop2.message.SoapUtils;
+import org.openspcoop2.message.constants.IntegrationError;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -53,7 +54,9 @@ import org.openspcoop2.pdd.core.state.OpenSPCoopStateException;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
-import org.openspcoop2.protocol.engine.builder.ErroreApplicativoBuilder;
+import org.openspcoop2.pdd.services.RequestInfo;
+import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
+import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.FiltroDuplicati;
 import org.openspcoop2.protocol.engine.driver.History;
@@ -74,16 +77,17 @@ import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
-import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
-import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.Loader;
+import org.slf4j.Logger;
 
 
 /**
@@ -101,7 +105,7 @@ public class Sbustamento extends GenericLib{
 	public final static String ID_MODULO = "Sbustamento";
 
 	/** XMLBuilder */
-	private ErroreApplicativoBuilder erroreApplicativoBuilder;
+	private RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore;
 
 
 	public Sbustamento(Logger log) throws GenericLibException {
@@ -126,6 +130,7 @@ public class Sbustamento extends GenericLib{
 		/* PddContext */
 		PdDContext pddContext = sbustamentoMsg.getPddContext();
 		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, pddContext);
+		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		
 		/* Protocol Factory */
 		IProtocolFactory protocolFactory = null;
@@ -143,8 +148,6 @@ public class Sbustamento extends GenericLib{
 			return esito;
 		}
 		
-		
-		SOAPVersion versioneSoap = (SOAPVersion) pddContext.getObject(org.openspcoop2.core.constants.Costanti.SOAP_VERSION);
 		
 		msgDiag.setPddContext(pddContext, protocolFactory);
 		
@@ -176,12 +179,11 @@ public class Sbustamento extends GenericLib{
 		msgDiag.mediumDebug("Profilo di gestione ["+Sbustamento.ID_MODULO+"] della busta: "+profiloGestione);
 		
 		try{
-			this.erroreApplicativoBuilder = new ErroreApplicativoBuilder(this.log, protocolFactory, 
-					identitaPdD, idSoggettoFruitore, idServizio, this.idModulo, 
-					this.propertiesReader.getProprietaGestioneErrorePD(protocolManager), versioneSoap,
-					TipoPdD.APPLICATIVA,null);
+			this.generatoreErrore = new RicezioneContenutiApplicativiInternalErrorGenerator(this.log, this.idModulo, requestInfo);
+			this.generatoreErrore.updateInformazioniCooperazione(idSoggettoFruitore, idServizio);
+			this.generatoreErrore.updateTipoPdD(TipoPdD.APPLICATIVA);
 		}catch(Exception e){
-			msgDiag.logErroreGenerico(e, "ErroreApplicativoBuilder.instanziazione"); 
+			msgDiag.logErroreGenerico(e, "RicezioneContenutiApplicativiGeneratoreErrore.instanziazione"); 
 			openspcoopstate.releaseResource();
 			esito.setEsitoInvocazione(false); 
 			esito.setStatoInvocazioneErroreNonGestito(e);
@@ -226,6 +228,20 @@ public class Sbustamento extends GenericLib{
 		}catch(Exception e){
 			msgDiag.logErroreGenerico(e, "EJBUtils.new");
 			openspcoopstate.releaseResource(); 
+			esito.setEsitoInvocazione(false); 
+			esito.setStatoInvocazioneErroreNonGestito(e);
+			return esito;
+		}
+		
+		try{
+			RicezioneBusteExternalErrorGenerator generatoreErrorePA = new RicezioneBusteExternalErrorGenerator(this.log, this.idModulo, requestInfo);
+			generatoreErrorePA.updateInformazioniCooperazione(idSoggettoFruitore, idServizio);
+			generatoreErrorePA.updateInformazioniCooperazione(richiestaApplicativa.getIdentitaServizioApplicativoFruitore());
+			generatoreErrorePA.updateTipoPdD(TipoPdD.APPLICATIVA);
+			ejbUtils.setGeneratoreErrorePortaApplicativa(generatoreErrorePA);
+		}catch(Exception e){
+			msgDiag.logErroreGenerico(e, "RicezioneBusteExternalErrorGenerator.instanziazione"); 
+			openspcoopstate.releaseResource();
 			esito.setEsitoInvocazione(false); 
 			esito.setStatoInvocazioneErroreNonGestito(e);
 			return esito;
@@ -512,7 +528,7 @@ public class Sbustamento extends GenericLib{
 						}else{
 							if(dettaglioEccezione!=null && dettaglioEccezione.getEccezioni()!=null && dettaglioEccezione.getEccezioni().sizeEccezioneList()>0){
 								org.openspcoop2.core.eccezione.details.Eccezione e = dettaglioEccezione.getEccezioni().getEccezione(0);
-								if(org.openspcoop2.core.eccezione.details.constants.Costanti.TIPO_ECCEZIONE_PROTOCOLLO.equals(e.getTipo())){
+								if(TipoEccezione.ECCEZIONE_PROTOCOLLO.equals(e.getTipo())){
 									ErroreCooperazione msgErroreCooperazione =
 											new ErroreCooperazione(e.getDescrizione(), traduttore.toCodiceErroreCooperazione(e.getCodice()));
 									eccezioneDaInviareServizioApplicativo = new Eccezione(msgErroreCooperazione, false, Sbustamento.ID_MODULO, protocolFactory);
@@ -549,7 +565,7 @@ public class Sbustamento extends GenericLib{
 				gestioneErroreProtocollo(configurazionePdDManager,ejbUtils,profiloCollaborazione,repositoryBuste,
 						bustaRichiesta,identitaPdD,eccezioneDaInviareServizioApplicativo,erroreIntegrazioneDaInviareServizioApplicativo,
 						new IDSoggetto(bustaRichiesta.getTipoMittente(),bustaRichiesta.getMittente()),
-						dettaglioEccezione, versioneSoap,protocolManager);
+						dettaglioEccezione, protocolManager);
 
 				// Commit modifiche
 				openspcoopstate.commit();
@@ -652,7 +668,7 @@ public class Sbustamento extends GenericLib{
 							msgDiag.mediumDebug("Invio eventuale messaggio di errore al servizio applicativo (gestione errore)...");
 							gestioneErroreProtocollo(configurazionePdDManager, ejbUtils, profiloCollaborazione, repositoryBuste,
 									bustaNonValida, identitaPdD, eccezioneDaInviareServizioApplicativo,null,
-									identitaPdD, null, versioneSoap,protocolManager);
+									identitaPdD, null, protocolManager);
 
 							// Commit modifiche
 							openspcoopstate.commit();
@@ -901,7 +917,7 @@ public class Sbustamento extends GenericLib{
 	
 							// Re-invio Riscontro
 							msgResponse = ejbUtils.buildAndSendBustaRisposta(richiestaApplicativa.getIdModuloInAttesa(),bustaHTTPReply,
-									SoapUtils.build_Soap_Empty(versioneSoap),profiloGestione,
+									MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(),MessageRole.RESPONSE),profiloGestione,
 									idCorrelazioneApplicativa,servizioApplicativoFruitore);
 						}
 						// 1b) 
@@ -1035,7 +1051,7 @@ public class Sbustamento extends GenericLib{
 								}
 								//	Re-invio Ricevuta
 								msgResponse = ejbUtils.buildAndSendBustaRisposta(richiestaApplicativa.getIdModuloInAttesa(),bustaHTTPReply,
-										SoapUtils.build_Soap_Empty(versioneSoap),profiloGestione,
+										MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(),MessageRole.RESPONSE),profiloGestione,
 										idCorrelazioneApplicativa,servizioApplicativoFruitore);	
 							}
 	
@@ -2105,7 +2121,7 @@ public class Sbustamento extends GenericLib{
 							bustaReplyTo = behaviour.getResponseTo().getBusta();
 						}
 						if(msgReplyTo==null){
-							msgReplyTo = SoapUtils.build_Soap_Empty(versioneSoap);
+							msgReplyTo = MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(),MessageRole.RESPONSE);
 						}
 						msgDiag.mediumDebug("Invio messaggio a Ricezione/Consegna ContenutiApplicativi (Behaviour)...");
 						msgResponse = ejbUtils.buildAndSendBustaRisposta(richiestaApplicativa.getIdModuloInAttesa(),
@@ -2126,7 +2142,7 @@ public class Sbustamento extends GenericLib{
 						// Invio risposta immediata in seguito alla richiesta ricevuta
 						msgDiag.mediumDebug("Invio messaggio a Ricezione/Consegna ContenutiApplicativi...");
 						msgResponse = ejbUtils.buildAndSendBustaRisposta(richiestaApplicativa.getIdModuloInAttesa(),bustaHTTPReply,
-								SoapUtils.build_Soap_Empty(versioneSoap),profiloGestione,
+								MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(),MessageRole.RESPONSE),profiloGestione,
 								idCorrelazioneApplicativa,servizioApplicativoFruitore);
 					}
 				}catch(Exception e){
@@ -2278,7 +2294,7 @@ public class Sbustamento extends GenericLib{
 	 */
 	private void gestioneErroreProtocollo(ConfigurazionePdDManager configurazionePdDManager, EJBUtils ejbUtils, ProfiloDiCollaborazione profiloCollaborazione, RepositoryBuste repositoryBuste,
 			Busta busta, IDSoggetto identitaPdD, Eccezione eccezioneProtocollo, ErroreIntegrazione erroreIntegrazione, IDSoggetto soggettoProduttoreEccezione, DettaglioEccezione dettaglioEccezione, 
-			SOAPVersion versioneSoap,IProtocolManager protocolManager) throws Exception{
+			IProtocolManager protocolManager) throws Exception{
 
 		// Gestione ERRORE
 		if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(busta.getProfiloDiCollaborazione()) && busta.getRiferimentoMessaggio()!=null){
@@ -2334,18 +2350,19 @@ public class Sbustamento extends GenericLib{
 						//	Il modulo in attesa e' il servizio di ricezioneContenutiApplicativi
 						consegnaApplicativaAsincrona.setIdModuloInAttesa(integrazioneRispostaErrore.getIdModuloInAttesa());
 
-						this.erroreApplicativoBuilder.setProprietaErroreApplicato(proprietaErroreApplAsincrono);
-						this.erroreApplicativoBuilder.setTipoPdD(TipoPdD.DELEGATA);
-						this.erroreApplicativoBuilder.setServizioApplicativo(consegnaApplicativaAsincrona.getServizioApplicativo());
-						this.erroreApplicativoBuilder.setMittente(consegnaApplicativaAsincrona.getSoggettoFruitore());
-						this.erroreApplicativoBuilder.setServizio(consegnaApplicativaAsincrona.getIdServizio());
-						this.erroreApplicativoBuilder.setDominio(consegnaApplicativaAsincrona.getDominio());
+						this.generatoreErrore.updateDominio(consegnaApplicativaAsincrona.getDominio());
+						this.generatoreErrore.updateProprietaErroreApplicativo(proprietaErroreApplAsincrono);
+						this.generatoreErrore.updateTipoPdD(TipoPdD.DELEGATA);
+						this.generatoreErrore.updateInformazioniCooperazione(consegnaApplicativaAsincrona.getServizioApplicativo());
+						this.generatoreErrore.updateInformazioniCooperazione(consegnaApplicativaAsincrona.getSoggettoFruitore(),consegnaApplicativaAsincrona.getIdServizio());
+						
 						OpenSPCoop2Message responseMessageError = null;
 						if(eccezioneProtocollo!=null){
-							responseMessageError = this.erroreApplicativoBuilder.toMessage(eccezioneProtocollo,soggettoProduttoreEccezione,dettaglioEccezione,
+							responseMessageError = this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
+									eccezioneProtocollo,soggettoProduttoreEccezione,dettaglioEccezione,
 									null);
 						}else{
-							responseMessageError = this.erroreApplicativoBuilder.toMessage(erroreIntegrazione,null,null);
+							responseMessageError = this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,erroreIntegrazione,null,null);
 						}
 						//	Aggiorno l'id di sessione al riferimento Messaggio, id utilizzato dal servizio
 						// RicezioneContenutiApplicativi per l'attesa di una risposta

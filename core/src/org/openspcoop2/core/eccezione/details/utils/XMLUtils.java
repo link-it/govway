@@ -37,14 +37,19 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPFault;
 
-import org.slf4j.Logger;
-import org.openspcoop2.core.eccezione.details.constants.Costanti;
 import org.openspcoop2.core.eccezione.details.Dettaglio;
 import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
-import org.openspcoop2.core.eccezione.details.Eccezione;
 import org.openspcoop2.core.eccezione.details.Dominio;
+import org.openspcoop2.core.eccezione.details.Eccezione;
+import org.openspcoop2.core.eccezione.details.constants.Costanti;
+import org.openspcoop2.core.eccezione.details.utils.serializer.JsonDeserializer;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.ValidatoreXSD;
+import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
+import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.xml.ValidatoreXSD;
+import org.openspcoop2.utils.beans.WriteToSerializerType;
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -245,6 +250,14 @@ public class XMLUtils  {
 		}
 	}
 
+	public static DettaglioEccezione getDettaglioEccezioneFromJson(Logger log,InputStream is) throws XMLUtilsException{
+		try{			
+			JsonDeserializer deserializer = new JsonDeserializer();
+			return deserializer.readDettaglioEccezione(is);
+		}catch(Exception e){
+			throw new XMLUtilsException(e.getMessage(),e);
+		}
+	}
 	
 	
 	
@@ -300,6 +313,18 @@ public class XMLUtils  {
 		}
 	}
 	
+	public static String generateDettaglioEccezioneAsJson(DettaglioEccezione eccezione) throws XMLUtilsException{
+		try{
+			StringBuffer risultatoValidazione = new StringBuffer();
+			if(XMLUtils.validate(eccezione, risultatoValidazione)==false){
+				throw new Exception(risultatoValidazione.toString());
+			}
+			return XMLUtils.generateDettaglioEccezioneAsJson_engine(eccezione);
+		}catch(Exception e){
+			throw new XMLUtilsException(e.getMessage(),e);
+		}
+	}
+	
 	private static byte[] generateDettaglioEccezione_engine(DettaglioEccezione eccezione) throws XMLUtilsException{
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -311,10 +336,68 @@ public class XMLUtils  {
 		}
 	}
 	
-	
+	private static String generateDettaglioEccezioneAsJson_engine(DettaglioEccezione eccezione) throws XMLUtilsException{
+		try{
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			eccezione.writeTo(bout, WriteToSerializerType.JSON);
+			bout.flush();
+			bout.close();
+			return bout.toString();
+		}catch(Exception e){
+			throw new XMLUtilsException(e.getMessage(),e);
+		}
+	}
 	
 	
 	public static DettaglioEccezione getDettaglioEccezione(Logger log,OpenSPCoop2Message msg)throws XMLUtilsException{
+		switch (msg.getMessageType()) {
+		case SOAP_11:
+		case SOAP_12:
+			try{
+				return getDettaglioEccezione(log, msg.castAsSoap());
+			}catch(XMLUtilsException e){
+				throw e;
+			}catch(Exception e){
+				throw new XMLUtilsException(e.getMessage(),e);
+			}
+		case XML:
+			try{
+				OpenSPCoop2RestXmlMessage rest = msg.castAsRestXml();
+				if(rest.hasContent()){
+					Element element = rest.getContent();
+					if(XMLUtils.isDettaglioEccezione(element)){
+						org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+						byte [] xml = xmlUtils.toByteArray(element);
+						//System.out.println("XML S: "+new String(xml));
+						DettaglioEccezione de = XMLUtils.getDettaglioEccezione(log,xml);
+						return de;
+					}
+				}
+				return null;
+			}catch(XMLUtilsException e){
+				throw e;
+			}catch(Exception e){
+				throw new XMLUtilsException(e.getMessage(),e);
+			}
+		case JSON:
+			try{
+				OpenSPCoop2RestJsonMessage rest = msg.castAsRestJson();
+				if(rest.hasContent()){
+					String json = rest.getContent();
+					try{
+						DettaglioEccezione de = XMLUtils.getDettaglioEccezioneFromJson(log, new ByteArrayInputStream(json.getBytes()));
+						return de;
+					}catch(Exception e){}
+				}
+				return null;
+			}catch(Exception e){
+				throw new XMLUtilsException(e.getMessage(),e);
+			}
+		default:
+			return null;
+		}
+	}
+	public static DettaglioEccezione getDettaglioEccezione(Logger log,OpenSPCoop2SoapMessage msg)throws XMLUtilsException{
 		try{
 			if(msg==null)
 				throw new XMLUtilsException("Messaggio non presente");
@@ -347,7 +430,7 @@ public class XMLUtils  {
 						try{
 							if(XMLUtils.isDettaglioEccezione(elem)){
 								//System.out.println("ITEM ["+elem.getLocalName()+"] TROVATO");
-								org.openspcoop2.message.XMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
+								org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 								byte [] xml = xmlUtils.toByteArray(elem);
 								//System.out.println("XML S: "+new String(xml));
 								DettaglioEccezione de = XMLUtils.getDettaglioEccezione(log,xml);
@@ -368,7 +451,7 @@ public class XMLUtils  {
 	
 	public static boolean isDettaglioEccezione(byte [] doc){
 		try{
-			org.openspcoop2.message.XMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
+			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			return XMLUtils.isDettaglioEccezione_engine(elemXML);

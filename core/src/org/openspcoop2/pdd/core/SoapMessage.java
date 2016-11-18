@@ -26,6 +26,7 @@ package org.openspcoop2.pdd.core;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -35,7 +36,8 @@ import org.slf4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
-import org.openspcoop2.message.SoapUtils;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
@@ -285,8 +287,12 @@ public class SoapMessage implements java.io.Serializable {
         
 		// Find SoapAction
 		String soapAction = null;
+		String location = null;
 		try{
-			soapAction = SoapUtils.getSoapAction(msg);
+			if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
+				soapAction = msg.castAsSoap().getSoapAction();
+				location = msg.castAsSoap().getSOAPPart().getContentLocation();
+			}
 		}catch(Exception e){
 			String errorMsg = "SOAP_MESSAGE, save (soapAction): "+this.box+"/"+this.idMessaggio+": "+e.getMessage();		
 			this.log.error(errorMsg);
@@ -322,7 +328,7 @@ public class SoapMessage implements java.io.Serializable {
 						//cosi nel caso di attachment lo trovo corretto.
 						
 						
-						pstmt.setString(5,msg.getSOAPPart().getContentLocation());
+						pstmt.setString(5,location);
 
 						// Save bytes
 						if(this.saveOnFS){
@@ -333,7 +339,7 @@ public class SoapMessage implements java.io.Serializable {
 								throw new UtilsException(errorMsg);
 							}
 							String path = saveDir + this.keyMsg;
-							SoapUtils.saveMessage(path,msg);
+							this.saveMessage(path,msg);
 						}else{
 							// Scrittura su DB
 							java.io.ByteArrayOutputStream msgByte = new java.io.ByteArrayOutputStream();
@@ -360,16 +366,7 @@ public class SoapMessage implements java.io.Serializable {
 						throw new UtilsException(errorMsg,e);
 					}
 		}else if (portaDiTipoStateless){
-			
-			try{
-				if(soapAction!=null)
-					msg.setProperty(org.openspcoop2.message.Costanti.SOAP_ACTION,soapAction);
-			}catch(Exception e){
-				String errorMsg = "SOAP_MESSAGE, set (soapAction): "+this.box+"/"+this.idMessaggio+": "+e.getMessage();		
-				this.log.error(errorMsg);
-				throw new UtilsException(errorMsg,e);
-			}
-			
+						
 			if (isRichiesta) ((OpenSPCoopStateless)this.openspcoopstate).setRichiestaMsg(msg);
 			else ((OpenSPCoopStateless)this.openspcoopstate).setRispostaMsg(msg);
 			
@@ -379,6 +376,29 @@ public class SoapMessage implements java.io.Serializable {
 		}
 
 	}     
+	private void saveMessage(String path,OpenSPCoop2Message msg) throws UtilsException{
+
+		FileOutputStream fos = null;
+		try{
+
+			File fileMsg = new File(path);
+			if(fileMsg.exists() == true){
+				throw new UtilsException("L'identificativo del Messaggio risulta gia' registrato: "+path);
+			}	
+
+			fos = new FileOutputStream(path);
+			// Scrittura Messaggio su FileSystem
+			msg.writeTo(fos,true);
+			fos.close();
+
+		}catch(Exception e){
+			try{
+				if( fos != null )
+					fos.close();
+			} catch(Exception er) {}
+			throw new UtilsException("Utilities.saveMessage error "+e.getMessage(),e);
+		}
+	}
 
 
 
@@ -457,7 +477,7 @@ public class SoapMessage implements java.io.Serializable {
 						}
 
 						// CostruzioneMessaggio
-						
+						/*
 						OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
 						NotifierInputStreamParams notifierInputStreamParams = null; // Non dovrebbe servire, un eventuale handler attaccato, dovrebbe gia aver ricevuto tutto il contenuto una volta serializzato il messaggio su database.
 						OpenSPCoop2MessageParseResult pr = mf.createMessage(is,notifierInputStreamParams,false,contentType,contentLocation, this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());
@@ -467,10 +487,15 @@ public class SoapMessage implements java.io.Serializable {
 						try{
 							String soapAction = rs.getString("SOAP_ACTION");
 							if(soapAction!=null)
-								msg.setProperty(org.openspcoop2.message.Costanti.SOAP_ACTION,soapAction);
+								msg.setProperty(org.openspcoop2.message.constants.Costanti.SOAP_ACTION,soapAction);
 						}catch(Exception e){
 							throw new UtilsException(e.getMessage(),e);
 						}
+						 */
+						
+						boolean b = true;
+						if(b)
+							throw new Exception("TODO implementare a modo base dati dove si salva il message type e tutto quello che serve");
 
 						// chiusura risorse DB
 						rs.close();

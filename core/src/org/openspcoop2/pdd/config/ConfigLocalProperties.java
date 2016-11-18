@@ -63,9 +63,9 @@ import org.openspcoop2.core.config.constants.ValidazioneBusteTipoControllo;
 import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.LogLevels;
-import org.openspcoop2.utils.resources.CollectionProperties;
-import org.openspcoop2.utils.resources.InstanceProperties;
-import org.openspcoop2.utils.resources.PropertiesUtilities;
+import org.openspcoop2.utils.properties.CollectionProperties;
+import org.openspcoop2.utils.properties.InstanceProperties;
+import org.openspcoop2.utils.properties.PropertiesUtilities;
 
 
 /**

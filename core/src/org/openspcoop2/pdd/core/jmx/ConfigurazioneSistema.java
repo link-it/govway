@@ -55,10 +55,11 @@ import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.manifest.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.resources.MapReader;
-import org.openspcoop2.utils.resources.SSLConstants;
-import org.openspcoop2.utils.resources.SSLUtilities;
+import org.openspcoop2.utils.transport.http.SSLConstants;
+import org.openspcoop2.utils.transport.http.SSLUtilities;
 
 
 /**
@@ -707,11 +708,11 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 						bfProtocols.append("\"\" (protocol:"+key+")");
 					}
 					if(pf.getManifest().getWeb().sizeContextList()>0){
-						for (String context : pf.getManifest().getWeb().getContextList()) {
+						for (Context context : pf.getManifest().getWeb().getContextList()) {
 							if(bfProtocols.length()>0){
 								bfProtocols.append("\n");
 							}
-							bfProtocols.append(context+" (protocol:"+key+")");
+							bfProtocols.append(context.getName()+" (protocol:"+key+")");
 						}
 					}
 				}

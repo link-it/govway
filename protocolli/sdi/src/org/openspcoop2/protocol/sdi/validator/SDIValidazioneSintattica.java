@@ -30,7 +30,8 @@ import javax.xml.soap.SOAPElement;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.SoapUtils;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.protocol.basic.validator.ValidazioneSintattica;
 import org.openspcoop2.protocol.sdi.config.SDIProperties;
 import org.openspcoop2.protocol.sdi.constants.SDICostanti;
@@ -90,7 +91,7 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica{
 	public SOAPElement getHeaderProtocollo_senzaControlli(
 			OpenSPCoop2Message msg) throws ProtocolException {
 		try{
-			return SDIUtils.readHeader(msg);
+			return SDIUtils.readHeader(msg.castAsSoap());
 		}catch(Exception e){
 			this.log.debug("getHeaderProtocollo_senzaControlli error: "+e.getMessage(),e);
 			return null;
@@ -131,7 +132,7 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica{
 		
 		boolean hasFault = false;
 		try {
-			hasFault = msg.getSOAPBody().hasFault();
+			hasFault = msg.castAsSoap().getSOAPBody().hasFault();
 		} catch (Exception e) {
 			throw new ProtocolException(e); 
 		}
@@ -167,10 +168,10 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica{
 			if(msg==null){
 				return false;
 			}
-			if(msg.getSOAPBody()==null){
+			if(msg.castAsSoap().getSOAPBody()==null){
 				return false;
 			}
-			SOAPElement child = SoapUtils.getNotEmptyFirstChildSOAPElement(msg.getSOAPBody());
+			SOAPElement child = SoapUtils.getNotEmptyFirstChildSOAPElement(msg.castAsSoap().getSOAPBody());
 			if(child==null){
 				return false;
 			}
@@ -246,11 +247,11 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica{
 					"Messaggio non presente"));
 			return;
 		}
-		if(msg.getSOAPBody()==null){
+		if(msg.castAsSoap().getSOAPBody()==null){
 			this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_PRESENTE));
 			return;
 		}
-		Vector<SOAPElement> soapBodyChilds = SoapUtils.getNotEmptyChildSOAPElement(msg.getSOAPBody());
+		Vector<SOAPElement> soapBodyChilds = SoapUtils.getNotEmptyChildSOAPElement(msg.castAsSoap().getSOAPBody());
 		if(soapBodyChilds==null || soapBodyChilds.size()<=0){
 			this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_PRESENTE));
 			return;			
@@ -326,7 +327,7 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica{
 			this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SERVIZIO_NON_PRESENTE));
 			return;
 		}	
-		if(this.protocolConfiguration.getTipiServizi().contains(busta.getTipoServizio())==false){
+		if(this.protocolConfiguration.getTipiServizi(ServiceBinding.SOAP).contains(busta.getTipoServizio())==false){
 			this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.TIPO_SERVIZIO_SCONOSCIUTO));
 			return;			
 		}

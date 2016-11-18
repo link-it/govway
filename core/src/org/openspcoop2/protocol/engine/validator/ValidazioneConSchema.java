@@ -24,14 +24,11 @@
 package org.openspcoop2.protocol.engine.validator;
 
 
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
-
-import org.slf4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.slf4j.Logger;
 
 /**
  * Classe utilizzata per effettuare una validazione con schema xsd.
@@ -56,12 +53,6 @@ public class ValidazioneConSchema  {
 	/** Messaggio intero */
 	private OpenSPCoop2Message message;
 	
-	/** Busta */
-	private SOAPElement  busta;
-	
-	/** ManifestAttachments */
-	private SOAPBody soapBody;
-	
 	/** IsErrore */
 	private boolean isErroreProcessamento = false;
 	private boolean isErroreIntestazione = false;
@@ -70,27 +61,11 @@ public class ValidazioneConSchema  {
 	
 	private IProtocolFactory protocolFactory;
 	
-	/**
-	 * Costruttore.
-	 *
-	 * @param header Busta da validare.
-	 * @param soapBody  BodySOAP contenente il manifest degli attachments
-	 * 
-	 */
-	public ValidazioneConSchema(OpenSPCoop2Message message, SOAPElement header,SOAPBody soapBody,boolean isErroreProcessamento, boolean isErroreIntestazione, boolean validazioneManifestAttachments, IProtocolFactory protocolFactory){
-		this(message,header,soapBody,isErroreProcessamento,isErroreIntestazione,validazioneManifestAttachments,Configurazione.getLibraryLog(), protocolFactory);
+	public ValidazioneConSchema(OpenSPCoop2Message message, boolean isErroreProcessamento, boolean isErroreIntestazione, boolean validazioneManifestAttachments, IProtocolFactory protocolFactory){
+		this(message,isErroreProcessamento,isErroreIntestazione,validazioneManifestAttachments,Configurazione.getLibraryLog(), protocolFactory);
 	}
-	/**
-	 * Costruttore.
-	 *
-	 * @param header Busta da validare.
-	 * @param soapBody  BodySOAP contenente il manifest degli attachments
-	 * 
-	 */
-	public ValidazioneConSchema(OpenSPCoop2Message message, SOAPElement header,SOAPBody soapBody,boolean isErroreProcessamento, boolean isErroreIntestazione, boolean validazioneManifestAttachments,Logger aLog, IProtocolFactory protocolFactory){
+	public ValidazioneConSchema(OpenSPCoop2Message message, boolean isErroreProcessamento, boolean isErroreIntestazione, boolean validazioneManifestAttachments,Logger aLog, IProtocolFactory protocolFactory){
 		this.message = message;
-		this.busta = header;
-		this.soapBody = soapBody;
 		this.isErroreProcessamento = isErroreProcessamento;
 		this.isErroreIntestazione = isErroreIntestazione;
 		this.validazioneManifestAttachments = validazioneManifestAttachments;
@@ -130,7 +105,7 @@ public class ValidazioneConSchema  {
 	 */
 	public void valida(boolean isMessaggioConAttachments) throws Exception {
 		org.openspcoop2.protocol.sdk.validator.IValidazioneConSchema validazione = this.protocolFactory.createValidazioneConSchema();
-		validazione.valida(this.message, this.busta, this.soapBody, this.isErroreProcessamento, this.isErroreIntestazione, isMessaggioConAttachments,this.validazioneManifestAttachments);
+		validazione.valida(this.message, this.isErroreProcessamento, this.isErroreIntestazione, isMessaggioConAttachments,this.validazioneManifestAttachments);
 		this.erroriProcessamento = validazione.getEccezioniProcessamento();
 		this.erroriValidazione = validazione.getEccezioniValidazione();
 	}

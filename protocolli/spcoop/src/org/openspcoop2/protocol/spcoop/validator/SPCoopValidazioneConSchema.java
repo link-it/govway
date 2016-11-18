@@ -34,9 +34,11 @@ import javax.xml.soap.SOAPElement;
 import org.slf4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.SOAPVersion;
-import org.openspcoop2.message.ValidatoreXSD;
-import org.openspcoop2.message.XMLUtils;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.xml.ValidatoreXSD;
+import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -201,7 +203,7 @@ public class SPCoopValidazioneConSchema implements IValidazioneConSchema {
 	 * 
 	 */
 	@Override
-	public void valida(OpenSPCoop2Message message, SOAPElement header, SOAPBody soapBody, boolean isSPCoopErroreProcessamento, boolean isSPCoopErroreIntestazione,
+	public void valida(OpenSPCoop2Message message, boolean isSPCoopErroreProcessamento, boolean isSPCoopErroreIntestazione,
 			boolean isMessaggioConAttachments, boolean validazioneManifestAttachments) throws ProtocolException{
 
 		this.erroriValidazione = new java.util.Vector<Eccezione>();
@@ -214,11 +216,14 @@ public class SPCoopValidazioneConSchema implements IValidazioneConSchema {
 		// Validazione eGov
 		try {
 
+			SOAPElement header = this.protocolFactory.createValidazioneSintattica().getHeaderProtocollo_senzaControlli(message);
+			
 			if(isSPCoopErroreProcessamento==false && isSPCoopErroreIntestazione==false){
 				
 				// VALIDAZIONE
 				SPCoopValidazioneConSchema.validatoreBustaSPCoop.valida(
-						this.xmlUtils.newDocument((OpenSPCoop2MessageFactory.getMessageFactory()).createMessage(SOAPVersion.SOAP11).getAsByte(header,false)));
+						this.xmlUtils.newDocument((OpenSPCoop2MessageFactory.getMessageFactory()).
+								createMessage(MessageType.SOAP_11,MessageRole.NONE).getAsByte(header,false)));
 				
 			}
 			else{
@@ -245,7 +250,9 @@ public class SPCoopValidazioneConSchema implements IValidazioneConSchema {
 				
 				// VALIDAZIONE
 				if(listaEccezioni!=null){
-					SPCoopValidazioneConSchema.validatoreBustaSPCoop.valida(this.xmlUtils.newDocument((OpenSPCoop2MessageFactory.getMessageFactory()).createMessage(SOAPVersion.SOAP11).getAsByte(listaEccezioni,false)));
+					SPCoopValidazioneConSchema.validatoreBustaSPCoop.valida(
+							this.xmlUtils.newDocument((OpenSPCoop2MessageFactory.getMessageFactory()).
+									createMessage(MessageType.SOAP_11,MessageRole.NONE).getAsByte(listaEccezioni,false)));
 				}
 			}
 					
@@ -268,10 +275,16 @@ public class SPCoopValidazioneConSchema implements IValidazioneConSchema {
 		}
 
 		// Validazione ManifestAttachments
+		SOAPBody soapBody = null;
+		try{
+			soapBody = message.castAsSoap().getSOAPBody();
+		}catch(Exception e){
+			throw new ProtocolException(e.getMessage(),e);
+		}
 		if(soapBody!=null && isMessaggioConAttachments && validazioneManifestAttachments){
 			try {	
 				// Validazione
-				OpenSPCoop2Message msg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(SOAPVersion.SOAP11);
+				OpenSPCoop2SoapMessage msg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap();
 				SPCoopValidazioneConSchema.validatoreBustaSPCoop.valida(this.xmlUtils.newDocument(msg.getAsByte(msg.getFirstChildElement(soapBody),false)));  
 			} catch (SAXException e) {
 				// instance document is invalid!

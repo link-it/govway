@@ -23,11 +23,17 @@ package org.openspcoop2.protocol.sdk.config;
 
 import java.util.List;
 
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.message.config.ServiceBindingConfiguration;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.BypassMustUnderstandCheck;
-import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
+import org.openspcoop2.utils.transport.TransportRequestContext;
 
 /**
  * Interfaccia di Configurazione del Protocollo, valori prelevati dal file openspcoop2-manifest
@@ -43,6 +49,37 @@ public interface IProtocolConfiguration {
 	
 	
 	/**
+	 * Restituisce la configurazione del service binding generale del protocollo, indipendente dal servizio 
+	 * (se sono presenti più binding verrà usato quello di default)
+	 * 
+	 * @param registryReader Reader delle informazioni interne al registro
+	 * @return configurazione del service binding generale del protocollo
+	 * @throws ProtocolException
+	 */
+	public ServiceBindingConfiguration getDefaultServiceBindingConfiguration(TransportRequestContext transportRequest) throws ProtocolException;
+	
+	/**
+	 * Restituisce il service binding associato al servizio
+	 * 
+	 * @param idServizio servizio richiesto
+	 * @param registryReader Reader delle informazioni interne al registro
+	 * @return service binding associato al servizio
+	 * @throws ProtocolException
+	 */
+	public ServiceBinding getServiceBinding(IDServizio idServizio, IRegistryReader registryReader) throws ProtocolException, RegistryNotFound;
+	
+	/**
+	 * Restituisce la configurazione del service binding compatibile con il servizio richiesto
+	 * 
+	 * @param idServizio servizio richiesto
+	 * @param registryReader Reader delle informazioni interne al registro
+	 * @return configurazione del service binding compatibile con il servizio richiesto
+	 * @throws ProtocolException
+	 */
+	public ServiceBindingConfiguration getServiceBindingConfiguration(TransportRequestContext transportRequest, ServiceBinding serviceBinding,
+			IDServizio idServizio, IRegistryReader registryReader) throws ProtocolException, RegistryNotFound;
+		
+	/**
 	 * Restituisce la lista dei tipi associabili ai soggetti
 	 * 
 	 * @return la lista dei tipi associabili ai soggetti
@@ -56,13 +93,13 @@ public interface IProtocolConfiguration {
 	 * @throws ProtocolException
 	 */
 	public String getTipoSoggettoDefault() throws ProtocolException;
-	
+		
 	/**
-	 * Restituisce la lista dei tipi associabili ai servizi
+	 * Restituisce la lista dei tipi associabili ai servizi compatibili con il service binding fornito
 	 * 
 	 * @return la lista dei tipi associabili ai servizi
 	 */
-	public List<String> getTipiServizi() throws ProtocolException;
+	public List<String> getTipiServizi(ServiceBinding serviceBinding) throws ProtocolException;
 	
 	/**
 	 * Restituisce il tipo di default dei servizi
@@ -70,7 +107,7 @@ public interface IProtocolConfiguration {
 	 * @return Restituisce il tipo di default dei servizi
 	 * @throws ProtocolException
 	 */
-	public String getTipoServizioDefault() throws ProtocolException;
+	public String getTipoServizioDefault(ServiceBinding serviceBinding) throws ProtocolException;
 
 	/**
 	 * Restituisce la lista delle versioni del protocollo
@@ -129,19 +166,6 @@ public interface IProtocolConfiguration {
 	 */
 	public boolean isSupportoSpecificaConversazioni();
 	
-	/**
-	 * Ritorna l'indicazione sulla supporto del protocollo SOAP 1.1
-	 * 
-	 * @return True se il protocllo SOAP 1.1 e' supportato. False altrimenti
-	 */
-	public boolean isSupportoSOAP11();
-	
-	/**
-	 * Ritorna l'indicazione sulla supporto del protocollo SOAP 1.2
-	 * 
-	 * @return True se il protocllo SOAP 1.2 e' supportato. False altrimenti
-	 */
-	public boolean isSupportoSOAP12();
 	
 	/**
 	 * Ritorna i bypass da attivare sulla Porta relativi al protocollo

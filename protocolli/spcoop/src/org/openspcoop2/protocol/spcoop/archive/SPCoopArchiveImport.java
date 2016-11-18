@@ -35,7 +35,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioComposto;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioParteSpecifica;
 import org.openspcoop2.protocol.sdk.archive.ArchiveIdCorrelazione;
-import org.openspcoop2.protocol.sdk.archive.IRegistryReader;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopContext;
 import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopUtilities;
 

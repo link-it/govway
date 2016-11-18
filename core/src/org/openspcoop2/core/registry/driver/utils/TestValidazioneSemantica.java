@@ -322,18 +322,29 @@ public class TestValidazioneSemantica {
 				tipoSoggettiArray[i]=tipoSoggettiArray[i].trim();
 			}
 			
-			String tipiServizi = commonProperties.getProperty("openspcoop2.tipiServizi");
-			if(tipiServizi==null){
+			String tipiServiziSoap = commonProperties.getProperty("openspcoop2.tipiServizi.soap");
+			if(tipiServiziSoap==null){
 				throw new Exception("Non sono stati definiti i tipi di Servizi supportati");
 			}else{
-				tipiServizi = tipiServizi.trim();
+				tipiServiziSoap = tipiServiziSoap.trim();
 			}
-			String [] tipoServiziArray = tipiServizi.split(",");
-			for (int i = 0; i < tipoServiziArray.length; i++) {
-				tipoServiziArray[i]=tipoServiziArray[i].trim();
+			String [] tipoServiziArraySoap = tipiServiziSoap.split(",");
+			for (int i = 0; i < tipoServiziArraySoap.length; i++) {
+				tipoServiziArraySoap[i]=tipoServiziArraySoap[i].trim();
 			}
 			
-			ValidazioneSemantica validatore = new ValidazioneSemantica(registro,checkURI,tipoConnettoriArray,tipoSoggettiArray,tipoServiziArray,log);
+			String tipiServiziRest = commonProperties.getProperty("openspcoop2.tipiServizi.rest");
+			if(tipiServiziRest==null){
+				throw new Exception("Non sono stati definiti i tipi di Servizi supportati");
+			}else{
+				tipiServiziRest = tipiServiziRest.trim();
+			}
+			String [] tipoServiziArrayRest = tipiServiziRest.split(",");
+			for (int i = 0; i < tipoServiziArrayRest.length; i++) {
+				tipoServiziArrayRest[i]=tipoServiziArrayRest[i].trim();
+			}
+			
+			ValidazioneSemantica validatore = new ValidazioneSemantica(registro,checkURI,tipoConnettoriArray,tipoSoggettiArray,tipoServiziArraySoap,tipoServiziArrayRest,log);
 			
 			validatore.validazioneSemantica(true);
 		}catch(Exception e){

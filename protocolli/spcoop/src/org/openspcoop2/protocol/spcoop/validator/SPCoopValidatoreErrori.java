@@ -27,6 +27,7 @@ import javax.xml.soap.SOAPFault;
 
 import org.slf4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -68,11 +69,13 @@ public class SPCoopValidatoreErrori implements IValidatoreErrori {
 	}
 
 	@Override
-	public boolean isBustaErrore(Busta busta,OpenSPCoop2Message msg,ProprietaValidazioneErrori proprietaValidazioneErrori) {
+	public boolean isBustaErrore(Busta busta,OpenSPCoop2Message msgParam,ProprietaValidazioneErrori proprietaValidazioneErrori) {
 		
 		boolean eccezioneProcessamento = false;
 		IProtocolVersionManager protocolManager = null;
 		try{
+			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
+			
 			if(msg!=null && msg.getSOAPBody()!=null && msg.getSOAPBody().hasFault()){
 				SOAPFault soapFault = msg.getSOAPBody().getFault();
 				String faultS = soapFault.getFaultString();
@@ -117,10 +120,12 @@ public class SPCoopValidatoreErrori implements IValidatoreErrori {
 	}
 	
 	@Override
-	public boolean isBustaErroreProcessamento(Busta busta,OpenSPCoop2Message msg,ProprietaValidazioneErrori proprietaValidazioneErrori){
+	public boolean isBustaErroreProcessamento(Busta busta,OpenSPCoop2Message msgParam,ProprietaValidazioneErrori proprietaValidazioneErrori){
 		
 		boolean eccezioneProcessamento = false;
 		try{
+			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
+			
 			if(msg!=null && msg.getSOAPBody()!=null && msg.getSOAPBody().hasFault()){
 				SOAPFault soapFault = msg.getSOAPBody().getFault();
 				String faultS = soapFault.getFaultString();
@@ -141,11 +146,13 @@ public class SPCoopValidatoreErrori implements IValidatoreErrori {
 	}
 	
 	@Override
-	public boolean isBustaErroreIntestazione(Busta busta,OpenSPCoop2Message msg,ProprietaValidazioneErrori proprietaValidazioneErrori){
+	public boolean isBustaErroreIntestazione(Busta busta,OpenSPCoop2Message msgParam,ProprietaValidazioneErrori proprietaValidazioneErrori){
 		
 		boolean eccezioneProcessamento = false;
 		IProtocolVersionManager protocolManager = null;
 		try{
+			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
+			
 			if(msg!=null && msg.getSOAPBody()!=null && msg.getSOAPBody().hasFault()){
 				SOAPFault soapFault = msg.getSOAPBody().getFault();
 				String faultS = soapFault.getFaultString();

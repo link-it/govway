@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.logging.log4j.Level;
-import org.slf4j.Logger;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -42,6 +41,7 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.handlers.GeneratoreCasualeDate;
+import org.openspcoop2.pdd.services.RequestInfo;
 import org.openspcoop2.pdd.services.skeleton.IntegrationManager;
 import org.openspcoop2.protocol.engine.BasicProtocolFactory;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -58,6 +58,7 @@ import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoException;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 
 
 
@@ -363,8 +364,11 @@ public class MsgDiagnostico {
 	public void addKeywords(IProtocolFactory protocolFactory){
 		this.addKeyword(CostantiPdD.KEY_PROTOCOLLO, protocolFactory.getProtocol());
 		try{
-			this.addKeyword(CostantiPdD.KEY_PROTOCOLLO_TIPI_SOGGETTI, protocolFactory.createProtocolConfiguration().getTipiSoggetti().toString());
-			this.addKeyword(CostantiPdD.KEY_PROTOCOLLO_TIPI_SERVIZI, protocolFactory.createProtocolConfiguration().getTipiServizi().toString());
+			if(this.pddContext!=null && this.pddContext.containsKey(Costanti.REQUEST_INFO)){
+				RequestInfo requestInfo = (RequestInfo) this.pddContext.getObject(Costanti.REQUEST_INFO);
+				this.addKeyword(CostantiPdD.KEY_PROTOCOLLO_TIPI_SOGGETTI, protocolFactory.createProtocolConfiguration().getTipiSoggetti().toString());
+				this.addKeyword(CostantiPdD.KEY_PROTOCOLLO_TIPI_SERVIZI, protocolFactory.createProtocolConfiguration().getTipiServizi(requestInfo.getServiceBinding()).toString());
+			}
 		}catch(Exception e){}
 	}
 	public void addKeywords(Busta busta,boolean richiesta){

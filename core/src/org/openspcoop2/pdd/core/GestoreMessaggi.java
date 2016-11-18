@@ -23,6 +23,7 @@
 
 package org.openspcoop2.pdd.core;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -44,7 +45,9 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
@@ -60,8 +63,8 @@ import org.openspcoop2.pdd.mdb.InoltroBuste;
 import org.openspcoop2.pdd.mdb.InoltroRisposte;
 import org.openspcoop2.pdd.mdb.Sbustamento;
 import org.openspcoop2.pdd.mdb.SbustamentoRisposte;
-import org.openspcoop2.pdd.services.RicezioneBuste;
-import org.openspcoop2.pdd.services.RicezioneContenutiApplicativi;
+import org.openspcoop2.pdd.services.core.RicezioneBuste;
+import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -5771,7 +5774,9 @@ public class GestoreMessaggi  {
 					"</richiesta></pubblicazioneMessaggio>\n"+
 					"</soapenv:Body>\n"+
 					"</soapenv:Envelope>";
-			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(SOAPVersion.SOAP11, msg);
+			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11, MessageRole.REQUEST, 
+					MessageUtilities.getDefaultContentType(MessageType.SOAP_11),
+					new ByteArrayInputStream(msg.getBytes()),null,false,null,null);
 			return pr.getMessage_throwParseException();
 		}catch(Exception e){
 			String errorMsg = "GESTORE_MESSAGGI, error buildRichiestaPubblicazioneMessaggio_RepositoryMessaggi: "+e.getMessage();		
@@ -5786,11 +5791,11 @@ public class GestoreMessaggi  {
 	 * 
 	 * 
 	 */
-	public OpenSPCoop2Message buildRispostaPrelevamentoMessaggio_RepositoryMessaggi(byte[] messaggio, SOAPVersion versioneSoap) throws GestoreMessaggiException{
+	public OpenSPCoop2Message buildRispostaPrelevamentoMessaggio_RepositoryMessaggi(byte[] messaggio, MessageType messageType) throws GestoreMessaggiException{
 
 		try{
 			String namespace;
-			if("SOAP11".equals(versioneSoap)){
+			if(MessageType.SOAP_11.equals(messageType)){
 				namespace = "http://schemas.xmlsoap.org/soap/envelope/";
 			} else {
 				namespace = "http://www.w3.org/2003/05/soap-envelope";
@@ -5806,7 +5811,11 @@ public class GestoreMessaggi  {
 			bout.write(msgUpper.getBytes());
 			bout.write(Base64.encode(messaggio).getBytes());
 			bout.write(msgDown.getBytes());
-			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(versioneSoap, bout.toByteArray());
+			bout.flush();
+			bout.close();
+			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, MessageRole.RESPONSE, 
+					MessageUtilities.getDefaultContentType(messageType),
+					new ByteArrayInputStream(bout.toByteArray()),null,false,null,null);
 			return pr.getMessage_throwParseException();
 		}catch(Exception e){
 			String errorMsg = "GESTORE_MESSAGGI, error buildRispostaPrelevamentoMessaggio_RepositoryMessaggi: "+e.getMessage();		

@@ -60,7 +60,7 @@ import org.w3c.dom.Node;
 public class RegistroOpenSPCoopUtilities {
 
 	private Logger logger = null;
-	private org.openspcoop2.message.XMLUtils xmlUtils = null;
+	private org.openspcoop2.message.xml.XMLUtils xmlUtils = null;
 	private XSDUtils xsdUtils = null;
 	private WSDLUtilities wsdlUtilities = null;
 	
@@ -74,7 +74,7 @@ public class RegistroOpenSPCoopUtilities {
 		else
 			this.logger = LoggerWrapperFactory.getLogger(RegistroOpenSPCoopUtilities.class);
 		
-		this.xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
+		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 		this.xsdUtils = new XSDUtils(this.xmlUtils);
 		this.wsdlUtilities = WSDLUtilities.getInstance(this.xmlUtils);
 	}

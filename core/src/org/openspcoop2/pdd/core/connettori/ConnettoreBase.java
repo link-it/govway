@@ -24,9 +24,13 @@ package org.openspcoop2.pdd.core.connettori;
 import java.util.Date;
 import java.util.Properties;
 
-import org.openspcoop2.message.MessageUtils;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.exception.ParseExceptionUtils;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.AbstractCore;
+import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.OutRequestContext;
@@ -34,9 +38,12 @@ import org.openspcoop2.pdd.core.handlers.PostOutRequestContext;
 import org.openspcoop2.pdd.core.handlers.PreInResponseContext;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.services.RequestInfo;
+import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
+import org.openspcoop2.utils.resources.Loader;
 
 /**	
  * Contiene una classe base per i connettori
@@ -47,6 +54,52 @@ import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
  */
 public abstract class ConnettoreBase extends AbstractCore implements IConnettore {
 
+	/** Proprieta' del connettore */
+	protected java.util.Hashtable<String,String> properties;
+	
+	/** Tipo di Connettore */
+	protected String tipoConnettore;
+	
+	/** Msg di richiesta */
+	protected OpenSPCoop2Message requestMsg;	
+	protected boolean isSoap = false;
+	protected boolean isRest = false;
+	
+	/** Indicazione su di un eventuale sbustamento SOAP */
+	protected boolean sbustamentoSoap;
+	
+	/** Proprieta' del trasporto che deve gestire il connettore */
+	protected java.util.Properties propertiesTrasporto;
+	
+	/** Proprieta' urlBased che deve gestire il connettore */
+	protected java.util.Properties propertiesUrlBased;
+	
+	/** Tipo di Autenticazione */
+	//private String tipoAutenticazione;
+	/** Credenziali per l'autenticazione */
+	protected Credenziali credenziali;
+	
+	/** Busta */
+	protected Busta busta;
+	
+	/** Indicazione se siamo in modalita' debug */
+	protected boolean debug = false;
+
+	/** OpenSPCoopProperties */
+	protected OpenSPCoop2Properties openspcoopProperties = null;
+
+	/** Identificativo */
+	protected String idMessaggio;
+	
+	/** Logger */
+	protected ConnettoreLogger logger = null;
+
+	/** Loader loader */
+	protected Loader loader = null;
+	
+	/** Identificativo Modulo */
+	protected String idModulo = null;
+	
 	/** motivo di un eventuale errore */
 	protected String errore = null;
 	/** Messaggio di risposta */
@@ -73,10 +126,94 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	/** PreInResponseContext */
 	protected PreInResponseContext preInResponseContext;
 	
+	/** RequestInfo */
+	protected RequestInfo requestInfo;
 	
+	
+
 	protected ConnettoreBase(){
 		this.creationDate = DateManager.getDate();
 	}
+	
+	protected boolean initialize(ConnettoreMsg request, boolean connectorPropertiesRequired){
+		
+		this.openspcoopProperties = OpenSPCoop2Properties.getInstance();
+		this.loader = Loader.getInstance();
+
+		if(request==null){
+			this.errore = "Messaggio da consegnare is Null (ConnettoreMsg)";
+			return false;
+		}
+		
+		// Raccolta parametri per costruttore logger
+		this.properties = request.getConnectorProperties();
+		if(connectorPropertiesRequired){
+			if(this.properties == null)
+				this.errore = "Proprieta' del connettore non definite";
+			if(this.properties.size() == 0)
+				this.errore = "Proprieta' del connettore non definite";
+		}
+		
+		// tipoConnetore
+		this.tipoConnettore = request.getTipoConnettore();
+		
+		// - Busta
+		this.busta = request.getBusta();
+		if(this.busta!=null)
+			this.idMessaggio=this.busta.getID();
+		
+		// - Debug mode
+		if(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG)!=null){
+			if("true".equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG).trim()))
+				this.debug = true;
+		}
+	
+		// Logger
+		this.logger = new ConnettoreLogger(this.debug, this.idMessaggio, this.getPddContext());
+		
+		// Raccolta altri parametri
+		try{
+			this.requestMsg =  request.getRequestMessage();
+		}catch(Exception e){
+			this.eccezioneProcessamento = e;
+			this.logger.error("Errore durante la lettura del messaggio da consegnare: "+this.readExceptionMessageFromException(e),e);
+			this.errore = "Errore durante la lettura del messaggio da consegnare: "+this.readExceptionMessageFromException(e);
+			return false;
+		}
+		if(this.requestMsg==null){
+			this.errore = "Messaggio da consegnare is Null (Msg)";
+			return false;
+		}
+		if(ServiceBinding.SOAP.equals(this.requestMsg.getServiceBinding())){
+			this.isSoap = true;
+		}
+		else{
+			this.isRest = true;
+		}
+		this.sbustamentoSoap = request.isSbustamentoSOAP();
+		this.propertiesTrasporto = request.getPropertiesTrasporto();
+		this.propertiesUrlBased = request.getPropertiesUrlBased();
+
+		// Credenziali
+		//this.tipoAutenticazione = request.getAutenticazione();
+		this.credenziali = request.getCredenziali();
+
+		// Identificativo modulo
+		this.idModulo = request.getIdModulo();
+				
+		// Context per invocazioni handler
+		this.outRequestContext = request.getOutRequestContext();
+		this.msgDiagnostico = request.getMsgDiagnostico();
+		
+		// MessageConfiguration
+		if(this.getPddContext()!=null && this.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.REQUEST_INFO)){
+			this.requestInfo = (RequestInfo) this.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+		}
+		
+		return true;
+	}
+	
+	
 	
 	/**
 	 * In caso di avvenuto errore in fase di consegna, questo metodo ritorna il motivo dell'errore.
@@ -143,7 +280,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
      * @return location di inoltro del messaggio
      */
     @Override
-	public String getLocation(){
+	public String getLocation() throws ConnettoreException{
     	return this.location;
     }
     
@@ -316,7 +453,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     		return e.getMessage();
     	}
     	else{
-    		Throwable tNotEmpty = MessageUtils.getInnerNotEmptyMessageException(e);
+    		Throwable tNotEmpty = ParseExceptionUtils.getInnerNotEmptyMessageException(e);
     		if(tNotEmpty!=null){
     			return tNotEmpty.getMessage();
     		}

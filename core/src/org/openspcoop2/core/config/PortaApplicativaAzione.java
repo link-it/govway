@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import java.io.Serializable;
 
 
@@ -35,7 +37,10 @@ import java.io.Serializable;
  * 
  * <pre>
  * &lt;complexType name="porta-applicativa-azione">
- * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="identificazione" type="{http://www.openspcoop2.org/core/config}PortaApplicativaAzioneIdentificazione" use="optional" default="static"/>
+ * 		&lt;attribute name="pattern" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="force-wsdl-based" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -68,12 +73,60 @@ public class PortaApplicativaAzione extends org.openspcoop2.utils.beans.BaseBean
 		this.id=new Long(-1);
   }
 
+  public void set_value_identificazione(String value) {
+    this.identificazione = (PortaApplicativaAzioneIdentificazione) PortaApplicativaAzioneIdentificazione.toEnumConstantFromString(value);
+  }
+
+  public String get_value_identificazione() {
+    if(this.identificazione == null){
+    	return null;
+    }else{
+    	return this.identificazione.toString();
+    }
+  }
+
+  public org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione getIdentificazione() {
+    return this.identificazione;
+  }
+
+  public void setIdentificazione(org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione identificazione) {
+    this.identificazione = identificazione;
+  }
+
+  public java.lang.String getPattern() {
+    return this.pattern;
+  }
+
+  public void setPattern(java.lang.String pattern) {
+    this.pattern = pattern;
+  }
+
   public java.lang.String getNome() {
     return this.nome;
   }
 
   public void setNome(java.lang.String nome) {
     this.nome = nome;
+  }
+
+  public void set_value_forceWsdlBased(String value) {
+    this.forceWsdlBased = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
+  }
+
+  public String get_value_forceWsdlBased() {
+    if(this.forceWsdlBased == null){
+    	return null;
+    }else{
+    	return this.forceWsdlBased.toString();
+    }
+  }
+
+  public org.openspcoop2.core.config.constants.StatoFunzionalita getForceWsdlBased() {
+    return this.forceWsdlBased;
+  }
+
+  public void setForceWsdlBased(org.openspcoop2.core.config.constants.StatoFunzionalita forceWsdlBased) {
+    this.forceWsdlBased = forceWsdlBased;
   }
 
   private static final long serialVersionUID = 1L;
@@ -83,8 +136,24 @@ public class PortaApplicativaAzione extends org.openspcoop2.utils.beans.BaseBean
 
 
 
+  @XmlTransient
+  protected java.lang.String _value_identificazione;
+
+  @XmlAttribute(name="identificazione",required=false)
+  protected PortaApplicativaAzioneIdentificazione identificazione = (PortaApplicativaAzioneIdentificazione) PortaApplicativaAzioneIdentificazione.toEnumConstantFromString("static");
+
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlAttribute(name="nome",required=true)
+  @XmlAttribute(name="pattern",required=false)
+  protected java.lang.String pattern;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="nome",required=false)
   protected java.lang.String nome;
+
+  @XmlTransient
+  protected java.lang.String _value_forceWsdlBased;
+
+  @XmlAttribute(name="force-wsdl-based",required=false)
+  protected StatoFunzionalita forceWsdlBased = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
 }

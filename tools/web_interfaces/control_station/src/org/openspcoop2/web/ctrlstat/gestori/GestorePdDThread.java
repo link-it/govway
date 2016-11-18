@@ -51,7 +51,7 @@ import org.openspcoop2.core.config.ws.client.portadelegata.all.PortaDelegataSoap
 import org.openspcoop2.core.config.ws.client.servizioapplicativo.all.ServizioApplicativoSoap11Service;
 import org.openspcoop2.core.config.ws.client.soggetto.all.SoggettoSoap11Service;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
-import org.openspcoop2.utils.resources.ExceptionListenerJMS;
+import org.openspcoop2.utils.transport.jms.ExceptionListenerJMS;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCoreException;

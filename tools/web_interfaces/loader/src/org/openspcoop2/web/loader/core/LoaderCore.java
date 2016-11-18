@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.apache.struts.upload.FormFile;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
-import org.openspcoop2.message.XMLUtils;
+import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;

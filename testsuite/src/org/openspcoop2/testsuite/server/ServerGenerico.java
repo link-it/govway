@@ -31,7 +31,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openspcoop2.message.ServletTestService;
+import org.openspcoop2.message.utils.ServletTestService;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 
 

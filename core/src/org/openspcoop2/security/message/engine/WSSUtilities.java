@@ -24,9 +24,9 @@ package org.openspcoop2.security.message.engine;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.openspcoop2.message.Costanti;
-import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.reference.Reference;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.Costanti;
+import org.openspcoop2.message.soap.reference.Reference;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.MessageSecurityContext;
@@ -42,7 +42,7 @@ import org.openspcoop2.utils.Utilities;
  */
 public class WSSUtilities {
 
-	public static List<Reference> getDirtyElements(MessageSecurityContext messageSecurityContext,OpenSPCoop2Message message) throws SecurityException{
+	public static List<Reference> getDirtyElements(MessageSecurityContext messageSecurityContext,OpenSPCoop2SoapMessage message) throws SecurityException{
 		
 		try{
 			
@@ -71,7 +71,7 @@ public class WSSUtilities {
 		}
 	}
 	
-	public static void cleanDirtyElements(MessageSecurityContext messageSecurityContext,OpenSPCoop2Message message, List<Reference> elementsToClean,
+	public static void cleanDirtyElements(MessageSecurityContext messageSecurityContext,OpenSPCoop2SoapMessage message, List<Reference> elementsToClean,
 			boolean detachHeaderWSSecurity) throws SecurityException{
 		try{
 			

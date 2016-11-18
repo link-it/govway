@@ -36,7 +36,7 @@ import org.openspcoop2.testsuite.core.TestSuiteProperties;
 import org.openspcoop2.testsuite.db.DatabaseProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
-import org.openspcoop2.utils.resources.DataContentHandlerManager;
+import org.openspcoop2.utils.dch.DataContentHandlerManager;
 
 
 /**

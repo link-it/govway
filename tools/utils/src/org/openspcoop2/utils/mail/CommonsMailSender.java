@@ -33,7 +33,7 @@ import org.apache.commons.mail.SimpleEmail;
 import org.slf4j.Logger;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
-import org.openspcoop2.utils.resources.SSLUtilities;
+import org.openspcoop2.utils.transport.http.SSLUtilities;
 
 /**
  * CommonsMailSender

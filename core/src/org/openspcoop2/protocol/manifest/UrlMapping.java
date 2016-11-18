@@ -22,6 +22,7 @@ package org.openspcoop2.protocol.manifest;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -38,8 +39,8 @@ import java.io.Serializable;
  * &lt;complexType name="urlMapping">
  * 		&lt;sequence>
  * 			&lt;element name="file" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="tipo" type="{http://www.openspcoop2.org/protocol/manifest}urlMappingSourceType" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
+ * 		&lt;attribute name="type" type="{http://www.openspcoop2.org/protocol/manifest}urlMappingSourceType" use="required"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -52,8 +53,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "urlMapping", 
   propOrder = {
-  	"file",
-  	"tipo"
+  	"file"
   }
 )
 
@@ -85,24 +85,24 @@ public class UrlMapping extends org.openspcoop2.utils.beans.BaseBean implements 
     this.file = file;
   }
 
-  public void set_value_tipo(String value) {
-    this.tipo = (UrlMappingSourceType) UrlMappingSourceType.toEnumConstantFromString(value);
+  public void set_value_type(String value) {
+    this.type = (UrlMappingSourceType) UrlMappingSourceType.toEnumConstantFromString(value);
   }
 
-  public String get_value_tipo() {
-    if(this.tipo == null){
+  public String get_value_type() {
+    if(this.type == null){
     	return null;
     }else{
-    	return this.tipo.toString();
+    	return this.type.toString();
     }
   }
 
-  public org.openspcoop2.protocol.manifest.constants.UrlMappingSourceType getTipo() {
-    return this.tipo;
+  public org.openspcoop2.protocol.manifest.constants.UrlMappingSourceType getType() {
+    return this.type;
   }
 
-  public void setTipo(org.openspcoop2.protocol.manifest.constants.UrlMappingSourceType tipo) {
-    this.tipo = tipo;
+  public void setType(org.openspcoop2.protocol.manifest.constants.UrlMappingSourceType type) {
+    this.type = type;
   }
 
   private static final long serialVersionUID = 1L;
@@ -117,9 +117,9 @@ public class UrlMapping extends org.openspcoop2.utils.beans.BaseBean implements 
   protected java.lang.String file;
 
   @XmlTransient
-  protected java.lang.String _value_tipo;
+  protected java.lang.String _value_type;
 
-  @XmlElement(name="tipo",required=true,nillable=false)
-  protected UrlMappingSourceType tipo;
+  @XmlAttribute(name="type",required=true)
+  protected UrlMappingSourceType type;
 
 }

@@ -25,7 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.resources.SSLConfig;
+import org.openspcoop2.utils.transport.http.SSLConfig;
 
 /**
  * Test

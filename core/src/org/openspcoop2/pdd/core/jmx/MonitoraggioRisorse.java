@@ -651,7 +651,13 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 		while(cs.hasMoreElements()){
 			String id = cs.nextElement();
 			IConnettore c = connettori.get(id);
-			bf.append(id+" -> ["+c.getLocation()+"]\n");
+			String location = null;
+			try{
+				location = c.getLocation();
+			}catch(Exception e){
+				location = "ERRORE: "+e.getMessage();
+			}
+			bf.append(id+" -> ["+location+"]\n");
 		}
 		return bf.toString();
 	}

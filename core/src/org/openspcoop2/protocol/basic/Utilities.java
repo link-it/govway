@@ -25,8 +25,9 @@ import javax.xml.soap.SOAPElement;
 
 import org.slf4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.SOAPVersion;
-import org.openspcoop2.message.XMLUtils;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 
@@ -48,7 +49,7 @@ public class Utilities {
 			throw new ProtocolException("Conversione in element non riuscita");
 		}
 		try{
-			String xml = Utilities.msgFactory.createMessage(SOAPVersion.SOAP11).getAsString(soapElement,true);
+			String xml = Utilities.msgFactory.createMessage(MessageType.SOAP_11,MessageRole.NONE).getAsString(soapElement,true);
 			if(xml==null){
 				xml = Utilities.xmlUtils.toString(soapElement,true);
 				if(xml==null){
@@ -69,7 +70,7 @@ public class Utilities {
 			throw new ProtocolException("Conversione in element non riuscita");
 		}
 		try{
-			byte[] xml = Utilities.msgFactory.createMessage(SOAPVersion.SOAP11).getAsByte(soapElement,true);
+			byte[] xml = Utilities.msgFactory.createMessage(MessageType.SOAP_11,MessageRole.NONE).getAsByte(soapElement,true);
 			if(xml==null){
 				xml = Utilities.xmlUtils.toByteArray(soapElement,true);
 				if(xml==null){

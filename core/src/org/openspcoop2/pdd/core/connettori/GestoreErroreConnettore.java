@@ -35,7 +35,8 @@ import org.openspcoop2.core.config.GestioneErroreCodiceTrasporto;
 import org.openspcoop2.core.config.GestioneErroreSoapFault;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.SoapUtils;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.pdd.core.GestoreMessaggiException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -260,8 +261,13 @@ public class GestoreErroreConnettore {
 		// ESITO SOAP FAULT:
 		SOAPBody body = null;
 		
-		if(messageResponse!=null)
-			body = messageResponse.getSOAPBody();
+		if(messageResponse!=null && (messageResponse instanceof OpenSPCoop2SoapMessage) ){
+			try{
+				body = messageResponse.castAsSoap().getSOAPBody();
+			}catch(Exception e){
+				throw new GestoreMessaggiException(e.getMessage(),e);
+			}
+		}
 
 		if(body!=null && body.hasFault()){
 			this.fault = body.getFault();
@@ -289,7 +295,12 @@ public class GestoreErroreConnettore {
 
 				if( match ){
 					if(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG.equals(gestore.getComportamento())){
-						this.errore = "errore applicativo, "+SoapUtils.toString(this.fault);
+						try{
+							this.errore = "errore applicativo, "+SoapUtils.toString(this.fault);
+						}catch(Exception e){
+							this.errore = "errore applicativo SoapFault";
+							GestoreErroreConnettore.log.error("Serializzazione SOAPFault non riuscita: "+e.getMessage(),e);
+						}
 						this.riconsegna = true;
 						if(gestore.getCadenzaRispedizione()!=null){
 							try{
@@ -334,7 +345,12 @@ public class GestoreErroreConnettore {
 				if(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG.equals(gestore.getComportamento())){
 					this.errore = "errore di trasporto, codice "+codiceTrasporto;
 					if(this.fault!=null){
-						this.errore = this.errore + " (" +SoapUtils.toString(this.fault)+ ")";
+						try{
+							this.errore = this.errore + " (" +SoapUtils.toString(this.fault)+ ")";
+						}catch(Exception e){
+							this.errore = "errore applicativo SoapFault";
+							GestoreErroreConnettore.log.error("Serializzazione SOAPFault non riuscita: "+e.getMessage(),e);
+						}
 					}
 					this.riconsegna = true;
 					if(gestore.getCadenzaRispedizione()!=null){
@@ -365,7 +381,12 @@ public class GestoreErroreConnettore {
 		if(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG.equals(gestioneErrore.getComportamento())){
 			this.errore = "errore di trasporto, codice "+codiceTrasporto;
 			if(this.fault!=null){
-				this.errore = this.errore + " (" +SoapUtils.toString(this.fault)+ ")";
+				try{
+					this.errore = this.errore + " (" +SoapUtils.toString(this.fault)+ ")";
+				}catch(Exception e){
+					this.errore = "errore applicativo SoapFault";
+					GestoreErroreConnettore.log.error("Serializzazione SOAPFault non riuscita: "+e.getMessage(),e);
+				}
 			}
 			this.riconsegna = true;
 			if(gestioneErrore.getCadenzaRispedizione()!=null){

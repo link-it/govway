@@ -22,7 +22,7 @@
 package org.openspcoop2.protocol.sdk;
 
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.message.SOAPFaultCode;
+import org.openspcoop2.message.soap.SOAPFaultCode;
 
 
 /**

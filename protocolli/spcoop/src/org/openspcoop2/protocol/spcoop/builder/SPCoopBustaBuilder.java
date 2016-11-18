@@ -30,7 +30,8 @@ import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.basic.Utilities;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -97,7 +98,7 @@ public class SPCoopBustaBuilder implements org.openspcoop2.protocol.sdk.builder.
 	@Override
 	public SOAPElement toElement(Busta busta,boolean isRichiesta) throws ProtocolException{
 		try{
-			OpenSPCoop2Message msg = OpenSPCoop2MessageFactory.getMessageFactory().createEmptySOAPMessage(SOAPVersion.SOAP11);
+			OpenSPCoop2Message msg = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE);
 			return this.spcoopImbustamento.build_eGovHeader(msg, busta, false);
 		}catch(Exception e){
 			throw new ProtocolException(e.getMessage(),e);

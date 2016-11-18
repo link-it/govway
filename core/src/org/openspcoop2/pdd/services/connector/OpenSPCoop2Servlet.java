@@ -30,8 +30,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.openspcoop2.core.api.constants.MethodType;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -40,6 +38,8 @@ import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.manifest.constants.Costanti;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
+import org.slf4j.Logger;
 
 /**
  * OpenSPCoop2Servlet
@@ -54,59 +54,57 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		dispatch(req, resp, MethodType.DELETE);
+		dispatch(req, resp, HttpRequestMethod.DELETE);
 	}
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		dispatch(req, resp, MethodType.GET);
+		dispatch(req, resp, HttpRequestMethod.GET);
 	}
 
 	@Override
 	protected void doHead(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		dispatch(req, resp, MethodType.HEAD);
+		dispatch(req, resp, HttpRequestMethod.HEAD);
 	}
 
 	@Override
 	protected void doOptions(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		dispatch(req, resp, MethodType.OPTIONS);
+		dispatch(req, resp, HttpRequestMethod.OPTIONS);
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		dispatch(req, resp, MethodType.POST);
+		dispatch(req, resp, HttpRequestMethod.POST);
 	}
 
 	@Override
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		dispatch(req, resp, MethodType.PUT);
+		dispatch(req, resp, HttpRequestMethod.PUT);
 	}
 
 	@Override
 	protected void doTrace(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		dispatch(req, resp, MethodType.TRACE);
+		dispatch(req, resp, HttpRequestMethod.TRACE);
 	}
 
 	
-	private void dispatch(HttpServletRequest req, HttpServletResponse res,MethodType method) throws ServletException, IOException {
+	private void dispatch(HttpServletRequest req, HttpServletResponse res,HttpRequestMethod method) throws ServletException, IOException {
 		
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		Logger logOpenSPCoop2Servlet = LoggerWrapperFactory.getLogger("openspcoop2.startup");
-		
-		boolean doPost = MethodType.POST.equals(method);
 		
 		OpenSPCoop2Properties op2Properties = null;
 		try {
 			
 			op2Properties = OpenSPCoop2Properties.getInstance();
 			
-			URLProtocolContext protocolContext = new URLProtocolContext(req, logCore);
+			URLProtocolContext protocolContext = new URLProtocolContext(req, logCore, op2Properties.isPrintInfoCertificate());
 			String function = protocolContext.getFunction();
 			
 			IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByServletContext(protocolContext.getProtocol());
@@ -116,35 +114,29 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				else
 					throw new Exception("Non risulta registrato un protocollo con contesto speciale 'vuoto'");
 			}
-			
+						
 			if(function.equals(URLProtocolContext.PD_FUNCTION)){
-				RicezioneContenutiApplicativiSOAPConnector r = new RicezioneContenutiApplicativiSOAPConnector();
-				r.init();
-				if(doPost)
-					r.doPost(req, res);
-				else
-					r.engine(req, res, method);
+				
+				RicezioneContenutiApplicativiConnector r = new RicezioneContenutiApplicativiConnector();
+				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
+				
 			}
-			else if(function.equals(URLProtocolContext.PDtoSOAP_FUNCTION)){
+			else if(function.equals(URLProtocolContext.PDtoSOAP_FUNCTION) ){
+				
 				RicezioneContenutiApplicativiHTTPtoSOAPConnector r = new RicezioneContenutiApplicativiHTTPtoSOAPConnector();
-				r.init();
-				if(doPost)
-					r.doPost(req, res);
-				else
-					r.engine(req, res, method);
+				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
+				
 			}
 			else if(function.equals(URLProtocolContext.PA_FUNCTION)){
-				RicezioneBusteSOAPConnector r = new RicezioneBusteSOAPConnector();
-				r.init();
-				if(doPost)
-					r.doPost(req, res);
-				else
-					r.engine(req, res, method);
+				
+				RicezioneBusteConnector r = new RicezioneBusteConnector();
+				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
 			}
+			
 			else if(function.equals(URLProtocolContext.IntegrationManager_FUNCTION)){
 				
 				boolean wsdl = false;
-				if(MethodType.GET.equals(method)){
+				if(HttpRequestMethod.GET.equals(method)){
 					Enumeration<?> parameters = req.getParameterNames();
 					while(parameters.hasMoreElements()){
 						String key = (String) parameters.nextElement();
@@ -163,7 +155,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 					}
 				}
 				
-				if(!doPost && !wsdl){
+				if(!HttpRequestMethod.POST.equals(method) && !wsdl){
 					// messaggio di errore
 					boolean errore404 = false;
 					if(op2Properties!=null && !op2Properties.isGenerazioneErroreHttpMethodUnsupportedIntegrationManagerEnabled()){
@@ -201,7 +193,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 			}
 			else if(function.equals(URLProtocolContext.CheckPdD_FUNCTION)){
 				
-				if(MethodType.GET.equals(method)==false){
+				if(HttpRequestMethod.GET.equals(method)==false){
 					// messaggio di errore
 					boolean errore404 = false;
 					if(op2Properties!=null && !op2Properties.isGenerazioneErroreHttpMethodUnsupportedCheckPdDEnabled()){
@@ -234,32 +226,6 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolContext.getProtocol());
 				checkStatoPdD.doGet(req, res);
 				
-			}
-			else if(function.equals(URLProtocolContext.API_ENGINE+"/"+URLProtocolContext.API_FUNCTION_PD)){
-				if(op2Properties.isAPIServicesEnabled()==false){
-					res.sendError(404,ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeFunctionUnsupported(IDService.PORTA_DELEGATA_API)));
-					return;
-				}
-				RicezioneContenutiApplicativiAPIConnector r = new RicezioneContenutiApplicativiAPIConnector();
-				r.init();
-				r.engine(req, res);
-			}
-			else if(function.equals(URLProtocolContext.API_ENGINE+"/"+URLProtocolContext.API_FUNCTION_PA)){
-				if(op2Properties.isAPIServicesEnabled()==false){
-					res.sendError(404,ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeFunctionUnsupported(IDService.PORTA_APPLICATIVA_API)));
-					return;
-				}
-				RicezioneBusteAPIConnector r = new RicezioneBusteAPIConnector();
-				r.init();
-				r.engine(req, res);
-			}
-			else if(function.equals(URLProtocolContext.API_ENGINE+"/"+URLProtocolContext.API_FUNCTION_MessageBox)){
-				if(op2Properties.isAPIServicesEnabled()==false){
-					res.sendError(404,ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeFunctionUnsupported(IDService.INTEGRATION_MANAGER_API)));
-					return;
-				}
-				// TODO
-				throw new Exception("Service ["+function+"] not implemented (TODO)");
 			}
 			else{
 				throw new Exception("Service ["+function+"] not supported");
@@ -325,4 +291,8 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 
 		
 	}
+	
+
+	
+
 }

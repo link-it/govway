@@ -1,60 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openspcoop2 xmlns="http://www.openspcoop2.org/protocol/manifest">
 
-    <protocolName>spcoop</protocolName>
+    <protocol name="spcoop">
+    	<factory>org.openspcoop2.protocol.spcoop.SPCoopFactory</factory>
+    </protocol>
 
-    <factory>org.openspcoop2.protocol.spcoop.SPCoopFactory</factory>
+    <binding>
+    	<soap soap11="true" soap11_withAttachments="true" soap11_mtom="true"
+    		  soap12="false" soap12_withAttachments="false" soap12_mtom="false">
+   			<integrationError>
+    			<internal>
+    				<default httpReturnCode="500" messageType="soap" />
+    			</internal>	
+    			<external>
+    				<default httpReturnCode="500" messageType="soap" />
+    			</external>	
+    		</integrationError>
+    		<mediaTypeCollection>
+    			<mediaType messageType="soap11">text/xml</mediaType>
+    		</mediaTypeCollection>
+    		<soapHeaderBypassMustUnderstand>
+	    		<header>
+	    			<localName>Intestazione</localName>
+	    			<namespace>http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/</namespace>
+	    		</header>
+	    	</soapHeaderBypassMustUnderstand>
+    	</soap>
+    </binding>
 
     <web>
-        <context>spcoop</context>
-        <emptyContext enabled="true"/>
+        <context name="spcoop">
+        	<subContext function="PA" messageType="soap12">v2</subContext> <!-- es. http://server/openspcoop2/spcoop/PA/v2 -->
+			<emptySubContext function="PA" messageType="soap11"/> <!-- es. http://server/openspcoop2/spcoop/PA -->
+        </context> 
+        <emptyContext enabled="true">
+        	<subContext function="PA" messageType="soap12">v2</subContext> <!-- es. http://server/openspcoop2/PA/v2 -->
+			<emptySubContext function="PA" messageType="soap11"/> <!-- es. http://server/openspcoop2/PA -->
+        </emptyContext>
     </web>
 
-    <registroServizi>
+    <registry>
 
-        <soggetti codiceIPA="true">
-            <tipi default="SPC">
-                <tipo>SPC</tipo>
-                <tipo>TEST</tipo>
-                <tipo>AOO</tipo>
-            </tipi>
-        </soggetti>
+        <organization codeIPA="true">
+            <types>
+            	<type name="SPC"/>
+            	<type name="TEST"/>
+            	<type name="AOO"/>
+            </types>
+        </organization>
 
-        <servizi wsdlDefinitorio="true" specificaConversazioni="true">
-            <tipi default="SPC">
-                <tipo>SPC</tipo>
-                <tipo>TEST</tipo>
-                <tipo>URL</tipo>
-                <tipo>WSDL</tipo>
-                <tipo>LDAP</tipo>
-                <tipo>UDDI</tipo>
-                <tipo>ebXMLRegistry</tipo>
-            </tipi>
-            <profilo asincronoAsimmetrico="true" asincronoSimmetrico="true" />
-            <funzionalita filtroDuplicati="true" confermaRicezione="true"
-            				collaborazione="true" consegnaInOrdine="true"
-            				scadenza="true" manifestAttachments="true"/>
-        </servizi>
+        <service wsdlSchema="true" conversations="true">
+            <types>
+                <type name="SPC"/>
+                <type name="TEST"/>
+                <type name="URL"/>
+                <type name="WSDL"/>
+                <type name="LDAP"/>
+                <type name="UDDI"/>
+                <type name="ebXMLRegistry"/>
+            </types>
+            <profile asyncInputOutput="true" polledInputOutput="true" />
+            <functionality duplicateFilter="true" acknowledgement="true"
+            				conversationIdentifier="true" deliveryOrder="true"
+            				expiration="true" manifestAttachments="true"/>
+        </service>
 
-        <versioni default="eGov1.1-lineeGuida1.1">
-            <versione>eGov1.1</versione>
-            <versione>eGov1.1-lineeGuida1.1</versione>
-        </versioni>
+        <versions>
+            <version name="eGov1.1-lineeGuida1.1"/>
+        	<version name="eGov1.1"/>
+        </versions>
 
-    </registroServizi>
+    </registry>
 
-    <urlMapping>
+    <urlMapping type="PROPERTIES">
         <file>/spcoop-url-mapping.properties</file>
-        <tipo>PROPERTIES</tipo>
     </urlMapping>
-    
-    <binding soap11="true" soap12="false">
-    	<soapHeaderBypassMustUnderstand>
-    		<header>
-    			<localName>Intestazione</localName>
-    			<namespace>http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/</namespace>
-    		</header>
-    	</soapHeaderBypassMustUnderstand>
-    </binding>
 
 </openspcoop2>

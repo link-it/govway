@@ -38,7 +38,6 @@ public class OpenSPCoop2DataContentHandlerInputStream extends ByteArrayInputStre
 
 	public OpenSPCoop2DataContentHandlerInputStream(byte[] buf) {
 		super(buf);
-		// TODO Auto-generated constructor stub
 	}
 
 }

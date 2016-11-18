@@ -36,12 +36,11 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="openspcoop2">
  * 		&lt;sequence>
- * 			&lt;element name="protocolName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="factory" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="web" type="{http://www.openspcoop2.org/protocol/manifest}web" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="registroServizi" type="{http://www.openspcoop2.org/protocol/manifest}registroServizi" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="urlMapping" type="{http://www.openspcoop2.org/protocol/manifest}urlMapping" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="protocol" type="{http://www.openspcoop2.org/protocol/manifest}protocol" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="binding" type="{http://www.openspcoop2.org/protocol/manifest}binding" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="web" type="{http://www.openspcoop2.org/protocol/manifest}web" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="registry" type="{http://www.openspcoop2.org/protocol/manifest}registry" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="urlMapping" type="{http://www.openspcoop2.org/protocol/manifest}urlMapping" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -55,12 +54,11 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "openspcoop2", 
   propOrder = {
-  	"protocolName",
-  	"factory",
+  	"protocol",
+  	"binding",
   	"web",
-  	"registroServizi",
-  	"urlMapping",
-  	"binding"
+  	"registry",
+  	"urlMapping"
   }
 )
 
@@ -84,20 +82,20 @@ public class Openspcoop2 extends org.openspcoop2.utils.beans.BaseBean implements
 		this.id=new Long(-1);
   }
 
-  public java.lang.String getProtocolName() {
-    return this.protocolName;
+  public Protocol getProtocol() {
+    return this.protocol;
   }
 
-  public void setProtocolName(java.lang.String protocolName) {
-    this.protocolName = protocolName;
+  public void setProtocol(Protocol protocol) {
+    this.protocol = protocol;
   }
 
-  public java.lang.String getFactory() {
-    return this.factory;
+  public Binding getBinding() {
+    return this.binding;
   }
 
-  public void setFactory(java.lang.String factory) {
-    this.factory = factory;
+  public void setBinding(Binding binding) {
+    this.binding = binding;
   }
 
   public Web getWeb() {
@@ -108,12 +106,12 @@ public class Openspcoop2 extends org.openspcoop2.utils.beans.BaseBean implements
     this.web = web;
   }
 
-  public RegistroServizi getRegistroServizi() {
-    return this.registroServizi;
+  public Registry getRegistry() {
+    return this.registry;
   }
 
-  public void setRegistroServizi(RegistroServizi registroServizi) {
-    this.registroServizi = registroServizi;
+  public void setRegistry(Registry registry) {
+    this.registry = registry;
   }
 
   public UrlMapping getUrlMapping() {
@@ -122,14 +120,6 @@ public class Openspcoop2 extends org.openspcoop2.utils.beans.BaseBean implements
 
   public void setUrlMapping(UrlMapping urlMapping) {
     this.urlMapping = urlMapping;
-  }
-
-  public Binding getBinding() {
-    return this.binding;
-  }
-
-  public void setBinding(Binding binding) {
-    this.binding = binding;
   }
 
   private static final long serialVersionUID = 1L;
@@ -151,24 +141,19 @@ public class Openspcoop2 extends org.openspcoop2.utils.beans.BaseBean implements
   }
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="protocolName",required=true,nillable=false)
-  protected java.lang.String protocolName;
+  @XmlElement(name="protocol",required=true,nillable=false)
+  protected Protocol protocol;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="factory",required=true,nillable=false)
-  protected java.lang.String factory;
+  @XmlElement(name="binding",required=true,nillable=false)
+  protected Binding binding;
 
   @XmlElement(name="web",required=true,nillable=false)
   protected Web web;
 
-  @XmlElement(name="registroServizi",required=true,nillable=false)
-  protected RegistroServizi registroServizi;
+  @XmlElement(name="registry",required=true,nillable=false)
+  protected Registry registry;
 
   @XmlElement(name="urlMapping",required=true,nillable=false)
   protected UrlMapping urlMapping;
-
-  @XmlElement(name="binding",required=true,nillable=false)
-  protected Binding binding;
 
 }

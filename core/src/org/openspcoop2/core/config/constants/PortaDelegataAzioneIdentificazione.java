@@ -39,6 +39,8 @@ public enum PortaDelegataAzioneIdentificazione implements IEnumeration , Seriali
 
 	@javax.xml.bind.annotation.XmlEnumValue("static")
 	STATIC ("static"),
+	@javax.xml.bind.annotation.XmlEnumValue("headerBased")
+	HEADER_BASED ("headerBased"),
 	@javax.xml.bind.annotation.XmlEnumValue("urlBased")
 	URL_BASED ("urlBased"),
 	@javax.xml.bind.annotation.XmlEnumValue("contentBased")

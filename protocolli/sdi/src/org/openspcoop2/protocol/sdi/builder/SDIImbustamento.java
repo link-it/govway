@@ -20,8 +20,6 @@
  */
 package org.openspcoop2.protocol.sdi.builder;
 
-import it.gov.fatturapa.sdi.messaggi.v1_0.constants.TipiMessaggi;
-
 import java.io.ByteArrayInputStream;
 import java.util.Vector;
 
@@ -30,11 +28,12 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPPart;
 
-import org.openspcoop2.message.Costanti;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.SOAPVersion;
-import org.openspcoop2.message.SoapUtils;
-import org.openspcoop2.message.XMLUtils;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.Costanti;
+import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.message.utils.MessageUtilities;
+import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.sdi.config.SDIProperties;
 import org.openspcoop2.protocol.sdi.config.SDITraduttore;
 import org.openspcoop2.protocol.sdi.constants.SDICostanti;
@@ -52,6 +51,8 @@ import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
+
+import it.gov.fatturapa.sdi.messaggi.v1_0.constants.TipiMessaggi;
 
 /**
  * SDIImbustamento
@@ -75,9 +76,10 @@ public class SDIImbustamento {
 		this.sdiProperties = SDIProperties.getInstance(bustaBuilder.getProtocolFactory().getLogger());
 	}
 	
-	public SOAPElement creaRichiesta_ServizioSdIRiceviFile_AzioneRiceviFile(IProtocolFactory protocolFactory, IState state, Busta busta, OpenSPCoop2Message msg) throws ProtocolException{
+	public SOAPElement creaRichiesta_ServizioSdIRiceviFile_AzioneRiceviFile(IProtocolFactory protocolFactory, IState state, Busta busta, OpenSPCoop2Message msgParam) throws ProtocolException{
 		
 		try{
+			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
 					
 			// create body
 			SOAPPart soapPart = msg.getSOAPPart();
@@ -317,18 +319,14 @@ public class SDIImbustamento {
 			// add MessaggioProtocollo
 			it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types.utils.serializer.JaxbSerializer serializer = new it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types.utils.serializer.JaxbSerializer();
 			String xmlRichiesta = serializer.toString(of.createFileSdIAccoglienza(fileSdi));
-			SOAPElement element = SoapUtils.getSoapFactory(msg.getVersioneSoap()).createElement(this.xmlUtils.newElement(xmlRichiesta.getBytes()));
+			SOAPElement element = SoapUtils.getSoapFactory(msg.getMessageType()).createElement(this.xmlUtils.newElement(xmlRichiesta.getBytes()));
 			soapBody.addChildElement(element);
 			
 			// salvo nomeFile
 			busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE, fileSdi.getNomeFile());
 			
 			// soapAction
-			msg.setProperty("SOAPAction", SDICostantiServizioRiceviFile.SDI_SOAP_ACTION_SERVIZIO_RICEVI_FILE_AZIONE_RICEVI_FILE);
-			try{
-				msg.getMimeHeaders().removeHeader(org.openspcoop2.message.Costanti.SOAP_ACTION);
-			}catch(Exception eNotFoud){}
-			msg.getMimeHeaders().addHeader(org.openspcoop2.message.Costanti.SOAP_ACTION, SDICostantiServizioRiceviFile.SDI_SOAP_ACTION_SERVIZIO_RICEVI_FILE_AZIONE_RICEVI_FILE);
+			msg.setSoapAction(SDICostantiServizioRiceviFile.SDI_SOAP_ACTION_SERVIZIO_RICEVI_FILE_AZIONE_RICEVI_FILE);
 			
 			return SDIUtils.readHeader(msg); // l'header ritornato viene usato solo per il tracciamento e cosi' facendo viene ripulito
 			
@@ -338,10 +336,11 @@ public class SDIImbustamento {
 		
 	}
 	
-	public SOAPElement creaRisposta_ServizioRicezioneFatture_AzioneRiceviFatture(IProtocolFactory protocolFactory, IState state, Busta busta, OpenSPCoop2Message msg) throws ProtocolException{
+	public SOAPElement creaRisposta_ServizioRicezioneFatture_AzioneRiceviFatture(IProtocolFactory protocolFactory, IState state, Busta busta, OpenSPCoop2Message msgParam) throws ProtocolException{
 		
 		try{
-		
+			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
+			
 			// create body
 			SOAPPart soapPart = msg.getSOAPPart();
 			SOAPBody soapBody = msg.getSOAPBody();
@@ -363,12 +362,7 @@ public class SDIImbustamento {
 			}
 			
 			// imposto content type
-			if(SOAPVersion.SOAP11.equals(msg.getVersioneSoap())){
-				msg.setContentType(Costanti.CONTENT_TYPE_SOAP_1_1);
-			}
-			else if(SOAPVersion.SOAP12.equals(msg.getVersioneSoap())){
-				msg.setContentType(Costanti.CONTENT_TYPE_SOAP_1_2);
-			}
+			msg.setContentType(MessageUtilities.getDefaultContentType(msg.getMessageType()));
 			
 			// add MessaggioProtocollo
 			it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.ObjectFactory of = new it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.ObjectFactory();
@@ -376,7 +370,7 @@ public class SDIImbustamento {
 			rispostaRiceviFatture.setEsito(it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.constants.EsitoRicezioneType.ER01);
 			it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.utils.serializer.JaxbSerializer serializer = new it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.utils.serializer.JaxbSerializer();
 			String xmlRisposta = serializer.toString(of.createRispostaRiceviFatture(rispostaRiceviFatture));
-			SOAPElement element = SoapUtils.getSoapFactory(msg.getVersioneSoap()).createElement(this.xmlUtils.newElement(xmlRisposta.getBytes()));
+			SOAPElement element = SoapUtils.getSoapFactory(msg.getMessageType()).createElement(this.xmlUtils.newElement(xmlRisposta.getBytes()));
 			soapBody.addChildElement(element);
 			
 			return element; // non vi sono base64
@@ -387,11 +381,12 @@ public class SDIImbustamento {
 		
 	}
 	
-	public SOAPElement creaRichiesta_ServizioSdIRiceviNotifica_AzioneNotificaEsito(IProtocolFactory protocolFactory, IState state, Busta busta, OpenSPCoop2Message msg,
+	public SOAPElement creaRichiesta_ServizioSdIRiceviNotifica_AzioneNotificaEsito(IProtocolFactory protocolFactory, IState state, Busta busta, OpenSPCoop2Message msgParam,
 			boolean isEnableGenerazioneMessaggiCompatibilitaNamespaceSenzaGov,
 			boolean isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov) throws ProtocolException{
 		
 		try{
+			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
 		
 			// create body
 			SOAPPart soapPart = msg.getSOAPPart();
@@ -524,16 +519,12 @@ public class SDIImbustamento {
 			// add MessaggioProtocollo
 			it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.utils.serializer.JaxbSerializer serializer = new it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.utils.serializer.JaxbSerializer();
 			String xmlRisposta = serializer.toString(of.createFileSdI(fileSdi));
-			SOAPElement element = SoapUtils.getSoapFactory(msg.getVersioneSoap()).createElement(this.xmlUtils.newElement(xmlRisposta.getBytes()));
+			SOAPElement element = SoapUtils.getSoapFactory(msg.getMessageType()).createElement(this.xmlUtils.newElement(xmlRisposta.getBytes()));
 			soapBody.addChildElement(element);
 			
 			// soapAction
-			msg.setProperty("SOAPAction", SDICostantiServizioRiceviNotifica.SDI_SOAP_ACTION_SERVIZIO_NOTIFICA_ESITO_AZIONE_NOTIFICA_ESITO);
-			try{
-				msg.getMimeHeaders().removeHeader(org.openspcoop2.message.Costanti.SOAP_ACTION);
-			}catch(Exception eNotFoud){}
-			msg.getMimeHeaders().addHeader(org.openspcoop2.message.Costanti.SOAP_ACTION, SDICostantiServizioRiceviNotifica.SDI_SOAP_ACTION_SERVIZIO_NOTIFICA_ESITO_AZIONE_NOTIFICA_ESITO);
-			
+			msg.setSoapAction(SDICostantiServizioRiceviNotifica.SDI_SOAP_ACTION_SERVIZIO_NOTIFICA_ESITO_AZIONE_NOTIFICA_ESITO);
+				
 			return SDIUtils.readHeader(msg); // l'header ritornato viene usato solo per il tracciamento e cosi' facendo viene ripulito
 			
 		}catch(Exception e){

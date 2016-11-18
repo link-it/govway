@@ -17,6 +17,7 @@
  			<xsd:element name="servizio-composto" type="tns:accordo-servizio-parte-comune-servizio-composto" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="stato-package" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="privato" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="service-binding" type="api:ServiceBinding" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="nome" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="descrizione" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="ora-registrazione-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />

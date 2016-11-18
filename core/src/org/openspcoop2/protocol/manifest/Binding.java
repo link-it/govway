@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.openspcoop2.protocol.manifest.constants.ServiceBinding;
 import java.io.Serializable;
 
 
@@ -37,10 +38,10 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="binding">
  * 		&lt;sequence>
- * 			&lt;element name="soapHeaderBypassMustUnderstand" type="{http://www.openspcoop2.org/protocol/manifest}soapHeaderBypassMustUnderstand" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="soap" type="{http://www.openspcoop2.org/protocol/manifest}SoapConfiguration" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="rest" type="{http://www.openspcoop2.org/protocol/manifest}RestConfiguration" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
- * 		&lt;attribute name="soap11" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/>
- * 		&lt;attribute name="soap12" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/>
+ * 		&lt;attribute name="default" type="{http://www.openspcoop2.org/protocol/manifest}ServiceBinding" use="optional"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -53,7 +54,8 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "binding", 
   propOrder = {
-  	"soapHeaderBypassMustUnderstand"
+  	"soap",
+  	"rest"
   }
 )
 
@@ -77,36 +79,40 @@ public class Binding extends org.openspcoop2.utils.beans.BaseBean implements Ser
 		this.id=new Long(-1);
   }
 
-  public SoapHeaderBypassMustUnderstand getSoapHeaderBypassMustUnderstand() {
-    return this.soapHeaderBypassMustUnderstand;
+  public SoapConfiguration getSoap() {
+    return this.soap;
   }
 
-  public void setSoapHeaderBypassMustUnderstand(SoapHeaderBypassMustUnderstand soapHeaderBypassMustUnderstand) {
-    this.soapHeaderBypassMustUnderstand = soapHeaderBypassMustUnderstand;
+  public void setSoap(SoapConfiguration soap) {
+    this.soap = soap;
   }
 
-  public boolean isSoap11() {
-    return this.soap11;
+  public RestConfiguration getRest() {
+    return this.rest;
   }
 
-  public boolean getSoap11() {
-    return this.soap11;
+  public void setRest(RestConfiguration rest) {
+    this.rest = rest;
   }
 
-  public void setSoap11(boolean soap11) {
-    this.soap11 = soap11;
+  public void set_value__default(String value) {
+    this._default = (ServiceBinding) ServiceBinding.toEnumConstantFromString(value);
   }
 
-  public boolean isSoap12() {
-    return this.soap12;
+  public String get_value__default() {
+    if(this._default == null){
+    	return null;
+    }else{
+    	return this._default.toString();
+    }
   }
 
-  public boolean getSoap12() {
-    return this.soap12;
+  public org.openspcoop2.protocol.manifest.constants.ServiceBinding getDefault() {
+    return this._default;
   }
 
-  public void setSoap12(boolean soap12) {
-    this.soap12 = soap12;
+  public void setDefault(org.openspcoop2.protocol.manifest.constants.ServiceBinding _default) {
+    this._default = _default;
   }
 
   private static final long serialVersionUID = 1L;
@@ -116,15 +122,16 @@ public class Binding extends org.openspcoop2.utils.beans.BaseBean implements Ser
 
 
 
-  @XmlElement(name="soapHeaderBypassMustUnderstand",required=false,nillable=false)
-  protected SoapHeaderBypassMustUnderstand soapHeaderBypassMustUnderstand;
+  @XmlElement(name="soap",required=false,nillable=false)
+  protected SoapConfiguration soap;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
-  @XmlAttribute(name="soap11",required=true)
-  protected boolean soap11;
+  @XmlElement(name="rest",required=false,nillable=false)
+  protected RestConfiguration rest;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
-  @XmlAttribute(name="soap12",required=true)
-  protected boolean soap12;
+  @XmlTransient
+  protected java.lang.String _value__default;
+
+  @XmlAttribute(name="default",required=false)
+  protected ServiceBinding _default;
 
 }

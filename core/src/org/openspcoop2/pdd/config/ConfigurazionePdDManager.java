@@ -27,10 +27,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 
-import javax.xml.soap.SOAPEnvelope;
-
 import org.apache.logging.log4j.Level;
-import org.slf4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
@@ -61,12 +58,14 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
+import org.openspcoop2.protocol.engine.mapping.IdentificazioneDinamicaException;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
+import org.slf4j.Logger;
 
 /**
  * ConfigurazionePdDManager
@@ -170,8 +169,12 @@ public class ConfigurazionePdDManager {
 	
 	/* ********  SOGGETTI (Interfaccia)  ******** */
 	
-	public IDSoggetto getIDSoggetto(String location,IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
-		return this.configurazionePdDReader.getIDSoggetto(this.getConnection(), location, protocolFactory);
+	public IDSoggetto getSoggettoProprietarioPortaDelegata(String location,IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.getSoggettoProprietarioPortaDelegata(this.getConnection(), location, protocolFactory);
+	}
+	
+	public IDSoggetto getSoggettoProprietarioPortaApplicativa(String location,IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.getSoggettoProprietarioPortaApplicativa(this.getConnection(), location, protocolFactory);
 	}
 	
 	public String getIdentificativoPorta(IDSoggetto idSoggetto,IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
@@ -239,12 +242,15 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.identificazioneContentBased(pd);
 	}
 	
-	public IDServizio getIDServizio(PortaDelegata pd,URLProtocolContext urlProtocolContext,
-			OpenSPCoop2Message message, SOAPEnvelope envelope,HeaderIntegrazione headerIntegrazione,boolean readFirstHeaderIntegrazione,
-			String soapAction,IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound,Exception { 
-		return this.configurazionePdDReader.getIDServizio(this.registroServiziManager, pd, urlProtocolContext, 
-				message, envelope, 
-				headerIntegrazione, readFirstHeaderIntegrazione, soapAction, protocolFactory);
+	public boolean identificazioneInputBased(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.identificazioneInputBased(pd);
+	}
+	
+	public String getAzione(PortaDelegata pd,URLProtocolContext urlProtocolContext,
+			OpenSPCoop2Message message, HeaderIntegrazione headerIntegrazione,boolean readFirstHeaderIntegrazione,
+			IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound, IdentificazioneDinamicaException { 
+		return this.configurazionePdDReader.getAzione(this.registroServiziManager, pd, urlProtocolContext, 
+				message, headerIntegrazione, readFirstHeaderIntegrazione, protocolFactory);
 	}
 	
 	public MTOMProcessorConfig getPD_MTOMProcessorForSender(PortaDelegata pd) throws DriverConfigurazioneException{
@@ -348,6 +354,21 @@ public class ConfigurazionePdDManager {
 	
 	public PortaApplicativa getPortaApplicativa_SafeMethod(IDPortaApplicativaByNome idPA)throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getPortaApplicativa_SafeMethod(this.getConnection(), idPA);
+	}
+	
+	public boolean identificazioneContentBased(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.identificazioneContentBased(pa);
+	}
+	
+	public boolean identificazioneInputBased(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.identificazioneInputBased(pa);
+	}
+	
+	public String getAzione(PortaApplicativa pa,URLProtocolContext urlProtocolContext,
+			OpenSPCoop2Message message, HeaderIntegrazione headerIntegrazione,boolean readFirstHeaderIntegrazione,
+			IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound, IdentificazioneDinamicaException { 
+		return this.configurazionePdDReader.getAzione(this.registroServiziManager, pa, urlProtocolContext, 
+				message, headerIntegrazione, readFirstHeaderIntegrazione, protocolFactory);
 	}
 	
 	public String[] getServiziApplicativi(PortaApplicativa pa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{

@@ -24,9 +24,8 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
-import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.message.constants.MessageRole;
 
 
 /**
@@ -40,26 +39,10 @@ import org.openspcoop2.protocol.sdk.Busta;
  */
 
 public class ConnettoreNULL extends ConnettoreBase {
-
-	/** Logger utilizzato per debug. */
-	private ConnettoreLogger logger = null;
 	
 	public final static String LOCATION = "openspcoop2://dev/null";
     
-	/** Proprieta' del connettore */
-	private java.util.Hashtable<String,String> properties;
 	
-	/** Proprieta' urlBased che deve gestire il connettore */
-	private java.util.Properties propertiesUrlBased;
-
-	/** Busta */
-	private Busta busta;
-	
-	/** Indicazione se siamo in modalita' debug */
-	private boolean debug = false;
-
-	/** Identificativo */
-	private String idMessaggio;
 
 
 	/* ********  METODI  ******** */
@@ -74,36 +57,10 @@ public class ConnettoreNULL extends ConnettoreBase {
 	@Override
 	public boolean send(ConnettoreMsg request){
 
-		if(request==null){
-			this.errore = "Messaggio da consegnare is Null (ConnettoreMsg)";
+		if(this.initialize(request, false)==false){
 			return false;
 		}
-		
-		// Raccolta parametri per costruttore logger
-		this.properties = request.getConnectorProperties();
-		if(this.properties == null)
-			this.errore = "Proprieta' del connettore non definite";
-//		if(this.properties.size() == 0)
-//			this.errore = "Proprieta' del connettore non definite";
-		// - Busta
-		this.busta = request.getBusta();
-		if(this.busta!=null)
-			this.idMessaggio=this.busta.getID();
-		// - Debug mode
-		if(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG)!=null){
-			if("true".equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG).trim()))
-				this.debug = true;
-		}
-	
-		// Logger
-		this.logger = new ConnettoreLogger(this.debug, this.idMessaggio, this.getPddContext());
-				
-		// Raccolta altri parametri
-		
-		// Context per invocazioni handler
-		this.outRequestContext = request.getOutRequestContext();
-		this.msgDiagnostico = request.getMsgDiagnostico();
-		this.propertiesUrlBased = request.getPropertiesUrlBased();
+
 		
 		this.codice = 200;
 		
@@ -155,7 +112,7 @@ public class ConnettoreNULL extends ConnettoreBase {
 		
 		try{
 					
-			this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(request.getRequestMessage().getVersioneSoap());
+			this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(request.getRequestMessage().getMessageType(),MessageRole.RESPONSE);
 			
 		}catch(Exception e){
 			this.eccezioneProcessamento = e;
@@ -171,15 +128,11 @@ public class ConnettoreNULL extends ConnettoreBase {
      * Ritorna l'informazione su dove il connettore sta spedendo il messaggio
      * 
      * @return location di inoltro del messaggio
+     * @throws ConnettoreException 
      */
     @Override
-	public String getLocation(){
-		if(this.propertiesUrlBased != null && this.propertiesUrlBased.size()>0){
-			return ConnettoreUtils.buildLocationWithURLBasedParameter(this.propertiesUrlBased, LOCATION);
-		}
-		else{
-			return LOCATION;
-		}
+	public String getLocation() throws ConnettoreException{
+		return ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, this.propertiesUrlBased, LOCATION);
     }
     
 }

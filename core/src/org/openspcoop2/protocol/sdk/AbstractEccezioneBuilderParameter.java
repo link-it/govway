@@ -27,9 +27,9 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.message.ParseException;
-import org.openspcoop2.message.SOAPFaultCode;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.exception.ParseException;
+import org.openspcoop2.message.soap.SOAPFaultCode;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
 import org.openspcoop2.utils.date.DateManager;
 
@@ -47,7 +47,7 @@ public abstract class AbstractEccezioneBuilderParameter {
 	private IDSoggetto mittente;
 	private IDServizio servizio;
 	private DettaglioEccezione dettaglioEccezionePdD;
-	private SOAPVersion versioneSoap;
+	private MessageType messageType;
 	private String idFunzione;
 	private String servizioApplicativo;
 	private TipoPdD tipoPorta;
@@ -102,11 +102,11 @@ public abstract class AbstractEccezioneBuilderParameter {
 	public void setDettaglioEccezionePdD(DettaglioEccezione dettaglioEccezionePdD) {
 		this.dettaglioEccezionePdD = dettaglioEccezionePdD;
 	}
-	public SOAPVersion getVersioneSoap() {
-		return this.versioneSoap;
+	public MessageType getMessageType() {
+		return this.messageType;
 	}
-	public void setVersioneSoap(SOAPVersion versioneSoap) {
-		this.versioneSoap = versioneSoap;
+	public void setMessageType(MessageType messageType) {
+		this.messageType = messageType;
 	}
 	public IDSoggetto getMittente() {
 		return this.mittente;

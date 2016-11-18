@@ -27,6 +27,8 @@ import javax.xml.soap.SOAPFault;
 
 import org.slf4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -68,14 +70,17 @@ public class ValidatoreErrori implements org.openspcoop2.protocol.sdk.validator.
 		
 		boolean eccezioneProcessamento = false;
 		try{
-			if(msg!=null && msg.getSOAPBody()!=null && msg.getSOAPBody().hasFault()){
-				SOAPFault soapFault = msg.getSOAPBody().getFault();
-				String faultS = soapFault.getFaultString();
-				if(faultS!=null)
-					faultS = faultS.trim();
-				
-				return (this.costanti.toString( MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO).equals(faultS))  || (this.costanti.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE).equals(faultS));
-				
+			if(msg!=null && ServiceBinding.SOAP.equals(msg.getServiceBinding())){
+				OpenSPCoop2SoapMessage soapMessage = msg.castAsSoap();
+				if(soapMessage.getSOAPBody()!=null && soapMessage.getSOAPBody().hasFault()){
+					SOAPFault soapFault = soapMessage.getSOAPBody().getFault();
+					String faultS = soapFault.getFaultString();
+					if(faultS!=null)
+						faultS = faultS.trim();
+					
+					return (this.costanti.toString( MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO).equals(faultS))  || (this.costanti.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE).equals(faultS));
+					
+				}
 			}
 		}catch(Exception e){
 			this.log.error("Errore durante l'analisi per comprendere se un msg e' una busta Errore: "+e.getMessage(),e);
@@ -113,14 +118,17 @@ public class ValidatoreErrori implements org.openspcoop2.protocol.sdk.validator.
 		
 		boolean eccezioneProcessamento = false;
 		try{
-			if(msg!=null && msg.getSOAPBody()!=null && msg.getSOAPBody().hasFault()){
-				SOAPFault soapFault = msg.getSOAPBody().getFault();
-				String faultS = soapFault.getFaultString();
-				if(faultS!=null)
-					faultS = faultS.trim();
-				
-				if( (this.costanti.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO).equals(faultS))  ){
-					eccezioneProcessamento = true;
+			if(msg!=null && ServiceBinding.SOAP.equals(msg.getServiceBinding())){
+				OpenSPCoop2SoapMessage soapMessage = msg.castAsSoap();
+				if(soapMessage.getSOAPBody()!=null && soapMessage.getSOAPBody().hasFault()){
+					SOAPFault soapFault = soapMessage.getSOAPBody().getFault();
+					String faultS = soapFault.getFaultString();
+					if(faultS!=null)
+						faultS = faultS.trim();
+					
+					if( (this.costanti.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO).equals(faultS))  ){
+						eccezioneProcessamento = true;
+					}
 				}
 			}
 		}catch(Exception e){
@@ -135,20 +143,22 @@ public class ValidatoreErrori implements org.openspcoop2.protocol.sdk.validator.
 		
 		boolean eccezioneProcessamento = false;
 		try{
-			if(msg!=null && msg.getSOAPBody()!=null && msg.getSOAPBody().hasFault()){
-				SOAPFault soapFault = msg.getSOAPBody().getFault();
-				String faultS = soapFault.getFaultString();
-				if(faultS!=null)
-					faultS = faultS.trim();
-				
-				if( (this.costanti.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE).equals(faultS))  ){
-					return true;
+			if(msg!=null && ServiceBinding.SOAP.equals(msg.getServiceBinding())){
+				OpenSPCoop2SoapMessage soapMessage = msg.castAsSoap();
+				if(soapMessage.getSOAPBody()!=null && soapMessage.getSOAPBody().hasFault()){
+					SOAPFault soapFault = soapMessage.getSOAPBody().getFault();
+					String faultS = soapFault.getFaultString();
+					if(faultS!=null)
+						faultS = faultS.trim();
+					
+					if( (this.costanti.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE).equals(faultS))  ){
+						return true;
+					}
+					
+					if( (this.costanti.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO).equals(faultS))  ){
+						eccezioneProcessamento = true;
+					}
 				}
-				
-				if( (this.costanti.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO).equals(faultS))  ){
-					eccezioneProcessamento = true;
-				}
-				
 			}
 		}catch(Exception e){
 			this.log.error("Errore durante l'analisi per comprendere se un msg e' una busta Errore: "+e.getMessage(),e);

@@ -43,10 +43,10 @@ import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
-import org.openspcoop2.message.MailcapActivationReader;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory_impl;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
@@ -74,6 +74,8 @@ import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.services.core.RicezioneBuste;
+import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
 import org.openspcoop2.pdd.services.skeleton.IntegrationManager;
 import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativiThread;
 import org.openspcoop2.pdd.timers.TimerGestoreBusteNonRiscontrate;
@@ -85,8 +87,10 @@ import org.openspcoop2.pdd.timers.TimerGestoreRepositoryBuste;
 import org.openspcoop2.pdd.timers.TimerGestoreRepositoryBusteThread;
 import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorse;
 import org.openspcoop2.pdd.timers.TimerThreshold;
+import org.openspcoop2.pdd.timers.TimerUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.driver.repository.IGestoreRepository;
+import org.openspcoop2.protocol.manifest.constants.ServiceBinding;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
@@ -98,6 +102,7 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
@@ -445,7 +450,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						propertiesReader.getItemLifeSecondCacheMessageSecurityKeystore(), propertiesReader.getDimensioneCacheMessageSecurityKeystore());
 				
 				// XML
-				org.openspcoop2.message.XMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
+				org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 				// XML - XERCES
 				xmlUtils.initDocumentBuilderFactory();
 				xmlUtils.initDatatypeFactory();
@@ -468,8 +473,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				// stampo comunque saaj factory
 				OpenSPCoop2Startup.log.info("OpenSPCoop MessageFactory (open:"+OpenSPCoop2MessageFactory_impl.class.getName().equals(factory.getClass().getName())+"): "+factory.getClass().getName());
 				if(propertiesReader.isPrintInfoFactory()){
-					OpenSPCoop2Startup.log.info("OpenSPCoop Message: "+factory.createEmptySOAPMessage(SOAPVersion.SOAP11).getClass().getName());
-					OpenSPCoop2Startup.log.info("OpenSPCoop Message: "+factory.createEmptySOAPMessage(SOAPVersion.SOAP12).getClass().getName());
+					MessageType [] mt = MessageType.values();
+					for (int i = 0; i < mt.length; i++) {
+						OpenSPCoop2Startup.log.info("OpenSPCoop Message ["+mt[i].name()+"]: "+factory.createEmptyMessage(mt[i],MessageRole.NONE).getClass().getName());	
+					}
 					if( OpenSPCoop2MessageFactory.getMessageFactory().getSoapFactory11()!=null)
 						OpenSPCoop2Startup.log.info("SOAP1.1 Factory: "+ OpenSPCoop2MessageFactory.getMessageFactory().getSoapFactory11().getClass().getName());
 					else
@@ -499,9 +506,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					OpenSPCoop2Startup.log.info("MessageSecurity Keystore Cache enabled["+propertiesReader.isAbilitataCacheMessageSecurityKeystore()+"] itemLifeSecond["+
 							propertiesReader.getItemLifeSecondCacheMessageSecurityKeystore()+"] size["+
 							propertiesReader.getDimensioneCacheMessageSecurityKeystore()+"]");
-					OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) EncryptedDataHeaderBlock: "+factory.createEmptySOAPMessage(SOAPVersion.SOAP11).getEncryptedDataHeaderBlockClass());
-					OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) ProcessPartialEncryptedMessage: "+factory.createEmptySOAPMessage(SOAPVersion.SOAP11).getProcessPartialEncryptedMessageClass());
-					OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) getSignPartialMessageProcessor: "+factory.createEmptySOAPMessage(SOAPVersion.SOAP11).getSignPartialMessageProcessorClass());
+					OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) EncryptedDataHeaderBlock: "+factory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().getEncryptedDataHeaderBlockClass());
+					OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) ProcessPartialEncryptedMessage: "+factory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().getProcessPartialEncryptedMessageClass());
+					OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) getSignPartialMessageProcessor: "+factory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().getSignPartialMessageProcessorClass());
 				}
 			} catch(Exception e) {
 				this.logError("Inizializzazione Message/DOM/SOAP: "+e.getMessage(), e);
@@ -1028,12 +1035,18 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			// Registro dei Servizi
 			try{
 				RegistroServiziManager.getInstance().validazioneSemantica(true, propertiesReader.isValidazioneSemanticaRegistroServiziCheckURI(), 
-						protocolFactoryManager.getSubjectTypesAsArray(),protocolFactoryManager.getServiceTypesAsArray(),classNameReader.getConnettore(),
+						protocolFactoryManager.getOrganizationTypesAsArray(),
+						protocolFactoryManager.getServiceTypesAsArray(ServiceBinding.SOAP),
+						protocolFactoryManager.getServiceTypesAsArray(ServiceBinding.REST),
+						classNameReader.getConnettore(),
 						propertiesReader.isValidazioneSemanticaRegistroServiziStartupXML(),
 						propertiesReader.isValidazioneSemanticaRegistroServiziStartup(),OpenSPCoop2Startup.log);		
 				if(propertiesReader.isValidazioneSemanticaRegistroServiziStartupXML()){
 					RegistroServiziManager.getInstance().setValidazioneSemanticaModificaRegistroServiziXML(propertiesReader.isValidazioneSemanticaRegistroServiziCheckURI(), 
-							protocolFactoryManager.getSubjectTypesAsArray(),protocolFactoryManager.getServiceTypesAsArray(),classNameReader.getConnettore());
+							protocolFactoryManager.getOrganizationTypesAsArray(),
+							protocolFactoryManager.getServiceTypesAsArray(ServiceBinding.SOAP),
+							protocolFactoryManager.getServiceTypesAsArray(ServiceBinding.REST),
+							classNameReader.getConnettore());
 				}
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"Validazione semantica del registro dei servizi");
@@ -1425,7 +1438,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				if(propertiesReader.isTimerGestoreRiscontriRicevuteAbilitato()){
 					if(gestoreBusteNonRiscontrate){
 						try{
-							OpenSPCoop2Startup.this.timerRiscontri = ServicesUtils.createTimerGestoreBusteNonRiscontrate();
+							OpenSPCoop2Startup.this.timerRiscontri = TimerUtils.createTimerGestoreBusteNonRiscontrate();
 						}catch(Exception e){
 							msgDiag.logStartupError(e,"Creazione timer '"+TimerGestoreBusteNonRiscontrate.ID_MODULO+"'");
 						}
@@ -1462,7 +1475,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				if(OpenSPCoop2Startup.this.serverJ2EE){
 					if(gestoreMessaggi){
 						try{
-							OpenSPCoop2Startup.this.timerEliminazioneMsg = ServicesUtils.createTimerGestoreMessaggi();
+							OpenSPCoop2Startup.this.timerEliminazioneMsg = TimerUtils.createTimerGestoreMessaggi();
 						}catch(Exception e){
 							msgDiag.logStartupError(e,"Creazione timer '"+TimerGestoreMessaggi.ID_MODULO+"'");
 						}
@@ -1506,7 +1519,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				if(OpenSPCoop2Startup.this.serverJ2EE){
 					if(gestorePuliziaMessaggiAnomali){
 						try{
-							OpenSPCoop2Startup.this.timerPuliziaMsgAnomali = ServicesUtils.createTimerGestorePuliziaMessaggiAnomali();
+							OpenSPCoop2Startup.this.timerPuliziaMsgAnomali = TimerUtils.createTimerGestorePuliziaMessaggiAnomali();
 						}catch(Exception e){
 							msgDiag.logStartupError(e,"Creazione timer '"+TimerGestorePuliziaMessaggiAnomali.ID_MODULO+"'");
 						}
@@ -1548,7 +1561,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				if(OpenSPCoop2Startup.this.serverJ2EE){
 					if(gestoreRepository){
 						try{
-							OpenSPCoop2Startup.this.timerRepositoryBuste = ServicesUtils.createTimerGestoreRepositoryBuste();
+							OpenSPCoop2Startup.this.timerRepositoryBuste = TimerUtils.createTimerGestoreRepositoryBuste();
 						}catch(Exception e){
 							msgDiag.logStartupError(e,"Creazione timer '"+TimerGestoreRepositoryBuste.ID_MODULO+"'");
 						}

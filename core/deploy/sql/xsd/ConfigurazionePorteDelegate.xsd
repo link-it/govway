@@ -50,8 +50,10 @@
                             <linkit:sql-table-fk-reference-column name="id"/>
                         </linkit:sql-table-foreign-key>
                         <linkit:sql-table-unique create-index="true">
-                            <linkit:sql-table-unique-field name="id_soggetto"/>
                             <linkit:sql-table-unique-field name="nome_porta"/>
+                        </linkit:sql-table-unique>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-field name="location"/>
                         </linkit:sql-table-unique>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
@@ -124,26 +126,6 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="mode_soggetto_erogatore" type="xsd:string" minOccurs="0">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="mode_soggetto_erogatore"/>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="pattern_soggetto_erogatore" type="xsd:string" minOccurs="0">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="pattern_soggetto_erogatore"/>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
                 <xsd:element name="id_servizio" type="xsd:long" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
@@ -174,26 +156,6 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome_servizio"/>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="mode_servizio" type="xsd:string" minOccurs="0">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="mode_servizio"/>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="pattern_servizio" type="xsd:string" minOccurs="0">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="pattern_servizio"/>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

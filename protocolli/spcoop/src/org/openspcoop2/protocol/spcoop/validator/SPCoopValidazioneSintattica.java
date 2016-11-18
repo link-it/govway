@@ -38,15 +38,17 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
-import javax.xml.soap.SOAPMessage;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.message.Costanti;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.SOAPVersion;
-import org.openspcoop2.message.SoapUtils;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.Costanti;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -86,8 +88,8 @@ import org.w3c.dom.Node;
 public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 
 	/** Messaggio. */
-	private SOAPMessage msg;
-	public void setMsg(SOAPMessage msg) {
+	private OpenSPCoop2SoapMessage msg;
+	public void setMsg(OpenSPCoop2SoapMessage msg) {
 		this.msg = msg;
 	}
 	/** HeaderSOAP */
@@ -152,7 +154,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 			this.erroriValidazione = new java.util.Vector<Eccezione>();
 		
 		this.tipiSoggetti = this.protocolFactory.createProtocolConfiguration().getTipiSoggetti();
-		this.tipiServizi = this.protocolFactory.createProtocolConfiguration().getTipiServizi();
+		this.tipiServizi = this.protocolFactory.createProtocolConfiguration().getTipiServizi(ServiceBinding.SOAP);
 		
 		this.traduttore = this.protocolFactory.createTraduttore();
 		
@@ -160,7 +162,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 	}
 
 
-	public SOAPHeaderElement getHeaderEGov(SOAPMessage aMsg, boolean readQualifiedAttribute) throws ProtocolException{
+	public SOAPHeaderElement getHeaderEGov(OpenSPCoop2SoapMessage aMsg, boolean readQualifiedAttribute) throws ProtocolException{
 		this.msg = aMsg;
 		this.readQualifiedAttribute = readQualifiedAttribute;
 		return getHeaderEGov();
@@ -270,7 +272,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 	 * @return return true in caso di validazione sintattica riuscita (con o senza anomalie), false in caso di errori di processamento.
 	 * 
 	 */
-	public boolean valida(){
+	public boolean valida(boolean localizzaSolamenteDatiIdentificativiMinimi){
 
 		try{
 
@@ -415,43 +417,47 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 				}
 				//else if((child.getNodeName().equals(xmlns+"ProfiloCollaborazione"))){
 				else if(SoapUtils.matchLocalName(child, "ProfiloCollaborazione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
-					if(profiloCollaborazioneGiaTrovato==false){
-						validazioneProfiloCollaborazione(child,xmlns);
-						profiloCollaborazioneGiaTrovato = true;
-					}else{
-						if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
-							throw new StrutturaBustaException("Header egov con più di un elemento ProfiloCollaborazione","ProfiloCollaborazione");
+					if(localizzaSolamenteDatiIdentificativiMinimi==false){
+						if(profiloCollaborazioneGiaTrovato==false){
+							validazioneProfiloCollaborazione(child,xmlns);
+							profiloCollaborazioneGiaTrovato = true;
 						}else{
-							Eccezione ecc = new Eccezione();
-							ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
-							ecc.setCodiceEccezione(CodiceErroreCooperazione.PROFILO_COLLABORAZIONE_PRESENTE_PIU_VOLTE);
-							ecc.setRilevanza(LivelloRilevanza.ERROR);
-							if(this.segnalazioneElementoPresentePiuVolte)
-								ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_PROFILO_COLLABORAZIONE_SCONOSCIUTO_POSIZIONE+" "+CostantiProtocollo.ECCEZIONE_ELEMENTO_PRESENTE_PIU_VOLTE);
-							else
-								ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_PROFILO_COLLABORAZIONE_SCONOSCIUTO_POSIZIONE.toString());
-							this.erroriValidazione.add(ecc);
+							if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
+								throw new StrutturaBustaException("Header egov con più di un elemento ProfiloCollaborazione","ProfiloCollaborazione");
+							}else{
+								Eccezione ecc = new Eccezione();
+								ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
+								ecc.setCodiceEccezione(CodiceErroreCooperazione.PROFILO_COLLABORAZIONE_PRESENTE_PIU_VOLTE);
+								ecc.setRilevanza(LivelloRilevanza.ERROR);
+								if(this.segnalazioneElementoPresentePiuVolte)
+									ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_PROFILO_COLLABORAZIONE_SCONOSCIUTO_POSIZIONE+" "+CostantiProtocollo.ECCEZIONE_ELEMENTO_PRESENTE_PIU_VOLTE);
+								else
+									ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_PROFILO_COLLABORAZIONE_SCONOSCIUTO_POSIZIONE.toString());
+								this.erroriValidazione.add(ecc);
+							}
 						}
 					}
 				}
 				//else if((child.getNodeName().equals(xmlns+"Collaborazione"))){
 				else if(SoapUtils.matchLocalName(child, "Collaborazione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
-					if(collaborazioneGiaTrovato==false){
-						validazioneCollaborazione(child);
-						collaborazioneGiaTrovato = true;
-					}else{
-						if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
-							throw new StrutturaBustaException("Header egov con più di un elemento Collaborazione","Collaborazione");
+					if(localizzaSolamenteDatiIdentificativiMinimi==false){
+						if(collaborazioneGiaTrovato==false){
+							validazioneCollaborazione(child);
+							collaborazioneGiaTrovato = true;
 						}else{
-							Eccezione ecc = new Eccezione();
-							ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
-							ecc.setCodiceEccezione(CodiceErroreCooperazione.COLLABORAZIONE_PRESENTE_PIU_VOLTE);
-							ecc.setRilevanza(LivelloRilevanza.ERROR);
-							if(this.segnalazioneElementoPresentePiuVolte)
-								ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_COLLABORAZIONE_SCONOSCIUTA_POSIZIONE+" "+CostantiProtocollo.ECCEZIONE_ELEMENTO_PRESENTE_PIU_VOLTE);
-							else
-								ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_COLLABORAZIONE_SCONOSCIUTA_POSIZIONE.toString());
-							this.erroriValidazione.add(ecc);
+							if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
+								throw new StrutturaBustaException("Header egov con più di un elemento Collaborazione","Collaborazione");
+							}else{
+								Eccezione ecc = new Eccezione();
+								ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
+								ecc.setCodiceEccezione(CodiceErroreCooperazione.COLLABORAZIONE_PRESENTE_PIU_VOLTE);
+								ecc.setRilevanza(LivelloRilevanza.ERROR);
+								if(this.segnalazioneElementoPresentePiuVolte)
+									ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_COLLABORAZIONE_SCONOSCIUTA_POSIZIONE+" "+CostantiProtocollo.ECCEZIONE_ELEMENTO_PRESENTE_PIU_VOLTE);
+								else
+									ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_COLLABORAZIONE_SCONOSCIUTA_POSIZIONE.toString());
+								this.erroriValidazione.add(ecc);
+							}
 						}
 					}
 				}
@@ -499,64 +505,70 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 				}
 				//else if((child.getNodeName().equals(xmlns+"Messaggio"))){
 				else if(SoapUtils.matchLocalName(child, "Messaggio", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
-					if(messaggioGiaTrovato==false){
-						validazioneMessaggio(child,xmlns);
-						messaggioGiaTrovato = true;
-					}else{
-						if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
-							throw new StrutturaBustaException("Header egov con più di un elemento Messaggio","Messaggio");
+					if(localizzaSolamenteDatiIdentificativiMinimi==false){
+						if(messaggioGiaTrovato==false){
+							validazioneMessaggio(child,xmlns);
+							messaggioGiaTrovato = true;
 						}else{
-							Eccezione ecc = new Eccezione();
-							ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
-							ecc.setCodiceEccezione(CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_CORRETTO);
-							ecc.setRilevanza(LivelloRilevanza.ERROR);
-							if(this.segnalazioneElementoPresentePiuVolte)
-								ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_FORMATO_INTESTAZIONE_NON_CORRETTO_POSIZIONE_MESSAGGIO+" "+CostantiProtocollo.ECCEZIONE_ELEMENTO_PRESENTE_PIU_VOLTE);
-							else
-								ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_FORMATO_INTESTAZIONE_NON_CORRETTO_POSIZIONE_MESSAGGIO.toString());
-							this.erroriValidazione.add(ecc);
+							if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
+								throw new StrutturaBustaException("Header egov con più di un elemento Messaggio","Messaggio");
+							}else{
+								Eccezione ecc = new Eccezione();
+								ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
+								ecc.setCodiceEccezione(CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_CORRETTO);
+								ecc.setRilevanza(LivelloRilevanza.ERROR);
+								if(this.segnalazioneElementoPresentePiuVolte)
+									ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_FORMATO_INTESTAZIONE_NON_CORRETTO_POSIZIONE_MESSAGGIO+" "+CostantiProtocollo.ECCEZIONE_ELEMENTO_PRESENTE_PIU_VOLTE);
+								else
+									ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_FORMATO_INTESTAZIONE_NON_CORRETTO_POSIZIONE_MESSAGGIO.toString());
+								this.erroriValidazione.add(ecc);
+							}
 						}
 					}
 				}
 				//else if((child.getNodeName().equals(xmlns+"ProfiloTrasmissione"))){
 				else if(SoapUtils.matchLocalName(child, "ProfiloTrasmissione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
-					if(profiloTrasmissioneGiaTrovato==false){
-						validazioneProfiloTrasmissione(child,xmlns);
-						profiloTrasmissioneGiaTrovato = true;
-					}else{
-						if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
-							throw new StrutturaBustaException("Header egov con più di un elemento ProfiloTrasmissione","ProfiloTrasmissione");
+					if(localizzaSolamenteDatiIdentificativiMinimi==false){
+						if(profiloTrasmissioneGiaTrovato==false){
+							validazioneProfiloTrasmissione(child,xmlns);
+							profiloTrasmissioneGiaTrovato = true;
 						}else{
-							Eccezione ecc = new Eccezione();
-							ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
-							ecc.setCodiceEccezione(CodiceErroreCooperazione.PROFILO_TRASMISSIONE_PRESENTE_PIU_VOLTE);
-							ecc.setRilevanza(LivelloRilevanza.ERROR);
-							if(this.segnalazioneElementoPresentePiuVolte)
-								ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_PROFILO_TRASMISSIONE_NON_VALIDO_POSIZIONE+" "+CostantiProtocollo.ECCEZIONE_ELEMENTO_PRESENTE_PIU_VOLTE);
-							else
-								ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_PROFILO_TRASMISSIONE_NON_VALIDO_POSIZIONE.toString());
-							this.erroriValidazione.add(ecc);
+							if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
+								throw new StrutturaBustaException("Header egov con più di un elemento ProfiloTrasmissione","ProfiloTrasmissione");
+							}else{
+								Eccezione ecc = new Eccezione();
+								ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
+								ecc.setCodiceEccezione(CodiceErroreCooperazione.PROFILO_TRASMISSIONE_PRESENTE_PIU_VOLTE);
+								ecc.setRilevanza(LivelloRilevanza.ERROR);
+								if(this.segnalazioneElementoPresentePiuVolte)
+									ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_PROFILO_TRASMISSIONE_NON_VALIDO_POSIZIONE+" "+CostantiProtocollo.ECCEZIONE_ELEMENTO_PRESENTE_PIU_VOLTE);
+								else
+									ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_PROFILO_TRASMISSIONE_NON_VALIDO_POSIZIONE.toString());
+								this.erroriValidazione.add(ecc);
+							}
 						}
 					}
 				}
 				//else if((child.getNodeName().equals(xmlns+"Sequenza"))){
 				else if(SoapUtils.matchLocalName(child, "Sequenza", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
-					if(sequenzaGiaTrovato==false){
-						validazioneSequenza(child,xmlns);
-						sequenzaGiaTrovato = true;
-					}else{
-						if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
-							throw new StrutturaBustaException("Header egov con più di un elemento Sequenza","Sequenza");
+					if(localizzaSolamenteDatiIdentificativiMinimi==false){
+						if(sequenzaGiaTrovato==false){
+							validazioneSequenza(child,xmlns);
+							sequenzaGiaTrovato = true;
 						}else{
-							Eccezione ecc = new Eccezione();
-							ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
-							ecc.setCodiceEccezione(CodiceErroreCooperazione.CONSEGNA_IN_ORDINE_PRESENTE_PIU_VOLTE);
-							ecc.setRilevanza(LivelloRilevanza.ERROR);
-							if(this.segnalazioneElementoPresentePiuVolte)
-								ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_SEQUENZA_NON_VALIDA_POSIZIONE+" "+CostantiProtocollo.ECCEZIONE_ELEMENTO_PRESENTE_PIU_VOLTE);
-							else
-								ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_SEQUENZA_NON_VALIDA_POSIZIONE.toString());
-							this.erroriValidazione.add(ecc);
+							if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
+								throw new StrutturaBustaException("Header egov con più di un elemento Sequenza","Sequenza");
+							}else{
+								Eccezione ecc = new Eccezione();
+								ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
+								ecc.setCodiceEccezione(CodiceErroreCooperazione.CONSEGNA_IN_ORDINE_PRESENTE_PIU_VOLTE);
+								ecc.setRilevanza(LivelloRilevanza.ERROR);
+								if(this.segnalazioneElementoPresentePiuVolte)
+									ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_SEQUENZA_NON_VALIDA_POSIZIONE+" "+CostantiProtocollo.ECCEZIONE_ELEMENTO_PRESENTE_PIU_VOLTE);
+								else
+									ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_SEQUENZA_NON_VALIDA_POSIZIONE.toString());
+								this.erroriValidazione.add(ecc);
+							}
 						}
 					}
 				}else{
@@ -569,6 +581,10 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 				}
 			}
 
+			if(localizzaSolamenteDatiIdentificativiMinimi){
+				// una volta letto il messaggio, anche minimo, e' possibile utilizzarlo.
+				return true;
+			}
 			
 			// Controllo scadenza messaggio rispetto ora registrazione
 			if(this.spcoopProperties.isRepositoryBusteFiltraBusteScaduteRispettoOraRegistrazione() && (this.messaggioScaduto==false)){
@@ -863,7 +879,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 				// header egov non trovato
 				String msgHeader = "";
 				try{
-					msgHeader = " header-soap: "+OpenSPCoop2MessageFactory.getMessageFactory().createEmptySOAPMessage(SOAPVersion.SOAP11).getAsString(header, false);
+					msgHeader = " header-soap: "+OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).getAsString(header, false);
 				}catch(Exception e){}
 				throw new Exception("Header eGov non presente ("+bf.toString()+")"+msgHeader);
 			}
@@ -1434,8 +1450,8 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 	 * 
 	 * @return true se l'header esiste, false altrimenti
 	 */
-	public boolean existsHeaderEGov(OpenSPCoop2Message msg){
-		this.msg = (SOAPMessage) msg;
+	public boolean existsHeaderEGov(OpenSPCoop2SoapMessage msg){
+		this.msg = msg;
 		try{
 			if(this.headerEGov!=null){
 				return true;
@@ -3608,9 +3624,11 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 	 * @param body SOAPBody contenente il SOAPFault.
 	 * 
 	 */
-	public void validazioneFaultEGov(SOAPBody body){
+	public void validazioneFaultEGov(OpenSPCoop2Message msg){
 
 		try{
+			SOAPBody body = msg.castAsSoap().getSOAPBody();
+			
 			//Traduttore trasl = this.protocolFactory.createTraduttore();
 
 			//log.info("VALIDAZIONE FAULT");
@@ -3715,10 +3733,12 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 	 * @param msg SOAPMessage contenente il Manifest.
 	 * 
 	 */
-	public void validazioneManifestAttachmentsEGov(OpenSPCoop2Message msg,ProprietaManifestAttachments proprietaManifestAttachments){
+	public void validazioneManifestAttachmentsEGov(OpenSPCoop2Message msgParam,ProprietaManifestAttachments proprietaManifestAttachments){
 		//log.info("VALIDAZIONE MANIFEST");
 		SOAPBody soapBody = null;
 		try{
+			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
+			
 			java.util.Vector<String> contentID = new java.util.Vector<String>();
 			java.util.Vector<String> contentLocation = new java.util.Vector<String>();
 			java.util.Iterator<?> it = msg.getAttachments();
@@ -4458,8 +4478,12 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 
 	@Override
 	public ValidazioneSintatticaResult validaRichiesta(IState state, OpenSPCoop2Message msg,  Busta datiBustaLettiURLMappingProperties, ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException{
-		this.msg = (SOAPMessage) msg;
-		boolean isValido = this.valida();
+		try{
+			this.msg = msg.castAsSoap();
+		}catch(Exception e){
+			throw new ProtocolException(e.getMessage(),e);
+		}
+		boolean isValido = this.valida(false);
 		ErroreCooperazione errore = null;
 		if(this.msgErrore!=null && this.codiceErrore!=null){
 			errore = new ErroreCooperazione(this.msgErrore, this.codiceErrore);
@@ -4470,8 +4494,12 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 	
 	@Override
 	public ValidazioneSintatticaResult validaRisposta(IState state, OpenSPCoop2Message msg, Busta bustaRichiesta, ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException{
-		this.msg = (SOAPMessage) msg;
-		boolean isValido = this.valida();
+		try{
+			this.msg = msg.castAsSoap();
+		}catch(Exception e){
+			throw new ProtocolException(e.getMessage(),e);
+		}
+		boolean isValido = this.valida(false);
 		ErroreCooperazione errore = null;
 		if(this.msgErrore!=null && this.codiceErrore!=null){
 			errore = new ErroreCooperazione(this.msgErrore, this.codiceErrore);
@@ -4483,7 +4511,13 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 	@Override
 	public boolean verifyProtocolPresence(TipoPdD tipoPdD, ProfiloDiCollaborazione profilo, boolean isRichiesta,
 			OpenSPCoop2Message msg) throws ProtocolException{
-		return this.existsHeaderEGov(msg);
+		OpenSPCoop2SoapMessage soap = null;
+		try{
+			soap = msg.castAsSoap();
+		}catch(Exception e){
+			throw new ProtocolException(e.getMessage(),e);
+		}
+		return this.existsHeaderEGov(soap);
 	}
 
 	@Override
@@ -4502,13 +4536,32 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 	@Override
 	public SOAPHeaderElement getHeaderProtocollo_senzaControlli(
 			OpenSPCoop2Message msg) throws ProtocolException {
-		this.msg = (SOAPMessage) msg;
+		try{
+			this.msg = msg.castAsSoap();
+		}catch(Exception e){
+			throw new ProtocolException(e.getMessage(),e);
+		}
 		return this.getHeaderEGov_senzaControlli();
+	}
+	
+	@Override
+	public Busta getBustaProtocollo_senzaControlli(OpenSPCoop2Message msg) throws ProtocolException{
+		try{
+			this.msg = msg.castAsSoap();
+		}catch(Exception e){
+			throw new ProtocolException(e.getMessage(),e);
+		}
+		if(this.valida(true)){
+			return this.busta;
+		}
+		else{
+			return this.bustaErroreHeaderIntestazione;
+		}
 	}
 
 	@Override
-	public ValidazioneSintatticaResult validazioneFault(SOAPBody body) {
-		this.validazioneFaultEGov(body);
+	public ValidazioneSintatticaResult validazioneFault(OpenSPCoop2Message msg) {
+		this.validazioneFaultEGov(msg);
 		ErroreCooperazione errore = null;
 		if(this.msgErrore!=null && this.codiceErrore!=null){
 			errore = new ErroreCooperazione(this.msgErrore, this.codiceErrore);

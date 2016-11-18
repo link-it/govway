@@ -28,7 +28,10 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
  * <pre>
  * &lt;complexType name="porta-applicativa-azione">
  *     &lt;sequence>
+ *         &lt;element name="identificazione" type="{http://www.openspcoop2.org/core/config}PortaApplicativaAzioneIdentificazione" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="pattern" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="force-wsdl-based" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  *     &lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -39,6 +42,8 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
 import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
+import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 
 /**     
  * PortaApplicativaAzione
@@ -50,12 +55,40 @@ import javax.xml.bind.annotation.XmlElement;
 
 @javax.xml.bind.annotation.XmlAccessorType(javax.xml.bind.annotation.XmlAccessType.FIELD)
 @javax.xml.bind.annotation.XmlType(name = "porta-applicativa-azione", namespace="http://www.openspcoop2.org/core/config/management", propOrder = {
-    "nome"
+    "identificazione",
+    "pattern",
+    "nome",
+    "forceWsdlBased"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "porta-applicativa-azione")
 public class PortaApplicativaAzione extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
+	
+	@XmlElement(name="identificazione",required=false,nillable=false)
+	private PortaApplicativaAzioneIdentificazione identificazione;
+	
+	public void setIdentificazione(PortaApplicativaAzioneIdentificazione identificazione){
+		this.identificazione = identificazione;
+	}
+	
+	public PortaApplicativaAzioneIdentificazione getIdentificazione(){
+		return this.identificazione;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="pattern",required=false,nillable=false)
+	private String pattern;
+	
+	public void setPattern(String pattern){
+		this.pattern = pattern;
+	}
+	
+	public String getPattern(){
+		return this.pattern;
+	}
+	
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="nome",required=false,nillable=false)
@@ -67,6 +100,18 @@ public class PortaApplicativaAzione extends org.openspcoop2.utils.beans.BaseBean
 	
 	public String getNome(){
 		return this.nome;
+	}
+	
+	
+	@XmlElement(name="force-wsdl-based",required=false,nillable=false)
+	private StatoFunzionalita forceWsdlBased;
+	
+	public void setForceWsdlBased(StatoFunzionalita forceWsdlBased){
+		this.forceWsdlBased = forceWsdlBased;
+	}
+	
+	public StatoFunzionalita getForceWsdlBased(){
+		return this.forceWsdlBased;
 	}
 	
 	

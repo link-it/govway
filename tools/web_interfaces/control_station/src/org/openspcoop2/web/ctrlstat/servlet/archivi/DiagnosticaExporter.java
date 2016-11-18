@@ -52,8 +52,8 @@ import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiNotFoundExce
 import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnosticiConPaginazione;
 import org.openspcoop2.protocol.sdk.diagnostica.InformazioniProtocollo;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
-import org.openspcoop2.utils.resources.HttpUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.ServletUtils;

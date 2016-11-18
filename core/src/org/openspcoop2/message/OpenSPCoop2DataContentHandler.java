@@ -35,6 +35,7 @@ import javax.activation.DataSource;
 
 import org.apache.soap.encoding.soapenc.Base64;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 
 
 /**
@@ -114,7 +115,7 @@ public class OpenSPCoop2DataContentHandler implements DataContentHandler{
 		try
 		{
 			adataflavor[0] = new ActivationDataFlavor(Loader.getInstance().forName("org.openspcoop2.message.OpenSPCoop2DataContentHandler"), 
-					Costanti.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP, "OpenSPCoop2AttachmentsTunnel");
+					HttpConstants.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP, "OpenSPCoop2AttachmentsTunnel");
 		}
 		catch(Exception exception) { }
 		return adataflavor;

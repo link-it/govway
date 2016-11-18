@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.openspcoop2.core.config.constants.PortaDelegataServizioIdentificazione;
 import java.io.Serializable;
 
 
@@ -36,10 +35,8 @@ import java.io.Serializable;
  * 
  * <pre>
  * &lt;complexType name="porta-delegata-servizio">
- * 		&lt;attribute name="identificazione" type="{http://www.openspcoop2.org/core/config}PortaDelegataServizioIdentificazione" use="optional" default="static"/>
- * 		&lt;attribute name="pattern" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -72,34 +69,6 @@ public class PortaDelegataServizio extends org.openspcoop2.utils.beans.BaseBean 
 		this.id=new Long(-1);
   }
 
-  public void set_value_identificazione(String value) {
-    this.identificazione = (PortaDelegataServizioIdentificazione) PortaDelegataServizioIdentificazione.toEnumConstantFromString(value);
-  }
-
-  public String get_value_identificazione() {
-    if(this.identificazione == null){
-    	return null;
-    }else{
-    	return this.identificazione.toString();
-    }
-  }
-
-  public org.openspcoop2.core.config.constants.PortaDelegataServizioIdentificazione getIdentificazione() {
-    return this.identificazione;
-  }
-
-  public void setIdentificazione(org.openspcoop2.core.config.constants.PortaDelegataServizioIdentificazione identificazione) {
-    this.identificazione = identificazione;
-  }
-
-  public java.lang.String getPattern() {
-    return this.pattern;
-  }
-
-  public void setPattern(java.lang.String pattern) {
-    this.pattern = pattern;
-  }
-
   public java.lang.String getTipo() {
     return this.tipo;
   }
@@ -123,22 +92,12 @@ public class PortaDelegataServizio extends org.openspcoop2.utils.beans.BaseBean 
 
 
 
-  @XmlTransient
-  protected java.lang.String _value_identificazione;
-
-  @XmlAttribute(name="identificazione",required=false)
-  protected PortaDelegataServizioIdentificazione identificazione = (PortaDelegataServizioIdentificazione) PortaDelegataServizioIdentificazione.toEnumConstantFromString("static");
-
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlAttribute(name="pattern",required=false)
-  protected java.lang.String pattern;
-
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="tipo",required=true)
   protected java.lang.String tipo;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlAttribute(name="nome",required=false)
+  @XmlAttribute(name="nome",required=true)
   protected java.lang.String nome;
 
 }

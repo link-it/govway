@@ -32,6 +32,7 @@ package org.openspcoop2.core.registry.ws.server.filter;
  *         &lt;element name="servizio-composto" type="{http://www.openspcoop2.org/core/registry/management}accordo-servizio-parte-comune-servizio-composto" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="stato-package" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="privato" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="service-binding" type="{http://www.openspcoop2.org/core/registry}ServiceBinding" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
@@ -53,6 +54,7 @@ import javax.xml.bind.annotation.XmlElement;
 import java.util.Date;
 import org.openspcoop2.core.registry.ws.server.filter.beans.IdSoggetto;
 import org.openspcoop2.core.registry.ws.server.filter.beans.AccordoServizioParteComuneServizioComposto;
+import org.openspcoop2.core.registry.constants.ServiceBinding;
 
 /**     
  * SearchFilterAccordoServizioParteComune
@@ -68,6 +70,7 @@ import org.openspcoop2.core.registry.ws.server.filter.beans.AccordoServizioParte
     "servizioComposto",
     "statoPackage",
     "privato",
+    "serviceBinding",
     "nome",
     "descrizione",
     "oraRegistrazioneMin",
@@ -129,6 +132,18 @@ public class SearchFilterAccordoServizioParteComune extends org.openspcoop2.util
 	
 	public java.lang.Boolean getPrivato(){
 		return this.privato;
+	}
+	
+	
+	@XmlElement(name="service-binding",required=false,nillable=false)
+	private ServiceBinding serviceBinding;
+	
+	public void setServiceBinding(ServiceBinding serviceBinding){
+		this.serviceBinding = serviceBinding;
+	}
+	
+	public ServiceBinding getServiceBinding(){
+		return this.serviceBinding;
 	}
 	
 	

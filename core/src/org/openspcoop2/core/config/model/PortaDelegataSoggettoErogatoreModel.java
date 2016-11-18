@@ -41,8 +41,6 @@ public class PortaDelegataSoggettoErogatoreModel extends AbstractModel<PortaDele
 	
 		super();
 	
-		this.IDENTIFICAZIONE = new Field("identificazione",java.lang.String.class,"porta-delegata-soggetto-erogatore",PortaDelegataSoggettoErogatore.class);
-		this.PATTERN = new Field("pattern",java.lang.String.class,"porta-delegata-soggetto-erogatore",PortaDelegataSoggettoErogatore.class);
 		this.TIPO = new Field("tipo",java.lang.String.class,"porta-delegata-soggetto-erogatore",PortaDelegataSoggettoErogatore.class);
 		this.NOME = new Field("nome",java.lang.String.class,"porta-delegata-soggetto-erogatore",PortaDelegataSoggettoErogatore.class);
 	
@@ -52,8 +50,6 @@ public class PortaDelegataSoggettoErogatoreModel extends AbstractModel<PortaDele
 	
 		super(father);
 	
-		this.IDENTIFICAZIONE = new ComplexField(father,"identificazione",java.lang.String.class,"porta-delegata-soggetto-erogatore",PortaDelegataSoggettoErogatore.class);
-		this.PATTERN = new ComplexField(father,"pattern",java.lang.String.class,"porta-delegata-soggetto-erogatore",PortaDelegataSoggettoErogatore.class);
 		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"porta-delegata-soggetto-erogatore",PortaDelegataSoggettoErogatore.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"porta-delegata-soggetto-erogatore",PortaDelegataSoggettoErogatore.class);
 	
@@ -61,10 +57,6 @@ public class PortaDelegataSoggettoErogatoreModel extends AbstractModel<PortaDele
 	
 	
 
-	public IField IDENTIFICAZIONE = null;
-	 
-	public IField PATTERN = null;
-	 
 	public IField TIPO = null;
 	 
 	public IField NOME = null;

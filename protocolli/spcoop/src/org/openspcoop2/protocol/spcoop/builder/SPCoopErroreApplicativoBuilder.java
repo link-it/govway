@@ -23,14 +23,12 @@
 
 package org.openspcoop2.protocol.spcoop.builder;
 
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
+import java.io.ByteArrayInputStream;
+import java.util.Date;
 
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.SOAPVersion;
 import org.openspcoop2.protocol.basic.builder.ErroreApplicativoBuilder;
+import org.openspcoop2.protocol.basic.builder.ErroreApplicativoMessageUtils;
 import org.openspcoop2.protocol.sdk.AbstractEccezioneBuilderParameter;
 import org.openspcoop2.protocol.sdk.EccezioneIntegrazioneBuilderParameters;
 import org.openspcoop2.protocol.sdk.EccezioneProtocolloBuilderParameters;
@@ -40,11 +38,15 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.TipoErroreApplicativo;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
-import org.openspcoop2.protocol.spcoop.utils.SPCoopUtils;
-import org.w3c.dom.Document;
+import org.openspcoop2.utils.date.DateManager;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+
+import it.cnipa.schemas._2003.egovit.exception1_0.EccezioneBusta;
+import it.cnipa.schemas._2003.egovit.exception1_0.EccezioneProcessamento;
+import it.cnipa.schemas._2003.egovit.exception1_0.MessaggioDiErroreApplicativo;
+import it.cnipa.schemas._2003.egovit.exception1_0.utils.XMLUtils;
 
 /**
  * Classe che implementa, in base al protocollo SPCoop, l'interfaccia {@link org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder}
@@ -60,6 +62,19 @@ public class SPCoopErroreApplicativoBuilder extends ErroreApplicativoBuilder imp
 		super(factory);
 	}
 
+	
+	// NAMESPACE
+	
+	@Override
+	public String getNamespaceEccezioneProtocollo(){
+		return SPCoopCostanti.NAMESPACE_EGOV;
+	}
+	
+	
+	
+	
+	// UTILITY DI RICONOSCIMENTO
+	
 	@Override
 	public boolean isErroreApplicativo(String namespace, String localName){
 		if("MessaggioDiErroreApplicativo".equals(localName) && 
@@ -70,152 +85,195 @@ public class SPCoopErroreApplicativoBuilder extends ErroreApplicativoBuilder imp
 		return false;
 	}
 	
+
+	
+	
+	// BUILDER
+	
+	
+	/** BUILDER UTILITIES */
+		
 	@Override
-	public String getNamespaceEccezioneProtocollo(){
-		return SPCoopCostanti.NAMESPACE_EGOV;
+	protected Element _buildErroreApplicativo_Element(EccezioneProtocolloBuilderParameters eccezioneProtocollo,
+			EccezioneIntegrazioneBuilderParameters eccezioneIntegrazione)throws ProtocolException{
+	
+		MessaggioDiErroreApplicativo erroreApplicativo = this._buildErroreApplicativo_engine(eccezioneProtocollo, eccezioneIntegrazione);
+		
+		try{
+			// il passaggio da XMLUtils forza anche la validazione dell'oggetto
+			byte[]xmlErroreApplicativo = XMLUtils.generateErroreApplicativo(erroreApplicativo);
+			Element elementErroreApplicativo = this.xmlUtils.newElement(xmlErroreApplicativo);
+			ErroreApplicativoMessageUtils.addPrefixToElement(elementErroreApplicativo,"cnipaErrAppl");
+			
+			return elementErroreApplicativo;
+		} catch(Exception e) {
+			this.log.error("XMLBuilder.buildElement_Eccezione error: "+e.getMessage(),e);
+			throw new ProtocolException("buildErroreApplicativoElement failed: "+e.getMessage(),e);
+		}
 	}
 	
 	@Override
-	protected SOAPElement buildErroreApplicativoElement_engine(EccezioneProtocolloBuilderParameters eccezioneProtocollo,
+	protected String _buildErroreApplicativo_String(TipoErroreApplicativo tipoErroreApplicativo,
+			EccezioneProtocolloBuilderParameters eccezioneProtocollo,
+			EccezioneIntegrazioneBuilderParameters eccezioneIntegrazione)throws ProtocolException{
+		
+		try{
+			if(TipoErroreApplicativo.JSON.equals(tipoErroreApplicativo)){
+				MessaggioDiErroreApplicativo erroreApplicativo = this._buildErroreApplicativo_engine(eccezioneProtocollo, eccezioneIntegrazione);
+				return XMLUtils.generateErroreApplicativoAsJson(erroreApplicativo);
+			}
+			else{
+				Element element = this._buildErroreApplicativo_Element(eccezioneProtocollo, eccezioneIntegrazione);
+				return this.xmlUtils.toString(element, true);
+			}
+		
+		}catch(Exception e){
+			throw new ProtocolException("toString failed: "+e.getMessage());
+		}
+	}
+	
+	@Override
+	protected byte[] _buildErroreApplicativo_ByteArray(TipoErroreApplicativo tipoErroreApplicativo,
+			EccezioneProtocolloBuilderParameters eccezioneProtocollo,
+			EccezioneIntegrazioneBuilderParameters eccezioneIntegrazione)throws ProtocolException{
+		
+		try{
+			if(TipoErroreApplicativo.JSON.equals(tipoErroreApplicativo)){
+				MessaggioDiErroreApplicativo erroreApplicativo = this._buildErroreApplicativo_engine(eccezioneProtocollo, eccezioneIntegrazione);
+				return XMLUtils.generateErroreApplicativoAsJson(erroreApplicativo).getBytes();
+			}
+			else{
+				Element element = this._buildErroreApplicativo_Element(eccezioneProtocollo, eccezioneIntegrazione);
+				return this.xmlUtils.toByteArray(element, true);
+			}
+		
+		}catch(Exception e){
+			throw new ProtocolException("toByteArray failed: "+e.getMessage());
+		}
+	}
+	
+	private MessaggioDiErroreApplicativo _buildErroreApplicativo_engine(EccezioneProtocolloBuilderParameters eccezioneProtocollo,
 			EccezioneIntegrazioneBuilderParameters eccezioneIntegrazione)throws ProtocolException{
 		try{
+
+			MessaggioDiErroreApplicativo erroreApplicativo = new MessaggioDiErroreApplicativo();
 			
 			String idPorta = null;
 			String idFunzione = null;
-			String tipo = null;
 			String codiceEccezione = null;
 			String descrizioneEccezione = null;
+			Date oraRegistrazione = null;
 			if(eccezioneProtocollo!=null){
 				idPorta = eccezioneProtocollo.getDominioPorta().getCodicePorta();
 				idFunzione = eccezioneProtocollo.getIdFunzione();
-				tipo = SPCoopCostanti.ECCEZIONE_VALIDAZIONE_BUSTA_SPCOOP;
 				codiceEccezione = super.traduttore.toString(eccezioneProtocollo.getEccezioneProtocollo().getCodiceEccezione(),
 						eccezioneProtocollo.getEccezioneProtocollo().getSubCodiceEccezione());
 				descrizioneEccezione = eccezioneProtocollo.getEccezioneProtocollo().getDescrizione(this.factory);
+				oraRegistrazione = eccezioneProtocollo.getOraRegistrazione();
 			}else{
 				idPorta = eccezioneIntegrazione.getDominioPorta().getCodicePorta();
 				idFunzione = eccezioneIntegrazione.getIdFunzione();
-				tipo = SPCoopCostanti.ECCEZIONE_PROCESSAMENTO_SPCOOP;
 				codiceEccezione = this.traduttore.toString(eccezioneIntegrazione.getErroreIntegrazione().getCodiceErrore(),
 						eccezioneIntegrazione.getProprieta().getFaultPrefixCode(),
 						eccezioneIntegrazione.getProprieta().isFaultAsGenericCode());
 				descrizioneEccezione = eccezioneIntegrazione.getProprieta().transformFaultMsg(eccezioneIntegrazione.getErroreIntegrazione(),this.factory);
+				oraRegistrazione = eccezioneIntegrazione.getOraRegistrazione();
 			}
 			
-			Document doc = super.xmlUtils.newDocument();
-			Element eccezione = doc.createElementNS("http://www.cnipa.it/schemas/2003/eGovIT/Exception1_0/", "eGov_IT_Ecc:MessaggioDiErroreApplicativo");
+			if(oraRegistrazione==null){
+				oraRegistrazione = DateManager.getDate();
+			}
+			erroreApplicativo.setOraRegistrazione(oraRegistrazione);
 			
-			Element oraRec = doc.createElementNS("http://www.cnipa.it/schemas/2003/eGovIT/Exception1_0/", "eGov_IT_Ecc:OraRegistrazione");
-			oraRec.setTextContent(SPCoopUtils.getDate_eGovFormat());
-			eccezione.appendChild(oraRec);
-
-			Element identificativoPorta = doc.createElementNS("http://www.cnipa.it/schemas/2003/eGovIT/Exception1_0/", "eGov_IT_Ecc:IdentificativoPorta");
-			identificativoPorta.setTextContent(idPorta);
-			eccezione.appendChild(identificativoPorta);
+			erroreApplicativo.setIdentificativoPorta(idPorta);
 			
-			Element identificativoFunzione = doc.createElementNS("http://www.cnipa.it/schemas/2003/eGovIT/Exception1_0/", "eGov_IT_Ecc:IdentificativoFunzione");
-			identificativoFunzione.setTextContent(idFunzione);
-			eccezione.appendChild(identificativoFunzione);
-
-			Element EccNode = doc.createElementNS("http://www.cnipa.it/schemas/2003/eGovIT/Exception1_0/", "eGov_IT_Ecc:Eccezione");
-			eccezione.appendChild(EccNode);
-
-			Element EccNodeInterno = doc.createElementNS("http://www.cnipa.it/schemas/2003/eGovIT/Exception1_0/", "eGov_IT_Ecc:"+tipo);
-			EccNodeInterno.setAttribute("codiceEccezione",codiceEccezione);
-			EccNodeInterno.setAttribute("descrizioneEccezione",descrizioneEccezione);
-			EccNode.appendChild(EccNodeInterno);
-
-			// Aggiunta per rispettare l'interfaccia.
+			erroreApplicativo.setIdentificativoFunzione(idFunzione);
 			
-			OpenSPCoop2Message responseSOAPMessageError = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(SOAPVersion.SOAP11);
-			SOAPBody soapBody = responseSOAPMessageError.getSOAPBody();
-			soapBody.appendChild(soapBody.getOwnerDocument().importNode(eccezione, true));
-			return (SOAPElement) soapBody.getFirstChild();
+			it.cnipa.schemas._2003.egovit.exception1_0.Eccezione eccezione = new it.cnipa.schemas._2003.egovit.exception1_0.Eccezione();
+			if(eccezioneProtocollo!=null){
+				EccezioneBusta eccezioneBusta = new EccezioneBusta();
+				eccezioneBusta.setCodiceEccezione(codiceEccezione);
+				eccezioneBusta.setDescrizioneEccezione(descrizioneEccezione);
+				eccezione.setEccezioneBusta(eccezioneBusta);
+			}
+			else{
+				EccezioneProcessamento eccezioneProcessamento = new EccezioneProcessamento();
+				eccezioneProcessamento.setCodiceEccezione(codiceEccezione);
+				eccezioneProcessamento.setDescrizioneEccezione(descrizioneEccezione);
+				eccezione.setEccezioneProcessamento(eccezioneProcessamento);
+			}
+			erroreApplicativo.setEccezione(eccezione);
+			
+			return erroreApplicativo;
 
 		} catch(Exception e) {
 			this.log.error("XMLBuilder.buildElement_Eccezione error: "+e.getMessage(),e);
-			throw new ProtocolException("toElement failed: "+e.getMessage(),e);
+			throw new ProtocolException("buildErroreApplicativoElement failed: "+e.getMessage(),e);
 		}
 	}
 	
 	
 	
 	
-	@Override
-	public AbstractEccezioneBuilderParameter readErroreApplicativo(byte[] xml,String prefixCodiceErroreApplicativoIntegrazione) throws ProtocolException{
-		try{
-			Node nXml = this.xmlUtils.newDocument(xml);
-			return readErroreApplicativo(nXml,prefixCodiceErroreApplicativoIntegrazione);
-		}catch(Exception e){
-			throw new ProtocolException(e.getMessage(), e);
-		}
-	}
+	
+	
+	
+	// PARSER
 	
 	@Override
-	public AbstractEccezioneBuilderParameter readErroreApplicativo(Node xml,String prefixCodiceErroreApplicativoIntegrazione) throws ProtocolException{
-		try{
-			
-			org.w3c.dom.NodeList ndList = xml.getChildNodes();
-			String oraRegistrazione = null;
-			String identificativoPorta = null;
-			String identificativoFunzione = null;
-			boolean eccezioneBusta = false;
-			String codiceEccezione = null;
-			String descrizioneEccezione = null;
-			for(int i=0; i<ndList.getLength(); i++){
-				//System.out.println("NOME:"+ndList.item(i).getNodeName()+" VALORE:"+ndList.item(i).getTextContent());
-				if(ndList.item(i).getNodeName().endsWith("OraRegistrazione"))
-					oraRegistrazione = ((org.w3c.dom.Element) ndList.item(i)).getFirstChild().getTextContent();
-				else if(ndList.item(i).getNodeName().endsWith("IdentificativoPorta"))
-					identificativoPorta = ((org.w3c.dom.Element) ndList.item(i)).getFirstChild().getTextContent();
-				else if(ndList.item(i).getNodeName().endsWith("IdentificativoFunzione"))
-					identificativoFunzione = ((org.w3c.dom.Element) ndList.item(i)).getFirstChild().getTextContent();
-				else if(ndList.item(i).getNodeName().endsWith("Eccezione")){
-					org.w3c.dom.NodeList ndEcc = ndList.item(i).getChildNodes();
-					if(ndEcc.item(0).getNodeName().endsWith("EccezioneBusta")){
-						eccezioneBusta = true;
-					}else if(ndEcc.item(0).getNodeName().endsWith("EccezioneProcessamento")){
-						eccezioneBusta = false;
-					}
-					org.w3c.dom.NamedNodeMap mapAtt = ndEcc.item(0).getAttributes();
-					codiceEccezione = mapAtt.getNamedItem("codiceEccezione").getNodeValue();
-					descrizioneEccezione = mapAtt.getNamedItem("descrizioneEccezione").getNodeValue();
-				}		
+	public AbstractEccezioneBuilderParameter readErroreApplicativo(TipoErroreApplicativo tipoErroreApplicativo, byte[] erroreApplicativo,String prefixCodiceErroreApplicativoIntegrazione) throws ProtocolException{
+		MessaggioDiErroreApplicativo erroreApplicativoObject = null;
+		switch (tipoErroreApplicativo) {
+		case JSON:
+			try{
+				erroreApplicativoObject = XMLUtils.getErroreApplicativoFromJson(this.log, new ByteArrayInputStream(erroreApplicativo));
+			}catch(Exception e){
+				throw new ProtocolException("JSon fornito non contiene un errore applicativo per il protocollo "+this.getProtocolFactory().getProtocol()+": "+e.getMessage(),e);
 			}
-
-			if(oraRegistrazione==null)
-				throw new ProtocolException("OraRegistrazione non definita?");
-			if(identificativoFunzione==null)
-				throw new ProtocolException("IdentificativoFunzione non definito?");
-			if(identificativoPorta==null)
-				throw new ProtocolException("IdentificativoPorta non definito?");
-			if(codiceEccezione==null)
-				throw new ProtocolException("CodiceEccezione non definita?");
-			if(descrizioneEccezione==null)
-				throw new ProtocolException("DescrizioneEccezione non definita?");
+			break;
+		default:
+			if(XMLUtils.isErroreApplicativo(erroreApplicativo)==false){
+				throw new ProtocolException("XML fornito non contiene un errore applicativo per il protocollo "+this.getProtocolFactory().getProtocol());
+			}
+			try{
+				erroreApplicativoObject = XMLUtils.getErroreApplicativo(this.log, erroreApplicativo);
+			}catch(Exception e){
+				throw new ProtocolException("Xml fornito non contiene un errore applicativo per il protocollo "+this.getProtocolFactory().getProtocol()+": "+e.getMessage(),e);
+			}
+			break;
+		}
+		
+		return _parseErroreApplicativo(erroreApplicativoObject, prefixCodiceErroreApplicativoIntegrazione);
+		
+	}
+	
+	private AbstractEccezioneBuilderParameter _parseErroreApplicativo(MessaggioDiErroreApplicativo erroreApplicativo,String prefixCodiceErroreApplicativoIntegrazione) throws ProtocolException{
+		try{
 			
+			String identificativoPorta = erroreApplicativo.getIdentificativoPorta();
+			String identificativoFunzione = erroreApplicativo.getIdentificativoFunzione();
 			
 			AbstractEccezioneBuilderParameter eccezione = null;
-			if( eccezioneBusta ){
+			if( erroreApplicativo.getEccezione().getEccezioneBusta()!=null ){
 				eccezione = new EccezioneProtocolloBuilderParameters();
 				
-				CodiceErroreCooperazione codice = this.factory.createTraduttore().toCodiceErroreCooperazione(codiceEccezione);
-				ErroreCooperazione erroreCooperazione = new ErroreCooperazione(descrizioneEccezione, codice);
+				CodiceErroreCooperazione codice = this.factory.createTraduttore().toCodiceErroreCooperazione(erroreApplicativo.getEccezione().getEccezioneBusta().getCodiceEccezione());
+				ErroreCooperazione erroreCooperazione = new ErroreCooperazione(erroreApplicativo.getEccezione().getEccezioneBusta().getDescrizioneEccezione(), codice);
 				org.openspcoop2.protocol.sdk.Eccezione eccezioneProtocollo = 
 						new org.openspcoop2.protocol.sdk.Eccezione(erroreCooperazione,true,identificativoFunzione,this.factory);
 				((EccezioneProtocolloBuilderParameters)eccezione).setEccezioneProtocollo(eccezioneProtocollo);
 			}
 			else{
 				eccezione = new EccezioneIntegrazioneBuilderParameters();
-				CodiceErroreIntegrazione codice = this.factory.createTraduttore().toCodiceErroreIntegrazione(codiceEccezione,prefixCodiceErroreApplicativoIntegrazione);
-				ErroreIntegrazione erroreIntegrazione = new ErroreIntegrazione(descrizioneEccezione, codice);
+				CodiceErroreIntegrazione codice = this.factory.createTraduttore().toCodiceErroreIntegrazione(erroreApplicativo.getEccezione().getEccezioneProcessamento().getCodiceEccezione(),prefixCodiceErroreApplicativoIntegrazione);
+				ErroreIntegrazione erroreIntegrazione = new ErroreIntegrazione(erroreApplicativo.getEccezione().getEccezioneProcessamento().getDescrizioneEccezione(), codice);
 				((EccezioneIntegrazioneBuilderParameters)eccezione).setErroreIntegrazione(erroreIntegrazione);
 			}
 			
 			IDSoggetto dominio = new IDSoggetto();
 			dominio.setCodicePorta(identificativoPorta);
 			eccezione.setDominioPorta(dominio);
-			eccezione.setOraRegistrazione(SPCoopUtils.getDate_eGovFormat(oraRegistrazione));
+			eccezione.setOraRegistrazione(erroreApplicativo.getOraRegistrazione());
 			eccezione.setIdFunzione(identificativoFunzione);
 			
 			return eccezione;
@@ -224,5 +282,7 @@ public class SPCoopErroreApplicativoBuilder extends ErroreApplicativoBuilder imp
 			throw new ProtocolException(e.getMessage(), e);
 		}
 	}
+	
+
 
 }

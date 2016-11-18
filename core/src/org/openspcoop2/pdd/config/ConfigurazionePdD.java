@@ -689,17 +689,17 @@ public class ConfigurazionePdD  {
 	 * @param location Location che identifica una porta delegata
 	 * @return Il Soggetto che include la porta delegata fornita come parametro.
 	 */
-	public Soggetto getSoggetto(Connection connectionPdD,String location) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public Soggetto getSoggettoProprietarioPortaDelegata(Connection connectionPdD,String location) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		
 		
 		// Raccolta dati
 		if(location == null)
-			throw new DriverConfigurazioneException("[getSoggetto(Location)]: Parametro non definito");	
+			throw new DriverConfigurazioneException("[getSoggettoProprietarioPortaDelegata]: Parametro non definito");	
 		
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getSoggetto(location)_" + location;
+			key = "getSoggettoProprietarioPortaDelegata_" + location;
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -717,15 +717,54 @@ public class ConfigurazionePdD  {
 		// Algoritmo CACHE
 		Soggetto sogg = null;
 		if(this.cache!=null){
-			sogg = (Soggetto) this.getObjectCache(key,"getSoggetto",connectionPdD,location);
+			sogg = (Soggetto) this.getObjectCache(key,"getSoggettoProprietarioPortaDelegata",connectionPdD,location);
 		}else{
-			sogg = (Soggetto) this.getObject("getSoggetto",connectionPdD,location);
+			sogg = (Soggetto) this.getObject("getSoggettoProprietarioPortaDelegata",connectionPdD,location);
 		}
 				
 		if(sogg!=null)
 			return sogg;
 		else
-			throw new DriverConfigurazioneNotFound("[getSoggetto(location)] Soggetto non Trovato");
+			throw new DriverConfigurazioneNotFound("[getSoggettoProprietarioPortaDelegata] Soggetto non Trovato");
+	}
+	
+	public Soggetto getSoggettoProprietarioPortaApplicativa(Connection connectionPdD,String location) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		
+		// Raccolta dati
+		if(location == null)
+			throw new DriverConfigurazioneException("[getSoggettoProprietarioPortaApplicativa]: Parametro non definito");	
+		
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = "getSoggettoProprietarioPortaApplicativa_" + location;
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return ((Soggetto) response.getObject());
+				}
+			}
+		}
+			
+		// Algoritmo CACHE
+		Soggetto sogg = null;
+		if(this.cache!=null){
+			sogg = (Soggetto) this.getObjectCache(key,"getSoggettoProprietarioPortaApplicativa",connectionPdD,location);
+		}else{
+			sogg = (Soggetto) this.getObject("getSoggettoProprietarioPortaApplicativa",connectionPdD,location);
+		}
+				
+		if(sogg!=null)
+			return sogg;
+		else
+			throw new DriverConfigurazioneNotFound("[getSoggettoProprietarioPortaApplicativa] Soggetto non Trovato");
 	}
 	
 	/**

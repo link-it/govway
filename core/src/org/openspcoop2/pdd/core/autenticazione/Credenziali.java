@@ -23,6 +23,11 @@
 
 package org.openspcoop2.pdd.core.autenticazione;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.openspcoop2.utils.transport.Credential;
+import org.openspcoop2.utils.transport.http.HttpServletCredential;
+import org.slf4j.Logger;
 
 /**
  * Classe utilizzata per rappresentare le informazioni utilizzata da un generico connettore.
@@ -32,121 +37,35 @@ package org.openspcoop2.pdd.core.autenticazione;
  * @version $Rev$, $Date$
  */
 
-public class Credenziali implements java.io.Serializable  {
+public class Credenziali extends HttpServletCredential implements java.io.Serializable  {
 
+	public Credenziali(){
+		super();
+	}
+	public Credenziali(Credential credentials){
+		if(credentials!=null){
+			this.username = credentials.getUsername();
+			this.password = credentials.getPassword();
+			this.certs = credentials.getCerts();
+			this.subject = credentials.getSubject();
+			this.principal = credentials.getPrincipalObject();
+			this.principalName = credentials.getPrincipal();
+		}
+	}
+	public Credenziali(HttpServletRequest req){
+		super(req, null);
+	}
+	public Credenziali(HttpServletRequest req,Logger log){
+		super(req, log);
+	}
+	
+	
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	/* ---- User (HTTP Authentication) --- */
-    private String user;
-    /* ---- Password (HTTP Authentication) --- */
-    private String password;
-    /* ---- Subject --- */
-    private String subject;
-    /* ---- Certificati ---- */
-    private java.security.cert.X509Certificate[] certs;
 
-    
-    /** ---------------- SETTER ---------------------- */
-
-    /**
-     * Imposta il parametro 'user' di una autenticazione BASIC.
-     *
-     * @param us  parametro 'user' di una autenticazione BASIC.
-     * 
-     */
-    public void setUsername(String us){
-	this.user = us;
-    }
-
-    /**
-     * Imposta il parametro 'password' di una autenticazione BASIC.
-     *
-     * @param passw  parametro 'password' di una autenticazione BASIC.
-     * 
-     */
-    public void setPassword(String passw){
-	this.password = passw;
-    }
-
-    /**
-     * Imposta i certificati utilizzati in una autenticazione SSL.
-     *
-     * @param c certificati di una autenticazione SSL.
-     * 
-     */
-    public void setCertificati(java.security.cert.X509Certificate[] c){
-	this.certs = c;
-    }
-
-    /**
-     * Imposta il parametro 'subject' di una autenticazione SSL (primo certificato).
-     *
-     * @param s  parametro 'subject' di una autenticazione SSL.
-     * 
-     */
-    public void setSubject(String s){
-	this.subject = s;
-    }
-
-
-
-
-
-
-    
-
-    /** -------------- GETTER ------------------ */
-
-     /**
-     * Ritorna il parametro 'user' di una autenticazione BASIC.
-     *
-     * @return parametro 'user' di una autenticazione BASIC.
-     * 
-     */
-    public String getUsername(){
-	return this.user;
-    }
-
-    /**
-     * Ritorna il parametro 'password' di una autenticazione BASIC.
-     *
-     * @return parametro 'password' di una autenticazione BASIC.
-     * 
-     */
-    public String getPassword(){
-	return this.password;
-    }
-
-    /**
-     * Ritorna i certificati utilizzati in una autenticazione SSL.
-     *
-     * @return certificati di una autenticazione SSL.
-     * 
-     */
-    public java.security.cert.X509Certificate[] getCertificati(){
-	return this.certs;
-    }
-
-    /**
-     * Ritorna il parametro 'subject' di una autenticazione SSL (primo certificato).
-     *
-     * @return  parametro 'subject' di una autenticazione SSL.
-     * 
-     */
-    public String getSubject(){
-	return this.subject;
-    }
-    
-    
-    
-    
-    
-    
-    
-    
     @Override
 	public boolean equals(Object c){
     	return this.toString().equals(((Credenziali)c).toString());
@@ -155,7 +74,7 @@ public class Credenziali implements java.io.Serializable  {
     @Override
 	public String toString(){
     	String credenzialiFornite = "";
-		if (this.getUsername() != null || this.getSubject() != null) {
+		if (this.getUsername() != null || this.getSubject() != null || this.getPrincipal() != null) {
 			credenzialiFornite = "(";
 			if (this.getUsername() != null){
 				if(this.getPassword()==null || "".equals(this.getPassword()) )
@@ -165,6 +84,8 @@ public class Credenziali implements java.io.Serializable  {
 			}
 			if (this.getSubject() != null)
 				credenzialiFornite = credenzialiFornite + " SSL Subject: ["+ this.getSubject() + "] ";
+			if (this.getPrincipal() != null)
+				credenzialiFornite = credenzialiFornite + " Principal: ["+ this.getPrincipal() + "] ";
 			credenzialiFornite = credenzialiFornite + ") ";
 		}
 		return credenzialiFornite;

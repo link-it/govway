@@ -33,7 +33,10 @@ public class ConnectorCostanti {
 	public final static String SEPARATOR_CODE = "-";
 	
 	public final static String KEYWORD_METHOD_HTTP = "@METHOD@";
-	public final static String MESSAGE_METHOD_HTTP_NOT_SUPPORTED = "Method HTTP @METHOD@ non supportato";
+	public final static String MESSAGE_METHOD_HTTP_NOT_SUPPORTED = "Method HTTP "+KEYWORD_METHOD_HTTP+" non supportato";
+	
+	public final static String KEYWORD_SERVICE_BINDING = "@SERVICE_BINDING@";
+	public final static String MESSAGE_SERVICE_BINDING_NOT_SUPPORTED = "ServiceBinding "+KEYWORD_SERVICE_BINDING+" non supportato";
 
 	// ID: 7 cifre (parlante)
 	public final static String ID_ERRORE_GENERICO = "0000000";
@@ -51,11 +54,15 @@ public class ConnectorCostanti {
 	public final static String CODE_HTTP_METHOD_DELETE_UNSUPPORTED = "0015";
 	public final static String CODE_HTTP_METHOD_OPTIONS_UNSUPPORTED = "0016";
 	public final static String CODE_HTTP_METHOD_TRACE_UNSUPPORTED = "0017";
+	public final static String CODE_HTTP_METHOD_PATCH_UNSUPPORTED = "0018";
 	
 	public final static String CODE_WSDL = "0021";
 	
 	public final static String CODE_ENGINE_FILTER = "0031";
 
 	public final static String CODE_FUNCTION_UNSUPPORTED = "0041";
+	
+	public final static String CODE_SERVICE_BINDING_SOAP_UNSUPPORTED = "0051";
+	public final static String CODE_SERVICE_BINDING_REST_UNSUPPORTED = "0052";
 	
 }

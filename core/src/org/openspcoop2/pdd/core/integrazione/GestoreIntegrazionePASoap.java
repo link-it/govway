@@ -24,12 +24,15 @@ package org.openspcoop2.pdd.core.integrazione;
 
 import javax.xml.soap.SOAPHeaderElement;
 
-import org.slf4j.Logger;
+import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.TipoIntegrazione;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.slf4j.Logger;
 
 
 /**
@@ -70,7 +73,13 @@ public class GestoreIntegrazionePASoap extends AbstractCore implements IGestoreI
 	public void readInRequestHeader(HeaderIntegrazione integrazione,
 			InRequestPAMessage inRequestPAMessage) throws HeaderIntegrazioneException{
 		try{
-			this.utilities.readHeader(inRequestPAMessage.getMessage(), integrazione, this.openspcoopProperties.getHeaderSoapActorIntegrazione());
+			OpenSPCoop2Message msg = inRequestPAMessage.getMessage();
+			if(ServiceBinding.SOAP.equals(msg.getServiceBinding())==false){
+				throw new Exception("Non utilizzabile con un Service Binding Rest");
+			}
+			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
+			
+			this.utilities.readHeader(soapMsg, integrazione, this.openspcoopProperties.getHeaderSoapActorIntegrazione());
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePASoap, "+e.getMessage(),e);
 		}
@@ -79,7 +88,13 @@ public class GestoreIntegrazionePASoap extends AbstractCore implements IGestoreI
 	@Override
 	public void deleteInRequestHeader(InRequestPAMessage inRequestPAMessage) throws HeaderIntegrazioneException{
 		try{
-			this.utilities.deleteHeader(inRequestPAMessage.getMessage(),this.openspcoopProperties.getHeaderSoapActorIntegrazione());
+			OpenSPCoop2Message msg = inRequestPAMessage.getMessage();
+			if(ServiceBinding.SOAP.equals(msg.getServiceBinding())==false){
+				throw new Exception("Non utilizzabile con un Service Binding Rest");
+			}
+			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
+			
+			this.utilities.deleteHeader(soapMsg,this.openspcoopProperties.getHeaderSoapActorIntegrazione());
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePASoap, "+e.getMessage(),e);
 		}
@@ -89,7 +104,13 @@ public class GestoreIntegrazionePASoap extends AbstractCore implements IGestoreI
 	public void updateInRequestHeader(InRequestPAMessage inRequestPAMessage,
 			String idMessaggio,String servizioApplicativo,String correlazioneApplicativa) throws HeaderIntegrazioneException{
 		try{
-			this.utilities.updateHeader(inRequestPAMessage.getMessage(), 
+			OpenSPCoop2Message msg = inRequestPAMessage.getMessage();
+			if(ServiceBinding.SOAP.equals(msg.getServiceBinding())==false){
+				throw new Exception("Non utilizzabile con un Service Binding Rest");
+			}
+			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
+			
+			this.utilities.updateHeader(soapMsg, 
 					inRequestPAMessage.getSoggettoMittente(), 
 					inRequestPAMessage.getServizio(), 
 					idMessaggio, 
@@ -115,21 +136,27 @@ public class GestoreIntegrazionePASoap extends AbstractCore implements IGestoreI
 			OutRequestPAMessage outRequestPAMessage) throws HeaderIntegrazioneException{
 		try{
 			
+			OpenSPCoop2Message msg = outRequestPAMessage.getMessage();
+			if(ServiceBinding.SOAP.equals(msg.getServiceBinding())==false){
+				throw new Exception("Non utilizzabile con un Service Binding Rest");
+			}
+			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
+			
 			SOAPHeaderElement header = this.utilities.buildHeader(integrazione,
 					this.openspcoopProperties.getHeaderSoapNameIntegrazione(), // header name 
 					this.openspcoopProperties.getHeaderSoapPrefixIntegrazione(), // prefix
 					this.openspcoopProperties.getHeaderSoapActorIntegrazione(), // namespace
 					this.openspcoopProperties.getHeaderSoapActorIntegrazione(), // actor
-					outRequestPAMessage.getMessage(),
+					soapMsg,
 					this.openspcoopProperties.getHeaderSoapExtProtocolInfoNomeElementoIntegrazione(), // nomeElemento ExtInfoProtocol
 					this.openspcoopProperties.getHeaderSoapExtProtocolInfoNomeAttributoIntegrazione(), // nomeAttributo ExtInfoProtocol
 					this.getProtocolFactory().createProtocolManager().buildIntegrationProperties(outRequestPAMessage.getBustaRichiesta(), true, TipoIntegrazione.SOAP)
 				);
-			
-			if(outRequestPAMessage.getMessage().getSOAPHeader() == null){
-				outRequestPAMessage.getMessage().getSOAPPart().getEnvelope().addHeader();
+						
+			if(soapMsg.getSOAPHeader() == null){
+				soapMsg.getSOAPPart().getEnvelope().addHeader();
 			}
-			outRequestPAMessage.getMessage().addHeaderElement(outRequestPAMessage.getMessage().getSOAPHeader(), header);
+			soapMsg.addHeaderElement(soapMsg.getSOAPHeader(), header);
 			
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePASoap, "+e.getMessage(),e);
@@ -143,7 +170,13 @@ public class GestoreIntegrazionePASoap extends AbstractCore implements IGestoreI
 	public void readInResponseHeader(HeaderIntegrazione integrazione,
 			InResponsePAMessage inResponsePAMessage) throws HeaderIntegrazioneException{
 		try{
-			this.utilities.readHeader(inResponsePAMessage.getMessage(), integrazione, this.openspcoopProperties.getHeaderSoapActorIntegrazione());
+			OpenSPCoop2Message msg = inResponsePAMessage.getMessage();
+			if(ServiceBinding.SOAP.equals(msg.getServiceBinding())==false){
+				throw new Exception("Non utilizzabile con un Service Binding Rest");
+			}
+			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
+			
+			this.utilities.readHeader(soapMsg, integrazione, this.openspcoopProperties.getHeaderSoapActorIntegrazione());
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePASoap, "+e.getMessage(),e);
 		}
@@ -152,7 +185,13 @@ public class GestoreIntegrazionePASoap extends AbstractCore implements IGestoreI
 	@Override
 	public void deleteInResponseHeader(InResponsePAMessage inResponsePAMessage) throws HeaderIntegrazioneException{
 		try{
-			this.utilities.deleteHeader(inResponsePAMessage.getMessage(),this.openspcoopProperties.getHeaderSoapActorIntegrazione());
+			OpenSPCoop2Message msg = inResponsePAMessage.getMessage();
+			if(ServiceBinding.SOAP.equals(msg.getServiceBinding())==false){
+				throw new Exception("Non utilizzabile con un Service Binding Rest");
+			}
+			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
+			
+			this.utilities.deleteHeader(soapMsg,this.openspcoopProperties.getHeaderSoapActorIntegrazione());
 		}catch(Exception e){
 			throw new HeaderIntegrazioneException("GestoreIntegrazionePASoap, "+e.getMessage(),e);
 		}
@@ -162,7 +201,13 @@ public class GestoreIntegrazionePASoap extends AbstractCore implements IGestoreI
 	public void updateInResponseHeader(InResponsePAMessage inResponsePAMessage,
 			String idMessaggioRichiesta,String idMessaggioRisposta,String servizioApplicativo,String correlazioneApplicativa,String riferimentoCorrelazioneApplicativaRichiesta) throws HeaderIntegrazioneException{
 		try{
-			this.utilities.updateHeader(inResponsePAMessage.getMessage(), 
+			OpenSPCoop2Message msg = inResponsePAMessage.getMessage();
+			if(ServiceBinding.SOAP.equals(msg.getServiceBinding())==false){
+				throw new Exception("Non utilizzabile con un Service Binding Rest");
+			}
+			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
+			
+			this.utilities.updateHeader(soapMsg, 
 					inResponsePAMessage.getSoggettoMittente(), 
 					inResponsePAMessage.getServizio(),
 					idMessaggioRichiesta, idMessaggioRisposta,

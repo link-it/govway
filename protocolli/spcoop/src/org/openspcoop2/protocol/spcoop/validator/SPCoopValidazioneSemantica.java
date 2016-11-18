@@ -23,10 +23,6 @@
 
 package org.openspcoop2.protocol.spcoop.validator;
 
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPEnvelope;
-
-import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -57,6 +53,7 @@ import org.openspcoop2.protocol.sdk.validator.ValidazioneSemanticaResult;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostantiPosizioneEccezione;
 import org.openspcoop2.utils.digest.IDigestReader;
+import org.slf4j.Logger;
 
 
 
@@ -1184,10 +1181,6 @@ public class SPCoopValidazioneSemantica implements IValidazioneSemantica {
 	}
 
 	
-	@Override
-	public SecurityInfo readSecurityInformation(IDigestReader digestReader, OpenSPCoop2Message msg,SOAPEnvelope soapEnvelope,SOAPElement protocolHeader) throws ProtocolException{
-		return null;
-	}
 	@Override
 	public SecurityInfo readSecurityInformation(IDigestReader digestReader, OpenSPCoop2Message msg) throws ProtocolException{
 		return null;

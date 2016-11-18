@@ -46,7 +46,7 @@ import org.apache.cxf.tools.common.toolspec.ToolSpec;
 import org.apache.cxf.tools.validator.WSDLValidator;
 import org.apache.cxf.tools.wsdlto.WSDLToJava;
 import org.openspcoop2.core.registry.wsdl.SplitWSDL;
-import org.openspcoop2.message.XMLUtils;
+import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 

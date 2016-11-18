@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.registry.RegistryReader;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.archive.Archive;
@@ -97,7 +98,7 @@ public class Importer {
 		DriverRegistroServiziDB driverRegistroServizi = null; 
 		DriverConfigurazioneDB driverConfigurazione = null;
 		// TODO INIT
-		ArchiveRegistryReader archiveRegistryReader = new ArchiveRegistryReader(driverRegistroServizi,driverConfigurazione);
+		RegistryReader archiveRegistryReader = new RegistryReader(driverRegistroServizi,driverConfigurazione,log);
 		
 		
 		// trasformazione in archivio openspcoop2

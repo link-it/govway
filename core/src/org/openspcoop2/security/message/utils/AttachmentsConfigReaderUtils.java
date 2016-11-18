@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.openspcoop2.message.reference.AttachmentReference;
-import org.openspcoop2.message.reference.Reference;
+import org.openspcoop2.message.soap.reference.AttachmentReference;
+import org.openspcoop2.message.soap.reference.Reference;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 

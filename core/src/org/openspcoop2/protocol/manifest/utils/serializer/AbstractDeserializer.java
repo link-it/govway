@@ -22,20 +22,42 @@ package org.openspcoop2.protocol.manifest.utils.serializer;
 
 import org.openspcoop2.generic_project.exception.DeserializerException;
 
-import org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader;
-import org.openspcoop2.protocol.manifest.Tipi;
-import org.openspcoop2.protocol.manifest.Servizi;
-import org.openspcoop2.protocol.manifest.Profilo;
-import org.openspcoop2.protocol.manifest.Funzionalita;
-import org.openspcoop2.protocol.manifest.WebEmptyContext;
-import org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand;
+import org.openspcoop2.protocol.manifest.Protocol;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
-import org.openspcoop2.protocol.manifest.Web;
-import org.openspcoop2.protocol.manifest.RegistroServizi;
-import org.openspcoop2.protocol.manifest.UrlMapping;
 import org.openspcoop2.protocol.manifest.Binding;
-import org.openspcoop2.protocol.manifest.Versioni;
-import org.openspcoop2.protocol.manifest.Soggetti;
+import org.openspcoop2.protocol.manifest.Web;
+import org.openspcoop2.protocol.manifest.Registry;
+import org.openspcoop2.protocol.manifest.UrlMapping;
+import org.openspcoop2.protocol.manifest.ServiceTypes;
+import org.openspcoop2.protocol.manifest.Service;
+import org.openspcoop2.protocol.manifest.CollaborationProfile;
+import org.openspcoop2.protocol.manifest.Functionality;
+import org.openspcoop2.protocol.manifest.SoapMediaTypeMapping;
+import org.openspcoop2.protocol.manifest.SoapMediaTypeCollection;
+import org.openspcoop2.protocol.manifest.SoapMediaTypeDefaultMapping;
+import org.openspcoop2.protocol.manifest.SoapMediaTypeUndefinedMapping;
+import org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration;
+import org.openspcoop2.protocol.manifest.RestConfiguration;
+import org.openspcoop2.protocol.manifest.RestMediaTypeCollection;
+import org.openspcoop2.protocol.manifest.IntegrationErrorCollection;
+import org.openspcoop2.protocol.manifest.SoapConfiguration;
+import org.openspcoop2.protocol.manifest.IntegrationError;
+import org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader;
+import org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand;
+import org.openspcoop2.protocol.manifest.Organization;
+import org.openspcoop2.protocol.manifest.Versions;
+import org.openspcoop2.protocol.manifest.SubContextMapping;
+import org.openspcoop2.protocol.manifest.WebEmptyContext;
+import org.openspcoop2.protocol.manifest.EmptySubContextMapping;
+import org.openspcoop2.protocol.manifest.RestMediaTypeMapping;
+import org.openspcoop2.protocol.manifest.OrganizationTypes;
+import org.openspcoop2.protocol.manifest.Version;
+import org.openspcoop2.protocol.manifest.ServiceType;
+import org.openspcoop2.protocol.manifest.RestMediaTypeDefaultMapping;
+import org.openspcoop2.protocol.manifest.RestMediaTypeUndefinedMapping;
+import org.openspcoop2.protocol.manifest.OrganizationType;
+import org.openspcoop2.protocol.manifest.Context;
+import org.openspcoop2.protocol.manifest.DefaultIntegrationError;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -104,441 +126,63 @@ public abstract class AbstractDeserializer {
 
 	/*
 	 =================================================================================
-	 Object: soapHeaderBypassMustUnderstandHeader
+	 Object: protocol
 	 =================================================================================
 	*/
 	
 	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.Protocol}
 	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Protocol}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Protocol}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public SoapHeaderBypassMustUnderstandHeader readSoapHeaderBypassMustUnderstandHeader(String fileName) throws DeserializerException {
-		return (SoapHeaderBypassMustUnderstandHeader) this.xmlToObj(fileName, SoapHeaderBypassMustUnderstandHeader.class);
+	public Protocol readProtocol(String fileName) throws DeserializerException {
+		return (Protocol) this.xmlToObj(fileName, Protocol.class);
 	}
 	
 	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.Protocol}
 	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Protocol}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Protocol}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public SoapHeaderBypassMustUnderstandHeader readSoapHeaderBypassMustUnderstandHeader(File file) throws DeserializerException {
-		return (SoapHeaderBypassMustUnderstandHeader) this.xmlToObj(file, SoapHeaderBypassMustUnderstandHeader.class);
+	public Protocol readProtocol(File file) throws DeserializerException {
+		return (Protocol) this.xmlToObj(file, Protocol.class);
 	}
 	
 	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Protocol}
 	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Protocol}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Protocol}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public SoapHeaderBypassMustUnderstandHeader readSoapHeaderBypassMustUnderstandHeader(InputStream in) throws DeserializerException {
-		return (SoapHeaderBypassMustUnderstandHeader) this.xmlToObj(in, SoapHeaderBypassMustUnderstandHeader.class);
+	public Protocol readProtocol(InputStream in) throws DeserializerException {
+		return (Protocol) this.xmlToObj(in, Protocol.class);
 	}	
 	
 	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Protocol}
 	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Protocol}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Protocol}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public SoapHeaderBypassMustUnderstandHeader readSoapHeaderBypassMustUnderstandHeader(byte[] in) throws DeserializerException {
-		return (SoapHeaderBypassMustUnderstandHeader) this.xmlToObj(in, SoapHeaderBypassMustUnderstandHeader.class);
+	public Protocol readProtocol(byte[] in) throws DeserializerException {
+		return (Protocol) this.xmlToObj(in, Protocol.class);
 	}	
 	
 	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Protocol}
 	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Protocol}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Protocol}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public SoapHeaderBypassMustUnderstandHeader readSoapHeaderBypassMustUnderstandHeaderFromString(String in) throws DeserializerException {
-		return (SoapHeaderBypassMustUnderstandHeader) this.xmlToObj(in.getBytes(), SoapHeaderBypassMustUnderstandHeader.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: tipi
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.Tipi}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Tipi}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Tipi}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Tipi readTipi(String fileName) throws DeserializerException {
-		return (Tipi) this.xmlToObj(fileName, Tipi.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.Tipi}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Tipi}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Tipi}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Tipi readTipi(File file) throws DeserializerException {
-		return (Tipi) this.xmlToObj(file, Tipi.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Tipi}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Tipi}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Tipi}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Tipi readTipi(InputStream in) throws DeserializerException {
-		return (Tipi) this.xmlToObj(in, Tipi.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Tipi}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Tipi}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Tipi}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Tipi readTipi(byte[] in) throws DeserializerException {
-		return (Tipi) this.xmlToObj(in, Tipi.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Tipi}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Tipi}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Tipi}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Tipi readTipiFromString(String in) throws DeserializerException {
-		return (Tipi) this.xmlToObj(in.getBytes(), Tipi.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: servizi
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.Servizi}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Servizi}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Servizi}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Servizi readServizi(String fileName) throws DeserializerException {
-		return (Servizi) this.xmlToObj(fileName, Servizi.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.Servizi}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Servizi}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Servizi}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Servizi readServizi(File file) throws DeserializerException {
-		return (Servizi) this.xmlToObj(file, Servizi.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Servizi}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Servizi}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Servizi}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Servizi readServizi(InputStream in) throws DeserializerException {
-		return (Servizi) this.xmlToObj(in, Servizi.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Servizi}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Servizi}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Servizi}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Servizi readServizi(byte[] in) throws DeserializerException {
-		return (Servizi) this.xmlToObj(in, Servizi.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Servizi}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Servizi}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Servizi}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Servizi readServiziFromString(String in) throws DeserializerException {
-		return (Servizi) this.xmlToObj(in.getBytes(), Servizi.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: profilo
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.Profilo}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Profilo}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Profilo}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Profilo readProfilo(String fileName) throws DeserializerException {
-		return (Profilo) this.xmlToObj(fileName, Profilo.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.Profilo}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Profilo}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Profilo}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Profilo readProfilo(File file) throws DeserializerException {
-		return (Profilo) this.xmlToObj(file, Profilo.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Profilo}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Profilo}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Profilo}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Profilo readProfilo(InputStream in) throws DeserializerException {
-		return (Profilo) this.xmlToObj(in, Profilo.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Profilo}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Profilo}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Profilo}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Profilo readProfilo(byte[] in) throws DeserializerException {
-		return (Profilo) this.xmlToObj(in, Profilo.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Profilo}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Profilo}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Profilo}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Profilo readProfiloFromString(String in) throws DeserializerException {
-		return (Profilo) this.xmlToObj(in.getBytes(), Profilo.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: funzionalita
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.Funzionalita}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Funzionalita}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Funzionalita}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Funzionalita readFunzionalita(String fileName) throws DeserializerException {
-		return (Funzionalita) this.xmlToObj(fileName, Funzionalita.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.Funzionalita}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Funzionalita}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Funzionalita}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Funzionalita readFunzionalita(File file) throws DeserializerException {
-		return (Funzionalita) this.xmlToObj(file, Funzionalita.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Funzionalita}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Funzionalita}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Funzionalita}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Funzionalita readFunzionalita(InputStream in) throws DeserializerException {
-		return (Funzionalita) this.xmlToObj(in, Funzionalita.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Funzionalita}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Funzionalita}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Funzionalita}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Funzionalita readFunzionalita(byte[] in) throws DeserializerException {
-		return (Funzionalita) this.xmlToObj(in, Funzionalita.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Funzionalita}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Funzionalita}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Funzionalita}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public Funzionalita readFunzionalitaFromString(String in) throws DeserializerException {
-		return (Funzionalita) this.xmlToObj(in.getBytes(), Funzionalita.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: webEmptyContext
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public WebEmptyContext readWebEmptyContext(String fileName) throws DeserializerException {
-		return (WebEmptyContext) this.xmlToObj(fileName, WebEmptyContext.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public WebEmptyContext readWebEmptyContext(File file) throws DeserializerException {
-		return (WebEmptyContext) this.xmlToObj(file, WebEmptyContext.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public WebEmptyContext readWebEmptyContext(InputStream in) throws DeserializerException {
-		return (WebEmptyContext) this.xmlToObj(in, WebEmptyContext.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public WebEmptyContext readWebEmptyContext(byte[] in) throws DeserializerException {
-		return (WebEmptyContext) this.xmlToObj(in, WebEmptyContext.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public WebEmptyContext readWebEmptyContextFromString(String in) throws DeserializerException {
-		return (WebEmptyContext) this.xmlToObj(in.getBytes(), WebEmptyContext.class);
-	}	
-	
-	
-	
-	/*
-	 =================================================================================
-	 Object: soapHeaderBypassMustUnderstand
-	 =================================================================================
-	*/
-	
-	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
-	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public SoapHeaderBypassMustUnderstand readSoapHeaderBypassMustUnderstand(String fileName) throws DeserializerException {
-		return (SoapHeaderBypassMustUnderstand) this.xmlToObj(fileName, SoapHeaderBypassMustUnderstand.class);
-	}
-	
-	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
-	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public SoapHeaderBypassMustUnderstand readSoapHeaderBypassMustUnderstand(File file) throws DeserializerException {
-		return (SoapHeaderBypassMustUnderstand) this.xmlToObj(file, SoapHeaderBypassMustUnderstand.class);
-	}
-	
-	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
-	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public SoapHeaderBypassMustUnderstand readSoapHeaderBypassMustUnderstand(InputStream in) throws DeserializerException {
-		return (SoapHeaderBypassMustUnderstand) this.xmlToObj(in, SoapHeaderBypassMustUnderstand.class);
-	}	
-	
-	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
-	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public SoapHeaderBypassMustUnderstand readSoapHeaderBypassMustUnderstand(byte[] in) throws DeserializerException {
-		return (SoapHeaderBypassMustUnderstand) this.xmlToObj(in, SoapHeaderBypassMustUnderstand.class);
-	}	
-	
-	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
-	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
-	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
-	 */
-	public SoapHeaderBypassMustUnderstand readSoapHeaderBypassMustUnderstandFromString(String in) throws DeserializerException {
-		return (SoapHeaderBypassMustUnderstand) this.xmlToObj(in.getBytes(), SoapHeaderBypassMustUnderstand.class);
+	public Protocol readProtocolFromString(String in) throws DeserializerException {
+		return (Protocol) this.xmlToObj(in.getBytes(), Protocol.class);
 	}	
 	
 	
@@ -608,6 +252,69 @@ public abstract class AbstractDeserializer {
 	
 	/*
 	 =================================================================================
+	 Object: binding
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.Binding}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Binding}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Binding}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Binding readBinding(String fileName) throws DeserializerException {
+		return (Binding) this.xmlToObj(fileName, Binding.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.Binding}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Binding}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Binding}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Binding readBinding(File file) throws DeserializerException {
+		return (Binding) this.xmlToObj(file, Binding.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Binding}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Binding}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Binding}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Binding readBinding(InputStream in) throws DeserializerException {
+		return (Binding) this.xmlToObj(in, Binding.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Binding}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Binding}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Binding}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Binding readBinding(byte[] in) throws DeserializerException {
+		return (Binding) this.xmlToObj(in, Binding.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Binding}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Binding}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Binding}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Binding readBindingFromString(String in) throws DeserializerException {
+		return (Binding) this.xmlToObj(in.getBytes(), Binding.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: web
 	 =================================================================================
 	*/
@@ -671,63 +378,63 @@ public abstract class AbstractDeserializer {
 	
 	/*
 	 =================================================================================
-	 Object: registroServizi
+	 Object: registry
 	 =================================================================================
 	*/
 	
 	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.RegistroServizi}
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.Registry}
 	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RegistroServizi}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.RegistroServizi}
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Registry}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Registry}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public RegistroServizi readRegistroServizi(String fileName) throws DeserializerException {
-		return (RegistroServizi) this.xmlToObj(fileName, RegistroServizi.class);
+	public Registry readRegistry(String fileName) throws DeserializerException {
+		return (Registry) this.xmlToObj(fileName, Registry.class);
 	}
 	
 	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.RegistroServizi}
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.Registry}
 	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RegistroServizi}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.RegistroServizi}
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Registry}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Registry}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public RegistroServizi readRegistroServizi(File file) throws DeserializerException {
-		return (RegistroServizi) this.xmlToObj(file, RegistroServizi.class);
+	public Registry readRegistry(File file) throws DeserializerException {
+		return (Registry) this.xmlToObj(file, Registry.class);
 	}
 	
 	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.RegistroServizi}
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Registry}
 	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RegistroServizi}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.RegistroServizi}
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Registry}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Registry}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public RegistroServizi readRegistroServizi(InputStream in) throws DeserializerException {
-		return (RegistroServizi) this.xmlToObj(in, RegistroServizi.class);
+	public Registry readRegistry(InputStream in) throws DeserializerException {
+		return (Registry) this.xmlToObj(in, Registry.class);
 	}	
 	
 	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.RegistroServizi}
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Registry}
 	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RegistroServizi}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.RegistroServizi}
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Registry}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Registry}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public RegistroServizi readRegistroServizi(byte[] in) throws DeserializerException {
-		return (RegistroServizi) this.xmlToObj(in, RegistroServizi.class);
+	public Registry readRegistry(byte[] in) throws DeserializerException {
+		return (Registry) this.xmlToObj(in, Registry.class);
 	}	
 	
 	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.RegistroServizi}
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Registry}
 	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RegistroServizi}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.RegistroServizi}
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Registry}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Registry}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public RegistroServizi readRegistroServiziFromString(String in) throws DeserializerException {
-		return (RegistroServizi) this.xmlToObj(in.getBytes(), RegistroServizi.class);
+	public Registry readRegistryFromString(String in) throws DeserializerException {
+		return (Registry) this.xmlToObj(in.getBytes(), Registry.class);
 	}	
 	
 	
@@ -797,189 +504,1890 @@ public abstract class AbstractDeserializer {
 	
 	/*
 	 =================================================================================
-	 Object: binding
+	 Object: ServiceTypes
 	 =================================================================================
 	*/
 	
 	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.Binding}
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.ServiceTypes}
 	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Binding}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Binding}
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.ServiceTypes}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.ServiceTypes}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public Binding readBinding(String fileName) throws DeserializerException {
-		return (Binding) this.xmlToObj(fileName, Binding.class);
+	public ServiceTypes readServiceTypes(String fileName) throws DeserializerException {
+		return (ServiceTypes) this.xmlToObj(fileName, ServiceTypes.class);
 	}
 	
 	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.Binding}
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.ServiceTypes}
 	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Binding}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Binding}
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.ServiceTypes}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.ServiceTypes}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public Binding readBinding(File file) throws DeserializerException {
-		return (Binding) this.xmlToObj(file, Binding.class);
+	public ServiceTypes readServiceTypes(File file) throws DeserializerException {
+		return (ServiceTypes) this.xmlToObj(file, ServiceTypes.class);
 	}
 	
 	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Binding}
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.ServiceTypes}
 	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Binding}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Binding}
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.ServiceTypes}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.ServiceTypes}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public Binding readBinding(InputStream in) throws DeserializerException {
-		return (Binding) this.xmlToObj(in, Binding.class);
+	public ServiceTypes readServiceTypes(InputStream in) throws DeserializerException {
+		return (ServiceTypes) this.xmlToObj(in, ServiceTypes.class);
 	}	
 	
 	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Binding}
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.ServiceTypes}
 	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Binding}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Binding}
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.ServiceTypes}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.ServiceTypes}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public Binding readBinding(byte[] in) throws DeserializerException {
-		return (Binding) this.xmlToObj(in, Binding.class);
+	public ServiceTypes readServiceTypes(byte[] in) throws DeserializerException {
+		return (ServiceTypes) this.xmlToObj(in, ServiceTypes.class);
 	}	
 	
 	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Binding}
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.ServiceTypes}
 	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Binding}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Binding}
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.ServiceTypes}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.ServiceTypes}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public Binding readBindingFromString(String in) throws DeserializerException {
-		return (Binding) this.xmlToObj(in.getBytes(), Binding.class);
+	public ServiceTypes readServiceTypesFromString(String in) throws DeserializerException {
+		return (ServiceTypes) this.xmlToObj(in.getBytes(), ServiceTypes.class);
 	}	
 	
 	
 	
 	/*
 	 =================================================================================
-	 Object: versioni
+	 Object: Service
 	 =================================================================================
 	*/
 	
 	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.Versioni}
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.Service}
 	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Versioni}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Versioni}
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Service}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Service}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public Versioni readVersioni(String fileName) throws DeserializerException {
-		return (Versioni) this.xmlToObj(fileName, Versioni.class);
+	public Service readService(String fileName) throws DeserializerException {
+		return (Service) this.xmlToObj(fileName, Service.class);
 	}
 	
 	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.Versioni}
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.Service}
 	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Versioni}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Versioni}
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Service}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Service}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public Versioni readVersioni(File file) throws DeserializerException {
-		return (Versioni) this.xmlToObj(file, Versioni.class);
+	public Service readService(File file) throws DeserializerException {
+		return (Service) this.xmlToObj(file, Service.class);
 	}
 	
 	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Versioni}
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Service}
 	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Versioni}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Versioni}
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Service}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Service}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public Versioni readVersioni(InputStream in) throws DeserializerException {
-		return (Versioni) this.xmlToObj(in, Versioni.class);
+	public Service readService(InputStream in) throws DeserializerException {
+		return (Service) this.xmlToObj(in, Service.class);
 	}	
 	
 	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Versioni}
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Service}
 	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Versioni}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Versioni}
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Service}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Service}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public Versioni readVersioni(byte[] in) throws DeserializerException {
-		return (Versioni) this.xmlToObj(in, Versioni.class);
+	public Service readService(byte[] in) throws DeserializerException {
+		return (Service) this.xmlToObj(in, Service.class);
 	}	
 	
 	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Versioni}
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Service}
 	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Versioni}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Versioni}
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Service}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Service}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public Versioni readVersioniFromString(String in) throws DeserializerException {
-		return (Versioni) this.xmlToObj(in.getBytes(), Versioni.class);
+	public Service readServiceFromString(String in) throws DeserializerException {
+		return (Service) this.xmlToObj(in.getBytes(), Service.class);
 	}	
 	
 	
 	
 	/*
 	 =================================================================================
-	 Object: soggetti
+	 Object: CollaborationProfile
 	 =================================================================================
 	*/
 	
 	/**
-	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.Soggetti}
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
 	 * 
-	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Soggetti}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Soggetti}
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public Soggetti readSoggetti(String fileName) throws DeserializerException {
-		return (Soggetti) this.xmlToObj(fileName, Soggetti.class);
+	public CollaborationProfile readCollaborationProfile(String fileName) throws DeserializerException {
+		return (CollaborationProfile) this.xmlToObj(fileName, CollaborationProfile.class);
 	}
 	
 	/**
-	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.Soggetti}
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
 	 * 
-	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Soggetti}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Soggetti}
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public Soggetti readSoggetti(File file) throws DeserializerException {
-		return (Soggetti) this.xmlToObj(file, Soggetti.class);
+	public CollaborationProfile readCollaborationProfile(File file) throws DeserializerException {
+		return (CollaborationProfile) this.xmlToObj(file, CollaborationProfile.class);
 	}
 	
 	/**
-	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Soggetti}
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
 	 * 
-	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Soggetti}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Soggetti}
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public Soggetti readSoggetti(InputStream in) throws DeserializerException {
-		return (Soggetti) this.xmlToObj(in, Soggetti.class);
+	public CollaborationProfile readCollaborationProfile(InputStream in) throws DeserializerException {
+		return (CollaborationProfile) this.xmlToObj(in, CollaborationProfile.class);
 	}	
 	
 	/**
-	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Soggetti}
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
 	 * 
-	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Soggetti}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Soggetti}
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public Soggetti readSoggetti(byte[] in) throws DeserializerException {
-		return (Soggetti) this.xmlToObj(in, Soggetti.class);
+	public CollaborationProfile readCollaborationProfile(byte[] in) throws DeserializerException {
+		return (CollaborationProfile) this.xmlToObj(in, CollaborationProfile.class);
 	}	
 	
 	/**
-	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Soggetti}
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
 	 * 
-	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Soggetti}
-	 * @return Object type {@link org.openspcoop2.protocol.manifest.Soggetti}
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.CollaborationProfile}
 	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
 	 */
-	public Soggetti readSoggettiFromString(String in) throws DeserializerException {
-		return (Soggetti) this.xmlToObj(in.getBytes(), Soggetti.class);
+	public CollaborationProfile readCollaborationProfileFromString(String in) throws DeserializerException {
+		return (CollaborationProfile) this.xmlToObj(in.getBytes(), CollaborationProfile.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: Functionality
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.Functionality}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Functionality}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Functionality}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Functionality readFunctionality(String fileName) throws DeserializerException {
+		return (Functionality) this.xmlToObj(fileName, Functionality.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.Functionality}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Functionality}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Functionality}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Functionality readFunctionality(File file) throws DeserializerException {
+		return (Functionality) this.xmlToObj(file, Functionality.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Functionality}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Functionality}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Functionality}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Functionality readFunctionality(InputStream in) throws DeserializerException {
+		return (Functionality) this.xmlToObj(in, Functionality.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Functionality}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Functionality}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Functionality}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Functionality readFunctionality(byte[] in) throws DeserializerException {
+		return (Functionality) this.xmlToObj(in, Functionality.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Functionality}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Functionality}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Functionality}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Functionality readFunctionalityFromString(String in) throws DeserializerException {
+		return (Functionality) this.xmlToObj(in.getBytes(), Functionality.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: SoapMediaTypeMapping
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeMapping}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapMediaTypeMapping readSoapMediaTypeMapping(String fileName) throws DeserializerException {
+		return (SoapMediaTypeMapping) this.xmlToObj(fileName, SoapMediaTypeMapping.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeMapping}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapMediaTypeMapping readSoapMediaTypeMapping(File file) throws DeserializerException {
+		return (SoapMediaTypeMapping) this.xmlToObj(file, SoapMediaTypeMapping.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeMapping}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapMediaTypeMapping readSoapMediaTypeMapping(InputStream in) throws DeserializerException {
+		return (SoapMediaTypeMapping) this.xmlToObj(in, SoapMediaTypeMapping.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeMapping}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapMediaTypeMapping readSoapMediaTypeMapping(byte[] in) throws DeserializerException {
+		return (SoapMediaTypeMapping) this.xmlToObj(in, SoapMediaTypeMapping.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeMapping}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapMediaTypeMapping readSoapMediaTypeMappingFromString(String in) throws DeserializerException {
+		return (SoapMediaTypeMapping) this.xmlToObj(in.getBytes(), SoapMediaTypeMapping.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: SoapMediaTypeCollection
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeCollection}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeCollection}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeCollection}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapMediaTypeCollection readSoapMediaTypeCollection(String fileName) throws DeserializerException {
+		return (SoapMediaTypeCollection) this.xmlToObj(fileName, SoapMediaTypeCollection.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeCollection}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeCollection}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeCollection}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapMediaTypeCollection readSoapMediaTypeCollection(File file) throws DeserializerException {
+		return (SoapMediaTypeCollection) this.xmlToObj(file, SoapMediaTypeCollection.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeCollection}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeCollection}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeCollection}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapMediaTypeCollection readSoapMediaTypeCollection(InputStream in) throws DeserializerException {
+		return (SoapMediaTypeCollection) this.xmlToObj(in, SoapMediaTypeCollection.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeCollection}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeCollection}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeCollection}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapMediaTypeCollection readSoapMediaTypeCollection(byte[] in) throws DeserializerException {
+		return (SoapMediaTypeCollection) this.xmlToObj(in, SoapMediaTypeCollection.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeCollection}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeCollection}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeCollection}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapMediaTypeCollection readSoapMediaTypeCollectionFromString(String in) throws DeserializerException {
+		return (SoapMediaTypeCollection) this.xmlToObj(in.getBytes(), SoapMediaTypeCollection.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: SoapMediaTypeDefaultMapping
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeDefaultMapping}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeDefaultMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeDefaultMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapMediaTypeDefaultMapping readSoapMediaTypeDefaultMapping(String fileName) throws DeserializerException {
+		return (SoapMediaTypeDefaultMapping) this.xmlToObj(fileName, SoapMediaTypeDefaultMapping.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeDefaultMapping}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeDefaultMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeDefaultMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapMediaTypeDefaultMapping readSoapMediaTypeDefaultMapping(File file) throws DeserializerException {
+		return (SoapMediaTypeDefaultMapping) this.xmlToObj(file, SoapMediaTypeDefaultMapping.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeDefaultMapping}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeDefaultMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeDefaultMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapMediaTypeDefaultMapping readSoapMediaTypeDefaultMapping(InputStream in) throws DeserializerException {
+		return (SoapMediaTypeDefaultMapping) this.xmlToObj(in, SoapMediaTypeDefaultMapping.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeDefaultMapping}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeDefaultMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeDefaultMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapMediaTypeDefaultMapping readSoapMediaTypeDefaultMapping(byte[] in) throws DeserializerException {
+		return (SoapMediaTypeDefaultMapping) this.xmlToObj(in, SoapMediaTypeDefaultMapping.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeDefaultMapping}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeDefaultMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeDefaultMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapMediaTypeDefaultMapping readSoapMediaTypeDefaultMappingFromString(String in) throws DeserializerException {
+		return (SoapMediaTypeDefaultMapping) this.xmlToObj(in.getBytes(), SoapMediaTypeDefaultMapping.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: SoapMediaTypeUndefinedMapping
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeUndefinedMapping}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeUndefinedMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeUndefinedMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapMediaTypeUndefinedMapping readSoapMediaTypeUndefinedMapping(String fileName) throws DeserializerException {
+		return (SoapMediaTypeUndefinedMapping) this.xmlToObj(fileName, SoapMediaTypeUndefinedMapping.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeUndefinedMapping}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeUndefinedMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeUndefinedMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapMediaTypeUndefinedMapping readSoapMediaTypeUndefinedMapping(File file) throws DeserializerException {
+		return (SoapMediaTypeUndefinedMapping) this.xmlToObj(file, SoapMediaTypeUndefinedMapping.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeUndefinedMapping}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeUndefinedMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeUndefinedMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapMediaTypeUndefinedMapping readSoapMediaTypeUndefinedMapping(InputStream in) throws DeserializerException {
+		return (SoapMediaTypeUndefinedMapping) this.xmlToObj(in, SoapMediaTypeUndefinedMapping.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeUndefinedMapping}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeUndefinedMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeUndefinedMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapMediaTypeUndefinedMapping readSoapMediaTypeUndefinedMapping(byte[] in) throws DeserializerException {
+		return (SoapMediaTypeUndefinedMapping) this.xmlToObj(in, SoapMediaTypeUndefinedMapping.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeUndefinedMapping}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeUndefinedMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapMediaTypeUndefinedMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapMediaTypeUndefinedMapping readSoapMediaTypeUndefinedMappingFromString(String in) throws DeserializerException {
+		return (SoapMediaTypeUndefinedMapping) this.xmlToObj(in.getBytes(), SoapMediaTypeUndefinedMapping.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: IntegrationErrorConfiguration
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IntegrationErrorConfiguration readIntegrationErrorConfiguration(String fileName) throws DeserializerException {
+		return (IntegrationErrorConfiguration) this.xmlToObj(fileName, IntegrationErrorConfiguration.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IntegrationErrorConfiguration readIntegrationErrorConfiguration(File file) throws DeserializerException {
+		return (IntegrationErrorConfiguration) this.xmlToObj(file, IntegrationErrorConfiguration.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IntegrationErrorConfiguration readIntegrationErrorConfiguration(InputStream in) throws DeserializerException {
+		return (IntegrationErrorConfiguration) this.xmlToObj(in, IntegrationErrorConfiguration.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IntegrationErrorConfiguration readIntegrationErrorConfiguration(byte[] in) throws DeserializerException {
+		return (IntegrationErrorConfiguration) this.xmlToObj(in, IntegrationErrorConfiguration.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorConfiguration}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IntegrationErrorConfiguration readIntegrationErrorConfigurationFromString(String in) throws DeserializerException {
+		return (IntegrationErrorConfiguration) this.xmlToObj(in.getBytes(), IntegrationErrorConfiguration.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: RestConfiguration
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.RestConfiguration}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RestConfiguration}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RestConfiguration}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RestConfiguration readRestConfiguration(String fileName) throws DeserializerException {
+		return (RestConfiguration) this.xmlToObj(fileName, RestConfiguration.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.RestConfiguration}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RestConfiguration}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RestConfiguration}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RestConfiguration readRestConfiguration(File file) throws DeserializerException {
+		return (RestConfiguration) this.xmlToObj(file, RestConfiguration.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.RestConfiguration}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RestConfiguration}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RestConfiguration}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RestConfiguration readRestConfiguration(InputStream in) throws DeserializerException {
+		return (RestConfiguration) this.xmlToObj(in, RestConfiguration.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.RestConfiguration}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RestConfiguration}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RestConfiguration}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RestConfiguration readRestConfiguration(byte[] in) throws DeserializerException {
+		return (RestConfiguration) this.xmlToObj(in, RestConfiguration.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.RestConfiguration}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RestConfiguration}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RestConfiguration}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RestConfiguration readRestConfigurationFromString(String in) throws DeserializerException {
+		return (RestConfiguration) this.xmlToObj(in.getBytes(), RestConfiguration.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: RestMediaTypeCollection
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeCollection}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeCollection}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeCollection}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RestMediaTypeCollection readRestMediaTypeCollection(String fileName) throws DeserializerException {
+		return (RestMediaTypeCollection) this.xmlToObj(fileName, RestMediaTypeCollection.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeCollection}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeCollection}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeCollection}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RestMediaTypeCollection readRestMediaTypeCollection(File file) throws DeserializerException {
+		return (RestMediaTypeCollection) this.xmlToObj(file, RestMediaTypeCollection.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeCollection}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeCollection}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeCollection}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RestMediaTypeCollection readRestMediaTypeCollection(InputStream in) throws DeserializerException {
+		return (RestMediaTypeCollection) this.xmlToObj(in, RestMediaTypeCollection.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeCollection}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeCollection}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeCollection}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RestMediaTypeCollection readRestMediaTypeCollection(byte[] in) throws DeserializerException {
+		return (RestMediaTypeCollection) this.xmlToObj(in, RestMediaTypeCollection.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeCollection}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeCollection}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeCollection}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RestMediaTypeCollection readRestMediaTypeCollectionFromString(String in) throws DeserializerException {
+		return (RestMediaTypeCollection) this.xmlToObj(in.getBytes(), RestMediaTypeCollection.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: IntegrationErrorCollection
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCollection}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCollection}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCollection}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IntegrationErrorCollection readIntegrationErrorCollection(String fileName) throws DeserializerException {
+		return (IntegrationErrorCollection) this.xmlToObj(fileName, IntegrationErrorCollection.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCollection}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCollection}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCollection}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IntegrationErrorCollection readIntegrationErrorCollection(File file) throws DeserializerException {
+		return (IntegrationErrorCollection) this.xmlToObj(file, IntegrationErrorCollection.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCollection}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCollection}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCollection}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IntegrationErrorCollection readIntegrationErrorCollection(InputStream in) throws DeserializerException {
+		return (IntegrationErrorCollection) this.xmlToObj(in, IntegrationErrorCollection.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCollection}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCollection}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCollection}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IntegrationErrorCollection readIntegrationErrorCollection(byte[] in) throws DeserializerException {
+		return (IntegrationErrorCollection) this.xmlToObj(in, IntegrationErrorCollection.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCollection}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCollection}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.IntegrationErrorCollection}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IntegrationErrorCollection readIntegrationErrorCollectionFromString(String in) throws DeserializerException {
+		return (IntegrationErrorCollection) this.xmlToObj(in.getBytes(), IntegrationErrorCollection.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: SoapConfiguration
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapConfiguration}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapConfiguration}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapConfiguration}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapConfiguration readSoapConfiguration(String fileName) throws DeserializerException {
+		return (SoapConfiguration) this.xmlToObj(fileName, SoapConfiguration.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapConfiguration}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapConfiguration}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapConfiguration}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapConfiguration readSoapConfiguration(File file) throws DeserializerException {
+		return (SoapConfiguration) this.xmlToObj(file, SoapConfiguration.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapConfiguration}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapConfiguration}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapConfiguration}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapConfiguration readSoapConfiguration(InputStream in) throws DeserializerException {
+		return (SoapConfiguration) this.xmlToObj(in, SoapConfiguration.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapConfiguration}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapConfiguration}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapConfiguration}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapConfiguration readSoapConfiguration(byte[] in) throws DeserializerException {
+		return (SoapConfiguration) this.xmlToObj(in, SoapConfiguration.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapConfiguration}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapConfiguration}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapConfiguration}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapConfiguration readSoapConfigurationFromString(String in) throws DeserializerException {
+		return (SoapConfiguration) this.xmlToObj(in.getBytes(), SoapConfiguration.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: IntegrationError
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.IntegrationError}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.IntegrationError}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.IntegrationError}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IntegrationError readIntegrationError(String fileName) throws DeserializerException {
+		return (IntegrationError) this.xmlToObj(fileName, IntegrationError.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.IntegrationError}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.IntegrationError}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.IntegrationError}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IntegrationError readIntegrationError(File file) throws DeserializerException {
+		return (IntegrationError) this.xmlToObj(file, IntegrationError.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.IntegrationError}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.IntegrationError}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.IntegrationError}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IntegrationError readIntegrationError(InputStream in) throws DeserializerException {
+		return (IntegrationError) this.xmlToObj(in, IntegrationError.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.IntegrationError}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.IntegrationError}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.IntegrationError}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IntegrationError readIntegrationError(byte[] in) throws DeserializerException {
+		return (IntegrationError) this.xmlToObj(in, IntegrationError.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.IntegrationError}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.IntegrationError}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.IntegrationError}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IntegrationError readIntegrationErrorFromString(String in) throws DeserializerException {
+		return (IntegrationError) this.xmlToObj(in.getBytes(), IntegrationError.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: SoapHeaderBypassMustUnderstandHeader
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapHeaderBypassMustUnderstandHeader readSoapHeaderBypassMustUnderstandHeader(String fileName) throws DeserializerException {
+		return (SoapHeaderBypassMustUnderstandHeader) this.xmlToObj(fileName, SoapHeaderBypassMustUnderstandHeader.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapHeaderBypassMustUnderstandHeader readSoapHeaderBypassMustUnderstandHeader(File file) throws DeserializerException {
+		return (SoapHeaderBypassMustUnderstandHeader) this.xmlToObj(file, SoapHeaderBypassMustUnderstandHeader.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapHeaderBypassMustUnderstandHeader readSoapHeaderBypassMustUnderstandHeader(InputStream in) throws DeserializerException {
+		return (SoapHeaderBypassMustUnderstandHeader) this.xmlToObj(in, SoapHeaderBypassMustUnderstandHeader.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapHeaderBypassMustUnderstandHeader readSoapHeaderBypassMustUnderstandHeader(byte[] in) throws DeserializerException {
+		return (SoapHeaderBypassMustUnderstandHeader) this.xmlToObj(in, SoapHeaderBypassMustUnderstandHeader.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapHeaderBypassMustUnderstandHeader readSoapHeaderBypassMustUnderstandHeaderFromString(String in) throws DeserializerException {
+		return (SoapHeaderBypassMustUnderstandHeader) this.xmlToObj(in.getBytes(), SoapHeaderBypassMustUnderstandHeader.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: SoapHeaderBypassMustUnderstand
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapHeaderBypassMustUnderstand readSoapHeaderBypassMustUnderstand(String fileName) throws DeserializerException {
+		return (SoapHeaderBypassMustUnderstand) this.xmlToObj(fileName, SoapHeaderBypassMustUnderstand.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapHeaderBypassMustUnderstand readSoapHeaderBypassMustUnderstand(File file) throws DeserializerException {
+		return (SoapHeaderBypassMustUnderstand) this.xmlToObj(file, SoapHeaderBypassMustUnderstand.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapHeaderBypassMustUnderstand readSoapHeaderBypassMustUnderstand(InputStream in) throws DeserializerException {
+		return (SoapHeaderBypassMustUnderstand) this.xmlToObj(in, SoapHeaderBypassMustUnderstand.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapHeaderBypassMustUnderstand readSoapHeaderBypassMustUnderstand(byte[] in) throws DeserializerException {
+		return (SoapHeaderBypassMustUnderstand) this.xmlToObj(in, SoapHeaderBypassMustUnderstand.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstand}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SoapHeaderBypassMustUnderstand readSoapHeaderBypassMustUnderstandFromString(String in) throws DeserializerException {
+		return (SoapHeaderBypassMustUnderstand) this.xmlToObj(in.getBytes(), SoapHeaderBypassMustUnderstand.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: Organization
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.Organization}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Organization}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Organization}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Organization readOrganization(String fileName) throws DeserializerException {
+		return (Organization) this.xmlToObj(fileName, Organization.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.Organization}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Organization}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Organization}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Organization readOrganization(File file) throws DeserializerException {
+		return (Organization) this.xmlToObj(file, Organization.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Organization}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Organization}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Organization}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Organization readOrganization(InputStream in) throws DeserializerException {
+		return (Organization) this.xmlToObj(in, Organization.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Organization}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Organization}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Organization}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Organization readOrganization(byte[] in) throws DeserializerException {
+		return (Organization) this.xmlToObj(in, Organization.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Organization}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Organization}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Organization}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Organization readOrganizationFromString(String in) throws DeserializerException {
+		return (Organization) this.xmlToObj(in.getBytes(), Organization.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: Versions
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.Versions}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Versions}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Versions}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Versions readVersions(String fileName) throws DeserializerException {
+		return (Versions) this.xmlToObj(fileName, Versions.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.Versions}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Versions}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Versions}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Versions readVersions(File file) throws DeserializerException {
+		return (Versions) this.xmlToObj(file, Versions.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Versions}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Versions}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Versions}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Versions readVersions(InputStream in) throws DeserializerException {
+		return (Versions) this.xmlToObj(in, Versions.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Versions}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Versions}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Versions}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Versions readVersions(byte[] in) throws DeserializerException {
+		return (Versions) this.xmlToObj(in, Versions.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Versions}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Versions}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Versions}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Versions readVersionsFromString(String in) throws DeserializerException {
+		return (Versions) this.xmlToObj(in.getBytes(), Versions.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: SubContextMapping
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.SubContextMapping}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SubContextMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SubContextMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SubContextMapping readSubContextMapping(String fileName) throws DeserializerException {
+		return (SubContextMapping) this.xmlToObj(fileName, SubContextMapping.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.SubContextMapping}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SubContextMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SubContextMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SubContextMapping readSubContextMapping(File file) throws DeserializerException {
+		return (SubContextMapping) this.xmlToObj(file, SubContextMapping.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SubContextMapping}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SubContextMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SubContextMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SubContextMapping readSubContextMapping(InputStream in) throws DeserializerException {
+		return (SubContextMapping) this.xmlToObj(in, SubContextMapping.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SubContextMapping}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SubContextMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SubContextMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SubContextMapping readSubContextMapping(byte[] in) throws DeserializerException {
+		return (SubContextMapping) this.xmlToObj(in, SubContextMapping.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.SubContextMapping}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.SubContextMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.SubContextMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public SubContextMapping readSubContextMappingFromString(String in) throws DeserializerException {
+		return (SubContextMapping) this.xmlToObj(in.getBytes(), SubContextMapping.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: WebEmptyContext
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public WebEmptyContext readWebEmptyContext(String fileName) throws DeserializerException {
+		return (WebEmptyContext) this.xmlToObj(fileName, WebEmptyContext.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public WebEmptyContext readWebEmptyContext(File file) throws DeserializerException {
+		return (WebEmptyContext) this.xmlToObj(file, WebEmptyContext.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public WebEmptyContext readWebEmptyContext(InputStream in) throws DeserializerException {
+		return (WebEmptyContext) this.xmlToObj(in, WebEmptyContext.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public WebEmptyContext readWebEmptyContext(byte[] in) throws DeserializerException {
+		return (WebEmptyContext) this.xmlToObj(in, WebEmptyContext.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.WebEmptyContext}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public WebEmptyContext readWebEmptyContextFromString(String in) throws DeserializerException {
+		return (WebEmptyContext) this.xmlToObj(in.getBytes(), WebEmptyContext.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: EmptySubContextMapping
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.EmptySubContextMapping}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.EmptySubContextMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.EmptySubContextMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public EmptySubContextMapping readEmptySubContextMapping(String fileName) throws DeserializerException {
+		return (EmptySubContextMapping) this.xmlToObj(fileName, EmptySubContextMapping.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.EmptySubContextMapping}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.EmptySubContextMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.EmptySubContextMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public EmptySubContextMapping readEmptySubContextMapping(File file) throws DeserializerException {
+		return (EmptySubContextMapping) this.xmlToObj(file, EmptySubContextMapping.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.EmptySubContextMapping}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.EmptySubContextMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.EmptySubContextMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public EmptySubContextMapping readEmptySubContextMapping(InputStream in) throws DeserializerException {
+		return (EmptySubContextMapping) this.xmlToObj(in, EmptySubContextMapping.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.EmptySubContextMapping}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.EmptySubContextMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.EmptySubContextMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public EmptySubContextMapping readEmptySubContextMapping(byte[] in) throws DeserializerException {
+		return (EmptySubContextMapping) this.xmlToObj(in, EmptySubContextMapping.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.EmptySubContextMapping}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.EmptySubContextMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.EmptySubContextMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public EmptySubContextMapping readEmptySubContextMappingFromString(String in) throws DeserializerException {
+		return (EmptySubContextMapping) this.xmlToObj(in.getBytes(), EmptySubContextMapping.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: RestMediaTypeMapping
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeMapping}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RestMediaTypeMapping readRestMediaTypeMapping(String fileName) throws DeserializerException {
+		return (RestMediaTypeMapping) this.xmlToObj(fileName, RestMediaTypeMapping.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeMapping}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RestMediaTypeMapping readRestMediaTypeMapping(File file) throws DeserializerException {
+		return (RestMediaTypeMapping) this.xmlToObj(file, RestMediaTypeMapping.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeMapping}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RestMediaTypeMapping readRestMediaTypeMapping(InputStream in) throws DeserializerException {
+		return (RestMediaTypeMapping) this.xmlToObj(in, RestMediaTypeMapping.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeMapping}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RestMediaTypeMapping readRestMediaTypeMapping(byte[] in) throws DeserializerException {
+		return (RestMediaTypeMapping) this.xmlToObj(in, RestMediaTypeMapping.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeMapping}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RestMediaTypeMapping readRestMediaTypeMappingFromString(String in) throws DeserializerException {
+		return (RestMediaTypeMapping) this.xmlToObj(in.getBytes(), RestMediaTypeMapping.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: OrganizationTypes
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.OrganizationTypes}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.OrganizationTypes}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.OrganizationTypes}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public OrganizationTypes readOrganizationTypes(String fileName) throws DeserializerException {
+		return (OrganizationTypes) this.xmlToObj(fileName, OrganizationTypes.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.OrganizationTypes}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.OrganizationTypes}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.OrganizationTypes}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public OrganizationTypes readOrganizationTypes(File file) throws DeserializerException {
+		return (OrganizationTypes) this.xmlToObj(file, OrganizationTypes.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.OrganizationTypes}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.OrganizationTypes}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.OrganizationTypes}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public OrganizationTypes readOrganizationTypes(InputStream in) throws DeserializerException {
+		return (OrganizationTypes) this.xmlToObj(in, OrganizationTypes.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.OrganizationTypes}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.OrganizationTypes}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.OrganizationTypes}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public OrganizationTypes readOrganizationTypes(byte[] in) throws DeserializerException {
+		return (OrganizationTypes) this.xmlToObj(in, OrganizationTypes.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.OrganizationTypes}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.OrganizationTypes}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.OrganizationTypes}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public OrganizationTypes readOrganizationTypesFromString(String in) throws DeserializerException {
+		return (OrganizationTypes) this.xmlToObj(in.getBytes(), OrganizationTypes.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: Version
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.Version}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Version}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Version}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Version readVersion(String fileName) throws DeserializerException {
+		return (Version) this.xmlToObj(fileName, Version.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.Version}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Version}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Version}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Version readVersion(File file) throws DeserializerException {
+		return (Version) this.xmlToObj(file, Version.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Version}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Version}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Version}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Version readVersion(InputStream in) throws DeserializerException {
+		return (Version) this.xmlToObj(in, Version.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Version}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Version}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Version}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Version readVersion(byte[] in) throws DeserializerException {
+		return (Version) this.xmlToObj(in, Version.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Version}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Version}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Version}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Version readVersionFromString(String in) throws DeserializerException {
+		return (Version) this.xmlToObj(in.getBytes(), Version.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: ServiceType
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.ServiceType}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.ServiceType}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.ServiceType}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ServiceType readServiceType(String fileName) throws DeserializerException {
+		return (ServiceType) this.xmlToObj(fileName, ServiceType.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.ServiceType}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.ServiceType}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.ServiceType}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ServiceType readServiceType(File file) throws DeserializerException {
+		return (ServiceType) this.xmlToObj(file, ServiceType.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.ServiceType}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.ServiceType}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.ServiceType}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ServiceType readServiceType(InputStream in) throws DeserializerException {
+		return (ServiceType) this.xmlToObj(in, ServiceType.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.ServiceType}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.ServiceType}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.ServiceType}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ServiceType readServiceType(byte[] in) throws DeserializerException {
+		return (ServiceType) this.xmlToObj(in, ServiceType.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.ServiceType}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.ServiceType}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.ServiceType}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public ServiceType readServiceTypeFromString(String in) throws DeserializerException {
+		return (ServiceType) this.xmlToObj(in.getBytes(), ServiceType.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: RestMediaTypeDefaultMapping
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeDefaultMapping}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeDefaultMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeDefaultMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RestMediaTypeDefaultMapping readRestMediaTypeDefaultMapping(String fileName) throws DeserializerException {
+		return (RestMediaTypeDefaultMapping) this.xmlToObj(fileName, RestMediaTypeDefaultMapping.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeDefaultMapping}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeDefaultMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeDefaultMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RestMediaTypeDefaultMapping readRestMediaTypeDefaultMapping(File file) throws DeserializerException {
+		return (RestMediaTypeDefaultMapping) this.xmlToObj(file, RestMediaTypeDefaultMapping.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeDefaultMapping}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeDefaultMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeDefaultMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RestMediaTypeDefaultMapping readRestMediaTypeDefaultMapping(InputStream in) throws DeserializerException {
+		return (RestMediaTypeDefaultMapping) this.xmlToObj(in, RestMediaTypeDefaultMapping.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeDefaultMapping}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeDefaultMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeDefaultMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RestMediaTypeDefaultMapping readRestMediaTypeDefaultMapping(byte[] in) throws DeserializerException {
+		return (RestMediaTypeDefaultMapping) this.xmlToObj(in, RestMediaTypeDefaultMapping.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeDefaultMapping}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeDefaultMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeDefaultMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RestMediaTypeDefaultMapping readRestMediaTypeDefaultMappingFromString(String in) throws DeserializerException {
+		return (RestMediaTypeDefaultMapping) this.xmlToObj(in.getBytes(), RestMediaTypeDefaultMapping.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: RestMediaTypeUndefinedMapping
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeUndefinedMapping}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeUndefinedMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeUndefinedMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RestMediaTypeUndefinedMapping readRestMediaTypeUndefinedMapping(String fileName) throws DeserializerException {
+		return (RestMediaTypeUndefinedMapping) this.xmlToObj(fileName, RestMediaTypeUndefinedMapping.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeUndefinedMapping}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeUndefinedMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeUndefinedMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RestMediaTypeUndefinedMapping readRestMediaTypeUndefinedMapping(File file) throws DeserializerException {
+		return (RestMediaTypeUndefinedMapping) this.xmlToObj(file, RestMediaTypeUndefinedMapping.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeUndefinedMapping}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeUndefinedMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeUndefinedMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RestMediaTypeUndefinedMapping readRestMediaTypeUndefinedMapping(InputStream in) throws DeserializerException {
+		return (RestMediaTypeUndefinedMapping) this.xmlToObj(in, RestMediaTypeUndefinedMapping.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeUndefinedMapping}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeUndefinedMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeUndefinedMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RestMediaTypeUndefinedMapping readRestMediaTypeUndefinedMapping(byte[] in) throws DeserializerException {
+		return (RestMediaTypeUndefinedMapping) this.xmlToObj(in, RestMediaTypeUndefinedMapping.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeUndefinedMapping}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeUndefinedMapping}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.RestMediaTypeUndefinedMapping}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RestMediaTypeUndefinedMapping readRestMediaTypeUndefinedMappingFromString(String in) throws DeserializerException {
+		return (RestMediaTypeUndefinedMapping) this.xmlToObj(in.getBytes(), RestMediaTypeUndefinedMapping.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: OrganizationType
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.OrganizationType}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.OrganizationType}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.OrganizationType}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public OrganizationType readOrganizationType(String fileName) throws DeserializerException {
+		return (OrganizationType) this.xmlToObj(fileName, OrganizationType.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.OrganizationType}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.OrganizationType}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.OrganizationType}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public OrganizationType readOrganizationType(File file) throws DeserializerException {
+		return (OrganizationType) this.xmlToObj(file, OrganizationType.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.OrganizationType}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.OrganizationType}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.OrganizationType}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public OrganizationType readOrganizationType(InputStream in) throws DeserializerException {
+		return (OrganizationType) this.xmlToObj(in, OrganizationType.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.OrganizationType}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.OrganizationType}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.OrganizationType}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public OrganizationType readOrganizationType(byte[] in) throws DeserializerException {
+		return (OrganizationType) this.xmlToObj(in, OrganizationType.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.OrganizationType}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.OrganizationType}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.OrganizationType}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public OrganizationType readOrganizationTypeFromString(String in) throws DeserializerException {
+		return (OrganizationType) this.xmlToObj(in.getBytes(), OrganizationType.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: Context
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.Context}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Context}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Context}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Context readContext(String fileName) throws DeserializerException {
+		return (Context) this.xmlToObj(fileName, Context.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.Context}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Context}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Context}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Context readContext(File file) throws DeserializerException {
+		return (Context) this.xmlToObj(file, Context.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Context}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Context}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Context}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Context readContext(InputStream in) throws DeserializerException {
+		return (Context) this.xmlToObj(in, Context.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Context}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Context}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Context}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Context readContext(byte[] in) throws DeserializerException {
+		return (Context) this.xmlToObj(in, Context.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.Context}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.Context}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.Context}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Context readContextFromString(String in) throws DeserializerException {
+		return (Context) this.xmlToObj(in.getBytes(), Context.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: DefaultIntegrationError
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.protocol.manifest.DefaultIntegrationError}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.DefaultIntegrationError}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.DefaultIntegrationError}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DefaultIntegrationError readDefaultIntegrationError(String fileName) throws DeserializerException {
+		return (DefaultIntegrationError) this.xmlToObj(fileName, DefaultIntegrationError.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.protocol.manifest.DefaultIntegrationError}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.DefaultIntegrationError}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.DefaultIntegrationError}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DefaultIntegrationError readDefaultIntegrationError(File file) throws DeserializerException {
+		return (DefaultIntegrationError) this.xmlToObj(file, DefaultIntegrationError.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.DefaultIntegrationError}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.DefaultIntegrationError}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.DefaultIntegrationError}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DefaultIntegrationError readDefaultIntegrationError(InputStream in) throws DeserializerException {
+		return (DefaultIntegrationError) this.xmlToObj(in, DefaultIntegrationError.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.DefaultIntegrationError}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.DefaultIntegrationError}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.DefaultIntegrationError}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DefaultIntegrationError readDefaultIntegrationError(byte[] in) throws DeserializerException {
+		return (DefaultIntegrationError) this.xmlToObj(in, DefaultIntegrationError.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.protocol.manifest.DefaultIntegrationError}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.protocol.manifest.DefaultIntegrationError}
+	 * @return Object type {@link org.openspcoop2.protocol.manifest.DefaultIntegrationError}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public DefaultIntegrationError readDefaultIntegrationErrorFromString(String in) throws DeserializerException {
+		return (DefaultIntegrationError) this.xmlToObj(in.getBytes(), DefaultIntegrationError.class);
 	}	
 	
 	

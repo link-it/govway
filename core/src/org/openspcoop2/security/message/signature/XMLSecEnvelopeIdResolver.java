@@ -25,15 +25,15 @@ import java.util.Iterator;
 
 import javax.xml.soap.AttachmentPart;
 
-import org.slf4j.Logger;
 import org.apache.xml.security.signature.XMLSignatureInput;
 import org.apache.xml.security.utils.resolver.ResourceResolverContext;
 import org.apache.xml.security.utils.resolver.ResourceResolverException;
 import org.apache.xml.security.utils.resolver.ResourceResolverSpi;
 import org.apache.xml.utils.URI;
-import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.slf4j.Logger;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -51,13 +51,13 @@ public class XMLSecEnvelopeIdResolver extends ResourceResolverSpi {
 
 	private static final Logger logger = LoggerWrapperFactory.getLogger(XMLSecEnvelopeIdResolver.class);
   
-    public synchronized static ResourceResolverSpi getInstance(OpenSPCoop2Message message) {
+    public synchronized static ResourceResolverSpi getInstance(OpenSPCoop2SoapMessage message) {
         return new XMLSecEnvelopeIdResolver(message);
     }
 
 //    private AbstractXMLUtils xmlUtils = null;
-    private OpenSPCoop2Message message = null;
-    private XMLSecEnvelopeIdResolver(OpenSPCoop2Message message) {
+    private OpenSPCoop2SoapMessage message = null;
+    private XMLSecEnvelopeIdResolver(OpenSPCoop2SoapMessage message) {
     	this.message = message;
 //    	this.xmlUtils = XMLUtils.getInstance();
     }
@@ -89,7 +89,12 @@ public class XMLSecEnvelopeIdResolver extends ResourceResolverSpi {
         }
 
         if(attach){
-        	Iterator<?> it = this.message.getAttachments();
+        	Iterator<?> it = null;
+        	try{
+        		it = this.message.getAttachments();
+        	}catch(Exception e){
+        		throw new ResourceResolverException(e,"Cannot resoulve uri "+uri.getNodeValue(),uri.getLocalName(),BaseURI);
+        	}
         	while (it.hasNext()) {
 				AttachmentPart ap = (AttachmentPart) it.next();
 				String contentId = ap.getContentId();

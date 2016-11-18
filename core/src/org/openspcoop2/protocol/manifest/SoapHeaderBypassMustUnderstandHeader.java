@@ -29,12 +29,12 @@ import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class for soapHeaderBypassMustUnderstandHeader complex type.
+/** <p>Java class for SoapHeaderBypassMustUnderstandHeader complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="soapHeaderBypassMustUnderstandHeader">
+ * &lt;complexType name="SoapHeaderBypassMustUnderstandHeader">
  * 		&lt;sequence>
  * 			&lt;element name="localName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="namespace" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
@@ -49,14 +49,14 @@ import java.io.Serializable;
  * */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "soapHeaderBypassMustUnderstandHeader", 
+@XmlType(name = "SoapHeaderBypassMustUnderstandHeader", 
   propOrder = {
   	"localName",
   	"namespace"
   }
 )
 
-@XmlRootElement(name = "soapHeaderBypassMustUnderstandHeader")
+@XmlRootElement(name = "SoapHeaderBypassMustUnderstandHeader")
 
 public class SoapHeaderBypassMustUnderstandHeader extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public SoapHeaderBypassMustUnderstandHeader() {

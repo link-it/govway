@@ -32,8 +32,8 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.resources.CollectionProperties;
-import org.openspcoop2.utils.resources.PropertiesUtilities;
+import org.openspcoop2.utils.properties.CollectionProperties;
+import org.openspcoop2.utils.properties.PropertiesUtilities;
 
 /**
  * LoaderLogger

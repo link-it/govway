@@ -27,7 +27,6 @@ import java.util.Vector;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPFault;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -44,7 +43,8 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.SoapUtils;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.MessageSecurityConfig;
@@ -56,7 +56,7 @@ import org.openspcoop2.pdd.core.IntegrationContext;
 import org.openspcoop2.pdd.core.MTOMProcessor;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.ProtocolContext;
-import org.openspcoop2.pdd.core.connettori.ConnettoreHTTP;
+import org.openspcoop2.pdd.core.connettori.ConnettoreBaseHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.ConnettoreUtils;
 import org.openspcoop2.pdd.core.connettori.GestoreErroreConnettore;
@@ -73,7 +73,8 @@ import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.Tracciamento;
-import org.openspcoop2.pdd.services.FlowProperties;
+import org.openspcoop2.pdd.services.RequestInfo;
+import org.openspcoop2.pdd.services.core.FlowProperties;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.ProfiloDiCollaborazione;
@@ -103,6 +104,7 @@ import org.openspcoop2.security.message.MessageSecurityContextParameters;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 
 
 
@@ -133,6 +135,7 @@ public class InoltroRisposte extends GenericLib{
 		/* PddContext */
 		PdDContext pddContext = inoltroRisposteMsg.getPddContext();
 		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, pddContext);
+		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		
 		/* Protocol Factory */
 		IProtocolFactory protocolFactory = null;
@@ -567,7 +570,7 @@ public class InoltroRisposte extends GenericLib{
 					boolean isRichiesta = false;
 					if(inoltroSegnalazioneErrore)
 						isRichiesta = true;
-					org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = new org.openspcoop2.protocol.engine.builder.Imbustamento(protocolFactory);
+					org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = new org.openspcoop2.protocol.engine.builder.Imbustamento(this.log,protocolFactory);
 	
 					boolean gestioneManifest = configurazionePdDManager.isGestioneManifestAttachments();
 					// viene controllato servizio is not null, poiche' i riscontri non hanno un servizio
@@ -912,7 +915,7 @@ public class InoltroRisposte extends GenericLib{
 			// Location
 			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connettoreMsg, busta, this.log);
 			if(location!=null){
-				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.buildLocationWithURLBasedParameter(connettoreMsg.getPropertiesUrlBased(), location));
+				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.buildLocationWithURLBasedParameter(responseMessage,  connettoreMsg.getPropertiesUrlBased(), location));
 			}
 			else{
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, "N.D.");
@@ -996,9 +999,9 @@ public class InoltroRisposte extends GenericLib{
 					// aggiorno
 					location = tmpLocation;
 				
-					if(connectorSender instanceof ConnettoreHTTP){
-						if(((ConnettoreHTTP)connectorSender).isSbustamentoApi()){
-							location = org.openspcoop2.core.api.utils.Utilities.updateLocation(((ConnettoreHTTP)connectorSender).getHttpMethod(), location);
+					if(connectorSender instanceof ConnettoreBaseHTTP){
+						if(ServiceBinding.REST.equals(requestInfo.getServiceBinding())){
+							location = ConnettoreUtils.formatLocation(((ConnettoreBaseHTTP)connectorSender).getHttpMethod(), location);
 						}
 					}
 					msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, location);

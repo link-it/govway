@@ -79,7 +79,15 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	 * @param location Location che identifica una porta delegata
 	 * @return Il Soggetto che include la porta delegata fornita come parametro.
 	 */
-	public Soggetto getSoggetto(String location) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
+	public Soggetto getSoggettoProprietarioPortaDelegata(String location) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
+	
+	/**
+	 * Restituisce Il soggetto che include la porta applicativa identificata da <var>location</var>
+	 *
+	 * @param location Location che identifica una porta delegata
+	 * @return Il Soggetto che include la porta applicativa fornita come parametro.
+	 */
+	public Soggetto getSoggettoProprietarioPortaApplicativa(String location) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
 	
 	
 	/**

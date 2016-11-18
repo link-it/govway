@@ -25,7 +25,7 @@ import java.text.SimpleDateFormat;
 
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.datasource.DataSourceParams;
-import org.openspcoop2.utils.resources.CostantiJMX;
+import org.openspcoop2.utils.jmx.CostantiJMX;
 
 /**
  * Costanti 
@@ -49,7 +49,6 @@ public class Costanti {
 	public final static String HEADER_TRASPORTO = "HEADER_TRASPORTO";
 	public final static String TIPO_OPERAZIONE_IM = "TIPO_OPERAZIONE_IM";
 	public final static String PORTA_DELEGATA = "PORTA_DELEGATA";
-	public final static String SOAP_VERSION = "SOAP_VERSION";
 	public final static String STATELESS = "STATELESS";
 	public final static String DATA_PRESA_IN_CARICO = "DATA_PRESA_IN_CARICO";
 	public final static String ERRORE_UTILIZZO_CONNETTORE = "ERRORE_UTILIZZO_CONNETTORE";
@@ -59,6 +58,7 @@ public class Costanti {
 	public final static String URL_INVOCAZIONE = "URL_INVOCAZIONE";
 	public final static String CREDENZIALI_INVOCAZIONE = "CREDENZIALI_INVOCAZIONE";
 	public final static String EMESSI_DIAGNOSTICI_ERRORE = "EMESSI_DIAGNOSTICI_ERRORE";
+	public final static String REQUEST_INFO = "REQUEST_INFO";
 	public final static String [] CONTEXT_OBJECT = 
 		new String [] {Costanti.CLUSTER_ID,Costanti.PROTOCOLLO,
 			Costanti.ID_PORTA,Costanti.ID_FUNZIONE,

@@ -21,9 +21,6 @@
 
 package org.openspcoop2.protocol.sdk.validator;
 
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPEnvelope;
-
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -117,6 +114,5 @@ public interface IValidazioneSemantica {
 			IState state, ProprietaValidazione proprietaValidazione, 
 			RuoloBusta tipoBusta) throws ProtocolException;
 	
-	public SecurityInfo readSecurityInformation(IDigestReader digestReader, OpenSPCoop2Message msg,SOAPEnvelope soapEnvelope,SOAPElement protocolHeader) throws ProtocolException;
 	public SecurityInfo readSecurityInformation(IDigestReader digestReader, OpenSPCoop2Message msg) throws ProtocolException;
 }

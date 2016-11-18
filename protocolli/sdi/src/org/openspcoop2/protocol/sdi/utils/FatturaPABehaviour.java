@@ -29,8 +29,8 @@ import org.openspcoop2.generic_project.exception.SerializerException;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
-import org.openspcoop2.message.SoapUtils;
-import org.openspcoop2.message.SoapUtilsBuildParameter;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.behaviour.Behaviour;
@@ -50,6 +50,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
  * FatturaPABehaviour
@@ -95,7 +96,7 @@ public class FatturaPABehaviour extends DefaultBehaviour {
 						SDIFactory sdiFactory = new SDIFactory();
 						sdiFactory.createBustaBuilder().sbustamento(null, msg, busta, true, new ProprietaManifestAttachments());
 						ByteArrayOutputStream bout = new ByteArrayOutputStream();
-						SoapUtils.sbustamentoMessaggio(msg,bout);
+						TunnelSoapUtils.sbustamentoMessaggio(msg,bout);
 						bout.flush();
 						bout.close();
 						fatturaBytes = bout.toByteArray();
@@ -127,7 +128,7 @@ public class FatturaPABehaviour extends DefaultBehaviour {
 				BehaviourResponseTo responseTo = new BehaviourResponseTo();
 				responseTo.setResponseTo(true);
 				behaviour.setResponseTo(responseTo);
-				OpenSPCoop2Message replyTo = OpenSPCoop2MessageFactory.getMessageFactory().createEmptySOAPMessage(msg.getVersioneSoap());
+				OpenSPCoop2Message replyTo = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(msg.getMessageType(),MessageRole.RESPONSE);
 				
 				SDIImbustamento sdiImbustamento = new SDIImbustamento((SDIBustaBuilder) gestoreMessaggioRichiesta.getProtocolFactory().createBustaBuilder());
 				IState state = null;
@@ -201,10 +202,10 @@ public class FatturaPABehaviour extends DefaultBehaviour {
 						xml = imbustamentoSDI(busta, xml, metadati);
 					}
 					
-					SoapUtilsBuildParameter params = new SoapUtilsBuildParameter(xml,true,
-							true,false,
-							openspcoop2Properties.isFileCacheEnable(), openspcoop2Properties.getAttachmentRepoDir(), openspcoop2Properties.getFileThreshold());
-					OpenSPCoop2MessageParseResult pr = SoapUtils.build(params,null);
+					OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().
+							envelopingMessage(msg.getMessageType(), MessageRole.REQUEST, HttpConstants.CONTENT_TYPE_TEXT_XML, 
+									"OpenSPCoop", xml, null, openspcoop2Properties.isFileCacheEnable(), openspcoop2Properties.getAttachmentRepoDir(), openspcoop2Properties.getFileThreshold(), 
+									true);
 					OpenSPCoop2Message msgForwardTo = pr.getMessage_throwParseException();
 					
 					if(listForwardToObjectList!=null && (j<listForwardToObjectList.size())){

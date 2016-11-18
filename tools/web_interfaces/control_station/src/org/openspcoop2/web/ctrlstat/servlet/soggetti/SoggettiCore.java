@@ -468,7 +468,7 @@ public class SoggettiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverConfigurazioneDB().getSoggetto(location);
+			return driver.getDriverConfigurazioneDB().getSoggettoProprietarioPortaDelegata(location);
 
 		} catch (DriverConfigurazioneNotFound de) {
 			ControlStationCore.log.info("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage());

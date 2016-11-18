@@ -21,10 +21,6 @@
 
 package org.openspcoop2.protocol.basic.validator;
 
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPEnvelope;
-
-import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -36,6 +32,7 @@ import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneSemanticaResult;
 import org.openspcoop2.utils.digest.IDigestReader;
+import org.slf4j.Logger;
 
 /**
  * ValidazioneSemantica
@@ -75,10 +72,6 @@ public class ValidazioneSemantica implements
 		return new ValidazioneSemanticaResult(null, null, null, null, null);
 	}
 
-	@Override
-	public SecurityInfo readSecurityInformation(IDigestReader digestReader, OpenSPCoop2Message msg,SOAPEnvelope soapEnvelope,SOAPElement protocolHeader) throws ProtocolException{
-		return null;
-	}
 	@Override
 	public SecurityInfo readSecurityInformation(IDigestReader digestReader, OpenSPCoop2Message msg) throws ProtocolException{
 		return null;

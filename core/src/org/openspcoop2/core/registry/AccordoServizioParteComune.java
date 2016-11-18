@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
+import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -59,6 +60,7 @@ import java.util.List;
  * 		&lt;attribute name="byte-specifica-conversazione-concettuale" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/>
  * 		&lt;attribute name="byte-specifica-conversazione-erogatore" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/>
  * 		&lt;attribute name="byte-specifica-conversazione-fruitore" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/>
+ * 		&lt;attribute name="service-binding" type="{http://www.openspcoop2.org/core/registry}ServiceBinding" use="required"/>
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="profilo-collaborazione" type="{http://www.openspcoop2.org/core/registry}ProfiloCollaborazione" use="required"/>
@@ -316,6 +318,26 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   public void setByteSpecificaConversazioneFruitore(byte[] byteSpecificaConversazioneFruitore) {
     this.byteSpecificaConversazioneFruitore = byteSpecificaConversazioneFruitore;
+  }
+
+  public void set_value_serviceBinding(String value) {
+    this.serviceBinding = (ServiceBinding) ServiceBinding.toEnumConstantFromString(value);
+  }
+
+  public String get_value_serviceBinding() {
+    if(this.serviceBinding == null){
+    	return null;
+    }else{
+    	return this.serviceBinding.toString();
+    }
+  }
+
+  public org.openspcoop2.core.registry.constants.ServiceBinding getServiceBinding() {
+    return this.serviceBinding;
+  }
+
+  public void setServiceBinding(org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding) {
+    this.serviceBinding = serviceBinding;
   }
 
   public java.lang.String getNome() {
@@ -712,6 +734,12 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
   @javax.xml.bind.annotation.XmlSchemaType(name="base64Binary")
   @XmlAttribute(name="byte-specifica-conversazione-fruitore",required=false)
   protected byte[] byteSpecificaConversazioneFruitore;
+
+  @XmlTransient
+  protected java.lang.String _value_serviceBinding;
+
+  @XmlAttribute(name="service-binding",required=true)
+  protected ServiceBinding serviceBinding;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)

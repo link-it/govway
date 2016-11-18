@@ -109,9 +109,8 @@ import org.openspcoop2.core.config.constants.FaultIntegrazioneTipo;
 import org.openspcoop2.core.config.constants.GestioneErroreComportamento;
 import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
+import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
-import org.openspcoop2.core.config.constants.PortaDelegataServizioIdentificazione;
-import org.openspcoop2.core.config.constants.PortaDelegataSoggettoErogatoreIdentificazione;
 import org.openspcoop2.core.config.constants.ProprietaProtocolloValore;
 import org.openspcoop2.core.config.constants.Severita;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -1127,64 +1126,14 @@ public class DriverConfigurazioneDB_LIB {
 				//soggetto erogatore
 				String tipoSoggErogatore = (soggErogatore != null ? soggErogatore.getTipo() : null);
 				String nomeSoggErogatore = (soggErogatore != null ? soggErogatore.getNome() : null);
-				String patternErogatore  = (soggErogatore != null ? soggErogatore.getPattern() : null);
-				PortaDelegataSoggettoErogatoreIdentificazione modeSoggettoErogatore = (soggErogatore != null ? soggErogatore.getIdentificazione() : null);
-				if(modeSoggettoErogatore==null || modeSoggettoErogatore.equals("")) 
-					modeSoggettoErogatore=PortaDelegataSoggettoErogatoreIdentificazione.STATIC;
-				//controllo parametri necessari in base alla modalita
-
-				switch (modeSoggettoErogatore) {
-				case CONTENT_BASED:
-				case URL_BASED:
-					if(tipoSoggErogatore==null || tipoSoggErogatore.equals("")) throw new DriverConfigurazioneException("Tipo Soggetto Erogatore non impostato.");
-					if(patternErogatore==null || patternErogatore.equals("")) throw new DriverConfigurazioneException("Pattern Soggetto Erogatore non impostato.");
-					nomeSoggErogatore=null;
-					break;
-				case INPUT_BASED:
-					if(tipoSoggErogatore==null || tipoSoggErogatore.equals("")) throw new DriverConfigurazioneException("Tipo Soggetto Erogatore non impostato.");
-					break;
-				case STATIC:
-					//se non c'e' l'id del soggetto allora ci devono essere il tipo e il nome
-					if(idSoggettoErogatore<=0){
-						if(tipoSoggErogatore==null || tipoSoggErogatore.equals("")) throw new DriverConfigurazioneException("Tipo Soggetto Erogatore non impostato.");
-						if(nomeSoggErogatore==null || nomeSoggErogatore.equals("")) throw new DriverConfigurazioneException("Nome Soggetto Erogatore non impostato.");
-					}
-					patternErogatore=null;
-					break;
-				default:
-					break;
-				}
+				if(tipoSoggErogatore==null || tipoSoggErogatore.equals("")) throw new DriverConfigurazioneException("Tipo Soggetto Erogatore non impostato.");
+				if(nomeSoggErogatore==null || nomeSoggErogatore.equals("")) throw new DriverConfigurazioneException("Nome Soggetto Erogatore non impostato.");
 
 				//servizio
 				String tipoServizio = (servizio != null ? servizio.getTipo() : null);
 				String nomeServizio = (servizio != null ? servizio.getNome() : null);
-				String patternServizio = (servizio != null ? servizio.getPattern() : null);
-				PortaDelegataServizioIdentificazione modeServizio = (servizio != null ? servizio.getIdentificazione() : null);
-				if(modeServizio==null || modeServizio.equals("")) 
-					modeServizio=PortaDelegataServizioIdentificazione.STATIC;
-				//campi obbligatori
-				switch (modeServizio) {
-				case CONTENT_BASED:
-				case URL_BASED:
-					if(tipoServizio==null || tipoServizio.equals("")) throw new DriverConfigurazioneException("Tipo Servizio non impostato.");
-					if(patternServizio==null || patternServizio.equals("")) throw new DriverConfigurazioneException("Pattern Servizio non impostato.");
-					nomeServizio=null;
-					break;
-				case INPUT_BASED:
-					if(tipoServizio==null || tipoServizio.equals("")) throw new DriverConfigurazioneException("Tipo Servizio non impostato.");
-					break;
-				case STATIC:
-					//se non c'e' l'id del servizio allora ci devono essere il tipo e il nome
-					if(idServizioPD<=0){
-						if(tipoServizio==null || tipoServizio.equals("")) throw new DriverConfigurazioneException("Tipo Servizio non impostato.");
-						if(nomeServizio==null || nomeServizio.equals("")) throw new DriverConfigurazioneException("Nome Servizio non impostato.");
-					}
-					patternServizio=null;
-
-					break;
-				default:
-					break;
-				}
+				if(tipoServizio==null || tipoServizio.equals("")) throw new DriverConfigurazioneException("Tipo Servizio non impostato.");
+				if(nomeServizio==null || nomeServizio.equals("")) throw new DriverConfigurazioneException("Nome Servizio non impostato.");
 
 				//Azione
 				String nomeAzione = (azione != null ? azione.getNome() : null);
@@ -1198,6 +1147,7 @@ public class DriverConfigurazioneDB_LIB {
 					switch (modeAzione) {
 					case CONTENT_BASED:
 					case URL_BASED:
+					case HEADER_BASED:
 						if(patternAzione==null || patternAzione.equals("")) throw new DriverConfigurazioneException("Pattern Azione non impostato.");
 						nomeAzione=null;
 						break;
@@ -1227,14 +1177,13 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("id_soggetto_erogatore", "?");
 				sqlQueryObject.addInsertField("tipo_soggetto_erogatore", "?");
 				sqlQueryObject.addInsertField("nome_soggetto_erogatore", "?");
-				sqlQueryObject.addInsertField("mode_soggetto_erogatore", "?");
 				sqlQueryObject.addInsertField("id_servizio", "?");
 				sqlQueryObject.addInsertField("tipo_servizio", "?");
 				sqlQueryObject.addInsertField("nome_servizio", "?");
-				sqlQueryObject.addInsertField("mode_servizio", "?");
 				sqlQueryObject.addInsertField("id_azione", "?");
 				sqlQueryObject.addInsertField("nome_azione", "?");
 				sqlQueryObject.addInsertField("mode_azione", "?");
+				sqlQueryObject.addInsertField("pattern_azione", "?");
 				sqlQueryObject.addInsertField("force_wsdl_based_azione", "?");
 				sqlQueryObject.addInsertField("autenticazione", "?");
 				sqlQueryObject.addInsertField("autorizzazione", "?");
@@ -1248,9 +1197,6 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("ricevuta_asincrona_sim", "?");
 				sqlQueryObject.addInsertField("ricevuta_asincrona_asim", "?");
 				sqlQueryObject.addInsertField("integrazione", "?");
-				sqlQueryObject.addInsertField("pattern_soggetto_erogatore", "?");
-				sqlQueryObject.addInsertField("pattern_servizio", "?");
-				sqlQueryObject.addInsertField("pattern_azione", "?");
 				sqlQueryObject.addInsertField("scadenza_correlazione_appl", "?");
 				sqlQueryObject.addInsertField("validazione_contenuti_stato", "?");
 				sqlQueryObject.addInsertField("validazione_contenuti_tipo", "?");
@@ -1271,11 +1217,9 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setLong(index++, idSoggettoErogatore);				
 				stm.setString(index++, tipoSoggErogatore);
 				stm.setString(index++, nomeSoggErogatore);
-				stm.setString(index++, modeSoggettoErogatore.toString());
 				stm.setLong(index++, idServizioPD);
 				stm.setString(index++, tipoServizio);
 				stm.setString(index++, nomeServizio);
-				stm.setString(index++, modeServizio.toString());
 				stm.setLong(index++, idAzione);
 				stm.setString(index++, nomeAzione);
 				if(modeAzione!=null){
@@ -1284,6 +1228,7 @@ public class DriverConfigurazioneDB_LIB {
 				else{
 					stm.setString(index++, null);
 				}
+				stm.setString(index++, patternAzione);
 				stm.setString(index++, getValue(forceWsdlBased));
 				stm.setString(index++, autenticazione);
 				stm.setString(index++, autorizzazione);
@@ -1302,10 +1247,6 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(aPD.getRicevutaAsincronaAsimmetrica()));				
 				//integrazione
 				stm.setString(index++, aPD.getIntegrazione());
-				//pattern
-				stm.setString(index++, patternErogatore);
-				stm.setString(index++, patternServizio);
-				stm.setString(index++, patternAzione);
 				//correlazione applicativa scadenza
 				stm.setString(index++, aPD.getCorrelazioneApplicativa()!=null ? aPD.getCorrelazioneApplicativa().getScadenza() : null);
 				//validazione xsd
@@ -1330,14 +1271,15 @@ public class DriverConfigurazioneDB_LIB {
 				
 				DriverConfigurazioneDB_LIB.log.debug("eseguo query: " + 
 						DBUtils.formatSQLString(sqlQuery, nomePorta, descrizione, location, 
-								idSoggettoErogatore, tipoSoggErogatore, nomeSoggErogatore, modeSoggettoErogatore, 
-								idServizioPD, tipoServizio, nomeServizio, modeServizio, 
-								idAzione, nomeAzione, modeAzione, autenticazione, autorizzazione, autorizzazioneContenuto,
+								idSoggettoErogatore, tipoSoggErogatore, nomeSoggErogatore, 
+								idServizioPD, tipoServizio, nomeServizio, 
+								idAzione, nomeAzione, modeAzione, patternAzione, getValue(forceWsdlBased),
+								autenticazione, autorizzazione, autorizzazioneContenuto,
 								mtomMode_request, mtomMode_response,
 								messageSecurityStatus, messageSecurityApplyMtom_request, messageSecurityApplyMtom_response,
 								idSoggettoProprietario,
 								aPD.getRicevutaAsincronaSimmetrica(),aPD.getRicevutaAsincronaAsimmetrica(),aPD.getIntegrazione(),
-								patternErogatore,patternServizio,patternAzione,(aPD.getCorrelazioneApplicativa()!=null ? aPD.getCorrelazioneApplicativa().getScadenza() : null),
+								(aPD.getCorrelazioneApplicativa()!=null ? aPD.getCorrelazioneApplicativa().getScadenza() : null),
 								(aPD.getValidazioneContenutiApplicativi()!=null ? aPD.getValidazioneContenutiApplicativi().getStato() : null),
 								(aPD.getValidazioneContenutiApplicativi()!=null ? aPD.getValidazioneContenutiApplicativi().getTipo() : null),
 								(aPD.getValidazioneContenutiApplicativi()!=null ? aPD.getValidazioneContenutiApplicativi().getAcceptMtomMessage() : null),
@@ -1600,63 +1542,14 @@ public class DriverConfigurazioneDB_LIB {
 				//soggetto erogatore
 				tipoSoggErogatore = (soggErogatore != null ? soggErogatore.getTipo() : null);
 				nomeSoggErogatore = (soggErogatore != null ? soggErogatore.getNome() : null);
-				patternErogatore  = (soggErogatore != null ? soggErogatore.getPattern() : null);
-				modeSoggettoErogatore = (soggErogatore != null ? soggErogatore.getIdentificazione() : null);
-				if(modeSoggettoErogatore==null || modeSoggettoErogatore.equals("")) 
-					modeSoggettoErogatore=PortaDelegataSoggettoErogatoreIdentificazione.STATIC;
-				//controllo parametri necessari in base alla modalita
-
-				switch (modeSoggettoErogatore) {
-				case CONTENT_BASED:
-				case URL_BASED:
-					if(tipoSoggErogatore==null || tipoSoggErogatore.equals("")) throw new DriverConfigurazioneException("Tipo Soggetto Erogatore non impostato.");
-					if(patternErogatore==null || patternErogatore.equals("")) throw new DriverConfigurazioneException("Pattern Soggetto Erogatore non impostato.");
-					nomeSoggErogatore=null;
-					break;
-				case INPUT_BASED:
-					if(tipoSoggErogatore==null || tipoSoggErogatore.equals("")) throw new DriverConfigurazioneException("Tipo Soggetto Erogatore non impostato.");
-					break;
-				case STATIC:
-					//se non c'e' l'id del soggetto allora ci devono essere il tipo e il nome
-					if(idSoggettoErogatore<=0){
-						if(tipoSoggErogatore==null || tipoSoggErogatore.equals("")) throw new DriverConfigurazioneException("Tipo Soggetto Erogatore non impostato.");
-						if(nomeSoggErogatore==null || nomeSoggErogatore.equals("")) throw new DriverConfigurazioneException("Nome Soggetto Erogatore non impostato.");
-					}
-					patternErogatore=null;
-					break;
-				default:
-					break;
-				}
+				if(tipoSoggErogatore==null || tipoSoggErogatore.equals("")) throw new DriverConfigurazioneException("Tipo Soggetto Erogatore non impostato.");
+				if(nomeSoggErogatore==null || nomeSoggErogatore.equals("")) throw new DriverConfigurazioneException("Nome Soggetto Erogatore non impostato.");
 
 				//servizio
 				tipoServizio = (servizio != null ? servizio.getTipo() : null);
 				nomeServizio = (servizio != null ? servizio.getNome() : null);
-				patternServizio = (servizio != null ? servizio.getPattern() : null);
-				modeServizio = (servizio != null ? servizio.getIdentificazione() : null);
-				if(modeServizio==null || modeServizio.equals("")) 
-					modeServizio=PortaDelegataServizioIdentificazione.STATIC;
-				//campi obbligatori
-				switch (modeServizio) {
-				case CONTENT_BASED:
-				case URL_BASED:
-					if(tipoServizio==null || tipoServizio.equals("")) throw new DriverConfigurazioneException("Tipo Servizio non impostato.");
-					if(patternServizio==null || patternServizio.equals("")) throw new DriverConfigurazioneException("Pattern Servizio non impostato.");
-					nomeServizio=null;
-					break;
-				case INPUT_BASED:
-					if(tipoServizio==null || tipoServizio.equals("")) throw new DriverConfigurazioneException("Tipo Servizio non impostato.");
-					break;
-				case STATIC:
-					//se non c'e' l'id del servizio allora ci devono essere il tipo e il nome
-					if(idServizioPD<=0){
-						if(tipoServizio==null || tipoServizio.equals("")) throw new DriverConfigurazioneException("Tipo Servizio non impostato.");
-						if(nomeServizio==null || nomeServizio.equals("")) throw new DriverConfigurazioneException("Nome Servizio non impostato.");
-					}
-					patternServizio=null;
-					break;
-				default:
-					break;
-				}
+				if(tipoServizio==null || tipoServizio.equals("")) throw new DriverConfigurazioneException("Tipo Servizio non impostato.");
+				if(nomeServizio==null || nomeServizio.equals("")) throw new DriverConfigurazioneException("Nome Servizio non impostato.");
 
 				//Azione
 				nomeAzione = (azione != null ? azione.getNome() : null);
@@ -1670,6 +1563,7 @@ public class DriverConfigurazioneDB_LIB {
 					switch (modeAzione) {
 					case CONTENT_BASED:
 					case URL_BASED:
+					case HEADER_BASED:
 						if(patternAzione==null || patternAzione.equals("")) throw new DriverConfigurazioneException("Pattern Azione non impostato.");
 						nomeAzione=null;
 						break;
@@ -1740,14 +1634,13 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("id_soggetto_erogatore", "?");
 				sqlQueryObject.addUpdateField("tipo_soggetto_erogatore", "?");
 				sqlQueryObject.addUpdateField("nome_soggetto_erogatore", "?");
-				sqlQueryObject.addUpdateField("mode_soggetto_erogatore", "?");
 				sqlQueryObject.addUpdateField("id_servizio", "?");
 				sqlQueryObject.addUpdateField("tipo_servizio", "?");
 				sqlQueryObject.addUpdateField("nome_servizio", "?");
-				sqlQueryObject.addUpdateField("mode_servizio", "?");
 				sqlQueryObject.addUpdateField("id_azione", "?");
 				sqlQueryObject.addUpdateField("nome_azione", "?");
 				sqlQueryObject.addUpdateField("mode_azione", "?");
+				sqlQueryObject.addUpdateField("pattern_azione", "?");
 				sqlQueryObject.addUpdateField("force_wsdl_based_azione", "?");
 				sqlQueryObject.addUpdateField("autenticazione", "?");
 				sqlQueryObject.addUpdateField("autorizzazione", "?");
@@ -1761,9 +1654,6 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("ricevuta_asincrona_sim", "?");
 				sqlQueryObject.addUpdateField("ricevuta_asincrona_asim", "?");
 				sqlQueryObject.addUpdateField("integrazione", "?");
-				sqlQueryObject.addUpdateField("pattern_soggetto_erogatore", "?");
-				sqlQueryObject.addUpdateField("pattern_servizio", "?");
-				sqlQueryObject.addUpdateField("pattern_azione", "?");
 				sqlQueryObject.addUpdateField("scadenza_correlazione_appl", "?");
 				sqlQueryObject.addUpdateField("validazione_contenuti_stato", "?");
 				sqlQueryObject.addUpdateField("validazione_contenuti_tipo", "?");
@@ -1788,17 +1678,16 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setLong(index++, idSoggettoErogatore);
 				stm.setString(index++, tipoSoggErogatore);
 				stm.setString(index++, nomeSoggErogatore);
-				stm.setString(index++, modeSoggettoErogatore.toString());
 				stm.setLong(index++, idServizioPD);
 				stm.setString(index++, tipoServizio);
 				stm.setString(index++, nomeServizio);
-				stm.setString(index++, modeServizio.toString());
 				stm.setLong(index++, idAzione);
 				stm.setString(index++, nomeAzione);
 				if(modeAzione!=null)
 					stm.setString(index++, modeAzione.toString());
 				else
 					stm.setString(index++, null);
+				stm.setString(index++, patternAzione);
 				stm.setString(index++, getValue(forceWsdlBased));
 				stm.setString(index++, autenticazione);
 				stm.setString(index++, autorizzazione);
@@ -1817,10 +1706,6 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(aPD.getRicevutaAsincronaAsimmetrica()));
 				//integrazione
 				stm.setString(index++, aPD.getIntegrazione());
-				//pattern
-				stm.setString(index++, patternErogatore);
-				stm.setString(index++, patternServizio);
-				stm.setString(index++, patternAzione);
 				//scadenza correlazione applicativa
 				stm.setString(index++, aPD.getCorrelazioneApplicativa()!=null ? aPD.getCorrelazioneApplicativa().getScadenza() : null);
 				//validazione xsd
@@ -1843,7 +1728,10 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setLong(index++, idPortaDelegata);
 				stm.setLong(index++, oldIdSoggettoProprietario);
 
-				//DriverConfigurazioneDB_LIB.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, nomePorta, descrizione, location, soggErogatore.getId(), soggErogatore.getTipo(), soggErogatore.getNome(), soggErogatore.getIdentificazione(), servizio.getId(), servizio.getTipo(), servizio.getNome(), servizio.getIdentificazione(), azione.getId(), azione.getNome(), azione.getIdentificazione(), autenticazione, autorizzazione, messageSecurityStatus, idSoggettoProprietario, idPortaDelegata));
+				//DriverConfigurazioneDB_LIB.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, nomePorta, descrizione, location, 
+				// soggErogatore.getId(), soggErogatore.getTipo(), soggErogatore.getNome(), soggErogatore.getIdentificazione(), servizio.getId(), 
+				// servizio.getTipo(), servizio.getNome(), servizio.getIdentificazione(), azione.getId(), azione.getNome(), azione.getIdentificazione(), 
+				// autenticazione, autorizzazione, messageSecurityStatus, idSoggettoProprietario, idPortaDelegata));
 
 				n = stm.executeUpdate();
 				stm.close();
@@ -3021,6 +2909,38 @@ public class DriverConfigurazioneDB_LIB {
 					if(nomeServizio==null || nomeServizio.equals("")) throw new DriverConfigurazioneException("Nome Servizio non impostato.");
 				}
 
+				//Azione
+				String nomeAzione = (azione != null ? azione.getNome() : null);
+				String patternAzione = (azione != null ? azione.getPattern() : null);
+				StatoFunzionalita forceWsdlBased = (azione != null ? azione.getForceWsdlBased() : null);
+				PortaApplicativaAzioneIdentificazione modeAzione = (azione != null ? azione.getIdentificazione() : null);
+				//Se il bean Azione nn e' presente allora non controllo nulla
+				if(azione!=null){
+					if(modeAzione==null || modeAzione.equals("")) 
+						modeAzione = PortaApplicativaAzioneIdentificazione.STATIC;
+					switch (modeAzione) {
+					case CONTENT_BASED:
+					case URL_BASED:
+					case HEADER_BASED:
+						if(patternAzione==null || patternAzione.equals("")) throw new DriverConfigurazioneException("Pattern Azione non impostato.");
+						nomeAzione=null;
+						break;
+					case INPUT_BASED:
+					case SOAP_ACTION_BASED:
+					case WSDL_BASED:
+					case PLUGIN_BASED:
+						//nessun campo obbligatorio
+						break;
+					case STATIC:
+						//ci deve essere il nome
+						if(nomeAzione==null || nomeAzione.equals("")) throw new DriverConfigurazioneException("Nome Azione non impostato.");
+						patternAzione=null;
+						break;
+					default:
+						break;
+					}
+				}
+				
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE);
 				sqlQueryObject.addInsertField("nome_porta", "?");
@@ -3032,6 +2952,9 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("tipo_servizio", "?");
 				sqlQueryObject.addInsertField("servizio", "?");
 				sqlQueryObject.addInsertField("azione", "?");
+				sqlQueryObject.addInsertField("mode_azione", "?");
+				sqlQueryObject.addInsertField("pattern_azione", "?");
+				sqlQueryObject.addInsertField("force_wsdl_based_azione", "?");
 				sqlQueryObject.addInsertField("mtom_request_mode", "?");
 				sqlQueryObject.addInsertField("mtom_response_mode", "?");
 				sqlQueryObject.addInsertField("ws_security", "?");
@@ -3067,6 +2990,14 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, tipoServizio);
 				stm.setString(index++, nomeServizio);
 				stm.setString(index++, (azione != null ? azione.getNome() : null));
+				if(modeAzione!=null){
+					stm.setString(index++, modeAzione.toString());
+				}
+				else{
+					stm.setString(index++, null);
+				}
+				stm.setString(index++, patternAzione);
+				stm.setString(index++, getValue(forceWsdlBased));
 				// mtom
 				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(mtomMode_request));
 				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(mtomMode_response));
@@ -3393,6 +3324,38 @@ public class DriverConfigurazioneDB_LIB {
 					if(tipoServizio==null || tipoServizio.equals("")) throw new DriverConfigurazioneException("Tipo Servizio non impostato.");
 					if(nomeServizio==null || nomeServizio.equals("")) throw new DriverConfigurazioneException("Nome Servizio non impostato.");
 				}
+				
+				//Azione
+				nomeAzione = (azione != null ? azione.getNome() : null);
+				patternAzione = (azione != null ? azione.getPattern() : null);
+				forceWsdlBased = (azione != null ? azione.getForceWsdlBased() : null);
+				modeAzione = (azione != null ? azione.getIdentificazione() : null);
+				//Se il bean Azione nn e' presente allora non controllo nulla
+				if(azione!=null){
+					if(modeAzione==null || modeAzione.equals("")) 
+						modeAzione = PortaApplicativaAzioneIdentificazione.STATIC;
+					switch (modeAzione) {
+					case CONTENT_BASED:
+					case URL_BASED:
+					case HEADER_BASED:
+						if(patternAzione==null || patternAzione.equals("")) throw new DriverConfigurazioneException("Pattern Azione non impostato.");
+						nomeAzione=null;
+						break;
+					case INPUT_BASED:
+					case SOAP_ACTION_BASED:
+					case WSDL_BASED:
+					case PLUGIN_BASED:
+						//nessun campo obbligatorio
+						break;
+					case STATIC:
+						//ci deve essere il nome
+						if(nomeAzione==null || nomeAzione.equals("")) throw new DriverConfigurazioneException("Nome Azione non impostato.");
+						patternAzione=null;
+						break;
+					default:
+						break;
+					}
+				}
 
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addUpdateTable(CostantiDB.PORTE_APPLICATIVE);
@@ -3404,6 +3367,9 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("tipo_servizio", "?");
 				sqlQueryObject.addUpdateField("servizio", "?");
 				sqlQueryObject.addUpdateField("azione", "?");
+				sqlQueryObject.addUpdateField("mode_azione", "?");
+				sqlQueryObject.addUpdateField("pattern_azione", "?");
+				sqlQueryObject.addUpdateField("force_wsdl_based_azione", "?");
 				sqlQueryObject.addUpdateField("mtom_request_mode", "?");
 				sqlQueryObject.addUpdateField("mtom_response_mode", "?");
 				sqlQueryObject.addUpdateField("ws_security", "?");
@@ -3458,6 +3424,14 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, tipoServizio);
 				stm.setString(index++, nomeServizio);
 				stm.setString(index++, (azione != null ? azione.getNome() : null));
+				if(modeAzione!=null){
+					stm.setString(index++, modeAzione.toString());
+				}
+				else{
+					stm.setString(index++, null);
+				}
+				stm.setString(index++, patternAzione);
+				stm.setString(index++, getValue(forceWsdlBased));
 				// mtom
 				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(mtomMode_request));
 				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(mtomMode_response));

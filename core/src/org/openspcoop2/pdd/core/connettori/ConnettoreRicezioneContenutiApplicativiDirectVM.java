@@ -25,11 +25,11 @@
 package org.openspcoop2.pdd.core.connettori;
 
 import org.openspcoop2.core.constants.CostantiConnettori;
-import org.openspcoop2.pdd.services.RicezioneContenutiApplicativi;
-import org.openspcoop2.pdd.services.RicezioneContenutiApplicativiSOAP;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
-import org.openspcoop2.pdd.services.connector.DirectVMConnectorInMessage;
-import org.openspcoop2.pdd.services.connector.DirectVMConnectorOutMessage;
+import org.openspcoop2.pdd.services.connector.messages.DirectVMConnectorInMessage;
+import org.openspcoop2.pdd.services.connector.messages.DirectVMConnectorOutMessage;
+import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
+import org.openspcoop2.pdd.services.service.RicezioneContenutiApplicativiService;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
 
@@ -55,15 +55,15 @@ public class ConnettoreRicezioneContenutiApplicativiDirectVM extends AbstractCon
 	}
 	@Override
 	public IDService getIdModuloAsIDService() {
-		return IDService.PORTA_DELEGATA_SOAP;
+		return IDService.PORTA_DELEGATA;
 	}
 	@Override
 	public String getFunction(){
 		return URLProtocolContext.PD_FUNCTION;
 	}
 	@Override
-	public void process(DirectVMConnectorInMessage inMessage,DirectVMConnectorOutMessage outMessage) throws ConnectorException{
-		RicezioneContenutiApplicativiSOAP soapConnector = new RicezioneContenutiApplicativiSOAP();
+	public void process(DirectVMConnectorInMessage inMessage,DirectVMConnectorOutMessage outMessage) throws ConnectorException{	
+		RicezioneContenutiApplicativiService soapConnector = new RicezioneContenutiApplicativiService(null); // il generatore di errori verrà creato direttamente dal servizio
 		soapConnector.process(inMessage, outMessage);
 	}
 	

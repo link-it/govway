@@ -892,7 +892,7 @@ public class ClientTest {
 	}
 
 	private static void printImportFromWSDL(Logger log,byte[] doc)throws Exception{
-		AbstractXMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();		
+		AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();		
 		WSDLUtilities wsdlUtilities = WSDLUtilities.getInstance(xmlUtils);
 		if(xmlUtils.isDocument(doc)){
 			Document d = xmlUtils.newDocument(doc);
@@ -912,7 +912,7 @@ public class ClientTest {
 		}
 	}
 	private static void printImportIntoTypesFromWSDL(Logger log,byte[] doc)throws Exception{
-		AbstractXMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
+		AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 		WSDLUtilities wsdlUtilities = WSDLUtilities.getInstance(xmlUtils);
 		XSDUtils xsdUtils = new XSDUtils(xmlUtils);
 		if(xmlUtils.isDocument(doc)){
@@ -933,7 +933,7 @@ public class ClientTest {
 		}
 	}
 	private static void printIncludeIntoTypesFromWSDL(Logger log,byte[] doc)throws Exception{
-		AbstractXMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();	
+		AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();	
 		WSDLUtilities wsdlUtilities = WSDLUtilities.getInstance(xmlUtils);
 		XSDUtils xsdUtils = new XSDUtils(xmlUtils);
 		if(xmlUtils.isDocument(doc)){
@@ -950,7 +950,7 @@ public class ClientTest {
 		}
 	}
 	private static void printImportFromXSD(Logger log,byte[] doc)throws Exception{
-		AbstractXMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();		
+		AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();		
 		XSDUtils xsdUtils = new XSDUtils(xmlUtils);
 		if(xmlUtils.isDocument(doc)){
 			Document d = xmlUtils.newDocument(doc);
@@ -970,7 +970,7 @@ public class ClientTest {
 		}
 	}
 	private static void printIncludeFromXSD(Logger log,byte[] doc)throws Exception{
-		AbstractXMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();		
+		AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();		
 		XSDUtils xsdUtils = new XSDUtils(xmlUtils);
 		if(xmlUtils.isDocument(doc)){
 			Document d = xmlUtils.newDocument(doc);
@@ -987,7 +987,7 @@ public class ClientTest {
 	}
 	private static void printElementIntoWSDL(Logger log,byte[] doc)throws Exception{
 	
-		AbstractXMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();		
+		AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();		
 		WSDLUtilities wsdlUtilities = WSDLUtilities.getInstance(xmlUtils);
 		Document d = xmlUtils.newDocument(doc);
 		wsdlUtilities.removeTypes(d);

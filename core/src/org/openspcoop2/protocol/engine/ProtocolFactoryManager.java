@@ -31,11 +31,15 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.slf4j.Logger;
 import org.openspcoop2.protocol.engine.mapping.InformazioniServizioURLMapping;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
+import org.openspcoop2.protocol.manifest.RestConfiguration;
+import org.openspcoop2.protocol.manifest.SoapConfiguration;
+import org.openspcoop2.protocol.manifest.SubContextMapping;
 import org.openspcoop2.protocol.manifest.Web;
 import org.openspcoop2.protocol.manifest.constants.Costanti;
+import org.openspcoop2.protocol.manifest.constants.MessageType;
+import org.openspcoop2.protocol.manifest.constants.ServiceBinding;
 import org.openspcoop2.protocol.manifest.utils.XMLUtils;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -43,6 +47,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.MapReader;
+import org.slf4j.Logger;
 
 /**
  * Protocol Factory Manager
@@ -91,8 +96,10 @@ public class ProtocolFactoryManager {
 	private String protocolDefault = null;
 	private MapReader<String, List<String>> tipiSoggettiValidi = null;
 	private MapReader<String, String> tipiSoggettiDefault = null;
-	private MapReader<String, List<String>> tipiServiziValidi = null;
-	private MapReader<String, String> tipiServiziDefault = null;
+	private MapReader<String, List<String>> tipiServiziValidi_soap = null;
+	private MapReader<String, String> tipiServiziDefault_soap = null;
+	private MapReader<String, List<String>> tipiServiziValidi_rest = null;
+	private MapReader<String, String> tipiServiziDefault_rest = null;
 	private MapReader<String, List<String>> versioniValide = null;
 	private MapReader<String, String> versioniDefault = null;
 	private Logger log = null;
@@ -106,8 +113,10 @@ public class ProtocolFactoryManager {
 			Hashtable<String, List<String>> tmp_tipiSoggettiValidi = new Hashtable<String, List<String>>();
 			Hashtable<String, String> tmp_tipiSoggettiDefault = new Hashtable<String, String>();
 			
-			Hashtable<String, List<String>> tmp_tipiServiziValidi = new Hashtable<String, List<String>>();
-			Hashtable<String, String> tmp_tipiServiziDefault = new Hashtable<String, String>();
+			Hashtable<String, List<String>> tmp_tipiServiziValidi_soap = new Hashtable<String, List<String>>();
+			Hashtable<String, String> tmp_tipiServiziDefault_soap = new Hashtable<String, String>();
+			Hashtable<String, List<String>> tmp_tipiServiziValidi_rest = new Hashtable<String, List<String>>();
+			Hashtable<String, String> tmp_tipiServiziDefault_rest = new Hashtable<String, String>();
 			
 			Hashtable<String, List<String>> tmp_versioniValide = new Hashtable<String, List<String>>();
 			Hashtable<String, String> tmp_versioniDefault = new Hashtable<String, String>();
@@ -150,7 +159,8 @@ public class ProtocolFactoryManager {
 			configPdD.getLog().debug("Validate Manifests ...");
 			validateProtocolFactoryLoaded(tmp_manifests,
 					tmp_tipiSoggettiValidi,tmp_tipiSoggettiDefault,
-					tmp_tipiServiziValidi, tmp_tipiServiziDefault,
+					tmp_tipiServiziValidi_soap, tmp_tipiServiziDefault_soap,
+					tmp_tipiServiziValidi_rest, tmp_tipiServiziDefault_rest,
 					tmp_versioniValide, tmp_versioniDefault);
 			configPdD.getLog().debug("Validate Manifests ok");
 			
@@ -190,7 +200,7 @@ public class ProtocolFactoryManager {
 					}
 					context.append(manifestOpenspcoop2.getWeb().getContext(i));
 				}
-				log.info("Protocol loaded with id["+protocolManifest+"] factory["+manifestOpenspcoop2.getFactory()+"] contexts["+context.toString()+"]");
+				log.info("Protocol loaded with id["+protocolManifest+"] factory["+manifestOpenspcoop2.getProtocol().getFactory()+"] contexts["+context.toString()+"]");
 				
 				configPdD.getLog().debug("Init ProtocolFactory for protocol ["+protocolManifest+"] ok");
 			}
@@ -203,8 +213,11 @@ public class ProtocolFactoryManager {
 			this.tipiSoggettiValidi = new MapReader<String, List<String>>(tmp_tipiSoggettiValidi,true);
 			this.tipiSoggettiDefault = new MapReader<String, String>(tmp_tipiSoggettiDefault,true);
 			
-			this.tipiServiziValidi = new MapReader<String, List<String>>(tmp_tipiServiziValidi,true);
-			this.tipiServiziDefault = new MapReader<String, String>(tmp_tipiServiziDefault,true);
+			this.tipiServiziValidi_soap = new MapReader<String, List<String>>(tmp_tipiServiziValidi_soap,true);
+			this.tipiServiziDefault_soap = new MapReader<String, String>(tmp_tipiServiziDefault_soap,true);
+			
+			this.tipiServiziValidi_rest = new MapReader<String, List<String>>(tmp_tipiServiziValidi_rest,true);
+			this.tipiServiziDefault_rest = new MapReader<String, String>(tmp_tipiServiziDefault_rest,true);
 			
 			this.versioniValide = new MapReader<String, List<String>>(tmp_versioniValide,true);
 			this.versioniDefault = new MapReader<String, String>(tmp_versioniDefault,true);
@@ -234,7 +247,7 @@ public class ProtocolFactoryManager {
 
 		configPdD.getLog().debug("Analyze manifest ["+pluginURL.toString()+"] convertToOpenSPCoop2Manifest...");
 		Openspcoop2 manifestOpenspcoop2 = XMLUtils.getOpenspcoop2Manifest(configPdD.getLog(),manifest);
-		String protocollo = manifestOpenspcoop2.getProtocolName();
+		String protocollo = manifestOpenspcoop2.getProtocol().getName();
 		configPdD.getLog().debug("Analyze manifest ["+pluginURL.toString()+"] with protocolName: ["+protocollo+"]");
 		if(tmp_manifests.containsKey(protocollo)){
 		
@@ -254,7 +267,8 @@ public class ProtocolFactoryManager {
 	
 	private void validateProtocolFactoryLoaded(Hashtable<String, Openspcoop2> tmp_manifests,
 			Hashtable<String, List<String>> tmp_tipiSoggettiValidi,Hashtable<String, String> tmp_tipiSoggettiDefault,
-			Hashtable<String, List<String>> tmp_tipiServiziValidi, Hashtable<String, String> tmp_tipiServiziDefault,
+			Hashtable<String, List<String>> tmp_tipiServiziValidi_soap, Hashtable<String, String> tmp_tipiServiziDefault_soap,
+			Hashtable<String, List<String>> tmp_tipiServiziValidi_rest, Hashtable<String, String> tmp_tipiServiziDefault_rest,
 			Hashtable<String, List<String>> tmp_versioniValide,Hashtable<String, String> tmp_versioniDefault) throws Exception{
 				
 		// 1. controllare che solo uno possieda il contesto vuoto
@@ -284,7 +298,7 @@ public class ProtocolFactoryManager {
 			Openspcoop2 manifestOpenspcoop2 = tmp_manifests.get(protocolManifest);
 			
 			for (int i = 0; i < manifestOpenspcoop2.getWeb().sizeContextList(); i++) {
-				String context = manifestOpenspcoop2.getWeb().getContext(i);
+				String context = manifestOpenspcoop2.getWeb().getContext(i).getName();
 				if(!mappingContextToProtocol.containsKey(context)){
 					mappingContextToProtocol.put(context, protocolManifest);
 				}
@@ -303,13 +317,13 @@ public class ProtocolFactoryManager {
 			String protocolManifest = protocolManifestEnum.nextElement();
 			Openspcoop2 manifestOpenspcoop2 = tmp_manifests.get(protocolManifest);
 			
-			int size = manifestOpenspcoop2.getRegistroServizi().getSoggetti().getTipi().sizeTipoList();
+			int size = manifestOpenspcoop2.getRegistry().getOrganization().getTypes().sizeTypeList();
 			if(size<=0){
-				throw new Exception("Subject type not defined for protocol ["+protocolManifest+"]");
+				throw new Exception("Organization type not defined for protocol ["+protocolManifest+"]");
 			}
 			
 			for (int i = 0; i < size; i++) {
-				String tipo = manifestOpenspcoop2.getRegistroServizi().getSoggetti().getTipi().getTipo(i);
+				String tipo = manifestOpenspcoop2.getRegistry().getOrganization().getTypes().getType(i).getName();
 				if(!mappingTipiSoggettiToProtocol.containsKey(tipo)){
 					mappingTipiSoggettiToProtocol.put(tipo, protocolManifest);
 					
@@ -328,19 +342,9 @@ public class ProtocolFactoryManager {
 				}
 			}
 			
-			String tipoDefault = manifestOpenspcoop2.getRegistroServizi().getSoggetti().getTipi().getDefault();
-			if(tipoDefault!=null){
-				if(tmp_tipiSoggettiValidi.get(protocolManifest).contains(tipoDefault)==false){
-					throw new Exception("Unknown default subject type ["+tipoDefault+"] defined in protocol ["+protocolManifest+"]");
-				}
-			}
-			else{
-				if(size>1){
-					throw new Exception("Default subject type not defined. It's required if more than one type is defined (found "+size+" subject types)");
-				}
-				else{
-					tipoDefault = manifestOpenspcoop2.getRegistroServizi().getSoggetti().getTipi().getTipo(0);
-				}
+			String tipoDefault = manifestOpenspcoop2.getRegistry().getOrganization().getTypes().getType(0).getName();
+			if(tmp_tipiSoggettiValidi.get(protocolManifest).contains(tipoDefault)==false){
+				throw new Exception("Unknown default subject type ["+tipoDefault+"] defined in protocol ["+protocolManifest+"]");
 			}
 			tmp_tipiSoggettiDefault.put(protocolManifest, tipoDefault);
 			
@@ -348,6 +352,8 @@ public class ProtocolFactoryManager {
 		
 		
 		// 4. controllare e inizializzare i tipi di servizi in modo che siano tutti diversi
+		String tipoServizioDefaultSoap = null;
+		String tipoServizioDefaultRest = null;
 		Hashtable<String, String> mappingTipiServiziToProtocol = new Hashtable<String, String>();
 		protocolManifestEnum = tmp_manifests.keys();
 		while (protocolManifestEnum.hasMoreElements()) {
@@ -355,46 +361,61 @@ public class ProtocolFactoryManager {
 			String protocolManifest = protocolManifestEnum.nextElement();
 			Openspcoop2 manifestOpenspcoop2 = tmp_manifests.get(protocolManifest);
 			
-			int size = manifestOpenspcoop2.getRegistroServizi().getServizi().getTipi().sizeTipoList();
+			int size = manifestOpenspcoop2.getRegistry().getService().getTypes().sizeTypeList();
 			if(size<=0){
 				throw new Exception("Service type not defined for protocol ["+protocolManifest+"]");
 			}
 			
 			for (int i = 0; i < size; i++) {
-				String tipo = manifestOpenspcoop2.getRegistroServizi().getServizi().getTipi().getTipo(i);
+				String tipo = manifestOpenspcoop2.getRegistry().getService().getTypes().getType(i).getName();
+				ServiceBinding serviceBinding = manifestOpenspcoop2.getRegistry().getService().getTypes().getType(i).getBinding();
 				if(!mappingTipiServiziToProtocol.containsKey(tipo)){
 					mappingTipiServiziToProtocol.put(tipo, protocolManifest);
 					
-					List<String> tipiServiziPerProtocollo = null;
-					if(tmp_tipiServiziValidi.containsKey(protocolManifest)){
-						tipiServiziPerProtocollo = tmp_tipiServiziValidi.remove(protocolManifest);
+					List<String> tipiServiziPerProtocollo_soap = null;
+					if(tmp_tipiServiziValidi_soap.containsKey(protocolManifest)){
+						tipiServiziPerProtocollo_soap = tmp_tipiServiziValidi_soap.remove(protocolManifest);
 					}
 					else{
-						tipiServiziPerProtocollo = new ArrayList<String>();
+						tipiServiziPerProtocollo_soap = new ArrayList<String>();
 					}
-					tipiServiziPerProtocollo.add(tipo);
-					tmp_tipiServiziValidi.put(protocolManifest, tipiServiziPerProtocollo);
+					
+					List<String> tipiServiziPerProtocollo_rest = null;
+					if(tmp_tipiServiziValidi_rest.containsKey(protocolManifest)){
+						tipiServiziPerProtocollo_rest = tmp_tipiServiziValidi_rest.remove(protocolManifest);
+					}
+					else{
+						tipiServiziPerProtocollo_rest = new ArrayList<String>();
+					}
+					
+					if(serviceBinding==null || ServiceBinding.SOAP.equals(serviceBinding)){
+						tipiServiziPerProtocollo_soap.add(tipo);
+						tmp_tipiServiziValidi_soap.put(protocolManifest, tipiServiziPerProtocollo_soap);
+						if(tipoServizioDefaultSoap==null){
+							tipoServizioDefaultSoap = tipo;
+						}
+					}
+					
+					if(serviceBinding==null || ServiceBinding.REST.equals(serviceBinding)){
+						tipiServiziPerProtocollo_rest.add(tipo);
+						tmp_tipiServiziValidi_rest.put(protocolManifest, tipiServiziPerProtocollo_rest);
+						if(tipoServizioDefaultRest==null){
+							tipoServizioDefaultRest = tipo;
+						}
+					}
 				}
 				else{
 					throw new Exception("Protocols ["+mappingTipiServiziToProtocol.get(tipo)+"] and ["+protocolManifest+"] with same service type ["+tipo+"]");
 				}
 			}
 			
-			String tipoDefault = manifestOpenspcoop2.getRegistroServizi().getServizi().getTipi().getDefault();
-			if(tipoDefault!=null){
-				if(tmp_tipiServiziValidi.get(protocolManifest).contains(tipoDefault)==false){
-					throw new Exception("Unknown default service type ["+tipoDefault+"] defined in protocol ["+protocolManifest+"]");
-				}
+			if(tipoServizioDefaultSoap!=null){
+				tmp_tipiServiziDefault_soap.put(protocolManifest, tipoServizioDefaultSoap);
 			}
-			else{
-				if(size>1){
-					throw new Exception("Default service type not defined. It's required if more than one type is defined (found "+size+" service types)");
-				}
-				else{
-					tipoDefault = manifestOpenspcoop2.getRegistroServizi().getServizi().getTipi().getTipo(0);
-				}
+			if(tipoServizioDefaultRest!=null){
+				tmp_tipiServiziDefault_soap.put(protocolManifest, tipoServizioDefaultRest);
 			}
-			tmp_tipiServiziDefault.put(protocolManifest, tipoDefault);
+			
 		}
 		
 		
@@ -406,13 +427,13 @@ public class ProtocolFactoryManager {
 			String protocolManifest = protocolManifestEnum.nextElement();
 			Openspcoop2 manifestOpenspcoop2 = tmp_manifests.get(protocolManifest);
 			
-			int size = manifestOpenspcoop2.getRegistroServizi().getVersioni().sizeVersioneList();
+			int size = manifestOpenspcoop2.getRegistry().getVersions().sizeVersionList();
 			if(size<=0){
 				throw new Exception("Version not defined for protocol ["+protocolManifest+"]");
 			}
 			
 			for (int i = 0; i < size; i++) {
-				String version = manifestOpenspcoop2.getRegistroServizi().getVersioni().getVersione(i);
+				String version = manifestOpenspcoop2.getRegistry().getVersions().getVersion(i).getName();
 				
 				List<String> versioniPerProtocollo = null;
 				if(tmp_versioniValide.containsKey(protocolManifest)){
@@ -426,30 +447,354 @@ public class ProtocolFactoryManager {
 
 			}
 			
-			String versioneDefault = manifestOpenspcoop2.getRegistroServizi().getVersioni().getDefault();
-			if(versioneDefault!=null){
-				if(tmp_versioniValide.get(protocolManifest).contains(versioneDefault)==false){
-					throw new Exception("Unknown default version ["+versioneDefault+"] defined in protocol ["+protocolManifest+"]");
-				}
-			}
-			else{
-				if(size>1){
-					throw new Exception("Default version not defined. It's required if more than one type is defined (found "+size+" version)");
-				}
-				else{
-					versioneDefault = manifestOpenspcoop2.getRegistroServizi().getVersioni().getVersione(0);
-				}
+			String versioneDefault = manifestOpenspcoop2.getRegistry().getVersions().getVersion(0).getName();
+			if(tmp_versioniValide.get(protocolManifest).contains(versioneDefault)==false){
+				throw new Exception("Unknown default version ["+versioneDefault+"] defined in protocol ["+protocolManifest+"]");
 			}
 			tmp_versioniDefault.put(protocolManifest, versioneDefault);
 		}
 		
+		
+		
+		// 6. controllare e inizializzare i service binding di default
+		protocolManifestEnum = tmp_manifests.keys();
+		while (protocolManifestEnum.hasMoreElements()) {
+			
+			String protocolManifest = protocolManifestEnum.nextElement();
+			Openspcoop2 manifestOpenspcoop2 = tmp_manifests.get(protocolManifest);
+			
+			if(manifestOpenspcoop2.getBinding()==null){
+				throw new Exception("Binding not defined for protocol ["+protocolManifest+"]");
+			}
+			if(manifestOpenspcoop2.getBinding().getSoap()==null && manifestOpenspcoop2.getBinding().getRest()==null){
+				throw new Exception("Binding (soap/rest) not defined for protocol ["+protocolManifest+"]");
+			}
+			if(manifestOpenspcoop2.getBinding().getSoap()!=null && manifestOpenspcoop2.getBinding().getRest()!=null){
+				if(manifestOpenspcoop2.getBinding().getDefault()==null)
+					throw new Exception("Unknown default binding for protocol ["+protocolManifest+"]");
+			}
+			
+			boolean soapEnabled = false;
+			if(manifestOpenspcoop2.getBinding().getSoap()!=null){
+				if(!manifestOpenspcoop2.getBinding().getSoap().isSoap11() && !manifestOpenspcoop2.getBinding().getSoap().isSoap12()){
+					throw new Exception("Binding Soap for protocol ["+protocolManifest+"]: none of the soap versions is enabled");
+				}
+				if(manifestOpenspcoop2.getBinding().getSoap().isSoap11Mtom() && !manifestOpenspcoop2.getBinding().getSoap().isSoap11()){
+					throw new Exception("Binding Soap for protocol ["+protocolManifest+"]: if soap 1.1 is not enabled you can not enable MTOM");
+				}
+				if(manifestOpenspcoop2.getBinding().getSoap().isSoap11WithAttachments() && !manifestOpenspcoop2.getBinding().getSoap().isSoap11()){
+					throw new Exception("Binding Soap for protocol ["+protocolManifest+"]: if soap 1.1 is not enabled you can not enable attachments");
+				}
+				if(manifestOpenspcoop2.getBinding().getSoap().isSoap12Mtom() && !manifestOpenspcoop2.getBinding().getSoap().isSoap12()){
+					throw new Exception("Binding Soap for protocol ["+protocolManifest+"]: if soap 1.2 is not enabled you can not enable MTOM");
+				}
+				if(manifestOpenspcoop2.getBinding().getSoap().isSoap12WithAttachments() && !manifestOpenspcoop2.getBinding().getSoap().isSoap12()){
+					throw new Exception("Binding Soap for protocol ["+protocolManifest+"]: if soap 1.2 is not enabled you can not enable attachments");
+				}
+				
+				if(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError()==null){
+					throw new Exception("Binding Soap for protocol ["+protocolManifest+"]: it has not defined the configuration for error handling");
+				}
+				if(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal()==null){
+					throw new Exception("Binding Soap for protocol ["+protocolManifest+"]: it has not defined the configuration for internal error handling");
+				}
+				if(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getDefault()==null){
+					throw new Exception("Binding Soap for protocol ["+protocolManifest+"]: it has not defined the default configuration for internal error handling");
+				}
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getDefault().getHttpReturnCode(),"default");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getAuthentication().getHttpReturnCode(),"authentication");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getAuthorization().getHttpReturnCode(),"authorization");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getNotFound().getHttpReturnCode(),"notFound");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getBadRequest().getHttpReturnCode(),"badRequest");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getInternalError().getHttpReturnCode(),"internalError");
+				if(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal()==null){
+					throw new Exception("Binding Soap for protocol ["+protocolManifest+"]: it has not defined the configuration for external error handling");
+				}
+				if(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getDefault()==null){
+					throw new Exception("Binding Soap for protocol ["+protocolManifest+"]: it has not defined the default configuration for external error handling");
+				}
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getDefault().getHttpReturnCode(),"default");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getAuthentication().getHttpReturnCode(),"authentication");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getAuthorization().getHttpReturnCode(),"authorization");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getNotFound().getHttpReturnCode(),"notFound");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getBadRequest().getHttpReturnCode(),"badRequest");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getInternalError().getHttpReturnCode(),"internalError");
+				
+				if(manifestOpenspcoop2.getBinding().getSoap().getMediaTypeCollection()==null){
+					throw new Exception("Binding Soap for protocol ["+protocolManifest+"]: media type collection undefined");
+				}
+				if(manifestOpenspcoop2.getBinding().getSoap().getMediaTypeCollection().sizeMediaTypeList()<=0 && 
+						manifestOpenspcoop2.getBinding().getSoap().getMediaTypeCollection().getDefault()==null && 
+								manifestOpenspcoop2.getBinding().getSoap().getMediaTypeCollection().getUndefined()==null){
+					throw new Exception("Binding Soap for protocol ["+protocolManifest+"]: media type collection undefined");
+				}
+				
+				soapEnabled = true;
+			}
+			
+			boolean restEnabled = false;
+			if(manifestOpenspcoop2.getBinding().getRest()!=null){
+				if(!manifestOpenspcoop2.getBinding().getRest().isBinary() && 
+						!manifestOpenspcoop2.getBinding().getRest().isJson() && 
+						!manifestOpenspcoop2.getBinding().getRest().isXml() && 
+						!manifestOpenspcoop2.getBinding().getRest().isMimeMultipart()){
+					throw new Exception("Binding Rest for protocol ["+protocolManifest+"]: none of the message types is enabled");
+				}
+				
+				if(manifestOpenspcoop2.getBinding().getRest().getIntegrationError()==null){
+					throw new Exception("Binding Rest for protocol ["+protocolManifest+"]: it has not defined the configuration for error handling");
+				}
+				if(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal()==null){
+					throw new Exception("Binding Rest for protocol ["+protocolManifest+"]: it has not defined the configuration for internal error handling");
+				}
+				if(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getDefault()==null){
+					throw new Exception("Binding Rest for protocol ["+protocolManifest+"]: it has not defined the default configuration for internal error handling");
+				}
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getDefault().getHttpReturnCode(),"default");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getAuthentication().getHttpReturnCode(),"authentication");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getAuthorization().getHttpReturnCode(),"authorization");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getNotFound().getHttpReturnCode(),"notFound");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getBadRequest().getHttpReturnCode(),"badRequest");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getInternalError().getHttpReturnCode(),"internalError");
+				if(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal()==null){
+					throw new Exception("Binding Rest for protocol ["+protocolManifest+"]: it has not defined the configuration for external error handling");
+				}
+				if(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getDefault()==null){
+					throw new Exception("Binding Rest for protocol ["+protocolManifest+"]: it has not defined the default configuration for external error handling");
+				}
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getDefault().getHttpReturnCode(),"default");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getAuthentication().getHttpReturnCode(),"authentication");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getAuthorization().getHttpReturnCode(),"authorization");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getNotFound().getHttpReturnCode(),"notFound");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getBadRequest().getHttpReturnCode(),"badRequest");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getInternalError().getHttpReturnCode(),"internalError");		
+				
+				if(manifestOpenspcoop2.getBinding().getRest().getMediaTypeCollection()==null){
+					throw new Exception("Binding Rest for protocol ["+protocolManifest+"]: media type collection undefined");
+				}
+				if(manifestOpenspcoop2.getBinding().getRest().getMediaTypeCollection().sizeMediaTypeList()<=0 && 
+						manifestOpenspcoop2.getBinding().getRest().getMediaTypeCollection().getDefault()==null && 
+								manifestOpenspcoop2.getBinding().getRest().getMediaTypeCollection().getUndefined()==null){
+					throw new Exception("Binding Rest for protocol ["+protocolManifest+"]: media type collection undefined");
+				}
+				
+				restEnabled = true;
+			}
+			
+			for (int i = 0; i < manifestOpenspcoop2.getWeb().sizeContextList(); i++) {
+				String context = manifestOpenspcoop2.getWeb().getContext(i).getName();
+				ServiceBinding serviceBinding = manifestOpenspcoop2.getWeb().getContext(i).getBinding();
+				if(serviceBinding!=null){
+					if(ServiceBinding.REST.equals(serviceBinding)){
+						if(!restEnabled){
+							throw new Exception("Binding Rest for protocol ["+protocolManifest+"] is disabled: cannot define restriction for web context "+context);
+						}
+					}
+					else{
+						if(!soapEnabled){
+							throw new Exception("Binding Soap for protocol ["+protocolManifest+"] is disabled: cannot define restriction for web context "+context);
+						}
+					}
+				}
+				for (int j = 0; j < manifestOpenspcoop2.getWeb().getContext(i).sizeSubContextList(); j++) {
+					SubContextMapping subContext = manifestOpenspcoop2.getWeb().getContext(i).getSubContext(j);
+					checkMessageType(context,subContext.getBase(),subContext.getMessageType(),
+							manifestOpenspcoop2.getBinding().getSoap(),
+							manifestOpenspcoop2.getBinding().getRest());
+				}
+				if(manifestOpenspcoop2.getWeb().getContext(i).getEmptySubContext()!=null){
+					checkMessageType(context,Costanti.CONTEXT_EMPTY,manifestOpenspcoop2.getWeb().getContext(i).getEmptySubContext().getMessageType(),
+							manifestOpenspcoop2.getBinding().getSoap(),
+							manifestOpenspcoop2.getBinding().getRest());
+				}
+				
+				if(manifestOpenspcoop2.getWeb().getContext(i).getSoapMediaTypeCollection()!=null){
+					if(manifestOpenspcoop2.getWeb().getContext(i).getSoapMediaTypeCollection().sizeMediaTypeList()>0 || 
+							manifestOpenspcoop2.getWeb().getContext(i).getSoapMediaTypeCollection().getDefault()!=null || 
+									manifestOpenspcoop2.getWeb().getContext(i).getSoapMediaTypeCollection().getUndefined()!=null){
+						if(soapEnabled==false){
+							throw new ProtocolException("(Context:"+context+") SoapMediaType not supported; Soap disabled");
+						}
+					}
+				}
+				if(manifestOpenspcoop2.getWeb().getContext(i).getRestMediaTypeCollection()!=null){
+					if(manifestOpenspcoop2.getWeb().getContext(i).getRestMediaTypeCollection().sizeMediaTypeList()>0 || 
+							manifestOpenspcoop2.getWeb().getContext(i).getRestMediaTypeCollection().getDefault()!=null || 
+									manifestOpenspcoop2.getWeb().getContext(i).getRestMediaTypeCollection().getUndefined()!=null){
+						if(restEnabled==false){
+							throw new ProtocolException("(Context:"+context+") RestMediaType not supported; Rest disabled");
+						}
+					}
+				}
+			}
+			
+			if(manifestOpenspcoop2.getWeb().getEmptyContext()!=null){
+				ServiceBinding serviceBinding = manifestOpenspcoop2.getWeb().getEmptyContext().getBinding();
+				if(serviceBinding!=null){
+					if(ServiceBinding.REST.equals(serviceBinding)){
+						if(!restEnabled){
+							throw new Exception("Binding Rest for protocol ["+protocolManifest+"] is disabled: cannot define restriction for empty web context");
+						}
+					}
+					else{
+						if(!soapEnabled){
+							throw new Exception("Binding Soap for protocol ["+protocolManifest+"] is disabled: cannot define restriction for empty web context");
+						}
+					}
+				}
+				for (int j = 0; j < manifestOpenspcoop2.getWeb().getEmptyContext().sizeSubContextList(); j++) {
+					SubContextMapping subContext = manifestOpenspcoop2.getWeb().getEmptyContext().getSubContext(j);
+					checkMessageType(Costanti.CONTEXT_EMPTY,subContext.getBase(),subContext.getMessageType(),
+							manifestOpenspcoop2.getBinding().getSoap(),
+							manifestOpenspcoop2.getBinding().getRest());
+				}
+				if(manifestOpenspcoop2.getWeb().getEmptyContext().getEmptySubContext()!=null){
+					checkMessageType(Costanti.CONTEXT_EMPTY,Costanti.CONTEXT_EMPTY,manifestOpenspcoop2.getWeb().getEmptyContext().getEmptySubContext().getMessageType(),
+							manifestOpenspcoop2.getBinding().getSoap(),
+							manifestOpenspcoop2.getBinding().getRest());
+				}
+				
+				if(manifestOpenspcoop2.getWeb().getEmptyContext().getSoapMediaTypeCollection()!=null){
+					if(manifestOpenspcoop2.getWeb().getEmptyContext().getSoapMediaTypeCollection().sizeMediaTypeList()>0 || 
+							manifestOpenspcoop2.getWeb().getEmptyContext().getSoapMediaTypeCollection().getDefault()!=null || 
+									manifestOpenspcoop2.getWeb().getEmptyContext().getSoapMediaTypeCollection().getUndefined()!=null){
+						if(soapEnabled==false){
+							throw new ProtocolException("(Context:"+Costanti.CONTEXT_EMPTY+") SoapMediaType not supported; Soap disabled");
+						}
+					}
+				}
+				if(manifestOpenspcoop2.getWeb().getEmptyContext().getRestMediaTypeCollection()!=null){
+					if(manifestOpenspcoop2.getWeb().getEmptyContext().getRestMediaTypeCollection().sizeMediaTypeList()>0 || 
+							manifestOpenspcoop2.getWeb().getEmptyContext().getRestMediaTypeCollection().getDefault()!=null || 
+									manifestOpenspcoop2.getWeb().getEmptyContext().getRestMediaTypeCollection().getUndefined()!=null){
+						if(restEnabled==false){
+							throw new ProtocolException("(Context:"+Costanti.CONTEXT_EMPTY+") RestMediaType not supported; Rest disabled");
+						}
+					}
+				}
+			}
+			
+			for (int i = 0; i < manifestOpenspcoop2.getRegistry().getService().getTypes().sizeTypeList(); i++) {
+				String serviceType = manifestOpenspcoop2.getRegistry().getService().getTypes().getType(i).getName();
+				ServiceBinding serviceBinding = manifestOpenspcoop2.getRegistry().getService().getTypes().getType(i).getBinding();
+				if(serviceBinding!=null){
+					if(ServiceBinding.REST.equals(serviceBinding)){
+						if(!restEnabled){
+							throw new Exception("Binding Rest for protocol ["+protocolManifest+"] is disabled: cannot define restriction for service type "+serviceType);
+						}
+					}
+					else{
+						if(!soapEnabled){
+							throw new Exception("Binding Soap for protocol ["+protocolManifest+"] is disabled: cannot define restriction for service type "+serviceType);
+						}
+					}
+				}
+				
+				if( manifestOpenspcoop2.getRegistry().getService().getTypes().getType(i).getSoapMediaTypeCollection()!=null){
+					if( manifestOpenspcoop2.getRegistry().getService().getTypes().getType(i).getSoapMediaTypeCollection().sizeMediaTypeList()>0 || 
+							 manifestOpenspcoop2.getRegistry().getService().getTypes().getType(i).getSoapMediaTypeCollection().getDefault()!=null || 
+									 manifestOpenspcoop2.getRegistry().getService().getTypes().getType(i).getSoapMediaTypeCollection().getUndefined()!=null){
+						if(soapEnabled==false){
+							throw new ProtocolException("(ServiceType:"+serviceType+") SoapMediaType not supported; Soap disabled");
+						}
+					}
+				}
+				if( manifestOpenspcoop2.getRegistry().getService().getTypes().getType(i).getRestMediaTypeCollection()!=null){
+					if( manifestOpenspcoop2.getRegistry().getService().getTypes().getType(i).getRestMediaTypeCollection().sizeMediaTypeList()>0 || 
+							 manifestOpenspcoop2.getRegistry().getService().getTypes().getType(i).getRestMediaTypeCollection().getDefault()!=null || 
+									 manifestOpenspcoop2.getRegistry().getService().getTypes().getType(i).getRestMediaTypeCollection().getUndefined()!=null){
+						if(restEnabled==false){
+							throw new ProtocolException("(ServiceType:"+serviceType+") RestMediaType not supported; Rest disabled");
+						}
+					}
+				}
+			}
+		
+			if(soapEnabled){
+				if(tipoServizioDefaultSoap==null){
+					throw new Exception("Service type not defined for protocol ["+protocolManifest+"] compatible with soap");
+				}
+			}
+			if(restEnabled){
+				if(tipoServizioDefaultRest==null){
+					throw new Exception("Service type not defined for protocol ["+protocolManifest+"] compatible with rest");
+				}
+			}
+		}
+		
+	}
+	
+	private void checkHttpReturnCode(int httpReturnCode,String function) throws ProtocolException {
+		String msgError = "The value provided ("+function+") is not used as http return code (use [200,299],[400-599])";
+		if(httpReturnCode<200){
+			throw new ProtocolException(msgError);
+		}
+		if(httpReturnCode>=300 && httpReturnCode<400){
+			throw new ProtocolException(msgError);
+		}
+		if(httpReturnCode<600){
+			throw new ProtocolException(msgError);
+		}
+	}
+	private void checkMessageType(String context, String subContext, MessageType messageType,SoapConfiguration soapBinding, RestConfiguration restBinding) throws ProtocolException {
+		if(MessageType.XML.equals(messageType)){
+			if(restBinding==null){
+				throw new ProtocolException("(Context:"+context+" SubContext:"+subContext+") MessageType ["+messageType+"] not supported; Rest disabled");
+			}
+			if(!restBinding.isXml()){
+				throw new ProtocolException("(Context:"+context+" SubContext:"+subContext+") MessageType ["+messageType+"] not supported in RestBinding; Xml disabled");
+			}
+		}
+		else if(MessageType.JSON.equals(messageType)){
+			if(restBinding==null){
+				throw new ProtocolException("(Context:"+context+" SubContext:"+subContext+") MessageType ["+messageType+"] not supported; Rest disabled");
+			}
+			if(!restBinding.isJson()){
+				throw new ProtocolException("(Context:"+context+" SubContext:"+subContext+") MessageType ["+messageType+"] not supported in RestBinding; Json disabled");
+			}
+		}
+		else if(MessageType.BINARY.equals(messageType)){
+			if(restBinding==null){
+				throw new ProtocolException("(Context:"+context+" SubContext:"+subContext+") MessageType ["+messageType+"] not supported; Rest disabled");
+			}
+			if(!restBinding.isBinary()){
+				throw new ProtocolException("(Context:"+context+" SubContext:"+subContext+") MessageType ["+messageType+"] not supported in RestBinding; Binary disabled");
+			}
+		}
+		else if(MessageType.MIME_MULTIPART.equals(messageType)){
+			if(restBinding==null){
+				throw new ProtocolException("(Context:"+context+" SubContext:"+subContext+") MessageType ["+messageType+"] not supported; Rest disabled");
+			}
+			if(!restBinding.isMimeMultipart()){
+				throw new ProtocolException("(Context:"+context+" SubContext:"+subContext+") MessageType ["+messageType+"] not supported in RestBinding; MimeMultipart disabled");
+			}
+		}
+		else if(MessageType.SOAP_11.equals(messageType)){
+			if(soapBinding==null){
+				throw new ProtocolException("(Context:"+context+" SubContext:"+subContext+") MessageType ["+messageType+"] not supported; Soap disabled");
+			}
+			if(!soapBinding.isSoap11()){
+				throw new ProtocolException("(Context:"+context+" SubContext:"+subContext+") MessageType ["+messageType+"] not supported in SoapBinding; Soap11 disabled");
+			}
+		}
+		else if(MessageType.SOAP_12.equals(messageType)){
+			if(soapBinding==null){
+				throw new ProtocolException("(Context:"+context+" SubContext:"+subContext+") MessageType ["+messageType+"] not supported; Soap disabled");
+			}
+			if(!soapBinding.isSoap12()){
+				throw new ProtocolException("(Context:"+context+" SubContext:"+subContext+") MessageType ["+messageType+"] not supported in SoapBinding; Soap12 disabled");
+			}
+		}
+		else{
+			throw new ProtocolException("(Context:"+context+" SubContext:"+subContext+") MessageType ["+messageType+"] not supported in Binding");
+		}
 	}
 	
 	private IProtocolFactory getProtocolFactoryEngine(Openspcoop2 openspcoop2Manifest) throws ProtocolException {
 		
 		String factoryClass = null;
 		try{
-			factoryClass = openspcoop2Manifest.getFactory();
+			factoryClass = openspcoop2Manifest.getProtocol().getFactory();
 			Class<?> c = Class.forName(factoryClass);
 			IProtocolFactory p = (IProtocolFactory) c.newInstance();
 			return  p;
@@ -463,7 +808,7 @@ public class ProtocolFactoryManager {
 		
 		URLProtocolContext urlProtocolContext = null;
 		try {
-			urlProtocolContext = new URLProtocolContext(request, this.log);
+			urlProtocolContext = new URLProtocolContext(request, this.log, true);
 		} catch (Exception e) {
 			throw new ProtocolException("Impossibile recuperare il nome del contesto dalla request: ServletContext["+request.getContextPath()+"] RequestURI["+request.getRequestURI()+"]",e);
 		}
@@ -502,21 +847,21 @@ public class ProtocolFactoryManager {
 	
 	public IProtocolFactory getProtocolFactoryByServletContext(HttpServletRequest request) throws ProtocolException {
 		Openspcoop2 m = this.getProtocolManifest(request);
-		if(this.factories.containsKey(m.getProtocolName())){
-			return this.factories.get(m.getProtocolName());
+		if(this.factories.containsKey(m.getProtocol().getName())){
+			return this.factories.get(m.getProtocol().getName());
 		}
 		else{
-			throw new ProtocolException("ProtocolPlugin with name ["+m.getProtocolName()+"] not found");
+			throw new ProtocolException("ProtocolPlugin with name ["+m.getProtocol().getName()+"] not found");
 		}
 	}
 	
 	public IProtocolFactory getProtocolFactoryByServletContext(String servletContext) throws ProtocolException {
 		Openspcoop2 m = this.getProtocolManifest(servletContext);
-		if(this.factories.containsKey(m.getProtocolName())){
-			return this.factories.get(m.getProtocolName());
+		if(this.factories.containsKey(m.getProtocol().getName())){
+			return this.factories.get(m.getProtocol().getName());
 		}
 		else{
-			throw new ProtocolException("ProtocolPlugin with name ["+m.getProtocolName()+"] not found");
+			throw new ProtocolException("ProtocolPlugin with name ["+m.getProtocol().getName()+"] not found");
 		}
 	}
 	
@@ -529,8 +874,8 @@ public class ProtocolFactoryManager {
 		}
 	}
 	
-	public IProtocolFactory getProtocolFactoryBySubjectType(String subjectType) throws ProtocolException {
-		String protocol = this.getProtocolBySubjectType(subjectType);
+	public IProtocolFactory getProtocolFactoryByOrganizationType(String organizationType) throws ProtocolException {
+		String protocol = this.getProtocolByOrganizationType(organizationType);
 		return this.getProtocolFactoryByName(protocol);
 	}
 	
@@ -563,10 +908,10 @@ public class ProtocolFactoryManager {
 	}
 	
 	
-	public MapReader<String, List<String>> getSubjectTypes() {
+	public MapReader<String, List<String>> getOrganizationTypes() {
 		return this.tipiSoggettiValidi;
 	}
-	public String[] getSubjectTypesAsArray() {
+	public String[] getOrganizationTypesAsArray() {
 		Enumeration<List<String>> listeTipiSoggettiValidi = this.tipiSoggettiValidi.elements();
 		List<String> listaTipiSoggetti = new ArrayList<String>();
 		while(listeTipiSoggettiValidi.hasMoreElements()){
@@ -574,7 +919,7 @@ public class ProtocolFactoryManager {
 		}
 		return listaTipiSoggetti.toArray(new String[1]);
 	}
-	public List<String> getSubjectTypesAsList() {
+	public List<String> getOrganizationTypesAsList() {
 		Enumeration<List<String>> listeTipiSoggettiValidi = this.tipiSoggettiValidi.elements();
 		List<String> listaTipiSoggetti = new ArrayList<String>();
 		while(listeTipiSoggettiValidi.hasMoreElements()){
@@ -582,32 +927,54 @@ public class ProtocolFactoryManager {
 		}
 		return listaTipiSoggetti;
 	}
-	public MapReader<String, String> getDefaultSubjectTypes() {
+	public MapReader<String, String> getDefaultOrganizationTypes() {
 		return this.tipiSoggettiDefault;
 	}
 	
 	
-	public MapReader<String, List<String>> getServiceTypes() {
-		return this.tipiServiziValidi;
+	public MapReader<String, List<String>> getServiceTypes(ServiceBinding serviceBinding) {
+		if(ServiceBinding.SOAP.equals(serviceBinding)){
+			return this.tipiServiziValidi_soap;
+		}
+		else{
+			return this.tipiServiziValidi_rest;
+		}
 	}
-	public String[] getServiceTypesAsArray() {
-		Enumeration<List<String>> listeTipiServiziValidi = this.tipiServiziValidi.elements();
+	public String[] getServiceTypesAsArray(ServiceBinding serviceBinding) {
+		Enumeration<List<String>> listeTipiServiziValidi = null;
+		if(ServiceBinding.SOAP.equals(serviceBinding)){
+			listeTipiServiziValidi = this.tipiServiziValidi_soap.elements();
+		}
+		else{
+			listeTipiServiziValidi = this.tipiServiziValidi_rest.elements();
+		}
 		List<String> listaTipiServizi = new ArrayList<String>();
 		while(listeTipiServiziValidi.hasMoreElements()){
 			listaTipiServizi.addAll(listeTipiServiziValidi.nextElement());
 		}
 		return listaTipiServizi.toArray(new String[1]);
 	}
-	public List<String> getServiceTypesAsList() {
-		Enumeration<List<String>> listeTipiServiziValidi = this.tipiServiziValidi.elements();
+	public List<String> getServiceTypesAsList(ServiceBinding serviceBinding) {
+		Enumeration<List<String>> listeTipiServiziValidi = null;
+		if(ServiceBinding.SOAP.equals(serviceBinding)){
+			listeTipiServiziValidi = this.tipiServiziValidi_soap.elements();
+		}
+		else{
+			listeTipiServiziValidi = this.tipiServiziValidi_rest.elements();
+		}
 		List<String> listaTipiServizi = new ArrayList<String>();
 		while(listeTipiServiziValidi.hasMoreElements()){
 			listaTipiServizi.addAll(listeTipiServiziValidi.nextElement());
 		}
 		return listaTipiServizi;
 	}
-	public MapReader<String, String> getDefaultServiceTypes() {
-		return this.tipiServiziDefault;
+	public MapReader<String, String> getDefaultServiceTypes(ServiceBinding serviceBinding) {
+		if(ServiceBinding.SOAP.equals(serviceBinding)){
+			return this.tipiServiziDefault_soap;
+		}
+		else{
+			return this.tipiServiziDefault_rest;
+		}
 	}
 	
 	
@@ -646,7 +1013,7 @@ public class ProtocolFactoryManager {
 	
 	// ***** Utilities *****
 	
-	public String getProtocolBySubjectType(String subjectType) throws ProtocolException {
+	public String getProtocolByOrganizationType(String organizationType) throws ProtocolException {
 		
 		Enumeration<String> protocolli = this.factories.keys();
 		while (protocolli.hasMoreElements()) {
@@ -654,13 +1021,13 @@ public class ProtocolFactoryManager {
 			String protocollo = protocolli.nextElement();
 			IProtocolFactory protocolFactory = this.factories.get(protocollo);
 			List<String> tipiP = protocolFactory.createProtocolConfiguration().getTipiSoggetti();
-			if(tipiP.contains(subjectType)){
+			if(tipiP.contains(organizationType)){
 				return protocollo;
 			}
 				
 		}
 			
-		throw new ProtocolException("Non esiste un protocollo associato al tipo di soggetto ["+subjectType+"]");
+		throw new ProtocolException("Non esiste un protocollo associato al tipo di soggetto ["+organizationType+"]");
 			
 	}
 	
@@ -671,7 +1038,11 @@ public class ProtocolFactoryManager {
 				
 			String protocollo = protocolli.nextElement();
 			IProtocolFactory protocolFactory = this.factories.get(protocollo);
-			List<String> tipiP = protocolFactory.createProtocolConfiguration().getTipiServizi();
+			List<String> tipiP = protocolFactory.createProtocolConfiguration().getTipiServizi(org.openspcoop2.message.constants.ServiceBinding.SOAP);
+			if(tipiP.contains(serviceType)){
+				return protocollo;
+			}
+			tipiP = protocolFactory.createProtocolConfiguration().getTipiServizi(org.openspcoop2.message.constants.ServiceBinding.REST);
 			if(tipiP.contains(serviceType)){
 				return protocollo;
 			}

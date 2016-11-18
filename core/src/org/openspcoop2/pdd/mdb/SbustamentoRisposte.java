@@ -22,7 +22,6 @@
 
 package org.openspcoop2.pdd.mdb;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -32,9 +31,10 @@ import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.core.eccezione.details.utils.XMLUtils;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.ParseException;
-import org.openspcoop2.message.SOAPVersion;
-import org.openspcoop2.message.SoapUtils;
+import org.openspcoop2.message.constants.IntegrationError;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.exception.ParseException;
+import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.RichiestaDelegata;
@@ -48,8 +48,10 @@ import org.openspcoop2.pdd.core.state.OpenSPCoopStateException;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
+import org.openspcoop2.pdd.services.RequestInfo;
+import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
+import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
-import org.openspcoop2.protocol.engine.builder.ErroreApplicativoBuilder;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.FiltroDuplicati;
 import org.openspcoop2.protocol.engine.driver.History;
@@ -67,13 +69,14 @@ import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
-import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
-import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
+import org.slf4j.Logger;
 
 /**
  * Contiene la libreria Sbustamento
@@ -88,7 +91,7 @@ public class SbustamentoRisposte extends GenericLib {
 	public static final String ID_MODULO = "SbustamentoRisposte";
 
 	/** XMLBuilder */
-	private ErroreApplicativoBuilder erroreApplicativoBuilder;
+	private RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore;
 
 
 	public SbustamentoRisposte(Logger log) throws GenericLibException {
@@ -121,6 +124,7 @@ public class SbustamentoRisposte extends GenericLib {
 		/* PddContext */
 		PdDContext pddContext = sbustamentoRisposteMsg.getPddContext();
 		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, pddContext);
+		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		
 		/* Protocol Factory */
 		IProtocolFactory protocolFactory = null;
@@ -137,8 +141,6 @@ public class SbustamentoRisposte extends GenericLib {
 			esito.setStatoInvocazioneErroreNonGestito(e);
 			return esito;
 		}
-		
-		SOAPVersion versioneSoap = (SOAPVersion) pddContext.getObject(org.openspcoop2.core.constants.Costanti.SOAP_VERSION);
 		
 		msgDiag.setPddContext(pddContext, protocolFactory);
 		
@@ -168,13 +170,19 @@ public class SbustamentoRisposte extends GenericLib {
 		String profiloGestione = richiestaDelegata.getProfiloGestione();
 		msgDiag.mediumDebug("Profilo di gestione ["+SbustamentoRisposte.ID_MODULO+"] della busta: "+profiloGestione);
 		
+		//	ProprietaErroreApplicativo
+		ProprietaErroreApplicativo proprietaErroreAppl = richiestaDelegata.getFault();
+		proprietaErroreAppl.setIdModulo(SbustamentoRisposte.ID_MODULO);
+		
 		try{
-			this.erroreApplicativoBuilder = new ErroreApplicativoBuilder(this.log, protocolFactory, 
-					identitaPdD, richiestaDelegata.getSoggettoFruitore(), richiestaDelegata.getIdServizio(), 
-					this.idModulo, richiestaDelegata.getFault(),versioneSoap,
-					TipoPdD.DELEGATA,richiestaDelegata.getServizioApplicativo());
+			this.generatoreErrore = new RicezioneContenutiApplicativiInternalErrorGenerator(this.log, this.idModulo, requestInfo);
+			this.generatoreErrore.updateInformazioniCooperazione(richiestaDelegata.getSoggettoFruitore(), richiestaDelegata.getIdServizio());
+			this.generatoreErrore.updateInformazioniCooperazione(richiestaDelegata.getServizioApplicativo());
+			if(proprietaErroreAppl!=null){
+				this.generatoreErrore.updateProprietaErroreApplicativo(proprietaErroreAppl);
+			}
 		}catch(Exception e){
-			msgDiag.logErroreGenerico(e, "ErroreApplicativoBuilder.instanziazione"); 
+			msgDiag.logErroreGenerico(e, "RicezioneContenutiApplicativiGeneratoreErrore.instanziazione"); 
 			openspcoopstate.releaseResource();
 			esito.setEsitoInvocazione(false); 
 			esito.setStatoInvocazioneErroreNonGestito(e);
@@ -239,6 +247,21 @@ public class SbustamentoRisposte extends GenericLib {
 			ejbUtils.setScenarioCooperazione(richiestaDelegata.getScenario());
 		}catch(Exception e){
 			msgDiag.logErroreGenerico(e, "EJBUtils.new");
+			openspcoopstate.releaseResource();
+			esito.setEsitoInvocazione(false); 
+			esito.setStatoInvocazioneErroreNonGestito(e);
+			return esito;
+		}
+		
+		try{
+			// Per inviare segnalazioni di buste malformate
+			RicezioneBusteExternalErrorGenerator generatoreErrorePA = new RicezioneBusteExternalErrorGenerator(this.log, this.idModulo, requestInfo);
+			generatoreErrorePA.updateInformazioniCooperazione(richiestaDelegata.getSoggettoFruitore(), richiestaDelegata.getIdServizio());
+			generatoreErrorePA.updateInformazioniCooperazione(richiestaDelegata.getServizioApplicativo());
+			generatoreErrorePA.updateTipoPdD(TipoPdD.DELEGATA);
+			ejbUtils.setGeneratoreErrorePortaApplicativa(generatoreErrorePA);
+		}catch(Exception e){
+			msgDiag.logErroreGenerico(e, "RicezioneBusteExternalErrorGenerator.instanziazione"); 
 			openspcoopstate.releaseResource();
 			esito.setEsitoInvocazione(false); 
 			esito.setStatoInvocazioneErroreNonGestito(e);
@@ -342,10 +365,6 @@ public class SbustamentoRisposte extends GenericLib {
 			}
 		}
 
-		//	ProprietaErroreApplicativo
-		ProprietaErroreApplicativo proprietaErroreAppl = richiestaDelegata.getFault();
-		proprietaErroreAppl.setIdModulo(SbustamentoRisposte.ID_MODULO);
-
 		// Ruolo Busta ricevuta
 		RuoloBusta ruoloBustaRicevuta = sbustamentoRisposteMsg.getRuoloBustaRicevuta();
 
@@ -400,9 +419,10 @@ public class SbustamentoRisposte extends GenericLib {
 				msgDiag.logPersonalizzato("protocolli.funzionalita.unsupported");
 				if(sendRispostaApplicativa){
 					OpenSPCoop2Message responseMessageError =
-						this.erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL.
-								getErrore439_FunzionalitaNotSupportedByProtocol(e.getMessage(), protocolFactory),e,
-								parseException);
+							this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
+									ErroriIntegrazione.ERRORE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL.
+										getErrore439_FunzionalitaNotSupportedByProtocol(e.getMessage(), protocolFactory),e,
+											parseException);
 					ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRiferimentoMessaggio,pd,sa);
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
 							msgDiag.getMessaggio_replaceKeywords("protocolli.funzionalita.unsupported"));
@@ -493,7 +513,7 @@ public class SbustamentoRisposte extends GenericLib {
 							else{
 								if(dettaglioEccezione!=null && dettaglioEccezione.getEccezioni()!=null && dettaglioEccezione.getEccezioni().sizeEccezioneList()>0){
 									org.openspcoop2.core.eccezione.details.Eccezione e = dettaglioEccezione.getEccezioni().getEccezione(0);
-									if(org.openspcoop2.core.eccezione.details.constants.Costanti.TIPO_ECCEZIONE_PROTOCOLLO.equals(e.getTipo())){
+									if(org.openspcoop2.core.eccezione.details.constants.TipoEccezione.ECCEZIONE_PROTOCOLLO.equals(e.getTipo())){
 										ErroreCooperazione msgErroreCooperazione =
 												new ErroreCooperazione(e.getDescrizione(), traduttore.toCodiceErroreCooperazione(e.getCodice()));
 										eccezioneDaInviareServizioApplicativo = new Eccezione(msgErroreCooperazione, false, SbustamentoRisposte.ID_MODULO ,protocolFactory);
@@ -526,11 +546,13 @@ public class SbustamentoRisposte extends GenericLib {
 					}
 					OpenSPCoop2Message responseMessageError = null;
 					if(eccezioneDaInviareServizioApplicativo!=null){
-						responseMessageError = this.erroreApplicativoBuilder.toMessage(eccezioneDaInviareServizioApplicativo,
+						responseMessageError = this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
+								eccezioneDaInviareServizioApplicativo,
 								richiestaDelegata.getIdServizio().getSoggettoErogatore(),dettaglioEccezione,
 								parseException);
 					}else{
-						responseMessageError = this.erroreApplicativoBuilder.toMessage(erroreIntegrazioneDaInviareServizioApplicativo,null,
+						responseMessageError = this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
+								erroreIntegrazioneDaInviareServizioApplicativo,null,
 								parseException);
 					}
 					ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRiferimentoMessaggio,pd,sa);
@@ -622,8 +644,9 @@ public class SbustamentoRisposte extends GenericLib {
 
 								// profilo sincrono asincronoPolling, aspetta una risposta
 								OpenSPCoop2Message responseMessageError =
-									this.erroreApplicativoBuilder.toMessage(eccezioneDaInviareServizioApplicativo,
-											richiestaDelegata.getSoggettoFruitore(),null,
+										this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
+												eccezioneDaInviareServizioApplicativo,
+											richiestaDelegata.getSoggettoFruitore(),
 											parseException);
 								ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRiferimentoMessaggio,pd,sa);
 								esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
@@ -703,9 +726,10 @@ public class SbustamentoRisposte extends GenericLib {
 				msgDiag.logErroreGenerico(e,"existsSoggetto("+bustaRisposta.getTipoDestinatario()+"/"+bustaRisposta.getDestinatario()+")");
 				if(sendRispostaApplicativa){
 					OpenSPCoop2Message responseMessageError =
-						this.erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
-								parseException);
+							this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
+									ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+										get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
+											parseException);
 					ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRiferimentoMessaggio,pd,sa);
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
 							"existsSoggetto("+bustaRisposta.getTipoDestinatario()+"/"+bustaRisposta.getDestinatario()+")");
@@ -721,9 +745,10 @@ public class SbustamentoRisposte extends GenericLib {
 				msgDiag.logPersonalizzato("soggettoDestinatarioNonGestito");
 				if(sendRispostaApplicativa){
 					OpenSPCoop2Message responseMessageError =
-						this.erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_528_RISPOSTA_RICHIESTA_NON_VALIDA),null,
-								parseException);
+							this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
+									ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+										get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_528_RISPOSTA_RICHIESTA_NON_VALIDA),null,
+											parseException);
 					ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRiferimentoMessaggio,pd,sa);
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
 							msgDiag.getMessaggio_replaceKeywords("soggettoDestinatarioNonGestito"));
@@ -762,9 +787,10 @@ public class SbustamentoRisposte extends GenericLib {
 				}else{
 					if(sendRispostaApplicativa){
 						OpenSPCoop2Message responseMessageError =
-							this.erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_517_RISPOSTA_RICHIESTA_NON_RITORNATA),null,
-									parseException);
+								this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
+										ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+											get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_517_RISPOSTA_RICHIESTA_NON_RITORNATA),null,
+												parseException);
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRiferimentoMessaggio,pd,sa);
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
 								msgDiag.getMessaggio_replaceKeywords("ricezioneBustaServizio"));
@@ -824,11 +850,9 @@ public class SbustamentoRisposte extends GenericLib {
 										CostantiPdD.CODICE_528_RISPOSTA_RICHIESTA_NON_VALIDA,
 										CostantiPdD.MSG_5XX_SISTEMA_NON_DISPONIBILE);*/
 							OpenSPCoop2Message responseMessageError =
-								this.erroreApplicativoBuilder.toMessage(Eccezione.getEccezioneValidazione(ErroriCooperazione.IDENTIFICATIVO_MESSAGGIO_GIA_PROCESSATO.getErroreCooperazione(),
-										protocolFactory),
-										identitaPdD,null,
-										parseException);
-							
+									this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
+											Eccezione.getEccezioneValidazione(ErroriCooperazione.IDENTIFICATIVO_MESSAGGIO_GIA_PROCESSATO.getErroreCooperazione(),
+														protocolFactory), identitaPdD, parseException);
 							esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
 									msgDiag.getMessaggio_replaceKeywords("ricezioneBustaDuplicata"));
 							ejbUtils.setRollbackRichiestaInCasoErrore_rollbackHistory(false); // non devo cancellare la busta per la gestione dei duplicati
@@ -856,9 +880,10 @@ public class SbustamentoRisposte extends GenericLib {
 					msgDiag.logErroreGenerico(e, "GestioneHistoryBusteRicevute");
 					if(sendRispostaApplicativa){
 						OpenSPCoop2Message responseMessageError =
-							this.erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),e,
-									parseException);
+								this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
+										ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+											get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),e,
+												parseException);
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRiferimentoMessaggio,pd,sa);
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"GestioneHistoryBusteRicevute");
 					}else{
@@ -970,9 +995,8 @@ public class SbustamentoRisposte extends GenericLib {
 			if(ecc!=null){
 				if(sendRispostaApplicativa){
 					OpenSPCoop2Message responseMessageError =
-						this.erroreApplicativoBuilder.toMessage(ecc,
-								richiestaDelegata.getSoggettoFruitore(),null,
-								parseException);
+							this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,ecc,
+								richiestaDelegata.getSoggettoFruitore(),parseException);
 					ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRiferimentoMessaggio,pd,sa);
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,ecc.toString(protocolFactory));
 				}else{
@@ -1011,9 +1035,10 @@ public class SbustamentoRisposte extends GenericLib {
 				}catch(Exception e){
 					msgDiag.logErroreGenerico(e, "profiloCollaborazione.sincrono_eliminaRichiestaInOutBox");
 					OpenSPCoop2Message responseMessageError =
-						this.erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),e,
-								parseException);
+							this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
+									ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+										get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),e,
+											parseException);
 					ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRiferimentoMessaggio,pd,sa);
 					openspcoopstate.releaseResource();
 					esito.setEsitoInvocazione(true);
@@ -1099,9 +1124,9 @@ public class SbustamentoRisposte extends GenericLib {
 					msgDiag.mediumDebug("Invio messaggio 'OK' al modulo di RicezioneContenutiApplicativi, oneway con scenario sincrono...");
 
 					if(protocolManager.isHttpEmptyResponseOneWay())
-						msgResponse = ejbUtils.sendRispostaApplicativaOK(SoapUtils.build_Soap_Empty(versioneSoap),richiestaDelegata,pd,sa);
+						msgResponse = ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(),MessageRole.RESPONSE),richiestaDelegata,pd,sa);
 					else
-						msgResponse = ejbUtils.sendRispostaApplicativaOK(ejbUtils.buildOpenSPCoopOK_soapMsg(versioneSoap, idMessageRequest),richiestaDelegata,pd,sa);
+						msgResponse = ejbUtils.sendRispostaApplicativaOK(ejbUtils.buildOpenSPCoopOK(requestInfo.getRequestMessageType(), idMessageRequest),richiestaDelegata,pd,sa);
 					
 				} else {
 					msgDiag.mediumDebug("Send risposta applicativa...");
@@ -1129,8 +1154,9 @@ public class SbustamentoRisposte extends GenericLib {
 			
 			if(sendRispostaApplicativa){
 				OpenSPCoop2Message responseMessageError =
-					this.erroreApplicativoBuilder.toMessage(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),e,
-							parseException);
+						this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
+								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(),e,
+									parseException);
 				try{
 					ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRiferimentoMessaggio,pd,sa);
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"ErroreGenerale");

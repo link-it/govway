@@ -25,16 +25,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
-import org.openspcoop2.protocol.manifest.Funzionalita;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.message.config.ServiceBindingConfiguration;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.protocol.manifest.CollaborationProfile;
+import org.openspcoop2.protocol.manifest.Functionality;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
-import org.openspcoop2.protocol.manifest.Profilo;
-import org.openspcoop2.protocol.manifest.RegistroServizi;
+import org.openspcoop2.protocol.manifest.OrganizationType;
+import org.openspcoop2.protocol.manifest.Registry;
+import org.openspcoop2.protocol.manifest.ServiceType;
 import org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader;
+import org.openspcoop2.protocol.manifest.Version;
 import org.openspcoop2.protocol.sdk.BypassMustUnderstandCheck;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
+import org.openspcoop2.utils.transport.TransportRequestContext;
 
 /**
  * Classe che implementa, l'interfaccia {@link org.openspcoop2.protocol.sdk.config.IProtocolConfiguration} 
@@ -48,15 +57,17 @@ public class BasicConfiguration implements org.openspcoop2.protocol.sdk.config.I
 	private IProtocolFactory factory;
 	@SuppressWarnings("unused")
 	private Logger log;
-	private RegistroServizi registroManifest;
+	private Registry registroManifest;
 	private Openspcoop2 manifest;
 
 	public BasicConfiguration(IProtocolFactory factory) throws ProtocolException {
 		this.factory = factory;
 		this.log = this.factory.getLogger();
 		this.manifest = this.factory.getManifest();
-		this.registroManifest = this.manifest.getRegistroServizi();
+		this.registroManifest = this.manifest.getRegistry();
 	}
+	
+
 	
 	@Override
 	public IProtocolFactory getProtocolFactory() {
@@ -64,68 +75,104 @@ public class BasicConfiguration implements org.openspcoop2.protocol.sdk.config.I
 	}
 	
 	@Override
+	public ServiceBindingConfiguration getDefaultServiceBindingConfiguration(TransportRequestContext transportRequest) throws ProtocolException{
+		return ServiceBindingConfigurationReader.getDefaultServiceBindingConfiguration(this.manifest, transportRequest);
+	}
+	
+	@Override
+	public ServiceBinding getServiceBinding(IDServizio idServizio, IRegistryReader registryReader) throws ProtocolException, RegistryNotFound{
+		return ServiceBindingConfigurationReader.getServiceBinding(idServizio, registryReader);
+	}
+	
+	@Override
+	public ServiceBindingConfiguration getServiceBindingConfiguration(TransportRequestContext transportRequest, ServiceBinding serviceBinding,
+			IDServizio idServizio, IRegistryReader registryReader) throws ProtocolException, RegistryNotFound{
+		return ServiceBindingConfigurationReader.getServiceBindingConfiguration(this.manifest, transportRequest, serviceBinding, idServizio, registryReader);
+	}
+	
+	@Override
 	public boolean isSupportoCodiceIPA() {
-		return this.registroManifest.getSoggetti().getCodiceIPA();
+		return this.registroManifest.getOrganization().isCodeIPA();
 	}
 
 	@Override
 	public boolean isSupportoIndirizzoRisposta(){
-		return this.registroManifest.getSoggetti().getIndirizzoRisposta();
+		return this.registroManifest.getOrganization().isReplyToAddress();
 	}
 	
 	@Override
 	public boolean isSupportoWsdlDefinitorio(){
-		return this.registroManifest.getServizi().getWsdlDefinitorio();
+		return this.registroManifest.getService().isWsdlSchema();
 	}
 	
 	@Override
 	public boolean isSupportoSpecificaConversazioni(){
-		return this.registroManifest.getServizi().getSpecificaConversazioni();
+		return this.registroManifest.getService().isConversations();
 	}
 		
 	@Override
 	public List<String> getTipiSoggetti() throws ProtocolException {
-		return this.registroManifest.getSoggetti().getTipi().getTipoList();
+		List<String> tipi = new ArrayList<String>();
+		List<OrganizationType> l = this.registroManifest.getOrganization().getTypes().getTypeList();
+		for (int i = 0; i < l.size(); i++) {
+			tipi.add(l.get(i).getName());
+		}
+		return tipi;
 	}
 	
 	@Override
 	public String getTipoSoggettoDefault() throws ProtocolException {
-		if(this.registroManifest.getSoggetti().getTipi().getDefault()!=null){
-			return this.registroManifest.getSoggetti().getTipi().getDefault(); 
+		return this.registroManifest.getOrganization().getTypes().getType(0).getName();
+	}
+
+	private org.openspcoop2.protocol.manifest.constants.ServiceBinding convert(ServiceBinding serviceBinding){
+		switch (serviceBinding) {
+			case SOAP:
+				return org.openspcoop2.protocol.manifest.constants.ServiceBinding.SOAP;
+			case REST:
+				return org.openspcoop2.protocol.manifest.constants.ServiceBinding.REST;
 		}
-		else{
-			return this.registroManifest.getSoggetti().getTipi().getTipo(0);
+		return null;
+	}
+	
+	@Override
+	public List<String> getTipiServizi(ServiceBinding serviceBinding) throws ProtocolException {
+		
+		org.openspcoop2.protocol.manifest.constants.ServiceBinding sb = this.convert(serviceBinding);
+		
+		List<String> tipi = new ArrayList<String>();
+		List<ServiceType> l = this.registroManifest.getService().getTypes().getTypeList();
+		for (int i = 0; i < l.size(); i++) {
+			org.openspcoop2.protocol.manifest.constants.ServiceBinding serviceBindingTmp = l.get(i).getBinding();
+			if(serviceBindingTmp==null || serviceBindingTmp.equals(sb)){
+				tipi.add(l.get(i).getName());	
+			}
 		}
+		return tipi;
 	}
 
 	@Override
-	public List<String> getTipiServizi() throws ProtocolException {
-		return this.registroManifest.getServizi().getTipi().getTipoList();
-	}
-
-	@Override
-	public String getTipoServizioDefault() throws ProtocolException {
-		if(this.registroManifest.getServizi().getTipi().getDefault()!=null){
-			return this.registroManifest.getServizi().getTipi().getDefault(); 
+	public String getTipoServizioDefault(ServiceBinding serviceBinding) throws ProtocolException {
+		List<String> l = this.getTipiServizi(serviceBinding);
+		if(l!=null && l.size()>0){
+			return l.get(0);
 		}
-		else{
-			return this.registroManifest.getServizi().getTipi().getTipo(0);
-		}
+		return null;
 	}
 	
 	@Override
 	public List<String> getVersioni() throws ProtocolException{
-		return this.registroManifest.getVersioni().getVersioneList();
+		List<String> tipi = new ArrayList<String>();
+		List<Version> l = this.registroManifest.getVersions().getVersionList();
+		for (int i = 0; i < l.size(); i++) {
+			tipi.add(l.get(i).getName());
+		}
+		return tipi;
 	}
 
 	@Override
 	public String getVersioneDefault() throws ProtocolException {
-		if(this.registroManifest.getVersioni().getDefault()!=null){
-			return this.registroManifest.getVersioni().getDefault(); 
-		}
-		else{
-			return this.registroManifest.getVersioni().getVersione(0);
-		}
+		return this.registroManifest.getVersions().getVersion(0).getName();
 	}
 	
 	@Override
@@ -134,16 +181,16 @@ public class BasicConfiguration implements org.openspcoop2.protocol.sdk.config.I
 		if(profiloCollaborazione==null){
 			throw new ProtocolException("Param not defined");
 		}
-		Profilo profilo = this.registroManifest.getServizi().getProfilo();
+		CollaborationProfile profilo = this.registroManifest.getService().getProfile();
 		switch (profiloCollaborazione) {
 		case ONEWAY:
-			return (profilo!=null ? profilo.getOneway() : true); 
+			return (profilo!=null ? profilo.isOneway() : true); 
 		case SINCRONO:		
-			return (profilo!=null ? profilo.getSincrono() : true); 
+			return (profilo!=null ? profilo.isInputOutput() : true); 
 		case ASINCRONO_SIMMETRICO:		
-			return (profilo!=null ? profilo.getAsincronoSimmetrico() : false); 
+			return (profilo!=null ? profilo.isAsyncInputOutput() : false); 
 		case ASINCRONO_ASIMMETRICO:		
-			return (profilo!=null ? profilo.getAsincronoAsimmetrico() : false); 
+			return (profilo!=null ? profilo.isPolledInputOutput() : false); 
 		case UNKNOWN:
 			throw new ProtocolException("Param ["+ProfiloDiCollaborazione.UNKNOWN.name()+"] not valid for this method");
 		default:
@@ -157,18 +204,18 @@ public class BasicConfiguration implements org.openspcoop2.protocol.sdk.config.I
 		if(funzionalitaProtocollo==null){
 			throw new ProtocolException("Param not defined");
 		}
-		Funzionalita funzionalita = this.registroManifest.getServizi().getFunzionalita();
+		Functionality funzionalita = this.registroManifest.getService().getFunctionality();
 		switch (funzionalitaProtocollo) {
 		case FILTRO_DUPLICATI:
-			return (funzionalita!=null ? funzionalita.getFiltroDuplicati() : false); 
+			return (funzionalita!=null ? funzionalita.isDuplicateFilter() : false); 
 		case CONFERMA_RICEZIONE:		
-			return (funzionalita!=null ? funzionalita.getConfermaRicezione() : false); 
+			return (funzionalita!=null ? funzionalita.isAcknowledgement() : false); 
 		case COLLABORAZIONE:		
-			return (funzionalita!=null ? funzionalita.getCollaborazione() : false); 
+			return (funzionalita!=null ? funzionalita.isConversationIdentifier() : false); 
 		case CONSEGNA_IN_ORDINE:		
-			return (funzionalita!=null ? funzionalita.getConsegnaInOrdine() : false); 
+			return (funzionalita!=null ? funzionalita.isDeliveryOrder() : false); 
 		case SCADENZA:		
-			return (funzionalita!=null ? funzionalita.getScadenza() : false); 
+			return (funzionalita!=null ? funzionalita.isExpiration() : false); 
 		case MANIFEST_ATTACHMENTS:		
 			return (funzionalita!=null ? funzionalita.getManifestAttachments() : false); 
 		default:
@@ -177,20 +224,12 @@ public class BasicConfiguration implements org.openspcoop2.protocol.sdk.config.I
 	}
 	
 	@Override
-	public boolean isSupportoSOAP11() {
-		return this.manifest.getBinding().getSoap11();
-	}
-
-	@Override
-	public boolean isSupportoSOAP12() {
-		return this.manifest.getBinding().getSoap12();
-	}
-
-	@Override
 	public List<BypassMustUnderstandCheck> getBypassMustUnderstandCheck(){
 		List<BypassMustUnderstandCheck> list = new ArrayList<BypassMustUnderstandCheck>();
-		if(this.manifest.getBinding().getSoapHeaderBypassMustUnderstand()!=null && this.manifest.getBinding().getSoapHeaderBypassMustUnderstand().sizeHeaderList()>0){
-			for (SoapHeaderBypassMustUnderstandHeader header : this.manifest.getBinding().getSoapHeaderBypassMustUnderstand().getHeaderList()) {
+		if( this.manifest.getBinding().getSoap()!=null &&
+				this.manifest.getBinding().getSoap().getSoapHeaderBypassMustUnderstand()!=null && 
+						this.manifest.getBinding().getSoap().getSoapHeaderBypassMustUnderstand().sizeHeaderList()>0){
+			for (SoapHeaderBypassMustUnderstandHeader header : this.manifest.getBinding().getSoap().getSoapHeaderBypassMustUnderstand().getHeaderList()) {
 				BypassMustUnderstandCheck bypassMustUnderstandCheck = new BypassMustUnderstandCheck();
 				bypassMustUnderstandCheck.setElementName(header.getLocalName());
 				bypassMustUnderstandCheck.setNamespace(header.getNamespace());

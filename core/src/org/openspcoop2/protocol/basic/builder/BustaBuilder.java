@@ -39,8 +39,10 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.SOAPFaultCode;
-import org.openspcoop2.message.XMLUtils;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.soap.SOAPFaultCode;
+import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Eccezione;
@@ -280,12 +282,16 @@ public class BustaBuilder implements org.openspcoop2.protocol.sdk.builder.IBusta
 	
 	protected void addEccezioniInFault(OpenSPCoop2Message msg, Busta busta, boolean ignoraEccezioniNonGravi) throws ProtocolException{
 		SOAPFault f = null;
+		OpenSPCoop2SoapMessage soapMessage = null;
 		try{
-			if(msg.getSOAPBody()!=null){
-				if(msg.getSOAPBody().hasFault()==false){
-					return;
+			if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
+				soapMessage = msg.castAsSoap();
+				if(soapMessage.getSOAPBody()!=null){
+					if(soapMessage.getSOAPBody().hasFault()==false){
+						return;
+					}
+					f = soapMessage.getSOAPBody().getFault();
 				}
-				f = msg.getSOAPBody().getFault();
 			}
 		
 		
@@ -309,8 +315,8 @@ public class BustaBuilder implements org.openspcoop2.protocol.sdk.builder.IBusta
 			IDServizio idServizio = new IDServizio(soggettoProduceEccezione, busta.getTipoServizio(), busta.getServizio(), busta.getAzione());
 			params.setServizio(idServizio);
 			
-			// SOAPVersione
-			params.setVersioneSoap(msg.getVersioneSoap());
+			// MessageType
+			params.setMessageType(msg.getMessageType());
 			
 			// IDFunzione
 			params.setIdFunzione("PortaApplicativa");
@@ -344,12 +350,14 @@ public class BustaBuilder implements org.openspcoop2.protocol.sdk.builder.IBusta
 			params.setEccezioneProtocollo(ecc);
 							
 			// Set Fault Code
-			String codiceEccezione = 
-					this.traduttore.toString(ecc.getCodiceEccezione(),
-							ecc.getSubCodiceEccezione());
-			QName eccezioneName = this.erroreApplicativoBuilder.getQNameEccezioneProtocollo(codiceEccezione);
-			SOAPFaultCode code = params.getSoapFaultCode();
-			msg.setFaultCode(f, code, eccezioneName);
+			if(soapMessage!=null){
+				String codiceEccezione = 
+						this.traduttore.toString(ecc.getCodiceEccezione(),
+								ecc.getSubCodiceEccezione());
+				QName eccezioneName = this.erroreApplicativoBuilder.getQNameEccezioneProtocollo(codiceEccezione);
+				SOAPFaultCode code = params.getSoapFaultCode();
+				soapMessage.setFaultCode(f, code, eccezioneName);
+			}
 			
 			// Set fault String
 			f.setFaultString(ecc.getDescrizione(this.protocolFactory));

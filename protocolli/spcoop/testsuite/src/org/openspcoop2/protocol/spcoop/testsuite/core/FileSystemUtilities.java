@@ -24,7 +24,7 @@ package org.openspcoop2.protocol.spcoop.testsuite.core;
 
 import java.util.Date;
 
-import org.openspcoop2.message.ValidatoreXSD;
+import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.xml.XSDResourceResolver;

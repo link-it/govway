@@ -21,7 +21,7 @@
 
 package org.openspcoop2.protocol.sdk;
 
-import org.openspcoop2.message.SOAPFaultCode;
+import org.openspcoop2.message.soap.SOAPFaultCode;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 
 

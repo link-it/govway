@@ -22,7 +22,7 @@ package org.openspcoop2.security.message.utils;
 
 import javax.xml.namespace.QName;
 
-import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -57,7 +57,7 @@ public class ElementProcessingPart extends ProcessingPart<QName, Element>{
     }
 
 	@Override
-	public Element getOutput(OpenSPCoop2Message message) throws Exception {
+	public Element getOutput(OpenSPCoop2SoapMessage message) throws Exception {
 		return getFirstChild(message.getSOAPPart().getEnvelope().getOwnerDocument().getDocumentElement(), this.part.getNamespaceURI(), this.part.getLocalPart());
 	}
 

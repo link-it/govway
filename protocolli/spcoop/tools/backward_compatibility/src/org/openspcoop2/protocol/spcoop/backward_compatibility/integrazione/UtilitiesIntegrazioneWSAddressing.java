@@ -34,7 +34,8 @@ import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.ValidatoreXSD;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazioneBusta;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazioneException;
@@ -121,7 +122,7 @@ public class UtilitiesIntegrazioneWSAddressing {
 	public static String buildDatiWSATo(String tipoSoggettoErogatore,String nomeSoggettoErogatore,String tipoServizio,String nomeServizio){
 		return "http://"+nomeSoggettoErogatore+".spcoop.it/servizi/"+nomeServizio;
 	}
-	public static SOAPHeaderElement buildWSATo(OpenSPCoop2Message msg,String actor,String tipoSoggettoErogatore,String nomeSoggettoErogatore,String tipoServizio,String nomeServizio) throws Exception{
+	public static SOAPHeaderElement buildWSATo(OpenSPCoop2SoapMessage msg,String actor,String tipoSoggettoErogatore,String nomeSoggettoErogatore,String tipoServizio,String nomeServizio) throws Exception{
 		QName name =  new QName(UtilitiesIntegrazioneWSAddressing.WSA_NAMESPACE,UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_TO,UtilitiesIntegrazioneWSAddressing.WSA_PREFIX);
 		SOAPHeaderElement header = UtilitiesIntegrazioneWSAddressing.buildHeaderElement(msg,name,UtilitiesIntegrazioneWSAddressing.buildDatiWSATo(tipoSoggettoErogatore,nomeSoggettoErogatore,tipoServizio,nomeServizio),actor,BUILD_VALUE_RAW);
 		return header;
@@ -170,7 +171,7 @@ public class UtilitiesIntegrazioneWSAddressing {
 		else
 			return "http://"+servizioApplicativoFruitore+"."+nomeSoggetto+".spcoop.it";
 	}
-	public static SOAPHeaderElement buildWSAFrom(OpenSPCoop2Message msg,String actor,String servizioApplicativoFruitore,String tipoSoggetto,String nomeSoggetto) throws Exception{
+	public static SOAPHeaderElement buildWSAFrom(OpenSPCoop2SoapMessage msg,String actor,String servizioApplicativoFruitore,String tipoSoggetto,String nomeSoggetto) throws Exception{
 		QName name =  new QName(UtilitiesIntegrazioneWSAddressing.WSA_NAMESPACE,UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_FROM,UtilitiesIntegrazioneWSAddressing.WSA_PREFIX);
 		SOAPHeaderElement header = UtilitiesIntegrazioneWSAddressing.buildHeaderElement(msg,name,UtilitiesIntegrazioneWSAddressing.buildDatiWSAFrom(servizioApplicativoFruitore,tipoSoggetto,nomeSoggetto),actor,BUILD_VALUE_AS_EPR);
 		return header;
@@ -215,7 +216,7 @@ public class UtilitiesIntegrazioneWSAddressing {
 	public static String buildDatiWSAAction(String tipoSoggettoErogatore,String nomeSoggettoErogatore,String tipoServizio,String nomeServizio,String azione){
 		return "http://"+nomeSoggettoErogatore+".spcoop.it/servizi/"+nomeServizio+"/"+azione;
 	}
-	public static SOAPHeaderElement buildWSAAction(OpenSPCoop2Message msg,String actor,String tipoSoggettoErogatore,String nomeSoggettoErogatore,String tipoServizio,String nomeServizio,String azione) throws Exception{
+	public static SOAPHeaderElement buildWSAAction(OpenSPCoop2SoapMessage msg,String actor,String tipoSoggettoErogatore,String nomeSoggettoErogatore,String tipoServizio,String nomeServizio,String azione) throws Exception{
 		QName name =  new QName(UtilitiesIntegrazioneWSAddressing.WSA_NAMESPACE,UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_ACTION,UtilitiesIntegrazioneWSAddressing.WSA_PREFIX);
 		SOAPHeaderElement header = UtilitiesIntegrazioneWSAddressing.buildHeaderElement(msg,name,UtilitiesIntegrazioneWSAddressing.buildDatiWSAAction(tipoSoggettoErogatore,nomeSoggettoErogatore,tipoServizio,nomeServizio,azione),actor,BUILD_VALUE_RAW);
 		return header;
@@ -240,7 +241,7 @@ public class UtilitiesIntegrazioneWSAddressing {
 	public static String buildDatiWSAID(String id){
 		return "uuid:"+id;
 	}
-	public static SOAPHeaderElement buildWSAID(OpenSPCoop2Message msg,String actor,String wsaID) throws Exception{
+	public static SOAPHeaderElement buildWSAID(OpenSPCoop2SoapMessage msg,String actor,String wsaID) throws Exception{
 		QName name =  new QName(UtilitiesIntegrazioneWSAddressing.WSA_NAMESPACE,UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_ID,UtilitiesIntegrazioneWSAddressing.WSA_PREFIX);
 		SOAPHeaderElement header = UtilitiesIntegrazioneWSAddressing.buildHeaderElement(msg,name,UtilitiesIntegrazioneWSAddressing.buildDatiWSAID(wsaID),actor,BUILD_VALUE_RAW);
 		return header;
@@ -262,13 +263,13 @@ public class UtilitiesIntegrazioneWSAddressing {
 	public static String buildDatiWSARelatesTo(String id){
 		return "uuid:"+id;
 	}
-	public static SOAPHeaderElement buildWSARelatesTo(OpenSPCoop2Message msg,String actor, String id) throws Exception{
+	public static SOAPHeaderElement buildWSARelatesTo(OpenSPCoop2SoapMessage msg,String actor, String id) throws Exception{
 		QName name =  new QName(UtilitiesIntegrazioneWSAddressing.WSA_NAMESPACE,UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_RELATES_TO,UtilitiesIntegrazioneWSAddressing.WSA_PREFIX);
 		SOAPHeaderElement header = UtilitiesIntegrazioneWSAddressing.buildHeaderElement(msg,name,UtilitiesIntegrazioneWSAddressing.buildDatiWSARelatesTo(id),actor,BUILD_VALUE_RAW);
 		return header;
 	}
 	
-	private static SOAPHeaderElement buildHeaderElement(OpenSPCoop2Message msg,QName name,String value,String actor,boolean epr) throws Exception{
+	private static SOAPHeaderElement buildHeaderElement(OpenSPCoop2SoapMessage msg,QName name,String value,String actor,boolean epr) throws Exception{
 		
 		SOAPHeader hdr = msg.getSOAPHeader();
 		if(hdr==null){
@@ -320,7 +321,7 @@ public class UtilitiesIntegrazioneWSAddressing {
 		}
 	}
 
-	public void readHeader(OpenSPCoop2Message message,HeaderIntegrazione integrazione,
+	public void readHeader(OpenSPCoop2SoapMessage message,HeaderIntegrazione integrazione,
 			boolean interpretaIDComeIDBusta,String actorIntegrazione) throws HeaderIntegrazioneException{
 
 		try{
@@ -436,13 +437,13 @@ public class UtilitiesIntegrazioneWSAddressing {
 		}
 	}
 	
-	public void updateHeader(OpenSPCoop2Message message,IDSoggetto soggettoFruitore,IDServizio idServizio,
+	public void updateHeader(OpenSPCoop2SoapMessage message,IDSoggetto soggettoFruitore,IDServizio idServizio,
 			String idBusta,String servizioApplicativo,
 			String correlazioneApplicativa,String actorIntegrazione) throws Exception{
 		updateHeader(message, soggettoFruitore, idServizio, idBusta, null, 
 				servizioApplicativo, correlazioneApplicativa, actorIntegrazione);
 	}
-	public void updateHeader(OpenSPCoop2Message message,IDSoggetto soggettoFruitore,IDServizio idServizio,
+	public void updateHeader(OpenSPCoop2SoapMessage message,IDSoggetto soggettoFruitore,IDServizio idServizio,
 			String idBusta,String idBustaRisposta,String servizioApplicativo,
 			String correlazioneApplicativa,String actorIntegrazione) throws Exception{
 		
@@ -469,7 +470,7 @@ public class UtilitiesIntegrazioneWSAddressing {
 		this.updateHeader(message, integrazione, actorIntegrazione);
 	}
 		
-	public void updateHeader(OpenSPCoop2Message message,HeaderIntegrazione integrazione,String actorIntegrazione) throws Exception{
+	public void updateHeader(OpenSPCoop2SoapMessage message,HeaderIntegrazione integrazione,String actorIntegrazione) throws Exception{
 		
 		SOAPHeader header = message.getSOAPHeader();
 		
@@ -609,7 +610,7 @@ public class UtilitiesIntegrazioneWSAddressing {
 	}
 
 	
-	public void deleteHeader(OpenSPCoop2Message message,String actorIntegrazione) throws HeaderIntegrazioneException{
+	public void deleteHeader(OpenSPCoop2SoapMessage message,String actorIntegrazione) throws HeaderIntegrazioneException{
 
 		try{
 

@@ -49,9 +49,9 @@ import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.dump.IDumpOpenSPCoopAppender;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciamentoOpenSPCoopAppender;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.resources.CollectionProperties;
+import org.openspcoop2.utils.properties.CollectionProperties;
+import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.resources.Loader;
-import org.openspcoop2.utils.resources.PropertiesUtilities;
 
 /**
  * Contiene la definizione un Logger utilizzato dai nodi dell'infrastruttura di OpenSPCoop

@@ -24,6 +24,7 @@ package org.openspcoop2.security.message.engine;
 
 
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.IMessageSecuritySender;
@@ -53,13 +54,15 @@ public class MessageSecuritySender_impl extends MessageSecuritySender {
 			
 			
 			// Fix per SOAPFault (quando ci sono le encryptionParts o le signatureParts, la Security fallisce se c'e' un SOAPFault)
-			if(message.getSOAPBody().hasFault()){
-				
-				if(MessageSecurityUtilities.processSOAPFault(this.messageSecurityContext.getOutgoingProperties()) == false){
-					return true; // non devo applicare la sicurezza.
-				}
-				
-			}	
+			if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
+				if(message.castAsSoap().getSOAPBody().hasFault()){
+					
+					if(MessageSecurityUtilities.processSOAPFault(this.messageSecurityContext.getOutgoingProperties()) == false){
+						return true; // non devo applicare la sicurezza.
+					}
+					
+				}	
+			}
 			
 			String action = (String) this.messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ACTION);
 			if(action==null || "".equals(action.trim())){

@@ -24,7 +24,7 @@ package org.openspcoop2.testsuite.core;
 
 import java.util.Properties;
 
-import org.openspcoop2.utils.resources.InstanceProperties;
+import org.openspcoop2.utils.properties.InstanceProperties;
 import org.slf4j.Logger;
 
 /**

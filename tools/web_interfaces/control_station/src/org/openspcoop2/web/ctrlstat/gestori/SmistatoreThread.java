@@ -39,7 +39,7 @@ import javax.naming.InitialContext;
 
 import org.slf4j.Logger;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
-import org.openspcoop2.utils.resources.ExceptionListenerJMS;
+import org.openspcoop2.utils.transport.jms.ExceptionListenerJMS;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;

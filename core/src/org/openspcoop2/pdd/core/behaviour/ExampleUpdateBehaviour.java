@@ -25,6 +25,7 @@ import javax.xml.soap.SOAPHeaderElement;
 
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.protocol.sdk.Busta;
 
@@ -43,7 +44,8 @@ public class ExampleUpdateBehaviour implements IBehaviour {
 			Behaviour behaviour = new Behaviour();
 			BehaviourForwardTo forwardTo = new BehaviourForwardTo();
 			
-			OpenSPCoop2Message msg = gestoreMessaggioRichiesta.getMessage(); // in caso di stateful lo legge dal db
+			OpenSPCoop2Message msgRead = gestoreMessaggioRichiesta.getMessage(); // in caso di stateful lo legge dal db
+			OpenSPCoop2SoapMessage msg = msgRead.castAsSoap();
 			if(msg.getSOAPHeader()==null){
 				msg.getSOAPPart().getEnvelope().addHeader();
 			}

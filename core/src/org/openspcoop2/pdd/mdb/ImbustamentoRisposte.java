@@ -26,7 +26,7 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.ParseException;
+import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.RichiestaApplicativa;
 import org.openspcoop2.pdd.config.RichiestaDelegata;
@@ -39,7 +39,9 @@ import org.openspcoop2.pdd.core.state.OpenSPCoopStateException;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
-import org.openspcoop2.pdd.services.connector.DirectVMProtocolInfo;
+import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
+import org.openspcoop2.pdd.services.RequestInfo;
+import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
@@ -89,6 +91,7 @@ public class ImbustamentoRisposte extends GenericLib {
 		/* PddContext */
 		PdDContext pddContext = imbustamentoRisposteMsg.getPddContext();
 		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, pddContext);
+		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 				
 		/* Protocol Factory */
 		IProtocolFactory protocolFactory = null;
@@ -225,6 +228,20 @@ public class ImbustamentoRisposte extends GenericLib {
 			openspcoopstate.releaseResource(); 
 			esito.setEsitoInvocazione(false); 
 			esito.setStatoInvocazioneErroreNonGestito(e); 
+			return esito;
+		}
+		
+		try{
+			RicezioneBusteExternalErrorGenerator generatoreErrorePA = new RicezioneBusteExternalErrorGenerator(this.log, this.idModulo, requestInfo);
+			generatoreErrorePA.updateInformazioniCooperazione(soggettoFruitore, idServizio);
+			generatoreErrorePA.updateInformazioniCooperazione(servizioApplicativoFruitore);
+			generatoreErrorePA.updateTipoPdD(TipoPdD.APPLICATIVA);
+			ejbUtils.setGeneratoreErrorePortaApplicativa(generatoreErrorePA);
+		}catch(Exception e){
+			msgDiag.logErroreGenerico(e, "RicezioneBusteExternalErrorGenerator.instanziazione"); 
+			openspcoopstate.releaseResource();
+			esito.setEsitoInvocazione(false); 
+			esito.setStatoInvocazioneErroreNonGestito(e);
 			return esito;
 		}
 		

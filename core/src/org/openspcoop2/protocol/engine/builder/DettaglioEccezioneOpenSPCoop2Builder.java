@@ -25,14 +25,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.util.Date;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.eccezione.details.Dettagli;
 import org.openspcoop2.core.eccezione.details.Dettaglio;
 import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.core.eccezione.details.Eccezione;
 import org.openspcoop2.core.eccezione.details.Eccezioni;
-import org.openspcoop2.core.eccezione.details.constants.Costanti;
+import org.openspcoop2.core.eccezione.details.constants.TipoEccezione;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -47,6 +46,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 
 /**
  * DettaglioEccezioneOpenSPCoop2Builder
@@ -130,9 +130,9 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 			Exception eProcessamento,boolean isIntegrazione,boolean generaInformazioniGeneriche){
 		org.openspcoop2.core.eccezione.details.Eccezione eccezione = new org.openspcoop2.core.eccezione.details.Eccezione();
 		if(isErroreProtocollo){
-			eccezione.setTipo(Costanti.TIPO_ECCEZIONE_PROTOCOLLO);
+			eccezione.setTipo(TipoEccezione.ECCEZIONE_PROTOCOLLO);
 		}else{
-			eccezione.setTipo(Costanti.TIPO_ECCEZIONE_INTEGRAZIONE);
+			eccezione.setTipo(TipoEccezione.ECCEZIONE_INTEGRAZIONE);
 		}
 		eccezione.setCodice(codErrore);
 		eccezione.setDescrizione(msgErrore);		
@@ -188,18 +188,15 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 			org.openspcoop2.protocol.sdk.Eccezione e = busta.getEccezione(i);
 
 			org.openspcoop2.core.eccezione.details.Eccezione eccezione = new org.openspcoop2.core.eccezione.details.Eccezione();
+			eccezione.setTipo(TipoEccezione.ECCEZIONE_PROTOCOLLO);
+			eccezione.setCodice(e.getCodiceEccezioneValue(this.protocolFactory));
+			eccezione.setRilevanza(e.getRilevanzaValue(this.protocolFactory));
 			if(this.protocolManager.isGenerazioneDetailsSOAPFaultProtocolloConInformazioniGeneriche()){
-				eccezione.setTipo(Costanti.TIPO_ECCEZIONE_PROTOCOLLO);
-				eccezione.setCodice(e.getCodiceEccezioneValue(this.protocolFactory));
 				eccezione.setDescrizione(this.transformFaultMsg(e.getCodiceEccezione(), e.getDescrizione(this.protocolFactory)));
-				eccezione.setRilevanza(e.getRilevanzaValue(this.protocolFactory));
 				eccezione.setContestoCodifica(this.protocolFactory.createTraduttore().toString(ContestoCodificaEccezione.PROCESSAMENTO));
 			}
 			else{
-				eccezione.setTipo(Costanti.TIPO_ECCEZIONE_PROTOCOLLO);
-				eccezione.setCodice(e.getCodiceEccezioneValue(this.protocolFactory));
 				eccezione.setDescrizione(e.getDescrizione(this.protocolFactory));
-				eccezione.setRilevanza(e.getRilevanzaValue(this.protocolFactory));
 				eccezione.setContestoCodifica(this.protocolFactory.createTraduttore().toString(e.getContestoCodifica()));
 			}
 

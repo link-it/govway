@@ -229,7 +229,7 @@ public class XMLUtils  {
 	
 	private static byte[] unescapeXMLForClientSICA(byte [] xml) throws Exception{
 		
-		AbstractXMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();		
+		AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();		
 		Document docXML = xmlUtils.newDocument(xml);
 		Element elemXML = docXML.getDocumentElement();
 		String prefixRootElement = elemXML.getPrefix();
@@ -343,7 +343,7 @@ public class XMLUtils  {
 	
 	public static boolean isProfiloCollaborazioneEGOV(byte [] doc){
 		try{
-			AbstractXMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();		
+			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();		
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			//System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");
@@ -396,7 +396,7 @@ public class XMLUtils  {
 		// Lettura specifica come document
 		Hashtable<String, String> mapPrefixNamespaces = new Hashtable<String, String>();
 		try{
-			AbstractXMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();		
+			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();		
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			NamedNodeMap map = elemXML.getAttributes();
@@ -590,7 +590,7 @@ public class XMLUtils  {
 				if(wsdlConcettuale!=null){
 					RegistroOpenSPCoopUtilities wsdlUtility = new RegistroOpenSPCoopUtilities(null);
 					wsdlConcettuale = wsdlUtility.eliminaImportASParteComune(wsdlConcettuale);
-					DefinitionWrapper wsdl = new DefinitionWrapper(wsdlConcettuale,org.openspcoop2.message.XMLUtils.getInstance());
+					DefinitionWrapper wsdl = new DefinitionWrapper(wsdlConcettuale,org.openspcoop2.message.xml.XMLUtils.getInstance());
 					String targetNamespace = wsdl.getTargetNamespace();
 					String prefix = null;
 					if(targetNamespace!=null){

@@ -24,10 +24,8 @@
 
 package org.openspcoop2.pdd.core;
 
-import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPEnvelope;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -37,12 +35,18 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper;
 import org.openspcoop2.core.registry.wsdl.WSDLValidator;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.registry.InformationWsdlSource;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.slf4j.Logger;
+import org.w3c.dom.Element;
 
 
 /**
@@ -62,15 +66,14 @@ public class ValidatoreMessaggiApplicativi {
 	/** Identificativo del Servizio */
 	IDServizio idServizio;
 	/** SOAPEnvelope */
-	SOAPVersion soapVersion;
-	SOAPEnvelope envelope;
-	SOAPBody body;
+	OpenSPCoop2Message message;
+	Element element;
 	/** WSDL Associato al servizio */
 	AccordoServizioWrapper accordoServizioWrapper = null;
 	/** Logger */
 	Logger logger = null;
 	/** XMLUtils */
-	org.openspcoop2.message.XMLUtils xmlUtils = null;
+	org.openspcoop2.message.xml.XMLUtils xmlUtils = null;
 	/** WSDLValidator */
 	WSDLValidator wsdlValidator = null;
 	
@@ -108,7 +111,7 @@ public class ValidatoreMessaggiApplicativi {
 	
 	/* ------ Costruttore -------------- */
 	public ValidatoreMessaggiApplicativi(RegistroServiziManager registro,IDServizio idServizio,
-			SOAPVersion soapVersion,SOAPEnvelope envelope,boolean readWSDLAccordoServizio)throws ValidatoreMessaggiApplicativiException{
+			OpenSPCoop2Message message,boolean readWSDLAccordoServizio)throws ValidatoreMessaggiApplicativiException{
 		
 		if(registro==null){
 			ValidatoreMessaggiApplicativiException ex 
@@ -125,35 +128,62 @@ public class ValidatoreMessaggiApplicativi {
 			throw ex;
 		}
 		
-		if(envelope==null){
-			ValidatoreMessaggiApplicativiException ex 
-				= new ValidatoreMessaggiApplicativiException("SOAPEnvelope non esistente");
-			ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_WSDL_FALLITA));
-			throw ex;
-		}
-		this.soapVersion = soapVersion;
-		this.envelope = envelope;
+		this.message = message;
 		try{
-			this.body = this.envelope.getBody();
-		}catch(Exception e){
-			this.logger.error("SOAPEnvelope.getBody failed: "+e.getMessage(),e);
+			if(ServiceBinding.SOAP.equals(this.message.getServiceBinding())){
+				OpenSPCoop2SoapMessage soapMessage = this.message.castAsSoap();
+				try{
+					this.element = soapMessage.getSOAPPart().getEnvelope();
+					SOAPEnvelope envelope = (SOAPEnvelope) this.element;
+					if(envelope.getBody()==null || (envelope.getBody().hasChildNodes()==false)){
+						ValidatoreMessaggiApplicativiException ex 
+							= new ValidatoreMessaggiApplicativiException("SOAPBody non esistente");
+						ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_WSDL_FALLITA));
+						throw ex;
+					}
+				}
+				catch(ValidatoreMessaggiApplicativiException e){
+					throw e;
+				}
+				catch(Exception e){
+					this.logger.error("Read failed: "+e.getMessage(),e);
+					ValidatoreMessaggiApplicativiException ex 
+						= new ValidatoreMessaggiApplicativiException("Lettura SOAPEnvelope fallita");
+					ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_WSDL_FALLITA));
+					throw ex;
+				}
+			}
+			else{
+				if(MessageType.XML.equals(this.message.getMessageType())){
+					OpenSPCoop2RestXmlMessage xml = this.message.castAsRestXml();
+					this.element = xml.getContent();	
+				}
+				else{
+					throw new Exception("Funzionalità non supportata con ServiceBinding REST e tipologia di messaggio ["+this.message.getMessageType()+"]");
+				}
+			}
+		}
+		catch(ValidatoreMessaggiApplicativiException e){
+			throw e;
+		}
+		catch(Exception e){
 			ValidatoreMessaggiApplicativiException ex 
-				= new ValidatoreMessaggiApplicativiException("SOAPEnvelope senza body");
+				= new ValidatoreMessaggiApplicativiException(e.getMessage());
 			ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_WSDL_FALLITA));
 			throw ex;
 		}
-		
-		if(this.body==null || (this.body.hasChildNodes()==false)){
+		if(this.element==null){
 			ValidatoreMessaggiApplicativiException ex 
-				= new ValidatoreMessaggiApplicativiException("SOAPBody non esistente");
+				= new ValidatoreMessaggiApplicativiException("Contenuto da validare non esistente");
 			ex.setErrore(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_WSDL_FALLITA));
 			throw ex;
 		}
+
 		this.registroServiziManager = registro;
 		this.idServizio = idServizio;
 		
 		this.logger = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
-		this.xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
+		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 		
 		try{
 			if(readWSDLAccordoServizio){
@@ -187,7 +217,7 @@ public class ValidatoreMessaggiApplicativi {
 		}
 		
 		try{
-			this.wsdlValidator = new WSDLValidator(this.soapVersion,this.envelope, this.xmlUtils, this.accordoServizioWrapper, this.logger);
+			this.wsdlValidator = new WSDLValidator(this.message.getMessageType(), this.element, this.xmlUtils, this.accordoServizioWrapper, this.logger);
 		}catch(Exception e){
 			this.logger.error("WSDLValidator initialized failed: "+e.getMessage(),e);
 			ValidatoreMessaggiApplicativiException ex 
@@ -261,10 +291,14 @@ public class ValidatoreMessaggiApplicativi {
 	 * @param isRichiesta Indicazione sul tipo di messaggio applicativo da gestire
 	 * 
 	 */
-	public void validateWithWsdlLogicoImplementativo(boolean isRichiesta,String soapAction) throws ValidatoreMessaggiApplicativiException {
+	public void validateWithWsdlLogicoImplementativo(boolean isRichiesta) throws ValidatoreMessaggiApplicativiException {
 		
 		try{
-			this.wsdlValidator.wsdlConformanceCheck(isRichiesta, soapAction, this.idServizio.getAzione());
+			if(ServiceBinding.SOAP.equals(this.message.getServiceBinding())==false){
+				throw new Exception("Tipo di validazione non supportata con Service Binding REST");
+			}
+			
+			this.wsdlValidator.wsdlConformanceCheck(isRichiesta, this.message.castAsSoap().getSoapAction(), this.idServizio.getAzione());
 		}catch(Exception e ){ // WSDLValidatorException
 			ValidatoreMessaggiApplicativiException ex 
 				= new ValidatoreMessaggiApplicativiException(e.getMessage());

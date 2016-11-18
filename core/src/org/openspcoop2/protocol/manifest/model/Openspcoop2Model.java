@@ -41,12 +41,11 @@ public class Openspcoop2Model extends AbstractModel<Openspcoop2> {
 	
 		super();
 	
-		this.PROTOCOL_NAME = new Field("protocolName",java.lang.String.class,"openspcoop2",Openspcoop2.class);
-		this.FACTORY = new Field("factory",java.lang.String.class,"openspcoop2",Openspcoop2.class);
-		this.WEB = new org.openspcoop2.protocol.manifest.model.WebModel(new Field("web",org.openspcoop2.protocol.manifest.Web.class,"openspcoop2",Openspcoop2.class));
-		this.REGISTRO_SERVIZI = new org.openspcoop2.protocol.manifest.model.RegistroServiziModel(new Field("registroServizi",org.openspcoop2.protocol.manifest.RegistroServizi.class,"openspcoop2",Openspcoop2.class));
-		this.URL_MAPPING = new org.openspcoop2.protocol.manifest.model.UrlMappingModel(new Field("urlMapping",org.openspcoop2.protocol.manifest.UrlMapping.class,"openspcoop2",Openspcoop2.class));
+		this.PROTOCOL = new org.openspcoop2.protocol.manifest.model.ProtocolModel(new Field("protocol",org.openspcoop2.protocol.manifest.Protocol.class,"openspcoop2",Openspcoop2.class));
 		this.BINDING = new org.openspcoop2.protocol.manifest.model.BindingModel(new Field("binding",org.openspcoop2.protocol.manifest.Binding.class,"openspcoop2",Openspcoop2.class));
+		this.WEB = new org.openspcoop2.protocol.manifest.model.WebModel(new Field("web",org.openspcoop2.protocol.manifest.Web.class,"openspcoop2",Openspcoop2.class));
+		this.REGISTRY = new org.openspcoop2.protocol.manifest.model.RegistryModel(new Field("registry",org.openspcoop2.protocol.manifest.Registry.class,"openspcoop2",Openspcoop2.class));
+		this.URL_MAPPING = new org.openspcoop2.protocol.manifest.model.UrlMappingModel(new Field("urlMapping",org.openspcoop2.protocol.manifest.UrlMapping.class,"openspcoop2",Openspcoop2.class));
 	
 	}
 	
@@ -54,28 +53,25 @@ public class Openspcoop2Model extends AbstractModel<Openspcoop2> {
 	
 		super(father);
 	
-		this.PROTOCOL_NAME = new ComplexField(father,"protocolName",java.lang.String.class,"openspcoop2",Openspcoop2.class);
-		this.FACTORY = new ComplexField(father,"factory",java.lang.String.class,"openspcoop2",Openspcoop2.class);
-		this.WEB = new org.openspcoop2.protocol.manifest.model.WebModel(new ComplexField(father,"web",org.openspcoop2.protocol.manifest.Web.class,"openspcoop2",Openspcoop2.class));
-		this.REGISTRO_SERVIZI = new org.openspcoop2.protocol.manifest.model.RegistroServiziModel(new ComplexField(father,"registroServizi",org.openspcoop2.protocol.manifest.RegistroServizi.class,"openspcoop2",Openspcoop2.class));
-		this.URL_MAPPING = new org.openspcoop2.protocol.manifest.model.UrlMappingModel(new ComplexField(father,"urlMapping",org.openspcoop2.protocol.manifest.UrlMapping.class,"openspcoop2",Openspcoop2.class));
+		this.PROTOCOL = new org.openspcoop2.protocol.manifest.model.ProtocolModel(new ComplexField(father,"protocol",org.openspcoop2.protocol.manifest.Protocol.class,"openspcoop2",Openspcoop2.class));
 		this.BINDING = new org.openspcoop2.protocol.manifest.model.BindingModel(new ComplexField(father,"binding",org.openspcoop2.protocol.manifest.Binding.class,"openspcoop2",Openspcoop2.class));
+		this.WEB = new org.openspcoop2.protocol.manifest.model.WebModel(new ComplexField(father,"web",org.openspcoop2.protocol.manifest.Web.class,"openspcoop2",Openspcoop2.class));
+		this.REGISTRY = new org.openspcoop2.protocol.manifest.model.RegistryModel(new ComplexField(father,"registry",org.openspcoop2.protocol.manifest.Registry.class,"openspcoop2",Openspcoop2.class));
+		this.URL_MAPPING = new org.openspcoop2.protocol.manifest.model.UrlMappingModel(new ComplexField(father,"urlMapping",org.openspcoop2.protocol.manifest.UrlMapping.class,"openspcoop2",Openspcoop2.class));
 	
 	}
 	
 	
 
-	public IField PROTOCOL_NAME = null;
+	public org.openspcoop2.protocol.manifest.model.ProtocolModel PROTOCOL = null;
 	 
-	public IField FACTORY = null;
+	public org.openspcoop2.protocol.manifest.model.BindingModel BINDING = null;
 	 
 	public org.openspcoop2.protocol.manifest.model.WebModel WEB = null;
 	 
-	public org.openspcoop2.protocol.manifest.model.RegistroServiziModel REGISTRO_SERVIZI = null;
+	public org.openspcoop2.protocol.manifest.model.RegistryModel REGISTRY = null;
 	 
 	public org.openspcoop2.protocol.manifest.model.UrlMappingModel URL_MAPPING = null;
-	 
-	public org.openspcoop2.protocol.manifest.model.BindingModel BINDING = null;
 	 
 
 	@Override

@@ -119,8 +119,8 @@ public class IdentificazionePortaDelegata {
 
 			if(this.location==null || "".equals(this.location)){
 				this.erroreIntegrazione = 
-						ErroriIntegrazione.ERRORE_401_PD_INESISTENTE.
-							getErrore401_PortaDelegataInesistente("nella url di invocazione alla Porta di Dominio non e' stata fornita il nome di una PD");
+						ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
+							getErrore401_PortaInesistente("nella url di invocazione alla Porta di Dominio non e' stata fornita il nome di una PD");
 				return false;
 			}
 
@@ -135,7 +135,7 @@ public class IdentificazionePortaDelegata {
 				while(portaDelegata.contains("/")){
 					//this.log.info("Cerco con nome porta delegata ["+portaDelegata+"]");
 					try{
-						this.soggetto = configurazionePdDReader.getIDSoggetto(portaDelegata,this.protocolFactory);
+						this.soggetto = configurazionePdDReader.getSoggettoProprietarioPortaDelegata(portaDelegata,this.protocolFactory);
 					}catch(DriverConfigurazioneNotFound dNotFound){}
 					if(this.soggetto!=null){
 						//this.log.info("TROVATA porta delegata ["+portaDelegata+"]");
@@ -158,7 +158,7 @@ public class IdentificazionePortaDelegata {
 				// Provo ad effettuare ultima ricerca
 				//this.log.info("ULTIMA... Cerco con nome porta delegata ["+portaDelegata+"]");
 				try{
-					this.soggetto = configurazionePdDReader.getIDSoggetto(portaDelegata,this.protocolFactory);
+					this.soggetto = configurazionePdDReader.getSoggettoProprietarioPortaDelegata(portaDelegata,this.protocolFactory);
 				}catch(DriverConfigurazioneNotFound dNotFound){}
 				if(this.soggetto!=null){
 					//this.log.info("ULTIMA....TROVATA porta delegata ["+portaDelegata+"]");
@@ -170,11 +170,11 @@ public class IdentificazionePortaDelegata {
 				//log.info("Cerco con nome giusto porta delegata ["+this.location+"]");
 				// check per nome PD univoco
 				try{
-					this.soggetto = configurazionePdDReader.getIDSoggetto(this.location,this.protocolFactory);
+					this.soggetto = configurazionePdDReader.getSoggettoProprietarioPortaDelegata(this.location,this.protocolFactory);
 				}catch(DriverConfigurazioneNotFound dNotFound){
 					this.erroreIntegrazione = 
-							ErroriIntegrazione.ERRORE_401_PD_INESISTENTE.
-								getErrore401_PortaDelegataInesistente("verificare i parametri di accesso utilizzati",this.location,this.urlCompleta);
+							ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
+								getErrore401_PortaInesistente("verificare i parametri di accesso utilizzati",this.location,this.urlCompleta);
 					this.log.error(this.erroreIntegrazione.getDescrizione(this.protocolFactory)+": "+dNotFound.getMessage());
 					return false;
 				}	
@@ -187,8 +187,8 @@ public class IdentificazionePortaDelegata {
 			
 			if(this.soggetto == null){
 				this.erroreIntegrazione = 
-						ErroriIntegrazione.ERRORE_401_PD_INESISTENTE.
-							getErrore401_PortaDelegataInesistente("verificare i parametri di accesso utilizzati",this.location,this.urlCompleta);
+						ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
+							getErrore401_PortaInesistente("verificare i parametri di accesso utilizzati",this.location,this.urlCompleta);
 				return false;
 			}
 
@@ -200,8 +200,8 @@ public class IdentificazionePortaDelegata {
 				this.pd = configurazionePdDReader.getPortaDelegata(richiestaDelegata.getIdPortaDelegata());
 			}catch(DriverConfigurazioneNotFound notFound){
 				this.erroreIntegrazione = 
-						ErroriIntegrazione.ERRORE_401_PD_INESISTENTE.
-							getErrore401_PortaDelegataInesistente(notFound.getMessage(),this.nomePDIndivituata,this.urlCompleta);
+						ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
+							getErrore401_PortaInesistente(notFound.getMessage(),this.nomePDIndivituata,this.urlCompleta);
 				return false;
 			}
 			
@@ -210,8 +210,8 @@ public class IdentificazionePortaDelegata {
 				this.tipoAutenticazione = configurazionePdDReader.getAutenticazione(this.pd);
 			}catch(DriverConfigurazioneNotFound notFound){
 				this.erroreIntegrazione = 
-						ErroriIntegrazione.ERRORE_401_PD_INESISTENTE.
-							getErrore401_PortaDelegataInesistente("[lettura tipo autenticazione] "+notFound.getMessage(),this.nomePDIndivituata,this.urlCompleta);
+						ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
+							getErrore401_PortaInesistente("[lettura tipo autenticazione] "+notFound.getMessage(),this.nomePDIndivituata,this.urlCompleta);
 				return false;
 			}
 
@@ -220,8 +220,8 @@ public class IdentificazionePortaDelegata {
 				this.tipoAutorizzazione = configurazionePdDReader.getAutorizzazione(this.pd);
 			}catch(DriverConfigurazioneNotFound notFound){
 				this.erroreIntegrazione = 
-						ErroriIntegrazione.ERRORE_401_PD_INESISTENTE.
-							getErrore401_PortaDelegataInesistente("[lettura tipo autorizzazione] "+notFound.getMessage(),this.nomePDIndivituata,this.urlCompleta);
+						ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
+							getErrore401_PortaInesistente("[lettura tipo autorizzazione] "+notFound.getMessage(),this.nomePDIndivituata,this.urlCompleta);
 				return false;
 			}
 			
@@ -230,8 +230,8 @@ public class IdentificazionePortaDelegata {
 				this.tipoAutorizzazioneContenuto = configurazionePdDReader.getAutorizzazioneContenuto(this.pd);
 			}catch(DriverConfigurazioneNotFound notFound){
 				this.erroreIntegrazione = 
-						ErroriIntegrazione.ERRORE_401_PD_INESISTENTE.
-							getErrore401_PortaDelegataInesistente("[lettura tipo autorizzazione contenuto] "+notFound.getMessage(),this.nomePDIndivituata,this.urlCompleta);
+						ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
+							getErrore401_PortaInesistente("[lettura tipo autorizzazione contenuto] "+notFound.getMessage(),this.nomePDIndivituata,this.urlCompleta);
 				return false;
 			}
 

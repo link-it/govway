@@ -31,9 +31,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.slf4j.Logger;
-import org.openspcoop2.message.ValidatoreXSD;
+import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
-import org.openspcoop2.protocol.manifest.RegistroServizi;
+import org.openspcoop2.protocol.manifest.Registry;
 import org.openspcoop2.protocol.manifest.Web;
 import org.openspcoop2.protocol.manifest.constants.Costanti;
 import org.w3c.dom.Document;
@@ -63,8 +63,18 @@ public class XMLUtils  {
 		
 		int size = motivoErroreValidazione.length();
 		
-		if(openspcoop2.getFactory()==null){
-			motivoErroreValidazione.append("Factory non definita\n");
+		if(openspcoop2.getProtocol()==null){
+			motivoErroreValidazione.append("Protocol non definito\n");
+		}
+		if(openspcoop2.getProtocol().getName()==null){
+			motivoErroreValidazione.append("Protocol.name non definito\n");
+		}
+		if(openspcoop2.getProtocol().getFactory()==null){
+			motivoErroreValidazione.append("Protocol.factory non definito\n");
+		}
+				
+		if(openspcoop2.getBinding()==null){
+			motivoErroreValidazione.append("Binding non definito\n");
 		}
 		
 		if(openspcoop2.getWeb()==null){
@@ -77,36 +87,36 @@ public class XMLUtils  {
 			}
 		}
 		
-		if(openspcoop2.getRegistroServizi()==null){
-			motivoErroreValidazione.append("Registro non definito\n");
+		if(openspcoop2.getRegistry()==null){
+			motivoErroreValidazione.append("Registry non definito\n");
 		}
 		else{
-			RegistroServizi reg = openspcoop2.getRegistroServizi();
+			Registry reg = openspcoop2.getRegistry();
 			
-			if(reg.getServizi()==null){
-				motivoErroreValidazione.append("Registro.Servizi non definito\n");
+			if(reg.getOrganization()==null){
+				motivoErroreValidazione.append("Registry.Organization non definito\n");
 			}
 			else{
-				if(reg.getServizi().getTipi()==null ||  reg.getServizi().getTipi().sizeTipoList()<=0){
-					motivoErroreValidazione.append("Registro.Servizi.tipi non definito\n");
+				if(reg.getOrganization().getTypes()==null ||  reg.getOrganization().getTypes().sizeTypeList()<=0){
+					motivoErroreValidazione.append("Registry.Organization.types non definito\n");
 				}
 			}
 			
-			if(reg.getSoggetti()==null){
-				motivoErroreValidazione.append("Registro.Soggetti non definito\n");
+			if(reg.getService()==null){
+				motivoErroreValidazione.append("Registry.Service non definito\n");
 			}
 			else{
-				if(reg.getSoggetti().getTipi()==null ||  reg.getSoggetti().getTipi().sizeTipoList()<=0){
-					motivoErroreValidazione.append("Registro.Soggetti.tipi non definito\n");
+				if(reg.getService().getTypes()==null ||  reg.getService().getTypes().sizeTypeList()<=0){
+					motivoErroreValidazione.append("Registry.Service.types non definito\n");
 				}
 			}
-			
-			if(reg.getVersioni()==null){
-				motivoErroreValidazione.append("Registro.Versioni non definito\n");
+						
+			if(reg.getVersions()==null){
+				motivoErroreValidazione.append("Registry.Versions non definito\n");
 			}
 			else{
-				if(reg.getVersioni().sizeVersioneList()<=0){
-					motivoErroreValidazione.append("Registro.Versioni.versione non definito\n");
+				if(reg.getVersions().sizeVersionList()<=0){
+					motivoErroreValidazione.append("Registry.Versions.version non definito\n");
 				}
 			}
 		}
@@ -284,7 +294,7 @@ public class XMLUtils  {
 	
 	public static boolean isOpenspcoop2Manifest(byte [] doc){
 		try{
-			org.openspcoop2.message.XMLUtils xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
+			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			return XMLUtils.isOpenspcoop2Manifest(elemXML);
@@ -328,9 +338,13 @@ public class XMLUtils  {
 	public static String toString(Openspcoop2 manifest){
 		StringBuffer bf = new StringBuffer();
 		
-		bf.append(" Protocollo "+manifest.getProtocolName()+" \n");
+		bf.append(" Protocollo "+manifest.getProtocol().getName()+" \n");
 		
-		bf.append("Factory["+manifest.getFactory()+"]\n");
+		bf.append("Factory["+manifest.getProtocol().getFactory()+"]\n");
+		
+		bf.append("Default Binding ["+manifest.getBinding().getDefault()+"]");
+		bf.append("Binding SOAP ["+manifest.getBinding().getSoap()!=null+"]\n");
+		bf.append("Binding REST ["+manifest.getBinding().getRest()!=null+"]\n");
 		
 		Web web = manifest.getWeb();
 		for (int i = 0; i < web.sizeContextList(); i++) {
@@ -343,23 +357,23 @@ public class XMLUtils  {
 			bf.append("EmptyContext not defined\n");
 		}
 		
-		RegistroServizi reg = manifest.getRegistroServizi();
+		Registry reg = manifest.getRegistry();
 		
-		if(reg.getServizi()!=null && reg.getServizi().getTipi()!=null){
-			for (int i = 0; i < reg.getServizi().getTipi().sizeTipoList(); i++) {
-				bf.append("Servizi.tipoSupportato["+i+"]=["+reg.getServizi().getTipi().getTipo(i)+"]\n");
+		if(reg.getOrganization()!=null && reg.getOrganization().getTypes()!=null){
+			for (int i = 0; i < reg.getOrganization().getTypes().sizeTypeList(); i++) {
+				bf.append("Organization.type["+i+"]=["+reg.getOrganization().getTypes().getType(i).getName()+"]\n");
 			}
 		}
 		
-		if(reg.getSoggetti()!=null && reg.getSoggetti().getTipi()!=null){
-			for (int i = 0; i < reg.getSoggetti().getTipi().sizeTipoList(); i++) {
-				bf.append("Soggetti.tipoSupportato["+i+"]=["+reg.getSoggetti().getTipi().getTipo(i)+"]\n");
+		if(reg.getService()!=null && reg.getService().getTypes()!=null){
+			for (int i = 0; i < reg.getService().getTypes().sizeTypeList(); i++) {
+				bf.append("Services.type["+i+"]=["+reg.getService().getTypes().getType(i).getName()+"]\n");
 			}
 		}
-		
-		if(reg.getVersioni()!=null){
-			for (int i = 0; i < reg.getVersioni().sizeVersioneList(); i++) {
-				bf.append("Versione["+i+"]=["+reg.getVersioni().getVersione(i)+"]\n");
+				
+		if(reg.getVersions()!=null){
+			for (int i = 0; i < reg.getVersions().sizeVersionList(); i++) {
+				bf.append("Versions["+i+"]=["+reg.getVersions().getVersion(i).getName()+"]\n");
 			}
 		}
 		

@@ -23,7 +23,7 @@ package org.openspcoop2.pdd.config;
 import java.util.List;
 
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
-import org.openspcoop2.message.mtom.MtomXomPackageInfo;
+import org.openspcoop2.message.soap.mtom.MtomXomPackageInfo;
 
 /**
  * MTOMProcessorConfig

@@ -24,6 +24,8 @@ import org.slf4j.Logger;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.MTOMProcessorConfig;
 import org.openspcoop2.pdd.config.MessageSecurityConfig;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
@@ -66,6 +68,10 @@ public class MTOMProcessor {
 	
 	public void mtomBeforeSecurity(OpenSPCoop2Message msg,TipoTraccia tipo) throws Exception{
 		
+		if(!ServiceBinding.SOAP.equals(msg.getServiceBinding())){
+			return;
+		}
+		
 		boolean emitDiagDisabled = false;
 		
 		if(this.isEngineEnabled()){
@@ -80,7 +86,7 @@ public class MTOMProcessor {
 				
 				try{
 					
-					this.mtomApply(msg);
+					this.mtomApply(msg.castAsSoap());
 					
 					this.emitDiagnostic(tipo, 
 							"mtom.processamentoRichiestaEffettuato",
@@ -118,6 +124,10 @@ public class MTOMProcessor {
 	
 	public void mtomAfterSecurity(OpenSPCoop2Message msg,TipoTraccia tipo) throws Exception{
 		
+		if(!ServiceBinding.SOAP.equals(msg.getServiceBinding())){
+			return;
+		}
+		
 		boolean emitDiagDisabled = false;
 		
 		if(this.isEngineEnabled()){
@@ -132,7 +142,7 @@ public class MTOMProcessor {
 				
 				try{
 					
-					this.mtomApply(msg);
+					this.mtomApply(msg.castAsSoap());
 					
 					this.emitDiagnostic(tipo, 
 							"mtom.processamentoRichiestaEffettuato",
@@ -214,7 +224,7 @@ public class MTOMProcessor {
 		}
 	}
 	
-	private void mtomApply(OpenSPCoop2Message msg) throws Exception{
+	private void mtomApply(OpenSPCoop2SoapMessage msg) throws Exception{
 		switch (this.config.getMtomProcessorType()) {
 		case PACKAGING:
 			

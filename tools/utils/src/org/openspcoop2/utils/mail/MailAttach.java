@@ -21,7 +21,7 @@
 
 package org.openspcoop2.utils.mail;
 
-import org.openspcoop2.utils.resources.MimeTypes;
+import org.openspcoop2.utils.mime.MimeTypes;
 
 /**
  * MailAttach

@@ -27,14 +27,17 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
+import org.openspcoop2.pdd.services.connector.messages.DumpRawConnectorInMessage;
+import org.openspcoop2.pdd.services.connector.messages.DumpRawConnectorOutMessage;
+import org.openspcoop2.pdd.services.core.AbstractContext;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
-import org.openspcoop2.utils.Identity;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
+import org.openspcoop2.utils.transport.Credential;
+import org.slf4j.Logger;
 
 /**
  * DumpRaw
@@ -152,9 +155,9 @@ public class DumpRaw {
 			this.log.error("Request.getContentLength error: "+t.getMessage(),t);
 		}
 		
-		Identity identity = null;
+		Credential credential = null;
 		try{
-			identity = req.getIdentity();
+			credential = req.getCredential();
 		}catch(Throwable t){
 			this.bfRequest.append("Request.getIdentity error: "+t.getMessage()+"\n");
 			this.log.error("Request.getIdentity error: "+t.getMessage(),t);
@@ -171,7 +174,7 @@ public class DumpRaw {
 		try{
 			// forzo la scrittura nel buffer dell'oggetto DumpRawConnectorInMessage
 			if(buildOpenSPCoopMessage){
-				req.getRequest(notifierInputStreamParams, contentType);
+				req.getRequest(notifierInputStreamParams);
 			}
 			else{
 				req.getRequest();
@@ -181,11 +184,11 @@ public class DumpRaw {
 			this.log.error("Request.getURLProtocolContext error: "+t.getMessage(),t);
 		}
 		
-		this.serializeRequest(contentType, contentLength, identity, urlProtocolContext, req.getRequestAsString(),
+		this.serializeRequest(contentType, contentLength, credential, urlProtocolContext, req.getRequestAsString(),
 				req.getParsingRequestErrorAsString());
 	}
 	
-	public void serializeRequest(String contentType, Integer contentLength, Identity identity, URLProtocolContext urlProtocolContext, String rawMessage,
+	public void serializeRequest(String contentType, Integer contentLength, Credential credential, URLProtocolContext urlProtocolContext, String rawMessage,
 			String parsingError) {
 		
 
@@ -214,39 +217,39 @@ public class DumpRaw {
 		}
 		
 		try{
-			if(identity!=null){
+			if(credential!=null){
 			
-				String principal = identity.getPrincipal();
+				String principal = credential.getPrincipal();
 				if(principal!=null){
 					this.bfRequest.append("Principal: ");
 					this.bfRequest.append(principal);
 					this.bfRequest.append("\n");
 				}
 				
-				String username = identity.getUsername();
+				String username = credential.getUsername();
 				if(username!=null){
 					this.bfRequest.append("Username: ");
 					this.bfRequest.append(username);
 					this.bfRequest.append("\n");
 				}
 				
-				String password = identity.getPassword();
+				String password = credential.getPassword();
 				if(password!=null){
 					this.bfRequest.append("Password: ");
 					this.bfRequest.append(password);
 					this.bfRequest.append("\n");
 				}
 				
-				String subjectX509 = identity.getSubject();
+				String subjectX509 = credential.getSubject();
 				if(subjectX509!=null){
 					this.bfRequest.append("X509.Subject: ");
 					this.bfRequest.append(subjectX509);
 					this.bfRequest.append("\n");
 				}
 				
-				X509Certificate[] certificates = identity.getCerts();
+				X509Certificate[] certificates = credential.getCerts();
 				if(certificates!=null && certificates.length>0){
-					Identity.printCertificate(this.bfRequest, certificates);
+					Credential.printCertificate(this.bfRequest, certificates);
 				}
 			}
 			

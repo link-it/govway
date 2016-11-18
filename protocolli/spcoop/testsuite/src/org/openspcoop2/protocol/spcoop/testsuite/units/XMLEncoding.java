@@ -31,9 +31,9 @@ import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPException;
 import javax.xml.transform.TransformerException;
 
-import org.openspcoop2.message.DynamicNamespaceContextFactory;
 import org.openspcoop2.message.SOAPVersion;
-import org.openspcoop2.message.XPathExpressionEngine;
+import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
+import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CooperazioneSPCoopBase;
@@ -122,7 +122,7 @@ public class XMLEncoding {
 		
 		DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContextFromSoapEnvelope11(client.getResponseMessage().getSOAPEnvelope());
 		XPathExpressionEngine xpathEngine = new XPathExpressionEngine();
-		String value = xpathEngine.getStringMatchPattern(org.openspcoop2.message.XMLUtils.getInstance().toString(client.getResponseMessage().getSOAPBody()), dnc, "//prova2/text()");
+		String value = xpathEngine.getStringMatchPattern(org.openspcoop2.message.xml.XMLUtils.getInstance().toString(client.getResponseMessage().getSOAPBody()), dnc, "//prova2/text()");
 		//System.out.println("VALUE = "+value);
 		Assert.assertEquals(value, "AMÉLIE");
 		
@@ -180,7 +180,7 @@ public class XMLEncoding {
 		
 		DynamicNamespaceContext dncBody = DynamicNamespaceContextFactory.getInstance().getNamespaceContextFromSoapEnvelope11(client.getResponseMessage().getSOAPEnvelope());
 		XPathExpressionEngine xpathEngine = new XPathExpressionEngine();
-		String valueBody = xpathEngine.getStringMatchPattern(org.openspcoop2.message.XMLUtils.getInstance().toString(client.getResponseMessage().getSOAPBody()), dncBody, "//prova2/text()");
+		String valueBody = xpathEngine.getStringMatchPattern(org.openspcoop2.message.xml.XMLUtils.getInstance().toString(client.getResponseMessage().getSOAPBody()), dncBody, "//prova2/text()");
 		
 			//System.out.println("VALUE = "+value);
 		Assert.assertEquals(valueBody, "AMÉLIE");
@@ -253,7 +253,7 @@ public class XMLEncoding {
 		
 		DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContextFromSoapEnvelope11(client.getResponseMessage().getSOAPEnvelope());
 		XPathExpressionEngine xpathEngine = new XPathExpressionEngine();
-		String value = xpathEngine.getStringMatchPattern(org.openspcoop2.message.XMLUtils.getInstance().toString(client.getResponseMessage().getSOAPBody()), dnc, "//prova2/text()");
+		String value = xpathEngine.getStringMatchPattern(org.openspcoop2.message.xml.XMLUtils.getInstance().toString(client.getResponseMessage().getSOAPBody()), dnc, "//prova2/text()");
 		
 		//System.out.println("VALUE = "+value);
 		Assert.assertEquals(value, "AMÉLIE");
@@ -312,7 +312,7 @@ public class XMLEncoding {
 		
 		DynamicNamespaceContext dncBody = DynamicNamespaceContextFactory.getInstance().getNamespaceContextFromSoapEnvelope11(client.getResponseMessage().getSOAPEnvelope());
 		XPathExpressionEngine xpathEngine = new XPathExpressionEngine();
-		String valueBody = xpathEngine.getStringMatchPattern(org.openspcoop2.message.XMLUtils.getInstance().toString(client.getResponseMessage().getSOAPBody()), dncBody, "//prova2/text()");
+		String valueBody = xpathEngine.getStringMatchPattern(org.openspcoop2.message.xml.XMLUtils.getInstance().toString(client.getResponseMessage().getSOAPBody()), dncBody, "//prova2/text()");
 		
 		//System.out.println("VALUE = "+value);
 		Assert.assertEquals(valueBody, "AMÉLIE");

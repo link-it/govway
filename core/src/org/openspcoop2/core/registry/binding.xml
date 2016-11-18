@@ -71,6 +71,7 @@
     <value name="byte-specifica-conversazione-concettuale" field="byteSpecificaConversazioneConcettuale" usage="optional" style="attribute"/>
     <value name="byte-specifica-conversazione-erogatore" field="byteSpecificaConversazioneErogatore" usage="optional" style="attribute"/>
     <value name="byte-specifica-conversazione-fruitore" field="byteSpecificaConversazioneFruitore" usage="optional" style="attribute"/>
+    <value name="service-binding" field="serviceBinding" usage="required" enum-value-method="toString" style="attribute"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
     <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
     <value name="profilo-collaborazione" field="profiloCollaborazione" usage="required" enum-value-method="toString" style="attribute"/>

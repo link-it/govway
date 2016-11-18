@@ -11,7 +11,7 @@
     <namespace uri="http://www.openspcoop2.org/core/eccezione/details" default="elements"/>
     <value name="identificativo-porta" field="identificativoPorta" usage="required"/>
     <structure field="soggetto" usage="required" map-as="org.openspcoop2.core.eccezione.details.DominioSoggetto"/>
-    <value name="funzione" field="funzione" usage="optional" style="attribute"/>
+    <value name="funzione" field="funzione" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="modulo" field="modulo" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="soggetto" class="org.openspcoop2.core.eccezione.details.DominioSoggetto">
@@ -37,7 +37,7 @@
     <value name="descrizione" field="descrizione" usage="required" style="attribute"/>
     <value name="rilevanza" field="rilevanza" usage="optional" style="attribute"/>
     <value name="contesto-codifica" field="contestoCodifica" usage="optional" style="attribute"/>
-    <value name="tipo" field="tipo" usage="required" style="attribute"/>
+    <value name="tipo" field="tipo" usage="required" enum-value-method="toString" style="attribute"/>
   </mapping>
   <mapping name="dettaglio" class="org.openspcoop2.core.eccezione.details.Dettaglio">
     <namespace uri="http://www.openspcoop2.org/core/eccezione/details" default="elements"/>

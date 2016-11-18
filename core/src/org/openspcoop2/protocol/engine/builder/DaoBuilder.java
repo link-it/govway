@@ -30,10 +30,10 @@ import org.openspcoop2.core.eccezione.details.Dettagli;
 import org.openspcoop2.core.eccezione.details.Dettaglio;
 import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.core.eccezione.details.Dominio;
+import org.openspcoop2.core.eccezione.details.DominioSoggetto;
 import org.openspcoop2.core.eccezione.details.Eccezione;
 import org.openspcoop2.core.eccezione.details.Eccezioni;
-import org.openspcoop2.core.eccezione.details.constants.Costanti;
-import org.openspcoop2.core.eccezione.details.DominioSoggetto;
+import org.openspcoop2.core.eccezione.details.constants.TipoEccezione;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -53,18 +53,18 @@ public class DaoBuilder {
 	/** ------------------- Metodi che generano un DettaglioEccezione ---------------- */
 
 	public static Dominio buildDominio(IDSoggetto identitaPdD,TipoPdD tipoPdD,String modulo){
-		String idFunzione = null;
+		org.openspcoop2.core.eccezione.details.constants.TipoPdD idFunzione = null;
 		if(TipoPdD.DELEGATA.equals(tipoPdD)){
-			idFunzione = org.openspcoop2.core.eccezione.details.constants.Costanti.TIPO_PDD_PORTA_DELEGATA;
+			idFunzione = org.openspcoop2.core.eccezione.details.constants.TipoPdD.PORTA_DELEGATA;
 		}
 		else if(TipoPdD.APPLICATIVA.equals(tipoPdD)){
-			idFunzione = org.openspcoop2.core.eccezione.details.constants.Costanti.TIPO_PDD_PORTA_APPLICATIVA;
+			idFunzione = org.openspcoop2.core.eccezione.details.constants.TipoPdD.PORTA_APPLICATIVA;
 		}
 		else if(TipoPdD.INTEGRATION_MANAGER.equals(tipoPdD)){
-			idFunzione = org.openspcoop2.core.eccezione.details.constants.Costanti.TIPO_PDD_INTEGRATION_MANAGER;
+			idFunzione = org.openspcoop2.core.eccezione.details.constants.TipoPdD.INTEGRATION_MANAGER;
 		}
 		else if(TipoPdD.ROUTER.equals(tipoPdD)){
-			idFunzione = org.openspcoop2.core.eccezione.details.constants.Costanti.TIPO_PDD_ROUTER;
+			idFunzione = org.openspcoop2.core.eccezione.details.constants.TipoPdD.ROUTER;
 		}
 		
 		Dominio dominio = new Dominio();
@@ -89,9 +89,9 @@ public class DaoBuilder {
 		eccezione.setCodice(codErrore);
 		eccezione.setDescrizione(msgErrore);
 		if(isErroreProtocollo){
-			eccezione.setTipo(Costanti.TIPO_ECCEZIONE_PROTOCOLLO);
+			eccezione.setTipo(TipoEccezione.ECCEZIONE_PROTOCOLLO);
 		}else{
-			eccezione.setTipo(Costanti.TIPO_ECCEZIONE_INTEGRAZIONE);
+			eccezione.setTipo(TipoEccezione.ECCEZIONE_INTEGRAZIONE);
 		}
 		if(dettaglioEccezione.getEccezioni()==null){
 			dettaglioEccezione.setEccezioni(new Eccezioni());
@@ -131,9 +131,9 @@ public class DaoBuilder {
 		eccezione.setRilevanza(rilevanza);
 		eccezione.setContestoCodifica(contesto);
 		if(isErroreProtocollo){
-			eccezione.setTipo(Costanti.TIPO_ECCEZIONE_PROTOCOLLO);
+			eccezione.setTipo(TipoEccezione.ECCEZIONE_PROTOCOLLO);
 		}else{
-			eccezione.setTipo(Costanti.TIPO_ECCEZIONE_INTEGRAZIONE);
+			eccezione.setTipo(TipoEccezione.ECCEZIONE_INTEGRAZIONE);
 		}
 		return eccezione;
 	}

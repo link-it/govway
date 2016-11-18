@@ -21,27 +21,32 @@
 
 package org.openspcoop2.message;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.SequenceInputStream;
-import java.util.Vector;
+import java.util.Enumeration;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.mail.internet.ContentType;
 import javax.xml.soap.MessageFactory;
-import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPMessage;
 
-import org.slf4j.Logger;
-import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.message.constants.Costanti;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.message.exception.ParseExceptionUtils;
+import org.openspcoop2.message.utils.MessageUtilities;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.io.notifier.NotifierInputStream;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
+import org.openspcoop2.utils.mime.MultipartUtils;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.transport.TransportRequestContext;
+import org.openspcoop2.utils.transport.TransportResponseContext;
+import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -56,10 +61,8 @@ import org.w3c.dom.Element;
  */
 
 public abstract class OpenSPCoop2MessageFactory {
-
-	public abstract String getDocumentBuilderFactoryClass();
-
-	private static Logger logger = LoggerWrapperFactory.getLogger(OpenSPCoop2MessageFactory.class);
+	
+	
 	public static String messageFactoryImpl = org.openspcoop2.message.OpenSPCoop2MessageFactory_impl.class.getName();
 	
 	public static void setMessageFactoryImpl(String messageFactoryImpl) {
@@ -87,6 +90,11 @@ public abstract class OpenSPCoop2MessageFactory {
 //		}
 	}
 	
+	
+	
+	
+	// ********** SOAP - FACTORY *************
+		
 	protected static SOAPFactory soapFactory11 = null;
 	protected static SOAPFactory soapFactory12 = null;
 	public SOAPFactory getSoapFactory11(){
@@ -94,8 +102,7 @@ public abstract class OpenSPCoop2MessageFactory {
 			initSoapFactory();
 		}
 		return OpenSPCoop2MessageFactory.soapFactory11;
-	}
-	
+	}	
 	public SOAPFactory getSoapFactory12(){
 		if(OpenSPCoop2MessageFactory.soapFactory12==null){
 			initSoapFactory();
@@ -114,230 +121,529 @@ public abstract class OpenSPCoop2MessageFactory {
 	}
 	protected abstract void initSoapMessageFactory() throws SOAPException; 
 	
-	protected final String getContentType(MimeHeaders headers)
-    {
-        String values[] = headers.getHeader(Costanti.CONTENT_TYPE);
-        if(values == null)
-            return null;
-        else
-            return values[0];
-    }
-	
 	public abstract SOAPConnectionFactory getSOAPConnectionFactory() throws SOAPException;
 	
-	// Implementazione specifica per i SAAJ Vendors
-	protected abstract OpenSPCoop2Message _createMessage(SOAPVersion versioneSoap);
-	protected abstract OpenSPCoop2Message _createMessage(SOAPVersion versioneSoap,SOAPMessage msg);
-	protected abstract OpenSPCoop2Message _createMessage(MimeHeaders mhs, InputStream is,  boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold, long overhead) throws SOAPException, IOException;	
+	
+	
+	
+	// ********** SAAJ *************
+	
+	public abstract String getDocumentBuilderFactoryClass();
 	
     public abstract Element convertoForXPathSearch(Element contenutoAsElement);
     
     public abstract void normalizeDocument(Document document);
-    
 	
+    
+    
+    
+    // ********** OpenSPCoop2Message builder *************
+    
+	protected abstract OpenSPCoop2Message _createMessage(MessageType messageType, SOAPMessage msg) throws MessageException;
+	
+	protected abstract OpenSPCoop2Message _createMessage(MessageType messageType, String contentType) throws MessageException;
+	
+	protected abstract OpenSPCoop2Message _createMessage(MessageType messageType, TransportRequestContext requestContext, 
+			InputStream is,  boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold, long overhead) throws MessageException;	
+	protected abstract OpenSPCoop2Message _createMessage(MessageType messageType, TransportResponseContext responseContext, 
+			InputStream is,  boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold, long overhead) throws MessageException;	
+	protected abstract OpenSPCoop2Message _createMessage(MessageType messageType, String contentType, 
+			InputStream is,  boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold, long overhead) throws MessageException;
+	
+	
+	
+	
+	
+	// ********** MessageType *************
+
+	public MessageType getMessageType(SOAPMessage soapMessage) throws MessageException {
+		try{
+			Object o = soapMessage.getProperty(Costanti.SOAP_MESSAGE_PROPERTY_MESSAGE_TYPE);
+			if(o!=null && o instanceof MessageType){
+				return (MessageType) o;
+			}
+			return null;
+		}catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
+	}
+    
+    
+    
+    
+    
 	
 	// ********** INTERNAL CREATE (chiamate dai metodi pubblici) *************
 	
-	private OpenSPCoop2MessageParseResult _internalCreateMessage(MimeHeaders mhs, InputStream is, NotifierInputStreamParams notifierInputStreamParams,
+    private OpenSPCoop2Message _internalCreateMessage(MessageType messageType, MessageRole role, SOAPMessage msg) throws MessageException{
+    	
+    	if(!MessageType.SOAP_11.equals(messageType) && !MessageType.SOAP_11.equals(messageType)){
+			throw new MessageException("Message Type ["+messageType+"] unsupported");
+		}
+    	
+    	OpenSPCoop2Message msgNew = this._createMessage(messageType, msg);
+    	
+    	msgNew.castAsSoap(); // check
+		
+    	msgNew.setMessageType(messageType);
+    	msgNew.setMessageRole(role);
+    	
+    	return msgNew;
+    }
+    
+    private OpenSPCoop2Message _internalCreateMessage(MessageType messageType, MessageRole role, String contentType) throws MessageException{
+    	
+    	OpenSPCoop2Message msgNew = this._createMessage(messageType, contentType);
+    	
+    	MessageUtilities.checkType(messageType, msgNew);
+		
+		msgNew.setContentType(contentType);
+		msgNew.setMessageType(messageType);
+		msgNew.setMessageRole(role);
+		
+        return msgNew;
+    	
+    }
+    
+    private OpenSPCoop2MessageParseResult _internalCreateMessage(MessageType messageType, MessageRole messageRole, Object context, 
+			InputStream is, NotifierInputStreamParams notifierInputStreamParams,
 			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold, long overhead) {	
 		
 		OpenSPCoop2MessageParseResult result = new OpenSPCoop2MessageParseResult();
 		try{
 			InputStream nis = null;
 			
-			if(is==null){
-				throw new Exception("Original InputStream undefined");
+//			if(is==null){
+//				throw new Exception("Original InputStream undefined");
+//			}
+//			
+			String contentType = null;
+			TransportRequestContext transportRequestContext = null; 
+			TransportResponseContext transportResponseContext = null;
+			if(context instanceof TransportRequestContext){
+				transportRequestContext = (TransportRequestContext) context;
+				contentType = transportRequestContext.getParameterTrasporto(HttpConstants.CONTENT_TYPE);
+			}
+			else if(context instanceof TransportResponseContext){
+				transportResponseContext = (TransportResponseContext) context;
+				contentType = transportResponseContext.getParameterTrasporto(HttpConstants.CONTENT_TYPE);
+			}
+			else if(context instanceof String){
+				contentType = (String) context;
+			}
+			else{
+				throw new MessageException("Unsupported Context ["+context.getClass().getName()+"]");
 			}
 			
-			if(notifierInputStreamParams!=null){
-				String [] headerContentType = null;
-				if(mhs!=null){
-					headerContentType = mhs.getHeader(Costanti.CONTENT_TYPE);
-				}
-				String contentType = null;
-				if(headerContentType!=null && headerContentType.length>0){
-					contentType = headerContentType[0];
-				}
-				else{
-					contentType = Costanti.CONTENT_TYPE_SOAP_1_1;
-				}
-		
+			
+			if(notifierInputStreamParams!=null && is!=null){
 				nis = new NotifierInputStream(is,contentType,notifierInputStreamParams);
 			}
 			else{
 				nis = is;
 			}
 			
-			OpenSPCoop2Message op2Msg = this._createMessage(mhs, nis, fileCacheEnable, attachmentRepoDir, fileThreshold, overhead);
+			OpenSPCoop2Message op2Msg = null;
+			if(transportRequestContext!=null){
+				op2Msg = this._createMessage(messageType, transportRequestContext, nis, fileCacheEnable, attachmentRepoDir, fileThreshold, overhead);
+				
+				if(MessageType.SOAP_11.equals(messageType) || MessageType.SOAP_12.equals(messageType)){
+					String soapAction = null;
+					if(MessageType.SOAP_11.equals(messageType)){
+						soapAction = transportRequestContext.getParameterTrasporto(Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION);
+					}
+					else{
+						// The SOAP 1.1 mandatory SOAPAction HTTP header has been removed in SOAP 1.2. 
+						// In its place is an optional action parameter on the application/soap+xml media type.
+						if(contentType!=null){
+							ContentType ct = new ContentType(contentType);
+							if(ct.getParameterList()!=null && ct.getParameterList().size()>0){
+								Enumeration<?> names = ct.getParameterList().getNames();
+								while (names.hasMoreElements()) {
+									String name = (String) names.nextElement();
+									if(Costanti.SOAP12_OPTIONAL_CONTENT_TYPE_PARAMETER_SOAP_ACTION.equals(name)){
+										soapAction = ct.getParameterList().get(name);
+									}	
+								}
+							}
+						}
+					}
+					
+					OpenSPCoop2SoapMessage soapMessage = op2Msg.castAsSoap();
+					if(soapAction!=null){
+						soapMessage.setSoapAction(soapAction);
+					}
+				}
+			}
+			else if(transportResponseContext!=null){
+				op2Msg = this._createMessage(messageType, transportResponseContext, nis, fileCacheEnable, attachmentRepoDir, fileThreshold, overhead);
+			}
+			else{
+				op2Msg = this._createMessage(messageType, contentType, nis, fileCacheEnable, attachmentRepoDir, fileThreshold, overhead);
+			}
 			if(op2Msg==null){
 				throw new Exception("Create message failed");
 			}
-			if(notifierInputStreamParams!=null){
+			if(notifierInputStreamParams!=null && nis!=null){
 				op2Msg.setNotifierInputStream((NotifierInputStream)nis);
 			}
 			
+			if(context instanceof TransportRequestContext){
+				op2Msg.setTransportRequestContext(transportRequestContext);
+			}
+			else if(context instanceof TransportResponseContext){
+				op2Msg.setTransportResponseContext(transportResponseContext);
+			}
+			
+			op2Msg.setMessageRole(messageRole);
+			op2Msg.setMessageType(messageType);
+			
 			result.setMessage(op2Msg);
 		}catch(Throwable t){
-			result.setParseException(MessageUtils.buildParseException(t));
+			result.setParseException(ParseExceptionUtils.buildParseException(t));
 		}
 		return result;
 	}
 	
+	private OpenSPCoop2MessageParseResult _internalEnvelopingMessage(MessageType messageType, MessageRole messageRole, 
+			String contentTypeForEnvelope, String soapAction,
+			Object context, 
+			Object msgParam, NotifierInputStreamParams notifierInputStreamParams, 
+			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold,
+			boolean eraserXmlTag) {
+				
+		try{
+		
+			byte[] byteMsg = null;
+			if(msgParam instanceof byte[]){
+				byteMsg = (byte[]) msgParam;
+			}
+			else if(msgParam instanceof InputStream){
+				byteMsg = Utilities.getAsByteArray((InputStream)msgParam);
+			}
+			else{
+				throw new Exception("Tipo di messaggio non supportato: "+msgParam.getClass().getName());
+			}
+			
+			if(byteMsg==null || byteMsg.length==0) 
+				throw new Exception("Nessun contenuto fornito da inserire all'interno del SoapBody");
+			
+			if(MessageType.SOAP_11.equals(messageType)){
+				if(contentTypeForEnvelope==null){
+					contentTypeForEnvelope = HttpConstants.CONTENT_TYPE_SOAP_1_1;
+				}
+			} else if(MessageType.SOAP_12.equals(messageType)){
+				if(contentTypeForEnvelope==null){
+					contentTypeForEnvelope = HttpConstants.CONTENT_TYPE_SOAP_1_2;
+				}
+			}
+			else{
+				throw new MessageException("Unsupported Type ["+messageType+"]");
+			}
+			
+			int offset = 0;
+			
+			if(MultipartUtils.messageWithAttachment(byteMsg)){
+				
+				// ** Attachments **
+				
+				contentTypeForEnvelope = ContentTypeUtilities.buildMultipartContentType(byteMsg, contentTypeForEnvelope);
+				String boundary = MultipartUtils.findBoundary(byteMsg);
+
+				// Il messaggio deve essere imbustato.
+				String msg = new String(byteMsg);
+				
+				int firstBound = msg.indexOf(boundary);
+				int secondBound = msg.indexOf(boundary,firstBound+boundary.length());
+				if(firstBound==-1 || secondBound==-1)
+					throw new Exception("multipart/related non correttamente formato (bound not found)");
+				String bodyOriginal = msg.substring(firstBound+boundary.length(), secondBound);
+				
+				// Cerco "\r\n\r\n";
+				int indexCarriage = bodyOriginal.indexOf("\r\n\r\n");
+				if(indexCarriage==-1)
+					throw new Exception("multipart/related non correttamente formato (\\r\\n\\r\\n not found)");
+				String contenutoBody = bodyOriginal.substring(indexCarriage+"\r\n\r\n".length());
+				
+				// brucio spazi vuoti
+				int puliziaSpaziBianchi_e_XML = 0;
+				for( ; puliziaSpaziBianchi_e_XML<contenutoBody.length(); puliziaSpaziBianchi_e_XML++){
+					if(contenutoBody.charAt(puliziaSpaziBianchi_e_XML)!=' '){
+						break;
+					}
+				}
+				String bodyPulito = contenutoBody.substring(puliziaSpaziBianchi_e_XML);
+				
+				// se presente <?xml && eraserXMLTag
+				if(bodyPulito.startsWith("<?xml")){
+					if(eraserXmlTag){
+						// eliminazione tag <?xml
+						for(puliziaSpaziBianchi_e_XML=0 ; puliziaSpaziBianchi_e_XML<contenutoBody.length(); puliziaSpaziBianchi_e_XML++){
+							if(contenutoBody.charAt(puliziaSpaziBianchi_e_XML)=='>'){
+								break;
+							}
+						}
+						bodyPulito = bodyPulito.substring(puliziaSpaziBianchi_e_XML+1);
+					}else{
+						// lancio eccezione
+						throw new Exception("Tag <?xml non permesso con la funzionalita di imbustamento SOAP");
+					}
+				}
+									
+				// ImbustamentoSOAP
+				String contenutoBodyImbustato = null;
+				if(MessageType.SOAP_11.equals(messageType)){
+					contenutoBodyImbustato = 
+							"<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Body>"+
+									bodyPulito+
+							"</SOAP-ENV:Body></SOAP-ENV:Envelope>";	
+				} else {
+					contenutoBodyImbustato = 
+							"<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://www.w3.org/2003/05/soap-envelope\"><SOAP-ENV:Body>"+
+									bodyPulito+
+							"</SOAP-ENV:Body></SOAP-ENV:Envelope>";	
+				}
+				
+				// MessaggioImbustato
+				String bodyOriginalImbustato = bodyOriginal.replace(contenutoBody, contenutoBodyImbustato);
+				msg = msg.replace(bodyOriginal, bodyOriginalImbustato);
+				byteMsg = msg.getBytes();
+				
+			}
+			else{
+				
+				// No Attachments
+				//Controllo <?xml
+				
+				// brucio spazi vuoti
+				int i = 0;
+				for( ; i<byteMsg.length; i++){
+					if(((char)byteMsg[i])!=' '){
+						break;
+					}
+				}
+				
+				// se presente <?xml
+				offset = readOffsetXmlInstruction(byteMsg, i, eraserXmlTag, offset, false);
+				
+			}
+			
+			InputStream messageInput = new ByteArrayInputStream(byteMsg,offset,byteMsg.length);
+			
+						
+			OpenSPCoop2MessageParseResult result = null;
+			if(context==null){
+				result = _internalCreateMessage(messageType, messageRole, contentTypeForEnvelope, messageInput, notifierInputStreamParams, fileCacheEnable, attachmentRepoDir, fileThreshold, 0);
+			}
+			else if(context instanceof TransportRequestContext){
+				TransportRequestContext trc = (TransportRequestContext) context;
+				trc.getParametersTrasporto().remove(HttpConstants.CONTENT_TYPE);
+				trc.getParametersTrasporto().remove(HttpConstants.CONTENT_TYPE.toLowerCase());
+				trc.getParametersTrasporto().remove(HttpConstants.CONTENT_TYPE.toUpperCase());
+				trc.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, contentTypeForEnvelope);
+				
+				result = _internalCreateMessage(messageType, messageRole, trc, messageInput, notifierInputStreamParams, fileCacheEnable, attachmentRepoDir, fileThreshold, 0);
+				
+			}
+			else if(context instanceof TransportResponseContext){
+				TransportResponseContext trc = (TransportResponseContext) context;
+				trc.getParametersTrasporto().remove(HttpConstants.CONTENT_TYPE);
+				trc.getParametersTrasporto().remove(HttpConstants.CONTENT_TYPE.toLowerCase());
+				trc.getParametersTrasporto().remove(HttpConstants.CONTENT_TYPE.toUpperCase());
+				trc.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, contentTypeForEnvelope);
+				
+				result = _internalCreateMessage(messageType, messageRole, trc, messageInput, notifierInputStreamParams, fileCacheEnable, attachmentRepoDir, fileThreshold, 0);
+			}
+			else{
+				throw new MessageException("Unsupported Context ["+context.getClass().getName()+"]");
+			}
+			
+			// Verifico la costruzione del messaggio SOAP
+			if(result.getMessage()!=null){
+				OpenSPCoop2SoapMessage soapMessage = null;
+				try{
+					soapMessage = result.getMessage().castAsSoap();
+					soapMessage.getSOAPPart().getEnvelope();
+				} catch (Throwable soapException) {
+					result.setMessage(null);
+					result.setParseException(ParseExceptionUtils.buildParseException(soapException));
+				}
+				
+				soapMessage.setSoapAction(soapAction);
+			}
+						
+			return result;
+		}catch(Throwable t){
+			OpenSPCoop2MessageParseResult result = new OpenSPCoop2MessageParseResult();
+			result.setParseException(ParseExceptionUtils.buildParseException(t));
+			return result;
+		}
+	}
+	
+	private static int readOffsetXmlInstruction(byte[]byteMsg, int startFrom,boolean eraserXmlTag, int offsetParam, boolean cleanEmptyChar) throws Exception{
+		//System.out.println("START["+(startFrom)+"] OFFSET["+offsetParam+"]");
+		int offset = offsetParam;
+		int i = startFrom;
+		
+		// brucio spazi vuoti
+		if(cleanEmptyChar){
+			for( ; i<byteMsg.length; i++){
+				if(((char)byteMsg[i])=='<'){
+					break;
+				}
+			}
+		}
+		
+		String xml = "";
+		if(byteMsg.length>i+5){
+			xml = "" + ((char)byteMsg[i]) + ((char)byteMsg[i+1]) + ((char)byteMsg[i+2]) +((char)byteMsg[i+3]) + ((char)byteMsg[i+4]);
+			//System.out.println("CHECK ["+xml+"]");
+			if(xml.equals("<?xml")){
+				if(eraserXmlTag){
+					// eliminazione tag <?xml
+					for( ; i<byteMsg.length; i++){
+						if(((char)byteMsg[i])=='>'){
+							break;
+						}
+					}
+					offset = i+1;
+				}else{
+					// lancio eccezione
+					throw new Exception("Tag <?xml non permesso con la funzionalita di imbustamento SOAP");
+				}
+				//System.out.println("RIGIRO CON START["+(i+1)+"] OFFSET["+offset+"]");
+				return readOffsetXmlInstruction(byteMsg, (i+1), eraserXmlTag, offset, true);
+			}
+			else{
+				//System.out.println("FINE A["+offset+"]");
+				return offset;
+			}
+		}
+		else{
+			//System.out.println("FINE B["+offset+"]");
+			return offset;
+		}
+	}
+	
+	
+	
 	
 	// ********** METODI PUBBLICI *************
 		
-	public OpenSPCoop2MessageParseResult createMessage(MimeHeaders mhs, InputStream is, NotifierInputStreamParams notifierInputStreamParams, 
-			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold, long overhead) {	
-		return _internalCreateMessage(mhs, is, notifierInputStreamParams,  fileCacheEnable, attachmentRepoDir, fileThreshold, overhead);
+	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportRequestContext requestContext, 
+			InputStream is, NotifierInputStreamParams notifierInputStreamParams, 
+			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold) {	
+		return _internalCreateMessage(messageType, MessageRole.REQUEST, requestContext, is, notifierInputStreamParams,  
+				fileCacheEnable, attachmentRepoDir, fileThreshold, 0);
 	}
 	
-	public OpenSPCoop2MessageParseResult createMessage(HttpServletRequest req, NotifierInputStreamParams notifierInputStreamParams,  
-			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold) {
-		return createMessage(req, notifierInputStreamParams, fileCacheEnable, attachmentRepoDir, fileThreshold, 0);
+	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportResponseContext responseContext, 
+			InputStream is, NotifierInputStreamParams notifierInputStreamParams, 
+			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold) {	
+		return _internalCreateMessage(messageType, MessageRole.RESPONSE, responseContext, is, notifierInputStreamParams,  
+				fileCacheEnable, attachmentRepoDir, fileThreshold, 0);
 	}
 	
-	public OpenSPCoop2MessageParseResult createMessage(HttpServletRequest req, NotifierInputStreamParams notifierInputStreamParams, 
-			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold, long overhead) {
+	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, MessageRole messageRole, String contentType, 
+			InputStream is, NotifierInputStreamParams notifierInputStreamParams, 
+			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold) {	
+		return _internalCreateMessage(messageType, messageRole, contentType, is, notifierInputStreamParams, 
+				fileCacheEnable, attachmentRepoDir, fileThreshold, 0);
+	}
+	
+	
+	
+	
+	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, String contentTypeForEnvelope, String soapAction,
+			TransportRequestContext requestContext, 
+			InputStream messageInput,NotifierInputStreamParams notifierInputStreamParams, 
+			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold,
+			boolean eraserXmlTag) {
+		return this._internalEnvelopingMessage(messageType, MessageRole.REQUEST, contentTypeForEnvelope, soapAction, requestContext, 
+				messageInput, notifierInputStreamParams, fileCacheEnable, attachmentRepoDir, fileThreshold, eraserXmlTag);
+	}
+	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, String contentTypeForEnvelope, String soapAction,
+			TransportRequestContext requestContext, 
+			byte[] messageInput,NotifierInputStreamParams notifierInputStreamParams, 
+			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold,
+			boolean eraserXmlTag) {
+		return this._internalEnvelopingMessage(messageType, MessageRole.REQUEST, contentTypeForEnvelope, soapAction, requestContext, 
+				messageInput, notifierInputStreamParams, fileCacheEnable, attachmentRepoDir, fileThreshold, eraserXmlTag);
+	}
+	
+	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, String contentTypeForEnvelope, String soapAction,
+			TransportResponseContext responseContext, 
+			InputStream messageInput,NotifierInputStreamParams notifierInputStreamParams, 
+			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold,
+			boolean eraserXmlTag) {
+		return this._internalEnvelopingMessage(messageType, MessageRole.RESPONSE, contentTypeForEnvelope, soapAction, responseContext, 
+				messageInput, notifierInputStreamParams, fileCacheEnable, attachmentRepoDir, fileThreshold, eraserXmlTag);
+	}
+	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, String contentTypeForEnvelope, String soapAction,
+			TransportResponseContext responseContext, 
+			byte[] messageInput,NotifierInputStreamParams notifierInputStreamParams, 
+			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold,
+			boolean eraserXmlTag) {
+		return this._internalEnvelopingMessage(messageType, MessageRole.RESPONSE, contentTypeForEnvelope, soapAction, responseContext, 
+				messageInput, notifierInputStreamParams, fileCacheEnable, attachmentRepoDir, fileThreshold, eraserXmlTag);
+	}
+	
+	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, MessageRole messageRole, 
+			String contentTypeForEnvelope, String soapAction,
+			InputStream messageInput,NotifierInputStreamParams notifierInputStreamParams, 
+			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold,
+			boolean eraserXmlTag) {
+		return this._internalEnvelopingMessage(messageType, messageRole, contentTypeForEnvelope, soapAction, null, 
+				messageInput, notifierInputStreamParams, fileCacheEnable, attachmentRepoDir, fileThreshold, eraserXmlTag);
+	}
+	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, MessageRole messageRole, 
+			String contentTypeForEnvelope, String soapAction,
+			byte[] messageInput,NotifierInputStreamParams notifierInputStreamParams, 
+			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold,
+			boolean eraserXmlTag) {
+		return this._internalEnvelopingMessage(messageType, messageRole, contentTypeForEnvelope, soapAction, null, 
+				messageInput, notifierInputStreamParams, fileCacheEnable, attachmentRepoDir, fileThreshold, eraserXmlTag);
+	}
+	
+	
+	
 		
-		MimeHeaders mhs = null;
-		InputStream is = null;
-		try{
-			
-			mhs = new MimeHeaders();
-			mhs.addHeader(Costanti.CONTENT_TYPE, req.getContentType());
-			mhs.addHeader(Costanti.SOAP_ACTION, req.getHeader(Costanti.SOAP_ACTION));
-			
-			is = req.getInputStream();
-			
-			if(is==null){
-				throw new Exception("Original InputStream undefined");
-			}
-			
-		}catch(Throwable t){
-			OpenSPCoop2MessageParseResult result = new OpenSPCoop2MessageParseResult();
-			result.setParseException(MessageUtils.buildParseException(t));
-			return result;
-		}
-		
-		return _internalCreateMessage(mhs, is, notifierInputStreamParams,  fileCacheEnable, attachmentRepoDir, fileThreshold, overhead);
-		
-	}
-
-
-	public OpenSPCoop2MessageParseResult createMessage(InputStream messageInput,NotifierInputStreamParams notifierInputStreamParams, 
-			boolean isBodyStream, String contentTypeParam, String contentLocation,  boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold) {
-		
-		try{
-			long diff = 0;
-			
-			if(messageInput==null){
-				throw new Exception("Original InputStream undefined");
-			}
-			
-			SOAPVersion soapVersion = SOAPVersion.getVersioneSoap(logger, contentTypeParam, true);
-			
-			if(isBodyStream){
-				Vector<InputStream> streams = new Vector<InputStream> ();
-				byte[] start = null, end = null;
-				if(SOAPVersion.SOAP12.equals(soapVersion)){
-					start = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://www.w3.org/2003/05/soap-envelope\"><SOAP-ENV:Body>".getBytes();
-					end = "</SOAP-ENV:Body></SOAP-ENV:Envelope>".getBytes();
-				} else {
-					start = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Body>".getBytes();
-					end = "</SOAP-ENV:Body></SOAP-ENV:Envelope>".getBytes();				
-				}
-				diff += start.length + end.length;
-				streams.add(new ByteArrayInputStream(start));
-				streams.add(messageInput);
-				streams.add(new ByteArrayInputStream (end));
-				messageInput = new SequenceInputStream (streams.elements());
-			}
-			MimeHeaders mhs = new MimeHeaders();
-			mhs.addHeader(Costanti.CONTENT_TYPE, contentTypeParam);
-			if(contentLocation != null) 
-				mhs.addHeader(Costanti.CONTENT_LOCATION, contentLocation);
-			
-			OpenSPCoop2MessageParseResult result = _internalCreateMessage(mhs, messageInput, notifierInputStreamParams, fileCacheEnable, attachmentRepoDir, fileThreshold, diff);
-						
-			// Verifico la costruzione del messaggio SOAP
-			if(result.getMessage()!=null){
-				try{
-					result.getMessage().getSOAPPart().getEnvelope();
-				} catch (Throwable soapException) {
-					result.setMessage(null);
-					result.setParseException(MessageUtils.buildParseException(soapException));
-				}
-			}
-			
-			return result;
-		}catch(Throwable t){
-			OpenSPCoop2MessageParseResult result = new OpenSPCoop2MessageParseResult();
-			result.setParseException(MessageUtils.buildParseException(t));
-			return result;
-		}
-	}
-	
-	
-	public OpenSPCoop2MessageParseResult createMessage(SOAPVersion versioneSoap, byte[] xml) {
-		return this.createMessage(versioneSoap,xml,null);
-	}
-	public OpenSPCoop2MessageParseResult createMessage(SOAPVersion versioneSoap, byte[] xml,NotifierInputStreamParams notifierInputStreamParams) {
-		try{
-			ByteArrayInputStream bais = new ByteArrayInputStream(xml);
-			MimeHeaders mhs = new MimeHeaders();
-			if(versioneSoap.equals(SOAPVersion.SOAP12)){
-				mhs.addHeader(Costanti.CONTENT_TYPE, Costanti.CONTENT_TYPE_SOAP_1_2);
-			} else {
-				mhs.addHeader(Costanti.CONTENT_TYPE, Costanti.CONTENT_TYPE_SOAP_1_1);
-			}
-			return _internalCreateMessage(mhs, bais, notifierInputStreamParams, false, null, null, 0);
-		}catch(Throwable t){
-			OpenSPCoop2MessageParseResult result = new OpenSPCoop2MessageParseResult();
-			result.setParseException(MessageUtils.buildParseException(t));
-			return result;
-		}
-	}
-	
-	public OpenSPCoop2MessageParseResult createMessage(SOAPVersion versioneSoap, String xml) {
-		return this.createMessage(versioneSoap,xml,null);
-	}
-	public OpenSPCoop2MessageParseResult createMessage(SOAPVersion versioneSoap, String xml,NotifierInputStreamParams notifierInputStreamParams) {
-		return createMessage(versioneSoap,xml.getBytes(),notifierInputStreamParams);
-	}
-	
-	
 	/*
 	 * Messaggi
 	 */
 	
-	public OpenSPCoop2Message createMessage(SOAPVersion versioneSoap){
-		return this._createMessage(versioneSoap);
+	public OpenSPCoop2Message createMessage(MessageType messageType, MessageRole role) throws MessageException{
+		return this._internalCreateMessage(messageType, role, MessageUtilities.getDefaultContentType(messageType));
 	}
-	public OpenSPCoop2Message createMessage(SOAPVersion versioneSoap, SOAPMessage msg){
-		return this._createMessage(versioneSoap,msg);
+	public OpenSPCoop2Message createMessage(MessageType messageType, MessageRole role, SOAPMessage msg) throws MessageException{
+		return this._internalCreateMessage(messageType, role, msg);
 	}
+	
+	
 	
 	/*
 	 * Messaggi vuoti
 	 */
 	
-	public OpenSPCoop2Message createEmptySOAPMessage(SOAPVersion versioneSoap) {
-		return this.createEmptySOAPMessage(versioneSoap,null);
+	public OpenSPCoop2Message createEmptyMessage(MessageType messageType, MessageRole role) {
+		return this.createEmptyMessage(messageType,role, null);
 	}
-	public OpenSPCoop2Message createEmptySOAPMessage(SOAPVersion versioneSoap,NotifierInputStreamParams notifierInputStreamParams) {
+	public OpenSPCoop2Message createEmptyMessage(MessageType messageType, MessageRole role, NotifierInputStreamParams notifierInputStreamParams) {
 		try{
 			byte[] xml = null;
-			MimeHeaders mhs = new MimeHeaders();
-			if(versioneSoap.equals(SOAPVersion.SOAP12)){
-				xml = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://www.w3.org/2003/05/soap-envelope\"><SOAP-ENV:Body/></SOAP-ENV:Envelope>".getBytes();
-				mhs.addHeader(Costanti.CONTENT_TYPE, Costanti.CONTENT_TYPE_SOAP_1_2);
-			} else {
+			if(MessageType.SOAP_11.equals(messageType)){
 				xml = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Body/></SOAP-ENV:Envelope>".getBytes();
-				mhs.addHeader(Costanti.CONTENT_TYPE, Costanti.CONTENT_TYPE_SOAP_1_1);
+			}
+			else if(MessageType.SOAP_12.equals(messageType)){
+				xml = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://www.w3.org/2003/05/soap-envelope\"><SOAP-ENV:Body/></SOAP-ENV:Envelope>".getBytes();
 			}
 			
-			ByteArrayInputStream bais = new ByteArrayInputStream(xml);
-			OpenSPCoop2MessageParseResult result =  _internalCreateMessage(mhs, bais, notifierInputStreamParams, false, null, null, xml.length);
+			ByteArrayInputStream bais = null;
+			if(xml!=null){
+				bais = new ByteArrayInputStream(xml);
+			}
+			OpenSPCoop2MessageParseResult result =  _internalCreateMessage(messageType,role, MessageUtilities.getDefaultContentType(messageType), 
+					bais, notifierInputStreamParams, false, null, null, xml.length);
 			if(result.getParseException()!=null){
 				// non dovrebbe succedere
 				throw result.getParseException().getSourceException();
@@ -355,32 +661,22 @@ public abstract class OpenSPCoop2MessageFactory {
 	/*
 	 * Messaggi di Errore
 	 */
-	public OpenSPCoop2Message createFaultMessage(SOAPVersion versioneSoap, Throwable t) {
-		return this.createFaultMessage(versioneSoap, t,null);
+	public OpenSPCoop2Message createFaultMessage(MessageType messageType, Throwable t) {
+		return this.createFaultMessage(messageType, t,null);
 	}
-	public OpenSPCoop2Message createFaultMessage(SOAPVersion versioneSoap, Throwable t,NotifierInputStreamParams notifierInputStreamParams) {
-		return createFaultMessage(versioneSoap, t.getMessage(),notifierInputStreamParams);
+	public OpenSPCoop2Message createFaultMessage(MessageType messageType, Throwable t,NotifierInputStreamParams notifierInputStreamParams) {
+		return createFaultMessage(messageType, t.getMessage(),notifierInputStreamParams);
 	}
 	
-	public OpenSPCoop2Message createFaultMessage(SOAPVersion versioneSoap, String errore) {
-		return this.createFaultMessage(versioneSoap, errore,null);
+	public OpenSPCoop2Message createFaultMessage(MessageType messageType, String errore) {
+		return this.createFaultMessage(messageType, errore,null);
 	}
-	public OpenSPCoop2Message createFaultMessage(SOAPVersion versioneSoap, String errore,NotifierInputStreamParams notifierInputStreamParams){
+	public OpenSPCoop2Message createFaultMessage(MessageType messageType, String errore,NotifierInputStreamParams notifierInputStreamParams){
 		try{
-			String xml = null;
-			MimeHeaders mhs = new MimeHeaders();
-			if(versioneSoap.equals(SOAPVersion.SOAP12)){
-				xml = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://www.w3.org/2003/05/soap-envelope\">"
-						+"<SOAP-ENV:Header/><SOAP-ENV:Body>"
-						+"<SOAP-ENV:Fault>"
-						+"<SOAP-ENV:Code><SOAP-ENV:Value>SOAP-ENV:Server</SOAP-ENV:Value></SOAP-ENV:Code>"
-						+"<SOAP-ENV:Reason><SOAP-ENV:Text xml:lang=\"en-US\">" + errore + "</SOAP-ENV:Text></SOAP-ENV:Reason>"
-						+"<SOAP-ENV:Role>"+org.openspcoop2.utils.Costanti.OPENSPCOOP2+"</SOAP-ENV:Role>"
-						+"</SOAP-ENV:Fault>"
-						+"</SOAP-ENV:Body></SOAP-ENV:Envelope>";
-				mhs.addHeader(Costanti.CONTENT_TYPE, Costanti.CONTENT_TYPE_SOAP_1_2);
-			} else {
-				xml = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+			String fault = null;
+			String contentType = MessageUtilities.getDefaultContentType(messageType);
+			if(MessageType.SOAP_11.equals(messageType)){
+				fault = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">"
 						+"<SOAP-ENV:Header/><SOAP-ENV:Body>"
 						+"<SOAP-ENV:Fault>"
 						+"<faultcode>SOAP-ENV:Server</faultcode>"
@@ -388,14 +684,39 @@ public abstract class OpenSPCoop2MessageFactory {
 						+"<faultactor>"+org.openspcoop2.utils.Costanti.OPENSPCOOP2+"</faultactor>"
 						+"</SOAP-ENV:Fault>"
 						+"</SOAP-ENV:Body></SOAP-ENV:Envelope>";
-				mhs.addHeader(Costanti.CONTENT_TYPE, Costanti.CONTENT_TYPE_SOAP_1_1);
+			}
+			else if(MessageType.SOAP_12.equals(messageType)){
+				fault = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://www.w3.org/2003/05/soap-envelope\">"
+						+"<SOAP-ENV:Header/><SOAP-ENV:Body>"
+						+"<SOAP-ENV:Fault>"
+						+"<SOAP-ENV:Code><SOAP-ENV:Value>SOAP-ENV:Server</SOAP-ENV:Value></SOAP-ENV:Code>"
+						+"<SOAP-ENV:Reason><SOAP-ENV:Text xml:lang=\"en-US\">" + errore + "</SOAP-ENV:Text></SOAP-ENV:Reason>"
+						+"<SOAP-ENV:Role>"+org.openspcoop2.utils.Costanti.OPENSPCOOP2+"</SOAP-ENV:Role>"
+						+"</SOAP-ENV:Fault>"
+						+"</SOAP-ENV:Body></SOAP-ENV:Envelope>";
+			}
+			else if(MessageType.XML.equals(messageType)){
+				fault = "<op2:Fault xmlns:SOAP-ENV=\"http://www.openspcoop2.org/fault\">"
+						+"<op2:Message>"+errore+"</op2:Message>"
+						+"</op2:Fault>";
+			}
+			else if(MessageType.JSON.equals(messageType)){
+				fault = "{ \"fault\" : { \"message\" : \""+errore+"\" , \"namespace\" : \"http://www.openspcoop2.org/fault\" } }";
+			}
+			else{
+				// default uso xml
+				fault = "<op2:Fault xmlns:SOAP-ENV=\"http://www.openspcoop2.org/fault\">"
+						+"<op2:Message>"+errore+"</op2:Message>"
+						+"</op2:Fault>";
+				contentType = MessageUtilities.getDefaultContentType(MessageType.XML);
 			}
 			
 			//System.out.println("XML ["+versioneSoap+"] ["+xml+"]");
 			
-			byte[] xmlByte = xml.getBytes();
+			byte[] xmlByte = fault.getBytes();
 			ByteArrayInputStream bais = new ByteArrayInputStream(xmlByte);
-			OpenSPCoop2MessageParseResult result =  _internalCreateMessage(mhs, bais, notifierInputStreamParams, false, null, null, xmlByte.length);
+			OpenSPCoop2MessageParseResult result =  _internalCreateMessage(messageType, MessageRole.FAULT, contentType, 
+					bais, notifierInputStreamParams, false, null, null, xmlByte.length);
 			if(result.getParseException()!=null){
 				// non dovrebbe succedere
 				throw result.getParseException().getSourceException();
@@ -403,38 +724,11 @@ public abstract class OpenSPCoop2MessageFactory {
 			return result.getMessage();
 		}
 		catch(Throwable e){
-			System.err.println("Exception non gestibile durante la creazione di un SOAPFault. " + e);
+			System.err.println("Exception non gestibile durante la creazione di un Fault. " + e);
 			e.printStackTrace(System.err);
 		}
 		return null;
 	}
-	
-	
-	/*
-	 * Utility per debugging. Prende uno Stream e lo porta in String
-	 */
-    public String convertStreamToString(InputStream is) {
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        StringBuilder sb = new StringBuilder();
- 
-        String line = null;
-        try {
-            while ((line = reader.readLine()) != null) {
-                sb.append(line + "\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
- 
-        return sb.toString();
-    }
 	
 
 }

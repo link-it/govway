@@ -59,6 +59,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.STATO_MESSAGE_SECURITY = new Field("stato-message-security",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.NOME = new Field("nome",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
+		this.LOCATION = new Field("location",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.RICEVUTA_ASINCRONA_SIMMETRICA = new Field("ricevuta-asincrona-simmetrica",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.RICEVUTA_ASINCRONA_ASIMMETRICA = new Field("ricevuta-asincrona-asimmetrica",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.INTEGRAZIONE = new Field("integrazione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
@@ -94,6 +95,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.STATO_MESSAGE_SECURITY = new ComplexField(father,"stato-message-security",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
+		this.LOCATION = new ComplexField(father,"location",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.RICEVUTA_ASINCRONA_SIMMETRICA = new ComplexField(father,"ricevuta-asincrona-simmetrica",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.RICEVUTA_ASINCRONA_ASIMMETRICA = new ComplexField(father,"ricevuta-asincrona-asimmetrica",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.INTEGRAZIONE = new ComplexField(father,"integrazione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
@@ -144,6 +146,8 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 	public IField NOME = null;
 	 
 	public IField DESCRIZIONE = null;
+	 
+	public IField LOCATION = null;
 	 
 	public IField RICEVUTA_ASINCRONA_SIMMETRICA = null;
 	 

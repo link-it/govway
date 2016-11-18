@@ -1038,55 +1038,7 @@ public class ImporterInformationMissingSetter {
 							pd.getAzione().getNome()));
 				}
 			}
-			
-			if(pd.getSoggettoErogatore()!=null){
-				if(pd.getSoggettoErogatore().getPattern()!=null &&
-						!"".equals(pd.getSoggettoErogatore().getPattern())){
-					pd.getSoggettoErogatore().setPattern(replaceSoggettoProprietario(pd.getSoggettoErogatore().getPattern(), 
-							pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
-					// se ho il pattern configurato, non c'è il nome del soggetto erogatore
-//					pd.getSoggettoErogatore().setPattern(replaceSoggettoErogatore(pd.getSoggettoErogatore().getPattern(), 
-//							pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome()));
-					// se ho il pattern configurato, non c'è il nome del soggetto erogatore
-					if(pd.getServizio()!=null && 
-							pd.getServizio().getNome()!=null && 
-							!"".equals(pd.getServizio().getNome()) ){
-						pd.getSoggettoErogatore().setPattern(replaceServizio(pd.getSoggettoErogatore().getPattern(), 
-								pd.getServizio().getTipo(), pd.getServizio().getNome()));
-					}
-					if(pd.getAzione()!=null && 
-							pd.getAzione().getNome()!=null &&
-							!"".equals(pd.getAzione().getNome()) ){
-						pd.getSoggettoErogatore().setPattern(replaceAzione(pd.getSoggettoErogatore().getPattern(), 
-								pd.getAzione().getNome()));
-					}			
-				}
-			}
-			
-			if(pd.getServizio()!=null){
-				if(pd.getServizio().getPattern()!=null &&
-						!"".equals(pd.getServizio().getPattern())){
-					pd.getServizio().setPattern(replaceSoggettoProprietario(pd.getServizio().getPattern(), 
-							pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
-					if(pd.getSoggettoErogatore()!=null && 
-							pd.getSoggettoErogatore().getNome()!=null && 
-							!"".equals(pd.getSoggettoErogatore().getNome()) ){
-						pd.getServizio().setPattern(replaceSoggettoErogatore(pd.getServizio().getPattern(), 
-								pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome()));
-					}
-					// se ho il pattern configurato, non c'è il nome del servizio
-//					pd.getServizio().setPattern(replaceServizio(pd.getServizio().getPattern(), 
-//							pd.getServizio().getTipo(), pd.getServizio().getNome()));
-					// se ho il pattern configurato, non c'è il nome del servizio
-					if(pd.getAzione()!=null && 
-							pd.getAzione().getNome()!=null &&
-							!"".equals(pd.getAzione().getNome()) ){
-						pd.getServizio().setPattern(replaceAzione(pd.getServizio().getPattern(), 
-								pd.getAzione().getNome()));
-					}			
-				}
-			}
-			
+						
 			if(pd.getAzione()!=null){
 				if(pd.getAzione().getPattern()!=null &&
 						!"".equals(pd.getAzione().getPattern())){

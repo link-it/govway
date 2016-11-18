@@ -34,6 +34,8 @@ import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Eccezione;
@@ -368,7 +370,7 @@ public class Validatore  {
 			/** Leggo contesto sicurezza prima di processare la parte MessageSecurity */
 			if(messageSecurityContext!= null && messageSecurityContext.getDigestReader()!=null){
 				this.securityInfo = this.protocolFactory.createValidazioneSemantica().readSecurityInformation(messageSecurityContext.getDigestReader(),
-						this.msg, this.msg.getSOAPPart().getEnvelope(), this.validatoreSintattico.getProtocolHeader());
+						this.msg);
 			}		
 
 		}catch(Exception e){
@@ -471,7 +473,7 @@ public class Validatore  {
 			 * Deve essere fatta dopo Message-Security per il Body (attachments manifest)
 			 */
 			if(this.isMessaggioErrore){
-				this.validatoreSintattico.validazioneFault(this.msg.getSOAPBody());
+				this.validatoreSintattico.validazioneFault(this.msg);
 				addListaEccezioni(this.validatoreSintattico.getErroriTrovatiSullaListaEccezioni(),this.erroriValidazione);
 				addListaEccezioni(this.validatoreSintattico.getEccezioniProcessamento(),this.erroriProcessamento);
 				if( ( (this.erroriValidazione!=null) && (this.erroriValidazione.size()>0) ) 
@@ -481,20 +483,31 @@ public class Validatore  {
 					return true; // riscontrati errori durante la validazione
 			}
 
+			// Controllo se il messaggio ha attachments
+			boolean hasAttachments = false;
+			if(ServiceBinding.SOAP.equals(this.msg.getServiceBinding())){
+				hasAttachments = this.msg.castAsSoap().countAttachments()>0;
+			}
+			else if(MessageType.MIME_MULTIPART.equals(this.msg.getMessageType())){
+				hasAttachments = true;
+			}
+			
 			/** Se ho ricevuto un messaggio con Attachments devo controllare il manifest
 			 * Deve essere fatta dopo Message-Security per il Body (attachments manifest)
 			 */
 			// Questa validazione non deve essere effettuata per messaggi Busta Errore
 			if(this.isMessaggioErrore==false){
-				if(this.proprietaValidazione.isValidazioneManifestAttachments() &&  this.msg.countAttachments()>0){
-					this.validatoreSintattico.validazioneManifestAttachments(this.msg,proprietaManifestAttachments);
-					addListaEccezioni(this.validatoreSintattico.getEccezioniValidazione(),this.erroriValidazione);
-					addListaEccezioni(this.validatoreSintattico.getEccezioniProcessamento(),this.erroriProcessamento);
-					if( ( (this.erroriValidazione!=null) && (this.erroriValidazione.size()>0) ) 
-							|| 
-						( (this.erroriProcessamento!=null) && (this.erroriProcessamento.size()>0) )
-						)
-						return true; // riscontrati errori durante la validazione 
+				if(this.proprietaValidazione.isValidazioneManifestAttachments()){					
+					if(hasAttachments){
+						this.validatoreSintattico.validazioneManifestAttachments(this.msg,proprietaManifestAttachments);
+						addListaEccezioni(this.validatoreSintattico.getEccezioniValidazione(),this.erroriValidazione);
+						addListaEccezioni(this.validatoreSintattico.getEccezioniProcessamento(),this.erroriProcessamento);
+						if( ( (this.erroriValidazione!=null) && (this.erroriValidazione.size()>0) ) 
+								|| 
+							( (this.erroriProcessamento!=null) && (this.erroriProcessamento.size()>0) )
+							)
+							return true; // riscontrati errori durante la validazione
+					}
 				}
 			}
 
@@ -518,10 +531,10 @@ public class Validatore  {
 			/** Validazione con SCHEMA (Opzionale): deve essere fatta dopo Message-Security per il Body (attachments manifest)*/
 			// Questa validazione deve essere effettuata anche per messaggi Busta Errore
 			if( this.proprietaValidazione.isValidazioneConSchema() ){
-				javax.xml.soap.SOAPBody body = this.msg.getSOAPBody();
-				ValidazioneConSchema schemaValidator = new ValidazioneConSchema(this.msg,this.validatoreSintattico.getProtocolHeader(), body,
-						this.isMessaggioErroreProcessamento, this.isMessaggioErroreIntestazione,this.proprietaValidazione.isValidazioneManifestAttachments(), this.log, this.protocolFactory);
-				schemaValidator.valida((this.msg.countAttachments()>0));
+				ValidazioneConSchema schemaValidator = new ValidazioneConSchema(this.msg,
+						this.isMessaggioErroreProcessamento, this.isMessaggioErroreIntestazione,
+						this.proprietaValidazione.isValidazioneManifestAttachments(), this.log, this.protocolFactory);
+				schemaValidator.valida(hasAttachments);
 				addListaEccezioni(schemaValidator.getEccezioniValidazione(),this.erroriValidazione);
 				addListaEccezioni(schemaValidator.getEccezioniProcessamento(),this.erroriProcessamento);
 				if( ( (this.erroriValidazione!=null) && (this.erroriValidazione.size()>0) ) 

@@ -28,8 +28,6 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
  * <pre>
  * &lt;complexType name="porta-delegata-servizio">
  *     &lt;sequence>
- *         &lt;element name="identificazione" type="{http://www.openspcoop2.org/core/config}PortaDelegataServizioIdentificazione" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="pattern" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *     &lt;/sequence>
@@ -42,7 +40,6 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
 import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
-import org.openspcoop2.core.config.constants.PortaDelegataServizioIdentificazione;
 
 /**     
  * PortaDelegataServizio
@@ -54,8 +51,6 @@ import org.openspcoop2.core.config.constants.PortaDelegataServizioIdentificazion
 
 @javax.xml.bind.annotation.XmlAccessorType(javax.xml.bind.annotation.XmlAccessType.FIELD)
 @javax.xml.bind.annotation.XmlType(name = "porta-delegata-servizio", namespace="http://www.openspcoop2.org/core/config/management", propOrder = {
-    "identificazione",
-    "pattern",
     "tipo",
     "nome"
 })
@@ -63,31 +58,6 @@ import org.openspcoop2.core.config.constants.PortaDelegataServizioIdentificazion
 public class PortaDelegataServizio extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
 	
 	private static final long serialVersionUID = -1L;
-	
-	@XmlElement(name="identificazione",required=false,nillable=false)
-	private PortaDelegataServizioIdentificazione identificazione;
-	
-	public void setIdentificazione(PortaDelegataServizioIdentificazione identificazione){
-		this.identificazione = identificazione;
-	}
-	
-	public PortaDelegataServizioIdentificazione getIdentificazione(){
-		return this.identificazione;
-	}
-	
-	
-	@javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="pattern",required=false,nillable=false)
-	private String pattern;
-	
-	public void setPattern(String pattern){
-		this.pattern = pattern;
-	}
-	
-	public String getPattern(){
-		return this.pattern;
-	}
-	
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tipo",required=false,nillable=false)

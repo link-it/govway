@@ -28,18 +28,27 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.slf4j.Logger;
-import org.openspcoop2.core.api.constants.MethodType;
-import org.openspcoop2.message.Costanti;
+import org.openspcoop2.message.config.ServiceBindingConfiguration;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.pdd.services.RequestInfo;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
+import org.openspcoop2.protocol.manifest.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.MapReader;
+import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
+import org.openspcoop2.utils.transport.http.HttpServletTransportRequestContext;
+import org.slf4j.Logger;
 
 /**
  * ConnectorUtils
@@ -58,8 +67,32 @@ public class ConnectorUtils {
 		return log;
 	}
 	
-	public static String getMessageHttpMethodNotSupported(MethodType method){
+	public static RequestInfo getRequestInfo(IProtocolFactory pf,URLProtocolContext protocolContext) throws ProtocolException, MessageException{
+		
+		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+		
+		ServiceBindingConfiguration bindingConfig = pf.createProtocolConfiguration().getDefaultServiceBindingConfiguration(protocolContext);
+		ServiceBinding serviceBinding = bindingConfig.getDefaultBinding();
+		MessageType requestMessageType = bindingConfig.getMessageType(serviceBinding, MessageRole.REQUEST, 
+				protocolContext, protocolContext.getContentType());
+		
+		RequestInfo requestInfo = new RequestInfo();
+		requestInfo.setProtocolContext(protocolContext);
+		requestInfo.setProtocolFactory(pf);
+		requestInfo.setRequestMessageType(requestMessageType);
+		requestInfo.setServiceBinding(serviceBinding);
+		requestInfo.setBindingConfig(bindingConfig);
+		requestInfo.setIdentitaPdD(op2Properties.getIdentitaPortaDefault(pf.getProtocol()));
+		
+		return requestInfo;
+	}
+	
+	public static String getMessageHttpMethodNotSupported(HttpRequestMethod method){
 		return ConnectorCostanti.MESSAGE_METHOD_HTTP_NOT_SUPPORTED.replace(ConnectorCostanti.KEYWORD_METHOD_HTTP, method.name());
+	}
+	
+	public static String getMessageServiceBindingNotSupported(ServiceBinding serviceBinding){
+		return ConnectorCostanti.MESSAGE_SERVICE_BINDING_NOT_SUPPORTED.replace(ConnectorCostanti.KEYWORD_SERVICE_BINDING, serviceBinding.name());
 	}
 	
 	private static StringBuffer getPrefixCode(IDService idService) {
@@ -107,7 +140,7 @@ public class ConnectorUtils {
 		return bf.toString();
 	}
 	
-	public static String getFullCodeHttpMethodNotSupported(IDService idService, MethodType method) {
+	public static String getFullCodeHttpMethodNotSupported(IDService idService, HttpRequestMethod method) {
 		StringBuffer bf = getPrefixCode(idService);
 		switch (method) {
 		case GET:
@@ -131,6 +164,22 @@ public class ConnectorUtils {
 		case TRACE:
 			bf.append(ConnectorCostanti.CODE_HTTP_METHOD_TRACE_UNSUPPORTED);
 			break;
+		case PATCH:
+			bf.append(ConnectorCostanti.CODE_HTTP_METHOD_PATCH_UNSUPPORTED);
+			break;
+		}
+		return bf.toString();
+	}
+	
+	public static String getFullCodeServiceBindingNotSupported(IDService idService, ServiceBinding serviceBinding) {
+		StringBuffer bf = getPrefixCode(idService);
+		switch (serviceBinding) {
+		case SOAP:
+			bf.append(ConnectorCostanti.CODE_SERVICE_BINDING_SOAP_UNSUPPORTED);
+			break;
+		case REST:
+			bf.append(ConnectorCostanti.CODE_SERVICE_BINDING_REST_UNSUPPORTED);
+			break;
 		}
 		return bf.toString();
 	}
@@ -140,15 +189,15 @@ public class ConnectorUtils {
 		return "OpenSPCoop2-"+code;
 	}
 	
-	public static void generateErrorMessage(IDService idService, MethodType httpMethod,
+	public static void generateErrorMessage(IDService idService, HttpRequestMethod httpMethod,
 			HttpServletRequest req, HttpServletResponse res, String msgErrore, boolean erroreGenerale, boolean htmlMessage) throws IOException{
 		generateErrorMessage(idService, httpMethod, req, res, msgErrore, erroreGenerale, htmlMessage, null);
 	}
-	public static void generateErrorMessage(IDService idService, MethodType httpMethod,
+	public static void generateErrorMessage(IDService idService, HttpRequestMethod httpMethod,
 			HttpServletRequest req, StringBuffer log, String msgErrore, boolean erroreGenerale, boolean htmlMessage) throws IOException{
 		generateErrorMessage(idService, httpMethod, req, null, msgErrore, erroreGenerale, htmlMessage, log);
 	}
-	private static void generateErrorMessage(IDService idService, MethodType httpMethod,
+	private static void generateErrorMessage(IDService idService, HttpRequestMethod httpMethod,
 			HttpServletRequest req, HttpServletResponse response, String msgErrore, boolean erroreGenerale, boolean htmlMessage, StringBuffer log) throws IOException{
 		
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
@@ -164,16 +213,16 @@ public class ConnectorUtils {
 		if(htmlMessage){
 			versione = StringEscapeUtils.escapeHtml(versione);
 			if(response!=null)
-				response.setContentType(Costanti.CONTENT_TYPE_HTML);
+				response.setContentType(HttpConstants.CONTENT_TYPE_HTML);
 		}
 		else{
 			if(response!=null)
-				response.setContentType(Costanti.CONTENT_TYPE_PLAIN);
+				response.setContentType(HttpConstants.CONTENT_TYPE_PLAIN);
 		}
 
 		
 		// produzione Body
-		boolean doBody = !MethodType.HEAD.equals(httpMethod);
+		boolean doBody = !HttpRequestMethod.HEAD.equals(httpMethod);
 		if(!doBody){
 			if(log!=null){
 				log.append(CostantiPdD.HEADER_HTTP_X_PDD).append("=").append(versione);
@@ -200,7 +249,7 @@ public class ConnectorUtils {
 		String function = null;
 		String parameters = null;
 		try{
-			URLProtocolContext protocolContext = new URLProtocolContext(req, logCore);
+			HttpServletTransportRequestContext protocolContext = new HttpServletTransportRequestContext(req, logCore);
 			String url = protocolContext.getUrlInvocazione_formBased();
 			if(url.endsWith("?wsdl=")){
 				// richiesta di un wsdl
@@ -235,10 +284,10 @@ public class ConnectorUtils {
 		
 		// other infos
 		switch (idService) {
-		case PORTA_DELEGATA_SOAP:
+		case PORTA_DELEGATA:
 			risposta.append("<i>Servizio utilizzabile per l'invocazione di Porte Delegate esposte dalla PdD OpenSPCoop v2</i><br/><br/>\n");
 			break;
-		case PORTA_APPLICATIVA_SOAP:
+		case PORTA_APPLICATIVA:
 			risposta.append("<i>Servizio utilizzabile per l'invocazione di Porte Applicative esposte dalla PdD OpenSPCoop v2</i><br/><br/>\n");
 			break;
 		case PORTA_DELEGATA_XML_TO_SOAP:
@@ -267,15 +316,6 @@ public class ConnectorUtils {
 		case CHECK_PDD:
 			risposta.append("<i>Servizio utilizzabile per comprendere lo stato di funzionamento della PdD OpenSPCoop v2</i><br/><br/>\n");
 			break;
-		case PORTA_DELEGATA_API:
-			risposta.append("<i>Servizio utilizzabile per l'invocazione di Porte Delegate esposte dalla PdD OpenSPCoop v2, attraverso richieste HTTP</i><br/><br/>\n");
-			break;
-		case PORTA_APPLICATIVA_API:
-			risposta.append("<i>Servizio utilizzabile per l'invocazione di Porte Applicative esposte dalla PdD OpenSPCoop v2, attraverso richieste HTTP</i><br/><br/>\n");
-			break;
-		case INTEGRATION_MANAGER_API:
-			risposta.append("<i>Servizio utilizzabile per accedere alla MessageBox esposta dalla PdD OpenSPCoop v2, attraverso richieste HTTP</i><br/><br/>\n");
-			break;
 		default:
 			if(htmlMessage){
 				// use as
@@ -303,11 +343,11 @@ public class ConnectorUtils {
 							bfProtocols.append("\"\" (protocol:"+key+")");
 						}
 						if(pf.getManifest().getWeb().sizeContextList()>0){
-							for (String context : pf.getManifest().getWeb().getContextList()) {
+							for (Context context : pf.getManifest().getWeb().getContextList()) {
 								if(bfProtocols.length()>0){
 									bfProtocols.append(", ");
 								}
-								bfProtocols.append(context+" (protocol:"+key+")");
+								bfProtocols.append(context.getName()+" (protocol:"+key+")");
 							}
 						}
 					}
@@ -345,5 +385,6 @@ public class ConnectorUtils {
 			response.getOutputStream().write(risposta.toString().getBytes());
 		}
 	}
+	
 	
 }

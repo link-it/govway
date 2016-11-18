@@ -25,6 +25,7 @@
 package org.openspcoop2.core.registry.wsdl;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -42,8 +43,8 @@ import org.openspcoop2.core.registry.constants.BindingUse;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
-import org.openspcoop2.message.SOAPVersion;
-import org.openspcoop2.message.SoapUtils;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.wsdl.WSDLException;
 import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
@@ -71,10 +72,9 @@ import org.w3c.dom.Comment;
 public class WSDLValidator {
 
 	/** SOAPVersion */
-	SOAPVersion soapVersion;
-	/** SOAPEnvelope */
-	SOAPEnvelope envelope;
-	SOAPBody body;
+	MessageType messageType;
+	/** Element */
+	Element element;
 	/** WSDL Associato al servizio */
 	AccordoServizioWrapper accordoServizioWrapper = null;
 	/** Logger */
@@ -89,23 +89,27 @@ public class WSDLValidator {
 	
 	
 	/* ------ Costruttore -------------- */
-	public WSDLValidator(SOAPVersion soapVersion, SOAPEnvelope envelope,AbstractXMLUtils xmlUtils,AccordoServizioWrapper accordoServizioWrapper,Logger log)throws WSDLException{
+	public WSDLValidator(MessageType messageType, Element element,AbstractXMLUtils xmlUtils,AccordoServizioWrapper accordoServizioWrapper,Logger log)throws WSDLException{
 		
-		this.soapVersion = soapVersion;
+		this.messageType = messageType;
 		
-		if(envelope==null){
-			throw new WSDLException("SOAPEnvelope non esistente");
+		if(element==null){
+			throw new WSDLException("Contenuto da validatore non fornito");
 		}
-		this.envelope = envelope;
-		try{
-			this.body = this.envelope.getBody();
-		}catch(Exception e){
-			this.logger.error("SOAPEnvelope.getBody failed: "+e.getMessage(),e);
-			throw new WSDLException("SOAPEnvelope senza body");
-		}
-		
-		if(this.body==null || (this.body.hasChildNodes()==false)){
-			throw new WSDLException("SOAPBody non esistente");
+		this.element = element;
+		if(MessageType.SOAP_11.equals(this.messageType) || MessageType.SOAP_12.equals(this.messageType)){
+			SOAPEnvelope envelope = (SOAPEnvelope) element;
+			SOAPBody body = null;
+			try{
+				body = envelope.getBody();
+			}catch(Exception e){
+				this.logger.error("SOAPEnvelope.getBody failed: "+e.getMessage(),e);
+				throw new WSDLException("SOAPEnvelope senza body");
+			}
+			
+			if(body==null || (body.hasChildNodes()==false)){
+				throw new WSDLException("SOAPBody non esistente");
+			}
 		}
 		
 		this.logger = log;
@@ -188,17 +192,35 @@ public class WSDLValidator {
 		/** Validazione XSD senza considerare gli usi e gli stili (rpc/document e literal/encoded) */
 		if(portType==null || operation==null){
 			this.logger.debug("Validazione XSD senza considerare il WSDLAccordoServizio e quindi senza considerare style (document/rpc) e gli use (literal/encoded)");
-			org.w3c.dom.NodeList nl = this.body.getChildNodes();
-			for(int i=0; i<nl.getLength(); i++){
-				//if (nl.item(i) instanceof Text && ((Text) nl.item(i)).getData().trim().length() == 0) { continue; }
-				if ( (nl.item(i) instanceof Text) || (nl.item(i) instanceof Comment) ){
-					continue;
+			
+			List<Node> nodeList = new ArrayList<Node>();
+			if(MessageType.SOAP_11.equals(this.messageType) || MessageType.SOAP_12.equals(this.messageType)){
+				SOAPEnvelope envelope = (SOAPEnvelope) this.element;
+				SOAPBody body = null;
+				try{
+					body = envelope.getBody();
+				}catch(Exception e){
+					// eccezione che non dovrebbe accadere. Lo stesso controllo viene fatto nel costruttore
+					throw new RuntimeException(e.getMessage(),e);
 				}
+				org.w3c.dom.NodeList nl = body.getChildNodes();
+				for(int i=0; i<nl.getLength(); i++){
+					if ( (nl.item(i) instanceof Text) || (nl.item(i) instanceof Comment) ){
+						continue;
+					}
+					nodeList.add(nl.item(i));
+				}
+			}
+			else{
+				nodeList.add(this.element);
+			}
+			
+			for(int i=0; i<nodeList.size(); i++){
 				String nomeElemento = null;
 				String namespaceElemento = null;
 				Node n = null;
 				try{
-					n = nl.item(i);
+					n = nodeList.get(i);
 					nomeElemento = n.getLocalName();
 					namespaceElemento = n.getNamespaceURI();
 					validatoreBodyApplicativo.valida(n,true);
@@ -268,15 +290,32 @@ public class WSDLValidator {
 			
 			if(errorMsgValidazioneXSD.length()==0){
 				this.logger.debug("Validazione XSD con style["+style+"] e use["+use+"]...");
-				org.w3c.dom.NodeList nl = this.body.getChildNodes();
 				
-				if(CostantiRegistroServizi.WSDL_STYLE_RPC.equals(style)){
-					int children=0;
+				List<Node> nodeList = new ArrayList<Node>();
+				if(MessageType.SOAP_11.equals(this.messageType) || MessageType.SOAP_12.equals(this.messageType)){
+					SOAPEnvelope envelope = (SOAPEnvelope) this.element;
+					SOAPBody body = null;
+					try{
+						body = envelope.getBody();
+					}catch(Exception e){
+						// eccezione che non dovrebbe accadere. Lo stesso controllo viene fatto nel costruttore
+						throw new RuntimeException(e.getMessage(),e);
+					}
+					org.w3c.dom.NodeList nl = body.getChildNodes();
 					for(int i=0; i<nl.getLength(); i++){
-						//if (nl.item(i) instanceof Text && ((Text) nl.item(i)).getData().trim().length() == 0) { continue; }
 						if ( (nl.item(i) instanceof Text) || (nl.item(i) instanceof Comment) ){
 							continue;
 						}
+						nodeList.add(nl.item(i));
+					}
+				}
+				else{
+					nodeList.add(this.element);
+				}
+				
+				if(CostantiRegistroServizi.WSDL_STYLE_RPC.equals(style)){
+					int children=0;
+					for(int i=0; i<nodeList.size(); i++){
 						children++;
 					}
 					
@@ -286,18 +325,14 @@ public class WSDLValidator {
 				}
 
 				if(errorMsgValidazioneXSD.length()==0){
-					for(int i=0; i<nl.getLength(); i++){
-						//if (nl.item(i) instanceof Text && ((Text) nl.item(i)).getData().trim().length() == 0) { continue; }
-						if ( (nl.item(i) instanceof Text) || (nl.item(i) instanceof Comment) ){
-							continue;
-						}
+					for(int i=0; i<nodeList.size(); i++){
 						String nomeElemento = null;
 						String namespaceElemento = null;
 						Node n = null;
 						Node nodo = null;
 						Node nChild = null;
 						try{
-							n = nl.item(i);
+							n = nodeList.get(i);
 							nomeElemento = n.getLocalName();
 							namespaceElemento = n.getNamespaceURI();
 							if(CostantiRegistroServizi.WSDL_USE_ENCODED.equals(use)){
@@ -590,6 +625,22 @@ public class WSDLValidator {
 		
 		String errorMsgValidazioneXSD = null;
 		try{
+			
+			SOAPEnvelope envelope = null;
+			SOAPBody body = null;
+			if(MessageType.SOAP_11.equals(this.messageType) || MessageType.SOAP_12.equals(this.messageType)){
+				envelope = (SOAPEnvelope) this.element;
+				try{
+					body = envelope.getBody();
+				}catch(Exception e){
+					// eccezione che non dovrebbe accadere. Lo stesso controllo viene fatto nel costruttore
+					throw new RuntimeException(e.getMessage(),e);
+				}
+			}
+			else{
+				throw new Exception("Tipo di validazione non supportata con Service Binding REST e tipologia messaggio: "+this.messageType.getMessageVersionAsString());
+			}
+			
 	
 			// cerco port-type
 			BindingStyle style = CostantiRegistroServizi.WSDL_STYLE_DOCUMENT;
@@ -656,7 +707,7 @@ public class WSDLValidator {
 						String nomeAtteso = operation;
 						if(isRichiesta==false)
 							nomeAtteso = operation+"Response";
-						SOAPElement childRPCElement = SoapUtils.getNotEmptyFirstChildSOAPElement(this.body);
+						SOAPElement childRPCElement = SoapUtils.getNotEmptyFirstChildSOAPElement(body);
 						if(childRPCElement==null){
 							this.logger.debug("WSDL, esamino operation["+operation+"] con style["+style+"] e use["+use+"]: Root element RCP non trovato rispetto all'operation name "+nomeAtteso +" (RPC Style)");
 							continue;
@@ -666,7 +717,7 @@ public class WSDLValidator {
 							continue;
 						}
 						
-						nodiContenutoApplicativo = this.body.getChildNodes();
+						nodiContenutoApplicativo = body.getChildNodes();
 						for(int ii=0;ii<nodiContenutoApplicativo.getLength();ii++){
 //							if (!(nodiContenutoApplicativo.item(ii) instanceof Text && 
 //									((Text) nodiContenutoApplicativo.item(ii)).getData().trim().length() == 0)) { 
@@ -680,8 +731,8 @@ public class WSDLValidator {
 						
 					}else{
 						// Document
-						nodiContenutoApplicativo = this.body.getChildNodes();
-						nodoPossiedeContenutoApplicativo = this.body;
+						nodiContenutoApplicativo = body.getChildNodes();
+						nodoPossiedeContenutoApplicativo = body;
 					}
 					
 					int sizeArgumentsOperation = 0;
@@ -699,7 +750,7 @@ public class WSDLValidator {
 								nodiMessaggioErrore.append(", ");
 							}
 							Node n = nodiContenutoApplicativo.item(ii);
-							RootElementBody rootElementBody = new RootElementBody(this.envelope, nodoPossiedeContenutoApplicativo, 
+							RootElementBody rootElementBody = new RootElementBody(envelope, nodoPossiedeContenutoApplicativo, 
 									CostantiRegistroServizi.WSDL_STYLE_RPC.equals(style), n);
 							nodiMessaggioErrore.append(rootElementBody.toString());
 							
@@ -739,7 +790,7 @@ public class WSDLValidator {
 							
 							Node n = nodiContenutoApplicativo.item(indexBody);
 							
-							RootElementBody rootElementBody = new RootElementBody(this.envelope, nodoPossiedeContenutoApplicativo, 
+							RootElementBody rootElementBody = new RootElementBody(envelope, nodoPossiedeContenutoApplicativo, 
 									CostantiRegistroServizi.WSDL_STYLE_RPC.equals(style), n);
 							elementRootBody.add(rootElementBody);
 							
@@ -904,7 +955,7 @@ public class WSDLValidator {
 				}
 				if(soapActionWSDL.equalsIgnoreCase(soapActionRipulita)==false){
 					boolean tmpThrowSOAPActionException = throwSOAPActionException;
-					if(soapActionRipulita==null && SOAPVersion.SOAP12.equals(this.soapVersion)){
+					if(soapActionRipulita==null && MessageType.SOAP_12.equals(this.messageType)){
 						// The SOAP 1.1 mandatory SOAPAction HTTP header has been removed in SOAP 1.2. In its place is an optional action parameter on the application/soap+xml media type.
 						// Quindi se nella richiesta non era presente una soapAction, non devo sollevare eccezione
 						tmpThrowSOAPActionException = false;

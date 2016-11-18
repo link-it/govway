@@ -266,6 +266,7 @@
 			</xsd:annotation>
 		</xsd:attribute>
 		<!-- end-extensions -->
+		<xsd:attribute name="service-binding" type="ServiceBinding" use="required"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
 		<xsd:attribute name="profilo-collaborazione" type="ProfiloCollaborazione" use="required">
@@ -1111,6 +1112,12 @@
 	
 	
 	<!-- Enumeration -->
+	<xsd:simpleType name="ServiceBinding">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="soap"/>
+			<xsd:enumeration value="rest"/>
+		</xsd:restriction>
+	</xsd:simpleType>
 	<xsd:simpleType name="ProfiloCollaborazione">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="oneway"/>

@@ -42,7 +42,7 @@ public class UrlMappingModel extends AbstractModel<UrlMapping> {
 		super();
 	
 		this.FILE = new Field("file",java.lang.String.class,"urlMapping",UrlMapping.class);
-		this.TIPO = new Field("tipo",java.lang.String.class,"urlMapping",UrlMapping.class);
+		this.TYPE = new Field("type",java.lang.String.class,"urlMapping",UrlMapping.class);
 	
 	}
 	
@@ -51,7 +51,7 @@ public class UrlMappingModel extends AbstractModel<UrlMapping> {
 		super(father);
 	
 		this.FILE = new ComplexField(father,"file",java.lang.String.class,"urlMapping",UrlMapping.class);
-		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"urlMapping",UrlMapping.class);
+		this.TYPE = new ComplexField(father,"type",java.lang.String.class,"urlMapping",UrlMapping.class);
 	
 	}
 	
@@ -59,7 +59,7 @@ public class UrlMappingModel extends AbstractModel<UrlMapping> {
 
 	public IField FILE = null;
 	 
-	public IField TIPO = null;
+	public IField TYPE = null;
 	 
 
 	@Override

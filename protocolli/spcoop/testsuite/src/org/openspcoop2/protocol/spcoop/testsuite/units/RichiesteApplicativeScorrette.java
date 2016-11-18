@@ -150,7 +150,7 @@ public class RichiesteApplicativeScorrette {
 				
 				Utilities.verificaFaultIntegrazione(error, 
 						Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativiSOAP", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_401_PD_INESISTENTE), 
+						Utilities.toString(CodiceErroreIntegrazione.CODICE_401_PORTA_INESISTENTE), 
 						CostantiErroriIntegrazione.MSG_401_PD_INESISTENTE, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);				
 			}finally{
 				dbComponentFruitore.close();
@@ -420,7 +420,7 @@ public class RichiesteApplicativeScorrette {
 				
 				Utilities.verificaFaultIntegrazione(error, 
 						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_403_PD_PATTERN_NON_VALIDO), 
+						Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA), 
 						CostantiErroriIntegrazione.MSG_403_PD_PATTERN_NON_VALIDO.replace("TIPO", "SOGGETTO_EROGATORE"), 
 						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 			}finally{
@@ -470,7 +470,7 @@ public class RichiesteApplicativeScorrette {
 				
 				Utilities.verificaFaultIntegrazione(error, 
 						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_403_PD_PATTERN_NON_VALIDO), 
+						Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA), 
 						CostantiErroriIntegrazione.MSG_403_PD_PATTERN_NON_VALIDO.replace("TIPO", "SOGGETTO_EROGATORE"), 
 						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 			}finally{
@@ -520,7 +520,7 @@ public class RichiesteApplicativeScorrette {
 				
 				Utilities.verificaFaultIntegrazione(error, 
 						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_403_PD_PATTERN_NON_VALIDO), 
+						Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA), 
 						CostantiErroriIntegrazione.MSG_403_PD_PATTERN_NON_VALIDO.replace("TIPO", "SOGGETTO_EROGATORE"), 
 						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 			}finally{
@@ -570,7 +570,7 @@ public class RichiesteApplicativeScorrette {
 				
 				Utilities.verificaFaultIntegrazione(error, 
 						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiSOAP", 
-						Utilities.toString(CodiceErroreIntegrazione.CODICE_403_PD_PATTERN_NON_VALIDO), 
+						Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA), 
 						CostantiErroriIntegrazione.MSG_403_PD_PATTERN_NON_VALIDO.replace("TIPO", "SOGGETTO_EROGATORE"), 
 						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);	
 			}finally{
@@ -2242,7 +2242,7 @@ public class RichiesteApplicativeScorrette {
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.XMLUtils.getInstance().newElement(xmlErroreApplicativo),
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo),
 						Utilities.testSuiteProperties.getIdentitaDefault_dominio(),"RicezioneContenutiApplicativiHTTP", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA), 
 						CostantiErroriIntegrazione.MSG_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);

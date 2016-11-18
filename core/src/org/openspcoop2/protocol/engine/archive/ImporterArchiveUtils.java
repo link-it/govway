@@ -57,7 +57,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.wsdl.RegistroOpenSPCoopUtilities;
-import org.openspcoop2.message.XMLUtils;
+import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.archive.Archive;
@@ -498,7 +498,7 @@ public class ImporterArchiveUtils {
 				if(archiveSoggetto.getSoggettoRegistro().getCodiceIpa()==null ||
 						archiveSoggetto.getSoggettoRegistro().getIdentificativoPorta()==null){
 					
-					IProtocolFactory protocolFactory = this.protocolFactoryManager.getProtocolFactoryBySubjectType(idSoggetto.getTipo());
+					IProtocolFactory protocolFactory = this.protocolFactoryManager.getProtocolFactoryByOrganizationType(idSoggetto.getTipo());
 					ITraduttore traduttore = protocolFactory.createTraduttore();
 					
 					if(archiveSoggetto.getSoggettoRegistro().getCodiceIpa()==null){
@@ -575,7 +575,7 @@ public class ImporterArchiveUtils {
 				
 				if(archiveSoggetto.getSoggettoConfigurazione().getIdentificativoPorta()==null){
 					
-					IProtocolFactory protocolFactory = this.protocolFactoryManager.getProtocolFactoryBySubjectType(idSoggetto.getTipo());
+					IProtocolFactory protocolFactory = this.protocolFactoryManager.getProtocolFactoryByOrganizationType(idSoggetto.getTipo());
 					ITraduttore traduttore = protocolFactory.createTraduttore();
 					
 					if(archiveSoggetto.getSoggettoConfigurazione().getIdentificativoPorta()==null){
@@ -755,11 +755,11 @@ public class ImporterArchiveUtils {
 			
 			
 			// --- compatibilita' elementi riferiti ---
-			String protocolloAssociatoAccordo = this.protocolFactoryManager.getProtocolBySubjectType(idSoggettoReferente.getTipo());
+			String protocolloAssociatoAccordo = this.protocolFactoryManager.getProtocolByOrganizationType(idSoggettoReferente.getTipo());
 			// soggetti partecipanti
 			if(idSoggettiPartecipanti!=null){
 				for (IDSoggetto idSoggettoPartecipante : idSoggettiPartecipanti) {
-					String protocolloAssociatoSoggettoPartecipante = this.protocolFactoryManager.getProtocolBySubjectType(idSoggettoPartecipante.getTipo());
+					String protocolloAssociatoSoggettoPartecipante = this.protocolFactoryManager.getProtocolByOrganizationType(idSoggettoPartecipante.getTipo());
 					if(protocolloAssociatoAccordo.equals(protocolloAssociatoSoggettoPartecipante)==false){
 						throw new Exception("Soggetto partecipante ["+idSoggettoPartecipante+"] (protocollo:"+protocolloAssociatoSoggettoPartecipante+
 								") non utilizzabile in un accordo con soggetto referente ["+idSoggettoReferente+"] (protocollo:"+protocolloAssociatoAccordo+")");
@@ -900,7 +900,7 @@ public class ImporterArchiveUtils {
 			
 			// --- compatibilita' elementi riferiti ---
 			// non ce ne sono da controllare
-			//String protocolloAssociatoAccordo = this.protocolFactoryManager.getProtocolBySubjectType(idSoggettoReferente.getTipo());
+			//String protocolloAssociatoAccordo = this.protocolFactoryManager.getProtocolByOrganizationType(idSoggettoReferente.getTipo());
 						
 
 			// ---- visibilita' oggetto riferiti ---
@@ -1040,11 +1040,11 @@ public class ImporterArchiveUtils {
 			
 			
 			// --- compatibilita' elementi riferiti ---
-			String protocolloAssociatoAccordo = this.protocolFactoryManager.getProtocolBySubjectType(idSoggettoReferente.getTipo());
+			String protocolloAssociatoAccordo = this.protocolFactoryManager.getProtocolByOrganizationType(idSoggettoReferente.getTipo());
 			// accordo cooperazione
 			AccordoCooperazione ac = this.importerEngine.getAccordoCooperazione(idAccordoCooperazione);
 			String protocolloAssociatoAccordoCooperazione = 
-					this.protocolFactoryManager.getProtocolBySubjectType(ac.getSoggettoReferente().getTipo());
+					this.protocolFactoryManager.getProtocolByOrganizationType(ac.getSoggettoReferente().getTipo());
 			if(protocolloAssociatoAccordo.equals(protocolloAssociatoAccordoCooperazione)==false){
 				throw new Exception("Soggetto referente ("+ac.getSoggettoReferente().getTipo()+"/"+ac.getSoggettoReferente().getNome()+
 						") dell'accordo di cooperazione ["+idAccordoCooperazione+"] (protocollo:"+protocolloAssociatoAccordoCooperazione+
@@ -1057,7 +1057,7 @@ public class ImporterArchiveUtils {
 					throw new Exception("ServizioComponente ["+idServizioComponente+"] (protocollo:"+protocolloAssociatoServizioComponente+
 							") non utilizzabile in un accordo con soggetto referente ["+idSoggettoReferente+"] (protocollo:"+protocolloAssociatoAccordo+")");
 				}
-				String protocolloAssociatoSoggettoServizioComponente = this.protocolFactoryManager.getProtocolBySubjectType(idServizioComponente.getSoggettoErogatore().getTipo());
+				String protocolloAssociatoSoggettoServizioComponente = this.protocolFactoryManager.getProtocolByOrganizationType(idServizioComponente.getSoggettoErogatore().getTipo());
 				if(protocolloAssociatoAccordo.equals(protocolloAssociatoSoggettoServizioComponente)==false){
 					throw new Exception("ServizioComponente ["+idServizioComponente+"] (protocollo:"+protocolloAssociatoSoggettoServizioComponente+
 							") non utilizzabile in un accordo con soggetto referente ["+idSoggettoReferente+"] (protocollo:"+protocolloAssociatoAccordo+")");
@@ -1436,9 +1436,9 @@ public class ImporterArchiveUtils {
 			
 			
 			// --- compatibilita' elementi riferiti ---
-			String protocolloAssociatoAccordo = this.protocolFactoryManager.getProtocolBySubjectType(idSoggettoErogatore.getTipo());
+			String protocolloAssociatoAccordo = this.protocolFactoryManager.getProtocolByOrganizationType(idSoggettoErogatore.getTipo());
 			// accordo di servizio parte comune
-			String protocolloAssociatoAccordoParteComune = this.protocolFactoryManager.getProtocolBySubjectType(idAccordoServizioParteComune.getSoggettoReferente().getTipo());
+			String protocolloAssociatoAccordoParteComune = this.protocolFactoryManager.getProtocolByOrganizationType(idAccordoServizioParteComune.getSoggettoReferente().getTipo());
 			if(protocolloAssociatoAccordo.equals(protocolloAssociatoAccordoParteComune)==false){
 				throw new Exception("AccordoServizioParteComune ["+idAccordoServizioParteComune+"] (protocollo:"+protocolloAssociatoAccordoParteComune+
 						") non utilizzabile in un accordo con soggetto erogatore ["+idSoggettoErogatore+"] (protocollo:"+protocolloAssociatoAccordo+")");
@@ -1606,9 +1606,9 @@ public class ImporterArchiveUtils {
 		
 			
 			// --- compatibilita' elementi riferiti ---
-			String protocolloAssociatoFruitore = this.protocolFactoryManager.getProtocolBySubjectType(idSoggettoFruitore.getTipo());
+			String protocolloAssociatoFruitore = this.protocolFactoryManager.getProtocolByOrganizationType(idSoggettoFruitore.getTipo());
 			// accordo di servizio parte specifica
-			String protocolloAssociatoAccordoParteSpecifica = this.protocolFactoryManager.getProtocolBySubjectType(idAccordoServizioParteSpecifica.getSoggettoReferente().getTipo());
+			String protocolloAssociatoAccordoParteSpecifica = this.protocolFactoryManager.getProtocolByOrganizationType(idAccordoServizioParteSpecifica.getSoggettoReferente().getTipo());
 			if(protocolloAssociatoFruitore.equals(protocolloAssociatoAccordoParteSpecifica)==false){
 				throw new Exception("AccordoServizioParteSpecifica ["+idAccordoServizioParteSpecifica+"] (protocollo:"+protocolloAssociatoAccordoParteSpecifica+
 						") non utilizzabile in un fruitore ["+idSoggettoFruitore+"] (protocollo:"+protocolloAssociatoFruitore+")");
@@ -1745,15 +1745,13 @@ public class ImporterArchiveUtils {
 			IDServizio idServizio = null;
 			if(pd.getSoggettoErogatore()!=null &&
 					pd.getSoggettoErogatore().getTipo()!=null &&
-					pd.getSoggettoErogatore().getNome()!=null &&
-					((pd.getSoggettoErogatore().getIdentificazione()==null)) || (CostantiConfigurazione.PORTA_DELEGATA_SOGGETTO_EROGATORE_STATIC.equals(pd.getSoggettoErogatore().getIdentificazione())) ){
+					pd.getSoggettoErogatore().getNome()!=null ){
 				idSoggettoErogatore = new IDSoggetto(pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome());
 			}
 			if(idSoggettoErogatore!=null){
 				if(pd.getServizio()!=null &&
 						pd.getServizio().getTipo()!=null &&
-						pd.getServizio().getNome()!=null &&
-						((pd.getServizio().getIdentificazione()==null)) || (CostantiConfigurazione.PORTA_DELEGATA_SERVIZIO_STATIC.equals(pd.getServizio().getIdentificazione())) ){
+						pd.getServizio().getNome()!=null  ){
 					idServizio = new IDServizio(idSoggettoErogatore, 
 							pd.getServizio().getTipo(), pd.getServizio().getNome());
 				}
@@ -1777,10 +1775,10 @@ public class ImporterArchiveUtils {
 			
 			
 			// --- compatibilita' elementi riferiti ---
-			String protocolloAssociatoSoggettoProprietario = this.protocolFactoryManager.getProtocolBySubjectType(idSoggettoProprietario.getTipo());
+			String protocolloAssociatoSoggettoProprietario = this.protocolFactoryManager.getProtocolByOrganizationType(idSoggettoProprietario.getTipo());
 			// erogatore
 			if(idSoggettoErogatore!=null){
-				String protocolloAssociatoSoggettoErogatore = this.protocolFactoryManager.getProtocolBySubjectType(idSoggettoErogatore.getTipo());
+				String protocolloAssociatoSoggettoErogatore = this.protocolFactoryManager.getProtocolByOrganizationType(idSoggettoErogatore.getTipo());
 				if(protocolloAssociatoSoggettoProprietario.equals(protocolloAssociatoSoggettoErogatore)==false){
 					throw new Exception("SoggettoErogatore ["+idSoggettoErogatore+"] (protocollo:"+protocolloAssociatoSoggettoErogatore+
 							") non utilizzabile in una porta delegata appartenete al soggetto ["+idSoggettoProprietario+"] (protocollo:"+protocolloAssociatoSoggettoProprietario+")");
@@ -1793,7 +1791,7 @@ public class ImporterArchiveUtils {
 					throw new Exception("AccordoServizioParteSpecifica ["+idServizio+"] (protocollo:"+protocolloAssociatoAccordoParteSpecifica+
 							") con servizio non utilizzabile in una porta delegata appartenete al soggetto ["+idSoggettoProprietario+"] (protocollo:"+protocolloAssociatoSoggettoProprietario+")");
 				}
-				String protocolloAssociatoSoggettoAccordoParteSpecifica = this.protocolFactoryManager.getProtocolBySubjectType(idServizio.getSoggettoErogatore().getTipo());
+				String protocolloAssociatoSoggettoAccordoParteSpecifica = this.protocolFactoryManager.getProtocolByOrganizationType(idServizio.getSoggettoErogatore().getTipo());
 				if(protocolloAssociatoSoggettoProprietario.equals(protocolloAssociatoSoggettoAccordoParteSpecifica)==false){
 					throw new Exception("AccordoServizioParteSpecifica ["+idServizio+"] (protocollo:"+protocolloAssociatoSoggettoAccordoParteSpecifica+
 							") con soggetto non utilizzabile in una porta delegata appartenete al soggetto ["+idSoggettoProprietario+"] (protocollo:"+protocolloAssociatoSoggettoProprietario+")");
@@ -1936,9 +1934,9 @@ public class ImporterArchiveUtils {
 			
 			
 			// --- compatibilita' elementi riferiti ---
-			String protocolloAssociatoSoggettoProprietario = this.protocolFactoryManager.getProtocolBySubjectType(idSoggettoProprietario.getTipo());
+			String protocolloAssociatoSoggettoProprietario = this.protocolFactoryManager.getProtocolByOrganizationType(idSoggettoProprietario.getTipo());
 			// erogatore
-			String protocolloAssociatoSoggettoErogatore = this.protocolFactoryManager.getProtocolBySubjectType(idSoggettoErogatore.getTipo());
+			String protocolloAssociatoSoggettoErogatore = this.protocolFactoryManager.getProtocolByOrganizationType(idSoggettoErogatore.getTipo());
 			if(protocolloAssociatoSoggettoProprietario.equals(protocolloAssociatoSoggettoErogatore)==false){
 				throw new Exception("SoggettoErogatore ["+idSoggettoErogatore+"] (protocollo:"+protocolloAssociatoSoggettoErogatore+
 						") non utilizzabile in una porta applicativa appartenete al soggetto ["+idSoggettoProprietario+"] (protocollo:"+protocolloAssociatoSoggettoProprietario+")");
@@ -1949,7 +1947,7 @@ public class ImporterArchiveUtils {
 				throw new Exception("AccordoServizioParteSpecifica ["+idServizio+"] (protocollo:"+protocolloAssociatoAccordoParteSpecifica+
 						") con servizio non utilizzabile in una porta applicativa appartenete al soggetto ["+idSoggettoProprietario+"] (protocollo:"+protocolloAssociatoSoggettoProprietario+")");
 			}
-			String protocolloAssociatoSoggettoAccordoParteSpecifica = this.protocolFactoryManager.getProtocolBySubjectType(idServizio.getSoggettoErogatore().getTipo());
+			String protocolloAssociatoSoggettoAccordoParteSpecifica = this.protocolFactoryManager.getProtocolByOrganizationType(idServizio.getSoggettoErogatore().getTipo());
 			if(protocolloAssociatoSoggettoProprietario.equals(protocolloAssociatoSoggettoAccordoParteSpecifica)==false){
 				throw new Exception("AccordoServizioParteSpecifica ["+idServizio+"] (protocollo:"+protocolloAssociatoSoggettoAccordoParteSpecifica+
 						") con soggetto non utilizzabile in una porta applicativa appartenete al soggetto ["+idSoggettoProprietario+"] (protocollo:"+protocolloAssociatoSoggettoProprietario+")");

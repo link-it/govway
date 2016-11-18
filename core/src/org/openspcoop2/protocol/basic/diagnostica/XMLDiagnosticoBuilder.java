@@ -37,7 +37,7 @@ import org.w3c.dom.Element;
  */
 public class XMLDiagnosticoBuilder implements org.openspcoop2.protocol.sdk.diagnostica.IXMLDiagnosticoBuilder {
 
-	protected org.openspcoop2.message.XMLUtils xmlUtils;
+	protected org.openspcoop2.message.xml.XMLUtils xmlUtils;
 	/** Logger utilizzato per debug. */
 
 	protected Logger log;
@@ -51,7 +51,7 @@ public class XMLDiagnosticoBuilder implements org.openspcoop2.protocol.sdk.diagn
 	public XMLDiagnosticoBuilder(IProtocolFactory protocolFactory){
 		this.log = protocolFactory.getLogger();
 		this.factory = protocolFactory;
-		this.xmlUtils = org.openspcoop2.message.XMLUtils.getInstance();
+		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 	}
 
 	/* --------------------- MESSAGGI DIAGNOSTICI -----------------------*/

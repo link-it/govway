@@ -21,7 +21,6 @@
 
 package org.openspcoop2.message;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.soap.MimeHeaders;
@@ -29,11 +28,17 @@ import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
-import org.slf4j.Logger;
-import org.openspcoop2.message.Costanti;
-import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.message.rest.OpenSPCoop2Message_binary_impl;
+import org.openspcoop2.message.rest.OpenSPCoop2Message_json_impl;
+import org.openspcoop2.message.rest.OpenSPCoop2Message_mimeMultipart_impl;
+import org.openspcoop2.message.rest.OpenSPCoop2Message_xml_impl;
+import org.openspcoop2.message.soap.OpenSPCoop2Message_saaj_11_impl;
+import org.openspcoop2.message.soap.OpenSPCoop2Message_saaj_12_impl;
+import org.openspcoop2.utils.transport.TransportRequestContext;
+import org.openspcoop2.utils.transport.TransportResponseContext;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -49,54 +54,8 @@ import org.w3c.dom.Element;
 
 public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
 
-	private static Logger logger = LoggerWrapperFactory.getLogger(OpenSPCoop2MessageFactory_impl.class);
 	
-	@Override
-	public OpenSPCoop2Message _createMessage(SOAPVersion versioneSoap,SOAPMessage msg) {
-		OpenSPCoop2Message omsg = null;
-		if(SOAPVersion.SOAP11.equals(versioneSoap)){
-			omsg = new OpenSPCoop2Message_11_impl(msg);
-		} else {
-			omsg = new OpenSPCoop2Message_12_impl(msg);
-		}
-		return omsg;
-	}
-	
-	@Override
-	public OpenSPCoop2Message _createMessage(SOAPVersion versioneSoap) {
-		OpenSPCoop2Message msg = null;
-		if(SOAPVersion.SOAP11.equals(versioneSoap)){
-	        msg = new OpenSPCoop2Message_11_impl();
-	        msg.setContentType(Costanti.CONTENT_TYPE_SOAP_1_1);
-		} else {
-			msg = new OpenSPCoop2Message_12_impl();
-			msg.setContentType(Costanti.CONTENT_TYPE_SOAP_1_2);
-		}
-        return msg;
-	}
-
-	@Override
-	protected OpenSPCoop2Message _createMessage(MimeHeaders mhs, InputStream is, boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold, long overhead) throws SOAPException, IOException {
-		if ((mhs == null) || (getContentType(mhs) == null)) {
-            mhs = new MimeHeaders();
-            mhs.setHeader(Costanti.CONTENT_TYPE, Costanti.CONTENT_TYPE_SOAP_1_1);
-		}
-		
-		OpenSPCoop2Message msg;
-		
-		String contentType = getContentType(mhs);
-		SOAPVersion soapVersion = SOAPVersion.getVersioneSoap(logger, contentType, true);
-		
-		if(SOAPVersion.SOAP12.equals(soapVersion)){
-			msg = new OpenSPCoop2Message_12_impl(mhs, is, fileCacheEnable, attachmentRepoDir, fileThreshold, overhead);
-			((OpenSPCoop2Message_12_impl) msg).setLazyAttachments(false);
-		} else {
-			msg = new OpenSPCoop2Message_11_impl(mhs, is, fileCacheEnable, attachmentRepoDir, fileThreshold, overhead);
-			((OpenSPCoop2Message_11_impl) msg).setLazyAttachments(false);
-		}
-		
-        return msg;
-	}
+	// ********** SOAP - FACTORY *************
 
 	@Override
 	protected synchronized void initSoapFactory() {
@@ -116,16 +75,21 @@ public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
             OpenSPCoop2MessageFactory.soapMessageFactory = new com.sun.xml.messaging.saaj.soap.MessageFactoryImpl();
 		}
 	}
-
-	@Override
-	public String getDocumentBuilderFactoryClass() {
-		return org.apache.xerces.jaxp.DocumentBuilderFactoryImpl.class.getName();
-	}
-
+	
 	@Override
 	public SOAPConnectionFactory getSOAPConnectionFactory()
 			throws SOAPException {
 		return new com.sun.xml.messaging.saaj.client.p2p.HttpSOAPConnectionFactory();
+	}
+	
+	
+	
+	
+	// ********** SAAJ *************
+	
+	@Override
+	public String getDocumentBuilderFactoryClass() {
+		return org.apache.xerces.jaxp.DocumentBuilderFactoryImpl.class.getName();
 	}
 
     @Override
@@ -137,5 +101,138 @@ public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
 	public void normalizeDocument(Document document){
     	document.normalizeDocument();
     }
+	
+	
+    
+    
+    // ********** OpenSPCoop2Message builder *************
+	
+	@Override
+	public OpenSPCoop2Message _createMessage(MessageType messageType, SOAPMessage soapMsg) throws MessageException {
+		OpenSPCoop2Message msg = null;
+		if(MessageType.SOAP_11.equals(messageType)){
+			msg = new OpenSPCoop2Message_saaj_11_impl(soapMsg);
+		} else if(MessageType.SOAP_11.equals(messageType)){
+			msg = new OpenSPCoop2Message_saaj_12_impl(soapMsg);
+		}
+		else{
+			throw new MessageException("Message Type ["+messageType+"] unsupported");
+		}
+		
+		return msg;
+	}
+	
+	@Override
+	public OpenSPCoop2Message _createMessage(MessageType messageType, String contentType) throws MessageException  {
+		OpenSPCoop2Message msg = null;
+		switch (messageType) {
+			case SOAP_11:
+				msg = new OpenSPCoop2Message_saaj_11_impl();
+				break;
+			case SOAP_12:
+				msg = new OpenSPCoop2Message_saaj_12_impl();
+				break;
+			case XML:
+				msg = new OpenSPCoop2Message_xml_impl();
+				break;
+			case JSON:
+				msg = new OpenSPCoop2Message_json_impl();
+				break;
+			case BINARY:
+				msg = new OpenSPCoop2Message_binary_impl();
+				break;
+			case MIME_MULTIPART:
+				msg = new OpenSPCoop2Message_mimeMultipart_impl();
+				break;
+		}
+		
+        return msg;
+	}
+
+	@Override
+	protected OpenSPCoop2Message _createMessage(MessageType messageType, TransportRequestContext requestContext, InputStream is, 
+			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold, long overhead) throws MessageException {
+		
+		return this._createMessageEngine(messageType, requestContext, is, fileCacheEnable, attachmentRepoDir, fileThreshold, overhead);
+	}
+	
+	@Override
+	protected OpenSPCoop2Message _createMessage(MessageType messageType, TransportResponseContext responseContext, InputStream is, 
+			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold, long overhead) throws MessageException {
+		
+		return this._createMessageEngine(messageType, responseContext, is, fileCacheEnable, attachmentRepoDir, fileThreshold, overhead);
+	}
+	
+	@Override
+	protected OpenSPCoop2Message _createMessage(MessageType messageType, String contentType, 
+			InputStream is,  boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold, long overhead) throws MessageException{
+		
+		return this._createMessageEngine(messageType, contentType, is, fileCacheEnable, attachmentRepoDir, fileThreshold, overhead);
+	}
+	
+	private OpenSPCoop2Message _createMessageEngine(MessageType messageType, Object context, InputStream is, 
+			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold, long overhead) throws MessageException {
+		
+		try{
+		
+			OpenSPCoop2Message msg = null;
+			
+			String contentType = null;
+			TransportRequestContext transportRequestContext = null; 
+			TransportResponseContext transportResponseContext = null;
+			if(context instanceof TransportRequestContext){
+				transportRequestContext = (TransportRequestContext) context;
+				contentType = transportRequestContext.getParameterTrasporto(HttpConstants.CONTENT_TYPE);
+			}
+			else if(context instanceof TransportResponseContext){
+				transportResponseContext = (TransportResponseContext) context;
+				contentType = transportResponseContext.getParameterTrasporto(HttpConstants.CONTENT_TYPE);
+			}
+			else if(context instanceof String){
+				contentType = (String) context;
+			}
+			else{
+				throw new MessageException("Unsupported Context ["+context+"]");
+			}
+			
+			switch (messageType) {
+				case SOAP_11:
+				case SOAP_12:
+					
+					MimeHeaders mhs = new MimeHeaders();
+					if(contentType!=null){
+						mhs.setHeader(HttpConstants.CONTENT_TYPE, contentType);
+					}
+					if(MessageType.SOAP_11.equals(messageType)){
+						msg = new OpenSPCoop2Message_saaj_11_impl(mhs, is);
+						((OpenSPCoop2Message_saaj_11_impl)msg).initialize(overhead);
+					}
+					else{
+						msg = new OpenSPCoop2Message_saaj_12_impl(mhs, is);
+						((OpenSPCoop2Message_saaj_12_impl)msg).initialize(overhead);
+					}
+					break;
+				case XML:
+					msg = new OpenSPCoop2Message_xml_impl(is,contentType);
+					break;
+				case JSON:
+					msg = new OpenSPCoop2Message_json_impl(is,contentType);
+					break;
+				case BINARY:
+					msg = new OpenSPCoop2Message_binary_impl(is,contentType);
+					break;
+				case MIME_MULTIPART:
+					msg = new OpenSPCoop2Message_mimeMultipart_impl(is,contentType);
+					break;
+			}
+					
+	        return msg;
+	        
+		}catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
+	}
+
+
 	
 }

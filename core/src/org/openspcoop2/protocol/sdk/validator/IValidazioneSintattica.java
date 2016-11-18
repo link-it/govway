@@ -21,7 +21,6 @@
 
 package org.openspcoop2.protocol.sdk.validator;
 
-import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 
 import org.openspcoop2.core.constants.TipoPdD;
@@ -91,7 +90,7 @@ public interface IValidazioneSintattica {
 	 * @return ValidazioneSintatticaResult con i risultati del processo di validazione
 	 */
 	
-	public ValidazioneSintatticaResult validazioneFault(SOAPBody body);
+	public ValidazioneSintatticaResult validazioneFault(OpenSPCoop2Message msg);
 	
 	/**
 	 * Metodo che si occupa di eseguire la validazione del manifest quando gestito dalla Porta di Dominio.
@@ -110,6 +109,15 @@ public interface IValidazioneSintattica {
 	 * @throws ProtocolException
 	 */
 	public SOAPElement getHeaderProtocollo_senzaControlli(OpenSPCoop2Message msg) throws ProtocolException;
+	
+	/**
+	 * Questo metodo ritorna la busta che contiene le informazioni di cooperazione.
+	 * 
+	 * @param msg Messaggio da cui estrarre le informazioni di cooperazione
+	 * @return Elemento SOAP con le informazioni di cooperazione
+	 * @throws ProtocolException
+	 */
+	public Busta getBustaProtocollo_senzaControlli(OpenSPCoop2Message msg) throws ProtocolException;
 	
 	/**
 	 * Per i protocolli che non ritornano un elemento SOAP valido in fase di validazione.

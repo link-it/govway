@@ -25,9 +25,9 @@ package org.openspcoop2.protocol.trasparente.testsuite.core;
 
 import java.io.File;
 
-import org.openspcoop2.message.DynamicNamespaceContextFactory;
-import org.openspcoop2.message.XMLUtils;
-import org.openspcoop2.message.XPathExpressionEngine;
+import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
+import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.w3c.dom.Document;
 
