@@ -52,7 +52,7 @@ public interface IProtocolConfiguration {
 	 * Restituisce la configurazione del service binding generale del protocollo, indipendente dal servizio 
 	 * (se sono presenti più binding verrà usato quello di default)
 	 * 
-	 * @param registryReader Reader delle informazioni interne al registro
+	 * @param transportRequest informazioni di trasporto
 	 * @return configurazione del service binding generale del protocollo
 	 * @throws ProtocolException
 	 */

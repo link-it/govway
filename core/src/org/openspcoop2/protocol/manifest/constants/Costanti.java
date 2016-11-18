@@ -36,7 +36,7 @@ public class Costanti {
 	
 	public static final String MANIFEST_OPENSPCOOP2 = "openspcoop2-manifest.xml";
 	
-	public static final String CONTEXT_EMPTY = "@EMPTY@";
+	public static final String CONTEXT_EMPTY = org.openspcoop2.message.constants.Costanti.CONTEXT_EMPTY;
 	
 
 }

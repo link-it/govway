@@ -1296,7 +1296,12 @@ public class RicezioneBuste {
 			
 			// Refresh dati su mittente
 			soggettoFruitore = new IDSoggetto();
-			is.refreshDati(soggettoFruitore, identity, headerIntegrazioneRichiesta);
+			IDSoggetto headerIntegrazioneRichiestaSoggettoMittente = null;
+			if(headerIntegrazioneRichiesta!=null && headerIntegrazioneRichiesta.getBusta()!=null){
+				headerIntegrazioneRichiestaSoggettoMittente = new IDSoggetto(headerIntegrazioneRichiesta.getBusta().getTipoMittente(), 
+						headerIntegrazioneRichiesta.getBusta().getMittente());
+			}
+			is.refreshDati(soggettoFruitore, identity, headerIntegrazioneRichiestaSoggettoMittente);
 			
 			// Reimposto a null se il refresh non ha trovato dati.
 			if(soggettoFruitore.getTipo()==null && soggettoFruitore.getNome()==null){

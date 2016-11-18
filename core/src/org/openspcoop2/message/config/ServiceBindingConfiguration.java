@@ -47,7 +47,7 @@ public class ServiceBindingConfiguration implements Serializable {
 
 	public static String normalizeContext(String context){
 		if(context==null || "".equals(context)){
-			return org.openspcoop2.protocol.manifest.constants.Costanti.CONTEXT_EMPTY;
+			return Costanti.CONTEXT_EMPTY;
 		}
 		return context;
 	}

@@ -290,7 +290,7 @@ public class ValidazioneSintattica {
 	/**
 	 * Metodo che si occupa di validare il Fault presente in un Messaggio Errore.
 	 *
-	 * @param body SOAPBody contenente il SOAPFault.
+	 * @param msg Messaggio contenente il Fault.
 	 * @throws ProtocolException 
 	 * 
 	 */

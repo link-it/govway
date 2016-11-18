@@ -31,7 +31,6 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.util.ByteArrayDataSource;
 
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.transport.http.HttpConstants;
 
 
 /**
@@ -145,18 +144,21 @@ public class MimeMultipart {
 		}
 	}
 	
+	private final static String CONTENT_ID = "Content-ID"; // Non e' utilizzabile HttpConstants per problemi di dipendenza di compilazione
+	private final static String CONTENT_LOCATION = "Content-Location"; // Non e' utilizzabile HttpConstants per problemi di dipendenza di compilazione
+	
 	public String getContentID(BodyPart bodyPart) throws UtilsException{
 		try{
 			Enumeration<?> enHdr = bodyPart.getAllHeaders();
 			while (enHdr.hasMoreElements()) {
 				String header = (String) enHdr.nextElement();
-				if(HttpConstants.CONTENT_ID.equals(header)){
+				if(CONTENT_ID.equals(header)){
 					return bodyPart.getHeader(header)[0];
 				}	
-				else if(HttpConstants.CONTENT_ID.toLowerCase().equals(header.toLowerCase())){
+				else if(CONTENT_ID.toLowerCase().equals(header.toLowerCase())){
 					return bodyPart.getHeader(header)[0];
 				}	
-				else if(HttpConstants.CONTENT_ID.toUpperCase().equals(header.toUpperCase())){
+				else if(CONTENT_ID.toUpperCase().equals(header.toUpperCase())){
 					return bodyPart.getHeader(header)[0];
 				}
 			}
@@ -171,13 +173,13 @@ public class MimeMultipart {
 			Enumeration<?> enHdr = bodyPart.getAllHeaders();
 			while (enHdr.hasMoreElements()) {
 				String header = (String) enHdr.nextElement();
-				if(HttpConstants.CONTENT_LOCATION.equals(header)){
+				if(CONTENT_LOCATION.equals(header)){
 					return bodyPart.getHeader(header)[0];
 				}	
-				else if(HttpConstants.CONTENT_LOCATION.toLowerCase().equals(header.toLowerCase())){
+				else if(CONTENT_LOCATION.toLowerCase().equals(header.toLowerCase())){
 					return bodyPart.getHeader(header)[0];
 				}	
-				else if(HttpConstants.CONTENT_LOCATION.toUpperCase().equals(header.toUpperCase())){
+				else if(CONTENT_LOCATION.toUpperCase().equals(header.toUpperCase())){
 					return bodyPart.getHeader(header)[0];
 				}
 			}

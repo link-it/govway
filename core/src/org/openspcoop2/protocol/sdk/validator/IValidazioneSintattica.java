@@ -86,7 +86,7 @@ public interface IValidazioneSintattica {
 	/**
 	 * Metodo che si occupa di validare il Fault presente in un Messaggio di Cooperazione contenente un Errore.
 	 *
-	 * @param body SOAPBody contenente il SOAPFault.
+	 * @param msg Messaggio contenente il Fault.
 	 * @return ValidazioneSintatticaResult con i risultati del processo di validazione
 	 */
 	

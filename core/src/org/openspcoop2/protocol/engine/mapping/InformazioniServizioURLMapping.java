@@ -33,7 +33,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
-import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
+
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
@@ -386,7 +386,7 @@ public class InformazioniServizioURLMapping {
 	
 	/* ***** INIT BUSTA **** */
 	
-	public void refreshDati(IDSoggetto idMittente, Credential identity, HeaderIntegrazione headerIntegrazioneRichiesta) throws ProtocolException{
+	public void refreshDati(IDSoggetto idMittente, Credential identity, IDSoggetto headerIntegrazioneRichiestaSoggettoMittente) throws ProtocolException{
 		
 		String urlInvocazione = null;
 		
@@ -420,7 +420,7 @@ public class InformazioniServizioURLMapping {
 		// TipoMittente
 		String tipoMittente = null;
 		try{
-			tipoMittente = this.readValue(this.tipoMittente, TIPO_MITTENTE, identity, urlInvocazione, element, dnc, xPathEngine, headerIntegrazioneRichiesta);
+			tipoMittente = this.readValue(this.tipoMittente, TIPO_MITTENTE, identity, urlInvocazione, element, dnc, xPathEngine, headerIntegrazioneRichiestaSoggettoMittente);
 		}catch(ProtocolException e){
 			if(tipoMittente==null && !ModalitaIdentificazione.PLUGIN_BASED.equals(this.tipoMittente.getModalitaIdentificazione())){
 				if(this.tipoMittente.getAnonymous()==null){
@@ -437,7 +437,7 @@ public class InformazioniServizioURLMapping {
 		// Mittente
 		String mittente = null;
 		try{
-			mittente = this.readValue(this.mittente, NOME_MITTENTE, identity, urlInvocazione, element, dnc, xPathEngine, headerIntegrazioneRichiesta);
+			mittente = this.readValue(this.mittente, NOME_MITTENTE, identity, urlInvocazione, element, dnc, xPathEngine, headerIntegrazioneRichiestaSoggettoMittente);
 		}catch(ProtocolException e){
 			if(mittente==null && !ModalitaIdentificazione.PLUGIN_BASED.equals(this.mittente.getModalitaIdentificazione())){
 				if(this.mittente.getAnonymous()==null){
@@ -458,7 +458,7 @@ public class InformazioniServizioURLMapping {
 	private String readValue(MappingInfo mappingInfo,String oggetto,
 			Credential identity,String urlInvocazione,
 			Element element, DynamicNamespaceContext dnc ,AbstractXPathExpressionEngine xPathEngine,
-			HeaderIntegrazione headerIntegrazioneRichiesta) throws ProtocolException{
+			IDSoggetto headerIntegrazioneRichiestaSoggettoMittente) throws ProtocolException{
 		
 		if(ModalitaIdentificazione.STATIC.equals(mappingInfo.getModalitaIdentificazione())){
 			if(mappingInfo.getValue()==null){
@@ -489,27 +489,24 @@ public class InformazioniServizioURLMapping {
 		}
 		
 		else if(ModalitaIdentificazione.INPUT_BASED.equals(mappingInfo.getModalitaIdentificazione())){
-			if(headerIntegrazioneRichiesta==null){
+			if(headerIntegrazioneRichiestaSoggettoMittente==null){
 				throw new ProtocolException("URLMapping["+oggetto+"] identificazione "+ModalitaIdentificazione.HEADER_BASED.toString()+" non riuscita: non esistono informazioni di integrazione");
-			}
-			else if(headerIntegrazioneRichiesta.getBusta()==null){
-				throw new ProtocolException("URLMapping["+oggetto+"] identificazione "+ModalitaIdentificazione.HEADER_BASED.toString()+" non riuscita: non esistono informazioni di integrazione (Busta)");
 			}
 			else{
 				if(TIPO_MITTENTE.equals(oggetto)){
-					if(headerIntegrazioneRichiesta.getBusta().getTipoMittente()==null){
+					if(headerIntegrazioneRichiestaSoggettoMittente.getTipo()==null){
 						throw new ProtocolException("URLMapping["+oggetto+"] identificazione "+ModalitaIdentificazione.HEADER_BASED.toString()+" non riuscita: non esistono informazioni di integrazione (TipoMittente)");
 					}
 					else{
-						return headerIntegrazioneRichiesta.getBusta().getTipoMittente();
+						return headerIntegrazioneRichiestaSoggettoMittente.getTipo();
 					}
 				}
 				else if(NOME_MITTENTE.equals(oggetto)){
-					if(headerIntegrazioneRichiesta.getBusta().getMittente()==null){
+					if(headerIntegrazioneRichiestaSoggettoMittente.getNome()==null){
 						throw new ProtocolException("URLMapping["+oggetto+"] identificazione "+ModalitaIdentificazione.HEADER_BASED.toString()+" non riuscita: non esistono informazioni di integrazione (Mittente)");
 					}
 					else{
-						return headerIntegrazioneRichiesta.getBusta().getMittente();
+						return headerIntegrazioneRichiestaSoggettoMittente.getNome();
 					}
 				}
 				else{
