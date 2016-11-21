@@ -107,6 +107,7 @@ public class DiagnosticSerializer implements org.openspcoop2.protocol.sdk.diagno
 			
 			switch (tipoSerializzazione) {
 				case XML:
+				case DEFAULT:
 					
 					ByteArrayOutputStream bout = new ByteArrayOutputStream();
 					XMLUtils.generateMessaggioDiagnostico(msgDiag.getMessaggioDiagnostico(),bout);

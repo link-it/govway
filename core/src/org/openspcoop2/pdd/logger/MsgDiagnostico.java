@@ -849,7 +849,7 @@ public class MsgDiagnostico {
 				
 				if(OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato){
 					try{
-						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.XML);
+						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.DEFAULT);
 						this.loggerMsgDiagnostico.log(logLevelseveritaLivelloLog4J,xml);
 					}catch(Exception e){
 						logError("Errore durante l'emissione del msg diagnostico su log4j (struttura xml): "+e.getMessage(),e);
@@ -1065,7 +1065,7 @@ public class MsgDiagnostico {
 				
 				if(OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato){
 					try{
-						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.XML);
+						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.DEFAULT);
 						this.loggerMsgDiagnostico.log(LogLevels.LOG_LEVEL_FATAL,xml);
 					}catch(Exception e){
 						logError("Errore durante l'emissione del msg diagnostico su log4j (struttura xml): "+e.getMessage(),e);
@@ -1179,7 +1179,7 @@ public class MsgDiagnostico {
 				
 				if(OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato){
 					try{
-						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.XML);
+						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.DEFAULT);
 						this.loggerMsgDiagnostico.log(LogLevels.LOG_LEVEL_ERROR_PROTOCOL,xml);
 					}catch(Exception e){
 						logError("Errore durante l'emissione del msg diagnostico su log4j (struttura xml): "+e.getMessage(),e);
@@ -1288,7 +1288,7 @@ public class MsgDiagnostico {
 				
 				if(OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato){
 					try{
-						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.XML);
+						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.DEFAULT);
 						this.loggerMsgDiagnostico.log(LogLevels.LOG_LEVEL_ERROR_INTEGRATION,xml);
 					}catch(Exception e){
 						logError("Errore durante l'emissione del msg diagnostico su log4j (struttura xml): "+e.getMessage(),e);
@@ -1397,7 +1397,7 @@ public class MsgDiagnostico {
 				
 				if(OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato){
 					try{
-						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.XML);
+						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.DEFAULT);
 						this.loggerMsgDiagnostico.log(LogLevels.LOG_LEVEL_INFO_PROTOCOL,xml);
 					}catch(Exception e){
 						logError("Errore durante l'emissione del msg diagnostico su log4j (struttura xml): "+e.getMessage(),e);
@@ -1507,7 +1507,7 @@ public class MsgDiagnostico {
 				
 				if(OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato){
 					try{
-						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.XML);
+						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.DEFAULT);
 						this.loggerMsgDiagnostico.log(LogLevels.LOG_LEVEL_INFO_INTEGRATION,xml);
 					}catch(Exception e){
 						logError("Errore durante l'emissione del msg diagnostico su log4j (struttura xml): "+e.getMessage(),e);
@@ -1616,7 +1616,7 @@ public class MsgDiagnostico {
 				
 				if(OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato){
 					try{
-						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.XML);
+						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.DEFAULT);
 						this.loggerMsgDiagnostico.log(LogLevels.LOG_LEVEL_DEBUG_LOW,xml);
 					}catch(Exception e){
 						logError("Errore durante l'emissione del msg diagnostico su log4j (struttura xml): "+e.getMessage(),e);
@@ -1723,7 +1723,7 @@ public class MsgDiagnostico {
 				
 				if(OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato){
 					try{
-						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.XML);
+						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.DEFAULT);
 						this.loggerMsgDiagnostico.log(LogLevels.LOG_LEVEL_DEBUG_MEDIUM,xml);
 					}catch(Exception e){
 						logError("Errore durante l'emissione del msg diagnostico su log4j (struttura xml): "+e.getMessage(),e);
@@ -1831,7 +1831,7 @@ public class MsgDiagnostico {
 				
 				if(OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato){
 					try{
-						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.XML);
+						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.DEFAULT);
 						this.loggerMsgDiagnostico.log(LogLevels.LOG_LEVEL_DEBUG_HIGH,xml);
 					}catch(Exception e){
 						logError("Errore durante l'emissione del msg diagnostico su log4j (struttura xml): "+e.getMessage(),e);

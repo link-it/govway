@@ -11,7 +11,7 @@
     <value name="location" field="location" usage="required"/>
     <structure field="busta" usage="required" map-as="org.openspcoop2.core.tracciamento.Busta"/>
     <value name="ricerca-solo-buste-errore" field="ricercaSoloBusteErrore" default="false" usage="optional"/>
-    <value name="busta-xml" field="bustaXml" usage="optional"/>
+    <value name="busta-raw" field="bustaRaw" usage="optional"/>
     <structure field="allegati" usage="optional" map-as="org.openspcoop2.core.tracciamento.Allegati"/>
     <value name="tipo" field="tipo" usage="optional" enum-value-method="toString" style="attribute"/>
   </mapping>

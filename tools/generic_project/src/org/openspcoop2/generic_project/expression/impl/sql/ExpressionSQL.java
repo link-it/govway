@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.openspcoop2.generic_project.beans.AliasField;
 import org.openspcoop2.generic_project.beans.ComplexField;
@@ -211,7 +210,7 @@ public class ExpressionSQL extends ExpressionImpl {
 						sqlQueryObject.addOrderBy(columnOrderBy,SortOrder.ASC.equals(orderedField.getSortOrder()));
 						
 						// Search by alias
-						Vector<String> v = new Vector<String>();
+						List<String> v = new ArrayList<String>();
 						try{
 							v = sqlQueryObject.getFieldsName();
 						}catch(Exception e){}

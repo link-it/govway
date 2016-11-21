@@ -396,13 +396,9 @@ public class TracciaProducer implements ITracciaProducer{
 			String headerProtocollo = null;
 			if(traccia.getBustaAsRawContent()!=null){
 				try{
-					headerProtocollo = traccia.getBustaAsRawContent().toString(TipoSerializzazione.XML);
+					headerProtocollo = traccia.getBustaAsRawContent().toString(TipoSerializzazione.DEFAULT);
 				}catch(Exception e){
-					try{
-						headerProtocollo = traccia.getBustaAsRawContent().toString(TipoSerializzazione.JSON);
-					}catch(Exception e2){
-						throw new Exception("Serializzazione RawContent non riuscito. \nXmlError: "+e.getMessage()+"\njsonErro: "+e2.getMessage(),e);
-					}
+					throw new Exception("Serializzazione RawContent non riuscita: "+e.getMessage(),e);
 				}
 			}
 			else if(traccia.getBustaAsString()!=null){

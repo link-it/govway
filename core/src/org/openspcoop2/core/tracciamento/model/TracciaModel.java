@@ -50,7 +50,7 @@ public class TracciaModel extends AbstractModel<Traccia> {
 		this.LOCATION = new Field("location",java.lang.String.class,"traccia",Traccia.class);
 		this.BUSTA = new org.openspcoop2.core.tracciamento.model.BustaModel(new Field("busta",org.openspcoop2.core.tracciamento.Busta.class,"traccia",Traccia.class));
 		this.RICERCA_SOLO_BUSTE_ERRORE = new Field("ricerca-solo-buste-errore",boolean.class,"traccia",Traccia.class);
-		this.BUSTA_XML = new Field("busta-xml",java.lang.String.class,"traccia",Traccia.class);
+		this.BUSTA_RAW = new Field("busta-raw",java.lang.String.class,"traccia",Traccia.class);
 		this.ALLEGATI = new org.openspcoop2.core.tracciamento.model.AllegatiModel(new Field("allegati",org.openspcoop2.core.tracciamento.Allegati.class,"traccia",Traccia.class));
 		this.TIPO = new Field("tipo",java.lang.String.class,"traccia",Traccia.class);
 	
@@ -69,7 +69,7 @@ public class TracciaModel extends AbstractModel<Traccia> {
 		this.LOCATION = new ComplexField(father,"location",java.lang.String.class,"traccia",Traccia.class);
 		this.BUSTA = new org.openspcoop2.core.tracciamento.model.BustaModel(new ComplexField(father,"busta",org.openspcoop2.core.tracciamento.Busta.class,"traccia",Traccia.class));
 		this.RICERCA_SOLO_BUSTE_ERRORE = new ComplexField(father,"ricerca-solo-buste-errore",boolean.class,"traccia",Traccia.class);
-		this.BUSTA_XML = new ComplexField(father,"busta-xml",java.lang.String.class,"traccia",Traccia.class);
+		this.BUSTA_RAW = new ComplexField(father,"busta-raw",java.lang.String.class,"traccia",Traccia.class);
 		this.ALLEGATI = new org.openspcoop2.core.tracciamento.model.AllegatiModel(new ComplexField(father,"allegati",org.openspcoop2.core.tracciamento.Allegati.class,"traccia",Traccia.class));
 		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"traccia",Traccia.class);
 	
@@ -95,7 +95,7 @@ public class TracciaModel extends AbstractModel<Traccia> {
 	 
 	public IField RICERCA_SOLO_BUSTE_ERRORE = null;
 	 
-	public IField BUSTA_XML = null;
+	public IField BUSTA_RAW = null;
 	 
 	public org.openspcoop2.core.tracciamento.model.AllegatiModel ALLEGATI = null;
 	 

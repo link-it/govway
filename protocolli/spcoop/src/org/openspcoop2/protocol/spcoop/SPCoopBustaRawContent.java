@@ -17,6 +17,7 @@ public class SPCoopBustaRawContent extends BustaRawContent<SOAPHeaderElement> {
 	public String toString(TipoSerializzazione tipoSerializzazione) throws ProtocolException{
 		switch (tipoSerializzazione) {
 		case XML:
+		case DEFAULT:
 			return Utilities.toString(this.element,false);
 		default:
 			throw new ProtocolException("Tipo di serializzazione ["+tipoSerializzazione+"] non supportata");
@@ -27,6 +28,7 @@ public class SPCoopBustaRawContent extends BustaRawContent<SOAPHeaderElement> {
 	public byte[] toByteArray(TipoSerializzazione tipoSerializzazione) throws ProtocolException{
 		switch (tipoSerializzazione) {
 		case XML:
+		case DEFAULT:
 			return Utilities.toByteArray(this.element,false);
 		default:
 			throw new ProtocolException("Tipo di serializzazione ["+tipoSerializzazione+"] non supportata");

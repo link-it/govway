@@ -29,7 +29,7 @@
             <xsd:element default="false" minOccurs="0" name="ricerca-solo-buste-errore" type="xsd:boolean">
                 
             </xsd:element>
-            <xsd:element minOccurs="0" name="busta-xml" type="xsd:string">
+            <xsd:element minOccurs="0" name="busta-raw" type="xsd:string">
                 
             </xsd:element>
             <!-- Dati Allegati -->

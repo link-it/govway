@@ -258,7 +258,7 @@ public class Tracciamento {
 				
 				// Miglioramento performance
 				if(OpenSPCoop2Logger.loggerTracciamentoAbilitato){
-					xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.XML);
+					xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
 					if(xml==null)
 						throw new Exception("Traccia non costruita");
 					this.loggerTracciamento.info(xml);
@@ -287,7 +287,7 @@ public class Tracciamento {
 				// check eventuale costruzione dell'xml non fatto per log4j disabilitato.
 				if( (xml==null) && (OpenSPCoop2Logger.loggerTracciamentoAbilitato==false) ){
 					try{
-						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.XML);
+						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
 					}catch(Exception eBuild){}
 				}
 				if(xml==null){
@@ -342,7 +342,7 @@ public class Tracciamento {
 		
 				// Miglioramento performance
 				if(OpenSPCoop2Logger.loggerTracciamentoAbilitato){
-					xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.XML);
+					xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
 					if(xml==null)
 						throw new Exception("Traccia non costruita");
 					this.loggerTracciamento.info(xml);
@@ -371,7 +371,7 @@ public class Tracciamento {
 				// check eventuale costruzione dell'xml non fatto per log4j disabilitato.
 				if( (xml==null) && (OpenSPCoop2Logger.loggerTracciamentoAbilitato==false) ){
 					try{
-						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.XML);
+						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
 					}catch(Exception eBuild){}
 				}
 				if(xml==null){
@@ -424,7 +424,7 @@ public class Tracciamento {
 				
 				// Miglioramento performance
 				if(OpenSPCoop2Logger.loggerTracciamentoAbilitato){
-					xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.XML);
+					xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
 					if(xml==null)
 						throw new Exception("Traccia non costruita");
 					this.loggerTracciamento.info(xml);
@@ -453,7 +453,7 @@ public class Tracciamento {
 				// check eventuale costruzione dell'xml non fatto per log4j disabilitato.
 				if( (xml==null) && (OpenSPCoop2Logger.loggerTracciamentoAbilitato==false) ){
 					try{
-						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.XML);
+						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
 					}catch(Exception eBuild){}
 				}
 				if(xml==null){
@@ -510,7 +510,7 @@ public class Tracciamento {
 							
 				// Miglioramento performance
 				if(OpenSPCoop2Logger.loggerTracciamentoAbilitato){
-					xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.XML);
+					xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
 					if(xml==null)
 						throw new Exception("Traccia non costruita");
 					this.loggerTracciamento.info(xml);
@@ -539,7 +539,7 @@ public class Tracciamento {
 				// check eventuale costruzione dell'xml non fatto per log4j disabilitato.
 				if( (xml==null) && (OpenSPCoop2Logger.loggerTracciamentoAbilitato==false) ){
 					try{
-						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.XML);
+						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
 					}catch(Exception eBuild){}
 				}
 				if(xml==null){
@@ -594,7 +594,7 @@ public class Tracciamento {
 								
 				// Miglioramento performance
 				if(OpenSPCoop2Logger.loggerTracciamentoAbilitato){
-					xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.XML);
+					xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
 					if(xml==null)
 						throw new Exception("Traccia non costruita");
 					this.loggerTracciamento.info(xml);
@@ -623,7 +623,7 @@ public class Tracciamento {
 				// check eventuale costruzione dell'xml non fatto per log4j disabilitato.
 				if( (xml==null) && (OpenSPCoop2Logger.loggerTracciamentoAbilitato==false) ){
 					try{
-						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.XML);
+						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
 					}catch(Exception eBuild){}
 				}
 				if(xml==null){
@@ -676,7 +676,7 @@ public class Tracciamento {
 			
 				// Miglioramento performance
 				if(OpenSPCoop2Logger.loggerTracciamentoAbilitato){
-					xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.XML);
+					xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
 					if(xml==null)
 						throw new Exception("Traccia non costruita");
 					this.loggerTracciamento.info(xml);
@@ -705,7 +705,7 @@ public class Tracciamento {
 				// check eventuale costruzione dell'xml non fatto per log4j disabilitato.
 				if( (xml==null) && (OpenSPCoop2Logger.loggerTracciamentoAbilitato==false) ){
 					try{
-						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.XML);
+						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.DEFAULT);
 					}catch(Exception eBuild){}
 				}
 				if(xml==null){

@@ -45,7 +45,7 @@ import java.io.Serializable;
  * 			&lt;element name="identificativo-correlazione-risposta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="location" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="busta" type="{http://www.openspcoop2.org/core/tracciamento}busta" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="busta-xml" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="busta-raw" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="allegati" type="{http://www.openspcoop2.org/core/tracciamento}allegati" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="tipo" type="{http://www.openspcoop2.org/core/tracciamento}TipoTraccia" use="optional"/>
@@ -68,7 +68,7 @@ import java.io.Serializable;
   	"identificativoCorrelazioneRisposta",
   	"location",
   	"busta",
-  	"bustaXml",
+  	"bustaRaw",
   	"allegati"
   }
 )
@@ -173,12 +173,12 @@ public class Traccia extends org.openspcoop2.utils.beans.BaseBean implements Ser
     this.ricercaSoloBusteErrore = ricercaSoloBusteErrore;
   }
 
-  public java.lang.String getBustaXml() {
-    return this.bustaXml;
+  public java.lang.String getBustaRaw() {
+    return this.bustaRaw;
   }
 
-  public void setBustaXml(java.lang.String bustaXml) {
-    this.bustaXml = bustaXml;
+  public void setBustaRaw(java.lang.String bustaRaw) {
+    this.bustaRaw = bustaRaw;
   }
 
   public Allegati getAllegati() {
@@ -261,8 +261,8 @@ public class Traccia extends org.openspcoop2.utils.beans.BaseBean implements Ser
   protected boolean ricercaSoloBusteErrore = false;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="busta-xml",required=false,nillable=false)
-  protected java.lang.String bustaXml;
+  @XmlElement(name="busta-raw",required=false,nillable=false)
+  protected java.lang.String bustaRaw;
 
   @XmlElement(name="allegati",required=false,nillable=false)
   protected Allegati allegati;

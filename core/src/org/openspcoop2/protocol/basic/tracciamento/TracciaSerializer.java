@@ -87,18 +87,14 @@ public class TracciaSerializer implements org.openspcoop2.protocol.sdk.tracciame
 			org.openspcoop2.core.tracciamento.Traccia tracciaBase = tracciaObject.getTraccia();
 			
 			// xml
-			if(tracciaBase.getBustaXml()==null){
+			if(tracciaBase.getBustaRaw()==null){
 				if(tracciaObject.getBustaAsByteArray()!=null)
-					tracciaBase.setBustaXml(new String(tracciaObject.getBustaAsByteArray()));
+					tracciaBase.setBustaRaw(new String(tracciaObject.getBustaAsByteArray()));
 				else if(tracciaObject.getBustaAsRawContent()!=null){			
 					try{
-						tracciaBase.setBustaXml(tracciaObject.getBustaAsRawContent().toString(TipoSerializzazione.XML));
+						tracciaBase.setBustaRaw(tracciaObject.getBustaAsRawContent().toString(TipoSerializzazione.DEFAULT));
 					}catch(Exception e){
-						try{
-							tracciaBase.setBustaXml(tracciaObject.getBustaAsRawContent().toString(TipoSerializzazione.JSON));
-						}catch(Exception e2){
-							throw new Exception("Serializzazione RawContent non riuscito. \nXmlError: "+e.getMessage()+"\njsonErro: "+e2.getMessage(),e);
-						}
+						throw new Exception("Serializzazione RawContent non riuscita: "+e.getMessage(),e);
 					}
 				}
 			}
@@ -220,6 +216,7 @@ public class TracciaSerializer implements org.openspcoop2.protocol.sdk.tracciame
 			
 			switch (tipoSerializzazione) {
 				case XML:
+				case DEFAULT:
 					
 					ByteArrayOutputStream bout = new ByteArrayOutputStream();
 					org.openspcoop2.core.tracciamento.utils.XMLUtils.generateTraccia(tracciaBase,bout);

@@ -98,6 +98,7 @@ public class SPCoopDiagnosticSerializer extends DiagnosticSerializer implements 
 					
 			switch (tipoSerializzazione) {
 				case XML:
+				case DEFAULT:
 					
 					ByteArrayOutputStream bout = new ByteArrayOutputStream();
 					bout.write(org.openspcoop2.message.xml.XMLUtils.getInstance().toByteArray(this.toElement(msgDiag)));

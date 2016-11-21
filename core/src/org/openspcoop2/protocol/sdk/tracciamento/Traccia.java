@@ -312,10 +312,10 @@ public class Traccia implements java.io.Serializable {
 	}
 	// [wrapper]
 	public String getBustaAsString() {
-		return this.traccia.getBustaXml();
+		return this.traccia.getBustaRaw();
 	}
 	public void setBustaAsString(String bustaAsString) {
-		this.traccia.setBustaXml(bustaAsString);
+		this.traccia.setBustaRaw(bustaAsString);
 	}
 	
 	

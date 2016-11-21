@@ -34,6 +34,6 @@ import java.io.Serializable;
 
 public enum TipoSerializzazione implements Serializable {
 
-	XML, JSON
+	DEFAULT, XML, JSON
 }
 
