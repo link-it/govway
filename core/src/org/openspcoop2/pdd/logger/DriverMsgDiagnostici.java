@@ -26,11 +26,9 @@ package org.openspcoop2.pdd.logger;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.sql.DataSource;
 
-import org.slf4j.Logger;
 import org.openspcoop2.protocol.engine.BasicProtocolFactory;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiException;
@@ -42,6 +40,7 @@ import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazione;
 import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoException;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
+import org.slf4j.Logger;
 
 /**
  * Interfaccia di ricerca dei messaggi diagnostici
@@ -59,10 +58,10 @@ public class DriverMsgDiagnostici implements IDiagnosticDriver {
 	}
 
 
-	public void setPropertiesMsgDiagnostici(Vector<String> properties) {
+	public void setPropertiesMsgDiagnostici(List<String> properties) {
 		this.driverBase.setPropertiesMsgDiagnostici(properties);
 	}
-	public void setPropertiesMsgDiagCorrelazione(Vector<String> properties) {
+	public void setPropertiesMsgDiagCorrelazione(List<String> properties) {
 		this.driverBase.setPropertiesMsgDiagCorrelazione(properties);
 	}	
 	

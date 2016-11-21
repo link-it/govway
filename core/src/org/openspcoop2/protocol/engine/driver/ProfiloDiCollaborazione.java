@@ -27,9 +27,9 @@ package org.openspcoop2.protocol.engine.driver;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.engine.Configurazione;
@@ -57,6 +57,7 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.slf4j.Logger;
 
 /**
  * Sono inclusi i metodi per la gestione del profilo di collaborazione.
@@ -2643,12 +2644,12 @@ public class ProfiloDiCollaborazione {
 	 * si occupa di ritornare un array di buste da reinviare, aggiornando le loro date di registrazione.
 	 *
 	 * @param timeout Minuti dopo il quale una data risulta scaduta.
-	 * @return un vector di {@link org.openspcoop2.protocol.sdk.Busta} contenente le informazioni necessarie per il re-invio delle buste, 
+	 * @return un List di {@link org.openspcoop2.protocol.sdk.Busta} contenente le informazioni necessarie per il re-invio delle buste, 
 	 *         se esistono buste non ringraziate.
 	 * @deprecated utilizzare la versione non serializable
 	 */
 	@Deprecated
-	public Vector<Busta> asincrono_getBusteAsincronePerUlterioreInoltro_serializable(long timeout)throws ProtocolException{
+	public List<Busta> asincrono_getBusteAsincronePerUlterioreInoltro_serializable(long timeout)throws ProtocolException{
 		return this.asincrono_getBusteAsincronePerUlterioreInoltro_serializable(timeout,60l,100);
 	}
 
@@ -2659,12 +2660,12 @@ public class ProfiloDiCollaborazione {
 	 * @param timeout Minuti dopo il quale una data risulta scaduta.
 	 * @param attesaAttiva AttesaAttiva per la gestione del livello di serializable
 	 * @param checkInterval Intervallo di check per la gestione  del livello di serializable
-	 * @return un vector di {@link org.openspcoop2.protocol.sdk.Busta} contenente le informazioni necessarie per il re-invio delle buste, 
+	 * @return un List di {@link org.openspcoop2.protocol.sdk.Busta} contenente le informazioni necessarie per il re-invio delle buste, 
 	 *         se esistono buste non ringraziate.
 	 * @deprecated utilizzare la versione non serializable 
 	 */
 	@Deprecated
-	public Vector<Busta> asincrono_getBusteAsincronePerUlterioreInoltro_serializable(long timeout,long attesaAttiva,int checkInterval)throws ProtocolException{
+	public List<Busta> asincrono_getBusteAsincronePerUlterioreInoltro_serializable(long timeout,long attesaAttiva,int checkInterval)throws ProtocolException{
 		if(this.state instanceof StatefulMessage) {
 			StatefulMessage stateful = (StatefulMessage)this.state;
 			Connection connectionDB = stateful.getConnectionDB();
@@ -2687,7 +2688,7 @@ public class ProfiloDiCollaborazione {
 			}
 
 			boolean getBusteOK = false;
-			java.util.Vector<Busta> busteNonRingraziate = new java.util.Vector<Busta>();	
+			java.util.List<Busta> busteNonRingraziate = new java.util.ArrayList<Busta>();	
 
 			long scadenzaWhile = DateManager.getTimeMillis() + attesaAttiva;
 
@@ -2695,7 +2696,7 @@ public class ProfiloDiCollaborazione {
 
 				PreparedStatement pstmt = null;
 				ResultSet rs = null;
-				java.util.Vector<String> IDBuste = new java.util.Vector<String>();
+				java.util.List<String> IDBuste = new java.util.ArrayList<String>();
 				try{	
 
 					long nowTime = DateManager.getTimeMillis() - (timeout * 60 * 1000);
@@ -2788,17 +2789,17 @@ public class ProfiloDiCollaborazione {
 	 * si occupa di ritornare un array di buste da reinviare, aggiornando le loro date di registrazione.
 	 *
 	 * @param timeout Minuti dopo il quale una data risulta scaduta.
-	 * @return un vector di {@link org.openspcoop2.protocol.sdk.Busta} contenente le informazioni necessarie per il re-invio delle buste, 
+	 * @return un List di {@link org.openspcoop2.protocol.sdk.Busta} contenente le informazioni necessarie per il re-invio delle buste, 
 	 *         se esistono buste non ringraziate.
 	 */
-	public Vector<BustaNonRiscontrata> asincrono_getBusteAsincronePerUlterioreInoltro(long timeout,int limit,int offset,boolean logQuery)throws ProtocolException{
+	public List<BustaNonRiscontrata> asincrono_getBusteAsincronePerUlterioreInoltro(long timeout,int limit,int offset,boolean logQuery)throws ProtocolException{
 		if(this.state instanceof StatefulMessage) {
 			StatefulMessage stateful = (StatefulMessage)this.state;
 			Connection connectionDB = stateful.getConnectionDB();
 			
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
-			java.util.Vector<String> IDBuste = new java.util.Vector<String>();
+			java.util.List<String> IDBuste = new java.util.ArrayList<String>();
 			String queryString = null;
 			try{	
 
@@ -2923,7 +2924,7 @@ public class ProfiloDiCollaborazione {
 				throw new  ProtocolException(errorMsg,e);
 			}
 
-			Vector<BustaNonRiscontrata> listaBustaNonRiscontrata = new Vector<BustaNonRiscontrata>();
+			List<BustaNonRiscontrata> listaBustaNonRiscontrata = new ArrayList<BustaNonRiscontrata>();
 			for (int i = 0; i < IDBuste.size(); i++) {
 				BustaNonRiscontrata bustaNonRiscontrata = new BustaNonRiscontrata();
 				bustaNonRiscontrata.setIdentificativo(IDBuste.get(i));

@@ -29,7 +29,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -918,7 +917,7 @@ public class SplitWSDL {
 			}
 
 			/** Pulizia message */
-			Vector<Message> mess = new Vector<Message>();
+			List<Message> mess = new ArrayList<Message>();
 			m = this.wsdlConcettuale.getAllPortTypes();
 			it = m.values().iterator();
 			while (it.hasNext()){
@@ -939,7 +938,7 @@ public class SplitWSDL {
 			//rimuovo i messaggi non presenti nei porttype
 			m = this.wsdlConcettuale.getMessages();
 			it = m.values().iterator();
-			Vector<Message> removeM = new Vector<Message>();
+			List<Message> removeM = new ArrayList<Message>();
 			while (it.hasNext()){
 				Message temp = ((Message) it.next());
 				if (!mess.contains(temp)){
@@ -1032,7 +1031,7 @@ public class SplitWSDL {
 		}
 
 		//riimposto i portType
-		Vector<PortType> pts = new Vector<PortType>();
+		List<PortType> pts = new ArrayList<PortType>();
 
 		for (int i=0, j=portTypes.length; i<j; i++){
 
@@ -1078,7 +1077,7 @@ public class SplitWSDL {
 			//def.removePortType(((PortType)it.next()).getQName());
 		}
 
-		Vector<Message> mess = new Vector<Message>();
+		List<Message> mess = new ArrayList<Message>();
 		//inserisco quelli richiesti
 		for (int i=0, j=pts.size(); i<j; i++){
 			PortType p = pts.get(i);
@@ -1100,7 +1099,7 @@ public class SplitWSDL {
 
 		m = wsdlLogico.getMessages();
 		it = m.values().iterator();
-		Vector<Message> removeM = new Vector<Message>();
+		List<Message> removeM = new ArrayList<Message>();
 		while (it.hasNext()){
 			Message temp = ((Message) it.next());
 			if (!mess.contains(temp))
@@ -1201,7 +1200,7 @@ public class SplitWSDL {
 		Map<?,?> m = wsdlImplementativo.getBindings();
 		Iterator<?> it = m.values().iterator();
 		//creo il vettore dei binding corretti.
-		Vector<Binding> bnd = new Vector<Binding>();
+		List<Binding> bnd = new ArrayList<Binding>();
 		while (it.hasNext()){
 			Binding now = wsdlImplementativo.getBinding(((Binding)it.next()).getQName());
 			String refPTName = now.getPortType().getQName().getLocalPart();
@@ -1217,7 +1216,7 @@ public class SplitWSDL {
 			if (found){
 				List<?> ops = now.getBindingOperations();
 				String[] myops = operations[i].split(",");
-				Vector<String> toDel = new Vector<String>();
+				List<String> toDel = new ArrayList<String>();
 				for (int h=0, k=ops.size(); h<k; h++){
 					String curName = ((BindingOperation)ops.get(h)).getName();
 					boolean rem = true;

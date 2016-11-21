@@ -30,12 +30,10 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
-import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.pdd.mdb.InoltroBuste;
@@ -58,6 +56,7 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
+import org.slf4j.Logger;
 
 /**
  * Driver per il Monitoraggio della Porta di Dominio OpenSPCoop
@@ -88,8 +87,8 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 	/**
 	 * Properties
 	 */
-	private Vector<String> properties;
-	public void setProperties(Vector<String> properties) {
+	private List<String> properties;
+	public void setProperties(List<String> properties) {
 		this.properties = properties;
 	}
 
@@ -730,7 +729,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 					pstmt = con.prepareStatement(sqlQuerySA);
 					pstmt.setString(1, msgs.get(i).getIdMessaggio());
 					rs = pstmt.executeQuery();
-					Vector<ServizioApplicativoConsegna> sconsegna = new Vector<ServizioApplicativoConsegna>();
+					List<ServizioApplicativoConsegna> sconsegna = new ArrayList<ServizioApplicativoConsegna>();
 					while(rs.next()){
 						ServizioApplicativoConsegna datiConsegna = new ServizioApplicativoConsegna();
 						if(rs.getInt("SBUSTAMENTO_SOAP")==1)
@@ -951,7 +950,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 				}
 			}
 			rs = pstmt.executeQuery();
-			Vector<Messaggio> msgs = new Vector<Messaggio>();
+			List<Messaggio> msgs = new ArrayList<Messaggio>();
 
 			this.log.debug("query["+sqlQueryObject+"] listaMessaggi");
 			this.log.debug("Soglia ["+search.getSoglia()+"] ["+data_registrazione_limite+"] listaMessaggi");

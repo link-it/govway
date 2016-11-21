@@ -29,7 +29,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
 import javax.xml.soap.SOAPBody;
 
@@ -2099,7 +2098,7 @@ public class EJBUtils {
 			Throwable eProcessamento, ParseException parseException)throws EJBUtilsException,ProtocolException{ 
 		Eccezione ecc = new Eccezione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreProcessamento(errore.getDescrizione(this.protocolFactory)),
 				false,this.idModulo,this.protocolFactory);
-		Vector<Eccezione> errs = new Vector<Eccezione>();
+		List<Eccezione> errs = new ArrayList<Eccezione>();
 		errs.add(ecc);
 		sendAsRispostaBustaErroreProcessamento(idModuloInAttesa,busta,errs,idCorrelazioneApplicativa,null,servizioApplicativoFruitore,eProcessamento,parseException);
 	}
@@ -2109,7 +2108,7 @@ public class EJBUtils {
 			String servizioApplicativoFruitore,
 			Throwable eProcessamento, ParseException parseException)throws EJBUtilsException,ProtocolException{ 
 		Eccezione ecc = new Eccezione(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreProcessamento(errore.getDescrizione(this.protocolFactory)),false,this.idModulo,this.protocolFactory);
-		Vector<Eccezione> errs = new Vector<Eccezione>();
+		List<Eccezione> errs = new ArrayList<Eccezione>();
 		errs.add(ecc);
 		sendAsRispostaBustaErroreProcessamento(idModuloInAttesa,busta,errs,idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,eProcessamento,parseException);
 	}
@@ -2128,7 +2127,7 @@ public class EJBUtils {
 	 * 
 	 */
 	public void sendAsRispostaBustaErroreProcessamento(String idModuloInAttesa,Busta busta,
-			Vector<Eccezione> errs,String idCorrelazioneApplicativa,String idCorrelazioneApplicativaRisposta,
+			List<Eccezione> errs,String idCorrelazioneApplicativa,String idCorrelazioneApplicativaRisposta,
 			String servizioApplicativoFruitore,
 			Throwable eProcessamento, ParseException parseException)throws EJBUtilsException,ProtocolException{ 
 
@@ -2190,13 +2189,13 @@ public class EJBUtils {
 	 */
 	public void sendAsRispostaBustaErroreValidazione(String idModuloInAttesa,Busta busta,Eccezione eccezione,
 			String idCorrelazioneApplicativa,String servizioApplicativoFruitore)throws EJBUtilsException,ProtocolException{ 
-		Vector<Eccezione> v = new Vector<Eccezione>();
+		List<Eccezione> v = new ArrayList<Eccezione>();
 		v.add(eccezione);
 		sendAsRispostaBustaErroreValidazione(idModuloInAttesa,busta,v,idCorrelazioneApplicativa,null,servizioApplicativoFruitore);
 	}
 	public void sendAsRispostaBustaErroreValidazione(String idModuloInAttesa,Busta busta,Eccezione eccezione,
 			String idCorrelazioneApplicativa,String idCorrelazioneApplicativaRisposta,String servizioApplicativoFruitore)throws EJBUtilsException,ProtocolException{ 
-		Vector<Eccezione> v = new Vector<Eccezione>();
+		List<Eccezione> v = new ArrayList<Eccezione>();
 		v.add(eccezione);
 		sendAsRispostaBustaErroreValidazione(idModuloInAttesa,busta,v,idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore);
 	}
@@ -2214,7 +2213,7 @@ public class EJBUtils {
 	 * @param eccezioni Eccezioni di validazione
 	 * 
 	 */
-	public void sendAsRispostaBustaErroreValidazione(String idModuloInAttesa,Busta busta,Vector<Eccezione> eccezioni,
+	public void sendAsRispostaBustaErroreValidazione(String idModuloInAttesa,Busta busta,List<Eccezione> eccezioni,
 			String idCorrelazioneApplicativa,String idCorrelazioneApplicativaRisposta,String servizioApplicativoFruitore)throws EJBUtilsException,ProtocolException{ 
 
 		//Costruisco busta Errore 
@@ -2255,7 +2254,7 @@ public class EJBUtils {
 	 * @param eccezioni Eccezioni di validazione 
 	 * 
 	 */
-	public void sendAsRispostaBustaErrore_inoltroSegnalazioneErrore(Busta busta,Vector<Eccezione> eccezioni)throws EJBUtilsException,ProtocolException{ 
+	public void sendAsRispostaBustaErrore_inoltroSegnalazioneErrore(Busta busta,List<Eccezione> eccezioni)throws EJBUtilsException,ProtocolException{ 
 		
 		String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
 

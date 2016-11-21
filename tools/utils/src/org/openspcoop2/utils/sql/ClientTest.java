@@ -29,8 +29,8 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -788,7 +788,7 @@ public class ClientTest {
 			sqlQueryObject.setSortType(true);
 
 			//log.info("["+tipo.toString()+"] getField: \t"+sqlQueryObject.getFields());
-			Vector<String> trovato = sqlQueryObject.getFieldsName();
+			List<String> trovato = sqlQueryObject.getFieldsName();
 			log.info("(test0_engine) ["+tipo.toString()+"] getFieldsName: \t"+trovato);
 			String atteso = "cont, mittente, ALIASDEST";
 			if(atteso.equals(trovato.toString())){

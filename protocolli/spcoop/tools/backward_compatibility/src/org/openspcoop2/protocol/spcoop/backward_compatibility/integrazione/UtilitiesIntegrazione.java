@@ -24,7 +24,8 @@
 package org.openspcoop2.protocol.spcoop.backward_compatibility.integrazione;
 
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPElement;
@@ -554,7 +555,7 @@ public class UtilitiesIntegrazione {
 			}
 		}
 
-		Vector<SOAPElement> v = new Vector<SOAPElement>(); // mantengo eventuali message element presenti
+		List<SOAPElement> v = new ArrayList<SOAPElement>(); // mantengo eventuali message element presenti
 		if(headerIntegrazione!=null){
 			
 			java.util.Iterator<?> it = headerIntegrazione.getChildElements();

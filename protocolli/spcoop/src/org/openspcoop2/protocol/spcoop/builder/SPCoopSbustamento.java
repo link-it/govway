@@ -25,7 +25,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.SequenceInputStream;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MimeHeaders;
@@ -217,11 +219,11 @@ public class SPCoopSbustamento {
 			// Questo fa arrabbiare il parser.
 			// Aggiungo un WrapperElement per farmi costruire l'elemento e poi ne cerco i figli.
 			
-			Vector<InputStream> iss = new Vector<InputStream>();
+			List<InputStream> iss = new ArrayList<InputStream>();
 			iss.add(new ByteArrayInputStream("<OpenSPCoopWrapper>".getBytes()));
 			iss.add(isBody);
 			iss.add(new ByteArrayInputStream("</OpenSPCoopWrapper>".getBytes()));
-			InputStream is = new SequenceInputStream(iss.elements());
+			InputStream is = new SequenceInputStream(Collections.enumeration(iss));
 				
 			Document doc = this.xmlUtils.newDocument(is);
 			NodeList nl = doc.getDocumentElement().getChildNodes();

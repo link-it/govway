@@ -30,10 +30,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
-import org.slf4j.Logger;
 import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IUnmarshallingContext;
@@ -43,12 +42,16 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.RegistroServizi;
+import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
-import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
+import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
@@ -56,12 +59,9 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.ValidazioneSemantica;
 import org.openspcoop2.message.xml.ValidatoreXSD;
-import org.openspcoop2.core.registry.AccordoServizioParteComune;
-import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.RegistroServizi;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 
 
 /**
@@ -457,7 +457,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 	public List<IDAccordoCooperazione> getAllIdAccordiCooperazione(FiltroRicercaAccordi filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		try{
 
-			Vector<IDAccordoCooperazione> idAccordi = new Vector<IDAccordoCooperazione>();
+			List<IDAccordoCooperazione> idAccordi = new ArrayList<IDAccordoCooperazione>();
 			for(int i=0; i<this.registro.sizeAccordoCooperazioneList(); i++){
 				org.openspcoop2.core.registry.AccordoCooperazione ac = this.registro.getAccordoCooperazione(i);
 				String uriAC = this.idAccordoCooperazioneFactory.getUriFromAccordo(ac);
@@ -598,7 +598,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 	public List<IDAccordo> getAllIdAccordiServizioParteComune(FiltroRicercaAccordi filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		try{
 
-			Vector<IDAccordo> idAccordi = new Vector<IDAccordo>();
+			List<IDAccordo> idAccordi = new ArrayList<IDAccordo>();
 			for(int i=0; i<this.registro.sizeAccordoServizioParteComuneList(); i++){
 				org.openspcoop2.core.registry.AccordoServizioParteComune as = this.registro.getAccordoServizioParteComune(i);
 				String uriAS = this.idAccordoFactory.getUriFromAccordo(as);
@@ -740,7 +740,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 	public List<String> getAllIdPorteDominio(FiltroRicerca filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		try{
 
-			Vector<String> nomiPorteDiDominio = new Vector<String>();
+			List<String> nomiPorteDiDominio = new ArrayList<String>();
 			for(int i=0; i<this.registro.sizePortaDominioList(); i++){
 				org.openspcoop2.core.registry.PortaDominio pd = this.registro.getPortaDominio(i);
 				if(filtroRicerca!=null){
@@ -834,7 +834,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 	@Override
 	public List<IDSoggetto> getAllIdSoggetti(FiltroRicercaSoggetti filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		try{
-			Vector<IDSoggetto> idSoggetti = new Vector<IDSoggetto>();
+			List<IDSoggetto> idSoggetti = new ArrayList<IDSoggetto>();
 			for(int i=0; i<this.registro.sizeSoggettoList(); i++){
 				org.openspcoop2.core.registry.Soggetto ss = this.registro.getSoggetto(i);
 				if(filtroRicerca!=null){
@@ -1022,7 +1022,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 	public List<IDAccordo> getAllIdAccordiServizioParteSpecifica(
 			FiltroRicercaServizi filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		try{
-			Vector<IDAccordo> idAccordiServizi = new Vector<IDAccordo>();
+			List<IDAccordo> idAccordiServizi = new ArrayList<IDAccordo>();
 			for(int i=0; i<this.registro.sizeSoggettoList(); i++){
 				org.openspcoop2.core.registry.Soggetto ss = this.registro.getSoggetto(i);
 				if(filtroRicerca!=null){
@@ -1108,7 +1108,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 	@Override
 	public List<IDServizio> getAllIdServizi(FiltroRicercaServizi filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		try{
-			Vector<IDServizio> idServizi = new Vector<IDServizio>();
+			List<IDServizio> idServizi = new ArrayList<IDServizio>();
 			for(int i=0; i<this.registro.sizeSoggettoList(); i++){
 				org.openspcoop2.core.registry.Soggetto ss = this.registro.getSoggetto(i);
 				if(filtroRicerca!=null){

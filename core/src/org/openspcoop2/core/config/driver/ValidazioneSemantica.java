@@ -26,7 +26,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
@@ -779,7 +778,7 @@ public class ValidazioneSemantica {
 		else
 			idPorta = pd.getNome();
 		int numPD = 0;
-		Vector<String> pdTrovate = new Vector<String>();
+		List<String> pdTrovate = new ArrayList<String>();
 		for(int j=0; j<this.configurazione.sizeSoggettoList();j++){
 			Soggetto s = this.configurazione.getSoggetto(j);
 			for(int k =0; k<s.sizePortaDelegataList(); k++){

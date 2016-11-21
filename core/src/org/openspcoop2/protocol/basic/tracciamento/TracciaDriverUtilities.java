@@ -29,9 +29,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -49,9 +47,10 @@ import org.openspcoop2.protocol.sdk.constants.EsitoElaborazioneMessaggioTracciat
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.SubCodiceErrore;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
-import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
+import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiException;
 import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoException;
 import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoNotFoundException;
 import org.openspcoop2.protocol.sdk.tracciamento.EsitoElaborazioneMessaggioTracciato;
@@ -63,6 +62,7 @@ import org.openspcoop2.utils.StringWrapper;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
+import org.slf4j.Logger;
 
 /**
  * DriverTracciamentoUtilities
@@ -505,7 +505,7 @@ public class TracciaDriverUtilities {
 	 * @throws DriverMsgDiagnosticiException
 	 */
 	public static Traccia getTraccia(Connection con,String tipoDatabase,
-			Logger log,Long id,Vector<String> properties,
+			Logger log,Long id,List<String> properties,
 			ProtocolliRegistrati protocolli) throws DriverTracciamentoException, DriverTracciamentoNotFoundException, SQLQueryObjectException{
 		
 		PreparedStatement pstmt = null;

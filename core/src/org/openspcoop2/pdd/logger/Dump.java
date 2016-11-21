@@ -27,7 +27,7 @@ package org.openspcoop2.pdd.logger;
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Vector;
+import java.util.List;
 
 import org.openspcoop2.core.constants.TipoMessaggio;
 import org.openspcoop2.core.constants.TipoPdD;
@@ -44,7 +44,7 @@ import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreUscita;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.dump.IDumpOpenSPCoopAppender;
+import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.tracciamento.TracciamentoException;
@@ -99,8 +99,8 @@ public class Dump {
 	private MsgDiagnostico msgDiagErroreDump = null;
 	
 	/** Appender personalizzati per i dump applicativi di OpenSPCoop */
-	private Vector<IDumpOpenSPCoopAppender> loggerDumpOpenSPCoopAppender = null; 
-	private Vector<String> tipoDumpOpenSPCoopAppender = null; 
+	private List<IDumpProducer> loggerDumpOpenSPCoopAppender = null; 
+	private List<String> tipoDumpOpenSPCoopAppender = null; 
 	
 	private IProtocolFactory<?> protocolFactory = null;
 	

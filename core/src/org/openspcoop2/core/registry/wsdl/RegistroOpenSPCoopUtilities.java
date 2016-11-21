@@ -24,14 +24,13 @@ package org.openspcoop2.core.registry.wsdl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.wsdl.Import;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Documento;
@@ -44,6 +43,7 @@ import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 import org.openspcoop2.utils.wsdl.WSDLUtilities;
 import org.openspcoop2.utils.xml.PrettyPrintXMLUtils;
 import org.openspcoop2.utils.xml.XSDUtils;
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -1000,7 +1000,7 @@ public class RegistroOpenSPCoopUtilities {
 			
 			// Read import into wsdl.
 			List<Node> importsIntoWSDL = this.wsdlUtilities.readImports(doc);
-			Vector<Node> newSchemi = new Vector<Node>();		
+			List<Node> newSchemi = new ArrayList<Node>();		
 			for(int i=0; i<importsIntoWSDL.size(); i++){
 				Node n = importsIntoWSDL.get(i);
 				String namespaceImport = null;

@@ -33,13 +33,13 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
 
-import org.slf4j.Logger;
 import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IUnmarshallingContext;
@@ -55,11 +55,11 @@ import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Connettore;
-import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
@@ -81,6 +81,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.slf4j.Logger;
 
 /**
  * Classe utilizzata per convertire dati presenti in un file XML in un altra risorsa che implementa l'interfaccia CRUD.
@@ -657,8 +658,8 @@ public class XMLDataConverter {
 		
 		
 		// Accordi Servizio Parte Comune
-		Vector<AccordoServizioParteComune> accordiServizioComposti = new  Vector<AccordoServizioParteComune>();
-		Vector<String> accordiServizioCompostiID = new  Vector<String>();
+		List<AccordoServizioParteComune> accordiServizioComposti = new ArrayList<AccordoServizioParteComune>();
+		List<String> accordiServizioCompostiID = new ArrayList<String>();
 		try{
 			for(int i=0; i<this.sorgenteRegistro.sizeAccordoServizioParteComuneList(); i++){
 				AccordoServizioParteComune as = this.sorgenteRegistro.getAccordoServizioParteComune(i);
@@ -685,8 +686,8 @@ public class XMLDataConverter {
 		
 		
 		// Accordo Servizio Parte Specifica
-		Vector<AccordoServizioParteSpecifica> servizioComposti = new  Vector<AccordoServizioParteSpecifica>();
-		Vector<Soggetto> servizioComposti_Soggetti = new  Vector<Soggetto>();
+		List<AccordoServizioParteSpecifica> servizioComposti = new ArrayList<AccordoServizioParteSpecifica>();
+		List<Soggetto> servizioComposti_Soggetti = new ArrayList<Soggetto>();
 		try{
 			
 			for(int i=0; i<this.sorgenteRegistro.sizeSoggettoList(); i++){
@@ -859,7 +860,7 @@ public class XMLDataConverter {
 		
 		
 		// Accordi Servizio
-		Vector<AccordoServizioParteComune> asServiziNonComposti = new Vector<AccordoServizioParteComune>();
+		List<AccordoServizioParteComune> asServiziNonComposti = new ArrayList<AccordoServizioParteComune>();
 		try{
 			for(int i=0; i<this.sorgenteRegistro.sizeAccordoServizioParteComuneList(); i++){
 				AccordoServizioParteComune as = this.sorgenteRegistro.getAccordoServizioParteComune(i);

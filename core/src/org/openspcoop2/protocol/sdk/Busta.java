@@ -1299,7 +1299,7 @@ public class Busta implements java.io.Serializable {
 		return false;
 	}
 
-	public static String toStringListaEccezioni(java.util.Vector<Eccezione> errors, IProtocolFactory<?> protocolFactory) throws ProtocolException{
+	public static String toStringListaEccezioni(java.util.List<Eccezione> errors, IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		if(errors.size()>0){
 			StringBuffer bf = new StringBuffer();
 			for(int i=0; i<errors.size(); i++){
@@ -1313,7 +1313,7 @@ public class Busta implements java.io.Serializable {
 		}
 	}
 
-	public static String toStringListaEccezioni_erroriNonGravi(java.util.Vector<Eccezione> errors, IProtocolFactory<?> protocolFactory) throws ProtocolException{
+	public static String toStringListaEccezioni_erroriNonGravi(java.util.List<Eccezione> errors, IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		if(errors.size()>0){
 			StringBuffer bf = new StringBuffer();
 			for(int i=0; i<errors.size(); i++){
@@ -1329,7 +1329,7 @@ public class Busta implements java.io.Serializable {
 		}
 	}
 
-	public static String toStringListaEccezioni_erroriGravi(java.util.Vector<Eccezione> errors, IProtocolFactory<?> protocolFactory) throws ProtocolException{
+	public static String toStringListaEccezioni_erroriGravi(java.util.List<Eccezione> errors, IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		if(errors.size()>0){
 			StringBuffer bf = new StringBuffer();
 			for(int i=0; i<errors.size(); i++){
@@ -1345,7 +1345,7 @@ public class Busta implements java.io.Serializable {
 		}
 	}
 
-	public static boolean containsEccezioniGravi(java.util.Vector<Eccezione> errors){
+	public static boolean containsEccezioniGravi(java.util.List<Eccezione> errors){
 		for(int i=0; i<errors.size(); i++){
 			if(LivelloRilevanza.isEccezioneLivelloGrave(errors.get(i).getRilevanza())){
 				return true;

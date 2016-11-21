@@ -21,7 +21,7 @@
 package org.openspcoop2.protocol.sdi.builder;
 
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
 
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MimeHeaders;
@@ -138,7 +138,7 @@ public class SDISbustamento {
 				
 				//System.out.println("NON OTTIMIZZATO");
 				Element elementBody = SoapUtils.getNotEmptyFirstChildSOAPElement(soapBody);
-				Vector<Node> childs = SoapUtils.getNotEmptyChildNodes(elementBody, false);
+				List<Node> childs = SoapUtils.getNotEmptyChildNodes(elementBody, false);
 				for (int i = 0; i < childs.size(); i++) {
 					Node child = childs.get(i);
 					if(SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE.equals(child.getLocalName())){
@@ -226,13 +226,13 @@ public class SDISbustamento {
 				
 				//System.out.println("NON OTTIMIZZATO");
 				Element elementBody = SoapUtils.getNotEmptyFirstChildSOAPElement(soapBody);
-				Vector<Node> childs = SoapUtils.getNotEmptyChildNodes(elementBody, false);
+				List<Node> childs = SoapUtils.getNotEmptyChildNodes(elementBody, false);
 				for (int i = 0; i < childs.size(); i++) {
 					Node child = childs.get(i);
 					if(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO.equals(child.getLocalName()) &&
 							child instanceof SOAPElement){
 						
-						Vector<SOAPElement> elementScartoChilds = SoapUtils.getNotEmptyChildSOAPElement((SOAPElement)child);
+						List<SOAPElement> elementScartoChilds = SoapUtils.getNotEmptyChildSOAPElement((SOAPElement)child);
 						if(elementScartoChilds!=null){
 							for (int j = 0; j < elementScartoChilds.size(); j++) {
 								SOAPElement scartoChild = elementScartoChilds.get(j);
@@ -378,7 +378,7 @@ public class SDISbustamento {
 				else{
 					//System.out.println("NON OTTIMIZZATO");
 					Element elementBody = SoapUtils.getNotEmptyFirstChildSOAPElement(soapBody);
-					Vector<Node> childs = SoapUtils.getNotEmptyChildNodes(elementBody, false);
+					List<Node> childs = SoapUtils.getNotEmptyChildNodes(elementBody, false);
 					for (int i = 0; i < childs.size(); i++) {
 						Node child = childs.get(i);
 						if(SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE.equals(child.getLocalName())){

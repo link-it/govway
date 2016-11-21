@@ -23,9 +23,8 @@
 
 package org.openspcoop2.pdd.timers;
 
-import java.util.Vector;
+import java.util.List;
 
-import org.slf4j.Logger;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
@@ -36,6 +35,7 @@ import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.RollbackRepositoryBuste;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 
 /**
  * Implementazione dell'interfaccia {@link TimerGestorePuliziaMessaggiAnomali} del Gestore
@@ -109,9 +109,9 @@ public class TimerGestorePuliziaMessaggiAnomaliLib{
 			
 			// Messaggi da eliminare 
 			GestoreMessaggi gestoreMsgSearch = new GestoreMessaggi(openspcoopstate, true,this.logTimer, this.msgDiag,null);
-			Vector<String> busteInutiliINBOX = gestoreMsgSearch.readBusteNonRiferiteDaMessaggiFromInBox(this.limit,this.logQuery,
+			List<String> busteInutiliINBOX = gestoreMsgSearch.readBusteNonRiferiteDaMessaggiFromInBox(this.limit,this.logQuery,
 					this.propertiesReader.isForceIndex(),this.orderByQuery);
-			Vector<String> busteInutiliOUTBOX = gestoreMsgSearch.readBusteNonRiferiteDaMessaggiFromOutBox(this.limit,this.logQuery,
+			List<String> busteInutiliOUTBOX = gestoreMsgSearch.readBusteNonRiferiteDaMessaggiFromOutBox(this.limit,this.logQuery,
 					this.propertiesReader.isForceIndex(),this.orderByQuery);
 			
 			if(this.logQuery){

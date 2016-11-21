@@ -31,9 +31,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Vector;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnostici;
@@ -45,6 +43,7 @@ import org.openspcoop2.utils.StringWrapper;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
+import org.slf4j.Logger;
 
 /**
  * DriverMsgDiagnosticiUtilities
@@ -698,7 +697,7 @@ public class DiagnosticDriverUtilities {
 	
 	
 	public static MsgDiagnostico getMsgDiagnostico(Connection c,String tipoDatabase, 
-			Logger log,long id,Vector<String> properties) throws Exception{
+			Logger log,long id,List<String> properties) throws Exception{
 		
 		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 		sqlQueryObject.addFromTable(CostantiDB.MSG_DIAGNOSTICI);
@@ -771,7 +770,7 @@ public class DiagnosticDriverUtilities {
 	
 	
 	public static MsgDiagnosticoCorrelazione getMsgDiagnosticoCorrelazione(Connection c,String tipoDatabase, 
-			Logger log,long id,Vector<String> properties) throws Exception{
+			Logger log,long id,List<String> properties) throws Exception{
 		
 		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 		sqlQueryObject.addFromTable(CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE);

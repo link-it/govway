@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.openspcoop2.utils.TipiDatabase;
 
@@ -42,28 +41,28 @@ import org.openspcoop2.utils.TipiDatabase;
  */
 public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 
-	/** Vector di Field esistenti: i nomi dei fields impostati (se e' stato utilizzato un alias ritorna comunque il nome della colonna) */
-	Vector<String> fields = new Vector<String>();
-	/** Vector di NomiField esistenti: i nomi dei fields impostati (se e' stato utilizzato un alias ritorna il valore dell'alias) */
-	Vector<String> fieldNames = new Vector<String>();
+	/** List di Field esistenti: i nomi dei fields impostati (se e' stato utilizzato un alias ritorna comunque il nome della colonna) */
+	List<String> fields = new ArrayList<String>();
+	/** List di NomiField esistenti: i nomi dei fields impostati (se e' stato utilizzato un alias ritorna il valore dell'alias) */
+	List<String> fieldNames = new ArrayList<String>();
 	/** Mapping tra alias e indicazione se e' una function: i nomi dei fields impostati (se e' stato utilizzato un alias ritorna il valore dell'alias) */
 	Hashtable<String, Boolean> fieldNameIsFunction = new Hashtable<String, Boolean>();
 	/** Mapping tra alias (key) e field names (value) (sono presenti i mapping solo per le colonne per cui e' stato definito un alias) */
 	Hashtable<String, String> alias = new Hashtable<String, String>();
 	
-	/** Vector di Tabelle esistenti */
-	Vector<String> tables = new Vector<String>();
-	Vector<String> tableNames = new Vector<String>();
-	Vector<String> tableAlias = new Vector<String>();
+	/** List di Tabelle esistenti */
+	List<String> tables = new ArrayList<String>();
+	List<String> tableNames = new ArrayList<String>();
+	List<String> tableAlias = new ArrayList<String>();
 	
-	/** Vector di Field esistenti */
-	Vector<String> conditions = new Vector<String>();
+	/** List di Field esistenti */
+	List<String> conditions = new ArrayList<String>();
 	public int sizeConditions(){
 		return this.conditions.size();
 	}
 	
-	/** Vector di indici forzati */
-	Vector<String> forceIndexTableNames = new Vector<String>();
+	/** List di indici forzati */
+	List<String> forceIndexTableNames = new ArrayList<String>();
 	
 	/** OperatorLogic */
 	boolean andLogicOperator = false;
@@ -72,10 +71,10 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	boolean notBeforeConditions = false;
 	
 	/** GroupBy di Field esistenti */
-	private Vector<String> groupBy = new Vector<String>();
+	private List<String> groupBy = new ArrayList<String>();
 	
 	/** OrderBy di Field esistenti */
-	Vector<String> orderBy = new Vector<String>();
+	List<String> orderBy = new ArrayList<String>();
 	Hashtable<String, Boolean> orderBySortType = new Hashtable<String, Boolean>();
 	
 	/** Tipo di ordinamento */
@@ -93,16 +92,16 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	boolean selectForUpdate = false;
 	
 	/* UPDATE */
-	/** Vector di Field per l'update */
-	Vector<String> updateFieldsName = new Vector<String>();
-	Vector<String> updateFieldsValue = new Vector<String>();
+	/** List di Field per l'update */
+	List<String> updateFieldsName = new ArrayList<String>();
+	List<String> updateFieldsValue = new ArrayList<String>();
 	/** Tabella per l'update */
 	String updateTable = null;
 
 	/* INSERT */
-	/** Vector di Field per l'insert */
-	Vector<String> insertFieldsName = new Vector<String>();
-	Vector<String> insertFieldsValue = new Vector<String>();
+	/** List di Field per l'insert */
+	List<String> insertFieldsName = new ArrayList<String>();
+	List<String> insertFieldsValue = new ArrayList<String>();
 	/** Tabella per l'insert */
 	String insertTable = null;
 
@@ -844,7 +843,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 * @throws SQLQueryObjectException
 	 */
 	@Override
-	public Vector<String> getFieldsName() throws SQLQueryObjectException{
+	public List<String> getFieldsName() throws SQLQueryObjectException{
 		if(this.fieldNames==null || this.fieldNames.size()==0){
 			throw new SQLQueryObjectException("Nessun field impostato");
 		}
@@ -876,7 +875,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 * @throws SQLQueryObjectException
 	 */
 	//@Override
-	public Vector<String> getFields() throws SQLQueryObjectException{
+	public List<String> getFields() throws SQLQueryObjectException{
 		if(this.fields==null || this.fields.size()==0){
 			throw new SQLQueryObjectException("Nessun field impostato");
 		}
@@ -891,7 +890,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 * @throws SQLQueryObjectException
 	 */
 	@Override
-	public Vector<String> getTablesName() throws SQLQueryObjectException{
+	public List<String> getTablesName() throws SQLQueryObjectException{
 		if(this.tableNames==null || this.tableNames.size()==0){
 			throw new SQLQueryObjectException("Nessuna tabella impostata");
 		}
@@ -906,7 +905,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	 * @throws SQLQueryObjectException
 	 */
 	//@Override
-	public Vector<String> getTables() throws SQLQueryObjectException{
+	public List<String> getTables() throws SQLQueryObjectException{
 		if(this.tables==null || this.tables.size()==0){
 			throw new SQLQueryObjectException("Nessuna tabella impostata");
 		}
@@ -1739,7 +1738,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		return this;
 	}
 
-	public Vector<String> getGroupByConditions() throws SQLQueryObjectException{
+	public List<String> getGroupByConditions() throws SQLQueryObjectException{
 		if(this.groupBy!=null && this.groupBy.size()>0){
 			if(this.fields.size()<=0){
 				throw new SQLQueryObjectException("Non e' possibile utilizzare condizioni di group by se non sono stati indicati select field");
@@ -1926,7 +1925,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		// Check presenza fields
 		for(int i=0;i<sqlQueryObject.length;i++){
 			ISQLQueryObject sqlQueryObjectDaVerificare = sqlQueryObject[i];
-			Vector<String> nomiFieldSqlQueryObjectDaVerificare = sqlQueryObjectDaVerificare.getFieldsName();
+			List<String> nomiFieldSqlQueryObjectDaVerificare = sqlQueryObjectDaVerificare.getFieldsName();
 			if(nomiFieldSqlQueryObjectDaVerificare==null || nomiFieldSqlQueryObjectDaVerificare.size()==0){
 				throw new SQLQueryObjectException("La select numero "+(i+1)+" non possiede fields?");
 			}
@@ -1935,14 +1934,14 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		// Check nomi fields			
 		//		for(int i=0;i<sqlQueryObject.length;i++){
 		//			System.out.println("CHECK ["+i+"] ...");
-		//			Vector<String> nomiFieldSqlQueryObjectDaVerificare = sqlQueryObject[i].getFieldsName();
+		//			List<String> nomiFieldSqlQueryObjectDaVerificare = sqlQueryObject[i].getFieldsName();
 		//			for (String string : nomiFieldSqlQueryObjectDaVerificare) {
 		//				System.out.println("\t-"+string);
 		//			}
 		//		}
 		for(int i=0;i<sqlQueryObject.length;i++){
 
-			Vector<String> nomiFieldSqlQueryObjectDaVerificare = sqlQueryObject[i].getFieldsName();
+			List<String> nomiFieldSqlQueryObjectDaVerificare = sqlQueryObject[i].getFieldsName();
 			String [] nomi = nomiFieldSqlQueryObjectDaVerificare.toArray(new String[1]);
 
 			for(int indiceField =0; indiceField<nomi.length;indiceField++){

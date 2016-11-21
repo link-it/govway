@@ -21,8 +21,8 @@
 
 package org.openspcoop2.pdd.mdb;
 
+import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.xml.soap.SOAPFault;
 
@@ -547,7 +547,7 @@ public class InoltroRisposte extends GenericLib{
 			if(functionAsRouter==false){
 				if(  (inoltroSegnalazioneErrore==false) && (busta.sizeListaEccezioni()==0) && protocolManager.isEccezioniLivelloInfoAbilitato() ){
 					RepositoryBuste repositoryBustaRichiesta = new RepositoryBuste(openspcoopstate.getStatoRisposta(), false, protocolFactory);
-					Vector<Eccezione> erroriValidazione = repositoryBustaRichiesta.getErrorsFromInBox(busta.getRiferimentoMessaggio());
+					List<Eccezione> erroriValidazione = repositoryBustaRichiesta.getErrorsFromInBox(busta.getRiferimentoMessaggio());
 					for(int i=0; i<erroriValidazione.size();i++){
 						Eccezione ec = erroriValidazione.get(i);
 						if(LivelloRilevanza.INFO.equals(ec.getRilevanza())){

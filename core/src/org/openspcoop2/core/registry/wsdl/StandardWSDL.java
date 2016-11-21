@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Import;
@@ -1349,8 +1348,8 @@ public class StandardWSDL {
 		java.util.Iterator<?> itb = importBMap.keySet().iterator();
 		while(itb.hasNext()){
 			String namespace = (String) itb.next();
-			Vector<?> listb = (Vector<?>) importBMap.get(namespace);
-			Vector<?> lista = (Vector<?>) importAMap.get(namespace);
+			List<?> listb = (List<?>) importBMap.get(namespace);
+			List<?> lista = (List<?>) importAMap.get(namespace);
 			
 			for(int i =0; i<listb.size(); i++){
 				Import importB = (Import) listb.get(i);

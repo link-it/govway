@@ -29,11 +29,9 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.xml.namespace.QName;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -56,6 +54,7 @@ import org.openspcoop2.utils.wsdl.WSDLUtilities;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.XMLUtils;
 import org.openspcoop2.utils.xml.XSDUtils;
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 
 /**
@@ -276,7 +275,7 @@ public class ValidazioneDocumenti implements IValidazioneDocumenti{
 		
 
 		// WSDL Erogatore
-		Vector<String> portTypesWSDL_erogatore = new Vector<String>();
+		List<String> portTypesWSDL_erogatore = new ArrayList<String>();
 		tipoWsdl = "LogicoErogatore";
 		try{
 			if(wsdlLogicoErogatore!=null){
@@ -307,7 +306,7 @@ public class ValidazioneDocumenti implements IValidazioneDocumenti{
 		
 		
 		// WSDL Fruitore
-		Vector<String> portTypesWSDL_fruitore = new Vector<String>();
+		List<String> portTypesWSDL_fruitore = new ArrayList<String>();
 		tipoWsdl = "LogicoFruitore";
 		try{
 			if(wsdlLogicoFruitore!=null){

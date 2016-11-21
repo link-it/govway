@@ -30,7 +30,6 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.core.constants.Costanti;
@@ -92,8 +91,8 @@ public class MsgDiagnostico {
 	/**  Logger log4j utilizzato per scrivere lo stack trace degli errore nel core logger di openspcoop */
 	private Logger loggerOpenSPCoop2Core = null;
 	/** Appender personalizzati per i messaggi diagnostici di OpenSPCoop2 */
-	private Vector<IDiagnosticProducer> loggerMsgDiagnosticoOpenSPCoopAppender = null; 
-	private Vector<String> tipoMsgDiagnosticoOpenSPCoopAppender = null;
+	private List<IDiagnosticProducer> loggerMsgDiagnosticoOpenSPCoopAppender = null; 
+	private List<String> tipoMsgDiagnosticoOpenSPCoopAppender = null;
 
 	/** Soggetto che richiede il logger */
 	private IDSoggetto idSoggettoDominio;

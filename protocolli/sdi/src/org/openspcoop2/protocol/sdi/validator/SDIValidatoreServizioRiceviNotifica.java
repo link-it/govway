@@ -28,7 +28,7 @@ import it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.utils.ProjectInfo;
 
 import java.io.ByteArrayInputStream;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
@@ -134,7 +134,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 			return;	
 		}
 		
-		Vector<SOAPElement> elementChilds = SoapUtils.getNotEmptyChildSOAPElement(this.sdiMessage);
+		List<SOAPElement> elementChilds = SoapUtils.getNotEmptyChildSOAPElement(this.sdiMessage);
 		if(elementChilds==null || elementChilds.size()<=0){
 			this.sdiValidazioneSintattica.erroriValidazione.add(this.sdiValidazioneSintattica.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
 					"RootElement [{"+this.namespace+"}"+this.sdiMessage.getLocalName()+"] non contiene elementi"));
@@ -302,7 +302,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 	}
 	
 	private void _validazioneEsito(byte[] esitoDoc, SDIProperties sdiProperties, 
-			Vector<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
+			List<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
 	
 		byte[] esito = esitoDoc;
 		if(sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov()){
@@ -382,7 +382,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 			return;	
 		}
 		
-		Vector<SOAPElement> elementChilds = SoapUtils.getNotEmptyChildSOAPElement(this.sdiMessage);
+		List<SOAPElement> elementChilds = SoapUtils.getNotEmptyChildSOAPElement(this.sdiMessage);
 		if(elementChilds==null || elementChilds.size()<=0){
 			this.sdiValidazioneSintattica.erroriValidazione.add(this.sdiValidazioneSintattica.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
 					"RootElement [{"+this.namespace+"}"+this.sdiMessage.getLocalName()+"] non contiene elementi"));
@@ -420,7 +420,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 				}
 				scartoElementRead = true;
 				
-				Vector<SOAPElement> elementScartoChilds = SoapUtils.getNotEmptyChildSOAPElement(child);
+				List<SOAPElement> elementScartoChilds = SoapUtils.getNotEmptyChildSOAPElement(child);
 				if(elementScartoChilds==null || elementScartoChilds.size()<=0){
 					this.sdiValidazioneSintattica.erroriValidazione.add(this.sdiValidazioneSintattica.
 							validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
@@ -628,7 +628,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 	}
 	
 	private void _validazioneScartoEsito(byte[] esitoDoc, SDIProperties sdiProperties, 
-			Vector<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
+			List<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
 	
 		byte[] esito = esitoDoc;
 		if(sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov()){

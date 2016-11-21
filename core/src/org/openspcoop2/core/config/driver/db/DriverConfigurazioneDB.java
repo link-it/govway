@@ -35,11 +35,9 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.sql.DataSource;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
@@ -140,6 +138,7 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
@@ -149,6 +148,7 @@ import org.openspcoop2.utils.datasource.DataSourceParams;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.slf4j.Logger;
 
 /**
  * Contiene l'implementazione dell'interfaccia {@link CostantiConfigurazione}.
@@ -1168,7 +1168,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
 		try {
-			Vector<IDSoggetto> idTrovati = new Vector<IDSoggetto>();
+			List<IDSoggetto> idTrovati = new ArrayList<IDSoggetto>();
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(this.tabellaSoggetti);
 			sqlQueryObject.addSelectField("tipo_soggetto");
@@ -12641,7 +12641,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	}
 
 	// NOTA: Metodo non sicuro!!! Possono esistere piu' azioni di port type diversi o accordi diversi !!!!!
-	public Vector<IDPortaApplicativaByNome> getPortaApplicativaAzione(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	public List<IDPortaApplicativaByNome> getPortaApplicativaAzione(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
@@ -12658,7 +12658,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		} else
 			con = this.globalConnection;
 
-		Vector<IDPortaApplicativaByNome> id = new Vector<IDPortaApplicativaByNome>();
+		List<IDPortaApplicativaByNome> id = new ArrayList<IDPortaApplicativaByNome>();
 		try {
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -13069,7 +13069,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	}
 
 	// NOTA: Metodo non sicuro!!! Possono esistere piu' azioni di port type diversi o accordi diversi !!!!!
-	public Vector<IDPortaDelegata> getPortaDelegataAzione(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	public List<IDPortaDelegata> getPortaDelegataAzione(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
@@ -13086,7 +13086,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		} else
 			con = this.globalConnection;
 
-		Vector<IDPortaDelegata> id = new Vector<IDPortaDelegata>();
+		List<IDPortaDelegata> id = new ArrayList<IDPortaDelegata>();
 		try {
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -15646,7 +15646,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				}	
 			}
 			rs = stm.executeQuery();
-			Vector<IDSoggetto> idSoggetti = new Vector<IDSoggetto>();
+			List<IDSoggetto> idSoggetti = new ArrayList<IDSoggetto>();
 			while (rs.next()) {
 				IDSoggetto idS = new IDSoggetto(rs.getString("tipo_soggetto"),rs.getString("nome_soggetto"));
 				idSoggetti.add(idS);
@@ -15805,7 +15805,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				}
 			}
 			rs = stm.executeQuery();
-			Vector<IDPortaDelegata> idsPD = new Vector<IDPortaDelegata>();
+			List<IDPortaDelegata> idsPD = new ArrayList<IDPortaDelegata>();
 			while (rs.next()) {
 				IDSoggetto idS = new IDSoggetto(rs.getString("tipo_soggetto"),rs.getString("nome_soggetto"));
 				IDPortaDelegata idPD = new IDPortaDelegata();
@@ -15970,7 +15970,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				}
 			}
 			rs = stm.executeQuery();
-			Vector<IDPortaApplicativaByNome> idsPA = new Vector<IDPortaApplicativaByNome>();
+			List<IDPortaApplicativaByNome> idsPA = new ArrayList<IDPortaApplicativaByNome>();
 			while (rs.next()) {
 				IDSoggetto idS = new IDSoggetto(rs.getString("tipo_soggetto"),rs.getString("nome_soggetto"));
 				IDPortaApplicativaByNome idPA = new IDPortaApplicativaByNome();
@@ -16096,7 +16096,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				}	
 			}
 			rs = stm.executeQuery();
-			Vector<IDServizioApplicativo> idsSA = new Vector<IDServizioApplicativo>();
+			List<IDServizioApplicativo> idsSA = new ArrayList<IDServizioApplicativo>();
 			while (rs.next()) {
 				IDSoggetto idS = new IDSoggetto(rs.getString("tipo_soggetto"),rs.getString("nome_soggetto"));
 				IDServizioApplicativo idSA = new IDServizioApplicativo();

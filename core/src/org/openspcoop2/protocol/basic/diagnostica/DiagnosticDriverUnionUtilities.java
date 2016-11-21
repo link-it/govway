@@ -21,15 +21,15 @@
 
 package org.openspcoop2.protocol.basic.diagnostica;
 
-import java.util.Vector;
+import java.util.List;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnosticiConPaginazione;
 import org.openspcoop2.protocol.sdk.diagnostica.InformazioniProtocollo;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
+import org.slf4j.Logger;
 
 /**
  * DriverMsgDiagnosticiUnionUtilities
@@ -54,7 +54,7 @@ public class DiagnosticDriverUnionUtilities {
 	 */
 	public static ISQLQueryObject createSQLQueryObjCorrelazione(FiltroRicercaDiagnosticiConPaginazione filter,
 			boolean setLimit,
-			Logger log,String tipoDatabase,Vector<String>properties) throws SQLQueryObjectException{
+			Logger log,String tipoDatabase,List<String>properties) throws SQLQueryObjectException{
 			
 		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 		
@@ -199,7 +199,7 @@ public class DiagnosticDriverUnionUtilities {
 	 * @return ISQLQueryObject
 	 */
 	public static ISQLQueryObject createSqlQueryObjDiagnostici(FiltroRicercaDiagnosticiConPaginazione filter,boolean setLimit,
-			Logger log,String tipoDatabase,Vector<String>properties) throws SQLQueryObjectException{
+			Logger log,String tipoDatabase,List<String>properties) throws SQLQueryObjectException{
 		
 		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 		
@@ -274,7 +274,7 @@ public class DiagnosticDriverUnionUtilities {
 	}
 	
 	public static ISQLQueryObject createQueryObjDiagnosticiNotExist(FiltroRicercaDiagnosticiConPaginazione filter,boolean setLimit,
-			Logger log,String tipoDatabase,Vector<String>properties) throws SQLQueryObjectException{
+			Logger log,String tipoDatabase,List<String>properties) throws SQLQueryObjectException{
 		
 		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 		ISQLQueryObject innerObj = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
@@ -371,7 +371,7 @@ public class DiagnosticDriverUnionUtilities {
 	 * @throws String
 	 */
 	public static String createUnionObj(FiltroRicercaDiagnosticiConPaginazione filter,
-			Logger log, String tipoDatabase,Vector<String> properties) throws SQLQueryObjectException{
+			Logger log, String tipoDatabase,List<String> properties) throws SQLQueryObjectException{
 		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 		
 		//orderby solo su gdo causa bug su orderby

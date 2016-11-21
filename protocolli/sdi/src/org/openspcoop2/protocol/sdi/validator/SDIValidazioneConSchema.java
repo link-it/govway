@@ -24,7 +24,6 @@
 package org.openspcoop2.protocol.sdi.validator;
 
 import java.util.List;
-import java.util.Vector;
 
 import javax.xml.soap.SOAPElement;
 
@@ -56,9 +55,9 @@ import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
 public class SDIValidazioneConSchema extends ValidazioneConSchema {
 
 	/** Errori di validazione riscontrati sulla busta */
-	private java.util.Vector<Eccezione> erroriValidazione;
+	private java.util.List<Eccezione> erroriValidazione;
 	/** Errori di processamento riscontrati sulla busta */
-	private java.util.Vector<Eccezione> erroriProcessamento;
+	private java.util.List<Eccezione> erroriProcessamento;
 
 	public SDIValidazioneConSchema(IProtocolFactory<?> factory) {
 		super(factory);
@@ -72,12 +71,12 @@ public class SDIValidazioneConSchema extends ValidazioneConSchema {
 	}
 
 	@Override
-	public Vector<Eccezione> getEccezioniValidazione() {
+	public List<Eccezione> getEccezioniValidazione() {
 		return this.erroriValidazione;
 	}
 
 	@Override
-	public Vector<Eccezione> getEccezioniProcessamento() {
+	public List<Eccezione> getEccezioniProcessamento() {
 		return this.erroriProcessamento;
 	}
 
@@ -87,8 +86,8 @@ public class SDIValidazioneConSchema extends ValidazioneConSchema {
 			boolean isErroreIntestazione,
 			boolean isMessaggioConAttachments, boolean validazioneManifestAttachments) throws ProtocolException {
 
-		this.erroriValidazione = new java.util.Vector<Eccezione>();
-		this.erroriProcessamento = new java.util.Vector<Eccezione>();
+		this.erroriValidazione = new java.util.ArrayList<Eccezione>();
+		this.erroriProcessamento = new java.util.ArrayList<Eccezione>();
 
 		List<MtomXomReference> references = null;
 		

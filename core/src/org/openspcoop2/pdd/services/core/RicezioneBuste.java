@@ -26,11 +26,11 @@ package org.openspcoop2.pdd.services.core;
 
 import java.io.ByteArrayInputStream;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -252,8 +252,8 @@ public class RicezioneBuste {
 
 		// Inizializzo IGestoreIntegrazionePA list
 		String [] tipiIntegrazioneDefault = propertiesReader.getTipoIntegrazionePA();
-		//Vector<IGestoreIntegrazionePA> v = new Vector<IGestoreIntegrazionePA>();
-		Vector<String> s = new Vector<String>();
+		//List<IGestoreIntegrazionePA> v = new ArrayList<IGestoreIntegrazionePA>();
+		List<String> s = new ArrayList<String>();
 		for (int i = 0; i < tipiIntegrazioneDefault.length; i++) {
 			classType = className.getIntegrazionePortaApplicativa(tipiIntegrazioneDefault[i]);
 			try {
@@ -285,7 +285,7 @@ public class RicezioneBuste {
 			String protocol = (String) enumProtocols.nextElement();
 			String [] tipiIntegrazionePA = propertiesReader.getTipoIntegrazionePA(protocol);
 			if(tipiIntegrazionePA!=null && tipiIntegrazionePA.length>0){
-				Vector<String> tipiIntegrazionePerProtocollo = new Vector<String>();
+				List<String> tipiIntegrazionePerProtocollo = new ArrayList<String>();
 				for (int i = 0; i < tipiIntegrazionePA.length; i++) {
 					classType = className.getIntegrazionePortaApplicativa(tipiIntegrazionePA[i]);
 					try {
@@ -2817,8 +2817,8 @@ public class RicezioneBuste {
 			}
 			
 		}
-		java.util.Vector<Eccezione> erroriValidazione = validatore.getEccezioniValidazione();
-		java.util.Vector<Eccezione> erroriProcessamento =validatore.getEccezioniProcessamento();
+		java.util.List<Eccezione> erroriValidazione = validatore.getEccezioniValidazione();
+		java.util.List<Eccezione> erroriProcessamento =validatore.getEccezioniProcessamento();
 		SecurityInfo securityInfoRequest = validatore.getSecurityInfo();
 		
 		boolean isMessaggioErroreProtocollo = validatore.isErroreProtocollo();
@@ -3267,7 +3267,7 @@ public class RicezioneBuste {
 				if(this.msgContext.isGestioneRisposta()){
 					
 					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-					Vector<Eccezione> errs = new Vector<Eccezione>();
+					List<Eccezione> errs = new ArrayList<Eccezione>();
 					for(int add = 0; add < erroriValidazione.size() ; add++){
 						errs.add(erroriValidazione.get(add));
 					}
@@ -6490,7 +6490,7 @@ public class RicezioneBuste {
 							properties.getGestioneSerializableDB_AttesaAttiva(),
 							properties.getGestioneSerializableDB_CheckInterval(),
 							RuoloMessaggio.RISPOSTA);
-			Vector<Eccezione> v = new Vector<Eccezione>();
+			List<Eccezione> v = new ArrayList<Eccezione>();
 			v.add(Eccezione.getEccezioneValidazione(ErroriCooperazione.IDENTIFICATIVO_MESSAGGIO_GIA_PROCESSATO.getErroreCooperazione(),protocolFactory));
 			bustaHTTPReply = this.generatoreErrore.getImbustamentoErrore().buildMessaggioErroreProtocollo_Validazione(v,bustaRichiesta,id_busta_risposta,
 					properties.getTipoTempoBusta(implementazionePdDSoggettoMittente));	
@@ -6566,7 +6566,7 @@ public class RicezioneBuste {
 								properties.getGestioneSerializableDB_AttesaAttiva(),
 								properties.getGestioneSerializableDB_CheckInterval(),
 								RuoloMessaggio.RISPOSTA);
-				Vector<Eccezione> v = new Vector<Eccezione>();
+				List<Eccezione> v = new ArrayList<Eccezione>();
 				v.add(Eccezione.getEccezioneValidazione(ErroriCooperazione.IDENTIFICATIVO_MESSAGGIO_GIA_PROCESSATO.getErroreCooperazione(),protocolFactory));
 				bustaHTTPReply = this.generatoreErrore.getImbustamentoErrore().buildMessaggioErroreProtocollo_Validazione(v,bustaRichiesta,id_busta_risposta,
 						properties.getTipoTempoBusta(implementazionePdDSoggettoMittente));	

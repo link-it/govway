@@ -25,11 +25,11 @@ package org.openspcoop2.pdd.mdb;
 
 import java.io.ByteArrayInputStream;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.xml.soap.SOAPFault;
 
@@ -229,7 +229,7 @@ public class InoltroBuste extends GenericLib{
 				String protocol = (String) enumProtocols.nextElement();
 				String[]tipiIntegrazionePD = propertiesReader.getTipoIntegrazionePD(protocol);
 				if(tipiIntegrazionePD!=null && tipiIntegrazionePD.length>0){
-					Vector<String> tipiIntegrazionePerProtocollo = new Vector<String>();
+					List<String> tipiIntegrazionePerProtocollo = new ArrayList<String>();
 					for (int i = 0; i < tipiIntegrazionePD.length; i++) {
 						String classType = className.getIntegrazionePortaDelegata(tipiIntegrazionePD[i]);
 						try {
@@ -3068,8 +3068,8 @@ public class InoltroBuste extends GenericLib{
 			boolean isMessaggioErroreProtocollo = false;
 			boolean bustaDiServizio = false;
 			String idMessageResponse = null;
-			java.util.Vector<Eccezione> erroriValidazione = null;
-			java.util.Vector<Eccezione> erroriProcessamento = null;
+			java.util.List<Eccezione> erroriValidazione = null;
+			java.util.List<Eccezione> erroriProcessamento = null;
 			SbustamentoRisposteMessage sbustamentoRisposteMSG = null;
 			Busta bustaRisposta = null;
 			DettaglioEccezione dettaglioEccezione = null;

@@ -70,9 +70,9 @@ public class SPCoopValidazioneConSchema implements IValidazioneConSchema {
 	private static ValidatoreXSD validatoreBustaSPCoop = null;
 
 	/** Errori di validazione riscontrati sulla busta */
-	private java.util.Vector<Eccezione> erroriValidazione;
+	private java.util.List<Eccezione> erroriValidazione;
 	/** Errori di processamento riscontrati sulla busta */
-	private java.util.Vector<Eccezione> erroriProcessamento;
+	private java.util.List<Eccezione> erroriProcessamento;
 
 	private IProtocolFactory<?> protocolFactory;
 	private AbstractXMLUtils xmlUtils;
@@ -102,23 +102,23 @@ public class SPCoopValidazioneConSchema implements IValidazioneConSchema {
 	}
 
 	/**
-	 * Ritorna un vector contenente eventuali eccezioni di validazione riscontrate nella busta SPCoop.   
+	 * Ritorna un List contenente eventuali eccezioni di validazione riscontrate nella busta SPCoop.   
 	 *
 	 * @return Eccezioni riscontrate nella busta SPCoop.
 	 * 
 	 */
 	@Override
-	public java.util.Vector<Eccezione> getEccezioniValidazione(){
+	public java.util.List<Eccezione> getEccezioniValidazione(){
 		return this.erroriValidazione;
 	}
 	/**
-	 * Ritorna un vector contenente eventuali eccezioni di processamento riscontrate nella busta SPCoop.   
+	 * Ritorna un List contenente eventuali eccezioni di processamento riscontrate nella busta SPCoop.   
 	 *
 	 * @return Eccezioni riscontrate nella busta SPCoop.
 	 * 
 	 */
 	@Override
-	public java.util.Vector<Eccezione> getEccezioniProcessamento(){
+	public java.util.List<Eccezione> getEccezioniProcessamento(){
 		return this.erroriProcessamento;
 	}
 
@@ -199,7 +199,7 @@ public class SPCoopValidazioneConSchema implements IValidazioneConSchema {
 	 * Metodo che effettua la validazione dei soggetti di una busta, controllando la loro registrazione nel registro dei servizi. 
 	 *
 	 * Mano mano che sono incontrati errori di validazione, viene creato un oggetto 
-	 *   {@link Eccezione}, e viene inserito nel Vector <var>errors</var>.
+	 *   {@link Eccezione}, e viene inserito nel List <var>errors</var>.
 	 *
 	 * 
 	 */
@@ -207,8 +207,8 @@ public class SPCoopValidazioneConSchema implements IValidazioneConSchema {
 	public void valida(OpenSPCoop2Message message, boolean isSPCoopErroreProcessamento, boolean isSPCoopErroreIntestazione,
 			boolean isMessaggioConAttachments, boolean validazioneManifestAttachments) throws ProtocolException{
 
-		this.erroriValidazione = new java.util.Vector<Eccezione>();
-		this.erroriProcessamento = new java.util.Vector<Eccezione>();
+		this.erroriValidazione = new java.util.ArrayList<Eccezione>();
+		this.erroriProcessamento = new java.util.ArrayList<Eccezione>();
 
 		if(SPCoopValidazioneConSchema.validatoreBustaSPCoop == null){
 			throw new ProtocolException("Validatore con schema XSD non inizializzato");

@@ -73,9 +73,9 @@ public class SPCoopValidazioneSemantica implements IValidazioneSemantica {
 	private IState state;
 
 	/** Errori di validazione riscontrati sulla busta */
-	private java.util.Vector<Eccezione> erroriValidazione;
+	private java.util.List<Eccezione> erroriValidazione;
 	/** Errori di processamento riscontrati sulla busta */
-	private java.util.Vector<Eccezione> erroriProcessamento;
+	private java.util.List<Eccezione> erroriProcessamento;
 	/** Busta */
 	private Busta busta;
 	/** Validazione IDEGov completa */
@@ -115,7 +115,7 @@ public class SPCoopValidazioneSemantica implements IValidazioneSemantica {
 	 * Metodo che effettua la validazione dei soggetti di una busta, controllando la loro registrazione nel registro dei servizi. 
 	 *
 	 * Mano mano che sono incontrati errori di validazione, viene creato un oggetto 
-	 *   {@link Eccezione}, e viene inserito nel Vector <var>errors</var>.
+	 *   {@link Eccezione}, e viene inserito nel List <var>errors</var>.
 	 *
 	 * @param tipoValidazione tipo di Validazione
 	 * 
@@ -123,8 +123,8 @@ public class SPCoopValidazioneSemantica implements IValidazioneSemantica {
 	public void valida(ProprietaValidazione tipoValidazione, RuoloBusta tipoBusta, String profiloGestione){
 
 		try{
-			this.erroriValidazione = new java.util.Vector<Eccezione>();
-			this.erroriProcessamento = new java.util.Vector<Eccezione>();
+			this.erroriValidazione = new java.util.ArrayList<Eccezione>();
+			this.erroriProcessamento = new java.util.ArrayList<Eccezione>();
 			//log.info("Validazione semantica...");			
 			
 			/* Accesso al registro */

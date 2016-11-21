@@ -23,10 +23,11 @@
 
 package org.openspcoop2.utils.xml;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -281,7 +282,7 @@ public class DynamicNamespaceContext implements javax.xml.namespace.NamespaceCon
 		
 		//System.out.println("------ getPrefixes("+namespace+") -----");
 		
-		Vector<String> v = new Vector<String>();
+		List<String> v = new ArrayList<String>();
 		
 		// -e. null 
 		if(namespace==null){

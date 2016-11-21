@@ -27,7 +27,7 @@ import it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.utils.ProjectInfo;
 
 import java.io.ByteArrayInputStream;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
@@ -135,7 +135,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 			return;	
 		}
 		
-		Vector<SOAPElement> elementChilds = SoapUtils.getNotEmptyChildSOAPElement(this.sdiMessage);
+		List<SOAPElement> elementChilds = SoapUtils.getNotEmptyChildSOAPElement(this.sdiMessage);
 		if(elementChilds==null || elementChilds.size()<=0){
 			this.sdiValidazioneSintattica.erroriValidazione.add(this.sdiValidazioneSintattica.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
 					"RootElement [{"+this.namespace+"}"+this.sdiMessage.getLocalName()+"] non contiene elementi"));
@@ -513,7 +513,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 	}
 	
 	private boolean _validazioneMetadati(byte[] metadati, SDIProperties sdiProperties, 
-			Vector<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
+			List<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
 	
 		// validazione XSD file Metadati
 		if(sdiProperties.isEnableValidazioneXsdMetadati()){
@@ -644,7 +644,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 			return;	
 		}
 		
-		Vector<SOAPElement> elementChilds = SoapUtils.getNotEmptyChildSOAPElement(this.sdiMessage);
+		List<SOAPElement> elementChilds = SoapUtils.getNotEmptyChildSOAPElement(this.sdiMessage);
 		if(elementChilds==null || elementChilds.size()<=0){
 			this.sdiValidazioneSintattica.erroriValidazione.add(this.sdiValidazioneSintattica.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
 					"RootElement [{"+this.namespace+"}"+this.sdiMessage.getLocalName()+"] non contiene elementi"));
@@ -826,7 +826,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 	}
 	
 	private void _validazioneDT(byte[] xmlDoc, SDIProperties sdiProperties, 
-			Vector<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
+			List<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
 	
 		String tipoXml = "Notifica di Decorrenza Termini";
 		byte[] xml = xmlDoc;

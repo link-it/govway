@@ -29,7 +29,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Vector;
 
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.Detail;
@@ -101,11 +100,11 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 		this.headerSOAP = headerSOAP;
 	}
 	/** Errori di validazione riscontrati sulla busta */
-	private java.util.Vector<Eccezione> erroriValidazione;
+	private java.util.List<Eccezione> erroriValidazione;
 	/** Errori di processamento riscontrati sulla busta */
-	private java.util.Vector<Eccezione> erroriProcessamento;
+	private java.util.List<Eccezione> erroriProcessamento;
 	/** Errors riscontrati sulla lista eccezioni */
-	private java.util.Vector<Eccezione> errorsTrovatiSullaListaEccezioni;
+	private java.util.List<Eccezione> errorsTrovatiSullaListaEccezioni;
 	/** Busta */
 	private Busta busta;
 	/** Eventuale messaggio di errore avvenuto durante il processo di validazione */
@@ -148,11 +147,11 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 		this.log = protocolFactory.getLogger();
 		this.protocolFactory = protocolFactory;
 		if(this.errorsTrovatiSullaListaEccezioni == null)
-			this.errorsTrovatiSullaListaEccezioni = new java.util.Vector<Eccezione>();
+			this.errorsTrovatiSullaListaEccezioni = new java.util.ArrayList<Eccezione>();
 		if(this.erroriProcessamento == null)
-			this.erroriProcessamento = new java.util.Vector<Eccezione>();
+			this.erroriProcessamento = new java.util.ArrayList<Eccezione>();
 		if(this.erroriValidazione == null)
-			this.erroriValidazione = new java.util.Vector<Eccezione>();
+			this.erroriValidazione = new java.util.ArrayList<Eccezione>();
 		
 		this.tipiSoggetti = this.protocolFactory.createProtocolConfiguration().getTipiSoggetti();
 		this.tipiServizi = this.protocolFactory.createProtocolConfiguration().getTipiServizi(ServiceBinding.SOAP);
@@ -204,31 +203,31 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 	}
 
 	/**
-	 * Ritorna un vector contenente eventuali eccezioni di validazione riscontrate nella busta SPCoop.   
+	 * Ritorna un List contenente eventuali eccezioni di validazione riscontrate nella busta SPCoop.   
 	 *
 	 * @return Eccezioni riscontrate nella busta SPCoop.
 	 * 
 	 */
-	public java.util.Vector<Eccezione> getEccezioniValidazione(){
+	public java.util.List<Eccezione> getEccezioniValidazione(){
 		return this.erroriValidazione;
 	}
 	/**
-	 * Ritorna un vector contenente eventuali eccezioni di processamento riscontrate nella busta SPCoop.   
+	 * Ritorna un List contenente eventuali eccezioni di processamento riscontrate nella busta SPCoop.   
 	 *
 	 * @return Eccezioni riscontrate nella busta SPCoop.
 	 * 
 	 */
-	public java.util.Vector<Eccezione> getEccezioniProcessamento(){
+	public java.util.List<Eccezione> getEccezioniProcessamento(){
 		return this.erroriProcessamento;
 	}
 
 	/**
-	 * Ritorna un vector contenente eventuali eccezioni riscontrate nella busta SPCoop durante il processo di validazione.   
+	 * Ritorna un List contenente eventuali eccezioni riscontrate nella busta SPCoop durante il processo di validazione.   
 	 *
 	 * @return Eccezioni riscontrate nella busta SPCoop.
 	 * 
 	 */
-	public java.util.Vector<Eccezione> getErroriTrovatiSullaListaEccezioni(){
+	public java.util.List<Eccezione> getErroriTrovatiSullaListaEccezioni(){
 		return this.errorsTrovatiSullaListaEccezioni;
 	}
 
@@ -268,7 +267,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 	 * Il metodo, oltre ad effettuare la validazione della busta, si occupa anche di leggerne il contenuto e 
 	 * di impostarlo all'interno dell'oggetto <var>busta</var>.
 	 * Mano mano che sono incontrati errori di validazione, viene creato un oggetto 
-	 *   {@link Eccezione}, e viene inserito nel Vector <var>errors</var>.
+	 *   {@link Eccezione}, e viene inserito nel List <var>errors</var>.
 	 *
 	 * @return return true in caso di validazione sintattica riuscita (con o senza anomalie), false in caso di errori di processamento.
 	 * 
@@ -316,9 +315,9 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 			// Busta da ritornare
 			Busta aBusta = new Busta(this.protocolFactory.getProtocol());
 			this.busta = aBusta;
-			this.erroriValidazione = new java.util.Vector<Eccezione>();
-			this.erroriProcessamento = new java.util.Vector<Eccezione>();
-			this.errorsTrovatiSullaListaEccezioni = new java.util.Vector<Eccezione>();
+			this.erroriValidazione = new java.util.ArrayList<Eccezione>();
+			this.erroriProcessamento = new java.util.ArrayList<Eccezione>();
+			this.errorsTrovatiSullaListaEccezioni = new java.util.ArrayList<Eccezione>();
 
 			// Prefix eGov
 			String xmlns = getPrefix();
@@ -348,7 +347,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 				ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_FORMATO_INTESTAZIONE_NON_CORRETTO_POSIZIONE_MUST_UNDERSTAND.toString());
 				this.erroriValidazione.add(ecc);
 			}
-			Vector<Node> list = SoapUtils.getNotEmptyChildNodes(this.headerEGov.getElement());
+			List<Node> list = SoapUtils.getNotEmptyChildNodes(this.headerEGov.getElement());
 
 			//	Controllo value prefix
 			if(SPCoopCostanti.NAMESPACE_EGOV.equals(this.headerEGov.getElement().getNamespaceURI())==false){
@@ -362,7 +361,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 
 			// intestazione messaggio
 			Node intestazioneMsg = list.get(0);
-			Vector<Node> headerMsg = SoapUtils.getNotEmptyChildNodes(intestazioneMsg);
+			List<Node> headerMsg = SoapUtils.getNotEmptyChildNodes(intestazioneMsg);
 			boolean mittenteGiaTrovato = false;
 			boolean destinatarioGiaTrovato = false;
 			boolean profiloCollaborazioneGiaTrovato = false;
@@ -921,7 +920,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 			}
 
 			// Controllo elementi che contraddistingono un header eGov : Intestazione Messaggio
-			Vector<Node> list = SoapUtils.getNotEmptyChildNodes(headerElementEGov);
+			List<Node> list = SoapUtils.getNotEmptyChildNodes(headerElementEGov);
 			if(list==null || list.size() == 0){ 
 				this.bustaErroreHeaderIntestazione = errore;
 				this.bustaErroreHeaderIntestazione.addEccezione(Eccezione.getEccezioneValidazione(CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_CORRETTO, 
@@ -937,7 +936,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 				throw new Exception("Header eGov con header intestazione che possiede first child ["+intestazioneMsg.getNodeName()+"] diverso da IntestazioneMessaggio");
 			}
 			
-			Vector<Node> intestMsgChild = SoapUtils.getNotEmptyChildNodes(intestazioneMsg);
+			List<Node> intestMsgChild = SoapUtils.getNotEmptyChildNodes(intestazioneMsg);
 			
 			// Controllo elementi principali
 			Node mittente = null;
@@ -976,7 +975,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 						SPCoopCostantiPosizioneEccezione.ECCEZIONE_MITTENTE_SCONOSCIUTO_POSIZIONE.toString(),this.protocolFactory));
 				eccezioneStrutturaMittente = true;
 			}else{
-				Vector<Node> headerMittente = SoapUtils.getNotEmptyChildNodes(mittente); // identificativoParte mitt
+				List<Node> headerMittente = SoapUtils.getNotEmptyChildNodes(mittente); // identificativoParte mitt
 				if( (headerMittente==null) || (headerMittente.size() == 0) ){
 					errore.addEccezione(Eccezione.getEccezioneValidazione(CodiceErroreCooperazione.MITTENTE_NON_PRESENTE, 
 							SPCoopCostantiPosizioneEccezione.ECCEZIONE_MITTENTE_SCONOSCIUTO_POSIZIONE_IDENTIFICATIVO_PARTE.toString(),this.protocolFactory));
@@ -991,7 +990,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 							eccezioneStrutturaMittente = true;
 							break;
 						}
-						Vector<Node> valueIDParteMitt = SoapUtils.getNotEmptyChildNodes(idParteMittente);
+						List<Node> valueIDParteMitt = SoapUtils.getNotEmptyChildNodes(idParteMittente);
 						if( (valueIDParteMitt==null) || (valueIDParteMitt.size() == 0) || (valueIDParteMitt.size() > 1) ){ 
 							errore.addEccezione(Eccezione.getEccezioneValidazione(CodiceErroreCooperazione.MITTENTE_NON_VALORIZZATO, 
 									SPCoopCostantiPosizioneEccezione.ECCEZIONE_MITTENTE_SCONOSCIUTO_POSIZIONE_IDENTIFICATIVO_PARTE.toString(),this.protocolFactory));
@@ -1055,7 +1054,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 						SPCoopCostantiPosizioneEccezione.ECCEZIONE_DESTINATARIO_SCONOSCIUTO_POSIZIONE.toString(),this.protocolFactory));
 				eccezioneStrutturaDestinatario = true;
 			}else{
-				Vector<Node> headerDestinatario = SoapUtils.getNotEmptyChildNodes(destinatario); // identificativoParte dest
+				List<Node> headerDestinatario = SoapUtils.getNotEmptyChildNodes(destinatario); // identificativoParte dest
 				if( (headerDestinatario==null) || (headerDestinatario.size() == 0) ){
 					errore.addEccezione(Eccezione.getEccezioneValidazione(CodiceErroreCooperazione.DESTINATARIO_NON_PRESENTE, 
 							SPCoopCostantiPosizioneEccezione.ECCEZIONE_DESTINATARIO_SCONOSCIUTO_POSIZIONE_IDENTIFICATIVO_PARTE.toString(),this.protocolFactory));
@@ -1070,7 +1069,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 							eccezioneStrutturaDestinatario = true;
 							break;
 						}
-						Vector<Node> valueIDParteDest = SoapUtils.getNotEmptyChildNodes(idParteDestinatario);
+						List<Node> valueIDParteDest = SoapUtils.getNotEmptyChildNodes(idParteDestinatario);
 						if( (valueIDParteDest==null) || (valueIDParteDest.size() == 0) || (valueIDParteDest.size() > 1) ){ 
 							errore.addEccezione(Eccezione.getEccezioneValidazione(CodiceErroreCooperazione.DESTINATARIO_NON_VALIDO, 
 									SPCoopCostantiPosizioneEccezione.ECCEZIONE_DESTINATARIO_SCONOSCIUTO_POSIZIONE_IDENTIFICATIVO_PARTE.toString(),this.protocolFactory));
@@ -1134,7 +1133,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 						SPCoopCostantiPosizioneEccezione.ECCEZIONE_FORMATO_INTESTAZIONE_NON_CORRETTO_POSIZIONE_MESSAGGIO.toString(),this.protocolFactory));
 				eccezioneStrutturaMessaggio = true;
 			}else{
-				Vector<Node> contenutoMsg = SoapUtils.getNotEmptyChildNodes(messaggio);
+				List<Node> contenutoMsg = SoapUtils.getNotEmptyChildNodes(messaggio);
 				if( (contenutoMsg.size() <= 0)){
 					errore.addEccezione(Eccezione.getEccezioneValidazione(CodiceErroreCooperazione.IDENTIFICATIVO_MESSAGGIO_NON_PRESENTE, 
 							SPCoopCostantiPosizioneEccezione.ECCEZIONE_ID_MESSAGGIO_NON_DEFINITO_POSIZIONE.toString(),this.protocolFactory));
@@ -1231,12 +1230,12 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 				// Mittente
 				if(mittente!=null){
 					try{
-						Vector<Node> headerMittente = SoapUtils.getNotEmptyChildNodes(mittente);
+						List<Node> headerMittente = SoapUtils.getNotEmptyChildNodes(mittente);
 						Node idParteMittente = headerMittente.get(0);
 						errore.setMittente(SoapUtils.getNotEmptyChildNodes(idParteMittente).get(0).getNodeValue());
 					}catch(Exception e){}
 					try{
-						Vector<Node> headerMittente = SoapUtils.getNotEmptyChildNodes(mittente);
+						List<Node> headerMittente = SoapUtils.getNotEmptyChildNodes(mittente);
 						Node idParteMittente = headerMittente.get(0);
 						Node hrefFindMitt = null;
 						if(this.readQualifiedAttribute){
@@ -1248,7 +1247,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 						errore.setTipoMittente(itValue);
 					}catch(Exception e){}
 					try{
-						Vector<Node> headerMittente = SoapUtils.getNotEmptyChildNodes(mittente);
+						List<Node> headerMittente = SoapUtils.getNotEmptyChildNodes(mittente);
 						Node idParteMittente = headerMittente.get(0);
 						Node hrefFindMitt = null;
 						if(this.readQualifiedAttribute){
@@ -1264,12 +1263,12 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 				// Destinatario
 				if(destinatario!=null){
 					try{
-						Vector<Node> headerDest = SoapUtils.getNotEmptyChildNodes(destinatario);
+						List<Node> headerDest = SoapUtils.getNotEmptyChildNodes(destinatario);
 						Node idParteDest = headerDest.get(0);
 						errore.setDestinatario(SoapUtils.getNotEmptyChildNodes(idParteDest).get(0).getNodeValue());
 					}catch(Exception e){}
 					try{
-						Vector<Node> headerDest = SoapUtils.getNotEmptyChildNodes(destinatario);
+						List<Node> headerDest = SoapUtils.getNotEmptyChildNodes(destinatario);
 						Node idParteDest = headerDest.get(0);
 						Node hrefFindDest = null;
 						if(this.readQualifiedAttribute){
@@ -1281,7 +1280,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 						errore.setTipoDestinatario(itValue);
 					}catch(Exception e){}
 					try{
-						Vector<Node> headerDest = SoapUtils.getNotEmptyChildNodes(destinatario);
+						List<Node> headerDest = SoapUtils.getNotEmptyChildNodes(destinatario);
 						Node idParteDest = headerDest.get(0);
 						Node hrefFindDest = null;
 						if(this.readQualifiedAttribute){
@@ -1353,7 +1352,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 				// Messaggio
 				if(messaggio!=null){
 					try{
-						Vector<Node> contenutoMsg = SoapUtils.getNotEmptyChildNodes(messaggio);
+						List<Node> contenutoMsg = SoapUtils.getNotEmptyChildNodes(messaggio);
 						for(int j =0; j<contenutoMsg.size();j++){
 							Node childMsg = contenutoMsg.get(j);
 							//if((childMsg.getNodeName().equals(xmlns+"RiferimentoMessaggio"))){
@@ -1605,10 +1604,10 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 
 		//log.info("Validazione Mittente...");
 
-		Vector<Node> headerMittente = SoapUtils.getNotEmptyChildNodes(child);
+		List<Node> headerMittente = SoapUtils.getNotEmptyChildNodes(child);
 		Node idParte = headerMittente.get(0);
 		//log.info("esamino ["+idParte.getNodeName()+"]"); 
-		Vector<Node> valueIDParte = SoapUtils.getNotEmptyChildNodes(idParte);
+		List<Node> valueIDParte = SoapUtils.getNotEmptyChildNodes(idParte);
 		String value =  valueIDParte.get(0).getNodeValue();
 		//log.info("Value identificativo parte Mittente ["+value+"]");
 		Node hrefFind = null;
@@ -1686,10 +1685,10 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 
 		//log.info("Validazione Destinatario...");
 
-		Vector<Node> headerDestinatario = SoapUtils.getNotEmptyChildNodes(child);
+		List<Node> headerDestinatario = SoapUtils.getNotEmptyChildNodes(child);
 		Node idParte = headerDestinatario.get(0);
 		//log.info("esamino ["+idParte.getNodeName()+"]"); 
-		Vector<Node> valueIDParte = SoapUtils.getNotEmptyChildNodes(idParte);
+		List<Node> valueIDParte = SoapUtils.getNotEmptyChildNodes(idParte);
 		String value =  valueIDParte.get(0).getNodeValue();
 		//log.info("Value identificativo parte Destinatario ["+value+"]");
 		Node hrefFind = null;
@@ -1771,7 +1770,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 		//log.info("Validazione Profilo di Collaborazione...");
 		String profilo = null;
 
-		Vector<Node> valueProfiloDiCollaborazione = SoapUtils.getNotEmptyChildNodes(child);
+		List<Node> valueProfiloDiCollaborazione = SoapUtils.getNotEmptyChildNodes(child);
 		if( valueProfiloDiCollaborazione.size() == 0 || valueProfiloDiCollaborazione.size() > 1  ){ 
 			Eccezione ecc = new Eccezione();
 			ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
@@ -2095,7 +2094,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 
 		//log.info("Validazione Messaggio...");
 
-		Vector<Node> contenutoMsg = SoapUtils.getNotEmptyChildNodes(child);
+		List<Node> contenutoMsg = SoapUtils.getNotEmptyChildNodes(child);
 		if( (contenutoMsg.size() == 0) || (contenutoMsg.size() > 4)){
 			Eccezione ecc = new Eccezione();
 			ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
@@ -2591,7 +2590,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 	private void validazioneListaRiscontri(Node child,String prefix) throws StrutturaBustaException, ProtocolException{
 
 		//log.info("Validazione Lista Riscontri...");
-		Vector<Node> riscontri = SoapUtils.getNotEmptyChildNodes(child);
+		List<Node> riscontri = SoapUtils.getNotEmptyChildNodes(child);
 
 		if(riscontri.size() <= 0 ){		   
 			Eccezione ecc = new Eccezione();
@@ -2620,7 +2619,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 				continue;
 			}
 
-			Vector<Node> childsRiscontro = SoapUtils.getNotEmptyChildNodes(riscontro);
+			List<Node> childsRiscontro = SoapUtils.getNotEmptyChildNodes(riscontro);
 			/*if(childsRiscontro.getLength() != 2){		   
 				Eccezione ecc = new Eccezione();
 				ecc.setContestoCodifica(Costanti.CONTESTO_CODIFICA_ECCEZIONE_VALIDAZIONE);
@@ -2838,7 +2837,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 	private void validazioneListaTrasmissioni(Node child,String prefix) throws StrutturaBustaException, ProtocolException{
 		
 		//	log.info("Validazione Lista Trasmissioni...");
-		Vector<Node> trasmissioni = SoapUtils.getNotEmptyChildNodes(child);
+		List<Node> trasmissioni = SoapUtils.getNotEmptyChildNodes(child);
 
 		if(trasmissioni.size()<=0){
 			Eccezione ecc = new Eccezione();
@@ -2866,7 +2865,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 				this.erroriValidazione.add(ecc);
 				continue;
 			}
-			Vector<Node> childsTrasmissione = SoapUtils.getNotEmptyChildNodes(trasmissione);
+			List<Node> childsTrasmissione = SoapUtils.getNotEmptyChildNodes(trasmissione);
 			/*if(childsTrasmissione.getLength() != 3){		   
 				Eccezione ecc = new Eccezione();
 				ecc.setContestoCodifica(Costanti.CONTESTO_CODIFICA_ECCEZIONE_VALIDAZIONE);
@@ -2944,7 +2943,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 						}
 						Node idParte = SoapUtils.getNotEmptyChildNodes(elem).get(0);
 						try{ 
-							Vector<Node> valueIDParte = SoapUtils.getNotEmptyChildNodes(idParte);
+							List<Node> valueIDParte = SoapUtils.getNotEmptyChildNodes(idParte);
 							origine =  valueIDParte.get(0).getNodeValue();
 							findOrigine = true;
 						} catch(Exception e) {
@@ -3075,7 +3074,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 						}
 						Node idParte = SoapUtils.getNotEmptyChildNodes(elem).get(0);
 						try{ 
-							Vector<Node> valueIDParte = SoapUtils.getNotEmptyChildNodes(idParte);
+							List<Node> valueIDParte = SoapUtils.getNotEmptyChildNodes(idParte);
 							destinazione =  valueIDParte.get(0).getNodeValue();
 							findDestinazione = true;
 						} catch(Exception e) {
@@ -3392,7 +3391,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 	private void validazioneListaEccezioni(Node child,String prefix) throws StrutturaBustaException, ProtocolException{
 
 		//log.info("Validazione Lista Eccezioni...");
-		Vector<Node> eccezioni = SoapUtils.getNotEmptyChildNodes(child);
+		List<Node> eccezioni = SoapUtils.getNotEmptyChildNodes(child);
 
 		for(int i=0; i<eccezioni.size();i++){
 
@@ -3740,8 +3739,8 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 		try{
 			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
 			
-			java.util.Vector<String> contentID = new java.util.Vector<String>();
-			java.util.Vector<String> contentLocation = new java.util.Vector<String>();
+			java.util.List<String> contentID = new java.util.ArrayList<String>();
+			java.util.List<String> contentLocation = new java.util.ArrayList<String>();
 			java.util.Iterator<?> it = msg.getAttachments();
 			
 			while(it.hasNext()){
@@ -3757,7 +3756,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 			boolean isRisposta = false;
 
 			soapBody = msg.getSOAPBody();
-			Vector<Node> soapBodyList = SoapUtils.getNotEmptyChildNodes(soapBody);
+			List<Node> soapBodyList = SoapUtils.getNotEmptyChildNodes(soapBody);
 			if(soapBodyList.size()!=1){
 				// Il body deve possedere esattamente un elemento
 				Eccezione ecc = new Eccezione();
@@ -3802,7 +3801,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 
 
 
-			Vector<Node> descrizioneMessaggi = SoapUtils.getNotEmptyChildNodes(descrizione);
+			List<Node> descrizioneMessaggi = SoapUtils.getNotEmptyChildNodes(descrizione);
 			if(descrizioneMessaggi.size()<=0){
 				//	Elemento DescrizioneMessaggio non esistente
 				Eccezione ecc = new Eccezione();
@@ -3831,7 +3830,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 				}
 
 				//log.info("Validazione Riferimento...");
-				Vector<Node> riferimentoList = SoapUtils.getNotEmptyChildNodes(descrizioneMessaggio);
+				List<Node> riferimentoList = SoapUtils.getNotEmptyChildNodes(descrizioneMessaggio);
 				if(riferimentoList.size()!=1){
 					//	Elemento Riferimento non esistente
 					Eccezione ecc = new Eccezione();
@@ -4012,7 +4011,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 
 
 				// check elementi Schema e Titolo
-				Vector<Node> elementiRiferimento = SoapUtils.getNotEmptyChildNodes(riferimento);
+				List<Node> elementiRiferimento = SoapUtils.getNotEmptyChildNodes(riferimento);
 				if(elementiRiferimento.size()!=2){
 					//	Elemento Schema non esistente
 					Eccezione ecc = new Eccezione();

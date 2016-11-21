@@ -23,7 +23,8 @@
 
 package org.openspcoop2.protocol.registry;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe utilizzata per raccogliere informazioni sulla validazione di un servizio
@@ -56,7 +57,7 @@ public class RisultatoValidazione implements java.io.Serializable {
 	/** Azione correlata (presente se il servizio trovato non e' correlato, ma l'azione si) */
 	private String azioneCorrelata;
 	/**  Azioni associate al servizio */
-	private Vector<String> azioni;
+	private List<String> azioni;
 	/** Tipologia di porta di domino del soggetto fruitore */
 	private String implementazionePdDSoggettoFruitore;
 	/** Tipologia di porta di domino del soggetto erogatore */
@@ -73,7 +74,7 @@ public class RisultatoValidazione implements java.io.Serializable {
 	 * 
 	 */
 	public RisultatoValidazione(){
-		this.azioni = new Vector<String>();
+		this.azioni = new ArrayList<String>();
 	}
 
 

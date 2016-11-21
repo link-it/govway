@@ -26,10 +26,9 @@ package org.openspcoop2.core.registry.driver.uddi;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
-import org.slf4j.Logger;
 import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IUnmarshallingContext;
@@ -67,6 +66,7 @@ import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.slf4j.Logger;
 
 /**
  * Classe utilizzata per effettuare query al registro UDDI, riguardanti specifiche
@@ -301,7 +301,7 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			String [] urlXMLAccordi = this.uddiLib.getUrlXmlAccordiCooperazione(idAccordoFiltro,this.urlPrefix);
 			
 			// Esamina degli accordi
-			Vector<IDAccordoCooperazione> idAccordi = new Vector<IDAccordoCooperazione>();
+			List<IDAccordoCooperazione> idAccordi = new ArrayList<IDAccordoCooperazione>();
 			for(int i=0; i<urlXMLAccordi.length; i++){
 				org.openspcoop2.core.registry.AccordoCooperazione ac = null;
 				
@@ -523,7 +523,7 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			String [] urlXMLAccordi = this.uddiLib.getUrlXmlAccordiServizio(idAccordoFiltro,this.urlPrefix);
 			
 			// Esamina degli accordi
-			Vector<IDAccordo> idAccordi = new Vector<IDAccordo>();
+			List<IDAccordo> idAccordi = new ArrayList<IDAccordo>();
 			for(int i=0; i<urlXMLAccordi.length; i++){
 				org.openspcoop2.core.registry.AccordoServizioParteComune as = null;
 				
@@ -767,7 +767,7 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			String [] urlXMLPdd = this.uddiLib.getUrlXmlPortaDominio(nomeFiltro,this.urlPrefix);
 			
 			// Esamina delle porte di dominio
-			Vector<String> nomiPdd = new Vector<String>();
+			List<String> nomiPdd = new ArrayList<String>();
 			for(int i=0; i<urlXMLPdd.length; i++){
 				org.openspcoop2.core.registry.PortaDominio pd = null;
 				
@@ -951,7 +951,7 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			String [] urlXMLSoggetti = this.uddiLib.getUrlXmlSoggetti();
 			
 			// Esamina dei soggetti
-			Vector<IDSoggetto> idSoggetti = new Vector<IDSoggetto>();
+			List<IDSoggetto> idSoggetti = new ArrayList<IDSoggetto>();
 			for(int i=0; i<urlXMLSoggetti.length; i++){
 				
 				org.openspcoop2.core.registry.Soggetto ss = null;
@@ -1281,7 +1281,7 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			
 			
 			// Esamina dei servizi
-			Vector<IDServizio> idServizi = new Vector<IDServizio>();
+			List<IDServizio> idServizi = new ArrayList<IDServizio>();
 			for(int i=0; i<urlXMLServizi.length; i++){
 			
 				org.openspcoop2.core.registry.AccordoServizioParteSpecifica serv = null;
@@ -1421,7 +1421,7 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			
 			
 			// Esamina dei servizi
-			Vector<IDAccordo> idServizi = new Vector<IDAccordo>();
+			List<IDAccordo> idServizi = new ArrayList<IDAccordo>();
 			for(int i=0; i<urlXMLServizi.length; i++){
 			
 				org.openspcoop2.core.registry.AccordoServizioParteSpecifica serv = null;

@@ -171,7 +171,7 @@ public class ValidazioneSintattica {
 	}
 
 	/**
-	 * Ritorna un vector contenente eventuali eccezioni di validazione riscontrate nella busta.   
+	 * Ritorna un List contenente eventuali eccezioni di validazione riscontrate nella busta.   
 	 *
 	 * @return Eccezioni riscontrate nella busta.
 	 * 
@@ -180,7 +180,7 @@ public class ValidazioneSintattica {
 		return this.erroriValidazione;
 	}
 	/**
-	 * Ritorna un vector contenente eventuali eccezioni di processamento riscontrate nella busta.   
+	 * Ritorna un List contenente eventuali eccezioni di processamento riscontrate nella busta.   
 	 *
 	 * @return Eccezioni riscontrate nella busta.
 	 * 
@@ -190,7 +190,7 @@ public class ValidazioneSintattica {
 	}
 
 	/**
-	 * Ritorna un vector contenente eventuali eccezioni riscontrate nella busta durante il processo di validazione.   
+	 * Ritorna un List contenente eventuali eccezioni riscontrate nella busta durante il processo di validazione.   
 	 *
 	 * @return Eccezioni riscontrate nella busta.
 	 * 
@@ -215,7 +215,7 @@ public class ValidazioneSintattica {
 	 * Il metodo, oltre ad effettuare la validazione della busta, si occupa anche di leggerne il contenuto e 
 	 * di impostarlo all'interno dell'oggetto <var>busta</var>.
 	 * Mano mano che sono incontrati errori di validazione, viene creato un oggetto 
-	 *   {@link Eccezione}, e viene inserito nel Vector <var>errors</var>.
+	 *   {@link Eccezione}, e viene inserito nel List <var>errors</var>.
 	 *
 	 * @return return true in caso di validazione sintattica riuscita (con o senza anomalie), false in caso di errori di processamento.
 	 * 

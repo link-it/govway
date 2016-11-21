@@ -29,19 +29,20 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.utils.io.JarUtilities;
 import org.openspcoop2.utils.io.ZipUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.slf4j.Logger;
 
 /**
 * GeneralInstanceProperties
@@ -125,7 +126,7 @@ public class GeneralInstanceProperties {
 		}
 		if(fClasspath!=null){
 			
-			Vector<File> files = new Vector<File>();
+			List<File> files = new ArrayList<File>();
 			findArchives(log, fClasspath, files);
 						
 			if(files.size()<=0){
@@ -375,7 +376,7 @@ public class GeneralInstanceProperties {
 		return null;
 	}
 	
-	private void findArchives(Logger log,File fClasspath,Vector<File> files){
+	private void findArchives(Logger log,File fClasspath,List<File> files){
 		log.debug("Search libraries in classpath ["+fClasspath.getAbsolutePath()+"] ...");
 		
 		if(fClasspath.isFile()){
@@ -919,10 +920,10 @@ public class GeneralInstanceProperties {
 				}
 			}
 			
-			Vector<String> entries = new Vector<String>();
-			Vector<byte[]> entriesBytes = new Vector<byte[]>();
+			List<String> entries = new ArrayList<String>();
+			List<byte[]> entriesBytes = new ArrayList<byte[]>();
 			
-			// Inizializzo vector
+			// Inizializzo List
 			for (int i = 0; i < childs.length; i++) {
 				
 				if(childs[i].isDirectory()){
@@ -1011,7 +1012,7 @@ public class GeneralInstanceProperties {
 						catch(Throwable e){}
 						if(c!=null){
 							if(((Class<?>)find).isAssignableFrom(((Class<?>)c))){
-								Constructor<?> constructor = ((Class<?>)c).getConstructor(java.lang.ClassLoader.class,java.util.Vector.class,java.util.Vector.class,String.class, File.class);
+								Constructor<?> constructor = ((Class<?>)c).getConstructor(java.lang.ClassLoader.class,java.util.List.class,java.util.List.class,String.class, File.class);
 								parentDirLoader = nome.split("\\.")[0].trim()+".";
 								loader = (java.lang.ClassLoader) constructor.newInstance(this.getClass().getClassLoader(),entries,entriesBytes,parentDirLoader,this.archiveFile);
 								break;
@@ -1164,7 +1165,7 @@ public class GeneralInstanceProperties {
 		return null;
 	}
 	
-	private void buildEntryNames(File file,String prefix,Vector<String> files,Vector<byte[]> entriesBytes) throws Exception{
+	private void buildEntryNames(File file,String prefix,List<String> files,List<byte[]> entriesBytes) throws Exception{
 		
 		String name = null;
 		if(prefix!=null){

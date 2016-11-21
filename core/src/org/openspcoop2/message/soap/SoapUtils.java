@@ -25,10 +25,10 @@ package org.openspcoop2.message.soap;
 
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.mail.internet.ContentType;
 import javax.xml.namespace.QName;
@@ -238,10 +238,10 @@ public class SoapUtils {
 	
 	// GET NODES e ELEMENT
 	
-	public static Vector<Node> getNotEmptyChildNodes(Node e){
+	public static List<Node> getNotEmptyChildNodes(Node e){
 		return getNotEmptyChildNodes(e, true);
 	}
-	public static Vector<Node> getNotEmptyChildNodes(Node e, boolean consideraTextNotEmptyAsNode){
+	public static List<Node> getNotEmptyChildNodes(Node e, boolean consideraTextNotEmptyAsNode){
 		return XMLUtils.getInstance().getNotEmptyChildNodes(e, consideraTextNotEmptyAsNode);
 	}
 	
@@ -252,8 +252,8 @@ public class SoapUtils {
 		return XMLUtils.getInstance().getFirstNotEmptyChildNode(e, consideraTextNotEmptyAsNode);
 	}
 	
-	public static Vector<SOAPElement> getNotEmptyChildSOAPElement(SOAPElement e){
-		Vector<SOAPElement> vec = new Vector<SOAPElement>();
+	public static List<SOAPElement> getNotEmptyChildSOAPElement(SOAPElement e){
+		List<SOAPElement> vec = new ArrayList<SOAPElement>();
 		Iterator<?> soapElements = e.getChildElements();
 		while (soapElements.hasNext()) {
 			Object soapElement = soapElements.next();
@@ -364,7 +364,7 @@ public class SoapUtils {
 	
 	public static void equalsSoapElements(SOAPElement element1,SOAPElement element2,boolean checkTextComment) throws MessageException{
 		try{
-			_equalsSoapElements(element1, element2, new Vector<String>(),checkTextComment);
+			_equalsSoapElements(element1, element2, new ArrayList<String>(),checkTextComment);
 		}catch(Exception e){
 			try{
 				String soapReq = PrettyPrintXMLUtils.prettyPrintWithTrAX(element1);
@@ -385,7 +385,7 @@ public class SoapUtils {
 		}
 	}
 	
-	private static void _equalsSoapElements(SOAPElement el1,SOAPElement el2,Vector<String> namespacePrefixEl1,boolean checkTextComment) throws MessageException{
+	private static void _equalsSoapElements(SOAPElement el1,SOAPElement el2,List<String> namespacePrefixEl1,boolean checkTextComment) throws MessageException{
 		
 		/**************** controllo nome del nodo *****************************/
 		if(!el1.getNodeName().equals(el2.getNodeName())){
@@ -396,8 +396,8 @@ public class SoapUtils {
 		
 		Iterator<?> it=el1.getAllAttributesAsQNames();
 		Iterator<?> it2=el2.getAllAttributesAsQNames();
-		Vector <String>vet=new Vector<String>();
-		Vector <String>vet2=new Vector<String>();
+		List <String>vet=new ArrayList<String>();
+		List <String>vet2=new ArrayList<String>();
 		/**************** controllo se gli attributi sono uguali*****************************/
 		while(it.hasNext()){
 			if(!it2.hasNext()){
@@ -468,8 +468,8 @@ public class SoapUtils {
 		/*****************************Controllo se i namespace sono uguali********************************/
         Iterator<?> nameSp1=el1.getNamespacePrefixes();
         Iterator<?> nameSp2=el2.getNamespacePrefixes();
-        Vector <String>nameSpVet1=new Vector<String>();
-        Vector <String>nameSpVet2=new Vector<String>();
+        List <String>nameSpVet1=new ArrayList<String>();
+        List <String>nameSpVet2=new ArrayList<String>();
         String prefix1, prefix2, urlPrefix1, urlPrefix2;
         while(nameSp1.hasNext() && nameSp2.hasNext())
         {
@@ -615,7 +615,7 @@ public class SoapUtils {
 					throw new MessageException("Node2 ["+el2.getNodeName()+"] possiede un element Text ("+((Text)obj2).toString()+") non presente nel Node1 ["+el1.getNodeName()+"]"); 
 				}
 				@SuppressWarnings("unchecked")
-				Vector<String> namespacePrefixEl1Parent = (Vector<String>) namespacePrefixEl1.clone();
+				List<String> namespacePrefixEl1Parent = (List<String>) ((ArrayList<String>) namespacePrefixEl1).clone();
 				_equalsSoapElements((SOAPElement)obj, (SOAPElement)obj2 , namespacePrefixEl1Parent,checkTextComment);
 			}
 		}

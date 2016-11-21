@@ -24,15 +24,16 @@
 package org.openspcoop2.pdd.config;
 
 
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.slf4j.Logger;
 
 
 /**
@@ -699,7 +700,7 @@ public class ClassNameProperties {
 	private String[] getTipiGestiti(String prefix,String ... defaults) throws Exception{
 		Properties prop = this.reader.readProperties(prefix);
 		Enumeration<?> en = prop.keys();
-		Vector<String> tipi = new Vector<String>();
+		List<String> tipi = new ArrayList<String>();
 		if(defaults!=null && defaults.length>0){
 			for(int i=0; i<defaults.length; i++){
 				tipi.add(defaults[i]);

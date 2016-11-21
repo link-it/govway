@@ -21,7 +21,8 @@
 package org.openspcoop2.protocol.sdi.builder;
 
 import java.io.ByteArrayInputStream;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPBody;
@@ -91,7 +92,7 @@ public class SDIImbustamento {
 		
 			
 			// childElement
-			Vector<SOAPElement> childs = SoapUtils.getNotEmptyChildSOAPElement(soapBody);
+			List<SOAPElement> childs = SoapUtils.getNotEmptyChildSOAPElement(soapBody);
 			if(childs==null || childs.size()<=0){
 				throw new Exception("FatturaPA non presente");
 			}
@@ -265,7 +266,7 @@ public class SDIImbustamento {
 			// Leggo Fattura
 			if(SDICostanti.SDI_TIPO_FATTURA_XML.equals(tipoInvioFattura)){
 				try{
-					Vector<Eccezione> erroriValidazione = new Vector<Eccezione>();
+					List<Eccezione> erroriValidazione = new ArrayList<Eccezione>();
 					boolean forceDisableValidazioneXsd = true; // la validazione se abilitata e' stata fatta prima
 					SDIFatturaUtils.validazioneFattura(fatturaBytes,this.sdiProperties,
 							erroriValidazione,
@@ -411,7 +412,7 @@ public class SDIImbustamento {
 			}
 			
 			// childElement
-			Vector<SOAPElement> childs = SoapUtils.getNotEmptyChildSOAPElement(soapBody);
+			List<SOAPElement> childs = SoapUtils.getNotEmptyChildSOAPElement(soapBody);
 			if(childs==null || childs.size()<=0){
 				throw new Exception("Notifica di Esito Committente non presente");
 			}

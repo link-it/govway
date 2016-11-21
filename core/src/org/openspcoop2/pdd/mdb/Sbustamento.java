@@ -160,7 +160,7 @@ public class Sbustamento extends GenericLib{
 	
 		IDServizio idServizio = richiestaApplicativa.getIDServizio();
 		IDSoggetto idSoggettoFruitore = richiestaApplicativa.getSoggettoFruitore();
-		java.util.Vector<Eccezione> errors = sbustamentoMsg.getErrors();
+		java.util.List<Eccezione> errors = sbustamentoMsg.getErrors();
 		boolean isMessaggioErroreProtocollo = sbustamentoMsg.isMessaggioErroreProtocollo();
 		boolean bustaDiServizio = sbustamentoMsg.getIsBustaDiServizio();
 		TipoPdD tipoPdD = TipoPdD.APPLICATIVA;
@@ -606,7 +606,7 @@ public class Sbustamento extends GenericLib{
 						// Registrazione eccezioni riscontrate dalla validazione della busta
 						boolean mittenteRegistrato = true;
 						StringBuffer eccBuffer = new StringBuffer();
-						java.util.Vector<Eccezione> errorsClone =  new java.util.Vector<Eccezione>();
+						java.util.List<Eccezione> errorsClone =  new java.util.ArrayList<Eccezione>();
 						for(int k = 0; k < errors.size() ; k++){
 							Eccezione er = errors.get(k);
 							errorsClone.add(er);

@@ -33,11 +33,9 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.sql.DataSource;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.basic.Costanti;
@@ -56,6 +54,7 @@ import org.openspcoop2.utils.StringWrapper;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.slf4j.Logger;
 
 
 
@@ -90,8 +89,8 @@ public class TracciaDriver implements ITracciaDriver {
 	/**
 	 * Properties
 	 */
-	private Vector<String> properties;
-	public void setProperties(Vector<String> properties) {
+	private List<String> properties;
+	public void setProperties(List<String> properties) {
 		this.properties = properties;
 	}
 	

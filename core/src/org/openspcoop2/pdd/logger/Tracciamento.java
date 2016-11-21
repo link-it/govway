@@ -29,7 +29,7 @@ import java.sql.Connection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 
 import javax.mail.BodyPart;
 import javax.xml.soap.AttachmentPart;
@@ -102,8 +102,8 @@ public class Tracciamento {
 	private IProtocolFactory<?> protocolFactory;
 	
 	/** Appender personalizzati per i tracciamenti di OpenSPCoop */
-	private Vector<ITracciaProducer> loggerTracciamentoOpenSPCoopAppender = null; 
-	private Vector<String> tipoTracciamentoOpenSPCoopAppender = null; 
+	private List<ITracciaProducer> loggerTracciamentoOpenSPCoopAppender = null; 
+	private List<String> tipoTracciamentoOpenSPCoopAppender = null; 
 
 	/** Reader della configurazione di OpenSPCoop */
 	private ConfigurazionePdDManager configurazionePdDManager;

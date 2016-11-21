@@ -27,11 +27,9 @@ import java.sql.Connection;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.sql.DataSource;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.basic.ProtocolliRegistrati;
 import org.openspcoop2.protocol.engine.BasicProtocolFactory;
@@ -45,6 +43,7 @@ import org.openspcoop2.protocol.sdk.tracciamento.FiltroRicercaTracce;
 import org.openspcoop2.protocol.sdk.tracciamento.FiltroRicercaTracceConPaginazione;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
+import org.slf4j.Logger;
 
 
 
@@ -66,7 +65,7 @@ public class DriverTracciamento implements ITracciaDriver {
 	/**
 	 * Properties
 	 */
-	public void setProperties(Vector<String> properties) {
+	public void setProperties(List<String> properties) {
 		this.driverBase.setProperties(properties);
 	}
 	

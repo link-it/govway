@@ -22,17 +22,18 @@
 
 package org.openspcoop2.core.registry.driver;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
-import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.utils.serialization.IOException;
@@ -277,7 +278,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 	 */
 	@Override
 	public String[] getManagedObjects(boolean simpleName) throws IOException{
-		Vector<String> oggetti = new Vector<String>();
+		List<String> oggetti = new ArrayList<String>();
 		
 		if(simpleName){
 			oggetti.add(AccordoCooperazione.class.getSimpleName());

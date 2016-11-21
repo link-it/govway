@@ -29,7 +29,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -372,7 +371,7 @@ public class OpenSPCoop2DBConfigurationUtility {
 				filtroRicercaServizio.setTipoSoggettoErogatore(tipoSoggettoErogatore);
 				filtroRicercaServizio.setNomeSoggettoErogatore(nomeSoggettoErogatore);
 			}
-			Vector<IDServizio> idServizi = new Vector<IDServizio>();
+			List<IDServizio> idServizi = new ArrayList<IDServizio>();
 			try{
 				List<IDServizio> idServizio = driverRegistroServizi.getAllIdServizi(filtroRicercaServizio);
 				if(idServizio!=null){
@@ -423,7 +422,7 @@ public class OpenSPCoop2DBConfigurationUtility {
 					
 					
 					// PORTE DELEGATE CON TALE SERVIZIO e con tale fruitore
-					Vector<String> nomiServiziApplicativi = new Vector<String>();
+					List<String> nomiServiziApplicativi = new ArrayList<String>();
 					List<PortaDelegata> listaPorteDelegate = 
 						driverConfigurazione.getPorteDelegateWithServizio(asps.getId(), servizio.getTipo(), servizio.getNome(), 
 								asps.getIdSoggetto(), servizio.getTipoSoggettoErogatore(), servizio.getNomeSoggettoErogatore());
@@ -476,7 +475,7 @@ public class OpenSPCoop2DBConfigurationUtility {
 						
 													
 					// PORTE DELEGATE
-					Vector<IDServizioApplicativo> nomiServiziApplicativi = new Vector<IDServizioApplicativo>();
+					List<IDServizioApplicativo> nomiServiziApplicativi = new ArrayList<IDServizioApplicativo>();
 					List<PortaDelegata> listaPorteDelegate = 
 						driverConfigurazione.getPorteDelegateWithServizio(asps.getId(), servizio.getTipo(), servizio.getNome(), 
 								asps.getIdSoggetto(), servizio.getTipoSoggettoErogatore(), servizio.getNomeSoggettoErogatore());

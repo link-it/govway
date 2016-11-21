@@ -21,7 +21,7 @@
 package org.openspcoop2.protocol.sdi.utils;
 
 import java.io.ByteArrayInputStream;
-import java.util.Vector;
+import java.util.List;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdi.config.SDIProperties;
@@ -43,7 +43,7 @@ import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
  */
 public class SDIFatturaUtils {
 
-	public static void validazioneFattura(byte[] fattura, SDIProperties sdiProperties, Vector<Eccezione> eccezioniValidazione, 
+	public static void validazioneFattura(byte[] fattura, SDIProperties sdiProperties, List<Eccezione> eccezioniValidazione, 
 			SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory,
 			Busta busta,OpenSPCoop2Message msg,boolean addMsgInContextIfEnabled,
 			boolean validaDatiTrasmissione, boolean forceDisableValidazioneXSD) throws Exception{

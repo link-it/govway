@@ -25,10 +25,10 @@ package org.openspcoop2.pdd.services.core;
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
@@ -255,7 +255,7 @@ public class RicezioneContenutiApplicativi {
 			String protocol = (String) enumProtocols.nextElement();
 			String[] tipiIntegrazionePD = propertiesReader.getTipoIntegrazionePD(protocol);
 			if(tipiIntegrazionePD!=null && tipiIntegrazionePD.length>0){
-				Vector<String> tipiIntegrazionePerProtocollo = new Vector<String>();
+				List<String> tipiIntegrazionePerProtocollo = new ArrayList<String>();
 				for (int i = 0; i < tipiIntegrazionePD.length; i++) {
 					classType = className.getIntegrazionePortaDelegata(tipiIntegrazionePD[i]);
 					try {

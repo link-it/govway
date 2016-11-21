@@ -31,7 +31,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.core.commons.CoreException;
@@ -4308,7 +4307,7 @@ public class ConfigurazionePdDReader {
 				}else {
 					
 					String [] values =  configurazione.getIntegrationManager().getAutenticazione().split(",");
-					Vector<String> v = new Vector<String>();
+					List<String> v = new ArrayList<String>();
 					ClassNameProperties classNameProperties = ClassNameProperties.getInstance();
 					for(int i=0; i<values.length; i++){
 						values[i] = values[i].trim();

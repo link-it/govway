@@ -123,7 +123,7 @@ public class ValidazioneSemantica  {
 
 
 	/**
-	 * Ritorna un vector contenente eventuali eccezioni di validazione riscontrate nella busta.   
+	 * Ritorna un List contenente eventuali eccezioni di validazione riscontrate nella busta.   
 	 *
 	 * @return Eccezioni riscontrate nella busta.
 	 * 
@@ -132,7 +132,7 @@ public class ValidazioneSemantica  {
 		return this.erroriValidazione;
 	}
 	/**
-	 * Ritorna un vector contenente eventuali eccezioni di processamento riscontrate nella busta.   
+	 * Ritorna un List contenente eventuali eccezioni di processamento riscontrate nella busta.   
 	 *
 	 * @return Eccezioni riscontrate nella busta.
 	 * 
@@ -145,7 +145,7 @@ public class ValidazioneSemantica  {
 	 * Metodo che effettua la validazione dei soggetti di una busta, controllando la loro registrazione nel registro dei servizi. 
 	 *
 	 * Mano mano che sono incontrati errori di validazione, viene creato un oggetto 
-	 *   {@link Eccezione}, e viene inserito nel Vector <var>errors</var>.
+	 *   {@link Eccezione}, e viene inserito nel List <var>errors</var>.
 	 *
 	 * @param proprietaValidazione tipo di Validazione
 	 * 
@@ -161,10 +161,10 @@ public class ValidazioneSemantica  {
 			this.tipoServizioCorrelato = result.getTipoServizioCorrelato();
 			this.erroriProcessamento = result.getErroriProcessamento();
 			if(this.erroriProcessamento == null) 
-				this.erroriProcessamento = new java.util.Vector<Eccezione>();
+				this.erroriProcessamento = new java.util.ArrayList<Eccezione>();
 			this.erroriValidazione = result.getErroriValidazione();
 			if(this.erroriValidazione == null) 
-				this.erroriValidazione = new java.util.Vector<Eccezione>();
+				this.erroriValidazione = new java.util.ArrayList<Eccezione>();
 			
 			// Controllo correlazione alla richiesta per buste contenenti Risposte o ricevute 
 			//System.out.println("TIPO BUSTA ["+tipoBusta+"]");

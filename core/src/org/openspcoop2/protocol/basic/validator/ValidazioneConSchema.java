@@ -21,7 +21,7 @@
 
 package org.openspcoop2.protocol.basic.validator;
 
-import java.util.Vector;
+import java.util.List;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.Eccezione;
@@ -50,13 +50,13 @@ public class ValidazioneConSchema implements
 	}
 
 	@Override
-	public Vector<Eccezione> getEccezioniValidazione() {
-		return new java.util.Vector<Eccezione>();
+	public List<Eccezione> getEccezioniValidazione() {
+		return new java.util.ArrayList<Eccezione>();
 	}
 
 	@Override
-	public Vector<Eccezione> getEccezioniProcessamento() {
-		return new java.util.Vector<Eccezione>();
+	public List<Eccezione> getEccezioniProcessamento() {
+		return new java.util.ArrayList<Eccezione>();
 	}
 
 	@Override

@@ -32,7 +32,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.sql.DataSource;
 
@@ -100,12 +99,12 @@ public class DiagnosticDriver implements IDiagnosticDriver {
 	/**
 	 * Properties per campi aggiuntivi
 	 */
-	private Vector<String> propertiesMsgDiagnostici;
-	public void setPropertiesMsgDiagnostici(Vector<String> properties) {
+	private List<String> propertiesMsgDiagnostici;
+	public void setPropertiesMsgDiagnostici(List<String> properties) {
 		this.propertiesMsgDiagnostici = properties;
 	}
-	private Vector<String> propertiesMsgDiagCorrelazione;
-	public void setPropertiesMsgDiagCorrelazione(Vector<String> properties) {
+	private List<String> propertiesMsgDiagCorrelazione;
+	public void setPropertiesMsgDiagCorrelazione(List<String> properties) {
 		this.propertiesMsgDiagCorrelazione = properties;
 	}	
 	

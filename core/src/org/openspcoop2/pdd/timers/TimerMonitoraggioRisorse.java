@@ -23,9 +23,8 @@
 
 package org.openspcoop2.pdd.timers;
 
-import java.util.Vector;
+import java.util.List;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
@@ -42,6 +41,7 @@ import org.openspcoop2.protocol.manifest.constants.ServiceBinding;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
+import org.slf4j.Logger;
 
 /**
  * Thread per la gestione del monitoraggio delle risorse
@@ -94,11 +94,11 @@ public class TimerMonitoraggioRisorse extends Thread{
 	/** Risorsa: Registri dei Servizi di OpenSPCoop */
 	private RegistroServiziManager registriPdDReader=null;
 	/** Risorsa: Tracciamenti Personalizzati */
-	private Vector<ITracciaProducer> tracciamentiPersonalizzati=null;
-	private Vector<String> tipiTracciamentiPersonalizzati=null;
+	private List<ITracciaProducer> tracciamentiPersonalizzati=null;
+	private List<String> tipiTracciamentiPersonalizzati=null;
 	/** Risorsa: MsgDiagnostici Personalizzati */
-	private Vector<IDiagnosticProducer> msgDiagnosticiPersonalizzati=null;
-	private Vector<String> tipiMsgDiagnosticiPersonalizzati=null;
+	private List<IDiagnosticProducer> msgDiagnosticiPersonalizzati=null;
+	private List<String> tipiMsgDiagnosticiPersonalizzati=null;
 	
 	/** Costruttore */
 	public TimerMonitoraggioRisorse() {

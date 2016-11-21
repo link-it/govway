@@ -26,11 +26,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
@@ -414,7 +414,7 @@ public class MessageSecurityReceiver_soapbox implements IMessageSecurityReceiver
 	@SuppressWarnings("unused")
 	private void refreshAttachments(OpenSPCoop2SoapMessage openspcoop2Message) throws MessageException, MessageNotSupportedException, SOAPException{
 		java.util.Iterator<?> itAp = openspcoop2Message.getAttachments();
-		Vector<AttachmentPart> v = new Vector<AttachmentPart>();
+		List<AttachmentPart> v = new ArrayList<AttachmentPart>();
 	    while(itAp.hasNext()){
 	    	AttachmentPart ap = 
 	    		(AttachmentPart) itAp.next();

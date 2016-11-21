@@ -25,10 +25,10 @@ package org.openspcoop2.utils.xml;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.w3c.dom.Attr;
@@ -357,7 +357,7 @@ public class XSDUtils {
 	private List<Node> readImportsIncludes(String targetNamespaceSchema,Document xsdD,Node xsdE,boolean imports,boolean includes) throws XMLException{
 
 		try{
-			Vector<Node> nodes = new Vector<Node>();
+			List<Node> nodes = new ArrayList<Node>();
 			NodeList list = null;
 			if(xsdD!=null){
 				list = xsdD.getChildNodes(); 

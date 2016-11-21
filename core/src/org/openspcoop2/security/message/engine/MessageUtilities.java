@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
@@ -65,8 +64,8 @@ public class MessageUtilities {
 					for (int j = 0; j < it.getLength() && !found; j++) {
 						Node elementFather = (Node) it.item(j);
 						//SOAPElement elementFather = (SOAPElement) it.item(j);
-						//Vector<SOAPElement> encryptedElements = SoapUtils.getNotEmptyChildSOAPElement(elementFather);
-						Vector<Node> encryptedElements = SoapUtils.getNotEmptyChildNodes(elementFather, false);
+						//List<SOAPElement> encryptedElements = SoapUtils.getNotEmptyChildSOAPElement(elementFather);
+						List<Node> encryptedElements = SoapUtils.getNotEmptyChildNodes(elementFather, false);
 						for (int i = 0; i < encryptedElements.size() && !found; i++) {
 							//SOAPElement actual = encryptedElements.get(i);
 							Node actual = encryptedElements.get(i);

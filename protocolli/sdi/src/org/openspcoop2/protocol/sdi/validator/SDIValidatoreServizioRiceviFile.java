@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.sdi.validator;
 import it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types.constants.ErroreInvioType;
 import it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types.utils.ProjectInfo;
 
-import java.util.Vector;
+import java.util.List;
 
 import javax.xml.soap.SOAPElement;
 
@@ -120,7 +120,7 @@ public class SDIValidatoreServizioRiceviFile {
 			return;	
 		}
 		
-		Vector<SOAPElement> elementChilds = SoapUtils.getNotEmptyChildSOAPElement(this.sdiMessage);
+		List<SOAPElement> elementChilds = SoapUtils.getNotEmptyChildSOAPElement(this.sdiMessage);
 		if(elementChilds==null || elementChilds.size()<=0){
 			this.sdiValidazioneSintattica.erroriValidazione.add(this.sdiValidazioneSintattica.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
 					"RootElement [{"+this.namespace+"}"+this.sdiMessage.getLocalName()+"] non contiene elementi"));

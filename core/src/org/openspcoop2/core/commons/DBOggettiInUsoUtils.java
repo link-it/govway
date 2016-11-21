@@ -688,7 +688,7 @@ public class DBOggettiInUsoUtils  {
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_SERVIZI, servizi_list);
 			}
 
-			//Vector<String> nomiServiziApplicativi = new Vector<String>();
+			//List<String> nomiServiziApplicativi = new ArrayList<String>();
 			//controllo se in uso in servizi
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
@@ -1041,7 +1041,7 @@ public class DBOggettiInUsoUtils  {
 			
 			
 			// servizio Componente
-			//Vector<String> nomiServiziApplicativi = new Vector<String>();
+			//List<String> nomiServiziApplicativi = new ArrayList<String>();
 			//controllo se in uso in servizi
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.ACCORDI_SERVIZI_COMPONENTI);

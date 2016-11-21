@@ -23,9 +23,10 @@
 
 package org.openspcoop2.pdd.timers;
 
-import java.util.Vector;
-
 import org.slf4j.Logger;
+
+import java.util.List;
+
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
@@ -110,7 +111,7 @@ public class TimerGestoreRepositoryBusteLib {
 										
 				// Eliminazione Messaggi from INBOX
 				String causaMessaggiINBOX = "Eliminazione buste (INBOX) marcate logicamente da eliminare";
-				Vector<String> idMsgINBOX = null;
+				List<String> idMsgINBOX = null;
                 try{
                 	GestoreMessaggi.acquireLock(this.msgDiag, causaMessaggiINBOX, this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
         		
@@ -156,7 +157,7 @@ public class TimerGestoreRepositoryBusteLib {
 				
 				//	Eliminazione Messaggi from OUTBOX
                 String causaMessaggiOUTBOX = "Eliminazione buste (OUTBOX) marcate logicamente da eliminare";
-                Vector<String> idMsgOUTBOX = null;
+                List<String> idMsgOUTBOX = null;
                 try{
                 	GestoreMessaggi.acquireLock(this.msgDiag, causaMessaggiOUTBOX, this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), this.propertiesReader.getMsgGiaInProcessamento_CheckInterval());
         		

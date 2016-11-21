@@ -25,9 +25,8 @@ package org.openspcoop2.pdd.timers;
 
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Vector;
+import java.util.List;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -45,6 +44,7 @@ import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.driver.RollbackRepositoryBuste;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 
 
 /**
@@ -153,7 +153,7 @@ public class TimerGestoreMessaggiLib  {
 				
 				// Eliminazione Messaggi from INBOX
 				String causaMessaggiINBOXDaEliminareNonScaduti = "Eliminazione messaggi INBOX marcati logicamente da eliminare";
-				Vector<String> idMsgInutiliINBOX = null;
+				List<String> idMsgInutiliINBOX = null;
                 try{
                 	GestoreMessaggi.acquireLock(this.msgDiag, causaMessaggiINBOXDaEliminareNonScaduti, 
                 			this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
@@ -203,7 +203,7 @@ public class TimerGestoreMessaggiLib  {
 					
 				//	Eliminazione Messaggi from OUTBOX
                 String causaMessaggiOUTBOXDaEliminareNonScaduti = "Eliminazione messaggi OUTBOX marcati logicamente da eliminare";
-                Vector<String> idMsgInutiliOUTBOX = null;
+                List<String> idMsgInutiliOUTBOX = null;
                 try{
                 	GestoreMessaggi.acquireLock(this.msgDiag, causaMessaggiOUTBOXDaEliminareNonScaduti, 
                 			this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
@@ -259,7 +259,7 @@ public class TimerGestoreMessaggiLib  {
                 
 				//	Eliminazione Messaggi from INBOX
                 String causaMessaggiINBOXScaduti = "Eliminazione messaggi INBOX scaduti";
-                Vector<String> idMsgScadutiINBOX = null;
+                List<String> idMsgScadutiINBOX = null;
                 try{
                 	GestoreMessaggi.acquireLock(this.msgDiag, causaMessaggiINBOXScaduti, 
                 			this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
@@ -346,7 +346,7 @@ public class TimerGestoreMessaggiLib  {
 				
 				// Eliminazione Messaggi from OUTBOX
                 String causaMessaggiOUTBOXScaduti = "Eliminazione messaggi OUTBOX scaduti";
-                Vector<String> idMsgScadutiOUTBOX = null;
+                List<String> idMsgScadutiOUTBOX = null;
                 try{
                 	GestoreMessaggi.acquireLock(this.msgDiag, causaMessaggiOUTBOXScaduti, 
                 			this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
@@ -440,7 +440,7 @@ public class TimerGestoreMessaggiLib  {
                 
 				//	Eliminazione Messaggi from INBOX
                 String causaMessaggiINBOXNonGestitiRicezioneContenutiApplicativi = "Eliminazione messaggi INBOX non gestiti dal servizio RicezioneContenutiApplicativi";
-                Vector<String> idMsgServizioRicezioneContenutiApplicativiNonGestiti = null;
+                List<String> idMsgServizioRicezioneContenutiApplicativiNonGestiti = null;
                 try{
                 	GestoreMessaggi.acquireLock(this.msgDiag, causaMessaggiINBOXNonGestitiRicezioneContenutiApplicativi, 
                 			this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
@@ -527,7 +527,7 @@ public class TimerGestoreMessaggiLib  {
 			
 				//	Eliminazione Messaggi from OUTBOX
                 String causaMessaggiOUTBOXNonGestitiRicezioneBuste = "Eliminazione messaggi OUTBOX non gestiti dal servizio RicezioneBuste";
-                Vector<String> idMsgServizioRicezioneBusteNonGestiti = null;
+                List<String> idMsgServizioRicezioneBusteNonGestiti = null;
                 try{
                 	GestoreMessaggi.acquireLock(this.msgDiag, causaMessaggiOUTBOXNonGestitiRicezioneBuste, 
                 			this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 
@@ -627,7 +627,7 @@ public class TimerGestoreMessaggiLib  {
 			
 			
 			// -- Scadute (Correlazioni per cui era stata impostata una scadenza) --
-			java.util.Vector<Long> correlazioniScadute = gestoreCorrelazioneApplicativa.getCorrelazioniScadute(this.limit,this.logQuery,this.orderByQuery);
+			java.util.List<Long> correlazioniScadute = gestoreCorrelazioneApplicativa.getCorrelazioniScadute(this.limit,this.logQuery,this.orderByQuery);
 			this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_TIPO_RICERCA_MSG_DA_ELIMINARE,"CorrelazioniApplicative");
 			if(this.logQuery){
 				if(correlazioniScadute.size()<=0){
@@ -678,7 +678,7 @@ public class TimerGestoreMessaggiLib  {
 			
 			// -- Scadute rispetto ora registrazione
 			if(this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione){
-				java.util.Vector<Long> correlazioniScaduteRispettoOraRegistrazione = 
+				java.util.List<Long> correlazioniScaduteRispettoOraRegistrazione = 
 						gestoreCorrelazioneApplicativa.getCorrelazioniScaduteRispettoOraRegistrazione(this.limit, this.scadenzaCorrelazioneApplicativa, 
 								this.logQuery,this.orderByQuery,this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione_escludiCorrelazioniConScadenzaImpostata);
 				if(this.logQuery){

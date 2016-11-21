@@ -29,7 +29,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
-import java.util.Vector;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -155,7 +154,7 @@ public class TunnelSoapUtils {
 	/* ********  S B U S T A M E N T O    M E S S A G G I  ******** */ 
 
 	public static boolean isTunnelOpenSPCoopSoap(SOAPBody body){
-		Vector<Node> bodyChildren = SoapUtils.getNotEmptyChildNodes(body);
+		List<Node> bodyChildren = SoapUtils.getNotEmptyChildNodes(body);
 		if(body!=null && 
 				bodyChildren.size() > 0 && 
 				bodyChildren.get(0)!=null &&

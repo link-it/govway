@@ -26,8 +26,8 @@ package org.openspcoop2.pdd.core.connettori;
 
 import java.io.ByteArrayInputStream;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Random;
-import java.util.Vector;
 
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiConnettori;
@@ -369,7 +369,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
 					
 					// repository
 					RepositoryBuste repositoryBuste = new RepositoryBuste(state, true,this.getProtocolFactory());
-					repositoryBuste.registraBustaIntoInBox(bustaRichiesta, new Vector<Eccezione>() ,
+					repositoryBuste.registraBustaIntoInBox(bustaRichiesta, new ArrayList<Eccezione>() ,
 							OpenSPCoop2Properties.getInstance().getRepositoryIntervalloScadenzaMessaggi());
 					Integrazione infoIntegrazione = new Integrazione();
 					infoIntegrazione.setIdModuloInAttesa(null);

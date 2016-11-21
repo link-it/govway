@@ -25,9 +25,8 @@ package org.openspcoop2.pdd.timers;
 
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.Vector;
+import java.util.List;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -54,6 +53,7 @@ import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 
 
 /**
@@ -149,7 +149,7 @@ public class TimerConsegnaContenutiApplicativi  {
 				
 				// ReInoltro Messaggi from INBOX
 				String causaMessaggiINBOXDaRiconsegnare = "Messaggi da riconsegnare verso il modulo ConsegnaContenutiApplicativi";
-				Vector<MessaggioServizioApplicativo> msgDaRiconsegnareINBOX = null;
+				List<MessaggioServizioApplicativo> msgDaRiconsegnareINBOX = null;
                 try{
                 	GestoreMessaggi.acquireLock(this.msgDiag, causaMessaggiINBOXDaRiconsegnare, 
                 			this.propertiesReader.getMsgGiaInProcessamento_AttesaAttiva(), 

@@ -30,13 +30,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.slf4j.Logger;
 import org.apache.soap.encoding.soapenc.Base64;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -91,6 +91,7 @@ import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.slf4j.Logger;
 
 
 /**
@@ -1027,7 +1028,7 @@ public class GestoreMessaggi  {
 				StringBuffer fieldNamesPdDContext = new StringBuffer();
 				StringBuffer fieldValuesPdDContext = new StringBuffer();
 				Hashtable<String, String> contextSerializerParameters = null;
-				Vector<Object> objectSerializer = new Vector<Object>();
+				List<Object> objectSerializer = new ArrayList<Object>();
 				if(GestoreMessaggi.pddContextSerializer!=null){
 					contextSerializerParameters = GestoreMessaggi.pddContextSerializer.getGestoreMessaggiKeywords();
 					if(contextSerializerParameters!=null && contextSerializerParameters.size()>0){
@@ -1151,7 +1152,7 @@ public class GestoreMessaggi  {
 			StringBuffer fieldNamesPdDContext = new StringBuffer();
 			StringBuffer fieldValuesPdDContext = new StringBuffer();
 			Hashtable<String, String> contextSerializerParameters = null;
-			Vector<Object> objectSerializer = new Vector<Object>();
+			List<Object> objectSerializer = new ArrayList<Object>();
 			if(GestoreMessaggi.pddContextSerializer!=null){
 				contextSerializerParameters = GestoreMessaggi.pddContextSerializer.getGestoreMessaggiKeywords();
 				if(contextSerializerParameters!=null && contextSerializerParameters.size()>0){
@@ -3466,7 +3467,7 @@ public class GestoreMessaggi  {
 	 * @return ID dei messaggi destinati ad un servizio applicativo
 	 * 
 	 */
-	public Vector<String> getIDMessaggi_ServizioApplicativo(String servizioApplicativo)throws GestoreMessaggiException{
+	public List<String> getIDMessaggi_ServizioApplicativo(String servizioApplicativo)throws GestoreMessaggiException{
 
 		return this.getIDMessaggi_ServizioApplicativo_engine(servizioApplicativo, -1, -1, null, null, null);
 
@@ -3481,7 +3482,7 @@ public class GestoreMessaggi  {
 	 * @return ID dei messaggi destinati ad un servizio applicativo
 	 * 
 	 */
-	public Vector<String> getIDMessaggi_ServizioApplicativo(String servizioApplicativo,int counter)throws GestoreMessaggiException{
+	public List<String> getIDMessaggi_ServizioApplicativo(String servizioApplicativo,int counter)throws GestoreMessaggiException{
 
 		return this.getIDMessaggi_ServizioApplicativo_engine(servizioApplicativo, counter, -1, null, null, null);
 
@@ -3496,7 +3497,7 @@ public class GestoreMessaggi  {
 	 * @return ID dei messaggi destinati ad un servizio applicativo
 	 * 
 	 */
-	public Vector<String> getIDMessaggi_ServizioApplicativo(String servizioApplicativo,int counter, int offset)throws GestoreMessaggiException{
+	public List<String> getIDMessaggi_ServizioApplicativo(String servizioApplicativo,int counter, int offset)throws GestoreMessaggiException{
 
 		return this.getIDMessaggi_ServizioApplicativo_engine(servizioApplicativo, counter, offset, null, null, null);
 
@@ -3512,7 +3513,7 @@ public class GestoreMessaggi  {
 	 * @return ID dei messaggi destinati ad un servizio applicativo
 	 * 
 	 */
-	public Vector<String> getIDMessaggi_ServizioApplicativo(String servizioApplicativo,
+	public List<String> getIDMessaggi_ServizioApplicativo(String servizioApplicativo,
 			String tipoServizio,String servizio)throws GestoreMessaggiException{
 
 		return this.getIDMessaggi_ServizioApplicativo_engine(servizioApplicativo, -1, -1, tipoServizio, servizio, null);
@@ -3529,7 +3530,7 @@ public class GestoreMessaggi  {
 	 * @return ID dei messaggi destinati ad un servizio applicativo
 	 * 
 	 */
-	public Vector<String> getIDMessaggi_ServizioApplicativo(String servizioApplicativo,
+	public List<String> getIDMessaggi_ServizioApplicativo(String servizioApplicativo,
 			String tipoServizio,String servizio,int counter)throws GestoreMessaggiException{
 
 		return this.getIDMessaggi_ServizioApplicativo_engine(servizioApplicativo, counter, -1, tipoServizio, servizio, null);
@@ -3547,7 +3548,7 @@ public class GestoreMessaggi  {
 	 * @return ID dei messaggi destinati ad un servizio applicativo
 	 * 
 	 */
-	public Vector<String> getIDMessaggi_ServizioApplicativo(String servizioApplicativo,
+	public List<String> getIDMessaggi_ServizioApplicativo(String servizioApplicativo,
 			String tipoServizio,String servizio,int counter, int offset)throws GestoreMessaggiException{
 
 		return this.getIDMessaggi_ServizioApplicativo_engine(servizioApplicativo, counter, offset, tipoServizio, servizio, null);
@@ -3564,7 +3565,7 @@ public class GestoreMessaggi  {
 	 * @return ID dei messaggi destinati ad un servizio applicativo
 	 * 
 	 */
-	public Vector<String> getIDMessaggi_ServizioApplicativo(String servizioApplicativo,
+	public List<String> getIDMessaggi_ServizioApplicativo(String servizioApplicativo,
 			String tipoServizio,String servizio,String azione)throws GestoreMessaggiException{
 
 		return this.getIDMessaggi_ServizioApplicativo_engine(servizioApplicativo, -1, -1, tipoServizio, servizio, azione);
@@ -3582,7 +3583,7 @@ public class GestoreMessaggi  {
 	 * @return ID dei messaggi destinati ad un servizio applicativo
 	 * 
 	 */
-	public Vector<String> getIDMessaggi_ServizioApplicativo(String servizioApplicativo,
+	public List<String> getIDMessaggi_ServizioApplicativo(String servizioApplicativo,
 			String tipoServizio,String servizio,String azione,int counter)throws GestoreMessaggiException{
 
 		return this.getIDMessaggi_ServizioApplicativo_engine(servizioApplicativo, counter, -1, tipoServizio, servizio, azione);
@@ -3601,7 +3602,7 @@ public class GestoreMessaggi  {
 	 * @return ID dei messaggi destinati ad un servizio applicativo
 	 * 
 	 */
-	public Vector<String> getIDMessaggi_ServizioApplicativo(String servizioApplicativo,
+	public List<String> getIDMessaggi_ServizioApplicativo(String servizioApplicativo,
 			String tipoServizio,String servizio,String azione,int counter, int offset)throws GestoreMessaggiException{
 
 		return this.getIDMessaggi_ServizioApplicativo_engine(servizioApplicativo, counter, offset, tipoServizio, servizio, azione);
@@ -3623,7 +3624,7 @@ public class GestoreMessaggi  {
 	 * @return ID dei messaggi destinati ad un servizio applicativo
 	 * 
 	 */
-	private Vector<String> getIDMessaggi_ServizioApplicativo_engine(String servizioApplicativo,
+	private List<String> getIDMessaggi_ServizioApplicativo_engine(String servizioApplicativo,
 			int counter,int offset,String tipoServizio,String servizio,String azione)throws GestoreMessaggiException{
 
 		if(this.openspcoopstate instanceof OpenSPCoopStateful) {
@@ -3632,7 +3633,7 @@ public class GestoreMessaggi  {
 			Connection connectionDB = stateful.getConnectionDB();
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
-			Vector<String> ids = new Vector<String>();
+			List<String> ids = new ArrayList<String>();
 			String queryString = null;
 			try{	
 				// Effettuo ricerca ID DEL SERVIZIO APPLICATIVO
@@ -4253,14 +4254,14 @@ public class GestoreMessaggi  {
 
 	/* ------------- LETTURA MESSAGGI DA RICONSEGNARE -------------- */
 
-	public Vector<MessaggioServizioApplicativo> readMessaggiDaRiconsegnareIntoBox(int limit,boolean logQuery, boolean orderBy, Date riconsegna)throws GestoreMessaggiException{
+	public List<MessaggioServizioApplicativo> readMessaggiDaRiconsegnareIntoBox(int limit,boolean logQuery, boolean orderBy, Date riconsegna)throws GestoreMessaggiException{
 
 		if(this.openspcoopstate instanceof OpenSPCoopStateful) {
 			StatefulMessage stateful = (this.isRichiesta) ? ((StatefulMessage)this.openspcoopstate.getStatoRichiesta())
 					: ((StatefulMessage)this.openspcoopstate.getStatoRisposta()) ;
 			Connection connectionDB = stateful.getConnectionDB();
 
-			Vector<MessaggioServizioApplicativo> idMsg = new Vector<MessaggioServizioApplicativo>();
+			List<MessaggioServizioApplicativo> idMsg = new ArrayList<MessaggioServizioApplicativo>();
 
 			PreparedStatement pstmtMsgEliminati = null;
 			ResultSet rs = null;
@@ -4414,10 +4415,10 @@ public class GestoreMessaggi  {
 	 * del modulo utilizzato per l'eliminazione (parametro idModuloCleaner)
 	 *
 	 * @param idModuloCleaner ID del modulo utilizzato per l'eliminazione
-	 * @return Nel caso l'operazione ha successo ritorna un vector di stringhe, altrimenti null
+	 * @return Nel caso l'operazione ha successo ritorna un List di stringhe, altrimenti null
 	 * 
 	 */
-	public Vector<String> readMessaggiInutiliIntoInbox(String idModuloCleaner,int limit,boolean logQuery, boolean orderBy)throws GestoreMessaggiException{
+	public List<String> readMessaggiInutiliIntoInbox(String idModuloCleaner,int limit,boolean logQuery, boolean orderBy)throws GestoreMessaggiException{
 		return this.readMessaggiInutiliIntoBox(true,idModuloCleaner,limit,logQuery,orderBy);
 	}
 	/**
@@ -4427,10 +4428,10 @@ public class GestoreMessaggi  {
 	 * del modulo utilizzato per l'eliminazione (parametro idModuloCleaner)
 	 *
 	 * @param idModuloCleaner ID del modulo utilizzato per l'eliminazione
-	 * @return Nel caso l'operazione ha successo ritorna un vector di stringhe, altrimenti null
+	 * @return Nel caso l'operazione ha successo ritorna un List di stringhe, altrimenti null
 	 * 
 	 */
-	public Vector<String> readMessaggiInutiliIntoOutbox(String idModuloCleaner,int limit,boolean logQuery, boolean orderBy)throws GestoreMessaggiException{
+	public List<String> readMessaggiInutiliIntoOutbox(String idModuloCleaner,int limit,boolean logQuery, boolean orderBy)throws GestoreMessaggiException{
 		return this.readMessaggiInutiliIntoBox(false,idModuloCleaner,limit,logQuery,orderBy);
 	}
 
@@ -4442,17 +4443,17 @@ public class GestoreMessaggi  {
 	 *
 	 * @param searchIntoInbox Cerca nella cartella INBOX (se true) o nella cartella OUTBOX (se false)
 	 * @param idModuloCleaner ID del modulo utilizzato per l'eliminazione
-	 * @return Nel caso l'operazione ha successo ritorna un vector di stringhe, altrimenti null
+	 * @return Nel caso l'operazione ha successo ritorna un List di stringhe, altrimenti null
 	 * 
 	 */
-	private Vector<String> readMessaggiInutiliIntoBox(boolean searchIntoInbox,
+	private List<String> readMessaggiInutiliIntoBox(boolean searchIntoInbox,
 			String idModuloCleaner,int limit,boolean logQuery, boolean orderBy)throws GestoreMessaggiException{
 		if(this.openspcoopstate instanceof OpenSPCoopStateful) {
 			StatefulMessage stateful = (this.isRichiesta) ? ((StatefulMessage)this.openspcoopstate.getStatoRichiesta()) 
 					: ((StatefulMessage)this.openspcoopstate.getStatoRisposta()) ;			
 			Connection connectionDB = stateful.getConnectionDB();
 
-			Vector<String> idMsg = new Vector<String>();
+			List<String> idMsg = new ArrayList<String>();
 
 			PreparedStatement pstmtMsgEliminati = null;
 			ResultSet rs = null;
@@ -4550,20 +4551,20 @@ public class GestoreMessaggi  {
 	 * Cerca nella tabella MESSAGGI i messaggi che sono nelle cartelle da un intervallo di tempo definito da: <var>timeout<var>
 	 *
 	 * @param scadenzaMsg Intervallo di scadenza dei messaggi
-	 * @return Nel caso l'operazione ha successo ritorna un vector di stringhe, altrimenti null
+	 * @return Nel caso l'operazione ha successo ritorna un List di stringhe, altrimenti null
 	 * 
 	 */
-	public Vector<String> readMessaggiScadutiIntoInbox(long scadenzaMsg,int limit,boolean logQuery, boolean orderBy)throws GestoreMessaggiException{
+	public List<String> readMessaggiScadutiIntoInbox(long scadenzaMsg,int limit,boolean logQuery, boolean orderBy)throws GestoreMessaggiException{
 		return this.readMessaggiScadutiIntoBox(true,scadenzaMsg,limit,logQuery,orderBy);
 	}
 	/**
 	 * Cerca nella tabella MESSAGGI i messaggi che sono nelle cartelle da un intervallo di tempo definito da: <var>timeout<var>
 	 *
 	 * @param scadenzaMsg Intervallo di scadenza dei messaggi
-	 * @return Nel caso l'operazione ha successo ritorna un vector di stringhe, altrimenti null
+	 * @return Nel caso l'operazione ha successo ritorna un List di stringhe, altrimenti null
 	 * 
 	 */
-	public Vector<String> readMessaggiScadutiIntoOutbox(long scadenzaMsg,int limit,boolean logQuery, boolean orderBy)throws GestoreMessaggiException{
+	public List<String> readMessaggiScadutiIntoOutbox(long scadenzaMsg,int limit,boolean logQuery, boolean orderBy)throws GestoreMessaggiException{
 		return this.readMessaggiScadutiIntoBox(false,scadenzaMsg,limit,logQuery,orderBy);
 	}
 
@@ -4572,16 +4573,16 @@ public class GestoreMessaggi  {
 	 *
 	 * @param searchIntoInbox Cerca nella cartella INBOX (se true) o nella cartella OUTBOX (se false)
 	 * @param scadenzaMsg Intervallo di scadenza dei messaggi
-	 * @return Nel caso l'operazione ha successo ritorna un vector di stringhe, altrimenti null
+	 * @return Nel caso l'operazione ha successo ritorna un List di stringhe, altrimenti null
 	 * 
 	 */
-	private Vector<String> readMessaggiScadutiIntoBox(boolean searchIntoInbox,long scadenzaMsg,int limit,boolean logQuery, boolean orderBy)throws GestoreMessaggiException{
+	private List<String> readMessaggiScadutiIntoBox(boolean searchIntoInbox,long scadenzaMsg,int limit,boolean logQuery, boolean orderBy)throws GestoreMessaggiException{
 		if(this.openspcoopstate instanceof OpenSPCoopStateful) {
 			StatefulMessage stateful = (this.isRichiesta) ? ((StatefulMessage)this.openspcoopstate.getStatoRichiesta()) 
 					: ((StatefulMessage)this.openspcoopstate.getStatoRisposta()) ;
 
 			Connection connectionDB = stateful.getConnectionDB();
-			Vector<String> idMsg = new Vector<String>();
+			List<String> idMsg = new ArrayList<String>();
 
 			PreparedStatement pstmtMsgScaduti = null;
 			ResultSet rs = null;
@@ -4732,16 +4733,16 @@ public class GestoreMessaggi  {
 	 * del timeout per il servizio. Ritorna l'idBusta+'@'+nomeServizioApplicativo dove il servizio applicativo e' di tipo connectionReply
 	 *
 	 * @param timeout Intervallo di timeout del servizio
-	 * @return Nel caso l'operazione ha successo ritorna un vector di stringhe, altrimenti null
+	 * @return Nel caso l'operazione ha successo ritorna un List di stringhe, altrimenti null
 	 * 
 	 */
-	public Vector<String> readMsgForRicezioneContenutiApplicativiNonGestiti(long timeout,int limit,boolean logQuery, boolean orderBy)throws GestoreMessaggiException{
+	public List<String> readMsgForRicezioneContenutiApplicativiNonGestiti(long timeout,int limit,boolean logQuery, boolean orderBy)throws GestoreMessaggiException{
 		if(this.openspcoopstate instanceof OpenSPCoopStateful) {
 			StatefulMessage stateful = (this.isRichiesta) ? ((StatefulMessage)this.openspcoopstate.getStatoRichiesta()) 
 					: ((StatefulMessage)this.openspcoopstate.getStatoRisposta()) ;
 			Connection connectionDB = stateful.getConnectionDB();
 
-			Vector<String> idMsg = new Vector<String>();
+			List<String> idMsg = new ArrayList<String>();
 
 			PreparedStatement pstmtMsgScaduti = null;
 			ResultSet rs = null;
@@ -4853,17 +4854,17 @@ public class GestoreMessaggi  {
 	 * del timeout per il servizio. Ritorna l'idBusta
 	 *
 	 * @param timeout Intervallo di timeout del servizio
-	 * @return Nel caso l'operazione ha successo ritorna un vector di stringhe, altrimenti null
+	 * @return Nel caso l'operazione ha successo ritorna un List di stringhe, altrimenti null
 	 * 
 	 */
-	public Vector<String> readMsgForRicezioneBusteNonGestiti(long timeout,int limit,boolean logQuery, boolean orderBy)throws GestoreMessaggiException{
+	public List<String> readMsgForRicezioneBusteNonGestiti(long timeout,int limit,boolean logQuery, boolean orderBy)throws GestoreMessaggiException{
 		if(this.openspcoopstate instanceof OpenSPCoopStateful) {
 			StatefulMessage stateful = (this.isRichiesta) ? ((StatefulMessage)this.openspcoopstate.getStatoRichiesta()) 
 					: ((StatefulMessage)this.openspcoopstate.getStatoRisposta()) ;
 
 			Connection connectionDB = stateful.getConnectionDB();
 
-			Vector<String> idMsg = new Vector<String>();
+			List<String> idMsg = new ArrayList<String>();
 
 			PreparedStatement pstmtMsgScaduti = null;
 			ResultSet rs = null;
@@ -4974,28 +4975,28 @@ public class GestoreMessaggi  {
 	/**
 	 * Ritorna le buste salvate scadute o inutilizzate (tutti gli accessi uguale a 0) nella INBOX
 	 *
-	 * @return vector di stringhe contenenti gli ID delle buste scadute e/o inutilizzate con il tipo passato come parametro.
+	 * @return List di stringhe contenenti gli ID delle buste scadute e/o inutilizzate con il tipo passato come parametro.
 	 * @throws GestoreMessaggiException 
 	 * 
 	 */
-	public Vector<String> readBusteNonRiferiteDaMessaggiFromInBox(int limit,boolean logQuery,boolean forceIndex,boolean orderBy) throws ProtocolException, GestoreMessaggiException{
+	public List<String> readBusteNonRiferiteDaMessaggiFromInBox(int limit,boolean logQuery,boolean forceIndex,boolean orderBy) throws ProtocolException, GestoreMessaggiException{
 		return this.readBusteNonRiferiteDaMessaggi(Costanti.INBOX,limit,logQuery,forceIndex,orderBy);
 	}
 
 	/**
 	 * Ritorna le buste salvate scadute o inutilizzate (tutti gli accessi uguale a 0) nella OUTBOX
 	 *
-	 * @return vector di stringhe contenenti gli ID delle buste scadute e/o inutilizzate con il tipo passato come parametro.
+	 * @return List di stringhe contenenti gli ID delle buste scadute e/o inutilizzate con il tipo passato come parametro.
 	 * @throws GestoreMessaggiException 
 	 * 
 	 */
-	public Vector<String> readBusteNonRiferiteDaMessaggiFromOutBox(int limit,boolean logQuery,boolean forceIndex,boolean orderBy) throws ProtocolException, GestoreMessaggiException{
+	public List<String> readBusteNonRiferiteDaMessaggiFromOutBox(int limit,boolean logQuery,boolean forceIndex,boolean orderBy) throws ProtocolException, GestoreMessaggiException{
 		return this.readBusteNonRiferiteDaMessaggi(Costanti.OUTBOX,limit,logQuery,forceIndex,orderBy);
 	}
 
-	private Vector<String> readBusteNonRiferiteDaMessaggi(String tipoBusta,int limit,boolean logQuery,boolean forceIndex,boolean orderBy) throws ProtocolException, GestoreMessaggiException{
+	private List<String> readBusteNonRiferiteDaMessaggi(String tipoBusta,int limit,boolean logQuery,boolean forceIndex,boolean orderBy) throws ProtocolException, GestoreMessaggiException{
 
-		Vector<String> idBuste = new Vector<String>();
+		List<String> idBuste = new ArrayList<String>();
 		int pdd = 0;
 		int profilo = 0;
 		int pddProfilo = 0;
@@ -5021,12 +5022,12 @@ public class GestoreMessaggi  {
 	 * Ritorna le buste salvate scadute o inutilizzate (tutti gli accessi uguale a 0)
 	 *
 	 * @param tipoBusta Indicazione sul tipo di busta inviata/ricevuta	
-	 * @return vector di stringhe contenenti gli ID delle buste scadute e/o inutilizzate con il tipo passato come parametro.
+	 * @return List di stringhe contenenti gli ID delle buste scadute e/o inutilizzate con il tipo passato come parametro.
 	 * @throws GestoreMessaggiException 
 	 * 
 	 */
 	private void _engine_ReadBusteNonRiferiteDaMessaggi(String tipoBusta,int limit,boolean logQuery,boolean forceIndex,boolean orderBy,
-			boolean pdd, boolean profilo,Vector<String> idBuste) throws ProtocolException, GestoreMessaggiException{
+			boolean pdd, boolean profilo,List<String> idBuste) throws ProtocolException, GestoreMessaggiException{
 		if(this.openspcoopstate instanceof OpenSPCoopStateful) {
 			StatefulMessage stateful = (this.isRichiesta) ? ((StatefulMessage)this.openspcoopstate.getStatoRichiesta()) 
 					: ((StatefulMessage)this.openspcoopstate.getStatoRisposta()) ;

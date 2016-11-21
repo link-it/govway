@@ -29,8 +29,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
@@ -428,7 +429,7 @@ public class XMLLib{
 			
 			String cont = contenuto.replace(CostantiXMLRepository.INDEX_SERVIZI_MANIFEST,"");
 			StringTokenizer st = new StringTokenizer(cont,"\n");
-			Vector<IDServizio> ids = new Vector<IDServizio>();
+			List<IDServizio> ids = new ArrayList<IDServizio>();
 			while(st.hasMoreTokens()){
 				String line = null;
 				try{
@@ -1838,7 +1839,7 @@ public class XMLLib{
 		try {
 
 			// contenuto index dei servizi 
-			Vector<IDServizio> nID = new Vector<IDServizio>();
+			List<IDServizio> nID = new ArrayList<IDServizio>();
 			if(this.existsIndexServizi(dirServiziSoggetto)){
 				// elimino vecchia definizione
 				IDServizio [] oldImage = this.readIndexServiziFromFile(dirServiziSoggetto);
@@ -2387,7 +2388,7 @@ public class XMLLib{
 			// Prendo dopodiche i servizi
 			File dir = new File(this.pathPrefix);
 			File[] soggetti = dir.listFiles();
-			Vector<AccordoServizioParteSpecifica> servizi = new Vector<AccordoServizioParteSpecifica>();
+			List<AccordoServizioParteSpecifica> servizi = new ArrayList<AccordoServizioParteSpecifica>();
 			int indexSoggetto = 0;
 			if(soggetti!=null){
 				for(int i=0; i<soggetti.length;i++){

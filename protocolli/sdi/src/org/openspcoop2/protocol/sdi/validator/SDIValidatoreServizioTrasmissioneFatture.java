@@ -33,7 +33,7 @@ import it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types.utils.ProjectInfo;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
@@ -291,7 +291,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			return;	
 		}
 		
-		Vector<SOAPElement> elementChilds = SoapUtils.getNotEmptyChildSOAPElement(this.sdiMessage);
+		List<SOAPElement> elementChilds = SoapUtils.getNotEmptyChildSOAPElement(this.sdiMessage);
 		if(elementChilds==null || elementChilds.size()<=0){
 			this.sdiValidazioneSintattica.erroriValidazione.add(this.sdiValidazioneSintattica.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
 					"RootElement [{"+this.namespace+"}"+this.sdiMessage.getLocalName()+"] non contiene elementi"));
@@ -497,7 +497,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 	}
 	
 	private void _validazioneRC(byte[] xmlDoc, SDIProperties sdiProperties, 
-			Vector<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
+			List<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
 	
 		String tipoXml = "Ricevuta di Consegna";
 		byte[] xml = xmlDoc;
@@ -589,7 +589,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 	
 	
 	private void _validazioneMC(byte[] xmlDoc, SDIProperties sdiProperties, 
-			Vector<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
+			List<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
 	
 		String tipoXml = "Notifica di Mancata Consegna";
 		byte[] xml = xmlDoc;
@@ -673,7 +673,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 	
 	
 	private void _validazioneNS(byte[] xmlDoc, SDIProperties sdiProperties, 
-			Vector<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
+			List<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
 	
 		String tipoXml = "Notifica di Scarto";
 		byte[] xml = xmlDoc;
@@ -762,7 +762,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 	
 	
 	private void _validazioneNE(byte[] xmlDoc, SDIProperties sdiProperties, 
-			Vector<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
+			List<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
 	
 		String tipoXml = "Notifica di Esito (Cedente)";
 		byte[] xml = xmlDoc;
@@ -831,7 +831,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 	}
 	
 	private void _validazioneDT(byte[] xmlDoc, SDIProperties sdiProperties, 
-			Vector<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
+			List<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
 	
 		String tipoXml = "Notifica di Decorrenza Termini";
 		byte[] xml = xmlDoc;
@@ -914,7 +914,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 	
 	
 	private void _validazioneAT(byte[] zip, SDIProperties sdiProperties, 
-			Vector<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
+			List<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
 	
 		String tipoXml = "Attestazione di avvenuta trasmissione con impossibilità di recapito";
 		boolean consegnaAttestato = sdiProperties.isNotificaATConsegnaSoloAttestato();

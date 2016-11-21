@@ -26,7 +26,6 @@ package org.openspcoop2.protocol.engine.builder;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.xml.soap.Detail;
 import javax.xml.soap.SOAPBody;
@@ -168,7 +167,7 @@ public class ImbustamentoErrore  {
 	 */
 	public Busta buildMessaggioErroreProtocollo_Processamento(Eccezione ecc,Busta busta,String id_busta,TipoOraRegistrazione tipoTempo) throws ProtocolException{
 
-		Vector<Eccezione> eccs = new Vector<Eccezione>();
+		List<Eccezione> eccs = new ArrayList<Eccezione>();
 		eccs.add(ecc);
 		return this.buildMessaggioErroreProtocollo(eccs,busta,id_busta,tipoTempo);
 	}
@@ -642,7 +641,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 					this.imbustamento.buildID(state,identitaPdD, idTransazione, attesaAttiva, checkInterval, RuoloMessaggio.RISPOSTA);
 
 			if(errori==null){
-				errori = new Vector<Eccezione>();
+				errori = new ArrayList<Eccezione>();
 			}
 			if(erroreCooperazione!=null){
 				Eccezione ecc = 
@@ -822,7 +821,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 
 
 			if(errori==null){
-				errori = new Vector<Eccezione>();
+				errori = new ArrayList<Eccezione>();
 			}
 			if(erroreCooperazione!=null){
 				Eccezione ecc = Eccezione.getEccezioneValidazione(erroreCooperazione, this.protocolFactory);

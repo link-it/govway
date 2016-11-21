@@ -23,7 +23,7 @@
 package org.openspcoop2.pdd.mdb.threads;
 
 
-import java.util.Vector;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -40,9 +40,9 @@ public class SbustamentoRisposteProducer extends ModuloAlternativoProducer
 	}
 
 	@Override
-	public void creaWorkers(Vector<MessageIde> messaggiTrovati) {
+	public void creaWorkers(List<MessageIde> messaggiTrovati) {
 		for (int i=0;i<messaggiTrovati.size();i++){
-			MessageIde ide = messaggiTrovati.elementAt(i);
+			MessageIde ide = messaggiTrovati.get(i);
 			System.out.println(this.ID_MODULO+ "Producer: trovato messaggio, creo task...");
 			SbustamentoRisposteWorker task = new SbustamentoRisposteWorker(ide);
 			try {

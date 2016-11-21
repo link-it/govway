@@ -24,7 +24,8 @@
 package org.openspcoop2.protocol.sdi.validator;
 
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.soap.SOAPElement;
 
@@ -70,9 +71,9 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 	protected IProtocolConfiguration protocolConfiguration;
 	
 	/** Errori di validazione riscontrati sulla busta */
-	protected java.util.Vector<Eccezione> erroriValidazione = new Vector<Eccezione>();
+	protected java.util.List<Eccezione> erroriValidazione = new ArrayList<Eccezione>();
 	/** Errori di processamento riscontrati sulla busta */
-	protected java.util.Vector<Eccezione> erroriProcessamento = new Vector<Eccezione>();
+	protected java.util.List<Eccezione> erroriProcessamento = new ArrayList<Eccezione>();
 	/** Eventuale codice di errore avvenuto durante il processo di validazione  */
 	private CodiceErroreCooperazione codiceErrore;
 	/** Eventuale messaggio di errore avvenuto durante il processo di validazione */
@@ -113,11 +114,11 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 		if(this.msgErrore!=null && this.codiceErrore!=null){
 			errore = new ErroreCooperazione(this.msgErrore, this.codiceErrore);
 		}
-		java.util.Vector<Eccezione> erroriValidazione = null;
+		java.util.List<Eccezione> erroriValidazione = null;
 		if(this.erroriValidazione.size()>0){
 			erroriValidazione = this.erroriValidazione;
 		}
-		java.util.Vector<Eccezione> erroriProcessamento = null;
+		java.util.List<Eccezione> erroriProcessamento = null;
 		if(this.erroriProcessamento.size()>0){
 			erroriValidazione = this.erroriProcessamento;
 		}
@@ -149,11 +150,11 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 		if(this.msgErrore!=null && this.codiceErrore!=null){
 			errore = new ErroreCooperazione(this.msgErrore, this.codiceErrore);
 		}
-		java.util.Vector<Eccezione> erroriValidazione = null;
+		java.util.List<Eccezione> erroriValidazione = null;
 		if(this.erroriValidazione.size()>0){
 			erroriValidazione = this.erroriValidazione;
 		}
-		java.util.Vector<Eccezione> erroriProcessamento = null;
+		java.util.List<Eccezione> erroriProcessamento = null;
 		if(this.erroriProcessamento.size()>0){
 			erroriValidazione = this.erroriProcessamento;
 		}
@@ -252,7 +253,7 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 			this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_PRESENTE));
 			return;
 		}
-		Vector<SOAPElement> soapBodyChilds = SoapUtils.getNotEmptyChildSOAPElement(msg.castAsSoap().getSOAPBody());
+		List<SOAPElement> soapBodyChilds = SoapUtils.getNotEmptyChildSOAPElement(msg.castAsSoap().getSOAPBody());
 		if(soapBodyChilds==null || soapBodyChilds.size()<=0){
 			this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_PRESENTE));
 			return;			

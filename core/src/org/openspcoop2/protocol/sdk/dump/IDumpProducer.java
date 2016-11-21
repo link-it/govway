@@ -29,11 +29,11 @@ import org.openspcoop2.protocol.sdk.tracciamento.TracciamentoException;
  * Contiene la definizione una interfaccia per la registrazione personalizzata dei dump applicativi
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 12237 $, $Date: 2016-10-04 11:41:45 +0200 (Tue, 04 Oct 2016) $
  */
 
-public interface IDumpOpenSPCoopAppender {
+public interface IDumpProducer {
 
 	/**
 	 * Inizializza l'engine di un appender per la registrazione

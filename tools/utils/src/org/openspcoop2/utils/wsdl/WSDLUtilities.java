@@ -34,7 +34,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Types;
@@ -605,7 +604,7 @@ public class WSDLUtilities {
 	public List<Node> readImports(Document wsdl) throws org.openspcoop2.utils.wsdl.WSDLException{
 		
 		try{
-			Vector<Node> imports = new Vector<Node>();
+			List<Node> imports = new ArrayList<Node>();
 			
 			NodeList list = wsdl.getChildNodes();
 			if(list!=null){
@@ -647,7 +646,7 @@ public class WSDLUtilities {
 			}
 			XSDUtils xsdUtils = new XSDUtils(this.xmlUtils);
 			
-			Vector<Node> imports = new Vector<Node>();
+			List<Node> imports = new ArrayList<Node>();
 			
 			NodeList list = wsdl.getChildNodes();
 			if(list!=null){
@@ -743,7 +742,7 @@ public class WSDLUtilities {
 	 * @throws XMLException 
 	 * @throws org.openspcoop2.utils.wsdl.WSDLException 
 	 */
-	public Vector<byte[]> getSchemiXSD(Definition wsdlNormalizzato) throws IOException,TransformerException, XMLException, org.openspcoop2.utils.wsdl.WSDLException{
+	public List<byte[]> getSchemiXSD(Definition wsdlNormalizzato) throws IOException,TransformerException, XMLException, org.openspcoop2.utils.wsdl.WSDLException{
 		
 		if(this.xmlUtils==null){
 			throw new org.openspcoop2.utils.wsdl.WSDLException("XMLUtils not initialized in WSDLUtilities, use static instance 'getInstance(AbstractXMLUtils xmlUtils)'");
@@ -751,7 +750,7 @@ public class WSDLUtilities {
 		
 		// Il wsdl deve contenere solo schemi xsd completi
 		
-		Vector<byte[]> v = new Vector<byte[]>();
+		List<byte[]> v = new ArrayList<byte[]>();
 		
 		Types types = wsdlNormalizzato.getTypes();
 		List<?> xsdTypes = types.getExtensibilityElements();
@@ -771,7 +770,7 @@ public class WSDLUtilities {
 			}
 			XSDUtils xsdUtils = new XSDUtils(this.xmlUtils);
 			
-			Vector<Node> schemi = new Vector<Node>();
+			List<Node> schemi = new ArrayList<Node>();
 			
 			NodeList list = wsdl.getChildNodes();
 			if(list!=null){
@@ -847,7 +846,7 @@ public class WSDLUtilities {
 		
 			// Rimozione completa di tutti gli attributi all'infuori del TargetNamespace e dell'associato prefix
 			NamedNodeMap attributi = schemaXSD.getAttributes();
-			Vector<Attr> attributiDaMantenere = new Vector<Attr>();	
+			List<Attr> attributiDaMantenere = new ArrayList<Attr>();	
 			if(attributi!=null && attributi.getLength()>0){
 				for (int i = (attributi.getLength()-1); i >= 0; i--) {
 					Attr attr = (Attr) attributi.item(i);
@@ -903,7 +902,7 @@ public class WSDLUtilities {
 			
 			// Rimozione completa di tutti gli attributi 
 			NamedNodeMap attributi = schemaXSD.getAttributes();
-			Vector<Attr> attributiDaMantenere = new Vector<Attr>();	
+			List<Attr> attributiDaMantenere = new ArrayList<Attr>();	
 			if(attributi!=null && attributi.getLength()>0){
 				for (int i = (attributi.getLength()-1); i >= 0; i--) {
 					Attr attr = (Attr) attributi.item(i);

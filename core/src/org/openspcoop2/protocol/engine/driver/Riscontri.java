@@ -27,10 +27,10 @@ package org.openspcoop2.protocol.engine.driver;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.Vector;
+import java.util.List;
 
-import org.slf4j.Logger;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -42,6 +42,7 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.slf4j.Logger;
 
 /**
  * Sono inclusi i metodi per la gestione dei Riscontri.
@@ -161,17 +162,17 @@ public class Riscontri  {
 	 * Il controllo non e' serializzato, quindi possono essere ritornate anche busta gia' riscontrate, in seguito al controllo.
 	 *
 	 * @param timeout Minuti dopo il quale una data risulta scaduta.
-	 * @return un vector di {@link org.openspcoop2.protocol.sdk.Busta} contenente le informazioni necessarie per il re-invio delle buste, 
+	 * @return un List di {@link org.openspcoop2.protocol.sdk.Busta} contenente le informazioni necessarie per il re-invio delle buste, 
 	 *         se esistono riscontro scaduti.
 	 */
-	public Vector<BustaNonRiscontrata> getBustePerUlterioreInoltro(long timeout, int limit, int offset, boolean logQuery)throws ProtocolException{
+	public List<BustaNonRiscontrata> getBustePerUlterioreInoltro(long timeout, int limit, int offset, boolean logQuery)throws ProtocolException{
 		
 		StateMessage stateMSG = (StateMessage)this.state;
 		Connection connectionDB = stateMSG.getConnectionDB();
 
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		java.util.Vector<String> IDBuste = new java.util.Vector<String>();
+		java.util.List<String> IDBuste = new java.util.ArrayList<String>();
 		String queryString = null;
 		try{	
 
@@ -259,7 +260,7 @@ public class Riscontri  {
 		}
 		
 		
-		Vector<BustaNonRiscontrata> listaBustaNonRiscontrata = new Vector<BustaNonRiscontrata>();
+		List<BustaNonRiscontrata> listaBustaNonRiscontrata = new ArrayList<BustaNonRiscontrata>();
 		for (int i = 0; i < IDBuste.size(); i++) {
 			BustaNonRiscontrata bustaNonRiscontrata = new BustaNonRiscontrata();
 			bustaNonRiscontrata.setIdentificativo(IDBuste.get(i));

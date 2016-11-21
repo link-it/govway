@@ -28,12 +28,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.engine.Configurazione;
@@ -61,6 +61,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.slf4j.Logger;
 
 
 /**
@@ -163,10 +164,10 @@ public class RepositoryBuste  {
 	 *
 	 * @param busta Contiene le informazioni su di una busta in uscita (tipo {@link org.openspcoop2.protocol.sdk.Busta})
 	 * @param scadenza Scadenza Scadenza associata ad una busta, se non possiede essa stessa una scadenza
-	 * @param errors un oggetto Vector<{@link org.openspcoop2.protocol.sdk.Eccezione}> se contenente errori di validazione.
+	 * @param errors un oggetto List<{@link org.openspcoop2.protocol.sdk.Eccezione}> se contenente errori di validazione.
 	 *
 	 */
-	public void registraBustaIntoOutBox(Busta busta,Vector<Eccezione> errors,long scadenza) throws ProtocolException{
+	public void registraBustaIntoOutBox(Busta busta,List<Eccezione> errors,long scadenza) throws ProtocolException{
 		registraBusta(busta,Costanti.OUTBOX,errors,scadenza);
 	}
 	/**
@@ -259,11 +260,11 @@ public class RepositoryBuste  {
 	 * Metodo che si occupa di aggiornare i dati di una busta in uscita precedentemente inviata.
 	 *
 	 * @param busta Contiene le informazioni su di una busta in entrata (tipo {@link org.openspcoop2.protocol.sdk.Busta})
-	 * @param errors un oggetto Vector<{@link org.openspcoop2.protocol.sdk.Eccezione}> se contenente errori di validazione.
+	 * @param errors un oggetto List<{@link org.openspcoop2.protocol.sdk.Eccezione}> se contenente errori di validazione.
 	 * @param scadenza Scadenza Scadenza associata ad una busta, se non possiede essa stessa una scadenza
 	 *
 	 */
-	public void aggiornaBustaIntoOutBox(Busta busta,long scadenza,Vector<Eccezione> errors) throws ProtocolException{
+	public void aggiornaBustaIntoOutBox(Busta busta,long scadenza,List<Eccezione> errors) throws ProtocolException{
 		aggiornaBusta(busta,Costanti.OUTBOX,scadenza,errors);
 	}
 
@@ -348,10 +349,10 @@ public class RepositoryBuste  {
 	 * {@link org.openspcoop2.protocol.sdk.Eccezione} avvenuti durante la validazione di una busta.
 	 *
 	 * @param id identificativo della busta da ritornare.
-	 * @return un oggetto Vector<{@link org.openspcoop2.protocol.sdk.Eccezione}> se e' presente la busta richiesta.
+	 * @return un oggetto List<{@link org.openspcoop2.protocol.sdk.Eccezione}> se e' presente la busta richiesta.
 	 *
 	 */
-	public Vector<Eccezione> getErrorsFromOutBox(String id, IProtocolFactory<?> protocolFactory) throws ProtocolException{
+	public List<Eccezione> getErrorsFromOutBox(String id, IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		return getErrors(id, Costanti.OUTBOX);
 	}
 
@@ -481,11 +482,11 @@ public class RepositoryBuste  {
 	 * Metodo che si occupa di registrare una busta in uscita con errori.
 	 *
 	 * @param busta Contiene le informazioni su di una busta in uscita (tipo {@link org.openspcoop2.protocol.sdk.Busta})
-	 * @param errors un oggetto Vector<{@link org.openspcoop2.protocol.sdk.Eccezione}> se contenente errori di validazione.
+	 * @param errors un oggetto List<{@link org.openspcoop2.protocol.sdk.Eccezione}> se contenente errori di validazione.
 	 * @param scadenza Scadenza Scadenza associata ad una busta, se non possiede essa stessa una scadenza
 	 *
 	 */
-	public void registraBustaIntoInBox(Busta busta,Vector<Eccezione> errors,long scadenza) throws ProtocolException{
+	public void registraBustaIntoInBox(Busta busta,List<Eccezione> errors,long scadenza) throws ProtocolException{
 		registraBusta(busta,Costanti.INBOX,errors,scadenza);
 	}
 	/**
@@ -578,11 +579,11 @@ public class RepositoryBuste  {
 	 * Metodo che si occupa di aggiornare i dati di una busta in entrata precedentemente inviata.
 	 *
 	 * @param busta Contiene le informazioni su di una busta in entrata (tipo {@link org.openspcoop2.protocol.sdk.Busta})
-	 * @param errors un oggetto Vector<{@link org.openspcoop2.protocol.sdk.Eccezione}> se contenente errori di validazione.
+	 * @param errors un oggetto List<{@link org.openspcoop2.protocol.sdk.Eccezione}> se contenente errori di validazione.
 	 * @param scadenza Scadenza Scadenza associata ad una busta, se non possiede essa stessa una scadenza
 	 *
 	 */
-	public void aggiornaBustaIntoInBox(Busta busta,long scadenza,Vector<Eccezione> errors) throws ProtocolException{
+	public void aggiornaBustaIntoInBox(Busta busta,long scadenza,List<Eccezione> errors) throws ProtocolException{
 		aggiornaBusta(busta,Costanti.INBOX,scadenza,errors);
 	}
 
@@ -667,10 +668,10 @@ public class RepositoryBuste  {
 	 * {@link org.openspcoop2.protocol.sdk.Eccezione} avvenuti durante la validazione di una busta.
 	 *
 	 * @param id identificativo della busta da ritornare.
-	 * @return un oggetto Vector<{@link org.openspcoop2.protocol.sdk.Eccezione}> se e' presente la busta richiesta.
+	 * @return un oggetto List<{@link org.openspcoop2.protocol.sdk.Eccezione}> se e' presente la busta richiesta.
 	 *
 	 */
-	public Vector<Eccezione> getErrorsFromInBox(String id) throws ProtocolException{
+	public List<Eccezione> getErrorsFromInBox(String id) throws ProtocolException{
 		return getErrors(id,Costanti.INBOX);
 	}
 
@@ -933,7 +934,7 @@ public class RepositoryBuste  {
 	 * @param scadenza Scadenza Scadenza in minuti associata ad una busta, se non possiede essa stessa una scadenza
 	 *
 	 */
-	public void registraBusta(Busta busta,String tipoBusta,Vector<Eccezione> errors,long scadenza) throws ProtocolException{
+	public void registraBusta(Busta busta,String tipoBusta,List<Eccezione> errors,long scadenza) throws ProtocolException{
 		
 		if (!this.isRichiesta && this.state instanceof StatelessMessage) {
 			((StatelessMessage)this.state).setBusta(busta);
@@ -1311,7 +1312,7 @@ public class RepositoryBuste  {
 	 * @param errors Eventuali errori di validazione
 	 *
 	 */
-	public void aggiornaBusta(Busta busta,String tipoBusta,long scadenza,Vector<Eccezione> errors) throws ProtocolException{
+	public void aggiornaBusta(Busta busta,String tipoBusta,long scadenza,List<Eccezione> errors) throws ProtocolException{
 		
 		if (!this.isRichiesta && this.state instanceof StatelessMessage) {
 			((StatelessMessage)this.state).setBusta(busta);
@@ -2269,10 +2270,10 @@ public class RepositoryBuste  {
 	 *
 	 * @param id identificativo della busta da ritornare.
 	 * @param tipoBusta Indicazione sul tipo di busta inviata/ricevuta
-	 * @return un oggetto Vector<{@link org.openspcoop2.protocol.sdk.Eccezione}> se e' presente la busta richiesta.
+	 * @return un oggetto List<{@link org.openspcoop2.protocol.sdk.Eccezione}> se e' presente la busta richiesta.
 	 *
 	 */
-	private Vector<Eccezione> getErrors(String id,String tipoBusta) throws ProtocolException{
+	private List<Eccezione> getErrors(String id,String tipoBusta) throws ProtocolException{
 
 		if(this.state instanceof StatefulMessage) {
 
@@ -2281,7 +2282,7 @@ public class RepositoryBuste  {
 
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
-			Vector<Eccezione> errors = new Vector<Eccezione>();
+			List<Eccezione> errors = new ArrayList<Eccezione>();
 			try{
 
 				// Costruzione Query
@@ -3097,20 +3098,20 @@ public class RepositoryBuste  {
 	/**
 	 * Ritorna le buste salvate scadute o inutilizzate (tutti gli accessi uguale a 0) nella INBOX
 	 *
-	 * @return vector di stringhe contenenti gli ID delle buste scadute e/o inutilizzate con il tipo passato come parametro.
+	 * @return List di stringhe contenenti gli ID delle buste scadute e/o inutilizzate con il tipo passato come parametro.
 	 *
 	 */
-	public Vector<String> getBusteDaEliminareFromInBox(int limit,boolean logQuery,boolean forceIndex,boolean filtraBustaScadetureRispettoOraRegistrazione,boolean orderBy) throws ProtocolException{
+	public List<String> getBusteDaEliminareFromInBox(int limit,boolean logQuery,boolean forceIndex,boolean filtraBustaScadetureRispettoOraRegistrazione,boolean orderBy) throws ProtocolException{
 		return this.getBusteDaEliminare(Costanti.INBOX,limit,logQuery,forceIndex,filtraBustaScadetureRispettoOraRegistrazione,orderBy);
 	}
 
 	/**
 	 * Ritorna le buste salvate scadute o inutilizzate (tutti gli accessi uguale a 0) nella OUTBOX
 	 *
-	 * @return vector di stringhe contenenti gli ID delle buste scadute e/o inutilizzate con il tipo passato come parametro.
+	 * @return List di stringhe contenenti gli ID delle buste scadute e/o inutilizzate con il tipo passato come parametro.
 	 *
 	 */
-	public Vector<String> getBusteDaEliminareFromOutBox(int limit,boolean logQuery,boolean forceIndex,boolean filtraBustaScadetureRispettoOraRegistrazione,boolean orderBy) throws ProtocolException{
+	public List<String> getBusteDaEliminareFromOutBox(int limit,boolean logQuery,boolean forceIndex,boolean filtraBustaScadetureRispettoOraRegistrazione,boolean orderBy) throws ProtocolException{
 		return this.getBusteDaEliminare(Costanti.OUTBOX,limit,logQuery,forceIndex,filtraBustaScadetureRispettoOraRegistrazione,orderBy);
 	}
 
@@ -3119,10 +3120,10 @@ public class RepositoryBuste  {
 	 * Ritorna le buste salvate scadute o inutilizzate (tutti gli accessi uguale a 0)
 	 *
 	 * @param tipoBusta Indicazione sul tipo di busta inviata/ricevuta
-	 * @return vector di stringhe contenenti gli ID delle buste scadute e/o inutilizzate con il tipo passato come parametro.
+	 * @return List di stringhe contenenti gli ID delle buste scadute e/o inutilizzate con il tipo passato come parametro.
 	 *
 	 */
-	private Vector<String> getBusteDaEliminare(String tipoBusta,int limit,boolean logQuery,boolean forceIndex,boolean filtraBustaScadetureRispettoOraRegistrazione,boolean orderBy) throws ProtocolException{
+	private List<String> getBusteDaEliminare(String tipoBusta,int limit,boolean logQuery,boolean forceIndex,boolean filtraBustaScadetureRispettoOraRegistrazione,boolean orderBy) throws ProtocolException{
 
 		if(this.state instanceof StatefulMessage) {
 
@@ -3131,7 +3132,7 @@ public class RepositoryBuste  {
 
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
-			Vector<String> idBuste = new Vector<String>();
+			List<String> idBuste = new ArrayList<String>();
 			IGestoreRepository gestorerepositoryBuste = Configurazione.getGestoreRepositoryBuste();
 			String queryString = null;
 			try{

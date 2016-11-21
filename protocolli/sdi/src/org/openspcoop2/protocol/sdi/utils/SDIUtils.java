@@ -22,7 +22,6 @@ package org.openspcoop2.protocol.sdi.utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
@@ -85,7 +84,7 @@ public class SDIUtils {
 				xomReference = msg.mtomFastUnpackagingForXSDConformance();
 				element = (Element)element.cloneNode(true);
 				
-				Vector<Node> childs = SoapUtils.getNotEmptyChildNodes(element, false);
+				List<Node> childs = SoapUtils.getNotEmptyChildNodes(element, false);
 				for (int i = 0; i < childs.size(); i++) {
 					Node child = childs.get(i);
 					if(SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE.equals(child.getLocalName())){
@@ -104,7 +103,7 @@ public class SDIUtils {
 				xomReference = msg.mtomFastUnpackagingForXSDConformance();
 				element = (Element)element.cloneNode(true);
 				
-				Vector<Node> childs = SoapUtils.getNotEmptyChildNodes(element, false);
+				List<Node> childs = SoapUtils.getNotEmptyChildNodes(element, false);
 				for (int i = 0; i < childs.size(); i++) {
 					Node child = childs.get(i);
 					if(SDICostantiServizioRicezioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE.equals(child.getLocalName())){
@@ -121,7 +120,7 @@ public class SDIUtils {
 				xomReference = msg.mtomFastUnpackagingForXSDConformance();
 				element = (Element)element.cloneNode(true);
 				
-				Vector<Node> childs = SoapUtils.getNotEmptyChildNodes(element, false);
+				List<Node> childs = SoapUtils.getNotEmptyChildNodes(element, false);
 				for (int i = 0; i < childs.size(); i++) {
 					Node child = childs.get(i);
 					if(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RICHIESTA_ELEMENT_FILE.equals(child.getLocalName())){
@@ -136,11 +135,11 @@ public class SDIUtils {
 				xomReference = msg.mtomFastUnpackagingForXSDConformance();
 				element = (Element)element.cloneNode(true);
 				
-				Vector<Node> childs = SoapUtils.getNotEmptyChildNodes(element, false);
+				List<Node> childs = SoapUtils.getNotEmptyChildNodes(element, false);
 				for (int i = 0; i < childs.size(); i++) {
 					Node child = childs.get(i);
 					if(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO.equals(child.getLocalName())){
-						Vector<Node> childsScarto = SoapUtils.getNotEmptyChildNodes(child, false);
+						List<Node> childsScarto = SoapUtils.getNotEmptyChildNodes(child, false);
 						for (int j = 0; j < childsScarto.size(); j++) {
 							Node childScarto = childsScarto.get(j);
 							if(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO_FILE.equals(childScarto.getLocalName())){
@@ -160,7 +159,7 @@ public class SDIUtils {
 				xomReference = msg.mtomFastUnpackagingForXSDConformance();
 				element = (Element)element.cloneNode(true);
 				
-				Vector<Node> childs = SoapUtils.getNotEmptyChildNodes(element, false);
+				List<Node> childs = SoapUtils.getNotEmptyChildNodes(element, false);
 				for (int i = 0; i < childs.size(); i++) {
 					Node child = childs.get(i);
 					if(SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE.equals(child.getLocalName())){

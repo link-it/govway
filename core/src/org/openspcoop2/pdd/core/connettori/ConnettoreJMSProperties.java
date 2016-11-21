@@ -26,14 +26,13 @@ package org.openspcoop2.pdd.core.connettori;
 
 
 
+import java.util.Hashtable;
 import java.util.Properties;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-
-import java.util.Hashtable;
+import org.slf4j.Logger;
 
 /**
  * Reader delle proprieta' di personalizzazione della spedizione attraverso il connettore JMS
@@ -135,7 +134,7 @@ public class ConnettoreJMSProperties {
 	    Hashtable<String,IDServizio> servizi= new Hashtable<String,IDServizio>();
 	    try{ 
 		// Raccolta servizi
-		java.util.Vector<String> idServizi = new java.util.Vector<String>();	
+		java.util.List<String> idServizi = new java.util.ArrayList<String>();	
 		java.util.Enumeration<?> en = this.reader.propertyNames();
 		for (; en.hasMoreElements() ;) {
 		    String property = (String) en.nextElement();

@@ -23,7 +23,7 @@
 
 package org.openspcoop2.protocol.sdi.validator;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.xml.soap.SOAPElement;
 
@@ -64,9 +64,9 @@ public class SDIValidazioneSemantica extends ValidazioneSemantica {
 	protected SDIProperties sdiProperties;
 	
 	/** Errori di validazione riscontrati sulla busta */
-	protected java.util.Vector<Eccezione> erroriValidazione = new Vector<Eccezione>();
+	protected java.util.List<Eccezione> erroriValidazione = new ArrayList<Eccezione>();
 	/** Errori di processamento riscontrati sulla busta */
-	protected java.util.Vector<Eccezione> erroriProcessamento = new Vector<Eccezione>();
+	protected java.util.List<Eccezione> erroriProcessamento = new ArrayList<Eccezione>();
 	
 	public SDIValidazioneSemantica(IProtocolFactory<?> factory) throws ProtocolException {
 		super(factory);
@@ -88,11 +88,11 @@ public class SDIValidazioneSemantica extends ValidazioneSemantica {
 		
 		this.valida(soapMsg,busta,tipoBusta);
 		
-		java.util.Vector<Eccezione> erroriValidazione = null;
+		java.util.List<Eccezione> erroriValidazione = null;
 		if(this.erroriValidazione.size()>0){
 			erroriValidazione = this.erroriValidazione;
 		}
-		java.util.Vector<Eccezione> erroriProcessamento = null;
+		java.util.List<Eccezione> erroriProcessamento = null;
 		if(this.erroriProcessamento.size()>0){
 			erroriValidazione = this.erroriProcessamento;
 		}

@@ -23,10 +23,11 @@
 package org.openspcoop2.protocol.sdk.dump;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 
 import org.openspcoop2.core.constants.TipoMessaggio;
 import org.openspcoop2.core.constants.TipoPdD;
@@ -145,7 +146,7 @@ public class Messaggio implements Serializable{
     	}
     }
     public String[] getPropertiesNames() {
-    	Vector<String> nomi = new Vector<String>();
+    	List<String> nomi = new ArrayList<String>();
     	Enumeration<String> en = this.properties.keys();
     	while(en.hasMoreElements()){
     		nomi.add(en.nextElement());

@@ -22,7 +22,8 @@
 
 package org.openspcoop2.pdd.core;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -44,7 +45,7 @@ public class IntegrationContext {
 	/** Identita' del servizio applicativo fruitore */
 	private String servizioApplicativoFruitore = null;
 	/** Identita' dei servizi applicativi erogatori */
-	private Vector<String> serviziApplicativiErogatori = new Vector<String>();
+	private List<String> serviziApplicativiErogatori = new ArrayList<String>();
 	
 	/** Indicazione se la gestione e' stateless/stateful (Null se non ancora definita) */
 	private Boolean gestioneStateless;

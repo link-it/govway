@@ -24,9 +24,10 @@
 package org.openspcoop2.pdd.core.integrazione;
 
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPElement;
@@ -548,7 +549,7 @@ public class UtilitiesIntegrazione {
 			}
 		}
 
-		Vector<SOAPElement> v = new Vector<SOAPElement>(); // mantengo eventuali message element presenti
+		List<SOAPElement> v = new ArrayList<SOAPElement>(); // mantengo eventuali message element presenti
 		if(headerIntegrazione!=null){
 			
 			java.util.Iterator<?> it = headerIntegrazione.getChildElements();

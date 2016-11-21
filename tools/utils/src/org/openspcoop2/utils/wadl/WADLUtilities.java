@@ -27,15 +27,14 @@ import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
-import org.slf4j.Logger;
 import org.jvnet.ws.wadl.HTTPMethods;
 import org.jvnet.ws.wadl.ast.ApplicationNode;
 import org.jvnet.ws.wadl.ast.MethodNode;
 import org.jvnet.ws.wadl.ast.ResourceNode;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -404,7 +403,7 @@ public class WADLUtilities {
 	public List<Node> readIncludes(Document wadl) throws org.openspcoop2.utils.wadl.WADLException{
 
 		try{
-			Vector<Node> includes = new Vector<Node>();
+			List<Node> includes = new ArrayList<Node>();
 
 			NodeList list = wadl.getChildNodes();
 			if(list!=null){
@@ -452,7 +451,7 @@ public class WADLUtilities {
 	public List<Node> removeIncludes(Document wadl) throws org.openspcoop2.utils.wadl.WADLException{
 		
 		try{
-			Vector<Node> includes = new Vector<Node>();
+			List<Node> includes = new ArrayList<Node>();
 			
 			NodeList list = wadl.getChildNodes();
 			if(list!=null){

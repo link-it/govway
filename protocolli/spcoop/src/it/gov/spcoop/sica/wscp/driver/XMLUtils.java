@@ -23,11 +23,6 @@
 
 package it.gov.spcoop.sica.wscp.driver;
 
-import it.gov.spcoop.sica.manifest.driver.TipiDocumentoSemiformale;
-import it.gov.spcoop.sica.wscp.OperationListType;
-import it.gov.spcoop.sica.wscp.OperationType;
-import it.gov.spcoop.sica.wscp.ProfiloCollaborazioneEGOV;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -35,11 +30,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
@@ -51,11 +46,17 @@ import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.JiBXUtils;
 import org.openspcoop2.utils.xml.ValidatoreXSD;
+import org.slf4j.Logger;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+
+import it.gov.spcoop.sica.manifest.driver.TipiDocumentoSemiformale;
+import it.gov.spcoop.sica.wscp.OperationListType;
+import it.gov.spcoop.sica.wscp.OperationType;
+import it.gov.spcoop.sica.wscp.ProfiloCollaborazioneEGOV;
 
 
 /**
@@ -624,7 +625,7 @@ public class XMLUtils  {
 			
 			OperationListType operations = new OperationListType();
 			
-			Vector<OperationType> operationsSICA_asincrone_nonAncoraInserite = new Vector<OperationType>();
+			List<OperationType> operationsSICA_asincrone_nonAncoraInserite = new ArrayList<OperationType>();
 					
 			for(int i=0; i<as.sizePortTypeList(); i++){
 				

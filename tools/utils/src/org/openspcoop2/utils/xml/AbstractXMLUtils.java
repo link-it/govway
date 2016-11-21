@@ -29,12 +29,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -940,12 +941,12 @@ public abstract class AbstractXMLUtils {
 	
 	// UTILITIES
 	
-	public Vector<Node> getNotEmptyChildNodes(Node e){
+	public List<Node> getNotEmptyChildNodes(Node e){
 		return getNotEmptyChildNodes(e, true);
 	}
-	public Vector<Node> getNotEmptyChildNodes(Node e, boolean consideraTextNotEmptyAsNode){
+	public List<Node> getNotEmptyChildNodes(Node e, boolean consideraTextNotEmptyAsNode){
 		NodeList nl = e.getChildNodes();
-		Vector<Node> vec = new Vector<Node>();
+		List<Node> vec = new ArrayList<Node>();
 		if(nl!=null){
 			for(int index = 0 ; index<nl.getLength(); index++){
 				Node n = nl.item(index);

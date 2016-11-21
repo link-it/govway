@@ -34,9 +34,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -639,7 +640,7 @@ public class XMLUtils  {
 			
 			OperationListType operations = new OperationListType();
 			
-			Vector<OperationType> operationsSICA_asincrone_nonAncoraInserite = new Vector<OperationType>();
+			List<OperationType> operationsSICA_asincrone_nonAncoraInserite = new ArrayList<OperationType>();
 					
 			for(int i=0; i<as.sizePortTypeList(); i++){
 				

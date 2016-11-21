@@ -27,17 +27,17 @@ package org.openspcoop2.pdd.logger;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
-import org.slf4j.Logger;
+import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -46,12 +46,13 @@ import org.openspcoop2.protocol.engine.builder.DateBuilder;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
-import org.openspcoop2.protocol.sdk.dump.IDumpOpenSPCoopAppender;
+import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.properties.CollectionProperties;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.resources.Loader;
+import org.slf4j.Logger;
 
 /**
  * Contiene la definizione un Logger utilizzato dai nodi dell'infrastruttura di OpenSPCoop
@@ -107,14 +108,14 @@ public class OpenSPCoop2Logger {
 	/**  Logger log4j utilizzato per i dati binari del servizio PA */
 	protected static Logger loggerOpenSPCoopDumpBinarioPA = null;
 	/** Appender personalizzati per i messaggi diagnostici di OpenSPCoop */
-	protected static Vector<IDiagnosticProducer> loggerMsgDiagnosticoOpenSPCoopAppender = new Vector<IDiagnosticProducer>(); 
-	protected static Vector<String> tipoMsgDiagnosticoOpenSPCoopAppender = new Vector<String>();
+	protected static List<IDiagnosticProducer> loggerMsgDiagnosticoOpenSPCoopAppender = new ArrayList<IDiagnosticProducer>(); 
+	protected static List<String> tipoMsgDiagnosticoOpenSPCoopAppender = new ArrayList<String>();
 	/** Appender personalizzati per i tracciamenti di OpenSPCoop */
-	protected static Vector<ITracciaProducer> loggerTracciamentoOpenSPCoopAppender = new Vector<ITracciaProducer>(); 
-	protected static Vector<String> tipoTracciamentoOpenSPCoopAppender = new Vector<String>();
+	protected static List<ITracciaProducer> loggerTracciamentoOpenSPCoopAppender = new ArrayList<ITracciaProducer>(); 
+	protected static List<String> tipoTracciamentoOpenSPCoopAppender = new ArrayList<String>();
 	/** Appender personalizzati per i dump applicativi di OpenSPCoop */
-	protected static Vector<IDumpOpenSPCoopAppender> loggerDumpOpenSPCoopAppender = new Vector<IDumpOpenSPCoopAppender>(); 
-	protected static Vector<String> tipoDumpOpenSPCoopAppender = new Vector<String>();
+	protected static List<IDumpProducer> loggerDumpOpenSPCoopAppender = new ArrayList<IDumpProducer>(); 
+	protected static List<String> tipoDumpOpenSPCoopAppender = new ArrayList<String>();
 	/** PdDContextSerializer */
 	private static IPdDContextSerializer pddContextSerializer = null;
 	
@@ -462,7 +463,7 @@ public class OpenSPCoop2Logger {
 							appender.initializeAppender(tracciamentoConfig.getOpenspcoopAppender(i));
 						}
 						else{
-							if( !(o instanceof IDumpOpenSPCoopAppender) ){
+							if( !(o instanceof IDumpProducer) ){
 								throw new Exception("OpenSPCoop Appender non è compatibile ne per registrare le tracce, ne per registrare i contenuti applicativi");
 							}
 						}
@@ -512,11 +513,11 @@ public class OpenSPCoop2Logger {
 					}
 
 					// Carico appender richiesto
-					IDumpOpenSPCoopAppender appender = null;
+					IDumpProducer appender = null;
 					try{
 						Object o = Loader.getInstance().newInstance(dumpAppenderClass);
-						if(o instanceof IDumpOpenSPCoopAppender){
-							appender = (IDumpOpenSPCoopAppender) o; 
+						if(o instanceof IDumpProducer){
+							appender = (IDumpProducer) o; 
 							appender.initializeAppender(tracciamentoConfig.getOpenspcoopAppender(i));
 						}
 						else{
@@ -719,19 +720,19 @@ public class OpenSPCoop2Logger {
 		return OpenSPCoop2Logger.loggerOpenSPCoopDumpBinarioPA;
 	}
 	
-	public static Vector<IDiagnosticProducer> getLoggerMsgDiagnosticoOpenSPCoopAppender() {
+	public static List<IDiagnosticProducer> getLoggerMsgDiagnosticoOpenSPCoopAppender() {
 		return OpenSPCoop2Logger.loggerMsgDiagnosticoOpenSPCoopAppender;
 	}
 
-	public static Vector<String> getTipoMsgDiagnosticoOpenSPCoopAppender() {
+	public static List<String> getTipoMsgDiagnosticoOpenSPCoopAppender() {
 		return OpenSPCoop2Logger.tipoMsgDiagnosticoOpenSPCoopAppender;
 	}
 
-	public static Vector<ITracciaProducer> getLoggerTracciamentoOpenSPCoopAppender() {
+	public static List<ITracciaProducer> getLoggerTracciamentoOpenSPCoopAppender() {
 		return OpenSPCoop2Logger.loggerTracciamentoOpenSPCoopAppender;
 	}
 
-	public static Vector<String> getTipoTracciamentoOpenSPCoopAppender() {
+	public static List<String> getTipoTracciamentoOpenSPCoopAppender() {
 		return OpenSPCoop2Logger.tipoTracciamentoOpenSPCoopAppender;
 	}
 

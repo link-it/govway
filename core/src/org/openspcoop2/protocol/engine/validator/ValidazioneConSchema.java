@@ -79,7 +79,7 @@ public class ValidazioneConSchema  {
 	}
 
 	/**
-	 * Ritorna un vector contenente eventuali eccezioni di validazione riscontrate nella busta.   
+	 * Ritorna una lista contenente eventuali eccezioni di validazione riscontrate nella busta.   
 	 *
 	 * @return Eccezioni riscontrate nella busta.
 	 * 
@@ -88,7 +88,7 @@ public class ValidazioneConSchema  {
 		return this.erroriValidazione;
 	}
 	/**
-	 * Ritorna un vector contenente eventuali eccezioni di processamento riscontrate nella busta.   
+	 * Ritorna una lista contenente eventuali eccezioni di processamento riscontrate nella busta.   
 	 *
 	 * @return Eccezioni riscontrate nella busta.
 	 * 
@@ -101,7 +101,7 @@ public class ValidazioneConSchema  {
 	 * Metodo che effettua la validazione dei soggetti di una busta, controllando la loro registrazione nel registro dei servizi. 
 	 *
 	 * Mano mano che sono incontrati errori di validazione, viene creato un oggetto 
-	 *   {@link Eccezione}, e viene inserito nel Vector <var>errors</var>.
+	 *   {@link Eccezione}, e viene inserito nella lista <var>errors</var>.
 	 *
 	 * 
 	 */

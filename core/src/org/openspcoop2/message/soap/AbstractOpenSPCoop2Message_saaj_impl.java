@@ -25,7 +25,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -356,7 +355,7 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 			    if(it.hasNext()){ 
 			    	SOAPElement encryptedKey = (SOAPElement) it.next();
 			    	SOAPElement referenceList = (SOAPElement) encryptedKey.getChildElements(new QName(WSS4JConstants.ENC_NS, WSS4JConstants.REF_LIST_LN)).next();
-			    	Vector<SOAPElement> referenceListElements = SoapUtils.getNotEmptyChildSOAPElement(referenceList);
+			    	List<SOAPElement> referenceListElements = SoapUtils.getNotEmptyChildSOAPElement(referenceList);
 		        	for (int i = 0; i < referenceListElements.size(); i++) {
 		        		String referenceWithSharp = referenceListElements.get(i).getAttributeValue(new QName("URI"));
 			    		// Il riferimento presenta un # prima dell'identificativo se e' un elemento o cid: se e' un attachment

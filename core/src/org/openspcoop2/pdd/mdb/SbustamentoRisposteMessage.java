@@ -24,7 +24,7 @@
 package org.openspcoop2.pdd.mdb;
 
 import java.sql.Timestamp;
-import java.util.Vector;
+import java.util.List;
 
 import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.pdd.config.RichiestaDelegata;
@@ -58,8 +58,8 @@ public class SbustamentoRisposteMessage implements GenericMessage {
 	/** Busta ricevuta come risposta. */
 	private Busta busta;
 	/** Eventuali errori riscontrati durante la validazione della Busta ricevuta come risposta. 
-        Se non sono presenti errori, questa variabile conterra' un vector vuoto (size = 0) */
-	private Vector<Eccezione> errors;
+        Se non sono presenti errori, questa variabile conterra' un List vuoto (size = 0) */
+	private List<Eccezione> errors;
 	/** Indicazione se la busta associata a questo messaggio e' un messaggioProtocollo od un messaggioErroreProtocollo */
 	private boolean isMessaggioErroreProtocollo;
 	/** Indicazione se la busta associata a questo messaggio e' un messaggioProtocollo senza carico applicativo */
@@ -123,12 +123,12 @@ public class SbustamentoRisposteMessage implements GenericMessage {
 	}
 	/**
 	 * Imposta eventuali errori riscontrati durante la validazione della Busta ricevuta come risposta. 
-	 * Se non sono presenti errori, questa variabile conterra' un vector vuoto (size = 0)
+	 * Se non sono presenti errori, questa variabile conterra' un List vuoto (size = 0)
 	 *
 	 * @param aErrors Errori riscontrati durante la validazione della busta.
 	 * 
 	 */
-	public void setErrors(Vector<Eccezione> aErrors){
+	public void setErrors(List<Eccezione> aErrors){
 		this.errors = aErrors;
 	}
 	/**
@@ -196,12 +196,12 @@ public class SbustamentoRisposteMessage implements GenericMessage {
 	}
 	/**
 	 * Ritorna eventuali errori riscontrati durante la validazione della Busta ricevuta come risposta. 
-	 * Se non sono presenti errori, questa variabile conterra' un vector vuoto (size = 0)
+	 * Se non sono presenti errori, questa variabile conterra' un List vuoto (size = 0)
 	 *
-	 * @return Errori riscontrati durante la validazione della busta se presenti, un vector vuoto (size = 0) altrimenti.
+	 * @return Errori riscontrati durante la validazione della busta se presenti, un List vuoto (size = 0) altrimenti.
 	 * 
 	 */
-	public Vector<Eccezione> getErrors(){
+	public List<Eccezione> getErrors(){
 		return this.errors;
 	}
 	/**

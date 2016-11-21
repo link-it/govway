@@ -152,7 +152,7 @@ public class SbustamentoRisposte extends GenericLib {
 		/* Processamento informazioni */
 		RichiestaDelegata richiestaDelegata = sbustamentoRisposteMsg.getRichiestaDelegata();
 		richiestaDelegata.setProfiloCollaborazione(bustaRisposta.getProfiloDiCollaborazione(),bustaRisposta.getProfiloDiCollaborazioneValue()); // update value
-		java.util.Vector<Eccezione> errors = sbustamentoRisposteMsg.getErrors();
+		java.util.List<Eccezione> errors = sbustamentoRisposteMsg.getErrors();
 		boolean isMessaggioErroreProtocollo = sbustamentoRisposteMsg.isMessaggioErroreProtocollo();
 		boolean bustaDiServizio = sbustamentoRisposteMsg.getIsBustaDiServizio();
 		TipoPdD tipoPdD = TipoPdD.DELEGATA;
@@ -591,7 +591,7 @@ public class SbustamentoRisposte extends GenericLib {
 						// Registrazione eccezioni riscontrate dalla validazione della busta
 						boolean mittenteRegistrato = true;
 						StringBuffer eccBuffer = new StringBuffer();
-						java.util.Vector<Eccezione> errorsClone =  new java.util.Vector<Eccezione>();
+						java.util.List<Eccezione> errorsClone =  new java.util.ArrayList<Eccezione>();
 						for(int k = 0; k < errors.size() ; k++){
 							Eccezione er = errors.get(k);
 							errorsClone.add(er);

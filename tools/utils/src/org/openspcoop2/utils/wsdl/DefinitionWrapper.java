@@ -28,12 +28,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingFault;
@@ -376,7 +376,7 @@ public class DefinitionWrapper implements javax.wsdl.Definition{
 		try{
 			Map<?,?> m = this.wsdlDefinition.getMessages();
 			Iterator<?> it = m.values().iterator();
-			Vector<QName> v = new Vector<QName>();
+			List<QName> v = new ArrayList<QName>();
 			while (it.hasNext()) {
 				v.add(((Message) it.next()).getQName());
 			}
@@ -445,7 +445,7 @@ public class DefinitionWrapper implements javax.wsdl.Definition{
 			Map<?,?> m = this.wsdlDefinition.getAllPortTypes();
 			//System.out.println("REMOVE SIZE: "+m.size());
 			Iterator<?> it = m.values().iterator();
-			Vector<QName> v = new Vector<QName>();
+			List<QName> v = new ArrayList<QName>();
 			while (it.hasNext()){
 				PortType pt = (PortType)it.next();
 				v.add(pt.getQName());
@@ -529,7 +529,7 @@ public class DefinitionWrapper implements javax.wsdl.Definition{
 		try{
 			Map<?,?> m = this.wsdlDefinition.getAllBindings();
 			Iterator<?> it = m.values().iterator();
-			Vector<QName> v = new Vector<QName>();
+			List<QName> v = new ArrayList<QName>();
 			while (it.hasNext()){
 				v.add(((Binding)it.next()).getQName());
 			}
@@ -599,7 +599,7 @@ public class DefinitionWrapper implements javax.wsdl.Definition{
 		try{
 			Map<?,?> m = this.wsdlDefinition.getAllServices();
 			Iterator<?> it = m.values().iterator();
-			Vector<QName> v = new Vector<QName>();
+			List<QName> v = new ArrayList<QName>();
 			while (it.hasNext()){
 				v.add(((Service)it.next()).getQName());
 			}

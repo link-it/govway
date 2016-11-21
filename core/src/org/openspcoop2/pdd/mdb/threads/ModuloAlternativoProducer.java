@@ -28,7 +28,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 import org.slf4j.Logger;
@@ -110,8 +111,8 @@ public class ModuloAlternativoProducer implements IProducer {
 		while (!this.stop){
 			int postiLiberi = this.coda.remainingCapacity();
 			if (postiLiberi > 0){ 
-				Vector <MessageIde> messaggiTrovati = EseguiCercaNuoviMessaggi(connectionDB, ps, postiLiberi);
-			//	Vector <MessageIde> messaggiTrovati = cercaNuoviMessaggiOld(postiLiberi);
+				List<MessageIde> messaggiTrovati = EseguiCercaNuoviMessaggi(connectionDB, ps, postiLiberi);
+			//	List <MessageIde> messaggiTrovati = cercaNuoviMessaggiOld(postiLiberi);
 				if (messaggiTrovati != null && messaggiTrovati.size()>0){
 					//aggiunge i task per la gestione dei messaggi alla coda
 					creaWorkers(messaggiTrovati);
@@ -131,7 +132,7 @@ public class ModuloAlternativoProducer implements IProducer {
 		System.out.println(this.ID_MODULO + " Producer fermato");
 	}
 
-	public void creaWorkers(Vector <MessageIde> messaggiTrovati){
+	public void creaWorkers(List <MessageIde> messaggiTrovati){
 		//implementare nelle sottoclassi
 	}
 	
@@ -182,8 +183,8 @@ public class ModuloAlternativoProducer implements IProducer {
 	 * @param limiteRisultati
 	 * @return MessageIde
 	 */
-	protected Vector <MessageIde> EseguiCercaNuoviMessaggi(Connection connectionDB, PreparedStatement ps, int limiteRisultati) {
-		Vector <MessageIde> result = new Vector <MessageIde> ();
+	protected List <MessageIde> EseguiCercaNuoviMessaggi(Connection connectionDB, PreparedStatement ps, int limiteRisultati) {
+		List <MessageIde> result = new ArrayList <MessageIde> ();
 		ResultSet rs = null;
 		try {
 			ps.setTimestamp(2, DateManager.getTimestamp());
@@ -255,7 +256,7 @@ public class ModuloAlternativoProducer implements IProducer {
 	 * @param connectionDB
 	 * @return un vettore di MessageIde che contiene gli identificatori dei messaggi schedulati
 	 */
-	protected Vector <MessageIde> cercaNuoviMessaggi(int limiteRisultati, Connection connectionDB) {	
+	protected List <MessageIde> cercaNuoviMessaggi(int limiteRisultati, Connection connectionDB) {	
 		String preparedQuery = 
 			"SELECT id_messaggio, tipo, scheduling, redelivery_count, redelivery_delay," +
 			" ora_registrazione, scheduling_time, msg_bytes" +
@@ -268,7 +269,7 @@ public class ModuloAlternativoProducer implements IProducer {
 			" ORDER BY ora_registrazione" +
 			" LIMIT " + limiteRisultati + " FOR UPDATE";
 	
-		Vector <MessageIde> result = new Vector <MessageIde> ();
+		List <MessageIde> result = new ArrayList <MessageIde> ();
 		
 		ResultSet rs = null;
 		PreparedStatement ps = null;
@@ -339,7 +340,7 @@ public class ModuloAlternativoProducer implements IProducer {
 	
 	
 	/** cerca nel db nuovi messaggi e li marca per la gestione */
-	protected Vector <MessageIde> cercaNuoviMessaggiOld(int limiteRisultati) {
+	protected List <MessageIde> cercaNuoviMessaggiOld(int limiteRisultati) {
 
 		String preparedQuery = 
 			"SELECT id_messaggio, tipo, scheduling, redelivery_count, redelivery_delay," +
@@ -356,7 +357,7 @@ public class ModuloAlternativoProducer implements IProducer {
 		Resource resourceDB = null;
 		Connection connectionDB = null;
 
-		Vector <MessageIde> id_messaggi = new Vector <MessageIde> ();
+		List <MessageIde> id_messaggi = new ArrayList <MessageIde> ();
 
 		// creazione di risorsa e connessione bisogna settare AUTOCOMMIT FALSE E SERIALIZABLE
 		try {
@@ -409,10 +410,10 @@ public class ModuloAlternativoProducer implements IProducer {
 				PreparedStatement ps3 = connectionDB.prepareStatement(preparedUpdate);
 				for (int i=0; i< id_messaggi.size(); i++) {
 					try{
-						ps3.setString(1, id_messaggi.elementAt(i).getIdMessaggio());
-						ps3.setString(2, id_messaggi.elementAt(i).getTipo());
+						ps3.setString(1, id_messaggi.get(i).getIdMessaggio());
+						ps3.setString(2, id_messaggi.get(i).getTipo());
 						ps3.executeUpdate();
-						System.out.print(this.ID_MODULO + "set sched=1 al msg: " + id_messaggi.elementAt(i).getIdMessaggio() + " | " + id_messaggi.elementAt(i).getTipo() + ".......");
+						System.out.print(this.ID_MODULO + "set sched=1 al msg: " + id_messaggi.get(i).getIdMessaggio() + " | " + id_messaggi.get(i).getTipo() + ".......");
 					}catch (SQLException e1) {
 						this.log.error(this.ID_MODULO +": SqlExecption, eseguo rollback " + e1);
 						connectionDB.rollback();

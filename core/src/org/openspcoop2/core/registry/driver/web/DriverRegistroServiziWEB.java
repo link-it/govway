@@ -26,10 +26,9 @@ package org.openspcoop2.core.registry.driver.web;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
-import org.slf4j.Logger;
 import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IUnmarshallingContext;
@@ -40,14 +39,23 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.AccordoCooperazione;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.Servizio;
+import org.openspcoop2.core.registry.ServizioAzione;
+import org.openspcoop2.core.registry.ServizioAzioneFruitore;
+import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.CostantiXMLRepository;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
-import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
+import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
@@ -55,18 +63,10 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziCRUD;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.message.xml.ValidatoreXSD;
-import org.openspcoop2.core.registry.AccordoCooperazione;
-import org.openspcoop2.core.registry.AccordoServizioParteComune;
-import org.openspcoop2.core.registry.Fruitore;
-import org.openspcoop2.core.registry.PortaDominio;
-import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.Servizio;
-import org.openspcoop2.core.registry.ServizioAzione;
-import org.openspcoop2.core.registry.ServizioAzioneFruitore;
-import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.slf4j.Logger;
 
 /**
  * Classe utilizzata per effettuare query ad un registro WEB, riguardanti specifiche
@@ -261,7 +261,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 				throw new DriverRegistroServiziNotFound("Accordi non esistenti nel repository WEB");
 
 			// Esamina degli accordi
-			Vector<IDAccordoCooperazione> idAccordi = new Vector<IDAccordoCooperazione>();
+			List<IDAccordoCooperazione> idAccordi = new ArrayList<IDAccordoCooperazione>();
 			for(int i=0; i<acList.length; i++){
 
 				String fileName = this.generatoreXML.mappingUriToFileName_accordoCooperazione(this.idAccordoCooperazioneFactory.getUriFromAccordo(acList[i]));
@@ -442,7 +442,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 				throw new DriverRegistroServiziNotFound("Accordi non esistenti nel repository WEB");
 
 			// Esamina degli accordi
-			Vector<IDAccordo> idAccordi = new Vector<IDAccordo>();
+			List<IDAccordo> idAccordi = new ArrayList<IDAccordo>();
 			for(int i=0; i<asList.length; i++){
 
 				String fileName = this.generatoreXML.mappingUriToFileName(this.idAccordoFactory.getUriFromAccordo(asList[i]));
@@ -647,7 +647,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 				throw new DriverRegistroServiziNotFound("Porte di dominio non esistenti nel repository WEB");
 
 			// Esamina delle pdd
-			Vector<String> nomiPdd = new Vector<String>();
+			List<String> nomiPdd = new ArrayList<String>();
 			for(int i=0; i<pddList.length; i++){
 
 				String pdUrlXML = this.urlPrefix + CostantiXMLRepository.PORTE_DI_DOMINIO + CostantiRegistroServizi.URL_SEPARATOR 
@@ -807,7 +807,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 				throw new DriverRegistroServiziNotFound("Soggetti non esistenti nel repository WEB");
 
 			// Esamina dei soggetti
-			Vector<IDSoggetto> idSoggetti = new Vector<IDSoggetto>();
+			List<IDSoggetto> idSoggetti = new ArrayList<IDSoggetto>();
 			for(int i=0; i<ssList.length; i++){
 
 				String idSoggettoXML = ssList[i].getTipo() + ssList[i].getNome();
@@ -1141,7 +1141,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 				throw new DriverRegistroServiziNotFound("Servizi non esistenti nel repository WEB");
 
 			// Esamina dei servizi
-			Vector<IDAccordo> idServizi = new Vector<IDAccordo>();
+			List<IDAccordo> idServizi = new ArrayList<IDAccordo>();
 			for(int i=0; i<servList.length; i++){
 
 				String idSoggettoXML = servList[i].getServizio().getTipoSoggettoErogatore() + servList[i].getServizio().getNomeSoggettoErogatore();
@@ -1244,7 +1244,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 				throw new DriverRegistroServiziNotFound("Servizi non esistenti nel repository WEB");
 
 			// Esamina dei servizi
-			Vector<IDServizio> idServizi = new Vector<IDServizio>();
+			List<IDServizio> idServizi = new ArrayList<IDServizio>();
 			for(int i=0; i<servList.length; i++){
 
 				String idSoggettoXML = servList[i].getServizio().getTipoSoggettoErogatore() + servList[i].getServizio().getNomeSoggettoErogatore();

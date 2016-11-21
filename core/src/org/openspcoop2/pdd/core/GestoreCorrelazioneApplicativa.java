@@ -237,7 +237,7 @@ public class GestoreCorrelazioneApplicativa {
 		AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine();
 		
 		/** Gestioni correlazioni, in modo da avere lo '*' in fondo */
-		java.util.Vector<CorrelazioneApplicativaElemento> c = new java.util.Vector<CorrelazioneApplicativaElemento>();
+		java.util.List<CorrelazioneApplicativaElemento> c = new java.util.ArrayList<CorrelazioneApplicativaElemento>();
 		int posizioneElementoQualsiasi = -1;
 		for(int i=0; i<correlazioneApplicativa.sizeElementoList(); i++){
 			CorrelazioneApplicativaElemento elemento = correlazioneApplicativa.getElemento(i);
@@ -604,7 +604,7 @@ public class GestoreCorrelazioneApplicativa {
 
 		
 		/** Gestioni correlazioni, in modo da avere lo '*' in fondo */
-		java.util.Vector<CorrelazioneApplicativaRispostaElemento> c = new java.util.Vector<CorrelazioneApplicativaRispostaElemento>();
+		java.util.List<CorrelazioneApplicativaRispostaElemento> c = new java.util.ArrayList<CorrelazioneApplicativaRispostaElemento>();
 		int posizioneElementoQualsiasi = -1;
 		for(int i=0; i<correlazioneApplicativa.sizeElementoList(); i++){
 			CorrelazioneApplicativaRispostaElemento elemento = correlazioneApplicativa.getElemento(i);
@@ -911,9 +911,9 @@ public class GestoreCorrelazioneApplicativa {
 	 *
 	 * @return Nel caso l'operazione ha successo ritorna gli id delle tabelle delle correlazioni scadute
 	 */
-	public java.util.Vector<Long> getCorrelazioniScadute(int limit,boolean logQuery,boolean orderBy) throws GestoreMessaggiException{
+	public java.util.List<Long> getCorrelazioniScadute(int limit,boolean logQuery,boolean orderBy) throws GestoreMessaggiException{
 
-		java.util.Vector<Long> idMsg = new java.util.Vector<Long>();
+		java.util.List<Long> idMsg = new java.util.ArrayList<Long>();
 
 		PreparedStatement pstmtMsgScaduti = null;
 		ResultSet rs = null;
@@ -1004,9 +1004,9 @@ public class GestoreCorrelazioneApplicativa {
 	 *
 	 * @return Nel caso l'operazione ha successo ritorna gli id delle tabelle delle correlazioni 'vecchie' (rispetto all'ora di registrazione) 
 	 */
-	public java.util.Vector<Long> getCorrelazioniScaduteRispettoOraRegistrazione(int limit,long scadenzaMsg,boolean logQuery,boolean orderBy,boolean escludiCorrelazioniConScadenza) throws GestoreMessaggiException{
+	public java.util.List<Long> getCorrelazioniScaduteRispettoOraRegistrazione(int limit,long scadenzaMsg,boolean logQuery,boolean orderBy,boolean escludiCorrelazioniConScadenza) throws GestoreMessaggiException{
 
-		java.util.Vector<Long> idMsg = new java.util.Vector<Long>();
+		java.util.List<Long> idMsg = new java.util.ArrayList<Long>();
 		
 		PreparedStatement pstmtMsgScaduti = null;
 		ResultSet rs = null;

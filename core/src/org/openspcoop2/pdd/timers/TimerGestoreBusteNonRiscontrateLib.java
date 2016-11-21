@@ -25,7 +25,7 @@ package org.openspcoop2.pdd.timers;
 
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.Vector;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -188,7 +188,7 @@ public class TimerGestoreBusteNonRiscontrateLib {
 			/* ----- Gestione Riscontri per profilo OneWay ----- */
 			Riscontri rBuste = new Riscontri(openspcoopState.getStatoRichiesta(),this.logTimer);
 			int offsetRiscontri = 0;
-			Vector<BustaNonRiscontrata> busteOneWayToSend = 
+			List<BustaNonRiscontrata> busteOneWayToSend = 
 				rBuste.getBustePerUlterioreInoltro(this.timeout,this.limit,offsetRiscontri,this.logQuery);
 			if(this.logQuery){
 				if( (busteOneWayToSend != null) && (busteOneWayToSend.size()<=0)){
@@ -422,7 +422,7 @@ public class TimerGestoreBusteNonRiscontrateLib {
 			/* ----- Gestione RicevuteAsincrone per profili Asincroni ----- */
 			ProfiloDiCollaborazione pBuste = new ProfiloDiCollaborazione(openspcoopState.getStatoRichiesta(),this.logTimer,null);
 			int offsetBusteAsincrone = 0;
-			Vector<BustaNonRiscontrata> busteAsincroneToSend = 
+			List<BustaNonRiscontrata> busteAsincroneToSend = 
 				pBuste.asincrono_getBusteAsincronePerUlterioreInoltro(this.timeout,this.limit,offsetBusteAsincrone,this.logQuery);
 			if(this.logQuery){
 				if( (busteAsincroneToSend != null) && (busteAsincroneToSend.size()<=0)){

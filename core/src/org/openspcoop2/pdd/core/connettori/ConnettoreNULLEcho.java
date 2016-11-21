@@ -26,7 +26,7 @@ package org.openspcoop2.pdd.core.connettori;
 
 import java.io.ByteArrayInputStream;
 import java.sql.Connection;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipoPdD;
@@ -265,7 +265,7 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 						
 						// repository
 						RepositoryBuste repositoryBuste = new RepositoryBuste(state, true,protocolFactory);
-						repositoryBuste.registraBustaIntoInBox(busta, new Vector<Eccezione>() ,
+						repositoryBuste.registraBustaIntoInBox(busta, new ArrayList<Eccezione>() ,
 								OpenSPCoop2Properties.getInstance().getRepositoryIntervalloScadenzaMessaggi());
 						Integrazione infoIntegrazione = new Integrazione();
 						infoIntegrazione.setIdModuloInAttesa(null);

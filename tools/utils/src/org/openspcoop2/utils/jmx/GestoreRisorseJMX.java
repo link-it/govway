@@ -24,8 +24,9 @@ package org.openspcoop2.utils.jmx;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -53,7 +54,7 @@ public class GestoreRisorseJMX {
 	protected Logger log = null;
 	
 	/** JMX Name */
-	private Vector<ObjectName> jmxNames = new Vector<ObjectName>();
+	private List<ObjectName> jmxNames = new ArrayList<ObjectName>();
 	
 	
 	/**

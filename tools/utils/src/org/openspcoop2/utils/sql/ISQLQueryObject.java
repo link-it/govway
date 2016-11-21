@@ -24,7 +24,6 @@
 package org.openspcoop2.utils.sql;
 
 import java.util.List;
-import java.util.Vector;
 
 import org.openspcoop2.utils.TipiDatabase;
 
@@ -379,7 +378,7 @@ public interface ISQLQueryObject {
 	 * @return nomi dei fields impostati (se e' stato utilizzato un alias ritorna il valore dell'alias)
 	 * @throws SQLQueryObjectException
 	 */
-	public Vector<String> getFieldsName() throws SQLQueryObjectException;
+	public List<String> getFieldsName() throws SQLQueryObjectException;
 	
 	/**
 	 * Indicazione se e' il nome rappresenta una funzione
@@ -395,7 +394,7 @@ public interface ISQLQueryObject {
 	 * @return nomi dei fields impostati (se e' stato utilizzato un alias ritorna comunque il nome della colonna)
 	 * @throws SQLQueryObjectException
 	 */
-	//public Vector<String> getFields() throws SQLQueryObjectException;
+	//public List<String> getFields() throws SQLQueryObjectException;
 	
 	/**
 	 * Ritorna i nomi delle tabelle impostate (se e' stato utilizzato un alias ritorna il valore dell'alias)
@@ -403,7 +402,7 @@ public interface ISQLQueryObject {
 	 * @return nomi delle tabelle impostate (se e' stato utilizzato un alias ritorna il valore dell'alias)
 	 * @throws SQLQueryObjectException
 	 */
-	public Vector<String> getTablesName() throws SQLQueryObjectException;
+	public List<String> getTablesName() throws SQLQueryObjectException;
 	
 	/**
 	 * Ritorna i nomi delle tabelle impostate (se e' stato utilizzato un alias ritorna comunque il nome della tabella)
@@ -411,7 +410,7 @@ public interface ISQLQueryObject {
 	 * @return nomi delle tabelle impostate (se e' stato utilizzato un alias ritorna comunque il nome della tabella)
 	 * @throws SQLQueryObjectException
 	 */
-	//public Vector<String> getTables() throws SQLQueryObjectException;
+	//public List<String> getTables() throws SQLQueryObjectException;
 	
 	
 	

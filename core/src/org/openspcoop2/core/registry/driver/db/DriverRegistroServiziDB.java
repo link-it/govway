@@ -38,11 +38,9 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.sql.DataSource;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.DBUtils;
@@ -112,6 +110,7 @@ import org.openspcoop2.utils.datasource.DataSourceParams;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.slf4j.Logger;
 
 /**
  * Classe utilizzata per effettuare query ad un registro dei servizi openspcoop
@@ -867,7 +866,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 			}
 			rs = stm.executeQuery();
-			Vector<IDAccordoCooperazione> idAccordi = new Vector<IDAccordoCooperazione>();
+			List<IDAccordoCooperazione> idAccordi = new ArrayList<IDAccordoCooperazione>();
 			while (rs.next()) {
 				IDAccordoCooperazione idAccordo = this.idAccordoCooperazioneFactory.getIDAccordoFromValues(rs.getString("nome"),rs.getString("versione"));
 				idAccordi.add(idAccordo);
@@ -2098,7 +2097,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 			}
 			rs = stm.executeQuery();
-			Vector<IDAccordo> idAccordi = new Vector<IDAccordo>();
+			List<IDAccordo> idAccordi = new ArrayList<IDAccordo>();
 			while (rs.next()) {
 				long idReferente = rs.getLong("id_referente");
 				IDSoggetto idSoggettoReferente = null;
@@ -3195,7 +3194,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stm=connection.prepareStatement(sqlQuery);
 			stm.setLong(1, idAccordoLong);
 			rs=stm.executeQuery();
-			Vector<Long> idPT = new Vector<Long>();
+			List<Long> idPT = new ArrayList<Long>();
 			while(rs.next()){
 				idPT.add(rs.getLong("id"));
 			}
@@ -3216,7 +3215,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				stm=connection.prepareStatement(sqlQuery);
 				stm.setLong(1, idPortType);
 				rs=stm.executeQuery();
-				Vector<Long> idPTAzione = new Vector<Long>();
+				List<Long> idPTAzione = new ArrayList<Long>();
 				while(rs.next()){
 					idPTAzione.add(rs.getLong("id"));
 				}
@@ -3656,7 +3655,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stm=connection.prepareStatement(sqlQuery);
 			stm.setLong(1, idAccordoLong);
 			rs=stm.executeQuery();
-			Vector<Long> idPT = new Vector<Long>();
+			List<Long> idPT = new ArrayList<Long>();
 			while(rs.next()){
 				idPT.add(rs.getLong("id"));
 			}
@@ -3667,7 +3666,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				Long idPortType = idPT.remove(0);
 
 				// gestione operation_messages
-				Vector<Long> idPortTypeAzioni = new Vector<Long>();
+				List<Long> idPortTypeAzioni = new ArrayList<Long>();
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.PORT_TYPE_AZIONI);
 				sqlQueryObject.addSelectField("id");
@@ -3955,7 +3954,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 			}
 			rs = stm.executeQuery();
-			Vector<String> nomiPdd = new Vector<String>();
+			List<String> nomiPdd = new ArrayList<String>();
 			while (rs.next()) {
 				nomiPdd.add(rs.getString("nome"));
 			}
@@ -4560,7 +4559,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}	
 			}
 			rs = stm.executeQuery();
-			Vector<IDSoggetto> idSoggetti = new Vector<IDSoggetto>();
+			List<IDSoggetto> idSoggetti = new ArrayList<IDSoggetto>();
 			while (rs.next()) {
 				IDSoggetto idS = new IDSoggetto(rs.getString("tipo_soggetto"),rs.getString("nome_soggetto"));
 				idSoggetti.add(idS);
@@ -5246,7 +5245,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
 		try {
-			Vector<IDSoggetto> idTrovati = new Vector<IDSoggetto>();
+			List<IDSoggetto> idTrovati = new ArrayList<IDSoggetto>();
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
 			sqlQueryObject.addSelectField("tipo_soggetto");
@@ -5486,7 +5485,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}	
 			}
 			rs = stm.executeQuery();
-			Vector<IDServizio> idServizi = new Vector<IDServizio>();
+			List<IDServizio> idServizi = new ArrayList<IDServizio>();
 			while (rs.next()) {
 				IDServizio idServ = new IDServizio(rs.getString("tipo_soggetto"),rs.getString("nome_soggetto"),
 						rs.getString("tipo_servizio"),rs.getString("nome_servizio"));
@@ -5668,7 +5667,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}	
 			}
 			rs = stm.executeQuery();
-			Vector<IDAccordo> idAccordi = new Vector<IDAccordo>();
+			List<IDAccordo> idAccordi = new ArrayList<IDAccordo>();
 			while (rs.next()) {
 				long idReferente = rs.getLong("id_soggetto");
 				IDSoggetto idSoggettoReferente = null;
@@ -5778,7 +5777,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stm = con.prepareStatement(sqlQuery);
 			stm.setLong(1, idSoggetto);
 			rs = stm.executeQuery();
-			Vector<IDServizio> idServizi = new Vector<IDServizio>();
+			List<IDServizio> idServizi = new ArrayList<IDServizio>();
 			while (rs.next()) {
 				IDServizio idServ = new IDServizio(rs.getString("tipo_soggetto"),rs.getString("nome_soggetto"),
 						rs.getString("tipo_servizio"),rs.getString("nome_servizio"));
@@ -9614,7 +9613,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stm.setString(1, idsoggetto.getTipo());
 			stm.setString(2, idsoggetto.getNome());
 			rs = stm.executeQuery();
-			Vector<AccordoServizioParteComune> accordi = new Vector<AccordoServizioParteComune>();
+			List<AccordoServizioParteComune> accordi = new ArrayList<AccordoServizioParteComune>();
 			while (rs.next()) {
 				accordi.add(this.getAccordoServizioParteComune(rs.getLong("idAccordo")));
 			}
@@ -10214,8 +10213,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		try {
 			boolean isInUso = false;
-			Vector<String> nomiAccordi = new Vector<String>();
-			//Vector<String> nomiServiziApplicativi = new Vector<String>();
+			List<String> nomiAccordi = new ArrayList<String>();
+			//List<String> nomiServiziApplicativi = new ArrayList<String>();
 			//controllo se in uso in servizi
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.ACCORDI_SERVIZI_COMPONENTI);
@@ -10343,11 +10342,11 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		try {
 			boolean isInUso = false;
-			Vector<String> nomiServizi = new Vector<String>();
-			Vector<String> serviziFruitori = new Vector<String>();
-			Vector<String> accordi = new Vector<String>();
-			Vector<String> accordi_cooperazione = new Vector<String>();
-			Vector<String> partecipanti = new Vector<String>();
+			List<String> nomiServizi = new ArrayList<String>();
+			List<String> serviziFruitori = new ArrayList<String>();
+			List<String> accordi = new ArrayList<String>();
+			List<String> accordi_cooperazione = new ArrayList<String>();
+			List<String> partecipanti = new ArrayList<String>();
 
 			//controllo se in uso in servizi
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -10571,8 +10570,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 			ArrayList<IDServizio> idServizi = new ArrayList<IDServizio>();
 			ArrayList<IDServizio> idServiziFruitori = new ArrayList<IDServizio>();
 			ArrayList<IDAccordo> idAccordi = new ArrayList<IDAccordo>();
-			//Vector<String> accordi_cooperazione = new Vector<String>();
-			//Vector<String> partecipanti = new Vector<String>();
+			//List<String> accordi_cooperazione = new ArrayList<String>();
+			//List<String> partecipanti = new ArrayList<String>();
 
 			//controllo se in uso in servizi
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -15860,7 +15859,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 	}
 
-	public Vector<IDServizio> getIdServiziWithPortType(IDPortType idPT) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+	public List<IDServizio> getIdServiziWithPortType(IDPortType idPT) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		String nomeMetodo = "getIdServiziWithPortType";
 
 		Connection con = null;
@@ -15883,7 +15882,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
-		Vector<IDServizio> idServizi = new Vector<IDServizio>(); 
+		List<IDServizio> idServizi = new ArrayList<IDServizio>(); 
 		try {
 
 			//recupero idAccordo
@@ -15948,7 +15947,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	}
 
 
-	public Vector<IDServizio> getIdServiziWithAccordo(IDAccordo idAccordo,boolean checkPTisNull) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+	public List<IDServizio> getIdServiziWithAccordo(IDAccordo idAccordo,boolean checkPTisNull) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		String nomeMetodo = "getIdServiziWithPortType";
 
 		Connection con = null;
@@ -15971,7 +15970,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
-		Vector<IDServizio> idServizi = new Vector<IDServizio>(); 
+		List<IDServizio> idServizi = new ArrayList<IDServizio>(); 
 		try {
 
 			//recupero idAccordo
@@ -17597,7 +17596,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			indexStmt++;
 
 			rs = stm.executeQuery();
-			Vector<IDServizioApplicativo> idServiziApplicativi = new Vector<IDServizioApplicativo>();
+			List<IDServizioApplicativo> idServiziApplicativi = new ArrayList<IDServizioApplicativo>();
 			while (rs.next()) {
 				IDSoggetto idS = new IDSoggetto(rs.getString("tipo_soggetto"),rs.getString("nome_soggetto"));
 				IDServizioApplicativo idSA = new IDServizioApplicativo();

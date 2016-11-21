@@ -24,10 +24,10 @@ package org.openspcoop2.pdd.mdb;
 
 import java.io.ByteArrayInputStream;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPFault;
@@ -212,7 +212,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				String protocol = (String) enumProtocols.nextElement();
 				String [] tipiIntegrazionePA = propertiesReader.getTipoIntegrazionePA(protocol);
 				if(tipiIntegrazionePA!=null && tipiIntegrazionePA.length>0){
-					Vector<String> tipiIntegrazionePerProtocollo = new Vector<String>();
+					List<String> tipiIntegrazionePerProtocollo = new ArrayList<String>();
 					for (int i = 0; i < tipiIntegrazionePA.length; i++) {
 						String classType = className.getIntegrazionePortaApplicativa(tipiIntegrazionePA[i]);
 						try {

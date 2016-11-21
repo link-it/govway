@@ -26,7 +26,6 @@ package org.openspcoop2.pdd.services.skeleton;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -585,7 +584,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			msgDiag.logPersonalizzato("logInvocazioneOperazione");
 
 			// Ricerca Messaggi
-			Vector<String> ids = null;
+			List<String> ids = null;
 
 			GestoreMessaggi gestoreMessaggi = new GestoreMessaggi(stato, true, msgDiag,pddContext);
 
@@ -1450,7 +1449,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			// Effettuo ricerca ID DEL SERVIZIO APPLICATIVO
 			GestoreMessaggi gestoreSearchID = new GestoreMessaggi(stato, true,msgDiag,pddContext);
 
-			Vector<String> ids =  gestoreSearchID.getIDMessaggi_ServizioApplicativo(servizio_applicativo);      
+			List<String> ids =  gestoreSearchID.getIDMessaggi_ServizioApplicativo(servizio_applicativo);      
 			if(ids.size() == 0){
 				msgDiag.logPersonalizzato("messaggiNonPresenti");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_406_INTEGRATION_MANAGER_MESSAGGI_FOR_SIL_NON_TROVATI.

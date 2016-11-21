@@ -25,11 +25,11 @@ package org.openspcoop2.protocol.registry;
 
 import java.lang.reflect.Method;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -64,6 +64,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.slf4j.Logger;
 
 
 
@@ -92,7 +93,7 @@ public class RegistroServizi  {
 	private Hashtable<String, Boolean> mappingNomeRegistroToUseConnectionPdD = new Hashtable<String, Boolean>();
 	
 	/** Eventuale RegistriXML da cui prelevare le definizioni dei connettori */
-	private Vector<DriverRegistroServiziXML> registriXML;
+	private List<DriverRegistroServiziXML> registriXML;
 
 	/** Logger utilizzato per debug. */
 	private Logger log = null;
@@ -243,7 +244,7 @@ public class RegistroServizi  {
 
 		try{ 
 			this.driverRegistroServizi = new java.util.Hashtable<String,IDriverRegistroServiziGet>();
-			this.registriXML = new Vector<DriverRegistroServiziXML>();
+			this.registriXML = new ArrayList<DriverRegistroServiziXML>();
 
 			if(alog!=null)
 				this.log = alog;
@@ -665,7 +666,7 @@ public class RegistroServizi  {
 							throw new DriverRegistroServiziNotFound("Accordo presente in uno stato bozza");
 						}else{
 							// Check fruitori
-							Vector<Fruitore> fruitoriConStatoNonBozza = new Vector<Fruitore>();
+							List<Fruitore> fruitoriConStatoNonBozza = new ArrayList<Fruitore>();
 							while(s.sizeFruitoreList()>0){
 								Fruitore tmpF = s.removeFruitore(0);
 								if(StatiAccordo.bozza.toString().equals(tmpF.getStatoPackage())==false){
@@ -781,7 +782,7 @@ public class RegistroServizi  {
 								throw new DriverRegistroServiziNotFound("Accordo presente in uno stato bozza");
 							}else{
 								// Check fruitori
-								Vector<Fruitore> fruitoriConStatoNonBozza = new Vector<Fruitore>();
+								List<Fruitore> fruitoriConStatoNonBozza = new ArrayList<Fruitore>();
 								while(s.sizeFruitoreList()>0){
 									Fruitore tmpF = s.removeFruitore(0);
 									if(StatiAccordo.bozza.toString().equals(tmpF.getStatoPackage())==false){

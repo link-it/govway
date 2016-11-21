@@ -23,7 +23,8 @@
 
 package org.openspcoop2.core.registry.driver;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -37,7 +38,7 @@ import java.util.Vector;
 
 public class ValidazioneStatoPackageException extends Exception {
     
-	private Vector<String> errori_validazione = new Vector<String>();
+	private List<String> errori_validazione = new ArrayList<String>();
 	private String tipoPackage = null;
 	private String stato = null;
 	

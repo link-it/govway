@@ -37,7 +37,7 @@ import it.gov.spcoop.sica.manifest.driver.TipiDocumentoConversazione;
 import it.gov.spcoop.sica.manifest.driver.TipiDocumentoInterfaccia;
 
 import java.io.File;
-import java.util.Vector;
+import java.util.List;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
@@ -615,7 +615,7 @@ public class SICAtoOpenSPCoopUtilities {
 				return false;
 			}
 			
-			Vector<Node> childs = SoapUtils.getNotEmptyChildNodes(el, false);
+			List<Node> childs = SoapUtils.getNotEmptyChildNodes(el, false);
 			if(childs.size()<=0){
 				return true;
 			}

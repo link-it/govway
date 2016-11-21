@@ -27,13 +27,11 @@ package org.openspcoop2.core.registry.wsdl;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.registry.Message;
 import org.openspcoop2.core.registry.MessagePart;
 import org.openspcoop2.core.registry.Operation;
@@ -45,18 +43,20 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiException;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.wsdl.WSDLException;
 import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.ValidatoreXSD;
+import org.slf4j.Logger;
 import org.w3c.dom.Attr;
+import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
-import org.w3c.dom.Comment;
 
 
 /**
@@ -777,7 +777,7 @@ public class WSDLValidator {
 					if(argumentsOperation!=null && argumentsOperation.sizePartList()>0){
 						
 						// Mi conservo gli elementi presenti nel body
-						Vector<RootElementBody> elementRootBody = new Vector<RootElementBody>();
+						List<RootElementBody> elementRootBody = new ArrayList<RootElementBody>();
 						StringBuffer bodyElements = new StringBuffer();
 						int numeroBodyElements = 0;
 						int realIndexBody = 0;

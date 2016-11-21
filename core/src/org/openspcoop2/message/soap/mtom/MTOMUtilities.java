@@ -24,7 +24,6 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.mail.internet.ContentType;
 import javax.xml.namespace.QName;
@@ -303,7 +302,7 @@ public class MTOMUtilities {
 					
 					QName qname = new QName(elementBase64Binary.getNamespaceURI(), elementBase64Binary.getLocalName());
 					//System.out.println("Found Element ["+qname.toString()+"]");
-					Vector<Node> elementBase64BinaryChilds = SoapUtils.getNotEmptyChildNodes(elementBase64Binary,false);
+					List<Node> elementBase64BinaryChilds = SoapUtils.getNotEmptyChildNodes(elementBase64Binary,false);
 					if(elementBase64BinaryChilds!=null && elementBase64BinaryChilds.size()>0){
 						throw new MessageException("XpathEngine (expr("+xpathExpressionName+"):"+xpathExpression+") found element ("+qname+
 								") with childs, mtom optimize packaging is only valid for base64Binary xsd element");
@@ -515,7 +514,7 @@ public class MTOMUtilities {
 						}
 							
 					}
-					Vector<Node> nodeListBase64 = SoapUtils.getNotEmptyChildNodes(elementBase64Binary,false);
+					List<Node> nodeListBase64 = SoapUtils.getNotEmptyChildNodes(elementBase64Binary,false);
 					if(nodeListBase64==null || nodeListBase64.size()<=0){
 						throw new MessageException("XpathEngine (expr("+xpathExpressionName+"):"+xpathExpression+") found element ("+qname+
 								") without childs, mtom optimize packaging require xop:"+org.openspcoop2.message.soap.mtom.Costanti.XOP_INCLUDE_LOCAL_NAME+" element");

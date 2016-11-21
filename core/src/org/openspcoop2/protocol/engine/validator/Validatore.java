@@ -26,7 +26,6 @@ package org.openspcoop2.protocol.engine.validator;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -86,9 +85,9 @@ public class Validatore  {
 	/** Eventuale errore avvenuto durante il processo di validazione */
 	ErroreCooperazione errore;
 	/** Errori di validazione riscontrati sulla busta */
-	private java.util.Vector<Eccezione> erroriValidazione = new Vector<Eccezione>();
+	private java.util.List<Eccezione> erroriValidazione = new ArrayList<Eccezione>();
 	/** Errori di processamento riscontrati sulla busta */
-	private java.util.Vector<Eccezione> erroriProcessamento = new Vector<Eccezione>();
+	private java.util.List<Eccezione> erroriProcessamento = new ArrayList<Eccezione>();
 	/** Indicazione se la busta validata e' un messaggio errore */
 	private boolean isMessaggioErrore;
 	private boolean isMessaggioErroreIntestazione;
@@ -588,28 +587,28 @@ public class Validatore  {
 	}
 
 	/**
-	 * Ritorna un vector contenente eventuali eccezioni di validazione riscontrate nella busta.   
+	 * Ritorna un List contenente eventuali eccezioni di validazione riscontrate nella busta.   
 	 *
 	 * @return Eccezioni riscontrate nella busta.
 	 * 
 	 */
-	public java.util.Vector<Eccezione> getEccezioniValidazione(){
+	public java.util.List<Eccezione> getEccezioniValidazione(){
 		if(this.erroriValidazione!=null)
 			return this.erroriValidazione;
 		else
-			return new java.util.Vector<Eccezione>();
+			return new java.util.ArrayList<Eccezione>();
 	}
 	/**
-	 * Ritorna un vector contenente eventuali eccezioni di processamento riscontrate nella busta.   
+	 * Ritorna un List contenente eventuali eccezioni di processamento riscontrate nella busta.   
 	 *
 	 * @return Eccezioni riscontrate nella busta.
 	 * 
 	 */
-	public java.util.Vector<Eccezione> getEccezioniProcessamento(){
+	public java.util.List<Eccezione> getEccezioniProcessamento(){
 		if(this.erroriProcessamento!=null)
 			return this.erroriProcessamento;
 		else
-			return new java.util.Vector<Eccezione>();
+			return new java.util.ArrayList<Eccezione>();
 	}
 
 	/**

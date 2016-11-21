@@ -348,7 +348,7 @@ public class EngineTest {
 			
 			/*(non serve se non si imposta il CONTENT_TRANSFER_ENCODING a base64!!)
 			java.util.Iterator<?> itAp = openspcoop2Message.getAttachments();
-			java.util.Vector<AttachmentPart> v = new java.util.Vector<AttachmentPart>();
+			java.util.List<AttachmentPart> v = new java.util.ArrayList<AttachmentPart>();
 		    while(itAp.hasNext()){
 		    	AttachmentPart ap = 
 		    		(AttachmentPart) itAp.next();
