@@ -22,7 +22,7 @@ package org.openspcoop2.pdd.services.core;
 
 import org.openspcoop2.pdd.config.MTOMProcessorConfig;
 import org.openspcoop2.pdd.config.MessageSecurityConfig;
-import org.openspcoop2.protocol.sdk.constants.TipoTraccia;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 
 /**
  * FlowProperties
@@ -35,6 +35,6 @@ public class FlowProperties{
 	
 	public MessageSecurityConfig messageSecurity = null;
 	public MTOMProcessorConfig mtom = null;
-	public TipoTraccia tipoMessaggio = null;
+	public RuoloMessaggio tipoMessaggio = null;
 	
 }

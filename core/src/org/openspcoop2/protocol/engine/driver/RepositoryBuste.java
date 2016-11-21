@@ -97,7 +97,7 @@ public class RepositoryBuste  {
 	/** GestoreRepository */
 	private IGestoreRepository gestoreRepositoryBuste;
 
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<?> protocolFactory;
 
 	
 	/* ********  C O S T R U T T O R E  ******** */
@@ -105,13 +105,13 @@ public class RepositoryBuste  {
 	//public RepositoryBuste(IState state){
 	//	this(state, Configurazione.getLibraryLog(), true,null);
 	//}
-	public RepositoryBuste(IState state, boolean isRichiesta,IProtocolFactory protocolFactory){
+	public RepositoryBuste(IState state, boolean isRichiesta,IProtocolFactory<?> protocolFactory){
 		this(state, Configurazione.getLibraryLog(), isRichiesta,protocolFactory);
 	}
-	public RepositoryBuste(IState state, Logger alog,IProtocolFactory protocolFactory){
+	public RepositoryBuste(IState state, Logger alog,IProtocolFactory<?> protocolFactory){
 		this(state, alog, true,protocolFactory);
 	}
-	public RepositoryBuste(IState state,IProtocolFactory protocolFactory){
+	public RepositoryBuste(IState state,IProtocolFactory<?> protocolFactory){
 		this(state, Configurazione.getLibraryLog(), true,protocolFactory);
 	}
 	/**
@@ -120,7 +120,7 @@ public class RepositoryBuste  {
 	 * @param state Oggetto che rappresenta lo stato di una busta
 	 *
 	 */
-	public RepositoryBuste(IState state, Logger alog, boolean isRichiesta,IProtocolFactory protocolFactory){
+	public RepositoryBuste(IState state, Logger alog, boolean isRichiesta,IProtocolFactory<?> protocolFactory){
 		this.state = state;
 		this.gestoreRepositoryBuste = Configurazione.getGestoreRepositoryBuste();
 		if(alog!=null){
@@ -351,7 +351,7 @@ public class RepositoryBuste  {
 	 * @return un oggetto Vector<{@link org.openspcoop2.protocol.sdk.Eccezione}> se e' presente la busta richiesta.
 	 *
 	 */
-	public Vector<Eccezione> getErrorsFromOutBox(String id, IProtocolFactory protocolFactory) throws ProtocolException{
+	public Vector<Eccezione> getErrorsFromOutBox(String id, IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		return getErrors(id, Costanti.OUTBOX);
 	}
 

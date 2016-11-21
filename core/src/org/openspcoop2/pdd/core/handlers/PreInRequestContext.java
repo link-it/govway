@@ -59,7 +59,7 @@ public class PreInRequestContext {
 	private PdDContext pddContext = null;
 	
 	/** ProtocolFactory */
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<?> protocolFactory;
 	
 	/** NotifierInputStreamParameter */
 	private NotifierInputStreamParams notifierInputStreamParams;
@@ -114,11 +114,11 @@ public class PreInRequestContext {
 		this.idModulo = idModulo;
 	}
 	
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}
 
-	public void setProtocolFactory(IProtocolFactory protocolFactory) {
+	public void setProtocolFactory(IProtocolFactory<?> protocolFactory) {
 		this.protocolFactory = protocolFactory;
 	}
 }

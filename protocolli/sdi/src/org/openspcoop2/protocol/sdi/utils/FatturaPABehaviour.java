@@ -49,6 +49,7 @@ import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRicezioneFattur
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
@@ -94,7 +95,7 @@ public class FatturaPABehaviour extends DefaultBehaviour {
 					// gestisco con lo splitter
 					try{
 						SDIFactory sdiFactory = new SDIFactory();
-						sdiFactory.createBustaBuilder().sbustamento(null, msg, busta, true, new ProprietaManifestAttachments());
+						sdiFactory.createBustaBuilder().sbustamento(null, msg, busta, RuoloMessaggio.RICHIESTA, new ProprietaManifestAttachments());
 						ByteArrayOutputStream bout = new ByteArrayOutputStream();
 						TunnelSoapUtils.sbustamentoMessaggio(msg,bout);
 						bout.flush();

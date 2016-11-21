@@ -97,6 +97,7 @@ import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.state.StatelessMessage;
@@ -194,7 +195,7 @@ public class EJBUtils {
 	private INodeSender nodeSender = null;
 
 	/** ProtocolFactory */
-	private IProtocolFactory protocolFactory = null;
+	private IProtocolFactory<?> protocolFactory = null;
 	private IProtocolVersionManager protocolManager = null;
 	
 	/** DettaglioEccezioneOpenSPCoop2Builder */
@@ -778,7 +779,7 @@ public class EJBUtils {
 					imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
 							this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 							this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
-							Boolean.FALSE);
+							RuoloMessaggio.RISPOSTA);
 				if(idRisposta == null){
 					throw new Exception("Identificativo non costruito.");
 				}  
@@ -857,7 +858,7 @@ public class EJBUtils {
 					imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
 							this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 							this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
-							Boolean.FALSE);
+							RuoloMessaggio.RISPOSTA);
 				if(idSbloccoRicezioneContenutiApplicativi == null){
 					throw new Exception("Identificativo non costruito.");
 				}  
@@ -1018,7 +1019,7 @@ public class EJBUtils {
 						imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
 								this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 								this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
-								Boolean.FALSE);
+								RuoloMessaggio.RISPOSTA);
 					if(idRisposta == null){
 						throw new Exception("Identificativo non costruito.");
 					}  
@@ -1109,7 +1110,7 @@ public class EJBUtils {
 					imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
 							this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 							this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
-							Boolean.FALSE);
+							RuoloMessaggio.RISPOSTA);
 				if(idSbloccoRicezioneContenutiApplicativi == null){
 					throw new Exception("Identificativo non costruito.");
 				}  
@@ -2140,13 +2141,13 @@ public class EJBUtils {
 			imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
 					this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 					this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
-					Boolean.FALSE);
+					RuoloMessaggio.RISPOSTA);
 
 		//ErroreProcessamentoProtocollo: Header
 		busta = this.generatoreErrorePortaApplicativa.getImbustamentoErrore().buildMessaggioErroreProtocollo_Processamento(errs,busta,id_bustaErrore,this.propertiesReader.getTipoTempoBusta(this.implementazionePdDSoggettoMittente));
 
 		DettaglioEccezione dettaglioEccezione = null;
-		if(this.protocolManager.isGenerazioneDetailsSOAPFaultProtocollo_EccezioneProcessamento()){
+		if(this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneProcessamento()){
 			dettaglioEccezione = this.dettaglioBuilder.buildDettaglioEccezioneFromBusta(this.identitaPdD,this.tipoPdD,this.idModulo, this.servizioApplicativoErogatore, busta, eProcessamento);
 		}
 		
@@ -2223,7 +2224,7 @@ public class EJBUtils {
 					(String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID), 
 					this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 					this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
-					Boolean.FALSE);
+					RuoloMessaggio.RISPOSTA);
 
 		//ErroreValidazioneProtocollo: Header
 		busta = this.generatoreErrorePortaApplicativa.getImbustamentoErrore().
@@ -2264,7 +2265,7 @@ public class EJBUtils {
 			imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
 					this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 					this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
-					Boolean.FALSE);
+					RuoloMessaggio.RISPOSTA);
 
 		//ErroreValidazioneProtocollo: Header
 		// L'inoltro di segnalazione avviene in SbustamentoRisposte quindi devo riferire l'implemenazione della PdD del Soggetto Destinatario
@@ -2482,7 +2483,7 @@ public class EJBUtils {
 			imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
 					this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 					this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
-					Boolean.FALSE);
+					RuoloMessaggio.RISPOSTA);
 		return sendBustaRisposta(idModuloInAttesa,null,MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(), MessageRole.RESPONSE)
 				,idSblocco,null,null,null,null);
 	}
@@ -2497,7 +2498,7 @@ public class EJBUtils {
 			imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
 					this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 					this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
-					Boolean.FALSE);
+					RuoloMessaggio.RISPOSTA);
 
 		return sendBustaRisposta(idModuloInAttesa,null,msg,idSblocco,null,null,null,null);
 	}
@@ -2531,7 +2532,7 @@ public class EJBUtils {
 			imbustatore.buildID(this.openSPCoopState.getStatoRichiesta(),this.identitaPdD, idTransazione, 
 					this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 					this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
-					Boolean.FALSE);
+					RuoloMessaggio.RISPOSTA);
 
 		// Aggiungo ID
 		if(busta!=null)

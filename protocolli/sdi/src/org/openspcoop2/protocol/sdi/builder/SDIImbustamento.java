@@ -76,7 +76,7 @@ public class SDIImbustamento {
 		this.sdiProperties = SDIProperties.getInstance(bustaBuilder.getProtocolFactory().getLogger());
 	}
 	
-	public SOAPElement creaRichiesta_ServizioSdIRiceviFile_AzioneRiceviFile(IProtocolFactory protocolFactory, IState state, Busta busta, OpenSPCoop2Message msgParam) throws ProtocolException{
+	public SOAPElement creaRichiesta_ServizioSdIRiceviFile_AzioneRiceviFile(IProtocolFactory<?> protocolFactory, IState state, Busta busta, OpenSPCoop2Message msgParam) throws ProtocolException{
 		
 		try{
 			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
@@ -336,7 +336,7 @@ public class SDIImbustamento {
 		
 	}
 	
-	public SOAPElement creaRisposta_ServizioRicezioneFatture_AzioneRiceviFatture(IProtocolFactory protocolFactory, IState state, Busta busta, OpenSPCoop2Message msgParam) throws ProtocolException{
+	public SOAPElement creaRisposta_ServizioRicezioneFatture_AzioneRiceviFatture(IProtocolFactory<?> protocolFactory, IState state, Busta busta, OpenSPCoop2Message msgParam) throws ProtocolException{
 		
 		try{
 			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
@@ -381,7 +381,7 @@ public class SDIImbustamento {
 		
 	}
 	
-	public SOAPElement creaRichiesta_ServizioSdIRiceviNotifica_AzioneNotificaEsito(IProtocolFactory protocolFactory, IState state, Busta busta, OpenSPCoop2Message msgParam,
+	public SOAPElement creaRichiesta_ServizioSdIRiceviNotifica_AzioneNotificaEsito(IProtocolFactory<?> protocolFactory, IState state, Busta busta, OpenSPCoop2Message msgParam,
 			boolean isEnableGenerazioneMessaggiCompatibilitaNamespaceSenzaGov,
 			boolean isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov) throws ProtocolException{
 		

@@ -36,7 +36,7 @@ import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
  */
 public abstract class BasicVersionManager extends BasicManager implements IProtocolVersionManager {
 
-	public BasicVersionManager(IProtocolFactory protocolFactory){
+	public BasicVersionManager(IProtocolFactory<?> protocolFactory){
 		super(protocolFactory);
 	}
 	

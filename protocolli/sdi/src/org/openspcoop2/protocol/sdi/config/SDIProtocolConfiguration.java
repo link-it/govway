@@ -34,7 +34,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
  */
 public class SDIProtocolConfiguration extends BasicConfiguration {
 
-	public SDIProtocolConfiguration(IProtocolFactory factory) throws ProtocolException {
+	public SDIProtocolConfiguration(IProtocolFactory<?> factory) throws ProtocolException {
 		super(factory);
 	}
 	

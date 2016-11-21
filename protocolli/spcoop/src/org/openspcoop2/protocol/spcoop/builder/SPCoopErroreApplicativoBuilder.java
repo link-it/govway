@@ -58,7 +58,7 @@ import it.cnipa.schemas._2003.egovit.exception1_0.utils.XMLUtils;
 public class SPCoopErroreApplicativoBuilder extends ErroreApplicativoBuilder implements org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder {
 
 	
-	public SPCoopErroreApplicativoBuilder(IProtocolFactory factory) throws ProtocolException{
+	public SPCoopErroreApplicativoBuilder(IProtocolFactory<?> factory) throws ProtocolException{
 		super(factory);
 	}
 

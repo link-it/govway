@@ -70,6 +70,7 @@ import org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
 import org.openspcoop2.protocol.sdk.validator.StrutturaBustaException;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneSintatticaResult;
+import org.openspcoop2.protocol.spcoop.SPCoopBustaRawContent;
 import org.openspcoop2.protocol.spcoop.config.SPCoopProperties;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostantiPosizioneEccezione;
@@ -85,7 +86,7 @@ import org.w3c.dom.Node;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
+public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAPHeaderElement>{
 
 	/** Messaggio. */
 	private OpenSPCoop2SoapMessage msg;
@@ -95,7 +96,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 	/** HeaderSOAP */
 	private SOAPHeader headerSOAP = null;
 	/** Header SPCoop */
-	private SOAPHeaderElement headerEGov;
+	private SPCoopBustaRawContent headerEGov;
 	public void setHeaderSOAP(SOAPHeader headerSOAP) {
 		this.headerSOAP = headerSOAP;
 	}
@@ -116,7 +117,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 	public void setReadQualifiedAttribute(boolean readQualifiedAttribute) {
 		this.readQualifiedAttribute = readQualifiedAttribute;
 	}
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<SOAPHeaderElement> protocolFactory;
 	/** Logger utilizzato per debug. */
 	private org.slf4j.Logger log = null;
 
@@ -143,7 +144,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public SPCoopValidazioneSintattica(IProtocolFactory protocolFactory) throws ProtocolException{
+	public SPCoopValidazioneSintattica(IProtocolFactory<SOAPHeaderElement> protocolFactory) throws ProtocolException{
 		this.log = protocolFactory.getLogger();
 		this.protocolFactory = protocolFactory;
 		if(this.errorsTrovatiSullaListaEccezioni == null)
@@ -162,7 +163,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 	}
 
 
-	public SOAPHeaderElement getHeaderEGov(OpenSPCoop2SoapMessage aMsg, boolean readQualifiedAttribute) throws ProtocolException{
+	public SPCoopBustaRawContent getHeaderEGov(OpenSPCoop2SoapMessage aMsg, boolean readQualifiedAttribute) throws ProtocolException{
 		this.msg = aMsg;
 		this.readQualifiedAttribute = readQualifiedAttribute;
 		return getHeaderEGov();
@@ -173,7 +174,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 	 * @return header SPCoop.
 	 * 
 	 */
-	public SOAPHeaderElement getHeaderEGov() throws ProtocolException{
+	public SPCoopBustaRawContent getHeaderEGov() throws ProtocolException{
 		try{
 			if(this.headerEGov!=null){
 				return this.headerEGov;
@@ -258,7 +259,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 	 * @return header SPCoop.
 	 * 
 	 */
-	public SOAPHeaderElement getHeaderSPCoop(){
+	public SPCoopBustaRawContent getHeaderSPCoop(){
 		return this.headerEGov;
 	}
 
@@ -324,7 +325,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 
 			// Controllo Actor
 			//log.info("Controllo attributo Actor["+this.header.getActor()+"] ...");
-			if(SPCoopCostanti.ACTOR_EGOV.equals(this.headerEGov.getActor()) == false){
+			if(SPCoopCostanti.ACTOR_EGOV.equals(this.headerEGov.getElement().getActor()) == false){
 				if(this.spcoopProperties.isGenerazioneBustaErrore_actorScorretto()==false){
 					throw new StrutturaBustaException("Header egov con actor scorretto","Actor");
 				}else{
@@ -339,7 +340,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 			
 			// Controllo MustUnderstand
 			//log.info("Controllo attributo MustUnderstand["+this.header.getMustUnderstand()+"] ...");
-			if(this.headerEGov.getMustUnderstand() == false){ 
+			if(this.headerEGov.getElement().getMustUnderstand() == false){ 
 				Eccezione ecc = new Eccezione();
 				ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 				ecc.setCodiceEccezione(CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_CORRETTO);
@@ -347,10 +348,10 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 				ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_FORMATO_INTESTAZIONE_NON_CORRETTO_POSIZIONE_MUST_UNDERSTAND.toString());
 				this.erroriValidazione.add(ecc);
 			}
-			Vector<Node> list = SoapUtils.getNotEmptyChildNodes(this.headerEGov);
+			Vector<Node> list = SoapUtils.getNotEmptyChildNodes(this.headerEGov.getElement());
 
 			//	Controllo value prefix
-			if(SPCoopCostanti.NAMESPACE_EGOV.equals(this.headerEGov.getNamespaceURI())==false){
+			if(SPCoopCostanti.NAMESPACE_EGOV.equals(this.headerEGov.getElement().getNamespaceURI())==false){
 				Eccezione ecc = new Eccezione();
 				ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 				ecc.setCodiceEccezione(CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_CORRETTO);
@@ -757,7 +758,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 	}
 
 	
-	public SOAPHeaderElement getHeaderEGov_senzaControlli() throws ProtocolException{
+	public SPCoopBustaRawContent getHeaderEGov_senzaControlli() throws ProtocolException{
 		try{	
 			// Estraggo header
 			if(this.headerSOAP==null)
@@ -801,7 +802,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 				// header egov non trovato
 				throw new Exception("Header eGov non presente");
 			}else{
-				return headerElementEGov;
+				return new SPCoopBustaRawContent(headerElementEGov);
 			}
 		}catch(Exception e){
 			throw new ProtocolException("Lettura non riuscita: "+e.getMessage(),e);
@@ -825,7 +826,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 	 * @return null se la verifica ha successo, altrimenti l'header eGov presente (non estratto).
 	 * 
 	 */
-	public SOAPHeaderElement getHeaderEGov(SOAPHeader header) throws ProtocolException,StrutturaBustaException{
+	public SPCoopBustaRawContent getHeaderEGov(SOAPHeader header) throws ProtocolException,StrutturaBustaException{
 		try{	
 
 			if(header == null)
@@ -1435,7 +1436,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 				throw new Exception("Header eGov senza alcuni elementi principali: presenza mittente["+(mittente!=null)+"] destinatario["+(destinatario!=null)+"] messaggio["+(messaggio!=null)+"] eccezioni-riscontrate: ["+errore.toStringListaEccezioni(this.getProtocolFactory())+"]"); 
 			}
 			
-			return headerElementEGov;
+			return new SPCoopBustaRawContent(headerElementEGov);
 			
 		}catch(StrutturaBustaException e){
 			throw e;
@@ -1578,7 +1579,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 	public String getPrefix(){
 
 		// Prefix eGov
-		String xmlns = this.headerEGov.getPrefix();
+		String xmlns = this.headerEGov.getElement().getPrefix();
 		if(xmlns == null){ 
 			xmlns = "";
 		}
@@ -4472,12 +4473,12 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 	}
 
 	@Override
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<SOAPHeaderElement> getProtocolFactory() {
 		return this.protocolFactory;
 	}
 
 	@Override
-	public ValidazioneSintatticaResult validaRichiesta(IState state, OpenSPCoop2Message msg,  Busta datiBustaLettiURLMappingProperties, ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException{
+	public ValidazioneSintatticaResult<SOAPHeaderElement> validaRichiesta(IState state, OpenSPCoop2Message msg,  Busta datiBustaLettiURLMappingProperties, ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException{
 		try{
 			this.msg = msg.castAsSoap();
 		}catch(Exception e){
@@ -4488,12 +4489,13 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 		if(this.msgErrore!=null && this.codiceErrore!=null){
 			errore = new ErroreCooperazione(this.msgErrore, this.codiceErrore);
 		}
-		ValidazioneSintatticaResult result = new ValidazioneSintatticaResult(this.erroriValidazione, this.erroriProcessamento, this.errorsTrovatiSullaListaEccezioni, this.busta, errore, this.bustaErroreHeaderIntestazione, this.headerEGov, isValido);
+		ValidazioneSintatticaResult<SOAPHeaderElement> result = new ValidazioneSintatticaResult<SOAPHeaderElement>(this.erroriValidazione, this.erroriProcessamento, 
+				this.errorsTrovatiSullaListaEccezioni, this.busta, errore, this.bustaErroreHeaderIntestazione, this.headerEGov, isValido);
 		return result;
 	}
 	
 	@Override
-	public ValidazioneSintatticaResult validaRisposta(IState state, OpenSPCoop2Message msg, Busta bustaRichiesta, ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException{
+	public ValidazioneSintatticaResult<SOAPHeaderElement> validaRisposta(IState state, OpenSPCoop2Message msg, Busta bustaRichiesta, ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException{
 		try{
 			this.msg = msg.castAsSoap();
 		}catch(Exception e){
@@ -4504,7 +4506,8 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 		if(this.msgErrore!=null && this.codiceErrore!=null){
 			errore = new ErroreCooperazione(this.msgErrore, this.codiceErrore);
 		}
-		ValidazioneSintatticaResult result = new ValidazioneSintatticaResult(this.erroriValidazione, this.erroriProcessamento, this.errorsTrovatiSullaListaEccezioni, this.busta, errore, this.bustaErroreHeaderIntestazione, this.headerEGov, isValido);
+		ValidazioneSintatticaResult<SOAPHeaderElement> result = new ValidazioneSintatticaResult<SOAPHeaderElement>(this.erroriValidazione, this.erroriProcessamento, 
+				this.errorsTrovatiSullaListaEccezioni, this.busta, errore, this.bustaErroreHeaderIntestazione, this.headerEGov, isValido);
 		return result;
 	}
 	
@@ -4521,7 +4524,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 	}
 
 	@Override
-	public ValidazioneSintatticaResult validazioneManifestAttachments(
+	public ValidazioneSintatticaResult<SOAPHeaderElement> validazioneManifestAttachments(
 			OpenSPCoop2Message msg,
 			ProprietaManifestAttachments proprietaManifestAttachments) {
 		this.validazioneManifestAttachmentsEGov(msg, proprietaManifestAttachments);
@@ -4529,12 +4532,13 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 		if(this.msgErrore!=null && this.codiceErrore!=null){
 			errore = new ErroreCooperazione(this.msgErrore, this.codiceErrore);
 		}
-		ValidazioneSintatticaResult result = new ValidazioneSintatticaResult(this.erroriValidazione, this.erroriProcessamento, this.errorsTrovatiSullaListaEccezioni, this.busta, errore, this.bustaErroreHeaderIntestazione, this.headerEGov, true);
+		ValidazioneSintatticaResult<SOAPHeaderElement> result = new ValidazioneSintatticaResult<SOAPHeaderElement>(this.erroriValidazione, this.erroriProcessamento, 
+				this.errorsTrovatiSullaListaEccezioni, this.busta, errore, this.bustaErroreHeaderIntestazione, this.headerEGov, true);
 		return result;
 	}
 
 	@Override
-	public SOAPHeaderElement getHeaderProtocollo_senzaControlli(
+	public SPCoopBustaRawContent getBustaRawContent_senzaControlli(
 			OpenSPCoop2Message msg) throws ProtocolException {
 		try{
 			this.msg = msg.castAsSoap();
@@ -4545,7 +4549,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 	}
 	
 	@Override
-	public Busta getBustaProtocollo_senzaControlli(OpenSPCoop2Message msg) throws ProtocolException{
+	public Busta getBusta_senzaControlli(OpenSPCoop2Message msg) throws ProtocolException{
 		try{
 			this.msg = msg.castAsSoap();
 		}catch(Exception e){
@@ -4560,19 +4564,17 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica{
 	}
 
 	@Override
-	public ValidazioneSintatticaResult validazioneFault(OpenSPCoop2Message msg) {
+	public ValidazioneSintatticaResult<SOAPHeaderElement> validazioneFault(OpenSPCoop2Message msg) {
 		this.validazioneFaultEGov(msg);
 		ErroreCooperazione errore = null;
 		if(this.msgErrore!=null && this.codiceErrore!=null){
 			errore = new ErroreCooperazione(this.msgErrore, this.codiceErrore);
 		}
-		ValidazioneSintatticaResult result = new ValidazioneSintatticaResult(this.erroriValidazione, this.erroriProcessamento, this.errorsTrovatiSullaListaEccezioni, this.busta, errore, this.bustaErroreHeaderIntestazione, this.headerEGov, true);
+		ValidazioneSintatticaResult<SOAPHeaderElement> result = new ValidazioneSintatticaResult<SOAPHeaderElement>(this.erroriValidazione, this.erroriProcessamento, 
+				this.errorsTrovatiSullaListaEccezioni, this.busta, errore, this.bustaErroreHeaderIntestazione, this.headerEGov, true);
 		return result;
 	}
-	@Override
-	public SOAPHeaderElement getHeaderProtocollo(Busta busta) {
-		return null;
-	}
+
 	
 	public ProfiloDiCollaborazione toProfilo(String profilo){
 		if(SPCoopCostanti.PROFILO_COLLABORAZIONE_ONEWAY.equals(profilo))

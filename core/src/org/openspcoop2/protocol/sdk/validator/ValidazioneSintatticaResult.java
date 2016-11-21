@@ -21,11 +21,10 @@
 
 package org.openspcoop2.protocol.sdk.validator;
 
-import java.util.Vector;
-
-import javax.xml.soap.SOAPElement;
+import java.util.List;
 
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 
@@ -36,9 +35,9 @@ import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
  * <li><i>erroriProcessamento</i> - Vettore con gli errori di processamento incorsi durante la validazione
  * <li><i>erroriTrovatiSullaListaEccezioni</i> - Vettore di Eccezioni trovati tra le informazioni di cooperazione
  * <li><i>busta</i> - Busta con le informazioni di cooperazione raccolte
- * <li><i>msgErrore</i> - Messaggio di errore da inserire nella risposta
- * <li><i>codiceErrore</i> - Codice dell'errore da inserire nella risposta
+ * <li><i>errore</i> - Eventuale errore avvenuto durante il processo di validazione
  * <li><i>bustaErrore</i> - Generata solo quando la busta arrivata non contiene gli elementi principali
+ * <li><i>bustaRaw</i> - Contiene l'informazione raw del protocollo (es. header soap, header di trasporto o altra informazione dipendente dal protocollo)
  * <li><i>isValido</i> - booleano che indica se il messaggio puo' considerarsi valido.
  * </ul>
  * @author Lorenzo Nardi (nardi@link.it)
@@ -46,8 +45,25 @@ import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
  * @version $Rev$, $Date$
  */
 
-public class ValidazioneSintatticaResult {
+public class ValidazioneSintatticaResult<BustaRawType> {
 
+	/** Errori di validazione riscontrati sulla busta */
+	private List<Eccezione> erroriValidazione;
+	/** Errori di processamento riscontrati sulla busta */
+	private List<Eccezione> erroriProcessamento;
+	/** Errors riscontrati sulla lista eccezioni */
+	private List<Eccezione> errorsTrovatiSullaListaEccezioni;
+	/** Busta */
+	private Busta busta;
+	/** Eventuale errore avvenuto durante il processo di validazione */
+	private ErroreCooperazione errore;
+	/** bustaErroreHeaderIntestazione: generata solo quando la busta arrivata non contiene gli elementi principali */
+	private Busta bustaErrore;
+	/** Elemento che raccoglie i dati di cooperazione */
+	private BustaRawContent<BustaRawType> bustaRaw;
+	/** Indica se il messaggio e' valido o meno */
+	private boolean isValido;
+	
 	/**
 	 * Imposta i risultati del processo di validazione sintattiva
 	 * 
@@ -57,13 +73,17 @@ public class ValidazioneSintatticaResult {
 	 * @param busta Busta con le informazioni di cooperazione raccolte
 	 * @param errore Errore da inserire nella risposta
 	 * @param bustaErrore Generata solo quando la busta arrivata non contiene gli elementi principali
+	 * @param bustaRaw Contiene l'informazione raw del protocollo (es. header soap, header di trasporto o altra informazione dipendente dal protocollo)
+	 * @param isValido Indicazione se il messaggio è valido o meno rispetto al protocollo
 	 */
 	
-	public ValidazioneSintatticaResult(Vector<Eccezione> erroriValidazione, 
-			Vector<Eccezione> erroriProcessamento, 
-			Vector<Eccezione> errorsTrovatiSullaListaEccezioni,
-			Busta busta, ErroreCooperazione errore,
-			Busta bustaErrore, SOAPElement protocolElement,
+	public ValidazioneSintatticaResult(List<Eccezione> erroriValidazione, 
+			List<Eccezione> erroriProcessamento, 
+			List<Eccezione> errorsTrovatiSullaListaEccezioni,
+			Busta busta, 
+			ErroreCooperazione errore,
+			Busta bustaErrore, 
+			BustaRawContent<BustaRawType> bustaRaw,
 			boolean isValido){
 		this.erroriProcessamento = erroriProcessamento;
 		this.erroriValidazione = erroriValidazione;
@@ -71,19 +91,19 @@ public class ValidazioneSintatticaResult {
 		this.busta = busta;
 		this.errore = errore;
 		this.bustaErrore = bustaErrore;
-		this.protocolElement = protocolElement;
+		this.bustaRaw = bustaRaw;
 		this.isValido = isValido;
 	}
 	
-	public Vector<Eccezione> getErroriValidazione() {
+	public List<Eccezione> getErroriValidazione() {
 		return this.erroriValidazione;
 	}
 
-	public Vector<Eccezione> getErroriProcessamento() {
+	public List<Eccezione> getErroriProcessamento() {
 		return this.erroriProcessamento;
 	}
 
-	public Vector<Eccezione> getErrorsTrovatiSullaListaEccezioni() {
+	public List<Eccezione> getErrorsTrovatiSullaListaEccezioni() {
 		return this.errorsTrovatiSullaListaEccezioni;
 	}
 
@@ -99,27 +119,12 @@ public class ValidazioneSintatticaResult {
 		return this.bustaErrore;
 	}
 	
-	public SOAPElement getProtocolElement() {
-		return this.protocolElement;
+	public BustaRawContent<BustaRawType> getBustaRawContent() {
+		return this.bustaRaw;
 	}
 	
 	public boolean isValido(){
 		return this.isValido;
 	}
-	/** Errori di validazione riscontrati sulla busta */
-	private Vector<Eccezione> erroriValidazione;
-	/** Errori di processamento riscontrati sulla busta */
-	private Vector<Eccezione> erroriProcessamento;
-	/** Errors riscontrati sulla lista eccezioni */
-	private Vector<Eccezione> errorsTrovatiSullaListaEccezioni;
-	/** Busta */
-	private Busta busta;
-	/** Eventuale errore avvenuto durante il processo di validazione */
-	private ErroreCooperazione errore;
-	/** bustaErroreHeaderIntestazione: generata solo quando la busta arrivata non contiene gli elementi principali */
-	private Busta bustaErrore;
-	/** Elemento SOAP che raccoglie i dati di cooperazione */
-	private SOAPElement protocolElement;
-	/** Indica se il messaggio e' valido o meno */
-	private boolean isValido;
+
 }

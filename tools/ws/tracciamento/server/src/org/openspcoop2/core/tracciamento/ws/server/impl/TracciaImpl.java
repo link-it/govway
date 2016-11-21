@@ -47,7 +47,7 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
-import org.openspcoop2.protocol.sdk.constants.TipoTraccia;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoNotFoundException;
 import org.openspcoop2.protocol.sdk.tracciamento.FiltroRicercaTracce;
 import org.openspcoop2.protocol.sdk.tracciamento.FiltroRicercaTracceConPaginazione;
@@ -100,10 +100,10 @@ public abstract class TracciaImpl extends BaseImpl  implements TracciaSearch {
 		if(filter.getTipo()!=null){
 			switch (filter.getTipo()) {
 			case RICHIESTA:
-				filterSearch.setTipoTraccia(TipoTraccia.RICHIESTA);
+				filterSearch.setTipoTraccia(RuoloMessaggio.RICHIESTA);
 				break;
 			case RISPOSTA:
-				filterSearch.setTipoTraccia(TipoTraccia.RISPOSTA);
+				filterSearch.setTipoTraccia(RuoloMessaggio.RISPOSTA);
 				break;
 			}
 		}

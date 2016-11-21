@@ -32,7 +32,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.protocol.sdk.constants.TipoTraccia;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 
 /**
  * FiltroRicercaTracce
@@ -52,7 +52,7 @@ public class FiltroRicercaTracce implements java.io.Serializable {
 	protected Date maxDate;
 	protected Date minDate;
 
-	protected TipoTraccia tipoTraccia;
+	protected RuoloMessaggio tipoTraccia;
 	private TipoPdD tipoPdD;
 	protected IDSoggetto dominio;
 
@@ -235,7 +235,7 @@ public class FiltroRicercaTracce implements java.io.Serializable {
 	 *     {@link String }
 	 *     
 	 */
-	public TipoTraccia getTipoTraccia() {
+	public RuoloMessaggio getTipoTraccia() {
 		return this.tipoTraccia;
 	}
 
@@ -247,7 +247,7 @@ public class FiltroRicercaTracce implements java.io.Serializable {
 	 *     {@link String }
 	 *     
 	 */
-	public void setTipoTraccia(TipoTraccia value) {
+	public void setTipoTraccia(RuoloMessaggio value) {
 		this.tipoTraccia = value;
 	}
 

@@ -80,6 +80,7 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
@@ -135,7 +136,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	protected abstract HttpServletRequest getHttpServletRequest() throws IntegrationManagerException;
 	protected abstract HttpServletResponse getHttpServletResponse() throws IntegrationManagerException;
 	
-	private IProtocolFactory getProtocolFactory(Logger log) throws IntegrationManagerException{
+	private IProtocolFactory<?> getProtocolFactory(Logger log) throws IntegrationManagerException{
 		try {
 			String protocolName = (String) getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOLLO);
 			return ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolName);
@@ -172,7 +173,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	}
 	
 	private IntegrationManagerRequestContext buildIMRequestContext(Timestamp dataRichiestaOperazione,
-			Operazione tipoOperazione, PdDContext pddContext, Logger logCore,IProtocolFactory protocolFactory) throws IntegrationManagerException, ProtocolException, UtilsException{
+			Operazione tipoOperazione, PdDContext pddContext, Logger logCore,IProtocolFactory<?> protocolFactory) throws IntegrationManagerException, ProtocolException, UtilsException{
 		
 		IntegrationManagerRequestContext imRequestContext = 
 			new IntegrationManagerRequestContext(dataRichiestaOperazione, tipoOperazione, pddContext, logCore,protocolFactory);
@@ -195,7 +196,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	//private java.util.Hashtable<String, IGestoreCredenzialiIM> gestoriCredenziali = null;
 	// E' stato aggiunto lo stato dentro l'oggetto.
 	private String [] tipiGestoriCredenziali = null;
-	private synchronized void initializeGestoreCredenziali(IProtocolFactory protocolFactory,MsgDiagnostico msgDiag) throws IntegrationManagerException{
+	private synchronized void initializeGestoreCredenziali(IProtocolFactory<?> protocolFactory,MsgDiagnostico msgDiag) throws IntegrationManagerException{
 		if(this.tipiGestoriCredenziali==null){
 			
 			Loader loader = Loader.getInstance();
@@ -219,7 +220,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			}
 		}
 	}
-	private void gestioneCredenziali(IProtocolFactory protocolFactory,MsgDiagnostico msgDiag,
+	private void gestioneCredenziali(IProtocolFactory<?> protocolFactory,MsgDiagnostico msgDiag,
 			InfoConnettoreIngresso infoConnettoreIngresso,PdDContext pddContext) throws IntegrationManagerException {
 		if(this.tipiGestoriCredenziali==null){
 			initializeGestoreCredenziali(protocolFactory,msgDiag);
@@ -295,7 +296,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	 * @return il nome del Servizio Applicativo invocante
 	 * 
 	 */
-	private IDServizioApplicativo autenticazione(IProtocolFactory protocolFactory,MsgDiagnostico msgDiag,InfoConnettoreIngresso infoConnettoreIngresso,
+	private IDServizioApplicativo autenticazione(IProtocolFactory<?> protocolFactory,MsgDiagnostico msgDiag,InfoConnettoreIngresso infoConnettoreIngresso,
 			ConfigurazionePdDManager configPdDManager,PdDContext pddContext) throws IntegrationManagerException {
 		
 		Credenziali credenziali = infoConnettoreIngresso.getCredenziali();
@@ -394,7 +395,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 
 
 	/* ----------- Init -------------- */
-	private void verificaRisorseSistema(IProtocolFactory protocolFactory,Logger logCore,String tipoOperazione) throws IntegrationManagerException {
+	private void verificaRisorseSistema(IProtocolFactory<?> protocolFactory,Logger logCore,String tipoOperazione) throws IntegrationManagerException {
 		
 		if( OpenSPCoop2Startup.initialize == false){
 			logCore.error("["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Inizializzazione di OpenSPCoop non correttamente effettuata");
@@ -442,7 +443,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	}
 	
 	/* -------- Utility -------------- */
-	private IUniqueIdentifier getUniqueIdentifier(IProtocolFactory protocolFactory,MsgDiagnostico msgDiag,String tipoOperazione) throws IntegrationManagerException {
+	private IUniqueIdentifier getUniqueIdentifier(IProtocolFactory<?> protocolFactory,MsgDiagnostico msgDiag,String tipoOperazione) throws IntegrationManagerException {
 		try{
 			return UniqueIdentifierManager.newUniqueIdentifier();
 		}catch(Exception e){
@@ -456,7 +457,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		return msgDiag;
 	}
 	
-	private EsitoTransazione getEsitoTransazione(IProtocolFactory pf,IntegrationManagerRequestContext imRequestContext, EsitoTransazioneName name) throws ProtocolException{
+	private EsitoTransazione getEsitoTransazione(IProtocolFactory<?> pf,IntegrationManagerRequestContext imRequestContext, EsitoTransazioneName name) throws ProtocolException{
 		TransportRequestContext t = null;
 		if(imRequestContext!=null && imRequestContext.getConnettore()!=null){
 			t = imRequestContext.getConnettore().getUrlProtocolContext();
@@ -493,7 +494,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		checkIMAuthorization(logCore);
 		
 		// ProtocolFactoyr
-		IProtocolFactory protocolFactory = getProtocolFactory(logCore);
+		IProtocolFactory<?> protocolFactory = getProtocolFactory(logCore);
 		
 		// Verifica risorse sistema
 		this.verificaRisorseSistema(protocolFactory,logCore, tipoOperazione.toString());
@@ -780,7 +781,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		checkIMAuthorization(logCore);
 		
 		// ProtocolFactoyr
-		IProtocolFactory protocolFactory = getProtocolFactory(logCore);
+		IProtocolFactory<?> protocolFactory = getProtocolFactory(logCore);
 		
 		// Verifica risorse sistema
 		this.verificaRisorseSistema(protocolFactory,logCore, tipoOperazione.toString());
@@ -953,10 +954,10 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			}
 			
 			// TipoMessaggio
-			boolean isRichiesta = true;
+			RuoloMessaggio ruoloMessaggio = RuoloMessaggio.RICHIESTA;
 			try{
 				GestoreMessaggi gestoreMessaggiComprensione = new GestoreMessaggi(stato, true, idMessaggioRichiesto, Costanti.INBOX, msgDiag, pddContext);
-				isRichiesta = (gestoreMessaggiComprensione.getRiferimentoMessaggio()==null);
+				ruoloMessaggio = gestoreMessaggiComprensione.getRiferimentoMessaggio()==null ? RuoloMessaggio.RICHIESTA : RuoloMessaggio.RISPOSTA;
 			}catch(Exception e){
 				logCore.error("Comprensione tipo messaggio non riuscita: "+e.getMessage(),e);
 			}
@@ -964,11 +965,11 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			// Eventuale sbustamento
 			if(sbustamento_informazioni_protocollo){
 				try{
-					IBustaBuilder bustaBuilder = protocolFactory.createBustaBuilder();
+					IBustaBuilder<?> bustaBuilder = protocolFactory.createBustaBuilder();
 					// attachments non gestiti!
 					ProprietaManifestAttachments proprietaManifest = this.propertiesReader.getProprietaManifestAttachments("standard");
 					proprietaManifest.setGestioneManifest(false);
-					bustaBuilder.sbustamento(stato.getStatoRichiesta(),consegnaMessage, busta, isRichiesta, proprietaManifest);
+					bustaBuilder.sbustamento(stato.getStatoRichiesta(),consegnaMessage, busta, ruoloMessaggio, proprietaManifest);
 				}catch(Exception e){
 					msgDiag.logErroreGenerico(e,"gestoreMessaggi.getMessage("+isRiferimentoMessaggio+","+tipoOperazione+")");
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -1127,7 +1128,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		checkIMAuthorization(logCore);
 		
 		// ProtocolFactoyr
-		IProtocolFactory protocolFactory = getProtocolFactory(logCore);
+		IProtocolFactory<?> protocolFactory = getProtocolFactory(logCore);
 		
 		// Verifica risorse sistema
 		this.verificaRisorseSistema(protocolFactory,logCore, tipoOperazione.toString());
@@ -1375,7 +1376,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		checkIMAuthorization(logCore);
 		
 		// ProtocolFactoyr
-		IProtocolFactory protocolFactory = getProtocolFactory(logCore);
+		IProtocolFactory<?> protocolFactory = getProtocolFactory(logCore);
 		
 		// Verifica risorse sistema
 		this.verificaRisorseSistema(protocolFactory,logCore, tipoOperazione.toString());
@@ -1659,7 +1660,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		checkIMAuthorization(logCore);
 		
 		// ProtocolFactory
-		IProtocolFactory protocolFactory = getProtocolFactory(logCore);
+		IProtocolFactory<?> protocolFactory = getProtocolFactory(logCore);
 		
 		// Verifica risorse sistema
 		this.verificaRisorseSistema(protocolFactory,logCore, tipoOperazione);

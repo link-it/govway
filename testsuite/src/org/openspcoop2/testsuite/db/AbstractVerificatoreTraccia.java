@@ -41,7 +41,7 @@ import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
-import org.openspcoop2.protocol.sdk.constants.TipoTraccia;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Utilities;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -406,20 +406,20 @@ public abstract class AbstractVerificatoreTraccia {
 
 	}
 
-	public boolean isTracedTipoTraccia(String idMessaggio, TipoTraccia tipoTraccia)
+	public boolean isTracedTipoTraccia(String idMessaggio, RuoloMessaggio tipoTraccia)
 			throws TestSuiteException {
 		return _isTracedTipoTraccia(this.prepareStatement(idMessaggio),tipoTraccia);
 	}
-	public boolean isTracedTipoTraccia(String idMessaggio,IDSoggetto idPortaMessaggio, TipoTraccia tipoTraccia)
+	public boolean isTracedTipoTraccia(String idMessaggio,IDSoggetto idPortaMessaggio, RuoloMessaggio tipoTraccia)
 			throws TestSuiteException {
 		return _isTracedTipoTraccia(this.prepareStatement(idMessaggio,idPortaMessaggio),tipoTraccia);
 	}
 	public boolean isTracedTipoTraccia(String idMessaggio, DatiServizioAzione datiServizioAzione, 
-			TipoTraccia tipoTraccia)
+			RuoloMessaggio tipoTraccia)
 			throws TestSuiteException {
 		return _isTracedTipoTraccia(this.prepareStatement(idMessaggio,datiServizioAzione),tipoTraccia);
 	}
-	private boolean _isTracedTipoTraccia(PreparedStatement pstmt, TipoTraccia tipoTraccia)
+	private boolean _isTracedTipoTraccia(PreparedStatement pstmt, RuoloMessaggio tipoTraccia)
 			throws TestSuiteException {
 
 		ResultSet res = null;

@@ -35,7 +35,7 @@ import org.openspcoop2.protocol.sdk.Trasmissione;
  */
 public class Utilities {
 
-	public static void refreshIdentificativiPorta(Busta busta,IDSoggetto idSoggettoDefault,RegistroServiziManager registroServiziManager,IProtocolFactory protocolFactory){
+	public static void refreshIdentificativiPorta(Busta busta,IDSoggetto idSoggettoDefault,RegistroServiziManager registroServiziManager,IProtocolFactory<?> protocolFactory){
 		if(busta.getMittente()!=null && busta.getTipoMittente()!=null && busta.getIdentificativoPortaMittente()==null){
 			try{
 				if(idSoggettoDefault.getTipo().equals(busta.getTipoMittente()) &&

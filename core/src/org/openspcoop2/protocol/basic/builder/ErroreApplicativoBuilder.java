@@ -87,12 +87,12 @@ import org.w3c.dom.Node;
 public class ErroreApplicativoBuilder implements org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder {
 
 	protected Logger log;
-	protected IProtocolFactory factory;
+	protected IProtocolFactory<?> factory;
 	protected ITraduttore traduttore;
 	protected OpenSPCoop2MessageFactory msgFactory = null;
 	protected org.openspcoop2.message.xml.XMLUtils xmlUtils;
 	
-	public ErroreApplicativoBuilder(IProtocolFactory factory) throws ProtocolException{
+	public ErroreApplicativoBuilder(IProtocolFactory<?> factory) throws ProtocolException{
 		this.log = factory.getLogger();
 		this.factory = factory;
 		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
@@ -101,7 +101,7 @@ public class ErroreApplicativoBuilder implements org.openspcoop2.protocol.sdk.bu
 	}
 	
 	@Override
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.factory;
 	}
 
@@ -661,7 +661,7 @@ public class ErroreApplicativoBuilder implements org.openspcoop2.protocol.sdk.bu
 							d.appendChild(d.getOwnerDocument().importNode(rispostaApplicativaElement, true));
 							
 						}else{
-							fault.setFaultString(Utilities.toString(this.log, rispostaApplicativaElement));
+							fault.setFaultString(Utilities.toString(rispostaApplicativaElement, true));
 						}
 						
 						// DettaglioEccezione

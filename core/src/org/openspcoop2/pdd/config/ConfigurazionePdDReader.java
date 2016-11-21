@@ -467,7 +467,7 @@ public class ConfigurazionePdDReader {
 	 * @return Il Soggetto che include la porta delegata fornita come parametro.
 	 * 
 	 */
-	protected IDSoggetto getSoggettoProprietarioPortaDelegata(Connection connectionPdD, String location,IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+	protected IDSoggetto getSoggettoProprietarioPortaDelegata(Connection connectionPdD, String location,IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 
 		Soggetto soggetto = this.configurazionePdD.getSoggettoProprietarioPortaDelegata(connectionPdD,location);
 		if(soggetto==null)
@@ -485,7 +485,7 @@ public class ConfigurazionePdDReader {
 		}
 		return idSoggetto;
 	}
-	protected IDSoggetto getSoggettoProprietarioPortaApplicativa(Connection connectionPdD, String location,IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+	protected IDSoggetto getSoggettoProprietarioPortaApplicativa(Connection connectionPdD, String location,IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 
 		Soggetto soggetto = this.configurazionePdD.getSoggettoProprietarioPortaApplicativa(connectionPdD,location);
 		if(soggetto==null)
@@ -510,7 +510,7 @@ public class ConfigurazionePdDReader {
 	 * @return Il dominio del Soggetto.
 	 * 
 	 */
-	protected String getIdentificativoPorta(Connection connectionPdD, IDSoggetto idSoggetto,IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+	protected String getIdentificativoPorta(Connection connectionPdD, IDSoggetto idSoggetto,IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 		Soggetto soggetto = this.configurazionePdD.getSoggetto(connectionPdD,idSoggetto);
 		if(soggetto == null)
 			throw new DriverConfigurazioneNotFound("Soggetto["+idSoggetto.toString()+"] per lettura Dominio non trovato");
@@ -916,7 +916,7 @@ public class ConfigurazionePdDReader {
 	 * @return idSoggetto Identita della Porta di Dominio 
 	 * 
 	 */
-	protected IDSoggetto getRouterIdentity(Connection connectionPdD,IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected IDSoggetto getRouterIdentity(Connection connectionPdD,IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Per essere configurata come Router, una PdD deve possedere una tabella di routing:
 		RoutingTable routingTable = null;
@@ -1109,7 +1109,7 @@ public class ConfigurazionePdDReader {
 
 	protected String getAzione(RegistroServiziManager registroServiziManager,PortaDelegata pd,URLProtocolContext urlProtocolContext,
 			OpenSPCoop2Message message, HeaderIntegrazione headerIntegrazione, boolean readFirstHeaderIntegrazione,
-			IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound, IdentificazioneDinamicaException { 
+			IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound, IdentificazioneDinamicaException { 
 		
 		try{
 
@@ -1514,7 +1514,7 @@ public class ConfigurazionePdDReader {
 	 * @return Restituisce l'indicazione se deve essere effettuata la gestione degli attachments
 	 * 
 	 */
-	protected boolean isGestioneManifestAttachments(Connection connectionPdD, PortaDelegata pd, IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected boolean isGestioneManifestAttachments(Connection connectionPdD, PortaDelegata pd, IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		if(pd==null){
 			try{
 				if(protocolFactory.createProtocolConfiguration().isSupportato(FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
@@ -1811,7 +1811,7 @@ public class ConfigurazionePdDReader {
 
 	protected String getAzione(RegistroServiziManager registroServiziManager,PortaApplicativa pa,URLProtocolContext urlProtocolContext,
 			OpenSPCoop2Message message, HeaderIntegrazione headerIntegrazione, boolean readFirstHeaderIntegrazione,
-			IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound, IdentificazioneDinamicaException { 
+			IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound, IdentificazioneDinamicaException { 
 		
 		try{
 
@@ -2238,7 +2238,7 @@ public class ConfigurazionePdDReader {
 	 * @return Restituisce l'indicazione se deve essere effettuata la gestione degli attachments
 	 * 
 	 */
-	protected boolean isGestioneManifestAttachments(Connection connectionPdD, PortaApplicativa pa, IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected boolean isGestioneManifestAttachments(Connection connectionPdD, PortaApplicativa pa, IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		if(pa==null){
 			try{

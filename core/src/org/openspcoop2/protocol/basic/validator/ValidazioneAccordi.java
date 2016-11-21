@@ -39,17 +39,17 @@ import org.openspcoop2.utils.xml.AbstractXMLUtils;
  */
 public class ValidazioneAccordi implements IValidazioneAccordi{
 
-	protected IProtocolFactory protocolFactory;
+	protected IProtocolFactory<?> protocolFactory;
 	protected Logger log;
 	protected AbstractXMLUtils xmlUtils = null;
 
-	public ValidazioneAccordi(IProtocolFactory factory){
+	public ValidazioneAccordi(IProtocolFactory<?> factory){
 		this.log = factory.getLogger();
 		this.protocolFactory = factory;
 	}
 
 	@Override
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}
 

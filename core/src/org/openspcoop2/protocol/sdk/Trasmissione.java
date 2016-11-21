@@ -396,7 +396,7 @@ public class Trasmissione implements java.io.Serializable{
 		this.setTempoValue(value);
 	}
 
-	public String getTempoValue(IProtocolFactory protocolFactory) throws ProtocolException {
+	public String getTempoValue(IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		String tipoOraRegistrazioneValue = null;
 		if(this.trasmissione.getOraRegistrazione()!=null && this.trasmissione.getOraRegistrazione().getSorgente()!=null){
 			tipoOraRegistrazioneValue = this.trasmissione.getOraRegistrazione().getSorgente().getBase();

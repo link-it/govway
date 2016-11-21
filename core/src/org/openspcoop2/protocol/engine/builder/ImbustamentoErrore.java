@@ -57,6 +57,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
@@ -85,14 +86,14 @@ public class ImbustamentoErrore  {
 
 	/** Logger utilizzato per debug. */
 	private Logger log = null;
-	private org.openspcoop2.protocol.sdk.IProtocolFactory protocolFactory;
+	private org.openspcoop2.protocol.sdk.IProtocolFactory<?> protocolFactory;
 	private org.openspcoop2.message.xml.XMLUtils xmlUtils;
 	private IProtocolManager protocolManager;
 	private DettaglioEccezioneOpenSPCoop2Builder dettaglioEccezioneOpenSPCoop2Builder;
 	private ServiceBinding serviceBinding;
 	private Imbustamento imbustamento;
 	
-	public ImbustamentoErrore(Logger aLog, org.openspcoop2.protocol.sdk.IProtocolFactory protocolFactory, ServiceBinding serviceBinding) throws ProtocolException{
+	public ImbustamentoErrore(Logger aLog, org.openspcoop2.protocol.sdk.IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding) throws ProtocolException{
 		if(aLog!=null)
 			this.log = aLog;
 		else
@@ -110,7 +111,7 @@ public class ImbustamentoErrore  {
 		this.imbustamento = new Imbustamento(this.log, protocolFactory);
 	}
 
-	public org.openspcoop2.protocol.sdk.IProtocolFactory getProtocolFactory(){
+	public org.openspcoop2.protocol.sdk.IProtocolFactory<?> getProtocolFactory(){
 		return this.protocolFactory;
 	}
 
@@ -368,14 +369,14 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			MessageType messageType, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1){
 		try{
 			DettaglioEccezione dettaglioEccezione = null;
-			if(this.protocolManager.isGenerazioneDetailsSOAPFaultProtocollo_EccezioneProcessamento()){
+			if(this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneProcessamento()){
 				dettaglioEccezione = this.dettaglioEccezioneOpenSPCoop2Builder.buildDettaglioEccezione(identitaPdD, tipoPdD, modulo, errore.getCodiceErrore(), 
 						this.dettaglioEccezioneOpenSPCoop2Builder.transformFaultMsg(errore));
 				if(eProcessamento!=null){
 					this.dettaglioEccezioneOpenSPCoop2Builder.gestioneDettaglioEccezioneProcessamento(eProcessamento, dettaglioEccezione);
 				}
 			}
-			return this.buildFaultProtocollo_processamento(dettaglioEccezione, this.protocolManager.isGenerazioneDetailsSOAPFaultProtocollo_EccezioneProcessamento(), 
+			return this.buildFaultProtocollo_processamento(dettaglioEccezione, this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneProcessamento(), 
 					messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 		}catch(Exception e){
 			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(messageType, "Errore buildSoapFaultProtocollo_processamento: "+e.getMessage());
@@ -395,7 +396,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 	
 	
 	public OpenSPCoop2Message buildFaultProtocollo_intestazione(MessageType messageType, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1)  {
-		return this.buildFaultProtocollo_intestazione(null, this.protocolManager.isGenerazioneDetailsSOAPFaultProtocollo_EccezioneValidazione(), 
+		return this.buildFaultProtocollo_intestazione(null, this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneValidazione(), 
 				messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1);	
 	}
 	
@@ -403,11 +404,11 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			CodiceErroreCooperazione codiceErrore,String msgErrore, 
 			MessageType messageType, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1) throws ProtocolException{
 		DettaglioEccezione dettaglioEccezione = null;
-		if(this.protocolManager.isGenerazioneDetailsSOAPFaultProtocollo_EccezioneValidazione()){
+		if(this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneValidazione()){
 			dettaglioEccezione = this.dettaglioEccezioneOpenSPCoop2Builder.buildDettaglioEccezione(identitaPdD, tipoPdD, modulo, codiceErrore, 
 					this.dettaglioEccezioneOpenSPCoop2Builder.transformFaultMsg(codiceErrore,msgErrore));
 		}
-		return this.buildFaultProtocollo_intestazione(dettaglioEccezione, this.protocolManager.isGenerazioneDetailsSOAPFaultProtocollo_EccezioneValidazione(), 
+		return this.buildFaultProtocollo_intestazione(dettaglioEccezione, this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneValidazione(), 
 				messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 	}
 	
@@ -415,11 +416,11 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			ErroreIntegrazione errore, 
 			MessageType messageType, boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1) throws ProtocolException{
 		DettaglioEccezione dettaglioEccezione = null;
-		if(this.protocolManager.isGenerazioneDetailsSOAPFaultProtocollo_EccezioneValidazione()){
+		if(this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneValidazione()){
 			dettaglioEccezione = this.dettaglioEccezioneOpenSPCoop2Builder.buildDettaglioEccezione(identitaPdD, tipoPdD, modulo, errore.getCodiceErrore(), 
 					this.dettaglioEccezioneOpenSPCoop2Builder.transformFaultMsg(errore));
 		}
-		return this.buildFaultProtocollo_intestazione(dettaglioEccezione, this.protocolManager.isGenerazioneDetailsSOAPFaultProtocollo_EccezioneValidazione(), 
+		return this.buildFaultProtocollo_intestazione(dettaglioEccezione, this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneValidazione(), 
 				messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 	}
 	
@@ -638,7 +639,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			}
 
 			String id_bustaErrore = 
-					this.imbustamento.buildID(state,identitaPdD, idTransazione, attesaAttiva, checkInterval, Boolean.FALSE);
+					this.imbustamento.buildID(state,identitaPdD, idTransazione, attesaAttiva, checkInterval, RuoloMessaggio.RISPOSTA);
 
 			if(errori==null){
 				errori = new Vector<Eccezione>();
@@ -660,7 +661,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			busta = this.buildMessaggioErroreProtocollo_Processamento(errori,busta,id_bustaErrore,tipoTempo);
 
 			DettaglioEccezione dettaglioEccezione = null;
-			if(this.protocolManager.isGenerazioneDetailsSOAPFaultProtocollo_EccezioneProcessamento()){
+			if(this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneProcessamento()){
 				if(erroreIntegrazione!=null){
 					dettaglioEccezione = this.dettaglioEccezioneOpenSPCoop2Builder.buildDettaglioEccezioneProcessamentoBusta(identitaPdD, tipoPdD, modulo, 
 							erroreIntegrazione.getCodiceErrore(), erroreIntegrazione.getDescrizione(this.protocolFactory), eProcessamento);
@@ -675,7 +676,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			
 			//ErroreProcessamento:  Msg
 			OpenSPCoop2Message responseMessage = 
-					this.buildFaultProtocollo_processamento(dettaglioEccezione, this.protocolManager.isGenerazioneDetailsSOAPFaultProtocollo_EccezioneProcessamento(),
+					this.buildFaultProtocollo_processamento(dettaglioEccezione, this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneProcessamento(),
 							messageType, setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 
 			// Tracciamento in Busta (se il profilo e' null, non aggiunto la trasmissione, rischierei di aggiungere elementi che non sono validi per le LineeGuida1.1)
@@ -817,7 +818,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			}
 
 			String id_bustaErrore = 
-					this.imbustamento.buildID(state,identitaPdD, idTransazione, attesaAttiva, checkInterval, Boolean.FALSE);
+					this.imbustamento.buildID(state,identitaPdD, idTransazione, attesaAttiva, checkInterval, RuoloMessaggio.RISPOSTA);
 
 
 			if(errori==null){
@@ -833,13 +834,13 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			busta = this.buildMessaggioErroreProtocollo_Validazione(errori,busta,id_bustaErrore,tipoTempo);	
 
 			DettaglioEccezione dettaglioEccezione = null;
-			if(this.protocolManager.isGenerazioneDetailsSOAPFaultProtocollo_EccezioneValidazione()){
+			if(this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneValidazione()){
 				dettaglioEccezione = this.dettaglioEccezioneOpenSPCoop2Builder.buildDettaglioEccezioneFromBusta(identitaPdD, tipoPdD, modulo, null, busta, null);
 			}
 			
 			//ErroreValidazione:  Msg
 			OpenSPCoop2Message responseMessage = 
-				this.buildFaultProtocollo_intestazione(dettaglioEccezione,this.protocolManager.isGenerazioneDetailsSOAPFaultProtocollo_EccezioneValidazione(),
+				this.buildFaultProtocollo_intestazione(dettaglioEccezione,this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneValidazione(),
 						messageType,setSoapPrefixBackwardCompatibilityOpenSPCoop1);
 
 			// Tracciamento in Busta

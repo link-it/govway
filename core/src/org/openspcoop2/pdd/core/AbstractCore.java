@@ -34,11 +34,11 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 public abstract class AbstractCore implements ICore {
 
 	private PdDContext pddContext;
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<?> protocolFactory;
 	private Object[] args = null;
 	
 	@Override
-	public void init(PdDContext pddContext,IProtocolFactory protocolFactory,Object ... args) {
+	public void init(PdDContext pddContext,IProtocolFactory<?> protocolFactory,Object ... args) {
 		this.pddContext = pddContext;
 		this.protocolFactory = protocolFactory;
 		this.args = args;
@@ -53,11 +53,11 @@ public abstract class AbstractCore implements ICore {
 		this.pddContext = pddContext;
 	}
 
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}
 
-	public void setProtocolFactory(IProtocolFactory protocolFactory) {
+	public void setProtocolFactory(IProtocolFactory<?> protocolFactory) {
 		this.protocolFactory = protocolFactory;
 	}
 
@@ -70,7 +70,7 @@ public abstract class AbstractCore implements ICore {
 	}
 	
 	
-	public static void init(ICore core,PdDContext pddContext,IProtocolFactory protocolFactory,Object ... args){
+	public static void init(ICore core,PdDContext pddContext,IProtocolFactory<?> protocolFactory,Object ... args){
 		core.init(pddContext, protocolFactory, args);
 	}
 }

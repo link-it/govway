@@ -21,12 +21,11 @@
 
 package org.openspcoop2.protocol.sdk.validator;
 
-import javax.xml.soap.SOAPElement;
-
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.Busta;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.BustaRawContent;
+import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
@@ -42,32 +41,33 @@ import org.openspcoop2.protocol.sdk.state.IState;
  * @version $Rev$, $Date$
  */
 
-public interface IValidazioneSintattica {
-
-	/**
-	 * Recupera l'implementazione della factory per il protocollo in uso
-	 * @return protocolFactory in uso.
-	 */
-	public IProtocolFactory getProtocolFactory();
+public interface IValidazioneSintattica<BustaRawType> extends IComponentFactory {
 
 	/**
 	 * Esegue la validazione sintattica delle informazioni di cooperazione
 	 * 
+	 * @param state Stato delle risorse utilizzate durante la gestione della richiesta dalla PdD
 	 * @param msg Messaggio da validare
-	 * @param datiBustaLettiURLMappingProperties Eventuale busta costruita con i parametri letti tramite url Mapping Properties
+	 * @param datiBustaLettiURLMappingProperties Eventuale busta costruita con i parametri letti tramite url Mapping Properties (Porta Applicativa)
+	 * @param proprietaValidazioneErrori Contiene alcune indicazione sulla modalità di validazione del messaggio
 	 * @return ValidazioneSintatticaResult con i risultati del processo di validazione
 	 * @throws ProtocolException
 	 */
-	public ValidazioneSintatticaResult validaRichiesta(IState state, OpenSPCoop2Message msg, Busta datiBustaLettiURLMappingProperties, ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException;
+	public ValidazioneSintatticaResult<BustaRawType> validaRichiesta(IState state, OpenSPCoop2Message msg, 
+			Busta datiBustaLettiURLMappingProperties, ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException;
 	
 	/**
 	 * Esegue la validazione sintattica delle informazioni di cooperazione
 	 * 
+	 * @param state Stato delle risorse utilizzate durante la gestione della risposta dalla PdD
 	 * @param msg Messaggio da validare
+	 * @param bustaRichiesta Busta di richiesta
+	 * @param proprietaValidazioneErrori Contiene alcune indicazione sulla modalità di validazione del messaggio
 	 * @return ValidazioneSintatticaResult con i risultati del processo di validazione
 	 * @throws ProtocolException
 	 */
-	public ValidazioneSintatticaResult validaRisposta(IState state, OpenSPCoop2Message msg, Busta bustaRichiesta, ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException;
+	public ValidazioneSintatticaResult<BustaRawType> validaRisposta(IState state, OpenSPCoop2Message msg, 
+			Busta bustaRichiesta, ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException;
 		
 	/**
 	 * Verifica se il messaggio che sta transitando presenta o meno le informazioni di cooperazione. 
@@ -90,7 +90,7 @@ public interface IValidazioneSintattica {
 	 * @return ValidazioneSintatticaResult con i risultati del processo di validazione
 	 */
 	
-	public ValidazioneSintatticaResult validazioneFault(OpenSPCoop2Message msg);
+	public ValidazioneSintatticaResult<BustaRawType> validazioneFault(OpenSPCoop2Message msg);
 	
 	/**
 	 * Metodo che si occupa di eseguire la validazione del manifest quando gestito dalla Porta di Dominio.
@@ -99,34 +99,26 @@ public interface IValidazioneSintattica {
 	 * @param proprietaManifestAttachments Propriet&agrave; del manifest che ne determinano la struttura.
 	 * @return ValidazioneSintatticaResult con i risultati del processo di validazione
 	 */
-	public ValidazioneSintatticaResult validazioneManifestAttachments(OpenSPCoop2Message msg, ProprietaManifestAttachments proprietaManifestAttachments);
+	public ValidazioneSintatticaResult<BustaRawType> validazioneManifestAttachments(OpenSPCoop2Message msg, 
+			ProprietaManifestAttachments proprietaManifestAttachments);
 	
 	/**
-	 * Questo metodo ritorna l'elemento SOAP che contiene le informazioni di cooperazione.
+	 * Questo metodo ritorna l'informazione raw del protocollo (es. header soap, header di trasporto o altra informazione dipendente dal protocollo)
 	 * 
 	 * @param msg Messaggio da cui estrarre le informazioni di cooperazione
-	 * @return Elemento SOAP con le informazioni di cooperazione
+	 * @return Oggetto che contiene l'informazione raw del protocollo (es. header soap, header di trasporto o altra informazione dipendente dal protocollo)
 	 * @throws ProtocolException
 	 */
-	public SOAPElement getHeaderProtocollo_senzaControlli(OpenSPCoop2Message msg) throws ProtocolException;
+	public BustaRawContent<BustaRawType> getBustaRawContent_senzaControlli(OpenSPCoop2Message msg) throws ProtocolException;
 	
 	/**
 	 * Questo metodo ritorna la busta che contiene le informazioni di cooperazione.
 	 * 
 	 * @param msg Messaggio da cui estrarre le informazioni di cooperazione
-	 * @return Elemento SOAP con le informazioni di cooperazione
+	 * @return Busta contenenete le informazioni di cooperazione
 	 * @throws ProtocolException
 	 */
-	public Busta getBustaProtocollo_senzaControlli(OpenSPCoop2Message msg) throws ProtocolException;
-	
-	/**
-	 * Per i protocolli che non ritornano un elemento SOAP valido in fase di validazione.
-	 * 
-	 * @param busta Messaggio da cui estrarre le informazioni di cooperazione
-	 * @return Elemento SOAP con le informazioni di cooperazione
-	 * @throws ProtocolException
-	 */
-	public SOAPElement getHeaderProtocollo(Busta busta);
+	public Busta getBusta_senzaControlli(OpenSPCoop2Message msg) throws ProtocolException;
 	
 	
 }

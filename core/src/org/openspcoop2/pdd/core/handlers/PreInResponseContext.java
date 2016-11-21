@@ -33,7 +33,7 @@ import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
  */
 public class PreInResponseContext extends PostOutRequestContext {
 
-	public PreInResponseContext(Logger logger,IProtocolFactory protocolFactory){
+	public PreInResponseContext(Logger logger,IProtocolFactory<?> protocolFactory){
 		super(logger,protocolFactory);
 	}
 	

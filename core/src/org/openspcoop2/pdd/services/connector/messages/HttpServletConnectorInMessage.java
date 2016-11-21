@@ -115,7 +115,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	}
 
 	@Override
-	public IProtocolFactory getProtocolFactory() throws ConnectorException{
+	public IProtocolFactory<?> getProtocolFactory() throws ConnectorException{
 		return this.requestInfo.getProtocolFactory();
 	}
 	

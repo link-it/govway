@@ -44,10 +44,10 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.IPdDContextSerializer;
 import org.openspcoop2.protocol.engine.builder.DateBuilder;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.diagnostica.IMsgDiagnosticoOpenSPCoopAppender;
+import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.dump.IDumpOpenSPCoopAppender;
-import org.openspcoop2.protocol.sdk.tracciamento.ITracciamentoOpenSPCoopAppender;
+import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.properties.CollectionProperties;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
@@ -107,10 +107,10 @@ public class OpenSPCoop2Logger {
 	/**  Logger log4j utilizzato per i dati binari del servizio PA */
 	protected static Logger loggerOpenSPCoopDumpBinarioPA = null;
 	/** Appender personalizzati per i messaggi diagnostici di OpenSPCoop */
-	protected static Vector<IMsgDiagnosticoOpenSPCoopAppender> loggerMsgDiagnosticoOpenSPCoopAppender = new Vector<IMsgDiagnosticoOpenSPCoopAppender>(); 
+	protected static Vector<IDiagnosticProducer> loggerMsgDiagnosticoOpenSPCoopAppender = new Vector<IDiagnosticProducer>(); 
 	protected static Vector<String> tipoMsgDiagnosticoOpenSPCoopAppender = new Vector<String>();
 	/** Appender personalizzati per i tracciamenti di OpenSPCoop */
-	protected static Vector<ITracciamentoOpenSPCoopAppender> loggerTracciamentoOpenSPCoopAppender = new Vector<ITracciamentoOpenSPCoopAppender>(); 
+	protected static Vector<ITracciaProducer> loggerTracciamentoOpenSPCoopAppender = new Vector<ITracciaProducer>(); 
 	protected static Vector<String> tipoTracciamentoOpenSPCoopAppender = new Vector<String>();
 	/** Appender personalizzati per i dump applicativi di OpenSPCoop */
 	protected static Vector<IDumpOpenSPCoopAppender> loggerDumpOpenSPCoopAppender = new Vector<IDumpOpenSPCoopAppender>(); 
@@ -407,9 +407,9 @@ public class OpenSPCoop2Logger {
 					}
 
 					// Carico appender richiesto
-					IMsgDiagnosticoOpenSPCoopAppender appender = null;
+					IDiagnosticProducer appender = null;
 					try{
-						appender = (IMsgDiagnosticoOpenSPCoopAppender) Loader.getInstance().newInstance(msgDiagAppenderClass);
+						appender = (IDiagnosticProducer) Loader.getInstance().newInstance(msgDiagAppenderClass);
 						appender.initializeAppender(msgDiagConfig.getOpenspcoopAppender(i));
 					}catch(ClassNotFoundException e){
 						throw new Exception("Riscontrato errore durante il caricamento del msg diagnostico appender specificato ["+msgDiagConfig.getOpenspcoopAppender(i).getTipo()+"]: "+e.getMessage());
@@ -454,11 +454,11 @@ public class OpenSPCoop2Logger {
 					}
 
 					// Carico appender richiesto
-					ITracciamentoOpenSPCoopAppender appender = null;
+					ITracciaProducer appender = null;
 					try{
 						Object o = Loader.getInstance().newInstance(tracciamentoAppenderClass);
-						if(o instanceof ITracciamentoOpenSPCoopAppender){
-							appender = (ITracciamentoOpenSPCoopAppender) o; 
+						if(o instanceof ITracciaProducer){
+							appender = (ITracciaProducer) o; 
 							appender.initializeAppender(tracciamentoConfig.getOpenspcoopAppender(i));
 						}
 						else{
@@ -520,7 +520,7 @@ public class OpenSPCoop2Logger {
 							appender.initializeAppender(tracciamentoConfig.getOpenspcoopAppender(i));
 						}
 						else{
-							if( !(o instanceof ITracciamentoOpenSPCoopAppender) ){
+							if( !(o instanceof ITracciaProducer) ){
 								throw new Exception("OpenSPCoop Appender non è compatibile ne per registrare le tracce, ne per registrare i contenuti applicativi");
 							}
 						}
@@ -555,12 +555,12 @@ public class OpenSPCoop2Logger {
 		return humanReadable(msgDiag, null, null, 
 				null, false, null, null, null, protocol);
 	}
-	public static String humanReadable(MsgDiagnostico msgDiag,IProtocolFactory protocolFactory){
+	public static String humanReadable(MsgDiagnostico msgDiag,IProtocolFactory<?> protocolFactory){
 		return humanReadable(msgDiag, null, null, 
 				null, false, null, null, null, protocolFactory.getProtocol());
 	}
 	public static String humanReadable(MsgDiagnostico msgDiag,String idCorrelazioneApplicativa,String idCorrelazioneApplicativaRisposta,
-			String porta,boolean delegata,IDSoggetto fruitore,IDServizio servizio,String servizioApplicativo,IProtocolFactory protocolFactory){
+			String porta,boolean delegata,IDSoggetto fruitore,IDServizio servizio,String servizioApplicativo,IProtocolFactory<?> protocolFactory){
 		return humanReadable(msgDiag, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, 
 				porta, delegata, fruitore, servizio, servizioApplicativo, protocolFactory.getProtocol());
 	}
@@ -719,7 +719,7 @@ public class OpenSPCoop2Logger {
 		return OpenSPCoop2Logger.loggerOpenSPCoopDumpBinarioPA;
 	}
 	
-	public static Vector<IMsgDiagnosticoOpenSPCoopAppender> getLoggerMsgDiagnosticoOpenSPCoopAppender() {
+	public static Vector<IDiagnosticProducer> getLoggerMsgDiagnosticoOpenSPCoopAppender() {
 		return OpenSPCoop2Logger.loggerMsgDiagnosticoOpenSPCoopAppender;
 	}
 
@@ -727,7 +727,7 @@ public class OpenSPCoop2Logger {
 		return OpenSPCoop2Logger.tipoMsgDiagnosticoOpenSPCoopAppender;
 	}
 
-	public static Vector<ITracciamentoOpenSPCoopAppender> getLoggerTracciamentoOpenSPCoopAppender() {
+	public static Vector<ITracciaProducer> getLoggerTracciamentoOpenSPCoopAppender() {
 		return OpenSPCoop2Logger.loggerTracciamentoOpenSPCoopAppender;
 	}
 

@@ -29,8 +29,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
-import javax.xml.soap.SOAPElement;
-
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -43,8 +41,9 @@ import org.openspcoop2.core.tracciamento.TracciaEsitoElaborazione;
 import org.openspcoop2.core.tracciamento.constants.TipoEsitoElaborazione;
 import org.openspcoop2.protocol.sdk.Allegato;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.constants.EsitoElaborazioneMessaggioTracciatura;
-import org.openspcoop2.protocol.sdk.constants.TipoTraccia;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 
 /**
  * Bean Contenente le informazioni relative alle tracce
@@ -55,7 +54,7 @@ import org.openspcoop2.protocol.sdk.constants.TipoTraccia;
  * @version $Rev$, $Date$
  */
 
-public class Traccia  implements java.io.Serializable {
+public class Traccia implements java.io.Serializable {
 
 	/**
 	 * serialVersionUID
@@ -65,7 +64,7 @@ public class Traccia  implements java.io.Serializable {
 	// Busta
 	protected Busta busta;
 	private byte[] bustaInByte;
-    private SOAPElement bustaInDom;
+    private BustaRawContent<?> bustaRawContent;
 
     // properties
     protected Hashtable<String, String> properties = new Hashtable<String, String>();
@@ -261,18 +260,18 @@ public class Traccia  implements java.io.Serializable {
     
     // tipoTraccia [wrapper]
     
-	public TipoTraccia getTipoMessaggio() {
+	public RuoloMessaggio getTipoMessaggio() {
 		if(this.traccia.getTipo()!=null){
 			switch (this.traccia.getTipo()) {
 			case RICHIESTA:
-				return TipoTraccia.RICHIESTA;
+				return RuoloMessaggio.RICHIESTA;
 			case RISPOSTA:
-				return TipoTraccia.RISPOSTA;
+				return RuoloMessaggio.RISPOSTA;
 			}
 		}
 		return null;
     }
-    public void setTipoMessaggio(TipoTraccia value) {
+    public void setTipoMessaggio(RuoloMessaggio value) {
     	if(value!=null){
 			switch (value) {
 			case RICHIESTA:
@@ -305,11 +304,11 @@ public class Traccia  implements java.io.Serializable {
 	public void setBustaAsByteArray(byte[] bustaInByte) {
 		this.bustaInByte = bustaInByte;
 	}
-	public SOAPElement getBustaAsElement() {
-		return this.bustaInDom;
+	public BustaRawContent<?> getBustaAsRawContent() {
+		return this.bustaRawContent;
 	}
-	public void setBustaAsElement(SOAPElement bustaInDom) {
-		this.bustaInDom = bustaInDom;
+	public void setBustaAsRawContent(BustaRawContent<?> bustaElement) {
+		this.bustaRawContent = bustaElement;
 	}
 	// [wrapper]
 	public String getBustaAsString() {
@@ -539,7 +538,7 @@ public class Traccia  implements java.io.Serializable {
 			}
 			clone.setBustaAsByteArray(bout.toByteArray());
 		}
-		clone.setBustaAsElement(this.getBustaAsElement()); // non clonato, vedere se si trova un modo efficente se serve
+		clone.setBustaAsRawContent(this.getBustaAsRawContent()); // non clonato, vedere se si trova un modo efficente se serve
 		clone.setBustaAsString(this.getBustaAsString()!=null ? new String(this.getBustaAsString()) : null);
 		
     	// correlazione

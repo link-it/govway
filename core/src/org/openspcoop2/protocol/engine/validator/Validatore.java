@@ -28,9 +28,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import javax.xml.soap.SOAPElement;
-
-import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -38,6 +35,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -56,6 +54,7 @@ import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.SubErrorCodeSecurity;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.slf4j.Logger;
 
 
 
@@ -134,7 +133,7 @@ public class Validatore  {
 	
 	/** Logger utilizzato per debug. */
 	private org.slf4j.Logger log = null;
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<?> protocolFactory;
 	private IProtocolManager protocolManager;
 	/** bustaErroreHeaderIntestazione: generata solo quando la busta arrivata non contiene gli elementi principali */
 	private Busta bustaErroreHeaderIntestazione = null;
@@ -151,7 +150,7 @@ public class Validatore  {
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public Validatore(OpenSPCoop2Message aMsg,ProprietaValidazione aValidazione, IState state,boolean readQualifiedAttribute, IProtocolFactory protocolFactory) throws ProtocolException {
+	public Validatore(OpenSPCoop2Message aMsg,ProprietaValidazione aValidazione, IState state,boolean readQualifiedAttribute, IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		this(aMsg,aValidazione,state,Configurazione.getLibraryLog(),readQualifiedAttribute, protocolFactory);
 	}
 	/**
@@ -163,7 +162,7 @@ public class Validatore  {
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public Validatore(OpenSPCoop2Message aMsg,ProprietaValidazione aValidazione,IState state,Logger alog,boolean readQualifiedAttribute, IProtocolFactory protocolFactory) throws ProtocolException {
+	public Validatore(OpenSPCoop2Message aMsg,ProprietaValidazione aValidazione,IState state,Logger alog,boolean readQualifiedAttribute, IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		this.msg = aMsg;
 		if(aValidazione == null)
 			this.proprietaValidazione = new ProprietaValidazione();
@@ -187,7 +186,7 @@ public class Validatore  {
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public Validatore(OpenSPCoop2Message aMsg,IState state,Logger alog, IProtocolFactory protocolFactory) throws ProtocolException {
+	public Validatore(OpenSPCoop2Message aMsg,IState state,Logger alog, IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		this(aMsg,null,state,alog,false, protocolFactory);
 	}
 
@@ -711,16 +710,16 @@ public class Validatore  {
 		this.proprietaValidazione = proprietaValidazione;
 	}
 	
-	public SOAPElement getHeaderProtocollo() {
+	public BustaRawContent<?> getHeaderProtocollo() {
 		return this.validatoreSintattico.getProtocolHeader();
 	}
 	
-	public SOAPElement getHeaderProtocollo_senzaControlli() throws ProtocolException{
+	public BustaRawContent<?> getHeaderProtocollo_senzaControlli() throws ProtocolException{
 		this.validatoreSintattico = new ValidazioneSintattica(this.state,this.msg,this.log, this.protocolFactory);
 		return this.validatoreSintattico.getHeaderProtocollo_senzaControlli();
 	}
 
-	private void addListaEccezioni(Vector<Eccezione> from,Vector<Eccezione> to){
+	private void addListaEccezioni(List<Eccezione> from,List<Eccezione> to){
 		if(from!=null){
 			to.addAll(from);
 		}

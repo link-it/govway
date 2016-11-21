@@ -36,7 +36,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 public class SDIProtocolVersionManager extends BasicVersionManager {
 	
 	protected String versione;
-	public SDIProtocolVersionManager(IProtocolFactory protocolFactory,String versione) throws ProtocolException{
+	public SDIProtocolVersionManager(IProtocolFactory<?> protocolFactory,String versione) throws ProtocolException{
 		super(protocolFactory);
 		this.versione = versione;
 	}

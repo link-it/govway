@@ -102,7 +102,7 @@ public class Dump {
 	private Vector<IDumpOpenSPCoopAppender> loggerDumpOpenSPCoopAppender = null; 
 	private Vector<String> tipoDumpOpenSPCoopAppender = null; 
 	
-	private IProtocolFactory protocolFactory = null;
+	private IProtocolFactory<?> protocolFactory = null;
 	
 	/** Stati */
 	private IState statoRichiesta;

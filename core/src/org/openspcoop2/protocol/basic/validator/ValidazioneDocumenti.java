@@ -67,13 +67,13 @@ import org.w3c.dom.Document;
  */
 public class ValidazioneDocumenti implements IValidazioneDocumenti{
 
-	protected IProtocolFactory protocolFactory;
+	protected IProtocolFactory<?> protocolFactory;
 	protected Logger log;
 	protected AbstractXMLUtils xmlUtils = null;
 	protected XSDUtils xsdUtils = null;
 	protected WSDLUtilities wsdlUtilities = null;
 
-	public ValidazioneDocumenti(IProtocolFactory factory){
+	public ValidazioneDocumenti(IProtocolFactory<?> factory){
 		this.log = factory.getLogger();
 		this.protocolFactory = factory;
 		this.xmlUtils = XMLUtils.getInstance();
@@ -82,12 +82,12 @@ public class ValidazioneDocumenti implements IValidazioneDocumenti{
 	}
 
 	@Override
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}
 
 	@Override
-	public ValidazioneResult validaInterfacciaWsdlParteComune(
+	public ValidazioneResult validaSpecificaInterfaccia(
 			AccordoServizioParteComune accordoServizioParteComune) {
 
 		String objectInEsame = null;
@@ -220,7 +220,7 @@ public class ValidazioneDocumenti implements IValidazioneDocumenti{
 	}
 
 	@Override
-	public ValidazioneResult validaInterfacciaWsdlParteSpecifica(
+	public ValidazioneResult validaSpecificaInterfaccia(
 			AccordoServizioParteSpecifica accordoServizioParteSpecifica,
 			AccordoServizioParteComune accordoServizioParteComune) {
 
@@ -431,13 +431,13 @@ public class ValidazioneDocumenti implements IValidazioneDocumenti{
 
 	
 	@Override
-	public ValidazioneResult validaInterfacciaWsdlParteSpecifica(Fruitore fruitore, AccordoServizioParteSpecifica accordoServizioParteSpecifica , AccordoServizioParteComune accordoServizioParteComune){
+	public ValidazioneResult validaSpecificaInterfaccia(Fruitore fruitore, AccordoServizioParteSpecifica accordoServizioParteSpecifica , AccordoServizioParteComune accordoServizioParteComune){
 		AccordoServizioParteSpecifica as = new AccordoServizioParteSpecifica();
 		as.setByteWsdlImplementativoErogatore(fruitore.getByteWsdlImplementativoErogatore());
 		as.setByteWsdlImplementativoFruitore(fruitore.getByteWsdlImplementativoFruitore());
 		as.setWsdlImplementativoErogatore(fruitore.getWsdlImplementativoErogatore());
 		as.setWsdlImplementativoFruitore(fruitore.getWsdlImplementativoFruitore());
-		return this.validaInterfacciaWsdlParteSpecifica(as, accordoServizioParteComune);
+		return this.validaSpecificaInterfaccia(as, accordoServizioParteComune);
 	}
 	
 	@Override

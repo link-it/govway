@@ -68,7 +68,7 @@ public class SDIValidazioneSemantica extends ValidazioneSemantica {
 	/** Errori di processamento riscontrati sulla busta */
 	protected java.util.Vector<Eccezione> erroriProcessamento = new Vector<Eccezione>();
 	
-	public SDIValidazioneSemantica(IProtocolFactory factory) throws ProtocolException {
+	public SDIValidazioneSemantica(IProtocolFactory<?> factory) throws ProtocolException {
 		super(factory);
 		this.sdiProperties = SDIProperties.getInstance(this.log);
 		this.validazioneUtils = new SDIValidazioneUtils(factory);

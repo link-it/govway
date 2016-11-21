@@ -22,38 +22,28 @@
 package org.openspcoop2.protocol.sdi;
 
 
-import org.slf4j.Logger;
+import javax.xml.soap.SOAPElement;
+
 import org.openspcoop2.protocol.basic.BasicFactory;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.sdi.builder.SDIBustaBuilder;
-import org.openspcoop2.protocol.sdi.builder.SDIErroreApplicativoBuilder;
-import org.openspcoop2.protocol.sdi.builder.SDIEsitoBuilder;
 import org.openspcoop2.protocol.sdi.config.SDIProperties;
 import org.openspcoop2.protocol.sdi.config.SDIProtocolConfiguration;
 import org.openspcoop2.protocol.sdi.config.SDIProtocolManager;
 import org.openspcoop2.protocol.sdi.config.SDIProtocolVersionManager;
 import org.openspcoop2.protocol.sdi.config.SDITraduttore;
-import org.openspcoop2.protocol.sdi.diagnostica.SDIXMLDiagnosticoBuilder;
-import org.openspcoop2.protocol.sdi.tracciamento.SDIXMLTracciaBuilder;
-import org.openspcoop2.protocol.sdi.validator.SDIValidatoreErrori;
 import org.openspcoop2.protocol.sdi.validator.SDIValidazioneConSchema;
 import org.openspcoop2.protocol.sdi.validator.SDIValidazioneSemantica;
 import org.openspcoop2.protocol.sdi.validator.SDIValidazioneSintattica;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.builder.IBustaBuilder;
-import org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder;
-import org.openspcoop2.protocol.sdk.builder.IEsitoBuilder;
 import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
-import org.openspcoop2.protocol.sdk.diagnostica.IXMLDiagnosticoBuilder;
-import org.openspcoop2.protocol.sdk.tracciamento.IXMLTracciaBuilder;
-import org.openspcoop2.protocol.sdk.validator.IValidatoreErrori;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneConSchema;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneSemantica;
-import org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica;
+import org.slf4j.Logger;
 
 
 /**
@@ -63,7 +53,7 @@ import org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SDIFactory extends BasicFactory {
+public class SDIFactory extends BasicFactory<SOAPElement> {
 
 	/**
 	 * 
@@ -80,44 +70,20 @@ public class SDIFactory extends BasicFactory {
 		properties.validaConfigurazione(configPdD.getLoader());
 	}
 	
-	
-	/* ** INFO SERVIZIO ** */
-	
-	//public String getProtocol();
-	//public Logger getLogger();
-	//public ConfigurazionePdD getConfigurazionePdD();
-	//public Openspcoop2 getManifest();
-	// ereditato da BasicFactory
-	
+
 	
 	/* ** PROTOCOL BUILDER ** */
 	
 	@Override
-	public IBustaBuilder createBustaBuilder() throws ProtocolException {
+	public SDIBustaBuilder createBustaBuilder() throws ProtocolException {
 		return new SDIBustaBuilder(this);
-	}
-
-	@Override
-	public IErroreApplicativoBuilder createErroreApplicativoBuilder()
-			throws ProtocolException {
-		return new SDIErroreApplicativoBuilder(this);
-	}
-	
-	@Override
-	public IEsitoBuilder createEsitoBuilder() throws ProtocolException {
-		return new SDIEsitoBuilder(this);
 	}
 	
 		
 	/* ** PROTOCOL VALIDATOR ** */
 	
 	@Override
-	public IValidatoreErrori createValidatoreErrori() throws ProtocolException {
-		return new SDIValidatoreErrori(this);
-	}
-	
-	@Override
-	public IValidazioneSintattica createValidazioneSintattica()
+	public SDIValidazioneSintattica createValidazioneSintattica()
 			throws ProtocolException {
 		return new SDIValidazioneSintattica(this);
 	}
@@ -133,32 +99,6 @@ public class SDIFactory extends BasicFactory {
 			throws ProtocolException {
 		return new SDIValidazioneConSchema(this);
 	}
-	
-	
-	/* ** DIAGNOSTICI ** */
-	
-	//public IDriverMSGDiagnostici createDriverMSGDiagnostici() throws ProtocolException;
-	//public IMsgDiagnosticoOpenSPCoopAppender createMsgDiagnosticoOpenSPCoopAppender() throws ProtocolException;
-	// ereditato da BasicFactory
-	
-	@Override
-	public IXMLDiagnosticoBuilder createXMLDiagnosticoBuilder()
-			throws ProtocolException {
-		return new SDIXMLDiagnosticoBuilder(this);
-	}
-	
-	
-	/* ** TRACCE ** */
-	
-	//public IDriverTracciamento createDriverTracciamento() throws ProtocolException;
-	//public ITracciamentoOpenSPCoopAppender createTracciamentoOpenSPCoopAppender() throws ProtocolException;
-	// ereditato da BasicFactory
-	
-	@Override
-	public IXMLTracciaBuilder createXMLTracciaBuilder() throws ProtocolException {
-		return new SDIXMLTracciaBuilder(this);
-	}
-	
 	
 	
 	/* ** CONFIG ** */

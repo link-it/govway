@@ -55,7 +55,7 @@ public class IntegrationManagerResponseContext extends IntegrationManagerRequest
 
 	/** Costruttori */
 	public IntegrationManagerResponseContext(Date dataRichiestaOperazione,Operazione tipoOperazione,
-			PdDContext pddContext,Logger logger,IProtocolFactory protocolFactory) {
+			PdDContext pddContext,Logger logger,IProtocolFactory<?> protocolFactory) {
 		super(dataRichiestaOperazione,tipoOperazione,pddContext,logger,protocolFactory);
 	}
 

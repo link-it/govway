@@ -254,7 +254,7 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 	}
 
 	@Override
-	public IProtocolFactory getProtocolFactory() throws ConnectorException {
+	public IProtocolFactory<?> getProtocolFactory() throws ConnectorException {
 		// wrapped method
 		return this.connectorInMessage.getProtocolFactory();
 	}

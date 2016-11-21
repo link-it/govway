@@ -95,7 +95,7 @@ public class SPCoopValidazioneSemantica implements IValidazioneSemantica {
 	
 	/** Logger utilizzato per debug. */
 	private Logger log = null;
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<?> protocolFactory;
 	
 	
 
@@ -105,7 +105,7 @@ public class SPCoopValidazioneSemantica implements IValidazioneSemantica {
 	 * @param protocolFactory ProtocolFactory
 	 * 
 	 */
-	public SPCoopValidazioneSemantica(IProtocolFactory protocolFactory){
+	public SPCoopValidazioneSemantica(IProtocolFactory<?> protocolFactory){
 		this.log = protocolFactory.getLogger();
 		this.protocolFactory = protocolFactory;
 	}
@@ -1151,7 +1151,7 @@ public class SPCoopValidazioneSemantica implements IValidazioneSemantica {
 
 
 	@Override
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}
 

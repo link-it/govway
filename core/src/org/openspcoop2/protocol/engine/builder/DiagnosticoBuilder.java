@@ -27,7 +27,8 @@ import org.slf4j.Logger;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.diagnostica.IXMLDiagnosticoBuilder;
+import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
+import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticSerializer;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.w3c.dom.Element;
@@ -51,25 +52,25 @@ public class DiagnosticoBuilder  {
 
 	/** Logger utilizzato per debug. */
 	protected Logger log = null;
-	private IProtocolFactory protocolFactory;
-	private IXMLDiagnosticoBuilder diagnosticoProtocolBuilder;
-	public DiagnosticoBuilder(IProtocolFactory protocolFactory) {
+	private IProtocolFactory<?> protocolFactory;
+	private IDiagnosticSerializer diagnosticoProtocolBuilder;
+	public DiagnosticoBuilder(IProtocolFactory<?> protocolFactory) {
 		this(Configurazione.getLibraryLog(), protocolFactory);
 	}
-	public DiagnosticoBuilder(Logger aLog,IProtocolFactory protocolFactory) {
+	public DiagnosticoBuilder(Logger aLog,IProtocolFactory<?> protocolFactory) {
 		if(aLog!=null)
 			this.log = aLog;
 		else
 			this.log = LoggerWrapperFactory.getLogger(DiagnosticoBuilder.class);
 		this.protocolFactory = protocolFactory;
 		try{
-			this.diagnosticoProtocolBuilder = this.protocolFactory.createXMLDiagnosticoBuilder();
+			this.diagnosticoProtocolBuilder = this.protocolFactory.createDiagnosticSerializer();
 		}catch(Exception e){
 			this.log.error("Errore durante la creazione dell'XMLDiagnosticoBuilder: "+e.getMessage(),e);
 		}
 	}
 
-	public IProtocolFactory getProtocolFactory(){
+	public IProtocolFactory<?> getProtocolFactory(){
 		return this.protocolFactory;
 	}
 	
@@ -97,8 +98,8 @@ public class DiagnosticoBuilder  {
 	 * @return array di byte contenente il messaggio Diagnostico in caso di successo, null altrimenti. 
 	 * 
 	 */
-	public byte[] toByteArray(MsgDiagnostico msgDiag) throws ProtocolException{
-		return this.diagnosticoProtocolBuilder.toByteArray(msgDiag);
+	public byte[] toByteArray(MsgDiagnostico msgDiag, TipoSerializzazione tipoSerializzazione) throws ProtocolException{
+		return this.diagnosticoProtocolBuilder.toByteArray(msgDiag,tipoSerializzazione);
 	}
 
 	/**
@@ -108,7 +109,7 @@ public class DiagnosticoBuilder  {
 	 * @return String contenente il messaggio Diagnostico in caso di successo, null altrimenti. 
 	 * 
 	 */
-	public String toString(MsgDiagnostico msgDiag) throws ProtocolException{
-		return this.diagnosticoProtocolBuilder.toString(msgDiag);
+	public String toString(MsgDiagnostico msgDiag, TipoSerializzazione tipoSerializzazione) throws ProtocolException{
+		return this.diagnosticoProtocolBuilder.toString(msgDiag,tipoSerializzazione);
 	}
 }

@@ -243,7 +243,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		MessageType messageTypeReq = null;
 		OpenSPCoop2Message requestMessage = null;
 		OpenSPCoop2Message responseMessage = null;
-		IProtocolFactory protocolFactory = null;
+		IProtocolFactory<?> protocolFactory = null;
 		String protocol = null;
 		byte[] inputBody = null;
 		

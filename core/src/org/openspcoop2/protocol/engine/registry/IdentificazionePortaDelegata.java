@@ -59,7 +59,7 @@ public class IdentificazionePortaDelegata extends AbstractIdentificazionePorta {
 	 */
 	public IdentificazionePortaDelegata(TransportRequestContext urlProtocolContext, Logger log,
 			boolean portaUrlBased, IRegistryReader registryReader,
-			IProtocolFactory protocolFactory) throws ProtocolException {
+			IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		super(urlProtocolContext, log, portaUrlBased, registryReader, protocolFactory);
 	}
 

@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
-import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPFault;
 
 import org.openspcoop2.core.config.Connettore;
@@ -115,6 +114,7 @@ import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
 import org.openspcoop2.protocol.engine.validator.Validatore;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Integrazione;
@@ -130,7 +130,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
-import org.openspcoop2.protocol.sdk.constants.TipoTraccia;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.StatelessMessage;
 import org.openspcoop2.protocol.sdk.tracciamento.EsitoElaborazioneMessaggioTracciato;
 import org.openspcoop2.protocol.sdk.validator.IValidatoreErrori;
@@ -306,7 +306,7 @@ public class InoltroBuste extends GenericLib{
 		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 				
 		/* Protocol Factory */
-		IProtocolFactory protocolFactory = null;
+		IProtocolFactory<?> protocolFactory = null;
 		org.openspcoop2.protocol.sdk.config.ITraduttore traduttore = null;
 		IProtocolVersionManager protocolManager = null;
 		IValidazioneSemantica validazioneSemantica = null;
@@ -789,7 +789,7 @@ public class InoltroBuste extends GenericLib{
 
 		// Punto di inizio per la transazione.
 		Validatore validatore = null;
-		SOAPElement headerProtocolloRisposta = null;
+		BustaRawContent<?> headerProtocolloRisposta = null;
 		IConnettore connectorSenderForDisconnect = null;
 		String location = "";
 		try{
@@ -1206,7 +1206,7 @@ public class InoltroBuste extends GenericLib{
 			}else{
 				gestioneManifest = configurazionePdDManager.isGestioneManifestAttachments(pd,protocolFactory);
 			}
-			SOAPElement headerBustaRichiesta = null;
+			BustaRawContent<?> headerBustaRichiesta = null;
 			try{
 				org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore =  new org.openspcoop2.protocol.engine.builder.Imbustamento(this.log, protocolFactory);
 				if(functionAsRouter){
@@ -1218,8 +1218,8 @@ public class InoltroBuste extends GenericLib{
 						headerBustaRichiesta = v.getHeaderProtocollo_senzaControlli();
 					}
 				}else{
-					headerBustaRichiesta = imbustatore.imbustamento(openspcoopstate.getStatoRichiesta(),requestMessage,bustaRichiesta,integrazione,gestioneManifest,true,
-							scartaBody,proprietaManifestAttachments);
+					headerBustaRichiesta = imbustatore.imbustamento(openspcoopstate.getStatoRichiesta(),requestMessage,bustaRichiesta,integrazione,gestioneManifest,
+							RuoloMessaggio.RICHIESTA,scartaBody,proprietaManifestAttachments);
 				}
 			}catch(Exception e){
 				String msgErroreImbusta = null;
@@ -1339,7 +1339,7 @@ public class InoltroBuste extends GenericLib{
 			/* ------------ MTOM Processor BeforeSecurity  -------------- */
 			if(mtomProcessor!=null){
 				try{
-					mtomProcessor.mtomBeforeSecurity(requestMessage, TipoTraccia.RICHIESTA);
+					mtomProcessor.mtomBeforeSecurity(requestMessage, RuoloMessaggio.RICHIESTA);
 				}catch(Exception e){
 					// L'errore viene registrato dentro il metodo mtomProcessor.mtomBeforeSecurity
 					// msgDiag.logErroreGenerico(e,"MTOMProcessor(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+")");
@@ -1515,7 +1515,7 @@ public class InoltroBuste extends GenericLib{
 			/* ------------ MTOM Processor AfterSecurity  -------------- */
 			if(mtomProcessor!=null){
 				try{
-					mtomProcessor.mtomAfterSecurity(requestMessage, TipoTraccia.RICHIESTA);
+					mtomProcessor.mtomAfterSecurity(requestMessage, RuoloMessaggio.RICHIESTA);
 				}catch(Exception e){
 					// L'errore viene registrato dentro il metodo mtomProcessor.mtomAfterSecurity
 					//msgDiag.logErroreGenerico(e,"MTOMProcessor(AfterSec-"+mtomProcessor.getMTOMProcessorType()+")");
@@ -2394,7 +2394,7 @@ public class InoltroBuste extends GenericLib{
 			/* ------------- Analisi di una risposta ritornata ------------*/
 			boolean presenzaRispostaProtocollo = false;
 			SecurityInfo securityInfoResponse = null;
-			SOAPElement headerBustaRisposta = null;
+			BustaRawContent<?> headerBustaRisposta = null;
 			if(responseMessage != null ){
 				msgDiag.mediumDebug("Analisi della risposta (validazione sintattica)...");
 
@@ -2502,7 +2502,7 @@ public class InoltroBuste extends GenericLib{
 					/* *** MTOM Processor BeforeSecurity  *** */
 					if(mtomProcessor!=null){
 						try{
-							mtomProcessor.mtomBeforeSecurity(responseMessage, TipoTraccia.RISPOSTA);
+							mtomProcessor.mtomBeforeSecurity(responseMessage, RuoloMessaggio.RISPOSTA);
 						}catch(Exception e){
 							// L'errore viene registrato dentro il metodo mtomProcessor.mtomBeforeSecurity
 							// msgDiag.logErroreGenerico(e,"MTOMProcessor(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+")");
@@ -2691,7 +2691,7 @@ public class InoltroBuste extends GenericLib{
 					/* *** MTOM Processor AfterSecurity  *** */
 					if(mtomProcessor!=null){
 						try{
-							mtomProcessor.mtomAfterSecurity(responseMessage, TipoTraccia.RISPOSTA);
+							mtomProcessor.mtomAfterSecurity(responseMessage, RuoloMessaggio.RISPOSTA);
 						}catch(Exception e){
 							// L'errore viene registrato dentro il metodo mtomProcessor.mtomAfterSecurity
 							// msgDiag.logErroreGenerico(e,"MTOMProcessor(AfterSec-"+mtomProcessor.getMTOMProcessorType()+")");
@@ -3200,7 +3200,8 @@ public class InoltroBuste extends GenericLib{
 							}
 						}	
 						org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = new org.openspcoop2.protocol.engine.builder.Sbustamento(protocolFactory);
-						headerProtocolloRisposta = sbustatore.sbustamento(openspcoopstate.getStatoRichiesta(),responseMessage,bustaRisposta,false,sbustamentoManifestRisposta,proprietaManifestAttachments);
+						headerProtocolloRisposta = sbustatore.sbustamento(openspcoopstate.getStatoRichiesta(),responseMessage,bustaRisposta,
+								RuoloMessaggio.RISPOSTA,sbustamentoManifestRisposta,proprietaManifestAttachments);
 					}else{
 						headerProtocolloRisposta = validatore.getHeaderProtocollo();
 					}

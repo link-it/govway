@@ -60,7 +60,7 @@ public class SDIValidazioneConSchema extends ValidazioneConSchema {
 	/** Errori di processamento riscontrati sulla busta */
 	private java.util.Vector<Eccezione> erroriProcessamento;
 
-	public SDIValidazioneConSchema(IProtocolFactory factory) {
+	public SDIValidazioneConSchema(IProtocolFactory<?> factory) {
 		super(factory);
 	}
 

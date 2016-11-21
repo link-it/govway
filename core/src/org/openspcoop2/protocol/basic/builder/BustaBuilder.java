@@ -21,19 +21,13 @@
 
 package org.openspcoop2.protocol.basic.builder;
 
-//import java.util.GregorianCalendar;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 
 import javax.xml.namespace.QName;
-//import javax.xml.datatype.DatatypeConfigurationException;
-//import javax.xml.datatype.DatatypeFactory;
-//import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPFault;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -45,6 +39,7 @@ import org.openspcoop2.message.soap.SOAPFaultCode;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.EccezioneProtocolloBuilderParameters;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -58,11 +53,13 @@ import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
+import org.slf4j.Logger;
 
 /**	
  * BustaBuilder
@@ -71,16 +68,16 @@ import org.openspcoop2.utils.xml.AbstractXMLUtils;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class BustaBuilder implements org.openspcoop2.protocol.sdk.builder.IBustaBuilder {
-
+public class BustaBuilder<BustaRawType> implements org.openspcoop2.protocol.sdk.builder.IBustaBuilder<BustaRawType> {
+	
 	protected Logger log;
-	protected IProtocolFactory protocolFactory;
+	protected IProtocolFactory<?> protocolFactory;
 	protected OpenSPCoop2MessageFactory msgFactory;
 	protected AbstractXMLUtils xmlUtils;
 	protected ITraduttore traduttore;
 	protected IErroreApplicativoBuilder erroreApplicativoBuilder = null;
 		
-	public BustaBuilder(IProtocolFactory factory) throws ProtocolException{
+	public BustaBuilder(IProtocolFactory<?> factory) throws ProtocolException{
 		this.log = factory.getLogger();
 		this.protocolFactory = factory;
 		this.msgFactory = OpenSPCoop2MessageFactory.getMessageFactory();
@@ -90,7 +87,7 @@ public class BustaBuilder implements org.openspcoop2.protocol.sdk.builder.IBusta
 	}
 	
 	@Override
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}
 
@@ -98,10 +95,10 @@ public class BustaBuilder implements org.openspcoop2.protocol.sdk.builder.IBusta
 	private final static UniversallyUniqueIdentifierGenerator uuidGenerator = new UniversallyUniqueIdentifierGenerator();
 	
 	@Override
-	public String newID(IState state, IDSoggetto idSoggetto, String idTransazione, Boolean isRichiesta) throws ProtocolException {
-		return newID(state, idSoggetto, idTransazione, isRichiesta, true);
+	public String newID(IState state, IDSoggetto idSoggetto, String idTransazione, RuoloMessaggio ruoloMessaggio) throws ProtocolException {
+		return newID(state, idSoggetto, idTransazione, ruoloMessaggio, true);
 	}
-	public String newID(IState state, IDSoggetto idSoggetto, String idTransazione, Boolean isRichiesta, boolean generateIDasUUID) throws ProtocolException {
+	public String newID(IState state, IDSoggetto idSoggetto, String idTransazione, RuoloMessaggio ruoloMessaggio, boolean generateIDasUUID) throws ProtocolException {
 		
 		if(generateIDasUUID){
 			
@@ -135,7 +132,7 @@ public class BustaBuilder implements org.openspcoop2.protocol.sdk.builder.IBusta
 			
 			SimpleDateFormat dateFormat = new SimpleDateFormat(dateformatPattern); // SimpleDateFormat non e' thread-safe
 			
-			if(isRichiesta)
+			if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio))
 	//			return id+ "-request";
 				return dateFormat.format(now)+"-"+id;
 			else
@@ -171,27 +168,11 @@ public class BustaBuilder implements org.openspcoop2.protocol.sdk.builder.IBusta
 		}
 	}
 	
-	@Override
-	public SOAPElement toElement(Busta busta, boolean isRichiesta)
-			throws ProtocolException {
-		return null;
-	}
 
-	@Override
-	public String toString(Busta busta, boolean isRichiesta)
-			throws ProtocolException {
-		return null;
-	}
-
-	@Override
-	public byte[] toByteArray(Busta busta, boolean isRichiesta)
-			throws ProtocolException {
-		return null;
-	}
 	
 	@Override
-	public SOAPElement imbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
-			boolean isRichiesta,
+	public BustaRawContent<BustaRawType> imbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
+			RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments)
 			throws ProtocolException {
 		if(busta.getProfiloDiCollaborazione() != null) {
@@ -264,20 +245,21 @@ public class BustaBuilder implements org.openspcoop2.protocol.sdk.builder.IBusta
 		
 		return null;
 	}
-
+	
 	@Override
-	public SOAPElement addTrasmissione(OpenSPCoop2Message message,
+	public BustaRawContent<BustaRawType> addTrasmissione(OpenSPCoop2Message message,
 			Trasmissione trasmissione) throws ProtocolException {
 		return null;
 	}
 
 	@Override
-	public SOAPElement sbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
-			boolean isRichiesta, ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException {
+	public BustaRawContent<BustaRawType> sbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
+			RuoloMessaggio ruoloMessaggio, ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException {
 		
 		return null;
 		
 	}
+	
 	
 	
 	protected void addEccezioniInFault(OpenSPCoop2Message msg, Busta busta, boolean ignoraEccezioniNonGravi) throws ProtocolException{

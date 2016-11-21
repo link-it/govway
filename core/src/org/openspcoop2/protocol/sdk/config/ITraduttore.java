@@ -24,16 +24,16 @@ package org.openspcoop2.protocol.sdk.config;
 import java.util.Date;
 
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ContestoCodificaEccezione;
+import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
+import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
 import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
-import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
-import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.SubCodiceErrore;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
@@ -45,9 +45,7 @@ import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public interface ITraduttore {
-	
-	public IProtocolFactory getProtocolFactory();
+public interface ITraduttore extends IComponentFactory {
 		
 	/**
 	 * Traduce il valore del parametro di inoltro in un formato conforme alle specifiche del protocollo

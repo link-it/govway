@@ -222,7 +222,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		try {
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 			IProtocolFactory protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
-			return protocol.createValidazioneDocumenti().validaInterfacciaWsdlParteComune(as);
+			return protocol.createValidazioneDocumenti().validaSpecificaInterfaccia(as);
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);

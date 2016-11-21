@@ -22,14 +22,13 @@
 package org.openspcoop2.protocol.basic;
 
 
-import org.slf4j.Logger;
 import org.openspcoop2.protocol.basic.archive.BasicArchive;
+import org.openspcoop2.protocol.basic.builder.BustaBuilder;
 import org.openspcoop2.protocol.basic.builder.ErroreApplicativoBuilder;
 import org.openspcoop2.protocol.basic.builder.EsitoBuilder;
-import org.openspcoop2.protocol.basic.builder.BustaBuilder;
 import org.openspcoop2.protocol.basic.config.BasicTraduttore;
-import org.openspcoop2.protocol.basic.diagnostica.XMLDiagnosticoBuilder;
-import org.openspcoop2.protocol.basic.tracciamento.XMLTracciaBuilder;
+import org.openspcoop2.protocol.basic.diagnostica.DiagnosticSerializer;
+import org.openspcoop2.protocol.basic.tracciamento.TracciaSerializer;
 import org.openspcoop2.protocol.basic.validator.ValidatoreErrori;
 import org.openspcoop2.protocol.basic.validator.ValidazioneAccordi;
 import org.openspcoop2.protocol.basic.validator.ValidazioneConSchema;
@@ -38,15 +37,16 @@ import org.openspcoop2.protocol.basic.validator.ValidazioneSemantica;
 import org.openspcoop2.protocol.basic.validator.ValidazioneSintattica;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
-import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.archive.IArchive;
-import org.openspcoop2.protocol.sdk.diagnostica.IDriverMsgDiagnostici;
-import org.openspcoop2.protocol.sdk.diagnostica.IMsgDiagnosticoOpenSPCoopAppender;
-import org.openspcoop2.protocol.sdk.tracciamento.IDriverTracciamento;
-import org.openspcoop2.protocol.sdk.tracciamento.ITracciamentoOpenSPCoopAppender;
+import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
+import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
+import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
+import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneAccordi;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneDocumenti;
+import org.slf4j.Logger;
 
 
 /**	
@@ -56,7 +56,7 @@ import org.openspcoop2.protocol.sdk.validator.IValidazioneDocumenti;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public abstract class BasicFactory implements IProtocolFactory {
+public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<BustaRawType> {
 	private static final long serialVersionUID = 1L;
 	
 	private String protocol;
@@ -101,10 +101,10 @@ public abstract class BasicFactory implements IProtocolFactory {
 	/* ** PROTOCOL BUILDER ** */
 	
 	@Override
-	public org.openspcoop2.protocol.sdk.builder.IBustaBuilder createBustaBuilder() throws ProtocolException {
-		return new BustaBuilder(this);
+	public org.openspcoop2.protocol.sdk.builder.IBustaBuilder<BustaRawType> createBustaBuilder() throws ProtocolException {
+		return new BustaBuilder<BustaRawType>(this);
 	}
-
+	
 	@Override
 	public org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder createErroreApplicativoBuilder()  throws ProtocolException {
 		return new ErroreApplicativoBuilder(this);
@@ -124,10 +124,10 @@ public abstract class BasicFactory implements IProtocolFactory {
 	}
 
 	@Override
-	public org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica createValidazioneSintattica() throws ProtocolException {
-		return new ValidazioneSintattica(this);
+	public org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica<BustaRawType> createValidazioneSintattica() throws ProtocolException {
+		return new ValidazioneSintattica<BustaRawType>(this);
 	}
-
+	
 	@Override
 	public org.openspcoop2.protocol.sdk.validator.IValidazioneSemantica createValidazioneSemantica()  throws ProtocolException {
 		return new ValidazioneSemantica(this);
@@ -155,36 +155,36 @@ public abstract class BasicFactory implements IProtocolFactory {
 	/* ** DIAGNOSTICI ** */
 
 	@Override
-	public IDriverMsgDiagnostici createDriverMSGDiagnostici() throws ProtocolException{
-		return new org.openspcoop2.protocol.basic.diagnostica.DriverMsgDiagnostici(this);
+	public IDiagnosticDriver createDiagnosticDriver() throws ProtocolException{
+		return new org.openspcoop2.protocol.basic.diagnostica.DiagnosticDriver(this);
 	}
 	
 	@Override
-	public IMsgDiagnosticoOpenSPCoopAppender createMsgDiagnosticoOpenSPCoopAppender() throws ProtocolException{
-		return new org.openspcoop2.protocol.basic.diagnostica.MsgDiagnosticoOpenSPCoopAppenderDB(this);
+	public IDiagnosticProducer createDiagnosticProducer() throws ProtocolException{
+		return new org.openspcoop2.protocol.basic.diagnostica.DiagnosticProducer(this);
 	}
 	
 	@Override
-	public org.openspcoop2.protocol.sdk.diagnostica.IXMLDiagnosticoBuilder createXMLDiagnosticoBuilder()  throws ProtocolException {
-		return new XMLDiagnosticoBuilder(this);
+	public org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticSerializer createDiagnosticSerializer()  throws ProtocolException {
+		return new DiagnosticSerializer(this);
 	}
 
 	
 	/* ** TRACCE ** */
 	
 	@Override
-	public IDriverTracciamento createDriverTracciamento() throws ProtocolException{
-		return new org.openspcoop2.protocol.basic.tracciamento.DriverTracciamento(this);
+	public ITracciaDriver createTracciaDriver() throws ProtocolException{
+		return new org.openspcoop2.protocol.basic.tracciamento.TracciaDriver(this);
 	}
 	
 	@Override
-	public ITracciamentoOpenSPCoopAppender createTracciamentoOpenSPCoopAppender() throws ProtocolException{
-		return new org.openspcoop2.protocol.basic.tracciamento.TracciamentoOpenSPCoopAppenderDB(this);
+	public ITracciaProducer createTracciaProducer() throws ProtocolException{
+		return new org.openspcoop2.protocol.basic.tracciamento.TracciaProducer(this);
 	}
 	
 	@Override
-	public org.openspcoop2.protocol.sdk.tracciamento.IXMLTracciaBuilder createXMLTracciaBuilder()  throws ProtocolException {
-		return new XMLTracciaBuilder(this);
+	public org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer createTracciaSerializer()  throws ProtocolException {
+		return new TracciaSerializer(this);
 	}
 	
 	

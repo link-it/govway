@@ -46,7 +46,7 @@ import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 public class SPCoopValidatoreErrori implements IValidatoreErrori {
 
 	/** Logger utilizzato per debug. */
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<?> protocolFactory;
 	private Logger log;
 	
 
@@ -57,14 +57,14 @@ public class SPCoopValidatoreErrori implements IValidatoreErrori {
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public SPCoopValidatoreErrori(IProtocolFactory protocolFactory) throws ProtocolException{
+	public SPCoopValidatoreErrori(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		this.protocolFactory = protocolFactory;
 		this.log = this.protocolFactory.getLogger();
 	}
 	
 
 	@Override
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}
 

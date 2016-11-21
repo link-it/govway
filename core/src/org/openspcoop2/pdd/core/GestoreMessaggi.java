@@ -182,8 +182,8 @@ public class GestoreMessaggi  {
 	public PdDContext getPddContext() {
 		return this.pddContext;
 	}
-	private IProtocolFactory protocolFactory = null;
-	public IProtocolFactory getProtocolFactory() {
+	private IProtocolFactory<?> protocolFactory = null;
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}
 

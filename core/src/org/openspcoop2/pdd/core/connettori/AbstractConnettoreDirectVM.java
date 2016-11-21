@@ -69,7 +69,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 		}
 		
 		// protocol
-		IProtocolFactory pFactory = null;
+		IProtocolFactory<?> pFactory = null;
 		try{
 			pFactory = this.buildProtocolFactoryForForwardMessage(this.properties);
 		}catch(Exception e){
@@ -111,9 +111,9 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 
 	}
 
-	private IProtocolFactory buildProtocolFactoryForForwardMessage(Hashtable<String, String> properties) throws Exception{
+	private IProtocolFactory<?> buildProtocolFactoryForForwardMessage(Hashtable<String, String> properties) throws Exception{
 		// protocol
-		IProtocolFactory pFactory = this.getProtocolFactory();
+		IProtocolFactory<?> pFactory = this.getProtocolFactory();
 		String protocol = properties.get(CostantiConnettori.CONNETTORE_DIRECT_VM_PROTOCOL);
 		if(protocol!=null){
 			try{
@@ -128,7 +128,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 	public void buildLocation(Hashtable<String, String> properties, boolean setFormBasedParameter) throws Exception{
 		
 		// protocol
-		IProtocolFactory pFactory = buildProtocolFactoryForForwardMessage(properties);
+		IProtocolFactory<?> pFactory = buildProtocolFactoryForForwardMessage(properties);
 		
 		// context
 		String webContext = "openspcoop2";
@@ -156,7 +156,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 	 * @return true in caso di consegna con successo, false altrimenti
 	 * 
 	 */
-	private boolean sendByVM(IProtocolFactory pFactory){
+	private boolean sendByVM(IProtocolFactory<?> pFactory){
 		
 		String oldIdTransazione = null;
 		try{

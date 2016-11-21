@@ -57,7 +57,7 @@ public class OperationFinder {
 			OpenSPCoop2Message message, 
 			IDSoggetto soggettoErogatore, IDServizio idServizio,
 			boolean readFirstHeaderIntegrazione, String azioneHeaderIntegrazione, 
-			IProtocolFactory protocolFactory,
+			IProtocolFactory<?> protocolFactory,
 			ModalitaIdentificazioneAzione modalitaIdentificazione, String pattern, 
 			boolean forceRegistryBased, boolean forcePluginBased,
 			Logger log) throws DriverConfigurazioneException,DriverConfigurazioneNotFound, IdentificazioneDinamicaException { 
@@ -174,7 +174,7 @@ public class OperationFinder {
 								azione = idServizio.getAzione();
 							}
 							else{
-								Busta busta = protocolFactory.createValidazioneSintattica().getBustaProtocollo_senzaControlli(message);
+								Busta busta = protocolFactory.createValidazioneSintattica().getBusta_senzaControlli(message);
 								if(busta!=null){
 									azione = busta.getAzione();
 								}
@@ -207,7 +207,7 @@ public class OperationFinder {
 						azione = idServizio.getAzione();
 					}
 					else{
-						Busta busta = protocolFactory.createValidazioneSintattica().getBustaProtocollo_senzaControlli(message);
+						Busta busta = protocolFactory.createValidazioneSintattica().getBusta_senzaControlli(message);
 						if(busta!=null){
 							azione = busta.getAzione();
 						}

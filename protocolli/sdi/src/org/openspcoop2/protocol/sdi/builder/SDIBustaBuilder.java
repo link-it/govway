@@ -28,6 +28,7 @@ import javax.xml.soap.SOAPElement;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.protocol.basic.builder.BustaBuilder;
+import org.openspcoop2.protocol.sdi.SDIBustaRawContent;
 import org.openspcoop2.protocol.sdi.config.SDIProperties;
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRiceviFile;
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRiceviNotifica;
@@ -37,6 +38,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 
 /**
@@ -46,7 +48,7 @@ import org.openspcoop2.protocol.sdk.state.IState;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SDIBustaBuilder extends BustaBuilder {
+public class SDIBustaBuilder extends BustaBuilder<SOAPElement> {
 
 	/** Properties */
 	protected SDIProperties sdiProperties;
@@ -55,7 +57,7 @@ public class SDIBustaBuilder extends BustaBuilder {
 	/** SDISbustamento */
 	private SDISbustamento sdiSbustamento;
 	
-	public SDIBustaBuilder(IProtocolFactory factory) throws ProtocolException {
+	public SDIBustaBuilder(IProtocolFactory<SOAPElement> factory) throws ProtocolException {
 		super(factory);
 		this.sdiProperties = SDIProperties.getInstance(this.log);
 		this.sdiImbustamento = new SDIImbustamento(this);
@@ -63,12 +65,12 @@ public class SDIBustaBuilder extends BustaBuilder {
 	}
 
 	@Override
-	public SOAPElement imbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
-			boolean isRichiesta,
+	public SDIBustaRawContent imbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
+			RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments)
 			throws ProtocolException {
 		
-		super.imbustamento(state, msg, busta, isRichiesta, proprietaManifestAttachments);
+		super.imbustamento(state, msg, busta, ruoloMessaggio, proprietaManifestAttachments);
 		
 		// Modifico il messaggio per aggiungere la struttura SDI in base all'azione invocata e al ruolo (Richiesta/Risposta) e al fatto che non vi sono errori.
 		// TODO: il body attuale lo devo inserire come valore codificato in base 64 tramite la struttura Corretta
@@ -92,7 +94,7 @@ public class SDIBustaBuilder extends BustaBuilder {
 		
 		SOAPElement element = null;
 		
-		if(isRichiesta){
+		if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)){
 	
 			// Servizio
 			if(SDICostantiServizioRiceviFile.SDI_SERVIZIO_RICEVI_FILE.equals(busta.getServizio())
@@ -161,19 +163,19 @@ public class SDIBustaBuilder extends BustaBuilder {
 			
 		}
 
-		return element;
+		return new SDIBustaRawContent(element);
 		
 	}
 	
 	@Override
-	public SOAPElement sbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
-			boolean isRichiesta, ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{
+	public SDIBustaRawContent sbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
+			RuoloMessaggio ruoloMessaggio, ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{
 		
 		try{
 		
 			SOAPElement se = null;
 						
-			if(isRichiesta){
+			if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)){
 				
 				// Servizio
 				if(SDICostantiServizioTrasmissioneFatture.TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE.equals(busta.getServizio())){
@@ -250,7 +252,7 @@ public class SDIBustaBuilder extends BustaBuilder {
 				
 			}
 			
-			return se; 
+			return new SDIBustaRawContent(se);
 			
 		}catch(Exception e){
 			throw new ProtocolException(e.getMessage(),e);

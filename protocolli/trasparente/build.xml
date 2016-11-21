@@ -85,8 +85,6 @@
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.trasparente.builder" />
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.trasparente.config" />
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.trasparente.constants" />
-		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.trasparente.diagnostica" />
-		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.trasparente.tracciamento" />
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.trasparente.utils" />
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.trasparente.validator" />
 		<antcall target="compile_src_openspcoop2">

@@ -158,7 +158,7 @@ public class Riscontro implements java.io.Serializable {
 		this.setTipoOraRegistrazioneValue(value);
 	}
 
-	public String getTipoOraRegistrazioneValue(IProtocolFactory protocolFactory) throws ProtocolException {
+	public String getTipoOraRegistrazioneValue(IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		String tipoOraRegistrazioneValue = null;
 		if(this.riscontro.getOraRegistrazione()!=null && this.riscontro.getOraRegistrazione().getSorgente()!=null){
 			tipoOraRegistrazioneValue = this.riscontro.getOraRegistrazione().getSorgente().getBase();

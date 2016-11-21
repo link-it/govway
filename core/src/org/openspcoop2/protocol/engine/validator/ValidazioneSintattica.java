@@ -23,13 +23,13 @@
 
 package org.openspcoop2.protocol.engine.validator;
 
-import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeader;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -60,9 +60,9 @@ public class ValidazioneSintattica {
 	/** HeaderSOAP */
 	protected SOAPHeader headerSOAP = null;
 	/** Header */
-	protected SOAPElement headerProtocollo;
+	protected BustaRawContent<?> headerProtocollo;
 	
-	public SOAPElement getProtocolHeader(){
+	public BustaRawContent<?> getProtocolHeader(){
 		return this.headerProtocollo;
 	}
 	
@@ -70,11 +70,11 @@ public class ValidazioneSintattica {
 		this.headerSOAP = headerSOAP;
 	}
 	/** Errori di validazione riscontrati sulla busta */
-	protected java.util.Vector<Eccezione> erroriValidazione;
+	protected java.util.List<Eccezione> erroriValidazione;
 	/** Errori di processamento riscontrati sulla busta */
-	protected java.util.Vector<Eccezione> erroriProcessamento;
+	protected java.util.List<Eccezione> erroriProcessamento;
 	/** Errors riscontrati sulla lista eccezioni */
-	protected java.util.Vector<Eccezione> errorsTrovatiSullaListaEccezioni;
+	protected java.util.List<Eccezione> errorsTrovatiSullaListaEccezioni;
 	/** Busta */
 	protected Busta busta;
 	protected Boolean isRichiesta;
@@ -87,7 +87,7 @@ public class ValidazioneSintattica {
 	protected org.slf4j.Logger log = null;
 
 	protected boolean segnalazioneElementoPresentePiuVolte = false;
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<?> protocolFactory;
 	private IProtocolManager protocolManager;
 	/** Indicazione se la busta risulta scaduta */
 	protected boolean messaggioScaduto = false;
@@ -108,13 +108,13 @@ public class ValidazioneSintattica {
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public ValidazioneSintattica(IState state,OpenSPCoop2Message aMsg,boolean readQualifiedAttribute, IProtocolFactory protocolFactory) throws ProtocolException {
+	public ValidazioneSintattica(IState state,OpenSPCoop2Message aMsg,boolean readQualifiedAttribute, IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		this(state,aMsg,Configurazione.getLibraryLog(),readQualifiedAttribute, protocolFactory);
 	}
-	public ValidazioneSintattica(IState state,OpenSPCoop2Message aMsg, IProtocolFactory protocolFactory) throws ProtocolException {
+	public ValidazioneSintattica(IState state,OpenSPCoop2Message aMsg, IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		this(state,aMsg,Configurazione.getLibraryLog(),false, protocolFactory);
 	}
-	public ValidazioneSintattica(IState state,OpenSPCoop2Message aMsg,Logger alog, IProtocolFactory protocolFactory) throws ProtocolException {
+	public ValidazioneSintattica(IState state,OpenSPCoop2Message aMsg,Logger alog, IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		this(state,aMsg,alog,false, protocolFactory);
 	}
 	
@@ -125,13 +125,13 @@ public class ValidazioneSintattica {
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public ValidazioneSintattica(IState state,OpenSPCoop2Message aMsg, Busta busta, Boolean isRichiesta, Logger alog, boolean readQualifiedAttribute, IProtocolFactory protocolFactory) throws ProtocolException {
+	public ValidazioneSintattica(IState state,OpenSPCoop2Message aMsg, Busta busta, Boolean isRichiesta, Logger alog, boolean readQualifiedAttribute, IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		this(state,aMsg, alog, readQualifiedAttribute, protocolFactory);
 		this.busta = busta;
 		this.isRichiesta = isRichiesta;
 	}
 	
-	public ValidazioneSintattica(IState state,OpenSPCoop2Message aMsg,Logger alog,boolean readQualifiedAttribute, IProtocolFactory protocolFactory) throws ProtocolException {
+	public ValidazioneSintattica(IState state,OpenSPCoop2Message aMsg,Logger alog,boolean readQualifiedAttribute, IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		this.state = state;
 		this.msg = aMsg;
 		if(alog!=null){
@@ -150,13 +150,13 @@ public class ValidazioneSintattica {
 		if(update){
 			this.msg = msg;
 			if(this.headerProtocollo!=null){
-				org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica validazioneSintattica = this.protocolFactory.createValidazioneSintattica();
-				this.headerProtocollo = validazioneSintattica.getHeaderProtocollo_senzaControlli(this.msg);
+				org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica<?> validazioneSintattica = this.protocolFactory.createValidazioneSintattica();
+				this.headerProtocollo = validazioneSintattica.getBustaRawContent_senzaControlli(this.msg);
 			}
 		}
 	}
 
-	public IProtocolFactory getProtocolFactory(){
+	public IProtocolFactory<?> getProtocolFactory(){
 		return this.protocolFactory;
 	}
 	
@@ -176,7 +176,7 @@ public class ValidazioneSintattica {
 	 * @return Eccezioni riscontrate nella busta.
 	 * 
 	 */
-	public java.util.Vector<Eccezione> getEccezioniValidazione(){
+	public java.util.List<Eccezione> getEccezioniValidazione(){
 		return this.erroriValidazione;
 	}
 	/**
@@ -185,7 +185,7 @@ public class ValidazioneSintattica {
 	 * @return Eccezioni riscontrate nella busta.
 	 * 
 	 */
-	public java.util.Vector<Eccezione> getEccezioniProcessamento(){
+	public java.util.List<Eccezione> getEccezioniProcessamento(){
 		return this.erroriProcessamento;
 	}
 
@@ -195,7 +195,7 @@ public class ValidazioneSintattica {
 	 * @return Eccezioni riscontrate nella busta.
 	 * 
 	 */
-	public java.util.Vector<Eccezione> getErroriTrovatiSullaListaEccezioni(){
+	public java.util.List<Eccezione> getErroriTrovatiSullaListaEccezioni(){
 		return this.errorsTrovatiSullaListaEccezioni;
 	}
 
@@ -224,8 +224,8 @@ public class ValidazioneSintattica {
 		// Recupero l'oggetto Busta
 		
 		
-		ValidazioneSintatticaResult result = null;
-		org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica validazioneSintattica = null;
+		ValidazioneSintatticaResult<?> result = null;
+		org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica<?> validazioneSintattica = null;
 		try {
 			validazioneSintattica = this.protocolFactory.createValidazioneSintattica();
 			ProprietaValidazioneErrori pValidazioneErrori = new ProprietaValidazioneErrori();
@@ -251,20 +251,18 @@ public class ValidazioneSintattica {
 				
 				this.erroriProcessamento = result.getErroriProcessamento();
 				if(this.erroriProcessamento == null) 
-					this.erroriProcessamento = new java.util.Vector<Eccezione>();
+					this.erroriProcessamento = new java.util.ArrayList<Eccezione>();
 				
 				this.erroriValidazione = result.getErroriValidazione();
 				if(this.erroriValidazione == null) 
-					this.erroriValidazione = new java.util.Vector<Eccezione>();
+					this.erroriValidazione = new java.util.ArrayList<Eccezione>();
 				
 				this.errorsTrovatiSullaListaEccezioni = result.getErrorsTrovatiSullaListaEccezioni();
 				if(this.errorsTrovatiSullaListaEccezioni == null) 
-					this.errorsTrovatiSullaListaEccezioni = new java.util.Vector<Eccezione>();
+					this.errorsTrovatiSullaListaEccezioni = new java.util.ArrayList<Eccezione>();
 				
-				if(result.getProtocolElement() != null)
-					this.headerProtocollo = result.getProtocolElement();
-				else
-					this.headerProtocollo = validazioneSintattica.getHeaderProtocollo(this.busta);
+				if(result.getBustaRawContent() != null)
+					this.headerProtocollo = result.getBustaRawContent();
 				
 				return result.isValido();
 			}
@@ -295,7 +293,7 @@ public class ValidazioneSintattica {
 	 * 
 	 */
 	public void validazioneFault(OpenSPCoop2Message msg) throws ProtocolException{
-		ValidazioneSintatticaResult result = this.protocolFactory.createValidazioneSintattica().validazioneFault(msg);
+		ValidazioneSintatticaResult<?> result = this.protocolFactory.createValidazioneSintattica().validazioneFault(msg);
 		if(result != null){
 			if(result.getBusta() != null)
 				this.busta = result.getBusta();
@@ -306,16 +304,16 @@ public class ValidazioneSintattica {
 			
 			this.erroriProcessamento = result.getErroriProcessamento();
 			if(this.erroriProcessamento == null) 
-				this.erroriProcessamento = new java.util.Vector<Eccezione>();
+				this.erroriProcessamento = new java.util.ArrayList<Eccezione>();
 			this.erroriValidazione = result.getErroriValidazione();
 			if(this.erroriValidazione == null) 
-				this.erroriValidazione = new java.util.Vector<Eccezione>();
+				this.erroriValidazione = new java.util.ArrayList<Eccezione>();
 			this.errorsTrovatiSullaListaEccezioni = result.getErrorsTrovatiSullaListaEccezioni();
 			if(this.errorsTrovatiSullaListaEccezioni == null) 
-				this.errorsTrovatiSullaListaEccezioni = new java.util.Vector<Eccezione>();
+				this.errorsTrovatiSullaListaEccezioni = new java.util.ArrayList<Eccezione>();
 
-			if(result.getProtocolElement() != null)
-				this.headerProtocollo = result.getProtocolElement();
+			if(result.getBustaRawContent() != null)
+				this.headerProtocollo = result.getBustaRawContent();
 		}
 	}
 
@@ -327,7 +325,7 @@ public class ValidazioneSintattica {
 	 * 
 	 */
 	public void validazioneManifestAttachments(OpenSPCoop2Message msg,ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{
-		ValidazioneSintatticaResult result = this.protocolFactory.createValidazioneSintattica().validazioneManifestAttachments(msg, proprietaManifestAttachments);
+		ValidazioneSintatticaResult<?> result = this.protocolFactory.createValidazioneSintattica().validazioneManifestAttachments(msg, proprietaManifestAttachments);
 		if(result != null){
 			if(result.getBusta() != null)
 				this.busta = result.getBusta();
@@ -338,21 +336,21 @@ public class ValidazioneSintattica {
 			
 			this.erroriProcessamento = result.getErroriProcessamento();
 			if(this.erroriProcessamento == null) 
-				this.erroriProcessamento = new java.util.Vector<Eccezione>();
+				this.erroriProcessamento = new java.util.ArrayList<Eccezione>();
 			this.erroriValidazione = result.getErroriValidazione();
 			if(this.erroriValidazione == null) 
-				this.erroriValidazione = new java.util.Vector<Eccezione>();
+				this.erroriValidazione = new java.util.ArrayList<Eccezione>();
 			this.errorsTrovatiSullaListaEccezioni = result.getErrorsTrovatiSullaListaEccezioni();
 			if(this.errorsTrovatiSullaListaEccezioni == null) 
-				this.errorsTrovatiSullaListaEccezioni = new java.util.Vector<Eccezione>();
+				this.errorsTrovatiSullaListaEccezioni = new java.util.ArrayList<Eccezione>();
 	
-			if(result.getProtocolElement() != null)
-				this.headerProtocollo = result.getProtocolElement();
+			if(result.getBustaRawContent() != null)
+				this.headerProtocollo = result.getBustaRawContent();
 		}
 	}
 	
-	public SOAPElement getHeaderProtocollo_senzaControlli() throws ProtocolException{
-		return this.protocolFactory.createValidazioneSintattica().getHeaderProtocollo_senzaControlli(this.msg);
+	public BustaRawContent<?> getHeaderProtocollo_senzaControlli() throws ProtocolException{
+		return this.protocolFactory.createValidazioneSintattica().getBustaRawContent_senzaControlli(this.msg);
 	}
 
 }

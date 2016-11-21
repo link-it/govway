@@ -68,19 +68,19 @@ public class Eccezione implements java.io.Serializable{
 		this.eccezione = new org.openspcoop2.core.tracciamento.Eccezione();
 	}
 	
-    public Eccezione(String codiceEcc, String descrizione, boolean isErroreValidazione, IProtocolFactory protocolFactory) throws ProtocolException{
+    public Eccezione(String codiceEcc, String descrizione, boolean isErroreValidazione, IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		this(new ErroreCooperazione(descrizione,CodiceErroreCooperazione.UNKNOWN), isErroreValidazione, null, protocolFactory); // codice lo imposto subito dopo
 		this.setCodiceEccezioneValue(codiceEcc);
 		this.setCodiceEccezione(protocolFactory.createTraduttore().toCodiceErroreCooperazione(codiceEcc));
 		this.setDescrizione(descrizione); // in modo che non venga tradotto alla chiamata della get
 	}
-    public Eccezione(CodiceErroreCooperazione codiceEcc, String descrizione, boolean isErroreValidazione, IProtocolFactory protocolFactory) throws ProtocolException{
+    public Eccezione(CodiceErroreCooperazione codiceEcc, String descrizione, boolean isErroreValidazione, IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		this(new ErroreCooperazione(descrizione,codiceEcc), isErroreValidazione, null, protocolFactory);
 		this.setDescrizione(descrizione); // in modo che non venga tradotto alla chiamata della get
 	}
     
     /* Metodi da utilizzare per fare attuare la traduzione della descrizione */
-	public Eccezione(ErroreCooperazione errore,boolean isErroreValidazione, String modulo,IProtocolFactory protocolFactory) throws ProtocolException{
+	public Eccezione(ErroreCooperazione errore,boolean isErroreValidazione, String modulo,IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		this.eccezione = new org.openspcoop2.core.tracciamento.Eccezione();
 		if(isErroreValidazione){
 			this.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
@@ -129,18 +129,18 @@ public class Eccezione implements java.io.Serializable{
 		Eccezione ecc = new Eccezione();
 		return ecc;
 	}
-	public static Eccezione getEccezioneValidazione(CodiceErroreCooperazione codiceEcc, String descrizione, IProtocolFactory protocolFactory) throws ProtocolException{
+	public static Eccezione getEccezioneValidazione(CodiceErroreCooperazione codiceEcc, String descrizione, IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		return new Eccezione(codiceEcc,descrizione, true, protocolFactory);
 	}
-	public static Eccezione getEccezioneProcessamento(CodiceErroreCooperazione codiceEcc, String descrizione, IProtocolFactory protocolFactory) throws ProtocolException{
+	public static Eccezione getEccezioneProcessamento(CodiceErroreCooperazione codiceEcc, String descrizione, IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		return new Eccezione(codiceEcc,descrizione, false, protocolFactory);
 	}
 	
 	/* Metodi da utilizzare per fare attuare la traduzione della descrizione */
-	public static Eccezione getEccezioneValidazione(ErroreCooperazione errore, IProtocolFactory protocolFactory) throws ProtocolException{
+	public static Eccezione getEccezioneValidazione(ErroreCooperazione errore, IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		return new Eccezione(errore, true, null, protocolFactory);
 	}
-	public static Eccezione getEccezioneProcessamento(ErroreCooperazione errore, IProtocolFactory protocolFactory) throws ProtocolException{
+	public static Eccezione getEccezioneProcessamento(ErroreCooperazione errore, IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		return new Eccezione(errore, false, null, protocolFactory);
 	}
 	
@@ -175,7 +175,7 @@ public class Eccezione implements java.io.Serializable{
         }
     }
     
-    public String getCodiceEccezioneValue(IProtocolFactory protocolFactory) throws ProtocolException {
+    public String getCodiceEccezioneValue(IProtocolFactory<?> protocolFactory) throws ProtocolException {
     	String codiceEccezioneValue = null;
     	if(this.eccezione.getCodice()!=null){
     		codiceEccezioneValue = this.eccezione.getCodice().getBase();
@@ -233,7 +233,7 @@ public class Eccezione implements java.io.Serializable{
 	
 	/* --- DESCRIZIONE ECCEZIONE [Wrapper] --- */
 	
-	public String getDescrizione(IProtocolFactory protocolFactory) throws ProtocolException {
+	public String getDescrizione(IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		String descrizione = this.eccezione.getDescrizione();
         return descrizione == null ? protocolFactory.createTraduttore().toString(this.getErrore()) : descrizione;
     }
@@ -297,7 +297,7 @@ public class Eccezione implements java.io.Serializable{
         }
     }
     
-    public String getContestoCodificaValue(IProtocolFactory protocolFactory) throws ProtocolException {
+    public String getContestoCodificaValue(IProtocolFactory<?> protocolFactory) throws ProtocolException {
     	String contestoCodificaValue = null;
     	if(this.eccezione.getContestoCodifica()!=null){
     		contestoCodificaValue = this.eccezione.getContestoCodifica().getBase();
@@ -386,7 +386,7 @@ public class Eccezione implements java.io.Serializable{
         }
     }
     
-    public String getRilevanzaValue(IProtocolFactory protocolFactory) throws ProtocolException {
+    public String getRilevanzaValue(IProtocolFactory<?> protocolFactory) throws ProtocolException {
     	String rilevanzaValue = null;
     	if(this.eccezione.getRilevanza()!=null){
     		rilevanzaValue = this.eccezione.getRilevanza().getBase();
@@ -444,7 +444,7 @@ public class Eccezione implements java.io.Serializable{
 		throw new NotImplementedException("Use with protocolFactory");
 	}
 	
-	public String toString(IProtocolFactory protocolFactory) throws ProtocolException{
+	public String toString(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		StringBuffer bf = new StringBuffer();
 		bf.append("Eccezione");
 		

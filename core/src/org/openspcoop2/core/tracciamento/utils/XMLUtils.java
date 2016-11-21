@@ -50,7 +50,9 @@ import org.openspcoop2.core.tracciamento.Traccia;
 import org.openspcoop2.core.tracciamento.Trasmissione;
 import org.openspcoop2.core.tracciamento.Trasmissioni;
 import org.openspcoop2.core.tracciamento.constants.CostantiTracciamento;
+import org.openspcoop2.core.tracciamento.utils.serializer.JsonDeserializer;
 import org.openspcoop2.message.xml.ValidatoreXSD;
+import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -413,7 +415,15 @@ public class XMLUtils  {
 		}
 	}
 
-	
+
+	public static Traccia getTracciaFromJson(Logger log,InputStream is) throws XMLUtilsException{
+		try{			
+			JsonDeserializer deserializer = new JsonDeserializer();
+			return deserializer.readTraccia(is);
+		}catch(Exception e){
+			throw new XMLUtilsException(e.getMessage(),e);
+		}
+	}
 	
 	
 	
@@ -468,6 +478,18 @@ public class XMLUtils  {
 		}
 	}
 	
+	public static String generateTracciaAsJson(Traccia traccia) throws XMLUtilsException{
+		try{
+			StringBuffer risultatoValidazione = new StringBuffer();
+			if(XMLUtils.validate(traccia, risultatoValidazione)==false){
+				throw new Exception(risultatoValidazione.toString());
+			}
+			return XMLUtils.generateTracciaAsJson_engine(traccia);
+		}catch(Exception e){
+			throw new XMLUtilsException(e.getMessage(),e);
+		}
+	}
+	
 	private static byte[] generateTraccia_engine(Traccia traccia) throws XMLUtilsException{
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -479,6 +501,17 @@ public class XMLUtils  {
 		}
 	}
 	
+	private static String generateTracciaAsJson_engine(Traccia traccia) throws XMLUtilsException{
+		try{
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			traccia.writeTo(bout, WriteToSerializerType.JSON);
+			bout.flush();
+			bout.close();
+			return bout.toString();
+		}catch(Exception e){
+			throw new XMLUtilsException(e.getMessage(),e);
+		}
+	}
 	
 	
 	

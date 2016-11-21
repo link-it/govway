@@ -26,7 +26,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.IComponentFactory;
 
 
 /**
@@ -37,21 +37,15 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
  * @version $Rev$, $Date$
  */
 
-public interface IValidazioneDocumenti {
+public interface IValidazioneDocumenti extends IComponentFactory {
 
 	/**
-	 * Recupera l'implementazione della factory per il protocollo in uso
-	 * @return protocolFactory in uso.
-	 */
-	public IProtocolFactory getProtocolFactory();
-
-	/**
-	 * Effettua la validazione dei documenti che compongono l'interfaccia WSDL dell'accordo di servizio parte comune
+	 * Effettua la validazione dei documenti che compongono la specifica di interfaccia presente all'interno dell'accordo di servizio parte comune
 	 * 
 	 * @param accordoServizioParteComune accordo di servizio parte comune
 	 * @return esito
 	 */
-	public ValidazioneResult validaInterfacciaWsdlParteComune(AccordoServizioParteComune accordoServizioParteComune);
+	public ValidazioneResult validaSpecificaInterfaccia(AccordoServizioParteComune accordoServizioParteComune);
 	
 	/**
 	 * Effettua la validazione dei documenti che compongono la specifica di conversazione dell'accordo di servizio parte comune
@@ -62,23 +56,23 @@ public interface IValidazioneDocumenti {
 	public ValidazioneResult validaSpecificaConversazione(AccordoServizioParteComune accordoServizioParteComune);
 	
 	/**
-	 * Effettua la validazione dei documenti che compongono l'interfaccia WSDL dell'accordo di servizio parte specifica
+	 * Effettua la validazione dei documenti che compongono la specifica di interfaccia presente all'interno dell'accordo di servizio parte specifica
 	 * 
 	 * @param accordoServizioParteSpecifica accordo di servizio parte specifica
 	 * @param accordoServizioParteComune accordo di servizio parte comune
 	 * @return esito
 	 */
-	public ValidazioneResult validaInterfacciaWsdlParteSpecifica(AccordoServizioParteSpecifica accordoServizioParteSpecifica, AccordoServizioParteComune accordoServizioParteComune);
+	public ValidazioneResult validaSpecificaInterfaccia(AccordoServizioParteSpecifica accordoServizioParteSpecifica, AccordoServizioParteComune accordoServizioParteComune);
 	
 	/**
-	 * Effettua la validazione dei documenti che compongono l'interfaccia WSDL del fruizione di un servizio
+	 * Effettua la validazione dei documenti che compongono la specifica di interfaccia presente all'interno di una fruizione di un accordo di servizio parte specifica
 	 * 
 	 * @param fruitore fruitore
 	 * @param accordoServizioParteSpecifica accordo di servizio parte specifica
 	 * @param accordoServizioParteComune accordo di servizio parte comune
 	 * @return esito
 	 */
-	public ValidazioneResult validaInterfacciaWsdlParteSpecifica(Fruitore fruitore, AccordoServizioParteSpecifica accordoServizioParteSpecifica, AccordoServizioParteComune accordoServizioParteComune);
+	public ValidazioneResult validaSpecificaInterfaccia(Fruitore fruitore, AccordoServizioParteSpecifica accordoServizioParteSpecifica, AccordoServizioParteComune accordoServizioParteComune);
 	
 	
 	/**

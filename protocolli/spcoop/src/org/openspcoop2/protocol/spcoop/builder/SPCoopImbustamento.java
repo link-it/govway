@@ -60,9 +60,11 @@ import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
+import org.openspcoop2.protocol.spcoop.SPCoopBustaRawContent;
 import org.openspcoop2.protocol.spcoop.config.SPCoopProperties;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.utils.SPCoopUtils;
@@ -93,7 +95,7 @@ import org.w3c.dom.Node;
 
 public class SPCoopImbustamento {
 	
-	private IProtocolFactory factory;
+	private IProtocolFactory<SOAPHeaderElement> factory;
 	private Logger log;
 	private SPCoopProperties spcoopProperties = null;
 	@SuppressWarnings("unused")
@@ -105,7 +107,7 @@ public class SPCoopImbustamento {
 	private ITraduttore traduttore = null;
 	private IProtocolManager protocolManager = null;
 
-	public SPCoopImbustamento(IProtocolFactory factory) throws ProtocolException{
+	public SPCoopImbustamento(IProtocolFactory<SOAPHeaderElement> factory) throws ProtocolException{
 		this.factory = factory;
 		this.log = factory.getLogger();
 		this.spcoopProperties = SPCoopProperties.getInstance(this.log);
@@ -123,7 +125,7 @@ public class SPCoopImbustamento {
 		this.protocolManager = this.factory.createProtocolManager();
 	}
 	
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<SOAPHeaderElement> getProtocolFactory() {
 		return this.factory;
 	}  
 	
@@ -177,11 +179,11 @@ public class SPCoopImbustamento {
 	 *
 	 * @param idSoggetto identificativo del soggetto
 	 * @param idTransazione identificativo della transazione
-	 * @param isRichiesta Indicazione se si tratta della richiesta
+	 * @param ruoloMessaggio Indicazione se si tratta della richiesta
 	 * @return un oggetto String contenente l'identificativo secondo specifica eGov.
 	 * 
 	 */
-	public String buildID(IState state, IDSoggetto idSoggetto, String idTransazione, Boolean isRichiesta) throws ProtocolException {
+	public String buildID(IState state, IDSoggetto idSoggetto, String idTransazione, RuoloMessaggio ruoloMessaggio) throws ProtocolException {
 
 		
 		String idPD = idSoggetto.getCodicePorta();
@@ -291,13 +293,13 @@ public class SPCoopImbustamento {
 	 * @return il SOAPElement 'eGov_IT:Intestazione'  se la costruzione ha successo, null altrimenti.
 	 * 
 	 */
-	public SOAPElement build_eGovHeader(OpenSPCoop2Message msg, Busta eGov) throws ProtocolException{ 
+	public SOAPHeaderElement build_eGovHeader(OpenSPCoop2Message msg, Busta eGov) throws ProtocolException{ 
 		return build_eGovHeader(msg,eGov, true, false);
 	}
-	public SOAPElement build_eGovHeader(OpenSPCoop2Message msg,Busta eGov,boolean verificaPresenzaElementiObbligatori) throws ProtocolException{ 
+	public SOAPHeaderElement build_eGovHeader(OpenSPCoop2Message msg,Busta eGov,boolean verificaPresenzaElementiObbligatori) throws ProtocolException{ 
 		return build_eGovHeader(msg,eGov, verificaPresenzaElementiObbligatori, false);
 	}
-	public SOAPElement build_eGovHeader(OpenSPCoop2Message msg,Busta eGov,boolean verificaPresenzaElementiObbligatori,boolean forzaValidazioneXSDElementiDisabilitata) throws ProtocolException{ 
+	public SOAPHeaderElement build_eGovHeader(OpenSPCoop2Message msg,Busta eGov,boolean verificaPresenzaElementiObbligatori,boolean forzaValidazioneXSDElementiDisabilitata) throws ProtocolException{ 
 		try{
 
 			OpenSPCoop2SoapMessage soapMsg = null;
@@ -791,7 +793,7 @@ public class SPCoopImbustamento {
 	 * @param isRichiesta Tipo di Busta
 	 * 
 	 */
-	public OpenSPCoop2Message build_eGovManifest(OpenSPCoop2Message msg,boolean isRichiesta,
+	public OpenSPCoop2Message build_eGovManifest(OpenSPCoop2Message msg,RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{ 
 		try{
 
@@ -830,7 +832,7 @@ public class SPCoopImbustamento {
 				
 				if(attach==1 && proprietaManifestAttachments.isScartaBody()){
 					
-					if(isRichiesta){
+					if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)){
 						riferimento.setAttribute("role",this.spcoopProperties.getRoleRichiestaManifest()); // xsd:string
 					}
 					else{
@@ -855,7 +857,7 @@ public class SPCoopImbustamento {
 				//	titolo.setValue(fileName); // xsd:string
 				//else
 				if(attach==1 && proprietaManifestAttachments.isScartaBody()){
-					if(isRichiesta)
+					if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio))
 						titolo.setValue(this.spcoopProperties.getRoleRichiestaManifest()); // xsd:string
 					else
 						titolo.setValue(this.spcoopProperties.getRoleRispostaManifest()); // xsd:string
@@ -912,7 +914,7 @@ public class SPCoopImbustamento {
 				SOAPElement riferimento = descrizioneMessaggio.addChildElement("Riferimento",SPCoopCostanti.PREFIX_EGOV,SPCoopCostanti.NAMESPACE_EGOV);
 				riferimento.setAttribute("href","cid:" + ap.getContentId()); // xsd:anyURI
 				//riferimento.setAttribute("href",ap.getContentLocation()); // xsd:anyURI // Test Sbustamento con ContentLocation
-				if(isRichiesta){
+				if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)){
 					riferimento.setAttribute("role",this.spcoopProperties.getRoleRichiestaManifest()); // xsd:string
 				}
 				else{
@@ -928,7 +930,7 @@ public class SPCoopImbustamento {
 				// Costruzione Titolo
 				SOAPElement titolo = riferimento.addChildElement("Titolo",SPCoopCostanti.PREFIX_EGOV,SPCoopCostanti.NAMESPACE_EGOV);
 				titolo.setAttribute("Lingua","it"); //xsd:language
-				if(isRichiesta)
+				if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio))
 					titolo.setValue(this.spcoopProperties.getRoleRichiestaManifest()); // xsd:string
 				else
 					titolo.setValue(this.spcoopProperties.getRoleRispostaManifest()); // xsd:string
@@ -956,7 +958,7 @@ public class SPCoopImbustamento {
 	 * 
 	 */
 	public void imbustamentoEGov(OpenSPCoop2Message msg,Busta busta,ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{	
-		this.imbustamentoEGov(msg, busta, false, proprietaManifestAttachments);
+		this.imbustamentoEGov(msg, busta, RuoloMessaggio.RISPOSTA, proprietaManifestAttachments);
 	}
 
 
@@ -968,8 +970,8 @@ public class SPCoopImbustamento {
 	 * @param isRichiesta Tipo di Busta
 	 * 
 	 */
-	public SOAPElement imbustamentoEGov(OpenSPCoop2Message msg,Busta busta,
-			boolean isRichiesta,
+	public SOAPHeaderElement imbustamentoEGov(OpenSPCoop2Message msg,Busta busta,
+			RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{	
 
 		try{
@@ -977,7 +979,7 @@ public class SPCoopImbustamento {
 			Utilities.printFreeMemory("Imbustamento - Creazione header eGov");
 			SOAPHeaderElement headerEGovElement = (SOAPHeaderElement) this.build_eGovHeader(msg, busta);
 			Utilities.printFreeMemory("Imbustamento - imbustamento");
-			this.imbustamentoEGov(msg, headerEGovElement, isRichiesta, proprietaManifestAttachments);
+			this.imbustamentoEGov(msg, headerEGovElement, ruoloMessaggio, proprietaManifestAttachments);
 			return headerEGovElement;
 		}catch(Exception e){
 			this.log.error("ImbustamentoEGov non riuscito: "+e.getMessage(),e);
@@ -993,8 +995,8 @@ public class SPCoopImbustamento {
 	 * @param isRichiesta Tipo di Busta
 	 * 
 	 */
-	public SOAPElement imbustamentoEGov(OpenSPCoop2Message msg, SOAPHeaderElement headerEGovElement,
-			boolean isRichiesta,
+	public SOAPHeaderElement imbustamentoEGov(OpenSPCoop2Message msg, SOAPHeaderElement headerEGovElement,
+			RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{	
 
 		try{
@@ -1011,7 +1013,7 @@ public class SPCoopImbustamento {
 			
 			if (proprietaManifestAttachments!=null && proprietaManifestAttachments.isGestioneManifest() && soapMsg.countAttachments()>0) {
 				Utilities.printFreeMemory("Imbustamento - Gestione Manifest");
-				this.build_eGovManifest(msg,isRichiesta,proprietaManifestAttachments);
+				this.build_eGovManifest(msg,ruoloMessaggio,proprietaManifestAttachments);
 			}
 			
 			//System.out.println("MSG:");
@@ -1069,12 +1071,16 @@ public class SPCoopImbustamento {
 	}
 
 
-	public SOAPElement addTrasmissione(OpenSPCoop2Message message,Trasmissione trasmissione,boolean readQualifiedAttribute)throws ProtocolException{
+	public SOAPHeaderElement addTrasmissione(OpenSPCoop2Message message,Trasmissione trasmissione,boolean readQualifiedAttribute)throws ProtocolException{
 		SOAPHeaderElement eGovHeaderOLD = null;
 		SOAPHeaderElement eGovHeaderNEW = null;
 		try{
 			
-			eGovHeaderOLD = this.validazioneSintattica.getHeaderEGov(message.castAsSoap(),readQualifiedAttribute);
+			SPCoopBustaRawContent bustaElement = this.validazioneSintattica.getHeaderEGov(message.castAsSoap(),readQualifiedAttribute);
+			if(bustaElement==null){
+				throw new ProtocolException("Header eGov non esistente");
+			}
+			eGovHeaderOLD = bustaElement.getElement();
 			if(eGovHeaderOLD==null){
 				throw new ProtocolException("Header eGov non esistente");
 			}
@@ -1132,7 +1138,7 @@ public class SPCoopImbustamento {
 			soapMsg.getSOAPHeader().removeChild(eGovHeaderOLD);
 
 			// Imbustamento nuovo header
-			return this.imbustamentoEGov(message, eGovHeaderNEW, false, null);
+			return this.imbustamentoEGov(message, eGovHeaderNEW, RuoloMessaggio.RISPOSTA, null);
 
 		} catch(Exception e) {
 			this.log.error("addTrasmissione non riuscita: "+e.getMessage(),e);
@@ -1879,8 +1885,8 @@ public class SPCoopImbustamento {
 
 	
 
-	public SOAPElement imbustamento(OpenSPCoop2Message msg, Busta busta,
-			boolean isRichiesta,
+	public SOAPHeaderElement imbustamento(OpenSPCoop2Message msg, Busta busta,
+			RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments)
 			throws ProtocolException {
 		if(busta.getProfiloDiCollaborazione() != null) {
@@ -1950,10 +1956,10 @@ public class SPCoopImbustamento {
 			 
 		}
 			
-		return this.imbustamentoEGov(msg, busta, isRichiesta, proprietaManifestAttachments);
+		return this.imbustamentoEGov(msg, busta, ruoloMessaggio, proprietaManifestAttachments);
 	}
 
-	public SOAPElement addTrasmissione(OpenSPCoop2Message message,
+	public SOAPHeaderElement addTrasmissione(OpenSPCoop2Message message,
 			Trasmissione trasmissione) throws ProtocolException {
 		return this.addTrasmissione(message, trasmissione, false);
 	}

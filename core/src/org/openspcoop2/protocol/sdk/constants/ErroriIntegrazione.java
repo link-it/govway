@@ -704,7 +704,7 @@ public enum ErroriIntegrazione {
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 	
-	public ErroreIntegrazione getErrore436_TipoSoggettoFruitoreNotSupportedByProtocol(IDSoggetto fruitore,IProtocolFactory protocolFactory) {
+	public ErroreIntegrazione getErrore436_TipoSoggettoFruitoreNotSupportedByProtocol(IDSoggetto fruitore,IProtocolFactory<?> protocolFactory) {
 		if(!this.equals(ERRORE_436_TIPO_SOGGETTO_FRUITORE_NOT_SUPPORTED_BY_PROTOCOL)){
 			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_436_TIPO_SOGGETTO_FRUITORE_NOT_SUPPORTED_BY_PROTOCOL.name());
 		}
@@ -718,7 +718,7 @@ public enum ErroriIntegrazione {
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 	
-	public ErroreIntegrazione getErrore437_TipoSoggettoErogatoreNotSupportedByProtocol(IDSoggetto erogatore,IProtocolFactory protocolFactory) {
+	public ErroreIntegrazione getErrore437_TipoSoggettoErogatoreNotSupportedByProtocol(IDSoggetto erogatore,IProtocolFactory<?> protocolFactory) {
 		if(!this.equals(ERRORE_437_TIPO_SOGGETTO_EROGATORE_NOT_SUPPORTED_BY_PROTOCOL)){
 			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_437_TIPO_SOGGETTO_EROGATORE_NOT_SUPPORTED_BY_PROTOCOL.name());
 		}
@@ -732,7 +732,7 @@ public enum ErroriIntegrazione {
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 	
-	public ErroreIntegrazione getErrore438_TipoServizioNotSupportedByProtocol(ServiceBinding serviceBinding, IDServizio servizio,IProtocolFactory protocolFactory) {
+	public ErroreIntegrazione getErrore438_TipoServizioNotSupportedByProtocol(ServiceBinding serviceBinding, IDServizio servizio,IProtocolFactory<?> protocolFactory) {
 		if(!this.equals(ERRORE_438_TIPO_SERVIZIO_NOT_SUPPORTED_BY_PROTOCOL)){
 			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_438_TIPO_SERVIZIO_NOT_SUPPORTED_BY_PROTOCOL.name());
 		}
@@ -746,7 +746,7 @@ public enum ErroriIntegrazione {
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 	
-	public ErroreIntegrazione getErrore439_FunzionalitaNotSupportedByProtocol(String msgErrore,IProtocolFactory protocolFactory) {
+	public ErroreIntegrazione getErrore439_FunzionalitaNotSupportedByProtocol(String msgErrore,IProtocolFactory<?> protocolFactory) {
 		if(!this.equals(ERRORE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL)){
 			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL.name());
 		}

@@ -236,7 +236,7 @@ public class RicezioneContenutiApplicativiService {
 		
 				
 		/* --------------- ProtocolFactory ----------------------- */
-		IProtocolFactory protocolFactory = null;
+		IProtocolFactory<?> protocolFactory = null;
 
 		
 		/* ------------  Lettura parametri della richiesta ------------- */

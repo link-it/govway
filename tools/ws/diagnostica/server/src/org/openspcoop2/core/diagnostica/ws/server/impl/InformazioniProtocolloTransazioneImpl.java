@@ -295,7 +295,7 @@ public abstract class InformazioniProtocolloTransazioneImpl extends BaseImpl  im
 			if(info.getProtocollo().sizeProprietaList()>0){
 				for (int i = 0; i < info.getProtocollo().sizeProprietaList(); i++) {
 					Proprieta p = info.getProtocollo().getProprieta(i);
-					if(org.openspcoop2.protocol.basic.diagnostica.DriverMsgDiagnostici.IDDIAGNOSTICI.equals(p.getNome())){
+					if(org.openspcoop2.protocol.basic.diagnostica.DiagnosticDriver.IDDIAGNOSTICI.equals(p.getNome())){
 						info.getProtocollo().removeProprieta(i);
 						break;
 					}

@@ -54,13 +54,13 @@ import org.openspcoop2.utils.transport.TransportRequestContext;
  */
 public class BasicConfiguration implements org.openspcoop2.protocol.sdk.config.IProtocolConfiguration {
 
-	private IProtocolFactory factory;
+	private IProtocolFactory<?> factory;
 	@SuppressWarnings("unused")
 	private Logger log;
 	private Registry registroManifest;
 	private Openspcoop2 manifest;
 
-	public BasicConfiguration(IProtocolFactory factory) throws ProtocolException {
+	public BasicConfiguration(IProtocolFactory<?> factory) throws ProtocolException {
 		this.factory = factory;
 		this.log = this.factory.getLogger();
 		this.manifest = this.factory.getManifest();
@@ -70,7 +70,7 @@ public class BasicConfiguration implements org.openspcoop2.protocol.sdk.config.I
 
 	
 	@Override
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.factory;
 	}
 	

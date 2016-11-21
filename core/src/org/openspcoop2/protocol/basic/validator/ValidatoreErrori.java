@@ -49,11 +49,11 @@ import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
 public class ValidatoreErrori implements org.openspcoop2.protocol.sdk.validator.IValidatoreErrori {
 
 	/** Logger utilizzato per debug. */
-	protected IProtocolFactory protocolFactory;
+	protected IProtocolFactory<?> protocolFactory;
 	private ITraduttore costanti;
 	protected Logger log = null;
 
-	public ValidatoreErrori(IProtocolFactory protocolFactory) throws ProtocolException{
+	public ValidatoreErrori(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		this.protocolFactory = protocolFactory;
 		this.costanti = protocolFactory.createTraduttore();
 		this.log = protocolFactory.getLogger();
@@ -61,7 +61,7 @@ public class ValidatoreErrori implements org.openspcoop2.protocol.sdk.validator.
 	
 
 	@Override
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}
 

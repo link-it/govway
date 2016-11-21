@@ -80,7 +80,7 @@ public class GestoreIntegrazionePDUrlBased extends AbstractCore implements IGest
 		}
 	}
 	@Override
-	public void init(PdDContext pddContext, IProtocolFactory protocolFactory,
+	public void init(PdDContext pddContext, IProtocolFactory<?> protocolFactory,
 			Object... args) {
 		super.init(pddContext, protocolFactory, args);
 		try{

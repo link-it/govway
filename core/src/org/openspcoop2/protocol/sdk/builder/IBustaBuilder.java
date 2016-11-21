@@ -25,14 +25,14 @@ package org.openspcoop2.protocol.sdk.builder;
 
 import java.util.Date;
 
-import javax.xml.soap.SOAPElement;
-
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.Busta;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.BustaRawContent;
+import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.Trasmissione;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 
 
@@ -47,20 +47,21 @@ import org.openspcoop2.protocol.sdk.state.IState;
  * @version $Rev$, $Date$
  */
 
-public interface IBustaBuilder {
-
-	public IProtocolFactory getProtocolFactory();
+public interface IBustaBuilder<BustaRawType> extends IComponentFactory {
 	
 	/**
 	 * Metodo che si occupa di costruire una stringa formata da un identificativo
 	 * conforme alla specifica del protocollo in uso.
 	 *
-	 * @param idSoggetto Soggetto per cui stiamo gestendo il messaggio.
+	 * @param state Stato delle risorse utilizzate durante la gestione dalla PdD
+	 * @param idSoggetto Soggetto che stà gestendo il messaggio
+	 * @param idTransazione Identificativo della transazione in corso sulla PdD
+	 * @param ruoloMessaggio Indicazione se l'identificativo deve essere generato per un messaggio di richiesta o risposta
 	 * @return la stringa contenente l'identificativo secondo specifica.
 	 * @throws ProtocolException
 	 */
 
-	public String newID(IState state, IDSoggetto idSoggetto, String idTransazione, Boolean isRichiesta) throws ProtocolException;
+	public String newID(IState state, IDSoggetto idSoggetto, String idTransazione, RuoloMessaggio ruoloMessaggio) throws ProtocolException;
 	
 	/**
 	 * Se l'identificativo di protocollo contiene una data, il metodo la restituisce, altrimenti ritorna null.
@@ -70,72 +71,43 @@ public interface IBustaBuilder {
 	 * @throws ProtocolException
 	 */
 	public Date extractDateFromID(String id) throws ProtocolException;
-	
+		
 	/**
-	 * Ritorna l'elemento che rappresenta la busta
-	 * 
-	 * @param busta Busta
-	 * @return elemento che rappresenta la busta
-	 * @throws ProtocolException
-	 */
-	public SOAPElement toElement(Busta busta,boolean isRichiesta) throws ProtocolException;
-	
-	/**
-	 * Ritorna la rappresentazione in String della busta
-	 * 
-	 * @param busta Busta
-	 * @return rappresentazione in String della busta
-	 * @throws ProtocolException
-	 */
-	public String toString(Busta busta,boolean isRichiesta) throws ProtocolException;
-	
-	/**
-	 * Ritorna la rappresentazione in byte[] della busta
-	 * 
-	 * @param busta Busta
-	 * @return rappresentazione in byte[] della busta
-	 * @throws ProtocolException
-	 */
-	public byte[] toByteArray(Busta busta,boolean isRichiesta) throws ProtocolException;
-	
-	/**
-	 * Modifica il messaggio applicativo inserendo i metadati di cooperazione secondo
-	 * le specifiche del protocollo in uso. 
+	 * Modifica il messaggio applicativo inserendo i metadati di cooperazione secondo le specifiche del protocollo in uso. 
 	 *  
+	 * @param state Stato delle risorse utilizzate durante la gestione dalla PdD
 	 * @param msg Messaggio in cui inserire le informazioni di cooperazione.
-	 * @param busta Busta contenente i metadati di cooperazione
-	 * @param isRichiesta Indicazione se il messaggio da modificare &egrave; di richiesta o di risposta
-	 * @param proprietaManifestAttachments Propriet&agrave; necessarie per la generazione del manifest degli attachments
-	 * @return SOAPElement header della busta
+	 * @param busta Busta contenente i metadati di cooperazione da convertire in informazione raw del protocollo
+	 * @param ruoloMessaggio Indicazione se la busta appartiene ad un messaggio di richiesta o di risposta
+	 * @param proprietaManifestAttachments Propriet&agrave; necessarie per la generazione del manifest degli attachments (se presenti e la funzionalità è abilitata e supportata dal protocollo)
+	 * @return Oggetto che contiene l'informazione raw del protocollo (es. header soap, header di trasporto o altra informazione dipendente dal protocollo)
 	 * @throws ProtocolException
 	 */
 	
-	public SOAPElement imbustamento(IState state, OpenSPCoop2Message msg, Busta busta, boolean isRichiesta, 
+	public BustaRawContent<BustaRawType> imbustamento(IState state, OpenSPCoop2Message msg, Busta busta, RuoloMessaggio ruoloMessaggio, 
 			ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException;
 
 	/**
-	 * Modifica il messaggio di cooperazione (quindi gi&agrave; imbustato) aggiungendo le informazioni di trasmissione.
+	 * Modifica il messaggio di cooperazione (gi&agrave; imbustato) aggiungendo le informazioni di trasmissione.
 	 * 
-	 * @param message Messaggio di cooperazione
+	 * @param message Messaggio di cooperazione in cui inserire le informazioni di trasmissione.
 	 * @param trasmissione Trasmissione da aggiungere
-	 * @return SOAPElement header della busta
+	 * @return Oggetto che contiene l'informazione raw del protocollo (es. header soap, header di trasporto o altra informazione dipendente dal protocollo)
 	 * @throws ProtocolException
 	 */
-	public SOAPElement addTrasmissione(OpenSPCoop2Message message, Trasmissione trasmissione) throws ProtocolException;
+	public BustaRawContent<BustaRawType> addTrasmissione(OpenSPCoop2Message message, Trasmissione trasmissione) throws ProtocolException;
 
 	/**
-	 * Rimuove le informazioni di cooperazione dal messaggio. Il messaggio cosi ottenuto 
-	 * sar&agrave; quello consegnato al servizio applicativo di destinazione.
-	 * <p>
-	 * L'elemento SOAP restituito dal metodo raccoglie i metadati di cooperazione.
-	 *  
+	 * Rimuove le informazioni di cooperazione dal messaggio. 
+	 * 
+	 * @param state Stato delle risorse utilizzate durante la gestione dalla PdD
 	 * @param msg Messaggio da cui devono essere estratte le informazioni di cooperazione.
 	 * @param busta Busta contenente i metadati di cooperazione
-	 * @param isRichiesta Indicazione se il messaggio da modificare &egrave; di richiesta o di risposta
-	 * @param proprietaManifestAttachments Indicazioni per la generazione del manifest
+	 * @param ruoloMessaggio Indicazione se la busta appartiene ad un messaggio di richiesta o di risposta
+	 * @param proprietaManifestAttachments Propriet&agrave; necessarie per la gestione del manifest degli attachments (se la funzionalità è abilitata e supportata dal protocollo)
 	 */
-	public SOAPElement sbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
-			boolean isRichiesta, ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException;
+	public BustaRawContent<BustaRawType> sbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
+			RuoloMessaggio ruoloMessaggio, ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException;
 }
 
 

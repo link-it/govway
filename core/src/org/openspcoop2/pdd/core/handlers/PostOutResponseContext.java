@@ -37,7 +37,7 @@ import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
  */
 public class PostOutResponseContext extends OutResponseContext {
 
-	public PostOutResponseContext(Logger logger,IProtocolFactory protocolFactory){
+	public PostOutResponseContext(Logger logger,IProtocolFactory<?> protocolFactory){
 		super(logger,protocolFactory);
 	}
 	

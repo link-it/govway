@@ -30,7 +30,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
-import org.openspcoop2.protocol.sdk.constants.SOAPFaultIntegrationGenericInfoMode;
+import org.openspcoop2.protocol.sdk.constants.FaultIntegrationGenericInfoMode;
 import org.openspcoop2.protocol.sdk.constants.TipoIntegrazione;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.TransportRequestContext;
@@ -47,16 +47,16 @@ import org.openspcoop2.utils.transport.TransportResponseContext;
 public class SPCoopProtocolManager implements IProtocolManager {
 	
 	protected SPCoopProperties spcoopProperties = null;
-	protected IProtocolFactory protocolFactory = null;
+	protected IProtocolFactory<?> protocolFactory = null;
 	protected Logger logger = null;
-	public SPCoopProtocolManager(IProtocolFactory protocolFactory) throws ProtocolException{
+	public SPCoopProtocolManager(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		this.protocolFactory = protocolFactory;
 		this.logger = this.protocolFactory.getLogger();
 		this.spcoopProperties = SPCoopProperties.getInstance(this.logger);
 	}
 
 	@Override
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}	
 	
@@ -120,60 +120,60 @@ public class SPCoopProtocolManager implements IProtocolManager {
 	/* *********** SOAP Fault della Porta ******************* */
 	
 	@Override
-	public boolean isGenerazioneDetailsSOAPFaultProtocollo_EccezioneValidazione(){
+	public boolean isGenerazioneDetailsFaultProtocollo_EccezioneValidazione(){
 		return this.spcoopProperties.isGenerazioneDetailsSOAPFaultProtocolValidazione();
 	}
 	
 	@Override
-	public boolean isGenerazioneDetailsSOAPFaultProtocollo_EccezioneProcessamento(){
+	public boolean isGenerazioneDetailsFaultProtocollo_EccezioneProcessamento(){
 		return this.spcoopProperties.isGenerazioneDetailsSOAPFaultProtocolProcessamento();
 	}
 		
 	@Override
-	public boolean isGenerazioneDetailsSOAPFaultProtocolloConStackTrace(){
+	public boolean isGenerazioneDetailsFaultProtocolloConStackTrace(){
 		return this.spcoopProperties.isGenerazioneDetailsSOAPFaultProtocolWithStackTrace();
 	}
 	
 	@Override
-	public boolean isGenerazioneDetailsSOAPFaultProtocolloConInformazioniGeneriche(){
+	public boolean isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche(){
 		return this.spcoopProperties.isGenerazioneDetailsSOAPFaultProtocolConInformazioniGeneriche();
 	}
 	
 	@Override
-	public boolean isGenerazioneDetailsSOAPFaultIntegratione_erroreServer(){
+	public boolean isGenerazioneDetailsFaultIntegratione_erroreServer(){
 		return this.spcoopProperties.isGenerazioneDetailsSOAPFaultIntegrationServerError();
 	}
 	
 	@Override
-	public boolean isGenerazioneDetailsSOAPFaultIntegratione_erroreClient(){
+	public boolean isGenerazioneDetailsFaultIntegratione_erroreClient(){
 		return this.spcoopProperties.isGenerazioneDetailsSOAPFaultIntegrationClientError();
 	}
 	
 	@Override
-	public boolean isGenerazioneDetailsSOAPFaultIntegrationeConStackTrace(){
+	public boolean isGenerazioneDetailsFaultIntegrationeConStackTrace(){
 		return this.spcoopProperties.isGenerazioneDetailsSOAPFaultIntegrationWithStackTrace();
 	}
 	
 	@Override
-	public SOAPFaultIntegrationGenericInfoMode getModalitaGenerazioneInformazioniGeneriche_DetailsSOAPFaultIntegrazione(){
+	public FaultIntegrationGenericInfoMode getModalitaGenerazioneInformazioniGeneriche_DetailsFaultIntegrazione(){
 		Boolean value = this.spcoopProperties.isGenerazioneDetailsSOAPFaultIntegrazionConInformazioniGeneriche();
 		if(value==null){
-			return SOAPFaultIntegrationGenericInfoMode.SERVIZIO_APPLICATIVO;
+			return FaultIntegrationGenericInfoMode.SERVIZIO_APPLICATIVO;
 		}
 		else if(value){
-			return SOAPFaultIntegrationGenericInfoMode.ABILITATO;
+			return FaultIntegrationGenericInfoMode.ABILITATO;
 		}else{
-			return SOAPFaultIntegrationGenericInfoMode.DISABILITATO;
+			return FaultIntegrationGenericInfoMode.DISABILITATO;
 		}
 	}
 	
 	@Override
-	public Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativo() {
+	public Boolean isAggiungiDetailErroreApplicativo_FaultApplicativo() {
 		return this.spcoopProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
 	}
 
 	@Override
-	public Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdD() {
+	public Boolean isAggiungiDetailErroreApplicativo_FaultPdD() {
 		return this.spcoopProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD();
 	}
 	

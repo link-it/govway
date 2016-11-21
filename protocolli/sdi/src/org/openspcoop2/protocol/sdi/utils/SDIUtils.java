@@ -182,7 +182,7 @@ public class SDIUtils {
 	}
 
 	
-	public static String getNomeFileMessaggi(IProtocolFactory factory, IState state, String nomeFileFattura,TipiMessaggi tipo) throws ProtocolException{
+	public static String getNomeFileMessaggi(IProtocolFactory<?> factory, IState state, String nomeFileFattura,TipiMessaggi tipo) throws ProtocolException{
 		// <NomeFilaFatturaRicevutoSenzaEstensione>_<TipoMessaggio>_<ProgressivoUnivoco>
 		
 		// Progressivo fileName: è relativo al file inviato
@@ -206,7 +206,7 @@ public class SDIUtils {
 		return SDIValidatoreNomeFile.getNomeFileFatturaPerMessaggi(nomeFileFattura)+"_"+tipo.name()+"_"+serialGenerator.buildID(serialGeneratorParameter)+ext;
 	}
 	
-	public static String getNomeFileFattura(IProtocolFactory factory, IState state, String idPaeseTrasmittente, String idCodiceTrasmittente, String formatoInvio) throws ProtocolException{
+	public static String getNomeFileFattura(IProtocolFactory<?> factory, IState state, String idPaeseTrasmittente, String idCodiceTrasmittente, String formatoInvio) throws ProtocolException{
 		
 		// <codice Paese>< identificativo univoco del soggetto trasmittente >_<progressivoUnicoFile>
 		

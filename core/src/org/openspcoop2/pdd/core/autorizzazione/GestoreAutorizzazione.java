@@ -287,7 +287,7 @@ public class GestoreAutorizzazione {
 	// NOTA: le chiamate ad autorizzazione per contenuto non possono essere cachete, poiche' variano sempre i contenuti.
 
     public static EsitoAutorizzazioneIntegrazione verificaAutorizzazionePortaDelegata(String tipoAutorizzazione, DatiInvocazionePortaDelegata datiInvocazione,
- 		  PdDContext pddContext,IProtocolFactory protocolFactory) throws Exception{
+ 		  PdDContext pddContext,IProtocolFactory<?> protocolFactory) throws Exception{
     	
     	checkDatiPortaDelegata(datiInvocazione);
     	
@@ -347,7 +347,7 @@ public class GestoreAutorizzazione {
     }
 	
     public static EsitoAutorizzazioneCooperazione verificaAutorizzazionePortaApplicativa(String tipoAutorizzazione, DatiInvocazionePortaApplicativa datiInvocazione,
-    		PdDContext pddContext,IProtocolFactory protocolFactory) throws Exception{
+    		PdDContext pddContext,IProtocolFactory<?> protocolFactory) throws Exception{
     	  
     	checkDatiPortaApplicativa(datiInvocazione);
     	
@@ -487,7 +487,7 @@ public class GestoreAutorizzazione {
     	return bf.toString();
     }
     
-    private static IAutorizzazionePortaDelegata newInstanceAuthPortaDelegata(String tipoAutorizzazione,PdDContext pddContext, IProtocolFactory protocolFactory) throws AutorizzazioneException{
+    private static IAutorizzazionePortaDelegata newInstanceAuthPortaDelegata(String tipoAutorizzazione,PdDContext pddContext, IProtocolFactory<?> protocolFactory) throws AutorizzazioneException{
     	String classType = null; 
 		IAutorizzazionePortaDelegata auth = null;
 		try{
@@ -501,7 +501,7 @@ public class GestoreAutorizzazione {
 		}
     }
     
-    private static IAutorizzazionePortaApplicativa newInstanceAuthPortaApplicativa(String tipoAutorizzazione,PdDContext pddContext, IProtocolFactory protocolFactory) throws AutorizzazioneException{
+    private static IAutorizzazionePortaApplicativa newInstanceAuthPortaApplicativa(String tipoAutorizzazione,PdDContext pddContext, IProtocolFactory<?> protocolFactory) throws AutorizzazioneException{
     	String classType = null; 
     	IAutorizzazionePortaApplicativa auth = null;
 		try{

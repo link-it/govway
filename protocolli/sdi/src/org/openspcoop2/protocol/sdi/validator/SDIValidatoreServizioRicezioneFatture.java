@@ -513,7 +513,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 	}
 	
 	private boolean _validazioneMetadati(byte[] metadati, SDIProperties sdiProperties, 
-			Vector<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory protocolFactory) throws Exception{
+			Vector<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
 	
 		// validazione XSD file Metadati
 		if(sdiProperties.isEnableValidazioneXsdMetadati()){
@@ -826,7 +826,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 	}
 	
 	private void _validazioneDT(byte[] xmlDoc, SDIProperties sdiProperties, 
-			Vector<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory protocolFactory) throws Exception{
+			Vector<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
 	
 		String tipoXml = "Notifica di Decorrenza Termini";
 		byte[] xml = xmlDoc;

@@ -37,7 +37,7 @@ import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiException;
 import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiNotFoundException;
 import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnostici;
 import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnosticiConPaginazione;
-import org.openspcoop2.protocol.sdk.diagnostica.IDriverMsgDiagnostici;
+import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazione;
 import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoException;
@@ -50,11 +50,11 @@ import org.openspcoop2.utils.sql.SQLQueryObjectException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
+public class DriverMsgDiagnostici implements IDiagnosticDriver {
 	
 
 	@Override
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.basicProtocolFactory;
 	}
 
@@ -68,7 +68,7 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 	
 	
 	/** Driver di base: valido per tutti i protocolli */
-	org.openspcoop2.protocol.basic.diagnostica.DriverMsgDiagnostici driverBase = null;
+	org.openspcoop2.protocol.basic.diagnostica.DiagnosticDriver driverBase = null;
 	
 	/** Factory di base */
 	private BasicProtocolFactory basicProtocolFactory;
@@ -80,7 +80,7 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 	public DriverMsgDiagnostici(String nomeDataSource, String tipoDatabase, Properties prop, Logger log) throws DriverMsgDiagnosticiException {
 		try{
 			this.basicProtocolFactory = new BasicProtocolFactory(log);
-			this.driverBase = (org.openspcoop2.protocol.basic.diagnostica.DriverMsgDiagnostici) this.basicProtocolFactory.createDriverMSGDiagnostici();
+			this.driverBase = (org.openspcoop2.protocol.basic.diagnostica.DiagnosticDriver) this.basicProtocolFactory.createDiagnosticDriver();
 			this.driverBase.init(nomeDataSource, tipoDatabase,prop,log);
 		}catch(Exception e){
 			throw new DriverMsgDiagnosticiException(e.getMessage(),e);
@@ -94,7 +94,7 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 	public DriverMsgDiagnostici(DataSource dataSourceObject, String tipoDatabase, Logger log) throws DriverMsgDiagnosticiException {
 		try{
 			this.basicProtocolFactory = new BasicProtocolFactory(log);
-			this.driverBase = (org.openspcoop2.protocol.basic.diagnostica.DriverMsgDiagnostici) this.basicProtocolFactory.createDriverMSGDiagnostici();
+			this.driverBase = (org.openspcoop2.protocol.basic.diagnostica.DiagnosticDriver) this.basicProtocolFactory.createDiagnosticDriver();
 			this.driverBase.init(dataSourceObject, tipoDatabase,log);
 		}catch(Exception e){
 			throw new DriverMsgDiagnosticiException(e.getMessage(),e);
@@ -104,7 +104,7 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 	public DriverMsgDiagnostici(Connection connection, String tipoDatabase, Logger log) throws DriverMsgDiagnosticiException {
 		try{
 			this.basicProtocolFactory = new BasicProtocolFactory(log);
-			this.driverBase = (org.openspcoop2.protocol.basic.diagnostica.DriverMsgDiagnostici) this.basicProtocolFactory.createDriverMSGDiagnostici();
+			this.driverBase = (org.openspcoop2.protocol.basic.diagnostica.DiagnosticDriver) this.basicProtocolFactory.createDiagnosticDriver();
 			this.driverBase.init(connection, tipoDatabase,log);
 		}catch(Exception e){
 			throw new DriverMsgDiagnosticiException(e.getMessage(),e);
@@ -115,7 +115,7 @@ public class DriverMsgDiagnostici implements IDriverMsgDiagnostici {
 			String username,String password, String tipoDatabase, Logger log) throws DriverMsgDiagnosticiException {
 		try{
 			this.basicProtocolFactory = new BasicProtocolFactory(log);
-			this.driverBase = (org.openspcoop2.protocol.basic.diagnostica.DriverMsgDiagnostici) this.basicProtocolFactory.createDriverMSGDiagnostici();
+			this.driverBase = (org.openspcoop2.protocol.basic.diagnostica.DiagnosticDriver) this.basicProtocolFactory.createDiagnosticDriver();
 			this.driverBase.init(urlJDBC,driverJDBC,username,password,tipoDatabase,log);
 		}catch(Exception e){
 			throw new DriverMsgDiagnosticiException(e.getMessage(),e);

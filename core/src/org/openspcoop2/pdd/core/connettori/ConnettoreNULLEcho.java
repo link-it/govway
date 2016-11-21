@@ -28,8 +28,6 @@ import java.io.ByteArrayInputStream;
 import java.sql.Connection;
 import java.util.Vector;
 
-import javax.xml.soap.SOAPElement;
-
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -48,12 +46,14 @@ import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
 import org.openspcoop2.protocol.engine.validator.Validatore;
 import org.openspcoop2.protocol.engine.validator.ValidazioneSintattica;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Integrazione;
 import org.openspcoop2.protocol.sdk.Riscontro;
 import org.openspcoop2.protocol.sdk.Trasmissione;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.state.StatefulMessage;
 import org.openspcoop2.protocol.sdk.validator.IValidatoreErrori;
@@ -126,10 +126,10 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 		ValidazioneSintattica validatoreSintattico = null;
 		Validatore validatoreProtocollo = null;
 		@SuppressWarnings("unused")
-		SOAPElement headerProtocolloRisposta = null;
+		BustaRawContent<?> headerProtocolloRisposta = null;
 		String protocol = null;
 		try{
-			IProtocolFactory protocolFactory = this.getProtocolFactory();
+			IProtocolFactory<?> protocolFactory = this.getProtocolFactory();
 			IProtocolManager protocolManager = protocolFactory.createProtocolManager();
 			protocol = protocolFactory.getProtocol();
 			
@@ -210,7 +210,7 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 				
 				// rimozione vecchia busta
 				Sbustamento sbustatore = new Sbustamento(protocolFactory);
-				headerProtocolloRisposta = sbustatore.sbustamento(state,this.responseMsg,busta,true, gestioneManifest, 
+				headerProtocolloRisposta = sbustatore.sbustamento(state,this.responseMsg,busta,RuoloMessaggio.RICHIESTA, gestioneManifest, 
 						this.openspcoopProperties.getProprietaManifestAttachments(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD));
 				
 				// Creo busta di risposta solo se la busta di richiesta non conteneva una busta Errore
@@ -317,7 +317,7 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 									null, 
 									this.openspcoopProperties.getGestioneSerializableDB_AttesaAttiva(),
 									this.openspcoopProperties.getGestioneSerializableDB_CheckInterval(),
-									Boolean.FALSE);
+									RuoloMessaggio.RISPOSTA);
 					}catch(Exception e){
 						// rilancio
 						throw e;
@@ -373,7 +373,7 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 					// imbustamento nuova busta
 					Integrazione integrazione = new Integrazione();
 					integrazione.setStateless(true);
-					imbustatore.imbustamento(state,this.responseMsg,bustaRisposta,integrazione,gestioneManifest,false,false,
+					imbustatore.imbustamento(state,this.responseMsg,bustaRisposta,integrazione,gestioneManifest,RuoloMessaggio.RISPOSTA,false,
 							this.openspcoopProperties.getProprietaManifestAttachments(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD));
 
 				}

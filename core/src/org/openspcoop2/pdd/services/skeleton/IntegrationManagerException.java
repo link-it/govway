@@ -111,13 +111,13 @@ public class IntegrationManagerException extends Exception implements java.io.Se
 	private ProprietaErroreApplicativo proprietaErroreAppl;
     
 
-	public IntegrationManagerException(IProtocolFactory protocolFactory,ErroreIntegrazione errore) {
+	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreIntegrazione errore) {
 		this(protocolFactory,errore,IntegrationManagerException.ECCEZIONE_INTEGRAZIONE,null);
 	}
-	public IntegrationManagerException(IProtocolFactory protocolFactory,ErroreIntegrazione errore,String servizioApplicativo) {
+	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreIntegrazione errore,String servizioApplicativo) {
 		this(protocolFactory,errore,IntegrationManagerException.ECCEZIONE_INTEGRAZIONE,servizioApplicativo);
 	}
-	private IntegrationManagerException(IProtocolFactory protocolFactory,ErroreIntegrazione errore,String tipo,String servizioApplicativo) {
+	private IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreIntegrazione errore,String tipo,String servizioApplicativo) {
 		super(errore.getDescrizioneRawValue());
 		try{
 			this.initProprietaBase(protocolFactory, tipo, servizioApplicativo);
@@ -137,13 +137,13 @@ public class IntegrationManagerException extends Exception implements java.io.Se
 	}
 	
 
-	public IntegrationManagerException(IProtocolFactory protocolFactory,ErroreCooperazione errore) {
+	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreCooperazione errore) {
 		this(protocolFactory,errore,IntegrationManagerException.ECCEZIONE_PROTOCOLLO,null);
 	}
-	public IntegrationManagerException(IProtocolFactory protocolFactory,ErroreCooperazione errore,String servizioApplicativo) {
+	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreCooperazione errore,String servizioApplicativo) {
 		this(protocolFactory,errore,IntegrationManagerException.ECCEZIONE_PROTOCOLLO,servizioApplicativo);
 	}
-	private IntegrationManagerException(IProtocolFactory protocolFactory,ErroreCooperazione errore,String tipo,String servizioApplicativo)  {
+	private IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreCooperazione errore,String tipo,String servizioApplicativo)  {
 		super(errore.getDescrizioneRawValue());
 		try{
 			this.initProprietaBase(protocolFactory, tipo, servizioApplicativo);
@@ -157,13 +157,13 @@ public class IntegrationManagerException extends Exception implements java.io.Se
 	
 	
 	
-	public IntegrationManagerException(IProtocolFactory protocolFactory,Eccezione errore)  {
+	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,Eccezione errore)  {
 		this(protocolFactory,errore,IntegrationManagerException.ECCEZIONE_PROTOCOLLO,null);
 	}
-	public IntegrationManagerException(IProtocolFactory protocolFactory,Eccezione errore,String servizioApplicativo) {
+	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,Eccezione errore,String servizioApplicativo) {
 		this(protocolFactory,errore,IntegrationManagerException.ECCEZIONE_PROTOCOLLO,servizioApplicativo);
 	}
-	private IntegrationManagerException(IProtocolFactory protocolFactory,Eccezione errore,String tipo,String servizioApplicativo) {
+	private IntegrationManagerException(IProtocolFactory<?> protocolFactory,Eccezione errore,String tipo,String servizioApplicativo) {
 		super(getDescrizione(errore,protocolFactory));
 		try{
 			this.initProprietaBase(protocolFactory, tipo, servizioApplicativo);
@@ -174,7 +174,7 @@ public class IntegrationManagerException extends Exception implements java.io.Se
 			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
-	private static String getDescrizione(Eccezione errore,IProtocolFactory protocolFactory){
+	private static String getDescrizione(Eccezione errore,IProtocolFactory<?> protocolFactory){
 		try{
 			return errore.getDescrizione(protocolFactory);
 		}catch(Exception e){
@@ -186,7 +186,7 @@ public class IntegrationManagerException extends Exception implements java.io.Se
 	public IntegrationManagerException() { }
 	
 	
-	private void initProprietaBase(IProtocolFactory protocolFactory,String tipoEccezione, String servizioApplicativo) throws ProtocolException {
+	private void initProprietaBase(IProtocolFactory<?> protocolFactory,String tipoEccezione, String servizioApplicativo) throws ProtocolException {
 		this.oraRegistrazione = DateBuilder.getDate_Format(null);
 		this.identificativoFunzione = IntegrationManager.ID_MODULO;
 		this.tipoEccezione = tipoEccezione;

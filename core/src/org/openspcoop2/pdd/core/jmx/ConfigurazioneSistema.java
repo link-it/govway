@@ -691,7 +691,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	
 	public String getPluginProtocols(){
 		try{
-			MapReader<String, IProtocolFactory> prots = ProtocolFactoryManager.getInstance().getProtocolFactories();
+			MapReader<String, IProtocolFactory<?>> prots = ProtocolFactoryManager.getInstance().getProtocolFactories();
 			if(prots.size()<=0){
 				throw new Exception("No protocol installed");
 			}
@@ -700,7 +700,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				Enumeration<String> keys = prots.keys();
 				while (keys.hasMoreElements()) {
 					String key = (String) keys.nextElement();
-					IProtocolFactory pf = prots.get(key);
+					IProtocolFactory<?> pf = prots.get(key);
 					if(pf.getManifest().getWeb().getEmptyContext()!=null && pf.getManifest().getWeb().getEmptyContext().isEnabled()){
 						if(bfProtocols.length()>0){
 							bfProtocols.append("\n");

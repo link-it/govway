@@ -22,7 +22,6 @@
 package org.openspcoop2.protocol.sdk.config;
 
 import org.openspcoop2.protocol.sdk.Busta;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
 
@@ -35,10 +34,7 @@ import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
  */
 public interface IProtocolVersionManager extends IProtocolManager {
 
-	@Override
-	public IProtocolFactory getProtocolFactory();
-	
-	
+
 	
 	/* *********** FUNZIONALITA' OFFERTE DALLA Porta di Dominio ******************* */
 	

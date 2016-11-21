@@ -68,11 +68,11 @@ import org.w3c.dom.Document;
  */
 public class BasicArchive implements IArchive {
 
-	protected IProtocolFactory protocolFactory = null;
+	protected IProtocolFactory<?> protocolFactory = null;
 	protected IDAccordoCooperazioneFactory idAccordoCooperazioneFactory;
 	protected IDAccordoFactory idAccordoFactory;
 	protected EsitoUtils esitoUtils;
-	public BasicArchive(IProtocolFactory protocolFactory){
+	public BasicArchive(IProtocolFactory<?> protocolFactory){
 		this.protocolFactory = protocolFactory;
 		this.idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
 		this.idAccordoFactory = IDAccordoFactory.getInstance();
@@ -80,7 +80,7 @@ public class BasicArchive implements IArchive {
 	}
 	
 	@Override
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}
 

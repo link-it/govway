@@ -82,14 +82,14 @@ public class ImporterInformationMissingUtils {
 	private IDAccordoFactory idAccordoFactory = null;
 	private ImportInformationMissingCollection importInformationMissingCollection = null;
 	private boolean validateDocuments = false;
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<?> protocolFactory;
 	private IValidazioneDocumenti validatoreDocumenti;
 	private AbstractXMLUtils xmlUtils;
 	private IRegistryReader registryReader;
 	private Archive archive;
 	
 	public ImporterInformationMissingUtils(ImportInformationMissingCollection importInformationMissingCollection,IRegistryReader registryReader,
-			boolean validateDocuments,IProtocolFactory protocolFactory, String userLogin, Archive archive) throws Exception{
+			boolean validateDocuments,IProtocolFactory<?> protocolFactory, String userLogin, Archive archive) throws Exception{
 		this.idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
 		this.idAccordoFactory = IDAccordoFactory.getInstance();
 		this.importInformationMissingCollection = importInformationMissingCollection;
@@ -1005,7 +1005,7 @@ public class ImporterInformationMissingUtils {
 			
 			if(this.validateDocuments){
 				
-				ValidazioneResult result = this.validatoreDocumenti.validaInterfacciaWsdlParteComune(aspc);
+				ValidazioneResult result = this.validatoreDocumenti.validaSpecificaInterfaccia(aspc);
 				if(result.isEsito()==false){
 					if(result.getException()!=null)
 						throw new Exception(result.getMessaggioErrore(),result.getException());
@@ -1266,7 +1266,7 @@ public class ImporterInformationMissingUtils {
 				List<String> serviziIdentificatiNellaParteComune = this.letturaServiziDefinitiParteComune(asps, aspc);
 				if(this.validateDocuments){						
 					
-					ValidazioneResult result = this.validatoreDocumenti.validaInterfacciaWsdlParteSpecifica(asps, aspc);
+					ValidazioneResult result = this.validatoreDocumenti.validaSpecificaInterfaccia(asps, aspc);
 					if(result.isEsito()==false){
 						if(result.getException()!=null)
 							throw new Exception(result.getMessaggioErrore(),result.getException());
@@ -1635,7 +1635,7 @@ public class ImporterInformationMissingUtils {
 			List<String> serviziIdentificatiNellaParteComune = this.letturaServiziDefinitiParteComune(fruitore,accordoAsps, aspc);
 			if(this.validateDocuments){						
 				
-				ValidazioneResult result = this.validatoreDocumenti.validaInterfacciaWsdlParteSpecifica(fruitore,accordoAsps, aspc);
+				ValidazioneResult result = this.validatoreDocumenti.validaSpecificaInterfaccia(fruitore,accordoAsps, aspc);
 				if(result.isEsito()==false){
 					if(result.getException()!=null)
 						throw new Exception(result.getMessaggioErrore(),result.getException());

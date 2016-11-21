@@ -65,7 +65,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
-import org.openspcoop2.protocol.sdk.constants.TipoTraccia;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneSemantica;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.MessageSecurityContextParameters;
@@ -284,7 +284,7 @@ public class LocalForwardEngine {
 			/* *** MTOM Processor BeforeSecurity  *** */
 			if(mtomProcessor!=null && erroreIntegrazione==null){
 				try{
-					mtomProcessor.mtomBeforeSecurity(requestMessage, TipoTraccia.RICHIESTA);
+					mtomProcessor.mtomBeforeSecurity(requestMessage, RuoloMessaggio.RICHIESTA);
 				}catch(Exception e){
 					logDiagnosticError = false; // L'errore viene registrato dentro il metodo mtomProcessor.mtomBeforeSecurity
 					
@@ -346,7 +346,7 @@ public class LocalForwardEngine {
 			/* *** MTOM Processor AfterSecurity  *** */
 			if(mtomProcessor!=null && erroreIntegrazione==null){
 				try{
-					mtomProcessor.mtomAfterSecurity(requestMessage, TipoTraccia.RICHIESTA);
+					mtomProcessor.mtomAfterSecurity(requestMessage, RuoloMessaggio.RICHIESTA);
 				}catch(Exception e){
 					logDiagnosticError = false; // L'errore viene registrato dentro il metodo mtomProcessor.mtomAfterSecurity
 					
@@ -431,7 +431,7 @@ public class LocalForwardEngine {
 			/* *** MTOM Processor BeforeSecurity  *** */
 			if(mtomProcessor!=null && erroreIntegrazione==null){
 				try{
-					mtomProcessor.mtomBeforeSecurity(requestMessage, TipoTraccia.RICHIESTA);
+					mtomProcessor.mtomBeforeSecurity(requestMessage, RuoloMessaggio.RICHIESTA);
 				}catch(Exception e){
 					logDiagnosticError = false; // L'errore viene registrato dentro il metodo mtomProcessor.mtomBeforeSecurity
 					
@@ -531,7 +531,7 @@ public class LocalForwardEngine {
 			/* *** MTOM Processor AfterSecurity  *** */
 			if(mtomProcessor!=null && erroreIntegrazione==null){
 				try{
-					mtomProcessor.mtomAfterSecurity(requestMessage, TipoTraccia.RICHIESTA);
+					mtomProcessor.mtomAfterSecurity(requestMessage, RuoloMessaggio.RICHIESTA);
 				}catch(Exception e){
 					logDiagnosticError = false; // L'errore viene registrato dentro il metodo mtomProcessor.mtomAfterSecurity
 					
@@ -704,7 +704,7 @@ public class LocalForwardEngine {
 			/* *** MTOM Processor BeforeSecurity  *** */
 			if(mtomProcessor!=null && erroreIntegrazione==null){
 				try{
-					mtomProcessor.mtomBeforeSecurity(responseMessage, TipoTraccia.RISPOSTA);
+					mtomProcessor.mtomBeforeSecurity(responseMessage, RuoloMessaggio.RISPOSTA);
 				}catch(Exception e){
 					logDiagnosticError = false; // L'errore viene registrato dentro il metodo mtomProcessor.mtomBeforeSecurity
 					
@@ -776,7 +776,7 @@ public class LocalForwardEngine {
 			/* *** MTOM Processor AfterSecurity  *** */
 			if(mtomProcessor!=null && erroreIntegrazione==null){
 				try{
-					mtomProcessor.mtomAfterSecurity(responseMessage, TipoTraccia.RISPOSTA);
+					mtomProcessor.mtomAfterSecurity(responseMessage, RuoloMessaggio.RISPOSTA);
 				}catch(Exception e){
 					logDiagnosticError = false; // L'errore viene registrato dentro il metodo mtomProcessor.mtomAfterSecurity
 					
@@ -859,7 +859,7 @@ public class LocalForwardEngine {
 			/* *** MTOM Processor BeforeSecurity  *** */
 			if(mtomProcessor!=null && erroreIntegrazione==null){
 				try{
-					mtomProcessor.mtomBeforeSecurity(responseMessage, TipoTraccia.RISPOSTA);
+					mtomProcessor.mtomBeforeSecurity(responseMessage, RuoloMessaggio.RISPOSTA);
 				}catch(Exception e){
 					logDiagnosticError = false; // L'errore viene registrato dentro il metodo mtomProcessor.mtomBeforeSecurity
 					
@@ -936,7 +936,7 @@ public class LocalForwardEngine {
 			/* *** MTOM Processor AfterSecurity  *** */
 			if(mtomProcessor!=null && erroreIntegrazione==null){
 				try{
-					mtomProcessor.mtomAfterSecurity(responseMessage, TipoTraccia.RISPOSTA);
+					mtomProcessor.mtomAfterSecurity(responseMessage, RuoloMessaggio.RISPOSTA);
 				}catch(Exception e){
 					logDiagnosticError = false; // L'errore viene registrato dentro il metodo mtomProcessor.mtomAfterSecurity
 					

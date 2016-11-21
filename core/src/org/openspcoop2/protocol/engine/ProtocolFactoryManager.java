@@ -91,7 +91,7 @@ public class ProtocolFactoryManager {
 	private MapReader<String, Openspcoop2> manifests = null;
 	@SuppressWarnings("unused")
 	private MapReader<String, URL> manifestURLs = null;
-	private MapReader<String, IProtocolFactory> factories = null;
+	private MapReader<String, IProtocolFactory<?>> factories = null;
 	private StringBuffer protocolLoaded = new StringBuffer();
 	private String protocolDefault = null;
 	private MapReader<String, List<String>> tipiSoggettiValidi = null;
@@ -108,7 +108,7 @@ public class ProtocolFactoryManager {
 
 			Hashtable<String, Openspcoop2> tmp_manifests = new Hashtable<String, Openspcoop2>();
 			Hashtable<String, URL> tmp_manifestURLs = new Hashtable<String, URL>();
-			Hashtable<String, IProtocolFactory> tmp_factories = new Hashtable<String, IProtocolFactory>();
+			Hashtable<String, IProtocolFactory<?>> tmp_factories = new Hashtable<String, IProtocolFactory<?>>();
 			
 			Hashtable<String, List<String>> tmp_tipiSoggettiValidi = new Hashtable<String, List<String>>();
 			Hashtable<String, String> tmp_tipiSoggettiDefault = new Hashtable<String, String>();
@@ -173,7 +173,7 @@ public class ProtocolFactoryManager {
 				Openspcoop2 manifestOpenspcoop2 = tmp_manifests.get(protocolManifest);				
 				
 				// Factory
-				IProtocolFactory p = this.getProtocolFactoryEngine(manifestOpenspcoop2);
+				IProtocolFactory<?> p = this.getProtocolFactoryEngine(manifestOpenspcoop2);
 				p.init(configPdD.getLog(), protocolManifest, configPdD,manifestOpenspcoop2);
 				if(!p.createValidazioneConSchema().initialize()){
 					throw new Exception("[protocol:"+protocolManifest+"] Inizialize with error for ValidazioneConSchema");
@@ -208,7 +208,7 @@ public class ProtocolFactoryManager {
 			// init
 			this.manifests = new MapReader<String, Openspcoop2>(tmp_manifests,true);
 			this.manifestURLs = new MapReader<String, URL>(tmp_manifestURLs,true);
-			this.factories = new MapReader<String, IProtocolFactory>(tmp_factories,true);
+			this.factories = new MapReader<String, IProtocolFactory<?>>(tmp_factories,true);
 			
 			this.tipiSoggettiValidi = new MapReader<String, List<String>>(tmp_tipiSoggettiValidi,true);
 			this.tipiSoggettiDefault = new MapReader<String, String>(tmp_tipiSoggettiDefault,true);
@@ -790,13 +790,13 @@ public class ProtocolFactoryManager {
 		}
 	}
 	
-	private IProtocolFactory getProtocolFactoryEngine(Openspcoop2 openspcoop2Manifest) throws ProtocolException {
+	private IProtocolFactory<?> getProtocolFactoryEngine(Openspcoop2 openspcoop2Manifest) throws ProtocolException {
 		
 		String factoryClass = null;
 		try{
 			factoryClass = openspcoop2Manifest.getProtocol().getFactory();
 			Class<?> c = Class.forName(factoryClass);
-			IProtocolFactory p = (IProtocolFactory) c.newInstance();
+			IProtocolFactory<?> p = (IProtocolFactory<?>) c.newInstance();
 			return  p;
 		} catch (Exception e) {
 			throw new ProtocolException("Impossibile caricare la factory indicata ["+factoryClass+"] " + e, e);
@@ -845,7 +845,7 @@ public class ProtocolFactoryManager {
 		}
 	}
 	
-	public IProtocolFactory getProtocolFactoryByServletContext(HttpServletRequest request) throws ProtocolException {
+	public IProtocolFactory<?> getProtocolFactoryByServletContext(HttpServletRequest request) throws ProtocolException {
 		Openspcoop2 m = this.getProtocolManifest(request);
 		if(this.factories.containsKey(m.getProtocol().getName())){
 			return this.factories.get(m.getProtocol().getName());
@@ -855,7 +855,7 @@ public class ProtocolFactoryManager {
 		}
 	}
 	
-	public IProtocolFactory getProtocolFactoryByServletContext(String servletContext) throws ProtocolException {
+	public IProtocolFactory<?> getProtocolFactoryByServletContext(String servletContext) throws ProtocolException {
 		Openspcoop2 m = this.getProtocolManifest(servletContext);
 		if(this.factories.containsKey(m.getProtocol().getName())){
 			return this.factories.get(m.getProtocol().getName());
@@ -865,7 +865,7 @@ public class ProtocolFactoryManager {
 		}
 	}
 	
-	public IProtocolFactory getProtocolFactoryByName(String protocol) throws ProtocolException {
+	public IProtocolFactory<?> getProtocolFactoryByName(String protocol) throws ProtocolException {
 		if(this.factories.containsKey(protocol)){
 			return this.factories.get(protocol);
 		}
@@ -874,18 +874,18 @@ public class ProtocolFactoryManager {
 		}
 	}
 	
-	public IProtocolFactory getProtocolFactoryByOrganizationType(String organizationType) throws ProtocolException {
+	public IProtocolFactory<?> getProtocolFactoryByOrganizationType(String organizationType) throws ProtocolException {
 		String protocol = this.getProtocolByOrganizationType(organizationType);
 		return this.getProtocolFactoryByName(protocol);
 	}
 	
-	public IProtocolFactory getProtocolFactoryByServiceType(String serviceType) throws ProtocolException {
+	public IProtocolFactory<?> getProtocolFactoryByServiceType(String serviceType) throws ProtocolException {
 		String protocol = this.getProtocolByServiceType(serviceType);
 		return this.getProtocolFactoryByName(protocol);
 	}
 	
 	
-	public IProtocolFactory getDefaultProtocolFactory() throws ProtocolException {
+	public IProtocolFactory<?> getDefaultProtocolFactory() throws ProtocolException {
 		try {
 			if(this.factories.size()==1){
 				return this.factories.get((String)this.factories.keys().nextElement());
@@ -1002,7 +1002,7 @@ public class ProtocolFactoryManager {
 	}
 	
 	
-	public MapReader<String, IProtocolFactory> getProtocolFactories() {
+	public MapReader<String, IProtocolFactory<?>> getProtocolFactories() {
 		return this.factories;
 	}
 	
@@ -1019,7 +1019,7 @@ public class ProtocolFactoryManager {
 		while (protocolli.hasMoreElements()) {
 				
 			String protocollo = protocolli.nextElement();
-			IProtocolFactory protocolFactory = this.factories.get(protocollo);
+			IProtocolFactory<?> protocolFactory = this.factories.get(protocollo);
 			List<String> tipiP = protocolFactory.createProtocolConfiguration().getTipiSoggetti();
 			if(tipiP.contains(organizationType)){
 				return protocollo;
@@ -1037,7 +1037,7 @@ public class ProtocolFactoryManager {
 		while (protocolli.hasMoreElements()) {
 				
 			String protocollo = protocolli.nextElement();
-			IProtocolFactory protocolFactory = this.factories.get(protocollo);
+			IProtocolFactory<?> protocolFactory = this.factories.get(protocollo);
 			List<String> tipiP = protocolFactory.createProtocolConfiguration().getTipiServizi(org.openspcoop2.message.constants.ServiceBinding.SOAP);
 			if(tipiP.contains(serviceType)){
 				return protocollo;

@@ -35,7 +35,9 @@ import org.openspcoop2.core.diagnostica.DominioDiagnostico;
 import org.openspcoop2.core.diagnostica.MessaggioDiagnostico;
 import org.openspcoop2.core.diagnostica.Protocollo;
 import org.openspcoop2.core.diagnostica.constants.CostantiDiagnostica;
+import org.openspcoop2.core.diagnostica.utils.serializer.JsonDeserializer;
 import org.openspcoop2.message.xml.ValidatoreXSD;
+import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -214,6 +216,14 @@ public class XMLUtils  {
 		}
 	}
 
+	public static MessaggioDiagnostico getMessaggioDiagnosticoFromJson(Logger log,InputStream is) throws XMLUtilsException{
+		try{			
+			JsonDeserializer deserializer = new JsonDeserializer();
+			return deserializer.readMessaggioDiagnostico(is);
+		}catch(Exception e){
+			throw new XMLUtilsException(e.getMessage(),e);
+		}
+	}
 	
 	
 	
@@ -269,12 +279,36 @@ public class XMLUtils  {
 		}
 	}
 	
+	public static String generateMessaggioDiagnosticoAsJson(MessaggioDiagnostico messaggioDiagnostico) throws XMLUtilsException{
+		try{
+			StringBuffer risultatoValidazione = new StringBuffer();
+			if(XMLUtils.validate(messaggioDiagnostico, risultatoValidazione)==false){
+				throw new Exception(risultatoValidazione.toString());
+			}
+			return XMLUtils.generateMessaggioDiagnosticoAsJson_engine(messaggioDiagnostico);
+		}catch(Exception e){
+			throw new XMLUtilsException(e.getMessage(),e);
+		}
+	}
+	
 	private static byte[] generateMessaggioDiagnostico_engine(MessaggioDiagnostico messaggioDiagnostico) throws XMLUtilsException{
 		try{
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			org.openspcoop2.utils.xml.JiBXUtils.objToXml(bout, MessaggioDiagnostico.class, messaggioDiagnostico);
 			byte[] dichiarazione = bout.toByteArray();
 			return dichiarazione;
+		}catch(Exception e){
+			throw new XMLUtilsException(e.getMessage(),e);
+		}
+	}
+	
+	private static String generateMessaggioDiagnosticoAsJson_engine(MessaggioDiagnostico messaggioDiagnostico) throws XMLUtilsException{
+		try{
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			messaggioDiagnostico.writeTo(bout, WriteToSerializerType.JSON);
+			bout.flush();
+			bout.close();
+			return bout.toString();
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}

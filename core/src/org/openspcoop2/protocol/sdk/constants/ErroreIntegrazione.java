@@ -72,7 +72,7 @@ public class ErroreIntegrazione implements Serializable  {
 	public String getDescrizioneRawValue() {
 		return replaceAll(this.descrizione);
 	}
-	public String getDescrizione(IProtocolFactory protocolFactory) throws ProtocolException {
+	public String getDescrizione(IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		return replaceAll(protocolFactory.createTraduttore().toString(this));
 	}
 	protected void setDescrizione(String descrizione) {
@@ -123,7 +123,7 @@ public class ErroreIntegrazione implements Serializable  {
 			throw new RuntimeException(e.getMessage(),e);
 		}
 	}
-	public String toString(IProtocolFactory protocolFactory) throws ProtocolException{
+	public String toString(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		StringBuffer bf = new StringBuffer();
 		
 		if(this.descrizione!=null){

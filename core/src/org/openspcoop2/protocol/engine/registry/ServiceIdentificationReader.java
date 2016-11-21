@@ -47,10 +47,10 @@ import org.slf4j.Logger;
 public class ServiceIdentificationReader implements IServiceIdentificationReader {
 
 	private IRegistryReader registryReader;
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<?> protocolFactory;
 	private Logger log;
 	public ServiceIdentificationReader(IRegistryReader registryReader,
-			IProtocolFactory protocolFactory, Logger log) {
+			IProtocolFactory<?> protocolFactory, Logger log) {
 		this.registryReader = registryReader;
 		this.protocolFactory = protocolFactory;
 		this.log = log;

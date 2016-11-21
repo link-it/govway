@@ -112,7 +112,7 @@ public class Imbustamento extends GenericLib{
 		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		
 		/* Protocol Factory */
-		IProtocolFactory protocolFactory = null;
+		IProtocolFactory<?> protocolFactory = null;
 		IProtocolVersionManager protocolManager = null;
 		ITraduttore traduttore = null;
 		try{

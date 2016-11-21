@@ -34,7 +34,7 @@ import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
  */
 public class SPCoopValidazioneDocumenti extends ValidazioneDocumenti  {
 
-	public SPCoopValidazioneDocumenti(IProtocolFactory factory) {
+	public SPCoopValidazioneDocumenti(IProtocolFactory<?> factory) {
 		super(factory);
 	}
 

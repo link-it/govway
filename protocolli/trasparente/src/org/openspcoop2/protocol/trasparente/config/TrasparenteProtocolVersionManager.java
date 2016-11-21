@@ -40,7 +40,7 @@ public class TrasparenteProtocolVersionManager extends BasicVersionManager {
 	protected TrasparenteProperties trasparenteProperties = null;
 	protected Logger logger = null;
 	protected String versione;
-	public TrasparenteProtocolVersionManager(IProtocolFactory protocolFactory,String versione) throws ProtocolException{
+	public TrasparenteProtocolVersionManager(IProtocolFactory<?> protocolFactory,String versione) throws ProtocolException{
 		super(protocolFactory);
 		this.versione = versione;
 		this.logger = this.getProtocolFactory().getLogger();
@@ -49,12 +49,12 @@ public class TrasparenteProtocolVersionManager extends BasicVersionManager {
 	
 	
 	@Override
-	public Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativo() {
+	public Boolean isAggiungiDetailErroreApplicativo_FaultApplicativo() {
 		return this.trasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
 	}
 
 	@Override
-	public Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdD() {
+	public Boolean isAggiungiDetailErroreApplicativo_FaultPdD() {
 		return this.trasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD();
 	}
 	

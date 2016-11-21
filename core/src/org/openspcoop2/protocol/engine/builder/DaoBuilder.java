@@ -153,17 +153,17 @@ public class DaoBuilder {
 	
 	
 	
-	public static void gestioneDettaglioEccezioneIntegrazione(IProtocolFactory protocolFactory,Exception eProcessamento,DettaglioEccezione dettaglioEccezione,boolean generaInformazioniGeneriche) throws ProtocolException{
+	public static void gestioneDettaglioEccezioneIntegrazione(IProtocolFactory<?> protocolFactory,Exception eProcessamento,DettaglioEccezione dettaglioEccezione,boolean generaInformazioniGeneriche) throws ProtocolException{
 		IProtocolManager protocolManager = protocolFactory.createProtocolManager();
 		DaoBuilder.gestioneDettaglioEccezioneProcessamento_engine(eProcessamento, dettaglioEccezione, 
-				protocolManager.isGenerazioneDetailsSOAPFaultIntegrationeConStackTrace(),
+				protocolManager.isGenerazioneDetailsFaultIntegrationeConStackTrace(),
 				generaInformazioniGeneriche);
 	}
-	public static void gestioneDettaglioEccezioneProcessamento(IProtocolFactory protocolFactory,Exception eProcessamento,DettaglioEccezione dettaglioEccezione) throws ProtocolException{
+	public static void gestioneDettaglioEccezioneProcessamento(IProtocolFactory<?> protocolFactory,Exception eProcessamento,DettaglioEccezione dettaglioEccezione) throws ProtocolException{
 		IProtocolManager protocolManager = protocolFactory.createProtocolManager();
 		DaoBuilder.gestioneDettaglioEccezioneProcessamento_engine(eProcessamento, dettaglioEccezione, 
-				protocolManager.isGenerazioneDetailsSOAPFaultProtocolloConStackTrace(),
-				protocolManager.isGenerazioneDetailsSOAPFaultProtocolloConInformazioniGeneriche());
+				protocolManager.isGenerazioneDetailsFaultProtocolloConStackTrace(),
+				protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche());
 	}
 	
 	private static void gestioneDettaglioEccezioneProcessamento_engine(Exception eProcessamento,DettaglioEccezione dettaglioEccezione,

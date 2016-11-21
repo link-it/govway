@@ -37,7 +37,7 @@ import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopContext;
  */
 public class SPCoopValidazioneAccordi extends ValidazioneAccordi  {
 
-	public SPCoopValidazioneAccordi(IProtocolFactory factory) {
+	public SPCoopValidazioneAccordi(IProtocolFactory<?> factory) {
 		super(factory);
 	}
 	

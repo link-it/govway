@@ -37,25 +37,25 @@ public class ProtocolliRegistrati {
 	public ProtocolliRegistrati(){
 		
 	}
-	public ProtocolliRegistrati(MapReader<String, IProtocolFactory> protocolli){
+	public ProtocolliRegistrati(MapReader<String, IProtocolFactory<?>> protocolli){
 		this.protocolli = protocolli;
 	}	
 	
-	private MapReader<String, IProtocolFactory> protocolli;
+	private MapReader<String, IProtocolFactory<?>> protocolli;
 	
-	public MapReader<String, IProtocolFactory> getProtocolli() {
+	public MapReader<String, IProtocolFactory<?>> getProtocolli() {
 		return this.protocolli;
 	}
 
-	public void setProtocolli(MapReader<String, IProtocolFactory> protocolli) {
+	public void setProtocolli(MapReader<String, IProtocolFactory<?>> protocolli) {
 		this.protocolli = protocolli;
 	}
 	
-	public IProtocolFactory getProtocolFactory(String protocollo) throws ProtocolException{
+	public IProtocolFactory<?> getProtocolFactory(String protocollo) throws ProtocolException{
 		if(this.protocolli.containsKey(protocollo)==false){
 			throw new ProtocolException("Protocollo ["+protocollo+"] non registrato");
 		}
-		IProtocolFactory pf = this.protocolli.get(protocollo);
+		IProtocolFactory<?> pf = this.protocolli.get(protocollo);
 		return pf;
 	}
 	

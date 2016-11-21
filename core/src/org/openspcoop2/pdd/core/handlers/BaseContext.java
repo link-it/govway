@@ -56,7 +56,7 @@ public abstract class BaseContext {
 	private PdDContext pddContext;
 	
 	/** ProtocolFactory */
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<?> protocolFactory;
 	
 	/** Logger */
 	private Logger logCore;
@@ -101,11 +101,11 @@ public abstract class BaseContext {
 		this.logCore = logger;
 	}
 
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}
 
-	public void setProtocolFactory(IProtocolFactory protocolFactory) {
+	public void setProtocolFactory(IProtocolFactory<?> protocolFactory) {
 		this.protocolFactory = protocolFactory;
 	}
 	

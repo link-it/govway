@@ -19,15 +19,15 @@ public class RequestInfo implements java.io.Serializable {
 	private ServiceBindingConfiguration bindingConfig;
 	private ServiceBinding serviceBinding;
 	private MessageType requestMessageType;
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<?> protocolFactory;
 	private IDSoggetto identitaPdD;
 	private IDSoggetto fruitore;
 	private IDServizio idServizio;
 	
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}
-	public void setProtocolFactory(IProtocolFactory protocolFactory) {
+	public void setProtocolFactory(IProtocolFactory<?> protocolFactory) {
 		this.protocolFactory = protocolFactory;
 	}
 	public URLProtocolContext getProtocolContext() {

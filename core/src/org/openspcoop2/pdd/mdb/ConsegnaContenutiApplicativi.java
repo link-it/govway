@@ -125,6 +125,7 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
@@ -294,7 +295,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		
 		/* Protocol Factory */
-		IProtocolFactory protocolFactory = null;
+		IProtocolFactory<?> protocolFactory = null;
 		try{
 			protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
 		}catch(Exception e){
@@ -951,7 +952,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							(String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID),
 							this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 							this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
-							Boolean.FALSE);
+							RuoloMessaggio.RISPOSTA);
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e, "imbustatore.buildID(idMessageResponse)");
 				if(existsModuloInAttesaRispostaApplicativa) {

@@ -55,7 +55,7 @@ public class ArchiveValidator {
 			String userLogin, boolean checkCorrelazioneAsincrona) throws Exception,ImportInformationMissingException{
 		try{
 			
-			IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolloEffettivo);
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolloEffettivo);
 			
 			validateAndFillImportInformationMissing(archive, protocolFactory, importInformationMissingCollection, validazioneDocumenti, userLogin, checkCorrelazioneAsincrona);
 							
@@ -66,7 +66,7 @@ public class ArchiveValidator {
 		}
 	}
 	
-	private void validateAndFillImportInformationMissing(Archive archive,IProtocolFactory protocolFactory, 
+	private void validateAndFillImportInformationMissing(Archive archive,IProtocolFactory<?> protocolFactory, 
 			ImportInformationMissingCollection importInformationMissingCollection, boolean validazioneDocumenti, String userLogin, boolean checkCorrelazioneAsincrona) throws Exception,ImportInformationMissingException{
 		
 		ImporterInformationMissingUtils importerInformationMissingUtils = 

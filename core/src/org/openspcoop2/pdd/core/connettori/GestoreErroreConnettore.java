@@ -135,7 +135,7 @@ public class GestoreErroreConnettore {
 			while (factoriesKeys.hasMoreElements()) {
 				
 				String protocolName = factoriesKeys.nextElement();
-				IProtocolFactory protocolFactory;
+				IProtocolFactory<?> protocolFactory;
 				org.openspcoop2.protocol.sdk.config.ITraduttore trasl = null;
 				try {
 					protocolFactory = protocolFactoryManager.getProtocolFactoryByName(protocolName);

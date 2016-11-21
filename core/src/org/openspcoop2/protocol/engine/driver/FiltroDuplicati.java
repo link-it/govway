@@ -46,17 +46,17 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 	}
 	
 	@Override
-	public boolean isDuplicata(IProtocolFactory protocolFactory, String id) throws ProtocolException{
+	public boolean isDuplicata(IProtocolFactory<?> protocolFactory, String id) throws ProtocolException{
 		return this.historyBuste.bustaRicevutaPrecedentemente(id);
 	}
 	
 	@Override
-	public void incrementaNumeroDuplicati(IProtocolFactory protocolFactory, String id) throws ProtocolException{
+	public void incrementaNumeroDuplicati(IProtocolFactory<?> protocolFactory, String id) throws ProtocolException{
 		this.repositoryBuste.aggiornaDuplicatiIntoInBox(id);
 	}
 	
 	@Override
-	public void registraBusta(IProtocolFactory protocolFactory, Busta busta) throws ProtocolException{
+	public void registraBusta(IProtocolFactory<?> protocolFactory, Busta busta) throws ProtocolException{
 		if( this.gestioneStateless ){
 			// La busta puo' non esistere
 			if(this.repositoryBuste.isRegistrataIntoInBox(busta.getID())==false){

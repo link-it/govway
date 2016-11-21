@@ -34,7 +34,6 @@ import java.util.Vector;
 import javax.mail.BodyPart;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPElement;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -53,13 +52,15 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.builder.TracciaBuilder;
 import org.openspcoop2.protocol.sdk.Allegato;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.SecurityInfo;
-import org.openspcoop2.protocol.sdk.constants.TipoTraccia;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
+import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.tracciamento.EsitoElaborazioneMessaggioTracciato;
-import org.openspcoop2.protocol.sdk.tracciamento.ITracciamentoOpenSPCoopAppender;
+import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.protocol.sdk.tracciamento.TracciamentoException;
 import org.openspcoop2.utils.date.DateManager;
@@ -98,10 +99,10 @@ public class Tracciamento {
 	
 	/** Protocol Factory */
 	private ProtocolFactoryManager protocolFactoryManager = null;
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<?> protocolFactory;
 	
 	/** Appender personalizzati per i tracciamenti di OpenSPCoop */
-	private Vector<ITracciamentoOpenSPCoopAppender> loggerTracciamentoOpenSPCoopAppender = null; 
+	private Vector<ITracciaProducer> loggerTracciamentoOpenSPCoopAppender = null; 
 	private Vector<String> tipoTracciamentoOpenSPCoopAppender = null; 
 
 	/** Reader della configurazione di OpenSPCoop */
@@ -251,13 +252,13 @@ public class Tracciamento {
 			}
 			
 			// Traccia
-			Traccia traccia = this.getTraccia(busta, msg,securityInfo, esito, gdo, TipoTraccia.RICHIESTA, location, idCorrelazioneApplicativa);
+			Traccia traccia = this.getTraccia(busta, msg,securityInfo, esito, gdo, RuoloMessaggio.RICHIESTA, location, idCorrelazioneApplicativa);
 			
 			try{
 				
 				// Miglioramento performance
 				if(OpenSPCoop2Logger.loggerTracciamentoAbilitato){
-					xml = this.xmlBuilder.toString(traccia);
+					xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.XML);
 					if(xml==null)
 						throw new Exception("Traccia non costruita");
 					this.loggerTracciamento.info(xml);
@@ -270,7 +271,7 @@ public class Tracciamento {
 					}catch(Exception e){
 						logError("Errore durante il tracciamento personalizzato ["+this.tipoTracciamentoOpenSPCoopAppender.get(i)+"] della richiesta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
 						try{
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, TipoTraccia.RICHIESTA.toString());
+							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RICHIESTA.toString());
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoTracciamentoOpenSPCoopAppender.get(i));
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
@@ -286,7 +287,7 @@ public class Tracciamento {
 				// check eventuale costruzione dell'xml non fatto per log4j disabilitato.
 				if( (xml==null) && (OpenSPCoop2Logger.loggerTracciamentoAbilitato==false) ){
 					try{
-						xml = this.xmlBuilder.toString(traccia);
+						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.XML);
 					}catch(Exception eBuild){}
 				}
 				if(xml==null){
@@ -295,7 +296,7 @@ public class Tracciamento {
 					logError("Errore durante il tracciamento della richiesta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
 					if(!erroreAppender){
 						try{
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, TipoTraccia.RICHIESTA.toString());
+							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RICHIESTA.toString());
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
 							this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita");
@@ -334,14 +335,14 @@ public class Tracciamento {
 			}
 			
 			// Traccia
-			Traccia traccia = this.getTraccia(bustaObject, msg, securityInfo, esito, gdo, TipoTraccia.RICHIESTA, location, idCorrelazioneApplicativa);
+			Traccia traccia = this.getTraccia(bustaObject, msg, securityInfo, esito, gdo, RuoloMessaggio.RICHIESTA, location, idCorrelazioneApplicativa);
 			traccia.setBustaAsByteArray(busta);
 			
 			try{
 		
 				// Miglioramento performance
 				if(OpenSPCoop2Logger.loggerTracciamentoAbilitato){
-					xml = this.xmlBuilder.toString(traccia);
+					xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.XML);
 					if(xml==null)
 						throw new Exception("Traccia non costruita");
 					this.loggerTracciamento.info(xml);
@@ -354,7 +355,7 @@ public class Tracciamento {
 					}catch(Exception e){
 						logError("Errore durante il tracciamento personalizzato ["+this.tipoTracciamentoOpenSPCoopAppender.get(i)+"] della richiesta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
 						try{
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, TipoTraccia.RICHIESTA.toString());
+							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RICHIESTA.toString());
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoTracciamentoOpenSPCoopAppender.get(i));
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
@@ -370,7 +371,7 @@ public class Tracciamento {
 				// check eventuale costruzione dell'xml non fatto per log4j disabilitato.
 				if( (xml==null) && (OpenSPCoop2Logger.loggerTracciamentoAbilitato==false) ){
 					try{
-						xml = this.xmlBuilder.toString(traccia);
+						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.XML);
 					}catch(Exception eBuild){}
 				}
 				if(xml==null){
@@ -379,7 +380,7 @@ public class Tracciamento {
 					logError("Errore durante il tracciamento della richiesta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
 					if(!erroreAppender){
 						try{
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, TipoTraccia.RICHIESTA.toString());
+							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RICHIESTA.toString());
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
 							this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita");
@@ -398,11 +399,11 @@ public class Tracciamento {
 	 * 
 	 */
 	public void registraRichiesta(OpenSPCoop2Message msg,SecurityInfo securityInfo,
-			SOAPElement busta,Busta bustaObject,EsitoElaborazioneMessaggioTracciato esito, String location) throws TracciamentoException {
+			BustaRawContent<?> busta,Busta bustaObject,EsitoElaborazioneMessaggioTracciato esito, String location) throws TracciamentoException {
 		registraRichiesta(msg,securityInfo,busta,bustaObject,esito,location,null);
 	}
 	public void registraRichiesta(OpenSPCoop2Message msg,SecurityInfo securityInfo,
-			SOAPElement busta,Busta bustaObject,EsitoElaborazioneMessaggioTracciato esito, String location, 
+			BustaRawContent<?> busta,Busta bustaObject,EsitoElaborazioneMessaggioTracciato esito, String location, 
 			String idCorrelazioneApplicativa) throws TracciamentoException {
 		if(this.configurazionePdDManager.tracciamentoBuste()) {
 			String xml = null;
@@ -416,14 +417,14 @@ public class Tracciamento {
 			}
 			
 			// Traccia
-			Traccia traccia = this.getTraccia(bustaObject, msg, securityInfo, esito, gdo, TipoTraccia.RICHIESTA, location, idCorrelazioneApplicativa);
-			traccia.setBustaAsElement(busta);
+			Traccia traccia = this.getTraccia(bustaObject, msg, securityInfo, esito, gdo, RuoloMessaggio.RICHIESTA, location, idCorrelazioneApplicativa);
+			traccia.setBustaAsRawContent(busta);
 			
 			try{
 				
 				// Miglioramento performance
 				if(OpenSPCoop2Logger.loggerTracciamentoAbilitato){
-					xml = this.xmlBuilder.toString(traccia);
+					xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.XML);
 					if(xml==null)
 						throw new Exception("Traccia non costruita");
 					this.loggerTracciamento.info(xml);
@@ -436,7 +437,7 @@ public class Tracciamento {
 					} catch(Exception e){
 						logError("Errore durante il tracciamento personalizzato ["+this.tipoTracciamentoOpenSPCoopAppender.get(i)+"] della richiesta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
 						try{
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, TipoTraccia.RICHIESTA.toString());
+							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RICHIESTA.toString());
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoTracciamentoOpenSPCoopAppender.get(i));
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
@@ -452,7 +453,7 @@ public class Tracciamento {
 				// check eventuale costruzione dell'xml non fatto per log4j disabilitato.
 				if( (xml==null) && (OpenSPCoop2Logger.loggerTracciamentoAbilitato==false) ){
 					try{
-						xml = this.xmlBuilder.toString(traccia);
+						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.XML);
 					}catch(Exception eBuild){}
 				}
 				if(xml==null){
@@ -461,7 +462,7 @@ public class Tracciamento {
 					logError("Errore durante il tracciamento della richiesta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
 					if(!erroreAppender){
 						try{
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, TipoTraccia.RICHIESTA.toString());
+							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RICHIESTA.toString());
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
 							this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita");
@@ -503,13 +504,13 @@ public class Tracciamento {
 			}
 			
 			// Traccia
-			Traccia traccia = this.getTraccia(busta, msg, securityInfo, esito, gdo, TipoTraccia.RISPOSTA, location, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta);
+			Traccia traccia = this.getTraccia(busta, msg, securityInfo, esito, gdo, RuoloMessaggio.RISPOSTA, location, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta);
 			
 			try{
 							
 				// Miglioramento performance
 				if(OpenSPCoop2Logger.loggerTracciamentoAbilitato){
-					xml = this.xmlBuilder.toString(traccia);
+					xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.XML);
 					if(xml==null)
 						throw new Exception("Traccia non costruita");
 					this.loggerTracciamento.info(xml);
@@ -522,7 +523,7 @@ public class Tracciamento {
 					}catch(Exception e){
 						logError("Errore durante il tracciamento personalizzato ["+this.tipoTracciamentoOpenSPCoopAppender.get(i)+"] della risposta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
 						try{
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, TipoTraccia.RISPOSTA.toString());
+							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RISPOSTA.toString());
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoTracciamentoOpenSPCoopAppender.get(i));
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
@@ -538,7 +539,7 @@ public class Tracciamento {
 				// check eventuale costruzione dell'xml non fatto per log4j disabilitato.
 				if( (xml==null) && (OpenSPCoop2Logger.loggerTracciamentoAbilitato==false) ){
 					try{
-						xml = this.xmlBuilder.toString(traccia);
+						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.XML);
 					}catch(Exception eBuild){}
 				}
 				if(xml==null){
@@ -547,7 +548,7 @@ public class Tracciamento {
 					logError("Errore durante il tracciamento della risposta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
 					if(!erroreAppender){
 						try{
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, TipoTraccia.RISPOSTA.toString());
+							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RISPOSTA.toString());
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
 							this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita");
@@ -586,14 +587,14 @@ public class Tracciamento {
 			}
 			
 			// Traccia
-			Traccia traccia = this.getTraccia(bustaObject, msg, securityInfo, esito, gdo, TipoTraccia.RISPOSTA, location, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta);
+			Traccia traccia = this.getTraccia(bustaObject, msg, securityInfo, esito, gdo, RuoloMessaggio.RISPOSTA, location, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta);
 			traccia.setBustaAsByteArray(busta);
 			
 			try{
 								
 				// Miglioramento performance
 				if(OpenSPCoop2Logger.loggerTracciamentoAbilitato){
-					xml = this.xmlBuilder.toString(traccia);
+					xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.XML);
 					if(xml==null)
 						throw new Exception("Traccia non costruita");
 					this.loggerTracciamento.info(xml);
@@ -606,7 +607,7 @@ public class Tracciamento {
 					}catch(Exception e){
 						logError("Errore durante il tracciamento personalizzato ["+this.tipoTracciamentoOpenSPCoopAppender.get(i)+"] della risposta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
 						try{
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, TipoTraccia.RISPOSTA.toString());
+							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RISPOSTA.toString());
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoTracciamentoOpenSPCoopAppender.get(i));
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
@@ -622,7 +623,7 @@ public class Tracciamento {
 				// check eventuale costruzione dell'xml non fatto per log4j disabilitato.
 				if( (xml==null) && (OpenSPCoop2Logger.loggerTracciamentoAbilitato==false) ){
 					try{
-						xml = this.xmlBuilder.toString(traccia);
+						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.XML);
 					}catch(Exception eBuild){}
 				}
 				if(xml==null){
@@ -631,7 +632,7 @@ public class Tracciamento {
 					logError("Errore durante il tracciamento della risposta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
 					if(!erroreAppender){
 						try{
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, TipoTraccia.RISPOSTA.toString());
+							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RISPOSTA.toString());
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
 							this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita");
@@ -650,11 +651,11 @@ public class Tracciamento {
 	 * 
 	 */
 	public void registraRisposta(OpenSPCoop2Message msg,SecurityInfo securityInfo,
-			SOAPElement busta,Busta bustaObject,EsitoElaborazioneMessaggioTracciato esito, String location) throws TracciamentoException {
+			BustaRawContent<?> busta,Busta bustaObject,EsitoElaborazioneMessaggioTracciato esito, String location) throws TracciamentoException {
 		registraRisposta(msg,securityInfo,busta,bustaObject,esito, location,null,null);
 	}
 	public void registraRisposta(OpenSPCoop2Message msg,SecurityInfo securityInfo,
-			SOAPElement busta,Busta bustaObject,EsitoElaborazioneMessaggioTracciato esito, String location, 
+			BustaRawContent<?> busta,Busta bustaObject,EsitoElaborazioneMessaggioTracciato esito, String location, 
 			String idCorrelazioneApplicativa, String idCorrelazioneApplicativaRisposta) throws TracciamentoException {
 		if(this.configurazionePdDManager.tracciamentoBuste()){
 			String xml = null;
@@ -668,14 +669,14 @@ public class Tracciamento {
 			}
 			
 			// Traccia
-			Traccia traccia = this.getTraccia(bustaObject, msg, securityInfo, esito, gdo, TipoTraccia.RISPOSTA, location, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta);
-			traccia.setBustaAsElement(busta);
+			Traccia traccia = this.getTraccia(bustaObject, msg, securityInfo, esito, gdo, RuoloMessaggio.RISPOSTA, location, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta);
+			traccia.setBustaAsRawContent(busta);
 			
 			try{
 			
 				// Miglioramento performance
 				if(OpenSPCoop2Logger.loggerTracciamentoAbilitato){
-					xml = this.xmlBuilder.toString(traccia);
+					xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.XML);
 					if(xml==null)
 						throw new Exception("Traccia non costruita");
 					this.loggerTracciamento.info(xml);
@@ -688,7 +689,7 @@ public class Tracciamento {
 					}catch(Exception e){
 						logError("Errore durante il tracciamento personalizzato ["+this.tipoTracciamentoOpenSPCoopAppender.get(i)+"] della risposta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
 						try{
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, TipoTraccia.RISPOSTA.toString());
+							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RISPOSTA.toString());
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_PERSONALIZZATO,this.tipoTracciamentoOpenSPCoopAppender.get(i));
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
@@ -704,7 +705,7 @@ public class Tracciamento {
 				// check eventuale costruzione dell'xml non fatto per log4j disabilitato.
 				if( (xml==null) && (OpenSPCoop2Logger.loggerTracciamentoAbilitato==false) ){
 					try{
-						xml = this.xmlBuilder.toString(traccia);
+						xml = this.xmlBuilder.toString(traccia,TipoSerializzazione.XML);
 					}catch(Exception eBuild){}
 				}
 				if(xml==null){
@@ -713,7 +714,7 @@ public class Tracciamento {
 					logError("Errore durante il tracciamento della risposta: "+e.getMessage()+". Traccia non registrata:\n"+xml,e);
 					if(!erroreAppender){
 						try{
-							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, TipoTraccia.RISPOSTA.toString());
+							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, RuoloMessaggio.RISPOSTA.toString());
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIA, xml);
 							this.msgDiagErroreTracciamento.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,e.getMessage());
 							this.msgDiagErroreTracciamento.logPersonalizzato("registrazioneNonRiuscita");
@@ -727,11 +728,11 @@ public class Tracciamento {
 	
 
 	
-	private Traccia getTraccia(Busta busta,OpenSPCoop2Message msg,SecurityInfo securityInfo,EsitoElaborazioneMessaggioTracciato esito,Date gdo,TipoTraccia tipoTraccia,
+	private Traccia getTraccia(Busta busta,OpenSPCoop2Message msg,SecurityInfo securityInfo,EsitoElaborazioneMessaggioTracciato esito,Date gdo,RuoloMessaggio tipoTraccia,
 			String location,String idCorrelazioneApplicativa){
 		return getTraccia(busta, msg, securityInfo, esito, gdo, tipoTraccia, location, idCorrelazioneApplicativa, null);
 	}
-	private Traccia getTraccia(Busta busta,OpenSPCoop2Message msg,SecurityInfo securityInfo,EsitoElaborazioneMessaggioTracciato esito,Date gdo,TipoTraccia tipoTraccia,
+	private Traccia getTraccia(Busta busta,OpenSPCoop2Message msg,SecurityInfo securityInfo,EsitoElaborazioneMessaggioTracciato esito,Date gdo,RuoloMessaggio tipoTraccia,
 			String location,String idCorrelazioneApplicativa,String idCorrelazioneApplicativaRisposta){
 		
 		Traccia traccia = new Traccia();
@@ -739,7 +740,7 @@ public class Tracciamento {
 		// Esito
 		traccia.setEsitoElaborazioneMessaggioTracciato(esito);
 		try{
-			if(TipoTraccia.RISPOSTA.equals(tipoTraccia) && msg!=null){
+			if(RuoloMessaggio.RISPOSTA.equals(tipoTraccia) && msg!=null){
 				boolean found = false;
 				if(ServiceBinding.SOAP.equals(msg)){
 					SOAPBody body = msg.castAsSoap().getSOAPBody();

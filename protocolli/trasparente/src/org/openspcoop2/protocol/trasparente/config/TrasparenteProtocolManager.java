@@ -39,7 +39,7 @@ public class TrasparenteProtocolManager extends BasicManager {
 	
 	protected TrasparenteProperties trasparenteProperties = null;
 	protected Logger logger = null;
-	public TrasparenteProtocolManager(IProtocolFactory protocolFactory) throws ProtocolException{
+	public TrasparenteProtocolManager(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		super(protocolFactory);
 		this.logger = this.getProtocolFactory().getLogger();
 		this.trasparenteProperties = TrasparenteProperties.getInstance(this.logger);
@@ -47,12 +47,12 @@ public class TrasparenteProtocolManager extends BasicManager {
 	
 	
 	@Override
-	public Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativo() {
+	public Boolean isAggiungiDetailErroreApplicativo_FaultApplicativo() {
 		return this.trasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
 	}
 
 	@Override
-	public Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdD() {
+	public Boolean isAggiungiDetailErroreApplicativo_FaultPdD() {
 		return this.trasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD();
 	}
 	

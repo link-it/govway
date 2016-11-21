@@ -96,7 +96,7 @@ import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
-import org.openspcoop2.protocol.sdk.constants.SOAPFaultIntegrationGenericInfoMode;
+import org.openspcoop2.protocol.sdk.constants.FaultIntegrationGenericInfoMode;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
@@ -4277,23 +4277,23 @@ public class OpenSPCoop2Properties {
 		pNew.setAggiungiDetailErroreApplicativo_SoapFaultApplicativo(OpenSPCoop2Properties.proprietaGestioneErrorePD.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo());
 		pNew.setAggiungiDetailErroreApplicativo_SoapFaultPdD(OpenSPCoop2Properties.proprietaGestioneErrorePD.isAggiungiDetailErroreApplicativo_SoapFaultPdD());
 		if(protocolManager!=null){
-			SOAPFaultIntegrationGenericInfoMode sf = protocolManager.getModalitaGenerazioneInformazioniGeneriche_DetailsSOAPFaultIntegrazione();
-			if(SOAPFaultIntegrationGenericInfoMode.SERVIZIO_APPLICATIVO.equals(sf)){
+			FaultIntegrationGenericInfoMode sf = protocolManager.getModalitaGenerazioneInformazioniGeneriche_DetailsFaultIntegrazione();
+			if(FaultIntegrationGenericInfoMode.SERVIZIO_APPLICATIVO.equals(sf)){
 				pNew.setInformazioniGenericheDetailsOpenSPCoop(null);
 			}
-			else if(SOAPFaultIntegrationGenericInfoMode.ABILITATO.equals(sf)){
+			else if(FaultIntegrationGenericInfoMode.ABILITATO.equals(sf)){
 				pNew.setInformazioniGenericheDetailsOpenSPCoop(true);
 			} 
-			else if(SOAPFaultIntegrationGenericInfoMode.DISABILITATO.equals(sf)){
+			else if(FaultIntegrationGenericInfoMode.DISABILITATO.equals(sf)){
 				pNew.setInformazioniGenericheDetailsOpenSPCoop(false);
 			} 
 			
-			Boolean enrich = protocolManager.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
+			Boolean enrich = protocolManager.isAggiungiDetailErroreApplicativo_FaultApplicativo();
 			if(enrich!=null){
 				pNew.setAggiungiDetailErroreApplicativo_SoapFaultApplicativo(enrich);
 			}
 			
-			enrich = protocolManager.isAggiungiDetailErroreApplicativo_SoapFaultPdD();
+			enrich = protocolManager.isAggiungiDetailErroreApplicativo_FaultPdD();
 			if(enrich!=null){
 				pNew.setAggiungiDetailErroreApplicativo_SoapFaultPdD(enrich);
 			}
@@ -4715,7 +4715,7 @@ public class OpenSPCoop2Properties {
 				Enumeration<String> protocolli = ProtocolFactoryManager.getInstance().getProtocolFactories().keys();
 				while (protocolli.hasMoreElements()) {
 					String protocollo = (String) protocolli.nextElement();
-					IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactories().get(protocollo);
+					IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactories().get(protocollo);
 					IProtocolConfiguration pc = pf.createProtocolConfiguration();
 					List<BypassMustUnderstandCheck> list = pc.getBypassMustUnderstandCheck();
 					

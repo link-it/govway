@@ -514,7 +514,7 @@ public enum CodiceErroreCooperazione implements CodiceErrore,Serializable {
 		return this.getCodice() == codice.getCodice();
 	}
 	
-	public static CodiceErroreCooperazione toCodiceErroreCooperazione(IProtocolFactory protocolFactory, String protocolString) throws ProtocolException{
+	public static CodiceErroreCooperazione toCodiceErroreCooperazione(IProtocolFactory<?> protocolFactory, String protocolString) throws ProtocolException{
 		return protocolFactory.createTraduttore().toCodiceErroreCooperazione(protocolString);
 	}
 	

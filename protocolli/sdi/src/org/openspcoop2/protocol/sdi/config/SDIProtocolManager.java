@@ -56,7 +56,7 @@ public class SDIProtocolManager extends BasicManager {
 
 	protected SDIProperties sdiProperties = null;
 	protected Logger logger = null;
-	public SDIProtocolManager(IProtocolFactory protocolFactory) throws ProtocolException{
+	public SDIProtocolManager(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		super(protocolFactory);
 		this.logger = this.getProtocolFactory().getLogger();
 		this.sdiProperties = SDIProperties.getInstance(this.logger);

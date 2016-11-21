@@ -61,10 +61,10 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
  */
 public class EsitoUtils {
 
-	protected IProtocolFactory protocolFactory = null;
+	protected IProtocolFactory<?> protocolFactory = null;
 	protected IDAccordoCooperazioneFactory idAccordoCooperazioneFactory;
 	protected IDAccordoFactory idAccordoFactory;
-	public EsitoUtils(IProtocolFactory protocolFactory){
+	public EsitoUtils(IProtocolFactory<?> protocolFactory){
 		this.protocolFactory = protocolFactory;
 		this.idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
 		this.idAccordoFactory = IDAccordoFactory.getInstance();

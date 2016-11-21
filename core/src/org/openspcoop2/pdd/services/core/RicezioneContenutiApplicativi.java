@@ -147,6 +147,7 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.tracciamento.TracciamentoException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -338,7 +339,7 @@ public class RicezioneContenutiApplicativi {
 		
 		
 		// ------------- in-handler -----------------------------
-		IProtocolFactory protocolFactory = null;
+		IProtocolFactory<?> protocolFactory = null;
 		try{
 			protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String)this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
 		}catch(Exception e){
@@ -600,7 +601,7 @@ public class RicezioneContenutiApplicativi {
 		IDSoggetto identitaPdD = requestInfo.getIdentitaPdD();
 
 		// ProtocolFactory
-		IProtocolFactory protocolFactory = requestInfo.getProtocolFactory();
+		IProtocolFactory<?> protocolFactory = requestInfo.getProtocolFactory();
 		PdDContext pddContext = inRequestContext.getPddContext();
 		ITraduttore traduttore = protocolFactory.createTraduttore();
 		IProtocolManager protocolManager = protocolFactory.createProtocolManager();
@@ -1471,7 +1472,7 @@ public class RicezioneContenutiApplicativi {
 							(String) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID), 
 							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 							propertiesReader.getGestioneSerializableDB_CheckInterval(),
-							Boolean.TRUE);
+							RuoloMessaggio.RICHIESTA);
 				if (idMessageRequest == null) {
 					throw new Exception("Identificativo non costruito.");
 				}
@@ -1594,7 +1595,7 @@ public class RicezioneContenutiApplicativi {
 		/*
 		  * --------- Informazioni protocollo ----------
 		 */
-		IBustaBuilder bustaBuilder = protocolFactory.createBustaBuilder();
+		IBustaBuilder<?> bustaBuilder = protocolFactory.createBustaBuilder();
 		IDServizio idServizio = richiestaDelegata.getIdServizio();	
 		this.msgContext.getProtocol().setFruitore(soggettoFruitore);	
 		this.msgContext.getProtocol().setErogatore(idServizio.getSoggettoErogatore());		
@@ -2377,7 +2378,7 @@ public class RicezioneContenutiApplicativi {
 					// attachments non gestiti!
 					ProprietaManifestAttachments proprietaManifest = propertiesReader.getProprietaManifestAttachments("standard");
 					proprietaManifest.setGestioneManifest(false);
-					bustaBuilder.sbustamento(openspcoopstate.getStatoRichiesta(),requestMessage, bustaRichiesta, true, proprietaManifest);
+					bustaBuilder.sbustamento(openspcoopstate.getStatoRichiesta(),requestMessage, bustaRichiesta, RuoloMessaggio.RICHIESTA, proprietaManifest);
 				}
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e,"invocazionePortaDelegataPerRiferimento.sbustamentoProtocolHeader()");
@@ -3605,7 +3606,7 @@ public class RicezioneContenutiApplicativi {
 		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, pddContext);
 		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		
-		IProtocolFactory protocolFactory = parametriGestioneRisposta.getProtocolFactory();
+		IProtocolFactory<?> protocolFactory = parametriGestioneRisposta.getProtocolFactory();
 		
 		Busta bustaRichiesta = parametriGestioneRisposta.getBustaRichiesta();
 		

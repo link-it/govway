@@ -207,7 +207,7 @@ public class ConnectorDispatcherUtils {
 			RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore, ErroreIntegrazione erroreIntegrazione,
 			IntegrationError integrationError, Throwable e, HttpServletResponse res, Logger log){
 		
-		IProtocolFactory protocolFactory = requestInfo.getProtocolFactory();
+		IProtocolFactory<?> protocolFactory = requestInfo.getProtocolFactory();
 				
 		if(generatoreErrore!=null){
 			OpenSPCoop2Message msgErrore = generatoreErrore.build(integrationError, erroreIntegrazione, e, null);
@@ -240,7 +240,7 @@ public class ConnectorDispatcherUtils {
 			IntegrationError integrationError, Throwable e, ParseException parseException,
 			ConnectorOutMessage res, Logger log) throws ConnectorException{
 		
-		IProtocolFactory protocolFactory = requestInfo.getProtocolFactory();
+		IProtocolFactory<?> protocolFactory = requestInfo.getProtocolFactory();
 			
 		if(generatoreErrore!=null){
 			OpenSPCoop2Message msgErrore = generatoreErrore.build(integrationError, erroreIntegrazione, e, parseException);
@@ -274,7 +274,7 @@ public class ConnectorDispatcherUtils {
 			RicezioneBusteExternalErrorGenerator generatoreErrore, ErroreIntegrazione erroreIntegrazione,
 			IntegrationError integrationError, Throwable e, HttpServletResponse res, Logger log){
 		
-		IProtocolFactory protocolFactory = requestInfo.getProtocolFactory();
+		IProtocolFactory<?> protocolFactory = requestInfo.getProtocolFactory();
 				
 		if(generatoreErrore!=null){
 			OpenSPCoop2Message msgErrore = generatoreErrore.buildErroreProcessamento(integrationError, erroreIntegrazione, e);
@@ -307,7 +307,7 @@ public class ConnectorDispatcherUtils {
 			IntegrationError integrationError, Throwable e, ParseException parseException,
 			ConnectorOutMessage res, Logger log) throws ConnectorException{
 		
-		IProtocolFactory protocolFactory = requestInfo.getProtocolFactory();
+		IProtocolFactory<?> protocolFactory = requestInfo.getProtocolFactory();
 							
 		OpenSPCoop2Message msgErrore = generatoreErrore.buildErroreProcessamento(integrationError, erroreIntegrazione, e);
 		if(msgErrore.getForcedResponseCode()!=null){

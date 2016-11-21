@@ -23,17 +23,17 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
-import javax.xml.soap.SOAPElement;
-
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.pdd.core.handlers.OutRequestContext;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 
 /**
@@ -74,17 +74,17 @@ public class ConnettoreMsg  {
 	/** Identificativo Modulo che utilizza il connettore */
 	private String idModulo;
 	/** ProtocolFactory */
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<?> protocolFactory;
 	/** Attributi per lo sbustamento del protocollo */
 	private boolean gestioneManifest = false;
 	private ProprietaManifestAttachments proprietaManifestAttachments = null;
 	/** Eventuale header sbustato contenente le informazioni di protocollo */
-	private SOAPElement soapProtocolInfo = null;
+	private BustaRawContent<?> soapProtocolInfo = null;
 	/** Informazione sulla modalita LocalForward */
 	private boolean localForward = false;
 	/** Indicazione se il messaggio in consegna riguarda una richiesta o una risposta
 	 * Il set di questo field, potrà essere usato per la risposta di una invocazione sincrona con consegna su I.M. */
-	private boolean isRichiesta = true;
+	private RuoloMessaggio ruoloMessaggio = RuoloMessaggio.RICHIESTA;
 	
 	/** OutRequestContext */
 	private OutRequestContext outRequestContext;
@@ -272,7 +272,8 @@ public class ConnettoreMsg  {
 		if(!this.localForward && this.sbustamentoInformazioniProtocollo && !this.sbustamentoProtocolInfoEffettuato){
 			org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = 
 				new org.openspcoop2.protocol.engine.builder.Sbustamento(this.protocolFactory);
-			this.soapProtocolInfo = sbustatore.sbustamento(this.state,this.request,this.busta,this.isRichiesta,this.gestioneManifest,this.proprietaManifestAttachments);
+			this.soapProtocolInfo = sbustatore.sbustamento(this.state,this.request,this.busta,
+					this.ruoloMessaggio,this.gestioneManifest,this.proprietaManifestAttachments);
 			this.sbustamentoProtocolInfoEffettuato = true;
 		}
 		return this.request;
@@ -365,13 +366,13 @@ public class ConnettoreMsg  {
 			boolean sbustamentoInformazioniProtocollo) {
 		this.sbustamentoInformazioniProtocollo = sbustamentoInformazioniProtocollo;
 	}
-	public boolean isRichiesta() {
-		return this.isRichiesta;
+	public RuoloMessaggio getRuoloMessaggio() {
+		return this.ruoloMessaggio;
 	}
-	public void setRichiesta(boolean isRichiesta) {
-		this.isRichiesta = isRichiesta;
+	public void setRuoloMessaggio(RuoloMessaggio ruoloMessaggio) {
+		this.ruoloMessaggio = ruoloMessaggio;
 	}
-	public void setProtocolFactory(IProtocolFactory protocolFactory) {
+	public void setProtocolFactory(IProtocolFactory<?> protocolFactory) {
 		this.protocolFactory = protocolFactory;
 	}
 	
@@ -382,7 +383,7 @@ public class ConnettoreMsg  {
 			ProprietaManifestAttachments proprietaManifestAttachments) {
 		this.proprietaManifestAttachments = proprietaManifestAttachments;
 	}
-	public SOAPElement getSoapProtocolInfo() {
+	public BustaRawContent<?> getSoapProtocolInfo() {
 		return this.soapProtocolInfo;
 	}
 	public boolean isLocalForward() {

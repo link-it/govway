@@ -20,8 +20,8 @@ public abstract class AbstractErrorGenerator {
 	protected boolean internalErrorConfiguration;
 	
 	protected Logger log;
-	protected IProtocolFactory protocolFactory;
-	public IProtocolFactory getProtocolFactory() {
+	protected IProtocolFactory<?> protocolFactory;
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}
 	protected String idModulo;

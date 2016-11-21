@@ -293,7 +293,7 @@ public abstract class MessaggioDiagnosticoImpl extends BaseImpl  implements Mess
 			if(msgDiag.getProtocollo().sizeProprietaList()>0){
 				for (int i = 0; i < msgDiag.getProtocollo().sizeProprietaList(); i++) {
 					Proprieta p = msgDiag.getProtocollo().getProprieta(i);
-					if(org.openspcoop2.protocol.basic.diagnostica.DriverMsgDiagnostici.IDDIAGNOSTICI.equals(p.getNome())){
+					if(org.openspcoop2.protocol.basic.diagnostica.DiagnosticDriver.IDDIAGNOSTICI.equals(p.getNome())){
 						msgDiag.getProtocollo().removeProprieta(i);
 						break;
 					}

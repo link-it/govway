@@ -45,7 +45,7 @@ public class IntegrationManagerRequestContext extends IntegrationManagerBaseCont
 	
 	/** Costruttori */
 	public IntegrationManagerRequestContext(Date dataRichiestaOperazione,Operazione tipoOperazione,
-			PdDContext pddContext,Logger logger,IProtocolFactory protocolFactory) {
+			PdDContext pddContext,Logger logger,IProtocolFactory<?> protocolFactory) {
 		super(dataRichiestaOperazione,tipoOperazione,pddContext,logger,protocolFactory);
 	}
 

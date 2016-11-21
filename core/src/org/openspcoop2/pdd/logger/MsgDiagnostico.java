@@ -50,7 +50,8 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
-import org.openspcoop2.protocol.sdk.diagnostica.IMsgDiagnosticoOpenSPCoopAppender;
+import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
+import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazione;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazioneApplicativa;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazioneServizioApplicativo;
@@ -91,7 +92,7 @@ public class MsgDiagnostico {
 	/**  Logger log4j utilizzato per scrivere lo stack trace degli errore nel core logger di openspcoop */
 	private Logger loggerOpenSPCoop2Core = null;
 	/** Appender personalizzati per i messaggi diagnostici di OpenSPCoop2 */
-	private Vector<IMsgDiagnosticoOpenSPCoopAppender> loggerMsgDiagnosticoOpenSPCoopAppender = null; 
+	private Vector<IDiagnosticProducer> loggerMsgDiagnosticoOpenSPCoopAppender = null; 
 	private Vector<String> tipoMsgDiagnosticoOpenSPCoopAppender = null;
 
 	/** Soggetto che richiede il logger */
@@ -109,7 +110,7 @@ public class MsgDiagnostico {
 	
 	/** Protocol Factory */
 	private ProtocolFactoryManager protocolFactoryManager = null;
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<?> protocolFactory;
 	private ITraduttore traduttore;
 	/** ConfigurazionePdDReader */
 	private ConfigurazionePdDManager configurazionePdDReader;
@@ -242,7 +243,7 @@ public class MsgDiagnostico {
 	 * @param pddContext Contesto della PdD
 	 * 
 	 */
-	public void setPddContext(PdDContext pddContext, IProtocolFactory protocolFactory) {
+	public void setPddContext(PdDContext pddContext, IProtocolFactory<?> protocolFactory) {
 		this.pddContext = pddContext;
 		this.protocolFactory = protocolFactory;
 		try{
@@ -361,7 +362,7 @@ public class MsgDiagnostico {
 			this.keywordLogPersonalizzati.put(key, tmpValue);
 		}
 	}
-	public void addKeywords(IProtocolFactory protocolFactory){
+	public void addKeywords(IProtocolFactory<?> protocolFactory){
 		this.addKeyword(CostantiPdD.KEY_PROTOCOLLO, protocolFactory.getProtocol());
 		try{
 			if(this.pddContext!=null && this.pddContext.containsKey(Costanti.REQUEST_INFO)){
@@ -385,7 +386,7 @@ public class MsgDiagnostico {
 					}
 					else if(busta.getProtocollo()!=null){
 						try{
-							IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(busta.getProtocollo());
+							IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(busta.getProtocollo());
 							ITraduttore traduttore = protocolFactory.createTraduttore();
 							profilo = traduttore.toString(busta.getProfiloDiCollaborazione());
 						}catch(Exception e){
@@ -439,7 +440,7 @@ public class MsgDiagnostico {
 					}
 					else if(busta.getProtocollo()!=null){
 						try{
-							IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(busta.getProtocollo());
+							IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(busta.getProtocollo());
 							ITraduttore traduttore = protocolFactory.createTraduttore();
 							profilo = traduttore.toString(busta.getProfiloDiCollaborazione());
 						}catch(Exception e){
@@ -849,7 +850,7 @@ public class MsgDiagnostico {
 				
 				if(OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato){
 					try{
-						String xml = this.diagnosticoBuilder.toString(msgDiag);
+						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.XML);
 						this.loggerMsgDiagnostico.log(logLevelseveritaLivelloLog4J,xml);
 					}catch(Exception e){
 						logError("Errore durante l'emissione del msg diagnostico su log4j (struttura xml): "+e.getMessage(),e);
@@ -1065,7 +1066,7 @@ public class MsgDiagnostico {
 				
 				if(OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato){
 					try{
-						String xml = this.diagnosticoBuilder.toString(msgDiag);
+						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.XML);
 						this.loggerMsgDiagnostico.log(LogLevels.LOG_LEVEL_FATAL,xml);
 					}catch(Exception e){
 						logError("Errore durante l'emissione del msg diagnostico su log4j (struttura xml): "+e.getMessage(),e);
@@ -1179,7 +1180,7 @@ public class MsgDiagnostico {
 				
 				if(OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato){
 					try{
-						String xml = this.diagnosticoBuilder.toString(msgDiag);
+						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.XML);
 						this.loggerMsgDiagnostico.log(LogLevels.LOG_LEVEL_ERROR_PROTOCOL,xml);
 					}catch(Exception e){
 						logError("Errore durante l'emissione del msg diagnostico su log4j (struttura xml): "+e.getMessage(),e);
@@ -1288,7 +1289,7 @@ public class MsgDiagnostico {
 				
 				if(OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato){
 					try{
-						String xml = this.diagnosticoBuilder.toString(msgDiag);
+						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.XML);
 						this.loggerMsgDiagnostico.log(LogLevels.LOG_LEVEL_ERROR_INTEGRATION,xml);
 					}catch(Exception e){
 						logError("Errore durante l'emissione del msg diagnostico su log4j (struttura xml): "+e.getMessage(),e);
@@ -1397,7 +1398,7 @@ public class MsgDiagnostico {
 				
 				if(OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato){
 					try{
-						String xml = this.diagnosticoBuilder.toString(msgDiag);
+						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.XML);
 						this.loggerMsgDiagnostico.log(LogLevels.LOG_LEVEL_INFO_PROTOCOL,xml);
 					}catch(Exception e){
 						logError("Errore durante l'emissione del msg diagnostico su log4j (struttura xml): "+e.getMessage(),e);
@@ -1507,7 +1508,7 @@ public class MsgDiagnostico {
 				
 				if(OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato){
 					try{
-						String xml = this.diagnosticoBuilder.toString(msgDiag);
+						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.XML);
 						this.loggerMsgDiagnostico.log(LogLevels.LOG_LEVEL_INFO_INTEGRATION,xml);
 					}catch(Exception e){
 						logError("Errore durante l'emissione del msg diagnostico su log4j (struttura xml): "+e.getMessage(),e);
@@ -1616,7 +1617,7 @@ public class MsgDiagnostico {
 				
 				if(OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato){
 					try{
-						String xml = this.diagnosticoBuilder.toString(msgDiag);
+						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.XML);
 						this.loggerMsgDiagnostico.log(LogLevels.LOG_LEVEL_DEBUG_LOW,xml);
 					}catch(Exception e){
 						logError("Errore durante l'emissione del msg diagnostico su log4j (struttura xml): "+e.getMessage(),e);
@@ -1723,7 +1724,7 @@ public class MsgDiagnostico {
 				
 				if(OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato){
 					try{
-						String xml = this.diagnosticoBuilder.toString(msgDiag);
+						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.XML);
 						this.loggerMsgDiagnostico.log(LogLevels.LOG_LEVEL_DEBUG_MEDIUM,xml);
 					}catch(Exception e){
 						logError("Errore durante l'emissione del msg diagnostico su log4j (struttura xml): "+e.getMessage(),e);
@@ -1831,7 +1832,7 @@ public class MsgDiagnostico {
 				
 				if(OpenSPCoop2Logger.loggerMsgDiagnosticoAbilitato){
 					try{
-						String xml = this.diagnosticoBuilder.toString(msgDiag);
+						String xml = this.diagnosticoBuilder.toString(msgDiag,TipoSerializzazione.XML);
 						this.loggerMsgDiagnostico.log(LogLevels.LOG_LEVEL_DEBUG_HIGH,xml);
 					}catch(Exception e){
 						logError("Errore durante l'emissione del msg diagnostico su log4j (struttura xml): "+e.getMessage(),e);

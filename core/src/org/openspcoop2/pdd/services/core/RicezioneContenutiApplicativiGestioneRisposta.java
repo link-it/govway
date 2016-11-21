@@ -81,7 +81,7 @@ public class RicezioneContenutiApplicativiGestioneRisposta {
 	
 	private PdDContext pddContext;
 	
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<?> protocolFactory;
 	
 	private Busta bustaRichiesta;
 	
@@ -91,10 +91,10 @@ public class RicezioneContenutiApplicativiGestioneRisposta {
 	public void setBustaRichiesta(Busta bustaRichiesta) {
 		this.bustaRichiesta = bustaRichiesta;
 	}
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}
-	public void setProtocolFactory(IProtocolFactory protocolFactory) {
+	public void setProtocolFactory(IProtocolFactory<?> protocolFactory) {
 		this.protocolFactory = protocolFactory;
 	}
 	public PdDContext getPddContext() {

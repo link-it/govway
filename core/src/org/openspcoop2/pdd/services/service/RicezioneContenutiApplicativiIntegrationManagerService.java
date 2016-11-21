@@ -73,7 +73,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 	public IntegrationManagerMessage process(String tipoOperazione, String portaDelegata, IntegrationManagerMessage msg,
 			String idInvocazionePerRiferimento,
 			Logger logCore, javax.servlet.http.HttpServletRequest req, HttpServletResponse res,
-			IProtocolFactory protocolFactory, Timestamp dataIngressoMessaggio) throws IntegrationManagerException {
+			IProtocolFactory<?> protocolFactory, Timestamp dataIngressoMessaggio) throws IntegrationManagerException {
 
 		String idModulo = RicezioneContenutiApplicativi.ID_MODULO+IntegrationManager.ID_MODULO;
 				

@@ -67,7 +67,7 @@ public class ConnectorUtils {
 		return log;
 	}
 	
-	public static RequestInfo getRequestInfo(IProtocolFactory pf,URLProtocolContext protocolContext) throws ProtocolException, MessageException{
+	public static RequestInfo getRequestInfo(IProtocolFactory<?> pf,URLProtocolContext protocolContext) throws ProtocolException, MessageException{
 		
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 		
@@ -326,7 +326,7 @@ public class ConnectorUtils {
 				
 			// protocolli
 			try{
-				MapReader<String, IProtocolFactory> prots = ProtocolFactoryManager.getInstance().getProtocolFactories();
+				MapReader<String, IProtocolFactory<?>> prots = ProtocolFactoryManager.getInstance().getProtocolFactories();
 				if(prots.size()<=0){
 					risposta.append("<i>ERROR: No protocol installed</i><br/>\n");
 				}
@@ -335,7 +335,7 @@ public class ConnectorUtils {
 					Enumeration<String> keys = prots.keys();
 					while (keys.hasMoreElements()) {
 						String key = (String) keys.nextElement();
-						IProtocolFactory pf = prots.get(key);
+						IProtocolFactory<?> pf = prots.get(key);
 						if(pf.getManifest().getWeb().getEmptyContext()!=null && pf.getManifest().getWeb().getEmptyContext().isEnabled()){
 							if(bfProtocols.length()>0){
 								bfProtocols.append(", ");

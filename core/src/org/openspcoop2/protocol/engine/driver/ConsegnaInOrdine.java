@@ -66,7 +66,7 @@ public class ConsegnaInOrdine  {
 	 *  Altrimenti, e' un'istanza di StatelessMessage e nn necessita di connessioni */
 	private IState state;
 	
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<?> protocolFactory;
 
 	
 
@@ -78,7 +78,7 @@ public class ConsegnaInOrdine  {
 	 * @param state Oggetto che rappresenta lo stato di una busta
 	 * 
 	 */
-	public ConsegnaInOrdine(IState state,IProtocolFactory protocolFactory){
+	public ConsegnaInOrdine(IState state,IProtocolFactory<?> protocolFactory){
 		this(state,Configurazione.getLibraryLog(),protocolFactory);
 	}
 	/**
@@ -87,7 +87,7 @@ public class ConsegnaInOrdine  {
 	 * @param state Oggetto che rappresenta lo stato di una busta
 	 * 
 	 */
-	public ConsegnaInOrdine(IState state, Logger alog,IProtocolFactory protocolFactory){
+	public ConsegnaInOrdine(IState state, Logger alog,IProtocolFactory<?> protocolFactory){
 		this.state = state;
 		if(alog!=null){
 			this.log = alog;
@@ -266,7 +266,7 @@ public class ConsegnaInOrdine  {
 	 * @return una eccezione se la busta contiene una sequenza/collaborazione non valida
 	 * 
 	 */
-	public Eccezione validazioneDatiConsegnaInOrdine(Busta busta, IProtocolFactory protocolFactory)throws ProtocolException{
+	public Eccezione validazioneDatiConsegnaInOrdine(Busta busta, IProtocolFactory<?> protocolFactory)throws ProtocolException{
 		if(this.state instanceof StateMessage) {
 			
 			StateMessage stateful = (StateMessage)this.state;

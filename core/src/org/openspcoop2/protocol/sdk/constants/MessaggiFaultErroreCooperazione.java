@@ -47,7 +47,7 @@ public enum MessaggiFaultErroreCooperazione {
 		return this.msg;
 	}
 	
-	public String toString(IProtocolFactory protocolFactory) throws ProtocolException {
+	public String toString(IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		return protocolFactory.createTraduttore().toString(this);
 	}
 

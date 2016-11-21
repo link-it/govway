@@ -30,7 +30,7 @@ import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.protocol.engine.BasicProtocolFactory;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.diagnostica.IMsgDiagnosticoOpenSPCoopAppender;
+import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazione;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazioneApplicativa;
@@ -46,10 +46,10 @@ import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class MsgDiagnosticoOpenSPCoopAppenderDB implements IMsgDiagnosticoOpenSPCoopAppender{
+public class MsgDiagnosticoOpenSPCoopAppenderDB implements IDiagnosticProducer{
 
 	/** Driver di base: valido per tutti i protocolli */
-	org.openspcoop2.protocol.basic.diagnostica.MsgDiagnosticoOpenSPCoopAppenderDB diagnosticaBase = null;
+	org.openspcoop2.protocol.basic.diagnostica.DiagnosticProducer diagnosticaBase = null;
 	
 	/** Factory di base */
 	private BasicProtocolFactory basicProtocolFactory;
@@ -65,7 +65,7 @@ public class MsgDiagnosticoOpenSPCoopAppenderDB implements IMsgDiagnosticoOpenSP
 	public void initializeAppender(OpenspcoopAppender appenderProperties) throws MsgDiagnosticoException{
 		try{
 			this.basicProtocolFactory = new BasicProtocolFactory(OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
-			this.diagnosticaBase = (org.openspcoop2.protocol.basic.diagnostica.MsgDiagnosticoOpenSPCoopAppenderDB) this.basicProtocolFactory.createMsgDiagnosticoOpenSPCoopAppender();
+			this.diagnosticaBase = (org.openspcoop2.protocol.basic.diagnostica.DiagnosticProducer) this.basicProtocolFactory.createDiagnosticProducer();
 			this.diagnosticaBase.initializeAppender(appenderProperties);
 			this.diagnosticaBase.setForceIndex(OpenSPCoop2Properties.getInstance().isForceIndex());
 		}catch(Exception e){
@@ -134,7 +134,7 @@ public class MsgDiagnosticoOpenSPCoopAppenderDB implements IMsgDiagnosticoOpenSP
 	}
 		
 	@Override
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.basicProtocolFactory;
 	}
 }

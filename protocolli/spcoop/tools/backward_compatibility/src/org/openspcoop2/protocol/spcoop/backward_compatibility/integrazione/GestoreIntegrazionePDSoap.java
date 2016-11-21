@@ -86,7 +86,7 @@ public class GestoreIntegrazionePDSoap extends AbstractCore implements IGestoreI
 		}
 	}
 	@Override
-	public void init(PdDContext pddContext, IProtocolFactory protocolFactory,
+	public void init(PdDContext pddContext, IProtocolFactory<?> protocolFactory,
 			Object... args) {
 		super.init(pddContext, protocolFactory, args);
 		try{

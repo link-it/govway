@@ -196,7 +196,7 @@ public class RegistroServiziManager {
 	
 	/* ********  VALIDAZIONE  ******** */ 
 
-	public String getDominio(IDSoggetto idSoggetto,String nomeRegistro,IProtocolFactory protocolFactory) 
+	public String getDominio(IDSoggetto idSoggetto,String nomeRegistro,IProtocolFactory<?> protocolFactory) 
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return this.registroServiziReader.getDominio(this.getConnection(), idSoggetto, nomeRegistro, protocolFactory);
 	}

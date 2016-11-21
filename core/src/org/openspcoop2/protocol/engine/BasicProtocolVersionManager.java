@@ -34,7 +34,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 
 public class BasicProtocolVersionManager extends BasicVersionManager {
 
-	public BasicProtocolVersionManager(IProtocolFactory protocolFactory) {
+	public BasicProtocolVersionManager(IProtocolFactory<?> protocolFactory) {
 		super(protocolFactory);
 	}
 

@@ -40,8 +40,8 @@ import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.manifest.constants.ServiceBinding;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
-import org.openspcoop2.protocol.sdk.diagnostica.IMsgDiagnosticoOpenSPCoopAppender;
-import org.openspcoop2.protocol.sdk.tracciamento.ITracciamentoOpenSPCoopAppender;
+import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
+import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
 
 /**
  * Thread per la gestione del monitoraggio delle risorse
@@ -94,10 +94,10 @@ public class TimerMonitoraggioRisorse extends Thread{
 	/** Risorsa: Registri dei Servizi di OpenSPCoop */
 	private RegistroServiziManager registriPdDReader=null;
 	/** Risorsa: Tracciamenti Personalizzati */
-	private Vector<ITracciamentoOpenSPCoopAppender> tracciamentiPersonalizzati=null;
+	private Vector<ITracciaProducer> tracciamentiPersonalizzati=null;
 	private Vector<String> tipiTracciamentiPersonalizzati=null;
 	/** Risorsa: MsgDiagnostici Personalizzati */
-	private Vector<IMsgDiagnosticoOpenSPCoopAppender> msgDiagnosticiPersonalizzati=null;
+	private Vector<IDiagnosticProducer> msgDiagnosticiPersonalizzati=null;
 	private Vector<String> tipiMsgDiagnosticiPersonalizzati=null;
 	
 	/** Costruttore */

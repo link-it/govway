@@ -84,7 +84,7 @@ public class GestoreIntegrazionePDWSAddressing extends AbstractCore implements I
 		}
 	}
 	@Override
-	public void init(PdDContext pddContext, IProtocolFactory protocolFactory,
+	public void init(PdDContext pddContext, IProtocolFactory<?> protocolFactory,
 			Object... args) {
 		super.init(pddContext, protocolFactory, args);
 		try{

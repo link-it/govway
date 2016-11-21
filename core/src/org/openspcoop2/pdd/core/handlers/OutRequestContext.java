@@ -38,7 +38,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
  */
 public class OutRequestContext extends BaseContext {
 
-	public OutRequestContext(Logger logger,IProtocolFactory protocolFactory){
+	public OutRequestContext(Logger logger,IProtocolFactory<?> protocolFactory){
 		super.setLogCore(logger);
 		super.setProtocolFactory(protocolFactory);
 	}

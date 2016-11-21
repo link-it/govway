@@ -22,27 +22,26 @@
 package org.openspcoop2.protocol.spcoop;
 
 
-import org.slf4j.Logger;
+import javax.xml.soap.SOAPHeaderElement;
+
 import org.openspcoop2.protocol.basic.BasicFactory;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.archive.IArchive;
-import org.openspcoop2.protocol.sdk.builder.IBustaBuilder;
 import org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder;
 import org.openspcoop2.protocol.sdk.builder.IEsitoBuilder;
 import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
-import org.openspcoop2.protocol.sdk.diagnostica.IXMLDiagnosticoBuilder;
-import org.openspcoop2.protocol.sdk.tracciamento.IXMLTracciaBuilder;
+import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticSerializer;
+import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
 import org.openspcoop2.protocol.sdk.validator.IValidatoreErrori;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneAccordi;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneConSchema;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneDocumenti;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneSemantica;
-import org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica;
 import org.openspcoop2.protocol.spcoop.archive.SPCoopArchive;
 import org.openspcoop2.protocol.spcoop.builder.SPCoopBustaBuilder;
 import org.openspcoop2.protocol.spcoop.builder.SPCoopErroreApplicativoBuilder;
@@ -52,14 +51,15 @@ import org.openspcoop2.protocol.spcoop.config.SPCoopProtocolConfiguration;
 import org.openspcoop2.protocol.spcoop.config.SPCoopProtocolManager;
 import org.openspcoop2.protocol.spcoop.config.SPCoopProtocolVersionManager;
 import org.openspcoop2.protocol.spcoop.config.SPCoopTraduttore;
-import org.openspcoop2.protocol.spcoop.diagnostica.SPCoopXMLDiagnosticoBuilder;
-import org.openspcoop2.protocol.spcoop.tracciamento.SPCoopXMLTracciaBuilder;
+import org.openspcoop2.protocol.spcoop.diagnostica.SPCoopDiagnosticSerializer;
+import org.openspcoop2.protocol.spcoop.tracciamento.SPCoopTracciaSerializer;
 import org.openspcoop2.protocol.spcoop.validator.SPCoopValidatoreErrori;
 import org.openspcoop2.protocol.spcoop.validator.SPCoopValidazioneAccordi;
 import org.openspcoop2.protocol.spcoop.validator.SPCoopValidazioneConSchema;
 import org.openspcoop2.protocol.spcoop.validator.SPCoopValidazioneDocumenti;
 import org.openspcoop2.protocol.spcoop.validator.SPCoopValidazioneSemantica;
 import org.openspcoop2.protocol.spcoop.validator.SPCoopValidazioneSintattica;
+import org.slf4j.Logger;
 
 
 /**
@@ -69,7 +69,7 @@ import org.openspcoop2.protocol.spcoop.validator.SPCoopValidazioneSintattica;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SPCoopFactory extends BasicFactory {
+public class SPCoopFactory extends BasicFactory<SOAPHeaderElement> {
 
 	/**
 	 * 
@@ -87,19 +87,10 @@ public class SPCoopFactory extends BasicFactory {
 	}
 	
 	
-	/* ** INFO SERVIZIO ** */
-	
-	//public String getProtocol();
-	//public Logger getLogger();
-	//public ConfigurazionePdD getConfigurazionePdD();
-	//public Openspcoop2 getManifest();
-	// ereditato da BasicFactory
-	
-	
 	/* ** PROTOCOL BUILDER ** */
 	
 	@Override
-	public IBustaBuilder createBustaBuilder() throws ProtocolException {
+	public SPCoopBustaBuilder createBustaBuilder() throws ProtocolException {
 		return new SPCoopBustaBuilder(this);
 	}
 
@@ -123,7 +114,7 @@ public class SPCoopFactory extends BasicFactory {
 	}
 	
 	@Override
-	public IValidazioneSintattica createValidazioneSintattica()
+	public SPCoopValidazioneSintattica createValidazioneSintattica()
 			throws ProtocolException {
 		return new SPCoopValidazioneSintattica(this);
 	}
@@ -157,26 +148,18 @@ public class SPCoopFactory extends BasicFactory {
 	
 	/* ** DIAGNOSTICI ** */
 	
-	//public IDriverMSGDiagnostici createDriverMSGDiagnostici() throws ProtocolException;
-	//public IMsgDiagnosticoOpenSPCoopAppender createMsgDiagnosticoOpenSPCoopAppender() throws ProtocolException;
-	// ereditato da BasicFactory
-	
 	@Override
-	public IXMLDiagnosticoBuilder createXMLDiagnosticoBuilder()
+	public IDiagnosticSerializer createDiagnosticSerializer()
 			throws ProtocolException {
-		return new SPCoopXMLDiagnosticoBuilder(this);
+		return new SPCoopDiagnosticSerializer(this);
 	}
 	
 	
 	/* ** TRACCE ** */
 	
-	//public IDriverTracciamento createDriverTracciamento() throws ProtocolException;
-	//public ITracciamentoOpenSPCoopAppender createTracciamentoOpenSPCoopAppender() throws ProtocolException;
-	// ereditato da BasicFactory
-	
 	@Override
-	public IXMLTracciaBuilder createXMLTracciaBuilder() throws ProtocolException {
-		return new SPCoopXMLTracciaBuilder(this);
+	public ITracciaSerializer createTracciaSerializer() throws ProtocolException {
+		return new SPCoopTracciaSerializer(this);
 	}
 	
 	

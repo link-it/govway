@@ -24,6 +24,7 @@
 package org.openspcoop2.protocol.trasparente.validator;
 
 
+import org.openspcoop2.protocol.basic.BasicEmptyRawContent;
 import org.openspcoop2.protocol.basic.validator.ValidazioneSintattica;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -36,9 +37,9 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class TrasparenteValidazioneSintattica extends ValidazioneSintattica{
+public class TrasparenteValidazioneSintattica extends ValidazioneSintattica<BasicEmptyRawContent>{
 
-	public TrasparenteValidazioneSintattica(IProtocolFactory factory) throws ProtocolException {
+	public TrasparenteValidazioneSintattica(IProtocolFactory<BasicEmptyRawContent> factory) throws ProtocolException {
 		super(factory);
 	}
 

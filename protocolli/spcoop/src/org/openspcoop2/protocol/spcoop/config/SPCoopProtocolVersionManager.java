@@ -41,7 +41,7 @@ import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 public class SPCoopProtocolVersionManager extends SPCoopProtocolManager implements IProtocolVersionManager {
 	
 	protected String versione;
-	public SPCoopProtocolVersionManager(IProtocolFactory protocolFactory,String versione) throws ProtocolException{
+	public SPCoopProtocolVersionManager(IProtocolFactory<?> protocolFactory,String versione) throws ProtocolException{
 		super(protocolFactory);
 		this.versione = versione;
 	}

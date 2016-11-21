@@ -240,7 +240,7 @@ public class TimerGestoreBusteNonRiscontrateLib {
 						
 							// PdDContext
 							PdDContext pddContext = messaggioDaInviare.getPdDContext();
-							IProtocolFactory protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+							IProtocolFactory<?> protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
 							
 							// Recupero busta
 							repositoryBuste = new RepositoryBuste(openspcoopState.getStatoRichiesta(),this.logTimer, true,protocolFactory);
@@ -476,7 +476,7 @@ public class TimerGestoreBusteNonRiscontrateLib {
 							
 							// PdDContext
 							PdDContext pddContext = messaggioDaInviare.getPdDContext();
-							IProtocolFactory protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+							IProtocolFactory<?> protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
 							
 							// Recupero busta
 							repositoryBuste = new RepositoryBuste(openspcoopState.getStatoRichiesta(),this.logTimer, true,protocolFactory);

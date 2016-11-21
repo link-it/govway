@@ -46,6 +46,7 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ContestoCodificaEccezione;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneConSchema;
+import org.openspcoop2.protocol.spcoop.SPCoopBustaRawContent;
 import org.openspcoop2.protocol.spcoop.config.SPCoopProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
@@ -73,7 +74,7 @@ public class SPCoopValidazioneConSchema implements IValidazioneConSchema {
 	/** Errori di processamento riscontrati sulla busta */
 	private java.util.Vector<Eccezione> erroriProcessamento;
 
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<?> protocolFactory;
 	private AbstractXMLUtils xmlUtils;
 	
 	
@@ -85,7 +86,7 @@ public class SPCoopValidazioneConSchema implements IValidazioneConSchema {
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public SPCoopValidazioneConSchema(IProtocolFactory protocolFactory) throws ProtocolException{
+	public SPCoopValidazioneConSchema(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		this.protocolFactory = protocolFactory;
 		if(protocolFactory.getLogger()!=null)
 			this.log = protocolFactory.getLogger();
@@ -96,7 +97,7 @@ public class SPCoopValidazioneConSchema implements IValidazioneConSchema {
 	}
 
 	@Override
-	public IProtocolFactory getProtocolFactory(){
+	public IProtocolFactory<?> getProtocolFactory(){
 		return this.protocolFactory;
 	}
 
@@ -216,7 +217,8 @@ public class SPCoopValidazioneConSchema implements IValidazioneConSchema {
 		// Validazione eGov
 		try {
 
-			SOAPElement header = this.protocolFactory.createValidazioneSintattica().getHeaderProtocollo_senzaControlli(message);
+			SPCoopBustaRawContent bustaElement = (SPCoopBustaRawContent) this.protocolFactory.createValidazioneSintattica().getBustaRawContent_senzaControlli(message);
+			SOAPElement header = bustaElement.getElement();
 			
 			if(isSPCoopErroreProcessamento==false && isSPCoopErroreIntestazione==false){
 				

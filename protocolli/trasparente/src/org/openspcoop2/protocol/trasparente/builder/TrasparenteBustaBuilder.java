@@ -23,15 +23,16 @@ package org.openspcoop2.protocol.trasparente.builder;
 
 import java.util.Date;
 
-import javax.xml.soap.SOAPElement;
-
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.protocol.basic.BasicEmptyRawContent;
 import org.openspcoop2.protocol.basic.builder.BustaBuilder;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.trasparente.config.TrasparenteProperties;
 
@@ -42,44 +43,23 @@ import org.openspcoop2.protocol.trasparente.config.TrasparenteProperties;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class TrasparenteBustaBuilder extends BustaBuilder {
+public class TrasparenteBustaBuilder extends BustaBuilder<BasicEmptyRawContent> {
 
 	private TrasparenteProperties trasparenteProperties;
-	public TrasparenteBustaBuilder(IProtocolFactory factory) throws ProtocolException {
+	public TrasparenteBustaBuilder(IProtocolFactory<?> factory) throws ProtocolException {
 		super(factory);
 		this.trasparenteProperties = TrasparenteProperties.getInstance(factory.getLogger());
 	}
 
 	@Override
-	public SOAPElement imbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
-			boolean isRichiesta,
+	public BustaRawContent<BasicEmptyRawContent> imbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
+			RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments)
 			throws ProtocolException {
-
-		// Aggiunto in richiesta tramite urlMapping, ed in risposta tramite validazioneRisposta
-//		// aggiunto lista trasmissione
-//		if(busta.sizeListaTrasmissioni()<=0){
-//			Trasmissione trasmissione = new Trasmissione();
-//			
-//			trasmissione.setTipoOrigine(busta.getTipoMittente());
-//			trasmissione.setOrigine(busta.getMittente());
-//			trasmissione.setIdentificativoPortaOrigine(busta.getIdentificativoPortaMittente());
-//			trasmissione.setIndirizzoOrigine(busta.getIndirizzoMittente());
-//			
-//			trasmissione.setTipoDestinazione(busta.getTipoDestinatario());
-//			trasmissione.setDestinazione(busta.getDestinatario());
-//			trasmissione.setIdentificativoPortaDestinazione(busta.getIdentificativoPortaDestinatario());
-//			trasmissione.setIndirizzoDestinazione(busta.getIndirizzoDestinatario());
-//			
-//			trasmissione.setOraRegistrazione(busta.getOraRegistrazione());
-//			trasmissione.setTempo(busta.getTipoOraRegistrazione(), busta.getTipoOraRegistrazioneValue());
-//			
-//			busta.addTrasmissione(trasmissione);
-//		}
 		
-		super.imbustamento(state, msg, busta, isRichiesta, proprietaManifestAttachments);
+		super.imbustamento(state, msg, busta, ruoloMessaggio, proprietaManifestAttachments);
 				
-		if(!isRichiesta && busta.sizeListaEccezioni()>0 ){
+		if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio) && busta.sizeListaEccezioni()>0 ){
 		
 			boolean ignoraEccezioniNonGravi = this.protocolFactory.createProtocolManager().isIgnoraEccezioniNonGravi();
 			if(ignoraEccezioniNonGravi){
@@ -98,8 +78,8 @@ public class TrasparenteBustaBuilder extends BustaBuilder {
 	
 	
 	@Override
-	public String newID(IState state, IDSoggetto idSoggetto, String idTransazione, Boolean isRichiesta) throws ProtocolException {
-		return newID(state, idSoggetto, idTransazione, isRichiesta, this.trasparenteProperties.generateIDasUUID());
+	public String newID(IState state, IDSoggetto idSoggetto, String idTransazione, RuoloMessaggio ruoloMessaggio) throws ProtocolException {
+		return super.newID(state, idSoggetto, idTransazione, ruoloMessaggio, this.trasparenteProperties.generateIDasUUID());
 	}
 	
 	

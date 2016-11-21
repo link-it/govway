@@ -104,7 +104,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPConnector {
 			throw new ServletException(e.getMessage(),e);
 		}
 		
-		IProtocolFactory protocolFactory = null;
+		IProtocolFactory<?> protocolFactory = null;
 		try{
 			protocolFactory = httpIn.getProtocolFactory();
 		}catch(Throwable e){}

@@ -69,7 +69,7 @@ public abstract class AbstractIdentificazionePorta {
 	/* --- Tipo di Autorizzazione per Contenuto --- */
     protected String tipoAutorizzazioneContenuto;
 	
-    protected IProtocolFactory protocolFactory = null;
+    protected IProtocolFactory<?> protocolFactory = null;
 
 	protected IRegistryReader registryReader;
 
@@ -86,7 +86,7 @@ public abstract class AbstractIdentificazionePorta {
 	 */
 	public AbstractIdentificazionePorta(TransportRequestContext urlProtocolContext, Logger log,
 			boolean portaUrlBased, IRegistryReader registryReader,
-			IProtocolFactory protocolFactory) throws ProtocolException {
+			IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		this.location = urlProtocolContext.getFunctionParameters();
 		this.urlCompleta = urlProtocolContext.getUrlInvocazione_formBased();
 		this.nomePortaURLBased = portaUrlBased;

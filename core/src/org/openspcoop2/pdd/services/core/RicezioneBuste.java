@@ -32,8 +32,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
-import javax.xml.soap.SOAPElement;
-
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.TipoFiltroAbilitazioneServizi;
@@ -139,6 +137,7 @@ import org.openspcoop2.protocol.engine.mapping.InformazioniServizioURLMapping;
 import org.openspcoop2.protocol.engine.validator.Validatore;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Integrazione;
@@ -164,7 +163,7 @@ import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
-import org.openspcoop2.protocol.sdk.constants.TipoTraccia;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.state.StatelessMessage;
 import org.openspcoop2.protocol.sdk.tracciamento.EsitoElaborazioneMessaggioTracciato;
@@ -373,7 +372,7 @@ public class RicezioneBuste {
 		
 		// ------------- in-handler -----------------------------
 		
-		IProtocolFactory protocolFactory = null;
+		IProtocolFactory<?> protocolFactory = null;
 		try{
 			protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String)this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
 		}catch(Exception e){
@@ -820,7 +819,7 @@ public class RicezioneBuste {
 		}
 		
 		// ProtocolFactory
-		IProtocolFactory protocolFactory = requestInfo.getProtocolFactory();
+		IProtocolFactory<?> protocolFactory = requestInfo.getProtocolFactory();
 		PdDContext pddContext = inRequestContext.getPddContext();
 		ITraduttore traduttore = protocolFactory.createTraduttore();
 		
@@ -984,7 +983,7 @@ public class RicezioneBuste {
 			// avviene solamente se abbiamo invocazioni speciali con contextURL
 			// provo ad individuarlo con il protocollo
 			try{
-				Busta busta = protocolFactory.createValidazioneSintattica().getBustaProtocollo_senzaControlli(requestMessage);
+				Busta busta = protocolFactory.createValidazioneSintattica().getBusta_senzaControlli(requestMessage);
 				if(busta==null){
 					throw new Exception("Protocollo non individuato nel messaggio");
 				}
@@ -1336,7 +1335,7 @@ public class RicezioneBuste {
 							(String) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID), 
 							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 							propertiesReader.getGestioneSerializableDB_CheckInterval(),
-							true);
+							RuoloMessaggio.RICHIESTA);
 			}
 			
 			// Lista trasmissioni
@@ -1560,7 +1559,7 @@ public class RicezioneBuste {
 				
 		soggettoFruitore = validatore.getSoggettoMittente();
 		idServizio = validatore.getIDServizio();
-		SOAPElement soapHeaderElement = validatore.getHeaderProtocollo();
+		BustaRawContent<?> soapHeaderElement = validatore.getHeaderProtocollo();
 
 		
 		
@@ -3151,7 +3150,7 @@ public class RicezioneBuste {
 		
 		
 		/* -------- Tracciamento ------------- */
-		SOAPElement headerProtocolloRichiesta = validatore.getHeaderProtocollo();
+		BustaRawContent<?> headerProtocolloRichiesta = validatore.getHeaderProtocollo();
 		if(this.msgContext.isTracciamentoAbilitato()){
 			msgDiag.mediumDebug("Tracciamento busta di richiesta...");
 			
@@ -5000,7 +4999,7 @@ public class RicezioneBuste {
 
 				/* ------------  Imbustamento  ------------- */	
 				msgDiag.mediumDebug("Imbustamento della risposta...");
-				SOAPElement headerBustaRisposta = null;
+				BustaRawContent<?> headerBustaRisposta = null;
 				try{
 					boolean gestioneManifestRisposta = false;
 					if(functionAsRouter){
@@ -5029,7 +5028,7 @@ public class RicezioneBuste {
 						}
 					}else{
 						headerBustaRisposta = imbustatore.imbustamento(openspcoopstate.getStatoRichiesta(),responseMessage,bustaRisposta,infoIntegrazione,
-								gestioneManifestRisposta,false,scartaBody,proprietaManifestAttachments);
+								gestioneManifestRisposta,RuoloMessaggio.RISPOSTA,scartaBody,proprietaManifestAttachments);
 					}
 				}catch(Exception e){
 					if(functionAsRouter && 
@@ -5078,7 +5077,7 @@ public class RicezioneBuste {
 				/* ------------ MTOM Processor BeforeSecurity  -------------- */
 				if(mtomProcessor!=null){
 					try{
-						mtomProcessor.mtomBeforeSecurity(responseMessage, TipoTraccia.RISPOSTA);
+						mtomProcessor.mtomBeforeSecurity(responseMessage, RuoloMessaggio.RISPOSTA);
 					}catch(Exception e){
 						// L'errore viene registrato dentro il metodo mtomProcessor.mtomBeforeSecurity
 						//msgDiag.logErroreGenerico(e,"MTOMProcessor(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+")");
@@ -5172,7 +5171,7 @@ public class RicezioneBuste {
 				/* ------------ MTOM Processor AfterSecurity  -------------- */
 				if(mtomProcessor!=null){
 					try{
-						mtomProcessor.mtomAfterSecurity(responseMessage, TipoTraccia.RISPOSTA);
+						mtomProcessor.mtomAfterSecurity(responseMessage, RuoloMessaggio.RISPOSTA);
 					}catch(Exception e){
 						// L'errore viene registrato dentro il metodo mtomProcessor.mtomAfterSecurity
 						//msgDiag.logErroreGenerico(e,"MTOMProcessor(AfterSec-"+mtomProcessor.getMTOMProcessorType()+")");
@@ -5618,7 +5617,7 @@ public class RicezioneBuste {
 			}
 
 			// ProtocolFactory
-			IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
 						
 			//	Tracciamento Busta Ritornata: cambiata nel metodo msgErroreProcessamento
 			if(this.msgContext.isTracciamentoAbilitato()){
@@ -5688,7 +5687,7 @@ public class RicezioneBuste {
 		
 		try{
 			
-			IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
 						
 
 			/* ------- Gestione messaggi di richiesta per stateless --------*/
@@ -5819,12 +5818,12 @@ public class RicezioneBuste {
 		// RicevutaRispostaAsincronaAsimmetrica (integrazione) responseFlow della porta delegata che ha effettuato la risposta
 
 		FlowProperties flowProperties = new FlowProperties();
-		flowProperties.tipoMessaggio = TipoTraccia.RICHIESTA;
+		flowProperties.tipoMessaggio = RuoloMessaggio.RICHIESTA;
 		
 		ProfiloDiCollaborazione profiloCollaborazione = null;
 		try{
 			
-			IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
 						
 			// Messaggi AD HOC senza profilo: RISCONTRO
 			if(bustaRichiesta.getProfiloDiCollaborazione()==null && bustaRichiesta.sizeListaRiscontri()>0 &&
@@ -5870,7 +5869,7 @@ public class RicezioneBuste {
 					PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
 					flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
 					flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
-					flowProperties.tipoMessaggio = TipoTraccia.RISPOSTA;
+					flowProperties.tipoMessaggio = RuoloMessaggio.RISPOSTA;
 				}
 			}
 
@@ -5918,7 +5917,7 @@ public class RicezioneBuste {
 						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
 						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
 						flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
-						flowProperties.tipoMessaggio = TipoTraccia.RISPOSTA;
+						flowProperties.tipoMessaggio = RuoloMessaggio.RISPOSTA;
 
 					}
 					//	Ricevuta alla risposta.
@@ -5932,7 +5931,7 @@ public class RicezioneBuste {
 						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
 						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
 						flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
-						flowProperties.tipoMessaggio = TipoTraccia.RISPOSTA;
+						flowProperties.tipoMessaggio = RuoloMessaggio.RISPOSTA;
 
 					}
 
@@ -5992,7 +5991,7 @@ public class RicezioneBuste {
 						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
 						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
 						flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
-						flowProperties.tipoMessaggio = TipoTraccia.RISPOSTA;
+						flowProperties.tipoMessaggio = RuoloMessaggio.RISPOSTA;
 
 					}
 					//	Ricevuta alla risposta.
@@ -6006,7 +6005,7 @@ public class RicezioneBuste {
 						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
 						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
 						flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
-						flowProperties.tipoMessaggio = TipoTraccia.RISPOSTA;
+						flowProperties.tipoMessaggio = RuoloMessaggio.RISPOSTA;
 
 					}
 
@@ -6053,14 +6052,14 @@ public class RicezioneBuste {
 		// RicevutaRispostaAsincronaAsimmetrica (conversioneServizio) responseFlow della porta applicativa
 
 		FlowProperties flowProperties = new FlowProperties();
-		flowProperties.tipoMessaggio = TipoTraccia.RISPOSTA;
+		flowProperties.tipoMessaggio = RuoloMessaggio.RISPOSTA;
 
 		// NOTA: La busta che sto gestendo e' la busta che ho ricevuto, non quella che sto inviando!!
 
 		ProfiloDiCollaborazione profiloCollaborazione = null;
 		try{
 
-			IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
 						
 			// Messaggi AD HOC senza profilo: RISCONTRO
 			if(bustaRichiesta.getProfiloDiCollaborazione()==null && bustaRichiesta.sizeListaRiscontri()>0 &&
@@ -6198,7 +6197,7 @@ public class RicezioneBuste {
 			PdDContext pddContext) throws Exception{
 		boolean attendiTerminazioneRichiesta = false;
 
-		IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
 				
 		// Puo' potenzialmente essere una ricevuta alla richiesta (new connection for response)
 		// o alla risposta (e cmq la risposta l'ho generata io e quindi e' chiaro che ho finito di gestire la richiesta)
@@ -6301,7 +6300,7 @@ public class RicezioneBuste {
 			PdDContext pddContext)throws Exception{
 		boolean attendiTerminazioneRicevutaRichiesta = false;
 
-		IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
+		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO));
 		
 		// Puo' potenzialmente essere una ricevuta alla richiesta (new connection for response)
 		// o alla risposta (e cmq la risposta l'ho generata io e quindi e' chiaro che ho finito di gestire la richiesta)
@@ -6400,7 +6399,7 @@ public class RicezioneBuste {
 
 	private OpenSPCoop2Message generaRisposta_msgGiaRicevuto(boolean printMsg,Busta bustaRichiesta,Integrazione integrazione,MsgDiagnostico msgDiag,
 			OpenSPCoopState openspcoopstate,Logger log,ConfigurazionePdDManager config,OpenSPCoop2Properties properties, String profiloGestione,
-			RuoloBusta ruoloBustaRicevuta,String implementazionePdDMittente,IProtocolFactory protocolFactory,
+			RuoloBusta ruoloBustaRicevuta,String implementazionePdDMittente,IProtocolFactory<?> protocolFactory,
 			IDSoggetto identitaPdD,String idTransazione,Loader loader, boolean oneWayVersione11,
 			String implementazionePdDSoggettoMittente,
 			Tracciamento tracciamento,MessageSecurityContext messageSecurityContext,
@@ -6470,7 +6469,7 @@ public class RicezioneBuste {
 					imbustatore.buildID(openspcoopstate.getStatoRichiesta(),identitaPdD, idTransazione, 
 							properties.getGestioneSerializableDB_AttesaAttiva(),
 							properties.getGestioneSerializableDB_CheckInterval(),
-							Boolean.FALSE);
+							RuoloMessaggio.RISPOSTA);
 			bustaHTTPReply.setID(id_busta_risposta);
 			
 			Riscontro r = new Riscontro();
@@ -6490,7 +6489,7 @@ public class RicezioneBuste {
 					imbustatore.buildID(openspcoopstate.getStatoRichiesta(),identitaPdD, idTransazione, 
 							properties.getGestioneSerializableDB_AttesaAttiva(),
 							properties.getGestioneSerializableDB_CheckInterval(),
-							Boolean.FALSE);
+							RuoloMessaggio.RISPOSTA);
 			Vector<Eccezione> v = new Vector<Eccezione>();
 			v.add(Eccezione.getEccezioneValidazione(ErroriCooperazione.IDENTIFICATIVO_MESSAGGIO_GIA_PROCESSATO.getErroreCooperazione(),protocolFactory));
 			bustaHTTPReply = this.generatoreErrore.getImbustamentoErrore().buildMessaggioErroreProtocollo_Validazione(v,bustaRichiesta,id_busta_risposta,
@@ -6553,7 +6552,7 @@ public class RicezioneBuste {
 						imbustatore.buildID(openspcoopstate.getStatoRichiesta(),identitaPdD, idTransazione, 
 								properties.getGestioneSerializableDB_AttesaAttiva(),
 								properties.getGestioneSerializableDB_CheckInterval(),
-								Boolean.FALSE);
+								RuoloMessaggio.RISPOSTA);
 				bustaHTTPReply.setID(id_busta_risposta);
 			}
 		}
@@ -6566,7 +6565,7 @@ public class RicezioneBuste {
 						imbustatore.buildID(openspcoopstate.getStatoRichiesta(),identitaPdD, idTransazione, 
 								properties.getGestioneSerializableDB_AttesaAttiva(),
 								properties.getGestioneSerializableDB_CheckInterval(),
-								Boolean.FALSE);
+								RuoloMessaggio.RISPOSTA);
 				Vector<Eccezione> v = new Vector<Eccezione>();
 				v.add(Eccezione.getEccezioneValidazione(ErroriCooperazione.IDENTIFICATIVO_MESSAGGIO_GIA_PROCESSATO.getErroreCooperazione(),protocolFactory));
 				bustaHTTPReply = this.generatoreErrore.getImbustamentoErrore().buildMessaggioErroreProtocollo_Validazione(v,bustaRichiesta,id_busta_risposta,
@@ -6594,7 +6593,7 @@ public class RicezioneBuste {
 				msg = this.generatoreErrore.buildErroreIntestazione(IntegrationError.INTERNAL_ERROR);
 			}
 			imbustatore.imbustamento(openspcoopstate.getStatoRichiesta(),msg,bustaHTTPReply,integrazione,
-					false,false,false,null);
+					false,RuoloMessaggio.RISPOSTA,false,null);
 			
 			
 			//			Tracciamento Busta Ritornata: cambiata nel metodo msgErroreProcessamento

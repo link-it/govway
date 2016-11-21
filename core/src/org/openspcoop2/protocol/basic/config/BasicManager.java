@@ -29,7 +29,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
-import org.openspcoop2.protocol.sdk.constants.SOAPFaultIntegrationGenericInfoMode;
+import org.openspcoop2.protocol.sdk.constants.FaultIntegrationGenericInfoMode;
 import org.openspcoop2.protocol.sdk.constants.TipoIntegrazione;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.TransportRequestContext;
@@ -44,13 +44,13 @@ import org.openspcoop2.utils.transport.TransportResponseContext;
  */
 public abstract class BasicManager implements IProtocolManager {
 
-	private IProtocolFactory protocolFactory = null;
-	public BasicManager(IProtocolFactory protocolFactory){
+	private IProtocolFactory<?> protocolFactory = null;
+	public BasicManager(IProtocolFactory<?> protocolFactory){
 		this.protocolFactory = protocolFactory;
 	}
 	
 	@Override
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}
 	
@@ -99,52 +99,52 @@ public abstract class BasicManager implements IProtocolManager {
 	/* *********** SOAP Fault della Porta ******************* */
 	
 	@Override
-	public boolean isGenerazioneDetailsSOAPFaultProtocollo_EccezioneValidazione(){
+	public boolean isGenerazioneDetailsFaultProtocollo_EccezioneValidazione(){
 		return false;
 	}
 	
 	@Override
-	public boolean isGenerazioneDetailsSOAPFaultProtocollo_EccezioneProcessamento(){
+	public boolean isGenerazioneDetailsFaultProtocollo_EccezioneProcessamento(){
 		return true;
 	}
 		
 	@Override
-	public boolean isGenerazioneDetailsSOAPFaultProtocolloConStackTrace(){
+	public boolean isGenerazioneDetailsFaultProtocolloConStackTrace(){
 		return false;
 	}
 	
 	@Override
-	public boolean isGenerazioneDetailsSOAPFaultProtocolloConInformazioniGeneriche(){
+	public boolean isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche(){
 		return true;
 	}
 	
 	@Override
-	public boolean isGenerazioneDetailsSOAPFaultIntegratione_erroreServer(){
+	public boolean isGenerazioneDetailsFaultIntegratione_erroreServer(){
 		return true;
 	}
 	
 	@Override
-	public boolean isGenerazioneDetailsSOAPFaultIntegratione_erroreClient(){
+	public boolean isGenerazioneDetailsFaultIntegratione_erroreClient(){
 		return false;
 	}
 	
 	@Override
-	public boolean isGenerazioneDetailsSOAPFaultIntegrationeConStackTrace(){
+	public boolean isGenerazioneDetailsFaultIntegrationeConStackTrace(){
 		return false;
 	}
 	
 	@Override
-	public SOAPFaultIntegrationGenericInfoMode getModalitaGenerazioneInformazioniGeneriche_DetailsSOAPFaultIntegrazione(){
-		return SOAPFaultIntegrationGenericInfoMode.SERVIZIO_APPLICATIVO;
+	public FaultIntegrationGenericInfoMode getModalitaGenerazioneInformazioniGeneriche_DetailsFaultIntegrazione(){
+		return FaultIntegrationGenericInfoMode.SERVIZIO_APPLICATIVO;
 	}
 	
 	@Override
-	public Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativo(){
+	public Boolean isAggiungiDetailErroreApplicativo_FaultApplicativo(){
 		return null; // default in openspcoop2.properties
 	}
 	
 	@Override
-	public Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdD(){
+	public Boolean isAggiungiDetailErroreApplicativo_FaultPdD(){
 		return null; // default in openspcoop2.properties
 	}
 	

@@ -21,12 +21,12 @@
 
 package org.openspcoop2.protocol.engine;
 
-import org.slf4j.Logger;
-import org.openspcoop2.protocol.basic.BasicFactory;
+import org.openspcoop2.protocol.basic.BasicEmptyRawContentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
+import org.slf4j.Logger;
 
 /**
  * Protocol Factory di Base
@@ -36,7 +36,7 @@ import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
  * @version $Rev$, $Date$
  */
 
-public class BasicProtocolFactory extends BasicFactory {
+public class BasicProtocolFactory extends BasicEmptyRawContentFactory {
 
 	/**
 	 * 

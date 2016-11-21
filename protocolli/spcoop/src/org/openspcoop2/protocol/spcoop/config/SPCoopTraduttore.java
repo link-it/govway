@@ -50,7 +50,7 @@ import org.openspcoop2.protocol.spcoop.utils.SPCoopUtils;
 public class SPCoopTraduttore extends BasicTraduttore {
 
 
-	public SPCoopTraduttore(IProtocolFactory protocolFactory){
+	public SPCoopTraduttore(IProtocolFactory<?> protocolFactory){
 		super(protocolFactory);
 	}
 

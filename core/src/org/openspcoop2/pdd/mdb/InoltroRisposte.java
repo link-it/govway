@@ -24,7 +24,6 @@ package org.openspcoop2.pdd.mdb;
 import java.util.Properties;
 import java.util.Vector;
 
-import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPFault;
 
 import org.openspcoop2.core.config.Connettore;
@@ -82,6 +81,7 @@ import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
 import org.openspcoop2.protocol.engine.validator.Validatore;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Integrazione;
@@ -91,7 +91,7 @@ import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
-import org.openspcoop2.protocol.sdk.constants.TipoTraccia;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StatefulMessage;
 import org.openspcoop2.protocol.sdk.tracciamento.EsitoElaborazioneMessaggioTracciato;
@@ -138,7 +138,7 @@ public class InoltroRisposte extends GenericLib{
 		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		
 		/* Protocol Factory */
-		IProtocolFactory protocolFactory = null;
+		IProtocolFactory<?> protocolFactory = null;
 		IValidazioneSemantica validazioneSemantica = null;
 		org.openspcoop2.protocol.sdk.config.ITraduttore traduttore = null;
 		try{
@@ -564,12 +564,12 @@ public class InoltroRisposte extends GenericLib{
 
 			/* ------------  Imbustamento ------------- */	
 			msgDiag.mediumDebug("Imbustamento ...");
-			SOAPElement headerBusta = null;
+			BustaRawContent<?> headerBusta = null;
 			if(inoltroRisposteMsg.isImbustamento()){
 				try{
-					boolean isRichiesta = false;
+					RuoloMessaggio ruoloMessaggio = RuoloMessaggio.RISPOSTA;
 					if(inoltroSegnalazioneErrore)
-						isRichiesta = true;
+						ruoloMessaggio = RuoloMessaggio.RICHIESTA;
 					org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = new org.openspcoop2.protocol.engine.builder.Imbustamento(this.log,protocolFactory);
 	
 					boolean gestioneManifest = configurazionePdDManager.isGestioneManifestAttachments();
@@ -590,7 +590,7 @@ public class InoltroRisposte extends GenericLib{
 						Integrazione integrazione = new Integrazione();
 						integrazione.setStateless(false);
 						headerBusta = imbustatore.imbustamento(openspcoopstate.getStatoRichiesta(),responseMessage,busta,integrazione,
-								gestioneManifest,isRichiesta,scartaBody,proprietaManifestAttachments);
+								gestioneManifest,ruoloMessaggio,scartaBody,proprietaManifestAttachments);
 					}
 				}catch(Exception e){
 					if(functionAsRouter)
@@ -1174,13 +1174,14 @@ public class InoltroRisposte extends GenericLib{
 
 				// Estrazione header busta
 				msgDiag.mediumDebug("Sbustamento della risposta...");
-				SOAPElement headerProtocolloRispostaConnectionReply = null;
+				BustaRawContent<?> headerProtocolloRispostaConnectionReply = null;
 				try{
 					boolean gestioneManifestRispostaHttp = false;
 					if(functionAsRouter==false)
 						gestioneManifestRispostaHttp = configurazionePdDManager.isGestioneManifestAttachments();
 					org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = new org.openspcoop2.protocol.engine.builder.Sbustamento(protocolFactory);
-					headerProtocolloRispostaConnectionReply = sbustatore.sbustamento(openspcoopstate.getStatoRichiesta(),responseHttpReply,busta,false,gestioneManifestRispostaHttp,proprietaManifestAttachments);
+					headerProtocolloRispostaConnectionReply = sbustatore.sbustamento(openspcoopstate.getStatoRichiesta(),responseHttpReply,busta,
+							RuoloMessaggio.RISPOSTA,gestioneManifestRispostaHttp,proprietaManifestAttachments);
 				}catch(Exception e){
 					EsitoElaborazioneMessaggioTracciato esitoTraccia = EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Sbustamento busta nella connection Reply non riuscita: "+e.getMessage());
 					tracciamento.registraRisposta(responseHttpReply,null,
@@ -1409,7 +1410,7 @@ public class InoltroRisposte extends GenericLib{
 	private FlowProperties  getFlowProperties(Busta bustaRisposta,
 			ConfigurazionePdDManager configurazionePdDManager, IState state,
 			MsgDiagnostico msgDiag, 
-			org.openspcoop2.protocol.sdk.IProtocolFactory protocolFactory,
+			org.openspcoop2.protocol.sdk.IProtocolFactory<?> protocolFactory,
 			PortaApplicativa paFind)throws DriverConfigurazioneException{
 
 		//	Proprieta' Message-Security relative alla spedizione della busta
@@ -1427,7 +1428,7 @@ public class InoltroRisposte extends GenericLib{
 		// RicevutaRispostaAsincronaAsimmetrica (conversioneServizio) responseFlow della porta applicativa
 
 		FlowProperties flowProperties = new FlowProperties();
-		flowProperties.tipoMessaggio = TipoTraccia.RISPOSTA;
+		flowProperties.tipoMessaggio = RuoloMessaggio.RISPOSTA;
 		ProfiloDiCollaborazione profiloCollaborazione = null;
 
 		try{

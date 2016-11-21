@@ -32,7 +32,7 @@ import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.diagnostica.IMsgDiagnosticoOpenSPCoopAppender;
+import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazione;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazioneApplicativa;
@@ -49,14 +49,14 @@ import org.openspcoop2.utils.resources.MapReader;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class MsgDiagnosticoOpenSPCoopProtocolAppender implements IMsgDiagnosticoOpenSPCoopAppender{
+public class MsgDiagnosticoOpenSPCoopProtocolAppender implements IDiagnosticProducer{
 
-	private static Hashtable<String, IMsgDiagnosticoOpenSPCoopAppender> mappingProtocolToAppenders = new Hashtable<String, IMsgDiagnosticoOpenSPCoopAppender>();
+	private static Hashtable<String, IDiagnosticProducer> mappingProtocolToAppenders = new Hashtable<String, IDiagnosticProducer>();
 	
 	private static synchronized void initProtocolAppender(String protocol,OpenspcoopAppender appenderProperties) throws ProtocolException{
 		if(MsgDiagnosticoOpenSPCoopProtocolAppender.mappingProtocolToAppenders.containsKey(protocol)==false){
-			IProtocolFactory p = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
-			IMsgDiagnosticoOpenSPCoopAppender msgDiag = p.createMsgDiagnosticoOpenSPCoopAppender();
+			IProtocolFactory<?> p = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
+			IDiagnosticProducer msgDiag = p.createDiagnosticProducer();
 			if(msgDiag==null){
 				throw new ProtocolException("IMsgDiagnosticoOpenSPCoopAppender not defined for protocol ["+protocol+"]");
 			}
@@ -69,7 +69,7 @@ public class MsgDiagnosticoOpenSPCoopProtocolAppender implements IMsgDiagnostico
 		}
 	}
 	
-	private static IMsgDiagnosticoOpenSPCoopAppender getProtocolAppender(String protocol) throws ProtocolException{
+	private static IDiagnosticProducer getProtocolAppender(String protocol) throws ProtocolException{
 		if(MsgDiagnosticoOpenSPCoopProtocolAppender.mappingProtocolToAppenders.containsKey(protocol)==false){
 			throw new ProtocolException("ProtocolAppender per protocollo["+protocol+"] non inizializzato");
 		}
@@ -86,7 +86,7 @@ public class MsgDiagnosticoOpenSPCoopProtocolAppender implements IMsgDiagnostico
 	@Override
 	public void initializeAppender(OpenspcoopAppender appenderProperties) throws MsgDiagnosticoException{
 		try{
-			MapReader<String, IProtocolFactory> table = ProtocolFactoryManager.getInstance().getProtocolFactories();
+			MapReader<String, IProtocolFactory<?>> table = ProtocolFactoryManager.getInstance().getProtocolFactories();
 			Enumeration<String> keys = table.keys();
 			while (keys.hasMoreElements()) {
 				String protocol = keys.nextElement();
@@ -190,7 +190,7 @@ public class MsgDiagnosticoOpenSPCoopProtocolAppender implements IMsgDiagnostico
 	}
 		
 	@Override
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return null; // non e' possibile localizzarla
 	}
 }

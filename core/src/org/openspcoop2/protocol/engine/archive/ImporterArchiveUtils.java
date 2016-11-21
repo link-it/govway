@@ -498,7 +498,7 @@ public class ImporterArchiveUtils {
 				if(archiveSoggetto.getSoggettoRegistro().getCodiceIpa()==null ||
 						archiveSoggetto.getSoggettoRegistro().getIdentificativoPorta()==null){
 					
-					IProtocolFactory protocolFactory = this.protocolFactoryManager.getProtocolFactoryByOrganizationType(idSoggetto.getTipo());
+					IProtocolFactory<?> protocolFactory = this.protocolFactoryManager.getProtocolFactoryByOrganizationType(idSoggetto.getTipo());
 					ITraduttore traduttore = protocolFactory.createTraduttore();
 					
 					if(archiveSoggetto.getSoggettoRegistro().getCodiceIpa()==null){
@@ -575,7 +575,7 @@ public class ImporterArchiveUtils {
 				
 				if(archiveSoggetto.getSoggettoConfigurazione().getIdentificativoPorta()==null){
 					
-					IProtocolFactory protocolFactory = this.protocolFactoryManager.getProtocolFactoryByOrganizationType(idSoggetto.getTipo());
+					IProtocolFactory<?> protocolFactory = this.protocolFactoryManager.getProtocolFactoryByOrganizationType(idSoggetto.getTipo());
 					ITraduttore traduttore = protocolFactory.createTraduttore();
 					
 					if(archiveSoggetto.getSoggettoConfigurazione().getIdentificativoPorta()==null){

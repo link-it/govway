@@ -112,7 +112,7 @@ public class GestoreCorrelazioneApplicativa {
 	/** Indicazione se deve essere effettuato riuso id */
 	private boolean riusoIdentificativo = false;
 	/** ProtocolFactory */
-	private IProtocolFactory protocolFactory = null;
+	private IProtocolFactory<?> protocolFactory = null;
 
 	public boolean isRiusoIdentificativo() {
 		return this.riusoIdentificativo;
@@ -124,7 +124,7 @@ public class GestoreCorrelazioneApplicativa {
 	 *
 	 */
 	public GestoreCorrelazioneApplicativa(IState state,Logger alog,IDSoggetto soggettoFruitore,IDServizio idServizio,
-			String servizioApplicativo,IProtocolFactory protocolFactory){
+			String servizioApplicativo,IProtocolFactory<?> protocolFactory){
 		this.state = state;
 		if(alog!=null){
 			this.log = alog;
@@ -140,7 +140,7 @@ public class GestoreCorrelazioneApplicativa {
 	 * Costruttore. 
 	 *
 	 */
-	public GestoreCorrelazioneApplicativa(IState state,Logger alog,IProtocolFactory protocolFactory){
+	public GestoreCorrelazioneApplicativa(IState state,Logger alog,IProtocolFactory<?> protocolFactory){
 		this(state,alog,null,null,null,protocolFactory);
 	}
 

@@ -35,7 +35,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 public class SDITraduttore extends BasicTraduttore {
 
 
-	public SDITraduttore(IProtocolFactory protocolFactory){
+	public SDITraduttore(IProtocolFactory<?> protocolFactory){
 		super(protocolFactory);
 	}
 

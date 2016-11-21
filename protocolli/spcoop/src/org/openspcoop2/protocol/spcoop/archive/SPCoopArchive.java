@@ -69,7 +69,7 @@ public class SPCoopArchive extends BasicArchive {
 	private SPCoopArchiveImport importEngine = null;
 	private SPCoopArchiveExport exportEngine = null;
 	
-	public SPCoopArchive(IProtocolFactory protocolFactory) {
+	public SPCoopArchive(IProtocolFactory<?> protocolFactory) {
 		super(protocolFactory);
 		this.importEngine = new SPCoopArchiveImport(protocolFactory);
 		this.exportEngine = new SPCoopArchiveExport(protocolFactory);

@@ -33,6 +33,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.protocol.basic.validator.ValidazioneSintattica;
+import org.openspcoop2.protocol.sdi.SDIBustaRawContent;
 import org.openspcoop2.protocol.sdi.config.SDIProperties;
 import org.openspcoop2.protocol.sdi.constants.SDICostanti;
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRiceviFile;
@@ -59,7 +60,7 @@ import org.openspcoop2.protocol.sdk.validator.ValidazioneSintatticaResult;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SDIValidazioneSintattica extends ValidazioneSintattica{
+public class SDIValidazioneSintattica extends ValidazioneSintattica<SOAPElement>{
 
 	/** ValidazioneUtils */
 	protected SDIValidazioneUtils validazioneUtils;
@@ -77,9 +78,9 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica{
 	/** Eventuale messaggio di errore avvenuto durante il processo di validazione */
 	private String msgErrore;
 	/** SOAPElement senza il contenuto (SoloProtocolloSDI) */
-	protected SOAPElement headerElement;
+	protected SDIBustaRawContent headerElement;
 	
-	public SDIValidazioneSintattica(IProtocolFactory factory) throws ProtocolException {
+	public SDIValidazioneSintattica(IProtocolFactory<SOAPElement> factory) throws ProtocolException {
 		super(factory);
 		this.validazioneUtils = new SDIValidazioneUtils(factory);
 		this.sdiProperties = SDIProperties.getInstance(this.log);
@@ -88,10 +89,10 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica{
 
 	
 	@Override
-	public SOAPElement getHeaderProtocollo_senzaControlli(
+	public SDIBustaRawContent getBustaRawContent_senzaControlli(
 			OpenSPCoop2Message msg) throws ProtocolException {
 		try{
-			return SDIUtils.readHeader(msg.castAsSoap());
+			return new SDIBustaRawContent(SDIUtils.readHeader(msg.castAsSoap()));
 		}catch(Exception e){
 			this.log.debug("getHeaderProtocollo_senzaControlli error: "+e.getMessage(),e);
 			return null;
@@ -100,11 +101,11 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica{
 	
 
 	@Override
-	public ValidazioneSintatticaResult validaRichiesta(IState state, OpenSPCoop2Message msg, Busta datiBustaLettiURLMappingProperties, ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException{
+	public ValidazioneSintatticaResult<SOAPElement> validaRichiesta(IState state, OpenSPCoop2Message msg, Busta datiBustaLettiURLMappingProperties, ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException{
 		
-		ValidazioneSintatticaResult basicResult = super.validaRichiesta(state, msg, datiBustaLettiURLMappingProperties, proprietaValidazioneErrori);
+		ValidazioneSintatticaResult<SOAPElement> basicResult = super.validaRichiesta(state, msg, datiBustaLettiURLMappingProperties, proprietaValidazioneErrori);
 		
-		this.headerElement = this.getHeaderProtocollo_senzaControlli(msg);
+		this.headerElement = this.getBustaRawContent_senzaControlli(msg);
 		
 		boolean isValido = this.valida(msg,basicResult.getBusta(), true,null);
 		
@@ -120,15 +121,15 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica{
 		if(this.erroriProcessamento.size()>0){
 			erroriValidazione = this.erroriProcessamento;
 		}
-		ValidazioneSintatticaResult result = new ValidazioneSintatticaResult(erroriValidazione, erroriProcessamento, null, 
+		ValidazioneSintatticaResult<SOAPElement> result = new ValidazioneSintatticaResult<SOAPElement>(erroriValidazione, erroriProcessamento, null, 
 				basicResult.getBusta(), errore, null, this.headerElement, isValido);
 		return result;
 		
 	}
 	
 	@Override
-	public ValidazioneSintatticaResult validaRisposta(IState state, OpenSPCoop2Message msg, Busta bustaRichiesta, ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException{
-		ValidazioneSintatticaResult basicResult = super.validaRisposta(state, msg, bustaRichiesta, proprietaValidazioneErrori);
+	public ValidazioneSintatticaResult<SOAPElement> validaRisposta(IState state, OpenSPCoop2Message msg, Busta bustaRichiesta, ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException{
+		ValidazioneSintatticaResult<SOAPElement> basicResult = super.validaRisposta(state, msg, bustaRichiesta, proprietaValidazioneErrori);
 		
 		boolean hasFault = false;
 		try {
@@ -140,7 +141,7 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica{
 			return basicResult;
 		}
 		
-		this.headerElement = this.getHeaderProtocollo_senzaControlli(msg);
+		this.headerElement = this.getBustaRawContent_senzaControlli(msg);
 		
 		boolean isValido = this.valida(msg,basicResult.getBusta(),false,bustaRichiesta);
 		
@@ -156,7 +157,7 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica{
 		if(this.erroriProcessamento.size()>0){
 			erroriValidazione = this.erroriProcessamento;
 		}
-		ValidazioneSintatticaResult result = new ValidazioneSintatticaResult(erroriValidazione, erroriProcessamento, null, 
+		ValidazioneSintatticaResult<SOAPElement> result = new ValidazioneSintatticaResult<SOAPElement>(erroriValidazione, erroriProcessamento, null, 
 				basicResult.getBusta(), errore, null, this.headerElement, isValido);
 		return result;
 	}

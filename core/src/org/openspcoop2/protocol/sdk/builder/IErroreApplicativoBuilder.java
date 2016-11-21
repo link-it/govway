@@ -29,7 +29,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.AbstractEccezioneBuilderParameter;
 import org.openspcoop2.protocol.sdk.EccezioneIntegrazioneBuilderParameters;
 import org.openspcoop2.protocol.sdk.EccezioneProtocolloBuilderParameters;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.TipoErroreApplicativo;
 import org.w3c.dom.Element;
@@ -48,14 +48,7 @@ import org.w3c.dom.Node;
  * @version $Rev$, $Date$
  */
 
-public interface IErroreApplicativoBuilder {
-
-	/**
-	 * Recupera l'implementazione della factory per il protocollo in uso
-	 * @return protocolFactory in uso.
-	 */
-		
-	public IProtocolFactory getProtocolFactory();
+public interface IErroreApplicativoBuilder extends IComponentFactory {
 
 	
 	// NAMESPACE
@@ -116,10 +109,10 @@ public interface IErroreApplicativoBuilder {
 	// BUILDER
 	
 	/**
-	 * Costruisce un messaggio SOAP contenente un SOAPFault o un SOAPBody (a seconda della configurazione) generato secondo lo standard del protocollo
+	 * Costruisce un messaggio SOAP contenente un Fault generato secondo lo standard del protocollo
 	 * 
 	 * @param parameters parametri
-	 * @return Il MessaggioSOAP contenente un SOAPFault generato secondo lo standard del protocollo
+	 * @return Il MessaggioSOAP contenente un Fault generato secondo lo standard del protocollo
 	 * @throws ProtocolException
 	 */
 	public OpenSPCoop2Message toMessage(EccezioneProtocolloBuilderParameters parameters) throws ProtocolException;

@@ -32,7 +32,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
  */
 public class PostOutRequestContext extends OutRequestContext {
 
-	public PostOutRequestContext(Logger logger, IProtocolFactory protocolFactory){
+	public PostOutRequestContext(Logger logger, IProtocolFactory<?> protocolFactory){
 		super(logger,protocolFactory);
 	}
 	

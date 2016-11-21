@@ -27,7 +27,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 			RegistryReader registryReader, ServiceIdentificationReader serviceIdentificationReader) throws ConnectorException{
 		
 		URLProtocolContext protocolContext = requestInfo.getProtocolContext();
-		IProtocolFactory pf = requestInfo.getProtocolFactory();
+		IProtocolFactory<?> pf = requestInfo.getProtocolFactory();
 		ServiceBindingConfiguration bindingConfig = requestInfo.getBindingConfig();
 		ServiceBinding serviceBinding = requestInfo.getServiceBinding();
 		MessageType requestMessageType = requestInfo.getRequestMessageType();

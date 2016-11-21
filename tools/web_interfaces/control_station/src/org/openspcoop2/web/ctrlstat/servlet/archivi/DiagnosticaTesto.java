@@ -120,7 +120,7 @@ public final class DiagnosticaTesto extends Action {
 
 			// Prendo i dati del messaggio diagnostico
 			FiltroRicercaDiagnosticiConPaginazione filtro = new FiltroRicercaDiagnosticiConPaginazione();
-			filtro.addProperty(org.openspcoop2.protocol.basic.diagnostica.DriverMsgDiagnostici.IDDIAGNOSTICI, idLong+"");
+			filtro.addProperty(org.openspcoop2.protocol.basic.diagnostica.DiagnosticDriver.IDDIAGNOSTICI, idLong+"");
 			List<MsgDiagnostico> list = driverMsgDiagnostici.getMessaggiDiagnostici(filtro);
 			if(list.size()>1){
 				throw new Exception("Esiste piu' di un messaggio diagnostico con id ["+idLong+"]???");

@@ -65,7 +65,7 @@ public class ErroreApplicativoBuilder  {
 	/** Logger utilizzato per debug. */
 	protected Logger log = null;
 	protected OpenSPCoop2MessageFactory fac = OpenSPCoop2MessageFactory.getMessageFactory();
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<?> protocolFactory;
 	private IProtocolManager protocolManager;
 	private IErroreApplicativoBuilder erroreApplicativoBuilder;
 	private org.openspcoop2.message.xml.XMLUtils xmlUtils;
@@ -104,7 +104,7 @@ public class ErroreApplicativoBuilder  {
 		this.tipoPdD = tipoPdD;
 	}
 
-	public ErroreApplicativoBuilder(Logger aLog, IProtocolFactory protocolFactory,
+	public ErroreApplicativoBuilder(Logger aLog, IProtocolFactory<?> protocolFactory,
 			IDSoggetto dominio,IDSoggetto mittente,IDServizio servizio,String idFunzione,
 			ProprietaErroreApplicativo proprietaErroreApplicativo,MessageType messageType,
 			TipoPdD tipoPdD,String servizioApplicativo) throws ProtocolException{
@@ -135,7 +135,7 @@ public class ErroreApplicativoBuilder  {
 		this.servizioApplicativo = servizioApplicativo;
 	}
 
-	public IProtocolFactory getProtocolFactory(){
+	public IProtocolFactory<?> getProtocolFactory(){
 		return this.protocolFactory;
 	}
 	
@@ -245,9 +245,9 @@ public class ErroreApplicativoBuilder  {
 			
 			boolean produciDettaglioEccezione = false;
 			if(errore.getCodiceErrore().getCodice() < 500){
-				produciDettaglioEccezione = this.protocolManager.isGenerazioneDetailsSOAPFaultIntegratione_erroreClient();
+				produciDettaglioEccezione = this.protocolManager.isGenerazioneDetailsFaultIntegratione_erroreClient();
 			}else{
-				produciDettaglioEccezione = this.protocolManager.isGenerazioneDetailsSOAPFaultIntegratione_erroreServer();
+				produciDettaglioEccezione = this.protocolManager.isGenerazioneDetailsFaultIntegratione_erroreServer();
 			}
 			
 			// uso byte per avere eraser type...

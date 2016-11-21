@@ -23,15 +23,15 @@
 
 package org.openspcoop2.protocol.engine.builder;
 
-import javax.xml.soap.SOAPElement;
-
-import org.slf4j.Logger;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.tracciamento.IXMLTracciaBuilder;
+import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
+import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.slf4j.Logger;
+import org.w3c.dom.Element;
 
 /**
  * Classe per la costruzione delle traccie
@@ -47,26 +47,26 @@ public class TracciaBuilder  {
 	/** Logger utilizzato per debug. */
 	protected Logger log = null;
 
-	private IProtocolFactory protocolFactory;
-	private IXMLTracciaBuilder tracciaProtocolBuilder;
+	private IProtocolFactory<?> protocolFactory;
+	private ITracciaSerializer tracciaProtocolBuilder;
 	
-	public TracciaBuilder(IProtocolFactory protocolFactory) {
+	public TracciaBuilder(IProtocolFactory<?> protocolFactory) {
 		this(Configurazione.getLibraryLog(), protocolFactory);
 	}
-	public TracciaBuilder(Logger aLog, IProtocolFactory protocolFactory) {
+	public TracciaBuilder(Logger aLog, IProtocolFactory<?> protocolFactory) {
 		if(aLog!=null)
 			this.log = aLog;
 		else
 			this.log = LoggerWrapperFactory.getLogger(TracciaBuilder.class);
 		this.protocolFactory = protocolFactory;
 		try{
-			this.tracciaProtocolBuilder = this.protocolFactory.createXMLTracciaBuilder();
+			this.tracciaProtocolBuilder = this.protocolFactory.createTracciaSerializer();
 		}catch(Exception e){
 			this.log.error("Errore durante la creazione dell'XMLTracciaBuilder: "+e.getMessage(),e);
 		}
 	}
 
-	public IProtocolFactory getProtocolFactory(){
+	public IProtocolFactory<?> getProtocolFactory(){
 		return this.protocolFactory;
 	}
 
@@ -79,7 +79,7 @@ public class TracciaBuilder  {
 	 * @return SOAPElement contenente il  tracciamento in caso di successo, null altrimenti. 
 	 * 
 	 */
-	public SOAPElement toElement(Traccia traccia)throws ProtocolException{
+	public Element toElement(Traccia traccia)throws ProtocolException{
 		return this.tracciaProtocolBuilder.toElement(traccia);
 	}
 	
@@ -90,8 +90,8 @@ public class TracciaBuilder  {
 	 * @return array di byte contenente il codice XML del tracciamento in caso di successo, null altrimenti. 
 	 * 
 	 */
-	public byte[] toByteArray(Traccia traccia)throws ProtocolException{
-		return this.tracciaProtocolBuilder.toByteArray(traccia);
+	public byte[] toByteArray(Traccia traccia, TipoSerializzazione tipoSerializzazione)throws ProtocolException{
+		return this.tracciaProtocolBuilder.toByteArray(traccia, tipoSerializzazione);
 	}
 
 	/**
@@ -101,8 +101,8 @@ public class TracciaBuilder  {
 	 * @return String contenente il codice XML del tracciamento in caso di successo, null altrimenti. 
 	 * 
 	 */
-	public String toString(Traccia traccia) throws ProtocolException{
-		return this.tracciaProtocolBuilder.toString(traccia);
+	public String toString(Traccia traccia, TipoSerializzazione tipoSerializzazione) throws ProtocolException{
+		return this.tracciaProtocolBuilder.toString(traccia, tipoSerializzazione);
 	}
 
 }

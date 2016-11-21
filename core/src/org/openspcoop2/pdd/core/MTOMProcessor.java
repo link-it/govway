@@ -30,7 +30,7 @@ import org.openspcoop2.pdd.config.MTOMProcessorConfig;
 import org.openspcoop2.pdd.config.MessageSecurityConfig;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
-import org.openspcoop2.protocol.sdk.constants.TipoTraccia;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 
 /**
  * MTOMProcessor
@@ -66,7 +66,7 @@ public class MTOMProcessor {
 			return null;
 	}
 	
-	public void mtomBeforeSecurity(OpenSPCoop2Message msg,TipoTraccia tipo) throws Exception{
+	public void mtomBeforeSecurity(OpenSPCoop2Message msg,RuoloMessaggio tipo) throws Exception{
 		
 		if(!ServiceBinding.SOAP.equals(msg.getServiceBinding())){
 			return;
@@ -122,7 +122,7 @@ public class MTOMProcessor {
 		
 	}
 	
-	public void mtomAfterSecurity(OpenSPCoop2Message msg,TipoTraccia tipo) throws Exception{
+	public void mtomAfterSecurity(OpenSPCoop2Message msg,RuoloMessaggio tipo) throws Exception{
 		
 		if(!ServiceBinding.SOAP.equals(msg.getServiceBinding())){
 			return;
@@ -181,7 +181,7 @@ public class MTOMProcessor {
 	
 	/* **** UTILITIES INTERNE ***** */
 	
-	private void setProcessorTypeIntoDiagnostic(TipoTraccia tipo){
+	private void setProcessorTypeIntoDiagnostic(RuoloMessaggio tipo){
 		switch (tipo) {
 		case RICHIESTA:
 			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_PROCESSAMENTO_MTOM_RICHIESTA, this.config.getMtomProcessorType().getValue());
@@ -194,7 +194,7 @@ public class MTOMProcessor {
 		}	
 	}
 	
-	private void emitDiagnostic(TipoTraccia tipo, String idDiagnosticRichiesta, String idDiagnosticRisposta){
+	private void emitDiagnostic(RuoloMessaggio tipo, String idDiagnosticRichiesta, String idDiagnosticRisposta){
 		
 		// Il set del prefisso viene fatto poichè il processor viene usato anche in moduli (es. LocalForward) dove non è correttamente impostato
 		
@@ -253,7 +253,7 @@ public class MTOMProcessor {
 		}
 	}
 	
-	private boolean isMTOMBeforeSecurity(TipoTraccia tipoTraccia) throws Exception{
+	private boolean isMTOMBeforeSecurity(RuoloMessaggio tipoTraccia) throws Exception{
 		
 		MTOMProcessorType processorType = null;
 		if(this.config!=null && this.config.getMtomProcessorType()!=null){

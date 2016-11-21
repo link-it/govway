@@ -24,7 +24,7 @@ package org.openspcoop2.protocol.sdk.validator;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.Busta;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.SecurityInfo;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
@@ -46,13 +46,8 @@ import org.openspcoop2.utils.digest.IDigestReader;
  * @version $Rev$, $Date$
  */
 
-public interface IValidazioneSemantica {
+public interface IValidazioneSemantica extends IComponentFactory {
 
-	/**
-	 * Recupera l'implementazione della factory per il protocollo in uso
-	 * @return protocolFactory in uso.
-	 */
-	public IProtocolFactory getProtocolFactory();
 
 	/**
 	 * Verifica che l'identificativo del messaggio rispetti le specifiche di protocollo.
@@ -70,7 +65,7 @@ public interface IValidazioneSemantica {
 	 * 
 	 * @param id Identificativo da validare
 	 * @param dominio Dominio del soggetto che emette la busta.
-	 * @param proprietaValidazione Indica il grado di validazione
+	 * @param proprietaValidazione Contiene alcune indicazione sulla modalità di validazione del messaggio
 	 * @return true se l'identificativo &egrave; valido
 	 */
 	public boolean validazioneID(String id, IDSoggetto dominio, ProprietaValidazione proprietaValidazione);
@@ -103,9 +98,10 @@ public interface IValidazioneSemantica {
 	 * <li> BustaDiServizio
 	 * </ul>
 	 *
+	 * @param msg Messaggio su cui effettuare la validazione semantica
 	 * @param busta Busta con i dati di cooperazione da validare
-	 * @param state Rappresentazione dello stato della busta
-	 * @param proprietaValidazione Contiene le informazioni sul tipo di validazione da effettuare
+	 * @param state Stato delle risorse utilizzate durante la gestione dalla PdD
+	 * @param proprietaValidazione Contiene alcune indicazione sulla modalità di validazione del messaggio
 	 * @param tipoBusta Ruolo della busta da validare
 	 * @return ValidazioneSemanticaResult cotenente i risultati della validazione.
 	 * @throws ProtocolException
@@ -114,5 +110,13 @@ public interface IValidazioneSemantica {
 			IState state, ProprietaValidazione proprietaValidazione, 
 			RuoloBusta tipoBusta) throws ProtocolException;
 	
+	/**
+	 * Informazioni sulla sicurezza estratta dal messaggio
+	 * 
+	 * @param digestReader interfaccia da utilizzare per estrarre le informazioni sulla sicurezza
+	 * @param msg Messaggio da analizzare
+	 * @return Informazioni sulla sicurezza estratta dal messaggio
+	 * @throws ProtocolException
+	 */
 	public SecurityInfo readSecurityInformation(IDigestReader digestReader, OpenSPCoop2Message msg) throws ProtocolException;
 }

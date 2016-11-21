@@ -93,14 +93,14 @@ public class ExporterArchiveUtils {
 	}
 	
 	public void export(String protocol,Archive archive,OutputStream out,ArchiveMode mode) throws Exception{
-		IProtocolFactory protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName(protocol);
+		IProtocolFactory<?> protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName(protocol);
 		IArchive archiveEngine = protocolFactory.createArchive();
 		RegistryReader archiveRegistryReader = new RegistryReader(this.archiveEngine.getDriverRegistroServizi(),this.archiveEngine.getDriverConfigurazione(),this.log);
 		archiveEngine.exportArchive(archive, out, mode, archiveRegistryReader);
 	}
 	
 	public byte[] export(String protocol,Archive archive,ArchiveMode mode) throws Exception{
-		IProtocolFactory protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName(protocol);
+		IProtocolFactory<?> protocolFactory = this.protocolFactoryManager.getProtocolFactoryByName(protocol);
 		IArchive archiveEngine = protocolFactory.createArchive();
 		RegistryReader archiveRegistryReader = new RegistryReader(this.archiveEngine.getDriverRegistroServizi(),this.archiveEngine.getDriverConfigurazione(),this.log);
 		return archiveEngine.exportArchive(archive, mode, archiveRegistryReader);

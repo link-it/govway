@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.sdk.validator;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.Busta;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.IComponentFactory;
 
 
 /**
@@ -35,21 +35,15 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
  * @version $Rev$, $Date$
  */
 
-public interface IValidatoreErrori {
-
-	/**
-	 * Recupera l'implementazione della factory per il protocollo in uso
-	 * @return protocolFactory in uso.
-	 */
-	public IProtocolFactory getProtocolFactory();
+public interface IValidatoreErrori extends IComponentFactory {
 
 	/**
 	 * Controlla se il messaggio fornito e' da considerarsi di errore
 	 * 
 	 * @param busta Informazioni di cooperazione
 	 * @param msg Messaggio da analizzare
-	 * @param proprietaValidazioneErrori proprietaValidazioneErrori 
-	 * @return true se il messaggio e' di errrore
+	 * @param proprietaValidazioneErrori Contiene alcune indicazione sulla modalità di validazione del messaggio
+	 * @return true se il messaggio contiene un errore di protocollo
 	 */
 	public boolean isBustaErrore(Busta busta,OpenSPCoop2Message msg,ProprietaValidazioneErrori proprietaValidazioneErrori);
 	
@@ -58,8 +52,8 @@ public interface IValidatoreErrori {
 	 * 
 	 * @param busta Informazioni di cooperazione
 	 * @param msg Messaggio da analizzare
-	 * @param proprietaValidazioneErrori proprietaValidazioneErrori 
-	 * @return true se il messaggio e' di errrore
+	 * @param proprietaValidazioneErrori Contiene alcune indicazione sulla modalità di validazione del messaggio
+	 * @return true se il messaggio è di tipologia errore di processamento
 	 */
 	public boolean isBustaErroreProcessamento(Busta busta,OpenSPCoop2Message msg,ProprietaValidazioneErrori proprietaValidazioneErrori);
 	
@@ -68,8 +62,8 @@ public interface IValidatoreErrori {
 	 * 
 	 * @param busta Informazioni di cooperazione
 	 * @param msg Messaggio da analizzare
-	 * @param proprietaValidazioneErrori proprietaValidazioneErrori 
-	 * @return true se il messaggio e' di errrore
+	 * @param proprietaValidazioneErrori Contiene alcune indicazione sulla modalità di validazione del messaggio 
+	 * @return true se il messaggio è di tipologia errore di intestazione
 	 */
 	public boolean isBustaErroreIntestazione(Busta busta,OpenSPCoop2Message msg,ProprietaValidazioneErrori proprietaValidazioneErrori);
 }

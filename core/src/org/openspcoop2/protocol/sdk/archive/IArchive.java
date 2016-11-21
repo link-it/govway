@@ -28,7 +28,7 @@ import java.io.OutputStream;
 import java.util.List;
 
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
@@ -42,16 +42,15 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
  * @version $Rev$, $Date$
  */
 
-public interface IArchive {
+public interface IArchive extends IComponentFactory {
 
-	public IProtocolFactory getProtocolFactory();
-	
 	
 	/* ----- Utilita' generali ----- */
 	
 	/**
 	 * Tipi di package gestiti per il protocollo, il valore della tabella contiene l'estensione associata al tipo al momento della generazione del package
 	 * 
+	 * @param mode ArchiveMode
 	 * @return Tipi dei package gestiti per il protocollo
 	 * @throws ProtocolException
 	 */
@@ -60,6 +59,9 @@ public interface IArchive {
 	/**
 	 * Imposta per ogni portType e operation presente nell'accordo fornito come parametro 
 	 * le informazioni di protocollo analizzando i documenti interni agli archivi
+	 * 
+	 * @param accordoServizioParteComune Accordo di Servizio Parte Comune
+	 * @throws ProtocolException
 	 */
 	public void setProtocolInfo(AccordoServizioParteComune accordoServizioParteComune) throws ProtocolException;
 	
@@ -80,6 +82,11 @@ public interface IArchive {
 	 * Converte l'archivio fornito come parametro in un oggetto org.openspcoop2.protocol.sdk.archive.Archive 
 	 * 
 	 * @param archive bytes dell'archivio
+	 * @param mode ArchiveMode
+	 * @param type ArchiveModeType
+	 * @param registryReader Reader delle informazioni presenti nel Registro
+	 * @param validationDocuments Indicazione se devono essere validati i documenti
+	 * @param placeholder MapPlaceholder
 	 * @return org.openspcoop2.protocol.sdk.archive.Archive
 	 * @throws ProtocolException
 	 */
@@ -90,7 +97,12 @@ public interface IArchive {
 	/**
 	 * Converte l'archivio fornito come parametro in un oggetto org.openspcoop2.protocol.sdk.archive.Archive 
 	 * 
-	 * @param archive bytes dell'archivio
+	 * @param archive Stream che restituisce i bytes dell'archivio
+	 * @param mode ArchiveMode
+	 * @param type ArchiveModeType
+	 * @param registryReader Reader delle informazioni presenti nel Registro
+	 * @param validationDocuments Indicazione se devono essere validati i documenti
+	 * @param placeholder MapPlaceholder
 	 * @return org.openspcoop2.protocol.sdk.archive.Archive
 	 * @throws ProtocolException
 	 */
@@ -135,6 +147,8 @@ public interface IArchive {
 	 * 
 	 * @param archive archivio da esportare
 	 * @param out stream su cui deve essere serializzato l'archivio
+	 * @param mode ArchiveMode
+	 * @param registryReader Reader delle informazioni presenti nel Registro
 	 * @throws ProtocolException
 	 */
 	public void exportArchive(Archive archive, OutputStream out, ArchiveMode mode,
@@ -144,6 +158,8 @@ public interface IArchive {
 	 * Converte l'archivio org.openspcoop2.protocol.sdk.archive.Archive in un formato binario serializzato nell'output stream 
 	 * 
 	 * @param archive archivio da esportare
+	 * @param mode ArchiveMode
+	 * @param registryReader Reader delle informazioni presenti nel Registro
 	 * @throws ProtocolException
 	 */
 	public byte[] exportArchive(Archive archive, ArchiveMode mode,

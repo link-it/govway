@@ -56,7 +56,7 @@ public class LocalForwardParameter {
 	private RichiestaDelegata richiestaDelegata;
 	private RichiestaApplicativa richiestaApplicativa;
 	private PdDContext pddContext;
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<?> protocolFactory;
 	private Servizio infoServizio;
 	private ConfigurazionePdDManager configurazionePdDReader;
 	private String idCorrelazioneApplicativa;
@@ -140,11 +140,11 @@ public class LocalForwardParameter {
 		this.infoServizio = infoServizio;
 	}
 	
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}
 
-	public void setProtocolFactory(IProtocolFactory protocolFactory) {
+	public void setProtocolFactory(IProtocolFactory<?> protocolFactory) {
 		this.protocolFactory = protocolFactory;
 	}
 

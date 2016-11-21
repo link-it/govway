@@ -63,8 +63,8 @@ public class RegistryReader implements IRegistryReader {
 	private Logger log;
 	private RegistroServiziManager registroServiziManager;
 	private ConfigurazionePdDManager configurazionePdDMangager;
-	private IProtocolFactory protocolFactory;
-	public RegistryReader(Logger log,IProtocolFactory protocolFactory) throws Exception{
+	private IProtocolFactory<?> protocolFactory;
+	public RegistryReader(Logger log,IProtocolFactory<?> protocolFactory) throws Exception{
 		this.log = log;
 		this.protocolFactory = protocolFactory;
 		this.registroServiziManager = RegistroServiziManager.getInstance();
@@ -337,7 +337,7 @@ public class RegistryReader implements IRegistryReader {
 			return null;
 		}
 	}
-	public String getAzione(PortaDelegata pd,URLProtocolContext transportContext, IProtocolFactory protocolFactory) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, IdentificazioneDinamicaException{
+	public String getAzione(PortaDelegata pd,URLProtocolContext transportContext, IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, IdentificazioneDinamicaException{
 		return this.configurazionePdDMangager.getAzione(pd, transportContext, null, null, false, protocolFactory);
 	}
 	
@@ -364,7 +364,7 @@ public class RegistryReader implements IRegistryReader {
 			return null;
 		}
 	}
-	public String getAzione(PortaApplicativa pa,URLProtocolContext transportContext, IProtocolFactory protocolFactory) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, IdentificazioneDinamicaException{
+	public String getAzione(PortaApplicativa pa,URLProtocolContext transportContext, IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, IdentificazioneDinamicaException{
 		return this.configurazionePdDMangager.getAzione(pa, transportContext, null, null, false, protocolFactory);
 	}
 }

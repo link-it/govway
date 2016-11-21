@@ -101,7 +101,7 @@ public class ProprietaErroreApplicativo implements java.io.Serializable {
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public String transformFaultMsg(ErroreIntegrazione errore,IProtocolFactory protocolFactory) throws ProtocolException{
+	public String transformFaultMsg(ErroreIntegrazione errore,IProtocolFactory<?> protocolFactory) throws ProtocolException{
 
 		CodiceErroreIntegrazione code = errore.getCodiceErrore();
 		if(this.faultAsGenericCode){

@@ -41,6 +41,7 @@ import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
+import org.openspcoop2.protocol.spcoop.SPCoopBustaRawContent;
 import org.openspcoop2.protocol.spcoop.config.SPCoopProperties;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.validator.SPCoopValidazioneSintattica;
@@ -63,12 +64,12 @@ import org.w3c.dom.Text;
 public class SPCoopSbustamento {
 
 	private Logger log;
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<?> protocolFactory;
 	private SPCoopValidazioneSintattica validazioneSintattica = null;
 	private AbstractXMLUtils xmlUtils = null;
 	private SPCoopProperties spcoopProperties = null;
 	
-	public SPCoopSbustamento(IProtocolFactory protocolFactory) throws ProtocolException{
+	public SPCoopSbustamento(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		this.protocolFactory = protocolFactory;
 		this.log = protocolFactory.getLogger();
 		this.spcoopProperties = SPCoopProperties.getInstance(this.log);
@@ -96,7 +97,11 @@ public class SPCoopSbustamento {
 			this.validazioneSintattica.setMsg(soapMsg);
 			this.validazioneSintattica.setReadQualifiedAttribute(proprietaManifestAttachments.isReadQualifiedAttribute());
 			headerSOAP = soapMsg.getSOAPHeader();
-			header = this.validazioneSintattica.getHeaderEGov(headerSOAP);
+			SPCoopBustaRawContent bustaElement = this.validazioneSintattica.getHeaderEGov(headerSOAP);
+			if(bustaElement == null){
+			    throw new Exception ("Header eGov non presente");
+			}
+			header = bustaElement.getElement();
 			if(header == null){
 			    throw new Exception ("Header eGov non presente");
 			}
@@ -331,7 +336,7 @@ public class SPCoopSbustamento {
 		}	
 	}
 
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}
 

@@ -77,7 +77,7 @@ public class IdentificazionePortaDelegata {
 	/* --- Tipo di Autorizzazione per Contenuto --- */
 	private String tipoAutorizzazioneContenuto;
 	
-	private IProtocolFactory protocolFactory = null;
+	private IProtocolFactory<?> protocolFactory = null;
 
 
 
@@ -91,7 +91,7 @@ public class IdentificazionePortaDelegata {
 	 * @param urlProtocolContext Parametri identificativi della porta delegata.
 	 * 
 	 */
-	public IdentificazionePortaDelegata(URLProtocolContext urlProtocolContext,IProtocolFactory protocolFactory) {
+	public IdentificazionePortaDelegata(URLProtocolContext urlProtocolContext,IProtocolFactory<?> protocolFactory) {
 		this.location = urlProtocolContext.getFunctionParameters();
 		this.urlCompleta = urlProtocolContext.getUrlInvocazione_formBased();
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();

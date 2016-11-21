@@ -27,7 +27,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.BypassMustUnderstandCheck;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
@@ -43,11 +43,9 @@ import org.openspcoop2.utils.transport.TransportRequestContext;
  * @version $Rev$, $Date$
  */
 
-public interface IProtocolConfiguration {
+public interface IProtocolConfiguration extends IComponentFactory {
 
-	public IProtocolFactory getProtocolFactory();
-	
-	
+
 	/**
 	 * Restituisce la configurazione del service binding generale del protocollo, indipendente dal servizio 
 	 * (se sono presenti più binding verrà usato quello di default)
@@ -165,7 +163,6 @@ public interface IProtocolConfiguration {
 	 * @return True se la specifica delle conversazioni viene supportata dal protocollo
 	 */
 	public boolean isSupportoSpecificaConversazioni();
-	
 	
 	/**
 	 * Ritorna i bypass da attivare sulla Porta relativi al protocollo

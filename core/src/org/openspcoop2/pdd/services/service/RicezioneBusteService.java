@@ -255,7 +255,7 @@ public class RicezioneBusteService  {
 		OpenSPCoop2Message requestMessage = null;
 		
 		
-		IProtocolFactory protocolFactory = null;
+		IProtocolFactory<?> protocolFactory = null;
 		String protocol = null;
 		MessageType messageTypeReq = null;
 		try{

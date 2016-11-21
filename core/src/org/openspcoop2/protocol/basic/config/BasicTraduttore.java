@@ -53,16 +53,16 @@ import org.openspcoop2.utils.date.DateManager;
 public class BasicTraduttore implements org.openspcoop2.protocol.sdk.config.ITraduttore {
 
 	protected Logger log = null;
-	protected IProtocolFactory protocolFactory;
+	protected IProtocolFactory<?> protocolFactory;
 	
 
-	public BasicTraduttore(IProtocolFactory factory){
+	public BasicTraduttore(IProtocolFactory<?> factory){
 		this.log = factory.getLogger();
 		this.protocolFactory = factory;
 	}
 
 	@Override
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}
 	

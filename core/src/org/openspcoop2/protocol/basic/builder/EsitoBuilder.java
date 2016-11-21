@@ -60,17 +60,17 @@ import org.w3c.dom.Node;
 public class EsitoBuilder implements org.openspcoop2.protocol.sdk.builder.IEsitoBuilder {
 	
 	protected Logger log;
-	protected IProtocolFactory factory;
+	protected IProtocolFactory<?> factory;
 	protected EsitiProperties esitiProperties;
 	
-	public EsitoBuilder(IProtocolFactory protocolFactory) throws ProtocolException{
+	public EsitoBuilder(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		this.log = protocolFactory.getLogger();
 		this.factory = protocolFactory;
 		this.esitiProperties = EsitiProperties.getInstance(this.log);
 	}
 	
 	@Override
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.factory;
 	}
 

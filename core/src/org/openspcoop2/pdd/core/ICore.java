@@ -33,6 +33,6 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
  */
 public interface ICore {
 
-	public void init(PdDContext pddContext,IProtocolFactory protocolFactory,Object ... args);
+	public void init(PdDContext pddContext,IProtocolFactory<?> protocolFactory,Object ... args);
 	
 }

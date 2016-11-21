@@ -119,7 +119,7 @@ public class ServicesUtils {
 	
 
 
-	public static String checkMustUnderstand(OpenSPCoop2SoapMessage message,IProtocolFactory protocolFactory) throws MessageException{
+	public static String checkMustUnderstand(OpenSPCoop2SoapMessage message,IProtocolFactory<?> protocolFactory) throws MessageException{
 		SOAPEnvelope envelope = null;
 		SOAPHeader header = null;
 		try {
@@ -189,7 +189,7 @@ public class ServicesUtils {
 
 
 	
-	public static boolean verificaRispostaRelazioneCodiceTrasporto202(IProtocolFactory protocolFactory,OpenSPCoop2Properties openSPCoopProperties,
+	public static boolean verificaRispostaRelazioneCodiceTrasporto202(IProtocolFactory<?> protocolFactory,OpenSPCoop2Properties openSPCoopProperties,
 			OpenSPCoop2Message responseMessage,boolean gestioneLatoPortaDelegata) throws Exception{
 		
 		if(responseMessage==null){

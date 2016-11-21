@@ -70,7 +70,7 @@ public class InformazioniServizioURLMapping {
 	private static final String GENERAZIONE_LISTA_TRASMISSIONI = "generazione-lista-trasmissioni";
 		
 	
-	private static MappingProperties getMappingProperties(IProtocolFactory protocolFactory) throws ProtocolException{
+	private static MappingProperties getMappingProperties(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		
 		Openspcoop2 manifest = protocolFactory.getManifest();
 		if(InformazioniServizioURLMapping.mappingPropertiesTable.containsKey(manifest.getProtocol().getName())==false){
@@ -81,7 +81,7 @@ public class InformazioniServizioURLMapping {
 	}
 	
 	private static HashMap<String, MappingProperties> mappingPropertiesTable = new HashMap<String, MappingProperties>();
-	public static synchronized void initMappingProperties(IProtocolFactory protocolFactory) throws ProtocolException{
+	public static synchronized void initMappingProperties(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		
 		try{
 			Openspcoop2 manifest = protocolFactory.getManifest();
@@ -156,7 +156,7 @@ public class InformazioniServizioURLMapping {
 	private boolean generateListaTrasmissione = false;
 		
 
-	public InformazioniServizioURLMapping(OpenSPCoop2Message msg,IProtocolFactory protocolFactory,
+	public InformazioniServizioURLMapping(OpenSPCoop2Message msg,IProtocolFactory<?> protocolFactory,
 			URLProtocolContext urlProtocolContext, Logger log, IDService idService) throws ProtocolException{
 				
 		this.mp = InformazioniServizioURLMapping.getMappingProperties(protocolFactory);

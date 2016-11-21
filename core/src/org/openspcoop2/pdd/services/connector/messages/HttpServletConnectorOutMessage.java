@@ -50,13 +50,13 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 
 	protected HttpServletResponse res;
 	protected OutputStream out;
-	protected IProtocolFactory protocolFactory;
+	protected IProtocolFactory<?> protocolFactory;
 	protected String idModulo;
 	protected IDService idModuloAsIDService;
 	protected OpenSPCoop2Properties openspcoopProperties;
 	
 	
-	public HttpServletConnectorOutMessage(IProtocolFactory protocolFactory, HttpServletResponse res,
+	public HttpServletConnectorOutMessage(IProtocolFactory<?> protocolFactory, HttpServletResponse res,
 			IDService idModuloAsIDService, String idModulo) throws ConnectorException{
 		try{
 			this.res = res;

@@ -34,7 +34,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
  */
 public class TrasparenteProtocolConfiguration extends BasicConfiguration {
 
-	public TrasparenteProtocolConfiguration(IProtocolFactory factory) throws ProtocolException {
+	public TrasparenteProtocolConfiguration(IProtocolFactory<?> factory) throws ProtocolException {
 		super(factory);
 	}
 	

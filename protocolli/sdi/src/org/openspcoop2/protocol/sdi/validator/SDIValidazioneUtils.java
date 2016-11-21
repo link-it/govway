@@ -35,9 +35,9 @@ import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
  */
 public class SDIValidazioneUtils {
 
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<?> protocolFactory;
 	
-	public SDIValidazioneUtils(IProtocolFactory protocolFactory){
+	public SDIValidazioneUtils(IProtocolFactory<?> protocolFactory){
 		this.protocolFactory = protocolFactory;
 	}
 	

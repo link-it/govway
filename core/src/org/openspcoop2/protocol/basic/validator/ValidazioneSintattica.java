@@ -23,13 +23,12 @@ package org.openspcoop2.protocol.basic.validator;
 
 import java.util.Date;
 
-import javax.xml.soap.SOAPElement;
-
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.Trasmissione;
@@ -37,6 +36,7 @@ import org.openspcoop2.protocol.sdk.builder.IBustaBuilder;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
@@ -52,14 +52,14 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  * 
  */
-public class ValidazioneSintattica implements
-		org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica {
+public class ValidazioneSintattica<BustaRawType> implements
+		org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica<BustaRawType> {
 
-	protected IProtocolFactory protocolFactory;
-	private IBustaBuilder bustaBuilder = null;
+	protected IProtocolFactory<BustaRawType> protocolFactory;
+	private IBustaBuilder<BustaRawType> bustaBuilder = null;
 	protected Logger log;
 		
-	public ValidazioneSintattica(IProtocolFactory factory) throws ProtocolException{
+	public ValidazioneSintattica(IProtocolFactory<BustaRawType> factory) throws ProtocolException{
 		this.log = factory.getLogger();
 		this.protocolFactory = factory;
 		this.bustaBuilder = this.protocolFactory.createBustaBuilder();
@@ -67,13 +67,13 @@ public class ValidazioneSintattica implements
 
 	
 	@Override
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<BustaRawType> getProtocolFactory() {
 		return this.protocolFactory;
 	}
 
 	
 	@Override
-	public ValidazioneSintatticaResult validaRichiesta(IState state, OpenSPCoop2Message msg, Busta datiBustaLettiURLMappingProperties, ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException{
+	public ValidazioneSintatticaResult<BustaRawType> validaRichiesta(IState state, OpenSPCoop2Message msg, Busta datiBustaLettiURLMappingProperties, ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException{
 		
 		Busta busta = null;
 		if(datiBustaLettiURLMappingProperties!=null)
@@ -97,11 +97,12 @@ public class ValidazioneSintattica implements
 			}
 		}
 		
-		return new ValidazioneSintatticaResult(null, null, null, busta, null, null, null, true);
+		return new ValidazioneSintatticaResult<BustaRawType>(null, null, null, busta, null, null, null, true);
 	}
 	
 	@Override
-	public ValidazioneSintatticaResult validaRisposta(IState state, OpenSPCoop2Message msg, Busta bustaRichiesta, ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException{
+	public ValidazioneSintatticaResult<BustaRawType> validaRisposta(IState state, OpenSPCoop2Message msg, Busta bustaRichiesta, 
+			ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException{
 		
 		Busta bustaRisposta = bustaRichiesta.invertiBusta(bustaRichiesta.getTipoOraRegistrazione(), bustaRichiesta.getTipoOraRegistrazioneValue());
 		bustaRisposta.setRiferimentoMessaggio(bustaRichiesta.getID());
@@ -125,7 +126,7 @@ public class ValidazioneSintattica implements
 			throw new ProtocolException("Identificativo di richiesta in un formato errato, estrazione della data non riuscita: "+e.getMessage(),e);
 		}
 		bustaRisposta.setID(this.bustaBuilder.newID(state, new IDSoggetto(bustaRisposta.getTipoMittente(), bustaRisposta.getMittente(), bustaRisposta.getIdentificativoPortaMittente()),
-				idSenzaData, false));
+				idSenzaData, RuoloMessaggio.RISPOSTA));
 		bustaRisposta.setInoltro(bustaRichiesta.getInoltro(), bustaRichiesta.getInoltroValue());
 		
 		// Se e' presente UNA lista trasmissione la inverto
@@ -155,23 +156,23 @@ public class ValidazioneSintattica implements
 			ValidatoreErrori validatoreErrori = new ValidatoreErrori(this.protocolFactory);
 			if(bustaRisposta.getProfiloDiCollaborazione().equals(ProfiloDiCollaborazione.ONEWAY))
 				if(validatoreErrori.isBustaErrore(bustaRichiesta, msg, proprietaValidazioneErrori)) {
-					return new ValidazioneSintatticaResult(null, null, null, bustaRisposta, null, null, null, true);
+					return new ValidazioneSintatticaResult<BustaRawType>(null, null, null, bustaRisposta, null, null, null, true);
 				}
 				else {
-					return new ValidazioneSintatticaResult(null, null, null, null, ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.
+					return new ValidazioneSintatticaResult<BustaRawType>(null, null, null, null, ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							getErroreProcessamento("Analizzato un messaggio fault"), bustaRisposta, null, false);
 				}
 				
 			if(bustaRisposta.getProfiloDiCollaborazione().equals(ProfiloDiCollaborazione.SINCRONO))
 				if(validatoreErrori.isBustaErrore(bustaRichiesta, msg, proprietaValidazioneErrori)) {
-					return new ValidazioneSintatticaResult(null, null, null, bustaRisposta, ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.
+					return new ValidazioneSintatticaResult<BustaRawType>(null, null, null, bustaRisposta, ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							getErroreProcessamento("Analizzato un messaggio fault"), bustaRisposta, null, true);
 				}
 				else {
-					return new ValidazioneSintatticaResult(null, null, null, bustaRisposta, null, null, null, true);
+					return new ValidazioneSintatticaResult<BustaRawType>(null, null, null, bustaRisposta, null, null, null, true);
 				}
 		}
-		return new ValidazioneSintatticaResult(null, null, null, bustaRisposta, null, null, null, true);
+		return new ValidazioneSintatticaResult<BustaRawType>(null, null, null, bustaRisposta, null, null, null, true);
 		
 	}
 	
@@ -205,31 +206,25 @@ public class ValidazioneSintattica implements
 	}
 
 	@Override
-	public ValidazioneSintatticaResult validazioneFault(OpenSPCoop2Message msg) {
+	public ValidazioneSintatticaResult<BustaRawType> validazioneFault(OpenSPCoop2Message msg) {
 		return null;
 	}
 
 	@Override
-	public ValidazioneSintatticaResult validazioneManifestAttachments(
+	public ValidazioneSintatticaResult<BustaRawType> validazioneManifestAttachments(
 			OpenSPCoop2Message msg,
 			ProprietaManifestAttachments proprietaManifestAttachments) {
 		return null;
 	}
 
 	@Override
-	public SOAPElement getHeaderProtocollo_senzaControlli(
+	public BustaRawContent<BustaRawType> getBustaRawContent_senzaControlli(
 			OpenSPCoop2Message msg) throws ProtocolException {
 		return null;
 	}
 
 	@Override
-	public Busta getBustaProtocollo_senzaControlli(OpenSPCoop2Message msg) throws ProtocolException{
-		return null;
-	}
-	
-	@Override
-	public SOAPElement getHeaderProtocollo(Busta busta) {
-		// TODO Auto-generated method stub
+	public Busta getBusta_senzaControlli(OpenSPCoop2Message msg) throws ProtocolException{
 		return null;
 	}
 

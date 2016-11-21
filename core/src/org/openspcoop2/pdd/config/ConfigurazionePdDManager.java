@@ -169,15 +169,15 @@ public class ConfigurazionePdDManager {
 	
 	/* ********  SOGGETTI (Interfaccia)  ******** */
 	
-	public IDSoggetto getSoggettoProprietarioPortaDelegata(String location,IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+	public IDSoggetto getSoggettoProprietarioPortaDelegata(String location,IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 		return this.configurazionePdDReader.getSoggettoProprietarioPortaDelegata(this.getConnection(), location, protocolFactory);
 	}
 	
-	public IDSoggetto getSoggettoProprietarioPortaApplicativa(String location,IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+	public IDSoggetto getSoggettoProprietarioPortaApplicativa(String location,IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 		return this.configurazionePdDReader.getSoggettoProprietarioPortaApplicativa(this.getConnection(), location, protocolFactory);
 	}
 	
-	public String getIdentificativoPorta(IDSoggetto idSoggetto,IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+	public String getIdentificativoPorta(IDSoggetto idSoggetto,IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 		return this.configurazionePdDReader.getIdentificativoPorta(this.getConnection(), idSoggetto, protocolFactory);
 	}
 	
@@ -212,7 +212,7 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.routerFunctionActive(this.getConnection());
 	}
 	
-	public IDSoggetto getRouterIdentity(IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public IDSoggetto getRouterIdentity(IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdDReader.getRouterIdentity(this.getConnection(),protocolFactory);
 	}
 	
@@ -248,7 +248,7 @@ public class ConfigurazionePdDManager {
 	
 	public String getAzione(PortaDelegata pd,URLProtocolContext urlProtocolContext,
 			OpenSPCoop2Message message, HeaderIntegrazione headerIntegrazione,boolean readFirstHeaderIntegrazione,
-			IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound, IdentificazioneDinamicaException { 
+			IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound, IdentificazioneDinamicaException { 
 		return this.configurazionePdDReader.getAzione(this.registroServiziManager, pd, urlProtocolContext, 
 				message, headerIntegrazione, readFirstHeaderIntegrazione, protocolFactory);
 	}
@@ -305,7 +305,7 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getTipiIntegrazione(pd);
 	}
 	
-	public boolean isGestioneManifestAttachments(PortaDelegata pd, IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public boolean isGestioneManifestAttachments(PortaDelegata pd, IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdDReader.isGestioneManifestAttachments(this.getConnection(), pd, protocolFactory);
 	}
 	
@@ -366,7 +366,7 @@ public class ConfigurazionePdDManager {
 	
 	public String getAzione(PortaApplicativa pa,URLProtocolContext urlProtocolContext,
 			OpenSPCoop2Message message, HeaderIntegrazione headerIntegrazione,boolean readFirstHeaderIntegrazione,
-			IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound, IdentificazioneDinamicaException { 
+			IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound, IdentificazioneDinamicaException { 
 		return this.configurazionePdDReader.getAzione(this.registroServiziManager, pa, urlProtocolContext, 
 				message, headerIntegrazione, readFirstHeaderIntegrazione, protocolFactory);
 	}
@@ -423,7 +423,7 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getTipiIntegrazione(pa);
 	}
 	
-	public boolean isGestioneManifestAttachments(PortaApplicativa pa, IProtocolFactory protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	public boolean isGestioneManifestAttachments(PortaApplicativa pa, IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdDReader.isGestioneManifestAttachments(this.getConnection(), pa, protocolFactory);
 	}
 	

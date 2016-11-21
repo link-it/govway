@@ -107,7 +107,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 			URLProtocolContext protocolContext = new URLProtocolContext(req, logCore, op2Properties.isPrintInfoCertificate());
 			String function = protocolContext.getFunction();
 			
-			IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByServletContext(protocolContext.getProtocol());
+			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByServletContext(protocolContext.getProtocol());
 			if(pf==null){
 				if(!Costanti.CONTEXT_EMPTY.equals(protocolContext.getProtocol()))
 					throw new Exception("Non risulta registrato un protocollo con contesto ["+protocolContext.getProtocol()+"]");

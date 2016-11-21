@@ -32,7 +32,7 @@ import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.tracciamento.ITracciamentoOpenSPCoopAppender;
+import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.protocol.sdk.tracciamento.TracciamentoException;
 import org.openspcoop2.utils.resources.MapReader;
@@ -46,14 +46,14 @@ import org.openspcoop2.utils.resources.MapReader;
  * @version $Rev$, $Date$
  */
 
-public class TracciamentoOpenSPCoopProtocolAppender implements ITracciamentoOpenSPCoopAppender{
+public class TracciamentoOpenSPCoopProtocolAppender implements ITracciaProducer{
 
-	private static Hashtable<String, ITracciamentoOpenSPCoopAppender> mappingProtocolToAppenders = new Hashtable<String, ITracciamentoOpenSPCoopAppender>();
+	private static Hashtable<String, ITracciaProducer> mappingProtocolToAppenders = new Hashtable<String, ITracciaProducer>();
 	
 	private static synchronized void initProtocolAppender(String protocol,OpenspcoopAppender appenderProperties) throws ProtocolException{
 		if(TracciamentoOpenSPCoopProtocolAppender.mappingProtocolToAppenders.containsKey(protocol)==false){
-			IProtocolFactory p = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
-			ITracciamentoOpenSPCoopAppender tracciamento = p.createTracciamentoOpenSPCoopAppender();
+			IProtocolFactory<?> p = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
+			ITracciaProducer tracciamento = p.createTracciaProducer();
 			if(tracciamento==null){
 				throw new ProtocolException("ITracciamentoOpenSPCoopAppender not defined for protocol ["+protocol+"]");
 			}
@@ -66,7 +66,7 @@ public class TracciamentoOpenSPCoopProtocolAppender implements ITracciamentoOpen
 		}
 	}
 	
-	private static ITracciamentoOpenSPCoopAppender getProtocolAppender(String protocol) throws ProtocolException{
+	private static ITracciaProducer getProtocolAppender(String protocol) throws ProtocolException{
 		if(TracciamentoOpenSPCoopProtocolAppender.mappingProtocolToAppenders.containsKey(protocol)==false){
 			throw new ProtocolException("ProtocolAppender per protocollo["+protocol+"] non inizializzato");
 		}
@@ -84,7 +84,7 @@ public class TracciamentoOpenSPCoopProtocolAppender implements ITracciamentoOpen
 	@Override
 	public void initializeAppender(OpenspcoopAppender appenderProperties) throws TracciamentoException{
 		try{
-			MapReader<String, IProtocolFactory> table = ProtocolFactoryManager.getInstance().getProtocolFactories();
+			MapReader<String, IProtocolFactory<?>> table = ProtocolFactoryManager.getInstance().getProtocolFactories();
 			Enumeration<String> keys = table.keys();
 			while (keys.hasMoreElements()) {
 				String protocol = keys.nextElement();
@@ -133,7 +133,7 @@ public class TracciamentoOpenSPCoopProtocolAppender implements ITracciamentoOpen
 
 
 	@Override
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return null; // non e' possibile localizzarla
 	}
 

@@ -102,7 +102,7 @@ public class Importer {
 		
 		
 		// trasformazione in archivio openspcoop2
-		IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+		IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 		IArchive archiveEngine = pf.createArchive();
 		Archive archive = archiveEngine.importArchive(archiveBytes, archiveMode, archiveModeType, archiveRegistryReader, validateDocuments,null);
 		

@@ -47,7 +47,7 @@ public class ErroreCooperazione implements Serializable {
 	public String getDescrizioneRawValue() {
 		return this.descrizione;
 	}
-	public String getDescrizione(IProtocolFactory protocolFactory) throws ProtocolException {
+	public String getDescrizione(IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		return protocolFactory.createTraduttore().toString(this);
 	}
 	protected void setDescrizione(String descrizione) {
@@ -69,7 +69,7 @@ public class ErroreCooperazione implements Serializable {
 			throw new RuntimeException(e.getMessage(),e);
 		}
 	}
-	public String toString(IProtocolFactory protocolFactory) throws ProtocolException{
+	public String toString(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		StringBuffer bf = new StringBuffer();
 		
 		if(this.descrizione!=null){

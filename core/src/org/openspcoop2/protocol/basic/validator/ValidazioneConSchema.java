@@ -41,10 +41,10 @@ import org.slf4j.Logger;
 public class ValidazioneConSchema implements
 		org.openspcoop2.protocol.sdk.validator.IValidazioneConSchema {
 
-	protected IProtocolFactory protocolFactory;
+	protected IProtocolFactory<?> protocolFactory;
 	protected Logger log;
 		
-	public ValidazioneConSchema(IProtocolFactory factory){
+	public ValidazioneConSchema(IProtocolFactory<?> factory){
 		this.log = factory.getLogger();
 		this.protocolFactory = factory;
 	}
@@ -73,7 +73,7 @@ public class ValidazioneConSchema implements
 	}
 
 	@Override
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}
 

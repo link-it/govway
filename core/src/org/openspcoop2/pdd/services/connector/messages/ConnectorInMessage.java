@@ -50,7 +50,7 @@ public interface ConnectorInMessage {
 	
 	public String getParameter(String key) throws ConnectorException;
 	
-	public IProtocolFactory getProtocolFactory() throws ConnectorException;
+	public IProtocolFactory<?> getProtocolFactory() throws ConnectorException;
 	
 	public String getContentType() throws ConnectorException;
 	

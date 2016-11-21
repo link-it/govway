@@ -63,7 +63,7 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	private String idModulo;
 	private IDService idModuloAsIDService;
 	private RequestInfo requestInfo;
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<?> protocolFactory;
 	private String function;
 	private String url;
 	private Credenziali credenziali;
@@ -73,7 +73,7 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	public DirectVMConnectorInMessage(OpenSPCoop2Message msg,IDService idModuloAsIDService, String idModulo,
 			Properties trasporto,
 			Properties formUrl,
-			IProtocolFactory protocolFactory,
+			IProtocolFactory<?> protocolFactory,
 			String function, String url,
 			Credenziali credenziali,
 			String functionParameters,
@@ -198,7 +198,7 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 
 	
 	@Override
-	public IProtocolFactory getProtocolFactory() throws ConnectorException{
+	public IProtocolFactory<?> getProtocolFactory() throws ConnectorException{
 		return this.protocolFactory;
 	}
 	

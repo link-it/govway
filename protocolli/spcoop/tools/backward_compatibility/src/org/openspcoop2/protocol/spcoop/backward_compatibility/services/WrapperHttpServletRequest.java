@@ -54,7 +54,7 @@ public class WrapperHttpServletRequest implements HttpServletRequest {
 	public WrapperHttpServletRequest(HttpServletRequest httpServletRequest,BackwardCompatibilityProperties backwardCompatibilityProperties) throws ProtocolException{
 		this.httpServletRequest = httpServletRequest;
 		
-		IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(backwardCompatibilityProperties.getProtocolName());
+		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(backwardCompatibilityProperties.getProtocolName());
 		Web web = protocolFactory.getManifest().getWeb();
 		if(web.sizeContextList()>0){
 			// uso il primo contesto trovato, uno vale l'altro

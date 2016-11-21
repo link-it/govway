@@ -32,6 +32,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 
 /**
  * ExampleResponseToNewMessageAndBustaBehaviour
@@ -67,7 +68,7 @@ public class ExampleResponseToNewMessageAndBustaBehaviour implements IBehaviour 
 			bustaRisposta.setID(gestoreMessaggioRichiesta.getProtocolFactory().createBustaBuilder().newID(gestoreMessaggioRichiesta.getOpenspcoopstate().getStatoRichiesta(), 
 					mittente, 
 					(String) gestoreMessaggioRichiesta.getPddContext().getObject(Costanti.CLUSTER_ID), 
-					false));
+					RuoloMessaggio.RISPOSTA));
 			responseTo.setBusta(bustaRisposta);
 			
 			behaviour.setResponseTo(responseTo);

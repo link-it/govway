@@ -25,9 +25,9 @@ import java.util.Map;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.Busta;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.constants.SOAPFaultIntegrationGenericInfoMode;
+import org.openspcoop2.protocol.sdk.constants.FaultIntegrationGenericInfoMode;
 import org.openspcoop2.protocol.sdk.constants.TipoIntegrazione;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.TransportRequestContext;
@@ -40,9 +40,7 @@ import org.openspcoop2.utils.transport.TransportResponseContext;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public interface IProtocolManager {
-
-	public IProtocolFactory getProtocolFactory();
+public interface IProtocolManager extends IComponentFactory {
 	
 
 	
@@ -109,39 +107,39 @@ public interface IProtocolManager {
 	
 	
 	
-	/* *********** SOAP Fault della Porta ******************* */
+	/* *********** Fault della Porta ******************* */
 	
 	/**
-     * Indicazione se generare i details in caso di SOAPFault *_001 (senza buste Errore) di protocollo
+     * Indicazione se generare i details in caso di Fault *_001 (senza buste Errore) di protocollo
      *   
-     * @return Indicazione se generare i details in caso di SOAPFault *_001 (senza buste Errore) di protocollo
+     * @return Indicazione se generare i details in caso di Fault *_001 (senza buste Errore) di protocollo
      * 
      */
-	public boolean isGenerazioneDetailsSOAPFaultProtocollo_EccezioneValidazione();
+	public boolean isGenerazioneDetailsFaultProtocollo_EccezioneValidazione();
 	
 	/**
-     * Indicazione se generare i details in caso di SOAPFault *_300 di protocollo
+     * Indicazione se generare i details in caso di Fault *_300 di protocollo
      *   
-     * @return Indicazione se generare i details in caso di SOAPFault *_300 di protocollo
+     * @return Indicazione se generare i details in caso di Fault *_300 di protocollo
      * 
      */
-    public boolean isGenerazioneDetailsSOAPFaultProtocollo_EccezioneProcessamento();
+    public boolean isGenerazioneDetailsFaultProtocollo_EccezioneProcessamento();
     
     /**
-     * Indicazione se generare all'interno dei fault di protocollo, nei details, in caso di SOAPFault *_300 lo stack trace
+     * Indicazione se generare all'interno dei fault di protocollo, nei details, in caso di Fault *_300 lo stack trace
      *   
-     * @return Indicazione se generare all'interno dei fault di protocollo, nei details, in caso di SOAPFault *_300 lo stack trace
+     * @return Indicazione se generare all'interno dei fault di protocollo, nei details, in caso di Fault *_300 lo stack trace
      * 
      */
-    public boolean isGenerazioneDetailsSOAPFaultProtocolloConStackTrace();
+    public boolean isGenerazioneDetailsFaultProtocolloConStackTrace();
     
     /**
-     * Indicazione se generare all'interno dei fault di protocollo, nei details, in caso di SOAPFault informazioni generiche
+     * Indicazione se generare all'interno dei fault di protocollo, nei details, in caso di Fault informazioni generiche
      *   
-     * @return Indicazione se generare all'interno dei fault di protocollo, nei details, in caso di SOAPFault informazioni generiche
+     * @return Indicazione se generare all'interno dei fault di protocollo, nei details, in caso di Fault informazioni generiche
      * 
      */
-	public boolean isGenerazioneDetailsSOAPFaultProtocolloConInformazioniGeneriche();
+	public boolean isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche();
 	
 	 /**
      * Indicazione se generare i details in Casi di errore 5XX in fase di integrazione
@@ -149,7 +147,7 @@ public interface IProtocolManager {
      * @return Indicazione se generare i details in Casi di errore 5XX in fase di integrazione
      * 
      */
-	public boolean isGenerazioneDetailsSOAPFaultIntegratione_erroreServer();
+	public boolean isGenerazioneDetailsFaultIntegratione_erroreServer();
 
 	 /**
      * Indicazione se generare i details in Casi di errore 4XX in fase di integrazione
@@ -157,7 +155,7 @@ public interface IProtocolManager {
      * @return Indicazione se generare i details in Casi di errore 4XX in fase di integrazione
      * 
      */
-	public boolean isGenerazioneDetailsSOAPFaultIntegratione_erroreClient();
+	public boolean isGenerazioneDetailsFaultIntegratione_erroreClient();
 	
 	 /**
      * Indicazione se generare nei details lo stack trace all'interno in fase di integrazione
@@ -165,31 +163,31 @@ public interface IProtocolManager {
      * @return Indicazione se generare nei details lo stack trace all'interno in fase di integrazione
      * 
      */
-	public boolean isGenerazioneDetailsSOAPFaultIntegrationeConStackTrace();
+	public boolean isGenerazioneDetailsFaultIntegrationeConStackTrace();
 
     /**
-     * Indicazione se generare all'interno dei fault di integrazione, nei details, in caso di SOAPFault informazioni generiche
+     * Indicazione se generare all'interno dei fault di integrazione, nei details, in caso di Fault informazioni generiche
      * Se viene ritornato l'indicazione di usare il default del servizio applicativo
      * viene utilizzato il comportamento associato al servizio applicativo fruitore, riguardante la generazione di un fault code generico
      *   
-     * @return Indicazione se generare all'interno dei fault di integrazione, nei details, in caso di SOAPFault informazioni generiche
+     * @return Indicazione se generare all'interno dei fault di integrazione, nei details, in caso di Fault informazioni generiche
      * 
      */
-	public SOAPFaultIntegrationGenericInfoMode getModalitaGenerazioneInformazioniGeneriche_DetailsSOAPFaultIntegrazione();
+	public FaultIntegrationGenericInfoMode getModalitaGenerazioneInformazioniGeneriche_DetailsFaultIntegrazione();
 	
 	/**
-	 * Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultApplicativo originale
+	 * Indicazione se aggiungere un detail contenente descrizione dell'errore nel FaultApplicativo originale
 	 * 
-	 * @return Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultApplicativo originale
+	 * @return Indicazione se aggiungere un detail contenente descrizione dell'errore nel FaultApplicativo originale
 	 */
-	public Boolean isAggiungiDetailErroreApplicativo_SoapFaultApplicativo();
+	public Boolean isAggiungiDetailErroreApplicativo_FaultApplicativo();
 	
 	/**
-	 * Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultPdD originale
+	 * Indicazione se aggiungere un detail contenente descrizione dell'errore nel FaultPdD originale
 	 * 
-	 * @return Indicazione se aggiungere un detail contenente descrizione dell'errore nel SoapFaultPdD originale
+	 * @return Indicazione se aggiungere un detail contenente descrizione dell'errore nel FaultPdD originale
 	 */
-	public Boolean isAggiungiDetailErroreApplicativo_SoapFaultPdD();
+	public Boolean isAggiungiDetailErroreApplicativo_FaultPdD();
 	
 	
 	

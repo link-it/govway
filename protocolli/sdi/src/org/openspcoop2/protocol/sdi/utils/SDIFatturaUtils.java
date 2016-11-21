@@ -44,7 +44,7 @@ import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
 public class SDIFatturaUtils {
 
 	public static void validazioneFattura(byte[] fattura, SDIProperties sdiProperties, Vector<Eccezione> eccezioniValidazione, 
-			SDIValidazioneUtils validazioneUtils, IProtocolFactory protocolFactory,
+			SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory,
 			Busta busta,OpenSPCoop2Message msg,boolean addMsgInContextIfEnabled,
 			boolean validaDatiTrasmissione, boolean forceDisableValidazioneXSD) throws Exception{
 			

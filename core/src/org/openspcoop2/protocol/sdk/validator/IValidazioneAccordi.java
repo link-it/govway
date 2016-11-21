@@ -24,7 +24,7 @@ package org.openspcoop2.protocol.sdk.validator;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.IComponentFactory;
 
 
 /**
@@ -35,13 +35,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
  * @version $Rev$, $Date$
  */
 
-public interface IValidazioneAccordi {
-
-	/**
-	 * Recupera l'implementazione della factory per il protocollo in uso
-	 * @return protocolFactory in uso.
-	 */
-	public IProtocolFactory getProtocolFactory();
+public interface IValidazioneAccordi extends IComponentFactory {
 
 	/**
 	 * Effettua la validazione di un accordo di servizio parte comune

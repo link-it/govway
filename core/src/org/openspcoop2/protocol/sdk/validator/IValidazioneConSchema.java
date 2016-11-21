@@ -23,9 +23,11 @@
 
 package org.openspcoop2.protocol.sdk.validator;
 
+import java.util.List;
+
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.Eccezione;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 
 /**
@@ -37,42 +39,43 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
  * @version $Rev$, $Date$
  */
 
-public interface IValidazioneConSchema  {
-
-	
-	public IProtocolFactory getProtocolFactory();
+public interface IValidazioneConSchema  extends IComponentFactory {
 
 	/**
-	 * Ritorna un vector contenente eventuali eccezioni di validazione riscontrate nella busta.   
-	 *
-	 * @return Eccezioni riscontrate nella busta.
+	 * Metodo che viene chiamato in fase di startup della PdD per l'eventuale inizializzazione di validatori
 	 * 
+	 * @return true se l'inizializzazione va a buon fine
 	 */
-	
-	public java.util.Vector<Eccezione> getEccezioniValidazione();
-	
+	public boolean initialize();
+		
 	/**
-	 * Ritorna un vector contenente eventuali eccezioni di processamento riscontrate nella busta.   
-	 *
-	 * @return Eccezioni riscontrate nella busta.
+	 * Effettua la validazione utilizzando gli schemi formali che definiscono i dati raw del protocollo
 	 * 
-	 */
-	public java.util.Vector<Eccezione> getEccezioniProcessamento();
-
-	
-	/**
-	 * Metodo che effettua la validazione dei soggetti di una busta, controllando la loro registrazione nel registro dei servizi. 
-	 *
-	 * Mano mano che sono incontrati errori di validazione, vengono salvati in oggetti di tipo {@link Eccezione} recuperabili tramite i metodi getEccezioniValidazione e getEccezioniProcessamento.
-	 *
-	 * 
+	 * @param message Messaggio su cui effettuare la validazione
+	 * @param isErroreProcessamento Indicazione se il messaggio da validare è un errore protocollo di processamento
+	 * @param isErroreIntestazione Indicazione se il messaggio da validare è un errore protocollo di intestazione
+	 * @param isMessaggioConAttachments Indicazione se il messaggio contiene attachments
+	 * @param validazioneManifestAttachments Indicazione se deve essere attuata o meno la validazione del manifest degli attachments (se supportata dal protocollo)
+	 * @throws ProtocolException
 	 */
 	public void valida(OpenSPCoop2Message message, boolean isErroreProcessamento, boolean isErroreIntestazione,
 			boolean isMessaggioConAttachments, boolean validazioneManifestAttachments) throws ProtocolException;
 
 	/**
-	 * Metodo che viene chiamato in fase di startup della PdS per l'eventuale inizializzazione di validatori XSD
+	 * Ritorna eventuali eccezioni di validazione riscontrate nella busta.   
+	 *
+	 * @return Eccezioni riscontrate nella busta.
+	 * 
 	 */
 	
-	public boolean initialize();
+	public List<Eccezione> getEccezioniValidazione();
+	
+	/**
+	 * Ritorna eventuali eccezioni di processamento riscontrate nella busta.   
+	 *
+	 * @return Eccezioni riscontrate nella busta.
+	 * 
+	 */
+	public List<Eccezione> getEccezioniProcessamento();
+	
 }

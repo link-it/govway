@@ -48,9 +48,9 @@ import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopUtilities;
  */
 public class SPCoopArchiveImport {
 
-	private IProtocolFactory protocolFactory = null;
+	private IProtocolFactory<?> protocolFactory = null;
 	private Logger logger = null;
-	public SPCoopArchiveImport(IProtocolFactory protocolFactory){
+	public SPCoopArchiveImport(IProtocolFactory<?> protocolFactory){
 		this.protocolFactory = protocolFactory;
 		this.logger = this.protocolFactory.getLogger();
 	}

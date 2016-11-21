@@ -80,12 +80,12 @@ public class ProfiloDiCollaborazione {
 	/** GestoreRepository */
 	private IGestoreRepository gestoreRepositoryBuste;
 	
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<?> protocolFactory;
 	private IProtocolConfiguration protocolConfiguration;
 	private IProtocolManager protocolManager;
 	private ITraduttore protocolTraduttore;
 	
-	private void initProtocolFactory(IProtocolFactory protocolFactory) throws ProtocolException{
+	private void initProtocolFactory(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		this.protocolFactory = protocolFactory;
 		this.protocolManager = this.protocolFactory.createProtocolManager();
 		this.protocolTraduttore = this.protocolFactory.createTraduttore();
@@ -101,7 +101,7 @@ public class ProfiloDiCollaborazione {
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public ProfiloDiCollaborazione(IState state,IProtocolFactory protocolFactory) throws ProtocolException{
+	public ProfiloDiCollaborazione(IState state,IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		this(state, Configurazione.getLibraryLog(),protocolFactory);
 	}
 	/**
@@ -111,7 +111,7 @@ public class ProfiloDiCollaborazione {
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public ProfiloDiCollaborazione(IState state, Logger alog, IProtocolFactory protocolFactory) throws ProtocolException{
+	public ProfiloDiCollaborazione(IState state, Logger alog, IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		this.state = state;
 		this.gestoreRepositoryBuste = Configurazione.getGestoreRepositoryBuste();
 		if(alog!=null){
@@ -417,7 +417,7 @@ public class ProfiloDiCollaborazione {
 	 * @return una Eccezione se la validazione fallisce, null altrimenti.
 	 * 
 	 */
-	public Eccezione sincrono_validazioneCorrelazione(Busta bustaDaValidare, IProtocolFactory protocolFactory) throws ProtocolException {
+	public Eccezione sincrono_validazioneCorrelazione(Busta bustaDaValidare, IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		if(this.state instanceof StatefulMessage) {
 			StatefulMessage stateful = (StatefulMessage)this.state;	
 
@@ -1163,7 +1163,7 @@ public class ProfiloDiCollaborazione {
 	 * @return una Eccezione se la validazione fallisce, null altrimenti.
 	 * 
 	 */
-	public Eccezione asincronoSimmetrico_validazioneCorrelazione_ricevutaRichiesta(Busta bustaDaValidare, IProtocolFactory protocolFactory) throws ProtocolException{
+	public Eccezione asincronoSimmetrico_validazioneCorrelazione_ricevutaRichiesta(Busta bustaDaValidare, IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		return asincronoSimmetrico_validazioneCorrelazione(bustaDaValidare,true,false,false,protocolFactory);
 	}
 	/**
@@ -1173,7 +1173,7 @@ public class ProfiloDiCollaborazione {
 	 * @return una Eccezione se la validazione fallisce, null altrimenti.
 	 * 
 	 */
-	public Eccezione asincronoSimmetrico_validazioneCorrelazione_risposta(Busta bustaDaValidare, IProtocolFactory protocolFactory) throws ProtocolException{
+	public Eccezione asincronoSimmetrico_validazioneCorrelazione_risposta(Busta bustaDaValidare, IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		return asincronoSimmetrico_validazioneCorrelazione(bustaDaValidare,false,true,false,protocolFactory);
 	}
 	/**
@@ -1183,7 +1183,7 @@ public class ProfiloDiCollaborazione {
 	 * @return una Eccezione se la validazione fallisce, null altrimenti.
 	 * 
 	 */
-	public Eccezione asincronoSimmetrico_validazioneCorrelazione_ricevutaRisposta(Busta bustaDaValidare, IProtocolFactory protocolFactory) throws ProtocolException{
+	public Eccezione asincronoSimmetrico_validazioneCorrelazione_ricevutaRisposta(Busta bustaDaValidare, IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		return asincronoSimmetrico_validazioneCorrelazione(bustaDaValidare,false,false,true,protocolFactory);
 	}
 	/**
@@ -1196,7 +1196,8 @@ public class ProfiloDiCollaborazione {
 	 * @return una Eccezione se la validazione fallisce, null altrimenti.
 	 * 
 	 */
-	private Eccezione asincronoSimmetrico_validazioneCorrelazione(Busta bustaDaValidare,boolean isRicevutaRichiesta,boolean isRisposta,boolean isRicevutaRisposta, IProtocolFactory protocolFactory) throws ProtocolException{
+	private Eccezione asincronoSimmetrico_validazioneCorrelazione(Busta bustaDaValidare,boolean isRicevutaRichiesta,boolean isRisposta,
+			boolean isRicevutaRisposta, IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		StateMessage state = (StateMessage)this.state;
 		Connection connectionDB = state.getConnectionDB();
 		Busta bustaRichiesta = null;
@@ -2211,7 +2212,7 @@ public class ProfiloDiCollaborazione {
 	 * @return una Eccezione se la validazione fallisce, null altrimenti.
 	 * 
 	 */
-	public Eccezione asincronoAsimmetrico_validazioneCorrelazione_ricevutaRichiesta(Busta bustaDaValidare, IProtocolFactory protocolFactory) throws ProtocolException{
+	public Eccezione asincronoAsimmetrico_validazioneCorrelazione_ricevutaRichiesta(Busta bustaDaValidare, IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		return asincronoAsimmetrico_validazioneCorrelazione(bustaDaValidare,true,false,false,protocolFactory);
 	}	
 
@@ -2222,7 +2223,7 @@ public class ProfiloDiCollaborazione {
 	 * @return una Eccezione se la validazione fallisce, null altrimenti.
 	 * 
 	 */
-	public Eccezione asincronoAsimmetrico_validazioneCorrelazione_richiestaStato(Busta bustaDaValidare, IProtocolFactory protocolFactory) throws ProtocolException{
+	public Eccezione asincronoAsimmetrico_validazioneCorrelazione_richiestaStato(Busta bustaDaValidare, IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		return asincronoAsimmetrico_validazioneCorrelazione(bustaDaValidare,false,true,false,protocolFactory);
 	}	
 
@@ -2233,7 +2234,7 @@ public class ProfiloDiCollaborazione {
 	 * @return una Eccezione se la validazione fallisce, null altrimenti.
 	 * 
 	 */
-	public Eccezione asincronoAsimmetrico_validazioneCorrelazione_ricevutaRichiestaStato(Busta bustaDaValidare, IProtocolFactory protocolFactory) throws ProtocolException{
+	public Eccezione asincronoAsimmetrico_validazioneCorrelazione_ricevutaRichiestaStato(Busta bustaDaValidare, IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		return asincronoAsimmetrico_validazioneCorrelazione(bustaDaValidare,false,false,true,protocolFactory);
 	}	
 
@@ -2248,7 +2249,8 @@ public class ProfiloDiCollaborazione {
 	 * @return una Eccezione se la validazione fallisce, null altrimenti.
 	 * 
 	 */
-	private Eccezione asincronoAsimmetrico_validazioneCorrelazione(Busta bustaDaValidare,boolean isRicevutaRichiesta,boolean isRichiestaStato,boolean isRicevutaRichiestaStato, IProtocolFactory protocolFactory) throws ProtocolException{
+	private Eccezione asincronoAsimmetrico_validazioneCorrelazione(Busta bustaDaValidare,boolean isRicevutaRichiesta,boolean isRichiestaStato,
+			boolean isRicevutaRichiestaStato, IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		StateMessage state = (StateMessage)this.state;
 		Connection connectionDB = state.getConnectionDB();
 		Busta bustaRichiesta = null;

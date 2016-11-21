@@ -61,11 +61,11 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 	/** Logger utilizzato per debug. */
 	@SuppressWarnings("unused")
 	private Logger log = null;
-	private org.openspcoop2.protocol.sdk.IProtocolFactory protocolFactory;
+	private org.openspcoop2.protocol.sdk.IProtocolFactory<?> protocolFactory;
 	private ITraduttore traduttore;
 	private IProtocolManager protocolManager;
 
-	public DettaglioEccezioneOpenSPCoop2Builder(Logger aLog, org.openspcoop2.protocol.sdk.IProtocolFactory protocolFactory) throws ProtocolException{
+	public DettaglioEccezioneOpenSPCoop2Builder(Logger aLog, org.openspcoop2.protocol.sdk.IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		if(aLog!=null)
 			this.log = aLog;
 		else
@@ -76,7 +76,7 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 		this.protocolManager = this.protocolFactory.createProtocolManager();
 	}
 
-	public org.openspcoop2.protocol.sdk.IProtocolFactory getProtocolFactory(){
+	public org.openspcoop2.protocol.sdk.IProtocolFactory<?> getProtocolFactory(){
 		return this.protocolFactory;
 	}
 
@@ -86,19 +86,19 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 
 	public DettaglioEccezione buildDettaglioEccezione(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,CodiceErroreIntegrazione codErrore,String msgErrore){
 		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, 
-				this.traduttore.toString(codErrore, null, this.protocolManager.isGenerazioneDetailsSOAPFaultProtocolloConInformazioniGeneriche()),
+				this.traduttore.toString(codErrore, null, this.protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche()),
 				false,msgErrore, null, false, false);
 	}
 	public DettaglioEccezione buildDettaglioEccezioneProcessamentoBusta(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,CodiceErroreIntegrazione codErrore,String msgErrore,
 			Exception eProcessamento){
 		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, 
-				this.traduttore.toString(codErrore, null, this.protocolManager.isGenerazioneDetailsSOAPFaultProtocolloConInformazioniGeneriche()),
+				this.traduttore.toString(codErrore, null, this.protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche()),
 				false,msgErrore, eProcessamento, false, false);
 	}
 	public DettaglioEccezione buildDettaglioEccezioneIntegrazione(IDSoggetto identitaPdD, TipoPdD tipoPdD,String modulo,CodiceErroreIntegrazione codErrore,String msgErrore,
 			Exception eProcessamento,boolean generaInformazioniGeneriche){
 		return buildDettaglioEccezione_engineBuildEccezione(identitaPdD, tipoPdD, modulo, 
-				this.traduttore.toString(codErrore, null, this.protocolManager.isGenerazioneDetailsSOAPFaultProtocolloConInformazioniGeneriche()),
+				this.traduttore.toString(codErrore, null, this.protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche()),
 				false,msgErrore, eProcessamento, true, generaInformazioniGeneriche);
 	}
 
@@ -191,7 +191,7 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 			eccezione.setTipo(TipoEccezione.ECCEZIONE_PROTOCOLLO);
 			eccezione.setCodice(e.getCodiceEccezioneValue(this.protocolFactory));
 			eccezione.setRilevanza(e.getRilevanzaValue(this.protocolFactory));
-			if(this.protocolManager.isGenerazioneDetailsSOAPFaultProtocolloConInformazioniGeneriche()){
+			if(this.protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche()){
 				eccezione.setDescrizione(this.transformFaultMsg(e.getCodiceEccezione(), e.getDescrizione(this.protocolFactory)));
 				eccezione.setContestoCodifica(this.protocolFactory.createTraduttore().toString(ContestoCodificaEccezione.PROCESSAMENTO));
 			}
@@ -207,7 +207,7 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 		}
 
 		// dettagli
-		if(this.protocolManager.isGenerazioneDetailsSOAPFaultProtocolloConInformazioniGeneriche()==false){
+		if(this.protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche()==false){
 			if(servizioApplicativoErogatore!=null){
 				Dettaglio detail = new Dettaglio();
 				detail.setTipo("servizioApplicativo");
@@ -226,13 +226,13 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 
 	public void gestioneDettaglioEccezioneIntegrazione(Throwable eProcessamento,DettaglioEccezione dettaglioEccezione,boolean generaInformazioniGeneriche){
 		gestioneDettaglioEccezioneProcessamento_engine(eProcessamento, dettaglioEccezione,
-				this.protocolManager.isGenerazioneDetailsSOAPFaultIntegrationeConStackTrace(),
+				this.protocolManager.isGenerazioneDetailsFaultIntegrationeConStackTrace(),
 				generaInformazioniGeneriche);
 	}
 	public void gestioneDettaglioEccezioneProcessamento(Throwable eProcessamento,DettaglioEccezione dettaglioEccezione){
 		gestioneDettaglioEccezioneProcessamento_engine(eProcessamento, dettaglioEccezione, 
-				this.protocolManager.isGenerazioneDetailsSOAPFaultProtocolloConStackTrace(),
-				this.protocolManager.isGenerazioneDetailsSOAPFaultProtocolloConInformazioniGeneriche());
+				this.protocolManager.isGenerazioneDetailsFaultProtocolloConStackTrace(),
+				this.protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche());
 	}
 	private void gestioneDettaglioEccezioneProcessamento_engine(Throwable eProcessamento,DettaglioEccezione dettaglioEccezione,
 			boolean generaStackTrace,boolean generaInformazioniGeneriche){
@@ -352,7 +352,7 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 
 
 	public String transformFaultMsg(CodiceErroreCooperazione code,String msg) throws ProtocolException{
-		if(this.protocolManager.isGenerazioneDetailsSOAPFaultProtocolloConInformazioniGeneriche()){
+		if(this.protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche()){
 			if(code.equals(CodiceErroreCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO)){
 				//errore di processamento.
 				// Lascio intatto solo il msg di ServizioApplicativo non disponibile
@@ -365,7 +365,7 @@ public class DettaglioEccezioneOpenSPCoop2Builder {
 	}
 
 	public String transformFaultMsg(ErroreIntegrazione errore) throws ProtocolException{
-		if(this.protocolManager.isGenerazioneDetailsSOAPFaultProtocolloConInformazioniGeneriche()){
+		if(this.protocolManager.isGenerazioneDetailsFaultProtocolloConInformazioniGeneriche()){
 			// 	Mi appoggio a questa utility
 			ProprietaErroreApplicativo pErroreApplicativo = new ProprietaErroreApplicativo();
 			pErroreApplicativo.setFaultAsGenericCode(true);

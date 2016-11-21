@@ -46,9 +46,9 @@ public class ValidazioneConSchema  {
 
 
 	/** Errori di validazione riscontrati sulla busta */
-	private java.util.Vector<Eccezione> erroriValidazione;
+	private java.util.List<Eccezione> erroriValidazione;
 	/** Errori di processamento riscontrati sulla busta */
-	private java.util.Vector<Eccezione> erroriProcessamento;
+	private java.util.List<Eccezione> erroriProcessamento;
 
 	/** Messaggio intero */
 	private OpenSPCoop2Message message;
@@ -59,12 +59,14 @@ public class ValidazioneConSchema  {
 	
 	private boolean validazioneManifestAttachments = false;
 	
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<?> protocolFactory;
 	
-	public ValidazioneConSchema(OpenSPCoop2Message message, boolean isErroreProcessamento, boolean isErroreIntestazione, boolean validazioneManifestAttachments, IProtocolFactory protocolFactory){
+	public ValidazioneConSchema(OpenSPCoop2Message message, boolean isErroreProcessamento, boolean isErroreIntestazione, boolean validazioneManifestAttachments, 
+			IProtocolFactory<?> protocolFactory){
 		this(message,isErroreProcessamento,isErroreIntestazione,validazioneManifestAttachments,Configurazione.getLibraryLog(), protocolFactory);
 	}
-	public ValidazioneConSchema(OpenSPCoop2Message message, boolean isErroreProcessamento, boolean isErroreIntestazione, boolean validazioneManifestAttachments,Logger aLog, IProtocolFactory protocolFactory){
+	public ValidazioneConSchema(OpenSPCoop2Message message, boolean isErroreProcessamento, boolean isErroreIntestazione, boolean validazioneManifestAttachments,
+			Logger aLog, IProtocolFactory<?> protocolFactory){
 		this.message = message;
 		this.isErroreProcessamento = isErroreProcessamento;
 		this.isErroreIntestazione = isErroreIntestazione;
@@ -72,7 +74,7 @@ public class ValidazioneConSchema  {
 		this.protocolFactory = protocolFactory;
 	}
 
-	public IProtocolFactory getProtocolFactory(){
+	public IProtocolFactory<?> getProtocolFactory(){
 		return this.protocolFactory;
 	}
 
@@ -82,7 +84,7 @@ public class ValidazioneConSchema  {
 	 * @return Eccezioni riscontrate nella busta.
 	 * 
 	 */
-	public java.util.Vector<Eccezione> getEccezioniValidazione(){
+	public java.util.List<Eccezione> getEccezioniValidazione(){
 		return this.erroriValidazione;
 	}
 	/**
@@ -91,7 +93,7 @@ public class ValidazioneConSchema  {
 	 * @return Eccezioni riscontrate nella busta.
 	 * 
 	 */
-	public java.util.Vector<Eccezione> getEccezioniProcessamento(){
+	public java.util.List<Eccezione> getEccezioniProcessamento(){
 		return this.erroriProcessamento;
 	}
 

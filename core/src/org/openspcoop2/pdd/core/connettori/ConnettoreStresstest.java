@@ -49,6 +49,7 @@ import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Integrazione;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.StatefulMessage;
 import org.openspcoop2.utils.date.DateManager;
 
@@ -318,7 +319,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
     		    		
 			String idRiscontro = null;	
 			
-			IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(bustaRichiesta.getProtocollo());
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(bustaRichiesta.getProtocollo());
 			ITraduttore traduttore = protocolFactory.createTraduttore();
 			
 			protocolHeader.append("<eGov_IT:Intestazione SOAP_ENV:actor=\"http://www.cnipa.it/eGov_it/portadominio\" SOAP_ENV:mustUnderstand=\"1\" " +
@@ -431,7 +432,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
 							null, 
 							this.openspcoopProperties.getGestioneSerializableDB_AttesaAttiva(),
 							this.openspcoopProperties.getGestioneSerializableDB_CheckInterval(),
-							Boolean.FALSE);
+							RuoloMessaggio.RISPOSTA);
 			}catch(Exception e){
 				// rilancio
 				throw e;

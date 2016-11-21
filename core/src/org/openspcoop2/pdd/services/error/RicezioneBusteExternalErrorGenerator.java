@@ -62,7 +62,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		try{		
 			OpenSPCoop2Message msg = this.imbustamentoErrore.buildFaultProtocollo_processamento(dettaglioEccezione,
-					this.protocolFactory.createProtocolManager().isGenerazioneDetailsSOAPFaultProtocollo_EccezioneProcessamento(),
+					this.protocolFactory.createProtocolManager().isGenerazioneDetailsFaultProtocollo_EccezioneProcessamento(),
 					msgTypeErrorResponse,this.forceSoapPrefixCompatibilitOpenSPCoopV1);			
 			int httpReturnCode = this.getReturnCodeForError(integrationError);
 			msg.setForcedResponseCode(httpReturnCode+"");	

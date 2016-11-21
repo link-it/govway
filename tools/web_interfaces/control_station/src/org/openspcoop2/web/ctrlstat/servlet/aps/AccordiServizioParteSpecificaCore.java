@@ -1223,7 +1223,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		try {
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getServizio().getTipoSoggettoErogatore());
 			IProtocolFactory protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
-			return protocol.createValidazioneDocumenti().validaInterfacciaWsdlParteSpecifica(as,apc);
+			return protocol.createValidazioneDocumenti().validaSpecificaInterfaccia(as,apc);
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);
@@ -1235,7 +1235,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		try {
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getServizio().getTipoSoggettoErogatore());
 			IProtocolFactory protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
-			return protocol.createValidazioneDocumenti().validaInterfacciaWsdlParteSpecifica(fruitore, as, apc);
+			return protocol.createValidazioneDocumenti().validaSpecificaInterfaccia(fruitore, as, apc);
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(), e);

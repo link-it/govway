@@ -176,7 +176,7 @@ public class TimerConsegnaContenutiApplicativi  {
 								Busta bustaToSend = repositoryBuste.getBustaFromInBox(idMsgDaInoltrare);
 								this.msgDiag.addKeywords(bustaToSend, true);
 								
-								IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(bustaToSend.getProtocollo());
+								IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(bustaToSend.getProtocollo());
 								
 								String implementazioneMittente = this.registroServiziReader.getImplementazionePdD(new IDSoggetto(bustaToSend.getTipoMittente(),bustaToSend.getMittente()), null);
 								String implementazioneDestinatario = this.registroServiziReader.getImplementazionePdD(new IDSoggetto(bustaToSend.getTipoDestinatario(),bustaToSend.getDestinatario()), null);

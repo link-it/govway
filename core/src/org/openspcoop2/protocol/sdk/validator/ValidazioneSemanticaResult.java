@@ -21,7 +21,7 @@
 
 package org.openspcoop2.protocol.sdk.validator;
 
-import java.util.Vector;
+import java.util.List;
 
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.Servizio;
@@ -44,9 +44,9 @@ import org.openspcoop2.protocol.sdk.Servizio;
 public class ValidazioneSemanticaResult {
 
 	/** Errori di validazione riscontrati sulla busta */
-	private Vector<Eccezione> erroriValidazione;
+	private List<Eccezione> erroriValidazione;
 	/** Errori di processamento riscontrati sulla busta */
-	private Vector<Eccezione> erroriProcessamento;
+	private List<Eccezione> erroriProcessamento;
 	/** ServizioCorrelato */
 	private String servizioCorrelato;
 	/** Tipo ServizioCorrelato */
@@ -63,7 +63,7 @@ public class ValidazioneSemanticaResult {
 	 * @param tipoServizioCorrelato Eventuale tipo del servizio correlato a quello richiesto nella busta
 	 * @param infoServizio Informazioni sul servizio
 	 */
-	public ValidazioneSemanticaResult(Vector<Eccezione> erroriValidazione, Vector<Eccezione> erroriProcessamento,
+	public ValidazioneSemanticaResult(List<Eccezione> erroriValidazione, List<Eccezione> erroriProcessamento,
 			String servizioCorrelato, String tipoServizioCorrelato, Servizio infoServizio) {
 		this.erroriProcessamento = erroriProcessamento;
 		this.erroriValidazione = erroriValidazione;
@@ -72,11 +72,11 @@ public class ValidazioneSemanticaResult {
 		this.servizioCorrelato = servizioCorrelato;
 	}
 	
-	public Vector<Eccezione> getErroriValidazione() {
+	public List<Eccezione> getErroriValidazione() {
 		return this.erroriValidazione;
 	}
 	
-	public Vector<Eccezione> getErroriProcessamento() {
+	public List<Eccezione> getErroriProcessamento() {
 		return this.erroriProcessamento;
 	}
 	

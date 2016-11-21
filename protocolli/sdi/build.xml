@@ -176,8 +176,6 @@
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.sdi.builder" />
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.sdi.config" />
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.sdi.constants" />
-		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.sdi.diagnostica" />
-		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.sdi.tracciamento" />
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.sdi.utils" />
 		<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.protocol.sdi.validator" />
 		<antcall target="compile_src_openspcoop2">

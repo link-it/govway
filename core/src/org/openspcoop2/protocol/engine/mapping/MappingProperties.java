@@ -60,7 +60,7 @@ public class MappingProperties {
 	}
 	
 	public String getUrlWithoutContext(String protocol,String urlWithContext,IDService idService) throws ProtocolException{
-		IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
+		IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
 		Openspcoop2 manifestProtocol = pf.getManifest();
 		String urlWithoutContext = null;
 		

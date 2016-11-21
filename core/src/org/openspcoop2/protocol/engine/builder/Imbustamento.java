@@ -23,15 +23,15 @@
 
 package org.openspcoop2.protocol.engine.builder;
 
-import javax.xml.soap.SOAPElement;
-
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.Integrazione;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.Trasmissione;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.slf4j.Logger;
@@ -55,9 +55,9 @@ public class Imbustamento  {
 	/** Logger utilizzato per debug. */
 	@SuppressWarnings("unused")
 	private Logger log = null;
-	private org.openspcoop2.protocol.sdk.IProtocolFactory protocolFactory;
+	private org.openspcoop2.protocol.sdk.IProtocolFactory<?> protocolFactory;
 	
-	public Imbustamento(Logger aLog, org.openspcoop2.protocol.sdk.IProtocolFactory protocolFactory) throws ProtocolException{
+	public Imbustamento(Logger aLog, org.openspcoop2.protocol.sdk.IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		if(aLog!=null)
 			this.log = aLog;
 		else
@@ -66,7 +66,7 @@ public class Imbustamento  {
 	
 	}
 
-	public org.openspcoop2.protocol.sdk.IProtocolFactory getProtocolFactory(){
+	public org.openspcoop2.protocol.sdk.IProtocolFactory<?> getProtocolFactory(){
 		return this.protocolFactory;
 	}
 
@@ -97,9 +97,9 @@ public class Imbustamento  {
 	//}
 
 	public String buildID(IState state, IDSoggetto idSoggetto, String idTransazione, long attesaAttiva,
-			int checkInterval, Boolean isRichiesta) throws ProtocolException {
+			int checkInterval, RuoloMessaggio ruoloMessaggio) throws ProtocolException {
 		try{
-			return this.protocolFactory.createBustaBuilder().newID(state,idSoggetto, idTransazione, isRichiesta);	
+			return this.protocolFactory.createBustaBuilder().newID(state,idSoggetto, idTransazione, ruoloMessaggio);	
 		}catch(Exception e){
 			throw new ProtocolException(e.getMessage(),e);
 		}
@@ -118,7 +118,7 @@ public class Imbustamento  {
 	 * 
 	 */
 	public void imbustamento(IState state, OpenSPCoop2Message msg,Busta busta,Integrazione integrazione,ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{	
-		this.imbustamento(state, msg, busta,integrazione, false, false, false, proprietaManifestAttachments);
+		this.imbustamento(state, msg, busta,integrazione, false, RuoloMessaggio.RISPOSTA, false, proprietaManifestAttachments);
 	}
 
 
@@ -131,15 +131,15 @@ public class Imbustamento  {
 	 * @param isRichiesta Tipo di Busta
 	 * 
 	 */
-	public SOAPElement imbustamento(IState state, OpenSPCoop2Message msg,Busta busta,Integrazione integrazione,
-			boolean gestioneManifest,boolean isRichiesta,boolean scartaBody,
+	public BustaRawContent<?> imbustamento(IState state, OpenSPCoop2Message msg,Busta busta,Integrazione integrazione,
+			boolean gestioneManifest,RuoloMessaggio ruoloMessaggio,boolean scartaBody,
 			ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{	
 		if(proprietaManifestAttachments==null){
 			proprietaManifestAttachments = new ProprietaManifestAttachments();
 		}
 		proprietaManifestAttachments.setGestioneManifest(gestioneManifest);
 		proprietaManifestAttachments.setScartaBody(scartaBody);
-		return this.protocolFactory.createBustaBuilder().imbustamento(state, msg, busta, isRichiesta, proprietaManifestAttachments);
+		return this.protocolFactory.createBustaBuilder().imbustamento(state, msg, busta, ruoloMessaggio, proprietaManifestAttachments);
 	}
 
 
@@ -150,7 +150,7 @@ public class Imbustamento  {
 	 * 
 	 */
 
-	public SOAPElement addTrasmissione(OpenSPCoop2Message message,Trasmissione trasmissione,boolean readQualifiedAttribute) throws ProtocolException{
+	public BustaRawContent<?> addTrasmissione(OpenSPCoop2Message message,Trasmissione trasmissione,boolean readQualifiedAttribute) throws ProtocolException{
 		return this.protocolFactory.createBustaBuilder().addTrasmissione(message, trasmissione);
 	}
 

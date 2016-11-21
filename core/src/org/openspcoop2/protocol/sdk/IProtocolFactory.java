@@ -33,12 +33,12 @@ import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
-import org.openspcoop2.protocol.sdk.diagnostica.IDriverMsgDiagnostici;
-import org.openspcoop2.protocol.sdk.diagnostica.IMsgDiagnosticoOpenSPCoopAppender;
-import org.openspcoop2.protocol.sdk.diagnostica.IXMLDiagnosticoBuilder;
-import org.openspcoop2.protocol.sdk.tracciamento.IDriverTracciamento;
-import org.openspcoop2.protocol.sdk.tracciamento.ITracciamentoOpenSPCoopAppender;
-import org.openspcoop2.protocol.sdk.tracciamento.IXMLTracciaBuilder;
+import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
+import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
+import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticSerializer;
+import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
+import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
+import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
 import org.openspcoop2.protocol.sdk.validator.IValidatoreErrori;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneAccordi;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneConSchema;
@@ -55,7 +55,7 @@ import org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public interface IProtocolFactory extends Serializable {
+public interface IProtocolFactory<BustaRawType> extends Serializable {
 	
 	/* ** INIT ** */
 	
@@ -70,14 +70,14 @@ public interface IProtocolFactory extends Serializable {
 	
 	/* ** PROTOCOL BUILDER ** */
 	
-	public IBustaBuilder createBustaBuilder() throws ProtocolException;
+	public IBustaBuilder<BustaRawType> createBustaBuilder() throws ProtocolException;
 	public IErroreApplicativoBuilder createErroreApplicativoBuilder() throws ProtocolException;
 	public IEsitoBuilder createEsitoBuilder() throws ProtocolException;
 	
 	/* ** PROTOCOL VALIDATOR ** */
 	
 	public IValidatoreErrori createValidatoreErrori() throws ProtocolException;
-	public IValidazioneSintattica createValidazioneSintattica() throws ProtocolException;
+	public IValidazioneSintattica<BustaRawType> createValidazioneSintattica() throws ProtocolException;
 	public IValidazioneSemantica createValidazioneSemantica() throws ProtocolException;
 	public IValidazioneConSchema createValidazioneConSchema() throws ProtocolException;
 	public IValidazioneDocumenti createValidazioneDocumenti() throws ProtocolException;
@@ -85,20 +85,19 @@ public interface IProtocolFactory extends Serializable {
 	
 	/* ** DIAGNOSTICI ** */
 	
-	public IDriverMsgDiagnostici createDriverMSGDiagnostici() throws ProtocolException;
-	public IMsgDiagnosticoOpenSPCoopAppender createMsgDiagnosticoOpenSPCoopAppender() throws ProtocolException;
-	public IXMLDiagnosticoBuilder createXMLDiagnosticoBuilder() throws ProtocolException;
+	public IDiagnosticDriver createDiagnosticDriver() throws ProtocolException;
+	public IDiagnosticProducer createDiagnosticProducer() throws ProtocolException;
+	public IDiagnosticSerializer createDiagnosticSerializer() throws ProtocolException;
 	
 	/* ** TRACCE ** */
 	
-	public IDriverTracciamento createDriverTracciamento() throws ProtocolException;
-	public ITracciamentoOpenSPCoopAppender createTracciamentoOpenSPCoopAppender() throws ProtocolException;
-	public IXMLTracciaBuilder createXMLTracciaBuilder() throws ProtocolException;
+	public ITracciaDriver createTracciaDriver() throws ProtocolException;
+	public ITracciaProducer createTracciaProducer() throws ProtocolException;
+	public ITracciaSerializer createTracciaSerializer() throws ProtocolException;
 	
 	/* ** ARCHIVE ** */
 	
 	public IArchive createArchive() throws ProtocolException;
-	
 	
 	/* ** CONFIG ** */
 	

@@ -34,7 +34,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
  */
 public class SPCoopProtocolConfiguration extends BasicConfiguration {
 
-	public SPCoopProtocolConfiguration(IProtocolFactory factory) throws ProtocolException {
+	public SPCoopProtocolConfiguration(IProtocolFactory<?> factory) throws ProtocolException {
 		super(factory);
 	}
 	

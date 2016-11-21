@@ -89,13 +89,13 @@ public class IntegrationManagerUtility {
 	 * @return la protocol exception
 	 * 
 	 */
-	public static IntegrationManagerException mapXMLIntoProtocolException(IProtocolFactory protocolFactory,String xml,String prefixCodiceErroreApplicativoIntegrazione) throws Exception{
+	public static IntegrationManagerException mapXMLIntoProtocolException(IProtocolFactory<?> protocolFactory,String xml,String prefixCodiceErroreApplicativoIntegrazione) throws Exception{
 		org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 		org.w3c.dom.Document document = xmlUtils.newDocument(xml.getBytes());
 		return IntegrationManagerUtility.mapXMLIntoProtocolException(protocolFactory,document.getFirstChild(),prefixCodiceErroreApplicativoIntegrazione);
 	}
 	
-	public static IntegrationManagerException mapXMLIntoProtocolException(IProtocolFactory protocolFactory,Node xml,String prefixCodiceErroreApplicativoIntegrazione) throws Exception{
+	public static IntegrationManagerException mapXMLIntoProtocolException(IProtocolFactory<?> protocolFactory,Node xml,String prefixCodiceErroreApplicativoIntegrazione) throws Exception{
 		
 		AbstractEccezioneBuilderParameter eccezione = 
 				protocolFactory.createErroreApplicativoBuilder().readErroreApplicativo(xml, prefixCodiceErroreApplicativoIntegrazione);

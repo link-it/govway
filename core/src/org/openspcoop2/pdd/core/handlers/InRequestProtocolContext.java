@@ -37,7 +37,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
  */
 public class InRequestProtocolContext extends InRequestContext {
 
-	public InRequestProtocolContext(Logger logger,IProtocolFactory protocolFactory){
+	public InRequestProtocolContext(Logger logger,IProtocolFactory<?> protocolFactory){
 		super(logger,protocolFactory);
 	}
 	public InRequestProtocolContext(InRequestContext inRequestContext){

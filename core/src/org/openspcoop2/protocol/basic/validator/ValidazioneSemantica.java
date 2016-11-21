@@ -45,17 +45,17 @@ import org.slf4j.Logger;
 public class ValidazioneSemantica implements
 		org.openspcoop2.protocol.sdk.validator.IValidazioneSemantica {
 
-	protected IProtocolFactory protocolFactory;
+	protected IProtocolFactory<?> protocolFactory;
 	protected Logger log;
 		
-	public ValidazioneSemantica(IProtocolFactory factory){
+	public ValidazioneSemantica(IProtocolFactory<?> factory){
 		this.log = factory.getLogger();
 		this.protocolFactory = factory;
 	}
 
 	
 	@Override
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}
 

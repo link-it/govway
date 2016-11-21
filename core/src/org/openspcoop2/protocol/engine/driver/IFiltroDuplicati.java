@@ -38,10 +38,10 @@ public interface IFiltroDuplicati {
 
 	public void init(Object context) throws ProtocolException;
 	
-	public boolean isDuplicata(IProtocolFactory protocolFactory, String id) throws ProtocolException;
+	public boolean isDuplicata(IProtocolFactory<?> protocolFactory, String id) throws ProtocolException;
 	
-	public void incrementaNumeroDuplicati(IProtocolFactory protocolFactory, String id) throws ProtocolException;
+	public void incrementaNumeroDuplicati(IProtocolFactory<?> protocolFactory, String id) throws ProtocolException;
 	
-	public void registraBusta(IProtocolFactory protocolFactory, Busta busta) throws ProtocolException;
+	public void registraBusta(IProtocolFactory<?> protocolFactory, Busta busta) throws ProtocolException;
 	
 }

@@ -44,7 +44,7 @@ import org.w3c.dom.NodeList;
  */
 public class SPCoopEsitoBuilder extends EsitoBuilder {
 
-	public SPCoopEsitoBuilder(IProtocolFactory protocolFactory) throws ProtocolException {
+	public SPCoopEsitoBuilder(IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		super(protocolFactory);
 	}
 	

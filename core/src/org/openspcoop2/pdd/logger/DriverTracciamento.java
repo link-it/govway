@@ -37,13 +37,13 @@ import org.openspcoop2.protocol.basic.ProtocolliRegistrati;
 import org.openspcoop2.protocol.engine.BasicProtocolFactory;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.constants.TipoTraccia;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiException;
 import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoException;
 import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoNotFoundException;
 import org.openspcoop2.protocol.sdk.tracciamento.FiltroRicercaTracce;
 import org.openspcoop2.protocol.sdk.tracciamento.FiltroRicercaTracceConPaginazione;
-import org.openspcoop2.protocol.sdk.tracciamento.IDriverTracciamento;
+import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 
 
@@ -55,11 +55,11 @@ import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class DriverTracciamento implements IDriverTracciamento {
+public class DriverTracciamento implements ITracciaDriver {
 
 	
 	@Override
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.basicProtocolFactory;
 	}
 	
@@ -71,7 +71,7 @@ public class DriverTracciamento implements IDriverTracciamento {
 	}
 	
 	/** Driver di base: valido per tutti i protocolli */
-	org.openspcoop2.protocol.basic.tracciamento.DriverTracciamento driverBase = null;
+	org.openspcoop2.protocol.basic.tracciamento.TracciaDriver driverBase = null;
 	
 	/** Factory di base */
 	private BasicProtocolFactory basicProtocolFactory;
@@ -84,7 +84,7 @@ public class DriverTracciamento implements IDriverTracciamento {
 		
 		try{
 			this.basicProtocolFactory = new BasicProtocolFactory(log);
-			this.driverBase = (org.openspcoop2.protocol.basic.tracciamento.DriverTracciamento) this.basicProtocolFactory.createDriverTracciamento();
+			this.driverBase = (org.openspcoop2.protocol.basic.tracciamento.TracciaDriver) this.basicProtocolFactory.createTracciaDriver();
 			ProtocolliRegistrati pRegistrati = new ProtocolliRegistrati(ProtocolFactoryManager.getInstance().getProtocolFactories());
 			this.driverBase.init(pRegistrati,nomeDataSource, tipoDatabase,prop,log);
 		}catch(Exception e){
@@ -100,7 +100,7 @@ public class DriverTracciamento implements IDriverTracciamento {
 	public DriverTracciamento(DataSource dataSourceObject, String tipoDatabase, Logger log) throws DriverTracciamentoException {
 		try{
 			this.basicProtocolFactory = new BasicProtocolFactory(log);
-			this.driverBase = (org.openspcoop2.protocol.basic.tracciamento.DriverTracciamento) this.basicProtocolFactory.createDriverTracciamento();
+			this.driverBase = (org.openspcoop2.protocol.basic.tracciamento.TracciaDriver) this.basicProtocolFactory.createTracciaDriver();
 			ProtocolliRegistrati pRegistrati = new ProtocolliRegistrati(ProtocolFactoryManager.getInstance().getProtocolFactories());
 			this.driverBase.init(pRegistrati,dataSourceObject, tipoDatabase,log);
 		}catch(Exception e){
@@ -111,7 +111,7 @@ public class DriverTracciamento implements IDriverTracciamento {
 	public DriverTracciamento(Connection connection, String tipoDatabase, Logger log) throws DriverTracciamentoException {
 		try{
 			this.basicProtocolFactory = new BasicProtocolFactory(log);
-			this.driverBase = (org.openspcoop2.protocol.basic.tracciamento.DriverTracciamento) this.basicProtocolFactory.createDriverTracciamento();
+			this.driverBase = (org.openspcoop2.protocol.basic.tracciamento.TracciaDriver) this.basicProtocolFactory.createTracciaDriver();
 			ProtocolliRegistrati pRegistrati = new ProtocolliRegistrati(ProtocolFactoryManager.getInstance().getProtocolFactories());
 			this.driverBase.init(pRegistrati,connection, tipoDatabase,log);
 		}catch(Exception e){
@@ -124,7 +124,7 @@ public class DriverTracciamento implements IDriverTracciamento {
 			String tipoDatabase, Logger log) throws DriverTracciamentoException {
 		try{
 			this.basicProtocolFactory = new BasicProtocolFactory(log);
-			this.driverBase = (org.openspcoop2.protocol.basic.tracciamento.DriverTracciamento) this.basicProtocolFactory.createDriverTracciamento();
+			this.driverBase = (org.openspcoop2.protocol.basic.tracciamento.TracciaDriver) this.basicProtocolFactory.createTracciaDriver();
 			ProtocolliRegistrati pRegistrati = new ProtocolliRegistrati(ProtocolFactoryManager.getInstance().getProtocolFactories());
 			this.driverBase.init(pRegistrati,urlJDBC, driverJDBC,
 					username, password,
@@ -216,7 +216,7 @@ public class DriverTracciamento implements IDriverTracciamento {
 	 * @throws DriverMsgDiagnosticiException
 	 */
 	@Override
-	public Traccia getTraccia(TipoTraccia tipoTraccia,Hashtable<String, String> propertiesRicerca) throws DriverTracciamentoException, DriverTracciamentoNotFoundException{
+	public Traccia getTraccia(RuoloMessaggio tipoTraccia,Hashtable<String, String> propertiesRicerca) throws DriverTracciamentoException, DriverTracciamentoNotFoundException{
 		return this.driverBase.getTraccia(tipoTraccia, propertiesRicerca);
 	} 
 	

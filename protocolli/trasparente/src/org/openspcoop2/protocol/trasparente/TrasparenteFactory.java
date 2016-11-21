@@ -22,38 +22,20 @@
 package org.openspcoop2.protocol.trasparente;
 
 
-import org.slf4j.Logger;
-import org.openspcoop2.protocol.basic.BasicFactory;
+import org.openspcoop2.protocol.basic.BasicEmptyRawContentFactory;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.builder.IBustaBuilder;
-import org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder;
-import org.openspcoop2.protocol.sdk.builder.IEsitoBuilder;
 import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
-import org.openspcoop2.protocol.sdk.config.ITraduttore;
-import org.openspcoop2.protocol.sdk.diagnostica.IXMLDiagnosticoBuilder;
-import org.openspcoop2.protocol.sdk.tracciamento.IXMLTracciaBuilder;
-import org.openspcoop2.protocol.sdk.validator.IValidatoreErrori;
-import org.openspcoop2.protocol.sdk.validator.IValidazioneConSchema;
-import org.openspcoop2.protocol.sdk.validator.IValidazioneSemantica;
-import org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica;
 import org.openspcoop2.protocol.trasparente.builder.TrasparenteBustaBuilder;
-import org.openspcoop2.protocol.trasparente.builder.TrasparenteErroreApplicativoBuilder;
-import org.openspcoop2.protocol.trasparente.builder.TrasparenteEsitoBuilder;
 import org.openspcoop2.protocol.trasparente.config.TrasparenteProperties;
 import org.openspcoop2.protocol.trasparente.config.TrasparenteProtocolConfiguration;
 import org.openspcoop2.protocol.trasparente.config.TrasparenteProtocolManager;
 import org.openspcoop2.protocol.trasparente.config.TrasparenteProtocolVersionManager;
-import org.openspcoop2.protocol.trasparente.config.TrasparenteTraduttore;
-import org.openspcoop2.protocol.trasparente.diagnostica.TrasparenteXMLDiagnosticoBuilder;
-import org.openspcoop2.protocol.trasparente.tracciamento.TrasparenteXMLTracciaBuilder;
-import org.openspcoop2.protocol.trasparente.validator.TrasparenteValidatoreErrori;
-import org.openspcoop2.protocol.trasparente.validator.TrasparenteValidazioneConSchema;
-import org.openspcoop2.protocol.trasparente.validator.TrasparenteValidazioneSemantica;
 import org.openspcoop2.protocol.trasparente.validator.TrasparenteValidazioneSintattica;
+import org.slf4j.Logger;
 
 
 /**
@@ -63,7 +45,7 @@ import org.openspcoop2.protocol.trasparente.validator.TrasparenteValidazioneSint
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class TrasparenteFactory extends BasicFactory {
+public class TrasparenteFactory extends BasicEmptyRawContentFactory {
 
 	/**
 	 * 
@@ -81,85 +63,23 @@ public class TrasparenteFactory extends BasicFactory {
 	}
 	
 	
-	/* ** INFO SERVIZIO ** */
-	
-	//public String getProtocol();
-	//public Logger getLogger();
-	//public ConfigurazionePdD getConfigurazionePdD();
-	//public Openspcoop2 getManifest();
-	// ereditato da BasicFactory
-	
-	
 	/* ** PROTOCOL BUILDER ** */
 	
 	@Override
-	public IBustaBuilder createBustaBuilder() throws ProtocolException {
+	public TrasparenteBustaBuilder createBustaBuilder() throws ProtocolException {
 		return new TrasparenteBustaBuilder(this);
 	}
 
-	@Override
-	public IErroreApplicativoBuilder createErroreApplicativoBuilder()
-			throws ProtocolException {
-		return new TrasparenteErroreApplicativoBuilder(this);
-	}
-	
-	@Override
-	public IEsitoBuilder createEsitoBuilder() throws ProtocolException {
-		return new TrasparenteEsitoBuilder(this);
-	}
-	
 		
 	/* ** PROTOCOL VALIDATOR ** */
 	
 	@Override
-	public IValidatoreErrori createValidatoreErrori() throws ProtocolException {
-		return new TrasparenteValidatoreErrori(this);
-	}
-	
-	@Override
-	public IValidazioneSintattica createValidazioneSintattica()
+	public TrasparenteValidazioneSintattica createValidazioneSintattica()
 			throws ProtocolException {
 		return new TrasparenteValidazioneSintattica(this);
 	}
 
-	@Override
-	public IValidazioneSemantica createValidazioneSemantica()
-			throws ProtocolException {
-		return new TrasparenteValidazioneSemantica(this);
-	}
-	
-	@Override
-	public IValidazioneConSchema createValidazioneConSchema()
-			throws ProtocolException {
-		return new TrasparenteValidazioneConSchema(this);
-	}
-	
-	
-	/* ** DIAGNOSTICI ** */
-	
-	//public IDriverMSGDiagnostici createDriverMSGDiagnostici() throws ProtocolException;
-	//public IMsgDiagnosticoOpenSPCoopAppender createMsgDiagnosticoOpenSPCoopAppender() throws ProtocolException;
-	// ereditato da BasicFactory
-	
-	@Override
-	public IXMLDiagnosticoBuilder createXMLDiagnosticoBuilder()
-			throws ProtocolException {
-		return new TrasparenteXMLDiagnosticoBuilder(this);
-	}
-	
-	
-	/* ** TRACCE ** */
-	
-	//public IDriverTracciamento createDriverTracciamento() throws ProtocolException;
-	//public ITracciamentoOpenSPCoopAppender createTracciamentoOpenSPCoopAppender() throws ProtocolException;
-	// ereditato da BasicFactory
-	
-	@Override
-	public IXMLTracciaBuilder createXMLTracciaBuilder() throws ProtocolException {
-		return new TrasparenteXMLTracciaBuilder(this);
-	}
-	
-	
+
 	
 	/* ** CONFIG ** */
 	
@@ -175,11 +95,6 @@ public class TrasparenteFactory extends BasicFactory {
 		return new TrasparenteProtocolVersionManager(this,version);
 	}
 
-	@Override
-	public ITraduttore createTraduttore() throws ProtocolException {
-		return new TrasparenteTraduttore(this);
-	}
-	
 	@Override
 	public IProtocolConfiguration createProtocolConfiguration()
 			throws ProtocolException {

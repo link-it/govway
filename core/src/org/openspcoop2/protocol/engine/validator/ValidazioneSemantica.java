@@ -64,9 +64,9 @@ public class ValidazioneSemantica  {
 	 *  Altrimenti, e' un'istanza di StatelessMessage e nn necessita di connessioni  */
 	protected IState state;
 	/** Errori di validazione riscontrati sulla busta */
-	protected java.util.Vector<Eccezione> erroriValidazione;
+	protected java.util.List<Eccezione> erroriValidazione;
 	/** Errori di processamento riscontrati sulla busta */
-	protected java.util.Vector<Eccezione> erroriProcessamento;
+	protected java.util.List<Eccezione> erroriProcessamento;
 	/** Busta */
 	protected Busta busta;
 	/** Validazione ID completa */
@@ -83,8 +83,8 @@ public class ValidazioneSemantica  {
 	protected Servizio infoServizio = null;
 	/** Logger utilizzato per debug. */
 	protected Logger log = null;
-	private IProtocolFactory protocolFactory;
-	public IProtocolFactory getProtocolFactory(){
+	private IProtocolFactory<?> protocolFactory;
+	public IProtocolFactory<?> getProtocolFactory(){
 		return this.protocolFactory;
 	}
 
@@ -96,7 +96,7 @@ public class ValidazioneSemantica  {
 	 * 
 	 */
 	 
-	public ValidazioneSemantica(Busta aBusta, IState state, boolean validazioneIdentificativiCompleta, IProtocolFactory protocolFactory){
+	public ValidazioneSemantica(Busta aBusta, IState state, boolean validazioneIdentificativiCompleta, IProtocolFactory<?> protocolFactory){
 		this(aBusta,state,validazioneIdentificativiCompleta,Configurazione.getLibraryLog(), protocolFactory);
 	}
 	
@@ -108,7 +108,7 @@ public class ValidazioneSemantica  {
 	 * 
 	 */
 	 
-	public ValidazioneSemantica(Busta aBusta, IState state, boolean validazioneIdentificativiCompleta, Logger alog, IProtocolFactory protocolFactory){
+	public ValidazioneSemantica(Busta aBusta, IState state, boolean validazioneIdentificativiCompleta, Logger alog, IProtocolFactory<?> protocolFactory){
 		this.busta = aBusta;
 		this.state = state;
 		this.registroServiziReader = RegistroServiziManager.getInstance(state);
@@ -128,7 +128,7 @@ public class ValidazioneSemantica  {
 	 * @return Eccezioni riscontrate nella busta.
 	 * 
 	 */
-	public java.util.Vector<Eccezione> getEccezioniValidazione(){
+	public java.util.List<Eccezione> getEccezioniValidazione(){
 		return this.erroriValidazione;
 	}
 	/**
@@ -137,7 +137,7 @@ public class ValidazioneSemantica  {
 	 * @return Eccezioni riscontrate nella busta.
 	 * 
 	 */
-	public java.util.Vector<Eccezione> getEccezioniProcessamento(){
+	public java.util.List<Eccezione> getEccezioniProcessamento(){
 		return this.erroriProcessamento;
 	}
 	
@@ -254,7 +254,7 @@ public class ValidazioneSemantica  {
 	}
 
 
-	public static RuoloBusta getTipoBustaDaValidare(Busta busta, org.openspcoop2.protocol.sdk.IProtocolFactory protocolFactory, boolean validazioneRispostaHttpReply, IState state, Logger log) throws ProtocolException{
+	public static RuoloBusta getTipoBustaDaValidare(Busta busta, org.openspcoop2.protocol.sdk.IProtocolFactory<?> protocolFactory, boolean validazioneRispostaHttpReply, IState state, Logger log) throws ProtocolException{
 
 		RuoloBusta tipo = RuoloBusta.BUSTA_DI_SERVIZIO;
 

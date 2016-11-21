@@ -55,11 +55,11 @@ public abstract class IntegrationManagerBaseContext {
 	private Logger logger;
 
 	/** ProtocolFactory */
-	private IProtocolFactory protocolFactory;
+	private IProtocolFactory<?> protocolFactory;
 	
 	/** Costruttori */
 	public IntegrationManagerBaseContext(Date dataRichiestaOperazione,Operazione tipoOperazione,
-			PdDContext pddContext,Logger logger,IProtocolFactory protocolFactory) {
+			PdDContext pddContext,Logger logger,IProtocolFactory<?> protocolFactory) {
 		this.dataRichiestaOperazione = dataRichiestaOperazione;
 		this.tipoOperazione = tipoOperazione;
 		this.pddContext = pddContext;	
@@ -104,12 +104,12 @@ public abstract class IntegrationManagerBaseContext {
 	}
 
 
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
 	}
 
 
-	public void setProtocolFactory(IProtocolFactory protocolFactory) {
+	public void setProtocolFactory(IProtocolFactory<?> protocolFactory) {
 		this.protocolFactory = protocolFactory;
 	}
 

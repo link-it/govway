@@ -29,7 +29,7 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.protocol.engine.BasicProtocolFactory;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.tracciamento.ITracciamentoOpenSPCoopAppender;
+import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.protocol.sdk.tracciamento.TracciamentoException;
 
@@ -42,10 +42,10 @@ import org.openspcoop2.protocol.sdk.tracciamento.TracciamentoException;
  * @version $Rev$, $Date$
  */
 
-public class TracciamentoOpenSPCoopAppenderDB implements ITracciamentoOpenSPCoopAppender{
+public class TracciamentoOpenSPCoopAppenderDB implements ITracciaProducer{
 
 	/** Driver di base: valido per tutti i protocolli */
-	org.openspcoop2.protocol.basic.tracciamento.TracciamentoOpenSPCoopAppenderDB tracciamentoBase = null;
+	org.openspcoop2.protocol.basic.tracciamento.TracciaProducer tracciamentoBase = null;
 	
 	/** Factory di base */
 	private BasicProtocolFactory basicProtocolFactory;
@@ -62,7 +62,7 @@ public class TracciamentoOpenSPCoopAppenderDB implements ITracciamentoOpenSPCoop
 	public void initializeAppender(OpenspcoopAppender appenderProperties) throws TracciamentoException{
 		try{
 			this.basicProtocolFactory = new BasicProtocolFactory(OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
-			this.tracciamentoBase = (org.openspcoop2.protocol.basic.tracciamento.TracciamentoOpenSPCoopAppenderDB) this.basicProtocolFactory.createTracciamentoOpenSPCoopAppender();
+			this.tracciamentoBase = (org.openspcoop2.protocol.basic.tracciamento.TracciaProducer) this.basicProtocolFactory.createTracciaProducer();
 			this.tracciamentoBase.initializeAppender(appenderProperties);
 		}catch(Exception e){
 			throw new TracciamentoException(e.getMessage(),e);
@@ -93,7 +93,7 @@ public class TracciamentoOpenSPCoopAppenderDB implements ITracciamentoOpenSPCoop
 
 
 	@Override
-	public IProtocolFactory getProtocolFactory() {
+	public IProtocolFactory<?> getProtocolFactory() {
 		return this.basicProtocolFactory;
 	}
 

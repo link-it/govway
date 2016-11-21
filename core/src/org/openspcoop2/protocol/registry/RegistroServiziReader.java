@@ -1626,7 +1626,7 @@ public class RegistroServiziReader {
 	 * @return il dominio associato al soggetto se la ricerca nel registro ha successo,
 	 *         null altrimenti.
 	 */
-	protected String getDominio(Connection connectionPdD,IDSoggetto idSoggetto,String nomeRegistro,IProtocolFactory protocolFactory) 
+	protected String getDominio(Connection connectionPdD,IDSoggetto idSoggetto,String nomeRegistro,IProtocolFactory<?> protocolFactory) 
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
 		if(idSoggetto == null)

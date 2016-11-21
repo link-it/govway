@@ -302,7 +302,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 	}
 	
 	private void _validazioneEsito(byte[] esitoDoc, SDIProperties sdiProperties, 
-			Vector<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory protocolFactory) throws Exception{
+			Vector<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
 	
 		byte[] esito = esitoDoc;
 		if(sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov()){
@@ -628,7 +628,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 	}
 	
 	private void _validazioneScartoEsito(byte[] esitoDoc, SDIProperties sdiProperties, 
-			Vector<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory protocolFactory) throws Exception{
+			Vector<Eccezione> eccezioniValidazione, SDIValidazioneUtils validazioneUtils, IProtocolFactory<?> protocolFactory) throws Exception{
 	
 		byte[] esito = esitoDoc;
 		if(sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov()){
