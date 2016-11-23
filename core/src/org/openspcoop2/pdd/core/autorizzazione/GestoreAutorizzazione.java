@@ -418,11 +418,8 @@ public class GestoreAutorizzazione {
     	IDPortaDelegata idPD = datiInvocazione.getIdPD();
     	if(idPD==null)
 			throw new AutorizzazioneException("(Parametri) IDPortaDelegata non definito");
-    	if(idPD.getLocationPD()==null)
-			throw new AutorizzazioneException("(Parametri) IDPortaDelegata.locationPD non definito");
-    	IDSoggetto idSoggettoFruitore = idPD.getSoggettoFruitore();
-		if(idSoggettoFruitore==null || idSoggettoFruitore.getTipo()==null || idSoggettoFruitore.getNome()==null)
-			throw new AutorizzazioneException("(Parametri) IDPortaDelegata.Soggetto non definito");
+    	if(idPD.getNome()==null)
+			throw new AutorizzazioneException("(Parametri) IDPortaDelegata.nome non definito");
 		
 		PortaDelegata pd = datiInvocazione.getPd();
 		if(pd==null)

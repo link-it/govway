@@ -22,18 +22,17 @@ package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.sql.Connection;
 import java.util.List;
-import java.util.Vector;
 
+import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
+import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
-import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
-import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB_LIB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -55,26 +54,6 @@ public class PorteDelegateCore extends ControlStationCore {
 		super(core);
 	}
 	
-	public List<PortaDelegata> porteDelegateWithLocationList(String location) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		Connection con = null;
-		String nomeMetodo = "porteDelegateWithLocationList";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getDriverConfigurazioneDB().porteDelegateWithLocationList(location);
-
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-	}
 
 	public List<PortaDelegata> getPorteDelegateWithServizio(Long idServizio) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;
@@ -317,7 +296,7 @@ public class PorteDelegateCore extends ControlStationCore {
 		}
 	}
 	
-	public Vector<IDPortaDelegata> getPortaDelegataAzione(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	public List<IDPortaDelegata> getPortaDelegataAzione(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;
 		String nomeMetodo = "getPortaDelegataAzione";
 		DriverControlStationDB driver = null;
@@ -339,14 +318,14 @@ public class PorteDelegateCore extends ControlStationCore {
 	}
 
 	
-	public long getIdPortaDelegata(String id,String tipoSoggetto,String nomeSoggetto) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+	public long getIdPortaDelegata(String nomePorta) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "getPortaDelegata";
 	
 		try {
 			// prendo una connessione
 			con = ControlStationCore.dbM.getConnection();
-			return DriverConfigurazioneDB_LIB.getIdPortaDelegata(id, tipoSoggetto, nomeSoggetto, con, this.getTipoDatabase());
+			return DBUtils.getIdPortaDelegata(nomePorta,  con, this.getTipoDatabase());
 
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

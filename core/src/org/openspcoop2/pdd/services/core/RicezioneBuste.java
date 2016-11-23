@@ -44,7 +44,6 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.core.eccezione.details.utils.XMLUtils;
 import org.openspcoop2.core.id.IDPortaApplicativa;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -1005,10 +1004,17 @@ public class RicezioneBuste {
 				idServizio.setAzione(busta.getAzione());
 				requestInfo.setIdServizio(idServizio);
 				
-				IDPortaApplicativaByNome idByNome = configurazionePdDReader.convertTo_SafeMethod(idServizio, this.msgContext.getProprietaFiltroPortaApplicativa());
-				if(idByNome!=null)
-					pa = configurazionePdDReader.getPortaApplicativa_SafeMethod(idByNome);
+				List<PortaApplicativa> listPa = configurazionePdDReader.getPorteApplicative(idServizio, false);
+//				if(listPa.size()<=0){
+//					throw new Exception("Non esiste alcuna porta applicativa indirizzabile tramite il servizio ["+idServizio+"]");
+//				}
 				// NOTA: la pa potra' essere null nei casi di profili asincroni
+				if(listPa.size()>0){
+					if(listPa.size()>1)
+						throw new Exception("Esiste più di una porta applicativa indirizzabile tramite il servizio ["+idServizio+"]");
+					pa = listPa.get(0);
+					requestInfo.getProtocolContext().setInterfaceName(pa.getNome());
+				}
 				
 			}catch(Exception e){
 				setSOAPFault_processamento(IntegrationError.NOT_FOUND,logCore,msgDiag,
@@ -1021,9 +1027,8 @@ public class RicezioneBuste {
 		else{
 			// L'interface name DEVE essere presente in questo caso
 			try{
-				IDPortaApplicativaByNome idPA = new IDPortaApplicativaByNome();
+				IDPortaApplicativa idPA = new IDPortaApplicativa();
 				idPA.setNome(requestInfo.getProtocolContext().getInterfaceName());
-				idPA.setSoggetto(requestInfo.getIdServizio().getSoggettoErogatore());
 				pa = configurazionePdDReader.getPortaApplicativa_SafeMethod(idPA);
 				// NOTA: la pa potra' essere null nei casi di profili asincroni
 			}catch(Exception e){
@@ -2067,9 +2072,9 @@ public class RicezioneBuste {
 						}
 						servizioApplicativoErogatoreAsincronoSimmetricoRisposta = integrazione.getServizioApplicativo();
 						idPD = new IDPortaDelegata();
-						idPD.setLocationPD(integrazione.getLocationPD());
-						idPD.setSoggettoFruitore(new IDSoggetto(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario()));
+						idPD.setNome(integrazione.getNomePorta());
 						pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
+						idPD = configurazionePdDReader.convertToIDPortaDelegata(pd); // per aggiungere informazioni sugli identificativi
 						
 					}
 					// Profilo Asincrono Asimmetrico
@@ -2088,9 +2093,7 @@ public class RicezioneBuste {
 							idServizioOriginale.setSoggettoErogatore(idServizio.getSoggettoErogatore());
 								
 							if(pa==null){
-								IDPortaApplicativaByNome idByNome = configurazionePdDReader.convertTo_SafeMethod(idServizioOriginale, this.msgContext.getProprietaFiltroPortaApplicativa());
-								if(idByNome!=null)
-									pa = configurazionePdDReader.getPortaApplicativa_SafeMethod(idByNome);
+								pa = this.getPortaApplicativa(configurazionePdDReader, idServizioOriginale);
 							}
 							
 						}
@@ -2106,9 +2109,9 @@ public class RicezioneBuste {
 								integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getCollaborazione());
 							}
 							idPD = new IDPortaDelegata();
-							idPD.setLocationPD(integrazione.getLocationPD());
-							idPD.setSoggettoFruitore(new IDSoggetto(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario()));
+							idPD.setNome(integrazione.getNomePorta());
 							pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
+							idPD = configurazionePdDReader.convertToIDPortaDelegata(pd); // per aggiungere informazioni sugli identificativi
 						}
 						
 					}
@@ -2117,9 +2120,7 @@ public class RicezioneBuste {
 				}else{
 					msgDiag.highDebug("Lettura porta applicativa/delegata (Normale)...");
 					if(pa==null){
-						IDPortaApplicativaByNome idByNome = configurazionePdDReader.convertTo_SafeMethod(idServizio, this.msgContext.getProprietaFiltroPortaApplicativa());
-						if(idByNome!=null)
-							pa = configurazionePdDReader.getPortaApplicativa_SafeMethod(idByNome);
+						pa = this.getPortaApplicativa(configurazionePdDReader, idServizio);
 					}
 				}
 
@@ -2175,11 +2176,9 @@ public class RicezioneBuste {
 			}
 		}
 		// Aggiungo identita servizio applicativi
-		IDPortaApplicativaByNome idPAbyNome = null;
+		IDPortaApplicativa idPA = null;
 		if(pa!=null){
-			idPAbyNome = new IDPortaApplicativaByNome();
-			idPAbyNome.setNome(pa.getNome());
-			idPAbyNome.setSoggetto(idServizio.getSoggettoErogatore());
+			idPA = configurazionePdDReader.convertToIDPortaApplicativa(pa);
 			msgDiag.setPorta(pa.getNome());
 			for(int i=0; i<pa.sizeServizioApplicativoList();i++){
 				this.msgContext.getIntegrazione().addServizioApplicativoErogatore(pa.getServizioApplicativo(i).getNome());
@@ -2190,8 +2189,8 @@ public class RicezioneBuste {
 			this.msgContext.getIntegrazione().addServizioApplicativoErogatore(servizioApplicativoErogatoreAsincronoSimmetricoRisposta);
 		}
 		// Aggiungo identificativo porta applicativa/delegata
-		if(idPAbyNome!=null){
-			this.msgContext.getIntegrazione().setIdPA(idPAbyNome);
+		if(idPA!=null){
+			this.msgContext.getIntegrazione().setIdPA(idPA);
 		}
 		else if(idPD!=null){
 			this.msgContext.getIntegrazione().setIdPD(idPD);
@@ -2209,8 +2208,8 @@ public class RicezioneBuste {
 		String idModuloInAttesa = null;
 		if(this.msgContext.isGestioneRisposta())
 			idModuloInAttesa = this.msgContext.getIdModulo();
-		RichiestaApplicativa richiestaApplicativa = new RichiestaApplicativa(soggettoFruitore,idServizio,
-				idModuloInAttesa,identitaPdD,idPAbyNome); 
+		RichiestaApplicativa richiestaApplicativa = new RichiestaApplicativa(soggettoFruitore,
+				idModuloInAttesa,identitaPdD,idPA); 
 		richiestaApplicativa.setFiltroProprietaPorteApplicative(this.msgContext.getProprietaFiltroPortaApplicativa());
 		
 		
@@ -3397,7 +3396,7 @@ public class RicezioneBuste {
 				datiInvocazione.setCredenzialiPdDMittente(credenziali);
 				datiInvocazione.setIdentitaServizioApplicativoFruitore(identitaServizioApplicativoFruitore);
 				datiInvocazione.setSubjectServizioApplicativoFruitoreFromMessageSecurityHeader(subjectMessageSecurity);
-				datiInvocazione.setIdPA(idPAbyNome);
+				datiInvocazione.setIdPA(idPA);
 				datiInvocazione.setPa(pa);
 				datiInvocazione.setIdPD(idPD);
 				datiInvocazione.setPd(pd);
@@ -3822,7 +3821,7 @@ public class RicezioneBuste {
 							datiInvocazione.setCredenzialiPdDMittente(credenziali);
 							datiInvocazione.setIdentitaServizioApplicativoFruitore(identitaServizioApplicativoFruitore);
 							datiInvocazione.setSubjectServizioApplicativoFruitoreFromMessageSecurityHeader(subjectMessageSecurity);
-							datiInvocazione.setIdPA(idPAbyNome);
+							datiInvocazione.setIdPA(idPA);
 							datiInvocazione.setPa(pa);
 							datiInvocazione.setIdPD(idPD);
 							datiInvocazione.setPd(pd);
@@ -5830,10 +5829,9 @@ public class RicezioneBuste {
 					properties.isGestioneRiscontri(implementazionePdDMittente)){
 				RepositoryBuste repository = new RepositoryBuste(state, true,protocolFactory);
 				Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiscontro(0).getID());
-				if(integrazione.getLocationPD()!=null){
+				if(integrazione.getNomePorta()!=null){
 					IDPortaDelegata idPD = new IDPortaDelegata();
-					idPD.setLocationPD(integrazione.getLocationPD());
-					idPD.setSoggettoFruitore(new IDSoggetto(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario()));
+					idPD.setNome(integrazione.getNomePorta());
 					PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
 					flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
 					flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
@@ -5847,14 +5845,12 @@ public class RicezioneBuste {
 			) {	
 				// Richiesta
 				if(bustaRichiesta.getRiferimentoMessaggio()==null){
-					IDPortaApplicativa idPA = new IDPortaApplicativa();
-					idPA.setIDServizio(new IDServizio(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(),bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(),bustaRichiesta.getAzione()));
 					PortaApplicativa pa = paFind;
 					if(pa==null){
-						IDPortaApplicativaByNome idPAbyNome = configurazionePdDReader.convertTo_SafeMethod(idPA.getIDServizio(), this.msgContext.getProprietaFiltroPortaApplicativa());
-						if(idPAbyNome!=null){
-							pa = configurazionePdDReader.getPortaApplicativa(idPAbyNome);
-						}
+						pa = this.getPortaApplicativa(configurazionePdDReader, 
+								new IDServizio(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(),
+										bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(),
+										bustaRichiesta.getAzione()));
 					}
 					flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForReceiver(pa);
 					flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForReceiver(pa);
@@ -5864,8 +5860,7 @@ public class RicezioneBuste {
 					RepositoryBuste repository = new RepositoryBuste(state, false,protocolFactory);
 					Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 					IDPortaDelegata idPD = new IDPortaDelegata();
-					idPD.setLocationPD(integrazione.getLocationPD());
-					idPD.setSoggettoFruitore(new IDSoggetto(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario()));
+					idPD.setNome(integrazione.getNomePorta());
 					PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
 					flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
 					flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
@@ -5879,14 +5874,12 @@ public class RicezioneBuste {
 				//	Richiesta Asincrona
 				if(bustaRichiesta.getRiferimentoMessaggio()==null){
 
-					IDPortaApplicativa idPA = new IDPortaApplicativa();
-					idPA.setIDServizio(new IDServizio(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(),bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(),bustaRichiesta.getAzione()));
 					PortaApplicativa pa = paFind;
 					if(pa==null){
-						IDPortaApplicativaByNome idPAbyNome = configurazionePdDReader.convertTo_SafeMethod(idPA.getIDServizio(), this.msgContext.getProprietaFiltroPortaApplicativa());
-						if(idPAbyNome!=null){
-							pa = configurazionePdDReader.getPortaApplicativa(idPAbyNome);
-						}
+						pa = this.getPortaApplicativa(configurazionePdDReader, 
+								new IDServizio(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(),
+										bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(),
+										bustaRichiesta.getAzione()));
 					}
 					flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForReceiver(pa);
 					flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForReceiver(pa);
@@ -5899,8 +5892,7 @@ public class RicezioneBuste {
 						RepositoryBuste repository = new RepositoryBuste(state, false,protocolFactory);
 						Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 						IDPortaDelegata idPD = new IDPortaDelegata();
-						idPD.setLocationPD(integrazione.getLocationPD());
-						idPD.setSoggettoFruitore(new IDSoggetto(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario()));
+						idPD.setNome(integrazione.getNomePorta());
 						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
 						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForSender(pd);
 						flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForSender(pd);
@@ -5912,8 +5904,7 @@ public class RicezioneBuste {
 						RepositoryBuste repository = new RepositoryBuste(state, true, protocolFactory);
 						Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 						IDPortaDelegata idPD = new IDPortaDelegata();
-						idPD.setLocationPD(integrazione.getLocationPD());
-						idPD.setSoggettoFruitore(new IDSoggetto(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario()));
+						idPD.setNome(integrazione.getNomePorta());
 						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
 						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
 						flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
@@ -5926,8 +5917,7 @@ public class RicezioneBuste {
 						RepositoryBuste repository = new RepositoryBuste(state, false, protocolFactory);
 						Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 						IDPortaDelegata idPD = new IDPortaDelegata();
-						idPD.setLocationPD(integrazione.getLocationPD());
-						idPD.setSoggettoFruitore(new IDSoggetto(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario()));
+						idPD.setNome(integrazione.getNomePorta());
 						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
 						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
 						flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
@@ -5945,14 +5935,12 @@ public class RicezioneBuste {
 				//	Richiesta Asincrona
 				if(bustaRichiesta.getRiferimentoMessaggio()==null){
 
-					IDPortaApplicativa idPA = new IDPortaApplicativa();
-					idPA.setIDServizio(new IDServizio(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(),bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(),bustaRichiesta.getAzione()));
 					PortaApplicativa pa = paFind;
 					if(pa==null){
-						IDPortaApplicativaByNome idPAbyNome = configurazionePdDReader.convertTo_SafeMethod(idPA.getIDServizio(), this.msgContext.getProprietaFiltroPortaApplicativa());
-						if(idPAbyNome!=null){
-							pa = configurazionePdDReader.getPortaApplicativa(idPAbyNome);
-						}
+						pa = this.getPortaApplicativa(configurazionePdDReader, 
+								new IDServizio(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(),
+										bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(),
+										bustaRichiesta.getAzione()));
 					}
 					flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForReceiver(pa);
 					flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForReceiver(pa);
@@ -5964,17 +5952,14 @@ public class RicezioneBuste {
 					//	Risposta Asincrona
 					if(RuoloBusta.RISPOSTA.equals(ruoloBustaRicevuta.toString())){
 
-						IDPortaApplicativa idPA = new IDPortaApplicativa();
 						// ConversioneServizio.
 						IDServizio idServizioOriginale = profiloCollaborazione.asincronoAsimmetrico_getDatiConsegnaRisposta(bustaRichiesta.getRiferimentoMessaggio());
-						idPA.setIDServizio(new IDServizio(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(),idServizioOriginale.getTipoServizio(),
-								idServizioOriginale.getServizio(),idServizioOriginale.getAzione()));
 						PortaApplicativa pa = paFind;
 						if(pa==null){
-							IDPortaApplicativaByNome idPAbyNome = configurazionePdDReader.convertTo_SafeMethod(idPA.getIDServizio(), this.msgContext.getProprietaFiltroPortaApplicativa());
-							if(idPAbyNome!=null){
-								pa = configurazionePdDReader.getPortaApplicativa(idPAbyNome);
-							}
+							pa = this.getPortaApplicativa(configurazionePdDReader, 
+									new IDServizio(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(),
+											idServizioOriginale.getTipoServizio(),idServizioOriginale.getServizio(),
+											idServizioOriginale.getAzione()));
 						}
 						flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForReceiver(pa);
 						flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForReceiver(pa);
@@ -5986,8 +5971,7 @@ public class RicezioneBuste {
 						RepositoryBuste repository = new RepositoryBuste(state, true,protocolFactory);
 						Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 						IDPortaDelegata idPD = new IDPortaDelegata();
-						idPD.setLocationPD(integrazione.getLocationPD());
-						idPD.setSoggettoFruitore(new IDSoggetto(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario()));
+						idPD.setNome(integrazione.getNomePorta());
 						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
 						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
 						flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
@@ -6000,8 +5984,7 @@ public class RicezioneBuste {
 						RepositoryBuste repository = new RepositoryBuste(state, false,protocolFactory);
 						Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 						IDPortaDelegata idPD = new IDPortaDelegata();
-						idPD.setLocationPD(integrazione.getLocationPD());
-						idPD.setSoggettoFruitore(new IDSoggetto(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario()));
+						idPD.setNome(integrazione.getNomePorta());
 						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
 						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForReceiver(pd);
 						flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForReceiver(pd);
@@ -6066,14 +6049,12 @@ public class RicezioneBuste {
 					properties.isGestioneRiscontri(implementazionePdDMittente)){
 				if(bustaRichiesta.getTipoServizio()!=null &&
 						bustaRichiesta.getServizio()!=null){
-					IDPortaApplicativa idPA = new IDPortaApplicativa();
-					idPA.setIDServizio(new IDServizio(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(),bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(),bustaRichiesta.getAzione()));
 					PortaApplicativa pa = paFind;
 					if(pa==null){
-						IDPortaApplicativaByNome idPAbyNome = configurazionePdDReader.convertTo_SafeMethod(idPA.getIDServizio(), this.msgContext.getProprietaFiltroPortaApplicativa());
-						if(idPAbyNome!=null){
-							pa = configurazionePdDReader.getPortaApplicativa(idPAbyNome);
-						}
+						pa = this.getPortaApplicativa(configurazionePdDReader, 
+								new IDServizio(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(),
+										bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(),
+										bustaRichiesta.getAzione()));
 					}
 					flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForSender(pa);
 					flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForSender(pa);
@@ -6083,14 +6064,12 @@ public class RicezioneBuste {
 			else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY.equals(bustaRichiesta.getProfiloDiCollaborazione()) || 
 					org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(bustaRichiesta.getProfiloDiCollaborazione())
 			) {	
-				IDPortaApplicativa idPA = new IDPortaApplicativa();
-				idPA.setIDServizio(new IDServizio(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(),bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(),bustaRichiesta.getAzione()));
 				PortaApplicativa pa = paFind;
 				if(pa==null){
-					IDPortaApplicativaByNome idPAbyNome = configurazionePdDReader.convertTo_SafeMethod(idPA.getIDServizio(), this.msgContext.getProprietaFiltroPortaApplicativa());
-					if(idPAbyNome!=null){
-						pa = configurazionePdDReader.getPortaApplicativa(idPAbyNome);
-					}
+					pa = this.getPortaApplicativa(configurazionePdDReader, 
+							new IDServizio(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(),
+									bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(),
+									bustaRichiesta.getAzione()));
 				}
 				flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForSender(pa);
 				flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForSender(pa);
@@ -6102,14 +6081,12 @@ public class RicezioneBuste {
 				//	Ricevuta alla richiesta.
 				if(bustaRichiesta.getRiferimentoMessaggio()==null){
 
-					IDPortaApplicativa idPA = new IDPortaApplicativa();
-					idPA.setIDServizio(new IDServizio(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(),bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(),bustaRichiesta.getAzione()));
 					PortaApplicativa pa = paFind;
 					if(pa==null){
-						IDPortaApplicativaByNome idPAbyNome = configurazionePdDReader.convertTo_SafeMethod(idPA.getIDServizio(), this.msgContext.getProprietaFiltroPortaApplicativa());
-						if(idPAbyNome!=null){
-							pa = configurazionePdDReader.getPortaApplicativa(idPAbyNome);
-						}
+						pa = this.getPortaApplicativa(configurazionePdDReader, 
+								new IDServizio(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(),
+										bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(),
+										bustaRichiesta.getAzione()));
 					}
 					flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForSender(pa);
 					flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForSender(pa);
@@ -6122,8 +6099,7 @@ public class RicezioneBuste {
 					RepositoryBuste repository = new RepositoryBuste(state, false, protocolFactory);
 					Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
 					IDPortaDelegata idPD = new IDPortaDelegata();
-					idPD.setLocationPD(integrazione.getLocationPD());
-					idPD.setSoggettoFruitore(new IDSoggetto(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario()));
+					idPD.setNome(integrazione.getNomePorta());
 					PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
 					flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForSender(pd);
 					flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForSender(pd);
@@ -6140,14 +6116,12 @@ public class RicezioneBuste {
 				//	Ricevuta alla richiesta.
 				if(bustaRichiesta.getRiferimentoMessaggio()==null){
 
-					IDPortaApplicativa idPA = new IDPortaApplicativa();
-					idPA.setIDServizio(new IDServizio(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(),bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(),bustaRichiesta.getAzione()));
 					PortaApplicativa pa = paFind;
 					if(pa==null){
-						IDPortaApplicativaByNome idPAbyNome = configurazionePdDReader.convertTo_SafeMethod(idPA.getIDServizio(), this.msgContext.getProprietaFiltroPortaApplicativa());
-						if(idPAbyNome!=null){
-							pa = configurazionePdDReader.getPortaApplicativa(idPAbyNome);
-						}
+						pa = this.getPortaApplicativa(configurazionePdDReader, 
+								new IDServizio(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(),
+										bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(),
+										bustaRichiesta.getAzione()));
 					}
 					flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForSender(pa);
 					flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForSender(pa);
@@ -6157,17 +6131,14 @@ public class RicezioneBuste {
 				//	Ricevuta alla risposta.
 				else if(RuoloBusta.RISPOSTA.equals(ruoloBustaRicevuta.toString())){
 
-					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					// ConversioneServizio.
 					IDServizio idServizioOriginale = profiloCollaborazione.asincronoAsimmetrico_getDatiConsegnaRisposta(bustaRichiesta.getRiferimentoMessaggio());
-					idPA.setIDServizio(new IDServizio(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(),
-							idServizioOriginale.getTipoServizio(),idServizioOriginale.getServizio(),idServizioOriginale.getAzione()));
 					PortaApplicativa pa = paFind;
 					if(pa==null){
-						IDPortaApplicativaByNome idPAbyNome = configurazionePdDReader.convertTo_SafeMethod(idPA.getIDServizio(), this.msgContext.getProprietaFiltroPortaApplicativa());
-						if(idPAbyNome!=null){
-							pa = configurazionePdDReader.getPortaApplicativa(idPAbyNome);
-						}
+						pa = this.getPortaApplicativa(configurazionePdDReader, 
+								new IDServizio(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario(),
+										idServizioOriginale.getTipoServizio(),idServizioOriginale.getServizio(),
+										idServizioOriginale.getAzione()));
 					}
 					flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForSender(pa);
 					flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForSender(pa);
@@ -6755,6 +6726,18 @@ public class RicezioneBuste {
 					soggettoFruitore.getCodicePorta());
 		}
 		return soggettoMittentePerAutorizzazione;
+	}
+	
+	private PortaApplicativa getPortaApplicativa(ConfigurazionePdDManager configurazionePdDReader, IDServizio idServizio) throws Exception{
+		List<PortaApplicativa> listPa = configurazionePdDReader.getPorteApplicative(idServizio, false);
+		if(listPa.size()<=0){
+			throw new Exception("Non esiste alcuna porta applicativa indirizzabile tramite il servizio ["+idServizio+"]");
+		}
+		else{
+			if(listPa.size()>1)
+				throw new Exception("Esiste più di una porta applicativa indirizzabile tramite il servizio ["+idServizio+"]");
+			return listPa.get(0);
+		}
 	}
 }
 

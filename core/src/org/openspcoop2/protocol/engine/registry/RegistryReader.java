@@ -30,7 +30,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -43,6 +43,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaAccordi;
 import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServizi;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
@@ -161,36 +162,6 @@ public class RegistryReader implements IRegistryReader {
 		try{
 			return this.driverRegistroServiziDB.getSoggetto(idSoggetto);
 		} catch (DriverRegistroServiziNotFound de) {
-			throw new RegistryNotFound(de.getMessage(),de);
-		}catch(Exception e){
-			return null;
-		}
-	}
-	
-	@Override
-	public IDSoggetto getIdSoggettoProprietarioPortaDelegata(String location) throws RegistryNotFound{
-		try{
-			org.openspcoop2.core.config.Soggetto s = this.driverConfigurazioneDB.getSoggettoProprietarioPortaDelegata(location);
-			if(s==null){
-				throw new DriverConfigurazioneNotFound("Not Found");
-			}
-			return new IDSoggetto(s.getTipo(), s.getNome());
-		} catch (DriverConfigurazioneNotFound de) {
-			throw new RegistryNotFound(de.getMessage(),de);
-		}catch(Exception e){
-			return null;
-		}
-	}
-	
-	@Override
-	public IDSoggetto getIdSoggettoProprietarioPortaApplicativa(String location) throws RegistryNotFound{
-		try{
-			org.openspcoop2.core.config.Soggetto s = this.driverConfigurazioneDB.getSoggettoProprietarioPortaApplicativa(location);
-			if(s==null){
-				throw new DriverConfigurazioneNotFound("Not Found");
-			}
-			return new IDSoggetto(s.getTipo(), s.getNome());
-		} catch (DriverConfigurazioneNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
 			return null;
@@ -403,7 +374,7 @@ public class RegistryReader implements IRegistryReader {
 	@Override
 	public boolean existsServizioApplicativo(String username, String password){
 		try{
-			return this.driverConfigurazioneDB.getServizioApplicativoAutenticato(username, password)!=null;
+			return this.driverConfigurazioneDB.getServizioApplicativoByCredenzialiBasic(username, password)!=null;
 		}catch(Exception e){
 			return false;
 		}
@@ -412,7 +383,7 @@ public class RegistryReader implements IRegistryReader {
 	@Override
 	public boolean existsServizioApplicativo(String subject){
 		try{
-			return this.driverConfigurazioneDB.getServizioApplicativoAutenticato(subject)!=null;
+			return this.driverConfigurazioneDB.getServizioApplicativoByCredenzialiSsl(subject)!=null;
 		}catch(Exception e){
 			return false;
 		}	
@@ -434,6 +405,41 @@ public class RegistryReader implements IRegistryReader {
 	
 	
 	// PORTA DELEGATA
+	
+	@Override
+	public IDPortaDelegata getIdPortaDelegata(String nome, IProtocolFactory<?> protocolFactory) throws RegistryNotFound{
+		
+		IDPortaDelegata idPortaDelegata = null;
+		try{
+			idPortaDelegata = this.driverConfigurazioneDB.getIDPortaDelegata(nome);
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			return null;
+		}
+		
+		try{
+			if(idPortaDelegata!=null && idPortaDelegata.getIdentificativiFruizione()!=null){
+				if(idPortaDelegata.getIdentificativiFruizione().getSoggettoFruitore()!=null){
+					IDSoggetto soggetto = idPortaDelegata.getIdentificativiFruizione().getSoggettoFruitore();
+					if(soggetto.getCodicePorta()==null){
+						soggetto.setCodicePorta(this.getDominio(soggetto));
+					}
+				}
+				if(idPortaDelegata.getIdentificativiFruizione().getIdServizio()!=null &&
+						idPortaDelegata.getIdentificativiFruizione().getIdServizio().getSoggettoErogatore()!=null){
+					IDSoggetto soggetto = idPortaDelegata.getIdentificativiFruizione().getIdServizio().getSoggettoErogatore();
+					if(soggetto.getCodicePorta()==null){
+						soggetto.setCodicePorta(this.getDominio(soggetto));
+					}
+				}
+			}
+		}catch(Exception e){
+			return null;
+		}
+		
+		return idPortaDelegata;
+	}
 	
 	@Override
 	public boolean existsPortaDelegata(IDPortaDelegata idPortaDelegata){
@@ -458,7 +464,43 @@ public class RegistryReader implements IRegistryReader {
 	// PORTA APPLICATIVA
 		
 	@Override
-	public boolean existsPortaApplicativa(IDPortaApplicativaByNome idPortaApplicativa){
+	public IDPortaApplicativa getIdPortaApplicativa(String nome, IProtocolFactory<?> protocolFactory) throws RegistryNotFound{
+		
+		IDPortaApplicativa idPortaApplicativa = null;
+		try{
+			idPortaApplicativa = this.driverConfigurazioneDB.getIDPortaApplicativa(nome);
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			return null;
+		}
+		
+		try{
+			if(idPortaApplicativa!=null && idPortaApplicativa.getIdentificativiErogazione()!=null){
+				if(idPortaApplicativa.getIdentificativiErogazione().getSoggettoVirtuale()!=null){
+					IDSoggetto soggetto = idPortaApplicativa.getIdentificativiErogazione().getSoggettoVirtuale();
+					if(soggetto.getCodicePorta()==null){
+						soggetto.setCodicePorta(this.getDominio(soggetto));
+					}
+				}
+				if(idPortaApplicativa.getIdentificativiErogazione().getIdServizio()!=null &&
+						idPortaApplicativa.getIdentificativiErogazione().getIdServizio().getSoggettoErogatore()!=null){
+					IDSoggetto soggetto = idPortaApplicativa.getIdentificativiErogazione().getIdServizio().getSoggettoErogatore();
+					if(soggetto.getCodicePorta()==null){
+						soggetto.setCodicePorta(this.getDominio(soggetto));
+					}
+				}
+			}
+		}catch(Exception e){
+			return null;
+		}
+		
+		return idPortaApplicativa;
+	}
+	
+	
+	@Override
+	public boolean existsPortaApplicativa(IDPortaApplicativa idPortaApplicativa){
 		try{
 			return this.driverConfigurazioneDB.existsPortaApplicativa(idPortaApplicativa);
 		}catch(Exception e){
@@ -466,7 +508,7 @@ public class RegistryReader implements IRegistryReader {
 		}	
 	}
 	@Override
-	public PortaApplicativa getPortaApplicativa(IDPortaApplicativaByNome idPortaApplicativa) throws RegistryNotFound{
+	public PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPortaApplicativa) throws RegistryNotFound{
 		try{
 			return this.driverConfigurazioneDB.getPortaApplicativa(idPortaApplicativa);
 		} catch (DriverConfigurazioneNotFound de) {

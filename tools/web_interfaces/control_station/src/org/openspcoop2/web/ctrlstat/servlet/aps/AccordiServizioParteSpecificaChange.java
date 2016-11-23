@@ -46,6 +46,7 @@ import org.openspcoop2.core.config.PortaDelegataServizio;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -60,6 +61,8 @@ import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.protocol.basic.Utilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
@@ -324,6 +327,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				as = apcCore.getAccordoServizio(idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
 				portType = asps.getPortType();
 			}
+			ServiceBinding serviceBinding = Utilities.convert(as.getServiceBinding());
 
 			// Lista di Accordi Compatibili
 			List<AccordoServizioParteComune> asParteComuneCompatibili = null;
@@ -338,7 +342,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 			versioniProtocollo = apsCore.getVersioniProtocollo(protocollo);
 			tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
-			tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(protocollo);
+			tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(protocollo,serviceBinding);
 
 			// calcolo soggetti compatibili con accordi
 			List<Soggetto> list = null;
@@ -946,8 +950,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				for (Fruitore fruitore : asps.getFruitoreList()) {
 					locationPrefix = fruitore.getTipo() + fruitore.getNome();
 					String location = locationPrefix + locationSuffix;
-					tmpListPD = porteDelegateCore.porteDelegateWithLocationList(location);
-					for (PortaDelegata tmpPorta : tmpListPD) {
+					IDPortaDelegata idPD = new IDPortaDelegata();
+					idPD.setNome(location);
+					PortaDelegata tmpPorta = porteDelegateCore.getPortaDelegata(idPD);
+					if(tmpPorta!=null){
 						Long idPorta = tmpPorta.getId();
 						if (!idListPD.contains(idPorta)) {
 							// new locationSuffix
@@ -956,7 +962,6 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							idListPD.add(idPorta);
 							tmpPorta.setOldNomeForUpdate(tmpPorta.getNome());
 							tmpPorta.setNome(newLocation);
-							tmpPorta.setLocation(newLocation);
 							// aggiorno la descrizione della porta
 							String descrizionePD = tmpPorta.getDescrizione();
 							if (descrizionePD != null && !descrizionePD.equals("")) {

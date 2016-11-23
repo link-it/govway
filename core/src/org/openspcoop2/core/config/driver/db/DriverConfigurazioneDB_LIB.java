@@ -72,10 +72,12 @@ import org.openspcoop2.core.config.OpenspcoopSorgenteDati;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAzione;
 import org.openspcoop2.core.config.PortaDelegataServizio;
+import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.ProprietaProtocollo;
@@ -1078,7 +1080,6 @@ public class DriverConfigurazioneDB_LIB {
 		}
 		long idPortaDelegata = -1;
 
-		String location = aPD.getLocation();
 		PortaDelegataServizio servizio = aPD.getServizio();
 		long idServizioPD = ((servizio != null && servizio.getId() != null) ? servizio.getId() : -1);
 
@@ -1116,7 +1117,6 @@ public class DriverConfigurazioneDB_LIB {
 		ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
 		IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoPortaDelegata();
 		
-		ServizioApplicativo servizioApplicativo = null;
 		try {
 			int n = 0;
 			int i = 0;
@@ -1173,7 +1173,6 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE);
 				sqlQueryObject.addInsertField("nome_porta", "?");
 				sqlQueryObject.addInsertField("descrizione", "?");
-				sqlQueryObject.addInsertField("location", "?");
 				sqlQueryObject.addInsertField("id_soggetto_erogatore", "?");
 				sqlQueryObject.addInsertField("tipo_soggetto_erogatore", "?");
 				sqlQueryObject.addInsertField("nome_soggetto_erogatore", "?");
@@ -1213,7 +1212,6 @@ public class DriverConfigurazioneDB_LIB {
 				int index = 1;
 				stm.setString(index++, nomePorta);
 				stm.setString(index++, descrizione);
-				stm.setString(index++, location);
 				stm.setLong(index++, idSoggettoErogatore);				
 				stm.setString(index++, tipoSoggErogatore);
 				stm.setString(index++, nomeSoggErogatore);
@@ -1270,7 +1268,7 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setLong(index++, aPD.getIdPortType() !=null ? aPD.getIdPortType() : -1L);
 				
 				DriverConfigurazioneDB_LIB.log.debug("eseguo query: " + 
-						DBUtils.formatSQLString(sqlQuery, nomePorta, descrizione, location, 
+						DBUtils.formatSQLString(sqlQuery, nomePorta, descrizione, 
 								idSoggettoErogatore, tipoSoggErogatore, nomeSoggErogatore, 
 								idServizioPD, tipoServizio, nomeServizio, 
 								idAzione, nomeAzione, modeAzione, patternAzione, getValue(forceWsdlBased),
@@ -1492,7 +1490,6 @@ public class DriverConfigurazioneDB_LIB {
 				}
 				
 				// serviziapplicativi
-				servizioApplicativo = null;
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addInsertTable(CostantiDB.PORTE_DELEGATE_SA);
 				sqlQueryObject.addInsertField("id_porta", "?");
@@ -1501,7 +1498,7 @@ public class DriverConfigurazioneDB_LIB {
 				stm = con.prepareStatement(sqlQuery);
 
 				for (i = 0; i < aPD.sizeServizioApplicativoList(); i++) {
-					servizioApplicativo = aPD.getServizioApplicativo(i);
+					PortaDelegataServizioApplicativo servizioApplicativo = aPD.getServizioApplicativo(i);
 					String nomeSA = servizioApplicativo.getNome();
 					//il tipo e il nome proprietario servizio applicativo sono gli stessi della porta delegata
 					String nomeProprietarioSA = aPD.getNomeSoggettoProprietario(); //servizioApplicativo.getNomeSoggettoProprietario();
@@ -1586,51 +1583,31 @@ public class DriverConfigurazioneDB_LIB {
 
 				// update
 				String oldNomePD = aPD.getOldNomeForUpdate();
-				String oldNomeProprietario = aPD.getOldNomeSoggettoProprietarioForUpdate();
-				String oldTipoProprietario = aPD.getOldTipoSoggettoProprietarioForUpdate();
-				DriverConfigurazioneDB_LIB.log.debug("OLD-PD["+oldNomePD+"] PD["+nomePorta+"] OLD-TIPOS["+oldTipoProprietario+"] TIPOS["+tipoProprietario+
-						"] OLD-NOMES["+oldNomeProprietario+"] NOMES["+nomeProprietario+"]");
+				DriverConfigurazioneDB_LIB.log.debug("OLD-PD["+oldNomePD+"] PD["+nomePorta+"]");
 				
 				if (oldNomePD == null || oldNomePD.equals("")){
 					DriverConfigurazioneDB_LIB.log.debug("old nomePD is null, assegno: "+nomePorta);
 					oldNomePD = nomePorta;
 				}
-				if (oldNomeProprietario == null || oldNomeProprietario.equals("")){
-					DriverConfigurazioneDB_LIB.log.debug("oldNomeProprietario is null, assegno: "+nomeProprietario);
-					oldNomeProprietario = nomeProprietario;
-				}
-				if (oldTipoProprietario == null || oldTipoProprietario.equals("")){
-					DriverConfigurazioneDB_LIB.log.debug("oldTipoProprietario is null, assegno: "+tipoProprietario);
-					oldTipoProprietario = tipoProprietario;
-				}
 
 				// if(aPD.getId() == null || aPD.getId()<=0) throw new
 				// DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDPortaDelegata(UPDATE)]
 				// L'id della porta e' necessario per effettuare l'UPDATE.");
-				idPortaDelegata = DriverConfigurazioneDB_LIB.getIdPortaDelegata(oldNomePD, oldTipoProprietario, oldNomeProprietario, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+				idPortaDelegata = DBUtils.getIdPortaDelegata(oldNomePD, con, DriverConfigurazioneDB_LIB.tipoDB);
 				// Puo' darsi che l'old soggetto e il nuovo soggetto siano la stesso soggetto della tabella. E' stato cambiato il nome.
 				if(idPortaDelegata<=0) {
-					idPortaDelegata = DriverConfigurazioneDB_LIB.getIdPortaDelegata(oldNomePD, tipoProprietario, nomeProprietario, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+					idPortaDelegata = DBUtils.getIdPortaDelegata(oldNomePD, con, DriverConfigurazioneDB_LIB.tipoDB);
 				}
 				if(idPortaDelegata<=0) 
-					throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDPortaDelegata(UPDATE)] id porta delegata non trovato nome["+oldNomePD+"] tipoProprietario["
-							+oldTipoProprietario+"] nomeProprietario["+oldNomeProprietario+"]");
+					throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDPortaDelegata(UPDATE)] id porta delegata non trovato nome["+oldNomePD+"]");
 				aPD.setId(idPortaDelegata);
 				
-				//id soggetto puo essere cambiato
-				long oldIdSoggettoProprietario=DBUtils.getIdSoggetto(oldNomeProprietario, oldTipoProprietario, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
-				// Puo' darsi che l'old soggetto e il nuovo soggetto siano la stesso soggetto della tabella. E' stato cambiato il nome.
-				if(oldIdSoggettoProprietario<=0) {
-					oldIdSoggettoProprietario = DBUtils.getIdSoggetto(nomeProprietario, tipoProprietario, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
-				}
-				if(oldIdSoggettoProprietario <=0) throw new DriverConfigurazioneException("Impossibile recuperare l'id del Soggetto Proprietario della Porta Delegata");
 				
 				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addUpdateTable(CostantiDB.PORTE_DELEGATE);
 				sqlQueryObject.addUpdateField("nome_porta", "?");
 				sqlQueryObject.addUpdateField("descrizione", "?");
-				sqlQueryObject.addUpdateField("location", "?");
 				sqlQueryObject.addUpdateField("id_soggetto_erogatore", "?");
 				sqlQueryObject.addUpdateField("tipo_soggetto_erogatore", "?");
 				sqlQueryObject.addUpdateField("nome_soggetto_erogatore", "?");
@@ -1666,7 +1643,6 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("id_accordo", "?");
 				sqlQueryObject.addUpdateField("id_port_type", "?");
 				sqlQueryObject.addWhereCondition("id=?");
-				sqlQueryObject.addWhereCondition("id_soggetto=?");
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQuery = sqlQueryObject.createSQLUpdate();
 				stm = con.prepareStatement(sqlQuery);
@@ -1674,7 +1650,6 @@ public class DriverConfigurazioneDB_LIB {
 				index = 1;
 				stm.setString(index++, nomePorta);
 				stm.setString(index++, descrizione);
-				stm.setString(index++, location);
 				stm.setLong(index++, idSoggettoErogatore);
 				stm.setString(index++, tipoSoggErogatore);
 				stm.setString(index++, nomeSoggErogatore);
@@ -1726,9 +1701,8 @@ public class DriverConfigurazioneDB_LIB {
 				
 				// where
 				stm.setLong(index++, idPortaDelegata);
-				stm.setLong(index++, oldIdSoggettoProprietario);
 
-				//DriverConfigurazioneDB_LIB.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, nomePorta, descrizione, location, 
+				//DriverConfigurazioneDB_LIB.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, nomePorta, descrizione, 
 				// soggErogatore.getId(), soggErogatore.getTipo(), soggErogatore.getNome(), soggErogatore.getIdentificazione(), servizio.getId(), 
 				// servizio.getTipo(), servizio.getNome(), servizio.getIdentificazione(), azione.getId(), azione.getNome(), azione.getIdentificazione(), 
 				// autenticazione, autorizzazione, messageSecurityStatus, idSoggettoProprietario, idPortaDelegata));
@@ -1993,7 +1967,7 @@ public class DriverConfigurazioneDB_LIB {
 				//scrivo la lista nel db
 				n=0;
 				for (i = 0; i < aPD.sizeServizioApplicativoList(); i++) {
-					servizioApplicativo = aPD.getServizioApplicativo(i);
+					PortaDelegataServizioApplicativo servizioApplicativo = aPD.getServizioApplicativo(i);
 
 					String nomeSA = servizioApplicativo.getNome();
 					//il tipo e il nome proprietario servizio applicativo sono gli stessi della porta delegata
@@ -2051,7 +2025,7 @@ public class DriverConfigurazioneDB_LIB {
 
 			case DELETE:
 				// delete
-				idPortaDelegata = DriverConfigurazioneDB_LIB.getIdPortaDelegata(nomePorta, tipoProprietario, nomeProprietario, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+				idPortaDelegata = DBUtils.getIdPortaDelegata(nomePorta, con, DriverConfigurazioneDB_LIB.tipoDB);
 				if (idPortaDelegata <= 0)
 					throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDPortaDelegata(DELETE)] Non e' stato possibile recuperare l'id della Porta Delegata, necessario per effettuare la DELETE.");
 
@@ -2101,7 +2075,6 @@ public class DriverConfigurazioneDB_LIB {
 				//}
 
 				// servizi applicativi
-				servizioApplicativo = null;
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_SA);
 				sqlQueryObject.addWhereCondition("id_porta=?");
@@ -2892,7 +2865,6 @@ public class DriverConfigurazioneDB_LIB {
 			int n = 0;
 			int i = 0;
 			long idPortaApplicativa = 0;
-			ServizioApplicativo servizioApplicativo = null;
 			long idProprietario = DBUtils.getIdSoggetto(nomeProprietario, tipoProprietario, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
 			// preparo lo statement in base al tipo di operazione
 			switch (type) {
@@ -3238,7 +3210,6 @@ public class DriverConfigurazioneDB_LIB {
 				}
 				
 				// serviziapplicativi
-				servizioApplicativo = null;
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_SA);
 				sqlQueryObject.addInsertField("id_porta", "?");
@@ -3247,7 +3218,7 @@ public class DriverConfigurazioneDB_LIB {
 				stm = con.prepareStatement(sqlQuery);
 
 				for (i = 0; i < aPA.sizeServizioApplicativoList(); i++) {
-					servizioApplicativo = aPA.getServizioApplicativo(i);
+					PortaApplicativaServizioApplicativo servizioApplicativo = aPA.getServizioApplicativo(i);
 					String nomeSA = servizioApplicativo.getNome();
 					//nome/tipo soggetto proprietario servizio applicativo sono gli stessi della porta applicativa
 					String nomeProprietarioSA = aPA.getNomeSoggettoProprietario();//servizioApplicativo.getNomeSoggettoProprietario();
@@ -3306,14 +3277,8 @@ public class DriverConfigurazioneDB_LIB {
 			case UPDATE:
 				// UPDATE
 				String oldNomePA = aPA.getOldNomeForUpdate();
-				String oldNomeProprietario = aPA.getOldNomeSoggettoProprietarioForUpdate();
-				String oldTipoProprietario = aPA.getOldTipoSoggettoProprietarioForUpdate();
 				if (oldNomePA == null || oldNomePA.equals(""))
 					oldNomePA = nomePorta;
-				if (oldNomeProprietario == null || oldNomeProprietario.equals(""))
-					oldNomeProprietario = nomeProprietario;
-				if (oldTipoProprietario == null || oldTipoProprietario.equals(""))
-					oldTipoProprietario = tipoProprietario;
 
 				//campi obbligatori
 				//servizio ci deve essere l'id oppure tipo e nome
@@ -3392,28 +3357,19 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("id_accordo", "?");
 				sqlQueryObject.addUpdateField("id_port_type", "?");
 				sqlQueryObject.addUpdateField("scadenza_correlazione_appl", "?");
-				sqlQueryObject.addWhereCondition("id_soggetto=?");
 				sqlQueryObject.addWhereCondition("nome_porta=?");
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQuery = sqlQueryObject.createSQLUpdate();
 				stm = con.prepareStatement(sqlQuery);
 
-				idPortaApplicativa = DBUtils.getIdPortaApplicativa(oldNomePA, oldTipoProprietario, oldNomeProprietario, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+				idPortaApplicativa = DBUtils.getIdPortaApplicativa(oldNomePA, con, DriverConfigurazioneDB_LIB.tipoDB);
 				//  Puo' darsi che l'old soggetto e il nuovo soggetto siano la stesso soggetto della tabella. E' stato cambiato il nome.
 				if(idPortaApplicativa<=0) {
-					idPortaApplicativa = DBUtils.getIdPortaApplicativa(oldNomePA, tipoProprietario, nomeProprietario, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+					idPortaApplicativa = DBUtils.getIdPortaApplicativa(oldNomePA, con, DriverConfigurazioneDB_LIB.tipoDB);
 				}
 				if(idPortaApplicativa<=0) 
-					throw new DriverConfigurazioneException("Impossibile recuperare l'id della Porta Applicativa nomePA["+oldNomePA+"] (old["+aPA.getOldNomeForUpdate()+"]) tipoProprietario["
-						+oldTipoProprietario+"] (old["+aPA.getOldTipoSoggettoProprietarioForUpdate()+"]) nomeProprietario["+oldNomeProprietario+"] (old["+aPA.getOldNomeSoggettoProprietarioForUpdate()+"])");
-								
-				long oldIdProprietario = DBUtils.getIdSoggetto(oldNomeProprietario, oldTipoProprietario, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
-				// Puo' darsi che l'old soggetto e il nuovo soggetto siano la stesso soggetto della tabella. E' stato cambiato il nome.
-				if(oldIdProprietario<=0) {
-					oldIdProprietario = DBUtils.getIdSoggetto(nomeProprietario, tipoProprietario, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
-				}
-				if(oldIdProprietario <=0) throw new DriverConfigurazioneException("Impossibile recuperare l'id del Soggetto Proprietario della Porta Applicativa");
-				
+					throw new DriverConfigurazioneException("Impossibile recuperare l'id della Porta Applicativa nomePA["+oldNomePA+"] (old["+aPA.getOldNomeForUpdate()+"]");
+										
 				index = 1;
 				
 				stm.setString(index++, descrizione);
@@ -3467,7 +3423,6 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, aPA.getCorrelazioneApplicativa()!=null ? aPA.getCorrelazioneApplicativa().getScadenza() : null);
 				
 				// where
-				stm.setLong(index++, oldIdProprietario);
 				stm.setString(index++, oldNomePA);
 
 				n = stm.executeUpdate();
@@ -3727,7 +3682,7 @@ public class DriverConfigurazioneDB_LIB {
 				//scrivo la lista nel db
 				n=0;
 				for (i = 0; i < aPA.sizeServizioApplicativoList(); i++) {
-					servizioApplicativo = aPA.getServizioApplicativo(i);
+					PortaApplicativaServizioApplicativo servizioApplicativo = aPA.getServizioApplicativo(i);
 
 					String nomeSA = servizioApplicativo.getNome();
 					//il tipo e il nome proprietario servizio applicativo sono gli stessi della porta delegata
@@ -3821,7 +3776,7 @@ public class DriverConfigurazioneDB_LIB {
 				// id della PortaApplicativa non valida.");
 
 
-				idPortaApplicativa = DBUtils.getIdPortaApplicativa(nomePorta, tipoProprietario, nomeProprietario, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+				idPortaApplicativa = DBUtils.getIdPortaApplicativa(nomePorta, con, DriverConfigurazioneDB_LIB.tipoDB);
 				if (idPortaApplicativa <= 0)
 					throw new DriverConfigurazioneException("Non e' stato possibile recuperare l'id della Porta Applicativa.");
 
@@ -3872,7 +3827,6 @@ public class DriverConfigurazioneDB_LIB {
 				//}
 
 				// serviziapplicativi
-				servizioApplicativo = null;
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SA);
 				sqlQueryObject.addWhereCondition("id_porta=?");
@@ -7055,111 +7009,4 @@ public class DriverConfigurazioneDB_LIB {
 		}
 	}
 	
-	public static long getIdPortaApplicativa(String nomePorta, String tipoProprietario, String nomeProprietario,
-			Connection con, String tipoDB) throws CoreException
-	{
-		return DBUtils.getIdPortaApplicativa(nomePorta, tipoProprietario, nomeProprietario, con, tipoDB, CostantiDB.SOGGETTI);
-	}
-	public static long getIdPortaApplicativa(String nomePorta, String tipoProprietario, String nomeProprietario,
-			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException
-	{
-		PreparedStatement stm = null;
-		ResultSet rs = null;
-		long idSoggetto;
-		long idPortaApplicativa=-1;
-
-		try
-		{
-			idSoggetto = DBUtils.getIdSoggetto(nomeProprietario, tipoProprietario, con, tipoDB,tabellaSoggetti);
-
-			//recupero l'id della porta applicativa appena inserita
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
-			sqlQueryObject.addSelectField("id");
-			sqlQueryObject.addWhereCondition("id_soggetto = ?");
-			sqlQueryObject.addWhereCondition("nome_porta = ?");
-			sqlQueryObject.setANDLogicOperator(true);
-			String sqlQuery = sqlQueryObject.createSQLQuery();
-			stm=con.prepareStatement(sqlQuery);
-			stm.setLong(1, idSoggetto);
-			stm.setString(2, nomePorta);
-
-			rs=stm.executeQuery();
-
-			if(rs.next())
-			{
-				idPortaApplicativa=rs.getLong("id");
-			}
-			return idPortaApplicativa;
-		}catch (SQLException e) {
-			throw new CoreException(e);
-		}catch (Exception e) {
-			throw new CoreException(e);
-		}finally
-		{
-			//Chiudo statement and resultset
-			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
-
-		}
-
-	}
-	
-	public static long getIdPortaDelegata(String nomePorta, String tipoProprietario, String nomeProprietario,
-			Connection con, String tipoDB) throws CoreException
-	{
-		return DriverConfigurazioneDB_LIB.getIdPortaDelegata(nomePorta, tipoProprietario, nomeProprietario, con, tipoDB, CostantiDB.SOGGETTI);
-	}
-	public static long getIdPortaDelegata(String nomePorta, String tipoProprietario, String nomeProprietario,
-			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException
-	{
-		PreparedStatement stm = null;
-		ResultSet rs = null;
-		long idSoggetto;
-		long idPortaDelegata=-1;
-
-		try
-		{
-			idSoggetto = DBUtils.getIdSoggetto(nomeProprietario, tipoProprietario, con, tipoDB,tabellaSoggetti);
-
-			//recupero l'id della porta applicativa appena inserita
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
-			sqlQueryObject.addSelectField("id");
-			sqlQueryObject.addWhereCondition("id_soggetto = ?");
-			sqlQueryObject.addWhereCondition("nome_porta = ?");
-			sqlQueryObject.setANDLogicOperator(true);
-			String sqlQuery = sqlQueryObject.createSQLQuery();
-			stm=con.prepareStatement(sqlQuery);
-			stm.setLong(1, idSoggetto);
-			stm.setString(2, nomePorta);
-
-			rs=stm.executeQuery();
-
-			if(rs.next())
-			{
-				idPortaDelegata=rs.getLong("id");
-			}
-			return idPortaDelegata;
-		}catch (SQLException e) {
-			throw new CoreException(e);
-		}catch (Exception e) {
-			throw new CoreException(e);
-		}finally
-		{
-			//Chiudo statement and resultset
-			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
-
-		}
-
-	}
 }

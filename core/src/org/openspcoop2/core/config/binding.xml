@@ -16,7 +16,7 @@
       <structure map-as="org.openspcoop2.core.config.PortaApplicativa"/>
     </collection>
     <collection field="servizioApplicativo" create-type="java.util.ArrayList">
-      <structure name="servizio-applicativo" map-as="_ServizioApplicativo_Type"/>
+      <structure map-as="org.openspcoop2.core.config.ServizioApplicativo"/>
     </collection>
     <collection field="connettore" create-type="java.util.ArrayList">
       <structure name="connettore" map-as="_Connettore_Type"/>
@@ -37,7 +37,7 @@
     <structure field="servizio" usage="required" map-as="org.openspcoop2.core.config.PortaDelegataServizio"/>
     <structure field="azione" usage="optional" map-as="org.openspcoop2.core.config.PortaDelegataAzione"/>
     <collection field="servizioApplicativo" create-type="java.util.ArrayList">
-      <structure name="servizio-applicativo" map-as="_ServizioApplicativo_Type"/>
+      <structure map-as="org.openspcoop2.core.config.PortaDelegataServizioApplicativo"/>
     </collection>
     <structure name="mtom-processor" field="mtomProcessor" usage="optional" map-as="_MtomProcessor_Type"/>
     <structure name="message-security" field="messageSecurity" usage="optional" map-as="_MessageSecurity_Type"/>
@@ -52,7 +52,6 @@
     <value name="stato-message-security" field="statoMessageSecurity" usage="optional" style="attribute"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
     <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
-    <value name="location" field="location" usage="optional" style="attribute"/>
     <value name="autenticazione" field="autenticazione" default="ssl" usage="optional" style="attribute"/>
     <value name="autorizzazione" field="autorizzazione" default="openspcoop" usage="optional" style="attribute"/>
     <value name="autorizzazione-contenuto" field="autorizzazioneContenuto" usage="optional" style="attribute"/>
@@ -83,13 +82,17 @@
     <value name="nome" field="nome" usage="optional" style="attribute"/>
     <value name="force-wsdl-based" field="forceWsdlBased" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
   </mapping>
+  <mapping name="servizio-applicativo" class="org.openspcoop2.core.config.PortaDelegataServizioApplicativo">
+    <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
+    <value name="nome" field="nome" usage="required" style="attribute"/>
+  </mapping>
   <mapping name="porta-applicativa" class="org.openspcoop2.core.config.PortaApplicativa">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
     <structure field="soggettoVirtuale" usage="optional" map-as="org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale"/>
     <structure field="servizio" usage="required" map-as="org.openspcoop2.core.config.PortaApplicativaServizio"/>
     <structure field="azione" usage="optional" map-as="org.openspcoop2.core.config.PortaApplicativaAzione"/>
     <collection field="servizioApplicativo" create-type="java.util.ArrayList">
-      <structure name="servizio-applicativo" map-as="_ServizioApplicativo_Type"/>
+      <structure map-as="org.openspcoop2.core.config.PortaApplicativaServizioApplicativo"/>
     </collection>
     <collection field="proprietaProtocollo" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.core.config.ProprietaProtocollo"/>
@@ -107,7 +110,6 @@
     <value name="stato-message-security" field="statoMessageSecurity" usage="optional" style="attribute"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
     <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
-    <value name="location" field="location" usage="optional" style="attribute"/>
     <value name="ricevuta-asincrona-simmetrica" field="ricevutaAsincronaSimmetrica" default="abilitato" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="ricevuta-asincrona-asimmetrica" field="ricevutaAsincronaAsimmetrica" default="abilitato" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="integrazione" field="integrazione" usage="optional" style="attribute"/>
@@ -136,25 +138,11 @@
     <value name="nome" field="nome" usage="optional" style="attribute"/>
     <value name="force-wsdl-based" field="forceWsdlBased" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
   </mapping>
-  <mapping name="servizio-applicativo" class="org.openspcoop2.core.config.ServizioApplicativo" abstract="false">
+  <mapping name="servizio-applicativo" class="org.openspcoop2.core.config.PortaApplicativaServizioApplicativo">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
-    <collection field="ruolo" create-type="java.util.ArrayList">
-      <value name="ruolo" type="java.lang.String"/>
-    </collection>
-    <structure field="invocazionePorta" usage="optional" map-as="org.openspcoop2.core.config.InvocazionePorta"/>
-    <structure field="invocazioneServizio" usage="optional" map-as="org.openspcoop2.core.config.InvocazioneServizio"/>
-    <structure field="rispostaAsincrona" usage="optional" map-as="org.openspcoop2.core.config.RispostaAsincrona"/>
-    <value name="id-soggetto" field="idSoggetto" usage="optional" style="attribute"/>
-    <value name="tipo-soggetto-proprietario" field="tipoSoggettoProprietario" usage="optional" style="attribute"/>
-    <value name="nome-soggetto-proprietario" field="nomeSoggettoProprietario" usage="optional" style="attribute"/>
-    <value name="tipologia-fruizione" field="tipologiaFruizione" usage="optional" style="attribute"/>
-    <value name="tipologia-erogazione" field="tipologiaErogazione" usage="optional" style="attribute"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
-    <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
-    <value name="ora-registrazione" field="oraRegistrazione" usage="optional" style="attribute"/>
   </mapping>
-
-  <mapping type-name="_ServizioApplicativo_Type" class="org.openspcoop2.core.config.ServizioApplicativo" abstract="true">
+  <mapping name="servizio-applicativo" class="org.openspcoop2.core.config.ServizioApplicativo">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
     <collection field="ruolo" create-type="java.util.ArrayList">
       <value name="ruolo" type="java.lang.String"/>
@@ -678,30 +666,22 @@
     <value name="nome" field="nome" usage="required" style="attribute"/>
     <value name="valore" field="valore" usage="required" style="attribute"/>
   </mapping>
-  <mapping name="id-soggetto" class="org.openspcoop2.core.config.IdSoggetto" abstract="false">
-    <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
-    <value name="tipo" field="tipo" usage="required" style="attribute"/>
-    <value name="nome" field="nome" usage="required" style="attribute"/>
-  </mapping>
-
-  <mapping type-name="_IdSoggetto_Type" class="org.openspcoop2.core.config.IdSoggetto" abstract="true">
+  <mapping name="id-soggetto" class="org.openspcoop2.core.config.IdSoggetto">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
     <value name="tipo" field="tipo" usage="required" style="attribute"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
   </mapping>
   <mapping name="id-porta-delegata" class="org.openspcoop2.core.config.IdPortaDelegata">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
-    <structure name="id-soggetto" field="idSoggetto" usage="required" map-as="_IdSoggetto_Type"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
   </mapping>
   <mapping name="id-porta-applicativa" class="org.openspcoop2.core.config.IdPortaApplicativa">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
-    <structure name="id-soggetto" field="idSoggetto" usage="required" map-as="_IdSoggetto_Type"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
   </mapping>
   <mapping name="id-servizio-applicativo" class="org.openspcoop2.core.config.IdServizioApplicativo">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
-    <structure name="id-soggetto" field="idSoggetto" usage="required" map-as="_IdSoggetto_Type"/>
+    <structure field="idSoggetto" usage="required" map-as="org.openspcoop2.core.config.IdSoggetto"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
   </mapping>
 </binding>

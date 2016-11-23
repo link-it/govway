@@ -34,7 +34,6 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -779,11 +778,10 @@ public class DeleterArchiveUtils {
 			ArchiveEsitoImportDetail detail){
 		
 		IDPortaApplicativa idPortaApplicativa = archivePortaApplicativa.getIdPortaApplicativa();
-		IDPortaApplicativaByNome idPortaApplicativaByNome = archivePortaApplicativa.getIdPortaApplicativaByNome();
 		IDSoggetto idSoggettoProprietario = archivePortaApplicativa.getIdSoggettoProprietario();
 		try{
 			// --- check esistenza ---
-			if(this.importerEngine.existsPortaApplicativa(idPortaApplicativaByNome.getNome(),idSoggettoProprietario)==false){
+			if(this.importerEngine.existsPortaApplicativa(idPortaApplicativa)==false){
 				detail.setState(ArchiveStatoImport.DELETED_NOT_EXISTS);
 				return;
 			}

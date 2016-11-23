@@ -362,7 +362,7 @@ public class ArchiviHelper extends ConsoleHelper {
 		for (int i = 0; i < wizard.getRequisiti().sizeProtocolloList(); i++) {
 			String protocollo = wizard.getRequisiti().getProtocollo(i).getNome();
 			try{
-				IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+				IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 				pf.toString();
 			}catch(Exception e){
 				this.log.error("Requisito["+i+"] protocollo ["+protocollo+"] non trovato: "+e.getMessage(),e);
@@ -749,7 +749,7 @@ public class ArchiviHelper extends ConsoleHelper {
 		}
 		
 		// Uso il protocollo per riempire il package
-		IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 		protocolFactory.createArchive().setProtocolInfo(aspc);
 		// NOTA il codice sopra lo devo eseguire sempre e comunque per validare il WSDL.
 		// Se il WSDL e' corrotto (es. wsdl senza port type viene sollevata una eccezione)

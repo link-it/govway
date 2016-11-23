@@ -126,7 +126,7 @@ public class ArchiviExporter extends HttpServlet {
 					
 			// protocollo
 			String protocollo = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO);
-			IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			IArchive archiveFactory = protocolFactory.createArchive();
 			
 			// tipo esportazione

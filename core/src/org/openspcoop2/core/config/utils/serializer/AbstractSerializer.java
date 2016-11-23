@@ -39,7 +39,7 @@ import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
-import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.ProprietaProtocollo;
 import org.openspcoop2.core.config.MtomProcessor;
 import org.openspcoop2.core.config.MessageSecurity;
@@ -61,6 +61,7 @@ import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.TipoFiltroAbilitazioneServizi;
 import org.openspcoop2.core.config.StatoServiziPddPortaDelegata;
 import org.openspcoop2.core.config.Route;
+import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.RispostaAsincrona;
@@ -90,6 +91,7 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.StatoServiziPddPortaApplicativa;
 import org.openspcoop2.core.config.StatoServiziPddIntegrationManager;
 import org.openspcoop2.core.config.IdPortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
@@ -1952,118 +1954,118 @@ public abstract class AbstractSerializer {
 	
 	/*
 	 =================================================================================
-	 Object: servizio-applicativo
+	 Object: porta-applicativa-servizio-applicativo
 	 =================================================================================
 	*/
 	
 	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>servizioApplicativo</var> of type {@link org.openspcoop2.core.config.ServizioApplicativo}
+	 * Serialize to file system in <var>fileName</var> the object <var>portaApplicativaServizioApplicativo</var> of type {@link org.openspcoop2.core.config.PortaApplicativaServizioApplicativo}
 	 * 
-	 * @param fileName Xml file to serialize the object <var>servizioApplicativo</var>
-	 * @param servizioApplicativo Object to be serialized in xml file <var>fileName</var>
+	 * @param fileName Xml file to serialize the object <var>portaApplicativaServizioApplicativo</var>
+	 * @param portaApplicativaServizioApplicativo Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(String fileName,ServizioApplicativo servizioApplicativo) throws SerializerException {
-		this.objToXml(fileName, ServizioApplicativo.class, servizioApplicativo, false);
+	public void write(String fileName,PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo) throws SerializerException {
+		this.objToXml(fileName, PortaApplicativaServizioApplicativo.class, portaApplicativaServizioApplicativo, false);
 	}
 	/**
-	 * Serialize to file system in <var>fileName</var> the object <var>servizioApplicativo</var> of type {@link org.openspcoop2.core.config.ServizioApplicativo}
+	 * Serialize to file system in <var>fileName</var> the object <var>portaApplicativaServizioApplicativo</var> of type {@link org.openspcoop2.core.config.PortaApplicativaServizioApplicativo}
 	 * 
-	 * @param fileName Xml file to serialize the object <var>servizioApplicativo</var>
-	 * @param servizioApplicativo Object to be serialized in xml file <var>fileName</var>
+	 * @param fileName Xml file to serialize the object <var>portaApplicativaServizioApplicativo</var>
+	 * @param portaApplicativaServizioApplicativo Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(String fileName,ServizioApplicativo servizioApplicativo,boolean prettyPrint) throws SerializerException {
-		this.objToXml(fileName, ServizioApplicativo.class, servizioApplicativo, prettyPrint);
+	public void write(String fileName,PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, PortaApplicativaServizioApplicativo.class, portaApplicativaServizioApplicativo, prettyPrint);
 	}
 	
 	/**
-	 * Serialize to file system in <var>file</var> the object <var>servizioApplicativo</var> of type {@link org.openspcoop2.core.config.ServizioApplicativo}
+	 * Serialize to file system in <var>file</var> the object <var>portaApplicativaServizioApplicativo</var> of type {@link org.openspcoop2.core.config.PortaApplicativaServizioApplicativo}
 	 * 
-	 * @param file Xml file to serialize the object <var>servizioApplicativo</var>
-	 * @param servizioApplicativo Object to be serialized in xml file <var>fileName</var>
+	 * @param file Xml file to serialize the object <var>portaApplicativaServizioApplicativo</var>
+	 * @param portaApplicativaServizioApplicativo Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(File file,ServizioApplicativo servizioApplicativo) throws SerializerException {
-		this.objToXml(file, ServizioApplicativo.class, servizioApplicativo, false);
+	public void write(File file,PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo) throws SerializerException {
+		this.objToXml(file, PortaApplicativaServizioApplicativo.class, portaApplicativaServizioApplicativo, false);
 	}
 	/**
-	 * Serialize to file system in <var>file</var> the object <var>servizioApplicativo</var> of type {@link org.openspcoop2.core.config.ServizioApplicativo}
+	 * Serialize to file system in <var>file</var> the object <var>portaApplicativaServizioApplicativo</var> of type {@link org.openspcoop2.core.config.PortaApplicativaServizioApplicativo}
 	 * 
-	 * @param file Xml file to serialize the object <var>servizioApplicativo</var>
-	 * @param servizioApplicativo Object to be serialized in xml file <var>fileName</var>
+	 * @param file Xml file to serialize the object <var>portaApplicativaServizioApplicativo</var>
+	 * @param portaApplicativaServizioApplicativo Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(File file,ServizioApplicativo servizioApplicativo,boolean prettyPrint) throws SerializerException {
-		this.objToXml(file, ServizioApplicativo.class, servizioApplicativo, prettyPrint);
+	public void write(File file,PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, PortaApplicativaServizioApplicativo.class, portaApplicativaServizioApplicativo, prettyPrint);
 	}
 	
 	/**
-	 * Serialize to output stream <var>out</var> the object <var>servizioApplicativo</var> of type {@link org.openspcoop2.core.config.ServizioApplicativo}
+	 * Serialize to output stream <var>out</var> the object <var>portaApplicativaServizioApplicativo</var> of type {@link org.openspcoop2.core.config.PortaApplicativaServizioApplicativo}
 	 * 
-	 * @param out OutputStream to serialize the object <var>servizioApplicativo</var>
-	 * @param servizioApplicativo Object to be serialized in xml file <var>fileName</var>
+	 * @param out OutputStream to serialize the object <var>portaApplicativaServizioApplicativo</var>
+	 * @param portaApplicativaServizioApplicativo Object to be serialized in xml file <var>fileName</var>
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(OutputStream out,ServizioApplicativo servizioApplicativo) throws SerializerException {
-		this.objToXml(out, ServizioApplicativo.class, servizioApplicativo, false);
+	public void write(OutputStream out,PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo) throws SerializerException {
+		this.objToXml(out, PortaApplicativaServizioApplicativo.class, portaApplicativaServizioApplicativo, false);
 	}
 	/**
-	 * Serialize to output stream <var>out</var> the object <var>servizioApplicativo</var> of type {@link org.openspcoop2.core.config.ServizioApplicativo}
+	 * Serialize to output stream <var>out</var> the object <var>portaApplicativaServizioApplicativo</var> of type {@link org.openspcoop2.core.config.PortaApplicativaServizioApplicativo}
 	 * 
-	 * @param out OutputStream to serialize the object <var>servizioApplicativo</var>
-	 * @param servizioApplicativo Object to be serialized in xml file <var>fileName</var>
+	 * @param out OutputStream to serialize the object <var>portaApplicativaServizioApplicativo</var>
+	 * @param portaApplicativaServizioApplicativo Object to be serialized in xml file <var>fileName</var>
 	 * @param prettyPrint if true output the XML with indenting
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public void write(OutputStream out,ServizioApplicativo servizioApplicativo,boolean prettyPrint) throws SerializerException {
-		this.objToXml(out, ServizioApplicativo.class, servizioApplicativo, prettyPrint);
+	public void write(OutputStream out,PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, PortaApplicativaServizioApplicativo.class, portaApplicativaServizioApplicativo, prettyPrint);
 	}
 			
 	/**
-	 * Serialize to byte array the object <var>servizioApplicativo</var> of type {@link org.openspcoop2.core.config.ServizioApplicativo}
+	 * Serialize to byte array the object <var>portaApplicativaServizioApplicativo</var> of type {@link org.openspcoop2.core.config.PortaApplicativaServizioApplicativo}
 	 * 
-	 * @param servizioApplicativo Object to be serialized
+	 * @param portaApplicativaServizioApplicativo Object to be serialized
 	 * @return Object to be serialized in byte array
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public byte[] toByteArray(ServizioApplicativo servizioApplicativo) throws SerializerException {
-		return this.objToXml(ServizioApplicativo.class, servizioApplicativo, false).toByteArray();
+	public byte[] toByteArray(PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo) throws SerializerException {
+		return this.objToXml(PortaApplicativaServizioApplicativo.class, portaApplicativaServizioApplicativo, false).toByteArray();
 	}
 	/**
-	 * Serialize to byte array the object <var>servizioApplicativo</var> of type {@link org.openspcoop2.core.config.ServizioApplicativo}
+	 * Serialize to byte array the object <var>portaApplicativaServizioApplicativo</var> of type {@link org.openspcoop2.core.config.PortaApplicativaServizioApplicativo}
 	 * 
-	 * @param servizioApplicativo Object to be serialized
+	 * @param portaApplicativaServizioApplicativo Object to be serialized
 	 * @param prettyPrint if true output the XML with indenting
 	 * @return Object to be serialized in byte array
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public byte[] toByteArray(ServizioApplicativo servizioApplicativo,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(ServizioApplicativo.class, servizioApplicativo, prettyPrint).toByteArray();
+	public byte[] toByteArray(PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(PortaApplicativaServizioApplicativo.class, portaApplicativaServizioApplicativo, prettyPrint).toByteArray();
 	}
 	
 	/**
-	 * Serialize to String the object <var>servizioApplicativo</var> of type {@link org.openspcoop2.core.config.ServizioApplicativo}
+	 * Serialize to String the object <var>portaApplicativaServizioApplicativo</var> of type {@link org.openspcoop2.core.config.PortaApplicativaServizioApplicativo}
 	 * 
-	 * @param servizioApplicativo Object to be serialized
+	 * @param portaApplicativaServizioApplicativo Object to be serialized
 	 * @return Object to be serialized as String
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public String toString(ServizioApplicativo servizioApplicativo) throws SerializerException {
-		return this.objToXml(ServizioApplicativo.class, servizioApplicativo, false).toString();
+	public String toString(PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo) throws SerializerException {
+		return this.objToXml(PortaApplicativaServizioApplicativo.class, portaApplicativaServizioApplicativo, false).toString();
 	}
 	/**
-	 * Serialize to String the object <var>servizioApplicativo</var> of type {@link org.openspcoop2.core.config.ServizioApplicativo}
+	 * Serialize to String the object <var>portaApplicativaServizioApplicativo</var> of type {@link org.openspcoop2.core.config.PortaApplicativaServizioApplicativo}
 	 * 
-	 * @param servizioApplicativo Object to be serialized
+	 * @param portaApplicativaServizioApplicativo Object to be serialized
 	 * @param prettyPrint if true output the XML with indenting
 	 * @return Object to be serialized as String
 	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
 	 */
-	public String toString(ServizioApplicativo servizioApplicativo,boolean prettyPrint) throws SerializerException {
-		return this.objToXml(ServizioApplicativo.class, servizioApplicativo, prettyPrint).toString();
+	public String toString(PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(PortaApplicativaServizioApplicativo.class, portaApplicativaServizioApplicativo, prettyPrint).toString();
 	}
 	
 	
@@ -4542,6 +4544,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(Route route,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(Route.class, route, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: servizio-applicativo
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>servizioApplicativo</var> of type {@link org.openspcoop2.core.config.ServizioApplicativo}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>servizioApplicativo</var>
+	 * @param servizioApplicativo Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ServizioApplicativo servizioApplicativo) throws SerializerException {
+		this.objToXml(fileName, ServizioApplicativo.class, servizioApplicativo, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>servizioApplicativo</var> of type {@link org.openspcoop2.core.config.ServizioApplicativo}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>servizioApplicativo</var>
+	 * @param servizioApplicativo Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,ServizioApplicativo servizioApplicativo,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, ServizioApplicativo.class, servizioApplicativo, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>servizioApplicativo</var> of type {@link org.openspcoop2.core.config.ServizioApplicativo}
+	 * 
+	 * @param file Xml file to serialize the object <var>servizioApplicativo</var>
+	 * @param servizioApplicativo Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ServizioApplicativo servizioApplicativo) throws SerializerException {
+		this.objToXml(file, ServizioApplicativo.class, servizioApplicativo, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>servizioApplicativo</var> of type {@link org.openspcoop2.core.config.ServizioApplicativo}
+	 * 
+	 * @param file Xml file to serialize the object <var>servizioApplicativo</var>
+	 * @param servizioApplicativo Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,ServizioApplicativo servizioApplicativo,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, ServizioApplicativo.class, servizioApplicativo, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>servizioApplicativo</var> of type {@link org.openspcoop2.core.config.ServizioApplicativo}
+	 * 
+	 * @param out OutputStream to serialize the object <var>servizioApplicativo</var>
+	 * @param servizioApplicativo Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ServizioApplicativo servizioApplicativo) throws SerializerException {
+		this.objToXml(out, ServizioApplicativo.class, servizioApplicativo, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>servizioApplicativo</var> of type {@link org.openspcoop2.core.config.ServizioApplicativo}
+	 * 
+	 * @param out OutputStream to serialize the object <var>servizioApplicativo</var>
+	 * @param servizioApplicativo Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,ServizioApplicativo servizioApplicativo,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, ServizioApplicativo.class, servizioApplicativo, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>servizioApplicativo</var> of type {@link org.openspcoop2.core.config.ServizioApplicativo}
+	 * 
+	 * @param servizioApplicativo Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ServizioApplicativo servizioApplicativo) throws SerializerException {
+		return this.objToXml(ServizioApplicativo.class, servizioApplicativo, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>servizioApplicativo</var> of type {@link org.openspcoop2.core.config.ServizioApplicativo}
+	 * 
+	 * @param servizioApplicativo Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(ServizioApplicativo servizioApplicativo,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ServizioApplicativo.class, servizioApplicativo, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>servizioApplicativo</var> of type {@link org.openspcoop2.core.config.ServizioApplicativo}
+	 * 
+	 * @param servizioApplicativo Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ServizioApplicativo servizioApplicativo) throws SerializerException {
+		return this.objToXml(ServizioApplicativo.class, servizioApplicativo, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>servizioApplicativo</var> of type {@link org.openspcoop2.core.config.ServizioApplicativo}
+	 * 
+	 * @param servizioApplicativo Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(ServizioApplicativo servizioApplicativo,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(ServizioApplicativo.class, servizioApplicativo, prettyPrint).toString();
 	}
 	
 	
@@ -7964,6 +8084,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(IdPortaApplicativa idPortaApplicativa,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(IdPortaApplicativa.class, idPortaApplicativa, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: porta-delegata-servizio-applicativo
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>portaDelegataServizioApplicativo</var> of type {@link org.openspcoop2.core.config.PortaDelegataServizioApplicativo}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>portaDelegataServizioApplicativo</var>
+	 * @param portaDelegataServizioApplicativo Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,PortaDelegataServizioApplicativo portaDelegataServizioApplicativo) throws SerializerException {
+		this.objToXml(fileName, PortaDelegataServizioApplicativo.class, portaDelegataServizioApplicativo, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>portaDelegataServizioApplicativo</var> of type {@link org.openspcoop2.core.config.PortaDelegataServizioApplicativo}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>portaDelegataServizioApplicativo</var>
+	 * @param portaDelegataServizioApplicativo Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,PortaDelegataServizioApplicativo portaDelegataServizioApplicativo,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, PortaDelegataServizioApplicativo.class, portaDelegataServizioApplicativo, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>portaDelegataServizioApplicativo</var> of type {@link org.openspcoop2.core.config.PortaDelegataServizioApplicativo}
+	 * 
+	 * @param file Xml file to serialize the object <var>portaDelegataServizioApplicativo</var>
+	 * @param portaDelegataServizioApplicativo Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,PortaDelegataServizioApplicativo portaDelegataServizioApplicativo) throws SerializerException {
+		this.objToXml(file, PortaDelegataServizioApplicativo.class, portaDelegataServizioApplicativo, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>portaDelegataServizioApplicativo</var> of type {@link org.openspcoop2.core.config.PortaDelegataServizioApplicativo}
+	 * 
+	 * @param file Xml file to serialize the object <var>portaDelegataServizioApplicativo</var>
+	 * @param portaDelegataServizioApplicativo Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,PortaDelegataServizioApplicativo portaDelegataServizioApplicativo,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, PortaDelegataServizioApplicativo.class, portaDelegataServizioApplicativo, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>portaDelegataServizioApplicativo</var> of type {@link org.openspcoop2.core.config.PortaDelegataServizioApplicativo}
+	 * 
+	 * @param out OutputStream to serialize the object <var>portaDelegataServizioApplicativo</var>
+	 * @param portaDelegataServizioApplicativo Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,PortaDelegataServizioApplicativo portaDelegataServizioApplicativo) throws SerializerException {
+		this.objToXml(out, PortaDelegataServizioApplicativo.class, portaDelegataServizioApplicativo, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>portaDelegataServizioApplicativo</var> of type {@link org.openspcoop2.core.config.PortaDelegataServizioApplicativo}
+	 * 
+	 * @param out OutputStream to serialize the object <var>portaDelegataServizioApplicativo</var>
+	 * @param portaDelegataServizioApplicativo Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,PortaDelegataServizioApplicativo portaDelegataServizioApplicativo,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, PortaDelegataServizioApplicativo.class, portaDelegataServizioApplicativo, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>portaDelegataServizioApplicativo</var> of type {@link org.openspcoop2.core.config.PortaDelegataServizioApplicativo}
+	 * 
+	 * @param portaDelegataServizioApplicativo Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(PortaDelegataServizioApplicativo portaDelegataServizioApplicativo) throws SerializerException {
+		return this.objToXml(PortaDelegataServizioApplicativo.class, portaDelegataServizioApplicativo, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>portaDelegataServizioApplicativo</var> of type {@link org.openspcoop2.core.config.PortaDelegataServizioApplicativo}
+	 * 
+	 * @param portaDelegataServizioApplicativo Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(PortaDelegataServizioApplicativo portaDelegataServizioApplicativo,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(PortaDelegataServizioApplicativo.class, portaDelegataServizioApplicativo, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>portaDelegataServizioApplicativo</var> of type {@link org.openspcoop2.core.config.PortaDelegataServizioApplicativo}
+	 * 
+	 * @param portaDelegataServizioApplicativo Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(PortaDelegataServizioApplicativo portaDelegataServizioApplicativo) throws SerializerException {
+		return this.objToXml(PortaDelegataServizioApplicativo.class, portaDelegataServizioApplicativo, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>portaDelegataServizioApplicativo</var> of type {@link org.openspcoop2.core.config.PortaDelegataServizioApplicativo}
+	 * 
+	 * @param portaDelegataServizioApplicativo Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(PortaDelegataServizioApplicativo portaDelegataServizioApplicativo,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(PortaDelegataServizioApplicativo.class, portaDelegataServizioApplicativo, prettyPrint).toString();
 	}
 	
 	

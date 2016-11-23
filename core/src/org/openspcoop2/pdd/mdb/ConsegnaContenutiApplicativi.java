@@ -46,9 +46,9 @@ import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -412,7 +412,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			
 		}else{
 			identitaPdD = richiestaDelegata.getDominio();
-			soggettoFruitore = richiestaDelegata.getSoggettoFruitore();
+			soggettoFruitore = richiestaDelegata.getIdSoggettoFruitore();
 			servizioApplicativo = richiestaDelegata.getServizioApplicativo();
 			idModuloInAttesa = richiestaDelegata.getIdModuloInAttesa();
 			scenarioCooperazione = richiestaDelegata.getScenario();
@@ -473,16 +473,14 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 
 		PortaApplicativa pa = null;
 		IDPortaApplicativa idPA = null;
-		IDPortaApplicativaByNome idPAByNome = null;
 		PortaDelegata pd = null;
 		IDPortaDelegata idPD = null;
 		ServizioApplicativo sa = null;
 		if(richiestaApplicativa!=null){
-			idPA = richiestaApplicativa.getIdPA();
-			idPAByNome = richiestaApplicativa.getIdPAbyNome();
+			idPA = richiestaApplicativa.getIdPortaApplicativa();
 			try{
 				msgDiag.mediumDebug("getPortaApplicativa...");
-				pa = configurazionePdDManager.getPortaApplicativa(idPAByNome);
+				pa = configurazionePdDManager.getPortaApplicativa(idPA);
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e, "RichiestaApplicativa.getPortaApplicativa");
 				esito.setEsitoInvocazione(false); 
@@ -491,8 +489,10 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			}
 			try{
 				msgDiag.mediumDebug("getServizioApplicativo(pa)...");
-				sa = configurazionePdDManager.getServizioApplicativo(idPA, 
-						richiestaApplicativa.getServizioApplicativo());
+				IDServizioApplicativo idSA = new IDServizioApplicativo();
+				idSA.setNome(richiestaApplicativa.getServizioApplicativo());
+				idSA.setIdSoggettoProprietario(richiestaApplicativa.getIDServizio().getSoggettoErogatore());
+				sa = configurazionePdDManager.getServizioApplicativo(idSA);
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e, "RichiestaApplicativa.getServizioApplicativo");
 				esito.setEsitoInvocazione(false); 
@@ -514,8 +514,10 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			}
 			try{
 				msgDiag.mediumDebug("getServizioApplicativo(pd)...");
-				sa = configurazionePdDManager.getServizioApplicativo(idPD, 
-						richiestaDelegata.getServizioApplicativo());
+				IDServizioApplicativo idSA = new IDServizioApplicativo();
+				idSA.setNome(richiestaDelegata.getServizioApplicativo());
+				idSA.setIdSoggettoProprietario(richiestaDelegata.getIdSoggettoFruitore());
+				sa = configurazionePdDManager.getServizioApplicativo(idSA);
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e, "RichiestaDelegata.getServizioApplicativo");
 				esito.setEsitoInvocazione(false); 
@@ -1434,7 +1436,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				integrationContext.setServizioApplicativoFruitore(servizioApplicativoFruitore);
 				integrationContext.addServizioApplicativoErogatore(servizioApplicativo);
 				integrationContext.setGestioneStateless(portaDiTipoStateless);
-				integrationContext.setIdPA(idPAByNome);
+				integrationContext.setIdPA(idPA);
 				integrationContext.setIdPD(idPD);
 				outRequestContext.setIntegrazione(integrationContext);
 				

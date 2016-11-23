@@ -35,6 +35,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
@@ -104,7 +105,7 @@ public final class PorteDelegateServizioApplicativoDel extends Action {
 				// servizioApplicativo = de.getValue();
 				servizioApplicativo = idsToRemove.get(i);
 				for (int j = 0; j < pde.sizeServizioApplicativoList(); j++) {
-					ServizioApplicativo sa = pde.getServizioApplicativo(j);
+					PortaDelegataServizioApplicativo sa = pde.getServizioApplicativo(j);
 					if (servizioApplicativo.equals(sa.getNome())) {
 						pde.removeServizioApplicativo(j);
 						break;

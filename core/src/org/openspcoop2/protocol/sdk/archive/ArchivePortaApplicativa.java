@@ -22,7 +22,6 @@ package org.openspcoop2.protocol.sdk.archive;
 
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.id.IDPortaApplicativa;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -61,7 +60,7 @@ public class ArchivePortaApplicativa implements IArchiveObject {
 	@Override
 	public String key() throws ProtocolException {
 		return ArchivePortaApplicativa.buildKey(this.idSoggettoProprietario.getTipo(), this.idSoggettoProprietario.getNome(), 
-					this.idPortaApplicativaByNome.getNome());
+					this.idPortaApplicativa.getNome());
 	}
 	
 	
@@ -69,7 +68,6 @@ public class ArchivePortaApplicativa implements IArchiveObject {
 	private IDSoggetto idSoggettoProprietario;
 	private IDServizio idServizio;
 	private IDPortaApplicativa idPortaApplicativa;
-	private IDPortaApplicativaByNome idPortaApplicativaByNome;
 	private PortaApplicativa portaApplicativa;
 	
 	private ArchiveIdCorrelazione idCorrelazione; // permette di correlare più oggetti tra di loro 
@@ -137,9 +135,8 @@ public class ArchivePortaApplicativa implements IArchiveObject {
 					new IDSoggetto(this.portaApplicativa.getTipoSoggettoProprietario(), 
 							this.portaApplicativa.getNomeSoggettoProprietario());
 			
-			this.idPortaApplicativaByNome = new IDPortaApplicativaByNome();
-			this.idPortaApplicativaByNome.setNome(this.portaApplicativa.getNome());
-			this.idPortaApplicativaByNome.setSoggetto(this.idSoggettoProprietario);
+			this.idPortaApplicativa = new IDPortaApplicativa();
+			this.idPortaApplicativa.setNome(this.portaApplicativa.getNome());
 			
 			if(portaApplicativa.getServizio()==null){
 				throw new ProtocolException("PortaApplicativa.servizio non definito");
@@ -157,9 +154,6 @@ public class ArchivePortaApplicativa implements IArchiveObject {
 					portaApplicativa.getAzione().getNome()!=null){
 				this.idServizio.setAzione(portaApplicativa.getAzione().getNome());
 			}
-			
-			this.idPortaApplicativa = new IDPortaApplicativa();
-			this.idPortaApplicativa.setIDServizio(this.idServizio);
 		
 		}
 	}
@@ -175,9 +169,6 @@ public class ArchivePortaApplicativa implements IArchiveObject {
 	}
 	public IDPortaApplicativa getIdPortaApplicativa() {
 		return this.idPortaApplicativa;
-	}
-	public IDPortaApplicativaByNome getIdPortaApplicativaByNome() {
-		return this.idPortaApplicativaByNome;
 	}
 	public PortaApplicativa getPortaApplicativa() {
 		return this.portaApplicativa;

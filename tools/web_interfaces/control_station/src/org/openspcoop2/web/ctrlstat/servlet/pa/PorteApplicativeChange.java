@@ -41,8 +41,8 @@ import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
-import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -783,8 +783,6 @@ public final class PorteApplicativeChange extends Action {
 			// Modifico i dati della porta applicativa nel db
 			pa.setNome(nomePorta);
 			pa.setOldNomeForUpdate(oldNomePA);
-			pa.setOldTipoSoggettoProprietarioForUpdate(pa.getTipoSoggettoProprietario());
-			pa.setOldNomeSoggettoProprietarioForUpdate(pa.getNomeSoggettoProprietario());
 			pa.setDescrizione(descr);
 			pa.setAutorizzazioneContenuto(autorizzazioneContenuti);
 			if (stateless!=null && stateless.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_STATELESS_DEFAULT))
@@ -860,7 +858,7 @@ public final class PorteApplicativeChange extends Action {
 				if(pa.sizeServizioApplicativoList()>0)
 					pa.removeServizioApplicativo(0);
 				if(!"-".equals(servizioApplicativo)){
-					ServizioApplicativo sa = new ServizioApplicativo();
+					PortaApplicativaServizioApplicativo sa = new PortaApplicativaServizioApplicativo();
 					sa.setNome(servizioApplicativo);
 					pa.addServizioApplicativo(sa);
 				}

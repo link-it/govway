@@ -32,6 +32,7 @@ import org.openspcoop2.core.eccezione.details.constants.TipoEccezione;
 import org.openspcoop2.core.eccezione.details.utils.XMLUtils;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.IntegrationError;
@@ -565,7 +566,7 @@ public class Sbustamento extends GenericLib{
 				gestioneErroreProtocollo(configurazionePdDManager,ejbUtils,profiloCollaborazione,repositoryBuste,
 						bustaRichiesta,identitaPdD,eccezioneDaInviareServizioApplicativo,erroreIntegrazioneDaInviareServizioApplicativo,
 						new IDSoggetto(bustaRichiesta.getTipoMittente(),bustaRichiesta.getMittente()),
-						dettaglioEccezione, protocolManager);
+						dettaglioEccezione, protocolFactory, protocolManager);
 
 				// Commit modifiche
 				openspcoopstate.commit();
@@ -668,7 +669,7 @@ public class Sbustamento extends GenericLib{
 							msgDiag.mediumDebug("Invio eventuale messaggio di errore al servizio applicativo (gestione errore)...");
 							gestioneErroreProtocollo(configurazionePdDManager, ejbUtils, profiloCollaborazione, repositoryBuste,
 									bustaNonValida, identitaPdD, eccezioneDaInviareServizioApplicativo,null,
-									identitaPdD, null, protocolManager);
+									identitaPdD, null, protocolFactory, protocolManager);
 
 							// Commit modifiche
 							openspcoopstate.commit();
@@ -968,13 +969,12 @@ public class Sbustamento extends GenericLib{
 										}
 										Integrazione integrazione = repositoryBuste.getInfoIntegrazioneFromOutBox(idAsincronoCorrelazioneRichiesta);
 										IDPortaDelegata idPD = new IDPortaDelegata();
-										idPD.setLocationPD(integrazione.getLocationPD());
-										idPD.setSoggettoFruitore(new IDSoggetto(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario()));
+										idPD.setNome(integrazione.getNomePorta());
 										PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD);
 										ricevutaAbilitata = configurazionePdDManager.ricevutaAsincronaSimmetricaAbilitata(pd);
 									}else{
 										msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-										PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPAbyNome());
+										PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa());
 										ricevutaAbilitata = configurazionePdDManager.ricevutaAsincronaSimmetricaAbilitata(pa);
 									}
 								}catch(Exception e){
@@ -1005,7 +1005,7 @@ public class Sbustamento extends GenericLib{
 								//	Asincrono Asimmetrico
 								
 								msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-								PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPAbyNome());
+								PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa());
 								
 								if(configurazionePdDManager.ricevutaAsincronaAsimmetricaAbilitata(pa)==false){
 									if(bustaRichiesta.getRiferimentoMessaggio()==null){
@@ -1226,7 +1226,7 @@ public class Sbustamento extends GenericLib{
 				
 				// Lettura Porta Applicativa
 				msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-				pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPAbyNome());
+				pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa());
 				
 				// Modalita di trasmissione sincrona/asincrona
 				if(configurazionePdDManager.isModalitaStateless(pa, bustaRichiesta.getProfiloDiCollaborazione())==false){
@@ -1286,7 +1286,7 @@ public class Sbustamento extends GenericLib{
 
 				// Lettura Porta Applicativa
 				msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-				pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPAbyNome());
+				pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa());
 				
 				msgDiag.mediumDebug("Gestione profilo di collaborazione Sincrono (registra busta ricevuta)...");
 				try{
@@ -1345,7 +1345,7 @@ public class Sbustamento extends GenericLib{
 					
 					// Lettura Porta Applicativa
 					msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-					pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPAbyNome());
+					pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa());
 					
 					
 					//	gestione ricevute asincrone
@@ -1533,7 +1533,7 @@ public class Sbustamento extends GenericLib{
 
 					// Lettura Porta Applicativa
 					msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-					pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPAbyNome());
+					pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa());
 					
 					// assegnamento servizioApplicativo
 					msgDiag.mediumDebug("Gestione profilo di collaborazione AsincronoAsimmetrico richiesta (lettura servizio applicativo)...");
@@ -1565,7 +1565,10 @@ public class Sbustamento extends GenericLib{
 					//	Lettura Servizio Applicativo
 					msgDiag.mediumDebug("Lettura Servizio Applicativo ...");
 					try{
-						sa = configurazionePdDManager.getServizioApplicativo(richiestaApplicativa.getIdPA(), servizioApplicativo[0]);
+						IDServizioApplicativo idSA = new IDServizioApplicativo();
+						idSA.setNome(servizioApplicativo[0]);
+						idSA.setIdSoggettoProprietario(richiestaApplicativa.getIDServizio().getSoggettoErogatore());
+						sa = configurazionePdDManager.getServizioApplicativo(idSA );
 					}catch(DriverConfigurazioneNotFound e){
 						msgDiag.logErroreGenerico("Servizio applicativo ["+servizioApplicativo[0]+"] non esistente", "getServizioApplicativoProfiloAsincronoAsimmetrico");
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
@@ -1777,7 +1780,7 @@ public class Sbustamento extends GenericLib{
 						
 						// Lettura Porta Applicativa
 						msgDiag.mediumDebug("Lettura Porta Applicativa ...");
-						pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPAbyNome());
+						pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(richiestaApplicativa.getIdPortaApplicativa());
 						
 
 					}
@@ -1872,19 +1875,23 @@ public class Sbustamento extends GenericLib{
 				if(integrazioneAsincrona!=null){
 					IDSoggetto soggettoFruitoreRichiestaAsincrona = new IDSoggetto(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario());
 					IDSoggetto soggettoErogatoreRichiestaAsincrona = new IDSoggetto(bustaRichiesta.getTipoMittente(),bustaRichiesta.getMittente());
+					@SuppressWarnings("unused")
 					IDServizio servizioRichiestaAsincrona = new IDServizio(soggettoErogatoreRichiestaAsincrona,bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(),bustaRichiesta.getAzione());
 					ProprietaErroreApplicativo proprietaErroreApplAsincrono = this.propertiesReader.getProprietaGestioneErrorePD(protocolManager);
 					proprietaErroreApplAsincrono.setDominio(identitaPdD.getCodicePorta());
 					proprietaErroreApplAsincrono.setIdModulo(Sbustamento.ID_MODULO);
-					consegnaApplicativaAsincrona = new RichiestaDelegata(soggettoFruitoreRichiestaAsincrona,integrazioneAsincrona.getLocationPD(),
-							integrazioneAsincrona.getServizioApplicativo(),servizioRichiestaAsincrona,null,proprietaErroreApplAsincrono,identitaPdD);
+					IDPortaDelegata idPD = configurazionePdDManager.getIDPortaDelegata(integrazioneAsincrona.getNomePorta(), protocolFactory);
+					consegnaApplicativaAsincrona = new RichiestaDelegata(idPD,
+							integrazioneAsincrona.getServizioApplicativo(),null,proprietaErroreApplAsincrono,identitaPdD);
 					consegnaApplicativaAsincrona.setScenario(scenarioCooperazione);
 					consegnaApplicativaAsincrona.setProfiloGestione(profiloGestione);
 					
 					pdConsegnaApplicativaAsincrona = configurazionePdDManager.getPortaDelegata(consegnaApplicativaAsincrona.getIdPortaDelegata());
 					try{
-						saConsegnaApplicativaAsincrona = configurazionePdDManager.getServizioApplicativo(consegnaApplicativaAsincrona.getIdPortaDelegata(), 
-								consegnaApplicativaAsincrona.getServizioApplicativo());
+						IDServizioApplicativo idSA = new IDServizioApplicativo();
+						idSA.setNome(consegnaApplicativaAsincrona.getServizioApplicativo());
+						idSA.setIdSoggettoProprietario(soggettoFruitoreRichiestaAsincrona);
+						saConsegnaApplicativaAsincrona = configurazionePdDManager.getServizioApplicativo(idSA);
 					}catch(Exception e){
 						if( !(e instanceof DriverConfigurazioneNotFound) || 
 								!(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(consegnaApplicativaAsincrona.getServizioApplicativo())) ){
@@ -2294,7 +2301,7 @@ public class Sbustamento extends GenericLib{
 	 */
 	private void gestioneErroreProtocollo(ConfigurazionePdDManager configurazionePdDManager, EJBUtils ejbUtils, ProfiloDiCollaborazione profiloCollaborazione, RepositoryBuste repositoryBuste,
 			Busta busta, IDSoggetto identitaPdD, Eccezione eccezioneProtocollo, ErroreIntegrazione erroreIntegrazione, IDSoggetto soggettoProduttoreEccezione, DettaglioEccezione dettaglioEccezione, 
-			IProtocolManager protocolManager) throws Exception{
+			IProtocolFactory<?> protocolFactory, IProtocolManager protocolManager) throws Exception{
 
 		// Gestione ERRORE
 		if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(busta.getProfiloDiCollaborazione()) && busta.getRiferimentoMessaggio()!=null){
@@ -2320,19 +2327,23 @@ public class Sbustamento extends GenericLib{
 						// Costruzione Richiesta Delegata
 						IDSoggetto soggettoFruitoreAsincrono = new IDSoggetto(busta.getTipoDestinatario(),busta.getDestinatario());
 						IDSoggetto soggettoErogatoreAsincrono = new IDSoggetto(busta.getTipoMittente(),busta.getMittente());
+						@SuppressWarnings("unused")
 						IDServizio servizioAsincrono = new IDServizio(soggettoErogatoreAsincrono,busta.getTipoServizio(),busta.getServizio(),busta.getAzione());
 						ProprietaErroreApplicativo proprietaErroreApplAsincrono = this.propertiesReader.getProprietaGestioneErrorePD(protocolManager);
 						proprietaErroreApplAsincrono.setDominio(identitaPdD.getCodicePorta());
 						proprietaErroreApplAsincrono.setIdModulo(Sbustamento.ID_MODULO);
 						
-						RichiestaDelegata consegnaApplicativaAsincrona = new RichiestaDelegata(soggettoFruitoreAsincrono,integrazioneRispostaErrore.getLocationPD(),
-								integrazioneRispostaErrore.getServizioApplicativo(),servizioAsincrono,null,proprietaErroreApplAsincrono,identitaPdD);
+						IDPortaDelegata idPD = configurazionePdDManager.getIDPortaDelegata(integrazioneRispostaErrore.getNomePorta(), protocolFactory);
+						RichiestaDelegata consegnaApplicativaAsincrona = new RichiestaDelegata(idPD,
+								integrazioneRispostaErrore.getServizioApplicativo(),null,proprietaErroreApplAsincrono,identitaPdD);
 						
 						PortaDelegata pd = configurazionePdDManager.getPortaDelegata(consegnaApplicativaAsincrona.getIdPortaDelegata());
 						ServizioApplicativo sappl = null;
 						try{
-							sappl = configurazionePdDManager.getServizioApplicativo(consegnaApplicativaAsincrona.getIdPortaDelegata(), 
-								consegnaApplicativaAsincrona.getServizioApplicativo());
+							IDServizioApplicativo idSA = new IDServizioApplicativo();
+							idSA.setNome(consegnaApplicativaAsincrona.getServizioApplicativo());
+							idSA.setIdSoggettoProprietario(soggettoFruitoreAsincrono);
+							sappl = configurazionePdDManager.getServizioApplicativo(idSA);
 						}catch(Exception e){
 							if( !(e instanceof DriverConfigurazioneNotFound) || !(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(consegnaApplicativaAsincrona.getServizioApplicativo())) ){
 								throw e;
@@ -2354,7 +2365,7 @@ public class Sbustamento extends GenericLib{
 						this.generatoreErrore.updateProprietaErroreApplicativo(proprietaErroreApplAsincrono);
 						this.generatoreErrore.updateTipoPdD(TipoPdD.DELEGATA);
 						this.generatoreErrore.updateInformazioniCooperazione(consegnaApplicativaAsincrona.getServizioApplicativo());
-						this.generatoreErrore.updateInformazioniCooperazione(consegnaApplicativaAsincrona.getSoggettoFruitore(),consegnaApplicativaAsincrona.getIdServizio());
+						this.generatoreErrore.updateInformazioniCooperazione(consegnaApplicativaAsincrona.getIdSoggettoFruitore(),consegnaApplicativaAsincrona.getIdServizio());
 						
 						OpenSPCoop2Message responseMessageError = null;
 						if(eccezioneProtocollo!=null){

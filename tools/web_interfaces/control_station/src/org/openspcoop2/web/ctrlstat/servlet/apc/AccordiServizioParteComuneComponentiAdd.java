@@ -40,6 +40,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioCompostoS
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -109,11 +110,12 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 			// Prendo il nome
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(idAccordoInt));
 			String uriAS = idAccordoFactory.getUriFromAccordo(as);		
+			ServiceBinding serviceBinding = org.openspcoop2.protocol.basic.Utilities.convert(as.getServiceBinding());
 
 
 			//String profiloReferente = soggettiCore.getSoggettoRegistro(new IDSoggetto(as.getSoggettoReferente().getTipo(),as.getSoggettoReferente().getNome())).getVersioneProtocollo();
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
-			List<String> tipiServiziCompatibili = apsCore.getTipiServiziGestitiProtocollo(protocollo);
+			List<String> tipiServiziCompatibili = apsCore.getTipiServiziGestitiProtocollo(protocollo,serviceBinding);
 			List<String> tipiSoggettiCompatibili = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
 
 

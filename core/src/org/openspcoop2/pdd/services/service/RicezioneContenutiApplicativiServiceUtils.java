@@ -2,6 +2,7 @@ package org.openspcoop2.pdd.services.service;
 
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageRole;
@@ -46,20 +47,28 @@ public class RicezioneContenutiApplicativiServiceUtils {
 		if(idPD!=null){
 			
 			// da ora in avanti, avendo localizzato una PD, se avviene un errore genero l'errore stesso
-			protocolContext.setInterfaceName(idPD.getLocationPD());
+			protocolContext.setInterfaceName(idPD.getNome());
 			
-			if(generatoreErrore!=null){
-				generatoreErrore.updateDominio(idPD.getSoggettoFruitore());
-				generatoreErrore.updateInformazioniCooperazione(idPD.getSoggettoFruitore(), null);
-			}
+			IDSoggetto idSoggettoFruitore = null;
 			IDServizio idServizio = null;
-			try{
-				idServizio = serviceIdentificationReader.convertToIDServizio(idPD);
-			}catch(RegistryNotFound notFound){
-				logCore.debug("Conversione Dati PortaDelegata in identificativo servizio fallita (notFound): "+notFound.getMessage(),notFound);
-				ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore, serviceIdentificationReader.getErroreIntegrazioneNotFound(), 
-						IntegrationError.NOT_FOUND, notFound, null, res, logCore);
-				return false;
+			if(idPD.getIdentificativiFruizione()!=null){
+				idSoggettoFruitore = idPD.getIdentificativiFruizione().getSoggettoFruitore();
+				idServizio = idPD.getIdentificativiFruizione().getIdServizio();
+			}
+			
+			if(generatoreErrore!=null && idSoggettoFruitore!=null){
+				generatoreErrore.updateDominio(idSoggettoFruitore);
+				generatoreErrore.updateInformazioniCooperazione(idSoggettoFruitore, null);
+			}
+			if(idServizio==null){
+				try{
+					idServizio = serviceIdentificationReader.convertToIDServizio(idPD);
+				}catch(RegistryNotFound notFound){
+					logCore.debug("Conversione Dati PortaDelegata in identificativo servizio fallita (notFound): "+notFound.getMessage(),notFound);
+					ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore, serviceIdentificationReader.getErroreIntegrazioneNotFound(), 
+							IntegrationError.NOT_FOUND, notFound, null, res, logCore);
+					return false;
+				}
 			}
 			if(idServizio!=null){
 				
@@ -73,7 +82,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 				
 				// updateInformazioniCooperazione
 				if(generatoreErrore!=null){
-					generatoreErrore.updateInformazioniCooperazione(idPD.getSoggettoFruitore(), idServizio);
+					generatoreErrore.updateInformazioniCooperazione(idSoggettoFruitore, idServizio);
 				}
 				
 				// Aggiorno service binding rispetto al servizio localizzato

@@ -438,10 +438,24 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link PortaDelegataServizioApplicativo }
+     */
+    public PortaDelegataServizioApplicativo createPortaDelegataServizioApplicativo() {
+        return new PortaDelegataServizioApplicativo();
+    }
+
+    /**
      * Create an instance of {@link IndirizzoRisposta }
      */
     public IndirizzoRisposta createIndirizzoRisposta() {
         return new IndirizzoRisposta();
+    }
+
+    /**
+     * Create an instance of {@link PortaApplicativaServizioApplicativo }
+     */
+    public PortaApplicativaServizioApplicativo createPortaApplicativaServizioApplicativo() {
+        return new PortaApplicativaServizioApplicativo();
     }
 
     /**

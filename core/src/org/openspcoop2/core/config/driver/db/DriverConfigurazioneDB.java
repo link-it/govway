@@ -80,10 +80,12 @@ import org.openspcoop2.core.config.OpenspcoopSorgenteDati;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAzione;
 import org.openspcoop2.core.config.PortaDelegataServizio;
+import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.ProprietaProtocollo;
@@ -133,11 +135,12 @@ import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.id.IdentificativiErogazione;
+import org.openspcoop2.core.id.IdentificativiFruizione;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -757,130 +760,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		}
 	}
 
-
-	@Override
-	public Soggetto getSoggettoProprietarioPortaDelegata(String location) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
-		return _getSoggettoProprietarioPorta(location, "getSoggettoProprietarioPortaDelegata", CostantiDB.PORTE_DELEGATE);
-	}
-	
-	@Override
-	public Soggetto getSoggettoProprietarioPortaApplicativa(String location) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
-		return _getSoggettoProprietarioPorta(location, "getSoggettoProprietarioPortaApplicativa", CostantiDB.PORTE_APPLICATIVE);
-	}
-	
-	private Soggetto _getSoggettoProprietarioPorta(String location,String nomeMetodo,String tabella) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
-
-		if (location == null)
-			throw new DriverConfigurazioneException("["+nomeMetodo+"] Parametro Non Valido");
-
-		Soggetto Soggetto = null;
-
-		Connection con = null;
-		PreparedStatement stm = null;
-		ResultSet rs = null;
-		String sqlQuery = "";
-
-		if (this.atomica) {
-			try {
-				con = getConnectionFromDatasource(nomeMetodo);
-
-			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] Exception accedendo al datasource :" + e.getMessage(),e);
-
-			}
-
-		} else
-			con = this.globalConnection;
-
-		this.log.debug("operazione this.atomica = " + this.atomica);
-
-		try {
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(tabella);
-			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition("location = ?");
-			sqlQuery = sqlQueryObject.createSQLQuery();
-			stm = con.prepareStatement(sqlQuery);
-
-			stm.setString(1, location);
-
-			this.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, location));
-			rs = stm.executeQuery();
-
-			// se nn ho risultati allora devo ricercare per nome e filtrare su
-			// location
-			if (rs.next()) {
-				// la location era settata
-				Soggetto = new Soggetto();
-
-				long idSoggProprietario = rs.getLong("id_soggetto");
-
-				Soggetto = this.getSoggetto(idSoggProprietario,con);
-
-			} else {
-				rs.close();
-				stm.close();
-				boolean trovato = false;
-				// ricerco per nome porta e restituisco il primo record che ha
-				// come nome_porta la location
-				// e come location null
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable(tabella);
-				sqlQueryObject.addSelectField("*");
-				sqlQueryObject.addWhereCondition("nome_porta = ?");
-				sqlQuery = sqlQueryObject.createSQLQuery();
-				stm = con.prepareStatement(sqlQuery);
-				stm.setString(1, location);
-				rs=stm.executeQuery();
-				while (rs.next() && trovato == false) {
-					// se location e' null allora e' questo il mio record
-					if (rs.getString("location") == null || "".equals(rs.getString("location")) ) {
-						trovato = true;
-
-						long idSoggProprietario = rs.getLong("id_soggetto");
-						if(idSoggProprietario>0){
-							Soggetto=this.getSoggetto(idSoggProprietario,con);
-							trovato = true;
-						}
-					}
-				}
-			}
-
-			if (Soggetto == null)
-				throw new DriverConfigurazioneNotFound("[DriverConfigurazioneDB::"+nomeMetodo+"] Soggetto associato alla "+tabella+" ["+location+"] non esistente.");
-
-			return Soggetto;
-
-		} catch (SQLException se) {
-
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] SqlException: " + se.getMessage(),se);
-		} catch (DriverConfigurazioneException se) {
-			throw se;
-		} catch (DriverConfigurazioneNotFound se) {
-			throw se;
-		} catch (Exception se) {
-
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] Exception: " + se.getMessage(),se);
-		}
-		finally {
-
-			//Chiudo statement and resultset
-			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-			}// ignore exception
-		}
-	}
-
 	/**
 	 * Crea un nuovo Connettore
 	 * 
@@ -1308,69 +1187,170 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 	}
 
-	/**
-	 * Restituisce la porta delegata identificato da <var>idPD</var>
-	 * 
-	 * @param idPD
-	 *                Identificatore di una Porta Delegata
-	 * @return La porta delegata.
-	 * 
-	 */
+
+	@Override
+	public IDPortaDelegata getIDPortaDelegata(String nome) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	
+		String nomeMetodo = "getIDPortaDelegata";
+		
+		if (nome == null)
+			throw new DriverConfigurazioneException("["+nomeMetodo+"] Parametro Non Valido");
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		String sqlQuery = "";
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource(nomeMetodo);
+
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("nome_porta = ?");
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+
+			stm.setString(1, nome);
+
+			this.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, nome));
+			rs = stm.executeQuery();
+
+			IDPortaDelegata idPD = null;
+			if (rs.next()) {
+				
+				idPD = new IDPortaDelegata();
+				
+				idPD.setNome(rs.getString("nome_porta"));
+				
+				IdentificativiFruizione idFruizione = new IdentificativiFruizione();
+				
+				try{
+					long idSoggProprietario = rs.getLong("id_soggetto");
+					IDSoggetto idSoggettoProprietario = this.getIdSoggetto(idSoggProprietario,con);
+					idFruizione.setSoggettoFruitore(idSoggettoProprietario);
+				} catch (Exception se) {
+					throw new Exception(se.getMessage()); // mappo NotFound in una eccezione generica. Il Soggetto proprietario deve esistere
+				}
+				
+				String nomeSoggettoErogatore = rs.getString("nome_soggetto_erogatore");
+				String tipoSoggettoErogatore = rs.getString("tipo_soggetto_erogatore");
+				long idSoggettoErogatoreDB = rs.getLong("id_soggetto_erogatore");
+				long idSoggErogatore=-1;
+				if( (idSoggettoErogatoreDB==-2) || (idSoggettoErogatoreDB>0) ){
+					idSoggErogatore = idSoggettoErogatoreDB;
+				}
+				else{
+					try {
+						idSoggErogatore = DBUtils.getIdSoggetto(nomeSoggettoErogatore, tipoSoggettoErogatore, con, this.tipoDB,this.tabellaSoggetti);
+					} catch (CoreException e) {
+						this.log.debug(e.getMessage(),e);
+					}
+				}
+				IDSoggetto idSoggettoErogatore = null;
+				if(idSoggErogatore>0){
+					idSoggettoErogatore = new IDSoggetto();
+					idSoggettoErogatore.setTipo(tipoSoggettoErogatore);
+					idSoggettoErogatore.setNome(nomeSoggettoErogatore);
+				}else{
+					throw new DriverConfigurazioneException("Soggetto Erogatore della Porta Delegata ["+nome+"] non presente.");
+				}
+
+				String tipoServizio = rs.getString("tipo_servizio");
+				String nomeServizio = rs.getString("nome_servizio");
+				long idServizioDB = rs.getLong("id_servizio");
+				long idServizio=-1;
+				if( (idServizioDB==-2) || (idServizioDB>0) ){
+					idServizio = idServizioDB;
+				}
+				else{
+					try {
+						idServizio = DBUtils.getIdServizio(nomeServizio, tipoServizio, nomeSoggettoErogatore, tipoSoggettoErogatore, con, this.tipoDB,this.tabellaSoggetti);
+					} catch (Exception e) {
+						// NON Abilitare il log, poiche' la tabella servizi puo' non esistere per il driver di configurazione 
+						// in un database che non ' quello della controlstation ma quello pdd.
+						//this.log.debug(e);
+					}
+				}
+				IDServizio idServizioObject = null;
+				if(idServizio>0){
+					idServizioObject=new IDServizio();
+					idServizioObject.setSoggettoErogatore(idSoggettoErogatore);
+					idServizioObject.setTipoServizio(tipoServizio);
+					idServizioObject.setServizio(nomeServizio);
+				}
+
+				String azione = rs.getString("nome_azione");
+				if(azione!=null && !"".equals(azione)){
+					idServizioObject.setAzione(azione);
+				}
+				idFruizione.setIdServizio(idServizioObject);
+
+				
+				idPD.setIdentificativiFruizione(idFruizione);	
+			}
+			else{
+				throw new DriverConfigurazioneNotFound("PortaDelegata ["+nome+"] non esistente");
+			}
+
+			return idPD;
+
+		} catch (SQLException se) {
+
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] SqlException: " + se.getMessage(),se);
+		} catch (DriverConfigurazioneException se) {
+			throw se;
+		} catch (DriverConfigurazioneNotFound se) {
+			throw se;
+		} catch (Exception se) {
+
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] Exception: " + se.getMessage(),se);
+		}
+		finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+			}// ignore exception
+		}
+	}
+	
+
 	@Override
 	public PortaDelegata getPortaDelegata(IDPortaDelegata idPD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 
 		if (idPD == null)
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPortaDelegata] Parametro idPD Non Valido");
 
-		IDSoggetto aSoggetto = idPD.getSoggettoFruitore();
-		String location = idPD.getLocationPD();
+		String nome = idPD.getNome();
 
-		if ((location == null) || (aSoggetto == null)){
-			String a1 = "";
-			String a2 = "";
-			if(location==null){
-				a1=" [Location is null]";
-			}else{
-				a1=" ["+location+"]";
-			}
-			if(aSoggetto==null){
-				a2=" [soggetto is null]";
-			}else{
-				a2=" [soggetto tipo("+aSoggetto.getTipo()+") nome("+aSoggetto.getNome()+")]";
-			}
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPortaDelegata] Parametri non Validi"+a1+a2);
+		if ((nome == null)){
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPortaDelegata] Parametri non Validi");
 		}
-
-		// Devi cercare una porta delegata che appartiene al soggetto fruitore
-		// (aSoggetto occhio al tipo+nome)
-		// e che soddisfa la location
-		// Nota: la location puo' essere definita come attributo a se stante
-		// (url di invocazione), oppure puo' essere assunta nel nome della porta
-		// delegata
-		// Quindi per ogni PD devi guardare se e' definita una url di
-		// invocazione, se lo e' quella e' la location da controllare,
-		// altrimenti e' il nome
-		//
-		// 1. deve ritornare le proprieta' della PD.
-		// 2. Le proprieta' di Message-Security.
-		// 3. Solo i NOMI dei servizi applicativi associati alla PD.
-		/*
-		 * PortaDelegata pd = new PortaDelegata();
-		 * pd.setAutenticazione(autenticazione);
-		 * pd.setAutorizzazione(autorizzazione); pd.setDescrizione(descrizione);
-		 * pd.setLocation(location); // e' l'url di invocazione.
-		 * pd.setNome(nome);
-		 * pd.setSoggettoErogatore(SoggettoErogatore);
-		 * pd.setServizio(servizio); pd.setAzione(azione);
-		 * pd.setMessageSecurity(messageSecurity); ....
-		 * pd.addServizioApplicativo(servizioApplicativo); // servizi
-		 * applicativi associati alla Porta Delegata: NOTA BAsta impostare il
-		 * nome del servizio applicativo!!
-		 */
+		
 		Connection con = null;
-		PreparedStatement stm = null;
-		ResultSet rs = null;
-		String sqlQuery;
 		PortaDelegata pd = null;
 		long idPortaDelegata = 0;
 		if (this.atomica) {
@@ -1389,104 +1369,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		boolean trovato = false;
 		try {
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(this.tabellaSoggetti);
-			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition("nome_soggetto=?");
-			sqlQueryObject.addWhereCondition("tipo_soggetto=?");
-			sqlQueryObject.setANDLogicOperator(true);
-			sqlQuery = sqlQueryObject.createSQLQuery();
-			String nomeSoggFruit = aSoggetto.getNome();
-			String tipoSoggFruit = aSoggetto.getTipo();
-			long idSoggettoFruitore = 0;
-			if (nomeSoggFruit == null || nomeSoggFruit.trim().equals("") || tipoSoggFruit == null || tipoSoggFruit.trim().equals(""))
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPortaDelegata] nome o tipo Soggetto fruitore non settati correttamente");
 
-			stm = con.prepareStatement(sqlQuery,ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			stm.setString(1, nomeSoggFruit);
-			stm.setString(2, tipoSoggFruit);
-			this.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, nomeSoggFruit, tipoSoggFruit));
-
-			rs = stm.executeQuery();
-
-			if (rs.next()) {
-				// il soggetto fruitore e' il proprietario della porta delegeata
-				// che sto cercando
-				idSoggettoFruitore = rs.getLong("id");
-
-			} else {
-				throw new DriverConfigurazioneNotFound("[DriverConfigurazioneDB::getPortaDelegata] Non ho trovato nessuno soggetto fruitore [" + nomeSoggFruit + "," + tipoSoggFruit + "] non esistente");
+			try{
+				idPortaDelegata = DBUtils.getIdPortaDelegata(nome, con, this.tipoDB);
+			} catch (Exception se) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPortaDelegata] Exception: " + se.getMessage(),se);
 			}
-			rs.close();
-			stm.close();
-			// cerco porta delegata del soggetto fruitore che soddisfa la
-			// location
-			// la location se nn settata va controllata nel nome_porta
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
-			sqlQueryObject.addFromTable(this.tabellaSoggetti);
-			//sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addSelectAliasField(CostantiDB.PORTE_DELEGATE+".id", "idPD");
-			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id_soggetto = "+this.tabellaSoggetti+".id");
-			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id_soggetto = ?");
-			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".location = ?");
-			sqlQueryObject.setANDLogicOperator(true);
-			sqlQuery = sqlQueryObject.createSQLQuery();
-
-			stm = con.prepareStatement(sqlQuery,ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			stm.setLong(1, idSoggettoFruitore);
-			stm.setString(2, location);
-
-			rs = stm.executeQuery();
-
-			if (rs.next()) {// ho trovato la porta delegata che cercavo
-				idPortaDelegata = rs.getLong("idPD");
+			if(idPortaDelegata>0){
 				trovato = true;
-				rs.close();
-				stm.close();
-			} else {// in questo caso devo cercare il parametro location sul
-				// nome_porta
-
-				// ricerco per nome porta e restituisco il primo record che ha
-				// come nome_porta la location
-				// e come location null
-				rs.close();
-				stm.close();
-
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
-				sqlQueryObject.addSelectField("*");
-				sqlQueryObject.addWhereCondition("nome_porta=?");
-				sqlQueryObject.addWhereCondition("id_soggetto = ?");
-				sqlQueryObject.setANDLogicOperator(true);
-				sqlQuery = sqlQueryObject.createSQLQuery();
-				stm = con.prepareStatement(sqlQuery,ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-				stm.setString(1, location);
-				stm.setLong(2, idSoggettoFruitore);
-				rs=stm.executeQuery();
-				while (rs.next() && trovato == false) {
-					idPortaDelegata = rs.getLong("id");
-					trovato = true;
-				}
-				rs.close();
-				stm.close();
 			}
 			
-		} catch (SQLException se) {
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPortaDelegata] SqlException: " + se.getMessage(),se);
-		} catch (DriverConfigurazioneNotFound de) {
-			throw de;
 		} catch (Exception se) {
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPortaDelegata] Exception: " + se.getMessage(),se);
 		} finally {
-
-			//Chiudo statement and resultset
-			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
 
 			try {
 				if (this.atomica) {
@@ -1502,7 +1397,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			pd=this.getPortaDelegata(idPortaDelegata);
 
 		} else {
-			throw new DriverConfigurazioneNotFound("Nessuna PortaDelegata trovata.");
+			throw new DriverConfigurazioneNotFound("PortaDelegata ["+nome+"] non esistente");
 		}
 
 		return pd;
@@ -1687,68 +1582,229 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		}
 	}
 
-	/**
-	 * Restituisce la porta applicativa identificata da <var>idPA</var>
-	 * nel caso in cui e' specificata un'azione ma non viene trovato nessun risultato, viene ricercata
-	 * una Porta Applicativa che non possegga l'azione
-	 * @param idPA Identificatore di una Porta Applicativa
-	 * @return La porta applicativa
-	 * 
-	 */
 	@Override
-	public PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPA) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		return getPortaApplicativa(idPA, false,null);
-	}
+	public IDPortaApplicativa getIDPortaApplicativa(String nome) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	
+		String nomeMetodo = "getIDPortaApplicativa";
+		
+		if (nome == null)
+			throw new DriverConfigurazioneException("["+nomeMetodo+"] Parametro Non Valido");
 
-	/**
-	 * Restituisce la porta applicativa identificata da <var>idPA</var>
-	 * nel caso in cui e' specificata un'azione ma non viene trovato nessun risultato, non vengono effettuate ricerche ulteriori.
-	 * @param idPA
-	 * @param ricercaPuntuale
-	 * @return La porta applicativa
-	 * @throws DriverConfigurazioneException
-	 * @throws DriverConfigurazioneNotFound
-	 */
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		String sqlQuery = "";
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource(nomeMetodo);
+
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("nome_porta = ?");
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+
+			stm.setString(1, nome);
+
+			this.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, nome));
+			rs = stm.executeQuery();
+
+			IDPortaApplicativa idPA = null;
+			if (rs.next()) {
+				
+				idPA = new IDPortaApplicativa();
+				
+				idPA.setNome(rs.getString("nome_porta"));
+				
+				IdentificativiErogazione idErogazione = new IdentificativiErogazione();
+				
+				IDSoggetto idSoggettoProprietario = null;
+				try{
+					long idSoggProprietario = rs.getLong("id_soggetto");
+					idSoggettoProprietario = this.getIdSoggetto(idSoggProprietario,con);
+				} catch (Exception se) {
+					throw new Exception(se.getMessage()); // mappo NotFound in una eccezione generica. Il Soggetto proprietario deve esistere
+				}
+				
+
+				IDSoggetto idSoggettoVirtuale = null;
+				String tipoSoggVirt=rs.getString("tipo_soggetto_virtuale");
+				String nomeSoggVirt=rs.getString("nome_soggetto_virtuale");
+				if(nomeSoggVirt!=null && !nomeSoggVirt.equals("") && tipoSoggVirt!=null && !tipoSoggVirt.equals("")){
+					idSoggettoVirtuale = new IDSoggetto(tipoSoggVirt, nomeSoggVirt);
+				}
+				idErogazione.setSoggettoVirtuale(idSoggettoVirtuale);
+
+				String tipoServizio = rs.getString("tipo_servizio");
+				String nomeServizio = rs.getString("servizio");
+
+				String nomeProprietarioServizio = null;
+				String tipoProprietarioServizio = null;
+				if(nomeSoggVirt!=null && !nomeSoggVirt.equals("") && tipoSoggVirt!=null && !tipoSoggVirt.equals("")){
+					nomeProprietarioServizio=nomeSoggVirt;
+					tipoProprietarioServizio=tipoSoggVirt;
+				}else{
+					nomeProprietarioServizio=idSoggettoProprietario.getNome();
+					tipoProprietarioServizio=idSoggettoProprietario.getTipo();
+				}
+
+				long idServizioPA=-1;
+				try {
+					idServizioPA = DBUtils.getIdServizio(nomeServizio, tipoServizio, nomeProprietarioServizio, tipoProprietarioServizio, con, this.tipoDB,this.tabellaSoggetti);
+				} catch (Exception e) {
+					// NON Abilitare il log, poiche' la tabella servizi puo' non esistere per il driver di configurazione 
+					// in un database che non ' quello della controlstation ma quello pdd.
+					//this.log.info(e);
+				}
+				IDServizio idServizio = null;
+				if( (idServizioPA>0) || (nomeServizio!=null && !nomeServizio.equals("") && tipoServizio!=null && !tipoServizio.equals("")) ){
+					idServizio = new IDServizio();
+					idServizio.setSoggettoErogatore(idSoggettoProprietario);
+					idServizio.setTipoServizio(tipoServizio);
+					idServizio.setServizio(nomeServizio);
+				}
+				
+				String azione = rs.getString("azione");
+				if(azione!=null && !"".equals(azione)){
+					idServizio.setAzione(azione);
+				}
+				idErogazione.setIdServizio(idServizio);
+
+				
+				idPA.setIdentificativiErogazione(idErogazione);	
+			}
+			else{
+				throw new DriverConfigurazioneNotFound("PortaApplicativa ["+nome+"] non esistente");
+			}
+
+			return idPA;
+
+		} catch (SQLException se) {
+
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] SqlException: " + se.getMessage(),se);
+		} catch (DriverConfigurazioneException se) {
+			throw se;
+		} catch (DriverConfigurazioneNotFound se) {
+			throw se;
+		} catch (Exception se) {
+
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::"+nomeMetodo+"] Exception: " + se.getMessage(),se);
+		}
+		finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+			}// ignore exception
+		}
+	}
+	
 	@Override
-	public PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPA,boolean ricercaPuntuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		return getPortaApplicativa(idPA, ricercaPuntuale,null);
-	}
+	public PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPA) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 
-	/**
-	 * Restituisce la porta applicativa identificata da <var>idPA</var>
-	 * dove il soggetto erogatore e' un soggetto virtuale
-	 * @param idPA
-	 * @return La porta applicativa
-	 * @throws DriverConfigurazioneException
-	 * @throws DriverConfigurazioneNotFound
-	 */
+		if (idPA == null)
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPortaApplicativa] Parametro idPA Non Valido");
+
+		String nome = idPA.getNome();
+
+		if ((nome == null)){
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPortaApplicativa] Parametri non Validi");
+		}
+		
+		Connection con = null;
+		PortaApplicativa pa = null;
+		long idPortaApplicativa = 0;
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("getPortaApplicativa(idPortaApplicativa)");
+
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPortaApplicativa] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		boolean trovato = false;
+		try {
+
+			try{
+				idPortaApplicativa = DBUtils.getIdPortaApplicativa(nome, con, this.tipoDB);
+			} catch (Exception se) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPortaApplicativa] Exception: " + se.getMessage(),se);
+			}
+			if(idPortaApplicativa>0){
+				trovato = true;
+			}
+			
+		} catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPortaApplicativa] Exception: " + se.getMessage(),se);
+		} finally {
+
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+
+		if (trovato) {
+			pa=this.getPortaApplicativa(idPortaApplicativa);
+
+		} else {
+			throw new DriverConfigurazioneNotFound("PortaApplicativa ["+nome+"] non esistente");
+		}
+
+		return pa;
+	}
+	
+	
 	@Override
-	public PortaApplicativa getPortaApplicativaVirtuale(IDPortaApplicativa idPA,IDSoggetto soggettoVirtuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		return getPortaApplicativa(idPA, false,soggettoVirtuale);
+	public List<PortaApplicativa> getPorteApplicative(IDServizio idServizio, boolean ricercaPuntuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this._getPortaApplicativa(idServizio, ricercaPuntuale, null);
 	}
-
-	/**
-	 * Restituisce la porta applicativa identificata da <var>idPA</var>
-	 * dove il soggetto erogatore e' un soggetto virtuale
-	 * nel caso in cui e' specificata un'azione ma non viene trovato nessun risultato, non vengono effettuate ricerche ulteriori.
-	 * @param idPA
-	 * @param ricercaPuntuale
-	 * @return La porta applicativa
-	 * @throws DriverConfigurazioneException
-	 * @throws DriverConfigurazioneNotFound
-	 */
+	
 	@Override
-	public PortaApplicativa getPortaApplicativaVirtuale(IDPortaApplicativa idPA,IDSoggetto soggettoVirtuale,boolean ricercaPuntuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		return getPortaApplicativa(idPA, ricercaPuntuale,soggettoVirtuale);
+	public List<PortaApplicativa> getPorteApplicativeVirtuali(IDSoggetto soggettoVirtuale,IDServizio idServizio, boolean ricercaPuntuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this._getPortaApplicativa(idServizio, ricercaPuntuale, soggettoVirtuale);
 	}
+	
+		
+	private List<PortaApplicativa> _getPortaApplicativa(IDServizio service,boolean ricercaPuntuale, IDSoggetto soggettoVirtuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 
-	private PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPA,boolean ricercaPuntuale, IDSoggetto soggettoVirtuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		if (service==null)
+			throw new DriverConfigurazioneException("[getPortaApplicativa] Parametro idServizio Non Valido");
 
-		if (idPA == null || idPA.getIDServizio()==null)
-			throw new DriverConfigurazioneException("[getPortaApplicativa] Parametro idPA Non Validi");
-
-		IDSoggetto soggettoErogatore = idPA.getIDServizio().getSoggettoErogatore();
-		IDServizio service = idPA.getIDServizio();
+		IDSoggetto soggettoErogatore = service.getSoggettoErogatore();
 		if ((soggettoErogatore == null) || (service == null))
 			throw new DriverConfigurazioneException("[getPortaApplicativa] Parametri Non Validi");
 		String servizio = service.getServizio();
@@ -1772,20 +1828,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		// anche con l'azione, e se questa fallisce,
 		// viene effettuata allora senza l'azione controllando solo il servizio.
 
-		// 1. deve ritornare le proprieta' della PA.
-		// 2. Le proprieta' di Message-Security.
-		// 3. Le proprieta' di Properties.
-		// 4. Solo i NOMI dei servizi applicativi associati alla PA.
-		// 5. Il soggetto virtuale
-		/*
-		 * PortaApplicativa pa = new PortaApplicativa();
-		 * pa.setDescrizione(descrizione); pa.setNome(nome);
-		 * pa.setServizio(servizio); pa.setAzione(azione);
-		 * pa.setSoggettoVirtuale(soggettoVirtuale);
-		 * pa.setMessageSecurity(messageSecurity);
-		 * pa.addServizioApplicativo(servizioApplicativo); .... solo i NOMI!!!
-		 * pa.addSetProperty(setProperty); .....
-		 */
+		// Nel caso la ricerca non sia puntuale, se non si trovano PA con un'azione specifica, si prova a cercarla con azione non definita. 
 
 		Connection con = null;
 		PreparedStatement stm = null;
@@ -1806,8 +1849,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
-		long idPortaApplicativa = -1;
-		boolean trovato = false;
+		List<Long> idPorteApplicative = new ArrayList<Long>();
 		try {
 			// Soggetto Proprietario della Porta Applicativa
 			long idSoggErog = 0;
@@ -1961,14 +2003,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 			rs = stm.executeQuery();
 
-			trovato = rs.next();
+			while(rs.next()){
+				long idPortaApplicativa = rs.getLong("id");
+				idPorteApplicative.add(idPortaApplicativa);
+			}
+			rs.close();
+			stm.close();
+				
+
 			this.log.debug("ricerca puntuale="+ricercaPuntuale);
 			if(!ricercaPuntuale){
-				if (!trovato && azione != null) {
+				if (idPorteApplicative.size()==0 && azione != null) {
 					this.log.debug("ricerca PA con azione != null ma con solo il servizio, soggettoVirtuale="+soggettoVirtuale);
-
-					rs.close();
-					stm.close();				
+			
 					// in questo caso provo a cercaredelle porte applicative solo
 					// con id_soggetto tipo_servizio e servizio
 					if(soggettoVirtuale==null) {
@@ -2016,17 +2063,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 					this.log.debug("eseguo query " + DBUtils.formatSQLString(sqlQuery, idSoggErog, tipoServizio, servizio));
 
-
 					rs = stm.executeQuery();
 
-					trovato = rs.next();
+					while(rs.next()){
+						long idPortaApplicativa = rs.getLong("id");
+						idPorteApplicative.add(idPortaApplicativa);
+					}
+					
 				}
-			}
-
-			if (trovato) {
-				// ripristino il cursore del rs sulla prima riga
-				rs.first();
-				idPortaApplicativa = rs.getLong("id");
 			}
 
 		} catch (SQLException se) {
@@ -2053,13 +2097,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			}
 		}
 
-		PortaApplicativa pa = null;
-		if (trovato) {
-			pa = this.getPortaApplicativa(idPortaApplicativa);
-		} else {
-			throw new DriverConfigurazioneNotFound("Porta Applicativa non esistente");
+		if(idPorteApplicative.size()<=0){
+			throw new DriverConfigurazioneNotFound("Porte Applicative non esistenti");
 		}
-		
+		List<PortaApplicativa> pa = new ArrayList<PortaApplicativa>();
+		for (Long idPA : idPorteApplicative) {
+			pa.add(this.getPortaApplicativa(idPA));
+		}
+
 		return pa;
 	}
 
@@ -2254,21 +2299,19 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	 * 
 	 */
 	@Override
-	public Hashtable<IDSoggetto, PortaApplicativa> getPorteApplicative_SoggettiVirtuali(IDPortaApplicativa idPA) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+	public Hashtable<IDSoggetto, PortaApplicativa> getPorteApplicative_SoggettiVirtuali(IDServizio idServizio) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 
 		this.log.debug("metodo getPorteApplicative_SoggettiVirtuali in esecuzione...");
 
-		if (idPA == null)
-			throw new DriverConfigurazioneException("[getPortaApplicativa_SoggettiVirtuali] Parametro idPA Non Valido");
-		if (idPA.getIDServizio() == null)
+		if (idServizio == null)
 			throw new DriverConfigurazioneException("[getPortaApplicativa_SoggettiVirtuali] Parametro idServizio Non Valido");
-		if (idPA.getIDServizio().getSoggettoErogatore() == null)
+		if (idServizio.getSoggettoErogatore() == null)
 			throw new DriverConfigurazioneException("[getPortaApplicativa_SoggettiVirtuali] Parametro Soggetto Erogatore Non Valido");
 		Hashtable<IDSoggetto, PortaApplicativa> paConSoggetti = new Hashtable<IDSoggetto, PortaApplicativa>();
-		IDSoggetto soggettoVirtuale = idPA.getIDServizio().getSoggettoErogatore();
-		String servizio = idPA.getIDServizio().getServizio();
-		String tipoServizio = idPA.getIDServizio().getTipoServizio();
-		String azione = idPA.getIDServizio().getAzione();
+		IDSoggetto soggettoVirtuale = idServizio.getSoggettoErogatore();
+		String servizio = idServizio.getServizio();
+		String tipoServizio = idServizio.getTipoServizio();
+		String azione = idServizio.getAzione();
 		if ((servizio == null) || (tipoServizio == null))
 			throw new DriverConfigurazioneException("[getPortaApplicativa_SoggettiVirtuali] Parametri (Servizio) Non Validi");
 
@@ -2522,120 +2565,24 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 	}
 
-	/**
-	 * Restituisce il servizio applicativo, cercandolo prima nella porta
-	 * delegata <var>location</var>. Se nella porta delegata non vi e' viene
-	 * cercato poi in un specifico soggetto se specificato con <var>aSoggetto</var>,
-	 * altrimenti in ogni soggetto.
-	 * 
-	 * @param idPD
-	 *                Identificatore della porta delegata.
-	 * @param servizioApplicativo
-	 * @return Il Servizio Applicativo.
-	 * 
-	 */
-	@Override
-	public ServizioApplicativo getServizioApplicativo(IDPortaDelegata idPD, String servizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 
-		return getServizioApplicativo(1, idPD, null, servizioApplicativo, null, null, null, 0);
-
-	}
-
-	/**
-	 * Restituisce il servizio applicativo, cercandolo prima nella porta
-	 * applicativa <var>location</var> e poi nel soggetto <var>aSoggetto</var>.
-	 * 
-	 * @param idPA
-	 *                Identificatore della porta applicativa.
-	 * @param servizioApplicativo
-	 * @return Il Servizio Applicativo.
-	 * 
-	 */
-	@Override
-	public ServizioApplicativo getServizioApplicativo(IDPortaApplicativa idPA, String servizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
-
-		return getServizioApplicativo(4, null, idPA, servizioApplicativo, null, null, null, 0);
-	}
-
-	/**
-	 * Restituisce Il servizio applicativo che include le credenziali passate
-	 * come parametro.
-	 * 
-	 * @param idPD
-	 *                Identificatore della porta delegata.
-	 * @param aUser
-	 *                User utilizzato nell'header HTTP Authentication.
-	 * @param aPassword
-	 *                Password utilizzato nell'header HTTP Authentication.
-	 * @return Il servizio applicativo che include le credenziali passate come
-	 *         parametro.
-	 * 
-	 */
-	@Override
-	public ServizioApplicativo getServizioApplicativoAutenticato(IDPortaDelegata idPD, String aUser, String aPassword) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
-
-		return getServizioApplicativo(2, idPD, null, null, aUser, aPassword, null, 0);
-	}
-
-	@Override
-	public ServizioApplicativo getServizioApplicativoAutenticato(String aUser,String aPassword)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return getServizioApplicativo(22, null, null, null, aUser, aPassword, null, 0); // tipo 22 sta ad indicare che e' un particolare caso del 2
-	}
-
-	/**
-	 * Restituisce Il servizio applicativo che include le credenziali passate
-	 * come parametro.
-	 * 
-	 * @param idPD
-	 *                Identificatore della porta delegata.
-	 * @param aSubject
-	 *                Subject utilizzato nella connessione HTTPS.
-	 * @return Il servizio applicativo che include le credenziali passate come
-	 *         parametro.
-	 * 
-	 */
-	@Override
-	public ServizioApplicativo getServizioApplicativoAutenticato(IDPortaDelegata idPD, String aSubject) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
-		return getServizioApplicativo(3, idPD, null, null, null, null, aSubject, 0);
-	}
-
-	@Override
-	public ServizioApplicativo getServizioApplicativoAutenticato(String aSubject) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return getServizioApplicativo(33, null, null, null, null, null, aSubject, 0); // tipo 33 sta ad indicare che e' un particolare caso del 3
-	}
-
-	/**
-	 * Verifica l'esistenza di un servizio applicativo.
-	 *
-	 * @param idServizioApplicativo id del servizio applicativo
-	 * @return ServizioApplicativo
-	 * @throws DriverRegistroServiziException
-	 */    
 	@Override
 	public ServizioApplicativo getServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		IDPortaDelegata idPD = new IDPortaDelegata();
-		idPD.setSoggettoFruitore(idServizioApplicativo.getIdSoggettoProprietario());
-		return getServizioApplicativo(1, idPD, null, idServizioApplicativo.getNome(), null, null, null, 0);
+		return this._getServizioApplicativo(idServizioApplicativo, null, null, null, null);
 	}
-
-
-	/**
-	 * Verifica l'esistenza di un servizio applicativo.
-	 *
-	 * @param idSoggetto id del soggetto proprietario
-	 * @param nomeServizioApplicativo nome del servizio applicativo
-	 * @return ServizioApplicativo
-	 * @throws DriverRegistroServiziException
-	 */    
 	@Override
-	public ServizioApplicativo getServizioApplicativo(IDSoggetto idSoggetto,String nomeServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
-		idServizioApplicativo.setIdSoggettoProprietario(idSoggetto);
-		idServizioApplicativo.setNome(nomeServizioApplicativo);
-		return this.getServizioApplicativo(idServizioApplicativo);
+	public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String aUser,String aPassword) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this._getServizioApplicativo(null, aUser, aPassword, null, null);
+	}
+	@Override
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String aSubject) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this._getServizioApplicativo(null, null, null, aSubject, null);
+	}
+	public ServizioApplicativo getServizioApplicativo(long idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+		return this._getServizioApplicativo(null, null, null, null, idServizioApplicativo);
 	}
 
-	private ServizioApplicativo getServizioApplicativo(int type, IDPortaDelegata idPD, IDPortaApplicativa idPA, String servizioApplicativo, String aUser, String aPassord, String aSubject, long idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+	private ServizioApplicativo _getServizioApplicativo(IDServizioApplicativo idServizioApplicativoObject, String aUser, String aPassord, String aSubject, Long idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 		// 1: getServizioApplicativo(RichiestaDelegata idPD)
 		// 2: getServizioApplicativo(RichiestaDelegata idPD, String aUser,String
 		// aPassword)
@@ -2648,80 +2595,35 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		String nome_sa = null;
 		String sqlQuery = null;
 		ServizioApplicativo sa = null;
-		long idSoggettoFruitore = -1;
-		IDSoggetto idSF = null;
 
-		switch (type) {
-		case 1:
-			//controllo soggetto fruitore
-			if (idPD == null)
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Parametro idPD non valido.");
+		int type = 0;
+		final int TYPE_ID_OBJECT = 1;
+		final int TYPE_BASIC = 2;
+		final int TYPE_SSL = 3;
+		final int TYPE_ID_LONG = 4;
+		if(idServizioApplicativoObject!=null){
+			IDSoggetto idSO = idServizioApplicativoObject.getIdSoggettoProprietario();
+			if(idSO==null)throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Soggetto Proprietario non definito.");
+			if(idSO.getNome()==null || "".equals(idSO.getNome()))throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Nome Soggetto Proprietario non definito.");
+			if(idSO.getTipo()==null || "".equals(idSO.getTipo()))throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Nome Soggetto Proprietario non definito.");
 
-			IDSoggetto idSO = idPD.getSoggettoFruitore();
-			if(idSO==null)throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Soggetto Fruitore non Impostato.");
-			if(idSO.getNome()==null || "".equals(idSO.getNome()))throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Nome Soggetto Fruitore non Impostato.");
-			if(idSO.getTipo()==null || "".equals(idSO.getTipo()))throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Nome Soggetto Fruitore non Impostato.");
-
-			nome_sa = servizioApplicativo;
-			break;
-
-		case 2:
-		case 22:
-			if(type == 2){
-				if (idPD == null)
-					throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Parametro idPD non valido.");
-				if (idPD.getSoggettoFruitore() == null)
-					throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Parametro idPD.getSoggettoFruitore() non valido.");
-				idSF = idPD.getSoggettoFruitore();
-				if ( (idSF.getNome() == null) || (idSF.getTipo() == null) )
-					throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Parametro idPD.getSoggettoFruitore(valori) non valido.");
+			nome_sa = idServizioApplicativoObject.getNome();
+			if(nome_sa==null){
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Nome non definito.");
 			}
-
-			if (aUser == null || aUser.trim().equals("") || aPassord == null || aPassord.trim().equals(""))
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Parametri di autenticazione user["+aUser+"] password["+aPassord+"] non validi.");
-			nome_sa = servizioApplicativo;
-			break;
-
-		case 3:
-		case 33:
-			if(type == 3){
-				if (idPD == null)
-					throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Parametro idPD non valido.");
-				if (idPD.getSoggettoFruitore() == null)
-					throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Parametro idPD.getSoggettoFruitore() non valido.");
-				idSF = idPD.getSoggettoFruitore();
-				if ( (idSF.getNome() == null) || (idSF.getTipo() == null) )
-					throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Parametro idPD.getSoggettoFruitore(valori) non valido.");
+			type = TYPE_ID_OBJECT;
+		}
+		else if(aUser!=null){
+			type = TYPE_BASIC;
+		}
+		else if(aSubject!=null){
+			type = TYPE_SSL;
+		}
+		else{
+			type = TYPE_ID_LONG;
+			if(idServizioApplicativo==null || idServizioApplicativo.longValue()<=0){
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Id DB non definito.");
 			}
-
-			if (aSubject == null || aSubject.trim().equals(""))
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Parametri di autenticazione subject["+aSubject+"] non validi.");
-
-			nome_sa = servizioApplicativo;
-			break;
-
-		case 4:
-			//controllo soggetto
-			if (idPA == null)
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Parametro idPA non valido.");
-
-			IDServizio idSE=idPA.getIDServizio();
-			if(idSE==null)throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] IDServizio non impostato.");
-
-			idSO = idSE.getSoggettoErogatore();
-			if(idSO==null)throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Soggetto Erogatore non Impostato.");
-			if(idSO.getNome()==null || "".equals(idSO.getNome()))throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Nome Soggetto Erogatore non Impostato.");
-			if(idSO.getTipo()==null || "".equals(idSO.getTipo()))throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Nome Soggetto Erogatore non Impostato.");
-
-			nome_sa = servizioApplicativo;
-			break;
-
-		case 5:
-			if (idServizioApplicativo <= 0)
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] L'id del Servizio applicativo deve essere > 0.");
-			break;
-		default:
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Parametri non validi.");
 		}
 
 		if (this.atomica) {
@@ -2741,9 +2643,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		try {
 
 			switch (type) {
-			case 1:
-				String tipoSog=idPD.getSoggettoFruitore().getTipo();
-				String nomeSog=idPD.getSoggettoFruitore().getNome();
+			case TYPE_ID_OBJECT:
+				String tipoSog=idServizioApplicativoObject.getIdSoggettoProprietario().getTipo();
+				String nomeSog=idServizioApplicativoObject.getIdSoggettoProprietario().getNome();
 
 				long idSog=DBUtils.getIdSoggetto(nomeSog, tipoSog, con, this.tipoDB,this.tabellaSoggetti);
 
@@ -2761,13 +2663,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 				break;
 
-			case 2:
-			case 22:
-
-				// id soggetto fruitore
-				if(type==2){
-					idSoggettoFruitore = DBUtils.getIdSoggetto(idSF.getNome(), idSF.getTipo(), con, this.tipoDB,this.tabellaSoggetti);
-				}
+			case TYPE_BASIC:
 
 				//cerco un servizio applicativo che contenga utente e password con autenticazione basi
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -2776,9 +2672,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				sqlQueryObject.addWhereCondition("tipoauth = ?");
 				sqlQueryObject.addWhereCondition("utente = ?");
 				sqlQueryObject.addWhereCondition("password = ?");
-				if(type==2){
-					sqlQueryObject.addWhereCondition("id_soggetto = ?");
-				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQuery = sqlQueryObject.createSQLQuery();
 				stm = con.prepareStatement(sqlQuery);
@@ -2786,20 +2679,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				stm.setString(1, CostantiConfigurazione.CREDENZIALE_BASIC.toString());
 				stm.setString(2, aUser);
 				stm.setString(3, aPassord);
-				if(type==2){
-					stm.setLong(4, idSoggettoFruitore);
-				}
 
 				this.log.debug("eseguo query :" + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_BASIC.toString(), aUser, aPassord));
 
 				break;
-			case 3:
-			case 33:
-
-				// id soggetto fruitore
-				if(type==3){
-					idSoggettoFruitore = DBUtils.getIdSoggetto(idSF.getNome(), idSF.getTipo(), con, this.tipoDB,this.tabellaSoggetti);
-				}
+				
+			case TYPE_SSL:
 
 				// Autenticazione SSL deve essere LIKE
 				Hashtable<String, String> hashSubject = Utilities.getSubjectIntoHashtable(aSubject);
@@ -2816,9 +2701,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereLikeCondition("subject", "/"+Utilities.formatKeySubject(key)+"="+Utilities.formatValueSubject(value)+"/", true, false);
 				}
 
-				if(type==3){
-					sqlQueryObject.addWhereCondition("id_soggetto = ?");
-				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQuery = sqlQueryObject.createSQLQuery();
 
@@ -2827,15 +2709,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				stm = con.prepareStatement(sqlQuery);
 				//stm.setString(1, nome_sa);
 				stm.setString(1, CostantiConfigurazione.CREDENZIALE_SSL.toString());
-				if(type==3){
-					stm.setLong(2, idSoggettoFruitore);
-				}
 
-				if(type==3){
-					this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_SSL.toString(), idSoggettoFruitore));
-				}else{
-					this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_SSL.toString()));
-				}
+				this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_SSL.toString()));
 
 				rs = stm.executeQuery();
 				long idSA = -1;
@@ -2863,26 +2738,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, idSA));
 
 				break;
-			case 4:
-				tipoSog=idPA.getIDServizio().getSoggettoErogatore().getTipo();
-				nomeSog=idPA.getIDServizio().getSoggettoErogatore().getNome();
-
-				idSog=DBUtils.getIdSoggetto(nomeSog, tipoSog, con, this.tipoDB,this.tabellaSoggetti);
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
-				sqlQueryObject.addSelectField("*");
-				sqlQueryObject.addWhereCondition("nome = ?");
-				sqlQueryObject.addWhereCondition("id_soggetto = ?");
-				sqlQueryObject.setANDLogicOperator(true);
-				sqlQuery = sqlQueryObject.createSQLQuery();
-				stm = con.prepareStatement(sqlQuery);
-				stm.setString(1, nome_sa);
-				stm.setLong(2, idSog);
-
-				this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, nome_sa));
-				break;
-
-			case 5:
+				
+			case TYPE_ID_LONG:
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 				sqlQueryObject.addSelectField("*");
@@ -7800,82 +7657,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		}
 	}
 
-	public List<PortaDelegata> porteDelegateWithLocationList(String location) throws DriverConfigurazioneException {
-		String nomeMetodo = "porteDelegateWithLocationList";
-		String queryString;
-
-		Connection con = null;
-		boolean error = false;
-		PreparedStatement stmt=null;
-		ResultSet risultato=null;
-		ArrayList<PortaDelegata> lista = new ArrayList<PortaDelegata>();
-
-		if (this.atomica) {
-			try {
-				con = getConnectionFromDatasource("porteDelegateWithLocationList");
-				con.setAutoCommit(false);
-			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
-
-			}
-
-		} else
-			con = this.globalConnection;
-
-		this.log.debug("operazione this.atomica = " + this.atomica);
-
-		try {
-
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
-			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition("location = ?");
-			queryString = sqlQueryObject.createSQLQuery();
-			stmt = con.prepareStatement(queryString);
-			stmt.setString(1, location);
-			risultato = stmt.executeQuery();
-
-			PortaDelegata pd;
-			while (risultato.next()) {
-				pd = getPortaDelegata(risultato.getLong("id"),con);
-				lista.add(pd);
-			}
-
-			return lista;
-
-		} catch (Exception qe) {
-			error = true;
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
-		} finally {
-
-			//Chiudo statement and resultset
-			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
-			}catch (Exception e) {
-				//ignore
-			}
-
-			try {
-				if (error && this.atomica) {
-					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
-					con.rollback();
-					con.setAutoCommit(true);
-					con.close();
-
-				} else if (!error && this.atomica) {
-					this.log.debug("eseguo commit e rilascio connessioni...");
-					con.commit();
-					con.setAutoCommit(true);
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
-		}
-	}
-
 	public List<PortaDelegata> porteDelegateWithSoggettoErogatoreList(long idSoggettoErogatore) throws DriverConfigurazioneException {
 		String nomeMetodo = "porteDelegateWithSoggettoErogatoreList";
 		String queryString;
@@ -9230,128 +9011,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		}
 	}
 
-	/**
-	 * Restituisce la lista delle porte applicative con il nome fornito da parametro.
-	 * Possono esistere piu' porte applicative con medesimo nome, che appartengono a soggetti differenti.
-	 * Se indicati i parametri sui soggetti vengono utilizzati come filtro per localizzare in maniera piu' precisa la PA
-	 * 
-	 * @param nomePA Nome di una Porta Applicativa
-	 * @param tipoSoggettoProprietario Tipo del Soggetto Proprietario di una Porta Applicativa
-	 * @param nomeSoggettoProprietario Nome del Soggetto Proprietario di una Porta Applicativa
-	 * @return La lista di porte applicative
-	 * 
-	 */
-	@Override
-	public List<PortaApplicativa> getPorteApplicative(
-			String nomePA,String tipoSoggettoProprietario,String nomeSoggettoProprietario) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-
-		if(nomePA==null)
-			throw new DriverConfigurazioneException("[getPorteApplicative] Parametro nomePA Non Valido");
-
-		List<PortaApplicativa> lista = new ArrayList<PortaApplicativa>();
-
-		Connection con = null;
-		PreparedStatement stmt=null;
-		ResultSet risultato=null;
-		String nomeMetodo = "getPorteApplicative";
-		boolean error = false;
-
-		if (this.atomica) {
-			try {
-				con = (Connection) getConnectionFromDatasource("getPorteApplicative");
-				con.setAutoCommit(false);
-			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
-
-			}
-
-		} else
-			con = this.globalConnection;
-
-		this.log.debug("operazione this.atomica = " + this.atomica);
-
-		try {
-
-			boolean tipoSoggettoDefined = tipoSoggettoProprietario!=null && !"".equals(tipoSoggettoProprietario);
-			boolean nomeSoggettoDefined = nomeSoggettoProprietario!=null && !"".equals(nomeSoggettoProprietario);
-
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE,"pa");
-			if(tipoSoggettoDefined || nomeSoggettoDefined)
-				sqlQueryObject.addFromTable(this.tabellaSoggetti,"s");
-			sqlQueryObject.addSelectAliasField("pa","id","idPortaApplicativa");
-			if(tipoSoggettoDefined || nomeSoggettoDefined)
-				sqlQueryObject.addWhereCondition("pa.id_soggetto = s.id");
-			sqlQueryObject.addWhereCondition("pa.nome_porta = ?");
-			if(tipoSoggettoDefined){
-				sqlQueryObject.addWhereCondition("s.tipo_soggetto = ?");
-			}
-			if(nomeSoggettoDefined){
-				sqlQueryObject.addWhereCondition("s.nome_soggetto = ?");
-			}
-			String queryString = sqlQueryObject.createSQLQuery();
-			this.log.debug("Query ["+queryString+"] NOMEPA["+nomePA+"] TIPOSOG["+tipoSoggettoProprietario+"] NOMESOG["+nomeSoggettoProprietario+"]");
-			stmt = con.prepareStatement(queryString);
-			int index = 1;
-			stmt.setString(index++, nomePA);
-			if(tipoSoggettoDefined){
-				stmt.setString(index++, tipoSoggettoProprietario);
-			}
-			if(nomeSoggettoDefined){
-				stmt.setString(index++, nomeSoggettoProprietario);
-			}
-			risultato = stmt.executeQuery();
-
-			//long idServizioApplicativo = 0;
-			List<Long> listaId = new ArrayList<Long>();
-			while (risultato.next()) {
-				listaId.add(risultato.getLong("idPortaApplicativa"));
-			}
-			risultato.close();
-			stmt.close();
-
-			for (int i = 0; i < listaId.size(); i++) {
-				lista.add(this.getPortaApplicativa(listaId.get(i), con));
-			}
-
-
-		} catch (Exception qe) {
-			error = true;
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
-		} finally {
-
-			//Chiudo statement and resultset
-			try{
-				if(risultato!=null) risultato.close();
-				if(stmt!=null) stmt.close();
-			}catch (Exception e) {
-				//ignore
-			}
-
-			try {
-				if (error && this.atomica) {
-					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
-					con.rollback();
-					con.setAutoCommit(true);
-					con.close();
-
-				} else if (!error && this.atomica) {
-					this.log.debug("eseguo commit e rilascio connessioni...");
-					con.commit();
-					con.setAutoCommit(true);
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
-		}
-
-		if(lista.size() == 0)
-			throw new DriverConfigurazioneNotFound("[getPorteApplicative] Porte applicative non esistenti.");
-
-		return lista;
-	}
 
 
 	/**
@@ -11339,10 +10998,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 						rs1 = stm1.executeQuery();
 
-						ServizioApplicativo servizioApplicativo = null;
+						PortaApplicativaServizioApplicativo servizioApplicativo = null;
 						if (rs1.next()) {
 							// setto solo il nome come da specifica
-							servizioApplicativo = new ServizioApplicativo();
+							servizioApplicativo = new PortaApplicativaServizioApplicativo();
 							servizioApplicativo.setId(idSA);
 							servizioApplicativo.setNome(rs1.getString("nome"));
 							pa.addServizioApplicativo(servizioApplicativo);
@@ -11466,7 +11125,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			sqlQueryObject.addSelectField("autorizzazione");
 			sqlQueryObject.addSelectField("autorizzazione_contenuto");
 			sqlQueryObject.addSelectField("id_soggetto");
-			sqlQueryObject.addSelectField("location");
 			sqlQueryObject.addSelectField("nome_porta");
 			sqlQueryObject.addSelectField("id_soggetto_erogatore");
 			sqlQueryObject.addSelectField("tipo_soggetto_erogatore");
@@ -11523,7 +11181,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 				pd.setDescrizione(rs.getString("descrizionePD"));
 				pd.setIdSoggetto(rs.getLong("id_soggetto"));
-				pd.setLocation(rs.getString("location"));
 				pd.setNome(rs.getString("nome_porta"));
 
 				//idaccordo
@@ -11916,10 +11573,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 						rs1 = stm1.executeQuery();
 
-						ServizioApplicativo servizioApplicativo = null;
+						PortaDelegataServizioApplicativo servizioApplicativo = null;
 						if (rs1.next()) {
 							// setto solo il nome come da specifica
-							servizioApplicativo = new ServizioApplicativo();
+							servizioApplicativo = new PortaDelegataServizioApplicativo();
 							servizioApplicativo.setId(idSA);
 							servizioApplicativo.setNome(rs1.getString("nome"));
 							pd.addServizioApplicativo(servizioApplicativo);
@@ -11981,10 +11638,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		}
 	}
 
-	public ServizioApplicativo getServizioApplicativo(long idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 
-		return getServizioApplicativo(5, null, null, null, null, null, null, idServizioApplicativo);
-	}
 
 	//RESET
 
@@ -12309,55 +11963,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	}
 
 	/**
-	 * Verifica l'esistenza di una porta applicativa in cui il soggetto erogatore e' un soggetto virtuale
-	 * @param idPA
-	 * @return true se la porta applicativa esiste, false altrimenti
-	 * @throws DriverConfigurazioneException
-	 */
-	@Override
-	public boolean existsPortaApplicativaVirtuale(IDPortaApplicativa idPA,IDSoggetto soggettoVirtuale) throws DriverConfigurazioneException {
-
-		try{
-			return getPortaApplicativaVirtuale(idPA,soggettoVirtuale)!=null;
-		}catch (DriverConfigurazioneNotFound e) {
-			return false;
-		}
-	}
-	/**
-	 * Verifica l'esistenza di una porta applicativa in cui il soggetto erogatore e' un soggetto virtuale
-	 * @param idPA
-	 * @param ricercaPuntuale ricercaPuntuale
-	 * @return true se la porta applicativa esiste, false altrimenti
-	 * @throws DriverConfigurazioneException
-	 */
-	@Override
-	public boolean existsPortaApplicativaVirtuale(IDPortaApplicativa idPA,IDSoggetto soggettoVirtuale,boolean ricercaPuntuale) throws DriverConfigurazioneException {
-
-		try{
-			return getPortaApplicativaVirtuale(idPA,soggettoVirtuale,ricercaPuntuale)!=null;
-		}catch (DriverConfigurazioneNotFound e) {
-			return false;
-		}
-	}
-	/**
-	 * Verifica l'esistenza di una porta applicativa.
-	 * E' possibile specificare se si vuole effettuare una ricerca puntuale in tal caso
-	 * se l'azione e' specificata ma non vi sono porte applicative che mathcano i criteri verra restituito false
-	 * @param idPA id della porta applicativa da verificare
-	 * @param ricercaPuntuale ricercaPuntuale
-	 * @return true se la porta applicativa esiste, false altrimenti
-	 * @throws DriverRegistroServiziException 
-	 */
-	@Override
-	public boolean existsPortaApplicativa(IDPortaApplicativa idPA,boolean ricercaPuntuale) throws DriverConfigurazioneException {
-
-		try{
-			return getPortaApplicativa(idPA,ricercaPuntuale)!=null;
-		}catch (DriverConfigurazioneNotFound e) {
-			return false;
-		}
-	}
-	/**
 	 * Verifica l'esistenza di una porta applicativa.
 	 * se l'azione e' specificata ma non vi sono porte applicative che mathcano i criteri allora
 	 * effettua la ricerca senza tener conto dell'azione. Per una ricerca piu precisa utilizzare 
@@ -12641,7 +12246,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	}
 
 	// NOTA: Metodo non sicuro!!! Possono esistere piu' azioni di port type diversi o accordi diversi !!!!!
-	public List<IDPortaApplicativaByNome> getPortaApplicativaAzione(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	public List<IDPortaApplicativa> getPortaApplicativaAzione(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
@@ -12658,16 +12263,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		} else
 			con = this.globalConnection;
 
-		List<IDPortaApplicativaByNome> id = new ArrayList<IDPortaApplicativaByNome>();
+		List<IDPortaApplicativa> id = new ArrayList<IDPortaApplicativa>();
 		try {
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
-			sqlQueryObject.addFromTable(this.tabellaSoggetti);
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQueryObject.addWhereCondition("azione=?");
-			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id_soggetto="+this.tabellaSoggetti+".id");
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 
@@ -12677,8 +12280,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			rs = stm.executeQuery();
 
 			while (rs.next()){
-				IDPortaApplicativaByNome idPA = new IDPortaApplicativaByNome();
-				idPA.setSoggetto(new IDSoggetto(rs.getString("tipo_soggetto"), rs.getString("nome_soggetto")));
+				IDPortaApplicativa idPA = new IDPortaApplicativa();
 				idPA.setNome(rs.getString("nome_porta"));
 				id.add(idPA);
 			}
@@ -13091,11 +12693,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
-			sqlQueryObject.addFromTable(this.tabellaSoggetti);
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQueryObject.addWhereCondition("nome_azione=?");
-			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id_soggetto="+this.tabellaSoggetti+".id");
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 
@@ -13106,8 +12706,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 			while (rs.next()){
 				IDPortaDelegata idPD = new IDPortaDelegata();
-				idPD.setLocationPD(rs.getString("nome_porta"));
-				idPD.setSoggettoFruitore(new IDSoggetto(rs.getString("tipo_soggetto"), rs.getString("nome_soggetto")));
+				idPD.setNome(rs.getString("nome_porta"));
 				id.add(idPD);
 			}
 
@@ -13194,14 +12793,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 	}
 
-
-	@Override
-	public boolean existsServizioApplicativo(IDSoggetto idSoggetto, String nomeServizioApplicativo) throws DriverConfigurazioneException {
-		IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
-		idServizioApplicativo.setIdSoggettoProprietario(idSoggetto);
-		idServizioApplicativo.setNome(nomeServizioApplicativo);
-		return this.existsServizioApplicativo(idServizioApplicativo);
-	}
 
 	/**
 	 * Verifica l'esistenza di un servizio applicativo.
@@ -13509,12 +13100,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			while (risultato.next()) {
 				isInUso=true;
 				IDPortaApplicativa idPA = new IDPortaApplicativa();
-				IDServizio idSE = new IDServizio();
-				idSE.setAzione(risultato.getString("azione"));
-				idSE.setServizio(risultato.getString("servizio"));
-				idSE.setTipoServizio(risultato.getString("tipo_servizio"));
-				idSE.setSoggettoErogatore(risultato.getString("tipo_soggetto"), risultato.getString("nome_soggetto"));
-				idPA.setIDServizio(idSE);
+				idPA.setNome(risultato.getString("nome_porta"));
 				idsPA.add(idPA);
 			}
 			risultato.close();
@@ -13539,13 +13125,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			while (risultato.next()) {
 				isInUso=true;
 				IDPortaDelegata idPD = new IDPortaDelegata();
-
-				idPD.setSoggettoFruitore(new IDSoggetto(risultato.getString("tipo_soggetto"), risultato.getString("nome_soggetto")));
-				String location = risultato.getString("location");
-				if(location==null || "".equals(location))
-					location = risultato.getString("nome_porta");
-
-				idPD.setLocationPD(location);
+				idPD.setNome(risultato.getString("nome_porta"));
 				idsPD.add(idPD);
 			}
 			risultato.close();
@@ -13652,106 +13232,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		}
 	}
 
-	@Override
-	public PortaApplicativa getPortaApplicativa(
-			IDPortaApplicativaByNome idPA) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		if(idPA==null) 
-			throw new DriverConfigurazioneException("Identificativo non fornito");
-		return this.getPortaApplicativa(idPA.getNome(), idPA.getSoggetto());
-	}
-
-	@Override
-	public PortaApplicativa getPortaApplicativa(String nomePorta, IDSoggetto soggettoProprietario) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {		
-		if(nomePorta==null || "".equals(nomePorta.trim())) throw new DriverConfigurazioneException("Nome PA non valido");
-
-		Connection con = null;
-
-		if (this.atomica) {
-			try {
-				con = getConnectionFromDatasource("getPortaApplicativa");
-			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
-
-			}
-
-		} else
-			con = this.globalConnection;
-
-		long idPorta= -1;
-		try{
-			if(!existsPortaApplicativa(nomePorta,soggettoProprietario)) 
-				throw new DriverConfigurazioneNotFound("Porta Applicativa ["+nomePorta+"] del soggetto ["+soggettoProprietario.toString()+"] non trovata.");
-
-			idPorta=DriverConfigurazioneDB_LIB.getIdPortaApplicativa(nomePorta, soggettoProprietario.getTipo(),soggettoProprietario.getNome(), con, this.tipoDB,this.tabellaSoggetti);
-		}catch (CoreException e) {
-			throw new DriverConfigurazioneException(e.getMessage(),e);
-		}catch (DriverConfigurazioneNotFound e) {
-			throw e;
-		}catch (DriverConfigurazioneException e) {
-			throw e;
-		}finally{
-			try{
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			}catch (Exception e) {
-
-			}
-		}
-
-		return getPortaApplicativa(idPorta);
-
-	}
-
-	@Override
-	public boolean existsPortaApplicativa(
-			IDPortaApplicativaByNome idPA) throws DriverConfigurazioneException{
-		if(idPA==null) 
-			throw new DriverConfigurazioneException("Identificativo non fornito");
-		return this.existsPortaApplicativa(idPA.getNome(), idPA.getSoggetto());
-	}
-	
-	@Override
-	public boolean existsPortaApplicativa(String nomePorta, IDSoggetto soggettoProprietario) throws DriverConfigurazioneException {
-
-		if(nomePorta==null || "".equals(nomePorta.trim())) throw new DriverConfigurazioneException("Nome PA non valido");
-
-		// check Soggetto Proprietario
-		if(!existsSoggetto(soggettoProprietario)) return false;
-
-		Connection con = null;
-
-		if (this.atomica) {
-			try {
-				con = getConnectionFromDatasource("existsPortaApplicativa");
-			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
-
-			}
-
-		} else
-			con = this.globalConnection;
-
-		try {
-			return DBUtils.getIdPortaApplicativa(nomePorta, soggettoProprietario.getTipo(),soggettoProprietario.getNome(), con, this.tipoDB,this.tabellaSoggetti)>0;
-		} catch (Exception qe) {
-			throw new DriverConfigurazioneException(qe);
-		} finally {
-
-			try{
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			}catch (Exception e) {
-
-			}
-
-		}
-
-
-	}
 
 	public List<PortaApplicativa> serviziPorteAppList(String tipoServizio,String nomeServizio,long idServizio, long idSoggettoErogatore, ISearch ricerca) throws DriverConfigurazioneException {
 		String nomeMetodo = "serviziPorteAppList";
@@ -14288,82 +13768,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 	}
 
-	public boolean existsPortaDelegata(String nomePorta, IDSoggetto soggettoProprietario) throws DriverConfigurazioneException {
+	
 
-		if(nomePorta==null || "".equals(nomePorta.trim())) throw new DriverConfigurazioneException("Nome PD non valido");
-
-		// check Soggetto Proprietario
-		if(!existsSoggetto(soggettoProprietario)) return false;
-
-		Connection con = null;
-
-		if (this.atomica) {
-			try {
-				con = getConnectionFromDatasource("existsPortaDelegata");
-			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaDelegata] Exception accedendo al datasource :" + e.getMessage(),e);
-
-			}
-
-		} else
-			con = this.globalConnection;
-
-		try {
-			return DriverConfigurazioneDB_LIB.getIdPortaDelegata(nomePorta, soggettoProprietario.getTipo(),soggettoProprietario.getNome(), con, this.tipoDB,this.tabellaSoggetti)>0;
-		} catch (Exception qe) {
-			throw new DriverConfigurazioneException(qe);
-		} finally {
-
-			try{
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			}catch (Exception e) {
-
-			}
-
-		}
-	}
-
-	public PortaDelegata getPortaDelegata(String nomePorta, IDSoggetto soggettoProprietario) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
-
-		if(nomePorta==null || "".equals(nomePorta.trim())) throw new DriverConfigurazioneException("Nome PD non valido");
-
-		// check Soggetto Proprietario
-		if(!existsSoggetto(soggettoProprietario)) throw new DriverConfigurazioneNotFound("Il soggetto indicato come proprietario della Porta Delegata non esiste");
-
-		Connection con = null;
-
-		if (this.atomica) {
-			try {
-				con = getConnectionFromDatasource("getPortaDelegata");
-			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaDelegata] Exception accedendo al datasource :" + e.getMessage(),e);
-
-			}
-
-		} else
-			con = this.globalConnection;
-
-		try {
-			long idPD = DriverConfigurazioneDB_LIB.getIdPortaDelegata(nomePorta, soggettoProprietario.getTipo(),soggettoProprietario.getNome(), con, this.tipoDB,this.tabellaSoggetti);
-			return this.getPortaDelegata(idPD,con);
-		} catch (Exception qe) {
-			throw new DriverConfigurazioneException(qe);
-		} finally {
-
-			try{
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			}catch (Exception e) {
-
-			}
-
-		}
-	}
 
 
 
@@ -15703,7 +15109,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		Connection con = null;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
-
+		List<String> nomiPD = null;
+		
 		this.log.debug("getAllIdPorteDelegate...");
 
 		try {
@@ -15716,12 +15123,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
-			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			if(filtroRicerca!=null && (filtroRicerca.getTipoSoggetto()!=null || filtroRicerca.getNomeSoggetto()!=null) ){
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			}
 			sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE+".nome_porta");
-			sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE+".location");
-			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".tipo_soggetto");
-			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".nome_soggetto");
-			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+			if(filtroRicerca!=null && (filtroRicerca.getTipoSoggetto()!=null || filtroRicerca.getNomeSoggetto()!=null) ){
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+			}
 
 			if(filtroRicerca!=null){
 				// Filtro By Data
@@ -15805,26 +15213,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				}
 			}
 			rs = stm.executeQuery();
-			List<IDPortaDelegata> idsPD = new ArrayList<IDPortaDelegata>();
+			nomiPD = new ArrayList<String>();
 			while (rs.next()) {
-				IDSoggetto idS = new IDSoggetto(rs.getString("tipo_soggetto"),rs.getString("nome_soggetto"));
-				IDPortaDelegata idPD = new IDPortaDelegata();
-				idPD.setSoggettoFruitore(idS);
-				String location = rs.getString("location");
-				if(location!=null && !"".equals(location)){
-					idPD.setLocationPD(location);
-				}else{
-					idPD.setLocationPD(rs.getString("nome_porta"));
-				}
-				idsPD.add(idPD);
-			}
-			if(idsPD.size()==0){
-				if(filtroRicerca!=null)
-					throw new DriverConfigurazioneNotFound("PorteDelegate non trovate che rispettano il filtro di ricerca selezionato: "+filtroRicerca.toString());
-				else
-					throw new DriverConfigurazioneNotFound("PorteDelegate non trovate");
-			}else{
-				return idsPD;
+				nomiPD.add(rs.getString("nome_porta"));
 			}
 		}catch(DriverConfigurazioneNotFound de){
 			throw de;
@@ -15851,6 +15242,20 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			}
 
 		}
+		
+		if(nomiPD == null || nomiPD.size()<=0){
+			if(filtroRicerca!=null)
+				throw new DriverConfigurazioneNotFound("PorteDelegate non trovate che rispettano il filtro di ricerca selezionato: "+filtroRicerca.toString());
+			else
+				throw new DriverConfigurazioneNotFound("PorteDelegate non trovate");
+		}else{
+			List<IDPortaDelegata> idsPD = new ArrayList<IDPortaDelegata>();
+			for (String nomePortaDelegata : nomiPD) {
+				idsPD.add(this.getIDPortaDelegata(nomePortaDelegata));
+			}
+			return idsPD;
+		}
+		
 	}
 
 
@@ -15863,13 +15268,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	 * @throws DriverConfigurazioneNotFound
 	 */
 	@Override
-	public List<IDPortaApplicativaByNome> getAllIdPorteApplicative(
+	public List<IDPortaApplicativa> getAllIdPorteApplicative(
 			FiltroRicercaPorteApplicative filtroRicerca) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 
 		Connection con = null;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
-
+		List<String> nomiPA = null;
+		
 		this.log.debug("getAllIdPorteApplicative...");
 
 		try {
@@ -15882,11 +15288,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
-			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			if(filtroRicerca!=null && (filtroRicerca.getTipoSoggetto()!=null || filtroRicerca.getNomeSoggetto()!=null) ){
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			}
 			sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE+".nome_porta");
-			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".tipo_soggetto");
-			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".nome_soggetto");
-			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+			if(filtroRicerca!=null && (filtroRicerca.getTipoSoggetto()!=null || filtroRicerca.getNomeSoggetto()!=null) ){
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+			}
 
 			if(filtroRicerca!=null){
 				// Filtro By Data
@@ -15970,22 +15378,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				}
 			}
 			rs = stm.executeQuery();
-			List<IDPortaApplicativaByNome> idsPA = new ArrayList<IDPortaApplicativaByNome>();
+			nomiPA = new ArrayList<String>();
 			while (rs.next()) {
-				IDSoggetto idS = new IDSoggetto(rs.getString("tipo_soggetto"),rs.getString("nome_soggetto"));
-				IDPortaApplicativaByNome idPA = new IDPortaApplicativaByNome();
-				idPA.setSoggetto(idS);
-				idPA.setNome(rs.getString("nome_porta"));
-				idsPA.add(idPA);
+				nomiPA.add(rs.getString("nome_porta"));
 			}
-			if(idsPA.size()==0){
-				if(filtroRicerca!=null)
-					throw new DriverConfigurazioneNotFound("PorteApplicative non trovate che rispettano il filtro di ricerca selezionato: "+filtroRicerca.toString());
-				else
-					throw new DriverConfigurazioneNotFound("PorteApplicative non trovate");
-			}else{
-				return idsPA;
-			}
+			
 		}catch(DriverConfigurazioneNotFound de){
 			throw de;
 		}
@@ -16012,6 +15409,18 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		}
 
+		if(nomiPA == null || nomiPA.size()<=0){
+			if(filtroRicerca!=null)
+				throw new DriverConfigurazioneNotFound("PorteApplicative non trovate che rispettano il filtro di ricerca selezionato: "+filtroRicerca.toString());
+			else
+				throw new DriverConfigurazioneNotFound("PorteApplicative non trovate");
+		}else{
+			List<IDPortaApplicativa> idsPA = new ArrayList<IDPortaApplicativa>();
+			for (String nomePortaApplicativa : nomiPA) {
+				idsPA.add(this.getIDPortaApplicativa(nomePortaApplicativa));
+			}
+			return idsPA;
+		}
 	}
 
 

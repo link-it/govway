@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.openspcoop2.core.config.ServizioApplicativo;
-import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.protocol.engine.builder.DateBuilder;
@@ -114,10 +114,10 @@ public class IntegrationManagerException extends Exception implements java.io.Se
 	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreIntegrazione errore) {
 		this(protocolFactory,errore,IntegrationManagerException.ECCEZIONE_INTEGRAZIONE,null);
 	}
-	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreIntegrazione errore,String servizioApplicativo) {
+	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreIntegrazione errore,IDServizioApplicativo servizioApplicativo) {
 		this(protocolFactory,errore,IntegrationManagerException.ECCEZIONE_INTEGRAZIONE,servizioApplicativo);
 	}
-	private IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreIntegrazione errore,String tipo,String servizioApplicativo) {
+	private IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreIntegrazione errore,String tipo,IDServizioApplicativo servizioApplicativo) {
 		super(errore.getDescrizioneRawValue());
 		try{
 			this.initProprietaBase(protocolFactory, tipo, servizioApplicativo);
@@ -140,10 +140,10 @@ public class IntegrationManagerException extends Exception implements java.io.Se
 	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreCooperazione errore) {
 		this(protocolFactory,errore,IntegrationManagerException.ECCEZIONE_PROTOCOLLO,null);
 	}
-	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreCooperazione errore,String servizioApplicativo) {
+	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreCooperazione errore,IDServizioApplicativo servizioApplicativo) {
 		this(protocolFactory,errore,IntegrationManagerException.ECCEZIONE_PROTOCOLLO,servizioApplicativo);
 	}
-	private IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreCooperazione errore,String tipo,String servizioApplicativo)  {
+	private IntegrationManagerException(IProtocolFactory<?> protocolFactory,ErroreCooperazione errore,String tipo,IDServizioApplicativo servizioApplicativo)  {
 		super(errore.getDescrizioneRawValue());
 		try{
 			this.initProprietaBase(protocolFactory, tipo, servizioApplicativo);
@@ -160,10 +160,10 @@ public class IntegrationManagerException extends Exception implements java.io.Se
 	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,Eccezione errore)  {
 		this(protocolFactory,errore,IntegrationManagerException.ECCEZIONE_PROTOCOLLO,null);
 	}
-	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,Eccezione errore,String servizioApplicativo) {
+	public IntegrationManagerException(IProtocolFactory<?> protocolFactory,Eccezione errore,IDServizioApplicativo servizioApplicativo) {
 		this(protocolFactory,errore,IntegrationManagerException.ECCEZIONE_PROTOCOLLO,servizioApplicativo);
 	}
-	private IntegrationManagerException(IProtocolFactory<?> protocolFactory,Eccezione errore,String tipo,String servizioApplicativo) {
+	private IntegrationManagerException(IProtocolFactory<?> protocolFactory,Eccezione errore,String tipo,IDServizioApplicativo servizioApplicativo) {
 		super(getDescrizione(errore,protocolFactory));
 		try{
 			this.initProprietaBase(protocolFactory, tipo, servizioApplicativo);
@@ -186,7 +186,7 @@ public class IntegrationManagerException extends Exception implements java.io.Se
 	public IntegrationManagerException() { }
 	
 	
-	private void initProprietaBase(IProtocolFactory<?> protocolFactory,String tipoEccezione, String servizioApplicativo) throws ProtocolException {
+	private void initProprietaBase(IProtocolFactory<?> protocolFactory,String tipoEccezione, IDServizioApplicativo servizioApplicativo) throws ProtocolException {
 		this.oraRegistrazione = DateBuilder.getDate_Format(null);
 		this.identificativoFunzione = IntegrationManager.ID_MODULO;
 		this.tipoEccezione = tipoEccezione;
@@ -202,7 +202,7 @@ public class IntegrationManagerException extends Exception implements java.io.Se
 		if(servizioApplicativo!=null){
 			try{
 				ConfigurazionePdDManager configPdDReader = ConfigurazionePdDManager.getInstance();
-				ServizioApplicativo sa = configPdDReader.getServizioApplicativo(new IDPortaDelegata(), servizioApplicativo);
+				ServizioApplicativo sa = configPdDReader.getServizioApplicativo(servizioApplicativo);
 				configPdDReader.aggiornaProprietaGestioneErrorePD(this.proprietaErroreAppl,sa);
 			}catch(Exception e){
 				//OpenSPCoopLogger.getLoggerOpenSPCoopCore().error("Aggiornamento gestione errore PD servizio applicativo in IntegrationManagerException.init dell'IntegrationManager  SA["+servizioApplicativo+"] non riuscito");

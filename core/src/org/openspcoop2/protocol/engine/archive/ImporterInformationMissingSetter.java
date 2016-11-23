@@ -1015,29 +1015,6 @@ public class ImporterInformationMissingSetter {
 				pd.setNome(replaceAzione(pd.getNome(), 
 						pd.getAzione().getNome()));
 			}
-			
-			if(pd.getLocation()!=null && !"".equals(pd.getLocation())){
-				pd.setLocation(replaceSoggettoProprietario(pd.getLocation(), 
-						pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
-				if(pd.getSoggettoErogatore()!=null && 
-						pd.getSoggettoErogatore().getNome()!=null && 
-						!"".equals(pd.getSoggettoErogatore().getNome()) ){
-					pd.setLocation(replaceSoggettoErogatore(pd.getLocation(), 
-							pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome()));
-				}
-				if(pd.getServizio()!=null && 
-						pd.getServizio().getNome()!=null && 
-						!"".equals(pd.getServizio().getNome()) ){
-					pd.setLocation(replaceServizio(pd.getLocation(), 
-							pd.getServizio().getTipo(), pd.getServizio().getNome()));
-				}
-				if(pd.getAzione()!=null && 
-						pd.getAzione().getNome()!=null &&
-						!"".equals(pd.getAzione().getNome()) ){
-					pd.setLocation(replaceAzione(pd.getLocation(), 
-							pd.getAzione().getNome()));
-				}
-			}
 						
 			if(pd.getAzione()!=null){
 				if(pd.getAzione().getPattern()!=null &&

@@ -40,6 +40,7 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -506,9 +507,10 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			if(this.core.isGenerazioneAutomaticaPorteApplicative()){
 				if(nomePA!=null && !"".equals(nomePA)){
 
-					IDSoggetto soggettoProprietario = new IDSoggetto(tipoErogatore, nomeErogatore);
-					if(this.porteApplicativeCore.existsPortaApplicativa(nomePA, soggettoProprietario)){
-						this.pd.setMessage("Esiste gi&agrave; una porta applicativa con nome "+nomePA+" appartenente al soggetto "+soggettoProprietario.toString());
+					IDPortaApplicativa idPA = new IDPortaApplicativa();
+					idPA.setNome(nomePA);
+					if(this.porteApplicativeCore.existsPortaApplicativa(idPA)){
+						this.pd.setMessage("Esiste gi&agrave; una porta applicativa con nome "+nomePA);
 						return false;
 					}
 				}

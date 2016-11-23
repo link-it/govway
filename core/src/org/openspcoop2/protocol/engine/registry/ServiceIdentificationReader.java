@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.engine.registry;
 
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -66,6 +66,7 @@ public class ServiceIdentificationReader implements IServiceIdentificationReader
 	// PORTA DELEGATA
 	
 	private PortaDelegata pd;
+	private IDPortaDelegata idPD;
 	
 	@Override
 	public IDPortaDelegata findPortaDelegata(TransportRequestContext transportRequestContext, boolean portaUrlBased) throws RegistryNotFound{
@@ -84,6 +85,7 @@ public class ServiceIdentificationReader implements IServiceIdentificationReader
 				}
 			}
 			this.pd = idPD.getPortaDelegata();
+			this.idPD = idPD.getIDPortaDelegata();
 			
 			return idPD.getIDPortaDelegata();
 			
@@ -103,6 +105,11 @@ public class ServiceIdentificationReader implements IServiceIdentificationReader
 	public IDServizio convertToIDServizio(IDPortaDelegata idPortaDelegata) throws RegistryNotFound{
 		
 		try{
+			if(this.idPD!=null && this.idPD.getIdentificativiFruizione()!=null &&
+					this.idPD.getIdentificativiFruizione().getIdServizio()!=null){
+				return this.idPD.getIdentificativiFruizione().getIdServizio();
+			}
+			
 			if(this.pd==null){
 				this.pd = this.registryReader.getPortaDelegata(idPortaDelegata);
 			}
@@ -118,7 +125,7 @@ public class ServiceIdentificationReader implements IServiceIdentificationReader
 		catch(RegistryNotFound e){
 			this.erroreIntegrazioneNotFound = 
 					ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
-					getErrore401_PortaInesistente(e.getMessage(),idPortaDelegata.getLocationPD(),idPortaDelegata.getLocationPD());
+					getErrore401_PortaInesistente(e.getMessage(),idPortaDelegata.getNome(),idPortaDelegata.getNome());
 			throw e;
 		}
 		catch(Exception e){
@@ -131,9 +138,10 @@ public class ServiceIdentificationReader implements IServiceIdentificationReader
 	// PORTA APPLICATIVA
 	
 	private PortaApplicativa pa;
+	private IDPortaApplicativa idPA;
 	
 	@Override
-	public IDPortaApplicativaByNome findPortaApplicativa(TransportRequestContext transportRequestContext, boolean portaUrlBased) throws RegistryNotFound{
+	public IDPortaApplicativa findPortaApplicativa(TransportRequestContext transportRequestContext, boolean portaUrlBased) throws RegistryNotFound{
 		
 		IdentificazionePortaApplicativa idPA = null;
 		try{
@@ -149,7 +157,9 @@ public class ServiceIdentificationReader implements IServiceIdentificationReader
 				}
 			}
 			this.pa = idPA.getPortaApplicativa();
-			return idPA.getIDPortaApplicativaByNome();
+			this.idPA = idPA.getIDPortaApplicativa();
+			
+			return idPA.getIDPortaApplicativa();
 			
 		}
 		catch(RegistryNotFound e){
@@ -164,13 +174,18 @@ public class ServiceIdentificationReader implements IServiceIdentificationReader
 	}
 	
 	@Override
-	public IDServizio convertToIDServizio(IDPortaApplicativaByNome idPortaApplicativa) throws RegistryNotFound{
+	public IDServizio convertToIDServizio(IDPortaApplicativa idPortaApplicativa) throws RegistryNotFound{
 		
 		try{
+			if(this.idPA!=null && this.idPA.getIdentificativiErogazione()!=null &&
+					this.idPA.getIdentificativiErogazione().getIdServizio()!=null){
+				return this.idPA.getIdentificativiErogazione().getIdServizio();
+			}
+			
 			if(this.pa==null){
 				this.pa = this.registryReader.getPortaApplicativa(idPortaApplicativa);
 			}
-			IDServizio idS = new IDServizio(idPortaApplicativa.getSoggetto(), 
+			IDServizio idS = new IDServizio(this.pa.getTipoSoggettoProprietario(),this.pa.getNomeSoggettoProprietario(), 
 					this.pa.getServizio().getTipo(), this.pa.getServizio().getNome());
 			
 			if(idS.getSoggettoErogatore().getCodicePorta()==null){

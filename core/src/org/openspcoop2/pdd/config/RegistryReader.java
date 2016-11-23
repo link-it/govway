@@ -30,7 +30,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -123,46 +123,6 @@ public class RegistryReader implements IRegistryReader {
 	@Override
 	public Soggetto getSoggetto(IDSoggetto idSoggetto) throws RegistryNotFound {
 		throw new RuntimeException("Not Implemented");
-	}
-	
-	@Override
-	public IDSoggetto getIdSoggettoProprietarioPortaDelegata(String location) throws RegistryNotFound{
-		try{
-			IDSoggetto idSoggetto = this.configurazionePdDMangager.getSoggettoProprietarioPortaDelegata(location, this.protocolFactory);
-			// Update CodicePorta
-			if(idSoggetto.getCodicePorta()==null){
-				try {
-					idSoggetto.setCodicePorta(this.getDominio(idSoggetto));
-				} catch (Exception e) {
-					//e.printStackTrace();
-				}
-			}
-			return idSoggetto;
-		} catch (DriverConfigurazioneNotFound de) {
-			throw new RegistryNotFound(de.getMessage(),de);
-		}catch(Exception e){
-			return null;
-		}
-	}
-	
-	@Override
-	public IDSoggetto getIdSoggettoProprietarioPortaApplicativa(String location) throws RegistryNotFound{
-		try{
-			IDSoggetto idSoggetto = this.configurazionePdDMangager.getSoggettoProprietarioPortaApplicativa(location, this.protocolFactory);
-			// Update CodicePorta
-			if(idSoggetto.getCodicePorta()==null){
-				try {
-					idSoggetto.setCodicePorta(this.getDominio(idSoggetto));
-				} catch (Exception e) {
-					//e.printStackTrace();
-				}
-			}
-			return idSoggetto;
-		} catch (DriverConfigurazioneNotFound de) {
-			throw new RegistryNotFound(de.getMessage(),de);
-		}catch(Exception e){
-			return null;
-		}
 	}
 	
 	
@@ -318,6 +278,16 @@ public class RegistryReader implements IRegistryReader {
 	// PORTA DELEGATA
 	
 	@Override
+	public IDPortaDelegata getIdPortaDelegata(String nome, IProtocolFactory<?> protocolFactory) throws RegistryNotFound{
+		try{
+			return this.configurazionePdDMangager.getIDPortaDelegata(nome,protocolFactory);
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			return null;
+		}
+	}
+	@Override
 	public boolean existsPortaDelegata(IDPortaDelegata idPortaDelegata){
 		try{
 			return this.configurazionePdDMangager.getPortaDelegata(idPortaDelegata)!=null;
@@ -345,7 +315,17 @@ public class RegistryReader implements IRegistryReader {
 	// PORTA APPLICATIVA
 	
 	@Override
-	public boolean existsPortaApplicativa(IDPortaApplicativaByNome idPortaApplicativa){
+	public IDPortaApplicativa getIdPortaApplicativa(String nome, IProtocolFactory<?> protocolFactory) throws RegistryNotFound{
+		try{
+			return this.configurazionePdDMangager.getIDPortaApplicativa(nome,protocolFactory);
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			return null;
+		}
+	}
+	@Override
+	public boolean existsPortaApplicativa(IDPortaApplicativa idPortaApplicativa){
 		try{
 			return this.configurazionePdDMangager.getPortaApplicativa(idPortaApplicativa)!=null;
 		} catch (DriverConfigurazioneNotFound de) {
@@ -355,7 +335,7 @@ public class RegistryReader implements IRegistryReader {
 		}
 	} 
 	@Override
-	public PortaApplicativa getPortaApplicativa(IDPortaApplicativaByNome idPortaApplicativa) throws RegistryNotFound{
+	public PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPortaApplicativa) throws RegistryNotFound{
 		try{
 			return this.configurazionePdDMangager.getPortaApplicativa(idPortaApplicativa);
 		} catch (DriverConfigurazioneNotFound de) {
@@ -367,5 +347,6 @@ public class RegistryReader implements IRegistryReader {
 	public String getAzione(PortaApplicativa pa,URLProtocolContext transportContext, IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, IdentificazioneDinamicaException{
 		return this.configurazionePdDMangager.getAzione(pa, transportContext, null, null, false, protocolFactory);
 	}
+	
 }
 

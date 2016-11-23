@@ -32,8 +32,9 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipoPdD;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -89,7 +90,7 @@ public class LocalForwardEngine {
 	private RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrorePortaDelegata = null;
 	private RicezioneBusteExternalErrorGenerator generatoreErrorePortaApplicativa = null;
 	private Busta busta = null;
-	private IDPortaApplicativaByNome idPAByNome = null;
+	private IDPortaApplicativa idPA = null;
 	private PortaApplicativa pa = null;
 	private RichiestaApplicativa richiestaApplicativa = null;
 	private RichiestaDelegata richiestaDelegata = null;
@@ -126,13 +127,13 @@ public class LocalForwardEngine {
 				servizioApplicativo = this.richiestaApplicativa.getServizioApplicativo();
 				scenarioCooperazione = this.richiestaApplicativa.getScenario();
 				
-				this.idPAByNome = this.richiestaApplicativa.getIdPAbyNome();
+				this.idPA = this.richiestaApplicativa.getIdPortaApplicativa();
 				
 				this.busta = this.localForwardParameter.getBusta();
 								
 			}else{
 				profiloGestione = this.richiestaDelegata.getProfiloGestione();
-				soggettoFruitore = this.richiestaDelegata.getSoggettoFruitore();
+				soggettoFruitore = this.richiestaDelegata.getIdSoggettoFruitore();
 				idServizio = this.richiestaDelegata.getIdServizio();
 				fault = this.richiestaDelegata.getFault();
 				servizioApplicativo = this.richiestaDelegata.getServizioApplicativo();
@@ -143,10 +144,31 @@ public class LocalForwardEngine {
 					scenarioCooperazione = Costanti.SCENARIO_SINCRONO_INVOCAZIONE_SERVIZIO;
 				}
 				
-				this.idPAByNome = this.localForwardParameter.getConfigurazionePdDReader().convertTo(idServizio, null);
+				// TODO Fare opzione che si indica nella PD il nome della PA su cui effettuare il localForward
+				String nomePA = null; // TODO
+				if(nomePA==null){
+					try{
+						List<PortaApplicativa> list = this.localForwardParameter.getConfigurazionePdDReader().getPorteApplicative(idServizio, false);
+						if(list.size()<=0){
+							throw new DriverConfigurazioneNotFound("NotFound");
+						}
+						if(list.size()>1){
+							throw new Exception("Esiste più di una porta applicativa indirizzabile tramite il servizio ["+idServizio+"] indicato nella porta delegata ["+
+									this.richiestaDelegata.getIdPortaDelegata().getNome()+"]");
+						}
+						this.idPA = this.localForwardParameter.getConfigurazionePdDReader().convertToIDPortaApplicativa(list.get(0));
+					}catch(DriverConfigurazioneNotFound n){
+						throw new Exception("Non esiste alcuna porta applicativa indirizzabile tramite il servizio ["+idServizio+"] indicato nella porta delegata ["+
+								this.richiestaDelegata.getIdPortaDelegata().getNome()+"]",n);
+					}
+				}
+				else{
+					this.idPA=this.localForwardParameter.getConfigurazionePdDReader().getIDPortaApplicativa(nomePA, this.localForwardParameter.getProtocolFactory());
+				}
+				
 				this.richiestaApplicativa = 
-						new RichiestaApplicativa(soggettoFruitore, idServizio, 
-								this.localForwardParameter.getIdModulo(), this.localForwardParameter.getIdentitaPdD(),this.idPAByNome);
+						new RichiestaApplicativa(soggettoFruitore,  
+								this.localForwardParameter.getIdModulo(), this.localForwardParameter.getIdentitaPdD(),this.idPA);
 				this.richiestaApplicativa.setIdCorrelazioneApplicativa(this.localForwardParameter.getIdCorrelazioneApplicativa());
 				this.richiestaApplicativa.setProfiloGestione(profiloGestione);
 				this.richiestaApplicativa.setRicevutaAsincrona(false);
@@ -165,8 +187,10 @@ public class LocalForwardEngine {
 			
 			this.pd = this.localForwardParameter.getConfigurazionePdDReader().getPortaDelegata(this.richiestaDelegata.getIdPortaDelegata());	
 			try{
-				this.sa = this.localForwardParameter.getConfigurazionePdDReader().getServizioApplicativo(this.richiestaDelegata.getIdPortaDelegata(), 
-						this.richiestaDelegata.getServizioApplicativo());
+				IDServizioApplicativo idSA = new IDServizioApplicativo();
+				idSA.setNome(this.richiestaDelegata.getServizioApplicativo());
+				idSA.setIdSoggettoProprietario(this.richiestaDelegata.getIdSoggettoFruitore());
+				this.sa = this.localForwardParameter.getConfigurazionePdDReader().getServizioApplicativo(idSA);
 			}catch(DriverConfigurazioneNotFound e){
 				if(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(this.richiestaDelegata.getServizioApplicativo())==false)
 					throw e;
@@ -202,7 +226,7 @@ public class LocalForwardEngine {
 			
 			this.ejbUtils.setGeneratoreErrorePortaApplicativa(this.generatoreErrorePortaApplicativa);
 			
-			this.pa = this.localForwardParameter.getConfigurazionePdDReader().getPortaApplicativa(this.idPAByNome);
+			this.pa = this.localForwardParameter.getConfigurazionePdDReader().getPortaApplicativa(this.idPA);
 			
 			
 			
@@ -308,7 +332,7 @@ public class LocalForwardEngine {
 						contextParameters.setLog(this.localForwardParameter.getLog());
 						contextParameters.setFunctionAsClient(SecurityConstants.SECURITY_CLIENT);
 						contextParameters.setPrefixWsuId(this.propertiesReader.getPrefixWsuId());
-						contextParameters.setIdFruitore(this.richiestaDelegata.getSoggettoFruitore());
+						contextParameters.setIdFruitore(this.richiestaDelegata.getIdSoggettoFruitore());
 						contextParameters.setIdServizio(this.richiestaDelegata.getIdServizio());
 						contextParameters.setPddFruitore(this.localForwardParameter.getIdPdDMittente());
 						contextParameters.setPddErogatore(this.localForwardParameter.getIdPdDDestinatario());
@@ -374,7 +398,7 @@ public class LocalForwardEngine {
 								posizione);
 					}
 					this.responseMessageError = this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,
-							ecc,this.richiestaDelegata.getSoggettoFruitore(),null);
+							ecc,this.richiestaDelegata.getIdSoggettoFruitore(),null);
 				}
 
 			}
@@ -470,7 +494,7 @@ public class LocalForwardEngine {
 						contextParameters.setLog(this.localForwardParameter.getLog());
 						contextParameters.setFunctionAsClient(SecurityConstants.SECURITY_SERVER);
 						contextParameters.setPrefixWsuId(this.propertiesReader.getPrefixWsuId());
-						contextParameters.setIdFruitore(this.richiestaDelegata.getSoggettoFruitore());
+						contextParameters.setIdFruitore(this.richiestaDelegata.getIdSoggettoFruitore());
 						contextParameters.setIdServizio(this.richiestaDelegata.getIdServizio());
 						contextParameters.setPddFruitore(this.localForwardParameter.getIdPdDMittente());
 						contextParameters.setPddErogatore(this.localForwardParameter.getIdPdDDestinatario());
@@ -558,7 +582,7 @@ public class LocalForwardEngine {
 								posizione);
 					}
 					this.responseMessageError = this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,
-							ecc,this.richiestaDelegata.getSoggettoFruitore(),null);
+							ecc,this.richiestaDelegata.getIdSoggettoFruitore(),null);
 				}
 
 			}
@@ -727,7 +751,7 @@ public class LocalForwardEngine {
 						contextParameters.setLog(this.localForwardParameter.getLog());
 						contextParameters.setFunctionAsClient(SecurityConstants.SECURITY_CLIENT);
 						contextParameters.setPrefixWsuId(this.propertiesReader.getPrefixWsuId());
-						contextParameters.setIdFruitore(this.richiestaDelegata.getSoggettoFruitore());
+						contextParameters.setIdFruitore(this.richiestaDelegata.getIdSoggettoFruitore());
 						contextParameters.setIdServizio(this.richiestaDelegata.getIdServizio());
 						contextParameters.setPddFruitore(this.localForwardParameter.getIdPdDMittente());
 						contextParameters.setPddErogatore(this.localForwardParameter.getIdPdDDestinatario());
@@ -805,7 +829,7 @@ public class LocalForwardEngine {
 								posizione);
 					}
 					this.responseMessageError = this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,
-							ecc,this.richiestaDelegata.getSoggettoFruitore(),null);
+							ecc,this.richiestaDelegata.getIdSoggettoFruitore(),null);
 				}
 			}
 			if(this.responseMessageError!=null){
@@ -898,7 +922,7 @@ public class LocalForwardEngine {
 						contextParameters.setLog(this.localForwardParameter.getLog());
 						contextParameters.setFunctionAsClient(SecurityConstants.SECURITY_SERVER);
 						contextParameters.setPrefixWsuId(this.propertiesReader.getPrefixWsuId());
-						contextParameters.setIdFruitore(this.richiestaDelegata.getSoggettoFruitore());
+						contextParameters.setIdFruitore(this.richiestaDelegata.getIdSoggettoFruitore());
 						contextParameters.setIdServizio(this.richiestaDelegata.getIdServizio());
 						contextParameters.setPddFruitore(this.localForwardParameter.getIdPdDMittente());
 						contextParameters.setPddErogatore(this.localForwardParameter.getIdPdDDestinatario());
@@ -965,7 +989,7 @@ public class LocalForwardEngine {
 								posizione);
 					}
 					this.responseMessageError = this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,
-							ecc,this.richiestaDelegata.getSoggettoFruitore(),null);
+							ecc,this.richiestaDelegata.getIdSoggettoFruitore(),null);
 				}
 			}
 			if(this.responseMessageError!=null){

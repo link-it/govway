@@ -24,8 +24,8 @@ package org.openspcoop2.pdd.config;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.core.commons.CoreException;
@@ -49,11 +49,12 @@ import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDPortaApplicativa;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.id.IdentificativiErogazione;
+import org.openspcoop2.core.id.IdentificativiFruizione;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
@@ -169,14 +170,6 @@ public class ConfigurazionePdDManager {
 	
 	/* ********  SOGGETTI (Interfaccia)  ******** */
 	
-	public IDSoggetto getSoggettoProprietarioPortaDelegata(String location,IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
-		return this.configurazionePdDReader.getSoggettoProprietarioPortaDelegata(this.getConnection(), location, protocolFactory);
-	}
-	
-	public IDSoggetto getSoggettoProprietarioPortaApplicativa(String location,IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
-		return this.configurazionePdDReader.getSoggettoProprietarioPortaApplicativa(this.getConnection(), location, protocolFactory);
-	}
-	
 	public String getIdentificativoPorta(IDSoggetto idSoggetto,IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 		return this.configurazionePdDReader.getIdentificativoPorta(this.getConnection(), idSoggetto, protocolFactory);
 	}
@@ -229,6 +222,54 @@ public class ConfigurazionePdDManager {
 	
 	
 	/* ********  PORTE DELEGATE (Interfaccia)  ******** */
+	
+	public IDPortaDelegata convertToIDPortaDelegata(PortaDelegata pd){
+		
+		IDPortaDelegata idPD = new IDPortaDelegata();
+		idPD.setNome(pd.getNome());
+		
+		IdentificativiFruizione idFruizione = new IdentificativiFruizione();
+		
+		IDSoggetto soggettoFruitore = new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario());
+		idFruizione.setSoggettoFruitore(soggettoFruitore);
+		
+		IDServizio idServizio = new IDServizio(pd.getSoggettoErogatore().getTipo(),pd.getSoggettoErogatore().getNome(),
+				pd.getServizio().getTipo(),pd.getServizio().getNome());
+		if(pd.getAzione()!=null && pd.getAzione().getNome()!=null && !"".equals(pd.getAzione().getNome())){
+			idServizio.setAzione(pd.getAzione().getNome());	
+		}
+		idFruizione.setIdServizio(idServizio);
+		
+		idPD.setIdentificativiFruizione(idFruizione);
+		
+		return idPD;
+	}
+	
+	public IDPortaDelegata getIDPortaDelegata(String nome, IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		IDPortaDelegata idPortaDelegata = this.configurazionePdDReader.getIDPortaDelegata(this.getConnection(), nome);
+		
+		try{
+			if(idPortaDelegata!=null && idPortaDelegata.getIdentificativiFruizione()!=null){
+				if(idPortaDelegata.getIdentificativiFruizione().getSoggettoFruitore()!=null){
+					IDSoggetto soggetto = idPortaDelegata.getIdentificativiFruizione().getSoggettoFruitore();
+					if(soggetto.getCodicePorta()==null){
+						soggetto.setCodicePorta(this.registroServiziManager.getDominio(soggetto, null, protocolFactory));
+					}
+				}
+				if(idPortaDelegata.getIdentificativiFruizione().getIdServizio()!=null &&
+						idPortaDelegata.getIdentificativiFruizione().getIdServizio().getSoggettoErogatore()!=null){
+					IDSoggetto soggetto = idPortaDelegata.getIdentificativiFruizione().getIdServizio().getSoggettoErogatore();
+					if(soggetto.getCodicePorta()==null){
+						soggetto.setCodicePorta(this.registroServiziManager.getDominio(soggetto, null, protocolFactory));
+					}
+				}
+			}
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		
+		return idPortaDelegata;
+	}
 	
 	public PortaDelegata getPortaDelegata(IDPortaDelegata idPD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		return this.configurazionePdDReader.getPortaDelegata(this.getConnection(), idPD);
@@ -333,26 +374,67 @@ public class ConfigurazionePdDManager {
 	
 	/* ********  PORTE APPLICATIVE  (Interfaccia) ******** */
 	
-	public Hashtable<IDSoggetto,PortaApplicativa> getPorteApplicative_SoggettiVirtuali(IDPortaApplicativa idPA)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdDReader.getPorteApplicative_SoggettiVirtuali(this.getConnection(), idPA);
+	public IDPortaApplicativa convertToIDPortaApplicativa(PortaApplicativa pa){
+		
+		IDPortaApplicativa idPA = new IDPortaApplicativa();
+		idPA.setNome(pa.getNome());
+		
+		IdentificativiErogazione idErogazione = new IdentificativiErogazione();
+		
+		if(pa.getSoggettoVirtuale()!=null){
+			IDSoggetto soggettoVirtuale = new IDSoggetto(pa.getSoggettoVirtuale().getTipo(),pa.getSoggettoVirtuale().getNome());
+			idErogazione.setSoggettoVirtuale(soggettoVirtuale);
+		}
+		
+		IDServizio idServizio = new IDServizio(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(),
+				pa.getServizio().getTipo(),pa.getServizio().getNome());
+		if(pa.getAzione()!=null && pa.getAzione().getNome()!=null && !"".equals(pa.getAzione().getNome())){
+			idServizio.setAzione(pa.getAzione().getNome());	
+		}
+		idErogazione.setIdServizio(idServizio);
+		
+		idPA.setIdentificativiErogazione(idErogazione);
+		
+		return idPA;
+	}
+	
+	public IDPortaApplicativa getIDPortaApplicativa(String nome, IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		IDPortaApplicativa idPortaApplicativa = this.configurazionePdDReader.getIDPortaApplicativa(this.getConnection(), nome);
+		try{
+			if(idPortaApplicativa!=null && idPortaApplicativa.getIdentificativiErogazione()!=null){
+				if(idPortaApplicativa.getIdentificativiErogazione().getSoggettoVirtuale()!=null){
+					IDSoggetto soggetto = idPortaApplicativa.getIdentificativiErogazione().getSoggettoVirtuale();
+					if(soggetto.getCodicePorta()==null){
+						soggetto.setCodicePorta(this.registroServiziManager.getDominio(soggetto, null, protocolFactory));
+					}
+				}
+				if(idPortaApplicativa.getIdentificativiErogazione().getIdServizio()!=null &&
+						idPortaApplicativa.getIdentificativiErogazione().getIdServizio().getSoggettoErogatore()!=null){
+					IDSoggetto soggetto = idPortaApplicativa.getIdentificativiErogazione().getIdServizio().getSoggettoErogatore();
+					if(soggetto.getCodicePorta()==null){
+						soggetto.setCodicePorta(this.registroServiziManager.getDominio(soggetto, null, protocolFactory));
+					}
+				}
+			}
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		return idPortaApplicativa;
+	}
+	
+	public Map<IDSoggetto,PortaApplicativa> getPorteApplicative_SoggettiVirtuali(IDServizio idServizio)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getPorteApplicative_SoggettiVirtuali(this.getConnection(), idServizio);
 	}
 	
 	public boolean existsPA(RichiestaApplicativa idPA) throws DriverConfigurazioneException{	
 		return this.configurazionePdDReader.existsPA(this.getConnection(), idPA);
 	}
 	
-	public IDPortaApplicativaByNome convertTo_SafeMethod(IDServizio idServizio,Hashtable<String,String> proprietaPresentiBustaRicevuta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return this.configurazionePdDReader.convertTo_SafeMethod(this.getConnection(), idServizio, proprietaPresentiBustaRicevuta);
-	}
-	public IDPortaApplicativaByNome convertTo(IDServizio idServizio,Hashtable<String,String> proprietaPresentiBustaRicevuta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return this.configurazionePdDReader.convertTo(this.getConnection(), idServizio, proprietaPresentiBustaRicevuta);
-	}
-	
-	public PortaApplicativa getPortaApplicativa(IDPortaApplicativaByNome idPA) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+	public PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPA) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		return this.configurazionePdDReader.getPortaApplicativa(this.getConnection(), idPA);
 	}
 	
-	public PortaApplicativa getPortaApplicativa_SafeMethod(IDPortaApplicativaByNome idPA)throws DriverConfigurazioneException{
+	public PortaApplicativa getPortaApplicativa_SafeMethod(IDPortaApplicativa idPA)throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getPortaApplicativa_SafeMethod(this.getConnection(), idPA);
 	}
 	
@@ -379,10 +461,14 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getServiziApplicativi_SoggettiVirtuali(this.getConnection(), idPA);
 	}
 	
-	public List<PortaApplicativa> getPorteApplicative(String nomePA,String tipoSoggettoProprietario,String nomeSoggettoProprietario) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return this.configurazionePdDReader.getPorteApplicative(this.getConnection(), nomePA, tipoSoggettoProprietario, nomeSoggettoProprietario);
+	public List<PortaApplicativa> getPorteApplicative(IDServizio idServizio, boolean ricercaPuntuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getPorteApplicative(this.getConnection(), idServizio, ricercaPuntuale);
 	}
 	
+	public List<PortaApplicativa> getPorteApplicativeVirtuali(IDSoggetto idSoggettoVirtuale, IDServizio idServizio, boolean ricercaPuntuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getPorteApplicativeVirtuali(this.getConnection(), idSoggettoVirtuale, idServizio, ricercaPuntuale);
+	}
+
 	public MTOMProcessorConfig getPA_MTOMProcessorForSender(PortaApplicativa pa)throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getPA_MTOMProcessorForSender(pa);
 	}
@@ -450,34 +536,22 @@ public class ConfigurazionePdDManager {
 	
 	/* ********  Servizi Applicativi (Interfaccia)  ******** */
 	
-	public boolean existsServizioApplicativo(IDPortaDelegata idPD,String serv) throws DriverConfigurazioneException{ 
-		return this.configurazionePdDReader.existsServizioApplicativo(this.getConnection(), idPD, serv);
+	public boolean existsServizioApplicativo(IDServizioApplicativo idSA) throws DriverConfigurazioneException{ 
+		return this.configurazionePdDReader.existsServizioApplicativo(this.getConnection(), idSA);
 	}
 	
-	public ServizioApplicativo getServizioApplicativo(IDPortaDelegata idPD, String serv) throws DriverConfigurazioneNotFound,DriverConfigurazioneException{
-		return this.configurazionePdDReader.getServizioApplicativo(this.getConnection(), idPD, serv);
+	public ServizioApplicativo getServizioApplicativo(IDServizioApplicativo idSA) throws DriverConfigurazioneNotFound,DriverConfigurazioneException{
+		return this.configurazionePdDReader.getServizioApplicativo(this.getConnection(), idSA);
 	}
 	
-	public ServizioApplicativo getServizioApplicativo(IDPortaApplicativa idPA, String serv) throws DriverConfigurazioneNotFound,DriverConfigurazioneException{
-		return this.configurazionePdDReader.getServizioApplicativo(this.getConnection(), idPA, serv);
+	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiBasic(String aUser,String aPassword) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiBasic(this.getConnection(), aUser, aPassword);
 	}
 	
-	public IDServizioApplicativo autenticazioneHTTP(IDSoggetto aSoggetto,String location, String aUser,String aPassword) throws DriverConfigurazioneException{ 
-		return this.configurazionePdDReader.autenticazioneHTTP(this.getConnection(), aSoggetto, location, aUser, aPassword);
+	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiSsl(String aSubject) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiSsl(this.getConnection(), aSubject);
 	}
-	
-	public IDServizioApplicativo autenticazioneHTTP(String aUser,String aPassword) throws DriverConfigurazioneException{ 
-		return this.configurazionePdDReader.autenticazioneHTTP(this.getConnection(), aUser, aPassword);
-	}
-	
-	public IDServizioApplicativo autenticazioneHTTPS(IDSoggetto aSoggetto,String location, String aSubject) throws DriverConfigurazioneException{ 
-		return this.configurazionePdDReader.autenticazioneHTTPS(this.getConnection(), aSoggetto, location, aSubject);
-	}
-	
-	public IDServizioApplicativo autenticazioneHTTPS(String aSubject) throws DriverConfigurazioneException{ 
-		return this.configurazionePdDReader.autenticazioneHTTPS(this.getConnection(), aSubject);
-	}
-	
+		
 	public boolean autorizzazione(PortaDelegata pd, String servizio) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 		return this.configurazionePdDReader.autorizzazione(pd, servizio);
 	}

@@ -23,8 +23,8 @@
 package org.openspcoop2.core.config.driver;
 
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
@@ -39,7 +39,6 @@ import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.StatoServiziPdd;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.id.IDPortaApplicativa;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -72,23 +71,6 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	 * @return Il Soggetto identificato dal parametro.
 	 */
 	public Soggetto getSoggetto(IDSoggetto aSoggetto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
-
-	/**
-	 * Restituisce Il soggetto che include la porta delegata identificata da <var>location</var>
-	 *
-	 * @param location Location che identifica una porta delegata
-	 * @return Il Soggetto che include la porta delegata fornita come parametro.
-	 */
-	public Soggetto getSoggettoProprietarioPortaDelegata(String location) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
-	
-	/**
-	 * Restituisce Il soggetto che include la porta applicativa identificata da <var>location</var>
-	 *
-	 * @param location Location che identifica una porta delegata
-	 * @return Il Soggetto che include la porta applicativa fornita come parametro.
-	 */
-	public Soggetto getSoggettoProprietarioPortaApplicativa(String location) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
-	
 	
 	/**
 	 * Restituisce il soggetto configurato come router, se esiste nella Porta di Dominio un soggetto registrato come Router
@@ -127,6 +109,16 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	
 	
 	// PORTA DELEGATA
+	
+	/**
+	 * Restituisce l'identificativo della PortaDelegata identificata da <var>nome</var>.
+	 * Tale struttura contiene gli identificativi del fruitore e del servizio indirizzato dalla porta.
+	 *
+	 * @param nome Nome che identifica una porta delegata
+	 * @return Identificativi del fruitore e del servizio indirizzato dalla porta.
+	 */
+	public IDPortaDelegata getIDPortaDelegata(String nome) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
+	
 	/**
 	 * Restituisce la porta delegata identificato da <var>idPD</var>
 	 *
@@ -150,79 +142,58 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	
 	
 	// PORTA APPLICATIVA
+	
+	/**
+	 * Restituisce l'identificativo della PortaApplicativa identificata da <var>nome</var>.
+	 * Tale struttura contiene l'identificativo del servizio indirizzato dalla porta.
+	 *
+	 * @param nome Nome che identifica una porta applicativa
+	 * @return Identificativo del servizio indirizzato dalla porta.
+	 */
+	public IDPortaApplicativa getIDPortaApplicativa(String nome) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
+	
 	/**
 	 * Restituisce la porta applicativa identificata da <var>idPA</var>
-	 * nel caso in cui e' specificata un'azione ma non viene trovato nessun risultato, viene ricercata
-	 * una Porta Applicativa che non possegga l'azione
 	 * @param idPA Identificatore di una Porta Applicativa
 	 * @return La porta applicativa
 	 * 
 	 */
 	public PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPA) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
+	
 	/**
-	 * Restituisce la porta applicativa identificata da <var>idPA</var>
-	 * nel caso in cui e' specificata un'azione ma non viene trovato nessun risultato, non vengono effettuate ricerche ulteriori.
+	 * Restituisce le porta applicative che indirizzano il servizio indicato in <var>idServizio</var>
+	 * Nel caso in cui e' specificata un'azione ma non viene trovato nessun risultato, non vengono effettuate ricerche ulteriori.
 	 * @param idPA
 	 * @param ricercaPuntuale
 	 * @return La porta applicativa
 	 * @throws DriverConfigurazioneException
 	 * @throws DriverConfigurazioneNotFound
 	 */
-	public PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPA,
-			boolean ricercaPuntuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound;
-	/** Restituisce una porta applicativa in base al nome della porta e il soggetto proprietario della porta*/
+	public List<PortaApplicativa> getPorteApplicative(IDServizio idServizio, boolean ricercaPuntuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound;
 	
-	public PortaApplicativa getPortaApplicativa(
-			IDPortaApplicativaByNome idPA) throws DriverConfigurazioneException, DriverConfigurazioneNotFound;
-	
-	public PortaApplicativa getPortaApplicativa(
-			String nomePorta, 
-			IDSoggetto soggettoProprietario) throws DriverConfigurazioneException, DriverConfigurazioneNotFound;
 	/**
-	 * Restituisce la porta applicativa identificata da <var>idPA</var>
+	 * Restituisce le porta applicative che indirizzano il servizio indicato in <var>idServizio</var>
 	 * dove il soggetto erogatore e' un soggetto virtuale
-	 * @param idPA
-	 * @return La porta applicativa
-	 * @throws DriverConfigurazioneException
-	 * @throws DriverConfigurazioneNotFound
-	 */
-	public PortaApplicativa getPortaApplicativaVirtuale(IDPortaApplicativa idPA,IDSoggetto soggettoVirtuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound;
-	/**
-	 * Restituisce la porta applicativa identificata da <var>idPA</var>
-	 * dove il soggetto erogatore e' un soggetto virtuale
-	 * nel caso in cui e' specificata un'azione ma non viene trovato nessun risultato, non vengono effettuate ricerche ulteriori.
+	 * Nel caso in cui e' specificata un'azione ma non viene trovato nessun risultato, non vengono effettuate ricerche ulteriori.
 	 * @param idPA
 	 * @param ricercaPuntuale
 	 * @return La porta applicativa
 	 * @throws DriverConfigurazioneException
 	 * @throws DriverConfigurazioneNotFound
 	 */
-	public PortaApplicativa getPortaApplicativaVirtuale(IDPortaApplicativa idPA,IDSoggetto soggettoVirtuale,boolean ricercaPuntuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound;
+	public List<PortaApplicativa> getPorteApplicativeVirtuali(IDSoggetto soggettoVirtuale,IDServizio idServizio, boolean ricercaPuntuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound;
+	
 	/**
 	 * Restituisce un array di soggetti reali (e associata porta applicativa) 
-	 * che possiedono il soggetto SoggettoVirtuale identificato da <var>idPA</var>
+	 * che erogano il servizio indicato dal parametro <var>idServizio</var> attraverso 
+	 * il SoggettoVirtuale indicato come soggettoErogatore sempre nel parametro <var>idServizio</var>.
 	 *
-	 * @param idPA Identificatore di una Porta Applicativa con soggetto Virtuale
+	 * @param idServizio Identificatore del servizio
 	 * @return una porta applicativa
 	 * 
 	 */
-	public 
-		Hashtable<IDSoggetto,PortaApplicativa> getPorteApplicative_SoggettiVirtuali(IDPortaApplicativa idPA) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
+	public Map<IDSoggetto,PortaApplicativa> getPorteApplicative_SoggettiVirtuali(IDServizio idServizio) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
 
-	/**
-	 * Restituisce la lista delle porte applicative con il nome fornito da parametro.
-	 * Possono esistere piu' porte applicative con medesimo nome, che appartengono a soggetti differenti.
-	 * Se indicati i parametri sui soggetti vengono utilizzati come filtro per localizzare in maniera piu' precisa la PA
-	 * 
-	 * @param nomePA Nome di una Porta Applicativa
-	 * @param tipoSoggettoProprietario Tipo del Soggetto Proprietario di una Porta Applicativa
-	 * @param nomeSoggettoProprietario Nome del Soggetto Proprietario di una Porta Applicativa
-	 * @return La lista di porte applicative
-	 * 
-	 */
-	public List<PortaApplicativa> getPorteApplicative(
-			String nomePA,String tipoSoggettoProprietario,String nomeSoggettoProprietario) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
-	
 	/**
 	 * Restituisce la lista degli identificativi delle porte applicative
 	 * 
@@ -231,7 +202,7 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	 * @throws DriverConfigurazioneException
 	 * @throws DriverConfigurazioneNotFound
 	 */
-	public List<IDPortaApplicativaByNome> getAllIdPorteApplicative(
+	public List<IDPortaApplicativa> getAllIdPorteApplicative(
 			FiltroRicercaPorteApplicative filtroRicerca) throws DriverConfigurazioneException, DriverConfigurazioneNotFound;
 	
 	
@@ -240,73 +211,36 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	
 	// SERVIZIO APPLICATIVO
 	/**
-	 * Restituisce il servizio applicativo, cercandolo prima nella porta delegata <var>location</var>.
-	 * Se nella porta delegata non vi e' viene cercato 
-	 * poi in un specifico soggetto se specificato con <var>aSoggetto</var>, altrimenti in ogni soggetto. 
+	 * Restituisce il servizio applicativo
 	 *
-	 * @param idPD Identificatore della porta delegata.
+	 * @param idServizioApplicativo Identificativo del servizio applicativo
 	 * @param servizioApplicativo Servizio Applicativo
 	 * @return Il Servizio Applicativo.
 	 * 
 	 */
-	public ServizioApplicativo getServizioApplicativo(IDPortaDelegata idPD,String servizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
-
-	/**
-	 * Restituisce il servizio applicativo, cercandolo prima nella porta applicativa <var>location</var>
-	 * e poi nel soggetto <var>aSoggetto</var>. 
-	 *
-	 * @param idPA Identificatore della porta applicativa.
-	 * @param servizioApplicativo Servizio Applicativo
-	 * @return Il Servizio Applicativo.
-	 * 
-	 */
-	public ServizioApplicativo getServizioApplicativo(IDPortaApplicativa idPA,String servizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
+	public ServizioApplicativo getServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
 	
 	/**
 	 * Restituisce Il servizio applicativo che include le credenziali passate come parametro. 
 	 *
-	 * @param idPD Identificatore della porta delegata.
 	 * @param aUser User utilizzato nell'header HTTP Authentication.
 	 * @param aPassword Password utilizzato nell'header HTTP Authentication.
 	 * @return Il servizio applicativo che include le credenziali passate come parametro. 
 	 * 
 	 */
-	public ServizioApplicativo getServizioApplicativoAutenticato(IDPortaDelegata idPD, String aUser,String aPassword) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
-	
-	public ServizioApplicativo getServizioApplicativoAutenticato(String aUser,String aPassword) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
+	public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String aUser,String aPassword) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
 
 	
 	/**
 	 * Restituisce Il servizio applicativo che include le credenziali passate come parametro. 
 	 *
-	 * @param idPD Identificatore della porta delegata.
 	 * @param aSubject Subject utilizzato nella connessione HTTPS.
 	 * @return Il servizio applicativo che include le credenziali passate come parametro. 
 	 * 
 	 */
-	public ServizioApplicativo getServizioApplicativoAutenticato(IDPortaDelegata idPD, String aSubject) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String aSubject) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
 	
-	public ServizioApplicativo getServizioApplicativoAutenticato(String aSubject) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
-	
-	/**
-     * Verifica l'esistenza di un servizio applicativo.
-     *
-     * @param idSoggetto id del soggetto proprietario
-     * @param nomeServizioApplicativo nome del servizio applicativo
-     * @return ServizioApplicativo
-	 * @throws DriverRegistroServiziException
-     */    
-	public ServizioApplicativo getServizioApplicativo(IDSoggetto idSoggetto,String nomeServizioApplicativo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound;
-	
-    /**
-     * Verifica l'esistenza di un servizio applicativo.
-     *
-     * @param idServizioApplicativo id del servizio applicativo
-     * @return ServizioApplicativo
-	 * @throws DriverRegistroServiziException
-     */    
-	public ServizioApplicativo getServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound;
-	
+
 	/**
 	 * Restituisce la lista degli identificativi dei servizi applicativi
 	 * 

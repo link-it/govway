@@ -36,7 +36,6 @@ import javax.jms.QueueReceiver;
 import javax.jms.QueueSession;
 import javax.xml.ws.BindingProvider;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.config.IdPortaApplicativa;
 import org.openspcoop2.core.config.IdPortaDelegata;
 import org.openspcoop2.core.config.IdServizioApplicativo;
@@ -75,6 +74,7 @@ import org.openspcoop2.web.lib.queue.costanti.TipoOperazione;
 import org.openspcoop2.web.lib.queue.dao.FilterParameter;
 import org.openspcoop2.web.lib.queue.dao.Operation;
 import org.openspcoop2.web.lib.queue.dao.Parameter;
+import org.slf4j.Logger;
 
 /**
  * GestorePdDThread
@@ -606,10 +606,6 @@ public class GestorePdDThread extends GestoreGeneral {
 
 						String nomePA = operation.getParameterValue(OperationsParameter.NOME_PA.getNome());
 						String oldNomePA = operation.getParameterValue(OperationsParameter.OLD_NOME_PA.getNome()); 
-						String tipoSogg = operation.getParameterValue(OperationsParameter.TIPO_SOGGETTO.getNome());
-						String nomeSogg = operation.getParameterValue(OperationsParameter.NOME_SOGGETTO.getNome());
-						String oldTipoProprietario = operation.getParameterValue(OperationsParameter.OLD_TIPO_SOGGETTO.getNome());
-						String oldNomeProprietario = operation.getParameterValue(OperationsParameter.OLD_NOME_SOGGETTO.getNome());
 
 						// Ottengo nuova immagine della porta applicativa
 						PortaApplicativa pa = null;
@@ -658,39 +654,12 @@ public class GestorePdDThread extends GestoreGeneral {
 								// vecchi dati per update
 								pa.setOldNomeForUpdate(oldNomePA);
 								
-								if(oldTipoProprietario!=null && oldNomeProprietario!=null){
-									// Check se operazione di change che  l'operazione di modifica del soggetto non sia ancora in rollback.
-									// Se sussite, aspetto l'operazione.
-									FilterParameter filtro = operazioneInGestione.getFilterChangeIDSoggetto(soggettoProprietario.getTipo(),soggettoProprietario.getNome(),
-											oldTipoProprietario,oldNomeProprietario);										
-									if(operazioneInGestione.existsOperationNotCompleted("change", operation.getHostname(), filtro)){
-										pa.setOldNomeSoggettoProprietarioForUpdate(oldNomeProprietario);
-										pa.setOldTipoSoggettoProprietarioForUpdate(oldTipoProprietario);
-										this.log.debug("ChangePD: operazione change ID Soggetto non ancora completata: utilizzo OLD nome");
-									}else{
-										this.log.debug("ChangePD: operazione change ID Soggetto completata: utilizzo nome");
-									}
-								}
-								
 								IdPortaApplicativa idPA = new IdPortaApplicativa();
 								if(pa.getOldNomeForUpdate()!=null){
 									idPA.setNome(pa.getOldNomeForUpdate());
 								}
 								else{
 									idPA.setNome(pa.getNome());
-								}
-								idPA.setIdSoggetto(new IdSoggetto());
-								if(pa.getOldTipoSoggettoProprietarioForUpdate()!=null){
-									idPA.getIdSoggetto().setTipo(pa.getOldTipoSoggettoProprietarioForUpdate());
-								}
-								else{
-									idPA.getIdSoggetto().setTipo(pa.getTipoSoggettoProprietario());
-								}
-								if(pa.getOldNomeSoggettoProprietarioForUpdate()!=null){
-									idPA.getIdSoggetto().setNome(pa.getOldNomeSoggettoProprietarioForUpdate());
-								}
-								else{
-									idPA.getIdSoggetto().setNome(pa.getNomeSoggettoProprietario());
 								}
 								
 								this.portaApplicativaPort.update(idPA, pa);
@@ -699,10 +668,6 @@ public class GestorePdDThread extends GestoreGeneral {
 
 								IdPortaApplicativa idPA = new IdPortaApplicativa();
 								idPA.setNome(nomePA);
-								idPA.setIdSoggetto(new IdSoggetto());
-								idPA.getIdSoggetto().setTipo(tipoSogg);
-								idPA.getIdSoggetto().setNome(nomeSogg);
-
 								this.portaApplicativaPort.deleteById(idPA);
 
 							}
@@ -718,11 +683,6 @@ public class GestorePdDThread extends GestoreGeneral {
 
 						String nomePD = operation.getParameterValue(OperationsParameter.NOME_PD.getNome());
 						String oldNomePD = operation.getParameterValue(OperationsParameter.OLD_NOME_PD.getNome());
-						String tipoSogg = operation.getParameterValue(OperationsParameter.TIPO_SOGGETTO.getNome());
-						String nomeSogg = operation.getParameterValue(OperationsParameter.NOME_SOGGETTO.getNome());
-						String oldTipoProprietario = operation.getParameterValue(OperationsParameter.OLD_TIPO_SOGGETTO.getNome());
-						String oldNomeProprietario = operation.getParameterValue(OperationsParameter.OLD_NOME_SOGGETTO.getNome());
-
 						// Ottengo nuova immagine della porta delegata
 						PortaDelegata pd = null;
 						try {
@@ -785,38 +745,12 @@ public class GestorePdDThread extends GestoreGeneral {
 								// vecchi dati per update
 								pd.setOldNomeForUpdate(oldNomePD);
 								
-								if(oldTipoProprietario!=null && oldNomeProprietario!=null){
-									// Check se operazione di change che  l'operazione di modifica del soggetto non sia ancora in rollback.
-									// Se sussite, aspetto l'operazione.
-									FilterParameter filtro = operazioneInGestione.getFilterChangeIDSoggetto(soggettoProprietario.getTipo(),soggettoProprietario.getNome(),oldTipoProprietario,oldNomeProprietario);										
-									if(operazioneInGestione.existsOperationNotCompleted("change", operation.getHostname(), filtro)){
-										pd.setOldNomeSoggettoProprietarioForUpdate(oldNomeProprietario);
-										pd.setOldTipoSoggettoProprietarioForUpdate(oldTipoProprietario);
-										this.log.debug("ChangePD: operazione change ID Soggetto non ancora completata: utilizzo OLD nome");
-									}else{
-										this.log.debug("ChangePD: operazione change ID Soggetto completata: utilizzo nome");
-									}
-								}
-								
 								IdPortaDelegata idPD = new IdPortaDelegata();
 								if(pd.getOldNomeForUpdate()!=null){
 									idPD.setNome(pd.getOldNomeForUpdate());
 								}
 								else{
 									idPD.setNome(pd.getNome());
-								}
-								idPD.setIdSoggetto(new IdSoggetto());
-								if(pd.getOldTipoSoggettoProprietarioForUpdate()!=null){
-									idPD.getIdSoggetto().setTipo(pd.getOldTipoSoggettoProprietarioForUpdate());
-								}
-								else{
-									idPD.getIdSoggetto().setTipo(pd.getTipoSoggettoProprietario());
-								}
-								if(pd.getOldNomeSoggettoProprietarioForUpdate()!=null){
-									idPD.getIdSoggetto().setNome(pd.getOldNomeSoggettoProprietarioForUpdate());
-								}
-								else{
-									idPD.getIdSoggetto().setNome(pd.getNomeSoggettoProprietario());
 								}
 								
 								this.portaDelegataPort.update(idPD, pd);
@@ -826,9 +760,6 @@ public class GestorePdDThread extends GestoreGeneral {
 
 								IdPortaDelegata idPD = new IdPortaDelegata();
 								idPD.setNome(nomePD);
-								idPD.setIdSoggetto(new IdSoggetto());
-								idPD.getIdSoggetto().setTipo(tipoSogg);
-								idPD.getIdSoggetto().setNome(nomeSogg);
 								
 								this.portaDelegataPort.deleteById(idPD);
 								

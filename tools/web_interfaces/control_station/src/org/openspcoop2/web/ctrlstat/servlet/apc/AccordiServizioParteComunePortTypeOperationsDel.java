@@ -24,7 +24,6 @@ package org.openspcoop2.web.ctrlstat.servlet.apc;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,7 +34,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.id.IDPortType;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -44,9 +43,9 @@ import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
@@ -128,7 +127,7 @@ public final class AccordiServizioParteComunePortTypeOperationsDel extends Actio
 
 			String nomeop = "";
 
-			Vector<IDServizio> idServiziWithPortType = null;
+			List<IDServizio> idServiziWithPortType = null;
 			try{
 				IDPortType idPT = new IDPortType();
 				idPT.setNome(pt.getNome());
@@ -180,7 +179,7 @@ public final class AccordiServizioParteComunePortTypeOperationsDel extends Actio
 						
 						// Se esiste solo un'azione con tale identificativo, posso effettuare il controllo che non vi siano PA/PD esistenti.
 						if (porteApplicativeCore.existsPortaApplicativaAzione(nomeop)) {
-							Vector<IDPortaApplicativaByNome> idPAs = porteApplicativeCore.getPortaApplicativaAzione(nomeop);
+							List<IDPortaApplicativa> idPAs = porteApplicativeCore.getPortaApplicativaAzione(nomeop);
 							errori.append("Azione "+nomeop+" non rimuovibile poiche' in uso in porte applicative: <BR>");
 							for(int j=0;j<idPAs.size();j++){
 								errori.append("- "+idPAs.get(j).toString()+"<BR>");
@@ -188,7 +187,7 @@ public final class AccordiServizioParteComunePortTypeOperationsDel extends Actio
 							continue;
 						}
 						if (porteDelegateCore.existsPortaDelegataAzione(nomeop)) {
-							Vector<IDPortaDelegata> idPDs = porteDelegateCore.getPortaDelegataAzione(nomeop);
+							List<IDPortaDelegata> idPDs = porteDelegateCore.getPortaDelegataAzione(nomeop);
 							errori.append("Azione "+nomeop+" non rimuovibile poiche' in uso in porte delegate: <BR>");
 							for(int j=0;j<idPDs.size();j++){
 								errori.append("- "+idPDs.get(j).toString()+"<BR>");

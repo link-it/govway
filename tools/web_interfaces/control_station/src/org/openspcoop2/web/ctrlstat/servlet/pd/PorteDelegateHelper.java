@@ -36,6 +36,7 @@ import org.openspcoop2.core.config.MessageSecurity;
 import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
@@ -48,6 +49,7 @@ import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.IdentificazioneView;
@@ -85,7 +87,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 
 	public Vector<DataElement> addPorteDelegateToDati(TipoOperazione tipoOp, String idsogg,
 			String nomePorta, Vector<DataElement> dati, String idPorta,
-			String descr, String urlinv, String autenticazione,
+			String descr, String autenticazione,
 			String autorizzazione, String modesp, String soggid,
 			String[] soggettiList, String[] soggettiListLabel, String sp,
 			String tiposp, String patternErogatore, String modeservizio,
@@ -100,7 +102,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			String nomeautor,String autorizzazioneContenuti, String idsogg2, String protocollo
 			,int numSA,	String statoMessageSecurity,String statoMTOM ,int numCorrelazioneReq , 
 			int numCorrelazioneRes,String forceWsdlBased, String applicaMTOM,
-			boolean riusoId) throws DriverRegistroServiziException, DriverControlStationException, DriverRegistroServiziNotFound {
+			boolean riusoId,ServiceBinding serviceBinding) throws DriverRegistroServiziException, DriverControlStationException, DriverRegistroServiziNotFound {
 
 
 
@@ -156,23 +158,6 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_DESCRIZIONE);
 		de.setSize(alternativeSize);
 		dati.addElement(de);
-		if ( (this.porteDelegateCore.isShowPortaDelegataUrlInvocazione()==false) || 
-				InterfaceType.STANDARD.equals(user.getInterfaceType())) {
-			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_URL_DI_INVOCAZIONE);
-			de.setValue("");
-			de.setType(DataElementType.HIDDEN);
-			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_URL_DI_INVOCAZIONE);
-			dati.addElement(de);
-		} else {
-			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_URL_DI_INVOCAZIONE);
-			de.setValue(urlinv);
-			de.setType(DataElementType.TEXT_EDIT);
-			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_URL_DI_INVOCAZIONE);
-			de.setSize(alternativeSize);
-			dati.addElement(de);
-		}
 
 		
 		
@@ -384,7 +369,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				if (InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
 					de = new DataElement();
 					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TIPO);
-					de.setValue(this.apsCore.getTipoServizioDefault());
+					de.setValue(this.apsCore.getTipoServizioDefault(serviceBinding));
 					de.setType(DataElementType.HIDDEN);
 					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SERVIZIO);
 					dati.addElement(de);
@@ -1411,7 +1396,6 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			String idsogg = this.request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 			int soggInt = Integer.parseInt(idsogg);
 			// String descr = this.request.getParameter("descr");
-			String urlinv = this.request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_URL_DI_INVOCAZIONE);
 			String autenticazione = this.request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE);
 			String nomeauth = this.request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_AUTENTICAZIONE);
 			String autorizzazione = this.request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE);
@@ -1522,7 +1506,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
-			if ((nomePD.indexOf(" ") != -1) || (urlinv.indexOf(" ") != -1)) {
+			if ((nomePD.indexOf(" ") != -1) ) {
 				this.pd.setMessage("Non inserire spazi nei campi di testo");
 				return false;
 			}
@@ -1669,44 +1653,36 @@ public class PorteDelegateHelper extends ConsoleHelper {
 					}*/ // Questo controllo serve??? Il valore è stato preso da una select list!!!
 			}
 
-			IDPortaDelegata idPD = new IDPortaDelegata();
-
+			IDSoggetto idSoggettoFruitore = null; 
 			if(this.core.isRegistroServiziLocale()){
 				// Soggetto Fruitore
 				Soggetto soggettoFruitore = null;
 				soggettoFruitore = this.soggettiCore.getSoggettoRegistro(soggInt);
-				IDSoggetto idSO = new IDSoggetto(soggettoFruitore.getTipo(), soggettoFruitore.getNome());
-				idPD.setSoggettoFruitore(idSO);
+				idSoggettoFruitore = new IDSoggetto(soggettoFruitore.getTipo(), soggettoFruitore.getNome());
 			}
 			else{
 				// Soggetto Fruitore
 				org.openspcoop2.core.config.Soggetto soggettoFruitore = null;
 				soggettoFruitore = this.soggettiCore.getSoggetto(soggInt);
-				IDSoggetto idSO = new IDSoggetto(soggettoFruitore.getTipo(), soggettoFruitore.getNome());
-				idPD.setSoggettoFruitore(idSO);
+				idSoggettoFruitore = new IDSoggetto(soggettoFruitore.getTipo(), soggettoFruitore.getNome());
 			}
-			// se url invocazione null allora la url e' il nome della porta
-			urlinv = (("".equals(urlinv) || urlinv == null) ? nomePD : urlinv);
-
-			idPD.setLocationPD(urlinv);
+			
+			IDPortaDelegata idPD = new IDPortaDelegata();
+			idPD.setNome(nomePD);
 
 			// Se tipoOp = add, controllo che la porta delegata non sia gia'
 			// stata registrata
 			if (tipoOp == TipoOperazione.ADD) {
 				boolean giaRegistrato = false;
 				try {
-
 					// controllo puntuale su nome
-					giaRegistrato = this.porteDelegateCore.getIdPortaDelegata(nomePD, idPD.getSoggettoFruitore().getTipo(), idPD.getSoggettoFruitore().getNome()) > 0;
-					// controllo su location e nome
-					if (!giaRegistrato)
-						giaRegistrato = this.porteDelegateCore.getPortaDelegata(idPD) != null;
+					giaRegistrato = this.porteDelegateCore.getIdPortaDelegata(nomePD) > 0;
 				} catch (DriverConfigurazioneNotFound e) {
 					giaRegistrato = false;
 				}
 
 				if (giaRegistrato) {
-					this.pd.setMessage("Esiste gia' una Porta Delegata con nome (o location) [" + nomePD + "] associata al Soggetto [" + idPD.getSoggettoFruitore().toString() + "]");
+					this.pd.setMessage("Esiste gia' una Porta Delegata con nome (o location) [" + nomePD + "]");
 					return false;
 				}
 			} else if (TipoOperazione.CHANGE == tipoOp) {
@@ -1715,9 +1691,9 @@ public class PorteDelegateHelper extends ConsoleHelper {
 					// controllo su nome (non possono esistere 2 pd con stesso
 					// nome dello stesso fruitore)
 					if (!nomePD.equals(oldNomePD)) {
-						long curID = this.porteDelegateCore.getIdPortaDelegata(nomePD, idPD.getSoggettoFruitore().getTipo(), idPD.getSoggettoFruitore().getNome());
+						long curID = this.porteDelegateCore.getIdPortaDelegata(nomePD);
 						if (curID > 0) {
-							this.pd.setMessage("Esiste gia' una Porta Delegata con nome [" + nomePD + "] associata al Soggetto [" + idPD.getSoggettoFruitore().toString() + "]");
+							this.pd.setMessage("Esiste gia' una Porta Delegata con nome [" + nomePD + "]");
 							return false;
 						}
 					}
@@ -1735,10 +1711,10 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				// modificando
 				// in tal caso procedo con l update altrimenti non posso fare
 				// update in quanto pdd gia esistente
-				long oldIDpd =  this.porteDelegateCore.getIdPortaDelegata(oldNomePD, idPD.getSoggettoFruitore().getTipo(), idPD.getSoggettoFruitore().getNome());
+				long oldIDpd =  this.porteDelegateCore.getIdPortaDelegata(oldNomePD);
 				if (portaDelegata != null) {
 					if (oldIDpd != portaDelegata.getId()) {
-						this.pd.setMessage("Esiste gia' una Porta Delegata con nome [" + portaDelegata.getNome() + "]" + (portaDelegata.getLocation() != null && !"".equals(portaDelegata.getLocation()) ? " o location [" + portaDelegata.getLocation() + "]" : "") + " associata al Soggetto [" + idPD.getSoggettoFruitore().toString() + "]");
+						this.pd.setMessage("Esiste gia' una Porta Delegata con nome [" + portaDelegata.getNome() + "]");
 						return false;
 					}
 				}
@@ -1758,7 +1734,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 								
 								IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
 								idServizioApplicativo.setNome(portaDelegata.getServizioApplicativo(i).getNome());
-								idServizioApplicativo.setIdSoggettoProprietario(idPD.getSoggettoFruitore());
+								idServizioApplicativo.setIdSoggettoProprietario(idSoggettoFruitore);
 								ServizioApplicativo saTmp = this.saCore.getServizioApplicativo(idServizioApplicativo);
 								
 								if(saTmp.getInvocazionePorta()==null){
@@ -1835,7 +1811,10 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			}
 
 			IDSoggetto ids = new IDSoggetto(tipoprov, nomeprov);
-			trovatoServizioApplicativo = this.saCore.existsServizioApplicativo(ids, servizioApplicativo);
+			IDServizioApplicativo idSA = new IDServizioApplicativo();
+			idSA.setIdSoggettoProprietario(ids);
+			idSA.setNome(servizioApplicativo);
+			trovatoServizioApplicativo = this.saCore.existsServizioApplicativo(idSA);
 			if (!trovatoServizioApplicativo) {
 				this.pd.setMessage("Il Servizio Applicativo dev'essere scelto tra quelli definiti nel pannello Servizi Applicativi ed associati al soggetto " + tipoprov + "/" + nomeprov);
 				return false;
@@ -1853,7 +1832,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				String nomeporta = pde.getNome();
 
 				for (int i = 0; i < pde.sizeServizioApplicativoList(); i++) {
-					ServizioApplicativo tmpSA = pde.getServizioApplicativo(i);
+					PortaDelegataServizioApplicativo tmpSA = pde.getServizioApplicativo(i);
 					if (servizioApplicativo.equals(tmpSA.getNome())) {
 						giaRegistrato = true;
 						break;

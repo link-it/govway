@@ -29,6 +29,7 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.IntegrationError;
@@ -143,9 +144,9 @@ public class Imbustamento extends GenericLib{
 		msgDiag.setIdMessaggioRichiesta(idMessageRequest);
 		msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_RICHIESTA, idMessageRequest);
 		msgDiag.setDelegata(true);
-		msgDiag.setPorta(richiestaDelegata.getLocationPD());
-		msgDiag.setFruitore(richiestaDelegata.getSoggettoFruitore());
-		msgDiag.addKeywords(richiestaDelegata.getSoggettoFruitore());
+		msgDiag.setPorta(richiestaDelegata.getIdPortaDelegata().getNome());
+		msgDiag.setFruitore(richiestaDelegata.getIdSoggettoFruitore());
+		msgDiag.addKeywords(richiestaDelegata.getIdSoggettoFruitore());
 		msgDiag.setServizio(richiestaDelegata.getIdServizio());
 		msgDiag.addKeywords(richiestaDelegata.getIdServizio());
 		msgDiag.setServizioApplicativo(richiestaDelegata.getServizioApplicativo());
@@ -167,7 +168,7 @@ public class Imbustamento extends GenericLib{
 		RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore = null;
 		try{
 			generatoreErrore = new RicezioneContenutiApplicativiInternalErrorGenerator(this.log, this.idModulo, requestInfo);
-			generatoreErrore.updateInformazioniCooperazione(richiestaDelegata.getSoggettoFruitore(), richiestaDelegata.getIdServizio());
+			generatoreErrore.updateInformazioniCooperazione(richiestaDelegata.getIdSoggettoFruitore(), richiestaDelegata.getIdServizio());
 			generatoreErrore.updateInformazioniCooperazione(richiestaDelegata.getServizioApplicativo());
 			generatoreErrore.updateProprietaErroreApplicativo(proprietaErroreAppl);
 		}catch(Exception e){
@@ -230,7 +231,7 @@ public class Imbustamento extends GenericLib{
 		String riferimentoServizioCorrelato = imbustamentoMsg.getRiferimentoServizioCorrelato();
 		boolean isServizioCorrelato = infoServizio.isCorrelato();
 		IDServizio idServizio = richiestaDelegata.getIdServizio();
-		IDSoggetto soggettoFruitore = richiestaDelegata.getSoggettoFruitore();
+		IDSoggetto soggettoFruitore = richiestaDelegata.getIdSoggettoFruitore();
 		
 
 		// Punto di inizio per la transazione.
@@ -360,7 +361,10 @@ public class Imbustamento extends GenericLib{
 			/* ----------- Lettura PortaDelegata e Servizio Applicativo ------------- */
 			pd = configurazionePdDManager.getPortaDelegata(richiestaDelegata.getIdPortaDelegata());
 			try{
-				sa = configurazionePdDManager.getServizioApplicativo(richiestaDelegata.getIdPortaDelegata(), richiestaDelegata.getServizioApplicativo());
+				IDServizioApplicativo idSA = new IDServizioApplicativo();
+				idSA.setNome(richiestaDelegata.getServizioApplicativo());
+				idSA.setIdSoggettoProprietario(richiestaDelegata.getIdSoggettoFruitore());
+				sa = configurazionePdDManager.getServizioApplicativo(idSA);
 			}catch(DriverConfigurazioneNotFound e){
 				if(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(richiestaDelegata.getServizioApplicativo())==false)
 					throw e;
@@ -694,7 +698,7 @@ public class Imbustamento extends GenericLib{
 						if(configurazionePdDManager.isModalitaStateless(pd, infoServizio.getProfiloDiCollaborazione())){
 							infoIntegrazione = new Integrazione();
 							infoIntegrazione.setIdModuloInAttesa(this.idModulo);
-							infoIntegrazione.setLocationPD(richiestaDelegata.getLocationPD());
+							infoIntegrazione.setNomePorta(richiestaDelegata.getIdPortaDelegata().getNome());
 							infoIntegrazione.setServizioApplicativo(richiestaDelegata.getServizioApplicativo());
 							
 							if(busta.getScadenza()==null){

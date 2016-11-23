@@ -189,7 +189,6 @@ public class PorteDelegateCostanti {
 	public final static String PARAMETRO_PORTE_DELEGATE_TIPO_SOGGETTO = "tipoprov";
 	public final static String PARAMETRO_PORTE_DELEGATE_NOME_SOGGETTO = "nomeprov";
 	public final static String PARAMETRO_PORTE_DELEGATE_DESCRIZIONE = "descr";
-	public final static String PARAMETRO_PORTE_DELEGATE_URL_DI_INVOCAZIONE = "urlinv";
 	public final static String PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE = "autenticazione";
 	public final static String PARAMETRO_PORTE_DELEGATE_TIPO_SERVIZIO = "tiposervizio";
 	public final static String PARAMETRO_PORTE_DELEGATE_MODE_SERVIZIO = "modeservizio";
@@ -261,7 +260,6 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VALORE = "Valore";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_TIPO = "Tipo";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_DESCRIZIONE = "Descrizione";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_URL_DI_INVOCAZIONE = "Url di Invocazione";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE = "Autenticazione";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE = "Autorizzazione";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI = "Autorizzazione Contenuti";

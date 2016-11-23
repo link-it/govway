@@ -37,7 +37,6 @@ import java.sql.Connection;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
 
-import org.slf4j.Logger;
 import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IUnmarshallingContext;
@@ -65,7 +64,7 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
-import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.message.xml.XMLUtils;
@@ -73,6 +72,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
+import org.slf4j.Logger;
 import org.w3c.dom.Document;
 
 /**
@@ -665,33 +665,13 @@ public class XMLDataConverter {
 				for(int j=0;j<soggetto.sizePortaDelegataList();j++){
 					PortaDelegata pd = soggetto.getPortaDelegata(j);
 					
-					String nomePD = pd.getNome();
-					if(pd.getLocation()!=null){
-						nomePD =pd.getLocation();
-					}
-					nomePD = soggetto.getTipo()+soggetto.getNome()+"_"+nomePD;
-					
-					// creazione servizi applicativi interni alla porta delegata
-					for(int k=0; k<pd.sizeServizioApplicativoList();k++){
-						ServizioApplicativo saPD = pd.getServizioApplicativo(k);
-						if(saPD.getInvocazionePorta()!=null || saPD.getInvocazioneServizio()!=null || saPD.getRispostaAsincrona()!=null){
-							saPD.setNome(nomePD+"_"+saPD.getNome());
-							this.addServizioApplicativo(saPD,soggetto,"Definizione Interna alla PortaDelegata",reset);			
-						}
-					}
-					
 					pd.setTipoSoggettoProprietario(soggetto.getTipo());
 					pd.setNomeSoggettoProprietario(soggetto.getNome());
 					
 					impostaInformazioniConfigurazione_PortaDelegata(pd);
 					
-					IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipo(),soggetto.getNome());
 					IDPortaDelegata idPD = new IDPortaDelegata();
-					idPD.setSoggettoFruitore(idSoggetto);
-					idPD.setLocationPD(pd.getNome());
-					if(pd.getLocation()!=null){
-						idPD.setLocationPD(pd.getLocation());
-					}					
+					idPD.setNome(pd.getNome());			
 					if( (reset==false) && this.gestoreCRUD.existsPortaDelegata(idPD)){
 						this.log.info("Porta delegata ["+pd.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornamento in corso...");
 						this.gestoreCRUD.updatePortaDelegata(pd);
@@ -715,30 +695,14 @@ public class XMLDataConverter {
 				for(int j=0;j<soggetto.sizePortaApplicativaList();j++){
 					PortaApplicativa pa = soggetto.getPortaApplicativa(j);
 					
-					String nomePA = pa.getNome();
-					nomePA = soggetto.getTipo()+soggetto.getNome()+"_"+nomePA;
-					
-					// creazione servizi applicativi interni alla porta applicativa
-					for(int k=0; k<pa.sizeServizioApplicativoList();k++){
-						ServizioApplicativo saPA = pa.getServizioApplicativo(k);
-						if(saPA.getInvocazionePorta()!=null || saPA.getInvocazioneServizio()!=null || saPA.getRispostaAsincrona()!=null){
-							saPA.setNome(nomePA+"_"+saPA.getNome());
-							this.addServizioApplicativo(saPA,soggetto,"Definizione Interna alla PortaApplicativa",reset);		
-						}
-					}
-					
 					pa.setTipoSoggettoProprietario(soggetto.getTipo());
 					pa.setNomeSoggettoProprietario(soggetto.getNome());
 					
 					impostaInformazioniConfigurazione_PortaApplicativa(pa);
 					
-					IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipo(),soggetto.getNome());
-					//IDPortaApplicativa idPA = new IDPortaApplicativa();
-					//String azione = null;
-					//if(pa.getAzione()!=null)
-					//	azione = pa.getAzione().getNome();
-					//idPA.setIDServizio(new IDServizio(idSoggetto,pa.getServizio().getTipo(),pa.getServizio().getNome(),azione));
-					if( (reset==false) && this.gestoreCRUD.existsPortaApplicativa(pa.getNome(), idSoggetto)){
+					IDPortaApplicativa idPA = new IDPortaApplicativa();
+					idPA.setNome(pa.getNome());
+					if( (reset==false) && this.gestoreCRUD.existsPortaApplicativa(idPA)){
 						this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornamento in corso...");
 						this.gestoreCRUD.updatePortaApplicativa(pa);
 						this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornato.");
@@ -877,37 +841,13 @@ public class XMLDataConverter {
 				Soggetto soggetto = this.sorgenteConfigurazione.getSoggetto(i);
 				for(int j=0;j<soggetto.sizePortaDelegataList();j++){
 					PortaDelegata pd = soggetto.getPortaDelegata(j);
-					IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipo(),soggetto.getNome());
 					IDPortaDelegata idPD = new IDPortaDelegata();
-					idPD.setSoggettoFruitore(idSoggetto);
-					idPD.setLocationPD(pd.getNome());
-					if(pd.getLocation()!=null){
-						idPD.setLocationPD(pd.getLocation());
-					}			
+					idPD.setNome(pd.getNome());		
 					this.log.info("Porta delegata ["+pd.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" eliminazione in corso...");
 					if(this.gestoreCRUD.existsPortaDelegata(idPD)){
 						this.gestoreCRUD.deletePortaDelegata(((IDriverConfigurazioneGet)this.gestoreCRUD).getPortaDelegata(idPD));
 					}
 					this.log.info("Porta delegata ["+pd.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" eliminata.");
-					
-					
-					// eliminazione servizi applicativi interni alla porta delegata
-					String nomePD = pd.getNome();
-					if(pd.getLocation()!=null){
-						nomePD =pd.getLocation();
-					}
-					nomePD = soggetto.getTipo()+soggetto.getNome()+"_"+nomePD;
-					for(int k=0; k<pd.sizeServizioApplicativoList();k++){
-						ServizioApplicativo saPD = pd.getServizioApplicativo(k);
-						if(saPD.getInvocazionePorta()!=null || saPD.getInvocazioneServizio()!=null || saPD.getRispostaAsincrona()!=null){
-							saPD.setNome(nomePD+"_"+saPD.getNome());
-							this.log.info("Servizio Applicativo ["+saPD.getNome()+"] [Definizione Interna alla PortaDelegata] del Soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome()+" eliminazione in corso...");
-							if( this.gestoreCRUD.existsServizioApplicativo(idSoggetto, saPD.getNome())){
-								this.gestoreCRUD.deleteServizioApplicativo(((IDriverConfigurazioneGet)this.gestoreCRUD).getServizioApplicativo(idSoggetto, saPD.getNome()));
-							}
-							this.log.info("Servizio Applicativo ["+saPD.getNome()+"] [Definizione Interna alla PortaDelegata] del Soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome()+" eliminato.");				
-						}
-					}
 				}
 			}
 		}catch(Exception e){
@@ -921,33 +861,13 @@ public class XMLDataConverter {
 				Soggetto soggetto = this.sorgenteConfigurazione.getSoggetto(i);
 				for(int j=0;j<soggetto.sizePortaApplicativaList();j++){
 					PortaApplicativa pa = soggetto.getPortaApplicativa(j);
-					IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipo(),soggetto.getNome());
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
-					String azione = null;
-					if(pa.getAzione()!=null)
-						azione = pa.getAzione().getNome();
-					idPA.setIDServizio(new IDServizio(idSoggetto,pa.getServizio().getTipo(),pa.getServizio().getNome(),azione));
+					idPA.setNome(pa.getNome());		
 					this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" eliminazione in corso...");
-					if( this.gestoreCRUD.existsPortaApplicativa(idPA,true)){
+					if( this.gestoreCRUD.existsPortaApplicativa(idPA)){
 						this.gestoreCRUD.deletePortaApplicativa(((IDriverConfigurazioneGet)this.gestoreCRUD).getPortaApplicativa(idPA));
 					}
 					this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" eliminata.");
-					
-					
-					// eliminazione servizi applicativi interni alla porta applicativa
-					String nomePA = pa.getNome();
-					nomePA = soggetto.getTipo()+soggetto.getNome()+"_"+nomePA;
-					for(int k=0; k<pa.sizeServizioApplicativoList();k++){
-						ServizioApplicativo saPA = pa.getServizioApplicativo(k);
-						if(saPA.getInvocazionePorta()!=null || saPA.getInvocazioneServizio()!=null || saPA.getRispostaAsincrona()!=null){
-							saPA.setNome(nomePA+"_"+saPA.getNome());
-							this.log.info("Servizio Applicativo ["+saPA.getNome()+"] [Definizione Interna alla PortaApplicativa] del Soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome()+" eliminazione in corso...");
-							if( this.gestoreCRUD.existsServizioApplicativo(idSoggetto, saPA.getNome())){
-								this.gestoreCRUD.deleteServizioApplicativo(((IDriverConfigurazioneGet)this.gestoreCRUD).getServizioApplicativo(idSoggetto, saPA.getNome()));
-							}
-							this.log.info("Servizio Applicativo ["+saPA.getNome()+"] [Definizione Interna alla PortaApplicativa] del Soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome()+" eliminato.");		
-						}
-					}
 				}
 			}
 		}catch(Exception e){
@@ -963,9 +883,12 @@ public class XMLDataConverter {
 				for(int j=0;j<soggetto.sizeServizioApplicativoList();j++){
 					ServizioApplicativo servizioApplicativo = soggetto.getServizioApplicativo(j);
 					IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipo(),soggetto.getNome());
+					IDServizioApplicativo idSA = new IDServizioApplicativo();
+					idSA.setIdSoggettoProprietario(idSoggetto);
+					idSA.setNome(servizioApplicativo.getNome());
 					this.log.info("Servizio Applicativo ["+servizioApplicativo.getNome()+"] del Soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome()+" eliminazione in corso...");
-					if( this.gestoreCRUD.existsServizioApplicativo(idSoggetto, servizioApplicativo.getNome())){
-						this.gestoreCRUD.deleteServizioApplicativo(((IDriverConfigurazioneGet)this.gestoreCRUD).getServizioApplicativo(idSoggetto, servizioApplicativo.getNome()));
+					if( this.gestoreCRUD.existsServizioApplicativo(idSA)){
+						this.gestoreCRUD.deleteServizioApplicativo(((IDriverConfigurazioneGet)this.gestoreCRUD).getServizioApplicativo(idSA));
 					}
 					this.log.info("Servizio Applicativo ["+servizioApplicativo.getNome()+"] del Soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome()+" eliminato.");
 				}
@@ -1249,12 +1172,13 @@ public class XMLDataConverter {
 		
 		// *** effettua create/update/delete
 		IDSoggetto idSoggetto = new IDSoggetto(soggettoProprietario.getTipo(),soggettoProprietario.getNome());
-		if( (reset==false) && this.gestoreCRUD.existsServizioApplicativo(idSoggetto, servizioApplicativo.getNome())){
+		IDServizioApplicativo idSA = new IDServizioApplicativo();
+		idSA.setIdSoggettoProprietario(idSoggetto);
+		idSA.setNome(servizioApplicativo.getNome());
+		if( (reset==false) && this.gestoreCRUD.existsServizioApplicativo(idSA)){
 			this.log.info("Servizio Applicativo ["+servizioApplicativo.getNome()+"]"+pos+" del Soggetto "+soggettoProprietario.getTipo()+"/"+soggettoProprietario.getNome()+" aggiornamento in corso...");
 			
-			IDPortaDelegata idPD = new IDPortaDelegata();
-			idPD.setSoggettoFruitore(new IDSoggetto(soggettoProprietario.getTipo(),soggettoProprietario.getNome()));
-			ServizioApplicativo old = ((IDriverConfigurazioneGet) this.gestoreCRUD).getServizioApplicativo(idPD, servizioApplicativo.getNome());
+			ServizioApplicativo old = ((IDriverConfigurazioneGet) this.gestoreCRUD).getServizioApplicativo(idSA);
 			
 			impostaInformazioniConfigurazione_ServizioApplicativo_update(servizioApplicativo, old);
 			

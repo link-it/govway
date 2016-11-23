@@ -42,7 +42,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipoPdD;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -884,20 +884,18 @@ public class RicezioneContenutiApplicativi {
 			return;
 		}
 		// Raccolgo dati
-		IDSoggetto soggettoFruitore = identificazione.getSoggetto();
+		IDPortaDelegata idPD = identificazione.getIdPortaDelegata();
+		IDSoggetto soggettoFruitore = idPD.getIdentificativiFruizione().getSoggettoFruitore();
 		PortaDelegata pd = identificazione.getPd();
 		identitaPdD = soggettoFruitore; // la PdD Assume l'identita del soggetto
 		this.msgContext.getProtocol().setDominio(identitaPdD);
 		this.msgContext.setIdentitaPdD(identitaPdD);
 		// che possiede la Porta Delegata ID Porta Delegata
-		IDPortaDelegata idPD = new IDPortaDelegata();
-		idPD.setLocationPD(identificazione.getNomePDIndivituata());
-		idPD.setSoggettoFruitore(soggettoFruitore);
 		this.msgContext.getIntegrazione().setIdPD(idPD);
 		// altri contesti
 		msgDiag.setDominio(identitaPdD); // imposto anche il dominio nel msgDiag
 		msgDiag.setFruitore(soggettoFruitore);
-		msgDiag.addKeyword(CostantiPdD.KEY_PORTA_DELEGATA, identificazione.getNomePDIndivituata());
+		msgDiag.addKeyword(CostantiPdD.KEY_PORTA_DELEGATA, idPD.getNome());
 		msgDiag.addKeywords(soggettoFruitore);
 		proprietaErroreAppl.setDominio(identitaPdD.getCodicePorta()); // imposto
 		// anche il dominio per gli errori
@@ -1089,7 +1087,10 @@ public class RicezioneContenutiApplicativi {
 				servizioApplicativo = headerIntegrazioneRichiesta.getServizioApplicativo();
 				boolean existsServizioApplicativo = false;
 				try {
-					existsServizioApplicativo = configurazionePdDReader.existsServizioApplicativo(idPD,servizioApplicativo);
+					IDServizioApplicativo idSA = new IDServizioApplicativo();
+					idSA.setNome(servizioApplicativo);
+					idSA.setIdSoggettoProprietario(soggettoFruitore);
+					existsServizioApplicativo = configurazionePdDReader.existsServizioApplicativo(idSA);
 				} catch (Exception e) {
 					msgDiag.logErroreGenerico(e, "existsServizioApplicativo(idPD,"+servizioApplicativo+")");
 					openspcoopstate.releaseResource();
@@ -1169,7 +1170,7 @@ public class RicezioneContenutiApplicativi {
 			servizioApplicativo = auth.getServizioApplicativo().getNome();
 		}
 		// Identita' errore
-		msgDiag.setPorta(idPD.getLocationPD());
+		msgDiag.setPorta(idPD.getNome());
 		msgDiag.setServizioApplicativo(servizioApplicativo);
 		msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE, servizioApplicativo);
 		// identita
@@ -1189,7 +1190,10 @@ public class RicezioneContenutiApplicativi {
 		msgDiag.mediumDebug("Get servizio applicativo...");
 		ServizioApplicativo sa = null;
 		try{
-			sa = configurazionePdDReader.getServizioApplicativo(idPD, servizioApplicativo);
+			IDServizioApplicativo idSA = new IDServizioApplicativo();
+			idSA.setNome(servizioApplicativo);
+			idSA.setIdSoggettoProprietario(soggettoFruitore);
+			sa = configurazionePdDReader.getServizioApplicativo(idSA);
 		}catch (Exception e) {
 			if( !(e instanceof DriverConfigurazioneNotFound) || !(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(servizioApplicativo)) ){
 				msgDiag.logErroreGenerico(e, "getServizioApplicativo(idPD,"+servizioApplicativo+")");
@@ -1245,7 +1249,7 @@ public class RicezioneContenutiApplicativi {
 		if (this.msgContext.isGestioneRisposta())
 			idModuloInAttesa = this.msgContext.getIdModulo();
 		RichiestaDelegata richiestaDelegata = new RichiestaDelegata(
-				soggettoFruitore, idPD.getLocationPD(), servizioApplicativo,
+				idPD, servizioApplicativo,
 				idModuloInAttesa, proprietaErroreAppl, identitaPdD);
 		try {
 			IDSoggetto soggettoErogatore = new IDSoggetto(pd.getTipoSoggettoProprietario(),pd.getNomeSoggettoProprietario());
@@ -1409,7 +1413,7 @@ public class RicezioneContenutiApplicativi {
 			return;
 		}
 		GestoreCorrelazioneApplicativa correlazioneApplicativa = 
-			new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRichiesta(), logCore, richiestaDelegata.getSoggettoFruitore(),
+			new GestoreCorrelazioneApplicativa(openspcoopstate.getStatoRichiesta(), logCore, richiestaDelegata.getIdSoggettoFruitore(),
 					richiestaDelegata.getIdServizio(),servizioApplicativo,protocolFactory);
 		boolean correlazioneEsistente = false;
 		String idCorrelazioneApplicativa = null;
@@ -1614,7 +1618,7 @@ public class RicezioneContenutiApplicativi {
 		
 		IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
 		idServizioApplicativo.setNome(servizioApplicativo);
-		idServizioApplicativo.setIdSoggettoProprietario(idPD.getSoggettoFruitore());
+		idServizioApplicativo.setIdSoggettoProprietario(soggettoFruitore);
 		
 		DatiInvocazionePortaDelegata datiInvocazione = new DatiInvocazionePortaDelegata();
 		datiInvocazione.setInfoConnettoreIngresso(inRequestContext.getConnettore());
@@ -2717,15 +2721,40 @@ public class RicezioneContenutiApplicativi {
 				
 				RichiestaApplicativa ra = null;
 				if(erroreConfigurazione==null){
-					IDPortaApplicativaByNome idPaByNome = configurazionePdDReader.convertTo_SafeMethod(idServizio, null);
-					ra = new RichiestaApplicativa(soggettoFruitore, idServizio, identitaPdD, idPaByNome);
-					if(configurazionePdDReader.existsPA(ra)==false){
-						erroreConfigurazione = "non risulta esistere una porta applicativa associata al servizio richiesto";
+					
+					// TODO Fare opzione che si indica nella PD il nome della PA su cui effettuare il localForward
+					IDPortaApplicativa idPA = null;
+					String nomePA = null; // TODO
+					if(nomePA==null){
+						try{
+							List<PortaApplicativa> list = configurazionePdDReader.getPorteApplicative(idServizio, false);
+							if(list.size()<=0){
+								throw new DriverConfigurazioneNotFound("NotFound");
+							}
+							if(list.size()>1){
+								throw new Exception("Esiste più di una porta applicativa indirizzabile tramite il servizio ["+idServizio+"] indicato nella porta delegata ["+
+										idPD.getNome()+"]");
+							}
+							idPA = configurazionePdDReader.convertToIDPortaApplicativa(list.get(0));
+						}catch(DriverConfigurazioneNotFound n){
+							erroreConfigurazione = "Non esiste alcuna porta applicativa indirizzabile tramite il servizio ["+idServizio+"] indicato nella porta delegata ["+
+									idPD.getNome()+"]";
+						}catch(Exception e){
+							erroreConfigurazione = e.getMessage();
+						}
 					}
+					else{
+						try{
+							idPA = configurazionePdDReader.getIDPortaApplicativa(nomePA, protocolFactory);
+						}catch(Exception e){
+							erroreConfigurazione = e.getMessage();
+						}
+					}
+					ra = new RichiestaApplicativa(soggettoFruitore,idServizio.getSoggettoErogatore(), idPA);
 				}
 				
 				if(erroreConfigurazione==null){
-					pa = configurazionePdDReader.getPortaApplicativa_SafeMethod(ra.getIdPAbyNome());
+					pa = configurazionePdDReader.getPortaApplicativa_SafeMethod(ra.getIdPortaApplicativa());
 					if(pa.sizeServizioApplicativoList()<=0){
 						erroreConfigurazione = "non risultano registrati servizi applicativi erogatori associati alla porta applicativa ("+pa.getNome()
 								+") relativa al servizio richiesto";
@@ -3019,7 +3048,7 @@ public class RicezioneContenutiApplicativi {
 				}
 				Integrazione infoIntegrazione = new Integrazione();
 				infoIntegrazione.setIdModuloInAttesa(this.msgContext.getIdModulo());
-				infoIntegrazione.setLocationPD(richiestaDelegata.getLocationPD());
+				infoIntegrazione.setNomePorta(richiestaDelegata.getIdPortaDelegata().getNome());
 				infoIntegrazione.setServizioApplicativo(richiestaDelegata.getServizioApplicativo());
 				repositoryBuste.aggiornaInfoIntegrazione(idMessageRequest,tipoMessaggio,infoIntegrazione);
 			}

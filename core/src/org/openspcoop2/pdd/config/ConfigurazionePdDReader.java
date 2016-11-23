@@ -26,10 +26,10 @@ package org.openspcoop2.pdd.config;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.logging.log4j.Level;
@@ -75,7 +75,6 @@ import org.openspcoop2.core.config.driver.ValidazioneSemantica;
 import org.openspcoop2.core.config.driver.xml.DriverConfigurazioneXML;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.id.IDPortaApplicativa;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -123,15 +122,15 @@ public class ConfigurazionePdDReader {
 	private boolean configurazioneDinamica = false;
 
 	/** Registro dei Servizi Reader per il routing */
-//	private RegistroServiziReader registroServiziReader;
+	//	private RegistroServiziReader registroServiziReader;
 
 	/** Logger utilizzato per debug. */
 	private Logger log = null;
-	
+
 	/** OpenSPCoopProperties */
 	private OpenSPCoop2Properties openspcoopProperties = null;
 	private PddProperties pddProperties = null;
-	
+
 	/** Server J2EE */
 	private boolean serverJ2EE;
 
@@ -215,7 +214,7 @@ public class ConfigurazionePdDReader {
 			throw new DriverConfigurazioneException("Visualizzazione chiavi presenti nella cache della Configurazione della Porta di Dominio non riuscita: "+e.getMessage(),e);
 		}
 	}
-	
+
 	public static String getObjectCache(String key) throws DriverConfigurazioneException{
 		try{
 			ConfigurazionePdDReader configurazionePdDReader = org.openspcoop2.pdd.config.ConfigurazionePdDReader.getInstance();
@@ -229,7 +228,7 @@ public class ConfigurazionePdDReader {
 			throw new DriverConfigurazioneException("Visualizzazione oggetto presente nella cache della Configurazione della Porta di Dominio non riuscita: "+e.getMessage(),e);
 		}
 	}
-	
+
 	public static void removeObjectCache(String key) throws DriverConfigurazioneException{
 		try{
 			ConfigurazionePdDReader configurazionePdDReader = org.openspcoop2.pdd.config.ConfigurazionePdDReader.getInstance();
@@ -325,13 +324,13 @@ public class ConfigurazionePdDReader {
 			// OpenSPCoop Properties
 			this.openspcoopProperties = OpenSPCoop2Properties.getInstance();
 			this.pddProperties = PddProperties.getInstance();
-			
+
 			// configurazioneDinamica
 			this.configurazioneDinamica = this.openspcoopProperties.isConfigurazioneDinamica();
-			
+
 			// Server J2EE
 			this.serverJ2EE = this.openspcoopProperties.isServerJ2EE();
-			
+
 			ConfigurazionePdDReader.initialize = true;
 		}catch(Exception e){
 			if(this.log!=null)
@@ -349,13 +348,13 @@ public class ConfigurazionePdDReader {
 	 * 
 	 * @throws DriverConfigurazioneException
 	 */
-//	public void initializeRegistroServiziReader()throws DriverConfigurazioneException{
-//		//	 RegistroServizi
-//		if(RegistroServiziReader.isInitialize()==false){
-//			throw new DriverConfigurazioneException("Registro dei Servizi non risulta inizializzato");
-//		}
-//		this.registroServiziReader = RegistroServiziReader.getInstance();
-//	}
+	//	public void initializeRegistroServiziReader()throws DriverConfigurazioneException{
+	//		//	 RegistroServizi
+	//		if(RegistroServiziReader.isInitialize()==false){
+	//			throw new DriverConfigurazioneException("Registro dei Servizi non risulta inizializzato");
+	//		}
+	//		this.registroServiziReader = RegistroServiziReader.getInstance();
+	//	}
 
 
 
@@ -373,8 +372,8 @@ public class ConfigurazionePdDReader {
 	protected void isAlive() throws CoreException{
 		((IMonitoraggioRisorsa)this.configurazionePdD.getDriverConfigurazionePdD()).isAlive();
 	}
-	
-	
+
+
 	/**
 	 * Validazione semantica dei registri servizi
 	 * 
@@ -397,7 +396,7 @@ public class ConfigurazionePdDReader {
 			if(validazione){
 				BeanUtilities driverConfigurazione = (BeanUtilities) o;
 				org.openspcoop2.core.config.Openspcoop2 configurazionePdD = driverConfigurazione.getImmagineCompletaConfigurazionePdD();
-				
+
 				ValidazioneSemantica validazioneSemantica = new ValidazioneSemantica(configurazionePdD,
 						tipiConnettori,ProtocolFactoryManager.getInstance().getOrganizationTypesAsArray(),
 						ProtocolFactoryManager.getInstance().getServiceTypesAsArray(org.openspcoop2.protocol.manifest.constants.ServiceBinding.SOAP),
@@ -415,7 +414,7 @@ public class ConfigurazionePdDReader {
 			throw new CoreException(e.getMessage(),e);
 		}
 	}
-	
+
 	protected void setValidazioneSemanticaModificaConfigurazionePdDXML(String[] tipiConnettori,
 			String[]tipoMsgDiagnosticiAppender,String[]tipoTracciamentoAppender,
 			String[]tipoAutenticazione,String[]tipoAutorizzazione,
@@ -437,7 +436,7 @@ public class ConfigurazionePdDReader {
 			throw new CoreException(e.getMessage(),e);
 		}
 	}
-	
+
 	protected void verificaConsistenzaConfigurazione() throws DriverConfigurazioneException {
 		Object o = this.configurazionePdD.getDriverConfigurazionePdD();
 		if(o instanceof DriverConfigurazioneXML){
@@ -445,10 +444,10 @@ public class ConfigurazionePdDReader {
 			driver.refreshConfigurazioneXML();
 		}
 	}
-	
-	
-	
-	
+
+
+
+
 
 
 
@@ -459,49 +458,6 @@ public class ConfigurazionePdDReader {
 
 	/* ********  SOGGETTI (Interfaccia)  ******** */
 
-	/**
-	 * Restituisce Il soggetto che include la porta delegata identificata da <var>idPD</var>
-	 *
-	 * @param location Location che identifica una porta delegata
-	 * @return Il Soggetto che include la porta delegata fornita come parametro.
-	 * 
-	 */
-	protected IDSoggetto getSoggettoProprietarioPortaDelegata(Connection connectionPdD, String location,IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
-
-		Soggetto soggetto = this.configurazionePdD.getSoggettoProprietarioPortaDelegata(connectionPdD,location);
-		if(soggetto==null)
-			throw new DriverConfigurazioneNotFound("Soggetto che possiede la porta delegata ["+location+"] non esistente");
-
-		IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipo(),soggetto.getNome());
-		if(soggetto.getIdentificativoPorta() != null){
-			idSoggetto.setCodicePorta(soggetto.getIdentificativoPorta());
-		}else{
-			try{
-				idSoggetto.setCodicePorta(protocolFactory.createTraduttore().getIdentificativoPortaDefault(idSoggetto));
-			}catch(Exception e){
-				throw new DriverConfigurazioneException(e.getMessage(),e);
-			}
-		}
-		return idSoggetto;
-	}
-	protected IDSoggetto getSoggettoProprietarioPortaApplicativa(Connection connectionPdD, String location,IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
-
-		Soggetto soggetto = this.configurazionePdD.getSoggettoProprietarioPortaApplicativa(connectionPdD,location);
-		if(soggetto==null)
-			throw new DriverConfigurazioneNotFound("Soggetto che possiede la porta applicativa ["+location+"] non esistente");
-
-		IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipo(),soggetto.getNome());
-		if(soggetto.getIdentificativoPorta() != null){
-			idSoggetto.setCodicePorta(soggetto.getIdentificativoPorta());
-		}else{
-			try{
-				idSoggetto.setCodicePorta(protocolFactory.createTraduttore().getIdentificativoPortaDefault(idSoggetto));
-			}catch(Exception e){
-				throw new DriverConfigurazioneException(e.getMessage(),e);
-			}
-		}
-		return idSoggetto;
-	}
 	/**
 	 * Restituisce Il dominio di un soggetto  identificato da <var>idSoggetto</var>
 	 *
@@ -540,7 +496,7 @@ public class ConfigurazionePdDReader {
 	protected boolean isSoggettoVirtuale(Connection connectionPdD, IDSoggetto idSoggetto) throws DriverConfigurazioneException { 
 
 		// il soggetto virtuale e' stato registrato come tale?
-		
+
 		if(idSoggetto == null || idSoggetto.getTipo()==null || idSoggetto.getNome()==null)
 			return false;
 
@@ -552,7 +508,7 @@ public class ConfigurazionePdDReader {
 			this.log.info("Soggetti virtuali non presenti.");
 			return false;
 		}
-		
+
 		String keySoggetto = idSoggetto.getTipo() + idSoggetto.getNome();
 
 		return listaSoggettiVirtuali.contains(keySoggetto);
@@ -675,12 +631,12 @@ public class ConfigurazionePdDReader {
 		}	*/
 		if( (routingTable.getAbilitata()==null || routingTable.getAbilitata()==false) 
 				|| 
-			( 
-				( (routingTable.getDefault()==null) || (routingTable.getDefault().sizeRouteList()==0) ) 
-					&& 
-				(routingTable.sizeDestinazioneList()==0) 
-			) 
-		){
+				( 
+						( (routingTable.getDefault()==null) || (routingTable.getDefault().sizeRouteList()==0) ) 
+						&& 
+						(routingTable.sizeDestinazioneList()==0) 
+						) 
+				){
 
 			if(routingTable.getAbilitata()==null || routingTable.getAbilitata()==false)
 				this.log.debug("getForwardRoute: routing table disabilitata");
@@ -801,7 +757,7 @@ public class ConfigurazionePdDReader {
 					if(route.getRegistro()!=null){ 
 						this.log.debug("getForwardRoute: esamino routing table, rotta di default, Registro nomeRegistro["+route.getRegistro().getNome()+"]");
 						bf.append(" Registro nomeRegistro["+route.getRegistro().getNome()+"]: ");
-	
+
 						// Utilizzo del registro con l'identita reale della busta
 						if(idSoggettoMittente!=null && idServizio.getServizio()!=null){
 							connettoreDominio = registroServiziManager.getConnettore(idSoggettoMittente,idServizio,route.getRegistro().getNome());
@@ -817,7 +773,7 @@ public class ConfigurazionePdDReader {
 					}else if(route.getGateway()!=null){ 
 						this.log.debug("getForwardRoute: esamino routing table, rotta di default, GateWay["+route.getGateway().getTipo()+"/"+route.getGateway().getNome()+"]");
 						bf.append(" GateWay["+route.getGateway().getTipo()+"/"+route.getGateway().getNome()+"]: ");
-	
+
 						// Utilizzo del gateway
 						IDSoggetto gateway = new IDSoggetto(route.getGateway().getTipo(),
 								route.getGateway().getNome());
@@ -890,11 +846,11 @@ public class ConfigurazionePdDReader {
 		}
 		if(routingTable == null || (routingTable.getAbilitata()==null || routingTable.getAbilitata()==false) || 
 				( 
-					(routingTable.getDefault()==null || routingTable.getDefault().sizeRouteList()==0) 
+						(routingTable.getDefault()==null || routingTable.getDefault().sizeRouteList()==0) 
 						&& 
-					(routingTable.sizeDestinazioneList()==0) 
-				) 
-		){
+						(routingTable.sizeDestinazioneList()==0) 
+						) 
+				){
 			return false;
 		}
 
@@ -926,11 +882,11 @@ public class ConfigurazionePdDReader {
 		}
 		if(routingTable == null || (routingTable.getAbilitata()==null || routingTable.getAbilitata()==false) || 
 				( 
-					(routingTable.getDefault()==null || routingTable.getDefault().sizeRouteList()==0) 
+						(routingTable.getDefault()==null || routingTable.getDefault().sizeRouteList()==0) 
 						&& 
-					(routingTable.sizeDestinazioneList()==0) 
-				) 
-		){
+						(routingTable.sizeDestinazioneList()==0) 
+						) 
+				){
 			throw new DriverConfigurazioneException("getRouterIdentity error: RoutingTable non definita");
 		}
 
@@ -962,11 +918,11 @@ public class ConfigurazionePdDReader {
 
 
 
-	
-	
-	
+
+
+
 	/* ********  URLPrefixRewriter  ******** */
-	
+
 	protected void setPDUrlPrefixRewriter(Connection connectionPdD, org.openspcoop2.core.config.Connettore connettore, IDSoggetto idSoggettoFruitore) throws DriverConfigurazioneNotFound,DriverConfigurazioneException{
 		if(idSoggettoFruitore==null)
 			return;
@@ -980,7 +936,7 @@ public class ConfigurazionePdDReader {
 		setUrlPrefixRewriter(soggettoErogatore.getPaUrlPrefixRewriter(),"paUrlPrefixRewriter", connettore);
 	}
 	private void setUrlPrefixRewriter(String urlPrefix,String funzione,org.openspcoop2.core.config.Connettore connettore) throws DriverConfigurazioneNotFound,DriverConfigurazioneException{
-			
+
 		if( (urlPrefix!=null) && (!"".equals(urlPrefix)) ){
 			// search location property
 			for (int i = 0; i < connettore.sizePropertyList(); i++) {
@@ -991,39 +947,39 @@ public class ConfigurazionePdDReader {
 					break;
 				}
 			}
-			
+
 		}
-		
+
 	}
 	private String urlPrefixRewriter(String funzione,String urlOriginale, String urlPrefix) throws DriverConfigurazioneException{
-		
+
 		try{
-		
+
 			String urlFinale = urlPrefix;
-						
+
 			String originale = urlOriginale;
 			if(originale==null){
 				throw new DriverRegistroServiziException("["+funzione+"] Url originale non fornita");
 			}
 			originale = originale.trim();
-			
+
 			// Per evitare replace multipli (in caso di risultati cachati)
 			if(originale.startsWith(urlPrefix)){
 				// replace gia' effettuato
 				return originale;
 			}
-			
+
 			this.log.debug("["+funzione+"]  Originale["+originale+"] UrlPrefix["+urlPrefix+"] ...");
-			
+
 			String tmp = null;
 			if(originale.contains("://")){
 				tmp = originale.substring(originale.indexOf("://")+3);
 			}else{
 				return urlOriginale; // url prefix effettuato solo se definito un protocollo es. http://
 			}
-			
+
 			this.log.debug("["+funzione+"]  eliminazioneProtocollo["+tmp+"] ...");
-			
+
 			if(tmp.contains("/")){
 				tmp = tmp.substring(tmp.indexOf("/")+1);
 				this.log.debug("["+funzione+"]  salvataggioContesto["+tmp+"] ...");
@@ -1033,19 +989,19 @@ public class ConfigurazionePdDReader {
 				urlFinale = urlFinale + tmp;
 			}
 			// else sostituisco completamente tutta la url, non avendo un contesto.
-			
+
 			this.log.debug("["+funzione+"]  nuova url: ["+urlFinale+"]");
-			
+
 			return urlFinale;
-			
+
 		}catch(Exception e){
 			this.log.error("Processo di ["+funzione+"]  fallito (urlOriginale:"+urlOriginale+") (urlPrefix:"+urlPrefix+")",e);
 			throw new DriverConfigurazioneException("Processo di ["+funzione+"]  fallito (urlOriginale:"+urlOriginale+") (urlPrefix:"+urlPrefix+")",e);
 		}
 	}
-	
-	
-	
+
+
+
 
 
 
@@ -1055,21 +1011,17 @@ public class ConfigurazionePdDReader {
 
 	/* ********  PORTE DELEGATE (Interfaccia)  ******** */
 
-	/**
-	 * Ritorna la porta delegata
-	 * 
-	 * @param idPD
-	 * @return porta delegata
-	 * @throws DriverConfigurazioneException
-	 * @throws DriverConfigurazioneNotFound
-	 */
+	public IDPortaDelegata getIDPortaDelegata(Connection connectionPdD,String nome) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getIDPortaDelegata(connectionPdD, nome);
+	}
+
 	protected PortaDelegata getPortaDelegata(Connection connectionPdD,IDPortaDelegata idPD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		return this.configurazionePdD.getPortaDelegata(connectionPdD,idPD);
 	}
-	
+
 	protected PortaDelegata getPortaDelegata_SafeMethod(Connection connectionPdD,IDPortaDelegata idPD)throws DriverConfigurazioneException{
 		try{
-			if(idPD.getLocationPD()!=null)
+			if(idPD.getNome()!=null)
 				return this.getPortaDelegata(connectionPdD,idPD);
 			else
 				return null;
@@ -1077,7 +1029,7 @@ public class ConfigurazionePdDReader {
 			return null;
 		}
 	}
-	
+
 	protected boolean identificazioneContentBased(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		if(pd==null){
 			throw new DriverConfigurazioneException("Porta Delegata non fornita");
@@ -1091,7 +1043,7 @@ public class ConfigurazionePdDReader {
 		}else
 			return false;
 	}
-	
+
 	protected boolean identificazioneInputBased(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		if(pd==null){
 			throw new DriverConfigurazioneException("Porta Delegata non fornita");
@@ -1109,7 +1061,7 @@ public class ConfigurazionePdDReader {
 	protected String getAzione(RegistroServiziManager registroServiziManager,PortaDelegata pd,URLProtocolContext urlProtocolContext,
 			OpenSPCoop2Message message, HeaderIntegrazione headerIntegrazione, boolean readFirstHeaderIntegrazione,
 			IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound, IdentificazioneDinamicaException { 
-		
+
 		try{
 
 			if(pd==null){
@@ -1117,12 +1069,12 @@ public class ConfigurazionePdDReader {
 			}
 			IDSoggetto soggettoErogatore = new IDSoggetto(pd.getSoggettoErogatore().getTipo(),pd.getSoggettoErogatore().getNome());
 			IDServizio idServizio = new IDServizio(soggettoErogatore,pd.getServizio().getTipo(),pd.getServizio().getNome());
-			
+
 			String azioneHeaderIntegrazione = null;
 			if(headerIntegrazione!=null && headerIntegrazione.getBusta()!=null && headerIntegrazione.getBusta().getAzione()!=null){
 				azioneHeaderIntegrazione = headerIntegrazione.getBusta().getAzione();
 			}
-			
+
 			ModalitaIdentificazioneAzione modalitaIdentificazione = ModalitaIdentificazioneAzione.STATIC;
 			String pattern = null;
 			boolean forceRegistryBased = false;
@@ -1135,14 +1087,14 @@ public class ConfigurazionePdDReader {
 				}
 				forceRegistryBased = StatoFunzionalita.ABILITATO.equals(pd.getAzione().getForceWsdlBased());
 			}
-			
+
 			String azione = OperationFinder.getAzione(registroServiziManager, urlProtocolContext, message, soggettoErogatore, idServizio, 
 					readFirstHeaderIntegrazione, azioneHeaderIntegrazione, protocolFactory, modalitaIdentificazione, 
 					pattern, forceRegistryBased, forcePluginBased, this.log);
-			
+
 			// Se non ho riconosciuto una azione a questo punto, 
 			// durante il processo standard di riconoscimento viene sollevata una eccezione IdentificazioneDinamicaException
-			
+
 			return azione;
 
 		}catch(IdentificazioneDinamicaException e){
@@ -1154,22 +1106,14 @@ public class ConfigurazionePdDReader {
 
 	}
 
-	/**
-	 * Restituisce una tabella hash che contiene le informazioni MTOM riguradanti la gestione di una
-	 * richiesta associata ad una Porta Delegata 
-	 *
-	 * @param pd Identificatore di una Porta Delegata
-	 * @return Le proprieta' MTOM
-	 * 
-	 */
 	protected MTOMProcessorConfig getPD_MTOMProcessorForSender(PortaDelegata pd) throws DriverConfigurazioneException{
 
 		MTOMProcessorConfig config = new MTOMProcessorConfig();
 		List<MtomXomPackageInfo> list = new ArrayList<MtomXomPackageInfo>();
 		config.setInfo(list);
-		
+
 		if(pd == null)
-            return config;
+			return config;
 
 		MtomProcessor mtomProcessor = pd.getMtomProcessor();
 		if(mtomProcessor == null)
@@ -1194,22 +1138,14 @@ public class ConfigurazionePdDReader {
 		return config;
 	}
 
-	/**
-	 * Restituisce una tabella hash che contiene le informazioni MTOM riguardanti la gestione di una
-	 * risposta associate ad una Porta Delegata 
-	 *
-	 * @param pd Identificatore di una Porta Delegata
-	 * @return Le proprieta' MTOM
-	 * 
-	 */
 	protected MTOMProcessorConfig getPD_MTOMProcessorForReceiver(PortaDelegata pd) throws DriverConfigurazioneException{
 
 		MTOMProcessorConfig config = new MTOMProcessorConfig();
 		List<MtomXomPackageInfo> list = new ArrayList<MtomXomPackageInfo>();
 		config.setInfo(list);
-		
+
 		if(pd == null)
-            return config;
+			return config;
 
 		MtomProcessor mtomProcessor = pd.getMtomProcessor();
 		if(mtomProcessor == null)
@@ -1233,28 +1169,20 @@ public class ConfigurazionePdDReader {
 
 		return config;
 	}
-	
-	/**
-	 * Restituisce una tabella hash che contiene le informazioni Message-Security riguradanti la gestione di una
-	 * richiesta associata ad una Porta Delegata 
-	 *
-	 * @param pd Identificatore di una Porta Delegata
-	 * @return Le proprieta' Message-Security
-	 * 
-	 */
+
 	protected MessageSecurityConfig getPD_MessageSecurityForSender(PortaDelegata pd) throws DriverConfigurazioneException{
 
 		MessageSecurityConfig securityConfig = new MessageSecurityConfig();
 		java.util.Hashtable<String,Object> table = new java.util.Hashtable<String,Object>();
 		securityConfig.setFlowParameters(table);
-		
+
 		if(pd == null)
-            return securityConfig;
+			return securityConfig;
 
 		if(pd.getStatoMessageSecurity()!=null && CostantiConfigurazione.DISABILITATO.toString().equals(pd.getStatoMessageSecurity())){
 			return securityConfig;
 		}
-		
+
 		MessageSecurity messageSecurity = pd.getMessageSecurity();
 		if(messageSecurity == null)
 			return securityConfig;
@@ -1284,27 +1212,19 @@ public class ConfigurazionePdDReader {
 		return securityConfig;
 	}
 
-	/**
-	 * Restituisce una tabella hash che contiene le informazioni Message-Security riguardanti la gestione di una
-	 * risposta associate ad una Porta Delegata 
-	 *
-	 * @param pd Identificatore di una Porta Delegata
-	 * @return Le proprieta' MessageSecurity
-	 * 
-	 */
 	protected MessageSecurityConfig getPD_MessageSecurityForReceiver(PortaDelegata pd) throws DriverConfigurazioneException{
 
 		MessageSecurityConfig securityConfig = new MessageSecurityConfig();
 		java.util.Hashtable<String,Object> table = new java.util.Hashtable<String,Object>();
 		securityConfig.setFlowParameters(table);
-		
+
 		if(pd == null)
-            return securityConfig;
+			return securityConfig;
 
 		if(pd.getStatoMessageSecurity()!=null && CostantiConfigurazione.DISABILITATO.toString().equals(pd.getStatoMessageSecurity())){
 			return securityConfig;
 		}
-		
+
 		MessageSecurity messageSecurity = pd.getMessageSecurity();
 		if(messageSecurity == null)
 			return securityConfig;
@@ -1334,108 +1254,64 @@ public class ConfigurazionePdDReader {
 		return securityConfig;
 	}
 
-	/**
-	 * Restituisce l'autenticazione associata alla porta delegata identificata dai parametri. 
-	 *
-	 * @param pd identificatore di una porta delegata
-	 * @return autenticazione associata alla porta delegata.
-	 * 
-	 */
 	protected String getAutenticazione(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
-		
+
 		if(pd==null){
 			throw new DriverConfigurazioneException("Porta Delegata non fornita");
 		}
-		
+
 		if(pd.getAutenticazione() == null || "".equals(pd.getAutenticazione()))
 			return CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_SSL.toString();
 		else
 			return pd.getAutenticazione();
 	}
 
-	/**
-	 * Restituisce l'autorizzazione associata alla porta delegata identificata dai parametri. 
-	 *
-	 * @param pd identificatore di una porta delegata
-	 * @return autorizzazione associata alla porta delegata.
-	 * 
-	 */
 	protected String getAutorizzazione(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
-		
+
 		if(pd==null){
 			throw new DriverConfigurazioneException("Porta Delegata non fornita");
 		}
-		
+
 		if(pd.getAutorizzazione() == null || "".equals(pd.getAutorizzazione()) )
 			return CostantiConfigurazione.AUTORIZZAZIONE_OPENSPCOOP;
 		else
 			return pd.getAutorizzazione();
 	}
-	
-	/**
-	 * Restituisce l'autorizzazione per contenuto associata alla porta delegata identificata dai parametri. 
-	 *
-	 * @param pd identificatore di una porta delegata
-	 * @return autorizzazione associata alla porta delegata.
-	 * 
-	 */
+
 	protected String getAutorizzazioneContenuto(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
-		
+
 		if(pd==null){
 			throw new DriverConfigurazioneException("Porta Delegata non fornita");
 		}
-		
+
 		if(pd.getAutorizzazioneContenuto() == null || "".equals(pd.getAutorizzazioneContenuto()))
 			return CostantiConfigurazione.NONE;
 		else
 			return pd.getAutorizzazioneContenuto();
 	}
 
-	/**
-	 * Restituisce true , se la porta delegata richiesta  e' registrata
-	 * con la funziona di ricevuta asincrona simmetrica abilitata.
-	 *
-	 * @param pd Identificatore di una Porta Delegata
-	 * @return true se la porta delegata richiesta, risulta registrata con la funziona di ricevuta asincrona simmetrica abilitata.
-	 * 
-	 */
 	protected boolean ricevutaAsincronaSimmetricaAbilitata(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		if(pd==null)
 			return true; // default Abilitata-CNIPA
 		return !CostantiConfigurazione.DISABILITATO.equals(pd.getRicevutaAsincronaSimmetrica());
 	}
 
-	/**
-	 * Restituisce true , se la porta delegata richiesta  e' registrata
-	 * con la funziona di ricevuta asincrona asimmetrica abilitata.
-	 *
-	 * @param pd Identificatore di una Porta Delegata
-	 * @return true se la porta delegata richiesta, risulta registrata con la funziona di ricevuta asincrona asimmetrica abilitata.
-	 * 
-	 */
 	protected boolean ricevutaAsincronaAsimmetricaAbilitata(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		if(pd==null)
 			return true; // default Abilitata-CNIPA
 		return !CostantiConfigurazione.DISABILITATO.equals(pd.getRicevutaAsincronaAsimmetrica());
 	}
 
-	/**
-	 * Restituisce il tipo di validazione xsd  attiva nella porta delegata
-	 * 
-	 * @param pd identificatore di una porta delegata
-	 * @return Restituisce il tipo di validazione xsd attiva nella porta delegata
-	 * 
-	 */
 	protected ValidazioneContenutiApplicativi getTipoValidazioneContenutoApplicativo(Connection connectionPdD, PortaDelegata pd,String implementazionePdDSoggetto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		// default in configurazione
 		ValidazioneContenutiApplicativi val = this.getTipoValidazioneContenutoApplicativo(connectionPdD,implementazionePdDSoggetto);
-		
+
 		if( pd==null || pd.getValidazioneContenutiApplicativi() == null ){
 			return val;
 		}
 
 		ValidazioneContenutiApplicativi valPD = new ValidazioneContenutiApplicativi();
-		
+
 		if( CostantiConfigurazione.STATO_CON_WARNING_ABILITATO.equals(pd.getValidazioneContenutiApplicativi().getStato())  )
 			valPD.setStato(CostantiConfigurazione.STATO_CON_WARNING_ABILITATO);
 		else if( CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(pd.getValidazioneContenutiApplicativi().getStato())  )
@@ -1449,22 +1325,15 @@ public class ConfigurazionePdDReader {
 			valPD.setTipo(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL);
 		else if( CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD.equals(pd.getValidazioneContenutiApplicativi().getTipo())  )
 			valPD.setTipo(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD);
-		
+
 		if( CostantiConfigurazione.ABILITATO.equals(pd.getValidazioneContenutiApplicativi().getAcceptMtomMessage())  )
 			valPD.setAcceptMtomMessage(CostantiConfigurazione.ABILITATO);
 		else if( CostantiConfigurazione.DISABILITATO.equals(pd.getValidazioneContenutiApplicativi().getAcceptMtomMessage())  )
 			valPD.setAcceptMtomMessage(CostantiConfigurazione.DISABILITATO);
-		
+
 		return valPD;
 	}
 
-	/**
-	 * Restituisce le eventuali correlazioni applicative da effettuare.
-	 * 
-	 * @param pd identificatore di una porta delegata
-	 * @return Restituisce le eventuali correlazioni applicative da effettuare.
-	 * 
-	 */
 	protected CorrelazioneApplicativa getCorrelazioneApplicativa(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		if(pd==null){
 			throw new DriverConfigurazioneException("Porta Delegata non fornita");
@@ -1473,13 +1342,6 @@ public class ConfigurazionePdDReader {
 
 	}
 
-	/**
-	 * Restituisce le eventuali correlazioni applicative sulla risposta da effettuare.
-	 * 
-	 * @param pd identificatore di una porta delegata
-	 * @return Restituisce le eventuali correlazioni applicative sulla risposta da effettuare.
-	 * 
-	 */
 	protected CorrelazioneApplicativaRisposta getCorrelazioneApplicativaRisposta(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		if(pd==null){
 			throw new DriverConfigurazioneException("Porta Delegata non fornita");
@@ -1488,13 +1350,6 @@ public class ConfigurazionePdDReader {
 
 	}
 
-	/**
-	 * Restituisce il meccanismo di integrazione associato alla porta delegata identificata dai parametri, se esiste. 
-	 *
-	 * @param pd identificatore di una porta delegata
-	 * @return meccanismo di integrazione associata alla porta delegata se esiste, null altrimenti.
-	 * 
-	 */
 	protected String[] getTipiIntegrazione(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 		String[]tipi = null;
 		if(pd!=null){
@@ -1506,13 +1361,6 @@ public class ConfigurazionePdDReader {
 		return tipi;
 	}
 
-	/**
-	 * Restituisce l'indicazione se deve essere effettuata la gestione degli attachments
-	 * 
-	 * @param pd identificatore di una porta delegata
-	 * @return Restituisce l'indicazione se deve essere effettuata la gestione degli attachments
-	 * 
-	 */
 	protected boolean isGestioneManifestAttachments(Connection connectionPdD, PortaDelegata pd, IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		if(pd==null){
 			try{
@@ -1545,14 +1393,7 @@ public class ConfigurazionePdDReader {
 			}
 		}
 	}
-	
-	/**
-	 * Restituisce l'indicazione se deve essere allegato il messaggio Soap come allegato in un msg SoapWithAttachmetns con un Manifest 
-	 * 
-	 * @param pd identificatore di una porta delegata
-	 * @return Restituisce l'indicazione se deve essere allegato il messaggio Soap come allegato in un msg SoapWithAttachmetns con un Manifest 
-	 * 
-	 */
+
 	protected boolean isAllegaBody(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		if(pd==null){
 			return false; //configurazione di default
@@ -1564,14 +1405,7 @@ public class ConfigurazionePdDReader {
 		else 
 			return false; //configurazione di default
 	}
-	
-	/**
-	 * Restituisce l'indicazione se deve essere scartato il SoapBody tra gli allegati inseriti in un msg SoapWithAttachmetns con un Manifest 
-	 * 
-	 * @param pd identificatore di una porta delegata
-	 * @return Restituisce l'indicazione se deve essere scartato il SoapBody tra gli allegati inseriti in un msg SoapWithAttachmetns con un Manifest 
-	 * 
-	 */
+
 	protected boolean isScartaBody(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		if(pd==null){
 			return false; //configurazione di default
@@ -1583,22 +1417,14 @@ public class ConfigurazionePdDReader {
 		else 
 			return false; //configurazione di default
 	}
-	
 
-	/**
-	 * Restituisce l'indicazione se il profilo oneway o il profilo sincrono deve essere gestito in modalita stateless 
-	 * 
-	 * @param pd identificatore di una porta delegata
-	 * @return Restituisce l'indicazione se il profilo oneway o il profilo sincrono deve essere gestito in modalita stateless 
-	 * 
-	 */
 	protected boolean isModalitaStateless(PortaDelegata pd, ProfiloDiCollaborazione profiloCollaborazione) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		
+
 		if(this.serverJ2EE==false){
 			// Stateless obbligatorio in server di tipo web (non j2ee)
 			return true;
 		}
-		
+
 		if(pd==null){
 			// configurazione di default
 			if(ProfiloDiCollaborazione.ONEWAY.equals(profiloCollaborazione))
@@ -1608,7 +1434,7 @@ public class ConfigurazionePdDReader {
 			else
 				return CostantiConfigurazione.ABILITATO.equals(this.openspcoopProperties.getStatelessAsincroni());
 		}
-		
+
 		if( CostantiConfigurazione.ABILITATO.equals(pd.getStateless())  )
 			return true;
 		else if( CostantiConfigurazione.DISABILITATO.equals(pd.getStateless())  )
@@ -1623,21 +1449,14 @@ public class ConfigurazionePdDReader {
 				return CostantiConfigurazione.ABILITATO.equals(this.openspcoopProperties.getStatelessAsincroni());
 		}
 	}
-	
-	/**
-	 * Restituisce l'indicazione se la porta agisce in modalita' local-forward
-	 * 
-	 * @param pd identificatore di una porta delegata
-	 * @return Restituisce l'indicazione se la porta agisce in modalita' local-forward
-	 * 
-	 */
+
 	protected boolean isLocalForwardMode(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-				
+
 		if(pd==null){
 			// configurazione di default
 			return false;
 		}
-		
+
 		if( CostantiConfigurazione.ABILITATO.equals(pd.getLocalForward())  )
 			return true;
 		else if( CostantiConfigurazione.DISABILITATO.equals(pd.getLocalForward())  )
@@ -1649,9 +1468,9 @@ public class ConfigurazionePdDReader {
 	}
 
 	protected List<Object> getExtendedInfo(PortaDelegata pd)throws DriverConfigurazioneException{
-		
+
 		if(pd == null || pd.sizeExtendedInfoList()<=0)
-            return null;
+			return null;
 
 		return pd.getExtendedInfoList();
 	}
@@ -1668,39 +1487,26 @@ public class ConfigurazionePdDReader {
 
 	/* ********  PORTE APPLICATIVE  (Interfaccia) ******** */
 
-	/**
-	 * Restituisce un array di soggetti reali (e associata porta applicativa) 
-	 * che possiedono il soggetto SoggettoVirtuale identificato da <var>idPA</var>
-	 *
-	 * @param idPA Identificatore di una Porta Applicativa con soggetto Virtuale
-	 * @return una porta applicativa
-	 * 
-	 */
-	protected Hashtable<IDSoggetto,PortaApplicativa> getPorteApplicative_SoggettiVirtuali(Connection connectionPdD,IDPortaApplicativa idPA)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		 return this.configurazionePdD.getPorteApplicative_SoggettiVirtuali(connectionPdD,idPA,null,false);
+	public IDPortaApplicativa getIDPortaApplicativa(Connection connectionPdD,String nome) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getIDPortaApplicativa(connectionPdD, nome);
+	}
+	
+	protected Map<IDSoggetto,PortaApplicativa> getPorteApplicative_SoggettiVirtuali(Connection connectionPdD,IDServizio idServizio)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		 return this.configurazionePdD.getPorteApplicative_SoggettiVirtuali(connectionPdD,idServizio,null,false);
 	 }
 	
-	/**
-	 * Restituisce true , se la porta applicativa richiesta  e' tra quelle registrate nella porta di dominio.
-	 * La porta applicativa viene cercata utilizzando i parametri presenti in <var>idPA</var>:
-	 * TipoServiceProvider,ServiceProvider,TipoServizio,Servizio,Azione
-	 *
-	 * @param idPA Identificatore di una Porta Applicativa
-	 * @return true se la porta applicativa richiesta, risulta registrata nella porta di dominio, false altrimenti.
-	 * 
-	 */
-	 protected boolean existsPA(Connection connectionPdD,RichiestaApplicativa idPA) throws DriverConfigurazioneException{	
+	protected boolean existsPA(Connection connectionPdD,RichiestaApplicativa richiestaApplicativa) throws DriverConfigurazioneException{	
 
 		// Se non c'e' un servizio non puo' esistere una porta applicativa
-		if(idPA.getIDServizio()==null)
+		if(richiestaApplicativa.getIDServizio()==null)
 			return false;
-		if( (idPA.getIDServizio().getServizio()==null) || (idPA.getIDServizio().getTipoServizio()==null)  )
+		if( (richiestaApplicativa.getIDServizio().getServizio()==null) || (richiestaApplicativa.getIDServizio().getTipoServizio()==null)  )
 			return false;
 
-		if( isSoggettoVirtuale(connectionPdD,idPA.getIDServizio().getSoggettoErogatore())  ){
-			Hashtable<IDSoggetto,PortaApplicativa> paConSoggetti = null;
+		if( isSoggettoVirtuale(connectionPdD,richiestaApplicativa.getIDServizio().getSoggettoErogatore())  ){
+			Map<IDSoggetto,PortaApplicativa> paConSoggetti = null;
 			try{
-				paConSoggetti = this.configurazionePdD.getPorteApplicative_SoggettiVirtuali(connectionPdD,idPA.getIdPA(),idPA.getFiltroProprietaPorteApplicative(),true);
+				paConSoggetti = this.configurazionePdD.getPorteApplicative_SoggettiVirtuali(connectionPdD,richiestaApplicativa.getIDServizio(),richiestaApplicativa.getFiltroProprietaPorteApplicative(),true);
 			}catch(DriverConfigurazioneNotFound e){
 				return false;
 			}
@@ -1711,11 +1517,11 @@ public class ConfigurazionePdDReader {
 		}else{
 			PortaApplicativa pa = null;
 			try{
-				IDPortaApplicativaByNome idByNome = idPA.getIdPAbyNome();
-				if(idByNome==null){
+				IDPortaApplicativa idPA = richiestaApplicativa.getIdPortaApplicativa();
+				if(idPA==null){
 					return false;
 				}
-				pa = this.configurazionePdD.getPortaApplicativa(connectionPdD,idByNome.getNome(),idByNome.getSoggetto());
+				pa = this.configurazionePdD.getPortaApplicativa(connectionPdD,idPA);
 			}catch(DriverConfigurazioneNotFound e){
 				return false;
 			}
@@ -1723,63 +1529,24 @@ public class ConfigurazionePdDReader {
 		}
 	}
 
-	 public IDPortaApplicativaByNome convertTo(Connection connectionPdD,IDServizio idServizio,Hashtable<String,String> proprietaPresentiBustaRicevuta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		 IDPortaApplicativa idPA = new IDPortaApplicativa();
-		 idPA.setIDServizio(idServizio);
-		 PortaApplicativa pa = this.configurazionePdD.getPortaApplicativa(connectionPdD, idPA, proprietaPresentiBustaRicevuta);
-		 IDPortaApplicativaByNome id = new IDPortaApplicativaByNome();
-		 id.setNome(pa.getNome());
-		 id.setSoggetto(idPA.getIDServizio().getSoggettoErogatore());
-		 return id;
-	 }
-	 public IDPortaApplicativaByNome convertTo_SafeMethod(Connection connectionPdD,IDServizio idServizio,Hashtable<String,String> proprietaPresentiBustaRicevuta) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		 try{
-			 if(idServizio!=null && idServizio.getTipoServizio()!=null &&
-					 idServizio.getServizio()!=null &&
-					 idServizio.getSoggettoErogatore()!=null &&
-					 idServizio.getSoggettoErogatore().getTipo()!=null &&
-					 idServizio.getSoggettoErogatore().getNome()!=null){
-				 return this.convertTo(connectionPdD, idServizio, proprietaPresentiBustaRicevuta);
-			 }
-			 return null;
-		 }catch(DriverConfigurazioneNotFound e){
-			 return null;
-		 }
-	 }
-	 
-	/**
-	 * Ritorna la porta applicativa
-	 * 
-	 * @param idPA
-	 * @return porta applicativa
-	 * @throws DriverConfigurazioneException
-	 * @throws DriverConfigurazioneNotFound
-	 */
-	protected PortaApplicativa getPortaApplicativa(Connection connectionPdD,IDPortaApplicativaByNome idPA) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+	protected PortaApplicativa getPortaApplicativa(Connection connectionPdD,IDPortaApplicativa idPA) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		if(idPA==null){
 			throw new DriverConfigurazioneException("[getPortaApplicativa]: Parametro non definito (idPA is null)");
 		}
-		return this.getPortaApplicativa(connectionPdD,idPA.getNome(),idPA.getSoggetto());
+		return this.getPortaApplicativa(connectionPdD,idPA);
 	}
-	
-	protected PortaApplicativa getPortaApplicativa_SafeMethod(Connection connectionPdD,IDPortaApplicativaByNome idPA)throws DriverConfigurazioneException{
+
+	protected PortaApplicativa getPortaApplicativa_SafeMethod(Connection connectionPdD,IDPortaApplicativa idPA)throws DriverConfigurazioneException{
 		try{
-			if(idPA!=null && idPA.getNome()!=null &&
-					idPA.getSoggetto()!=null &&
-					idPA.getSoggetto().getTipo()!=null &&
-					idPA.getSoggetto().getNome()!=null)
-				return this.getPortaApplicativa(connectionPdD,idPA.getNome(),idPA.getSoggetto());
+			if(idPA!=null && idPA.getNome()!=null)
+				return this.getPortaApplicativa(connectionPdD,idPA);
 			else
 				return null;
 		}catch(DriverConfigurazioneNotFound e){
 			return null;
 		}
 	}
-	
-	protected PortaApplicativa getPortaApplicativa(Connection connectionPdD,String nomePA, IDSoggetto soggettoProprietario) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return this.configurazionePdD.getPortaApplicativa(connectionPdD,nomePA, soggettoProprietario);
-	}
-	
+
 	protected boolean identificazioneContentBased(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		if(pa==null){
 			throw new DriverConfigurazioneException("Porta Applicativa non fornita");
@@ -1793,7 +1560,7 @@ public class ConfigurazionePdDReader {
 		}else
 			return false;
 	}
-	
+
 	protected boolean identificazioneInputBased(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		if(pa==null){
 			throw new DriverConfigurazioneException("Porta Applicativa non fornita");
@@ -1811,7 +1578,7 @@ public class ConfigurazionePdDReader {
 	protected String getAzione(RegistroServiziManager registroServiziManager,PortaApplicativa pa,URLProtocolContext urlProtocolContext,
 			OpenSPCoop2Message message, HeaderIntegrazione headerIntegrazione, boolean readFirstHeaderIntegrazione,
 			IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound, IdentificazioneDinamicaException { 
-		
+
 		try{
 
 			if(pa==null){
@@ -1819,12 +1586,12 @@ public class ConfigurazionePdDReader {
 			}
 			IDSoggetto soggettoErogatore = new IDSoggetto(pa.getTipoSoggettoProprietario(),pa.getNomeSoggettoProprietario());
 			IDServizio idServizio = new IDServizio(soggettoErogatore,pa.getServizio().getTipo(),pa.getServizio().getNome());
-			
+
 			String azioneHeaderIntegrazione = null;
 			if(headerIntegrazione!=null && headerIntegrazione.getBusta()!=null && headerIntegrazione.getBusta().getAzione()!=null){
 				azioneHeaderIntegrazione = headerIntegrazione.getBusta().getAzione();
 			}
-			
+
 			ModalitaIdentificazioneAzione modalitaIdentificazione = ModalitaIdentificazioneAzione.STATIC;
 			String pattern = null;
 			boolean forceRegistryBased = false;
@@ -1837,14 +1604,14 @@ public class ConfigurazionePdDReader {
 				}
 				forceRegistryBased = StatoFunzionalita.ABILITATO.equals(pa.getAzione().getForceWsdlBased());
 			}
-			
+
 			String azione = OperationFinder.getAzione(registroServiziManager, urlProtocolContext, message, soggettoErogatore, idServizio, 
 					readFirstHeaderIntegrazione, azioneHeaderIntegrazione, protocolFactory, modalitaIdentificazione, 
 					pattern, forceRegistryBased, forcePluginBased, this.log);
-			
+
 			// Se non ho riconosciuto una azione a questo punto, 
 			// durante il processo standard di riconoscimento viene sollevata una eccezione IdentificazioneDinamicaException
-			
+
 			return azione;
 
 		}catch(IdentificazioneDinamicaException e){
@@ -1855,25 +1622,13 @@ public class ConfigurazionePdDReader {
 		}
 
 	}
-	
-	/**
-	 * Restituisce un array 
-	 * contenente le informazioni su ogni servizio applicativo collegato ad una porta applicativa 
-	 * identificata dal parametro <var>idPA</var>. 
-	 * La porta applicativa viene cercata utilizzando le proprieta'
-	 * 'TipoDestinatario', 'Destinatario' , 'TipoServizio', 'Servizio' , 'Azione' 
-	 * del parametro <var>idPA</var> di tipo {@link org.openspcoop2.pdd.config.RichiestaApplicativa}.
-	 *
-	 * @param pa Identificatore di una Porta Applicativa
-	 * @return un array di identificatori di servizi applicativi.
-	 * 
-	 */
+
 	protected String[] getServiziApplicativi(PortaApplicativa pa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		
+
 		if(pa==null){
 			throw new DriverConfigurazioneException("Porta Applicativa non fornita");
 		}
-		
+
 		String[]sa = new String[pa.sizeServizioApplicativoList()];
 		for(int i=0;i<pa.sizeServizioApplicativoList();i++){
 			sa[i] = pa.getServizioApplicativo(i).getNome();
@@ -1882,42 +1637,34 @@ public class ConfigurazionePdDReader {
 		return sa;
 	}
 
+	protected SoggettoVirtuale getServiziApplicativi_SoggettiVirtuali(Connection connectionPdD,RichiestaApplicativa richiestaApplicativa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
-	/**
-	 * Restituisce un oggetto SoggettoVirtuale contenente le informazioni sui servizi applicativi erogati
-	 * dai reali soggetti mappati in soggetti virtuali
-	 *
-	 * @param idPA Identificatore di una Porta Applicativa con soggetto Virtuale
-	 * @return un oggetto SoggettoVirtuale
-	 * 
-	 */
-	protected SoggettoVirtuale getServiziApplicativi_SoggettiVirtuali(Connection connectionPdD,RichiestaApplicativa idPA)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-
-		Hashtable<IDSoggetto,PortaApplicativa> paConSoggetti = this.configurazionePdD.getPorteApplicative_SoggettiVirtuali(connectionPdD,idPA.getIdPA()
-				,idPA.getFiltroProprietaPorteApplicative(),true);
+		Map<IDSoggetto,PortaApplicativa> paConSoggetti = this.configurazionePdD.getPorteApplicative_SoggettiVirtuali(connectionPdD,richiestaApplicativa.getIDServizio()
+				,richiestaApplicativa.getFiltroProprietaPorteApplicative(),true);
 		if(paConSoggetti == null)
-			throw new DriverConfigurazioneNotFound("PorteApplicative contenenti SoggettiVirtuali di ["+idPA.getIdPA()+"] non trovate");
+			throw new DriverConfigurazioneNotFound("PorteApplicative contenenti SoggettiVirtuali di ["+richiestaApplicativa.getIDServizio()+"] non trovate");
 		if(paConSoggetti.size() ==0)
-			throw new DriverConfigurazioneNotFound("PorteApplicative contenenti SoggettiVirtuali di ["+idPA.getIdPA()+"] non trovate");
+			throw new DriverConfigurazioneNotFound("PorteApplicative contenenti SoggettiVirtuali di ["+richiestaApplicativa.getIDServizio()+"] non trovate");
 
 		java.util.List<SoggettoVirtualeServizioApplicativo> trovati = new java.util.ArrayList<SoggettoVirtualeServizioApplicativo>();
 
-		for (Enumeration<?> e = paConSoggetti.keys() ; e.hasMoreElements() ;) {
-			IDSoggetto soggReale = (IDSoggetto) e.nextElement();
+		Iterator<IDSoggetto> it = paConSoggetti.keySet().iterator();
+		while (it.hasNext()) {
+			IDSoggetto soggReale = (IDSoggetto) it.next();
 			PortaApplicativa pa = paConSoggetti.get(soggReale);
 			for(int k=0; k<pa.sizeServizioApplicativoList(); k++){
-				
+
 				SoggettoVirtualeServizioApplicativo sa = new SoggettoVirtualeServizioApplicativo();
 				sa.setNomeServizioApplicativo(pa.getServizioApplicativo(k).getNome());
 				sa.setIdSoggettoReale(soggReale);
 				sa.setPortaApplicativa(pa);
 				trovati.add(sa);
-				
+
 			}
 		}
 
 		if(trovati.size() == 0)
-			throw new DriverConfigurazioneNotFound("PorteApplicative contenenti SoggettiVirtuali di ["+idPA.getIdPA()+"] non trovati soggetti virtuali");
+			throw new DriverConfigurazioneNotFound("PorteApplicative contenenti SoggettiVirtuali di ["+richiestaApplicativa.getIDServizio()+"] non trovati soggetti virtuali");
 		else{
 			SoggettoVirtuale soggVirtuale = new SoggettoVirtuale();
 			for (SoggettoVirtualeServizioApplicativo soggettoVirtualeServizioApplicativo : trovati) {
@@ -1927,27 +1674,22 @@ public class ConfigurazionePdDReader {
 		}
 	}
 
-	protected List<PortaApplicativa> getPorteApplicative(Connection connectionPdD,String nomePA,String tipoSoggettoProprietario,String nomeSoggettoProprietario) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return this.configurazionePdD.getPorteApplicative(connectionPdD, nomePA, tipoSoggettoProprietario, nomeSoggettoProprietario);
+	protected List<PortaApplicativa> getPorteApplicative(Connection connectionPdD,IDServizio idServizio, boolean ricercaPuntuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getPorteApplicative(connectionPdD, idServizio, ricercaPuntuale);
 	}
 	
-	
-	/**
-	 * Restituisce una tabella hash che contiene le informazioni MTOM riguradanti la gestione di una
-	 * risposta associata ad una Porta Applicativa 
-	 *
-	 * @param pa Identificatore di una Porta Applicativa
-	 * @return Le proprieta' MTOM
-	 * 
-	 */
+	protected List<PortaApplicativa> getPorteApplicativeVirtuali(Connection connectionPdD,IDSoggetto idSoggettoVirtuale, IDServizio idServizio, boolean ricercaPuntuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getPorteApplicativeVirtuali(connectionPdD, idSoggettoVirtuale, idServizio, ricercaPuntuale);
+	}
+
 	protected MTOMProcessorConfig getPA_MTOMProcessorForSender(PortaApplicativa pa)throws DriverConfigurazioneException{
 
 		MTOMProcessorConfig config = new MTOMProcessorConfig();
 		List<MtomXomPackageInfo> list = new ArrayList<MtomXomPackageInfo>();
 		config.setInfo(list);
-		
+
 		if(pa == null)
-            return config;
+			return config;
 
 		MtomProcessor mtomProcessor = pa.getMtomProcessor();
 		if(mtomProcessor == null)
@@ -1972,22 +1714,14 @@ public class ConfigurazionePdDReader {
 		return config;
 	}
 
-	/**
-	 * Restituisce una tabella hash che contiene le informazioni Message-Security riguardanti la gestione di una
-	 * richiesta associate ad una Porta Applicativa 
-	 *
-	 * @param pa Identificatore di una Porta Applicativa
-	 * @return Le proprieta' MTOM
-	 * 
-	 */
 	protected MTOMProcessorConfig getPA_MTOMProcessorForReceiver(PortaApplicativa pa)throws DriverConfigurazioneException{
 
 		MTOMProcessorConfig config = new MTOMProcessorConfig();
 		List<MtomXomPackageInfo> list = new ArrayList<MtomXomPackageInfo>();
 		config.setInfo(list);
-		
+
 		if(pa == null)
-            return config;
+			return config;
 
 		MtomProcessor mtomProcessor = pa.getMtomProcessor();
 		if(mtomProcessor == null)
@@ -2011,28 +1745,20 @@ public class ConfigurazionePdDReader {
 
 		return config; 
 	}
-	
-	/**
-	 * Restituisce una tabella hash che contiene le informazioni Message-Security riguradanti la gestione di una
-	 * risposta associata ad una Porta Applicativa 
-	 *
-	 * @param pa Identificatore di una Porta Applicativa
-	 * @return Le proprieta' MessageSecurity
-	 * 
-	 */
+
 	protected MessageSecurityConfig getPA_MessageSecurityForSender(PortaApplicativa pa)throws DriverConfigurazioneException{
 
 		MessageSecurityConfig securityConfig = new MessageSecurityConfig();
 		java.util.Hashtable<String,Object> table = new java.util.Hashtable<String,Object>();
 		securityConfig.setFlowParameters(table);
-		
+
 		if(pa == null)
-            return securityConfig;
+			return securityConfig;
 
 		if(pa.getStatoMessageSecurity()!=null && CostantiConfigurazione.DISABILITATO.toString().equals(pa.getStatoMessageSecurity())){
 			return securityConfig;
 		}
-		
+
 		MessageSecurity messageSecurity = pa.getMessageSecurity();
 		if(messageSecurity == null)
 			return securityConfig;
@@ -2062,27 +1788,19 @@ public class ConfigurazionePdDReader {
 		return securityConfig;
 	}
 
-	/**
-	 * Restituisce una tabella hash che contiene le informazioni Message-Security riguardanti la gestione di una
-	 * richiesta associate ad una Porta Applicativa 
-	 *
-	 * @param pa Identificatore di una Porta Applicativa
-	 * @return Le proprieta' MessageSecurity
-	 * 
-	 */
 	protected MessageSecurityConfig getPA_MessageSecurityForReceiver(PortaApplicativa pa)throws DriverConfigurazioneException{
 
 		MessageSecurityConfig securityConfig = new MessageSecurityConfig();
 		java.util.Hashtable<String,Object> table = new java.util.Hashtable<String,Object>();
 		securityConfig.setFlowParameters(table);
-		
+
 		if(pa == null)
-            return securityConfig;
+			return securityConfig;
 
 		if(pa.getStatoMessageSecurity()!=null && CostantiConfigurazione.DISABILITATO.toString().equals(pa.getStatoMessageSecurity())){
 			return securityConfig;
 		}
-		
+
 		MessageSecurity messageSecurity = pa.getMessageSecurity();
 		if(messageSecurity == null)
 			return securityConfig;
@@ -2111,53 +1829,30 @@ public class ConfigurazionePdDReader {
 
 		return securityConfig; 
 	}
-	
-	/**
-	 * Restituisce true , se la porta applicativa richiesta  e' registrata
-	 * con la funziona di ricevuta asincrona simmetrica abilitata.
-	 *
-	 * @param pa Identificatore di una Porta Applicativa
-	 * @return true se la porta applicativa richiesta, risulta registrata con la funziona di ricevuta asincrona simmetrica abilitata.
-	 * 
-	 */
+
 	protected boolean ricevutaAsincronaSimmetricaAbilitata(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		if(pa==null)
 			return true; // default Abilitata-CNIPA
 		return !CostantiConfigurazione.DISABILITATO.equals(pa.getRicevutaAsincronaSimmetrica());
 	}
 
-	/**
-	 * Restituisce true , se la porta applicativa richiesta  e' registrata
-	 * con la funziona di ricevuta asincrona asimmetrica abilitata.
-	 *
-	 * @param pa Identificatore di una Porta Applicativa
-	 * @return true se la porta applicativa richiesta, risulta registrata con la funziona di ricevuta asincrona asimmetrica abilitata.
-	 * 
-	 */
 	protected boolean ricevutaAsincronaAsimmetricaAbilitata(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		if(pa==null)
 			return true; // default Abilitata-CNIPA
 		return !CostantiConfigurazione.DISABILITATO.equals(pa.getRicevutaAsincronaAsimmetrica());
 	}
 
-	/**
-	 * Restituisce il tipo di validazione xsd  attiva nella porta applicativa
-	 * 
-	 * @param pa identificatore di una porta applicativa
-	 * @return Restituisce il tipo di validazione xsd attiva nella porta delegata
-	 * 
-	 */
 	protected ValidazioneContenutiApplicativi getTipoValidazioneContenutoApplicativo(Connection connectionPdD, PortaApplicativa pa,String implementazionePdDSoggetto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		
+
 		// default in configurazione
 		ValidazioneContenutiApplicativi val = this.getTipoValidazioneContenutoApplicativo(connectionPdD,implementazionePdDSoggetto);
-		
+
 		if( pa==null || pa.getValidazioneContenutiApplicativi() == null ){
 			return val;
 		}
 
 		ValidazioneContenutiApplicativi valPA = new ValidazioneContenutiApplicativi();
-		
+
 		if( CostantiConfigurazione.STATO_CON_WARNING_ABILITATO.equals(pa.getValidazioneContenutiApplicativi().getStato())  )
 			valPA.setStato(CostantiConfigurazione.STATO_CON_WARNING_ABILITATO);
 		else if( CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(pa.getValidazioneContenutiApplicativi().getStato())  )
@@ -2171,23 +1866,15 @@ public class ConfigurazionePdDReader {
 			valPA.setTipo(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_WSDL);
 		else if( CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD.equals(pa.getValidazioneContenutiApplicativi().getTipo())  )
 			valPA.setTipo(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD);
-		
+
 		if( CostantiConfigurazione.ABILITATO.equals(pa.getValidazioneContenutiApplicativi().getAcceptMtomMessage())  )
 			valPA.setAcceptMtomMessage(CostantiConfigurazione.ABILITATO);
 		else if( CostantiConfigurazione.DISABILITATO.equals(pa.getValidazioneContenutiApplicativi().getAcceptMtomMessage())  )
 			valPA.setAcceptMtomMessage(CostantiConfigurazione.DISABILITATO);
-		
+
 		return valPA;
 	}
 
-	
-	/**
-	 * Restituisce le eventuali correlazioni applicative da effettuare.
-	 * 
-	 * @param pa identificatore di una porta applicativa
-	 * @return Restituisce le eventuali correlazioni applicative da effettuare.
-	 * 
-	 */
 	protected CorrelazioneApplicativa getCorrelazioneApplicativa(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		if(pa==null){
 			throw new DriverConfigurazioneException("Porta Applicativa non fornita");
@@ -2195,14 +1882,7 @@ public class ConfigurazionePdDReader {
 		return pa.getCorrelazioneApplicativa();
 
 	}
-	
-	/**
-	 * Restituisce le eventuali correlazioni applicative sulla risposta da effettuare.
-	 * 
-	 * @param pa identificatore di una porta applicativa
-	 * @return Restituisce le eventuali correlazioni applicative sulla risposta da effettuare.
-	 * 
-	 */
+
 	protected CorrelazioneApplicativaRisposta getCorrelazioneApplicativaRisposta(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		if(pa==null){
 			throw new DriverConfigurazioneException("Porta Applicativa non fornita");
@@ -2210,16 +1890,9 @@ public class ConfigurazionePdDReader {
 		return pa.getCorrelazioneApplicativaRisposta();
 
 	}
-	
-	/**
-	 * Restituisce il meccanismo di integrazione associato alla porta applicativa identificata dai parametri, se esiste. 
-	 *
-	 * @param pa identificatore di una porta applicativa
-	 * @return meccanismo di integrazione associata alla porta applicativa se esiste, null altrimenti.
-	 * 
-	 */
+
 	protected String[] getTipiIntegrazione(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound { 
-		
+
 		String[]tipi = null;
 		if(pa!=null){
 			if(pa.getIntegrazione() != null && ("".equals(pa.getIntegrazione())==false) ){
@@ -2229,14 +1902,7 @@ public class ConfigurazionePdDReader {
 
 		return tipi;
 	}
-	
-	/**
-	 * Restituisce l'indicazione se deve essere effettuata la gestione degli attachments
-	 * 
-	 * @param pa identificatore di una porta applicativa
-	 * @return Restituisce l'indicazione se deve essere effettuata la gestione degli attachments
-	 * 
-	 */
+
 	protected boolean isGestioneManifestAttachments(Connection connectionPdD, PortaApplicativa pa, IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		if(pa==null){
@@ -2252,7 +1918,7 @@ public class ConfigurazionePdDReader {
 				throw new DriverConfigurazioneException(e.getMessage(),e);
 			}
 		}
-		
+
 		if( CostantiConfigurazione.ABILITATO.equals(pa.getGestioneManifest())  ){
 			return true;
 		}else if( CostantiConfigurazione.DISABILITATO.equals(pa.getGestioneManifest())  ){
@@ -2271,14 +1937,7 @@ public class ConfigurazionePdDReader {
 			}
 		}
 	}
-	
-	/**
-	 * Restituisce l'indicazione se deve essere allegato il messaggio Soap come allegato in un msg SoapWithAttachmetns con un Manifest 
-	 * 
-	 * @param pa identificatore di una porta applicativa
-	 * @return Restituisce l'indicazione se deve essere allegato il messaggio Soap come allegato in un msg SoapWithAttachmetns con un Manifest 
-	 * 
-	 */
+
 	protected boolean isAllegaBody(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		if(pa==null)
@@ -2290,16 +1949,9 @@ public class ConfigurazionePdDReader {
 		else 
 			return false; //configurazione di default
 	}
-	
-	/**
-	 * Restituisce l'indicazione se deve essere scartato il SoapBody tra gli allegati inseriti in un msg SoapWithAttachmetns con un Manifest 
-	 * 
-	 * @param pa identificatore di una porta applicativa
-	 * @return Restituisce l'indicazione se deve essere scartato il SoapBody tra gli allegati inseriti in un msg SoapWithAttachmetns con un Manifest 
-	 * 
-	 */
+
 	protected boolean isScartaBody(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		
+
 		if(pa==null){
 			return false; //configurazione di default
 		}
@@ -2311,21 +1963,14 @@ public class ConfigurazionePdDReader {
 		else 
 			return false; //configurazione di default
 	}
-	
-	/**
-	 * Restituisce l'indicazione se il profilo oneway o il profilo sincrono deve essere gestito in modalita stateless 
-	 * 
-	 * @param pa identificatore di una porta delegata
-	 * @return Restituisce l'indicazione se il profilo oneway o il profilo sincrono deve essere gestito in modalita stateless 
-	 * 
-	 */
+
 	protected boolean isModalitaStateless(PortaApplicativa pa, ProfiloDiCollaborazione profiloCollaborazione) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		
+
 		if(this.serverJ2EE==false){
 			// Stateless obbligatorio in server di tipo web (non j2ee)
 			return true;
 		}
-		
+
 		if(pa==null){
 			//configurazione di default
 			if(ProfiloDiCollaborazione.ONEWAY.equals(profiloCollaborazione))
@@ -2350,34 +1995,27 @@ public class ConfigurazionePdDReader {
 				return CostantiConfigurazione.ABILITATO.equals(this.openspcoopProperties.getStatelessAsincroni()); 
 		}
 	}
-	
-	/**
-	 * Restituisce l'autorizzazione per contenuto associata alla porta applicativa identificata dai parametri. 
-	 *
-	 * @param pa identificatore di una porta applicativa
-	 * @return autorizzazione associata alla porta applicativa.
-	 * 
-	 */
+
 	protected String getAutorizzazioneContenuto(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		
+
 		if(pa==null){
 			throw new DriverConfigurazioneException("Porta Applicativa non fornita");
 		}
-		
+
 		if(pa.getAutorizzazioneContenuto() == null || "".equals(pa.getAutorizzazioneContenuto()))
 			return CostantiConfigurazione.NONE;
 		else
 			return pa.getAutorizzazioneContenuto();
 	}
-	
+
 	protected List<Object> getExtendedInfo(PortaApplicativa pa)throws DriverConfigurazioneException{
-	
+
 		if(pa == null || pa.sizeExtendedInfoList()<=0)
-            return null;
+			return null;
 
 		return pa.getExtendedInfoList();
 	}
-	
+
 
 
 
@@ -2387,17 +2025,11 @@ public class ConfigurazionePdDReader {
 
 	/* ********  Servizi Applicativi (Interfaccia)  ******** */
 
-	/**
-	 * Indicazione se un servizio applicativo con il nome del parametro esiste.
-	 * 
-	 * @param serv Nome del servizio Applicativo
-	 * @return  Indicazione se un servizio applicativo con il nome del parametro esiste.
-	 */
-	protected boolean existsServizioApplicativo(Connection connectionPdD,IDPortaDelegata idPD,String serv) throws DriverConfigurazioneException{ 
+	protected boolean existsServizioApplicativo(Connection connectionPdD,IDServizioApplicativo idSA) throws DriverConfigurazioneException{ 
 
 		ServizioApplicativo servizioApplicativo = null;
 		try{
-			servizioApplicativo = this.configurazionePdD.getServizioApplicativo(connectionPdD,idPD,serv);
+			servizioApplicativo = this.configurazionePdD.getServizioApplicativo(connectionPdD,idSA);
 		}catch(DriverConfigurazioneNotFound e){
 			return false;
 		}
@@ -2406,46 +2038,14 @@ public class ConfigurazionePdDReader {
 
 	}
 
-	/**
-	 * @param idPD
-	 * @param serv
-	 * @return servizio applicativo
-	 * @throws DriverConfigurazioneNotFound
-	 * @throws DriverConfigurazioneException
-	 */
-	protected ServizioApplicativo getServizioApplicativo(Connection connectionPdD,IDPortaDelegata idPD, String serv) throws DriverConfigurazioneNotFound,DriverConfigurazioneException{
-		return this.configurazionePdD.getServizioApplicativo(connectionPdD,idPD, serv);
+	protected ServizioApplicativo getServizioApplicativo(Connection connectionPdD,IDServizioApplicativo idSA) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdD.getServizioApplicativo(connectionPdD, idSA);
 	}
-	
-	/**
-	 * @param idPA
-	 * @param serv
-	 * @return servizio applicativo
-	 * @throws DriverConfigurazioneNotFound
-	 * @throws DriverConfigurazioneException
-	 */
-	protected ServizioApplicativo getServizioApplicativo(Connection connectionPdD,IDPortaApplicativa idPA, String serv) throws DriverConfigurazioneNotFound,DriverConfigurazioneException{
-		return this.configurazionePdD.getServizioApplicativo(connectionPdD,idPA, serv);
-	}
-	
-	/**
-	 * Restituisce Il nome del servizio applicativo che include le credenziali passate come parametro. 
-	 *
-	 * @param aSoggetto Soggetto su cui cercare il servizio applicativo con le credenziali passate come parametro.
-	 * @param location Location che identifica una porta delegata.
-	 * @param aUser User utilizzato nell'header HTTP Authentication.
-	 * @param aPassword Password utilizzato nell'header HTTP Authentication.
-	 * @return Il nome del servizio applicativo che include le credenziali passate come parametro. 
-	 * 
-	 */
-	protected IDServizioApplicativo autenticazioneHTTP(Connection connectionPdD,IDSoggetto aSoggetto,String location, String aUser,String aPassword) throws DriverConfigurazioneException{ 
-
+		
+	protected IDServizioApplicativo getIdServizioApplicativoByCredenzialiBasic(Connection connectionPdD,String aUser,String aPassword) throws DriverConfigurazioneException{
 		ServizioApplicativo servizioApplicativo = null;
 		try{
-			IDPortaDelegata idPD = new IDPortaDelegata();
-			idPD.setSoggettoFruitore(aSoggetto);
-			idPD.setLocationPD(location);
-			servizioApplicativo = this.configurazionePdD.getServizioApplicativoAutenticato(connectionPdD,idPD, aUser, aPassword);
+			servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiBasic(connectionPdD, aUser, aPassword);
 		}catch(DriverConfigurazioneNotFound e){
 			//this.log.debug("autenticazioneHTTP (not found): "+e.getMessage());
 		}
@@ -2461,11 +2061,11 @@ public class ConfigurazionePdDReader {
 		else
 			return null;
 	}
-	protected IDServizioApplicativo autenticazioneHTTP(Connection connectionPdD,String aUser,String aPassword) throws DriverConfigurazioneException{ 
-
+	
+	protected IDServizioApplicativo getIdServizioApplicativoByCredenzialiSsl(Connection connectionPdD,String aSubject) throws DriverConfigurazioneException{
 		ServizioApplicativo servizioApplicativo = null;
 		try{
-			servizioApplicativo = this.configurazionePdD.getServizioApplicativoAutenticato(connectionPdD,aUser, aPassword);
+			servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiSsl(connectionPdD, aSubject);
 		}catch(DriverConfigurazioneNotFound e){
 			//this.log.debug("autenticazioneHTTP (not found): "+e.getMessage());
 		}
@@ -2481,78 +2081,14 @@ public class ConfigurazionePdDReader {
 		else
 			return null;
 	}
-
-	/**
-	 * Restituisce Il nome del servizio applicativo che include le credenziali passate come parametro. 
-	 *
-	 * @param aSoggetto Soggetto su cui cercare il servizio applicativo con le credenziali passate come parametro.
-	 * @param location Location che identifica una porta delegata.
-	 * @param aSubject Subject utilizzato nella connessione HTTPS.
-	 * @return Il nome del servizio applicativo che include le credenziali passate come parametro. 
-	 * 
-	 */
-	protected IDServizioApplicativo autenticazioneHTTPS(Connection connectionPdD,IDSoggetto aSoggetto,String location, String aSubject) throws DriverConfigurazioneException{ 
-
-		ServizioApplicativo servizioApplicativo = null;
-		try{
-			IDPortaDelegata idPD = new IDPortaDelegata();
-			idPD.setSoggettoFruitore(aSoggetto);
-			idPD.setLocationPD(location);
-			servizioApplicativo = this.configurazionePdD.getServizioApplicativoAutenticato(connectionPdD,idPD, aSubject);
-		}catch(DriverConfigurazioneNotFound e){
-			//this.log.debug("autenticazioneHTTPS (not found): "+e.getMessage());
-		}
-
-		if(servizioApplicativo!=null){
-			IDServizioApplicativo idSA = new IDServizioApplicativo();
-			idSA.setNome(servizioApplicativo.getNome());
-			if(servizioApplicativo.getTipoSoggettoProprietario()!=null && servizioApplicativo.getNomeSoggettoProprietario()!=null){
-				idSA.setIdSoggettoProprietario(new IDSoggetto(servizioApplicativo.getTipoSoggettoProprietario(), servizioApplicativo.getNomeSoggettoProprietario()));
-			}
-			return idSA;
-		}
-		else
-			return null;
-	}
 	
-	protected IDServizioApplicativo autenticazioneHTTPS(Connection connectionPdD,String aSubject) throws DriverConfigurazioneException{ 
+	protected boolean autorizzazione(PortaDelegata pd, String servizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 
-		ServizioApplicativo servizioApplicativo = null;
-		try{
-			servizioApplicativo = this.configurazionePdD.getServizioApplicativoAutenticato(connectionPdD,aSubject);
-		}catch(DriverConfigurazioneNotFound e){
-			//this.log.debug("autenticazioneHTTPS (not found): "+e.getMessage());
-		}
-
-		if(servizioApplicativo!=null){
-			IDServizioApplicativo idSA = new IDServizioApplicativo();
-			idSA.setNome(servizioApplicativo.getNome());
-			if(servizioApplicativo.getTipoSoggettoProprietario()!=null && servizioApplicativo.getNomeSoggettoProprietario()!=null){
-				idSA.setIdSoggettoProprietario(new IDSoggetto(servizioApplicativo.getTipoSoggettoProprietario(), servizioApplicativo.getNomeSoggettoProprietario()));
-			}
-			return idSA;
-		}
-		else
-			return null;
-	}
-
-	/**
-	 * Restituisce true se il servizio applicativo <var>servizio</var> puo' invocare la porta delegata <var>location</var>,
-	 * gestita dal soggetto <var>aSoggetto</var>. 
-	 *
-	 * @param pd Porta Delegata
-	 * @param servizio Identificativo del servizio applicativo.
-	 * @return Effettua un controllo di autorizzazione per il servizio applicativo <var>servizio</var>.
-	 * 
-	 */
-	protected boolean autorizzazione(PortaDelegata pd, String servizio) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
-
-		if( (pd == null) || (servizio==null) )
+		if( (pd == null) || (servizioApplicativo==null) )
 			return false;
 
 		for(int j=0; j<pd.sizeServizioApplicativoList(); j++){
-			ServizioApplicativo sa = pd.getServizioApplicativo(j);
-			if(servizio.equals(sa.getNome()))
+			if(servizioApplicativo.equals(pd.getServizioApplicativo(j).getNome()))
 				return true;
 		}
 
@@ -2560,14 +2096,6 @@ public class ConfigurazionePdDReader {
 
 	}
 
-	/**
-	 * Restituisce le proprieta' di fault specifiche per il servizio applicativo.
-	 *
-	 * @param gestioneErrore Proprieta di fault da rendere specifiche per il servizio applicativo.
-	 * @param sa Identificativo del servizio applicativo.
-
-	 * 
-	 */
 	protected void aggiornaProprietaGestioneErrorePD(ProprietaErroreApplicativo gestioneErrore, ServizioApplicativo sa) throws DriverConfigurazioneException {
 
 		if(sa==null)
@@ -2600,13 +2128,6 @@ public class ConfigurazionePdDReader {
 		return;
 	}
 
-	/**
-	 * Restituisce l'indicazione se deve essere effettuato un invio per riferimento.
-	 *
-	 * @param sa Identificativo del servizio applicativo.
-	 * @return true se l'invocazione e' per riferimento.
-	 * 
-	 */
 	protected boolean invocazionePortaDelegataPerRiferimento(ServizioApplicativo sa) throws DriverConfigurazioneException{
 		if(sa==null)
 			return false;
@@ -2614,14 +2135,7 @@ public class ConfigurazionePdDReader {
 			return false;
 		return CostantiConfigurazione.ABILITATO.equals(sa.getInvocazionePorta().getInvioPerRiferimento());
 	}
-	
-	/**
-	 * Restituisce l'indicazione se deve essere effettuato lo sbustamento delle informazioni di protocollo
-	 *
-	 * @param sa Identificativo del servizio applicativo.
-	 * @return true se l'invocazione e' per riferimento.
-	 * 
-	 */
+
 	protected boolean invocazionePortaDelegataSbustamentoInformazioniProtocollo(ServizioApplicativo sa) throws DriverConfigurazioneException{
 		if(sa==null)
 			return true;
@@ -2630,10 +2144,10 @@ public class ConfigurazionePdDReader {
 		return !CostantiConfigurazione.DISABILITATO.equals(sa.getInvocazionePorta().getSbustamentoInformazioniProtocollo());
 	}
 
-	
-	
-	
-	
+
+
+
+
 
 
 
@@ -2642,14 +2156,6 @@ public class ConfigurazionePdDReader {
 
 	// INVOCAZIONE SERVIZIO
 
-	/**
-	 * Restituisce l'indicazione se il servizio applicativo associato alla porta applicativa,
-	 * possiede abilitata la caratteristica del servizio GetMessage per quanto riguarda l'invocazione del servizio.
-	 *
-	 * @param sa ServizioApplicativo
-	 * @return true se il servizio applicativo puo' ricevere i messaggi anche dal servizio GOP
-	 * 
-	 */
 	protected boolean invocazioneServizioConGetMessage(ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		// Servizio applicativo
 		if(sa==null)
@@ -2660,14 +2166,6 @@ public class ConfigurazionePdDReader {
 		return CostantiConfigurazione.ABILITATO.equals(serv.getGetMessage());
 	}
 
-	/**
-	 * Restituisce l'indicazione se il servizio applicativo associato alla porta applicativa,
-	 * possiede abilitata la caratteristica del servizio di sbustamento Soap per quanto riguarda l'invocazione del servizio.
-	 *
-	 * @param sa ServizioApplicativo
-	 * @return true se il servizio applicativo ha associata la funzionalita' di sbustamento Soap
-	 * 
-	 */
 	protected boolean invocazioneServizioConSbustamento(ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		// Servizio applicativo
 		if(sa==null)
@@ -2687,15 +2185,7 @@ public class ConfigurazionePdDReader {
 		InvocazioneServizio serv = sa.getInvocazioneServizio();
 		return !CostantiConfigurazione.DISABILITATO.equals(serv.getSbustamentoInformazioniProtocollo());
 	}
-	
-	/**
-	 * Restituisce l'indicazione se il servizio applicativo associato alla porta applicativa,
-	 * possiede la definizione di un connettore
-	 *
-	 * @param sa ServizioApplicativo
-	 * @return true se il servizio applicativo possiede la definizione di un connettore
-	 * 
-	 */
+
 	protected boolean invocazioneServizioConConnettore(ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		// Servizio applicativo
 		if(sa==null)
@@ -2713,33 +2203,23 @@ public class ConfigurazionePdDReader {
 			return false;
 	}
 
-	/**
-	 * Restituisce l'oggetto {@link org.openspcoop2.pdd.core.connettori.ConnettoreMsg} 
-	 * contenente le informazioni sul servizio applicativo collegato ad una porta applicativa 
-	 * identificata dal parametro <var>idPA</var>. 
-	 *
-	 * @param sa ServizioApplicativo
-	 * @param idPA Identificatore di una Porta Applicativa
-	 * @return l'oggetto {@link org.openspcoop2.pdd.core.connettori.ConnettoreMsg} associati al servizio applicativo.
-	 * 
-	 */
-	protected ConnettoreMsg getInvocazioneServizio(Connection connectionPdD,ServizioApplicativo sa,RichiestaApplicativa idPA)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected ConnettoreMsg getInvocazioneServizio(Connection connectionPdD,ServizioApplicativo sa,RichiestaApplicativa richiestaApplicativa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Servizio applicativo
 		if(sa.getInvocazioneServizio()==null)
-			throw new DriverConfigurazioneNotFound("Servizio applicativo ["+idPA.getServizioApplicativo()+"] del soggetto["+idPA.getIDServizio().getSoggettoErogatore()+"] non possieder l'elemento invocazione servizio");
+			throw new DriverConfigurazioneNotFound("Servizio applicativo ["+richiestaApplicativa.getServizioApplicativo()+"] del soggetto["+richiestaApplicativa.getIDServizio().getSoggettoErogatore()+"] non possieder l'elemento invocazione servizio");
 		InvocazioneServizio serv = sa.getInvocazioneServizio();
 
 
 		// Soggetto Erogatore
-		IDSoggetto aSoggetto = idPA.getIDServizio().getSoggettoErogatore();
+		IDSoggetto aSoggetto = richiestaApplicativa.getIDServizio().getSoggettoErogatore();
 		Soggetto soggetto = this.configurazionePdD.getSoggetto(connectionPdD,aSoggetto);
 		if(soggetto==null)
 			throw new DriverConfigurazioneNotFound("[getInvocazioneServizio] Soggetto erogatore non trovato");
 
 
 		// Porta Applicativa
-		PortaApplicativa pa = this.configurazionePdD.getPortaApplicativa(connectionPdD,idPA.getIdPAbyNome().getNome(),idPA.getIdPAbyNome().getSoggetto());
+		PortaApplicativa pa = this.configurazionePdD.getPortaApplicativa(connectionPdD,richiestaApplicativa.getIdPortaApplicativa());
 
 
 		// CONNETTORE
@@ -2756,10 +2236,10 @@ public class ConfigurazionePdDReader {
 					}
 				}
 			}
-			
+
 			// urlPrefixRewriter
 			setPAUrlPrefixRewriter(connectionPdD,connettore, aSoggetto);
-				
+
 			// Properties connettore
 			properties = new java.util.Hashtable<String,String>();
 			for(int i=0;i<connettore.sizePropertyList();i++){
@@ -2815,15 +2295,6 @@ public class ConfigurazionePdDReader {
 		return connettoreMsg;
 	}
 
-	/**
-	 * Restituisce la politica di gestione della consegna tramite connettore, 
-	 * contenente le informazioni sul servizio applicativo collegato ad una porta applicativa 
-	 * identificata dal parametro <var>idPA</var>. 
-	 *
-	 * @param sa ServizioApplicativo
-	 * @return la politica di gestione della consegna tramite connettore
-	 * 
-	 */
 	protected GestioneErrore getGestioneErroreConnettore_InvocazioneServizio(Connection connectionPdD,ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		//  Servizio applicativo
@@ -2834,13 +2305,6 @@ public class ConfigurazionePdDReader {
 		return invocazione.getGestioneErrore();
 	}
 
-	/**
-	 * Restituisce l'indicazione se deve essere effettuato un invio per riferimento.
-	 *
-	 * @param sa ServizioApplicativo
-	 * @return true se l'invocazione e' per riferimento.
-	 * 
-	 */
 	protected boolean invocazioneServizioPerRiferimento(ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		//	  Servizio applicativo
 		if(sa==null)
@@ -2850,13 +2314,6 @@ public class ConfigurazionePdDReader {
 		return CostantiConfigurazione.ABILITATO.equals(sa.getInvocazioneServizio().getInvioPerRiferimento());
 	}
 
-	/**
-	 * Restituisce l'indicazione se deve essere ricevuta una risposto per riferimento.
-	 *
-	 * @param sa ServizioApplicativo
-	 * @return true se l'invocazione e' per riferimento.
-	 * 
-	 */
 	protected boolean invocazioneServizioRispostaPerRiferimento(ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		//		  Servizio applicativo
 		if(sa==null)
@@ -2866,7 +2323,7 @@ public class ConfigurazionePdDReader {
 		return CostantiConfigurazione.ABILITATO.equals(sa.getInvocazioneServizio().getRispostaPerRiferimento());
 	}
 
-	
+
 
 
 
@@ -2875,14 +2332,6 @@ public class ConfigurazionePdDReader {
 
 	// RICEZIONE RISPOSTA ASINCRONA
 
-	/**
-	 * Restituisce true se il servizio applicativo <var>servizio</var> contiene una ricezione risposta asincrona. 
-	 * Cioe' dispone di un connettore e/o di un servizio di getMessage abilitato
-	 *
-	 * @param sa ServizioApplicativo
-	 * @return Controlla se il servizio applicativo <var>servizio</var> possiede una ricezione risposta asincrona.
-	 * 
-	 */
 	protected boolean existsConsegnaRispostaAsincrona(ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound { 
 
 		if(sa==null)
@@ -2900,14 +2349,6 @@ public class ConfigurazionePdDReader {
 
 	}
 
-	/**
-	 * Restituisce l'indicazione se il servizio applicativo associato alla porta delegata,
-	 * possiede abilitata la caratteristica del servizio GetMessage per quanto riguarda la ricezione di risposte asincrone.
-	 *
-	 * @param sa ServizioApplicativo
-	 * @return true se il servizio applicativo puo' ricevere i messaggi anche dal servizio GetMessage
-	 * 
-	 */
 	protected boolean consegnaRispostaAsincronaConGetMessage(ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		// Servizio applicativo
 		if(sa==null)
@@ -2918,14 +2359,6 @@ public class ConfigurazionePdDReader {
 		return CostantiConfigurazione.ABILITATO.equals(serv.getGetMessage());
 	}
 
-	/**
-	 * Restituisce l'indicazione se il servizio applicativo associato alla porta delegata,
-	 * possiede abilitata la caratteristica del servizio di sbustamento Soap per quanto riguarda la ricezione di contenuti asincroni.
-	 *
-	 * @param sa ServizioApplicativo
-	 * @return true se il servizio applicativo ha associata la funzionalita' di sbustamento Soap
-	 * 
-	 */
 	protected boolean consegnaRispostaAsincronaConSbustamento(ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		// Servizio applicativo
 		if(sa==null)
@@ -2935,7 +2368,7 @@ public class ConfigurazionePdDReader {
 		RispostaAsincrona serv = sa.getRispostaAsincrona();
 		return CostantiConfigurazione.ABILITATO.equals(serv.getSbustamentoSoap());
 	}
-	
+
 	protected boolean consegnaRispostaAsincronaConSbustamentoInformazioniProtocollo(ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		// Servizio applicativo
 		if(sa==null)
@@ -2946,14 +2379,6 @@ public class ConfigurazionePdDReader {
 		return !CostantiConfigurazione.DISABILITATO.equals(serv.getSbustamentoInformazioniProtocollo());
 	}
 
-	/**
-	 * Restituisce l'indicazione se il servizio applicativo associato alla porta delegata,
-	 * possiede la definizione di un connettore
-	 *
-	 * @param sa ServizioApplicativo
-	 * @return true se il servizio applicativo possiede la definizione di un connettore
-	 * 
-	 */
 	protected boolean consegnaRispostaAsincronaConConnettore(ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		// Servizio applicativo
 		if(sa==null)
@@ -2970,27 +2395,16 @@ public class ConfigurazionePdDReader {
 			return false;
 	}
 
-	/**
-	 * Restituisce l'oggetto {@link org.openspcoop2.pdd.core.connettori.ConnettoreMsg} 
-	 * contenente le informazioni sul servizio applicativo, per quanto riguarda il servizio di ricezione risposte asincrono,
-	 * collegato ad una porta delegata 
-	 * identificata dal parametro <var>idPD</var>. 
-	 *
-	 * @param sa ServizioApplicativo
-	 * @param idPD Identificatore di una Porta Delegata
-	 * @return l'oggetto {@link org.openspcoop2.pdd.core.connettori.ConnettoreMsg} associati al servizio applicativo.
-	 * 
-	 */
 	protected ConnettoreMsg getConsegnaRispostaAsincrona(Connection connectionPdD,ServizioApplicativo sa,RichiestaDelegata idPD)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Servizio applicativo
 		if(sa.getRispostaAsincrona()==null)
-			throw new DriverConfigurazioneNotFound("Servizio applicativo ["+idPD.getServizioApplicativo()+"] del soggetto["+idPD.getSoggettoFruitore()+"] non possiede una risposta Asincrona");
+			throw new DriverConfigurazioneNotFound("Servizio applicativo ["+idPD.getServizioApplicativo()+"] del soggetto["+idPD.getIdSoggettoFruitore()+"] non possiede una risposta Asincrona");
 		RispostaAsincrona serv = sa.getRispostaAsincrona();
 
 
 		// Soggetto che possiede il connettore
-		IDSoggetto aSoggetto = idPD.getSoggettoFruitore();
+		IDSoggetto aSoggetto = idPD.getIdSoggettoFruitore();
 		Soggetto soggetto = this.configurazionePdD.getSoggetto(connectionPdD,aSoggetto);
 		if(soggetto==null)
 			throw new DriverConfigurazioneNotFound("[getConsegnaRispostaAsincrona] Soggetto non trovato");
@@ -3010,10 +2424,10 @@ public class ConfigurazionePdDReader {
 					}
 				}
 			}
-			
+
 			// urlPrefixRewriter
 			setPAUrlPrefixRewriter(connectionPdD,connettore, aSoggetto);
-			
+
 			// set properties
 			properties = new java.util.Hashtable<String,String>();
 			for(int i=0;i<connettore.sizePropertyList();i++){
@@ -3062,34 +2476,23 @@ public class ConfigurazionePdDReader {
 		return connettoreMsg;
 	}
 
-	/**
-	 * Restituisce l'oggetto {@link org.openspcoop2.pdd.core.connettori.ConnettoreMsg} 
-	 * contenente le informazioni sul servizio applicativo, per quanto riguarda il servizio di ricezione risposte asincrono,
-	 * collegato ad una porta applicativa 
-	 * identificata dal parametro <var>idPA</var>. 
-	 *
-	 * @param sa ServizioApplicativo
-	 * @param idPA Identificatore di una Porta Applicativa
-	 * @return l'oggetto {@link org.openspcoop2.pdd.core.connettori.ConnettoreMsg} associati al servizio applicativo.
-	 * 
-	 */
-	protected ConnettoreMsg getConsegnaRispostaAsincrona(Connection connectionPdD,ServizioApplicativo sa,RichiestaApplicativa idPA)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected ConnettoreMsg getConsegnaRispostaAsincrona(Connection connectionPdD,ServizioApplicativo sa,RichiestaApplicativa richiestaApplicativa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		//		 Servizio applicativo
 		if(sa.getRispostaAsincrona()==null)
-			throw new DriverConfigurazioneNotFound("Servizio applicativo ["+idPA.getServizioApplicativo()+"] del soggetto["+idPA.getSoggettoFruitore()+"] non possiede l'elemento invocazione servizio");
+			throw new DriverConfigurazioneNotFound("Servizio applicativo ["+richiestaApplicativa.getServizioApplicativo()+"] del soggetto["+richiestaApplicativa.getSoggettoFruitore()+"] non possiede l'elemento invocazione servizio");
 		RispostaAsincrona serv = sa.getRispostaAsincrona();
 
 
 		// Soggetto che contiene il connettore
-		IDSoggetto aSoggetto = idPA.getIDServizio().getSoggettoErogatore();
+		IDSoggetto aSoggetto = richiestaApplicativa.getIDServizio().getSoggettoErogatore();
 		Soggetto soggetto = this.configurazionePdD.getSoggetto(connectionPdD,aSoggetto);
 		if(soggetto==null)
 			throw new DriverConfigurazioneNotFound("[getConsegnaRispostaAsincrona] Soggetto non trovato");
 
 
 		// Porta Applicativa
-		PortaApplicativa pa = this.configurazionePdD.getPortaApplicativa(connectionPdD,idPA.getIdPAbyNome().getNome(),idPA.getIdPAbyNome().getSoggetto());
+		PortaApplicativa pa = this.configurazionePdD.getPortaApplicativa(connectionPdD,richiestaApplicativa.getIdPortaApplicativa());
 
 
 		// CONNETTORE
@@ -3106,10 +2509,10 @@ public class ConfigurazionePdDReader {
 					}
 				}
 			}
-			
+
 			// urlPrefixRewriter
 			setPAUrlPrefixRewriter(connectionPdD,connettore, aSoggetto);
-				
+
 			// Properties connettore
 			properties = new java.util.Hashtable<String,String>();
 			for(int i=0;i<connettore.sizePropertyList();i++){
@@ -3164,17 +2567,7 @@ public class ConfigurazionePdDReader {
 
 		return connettoreMsg;
 	}
-	
-	/**
-	 * Restituisce la politica di gestione della consegna tramite connettore, 
-	 * per quanto riguarda il servizio di ricezione risposte asincrono,
-	 * collegato ad una porta delegata 
-	 * identificata dal parametro <var>idPD</var>. 
-	 *
-	 * @param sa ServizioApplicativo
-	 * @return la politica di gestione della consegna tramite connettore
-	 * 
-	 */
+
 	protected GestioneErrore getGestioneErroreConnettore_RispostaAsincrona(Connection connectionPdD,ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		//  Servizio applicativo
@@ -3186,13 +2579,6 @@ public class ConfigurazionePdDReader {
 
 	}
 
-	/**
-	 * Restituisce l'indicazione se deve essere effettuato un invio per riferimento.
-	 *
-	 * @param sa ServizioApplicativo
-	 * @return true se l'invocazione e' per riferimento.
-	 * 
-	 */
 	protected boolean consegnaRispostaAsincronaPerRiferimento(ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		//	  Servizio applicativo
 		if(sa==null)
@@ -3202,13 +2588,6 @@ public class ConfigurazionePdDReader {
 		return CostantiConfigurazione.ABILITATO.equals(sa.getRispostaAsincrona().getInvioPerRiferimento());
 	}
 
-	/**
-	 * Restituisce l'indicazione se deve essere ricevuta una risposto per riferimento.
-	 *
-	 * @param sa ServizioApplicativo
-	 * @return true se l'invocazione e' per riferimento.
-	 * 
-	 */
 	protected boolean consegnaRispostaAsincronaRispostaPerRiferimento(ServizioApplicativo sa)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		// Servizio applicativo
 		if(sa==null)
@@ -3218,10 +2597,10 @@ public class ConfigurazionePdDReader {
 		return CostantiConfigurazione.ABILITATO.equals(sa.getRispostaAsincrona().getRispostaPerRiferimento());
 	}
 
-	
-	
-	
-	
+
+
+
+
 
 
 
@@ -3276,7 +2655,7 @@ public class ConfigurazionePdDReader {
 			System.out.println("REGISTRO CACHE ITEM IDLE: "+ConfigurazionePdDReader.accessoRegistroServizi.getCache().getItemIdleTime());
 			System.out.println("REGISTRO CACHE ITEM LIFE SECOND: "+ConfigurazionePdDReader.accessoRegistroServizi.getCache().getItemLifeSecond());
 		}
-		
+
 		for(int i=0; i<ConfigurazionePdDReader.accessoRegistroServizi.sizeRegistroList(); i++){
 			System.out.println("REGISTRO ["+i+"] NOME ["+ConfigurazionePdDReader.accessoRegistroServizi.getRegistro(i).getNome()+"]");
 			System.out.println("REGISTRO ["+i+"] TIPO ["+ConfigurazionePdDReader.accessoRegistroServizi.getRegistro(i).getTipo()+"]");
@@ -3284,7 +2663,7 @@ public class ConfigurazionePdDReader {
 			System.out.println("REGISTRO ["+i+"] USER ["+ConfigurazionePdDReader.accessoRegistroServizi.getRegistro(i).getUser()+"]");
 			System.out.println("REGISTRO ["+i+"] PASSWORD ["+ConfigurazionePdDReader.accessoRegistroServizi.getRegistro(i).getPassword()+"]");
 		}*/
-		
+
 		return ConfigurazionePdDReader.accessoRegistroServizi;
 	}
 
@@ -3322,11 +2701,11 @@ public class ConfigurazionePdDReader {
 			System.out.println("ACCESSO_CONFIG CACHE ITEM IDLE: "+ConfigurazionePdDReader.accessoConfigurazione.getCache().getItemIdleTime());
 			System.out.println("ACCESSO_CONFIG CACHE ITEM LIFE SECOND: "+ConfigurazionePdDReader.accessoConfigurazione.getCache().getItemLifeSecond());
 		}
-		*/
-		
+		 */
+
 		return ConfigurazionePdDReader.accessoConfigurazione;
 	}
-	
+
 	/**
 	 * Restituisce le informazioni necessarie alla porta di dominio per accedere ai dati di autorizzazione
 	 *
@@ -3361,11 +2740,11 @@ public class ConfigurazionePdDReader {
 			System.out.println("ACCESSO_DATI_AUTH CACHE ITEM IDLE: "+ConfigurazionePdDReader.accessoDatiAutorizzazione.getCache().getItemIdleTime());
 			System.out.println("ACCESSO_DATI_AUTH CACHE ITEM LIFE SECOND: "+ConfigurazionePdDReader.accessoDatiAutorizzazione.getCache().getItemLifeSecond());
 		}
-		*/
-		
+		 */
+
 		return ConfigurazionePdDReader.accessoDatiAutorizzazione;
 	}
-	
+
 	/**
 	 * Restituisce il tipo di validazione richiesta alla porta di dominio.
 	 * Se un valore non viene impostato, il tipo ritornato sara' 'attivo'.
@@ -3382,7 +2761,7 @@ public class ConfigurazionePdDReader {
 				CostantiConfigurazione.STATO_CON_WARNING_ABILITATO.toString().equals(tipo) || 
 				CostantiConfigurazione.STATO_CON_WARNING_DISABILITATO.toString().equals(tipo) || 
 				CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.toString().equals(tipo) ) 
-		   ){
+				){
 			if(CostantiConfigurazione.STATO_CON_WARNING_ABILITATO.toString().equals(tipo))
 				return CostantiConfigurazione.STATO_CON_WARNING_ABILITATO;
 			else if(CostantiConfigurazione.STATO_CON_WARNING_DISABILITATO.toString().equals(tipo))
@@ -3390,21 +2769,21 @@ public class ConfigurazionePdDReader {
 			else 
 				return CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY;
 		}
-		
+
 		if( this.configurazioneDinamica || ConfigurazionePdDReader.tipoValidazione==null){
-			
+
 			Configurazione configurazione = null;
 			try{
 				configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
-				
+
 				/*if(configurazione.getValidazioneBuste()!=null){
 					System.out.println("VALIDAZIONE tipo["+configurazione.getValidazioneBuste().getStato()+"] Controllo["+
 							configurazione.getValidazioneBuste().getControllo()+"] Profilo["+
 							configurazione.getValidazioneBuste().getProfiloCollaborazione()+"] Manifest["+
 							configurazione.getValidazioneBuste().getManifestAttachments()+"]");
 				}*/
-				
-				
+
+
 			}catch(DriverConfigurazioneNotFound e){
 				this.log.debug("getTipoValidazione (not found): "+e.getMessage());
 			}catch(Exception e){
@@ -3420,7 +2799,7 @@ public class ConfigurazionePdDReader {
 				ConfigurazionePdDReader.tipoValidazione = CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY;
 			else
 				ConfigurazionePdDReader.tipoValidazione = CostantiConfigurazione.STATO_CON_WARNING_ABILITATO;
-			
+
 		}
 
 		return ConfigurazionePdDReader.tipoValidazione;
@@ -3442,15 +2821,15 @@ public class ConfigurazionePdDReader {
 		if(value!=null && ( 
 				CostantiConfigurazione.VALIDAZIONE_PROTOCOL_LIVELLO_NORMALE.toString().equalsIgnoreCase(value) || 
 				CostantiConfigurazione.VALIDAZIONE_PROTOCOL_LIVELLO_RIGIDO.toString().equalsIgnoreCase(value) ) 
-		   ){
+				){
 			if(CostantiConfigurazione.VALIDAZIONE_PROTOCOL_LIVELLO_NORMALE.toString().equalsIgnoreCase(value))
 				return true;
 			else 
 				return false;
 		}
-		
+
 		if( this.configurazioneDinamica || ConfigurazionePdDReader.isLivelloValidazioneNormale==null){
-					
+
 			Configurazione configurazione = null;
 			try{
 				configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
@@ -3465,7 +2844,7 @@ public class ConfigurazionePdDReader {
 				ConfigurazionePdDReader.isLivelloValidazioneNormale = true;
 			else 
 				ConfigurazionePdDReader.isLivelloValidazioneNormale = false;		
-			
+
 		}
 
 		return ConfigurazionePdDReader.isLivelloValidazioneNormale;
@@ -3488,15 +2867,15 @@ public class ConfigurazionePdDReader {
 		if(value!=null && ( 
 				CostantiConfigurazione.VALIDAZIONE_PROTOCOL_LIVELLO_NORMALE.toString().equalsIgnoreCase(value) || 
 				CostantiConfigurazione.VALIDAZIONE_PROTOCOL_LIVELLO_RIGIDO.toString().equalsIgnoreCase(value) ) 
-		   ){
+				){
 			if(CostantiConfigurazione.VALIDAZIONE_PROTOCOL_LIVELLO_RIGIDO.toString().equalsIgnoreCase(value))
 				return true;
 			else 
 				return false;
 		}
-		
+
 		if( this.configurazioneDinamica || ConfigurazionePdDReader.isLivelloValidazioneRigido==null){
-				
+
 			Configurazione configurazione = null;
 			try{
 				configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
@@ -3511,7 +2890,7 @@ public class ConfigurazionePdDReader {
 				ConfigurazionePdDReader.isLivelloValidazioneRigido = true;
 			else
 				ConfigurazionePdDReader.isLivelloValidazioneRigido = false;
-			
+
 		}
 
 		return ConfigurazionePdDReader.isLivelloValidazioneRigido;
@@ -3533,15 +2912,15 @@ public class ConfigurazionePdDReader {
 		if(value!=null && ( 
 				CostantiConfigurazione.ABILITATO.toString().equalsIgnoreCase(value) || 
 				CostantiConfigurazione.DISABILITATO.toString().equalsIgnoreCase(value) ) 
-		   ){
+				){
 			if(CostantiConfigurazione.ABILITATO.toString().equalsIgnoreCase(value))
 				return true;
 			else 
 				return false;
 		}
-		
+
 		if( this.configurazioneDinamica || ConfigurazionePdDReader.validazioneProfiloCollaborazione==null){
-			
+
 			Configurazione configurazione = null;
 			try{
 				configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
@@ -3556,7 +2935,7 @@ public class ConfigurazionePdDReader {
 				ConfigurazionePdDReader.validazioneProfiloCollaborazione = true;
 			else
 				ConfigurazionePdDReader.validazioneProfiloCollaborazione = false; //default: CostantiConfigurazione.DISABILITATO;
-			
+
 		}
 
 		return ConfigurazionePdDReader.validazioneProfiloCollaborazione;
@@ -3576,15 +2955,15 @@ public class ConfigurazionePdDReader {
 		if(value!=null && ( 
 				CostantiConfigurazione.ABILITATO.toString().equalsIgnoreCase(value) || 
 				CostantiConfigurazione.DISABILITATO.toString().equalsIgnoreCase(value) ) 
-		   ){
+				){
 			if(CostantiConfigurazione.ABILITATO.toString().equalsIgnoreCase(value))
 				return true;
 			else 
 				return false;
 		}
-		
+
 		if( this.configurazioneDinamica || ConfigurazionePdDReader.validazioneManifestAttachments==null){
-			
+
 			Configurazione configurazione = null;
 			try{
 				configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
@@ -3599,7 +2978,7 @@ public class ConfigurazionePdDReader {
 				ConfigurazionePdDReader.validazioneManifestAttachments = false;
 			else
 				ConfigurazionePdDReader.validazioneManifestAttachments = true; //default: CostantiConfigurazione.ABILITATO;
-			
+
 		}
 
 		return ConfigurazionePdDReader.validazioneManifestAttachments;
@@ -3620,11 +2999,11 @@ public class ConfigurazionePdDReader {
 			Configurazione configurazione = null;
 			try{
 				configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
-				
+
 				/*if(configurazione.getRisposte()!=null){
 					System.out.println("NEW CONNECTION FOR RESPONSE ["+configurazione.getRisposte().getConnessione()+"]");
 				}*/
-				
+
 			}catch(DriverConfigurazioneNotFound e){
 				this.log.debug("newConnectionForResponse (not found): "+e.getMessage());
 			}catch(Exception e){
@@ -3654,11 +3033,11 @@ public class ConfigurazionePdDReader {
 			Configurazione configurazione = null;
 			try{
 				configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
-				
+
 				/*if(configurazione.getIndirizzoRisposta()!=null){
 					System.out.println("INDIRIZZO TELEMATICO ["+configurazione.getIndirizzoRisposta().getUtilizzo()+"]");
 				}*/
-				
+
 			}catch(DriverConfigurazioneNotFound e){
 				this.log.debug("isUtilizzoIndirizzoRisposta (not found): "+e.getMessage());
 			}catch(Exception e){
@@ -3688,11 +3067,11 @@ public class ConfigurazionePdDReader {
 			Configurazione configurazione = null;
 			try{
 				configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
-				
+
 				/*if(configurazione.getAttachments()!=null){
 					System.out.println("GESTIONE MANIFEST ["+configurazione.getAttachments().getGestioneManifest()+"]");
 				}*/
-				
+
 			}catch(DriverConfigurazioneNotFound e){
 				this.log.debug("isGestioneManifestAttachments (not found): "+e.getMessage());
 			}catch(Exception e){
@@ -3723,11 +3102,11 @@ public class ConfigurazionePdDReader {
 			Configurazione configurazione = null;
 			try{
 				configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
-				
+
 				/*if(configurazione.getInoltroBusteNonRiscontrate()!=null){
 					System.out.println("RISCONTRI ["+configurazione.getInoltroBusteNonRiscontrate().getCadenza()+"]");
 				}*/
-				
+
 			}catch(DriverConfigurazioneNotFound e){
 				this.log.debug("getTimeoutRiscontro (not found): "+e.getMessage());
 			}catch(Exception e){
@@ -3854,7 +3233,7 @@ public class ConfigurazionePdDReader {
 				Configurazione configurazione = null;
 				try{
 					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
-										
+
 				}catch(DriverConfigurazioneNotFound e){
 					this.log.debug("getSeverita_msgDiagnostici (not found): "+e.getMessage());
 				}catch(Exception e){
@@ -4000,7 +3379,7 @@ public class ConfigurazionePdDReader {
 
 		return ConfigurazionePdDReader.dumpMessaggi;
 	}
-	
+
 	private static Boolean dumpBinarioPD = null;
 	public static Boolean dumpBinarioPDJMX = null;
 	protected boolean dumpBinarioPD(Connection connectionPdD){
@@ -4036,8 +3415,8 @@ public class ConfigurazionePdDReader {
 
 		return ConfigurazionePdDReader.dumpBinarioPD;
 	}
-	
-	
+
+
 	private static Boolean dumpBinarioPA = null;
 	public static Boolean dumpBinarioPAJMX = null;
 	protected boolean dumpBinarioPA(Connection connectionPdD){
@@ -4094,7 +3473,7 @@ public class ConfigurazionePdDReader {
 				Configurazione configurazione = null;
 				try{
 					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
-					
+
 					/*if(configurazione.getTracciamento()!=null){
 						System.out.println("TRACCIAMENTO BUSTE ["+configurazione.getTracciamento().getBuste()+"]");
 						System.out.println("TRACCIAMENTO DUMP ["+configurazione.getTracciamento().getDump()+"]");
@@ -4108,7 +3487,7 @@ public class ConfigurazionePdDReader {
 							}
 						}
 					}*/
-					
+
 				}catch(DriverConfigurazioneNotFound e){
 					this.log.debug("tracciamentoBuste (not found): "+e.getMessage());
 				}catch(Exception e){
@@ -4179,7 +3558,7 @@ public class ConfigurazionePdDReader {
 				GestioneErrore gestione = null;
 				try{
 					gestione = this.configurazionePdD.getGestioneErroreComponenteCooperazione(connectionPdD);
-					
+
 					/*if(gestione!=null){
 						System.out.println("GESTIONE COOPERAZIONE PRESENTE");
 						System.out.println("COMPORTAMENTO: "+gestione.getComportamento());		
@@ -4200,7 +3579,7 @@ public class ConfigurazionePdDReader {
 									+"]" );
 						}
 					}*/
-					
+
 				}catch(DriverConfigurazioneNotFound e){
 					this.log.debug("getGestioneErroreConnettoreComponenteCooperazione (not found): "+e.getMessage());
 				}catch(Exception e){
@@ -4234,7 +3613,7 @@ public class ConfigurazionePdDReader {
 				GestioneErrore gestione = null;
 				try{
 					gestione = this.configurazionePdD.getGestioneErroreComponenteIntegrazione(connectionPdD);
-					
+
 					/*if(gestione!=null){
 						System.out.println("GESTIONE INTEGRAZIONE PRESENTE");
 						System.out.println("COMPORTAMENTO: "+gestione.getComportamento());		
@@ -4255,7 +3634,7 @@ public class ConfigurazionePdDReader {
 									+"]" );
 						}
 					}*/
-					
+
 				}catch(DriverConfigurazioneNotFound e){
 					this.log.debug("getGestioneErroreConnettoreComponenteIntegrazione (not found): "+e.getMessage());
 				}catch(Exception e){
@@ -4291,11 +3670,11 @@ public class ConfigurazionePdDReader {
 				Configurazione configurazione = null;
 				try{
 					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
-					
+
 					/*if(configurazione.getIntegrationManager()!=null){
 						System.out.println("IM ["+configurazione.getIntegrationManager().getAutenticazione()+"]");
 					}*/
-					
+
 				}catch(DriverConfigurazioneNotFound e){
 					this.log.debug("getIntegrationManagerAuthentication (not found): "+e.getMessage());
 				}catch(Exception e){
@@ -4305,7 +3684,7 @@ public class ConfigurazionePdDReader {
 					ConfigurazionePdDReader.integrationManagerAuthentication = new String [] { CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC.toString(),
 							CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_SSL.toString() };
 				}else {
-					
+
 					String [] values =  configurazione.getIntegrationManager().getAutenticazione().split(",");
 					List<String> v = new ArrayList<String>();
 					ClassNameProperties classNameProperties = ClassNameProperties.getInstance();
@@ -4334,7 +3713,7 @@ public class ConfigurazionePdDReader {
 
 	}
 
-	
+
 	/**
 	 * Restituisce il tipo di validazione xsd  attiva nella porta
 	 * 
@@ -4343,11 +3722,11 @@ public class ConfigurazionePdDReader {
 	 */
 	private static ValidazioneContenutiApplicativi validazioneContenutiApplicativi = null;
 	protected ValidazioneContenutiApplicativi getTipoValidazioneContenutoApplicativo(Connection connectionPdD, String implementazionePdDSoggetto) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		
+
 		ValidazioneContenutiApplicativi valDefault = new ValidazioneContenutiApplicativi();
 		valDefault.setStato(CostantiConfigurazione.STATO_CON_WARNING_DISABILITATO);
 		valDefault.setTipo(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD);
-		
+
 		// ovverriding per implementazione porta di dominio
 		String stato = this.pddProperties.getValidazioneContenutiApplicativi_Stato(implementazionePdDSoggetto);
 		String tipo = this.pddProperties.getValidazioneContenutiApplicativi_Tipo(implementazionePdDSoggetto);
@@ -4391,19 +3770,19 @@ public class ConfigurazionePdDReader {
 		if(pddPropertiesPresente)
 			return valDefault;
 
-		
+
 		if( this.configurazioneDinamica || ConfigurazionePdDReader.validazioneContenutiApplicativi==null){
-			
+
 			try{
 				Configurazione configurazione = null;
 				try{
 					configurazione = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD);
-					
+
 					/*if(configurazione.getValidazioneContenutiApplicativi()!=null){
 						System.out.println("VALIDAZIONE CONTENUTI STATO["+configurazione.getValidazioneContenutiApplicativi().getStato()+"]");
 						System.out.println("VALIDAZIONE CONTENUTI TIPO["+configurazione.getValidazioneContenutiApplicativi().getTipo()+"]");
 					}*/
-					
+
 				}catch(DriverConfigurazioneNotFound e){
 					this.log.debug("getTipoValidazioneContenutoApplicativo (not found): "+e.getMessage());
 				}catch(Exception e){
@@ -4443,7 +3822,7 @@ public class ConfigurazionePdDReader {
 					}else{
 						val.setAcceptMtomMessage(CostantiConfigurazione.DISABILITATO);
 					}
-					
+
 					ConfigurazionePdDReader.validazioneContenutiApplicativi = val;
 				}
 			}catch(Exception e){
@@ -4452,10 +3831,10 @@ public class ConfigurazionePdDReader {
 		}
 		return ConfigurazionePdDReader.validazioneContenutiApplicativi;
 	}
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * Restituisce l'indicazione se il servizio porta delegata e' attivo
 	 *
@@ -4490,7 +3869,7 @@ public class ConfigurazionePdDReader {
 		return ConfigurazionePdDReader.isPDServiceActive;
 
 	}
-	
+
 	private static List<TipoFiltroAbilitazioneServizi> getFiltriAbilitazionePDService = null;
 	protected List<TipoFiltroAbilitazioneServizi> getFiltriAbilitazionePDService(){
 
@@ -4519,7 +3898,7 @@ public class ConfigurazionePdDReader {
 		return ConfigurazionePdDReader.getFiltriAbilitazionePDService;
 
 	}
-	
+
 	private static List<TipoFiltroAbilitazioneServizi> getFiltriDisabilitazionePDService = null;
 	protected List<TipoFiltroAbilitazioneServizi> getFiltriDisabilitazionePDService(){
 
@@ -4548,9 +3927,9 @@ public class ConfigurazionePdDReader {
 		return ConfigurazionePdDReader.getFiltriDisabilitazionePDService;
 
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Restituisce l'indicazione se il servizio porta applicativa e' attivo
 	 *
@@ -4585,7 +3964,7 @@ public class ConfigurazionePdDReader {
 		return ConfigurazionePdDReader.isPAServiceActive;
 
 	}
-	
+
 	private static List<TipoFiltroAbilitazioneServizi> getFiltriAbilitazionePAService = null;
 	protected List<TipoFiltroAbilitazioneServizi> getFiltriAbilitazionePAService(){
 
@@ -4614,7 +3993,7 @@ public class ConfigurazionePdDReader {
 		return ConfigurazionePdDReader.getFiltriAbilitazionePAService;
 
 	}
-	
+
 	private static List<TipoFiltroAbilitazioneServizi> getFiltriDisabilitazionePAService = null;
 	protected List<TipoFiltroAbilitazioneServizi> getFiltriDisabilitazionePAService(){
 
@@ -4643,8 +4022,8 @@ public class ConfigurazionePdDReader {
 		return ConfigurazionePdDReader.getFiltriDisabilitazionePAService;
 
 	}
-	
-	
+
+
 	/**
 	 * Restituisce l'indicazione se il servizio integration manager e' attivo
 	 *
@@ -4679,11 +4058,11 @@ public class ConfigurazionePdDReader {
 		return ConfigurazionePdDReader.isIMServiceActive;
 
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	protected StatoServiziPdd getStatoServiziPdD() throws DriverConfigurazioneException{
 		try{
 			return this.configurazionePdD.getStatoServiziPdD();
@@ -4695,13 +4074,13 @@ public class ConfigurazionePdDReader {
 	protected void updateStatoServiziPdD(StatoServiziPdd servizi) throws DriverConfigurazioneException{
 		this.configurazionePdD.updateStatoServiziPdD(servizi);
 	}
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
 	protected SystemProperties getSystemPropertiesPdD() throws DriverConfigurazioneException{
 		try{
 			return this.configurazionePdD.getSystemPropertiesPdD();
@@ -4713,16 +4092,16 @@ public class ConfigurazionePdDReader {
 	protected void updateSystemPropertiesPdD(SystemProperties systemProperties) throws DriverConfigurazioneException{
 		this.configurazionePdD.updateSystemPropertiesPdD(systemProperties);
 	}
-	
-	
-	
+
+
+
 	// Per la configurazione realizzo due versioni.
 	//
 	// Il metodo 'getExtendedInfoConfigurazione' e 'getSingleExtendedInfoConfigurazione' implementa la logica classica della configurazione della PdD
 	// dove le informazioni sulla policy vengono lette solamente all'avvio della PdD (se la configurazione non è dinamica)
 	//
 	// Il metodo 'getExtendedInfoConfigurazioneFromCache' e 'getSingleExtendedInfoConfigurazioneFromCache' implementa la logica di prelieve sempre dalla cache
-	
+
 	private static List<Object> getExtendedInfoConfigurazione = null;
 	protected List<Object> getExtendedInfoConfigurazione(Connection connectionPdD) throws DriverConfigurazioneException{
 
@@ -4734,9 +4113,9 @@ public class ConfigurazionePdDReader {
 				}catch(DriverConfigurazioneNotFound e){
 					this.log.debug("getExtendedInfoConfigurazione (not found): "+e.getMessage());
 				}
-//				}catch(Exception e){
-//					this.log.error("getExtendedInfoConfigurazione",e);
-//				}
+				//				}catch(Exception e){
+				//					this.log.error("getExtendedInfoConfigurazione",e);
+				//				}
 				ConfigurazionePdDReader.getExtendedInfoConfigurazione = configurazione.getExtendedInfoList();
 
 			}catch(Exception e){
@@ -4748,10 +4127,10 @@ public class ConfigurazionePdDReader {
 		return ConfigurazionePdDReader.getExtendedInfoConfigurazione;
 
 	}
-	
-	private static Hashtable<String, Object> getSingleExtendedInfoConfigurazione = new Hashtable<String, Object>(); 
+
+	private static Map<String, Object> getSingleExtendedInfoConfigurazione = new java.util.Hashtable<String, Object>(); 
 	protected Object getSingleExtendedInfoConfigurazione(String id, Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		
+
 		if( this.configurazioneDinamica || ConfigurazionePdDReader.getSingleExtendedInfoConfigurazione.containsKey(id)==false){
 			try{
 				Object result = null;
@@ -4760,10 +4139,10 @@ public class ConfigurazionePdDReader {
 				}catch(DriverConfigurazioneNotFound e){
 					this.log.debug("getSingleExtendedInfoConfigurazione (not found): "+e.getMessage());
 				}
-//				}catch(Exception e){
-//					this.log.error("getExtendedInfoConfigurazione",e);
-//				}
-				
+				//				}catch(Exception e){
+				//					this.log.error("getExtendedInfoConfigurazione",e);
+				//				}
+
 				if(result!=null){
 					ConfigurazionePdDReader.getSingleExtendedInfoConfigurazione.put(id, result);
 				}
@@ -4777,7 +4156,7 @@ public class ConfigurazionePdDReader {
 		return ConfigurazionePdDReader.getSingleExtendedInfoConfigurazione.get(id);
 
 	}
-	
+
 	protected List<Object> getExtendedInfoConfigurazioneFromCache(Connection connectionPdD) throws DriverConfigurazioneException{
 		try{
 			Configurazione configurazione = null;
@@ -4786,9 +4165,9 @@ public class ConfigurazionePdDReader {
 			}catch(DriverConfigurazioneNotFound e){
 				this.log.debug("getConfigurazioneWithOnlyExtendedInfo (not found): "+e.getMessage());
 			}
-//			}catch(Exception e){
-//				this.log.error("getExtendedInfoConfigurazione",e);
-//			}
+			//			}catch(Exception e){
+			//				this.log.error("getExtendedInfoConfigurazione",e);
+			//			}
 			return configurazione.getExtendedInfoList();
 
 		}catch(Exception e){
@@ -4796,7 +4175,7 @@ public class ConfigurazionePdDReader {
 			throw new DriverConfigurazioneException("Errore durante la lettura delle informazioni extra della configurazione  (via cache): "+e.getMessage(),e);
 		}
 	}
-	
+
 	protected Object getSingleExtendedInfoConfigurazioneFromCache(String id, Connection connectionPdD) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		try{
 			Object result = null;
@@ -4805,9 +4184,9 @@ public class ConfigurazionePdDReader {
 			}catch(DriverConfigurazioneNotFound e){
 				this.log.debug("getSingleExtendedInfoConfigurazioneFromCache (not found): "+e.getMessage());
 			}
-//			}catch(Exception e){
-//				this.log.error("getExtendedInfoConfigurazione",e);
-//			}
+			//			}catch(Exception e){
+			//				this.log.error("getExtendedInfoConfigurazione",e);
+			//			}
 			return result;
 
 		}catch(Exception e){
@@ -4815,5 +4194,5 @@ public class ConfigurazionePdDReader {
 			throw new DriverConfigurazioneException("Errore durante la lettura delle informazioni extra con id '"+id+"' della configurazione  (via cache): "+e.getMessage(),e);
 		}
 	}
-	
+
 }

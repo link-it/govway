@@ -39,8 +39,8 @@ public class Integrazione {
 
 	/** Identificatore del modulo OpenSPCoop che ha gestito la richiesta, e che sta aspettando una risposta */
 	private String idModuloInAttesa;
-	/** Location della Porta Delegata Richiesta */
-	private String locationPD;
+	/** Nome della Porta */
+	private String nomePorta;
 	/** Nome del Servizio Applicativo che sta' richiedendo il servizio */
 	private String servizioApplicativo;
 	/** Indica il tipo di scenario di cooperazione da intraprendere. */
@@ -51,24 +51,11 @@ public class Integrazione {
 
 	/* ********  C O S T R U T T O R E  ******** */
 
-	/**
-	 * Costruttore. 
-	 *
-	 * 
-	 */
 	public Integrazione(){
 	}
-	/**
-	 * Costruttore. 
-	 *
-	 * @param idModulo Identificatore del modulo OpenSPCoop che sta aspettando una risposta.
-	 * @param aLocation Location della Porta Delegata.
-	 * @param idServizio Nome del Servizio Applicativo.
-	 * 
-	 */
-	public Integrazione(String idModulo,String aLocation, String idServizio){
+	public Integrazione(String idModulo,String nomePorta, String idServizio){
 		this.idModuloInAttesa = idModulo;
-		this.locationPD = aLocation;
+		this.nomePorta = nomePorta;
 		this.servizioApplicativo = idServizio;
 	}
 
@@ -92,8 +79,8 @@ public class Integrazione {
 	 * @param aLocation Location della Porta Delegata.
 	 * 
 	 */
-	public void setLocationPD(String aLocation){
-		this.locationPD = aLocation;
+	public void setNomePorta(String nomePorta){
+		this.nomePorta = nomePorta;
 	}
 	/**
 	 * Imposta il nome del Servizio Applicativo che sta' richiedendo il servizio
@@ -138,8 +125,8 @@ public class Integrazione {
 	 * @return Location della Porta Delegata.
 	 * 
 	 */
-	public String getLocationPD(){
-		return this.locationPD;
+	public String getNomePorta(){
+		return this.nomePorta;
 	}
 	/**
 	 * Ritorna il nome del Servizio Applicativo che sta' richiedendo il servizio

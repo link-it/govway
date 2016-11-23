@@ -27,7 +27,6 @@ import java.util.Hashtable;
 
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 
@@ -56,7 +55,7 @@ public class RichiestaApplicativa implements java.io.Serializable {
 	/** IDServizio */
 	private IDServizio idServizio;
 	/** Identificatore della PortaApplicativa */
-	private IDPortaApplicativaByNome idPAbyNome;
+	private IDPortaApplicativa idPortaApplicativa;
 	/** Nome del Servizio Applicativo che eroga il servizio */
 	private String servizioApplicativo;
 	/** Identificatore del modulo OpenSPCoop che ha gestito la richiesta, e che sta aspettando una risposta */
@@ -83,35 +82,19 @@ public class RichiestaApplicativa implements java.io.Serializable {
 
 
 	/* ********  C O S T R U T T O R E  ******** */
-	/**
-	 * Costruttore. 
-	 *
-	 * @param sog Identificatore del Soggetto che sta' richiedendo il servizio
-	 * @param idServ Identificativo del Servizio richiesto
-	 * @param idModulo Identificatore del modulo OpenSPCoop che sta aspettando una risposta.
-	 * @param dominio Dominio di gestione, puo' essere differente dal soggetto fruitore (es. Router)
-	 * 
-	 */
-	public RichiestaApplicativa(IDSoggetto sog,IDServizio idServ, String idModulo, IDSoggetto dominio, IDPortaApplicativaByNome idByNome){
+
+	public RichiestaApplicativa(IDSoggetto sog,String idModulo, IDSoggetto dominio, IDPortaApplicativa idPA){
 		this.soggettoFruitore = sog;
-		this.idServizio = idServ;
+		this.idServizio = idPA.getIdentificativiErogazione().getIdServizio();
 		this.idModuloInAttesa = idModulo;
 		this.dominio = dominio;
-		this.idPAbyNome = idByNome;
+		this.idPortaApplicativa = idPA;
 	}
-	/**
-	 * Costruttore. 
-	 *
-	 * @param sog Identificatore del Soggetto che sta' richiedendo il servizio
-	 * @param idServ Identificativo del Servizio richiesto
-	 * @param dominio Dominio di gestione, puo' essere differente dal soggetto fruitore (es. Router)
-	 * 
-	 */
-	public RichiestaApplicativa(IDSoggetto sog,IDServizio idServ,IDSoggetto dominio, IDPortaApplicativaByNome idByNome){
+	public RichiestaApplicativa(IDSoggetto sog,IDSoggetto dominio, IDPortaApplicativa idPA){
 		this.soggettoFruitore = sog;
-		this.idServizio = idServ;
+		this.idServizio = idPA.getIdentificativiErogazione().getIdServizio();
 		this.dominio = dominio;
-		this.idPAbyNome = idByNome;
+		this.idPortaApplicativa = idPA;
 	}
 
 
@@ -198,16 +181,7 @@ public class RichiestaApplicativa implements java.io.Serializable {
 	public IDServizio getIDServizio(){
 		return this.idServizio;
 	}
-	public IDPortaApplicativa getIdPA(){
-		if(this.idServizio!=null){
-			IDPortaApplicativa idPortaApplicativa = new IDPortaApplicativa();
-			idPortaApplicativa.setIDServizio(this.idServizio);
-			return idPortaApplicativa;
-		}
-		else{
-			return null;
-		}
-	}
+
 	/**
 	 * Ritorna il nome del Servizio Applicativo che eroga il servizio
 	 *
@@ -302,12 +276,13 @@ public class RichiestaApplicativa implements java.io.Serializable {
 		this.localForward = localForward;
 	}
 	
-	public IDPortaApplicativaByNome getIdPAbyNome() {
-		return this.idPAbyNome;
+	public IDPortaApplicativa getIdPortaApplicativa() {
+		return this.idPortaApplicativa;
 	}
-	public void setIdPAbyNome(IDPortaApplicativaByNome idPAbyNome) {
-		this.idPAbyNome = idPAbyNome;
+	public void setIdPortaApplicativa(IDPortaApplicativa idPortaApplicativa) {
+		this.idPortaApplicativa = idPortaApplicativa;
 	}
+
 }
 
 

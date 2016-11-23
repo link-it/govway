@@ -48,6 +48,7 @@ import org.openspcoop2.pdd.logger.DriverMsgDiagnostici;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.builder.DiagnosticoBuilder;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
 import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiNotFoundException;
 import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnosticiConPaginazione;
 import org.openspcoop2.protocol.sdk.diagnostica.InformazioniProtocollo;
@@ -137,9 +138,9 @@ public class DiagnosticaExporter extends HttpServlet {
 					for (int j = 0; j < lista.size(); j++) {
 						MsgDiagnostico msg = lista.get(j);
 						String newLine = j > 0 ? "\n\n" : "";
-						IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(msg.getProtocollo());
+						IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(msg.getProtocollo());
 						DiagnosticoBuilder diagnostico = new DiagnosticoBuilder(protocolFactory);
-						in = new ByteArrayInputStream((newLine + diagnostico.toString(msg)).getBytes());
+						in = new ByteArrayInputStream((newLine + diagnostico.toString(msg,TipoSerializzazione.DEFAULT)).getBytes());
 
 						// Transfer bytes from the input stream to the ZIP file
 						int len;

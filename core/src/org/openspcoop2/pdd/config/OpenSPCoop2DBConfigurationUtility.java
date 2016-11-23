@@ -37,6 +37,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -393,6 +394,7 @@ public class OpenSPCoop2DBConfigurationUtility {
 				log.debug("Gestione eliminazione servizio ["+idServizio.toString()+"] ...");
 				AccordoServizioParteSpecifica asps = driverRegistroServizi.getAccordoServizioParteSpecifica(idServizio);
 				Servizio servizio = asps.getServizio();
+				@SuppressWarnings("unused")
 				IDSoggetto soggettoErogatore = new IDSoggetto(servizio.getTipoSoggettoErogatore(), servizio.getNomeSoggettoErogatore());
 				log.debug("\t dati servizio SoggettoErogatore["+servizio.getTipoSoggettoErogatore()+"/"+servizio.getNomeSoggettoErogatore()+"] Tipologia["+servizio.getTipologiaServizio().toString()+"] ...");
 								
@@ -505,7 +507,9 @@ public class OpenSPCoop2DBConfigurationUtility {
 					log.debug("\t- eliminazione porte applicative ("+listaPorteApplicative.size()+") ...");
 					while(listaPorteApplicative.size()>0){
 						PortaApplicativa pa = listaPorteApplicative.remove(0);
-						pa = driverConfigurazione.getPortaApplicativa(pa.getNome(), soggettoErogatore); // Leggo tutti i valori (Bug del metodo getPorteApplicativeWithServizio)
+						IDPortaApplicativa idpa = new IDPortaApplicativa();
+						idpa.setNome(pa.getNome());
+						pa = driverConfigurazione.getPortaApplicativa(idpa); // Leggo tutti i valori (Bug del metodo getPorteApplicativeWithServizio)
 						log.debug("\t\t. porta applicativa ("+pa.getNome()+") ...");
 						for (int i = 0; i < pa.sizeServizioApplicativoList(); i++) {
 							String sa = pa.getServizioApplicativo(i).getNome();

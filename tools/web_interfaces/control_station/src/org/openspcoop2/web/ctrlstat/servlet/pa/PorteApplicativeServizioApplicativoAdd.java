@@ -41,6 +41,7 @@ import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
@@ -505,9 +506,8 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 			}
 
 			// Inserisco il servizioApplicativo nel db
-			ServizioApplicativo sa = new ServizioApplicativo();
+			PortaApplicativaServizioApplicativo sa = new PortaApplicativaServizioApplicativo();
 			sa.setNome(servizioApplicativo);
-			sa.setIdSoggetto(new Long(soggInt));
 			pa.addServizioApplicativo(sa);
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
@@ -543,7 +543,7 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 		HashSet<String> saEsistenti = new HashSet<String>();
 		if(addSAEsistenti){
 			for (int i = 0; i < pa.sizeServizioApplicativoList(); i++) {
-				ServizioApplicativo tmpSA = pa.getServizioApplicativo(i);
+				PortaApplicativaServizioApplicativo tmpSA = pa.getServizioApplicativo(i);
 				saEsistenti.add(tmpSA.getNome());
 			}
 		}

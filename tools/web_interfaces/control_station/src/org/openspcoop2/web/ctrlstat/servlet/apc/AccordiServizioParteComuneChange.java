@@ -41,8 +41,6 @@ import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
-import org.openspcoop2.core.config.constants.PortaDelegataServizioIdentificazione;
-import org.openspcoop2.core.config.constants.PortaDelegataSoggettoErogatoreIdentificazione;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -701,11 +699,6 @@ public final class AccordiServizioParteComuneChange extends Action {
 						PortaDelegata portaDelegata = porteDelegate.remove(0);
 
 						String oldName = portaDelegata.getNome();
-						boolean changeLocationOnly = false;
-						if(portaDelegata.getLocation()!=null && (portaDelegata.getLocation().equals(oldName)==false) ){
-							changeLocationOnly = true;
-							oldName = portaDelegata.getLocation();
-						}
 
 						String newName = null;
 						String nomeRuoloNEW = null;
@@ -728,33 +721,11 @@ public final class AccordiServizioParteComuneChange extends Action {
 						// nome e location PD
 						portaDelegata.setOldNomeForUpdate(portaDelegata.getNome());
 						newName = oldName.replace(nomeRuoloOLD, nomeRuoloNEW);
-						if(changeLocationOnly==false)
-							portaDelegata.setNome(newName);
-						portaDelegata.setLocation(newName);
+						portaDelegata.setNome(newName);
 
 						// descrizione
 						if(portaDelegata.getDescrizione()!=null){
 							portaDelegata.setDescrizione(portaDelegata.getDescrizione().replace(nomeRuoloOLD, nomeRuoloNEW));
-						}
-
-						// Soggetto erogatore
-						if(portaDelegata.getSoggettoErogatore()!=null && 
-								portaDelegata.getSoggettoErogatore().getPattern()!=null &&
-								PortaDelegataSoggettoErogatoreIdentificazione.URL_BASED.equals(portaDelegata.getSoggettoErogatore().getIdentificazione()) ){
-							portaDelegata.getSoggettoErogatore().setPattern(portaDelegata.getSoggettoErogatore().getPattern().replace(nomeRuoloOLD, nomeRuoloNEW));
-						}else{
-							// porta delegata da non considerare. La porta delegata non rispetti i criteri automatici di creazione.
-							continue;
-						}
-
-						// Servizio
-						if(portaDelegata.getServizio()!=null && 
-								portaDelegata.getServizio().getNome()!=null &&
-								PortaDelegataServizioIdentificazione.STATIC.equals(portaDelegata.getServizio().getIdentificazione()) ){
-							portaDelegata.getServizio().setNome(portaDelegata.getServizio().getNome().replace(nomeRuoloOLD, nomeRuoloNEW));
-						}else{
-							// porta delegata da non considerare. La porta delegata non rispetti i criteri automatici di creazione.
-							continue;
 						}
 
 						// Azione

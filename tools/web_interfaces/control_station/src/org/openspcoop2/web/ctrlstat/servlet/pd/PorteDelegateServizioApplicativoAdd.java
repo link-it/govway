@@ -35,6 +35,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -150,7 +151,7 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 					String tmpNome = singleSA.getNome();
 					boolean trovatoSA = false;
 					for (int j = 0; j < pde.sizeServizioApplicativoList(); j++) {
-						ServizioApplicativo tmpSA = pde.getServizioApplicativo(j);
+						PortaDelegataServizioApplicativo tmpSA = pde.getServizioApplicativo(j);
 						if (tmpNome.equals(tmpSA.getNome())) {
 							trovatoSA = true;
 							break;
@@ -212,7 +213,7 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 					String tmpNome = singleSA.getNome();
 					boolean trovatoSA = false;
 					for (int j = 0; j < pde.sizeServizioApplicativoList(); j++) {
-						ServizioApplicativo tmpSA = pde.getServizioApplicativo(j);
+						PortaDelegataServizioApplicativo tmpSA = pde.getServizioApplicativo(j);
 						if (tmpNome.equals(tmpSA.getNome())) {
 							trovatoSA = true;
 							break;
@@ -242,7 +243,7 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 			}
 
 			// Inserisco il servizioApplicativo nel db
-			ServizioApplicativo sa = new ServizioApplicativo();
+			PortaDelegataServizioApplicativo sa = new PortaDelegataServizioApplicativo();
 			sa.setNome(servizioApplicativo);
 			pde.addServizioApplicativo(sa);
 

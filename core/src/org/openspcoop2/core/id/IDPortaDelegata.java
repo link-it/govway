@@ -39,61 +39,40 @@ public class IDPortaDelegata implements java.io.Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	/** Identificatore del Soggetto che sta' richiedendo il servizio */
-	private IDSoggetto soggettoFruitore;
-	/** Location della Porta Delegata Richiesta */
-	private String locationPD;
+	/** Nome della Porta Delegata */
+	private String nome;
+		
+	/** Identificazioni Fruizione (opzionali) */
+	private IdentificativiFruizione identificativiFruizione;
 
-	/**
-	 * Imposta l'identificatore del Soggetto che sta' richiedendo il servizio
-	 *
-	 * @param idSoggetto Identificatore del Soggetto.
-	 * 
-	 */
-	public void setSoggettoFruitore(IDSoggetto idSoggetto){
-		this.soggettoFruitore = idSoggetto;
+	
+	public String getNome() {
+		return this.nome;
 	}
-	/**
-	 * Imposta la Location della Porta Delegata Richiesta
-	 *
-	 * @param aLocation Location della Porta Delegata.
-	 * 
-	 */
-	public void setLocationPD(String aLocation){
-		this.locationPD = aLocation;
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public IdentificativiFruizione getIdentificativiFruizione() {
+		return this.identificativiFruizione;
+	}
+	public void setIdentificativiFruizione(IdentificativiFruizione identificativiFruizione) {
+		this.identificativiFruizione = identificativiFruizione;
 	}
 	
-	/**
-	 * Ritorna l'identificatore del Soggetto che sta' richiedendo il servizio
-	 *
-	 * @return Identificatore del Soggetto.
-	 * 
-	 */
-	public IDSoggetto getSoggettoFruitore(){
-		return this.soggettoFruitore;
-	}
-	/**
-	 * Ritorna la Location della Porta Delegata Richiesta
-	 *
-	 * @return Location della Porta Delegata.
-	 * 
-	 */
-	public String getLocationPD(){
-		return this.locationPD;
-	}
-	
+
 	@Override
 	public String toString(){
 		StringBuffer bf = new StringBuffer();
-		if(this.locationPD!=null)
-			bf.append("PD:"+this.locationPD);
+		if(this.nome!=null)
+			bf.append("PD:"+this.nome);
 		else
 			bf.append("PD:NonDefinita");
 		bf.append(" ");
-		if(this.soggettoFruitore!=null)
-			bf.append("SoggettoFruitore:"+this.soggettoFruitore.toString());
+		if(this.identificativiFruizione!=null)
+			bf.append("Fruizione:"+this.identificativiFruizione.toString());
 		else
-			bf.append("SoggettoFruitore:NonDefinito");
+			bf.append("Fruizione:NonDefinita");
 		return bf.toString();
 	}
 	
@@ -105,19 +84,11 @@ public class IDPortaDelegata implements java.io.Serializable{
 			return false;
 		IDPortaDelegata id = (IDPortaDelegata) object;
 		
-		if(this.locationPD==null){
-			if(id.locationPD!=null)
+		if(this.nome==null){
+			if(id.nome!=null)
 				return false;
 		}else{
-			if(this.locationPD.equals(id.locationPD)==false)
-				return false;
-		}
-
-		if(this.soggettoFruitore==null){
-			if(id.soggettoFruitore!=null)
-				return false;
-		}else{
-			if(this.soggettoFruitore.equals(id.soggettoFruitore)==false)
+			if(this.nome.equals(id.nome)==false)
 				return false;
 		}
 		
@@ -133,11 +104,11 @@ public class IDPortaDelegata implements java.io.Serializable{
 	@Override
 	public IDPortaDelegata clone(){
 		IDPortaDelegata idPD = new IDPortaDelegata();
-		if(this.locationPD!=null){
-			idPD.locationPD = new String(this.locationPD);
+		if(this.nome!=null){
+			idPD.nome = new String(this.nome);
 		}
-		if(this.soggettoFruitore!=null){
-			idPD.soggettoFruitore = this.soggettoFruitore.clone();
+		if(this.identificativiFruizione!=null){
+			idPD.identificativiFruizione = this.identificativiFruizione.clone();
 		}
 		return idPD;
 	}

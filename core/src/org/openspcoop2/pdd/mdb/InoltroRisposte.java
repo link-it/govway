@@ -36,8 +36,6 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TipoPdD;
-import org.openspcoop2.core.id.IDPortaApplicativa;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -499,11 +497,7 @@ public class InoltroRisposte extends GenericLib{
 			PortaApplicativa pa = null;
 			if(functionAsRouter==false){
 				try{
-					IDPortaApplicativa idPA = new IDPortaApplicativa();
-					idPA.setIDServizio(new IDServizio(busta.getTipoMittente(),busta.getMittente(),busta.getTipoServizio(),busta.getServizio(),busta.getAzione()));
-					IDPortaApplicativaByNome idByNome = configurazionePdDManager.convertTo_SafeMethod(idPA.getIDServizio(), null);
-					if(idByNome!=null)
-						pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idByNome);
+					pa = getPortaApplicativa(configurazionePdDManager, new IDServizio(busta.getTipoMittente(),busta.getMittente(),busta.getTipoServizio(),busta.getServizio(),busta.getAzione()));
 				}catch(Exception e){
 					if( !(e instanceof DriverConfigurazioneNotFound)  ){
 						msgDiag.logErroreGenerico(e, "getPortaApplicativa_SafeMethod");
@@ -575,8 +569,6 @@ public class InoltroRisposte extends GenericLib{
 					boolean gestioneManifest = configurazionePdDManager.isGestioneManifestAttachments();
 					// viene controllato servizio is not null, poiche' i riscontri non hanno un servizio
 					if(functionAsRouter==false && inoltroSegnalazioneErrore==false  && busta.getTipoServizio()!=null && busta.getServizio()!=null){
-						IDPortaApplicativa idPA = new IDPortaApplicativa();
-						idPA.setIDServizio(new IDServizio(busta.getTipoMittente(),busta.getMittente(),busta.getTipoServizio(),busta.getServizio(),busta.getAzione()));
 						gestioneManifest = configurazionePdDManager.isGestioneManifestAttachments(pa,protocolFactory);
 					}
 					if(functionAsRouter && 
@@ -1437,14 +1429,12 @@ public class InoltroRisposte extends GenericLib{
 			if(bustaRisposta.getProfiloDiCollaborazione()==null&& bustaRisposta.sizeListaRiscontri()>0){
 				if(bustaRisposta.getTipoServizioRichiedenteBustaDiServizio()!=null &&
 						bustaRisposta.getServizioRichiedenteBustaDiServizio()!=null){
-					IDPortaApplicativa idPA = new IDPortaApplicativa();
-					idPA.setIDServizio(new IDServizio(bustaRisposta.getTipoMittente(),bustaRisposta.getMittente(),bustaRisposta.getTipoServizioRichiedenteBustaDiServizio(),bustaRisposta.getServizioRichiedenteBustaDiServizio(),bustaRisposta.getAzioneRichiedenteBustaDiServizio()));
 					PortaApplicativa pa = paFind;
 					if(pa==null){
-						IDPortaApplicativaByNome idPAbyNome = configurazionePdDManager.convertTo_SafeMethod(idPA.getIDServizio(), null);
-						if(idPAbyNome!=null){
-							pa = configurazionePdDManager.getPortaApplicativa(idPAbyNome);
-						}
+						pa = getPortaApplicativa(configurazionePdDManager, 
+								new IDServizio(bustaRisposta.getTipoMittente(),bustaRisposta.getMittente(),
+										bustaRisposta.getTipoServizioRichiedenteBustaDiServizio(),bustaRisposta.getServizioRichiedenteBustaDiServizio(),
+										bustaRisposta.getAzioneRichiedenteBustaDiServizio()));
 					}
 					flowProperties.messageSecurity = configurazionePdDManager.getPA_MessageSecurityForSender(pa);
 					flowProperties.mtom = configurazionePdDManager.getPA_MTOMProcessorForSender(pa);
@@ -1454,14 +1444,12 @@ public class InoltroRisposte extends GenericLib{
 			else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY.equals(bustaRisposta.getProfiloDiCollaborazione()) || 
 					org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(bustaRisposta.getProfiloDiCollaborazione())
 			) {	
-				IDPortaApplicativa idPA = new IDPortaApplicativa();
-				idPA.setIDServizio(new IDServizio(bustaRisposta.getTipoMittente(), bustaRisposta.getMittente(), bustaRisposta.getTipoServizio(), bustaRisposta.getServizio(),bustaRisposta.getAzione()));
 				PortaApplicativa pa = paFind;
 				if(pa==null){
-					IDPortaApplicativaByNome idPAbyNome = configurazionePdDManager.convertTo_SafeMethod(idPA.getIDServizio(), null);
-					if(idPAbyNome!=null){
-						pa = configurazionePdDManager.getPortaApplicativa(idPAbyNome);
-					}
+					pa = getPortaApplicativa(configurazionePdDManager, 
+							new IDServizio(bustaRisposta.getTipoMittente(),bustaRisposta.getMittente(),
+									bustaRisposta.getTipoServizio(),bustaRisposta.getServizio(),
+									bustaRisposta.getAzione()));
 				}
 				flowProperties.messageSecurity = configurazionePdDManager.getPA_MessageSecurityForSender(pa);
 				flowProperties.mtom = configurazionePdDManager.getPA_MTOMProcessorForSender(pa);
@@ -1475,14 +1463,12 @@ public class InoltroRisposte extends GenericLib{
 				//	Ricevuta alla richiesta.
 				if(profiloCollaborazione.asincrono_isRicevutaRichiesta(bustaRisposta.getRiferimentoMessaggio())){
 
-					IDPortaApplicativa idPA = new IDPortaApplicativa();
-					idPA.setIDServizio(new IDServizio(bustaRisposta.getTipoMittente(),bustaRisposta.getMittente(),bustaRisposta.getTipoServizio(),bustaRisposta.getServizio(),bustaRisposta.getAzione()));
 					PortaApplicativa pa = paFind;
 					if(pa==null){
-						IDPortaApplicativaByNome idPAbyNome = configurazionePdDManager.convertTo_SafeMethod(idPA.getIDServizio(), null);
-						if(idPAbyNome!=null){
-							pa = configurazionePdDManager.getPortaApplicativa(idPAbyNome);
-						}
+						pa = getPortaApplicativa(configurazionePdDManager, 
+								new IDServizio(bustaRisposta.getTipoMittente(),bustaRisposta.getMittente(),
+										bustaRisposta.getTipoServizio(),bustaRisposta.getServizio(),
+										bustaRisposta.getAzione()));
 					}
 					flowProperties.messageSecurity = configurazionePdDManager.getPA_MessageSecurityForSender(pa);
 					flowProperties.mtom = configurazionePdDManager.getPA_MTOMProcessorForSender(pa);
@@ -1495,8 +1481,7 @@ public class InoltroRisposte extends GenericLib{
 					RepositoryBuste repository = new RepositoryBuste(state, false,protocolFactory);
 					Integrazione integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRisposta.getRiferimentoMsgBustaRichiedenteServizio());
 					IDPortaDelegata idPD = new IDPortaDelegata();
-					idPD.setLocationPD(integrazione.getLocationPD());
-					idPD.setSoggettoFruitore(new IDSoggetto(bustaRisposta.getTipoMittente(),bustaRisposta.getMittente()));
+					idPD.setNome(integrazione.getNomePorta());
 					PortaDelegata pd = configurazionePdDManager.getPortaDelegata_SafeMethod(idPD);
 					flowProperties.messageSecurity = configurazionePdDManager.getPD_MessageSecurityForSender(pd);
 					flowProperties.mtom = configurazionePdDManager.getPD_MTOMProcessorForSender(pd);
@@ -1513,14 +1498,12 @@ public class InoltroRisposte extends GenericLib{
 				//	Ricevuta alla richiesta.
 				if(profiloCollaborazione.asincrono_isRicevutaRichiesta(bustaRisposta.getRiferimentoMessaggio())){
 
-					IDPortaApplicativa idPA = new IDPortaApplicativa();
-					idPA.setIDServizio(new IDServizio(bustaRisposta.getTipoMittente(),bustaRisposta.getMittente(),bustaRisposta.getTipoServizio(),bustaRisposta.getServizio(),bustaRisposta.getAzione()));
 					PortaApplicativa pa = paFind;
 					if(pa==null){
-						IDPortaApplicativaByNome idPAbyNome = configurazionePdDManager.convertTo_SafeMethod(idPA.getIDServizio(), null);
-						if(idPAbyNome!=null){
-							pa = configurazionePdDManager.getPortaApplicativa(idPAbyNome);
-						}
+						pa = getPortaApplicativa(configurazionePdDManager, 
+								new IDServizio(bustaRisposta.getTipoMittente(),bustaRisposta.getMittente(),
+										bustaRisposta.getTipoServizio(),bustaRisposta.getServizio(),
+										bustaRisposta.getAzione()));
 					}
 					flowProperties.messageSecurity = configurazionePdDManager.getPA_MessageSecurityForSender(pa);
 					flowProperties.mtom = configurazionePdDManager.getPA_MTOMProcessorForSender(pa);
@@ -1530,18 +1513,14 @@ public class InoltroRisposte extends GenericLib{
 				//	Ricevuta alla risposta.
 				else if(profiloCollaborazione.asincrono_isRicevutaRisposta(bustaRisposta.getRiferimentoMessaggio())){
 
-					IDPortaApplicativa idPA = new IDPortaApplicativa();
-					// ConversioneServizio.
-					IDServizio idServizioOriginale = profiloCollaborazione.asincronoAsimmetrico_getDatiConsegnaRisposta(bustaRisposta.getRiferimentoMsgBustaRichiedenteServizio());
-
-					idPA.setIDServizio(new IDServizio(bustaRisposta.getTipoMittente(),bustaRisposta.getMittente(),
-							idServizioOriginale.getTipoServizio(),idServizioOriginale.getServizio(),idServizioOriginale.getAzione()));
 					PortaApplicativa pa = paFind;
 					if(pa==null){
-						IDPortaApplicativaByNome idPAbyNome = configurazionePdDManager.convertTo_SafeMethod(idPA.getIDServizio(), null);
-						if(idPAbyNome!=null){
-							pa = configurazionePdDManager.getPortaApplicativa(idPAbyNome);
-						}
+						// ConversioneServizio.
+						IDServizio idServizioOriginale = profiloCollaborazione.asincronoAsimmetrico_getDatiConsegnaRisposta(bustaRisposta.getRiferimentoMsgBustaRichiedenteServizio());
+						pa = getPortaApplicativa(configurazionePdDManager, 
+								new IDServizio(bustaRisposta.getTipoMittente(),bustaRisposta.getMittente(),
+										idServizioOriginale.getTipoServizio(),idServizioOriginale.getServizio(),
+										idServizioOriginale.getAzione()));
 					}
 					flowProperties.messageSecurity = configurazionePdDManager.getPA_MessageSecurityForSender(pa);
 					flowProperties.mtom = configurazionePdDManager.getPA_MTOMProcessorForSender(pa);
@@ -1562,5 +1541,17 @@ public class InoltroRisposte extends GenericLib{
 		
 		return flowProperties;
 
+	}
+	
+	private PortaApplicativa getPortaApplicativa(ConfigurazionePdDManager configurazionePdDReader, IDServizio idServizio) throws Exception{
+		List<PortaApplicativa> listPa = configurazionePdDReader.getPorteApplicative(idServizio, false);
+		if(listPa.size()<=0){
+			throw new Exception("Non esiste alcuna porta applicativa indirizzabile tramite il servizio ["+idServizio+"]");
+		}
+		else{
+			if(listPa.size()>1)
+				throw new Exception("Esiste più di una porta applicativa indirizzabile tramite il servizio ["+idServizio+"]");
+			return listPa.get(0);
+		}
 	}
 }

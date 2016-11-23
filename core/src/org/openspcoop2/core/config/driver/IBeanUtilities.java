@@ -24,6 +24,7 @@ package org.openspcoop2.core.config.driver;
 
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
@@ -58,22 +59,6 @@ public interface IBeanUtilities {
 			Soggetto soggetto)throws DriverConfigurazioneException;
 	public boolean verificaSoggetto(
 			IDSoggetto idSoggetto,
-			Soggetto soggetto,
-			boolean checkID)throws DriverConfigurazioneException;
-	
-	
-	/**
-	 * Controlla che il bean presente nel registro, sia uguale al bean passato come parametro
-	 * 
-	 * @param location
-	 * @param soggetto
-	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
-	 */
-	public boolean verificaSoggetto(
-			String location,
-			Soggetto soggetto)throws DriverConfigurazioneException;
-	public boolean verificaSoggetto(
-			String location,
 			Soggetto soggetto,
 			boolean checkID)throws DriverConfigurazioneException;
 	
@@ -125,164 +110,21 @@ public interface IBeanUtilities {
 			PortaApplicativa pa,
 			boolean checkID)throws DriverConfigurazioneException;
 	
-	
-	/**
-	 * Controlla che il bean presente nel registro, sia uguale al bean passato come parametro
-	 * Utilizza la porta applicativa identificata da <var>idPA</var>
-	 * nel caso in cui e' specificata un'azione ma non viene trovato nessun risultato, 
-	 * non vengono effettuate ricerche ulteriori se ricerca puntuale e' abilitato.
-	 * 
-	 * @param idPA
-	 * @param ricercaPuntuale
-	 * @param pa
-	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
-	 */
-	public boolean verificaPortaApplicativa(
-			IDPortaApplicativa idPA,
-			boolean ricercaPuntuale,
-			PortaApplicativa pa)throws DriverConfigurazioneException;
-	public boolean verificaPortaApplicativa(
-			IDPortaApplicativa idPA,
-			boolean ricercaPuntuale,
-			PortaApplicativa pa,
-			boolean checkID)throws DriverConfigurazioneException;
-	
-	
+		
 	/**
 	 * Controlla che il bean presente nel registro, sia uguale al bean passato come parametro
 	 * 
-	 * @param nomePorta
-	 * @param soggettoProprietario
-	 * @param pa
-	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
-	 */
-	public boolean verificaPortaApplicativa(
-			String nomePorta, 
-			IDSoggetto soggettoProprietario,
-			PortaApplicativa pa)throws DriverConfigurazioneException;
-	public boolean verificaPortaApplicativa(
-			String nomePorta, 
-			IDSoggetto soggettoProprietario,
-			PortaApplicativa pa,
-			boolean checkID)throws DriverConfigurazioneException;
-	
-	
-	/**
-	 * Controlla che il bean presente nel registro, sia uguale al bean passato come parametro
-	 * 
-	 * @param idPA
-	 * @param soggettoVirtuale
-	 * @param pa
-	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
-	 */
-	public boolean verificaPortaApplicativaVirtuale(
-			IDPortaApplicativa idPA,
-			IDSoggetto soggettoVirtuale,
-			PortaApplicativa pa)throws DriverConfigurazioneException;
-	public boolean verificaPortaApplicativaVirtuale(
-			IDPortaApplicativa idPA,
-			IDSoggetto soggettoVirtuale,
-			PortaApplicativa pa,
-			boolean checkID)throws DriverConfigurazioneException;
-	
-	/**
-	 * Controlla che il bean presente nel registro, sia uguale al bean passato come parametro
-	 * Nel caso in cui e' specificata un'azione ma non viene trovato nessun risultato, 
-	 * non vengono effettuate ricerche ulteriori.
-	 * 
-	 * @param idPA
-	 * @param soggettoVirtuale
-	 * @param pa
-	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
-	 */
-	public boolean verificaPortaApplicativaVirtuale(
-			IDPortaApplicativa idPA,
-			IDSoggetto soggettoVirtuale,
-			boolean ricercaPuntuale,
-			PortaApplicativa pa)throws DriverConfigurazioneException;
-	public boolean verificaPortaApplicativaVirtuale(
-			IDPortaApplicativa idPA,
-			IDSoggetto soggettoVirtuale,
-			boolean ricercaPuntuale,
-			PortaApplicativa pa,
-			boolean checkID)throws DriverConfigurazioneException;
-	
-	
-	/**
-	 * Controlla che il bean presente nel registro, sia uguale al bean passato come parametro
-	 * 
-	 * @param idPD
-	 * @param servizioApplicativo
+	 * @param idSA
 	 * @param sa
 	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
 	 */
 	public boolean verificaServizioApplicativo(
-			IDPortaDelegata idPD,
-			String servizioApplicativo,
+			IDServizioApplicativo idSA,
 			ServizioApplicativo sa)throws DriverConfigurazioneException;
 	public boolean verificaServizioApplicativo(
-			IDPortaDelegata idPD,
-			String servizioApplicativo,
+			IDServizioApplicativo idSA,
 			ServizioApplicativo sa,
 			boolean checkID) throws DriverConfigurazioneException;
-	
-	
-	/**
-	 * Controlla che il bean presente nel registro, sia uguale al bean passato come parametro
-	 * 
-	 * @param idPA
-	 * @param servizioApplicativo
-	 * @param sa
-	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
-	 */
-	public boolean verificaServizioApplicativo(
-			IDPortaApplicativa idPA,
-			String servizioApplicativo,
-			ServizioApplicativo sa)throws DriverConfigurazioneException;
-	public boolean verificaServizioApplicativo(
-			IDPortaApplicativa idPA,
-			String servizioApplicativo,
-			ServizioApplicativo sa,
-			boolean checkID) throws DriverConfigurazioneException;
-	
-	
-	/**
-	 * Controlla che il bean presente nel registro, sia uguale al bean passato come parametro
-	 * 
-	 * @param idPD
-	 * @param sa
-	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
-	 */
-	public boolean verificaServizioApplicativoAutenticato(
-			IDPortaDelegata idPD,
-			String aUser,
-			String aPassword,
-			ServizioApplicativo sa)throws DriverConfigurazioneException;
-	public boolean verificaServizioApplicativoAutenticato(
-			IDPortaDelegata idPD,
-			String aUser,
-			String aPassword,
-			ServizioApplicativo sa,
-			boolean checkID)throws DriverConfigurazioneException;
-	
-	
-	/**
-	 * Controlla che il bean presente nel registro, sia uguale al bean passato come parametro
-	 * 
-	 * @param idPD
-	 * @param sa
-	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
-	 */
-	public boolean verificaServizioApplicativoAutenticato(
-			IDPortaDelegata idPD,
-			String aSubject,
-			ServizioApplicativo sa) throws DriverConfigurazioneException;
-	public boolean verificaServizioApplicativoAutenticato(IDPortaDelegata idPD,
-			String aSubject,
-			ServizioApplicativo sa,
-			boolean checkID) throws DriverConfigurazioneException;
-	
-	
 	
 	/**
 	 * Controlla che il bean presente nel registro, sia uguale al bean passato come parametro

@@ -59,7 +59,7 @@ public class ArchivePortaDelegata implements IArchiveObject {
 	@Override
 	public String key() throws ProtocolException {
 		return ArchivePortaDelegata.buildKey(this.idSoggettoProprietario.getTipo(), this.idSoggettoProprietario.getNome(), 
-					this.idPortaDelegata.getLocationPD());
+					this.idPortaDelegata.getNome());
 	}
 	
 	
@@ -134,11 +134,7 @@ public class ArchivePortaDelegata implements IArchiveObject {
 							this.portaDelegata.getNomeSoggettoProprietario());
 			
 			this.idPortaDelegata = new IDPortaDelegata();
-			this.idPortaDelegata.setSoggettoFruitore(this.idSoggettoProprietario);
-			this.idPortaDelegata.setLocationPD(this.portaDelegata.getNome());
-			if(this.portaDelegata.getLocation()!=null && !"".equals(this.portaDelegata.getLocation())){
-				this.idPortaDelegata.setLocationPD(this.portaDelegata.getLocation());
-			}
+			this.idPortaDelegata.setNome(this.portaDelegata.getNome());
 			
 		}
 	}

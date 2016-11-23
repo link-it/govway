@@ -170,7 +170,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		String nomeMetodo = "showWsdlDefinitorio";
 		try {
 
-			IProtocolFactory protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			IProtocolFactory<?> protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			return protocol.createProtocolConfiguration().isSupportoWsdlDefinitorio();
 
 		}catch (Exception e) {
@@ -196,7 +196,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		String nomeMetodo = "showConversazioni";
 		try {
 
-			IProtocolFactory protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			IProtocolFactory<?> protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			return protocol.createProtocolConfiguration().isSupportoSpecificaConversazioni();
 
 		}catch (Exception e) {
@@ -209,7 +209,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		String nomeMetodo = "validazione";
 		try {
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
-			IProtocolFactory protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			IProtocolFactory<?> protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			return protocol.createValidazioneAccordi().valida(as);
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -221,7 +221,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		String nomeMetodo = "validaInterfacciaWsdlParteComune";
 		try {
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
-			IProtocolFactory protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			IProtocolFactory<?> protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			return protocol.createValidazioneDocumenti().validaSpecificaInterfaccia(as);
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -233,7 +233,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		String nomeMetodo = "validaSpecificaConversazione";
 		try {
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
-			IProtocolFactory protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			IProtocolFactory<?> protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			return protocol.createValidazioneDocumenti().validaSpecificaConversazione(as);
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -1271,7 +1271,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 	public void mappingAutomatico(String protocollo , AccordoServizioParteComune as) throws DriverRegistroServiziException {
 		String nomeMetodo = "mappingAutomatico";
 		try {
-			IProtocolFactory protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			IProtocolFactory<?> protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			protocol.createArchive().setProtocolInfo(as);
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

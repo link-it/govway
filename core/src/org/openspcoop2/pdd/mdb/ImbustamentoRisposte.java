@@ -159,7 +159,7 @@ public class ImbustamentoRisposte extends GenericLib {
 			identitaPdD = richiestaDelegata.getDominio();
 			idModuloInAttesa = richiestaDelegata.getIdModuloInAttesa();
 			scenarioCooperazione = richiestaDelegata.getScenario();
-			soggettoFruitore = richiestaDelegata.getSoggettoFruitore();
+			soggettoFruitore = richiestaDelegata.getIdSoggettoFruitore();
 			idServizio = richiestaDelegata.getIdServizio();
 			servizioApplicativo = richiestaDelegata.getServizioApplicativo();
 			if(servizioHeaderIntegrazione!=null){

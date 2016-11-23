@@ -56,6 +56,8 @@ public class RichiestaDelegata implements java.io.Serializable {
 	private String servizioApplicativo;
 	/** IDAccordo */
 	private IDAccordo idAccordo;
+	/** Identificativo del Soggetto Fruitore */
+	private IDSoggetto idSoggettoFruitore;
 	/** Identificatore del ServizioRichiesto */
 	private IDServizio idServizio;
 	/** Identificatore del modulo OpenSPCoop che ha gestito la richiesta, e che sta aspettando una risposta */
@@ -86,74 +88,24 @@ public class RichiestaDelegata implements java.io.Serializable {
 
 	/* ********  C O S T R U T T O R E  ******** */
 
-	/**
-	 * Costruttore. 
-	 *
-	 * @param aSoggetto Identificatore del Soggetto che sta' richiedendo il servizio
-	 * 
-	 */
-	public RichiestaDelegata(IDSoggetto aSoggetto){
-		this.idPortaDelegata = new IDPortaDelegata();
-		this.idPortaDelegata.setSoggettoFruitore(aSoggetto);
+	public RichiestaDelegata(IDSoggetto idSoggettoFruitore){
+		this.idSoggettoFruitore = idSoggettoFruitore;
 	}
-	
-	/**
-	 * Costruttore. 
-	 *
-	 * @param aSoggetto Identificatore del Soggetto che sta' richiedendo il servizio
-	 * @param aLocationPD Location della Porta Delegata Richiesta
-	 * 
-	 */
-	public RichiestaDelegata(IDSoggetto aSoggetto, String aLocationPD){
-		this.idPortaDelegata = new IDPortaDelegata();
-		this.idPortaDelegata.setLocationPD(aLocationPD);
-		this.idPortaDelegata.setSoggettoFruitore(aSoggetto);
+	public RichiestaDelegata(IDPortaDelegata idPD){
+		this(idPD, null, null, null, null);
 	}
-	
-	/**
-	 * Costruttore. 
-	 *
-	 * @param aSoggetto Identificatore del Soggetto che sta' richiedendo il servizio
-	 * @param aLocationPD Location della Porta Delegata Richiesta
-	 * @param aServizioApplicativo Nome del Servizio Applicativo che sta' richiedendo il servizio
-	 * @param idS Identificativo del servizio richiesto
-	 * @param idModulo Identificatore del modulo OpenSPCoop che sta aspettando una risposta.
-	 * @param fault Proprieta' di un eventuale fault
-	 * @param dominio Dominio di gestione, puo' essere differente dal soggetto fruitore (es. Router)
-	 * 
-	 */
-	public RichiestaDelegata(IDSoggetto aSoggetto, String aLocationPD, 
-			String aServizioApplicativo,IDServizio idS,
+	public RichiestaDelegata(IDPortaDelegata idPD, 
+			String aServizioApplicativo,
 			String idModulo,ProprietaErroreApplicativo fault,IDSoggetto dominio){
-		this.idPortaDelegata = new IDPortaDelegata();
-		this.idPortaDelegata.setLocationPD(aLocationPD);
-		this.idPortaDelegata.setSoggettoFruitore(aSoggetto);
+		this.idPortaDelegata = idPD;
 		this.servizioApplicativo = aServizioApplicativo;
-		this.idServizio = idS;
+		this.idSoggettoFruitore = idPD.getIdentificativiFruizione().getSoggettoFruitore();
+		this.idServizio = idPD.getIdentificativiFruizione().getIdServizio();
 		this.idModuloInAttesa = idModulo;
 		this.fault = fault;
 		this.dominio = dominio;
 	}
-	/**
-	 * Costruttore. 
-	 *
-	 * @param aSoggetto Identificatore del Soggetto che sta' richiedendo il servizio
-	 * @param aLocationPD Location della Porta Delegata Richiesta
-	 * @param aServizioApplicativo Nome del Servizio Applicativo che sta' richiedendo il servizio
-	 * @param idModulo Identificatore del modulo OpenSPCoop che sta aspettando una risposta.
-	 * @param fault Proprieta' di un eventuale fault
-	 * @param dominio Dominio di gestione, puo' essere differente dal soggetto fruitore (es. Router)
-	 * 
-	 */
-	public RichiestaDelegata(IDSoggetto aSoggetto, String aLocationPD, 
-			String aServizioApplicativo,String idModulo,ProprietaErroreApplicativo fault,IDSoggetto dominio){
-		this(aSoggetto,aLocationPD,aServizioApplicativo,null,idModulo,fault,dominio);
-	}
-	/**
-	 * Costruttore. 
-	 *
-	 * 
-	 */
+
 	public RichiestaDelegata(){}
 
 
@@ -249,33 +201,13 @@ public class RichiestaDelegata implements java.io.Serializable {
 		this.profiloGestione = profiloGestione;
 	}
 	
-
-	/* ********  G E T T E R   ******** */
-	/**
-	 * Ritorna l'identificatore del Soggetto che sta' richiedendo il servizio
-	 *
-	 * @return Identificatore del Soggetto.
-	 * 
-	 */
-	public IDSoggetto getSoggettoFruitore(){
-		if(this.idPortaDelegata!=null)
-			return this.idPortaDelegata.getSoggettoFruitore();
-		else
-			return null;
-	}
-	/**
-	 * Ritorna la Location della Porta Delegata Richiesta
-	 *
-	 * @return Location della Porta Delegata.
-	 * 
-	 */
-	public String getLocationPD(){
-		if(this.idPortaDelegata!=null)
-			return this.idPortaDelegata.getLocationPD();
-		else
-			return null;
+	public void setIdSoggettoFruitore(IDSoggetto idSoggettoFruitore) {
+		this.idSoggettoFruitore = idSoggettoFruitore;
 	}
 	
+
+	/* ********  G E T T E R   ******** */
+
 	/**
 	 * Ritorna il nome del Servizio Applicativo che sta' richiedendo il servizio
 	 *
@@ -417,6 +349,10 @@ public class RichiestaDelegata implements java.io.Serializable {
 	public void setIdCorrelazioneApplicativaRisposta(
 			String idCorrelazioneApplicativaRisposta) {
 		this.idCorrelazioneApplicativaRisposta = idCorrelazioneApplicativaRisposta;
+	}
+	
+	public IDSoggetto getIdSoggettoFruitore() {
+		return this.idSoggettoFruitore;
 	}
 	
 }

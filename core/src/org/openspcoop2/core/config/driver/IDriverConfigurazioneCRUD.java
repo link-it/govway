@@ -33,10 +33,10 @@ import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.StatoServiziPdd;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.id.IDPortaApplicativa;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 
 /**
  * Interfaccia per la gestione CRUD di oggetti presenti in una configurazione 
@@ -155,35 +155,7 @@ public interface IDriverConfigurazioneCRUD {
 	 * @throws DriverRegistroServiziException 
      */    
 	public boolean existsPortaApplicativa(IDPortaApplicativa idPA) throws DriverConfigurazioneException;
-    /**
-     * Verifica l'esistenza di una porta applicativa.
-     * E' possibile specificare se si vuole effettuare una ricerca puntuale in tal caso
-     * se l'azione e' specificata ma non vi sono porte applicative che mathcano i criteri verra restituito false
-     * @param idPA id della porta applicativa da verificare
-     * @param ricercaPuntuale ricercaPuntuale
-     * @return true se la porta applicativa esiste, false altrimenti
-	 * @throws DriverRegistroServiziException 
-     */
-	public boolean existsPortaApplicativa(IDPortaApplicativa idPA,boolean ricercaPuntuale) throws DriverConfigurazioneException;
-    /**
-     * Verifica l'esistenza di una porta applicativa in cui il soggetto erogatore e' un soggetto virtuale
-     * @param idPA
-     * @return true se la porta applicativa esiste, false altrimenti
-     * @throws DriverConfigurazioneException
-     */
-	public boolean existsPortaApplicativaVirtuale(IDPortaApplicativa idPA,IDSoggetto soggettoVirtuale) throws DriverConfigurazioneException;
-    /**
-     * Verifica l'esistenza di una porta applicativa in cui il soggetto erogatore e' un soggetto virtuale
-     * @param idPA
-     * @param ricercaPuntuale ricercaPuntuale
-     * @return true se la porta applicativa esiste, false altrimenti
-     * @throws DriverConfigurazioneException
-     */
-	public boolean existsPortaApplicativaVirtuale(IDPortaApplicativa idPA,IDSoggetto soggettoVirtuale,boolean ricercaPuntuale) throws DriverConfigurazioneException;
-
-	public boolean existsPortaApplicativa(IDPortaApplicativaByNome idPA) throws DriverConfigurazioneException;
-	public boolean existsPortaApplicativa(String nomePorta,IDSoggetto soggettoProprietario) throws DriverConfigurazioneException;
-    
+ 
 	/**
 	 * Aggiorna una porta applicativa
 	 * 
@@ -215,16 +187,6 @@ public interface IDriverConfigurazioneCRUD {
 	 */
 	public void createServizioApplicativo(ServizioApplicativo aSA) throws DriverConfigurazioneException;
 	
-	/**
-     * Verifica l'esistenza di un servizio applicativo.
-     *
-     * @param idSoggetto id del soggetto proprietario
-     * @param nomeServizioApplicativo nome del servizio applicativo
-     * @return true se il servizio applicativo esiste, false altrimenti
-	 * @throws DriverRegistroServiziException
-     */    
-	public boolean existsServizioApplicativo(IDSoggetto idSoggetto,String nomeServizioApplicativo) throws DriverConfigurazioneException;
-    
     /**
      * Verifica l'esistenza di un servizio applicativo.
      *

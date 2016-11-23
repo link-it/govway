@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.jibx.runtime.BindingDirectory;
@@ -63,11 +64,12 @@ import org.openspcoop2.core.config.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
 import org.openspcoop2.core.config.driver.ValidazioneSemantica;
 import org.openspcoop2.core.id.IDPortaApplicativa;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.id.IdentificativiErogazione;
+import org.openspcoop2.core.id.IdentificativiFruizione;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
@@ -442,75 +444,6 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	}
 
 	/**
-	 * Restituisce Il soggetto che include la porta delegata identificata da <var>location</var>
-	 *
-	 * @param location Location che identifica una porta delegata
-	 * @return Il Soggetto che include la porta delegata fornita come parametro.
-	 * 
-	 */
-	@Override
-	public Soggetto getSoggettoProprietarioPortaDelegata(String location) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-
-		if(location == null)
-			throw new DriverConfigurazioneException("[getSoggettoProprietarioPortaDelegata] Parametro Non Validi");
-
-		refreshConfigurazioneXML();
-
-		for(int i=0;i<this.openspcoop.sizeSoggettoList();i++){
-			Soggetto soggetto = this.openspcoop.getSoggetto(i);
-
-			//	ricerca PD
-			for(int j=0; j<soggetto.sizePortaDelegataList() ; j++){
-
-				PortaDelegata pd = soggetto.getPortaDelegata(j);
-
-				// Prima controllo un eventuale location fornito. Poi controllo il nome della porta delegata.
-				if(pd.getLocation()!=null){
-					if(pd.getLocation().equals(location)){
-						return soggetto;
-					}
-				}
-				else if(location.equals(pd.getNome())){
-					return soggetto;
-				}
-			}  
-		}  
-
-		throw new DriverConfigurazioneNotFound("[getSoggettoProprietarioPortaDelegata] Porta Delegata ["+location+"] non esistente");
-	}
-	
-	@Override
-	public Soggetto getSoggettoProprietarioPortaApplicativa(String location) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-
-		if(location == null)
-			throw new DriverConfigurazioneException("[getSoggettoProprietarioPortaApplicativa] Parametro Non Validi");
-
-		refreshConfigurazioneXML();
-
-		for(int i=0;i<this.openspcoop.sizeSoggettoList();i++){
-			Soggetto soggetto = this.openspcoop.getSoggetto(i);
-
-			//	ricerca PA
-			for(int j=0; j<soggetto.sizePortaApplicativaList() ; j++){
-
-				PortaApplicativa pa = soggetto.getPortaApplicativa(j);
-
-				// Prima controllo un eventuale location fornito. Poi controllo il nome della porta delegata.
-				if(pa.getLocation()!=null){
-					if(pa.getLocation().equals(location)){
-						return soggetto;
-					}
-				}
-				else if(location.equals(pa.getNome())){
-					return soggetto;
-				}
-			}  
-		}  
-
-		throw new DriverConfigurazioneNotFound("[getSoggettoProprietarioPortaApplicativa] Porta Applicativa ["+location+"] non esistente");
-	}
-
-	/**
 	 * Restituisce il soggetto configurato come router, se esiste nella Porta di Dominio un soggetto registrato come Router
 	 * 
 	 * @return il soggetto configurato come router, se esiste nella Porta di Dominio un soggetto registrato come Router
@@ -686,64 +619,90 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	
 	// PORTA DELEGATA
 
-	/**
-	 * Restituisce la porta delegata identificato da <var>idPD</var>
-	 *
-	 * @param idPD Identificatore di una Porta Delegata
-	 * @return La porta delegata.
-	 * 
-	 */
+	private IDPortaDelegata convertToIDPortaDelegata(PortaDelegata pd){
+		
+		IDPortaDelegata idPD = new IDPortaDelegata();
+		idPD.setNome(pd.getNome());
+		
+		IdentificativiFruizione idFruizione = new IdentificativiFruizione();
+		
+		IDSoggetto soggettoFruitore = new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario());
+		idFruizione.setSoggettoFruitore(soggettoFruitore);
+		
+		IDServizio idServizio = new IDServizio(pd.getSoggettoErogatore().getTipo(),pd.getSoggettoErogatore().getNome(),
+				pd.getServizio().getTipo(),pd.getServizio().getNome());
+		if(pd.getAzione()!=null && pd.getAzione().getNome()!=null && !"".equals(pd.getAzione().getNome())){
+			idServizio.setAzione(pd.getAzione().getNome());	
+		}
+		idFruizione.setIdServizio(idServizio);
+		
+		idPD.setIdentificativiFruizione(idFruizione);
+		
+		return idPD;
+	}
+	
+	@Override
+	public IDPortaDelegata getIDPortaDelegata(String nome) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+
+		if(nome == null)
+			throw new DriverConfigurazioneException("[getIDPortaDelegata] Parametro Non Validi");
+
+		refreshConfigurazioneXML();
+
+		for(int i=0;i<this.openspcoop.sizeSoggettoList();i++){
+			Soggetto soggetto = this.openspcoop.getSoggetto(i);
+
+			//	ricerca PD
+			for(int j=0; j<soggetto.sizePortaDelegataList() ; j++){
+				PortaDelegata pd = soggetto.getPortaDelegata(j);
+				if(nome.equals(pd.getNome())){
+					pd.setTipoSoggettoProprietario(soggetto.getTipo());
+					pd.setNomeSoggettoProprietario(soggetto.getNome());
+					return convertToIDPortaDelegata(pd);
+				}
+			}  
+		}  
+
+		throw new DriverConfigurazioneNotFound("Porta Delegata ["+nome+"] non esistente");
+	}
+	
 	@Override
 	public PortaDelegata getPortaDelegata(IDPortaDelegata idPD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound { 
 
 		if(idPD == null)
 			throw new DriverConfigurazioneException("[getPortaDelegata] Parametro idPD Non Validi");
 
-		IDSoggetto aSoggetto = idPD.getSoggettoFruitore();
-		String location = idPD.getLocationPD();
+		String nome = idPD.getNome();
 
-		if( (location == null) || (aSoggetto==null))
+		if( (nome == null) )
 			throw new DriverConfigurazioneException("[getPortaDelegata] Parametri non Validi");
 
+		// Il getIDPortaDelegata effettua il REFRESH XML
+		IDPortaDelegata id = this.getIDPortaDelegata(nome);
+		IDSoggetto soggettoProprietario = id.getIdentificativiFruizione().getSoggettoFruitore();
+		
 		// Il getSoggetto effettua il REFRESH XML
 		Soggetto soggetto = null;
 		try{
-			soggetto = getSoggetto(aSoggetto);
+			soggetto = getSoggetto(soggettoProprietario);
 		}catch(Exception e){}
 		if(soggetto == null)
-			throw new DriverConfigurazioneException("[getPortaDelegata] Soggetto fruitore ["+aSoggetto.getTipo()+"/"+aSoggetto.getNome()+"] non esistente");
+			throw new DriverConfigurazioneException("[getPortaDelegata] Soggetto fruitore ["+soggettoProprietario.getTipo()+"/"+soggettoProprietario.getNome()+"] non esistente");
 
 		// ricerca PD
 		for(int j=0; j<soggetto.sizePortaDelegataList() ; j++){
 
 			PortaDelegata pd = soggetto.getPortaDelegata(j);
-
-			// Prima controllo un eventuale location fornito. Poi controllo il nome della porta delegata.
-			if(pd.getLocation()!=null){
-				if(pd.getLocation().equals(location)){
-					pd.setTipoSoggettoProprietario(soggetto.getTipo());
-					pd.setNomeSoggettoProprietario(soggetto.getNome());
-					return pd;
-				}
-			}
-			else if(location.equals(pd.getNome())){
+			if(nome.equals(pd.getNome())){
 				pd.setTipoSoggettoProprietario(soggetto.getTipo());
 				pd.setNomeSoggettoProprietario(soggetto.getNome());
 				return pd;
 			}
 		}  
 
-		throw new DriverConfigurazioneNotFound("[getPortaDelegata] PortaDelegata ["+location+"] non esistente");
+		throw new DriverConfigurazioneNotFound("PortaDelegata ["+nome+"] non esistente");
 	}
 
-	/**
-	 * Restituisce la lista degli identificativi delle porte delegate
-	 * 
-	 * @param filtroRicerca
-	 * @return lista degli identificativi delle porte delegate
-	 * @throws DriverConfigurazioneException
-	 * @throws DriverConfigurazioneNotFound
-	 */
 	@Override
 	public List<IDPortaDelegata> getAllIdPorteDelegate(
 			FiltroRicercaPorteDelegate filtroRicerca) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
@@ -758,9 +717,6 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 				PortaDelegata pd = soggetto.getPortaDelegata(j);
 				
 				String id = pd.getNome();
-				if(pd.getLocation()!=null){
-					id = pd.getLocation();
-				}
 				
 				if(filtroRicerca!=null){
 					// Filtro By Data
@@ -829,10 +785,10 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 						}
 					}
 				}
-				IDPortaDelegata idPD = new IDPortaDelegata();
-				idPD.setLocationPD(id);
-				idPD.setSoggettoFruitore(new IDSoggetto(soggetto.getTipo(), soggetto.getNome()));
-				listIDPorteDelegate.add(idPD);
+				
+				pd.setTipoSoggettoProprietario(soggetto.getTipo());
+				pd.setNomeSoggettoProprietario(soggetto.getNome());
+				listIDPorteDelegate.add(this.convertToIDPortaDelegata(pd));
 			}
 		}
 		
@@ -854,89 +810,116 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	
 	// PORTA APPLICATIVA
 	
-	/**
-	 * Restituisce la porta applicativa identificata da <var>idPA</var>
-	 * nel caso in cui e' specificata un'azione ma non viene trovato nessun risultato, viene ricercata
-	 * una Porta Applicativa che non possegga l'azione
-	 * @param idPA Identificatore di una Porta Applicativa
-	 * @return La porta applicativa
-	 * 
-	 */
-	@Override
-	public PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPA) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.getPortaApplicativa_engine(idPA, false,null);	
+	private IDPortaApplicativa convertToIDPortaApplicativa(PortaApplicativa pa){
+		
+		IDPortaApplicativa idPA = new IDPortaApplicativa();
+		idPA.setNome(pa.getNome());
+		
+		IdentificativiErogazione idErogazione = new IdentificativiErogazione();
+		
+		if(pa.getSoggettoVirtuale()!=null){
+			IDSoggetto soggettoVirtuale = new IDSoggetto(pa.getSoggettoVirtuale().getTipo(),pa.getSoggettoVirtuale().getNome());
+			idErogazione.setSoggettoVirtuale(soggettoVirtuale);
+		}
+		
+		IDServizio idServizio = new IDServizio(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(),
+				pa.getServizio().getTipo(),pa.getServizio().getNome());
+		if(pa.getAzione()!=null && pa.getAzione().getNome()!=null && !"".equals(pa.getAzione().getNome())){
+			idServizio.setAzione(pa.getAzione().getNome());	
+		}
+		idErogazione.setIdServizio(idServizio);
+		
+		idPA.setIdentificativiErogazione(idErogazione);
+		
+		return idPA;
 	}
 	
-	/**
-	 * Restituisce la porta applicativa identificata da <var>idPA</var>
-	 * nel caso in cui e' specificata un'azione ma non viene trovato nessun risultato, non vengono effettuate ricerche ulteriori.
-	 * @param idPA
-	 * @param ricercaPuntuale
-	 * @return La porta applicativa
-	 * @throws DriverConfigurazioneException
-	 * @throws DriverConfigurazioneNotFound
-	 */
 	@Override
-	public PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPA,boolean ricercaPuntuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		return this.getPortaApplicativa_engine(idPA, ricercaPuntuale,null);
+	public IDPortaApplicativa getIDPortaApplicativa(String nome) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+
+		if(nome == null)
+			throw new DriverConfigurazioneException("[getIDPortaApplicativa] Parametro Non Validi");
+
+		refreshConfigurazioneXML();
+
+		for(int i=0;i<this.openspcoop.sizeSoggettoList();i++){
+			Soggetto soggetto = this.openspcoop.getSoggetto(i);
+
+			//	ricerca PA
+			for(int j=0; j<soggetto.sizePortaApplicativaList() ; j++){
+				PortaApplicativa pa = soggetto.getPortaApplicativa(j);
+				if(nome.equals(pa.getNome())){				
+					pa.setTipoSoggettoProprietario(soggetto.getTipo());
+					pa.setNomeSoggettoProprietario(soggetto.getNome());
+					return convertToIDPortaApplicativa(pa);
+				}
+			}  
+		}  
+
+		throw new DriverConfigurazioneNotFound("Porta Delegata ["+nome+"] non esistente");
 	}
 	
-	/**
-	 * Restituisce la porta applicativa identificata da <var>idPA</var>
-	 * dove il soggetto erogatore e' un soggetto virtuale
-	 * @param idPA
-	 * @return La porta applicativa
-	 * @throws DriverConfigurazioneException
-	 * @throws DriverConfigurazioneNotFound
-	 */
 	@Override
-	public PortaApplicativa getPortaApplicativaVirtuale(IDPortaApplicativa idPA,IDSoggetto soggettoVirtuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-			return getPortaApplicativa_engine(idPA,false,soggettoVirtuale);
-	}
-	/**
-	 * Restituisce la porta applicativa identificata da <var>idPA</var>
-	 * dove il soggetto erogatore e' un soggetto virtuale
-	 * nel caso in cui e' specificata un'azione ma non viene trovato nessun risultato, non vengono effettuate ricerche ulteriori.
-	 * @param idPA
-	 * @param ricercaPuntuale
-	 * @return La porta applicativa
-	 * @throws DriverConfigurazioneException
-	 * @throws DriverConfigurazioneNotFound
-	 */
-	@Override
-	public PortaApplicativa getPortaApplicativaVirtuale(IDPortaApplicativa idPA,IDSoggetto soggettoVirtuale,boolean ricercaPuntuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-			return getPortaApplicativa_engine(idPA,ricercaPuntuale,soggettoVirtuale);
-	}
-	
-	
-	/**
-	 * Restituisce la porta applicativa identificata da <var>idPA</var>
-	 *
-	 * @param idPA Identificatore di una Porta Applicativa
-	 * @return La porta applicativa
-	 * 
-	 */
-	private PortaApplicativa getPortaApplicativa_engine(IDPortaApplicativa idPA,boolean ricercaPuntuale,IDSoggetto soggettoVirtuale) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+	public PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPA) throws DriverConfigurazioneException,DriverConfigurazioneNotFound { 
 
 		if(idPA == null)
 			throw new DriverConfigurazioneException("[getPortaApplicativa] Parametro idPA Non Validi");
 
-		if(idPA.getIDServizio() == null)
-			throw new DriverConfigurazioneException("[getPortaApplicativa] Parametro idPA non Validi (IDServizio is null)");
+		String nome = idPA.getNome();
+
+		if( (nome == null) )
+			throw new DriverConfigurazioneException("[getPortaApplicativa] Parametri non Validi");
+
+		// Il getIDPortaApplicativa effettua il REFRESH XML
+		IDPortaApplicativa id = this.getIDPortaApplicativa(nome);
+		IDSoggetto soggettoProprietario = id.getIdentificativiErogazione().getIdServizio().getSoggettoErogatore();
 		
-		IDSoggetto soggettoErogatore = idPA.getIDServizio().getSoggettoErogatore();
+		// Il getSoggetto effettua il REFRESH XML
+		Soggetto soggetto = null;
+		try{
+			soggetto = getSoggetto(soggettoProprietario);
+		}catch(Exception e){}
+		if(soggetto == null)
+			throw new DriverConfigurazioneException("[getPortaApplicativa] Soggetto fruitore ["+soggettoProprietario.getTipo()+"/"+soggettoProprietario.getNome()+"] non esistente");
+
+		// ricerca PA
+		for(int j=0; j<soggetto.sizePortaApplicativaList() ; j++){
+
+			PortaApplicativa pa = soggetto.getPortaApplicativa(j);
+			if(nome.equals(pa.getNome())){
+				pa.setTipoSoggettoProprietario(soggetto.getTipo());
+				pa.setNomeSoggettoProprietario(soggetto.getNome());
+				return pa;
+			}
+		}  
+
+		throw new DriverConfigurazioneNotFound("PortaApplicativa ["+nome+"] non esistente");
+	}
+	
+	@Override
+	public List<PortaApplicativa> getPorteApplicative(IDServizio idServizio, boolean ricercaPuntuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this._getPorteApplicative_engine(idServizio, null, ricercaPuntuale);
+	}
+	
+	@Override
+	public List<PortaApplicativa> getPorteApplicativeVirtuali(IDSoggetto soggettoVirtuale,IDServizio idServizio, boolean ricercaPuntuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		return this._getPorteApplicative_engine(idServizio, soggettoVirtuale, ricercaPuntuale);
+	}
+	
+	private List<PortaApplicativa> _getPorteApplicative_engine(IDServizio service,IDSoggetto soggettoVirtuale,boolean ricercaPuntuale) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+
+		if(service == null)
+			throw new DriverConfigurazioneException("[getPortaApplicativa] Parametro idServizio non definito");
+		
+		IDSoggetto soggettoErogatore = service.getSoggettoErogatore();
 		if(soggettoErogatore == null)
-			throw new DriverConfigurazioneException("[getPortaApplicativa] Parametri Non Validi (Soggetto Erogatore is null)");
-		
-		IDServizio service = idPA.getIDServizio();
-		if( service==null )
-			throw new DriverConfigurazioneException("[getPortaApplicativa] Parametri Non Validi (Servizio is null)");
+			throw new DriverConfigurazioneException("[getPortaApplicativa] Parametri non validi (Soggetto Erogatore is null)");
 	
 		String servizio = service.getServizio();
 		String tipoServizio = service.getTipoServizio();
 		String azione = service.getAzione();
 		if((servizio==null)||(tipoServizio==null))
-			throw new DriverConfigurazioneException("[getPortaApplicativa] Parametri (Servizio) Non Validi");
+			throw new DriverConfigurazioneException("[getPortaApplicativa] Parametri (Servizio) non validi");
 
 		//	Il getSoggetto effettua il REFRESH XML
 		Soggetto soggetto = null;
@@ -955,7 +938,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		}
 		
 		// ricerca PA
-		PortaApplicativa paSenzaAzione = null;
+		List<PortaApplicativa> paSenzaAzioneList = new ArrayList<PortaApplicativa>();
+		List<PortaApplicativa> paList = new ArrayList<PortaApplicativa>();
 		for(int j=0; j<soggetto.sizePortaApplicativaList() ; j++){
 
 			PortaApplicativa pa = soggetto.getPortaApplicativa(j);
@@ -980,96 +964,51 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 					if(pa.getAzione() == null){
 						pa.setTipoSoggettoProprietario(soggetto.getTipo());
 						pa.setNomeSoggettoProprietario(soggetto.getNome());
-						return pa;
+						paList.add(pa);
 					}
 				}
 				// ricerca di una porta applicativa con azione
 				else{
 					if(pa.getAzione() == null){
-						paSenzaAzione = pa; // potenziale porta applicativa che mappa solo il servizio (se non esiste)
+						PortaApplicativa paSenzaAzione = pa; // potenziale porta applicativa che mappa solo il servizio (se non esiste)
 						paSenzaAzione.setTipoSoggettoProprietario(soggetto.getTipo());
 						paSenzaAzione.setNomeSoggettoProprietario(soggetto.getNome());
-						continue;
+						paSenzaAzioneList.add(paSenzaAzione);
 					}
 					if(azione.equals(pa.getAzione().getNome())){
 						pa.setTipoSoggettoProprietario(soggetto.getTipo());
 						pa.setNomeSoggettoProprietario(soggetto.getNome());
-						return pa;
+						paList.add(pa);
 					}
 				}
 			}
 		}  
-		if(paSenzaAzione!=null && ricercaPuntuale==false)
-			return paSenzaAzione;
+		
+		if(paList.size()>0){
+			return paList;
+		}
+		
+		if(paSenzaAzioneList.size()>0 && ricercaPuntuale==false)
+			return paSenzaAzioneList;
 
-		throw new DriverConfigurazioneNotFound("[getPortaApplicativa] PortaApplicativa non esistente");
+		throw new DriverConfigurazioneNotFound("PorteApplicative non esistenti");
 	}
 	
-	/** Restituisce una porta applicativa in base al nome della porta e il soggetto proprietario della porta*/
 	@Override
-	public PortaApplicativa getPortaApplicativa(
-			IDPortaApplicativaByNome idPA) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		if(idPA==null) 
-			throw new DriverConfigurazioneException("Identificativo non fornito");
-		return this.getPortaApplicativa(idPA.getNome(), idPA.getSoggetto());
-	}
-	@Override
-	public PortaApplicativa getPortaApplicativa(String nomePorta, IDSoggetto soggettoProprietario) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
-		if(nomePorta==null)
-			throw new DriverConfigurazioneException("[getPortaApplicativa]  Nome Porta is null");
-		if(soggettoProprietario==null){
-			throw new DriverConfigurazioneException("[getPortaApplicativa]  SoggettoProprietario is null");
-		}
-		if(soggettoProprietario.getTipo()==null || soggettoProprietario.getNome()==null ){
-			throw new DriverConfigurazioneException("[getPortaApplicativa]  dati del SoggettoProprietario null");
-		}
-		
-		//	Il getSoggetto effettua il REFRESH XML
-		Soggetto soggetto = null;
-		try{
-			soggetto = getSoggetto(soggettoProprietario);
-		}catch(Exception e){}
-		if(soggetto == null)
-			throw new DriverConfigurazioneException("[getPortaApplicativa] Soggetto proprietario ["+soggettoProprietario.toString()+"] non esistente");
-		
-		for(int i=0; i<soggetto.sizePortaApplicativaList(); i++){
-			if (nomePorta.equals(soggetto.getPortaApplicativa(i).getNome())){
-				PortaApplicativa pa = soggetto.getPortaApplicativa(i);
-				pa.setTipoSoggettoProprietario(soggetto.getTipo());
-				pa.setNomeSoggettoProprietario(soggetto.getNome());
-				return pa;
-			}
-		}
-		
-		throw new DriverConfigurazioneNotFound("[getPortaApplicativa] PortaApplicativa non esistente");
+	public Map<IDSoggetto,PortaApplicativa> getPorteApplicative_SoggettiVirtuali(IDServizio idServizio)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
-	}
-	
-	/**
-	 * Restituisce un array di soggetti reali (e associata porta applicativa) 
-	 * che possiedono il soggetto SoggettoVirtuale identificato da <var>idPA</var>
-	 *
-	 * @param idPA Identificatore di una Porta Applicativa con soggetto Virtuale
-	 * @return una porta applicativa
-	 * 
-	 */
-	@Override
-	public Hashtable<IDSoggetto,PortaApplicativa> getPorteApplicative_SoggettiVirtuali(IDPortaApplicativa idPA)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-
-		if(idPA==null)
-			throw new DriverConfigurazioneException("[getPortaApplicativa_SoggettiVirtuali] Parametro idPA Non Valido");
-		if(idPA.getIDServizio()==null)
-			throw new DriverConfigurazioneException("[getPortaApplicativa_SoggettiVirtuali] Parametro idServizio Non Valido");
-		if(idPA.getIDServizio().getSoggettoErogatore()==null)
-			throw new DriverConfigurazioneException("[getPortaApplicativa_SoggettiVirtuali] Parametro Soggetto Erogatore Non Valido");
+		if(idServizio==null)
+			throw new DriverConfigurazioneException("[getPortaApplicativa_SoggettiVirtuali] Parametro idServizio non valido");
+		if(idServizio.getSoggettoErogatore()==null)
+			throw new DriverConfigurazioneException("[getPortaApplicativa_SoggettiVirtuali] Parametro Soggetto Erogatore non valido");
 
 		refreshConfigurazioneXML();
 
 		Hashtable<IDSoggetto,PortaApplicativa> paConSoggetti = new Hashtable<IDSoggetto,PortaApplicativa>();
-		IDSoggetto soggettoVirtuale = idPA.getIDServizio().getSoggettoErogatore();	
-		String servizio = idPA.getIDServizio().getServizio();
-		String tipoServizio = idPA.getIDServizio().getTipoServizio();
-		String azione = idPA.getIDServizio().getAzione();
+		IDSoggetto soggettoVirtuale = idServizio.getSoggettoErogatore();	
+		String servizio = idServizio.getServizio();
+		String tipoServizio = idServizio.getTipoServizio();
+		String azione = idServizio.getAzione();
 		if((servizio==null)||(tipoServizio==null))
 			throw new DriverConfigurazioneException("[getPortaApplicativa_SoggettiVirtuali] Parametri (Servizio) Non Validi");
 
@@ -1135,82 +1074,13 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		return paConSoggetti;
 	}
 
-	/**
-	 * Restituisce la lista delle porte applicative con il nome fornito da parametro.
-	 * Possono esistere piu' porte applicative con medesimo nome, che appartengono a soggetti differenti.
-	 * Se indicati i parametri sui soggetti vengono utilizzati come filtro per localizzare in maniera piu' precisa la PA
-	 * 
-	 * @param nomePA Nome di una Porta Applicativa
-	 * @param tipoSoggettoProprietario Tipo del Soggetto Proprietario di una Porta Applicativa
-	 * @param nomeSoggettoProprietario Nome del Soggetto Proprietario di una Porta Applicativa
-	 * @return La lista di porte applicative
-	 * 
-	 */
 	@Override
-	public List<PortaApplicativa> getPorteApplicative(
-			String nomePA,String tipoSoggettoProprietario,String nomeSoggettoProprietario) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-	
-		if(nomePA==null)
-			throw new DriverConfigurazioneException("[getPorteApplicative] Parametro nomePA Non Valido");
-	
-		
-		
-		refreshConfigurazioneXML();
-	
-		List<PortaApplicativa> lista = new ArrayList<PortaApplicativa>();
-		
-		// Ricerca soggetti che possiedono porte applicative
-		for(int i=0; i<this.openspcoop.sizeSoggettoList();i++){
-
-			Soggetto aSoggetto = this.openspcoop.getSoggetto(i);
-
-			if(tipoSoggettoProprietario!=null && !"".equals(tipoSoggettoProprietario)){
-				if(aSoggetto.getTipo().equals(tipoSoggettoProprietario)==false){
-					continue;
-				}
-			}
-			if(nomeSoggettoProprietario!=null && !"".equals(nomeSoggettoProprietario)){
-				if(aSoggetto.getNome().equals(nomeSoggettoProprietario)==false){
-					continue;
-				}
-			}
-			
-			// Ricerca tra le PA del soggetto...
-			for(int j=0; j<aSoggetto.sizePortaApplicativaList() ; j++){
-
-				PortaApplicativa pa = aSoggetto.getPortaApplicativa(j);
-				pa.setTipoSoggettoProprietario(aSoggetto.getTipo());
-				pa.setNomeSoggettoProprietario(aSoggetto.getNome());
-				
-				
-				if(pa.getNome().equals(nomePA)){
-					lista.add(pa);
-				}
-			}
-			
-		}
-		
-		if(lista.size() == 0)
-			throw new DriverConfigurazioneNotFound("[getPorteApplicative] Porte applicative non esistenti.");
-		
-		return lista;
-	}
-	
-	/**
-	 * Restituisce la lista degli identificativi delle porte applicative
-	 * 
-	 * @param filtroRicerca
-	 * @return lista degli identificativi delle porte applicative
-	 * @throws DriverConfigurazioneException
-	 * @throws DriverConfigurazioneNotFound
-	 */
-	@Override
-	public List<IDPortaApplicativaByNome> getAllIdPorteApplicative(
+	public List<IDPortaApplicativa> getAllIdPorteApplicative(
 			FiltroRicercaPorteApplicative filtroRicerca) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		
 		refreshConfigurazioneXML();
 		
-		List<IDPortaApplicativaByNome> listIDPorteApplicative = new ArrayList<IDPortaApplicativaByNome>();
+		List<IDPortaApplicativa> listIDPorteApplicative = new ArrayList<IDPortaApplicativa>();
 		
 		for(int i=0; i<this.openspcoop.sizeSoggettoList(); i++){
 			Soggetto soggetto = this.openspcoop.getSoggetto(i);
@@ -1272,10 +1142,11 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 						}
 					}
 				}
-				IDPortaApplicativaByNome idPA = new IDPortaApplicativaByNome();
-				idPA.setNome(id);
-				idPA.setSoggetto(new IDSoggetto(soggetto.getTipo(), soggetto.getNome()));
-				listIDPorteApplicative.add(idPA);
+				
+				pa.setTipoSoggettoProprietario(soggetto.getTipo());
+				pa.setNomeSoggettoProprietario(soggetto.getNome());
+				listIDPorteApplicative.add(this.convertToIDPortaApplicativa(pa));
+				
 			}
 		}
 		
@@ -1297,224 +1168,43 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	
 	// SERVIZIO APPLICATIVO
 	
-	/**
-	 * Restituisce il servizio applicativo, cercandolo prima nella porta delegata <var>location</var>.
-	 * Se nella porta delegata non vi e' viene cercato 
-	 * poi in un specifico soggetto se specificato con <var>aSoggetto</var>, altrimenti in ogni soggetto. 
-	 *
-	 * @param idPD Identificatore della porta delegata.
-	 * @param servizioApplicativo Servizio Applicativo
-	 * @return Il Servizio Applicativo.
-	 * 
-	 */
 	@Override
-	public ServizioApplicativo getServizioApplicativo(IDPortaDelegata idPD,String servizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound { 
-
-		IDSoggetto soggetto = idPD.getSoggettoFruitore();
-
-		if( servizioApplicativo==null )
-			throw new DriverConfigurazioneException("[getServizioApplicativo(RichiestaDelegata)] Parametro servizioApplicativo Non Valido");
-
-		// Ricerca nella porta delegata
-		// REFRESH verra' effettuato attraverso questa ricerca
-		PortaDelegata pd = getPortaDelegata(idPD);
-		if(pd!=null){
-			for(int j=0; j<pd.sizeServizioApplicativoList(); j++){
-				ServizioApplicativo sa =  pd.getServizioApplicativo(j);
-				if( servizioApplicativo.equals(sa.getNome()) ) {
-					if( sa.getInvocazionePorta()!=null ){
-						sa.setTipoSoggettoProprietario(pd.getTipoSoggettoProprietario());
-						sa.setNomeSoggettoProprietario(pd.getNomeSoggettoProprietario());
-						return sa;
-					}else{
-						break; // nella porta delegata e' presente solo il puntatore.
-					}
-				}
-			}    
+	public ServizioApplicativo getServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		if(idServizioApplicativo==null){
+			throw new DriverConfigurazioneException("IDServizioApplicativo non definito");
 		}
-
-		// Ricerca nel soggetto se diverso da null
-		if(soggetto!=null){
-			Soggetto soggettoProprietario = null;
-			try{
-				soggettoProprietario = getSoggetto(soggetto);
-			}catch(Exception e){}
-			if(soggettoProprietario == null)
-				throw new DriverConfigurazioneException("[getServizioApplicativo(RichiestaDelegata)] Soggetto fruitore non esistente");
-			for(int j=0; j<soggettoProprietario.sizeServizioApplicativoList(); j++){
-				ServizioApplicativo sa = soggettoProprietario.getServizioApplicativo(j);
-				if( servizioApplicativo.equals(sa.getNome()) ){
-					sa.setTipoSoggettoProprietario(soggettoProprietario.getTipo());
-					sa.setNomeSoggettoProprietario(soggettoProprietario.getNome());
-					return sa;
-				}
-			}
+		if(idServizioApplicativo.getIdSoggettoProprietario()==null){
+			throw new DriverConfigurazioneException("IDServizioApplicativo.idSoggettoProprietario non definito");
 		}
-		// Ricerca in ogni soggetto se uguale a null
-		else{
-			for(int i=0; i<this.openspcoop.sizeSoggettoList(); i++){
-				Soggetto soggettoSearch = this.openspcoop.getSoggetto(i);
-				for(int j=0; j<soggettoSearch.sizeServizioApplicativoList(); j++){
-					ServizioApplicativo sa = soggettoSearch.getServizioApplicativo(j);
-					if( servizioApplicativo.equals(sa.getNome()) ){
-						sa.setTipoSoggettoProprietario(soggettoSearch.getTipo());
-						sa.setNomeSoggettoProprietario(soggettoSearch.getNome());
-						return sa;
-					}
-				}
-			}
+		if(idServizioApplicativo.getNome()==null){
+			throw new DriverConfigurazioneException("IDServizioApplicativo.nome non definito");
 		}
-
-		throw new DriverConfigurazioneNotFound("[getServizioApplicativo(RichiestaDelegata)] Servizio Applicativo non esistente");
-
-	}
-
-	/**
-	 * Restituisce il servizio applicativo, cercandolo prima nella porta applicativa <var>location</var>
-	 * e poi nel soggetto <var>aSoggetto</var>. 
-	 *
-	 * @param idPA Identificatore della porta applicativa.
-	 * @param servizioApplicativo Servizio Applicativo
-	 * @return Il Servizio Applicativo.
-	 * 
-	 */
-	@Override
-	public ServizioApplicativo getServizioApplicativo(IDPortaApplicativa idPA,String servizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
-
-		IDSoggetto soggetto = idPA.getIDServizio().getSoggettoErogatore();
-
-		if( soggetto == null || servizioApplicativo==null )
-			throw new DriverConfigurazioneException("[getServizioApplicativo(RichiestaApplicativa)] Parametri Non Validi");
-
-		//	REFRESH verra' effettuato attraverso questa ricerca
-		PortaApplicativa pa = getPortaApplicativa(idPA);
-		if(pa!=null){
-			for(int j=0; j<pa.sizeServizioApplicativoList(); j++){
-				ServizioApplicativo sa =  pa.getServizioApplicativo(j);
-				if( servizioApplicativo.equals(sa.getNome()) ) {
-					if( sa.getInvocazioneServizio() !=null ){
-						sa.setTipoSoggettoProprietario(pa.getTipoSoggettoProprietario());
-						sa.setNomeSoggettoProprietario(pa.getNomeSoggettoProprietario());
-						return sa;
-					}else{
-						break; // nella porta applicativa e' presente solo il puntatore.
-					}
-				}
-			}    
-		}
-
-		Soggetto soggettoProprietario = null;
-		try{
-			soggettoProprietario = getSoggetto(soggetto);
-		}catch(Exception e){}
-		if(soggettoProprietario == null)
-			throw new DriverConfigurazioneException("[getServizioApplicativo(RichiestaApplicativa)] Soggetto Erogatore non esistente");
+		
+		Soggetto soggettoProprietario = this.getSoggetto(idServizioApplicativo.getIdSoggettoProprietario());
 		for(int j=0; j<soggettoProprietario.sizeServizioApplicativoList(); j++){
 			ServizioApplicativo sa = soggettoProprietario.getServizioApplicativo(j);
-			if( servizioApplicativo.equals(sa.getNome()) ){
+			if(idServizioApplicativo.getNome().equals(sa.getNome())){
 				sa.setTipoSoggettoProprietario(soggettoProprietario.getTipo());
 				sa.setNomeSoggettoProprietario(soggettoProprietario.getNome());
 				return sa;
 			}
 		}
-
-		throw new DriverConfigurazioneNotFound("[getServizioApplicativo(RichiestaApplicativa)] Servizio applicativo non esistente");
+		
+		throw new DriverConfigurazioneNotFound("Servizio Applicativo non trovato");
 	}
-
-	/**
-	 * Restituisce Il servizio applicativo che include le credenziali passate come parametro. 
-	 *
-	 * @param idPD Identificatore della porta delegata.
-	 * @param aUser User utilizzato nell'header HTTP Authentication.
-	 * @param aPassword Password utilizzato nell'header HTTP Authentication.
-	 * @return Il servizio applicativo che include le credenziali passate come parametro. 
-	 * 
-	 */
+	
+	
 	@Override
-	public ServizioApplicativo getServizioApplicativoAutenticato(IDPortaDelegata idPD, String aUser,String aPassword)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-
-		if(idPD!=null && idPD.getSoggettoFruitore()!=null & idPD.getLocationPD()!=null){
-			// Cerco Prima come definizione interna ad una porta delegata di un soggetto
-			// REFRESH verra' effettuato attraverso questa ricerca
-			PortaDelegata pd = null;
-			try{
-				pd = getPortaDelegata(idPD);
-			}catch(Exception e){}
-			if(pd!=null){
-				for(int j=0; j<pd.sizeServizioApplicativoList(); j++){
-					ServizioApplicativo sa = pd.getServizioApplicativo(j);
-					if(sa.getInvocazionePorta()!=null){
-						for(int z=0;z<sa.getInvocazionePorta().sizeCredenzialiList();z++){
-							if(sa.getInvocazionePorta().getCredenziali(z).getTipo()!=null &&
-									CostantiConfigurazione.CREDENZIALE_BASIC.equals(sa.getInvocazionePorta().getCredenziali(z).getTipo())){
-								if( (aUser.equals(sa.getInvocazionePorta().getCredenziali(z).getUser())) && 
-										(aPassword.equals(sa.getInvocazionePorta().getCredenziali(z).getPassword()))){
-									sa.setTipoSoggettoProprietario(pd.getTipoSoggettoProprietario());
-									sa.setNomeSoggettoProprietario(pd.getNomeSoggettoProprietario());
-									return sa;
-								}
-							}
-						}
-					}
-				}
-			}
+	public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String aUser,String aPassword) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		if(aUser==null){
+			throw new DriverConfigurazioneException("Username non definito");
 		}
-
-		//	Se il soggetto non e' null lo cerco poi come definizione esterna alla porta delegata dentro il soggetto
-		if(idPD!=null && idPD.getSoggettoFruitore()!=null){
-			// REFRESH verra' effettuato anche attraverso questa ricerca
-			Soggetto soggetto = null;
-			try{
-				soggetto = getSoggetto(idPD.getSoggettoFruitore());
-			}catch(Exception e){}
-			if(soggetto!=null)
-				for(int j=0; j<soggetto.sizeServizioApplicativoList(); j++){
-					ServizioApplicativo sa = soggetto.getServizioApplicativo(j);
-					if(sa.getInvocazionePorta()!=null){
-						for(int z=0;z<sa.getInvocazionePorta().sizeCredenzialiList();z++){
-							if(sa.getInvocazionePorta().getCredenziali(z).getTipo()!=null &&
-									CostantiConfigurazione.CREDENZIALE_BASIC.equals(sa.getInvocazionePorta().getCredenziali(z).getTipo())){
-								if( (aUser.equals(sa.getInvocazionePorta().getCredenziali(z).getUser())) && 
-										(aPassword.equals(sa.getInvocazionePorta().getCredenziali(z).getPassword()))){
-									sa.setTipoSoggettoProprietario(soggetto.getTipo());
-									sa.setNomeSoggettoProprietario(soggetto.getNome());
-									return sa;
-								}
-							}
-						}
-					}
-				}
-		}	
-
-		// Se il soggetto e' null lo cerca in ogni soggetto...
-		else{
-			for(int i=0; i<this.openspcoop.sizeSoggettoList(); i++){
-				Soggetto soggettoSearch = this.openspcoop.getSoggetto(i);
-				for(int j=0; j<soggettoSearch.sizeServizioApplicativoList(); j++){
-					ServizioApplicativo sa = soggettoSearch.getServizioApplicativo(j);
-					if(sa.getInvocazionePorta()!=null){
-						for(int z=0;z<sa.getInvocazionePorta().sizeCredenzialiList();z++){
-							if(sa.getInvocazionePorta().getCredenziali(z).getTipo()!=null &&
-									CostantiConfigurazione.CREDENZIALE_BASIC.equals(sa.getInvocazionePorta().getCredenziali(z).getTipo())){
-								if( (aUser.equals(sa.getInvocazionePorta().getCredenziali(z).getUser())) && 
-										(aPassword.equals(sa.getInvocazionePorta().getCredenziali(z).getPassword()))){
-									sa.setTipoSoggettoProprietario(soggettoSearch.getTipo());
-									sa.setNomeSoggettoProprietario(soggettoSearch.getNome());
-									return sa;
-								}
-							}
-						}
-					}
-				}
-			}
+		if(aPassword==null){
+			throw new DriverConfigurazioneException("Password non definita");
 		}
-
-
-		throw new DriverConfigurazioneNotFound("Servizio Applicativo cercato con credenziali basic non trovato");
-	}
-
-	@Override
-	public ServizioApplicativo getServizioApplicativoAutenticato(String aUser,String aPassword)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
 		for(int i=0; i<this.openspcoop.sizeSoggettoList(); i++){
 			Soggetto soggettoSearch = this.openspcoop.getSoggetto(i);
 			for(int j=0; j<soggettoSearch.sizeServizioApplicativoList(); j++){
@@ -1539,149 +1229,12 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	}
 	
 	
-	/**
-	 * Restituisce Il servizio applicativo che include le credenziali passate come parametro. 
-	 *
-	 * @param idPD Identificatore della porta delegata.
-	 * @param aSubject Subject utilizzato nella connessione HTTPS.
-	 * @return Il servizio applicativo che include le credenziali passate come parametro. 
-	 * 
-	 */
 	@Override
-	public ServizioApplicativo getServizioApplicativoAutenticato(IDPortaDelegata idPD, String aSubject) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-
-		if(idPD !=null && idPD.getSoggettoFruitore()!=null & idPD.getLocationPD()!=null){
-			// Cerco Prima come definizione interna ad una porta delegata di un soggetto
-			// REFRESH verra' effettuato attraverso questa ricerca
-			PortaDelegata pd = null;
-			try{
-				pd = getPortaDelegata(idPD);
-			}catch(Exception e){}
-			if(pd!=null){
-				for(int j=0; j<pd.sizeServizioApplicativoList(); j++){
-					ServizioApplicativo sa = pd.getServizioApplicativo(j);
-					if(sa.getInvocazionePorta()!=null){
-						for(int z=0;z<sa.getInvocazionePorta().sizeCredenzialiList();z++){
-							//	Default: SSL
-							if(sa.getInvocazionePorta().getCredenziali(z).getTipo() == null){
-								try{
-									//if( aSubject.equals(sa.getInvocazionePorta().getCredenziali(z).getSubject())){
-									if(Utilities.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject)){
-										sa.setTipoSoggettoProprietario(pd.getTipoSoggettoProprietario());
-										sa.setNomeSoggettoProprietario(pd.getNomeSoggettoProprietario());
-										return sa;
-									}	
-								}catch(Exception e){
-									throw new DriverConfigurazioneException(e.getMessage(),e);
-								}
-							}
-							if(sa.getInvocazionePorta().getCredenziali(z).getTipo()!=null && 
-									CostantiConfigurazione.CREDENZIALE_SSL.equals(sa.getInvocazionePorta().getCredenziali(z).getTipo())){
-								try{
-									//if( aSubject.equals(sa.getInvocazionePorta().getCredenziali(z).getSubject())){
-									if(Utilities.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject)){
-										sa.setTipoSoggettoProprietario(pd.getTipoSoggettoProprietario());
-										sa.setNomeSoggettoProprietario(pd.getNomeSoggettoProprietario());
-										return sa;
-									}	
-								}catch(Exception e){
-									throw new DriverConfigurazioneException(e.getMessage(),e);
-								}
-							}
-						}
-					}
-				}
-			}
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String aSubject) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		if(aSubject==null){
+			throw new DriverConfigurazioneException("Subject non definito");
 		}
-
-		//	Se il soggetto non e' null lo cerco poi come definizione esterna alla porta delegata dentro il soggetto
-		if(idPD !=null && idPD.getSoggettoFruitore()!=null){
-			// REFRESH verra' effettuato anche attraverso questa ricerca
-			Soggetto soggetto = null;
-			try{
-				soggetto = getSoggetto(idPD.getSoggettoFruitore());
-			}catch(Exception e){}
-			if(soggetto!=null)
-				for(int j=0; j<soggetto.sizeServizioApplicativoList(); j++){
-					ServizioApplicativo sa = soggetto.getServizioApplicativo(j);
-					if(sa.getInvocazionePorta()!=null){
-						for(int z=0;z<sa.getInvocazionePorta().sizeCredenzialiList();z++){
-							//	Default: SSL
-							if(sa.getInvocazionePorta().getCredenziali(z).getTipo() == null){
-								try{
-									//if( aSubject.equals(sa.getInvocazionePorta().getCredenziali(z).getSubject())){
-									if(Utilities.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject)){
-										sa.setTipoSoggettoProprietario(soggetto.getTipo());
-										sa.setNomeSoggettoProprietario(soggetto.getNome());
-										return sa;
-									}	
-								}catch(Exception e){
-									throw new DriverConfigurazioneException(e.getMessage(),e);
-								}
-							}
-							if(sa.getInvocazionePorta().getCredenziali(z).getTipo()!=null &&
-									CostantiConfigurazione.CREDENZIALE_SSL.equals(sa.getInvocazionePorta().getCredenziali(z).getTipo())){
-								try{
-									//if( aSubject.equals(sa.getInvocazionePorta().getCredenziali(z).getSubject())){
-									if(Utilities.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject)){
-										sa.setTipoSoggettoProprietario(soggetto.getTipo());
-										sa.setNomeSoggettoProprietario(soggetto.getNome());
-										return sa;
-									}	
-								}catch(Exception e){
-									throw new DriverConfigurazioneException(e.getMessage(),e);
-								}
-							}
-						}
-					}
-				}
-		}	
-
-		// Se il soggetto e' null lo cerca in ogni soggetto...
-		else{
-			for(int i=0; i<this.openspcoop.sizeSoggettoList(); i++){
-				Soggetto soggettoSearch = this.openspcoop.getSoggetto(i);
-				for(int j=0; j<soggettoSearch.sizeServizioApplicativoList(); j++){
-					ServizioApplicativo sa = soggettoSearch.getServizioApplicativo(j);
-					if(sa.getInvocazionePorta()!=null){
-						for(int z=0;z<sa.getInvocazionePorta().sizeCredenzialiList();z++){
-							//	Default: SSL
-							if(sa.getInvocazionePorta().getCredenziali(z).getTipo() == null){
-								try{
-									//if( aSubject.equals(sa.getInvocazionePorta().getCredenziali(z).getSubject())){
-									if(Utilities.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject)){
-										sa.setTipoSoggettoProprietario(soggettoSearch.getTipo());
-										sa.setNomeSoggettoProprietario(soggettoSearch.getNome());
-										return sa;
-									}	
-								}catch(Exception e){
-									throw new DriverConfigurazioneException(e.getMessage(),e);
-								}
-							}
-							if(sa.getInvocazionePorta().getCredenziali(z).getTipo()!=null &&
-									CostantiConfigurazione.CREDENZIALE_SSL.equals(sa.getInvocazionePorta().getCredenziali(z).getTipo())){
-								try{
-									//if( aSubject.equals(sa.getInvocazionePorta().getCredenziali(z).getSubject())){
-									if(Utilities.sslVerify(sa.getInvocazionePorta().getCredenziali(z).getSubject(), aSubject)){
-										sa.setTipoSoggettoProprietario(soggettoSearch.getTipo());
-										sa.setNomeSoggettoProprietario(soggettoSearch.getNome());
-										return sa;
-									}	
-								}catch(Exception e){
-									throw new DriverConfigurazioneException(e.getMessage(),e);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		throw new DriverConfigurazioneNotFound("Servizio Applicativo cercato con credenziali ssl non trovato");
-	}
-
-	@Override
-	public ServizioApplicativo getServizioApplicativoAutenticato(String aSubject) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		
 		for(int i=0; i<this.openspcoop.sizeSoggettoList(); i++){
 			Soggetto soggettoSearch = this.openspcoop.getSoggetto(i);
@@ -1723,70 +1276,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		throw new DriverConfigurazioneNotFound("Servizio Applicativo cercato con credenziali ssl non trovato");
 	}
 
-	
-	/**
-     * Verifica l'esistenza di un servizio applicativo.
-     *
-     * @param idServizioApplicativo id del servizio applicativo
-     * @return ServizioApplicativo
-	 * @throws DriverRegistroServiziException
-     */    
-	@Override
-	public ServizioApplicativo getServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		
-		if(idServizioApplicativo==null){
-			throw new DriverConfigurazioneException("IDServizioApplicativo non definito");
-		}
-		if(idServizioApplicativo.getIdSoggettoProprietario()==null){
-			throw new DriverConfigurazioneException("IDServizioApplicativo.idSoggettoProprietario non definito");
-		}
-		if(idServizioApplicativo.getNome()==null){
-			throw new DriverConfigurazioneException("IDServizioApplicativo.nome non definito");
-		}
-		
-		Soggetto soggettoProprietario = this.getSoggetto(idServizioApplicativo.getIdSoggettoProprietario());
-		for(int j=0; j<soggettoProprietario.sizeServizioApplicativoList(); j++){
-			ServizioApplicativo sa = soggettoProprietario.getServizioApplicativo(j);
-			if(idServizioApplicativo.getNome().equals(sa.getNome())){
-				sa.setTipoSoggettoProprietario(soggettoProprietario.getTipo());
-				sa.setNomeSoggettoProprietario(soggettoProprietario.getNome());
-				return sa;
-			}
-		}
-		
-		throw new DriverConfigurazioneNotFound("Servizio Applicativo non trovato");
-	}
-
-
-	/**
-     * Verifica l'esistenza di un servizio applicativo.
-     *
-     * @param idSoggetto id del soggetto proprietario
-     * @param nomeServizioApplicativo nome del servizio applicativo
-     * @return ServizioApplicativo
-	 * @throws DriverRegistroServiziException
-     */    
-    @Override
-	public ServizioApplicativo getServizioApplicativo(IDSoggetto idSoggetto,String nomeServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-    	for(int i=0; i<this.openspcoop.sizeSoggettoList(); i++){
-			Soggetto soggettoSearch = this.openspcoop.getSoggetto(i);
-			if(idSoggetto.getTipo().equals(soggettoSearch.getTipo()) &&
-					idSoggetto.getNome().equals(soggettoSearch.getNome()) ){
-				for(int j=0; j<soggettoSearch.sizeServizioApplicativoList(); j++){
-					ServizioApplicativo sa = soggettoSearch.getServizioApplicativo(j);
-					if(sa.getNome().equals(nomeServizioApplicativo)){
-						sa.setTipoSoggettoProprietario(soggettoSearch.getTipo());
-						sa.setNomeSoggettoProprietario(soggettoSearch.getNome());
-						return sa;
-					}
-				}
-			}
-		}
-		
-		throw new DriverConfigurazioneNotFound("Servizio Applicativo cercato con credenziali ssl non trovato");
-    }
-	
-    
+	    
 	/**
 	 * Restituisce la lista degli identificativi dei servizi applicativi
 	 * 

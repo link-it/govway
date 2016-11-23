@@ -197,22 +197,10 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			}
 			else if(o instanceof PortaDelegata){
 				PortaDelegata pd = (PortaDelegata) o;
-				if(pd.getOldTipoSoggettoProprietarioForUpdate()==null && pd.getOldNomeSoggettoProprietarioForUpdate()==null && pd.getOldNomeForUpdate()==null){
+				if(pd.getOldNomeForUpdate()==null){
 					return null; // non lancio un errore
 				}
-				String id = null;
-				if(pd.getOldTipoSoggettoProprietarioForUpdate()!=null && pd.getOldNomeSoggettoProprietarioForUpdate()!=null && pd.getOldNomeForUpdate()!=null){
-					id = pd.getOldTipoSoggettoProprietarioForUpdate()+"/"+pd.getOldNomeSoggettoProprietarioForUpdate()+"_"+pd.getOldNomeForUpdate();
-				}
-				else if(pd.getOldNomeForUpdate()!=null){
-					id = pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario()+"_"+pd.getOldNomeForUpdate();
-				}
-				else if(pd.getOldTipoSoggettoProprietarioForUpdate()==null || pd.getOldNomeSoggettoProprietarioForUpdate()==null){
-					throw new DriverConfigurazioneException("Oggetto in modifica non correttamente valorizzato");
-				}
-				else{
-					id = pd.getOldTipoSoggettoProprietarioForUpdate()+"/"+pd.getOldNomeSoggettoProprietarioForUpdate()+"_"+pd.getNome();
-				}
+				String id = pd.getOldNomeForUpdate();
 				if(this.prefix){
 					return "[PortaDelegata] "+ id;
 				}else{
@@ -221,22 +209,10 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			}
 			else if(o instanceof PortaApplicativa){
 				PortaApplicativa pa = (PortaApplicativa) o;
-				if(pa.getOldTipoSoggettoProprietarioForUpdate()==null && pa.getOldNomeSoggettoProprietarioForUpdate()==null && pa.getOldNomeForUpdate()==null){
+				if(pa.getOldNomeForUpdate()==null){
 					return null; // non lancio un errore
 				}
-				String id = null;
-				if(pa.getOldTipoSoggettoProprietarioForUpdate()!=null && pa.getOldNomeSoggettoProprietarioForUpdate()!=null && pa.getOldNomeForUpdate()!=null){
-					id = pa.getOldTipoSoggettoProprietarioForUpdate()+"/"+pa.getOldNomeSoggettoProprietarioForUpdate()+"_"+pa.getOldNomeForUpdate();
-				}
-				else if(pa.getOldNomeForUpdate()!=null){
-					id = pa.getTipoSoggettoProprietario()+"/"+pa.getNomeSoggettoProprietario()+"_"+pa.getOldNomeForUpdate();
-				}
-				else if(pa.getOldTipoSoggettoProprietarioForUpdate()==null || pa.getOldNomeSoggettoProprietarioForUpdate()==null){
-					throw new DriverConfigurazioneException("Oggetto in modifica non correttamente valorizzato");
-				}
-				else{
-					id = pa.getOldTipoSoggettoProprietarioForUpdate()+"/"+pa.getOldNomeSoggettoProprietarioForUpdate()+"_"+pa.getNome();
-				}
+				String id = pa.getOldNomeForUpdate();
 				if(this.prefix){
 					return "[PortaApplicativa] "+ id;
 				}else{

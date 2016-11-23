@@ -74,7 +74,7 @@ public class ExporterUtils {
 		
 		for (int i = 0; i < protocolli.size(); i++) {
 			String protocolName = protocolli.get(i);
-			IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolName);
+			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolName);
 			IArchive archiveEngine = pf.createArchive();
 			List<ExportMode> exportModesByProtocol = archiveEngine.getExportModes(archiveType);
 			for (ExportMode exportMode : exportModesByProtocol) {
@@ -85,7 +85,7 @@ public class ExporterUtils {
 					if(j==i)
 						continue;
 					String protocolCheck = protocolli.get(j);
-					IProtocolFactory pfCheck = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolCheck);
+					IProtocolFactory<?> pfCheck = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolCheck);
 					IArchive archiveEngineCheck = pfCheck.createArchive();
 					List<ExportMode> exportModesByProtocolCheck = archiveEngineCheck.getExportModes(archiveType);
 					if(exportModesByProtocolCheck.contains(exportMode)==false){
@@ -111,7 +111,7 @@ public class ExporterUtils {
 		for (int i = 0; i < protocolli.size(); i++) {
 			String protocolName = protocolli.get(i);
 			if(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO_UNDEFINDED.equals(protocolName)==false){
-				IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolName);
+				IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolName);
 				IArchive archiveEngine = pf.createArchive();
 				List<ExportMode> exportModesByProtocol = archiveEngine.getExportModes(archiveType);
 				for (ExportMode exp : exportModesByProtocol) {

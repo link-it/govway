@@ -34,6 +34,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
@@ -305,9 +306,10 @@ public class TimerGestoreBusteNonRiscontrateLib {
 								erroreAppl.setDominio(identitaPdD.getCodicePorta());
 								
 								// RichiestaDelegata
-								RichiestaDelegata richiestaDelegata = new RichiestaDelegata(soggettoBustaNonRiscontrata,
-										infoIntegrazione.getLocationPD(),infoIntegrazione.getServizioApplicativo(),
-										servizioBusta,infoIntegrazione.getIdModuloInAttesa(),erroreAppl,identitaPdD);
+								IDPortaDelegata idPD = this.configurazionePdDReader.getIDPortaDelegata(infoIntegrazione.getNomePorta(), protocolFactory);
+								RichiestaDelegata richiestaDelegata = new RichiestaDelegata(
+										idPD,infoIntegrazione.getServizioApplicativo(),
+										infoIntegrazione.getIdModuloInAttesa(),erroreAppl,identitaPdD);
 								richiestaDelegata.setScenario(infoIntegrazione.getScenario());
 								richiestaDelegata.setUtilizzoConsegnaAsincrona(true); // i riscontri sono utilizzati solo con il profilo oneway
 								richiestaDelegata.setIdCollaborazione(bustaToSend.getCollaborazione());
@@ -315,16 +317,17 @@ public class TimerGestoreBusteNonRiscontrateLib {
 								try{
 									richiestaDelegata.setIdCorrelazioneApplicativa(messaggioDaInviare.getIDCorrelazioneApplicativa());
 								}catch(Exception e){}
-								IDPortaDelegata idPD = richiestaDelegata.getIdPortaDelegata();
-								idPD.setSoggettoFruitore(soggettoBustaNonRiscontrata);
 								
 								// Lettura servizio applicativo
 								ServizioApplicativo sa = null;
 								String servizioApplicativo = richiestaDelegata.getServizioApplicativo();
 								try{
-									if(servizioApplicativo!=null)
-									this.configurazionePdDReader.getServizioApplicativo(idPD,
-											servizioApplicativo);
+									if(servizioApplicativo!=null){
+										IDServizioApplicativo idSA = new IDServizioApplicativo();
+										idSA.setNome(servizioApplicativo);
+										idSA.setIdSoggettoProprietario(richiestaDelegata.getIdSoggettoFruitore());
+										sa = this.configurazionePdDReader.getServizioApplicativo(idSA);
+									}
 								}catch (Exception e) {
 										if( !(e instanceof DriverConfigurazioneNotFound) || !(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(servizioApplicativo)) ){
 											throw e;
@@ -533,6 +536,7 @@ public class TimerGestoreBusteNonRiscontrateLib {
 									identitaPdD = new IDSoggetto(bustaToSend.getTipoMittente(),
 											bustaToSend.getMittente(),dominioRD);
 								}
+								@SuppressWarnings("unused")
 								IDServizio servizioBusta = new IDServizio(bustaToSend.getTipoDestinatario(),
 										bustaToSend.getDestinatario(),
 										bustaToSend.getTipoServizio(),
@@ -546,9 +550,9 @@ public class TimerGestoreBusteNonRiscontrateLib {
 								erroreAppl.setDominio(identitaPdD.getCodicePorta());
 								
 								// RichiestaDelegata
-								RichiestaDelegata richiestaDelegata = new RichiestaDelegata(soggettoBustaNonRiscontrata,
-										infoIntegrazione.getLocationPD(),infoIntegrazione.getServizioApplicativo(),
-										servizioBusta,infoIntegrazione.getIdModuloInAttesa(),erroreAppl,identitaPdD);
+								IDPortaDelegata idPD = this.configurazionePdDReader.getIDPortaDelegata(infoIntegrazione.getNomePorta(), protocolFactory);
+								RichiestaDelegata richiestaDelegata = new RichiestaDelegata(idPD,infoIntegrazione.getServizioApplicativo(),
+										infoIntegrazione.getIdModuloInAttesa(),erroreAppl,identitaPdD);
 								richiestaDelegata.setScenario(infoIntegrazione.getScenario());
 								if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaToSend.getProfiloDiCollaborazione()) &&
 										bustaToSend.getRiferimentoMessaggio() ==null)
@@ -556,16 +560,17 @@ public class TimerGestoreBusteNonRiscontrateLib {
 								else
 									richiestaDelegata.setUtilizzoConsegnaAsincrona(true); 
 								richiestaDelegata.setRicevutaAsincrona(false); // solo in caso di non-gestione della ricevuta applicativa, viene attivato il timer
-								IDPortaDelegata idPD = richiestaDelegata.getIdPortaDelegata();
-								idPD.setSoggettoFruitore(soggettoBustaNonRiscontrata);
-								
+	
 								// Lettura servizio applicativo
 								ServizioApplicativo sa = null;
 								String servizioApplicativo = richiestaDelegata.getServizioApplicativo();
 								try{
-									if(servizioApplicativo!=null)
-									this.configurazionePdDReader.getServizioApplicativo(idPD,
-											servizioApplicativo);
+									if(servizioApplicativo!=null){
+										IDServizioApplicativo idSA = new IDServizioApplicativo();
+										idSA.setNome(servizioApplicativo);
+										idSA.setIdSoggettoProprietario(richiestaDelegata.getIdSoggettoFruitore());
+										sa = this.configurazionePdDReader.getServizioApplicativo(idSA);
+									}
 								}catch (Exception e) {
 										if( !(e instanceof DriverConfigurazioneNotFound) || !(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(servizioApplicativo)) ){
 											throw e;

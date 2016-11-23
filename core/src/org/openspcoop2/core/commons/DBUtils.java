@@ -315,34 +315,22 @@ public class DBUtils {
 
 	
 
-	public static long getIdPortaApplicativa(String nomePorta, String tipoProprietario, String nomeProprietario,
-			Connection con, String tipoDB) throws CoreException
-	{
-		return DBUtils.getIdPortaApplicativa(nomePorta, tipoProprietario, nomeProprietario, con, tipoDB, CostantiDB.SOGGETTI);
-	}
-	public static long getIdPortaApplicativa(String nomePorta, String tipoProprietario, String nomeProprietario,
-			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException
+	public static long getIdPortaApplicativa(String nomePorta, Connection con, String tipoDB) throws CoreException
 	{
 		PreparedStatement stm = null;
 		ResultSet rs = null;
-		long idSoggetto;
 		long idPortaApplicativa=-1;
 
 		try
 		{
-			idSoggetto = DBUtils.getIdSoggetto(nomeProprietario, tipoProprietario, con, tipoDB,tabellaSoggetti);
-
-			//recupero l'id della porta applicativa appena inserita
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
 			sqlQueryObject.addSelectField("id");
-			sqlQueryObject.addWhereCondition("id_soggetto = ?");
 			sqlQueryObject.addWhereCondition("nome_porta = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 			stm=con.prepareStatement(sqlQuery);
-			stm.setLong(1, idSoggetto);
-			stm.setString(2, nomePorta);
+			stm.setString(1, nomePorta);
 
 			rs=stm.executeQuery();
 
@@ -374,34 +362,22 @@ public class DBUtils {
 	
 	
 	
-	public static long getIdPortaDelegata(String nomePorta, String tipoProprietario, String nomeProprietario,
-			Connection con, String tipoDB) throws CoreException
-	{
-		return DBUtils.getIdPortaDelegata(nomePorta, tipoProprietario, nomeProprietario, con, tipoDB, CostantiDB.SOGGETTI);
-	}
-	public static long getIdPortaDelegata(String nomePorta, String tipoProprietario, String nomeProprietario,
-			Connection con, String tipoDB,String tabellaSoggetti) throws CoreException
+	public static long getIdPortaDelegata(String nomePorta, Connection con, String tipoDB) throws CoreException
 	{
 		PreparedStatement stm = null;
 		ResultSet rs = null;
-		long idSoggetto;
 		long idPortaDelegata=-1;
 
 		try
 		{
-			idSoggetto = DBUtils.getIdSoggetto(nomeProprietario, tipoProprietario, con, tipoDB,tabellaSoggetti);
-
-			//recupero l'id della porta applicativa appena inserita
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
 			sqlQueryObject.addSelectField("id");
-			sqlQueryObject.addWhereCondition("id_soggetto = ?");
 			sqlQueryObject.addWhereCondition("nome_porta = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 			stm=con.prepareStatement(sqlQuery);
-			stm.setLong(1, idSoggetto);
-			stm.setString(2, nomePorta);
+			stm.setString(1, nomePorta);
 
 			rs=stm.executeQuery();
 

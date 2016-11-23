@@ -75,7 +75,7 @@ public class AutenticazioneSSL extends AbstractCore implements IAutenticazione {
 		}
 
 		try{
-			this.servizioApplicativo = ConfigurazionePdDManager.getInstance(state).autenticazioneHTTPS(idPD.getSoggettoFruitore(),idPD.getLocationPD(),subject);
+			this.servizioApplicativo = ConfigurazionePdDManager.getInstance(state).getIdServizioApplicativoByCredenzialiSsl(subject);
 		}catch(Exception e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneSSL non riuscita",e);
 			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -121,7 +121,7 @@ public class AutenticazioneSSL extends AbstractCore implements IAutenticazione {
 		}
 
 		try{
-			this.servizioApplicativo = ConfigurazionePdDManager.getInstance(state).autenticazioneHTTPS(subject);
+			this.servizioApplicativo = ConfigurazionePdDManager.getInstance(state).getIdServizioApplicativoByCredenzialiSsl(subject);
 		}catch(Exception e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneSSL non riuscita",e);
 			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.

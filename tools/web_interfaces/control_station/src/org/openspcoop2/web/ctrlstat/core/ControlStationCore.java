@@ -392,7 +392,6 @@ public class ControlStationCore {
 	private boolean enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = false;
 	private boolean showMTOMVisualizzazioneCompleta = false;
 	private boolean showAccordoParteComuneInformazioniStrutturaMessaggiWsdl = false;
-	private boolean showPortaDelegataUrlInvocazione = false;
 	private boolean isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = false;
 	private boolean showConfigurazioneTracciamentoDiagnostica = true;
 	
@@ -476,9 +475,6 @@ public class ControlStationCore {
 	}
 	public boolean isShowAccordoParteComuneInformazioniStrutturaMessaggiWsdl() {
 		return this.showAccordoParteComuneInformazioniStrutturaMessaggiWsdl;
-	}
-	public boolean isShowPortaDelegataUrlInvocazione() {
-		return this.showPortaDelegataUrlInvocazione;
 	}
 	public boolean isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona() {
 		return this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona;
@@ -1152,7 +1148,6 @@ public class ControlStationCore {
 		this.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = core.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes;
 		this.showMTOMVisualizzazioneCompleta = core.showMTOMVisualizzazioneCompleta;
 		this.showAccordoParteComuneInformazioniStrutturaMessaggiWsdl = core.showAccordoParteComuneInformazioniStrutturaMessaggiWsdl;
-		this.showPortaDelegataUrlInvocazione = core.showPortaDelegataUrlInvocazione;
 		this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = core.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona;
 		this.showConfigurazioneTracciamentoDiagnostica = core.showConfigurazioneTracciamentoDiagnostica;
 
@@ -1372,7 +1367,6 @@ public class ControlStationCore {
 			this.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = consoleProperties.isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes();
 			this.showMTOMVisualizzazioneCompleta = consoleProperties.isMenuMTOMVisualizzazioneCompleta();
 			this.showAccordoParteComuneInformazioniStrutturaMessaggiWsdl = consoleProperties.isElenchiMenuVisualizzazioneCampiInserimentoStrutturaMessaggiWsdl();
-			this.showPortaDelegataUrlInvocazione = consoleProperties.isMenuPortaDelegataVisualizzazioneUrlInvocazione();
 			this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = consoleProperties.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona();
 			this.showConfigurazioneTracciamentoDiagnostica = consoleProperties.isMenuConfigurazioneVisualizzazioneDiagnosticaTracciatura();
 			
@@ -2370,8 +2364,6 @@ public class ControlStationCore {
 						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, pd.getTipoSoggettoProprietario());
 						
 						operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_PD, pd.getOldNomeForUpdate());
-						operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SOGGETTO, pd.getOldNomeSoggettoProprietarioForUpdate());
-						operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_SOGGETTO, pd.getOldTipoSoggettoProprietarioForUpdate());
 						
 						if(this.isRegistroServiziLocale()){
 							org.openspcoop2.core.registry.Soggetto sogg = driver.getDriverRegistroServiziDB().getSoggetto(pd.getIdSoggetto());
@@ -2398,8 +2390,6 @@ public class ControlStationCore {
 						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, pa.getTipoSoggettoProprietario());
 						
 						operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_PA, pa.getOldNomeForUpdate());
-						operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SOGGETTO, pa.getOldNomeSoggettoProprietarioForUpdate());
-						operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_SOGGETTO, pa.getOldTipoSoggettoProprietarioForUpdate());
 						
 						if(this.isRegistroServiziLocale()){
 							org.openspcoop2.core.registry.Soggetto sogg = driver.getDriverRegistroServiziDB().getSoggetto(pa.getIdSoggetto());
@@ -3930,10 +3920,8 @@ public class ControlStationCore {
 			msg+=":<"+pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario()+"_"+pd.getNome()+">";
 			if(TipoOperazione.CHANGE.toString().equals(tipoOperazione.toString())){
 				String oldNome = pd.getOldNomeForUpdate()!=null ? pd.getOldNomeForUpdate() : pd.getNome();
-				String oldTipoProp = pd.getOldTipoSoggettoProprietarioForUpdate()!=null ? pd.getOldTipoSoggettoProprietarioForUpdate() : pd.getTipoSoggettoProprietario();
-				String oldNomeProp = pd.getOldNomeSoggettoProprietarioForUpdate()!=null ? pd.getOldNomeSoggettoProprietarioForUpdate() : pd.getNomeSoggettoProprietario();
-				if(  (oldNome.equals(pd.getNome())==false) || (oldTipoProp.equals(pd.getTipoSoggettoProprietario())==false) || (oldNomeProp.equals(pd.getNomeSoggettoProprietario())==false) )
-					msg+=":OLD<"+oldTipoProp+"/"+oldNomeProp+"_"+oldNome+">";
+				if(  (oldNome.equals(pd.getNome())==false) )
+					msg+=":OLD<"+pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario()+"_"+oldNome+">";
 			}
 		}
 
@@ -3944,10 +3932,8 @@ public class ControlStationCore {
 			msg+=":<"+pa.getTipoSoggettoProprietario()+"/"+pa.getNomeSoggettoProprietario()+"_"+pa.getNome()+">";
 			if(TipoOperazione.CHANGE.toString().equals(tipoOperazione.toString())){
 				String oldNome = pa.getOldNomeForUpdate()!=null ? pa.getOldNomeForUpdate() : pa.getNome();
-				String oldTipoProp = pa.getOldTipoSoggettoProprietarioForUpdate()!=null ? pa.getOldTipoSoggettoProprietarioForUpdate() : pa.getTipoSoggettoProprietario();
-				String oldNomeProp = pa.getOldNomeSoggettoProprietarioForUpdate()!=null ? pa.getOldNomeSoggettoProprietarioForUpdate() : pa.getNomeSoggettoProprietario();
-				if(  (oldNome.equals(pa.getNome())==false) || (oldTipoProp.equals(pa.getTipoSoggettoProprietario())==false) || (oldNomeProp.equals(pa.getNomeSoggettoProprietario())==false) )
-					msg+=":OLD<"+oldTipoProp+"/"+oldNomeProp+"_"+oldNome+">";
+				if(  (oldNome.equals(pa.getNome())==false) )
+					msg+=":OLD<"+pa.getTipoSoggettoProprietario()+"/"+pa.getNomeSoggettoProprietario()+"_"+oldNome+">";
 			}
 		}
 
@@ -4058,7 +4044,7 @@ public class ControlStationCore {
 
 			List<String> protocolliList = new ArrayList<String>();
 
-			MapReader<String, IProtocolFactory> protocolFactories = this.protocolFactoryManager.getProtocolFactories();
+			MapReader<String, IProtocolFactory<?>> protocolFactories = this.protocolFactoryManager.getProtocolFactories();
 			Enumeration<String> protocolli = protocolFactories.keys();
 			while (protocolli.hasMoreElements()) {
 

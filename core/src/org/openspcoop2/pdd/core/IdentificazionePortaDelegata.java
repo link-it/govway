@@ -23,10 +23,9 @@
 
 package org.openspcoop2.pdd.core;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
-import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.RichiestaDelegata;
@@ -37,6 +36,7 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.slf4j.Logger;
 
 
 /**
@@ -53,20 +53,17 @@ public class IdentificazionePortaDelegata {
 
 
 	/* ---- Location della Porta Delegata --- */
-	private String location;
-	private String urlCompleta;
-	/* --- NomePortaDelegata ----*/
-	private String nomePDIndivituata;
+	private String invocationUrl;
+	private String invocationUrlWithFormBasedParameters;
 	/* ----- Individuazione Nome PortaDelegata UrlBased -------- */
     private boolean nomePortaDelegataURLBased = true;
-    /* ---- Porta Delegata ---- */
+	/* ---- IdPortaDelegata identificata --- */
+	private IDPortaDelegata idPortaDelegata;
+	/* ---- Porta Delegata ---- */
     private PortaDelegata pd = null;
 	
 	/* ---- messaggio di errore --- */
     private ErroreIntegrazione erroreIntegrazione;
-
-	/* ---- Soggetto identificato --- */
-	private IDSoggetto soggetto;
 
 	/* ---- Tipo di Autenticazione --- */
 	private String tipoAutenticazione;
@@ -92,8 +89,8 @@ public class IdentificazionePortaDelegata {
 	 * 
 	 */
 	public IdentificazionePortaDelegata(URLProtocolContext urlProtocolContext,IProtocolFactory<?> protocolFactory) {
-		this.location = urlProtocolContext.getFunctionParameters();
-		this.urlCompleta = urlProtocolContext.getUrlInvocazione_formBased();
+		this.invocationUrl = urlProtocolContext.getFunctionParameters();
+		this.invocationUrlWithFormBasedParameters = urlProtocolContext.getUrlInvocazione_formBased();
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		if(URLProtocolContext.IntegrationManager_FUNCTION.equals(urlProtocolContext.getFunction())){
 			this.nomePortaDelegataURLBased = OpenSPCoop2Properties.getInstance().integrationManager_isNomePortaDelegataUrlBased();
@@ -117,7 +114,7 @@ public class IdentificazionePortaDelegata {
 
 		try{
 
-			if(this.location==null || "".equals(this.location)){
+			if(this.invocationUrl==null || "".equals(this.invocationUrl)){
 				this.erroreIntegrazione = 
 						ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
 							getErrore401_PortaInesistente("nella url di invocazione alla Porta di Dominio non e' stata fornita il nome di una PD");
@@ -129,17 +126,16 @@ public class IdentificazionePortaDelegata {
 			// Controllo Esistenza Porta Delegata appartenente ad un soggetto.
 			// Viene controllata la url 'scalandola' di '/'
 			if(this.nomePortaDelegataURLBased){
-				String portaDelegata = new String(this.location);
+				String portaDelegata = new String(this.invocationUrl);
 				if(portaDelegata.endsWith("/"))
 					portaDelegata = portaDelegata.substring(0,portaDelegata.length()-1);
 				while(portaDelegata.contains("/")){
 					//this.log.info("Cerco con nome porta delegata ["+portaDelegata+"]");
 					try{
-						this.soggetto = configurazionePdDReader.getSoggettoProprietarioPortaDelegata(portaDelegata,this.protocolFactory);
+						this.idPortaDelegata = configurazionePdDReader.getIDPortaDelegata(portaDelegata,this.protocolFactory);
 					}catch(DriverConfigurazioneNotFound dNotFound){}
-					if(this.soggetto!=null){
+					if(this.idPortaDelegata!=null){
 						//this.log.info("TROVATA porta delegata ["+portaDelegata+"]");
-						this.nomePDIndivituata = portaDelegata;
 						break;
 					}else{
 						int indexCut = -1;
@@ -158,42 +154,40 @@ public class IdentificazionePortaDelegata {
 				// Provo ad effettuare ultima ricerca
 				//this.log.info("ULTIMA... Cerco con nome porta delegata ["+portaDelegata+"]");
 				try{
-					this.soggetto = configurazionePdDReader.getSoggettoProprietarioPortaDelegata(portaDelegata,this.protocolFactory);
+					this.idPortaDelegata = configurazionePdDReader.getIDPortaDelegata(portaDelegata,this.protocolFactory);
 				}catch(DriverConfigurazioneNotFound dNotFound){}
-				if(this.soggetto!=null){
+				if(this.idPortaDelegata!=null){
 					//this.log.info("ULTIMA....TROVATA porta delegata ["+portaDelegata+"]");
-					this.nomePDIndivituata = portaDelegata;
 				}
 			}
 			
-			if(this.nomePDIndivituata==null){
+			if(this.idPortaDelegata==null){
 				//log.info("Cerco con nome giusto porta delegata ["+this.location+"]");
 				// check per nome PD univoco
 				try{
-					this.soggetto = configurazionePdDReader.getSoggettoProprietarioPortaDelegata(this.location,this.protocolFactory);
+					this.idPortaDelegata = configurazionePdDReader.getIDPortaDelegata(this.invocationUrl,this.protocolFactory);
 				}catch(DriverConfigurazioneNotFound dNotFound){
 					this.erroreIntegrazione = 
 							ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
-								getErrore401_PortaInesistente("verificare i parametri di accesso utilizzati",this.location,this.urlCompleta);
+								getErrore401_PortaInesistente("verificare i parametri di accesso utilizzati",this.invocationUrl,this.invocationUrlWithFormBasedParameters);
 					this.log.error(this.erroreIntegrazione.getDescrizione(this.protocolFactory)+": "+dNotFound.getMessage());
 					return false;
 				}	
-				if(this.soggetto!=null){
+				if(this.idPortaDelegata!=null){
 					//log.info("TROVATO con nome giusto porta delegata ["+this.location+"]");
-					this.nomePDIndivituata = this.location;
 				}
 			}
 			
 			
-			if(this.soggetto == null){
+			if(this.idPortaDelegata == null){
 				this.erroreIntegrazione = 
 						ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
-							getErrore401_PortaInesistente("verificare i parametri di accesso utilizzati",this.location,this.urlCompleta);
+							getErrore401_PortaInesistente("verificare i parametri di accesso utilizzati",this.invocationUrl,this.invocationUrlWithFormBasedParameters);
 				return false;
 			}
 
 					
-			RichiestaDelegata richiestaDelegata = new RichiestaDelegata(this.soggetto,this.nomePDIndivituata);
+			RichiestaDelegata richiestaDelegata = new RichiestaDelegata(this.idPortaDelegata);
 		
 			// Get Porta Delegata
 			try{
@@ -201,7 +195,7 @@ public class IdentificazionePortaDelegata {
 			}catch(DriverConfigurazioneNotFound notFound){
 				this.erroreIntegrazione = 
 						ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
-							getErrore401_PortaInesistente(notFound.getMessage(),this.nomePDIndivituata,this.urlCompleta);
+							getErrore401_PortaInesistente(notFound.getMessage(),this.idPortaDelegata.getNome(),this.invocationUrlWithFormBasedParameters);
 				return false;
 			}
 			
@@ -211,7 +205,7 @@ public class IdentificazionePortaDelegata {
 			}catch(DriverConfigurazioneNotFound notFound){
 				this.erroreIntegrazione = 
 						ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
-							getErrore401_PortaInesistente("[lettura tipo autenticazione] "+notFound.getMessage(),this.nomePDIndivituata,this.urlCompleta);
+							getErrore401_PortaInesistente("[lettura tipo autenticazione] "+notFound.getMessage(),this.idPortaDelegata.getNome(),this.invocationUrlWithFormBasedParameters);
 				return false;
 			}
 
@@ -221,7 +215,7 @@ public class IdentificazionePortaDelegata {
 			}catch(DriverConfigurazioneNotFound notFound){
 				this.erroreIntegrazione = 
 						ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
-							getErrore401_PortaInesistente("[lettura tipo autorizzazione] "+notFound.getMessage(),this.nomePDIndivituata,this.urlCompleta);
+							getErrore401_PortaInesistente("[lettura tipo autorizzazione] "+notFound.getMessage(),this.idPortaDelegata.getNome(),this.invocationUrlWithFormBasedParameters);
 				return false;
 			}
 			
@@ -231,14 +225,14 @@ public class IdentificazionePortaDelegata {
 			}catch(DriverConfigurazioneNotFound notFound){
 				this.erroreIntegrazione = 
 						ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
-							getErrore401_PortaInesistente("[lettura tipo autorizzazione contenuto] "+notFound.getMessage(),this.nomePDIndivituata,this.urlCompleta);
+							getErrore401_PortaInesistente("[lettura tipo autorizzazione contenuto] "+notFound.getMessage(),this.idPortaDelegata.getNome(),this.invocationUrlWithFormBasedParameters);
 				return false;
 			}
 
 			return true;
 
 		}catch(Exception e){
-			this.log.error("Identificazione porta delegata non riuscita location["+this.location+"] urlInvocazione["+this.urlCompleta+"]",e);
+			this.log.error("Identificazione porta delegata non riuscita location["+this.invocationUrl+"] urlInvocazione["+this.invocationUrlWithFormBasedParameters+"]",e);
 			try{
 				this.erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_502_IDENTIFICAZIONE_PD);
@@ -249,16 +243,6 @@ public class IdentificazionePortaDelegata {
 		}
 	}
 
-
-	/**
-	 * Ritorna l'identificativo del Soggetto che include la porta delegata richiesta. 
-	 *
-	 * @return l'identificativo del Soggetto
-	 * 
-	 */
-	public IDSoggetto getSoggetto(){
-		return this.soggetto;
-	}
 
 
 	public ErroreIntegrazione getErroreIntegrazione() {
@@ -294,17 +278,14 @@ public class IdentificazionePortaDelegata {
 	public String getTipoAutorizzazioneContenuto() {
 		return this.tipoAutorizzazioneContenuto;
 	}
-	
-	public String getNomePDIndivituata() {
-		return this.nomePDIndivituata;
-	}
-
-
 
 
 	public PortaDelegata getPd() {
 		return this.pd;
 	} 
 
+    public IDPortaDelegata getIdPortaDelegata() {
+		return this.idPortaDelegata;
+	}
 }
 

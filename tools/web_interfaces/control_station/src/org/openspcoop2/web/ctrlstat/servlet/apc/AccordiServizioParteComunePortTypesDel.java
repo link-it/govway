@@ -42,9 +42,9 @@ import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -124,7 +124,7 @@ public final class AccordiServizioParteComunePortTypesDel extends Action {
 				nomept = ptsToRemove.get(i);
 
 				idPT.setNome(nomept);
-				Vector<IDServizio> idServizi = null;
+				List<IDServizio> idServizi = null;
 				try{
 					idServizi = apsCore.getIdServiziWithPortType(idPT);
 				}catch(DriverRegistroServiziNotFound dNotF){}

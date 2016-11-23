@@ -34,7 +34,6 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -1849,8 +1848,6 @@ public class ImporterArchiveUtils {
 				org.openspcoop2.core.config.PortaDelegata old = this.importerEngine.getPortaDelegata(idPortaDelegata);
 				pd.setId(old.getId());
 				pd.setOldNomeForUpdate(old.getNome());
-				pd.setOldTipoSoggettoProprietarioForUpdate(old.getTipoSoggettoProprietario());
-				pd.setOldNomeSoggettoProprietarioForUpdate(old.getNomeSoggettoProprietario());
 				org.openspcoop2.core.config.driver.utils.XMLDataConverter.
 					impostaInformazioniConfigurazione_PortaDelegata(pd);
 				
@@ -1886,12 +1883,11 @@ public class ImporterArchiveUtils {
 			ArchiveEsitoImportDetail detail){
 		
 		IDPortaApplicativa idPortaApplicativa = archivePortaApplicativa.getIdPortaApplicativa();
-		IDPortaApplicativaByNome idPortaApplicativaByNome = archivePortaApplicativa.getIdPortaApplicativaByNome();
 		IDSoggetto idSoggettoProprietario = archivePortaApplicativa.getIdSoggettoProprietario();
 		try{
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
-				if(this.importerEngine.existsPortaApplicativa(idPortaApplicativaByNome.getNome(),idSoggettoProprietario)){
+				if(this.importerEngine.existsPortaApplicativa(idPortaApplicativa)){
 					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
 					return;
 				}
@@ -2000,13 +1996,11 @@ public class ImporterArchiveUtils {
 			
 			
 			// --- upload ---
-			if(this.importerEngine.existsPortaApplicativa(idPortaApplicativaByNome.getNome(),idSoggettoProprietario)){
+			if(this.importerEngine.existsPortaApplicativa(idPortaApplicativa)){
 				
-				org.openspcoop2.core.config.PortaApplicativa old = this.importerEngine.getPortaApplicativa(idPortaApplicativaByNome.getNome(),idSoggettoProprietario);
+				org.openspcoop2.core.config.PortaApplicativa old = this.importerEngine.getPortaApplicativa(idPortaApplicativa);
 				pa.setId(old.getId());
 				pa.setOldNomeForUpdate(old.getNome());
-				pa.setOldTipoSoggettoProprietarioForUpdate(old.getTipoSoggettoProprietario());
-				pa.setOldNomeSoggettoProprietarioForUpdate(old.getNomeSoggettoProprietario());
 				org.openspcoop2.core.config.driver.utils.XMLDataConverter.
 					impostaInformazioniConfigurazione_PortaApplicativa(pa);
 				

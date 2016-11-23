@@ -23,7 +23,6 @@
 
 package org.openspcoop2.protocol.engine.registry;
 
-import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
@@ -49,16 +48,14 @@ public abstract class AbstractIdentificazionePorta {
 	/* ---- Location della Porta --- */
 	protected String location;
 	protected String urlCompleta;
-	/* --- NomePorta ----*/
-	protected String nomePortaIndivituata;
 	/* ----- Individuazione Nome Porta UrlBased -------- */
 	protected boolean nomePortaURLBased = true;
     	
 	/* ---- messaggio di errore --- */
     protected ErroreIntegrazione erroreIntegrazione;
 
-	/* ---- Soggetto identificato --- */
-    protected IDSoggetto soggetto;
+	/* ---- IdentificativoPorta --- */
+    protected Object identificativoPorta;
 
 	/* ---- Tipo di Autenticazione --- */
     protected String tipoAutenticazione;
@@ -97,7 +94,7 @@ public abstract class AbstractIdentificazionePorta {
 
 
 
-	protected abstract IDSoggetto getIDSoggettoProprietario(String porta) throws RegistryNotFound;
+	protected abstract Object getIDPorta(String porta) throws RegistryNotFound;
 	
 
 	/**
@@ -126,11 +123,10 @@ public abstract class AbstractIdentificazionePorta {
 				while(porta.contains("/")){
 					//this.log.info("Cerco con nome porta delegata ["+porta+"]");
 					try{
-						this.soggetto = getIDSoggettoProprietario(porta);
+						this.identificativoPorta = getIDPorta(porta);
 					}catch(RegistryNotFound dNotFound){}
-					if(this.soggetto!=null){
+					if(this.identificativoPorta!=null){
 						//this.log.info("TROVATA porta delegata ["+porta+"]");
-						this.nomePortaIndivituata = porta;
 						break;
 					}else{
 						int indexCut = -1;
@@ -149,19 +145,18 @@ public abstract class AbstractIdentificazionePorta {
 				// Provo ad effettuare ultima ricerca
 				//this.log.info("ULTIMA... Cerco con nome porta delegata ["+porta+"]");
 				try{
-					this.soggetto = getIDSoggettoProprietario(porta);
+					this.identificativoPorta = getIDPorta(porta);
 				}catch(RegistryNotFound dNotFound){}
-				if(this.soggetto!=null){
+				if(this.identificativoPorta!=null){
 					//this.log.info("ULTIMA....TROVATA porta delegata ["+porta+"]");
-					this.nomePortaIndivituata = porta;
 				}
 			}
 			
-			if(this.nomePortaIndivituata==null){
+			if(this.identificativoPorta==null){
 				//log.info("Cerco con nome giusto porta delegata ["+this.location+"]");
 				// check per nome PD univoco
 				try{
-					this.soggetto = getIDSoggettoProprietario(this.location);
+					this.identificativoPorta = getIDPorta(this.location);
 				}catch(RegistryNotFound dNotFound){
 					this.erroreIntegrazione = 
 							ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
@@ -169,14 +164,13 @@ public abstract class AbstractIdentificazionePorta {
 					this.log.error(this.erroreIntegrazione.getDescrizione(this.protocolFactory)+": "+dNotFound.getMessage());
 					return false;
 				}	
-				if(this.soggetto!=null){
+				if(this.identificativoPorta!=null){
 					//log.info("TROVATO con nome giusto porta delegata ["+this.location+"]");
-					this.nomePortaIndivituata = this.location;
 				}
 			}
 			
 			
-			if(this.soggetto == null){
+			if(this.identificativoPorta == null){
 				this.erroreIntegrazione = 
 						ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
 							getErrore401_PortaInesistente("verificare i parametri di accesso utilizzati",this.location,this.urlCompleta);
@@ -198,16 +192,6 @@ public abstract class AbstractIdentificazionePorta {
 	}
 
 
-	/**
-	 * Ritorna l'identificativo del Soggetto che include la porta delegata richiesta. 
-	 *
-	 * @return l'identificativo del Soggetto
-	 * 
-	 */
-	public IDSoggetto getSoggetto(){
-		return this.soggetto;
-	}
-
 
 	public CodiceErroreIntegrazione getCodiceErrore(){
 		return this.erroreIntegrazione.getCodiceErrore();
@@ -221,40 +205,18 @@ public abstract class AbstractIdentificazionePorta {
 		return this.erroreIntegrazione;
 	}
 	
-
-	/**
-	 * Ritorna il tipo di autenticazione associato alla porta delegata.
-	 *
-	 * @return tipo di autenticazione.
-	 * 
-	 */
 	public String getTipoAutenticazione(){
 		return this.tipoAutenticazione;
 	}
 
-	/**
-	 * Ritorna il tipo di autorizzazione associato alla porta delegata.
-	 *
-	 * @return tipo di autorizzazione.
-	 * 
-	 */
 	public String getTipoAutorizzazione(){
 		return this.tipoAutorizzazione;
 	}
 
-	/**
-	 * Ritorna il tipo di autorizzazione per contenuto associato alla porta delegata.
-	 *
-	 * @return tipo di autorizzazione per contenuto
-	 * 
-	 */
 	public String getTipoAutorizzazioneContenuto() {
 		return this.tipoAutorizzazioneContenuto;
 	}
-	
-	public String getNomePDIndivituata() {
-		return this.nomePortaIndivituata;
-	}
+
 
 
 }

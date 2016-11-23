@@ -26,6 +26,7 @@ import javax.xml.soap.SOAPElement;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
@@ -84,5 +85,24 @@ public class Utilities {
 		}
 	}
 
+
 	
+	public static ServiceBinding convert(org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding){
+		switch (serviceBinding) {
+		case SOAP:
+			return ServiceBinding.SOAP;
+		case REST:
+			return ServiceBinding.REST;
+		}
+		return null;
+	}
+	public static ServiceBinding convert(org.openspcoop2.protocol.manifest.constants.ServiceBinding serviceBinding){
+		switch (serviceBinding) {
+		case SOAP:
+			return ServiceBinding.SOAP;
+		case REST:
+			return ServiceBinding.REST;
+		}
+		return null;
+	}
 }

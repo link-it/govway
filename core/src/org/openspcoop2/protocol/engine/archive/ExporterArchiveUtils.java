@@ -25,8 +25,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
@@ -34,15 +34,15 @@ import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDAccordoCooperazioneWithSoggetto;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioCompostoServizioComponente;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
@@ -70,6 +70,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
 import org.openspcoop2.protocol.sdk.archive.IArchive;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
+import org.slf4j.Logger;
 
 /**
  * ExporterArchiveUtils 
@@ -155,7 +156,7 @@ public class ExporterArchiveUtils {
 			break;
 		case PORTA_APPLICATIVA:
 			for (Object object : listObject) {
-				this.readPortaApplicativa(archive, (IDPortaApplicativaByNome)object, cascadeConfig, exportSourceArchiveType);
+				this.readPortaApplicativa(archive, (IDPortaApplicativa)object, cascadeConfig, exportSourceArchiveType);
 			}
 			break;
 		case ACCORDO_COOPERAZIONE:
@@ -384,9 +385,9 @@ public class ExporterArchiveUtils {
 			filtroPorteApplicative.setTipoSoggetto(idSoggetto.getTipo());
 			filtroPorteApplicative.setNomeSoggetto(idSoggetto.getNome());
 			try{
-				List<IDPortaApplicativaByNome> idsPA = this.archiveEngine.getAllIdPorteApplicative(filtroPorteApplicative);
+				List<IDPortaApplicativa> idsPA = this.archiveEngine.getAllIdPorteApplicative(filtroPorteApplicative);
 				if(idsPA!=null && idsPA.size()>0){
-					for (IDPortaApplicativaByNome idPortaApplicativa : idsPA) {
+					for (IDPortaApplicativa idPortaApplicativa : idsPA) {
 						this.readPortaApplicativa(archive, idPortaApplicativa, cascadeConfig, ArchiveType.SOGGETTO);
 					}
 				}
@@ -775,9 +776,9 @@ public class ExporterArchiveUtils {
 			filtroRicercaPorteApplicative.setTipoServizio(as.getServizio().getTipo());
 			filtroRicercaPorteApplicative.setNomeServizio(as.getServizio().getNome());
 			try{
-				List<IDPortaApplicativaByNome> idsPA = this.archiveEngine.getAllIdPorteApplicative(filtroRicercaPorteApplicative);
+				List<IDPortaApplicativa> idsPA = this.archiveEngine.getAllIdPorteApplicative(filtroRicercaPorteApplicative);
 				if(idsPA!=null && idsPA.size()>0){
-					for (IDPortaApplicativaByNome idPortaApplicativa : idsPA) {
+					for (IDPortaApplicativa idPortaApplicativa : idsPA) {
 						this.readPortaApplicativa(archive, idPortaApplicativa, cascadeConfig, ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA);
 					}
 				}
@@ -790,9 +791,9 @@ public class ExporterArchiveUtils {
 			filtroRicercaPorteApplicative.setTipoServizio(as.getServizio().getTipo());
 			filtroRicercaPorteApplicative.setNomeServizio(as.getServizio().getNome());
 			try{
-				List<IDPortaApplicativaByNome> idsPA = this.archiveEngine.getAllIdPorteApplicative(filtroRicercaPorteApplicative);
+				List<IDPortaApplicativa> idsPA = this.archiveEngine.getAllIdPorteApplicative(filtroRicercaPorteApplicative);
 				if(idsPA!=null && idsPA.size()>0){
-					for (IDPortaApplicativaByNome idPortaApplicativa : idsPA) {
+					for (IDPortaApplicativa idPortaApplicativa : idsPA) {
 						this.readPortaApplicativa(archive, idPortaApplicativa, cascadeConfig, ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA);
 					}
 				}
@@ -904,9 +905,11 @@ public class ExporterArchiveUtils {
 	private void readPortaDelegata(Archive archive, IDPortaDelegata idPortaDelegata, 
 			ArchiveCascadeConfiguration cascadeConfig, boolean cascadeAvanti, ArchiveType provenienza) throws Exception{
 	
-		String key =  ArchivePortaDelegata.buildKey(idPortaDelegata.getSoggettoFruitore().getTipo(),
-				idPortaDelegata.getSoggettoFruitore().getNome(), 
-				idPortaDelegata.getLocationPD());
+		IDSoggetto idSoggettoFruitore = idPortaDelegata.getIdentificativiFruizione().getSoggettoFruitore();
+		
+		String key =  ArchivePortaDelegata.buildKey(idSoggettoFruitore.getTipo(),
+				idSoggettoFruitore.getNome(), 
+				idPortaDelegata.getNome());
 		org.openspcoop2.core.config.PortaDelegata pd = null;
 		if(archive.getPorteDelegate().containsKey(key)){
 			// gia gestito
@@ -920,10 +923,10 @@ public class ExporterArchiveUtils {
 				
 					// add
 					if(pd.getTipoSoggettoProprietario()==null){
-						pd.setTipoSoggettoProprietario(idPortaDelegata.getSoggettoFruitore().getTipo());
+						pd.setTipoSoggettoProprietario(idSoggettoFruitore.getTipo());
 					}
 					if(pd.getNomeSoggettoProprietario()==null){
-						pd.setNomeSoggettoProprietario(idPortaDelegata.getSoggettoFruitore().getNome());
+						pd.setNomeSoggettoProprietario(idSoggettoFruitore.getNome());
 					}
 					ArchivePortaDelegata archivePd = new ArchivePortaDelegata(pd, this.idCorrelazione);
 					archive.getPorteDelegate().add(archivePd);
@@ -931,7 +934,7 @@ public class ExporterArchiveUtils {
 					// *** dipendenze: oggetti necessari per la creazione dell'oggetto sopra aggiunto ***
 					
 					// soggetto proprietario
-					this.readSoggetto(archive, idPortaDelegata.getSoggettoFruitore(), cascadeConfig, false, ArchiveType.PORTA_DELEGATA); // per evitare loop
+					this.readSoggetto(archive, idSoggettoFruitore, cascadeConfig, false, ArchiveType.PORTA_DELEGATA); // per evitare loop
 					
 					// eventuale servizio riferito
 					if(pd.getSoggettoErogatore()!=null && 
@@ -960,9 +963,9 @@ public class ExporterArchiveUtils {
 		
 			// serviziApplicativi
 			if(pd.sizeServizioApplicativoList()>0){
-				for (ServizioApplicativo sa: pd.getServizioApplicativoList()) {
+				for (PortaDelegataServizioApplicativo sa: pd.getServizioApplicativoList()) {
 					IDServizioApplicativo idSA = new IDServizioApplicativo();
-					idSA.setIdSoggettoProprietario(idPortaDelegata.getSoggettoFruitore());
+					idSA.setIdSoggettoProprietario(idSoggettoFruitore);
 					idSA.setNome(sa.getNome());
 					this.readServizioApplicativo(archive, idSA, cascadeConfig, ArchiveType.PORTA_DELEGATA);
 				}
@@ -973,15 +976,17 @@ public class ExporterArchiveUtils {
 	}
 	
 	
-	private void readPortaApplicativa(Archive archive, IDPortaApplicativaByNome idPortaApplicativa, 
+	private void readPortaApplicativa(Archive archive, IDPortaApplicativa idPortaApplicativa, 
 			ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception{
 		this.readPortaApplicativa(archive, idPortaApplicativa, cascadeConfig, true, provenienza);
 	}
-	private void readPortaApplicativa(Archive archive, IDPortaApplicativaByNome idPortaApplicativa, 
+	private void readPortaApplicativa(Archive archive, IDPortaApplicativa idPortaApplicativa, 
 			ArchiveCascadeConfiguration cascadeConfig, boolean cascadeAvanti, ArchiveType provenienza) throws Exception{
 	
-		String key =  ArchivePortaApplicativa.buildKey(idPortaApplicativa.getSoggetto().getTipo(),
-				idPortaApplicativa.getSoggetto().getNome(), 
+		IDSoggetto idSoggettoErogatore = idPortaApplicativa.getIdentificativiErogazione().getIdServizio().getSoggettoErogatore();
+		
+		String key =  ArchivePortaApplicativa.buildKey(idSoggettoErogatore.getTipo(),
+				idSoggettoErogatore.getNome(), 
 				idPortaApplicativa.getNome());
 		org.openspcoop2.core.config.PortaApplicativa pa = null;
 		if(archive.getPorteApplicative().containsKey(key)){
@@ -997,10 +1002,10 @@ public class ExporterArchiveUtils {
 				
 					// add
 					if(pa.getTipoSoggettoProprietario()==null){
-						pa.setTipoSoggettoProprietario(idPortaApplicativa.getSoggetto().getTipo());
+						pa.setTipoSoggettoProprietario(idSoggettoErogatore.getTipo());
 					}
 					if(pa.getNomeSoggettoProprietario()==null){
-						pa.setNomeSoggettoProprietario(idPortaApplicativa.getSoggetto().getNome());
+						pa.setNomeSoggettoProprietario(idSoggettoErogatore.getNome());
 					}
 					ArchivePortaApplicativa archivePa = new ArchivePortaApplicativa(pa, this.idCorrelazione);
 					archive.getPorteApplicative().add(archivePa);
@@ -1008,7 +1013,7 @@ public class ExporterArchiveUtils {
 					// *** dipendenze: oggetti necessari per la creazione dell'oggetto sopra aggiunto ***
 					
 					// proprietario
-					this.readSoggetto(archive, idPortaApplicativa.getSoggetto(), cascadeConfig, false, ArchiveType.PORTA_APPLICATIVA); // per evitare loop
+					this.readSoggetto(archive, idSoggettoErogatore, cascadeConfig, false, ArchiveType.PORTA_APPLICATIVA); // per evitare loop
 						
 					// virtuale
 					if(pa.getSoggettoVirtuale()!=null && 
@@ -1034,7 +1039,7 @@ public class ExporterArchiveUtils {
 						}
 						else {
 							
-							IDServizio idServizio = new IDServizio(idPortaApplicativa.getSoggetto(),
+							IDServizio idServizio = new IDServizio(idSoggettoErogatore,
 									pa.getServizio().getTipo(), pa.getServizio().getNome());
 							this.readAccordoServizioParteSpecifica(archive, idServizio, cascadeConfig, false, ArchiveType.PORTA_APPLICATIVA); // per evitare loop
 							
@@ -1054,9 +1059,9 @@ public class ExporterArchiveUtils {
 		
 			// serviziApplicativi
 			if(pa.sizeServizioApplicativoList()>0){
-				for (ServizioApplicativo sa: pa.getServizioApplicativoList()) {
+				for (PortaApplicativaServizioApplicativo sa: pa.getServizioApplicativoList()) {
 					IDServizioApplicativo idSA = new IDServizioApplicativo();
-					idSA.setIdSoggettoProprietario(idPortaApplicativa.getSoggetto());
+					idSA.setIdSoggettoProprietario(idSoggettoErogatore);
 					idSA.setNome(sa.getNome());
 					this.readServizioApplicativo(archive, idSA, cascadeConfig, ArchiveType.PORTA_APPLICATIVA);
 				}

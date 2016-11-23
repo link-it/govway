@@ -41,36 +41,43 @@ public class IDPortaApplicativa implements java.io.Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	/** Identificatore del Servizio richiesto */
-	private IDServizio servizio;
 	
-	/**
-	 * Imposta l'identificativo del servizio.
-	 *
-	 * @param idS Identificativo del servizio
-	 * 
-	 */
-	public void setIDServizio(IDServizio idS){
-		this.servizio = idS;
+	/** Nome della Porta Applicativa */
+	private String nome;
+		
+	/** Identificazioni Erogazione (opzionali) */
+	private IdentificativiErogazione identificativiErogazione;
+	
+	
+	
+	public String getNome() {
+		return this.nome;
+	}
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public IdentificativiErogazione getIdentificativiErogazione() {
+		return this.identificativiErogazione;
+	}
+	public void setIdentificativiErogazione(IdentificativiErogazione identificativiErogazione) {
+		this.identificativiErogazione = identificativiErogazione;
 	}
 	
-	/**
-	 * Ritorna l'identificativo del servizio all'interno del registro dei servizi.
-	 *
-	 * @return Identificativo del servizio
-	 * 
-	 */
-	public IDServizio getIDServizio(){
-		return this.servizio;
-	}
+
 	
 	@Override
 	public String toString(){
 		StringBuffer bf = new StringBuffer();
-		if(this.servizio!=null)
-			bf.append("PA del Servizio:"+this.servizio.toString());
+		if(this.nome!=null)
+			bf.append("PA:"+this.nome);
 		else
 			bf.append("PA:NonDefinita");
+		bf.append(" ");
+		if(this.identificativiErogazione!=null)
+			bf.append("Erogazione:"+this.identificativiErogazione.toString());
+		else
+			bf.append("Erogazione:NonDefinita");
 		return bf.toString();
 	}
 	
@@ -82,11 +89,11 @@ public class IDPortaApplicativa implements java.io.Serializable{
 			return false;
 		IDPortaApplicativa id = (IDPortaApplicativa) object;
 		
-		if(this.servizio==null){
-			if(id.servizio!=null)
+		if(this.nome==null){
+			if(id.nome!=null)
 				return false;
 		}else{
-			if(this.servizio.equals(id.servizio)==false)
+			if(this.nome.equals(id.nome)==false)
 				return false;
 		}
 		
@@ -102,8 +109,11 @@ public class IDPortaApplicativa implements java.io.Serializable{
 	@Override
 	public IDPortaApplicativa clone(){
 		IDPortaApplicativa idPA = new IDPortaApplicativa();
-		if(this.servizio!=null){
-			idPA.servizio = this.servizio.clone();
+		if(this.nome!=null){
+			idPA.nome = new String(this.nome);
+		}
+		if(this.identificativiErogazione!=null){
+			idPA.identificativiErogazione = this.identificativiErogazione.clone();
 		}
 		return idPA;
 	}

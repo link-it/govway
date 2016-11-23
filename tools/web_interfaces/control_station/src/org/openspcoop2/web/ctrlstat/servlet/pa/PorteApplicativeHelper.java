@@ -38,6 +38,7 @@ import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.ProprietaProtocollo;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -46,6 +47,7 @@ import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.ProprietaProtocolloValore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Servizio;
@@ -251,6 +253,11 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				 */
 
 				IDPortaApplicativa idPA = new IDPortaApplicativa();
+				idPA.setNome(nomePorta);
+				if (TipoOperazione.ADD.equals(tipoOp)==false) {
+					idPA.setNome(oldNomePA);
+				}
+				
 				// se specificato il soggetto virtuale
 				org.openspcoop2.core.config.Soggetto proprietario = null;
 				Soggetto virtuale = null;
@@ -269,14 +276,12 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 					idSE.setAzione(azione);
 				}
 
-				idPA.setIDServizio(idSE);
-
 				// controllo su nome e proprietario in caso di aggiunta
 				// nuova pa
 				// non posso inserire una porta con stesso nome e
 				// proprietario
 				if (TipoOperazione.ADD.equals(tipoOp)) {
-					giaRegistrato = this.porteApplicativeCore.existsPortaApplicativa(nomePorta, idSO);
+					giaRegistrato = this.porteApplicativeCore.existsPortaApplicativa(idPA);
 
 					if (giaRegistrato) {
 						this.pd.setMessage("Esiste gia' una Porta Applicativa [" + nomePorta + "] appartenente al Soggetto [" + idSO.toString() + "]");
@@ -285,13 +290,13 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 
 					if (!soggvirt.equals("-")) {
 						IDSoggetto idSOVirt = new IDSoggetto(virtuale.getTipo(), virtuale.getNome());
-						giaRegistrato = this.porteApplicativeCore.existsPortaApplicativaVirtuale(idPA, idSOVirt, true);
+						giaRegistrato = this.porteApplicativeCore.existsPortaApplicativaVirtuale(idSE, idSOVirt, true);
 					} else {
-						giaRegistrato = this.porteApplicativeCore.existsPortaApplicativa(idPA, true);
+						giaRegistrato = this.porteApplicativeCore.existsPortaApplicativa(idSE, true);
 					}
 
 				} else {
-					PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(oldNomePA, idSO);
+					PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(idPA);
 					PortaApplicativaServizio pa_servizio_precedente = pa.getServizio();
 					PortaApplicativaAzione pa_azione = pa.getAzione();
 
@@ -311,16 +316,19 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 						// se presente soggetto virtuale
 						if (!soggvirt.equals("-")) {
 							IDSoggetto idSOVirt = new IDSoggetto(virtuale.getTipo(), virtuale.getNome());
-							giaRegistrato = this.porteApplicativeCore.existsPortaApplicativaVirtuale(idPA, idSOVirt, true);
+							giaRegistrato = this.porteApplicativeCore.existsPortaApplicativaVirtuale(idSE, idSOVirt, true);
 						} else {
-							giaRegistrato = this.porteApplicativeCore.existsPortaApplicativa(idPA, true);
+							giaRegistrato = this.porteApplicativeCore.existsPortaApplicativa(idSE, true);
 						}
 
 					}
 				}
 
 				if (giaRegistrato) {
-					this.pd.setMessage("Esiste gia' una Porta Applicativa per il " + "Servizio [" + idPA.getIDServizio().getTipoServizio() + "/" + idPA.getIDServizio().getServizio() + "] " + "con Azione [" + (idPA.getIDServizio().getAzione() != null ? idPA.getIDServizio().getAzione() : "not set") + "] " + "erogato dal Soggetto " + (!soggvirt.equals("-") ? "Virtuale" : "") + " [" + (!soggvirt.equals("-") ? virtuale.getTipo() + "/" + virtuale.getNome() : idPA.getIDServizio().getSoggettoErogatore().toString()) + "]");
+					this.pd.setMessage("Esiste gia' una Porta Applicativa per il " + "Servizio [" + idSE.getTipoServizio() + "/" + idSE.getServizio() + 
+							"] " + "con Azione [" + (idSE.getAzione() != null ? idSE.getAzione() : "not set") + 
+							"] " + "erogato dal Soggetto " + (!soggvirt.equals("-") ? "Virtuale" : "") + " [" 
+							+ (!soggvirt.equals("-") ? virtuale.getTipo() + "/" + virtuale.getNome() : idSE.getSoggettoErogatore().toString()) + "]");
 
 					// this.pd.setMessage("La porta applicativa " + id + "
 					// &egrave; gi&agrave; stata registrata");
@@ -330,9 +338,11 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				
 				if (TipoOperazione.CHANGE.equals(tipoOp)) {
 					if (!nomePorta.equals(oldNomePA)) {
-						boolean exists = this.porteApplicativeCore.existsPortaApplicativa(nomePorta, idSO);
+						IDPortaApplicativa idPANew = new IDPortaApplicativa();
+						idPANew.setNome(nomePorta);
+						boolean exists = this.porteApplicativeCore.existsPortaApplicativa(idPANew);
 						if (exists) {
-							this.pd.setMessage("Esiste gia' una Porta Applicativa con nome [" + nomePorta + "] associata al Soggetto [" + idSO.toString() + "]");
+							this.pd.setMessage("Esiste gia' una Porta Applicativa con nome [" + nomePorta + "]");
 							return false;
 						}
 					}
@@ -383,7 +393,10 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			}
 
 			IDSoggetto ids = new IDSoggetto(tipoprov, nomeprov);
-			trovatoServizioApplicativo = this.saCore.existsServizioApplicativo(ids, servizioApplicativo);
+			IDServizioApplicativo idSAObject = new IDServizioApplicativo();
+			idSAObject.setIdSoggettoProprietario(ids);
+			idSAObject.setNome(servizioApplicativo);
+			trovatoServizioApplicativo = this.saCore.existsServizioApplicativo(idSAObject);
 
 			if (trovatoServizioApplicativo)
 				idSA = this.saCore.getIdServizioApplicativo(ids, servizioApplicativo);
@@ -405,7 +418,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				String nomeporta = pa.getNome();
 
 				for (int i = 0; i < pa.sizeServizioApplicativoList(); i++) {
-					ServizioApplicativo tmpSA = pa.getServizioApplicativo(i);
+					PortaApplicativaServizioApplicativo tmpSA = pa.getServizioApplicativo(i);
 					if (idSA == tmpSA.getId()) {
 						giaRegistrato = true;
 						break;

@@ -29,6 +29,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.core.eccezione.details.utils.XMLUtils;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.IntegrationError;
@@ -160,7 +161,7 @@ public class SbustamentoRisposte extends GenericLib {
 		
 		msgDiag.setDominio(identitaPdD);  // imposto anche il dominio nel msgDiag
 		msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO_RISPOSTE);
-		msgDiag.addKeywords(richiestaDelegata.getSoggettoFruitore(),richiestaDelegata.getIdServizio(),null);
+		msgDiag.addKeywords(richiestaDelegata.getIdSoggettoFruitore(),richiestaDelegata.getIdServizio(),null);
 		msgDiag.addKeywords(bustaRisposta, false);
 		msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE, richiestaDelegata.getServizioApplicativo());
 		msgDiag.setIdCorrelazioneApplicativa(richiestaDelegata.getIdCorrelazioneApplicativa());
@@ -176,7 +177,7 @@ public class SbustamentoRisposte extends GenericLib {
 		
 		try{
 			this.generatoreErrore = new RicezioneContenutiApplicativiInternalErrorGenerator(this.log, this.idModulo, requestInfo);
-			this.generatoreErrore.updateInformazioniCooperazione(richiestaDelegata.getSoggettoFruitore(), richiestaDelegata.getIdServizio());
+			this.generatoreErrore.updateInformazioniCooperazione(richiestaDelegata.getIdSoggettoFruitore(), richiestaDelegata.getIdServizio());
 			this.generatoreErrore.updateInformazioniCooperazione(richiestaDelegata.getServizioApplicativo());
 			if(proprietaErroreAppl!=null){
 				this.generatoreErrore.updateProprietaErroreApplicativo(proprietaErroreAppl);
@@ -205,8 +206,8 @@ public class SbustamentoRisposte extends GenericLib {
 		msgDiag.setIdMessaggioRisposta(idResponse);
 		msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_RICHIESTA, idMessageRequest);
 		msgDiag.setDelegata(true);
-		msgDiag.setPorta(richiestaDelegata.getLocationPD());
-		msgDiag.setFruitore(richiestaDelegata.getSoggettoFruitore());
+		msgDiag.setPorta(richiestaDelegata.getIdPortaDelegata().getNome());
+		msgDiag.setFruitore(richiestaDelegata.getIdSoggettoFruitore());
 		msgDiag.setServizio(richiestaDelegata.getIdServizio());
 		msgDiag.setServizioApplicativo(richiestaDelegata.getServizioApplicativo());
 		msgDiag.setIdCorrelazioneApplicativa(richiestaDelegata.getIdCorrelazioneApplicativa());
@@ -256,7 +257,7 @@ public class SbustamentoRisposte extends GenericLib {
 		try{
 			// Per inviare segnalazioni di buste malformate
 			RicezioneBusteExternalErrorGenerator generatoreErrorePA = new RicezioneBusteExternalErrorGenerator(this.log, this.idModulo, requestInfo);
-			generatoreErrorePA.updateInformazioniCooperazione(richiestaDelegata.getSoggettoFruitore(), richiestaDelegata.getIdServizio());
+			generatoreErrorePA.updateInformazioniCooperazione(richiestaDelegata.getIdSoggettoFruitore(), richiestaDelegata.getIdServizio());
 			generatoreErrorePA.updateInformazioniCooperazione(richiestaDelegata.getServizioApplicativo());
 			generatoreErrorePA.updateTipoPdD(TipoPdD.DELEGATA);
 			ejbUtils.setGeneratoreErrorePortaApplicativa(generatoreErrorePA);
@@ -286,7 +287,10 @@ public class SbustamentoRisposte extends GenericLib {
 			return esito;
 		}
 		try{
-			sa = configurazionePdDManager.getServizioApplicativo(richiestaDelegata.getIdPortaDelegata(), richiestaDelegata.getServizioApplicativo());
+			IDServizioApplicativo idSA = new IDServizioApplicativo();
+			idSA.setNome(richiestaDelegata.getServizioApplicativo());
+			idSA.setIdSoggettoProprietario(richiestaDelegata.getIdSoggettoFruitore());
+			sa = configurazionePdDManager.getServizioApplicativo(idSA);
 		}catch(Exception e){
 			if( !(e instanceof DriverConfigurazioneNotFound) || 
 					!(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(richiestaDelegata.getServizioApplicativo())) ){
@@ -646,7 +650,7 @@ public class SbustamentoRisposte extends GenericLib {
 								OpenSPCoop2Message responseMessageError =
 										this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
 												eccezioneDaInviareServizioApplicativo,
-											richiestaDelegata.getSoggettoFruitore(),
+											richiestaDelegata.getIdSoggettoFruitore(),
 											parseException);
 								ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRiferimentoMessaggio,pd,sa);
 								esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
@@ -996,7 +1000,7 @@ public class SbustamentoRisposte extends GenericLib {
 				if(sendRispostaApplicativa){
 					OpenSPCoop2Message responseMessageError =
 							this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,ecc,
-								richiestaDelegata.getSoggettoFruitore(),parseException);
+								richiestaDelegata.getIdSoggettoFruitore(),parseException);
 					ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRiferimentoMessaggio,pd,sa);
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,ecc.toString(protocolFactory));
 				}else{

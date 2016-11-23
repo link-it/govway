@@ -26,7 +26,7 @@ package org.openspcoop2.pdd.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
@@ -159,12 +159,11 @@ public class SoggettoVirtuale  {
 		return null;
 	}
 	
-	public IDPortaApplicativaByNome getIDPortaApplicativa(String idServizioApplicativo){
+	public IDPortaApplicativa getIDPortaApplicativa(String idServizioApplicativo){
 		for (SoggettoVirtualeServizioApplicativo sa : this.soggettoVirtuale_serviziApplicativi) {
 			if(sa.getId().equals(idServizioApplicativo)){
-				IDPortaApplicativaByNome idPA = new IDPortaApplicativaByNome();
+				IDPortaApplicativa idPA = new IDPortaApplicativa();
 				idPA.setNome(sa.getPortaApplicativa().getNome());
-				idPA.setSoggetto(new IDSoggetto(sa.getPortaApplicativa().getTipoSoggettoProprietario(), sa.getPortaApplicativa().getNomeSoggettoProprietario()));
 				return idPA;
 			}
 		}

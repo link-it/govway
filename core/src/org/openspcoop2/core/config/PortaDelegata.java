@@ -43,7 +43,7 @@ import java.util.List;
  * 			&lt;element name="soggetto-erogatore" type="{http://www.openspcoop2.org/core/config}porta-delegata-soggetto-erogatore" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="servizio" type="{http://www.openspcoop2.org/core/config}porta-delegata-servizio" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="azione" type="{http://www.openspcoop2.org/core/config}porta-delegata-azione" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}porta-delegata-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="mtom-processor" type="{http://www.openspcoop2.org/core/config}mtom-processor" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="message-security" type="{http://www.openspcoop2.org/core/config}message-security" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="validazione-contenuti-applicativi" type="{http://www.openspcoop2.org/core/config}validazione-contenuti-applicativi" minOccurs="0" maxOccurs="1"/>
@@ -58,7 +58,6 @@ import java.util.List;
  * 		&lt;attribute name="stato-message-security" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="location" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="autenticazione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="ssl"/>
  * 		&lt;attribute name="autorizzazione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="openspcoop"/>
  * 		&lt;attribute name="autorizzazione-contenuto" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
@@ -71,8 +70,6 @@ import java.util.List;
  * 		&lt;attribute name="stateless" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional"/>
  * 		&lt;attribute name="local-forward" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
  * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
- * 		&lt;attribute name="old-nome-soggetto-proprietario-for-update" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="old-tipo-soggetto-proprietario-for-update" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -130,32 +127,6 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
     this.oldNomeForUpdate=oldNomeForUpdate;
   }
 
-  public String getOldNomeSoggettoProprietarioForUpdate() {
-    if(this.oldNomeSoggettoProprietarioForUpdate!=null && ("".equals(this.oldNomeSoggettoProprietarioForUpdate)==false)){
-		return this.oldNomeSoggettoProprietarioForUpdate.trim();
-	}else{
-		return null;
-	}
-
-  }
-
-  public void setOldNomeSoggettoProprietarioForUpdate(String oldNomeSoggettoProprietarioForUpdate) {
-    this.oldNomeSoggettoProprietarioForUpdate=oldNomeSoggettoProprietarioForUpdate;
-  }
-
-  public String getOldTipoSoggettoProprietarioForUpdate() {
-    if(this.oldTipoSoggettoProprietarioForUpdate!=null && ("".equals(this.oldTipoSoggettoProprietarioForUpdate)==false)){
-		return this.oldTipoSoggettoProprietarioForUpdate.trim();
-	}else{
-		return null;
-	}
-
-  }
-
-  public void setOldTipoSoggettoProprietarioForUpdate(String oldTipoSoggettoProprietarioForUpdate) {
-    this.oldTipoSoggettoProprietarioForUpdate=oldTipoSoggettoProprietarioForUpdate;
-  }
-
   public void addExtendedInfo(Object extendedInfo) {
     this.extendedInfo.add(extendedInfo);
   }
@@ -204,23 +175,23 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
     this.azione = azione;
   }
 
-  public void addServizioApplicativo(ServizioApplicativo servizioApplicativo) {
+  public void addServizioApplicativo(PortaDelegataServizioApplicativo servizioApplicativo) {
     this.servizioApplicativo.add(servizioApplicativo);
   }
 
-  public ServizioApplicativo getServizioApplicativo(int index) {
+  public PortaDelegataServizioApplicativo getServizioApplicativo(int index) {
     return this.servizioApplicativo.get( index );
   }
 
-  public ServizioApplicativo removeServizioApplicativo(int index) {
+  public PortaDelegataServizioApplicativo removeServizioApplicativo(int index) {
     return this.servizioApplicativo.remove( index );
   }
 
-  public List<ServizioApplicativo> getServizioApplicativoList() {
+  public List<PortaDelegataServizioApplicativo> getServizioApplicativoList() {
     return this.servizioApplicativo;
   }
 
-  public void setServizioApplicativoList(List<ServizioApplicativo> servizioApplicativo) {
+  public void setServizioApplicativoList(List<PortaDelegataServizioApplicativo> servizioApplicativo) {
     this.servizioApplicativo=servizioApplicativo;
   }
 
@@ -330,14 +301,6 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   public void setDescrizione(java.lang.String descrizione) {
     this.descrizione = descrizione;
-  }
-
-  public java.lang.String getLocation() {
-    return this.location;
-  }
-
-  public void setLocation(java.lang.String location) {
-    this.location = location;
   }
 
   public java.lang.String getAutenticazione() {
@@ -543,12 +506,6 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
   private String oldNomeForUpdate;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected String oldNomeSoggettoProprietarioForUpdate;
-
-  @javax.xml.bind.annotation.XmlTransient
-  protected String oldTipoSoggettoProprietarioForUpdate;
-
-  @javax.xml.bind.annotation.XmlTransient
   protected List<Object> extendedInfo = new ArrayList<Object>();
 
   /**
@@ -588,23 +545,23 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
   protected PortaDelegataAzione azione;
 
   @XmlElement(name="servizio-applicativo",required=true,nillable=false)
-  protected List<ServizioApplicativo> servizioApplicativo = new ArrayList<ServizioApplicativo>();
+  protected List<PortaDelegataServizioApplicativo> servizioApplicativo = new ArrayList<PortaDelegataServizioApplicativo>();
 
   /**
    * @deprecated Use method getServizioApplicativoList
-   * @return List<ServizioApplicativo>
+   * @return List<PortaDelegataServizioApplicativo>
   */
   @Deprecated
-  public List<ServizioApplicativo> getServizioApplicativo() {
+  public List<PortaDelegataServizioApplicativo> getServizioApplicativo() {
   	return this.servizioApplicativo;
   }
 
   /**
    * @deprecated Use method setServizioApplicativoList
-   * @param servizioApplicativo List<ServizioApplicativo>
+   * @param servizioApplicativo List<PortaDelegataServizioApplicativo>
   */
   @Deprecated
-  public void setServizioApplicativo(List<ServizioApplicativo> servizioApplicativo) {
+  public void setServizioApplicativo(List<PortaDelegataServizioApplicativo> servizioApplicativo) {
   	this.servizioApplicativo=servizioApplicativo;
   }
 
@@ -660,10 +617,6 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="descrizione",required=false)
   protected java.lang.String descrizione;
-
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlAttribute(name="location",required=false)
-  protected java.lang.String location;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="autenticazione",required=false)

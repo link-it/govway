@@ -1737,7 +1737,7 @@ public class RepositoryBuste  {
 				query.append(Costanti.REPOSITORY);
 				query.append(" SET LOCATION_PD=? , SERVIZIO_APPLICATIVO=? , MODULO_IN_ATTESA=? , SCENARIO=? WHERE  ID_MESSAGGIO = ? AND TIPO=?");
 				pstmt = connectionDB.prepareStatement(query.toString());
-				pstmt.setString(1,infoIntegrazione.getLocationPD());
+				pstmt.setString(1,infoIntegrazione.getNomePorta());
 				pstmt.setString(2,infoIntegrazione.getServizioApplicativo());
 				pstmt.setString(3,infoIntegrazione.getIdModuloInAttesa());
 				pstmt.setString(4,infoIntegrazione.getScenario());
@@ -2849,7 +2849,7 @@ public class RepositoryBuste  {
 			Integrazione infoIntegrazione = new Integrazione();
 			if(rs.next()){
 				infoIntegrazione.setIdModuloInAttesa(rs.getString("MODULO_IN_ATTESA"));
-				infoIntegrazione.setLocationPD(rs.getString("LOCATION_PD"));
+				infoIntegrazione.setNomePorta(rs.getString("LOCATION_PD"));
 				infoIntegrazione.setScenario(rs.getString("SCENARIO"));
 				infoIntegrazione.setServizioApplicativo(rs.getString("SERVIZIO_APPLICATIVO"));
 			}

@@ -156,9 +156,7 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 				// del servizio, se esiste
 				String nomePD = fru.getTipo() + fru.getNome() + "/" + mytipoprov + mynomeprov + "/" + tiposervizio + nomeservizio;
 				IDPortaDelegata myidpd = new IDPortaDelegata();
-				IDSoggetto ids = new IDSoggetto(fru.getTipo(), fru.getNome());
-				myidpd.setSoggettoFruitore(ids);
-				myidpd.setLocationPD(nomePD);
+				myidpd.setNome(nomePD);
 				if (porteDelegateCore.existsPortaDelegata(myidpd)) {
 					PortaDelegata mypd = porteDelegateCore.getPortaDelegata(myidpd);
 					

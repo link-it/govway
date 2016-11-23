@@ -25,7 +25,6 @@ package org.openspcoop2.protocol.engine.registry;
 
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.id.IDPortaDelegata;
-import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
@@ -63,11 +62,12 @@ public class IdentificazionePortaDelegata extends AbstractIdentificazionePorta {
 		super(urlProtocolContext, log, portaUrlBased, registryReader, protocolFactory);
 	}
 
-	@Override
-	protected IDSoggetto getIDSoggettoProprietario(String porta) throws RegistryNotFound {
-		return this.registryReader.getIdSoggettoProprietarioPortaDelegata(porta);
-	}
 
+	@Override
+	protected Object getIDPorta(String porta) throws RegistryNotFound{
+		return this.registryReader.getIdPortaDelegata(porta, this.protocolFactory);
+	}
+	
 	/**
 	 * Avvia il processo di identificazione.
 	 *
@@ -91,7 +91,7 @@ public class IdentificazionePortaDelegata extends AbstractIdentificazionePorta {
 			}catch(RegistryNotFound notFound){
 				this.erroreIntegrazione = 
 						ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
-							getErrore401_PortaInesistente(notFound.getMessage(),this.nomePortaIndivituata,this.urlCompleta);
+							getErrore401_PortaInesistente(notFound.getMessage(),idPD.getNome(),this.urlCompleta);
 				return false;
 			}
 			
@@ -119,10 +119,7 @@ public class IdentificazionePortaDelegata extends AbstractIdentificazionePorta {
 	}
 
 	public IDPortaDelegata getIDPortaDelegata(){
-		IDPortaDelegata idPD = new IDPortaDelegata();
-		idPD.setSoggettoFruitore(this.soggetto);
-		idPD.setLocationPD(this.nomePortaIndivituata);
-		return idPD;
+		return (IDPortaDelegata) this.identificativoPorta;
 	}
 
 	public PortaDelegata getPortaDelegata() {

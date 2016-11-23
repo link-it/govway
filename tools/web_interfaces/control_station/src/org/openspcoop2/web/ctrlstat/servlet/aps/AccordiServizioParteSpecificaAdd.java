@@ -48,6 +48,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -64,6 +65,7 @@ import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -370,6 +372,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 			// Lista port-type associati all'accordo di servizio
 			AccordoServizioParteComune as = null;
+			ServiceBinding serviceBinding = null;
 			if (this.accordo != null && !"".equals(this.accordo)) {
 				as = apcCore.getAccordoServizio(Long.parseLong(this.accordo));
 			} else {
@@ -384,6 +387,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				// salvo il soggetto referente
 				soggettoReferente = new IDSoggetto(as.getSoggettoReferente().getTipo(), as.getSoggettoReferente().getNome());
 
+				serviceBinding = org.openspcoop2.protocol.basic.Utilities.convert(as.getServiceBinding());
+				
 				accordoPrivato = as.getPrivato()!=null && as.getPrivato();
 				uriAccordo = idAccordoFactory.getUriFromAccordo(as);
 
@@ -447,7 +452,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			}
 			List<String> versioniProtocollo = apsCore.getVersioniProtocollo(protocollo);
 			List<String> tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
-			List<String> tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(protocollo);
+			List<String> tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(protocollo,serviceBinding);
 
 			// calcolo soggetti compatibili con accordi
 			List<Soggetto> list = null;
@@ -502,7 +507,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					// refresh di tutte le infromazioni
 					versioniProtocollo = apsCore.getVersioniProtocollo(protocollo);
 					tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
-					tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(protocollo);
+					tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(protocollo,serviceBinding);
 					
 					for (Soggetto soggetto : list) {
 						if(tipiSoggettiCompatibiliAccordo.contains(soggetto.getTipo())){
@@ -536,7 +541,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			}
 			
 			if(this.tiposervizio == null){
-				this.tiposervizio = apsCore.getTipoServizioDefaultProtocollo(protocollo);
+				this.tiposervizio = apsCore.getTipoServizioDefaultProtocollo(protocollo,serviceBinding);
 			}
 
 			
@@ -631,7 +636,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 				if (this.nomeservizio == null) {
 					this.nomeservizio = "";
-					this.tiposervizio = apsCore.getTipoServizioDefault();
+					this.tiposervizio = apsCore.getTipoServizioDefault(serviceBinding);
 //					this.provider = "";
 //					this.accordo = "";
 					this.servcorr = "";
@@ -1045,7 +1050,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					pa.setIdSoggetto(idProv);
 
 					if(this.nomeSA!=null && !"".equals(this.nomeSA) && !"-".equals(this.nomeSA)){
-						ServizioApplicativo sa = new ServizioApplicativo();
+						PortaApplicativaServizioApplicativo sa = new PortaApplicativaServizioApplicativo();
 						sa.setNome(this.nomeSA);
 						pa.addServizioApplicativo(sa);
 					}

@@ -24,8 +24,7 @@
 package org.openspcoop2.protocol.engine.registry;
 
 import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
-import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
@@ -64,8 +63,8 @@ public class IdentificazionePortaApplicativa extends AbstractIdentificazionePort
 	}
 
 	@Override
-	protected IDSoggetto getIDSoggettoProprietario(String porta) throws RegistryNotFound {
-		return this.registryReader.getIdSoggettoProprietarioPortaApplicativa(porta);
+	protected Object getIDPorta(String porta) throws RegistryNotFound{
+		return this.registryReader.getIdPortaApplicativa(porta, this.protocolFactory);
 	}
 
 	/**
@@ -83,7 +82,7 @@ public class IdentificazionePortaApplicativa extends AbstractIdentificazionePort
 				return false;
 			}
 			
-			IDPortaApplicativaByNome idPA = this.getIDPortaApplicativaByNome();
+			IDPortaApplicativa idPA = this.getIDPortaApplicativa();
 			
 			// Get Porta Applicativa
 			try{
@@ -91,7 +90,7 @@ public class IdentificazionePortaApplicativa extends AbstractIdentificazionePort
 			}catch(RegistryNotFound notFound){
 				this.erroreIntegrazione = 
 						ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
-							getErrore401_PortaInesistente(notFound.getMessage(),this.nomePortaIndivituata,this.urlCompleta);
+							getErrore401_PortaInesistente(notFound.getMessage(),idPA.getNome(),this.urlCompleta);
 				return false;
 			}
 			
@@ -118,11 +117,8 @@ public class IdentificazionePortaApplicativa extends AbstractIdentificazionePort
 		}
 	}
 
-	public IDPortaApplicativaByNome getIDPortaApplicativaByNome(){
-		IDPortaApplicativaByNome idPA = new IDPortaApplicativaByNome();
-		idPA.setSoggetto(this.soggetto);
-		idPA.setNome(this.nomePortaIndivituata);
-		return idPA;
+	public IDPortaApplicativa getIDPortaApplicativa(){
+		return (IDPortaApplicativa) this.identificativoPorta;
 	}
 
 	public PortaApplicativa getPortaApplicativa() {

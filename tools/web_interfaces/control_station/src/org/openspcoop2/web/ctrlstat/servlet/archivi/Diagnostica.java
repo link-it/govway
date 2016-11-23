@@ -38,6 +38,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.OpenspcoopSorgenteDati;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -114,9 +115,11 @@ public final class Diagnostica extends Action {
 			List<String> tipiServizi = new ArrayList<String>();
 			tipiServizi.add("-");
 			if(protocollo!=null && !"".equals(protocollo) && !"-".equals(protocollo)){
-				tipiServizi.addAll(apsCore.getTipiServiziGestitiProtocollo(protocollo));
+				tipiServizi.addAll(apsCore.getTipiServiziGestitiProtocollo(protocollo,ServiceBinding.SOAP));
+				tipiServizi.addAll(apsCore.getTipiServiziGestitiProtocollo(protocollo,ServiceBinding.REST));
 			}else{
-				tipiServizi.addAll(apsCore.getTipiServiziGestiti());
+				tipiServizi.addAll(apsCore.getTipiServiziGestiti(ServiceBinding.SOAP));
+				tipiServizi.addAll(apsCore.getTipiServiziGestiti(ServiceBinding.REST));
 			}
 			String[] tipiServiziLabel = tipiServizi.toArray(new String[1]);
 			

@@ -44,7 +44,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.SOGGETTO_VIRTUALE = new org.openspcoop2.core.config.model.PortaApplicativaSoggettoVirtualeModel(new Field("soggetto-virtuale",org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale.class,"porta-applicativa",PortaApplicativa.class));
 		this.SERVIZIO = new org.openspcoop2.core.config.model.PortaApplicativaServizioModel(new Field("servizio",org.openspcoop2.core.config.PortaApplicativaServizio.class,"porta-applicativa",PortaApplicativa.class));
 		this.AZIONE = new org.openspcoop2.core.config.model.PortaApplicativaAzioneModel(new Field("azione",org.openspcoop2.core.config.PortaApplicativaAzione.class,"porta-applicativa",PortaApplicativa.class));
-		this.SERVIZIO_APPLICATIVO = new org.openspcoop2.core.config.model.ServizioApplicativoModel(new Field("servizio-applicativo",org.openspcoop2.core.config.ServizioApplicativo.class,"porta-applicativa",PortaApplicativa.class));
+		this.SERVIZIO_APPLICATIVO = new org.openspcoop2.core.config.model.PortaApplicativaServizioApplicativoModel(new Field("servizio-applicativo",org.openspcoop2.core.config.PortaApplicativaServizioApplicativo.class,"porta-applicativa",PortaApplicativa.class));
 		this.PROPRIETA_PROTOCOLLO = new org.openspcoop2.core.config.model.ProprietaProtocolloModel(new Field("proprieta-protocollo",org.openspcoop2.core.config.ProprietaProtocollo.class,"porta-applicativa",PortaApplicativa.class));
 		this.MTOM_PROCESSOR = new org.openspcoop2.core.config.model.MtomProcessorModel(new Field("mtom-processor",org.openspcoop2.core.config.MtomProcessor.class,"porta-applicativa",PortaApplicativa.class));
 		this.MESSAGE_SECURITY = new org.openspcoop2.core.config.model.MessageSecurityModel(new Field("message-security",org.openspcoop2.core.config.MessageSecurity.class,"porta-applicativa",PortaApplicativa.class));
@@ -59,7 +59,6 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.STATO_MESSAGE_SECURITY = new Field("stato-message-security",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.NOME = new Field("nome",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
-		this.LOCATION = new Field("location",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.RICEVUTA_ASINCRONA_SIMMETRICA = new Field("ricevuta-asincrona-simmetrica",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.RICEVUTA_ASINCRONA_ASIMMETRICA = new Field("ricevuta-asincrona-asimmetrica",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.INTEGRAZIONE = new Field("integrazione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
@@ -80,7 +79,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.SOGGETTO_VIRTUALE = new org.openspcoop2.core.config.model.PortaApplicativaSoggettoVirtualeModel(new ComplexField(father,"soggetto-virtuale",org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale.class,"porta-applicativa",PortaApplicativa.class));
 		this.SERVIZIO = new org.openspcoop2.core.config.model.PortaApplicativaServizioModel(new ComplexField(father,"servizio",org.openspcoop2.core.config.PortaApplicativaServizio.class,"porta-applicativa",PortaApplicativa.class));
 		this.AZIONE = new org.openspcoop2.core.config.model.PortaApplicativaAzioneModel(new ComplexField(father,"azione",org.openspcoop2.core.config.PortaApplicativaAzione.class,"porta-applicativa",PortaApplicativa.class));
-		this.SERVIZIO_APPLICATIVO = new org.openspcoop2.core.config.model.ServizioApplicativoModel(new ComplexField(father,"servizio-applicativo",org.openspcoop2.core.config.ServizioApplicativo.class,"porta-applicativa",PortaApplicativa.class));
+		this.SERVIZIO_APPLICATIVO = new org.openspcoop2.core.config.model.PortaApplicativaServizioApplicativoModel(new ComplexField(father,"servizio-applicativo",org.openspcoop2.core.config.PortaApplicativaServizioApplicativo.class,"porta-applicativa",PortaApplicativa.class));
 		this.PROPRIETA_PROTOCOLLO = new org.openspcoop2.core.config.model.ProprietaProtocolloModel(new ComplexField(father,"proprieta-protocollo",org.openspcoop2.core.config.ProprietaProtocollo.class,"porta-applicativa",PortaApplicativa.class));
 		this.MTOM_PROCESSOR = new org.openspcoop2.core.config.model.MtomProcessorModel(new ComplexField(father,"mtom-processor",org.openspcoop2.core.config.MtomProcessor.class,"porta-applicativa",PortaApplicativa.class));
 		this.MESSAGE_SECURITY = new org.openspcoop2.core.config.model.MessageSecurityModel(new ComplexField(father,"message-security",org.openspcoop2.core.config.MessageSecurity.class,"porta-applicativa",PortaApplicativa.class));
@@ -95,7 +94,6 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.STATO_MESSAGE_SECURITY = new ComplexField(father,"stato-message-security",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
-		this.LOCATION = new ComplexField(father,"location",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.RICEVUTA_ASINCRONA_SIMMETRICA = new ComplexField(father,"ricevuta-asincrona-simmetrica",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.RICEVUTA_ASINCRONA_ASIMMETRICA = new ComplexField(father,"ricevuta-asincrona-asimmetrica",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.INTEGRAZIONE = new ComplexField(father,"integrazione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
@@ -117,7 +115,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 	 
 	public org.openspcoop2.core.config.model.PortaApplicativaAzioneModel AZIONE = null;
 	 
-	public org.openspcoop2.core.config.model.ServizioApplicativoModel SERVIZIO_APPLICATIVO = null;
+	public org.openspcoop2.core.config.model.PortaApplicativaServizioApplicativoModel SERVIZIO_APPLICATIVO = null;
 	 
 	public org.openspcoop2.core.config.model.ProprietaProtocolloModel PROPRIETA_PROTOCOLLO = null;
 	 
@@ -146,8 +144,6 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 	public IField NOME = null;
 	 
 	public IField DESCRIZIONE = null;
-	 
-	public IField LOCATION = null;
 	 
 	public IField RICEVUTA_ASINCRONA_SIMMETRICA = null;
 	 

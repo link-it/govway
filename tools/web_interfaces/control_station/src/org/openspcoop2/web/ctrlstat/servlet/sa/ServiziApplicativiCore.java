@@ -31,8 +31,6 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
-import org.openspcoop2.core.id.IDPortaApplicativa;
-import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -87,72 +85,7 @@ public class ServiziApplicativiCore extends ControlStationCore {
 		}
 	}
 
-	public ServizioApplicativo getServizioApplicativo(String nomeServizioApplicativo, String nomeProprietario, String tipoProprietario) throws DriverConfigurazioneException {
-		Connection con = null;
-		String nomeMetodo = "getServizioApplicativo";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getServizioApplicativoWithRuolo(nomeServizioApplicativo, nomeProprietario, tipoProprietario);
-
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-	}
-	
-	public ServizioApplicativo getServizioApplicativo(IDPortaDelegata idPD, String servizioApplicativo) throws DriverConfigurazioneException {
-		Connection con = null;
-		String nomeMetodo = "getServizioApplicativo";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getServizioApplicativoWithRuolo(idPD, servizioApplicativo);
-
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-
-	}
-
-	public ServizioApplicativo getServizioApplicativo(IDPortaApplicativa idPA, String servizioApplicativo) throws DriverConfigurazioneException {
-		Connection con = null;
-		String nomeMetodo = "getServizioApplicativo";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getServizioApplicativoWithRuolo(idPA, servizioApplicativo);
-
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-
-	}
-
-	public ServizioApplicativo getServizioApplicativoAutenticato(IDPortaDelegata idPD, String user, String password) throws DriverConfigurazioneException {
+	public ServizioApplicativo getServizioApplicativoWithRuoloByCredenzialiBasic(String user, String password) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "getServizioApplicativoAutenticato";
 		DriverControlStationDB driver = null;
@@ -163,7 +96,7 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getServizioApplicativoAutenticatoWithRuolo(idPD, user, password);
+			return driver.getServizioApplicativoWithRuoloByCredenzialiBasic(user, password);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -174,7 +107,7 @@ public class ServiziApplicativiCore extends ControlStationCore {
 
 	}
 
-	public ServizioApplicativo getServizioApplicativoAutenticato(String user, String password) throws DriverConfigurazioneException {
+	public ServizioApplicativo getServizioApplicativoWithRuoloByCredenzialiSsl(String subject) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "getServizioApplicativoAutenticato";
 		DriverControlStationDB driver = null;
@@ -185,51 +118,7 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getServizioApplicativoAutenticatoWithRuolo(user, password);
-
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-
-	}
-
-	public ServizioApplicativo getServizioApplicativoAutenticato(IDPortaDelegata idPD, String subject) throws DriverConfigurazioneException {
-		Connection con = null;
-		String nomeMetodo = "getServizioApplicativoAutenticato";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getServizioApplicativoAutenticatoWithRuolo(idPD, subject);
-
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-
-	}
-
-	public ServizioApplicativo getServizioApplicativoAutenticato(String subject) throws DriverConfigurazioneException {
-		Connection con = null;
-		String nomeMetodo = "getServizioApplicativoAutenticato";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getServizioApplicativoAutenticatoWithRuolo(subject);
+			return driver.getServizioApplicativoWithRuoloByCredenzialiSsl(subject);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -251,9 +140,7 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			IDPortaDelegata idPD = new IDPortaDelegata();
-			idPD.setSoggettoFruitore(idServizioApplicativo.getIdSoggettoProprietario());
-			return driver.getServizioApplicativoWithRuolo(idPD, idServizioApplicativo.getNome());
+			return driver.getServizioApplicativoWithRuolo(idServizioApplicativo);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -511,7 +398,7 @@ public class ServiziApplicativiCore extends ControlStationCore {
 	}
 	
 	
-	public boolean existsServizioApplicativo(IDSoggetto idSoggetto, String nomeServizioApplicativo) throws DriverConfigurazioneException {
+	public boolean existsServizioApplicativo(IDServizioApplicativo idSA) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "existsServizioApplicativo";
 		DriverControlStationDB driver = null;
@@ -522,7 +409,7 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverConfigurazioneDB().existsServizioApplicativo(idSoggetto, nomeServizioApplicativo);
+			return driver.getDriverConfigurazioneDB().existsServizioApplicativo(idSA);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -532,29 +419,6 @@ public class ServiziApplicativiCore extends ControlStationCore {
 		}
 	}
 	
-	public ServizioApplicativo getServizioApplicativo(IDSoggetto idSoggetto,
-			String nomeServizioApplicativo)
-			throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		Connection con = null;
-		String nomeMetodo = "getServizioApplicativo";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getDriverConfigurazioneDB().getServizioApplicativo(idSoggetto, nomeServizioApplicativo);
-
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-	}
-
 	
 	public List<ServizioApplicativo> getServiziApplicativiByIdErogatore(Long idErogatore) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;

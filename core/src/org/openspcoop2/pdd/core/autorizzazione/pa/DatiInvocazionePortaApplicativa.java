@@ -23,7 +23,7 @@ package org.openspcoop2.pdd.core.autorizzazione.pa;
 
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -46,7 +46,7 @@ public class DatiInvocazionePortaApplicativa extends AbstractDatiInvocazione {
 	private String subjectServizioApplicativoFruitoreFromMessageSecurityHeader;
 	
 	// Richieste normali
-	private IDPortaApplicativaByNome idPA;
+	private IDPortaApplicativa idPA;
 	private PortaApplicativa pa;
 	// Nel caso di risposta asincrona simmetrica e per ricevute asincrone.
 	private IDPortaDelegata idPD;
@@ -86,10 +86,10 @@ public class DatiInvocazionePortaApplicativa extends AbstractDatiInvocazione {
 		this.subjectServizioApplicativoFruitoreFromMessageSecurityHeader = subjectServizioApplicativoFruitoreFromMessageSecurityHeader;
 	}
 
-	public IDPortaApplicativaByNome getIdPA() {
+	public IDPortaApplicativa getIdPA() {
 		return this.idPA;
 	}
-	public void setIdPA(IDPortaApplicativaByNome idPA) {
+	public void setIdPA(IDPortaApplicativa idPA) {
 		this.idPA = idPA;
 	}
 

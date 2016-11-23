@@ -55,6 +55,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.IdentificazioneView;
@@ -106,7 +107,6 @@ public final class PorteDelegateAdd extends Action {
 			String idsogg = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 			int soggInt = Integer.parseInt(idsogg);
 			String descr = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_DESCRIZIONE);
-			String urlinv = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_URL_DI_INVOCAZIONE);
 			String autenticazione = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE);
 			String nomeauth = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_AUTENTICAZIONE);
 			String autorizzazione = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE);
@@ -184,10 +184,6 @@ public final class PorteDelegateAdd extends Action {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteDelegateCore);
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
 
-			if(porteDelegateCore.isShowPortaDelegataUrlInvocazione()==false){
-				urlinv = null;
-			}
-			
 			String tmpTitle = null, tipoSoggetto = null;
 			if(porteDelegateCore.isRegistroServiziLocale()){
 				org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(soggInt);
@@ -205,9 +201,11 @@ public final class PorteDelegateAdd extends Action {
 			String[] soggettiList = null;
 			String[] soggettiListLabel = null;
 
+			ServiceBinding serviceBinding = ServiceBinding.SOAP; // TODO
+			
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggetto);
 			List<String> tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
-			List<String> tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(protocollo);
+			List<String> tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(protocollo,serviceBinding);
 
 			if (modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
 				List<IDSoggetto> list = null;
@@ -377,9 +375,6 @@ public final class PorteDelegateAdd extends Action {
 				if (descr == null) {
 					descr = "";
 				}
-				if (urlinv == null) {
-					urlinv = "";
-				}
 				if (autenticazione == null) {
 					autenticazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE_SSL;
 				}
@@ -438,7 +433,7 @@ public final class PorteDelegateAdd extends Action {
 						PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_NEW_ID,
 						nomePD,
 						dati, PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_NEW_ID,
-						descr, urlinv, autenticazione, autorizzazione,
+						descr, autenticazione, autorizzazione,
 						modesp, soggid, soggettiList, soggettiListLabel,
 						sp, tiposp, sp, modeservizio, servid, serviziList,
 						serviziListLabel, servizio, tiposervizio, servizio,
@@ -446,7 +441,7 @@ public final class PorteDelegateAdd extends Action {
 						azione, numAzioni,  stateless, localForward, ricsim, ricasim,
 						xsd, tipoValidazione, 0, "", gestBody, gestManifest,
 						null, nomeauth, nomeautor,autorizzazioneContenuti,idsogg,protocollo,numSA,statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,
-						forceWsdlBased,applicaMTOM,false);
+						forceWsdlBased,applicaMTOM,false,serviceBinding);
 
 				pd.setDati(dati);
 
@@ -480,7 +475,7 @@ public final class PorteDelegateAdd extends Action {
 						PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_NEW_ID,
 						nomePD,
 						dati, PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_NEW_ID,
-						descr, urlinv, autenticazione, autorizzazione,
+						descr, autenticazione, autorizzazione,
 						modesp, soggid, soggettiList, soggettiListLabel,
 						sp, tiposp, sp, modeservizio, servid, serviziList,
 						serviziListLabel, servizio, tiposervizio, servizio,
@@ -489,7 +484,7 @@ public final class PorteDelegateAdd extends Action {
 						xsd, tipoValidazione, 0, "", gestBody, gestManifest,
 						null, nomeauth, nomeautor,autorizzazioneContenuti ,idsogg,protocollo,
 						numSA,statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,
-						forceWsdlBased,applicaMTOM,false);
+						forceWsdlBased,applicaMTOM,false,serviceBinding);
 
 				pd.setDati(dati);
 
@@ -516,12 +511,6 @@ public final class PorteDelegateAdd extends Action {
 			PortaDelegata portaDelegata = new PortaDelegata();
 			portaDelegata.setNome(nomePD);
 			portaDelegata.setDescrizione(descr);
-			if(porteDelegateCore.isShowPortaDelegataUrlInvocazione()==false){
-				portaDelegata.setLocation(nomePD);
-			}
-			else if(urlinv!=null && !"".equals(urlinv)){
-				portaDelegata.setLocation(urlinv);
-			}
 			if (autenticazione == null ||
 					!autenticazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE_CUSTOM))
 				portaDelegata.setAutenticazione(autenticazione);
@@ -558,10 +547,6 @@ public final class PorteDelegateAdd extends Action {
 			}
 			pdSogg.setNome(sp);
 			pdSogg.setTipo(tiposp);
-			pdSogg.setIdentificazione(IdentificazioneView.view2db_soggettoErogatore(modesp));
-			// se l'identificazioe e' urlbased/contentbased ho il pattern nella
-			// variabile utilizzata per il nome
-			pdSogg.setPattern(sp);
 
 			portaDelegata.setSoggettoErogatore(pdSogg);
 
@@ -581,8 +566,6 @@ public final class PorteDelegateAdd extends Action {
 			}
 			pdServizio.setNome(servizio);
 			pdServizio.setTipo(tiposervizio);
-			pdServizio.setIdentificazione(IdentificazioneView.view2db_servizio(modeservizio));
-			pdServizio.setPattern(servizio);
 
 			portaDelegata.setServizio(pdServizio);
 
@@ -639,7 +622,7 @@ public final class PorteDelegateAdd extends Action {
 					}
 				}
 				pdAzione.setNome(azione);
-				pdAzione.setIdentificazione(IdentificazioneView.view2db_azione(modeaz));
+				pdAzione.setIdentificazione(IdentificazioneView.view2db_azione_portaDelegata(modeaz));
 				pdAzione.setPattern(azione);
 
 				//FORCE WSDL BASED

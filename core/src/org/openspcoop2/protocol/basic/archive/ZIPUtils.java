@@ -812,8 +812,6 @@ public class ZIPUtils  {
 			pd.setTipoSoggettoProprietario(tipoSoggetto);
 			pd.setNomeSoggettoProprietario(nomeSoggetto);
 			String nome = pd.getNome();
-			if(pd.getLocation()!=null && !"".equals(pd.getLocation()))
-				nome = pd.getLocation();
 			String tipoSoggettoKey = (tipoSoggetto!=null ? tipoSoggetto : "" );
 			String nomeSoggettoKey = (nomeSoggetto!=null ? nomeSoggetto : "" );
 			String key = ArchivePortaDelegata.buildKey(tipoSoggettoKey, nomeSoggettoKey, nome);

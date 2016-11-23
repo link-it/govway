@@ -81,7 +81,7 @@ public class AutenticazioneBASIC extends AbstractCore implements IAutenticazione
 		}
 
 		try{
-			this.servizioApplicativo = ConfigurazionePdDManager.getInstance(state).autenticazioneHTTP(idPD.getSoggettoFruitore(),idPD.getLocationPD(),user,password);
+			this.servizioApplicativo = ConfigurazionePdDManager.getInstance(state).getIdServizioApplicativoByCredenzialiBasic(user,password);
 		}catch(Exception e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneBasic non riuscita",e);
 			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -135,7 +135,7 @@ public class AutenticazioneBASIC extends AbstractCore implements IAutenticazione
 		}
 		
 		try{
-			this.servizioApplicativo = ConfigurazionePdDManager.getInstance(state).autenticazioneHTTP(user,password);
+			this.servizioApplicativo = ConfigurazionePdDManager.getInstance(state).getIdServizioApplicativoByCredenzialiBasic(user,password);
 		}catch(Exception e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("AutenticazioneBasic non riuscita",e);
 			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.

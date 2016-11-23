@@ -49,6 +49,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.builder.TracciaBuilder;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
 import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoNotFoundException;
 import org.openspcoop2.protocol.sdk.tracciamento.FiltroRicercaTracceConPaginazione;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
@@ -136,9 +137,9 @@ public class TracceExporter extends HttpServlet {
 					for (int j = 0; j < lista.size(); j++) {
 						Traccia traccia = lista.get(j);
 						String newLine = j > 0 ? "\n\n" : "";
-						IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(traccia.getProtocollo());
+						IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(traccia.getProtocollo());
 						TracciaBuilder tracciaBuilder = new TracciaBuilder(protocolFactory);
-						in = new ByteArrayInputStream((newLine + tracciaBuilder.toString(traccia)).getBytes());
+						in = new ByteArrayInputStream((newLine + tracciaBuilder.toString(traccia,TipoSerializzazione.DEFAULT)).getBytes());
 
 						// Transfer bytes from the input stream to the ZIP file
 						int len;

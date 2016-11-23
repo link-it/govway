@@ -41,6 +41,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.monitor.Busta;
 import org.openspcoop2.pdd.monitor.BustaServizio;
 import org.openspcoop2.pdd.monitor.BustaSoggetto;
@@ -1208,8 +1209,10 @@ public final class Monitor extends Action {
 			List<String> tipiServizi_label = new ArrayList<String>();
 			tipiServizi.add("");
 			tipiServizi_label.add("-");
-			tipiServizi.addAll(aspsCore.getTipiServiziGestiti());
-			tipiServizi_label.addAll(aspsCore.getTipiServiziGestiti());
+			tipiServizi.addAll(aspsCore.getTipiServiziGestiti(ServiceBinding.SOAP));
+			tipiServizi_label.addAll(aspsCore.getTipiServiziGestiti(ServiceBinding.SOAP));
+			tipiServizi.addAll(aspsCore.getTipiServiziGestiti(ServiceBinding.REST));
+			tipiServizi_label.addAll(aspsCore.getTipiServiziGestiti(ServiceBinding.REST));
 			
 			de = new DataElement();
 			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_TIPO_SERVIZIO);

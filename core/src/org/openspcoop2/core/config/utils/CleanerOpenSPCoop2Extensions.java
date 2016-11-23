@@ -111,12 +111,6 @@ public class CleanerOpenSPCoop2Extensions {
 		portaDelegata.setTipoSoggettoProprietario(null);
 		portaDelegata.setNomeSoggettoProprietario(null);
 		
-		if(portaDelegata.sizeServizioApplicativoList()>0){
-			for (ServizioApplicativo servizioApplicativo : portaDelegata.getServizioApplicativoList()) {
-				this.clean(servizioApplicativo);
-			}
-		}
-		
 	}
 
 	public void clean(PortaApplicativa portaApplicativa){
@@ -127,12 +121,6 @@ public class CleanerOpenSPCoop2Extensions {
 		portaApplicativa.setStatoMessageSecurity(null);
 		portaApplicativa.setTipoSoggettoProprietario(null);
 		portaApplicativa.setNomeSoggettoProprietario(null);
-		
-		if(portaApplicativa.sizeServizioApplicativoList()>0){
-			for (ServizioApplicativo servizioApplicativo : portaApplicativa.getServizioApplicativoList()) {
-				this.clean(servizioApplicativo);
-			}
-		}
 	
 	}
 

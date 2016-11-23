@@ -40,7 +40,6 @@ import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -495,16 +494,8 @@ public abstract class AbstractArchiveEngine {
 		return this.driverConfigurazione.getPortaDelegata(idPortaDelegata);
 	}
 	
-	public org.openspcoop2.core.config.PortaDelegata getPortaDelegata(String nomePorta,IDSoggetto soggettoProprietario) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		return this.driverConfigurazione.getPortaDelegata(nomePorta, soggettoProprietario);
-	}
-	
 	public boolean existsPortaDelegata(IDPortaDelegata idPortaDelegata) throws DriverConfigurazioneException {
 		return this.driverConfigurazione.existsPortaDelegata(idPortaDelegata);
-	}
-	
-	public boolean existsPortaDelegata(String nomePorta,IDSoggetto soggettoProprietario) throws DriverConfigurazioneException {
-		return this.driverConfigurazione.existsPortaDelegata(nomePorta, soggettoProprietario);
 	}
 	
 	public void createPortaDelegata(org.openspcoop2.core.config.PortaDelegata portaDelegata) throws DriverConfigurazioneException {
@@ -524,28 +515,16 @@ public abstract class AbstractArchiveEngine {
 	
 	// --- Porte Applicative ---
 	
-	public List<IDPortaApplicativaByNome> getAllIdPorteApplicative(FiltroRicercaPorteApplicative filtroRicerca) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	public List<IDPortaApplicativa> getAllIdPorteApplicative(FiltroRicercaPorteApplicative filtroRicerca) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		return this.driverConfigurazione.getAllIdPorteApplicative(filtroRicerca);
 	}
 	
 	public org.openspcoop2.core.config.PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPortaApplicativa) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		return this.driverConfigurazione.getPortaApplicativa(idPortaApplicativa, true);
-	}
-	
-	public org.openspcoop2.core.config.PortaApplicativa getPortaApplicativa(IDPortaApplicativaByNome idPortaApplicativa) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		return this.driverConfigurazione.getPortaApplicativa(idPortaApplicativa.getNome(),idPortaApplicativa.getSoggetto());
-	}
-	
-	public org.openspcoop2.core.config.PortaApplicativa getPortaApplicativa(String nomePorta,IDSoggetto soggettoProprietario) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		return this.driverConfigurazione.getPortaApplicativa(nomePorta,soggettoProprietario);
+		return this.driverConfigurazione.getPortaApplicativa(idPortaApplicativa);
 	}
 	
 	public boolean existsPortaApplicativa(IDPortaApplicativa idPortaApplicativa) throws DriverConfigurazioneException {
 		return this.driverConfigurazione.existsPortaApplicativa(idPortaApplicativa);
-	}
-	
-	public boolean existsPortaApplicativa(String nomePorta,IDSoggetto soggettoProprietario) throws DriverConfigurazioneException {
-		return this.driverConfigurazione.existsPortaApplicativa(nomePorta, soggettoProprietario);
 	}
 	
 	public void createPortaApplicativa(org.openspcoop2.core.config.PortaApplicativa portaApplicativa) throws DriverConfigurazioneException {

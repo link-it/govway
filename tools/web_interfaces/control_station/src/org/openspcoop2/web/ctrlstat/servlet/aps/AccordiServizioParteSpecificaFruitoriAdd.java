@@ -48,12 +48,11 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAzione;
 import org.openspcoop2.core.config.PortaDelegataServizio;
+import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
-import org.openspcoop2.core.config.constants.PortaDelegataServizioIdentificazione;
-import org.openspcoop2.core.config.constants.PortaDelegataSoggettoErogatoreIdentificazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -765,39 +764,26 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			if (generazionePortaDelegata) {
 				String nomePD = tipoFruitore + nomeFruitore + "/" + mytipoprov + mynomeprov + "/" + tiposervizio + nomeservizio;
 				String descr = "Invocazione servizio " + tiposervizio + nomeservizio + " erogato da " + mytipoprov + mynomeprov;
-				String urlinv = tipoFruitore + nomeFruitore + "/" + mytipoprov + mynomeprov + "/" + tiposervizio + nomeservizio;
-				if(porteDelegateCore.isShowPortaDelegataUrlInvocazione()==false){
-					urlinv = nomePD;
-				}
-				PortaDelegataSoggettoErogatoreIdentificazione modesp = PortaDelegataSoggettoErogatoreIdentificazione.STATIC;
 
 				PortaDelegata portaDelegata = new PortaDelegata();
 				portaDelegata.setNome(nomePD);
 				portaDelegata.setDescrizione(descr);
-				portaDelegata.setLocation(urlinv);
 				portaDelegata.setAutenticazione(autenticazionePortaDelegataAutomatica);
 				portaDelegata.setAutorizzazione(autorizzazionePortaDelegataAutomatica);
 
 				PortaDelegataSoggettoErogatore pdSogg = new PortaDelegataSoggettoErogatore();
 				pdSogg.setNome(mynomeprov);
 				pdSogg.setTipo(mytipoprov);
-				pdSogg.setIdentificazione(modesp);
-				// se l'identificazioe e' urlbased/contentbased ho il pattern
-				// nella
-				// variabile utilizzata per il nome
-				pdSogg.setPattern(mynomeprov);
 				portaDelegata.setSoggettoErogatore(pdSogg);
 
 				PortaDelegataServizio pdServizio = new PortaDelegataServizio();
 				pdServizio.setNome(nomeservizio);
 				pdServizio.setTipo(tiposervizio);
-				pdServizio.setIdentificazione(PortaDelegataServizioIdentificazione.STATIC);
-				pdServizio.setPattern(nomeservizio);
 				portaDelegata.setServizio(pdServizio);
 
 				PortaDelegataAzione pdAzione = new PortaDelegataAzione();
 				pdAzione.setIdentificazione(PortaDelegataAzioneIdentificazione.URL_BASED);
-				String pattern = ".*" + urlinv + "/([^/|^?]*).*";
+				String pattern = ".*" + nomePD + "/([^/|^?]*).*";
 				pdAzione.setPattern(pattern);
 				
 				if(apsCore.isForceWsdlBasedAzione_generazioneAutomaticaPorteDelegate()){
@@ -816,7 +802,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 				// servizioApplicativo
 				if(this.servizioApplicativo!=null && !"".equals(this.servizioApplicativo) && !"-".equals(this.servizioApplicativo)){
-					ServizioApplicativo sa = new ServizioApplicativo();
+					PortaDelegataServizioApplicativo sa = new PortaDelegataServizioApplicativo();
 					sa.setNome(this.servizioApplicativo);
 					portaDelegata.addServizioApplicativo(sa);
 					
@@ -829,9 +815,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				
 				// Verifico prima che la porta delegata non esista già
 				IDPortaDelegata myidpd = new IDPortaDelegata();
-				IDSoggetto ids = new IDSoggetto(tipoFruitore, nomeFruitore);
-				myidpd.setSoggettoFruitore(ids);
-				myidpd.setLocationPD(nomePD);
+				myidpd.setNome(nomePD);
 				if (!porteDelegateCore.existsPortaDelegata(myidpd)){
 					porteDelegateCore.performCreateOperation(superUser, apsHelper.smista(), portaDelegata);
 				}

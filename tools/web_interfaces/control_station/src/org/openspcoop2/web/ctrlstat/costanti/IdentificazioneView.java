@@ -25,6 +25,7 @@ package org.openspcoop2.web.ctrlstat.costanti;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 
 /**
@@ -40,7 +41,7 @@ import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
  */
 public enum IdentificazioneView {
 
-	USER_INPUT, REGISTER_INPUT, URL_BASED, CONTENT_BASED, INPUT_BASED, SOAP_ACTION_BASED, WSDL_BASED;
+	USER_INPUT, REGISTER_INPUT, HEADER_BASED, URL_BASED, CONTENT_BASED, INPUT_BASED, SOAP_ACTION_BASED, WSDL_BASED, PLUGIN_BASED;
 
 	static Hashtable<IdentificazioneView, String> table;
 	static {
@@ -48,6 +49,7 @@ public enum IdentificazioneView {
 
 		IdentificazioneView.table.put(USER_INPUT, USER_INPUT.toString());
 		IdentificazioneView.table.put(REGISTER_INPUT, REGISTER_INPUT.toString());
+		IdentificazioneView.table.put(HEADER_BASED, HEADER_BASED.toString());
 		IdentificazioneView.table.put(URL_BASED, URL_BASED.toString());
 		IdentificazioneView.table.put(CONTENT_BASED, CONTENT_BASED.toString());
 		IdentificazioneView.table.put(INPUT_BASED, INPUT_BASED.toString());
@@ -66,61 +68,7 @@ public enum IdentificazioneView {
 		throw new IllegalArgumentException("No enum const " + IdentificazioneView.class.getName() + "." + val);
 	}
 
-	/**
-	 * Converte la stringa in input come costante di Identificazione
-	 */
-	public static PortaDelegataSoggettoErogatoreIdentificazione view2db_soggettoErogatore(String viewConstat2Convert) {
-
-		switch (IdentificazioneView.getFromString(viewConstat2Convert)) {
-		case CONTENT_BASED:
-			return PortaDelegataSoggettoErogatoreIdentificazione.CONTENT_BASED;
-
-		case REGISTER_INPUT:
-		case USER_INPUT:
-			return PortaDelegataSoggettoErogatoreIdentificazione.STATIC;
-
-		case URL_BASED:
-			return PortaDelegataSoggettoErogatoreIdentificazione.URL_BASED;
-
-		case INPUT_BASED:
-			return PortaDelegataSoggettoErogatoreIdentificazione.INPUT_BASED;
-
-		case SOAP_ACTION_BASED: // non previsto nel soggetto
-		case WSDL_BASED:
-			return PortaDelegataSoggettoErogatoreIdentificazione.STATIC;
-
-		}
-
-		return PortaDelegataSoggettoErogatoreIdentificazione.STATIC;
-
-	}
-
-	public static PortaDelegataServizioIdentificazione view2db_servizio(String viewConstat2Convert) {
-
-		switch (IdentificazioneView.getFromString(viewConstat2Convert)) {
-		case CONTENT_BASED:
-			return PortaDelegataServizioIdentificazione.CONTENT_BASED;
-
-		case REGISTER_INPUT:
-		case USER_INPUT:
-			return PortaDelegataServizioIdentificazione.STATIC;
-
-		case URL_BASED:
-			return PortaDelegataServizioIdentificazione.URL_BASED;
-
-		case INPUT_BASED:
-			return PortaDelegataServizioIdentificazione.INPUT_BASED;
-
-		case SOAP_ACTION_BASED: // non previsto nel servizio
-		case WSDL_BASED:
-			return PortaDelegataServizioIdentificazione.STATIC;
-		}
-
-		return PortaDelegataServizioIdentificazione.STATIC;
-
-	}
-
-	public static PortaDelegataAzioneIdentificazione view2db_azione(String viewConstat2Convert) {
+	public static PortaDelegataAzioneIdentificazione view2db_azione_portaDelegata(String viewConstat2Convert) {
 
 		switch (IdentificazioneView.getFromString(viewConstat2Convert)) {
 		case CONTENT_BASED:
@@ -130,6 +78,9 @@ public enum IdentificazioneView {
 		case USER_INPUT:
 			return PortaDelegataAzioneIdentificazione.STATIC;
 
+		case HEADER_BASED:
+			return PortaDelegataAzioneIdentificazione.HEADER_BASED;
+			
 		case URL_BASED:
 			return PortaDelegataAzioneIdentificazione.URL_BASED;
 
@@ -140,9 +91,44 @@ public enum IdentificazioneView {
 			return PortaDelegataAzioneIdentificazione.SOAP_ACTION_BASED;
 		case WSDL_BASED:
 			return PortaDelegataAzioneIdentificazione.WSDL_BASED;
+			
+		case PLUGIN_BASED:
+			throw new RuntimeException("Tipo ["+viewConstat2Convert+"] non supportato nella Porta Delegata");
 		}
 
 		return PortaDelegataAzioneIdentificazione.STATIC;
+
+	}
+	
+	public static PortaApplicativaAzioneIdentificazione view2db_azione_portaApplicativa(String viewConstat2Convert) {
+
+		switch (IdentificazioneView.getFromString(viewConstat2Convert)) {
+		case CONTENT_BASED:
+			return PortaApplicativaAzioneIdentificazione.CONTENT_BASED;
+
+		case REGISTER_INPUT:
+		case USER_INPUT:
+			return PortaApplicativaAzioneIdentificazione.STATIC;
+
+		case HEADER_BASED:
+			return PortaApplicativaAzioneIdentificazione.HEADER_BASED;
+			
+		case URL_BASED:
+			return PortaApplicativaAzioneIdentificazione.URL_BASED;
+
+		case INPUT_BASED:
+			return PortaApplicativaAzioneIdentificazione.INPUT_BASED;
+
+		case SOAP_ACTION_BASED:
+			return PortaApplicativaAzioneIdentificazione.SOAP_ACTION_BASED;
+		case WSDL_BASED:
+			return PortaApplicativaAzioneIdentificazione.WSDL_BASED;
+			
+		case PLUGIN_BASED:
+			return PortaApplicativaAzioneIdentificazione.PLUGIN_BASED;
+		}
+
+		return PortaApplicativaAzioneIdentificazione.STATIC;
 
 	}
 
@@ -155,6 +141,9 @@ public enum IdentificazioneView {
 			break;
 		case REGISTER_INPUT:
 			res = "register-input";
+			break;
+		case HEADER_BASED:
+			res = "header-based";
 			break;
 		case URL_BASED:
 			res = "url-based";
@@ -170,6 +159,9 @@ public enum IdentificazioneView {
 			break;
 		case WSDL_BASED:
 			res = "wsdl-based";
+			break;
+		case PLUGIN_BASED:
+			res = "plugin-based";
 			break;
 		}
 

@@ -29,7 +29,7 @@ import java.util.List;
 
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -353,7 +353,7 @@ public class EsitoUtils {
 				ArchiveEsitoImportDetail archivePortaDelegata = archive.getPorteDelegate().get(i);
 				IDPortaDelegata idPortaDelegata = ((ArchivePortaDelegata)archivePortaDelegata.getArchiveObject()).getIdPortaDelegata();
 				IDSoggetto idProprietario = ((ArchivePortaDelegata)archivePortaDelegata.getArchiveObject()).getIdSoggettoProprietario();
-				bfEsito.append("\t- ["+idProprietario+"]["+idPortaDelegata.getLocationPD()+"] ");
+				bfEsito.append("\t- ["+idProprietario+"]["+idPortaDelegata.getNome()+"] ");
 				serializeStato(archivePortaDelegata, bfEsito, importOperation);
 			}catch(Exception e){
 				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
@@ -372,8 +372,9 @@ public class EsitoUtils {
 		for (int i = 0; i < archive.getPorteApplicative().size(); i++) {
 			try{
 				ArchiveEsitoImportDetail archivePortaApplicativa = archive.getPorteApplicative().get(i);
-				IDPortaApplicativaByNome idPortaApplicativa = ((ArchivePortaApplicativa)archivePortaApplicativa.getArchiveObject()).getIdPortaApplicativaByNome();
-				bfEsito.append("\t- ["+idPortaApplicativa.getSoggetto()+"]["+idPortaApplicativa.getNome()+"] ");
+				IDPortaApplicativa idPortaApplicativa = ((ArchivePortaApplicativa)archivePortaApplicativa.getArchiveObject()).getIdPortaApplicativa();
+				IDSoggetto idProprietario = ((ArchivePortaApplicativa)archivePortaApplicativa.getArchiveObject()).getIdSoggettoProprietario();
+				bfEsito.append("\t- ["+idProprietario+"]["+idPortaApplicativa.getNome()+"] ");
 				serializeStato(archivePortaApplicativa, bfEsito, importOperation);
 			}catch(Exception e){
 				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());

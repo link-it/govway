@@ -33,7 +33,9 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -41,6 +43,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Soggetto;
@@ -952,7 +955,10 @@ public class ServiziApplicativiHelper extends ConsoleHelper {
 					org.openspcoop2.core.config.Soggetto mySogg = this.soggettiCore.getSoggetto(newProv);
 					ids = new IDSoggetto(mySogg.getTipo(), mySogg.getNome());
 				}
-				boolean giaRegistrato = this.saCore.existsServizioApplicativo(ids, nome);
+				IDServizioApplicativo idSA = new IDServizioApplicativo();
+				idSA.setIdSoggettoProprietario(ids);
+				idSA.setNome(nome);
+				boolean giaRegistrato = this.saCore.existsServizioApplicativo(idSA);
 				if (giaRegistrato) {
 					this.pd.setMessage("Il Servizio Applicativo " + nome + " &egrave; gi&agrave; stato registrato per il soggetto scelto.");
 					return false;
@@ -975,7 +981,7 @@ public class ServiziApplicativiHelper extends ConsoleHelper {
 					for (int i = 0; i < oldSogg.sizePortaDelegataList(); i++) {
 						PortaDelegata pde = oldSogg.getPortaDelegata(i);
 						for (int j = 0; j < pde.sizeServizioApplicativoList(); j++) {
-							ServizioApplicativo tmpSA = pde.getServizioApplicativo(j);
+							PortaDelegataServizioApplicativo tmpSA = pde.getServizioApplicativo(j);
 							if (nome.equals(tmpSA.getNome())) {
 								servizioApplicativoInUso = true;
 								break;
@@ -989,7 +995,7 @@ public class ServiziApplicativiHelper extends ConsoleHelper {
 						for (int i = 0; i < oldSogg.sizePortaApplicativaList(); i++) {
 							PortaApplicativa pa = oldSogg.getPortaApplicativa(i);
 							for (int j = 0; j < pa.sizeServizioApplicativoList(); j++) {
-								ServizioApplicativo tmpSA = pa.getServizioApplicativo(j);
+								PortaApplicativaServizioApplicativo tmpSA = pa.getServizioApplicativo(j);
 								if (nome.equals(tmpSA.getNome())) {
 									servizioApplicativoInUso = true;
 									break;

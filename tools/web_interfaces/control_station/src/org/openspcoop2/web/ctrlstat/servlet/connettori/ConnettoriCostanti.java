@@ -22,7 +22,8 @@ package org.openspcoop2.web.ctrlstat.servlet.connettori;
 
 import java.util.Vector;
 
-import org.openspcoop2.utils.resources.SSLUtilities;
+import org.openspcoop2.utils.transport.http.SSLUtilities;
+
 
 /**
  * ConnettoriCostanti

@@ -25,7 +25,7 @@ package org.openspcoop2.pdd.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 
 /**
@@ -93,7 +93,7 @@ public class IntegrationContext {
 	/**
 	 * Identificativo della Porta Applicativa
 	 */
-	private IDPortaApplicativaByNome idPA;
+	private IDPortaApplicativa idPA;
 	
 	/**
 	 * Identificativo della Porta Delegata
@@ -196,10 +196,10 @@ public class IntegrationContext {
 		this.gestioneStateless = gestioneStateless;
 	}
 	
-	public IDPortaApplicativaByNome getIdPA() {
+	public IDPortaApplicativa getIdPA() {
 		return this.idPA;
 	}
-	public void setIdPA(IDPortaApplicativaByNome idPA) {
+	public void setIdPA(IDPortaApplicativa idPA) {
 		this.idPA = idPA;
 	}
 	public IDPortaDelegata getIdPD() {

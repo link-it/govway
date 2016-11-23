@@ -35,6 +35,7 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 
 
@@ -78,36 +79,6 @@ public abstract class BeanUtilities implements IDriverConfigurazioneGet {
 			else{
 				return beanRegistro.equals(soggetto,checkID);
 			}
-		}
-	}
-	
-	/**
-	 * Controlla che il bean presente nel registro, sia uguale al bean passato come parametro
-	 * 
-	 * @param location
-	 * @param soggetto
-	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
-	 */
-	@Override
-	public boolean verificaSoggetto(String location,Soggetto soggetto)throws DriverConfigurazioneException {
-		return verificaSoggetto(location,soggetto,true);
-	}
-	@Override
-	public boolean verificaSoggetto(String location,Soggetto soggetto,boolean checkID)throws DriverConfigurazioneException{
-		Soggetto beanRegistro = null;
-		try{
-			beanRegistro = this.getSoggettoProprietarioPortaDelegata(location);
-		}catch(DriverConfigurazioneNotFound dNotFound){}
-		if(beanRegistro==null){
-			if(soggetto==null)
-				return true;
-			else
-				return false;
-		}else{
-			if(soggetto==null)
-				return false;
-			else
-				return beanRegistro.equals(soggetto,checkID);
 		}
 	}
 	
@@ -203,154 +174,24 @@ public abstract class BeanUtilities implements IDriverConfigurazioneGet {
 		}
 	}
 	
-	/**
-	 * Controlla che il bean presente nel registro, sia uguale al bean passato come parametro
-	 * Utilizza la porta applicativa identificata da <var>idPA</var>
-	 * nel caso in cui e' specificata un'azione ma non viene trovato nessun risultato, 
-	 * non vengono effettuate ricerche ulteriori se ricerca puntuale e' abilitato.
-	 * 
-	 * @param idPA
-	 * @param ricercaPuntuale
-	 * @param pa
-	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
-	 */
-	@Override
-	public boolean verificaPortaApplicativa(IDPortaApplicativa idPA,boolean ricercaPuntuale,PortaApplicativa pa)throws DriverConfigurazioneException {
-		return verificaPortaApplicativa(idPA,ricercaPuntuale,pa,true);
-	}
-	@Override
-	public boolean verificaPortaApplicativa(IDPortaApplicativa idPA,boolean ricercaPuntuale,PortaApplicativa pa,boolean checkID)throws DriverConfigurazioneException{
-		PortaApplicativa beanRegistro = null;
-		try{
-			beanRegistro = this.getPortaApplicativa(idPA,ricercaPuntuale);
-		}catch(DriverConfigurazioneNotFound dNotFound){}
-		if(beanRegistro==null){
-			if(pa==null)
-				return true;
-			else
-				return false;
-		}else{
-			if(pa==null)
-				return false;
-			else
-				return beanRegistro.equals(pa,checkID);
-		}
-	}
+	
 	
 	/**
 	 * Controlla che il bean presente nel registro, sia uguale al bean passato come parametro
 	 * 
-	 * @param nomePorta
-	 * @param soggettoProprietario
-	 * @param pa
-	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
-	 */
-	@Override
-	public boolean verificaPortaApplicativa(String nomePorta, IDSoggetto soggettoProprietario,PortaApplicativa pa)throws DriverConfigurazioneException {
-		return verificaPortaApplicativa(nomePorta,soggettoProprietario,pa,true); 
-	}
-	@Override
-	public boolean verificaPortaApplicativa(String nomePorta, IDSoggetto soggettoProprietario,PortaApplicativa pa,boolean checkID)throws DriverConfigurazioneException{
-		PortaApplicativa beanRegistro = null;
-		try{
-			beanRegistro = this.getPortaApplicativa(nomePorta,soggettoProprietario);
-		}catch(DriverConfigurazioneNotFound dNotFound){}
-		if(beanRegistro==null){
-			if(pa==null)
-				return true;
-			else
-				return false;
-		}else{
-			if(pa==null)
-				return false;
-			else
-				return beanRegistro.equals(pa,checkID);
-		}
-	}
-	
-	/**
-	 * Controlla che il bean presente nel registro, sia uguale al bean passato come parametro
-	 * 
-	 * @param idPA
-	 * @param soggettoVirtuale
-	 * @param pa
-	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
-	 */
-	@Override
-	public boolean verificaPortaApplicativaVirtuale(IDPortaApplicativa idPA,IDSoggetto soggettoVirtuale,PortaApplicativa pa)throws DriverConfigurazioneException {
-		return verificaPortaApplicativaVirtuale(idPA,soggettoVirtuale,pa,true); 
-	}
-	@Override
-	public boolean verificaPortaApplicativaVirtuale(IDPortaApplicativa idPA,IDSoggetto soggettoVirtuale,PortaApplicativa pa,boolean checkID)throws DriverConfigurazioneException{
-		PortaApplicativa beanRegistro = null;
-		try{
-			beanRegistro = this.getPortaApplicativaVirtuale(idPA,soggettoVirtuale);
-		}catch(DriverConfigurazioneNotFound dNotFound){}
-		if(beanRegistro==null){
-			if(pa==null)
-				return true;
-			else
-				return false;
-		}else{
-			if(pa==null)
-				return false;
-			else
-				return beanRegistro.equals(pa,checkID);
-		}
-	}
-	
-	/**
-	 * Controlla che il bean presente nel registro, sia uguale al bean passato come parametro
-	 * Nel caso in cui e' specificata un'azione ma non viene trovato nessun risultato, 
-	 * non vengono effettuate ricerche ulteriori.
-	 * 
-	 * @param idPA
-	 * @param soggettoVirtuale
-	 * @param pa 
-	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
-	 */
-	@Override
-	public boolean verificaPortaApplicativaVirtuale(IDPortaApplicativa idPA,
-			IDSoggetto soggettoVirtuale,boolean ricercaPuntuale,PortaApplicativa pa)throws DriverConfigurazioneException {
-		return verificaPortaApplicativaVirtuale(idPA,soggettoVirtuale,ricercaPuntuale,pa,true);
-	}
-	@Override
-	public boolean verificaPortaApplicativaVirtuale(IDPortaApplicativa idPA,
-			IDSoggetto soggettoVirtuale,boolean ricercaPuntuale,PortaApplicativa pa,boolean checkID)throws DriverConfigurazioneException{
-		PortaApplicativa beanRegistro = null;
-		try{
-			beanRegistro = this.getPortaApplicativaVirtuale(idPA,soggettoVirtuale,ricercaPuntuale);
-		}catch(DriverConfigurazioneNotFound dNotFound){}
-		if(beanRegistro==null){
-			if(pa==null)
-				return true;
-			else
-				return false;
-		}else{
-			if(pa==null)
-				return false;
-			else
-				return beanRegistro.equals(pa,checkID);
-		}
-	}
-	
-	/**
-	 * Controlla che il bean presente nel registro, sia uguale al bean passato come parametro
-	 * 
-	 * @param idPD
-	 * @param servizioApplicativo
+	 * @param idSA
 	 * @param sa
 	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
 	 */
 	@Override
-	public boolean verificaServizioApplicativo(IDPortaDelegata idPD,String servizioApplicativo,ServizioApplicativo sa)throws DriverConfigurazioneException {
-		return verificaServizioApplicativo(idPD,servizioApplicativo,sa,true);
+	public boolean verificaServizioApplicativo(IDServizioApplicativo idSA,ServizioApplicativo sa)throws DriverConfigurazioneException {
+		return verificaServizioApplicativo(idSA,sa,true);
 	}
 	@Override
-	public boolean verificaServizioApplicativo(IDPortaDelegata idPD,String servizioApplicativo,ServizioApplicativo sa,boolean checkID)throws DriverConfigurazioneException{
+	public boolean verificaServizioApplicativo(IDServizioApplicativo idSA,ServizioApplicativo sa,boolean checkID)throws DriverConfigurazioneException{
 		ServizioApplicativo beanRegistro = null;
 		try{
-			beanRegistro = this.getServizioApplicativo(idPD, servizioApplicativo);
+			beanRegistro = this.getServizioApplicativo(idSA);
 		}catch(DriverConfigurazioneNotFound dNotFound){}
 		if(beanRegistro==null){
 			if(sa==null)
@@ -365,97 +206,7 @@ public abstract class BeanUtilities implements IDriverConfigurazioneGet {
 		}
 	}
 	
-	/**
-	 * Controlla che il bean presente nel registro, sia uguale al bean passato come parametro
-	 * 
-	 * @param idPA
-	 * @param servizioApplicativo
-	 * @param sa
-	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
-	 */
-	@Override
-	public boolean verificaServizioApplicativo(IDPortaApplicativa idPA,String servizioApplicativo,ServizioApplicativo sa)throws DriverConfigurazioneException {
-		return verificaServizioApplicativo(idPA,servizioApplicativo,sa,true);
-	}
-	@Override
-	public boolean verificaServizioApplicativo(IDPortaApplicativa idPA,String servizioApplicativo,ServizioApplicativo sa,boolean checkID)throws DriverConfigurazioneException{
-		ServizioApplicativo beanRegistro = null;
-		try{
-			beanRegistro = this.getServizioApplicativo(idPA, servizioApplicativo);
-		}catch(DriverConfigurazioneNotFound dNotFound){}
-		if(beanRegistro==null){
-			if(sa==null)
-				return true;
-			else
-				return false;
-		}else{
-			if(sa==null)
-				return false;
-			else
-				return beanRegistro.equals(sa,checkID);
-		}
-	}
-	
-	/**
-	 * Controlla che il bean presente nel registro, sia uguale al bean passato come parametro
-	 * 
-	 * @param idPD
-	 * @param sa
-	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
-	 */
-	@Override
-	public boolean verificaServizioApplicativoAutenticato(IDPortaDelegata idPD,String aUser,String aPassword,ServizioApplicativo sa)throws DriverConfigurazioneException {
-		return verificaServizioApplicativoAutenticato(idPD,aUser,aPassword,sa,true);
-	}
-	@Override
-	public boolean verificaServizioApplicativoAutenticato(IDPortaDelegata idPD,String aUser,String aPassword,ServizioApplicativo sa,boolean checkID)throws DriverConfigurazioneException{
-		ServizioApplicativo beanRegistro = null;
-		try{
-			beanRegistro = this.getServizioApplicativoAutenticato(idPD, aUser,aPassword);
-		}catch(DriverConfigurazioneNotFound dNotFound){}
-		if(beanRegistro==null){
-			if(sa==null)
-				return true;
-			else
-				return false;
-		}else{
-			if(sa==null)
-				return false;
-			else
-				return beanRegistro.equals(sa,checkID);
-		}
-	}
-	
-	/**
-	 * Controlla che il bean presente nel registro, sia uguale al bean passato come parametro
-	 * 
-	 * @param idPD
-	 * @param sa
-	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
-	 */
-	@Override
-	public boolean verificaServizioApplicativoAutenticato(IDPortaDelegata idPD,String aSubject,ServizioApplicativo sa)throws DriverConfigurazioneException {
-		return verificaServizioApplicativoAutenticato(idPD,aSubject,sa,true);
-	}
-	@Override
-	public boolean verificaServizioApplicativoAutenticato(IDPortaDelegata idPD,String aSubject,ServizioApplicativo sa,boolean checkID)throws DriverConfigurazioneException{
-		ServizioApplicativo beanRegistro = null;
-		try{
-			beanRegistro = this.getServizioApplicativoAutenticato(idPD, aSubject);
-		}catch(DriverConfigurazioneNotFound dNotFound){}
-		if(beanRegistro==null){
-			if(sa==null)
-				return true;
-			else
-				return false;
-		}else{
-			if(sa==null)
-				return false;
-			else
-				return beanRegistro.equals(sa,checkID);
-		}
-	}
-	
+
 	
 	/**
 	 * Controlla che il bean presente nel registro, sia uguale al bean passato come parametro

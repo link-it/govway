@@ -135,9 +135,9 @@
 			<xsd:element name="soggetto-erogatore" type="porta-delegata-soggetto-erogatore" maxOccurs="1" minOccurs="1"/>
 			<xsd:element name="servizio" type="porta-delegata-servizio" maxOccurs="1" minOccurs="1"/>
 			<xsd:element name="azione" type="porta-delegata-azione" maxOccurs="1" minOccurs="0"/>
-			<xsd:element maxOccurs="unbounded" minOccurs="0" ref="servizio-applicativo"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="mtom-processor" type="mtom-processor"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="message-security" type="message-security">
+			<xsd:element name="servizio-applicativo" type="porta-delegata-servizio-applicativo" maxOccurs="unbounded" minOccurs="0" />
+			<xsd:element name="mtom-processor" type="mtom-processor" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="message-security" type="message-security" maxOccurs="1" minOccurs="0">
 				<xsd:annotation>
 					<xsd:appinfo>
 						<linkit:generator
@@ -147,8 +147,8 @@
 					</xsd:appinfo>
 				</xsd:annotation>
 			</xsd:element>
-			<xsd:element maxOccurs="1" minOccurs="0" name="validazione-contenuti-applicativi" type="validazione-contenuti-applicativi"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="correlazione-applicativa" type="correlazione-applicativa">
+			<xsd:element name="validazione-contenuti-applicativi" type="validazione-contenuti-applicativi" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="correlazione-applicativa" type="correlazione-applicativa" maxOccurs="1" minOccurs="0" >
 				<xsd:annotation>
 					<xsd:appinfo>
 						<linkit:generator
@@ -158,7 +158,7 @@
 					</xsd:appinfo>
 				</xsd:annotation>
 			</xsd:element>
-			<xsd:element maxOccurs="1" minOccurs="0" name="correlazione-applicativa-risposta" type="correlazione-applicativa-risposta">
+			<xsd:element name="correlazione-applicativa-risposta" type="correlazione-applicativa-risposta" maxOccurs="1" minOccurs="0" >
 				<xsd:annotation>
 					<xsd:appinfo>
 						<linkit:generator
@@ -206,16 +206,6 @@
 		<!-- end-extensions -->
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
-		<xsd:attribute name="location" type="xsd:string">
-			<xsd:annotation>
-				<xsd:appinfo>
-					<linkit:generator
-						xmlns:linkit="http://www.link.it/project_generator">
-						<linkit:ws-field-mapping filter="false"/>
-					</linkit:generator>
-				</xsd:appinfo>
-			</xsd:annotation>
-		</xsd:attribute>
 		<xsd:attribute name="autenticazione" type="xsd:string" default="ssl">
 			<xsd:annotation>
 				<xsd:appinfo>
@@ -327,6 +317,10 @@
 			</xsd:annotation>
 		</xsd:attribute>
 	</xsd:complexType>
+	<!-- PortaDelegata.ServizioApplicativo -->
+	<xsd:complexType name="porta-delegata-servizio-applicativo">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
 
 
 	<!-- ** PortaApplicativa ** -->
@@ -348,10 +342,10 @@
 			<xsd:element name="servizio" type="porta-applicativa-servizio" maxOccurs="1" minOccurs="1"/>
 			<xsd:element name="azione" type="porta-applicativa-azione" maxOccurs="1" minOccurs="0"/>
 			<!-- Modificato in minOccurs=0 per gestire la possibile configurazione incrementale via WS -->
-			<xsd:element maxOccurs="unbounded" minOccurs="0" ref="servizio-applicativo"/>
-			<xsd:element maxOccurs="unbounded" minOccurs="0" name="proprieta-protocollo" type="proprieta-protocollo"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="mtom-processor" type="mtom-processor"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="message-security" type="message-security">
+			<xsd:element name="servizio-applicativo" type="porta-applicativa-servizio-applicativo" maxOccurs="unbounded" minOccurs="0" />
+			<xsd:element name="proprieta-protocollo" type="proprieta-protocollo" maxOccurs="unbounded" minOccurs="0" />
+			<xsd:element name="mtom-processor" type="mtom-processor" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="message-security" type="message-security" maxOccurs="1" minOccurs="0" >
 				<xsd:annotation>
 					<xsd:appinfo>
 						<linkit:generator
@@ -361,8 +355,8 @@
 					</xsd:appinfo>
 				</xsd:annotation>
 			</xsd:element>
-			<xsd:element maxOccurs="1" minOccurs="0" name="validazione-contenuti-applicativi" type="validazione-contenuti-applicativi"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="correlazione-applicativa" type="correlazione-applicativa">
+			<xsd:element name="validazione-contenuti-applicativi" type="validazione-contenuti-applicativi" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="correlazione-applicativa" type="correlazione-applicativa" maxOccurs="1" minOccurs="0" >
 				<xsd:annotation>
 					<xsd:appinfo>
 						<linkit:generator
@@ -372,7 +366,7 @@
 					</xsd:appinfo>
 				</xsd:annotation>
 			</xsd:element>
-			<xsd:element maxOccurs="1" minOccurs="0" name="correlazione-applicativa-risposta" type="correlazione-applicativa-risposta">
+			<xsd:element name="correlazione-applicativa-risposta" type="correlazione-applicativa-risposta" maxOccurs="1" minOccurs="0" >
 				<xsd:annotation>
 					<xsd:appinfo>
 						<linkit:generator
@@ -420,16 +414,6 @@
 		<!-- end-extensions -->
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
-		<xsd:attribute name="location" type="xsd:string">
-			<xsd:annotation>
-				<xsd:appinfo>
-					<linkit:generator
-						xmlns:linkit="http://www.link.it/project_generator">
-						<linkit:ws-field-mapping filter="false"/>
-					</linkit:generator>
-				</xsd:appinfo>
-			</xsd:annotation>
-		</xsd:attribute>
 		<xsd:attribute name="ricevuta-asincrona-simmetrica" type="StatoFunzionalita" default="abilitato">
 			<xsd:annotation>
 				<xsd:appinfo>
@@ -511,6 +495,10 @@
 				</xsd:appinfo>
 			</xsd:annotation>
 		</xsd:attribute>
+	</xsd:complexType>
+	<!-- PortaApplicativa.ServizioApplicativo -->
+	<xsd:complexType name="porta-applicativa-servizio-applicativo">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 
 
@@ -1440,15 +1428,9 @@
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 	<xsd:complexType name="id-porta-delegata">
-		<xsd:sequence>
-			<xsd:element name="id-soggetto" type="id-soggetto" />
-		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 	<xsd:complexType name="id-porta-applicativa">
-		<xsd:sequence>
-			<xsd:element name="id-soggetto" type="id-soggetto" />
-		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 	<xsd:complexType name="id-servizio-applicativo">

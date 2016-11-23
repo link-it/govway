@@ -164,7 +164,7 @@ public class TracciamentoTesto extends Action {
 			de.setLabel(ArchiviCostanti.LABEL_DATI_PER_PROTOCOLLO+traccia.getProtocollo());
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
-			IProtocolFactory protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(traccia.getProtocollo());
+			IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(traccia.getProtocollo());
 			ITraduttore traduttore = protocolFactory.createTraduttore();
 			
 			// ************ mittente ****************

@@ -21,22 +21,20 @@
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.sql.Connection;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
+import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.ProprietaProtocollo;
 import org.openspcoop2.core.config.ServizioApplicativo;
-import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDPortaApplicativa;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
@@ -78,32 +76,6 @@ public class PorteApplicativeCore extends ControlStationCore {
 		}
 	}
 	
-	public Hashtable<IDSoggetto, PortaApplicativa> getPorteApplicative_SoggettiVirtuali(IDPortaApplicativa idPA) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
-		Connection con = null;
-		String nomeMetodo = "getPorteApplicative_SoggettiVirtuali";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getDriverConfigurazioneDB().getPorteApplicative_SoggettiVirtuali(idPA);
-
-		} catch (DriverConfigurazioneNotFound de) {
-			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
-			throw de;
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-
-	}
-	
-	
 	public PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPA) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "getPortaApplicativa";
@@ -129,103 +101,6 @@ public class PorteApplicativeCore extends ControlStationCore {
 
 	}
 	
-	public PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPA, boolean ricercaPuntuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		Connection con = null;
-		String nomeMetodo = "getPortaApplicativa (ricercaPuntuale)";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getDriverConfigurazioneDB().getPortaApplicativa(idPA, ricercaPuntuale);
-
-		} catch (DriverConfigurazioneNotFound de) {
-			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
-			throw de;
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-	}
-
-	public PortaApplicativa getPortaApplicativaVirtuale(IDPortaApplicativa idPA, IDSoggetto soggettoVirtuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		Connection con = null;
-		String nomeMetodo = "getPortaApplicativa_soggettoVirtuale";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getDriverConfigurazioneDB().getPortaApplicativaVirtuale(idPA, soggettoVirtuale);
-
-		} catch (DriverConfigurazioneNotFound de) {
-			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
-			throw de;
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-	}
-
-	public PortaApplicativa getPortaApplicativaVirtuale(IDPortaApplicativa idPA, IDSoggetto soggettoVirtuale, boolean ricercaPuntuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		Connection con = null;
-		String nomeMetodo = "getPortaApplicativa_soggettoVirtuale (ricercaPuntuale)";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getDriverConfigurazioneDB().getPortaApplicativaVirtuale(idPA, soggettoVirtuale, ricercaPuntuale);
-
-		} catch (DriverConfigurazioneNotFound de) {
-			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
-			throw de;
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-	}
-
-	public PortaApplicativa getPortaApplicativa(String nomePorta, IDSoggetto soggettoProprietario) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-
-		Connection con = null;
-		String nomeMetodo = "getPortaApplicativa(nomePorta,proprietario)";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getDriverConfigurazioneDB().getPortaApplicativa(nomePorta, soggettoProprietario);
-
-		} catch (DriverConfigurazioneNotFound de) {
-			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
-			throw de;
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-
-	}
 
 	public List<PortaApplicativa> porteAppList(int idSoggetto, ISearch ricerca) throws DriverConfigurazioneException {
 		Connection con = null;
@@ -478,28 +353,6 @@ public class PorteApplicativeCore extends ControlStationCore {
 	}
 
 	
-
-	public boolean existsPortaApplicativa(String nomePorta, IDSoggetto soggettoProprietario) throws DriverConfigurazioneException {
-		Connection con = null;
-		String nomeMetodo = "existsPortaApplicativa";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getDriverConfigurazioneDB().existsPortaApplicativa(nomePorta, soggettoProprietario);
-
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-	}
-
 	public boolean existsPortaApplicativa(IDPortaApplicativa idPA) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "existsPortaApplicativa";
@@ -521,7 +374,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 		}
 	}
 
-	public boolean existsPortaApplicativa(IDPortaApplicativa idPA, boolean ricercaPuntuale) throws DriverConfigurazioneException {
+	public boolean existsPortaApplicativa(IDServizio idServizio, boolean ricercaPuntuale) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "existsPortaApplicativa (ricercaPuntuale)";
 		DriverControlStationDB driver = null;
@@ -532,7 +385,9 @@ public class PorteApplicativeCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverConfigurazioneDB().existsPortaApplicativa(idPA, ricercaPuntuale);
+			List<PortaApplicativa> list = driver.getDriverConfigurazioneDB().getPorteApplicative(idServizio, ricercaPuntuale);
+			
+			return list!=null && list.size()>0;
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -542,28 +397,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 		}
 	}
 
-	public boolean existsPortaApplicativaVirtuale(IDPortaApplicativa idPA, IDSoggetto soggettoVirtuale) throws DriverConfigurazioneException {
-		Connection con = null;
-		String nomeMetodo = "existsPortaApplicativa_soggettoVirtuale";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getDriverConfigurazioneDB().existsPortaApplicativaVirtuale(idPA, soggettoVirtuale);
-
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-	}
-
-	public boolean existsPortaApplicativaVirtuale(IDPortaApplicativa idPA, IDSoggetto soggettoVirtuale, boolean ricercaPuntuale) throws DriverConfigurazioneException {
+	public boolean existsPortaApplicativaVirtuale(IDServizio idServizio, IDSoggetto soggettoVirtuale, boolean ricercaPuntuale) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "existsPortaApplicativa_soggettoVirtuale (ricercaPuntuale)";
 		DriverControlStationDB driver = null;
@@ -574,7 +408,9 @@ public class PorteApplicativeCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverConfigurazioneDB().existsPortaApplicativaVirtuale(idPA, soggettoVirtuale, ricercaPuntuale);
+			List<PortaApplicativa> list = driver.getDriverConfigurazioneDB().getPorteApplicativeVirtuali(soggettoVirtuale, idServizio, ricercaPuntuale);
+			
+			return list!=null && list.size()>0;
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -605,7 +441,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 		}
 	}
 	
-	public Vector<IDPortaApplicativaByNome> getPortaApplicativaAzione(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	public List<IDPortaApplicativa> getPortaApplicativaAzione(String nome) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;
 		String nomeMetodo = "getPortaApplicativaAzione";
 		DriverControlStationDB driver = null;

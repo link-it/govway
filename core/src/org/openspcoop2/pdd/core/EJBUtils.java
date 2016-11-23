@@ -703,8 +703,8 @@ public class EJBUtils {
 			correlazioneApplicativaRisposta = richiestaDelegata.getIdCorrelazioneApplicativaRisposta();
 		
 		String nomePorta = null;
-		if(richiestaDelegata!=null)
-			nomePorta = richiestaDelegata.getLocationPD();
+		if(richiestaDelegata!=null && richiestaDelegata.getIdPortaDelegata()!=null)
+			nomePorta = richiestaDelegata.getIdPortaDelegata().getNome();
 		
 		RollbackRepositoryBuste rollbackBuste = null;
 		RollbackRepositoryBuste rollbackBusteRifMessaggio = null;
@@ -984,8 +984,8 @@ public class EJBUtils {
 			correlazioneApplicativaRisposta = richiestaDelegata.getIdCorrelazioneApplicativaRisposta();
 		
 		String nomePorta = null;
-		if(richiestaDelegata!=null)
-			nomePorta = richiestaDelegata.getLocationPD();
+		if(richiestaDelegata!=null && richiestaDelegata.getIdPortaDelegata()!=null)
+			nomePorta = richiestaDelegata.getIdPortaDelegata().getNome();
 		
 		// Aggiungo costante servizio applicativo
 		this.msgDiag.addKeyword(CostantiPdD.KEY_SA_EROGATORE, richiestaDelegata.getServizioApplicativo());
@@ -1254,9 +1254,9 @@ public class EJBUtils {
 
 			// Costrusce una busta opportuna per la gestione asincrona
 			Busta busta = new Busta(this.protocolFactory.getProtocol());
-			busta.setTipoMittente(richiestaDelegata.getSoggettoFruitore().getTipo());
-			busta.setMittente(richiestaDelegata.getSoggettoFruitore().getNome());
-			busta.setIdentificativoPortaMittente(richiestaDelegata.getSoggettoFruitore().getCodicePorta());
+			busta.setTipoMittente(richiestaDelegata.getIdSoggettoFruitore().getTipo());
+			busta.setMittente(richiestaDelegata.getIdSoggettoFruitore().getNome());
+			busta.setIdentificativoPortaMittente(richiestaDelegata.getIdSoggettoFruitore().getCodicePorta());
 			busta.setTipoDestinatario(richiestaDelegata.getIdServizio().getSoggettoErogatore().getTipo());
 			busta.setDestinatario(richiestaDelegata.getIdServizio().getSoggettoErogatore().getNome());
 			busta.setIdentificativoPortaDestinatario(richiestaDelegata.getIdServizio().getSoggettoErogatore().getCodicePorta());
@@ -1315,8 +1315,8 @@ public class EJBUtils {
 			this.msgDiag.addKeyword(CostantiPdD.KEY_SA_EROGATORE, richiestaDelegata.getServizioApplicativo());
 			
 			String nomePorta = null;
-			if(richiestaDelegata!=null)
-				nomePorta = richiestaDelegata.getLocationPD();
+			if(richiestaDelegata!=null && richiestaDelegata.getIdPortaDelegata()!=null)
+				nomePorta = richiestaDelegata.getIdPortaDelegata().getNome();
 			
 			//	Aggiorno dati di consegna
 			this.msgDiag.setServizioApplicativo(richiestaDelegata.getServizioApplicativo());
@@ -1635,8 +1635,10 @@ public class EJBUtils {
 						(this.openSPCoopState instanceof OpenSPCoopStateless) &&
 						(serviziApplicativiAbilitati.size() > 1) )  {
 					for (String nomeServizioApplicativo : serviziApplicativiAbilitati) {
-						ServizioApplicativo sappl = this.configurazionePdDReader.getServizioApplicativo(richiestaApplicativa.getIdPA(), 
-								nomeServizioApplicativo);
+						IDServizioApplicativo idSA = new IDServizioApplicativo();
+						idSA.setNome(nomeServizioApplicativo);
+						idSA.setIdSoggettoProprietario(richiestaApplicativa.getIDServizio().getSoggettoErogatore());
+						ServizioApplicativo sappl = this.configurazionePdDReader.getServizioApplicativo(idSA);
 						boolean servizioApplicativoConConnettore = this.configurazionePdDReader.invocazioneServizioConConnettore(sappl);
 						boolean getMessageAbilitato = this.configurazionePdDReader.invocazioneServizioConGetMessage(sappl);
 						if(servizioApplicativoConConnettore || (getMessageAbilitato==false)){
@@ -1773,8 +1775,8 @@ public class EJBUtils {
 		Hashtable<String, ConsegnaContenutiApplicativiMessage> mapConsegnaContenutiApplicativiMessage = new Hashtable<String, ConsegnaContenutiApplicativiMessage>();
 		
 		String nomePorta = null;
-		if(richiestaApplicativa!=null && richiestaApplicativa.getIdPAbyNome()!=null){
-			nomePorta = richiestaApplicativa.getIdPAbyNome().getNome();
+		if(richiestaApplicativa!=null && richiestaApplicativa.getIdPortaApplicativa()!=null){
+			nomePorta = richiestaApplicativa.getIdPortaApplicativa().getNome();
 		}
 		
 		// Fase di Registrazione
@@ -1787,7 +1789,7 @@ public class EJBUtils {
 				richiestaApplicativa.getIDServizio().setSoggettoErogatore(soggettiRealiMappatiInUnSoggettoVirtuale.getSoggettoReale(servizioApplicativo));
 				richiestaApplicativa.getIDServizio().getSoggettoErogatore().setCodicePorta(oldDominio);
 				
-				richiestaApplicativa.setIdPAbyNome(soggettiRealiMappatiInUnSoggettoVirtuale.getIDPortaApplicativa(servizioApplicativo));
+				richiestaApplicativa.setIdPortaApplicativa(soggettiRealiMappatiInUnSoggettoVirtuale.getIDPortaApplicativa(servizioApplicativo));
 				
 				servizioApplicativo = soggettiRealiMappatiInUnSoggettoVirtuale.getNomeServizioApplicativo(servizioApplicativo);
 			}
@@ -1812,8 +1814,10 @@ public class EJBUtils {
 			// identificativo Porta Applicativa
 			richiestaApplicativa.setServizioApplicativo(servizioApplicativo);
 			
-			ServizioApplicativo sappl = this.configurazionePdDReader.getServizioApplicativo(richiestaApplicativa.getIdPA(), 
-					servizioApplicativo);
+			IDServizioApplicativo idSA = new IDServizioApplicativo();
+			idSA.setNome(servizioApplicativo);
+			idSA.setIdSoggettoProprietario(richiestaApplicativa.getIDServizio().getSoggettoErogatore());
+			ServizioApplicativo sappl = this.configurazionePdDReader.getServizioApplicativo(idSA);
 
 			this.msgDiag.setServizioApplicativo(servizioApplicativo);
 			this.msgDiag.logCorrelazioneServizioApplicativo();
@@ -1919,7 +1923,7 @@ public class EJBUtils {
 				richiestaApplicativa.getIDServizio().setSoggettoErogatore(soggettiRealiMappatiInUnSoggettoVirtuale.getSoggettoReale(servizioApplicativo));
 				richiestaApplicativa.getIDServizio().getSoggettoErogatore().setCodicePorta(oldDominio);
 				
-				richiestaApplicativa.setIdPAbyNome(soggettiRealiMappatiInUnSoggettoVirtuale.getIDPortaApplicativa(servizioApplicativo));
+				richiestaApplicativa.setIdPortaApplicativa(soggettiRealiMappatiInUnSoggettoVirtuale.getIDPortaApplicativa(servizioApplicativo));
 				
 				servizioApplicativo = soggettiRealiMappatiInUnSoggettoVirtuale.getNomeServizioApplicativo(servizioApplicativo);
 			}

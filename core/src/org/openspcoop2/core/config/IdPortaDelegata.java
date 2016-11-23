@@ -23,7 +23,6 @@ package org.openspcoop2.core.config;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
@@ -36,9 +35,6 @@ import java.io.Serializable;
  * 
  * <pre>
  * &lt;complexType name="id-porta-delegata">
- * 		&lt;sequence>
- * 			&lt;element name="id-soggetto" type="{http://www.openspcoop2.org/core/config}id-soggetto" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * &lt;/complexType>
  * </pre>
@@ -50,11 +46,7 @@ import java.io.Serializable;
  * */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "id-porta-delegata", 
-  propOrder = {
-  	"idSoggetto"
-  }
-)
+@XmlType(name = "id-porta-delegata")
 
 @XmlRootElement(name = "id-porta-delegata")
 
@@ -76,14 +68,6 @@ public class IdPortaDelegata extends org.openspcoop2.utils.beans.BaseBean implem
 		this.id=new Long(-1);
   }
 
-  public IdSoggetto getIdSoggetto() {
-    return this.idSoggetto;
-  }
-
-  public void setIdSoggetto(IdSoggetto idSoggetto) {
-    this.idSoggetto = idSoggetto;
-  }
-
   public java.lang.String getNome() {
     return this.nome;
   }
@@ -101,12 +85,7 @@ public class IdPortaDelegata extends org.openspcoop2.utils.beans.BaseBean implem
 
   public IdPortaDelegata(org.openspcoop2.core.id.IDPortaDelegata idPortaDelegata){
   	if(idPortaDelegata!=null){
-  		this.nome = idPortaDelegata.getLocationPD();
-  		if(idPortaDelegata.getSoggettoFruitore()!=null){
-  			this.idSoggetto = new IdSoggetto();
-  			this.idSoggetto.setNome(idPortaDelegata.getSoggettoFruitore().getNome());
-  			this.idSoggetto.setTipo(idPortaDelegata.getSoggettoFruitore().getTipo());
-  		}
+  		this.nome = idPortaDelegata.getNome();
   	}
   }
 
@@ -114,23 +93,10 @@ public class IdPortaDelegata extends org.openspcoop2.utils.beans.BaseBean implem
   	if(this.nome==null){
   		throw new org.openspcoop2.core.commons.CoreException("Nome undefined");
   	}
-  	if(this.idSoggetto==null){
-  		throw new org.openspcoop2.core.commons.CoreException("IdSoggetto undefined");
-  	}
-  	if(this.idSoggetto.getTipo()==null){
-  		throw new org.openspcoop2.core.commons.CoreException("IdSoggetto.tipo undefined");
-  	}
-  	if(this.idSoggetto.getNome()==null){
-  		throw new org.openspcoop2.core.commons.CoreException("IdSoggetto.nome undefined");
-  	}
   	org.openspcoop2.core.id.IDPortaDelegata idPD = new org.openspcoop2.core.id.IDPortaDelegata();
-  	idPD.setLocationPD(this.nome);
-  	idPD.setSoggettoFruitore(this.idSoggetto.toIDSoggetto());
+  	idPD.setNome(this.nome);
   	return idPD;
   }
-
-  @XmlElement(name="id-soggetto",required=true,nillable=false)
-  protected IdSoggetto idSoggetto;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)

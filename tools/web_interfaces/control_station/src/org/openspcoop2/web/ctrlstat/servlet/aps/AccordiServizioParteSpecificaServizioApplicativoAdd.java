@@ -37,17 +37,17 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.id.IDPortaDelegata;
-import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.dao.PoliticheSicurezza;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -231,14 +231,13 @@ public final class AccordiServizioParteSpecificaServizioApplicativoAdd extends A
 				apsCore.performCreateOperation(superUser, apsHelper.smista(), polSic);
 
 				String idporta = tipoSoggFruitoreServ + nomeSoggFruitoreServ + "/" + tipoSoggettoErogatore + nomeSoggettoErogatore + "/" + tipoServizio + nomeServizio;
-				IDSoggetto ids = new IDSoggetto(tipoSoggFruitoreServ, nomeSoggFruitoreServ);
 				IDPortaDelegata idpd = new IDPortaDelegata();
-				idpd.setSoggettoFruitore(ids);
-				idpd.setLocationPD(idporta);
+				idpd.setNome(idporta);
 				if (porteDelegateCore.existsPortaDelegata(idpd)) {
 					PortaDelegata pde = porteDelegateCore.getPortaDelegata(idpd);
-					ServizioApplicativo sa = saCore.getServizioApplicativo(servizioApplicativo, nomeSoggFruitoreServ, tipoSoggFruitoreServ);
-					pde.addServizioApplicativo(sa);
+					PortaDelegataServizioApplicativo pdSA = new PortaDelegataServizioApplicativo();
+					pdSA.setNome(servizioApplicativo);
+					pde.addServizioApplicativo(pdSA);
 
 					apsCore.performUpdateOperation(superUser, apsHelper.smista(), pde);
 				}

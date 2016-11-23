@@ -456,31 +456,6 @@ public class SoggettiCore extends ControlStationCore {
 		}
 
 	}
-	
-	public Soggetto getSoggetto(String location) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
-		Connection con = null;
-		String nomeMetodo = "getSoggetto";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getDriverConfigurazioneDB().getSoggettoProprietarioPortaDelegata(location);
-
-		} catch (DriverConfigurazioneNotFound de) {
-			ControlStationCore.log.info("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage());
-			throw de;
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-
-	}
 
 	public SoggettoCtrlStat getSoggettoCtrlStat(long idSoggetto) throws DriverConfigurazioneNotFound, DriverRegistroServiziNotFound, DriverControlStationException {
 		Connection con = null;
@@ -709,12 +684,12 @@ public class SoggettiCore extends ControlStationCore {
 			
 			List<String> tipi = new ArrayList<String>();
 			
-			MapReader<String, IProtocolFactory> protocolFactories = this.protocolFactoryManager.getProtocolFactories();
+			MapReader<String, IProtocolFactory<?>> protocolFactories = this.protocolFactoryManager.getProtocolFactories();
 			Enumeration<String> protocolli = protocolFactories.keys();
 			while (protocolli.hasMoreElements()) {
 				
 				String protocollo = protocolli.nextElement();
-				IProtocolFactory protocolFactory = protocolFactories.get(protocollo);
+				IProtocolFactory<?> protocolFactory = protocolFactories.get(protocollo);
 				for (String tipo : protocolFactory.createProtocolConfiguration().getTipiSoggetti()){
 					if(!tipi.contains(tipo)){
 						tipi.add(tipo);
@@ -744,7 +719,7 @@ public class SoggettiCore extends ControlStationCore {
 		String nomeMetodo = "getProtocolloAssociatoTipoSoggetto";
 		try{
 			
-			return this.protocolFactoryManager.getProtocolBySubjectType(tipoSoggetto);
+			return this.protocolFactoryManager.getProtocolByOrganizationType(tipoSoggetto);
 			
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -757,12 +732,12 @@ public class SoggettiCore extends ControlStationCore {
 		try{
 			
 			String protocollo = this.getProtocolloAssociatoTipoSoggetto(tipoSoggetto);
-			IProtocolFactory pf = this.protocolFactoryManager.getProtocolFactoryByName(protocollo);
+			IProtocolFactory<?> pf = this.protocolFactoryManager.getProtocolFactoryByName(protocollo);
 			if(pf.getManifest().getWeb().getEmptyContext()!=null && pf.getManifest().getWeb().getEmptyContext().isEnabled()){
 				return "";
 			}
 			else{
-				return pf.getManifest().getWeb().getContext(0);
+				return pf.getManifest().getWeb().getContext(0).getName();
 			}
 			
 		}catch (Exception e) {

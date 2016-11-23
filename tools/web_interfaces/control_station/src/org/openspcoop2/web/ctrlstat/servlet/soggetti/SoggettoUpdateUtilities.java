@@ -32,11 +32,11 @@ import org.openspcoop2.core.config.PortaDelegataAzione;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
-import org.openspcoop2.core.config.constants.PortaDelegataSoggettoErogatoreIdentificazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -381,7 +381,7 @@ public class SoggettoUpdateUtilities {
 			// ServizioApplicativo)/(tipo+nome Soggetto)/(nome Accordo)
 			List<PortaDelegata> tmpList = this.porteDelegateCore.porteDelegateList(this.sog.getId().intValue(), new Search());
 			for (PortaDelegata portaDelegata : tmpList) {
-				String oldLocation = portaDelegata.getLocation() != null ? portaDelegata.getLocation() : "";
+				String oldLocation = portaDelegata.getNome();
 				// se la location e' quella di default cioe'
 				// (fruitore)/(erogatore)/(servizio)
 				String regex = "(.*)\\/(.*)\\/(.*)";
@@ -406,7 +406,7 @@ public class SoggettoUpdateUtilities {
 					}
 
 					String newLocation = pat1 + "/" + pat2 + "/" + pat3;
-					portaDelegata.setLocation(newLocation);
+					portaDelegata.setNome(newLocation);
 
 					// controllo se anche nome porta di default ed effettuo
 					// gli stessi cambiamenti di prima
@@ -560,55 +560,10 @@ public class SoggettoUpdateUtilities {
 					}
 				}// fine controllo azione
 
-				/*
-				 * Controllo del pattern del pattern Soggetto Erogatore
-				 * .(nome ServizioApplicativo)/(soggetto)/(nome
-				 * Accordo)/([^/]).
-				 */
-				PortaDelegataSoggettoErogatore soggettoErogatore = portaDelegata.getSoggettoErogatore();
-				PortaDelegataSoggettoErogatoreIdentificazione identificazioneSE = soggettoErogatore != null ? soggettoErogatore.getIdentificazione() : null;
-				String patternSE = soggettoErogatore != null ? (soggettoErogatore.getPattern() != null ? soggettoErogatore.getPattern() : "") : "";
-				String patternSEprefix = ".*";
-				String patternSEsuffix = "/([^/]*).*";
-				// se identificazione urlbased procedo con i controlli
-				if (PortaDelegataSoggettoErogatoreIdentificazione.URL_BASED.equals(identificazioneSE)) {
-
-					if (patternSE.startsWith(patternSEprefix) && patternSE.endsWith(patternSEsuffix)) {
-						int startidx = patternSEprefix.length();
-						int endidx = patternSE.lastIndexOf(patternSEsuffix);
-						String tmp = patternSE.substring(startidx, endidx);
-						// ho una stringa del tipo (nome
-						// ServizioApplicativo)/(soggetto)/(nome Accordo)
-						if (tmp.matches(regex)) {
-							String[] val = tmp.split("/");
-							String nomeSA = val[0];
-							String soggetto = val[1];
-							String nomeAccordo = val[2];
-
-							if (soggetto.equals(this.oldtipoprov + this.oldnomeprov)) {
-								soggetto = this.tipoprov + this.nomeprov;
-							}
-
-							String newPatternSE = patternSEprefix + nomeSA + "/" + soggetto + "/" + nomeAccordo + patternSEsuffix;
-							soggettoErogatore.setPattern(newPatternSE);
-							portaDelegata.setSoggettoErogatore(soggettoErogatore);
-
-							// //controllo se la porta delegata non e' stata
-							// gia' inserita in quelle da cambiare
-							// if(!idListPdProprietario.contains(portaDelegata.getId())){
-							// //inserisco la porta delegata per la modifica
-							// listaPDProprietario.add(portaDelegata);
-							// idListPdProprietario.add(portaDelegata.getId());
-							// }
-						}
-					}
-				}
 
 				// aggiungo la porta
 				portaDelegata.setTipoSoggettoProprietario(this.tipoprov);
 				portaDelegata.setNomeSoggettoProprietario(this.nomeprov);
-				portaDelegata.setOldTipoSoggettoProprietarioForUpdate(this.oldtipoprov);
-				portaDelegata.setOldNomeSoggettoProprietarioForUpdate(this.oldnomeprov);
 				listaPD.put(portaDelegata.getId(), portaDelegata);
 
 			}// fine for porte delegate
@@ -633,13 +588,17 @@ public class SoggettoUpdateUtilities {
 				for (Fruitore fruitore : asps.getFruitoreList()) {
 					locationPrefix = fruitore.getTipo() + fruitore.getNome();
 					String location = locationPrefix + locationSuffix;
-					tmpListPD = this.porteDelegateCore.porteDelegateWithLocationList(location);
+					IDPortaDelegata idPD = new IDPortaDelegata();
+					idPD.setNome(location);
+					
+					PortaDelegata portaDelegata = this.porteDelegateCore.getPortaDelegata(idPD);
+					
+					if(portaDelegata!=null){
 
-					// Per tutte le porte delegate che rispettano la
-					// location cambio la vecchia location e inoltre
-					// controllo pure il pattern azione
+						// Per tutte le porte delegate che rispettano la
+						// location cambio la vecchia location e inoltre
+						// controllo pure il pattern azione
 
-					for (PortaDelegata portaDelegata : tmpListPD) {
 						Long idPorta = portaDelegata.getId();
 
 						// se la porta delegata e' gia stata inserita
@@ -667,7 +626,6 @@ public class SoggettoUpdateUtilities {
 							portaDelegata.setOldNomeForUpdate(portaDelegata.getNome());
 						}
 						portaDelegata.setNome(newLocation);
-						portaDelegata.setLocation(newLocation);
 						// aggiorno la descrizione della porta
 						String descrizionePD = portaDelegata.getDescrizione();
 						if (descrizionePD != null && !descrizionePD.equals("")) {
@@ -874,8 +832,6 @@ public class SoggettoUpdateUtilities {
 						
 					portaApplicativa.setTipoSoggettoProprietario(this.tipoprov);
 					portaApplicativa.setNomeSoggettoProprietario(this.nomeprov);
-					portaApplicativa.setOldTipoSoggettoProprietarioForUpdate(this.oldtipoprov);
-					portaApplicativa.setOldNomeSoggettoProprietarioForUpdate(this.oldnomeprov);
 					listaPA.put(portaApplicativa.getId(), portaApplicativa);
 				}
 

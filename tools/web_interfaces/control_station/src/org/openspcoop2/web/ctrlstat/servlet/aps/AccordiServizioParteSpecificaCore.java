@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.DBUtils;
@@ -55,6 +54,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
@@ -86,11 +86,11 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 	}
 
 	
-	public String getTipoServizioDefault() throws  DriverRegistroServiziException {
+	public String getTipoServizioDefault(ServiceBinding serviceBinding) throws  DriverRegistroServiziException {
 		String getTipoServizioDefault = "getTipoServizioDefault";
 		try{
 			
-			return this.protocolFactoryManager.getDefaultProtocolFactory().createProtocolConfiguration().getTipoServizioDefault(); 
+			return this.protocolFactoryManager.getDefaultProtocolFactory().createProtocolConfiguration().getTipoServizioDefault(serviceBinding); 
 			
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + getTipoServizioDefault + "] Exception :" + e.getMessage(), e);
@@ -98,19 +98,19 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		}
 	}
 	
-	public List<String> getTipiServiziGestiti() throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	public List<String> getTipiServiziGestiti(ServiceBinding serviceBinding) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		String nomeMetodo = "getTipiServiziGestiti";
 		try{
 			
 			List<String> tipi = new ArrayList<String>();
 			
-			MapReader<String, IProtocolFactory> protocolFactories = this.protocolFactoryManager.getProtocolFactories();
+			MapReader<String, IProtocolFactory<?>> protocolFactories = this.protocolFactoryManager.getProtocolFactories();
 			Enumeration<String> protocolli = protocolFactories.keys();
 			while (protocolli.hasMoreElements()) {
 				
 				String protocollo = protocolli.nextElement();
-				IProtocolFactory protocolFactory = protocolFactories.get(protocollo);
-				for (String tipo : protocolFactory.createProtocolConfiguration().getTipiServizi()){
+				IProtocolFactory<?> protocolFactory = protocolFactories.get(protocollo);
+				for (String tipo : protocolFactory.createProtocolConfiguration().getTipiServizi(serviceBinding)){
 					if(!tipi.contains(tipo)){
 						tipi.add(tipo);
 					}
@@ -124,11 +124,11 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		}
 	}
-	public List<String> getTipiServiziGestitiProtocollo(String protocollo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	public List<String> getTipiServiziGestitiProtocollo(String protocollo,ServiceBinding serviceBinding) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		String nomeMetodo = "getTipiServiziGestitiProtocollo";
 		try{
 			
-			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().getTipiServizi();
+			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().getTipiServizi(serviceBinding);
 			
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -136,11 +136,11 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		}
 	}
 	
-	public String getTipoServizioDefaultProtocollo(String protocollo) throws  DriverRegistroServiziException {
+	public String getTipoServizioDefaultProtocollo(String protocollo,ServiceBinding serviceBinding) throws  DriverRegistroServiziException {
 		String getTipoServizioDefault = "getTipoServizioDefaultProtocollo";
 		try{
 			
-			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().getTipoServizioDefault(); 
+			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().getTipoServizioDefault(serviceBinding); 
 			
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + getTipoServizioDefault + "] Exception :" + e.getMessage(), e);
@@ -965,7 +965,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 	
 
 	
-	public Vector<IDServizio> getIdServiziWithPortType(IDPortType idPT) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+	public List<IDServizio> getIdServiziWithPortType(IDPortType idPT) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		Connection con = null;
 		String nomeMetodo = "getIdServiziWithPortType";
 		DriverControlStationDB driver = null;
@@ -987,7 +987,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		}
 	}
 	
-	public Vector<IDServizio> getIdServiziWithAccordo(IDAccordo idAccordo,boolean checkPTisNull) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+	public List<IDServizio> getIdServiziWithAccordo(IDAccordo idAccordo,boolean checkPTisNull) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		Connection con = null;
 		String nomeMetodo = "getIdServiziWithAccordo";
 		DriverControlStationDB driver = null;
@@ -1210,7 +1210,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		String nomeMetodo = "validazione";
 		try {
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getServizio().getTipoSoggettoErogatore());
-			IProtocolFactory protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			IProtocolFactory<?> protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			return protocol.createValidazioneAccordi().valida(as);
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -1222,7 +1222,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		String nomeMetodo = "validaInterfacciaWsdlParteSpecifica";
 		try {
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getServizio().getTipoSoggettoErogatore());
-			IProtocolFactory protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			IProtocolFactory<?> protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			return protocol.createValidazioneDocumenti().validaSpecificaInterfaccia(as,apc);
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -1234,7 +1234,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		String nomeMetodo = "validaInterfacciaWsdlParteSpecifica_Fruitore";
 		try {
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getServizio().getTipoSoggettoErogatore());
-			IProtocolFactory protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			IProtocolFactory<?> protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			return protocol.createValidazioneDocumenti().validaSpecificaInterfaccia(fruitore, as, apc);
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

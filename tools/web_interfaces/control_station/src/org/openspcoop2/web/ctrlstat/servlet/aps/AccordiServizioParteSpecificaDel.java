@@ -38,6 +38,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -207,8 +208,10 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 						nomeGenerato = ss.getTipoSoggettoErogatore()+ss.getNomeSoggettoErogatore()+"/"+
 								ss.getTipo()+asps.getPortType();
 						// provo a vedere se esiste
-						if(porteApplicativeCore.existsPortaApplicativa(nomeGenerato, new IDSoggetto(tiposogg, nomesogg))){
-							paGenerataAutomcaticamente = porteApplicativeCore.getPortaApplicativa(nomeGenerato, new IDSoggetto(tiposogg, nomesogg));
+						IDPortaApplicativa idPA = new IDPortaApplicativa();
+						idPA.setNome(nomeGenerato);
+						if(porteApplicativeCore.existsPortaApplicativa(idPA)){
+							paGenerataAutomcaticamente = porteApplicativeCore.getPortaApplicativa(idPA);
 							foundPAGenerataAutomaticamente = true;
 						}
 						

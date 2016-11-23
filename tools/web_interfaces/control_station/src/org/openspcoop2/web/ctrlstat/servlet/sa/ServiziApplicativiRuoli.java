@@ -37,17 +37,15 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAzione;
 import org.openspcoop2.core.config.PortaDelegataServizio;
+import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
-import org.openspcoop2.core.config.constants.PortaDelegataServizioIdentificazione;
-import org.openspcoop2.core.config.constants.PortaDelegataSoggettoErogatoreIdentificazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaDelegata;
-import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -214,20 +212,18 @@ public class ServiziApplicativiRuoli extends Action {
 								azione.setPattern(".*" + location + "/[^/]+/([^/|^?]*).*");
 								portaDelegata.setAzione(azione);
 								portaDelegata.setDescrizione("Ruolo " + (ruolo.isCorrelato() ? as.getNome() + " (Correlato)" : as.getNome()) + " del Servizio Applicativo " + servizioApplicativo.getNome() + " appartenente a " + servizioApplicativo.getTipoSoggettoProprietario() + servizioApplicativo.getNomeSoggettoProprietario());
-								portaDelegata.setLocation(location);
 								portaDelegata.setNome(location);
 								PortaDelegataServizio servizio = new PortaDelegataServizio();
-								servizio.setIdentificazione(PortaDelegataServizioIdentificazione.STATIC);
 								servizio.setTipo(servizioApplicativo.getTipoSoggettoProprietario()); // convenzione nell'usare lo stesso tipo
 								servizio.setNome((ruolo.isCorrelato() ? as.getNome() + "Correlato" : as.getNome()));
 								portaDelegata.setServizio(servizio);
-								List<ServizioApplicativo> arr = new ArrayList<ServizioApplicativo>();
-								arr.add(servizioApplicativo);
+								List<PortaDelegataServizioApplicativo> arr = new ArrayList<PortaDelegataServizioApplicativo>();
+								PortaDelegataServizioApplicativo pdSA = new PortaDelegataServizioApplicativo();
+								pdSA.setNome(servizioApplicativo.getNome());
+								arr.add(pdSA);
 								portaDelegata.setServizioApplicativoList(arr);
 								PortaDelegataSoggettoErogatore soggettoErogatore = new PortaDelegataSoggettoErogatore();
 								soggettoErogatore.setTipo(servizioApplicativo.getTipoSoggettoProprietario());  // convenzione nell'usare lo stesso tipo
-								soggettoErogatore.setIdentificazione(PortaDelegataSoggettoErogatoreIdentificazione.URL_BASED);
-								soggettoErogatore.setPattern(".*" + location + "/([^/]*).*");
 								portaDelegata.setSoggettoErogatore(soggettoErogatore);
 
 								saCore.performCreateOperation(userLogin, saHelper.smista(), ruolo, portaDelegata);
@@ -325,9 +321,8 @@ public class ServiziApplicativiRuoli extends Action {
 							}
 							location = location + Ruolo.getNomeRuoloByIDAccordo(idAccordoRuolo);
 							IDPortaDelegata idPD = new IDPortaDelegata();
-							idPD.setLocationPD(location);
-							idPD.setSoggettoFruitore(new IDSoggetto(servizioApplicativo.getTipoSoggettoProprietario(), servizioApplicativo.getNomeSoggettoProprietario()));
-
+							idPD.setNome(location);
+							
 							// tento di recuperare la porta delegate
 							// se nn esiste la porta delegata allora cancello
 							// solo

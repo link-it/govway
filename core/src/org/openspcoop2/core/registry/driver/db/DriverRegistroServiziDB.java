@@ -10156,10 +10156,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			while (risultato.next()){
 				isInUso=true;
 				IDPortaDelegata idPD = new IDPortaDelegata();
-				idPD.setLocationPD(risultato.getString("nome_porta"));
-				Soggetto fruitore = this.getSoggetto(risultato.getLong("id_soggetto"));
-				IDSoggetto idSO = new IDSoggetto(fruitore.getTipo(),fruitore.getNome());
-				idPD.setSoggettoFruitore(idSO);
+				idPD.setNome(risultato.getString("nome_porta"));
 				idPorteDelegate.add(idPD);
 			}
 			risultato.close();

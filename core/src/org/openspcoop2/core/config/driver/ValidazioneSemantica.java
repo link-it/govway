@@ -58,10 +58,12 @@ import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAzione;
 import org.openspcoop2.core.config.PortaDelegataServizio;
+import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.ProprietaProtocollo;
@@ -567,7 +569,28 @@ public class ValidazioneSemantica {
 			return;
 		}
 		
-		String idPortaDelegata = sogg.getTipo()+"/"+sogg.getNome()+"_"+pd.getNome();
+		String nomePorta = pd.getNome();
+		String idPortaDelegata = "("+sogg.getTipo()+"/"+sogg.getNome()+") "+nomePorta;
+		
+		// La porta delegata viene identificata dal nome.
+		// Una volta identificata la sua stringa di identificazione DEVE essere univoca tra tutte le porte delegate di TUTTA la configurazione 
+		// (e non solo tra quelle del soggetto proprietario)
+		int numPD = 0;
+		List<String> pdTrovate = new ArrayList<String>();
+		for(int j=0; j<this.configurazione.sizeSoggettoList();j++){
+			Soggetto s = this.configurazione.getSoggetto(j);
+			for(int k =0; k<s.sizePortaDelegataList(); k++){
+				PortaDelegata tmpPd = s.getPortaDelegata(k);
+				String tmpNomePorta = tmpPd.getNome();
+				if (nomePorta.equals(tmpNomePorta)){
+					numPD++;
+					pdTrovate.add("("+s.getTipo()+"/"+s.getNome()+") "+tmpPd.getNome());
+				}
+			}
+		}
+		if (numPD > 1)
+			this.errori.add("Non può esistere più di una porta delegata con nome "+nomePorta+". Sono state identificate le seguenti porte delegate: "+pdTrovate.toArray(new String[1]));
+
 		
 		// Il soggetto erogatore deve essere definito. Il tipo e' obbligatorio.
 		// Il nome DEVE essere presente solo se identificazione='static'.
@@ -693,24 +716,21 @@ public class ValidazioneSemantica {
 		// Check servizi applicativi
 		for(int i=0; i<pd.sizeServizioApplicativoList(); i++){
 			// Servizio Applicativo puo' avere solo meta informazioni
-			ServizioApplicativo sa = pd.getServizioApplicativo(i);
-			if(sa.getNome()==null){
+			PortaDelegataServizioApplicativo pdSa = pd.getServizioApplicativo(i);
+			ServizioApplicativo sa = null;
+			if(pdSa.getNome()==null){
 				this.errori.add("La porta delegata "+idPortaDelegata+" ha associato un servizio applicativo per cui non e' stato definito il nome");
+				continue;
 			}
 			else{
-				if(sa.getInvocazionePorta()==null && sa.getInvocazioneServizio()==null && sa.getRispostaAsincrona()==null){
-					// servizio applicativo definito nella root del soggetto
-					if(existsServizioApplicativo(sa.getNome(), sogg)==false){
-						this.errori.add("La porta delegata "+idPortaDelegata+" ha associato un riferimento ad un servizio applicativo ["+sa.getNome()+"] che non risulta registrato nel soggetto "+sogg.getTipo()+"/"+sogg.getNome());
-					}
-					else{
-						// Prelevo servizio applicativo per conformita con l'utilizzo nella porta delegata
-						sa = this.getServizioApplicativo(sa.getNome(), sogg);
-					}
+				// servizio applicativo definito nella root del soggetto
+				if(existsServizioApplicativo(pdSa.getNome(), sogg)==false){
+					this.errori.add("La porta delegata "+idPortaDelegata+" ha associato un riferimento ad un servizio applicativo ["+pdSa.getNome()+"] che non risulta registrato nel soggetto "+sogg.getTipo()+"/"+sogg.getNome());
+					continue;
 				}
 				else{
-					// Valido servizio applicativo
-					this.validaServizioApplicativo(sa, sogg);
+					// Prelevo servizio applicativo per conformita con l'utilizzo nella porta delegata
+					sa = this.getServizioApplicativo(pdSa.getNome(), sogg);
 				}
 			}
 			
@@ -770,32 +790,6 @@ public class ValidazioneSemantica {
 		String idRisorsa = "Porta delegata "+idPortaDelegata;
 		validaCorrelazioneApplicativaRichiesta(idRisorsa,pd.getCorrelazioneApplicativa(),true);
 		validaCorrelazioneApplicativaRisposta(idRisorsa,pd.getCorrelazioneApplicativaRisposta(),true);
-
-		// La porta delegata viene identificata dalla location se presente (e' opzionale) oppure dal nome (obbligatorio). Una volta identificata la sua stringa di identificazione DEVE essere univoca tra tutte le porte delegate di TUTTA la configurazione (e non solo tra quelle del soggetto proprietario)
-		String idPorta = null;
-		if (pd.getLocation() != null)
-			idPorta = pd.getLocation();
-		else
-			idPorta = pd.getNome();
-		int numPD = 0;
-		List<String> pdTrovate = new ArrayList<String>();
-		for(int j=0; j<this.configurazione.sizeSoggettoList();j++){
-			Soggetto s = this.configurazione.getSoggetto(j);
-			for(int k =0; k<s.sizePortaDelegataList(); k++){
-				PortaDelegata tmpPd = s.getPortaDelegata(k);
-				String tmpIdPorta = null;
-				if (tmpPd.getLocation() != null)
-					tmpIdPorta = tmpPd.getLocation();
-				else
-					tmpIdPorta = tmpPd.getNome();
-				if (idPorta.equals(tmpIdPorta)){
-					numPD++;
-					pdTrovate.add(s.getTipo()+"/"+s.getNome()+"_"+tmpPd.getNome());
-				}
-			}
-		}
-		if (numPD > 1)
-			this.errori.add("Non può esistere più di una porta delegata invocabile tramite identificativo "+idPorta+". Invece l'identificativo invoca le seguenti porte delegate: "+pdTrovate.toArray(new String[1]));
 
 		// XSD: ricevuta-asincrona-simmetrica: abilitato, disabilitato
 		StatoFunzionalita ricAsiSim = pd.getRicevutaAsincronaSimmetrica();
@@ -862,8 +856,33 @@ public class ValidazioneSemantica {
 			return;
 		}
 		
-		String idPortaApplicativa = sogg.getTipo()+"/"+sogg.getNome()+"_"+pa.getNome();
+		String nomePorta = pa.getNome();
+		String idPortaApplicativa = "("+sogg.getTipo()+"/"+sogg.getNome()+") "+nomePorta;
 		
+		// La porta applicativa viene identificata dal nome.
+		// Una volta identificata la sua stringa di identificazione DEVE essere univoca tra tutte le porte applicative di TUTTA la configurazione 
+		// (e non solo tra quelle del soggetto proprietario)
+		int numPD = 0;
+		List<String> paTrovate = new ArrayList<String>();
+		for(int j=0; j<this.configurazione.sizeSoggettoList();j++){
+			Soggetto s = this.configurazione.getSoggetto(j);
+			for(int k =0; k<s.sizePortaApplicativaList(); k++){
+				PortaApplicativa tmpPa = s.getPortaApplicativa(k);
+				String tmpNomePorta = tmpPa.getNome();
+				if (nomePorta.equals(tmpNomePorta)){
+					numPD++;
+					paTrovate.add("("+s.getTipo()+"/"+s.getNome()+") "+tmpPa.getNome());
+				}
+			}
+		}
+		if (numPD > 1)
+			this.errori.add("Non può esistere più di una porta applicativa con nome "+nomePorta+". Sono state identificate le seguenti porte applicative: "+paTrovate.toArray(new String[1]));
+
+		
+		
+		
+		// Il vincolo è stato eliminato nella versione 3.0
+		@SuppressWarnings("unused")
 		boolean checkIDPA = true; // Info per sapere se abbiamo abbastanza informazioni per costruire l'id
 		
 		// SoggettoVirtuale
@@ -961,24 +980,21 @@ public class ValidazioneSemantica {
 		else{
 			for(int i=0; i<pa.sizeServizioApplicativoList(); i++){
 				// Servizio Applicativo puo' avere solo meta informazioni
-				ServizioApplicativo sa = pa.getServizioApplicativo(i);
-				if(sa.getNome()==null){
+				PortaApplicativaServizioApplicativo paSa = pa.getServizioApplicativo(i);
+				ServizioApplicativo sa = null;
+				if(paSa.getNome()==null){
 					this.errori.add("La porta applicativa "+idPortaApplicativa+" ha associato un servizio applicativo per cui non e' stato definito il nome");
+					continue;
 				}
 				else{
-					if(sa.getInvocazionePorta()==null && sa.getInvocazioneServizio()==null && sa.getRispostaAsincrona()==null){
-						// servizio applicativo definito nella root del soggetto
-						if(existsServizioApplicativo(sa.getNome(), sogg)==false){
-							this.errori.add("La porta applicativa "+idPortaApplicativa+" ha associato un riferimento ad un servizio applicativo ["+sa.getNome()+"] che non risulta registrato nel soggetto "+sogg.getTipo()+"/"+sogg.getNome());
-						}
-						else{
-							// Prelevo servizio applicativo per conformita con l'utilizzo nella porta delegata
-							sa = this.getServizioApplicativo(sa.getNome(), sogg);
-						}
+					// servizio applicativo definito nella root del soggetto
+					if(existsServizioApplicativo(paSa.getNome(), sogg)==false){
+						this.errori.add("La porta applicativa "+idPortaApplicativa+" ha associato un riferimento ad un servizio applicativo ["+paSa.getNome()+"] che non risulta registrato nel soggetto "+sogg.getTipo()+"/"+sogg.getNome());
+						continue;
 					}
 					else{
-						// Valido servizio applicativo
-						this.validaServizioApplicativo(sa, sogg);
+						// Prelevo servizio applicativo per conformita con l'utilizzo nella porta applicativa
+						sa = this.getServizioApplicativo(paSa.getNome(), sogg);
 					}
 				}
 				
@@ -1046,59 +1062,60 @@ public class ValidazioneSemantica {
 			this.errori.add("Non può esistere più di una porta applicativa del soggetto "+sogg.getTipo()+"/"+sogg.getNome()+" con nome "+pa.getNome());
 	
 		//Check univocita' anche per valori soggetto (virtuale), servizio e azione
-		String idPortaA = null;
-		if(checkIDPA == false){
-			
-			if(pa.getSoggettoVirtuale()!=null){
-				idPortaA = pa.getSoggettoVirtuale().getTipo()+"/"+pa.getSoggettoVirtuale().getNome();
-			}
-			else{
-				idPortaA = sogg.getTipo()+"/"+sogg.getNome();
-			}
-			idPortaA = idPortaA +"_" + pa.getServizio().getTipo()+"/"+pa.getServizio().getNome(); 
-			if(pa.getAzione()!=null){
-				idPortaA = idPortaA +"_" +pa.getAzione().getNome();
-			}
-			
-			int cont = 0;
-			for(int i=0; i<sogg.sizePortaApplicativaList(); i++){
-				PortaApplicativa tmp = sogg.getPortaApplicativa(i);
-				String idTMPPA = null;
-				if(tmp.getSoggettoVirtuale()!=null){
-					if(tmp.getSoggettoVirtuale().getTipo()==null)
-						continue; // PA malformata, verra segnalata
-					if(tmp.getSoggettoVirtuale().getNome()==null)
-						continue; // PA malformata, verra segnalata
-					idTMPPA = tmp.getSoggettoVirtuale().getTipo()+"/"+tmp.getSoggettoVirtuale().getNome();
-				}
-				else{
-					idTMPPA = sogg.getTipo()+"/"+sogg.getNome();
-				}
-				if(tmp.getServizio()==null)
-					continue; // PA malformata, verra segnalata
-				if(tmp.getServizio().getTipo()==null)
-					continue; // PA malformata, verra segnalata
-				if(tmp.getServizio().getNome()==null)
-					continue; // PA malformata, verra segnalata
-				idTMPPA = idTMPPA +"_" + tmp.getServizio().getTipo()+"/"+tmp.getServizio().getNome(); 
-				if(tmp.getAzione()!=null){
-					if(tmp.getAzione().getNome()==null){
-						continue; // PA malformata, verra segnalata
-					}
-					idTMPPA = idTMPPA +"_" +pa.getAzione().getNome();
-				}
-				if(idPortaA.equals(idTMPPA)){
-					cont++;
-				}
-			}
-			
-			if(cont>1){
-				if(pa.getSoggettoVirtuale()!=null)
-					this.errori.add("Non può esistere più di una porta applicativa (con soggetto virtuale) che mappa il servizio: "+idPortaA);
-				else
-					this.errori.add("Non può esistere più di una porta applicativa che mappa il servizio: "+idPortaA);
-			}
-		}
+		// Il vincolo è stato eliminato nella versione 3.0
+//		String idPortaA = null;
+//		if(checkIDPA == false){
+//			
+//			if(pa.getSoggettoVirtuale()!=null){
+//				idPortaA = pa.getSoggettoVirtuale().getTipo()+"/"+pa.getSoggettoVirtuale().getNome();
+//			}
+//			else{
+//				idPortaA = sogg.getTipo()+"/"+sogg.getNome();
+//			}
+//			idPortaA = idPortaA +"_" + pa.getServizio().getTipo()+"/"+pa.getServizio().getNome(); 
+//			if(pa.getAzione()!=null){
+//				idPortaA = idPortaA +"_" +pa.getAzione().getNome();
+//			}
+//			
+//			int cont = 0;
+//			for(int i=0; i<sogg.sizePortaApplicativaList(); i++){
+//				PortaApplicativa tmp = sogg.getPortaApplicativa(i);
+//				String idTMPPA = null;
+//				if(tmp.getSoggettoVirtuale()!=null){
+//					if(tmp.getSoggettoVirtuale().getTipo()==null)
+//						continue; // PA malformata, verra segnalata
+//					if(tmp.getSoggettoVirtuale().getNome()==null)
+//						continue; // PA malformata, verra segnalata
+//					idTMPPA = tmp.getSoggettoVirtuale().getTipo()+"/"+tmp.getSoggettoVirtuale().getNome();
+//				}
+//				else{
+//					idTMPPA = sogg.getTipo()+"/"+sogg.getNome();
+//				}
+//				if(tmp.getServizio()==null)
+//					continue; // PA malformata, verra segnalata
+//				if(tmp.getServizio().getTipo()==null)
+//					continue; // PA malformata, verra segnalata
+//				if(tmp.getServizio().getNome()==null)
+//					continue; // PA malformata, verra segnalata
+//				idTMPPA = idTMPPA +"_" + tmp.getServizio().getTipo()+"/"+tmp.getServizio().getNome(); 
+//				if(tmp.getAzione()!=null){
+//					if(tmp.getAzione().getNome()==null){
+//						continue; // PA malformata, verra segnalata
+//					}
+//					idTMPPA = idTMPPA +"_" +pa.getAzione().getNome();
+//				}
+//				if(idPortaA.equals(idTMPPA)){
+//					cont++;
+//				}
+//			}
+//			
+//			if(cont>1){
+//				if(pa.getSoggettoVirtuale()!=null)
+//					this.errori.add("Non può esistere più di una porta applicativa (con soggetto virtuale) che mappa il servizio: "+idPortaA);
+//				else
+//					this.errori.add("Non può esistere più di una porta applicativa che mappa il servizio: "+idPortaA);
+//			}
+//		}
 		
 		
 		// XSD: ricevuta-asincrona-simmetrica: abilitato, disabilitato

@@ -1,6 +1,6 @@
 package org.openspcoop2.pdd.services.service;
 
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.IntegrationError;
@@ -33,7 +33,7 @@ public class RicezioneBusteServiceUtils {
 		ServiceBinding serviceBinding = requestInfo.getServiceBinding();
 		MessageType requestMessageType = requestInfo.getRequestMessageType();
 						
-		IDPortaApplicativaByNome idPA = null;
+		IDPortaApplicativa idPA = null;
 		try{
 			idPA = serviceIdentificationReader.findPortaApplicativa(protocolContext, true);
 		}catch(RegistryNotFound notFound){
@@ -49,15 +49,20 @@ public class RicezioneBusteServiceUtils {
 			// da ora in avanti, avendo localizzato una PA, se avviene un errore genero l'errore stesso
 			protocolContext.setInterfaceName(idPA.getNome());
 			
-			generatoreErrore.updateDominio(idPA.getSoggetto());
 			IDServizio idServizio = null;
-			try{
-				idServizio = serviceIdentificationReader.convertToIDServizio(idPA);
-			}catch(RegistryNotFound notFound){
-				logCore.debug("Conversione Dati PortaDelegata in identificativo servizio fallita (notFound): "+notFound.getMessage(),notFound);
-				ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore, serviceIdentificationReader.getErroreIntegrazioneNotFound(), 
-						IntegrationError.NOT_FOUND, notFound, null, res, logCore);
-				return false;
+			if(idPA.getIdentificativiErogazione()!=null){
+				idServizio = idPA.getIdentificativiErogazione().getIdServizio();
+			}
+			
+			if(idServizio==null){
+				try{
+					idServizio = serviceIdentificationReader.convertToIDServizio(idPA);
+				}catch(RegistryNotFound notFound){
+					logCore.debug("Conversione Dati PortaDelegata in identificativo servizio fallita (notFound): "+notFound.getMessage(),notFound);
+					ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore, serviceIdentificationReader.getErroreIntegrazioneNotFound(), 
+							IntegrationError.NOT_FOUND, notFound, null, res, logCore);
+					return false;
+				}
 			}
 			if(idServizio!=null){
 				

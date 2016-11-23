@@ -29,12 +29,12 @@ import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class for id-porta-applicativa complex type.
+/** <p>Java class for porta-delegata-servizio-applicativo complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="id-porta-applicativa">
+ * &lt;complexType name="porta-delegata-servizio-applicativo">
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * &lt;/complexType>
  * </pre>
@@ -46,12 +46,12 @@ import java.io.Serializable;
  * */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "id-porta-applicativa")
+@XmlType(name = "porta-delegata-servizio-applicativo")
 
-@XmlRootElement(name = "id-porta-applicativa")
+@XmlRootElement(name = "porta-delegata-servizio-applicativo")
 
-public class IdPortaApplicativa extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  public IdPortaApplicativa() {
+public class PortaDelegataServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
+  public PortaDelegataServizioApplicativo() {
   }
 
   public Long getId() {
@@ -82,21 +82,6 @@ public class IdPortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imp
   private Long id;
 
 
-
-  public IdPortaApplicativa(org.openspcoop2.core.id.IDPortaApplicativa idPortaApplicativa){
-  	if(idPortaApplicativa!=null){
-  		this.nome = idPortaApplicativa.getNome();
-  	}
-  }
-
-  public org.openspcoop2.core.id.IDPortaApplicativa toIDPortaApplicativa() throws org.openspcoop2.core.commons.CoreException{
-  	if(this.nome==null){
-  		throw new org.openspcoop2.core.commons.CoreException("Nome undefined");
-  	}
-  	org.openspcoop2.core.id.IDPortaApplicativa idPA = new org.openspcoop2.core.id.IDPortaApplicativa();
-  	idPA.setNome(this.nome);
-  	return idPA;
-  }
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)

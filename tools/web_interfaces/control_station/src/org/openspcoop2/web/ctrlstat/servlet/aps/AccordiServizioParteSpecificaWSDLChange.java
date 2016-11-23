@@ -50,6 +50,8 @@ import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.protocol.basic.Utilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
@@ -164,6 +166,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 
 			// Prendo Accordo di servizio parte comune
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+			ServiceBinding serviceBinding = Utilities.convert(as.getServiceBinding());
 
 			List<String> versioniProtocollo = null;
 			//String profiloReferente = soggettiCore.getSoggettoRegistro(new IDSoggetto(as.getSoggettoReferente().getTipo(),as.getSoggettoReferente().getNome())).getVersioneProtocollo();
@@ -298,7 +301,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			String[] accordiListLabel = null;
 			// soggetti
 			List<Soggetto> list = soggettiCore.soggettiRegistroList("", new Search(true));
-			List<String> tipiServizi = apsCore.getTipiServiziGestiti();
+			List<String> tipiServizi = apsCore.getTipiServiziGestiti(serviceBinding);
 			if (list.size() > 0) {
 				soggettiList = new String[list.size()];
 				soggettiListLabel = new String[list.size()];

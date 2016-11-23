@@ -106,7 +106,7 @@ public class ImporterUtils {
 			String protocollo = protocolliDaScorrere.get(i);
 			if(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO_UNDEFINDED.equals(protocollo) == false){
 				
-				IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+				IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 				IArchive archiveEngine = pf.createArchive();
 				List<ImportMode> importModesByProtocol = archiveEngine.getImportModes();
 				if(importModesByProtocol.contains(new ImportMode(importMode))){
@@ -191,7 +191,7 @@ public class ImporterUtils {
 			String protocollo = protocolli.get(i);
 			if(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO_UNDEFINDED.equals(protocollo) == false){
 				
-				IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+				IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 				IArchive archiveEngine = pf.createArchive();
 				List<ImportMode> importModesByProtocol = archiveEngine.getImportModes();
 				if(importModesByProtocol.contains(new ImportMode(importMode))){
@@ -225,7 +225,7 @@ public class ImporterUtils {
 			String protocollo = protocolli.get(i);
 			if(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO_UNDEFINDED.equals(protocollo) == false){
 				
-				IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+				IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 				IArchive archiveEngine = pf.createArchive();
 				List<ImportMode> importModesByProtocol = archiveEngine.getImportModes();
 				if(importModesByProtocol.contains(new ImportMode(importMode))){
@@ -258,7 +258,7 @@ public class ImporterUtils {
 		for (int i = 0; i < protocolli.size(); i++) {
 			String protocolName = protocolli.get(i);
 			if(ArchiviCostanti.PARAMETRO_ARCHIVI_PROTOCOLLO_UNDEFINDED.equals(protocolName)==false){
-				IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolName);
+				IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolName);
 				IArchive archiveEngine = pf.createArchive();
 				List<ImportMode> importModesByProtocol = archiveEngine.getImportModes();
 				for (ImportMode imp : importModesByProtocol) {
@@ -274,7 +274,7 @@ public class ImporterUtils {
 
 	public List<ArchiveModeType> getImportModeTypes(ArchiveMode mode,String protocol) throws ProtocolException{
 
-		IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
+		IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
 		IArchive archiveEngine = pf.createArchive();
 		return archiveEngine.getMappingTypesExtensions(mode).getAllTypes();
 
@@ -282,7 +282,7 @@ public class ImporterUtils {
 
 	public List<String> getValidExtensions(ArchiveModeType type,ArchiveMode mode,String protocol) throws ProtocolException{
 
-		IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
+		IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
 		IArchive archiveEngine = pf.createArchive();
 		return archiveEngine.getMappingTypesExtensions(mode).mappingTypeToExts(type);
 

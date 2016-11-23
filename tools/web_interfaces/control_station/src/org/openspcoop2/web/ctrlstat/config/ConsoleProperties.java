@@ -659,10 +659,6 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "menu.mtom.visualizzazioneCompleta");
 	}
 	
-	public Boolean isMenuPortaDelegataVisualizzazioneUrlInvocazione() throws UtilsException{
-		return this.readBooleanProperty(true, "menu.pd.visualizzazioneUrlInvocazione");
-	}
-	
 	public Boolean isMenuConfigurazioneVisualizzazioneDiagnosticaTracciatura() throws UtilsException{
 		String p = "menu.configurazione.visualizzazioneDiagnosticaTracciatura.standard";
 		String tmp = this.readProperty(false, p);

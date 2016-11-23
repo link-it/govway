@@ -201,7 +201,7 @@ public class ArchiviCore extends ControlStationCore {
 					this.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto(), 
 					this.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto());
 			
-			IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
+			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
 			IArchive archiveEngine = pf.createArchive();
 			return archiveEngine.toString(esito, archiveMode);
 						
@@ -230,7 +230,7 @@ public class ArchiviCore extends ControlStationCore {
 			
 			ArchiveEsitoDelete esito = deleterArchiveUtils.deleteArchive(archive, userLogin);
 			
-			IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
+			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
 			IArchive archiveEngine = pf.createArchive();
 			return archiveEngine.toString(esito, archiveMode);
 						
@@ -253,7 +253,7 @@ public class ArchiviCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			RegistryReader reader = new RegistryReader(driver.getDriverRegistroServiziDB(),driver.getDriverConfigurazioneDB());
+			RegistryReader reader = new RegistryReader(driver.getDriverRegistroServiziDB(),driver.getDriverConfigurazioneDB(),ControlStationCore.getLog());
 			
 			ArchiveValidator validator = new ArchiveValidator(reader);
 			validator.validateArchive(archive, protocolloEffettivo, validazioneDocumenti, importInformationMissingCollection, userLogin, 
@@ -276,9 +276,9 @@ public class ArchiviCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			RegistryReader reader = new RegistryReader(driver.getDriverRegistroServiziDB(),driver.getDriverConfigurazioneDB());
+			RegistryReader reader = new RegistryReader(driver.getDriverRegistroServiziDB(),driver.getDriverConfigurazioneDB(),ControlStationCore.getLog());
 			
-			IProtocolFactory pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
+			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
 			IArchive archiveEngine = pf.createArchive();
 			return archiveEngine.importArchive(file, mode, type, reader, validateDocuments, importInformationMissing_globalPlaceholder);
 			

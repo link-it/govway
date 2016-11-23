@@ -47,8 +47,8 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
-import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Soggetto;
@@ -2442,10 +2442,7 @@ public class DriverControlStationDB  {
 	}
 	
 	
-	/**
-	 * Recupera il servizio applicativo tramite l'id
-	 */
-	public ServizioApplicativo getServizioApplicativoWithRuolo(long idServizioApplicativo) throws DriverControlStationException, DriverControlStationNotFound {
+	private void addRuoli(ServizioApplicativo sa) throws DriverControlStationException{
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet risultato = null;
@@ -2467,7 +2464,6 @@ public class DriverControlStationDB  {
 		this.log.debug("operazione this.atomica = " + this.atomica);
 
 		try {
-			ServizioApplicativo sa = this.configDB.getServizioApplicativo(idServizioApplicativo);
 
 			// aggiungo i ruoli a questo servizio applicativo
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -2521,86 +2517,7 @@ public class DriverControlStationDB  {
 			risultato.close();
 			stmt.close();
 
-			return sa;
 		} catch (DriverConfigurazioneException e) {
-			throw new DriverControlStationException(e);
-		} catch (DriverConfigurazioneNotFound e) {
-			throw new DriverControlStationNotFound(e.getMessage(), e);
-		} catch (Exception se) {
-			throw new DriverControlStationException(se);
-		} finally {
-			// Chiudo statement and resultset
-			try {
-				if (risultato != null) {
-					risultato.close();
-				}
-				if (stmt != null) {
-					stmt.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
-		}
-	}
-
-	public ServizioApplicativo getServizioApplicativoWithRuolo(String nomeServizioApplicativo, String nomeProprietario, String tipoProprietario) throws DriverControlStationException, DriverControlStationNotFound {
-		Connection con = null;
-		PreparedStatement stmt = null;
-		ResultSet risultato = null;
-		String queryString = "";
-
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException(e);
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
-
-		this.log.debug("operazione this.atomica = " + this.atomica);
-
-		try {
-			long idProprietario = DBUtils.getIdSoggetto(nomeProprietario, tipoProprietario, con, this.tipoDB, CostantiDB.SOGGETTI);
-			if (idProprietario < 0) {
-				this.log.error("Il soggetto " + tipoProprietario + "/" + nomeProprietario + " non esiste");
-				throw new DriverControlStationException("Il soggetto " + tipoProprietario + "/" + nomeProprietario + " non esiste");
-			}
-			ServizioApplicativo sa = null;
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
-			sqlQueryObject.addSelectField("id");
-			sqlQueryObject.addWhereCondition("nome = ?");
-			sqlQueryObject.addWhereCondition("id_soggetto = ?");
-			sqlQueryObject.setANDLogicOperator(true);
-			queryString = sqlQueryObject.createSQLQuery();
-			stmt = con.prepareStatement(queryString);
-			stmt.setString(1, nomeServizioApplicativo);
-			stmt.setLong(2, idProprietario);
-			risultato = stmt.executeQuery();
-			if (risultato.next()) {
-				sa = this.getServizioApplicativoWithRuolo(risultato.getLong("id"));
-			} else {
-				throw new DriverConfigurazioneNotFound("Nessun Servizio Applicativo trovato con nome " + nomeServizioApplicativo + " appartenente a " + tipoProprietario + "/" + nomeProprietario);
-			}
-			risultato.close();
-			stmt.close();
-
-			return sa;
-		} catch (DriverConfigurazioneNotFound e) {
 			throw new DriverControlStationException(e);
 		} catch (Exception se) {
 			throw new DriverControlStationException(se);
@@ -2627,648 +2544,71 @@ public class DriverControlStationDB  {
 			}
 		}
 	}
-
-	public ServizioApplicativo getServizioApplicativoWithRuolo(IDPortaDelegata idPD, String servizioApplicativo) throws DriverControlStationException, DriverControlStationNotFound {
-		Connection con = null;
-		PreparedStatement stmt = null;
-		ResultSet risultato = null;
-		String sqlQuery = "";
-
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException(e);
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
-
-		this.log.debug("operazione this.atomica = " + this.atomica);
-
+	
+	/**
+	 * Recupera il servizio applicativo tramite l'id
+	 */
+	public ServizioApplicativo getServizioApplicativoWithRuolo(long idServizioApplicativo) throws DriverControlStationException, DriverControlStationNotFound {
 		try {
-			ServizioApplicativo sa = this.configDB.getServizioApplicativo(idPD, servizioApplicativo);
-
-			// aggiungo i ruoli a questo servizio
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
-			sqlQueryObject.addFromTable(CostantiDB.RUOLI_SA);
-			sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI + ".nome", "nomeAccordo");
-			sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI + ".versione", "versioneAccordo");
-			sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI + ".id_referente", "referenteAccordo");
-			sqlQueryObject.addSelectField(CostantiDB.RUOLI_SA + ".servizio_correlato");
-			sqlQueryObject.addWhereCondition(CostantiDB.RUOLI_SA + ".id_servizio_applicativo = ?");
-			sqlQueryObject.addWhereCondition(CostantiDB.RUOLI_SA + ".id_accordo = " + CostantiDB.ACCORDI + ".id");
-			sqlQueryObject.setANDLogicOperator(true);
-			sqlQuery = sqlQueryObject.createSQLQuery();
-			stmt = con.prepareStatement(sqlQuery);
-			stmt.setLong(1, sa.getId());
-			risultato = stmt.executeQuery();
-			while (risultato.next()) {
-				
-				String accordoNome = risultato.getString("nomeAccordo");
-				String accordoVersione = risultato.getString("versioneAccordo");
-				long referenteAccordo = risultato.getLong("referenteAccordo");
-				IDSoggetto soggettoReferente = null;
-				if(referenteAccordo>0){
-					Soggetto s = this.getDriverRegistroServiziDB().getSoggetto(referenteAccordo, con);
-					if(s==null){
-						try {
-							if (risultato != null) {
-								risultato.close(); risultato=null;
-							}
-						} catch (Exception e) {}
-						try {
-							if (stmt != null) {
-								stmt.close(); stmt=null;
-							}
-						} catch (Exception e) {
-							// ignore
-						}
-						throw new Exception("Soggetto referente ["+referenteAccordo+"] non presente?");
-					}
-					soggettoReferente = new IDSoggetto(s.getTipo(),s.getNome());
-				}
-				
-				String nomeRuolo = this.idAccordoFactory.getUriFromValues(accordoNome, soggettoReferente, accordoVersione);
-
-				int isCorrelato = risultato.getInt("servizio_correlato");
-				if (isCorrelato == CostantiDB.TRUE) {
-					nomeRuolo += "Correlato";
-				}
-				sa.addRuolo(nomeRuolo);
-			}
-			risultato.close();
-			stmt.close();
-
-			return sa;
+			ServizioApplicativo sa = this.configDB.getServizioApplicativo(idServizioApplicativo);
+			this.addRuoli(sa);
+			return  sa;
 		} catch (DriverConfigurazioneException e) {
 			throw new DriverControlStationException(e);
 		} catch (DriverConfigurazioneNotFound e) {
 			throw new DriverControlStationException(e);
 		} catch (Exception se) {
 			throw new DriverControlStationException(se);
-		} finally {
-			// Chiudo statement and resultset
-			try {
-				if (risultato != null) {
-					risultato.close();
-				}
-				if (stmt != null) {
-					stmt.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
 		}
 	}
 
-	public ServizioApplicativo getServizioApplicativoWithRuolo(IDPortaApplicativa idPA, String servizioApplicativo) throws DriverControlStationException, DriverControlStationNotFound {
-		Connection con = null;
-		PreparedStatement stmt = null;
-		ResultSet risultato = null;
-		String sqlQuery = "";
 
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException(e);
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
-
-		this.log.debug("operazione this.atomica = " + this.atomica);
-
+	public ServizioApplicativo getServizioApplicativoWithRuolo(IDServizioApplicativo idServizioApplicativo) throws DriverControlStationException, DriverControlStationNotFound {
+		
 		try {
-			ServizioApplicativo sa = this.configDB.getServizioApplicativo(idPA, servizioApplicativo);
-
-			
-			// aggiungo i ruoli a questo servizio
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
-			sqlQueryObject.addFromTable(CostantiDB.RUOLI_SA);
-			sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI + ".nome", "nomeAccordo");
-			sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI + ".versione", "versioneAccordo");
-			sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI + ".id_referente", "referenteAccordo");
-			sqlQueryObject.addSelectField(CostantiDB.RUOLI_SA + ".servizio_correlato");
-			sqlQueryObject.addWhereCondition(CostantiDB.RUOLI_SA + ".id_servizio_applicativo = ?");
-			sqlQueryObject.addWhereCondition(CostantiDB.RUOLI_SA + ".id_accordo = " + CostantiDB.ACCORDI + ".id");
-			sqlQueryObject.setANDLogicOperator(true);
-			sqlQuery = sqlQueryObject.createSQLQuery();
-			stmt = con.prepareStatement(sqlQuery);
-			stmt.setLong(1, sa.getId());
-			risultato = stmt.executeQuery();
-			while (risultato.next()) {
-				
-				String accordoNome = risultato.getString("nomeAccordo");
-				String accordoVersione = risultato.getString("versioneAccordo");
-				long referenteAccordo = risultato.getLong("referenteAccordo");
-				IDSoggetto soggettoReferente = null;
-				if(referenteAccordo>0){
-					Soggetto s = this.getDriverRegistroServiziDB().getSoggetto(referenteAccordo, con);
-					if(s==null){
-						try {
-							if (risultato != null) {
-								risultato.close(); risultato=null;
-							}
-						} catch (Exception e) {}
-						try {
-							if (stmt != null) {
-								stmt.close(); stmt=null;
-							}
-						} catch (Exception e) {
-							// ignore
-						}
-						throw new Exception("Soggetto referente ["+referenteAccordo+"] non presente?");
-					}
-					soggettoReferente = new IDSoggetto(s.getTipo(),s.getNome());
-				}
-				
-				String nomeRuolo = this.idAccordoFactory.getUriFromValues(accordoNome, soggettoReferente, accordoVersione);
-				
-				int isCorrelato = risultato.getInt("servizio_correlato");
-				if (isCorrelato == CostantiDB.TRUE) {
-					nomeRuolo += "Correlato";
-				}
-				sa.addRuolo(nomeRuolo);
-			}
-			risultato.close();
-			stmt.close();
-
-			return sa;
+			ServizioApplicativo sa = this.configDB.getServizioApplicativo(idServizioApplicativo);
+			this.addRuoli(sa);
+			return  sa;
 		} catch (DriverConfigurazioneException e) {
 			throw new DriverControlStationException(e);
 		} catch (DriverConfigurazioneNotFound e) {
 			throw new DriverControlStationException(e);
 		} catch (Exception se) {
 			throw new DriverControlStationException(se);
-		} finally {
-			// Chiudo statement and resultset
-			try {
-				if (risultato != null) {
-					risultato.close();
-				}
-				if (stmt != null) {
-					stmt.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
 		}
+		
 	}
 
-	public ServizioApplicativo getServizioApplicativoAutenticatoWithRuolo(IDPortaDelegata idPD, String user, String password) throws DriverControlStationException, DriverControlStationNotFound {
-		Connection con = null;
-		PreparedStatement stmt = null;
-		ResultSet risultato = null;
-		String sqlQuery = "";
-
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException(e);
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
-
-		this.log.debug("operazione this.atomica = " + this.atomica);
-
+	public ServizioApplicativo getServizioApplicativoWithRuoloByCredenzialiBasic(String user, String password) throws DriverControlStationException, DriverControlStationNotFound {
+		
 		try {
-			ServizioApplicativo sa = this.configDB.getServizioApplicativoAutenticato(idPD, user, password);
-
-			// aggiungo i ruoli a questo servizio
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
-			sqlQueryObject.addFromTable(CostantiDB.RUOLI_SA);
-			sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI + ".nome", "nomeAccordo");
-			sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI + ".versione", "versioneAccordo");
-			sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI + ".id_referente", "referenteAccordo");
-			sqlQueryObject.addSelectField(CostantiDB.RUOLI_SA + ".servizio_correlato");
-			sqlQueryObject.addWhereCondition(CostantiDB.RUOLI_SA + ".id_servizio_applicativo = ?");
-			sqlQueryObject.addWhereCondition(CostantiDB.RUOLI_SA + ".id_accordo = " + CostantiDB.ACCORDI + ".id");
-			sqlQueryObject.setANDLogicOperator(true);
-			sqlQuery = sqlQueryObject.createSQLQuery();
-			stmt = con.prepareStatement(sqlQuery);
-			stmt.setLong(1, sa.getId());
-			risultato = stmt.executeQuery();
-			while (risultato.next()) {
-				
-				String accordoNome = risultato.getString("nomeAccordo");
-				String accordoVersione = risultato.getString("versioneAccordo");
-				long referenteAccordo = risultato.getLong("referenteAccordo");
-				IDSoggetto soggettoReferente = null;
-				if(referenteAccordo>0){
-					Soggetto s = this.getDriverRegistroServiziDB().getSoggetto(referenteAccordo, con);
-					if(s==null){
-						try {
-							if (risultato != null) {
-								risultato.close(); risultato=null;
-							}
-						} catch (Exception e) {}
-						try {
-							if (stmt != null) {
-								stmt.close(); stmt=null;
-							}
-						} catch (Exception e) {
-							// ignore
-						}
-						throw new Exception("Soggetto referente ["+referenteAccordo+"] non presente?");
-					}
-					soggettoReferente = new IDSoggetto(s.getTipo(),s.getNome());
-				}
-				
-				String nomeRuolo = this.idAccordoFactory.getUriFromValues(accordoNome, soggettoReferente, accordoVersione);
-				
-				int isCorrelato = risultato.getInt("servizio_correlato");
-				if (isCorrelato == CostantiDB.TRUE) {
-					nomeRuolo += "Correlato";
-				}
-				sa.addRuolo(nomeRuolo);
-			}
-			risultato.close();
-			stmt.close();
-
-			return sa;
+			ServizioApplicativo sa = this.configDB.getServizioApplicativoByCredenzialiBasic(user, password);
+			this.addRuoli(sa);
+			return  sa;
 		} catch (DriverConfigurazioneException e) {
 			throw new DriverControlStationException(e);
 		} catch (DriverConfigurazioneNotFound e) {
 			throw new DriverControlStationException(e);
 		} catch (Exception se) {
 			throw new DriverControlStationException(se);
-		} finally {
-			// Chiudo statement and resultset
-			try {
-				if (risultato != null) {
-					risultato.close();
-				}
-				if (stmt != null) {
-					stmt.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
+		}	
 
-			} catch (Exception e) {
-				// ignore exception
-			}
-		}
 	}
 
-	public ServizioApplicativo getServizioApplicativoAutenticatoWithRuolo(String user, String password) throws DriverControlStationException, DriverControlStationNotFound {
-		Connection con = null;
-		PreparedStatement stmt = null;
-		ResultSet risultato = null;
-		String sqlQuery = "";
-
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException(e);
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
-
-		this.log.debug("operazione this.atomica = " + this.atomica);
-
+	public ServizioApplicativo getServizioApplicativoWithRuoloByCredenzialiSsl(String subject) throws DriverControlStationException, DriverControlStationNotFound {
+	
 		try {
-			ServizioApplicativo sa = this.configDB.getServizioApplicativoAutenticato(user, password);
-
-			// aggiungo i ruoli a questo servizio
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
-			sqlQueryObject.addFromTable(CostantiDB.RUOLI_SA);
-			sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI + ".nome", "nomeAccordo");
-			sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI + ".versione", "versioneAccordo");
-			sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI + ".id_referente", "referenteAccordo");
-			sqlQueryObject.addSelectField(CostantiDB.RUOLI_SA + ".servizio_correlato");
-			sqlQueryObject.addWhereCondition(CostantiDB.RUOLI_SA + ".id_servizio_applicativo = ?");
-			sqlQueryObject.addWhereCondition(CostantiDB.RUOLI_SA + ".id_accordo = " + CostantiDB.ACCORDI + ".id");
-			sqlQueryObject.setANDLogicOperator(true);
-			sqlQuery = sqlQueryObject.createSQLQuery();
-			stmt = con.prepareStatement(sqlQuery);
-			stmt.setLong(1, sa.getId());
-			risultato = stmt.executeQuery();
-			while (risultato.next()) {
-				
-				String accordoNome = risultato.getString("nomeAccordo");
-				String accordoVersione = risultato.getString("versioneAccordo");
-				long referenteAccordo = risultato.getLong("referenteAccordo");
-				IDSoggetto soggettoReferente = null;
-				if(referenteAccordo>0){
-					Soggetto s = this.getDriverRegistroServiziDB().getSoggetto(referenteAccordo, con);
-					if(s==null){
-						try {
-							if (risultato != null) {
-								risultato.close(); risultato=null;
-							}
-						} catch (Exception e) {}
-						try {
-							if (stmt != null) {
-								stmt.close(); stmt=null;
-							}
-						} catch (Exception e) {
-							// ignore
-						}
-						throw new Exception("Soggetto referente ["+referenteAccordo+"] non presente?");
-					}
-					soggettoReferente = new IDSoggetto(s.getTipo(),s.getNome());
-				}
-				
-				String nomeRuolo = this.idAccordoFactory.getUriFromValues(accordoNome, soggettoReferente, accordoVersione);
-				
-				int isCorrelato = risultato.getInt("servizio_correlato");
-				if (isCorrelato == CostantiDB.TRUE) {
-					nomeRuolo += "Correlato";
-				}
-				sa.addRuolo(nomeRuolo);
-			}
-			risultato.close();
-			stmt.close();
-
-			return sa;
+			ServizioApplicativo sa = this.configDB.getServizioApplicativoByCredenzialiSsl(subject);
+			this.addRuoli(sa);
+			return  sa;
 		} catch (DriverConfigurazioneException e) {
 			throw new DriverControlStationException(e);
 		} catch (DriverConfigurazioneNotFound e) {
 			throw new DriverControlStationException(e);
 		} catch (Exception se) {
 			throw new DriverControlStationException(se);
-		} finally {
-			// Chiudo statement and resultset
-			try {
-				if (risultato != null) {
-					risultato.close();
-				}
-				if (stmt != null) {
-					stmt.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
 		}
-	}
-
-	public ServizioApplicativo getServizioApplicativoAutenticatoWithRuolo(IDPortaDelegata idPD, String subject) throws DriverControlStationException, DriverControlStationNotFound {
-		Connection con = null;
-		PreparedStatement stmt = null;
-		ResultSet risultato = null;
-		String sqlQuery = "";
-
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException(e);
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
-
-		this.log.debug("operazione this.atomica = " + this.atomica);
-
-		try {
-			ServizioApplicativo sa = this.configDB.getServizioApplicativoAutenticato(idPD, subject);
-
-			// aggiungo i ruoli a questo servizio
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
-			sqlQueryObject.addFromTable(CostantiDB.RUOLI_SA);
-			sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI + ".nome", "nomeAccordo");
-			sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI + ".versione", "versioneAccordo");
-			sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI + ".id_referente", "referenteAccordo");
-			sqlQueryObject.addSelectField(CostantiDB.RUOLI_SA + ".servizio_correlato");
-			sqlQueryObject.addWhereCondition(CostantiDB.RUOLI_SA + ".id_servizio_applicativo = ?");
-			sqlQueryObject.addWhereCondition(CostantiDB.RUOLI_SA + ".id_accordo = " + CostantiDB.ACCORDI + ".id");
-			sqlQueryObject.setANDLogicOperator(true);
-			sqlQuery = sqlQueryObject.createSQLQuery();
-			stmt = con.prepareStatement(sqlQuery);
-			stmt.setLong(1, sa.getId());
-			risultato = stmt.executeQuery();
-			while (risultato.next()) {
-				
-				String accordoNome = risultato.getString("nomeAccordo");
-				String accordoVersione = risultato.getString("versioneAccordo");
-				long referenteAccordo = risultato.getLong("referenteAccordo");
-				IDSoggetto soggettoReferente = null;
-				if(referenteAccordo>0){
-					Soggetto s = this.getDriverRegistroServiziDB().getSoggetto(referenteAccordo, con);
-					if(s==null){
-						try {
-							if (risultato != null) {
-								risultato.close(); risultato=null;
-							}
-						} catch (Exception e) {}
-						try {
-							if (stmt != null) {
-								stmt.close(); stmt=null;
-							}
-						} catch (Exception e) {
-							// ignore
-						}
-						throw new Exception("Soggetto referente ["+referenteAccordo+"] non presente?");
-					}
-					soggettoReferente = new IDSoggetto(s.getTipo(),s.getNome());
-				}
-				
-				String nomeRuolo = this.idAccordoFactory.getUriFromValues(accordoNome, soggettoReferente, accordoVersione);
-				
-				int isCorrelato = risultato.getInt("servizio_correlato");
-				if (isCorrelato == CostantiDB.TRUE) {
-					nomeRuolo += "Correlato";
-				}
-				sa.addRuolo(nomeRuolo);
-			}
-			risultato.close();
-			stmt.close();
-
-			return sa;
-		} catch (DriverConfigurazioneException e) {
-			throw new DriverControlStationException(e);
-		} catch (DriverConfigurazioneNotFound e) {
-			throw new DriverControlStationException(e);
-		} catch (Exception se) {
-			throw new DriverControlStationException(se);
-		} finally {
-			// Chiudo statement and resultset
-			try {
-				if (risultato != null) {
-					risultato.close();
-				}
-				if (stmt != null) {
-					stmt.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
-		}
-	}
-
-	public ServizioApplicativo getServizioApplicativoAutenticatoWithRuolo(String subject) throws DriverControlStationException, DriverControlStationNotFound {
-		Connection con = null;
-		PreparedStatement stmt = null;
-		ResultSet risultato = null;
-		String sqlQuery = "";
-
-		if (this.atomica) {
-			try {
-				con = this.datasource.getConnection();
-
-			} catch (SQLException e) {
-				throw new DriverControlStationException(e);
-
-			}
-
-		} else {
-			con = this.globalConnection;
-		}
-
-		this.log.debug("operazione this.atomica = " + this.atomica);
-
-		try {
-			ServizioApplicativo sa = this.configDB.getServizioApplicativoAutenticato(subject);
-
-			// aggiungo i ruoli a questo servizio
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
-			sqlQueryObject.addFromTable(CostantiDB.RUOLI_SA);
-			sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI + ".nome", "nomeAccordo");
-			sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI + ".versione", "versioneAccordo");
-			sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI + ".id_referente", "referenteAccordo");
-			sqlQueryObject.addSelectField(CostantiDB.RUOLI_SA + ".servizio_correlato");
-			sqlQueryObject.addWhereCondition(CostantiDB.RUOLI_SA + ".id_servizio_applicativo = ?");
-			sqlQueryObject.addWhereCondition(CostantiDB.RUOLI_SA + ".id_accordo = " + CostantiDB.ACCORDI + ".id");
-			sqlQueryObject.setANDLogicOperator(true);
-			sqlQuery = sqlQueryObject.createSQLQuery();
-			stmt = con.prepareStatement(sqlQuery);
-			stmt.setLong(1, sa.getId());
-			risultato = stmt.executeQuery();
-			while (risultato.next()) {
-				
-				String accordoNome = risultato.getString("nomeAccordo");
-				String accordoVersione = risultato.getString("versioneAccordo");
-				long referenteAccordo = risultato.getLong("referenteAccordo");
-				IDSoggetto soggettoReferente = null;
-				if(referenteAccordo>0){
-					Soggetto s = this.getDriverRegistroServiziDB().getSoggetto(referenteAccordo, con);
-					if(s==null){
-						try {
-							if (risultato != null) {
-								risultato.close(); risultato=null;
-							}
-						} catch (Exception e) {}
-						try {
-							if (stmt != null) {
-								stmt.close(); stmt=null;
-							}
-						} catch (Exception e) {
-							// ignore
-						}
-						throw new Exception("Soggetto referente ["+referenteAccordo+"] non presente?");
-					}
-					soggettoReferente = new IDSoggetto(s.getTipo(),s.getNome());
-				}
-				
-				String nomeRuolo = this.idAccordoFactory.getUriFromValues(accordoNome, soggettoReferente, accordoVersione);
-				
-				int isCorrelato = risultato.getInt("servizio_correlato");
-				if (isCorrelato == CostantiDB.TRUE) {
-					nomeRuolo += "Correlato";
-				}
-				sa.addRuolo(nomeRuolo);
-			}
-			risultato.close();
-			stmt.close();
-
-			return sa;
-		} catch (DriverConfigurazioneException e) {
-			throw new DriverControlStationException(e);
-		} catch (DriverConfigurazioneNotFound e) {
-			throw new DriverControlStationException(e);
-		} catch (Exception se) {
-			throw new DriverControlStationException(se);
-		} finally {
-			// Chiudo statement and resultset
-			try {
-				if (risultato != null) {
-					risultato.close();
-				}
-				if (stmt != null) {
-					stmt.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
-		}
+		
 	}
 	
 	
@@ -3908,8 +3248,7 @@ public class DriverControlStationDB  {
 				}
 				
 				IDPortaDelegata idPD = new IDPortaDelegata();
-				idPD.setLocationPD(nomePD);
-				idPD.setSoggettoFruitore(new IDSoggetto(sa.getTipoSoggettoProprietario(),sa.getNomeSoggettoProprietario()));
+				idPD.setNome(nomePD);
 				
 				if(this.getDriverConfigurazioneDB().existsPortaDelegata(idPD)){
 					pd.add(this.getDriverConfigurazioneDB().getPortaDelegata(idPD));

@@ -48,6 +48,7 @@ import org.openspcoop2.core.eccezione.details.utils.XMLUtils;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
@@ -342,7 +343,7 @@ public class InoltroBuste extends GenericLib{
 		
 		Integrazione integrazione = new Integrazione();
 		integrazione.setIdModuloInAttesa(richiestaDelegata.getIdModuloInAttesa());
-		integrazione.setLocationPD(richiestaDelegata.getLocationPD());
+		integrazione.setNomePorta(richiestaDelegata.getIdPortaDelegata().getNome());
 		integrazione.setScenario(richiestaDelegata.getScenario());
 		integrazione.setServizioApplicativo(richiestaDelegata.getServizioApplicativo());
 
@@ -360,7 +361,7 @@ public class InoltroBuste extends GenericLib{
 		
 		// Aggiornamento Informazioni messaggio diagnostico
 		msgDiag.setIdMessaggioRichiesta(idMessageRequest);
-		msgDiag.setFruitore(richiestaDelegata.getSoggettoFruitore());
+		msgDiag.setFruitore(richiestaDelegata.getIdSoggettoFruitore());
 		msgDiag.setServizio(richiestaDelegata.getIdServizio());
 
 		ProprietaValidazioneErrori pValidazioneErrori = new ProprietaValidazioneErrori();
@@ -443,7 +444,7 @@ public class InoltroBuste extends GenericLib{
 		
 		try{
 			this.generatoreErrore = new RicezioneContenutiApplicativiInternalErrorGenerator(this.log, this.idModulo, requestInfo);
-			this.generatoreErrore.updateInformazioniCooperazione(richiestaDelegata.getSoggettoFruitore(), richiestaDelegata.getIdServizio());
+			this.generatoreErrore.updateInformazioniCooperazione(richiestaDelegata.getIdSoggettoFruitore(), richiestaDelegata.getIdServizio());
 			this.generatoreErrore.updateInformazioniCooperazione(richiestaDelegata.getServizioApplicativo());
 			if(proprietaErroreAppl!=null){
 				this.generatoreErrore.updateProprietaErroreApplicativo(proprietaErroreAppl);
@@ -478,7 +479,10 @@ public class InoltroBuste extends GenericLib{
 				return esito;
 			}
 			try{
-				sa = configurazionePdDManager.getServizioApplicativo(richiestaDelegata.getIdPortaDelegata(), richiestaDelegata.getServizioApplicativo());
+				IDServizioApplicativo idSA = new IDServizioApplicativo();
+				idSA.setNome(richiestaDelegata.getServizioApplicativo());
+				idSA.setIdSoggettoProprietario(richiestaDelegata.getIdSoggettoFruitore());
+				sa = configurazionePdDManager.getServizioApplicativo(idSA);
 			}catch(Exception e){
 				if( !(e instanceof DriverConfigurazioneNotFound) || 
 						!(CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(richiestaDelegata.getServizioApplicativo())) ){
@@ -577,7 +581,7 @@ public class InoltroBuste extends GenericLib{
 		if(functionAsRouter){
 			try{
 				RicezioneBusteExternalErrorGenerator generatoreErrorePA = new RicezioneBusteExternalErrorGenerator(this.log, this.idModulo, requestInfo);
-				generatoreErrorePA.updateInformazioniCooperazione(richiestaDelegata.getSoggettoFruitore(), richiestaDelegata.getIdServizio());
+				generatoreErrorePA.updateInformazioniCooperazione(richiestaDelegata.getIdSoggettoFruitore(), richiestaDelegata.getIdServizio());
 				generatoreErrorePA.updateTipoPdD(TipoPdD.ROUTER);
 				ejbUtils.setGeneratoreErrorePortaApplicativa(generatoreErrorePA);
 			}catch(Exception e){
@@ -768,7 +772,7 @@ public class InoltroBuste extends GenericLib{
 		// Identita' errore
 		if(functionAsRouter == false){
 			msgDiag.setDelegata(true);
-			msgDiag.setPorta(richiestaDelegata.getLocationPD());
+			msgDiag.setPorta(richiestaDelegata.getIdPortaDelegata().getNome());
 			msgDiag.setServizioApplicativo(richiestaDelegata.getServizioApplicativo());
 		}
 
@@ -815,7 +819,7 @@ public class InoltroBuste extends GenericLib{
 						if(sendRispostaApplicativa){
 							OpenSPCoop2Message responseMessageError = 
 									this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
-											ecc,richiestaDelegata.getSoggettoFruitore(),null);
+											ecc,richiestaDelegata.getIdSoggettoFruitore(),null);
 							ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);	
 						}else{
 							ejbUtils.releaseOutboxMessage(true);
@@ -843,7 +847,7 @@ public class InoltroBuste extends GenericLib{
 
 
 			/* ------------------ Routing --------------- */
-			IDSoggetto soggettoFruitore = richiestaDelegata.getSoggettoFruitore();
+			IDSoggetto soggettoFruitore = richiestaDelegata.getIdSoggettoFruitore();
 			IDServizio idServizio = richiestaDelegata.getIdServizio();
 			IDAccordo idAccordoServizio = richiestaDelegata.getIdAccordo();
 			msgDiag.logPersonalizzato("routingTable.esaminaInCorso");
@@ -1484,7 +1488,7 @@ public class InoltroBuste extends GenericLib{
 						}else{
 							Eccezione ecc = Eccezione.getEccezioneValidazione(ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(msgErrore, codiceErroreCooperazione),protocolFactory);
 							responseMessageError = this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
-									ecc,richiestaDelegata.getSoggettoFruitore(),null);
+									ecc,richiestaDelegata.getIdSoggettoFruitore(),null);
 						}
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
 						esito.setEsitoInvocazione(true);
@@ -3162,7 +3166,7 @@ public class InoltroBuste extends GenericLib{
 						String erroreRilevato = "Riscontrato errore durante la validazione della busta di risposta con id["+idMessageResponse+"]:\n"+errore.toString();
 						if(sendRispostaApplicativa){
 							OpenSPCoop2Message responseMessageError =  
-									this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,ecc,richiestaDelegata.getSoggettoFruitore(),
+									this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,ecc,richiestaDelegata.getIdSoggettoFruitore(),
 												(responseMessage!=null ? responseMessage.getParseException() : null));
 							ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
 							esito.setEsitoInvocazione(true);
@@ -3420,7 +3424,7 @@ public class InoltroBuste extends GenericLib{
 						}
 						Integrazione infoIntegrazione = new Integrazione();
 						infoIntegrazione.setIdModuloInAttesa(richiestaDelegata.getIdModuloInAttesa());
-						infoIntegrazione.setLocationPD(richiestaDelegata.getLocationPD());
+						infoIntegrazione.setNomePorta(richiestaDelegata.getIdPortaDelegata().getNome());
 						infoIntegrazione.setServizioApplicativo(richiestaDelegata.getServizioApplicativo());
 						infoIntegrazione.setScenario(richiestaDelegata.getScenario());
 						repositoryResponse.aggiornaInfoIntegrazione(bustaRisposta.getID(),tipoMsg,infoIntegrazione);

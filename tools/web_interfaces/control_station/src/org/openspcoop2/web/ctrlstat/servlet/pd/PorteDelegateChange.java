@@ -44,8 +44,6 @@ import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
-import org.openspcoop2.core.config.constants.PortaDelegataServizioIdentificazione;
-import org.openspcoop2.core.config.constants.PortaDelegataSoggettoErogatoreIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo;
@@ -60,6 +58,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.IdentificazioneView;
@@ -115,7 +114,6 @@ public final class PorteDelegateChange extends Action {
 			String idsogg = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 			int soggInt = Integer.parseInt(idsogg);
 			String descr = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_DESCRIZIONE);
-			String urlinv = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_URL_DI_INVOCAZIONE);
 			String autenticazione = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE );
 			String nomeauth = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_AUTENTICAZIONE );
 			String autorizzazione = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE);
@@ -158,10 +156,6 @@ public final class PorteDelegateChange extends Action {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteDelegateCore);
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteDelegateCore);
 
-			if(porteDelegateCore.isShowPortaDelegataUrlInvocazione()==false){
-				urlinv = null;
-			}
-			
 			
 			String tmpTitle = null;
 			IDSoggetto ids = null;
@@ -175,10 +169,11 @@ public final class PorteDelegateChange extends Action {
 				ids = new IDSoggetto(soggetto.getTipo(), soggetto.getNome());
 			}
 
+			ServiceBinding serviceBinding = ServiceBinding.SOAP; // TODO
+			
 			// Prendo la porta delegata
 			IDPortaDelegata idpd = new IDPortaDelegata();
-			idpd.setSoggettoFruitore(ids);
-			idpd.setLocationPD(oldNomePD);
+			idpd.setNome(oldNomePD);
 			PortaDelegata pde = porteDelegateCore.getPortaDelegata(idpd);
 
 			// Prendo il numero di correlazioni applicative
@@ -190,7 +185,7 @@ public final class PorteDelegateChange extends Action {
 
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(ids.getTipo());
 			List<String> tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
-			List<String> tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(protocollo);
+			List<String> tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(protocollo,serviceBinding);
 
 
 			// Informazioni sul numero di ServiziApplicativi, Correlazione Applicativa e stato Message-Security
@@ -324,9 +319,6 @@ public final class PorteDelegateChange extends Action {
 						ricasim = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA_ABILITATO; 
 					}
 				}
-				if (urlinv == null && porteDelegateCore.isShowPortaDelegataUrlInvocazione()) {
-					urlinv = pde.getLocation();
-				}
 				if (autenticazione == null) {
 					autenticazione = pde.getAutenticazione();
 					if (autenticazione != null &&
@@ -394,70 +386,16 @@ public final class PorteDelegateChange extends Action {
 				if (modeSoggettoErogatore == null) {
 					PortaDelegataSoggettoErogatore pdsse = pde.getSoggettoErogatore();
 					tipoSoggettoErogatore = pdsse.getTipo();
-					if(pdsse.getIdentificazione()!=null)
-						modeSoggettoErogatore = pdsse.getIdentificazione().toString();
 					nomeSoggettoErogatore = pdsse.getNome();
 					int idSoggettoErogatoreInt = pdsse.getId().intValue();
-					patternErogatore = pdsse.getPattern();
 					idSoggettoErogatore = "" + idSoggettoErogatoreInt;
-					// assegno costante
-					if (modeSoggettoErogatore != null) {
-						switch (PortaDelegataSoggettoErogatoreIdentificazione.toEnumConstant(modeSoggettoErogatore)) {
-						case CONTENT_BASED:
-							modeSoggettoErogatore = IdentificazioneView.CONTENT_BASED.toString();
-							break;
-						case INPUT_BASED:
-							modeSoggettoErogatore = IdentificazioneView.INPUT_BASED.toString();
-							break;
-						case URL_BASED:
-							modeSoggettoErogatore = IdentificazioneView.URL_BASED.toString();
-							break;
-						case STATIC:
-
-							if ( (idSoggettoErogatoreInt == -2) || (idSoggettoErogatoreInt>0) ) {
-								modeSoggettoErogatore = IdentificazioneView.REGISTER_INPUT.toString();
-								idSoggettoErogatore = tipoSoggettoErogatore+"/"+nomeSoggettoErogatore;
-							} else {
-								modeSoggettoErogatore = IdentificazioneView.USER_INPUT.toString();
-							}
-							break;
-						}
-					}
 				}
 				if (modeservizio == null) {
 					PortaDelegataServizio pds = pde.getServizio();
 					tiposervizio = pds.getTipo();
-					if(pds.getIdentificazione()!=null)
-						modeservizio = pds.getIdentificazione().toString();
-					patternServizio = pds.getPattern();
 					servizio = pds.getNome();
 					int servidInt = pds.getId().intValue();
 					servid = "" + servidInt;
-					// assegno costante
-					if (modeservizio != null) {
-						switch (PortaDelegataServizioIdentificazione.toEnumConstant(modeservizio)) {
-						case CONTENT_BASED:
-							modeservizio = IdentificazioneView.CONTENT_BASED.toString();
-							break;
-						case INPUT_BASED:
-							modeservizio = IdentificazioneView.INPUT_BASED.toString();
-							break;
-						case URL_BASED:
-							modeservizio = IdentificazioneView.URL_BASED.toString();
-							break;
-						case STATIC:
-
-							if ( (servidInt == -2) || (servidInt>0) ) {
-								modeservizio = IdentificazioneView.REGISTER_INPUT.toString();
-								servid = tiposervizio+"/"+servizio;
-							} else {
-								modeservizio = IdentificazioneView.USER_INPUT.toString();
-							}
-							break;
-
-						}
-					}
-
 				}
 				if (modeaz == null) {
 					PortaDelegataAzione pda = pde.getAzione();
@@ -484,6 +422,9 @@ public final class PorteDelegateChange extends Action {
 							break;
 						case INPUT_BASED:
 							modeaz = IdentificazioneView.INPUT_BASED.toString();
+							break;
+						case HEADER_BASED:
+							modeaz = IdentificazioneView.HEADER_BASED.toString();
 							break;
 						case URL_BASED:
 							modeaz = IdentificazioneView.URL_BASED.toString();
@@ -713,7 +654,7 @@ public final class PorteDelegateChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteDelegateHelper.addPorteDelegateToDati(TipoOperazione.CHANGE, idsogg, nomePorta, dati,
-						idPorta, descr, urlinv, autenticazione,
+						idPorta, descr, autenticazione,
 						autorizzazione, modeSoggettoErogatore,
 						idSoggettoErogatore, soggettiList, soggettiListLabel,
 						nomeSoggettoErogatore, tipoSoggettoErogatore,
@@ -726,7 +667,7 @@ public final class PorteDelegateChange extends Action {
 						gestManifest,integrazione, nomeauth, nomeautor,autorizzazioneContenuti,
 						idsogg,protocollo,numSA,statoMessageSecurity,statoMessageMTOM,
 						numCorrelazioneReq,numCorrelazioneRes,
-						forceWsdlBased,applicaMTOM,riusoID);
+						forceWsdlBased,applicaMTOM,riusoID,serviceBinding);
 
 				pd.setDati(dati);
 
@@ -901,7 +842,7 @@ public final class PorteDelegateChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteDelegateHelper.addPorteDelegateToDati(TipoOperazione.CHANGE, idsogg, nomePorta, dati,
-						idPorta, descr, urlinv, autenticazione,
+						idPorta, descr, autenticazione,
 						autorizzazione, modeSoggettoErogatore,
 						idSoggettoErogatore, soggettiList, soggettiListLabel,
 						nomeSoggettoErogatore, tipoSoggettoErogatore,
@@ -913,7 +854,7 @@ public final class PorteDelegateChange extends Action {
 						xsd, tipoValidazione, numCorrApp, scadcorr, gestBody,
 						gestManifest,integrazione, nomeauth, nomeautor,autorizzazioneContenuti,
 						idsogg,protocollo,numSA,statoMessageSecurity,statoMessageMTOM,
-						numCorrelazioneReq,numCorrelazioneRes,forceWsdlBased,applicaMTOM,riusoID);
+						numCorrelazioneReq,numCorrelazioneRes,forceWsdlBased,applicaMTOM,riusoID,serviceBinding);
 
 				pd.setDati(dati);
 
@@ -953,12 +894,6 @@ public final class PorteDelegateChange extends Action {
 			portaDelegata.setNome(nomePorta);
 			portaDelegata.setOldNomeForUpdate(oldPD.getNome());
 			portaDelegata.setDescrizione(descr);
-			if(porteDelegateCore.isShowPortaDelegataUrlInvocazione()==false){
-				portaDelegata.setLocation(nomePorta);
-			}
-			else if(urlinv!=null && !"".equals(urlinv)){
-				portaDelegata.setLocation(urlinv);
-			}
 			if (autenticazione == null || !autenticazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE_CUSTOM))
 				portaDelegata.setAutenticazione(autenticazione);
 			else
@@ -997,8 +932,6 @@ public final class PorteDelegateChange extends Action {
 			}
 			pdSogg.setNome(nomeSoggettoErogatore);
 			pdSogg.setTipo(tipoSoggettoErogatore);
-			pdSogg.setIdentificazione(IdentificazioneView.view2db_soggettoErogatore(modeSoggettoErogatore));
-			pdSogg.setPattern(nomeSoggettoErogatore);
 
 			portaDelegata.setSoggettoErogatore(pdSogg);
 
@@ -1018,8 +951,6 @@ public final class PorteDelegateChange extends Action {
 			}
 			pdServizio.setNome(servizio);
 			pdServizio.setTipo(tiposervizio);
-			pdServizio.setIdentificazione(IdentificazioneView.view2db_servizio(modeservizio));
-			pdServizio.setPattern(servizio);
 
 			portaDelegata.setServizio(pdServizio);
 
@@ -1077,7 +1008,7 @@ public final class PorteDelegateChange extends Action {
 					}
 				}
 				pdAzione.setNome(azione);
-				pdAzione.setIdentificazione(IdentificazioneView.view2db_azione(modeaz));
+				pdAzione.setIdentificazione(IdentificazioneView.view2db_azione_portaDelegata(modeaz));
 				pdAzione.setPattern(azione);
 
 				//FORCE WSDL BASED
@@ -1105,9 +1036,6 @@ public final class PorteDelegateChange extends Action {
 			portaDelegata.setIdSoggetto(soggettoCS.getId());
 			portaDelegata.setTipoSoggettoProprietario(soggettoCS.getTipo());
 			portaDelegata.setNomeSoggettoProprietario(soggettoCS.getNome());
-			portaDelegata.setOldNomeSoggettoProprietarioForUpdate(oldPD.getNomeSoggettoProprietario());
-			portaDelegata.setOldTipoSoggettoProprietarioForUpdate(oldPD.getTipoSoggettoProprietario());
-
 			// servizi applicativi
 			// portaDelegata.setServizioApplicativoList(oldPD.getServizioApplicativoList());
 

@@ -35,17 +35,17 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.id.IDPortaDelegata;
-import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.dao.PoliticheSicurezza;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -180,14 +180,12 @@ public final class AccordiServizioParteSpecificaServizioApplicativoDel extends A
 					// la variabile idErogatore in questo caso contiene l'id
 					// del soggetto Fruitore nel caso delle portadelegata
 					String idporta = tipoSoggFruitoreServ + nomeSoggFruitoreServ + "/" + tipoSoggettoErogatore + nomeSoggettoErogatore + "/" + tipoServizio + nomeServizio;
-					IDSoggetto ids = new IDSoggetto(tipoSoggFruitoreServ, nomeSoggFruitoreServ);
 					IDPortaDelegata idpd = new IDPortaDelegata();
-					idpd.setSoggettoFruitore(ids);
-					idpd.setLocationPD(idporta);
+					idpd.setNome(idporta);
 					if (porteDelegateCore.existsPortaDelegata(idpd)) {
 						PortaDelegata pde = porteDelegateCore.getPortaDelegata(idpd);
 						for (int j = 0; j < pde.sizeServizioApplicativoList(); j++) {
-							ServizioApplicativo sa = pde.getServizioApplicativo(j);
+							PortaDelegataServizioApplicativo sa = pde.getServizioApplicativo(j);
 							if (servizioApplicativo.equals(sa.getNome())) {
 								pde.removeServizioApplicativo(j);
 								break;

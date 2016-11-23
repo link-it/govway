@@ -69,7 +69,7 @@
 			<xsd:element maxOccurs="1" minOccurs="1" name="soggetto-erogatore" type="porta-delegata-soggetto-erogatore"/>
 			<xsd:element maxOccurs="1" minOccurs="1" name="servizio" type="porta-delegata-servizio"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="azione" type="porta-delegata-azione"/>
-			<xsd:element maxOccurs="unbounded" minOccurs="0" ref="servizio-applicativo"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="servizio-applicativo" type="porta-delegata-servizio-applicativo"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="mtom-processor" type="mtom-processor"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="message-security" type="message-security">
 				
@@ -98,9 +98,6 @@
 		<!-- end-extensions -->
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
-		<xsd:attribute name="location" type="xsd:string">
-			
-		</xsd:attribute>
 		<xsd:attribute default="ssl" name="autenticazione" type="xsd:string">
 			
 		</xsd:attribute>
@@ -149,6 +146,10 @@
 			
 		</xsd:attribute>
 	</xsd:complexType>
+	<!-- PortaDelegata.ServizioApplicativo -->
+	<xsd:complexType name="porta-delegata-servizio-applicativo">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
 
 
 	<!-- ** PortaApplicativa ** -->
@@ -160,7 +161,7 @@
 			<xsd:element maxOccurs="1" minOccurs="1" name="servizio" type="porta-applicativa-servizio"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="azione" type="porta-applicativa-azione"/>
 			<!-- Modificato in minOccurs=0 per gestire la possibile configurazione incrementale via WS -->
-			<xsd:element maxOccurs="unbounded" minOccurs="0" ref="servizio-applicativo"/>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="servizio-applicativo" type="porta-applicativa-servizio-applicativo"/>
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="proprieta-protocollo" type="proprieta-protocollo"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="mtom-processor" type="mtom-processor"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="message-security" type="message-security">
@@ -190,9 +191,6 @@
 		<!-- end-extensions -->
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
-		<xsd:attribute name="location" type="xsd:string">
-			
-		</xsd:attribute>
 		<xsd:attribute default="abilitato" name="ricevuta-asincrona-simmetrica" type="StatoFunzionalita">
 			
 		</xsd:attribute>
@@ -232,6 +230,10 @@
 		<xsd:attribute default="disabilitato" name="force-wsdl-based" type="StatoFunzionalita">
 			
 		</xsd:attribute>
+	</xsd:complexType>
+	<!-- PortaApplicativa.ServizioApplicativo -->
+	<xsd:complexType name="porta-applicativa-servizio-applicativo">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 
 
@@ -948,15 +950,9 @@
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 	<xsd:complexType name="id-porta-delegata">
-		<xsd:sequence>
-			<xsd:element name="id-soggetto" type="id-soggetto"/>
-		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 	<xsd:complexType name="id-porta-applicativa">
-		<xsd:sequence>
-			<xsd:element name="id-soggetto" type="id-soggetto"/>
-		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 	<xsd:complexType name="id-servizio-applicativo">

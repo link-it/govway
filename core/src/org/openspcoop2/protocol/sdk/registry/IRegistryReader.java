@@ -27,7 +27,7 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -36,6 +36,7 @@ import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 
 /**
  * IRegistryReader
@@ -66,11 +67,7 @@ public interface IRegistryReader {
 	public String getDominio(IDSoggetto idSoggetto) throws RegistryNotFound;
 	
 	public Soggetto getSoggetto(IDSoggetto idSoggetto) throws RegistryNotFound;
-	
-	public IDSoggetto getIdSoggettoProprietarioPortaDelegata(String location) throws RegistryNotFound;
-	
-	public IDSoggetto getIdSoggettoProprietarioPortaApplicativa(String location) throws RegistryNotFound;
-	
+		
 	
 	// ACCORDI PARTE COMUNE
 	
@@ -108,14 +105,16 @@ public interface IRegistryReader {
 	
 	// PORTA DELEGATA
 	
+	public IDPortaDelegata getIdPortaDelegata(String nome, IProtocolFactory<?> protocolFactory) throws RegistryNotFound;
 	public boolean existsPortaDelegata(IDPortaDelegata idPortaDelegata); 
 	public PortaDelegata getPortaDelegata(IDPortaDelegata idPortaDelegata) throws RegistryNotFound; 
 	
 	
 	// PORTA APPLICATIVA
 	
-	public boolean existsPortaApplicativa(IDPortaApplicativaByNome idPortaApplicativa); 
-	public PortaApplicativa getPortaApplicativa(IDPortaApplicativaByNome idPortaApplicativa) throws RegistryNotFound; 
+	public IDPortaApplicativa getIdPortaApplicativa(String nome, IProtocolFactory<?> protocolFactory) throws RegistryNotFound;
+	public boolean existsPortaApplicativa(IDPortaApplicativa idPortaApplicativa); 
+	public PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPortaApplicativa) throws RegistryNotFound; 
 	
 	
 }
