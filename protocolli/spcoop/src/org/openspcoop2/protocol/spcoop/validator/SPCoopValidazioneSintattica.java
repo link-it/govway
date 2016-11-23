@@ -3618,12 +3618,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 		return validazioneCodiceEccezione(codice);
 	}
 
-	/**
-	 * Metodo che si occupa di validare il Fault presente in un Messaggio SPCoop Errore.
-	 *
-	 * @param body SOAPBody contenente il SOAPFault.
-	 * 
-	 */
+
 	public void validazioneFaultEGov(OpenSPCoop2Message msg){
 
 		try{
@@ -3727,12 +3722,6 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 
 
 
-	/**
-	 * Metodo che si occupa di validare il Manifest di un SoapBody.
-	 *
-	 * @param msg SOAPMessage contenente il Manifest.
-	 * 
-	 */
 	public void validazioneManifestAttachmentsEGov(OpenSPCoop2Message msgParam,ProprietaManifestAttachments proprietaManifestAttachments){
 		//log.info("VALIDAZIONE MANIFEST");
 		SOAPBody soapBody = null;

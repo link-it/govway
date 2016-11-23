@@ -779,19 +779,6 @@ public class SPCoopImbustamento {
 
 
 
-
-	/**
-	 * Metodo che si occupa di costruire un Manifest per gli Attachments 
-	 * definito nella specifica eGov 
-	 * 'http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/'.
-	 * <p>
-	 * Gli attachments da linkare, all'interno del Manifesto sono prelevati
-	 * dall'oggetto <var>msg</var>.
-	 *
-	 * @param msg Messaggio su cui creare il manifesto
-	 * @param isRichiesta Tipo di Busta
-	 * 
-	 */
 	public OpenSPCoop2Message build_eGovManifest(OpenSPCoop2Message msg,RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{ 
 		try{
@@ -949,26 +936,12 @@ public class SPCoopImbustamento {
 		}   
 	}
 
-	/**
-	 * Effettua l'imbustamento eGov
-	 *  
-	 * @param msg Messaggio in cui deve essere aggiunto un header eGov.
-	 * @param busta BustaEGov che contiene i dati necessari per la creazione dell'header
-	 * 
-	 */
+
 	public void imbustamentoEGov(OpenSPCoop2Message msg,Busta busta,ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{	
 		this.imbustamentoEGov(msg, busta, RuoloMessaggio.RISPOSTA, proprietaManifestAttachments);
 	}
 
 
-	/**
-	 * Effettua l'imbustamento eGov
-	 *  
-	 * @param msg Messaggio in cui deve essere aggiunto un header eGov.
-	 * @param busta BustaEGov che contiene i dati necessari per la creazione dell'header
-	 * @param isRichiesta Tipo di Busta
-	 * 
-	 */
 	public SOAPHeaderElement imbustamentoEGov(OpenSPCoop2Message msg,Busta busta,
 			RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{	
@@ -986,14 +959,6 @@ public class SPCoopImbustamento {
 		}
 	}
 
-	/**
-	 * Effettua l'imbustamento eGov
-	 *  
-	 * @param msg Messaggio in cui deve essere aggiunto un header eGov.
-	 * @param headerEGovElement BustaEGov che contiene i dati necessari per la creazione dell'header
-	 * @param isRichiesta Tipo di Busta
-	 * 
-	 */
 	public SOAPHeaderElement imbustamentoEGov(OpenSPCoop2Message msg, SOAPHeaderElement headerEGovElement,
 			RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{	

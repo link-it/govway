@@ -133,14 +133,6 @@ public class SPCoopSbustamento {
 	}
 
 
-	 /**
-	 * Metodo che si occupa di rimuovere un Manifest per gli Attachments 
-	 * definito nella specifica eGov 
-	 * 'http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/'.
-	 *
-	 * @param msg Messaggio su cui creare il manifesto
-	 * 
-	 */
 	public OpenSPCoop2Message remove_eGovManifest(OpenSPCoop2Message msgParam,ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{ 
 		try{
 			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
