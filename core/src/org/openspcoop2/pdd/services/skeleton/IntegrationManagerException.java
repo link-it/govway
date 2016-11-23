@@ -283,4 +283,35 @@ public class IntegrationManagerException extends Exception implements java.io.Se
 	protected ProprietaErroreApplicativo getProprietaErroreApplicativo(){
 		return this.proprietaErroreAppl;
 	}
+	
+
+	// I seguenti transient method servono per evitare il warning:
+	// WARN  JAXBSchemaInitializer:595 - propOrder in @XmlType doesn't define all schema elements :
+	// [codiceEccezione, descrizioneEccezione, identificativoFunzione, identificativoPorta, oraRegistrazione, tipoEccezione]
+	
+	@Override
+	@XmlTransient
+	public StackTraceElement[] getStackTrace() {
+		return super.getStackTrace();
+	}
+	
+	@Override
+	@XmlTransient
+	public String getMessage() {
+		return super.getMessage();
+	}
+	
+	@Override
+	@XmlTransient
+	public String getLocalizedMessage() {
+		return super.getLocalizedMessage();
+	}
+	
+	@Override
+	@XmlTransient
+	public Throwable getCause() {
+		return super.getCause();
+    }
+	
+
 }
