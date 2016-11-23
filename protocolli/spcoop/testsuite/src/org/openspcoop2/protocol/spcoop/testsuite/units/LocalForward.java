@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.axis.AxisFault;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
@@ -46,8 +46,8 @@ import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.clients.ClientOneWay;
 import org.openspcoop2.testsuite.clients.ClientSincrono;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
-import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
@@ -80,7 +80,7 @@ public class LocalForward {
 			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
 			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
 	private CooperazioneBase collaborazioneSPCoopBase = 
-			new CooperazioneBase(false,SOAPVersion.SOAP11,  this.info, 
+			new CooperazioneBase(false,MessageType.SOAP_11,  this.info, 
 					org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
 					DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 

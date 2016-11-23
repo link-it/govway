@@ -565,17 +565,13 @@ public class ErroreApplicativoBuilder implements org.openspcoop2.protocol.sdk.bu
 				case XML:
 				
 					byte[] bytes = this._buildErroreApplicativo_ByteArray(TipoErroreApplicativo.XML, eccezioneProtocollo, eccezioneIntegrazione);
-					OpenSPCoop2MessageParseResult pr = this.msgFactory.createMessage(messageType, MessageRole.FAULT, HttpConstants.CONTENT_TYPE_XML, 
-							new ByteArrayInputStream(bytes), null, 
-							false, null, null);
+					OpenSPCoop2MessageParseResult pr = this.msgFactory.createMessage(messageType, MessageRole.FAULT, HttpConstants.CONTENT_TYPE_XML, bytes);
 					return pr.getMessage_throwParseException();
 
 				case JSON:
 				
 					bytes = this._buildErroreApplicativo_ByteArray(TipoErroreApplicativo.JSON, eccezioneProtocollo, eccezioneIntegrazione);
-					pr = this.msgFactory.createMessage(messageType, MessageRole.FAULT, HttpConstants.CONTENT_TYPE_JSON, 
-							new ByteArrayInputStream(bytes), null, 
-							false, null, null);
+					pr = this.msgFactory.createMessage(messageType, MessageRole.FAULT, HttpConstants.CONTENT_TYPE_JSON, bytes);
 					return pr.getMessage_throwParseException();
 
 				default:

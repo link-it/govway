@@ -37,9 +37,8 @@ import javax.xml.soap.SOAPMessage;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
-import org.openspcoop2.message.soap.SoapUtils;
-import org.openspcoop2.message.soap.SoapUtilsBuildParameter;
-import org.openspcoop2.pdd.services.ServicesUtils;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.validator.ValidazioneSintattica;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -102,13 +101,13 @@ public class ServerCongelamentoBuste extends ServerCore{
 				secondiSleep = intSecondi.intValue();
 			}
 			
-			SoapUtilsBuildParameter param = new SoapUtilsBuildParameter(bout.toByteArray(), false,false,null,null);
-			OpenSPCoop2MessageParseResult pr = SoapUtils.build(param,null);
+			
+			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11, MessageRole.REQUEST, 
+					request.getContentType(), bout.toByteArray());
 			OpenSPCoop2Message msg = pr.getMessage_throwParseException();
-			msg.setProperty("SOAPAction", ServicesUtils.getSoapAction(request,msg.getVersioneSoap(),msg.getContentType()));
-			msg.getMimeHeaders().addHeader(org.openspcoop2.message.constants.Costanti.SOAP_ACTION,  ServicesUtils.getSoapAction(request,msg.getVersioneSoap(),msg.getContentType()));
+			msg.castAsSoap().setSoapAction("TestSuite");
 			// ??? Serve ancora ??? Configurazione.init(checkInterval, gestoreRepositoryBuste, sqlQueryObject, this.log);
-			IProtocolFactory pf = ProtocolFactoryManager.getInstance().getDefaultProtocolFactory();
+			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getDefaultProtocolFactory();
 			ValidazioneSintattica validator = new ValidazioneSintattica(null,msg,pf);
 			boolean bustaCorretta = validator.valida();
 			if(!bustaCorretta)
@@ -131,7 +130,7 @@ public class ServerCongelamentoBuste extends ServerCore{
 			SOAPConnection connection = OpenSPCoop2MessageFactory.getMessageFactory().getSOAPConnectionFactory().createConnection();
 			javax.xml.messaging.URLEndpoint urlConnection = new  javax.xml.messaging.URLEndpoint(urlForward);
 			SOAPMessage responseMsgSoap = (SOAPMessage) connection.call((SOAPMessage)msg,urlConnection);
-			OpenSPCoop2Message responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(msg.getVersioneSoap(),responseMsgSoap);
+			OpenSPCoop2Message responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(msg.getMessageType(),MessageRole.RESPONSE,responseMsgSoap);
 
 			if(responseMsg!=null){
 				ByteArrayOutputStream boutResponse=new ByteArrayOutputStream();

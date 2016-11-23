@@ -24,7 +24,6 @@
 
 package org.openspcoop2.pdd.core;
 
-import java.io.ByteArrayInputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -2791,17 +2790,13 @@ public class EJBUtils {
 			case JSON:
 				
 				byte[] bytes = EsitoRichiestaXMLUtils.generateEsitoRichiestaAsJson(esito).getBytes();
-				OpenSPCoop2MessageParseResult pr = mf.createMessage(messageType, MessageRole.RESPONSE, HttpConstants.CONTENT_TYPE_JSON, 
-						new ByteArrayInputStream(bytes), null, 
-						false, null, null);
+				OpenSPCoop2MessageParseResult pr = mf.createMessage(messageType, MessageRole.RESPONSE, HttpConstants.CONTENT_TYPE_JSON, bytes);
 				return pr.getMessage_throwParseException();
 				
 			default:
 				
 				bytes = EsitoRichiestaXMLUtils.generateEsitoRichiesta(esito);
-				pr = mf.createMessage(MessageType.XML, MessageRole.RESPONSE, HttpConstants.CONTENT_TYPE_XML, 
-						new ByteArrayInputStream(bytes), null, 
-						false, null, null);
+				pr = mf.createMessage(MessageType.XML, MessageRole.RESPONSE, HttpConstants.CONTENT_TYPE_XML, bytes);
 				return pr.getMessage_throwParseException();
 				
 			}

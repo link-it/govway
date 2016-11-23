@@ -53,8 +53,7 @@ import org.apache.axis.soap.MessageFactoryImpl;
 import org.apache.axis.soap.SOAPFactoryImpl;
 import org.openspcoop2.message.OpenSPCoop2DataContentHandler;
 import org.openspcoop2.message.OpenSPCoop2DataContentHandlerInputStream;
-import org.openspcoop2.message.SOAPVersion;
-import org.openspcoop2.message.attachments.AttachmentsUtils;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.w3c.dom.NamedNodeMap;
@@ -859,21 +858,22 @@ public class Axis14SoapUtils {
 	 * 
 	 */
 	public static org.apache.axis.Message build(byte[] byteMsg,boolean isBodyStream) throws UtilsException{
-		return Axis14SoapUtils.build(SOAPVersion.SOAP11,byteMsg,isBodyStream,false,true);
+		return Axis14SoapUtils.build(MessageType.SOAP_11,byteMsg,isBodyStream,false,true);
 	}
-	public static org.apache.axis.Message build(SOAPVersion soapVersion,byte[] byteMsg,boolean isBodyStream) throws UtilsException{
-		return Axis14SoapUtils.build(soapVersion,byteMsg,isBodyStream,false,true);
+	public static org.apache.axis.Message build(MessageType messageType,byte[] byteMsg,boolean isBodyStream) throws UtilsException{
+		return Axis14SoapUtils.build(messageType,byteMsg,isBodyStream,false,true);
 	}
 	public static org.apache.axis.Message build(byte[] byteMsg,boolean isBodyStream,boolean eraserXMLTag) throws UtilsException{
-		return Axis14SoapUtils.build(SOAPVersion.SOAP11,byteMsg,isBodyStream,eraserXMLTag,true);
+		return Axis14SoapUtils.build(MessageType.SOAP_11,byteMsg,isBodyStream,eraserXMLTag,true);
 	}
-	public static org.apache.axis.Message build(SOAPVersion soapVersion,byte[] byteMsg,boolean isBodyStream,boolean eraserXMLTag) throws UtilsException{
-		return Axis14SoapUtils.build(soapVersion,byteMsg,isBodyStream,eraserXMLTag,true);
+	public static org.apache.axis.Message build(MessageType messageType,byte[] byteMsg,boolean isBodyStream,boolean eraserXMLTag) throws UtilsException{
+		return Axis14SoapUtils.build(messageType,byteMsg,isBodyStream,eraserXMLTag,true);
 	}
 	public static org.apache.axis.Message build(byte[] byteMsg,boolean isBodyStream,boolean eraserXMLTag,boolean checkEmptyBody) throws UtilsException{
-		return Axis14SoapUtils.build(SOAPVersion.SOAP11,byteMsg,isBodyStream,eraserXMLTag,checkEmptyBody);
+		return Axis14SoapUtils.build(MessageType.SOAP_11,byteMsg,isBodyStream,eraserXMLTag,checkEmptyBody);
 	}
-	public static org.apache.axis.Message build(SOAPVersion soapVersion, byte[] byteMsg,boolean isBodyStream,boolean eraserXMLTag,boolean checkEmptyBody) throws UtilsException{
+	@SuppressWarnings("incomplete-switch")
+	public static org.apache.axis.Message build(MessageType messageType, byte[] byteMsg,boolean isBodyStream,boolean eraserXMLTag,boolean checkEmptyBody) throws UtilsException{
 
 		try{
 			
@@ -883,16 +883,16 @@ public class Axis14SoapUtils {
 			int offset = 0;
 			
 			String contentType = SOAPConstants.SOAP_1_1_CONTENT_TYPE;
-			if(SOAPVersion.SOAP12.equals(soapVersion)){
+			if(MessageType.SOAP_12.equals(messageType)){
 				contentType = SOAPConstants.SOAP_1_2_CONTENT_TYPE;
 			}
 			String IDfirst  = null;
 			//BNCL TEST: String contentType = "application/xml";
-			if(AttachmentsUtils.messageWithAttachment(byteMsg)){
+			if(org.openspcoop2.utils.mime.MultipartUtils.messageWithAttachment(byteMsg)){
 				// con attachments
 				
-				IDfirst  = AttachmentsUtils.firstContentID(byteMsg);
-				String boundary = AttachmentsUtils.findBoundary(byteMsg);
+				IDfirst  = org.openspcoop2.utils.mime.MultipartUtils.firstContentID(byteMsg);
+				String boundary = org.openspcoop2.utils.mime.MultipartUtils.findBoundary(byteMsg);
 				//if(IDfirst==null){
 					//SoapUtils.log.warn("Errore avvenuto durante la lettura del punto di start del multipart message.");
 					// Dalla specifica, l'IDFirst e' opzionale.
@@ -902,14 +902,14 @@ public class Axis14SoapUtils {
 					throw new Exception("Errore avvenuto durante la lettura del boundary associato al multipart message.");
 				}
 
-				switch (soapVersion) {
-				case SOAP11:
+				switch (messageType) {
+				case SOAP_11:
 					if(IDfirst==null)
 						contentType = "multipart/related; type=\""+SOAPConstants.SOAP_1_1_CONTENT_TYPE+"\"; \tboundary=\""+boundary.substring(2,boundary.length())+"\" "; 
 					else
 						contentType = "multipart/related; type=\""+SOAPConstants.SOAP_1_1_CONTENT_TYPE+"\"; start=\""+IDfirst+"\"; \tboundary=\""+boundary.substring(2,boundary.length())+"\" "; 
 					break;
-				case SOAP12:
+				case SOAP_12:
 					if(IDfirst==null)
 						contentType = "multipart/related; type=\""+SOAPConstants.SOAP_1_2_CONTENT_TYPE+"\"; \tboundary=\""+boundary.substring(2,boundary.length())+"\" "; 
 					else

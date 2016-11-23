@@ -23,7 +23,6 @@
 
 package org.openspcoop2.protocol.engine.builder;
 
-import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -441,9 +440,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 						throw new Exception("Dettaglio eccezione non fornita");
 					}
 					byte [] xml = org.openspcoop2.core.eccezione.details.utils.XMLUtils.generateDettaglioEccezione(dettaglioEccezione);
-					OpenSPCoop2MessageParseResult pr = mf.createMessage(messageType, MessageRole.FAULT, MessageUtilities.getDefaultContentType(messageType), 
-								new ByteArrayInputStream(xml), null, 
-								false, null, null);
+					OpenSPCoop2MessageParseResult pr = mf.createMessage(messageType, MessageRole.FAULT, MessageUtilities.getDefaultContentType(messageType), xml);
 					return pr.getMessage_throwParseException();
 
 				case JSON:
@@ -451,9 +448,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 						throw new Exception("Dettaglio eccezione non fornita");
 					}
 					byte [] json = org.openspcoop2.core.eccezione.details.utils.XMLUtils.generateDettaglioEccezioneAsJson(dettaglioEccezione).getBytes();
-					pr = mf.createMessage(messageType, MessageRole.FAULT, HttpConstants.CONTENT_TYPE_JSON, 
-							new ByteArrayInputStream(json), null, 
-							false, null, null);
+					pr = mf.createMessage(messageType, MessageRole.FAULT, HttpConstants.CONTENT_TYPE_JSON, json);
 					return pr.getMessage_throwParseException();
 
 				default:

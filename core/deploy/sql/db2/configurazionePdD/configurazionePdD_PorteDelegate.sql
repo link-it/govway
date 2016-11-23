@@ -4,8 +4,6 @@ CREATE TABLE porte_delegate
 (
 	nome_porta VARCHAR(255) NOT NULL,
 	descrizione VARCHAR(255),
-	-- la location sovrascrive il nome di una porta delegata, nella sua url di invocazione
-	location VARCHAR(255),
 	-- * Soggetto Erogatore *
 	-- tipo/nome per le modalita static
 	-- tipo/pattern per la modalita contentBased/urlBased
@@ -13,8 +11,6 @@ CREATE TABLE porte_delegate
 	id_soggetto_erogatore BIGINT,
 	tipo_soggetto_erogatore VARCHAR(255),
 	nome_soggetto_erogatore VARCHAR(255),
-	mode_soggetto_erogatore VARCHAR(255),
-	pattern_soggetto_erogatore VARCHAR(255),
 	-- * Servizio *
 	-- tipo/nome per le modalita static
 	-- tipo/pattern per la modalita contentBased/urlBased
@@ -22,8 +18,6 @@ CREATE TABLE porte_delegate
 	id_servizio BIGINT,
 	tipo_servizio VARCHAR(255),
 	nome_servizio VARCHAR(255),
-	mode_servizio VARCHAR(255),
-	pattern_servizio VARCHAR(255),
 	id_accordo BIGINT,
 	id_port_type BIGINT,
 	-- * Azione *
@@ -80,14 +74,14 @@ CREATE TABLE porte_delegate
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
 	-- unique constraints
-	CONSTRAINT unique_porte_delegate_1 UNIQUE (id_soggetto,nome_porta),
+	CONSTRAINT unique_porte_delegate_1 UNIQUE (nome_porta),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_porte_delegate_1 FOREIGN KEY (id_soggetto) REFERENCES soggetti(id),
 	CONSTRAINT pk_porte_delegate PRIMARY KEY (id)
 );
 
 -- index
-CREATE UNIQUE INDEX index_porte_delegate_1 ON porte_delegate (id_soggetto,nome_porta);
+CREATE UNIQUE INDEX index_porte_delegate_1 ON porte_delegate (nome_porta);
 
 
 

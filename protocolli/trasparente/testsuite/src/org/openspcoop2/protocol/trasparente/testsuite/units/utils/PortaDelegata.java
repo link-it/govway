@@ -23,7 +23,7 @@
 
 package org.openspcoop2.protocol.trasparente.testsuite.units.utils;
 
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.trasparente.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
@@ -55,16 +55,16 @@ public class PortaDelegata extends Porta {
 		this.portaDelegataSincronoLocalForward = portaDelegataSincronoLocalForward;
 	}
 	
-	public PortaDelegata(SOAPVersion soapVersion, boolean attachments, boolean stateful) {
-		super(soapVersion, attachments, stateful, true, CostantiTestSuite.PROXY_SOGGETTO_FRUITORE, CostantiTestSuite.PROXY_SOGGETTO_FRUITORE, 
-				SOAPVersion.SOAP11.equals(soapVersion) ? CostantiTestSuite.PROXY_SOGGETTO_FRUITORE_FAULT11500: CostantiTestSuite.PROXY_SOGGETTO_FRUITORE_FAULT12500, 
-						SOAPVersion.SOAP11.equals(soapVersion) ? CostantiTestSuite.PROXY_SOGGETTO_FRUITORE_FAULT11200 : CostantiTestSuite.PROXY_SOGGETTO_FRUITORE_FAULT12200, CostantiTestSuite.PROXY_SOGGETTO_EROGATORE_ESTERNO);
+	public PortaDelegata(MessageType messageType, boolean attachments, boolean stateful) {
+		super(messageType, attachments, stateful, true, CostantiTestSuite.PROXY_SOGGETTO_FRUITORE, CostantiTestSuite.PROXY_SOGGETTO_FRUITORE, 
+				MessageType.SOAP_11.equals(messageType) ? CostantiTestSuite.PROXY_SOGGETTO_FRUITORE_FAULT11500: CostantiTestSuite.PROXY_SOGGETTO_FRUITORE_FAULT12500, 
+						MessageType.SOAP_11.equals(messageType) ? CostantiTestSuite.PROXY_SOGGETTO_FRUITORE_FAULT11200 : CostantiTestSuite.PROXY_SOGGETTO_FRUITORE_FAULT12200, CostantiTestSuite.PROXY_SOGGETTO_EROGATORE_ESTERNO);
 		
 		if(stateful) {
 			this.setPortaDelegataOneWay(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_STATEFUL_NON_AUTENTICATO);
 			this.setPortaDelegataSincrono(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_STATEFUL_NON_AUTENTICATO);
 
-			if(SOAPVersion.SOAP11.equals(soapVersion)) {
+			if(MessageType.SOAP_11.equals(messageType)) {
 				this.setPortaDelegataOneWayFault200(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_STATEFUL_FAULT11_200);
 				this.setPortaDelegataSincronoFault200(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_STATEFUL_FAULT11_200);
 				this.setPortaDelegataOneWayFault500(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_STATEFUL_FAULT11_500);
@@ -92,7 +92,7 @@ public class PortaDelegata extends Porta {
 			this.setPortaDelegataOneWay(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_STATELESS_NON_AUTENTICATO);
 			this.setPortaDelegataSincrono(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_STATELESS_NON_AUTENTICATO);
 
-			if(SOAPVersion.SOAP11.equals(soapVersion)) {
+			if(MessageType.SOAP_11.equals(messageType)) {
 				this.setPortaDelegataOneWayFault200(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_STATELESS_FAULT11_200);
 				this.setPortaDelegataSincronoFault200(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_STATELESS_FAULT11_200);
 				this.setPortaDelegataOneWayFault500(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_STATELESS_FAULT11_500);

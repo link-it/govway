@@ -43,7 +43,7 @@ import javax.jms.TopicSession;
 import javax.jms.TopicSubscriber;
 import javax.naming.Context;
 
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
@@ -88,7 +88,7 @@ public class ConnettoriDiversiHTTP {
 				CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
 				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
 	private CooperazioneBase collaborazioneSPCoopBase = 
-			new CooperazioneBase(false,SOAPVersion.SOAP11,  this.info, 
+			new CooperazioneBase(false,MessageType.SOAP_11,  this.info, 
 					org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
 					DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 

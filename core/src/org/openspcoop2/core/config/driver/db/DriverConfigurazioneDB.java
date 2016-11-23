@@ -141,7 +141,6 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.id.IdentificativiErogazione;
 import org.openspcoop2.core.id.IdentificativiFruizione;
-import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
@@ -2287,17 +2286,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			}
 		}
 	}
-	
-	/**
-	 * Restituisce un array di soggetti reali (e associata porta applicativa)
-	 * che possiedono il soggetto SoggettoVirtuale identificato da <var>idPA</var>
-	 * 
-	 * @param idPA
-	 *                Identificatore di una Porta Applicativa con soggetto
-	 *                Virtuale
-	 * @return una porta applicativa
-	 * 
-	 */
+
 	@Override
 	public Hashtable<IDSoggetto, PortaApplicativa> getPorteApplicative_SoggettiVirtuali(IDServizio idServizio) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
 

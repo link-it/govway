@@ -54,16 +54,16 @@ import org.apache.axis.encoding.Base64;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.SOAPFault;
 import org.apache.axis.transport.http.HTTPConstants;
-import org.openspcoop2.message.SOAPVersion;
-import org.openspcoop2.message.constants.Costanti;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPSProperties;
 import org.openspcoop2.testsuite.axis14.Axis14DynamicNamespaceContextFactory;
 import org.openspcoop2.testsuite.core.CostantiTestSuite;
-import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.SOAPEngine;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Utilities;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.SSLHostNameVerifierDisabled;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
@@ -278,10 +278,10 @@ public class ClientHttpGenerico extends ClientCore{
 	 */
 	@Override
 	public void connectToSoapEngine() throws TestSuiteException{
-		this.connectToSoapEngine(SOAPVersion.SOAP11);
+		this.connectToSoapEngine(MessageType.SOAP_11);
 	}
 	@Override
-	public void connectToSoapEngine(SOAPVersion soapVersion) throws TestSuiteException {
+	public void connectToSoapEngine(MessageType messageType) throws TestSuiteException {
 		FileInputStream finKeyStore = null;
 		FileInputStream finTrustStore = null;
 		try{
@@ -412,10 +412,10 @@ public class ClientHttpGenerico extends ClientCore{
 		if(this.contentType!=null){
 			contentTypeSpedito = this.contentType;
 		}else if(this.sentMessage!=null){
-			if(SOAPVersion.SOAP11.equals(this.soapVersion)){
+			if(MessageType.SOAP_11.equals(this.messageType)){
 				contentTypeSpedito = this.sentMessage.getContentType(new org.apache.axis.soap.SOAP11Constants());	
 			}
-			else if(SOAPVersion.SOAP12.equals(this.soapVersion)){
+			else if(MessageType.SOAP_12.equals(this.messageType)){
 				contentTypeSpedito = this.sentMessage.getContentType(new org.apache.axis.soap.SOAP12Constants());	
 			}
 			else{
@@ -423,16 +423,16 @@ public class ClientHttpGenerico extends ClientCore{
 				contentTypeSpedito = this.sentMessage.getContentType(new org.apache.axis.soap.SOAP11Constants());	
 			}
 		}else{
-			if(SOAPVersion.SOAP11.equals(this.soapVersion)){
-				contentTypeSpedito = Costanti.CONTENT_TYPE_SOAP_1_1;
+			if(MessageType.SOAP_11.equals(this.messageType)){
+				contentTypeSpedito = HttpConstants.CONTENT_TYPE_SOAP_1_1;
 			}
-			else if(SOAPVersion.SOAP12.equals(this.soapVersion)){
-				contentTypeSpedito = Costanti.CONTENT_TYPE_SOAP_1_2;
+			else if(MessageType.SOAP_12.equals(this.messageType)){
+				contentTypeSpedito = HttpConstants.CONTENT_TYPE_SOAP_1_2;
 			}
 			else{
 				// default
 				//contentTypeSpedito = "text/xml; charset=utf-8";
-				contentTypeSpedito = Costanti.CONTENT_TYPE_SOAP_1_1;
+				contentTypeSpedito = HttpConstants.CONTENT_TYPE_SOAP_1_1;
 			}
 		}
 		this.conn.setRequestProperty("Content-Type",contentTypeSpedito);

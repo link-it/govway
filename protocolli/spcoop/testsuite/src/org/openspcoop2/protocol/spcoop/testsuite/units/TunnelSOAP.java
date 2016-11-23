@@ -33,13 +33,7 @@ import java.util.Vector;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.message.MessageElement;
-import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
-import org.openspcoop2.testsuite.core.TestSuiteException;
-import org.openspcoop2.testsuite.core.Repository;
-import org.openspcoop2.testsuite.db.DatabaseComponent;
-import org.openspcoop2.testsuite.units.CooperazioneBase;
-import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CooperazioneSPCoopBase;
@@ -48,6 +42,12 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
+import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
+import org.openspcoop2.testsuite.core.Repository;
+import org.openspcoop2.testsuite.core.TestSuiteException;
+import org.openspcoop2.testsuite.db.DatabaseComponent;
+import org.openspcoop2.testsuite.units.CooperazioneBase;
+import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
 import org.openspcoop2.utils.date.DateManager;
 import org.testng.Assert;
 import org.testng.Reporter;
@@ -75,7 +75,7 @@ public class TunnelSOAP {
 			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
 			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
 	private CooperazioneBase collaborazioneSPCoopBaseWithAttach = 
-		new CooperazioneBase(true, SOAPVersion.SOAP11, this.infoWithAttach, 
+		new CooperazioneBase(true, MessageType.SOAP_11, this.infoWithAttach, 
 				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
 				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	
@@ -83,7 +83,7 @@ public class TunnelSOAP {
 			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
 			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
 	private CooperazioneBase collaborazioneSPCoopBaseWithoutAttach = 
-		new CooperazioneBase(false, SOAPVersion.SOAP11, this.infoWithoutAttach, 
+		new CooperazioneBase(false, MessageType.SOAP_11, this.infoWithoutAttach, 
 				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
 				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	
@@ -632,7 +632,7 @@ public class TunnelSOAP {
 			bout.close();
 			
 			client=new ClientHttpGenerico(this.repositorySincronoAttachmentsOpenSPCoopDoc);
-			client.setContentType(org.openspcoop2.utils.resources.MimeTypes.getInstance().getMimeType("doc"));
+			client.setContentType(org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("doc"));
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "PDtoSOAP"));
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ATTACHMENT_OPENSPCOOP+"?OpenSPCoop2TunnelSOAP=true");
@@ -732,7 +732,7 @@ public class TunnelSOAP {
 			bout.close();
 			
 			client=new ClientHttpGenerico(this.repositorySincronoAttachmentsOpenSPCoopZip);
-			client.setContentType(org.openspcoop2.utils.resources.MimeTypes.getInstance().getMimeType("zip"));
+			client.setContentType(org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("zip"));
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "PDtoSOAP"));
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ATTACHMENT_OPENSPCOOP+"?OpenSPCoop2TunnelSOAP=true");
@@ -833,7 +833,7 @@ public class TunnelSOAP {
 			bout.close();
 			
 			client=new ClientHttpGenerico(this.repositorySincronoAttachmentsOpenSPCoopPdf);
-			client.setContentType(org.openspcoop2.utils.resources.MimeTypes.getInstance().getMimeType("pdf"));
+			client.setContentType(org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("pdf"));
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "PDtoSOAP"));
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ATTACHMENT_OPENSPCOOP+"?OpenSPCoop2TunnelSOAP=true");
@@ -1071,7 +1071,7 @@ public class TunnelSOAP {
 			bout.close();
 			
 			client=new ClientHttpGenerico(this.repositoryNotificaAttachmentsOpenSPCoopDoc);
-			client.setContentType(org.openspcoop2.utils.resources.MimeTypes.getInstance().getMimeType("doc"));
+			client.setContentType(org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("doc"));
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "PDtoSOAP"));
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_TUNNEL_SOAP_ATTACHMENT_OPENSPCOOP+"?OpenSPCoop2TunnelSOAP=true");
@@ -1175,7 +1175,7 @@ public class TunnelSOAP {
 			bout.close();
 			
 			client=new ClientHttpGenerico(this.repositoryNotificaAttachmentsOpenSPCoopZip);
-			client.setContentType(org.openspcoop2.utils.resources.MimeTypes.getInstance().getMimeType("zip"));
+			client.setContentType(org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("zip"));
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "PDtoSOAP"));
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_TUNNEL_SOAP_ATTACHMENT_OPENSPCOOP+"?OpenSPCoop2TunnelSOAP=true");
@@ -1281,7 +1281,7 @@ public class TunnelSOAP {
 			bout.close();
 			
 			client=new ClientHttpGenerico(this.repositoryNotificaAttachmentsOpenSPCoopPdf);
-			client.setContentType(org.openspcoop2.utils.resources.MimeTypes.getInstance().getMimeType("pdf"));
+			client.setContentType(org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("pdf"));
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "PDtoSOAP"));
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_TUNNEL_SOAP_ATTACHMENT_OPENSPCOOP+"?OpenSPCoop2TunnelSOAP=true");
@@ -1388,10 +1388,10 @@ public class TunnelSOAP {
 			bout.close();
 			
 			client=new ClientHttpGenerico(this.repositorySincronoAttachmentsCustomDoc);
-			client.setContentType(org.openspcoop2.utils.resources.MimeTypes.getInstance().getMimeType("bin")); // lo imposto nel parametro
+			client.setContentType(org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("bin")); // lo imposto nel parametro
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "PDtoSOAP"));
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ATTACHMENT_CUSTOM_MIME_TYPE+"?OpenSPCoop2TunnelSOAP=true&OpenSPCoop2TunnelSOAPMimeType="+org.openspcoop2.utils.resources.MimeTypes.getInstance().getMimeType("doc"));
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ATTACHMENT_CUSTOM_MIME_TYPE+"?OpenSPCoop2TunnelSOAP=true&OpenSPCoop2TunnelSOAPMimeType="+org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("doc"));
 			client.connectToSoapEngine();
 			client.setMessaggioXMLRichiesta(bout.toByteArray());
 			client.setRispostaDaGestire(true);
@@ -1492,10 +1492,10 @@ public class TunnelSOAP {
 			bout.close();
 			
 			client=new ClientHttpGenerico(this.repositorySincronoAttachmentsCustomZip);
-			client.setContentType(org.openspcoop2.utils.resources.MimeTypes.getInstance().getMimeType("bin")); // lo imposto nel parametro
+			client.setContentType(org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("bin")); // lo imposto nel parametro
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "PDtoSOAP"));
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ATTACHMENT_CUSTOM_MIME_TYPE+"?OpenSPCoop2TunnelSOAP=true&OpenSPCoop2TunnelSOAPMimeType="+org.openspcoop2.utils.resources.MimeTypes.getInstance().getMimeType("zip"));
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ATTACHMENT_CUSTOM_MIME_TYPE+"?OpenSPCoop2TunnelSOAP=true&OpenSPCoop2TunnelSOAPMimeType="+org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("zip"));
 			client.connectToSoapEngine();
 			client.setMessaggioXMLRichiesta(bout.toByteArray());
 			client.setRispostaDaGestire(true);
@@ -1597,10 +1597,10 @@ public class TunnelSOAP {
 			bout.close();
 			
 			client=new ClientHttpGenerico(this.repositorySincronoAttachmentsCustomPdf);
-			client.setContentType(org.openspcoop2.utils.resources.MimeTypes.getInstance().getMimeType("bin")); // lo imposto nel parametro
+			client.setContentType(org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("bin")); // lo imposto nel parametro
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "PDtoSOAP"));
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ATTACHMENT_CUSTOM_MIME_TYPE+"?OpenSPCoop2TunnelSOAP=true&OpenSPCoop2TunnelSOAPMimeType="+org.openspcoop2.utils.resources.MimeTypes.getInstance().getMimeType("pdf"));
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_TUNNEL_SOAP_ATTACHMENT_CUSTOM_MIME_TYPE+"?OpenSPCoop2TunnelSOAP=true&OpenSPCoop2TunnelSOAPMimeType="+org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("pdf"));
 			client.connectToSoapEngine();
 			client.setMessaggioXMLRichiesta(bout.toByteArray());
 			client.setRispostaDaGestire(true);
@@ -1707,10 +1707,10 @@ public class TunnelSOAP {
 			bout.close();
 			
 			client=new ClientHttpGenerico(this.repositoryNotificaCustomDoc);
-			client.setContentType(org.openspcoop2.utils.resources.MimeTypes.getInstance().getMimeType("bin")); // lo imposto nel parametro
+			client.setContentType(org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("bin")); // lo imposto nel parametro
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "PDtoSOAP"));
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_TUNNEL_SOAP_CUSTOM_MIME_TYPE+"?OpenSPCoop2TunnelSOAP=true&OpenSPCoop2TunnelSOAPMimeType="+org.openspcoop2.utils.resources.MimeTypes.getInstance().getMimeType("doc"));
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_TUNNEL_SOAP_CUSTOM_MIME_TYPE+"?OpenSPCoop2TunnelSOAP=true&OpenSPCoop2TunnelSOAPMimeType="+org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("doc"));
 			client.connectToSoapEngine();
 			client.setMessaggioXMLRichiesta(bout.toByteArray());
 			client.setRispostaDaGestire(true);
@@ -1814,10 +1814,10 @@ public class TunnelSOAP {
 			bout.close();
 			
 			client=new ClientHttpGenerico(this.repositoryNotificaCustomZip);
-			client.setContentType(org.openspcoop2.utils.resources.MimeTypes.getInstance().getMimeType("bin")); // lo imposto nel parametro
+			client.setContentType(org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("bin")); // lo imposto nel parametro
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "PDtoSOAP"));
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_TUNNEL_SOAP_CUSTOM_MIME_TYPE+"?OpenSPCoop2TunnelSOAP=true&OpenSPCoop2TunnelSOAPMimeType="+org.openspcoop2.utils.resources.MimeTypes.getInstance().getMimeType("zip"));
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_TUNNEL_SOAP_CUSTOM_MIME_TYPE+"?OpenSPCoop2TunnelSOAP=true&OpenSPCoop2TunnelSOAPMimeType="+org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("zip"));
 			client.connectToSoapEngine();
 			client.setMessaggioXMLRichiesta(bout.toByteArray());
 			client.setRispostaDaGestire(true);
@@ -1917,10 +1917,10 @@ public class TunnelSOAP {
 			bout.close();
 			
 			client=new ClientHttpGenerico(this.repositoryNotificaCustomPdf);
-			client.setContentType(org.openspcoop2.utils.resources.MimeTypes.getInstance().getMimeType("bin")); // lo imposto nel parametro
+			client.setContentType(org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("bin")); // lo imposto nel parametro
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore().replace("PD", "PDtoSOAP"));
-			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_TUNNEL_SOAP_CUSTOM_MIME_TYPE+"?OpenSPCoop2TunnelSOAP=true&OpenSPCoop2TunnelSOAPMimeType="+org.openspcoop2.utils.resources.MimeTypes.getInstance().getMimeType("pdf"));
+			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_ONEWAY_TUNNEL_SOAP_CUSTOM_MIME_TYPE+"?OpenSPCoop2TunnelSOAP=true&OpenSPCoop2TunnelSOAPMimeType="+org.openspcoop2.utils.mime.MimeTypes.getInstance().getMimeType("pdf"));
 			client.connectToSoapEngine();
 			client.setMessaggioXMLRichiesta(bout.toByteArray());
 			client.setRispostaDaGestire(true);

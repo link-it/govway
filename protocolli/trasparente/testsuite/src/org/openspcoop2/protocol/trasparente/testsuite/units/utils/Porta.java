@@ -26,7 +26,7 @@ package org.openspcoop2.protocol.trasparente.testsuite.units.utils;
 import java.util.Date;
 
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.trasparente.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.trasparente.testsuite.core.DatabaseProperties;
@@ -87,28 +87,28 @@ public class Porta {
 
 	private boolean stateful;
 	
-	public Porta(SOAPVersion soapVersion, boolean attachments, boolean stateful, boolean isApplicativa, IDSoggetto soggettoFruitore, IDSoggetto soggettoFruitoreAutenticato, IDSoggetto soggettoFruitoreFault500, IDSoggetto soggettoFruitoreFault200, IDSoggetto erogatore) {
+	public Porta(MessageType messageType, boolean attachments, boolean stateful, boolean isApplicativa, IDSoggetto soggettoFruitore, IDSoggetto soggettoFruitoreAutenticato, IDSoggetto soggettoFruitoreFault500, IDSoggetto soggettoFruitoreFault200, IDSoggetto erogatore) {
 		this.stateful = stateful;
 		
 		this.info = org.openspcoop2.protocol.trasparente.testsuite.core.CooperazioneTrasparenteBase.getCooperazioneBaseInformazioni(soggettoFruitore,
 				erogatore,
 				false,CostantiTestSuite.PROXY_PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
 		this.collaborazioneTrasparenteBase = 
-				new CooperazioneTrasparenteBase(attachments, isApplicativa, soapVersion, this.info, 
+				new CooperazioneTrasparenteBase(attachments, isApplicativa, messageType, this.info, 
 						org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties.getInstance(), 
 						DatabaseProperties.getInstance(), TrasparenteTestsuiteLogger.getInstance());
 		this.infoAutenticato = org.openspcoop2.protocol.trasparente.testsuite.core.CooperazioneTrasparenteBase.getCooperazioneBaseInformazioni(soggettoFruitoreAutenticato,
 				erogatore,
 				false,CostantiTestSuite.PROXY_PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
 		this.collaborazioneTrasparenteBaseAutenticato = 
-				new CooperazioneTrasparenteBase(attachments, isApplicativa, soapVersion, this.infoAutenticato, 
+				new CooperazioneTrasparenteBase(attachments, isApplicativa, messageType, this.infoAutenticato, 
 						org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties.getInstance(), 
 						DatabaseProperties.getInstance(), TrasparenteTestsuiteLogger.getInstance());
 		this.infoFault200 = org.openspcoop2.protocol.trasparente.testsuite.core.CooperazioneTrasparenteBase.getCooperazioneBaseInformazioni(soggettoFruitoreFault200,
 				erogatore,
 				false,CostantiTestSuite.PROXY_PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
 		this.collaborazioneTrasparenteBaseFault200 = 
-				new CooperazioneTrasparenteBase(attachments, isApplicativa, soapVersion, this.infoFault200, 
+				new CooperazioneTrasparenteBase(attachments, isApplicativa, messageType, this.infoFault200, 
 						org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties.getInstance(), 
 						DatabaseProperties.getInstance(), TrasparenteTestsuiteLogger.getInstance());
 		this.collaborazioneTrasparenteBaseFault200.setResponseIsFault(true);
@@ -116,7 +116,7 @@ public class Porta {
 				erogatore,
 				false,CostantiTestSuite.PROXY_PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
 		this.collaborazioneTrasparenteBaseFault500 = 
-				new CooperazioneTrasparenteBase(attachments, isApplicativa, soapVersion, this.infoFault500, 
+				new CooperazioneTrasparenteBase(attachments, isApplicativa, messageType, this.infoFault500, 
 						org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties.getInstance(), 
 						DatabaseProperties.getInstance(), TrasparenteTestsuiteLogger.getInstance());
 		this.collaborazioneTrasparenteBaseFault500.setResponseIsFault(true);

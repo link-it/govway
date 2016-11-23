@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.trasparente.testsuite.units.utils;
 import java.util.Date;
 
 import org.slf4j.Logger;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.trasparente.testsuite.core.Utilities;
@@ -46,10 +46,10 @@ import org.testng.Reporter;
 public class CooperazioneTrasparenteBase extends CooperazioneBase {
 
 	public CooperazioneTrasparenteBase(boolean soapWithAttachments, boolean portaDelegata,
-			SOAPVersion soapVersion, CooperazioneBaseInformazioni info,
+			MessageType messageType, CooperazioneBaseInformazioni info,
 			UnitsTestSuiteProperties unitsTestsuiteProperties,
 			UnitsDatabaseProperties unitsDatabaseProperties, Logger log) {
-		super(soapWithAttachments, soapVersion, info, unitsTestsuiteProperties,
+		super(soapWithAttachments, messageType, info, unitsTestsuiteProperties,
 				unitsDatabaseProperties, log, portaDelegata);
 	}
 

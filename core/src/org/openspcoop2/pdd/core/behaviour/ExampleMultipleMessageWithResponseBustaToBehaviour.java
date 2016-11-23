@@ -20,8 +20,6 @@
  */
 package org.openspcoop2.pdd.core.behaviour;
 
-import java.io.ByteArrayInputStream;
-
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPHeaderElement;
 
@@ -56,8 +54,9 @@ public class ExampleMultipleMessageWithResponseBustaToBehaviour implements IBeha
 			
 			String xml = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"+
 					"<soapenv:Body><prova>CIAO</prova></soapenv:Body></soapenv:Envelope>";
-			OpenSPCoop2SoapMessage msgReplyTo = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11, MessageRole.REQUEST,MessageUtilities.getDefaultContentType(MessageType.SOAP_11),
-					new ByteArrayInputStream(xml.getBytes()),null,false,null,null).getMessage_throwParseException().castAsSoap();
+			OpenSPCoop2SoapMessage msgReplyTo = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11, MessageRole.REQUEST,
+					MessageUtilities.getDefaultContentType(MessageType.SOAP_11),
+					xml.getBytes()).getMessage_throwParseException().castAsSoap();
 			responseTo.setMessage(msgReplyTo);
 			
 			Busta bustaRisposta = busta.invertiBusta(busta.getTipoOraRegistrazione(), busta.getTipoOraRegistrazioneValue());

@@ -205,7 +205,7 @@ public class FatturaPABehaviour extends DefaultBehaviour {
 					
 					OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().
 							envelopingMessage(msg.getMessageType(), MessageRole.REQUEST, HttpConstants.CONTENT_TYPE_TEXT_XML, 
-									"OpenSPCoop", xml, null, openspcoop2Properties.isFileCacheEnable(), openspcoop2Properties.getAttachmentRepoDir(), openspcoop2Properties.getFileThreshold(), 
+									"OpenSPCoop", xml, null, openspcoop2Properties.getAttachmentsProcessingMode(), 
 									true);
 					OpenSPCoop2Message msgForwardTo = pr.getMessage_throwParseException();
 					

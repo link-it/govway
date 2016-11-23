@@ -29,7 +29,7 @@ import javax.xml.soap.SOAPException;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
@@ -76,7 +76,7 @@ public class AutorizzazioneContenuto {
 				CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
 				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
 	private CooperazioneBase collaborazioneSPCoopBase = 
-			new CooperazioneBase(false, SOAPVersion.SOAP11, this.info, 
+			new CooperazioneBase(false, MessageType.SOAP_11, this.info, 
 					org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
 					DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 

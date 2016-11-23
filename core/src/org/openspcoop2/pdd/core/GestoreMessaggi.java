@@ -23,7 +23,6 @@
 
 package org.openspcoop2.pdd.core;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -5777,7 +5776,7 @@ public class GestoreMessaggi  {
 					"</soapenv:Envelope>";
 			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11, MessageRole.REQUEST, 
 					MessageUtilities.getDefaultContentType(MessageType.SOAP_11),
-					new ByteArrayInputStream(msg.getBytes()),null,false,null,null);
+					msg.getBytes());
 			return pr.getMessage_throwParseException();
 		}catch(Exception e){
 			String errorMsg = "GESTORE_MESSAGGI, error buildRichiestaPubblicazioneMessaggio_RepositoryMessaggi: "+e.getMessage();		
@@ -5816,7 +5815,7 @@ public class GestoreMessaggi  {
 			bout.close();
 			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, MessageRole.RESPONSE, 
 					MessageUtilities.getDefaultContentType(messageType),
-					new ByteArrayInputStream(bout.toByteArray()),null,false,null,null);
+					bout.toByteArray());
 			return pr.getMessage_throwParseException();
 		}catch(Exception e){
 			String errorMsg = "GESTORE_MESSAGGI, error buildRispostaPrelevamentoMessaggio_RepositoryMessaggi: "+e.getMessage();		

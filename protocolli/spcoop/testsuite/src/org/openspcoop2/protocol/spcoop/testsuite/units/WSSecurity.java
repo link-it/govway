@@ -31,7 +31,7 @@ import javax.xml.soap.SOAPException;
 
 import org.apache.axis.AxisFault;
 import org.openspcoop2.core.constants.CostantiDB;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
@@ -84,7 +84,7 @@ public class WSSecurity {
 			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
 			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
 	private CooperazioneBase collaborazioneSPCoopBase = 
-		new CooperazioneBase(false,SOAPVersion.SOAP11,  this.info, 
+		new CooperazioneBase(false,MessageType.SOAP_11,  this.info, 
 				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
 				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	
@@ -2272,7 +2272,7 @@ public class WSSecurity {
 		ClientSincrono client=new ClientSincrono(this.repositorySincronoWSS_ENCRYPT_ATTACH);
 		client.setUrlPortaDiDominio(TestSuiteProperties.getInstance().getServizioRicezioneContenutiApplicativiFruitore());
 		client.setPortaDelegata(azione);
-		client.connectToSoapEngine(SOAPVersion.SOAP11);
+		client.connectToSoapEngine(MessageType.SOAP_11);
 		client.setMessageFromFile(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBox(), false,addIDUnivoco);
 		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoXml(),"text/xml");
 		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoBinario(),"application/octet-stream");
@@ -2348,7 +2348,7 @@ public class WSSecurity {
 		ClientSincrono client=new ClientSincrono(this.repositorySincronoWSS_SIGNATURE_ATTACH);
 		client.setUrlPortaDiDominio(TestSuiteProperties.getInstance().getServizioRicezioneContenutiApplicativiFruitore());
 		client.setPortaDelegata(azione);
-		client.connectToSoapEngine(SOAPVersion.SOAP11);
+		client.connectToSoapEngine(MessageType.SOAP_11);
 		client.setMessageFromFile(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBox(), false,addIDUnivoco);
 		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoXml(),"text/xml");
 		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoBinario(),"application/octet-stream");
@@ -2413,7 +2413,7 @@ public class WSSecurity {
 		ClientSincrono client=new ClientSincrono(this.repositorySincronoWSS_INCROCI_SIGN_ENCRYPT_ATTACH);
 		client.setUrlPortaDiDominio(TestSuiteProperties.getInstance().getServizioRicezioneContenutiApplicativiFruitore());
 		client.setPortaDelegata(azione);
-		client.connectToSoapEngine(SOAPVersion.SOAP11);
+		client.connectToSoapEngine(MessageType.SOAP_11);
 		client.setMessageFromFile(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBox(), false,addIDUnivoco);
 		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoXml(),"text/xml");
 		client.addAttachment(Utilities.testSuiteProperties.getSoapTestWSSecuritySoapBoxAllegatoBinario(),"application/octet-stream");

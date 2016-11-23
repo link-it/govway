@@ -403,8 +403,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().
 							envelopingMessage(messageTypeReq, contentTypeForEnvelope, soapAction, 
 							requestInfo.getProtocolContext(), inputBody, notifierInputStreamParams, 
-							openSPCoopProperties.isFileCacheEnable(), 
-							openSPCoopProperties.getAttachmentRepoDir(), openSPCoopProperties.getFileThreshold(), 
+							openSPCoopProperties.getAttachmentsProcessingMode(), 
 							openSPCoopProperties.isDeleteInstructionTargetMachineXml());
 					if(pr.getParseException()!=null){
 						pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());

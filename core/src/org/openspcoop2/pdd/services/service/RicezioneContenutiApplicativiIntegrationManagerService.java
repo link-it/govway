@@ -454,16 +454,12 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 					OpenSPCoop2MessageParseResult pr = null;
 					if(msg.getImbustamento()){
 						pr = factory.envelopingMessage(messageType, MessageRole.REQUEST, contentType, soapAction, bin, 
-								notifierInputStreamParams, openSPCoopProperties.isFileCacheEnable(), 
-								openSPCoopProperties.getAttachmentRepoDir(), 
-								openSPCoopProperties.getFileThreshold(), 
+								notifierInputStreamParams, openSPCoopProperties.getAttachmentsProcessingMode(), 
 								openSPCoopProperties.isDeleteInstructionTargetMachineXml());
 					}
 					else{
 						pr = factory.createMessage(messageType, MessageRole.REQUEST, contentType, 
-								bin, notifierInputStreamParams, openSPCoopProperties.isFileCacheEnable(), 
-								openSPCoopProperties.getAttachmentRepoDir(), 
-								openSPCoopProperties.getFileThreshold());
+								bin, notifierInputStreamParams, openSPCoopProperties.getAttachmentsProcessingMode());
 					}
 					if(pr.getParseException()!=null){
 						context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());

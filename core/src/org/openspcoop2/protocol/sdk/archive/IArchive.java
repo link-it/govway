@@ -152,7 +152,7 @@ public interface IArchive extends IComponentFactory {
 	 * @throws ProtocolException
 	 */
 	public void exportArchive(Archive archive, OutputStream out, ArchiveMode mode,
-			IRegistryReader registroReader) throws ProtocolException;
+			IRegistryReader registryReader) throws ProtocolException;
 		
 	/**
 	 * Converte l'archivio org.openspcoop2.protocol.sdk.archive.Archive in un formato binario serializzato nell'output stream 
@@ -163,7 +163,7 @@ public interface IArchive extends IComponentFactory {
 	 * @throws ProtocolException
 	 */
 	public byte[] exportArchive(Archive archive, ArchiveMode mode,
-			IRegistryReader registroReader) throws ProtocolException;
+			IRegistryReader registryReader) throws ProtocolException;
 	
 	
 }

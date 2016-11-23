@@ -21,7 +21,6 @@
 
 package org.openspcoop2.security.message.soapbox;
 
-import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -69,14 +68,13 @@ public class EngineTest {
 		try {
 			// ************ MESSAGGIO *****************
 			
-			InputStream messageInput = new ByteArrayInputStream(EngineTest.TEST_MSG_1.getBytes());
 			QName ciaoName = new QName("http://test.openspcoop.org/esempio", "ciao");
 			QName otherName = new QName("other");
 			QName body = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Body");
 			
 			MessageType messageType = MessageType.SOAP_11;
 			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType,MessageRole.REQUEST,
-					org.openspcoop2.message.utils.MessageUtilities.getDefaultContentType(messageType), messageInput, null, false, null, null);
+					org.openspcoop2.message.utils.MessageUtilities.getDefaultContentType(messageType), EngineTest.TEST_MSG_1.getBytes());
 			OpenSPCoop2SoapMessage openspcoop2Message = pr.getMessage_throwParseException().castAsSoap();
 
 			/* text/plain */
@@ -237,7 +235,7 @@ public class EngineTest {
 			//String envelope = XMLUtils.getInstance().toString(openspcoop2Message.getSOAPPart().getEnvelope());
 			//InputStream is2 = new ByteArrayInputStream(envelope.getBytes());
 			pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType,MessageRole.RESPONSE,
-					org.openspcoop2.message.utils.MessageUtilities.getDefaultContentType(messageType), is2, null, false, null, null);
+					org.openspcoop2.message.utils.MessageUtilities.getDefaultContentType(messageType), is2, null);
 			openspcoop2Message = pr.getMessage_throwParseException().castAsSoap();
 			
 			

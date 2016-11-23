@@ -245,7 +245,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBase {
 		
 		OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageTypeResponse,responseContext,
 				isParam,this.notifierInputStreamParams,
-				this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());	
+				this.openspcoopProperties.getAttachmentsProcessingMode());	
 		if(pr.getParseException()!=null){
 			this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
 		}
@@ -406,7 +406,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBase {
 					if(this.contentLength>0){
 						OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageTypeResponse,responseContext,
 								this.isResponse,this.notifierInputStreamParams,
-								this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());	
+								this.openspcoopProperties.getAttachmentsProcessingMode());	
 						if(pr.getParseException()!=null){
 							this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
 						}
@@ -422,7 +422,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBase {
 						try{
 							OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageTypeResponse,responseContext,
 									this.isResponse,this.notifierInputStreamParams,
-									this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());
+									this.openspcoopProperties.getAttachmentsProcessingMode());
 							if(pr.getParseException()!=null){
 								this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
 							}
@@ -489,7 +489,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBase {
 								OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().
 										envelopingMessage(messageTypeResponse, this.tipoRisposta, this.soapAction, responseContext, 
 												cis, this.notifierInputStreamParams, 
-												this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold(),
+												this.openspcoopProperties.getAttachmentsProcessingMode(),
 												true);
 								if(pr.getParseException()!=null){
 									this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());

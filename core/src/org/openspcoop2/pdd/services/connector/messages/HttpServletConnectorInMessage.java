@@ -144,7 +144,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			return factory.createMessage(this.getRequestInfo().getRequestMessageType(),
 					this.requestInfo.getProtocolContext(),
 					this.is,notifierInputStreamParams,
-					this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());
+					this.openspcoopProperties.getAttachmentsProcessingMode());
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}	
@@ -166,7 +166,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			return factory.createMessage(this.getRequestInfo().getRequestMessageType(),
 					this.requestInfo.getProtocolContext(),
 					bin,notifierInputStreamParams,
-					this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());
+					this.openspcoopProperties.getAttachmentsProcessingMode());
 		}catch(Throwable t){
 			//throw new ConnectorException(e.getMessage(),e);
 			OpenSPCoop2MessageParseResult result = new OpenSPCoop2MessageParseResult();

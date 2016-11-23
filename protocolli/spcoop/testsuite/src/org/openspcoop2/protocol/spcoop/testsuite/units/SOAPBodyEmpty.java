@@ -28,13 +28,7 @@ import java.util.Date;
 
 import javax.xml.soap.SOAPException;
 
-import org.openspcoop2.testsuite.clients.ClientSincrono;
-import org.openspcoop2.testsuite.core.TestSuiteException;
-import org.openspcoop2.testsuite.core.Repository;
-import org.openspcoop2.testsuite.db.DatabaseComponent;
-import org.openspcoop2.testsuite.units.CooperazioneBase;
-import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.testsuite.core.CooperazioneSPCoopBase;
@@ -43,6 +37,12 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
+import org.openspcoop2.testsuite.clients.ClientSincrono;
+import org.openspcoop2.testsuite.core.Repository;
+import org.openspcoop2.testsuite.core.TestSuiteException;
+import org.openspcoop2.testsuite.db.DatabaseComponent;
+import org.openspcoop2.testsuite.units.CooperazioneBase;
+import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
 import org.openspcoop2.utils.date.DateManager;
 import org.testng.Assert;
 import org.testng.Reporter;
@@ -68,7 +68,7 @@ public class SOAPBodyEmpty {
 			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
 			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
 	private CooperazioneBase collaborazioneSPCoopBase = 
-		new CooperazioneBase(false,SOAPVersion.SOAP11,  this.info, 
+		new CooperazioneBase(false,MessageType.SOAP_11,  this.info, 
 				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
 				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 

@@ -45,7 +45,7 @@ import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatiServizio;
 import org.openspcoop2.testsuite.db.DatiServizioAzione;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
@@ -65,7 +65,7 @@ public class CooperazioneBase {
 
 	/** Tipo di gestione */
 	protected boolean soapWithAttachments;
-	protected SOAPVersion soapVersion;
+	protected MessageType messageType;
 	/** String tipoCooperazione */
 	protected String tipoCooperazione;
 	
@@ -98,17 +98,17 @@ public class CooperazioneBase {
 	public void setSoapWithAttachments(boolean soapWithAttachments) {
 		this.soapWithAttachments = soapWithAttachments;
 	}
-	public CooperazioneBase(boolean soapWithAttachments,SOAPVersion soapVersion,CooperazioneBaseInformazioni info,
+	public CooperazioneBase(boolean soapWithAttachments,MessageType messageType,CooperazioneBaseInformazioni info,
 			UnitsTestSuiteProperties unitsTestsuiteProperties, UnitsDatabaseProperties unitsDatabaseProperties, Logger log) {
-		this(soapWithAttachments, soapVersion, info, unitsTestsuiteProperties, unitsDatabaseProperties, log, true);
+		this(soapWithAttachments, messageType, info, unitsTestsuiteProperties, unitsDatabaseProperties, log, true);
 	}
 	
-	public CooperazioneBase(boolean soapWithAttachments,SOAPVersion soapVersion,CooperazioneBaseInformazioni info,
+	public CooperazioneBase(boolean soapWithAttachments,MessageType messageType,CooperazioneBaseInformazioni info,
 			UnitsTestSuiteProperties unitsTestsuiteProperties, UnitsDatabaseProperties unitsDatabaseProperties, Logger log, boolean portaDelegata) {
 		super();
 		this.portaDelegata = portaDelegata;
 		this.soapWithAttachments = soapWithAttachments;
-		this.soapVersion = soapVersion;
+		this.messageType = messageType;
 		if(this.soapWithAttachments)
 			this.tipoCooperazione = "SOAPWithAttachments";
 		else
@@ -130,6 +130,7 @@ public class CooperazioneBase {
 
 
 	
+	@SuppressWarnings("incomplete-switch")
 	private void checkAttachmentsRequest(DatabaseComponent data, String id, DatiServizioAzione datiServizioAzione,Message msgFromCheck){
 		if(this.isSoapWithAttachments()){
 			
@@ -142,11 +143,11 @@ public class CooperazioneBase {
 				if(msgFromCheck!=null){
 					msg = msgFromCheck;
 				}else{
-					switch (this.soapVersion) {
-					case SOAP11:
+					switch (this.messageType) {
+					case SOAP_11:
 						msg = org.openspcoop2.testsuite.core.Utilities.createMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap11WithAttachmentsFileName(), false);
 						break;
-					case SOAP12:
+					case SOAP_12:
 						msg = org.openspcoop2.testsuite.core.Utilities.createMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap12WithAttachmentsFileName(), false);
 						break;
 					}
@@ -186,6 +187,7 @@ public class CooperazioneBase {
 	private void checkCountAttachmentsResponse(DatabaseComponent data, String id, DatiServizioAzione datiServizioAzione ,boolean withManifest, Integer numeroAttachments){
 		_checkAttachments(false, data, id, datiServizioAzione, withManifest, numeroAttachments);
 	}
+	@SuppressWarnings("incomplete-switch")
 	private void _checkAttachments(boolean isRequest,DatabaseComponent data, String id, DatiServizioAzione datiServizioAzione ,boolean withManifest, Integer numeroAttachments){
 		if(this.isSoapWithAttachments()){
 			
@@ -195,11 +197,11 @@ public class CooperazioneBase {
 			
 			try{
 				Message msg = null;
-				switch (this.soapVersion) {
-				case SOAP11:
+				switch (this.messageType) {
+				case SOAP_11:
 					msg = org.openspcoop2.testsuite.core.Utilities.createMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap11WithAttachmentsFileName(), false);
 					break;
-				case SOAP12:
+				case SOAP_12:
 					msg = org.openspcoop2.testsuite.core.Utilities.createMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap12WithAttachmentsFileName(), false);
 					break;
 				}
@@ -263,6 +265,7 @@ public class CooperazioneBase {
 	public void oneWay(Repository repository,String portaDelegata,boolean addIDUnivoco,String username,String password) throws TestSuiteException, Exception{
 		this.oneWay(repository, portaDelegata, addIDUnivoco, username, password, null);
 	}
+	@SuppressWarnings("incomplete-switch")
 	public void oneWay(Repository repository,String portaDelegata,boolean addIDUnivoco,String username,String password,Boolean attesaTerminazioneMessaggi) throws TestSuiteException, Exception{
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
@@ -272,25 +275,25 @@ public class CooperazioneBase {
 			ClientOneWay client=new ClientOneWay(repository);
 			client.setUrlPortaDiDominio(this.getUrlPortaDiDominio());
 			client.setPortaDelegata(portaDelegata);
-			client.connectToSoapEngine(this.soapVersion);
+			client.connectToSoapEngine(this.messageType);
 			if(username!=null && password!=null)
 				client.setAutenticazione(username,password);
 			if(this.soapWithAttachments){
-				switch (this.soapVersion) {
-				case SOAP11:
+				switch (this.messageType) {
+				case SOAP_11:
 					client.setMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap11WithAttachmentsFileName(), false,addIDUnivoco);
 					break;
-				case SOAP12:
+				case SOAP_12:
 					client.setMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap12WithAttachmentsFileName(), false,addIDUnivoco);
 					break;
 				}
 			}
 			else{
-				switch (this.soapVersion) {
-				case SOAP11:
+				switch (this.messageType) {
+				case SOAP_11:
 					client.setMessageFromFile(this.unitsTestsuiteProperties.getSoap11FileName(), false,addIDUnivoco);
 					break;
-				case SOAP12:
+				case SOAP_12:
 					client.setMessageFromFile(this.unitsTestsuiteProperties.getSoap12FileName(), false,addIDUnivoco);
 					break;
 				}
@@ -391,30 +394,31 @@ public class CooperazioneBase {
 	public void sincrono(Repository repository,String portaDelegata,boolean addIDUnivoco,boolean isOneWay) throws TestSuiteException, IOException, SOAPException{
 		this.sincrono(repository, portaDelegata, addIDUnivoco, isOneWay, null, null);
 	}
+	@SuppressWarnings("incomplete-switch")
 	public void sincrono(Repository repository,String portaDelegata,boolean addIDUnivoco,boolean isOneWay,String username,String password) throws TestSuiteException, IOException, SOAPException{
 		// Creazione client Sincrono
 		ClientSincrono client=new ClientSincrono(repository);
 		client.setUrlPortaDiDominio(this.getUrlPortaDiDominio());
 		client.setPortaDelegata(portaDelegata);
-		client.connectToSoapEngine(this.soapVersion);
+		client.connectToSoapEngine(this.messageType);
 		if(username!=null && password!=null)
 			client.setAutenticazione(username,password);
 		if(this.soapWithAttachments){
-			switch (this.soapVersion) {
-			case SOAP11:
+			switch (this.messageType) {
+			case SOAP_11:
 				client.setMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap11WithAttachmentsFileName(), false,addIDUnivoco);
 				break;
-			case SOAP12:
+			case SOAP_12:
 				client.setMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap12WithAttachmentsFileName(), false,addIDUnivoco);
 				break;
 			}
 		}
 		else{
-			switch (this.soapVersion) {
-			case SOAP11:
+			switch (this.messageType) {
+			case SOAP_11:
 				client.setMessageFromFile(this.unitsTestsuiteProperties.getSoap11FileName(), false,addIDUnivoco);
 				break;
-			case SOAP12:
+			case SOAP_12:
 				client.setMessageFromFile(this.unitsTestsuiteProperties.getSoap12FileName(), false,addIDUnivoco);
 				break;
 			}
@@ -538,6 +542,7 @@ public class CooperazioneBase {
 	/***
 	 * Test per il profilo di collaborazione Asincrono Simmetrico, modalita asincrona
 	 */
+	@SuppressWarnings("incomplete-switch")
 	public void asincronoSimmetrico_modalitaAsincrona(String portaDelegata,String portaDelegataCorrelata,String user,String password,RepositoryConsegnaRisposteAsincroneSimmetriche repositoryConsegnaRisposteAsincroneSimmetriche_modalitaAsincrona,
 			RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneSimmetriche_modalitaAsincrona,boolean addIDUnivoco) throws Exception{		
 		DatabaseComponent dbComponentFruitore = null;
@@ -550,24 +555,24 @@ public class CooperazioneBase {
 						portaDelegataCorrelata);
 			client.setUrlPortaDiDominio(this.getUrlPortaDiDominio());
 			client.setPortaDelegata(portaDelegata);
-			client.connectToSoapEngine(this.soapVersion);
+			client.connectToSoapEngine(this.messageType);
 			client.setAutenticazione(user,password);
 			if(this.soapWithAttachments){
-				switch (this.soapVersion) {
-				case SOAP11:
+				switch (this.messageType) {
+				case SOAP_11:
 					client.setMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap11WithAttachmentsFileName(), false,addIDUnivoco);
 					break;
-				case SOAP12:
+				case SOAP_12:
 					client.setMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap12WithAttachmentsFileName(), false,addIDUnivoco);
 					break;
 				}
 			}
 			else{
-				switch (this.soapVersion) {
-				case SOAP11:
+				switch (this.messageType) {
+				case SOAP_11:
 					client.setMessageFromFile(this.unitsTestsuiteProperties.getSoap11FileName(), false,addIDUnivoco);
 					break;
-				case SOAP12:
+				case SOAP_12:
 					client.setMessageFromFile(this.unitsTestsuiteProperties.getSoap12FileName(), false,addIDUnivoco);
 					break;
 				}
@@ -810,6 +815,7 @@ public class CooperazioneBase {
 	/***
 	 * Test per il profilo di collaborazione Asincrono Simmetrico, modalita sincrona
 	 */
+	@SuppressWarnings("incomplete-switch")
 	public void asincronoSimmetrico_modalitaSincrona(String portaDelegata,String portaDelegataCorrelata, String user,String password,RepositoryConsegnaRisposteAsincroneSimmetriche repositoryConsegnaRisposteAsincroneSimmetriche_modalitaSincrona,
 			RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneSimmetriche_modalitaSincrona,boolean addIDUnivoco) throws Exception{		
 		ClientAsincronoSimmetrico_ModalitaSincrona client = 
@@ -818,24 +824,24 @@ public class CooperazioneBase {
 					portaDelegataCorrelata);
 		client.setUrlPortaDiDominio(this.getUrlPortaDiDominio());
 		client.setPortaDelegata(portaDelegata);
-		client.connectToSoapEngine(this.soapVersion);
+		client.connectToSoapEngine(this.messageType);
 		client.setAutenticazione(user,password);
 		if(this.soapWithAttachments){
-			switch (this.soapVersion) {
-			case SOAP11:
+			switch (this.messageType) {
+			case SOAP_11:
 				client.setMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap11WithAttachmentsFileName(), false,addIDUnivoco);
 				break;
-			case SOAP12:
+			case SOAP_12:
 				client.setMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap12WithAttachmentsFileName(), false,addIDUnivoco);
 				break;
 			}
 		}
 		else{
-			switch (this.soapVersion) {
-			case SOAP11:
+			switch (this.messageType) {
+			case SOAP_11:
 				client.setMessageFromFile(this.unitsTestsuiteProperties.getSoap11FileName(), false,addIDUnivoco);
 				break;
-			case SOAP12:
+			case SOAP_12:
 				client.setMessageFromFile(this.unitsTestsuiteProperties.getSoap12FileName(), false,addIDUnivoco);
 				break;
 			}
@@ -1054,6 +1060,7 @@ public class CooperazioneBase {
 	/***
 	 * Test per il profilo di collaborazione Asincrono Asimmetrico, modalita asincrona
 	 */
+	@SuppressWarnings("incomplete-switch")
 	public void asincronoAsimmetrico_modalitaAsincrona(String portaDelegata, String portaDelegataCorrelata, 
 			RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_modalitaAsincrona,boolean addIDUnivoco) throws TestSuiteException, Exception{
 		DatabaseComponent dbComponentFruitore = null;
@@ -1064,24 +1071,24 @@ public class CooperazioneBase {
 			client.setUrlPortaDiDominio(this.getUrlPortaDiDominio());
 			client.setPortaDelegata(portaDelegata);
 			client.setPortaDelegataCorrelata(portaDelegataCorrelata);
-			client.connectToSoapEngine(this.soapVersion);
+			client.connectToSoapEngine(this.messageType);
 			client.setGeneraIDUnivoco(addIDUnivoco);
 			if(this.soapWithAttachments){
-				switch (this.soapVersion) {
-				case SOAP11:
+				switch (this.messageType) {
+				case SOAP_11:
 					client.setMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap11WithAttachmentsFileName(), false,addIDUnivoco);
 					break;
-				case SOAP12:
+				case SOAP_12:
 					client.setMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap12WithAttachmentsFileName(), false,addIDUnivoco);
 					break;
 				}
 			}
 			else{
-				switch (this.soapVersion) {
-				case SOAP11:
+				switch (this.messageType) {
+				case SOAP_11:
 					client.setMessageFromFile(this.unitsTestsuiteProperties.getSoap11FileName(), false,addIDUnivoco);
 					break;
-				case SOAP12:
+				case SOAP_12:
 					client.setMessageFromFile(this.unitsTestsuiteProperties.getSoap12FileName(), false,addIDUnivoco);
 					break;
 				}
@@ -1318,6 +1325,7 @@ public class CooperazioneBase {
 	/***
 	 * Test per il profilo di collaborazione Asincrono Asimmetrico, modalita sincrona
 	 */
+	@SuppressWarnings("incomplete-switch")
 	public void asincronoAsimmetrico_modalitaSincrona(String portaDelegata,String portaDelegataCorrelata,
 			RepositoryCorrelazioneIstanzeAsincrone repositoryCorrelazioneIstanzeAsincroneAsimmetriche_modalitaSincrona,boolean addIDUnivoco) throws TestSuiteException, IOException, SOAPException{
 		ClientAsincronoAsimmetrico_ModalitaSincrona client = new ClientAsincronoAsimmetrico_ModalitaSincrona(repositoryCorrelazioneIstanzeAsincroneAsimmetriche_modalitaSincrona);
@@ -1325,23 +1333,23 @@ public class CooperazioneBase {
 		client.setPortaDelegata(portaDelegata);
 		client.setGeneraIDUnivoco(addIDUnivoco);
 		client.setPortaDelegataCorrelata(portaDelegataCorrelata);
-		client.connectToSoapEngine(this.soapVersion);
+		client.connectToSoapEngine(this.messageType);
 		if(this.soapWithAttachments){
-			switch (this.soapVersion) {
-			case SOAP11:
+			switch (this.messageType) {
+			case SOAP_11:
 				client.setMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap11WithAttachmentsFileName(), false,addIDUnivoco);
 				break;
-			case SOAP12:
+			case SOAP_12:
 				client.setMessageWithAttachmentsFromFile(this.unitsTestsuiteProperties.getSoap12WithAttachmentsFileName(), false,addIDUnivoco);
 				break;
 			}
 		}
 		else{
-			switch (this.soapVersion) {
-			case SOAP11:
+			switch (this.messageType) {
+			case SOAP_11:
 				client.setMessageFromFile(this.unitsTestsuiteProperties.getSoap11FileName(), false,addIDUnivoco);
 				break;
-			case SOAP12:
+			case SOAP_12:
 				client.setMessageFromFile(this.unitsTestsuiteProperties.getSoap12FileName(), false,addIDUnivoco);
 				break;
 			}

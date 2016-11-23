@@ -39,6 +39,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.generic_project.web.impl.jsf1.mbean.LoginBean;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.transport.http.HttpServletCredential;
 
 /****
@@ -150,7 +151,7 @@ public class PrincipalFilter implements Filter {
 					// se non e' loggato lo loggo
 					if(!lb.getIsLoggedIn()){
 						// Controllo principal
-						HttpServletCredential identity = new HttpServletCredential(httpServletRequest);
+						HttpServletCredential identity = new HttpServletCredential(httpServletRequest,LoggerWrapperFactory.getLogger(PrincipalFilter.class));
 						String username = identity.getPrincipal();
 
 						// Se l'username che mi arriva e' settato vuol dire che sono autorizzato dal Container

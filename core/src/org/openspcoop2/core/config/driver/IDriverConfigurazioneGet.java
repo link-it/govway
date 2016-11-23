@@ -163,7 +163,7 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	/**
 	 * Restituisce le porta applicative che indirizzano il servizio indicato in <var>idServizio</var>
 	 * Nel caso in cui e' specificata un'azione ma non viene trovato nessun risultato, non vengono effettuate ricerche ulteriori.
-	 * @param idPA
+	 * @param idServizio
 	 * @param ricercaPuntuale
 	 * @return La porta applicativa
 	 * @throws DriverConfigurazioneException
@@ -175,7 +175,8 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	 * Restituisce le porta applicative che indirizzano il servizio indicato in <var>idServizio</var>
 	 * dove il soggetto erogatore e' un soggetto virtuale
 	 * Nel caso in cui e' specificata un'azione ma non viene trovato nessun risultato, non vengono effettuate ricerche ulteriori.
-	 * @param idPA
+	 * @param soggettoVirtuale
+	 * @param idServizio
 	 * @param ricercaPuntuale
 	 * @return La porta applicativa
 	 * @throws DriverConfigurazioneException
@@ -214,7 +215,6 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	 * Restituisce il servizio applicativo
 	 *
 	 * @param idServizioApplicativo Identificativo del servizio applicativo
-	 * @param servizioApplicativo Servizio Applicativo
 	 * @return Il Servizio Applicativo.
 	 * 
 	 */

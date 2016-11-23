@@ -28,7 +28,7 @@ import java.util.List;
 
 import org.apache.axis.AxisFault;
 import org.openspcoop2.core.constants.TipoPdD;
-import org.openspcoop2.core.eccezione.details.constants.Costanti;
+import org.openspcoop2.core.eccezione.details.constants.TipoEccezione;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
@@ -38,8 +38,8 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
-import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
+import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.core.Repository;
@@ -538,16 +538,16 @@ public class Utilities {
 					String idFunzioneValue = funzione.getTextContent();
 					String identificativoFunzioneAtteso = null;
 					if(tipoPdDAtteso.equals(TipoPdD.DELEGATA)){
-						identificativoFunzioneAtteso = Costanti.TIPO_PDD_PORTA_DELEGATA;
+						identificativoFunzioneAtteso = org.openspcoop2.core.eccezione.details.constants.TipoPdD.PORTA_DELEGATA.getValue();
 					}
 					else if(tipoPdDAtteso.equals(TipoPdD.APPLICATIVA)){
-						identificativoFunzioneAtteso = Costanti.TIPO_PDD_PORTA_APPLICATIVA;
+						identificativoFunzioneAtteso = org.openspcoop2.core.eccezione.details.constants.TipoPdD.PORTA_APPLICATIVA.getValue();
 					}
 					else if(tipoPdDAtteso.equals(TipoPdD.INTEGRATION_MANAGER)){
-						identificativoFunzioneAtteso = Costanti.TIPO_PDD_INTEGRATION_MANAGER;
+						identificativoFunzioneAtteso = org.openspcoop2.core.eccezione.details.constants.TipoPdD.INTEGRATION_MANAGER.getValue();
 					}
 					else if(tipoPdDAtteso.equals(TipoPdD.ROUTER)){
-						identificativoFunzioneAtteso = Costanti.TIPO_PDD_ROUTER;
+						identificativoFunzioneAtteso = org.openspcoop2.core.eccezione.details.constants.TipoPdD.ROUTER.getValue();
 					}
 					Reporter.log("Controllo identificativoFunzione presente["+idFunzioneValue+"] atteso["+identificativoFunzioneAtteso+"]");
 					Assert.assertTrue(idFunzioneValue.equals(identificativoFunzioneAtteso));
@@ -658,12 +658,12 @@ public class Utilities {
 								// check tipo
 								boolean okTipo = false;
 								if(valoreCodiceEccezione.startsWith("EGOV_IT_")){
-									if(Costanti.TIPO_ECCEZIONE_PROTOCOLLO.equals(valoreTipoEccezione)){
+									if(TipoEccezione.ECCEZIONE_PROTOCOLLO.getValue().equals(valoreTipoEccezione)){
 										okTipo = true;
 									}
 								}
 								else{
-									if(Costanti.TIPO_ECCEZIONE_INTEGRAZIONE.equals(valoreTipoEccezione)){
+									if(TipoEccezione.ECCEZIONE_INTEGRAZIONE.getValue().equals(valoreTipoEccezione)){
 										okTipo = true;
 									}
 								}

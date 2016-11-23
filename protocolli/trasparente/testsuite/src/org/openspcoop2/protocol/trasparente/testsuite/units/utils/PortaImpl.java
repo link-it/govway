@@ -23,7 +23,7 @@
 
 package org.openspcoop2.protocol.trasparente.testsuite.units.utils;
 
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.trasparente.testsuite.core.Utilities;
 
 /**
@@ -64,23 +64,23 @@ public class PortaImpl {
 	
 	public PortaImpl() {
 
-		this.pdSOAP11Stateless = new PortaDelegata(SOAPVersion.SOAP11, false, false);
-		this.pdSOAP12Stateless = new PortaDelegata(SOAPVersion.SOAP12, false, false);
-		this.pdSOAP11WithAttachmentsStateless = new PortaDelegata(SOAPVersion.SOAP11, true, false);
-		this.pdSOAP12WithAttachmentsStateless = new PortaDelegata(SOAPVersion.SOAP12, true, false);
-		this.pdSOAP11Stateful = new PortaDelegata(SOAPVersion.SOAP11, false, true);
-		this.pdSOAP12Stateful = new PortaDelegata(SOAPVersion.SOAP12, false, true);
-		this.pdSOAP11WithAttachmentsStateful = new PortaDelegata(SOAPVersion.SOAP11, true, true);
-		this.pdSOAP12WithAttachmentsStateful = new PortaDelegata(SOAPVersion.SOAP12, true, true);
+		this.pdSOAP11Stateless = new PortaDelegata(MessageType.SOAP_11, false, false);
+		this.pdSOAP12Stateless = new PortaDelegata(MessageType.SOAP_12, false, false);
+		this.pdSOAP11WithAttachmentsStateless = new PortaDelegata(MessageType.SOAP_11, true, false);
+		this.pdSOAP12WithAttachmentsStateless = new PortaDelegata(MessageType.SOAP_12, true, false);
+		this.pdSOAP11Stateful = new PortaDelegata(MessageType.SOAP_11, false, true);
+		this.pdSOAP12Stateful = new PortaDelegata(MessageType.SOAP_12, false, true);
+		this.pdSOAP11WithAttachmentsStateful = new PortaDelegata(MessageType.SOAP_11, true, true);
+		this.pdSOAP12WithAttachmentsStateful = new PortaDelegata(MessageType.SOAP_12, true, true);
 
-		this.paSOAP11Stateless = new PortaApplicativa(SOAPVersion.SOAP11, false, false);
-		this.paSOAP12Stateless = new PortaApplicativa(SOAPVersion.SOAP12, false, false);
-		this.paSOAP11WithAttachmentsStateless = new PortaApplicativa(SOAPVersion.SOAP11, true, false);
-		this.paSOAP12WithAttachmentsStateless = new PortaApplicativa(SOAPVersion.SOAP12, true, false);
-		this.paSOAP11Stateful = new PortaApplicativa(SOAPVersion.SOAP11, false, true);
-		this.paSOAP12Stateful = new PortaApplicativa(SOAPVersion.SOAP12, false, true);
-		this.paSOAP11WithAttachmentsStateful = new PortaApplicativa(SOAPVersion.SOAP11, true, true);
-		this.paSOAP12WithAttachmentsStateful = new PortaApplicativa(SOAPVersion.SOAP12, true, true);
+		this.paSOAP11Stateless = new PortaApplicativa(MessageType.SOAP_11, false, false);
+		this.paSOAP12Stateless = new PortaApplicativa(MessageType.SOAP_12, false, false);
+		this.paSOAP11WithAttachmentsStateless = new PortaApplicativa(MessageType.SOAP_11, true, false);
+		this.paSOAP12WithAttachmentsStateless = new PortaApplicativa(MessageType.SOAP_12, true, false);
+		this.paSOAP11Stateful = new PortaApplicativa(MessageType.SOAP_11, false, true);
+		this.paSOAP12Stateful = new PortaApplicativa(MessageType.SOAP_12, false, true);
+		this.paSOAP11WithAttachmentsStateful = new PortaApplicativa(MessageType.SOAP_11, true, true);
+		this.paSOAP12WithAttachmentsStateful = new PortaApplicativa(MessageType.SOAP_12, true, true);
 		
 		try{
 			String version_jbossas = Utilities.readApplicationServerVersion();

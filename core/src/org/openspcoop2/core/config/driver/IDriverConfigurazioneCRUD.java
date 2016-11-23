@@ -36,7 +36,6 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 
 /**
  * Interfaccia per la gestione CRUD di oggetti presenti in una configurazione 

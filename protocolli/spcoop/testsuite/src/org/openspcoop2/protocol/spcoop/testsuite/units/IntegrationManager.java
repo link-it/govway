@@ -31,20 +31,7 @@ import javax.xml.rpc.Stub;
 import javax.xml.ws.BindingProvider;
 
 import org.apache.axis.Message;
-import org.openspcoop2.testsuite.axis14.Axis14SoapUtils;
-import org.openspcoop2.testsuite.clients.ClientCore;
-import org.openspcoop2.testsuite.core.TestSuiteException;
-import org.openspcoop2.testsuite.core.Repository;
-import org.openspcoop2.testsuite.core.SOAPEngine;
-import org.openspcoop2.testsuite.core.TestSuiteProperties;
-import org.openspcoop2.testsuite.core.asincrono.RepositoryConsegnaRisposteAsincroneSimmetriche;
-import org.openspcoop2.testsuite.core.asincrono.RepositoryCorrelazioneIstanzeAsincrone;
-import org.openspcoop2.testsuite.db.DatabaseComponent;
-import org.openspcoop2.testsuite.db.DatiServizio;
-import org.openspcoop2.testsuite.server.ServerRicezioneRispostaAsincronaSimmetrica;
-import org.openspcoop2.testsuite.units.CooperazioneBase;
-import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
@@ -55,6 +42,19 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
+import org.openspcoop2.testsuite.axis14.Axis14SoapUtils;
+import org.openspcoop2.testsuite.clients.ClientCore;
+import org.openspcoop2.testsuite.core.Repository;
+import org.openspcoop2.testsuite.core.SOAPEngine;
+import org.openspcoop2.testsuite.core.TestSuiteException;
+import org.openspcoop2.testsuite.core.TestSuiteProperties;
+import org.openspcoop2.testsuite.core.asincrono.RepositoryConsegnaRisposteAsincroneSimmetriche;
+import org.openspcoop2.testsuite.core.asincrono.RepositoryCorrelazioneIstanzeAsincrone;
+import org.openspcoop2.testsuite.db.DatabaseComponent;
+import org.openspcoop2.testsuite.db.DatiServizio;
+import org.openspcoop2.testsuite.server.ServerRicezioneRispostaAsincronaSimmetrica;
+import org.openspcoop2.testsuite.units.CooperazioneBase;
+import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
 import org.openspcoop2.utils.date.DateManager;
 import org.testng.Assert;
 import org.testng.Reporter;
@@ -80,7 +80,7 @@ public class IntegrationManager {
 			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
 			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
 	private CooperazioneBase collaborazioneSPCoopBase = 
-		new CooperazioneBase(false,SOAPVersion.SOAP11,  this.info, 
+		new CooperazioneBase(false,MessageType.SOAP_11,  this.info, 
 				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
 				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 
@@ -2447,7 +2447,7 @@ public class IntegrationManager {
 			CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE,
 			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
 	private CooperazioneBase collaborazioneSPCoopBaseIM = 
-		new CooperazioneBase(false,SOAPVersion.SOAP11,  this.infoIM, 
+		new CooperazioneBase(false,MessageType.SOAP_11,  this.infoIM, 
 				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
 				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	@Test(groups={IntegrationManager.ID_GRUPPO,IntegrationManager.ID_GRUPPO+".MESSAGE_BOX"},dataProvider="SincronoIM",dependsOnMethods={"message_box_invocazione_per_riferimento"})

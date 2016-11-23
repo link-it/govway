@@ -41,7 +41,7 @@ import org.openspcoop2.testsuite.db.DatiServizioAzione;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
 import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
@@ -462,7 +462,7 @@ public class CooperazioneConErrori {
 				CostantiTestSuite.SPCOOP_SOGGETTO_CONNETTORE_ERRATO,
 				false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
 	private CooperazioneBase collaborazioneSPCoopBaseConnettoreErrato = 
-			new CooperazioneBase(false,SOAPVersion.SOAP11,  this.infoConnettoreErrato, 
+			new CooperazioneBase(false,MessageType.SOAP_11,  this.infoConnettoreErrato, 
 					org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
 					DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	
@@ -798,7 +798,7 @@ public class CooperazioneConErrori {
 			CostantiTestSuite.SPCOOP_SOGGETTO_SOAP_FAULT_PDD_DEST,
 			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
 	private CooperazioneBase collaborazioneSPCoopBaseSOAPFaultPdDDestinazione = 
-		new CooperazioneBase(false,SOAPVersion.SOAP11,  this.infoSOAPFaultPdDDestinazione, 
+		new CooperazioneBase(false,MessageType.SOAP_11,  this.infoSOAPFaultPdDDestinazione, 
 				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
 				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	
@@ -1143,7 +1143,7 @@ public class CooperazioneConErrori {
 			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
 			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
 	private CooperazioneBase collaborazioneSPCoopBaseConnettoreErratoServizioApplicativo = 
-		new CooperazioneBase(false,SOAPVersion.SOAP11,  this.infoConnettoreErratoServizioApplicativo, 
+		new CooperazioneBase(false,MessageType.SOAP_11,  this.infoConnettoreErratoServizioApplicativo, 
 				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
 				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	
@@ -1551,7 +1551,7 @@ public class CooperazioneConErrori {
 			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
 			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
 	private CooperazioneBase collaborazioneSPCoopBaseSOAPFaultServizioApplicativo = 
-		new CooperazioneBase(false, SOAPVersion.SOAP11, this.infoSOAPFaultServizioApplicativo, 
+		new CooperazioneBase(false, MessageType.SOAP_11, this.infoSOAPFaultServizioApplicativo, 
 				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
 				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	
@@ -1951,7 +1951,7 @@ public class CooperazioneConErrori {
 			CostantiTestSuite.SPCOOP_SOGGETTO_ERRORE_PROCESSAMENTO,
 			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
 	private CooperazioneBase collaborazioneSPCoopBaseErroreProcessamento = 
-		new CooperazioneBase(false,SOAPVersion.SOAP11,  this.infoErroreProcessamento, 
+		new CooperazioneBase(false,MessageType.SOAP_11,  this.infoErroreProcessamento, 
 				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
 				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	
@@ -2422,7 +2422,7 @@ public class CooperazioneConErrori {
 			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
 			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
 	private CooperazioneBase collaborazioneSPCoopBaseErroreValidazione = 
-		new CooperazioneBase(false,SOAPVersion.SOAP11,  this.infoErroreValidazione, 
+		new CooperazioneBase(false,MessageType.SOAP_11,  this.infoErroreValidazione, 
 				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
 				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	
@@ -3033,7 +3033,7 @@ public class CooperazioneConErrori {
 							CostantiTestSuite.SPCOOP_SOGGETTO_SOAP_FAULT_PDD_DEST,
 							true,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
 					CooperazioneBase collaborazioneSPCoopBaseTEST7 = 
-						new CooperazioneBase(false,SOAPVersion.SOAP11,  infoTEST7, 
+						new CooperazioneBase(false,MessageType.SOAP_11,  infoTEST7, 
 								org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
 								DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 					this.controllaTracciamentoRichiesta(id,data,collaborazioneSPCoopBaseTEST7, 

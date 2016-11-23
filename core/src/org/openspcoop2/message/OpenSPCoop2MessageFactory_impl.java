@@ -151,27 +151,27 @@ public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
 
 	@Override
 	protected OpenSPCoop2Message _createMessage(MessageType messageType, TransportRequestContext requestContext, InputStream is, 
-			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold, long overhead) throws MessageException {
+			AttachmentsProcessingMode attachmentsProcessingMode, long overhead) throws MessageException {
 		
-		return this._createMessageEngine(messageType, requestContext, is, fileCacheEnable, attachmentRepoDir, fileThreshold, overhead);
+		return this._createMessageEngine(messageType, requestContext, is, attachmentsProcessingMode, overhead);
 	}
 	
 	@Override
 	protected OpenSPCoop2Message _createMessage(MessageType messageType, TransportResponseContext responseContext, InputStream is, 
-			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold, long overhead) throws MessageException {
+			AttachmentsProcessingMode attachmentsProcessingMode, long overhead) throws MessageException {
 		
-		return this._createMessageEngine(messageType, responseContext, is, fileCacheEnable, attachmentRepoDir, fileThreshold, overhead);
+		return this._createMessageEngine(messageType, responseContext, is, attachmentsProcessingMode, overhead);
 	}
 	
 	@Override
-	protected OpenSPCoop2Message _createMessage(MessageType messageType, String contentType, 
-			InputStream is,  boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold, long overhead) throws MessageException{
+	protected OpenSPCoop2Message _createMessage(MessageType messageType, String contentType, InputStream is,  
+			AttachmentsProcessingMode attachmentsProcessingMode, long overhead) throws MessageException{
 		
-		return this._createMessageEngine(messageType, contentType, is, fileCacheEnable, attachmentRepoDir, fileThreshold, overhead);
+		return this._createMessageEngine(messageType, contentType, is, attachmentsProcessingMode, overhead);
 	}
 	
 	private OpenSPCoop2Message _createMessageEngine(MessageType messageType, Object context, InputStream is, 
-			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold, long overhead) throws MessageException {
+			AttachmentsProcessingMode attachmentsProcessingMode, long overhead) throws MessageException {
 		
 		try{
 		

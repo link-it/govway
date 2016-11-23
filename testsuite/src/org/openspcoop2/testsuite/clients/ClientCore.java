@@ -34,7 +34,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.attachments.AttachmentPart;
 import org.apache.axis.message.SOAPBody;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.testsuite.axis14.Axis14WSSBaseUtils;
 import org.openspcoop2.testsuite.axis14.Axis14WSSReceiver;
 import org.openspcoop2.testsuite.axis14.Axis14WSSSender;
@@ -78,7 +78,7 @@ public class ClientCore {
 	/** SOAPEngine utilizzato dal Client */
 	protected SOAPEngine soapEngine;
 	/** SOAPVersion */
-	protected SOAPVersion soapVersion;
+	protected MessageType messageType;
 
 	/** Messaggio da spedire */
 	public Message sentMessage;
@@ -210,13 +210,13 @@ public class ClientCore {
 	 * Deve essere chiamato dopo aver impostato la url della Porta di Dominio, e la porta delegata da invocare
 	 */
 	public void connectToSoapEngine() throws TestSuiteException{
-		this.connectToSoapEngine(SOAPVersion.SOAP11);
+		this.connectToSoapEngine(MessageType.SOAP_11);
 	}
-	public void connectToSoapEngine(SOAPVersion soapVersion) throws TestSuiteException{
+	public void connectToSoapEngine(MessageType messageType) throws TestSuiteException{
 		if(this.portaDelegata==null)
 			this.portaDelegata="";
-		this.soapEngine=new SOAPEngine(this.urlPortaDiDominio+this.portaDelegata,soapVersion);
-		this.soapVersion = soapVersion;
+		this.soapEngine=new SOAPEngine(this.urlPortaDiDominio+this.portaDelegata,messageType);
+		this.messageType = messageType;
 	}
 
 	/**

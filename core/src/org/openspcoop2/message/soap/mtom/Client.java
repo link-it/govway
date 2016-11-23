@@ -20,7 +20,6 @@
  */
 package org.openspcoop2.message.soap.mtom;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,9 +99,7 @@ public class Client {
 			bout.write(soap12Suffix.getBytes());
 		}
 		OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().
-				createMessage(messageType, MessageRole.REQUEST, MessageUtilities.getDefaultContentType(messageType), 
-						new ByteArrayInputStream(bout.toByteArray()), 
-						null, false, null, null);
+				createMessage(messageType, MessageRole.REQUEST, MessageUtilities.getDefaultContentType(messageType), bout.toByteArray());
 		OpenSPCoop2Message omsg  = pr.getMessage_throwParseException();
 		OpenSPCoop2SoapMessage msg = omsg.castAsSoap();
 		

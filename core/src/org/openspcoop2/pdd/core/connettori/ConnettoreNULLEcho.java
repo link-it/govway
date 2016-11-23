@@ -158,7 +158,7 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(this.requestMsg.getMessageType(),MessageRole.RESPONSE,
 					this.requestMsg.getContentType(),
 					bin,notifierInputStreamParams,
-					this.openspcoopProperties.isFileCacheEnable(), this.openspcoopProperties.getAttachmentRepoDir(), this.openspcoopProperties.getFileThreshold());
+					this.openspcoopProperties.getAttachmentsProcessingMode());
 			// Non funziona con gli attachments: this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(request.getRequestMessage().getVersioneSoap(),(bout.toByteArray()),notifierInputStreamParams);
 			if(pr.getParseException()!=null){
 				this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());

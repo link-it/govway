@@ -18,6 +18,10 @@ CREATE TABLE porte_applicative
 	id_port_type NUMBER,
 	-- azione
 	azione VARCHAR2(255),
+	mode_azione VARCHAR2(255),
+	pattern_azione VARCHAR2(255),
+	-- abilitato/disabilitato
+	force_wsdl_based_azione VARCHAR2(255),
 	-- disable/packaging/unpackaging/verify
 	mtom_request_mode VARCHAR2(255),
 	-- disable/packaging/unpackaging/verify
@@ -58,7 +62,7 @@ CREATE TABLE porte_applicative
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
-	CONSTRAINT unique_porte_applicative_1 UNIQUE (id_soggetto,nome_porta),
+	CONSTRAINT unique_porte_applicative_1 UNIQUE (nome_porta),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_porte_applicative_1 FOREIGN KEY (id_soggetto) REFERENCES soggetti(id),
 	CONSTRAINT pk_porte_applicative PRIMARY KEY (id)

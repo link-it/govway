@@ -76,22 +76,6 @@ public class Imbustamento  {
 	
 	/* ********  Metodi per la costruzione di parti della busta  ******** */ 
 
-	/**
-	 * Metodo che si occupa di costruire una stringa formata da un identificativo
-	 * conforme alla specifica.
-	 * L'identificativo e' formato da :
-	 * codAmministrazione_codPortaDominio_num.progressivo_data_ora
-	 * <p>
-	 * Il codice Amministrazione e' preso da <var>destinatario</var>.
-	 * Il codice della Porta di Dominio e' preso da <var>idPD</var>.
-	 * Le altre informazioni sono costruite dal metodo, che si occupa
-	 * di assemblarle in una unica stringa e di ritornarla.
-	 *
-	 * @param idSoggetto identificativo del Soggetto
-	 * @param idTransazione id transazione
-	 * @return un oggetto String contenente l'identificativo secondo specifica del protocollo.
-	 * 
-	 */
 	//public String buildID(IDSoggetto idSoggetto, String idTransazione, Boolean isRichiesta) throws ProtocolException{
 	//	return this.buildID(idSoggetto, idTransazione, Configurazione.getAttesaAttiva(), Configurazione.getCheckInterval(), isRichiesta);
 	//}
@@ -110,27 +94,11 @@ public class Imbustamento  {
 
 	/* ----------------  Metodi per la costruzione di una busta  -------------------- */
 
-	/**
-	 * Effettua l'imbustamento
-	 *  
-	 * @param msg Messaggio in cui deve essere aggiunto un header.
-	 * @param busta Busta che contiene i dati necessari per la creazione dell'header
-	 * 
-	 */
 	public void imbustamento(IState state, OpenSPCoop2Message msg,Busta busta,Integrazione integrazione,ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{	
 		this.imbustamento(state, msg, busta,integrazione, false, RuoloMessaggio.RISPOSTA, false, proprietaManifestAttachments);
 	}
 
 
-	/**
-	 * Effettua l'imbustamento
-	 *  
-	 * @param msg Messaggio in cui deve essere aggiunto un header.
-	 * @param busta Busta che contiene i dati necessari per la creazione dell'header
-	 * @param gestioneManifest Indicazione se deve essere gestito il manifest degli attachments
-	 * @param isRichiesta Tipo di Busta
-	 * 
-	 */
 	public BustaRawContent<?> imbustamento(IState state, OpenSPCoop2Message msg,Busta busta,Integrazione integrazione,
 			boolean gestioneManifest,RuoloMessaggio ruoloMessaggio,boolean scartaBody,
 			ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{	

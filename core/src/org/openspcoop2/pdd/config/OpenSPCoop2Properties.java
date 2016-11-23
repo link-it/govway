@@ -45,6 +45,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
+import org.openspcoop2.message.AttachmentsProcessingMode;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autenticazione.IGestoreCredenziali;
@@ -250,6 +251,7 @@ public class OpenSPCoop2Properties {
 			}
 			
 			// Attachment
+			getAttachmentsProcessingMode();
 			// warning, default false.
 			if(this.isFileCacheEnable()){
 				// Se abilitato, deve essere specificato il repository
@@ -3429,15 +3431,26 @@ public class OpenSPCoop2Properties {
 	
 	
 
-	/**
-	 * restituisce le preferenze di gestione attachment per l'implementazione Axiom
-	 *
-	 * @return Restituisce le preferenze di gestione attachment per l'implementazione Axiom
-	 * 
-	 */
-	
+	private static AttachmentsProcessingMode attachmentsProcessingMode = null;
+	public AttachmentsProcessingMode getAttachmentsProcessingMode() {	
+		if(OpenSPCoop2Properties.attachmentsProcessingMode==null){
+			if(this.isFileCacheEnable()){
+				try{ 
+					OpenSPCoop2Properties.attachmentsProcessingMode=AttachmentsProcessingMode.getFileCacheProcessingMode(getAttachmentRepoDir(), getFileThreshold());
+				} catch(java.lang.Exception e) {
+					this.log.error("Riscontrato errore durante la comprensione sulla modalità di processing degli attachments: "+e.getMessage(),e);
+					OpenSPCoop2Properties.attachmentsProcessingMode=AttachmentsProcessingMode.getMemoryCacheProcessingMode();
+				} 
+			}else{
+				OpenSPCoop2Properties.attachmentsProcessingMode=AttachmentsProcessingMode.getMemoryCacheProcessingMode();
+			}
+		}
+
+		return OpenSPCoop2Properties.attachmentsProcessingMode;
+	}
+
 	private static Boolean isFileCacheEnable = null;
-	public boolean isFileCacheEnable() {	
+	private boolean isFileCacheEnable() {	
 		if(OpenSPCoop2Properties.isFileCacheEnable==null){
 			try{ 
 				String name = null;
@@ -3459,7 +3472,7 @@ public class OpenSPCoop2Properties {
 
 
 	private static String attachmentRepoDir = null;
-	public String getAttachmentRepoDir() {	
+	private String getAttachmentRepoDir() {	
 
 		if(OpenSPCoop2Properties.attachmentRepoDir==null){
 			try{ 
@@ -3486,7 +3499,7 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private static String fileThreshold = null;
-	public String getFileThreshold() {	
+	private String getFileThreshold() {	
 
 		if(OpenSPCoop2Properties.fileThreshold==null){
 			try{ 

@@ -74,9 +74,9 @@ public class Integrazione {
 		this.idModuloInAttesa = idModulo;
 	} 
 	/**
-	 * Imposta la Location della Porta Delegata Richiesta
+	 * Imposta il nome della Porta Delegata Richiesta
 	 *
-	 * @param aLocation Location della Porta Delegata.
+	 * @param nomePorta Nome della Porta Delegata.
 	 * 
 	 */
 	public void setNomePorta(String nomePorta){

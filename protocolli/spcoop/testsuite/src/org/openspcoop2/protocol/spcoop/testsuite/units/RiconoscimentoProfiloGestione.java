@@ -31,15 +31,7 @@ import javax.xml.soap.SOAPException;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
-import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
-import org.openspcoop2.testsuite.core.TestSuiteException;
-import org.openspcoop2.testsuite.core.Repository;
-import org.openspcoop2.testsuite.core.asincrono.RepositoryCorrelazioneIstanzeAsincrone;
-import org.openspcoop2.testsuite.db.DatabaseComponent;
-import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
-import org.openspcoop2.testsuite.units.CooperazioneBase;
-import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
@@ -50,6 +42,14 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.DatabaseProperties;
 import org.openspcoop2.protocol.spcoop.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.spcoop.testsuite.core.SPCoopTestsuiteLogger;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
+import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
+import org.openspcoop2.testsuite.core.Repository;
+import org.openspcoop2.testsuite.core.TestSuiteException;
+import org.openspcoop2.testsuite.core.asincrono.RepositoryCorrelazioneIstanzeAsincrone;
+import org.openspcoop2.testsuite.db.DatabaseComponent;
+import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
+import org.openspcoop2.testsuite.units.CooperazioneBase;
+import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
 import org.openspcoop2.utils.date.DateManager;
 import org.testng.Assert;
 import org.testng.Reporter;
@@ -132,7 +132,7 @@ public class RiconoscimentoProfiloGestione {
 			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE,
 			false,SPCoopCostanti.PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI);	
 	private CooperazioneBase collaborazioneSPCoopBaseTEST1 = 
-		new CooperazioneBase(false, SOAPVersion.SOAP11, this.infoTEST1, 
+		new CooperazioneBase(false, MessageType.SOAP_11, this.infoTEST1, 
 				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
 				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	
@@ -216,7 +216,7 @@ public class RiconoscimentoProfiloGestione {
 			CostantiTestSuite.SPCOOP_SOGGETTO_EROGATORE_LINEE_GUIDA_11,
 			false,SPCoopCostanti.PROFILO_TRASMISSIONE_SENZA_DUPLICATI,Inoltro.SENZA_DUPLICATI);	
 	private CooperazioneBase collaborazioneSPCoopBaseTEST2 = 
-		new CooperazioneBase(false, SOAPVersion.SOAP11, this.infoTEST2, 
+		new CooperazioneBase(false, MessageType.SOAP_11, this.infoTEST2, 
 				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
 				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	
@@ -300,7 +300,7 @@ public class RiconoscimentoProfiloGestione {
 			CostantiTestSuite.SPCOOP_SOGGETTO_TMP,
 			false,SPCoopCostanti.PROFILO_TRASMISSIONE_SENZA_DUPLICATI,Inoltro.SENZA_DUPLICATI);	
 	private CooperazioneBase collaborazioneSPCoopBaseTEST3 = 
-		new CooperazioneBase(false, SOAPVersion.SOAP11, this.infoTEST3, 
+		new CooperazioneBase(false, MessageType.SOAP_11, this.infoTEST3, 
 				org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteProperties.getInstance(), 
 				DatabaseProperties.getInstance(), SPCoopTestsuiteLogger.getInstance());
 	

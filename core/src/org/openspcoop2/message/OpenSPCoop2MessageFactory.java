@@ -144,11 +144,11 @@ public abstract class OpenSPCoop2MessageFactory {
 	protected abstract OpenSPCoop2Message _createMessage(MessageType messageType, String contentType) throws MessageException;
 	
 	protected abstract OpenSPCoop2Message _createMessage(MessageType messageType, TransportRequestContext requestContext, 
-			InputStream is,  boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold, long overhead) throws MessageException;	
+			InputStream is,  AttachmentsProcessingMode attachmentsProcessingMode, long overhead) throws MessageException;	
 	protected abstract OpenSPCoop2Message _createMessage(MessageType messageType, TransportResponseContext responseContext, 
-			InputStream is,  boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold, long overhead) throws MessageException;	
+			InputStream is,  AttachmentsProcessingMode attachmentsProcessingMode, long overhead) throws MessageException;	
 	protected abstract OpenSPCoop2Message _createMessage(MessageType messageType, String contentType, 
-			InputStream is,  boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold, long overhead) throws MessageException;
+			InputStream is,  AttachmentsProcessingMode attachmentsProcessingMode, long overhead) throws MessageException;
 	
 	
 	
@@ -206,11 +206,24 @@ public abstract class OpenSPCoop2MessageFactory {
     }
     
     private OpenSPCoop2MessageParseResult _internalCreateMessage(MessageType messageType, MessageRole messageRole, Object context, 
-			InputStream is, NotifierInputStreamParams notifierInputStreamParams,
-			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold, long overhead) {	
+			Object msgParam, NotifierInputStreamParams notifierInputStreamParams,
+			AttachmentsProcessingMode attachmentsProcessingMode, long overhead) {	
 		
 		OpenSPCoop2MessageParseResult result = new OpenSPCoop2MessageParseResult();
 		try{
+			InputStream is = null;
+			if(msgParam!=null){
+				if(msgParam instanceof byte[]){
+					is = new ByteArrayInputStream( (byte[]) msgParam);
+				}
+				else if(msgParam instanceof InputStream){
+					is = (InputStream) msgParam;
+				}
+				else{
+					throw new Exception("Tipo di messaggio non supportato: "+msgParam.getClass().getName());
+				}
+			}
+			
 			InputStream nis = null;
 			
 //			if(is==null){
@@ -245,7 +258,7 @@ public abstract class OpenSPCoop2MessageFactory {
 			
 			OpenSPCoop2Message op2Msg = null;
 			if(transportRequestContext!=null){
-				op2Msg = this._createMessage(messageType, transportRequestContext, nis, fileCacheEnable, attachmentRepoDir, fileThreshold, overhead);
+				op2Msg = this._createMessage(messageType, transportRequestContext, nis, attachmentsProcessingMode, overhead);
 				
 				if(MessageType.SOAP_11.equals(messageType) || MessageType.SOAP_12.equals(messageType)){
 					String soapAction = null;
@@ -276,10 +289,10 @@ public abstract class OpenSPCoop2MessageFactory {
 				}
 			}
 			else if(transportResponseContext!=null){
-				op2Msg = this._createMessage(messageType, transportResponseContext, nis, fileCacheEnable, attachmentRepoDir, fileThreshold, overhead);
+				op2Msg = this._createMessage(messageType, transportResponseContext, nis, attachmentsProcessingMode, overhead);
 			}
 			else{
-				op2Msg = this._createMessage(messageType, contentType, nis, fileCacheEnable, attachmentRepoDir, fileThreshold, overhead);
+				op2Msg = this._createMessage(messageType, contentType, nis, attachmentsProcessingMode, overhead);
 			}
 			if(op2Msg==null){
 				throw new Exception("Create message failed");
@@ -309,7 +322,7 @@ public abstract class OpenSPCoop2MessageFactory {
 			String contentTypeForEnvelope, String soapAction,
 			Object context, 
 			Object msgParam, NotifierInputStreamParams notifierInputStreamParams, 
-			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold,
+			AttachmentsProcessingMode attachmentsProcessingMode,
 			boolean eraserXmlTag) {
 				
 		try{
@@ -433,7 +446,7 @@ public abstract class OpenSPCoop2MessageFactory {
 						
 			OpenSPCoop2MessageParseResult result = null;
 			if(context==null){
-				result = _internalCreateMessage(messageType, messageRole, contentTypeForEnvelope, messageInput, notifierInputStreamParams, fileCacheEnable, attachmentRepoDir, fileThreshold, 0);
+				result = _internalCreateMessage(messageType, messageRole, contentTypeForEnvelope, messageInput, notifierInputStreamParams, attachmentsProcessingMode, 0);
 			}
 			else if(context instanceof TransportRequestContext){
 				TransportRequestContext trc = (TransportRequestContext) context;
@@ -442,7 +455,7 @@ public abstract class OpenSPCoop2MessageFactory {
 				trc.getParametersTrasporto().remove(HttpConstants.CONTENT_TYPE.toUpperCase());
 				trc.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, contentTypeForEnvelope);
 				
-				result = _internalCreateMessage(messageType, messageRole, trc, messageInput, notifierInputStreamParams, fileCacheEnable, attachmentRepoDir, fileThreshold, 0);
+				result = _internalCreateMessage(messageType, messageRole, trc, messageInput, notifierInputStreamParams, attachmentsProcessingMode, 0);
 				
 			}
 			else if(context instanceof TransportResponseContext){
@@ -452,7 +465,7 @@ public abstract class OpenSPCoop2MessageFactory {
 				trc.getParametersTrasporto().remove(HttpConstants.CONTENT_TYPE.toUpperCase());
 				trc.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, contentTypeForEnvelope);
 				
-				result = _internalCreateMessage(messageType, messageRole, trc, messageInput, notifierInputStreamParams, fileCacheEnable, attachmentRepoDir, fileThreshold, 0);
+				result = _internalCreateMessage(messageType, messageRole, trc, messageInput, notifierInputStreamParams, attachmentsProcessingMode, 0);
 			}
 			else{
 				throw new MessageException("Unsupported Context ["+context.getClass().getName()+"]");
@@ -530,79 +543,217 @@ public abstract class OpenSPCoop2MessageFactory {
 	
 	// ********** METODI PUBBLICI *************
 		
+	
+	/*
+	 * Messaggi ottenuti tramite InputStream o byte[]
+	 */
+	
 	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportRequestContext requestContext, 
-			InputStream is, NotifierInputStreamParams notifierInputStreamParams, 
-			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold) {	
-		return _internalCreateMessage(messageType, MessageRole.REQUEST, requestContext, is, notifierInputStreamParams,  
-				fileCacheEnable, attachmentRepoDir, fileThreshold, 0);
+			InputStream messageInput, NotifierInputStreamParams notifierInputStreamParams) {	
+		return this.createMessage(messageType, requestContext, messageInput, notifierInputStreamParams, 
+				AttachmentsProcessingMode.getMemoryCacheProcessingMode());
+	}
+	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportRequestContext requestContext, 
+			InputStream messageInput, NotifierInputStreamParams notifierInputStreamParams, 
+			AttachmentsProcessingMode attachmentsProcessingMode) {	
+		return _internalCreateMessage(messageType, MessageRole.REQUEST, requestContext, messageInput, notifierInputStreamParams,  
+				attachmentsProcessingMode, 0);
+	}
+	
+	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportRequestContext requestContext, 
+			byte[] messageInput) {	
+		return this.createMessage(messageType, requestContext, messageInput, null, 
+				AttachmentsProcessingMode.getMemoryCacheProcessingMode());
+	}
+	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportRequestContext requestContext, 
+			byte[] messageInput, 
+			AttachmentsProcessingMode attachmentsProcessingMode) {	
+		return this.createMessage(messageType, requestContext, messageInput, null, 
+				attachmentsProcessingMode);
+	}
+	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportRequestContext requestContext, 
+			byte[] messageInput, NotifierInputStreamParams notifierInputStreamParams) {	
+		return this.createMessage(messageType, requestContext, messageInput, notifierInputStreamParams, 
+				AttachmentsProcessingMode.getMemoryCacheProcessingMode());
+	}
+	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportRequestContext requestContext, 
+			byte[] messageInput, NotifierInputStreamParams notifierInputStreamParams, 
+			AttachmentsProcessingMode attachmentsProcessingMode) {	
+		return _internalCreateMessage(messageType, MessageRole.REQUEST, requestContext, messageInput, notifierInputStreamParams,  
+				attachmentsProcessingMode, 0);
 	}
 	
 	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportResponseContext responseContext, 
-			InputStream is, NotifierInputStreamParams notifierInputStreamParams, 
-			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold) {	
-		return _internalCreateMessage(messageType, MessageRole.RESPONSE, responseContext, is, notifierInputStreamParams,  
-				fileCacheEnable, attachmentRepoDir, fileThreshold, 0);
+			InputStream messageInput, NotifierInputStreamParams notifierInputStreamParams) {	
+		return this.createMessage(messageType, responseContext, messageInput, notifierInputStreamParams, 
+				AttachmentsProcessingMode.getMemoryCacheProcessingMode());
+	}
+	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportResponseContext responseContext, 
+			InputStream messageInput, NotifierInputStreamParams notifierInputStreamParams, 
+			AttachmentsProcessingMode attachmentsProcessingMode) {	
+		return _internalCreateMessage(messageType, MessageRole.RESPONSE, responseContext, messageInput, notifierInputStreamParams,  
+				attachmentsProcessingMode, 0);
+	}
+	
+	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportResponseContext responseContext, 
+			byte[] messageInput) {	
+		return this.createMessage(messageType, responseContext, messageInput, null, 
+				AttachmentsProcessingMode.getMemoryCacheProcessingMode());
+	}
+	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportResponseContext responseContext, 
+			byte[] messageInput, 
+			AttachmentsProcessingMode attachmentsProcessingMode) {	
+		return this.createMessage(messageType, responseContext, messageInput, null, 
+				attachmentsProcessingMode);
+	}
+	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportResponseContext responseContext, 
+			byte[] messageInput, NotifierInputStreamParams notifierInputStreamParams) {	
+		return this.createMessage(messageType, responseContext, messageInput, notifierInputStreamParams, 
+				AttachmentsProcessingMode.getMemoryCacheProcessingMode());
+	}
+	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportResponseContext responseContext, 
+			byte[] messageInput, NotifierInputStreamParams notifierInputStreamParams, 
+			AttachmentsProcessingMode attachmentsProcessingMode) {	
+		return _internalCreateMessage(messageType, MessageRole.RESPONSE, responseContext, messageInput, notifierInputStreamParams,  
+				attachmentsProcessingMode, 0);
 	}
 	
 	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, MessageRole messageRole, String contentType, 
-			InputStream is, NotifierInputStreamParams notifierInputStreamParams, 
-			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold) {	
-		return _internalCreateMessage(messageType, messageRole, contentType, is, notifierInputStreamParams, 
-				fileCacheEnable, attachmentRepoDir, fileThreshold, 0);
+			InputStream messageInput, NotifierInputStreamParams notifierInputStreamParams) {	
+		return this.createMessage(messageType, messageRole, contentType, messageInput, notifierInputStreamParams, 
+				AttachmentsProcessingMode.getMemoryCacheProcessingMode());
+	}
+	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, MessageRole messageRole, String contentType, 
+			InputStream messageInput, NotifierInputStreamParams notifierInputStreamParams, 
+			AttachmentsProcessingMode attachmentsProcessingMode) {	
+		return _internalCreateMessage(messageType, messageRole, contentType, messageInput, notifierInputStreamParams, 
+				attachmentsProcessingMode, 0);
+	}
+	
+	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, MessageRole messageRole, String contentType, 
+			byte[] messageInput) {	
+		return this.createMessage(messageType, messageRole, contentType, messageInput, null, 
+				AttachmentsProcessingMode.getMemoryCacheProcessingMode());
+	}
+	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, MessageRole messageRole, String contentType, 
+			byte[] messageInput,
+			AttachmentsProcessingMode attachmentsProcessingMode) {	
+		return this.createMessage(messageType, messageRole, contentType, messageInput, null, 
+				attachmentsProcessingMode);
+	}
+	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, MessageRole messageRole, String contentType, 
+			byte[] messageInput, NotifierInputStreamParams notifierInputStreamParams) {	
+		return this.createMessage(messageType, messageRole, contentType, messageInput, notifierInputStreamParams, 
+				AttachmentsProcessingMode.getMemoryCacheProcessingMode());
+	}
+	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, MessageRole messageRole, String contentType, 
+			byte[] messageInput, NotifierInputStreamParams notifierInputStreamParams, 
+			AttachmentsProcessingMode attachmentsProcessingMode) {	
+		return _internalCreateMessage(messageType, messageRole, contentType, messageInput, notifierInputStreamParams, 
+				attachmentsProcessingMode, 0);
 	}
 	
 	
 	
+	
+	/*
+	 * Enveloping
+	 */
 	
 	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, String contentTypeForEnvelope, String soapAction,
 			TransportRequestContext requestContext, 
 			InputStream messageInput,NotifierInputStreamParams notifierInputStreamParams, 
-			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold,
+			boolean eraserXmlTag) {
+		return envelopingMessage(messageType, contentTypeForEnvelope, soapAction, requestContext,
+				messageInput, notifierInputStreamParams, AttachmentsProcessingMode.getMemoryCacheProcessingMode(), eraserXmlTag);
+	}
+	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, String contentTypeForEnvelope, String soapAction,
+			TransportRequestContext requestContext, 
+			InputStream messageInput,NotifierInputStreamParams notifierInputStreamParams, 
+			AttachmentsProcessingMode attachmentsProcessingMode,
 			boolean eraserXmlTag) {
 		return this._internalEnvelopingMessage(messageType, MessageRole.REQUEST, contentTypeForEnvelope, soapAction, requestContext, 
-				messageInput, notifierInputStreamParams, fileCacheEnable, attachmentRepoDir, fileThreshold, eraserXmlTag);
+				messageInput, notifierInputStreamParams, attachmentsProcessingMode, eraserXmlTag);
+	}
+	
+	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, String contentTypeForEnvelope, String soapAction,
+			TransportRequestContext requestContext, 
+			byte[] messageInput,NotifierInputStreamParams notifierInputStreamParams, 
+			boolean eraserXmlTag) {
+		return envelopingMessage(messageType, contentTypeForEnvelope, soapAction, requestContext,
+				messageInput, notifierInputStreamParams, AttachmentsProcessingMode.getMemoryCacheProcessingMode(), eraserXmlTag);
 	}
 	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, String contentTypeForEnvelope, String soapAction,
 			TransportRequestContext requestContext, 
 			byte[] messageInput,NotifierInputStreamParams notifierInputStreamParams, 
-			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold,
+			AttachmentsProcessingMode attachmentsProcessingMode,
 			boolean eraserXmlTag) {
 		return this._internalEnvelopingMessage(messageType, MessageRole.REQUEST, contentTypeForEnvelope, soapAction, requestContext, 
-				messageInput, notifierInputStreamParams, fileCacheEnable, attachmentRepoDir, fileThreshold, eraserXmlTag);
+				messageInput, notifierInputStreamParams, attachmentsProcessingMode, eraserXmlTag);
 	}
 	
 	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, String contentTypeForEnvelope, String soapAction,
 			TransportResponseContext responseContext, 
 			InputStream messageInput,NotifierInputStreamParams notifierInputStreamParams, 
-			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold,
+			boolean eraserXmlTag) {
+		return envelopingMessage(messageType, contentTypeForEnvelope, soapAction, responseContext,
+				messageInput, notifierInputStreamParams, AttachmentsProcessingMode.getMemoryCacheProcessingMode(), eraserXmlTag);
+	}
+	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, String contentTypeForEnvelope, String soapAction,
+			TransportResponseContext responseContext, 
+			InputStream messageInput,NotifierInputStreamParams notifierInputStreamParams, 
+			AttachmentsProcessingMode attachmentsProcessingMode,
 			boolean eraserXmlTag) {
 		return this._internalEnvelopingMessage(messageType, MessageRole.RESPONSE, contentTypeForEnvelope, soapAction, responseContext, 
-				messageInput, notifierInputStreamParams, fileCacheEnable, attachmentRepoDir, fileThreshold, eraserXmlTag);
+				messageInput, notifierInputStreamParams, attachmentsProcessingMode, eraserXmlTag);
+	}
+	
+	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, String contentTypeForEnvelope, String soapAction,
+			TransportResponseContext responseContext, 
+			byte[] messageInput,NotifierInputStreamParams notifierInputStreamParams, 
+			boolean eraserXmlTag) {
+		return envelopingMessage(messageType, contentTypeForEnvelope, soapAction, responseContext,
+				messageInput, notifierInputStreamParams, AttachmentsProcessingMode.getMemoryCacheProcessingMode(), eraserXmlTag);
 	}
 	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, String contentTypeForEnvelope, String soapAction,
 			TransportResponseContext responseContext, 
 			byte[] messageInput,NotifierInputStreamParams notifierInputStreamParams, 
-			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold,
+			AttachmentsProcessingMode attachmentsProcessingMode,
 			boolean eraserXmlTag) {
 		return this._internalEnvelopingMessage(messageType, MessageRole.RESPONSE, contentTypeForEnvelope, soapAction, responseContext, 
-				messageInput, notifierInputStreamParams, fileCacheEnable, attachmentRepoDir, fileThreshold, eraserXmlTag);
+				messageInput, notifierInputStreamParams, attachmentsProcessingMode, eraserXmlTag);
 	}
 	
 	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, MessageRole messageRole, 
 			String contentTypeForEnvelope, String soapAction,
 			InputStream messageInput,NotifierInputStreamParams notifierInputStreamParams, 
-			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold,
+			boolean eraserXmlTag) {
+		return envelopingMessage(messageType, messageRole, contentTypeForEnvelope, soapAction,
+				messageInput, notifierInputStreamParams, AttachmentsProcessingMode.getMemoryCacheProcessingMode(), eraserXmlTag);
+	}
+	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, MessageRole messageRole, 
+			String contentTypeForEnvelope, String soapAction,
+			InputStream messageInput,NotifierInputStreamParams notifierInputStreamParams, 
+			AttachmentsProcessingMode attachmentsProcessingMode,
 			boolean eraserXmlTag) {
 		return this._internalEnvelopingMessage(messageType, messageRole, contentTypeForEnvelope, soapAction, null, 
-				messageInput, notifierInputStreamParams, fileCacheEnable, attachmentRepoDir, fileThreshold, eraserXmlTag);
+				messageInput, notifierInputStreamParams, attachmentsProcessingMode, eraserXmlTag);
+	}
+	
+	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, MessageRole messageRole, 
+			String contentTypeForEnvelope, String soapAction,
+			byte[] messageInput,NotifierInputStreamParams notifierInputStreamParams, 
+			boolean eraserXmlTag) {
+		return envelopingMessage(messageType, messageRole, contentTypeForEnvelope, soapAction,
+				messageInput, notifierInputStreamParams, AttachmentsProcessingMode.getMemoryCacheProcessingMode(), eraserXmlTag);
 	}
 	public OpenSPCoop2MessageParseResult envelopingMessage(MessageType messageType, MessageRole messageRole, 
 			String contentTypeForEnvelope, String soapAction,
 			byte[] messageInput,NotifierInputStreamParams notifierInputStreamParams, 
-			boolean fileCacheEnable, String attachmentRepoDir, String fileThreshold,
+			AttachmentsProcessingMode attachmentsProcessingMode,
 			boolean eraserXmlTag) {
 		return this._internalEnvelopingMessage(messageType, messageRole, contentTypeForEnvelope, soapAction, null, 
-				messageInput, notifierInputStreamParams, fileCacheEnable, attachmentRepoDir, fileThreshold, eraserXmlTag);
+				messageInput, notifierInputStreamParams, attachmentsProcessingMode, eraserXmlTag);
 	}
 	
 	
@@ -638,12 +789,8 @@ public abstract class OpenSPCoop2MessageFactory {
 				xml = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://www.w3.org/2003/05/soap-envelope\"><SOAP-ENV:Body/></SOAP-ENV:Envelope>".getBytes();
 			}
 			
-			ByteArrayInputStream bais = null;
-			if(xml!=null){
-				bais = new ByteArrayInputStream(xml);
-			}
-			OpenSPCoop2MessageParseResult result =  _internalCreateMessage(messageType,role, MessageUtilities.getDefaultContentType(messageType), 
-					bais, notifierInputStreamParams, false, null, null, xml.length);
+			OpenSPCoop2MessageParseResult result = this.createMessage(messageType, role , MessageUtilities.getDefaultContentType(messageType), 
+					xml, notifierInputStreamParams);
 			if(result.getParseException()!=null){
 				// non dovrebbe succedere
 				throw result.getParseException().getSourceException();
@@ -714,9 +861,8 @@ public abstract class OpenSPCoop2MessageFactory {
 			//System.out.println("XML ["+versioneSoap+"] ["+xml+"]");
 			
 			byte[] xmlByte = fault.getBytes();
-			ByteArrayInputStream bais = new ByteArrayInputStream(xmlByte);
-			OpenSPCoop2MessageParseResult result =  _internalCreateMessage(messageType, MessageRole.FAULT, contentType, 
-					bais, notifierInputStreamParams, false, null, null, xmlByte.length);
+			OpenSPCoop2MessageParseResult result = this.createMessage(messageType, MessageRole.FAULT , contentType, 
+					xmlByte, notifierInputStreamParams);
 			if(result.getParseException()!=null){
 				// non dovrebbe succedere
 				throw result.getParseException().getSourceException();
