@@ -65,7 +65,22 @@ public abstract class BaseBean {
 			methodName.append(fieldName.substring(1));
 		}
 		
-		Method method = c.getMethod(methodName.toString());
+		Method method = null;
+		try{
+			method = c.getMethod(methodName.toString());
+		}catch(java.lang.NoSuchMethodException nsme){
+			if("get_default".equals(methodName.toString())){
+				// provo a recuperare getDefault
+				try{
+					method = c.getMethod("getDefault");
+				}catch(Throwable t){
+					throw nsme; // rilancio eccezione originale
+				}
+			}
+			else{
+				throw nsme; // rilancio eccezione originale
+			}
+		}
 		return method.invoke(object);
 	}
 	
@@ -79,7 +94,22 @@ public abstract class BaseBean {
 			methodName.append(fieldName.substring(1));
 		}
 		
-		Method method = c.getMethod(methodName.toString(),parameterType);
+		Method method = null;
+		try{
+			method = c.getMethod(methodName.toString(),parameterType);
+		}catch(java.lang.NoSuchMethodException nsme){
+			if("set_default".equals(methodName.toString())){
+				// provo a recuperare setDefault
+				try{
+					method = c.getMethod("setDefault",parameterType);
+				}catch(Throwable t){
+					throw nsme; // rilancio eccezione originale
+				}
+			}
+			else{
+				throw nsme; // rilancio eccezione originale
+			}
+		}
 		return method.invoke(object,parameterValue);
 	}
 	
