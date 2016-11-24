@@ -1533,7 +1533,7 @@ public class ConfigurazionePdDReader {
 		if(idPA==null){
 			throw new DriverConfigurazioneException("[getPortaApplicativa]: Parametro non definito (idPA is null)");
 		}
-		return this.getPortaApplicativa(connectionPdD,idPA);
+		return this.configurazionePdD.getPortaApplicativa(connectionPdD,idPA);
 	}
 
 	protected PortaApplicativa getPortaApplicativa_SafeMethod(Connection connectionPdD,IDPortaApplicativa idPA)throws DriverConfigurazioneException{

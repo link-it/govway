@@ -63,7 +63,7 @@ public class IntegrationErrorCollection implements java.io.Serializable {
 	
 	public org.openspcoop2.message.config.IntegrationErrorConfiguration getIntegrationError(IntegrationError errorType){
 		if(this.map.containsKey(errorType.name())){
-			org.openspcoop2.message.config.IntegrationErrorConfiguration error = this.map.get(errorType);
+			org.openspcoop2.message.config.IntegrationErrorConfiguration error = this.map.get(errorType.name());
 			error.setDefaultErrorType(this.defaultError);
 			return error;
 		}

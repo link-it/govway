@@ -2436,7 +2436,7 @@ public class RicezioneContenutiApplicativi {
 		boolean esisteProtocolloMsgRichiesta = false;
 		try{
 			esisteProtocolloMsgRichiesta = validatoreSintattico.
-					verifyProtocolPresence(this.msgContext.getTipoPorta(),infoServizio.getProfiloDiCollaborazione(),true);
+					verifyProtocolPresence(this.msgContext.getTipoPorta(),infoServizio.getProfiloDiCollaborazione(),RuoloMessaggio.RICHIESTA);
 		} catch (Exception e){
 			msgDiag.logErroreGenerico(e,"controlloEsistenzaBusta");
 			openspcoopstate.releaseResource();

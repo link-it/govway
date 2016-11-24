@@ -37,6 +37,7 @@ import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneSintatticaResult;
@@ -280,8 +281,8 @@ public class ValidazioneSintattica {
 	 * 
 	 * @return true se esiste un protocollo, false altrimenti
 	 */
-	public boolean verifyProtocolPresence(TipoPdD tipoPdD, ProfiloDiCollaborazione profilo, boolean isRichiesta) throws Exception{
-		return this.protocolFactory.createValidazioneSintattica().verifyProtocolPresence(tipoPdD, profilo, isRichiesta, this.msg);
+	public boolean verifyProtocolPresence(TipoPdD tipoPdD, ProfiloDiCollaborazione profilo, RuoloMessaggio ruoloMessaggio) throws Exception{
+		return this.protocolFactory.createValidazioneSintattica().verifyProtocolPresence(tipoPdD, profilo, ruoloMessaggio, this.msg);
 	}
 	
 

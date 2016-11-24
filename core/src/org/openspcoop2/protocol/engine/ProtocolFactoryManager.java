@@ -844,7 +844,7 @@ public class ProtocolFactoryManager {
 					}
 				}else{
 					for (int i = 0; i < webContext.sizeContextList(); i++) {
-						if(webContext.getContext(i).equals(servletContextName)){
+						if(webContext.getContext(i).getName().equals(servletContextName)){
 							return openspcoop2Manifest;
 						}
 					}

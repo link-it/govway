@@ -167,7 +167,7 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 			
 			validatoreSintattico = new ValidazioneSintattica(state,this.responseMsg, this.openspcoopProperties.isReadQualifiedAttribute(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD), protocolFactory); 
 
-			if(validatoreSintattico.verifyProtocolPresence(TipoPdD.APPLICATIVA,null,false) && 
+			if(validatoreSintattico.verifyProtocolPresence(TipoPdD.APPLICATIVA,null,RuoloMessaggio.RISPOSTA) && 
 					!"sdi".equals(protocolFactory.getProtocol())){ // evitare sdi per far funzionare il protocollo sdi con la sonda.
 				
 				// getBusta

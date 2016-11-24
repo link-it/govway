@@ -63,6 +63,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica;
@@ -4500,8 +4501,11 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 	}
 	
 	@Override
-	public boolean verifyProtocolPresence(TipoPdD tipoPdD, ProfiloDiCollaborazione profilo, boolean isRichiesta,
+	public boolean verifyProtocolPresence(TipoPdD tipoPdD, ProfiloDiCollaborazione profilo, RuoloMessaggio ruoloMessaggio,
 			OpenSPCoop2Message msg) throws ProtocolException{
+		if(msg==null){
+			return false;
+		}
 		OpenSPCoop2SoapMessage soap = null;
 		try{
 			soap = msg.castAsSoap();

@@ -373,8 +373,10 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 				if(this.debug)
 					this.logger.debug("Impostazione soap action...");
 				this.soapAction = soapMessageRequest.getSoapAction();
-				if(this.soapAction==null && MessageType.SOAP_11.equals(this.requestMsg.getMessageType())){
+				if(this.soapAction==null){
 					this.soapAction="\"OpenSPCoop\"";
+				}
+				if(MessageType.SOAP_11.equals(this.requestMsg.getMessageType())){
 					// NOTA non quotare la soap action, per mantenere la trasparenza della PdD
 					httpRequest.setHeader(Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION,this.soapAction);
 				}

@@ -55,9 +55,11 @@ public class ConfigurationServiceBindingSoap extends AbstractConfigurationServic
 	}
 	
 	@Override
-	protected void initMediaTypeCollection(){
-		this.request = new SoapMediaTypeCollection(this.binding);
-		this.response = new SoapMediaTypeCollection(this.binding);
+	public void init(){
+		if(this.enabled){
+			this.request = new SoapMediaTypeCollection(this.binding);
+			this.response = new SoapMediaTypeCollection(this.binding);
+		}
 	}
 	
 	public SoapBinding getBinding() {

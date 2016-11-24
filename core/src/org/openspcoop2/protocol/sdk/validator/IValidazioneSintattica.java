@@ -29,6 +29,7 @@ import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 
 /**
@@ -75,12 +76,12 @@ public interface IValidazioneSintattica<BustaRawType> extends IComponentFactory 
 	 * 
 	 * @param tipoPdD Tipo della PdD
 	 * @param profilo profilo di collaborazione
-	 * @param isRichiesta indicazione se il messaggio da controllare e' una richiesta o risposta 
+	 * @param ruoloMessaggio Indicazione se l'identificativo deve essere generato per un messaggio di richiesta o risposta
 	 * @param msg Messaggio da controllare
 	 * @return rende true se e' presente.
 	 * @throws ProtocolException
 	 */
-	public boolean verifyProtocolPresence(TipoPdD tipoPdD, ProfiloDiCollaborazione profilo, boolean isRichiesta,
+	public boolean verifyProtocolPresence(TipoPdD tipoPdD, ProfiloDiCollaborazione profilo, RuoloMessaggio ruoloMessaggio,
 			OpenSPCoop2Message msg) throws ProtocolException;
 	
 	/**

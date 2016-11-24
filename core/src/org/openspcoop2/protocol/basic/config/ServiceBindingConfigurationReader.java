@@ -265,6 +265,7 @@ public class ServiceBindingConfigurationReader  {
 		}
 		
 		ConfigurationServiceBindingSoap soap = new ConfigurationServiceBindingSoap(enabled, binding, internalIntegrationErrorConfiguration, externalIntegrationErrorConfiguration);
+		soap.init();
 		
 		if(enabled){
 			
@@ -371,6 +372,7 @@ public class ServiceBindingConfigurationReader  {
 		}
 		
 		ConfigurationServiceBindingRest rest = new ConfigurationServiceBindingRest(enabled, binding, internalIntegrationErrorConfiguration, externalIntegrationErrorConfiguration);
+		rest.init();
 		
 		if(enabled){
 			

@@ -177,24 +177,24 @@ public class ValidazioneSintattica<BustaRawType> implements
 	}
 	
 	@Override
-	public boolean verifyProtocolPresence(TipoPdD tipoPdD, ProfiloDiCollaborazione profilo, boolean isRichiesta,
+	public boolean verifyProtocolPresence(TipoPdD tipoPdD, ProfiloDiCollaborazione profilo, RuoloMessaggio ruoloMessaggio,
 			OpenSPCoop2Message msg) throws ProtocolException{
 		if(TipoPdD.DELEGATA.equals(tipoPdD)){
-			if(isRichiesta){
+			if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)){
 				return false;
 			}else{
 				return !ProfiloDiCollaborazione.ONEWAY.equals(profilo);
 			}
 		}
 		else if(TipoPdD.APPLICATIVA.equals(tipoPdD)){
-			if(isRichiesta){
+			if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)){
 				return true;
 			}else{
 				return false;
 			}
 		}
 		else if(TipoPdD.ROUTER.equals(tipoPdD)){
-			if(isRichiesta){
+			if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)){
 				return true;
 			}else{
 				return !ProfiloDiCollaborazione.ONEWAY.equals(profilo);

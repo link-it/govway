@@ -348,7 +348,7 @@ public class XMLUtils  {
 		
 		Web web = manifest.getWeb();
 		for (int i = 0; i < web.sizeContextList(); i++) {
-			bf.append("Context["+i+"]=["+web.getContext(i)+"]\n");
+			bf.append("Context["+i+"]=["+web.getContext(i).getName()+"]\n");
 		}
 		if(web.getEmptyContext()!=null){
 			bf.append("EmptyContext=["+web.getEmptyContext().getEnabled()+"]\n");

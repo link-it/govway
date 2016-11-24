@@ -389,16 +389,25 @@ public class ConfigurazionePdD  {
 
 	/**
 	 * Si occupa di effettuare una ricerca nella configurazione, e di inserire la ricerca in cache
-	 *
-	 * @param keyCache Chiave di ricerca in cache
-	 * @param methodName Nome del metodo da invocare
-	 * @param arguments Argomenti da passare al metodo
-	 * @return l'oggetto se trovato, null altrimenti.
-	 * 
 	 */
+	public Object getObjectCache(String keyCache,String methodName,
+			Connection connectionPdD,
+			Object ... instances) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		Class<?>[] classArgoments = null;
+		Object[] values = null;
+		if(instances!=null && instances.length>0){
+			classArgoments = new Class<?>[instances.length];
+			values = new Object[instances.length];
+			for (int i = 0; i < instances.length; i++) {
+				classArgoments[i] = instances[i].getClass();
+				values[i] = instances[i];
+			}
+		}
+		return getObjectCache(keyCache, methodName, connectionPdD, classArgoments, values);
+	}
 	public synchronized Object getObjectCache(String keyCache,String methodName,
 			Connection connectionPdD,
-			Object... arguments) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+			Class<?>[] classArgoments, Object[] values) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 
 		DriverConfigurazioneNotFound dNotFound = null;
@@ -432,7 +441,7 @@ public class ConfigurazionePdD  {
 			// Effettuo le query nella mia gerarchia di registri.
 			this.log.debug("oggetto con chiave ["+keyCache+"] (methodo:"+methodName+") ricerco nella configurazione...");
 			try{
-				obj = getObject(methodName,connectionPdD,arguments);
+				obj = getObject(methodName,connectionPdD,classArgoments,values);
 			}catch(DriverConfigurazioneNotFound e){
 				dNotFound = e;
 			}
@@ -479,15 +488,25 @@ public class ConfigurazionePdD  {
 
 	/**
 	 * Si occupa di effettuare una ricerca nella configurazione
-	 *
-	 * @param methodNameParam Nome del metodo da invocare
-	 * @param arguments Argomenti da passare al metodo
-	 * @return l'oggetto se trovato, null altrimenti.
-	 * 
 	 */
 	public Object getObject(String methodNameParam,
 			Connection connectionPdD,
-			Object... arguments) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+			Object ... instances) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		Class<?>[] classArgoments = null;
+		Object[] values = null;
+		if(instances!=null && instances.length>0){
+			classArgoments = new Class<?>[instances.length];
+			values = new Object[instances.length];
+			for (int i = 0; i < instances.length; i++) {
+				classArgoments[i] = instances[i].getClass();
+				values[i] = instances[i];
+			}
+		}
+		return getObject(methodNameParam, connectionPdD, classArgoments, values);
+	}
+	public Object getObject(String methodNameParam,
+			Connection connectionPdD,
+			Class<?>[] classArgoments, Object[] values) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		String methodName = null;
 		if("getConfigurazioneWithOnlyExtendedInfo".equals(methodNameParam)){
@@ -504,18 +523,18 @@ public class ConfigurazionePdD  {
 		try{
 			org.openspcoop2.core.config.driver.IDriverConfigurazioneGet driver = getDriver(connectionPdD);
 			this.log.debug("invocazione metodo ["+methodName+"]...");
-			if(arguments.length==0){
+			if(classArgoments==null || classArgoments.length==0){
 				Method method =  driver.getClass().getMethod(methodName);
 				obj = method.invoke(driver);
-			}else if(arguments.length==1){
-				Method method =  driver.getClass().getMethod(methodName,arguments[0].getClass());
-				obj = method.invoke(driver,arguments[0]);
-			}else if(arguments.length==2){
-				Method method =  driver.getClass().getMethod(methodName,arguments[0].getClass(),arguments[1].getClass());
-				obj = method.invoke(driver,arguments[0],arguments[1]);
-			}else if(arguments.length==3){
-				Method method =  driver.getClass().getMethod(methodName,arguments[0].getClass(),arguments[1].getClass(),arguments[2].getClass());
-				obj = method.invoke(driver,arguments[0],arguments[1],arguments[2]);
+			}else if(classArgoments.length==1){
+				Method method =  driver.getClass().getMethod(methodName,classArgoments[0]);
+				obj = method.invoke(driver,values[0]);
+			}else if(classArgoments.length==2){
+				Method method =  driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1]);
+				obj = method.invoke(driver,values[0],values[1]);
+			}else if(classArgoments.length==3){
+				Method method =  driver.getClass().getMethod(methodName,classArgoments[0],classArgoments[1],classArgoments[2]);
+				obj = method.invoke(driver,values[0],values[1],values[2]);
 			}else
 				throw new Exception("Troppi argomenti per gestire la chiamata del metodo");
 		}catch(DriverConfigurazioneNotFound e){
@@ -988,12 +1007,15 @@ public class ConfigurazionePdD  {
 			}
 		}
 
+		Class<?> [] classArgoments = {IDServizio.class,boolean.class};
+		Object [] values = {idServizio,ricercaPuntuale};
+		
 		// Algoritmo CACHE
 		List<PortaApplicativa> list = null;
 		if(this.cache!=null){
-			list = (List<PortaApplicativa>) this.getObjectCache(key,"getPorteApplicative",connectionPdD,idServizio,ricercaPuntuale);
+			list = (List<PortaApplicativa>) this.getObjectCache(key,"getPorteApplicative",connectionPdD,classArgoments,values);
 		}else{
-			list = (List<PortaApplicativa>) this.getObject("getPorteApplicative",connectionPdD,idServizio,ricercaPuntuale);
+			list = (List<PortaApplicativa>) this.getObject("getPorteApplicative",connectionPdD,classArgoments,values);
 		}
 
 		if(list!=null){
@@ -1043,12 +1065,15 @@ public class ConfigurazionePdD  {
 			}
 		}
 
+		Class<?> [] classArgoments = {IDSoggetto.class,IDServizio.class,boolean.class};
+		Object [] values = {soggettoVirtuale,idServizio,ricercaPuntuale};
+		
 		// Algoritmo CACHE
 		List<PortaApplicativa> list = null;
 		if(this.cache!=null){
-			list = (List<PortaApplicativa>) this.getObjectCache(key,"getPorteApplicativeVirtuali",connectionPdD,soggettoVirtuale,idServizio,ricercaPuntuale);
+			list = (List<PortaApplicativa>) this.getObjectCache(key,"getPorteApplicativeVirtuali",connectionPdD,classArgoments,values);
 		}else{
-			list = (List<PortaApplicativa>) this.getObject("getPorteApplicativeVirtuali",connectionPdD,soggettoVirtuale,idServizio,ricercaPuntuale);
+			list = (List<PortaApplicativa>) this.getObject("getPorteApplicativeVirtuali",connectionPdD,classArgoments,values);
 		}
 
 		if(list!=null){

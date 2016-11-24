@@ -50,6 +50,7 @@ import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneSintatticaResult;
@@ -164,7 +165,7 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 	}
 		
 	@Override
-	public boolean verifyProtocolPresence(TipoPdD tipoPdD, ProfiloDiCollaborazione profilo, boolean isRichiesta,
+	public boolean verifyProtocolPresence(TipoPdD tipoPdD, ProfiloDiCollaborazione profilo, RuoloMessaggio ruoloMessaggio,
 			OpenSPCoop2Message msg) throws ProtocolException{
 		try{
 			if(msg==null){
@@ -187,7 +188,7 @@ public class SDIValidazioneSintattica extends ValidazioneSintattica<SOAPElement>
 					(SDICostantiServizioTrasmissioneFatture.TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_NAMESPACE.equals(namespace));
 			if(!verify){
 				// per sondaPdD
-				if(!isRichiesta && TipoPdD.DELEGATA.equals(tipoPdD)){
+				if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio) && TipoPdD.DELEGATA.equals(tipoPdD)){
 					if(this.sdiProperties.getNamespaceWhiteList().contains(namespace)){
 						return true;
 					}

@@ -56,7 +56,6 @@ public abstract class AbstractConfigurationServiceBinding implements Serializabl
 		this.serviceBinding = serviceBinding;
 		this.enabled = enabled;
 		if(enabled){
-			this.initMediaTypeCollection();
 			
 			if(internalIntegrationErrorConfiguration==null){
 				throw new MessageException("InternalIntegrationErrorConfiguration for binding "+serviceBinding.name()+" not defined");
@@ -64,10 +63,12 @@ public abstract class AbstractConfigurationServiceBinding implements Serializabl
 			if(externalIntegrationErrorConfiguration==null){
 				throw new MessageException("ExternalIntegrationErrorConfiguration for binding "+serviceBinding.name()+" not defined");
 			}
+			this.internalIntegrationErrorConfiguration = internalIntegrationErrorConfiguration;
+			this.externalIntegrationErrorConfiguration = externalIntegrationErrorConfiguration;
 		}
 	}
 	
-	protected abstract void initMediaTypeCollection();
+	public abstract void init();
 	
 	public ServiceBinding getServiceBinding() {
 		return this.serviceBinding;

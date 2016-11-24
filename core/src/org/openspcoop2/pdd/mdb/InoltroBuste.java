@@ -2431,7 +2431,7 @@ public class InoltroBuste extends GenericLib{
 					try{
 						// ulteriore controllo per evitare che il protocollo trasparente generi una busta di risposta per il profilo oneway
 						presenzaRispostaProtocollo = protocolFactory.createValidazioneSintattica().
-								verifyProtocolPresence(tipoPdD,bustaRichiesta.getProfiloDiCollaborazione(),false,responseMessage);
+								verifyProtocolPresence(tipoPdD,bustaRichiesta.getProfiloDiCollaborazione(),RuoloMessaggio.RISPOSTA,responseMessage);
 					} catch (Exception e){
 						this.log.debug("Messaggio non riconosciuto come busta: "+e.getMessage());
 						presenzaRispostaProtocollo = false;

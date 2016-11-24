@@ -1865,7 +1865,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			ValidazioneSintattica validatoreSintattico = new ValidazioneSintattica(openspcoopstate.getStatoRichiesta(),responseMessage, protocolFactory);
 			String msgErrore = null;
 			try{
-				if(validatoreSintattico.verifyProtocolPresence(tipoPdD,profiloCollaborazione,false)){
+				if(validatoreSintattico.verifyProtocolPresence(tipoPdD,profiloCollaborazione,RuoloMessaggio.RISPOSTA)){
 					throw new Exception("Rilevato ProtocolHeader nella risposta");
 				}
 			} catch (Exception e){

@@ -55,9 +55,11 @@ public class ConfigurationServiceBindingRest extends AbstractConfigurationServic
 	}
 	
 	@Override
-	protected void initMediaTypeCollection(){
-		this.request = new RestMediaTypeCollection(this.binding);
-		this.response = new RestMediaTypeCollection(this.binding);
+	public void init(){
+		if(this.enabled){
+			this.request = new RestMediaTypeCollection(this.binding);
+			this.response = new RestMediaTypeCollection(this.binding);
+		}
 	}
 	
 	public RestBinding getBinding() {
