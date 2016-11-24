@@ -594,25 +594,22 @@
 			<xsd:enumeration value="verify"/>
 		</xsd:restriction>
 	</xsd:simpleType>
-	<xsd:simpleType name="PortaDelegataSoggettoErogatoreIdentificazione">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="static"/>
-			<xsd:enumeration value="urlBased"/>
-			<xsd:enumeration value="contentBased"/>
-			<xsd:enumeration value="inputBased"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	<xsd:simpleType name="PortaDelegataServizioIdentificazione">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="static"/>
-			<xsd:enumeration value="urlBased"/>
-			<xsd:enumeration value="contentBased"/>
-			<xsd:enumeration value="inputBased"/>
-		</xsd:restriction>
-	</xsd:simpleType>
 	<xsd:simpleType name="PortaDelegataAzioneIdentificazione">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="static"/>
+			<xsd:enumeration value="headerBased"/>
+			<xsd:enumeration value="urlBased"/>
+			<xsd:enumeration value="contentBased"/>
+			<xsd:enumeration value="inputBased"/>
+			<xsd:enumeration value="soapActionBased"/>
+			<xsd:enumeration value="wsdlBased"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="PortaApplicativaAzioneIdentificazione">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="static"/>
+			<xsd:enumeration value="headerBased"/>
+			<xsd:enumeration value="pluginBased"/>
 			<xsd:enumeration value="urlBased"/>
 			<xsd:enumeration value="contentBased"/>
 			<xsd:enumeration value="inputBased"/>

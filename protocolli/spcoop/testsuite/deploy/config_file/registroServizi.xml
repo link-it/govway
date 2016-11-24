@@ -7,7 +7,7 @@
 
     <!-- AS con Profilo di collaborazione OneWay -->
     <accordo-servizio-parte-comune nome="ASComunicazioneVariazione" profilo-collaborazione="oneway"
-        utilizzo-senza-azione="true">
+        utilizzo-senza-azione="true" service-binding="soap">
         <azione nome="Affidabile" conferma-ricezione="abilitato"/>
         <azione nome="FiltroDuplicati" filtro-duplicati="abilitato"/>
         <azione nome="AffidabileConFiltroDuplicati" conferma-ricezione="abilitato"
@@ -73,14 +73,14 @@
 
     <!-- Test per message Box -->
     <accordo-servizio-parte-comune nome="ASMessageBox" profilo-collaborazione="oneway"
-        utilizzo-senza-azione="false">
+        utilizzo-senza-azione="false" service-binding="soap">
         <azione nome="GetMessage"/>
         <azione nome="GetMessage2"/>
     </accordo-servizio-parte-comune>
 
     <!-- AS con Profilo di collaborazione Sincrono -->
     <accordo-servizio-parte-comune nome="ASRichiestaStatoAvanzamento"
-        profilo-collaborazione="sincrono" utilizzo-senza-azione="true">
+        profilo-collaborazione="sincrono" utilizzo-senza-azione="true" service-binding="soap">
         <azione nome="WSSTimestamp"/>
         <azione nome="WSSEncrypt"/>
         <azione nome="WSSEncryptP12"/>
@@ -229,7 +229,7 @@
 
     <!-- AS con Profilo di collaborazione Sincrono utilizzato per cooperazione SOAP WithAttachments -->
     <accordo-servizio-parte-comune nome="ASRichiestaBando" profilo-collaborazione="sincrono"
-        utilizzo-senza-azione="false">
+        utilizzo-senza-azione="false" service-binding="soap">
         <!-- Tunnel SOAP Sincrono -->
         <azione nome="TunnelSOAP"/>
         <azione nome="TunnelSOAPMultipartRelatedMIME"/>
@@ -250,7 +250,7 @@
         wsdl-definitorio="http://repository/definitorio.xsd"
         wsdl-concettuale="http://repository/concettuale.wsdl"
         wsdl-logico-erogatore="http://repository/logicoErogatore.wsdl"
-        wsdl-logico-fruitore="http://repository/logicoFruitore.wsdl" utilizzo-senza-azione="false">
+        wsdl-logico-fruitore="http://repository/logicoFruitore.wsdl" utilizzo-senza-azione="false" service-binding="soap">
         <azione nome="richiestaSincrona"/>
         <azione nome="richiestaAsincrona"/>
         <azione nome="WSS"/>
@@ -277,7 +277,7 @@
         wsdl-definitorio="http://repository/definitorio.xsd"
         wsdl-concettuale="http://repository/concettuale.wsdl"
         wsdl-logico-erogatore="http://repository/logicoErogatore.wsdl"
-        wsdl-logico-fruitore="http://repository/logicoFruitore.wsdl" utilizzo-senza-azione="false">
+        wsdl-logico-fruitore="http://repository/logicoFruitore.wsdl" utilizzo-senza-azione="false" service-binding="soap">
         <azione nome="richiestaSincrona"/>
         <azione nome="richiestaAsincrona"/>
         <azione nome="WSS"/>
@@ -306,7 +306,7 @@
 
     <!-- AS con Profilo di collaborazione test PortTypes -->
     <accordo-servizio-parte-comune nome="ASTestMultiPortTypes" profilo-collaborazione="oneway"
-        utilizzo-senza-azione="false">
+        utilizzo-senza-azione="false" service-binding="soap">
         <port-type nome="PortTypeOneWay" profilo-collaborazione="oneway">
             <azione nome="testOneWay"/>
         </port-type>
@@ -346,13 +346,13 @@
 
     <!-- Altro accordo temporaneo -->
     <accordo-servizio-parte-comune nome="ASTMP" profilo-collaborazione="oneway"
-        utilizzo-senza-azione="true">
+        utilizzo-senza-azione="true" service-binding="soap">
         <azione nome="Affidabile" conferma-ricezione="abilitato"/>
     </accordo-servizio-parte-comune>
 
     <!-- AS con Profilo di collaborazione AsincronoSimmetrico per test livello di profilo -->
     <accordo-servizio-parte-comune nome="ASTestProfiloLineeGuida"
-        profilo-collaborazione="asincronoAsimmetrico" utilizzo-senza-azione="false">
+        profilo-collaborazione="asincronoAsimmetrico" utilizzo-senza-azione="false" service-binding="soap">
         <azione nome="test"/>
         <azione nome="testCorrelata" correlata="test"/>
     </accordo-servizio-parte-comune>
@@ -366,7 +366,7 @@
         profilo-collaborazione="sincrono" wsdl-definitorio="/etc/openspcoop2/definitorio.xsd"
         wsdl-concettuale="/etc/openspcoop2/concettuale.wsdl"
         wsdl-logico-erogatore="/etc/openspcoop2/logicoErogatore.wsdl"
-        wsdl-logico-fruitore="/etc/openspcoop2/logicoFruitore.wsdl" utilizzo-senza-azione="false">
+        wsdl-logico-fruitore="/etc/openspcoop2/logicoFruitore.wsdl" utilizzo-senza-azione="false" service-binding="soap">
         <port-type nome="GestioneUtentiWrappedDocumentLiteral">
             <azione nome="registrazioneUtenteWDL"/>
             <azione nome="eliminazioneUtenteWDL"/>
@@ -422,7 +422,7 @@
       -->
     <accordo-servizio-parte-comune nome="ASMultiPortTypeValidazioneOpenSPCoop"
         profilo-collaborazione="sincrono" wsdl-definitorio="/etc/openspcoop2/definitorio.xsd"
-        utilizzo-senza-azione="false">
+        utilizzo-senza-azione="false" service-binding="soap">
         <port-type nome="GestioneUtentiWrappedDocumentLiteral" style="document">
             <azione nome="registrazioneUtenteWDL" soap-action="registrazioneUtenteWDL">
                 <message-input use="literal">
@@ -704,25 +704,25 @@
     </accordo-servizio-parte-comune>
 
     <accordo-servizio-parte-comune nome="ASComunicazioneVariazione" versione="1"
-        profilo-collaborazione="sincrono" utilizzo-senza-azione="false">
+        profilo-collaborazione="sincrono" utilizzo-senza-azione="false" service-binding="soap">
         <soggetto-referente tipo="SPC" nome="MinisteroFruitore"/>
         <azione nome="soggettoReferente_nome_versione"/>
     </accordo-servizio-parte-comune>
 
     <accordo-servizio-parte-comune nome="ASComunicazioneVariazione"
-        profilo-collaborazione="sincrono" utilizzo-senza-azione="false">
+        profilo-collaborazione="sincrono" utilizzo-senza-azione="false" service-binding="soap">
         <soggetto-referente tipo="SPC" nome="MinisteroFruitore"/>
         <azione nome="soggettoReferente_nome"/>
     </accordo-servizio-parte-comune>
 
     <accordo-servizio-parte-comune nome="ASComunicazioneVariazione" versione="1"
-        profilo-collaborazione="sincrono" utilizzo-senza-azione="false">
+        profilo-collaborazione="sincrono" utilizzo-senza-azione="false" service-binding="soap">
         <azione nome="nome_versione"/>
     </accordo-servizio-parte-comune>
 
     <accordo-servizio-parte-comune nome="TestValidazioneApplicativaErrata"
         profilo-collaborazione="sincrono" wsdl-definitorio="/etc/openspcoop2/definitorio.xsd"
-        utilizzo-senza-azione="true">
+        utilizzo-senza-azione="true" service-binding="soap">
         <allegato tipo="XML" file="/etc/openspcoop2/types.xsd"/>
         <allegato tipo="XML" file="/etc/openspcoop2/wrappedDocumentLiteralEsempio1.xsd"/>
         <specifica-semiformale tipo="XML"

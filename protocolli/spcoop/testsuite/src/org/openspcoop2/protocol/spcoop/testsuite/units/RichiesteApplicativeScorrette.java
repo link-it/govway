@@ -1897,8 +1897,7 @@ public class RichiesteApplicativeScorrette {
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
-		String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA+"/"+
-			CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_WSDL_GESTIONE_UTENTI_WDL+"/"+
+		String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTIONE_UTENTI_WDL+"/"+
 			CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL;
 		
 		try{

@@ -279,17 +279,15 @@ public class ValidazioneContenutiApplicativi {
 		return this.getIDEgov(locator.getCall());
 	}
 	
-	private void invocaServizioGestioneUtentiWrappedDocumentLiteral(String portaDelegata,String servizio,String azione,String test,boolean registra) throws Exception{
+	private void invocaServizioGestioneUtentiWrappedDocumentLiteral(String portaDelegata,String azione,String test,boolean registra) throws Exception{
 		Reporter.log("["+test+"] Invocazione GestioneUtenti WrappedDocumentLiteral  ["+Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore()+
 				portaDelegata+"/"+
-				servizio+"/"+
 				azione+"]");
 		
 		GestioneUtentiWrappedDocumentLiteralServiceLocator locator = new GestioneUtentiWrappedDocumentLiteralServiceLocator();
 		locator.setGestioneUtentiWrappedDocumentLiteralEndpointAddress(
 				Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore()+
 				portaDelegata+"/"+
-				servizio+"/"+
 				azione);
 		GestioneUtentiWrappedDocumentLiteral port = locator.getGestioneUtentiWrappedDocumentLiteral();
 		
@@ -330,26 +328,22 @@ public class ValidazioneContenutiApplicativi {
 		TestSuiteTransformer.sequentialForced = true;
 		
 		// Test contenuto corretto per Validazione WSDL (operazione registrazione)
-		invocaServizioGestioneUtentiWrappedDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_WSDL_GESTIONE_UTENTI_WDL,
+		invocaServizioGestioneUtentiWrappedDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTIONE_UTENTI_WDL,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
 				"ValidazioneWSDL_OperationRegistrazione",true);
 		
 		// Test contenuto corretto per Validazione OpenSPCoop (operazione registrazione)
-		invocaServizioGestioneUtentiWrappedDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_OPENSPCOOP_GESTIONE_UTENTI_WDL,
+		invocaServizioGestioneUtentiWrappedDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTIONE_UTENTI_WDL,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
 				"ValidazioneOpenSPCoop_OperationRegistrazione",true);
 		
 		// Test contenuto corretto per Validazione WSDL (operazione eliminazione)
-		invocaServizioGestioneUtentiWrappedDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_WSDL_GESTIONE_UTENTI_WDL,
+		invocaServizioGestioneUtentiWrappedDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTIONE_UTENTI_WDL,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_ELIMINAZIONE_UTENTE_WDL,
 				"ValidazioneWSDL_OperationEliminazione",false);
 		
 		// Test contenuto corretto per Validazione OpenSPCoop (operazione eliminazione)
-		invocaServizioGestioneUtentiWrappedDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_OPENSPCOOP_GESTIONE_UTENTI_WDL,
+		invocaServizioGestioneUtentiWrappedDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTIONE_UTENTI_WDL,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_ELIMINAZIONE_UTENTE_WDL,
 				"ValidazioneOpenSPCoop_OperationEliminazione",false);
 		
@@ -357,8 +351,7 @@ public class ValidazioneContenutiApplicativi {
 		Date dataInizioTestA = DateManager.getDate();
 		invocaServizioContenutoApplicativoErrato("operazioneRegistrazioneUtenteWDLNonCorrettamenteFormato.xml",
 				this.repositoryGestioneUtentiWrappedDocumentLiteral,
-				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA+"/"+
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_WSDL_GESTIONE_UTENTI_WDL+"/"+
+				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTIONE_UTENTI_WDL+"/"+
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
 				CostantiPdD.OPENSPCOOP2,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA),
 				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro dei Servizi",
@@ -381,8 +374,7 @@ public class ValidazioneContenutiApplicativi {
 		Date dataInizioTestB = DateManager.getDate();
 		invocaServizioContenutoApplicativoErrato("operazioneRegistrazioneUtenteWDLNonCorrettamenteFormato.xml",
 				this.repositoryGestioneUtentiWrappedDocumentLiteral,
-				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA+"/"+
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_OPENSPCOOP_GESTIONE_UTENTI_WDL+"/"+
+				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTIONE_UTENTI_WDL+"/"+
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
 				CostantiPdD.OPENSPCOOP2,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA),
 				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro dei Servizi",
@@ -405,8 +397,7 @@ public class ValidazioneContenutiApplicativi {
 		//              Viene riconosciuto che il contenuto e' di un'altra operation del port type
 		Date dataInizioTest1 = DateManager.getDate();
 		try{
-			invocaServizioGestioneUtentiWrappedDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_WSDL_GESTIONE_UTENTI_WDL,
+			invocaServizioGestioneUtentiWrappedDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTIONE_UTENTI_WDL,
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
 					"ValidazioneWSDL_OperationRegistrazione",false);	
 			throw new Exception("Invocazione azione con xml di una operation relativa ad un altra azione non ha dato errore");
@@ -437,8 +428,7 @@ public class ValidazioneContenutiApplicativi {
 		//              Viene riconosciuto che il contenuto e' di un'altra operation del port type
 		Date dataInizioTest2 = DateManager.getDate();
 		try{
-			invocaServizioGestioneUtentiWrappedDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA,
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_OPENSPCOOP_GESTIONE_UTENTI_WDL,
+			invocaServizioGestioneUtentiWrappedDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTIONE_UTENTI_WDL,
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
 					"ValidazioneWSDL_OperationRegistrazione",false);
 			throw new Exception("Invocazione azione con xml di una operation relativa ad un altra azione non ha dato errore");
@@ -468,8 +458,7 @@ public class ValidazioneContenutiApplicativi {
 		Date dataInizioTest3 = DateManager.getDate();
 		invocaServizioContenutoApplicativoErrato("operazioneRegistrazioneUtenteWDL.xml",
 				this.repositoryGestioneUtentiWrappedDocumentLiteral,
-				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA+"/"+
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_WSDL_GESTIONE_UTENTI_WDL+"/"+
+				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTIONE_UTENTI_WDL+"/"+
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
 				CostantiPdD.OPENSPCOOP2,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA),
 				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro dei Servizi",
@@ -491,8 +480,7 @@ public class ValidazioneContenutiApplicativi {
 		Date dataInizioTest4 = DateManager.getDate();
 		invocaServizioContenutoApplicativoErrato("operazioneRegistrazioneUtenteWDL.xml",
 				this.repositoryGestioneUtentiWrappedDocumentLiteral,
-				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA+"/"+
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_OPENSPCOOP_GESTIONE_UTENTI_WDL+"/"+
+				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTIONE_UTENTI_WDL+"/"+
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
 				CostantiPdD.OPENSPCOOP2,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA),
 				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro dei Servizi",
@@ -699,17 +687,15 @@ public class ValidazioneContenutiApplicativi {
 		return this.getIDEgov(locator.getCall());
 	}
 	
-	private void invocaServizioAggiornamentoUtentiWrappedDocumentLiteral(String portaDelegata,String servizio,String azione,String test,boolean notifica) throws Exception{
+	private void invocaServizioAggiornamentoUtentiWrappedDocumentLiteral(String portaDelegata,String azione,String test,boolean notifica) throws Exception{
 		Reporter.log("["+test+"] Invocazione GestioneUtenti WrappedDocumentLiteral ["+Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore()+
 				portaDelegata+"/"+
-				servizio+"/"+
 				azione+"]");
 		
 		AggiornamentoUtentiWrappedDocumentLiteralServiceLocator locator = new AggiornamentoUtentiWrappedDocumentLiteralServiceLocator();
 		locator.setAggiornamentoUtentiWrappedDocumentLiteralEndpointAddress(
 				Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore()+
 				portaDelegata+"/"+
-				servizio+"/"+
 				azione);
 		AggiornamentoUtentiWrappedDocumentLiteral port = locator.getAggiornamentoUtentiWrappedDocumentLiteral();
 		
@@ -758,28 +744,24 @@ public class ValidazioneContenutiApplicativi {
 		// Test contenuto corretto per Validazione WSDL (operazione notifica)
 		invocaServizioContenutoApplicativo("notificaAggiornamentoUtenteWDL.xml",
 				this.repositoryAggiornamentoUtentiWrappedDocumentLiteral,
-				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA+"/"+
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_WSDL_AGGIORNAMENTO_UTENTI_WDL+"/"+
+				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_AGGIORNAMENTO_UTENTI_WDL+"/"+
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_NOTIFICA_AGGIORNAMENTO_UTENTE_WDL,
 					"notificaAggiornamentoUtenteWDL");
 		
 		// Test contenuto corretto per Validazione OpenSPCoop (operazione notifica)
 		invocaServizioContenutoApplicativo("notificaAggiornamentoUtenteWDL.xml",
 				this.repositoryAggiornamentoUtentiWrappedDocumentLiteral,
-				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA+"/"+
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_OPENSPCOOP_AGGIORNAMENTO_UTENTI_WDL+"/"+
+				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_AGGIORNAMENTO_UTENTI_WDL+"/"+
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_NOTIFICA_AGGIORNAMENTO_UTENTE_WDL,
 					"notificaAggiornamentoUtenteWDL");
 		
 		// Test contenuto corretto per Validazione WSDL (operazione aggiornamento)
-		invocaServizioAggiornamentoUtentiWrappedDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_WSDL_AGGIORNAMENTO_UTENTI_WDL,
+		invocaServizioAggiornamentoUtentiWrappedDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_AGGIORNAMENTO_UTENTI_WDL,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_AGGIORNAMENTO_UTENTE_WDL,
 				"ValidazioneWSDL_OperationAggiornamento",false);
 		
 		// Test contenuto corretto per Validazione OpenSPCoop (operazione aggiornamento)
-		invocaServizioAggiornamentoUtentiWrappedDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_OPENSPCOOP_AGGIORNAMENTO_UTENTI_WDL,
+		invocaServizioAggiornamentoUtentiWrappedDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_AGGIORNAMENTO_UTENTI_WDL,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_AGGIORNAMENTO_UTENTE_WDL,
 				"ValidazioneOpenSPCoop_OperationAggiornamento",false);
 				
@@ -1249,17 +1231,15 @@ public class ValidazioneContenutiApplicativi {
 		return this.getIDEgov(locator.getCall());
 	}
 	
-	private void invocaServizioGestioneUtentiDocumentLiteral(String portaDelegata,String servizio,String azione,String test,boolean registra) throws Exception{
+	private void invocaServizioGestioneUtentiDocumentLiteral(String portaDelegata,String azione,String test,boolean registra) throws Exception{
 		Reporter.log("["+test+"] Invocazione GestioneUtenti DocumentLiteral  ["+Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore()+
 				portaDelegata+"/"+
-				servizio+"/"+
 				azione+"]");
 		
 		GestioneUtentiDocumentLiteralServiceLocator locator = new GestioneUtentiDocumentLiteralServiceLocator();
 		locator.setGestioneUtentiDocumentLiteralEndpointAddress(
 				Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore()+
 				portaDelegata+"/"+
-				servizio+"/"+
 				azione);
 		GestioneUtentiDocumentLiteral port = locator.getGestioneUtentiDocumentLiteral();
 		
@@ -1292,26 +1272,22 @@ public class ValidazioneContenutiApplicativi {
 		TestSuiteTransformer.sequentialForced = true;
 		
 		// Test contenuto corretto per Validazione WSDL (operazione registrazione)
-		invocaServizioGestioneUtentiDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_WSDL_GESTIONE_UTENTI_DL,
+		invocaServizioGestioneUtentiDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_DL,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
 				"ValidazioneWSDL_OperationRegistrazione",true);
 		
 		// Test contenuto corretto per Validazione OpenSPCoop (operazione registrazione)
-		invocaServizioGestioneUtentiDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_OPENSPCOOP_GESTIONE_UTENTI_DL,
+		invocaServizioGestioneUtentiDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_DL,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
 				"ValidazioneOpenSPCoop_OperationRegistrazione",true);
 		
 		// Test contenuto corretto per Validazione WSDL (operazione eliminazione)
-		invocaServizioGestioneUtentiDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_WSDL_GESTIONE_UTENTI_DL,
+		invocaServizioGestioneUtentiDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_DL,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_ELIMINAZIONE_UTENTE_DL,
 				"ValidazioneWSDL_OperationEliminazione",false);
 		
 		// Test contenuto corretto per Validazione OpenSPCoop (operazione eliminazione)
-		invocaServizioGestioneUtentiDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_OPENSPCOOP_GESTIONE_UTENTI_DL,
+		invocaServizioGestioneUtentiDocumentLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_DL,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_ELIMINAZIONE_UTENTE_DL,
 				"ValidazioneOpenSPCoop_OperationEliminazione",false);
 	}
@@ -1432,8 +1408,7 @@ public class ValidazioneContenutiApplicativi {
 		Date dataInizioTest = DateManager.getDate();
 		invocaServizioContenutoApplicativoErrato("registrazioneDocumentLiteralConTroppiParametriInput.xml",
 				this.repositoryGestioneUtentiDocumentLiteralContenutiErrato,
-				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA+"/"+
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_WSDL_GESTIONE_UTENTI_DL+"/"+
+				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_DL+"/"+
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
 				CostantiPdD.OPENSPCOOP2,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA),
 				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro dei Servizi",
@@ -1455,8 +1430,7 @@ public class ValidazioneContenutiApplicativi {
 		dataInizioTest = DateManager.getDate();
 		invocaServizioContenutoApplicativoErrato("registrazioneDocumentLiteralConTroppiParametriInput.xml",
 				this.repositoryGestioneUtentiDocumentLiteralContenutiErrato,
-				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA+"/"+
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_OPENSPCOOP_GESTIONE_UTENTI_DL+"/"+
+				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_DL+"/"+
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
 				CostantiPdD.OPENSPCOOP2,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA),
 				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro dei Servizi",
@@ -1478,8 +1452,7 @@ public class ValidazioneContenutiApplicativi {
 		dataInizioTest = DateManager.getDate();
 		invocaServizioContenutoApplicativoErrato("registrazioneDocumentLiteralConPochiParametriInput.xml",
 				this.repositoryGestioneUtentiDocumentLiteralContenutiErrato,
-				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA+"/"+
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_WSDL_GESTIONE_UTENTI_DL+"/"+
+				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_DL+"/"+
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
 				CostantiPdD.OPENSPCOOP2,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA),
 				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro dei Servizi",
@@ -1501,8 +1474,7 @@ public class ValidazioneContenutiApplicativi {
 		dataInizioTest = DateManager.getDate();
 		invocaServizioContenutoApplicativoErrato("registrazioneDocumentLiteralConPochiParametriInput.xml",
 				this.repositoryGestioneUtentiDocumentLiteralContenutiErrato,
-				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA+"/"+
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_OPENSPCOOP_GESTIONE_UTENTI_DL+"/"+
+				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_DL+"/"+
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
 				CostantiPdD.OPENSPCOOP2,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA),
 				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro dei Servizi",
@@ -1524,8 +1496,7 @@ public class ValidazioneContenutiApplicativi {
 		dataInizioTest = DateManager.getDate();
 		invocaServizioContenutoApplicativoErrato("registrazioneDocumentLiteralConAlcuniParametriInputNonAttesi.xml",
 				this.repositoryGestioneUtentiDocumentLiteralContenutiErrato,
-				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA+"/"+
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_WSDL_GESTIONE_UTENTI_DL+"/"+
+				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_DL+"/"+
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
 				CostantiPdD.OPENSPCOOP2,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA),
 				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro dei Servizi",
@@ -1547,8 +1518,7 @@ public class ValidazioneContenutiApplicativi {
 		dataInizioTest = DateManager.getDate();
 		invocaServizioContenutoApplicativoErrato("registrazioneDocumentLiteralConAlcuniParametriInputNonAttesi.xml",
 				this.repositoryGestioneUtentiDocumentLiteralContenutiErrato,
-				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA+"/"+
-					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_OPENSPCOOP_GESTIONE_UTENTI_DL+"/"+
+				CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_DL+"/"+
 					CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_DL,
 				CostantiPdD.OPENSPCOOP2,Utilities.toString(CodiceErroreIntegrazione.CODICE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA),
 				"Il contenuto applicativo del messaggio di richiesta non rispetta l'accordo di servizio (Wsdl erogatore) definito nel Registro dei Servizi",
@@ -1630,17 +1600,15 @@ public class ValidazioneContenutiApplicativi {
 		return this.getIDEgov(locator.getCall());
 	}
 	
-	private void invocaServizioGestioneUtentiRPCLiteral(String portaDelegata,String servizio,String azione,String test,boolean registra) throws Exception{
+	private void invocaServizioGestioneUtentiRPCLiteral(String portaDelegata,String azione,String test,boolean registra) throws Exception{
 		Reporter.log("["+test+"] Invocazione GestioneUtenti RPCLiteral  ["+Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore()+
 				portaDelegata+"/"+
-				servizio+"/"+
 				azione+"]");
 		
 		GestioneUtentiRPCLiteralServiceLocator locator = new GestioneUtentiRPCLiteralServiceLocator();
 		locator.setGestioneUtentiRPCLiteralEndpointAddress(
 				Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore()+
 				portaDelegata+"/"+
-				servizio+"/"+
 				azione);
 		GestioneUtentiRPCLiteral port = locator.getGestioneUtentiRPCLiteral();
 		
@@ -1673,26 +1641,22 @@ public class ValidazioneContenutiApplicativi {
 		TestSuiteTransformer.sequentialForced = true;
 		
 		// Test contenuto corretto per Validazione WSDL (operazione registrazione)
-		invocaServizioGestioneUtentiRPCLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_WSDL_GESTIONE_UTENTI_RPCL,
+		invocaServizioGestioneUtentiRPCLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_RPCL,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_RPCL,
 				"ValidazioneWSDL_OperationRegistrazione",true);
 		
 		// Test contenuto corretto per Validazione OpenSPCoop (operazione registrazione)
-		invocaServizioGestioneUtentiRPCLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_OPENSPCOOP_GESTIONE_UTENTI_RPCL,
+		invocaServizioGestioneUtentiRPCLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_RPCL,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_RPCL,
 				"ValidazioneOpenSPCoop_OperationRegistrazione",true);
 		
 		// Test contenuto corretto per Validazione WSDL (operazione eliminazione)
-		invocaServizioGestioneUtentiRPCLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_WSDL_GESTIONE_UTENTI_RPCL,
+		invocaServizioGestioneUtentiRPCLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_RPCL,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_ELIMINAZIONE_UTENTE_RPCL,
 				"ValidazioneWSDL_OperationEliminazione",false);
 		
 		// Test contenuto corretto per Validazione OpenSPCoop (operazione eliminazione)
-		invocaServizioGestioneUtentiRPCLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_OPENSPCOOP_GESTIONE_UTENTI_RPCL,
+		invocaServizioGestioneUtentiRPCLiteral(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_RPCL,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_ELIMINAZIONE_UTENTE_RPCL,
 				"ValidazioneOpenSPCoop_OperationEliminazione",false);
 	}
@@ -1787,17 +1751,15 @@ public class ValidazioneContenutiApplicativi {
 		return this.getIDEgov(locator.getCall());
 	}
 	
-	private void invocaServizioGestioneUtentiRPCEncoded(String portaDelegata,String servizio,String azione,String test,boolean registra) throws Exception{
+	private void invocaServizioGestioneUtentiRPCEncoded(String portaDelegata,String azione,String test,boolean registra) throws Exception{
 		Reporter.log("["+test+"] Invocazione GestioneUtenti RPCEncoded  ["+Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore()+
 				portaDelegata+"/"+
-				servizio+"/"+
 				azione+"]");
 		
 		GestioneUtentiRPCEncodedServiceLocator locator = new GestioneUtentiRPCEncodedServiceLocator();
 		locator.setGestioneUtentiRPCEncodedEndpointAddress(
 				Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore()+
 				portaDelegata+"/"+
-				servizio+"/"+
 				azione);
 		GestioneUtentiRPCEncoded port = locator.getGestioneUtentiRPCEncoded();
 		
@@ -1830,26 +1792,22 @@ public class ValidazioneContenutiApplicativi {
 		TestSuiteTransformer.sequentialForced = true;
 		
 		// Test contenuto corretto per Validazione WSDL (operazione registrazione)
-		invocaServizioGestioneUtentiRPCEncoded(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_WSDL_GESTIONE_UTENTI_RPCE,
+		invocaServizioGestioneUtentiRPCEncoded(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_RPCE,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_RPCE,
 				"ValidazioneWSDL_OperationRegistrazione",true);
 		
 		// Test contenuto corretto per Validazione OpenSPCoop (operazione registrazione)
-		invocaServizioGestioneUtentiRPCEncoded(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_OPENSPCOOP_GESTIONE_UTENTI_RPCE,
+		invocaServizioGestioneUtentiRPCEncoded(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_RPCE,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_RPCE,
 				"ValidazioneOpenSPCoop_OperationRegistrazione",true);
 		
 		// Test contenuto corretto per Validazione WSDL (operazione eliminazione)
-		invocaServizioGestioneUtentiRPCEncoded(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_WSDL_GESTIONE_UTENTI_RPCE,
+		invocaServizioGestioneUtentiRPCEncoded(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_RPCE,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_ELIMINAZIONE_UTENTE_RPCE,
 				"ValidazioneWSDL_OperationEliminazione",false);
 		
 		// Test contenuto corretto per Validazione OpenSPCoop (operazione eliminazione)
-		invocaServizioGestioneUtentiRPCEncoded(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_OPENSPCOOP_GESTIONE_UTENTI_RPCE,
+		invocaServizioGestioneUtentiRPCEncoded(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_RPCE,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_ELIMINAZIONE_UTENTE_RPCE,
 				"ValidazioneOpenSPCoop_OperationEliminazione",false);
 	}
@@ -1941,17 +1899,15 @@ public class ValidazioneContenutiApplicativi {
 		return this.getIDEgov(locator.getCall());
 	}
 	
-	private void invocaServizioGestioneUtentiOverloadedOperations(String portaDelegata,String servizio,String azione,String test,int tipoTest) throws Exception{
+	private void invocaServizioGestioneUtentiOverloadedOperations(String portaDelegata,String azione,String test,int tipoTest) throws Exception{
 		Reporter.log("["+test+"] Invocazione GestioneUtentiOverloadedOperations  ["+Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore()+
 				portaDelegata+"/"+
-				servizio+"/"+
 				azione+"]");
 		
 		GestioneUtentiOverloadedOperationsServiceLocator locator = new GestioneUtentiOverloadedOperationsServiceLocator();
 		locator.setGestioneUtentiOverloadedOperationsEndpointAddress(
 				Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore()+
 				portaDelegata+"/"+
-				servizio+"/"+
 				azione);
 		GestioneUtentiOverloadedOperations port = locator.getGestioneUtentiOverloadedOperations();
 		
@@ -1990,43 +1946,37 @@ public class ValidazioneContenutiApplicativi {
 		TestSuiteTransformer.sequentialForced = true;
 		
 		// Test contenuto corretto per Validazione WSDL Signature 1
-		invocaServizioGestioneUtentiOverloadedOperations(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_WSDL_GESTIONE_UTENTI_OVERLOADED_OPERATIONS,
+		invocaServizioGestioneUtentiOverloadedOperations(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_OVERLOADED,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_OVERLOADED,
 				"ValidazioneWSDL_OperationRegistrazione",1);
 		
 		// Test contenuto corretto per Validazione OpenSPCoop Signature 1
-		invocaServizioGestioneUtentiOverloadedOperations(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_OPENSPCOOP_GESTIONE_UTENTI_OVERLOADED_OPERATIONS,
+		invocaServizioGestioneUtentiOverloadedOperations(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_OVERLOADED,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_OVERLOADED,
 				"ValidazioneWSDL_OperationRegistrazione",1);
 		
 		// Test contenuto corretto per Validazione WSDL Signature 2
-		invocaServizioGestioneUtentiOverloadedOperations(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_WSDL_GESTIONE_UTENTI_OVERLOADED_OPERATIONS,
+		invocaServizioGestioneUtentiOverloadedOperations(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_OVERLOADED,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_OVERLOADED,
 				"ValidazioneWSDL_OperationRegistrazione",2);
 		
 		// Test contenuto corretto per Validazione OpenSPCoop Signature 2
 		/*
 		 * OVERLOADE IN QUESTA MODALITA NON E' PERMESSA
-		invocaServizioGestioneUtentiOverloadedOperations(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_OPENSPCOOP_GESTIONE_UTENTI_OVERLOADED_OPERATIONS,
+		invocaServizioGestioneUtentiOverloadedOperations(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_OVERLOADED,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_OVERLOADED,
 				"ValidazioneWSDL_OperationRegistrazione",2);
 		*/
 		
 		// Test contenuto corretto per Validazione WSDL Signature 3
-		invocaServizioGestioneUtentiOverloadedOperations(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_WSDL_GESTIONE_UTENTI_OVERLOADED_OPERATIONS,
+		invocaServizioGestioneUtentiOverloadedOperations(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_OVERLOADED,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_OVERLOADED,
 				"ValidazioneWSDL_OperationRegistrazione",3);
 		
 		// Test contenuto corretto per Validazione OpenSPCoop Signature 3
 		/*
 		 * OVERLOADE IN QUESTA MODALITA NON E' PERMESSA
-		invocaServizioGestioneUtentiOverloadedOperations(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_OPENSPCOOP_GESTIONE_UTENTI_OVERLOADED_OPERATIONS,
+		invocaServizioGestioneUtentiOverloadedOperations(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_OVERLOADED,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_OVERLOADED,
 				"ValidazioneWSDL_OperationRegistrazione",3);
 				*/
@@ -2108,17 +2058,15 @@ public class ValidazioneContenutiApplicativi {
 		return this.getIDEgov(locator.getCall());
 	}
 	
-	private void invocaServizioGestioneUtentiStileIbrido(String portaDelegata,String servizio,String azione,String test,String tipoTest) throws Exception{
+	private void invocaServizioGestioneUtentiStileIbrido(String portaDelegata,String azione,String test,String tipoTest) throws Exception{
 		Reporter.log("["+test+"] Invocazione GestioneUtentiOverloadedOperations  ["+Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore()+
 				portaDelegata+"/"+
-				servizio+"/"+
 				azione+"]");
 		
 		GestioneUtentiStileIbridoServiceLocator locator = new GestioneUtentiStileIbridoServiceLocator();
 		locator.setGestioneUtentiStileIbridoEndpointAddress(
 				Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore()+
 				portaDelegata+"/"+
-				servizio+"/"+
 				azione);
 		GestioneUtentiStileIbrido port = locator.getGestioneUtentiStileIbrido();
 		
@@ -2172,39 +2120,33 @@ public class ValidazioneContenutiApplicativi {
 		TestSuiteTransformer.sequentialForced = true;
 		
 		// Test contenuto corretto per Validazione WSDL WDL
-		invocaServizioGestioneUtentiStileIbrido(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_WSDL_GESTIONE_UTENTI_STILE_IBRIDO,
+		invocaServizioGestioneUtentiStileIbrido(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_IBRIDO,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
 				"ValidazioneWSDL_OperationRegistrazione","WDL");
 		
 		// Test contenuto corretto per Validazione OpenSPCoop WDL
-		invocaServizioGestioneUtentiStileIbrido(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_OPENSPCOOP_GESTIONE_UTENTI_STILE_IBRIDO,
+		invocaServizioGestioneUtentiStileIbrido(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_IBRIDO,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL,
 				"ValidazioneWSDL_OperationRegistrazione","WDL");
 		
 		/* Manda in crash il server, e dopodiche saltano gli id egov raccolti dall'applicazione finale tramite handler axis.
 		// Test contenuto corretto per Validazione WSDL RPCL
-		invocaServizioGestioneUtentiStileIbrido(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_WSDL_GESTIONE_UTENTI_STILE_IBRIDO,
+		invocaServizioGestioneUtentiStileIbrido(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_IBRIDO,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_RPCL,
 				"ValidazioneWSDL_OperationRegistrazione","RPCL");
 		
 		// Test contenuto corretto per Validazione OpenSPCoop RPCL
-		invocaServizioGestioneUtentiStileIbrido(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_OPENSPCOOP_GESTIONE_UTENTI_STILE_IBRIDO,
+		invocaServizioGestioneUtentiStileIbrido(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_IBRIDO,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_RPCL,
 				"ValidazioneWSDL_OperationRegistrazione","RPCL");
 		
 		// Test contenuto corretto per Validazione WSDL RPCE
-		invocaServizioGestioneUtentiStileIbrido(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_WSDL_GESTIONE_UTENTI_STILE_IBRIDO,
+		invocaServizioGestioneUtentiStileIbrido(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_IBRIDO,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_RPCE,
 				"ValidazioneWSDL_OperationRegistrazione","RPCE");
 		
 		// Test contenuto corretto per Validazione OpenSPCoop RPCE
-		invocaServizioGestioneUtentiStileIbrido(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA,
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_OPENSPCOOP_GESTIONE_UTENTI_STILE_IBRIDO,
+		invocaServizioGestioneUtentiStileIbrido(CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_IBRIDO,
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_RPCE,
 				"ValidazioneWSDL_OperationRegistrazione","RPCE");
 				*/

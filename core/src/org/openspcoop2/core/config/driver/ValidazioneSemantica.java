@@ -589,7 +589,7 @@ public class ValidazioneSemantica {
 			}
 		}
 		if (numPD > 1)
-			this.errori.add("Non può esistere più di una porta delegata con nome "+nomePorta+". Sono state identificate le seguenti porte delegate: "+pdTrovate.toArray(new String[1]));
+			this.errori.add("Non può esistere più di una porta delegata con nome "+nomePorta+". Sono state identificate le seguenti porte delegate: "+pdTrovate);
 
 		
 		// Il soggetto erogatore deve essere definito. Il tipo e' obbligatorio.
@@ -876,7 +876,7 @@ public class ValidazioneSemantica {
 			}
 		}
 		if (numPD > 1)
-			this.errori.add("Non può esistere più di una porta applicativa con nome "+nomePorta+". Sono state identificate le seguenti porte applicative: "+paTrovate.toArray(new String[1]));
+			this.errori.add("Non può esistere più di una porta applicativa con nome "+nomePorta+". Sono state identificate le seguenti porte applicative: "+paTrovate);
 
 		
 		

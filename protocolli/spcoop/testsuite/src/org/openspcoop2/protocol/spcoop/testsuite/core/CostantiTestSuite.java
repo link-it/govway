@@ -425,12 +425,23 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_MESSAGE_BOX_INVOCAZIONE_PER_RIFERIMENTO="CooperazioneSincronaRiferimentoMessaggio";
 	/** Porte Delegate per IntegrationManagerMessageBox con RicezioneRispostaAsincrona in profilo Asincrono */
 	public static final String PORTA_DELEGATA_RICEZIONE_RISPOSTA_ASINCRONA="RicezioneRispostaAsincrona";
-	
-	
-	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione WSDL */
-	public static final String PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA="PDValWSDL";
+
+	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione WSDL (GestioneUtentiWrappedDocumentLiteral) */
+	public static final String PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTIONE_UTENTI_WDL="PDValWSDL/GestioneUtentiWrappedDocumentLiteral";
+	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione WSDL (AggiornamentoUtentiWrappedDocumentLiteral) */
+	public static final String PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_AGGIORNAMENTO_UTENTI_WDL="PDValWSDL/AggiornamentoUtentiWrappedDocumentLiteral";
+	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione WSDL (GestioneUtentiDocumentLiteral) */
+	public static final String PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_DL="PDValWSDL/GestioneUtentiRPCLiteral";
+	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione WSDL (GestioneUtentiRPCLiteral) */
+	public static final String PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_RPCL="PDValWSDL/GestioneUtentiRPCLiteral";
+	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione WSDL (GestioneUtentiRPCEncoded) */
+	public static final String PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_RPCE="PDValWSDL/GestioneUtentiRPCEncoded";
+	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione WSDL (GestioneUtentiOverloadedOperations) */
+	public static final String PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_OVERLOADED="PDValWSDL/GestioneUtentiOverloadedOperations";
+	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione WSDL (GestioneUtentiStileIbrido) */
+	public static final String PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTINE_UTENTI_IBRIDO="PDValWSDL/GestioneUtentiStileIbrido";
 	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione WSDL in warning only mode */
-	public static final String PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_WARNING_ONLY="PDValWSDL_WarningOnly";
+	public static final String PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_WARNING_ONLY_GESTIONE_UTENTI_WDL="PDValWSDL_WarningOnly/GestioneUtentiWrappedDocumentLiteral";
 	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione WSDL specifica per richiesta asincrona simmetrica */
 	public static final String PORTA_DELEGATA_VALIDAZIONE_WSDL_RICHIESTA_ASINCRONA_SIMMETRICA="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral";
 	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione WSDL specifica per risposta asincrona simmetrica */
@@ -440,8 +451,20 @@ public class CostantiTestSuite {
 	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione WSDL specifica per richiesta-stato asincrona asimmetrica */
 	public static final String PORTA_DELEGATA_VALIDAZIONE_WSDL_RICHIESTA_STATO_ASINCRONA_ASIMMETRICA="EsitoAggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral";
 
-	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione OpenSPCoop */
-	public static final String PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA="PDValOpenSPCoop";
+	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione OpenSPCoop (GestioneUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop) */
+	public static final String PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTIONE_UTENTI_WDL="PDValOpenSPCoop/GestioneUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop";
+	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione OpenSPCoop (AggiornamentoUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop) */
+	public static final String PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_AGGIORNAMENTO_UTENTI_WDL="PDValOpenSPCoop/AggiornamentoUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop";
+	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione OpenSPCoop (GestioneUtentiDocumentLiteral_ValidazioneOpenSPCoop) */
+	public static final String PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_DL="PDValOpenSPCoop/GestioneUtentiDocumentLiteral_ValidazioneOpenSPCoop";
+	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione OpenSPCoop (GestioneUtentiRPCLiteral_ValidazioneOpenSPCoop) */
+	public static final String PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_RPCL="PDValOpenSPCoop/GestioneUtentiRPCLiteral_ValidazioneOpenSPCoop";
+	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione OpenSPCoop (GestioneUtentiRPCEncoded_ValidazioneOpenSPCoop) */
+	public static final String PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_RPCE="PDValOpenSPCoop/GestioneUtentiRPCEncoded_ValidazioneOpenSPCoop";
+	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione OpenSPCoop (GestioneUtentiOverloadedOperations_ValidazioneOpenSPCoop) */
+	public static final String PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_OVERLOADED="PDValOpenSPCoop/GestioneUtentiOverloadedOperations_ValidazioneOpenSPCoop";
+	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione OpenSPCoop (GestioneUtentiStileIbrido_ValidazioneOpenSPCoop) */
+	public static final String PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_GENERICA_GESTINE_UTENTI_IBRIDO="PDValOpenSPCoop/GestioneUtentiStileIbrido_ValidazioneOpenSPCoop";
 	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione OpenSPCoop specifica per richiesta asincrona simmetrica */
 	public static final String PORTA_DELEGATA_VALIDAZIONE_OPENSPCOOP_RICHIESTA_ASINCRONA_SIMMETRICA="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop";
 	/** Porte Delegate per il test sulla validazione dei contenuti applicativi: Validazione OpenSPCoop specifica per risposta asincrona simmetrica */

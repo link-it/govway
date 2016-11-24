@@ -32,6 +32,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.protocol.engine.mapping.InformazioniServizioURLMapping;
+import org.openspcoop2.protocol.manifest.DefaultIntegrationError;
+import org.openspcoop2.protocol.manifest.IntegrationError;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.manifest.RestConfiguration;
 import org.openspcoop2.protocol.manifest.SoapConfiguration;
@@ -198,7 +200,7 @@ public class ProtocolFactoryManager {
 					if(context.length()>0){
 						context.append(",");
 					}
-					context.append(manifestOpenspcoop2.getWeb().getContext(i));
+					context.append(manifestOpenspcoop2.getWeb().getContext(i).getName());
 				}
 				log.info("Protocol loaded with id["+protocolManifest+"] factory["+manifestOpenspcoop2.getProtocol().getFactory()+"] contexts["+context.toString()+"]");
 				
@@ -501,24 +503,24 @@ public class ProtocolFactoryManager {
 				if(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getDefault()==null){
 					throw new Exception("Binding Soap for protocol ["+protocolManifest+"]: it has not defined the default configuration for internal error handling");
 				}
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getDefault().getHttpReturnCode(),"default");
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getAuthentication().getHttpReturnCode(),"authentication");
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getAuthorization().getHttpReturnCode(),"authorization");
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getNotFound().getHttpReturnCode(),"notFound");
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getBadRequest().getHttpReturnCode(),"badRequest");
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getInternalError().getHttpReturnCode(),"internalError");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getDefault(),"default");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getAuthentication(),"authentication");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getAuthorization(),"authorization");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getNotFound(),"notFound");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getBadRequest(),"badRequest");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getInternal().getInternalError(),"internalError");
 				if(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal()==null){
 					throw new Exception("Binding Soap for protocol ["+protocolManifest+"]: it has not defined the configuration for external error handling");
 				}
 				if(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getDefault()==null){
 					throw new Exception("Binding Soap for protocol ["+protocolManifest+"]: it has not defined the default configuration for external error handling");
 				}
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getDefault().getHttpReturnCode(),"default");
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getAuthentication().getHttpReturnCode(),"authentication");
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getAuthorization().getHttpReturnCode(),"authorization");
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getNotFound().getHttpReturnCode(),"notFound");
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getBadRequest().getHttpReturnCode(),"badRequest");
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getInternalError().getHttpReturnCode(),"internalError");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getDefault(),"default");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getAuthentication(),"authentication");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getAuthorization(),"authorization");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getNotFound(),"notFound");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getBadRequest(),"badRequest");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getSoap().getIntegrationError().getExternal().getInternalError(),"internalError");
 				
 				if(manifestOpenspcoop2.getBinding().getSoap().getMediaTypeCollection()==null){
 					throw new Exception("Binding Soap for protocol ["+protocolManifest+"]: media type collection undefined");
@@ -550,24 +552,24 @@ public class ProtocolFactoryManager {
 				if(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getDefault()==null){
 					throw new Exception("Binding Rest for protocol ["+protocolManifest+"]: it has not defined the default configuration for internal error handling");
 				}
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getDefault().getHttpReturnCode(),"default");
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getAuthentication().getHttpReturnCode(),"authentication");
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getAuthorization().getHttpReturnCode(),"authorization");
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getNotFound().getHttpReturnCode(),"notFound");
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getBadRequest().getHttpReturnCode(),"badRequest");
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getInternalError().getHttpReturnCode(),"internalError");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getDefault(),"default");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getAuthentication(),"authentication");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getAuthorization(),"authorization");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getNotFound(),"notFound");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getBadRequest(),"badRequest");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getInternal().getInternalError(),"internalError");
 				if(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal()==null){
 					throw new Exception("Binding Rest for protocol ["+protocolManifest+"]: it has not defined the configuration for external error handling");
 				}
 				if(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getDefault()==null){
 					throw new Exception("Binding Rest for protocol ["+protocolManifest+"]: it has not defined the default configuration for external error handling");
 				}
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getDefault().getHttpReturnCode(),"default");
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getAuthentication().getHttpReturnCode(),"authentication");
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getAuthorization().getHttpReturnCode(),"authorization");
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getNotFound().getHttpReturnCode(),"notFound");
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getBadRequest().getHttpReturnCode(),"badRequest");
-				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getInternalError().getHttpReturnCode(),"internalError");		
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getDefault(),"default");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getAuthentication(),"authentication");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getAuthorization(),"authorization");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getNotFound(),"notFound");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getBadRequest(),"badRequest");
+				checkHttpReturnCode(manifestOpenspcoop2.getBinding().getRest().getIntegrationError().getExternal().getInternalError(),"internalError");		
 				
 				if(manifestOpenspcoop2.getBinding().getRest().getMediaTypeCollection()==null){
 					throw new Exception("Binding Rest for protocol ["+protocolManifest+"]: media type collection undefined");
@@ -724,15 +726,27 @@ public class ProtocolFactoryManager {
 		
 	}
 	
+	private void checkHttpReturnCode(DefaultIntegrationError ir,String function) throws ProtocolException {
+		if(ir!=null){
+			int httpReturnCode = ir.getHttpReturnCode();
+			this.checkHttpReturnCode(httpReturnCode, function);
+		}
+	}
+	private void checkHttpReturnCode(IntegrationError ir,String function) throws ProtocolException {
+		if(ir!=null){
+			int httpReturnCode = ir.getHttpReturnCode();
+			this.checkHttpReturnCode(httpReturnCode, function);
+		}
+	}
 	private void checkHttpReturnCode(int httpReturnCode,String function) throws ProtocolException {
-		String msgError = "The value provided ("+function+") is not used as http return code (use [200,299],[400-599])";
+		String msgError = "The value provided ("+httpReturnCode+") is not used as http return code (use [200,299],[400-599])";
 		if(httpReturnCode<200){
 			throw new ProtocolException(msgError);
 		}
 		if(httpReturnCode>=300 && httpReturnCode<400){
 			throw new ProtocolException(msgError);
 		}
-		if(httpReturnCode<600){
+		if(httpReturnCode>600){
 			throw new ProtocolException(msgError);
 		}
 	}

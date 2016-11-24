@@ -1273,8 +1273,7 @@ public class SOAPMessageScorretti {
 		listErroriAttesi.add("Validazione WSDL (true) fallita");
 		listErroriAttesi.add("Riscontrato errore durante la validazione xsd della richiesta applicativa");
 		
-		String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_WARNING_ONLY+"/"+
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_WSDL_GESTIONE_UTENTI_WDL+"/"+
+		String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_WARNING_ONLY_GESTIONE_UTENTI_WDL+"/"+
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL;
 		this.invocazionePD(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, listErroriAttesi, 
 				this.repositoryStrutturaXMLErrataPortaDelegataValidazioneContenutiApplicativiWarningOnly, portaDelegata,
@@ -1294,8 +1293,7 @@ public class SOAPMessageScorretti {
 		
 		Date dataInizioTest = DateManager.getDate();
 		
-		String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA+"/"+
-				CostantiTestSuite.SPCOOP_NOME_SERVIZIO_VAL_WSDL_GESTIONE_UTENTI_WDL+"/"+
+		String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_VALIDAZIONE_WSDL_GENERICA_GESTIONE_UTENTI_WDL+"/"+
 				CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_VALIDAZIONE_WSDL_OPENSPCOOP_AZIONE_REGISTRAZIONE_UTENTE_WDL;
 		try{
 			this.invocazionePD(messaggioXMLRichiesta, identificativoTest, motivoErroreParser, null, 

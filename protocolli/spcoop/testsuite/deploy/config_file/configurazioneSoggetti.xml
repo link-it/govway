@@ -2519,43 +2519,43 @@
             <azione nome="GetMessage" />
         </porta-delegata>
         <porta-delegata gestione-manifest="abilitato" nome="HelloWorldIntegrationManager2" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
-            <soggetto-erogatore tipo="SPC" identificazione="inputBased" />
-            <servizio tipo="SPC" identificazione="inputBased" />
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="MessageBox" />
             <azione identificazione="inputBased" />
         </porta-delegata>
         
-        <!-- Identificazione URL-Based del servizio SPCoop -->
+        <!-- Identificazione URL-Based -->
         <porta-delegata gestione-manifest="abilitato" nome="HelloWorldURLBased" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
-            <soggetto-erogatore tipo="SPC" identificazione="urlBased" pattern=".*HelloWorldURLBased/([^/]*).*" />
-            <servizio tipo="SPC" identificazione="urlBased" pattern=".*HelloWorldURLBased/[^/]+/([^/]*).*" />
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione identificazione="urlBased" pattern=".*HelloWorldURLBased/[^/]+/[^/]+/([^/]*).*" />
         </porta-delegata>
         
-        <!-- Identificazione URL-Based del servizio SPCoop, attraverso una url in stile http-form -->
+        <!-- Identificazione URL-Based, attraverso una url in stile http-form -->
         <porta-delegata gestione-manifest="abilitato" nome="HelloWorldURLBasedForm" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
-            <soggetto-erogatore tipo="SPC" identificazione="urlBased" pattern=".+soggetto=([^&amp;]*).*" />
-            <servizio tipo="SPC" identificazione="urlBased" pattern=".+servizio=([^&amp;]*).*" />
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione identificazione="urlBased" pattern=".+azione=([^&amp;]*).*" />
         </porta-delegata>
         
-        <!-- Identificazione Content-Based del servizio SPCoop, esempio1 -->
+        <!-- Identificazione Content-Based, esempio1 -->
         <porta-delegata gestione-manifest="abilitato" nome="HelloWorldContentBasedExample1" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
-            <soggetto-erogatore tipo="SPC" identificazione="contentBased" pattern="/soapenv:Envelope/soapenv:Body/ns1:getQuote/ns1:soggetto/text()" />
-            <servizio tipo="SPC" identificazione="contentBased" pattern="//soapenv:Header/servizio/text()" />
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione identificazione="contentBased" pattern="//azione/text()" />
         </porta-delegata>
         
-        <!-- Identificazione Content-Based del servizio SPCoop, esempio2 -->
+        <!-- Identificazione Content-Based, esempio2 -->
         <porta-delegata gestione-manifest="abilitato" nome="HelloWorldContentBasedExample2" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
-            <soggetto-erogatore tipo="SPC" identificazione="contentBased" pattern="//ns1:soggetto/@nome" />
-            <servizio tipo="SPC" identificazione="contentBased" pattern="//servizio[position()=3]/text()" />
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione identificazione="contentBased" pattern="//azione[@tipo='SPC']/text()" />
         </porta-delegata>
         
         <!-- Identificazione Input-Based -->
         <porta-delegata gestione-manifest="abilitato" nome="HelloWorldInputBased" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
-            <soggetto-erogatore tipo="SPC" identificazione="inputBased"  />
-            <servizio tipo="SPC" identificazione="inputBased"  />
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione identificazione="inputBased"/>
         </porta-delegata>
         
@@ -2892,18 +2892,49 @@
         -->
         
         <!-- VALIDAZIONE WSDL -->
-        <porta-delegata gestione-manifest="abilitato" nome="PDValWSDL" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+        <porta-delegata gestione-manifest="abilitato" nome="PDValWSDL/AggiornamentoUtentiWrappedDocumentLiteral" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
-            <servizio tipo="SPC" identificazione="urlBased" pattern=".*PDValWSDL/([^/]*).*" />
+            <servizio tipo="SPC" nome="AggiornamentoUtentiWrappedDocumentLiteral" />
             <azione identificazione="urlBased" pattern=".*PDValWSDL/[^/]+/([^/]*).*" />
             <validazione-contenuti-applicativi stato="abilitato" tipo="wsdl"/>
         </porta-delegata>
-        <porta-delegata gestione-manifest="abilitato" nome="PDValWSDL_WarningOnly" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+        <porta-delegata gestione-manifest="abilitato" nome="PDValWSDL/GestioneUtentiWrappedDocumentLiteral" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
-            <servizio tipo="SPC" identificazione="urlBased" pattern=".*PDValWSDL_WarningOnly/([^/]*).*" />
-            <azione identificazione="urlBased" pattern=".*PDValWSDL_WarningOnly/[^/]+/([^/]*).*" />
-            <validazione-contenuti-applicativi stato="warningOnly" tipo="wsdl"/>
+            <servizio tipo="SPC" nome="GestioneUtentiWrappedDocumentLiteral" />
+            <azione identificazione="urlBased" pattern=".*PDValWSDL/[^/]+/([^/]*).*" />
+            <validazione-contenuti-applicativi stato="abilitato" tipo="wsdl"/>
         </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="PDValWSDL/GestioneUtentiDocumentLiteral" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="GestioneUtentiDocumentLiteral" />
+            <azione identificazione="urlBased" pattern=".*PDValWSDL/[^/]+/([^/]*).*" />
+            <validazione-contenuti-applicativi stato="abilitato" tipo="wsdl"/>
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="PDValWSDL/GestioneUtentiRPCLiteral" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="GestioneUtentiRPCLiteral" />
+            <azione identificazione="urlBased" pattern=".*PDValWSDL/[^/]+/([^/]*).*" />
+            <validazione-contenuti-applicativi stato="abilitato" tipo="wsdl"/>
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="PDValWSDL/GestioneUtentiRPCEncoded" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="GestioneUtentiRPCEncoded" />
+            <azione identificazione="urlBased" pattern=".*PDValWSDL/[^/]+/([^/]*).*" />
+            <validazione-contenuti-applicativi stato="abilitato" tipo="wsdl"/>
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="PDValWSDL/GestioneUtentiOverloadedOperations" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="GestioneUtentiOverloadedOperations" />
+            <azione identificazione="urlBased" pattern=".*PDValWSDL/[^/]+/([^/]*).*" />
+            <validazione-contenuti-applicativi stato="abilitato" tipo="wsdl"/>
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="PDValWSDL/GestioneUtentiStileIbrido" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="GestioneUtentiStileIbrido" />
+            <azione identificazione="urlBased" pattern=".*PDValWSDL/[^/]+/([^/]*).*" />
+            <validazione-contenuti-applicativi stato="abilitato" tipo="wsdl"/>
+        </porta-delegata>
+
         <porta-delegata gestione-manifest="abilitato" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral" autenticazione="basic" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral" />
@@ -2922,15 +2953,97 @@
             <azione nome="esitoAggiornamentoUtenteAsincronoAsimmetricoWDL"/>
             <validazione-contenuti-applicativi stato="abilitato" tipo="wsdl"/>
         </porta-delegata>
-        
-        
-        <!-- VALIDAZIONE OPENSPCOOP -->
-        <porta-delegata gestione-manifest="abilitato" nome="PDValOpenSPCoop" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+
+
+        <!-- VALIDAZIONE WSDL (WARNING ONLY) -->
+        <porta-delegata gestione-manifest="abilitato" nome="PDValWSDL_WarningOnly/AggiornamentoUtentiWrappedDocumentLiteral" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
-            <servizio tipo="SPC" identificazione="urlBased" pattern=".*PDValOpenSPCoop/([^/]*).*" />
+            <servizio tipo="SPC" nome="AggiornamentoUtentiWrappedDocumentLiteral" />
+            <azione identificazione="urlBased" pattern=".*PDValWSDL_WarningOnly/[^/]+/([^/]*).*" />
+            <validazione-contenuti-applicativi stato="warningOnly" tipo="wsdl"/>
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="PDValWSDL_WarningOnly/GestioneUtentiWrappedDocumentLiteral" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="GestioneUtentiWrappedDocumentLiteral" />
+            <azione identificazione="urlBased" pattern=".*PDValWSDL_WarningOnly/[^/]+/([^/]*).*" />
+            <validazione-contenuti-applicativi stato="warningOnly" tipo="wsdl"/>
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="PDValWSDL_WarningOnly/GestioneUtentiDocumentLiteral" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="GestioneUtentiDocumentLiteral" />
+            <azione identificazione="urlBased" pattern=".*PDValWSDL_WarningOnly/[^/]+/([^/]*).*" />
+            <validazione-contenuti-applicativi stato="warningOnly" tipo="wsdl"/>
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="PDValWSDL_WarningOnly/GestioneUtentiRPCLiteral" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="GestioneUtentiRPCLiteral" />
+            <azione identificazione="urlBased" pattern=".*PDValWSDL_WarningOnly/[^/]+/([^/]*).*" />
+            <validazione-contenuti-applicativi stato="warningOnly" tipo="wsdl"/>
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="PDValWSDL_WarningOnly/GestioneUtentiRPCEncoded" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="GestioneUtentiRPCEncoded" />
+            <azione identificazione="urlBased" pattern=".*PDValWSDL_WarningOnly/[^/]+/([^/]*).*" />
+            <validazione-contenuti-applicativi stato="warningOnly" tipo="wsdl"/>
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="PDValWSDL_WarningOnly/GestioneUtentiOverloadedOperations" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="GestioneUtentiOverloadedOperations" />
+            <azione identificazione="urlBased" pattern=".*PDValWSDL_WarningOnly/[^/]+/([^/]*).*" />
+            <validazione-contenuti-applicativi stato="warningOnly" tipo="wsdl"/>
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="PDValWSDL_WarningOnly/GestioneUtentiStileIbrido" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="GestioneUtentiStileIbrido" />
+            <azione identificazione="urlBased" pattern=".*PDValWSDL_WarningOnly/[^/]+/([^/]*).*" />
+            <validazione-contenuti-applicativi stato="warningOnly" tipo="wsdl"/>
+        </porta-delegata>
+
+
+        <!-- VALIDAZIONE OPENSPCOOP -->
+        <porta-delegata gestione-manifest="abilitato" nome="PDValOpenSPCoop/AggiornamentoUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="AggiornamentoUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop" />
             <azione identificazione="urlBased" pattern=".*PDValOpenSPCoop/[^/]+/([^/]*).*" />
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="PDValOpenSPCoop/GestioneUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="GestioneUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop" />
+            <azione identificazione="urlBased" pattern=".*PDValOpenSPCoop/[^/]+/([^/]*).*" />
+            <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="PDValOpenSPCoop/GestioneUtentiDocumentLiteral_ValidazioneOpenSPCoop" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="GestioneUtentiDocumentLiteral_ValidazioneOpenSPCoop" />
+            <azione identificazione="urlBased" pattern=".*PDValOpenSPCoop/[^/]+/([^/]*).*" />
+            <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="PDValOpenSPCoop/GestioneUtentiRPCLiteral_ValidazioneOpenSPCoop" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="GestioneUtentiRPCLiteral_ValidazioneOpenSPCoop" />
+            <azione identificazione="urlBased" pattern=".*PDValOpenSPCoop/[^/]+/([^/]*).*" />
+            <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="PDValOpenSPCoop/GestioneUtentiRPCEncoded_ValidazioneOpenSPCoop" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="GestioneUtentiRPCEncoded_ValidazioneOpenSPCoop" />
+            <azione identificazione="urlBased" pattern=".*PDValOpenSPCoop/[^/]+/([^/]*).*" />
+            <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="PDValOpenSPCoop/GestioneUtentiOverloadedOperations_ValidazioneOpenSPCoop" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="GestioneUtentiOverloadedOperations_ValidazioneOpenSPCoop" />
+            <azione identificazione="urlBased" pattern=".*PDValOpenSPCoop/[^/]+/([^/]*).*" />
+            <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
+        </porta-delegata>
+        <porta-delegata gestione-manifest="abilitato" nome="PDValOpenSPCoop/GestioneUtentiStileIbrido_ValidazioneOpenSPCoop" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="GestioneUtentiStileIbrido_ValidazioneOpenSPCoop" />
+            <azione identificazione="urlBased" pattern=".*PDValOpenSPCoop/[^/]+/([^/]*).*" />
+            <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
+        </porta-delegata>
+
         <porta-delegata gestione-manifest="abilitato" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop" autenticazione="basic" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop" />
@@ -3045,59 +3158,59 @@
         
         <!-- URL Based -->
         <porta-delegata gestione-manifest="abilitato" nome="IntegrazioneURLBased" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
-            <soggetto-erogatore tipo="SPC" identificazione="urlBased" pattern=".*IntegrazioneURLBased/([^/]*).*" />
-            <servizio tipo="SPC" identificazione="urlBased" pattern=".*IntegrazioneURLBased/[^/]+/([^/]*).*" />
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore"/>
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione identificazione="urlBased" pattern=".*IntegrazioneURLBased/[^/]+/[^/]+/([^/]*).*" />
         </porta-delegata>
         <porta-delegata gestione-manifest="abilitato" nome="IntegrazioneURLFormBased" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
-            <soggetto-erogatore tipo="SPC" identificazione="urlBased" pattern=".+soggetto=([^&amp;]*).*" />
-            <servizio tipo="SPC" identificazione="urlBased" pattern=".+servizio=([^&amp;]*).*" />
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore"/>
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione identificazione="urlBased" pattern=".+azione=([^&amp;]*).*" />
         </porta-delegata>
         
         <!-- Content Based -->
         <porta-delegata gestione-manifest="abilitato" nome="IntegrazioneContentBased1" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
-            <soggetto-erogatore tipo="SPC" identificazione="contentBased" pattern="/soapenv:Envelope/soapenv:Body/ns1:getQuote/ns1:soggetto/text()" />
-            <servizio tipo="SPC" identificazione="contentBased" pattern="//soapenv:Header/servizio/text()" />
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore"/>
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione identificazione="contentBased" pattern="//azione/text()" />
         </porta-delegata>
         <porta-delegata gestione-manifest="abilitato" nome="IntegrazioneContentBased2" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
-            <soggetto-erogatore tipo="SPC" identificazione="contentBased" pattern="//ns1:soggetto/@nome" />
-            <servizio tipo="SPC" identificazione="contentBased" pattern="//servizio[position()=3]/text()" />
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore"/>
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione identificazione="contentBased" pattern="//azione[@tipo='SPC']/text()" />
         </porta-delegata>
         <porta-delegata gestione-manifest="abilitato" nome="IntegrazioneContentBasedCONCAT" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
-            <soggetto-erogatore tipo="SPC" identificazione="contentBased" pattern="//ns1:soggetto/@nome" />
-            <servizio tipo="SPC" identificazione="contentBased" pattern="//servizio[position()=3]/text()" />
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore"/>
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione identificazione="contentBased" pattern="concat(&#34;BEGIN-ID_&#34;,//azione[@tipo='SPC']/text(),&#34;_END-ID&#34;)" />
         </porta-delegata>
         <porta-delegata gestione-manifest="abilitato" nome="IntegrazioneContentBasedCONCAT_ERRORE" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
-            <soggetto-erogatore tipo="SPC" identificazione="contentBased" pattern="//ns1:soggetto/@nome" />
-            <servizio tipo="SPC" identificazione="contentBased" pattern="concat(&#34;BEGIN-ID_&#34;,//servizio[position()=3]/text(),&#34;_END-ID&#34;)" />
-            <azione identificazione="contentBased" pattern="//azione[@tipo='SPC']/text()" />
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore"/>
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione identificazione="contentBased" pattern="concat(&#34;BEGIN-ID_&#34;,//servizio[position()=3]/text(),&#34;_END-ID&#34;)" />
         </porta-delegata>
         <porta-delegata gestione-manifest="abilitato" nome="IntegrazioneContentBasedCONCATOpenSPCoop" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
-            <soggetto-erogatore tipo="SPC" identificazione="contentBased" pattern="//ns1:soggetto/@nome" />
-            <servizio tipo="SPC" identificazione="contentBased" pattern="//servizio[position()=3]/text()" />
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore"/>
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione identificazione="contentBased" pattern="concat_openspcoop(&#34;BEGIN-ID_&#34;,//azione[@tipo='SPC']/text(),&#34;_END-ID&#34;)" />
         </porta-delegata>
         <porta-delegata gestione-manifest="abilitato" nome="IntegrazioneContentBasedCONCATOpenSPCoop_ERRORE" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
-            <soggetto-erogatore tipo="SPC" identificazione="contentBased" pattern="//ns1:soggetto/@nome" />
-            <servizio tipo="SPC" identificazione="contentBased" pattern="concat_openspcoop(&#34;BEGIN-ID_&#34;,//servizio[position()=3]/text(),&#34;_END-ID&#34;)" />
-            <azione identificazione="contentBased" pattern="//azione[@tipo='SPC']/text()" />
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore"/>
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione identificazione="contentBased" pattern="concat_openspcoop(&#34;BEGIN-ID_&#34;,//servizio[position()=3]/text(),&#34;_END-ID&#34;)" />
         </porta-delegata>
         
         <!-- Input Based -->
         <porta-delegata gestione-manifest="abilitato" nome="IntegrazioneInputBased" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap,wsa">
-            <soggetto-erogatore tipo="SPC" identificazione="inputBased"  />
-            <servizio tipo="SPC" identificazione="inputBased"  />
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore"/>
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione identificazione="inputBased"/>
         </porta-delegata>
         
         <!-- SOAPAction Based -->
         <porta-delegata gestione-manifest="abilitato" nome="IntegrazioneSOAPActionBased" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
-            <soggetto-erogatore tipo="SPC" identificazione="static" nome="MinisteroErogatore" />
-            <servizio tipo="SPC" identificazione="static" nome="RichiestaStatoAvanzamento" />
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione identificazione="soapActionBased"/>
         </porta-delegata>
         
@@ -6312,243 +6425,117 @@
         </porta-applicativa>
         
         
-        
-        
-        
-        
-        
+
         
         <!-- Validazione XSD + Validazione WSDL + PortType multipli (VALIDAZIONE WSDL)-->
         <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiWrappedDocumentLiteral">
             <servizio tipo="SPC" nome="GestioneUtentiWrappedDocumentLiteral" />
-            <servizio-applicativo nome="TestGestioneUtentiWrappedDocumentLiteral" > 
-                <invocazione-servizio>
-                    <connettore tipo="http" nome="connettore di test">
-                        <!-- test validazione xsd e wsdl corretto -->
-                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiWrappedDocumentLiteral" />
-                        <!-- test con contenuto applicativo non validato da xsd per la risposta -->
-                        <!-- <property nome="location" valore="http://localhost:8080/TRACE_ECHO/trace" />  -->
-                    </connettore>
-                </invocazione-servizio>  
-            </servizio-applicativo>
+            <servizio-applicativo nome="TestGestioneUtentiWrappedDocumentLiteral" /> 
             <validazione-contenuti-applicativi stato="abilitato" tipo="wsdl"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="AggiornamentoUtentiWrappedDocumentLiteral">
             <servizio tipo="SPC" nome="AggiornamentoUtentiWrappedDocumentLiteral" />
-            <servizio-applicativo nome="TestAggiornamentoUtentiWrappedDocumentLiteral" > 
-                <invocazione-servizio>
-                    <connettore tipo="http" nome="connettore di test">
-                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/AggiornamentoUtentiWrappedDocumentLiteral" />
-                    </connettore>
-                </invocazione-servizio>  
-            </servizio-applicativo>
+            <servizio-applicativo nome="TestAggiornamentoUtentiWrappedDocumentLiteral" /> 
             <validazione-contenuti-applicativi stato="abilitato" tipo="wsdl"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral">
             <servizio tipo="SPC" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral" />
-            <servizio-applicativo nome="TestAggiornamentoAsincronoSimmetricoWrappedDocumentLiteral" > 
-                <invocazione-servizio>
-                    <connettore tipo="http" nome="connettore di test">
-                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/AggiornamentoAsincronoWrappedDocumentLiteral" />
-                    </connettore>
-                </invocazione-servizio>  
-            </servizio-applicativo>
+            <servizio-applicativo nome="TestAggiornamentoAsincronoSimmetricoWrappedDocumentLiteral" /> 
             <validazione-contenuti-applicativi stato="abilitato" tipo="wsdl"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="AggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral">
             <servizio tipo="SPC" nome="AggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral" />
-            <servizio-applicativo nome="TestAggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral" > 
-                <invocazione-servizio>
-                    <connettore tipo="http" nome="connettore di test">
-                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/AggiornamentoAsincronoWrappedDocumentLiteral" />
-                    </connettore>
-                </invocazione-servizio> 
-                <risposta-asincrona>
-                    <connettore tipo="http" nome="connettore di test">
-                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/EsitoAggiornamentoAsincronoWrappedDocumentLiteral" />
-                    </connettore>
-                </risposta-asincrona> 
-            </servizio-applicativo>
+            <servizio-applicativo nome="TestAggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral" /> 
             <validazione-contenuti-applicativi stato="abilitato" tipo="wsdl"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiDocumentLiteral">
             <servizio tipo="SPC" nome="GestioneUtentiDocumentLiteral" />
-            <servizio-applicativo nome="TestGestioneUtentiDocumentLiteral" > 
-                <invocazione-servizio>
-                    <connettore tipo="http" nome="connettore di test">
-                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiDocumentLiteral" />
-                    </connettore>
-                </invocazione-servizio>  
-            </servizio-applicativo>
+            <servizio-applicativo nome="TestGestioneUtentiDocumentLiteral" /> 
             <validazione-contenuti-applicativi stato="abilitato" tipo="wsdl"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiRPCLiteral">
             <servizio tipo="SPC" nome="GestioneUtentiRPCLiteral" />
-            <servizio-applicativo nome="TestGestioneUtentiRPCLiteral" > 
-                <invocazione-servizio>
-                    <connettore tipo="http" nome="connettore di test">
-                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiRPCLiteral" />
-                    </connettore>
-                </invocazione-servizio>  
-            </servizio-applicativo>
+            <servizio-applicativo nome="TestGestioneUtentiRPCLiteral" /> 
             <validazione-contenuti-applicativi stato="abilitato" tipo="wsdl"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiRPCEncoded">
             <servizio tipo="SPC" nome="GestioneUtentiRPCEncoded" />
-            <servizio-applicativo nome="TestGestioneUtentiRPCEncoded" > 
-                <invocazione-servizio>
-                    <connettore tipo="http" nome="connettore di test">
-                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiRPCEncoded" />
-                    </connettore>
-                </invocazione-servizio>  
-            </servizio-applicativo>
+            <servizio-applicativo nome="TestGestioneUtentiRPCEncoded" /> 
             <validazione-contenuti-applicativi stato="abilitato" tipo="wsdl"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiOverloadedOperations">
             <servizio tipo="SPC" nome="GestioneUtentiOverloadedOperations" />
-            <servizio-applicativo nome="TestGestioneUtentiOverloadedOperations" > 
-                <invocazione-servizio>
-                    <connettore tipo="http" nome="connettore di test">
-                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiOverloadedOperations" />
-                    </connettore>
-                </invocazione-servizio>  
-            </servizio-applicativo>
+            <servizio-applicativo nome="TestGestioneUtentiOverloadedOperations" /> 
             <validazione-contenuti-applicativi stato="abilitato" tipo="wsdl"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiStileIbrido">
             <servizio tipo="SPC" nome="GestioneUtentiStileIbrido" />
-            <servizio-applicativo nome="TestGestioneUtentiStileIbrido" > 
-                <invocazione-servizio>
-                    <connettore tipo="http" nome="connettore di test">
-                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiStileIbrido" />
-                    </connettore>
-                </invocazione-servizio>  
-            </servizio-applicativo>
+            <servizio-applicativo nome="TestGestioneUtentiStileIbrido" /> 
             <validazione-contenuti-applicativi stato="abilitato" tipo="wsdl"/>
         </porta-applicativa>
         
+
+
         <!-- Validazione XSD + Validazione WSDL + PortType multipli (VALIDAZIONE OPENSPCOOP)-->
         <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop">
             <servizio tipo="SPC" nome="GestioneUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop" />
-            <servizio-applicativo nome="TestGestioneUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop" > 
-                <invocazione-servizio>
-                    <connettore tipo="http" nome="connettore di test">
-                        <!-- test validazione xsd e wsdl corretto -->
-                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiWrappedDocumentLiteral" />
-                        <!-- test con contenuto applicativo non validato da xsd per la risposta -->
-                        <!-- <property nome="location" valore="http://localhost:8080/TRACE_ECHO/trace" />  -->
-                    </connettore>
-                </invocazione-servizio>  
-            </servizio-applicativo>
+            <servizio-applicativo nome="TestGestioneUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop" /> 
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="AggiornamentoUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop">
             <servizio tipo="SPC" nome="AggiornamentoUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop" />
-            <servizio-applicativo nome="TestAggiornamentoUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop" > 
-                <invocazione-servizio>
-                    <connettore tipo="http" nome="connettore di test">
-                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/AggiornamentoUtentiWrappedDocumentLiteral" />
-                    </connettore>
-                </invocazione-servizio>  
-            </servizio-applicativo>
+            <servizio-applicativo nome="TestAggiornamentoUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop" /> 
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop">
             <servizio tipo="SPC" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop" />
-            <servizio-applicativo nome="TestAggiornamentoAsincronoSimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop" > 
-                <invocazione-servizio>
-                    <connettore tipo="http" nome="connettore di test">
-                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/AggiornamentoAsincronoWrappedDocumentLiteral" />
-                    </connettore>
-                </invocazione-servizio>  
-            </servizio-applicativo>
+            <servizio-applicativo nome="TestAggiornamentoAsincronoSimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop" /> 
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="AggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop">
             <servizio tipo="SPC" nome="AggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop" />
-            <servizio-applicativo nome="TestAggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop" > 
-                <invocazione-servizio>
-                    <connettore tipo="http" nome="connettore di test">
-                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/AggiornamentoAsincronoWrappedDocumentLiteral" />
-                    </connettore>
-                </invocazione-servizio> 
-                <risposta-asincrona>
-                    <connettore tipo="http" nome="connettore di test">
-                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/EsitoAggiornamentoAsincronoWrappedDocumentLiteral" />
-                    </connettore>
-                </risposta-asincrona> 
-            </servizio-applicativo>
+            <servizio-applicativo nome="TestAggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop" /> 
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiDocumentLiteral_ValidazioneOpenSPCoop">
             <servizio tipo="SPC" nome="GestioneUtentiDocumentLiteral_ValidazioneOpenSPCoop" />
-            <servizio-applicativo nome="TestGestioneUtentiDocumentLiteral_ValidazioneOpenSPCoop" > 
-                <invocazione-servizio>
-                    <connettore tipo="http" nome="connettore di test">
-                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiDocumentLiteral" />
-                    </connettore>
-                </invocazione-servizio>  
-            </servizio-applicativo>
+            <servizio-applicativo nome="TestGestioneUtentiDocumentLiteral_ValidazioneOpenSPCoop" /> 
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiRPCLiteral_ValidazioneOpenSPCoop">
             <servizio tipo="SPC" nome="GestioneUtentiRPCLiteral_ValidazioneOpenSPCoop" />
-            <servizio-applicativo nome="TestGestioneUtentiRPCLiteral_ValidazioneOpenSPCoop" > 
-                <invocazione-servizio>
-                    <connettore tipo="http" nome="connettore di test">
-                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiRPCLiteral" />
-                    </connettore>
-                </invocazione-servizio>  
-            </servizio-applicativo>
+            <servizio-applicativo nome="TestGestioneUtentiRPCLiteral_ValidazioneOpenSPCoop" /> 
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiRPCEncoded_ValidazioneOpenSPCoop">
             <servizio tipo="SPC" nome="GestioneUtentiRPCEncoded_ValidazioneOpenSPCoop" />
-            <servizio-applicativo nome="TestGestioneUtentiRPCEncoded_ValidazioneOpenSPCoop" > 
-                <invocazione-servizio>
-                    <connettore tipo="http" nome="connettore di test">
-                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiRPCEncoded" />
-                    </connettore>
-                </invocazione-servizio>  
-            </servizio-applicativo>
+            <servizio-applicativo nome="TestGestioneUtentiRPCEncoded_ValidazioneOpenSPCoop" /> 
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiOverloadedOperations_ValidazioneOpenSPCoop">
             <servizio tipo="SPC" nome="GestioneUtentiOverloadedOperations_ValidazioneOpenSPCoop" />
-            <servizio-applicativo nome="TestGestioneUtentiOverloadedOperations_ValidazioneOpenSPCoop" > 
-                <invocazione-servizio>
-                    <connettore tipo="http" nome="connettore di test">
-                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiOverloadedOperations" />
-                    </connettore>
-                </invocazione-servizio>  
-            </servizio-applicativo>
+            <servizio-applicativo nome="TestGestioneUtentiOverloadedOperations_ValidazioneOpenSPCoop" /> 
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
         <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiStileIbrido_ValidazioneOpenSPCoop">
             <servizio tipo="SPC" nome="GestioneUtentiStileIbrido_ValidazioneOpenSPCoop" />
-            <servizio-applicativo nome="TestGestioneUtentiStileIbrido_ValidazioneOpenSPCoop" > 
-                <invocazione-servizio>
-                    <connettore tipo="http" nome="connettore di test">
-                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiStileIbrido" />
-                    </connettore>
-                </invocazione-servizio>  
-            </servizio-applicativo>
+            <servizio-applicativo nome="TestGestioneUtentiStileIbrido_ValidazioneOpenSPCoop" /> 
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
@@ -7052,83 +7039,83 @@
         
         <!-- FIltro duplicati test -->
         <!-- Oneway con riscontro -->
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateless_OnewayRiscontro" stateless="abilitato">
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_OnewayRiscontro" stateless="abilitato">
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicatiConRiscontroStateless" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateful_OnewayRiscontro" stateless="disabilitato">
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_OnewayRiscontro" stateless="disabilitato">
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicatiConRiscontroStateful" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
         </porta-applicativa>
         <!-- Oneway senza riscontro -->
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateless_Oneway" stateless="abilitato">
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_Oneway" stateless="abilitato">
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicatiStateless" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateful_Oneway" stateless="disabilitato">
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_Oneway" stateless="disabilitato">
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicatiStateful" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
         </porta-applicativa>
         <!-- Sincrono -->
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateless_Sincrono" stateless="abilitato">
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_Sincrono" stateless="abilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="FiltroDuplicatiStateless" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateful_Sincrono" stateless="disabilitato">
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_Sincrono" stateless="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="FiltroDuplicatiStateful" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
         </porta-applicativa>
         <!-- AsincronoSimmetrico -->
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateless_AsincronoSimmetrico_ricevutaAbilitata" stateless="abilitato"
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_AsincronoSimmetrico_ricevutaAbilitata" stateless="abilitato"
             ricevuta-asincrona-simmetrica="abilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="FiltroDuplicatiStateless_ricevutaAbilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateful_AsincronoSimmetrico_ricevutaAbilitata" stateless="disabilitato"
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_AsincronoSimmetrico_ricevutaAbilitata" stateless="disabilitato"
             ricevuta-asincrona-simmetrica="abilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="FiltroDuplicatiStateful_ricevutaAbilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateless_AsincronoSimmetrico_ricevutaDisabilitata" stateless="abilitato"
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_AsincronoSimmetrico_ricevutaDisabilitata" stateless="abilitato"
             ricevuta-asincrona-simmetrica="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="FiltroDuplicatiStateless_ricevutaDisabilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite_InputOnly" /> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateful_AsincronoSimmetrico_ricevutaDisabilitata" stateless="disabilitato"
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_AsincronoSimmetrico_ricevutaDisabilitata" stateless="disabilitato"
             ricevuta-asincrona-simmetrica="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="FiltroDuplicatiStateful_ricevutaDisabilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite_InputOnly" /> 
         </porta-applicativa>
         <!-- AsincronoAsimmetrico -->
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateless_AsincronoAsimmetrico_ricevutaAbilitata" stateless="abilitato"
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_AsincronoAsimmetrico_ricevutaAbilitata" stateless="abilitato"
             ricevuta-asincrona-asimmetrica="abilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="FiltroDuplicatiStateless_ricevutaAbilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAA" /> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateful_AsincronoAsimmetrico_ricevutaAbilitata" stateless="disabilitato"
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_AsincronoAsimmetrico_ricevutaAbilitata" stateless="disabilitato"
             ricevuta-asincrona-asimmetrica="abilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="FiltroDuplicatiStateful_ricevutaAbilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAA" /> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateless_AsincronoAsimmetrico_ricevutaDisabilitata" stateless="abilitato"
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_AsincronoAsimmetrico_ricevutaDisabilitata" stateless="abilitato"
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="FiltroDuplicatiStateless_ricevutaDisabilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAA_InputOnly" /> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateful_AsincronoAsimmetrico_ricevutaDisabilitata" stateless="disabilitato"
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_AsincronoAsimmetrico_ricevutaDisabilitata" stateless="disabilitato"
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="FiltroDuplicatiStateful_ricevutaDisabilitata" />
@@ -7679,7 +7666,151 @@
             </invocazione-servizio>
         </servizio-applicativo>
         
+	<!-- Validazione XSD + Validazione WSDL + PortType multipli (VALIDAZIONE WSDL)-->
+	<servizio-applicativo nome="TestGestioneUtentiWrappedDocumentLiteral" > 
+                <invocazione-servizio>
+                    <connettore tipo="http" nome="connettore di test">
+                        <!-- test validazione xsd e wsdl corretto -->
+                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiWrappedDocumentLiteral" />
+                        <!-- test con contenuto applicativo non validato da xsd per la risposta -->
+                        <!-- <property nome="location" valore="http://localhost:8080/TRACE_ECHO/trace" />  -->
+                    </connettore>
+                </invocazione-servizio>  
+	</servizio-applicativo>
+	<servizio-applicativo nome="TestAggiornamentoUtentiWrappedDocumentLiteral" > 
+                <invocazione-servizio>
+                    <connettore tipo="http" nome="connettore di test">
+                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/AggiornamentoUtentiWrappedDocumentLiteral" />
+                    </connettore>
+                </invocazione-servizio>  
+	</servizio-applicativo>
+	<servizio-applicativo nome="TestAggiornamentoAsincronoSimmetricoWrappedDocumentLiteral" > 
+                <invocazione-servizio>
+                    <connettore tipo="http" nome="connettore di test">
+                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/AggiornamentoAsincronoWrappedDocumentLiteral" />
+                    </connettore>
+                </invocazione-servizio>  
+	</servizio-applicativo>
+	<servizio-applicativo nome="TestAggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral" > 
+                <invocazione-servizio>
+                    <connettore tipo="http" nome="connettore di test">
+                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/AggiornamentoAsincronoWrappedDocumentLiteral" />
+                    </connettore>
+                </invocazione-servizio> 
+                <risposta-asincrona>
+                    <connettore tipo="http" nome="connettore di test">
+                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/EsitoAggiornamentoAsincronoWrappedDocumentLiteral" />
+                    </connettore>
+                </risposta-asincrona> 
+	</servizio-applicativo>
+	<servizio-applicativo nome="TestGestioneUtentiDocumentLiteral" > 
+                <invocazione-servizio>
+                    <connettore tipo="http" nome="connettore di test">
+                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiDocumentLiteral" />
+                    </connettore>
+                </invocazione-servizio>  
+	</servizio-applicativo>
+	<servizio-applicativo nome="TestGestioneUtentiRPCLiteral" > 
+                <invocazione-servizio>
+                    <connettore tipo="http" nome="connettore di test">
+                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiRPCLiteral" />
+                    </connettore>
+                </invocazione-servizio>  
+	</servizio-applicativo>
+	<servizio-applicativo nome="TestGestioneUtentiRPCEncoded" > 
+                <invocazione-servizio>
+                    <connettore tipo="http" nome="connettore di test">
+                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiRPCEncoded" />
+                    </connettore>
+                </invocazione-servizio>  
+	</servizio-applicativo>
+	<servizio-applicativo nome="TestGestioneUtentiOverloadedOperations" > 
+                <invocazione-servizio>
+                    <connettore tipo="http" nome="connettore di test">
+                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiOverloadedOperations" />
+                    </connettore>
+                </invocazione-servizio>  
+	</servizio-applicativo>
+	<servizio-applicativo nome="TestGestioneUtentiStileIbrido" > 
+                <invocazione-servizio>
+                    <connettore tipo="http" nome="connettore di test">
+                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiStileIbrido" />
+                    </connettore>
+                </invocazione-servizio>  
+	</servizio-applicativo>
         
+	<!-- Validazione XSD + Validazione WSDL + PortType multipli (VALIDAZIONE OPENSPCOOP)-->
+	<servizio-applicativo nome="TestGestioneUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop" > 
+                <invocazione-servizio>
+                    <connettore tipo="http" nome="connettore di test">
+                        <!-- test validazione xsd e wsdl corretto -->
+                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiWrappedDocumentLiteral" />
+                        <!-- test con contenuto applicativo non validato da xsd per la risposta -->
+                        <!-- <property nome="location" valore="http://localhost:8080/TRACE_ECHO/trace" />  -->
+                    </connettore>
+                </invocazione-servizio>  
+	</servizio-applicativo>
+	<servizio-applicativo nome="TestAggiornamentoUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop" > 
+                <invocazione-servizio>
+                    <connettore tipo="http" nome="connettore di test">
+                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/AggiornamentoUtentiWrappedDocumentLiteral" />
+                    </connettore>
+                </invocazione-servizio>  
+	</servizio-applicativo>
+	<servizio-applicativo nome="TestAggiornamentoAsincronoSimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop" > 
+                <invocazione-servizio>
+                    <connettore tipo="http" nome="connettore di test">
+                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/AggiornamentoAsincronoWrappedDocumentLiteral" />
+                    </connettore>
+                </invocazione-servizio>  
+	</servizio-applicativo>
+	<servizio-applicativo nome="TestAggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop" > 
+                <invocazione-servizio>
+                    <connettore tipo="http" nome="connettore di test">
+                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/AggiornamentoAsincronoWrappedDocumentLiteral" />
+                    </connettore>
+                </invocazione-servizio> 
+                <risposta-asincrona>
+                    <connettore tipo="http" nome="connettore di test">
+                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/EsitoAggiornamentoAsincronoWrappedDocumentLiteral" />
+                    </connettore>
+                </risposta-asincrona> 
+	</servizio-applicativo>
+	<servizio-applicativo nome="TestGestioneUtentiDocumentLiteral_ValidazioneOpenSPCoop" > 
+                <invocazione-servizio>
+                    <connettore tipo="http" nome="connettore di test">
+                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiDocumentLiteral" />
+                    </connettore>
+                </invocazione-servizio>  
+	</servizio-applicativo>
+	<servizio-applicativo nome="TestGestioneUtentiRPCLiteral_ValidazioneOpenSPCoop" > 
+                <invocazione-servizio>
+                    <connettore tipo="http" nome="connettore di test">
+                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiRPCLiteral" />
+                    </connettore>
+                </invocazione-servizio>  
+	</servizio-applicativo>
+	<servizio-applicativo nome="TestGestioneUtentiRPCEncoded_ValidazioneOpenSPCoop" > 
+                <invocazione-servizio>
+                    <connettore tipo="http" nome="connettore di test">
+                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiRPCEncoded" />
+                    </connettore>
+                </invocazione-servizio>  
+	</servizio-applicativo>
+	<servizio-applicativo nome="TestGestioneUtentiOverloadedOperations_ValidazioneOpenSPCoop" > 
+                <invocazione-servizio>
+                    <connettore tipo="http" nome="connettore di test">
+                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiOverloadedOperations" />
+                    </connettore>
+                </invocazione-servizio>  
+	</servizio-applicativo>
+	<servizio-applicativo nome="TestGestioneUtentiStileIbrido_ValidazioneOpenSPCoop" > 
+                <invocazione-servizio>
+                    <connettore tipo="http" nome="connettore di test">
+                        <property nome="location" valore="http://localhost:8080/ValidazioneContenutiWS/GestioneUtentiStileIbrido" />
+                    </connettore>
+                </invocazione-servizio>  
+	</servizio-applicativo>
         
         <!-- TEST SoapFault Applicativo -->
         <servizio-applicativo nome="SOAPFaultApplicativo" >
@@ -9597,83 +9728,83 @@
         
         <!-- FIltro duplicati test -->
         <!-- Oneway con riscontro -->
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateless_OnewayRiscontro" stateless="abilitato">
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_OnewayRiscontro" stateless="abilitato">
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicatiConRiscontroStateless" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateful_OnewayRiscontro" stateless="disabilitato">
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_OnewayRiscontro" stateless="disabilitato">
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicatiConRiscontroStateful" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
         </porta-applicativa>
         <!-- Oneway senza riscontro -->
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateless_Oneway" stateless="abilitato">
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_Oneway" stateless="abilitato">
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicatiStateless" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateful_Oneway" stateless="disabilitato">
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_Oneway" stateless="disabilitato">
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicatiStateful" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
         </porta-applicativa>
         <!-- Sincrono -->
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateless_Sincrono" stateless="abilitato">
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_Sincrono" stateless="abilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="FiltroDuplicatiStateless" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateful_Sincrono" stateless="disabilitato">
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_Sincrono" stateless="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="FiltroDuplicatiStateful" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
         </porta-applicativa>
         <!-- AsincronoSimmetrico -->
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateless_AsincronoSimmetrico_ricevutaAbilitata" stateless="abilitato"
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_AsincronoSimmetrico_ricevutaAbilitata" stateless="abilitato"
             ricevuta-asincrona-simmetrica="abilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="FiltroDuplicatiStateless_ricevutaAbilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateful_AsincronoSimmetrico_ricevutaAbilitata" stateless="disabilitato"
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_AsincronoSimmetrico_ricevutaAbilitata" stateless="disabilitato"
             ricevuta-asincrona-simmetrica="abilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="FiltroDuplicatiStateful_ricevutaAbilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateless_AsincronoSimmetrico_ricevutaDisabilitata" stateless="abilitato"
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_AsincronoSimmetrico_ricevutaDisabilitata" stateless="abilitato"
             ricevuta-asincrona-simmetrica="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="FiltroDuplicatiStateless_ricevutaDisabilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite_InputOnly" /> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateful_AsincronoSimmetrico_ricevutaDisabilitata" stateless="disabilitato"
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_AsincronoSimmetrico_ricevutaDisabilitata" stateless="disabilitato"
             ricevuta-asincrona-simmetrica="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="FiltroDuplicatiStateful_ricevutaDisabilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite_InputOnly" /> 
         </porta-applicativa>
         <!-- AsincronoAsimmetrico -->
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateless_AsincronoAsimmetrico_ricevutaAbilitata" stateless="abilitato"
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_AsincronoAsimmetrico_ricevutaAbilitata" stateless="abilitato"
             ricevuta-asincrona-asimmetrica="abilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="FiltroDuplicatiStateless_ricevutaAbilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAA" /> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateful_AsincronoAsimmetrico_ricevutaAbilitata" stateless="disabilitato"
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_AsincronoAsimmetrico_ricevutaAbilitata" stateless="disabilitato"
             ricevuta-asincrona-asimmetrica="abilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="FiltroDuplicatiStateful_ricevutaAbilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAA" /> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateless_AsincronoAsimmetrico_ricevutaDisabilitata" stateless="abilitato"
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_AsincronoAsimmetrico_ricevutaDisabilitata" stateless="abilitato"
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="FiltroDuplicatiStateless_ricevutaDisabilitata" />
             <servizio-applicativo nome="OpenSPCoop2TestSuiteAA_InputOnly" /> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="FiltroDuplicatiStateful_AsincronoAsimmetrico_ricevutaDisabilitata" stateless="disabilitato"
+        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_AsincronoAsimmetrico_ricevutaDisabilitata" stateless="disabilitato"
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="FiltroDuplicatiStateful_ricevutaDisabilitata" />
