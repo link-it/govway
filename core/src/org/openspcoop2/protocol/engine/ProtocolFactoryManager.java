@@ -376,23 +376,24 @@ public class ProtocolFactoryManager {
 					
 					List<String> tipiServiziPerProtocollo_soap = null;
 					if(tmp_tipiServiziValidi_soap.containsKey(protocolManifest)){
-						tipiServiziPerProtocollo_soap = tmp_tipiServiziValidi_soap.remove(protocolManifest);
+						tipiServiziPerProtocollo_soap = tmp_tipiServiziValidi_soap.get(protocolManifest);
 					}
 					else{
 						tipiServiziPerProtocollo_soap = new ArrayList<String>();
+						tmp_tipiServiziValidi_soap.put(protocolManifest, tipiServiziPerProtocollo_soap);
 					}
 					
 					List<String> tipiServiziPerProtocollo_rest = null;
 					if(tmp_tipiServiziValidi_rest.containsKey(protocolManifest)){
-						tipiServiziPerProtocollo_rest = tmp_tipiServiziValidi_rest.remove(protocolManifest);
+						tipiServiziPerProtocollo_rest = tmp_tipiServiziValidi_rest.get(protocolManifest);
 					}
 					else{
 						tipiServiziPerProtocollo_rest = new ArrayList<String>();
+						tmp_tipiServiziValidi_rest.put(protocolManifest, tipiServiziPerProtocollo_rest);
 					}
 					
 					if(serviceBinding==null || ServiceBinding.SOAP.equals(serviceBinding)){
 						tipiServiziPerProtocollo_soap.add(tipo);
-						tmp_tipiServiziValidi_soap.put(protocolManifest, tipiServiziPerProtocollo_soap);
 						if(tipoServizioDefaultSoap==null){
 							tipoServizioDefaultSoap = tipo;
 						}
@@ -400,7 +401,6 @@ public class ProtocolFactoryManager {
 					
 					if(serviceBinding==null || ServiceBinding.REST.equals(serviceBinding)){
 						tipiServiziPerProtocollo_rest.add(tipo);
-						tmp_tipiServiziValidi_rest.put(protocolManifest, tipiServiziPerProtocollo_rest);
 						if(tipoServizioDefaultRest==null){
 							tipoServizioDefaultRest = tipo;
 						}
@@ -415,7 +415,7 @@ public class ProtocolFactoryManager {
 				tmp_tipiServiziDefault_soap.put(protocolManifest, tipoServizioDefaultSoap);
 			}
 			if(tipoServizioDefaultRest!=null){
-				tmp_tipiServiziDefault_soap.put(protocolManifest, tipoServizioDefaultRest);
+				tmp_tipiServiziDefault_rest.put(protocolManifest, tipoServizioDefaultRest);
 			}
 			
 		}

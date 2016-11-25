@@ -7,7 +7,7 @@
     
 
 
-    <binding>
+    <binding default="rest">
     	<soap soap11="true" soap11_withAttachments="true" soap11_mtom="true"
     		  soap12="true" soap12_withAttachments="true" soap12_mtom="true">
     		<integrationError>
@@ -32,7 +32,7 @@
 	    			<notFound httpReturnCode="404" messageType="sameAsRequest" />
 	    			<badRequest httpReturnCode="400" messageType="sameAsRequest" />
 	    			<internalError httpReturnCode="500" messageType="sameAsRequest" />
-	    			<default messageType="xml" />
+	    			<default httpReturnCode="500" messageType="xml" />
     			</internal>
     			<external>
 	    			<authentication httpReturnCode="401" messageType="none" />
@@ -40,16 +40,8 @@
 	    			<notFound httpReturnCode="404" messageType="none" />
 	    			<badRequest httpReturnCode="400" messageType="none" />
 	    			<internalError httpReturnCode="500" messageType="none" />
-	    			<default messageType="xml" />
+	    			<default httpReturnCode="500" messageType="none" />
     			</external>
-    		</integrationError>
-    		<integrationError>
-    			<authentication httpReturnCode="401" messageType="none" />
-    			<authorization httpReturnCode="403" messageType="none" />
-    			<notFound httpReturnCode="404" messageType="none" />
-    			<badRequest httpReturnCode="400" messageType="none" />
-    			<internalError httpReturnCode="500" messageType="sameAsRequest" />
-    			<default messageType="xml" />
     		</integrationError>
     		<mediaTypeCollection>
     			<mediaType messageType="xml">text/xml</mediaType>
@@ -124,6 +116,18 @@
                 	<restMediaTypeCollection>
  						<default messageType="xml"/>
  						<undefined messageType="xml"/>
+ 					</restMediaTypeCollection>
+                </type>
+                <type name="JSON" binding="rest">
+                	<restMediaTypeCollection>
+ 						<default messageType="json"/>
+ 						<undefined messageType="json"/>
+ 					</restMediaTypeCollection>
+                </type>
+				<type name="BINARY" binding="rest">
+                	<restMediaTypeCollection>
+ 						<default messageType="binary"/>
+ 						<undefined messageType="binary"/>
  					</restMediaTypeCollection>
                 </type>
             </types>

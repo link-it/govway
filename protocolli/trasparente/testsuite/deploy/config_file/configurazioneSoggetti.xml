@@ -1,94 +1,116 @@
 <openspcoop2 xmlns="http://www.openspcoop2.org/core/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openspcoop2.org/core/config config.xsd">
 
-	<soggetto tipo="PROXY" nome="Anonimo" identificativo-porta="AnonimoPdD"/>
+	<soggetto tipo="API" nome="Anonimo" identificativo-porta="AnonimoPdD"/>
 
-	<soggetto xmlns="http://www.openspcoop2.org/core/config" tipo="PROXY" nome="applicativoComunePisa" identificativo-porta="applicativoComunePisaPdD"/>
+	<soggetto tipo="API" nome="applicativoComunePisa" identificativo-porta="applicativoComunePisaPdD"/>
 
-	<soggetto tipo="PROXY" nome="MinisteroReferente" identificativo-porta="MinisteroReferentePdD"/>
+	<soggetto tipo="API" nome="MinisteroReferente" identificativo-porta="MinisteroReferentePdD"/>
 
-	<soggetto tipo="PROXY" nome="MinisteroFruitore" identificativo-porta="MinisteroFruitorePdD">
+	<soggetto tipo="API" nome="MinisteroFruitore" identificativo-porta="MinisteroFruitorePdD">
+
+
+		<!-- **** Configurazione REST **** -->
+
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/RESTAPI" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                         <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
+                         <servizio tipo="REST" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+                </porta-delegata>
+
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/RESTAPI_viaLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt" local-forward="abilitato">
+                         <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
+                         <servizio tipo="REST" nome="API"/>
+                         <azione identificazione="static" nome="invoke"/>
+                </porta-delegata>
+
+
+
+		<!-- **** Configurazione SOAP **** -->
 
 		<!-- OneWay -->
 
-		<porta-delegata nome="PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYOnewayStateful" descrizione="Invocazione servizio PROXYOneway erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-			 <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
-			 <servizio tipo="PROXY" nome="Oneway"/>
-			 <azione identificazione="urlBased" pattern=".*PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYOnewayStateful/([^/|^?]*).*"/>
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStateful" descrizione="Invocazione servizio SOAPOneway erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+			 <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+			 <servizio tipo="SOAP" nome="Oneway"/>
+			 <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStateful/([^/|^?]*).*"/>
 		</porta-delegata>
 
-                <porta-delegata nome="PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYOnewayStateless" descrizione="Invocazione servizio PROXYOneway erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                         <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
-                         <servizio tipo="PROXY" nome="Oneway"/>
-                         <azione identificazione="urlBased" pattern=".*PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYOnewayStateless/([^/|^?]*).*"/>
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStateless" descrizione="Invocazione servizio SOAPOneway erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                         <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+                         <servizio tipo="SOAP" nome="Oneway"/>
+                         <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStateless/([^/|^?]*).*"/>
                 </porta-delegata>
 
-                <porta-delegata nome="PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYOnewayStatefulAutenticato" autenticazione="basic" autorizzazione="openspcoop" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
-                    <servizio tipo="PROXY" nome="Oneway"/>
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStatefulAutenticato" autenticazione="basic" autorizzazione="openspcoop" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+                    <servizio tipo="SOAP" nome="Oneway"/>
                     <azione nome="notifica"/>
                     <servizio-applicativo nome="EsempioFruitoreTrasparente"/>
                 </porta-delegata>
 
-		<porta-delegata nome="PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYOnewayStatelessAutenticato" autenticazione="basic" autorizzazione="openspcoop" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="PROXY" nome="Oneway"/>
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStatelessAutenticato" autenticazione="basic" autorizzazione="openspcoop" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Oneway"/>
 		    <azione nome="notifica"/>
 		    <servizio-applicativo nome="EsempioFruitoreTrasparente"/>
 		</porta-delegata>
 
-                <porta-delegata nome="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYOnewayStatefulLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" local-forward="abilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatore"/>
-                    <servizio tipo="PROXY" nome="Oneway"/>
-                    <azione identificazione="urlBased" pattern=".*PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYOnewayStatefulLocalForward/([^/|^?]*).*"/>
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPOnewayStatefulLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" local-forward="abilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                    <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
+                    <servizio tipo="SOAP" nome="Oneway"/>
+                    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatore/SOAPOnewayStatefulLocalForward/([^/|^?]*).*"/>
                 </porta-delegata>
 
-		<porta-delegata nome="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYOnewayStatelessLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" local-forward="abilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatore"/>
-		    <servizio tipo="PROXY" nome="Oneway"/>
-		    <azione identificazione="urlBased" pattern=".*PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYOnewayStatelessLocalForward/([^/|^?]*).*"/>
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPOnewayStatelessLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" local-forward="abilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
+		    <servizio tipo="SOAP" nome="Oneway"/>
+		    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatore/SOAPOnewayStatelessLocalForward/([^/|^?]*).*"/>
 		</porta-delegata>
 
 	
 		<!-- Sincrono -->
 
-		<porta-delegata nome="PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYSincronoStateful" descrizione="Invocazione servizio PROXYSincrono erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="PROXY" nome="Sincrono"/>
-		    <azione identificazione="urlBased" pattern=".*PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYSincronoStateful/([^/|^?]*).*"/>
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStateful" descrizione="Invocazione servizio SOAPSincrono erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStateful/([^/|^?]*).*"/>
 		</porta-delegata>
 
-                <porta-delegata nome="PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYSincronoStateless" descrizione="Invocazione servizio PROXYSincrono erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
-                    <servizio tipo="PROXY" nome="Sincrono"/>
-                    <azione identificazione="urlBased" pattern=".*PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYSincronoStateless/([^/|^?]*).*"/>
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStateless" descrizione="Invocazione servizio SOAPSincrono erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+                    <servizio tipo="SOAP" nome="Sincrono"/>
+                    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStateless/([^/|^?]*).*"/>
                 </porta-delegata>
 
-                <porta-delegata nome="PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYSincronoStatefulAutenticato" autenticazione="basic" autorizzazione="openspcoop" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
-                    <servizio tipo="PROXY" nome="Sincrono"/>
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStatefulAutenticato" autenticazione="basic" autorizzazione="openspcoop" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+                    <servizio tipo="SOAP" nome="Sincrono"/>
                     <azione nome="aggiornamento"/>
                     <servizio-applicativo nome="EsempioFruitoreTrasparente"/>
                 </porta-delegata>
 
-		<porta-delegata nome="PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYSincronoStatelessAutenticato" autenticazione="basic" autorizzazione="openspcoop" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="PROXY" nome="Sincrono"/>
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStatelessAutenticato" autenticazione="basic" autorizzazione="openspcoop" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
 		    <servizio-applicativo nome="EsempioFruitoreTrasparente"/>
 		</porta-delegata>
 
-                <porta-delegata nome="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYSincronoStatefulLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" local-forward="abilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatore"/>
-                    <servizio tipo="PROXY" nome="Sincrono"/>
-                    <azione identificazione="urlBased" pattern=".*PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYSincronoStatefulLocalForward/([^/|^?]*).*"/>
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatefulLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" local-forward="abilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                    <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
+                    <servizio tipo="SOAP" nome="Sincrono"/>
+                    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatefulLocalForward/([^/|^?]*).*"/>
                 </porta-delegata>
 
-		<porta-delegata nome="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYSincronoStatelessLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" local-forward="abilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatore"/>
-		    <servizio tipo="PROXY" nome="Sincrono"/>
-		    <azione identificazione="urlBased" pattern=".*PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYSincronoStatelessLocalForward/([^/|^?]*).*"/>
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatelessLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" local-forward="abilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatelessLocalForward/([^/|^?]*).*"/>
 		</porta-delegata>
 
+
+
+		<!-- **** Configurazione SOAP **** -->
 
 		<servizio-applicativo nome="EsempioFruitoreTrasparente">
 		    <invocazione-porta>
@@ -100,79 +122,93 @@
 	
 	</soggetto>
 
-	<soggetto tipo="PROXY" nome="MinisteroErogatore" identificativo-porta="MinisteroErogatorePdD">
+	<soggetto tipo="API" nome="MinisteroErogatore" identificativo-porta="MinisteroErogatorePdD">
+
+
+		<!-- **** Configurazione REST **** -->
+
+                <porta-applicativa nome="APIMinisteroErogatore/RESTAPI" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
+                    <servizio tipo="REST" nome="API"/>
+                    <azione nome="invoke"/>
+                    <servizio-applicativo nome="api"/>
+                </porta-applicativa>
+
+
+
+
+		<!-- **** Configurazione SOAP **** -->
 
 		<!-- OneWay -->
 
-                <porta-applicativa nome="PROXYMinisteroErogatore/PROXYOnewayStateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <servizio tipo="PROXY" nome="Oneway"/>
+                <porta-applicativa nome="APIMinisteroErogatore/SOAPOnewayStateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                    <servizio tipo="SOAP" nome="Oneway"/>
                     <azione nome="notifica"/>
                     <servizio-applicativo nome="ping"/>
                 </porta-applicativa>
 
-                <porta-applicativa nome="PROXYMinisteroErogatore/PROXYOnewayStateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <servizio tipo="PROXY" nome="Oneway"/>
+                <porta-applicativa nome="APIMinisteroErogatore/SOAPOnewayStateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                    <servizio tipo="SOAP" nome="Oneway"/>
                     <azione nome="notifica"/>
                     <servizio-applicativo nome="ping"/>
                 </porta-applicativa>
 
-		<porta-applicativa nome="PROXYMinisteroErogatore/PROXYOnewayLocalForwardStateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="PROXY" nome="Oneway"/>
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPOnewayLocalForwardStateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Oneway"/>
                     <azione nome="notificaLocalForward"/>
 		    <servizio-applicativo nome="pingSenzaVerifica"/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="PROXYMinisteroErogatore/PROXYOnewayLocalForwardStateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="PROXY" nome="Oneway"/>
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPOnewayLocalForwardStateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Oneway"/>
                     <azione nome="notificaLocalForward"/>
 		    <servizio-applicativo nome="pingSenzaVerifica"/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="PROXYMinisteroErogatore/PROXYOneway/gestioneSOAPFault11Stateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="PROXY" nome="Oneway"/>
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault11Stateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault11"/>
 		    <servizio-applicativo nome="faultPingSoap11"/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="PROXYMinisteroErogatore/PROXYOneway/gestioneSOAPFault11Stateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="PROXY" nome="Oneway"/>
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault11Stateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault11"/>
 		    <servizio-applicativo nome="faultPingSoap11"/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="PROXYMinisteroErogatore/PROXYOneway/gestioneSOAPFault11500Stateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="PROXY" nome="Oneway"/>
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault11500Stateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault11_500"/>
 		    <servizio-applicativo nome="faultPingSoap11_500"/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="PROXYMinisteroErogatore/PROXYOneway/gestioneSOAPFault11500Stateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="PROXY" nome="Oneway"/>
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault11500Stateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault11_500"/>
 		    <servizio-applicativo nome="faultPingSoap11_500"/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="PROXYMinisteroErogatore/PROXYOneway/gestioneSOAPFault12Stateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="PROXY" nome="Oneway"/>
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault12Stateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault12"/>
 		    <servizio-applicativo nome="faultPingSoap12"/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="PROXYMinisteroErogatore/PROXYOneway/gestioneSOAPFault12Stateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="PROXY" nome="Oneway"/>
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault12Stateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault12"/>
 		    <servizio-applicativo nome="faultPingSoap12"/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="PROXYMinisteroErogatore/PROXYOneway/gestioneSOAPFault12500Stateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="PROXY" nome="Oneway"/>
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault12500Stateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault12_500"/>
 		    <servizio-applicativo nome="faultPingSoap12_500"/>
 		    <validazione-contenuti-applicativi/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="PROXYMinisteroErogatore/PROXYOneway/gestioneSOAPFault12500Stateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="PROXY" nome="Oneway"/>
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault12500Stateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault12_500"/>
 		    <servizio-applicativo nome="faultPingSoap12_500"/>
 		    <validazione-contenuti-applicativi/>
@@ -180,83 +216,101 @@
 		
 		<!-- Sincrono -->
 
-                <porta-applicativa nome="PROXYMinisteroErogatore/PROXYSincronoStateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <servizio tipo="PROXY" nome="Sincrono"/>
+                <porta-applicativa nome="APIMinisteroErogatore/SOAPSincronoStateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                    <servizio tipo="SOAP" nome="Sincrono"/>
                     <azione nome="aggiornamento"/>
                     <servizio-applicativo nome="echo"/>
                 </porta-applicativa>
 
-                <porta-applicativa nome="PROXYMinisteroErogatore/PROXYSincronoStateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <servizio tipo="PROXY" nome="Sincrono"/>
+                <porta-applicativa nome="APIMinisteroErogatore/SOAPSincronoStateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                    <servizio tipo="SOAP" nome="Sincrono"/>
                     <azione nome="aggiornamento"/>
                     <servizio-applicativo nome="echo"/>
                 </porta-applicativa>
 
-		<porta-applicativa nome="PROXYMinisteroErogatore/PROXYSincronoLocalForwardStateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="PROXY" nome="Sincrono"/>
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPSincronoLocalForwardStateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
                     <azione nome="aggiornamentoLocalForward"/>
 		    <servizio-applicativo nome="echoSenzaVerifica"/>
 		</porta-applicativa>		
 		
-		<porta-applicativa nome="PROXYMinisteroErogatore/PROXYSincronoLocalForwardStateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="PROXY" nome="Sincrono"/>
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPSincronoLocalForwardStateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
                     <azione nome="aggiornamentoLocalForward"/>
 		    <servizio-applicativo nome="echoSenzaVerifica"/>
 		</porta-applicativa>		
 		
-		<porta-applicativa nome="PROXYMinisteroErogatore/PROXYSincrono/gestioneSOAPFault11Stateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="PROXY" nome="Sincrono"/>
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault11Stateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="gestioneSOAPFault11"/>
 		    <servizio-applicativo nome="faultSoap11"/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="PROXYMinisteroErogatore/PROXYSincrono/gestioneSOAPFault11Stateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="PROXY" nome="Sincrono"/>
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault11Stateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="gestioneSOAPFault11"/>
 		    <servizio-applicativo nome="faultSoap11"/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="PROXYMinisteroErogatore/PROXYSincrono/gestioneSOAPFault11500Stateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="PROXY" nome="Sincrono"/>
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault11500Stateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="gestioneSOAPFault11_500"/>
 		    <servizio-applicativo nome="faultSoap11_500"/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="PROXYMinisteroErogatore/PROXYSincrono/gestioneSOAPFault11500Stateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <servizio tipo="PROXY" nome="Sincrono"/>
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault11500Stateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="gestioneSOAPFault11_500"/>
 		    <servizio-applicativo nome="faultSoap11_500"/>
 		</porta-applicativa>
 
-                <porta-applicativa nome="PROXYMinisteroErogatore/PROXYSincrono/gestioneSOAPFault12Stateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <servizio tipo="PROXY" nome="Sincrono"/>
+                <porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault12Stateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                    <servizio tipo="SOAP" nome="Sincrono"/>
                     <azione nome="gestioneSOAPFault12"/>
                     <servizio-applicativo nome="faultSoap12"/>
                 </porta-applicativa>
 
-                <porta-applicativa nome="PROXYMinisteroErogatore/PROXYSincrono/gestioneSOAPFault12Stateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <servizio tipo="PROXY" nome="Sincrono"/>
+                <porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault12Stateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                    <servizio tipo="SOAP" nome="Sincrono"/>
                     <azione nome="gestioneSOAPFault12"/>
                     <servizio-applicativo nome="faultSoap12"/>
                 </porta-applicativa>
 
-                <porta-applicativa nome="PROXYMinisteroErogatore/PROXYSincrono/gestioneSOAPFault12500Stateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <servizio tipo="PROXY" nome="Sincrono"/>
+                <porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault12500Stateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                    <servizio tipo="SOAP" nome="Sincrono"/>
                     <azione nome="gestioneSOAPFault12_500"/>
                     <servizio-applicativo nome="faultSoap12_500"/>
                 </porta-applicativa>
 
-                <porta-applicativa nome="PROXYMinisteroErogatore/PROXYSincrono/gestioneSOAPFault12500Stateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <servizio tipo="PROXY" nome="Sincrono"/>
+                <porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault12500Stateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                    <servizio tipo="SOAP" nome="Sincrono"/>
                     <azione nome="gestioneSOAPFault12_500"/>
                     <servizio-applicativo nome="faultSoap12_500"/>
                 </porta-applicativa>
+
+
+
+
+		<!-- **** Configurazione REST **** -->
+
+                <servizio-applicativo nome="api">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="CNT_REST/MinisteroErogatore_REST/API">
+                                        <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/api"/>
+                                </connettore>     
+                        </invocazione-servizio>
+                </servizio-applicativo>
+
+
+
+
+		<!-- **** Configurazione SOAP **** -->
 
 		<!-- OneWay -->
 
                 <servizio-applicativo nome="ping">
                         <invocazione-servizio>
-                                <connettore tipo="http" nome="ConnettoreINV_pingPROXYMinisteroErogatore">
+                                <connettore tipo="http" nome="ConnettoreINV_pingAPIMinisteroErogatore">
                                     <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService"/>
                                 </connettore>
                         </invocazione-servizio>
@@ -264,7 +318,7 @@
 
 		<servizio-applicativo nome="pingSenzaVerifica">
     			<invocazione-servizio>
-			        <connettore tipo="http" nome="ConnettoreINV_pingSenzaVerificaPROXYMinisteroErogatore">
+			        <connettore tipo="http" nome="ConnettoreINV_pingSenzaVerificaAPIMinisteroErogatore">
 			            <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?checkTraccia=false"/>
 			        </connettore>
 			</invocazione-servizio>
@@ -272,7 +326,7 @@
 
 		<servizio-applicativo nome="faultPingSoap11">
     			<invocazione-servizio>
-			        <connettore tipo="http" nome="ConnettoreINV_faultPingSoap11PROXYMinisteroErogatore">
+			        <connettore tipo="http" nome="ConnettoreINV_faultPingSoap11APIMinisteroErogatore">
 			            <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?fault=true"/>
 			        </connettore>
 			</invocazione-servizio>
@@ -280,7 +334,7 @@
 
 		<servizio-applicativo nome="faultPingSoap11_500">
                         <invocazione-servizio>
-                                <connettore tipo="http" nome="ConnettoreINV_faultPingSoap11_500PROXYMinisteroErogatore">
+                                <connettore tipo="http" nome="ConnettoreINV_faultPingSoap11_500APIMinisteroErogatore">
                                     <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?fault=true&amp;returnCode=500"/>
                                 </connettore>
                         </invocazione-servizio>
@@ -288,7 +342,7 @@
 
                 <servizio-applicativo nome="faultPingSoap12">
                         <invocazione-servizio>
-                                <connettore tipo="http" nome="ConnettoreINV_faultPingSoap12PROXYMinisteroErogatore">
+                                <connettore tipo="http" nome="ConnettoreINV_faultPingSoap12APIMinisteroErogatore">
                                     <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?fault=true&amp;faultSoapVersion=12"/>
                                 </connettore>
                         </invocazione-servizio>
@@ -296,7 +350,7 @@
 
                 <servizio-applicativo nome="faultPingSoap12_500">
                         <invocazione-servizio>
-                                <connettore tipo="http" nome="ConnettoreINV_faultPingSoap12_500PROXYMinisteroErogatore">
+                                <connettore tipo="http" nome="ConnettoreINV_faultPingSoap12_500APIMinisteroErogatore">
                                     <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?fault=true&amp;faultSoapVersion=12&amp;returnCode=500"/>
                                 </connettore>
                         </invocazione-servizio>
@@ -307,7 +361,7 @@
 
                 <servizio-applicativo nome="echo">
                         <invocazione-servizio>
-                                <connettore tipo="http" nome="ConnettoreINV_echoPROXYMinisteroErogatore">
+                                <connettore tipo="http" nome="ConnettoreINV_echoAPIMinisteroErogatore">
                                     <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService"/>
                                 </connettore>
                         </invocazione-servizio>
@@ -315,7 +369,7 @@
 
 		<servizio-applicativo nome="echoSenzaVerifica">
     			<invocazione-servizio>
-			        <connettore tipo="http" nome="ConnettoreINV_echoSenzaVerificaPROXYMinisteroErogatore">
+			        <connettore tipo="http" nome="ConnettoreINV_echoSenzaVerificaAPIMinisteroErogatore">
 			            <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?checkTraccia=false"/>
 			        </connettore>
 			</invocazione-servizio>
@@ -323,7 +377,7 @@
 
 		<servizio-applicativo nome="faultSoap11">
     			<invocazione-servizio>
-			        <connettore tipo="http" nome="ConnettoreINV_faultSoap11PROXYMinisteroErogatore">
+			        <connettore tipo="http" nome="ConnettoreINV_faultSoap11APIMinisteroErogatore">
 			            <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?fault=true"/>
 			        </connettore>
 			</invocazione-servizio>
@@ -331,7 +385,7 @@
 
 		<servizio-applicativo nome="faultSoap11_500">
     			<invocazione-servizio>
-			        <connettore tipo="http" nome="ConnettoreINV_faultSoap11_500PROXYMinisteroErogatore">
+			        <connettore tipo="http" nome="ConnettoreINV_faultSoap11_500APIMinisteroErogatore">
 			            <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?fault=true&amp;returnCode=500"/>
 			        </connettore>
 			    </invocazione-servizio>
@@ -339,7 +393,7 @@
 
                 <servizio-applicativo nome="faultSoap12">
                         <invocazione-servizio>
-                                <connettore tipo="http" nome="ConnettoreINV_faultSoap12PROXYMinisteroErogatore">
+                                <connettore tipo="http" nome="ConnettoreINV_faultSoap12APIMinisteroErogatore">
                                     <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?fault=true&amp;faultSoapVersion=12"/>
                                 </connettore>
                         </invocazione-servizio>
@@ -347,7 +401,7 @@
 
                 <servizio-applicativo nome="faultSoap12_500">
                         <invocazione-servizio>
-                                <connettore tipo="http" nome="ConnettoreINV_faultSoap12_500PROXYMinisteroErogatore">
+                                <connettore tipo="http" nome="ConnettoreINV_faultSoap12_500APIMinisteroErogatore">
                                     <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?fault=true&amp;faultSoapVersion=12&amp;returnCode=500"/>
                                 </connettore>
                             </invocazione-servizio>
@@ -356,119 +410,130 @@
 
 	</soggetto>
 
-	<soggetto tipo="PROXY" nome="MinisteroErogatoreEsterno" identificativo-porta="MinisteroErogatoreEsternoPdD"/>
+	<soggetto tipo="API" nome="MinisteroErogatoreEsterno" identificativo-porta="MinisteroErogatoreEsternoPdD"/>
 
-	<soggetto tipo="PROXY" nome="ClientSoapFault11" identificativo-porta="ClientSoapFault11PdD">
+	<soggetto tipo="API" nome="ClientSoapFault11" identificativo-porta="ClientSoapFault11PdD">
 
-		<porta-delegata nome="PROXYClientSoapFault11/PROXYMinisteroErogatoreEsterno/PROXYOnewayStateful" descrizione="Invocazione servizio PROXYOneway erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="PROXY" nome="Oneway"/>
+		<!-- **** Configurazione SOAP **** -->
+
+		<porta-delegata nome="APIClientSoapFault11/APIMinisteroErogatoreEsterno/SOAPOnewayStateful" descrizione="Invocazione servizio SOAPOneway erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault11"/>
 		</porta-delegata>
 
-                <porta-delegata nome="PROXYClientSoapFault11/PROXYMinisteroErogatoreEsterno/PROXYOnewayStateless" descrizione="Invocazione servizio PROXYOneway erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
-                    <servizio tipo="PROXY" nome="Oneway"/>
+                <porta-delegata nome="APIClientSoapFault11/APIMinisteroErogatoreEsterno/SOAPOnewayStateless" descrizione="Invocazione servizio SOAPOneway erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+                    <servizio tipo="SOAP" nome="Oneway"/>
                     <azione nome="gestioneSOAPFault11"/>
                 </porta-delegata>
 
-		<porta-delegata nome="PROXYClientSoapFault11/PROXYMinisteroErogatoreEsterno/PROXYSincronoStateful" descrizione="Invocazione servizio PROXYSincrono erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="PROXY" nome="Sincrono"/>
+		<porta-delegata nome="APIClientSoapFault11/APIMinisteroErogatoreEsterno/SOAPSincronoStateful" descrizione="Invocazione servizio SOAPSincrono erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="gestioneSOAPFault11"/>
 		</porta-delegata>
 
-                <porta-delegata nome="PROXYClientSoapFault11/PROXYMinisteroErogatoreEsterno/PROXYSincronoStateless" descrizione="Invocazione servizio PROXYSincrono erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
-                    <servizio tipo="PROXY" nome="Sincrono"/>
+                <porta-delegata nome="APIClientSoapFault11/APIMinisteroErogatoreEsterno/SOAPSincronoStateless" descrizione="Invocazione servizio SOAPSincrono erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+                    <servizio tipo="SOAP" nome="Sincrono"/>
                     <azione nome="gestioneSOAPFault11"/>
                 </porta-delegata>
 
 	</soggetto>
 
-	<soggetto tipo="PROXY" nome="ClientSoapFault11500" identificativo-porta="ClientSoapFault11500PdD">
+	<soggetto tipo="API" nome="ClientSoapFault11500" identificativo-porta="ClientSoapFault11500PdD">
 
-		<porta-delegata nome="PROXYClientSoapFault11500/PROXYMinisteroErogatoreEsterno/PROXYOnewayStateful" descrizione="Invocazione servizio PROXYOneway erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="PROXY" nome="Oneway"/>
+		<!-- **** Configurazione SOAP **** -->
+
+		<porta-delegata nome="APIClientSoapFault11500/APIMinisteroErogatoreEsterno/SOAPOnewayStateful" descrizione="Invocazione servizio SOAPOneway erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault11_500"/>
 		</porta-delegata>
 
-                <porta-delegata nome="PROXYClientSoapFault11500/PROXYMinisteroErogatoreEsterno/PROXYOnewayStateless" descrizione="Invocazione servizio PROXYOneway erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
-                    <servizio tipo="PROXY" nome="Oneway"/>
+                <porta-delegata nome="APIClientSoapFault11500/APIMinisteroErogatoreEsterno/SOAPOnewayStateless" descrizione="Invocazione servizio SOAPOneway erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+                    <servizio tipo="SOAP" nome="Oneway"/>
                     <azione nome="gestioneSOAPFault11_500"/>
                 </porta-delegata>
 
-		<porta-delegata nome="PROXYClientSoapFault11500/PROXYMinisteroErogatoreEsterno/PROXYSincronoStateful" descrizione="Invocazione servizio PROXYSincrono erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="PROXY" nome="Sincrono"/>
+		<porta-delegata nome="APIClientSoapFault11500/APIMinisteroErogatoreEsterno/SOAPSincronoStateful" descrizione="Invocazione servizio SOAPSincrono erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="gestioneSOAPFault11_500"/>
 		</porta-delegata>
 
-                <porta-delegata nome="PROXYClientSoapFault11500/PROXYMinisteroErogatoreEsterno/PROXYSincronoStateless" descrizione="Invocazione servizio PROXYSincrono erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
-                    <servizio tipo="PROXY" nome="Sincrono"/>
+                <porta-delegata nome="APIClientSoapFault11500/APIMinisteroErogatoreEsterno/SOAPSincronoStateless" descrizione="Invocazione servizio SOAPSincrono erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+                    <servizio tipo="SOAP" nome="Sincrono"/>
                     <azione nome="gestioneSOAPFault11_500"/>
                 </porta-delegata>
 
 	</soggetto>
 
-        <soggetto tipo="PROXY" nome="ClientSoapFault12" identificativo-porta="ClientSoapFault12PdD">
+        <soggetto tipo="API" nome="ClientSoapFault12" identificativo-porta="ClientSoapFault12PdD">
 
-		<porta-delegata nome="PROXYClientSoapFault12/PROXYMinisteroErogatoreEsterno/PROXYOnewayStateful" descrizione="Invocazione servizio PROXYOneway erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="PROXY" nome="Oneway"/>
+		<!-- **** Configurazione SOAP **** -->
+
+		<porta-delegata nome="APIClientSoapFault12/APIMinisteroErogatoreEsterno/SOAPOnewayStateful" descrizione="Invocazione servizio SOAPOneway erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault12"/>
 		</porta-delegata>
 
-                <porta-delegata nome="PROXYClientSoapFault12/PROXYMinisteroErogatoreEsterno/PROXYOnewayStateless" descrizione="Invocazione servizio PROXYOneway erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
-                    <servizio tipo="PROXY" nome="Oneway"/>
+                <porta-delegata nome="APIClientSoapFault12/APIMinisteroErogatoreEsterno/SOAPOnewayStateless" descrizione="Invocazione servizio SOAPOneway erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+                    <servizio tipo="SOAP" nome="Oneway"/>
                     <azione nome="gestioneSOAPFault12"/>
                 </porta-delegata>
 
-		<porta-delegata nome="PROXYClientSoapFault12/PROXYMinisteroErogatoreEsterno/PROXYSincronoStateful" descrizione="Invocazione servizio PROXYSincrono erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="PROXY" nome="Sincrono"/>
+		<porta-delegata nome="APIClientSoapFault12/APIMinisteroErogatoreEsterno/SOAPSincronoStateful" descrizione="Invocazione servizio SOAPSincrono erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="gestioneSOAPFault12"/>
 		</porta-delegata>
 
-                <porta-delegata nome="PROXYClientSoapFault12/PROXYMinisteroErogatoreEsterno/PROXYSincronoStateless" descrizione="Invocazione servizio PROXYSincrono erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
-                    <servizio tipo="PROXY" nome="Sincrono"/>
+                <porta-delegata nome="APIClientSoapFault12/APIMinisteroErogatoreEsterno/SOAPSincronoStateless" descrizione="Invocazione servizio SOAPSincrono erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+                    <servizio tipo="SOAP" nome="Sincrono"/>
                     <azione nome="gestioneSOAPFault12"/>
                 </porta-delegata>
 
 	</soggetto>
 
-        <soggetto tipo="PROXY" nome="ClientSoapFault12500" identificativo-porta="ClientSoapFault12500PdD">
+        <soggetto tipo="API" nome="ClientSoapFault12500" identificativo-porta="ClientSoapFault12500PdD">
 
-		<porta-delegata nome="PROXYClientSoapFault12500/PROXYMinisteroErogatoreEsterno/PROXYOnewayStateful" descrizione="Invocazione servizio PROXYOneway erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="PROXY" nome="Oneway"/>
+		<!-- **** Configurazione SOAP **** -->
+
+		<porta-delegata nome="APIClientSoapFault12500/APIMinisteroErogatoreEsterno/SOAPOnewayStateful" descrizione="Invocazione servizio SOAPOneway erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault12_500"/>
 		</porta-delegata>
 
-                <porta-delegata nome="PROXYClientSoapFault12500/PROXYMinisteroErogatoreEsterno/PROXYOnewayStateless" descrizione="Invocazione servizio PROXYOneway erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
-                    <servizio tipo="PROXY" nome="Oneway"/>
+                <porta-delegata nome="APIClientSoapFault12500/APIMinisteroErogatoreEsterno/SOAPOnewayStateless" descrizione="Invocazione servizio SOAPOneway erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+                    <servizio tipo="SOAP" nome="Oneway"/>
                     <azione nome="gestioneSOAPFault12_500"/>
                 </porta-delegata>
 
-                <porta-delegata nome="PROXYClientSoapFault12500/PROXYMinisteroErogatoreEsterno/PROXYSincronoStateful" descrizione="Invocazione servizio PROXYSincrono erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-                    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
-                    <servizio tipo="PROXY" nome="Sincrono"/>
+                <porta-delegata nome="APIClientSoapFault12500/APIMinisteroErogatoreEsterno/SOAPSincronoStateful" descrizione="Invocazione servizio SOAPSincrono erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+                    <servizio tipo="SOAP" nome="Sincrono"/>
                     <azione nome="gestioneSOAPFault12_500"/>
                 </porta-delegata>
 
-		<porta-delegata nome="PROXYClientSoapFault12500/PROXYMinisteroErogatoreEsterno/PROXYSincronoStateless" descrizione="Invocazione servizio PROXYSincrono erogato da PROXYMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
-		    <soggetto-erogatore identificazione="static" tipo="PROXY" nome="MinisteroErogatoreEsterno"/>
-		    <servizio tipo="PROXY" nome="Sincrono"/>
+		<porta-delegata nome="APIClientSoapFault12500/APIMinisteroErogatoreEsterno/SOAPSincronoStateless" descrizione="Invocazione servizio SOAPSincrono erogato da APIMinisteroErogatoreEsterno" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="gestioneSOAPFault12_500"/>
 		</porta-delegata>
 
 	</soggetto>
+
+
+
 
 
 
