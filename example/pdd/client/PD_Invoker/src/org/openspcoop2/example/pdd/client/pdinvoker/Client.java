@@ -27,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -61,7 +62,9 @@ public class Client {
 
 		java.util.Properties reader = new java.util.Properties();
 		try{  
-			reader.load(new FileInputStream("Client.properties")); 
+			InputStreamReader isr = new InputStreamReader(
+				    new FileInputStream("Client.properties"), "UTF-8");
+			reader.load(isr); 
 		}catch(java.io.IOException e) {
 			System.err.println("ERROR : "+e.toString());
 			return;
@@ -158,7 +161,7 @@ public class Client {
 		String authentication = "";
 		if(user!=null && passw!=null){
 			authentication = user + ":" + passw;
-			authentication = "Basic " + Base64.encode(authentication.getBytes());
+			authentication = "Basic " + Base64.encode(authentication.getBytes("UTF-8"));
 			//System.out.println("CODE["+authentication+"]");
 		}
 

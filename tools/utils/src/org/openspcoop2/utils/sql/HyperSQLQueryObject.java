@@ -145,10 +145,17 @@ public class HyperSQLQueryObject extends SQLQueryObjectCore {
 	
 	@Override
 	protected EscapeSQLConfiguration getEscapeSQLConfiguration(){
+		
 		EscapeSQLConfiguration config = new EscapeSQLConfiguration();
-		config.setSpecial_char(new char[]  {'_','%'});
+		config.addCharacter('_');
+		config.addCharacter('%');
+		config.addCharacter('\\');
 		config.setUseEscapeClausole(true);
-		config.setEscapeClausole('\\');
+		config.setEscape('\\');
+		
+		// special
+		config.addCharacterWithOtherEscapeChar('\'','\'');
+		
 		return config;
 	}
 	

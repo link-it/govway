@@ -22,8 +22,10 @@
 
 package org.openspcoop2.example.pdd.client.im;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 import javax.xml.rpc.Stub;
@@ -43,8 +45,10 @@ public class IntegrationManagerClient_axis14 {
 		try {
 
 			java.util.Properties reader = new java.util.Properties();
-			try{  
-				reader.load(new java.io.FileInputStream("IntegrationManagerClient.properties")); 
+			try{ 
+				InputStreamReader isr = new InputStreamReader(
+					    new FileInputStream("IntegrationManagerClient.properties"), "UTF-8");
+				reader.load(isr);
 			}catch(java.io.IOException e) {
 				System.err.println("ERROR : "+e.toString());
 				return;

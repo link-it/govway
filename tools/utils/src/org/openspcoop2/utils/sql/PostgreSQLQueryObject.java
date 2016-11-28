@@ -171,10 +171,17 @@ public class PostgreSQLQueryObject extends SQLQueryObjectCore{
 	
 	@Override
 	protected EscapeSQLConfiguration getEscapeSQLConfiguration(){
+		
 		EscapeSQLConfiguration config = new EscapeSQLConfiguration();
-		config.setSpecial_char(new char[]  {'_','%'});
+		config.addCharacter('_');
+		config.addCharacter('%');
+		config.addCharacter('\\');
 		config.setUseEscapeClausole(false);
-		config.setEscapeClausole('\\');
+		config.setEscape('\\');
+		
+		// special
+		config.addCharacterWithOtherEscapeChar('\'','\'');
+		
 		return config;
 	}
 

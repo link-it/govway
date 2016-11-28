@@ -26,6 +26,7 @@ package org.openspcoop2.example.pdd.client.benchmark;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -58,8 +59,10 @@ public class Client {
 		}
 
 		java.util.Properties reader = new java.util.Properties();
-		try{  
-			reader.load(new FileInputStream("Client.properties")); 
+		try{ 
+			InputStreamReader isr = new InputStreamReader(
+				    new FileInputStream("Client.properties"), "UTF-8");
+			reader.load(isr);
 		}catch(java.io.IOException e) {
 			System.err.println("ERROR : "+e.toString());
 			return;

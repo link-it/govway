@@ -127,6 +127,11 @@ public final class AuthorisationFilter implements Filter {
 							//System.out.println("URL POST PROCESSING ["+servletRichiesta+"]");
 							ControlStationCore.logDebug("Check autorizzazione dell'utente "+userLogin+" per servlet ["+servletRichiesta+"] ...");
 							
+							// Se arrivo in questo punto sto richiedendo una pagina che riguarda una funzionalite' della console
+							// Imposto il CharacterEncoding UTF-8 per risolvere i problemi di encoding evidenziati in OP-407 e OP-571
+							//System.out.println("SET ENCODING RISOLVERE BUG");
+							request.setCharacterEncoding("UTF-8");
+							
 							// Non faccio verificare login/logout
 							if (!LoginCostanti.SERVLET_NAME_LOGIN.equals(servletRichiesta) && !LoginCostanti.SERVLET_NAME_LOGOUT.equals(servletRichiesta)) {
 								if(GestoreAutorizzazioni.autorizzazioneUtente(singlePdDBooleanValue,ControlStationCore.getLog(), servletRichiesta,request, session)==false){

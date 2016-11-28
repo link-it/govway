@@ -540,6 +540,9 @@ public class Utilities {
 	/* STRING UTILS CON ESCAPE */
 	
 	public static String[] split(String value, char separator) throws UtilsException{
+		
+		//System.out.println("SUBJECT SPLIT ["+separator+"]");
+		
 		StringBuffer bf = new StringBuffer();
 		List<String> splitResults = new ArrayList<String>();
 		if(value==null || value.length()<=0){
@@ -547,6 +550,15 @@ public class Utilities {
 		}
 		for (int i = 0; i < value.length(); i++) {
 			if(value.charAt(i) == separator){
+				
+//				if(i>0){
+//					boolean v = (value.charAt(i-1) != '\\');
+//					System.out.println("SUBJECT SERPARATOR FOUND i["+i+"] value["+value.charAt(i)+"] value-1["+value.charAt(i-1)+"] ("+v+")");
+//				}
+//				else{
+//					System.out.println("SUBJECT SERPARATOR FOUND i["+i+"] value["+value.charAt(i)+"]");
+//				}
+				
 				if(i>0 && (value.charAt(i-1) != '\\') ){
 					splitResults.add(bf.toString());
 					bf.delete(0, bf.length());
@@ -563,6 +575,9 @@ public class Utilities {
 				bf.append(value.charAt(i));
 			}
 		}
+		
+		//System.out.println("SUBJECT SPLIT FINE ["+splitResults+"]");
+		
 		splitResults.add(bf.toString());
 		return splitResults.toArray(new String[1]);
 	}
@@ -651,6 +666,8 @@ public class Utilities {
 
 	public static String formatSubject(String subject) throws UtilsException{
 
+		//System.out.println("PRIMA ["+subject+"]");
+		
 		// Autenticazione SSL deve essere LIKE
 		Hashtable<String, String> hashSubject = Utilities.getSubjectIntoHashtable(subject);
 		StringBuffer bf = new StringBuffer();
@@ -664,10 +681,13 @@ public class Utilities {
 			bf.append(Utilities.formatValueSubject(value));
 			bf.append("/");
 		}
+		//System.out.println("DOPO ["+bf.toString()+"]");
 		return bf.toString();
 	}
 
 	public static void validaSubject(String subjectParam) throws UtilsException{
+		
+		//System.out.println("PRIMA VALIDAZIONE ["+subjectParam+"]");
 		
 		String subject = subjectParam;
 		UtilsException normalizedException = null;
@@ -675,10 +695,13 @@ public class Utilities {
 			String tmp = normalizeSubject(subjectParam);
 			subject = tmp;
 		}catch(UtilsException e){
+			//System.out.println("ERRORE: "+e.getMessage());
 			// non voglio rilanciare l'eccezione, verra' segnalata l'eccezione puntuale.
 			// Se cosi' non fosse solo in fondo viene sollevata l'eccezione.
 			normalizedException = e;
 		}
+		
+		//System.out.println("DOPOP VALIDAZIONE ["+subject+"]");
 		
 		boolean commaFound = contains(subject, ",");
 		boolean slashFound = contains(subject, "/");
@@ -772,12 +795,15 @@ public class Utilities {
 
 	public static String [] getValoriSubject(String subjectParam) throws UtilsException{
 		try{
-			
+			//System.out.println("SUBJECT getValoriSubject["+subjectParam+"]");
 			String subject = normalizeSubject(subjectParam);
+			//System.out.println("SUBJECT dopo normalize getValoriSubject["+subject+"]");
 			
 			return _getValoriSubject(subject);
 			
 		}catch(Exception e){
+			
+			//System.out.println("SUBJECT getValoriSubject["+subjectParam+"] errore: "+e.getMessage());
 			
 			try{
 			
@@ -809,6 +835,7 @@ public class Utilities {
 		String [] valori;
 		boolean commaFound = contains(subject, ",");
 		boolean slashFound = contains(subject, "/");
+		//System.out.println("SUBJECT _getValoriSubject commaFound["+commaFound+"] slashFound["+slashFound+"]");
 		if(commaFound){
 			if(subject.startsWith(",")){
 				subject = subject.substring(1);
@@ -816,10 +843,13 @@ public class Utilities {
 			if(subject.endsWith(",")){
 				subject = subject.substring(0,subject.length()-1);
 			}
+			//System.out.println("SUBJECT _getValoriSubject preSplit , ["+subject+"] ..");
 			//valori =  subject.split(",");
 			valori = split(subject, ',');
 		}else{
+			//System.out.println("SUBJECT _getValoriSubject comma not found ["+subject+"] ..");
 			if(slashFound==false){
+				//System.out.println("SUBJECT _getValoriSubject slash not found ["+subject+"] ..");
 				int indexOf = subject.indexOf("=");
 				if(indexOf<=0){
 					throw new UtilsException("("+subject+") Separatore validi per il subject interno alla configurazione di OpenSPCoop non trovati:  \",\" o \"/\" e carattere \"=\" non presente");
@@ -836,6 +866,7 @@ public class Utilities {
 				if(subject.endsWith("/")){
 					subject = subject.substring(0,subject.length()-1);
 				}
+				//System.out.println("SUBJECT _getValoriSubject preSplit / ["+subject+"] ..");
 				//valori =  subject.split("/");
 				valori = split(subject, '/');
 			}

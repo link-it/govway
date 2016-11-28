@@ -21,6 +21,9 @@
 
 package org.openspcoop2.utils.sql;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * EscapeSQLConfiguration
  * 
@@ -31,27 +34,87 @@ package org.openspcoop2.utils.sql;
  */
 public class EscapeSQLConfiguration {
 
-	private char[] special_char;
-	private char escapeClausole;
-	public char getEscapeClausole() {
-		return this.escapeClausole;
-	}
-	public void setEscapeClausole(char escapeClausole) {
-		this.escapeClausole = escapeClausole;
-	}
+	// Alcuni caratteri possono essere 'escaped' tramite un comune carattere di escape (con in aggiunta una eventuale clausola di escape)
+	// Altri devono essere 'escaped' tramite un carattere di escape di default senza la clausola di escape
+	
+	private List<EscapeWithOtherEscapeChar> escapeWithOtherEscapeChar = new ArrayList<EscapeWithOtherEscapeChar>(); 
+	private List<Character> escapeChar = new ArrayList<Character>(); 
+	private char escape;
 	private boolean useEscapeClausole = false;
 	
-	public char[] getSpecial_char() {
-		return this.special_char;
+	
+	public char getEscape() {
+		return this.escape;
 	}
-	public void setSpecial_char(char[] special_char) {
-		this.special_char = special_char;
+	public void setEscape(char escape) {
+		this.escape = escape;
 	}
-
+	
 	public boolean isUseEscapeClausole() {
 		return this.useEscapeClausole;
 	}
 	public void setUseEscapeClausole(boolean useEscapeClausole) {
 		this.useEscapeClausole = useEscapeClausole;
 	}
+	
+	public void addCharacter(char c){
+		this.escapeChar.add(c);
+	}
+	public void addCharacterWithOtherEscapeChar(char c,char escape){
+		EscapeWithOtherEscapeChar e = new EscapeWithOtherEscapeChar();
+		e.setCharacter(c);
+		e.setEscape(escape);
+		this.escapeWithOtherEscapeChar.add(e);
+	}
+	
+	public boolean isDefaultEscape(char c){
+		if(this.escapeChar!=null && this.escapeChar.size()>0){
+			for (Character check : this.escapeChar) {
+				if(check.charValue() == c){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	public boolean isOtherEscape(char c){
+		if(this.escapeWithOtherEscapeChar!=null && this.escapeWithOtherEscapeChar.size()>0){
+			for (EscapeWithOtherEscapeChar check : this.escapeWithOtherEscapeChar) {
+				if(check.getCharacter() == c){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	public char getOtherEscapeCharacter(char c) throws SQLQueryObjectException{
+		if(this.escapeWithOtherEscapeChar!=null && this.escapeWithOtherEscapeChar.size()>0){
+			for (EscapeWithOtherEscapeChar check : this.escapeWithOtherEscapeChar) {
+				if(check.getCharacter() == c){
+					return check.getEscape();
+				}
+			}
+		}
+		throw new SQLQueryObjectException("Not exists escape char for character ["+c+"]");
+	}
+}
+
+class EscapeWithOtherEscapeChar {
+	
+	private char character;
+	private char escape;
+	
+	public char getCharacter() {
+		return this.character;
+	}
+	public void setCharacter(char character) {
+		this.character = character;
+	}
+	public char getEscape() {
+		return this.escape;
+	}
+	public void setEscape(char escape) {
+		this.escape = escape;
+	}
+	
 }

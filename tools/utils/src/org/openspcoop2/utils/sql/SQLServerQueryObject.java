@@ -45,7 +45,29 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 	}
 
 
-
+	
+	@Override
+	protected boolean continueNormalizeField(String normalizeField){
+		
+		// Alcuni valori sono standard dei vendor dei database (es. gestione delle date)
+		// Il problema è che se contengono dei '.' o dei caratteri alias rientrano erroneamnete nei punti 2 e 3 della normalizzazione
+		// Per questo motivo viene quindi prima richiesto al vendor se effettuare o meno la classica normalizzazione del field in base a tali valori
+		// sul field in essere
+		
+		if(normalizeField!=null && normalizeField.contains("(CAST(DATEDIFF(second,{d '1970-01-01'}") && 
+				normalizeField.contains("as BIGINT)*1000) + (DATEPART(ms") &&
+				normalizeField.contains("(CAST(DATEDIFF(HOUR,GETUTCDATE(),convert(datetime")
+				){
+			return false;
+		}
+		
+		return true;
+		
+	}
+	
+	
+	
+	
 	@Override
 	public String getUnixTimestampConversion(String column){
 		String format = "yyyy-MM-dd HH:mm:ss";
@@ -168,10 +190,20 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 
 	@Override
 	protected EscapeSQLConfiguration getEscapeSQLConfiguration(){
+		
 		EscapeSQLConfiguration config = new EscapeSQLConfiguration();
-		config.setSpecial_char(new char[]  {'[','_','%','^',']'});
+		config.addCharacter('_');
+		config.addCharacter('%');
+		config.addCharacter('\\');
+		config.addCharacter('[');
+		config.addCharacter(']');
+		config.addCharacter('^');
 		config.setUseEscapeClausole(true);
-		config.setEscapeClausole('\\');
+		config.setEscape('\\');
+		
+		// special
+		config.addCharacterWithOtherEscapeChar('\'','\'');
+
 		return config;
 	}
 

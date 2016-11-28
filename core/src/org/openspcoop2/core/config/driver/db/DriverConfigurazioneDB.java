@@ -2687,13 +2687,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				while(keys.hasMoreElements()){
 					String key = keys.nextElement();
 					String value = hashSubject.get(key);
-					sqlQueryObject.addWhereLikeCondition("subject", "/"+Utilities.formatKeySubject(key)+"="+Utilities.formatValueSubject(value)+"/", true, false);
+					sqlQueryObject.addWhereLikeCondition("subject", "/"+Utilities.formatKeySubject(key)+"="+Utilities.formatValueSubject(value)+"/", true, true, false);
 				}
 
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQuery = sqlQueryObject.createSQLQuery();
 
-				//System.out.println("QUERY["+sqlQuery+"]["+type+"]["+idSoggettoFruitore+"]");
+				//System.out.println("QUERY["+sqlQuery+"]["+type+"]["+idSoggettoFruitore+"]["+CostantiConfigurazione.CREDENZIALE_SSL.toString()+"]");
 
 				stm = con.prepareStatement(sqlQuery);
 				//stm.setString(1, nome_sa);

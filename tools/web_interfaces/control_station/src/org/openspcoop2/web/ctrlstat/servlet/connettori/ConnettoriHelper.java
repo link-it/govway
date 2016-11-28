@@ -30,6 +30,7 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.InvocazioneServizio;
@@ -765,7 +766,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			if (ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_BASIC.equals(tipoauth)) {
 				de = new DataElement();
 				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_USERNAME);
-				de.setValue(utente);
+				de.setValue(StringEscapeUtils.escapeHtml(utente));
 				de.setType(DataElementType.TEXT_EDIT);
 				if(connettore){
 					de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_USERNAME_CONNETTORE);
@@ -779,7 +780,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 				de = new DataElement();
 				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_PASSWORD);
-				de.setValue(password);
+				de.setValue(StringEscapeUtils.escapeHtml(password));
 				// de.setType("crypt");
 				de.setType(DataElementType.TEXT_EDIT);
 				if(connettore){
@@ -804,7 +805,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			if (ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_SSL.equals(tipoauth)) {
 				de = new DataElement();
 				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_SUBJECT);
-				de.setValue(subject);
+				de.setValue(StringEscapeUtils.escapeHtml(subject));
 				de.setType(DataElementType.TEXT_EDIT);
 				if(connettore){
 					de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_SUBJECT_CONNETTORE);

@@ -258,6 +258,14 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 			}
 		}
 
+		// Alcuni valori sono standard dei vendor dei database (es. gestione delle date)
+		// Il problema è che se contengono dei '.' o dei caratteri alias rientrano erroneamnete nei punti 2 e 3 dove invece non dovrebbero rientraci.
+		// Per questo motivo viene quindi prima richiesto al vendor se effettuare o meno la classica normalizzazione del field in base a tali valori
+		// sul field in essere
+		if(this.continueNormalizeField(field)==false){
+			return field;
+		}
+		
 		// 2. Altrimenti devo verificare se vi e' un prefisso di tabella davanti
 		// Devono essere eliminati le TABELLE. e lasciare solo il field
 		int indexOf = field.indexOf(".");
@@ -295,6 +303,19 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		}
 		return field;	
 
+	}
+	protected boolean continueNormalizeField(String normalizeField){
+		
+		// Alcuni valori sono standard dei vendor dei database (es. gestione delle date)
+		// Il problema è che se contengono dei '.' o dei caratteri alias rientrano erroneamnete nei punti 2 e 3 della normalizzazione
+		// Per questo motivo viene quindi prima richiesto al vendor se effettuare o meno la classica normalizzazione del field in base a tali valori
+		// sul field in essere
+		
+		// Vedere quali database sovrascrivono questo metodo
+		// Ad esempio SQLServer
+		
+		return true;
+		
 	}
 
 
@@ -1665,35 +1686,27 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		if(pattern==null){
 			throw new SQLQueryObjectException("Valore non fornito per escape");
 		}
-		// converte il carattere '  in ''
-		// fa l'escape dei caratteri speciali
 
 		EscapeSQLConfiguration escapeConfig = this.getEscapeSQLConfiguration();
 
-		char[] special_char = escapeConfig.getSpecial_char();
-
 		StringBuffer str =  new StringBuffer();
 		char[] v = pattern.toCharArray();
-		boolean escape=false;
 		for(int i=0; i<v.length; i++){
-			if(v[i]=='\''){
-				str.append('\'');
-			} else {
-				for(int j = 0 ; (j< special_char.length) && !escape;j++) {
-					if(v[i]==special_char[j]){
-						str.append(escapeConfig.getEscapeClausole());
-						escape=true;
-						if(escapeConfig.isUseEscapeClausole()){
-							escapeSqlPattern.setUseEscapeClausole(true);
-							escapeSqlPattern.setEscapeClausole(escapeConfig.getEscapeClausole());
-						}
-					}
+			
+			if(escapeConfig.isDefaultEscape(v[i])){
+				str.append(escapeConfig.getEscape());
+
+				if(escapeConfig.isUseEscapeClausole()){
+					escapeSqlPattern.setUseEscapeClausole(true);
+					escapeSqlPattern.setEscapeClausole(escapeConfig.getEscape());
 				}
 			}
-			str.append(v[i]);
-			if(escape) {
-				escape=false;
+			else if(escapeConfig.isOtherEscape(v[i])){
+				str.append(escapeConfig.getOtherEscapeCharacter(v[i]));
 			}
+			
+			str.append(v[i]);
+
 		}
 
 		String returnStr = str.toString();	

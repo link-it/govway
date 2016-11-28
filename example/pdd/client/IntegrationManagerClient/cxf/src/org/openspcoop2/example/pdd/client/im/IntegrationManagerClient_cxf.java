@@ -49,7 +49,9 @@ public class IntegrationManagerClient_cxf {
 
 			java.util.Properties reader = new java.util.Properties();
 			try{  
-				reader.load(new java.io.FileInputStream("IntegrationManagerClient.properties")); 
+				InputStreamReader isr = new InputStreamReader(
+					    new FileInputStream("IntegrationManagerClient.properties"), "UTF-8");
+				reader.load(isr);
 			}catch(java.io.IOException e) {
 				System.err.println("ERROR : "+e.toString());
 				return;
