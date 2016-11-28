@@ -1,3 +1,28 @@
+2016-11-28  Andrea Poli <apoli@link.it>
+
+	* [Pdd, PddConsole, Utils]
+	Risolto Bug OP-407
+	Sono stati risolti i problemi che occorrevano quando le credenziali associate ai servizi applicativi
+	contenevano caratteri differenti dai numeri e dalle lettere.
+	Per quanto concerne le credenziali 'http-basic' se venivano associate delle credenziali (username, password)
+	che contenevano dei simboli '?' o ')' o '/', ad esempio la password "?VrK)/", occorrevano i seguenti errori:
+	- la pddConsole in alcuni casi non permetteva più di modificare le credenziali del servizio applicativo
+	- l'autenticazione dei servizi applicativi non funzionava e veniva ritornato l'errore "credenziali fornite non corrette"
+	Per quanto concerne le credenziali 'https' il problema si presentava quando il subject
+	conteneva dei caratteri differenti da numeri e lettere, ad esempio: C=IT, ST=State, OU=Autorità statale.
+	Occorrevano i seguenti errori:
+	- i caratteri differenti da numeri e lettere (nell'esempio la a accentata) del campo subject venivano
+	  convertiti in due caratteri e salvati in maniera errata sul database.
+	- se si accedeva al dettaglio del servizio applicativo, tramite console, le credenziali
+	  precedentemente fornite venivano visualizzate in modo errato
+	- l'autenticazione dei servizi applicativi non funzionava e veniva ritornato l'errore "credenziali fornite non corrette"
+	Durante la risoluzione dei problemi è stato riscontrato anche un problema nella libreria org/openspcoop2/utils/sql
+	riguardante l'escape dei caratteri durante l'utilizzo della where Like conditions.
+	Problema risolto adeguando la libreria ad utilizzare il corretto escape character in funzione del carattere speciale.
+	Sono infine stati adeguati i client (PDInvoker,PAInvoker,Benchmark) per leggere il file di proprietà con codifica UTF-8 e
+	quindi essere in grado di spedire credenziali contenenti caratteri differenti da numeri e lettere.
+	Il bug OP-571 è stato risolto di conseguenza essendo un duplicato del bug OP-407.
+
 2016-11-09  Andrea Poli <apoli@link.it>
 
 	* [Pdd, PddConsole]
