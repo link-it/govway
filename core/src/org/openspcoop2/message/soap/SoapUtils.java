@@ -640,7 +640,8 @@ public class SoapUtils {
 		try{
 			if(printDetails){
 				if(fault!=null){
-					return OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11,MessageRole.NONE).getAsString(fault,true);
+					OpenSPCoop2MessageFactory.getMessageFactory();
+					return OpenSPCoop2MessageFactory.getAsString(fault,true);
 				}else{
 					return "SOAPFault non presente";
 				}	
@@ -712,7 +713,7 @@ public class SoapUtils {
 		ByteArrayOutputStream byteMessaggio = null;
 		try{
 			OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
-			OpenSPCoop2Message msg = mf.createMessage(messageType,MessageRole.FAULT);
+			OpenSPCoop2Message msg = mf.createEmptyMessage(messageType,MessageRole.FAULT);
 			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
 			SOAPEnvelope env = (soapMsg.getSOAPPart()).getEnvelope();
 

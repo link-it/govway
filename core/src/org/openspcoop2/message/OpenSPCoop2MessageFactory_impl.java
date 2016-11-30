@@ -123,7 +123,7 @@ public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
 	}
 	
 	@Override
-	public OpenSPCoop2Message _createMessage(MessageType messageType, String contentType) throws MessageException  {
+	public OpenSPCoop2Message _createEmptyMessage(MessageType messageType) throws MessageException  {
 		OpenSPCoop2Message msg = null;
 		switch (messageType) {
 			case SOAP_11:

@@ -450,9 +450,13 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 					byte [] json = org.openspcoop2.core.eccezione.details.utils.XMLUtils.generateDettaglioEccezioneAsJson(dettaglioEccezione).getBytes();
 					pr = mf.createMessage(messageType, MessageRole.FAULT, HttpConstants.CONTENT_TYPE_JSON, json);
 					return pr.getMessage_throwParseException();
+					
+				case BINARY:
+					// Viene usato per l'opzione None dove viene ritornato solamente il return code
+					return  mf.createEmptyMessage(messageType, MessageRole.FAULT);
 
 				default:
-					OpenSPCoop2Message msg = mf.createMessage(messageType, MessageRole.FAULT);
+					OpenSPCoop2Message msg = mf.createEmptyMessage(messageType, MessageRole.FAULT);
 					SOAPEnvelope env = msg.castAsSoap().getSOAPPart().getEnvelope();
 					//env.addNamespaceDeclaration("xsi","http://www.w3.org/2001/XMLSchema-instance");
 
@@ -479,7 +483,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			}
 			
 		} catch(Exception e) {
-			this.log.error("Build msgErrore non riuscito: " + e.getMessage());
+			this.log.error("Build msgErrore non riuscito: " + e.getMessage(),e);
 			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(messageType,"ErroreProcessamento"); // ritorno ErroreProcessamento per non far "uscire fuori" l'errore
 		}
 
@@ -719,7 +723,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			return responseMessage;
 
 		}catch(Exception e) {
-			this.log.error("Build msgErroreProcessamento non riuscito: "+e.getMessage());
+			this.log.error("Build msgErroreProcessamento non riuscito: "+e.getMessage(),e);
 			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(messageType, "ErroreProcessamento");
 		}
 

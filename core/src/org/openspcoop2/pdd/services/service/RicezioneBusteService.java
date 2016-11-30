@@ -206,12 +206,6 @@ public class RicezioneBusteService  {
 					IntegrationError.INTERNAL_ERROR, e, null, res, logCore);
 		}
 		
-		// Aggiorno RequestInfo
-		if(RicezioneBusteServiceUtils.updatePortaApplicativaRequestInfo(requestInfo, logCore, res,
-				this.generatoreErrore, registryReader, serviceIdentificationReader)==false){
-			return; // l'errore in response viene impostato direttamente dentro il metodo
-		}
-		
 		// Logger dei messaggi diagnostici
 		MsgDiagnostico msgDiag = new MsgDiagnostico(idModulo);
 		msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE);
@@ -219,6 +213,12 @@ public class RicezioneBusteService  {
 			msgDiag.setPorta(requestInfo.getProtocolContext().getInterfaceName());
 		}
 		
+		// Aggiorno RequestInfo
+		if(RicezioneBusteServiceUtils.updatePortaApplicativaRequestInfo(requestInfo, logCore, res,
+				this.generatoreErrore, registryReader, serviceIdentificationReader,msgDiag)==false){
+			return; // l'errore in response viene impostato direttamente dentro il metodo
+		}
+				
 		// PddContext from servlet
 		Object oPddContextFromServlet = req.getAttribute(CostantiPdD.OPENSPCOOP2_PDD_CONTEXT_HEADER_HTTP);
 		PdDContext pddContextFromServlet = null;
@@ -744,11 +744,7 @@ public class RicezioneBusteService  {
     			responseMessage.updateContentType();
 				
 				// content type
-				String contentTypeRisposta = responseMessage.getContentType();
-				if (contentTypeRisposta != null) 
-					res.setContentType(contentTypeRisposta);
-				else 
-					throw new Exception("Risposta senza Content-type");
+    			ServicesUtils.setContentType(responseMessage, res);
 
 				// http status
 				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, proprietaErroreAppl,informazioniErrori,
@@ -821,11 +817,7 @@ public class RicezioneBusteService  {
 						req, res, responseMessageError);
 								
 				// content type
-				String contentTypeRisposta = responseMessageError.getContentType();
-				if (contentTypeRisposta != null) 
-					res.setContentType(contentTypeRisposta);
-				else 
-					throw new Exception("Risposta errore senza Content-type");
+    			ServicesUtils.setContentType(responseMessageError, res);
 				
 				// http status (puo' essere 200 se il msg di errore e' un msg errore applicativo cnipa non in un soap fault)
 				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessageError, proprietaErroreAppl, informazioniErrori_error,

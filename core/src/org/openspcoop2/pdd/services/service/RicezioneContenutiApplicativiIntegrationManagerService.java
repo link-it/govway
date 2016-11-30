@@ -161,10 +161,16 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		}
 		
 		
+		// Logger dei messaggi diagnostici
+		MsgDiagnostico msgDiag = new MsgDiagnostico(IntegrationManager.ID_MODULO);
+		msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER);
+		msgDiag.addKeyword(CostantiPdD.KEY_TIPO_OPERAZIONE_IM, tipoOperazione);
+		
+		
 		// Aggiorno RequestInfo
 		try{
 			if(RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(requestInfo, logCore, null,
-					null, registryReader, serviceIdentificationReader)==false){
+					null, registryReader, serviceIdentificationReader,msgDiag)==false){
 				try{
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							getErroreIntegrazione());
@@ -184,11 +190,6 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 				throw new RuntimeException(eError); // errore che non dovrebbe accadare
 			}
 		}
-		
-
-		MsgDiagnostico msgDiag = new MsgDiagnostico(IntegrationManager.ID_MODULO);
-		msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER);
-		msgDiag.addKeyword(CostantiPdD.KEY_TIPO_OPERAZIONE_IM, tipoOperazione);
 		
 		
 

@@ -112,7 +112,7 @@ public class ConnettoreNULL extends ConnettoreBase {
 		
 		try{
 					
-			this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(request.getRequestMessage().getMessageType(),MessageRole.RESPONSE);
+			this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(request.getRequestMessage().getMessageType(),MessageRole.RESPONSE);
 			
 		}catch(Exception e){
 			this.eccezioneProcessamento = e;

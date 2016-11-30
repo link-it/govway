@@ -275,6 +275,10 @@ public class BustaBuilder<BustaRawType> implements org.openspcoop2.protocol.sdk.
 					f = soapMessage.getSOAPBody().getFault();
 				}
 			}
+			
+			if(soapMessage==null || f==null){
+				return;
+			}
 		
 		
 			EccezioneProtocolloBuilderParameters params = new EccezioneProtocolloBuilderParameters();

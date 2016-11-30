@@ -304,7 +304,7 @@ public class SPCoopImbustamento {
 			OpenSPCoop2SoapMessage soapMsg = null;
 			if(msg==null){
 				OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
-				soapMsg = mf.createMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap();
+				soapMsg = mf.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap();
 			}
 			else{
 				soapMsg = msg.castAsSoap();
@@ -784,7 +784,7 @@ public class SPCoopImbustamento {
 		try{
 
 			// Descrizione
-			SOAPElement descrizione = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().
+			SOAPElement descrizione = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().
 					getSOAPBody().addChildElement(new QName(SPCoopCostanti.NAMESPACE_EGOV, "Descrizione",SPCoopCostanti.PREFIX_EGOV));
 			
 			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap(); 
@@ -1053,7 +1053,7 @@ public class SPCoopImbustamento {
 			
 			// Creo nuovo header egov
 			eGovHeaderNEW = 
-				OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().
+				OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().
 					getSOAPHeader().addHeaderElement(
 						new QName(eGovHeaderOLD.getNamespaceURI(),eGovHeaderOLD.getLocalName(),eGovHeaderOLD.getPrefix()));
 			

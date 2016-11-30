@@ -44,6 +44,7 @@
 		- openspcoop_configuration_dir: configuration dir
 		- attachments_file: attachments files
 		- soap_file: soap files
+		- rest_file: rest files
 		- xml_encoding_file: xml encodings files
 		- openspcoop_configuration_dir_backup: directory di backup delle configurazioni
 		- config_file: directory di configurazione
@@ -189,6 +190,23 @@
 					<then>
 						<copy todir="${openspcoop_configuration_dir}/testfiles">
 							<fileset dir="${soap_file}"/>
+						</copy>
+					</then>
+				</if>
+			</then>
+		</if>
+		
+		<if>
+			<not>
+				<equals arg1="${rest_file}" arg2="$${rest_file}"/>
+			</not>
+			<then>
+				<available file="${rest_file}" property="rest_file.present"/>
+				<if>
+					<istrue value="${rest_file.present}"/>
+					<then>
+						<copy todir="${openspcoop_configuration_dir}/testfiles">
+							<fileset dir="${rest_file}"/>
 						</copy>
 					</then>
 				</if>

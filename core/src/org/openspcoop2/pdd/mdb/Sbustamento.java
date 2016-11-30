@@ -1212,6 +1212,11 @@ public class Sbustamento extends GenericLib{
 					return esito;
 				}
 				if(!existsPA){
+					String nomePA = "";
+					if(richiestaApplicativa.getIdPortaApplicativa()!=null && richiestaApplicativa.getIdPortaApplicativa().getNome()!=null){
+						nomePA = " ["+richiestaApplicativa.getIdPortaApplicativa().getNome()+"]";
+					}
+					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, "Porta Applicativa"+nomePA+" non esistente");
 					msgDiag.logPersonalizzato("portaApplicativaNonEsistente");
 					ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 							ErroriIntegrazione.ERRORE_450_PA_INESISTENTE.getErroreIntegrazione(),
@@ -1272,6 +1277,11 @@ public class Sbustamento extends GenericLib{
 					return esito;
 				}
 				if(!existsPA){
+					String nomePA = "";
+					if(richiestaApplicativa.getIdPortaApplicativa()!=null && richiestaApplicativa.getIdPortaApplicativa().getNome()!=null){
+						nomePA = " ["+richiestaApplicativa.getIdPortaApplicativa().getNome()+"]";
+					}
+					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, "Porta Applicativa"+nomePA+" non esistente");
 					msgDiag.logPersonalizzato("portaApplicativaNonEsistente");
 					ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 							ErroriIntegrazione.ERRORE_450_PA_INESISTENTE.getErroreIntegrazione(),
@@ -1330,6 +1340,11 @@ public class Sbustamento extends GenericLib{
 						return esito;
 					}
 					if(!existsPA){
+						String nomePA = "";
+						if(richiestaApplicativa.getIdPortaApplicativa()!=null && richiestaApplicativa.getIdPortaApplicativa().getNome()!=null){
+							nomePA = " ["+richiestaApplicativa.getIdPortaApplicativa().getNome()+"]";
+						}
+						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, "Porta Applicativa"+nomePA+" non esistente");
 						msgDiag.logPersonalizzato("portaApplicativaNonEsistente");
 						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaApplicativa.getIdModuloInAttesa(),bustaRichiesta,
 								ErroriIntegrazione.ERRORE_450_PA_INESISTENTE.getErroreIntegrazione(),
@@ -1517,6 +1532,11 @@ public class Sbustamento extends GenericLib{
 						return esito;
 					}
 					if(!existsPA){
+						String nomePA = "";
+						if(richiestaApplicativa.getIdPortaApplicativa()!=null && richiestaApplicativa.getIdPortaApplicativa().getNome()!=null){
+							nomePA = " ["+richiestaApplicativa.getIdPortaApplicativa().getNome()+"]";
+						}
+						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, "Porta Applicativa"+nomePA+" non esistente");
 						msgDiag.logPersonalizzato("(Richiesta) "+msgDiag.getMessaggio("portaApplicativaNonEsistente"), 
 								msgDiag.getLivello("portaApplicativaNonEsistente"),
 								msgDiag.getCodice("portaApplicativaNonEsistente"));
@@ -1763,6 +1783,11 @@ public class Sbustamento extends GenericLib{
 							return esito;
 						}
 						if(!existsPA){
+							String nomePA = "";
+							if(richiestaApplicativa.getIdPortaApplicativa()!=null && richiestaApplicativa.getIdPortaApplicativa().getNome()!=null){
+								nomePA = " ["+richiestaApplicativa.getIdPortaApplicativa().getNome()+"]";
+							}
+							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, "Porta Applicativa"+nomePA+" non esistente");
 							msgDiag.logPersonalizzato("(RichiestaStato) "+msgDiag.getMessaggio("portaApplicativaNonEsistente"), 
 									msgDiag.getLivello("portaApplicativaNonEsistente"),
 									msgDiag.getCodice("portaApplicativaNonEsistente"));

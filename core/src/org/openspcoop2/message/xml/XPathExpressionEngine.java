@@ -24,8 +24,6 @@ package org.openspcoop2.message.xml;
 import javax.xml.soap.SOAPElement;
 
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.constants.MessageRole;
-import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.w3c.dom.Element;
 
@@ -42,7 +40,7 @@ public class XPathExpressionEngine extends org.openspcoop2.utils.xml.AbstractXPa
 	@Override
 	public String getAsString(SOAPElement element) {
 		try{
-			return OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11,MessageRole.NONE).getAsString(element, false);
+			return OpenSPCoop2MessageFactory.getAsString(element, false);
 		}catch(Exception e){
 			throw new RuntimeException(e.getMessage(),e);
 		}

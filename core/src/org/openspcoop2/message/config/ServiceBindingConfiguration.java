@@ -329,14 +329,14 @@ public class ServiceBindingConfiguration implements Serializable {
 				}
 			}
 			else{
-				if(this.soap.isEnabled()==false){
+				if(this.rest.isEnabled()==false){
 					throw new MessageException("Typology ["+serviceBinding+"] not supported");
 				}
 				if(MessageRole.REQUEST.equals(messageRole)){
-					mediaTypeCollecton = this.soap.getRequest();
+					mediaTypeCollecton = this.rest.getRequest();
 				}
 				else{
-					mediaTypeCollecton = this.soap.getResponse();
+					mediaTypeCollecton = this.rest.getResponse();
 				}
 			}
 					

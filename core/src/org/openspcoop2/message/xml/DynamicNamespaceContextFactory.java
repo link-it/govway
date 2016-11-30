@@ -27,10 +27,7 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
 
-import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.OpenSPCoop2SoapMessage;
-import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.xml.sax.SAXException;
@@ -65,10 +62,7 @@ public class DynamicNamespaceContextFactory extends org.openspcoop2.utils.xml.Dy
 			byte[] soapenvelope) throws SAXException, SOAPException,
 			IOException, Exception {
 		
-		OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
-		OpenSPCoop2Message message = mf.createMessage(MessageType.SOAP_11,MessageRole.NONE);
-		OpenSPCoop2SoapMessage soapMsg = message.castAsSoap();
-		SOAPEnvelope envelope = (SOAPEnvelope) soapMsg.createSOAPElement(soapenvelope);
+		SOAPEnvelope envelope = (SOAPEnvelope) OpenSPCoop2MessageFactory.createSOAPElement(MessageType.SOAP_11, soapenvelope);
 		return this.getNamespaceContextFromSoapEnvelope(MessageType.SOAP_11, envelope);
 	}
 
@@ -77,10 +71,7 @@ public class DynamicNamespaceContextFactory extends org.openspcoop2.utils.xml.Dy
 			byte[] soapenvelope) throws SAXException, SOAPException,
 			IOException, Exception {
 		
-		OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
-		OpenSPCoop2Message message = mf.createMessage(MessageType.SOAP_12,MessageRole.NONE);
-		OpenSPCoop2SoapMessage soapMsg = message.castAsSoap();
-		SOAPEnvelope envelope = (SOAPEnvelope) soapMsg.createSOAPElement(soapenvelope);
+		SOAPEnvelope envelope = (SOAPEnvelope) OpenSPCoop2MessageFactory.createSOAPElement(MessageType.SOAP_12, soapenvelope);
 		return this.getNamespaceContextFromSoapEnvelope(MessageType.SOAP_12, envelope);
 	}
 
@@ -107,7 +98,7 @@ public class DynamicNamespaceContextFactory extends org.openspcoop2.utils.xml.Dy
 		}else{
 			String prefix = null;
 			try {
-				prefix = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType,MessageRole.NONE).castAsSoap().getFirstChildElement(body).getPrefix();
+				prefix = OpenSPCoop2MessageFactory.getFirstChildElement(messageType,body).getPrefix();
 			} catch (Throwable e) {
 				prefix = body.getFirstChild().getPrefix();
 			}

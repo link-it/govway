@@ -21,14 +21,17 @@
 
 package org.openspcoop2.message.rest;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.SequenceInputStream;
 import java.util.List;
 import java.util.Properties;
 
 import org.openspcoop2.message.AbstractBaseOpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
+import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.utils.Utilities;
@@ -58,9 +61,8 @@ public abstract class AbstractBaseOpenSPCoop2RestMessage<T> extends AbstractBase
 		this.hasContent = false;
 	}
 	
-	protected AbstractBaseOpenSPCoop2RestMessage(InputStream is,String contentType) throws MessageException {
+	protected AbstractBaseOpenSPCoop2RestMessage(InputStream isParam,String contentType) throws MessageException {
 		try{
-			this.is = is;
 			this.contentType = contentType;
 			if(contentType!=null){
 				String ch = ContentTypeUtilities.readCharsetFromContentType(contentType);
@@ -68,8 +70,18 @@ public abstract class AbstractBaseOpenSPCoop2RestMessage<T> extends AbstractBase
 					this.contentTypeCharsetName = ch;
 				}
 			}
-			if(is!=null){
-				this.hasContent = true;
+			if(isParam!=null){
+				
+				// check se esiste del contenuto nello stream, lo stream può essere diverso da null però vuoto.
+				byte[] b = new byte[1];
+				if(isParam.read(b) == -1) {
+					// stream vuoto
+					this.hasContent = false;
+				} else {
+					this.is = new SequenceInputStream(new ByteArrayInputStream(b),isParam);
+					this.hasContent = true;
+				}
+
 			}
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
@@ -115,12 +127,10 @@ public abstract class AbstractBaseOpenSPCoop2RestMessage<T> extends AbstractBase
 	public String getContentAsString() throws MessageException,MessageNotSupportedException{
 		try{
 			if(this.hasContent){
-				if(this.content!=null){
-					return this.buildContentAsString();
+				if(this.content==null){
+					this.initializeContent();
 				}
-				else{
-					Utilities.getAsString(this.is, this.contentTypeCharsetName);
-				}
+				return this.buildContentAsString();
 			}
 			return null;
 		}catch(MessageException e){
@@ -141,11 +151,16 @@ public abstract class AbstractBaseOpenSPCoop2RestMessage<T> extends AbstractBase
 			if(this.forwardTransportHeader.isInitialize()==false){
 				
 				Properties transportHeaders = null;
-				if(this.transportRequestContext!=null){
-					transportHeaders = this.transportRequestContext.getParametersTrasporto();
+				if(MessageRole.REQUEST.equals(this.messageRole)){
+					if(this.transportRequestContext!=null){
+						transportHeaders = this.transportRequestContext.getParametersTrasporto();
+					}
 				}
-				else if(this.transportResponseContext!=null){
-					transportHeaders = this.transportResponseContext.getParametersTrasporto();
+				else{
+					// vale sia per la risposta normale che fault
+					if(this.transportResponseContext!=null){ 
+						transportHeaders = this.transportResponseContext.getParametersTrasporto();
+					}
 				}
 				
 				if(transportHeaders!=null && transportHeaders.size()>0){
@@ -156,6 +171,28 @@ public abstract class AbstractBaseOpenSPCoop2RestMessage<T> extends AbstractBase
 			
 			}
 			return this.forwardTransportHeader;
+		}catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public OpenSPCoop2MessageProperties getForwardUrlProperties() throws MessageException{
+		try{
+			if(this.forwardUrlProperties.isInitialize()==false){
+				
+				Properties forwardUrlParamters = null;
+				if(this.transportRequestContext!=null){
+					forwardUrlParamters = this.transportRequestContext.getParametersFormBased();
+				}
+				
+				if(forwardUrlParamters!=null && forwardUrlParamters.size()>0){
+					RestUtilities.initializeForwardUrlParameters(this.forwardUrlProperties, this.messageRole, forwardUrlParamters);
+					this.forwardUrlProperties.setInitialize(true);
+				}
+			
+			}
+			return this.forwardUrlProperties;
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
 		}

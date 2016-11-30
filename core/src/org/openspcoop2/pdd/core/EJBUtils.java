@@ -2779,7 +2779,7 @@ public class EJBUtils {
 			case SOAP_11:
 			case SOAP_12:
 			
-				OpenSPCoop2Message responseSOAPMessage = mf.createMessage(messageType,MessageRole.RESPONSE);
+				OpenSPCoop2Message responseSOAPMessage = mf.createEmptyMessage(messageType,MessageRole.RESPONSE);
 				OpenSPCoop2SoapMessage soapMessage = responseSOAPMessage.castAsSoap();
 				SOAPBody soapBody = soapMessage.getSOAPBody();
 				byte[]xmlEsito = EsitoRichiestaXMLUtils.generateEsitoRichiesta(esito);

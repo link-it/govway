@@ -34,6 +34,7 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.rest.DumpRestMessageUtils;
 import org.openspcoop2.message.soap.DumpSoapMessageUtils;
@@ -350,8 +351,43 @@ public class Dump {
 	 * 
 	 */
 	private void dump(TipoMessaggio tipoMessaggio,OpenSPCoop2Message msg,byte[] msgBytes, 
-			String location,java.util.Properties transportHeader) throws TracciamentoException {
+			String location,java.util.Properties transportHeaderParam) throws TracciamentoException {
 
+		// Colleziono dati di dump header
+		java.util.Properties transportHeader = new java.util.Properties();
+		try{
+			if(transportHeaderParam.size()>0){
+				transportHeader.putAll(transportHeaderParam);
+				if(ServiceBinding.REST.equals(msg.getServiceBinding())){
+					OpenSPCoop2MessageProperties forwardHeader = null;
+					if(TipoMessaggio.RICHIESTA_USCITA.equals(tipoMessaggio)){
+						forwardHeader = msg.getForwardTransportHeader(this.properties.getRESTServicesWhiteListRequestHeaderList());
+					}
+					else if(TipoMessaggio.RISPOSTA_USCITA.equals(tipoMessaggio)){
+						forwardHeader = msg.getForwardTransportHeader(this.properties.getRESTServicesWhiteListResponseHeaderList());
+					}
+					if(forwardHeader!=null && forwardHeader.size()>0){
+						Enumeration<?> enHdr = forwardHeader.getKeys();
+						while (enHdr.hasMoreElements()) {
+							String key = (String) enHdr.nextElement();
+							if(key!=null){
+								String value = forwardHeader.getProperty(key);
+								if(value!=null){
+									transportHeader.put(key, value);
+								}
+							}
+						}
+					}
+				}
+			}
+		}catch(Exception e){
+			// Registro solo l'errore sul file dump.log
+			// Si tratta di un errore che non dovrebbe mai avvenire
+			String messaggio = "Riscontrato errore durante la lettura degli header di trasporto del contenuto applicativo presente nel messaggio ("+tipoMessaggio.getTipo()+") con identificativo ["+this.idMessaggio+"]:"+e.getMessage();
+			this.loggerDump.error(messaggio);
+			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error(messaggio);
+		}
+		
 		// Log4J
 		if(OpenSPCoop2Logger.loggerDumpAbilitato){
 			try{

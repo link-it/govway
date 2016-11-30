@@ -56,6 +56,8 @@ public abstract class AbstractErrorGenerator {
 		this.requestInfo = requestInfo;
 		
 		this.tipoPdD = tipoPdD;
+		
+		this.internalErrorConfiguration = internalErrorConfiguration;
 	}
 	
 	public void updateDominio(IDSoggetto identitaPdD){

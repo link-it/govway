@@ -334,7 +334,7 @@ public class TunnelSoapUtils {
 			byte[] body = null;
 			if(bd.hasFault()){
 				SOAPFault fault = bd.getFault();
-				body = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11,MessageRole.NONE).getAsByte(fault, true);
+				body = OpenSPCoop2MessageFactory.getAsByte(fault, true);
 			}else{
 				bout = new ByteArrayOutputStream();
 				java.util.Iterator<?> it = bd.getChildElements();
@@ -344,7 +344,7 @@ public class TunnelSoapUtils {
 						continue;
 					}
 					SOAPElement bodyElement = (SOAPElement) bodyElementObj;
-					bout.write(OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11,MessageRole.NONE).getAsByte(bodyElement, true));
+					bout.write(OpenSPCoop2MessageFactory.getAsByte(bodyElement, true));
 				}
 				bout.flush();
 				bout.close();
@@ -427,7 +427,7 @@ public class TunnelSoapUtils {
 		OpenSPCoop2Message msg = null;
 		try{
 			OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
-			msg = mf.createMessage(messageType,messageRole);
+			msg = mf.createEmptyMessage(messageType,messageRole);
 			return imbustamentoMessaggioConAttachment(msg, inputBody, tipoAttachment, buildAsDataHandler, contentTypeMessaggioOriginale, ns);
 		}
 		catch (MessageException e){

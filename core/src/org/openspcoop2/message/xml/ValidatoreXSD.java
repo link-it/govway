@@ -27,12 +27,10 @@ import java.io.InputStream;
 import javax.xml.transform.Source;
 import javax.xml.validation.Schema;
 
-import org.slf4j.Logger;
-import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.constants.MessageRole;
-import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.XMLException;
+import org.slf4j.Logger;
 import org.w3c.dom.Node;
 import org.w3c.dom.ls.LSResourceResolver;
 
@@ -50,7 +48,7 @@ public class ValidatoreXSD extends  org.openspcoop2.utils.xml.AbstractValidatore
 	@Override
 	public byte[] getAsByte(Node nodeXML) throws XMLException {
 		try{
-			return OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11,MessageRole.NONE).getAsByte(nodeXML,false);
+			return OpenSPCoop2MessageFactory.getAsByte(nodeXML,false);
 		}catch(Exception e){
 			throw new XMLException(e.getMessage(),e);
 		}

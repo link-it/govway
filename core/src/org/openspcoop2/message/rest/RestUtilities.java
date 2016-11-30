@@ -137,4 +137,21 @@ public class RestUtilities {
 		}
 		
 	}
+	
+	public static void initializeForwardUrlParameters(OpenSPCoop2MessageProperties op2MessageProperties, MessageRole messageRole, 
+			Properties forwardUrlParameters) throws MessageException{
+		
+		try{
+			if(forwardUrlParameters!=null && forwardUrlParameters.size()>0){
+				Enumeration<?> enumHeader = forwardUrlParameters.keys();
+				while (enumHeader.hasMoreElements()) {
+					String key = (String) enumHeader.nextElement();
+					op2MessageProperties.addProperty(key, forwardUrlParameters.getProperty(key));
+				}
+			}
+		}catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
+		
+	}
 }

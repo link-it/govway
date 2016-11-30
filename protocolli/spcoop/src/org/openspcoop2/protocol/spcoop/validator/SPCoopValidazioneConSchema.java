@@ -31,11 +31,8 @@ import java.util.Iterator;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 
-import org.slf4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.OpenSPCoop2SoapMessage;
-import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.message.xml.XMLUtils;
@@ -51,6 +48,8 @@ import org.openspcoop2.protocol.spcoop.config.SPCoopProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.XSDResourceResolver;
+import org.slf4j.Logger;
+import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 /**
@@ -224,8 +223,7 @@ public class SPCoopValidazioneConSchema implements IValidazioneConSchema {
 				
 				// VALIDAZIONE
 				SPCoopValidazioneConSchema.validatoreBustaSPCoop.valida(
-						this.xmlUtils.newDocument((OpenSPCoop2MessageFactory.getMessageFactory()).
-								createMessage(MessageType.SOAP_11,MessageRole.NONE).getAsByte(header,false)));
+						this.xmlUtils.newDocument(OpenSPCoop2MessageFactory.getAsByte(header,false)));
 				
 			}
 			else{
@@ -253,8 +251,7 @@ public class SPCoopValidazioneConSchema implements IValidazioneConSchema {
 				// VALIDAZIONE
 				if(listaEccezioni!=null){
 					SPCoopValidazioneConSchema.validatoreBustaSPCoop.valida(
-							this.xmlUtils.newDocument((OpenSPCoop2MessageFactory.getMessageFactory()).
-									createMessage(MessageType.SOAP_11,MessageRole.NONE).getAsByte(listaEccezioni,false)));
+							this.xmlUtils.newDocument(OpenSPCoop2MessageFactory.getAsByte(listaEccezioni,false)));
 				}
 			}
 					
@@ -286,8 +283,8 @@ public class SPCoopValidazioneConSchema implements IValidazioneConSchema {
 		if(soapBody!=null && isMessaggioConAttachments && validazioneManifestAttachments){
 			try {	
 				// Validazione
-				OpenSPCoop2SoapMessage msg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap();
-				SPCoopValidazioneConSchema.validatoreBustaSPCoop.valida(this.xmlUtils.newDocument(msg.getAsByte(msg.getFirstChildElement(soapBody),false)));  
+				Element firstElement = OpenSPCoop2MessageFactory.getFirstChildElement(MessageType.SOAP_11, soapBody);
+				SPCoopValidazioneConSchema.validatoreBustaSPCoop.valida(this.xmlUtils.newDocument(OpenSPCoop2MessageFactory.getAsByte(firstElement, false))); 
 			} catch (SAXException e) {
 				// instance document is invalid!
 				Eccezione ecc = new Eccezione();

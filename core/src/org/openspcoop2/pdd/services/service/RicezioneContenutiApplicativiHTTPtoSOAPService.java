@@ -199,12 +199,6 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 						get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),
 					IntegrationError.INTERNAL_ERROR, e, null, res, logCore);
 		}
-		
-		// Aggiorno RequestInfo
-		if(RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(requestInfo, logCore, res,
-				this.generatoreErrore, registryReader, serviceIdentificationReader)==false){
-			return; // l'errore in response viene impostato direttamente dentro il metodo
-		}
 	
 		// Logger dei messaggi diagnostici
 		MsgDiagnostico msgDiag = new MsgDiagnostico(idModulo);
@@ -213,6 +207,12 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			msgDiag.setPorta(requestInfo.getProtocolContext().getInterfaceName());
 		}
 		
+		// Aggiorno RequestInfo
+		if(RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(requestInfo, logCore, res,
+				this.generatoreErrore, registryReader, serviceIdentificationReader,msgDiag)==false){
+			return; // l'errore in response viene impostato direttamente dentro il metodo
+		}
+			
 		// PddContext from servlet
 		Object oPddContextFromServlet = null;
 		try{

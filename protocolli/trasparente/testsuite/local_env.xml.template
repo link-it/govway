@@ -43,6 +43,7 @@
       <!-- files di test -->
       <property name="attachments_file" location="deploy/testfiles/attachments" />
       <property name="soap_file" location="deploy/testfiles/soap" />
+      <property name="rest_file" location="deploy/testfiles/rest" />
       <property name="config_file" location="deploy/config_file" />
 
       <!-- OpenSPCoop Location and Library -->

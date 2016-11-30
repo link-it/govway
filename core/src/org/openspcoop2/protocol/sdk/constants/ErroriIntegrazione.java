@@ -421,7 +421,7 @@ public enum ErroriIntegrazione {
 		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
 		if(location!=null){
 			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_LOCATION,location));
-			bf.append(" pd["+location+"]");
+			bf.append(" porta["+location+"]");
 		}
 		if(urlInvocazione!=null){
 			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_URL_INVOCAZIONE,urlInvocazione));

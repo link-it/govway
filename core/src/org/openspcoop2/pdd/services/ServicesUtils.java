@@ -31,7 +31,6 @@ import javax.xml.soap.SOAPHeader;
 import org.apache.commons.io.output.NullOutputStream;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -40,6 +39,7 @@ import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorOutMessage;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -236,11 +236,12 @@ public class ServicesUtils {
 				// *** GB ***
 			}
 			else{
-				OpenSPCoop2RestMessage<?> rest = responseMessage.castAsRest();
-				if(rest.hasContent()==false){
-					//System.out.println("MESSAGGIO VUOTO");
-					rispostaPresente = false;
-				}
+//				OpenSPCoop2RestMessage<?> rest = responseMessage.castAsRest();
+//				if(rest.hasContent()==false){
+//					//System.out.println("MESSAGGIO VUOTO");
+//					rispostaPresente = false;
+//				}
+				rispostaPresente = true; // La gestione del return code in REST è indipendente dal fatto se vi è o meno un contenuto
 			}
 		}
 		
@@ -279,6 +280,27 @@ public class ServicesUtils {
 				}
 			}
 		}
+	}
+	
+	
+	public static void setContentType(OpenSPCoop2Message message, ConnectorOutMessage connectorOutMessage) throws ConnectorException{
+		try{
+			String contentTypeRisposta = message.getContentType();
+			if (contentTypeRisposta != null) {
+				connectorOutMessage.setContentType(contentTypeRisposta);
+			}else {
+				if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
+					throw new MessageException("Risposta errore senza Content-type");
+				}
+				else{
+					if(message.castAsRest().hasContent()){
+						throw new MessageException("Risposta errore senza Content-type");
+					}
+				}
+			}
+		}catch(Exception e){
+			throw new ConnectorException(e.getMessage(),e);
+		}	
 	}
 	
 }

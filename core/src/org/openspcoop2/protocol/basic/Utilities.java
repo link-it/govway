@@ -24,8 +24,6 @@ package org.openspcoop2.protocol.basic;
 import javax.xml.soap.SOAPElement;
 
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.constants.MessageRole;
-import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -40,7 +38,6 @@ import org.openspcoop2.utils.xml.AbstractXMLUtils;
  */
 public class Utilities {
 
-	private static OpenSPCoop2MessageFactory msgFactory = OpenSPCoop2MessageFactory.getMessageFactory();
 	private static AbstractXMLUtils xmlUtils = XMLUtils.getInstance();
 	
 	public static String toString(SOAPElement soapElement,boolean consume)
@@ -49,7 +46,7 @@ public class Utilities {
 			throw new ProtocolException("Conversione in element non riuscita");
 		}
 		try{
-			String xml = Utilities.msgFactory.createMessage(MessageType.SOAP_11,MessageRole.NONE).getAsString(soapElement,consume);
+			String xml = OpenSPCoop2MessageFactory.getAsString(soapElement,consume);
 			if(xml==null){
 				xml = Utilities.xmlUtils.toString(soapElement,true);
 				if(xml==null){
@@ -70,7 +67,7 @@ public class Utilities {
 			throw new ProtocolException("Conversione in element non riuscita");
 		}
 		try{
-			byte[] xml = Utilities.msgFactory.createMessage(MessageType.SOAP_11,MessageRole.NONE).getAsByte(soapElement,consume);
+			byte[] xml = OpenSPCoop2MessageFactory.getAsByte(soapElement,consume);
 			if(xml==null){
 				xml = Utilities.xmlUtils.toByteArray(soapElement,true);
 				if(xml==null){

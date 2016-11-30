@@ -28,6 +28,7 @@ import java.util.Enumeration;
 import javax.mail.internet.ContentType;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPConnectionFactory;
+import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPMessage;
@@ -36,6 +37,7 @@ import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.utils.Utilities;
@@ -49,6 +51,7 @@ import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 
 /**
@@ -126,6 +129,34 @@ public abstract class OpenSPCoop2MessageFactory {
 	
 	
 	
+	// ********** NODE Utilities mediati dall'implementazione dell'OpenSPCoop2Message *************
+	
+	public static String getAsString(Node ele, boolean consume){
+		// E' indipendente dal tipo SOAP11, il tipo viene utilizzato come uno qualsiasi
+		return OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).getAsString(ele,true);
+	}
+	public static byte[] getAsByte(Node ele, boolean consume){
+		// E' indipendente dal tipo SOAP11, il tipo viene utilizzato come uno qualsiasi
+		return OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).getAsByte(ele,true);
+	}
+	
+	
+	// ********** SOAP Utilities mediati dall'implementazione dell'OpenSPCoop2Message *************
+	
+	public static SOAPElement createSOAPElement(MessageType messageType,byte[] element) throws MessageException, MessageNotSupportedException{
+		OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
+		OpenSPCoop2Message message = mf.createEmptyMessage(messageType,MessageRole.NONE);
+		OpenSPCoop2SoapMessage soapMsg = message.castAsSoap();
+		return soapMsg.createSOAPElement(element);
+	}
+	public static Element getFirstChildElement(MessageType messageType,SOAPElement element) throws MessageException, MessageNotSupportedException{
+		return OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType,MessageRole.NONE).castAsSoap().getFirstChildElement(element);
+	}
+	
+
+	
+	
+	
 	// ********** SAAJ *************
 	
 	public abstract String getDocumentBuilderFactoryClass();
@@ -141,7 +172,7 @@ public abstract class OpenSPCoop2MessageFactory {
     
 	protected abstract OpenSPCoop2Message _createMessage(MessageType messageType, SOAPMessage msg) throws MessageException;
 	
-	protected abstract OpenSPCoop2Message _createMessage(MessageType messageType, String contentType) throws MessageException;
+	protected abstract OpenSPCoop2Message _createEmptyMessage(MessageType messageType) throws MessageException;
 	
 	protected abstract OpenSPCoop2Message _createMessage(MessageType messageType, TransportRequestContext requestContext, 
 			InputStream is,  AttachmentsProcessingMode attachmentsProcessingMode, long overhead) throws MessageException;	
@@ -191,13 +222,12 @@ public abstract class OpenSPCoop2MessageFactory {
     	return msgNew;
     }
     
-    private OpenSPCoop2Message _internalCreateMessage(MessageType messageType, MessageRole role, String contentType) throws MessageException{
+    private OpenSPCoop2Message _internalCreateEmptyMessage(MessageType messageType, MessageRole role) throws MessageException{
     	
-    	OpenSPCoop2Message msgNew = this._createMessage(messageType, contentType);
+    	OpenSPCoop2Message msgNew = this._createEmptyMessage(messageType);
     	
     	MessageUtilities.checkType(messageType, msgNew);
 		
-		msgNew.setContentType(contentType);
 		msgNew.setMessageType(messageType);
 		msgNew.setMessageRole(role);
 		
@@ -233,6 +263,7 @@ public abstract class OpenSPCoop2MessageFactory {
 			String contentType = null;
 			TransportRequestContext transportRequestContext = null; 
 			TransportResponseContext transportResponseContext = null;
+			String codiceTrasportoRisposta = null;
 			if(context instanceof TransportRequestContext){
 				transportRequestContext = (TransportRequestContext) context;
 				contentType = transportRequestContext.getParameterTrasporto(HttpConstants.CONTENT_TYPE);
@@ -240,6 +271,7 @@ public abstract class OpenSPCoop2MessageFactory {
 			else if(context instanceof TransportResponseContext){
 				transportResponseContext = (TransportResponseContext) context;
 				contentType = transportResponseContext.getParameterTrasporto(HttpConstants.CONTENT_TYPE);
+				codiceTrasportoRisposta = transportResponseContext.getCodiceTrasporto();
 			}
 			else if(context instanceof String){
 				contentType = (String) context;
@@ -306,6 +338,9 @@ public abstract class OpenSPCoop2MessageFactory {
 			}
 			else if(context instanceof TransportResponseContext){
 				op2Msg.setTransportResponseContext(transportResponseContext);
+				if(codiceTrasportoRisposta!=null){
+					op2Msg.setForcedResponseCode(codiceTrasportoRisposta);
+				}
 			}
 			
 			op2Msg.setMessageRole(messageRole);
@@ -763,9 +798,6 @@ public abstract class OpenSPCoop2MessageFactory {
 	 * Messaggi
 	 */
 	
-	public OpenSPCoop2Message createMessage(MessageType messageType, MessageRole role) throws MessageException{
-		return this._internalCreateMessage(messageType, role, MessageUtilities.getDefaultContentType(messageType));
-	}
 	public OpenSPCoop2Message createMessage(MessageType messageType, MessageRole role, SOAPMessage msg) throws MessageException{
 		return this._internalCreateMessage(messageType, role, msg);
 	}
@@ -781,21 +813,27 @@ public abstract class OpenSPCoop2MessageFactory {
 	}
 	public OpenSPCoop2Message createEmptyMessage(MessageType messageType, MessageRole role, NotifierInputStreamParams notifierInputStreamParams) {
 		try{
-			byte[] xml = null;
-			if(MessageType.SOAP_11.equals(messageType)){
-				xml = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Body/></SOAP-ENV:Envelope>".getBytes();
+			if(MessageType.SOAP_11.equals(messageType) || MessageType.SOAP_12.equals(messageType)){
+				
+				byte[] xml = null;
+				if(MessageType.SOAP_11.equals(messageType)){
+					xml = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Body/></SOAP-ENV:Envelope>".getBytes();
+				}
+				else if(MessageType.SOAP_12.equals(messageType)){
+					xml = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://www.w3.org/2003/05/soap-envelope\"><SOAP-ENV:Body/></SOAP-ENV:Envelope>".getBytes();
+				}
+				
+				OpenSPCoop2MessageParseResult result = this.createMessage(messageType, role , MessageUtilities.getDefaultContentType(messageType), 
+						xml, notifierInputStreamParams);
+				if(result.getParseException()!=null){
+					// non dovrebbe succedere
+					throw result.getParseException().getSourceException();
+				}
+				return result.getMessage();
 			}
-			else if(MessageType.SOAP_12.equals(messageType)){
-				xml = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://www.w3.org/2003/05/soap-envelope\"><SOAP-ENV:Body/></SOAP-ENV:Envelope>".getBytes();
+			else{
+				return _internalCreateEmptyMessage(messageType, role);
 			}
-			
-			OpenSPCoop2MessageParseResult result = this.createMessage(messageType, role , MessageUtilities.getDefaultContentType(messageType), 
-					xml, notifierInputStreamParams);
-			if(result.getParseException()!=null){
-				// non dovrebbe succedere
-				throw result.getParseException().getSourceException();
-			}
-			return result.getMessage();
 		}
 		catch(Throwable e){
 			System.err.println("Exception non gestibile durante la creazione di un messaggio vuoto. " + e);

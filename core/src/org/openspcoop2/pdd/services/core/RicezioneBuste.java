@@ -981,11 +981,16 @@ public class RicezioneBuste {
 		if(idServizio==null){
 			// avviene solamente se abbiamo invocazioni speciali con contextURL
 			// provo ad individuarlo con il protocollo
+			String idBusta = null;
+			String profiloBusta = null;
 			try{
 				Busta busta = protocolFactory.createValidazioneSintattica().getBusta_senzaControlli(requestMessage);
 				if(busta==null){
 					throw new Exception("Protocollo non individuato nel messaggio");
 				}
+				idBusta = busta.getID();
+				profiloBusta = busta.getProfiloDiCollaborazioneValue();
+				
 				if(busta.getTipoDestinatario()==null){
 					throw new Exception("TipoDestinatario non individuato nel messaggio");
 				}
@@ -1017,7 +1022,23 @@ public class RicezioneBuste {
 				}
 				
 			}catch(Exception e){
-				setSOAPFault_processamento(IntegrationError.NOT_FOUND,logCore,msgDiag,
+				
+				if(idServizio!=null){
+					msgDiag.addKeywords(idServizio);
+					if(idServizio.getAzione()==null){
+						msgDiag.addKeyword(CostantiPdD.KEY_AZIONE_BUSTA_RICHIESTA, "-");
+					}
+					msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_RICHIESTA, idBusta!=null ? idBusta : "-");
+					msgDiag.addKeyword(CostantiPdD.KEY_PROFILO_COLLABORAZIONE, profiloBusta!=null ? profiloBusta : "-");
+					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente.identificazionePerServizio");
+				}
+				else{
+					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente");	
+				}
+				
+				// passo volutamente null come msgDiag poichè ho generato prima il diagnostico
+				setSOAPFault_processamento(IntegrationError.NOT_FOUND,logCore,null,
 						ErroriIntegrazione.ERRORE_450_PA_INESISTENTE.getErroreIntegrazione(),e,
 						"comprensioneIDServizio");
 				openspcoopstate.releaseResource();
@@ -3420,12 +3441,14 @@ public class RicezioneBuste {
 						parametriGenerazioneBustaErrore.setErroreCooperazione(esito.getErroreCooperazione());
 						if(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA.equals(esito.getErroreCooperazione().getCodiceErrore()) || 
 								CodiceErroreCooperazione.SICUREZZA_FALSIFICAZIONE_MITTENTE.equals(esito.getErroreCooperazione().getCodiceErrore())){
+							parametriGenerazioneBustaErrore.setIntegrationError(IntegrationError.AUTHORIZATION);
 							errorOpenSPCoopMsg = generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
 						}
 						// Else necessario per Certificazione DigitPA tramite Router
 						else if(CodiceErroreCooperazione.SERVIZIO_SCONOSCIUTO.equals(esito.getErroreCooperazione().getCodiceErrore())){
 							parametriGenerazioneBustaErrore.setErroreCooperazione(
 									ErroriCooperazione.SERVIZIO_SCONOSCIUTO.getErroreCooperazione()); // in modo da utilizzare la posizione standard.
+							parametriGenerazioneBustaErrore.setIntegrationError(IntegrationError.BAD_REQUEST);
 							errorOpenSPCoopMsg = generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
 						}
 						else{

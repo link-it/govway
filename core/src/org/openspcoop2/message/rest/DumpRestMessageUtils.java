@@ -48,8 +48,13 @@ public class DumpRestMessageUtils {
 	public static String dumpMessage(OpenSPCoop2RestMessage<?> msg,boolean dumpAllBodyParts) throws MessageException{
 		try{
 			StringBuffer out = new StringBuffer();
-			out.append("------ Content ("+msg.getMessageType()+") ------\n");
-			out.append(msg.getContentAsString());
+			if(msg.hasContent()){
+				out.append("------ Content ("+msg.getMessageType()+") ------\n");
+				out.append(msg.getContentAsString());
+			}
+			else{
+				out.append("------ No-Content ("+msg.getMessageType()+") ------\n");
+			}
 			if(MessageType.MIME_MULTIPART.equals(msg.getMessageType())){
 				OpenSPCoop2RestMimeMultipartMessage msgMime = msg.castAsRestMimeMultipart();
 				for (int i = 0; i < msgMime.getContent().countBodyParts(); i++) {

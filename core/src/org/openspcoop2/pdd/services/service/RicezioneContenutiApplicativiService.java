@@ -205,19 +205,19 @@ public class RicezioneContenutiApplicativiService {
 					IntegrationError.INTERNAL_ERROR, e, null, res, logCore);
 		}
 		
-		// Aggiorno RequestInfo
-		if(RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(requestInfo, logCore, res,
-				this.generatoreErrore, registryReader, serviceIdentificationReader)==false){
-			return; // l'errore in response viene impostato direttamente dentro il metodo
-		}
-			
 		// Logger dei messaggi diagnostici
 		MsgDiagnostico msgDiag = new MsgDiagnostico(idModulo);
 		msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI);
 		if(requestInfo.getProtocolContext().getInterfaceName()!=null){
 			msgDiag.setPorta(requestInfo.getProtocolContext().getInterfaceName());
 		}
-			
+		
+		// Aggiorno RequestInfo
+		if(RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(requestInfo, logCore, res,
+				this.generatoreErrore, registryReader, serviceIdentificationReader, msgDiag)==false){
+			return; // l'errore in response viene impostato direttamente dentro il metodo
+		}
+						
 		// PddContext from servlet
 		Object oPddContextFromServlet = null;
 		try{
@@ -731,14 +731,7 @@ public class RicezioneContenutiApplicativiService {
 				// content type
 				// Alcune implementazioni richiedono di aggiornare il Content-Type
 				responseMessage.updateContentType();
-				String contentTypeRisposta = responseMessage.getContentType();
-				if (contentTypeRisposta != null) 
-					res.setContentType(contentTypeRisposta);
-				else {
-					if(ServiceBinding.SOAP.equals(requestInfo.getServiceBinding())){
-						throw new Exception("Risposta senza Content-type");
-					}
-				}
+				ServicesUtils.setContentType(responseMessage, res);
 				
 				// http status
 				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), 
@@ -819,11 +812,7 @@ public class RicezioneContenutiApplicativiService {
 						req, res, responseMessageError);
 				
 				// content type
-				String contentTypeRisposta = responseMessageError.getContentType();
-				if (contentTypeRisposta != null) 
-					res.setContentType(contentTypeRisposta);
-				else 
-					throw new Exception("Risposta errore senza Content-type");
+				ServicesUtils.setContentType(responseMessageError, res);
 				
 				// http status (puo' essere 200 se il msg di errore e' un msg errore applicativo cnipa non in un soap fault)
 				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(),responseMessageError, context.getProprietaErroreAppl(), informazioniErrori_error,

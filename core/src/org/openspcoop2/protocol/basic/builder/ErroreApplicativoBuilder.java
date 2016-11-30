@@ -573,6 +573,11 @@ public class ErroreApplicativoBuilder implements org.openspcoop2.protocol.sdk.bu
 					bytes = this._buildErroreApplicativo_ByteArray(TipoErroreApplicativo.JSON, eccezioneProtocollo, eccezioneIntegrazione);
 					pr = this.msgFactory.createMessage(messageType, MessageRole.FAULT, HttpConstants.CONTENT_TYPE_JSON, bytes);
 					return pr.getMessage_throwParseException();
+					
+				case BINARY:
+					// Viene usato per l'opzione None dove viene ritornato solamente il return code
+					pr = this.msgFactory.createMessage(messageType, MessageRole.FAULT,null, null);
+					return  this.msgFactory.createEmptyMessage(messageType, MessageRole.FAULT);
 
 				default:
 				
@@ -618,7 +623,7 @@ public class ErroreApplicativoBuilder implements org.openspcoop2.protocol.sdk.bu
 					// ELEMENT RISPOSTA APPLICATIVA ERRORE			
 					SOAPElement rispostaApplicativaElement = this._buildErroreApplicativo_SoapElement(eccezioneProtocollo, eccezioneIntegrazione);
 
-					OpenSPCoop2Message responseMessageError = this.msgFactory.createMessage(messageType,MessageRole.FAULT);
+					OpenSPCoop2Message responseMessageError = this.msgFactory.createEmptyMessage(messageType,MessageRole.FAULT);
 					OpenSPCoop2SoapMessage soapMessageError = responseMessageError.castAsSoap();
 					SOAPBody soapBody = soapMessageError.getSOAPBody();
 					SOAPFaultCode code = null;
