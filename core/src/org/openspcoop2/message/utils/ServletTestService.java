@@ -207,6 +207,27 @@ public class ServletTestService extends HttpServlet {
 			
 			
 			
+			// opzione returnHttpHeader
+			String returnHeaderString = req.getParameter("returnHttpHeader");
+			String returnHeaderKey = null; 
+			String returnHeaderValue = null;
+			if(returnHeaderString!=null){
+				returnHeaderString = returnHeaderString.trim();
+				if(returnHeaderString.contains(":")==false){
+					throw new ServletException("Ricevuta una richiesta di generazione header di risposta non conforme (pattern nome:valore)");
+				}
+				String [] split = returnHeaderString.split(":");
+				if(split==null){
+					throw new ServletException("Ricevuta una richiesta di generazione header di risposta non conforme (pattern nome:valore) (split null)");
+				}
+				if(split.length!=2){
+					throw new ServletException("Ricevuta una richiesta di generazione header di risposta non conforme (pattern nome:valore) (split:"+split.length+")");
+				}
+				returnHeaderKey = split[0];
+				returnHeaderValue = split[1];	
+			}
+			
+			
 			
 			
 			// opzioni save msg
@@ -367,6 +388,10 @@ public class ServletTestService extends HttpServlet {
 				soapMsg.setFaultCode(f, SOAPFaultCode.Receiver, qName);
 	            f.setFaultActor(faultActor);
 				
+	            if(returnHeaderKey!=null && returnHeaderValue!=null){
+	            	res.setHeader(returnHeaderKey,returnHeaderValue);
+	            }
+	            
 	            msg.saveChanges();
 				res.setContentType(msg.getContentType());
 				
@@ -378,6 +403,10 @@ public class ServletTestService extends HttpServlet {
 			}else{
 				
 				if(oneway){
+					
+		            if(returnHeaderKey!=null && returnHeaderValue!=null){
+		            	res.setHeader(returnHeaderKey,returnHeaderValue);
+		            }
 					
 					res.setStatus(returnCode);
 					
@@ -464,6 +493,11 @@ public class ServletTestService extends HttpServlet {
 						}
 					}
 				}
+				
+				// Return Header
+	            if(returnHeaderKey!=null && returnHeaderValue!=null){
+	            	res.setHeader(returnHeaderKey,returnHeaderValue);
+	            }
 				
 				// contentType
 				res.setContentType(contentTypeRisposta);
