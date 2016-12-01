@@ -53,12 +53,12 @@ public class CostantiTestSuite {
 	
 	
 	/** Porte Delegate per il test dei profili di collaborazione: OneWay */
-	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATEFUL_NON_AUTENTICATO="PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYOnewayStateful/notifica";
-	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATELESS_NON_AUTENTICATO="PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYOnewayStateless/notifica";
+	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATEFUL_NON_AUTENTICATO="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStateful/notifica";
+	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATELESS_NON_AUTENTICATO="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStateless/notifica";
 	
 	/** Porte Delegate per il test dei profili di collaborazione: Sincrono */
-	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATEFUL_NON_AUTENTICATO="PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYSincronoStateful/aggiornamento";
-	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATELESS_NON_AUTENTICATO="PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYSincronoStateless/aggiornamento";
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATEFUL_NON_AUTENTICATO="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStateful/aggiornamento";
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATELESS_NON_AUTENTICATO="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStateless/aggiornamento";
 
 	
 	/**
@@ -71,55 +71,58 @@ public class CostantiTestSuite {
 
 	
 	/** Porte Delegate per il test dei profili di collaborazione: OneWay Autenticato */
-	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATEFUL_AUTENTICATO="PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYOnewayStatefulAutenticato/notifica";
-	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATELESS_AUTENTICATO="PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYOnewayStatelessAutenticato/notifica";
+	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATEFUL_AUTENTICATO="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStatefulAutenticato/notifica";
+	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATELESS_AUTENTICATO="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStatelessAutenticato/notifica";
 	
 	/** Porte Delegate per il test dei profili di collaborazione: Sincrono Autenticato */
-	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATEFUL_AUTENTICATO="PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYSincronoStatefulAutenticato/aggiornamento";
-	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATELESS_AUTENTICATO="PROXYMinisteroFruitore/PROXYMinisteroErogatoreEsterno/PROXYSincronoStatelessAutenticato/aggiornamento";
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATEFUL_AUTENTICATO="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStatefulAutenticato/aggiornamento";
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATELESS_AUTENTICATO="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStatelessAutenticato/aggiornamento";
 
 	/** Porte Delegate per il test dei profili di collaborazione: OneWay Local Forward */
-	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATEFUL_LOCAL_FORWARD="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYOnewayStatefulLocalForward/notificaLocalForward";
-	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATELESS_LOCAL_FORWARD="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYOnewayStatelessLocalForward/notificaLocalForward";
+	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATEFUL_LOCAL_FORWARD="APIMinisteroFruitore/APIMinisteroErogatore/SOAPOnewayStatefulLocalForward/notificaLocalForward";
+	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATELESS_LOCAL_FORWARD="APIMinisteroFruitore/APIMinisteroErogatore/SOAPOnewayStatelessLocalForward/notificaLocalForward";
 
 	/** Porte Delegate per il test dei profili di collaborazione: Sincrono Local Forward */
-	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATEFUL_LOCAL_FORWARD="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYSincronoStatefulLocalForward/aggiornamentoLocalForward";
-	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATELESS_LOCAL_FORWARD="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYSincronoStatelessLocalForward/aggiornamentoLocalForward";
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATEFUL_LOCAL_FORWARD="APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatefulLocalForward/aggiornamentoLocalForward";
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATELESS_LOCAL_FORWARD="APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatelessLocalForward/aggiornamentoLocalForward";
 
 	/** Porte Delegate per il test dei profili di collaborazione: OneWay Stateful SOAP Fault */
-	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATEFUL_FAULT11_200="PROXYClientSoapFault11/PROXYMinisteroErogatoreEsterno/PROXYOnewayStateful";
-	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATEFUL_FAULT12_200="PROXYClientSoapFault12/PROXYMinisteroErogatoreEsterno/PROXYOnewayStateful";
-	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATEFUL_FAULT11_500="PROXYClientSoapFault11500/PROXYMinisteroErogatoreEsterno/PROXYOnewayStateful";
-	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATEFUL_FAULT12_500="PROXYClientSoapFault12500/PROXYMinisteroErogatoreEsterno/PROXYOnewayStateful";
+	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATEFUL_FAULT11_200="PROXYClientSoapFault11/APIMinisteroErogatoreEsterno/SOAPOnewayStateful";
+	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATEFUL_FAULT12_200="PROXYClientSoapFault12/APIMinisteroErogatoreEsterno/SOAPOnewayStateful";
+	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATEFUL_FAULT11_500="PROXYClientSoapFault11500/APIMinisteroErogatoreEsterno/SOAPOnewayStateful";
+	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATEFUL_FAULT12_500="PROXYClientSoapFault12500/APIMinisteroErogatoreEsterno/SOAPOnewayStateful";
 
 	/** Porte Delegate per il test dei profili di collaborazione: Sincrono Stateful SOAP Fault */
-	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATEFUL_FAULT11_200="PROXYClientSoapFault11/PROXYMinisteroErogatoreEsterno/PROXYSincronoStateful";
-	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATEFUL_FAULT12_200="PROXYClientSoapFault12/PROXYMinisteroErogatoreEsterno/PROXYSincronoStateful";
-	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATEFUL_FAULT11_500="PROXYClientSoapFault11500/PROXYMinisteroErogatoreEsterno/PROXYSincronoStateful";
-	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATEFUL_FAULT12_500="PROXYClientSoapFault12500/PROXYMinisteroErogatoreEsterno/PROXYSincronoStateful";
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATEFUL_FAULT11_200="PROXYClientSoapFault11/APIMinisteroErogatoreEsterno/SOAPSincronoStateful";
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATEFUL_FAULT12_200="PROXYClientSoapFault12/APIMinisteroErogatoreEsterno/SOAPSincronoStateful";
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATEFUL_FAULT11_500="PROXYClientSoapFault11500/APIMinisteroErogatoreEsterno/SOAPSincronoStateful";
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATEFUL_FAULT12_500="PROXYClientSoapFault12500/APIMinisteroErogatoreEsterno/SOAPSincronoStateful";
 	
 	/** Porte Delegate per il test dei profili di collaborazione: OneWay Stateless SOAP Fault */
-	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATELESS_FAULT11_200="PROXYClientSoapFault11/PROXYMinisteroErogatoreEsterno/PROXYOnewayStateless";
-	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATELESS_FAULT12_200="PROXYClientSoapFault12/PROXYMinisteroErogatoreEsterno/PROXYOnewayStateless";
-	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATELESS_FAULT11_500="PROXYClientSoapFault11500/PROXYMinisteroErogatoreEsterno/PROXYOnewayStateless";
-	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATELESS_FAULT12_500="PROXYClientSoapFault12500/PROXYMinisteroErogatoreEsterno/PROXYOnewayStateless";
+	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATELESS_FAULT11_200="PROXYClientSoapFault11/APIMinisteroErogatoreEsterno/SOAPOnewayStateless";
+	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATELESS_FAULT12_200="PROXYClientSoapFault12/APIMinisteroErogatoreEsterno/SOAPOnewayStateless";
+	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATELESS_FAULT11_500="PROXYClientSoapFault11500/APIMinisteroErogatoreEsterno/SOAPOnewayStateless";
+	public static final String PORTA_DELEGATA_PROFILO_ONEWAY_STATELESS_FAULT12_500="PROXYClientSoapFault12500/APIMinisteroErogatoreEsterno/SOAPOnewayStateless";
 
 	/** Porte Delegate per il test dei profili di collaborazione: Sincrono Stateless SOAP Fault */
-	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATELESS_FAULT11_200="PROXYClientSoapFault11/PROXYMinisteroErogatoreEsterno/PROXYSincronoStateless";
-	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATELESS_FAULT12_200="PROXYClientSoapFault12/PROXYMinisteroErogatoreEsterno/PROXYSincronoStateless";
-	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATELESS_FAULT11_500="PROXYClientSoapFault11500/PROXYMinisteroErogatoreEsterno/PROXYSincronoStateless";
-	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATELESS_FAULT12_500="PROXYClientSoapFault12500/PROXYMinisteroErogatoreEsterno/PROXYSincronoStateless";
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATELESS_FAULT11_200="PROXYClientSoapFault11/APIMinisteroErogatoreEsterno/SOAPSincronoStateless";
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATELESS_FAULT12_200="PROXYClientSoapFault12/APIMinisteroErogatoreEsterno/SOAPSincronoStateless";
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATELESS_FAULT11_500="PROXYClientSoapFault11500/APIMinisteroErogatoreEsterno/SOAPSincronoStateless";
+	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATELESS_FAULT12_500="PROXYClientSoapFault12500/APIMinisteroErogatoreEsterno/SOAPSincronoStateless";
 	
+	
+	/** Porte Delegate per il test dei profili di collaborazione: API */
+	public static final String PORTA_DELEGATA_REST_API="APIMinisteroFruitore/APIMinisteroErogatore/RESTAPI";
 	
 	
 	
 	/** Porte Applicative per il test dei profili di collaborazione: OneWay */
-	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATEFUL_NON_AUTENTICATO="PROXYMinisteroErogatore/PROXYOnewayStateful";
-	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATELESS_NON_AUTENTICATO="PROXYMinisteroErogatore/PROXYOnewayStateless";
+	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATEFUL_NON_AUTENTICATO="APIMinisteroErogatore/SOAPOnewayStateful";
+	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATELESS_NON_AUTENTICATO="APIMinisteroErogatore/SOAPOnewayStateless";
 	
 	/** Porte Applicative per il test dei profili di collaborazione: Sincrono */
-	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATEFUL_NON_AUTENTICATO="PROXYMinisteroErogatore/PROXYSincronoStateful";
-	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATELESS_NON_AUTENTICATO="PROXYMinisteroErogatore/PROXYSincronoStateless";
+	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATEFUL_NON_AUTENTICATO="APIMinisteroErogatore/SOAPSincronoStateful";
+	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATELESS_NON_AUTENTICATO="APIMinisteroErogatore/SOAPSincronoStateless";
 
 	
 	/**
@@ -132,124 +135,137 @@ public class CostantiTestSuite {
 
 	
 	/** Porte Applicative per il test dei profili di collaborazione: OneWay Stateful SOAP Fault */
-	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATEFUL_FAULT11_200="PROXYMinisteroErogatore/PROXYOneway/gestioneSOAPFault11Stateful";
-	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATEFUL_FAULT12_200="PROXYMinisteroErogatore/PROXYOneway/gestioneSOAPFault12Stateful";
-	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATEFUL_FAULT11_500="PROXYMinisteroErogatore/PROXYOneway/gestioneSOAPFault11500Stateful";
-	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATEFUL_FAULT12_500="PROXYMinisteroErogatore/PROXYOneway/gestioneSOAPFault12500Stateful";
+	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATEFUL_FAULT11_200="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault11Stateful";
+	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATEFUL_FAULT12_200="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault12Stateful";
+	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATEFUL_FAULT11_500="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault11500Stateful";
+	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATEFUL_FAULT12_500="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault12500Stateful";
 
 	/** Porte Applicative per il test dei profili di collaborazione: Sincrono Stateful SOAP Fault */
-	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATEFUL_FAULT11_200="PROXYMinisteroErogatore/PROXYSincrono/gestioneSOAPFault11Stateful";
-	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATEFUL_FAULT12_200="PROXYMinisteroErogatore/PROXYSincrono/gestioneSOAPFault12Stateful";
-	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATEFUL_FAULT11_500="PROXYMinisteroErogatore/PROXYSincrono/gestioneSOAPFault11500Stateful";
-	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATEFUL_FAULT12_500="PROXYMinisteroErogatore/PROXYSincrono/gestioneSOAPFault12500Stateful";
+	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATEFUL_FAULT11_200="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault11Stateful";
+	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATEFUL_FAULT12_200="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault12Stateful";
+	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATEFUL_FAULT11_500="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault11500Stateful";
+	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATEFUL_FAULT12_500="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault12500Stateful";
 	
 	/** Porte Applicative per il test dei profili di collaborazione: OneWay Stateless SOAP Fault */
-	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATELESS_FAULT11_200="PROXYMinisteroErogatore/PROXYOneway/gestioneSOAPFault11Stateless";
-	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATELESS_FAULT12_200="PROXYMinisteroErogatore/PROXYOneway/gestioneSOAPFault12Stateless";
-	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATELESS_FAULT11_500="PROXYMinisteroErogatore/PROXYOneway/gestioneSOAPFault11500Stateless";
-	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATELESS_FAULT12_500="PROXYMinisteroErogatore/PROXYOneway/gestioneSOAPFault12500Stateless";
+	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATELESS_FAULT11_200="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault11Stateless";
+	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATELESS_FAULT12_200="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault12Stateless";
+	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATELESS_FAULT11_500="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault11500Stateless";
+	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATELESS_FAULT12_500="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault12500Stateless";
 
 	/** Porte Applicative per il test dei profili di collaborazione: Sincrono Stateless SOAP Fault */
-	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATELESS_FAULT11_200="PROXYMinisteroErogatore/PROXYSincrono/gestioneSOAPFault11Stateless";
-	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATELESS_FAULT12_200="PROXYMinisteroErogatore/PROXYSincrono/gestioneSOAPFault12Stateless";
-	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATELESS_FAULT11_500="PROXYMinisteroErogatore/PROXYSincrono/gestioneSOAPFault11500Stateless";
-	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATELESS_FAULT12_500="PROXYMinisteroErogatore/PROXYSincrono/gestioneSOAPFault12500Stateless";
+	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATELESS_FAULT11_200="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault11Stateless";
+	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATELESS_FAULT12_200="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault12Stateless";
+	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATELESS_FAULT11_500="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault11500Stateless";
+	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATELESS_FAULT12_500="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault12500Stateless";
+	
+	
+	/** Porte Delegate per il test dei profili di collaborazione: API */
+	public static final String PORTA_APPLICATIVA_REST_API="APIMinisteroErogatore/RESTAPI";
+	
 	
 	
 		
-	/** ENTITA SPCOOP: Tipo Soggetto */
-	public static final String PROXY_TIPO_SOGGETTO="PROXY";
+	/** Tipo Soggetto */
+	public static final String PROXY_TIPO_SOGGETTO="API";
 	
 	
-	/** ENTITA SPCOOP: Nome Soggetto Fruitore */
+	/** Nome Soggetto Fruitore */
 	public static final String PROXY_NOME_SOGGETTO_FRUITORE_FAULT11500="ClientSoapFault11500";
-	/** ENTITA SPCOOP: Nome Soggetto Fruitore */
+	/** Nome Soggetto Fruitore */
 	public static final String PROXY_NOME_SOGGETTO_FRUITORE_FAULT11200="ClientSoapFault11";
-	/** ENTITA SPCOOP: Nome Soggetto Fruitore */
+	/** Nome Soggetto Fruitore */
 	public static final String PROXY_NOME_SOGGETTO_FRUITORE_FAULT12500="ClientSoapFault12500";
-	/** ENTITA SPCOOP: Nome Soggetto Fruitore */
+	/** Nome Soggetto Fruitore */
 	public static final String PROXY_NOME_SOGGETTO_FRUITORE_FAULT12200="ClientSoapFault12";
-	/** ENTITA SPCOOP: Nome Soggetto Fruitore */
+	/** Nome Soggetto Fruitore */
 	public static final String PROXY_NOME_SOGGETTO_FRUITORE="MinisteroFruitore";
-	/** ENTITA SPCOOP: Nome Soggetto Fruitore Anomino*/
+	/** Nome Soggetto Fruitore Anomino*/
 	public static final String PROXY_NOME_SOGGETTO_FRUITORE_ANONIMO="Anonimo";
-	/** ENTITA SPCOOP: Nome Soggetto Fruitore Anomino*/
+	/** Nome Soggetto Fruitore Anomino*/
 	public static final String PROXY_NOME_SOGGETTO_FRUITORE_AUTENTICATO_PORTA_APPLICATIVA="applicativoComunePisa";
-	/** ENTITA SPCOOP: IdPorta Soggetto Fruitore */
+	/** IdPorta Soggetto Fruitore */
 	public static final String PROXY_IDPORTA_SOGGETTO_FRUITORE_AUTENTICATO_PORTA_APPLICATIVA="applicativoComunePisaPdD";
-	/** ENTITA SPCOOP: IdPorta Soggetto Fruitore */
+	/** IdPorta Soggetto Fruitore */
 	public static final String PROXY_IDPORTA_SOGGETTO_FRUITORE="MinisteroFruitorePdD";
-	/** ENTITA SPCOOP: IdPorta Soggetto Fruitore */
+	/** IdPorta Soggetto Fruitore */
 	public static final String PROXY_IDPORTA_SOGGETTO_FRUITORE_FAULT11500="ClientSoapFault11500PdD";
-	/** ENTITA SPCOOP: IdPorta Soggetto Fruitore */
+	/** IdPorta Soggetto Fruitore */
 	public static final String PROXY_IDPORTA_SOGGETTO_FRUITORE_FAULT11200="ClientSoapFault11PdD";
-	/** ENTITA SPCOOP: IdPorta Soggetto Fruitore */
+	/** IdPorta Soggetto Fruitore */
 	public static final String PROXY_IDPORTA_SOGGETTO_FRUITORE_FAULT12500="ClientSoapFault12500PdD";
-	/** ENTITA SPCOOP: IdPorta Soggetto Fruitore */
+	/** IdPorta Soggetto Fruitore */
 	public static final String PROXY_IDPORTA_SOGGETTO_FRUITORE_FAULT12200="ClientSoapFault12PdD";
-	/** ENTITA SPCOOP: IdPorta Soggetto Fruitore */
+	/** IdPorta Soggetto Fruitore */
 	public static final String PROXY_IDPORTA_ANONIMO="AnonimoPdD";
 	
-	/** ENTITA SPCOOP: IDSoggetto */
+	/** IDSoggetto */
 	public static final IDSoggetto PROXY_SOGGETTO_FRUITORE_FAULT11500 = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_FRUITORE_FAULT11500, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_FRUITORE_FAULT11500);
-	/** ENTITA SPCOOP: IDSoggetto */
+	/** IDSoggetto */
 	public static final IDSoggetto PROXY_SOGGETTO_FRUITORE_FAULT11200 = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_FRUITORE_FAULT11200, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_FRUITORE_FAULT11200);
-	/** ENTITA SPCOOP: IDSoggetto */
+	/** IDSoggetto */
 	public static final IDSoggetto PROXY_SOGGETTO_FRUITORE_FAULT12500 = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_FRUITORE_FAULT12500, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_FRUITORE_FAULT12500);
-	/** ENTITA SPCOOP: IDSoggetto */
+	/** IDSoggetto */
 	public static final IDSoggetto PROXY_SOGGETTO_FRUITORE_FAULT12200 = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_FRUITORE_FAULT12200, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_FRUITORE_FAULT12200);
-	/** ENTITA SPCOOP: IDSoggetto */
+	/** IDSoggetto */
 	public static final IDSoggetto PROXY_SOGGETTO_FRUITORE = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_FRUITORE, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_FRUITORE);
-	/** ENTITA SPCOOP: IDSoggetto Anonimo*/
+	/** IDSoggetto Anonimo*/
 	public static final IDSoggetto PROXY_SOGGETTO_FRUITORE_ANONIMO = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_FRUITORE_ANONIMO, CostantiTestSuite.PROXY_IDPORTA_ANONIMO);
 		
-	/** ENTITA SPCOOP: IDSoggetto Autenticato Porta Applicativa */
+	/** IDSoggetto Autenticato Porta Applicativa */
 	public static final IDSoggetto PROXY_SOGGETTO_FRUITORE_AUTENTICATO_PORTA_APPLICATIVA= new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_FRUITORE_AUTENTICATO_PORTA_APPLICATIVA, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_FRUITORE_AUTENTICATO_PORTA_APPLICATIVA);
 		
-	/** ENTITA SPCOOP: Nome Soggetto Erogatore */
+	/** Nome Soggetto Erogatore */
 	public static final String PROXY_NOME_SOGGETTO_EROGATORE="MinisteroErogatore";
-	/** ENTITA SPCOOP: IdPorta Soggetto Erogatore */
+	/** IdPorta Soggetto Erogatore */
 	public static final String PROXY_IDPORTA_SOGGETTO_EROGATORE="MinisteroErogatorePdD";
-	/** ENTITA SPCOOP: IDSoggetto */
+	/** IDSoggetto */
 	public static final IDSoggetto PROXY_SOGGETTO_EROGATORE = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_EROGATORE, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_EROGATORE);
 	
-	/** ENTITA SPCOOP: Nome Soggetto Erogatore Esterno */
+	/** Nome Soggetto Erogatore Esterno */
 	public static final String PROXY_NOME_SOGGETTO_EROGATORE_ESTERNO="MinisteroErogatoreEsterno";
-	/** ENTITA SPCOOP: IdPorta Soggetto Erogatore Esterno */
+	/** IdPorta Soggetto Erogatore Esterno */
 	public static final String PROXY_IDPORTA_SOGGETTO_EROGATORE_ESTERNO="MinisteroErogatoreEsternoPdD";
-	/** ENTITA SPCOOP: IDSoggetto */
+	/** IDSoggetto */
 	public static final IDSoggetto PROXY_SOGGETTO_EROGATORE_ESTERNO = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_EROGATORE_ESTERNO, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_EROGATORE_ESTERNO);
 		
 	
 	
-	/** ENTITA SPCOOP: Versione Servizio */
+	/** Versione Servizio */
 	public static final Integer PROXY_VERSIONE_SERVIZIO_DEFAULT=1;
 	
 	
-	/** ENTITA SPCOOP: Tipo Servizio */
-	public static final String PROXY_TIPO_SERVIZIO="PROXY";
+	/** Tipo Servizio */
+	public static final String SOAP_TIPO_SERVIZIO="SOAP";
 	
-	/** ENTITA SPCOOP: Nome Servizio OneWay */
-	public static final String PROXY_NOME_SERVIZIO_ONEWAY="Oneway";
-	/** ENTITA SPCOOP: Nome Azione Affidabile del Servizio OneWay con notifica */
-	public static final String PROXY_SERVIZIO_ONEWAY_AZIONE_NOTIFICA="notifica";
+	/** Nome Servizio OneWay */
+	public static final String SOAP_NOME_SERVIZIO_ONEWAY="Oneway";
+	/** Nome Azione Affidabile del Servizio OneWay con notifica */
+	public static final String SOAP_SERVIZIO_ONEWAY_AZIONE_NOTIFICA="notifica";
 	
 
-	/** ENTITA SPCOOP: Nome Servizio Sincrono */
-	public static final String PROXY_NOME_SERVIZIO_SINCRONO="Sincrono";
-    /** ENTITA SPCOOP: Nome Azione Collaborazione del Servizio RichiestaStatoAvanzamento */
-    public static final String PROXY_SERVIZIO_SINCRONO_AZIONE_COLLABORAZIONE="Collaborazione";
-    /** ENTITA SPCOOP: Nome Azione WSSTimestamp del Servizio RichiestaStatoAvanzamento */
-    public static final String PROXY_SERVIZIO_SINCRONO_AZIONE_WSS_TIMESTAMP="WSSTimestamp";
+	/** Nome Servizio Sincrono */
+	public static final String SOAP_NOME_SERVIZIO_SINCRONO="Sincrono";
+    /** Nome Azione Collaborazione del Servizio RichiestaStatoAvanzamento */
+    public static final String SOAP_SERVIZIO_SINCRONO_AZIONE_COLLABORAZIONE="Collaborazione";
+    /** Nome Azione WSSTimestamp del Servizio RichiestaStatoAvanzamento */
+    public static final String SOAP_SERVIZIO_SINCRONO_AZIONE_WSS_TIMESTAMP="WSSTimestamp";
+    
+    
+    
+	/** Tipo Servizio */
+	public static final String REST_TIPO_SERVIZIO="REST";
    
+	
+	/** Nome Servizio API */
+	public static final String SOAP_NOME_SERVIZIO_API="API";
 	
 }

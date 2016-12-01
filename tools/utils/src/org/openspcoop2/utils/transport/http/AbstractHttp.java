@@ -21,29 +21,51 @@
 
 package org.openspcoop2.utils.transport.http;
 
+import java.util.Hashtable;
+import java.util.Map;
+
 /**
- * Classe che contiene la risposta http
+ * AbstractHttp
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author: apoli $
  * @version $Rev: 12237 $, $Date: 2016-10-04 11:41:45 +0200 (Tue, 04 Oct 2016) $
  */
-public class HttpResponseBody {
+public abstract class AbstractHttp {
 
-	byte[] response;
-	int resultHTTPOperation;
+	private String contentType;
+	private byte[] content;
+	private Map<String, String> headers = new Hashtable<String,String>();
 	
-	public byte[] getResponse() {
-		return this.response;
+	public byte[] getContent() {
+		return this.content;
 	}
-	public void setResponse(byte[] response) {
-		this.response = response;
+	public void setContent(byte[] content) {
+		this.content = content;
 	}
-	public int getResultHTTPOperation() {
-		return this.resultHTTPOperation;
+	
+	public void addHeader(String key,String value){
+		this.headers.put(key, value);
 	}
-	public void setResultHTTPOperation(int resultHTTPOperation) {
-		this.resultHTTPOperation = resultHTTPOperation;
+	public Map<String, String> getHeaders() {
+		return this.headers;
+	}
+	public String getHeader(String header) {
+		String v = this.headers.get(header);
+		if(v==null){
+			v = this.headers.get(header.toLowerCase());
+		}
+		if(v==null){
+			v = this.headers.get(header.toUpperCase());
+		}
+		return v;
+	}
+	
+	public String getContentType() {
+		return this.contentType;
+	}
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
 	}
 	
 }

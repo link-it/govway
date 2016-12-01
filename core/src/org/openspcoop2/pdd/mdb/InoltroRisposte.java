@@ -102,6 +102,7 @@ import org.openspcoop2.security.message.MessageSecurityContextParameters;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 
 
@@ -133,6 +134,7 @@ public class InoltroRisposte extends GenericLib{
 		/* PddContext */
 		PdDContext pddContext = inoltroRisposteMsg.getPddContext();
 		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, pddContext);
+		@SuppressWarnings("unused")
 		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		
 		/* Protocol Factory */
@@ -890,6 +892,8 @@ public class InoltroRisposte extends GenericLib{
 			}
 
 			// Carico connettore richiesto
+			@SuppressWarnings("unused")
+			Exception eInvokerNonSupportato = null;
 			if(invokerNonSupportato==false){
 				try{
 					connectorSender = (IConnettore) this.loader.newInstance(connectorClass);
@@ -897,6 +901,7 @@ public class InoltroRisposte extends GenericLib{
 				}catch(Exception e){
 					msgDiag.logErroreGenerico(e,"IConnettore.newInstance(tipo:"+tipoConnector+" class:"+connectorClass+")");
 					invokerNonSupportato = true;
+					eInvokerNonSupportato = e;
 				}
 				if( (invokerNonSupportato == false) && (connectorSender == null)){
 					msgDiag.logErroreGenerico("ConnectorSender is null","IConnettore.newInstance(tipo:"+tipoConnector+" class:"+connectorClass+")");
@@ -904,10 +909,30 @@ public class InoltroRisposte extends GenericLib{
 				}
 			}
 
+			// Imposto tipo di richiesta
+			HttpRequestMethod httpRequestMethod = null;
+			if(connectorSender!=null){
+				try{
+					if(connectorSender instanceof ConnettoreBaseHTTP){
+						ConnettoreBaseHTTP baseHttp = (ConnettoreBaseHTTP) connectorSender;
+						baseHttp.setHttpMethod(responseMessage);
+						
+						if(ServiceBinding.REST.equals(responseMessage.getServiceBinding())){
+							httpRequestMethod = baseHttp.getHttpMethod();
+						}
+					}
+				}catch(Exception e){
+					msgDiag.logErroreGenerico(e,"ConnettoreBaseHTTP.setHttpMethod(tipo:"+tipoConnector+" class:"+connectorClass+")");
+					invokerNonSupportato = true;
+					eInvokerNonSupportato = e;
+				}
+			}
+			
 			// Location
 			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connettoreMsg, busta, this.log);
 			if(location!=null){
-				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.buildLocationWithURLBasedParameter(responseMessage,  connettoreMsg.getPropertiesUrlBased(), location));
+				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(responseMessage, connettoreMsg.getPropertiesUrlBased(), location);
+				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, locationWithUrl));
 			}
 			else{
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, "N.D.");
@@ -990,13 +1015,7 @@ public class InoltroRisposte extends GenericLib{
 				if(tmpLocation!=null){
 					// aggiorno
 					location = tmpLocation;
-				
-					if(connectorSender instanceof ConnettoreBaseHTTP){
-						if(ServiceBinding.REST.equals(requestInfo.getServiceBinding())){
-							location = ConnettoreUtils.formatLocation(((ConnettoreBaseHTTP)connectorSender).getHttpMethod(), location);
-						}
-					}
-					msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, location);
+					msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, location));
 				}
 				
 				//	dump applicativo

@@ -125,8 +125,8 @@ public class PortaDelegata extends Porta {
 
 	public void testOneWayLocalForward(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
 		try{
-			this.collaborazioneTrasparenteBase.testOneWayLocalForward(data, msgDiagData,id, CostantiTestSuite.PROXY_TIPO_SERVIZIO,
-					CostantiTestSuite.PROXY_NOME_SERVIZIO_ONEWAY,checkServizioApplicativo);
+			this.collaborazioneTrasparenteBase.testOneWayLocalForward(data, msgDiagData,id, CostantiTestSuite.SOAP_TIPO_SERVIZIO,
+					CostantiTestSuite.SOAP_NOME_SERVIZIO_ONEWAY,checkServizioApplicativo);
 			
 		}catch(Exception e){
 			throw e;
@@ -147,8 +147,8 @@ public class PortaDelegata extends Porta {
 
 	public void testSincronoLocalForward(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
-			this.collaborazioneTrasparenteBase.testSincronoLocalForward(data, msgDiagData,id, CostantiTestSuite.PROXY_TIPO_SERVIZIO,
-					CostantiTestSuite.PROXY_NOME_SERVIZIO_SINCRONO, checkServizioApplicativo);
+			this.collaborazioneTrasparenteBase.testSincronoLocalForward(data, msgDiagData,id, CostantiTestSuite.SOAP_TIPO_SERVIZIO,
+					CostantiTestSuite.SOAP_NOME_SERVIZIO_SINCRONO, checkServizioApplicativo);
 		}catch(Exception e){
 			throw e;
 		}finally{

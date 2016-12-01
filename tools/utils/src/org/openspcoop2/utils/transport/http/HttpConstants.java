@@ -62,6 +62,18 @@ public class HttpConstants {
 	public final static String AUTHORIZATION = "Authorization";
 	public final static String AUTHORIZATION_PREFIX_BASIC = "Basic ";
 	
+	/** Download */
+	public final static String CONTENT_DISPOSITION = "Content-Disposition";
+	public final static String CONTENT_DISPOSITION_ATTACH_FILE_PREFIX = "attachment; filename=";
+	
+	/** Cache */
+	public final static String CACHE_STATUS_HTTP_1_1 = "Cache-Control";
+	public final static String CACHE_STATUS_HTTP_1_1_DISABLE_CACHE = "no-cache, no-store, must-revalidate";
+	public final static String CACHE_STATUS_HTTP_1_0 = "Pragma";
+	public final static String CACHE_STATUS_HTTP_1_0_DISABLE_CACHE = "no-cache";
+	public final static String CACHE_STATUS_PROXY_EXPIRES = "Expires";
+	public final static long CACHE_STATUS_PROXY_EXPIRES_DISABLE_CACHE = 0;
+	
 	/** Content Type */
 	public final static String CONTENT_TYPE_SOAP_1_1 = MimeTypeConstants.MEDIA_TYPE_SOAP_1_1;
 	public final static String CONTENT_TYPE_SOAP_1_2 = MimeTypeConstants.MEDIA_TYPE_SOAP_1_2;
@@ -74,6 +86,7 @@ public class HttpConstants {
 	public final static String CONTENT_TYPE_TEXT_XML = CONTENT_TYPE_SOAP_1_1;
 	public final static String CONTENT_TYPE_JSON = MimeTypeConstants.MEDIA_TYPE_JSON;
 	public final static String CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP = MimeTypeConstants.MEDIA_TYPE_OPENSPCOOP2_TUNNEL_SOAP;
+	public final static String CONTENT_TYPE_X_DOWNLOAD = "application/x-download";
 	
 	/** Content Type, Parameter */
 	public final static String CONTENT_TYPE_PARAMETER_CHARSET = "charset";

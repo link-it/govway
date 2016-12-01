@@ -29,11 +29,13 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 import org.apache.commons.io.input.CountingInputStream;
+import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
@@ -43,6 +45,7 @@ import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
 /**
  * ConnettoreBaseHTTP
@@ -59,9 +62,24 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBase {
 	protected InputStream isResponse = null;
 	
 	/** httpMethod */
-	protected String httpMethod = null;
-	public String getHttpMethod() {
+	protected HttpRequestMethod httpMethod = null;
+	public HttpRequestMethod getHttpMethod() {
 		return this.httpMethod;
+	}
+	public void setHttpMethod(OpenSPCoop2Message msg) throws ConnettoreException {
+		// HttpMethod
+		if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
+			this.httpMethod = HttpRequestMethod.POST;
+		}
+		else{
+			if(msg.getTransportRequestContext()==null || msg.getTransportRequestContext().getRequestType()==null){
+				throw new ConnettoreException("HttpRequestMethod non definito");
+			}
+			this.httpMethod = HttpRequestMethod.valueOf(msg.getTransportRequestContext().getRequestType().toUpperCase());
+			if(this.httpMethod==null){
+				throw new ConnettoreException("HttpRequestMethod sconosciuto ("+this.httpMethod+")");
+			}
+		}
 	}
 	
 	/** ContentType Risposta */

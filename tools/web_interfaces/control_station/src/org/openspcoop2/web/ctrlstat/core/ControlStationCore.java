@@ -84,7 +84,7 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.resources.ScriptInvoker;
 import org.openspcoop2.utils.transport.TransportUtils;
-import org.openspcoop2.utils.transport.http.HttpResponseBody;
+import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
@@ -900,16 +900,16 @@ public class ControlStationCore {
 				}
 				String urlWithParameters = TransportUtils.buildLocationWithURLBasedParameter(p, url);
 
-				HttpResponseBody response = HttpUtilities.getHTTPResponse(urlWithParameters, username, password);
+				HttpResponse response = HttpUtilities.getHTTPResponse(urlWithParameters, username, password);
 				if(response.getResultHTTPOperation()!=200){
 					String error = "[httpCode "+response.getResultHTTPOperation()+"]";
-					if(response.getResponse()!=null){
-						error+= " "+new String(response.getResponse());
+					if(response.getContent()!=null){
+						error+= " "+new String(response.getContent());
 					}
 					return error;
 				}
 				else{
-					return new String(response.getResponse());
+					return new String(response.getContent());
 				}
 			}
 			else {
@@ -948,16 +948,16 @@ public class ControlStationCore {
 				p.setProperty(CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_NAME, nomeAttributo);
 				String urlWithParameters = TransportUtils.buildLocationWithURLBasedParameter(p, url);
 				
-				HttpResponseBody response = HttpUtilities.getHTTPResponse(urlWithParameters, username, password);
+				HttpResponse response = HttpUtilities.getHTTPResponse(urlWithParameters, username, password);
 				if(response.getResultHTTPOperation()!=200){
 					String error = "[httpCode "+response.getResultHTTPOperation()+"]";
-					if(response.getResponse()!=null){
-						error+= " "+new String(response.getResponse());
+					if(response.getContent()!=null){
+						error+= " "+new String(response.getContent());
 					}
 					return error;
 				}
 				else{
-					return new String(response.getResponse());
+					return new String(response.getContent());
 				}
 			}
 			else {
@@ -989,11 +989,11 @@ public class ControlStationCore {
 				}
 				String urlWithParameters = TransportUtils.buildLocationWithURLBasedParameter(p, url);
 				
-				HttpResponseBody response = HttpUtilities.getHTTPResponse(urlWithParameters, username, password);
+				HttpResponse response = HttpUtilities.getHTTPResponse(urlWithParameters, username, password);
 				if(response.getResultHTTPOperation()!=200){
 					String error = "[httpCode "+response.getResultHTTPOperation()+"]";
-					if(response.getResponse()!=null){
-						error+= " "+new String(response.getResponse());
+					if(response.getContent()!=null){
+						error+= " "+new String(response.getContent());
 					}
 					throw new Exception(error);
 				}

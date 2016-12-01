@@ -32,6 +32,7 @@ import org.openspcoop2.message.rest.RestUtilities;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 
 /**
@@ -44,7 +45,7 @@ import org.slf4j.Logger;
  */
 public class ConnettoreUtils {
 
-	public static String formatLocation(String httpMethod, String location){
+	public static String formatLocation(HttpRequestMethod httpMethod, String location){
 		if(httpMethod!=null)
 			return location+" http-method:"+httpMethod;
 		else

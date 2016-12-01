@@ -147,6 +147,7 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.TransportResponseContext;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 
 
@@ -1626,11 +1627,31 @@ public class InoltroBuste extends GenericLib{
 					invokerNonSupportato = true;
 				}
 			}
+			
+			// Imposto tipo di richiesta
+			HttpRequestMethod httpRequestMethod = null;
+			if(connectorSender!=null){
+				try{
+					if(connectorSender instanceof ConnettoreBaseHTTP){
+						ConnettoreBaseHTTP baseHttp = (ConnettoreBaseHTTP) connectorSender;
+						baseHttp.setHttpMethod(requestMessage);
+						
+						if(ServiceBinding.REST.equals(requestMessage.getServiceBinding())){
+							httpRequestMethod = baseHttp.getHttpMethod();
+						}
+					}
+				}catch(Exception e){
+					msgDiag.logErroreGenerico(e,"ConnettoreBaseHTTP.setHttpMethod(tipo:"+tipoConnector+" class:"+connectorClass+")");
+					invokerNonSupportato = true;
+					eInvokerNonSupportato = e;
+				}
+			}
 
 			// Location
 			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connettoreMsg, bustaRichiesta, this.log);
 			if(location!=null){
-				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.buildLocationWithURLBasedParameter(requestMessage, connettoreMsg.getPropertiesUrlBased(), location));
+				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(requestMessage, connettoreMsg.getPropertiesUrlBased(), location);
+				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, locationWithUrl));
 			}
 			else{
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, "N.D.");
@@ -1816,7 +1837,8 @@ public class InoltroBuste extends GenericLib{
 			// L'handler puo' aggiornare le properties che contengono le proprieta' del connettore.
 			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connettoreMsg, bustaRichiesta, this.log);
 			if(location!=null){
-				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.buildLocationWithURLBasedParameter(requestMessage, connettoreMsg.getPropertiesUrlBased(), location));
+				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(requestMessage, connettoreMsg.getPropertiesUrlBased(), location);
+				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, locationWithUrl));
 			}
 			else{
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, "N.D.");
@@ -1980,13 +2002,7 @@ public class InoltroBuste extends GenericLib{
 					if(tmpLocation!=null){
 						// aggiorno
 						location = tmpLocation;
-					
-						if(connectorSender instanceof ConnettoreBaseHTTP){
-							if(ServiceBinding.REST.equals(requestInfo.getServiceBinding())){
-								location = ConnettoreUtils.formatLocation(((ConnettoreBaseHTTP)connectorSender).getHttpMethod(), location);
-							}
-						}
-						msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, location);
+						msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, location));
 					}
 				} catch (Exception e) {
 					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , "Analisi risposta fallita, "+e.getMessage() );

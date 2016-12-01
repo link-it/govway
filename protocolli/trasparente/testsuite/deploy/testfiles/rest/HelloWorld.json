@@ -1,0 +1,10 @@
+{
+  "example:operation": {
+    "-xmlns:example": "http://www.openspcoop2.org/example/",
+    "example:nominativo": [
+      "Rossi Mario, attivazione in corso",
+      "Andrea Verdi, disattivato"
+    ],
+    "example:idApplicativo": "223242424_32323_ABDKD_233"
+  }
+}

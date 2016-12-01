@@ -24,9 +24,13 @@ package org.openspcoop2.utils.transport.http;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -58,11 +62,7 @@ public class HttpUtilities {
 	/** TIMEOUT_READ (2 minuti) */
 	public static final int HTTP_READ_CONNECTION_TIMEOUT = 120000; 
 
-	
-	public final static String HEADER_X_DOWNLOAD = "application/x-download";
-	public final static String HEADER_CONTENT_DISPOSITION = "Content-Disposition";
-	public final static String HEADER_ATTACH_FILE = "attachment; filename=";
-	
+
 	public static void setOutputFile(HttpServletResponse response, boolean noCache, String fileName) throws UtilsException{
 		
 		// setto content-type e header per gestire il download lato client
@@ -78,11 +78,11 @@ public class HttpUtilities {
 				//System.out.println("CUSTOM ["+mimeType+"]");		
 			}
 			else{
-				mimeType = HEADER_X_DOWNLOAD;
+				mimeType = HttpConstants.CONTENT_TYPE_X_DOWNLOAD;
 			}
 		}
 		else{
-			mimeType = HEADER_X_DOWNLOAD;
+			mimeType = HttpConstants.CONTENT_TYPE_X_DOWNLOAD;
 		}
 		
 		setOutputFile(response, noCache, fileName, mimeType);
@@ -94,7 +94,7 @@ public class HttpUtilities {
 			response.setContentType(mimeType);
 		}
 
-		response.setHeader(HEADER_CONTENT_DISPOSITION, (new StringBuilder()).append(HEADER_ATTACH_FILE+"\"").append(fileName).append("\"").toString());
+		response.setHeader(HttpConstants.CONTENT_DISPOSITION, (new StringBuilder()).append(HttpConstants.CONTENT_DISPOSITION_ATTACH_FILE_PREFIX+"\"").append(fileName).append("\"").toString());
 		
 		// no cache
 		if(noCache){
@@ -106,14 +106,14 @@ public class HttpUtilities {
 	
 	
 	public static void setNoCache(HttpServletResponse response) throws UtilsException{
-		response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
-		response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
-		response.setDateHeader("Expires", 0); // Proxies.
+		response.setHeader(HttpConstants.CACHE_STATUS_HTTP_1_1, HttpConstants.CACHE_STATUS_HTTP_1_1_DISABLE_CACHE); // HTTP 1.1.
+		response.setHeader(HttpConstants.CACHE_STATUS_HTTP_1_0, HttpConstants.CACHE_STATUS_HTTP_1_0_DISABLE_CACHE); // HTTP 1.0.
+		response.setDateHeader(HttpConstants.CACHE_STATUS_PROXY_EXPIRES, HttpConstants.CACHE_STATUS_PROXY_EXPIRES_DISABLE_CACHE); // Proxies.
 	}
 	
 	
 	
-	public static void setChunkedStreamingMode(HttpURLConnection httpConn, int chunkLength, String httpMethod, String contentType) throws UtilsException{
+	public static void setChunkedStreamingMode(HttpURLConnection httpConn, int chunkLength, HttpRequestMethod httpMethod, String contentType) throws UtilsException{
 		
 		HttpBodyParameters params = new HttpBodyParameters(httpMethod, contentType);
 		
@@ -123,7 +123,7 @@ public class HttpUtilities {
 		}
 	}
 	
-	public static boolean isHttpBodyPermitted(boolean isRequest,String httpMethod, String contentType) throws UtilsException{
+	public static boolean isHttpBodyPermitted(boolean isRequest,HttpRequestMethod httpMethod, String contentType) throws UtilsException{
 		
 		HttpBodyParameters params = new HttpBodyParameters(httpMethod, contentType);
 		if(isRequest){
@@ -136,14 +136,14 @@ public class HttpUtilities {
 	}
 	
 
-	public static void setStream(HttpURLConnection httpConn, String httpMethod) throws UtilsException{
+	public static void setStream(HttpURLConnection httpConn, HttpRequestMethod httpMethod) throws UtilsException{
 		setStream(httpConn, httpMethod, null);
 	}
-	public static void setStream(HttpURLConnection httpConn, String httpMethod, String contentType) throws UtilsException{
+	public static void setStream(HttpURLConnection httpConn, HttpRequestMethod httpMethod, String contentType) throws UtilsException{
 		try{
 			HttpBodyParameters params = new HttpBodyParameters(httpMethod, contentType);
 						
-			httpConn.setRequestMethod(httpMethod);
+			httpConn.setRequestMethod(httpMethod.name());
 			if(params.isDoOutput()){
 				httpConn.setDoOutput(params.isDoOutput());
 			}
@@ -174,71 +174,155 @@ public class HttpUtilities {
 		return requestHTTPFile(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password);
 	}	
 	public static byte[] requestHTTPFile(String path,int readTimeout,int connectTimeout,String username,String password) throws UtilsException{
-		HttpResponseBody res = getHTTPResponse(path, readTimeout, connectTimeout, username, password);
-		return res.getResponse();
+		HttpResponse res = getHTTPResponse(path, readTimeout, connectTimeout, username, password);
+		return res.getContent();
 	}
-	public static HttpResponseBody getHTTPResponse(String path) throws UtilsException{
+	public static HttpResponse getHTTPResponse(String path) throws UtilsException{
 		return getHTTPResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, null, null);
 	}
-	public static HttpResponseBody getHTTPResponse(String path,int readTimeout,int connectTimeout) throws UtilsException{
+	public static HttpResponse getHTTPResponse(String path,int readTimeout,int connectTimeout) throws UtilsException{
 		return getHTTPResponse(path, readTimeout, connectTimeout, null, null);
 	}
-	public static HttpResponseBody getHTTPResponse(String path,String username,String password) throws UtilsException{
+	public static HttpResponse getHTTPResponse(String path,String username,String password) throws UtilsException{
 		return getHTTPResponse(path, HTTP_READ_CONNECTION_TIMEOUT, HTTP_CONNECTION_TIMEOUT, username, password);
 	}	
-	public static HttpResponseBody getHTTPResponse(String path,int readTimeout,int connectTimeout,String username,String password) throws UtilsException{
+	public static HttpResponse getHTTPResponse(String path,int readTimeout,int connectTimeout,String username,String password) throws UtilsException{
+		
+		HttpRequest httpRequest = new HttpRequest();
+		httpRequest.setUrl(path);
+		httpRequest.setReadTimeout(readTimeout);
+		httpRequest.setConnectTimeout(connectTimeout);
+		httpRequest.setUsername(username);
+		httpRequest.setPassword(password);
+		httpRequest.setMethod(HttpRequestMethod.GET);
+		
+		HttpResponse response = null;
+		try{
+			response = httpInvoke(httpRequest);
+			
+		}catch(Exception e){
+			throw new UtilsException("Utilities.requestHTTPFile error "+e.getMessage(),e);
+		}
+		if(response.getResultHTTPOperation()==404){
+			throw new UtilsException("404");
+		}
+		return response;
+		
+	}
+	
+	
+	public static HttpResponse httpInvoke(HttpRequest request) throws UtilsException{
 		InputStream is = null;
 		ByteArrayOutputStream outResponse = null;
 		try{
-			URL url = new URL(path);
+			if(request.getUrl()==null){
+				throw new UtilsException("Url required");
+			}
+			URL url = new URL(request.getUrl());
 			URLConnection connection = url.openConnection();
 			HttpURLConnection httpConn = (HttpURLConnection) connection;
 
-			httpConn.setConnectTimeout(connectTimeout);
-			httpConn.setReadTimeout(readTimeout);
+			if(request.getContentType()!=null){
+				httpConn.setRequestProperty(HttpConstants.CONTENT_TYPE,request.getContentType());
+			}
+			else if(request.getContent()!=null){
+				throw new UtilsException("Content required with ContentType");
+			}
 			
-			if(username!=null && password!=null){
-				String authentication = username + ":" + password;
-				authentication = "Basic " + 
+			httpConn.setConnectTimeout(request.getConnectTimeout());
+			httpConn.setReadTimeout(request.getReadTimeout());
+			
+			if(request.getUsername()!=null && request.getPassword()!=null){
+				String authentication = request.getUsername() + ":" + request.getPassword();
+				authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC + 
 				Base64.encode(authentication.getBytes());
-				httpConn.setRequestProperty("Authorization",authentication);
+				httpConn.setRequestProperty(HttpConstants.AUTHORIZATION,authentication);
 			}
 			
-			setStream(httpConn, "GET");
+			Map<String, String> requestHeaders = request.getHeaders();
+			if(requestHeaders!=null && requestHeaders.size()>0){
+				Iterator<String> itReq = requestHeaders.keySet().iterator();
+				while (itReq.hasNext()) {
+					String key = (String) itReq.next();
+					String value = request.getHeader(key);
+					httpConn.setRequestProperty(key,value);
+				}
+			}
+			
+			if(request.getMethod()==null){
+				throw new UtilsException("HttpMethod required");
+			}
+			setStream(httpConn, request.getMethod());
 
+			HttpBodyParameters httpContent = new  HttpBodyParameters(request.getMethod(), request.getContentType());
+			// Spedizione byte
+			if(httpContent.isDoOutput()){
+				OutputStream out = httpConn.getOutputStream();
+				out.write(request.getContent());
+				out.flush();
+				out.close();
+			}
+			
+			HttpResponse response = new HttpResponse();
+			
+			// Ricezione header
+			Map<String, List<String>> mapHeaderHttpResponse = httpConn.getHeaderFields();
+			if(mapHeaderHttpResponse!=null && mapHeaderHttpResponse.size()>0){
+				Iterator<String> itHttpResponse = mapHeaderHttpResponse.keySet().iterator();
+				while(itHttpResponse.hasNext()){
+					String keyHttpResponse = itHttpResponse.next();
+					List<String> valueHttpResponse = mapHeaderHttpResponse.get(keyHttpResponse);
+					StringBuffer bfHttpResponse = new StringBuffer();
+					for(int i=0;i<valueHttpResponse.size();i++){
+						if(i>0){
+							bfHttpResponse.append(",");
+						}
+						bfHttpResponse.append(valueHttpResponse.get(i));
+					}
+					if(keyHttpResponse==null){ // Check per evitare la coppia che ha come chiave null e come valore HTTP OK 200
+						keyHttpResponse=HttpConstants.RETURN_CODE;
+					}
+					response.addHeader(keyHttpResponse, bfHttpResponse.toString());
+				}
+			}
+			
+			// ContentType Risposta
+			if(response.getHeaders()!=null && response.getHeaders().size()>0){
+				response.setContentType(response.getHeader(HttpConstants.CONTENT_TYPE));
+			}
+			
+			// Ricezione Result HTTP Code
 			int resultHTTPOperation = httpConn.getResponseCode();
-			if(resultHTTPOperation==404){
-				throw new UtilsException("404");
-			}
-
+			response.setResultHTTPOperation(resultHTTPOperation);
+			
 			// Ricezione Risposta
-			outResponse = new ByteArrayOutputStream();
-			if(resultHTTPOperation>399){
-				is = httpConn.getErrorStream();
-				if(is==null){
-					is = httpConn.getInputStream();
-				}
-			}else{
-				is = httpConn.getInputStream();
-				if(is==null){
+			if(httpContent.isDoInput()){
+				outResponse = new ByteArrayOutputStream();
+				if(resultHTTPOperation>399){
 					is = httpConn.getErrorStream();
+					if(is==null){
+						is = httpConn.getInputStream();
+					}
+				}else{
+					is = httpConn.getInputStream();
+					if(is==null){
+						is = httpConn.getErrorStream();
+					}
 				}
+				byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
+				int readByte = 0;
+				while((readByte = is.read(readB))!= -1){
+					outResponse.write(readB,0,readByte);
+				}
+				is.close();
+				outResponse.flush();
+				outResponse.close();
+				response.setContent(outResponse.toByteArray());
 			}
-			byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
-			int readByte = 0;
-			while((readByte = is.read(readB))!= -1){
-				outResponse.write(readB,0,readByte);
-			}
-			is.close();
+				
 			// fine HTTP.
 			httpConn.disconnect();
-
-			byte[] xmlottenuto = outResponse.toByteArray();
-			outResponse.close();
-			
-			HttpResponseBody response = new HttpResponseBody();
-			response.setResponse(xmlottenuto);
-			response.setResultHTTPOperation(resultHTTPOperation);
+	
 			return response;
 		}catch(Exception e){
 			try{
@@ -249,10 +333,7 @@ public class HttpUtilities {
 				if(outResponse!=null)
 					outResponse.close();
 			}catch(Exception eis){}
-			if(e.getMessage()!=null && e.getMessage().contains("404"))
-				throw new UtilsException("404");
-			else
-				throw new UtilsException("Utilities.requestHTTPFile error "+e.getMessage(),e);
+			throw new UtilsException(e.getMessage(),e);
 		}
 	}
 
@@ -285,12 +366,12 @@ public class HttpUtilities {
 			
 			if(username!=null && password!=null){
 				String authentication = username + ":" + password;
-				authentication = "Basic " + 
+				authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC+ 
 				Base64.encode(authentication.getBytes());
-				httpConn.setRequestProperty("Authorization",authentication);
+				httpConn.setRequestProperty(HttpConstants.AUTHORIZATION,authentication);
 			}
 			
-			setStream(httpConn, "GET");
+			setStream(httpConn, HttpRequestMethod.GET);
 
 			int resultHTTPOperation = httpConn.getResponseCode();
 

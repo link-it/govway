@@ -226,8 +226,8 @@ public class Porta {
 
 	public void testOneWay(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
 		try{
-			this.collaborazioneTrasparenteBase.testOneWay(data, msgDiagData,id, CostantiTestSuite.PROXY_TIPO_SERVIZIO,
-					CostantiTestSuite.PROXY_NOME_SERVIZIO_ONEWAY,checkServizioApplicativo);
+			this.collaborazioneTrasparenteBase.testOneWay(data, msgDiagData,id, CostantiTestSuite.SOAP_TIPO_SERVIZIO,
+					CostantiTestSuite.SOAP_NOME_SERVIZIO_ONEWAY,checkServizioApplicativo);
 			
 		}catch(Exception e){
 			throw e;
@@ -243,8 +243,8 @@ public class Porta {
 
 	public void testOneWayFault500(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
 		try{
-			this.collaborazioneTrasparenteBaseFault500.testFaultOneWay(data, msgDiagData,id, CostantiTestSuite.PROXY_TIPO_SERVIZIO,
-					CostantiTestSuite.PROXY_NOME_SERVIZIO_ONEWAY,true, this.stateful,checkServizioApplicativo);
+			this.collaborazioneTrasparenteBaseFault500.testFaultOneWay(data, msgDiagData,id, CostantiTestSuite.SOAP_TIPO_SERVIZIO,
+					CostantiTestSuite.SOAP_NOME_SERVIZIO_ONEWAY,true, this.stateful,checkServizioApplicativo);
 			
 		}catch(Exception e){
 			throw e;
@@ -260,8 +260,8 @@ public class Porta {
 
 	public void testOneWayFault200(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo) throws Exception{
 		try{
-			this.collaborazioneTrasparenteBaseFault200.testFaultOneWay(data, msgDiagData,id, CostantiTestSuite.PROXY_TIPO_SERVIZIO,
-					CostantiTestSuite.PROXY_NOME_SERVIZIO_ONEWAY,false, this.stateful,checkServizioApplicativo);
+			this.collaborazioneTrasparenteBaseFault200.testFaultOneWay(data, msgDiagData,id, CostantiTestSuite.SOAP_TIPO_SERVIZIO,
+					CostantiTestSuite.SOAP_NOME_SERVIZIO_ONEWAY,false, this.stateful,checkServizioApplicativo);
 			
 		}catch(Exception e){
 			throw e;
@@ -277,8 +277,8 @@ public class Porta {
 
 	public void testOneWayAutenticato(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData, String id,boolean checkServizioApplicativo, Date date) throws Exception{
 		try{
-			this.collaborazioneTrasparenteBaseAutenticato.testOneWayAutenticato(data, msgDiagData,id, CostantiTestSuite.PROXY_TIPO_SERVIZIO,
-					CostantiTestSuite.PROXY_NOME_SERVIZIO_ONEWAY,checkServizioApplicativo, date);
+			this.collaborazioneTrasparenteBaseAutenticato.testOneWayAutenticato(data, msgDiagData,id, CostantiTestSuite.SOAP_TIPO_SERVIZIO,
+					CostantiTestSuite.SOAP_NOME_SERVIZIO_ONEWAY,checkServizioApplicativo, date);
 			
 		}catch(Exception e){
 			throw e;
@@ -321,8 +321,8 @@ public class Porta {
 
 	public void testSincrono(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
-			this.collaborazioneTrasparenteBase.testSincrono(data, msgDiagData,id, CostantiTestSuite.PROXY_TIPO_SERVIZIO,
-					CostantiTestSuite.PROXY_NOME_SERVIZIO_SINCRONO, checkServizioApplicativo);
+			this.collaborazioneTrasparenteBase.testSincrono(data, msgDiagData,id, CostantiTestSuite.SOAP_TIPO_SERVIZIO,
+					CostantiTestSuite.SOAP_NOME_SERVIZIO_SINCRONO, checkServizioApplicativo);
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -337,8 +337,8 @@ public class Porta {
 
 	public void testSincronoFault200(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
-			this.collaborazioneTrasparenteBaseFault200.testFaultSincrono(data, msgDiagData,id, CostantiTestSuite.PROXY_TIPO_SERVIZIO,
-					CostantiTestSuite.PROXY_NOME_SERVIZIO_SINCRONO, false, this.stateful);
+			this.collaborazioneTrasparenteBaseFault200.testFaultSincrono(data, msgDiagData,id, CostantiTestSuite.SOAP_TIPO_SERVIZIO,
+					CostantiTestSuite.SOAP_NOME_SERVIZIO_SINCRONO, false, this.stateful);
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -353,8 +353,8 @@ public class Porta {
 
 	public void testSincronoFault500(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData,String id,boolean checkServizioApplicativo) throws Exception{
 		try{
-			this.collaborazioneTrasparenteBaseFault500.testFaultSincrono(data, msgDiagData,id, CostantiTestSuite.PROXY_TIPO_SERVIZIO,
-					CostantiTestSuite.PROXY_NOME_SERVIZIO_SINCRONO, true, this.stateful);
+			this.collaborazioneTrasparenteBaseFault500.testFaultSincrono(data, msgDiagData,id, CostantiTestSuite.SOAP_TIPO_SERVIZIO,
+					CostantiTestSuite.SOAP_NOME_SERVIZIO_SINCRONO, true, this.stateful);
 		}catch(Exception e){
 			throw e;
 		}finally{
@@ -373,8 +373,8 @@ public class Porta {
 	
 	public void testSincronoAutenticato(DatabaseComponent data,DatabaseMsgDiagnosticiComponent msgDiagData,String id,boolean checkServizioApplicativo, Date date) throws Exception{
 		try{
-			this.collaborazioneTrasparenteBaseAutenticato.testSincronoAutenticato(data, msgDiagData,id, CostantiTestSuite.PROXY_TIPO_SERVIZIO,
-					CostantiTestSuite.PROXY_NOME_SERVIZIO_SINCRONO, checkServizioApplicativo, date);
+			this.collaborazioneTrasparenteBaseAutenticato.testSincronoAutenticato(data, msgDiagData,id, CostantiTestSuite.SOAP_TIPO_SERVIZIO,
+					CostantiTestSuite.SOAP_NOME_SERVIZIO_SINCRONO, checkServizioApplicativo, date);
 		}catch(Exception e){
 			throw e;
 		}finally{

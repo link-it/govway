@@ -55,7 +55,6 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpConstants;
-import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.transport.http.RFC2047Encoding;
 import org.openspcoop2.utils.transport.http.RFC2047Utilities;
@@ -365,18 +364,8 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			
 			
 			// HttpMethod
-			if(this.isSoap){
-				this.httpMethod = HttpRequestMethod.POST.name();
-			}
-			else{
-				if(this.requestMsg.getTransportRequestContext()==null || this.requestMsg.getTransportRequestContext().getRequestType()==null){
-					throw new Exception("HttpRequestMethod non definito");
-				}
-				this.httpMethod = this.requestMsg.getTransportRequestContext().getRequestType();
-				HttpRequestMethod method = HttpRequestMethod.valueOf(this.httpMethod.toUpperCase());
-				if(method==null){
-					throw new Exception("HttpRequestMethod sconosciuto ("+this.httpMethod+")");
-				}
+			if(this.httpMethod==null){
+				throw new Exception("HttpRequestMethod non definito");
 			}
 
 			

@@ -63,7 +63,6 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpConstants;
-import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.transport.http.RFC2047Encoding;
 import org.openspcoop2.utils.transport.http.RFC2047Utilities;
@@ -177,48 +176,42 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			else{
 				this.httpClient = ConnettoreHTTPCORE.getHttpClient(keepAliveStrategy);
 			}
-			HttpRequestBase httpRequest = null;
-			if(this.isSoap){
-				this.httpMethod = HttpRequestMethod.POST.name();
-				httpRequest = new HttpPost(url.toString());
+			
+			// HttpMethod
+			if(this.httpMethod==null){
+				throw new Exception("HttpRequestMethod non definito");
 			}
-			else{
-				if(this.requestMsg.getTransportRequestContext()==null || this.requestMsg.getTransportRequestContext().getRequestType()==null){
-					throw new Exception("HttpRequestMethod non definito");
-				}
-				this.httpMethod = this.requestMsg.getTransportRequestContext().getRequestType();
-				HttpRequestMethod method = HttpRequestMethod.valueOf(this.httpMethod.toUpperCase());
-				if(method==null){
-					throw new Exception("HttpRequestMethod sconosciuto ("+this.httpMethod+")");
-				}
-				switch (method) {
-					case GET:
-						httpRequest = new HttpGet(url.toString());
-						break;
-					case DELETE:
-						httpRequest = new HttpDelete(url.toString());
-						break;
-					case HEAD:
-						httpRequest = new HttpHead(url.toString());
-						break;
-					case POST:
-						httpRequest = new HttpPost(url.toString());
-						break;
-					case PUT:
-						httpRequest = new HttpPost(url.toString());
-						break;
-					case OPTIONS:
-						httpRequest = new HttpOptions(url.toString());
-						break;
-					case TRACE:
-						httpRequest = new HttpTrace(url.toString());
-						break;
-					case PATCH:
-						httpRequest = new HttpPatch(url.toString());
-						break;	
+			HttpRequestBase httpRequest = null;
+			switch (this.httpMethod) {
+				case GET:
+					httpRequest = new HttpGet(url.toString());
+					break;
+				case DELETE:
+					httpRequest = new HttpDelete(url.toString());
+					break;
+				case HEAD:
+					httpRequest = new HttpHead(url.toString());
+					break;
+				case POST:
+					httpRequest = new HttpPost(url.toString());
+					break;
+				case PUT:
+					httpRequest = new HttpPost(url.toString());
+					break;
+				case OPTIONS:
+					httpRequest = new HttpOptions(url.toString());
+					break;
+				case TRACE:
+					httpRequest = new HttpTrace(url.toString());
+					break;
+				case PATCH:
+					httpRequest = new HttpPatch(url.toString());
+					break;	
 				default:
 					break;
-				}
+			}
+			if(this.httpMethod==null){
+				throw new Exception("HttpRequest non definito ?");
 			}
 			RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
 			
