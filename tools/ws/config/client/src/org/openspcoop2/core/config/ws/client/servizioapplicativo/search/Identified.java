@@ -32,14 +32,14 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="identified">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="Soggetto"/>
- *     &lt;enumeration value="PortaDelegata"/>
- *     &lt;enumeration value="PortaApplicativa"/>
- *     &lt;enumeration value="ServizioApplicativo"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="identified"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *     &lt;enumeration value="Soggetto"/&gt;
+ *     &lt;enumeration value="PortaDelegata"/&gt;
+ *     &lt;enumeration value="PortaApplicativa"/&gt;
+ *     &lt;enumeration value="ServizioApplicativo"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  * 
  */

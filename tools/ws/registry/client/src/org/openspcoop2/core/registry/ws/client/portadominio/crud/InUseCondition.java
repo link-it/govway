@@ -26,6 +26,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -35,18 +36,18 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="in-use-condition">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="type" type="{http://www.openspcoop2.org/core/registry/management}identified" minOccurs="0"/>
- *         &lt;element name="id" type="{http://www.openspcoop2.org/core/registry/management}objectId" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="cause" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="in-use-condition"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="type" type="{http://www.openspcoop2.org/core/registry/management}identified" minOccurs="0"/&gt;
+ *         &lt;element name="id" type="{http://www.openspcoop2.org/core/registry/management}objectId" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="cause" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
@@ -61,6 +62,7 @@ import javax.xml.bind.annotation.XmlType;
 public class InUseCondition {
 
     protected String name;
+    @XmlSchemaType(name = "string")
     protected Identified type;
     protected List<ObjectId> id;
     @XmlElement(required = true)

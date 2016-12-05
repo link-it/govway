@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.openspcoop2.core.config.IdPortaApplicativa;
-import org.openspcoop2.core.config.IdSoggetto;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -46,8 +45,7 @@ import org.openspcoop2.core.config.ws.server.exception.ConfigNotImplementedExcep
 import org.openspcoop2.core.config.ws.server.exception.ConfigServiceException_Exception;
 import org.openspcoop2.core.config.ws.server.filter.SearchFilterPortaApplicativa;
 import org.openspcoop2.core.constants.CostantiDB;
-import org.openspcoop2.core.id.IDPortaApplicativaByNome;
-import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
@@ -82,32 +80,20 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 	
 
 	
-	private IDPortaApplicativaByNome convertToIdPortaApplicativa(IdPortaApplicativa id) throws DriverConfigurazioneException{
-		IDSoggetto idSoggettoProprietario = null;
-		if(id.getIdSoggetto()!=null){
-			idSoggettoProprietario = new IDSoggetto(id.getIdSoggetto().getTipoServizio(), id.getIdSoggetto().getNomeAzione());
-		}
-		return this.buildIDPortaApplicativa(id.getNome(), idSoggettoProprietario);
-	}
-	private IDPortaApplicativaByNome buildIDPortaApplicativa(String nome, IDSoggetto idSoggetto) throws DriverConfigurazioneException{
-		IDPortaApplicativaByNome idPortaApplicativa = new IDPortaApplicativaByNome();
-		idPortaApplicativa.setNomeAzione(nome);
-		idPortaApplicativa.setSoggettoErogatore(idSoggetto);
-		return idPortaApplicativa;
+	private IDPortaApplicativa convertToIdPortaApplicativa(IdPortaApplicativa id) throws DriverConfigurazioneException{
+		IDPortaApplicativa idPA = new IDPortaApplicativa();
+		idPA.setNome(id.getNome());
+		return idPA;
 	}
 
-	private IdPortaApplicativa convertToIdPortaApplicativaWS(IDPortaApplicativaByNome id) throws DriverConfigurazioneException{
+	private IdPortaApplicativa convertToIdPortaApplicativaWS(IDPortaApplicativa id) throws DriverConfigurazioneException{
 		IdPortaApplicativa idPortaApplicativa = new IdPortaApplicativa();
-		idPortaApplicativa.setNomeAzione(id.getNomeAzione());
-		IdSoggetto soggettoProprietario = new IdSoggetto();
-		soggettoProprietario.setTipoServizio(id.getSoggettoErogatore().getTipoServizio());
-		soggettoProprietario.setNomeAzione(id.getSoggettoErogatore().getNomeAzione());
-		idPortaApplicativa.setIdSoggetto(soggettoProprietario);
+		idPortaApplicativa.setNome(id.getNome());
 		return idPortaApplicativa;
 	}
 	
 	private List<IdPortaApplicativa> readPorteApplicativeIds(SearchFilterPortaApplicativa filter, boolean paginated) throws ServiceException, NotImplementedException, Exception{
-		List<IDPortaApplicativaByNome> listIds = this.readIds(filter, true);
+		List<IDPortaApplicativa> listIds = this.readIds(filter, true);
 		List<org.openspcoop2.core.config.IdPortaApplicativa> listIdsWS = new ArrayList<IdPortaApplicativa>();
 		for (int i = 0; i < listIds.size(); i++) {
 			listIdsWS.add(this.convertToIdPortaApplicativaWS(listIds.get(i)));
@@ -129,8 +115,8 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 		return (List<Long>) this.toList(filter, true, paginated);
 	}
 	@SuppressWarnings("unchecked")
-	private List<IDPortaApplicativaByNome> readIds(SearchFilterPortaApplicativa filter, boolean paginated) throws ServiceException, NotImplementedException, Exception{
-		return (List<IDPortaApplicativaByNome>) this.toList(filter, false, paginated);
+	private List<IDPortaApplicativa> readIds(SearchFilterPortaApplicativa filter, boolean paginated) throws ServiceException, NotImplementedException, Exception{
+		return (List<IDPortaApplicativa>) this.toList(filter, false, paginated);
 	}
 	private List<?> toList(SearchFilterPortaApplicativa filter, boolean idLong, boolean paginated) throws ServiceException, NotImplementedException, Exception{
 		
@@ -147,13 +133,9 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 			returnTypes.add(Long.class);
 		}
 		
-		if(!idLong || paginated){
-			sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE, "id_soggetto");
-			returnTypes.add(Long.class);
-			
+		if(!idLong || paginated){			
 			sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE, "nome_porta");
 			returnTypes.add(String.class);
-			
 		}
 		
 		
@@ -170,15 +152,12 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 			return listIds;
 		}
 		else{
-			List<IDPortaApplicativaByNome> listIds = new ArrayList<IDPortaApplicativaByNome>();
+			List<IDPortaApplicativa> listIds = new ArrayList<IDPortaApplicativa>();
 			for (List<Object> list : listaRisultati) {
-				Long idProprietario = (Long)list.get(0);
-				String name = (String)list.get(1);
-				IDSoggetto idSoggettoProprietario = null;
-				if(idProprietario!=null && idProprietario>0){
-					idSoggettoProprietario = driverDB.getIdSoggetto(idProprietario);
-				}
-				listIds.add(this.buildIDPortaApplicativa(name, idSoggettoProprietario));
+				String name = (String)list.get(0);
+				IDPortaApplicativa idPA = new IDPortaApplicativa();
+				idPA.setNome(name);
+				listIds.add(idPA);
 			}
 			return listIds;
 		}
@@ -307,9 +286,21 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 			}
 		}
 		if(filter.getAzione()!= null) {
+			if(filter.getAzione().getIdentificazione()!= null) {
+				sqlQueryObjectCondition.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".mode_azione=?");
+				paramTypes.add(new JDBCObject(filter.getAzione().getIdentificazione().getValue(),String.class));
+			}
+			if(filter.getAzione().getPattern()!= null) {
+				sqlQueryObjectCondition.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".pattern_azione=?");
+				paramTypes.add(new JDBCObject(filter.getAzione().getPattern(),String.class));
+			}
 			if(filter.getAzione().getNome()!= null) {
 				sqlQueryObjectCondition.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".azione=?");
 				paramTypes.add(new JDBCObject(filter.getAzione().getNome(),String.class));
+			}
+			if(filter.getAzione().getForceWsdlBased()!= null) {
+				sqlQueryObjectCondition.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".force_wsdl_based_azione=?");
+				paramTypes.add(new JDBCObject(filter.getAzione().getForceWsdlBased().getValue(),String.class));
 			}
 		}
 		
@@ -649,12 +640,8 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 				throw new DriverConfigurazioneNotFound("Porta Applicativa non esistente");
 			}
 			//obj.setSuperUser(ServerProperties.getInstance().getUser());
-			IDPortaApplicativaByNome idPA = this.convertToIdPortaApplicativa(oldId);
-			obj.setOldNomeForUpdate(idPA.getNomeAzione());
-			if(idPA.getSoggettoErogatore()!=null){
-				obj.setOldTipoSoggettoProprietarioForUpdate(idPA.getSoggettoErogatore().getTipoServizio());
-				obj.setOldNomeSoggettoProprietarioForUpdate(idPA.getSoggettoErogatore().getNomeAzione());
-			}
+			IDPortaApplicativa idPA = this.convertToIdPortaApplicativa(oldId);
+			obj.setOldNomeForUpdate(idPA.getNome());
 			((IDriverConfigurazioneCRUD)this.portaApplicativaService.getDriver()).updatePortaApplicativa(obj);
 			this.logEndMethod("update");
 			
@@ -683,12 +670,8 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 				((IDriverConfigurazioneCRUD)this.portaApplicativaService.getDriver()).createPortaApplicativa(obj);	
 			}else{
 				//obj.setSuperUser(ServerProperties.getInstance().getUser());
-				IDPortaApplicativaByNome idPA = this.convertToIdPortaApplicativa(oldId);
-				obj.setOldNomeForUpdate(idPA.getNomeAzione());
-				if(idPA.getSoggettoErogatore()!=null){
-					obj.setOldTipoSoggettoProprietarioForUpdate(idPA.getSoggettoErogatore().getTipoServizio());
-					obj.setOldNomeSoggettoProprietarioForUpdate(idPA.getSoggettoErogatore().getNomeAzione());
-				}
+				IDPortaApplicativa idPA = this.convertToIdPortaApplicativa(oldId);
+				obj.setOldNomeForUpdate(idPA.getNome());
 				((IDriverConfigurazioneCRUD)this.portaApplicativaService.getDriver()).updatePortaApplicativa(obj);
 			}
 			this.logEndMethod("updateOrCreate");
@@ -738,14 +721,14 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 			checkInitDriverConfigurazioneCRUD(this.portaApplicativaService);
 			this.logStartMethod("deleteAll");
 			this.authorize(false);
-			List<IDPortaApplicativaByNome> list = null; 
+			List<IDPortaApplicativa> list = null; 
 			try{
 				list = ((IDriverConfigurazioneGet)this.portaApplicativaService.getDriver()).getAllIdPorteApplicative(new FiltroRicercaPorteApplicative());
 			}catch(DriverConfigurazioneNotFound notFound){}
 			long result = 0;
 			if(list!=null && list.size()>0){
 				result = list.size();
-				for (IDPortaApplicativaByNome idPorta : list) {
+				for (IDPortaApplicativa idPorta : list) {
 					try{
 						((IDriverConfigurazioneCRUD)this.portaApplicativaService.getDriver()).
 							deletePortaApplicativa(((IDriverConfigurazioneGet)this.portaApplicativaService.getDriver()).getPortaApplicativa(idPorta));
@@ -774,11 +757,11 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 			checkInitDriverConfigurazioneCRUD(this.portaApplicativaService);
 			this.logStartMethod("deleteAllByFilter", filter);
 			this.authorize(false);
-			List<IDPortaApplicativaByNome> list = this.readIds(filter, true);
+			List<IDPortaApplicativa> list = this.readIds(filter, true);
 			long result = 0;
 			if(list!=null && list.size()>0){
 				result = list.size();
-				for (IDPortaApplicativaByNome idPorta : list) {
+				for (IDPortaApplicativa idPorta : list) {
 					try{
 						((IDriverConfigurazioneCRUD)this.portaApplicativaService.getDriver()).
 							deletePortaApplicativa(((IDriverConfigurazioneGet)this.portaApplicativaService.getDriver()).getPortaApplicativa(idPorta));

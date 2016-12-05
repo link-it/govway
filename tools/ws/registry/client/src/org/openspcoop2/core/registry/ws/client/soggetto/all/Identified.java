@@ -32,15 +32,15 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="identified">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="AccordoCooperazione"/>
- *     &lt;enumeration value="AccordoServizioParteComune"/>
- *     &lt;enumeration value="PortaDominio"/>
- *     &lt;enumeration value="Soggetto"/>
- *     &lt;enumeration value="AccordoServizioParteSpecifica"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="identified"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *     &lt;enumeration value="AccordoCooperazione"/&gt;
+ *     &lt;enumeration value="AccordoServizioParteComune"/&gt;
+ *     &lt;enumeration value="PortaDominio"/&gt;
+ *     &lt;enumeration value="Soggetto"/&gt;
+ *     &lt;enumeration value="AccordoServizioParteSpecifica"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  * 
  */

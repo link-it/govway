@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.openspcoop2.core.config.IdPortaDelegata;
-import org.openspcoop2.core.config.IdSoggetto;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -47,7 +46,6 @@ import org.openspcoop2.core.config.ws.server.exception.ConfigServiceException_Ex
 import org.openspcoop2.core.config.ws.server.filter.SearchFilterPortaDelegata;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDPortaDelegata;
-import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
@@ -84,26 +82,14 @@ public abstract class PortaDelegataImpl extends BaseImpl  implements PortaDelega
 	
 	
 	private IDPortaDelegata convertToIdPortaDelegata(IdPortaDelegata id) throws DriverConfigurazioneException{
-		IDSoggetto idSoggettoProprietario = null;
-		if(id.getIdSoggetto()!=null){
-			idSoggettoProprietario = new IDSoggetto(id.getIdSoggetto().getTipoServizio(), id.getIdSoggetto().getNomeAzione());
-		}
-		return this.buildIdPortaDelegata(id.getNome(), idSoggettoProprietario);
-	}
-	private IDPortaDelegata buildIdPortaDelegata(String nome, IDSoggetto idSoggetto) throws DriverConfigurazioneException{
-		IDPortaDelegata IdPortaDelegata = new IDPortaDelegata();
-		IdPortaDelegata.setLocationPD(nome);
-		IdPortaDelegata.setSoggettoFruitore(idSoggetto);
-		return IdPortaDelegata;
+		IDPortaDelegata idPD = new IDPortaDelegata();
+		idPD.setNome(id.getNome());
+		return idPD;
 	}
 
 	private IdPortaDelegata convertToIdPortaDelegataWS(IDPortaDelegata id) throws DriverConfigurazioneException{
 		IdPortaDelegata IdPortaDelegata = new IdPortaDelegata();
-		IdPortaDelegata.setNomeAzione(id.getLocationPD());
-		IdSoggetto soggettoProprietario = new IdSoggetto();
-		soggettoProprietario.setTipoServizio(id.getSoggettoFruitore().getTipoServizio());
-		soggettoProprietario.setNomeAzione(id.getSoggettoFruitore().getNomeAzione());
-		IdPortaDelegata.setIdSoggetto(soggettoProprietario);
+		IdPortaDelegata.setNome(id.getNome());
 		return IdPortaDelegata;
 	}
 	
@@ -149,12 +135,8 @@ public abstract class PortaDelegataImpl extends BaseImpl  implements PortaDelega
 		}
 		
 		if(!idLong || paginated){
-			sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE, "id_soggetto");
-			returnTypes.add(Long.class);
-			
 			sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE, "nome_porta");
 			returnTypes.add(String.class);
-			
 		}
 		
 		
@@ -173,13 +155,10 @@ public abstract class PortaDelegataImpl extends BaseImpl  implements PortaDelega
 		else{
 			List<IDPortaDelegata> listIds = new ArrayList<IDPortaDelegata>();
 			for (List<Object> list : listaRisultati) {
-				Long idProprietario = (Long)list.get(0);
-				String name = (String)list.get(1);
-				IDSoggetto idSoggettoProprietario = null;
-				if(idProprietario!=null && idProprietario>0){
-					idSoggettoProprietario = driverDB.getIdSoggetto(idProprietario);
-				}
-				listIds.add(this.buildIdPortaDelegata(name, idSoggettoProprietario));
+				String name = (String)list.get(0);
+				IDPortaDelegata idPD = new IDPortaDelegata();
+				idPD.setNome(name);
+				listIds.add(idPD);
 			}
 			return listIds;
 		}
@@ -297,14 +276,6 @@ public abstract class PortaDelegataImpl extends BaseImpl  implements PortaDelega
 		}
 		
 		if(filter.getSoggettoErogatore()!= null) {
-			if(filter.getSoggettoErogatore().getIdentificazione()!= null) {
-				sqlQueryObjectCondition.addWhereCondition(CostantiDB.PORTE_DELEGATE+".mode_soggetto_erogatore=?");
-				paramTypes.add(new JDBCObject(filter.getSoggettoErogatore().getIdentificazione().getValue(),String.class));
-			}
-			if(filter.getSoggettoErogatore().getPattern()!= null) {
-				sqlQueryObjectCondition.addWhereCondition(CostantiDB.PORTE_DELEGATE+".pattern_soggetto_erogatore=?");
-				paramTypes.add(new JDBCObject(filter.getSoggettoErogatore().getPattern(),String.class));
-			}
 			if(filter.getSoggettoErogatore().getTipo()!= null) {
 				sqlQueryObjectCondition.addWhereCondition(CostantiDB.PORTE_DELEGATE+".tipo_soggetto_erogatore=?");
 				paramTypes.add(new JDBCObject(filter.getSoggettoErogatore().getTipo(),String.class));
@@ -315,14 +286,6 @@ public abstract class PortaDelegataImpl extends BaseImpl  implements PortaDelega
 			}
 		}
 		if(filter.getServizio()!= null) {
-			if(filter.getServizio().getIdentificazione()!= null) {
-				sqlQueryObjectCondition.addWhereCondition(CostantiDB.PORTE_DELEGATE+".mode_servizio=?");
-				paramTypes.add(new JDBCObject(filter.getServizio().getIdentificazione().getValue(),String.class));
-			}
-			if(filter.getServizio().getPattern()!= null) {
-				sqlQueryObjectCondition.addWhereCondition(CostantiDB.PORTE_DELEGATE+".pattern_servizio=?");
-				paramTypes.add(new JDBCObject(filter.getServizio().getPattern(),String.class));
-			}
 			if(filter.getServizio().getTipo()!= null) {
 				sqlQueryObjectCondition.addWhereCondition(CostantiDB.PORTE_DELEGATE+".tipo_servizio=?");
 				paramTypes.add(new JDBCObject(filter.getServizio().getTipo(),String.class));
@@ -689,11 +652,7 @@ public abstract class PortaDelegataImpl extends BaseImpl  implements PortaDelega
 			}
 			//obj.setSuperUser(ServerProperties.getInstance().getUser());
 			IDPortaDelegata idPD = this.convertToIdPortaDelegata(oldId);
-			obj.setOldNomeForUpdate(idPD.getLocationPD());
-			if(idPD.getSoggettoFruitore()!=null){
-				obj.setOldTipoSoggettoProprietarioForUpdate(idPD.getSoggettoFruitore().getTipoServizio());
-				obj.setOldNomeSoggettoProprietarioForUpdate(idPD.getSoggettoFruitore().getNomeAzione());
-			}
+			obj.setOldNomeForUpdate(idPD.getNome());
 			((IDriverConfigurazioneCRUD)this.portaDelegataService.getDriver()).updatePortaDelegata(obj);
 			this.logEndMethod("update");
 			
@@ -723,11 +682,7 @@ public abstract class PortaDelegataImpl extends BaseImpl  implements PortaDelega
 			}else{
 				//obj.setSuperUser(ServerProperties.getInstance().getUser());
 				IDPortaDelegata idPD = this.convertToIdPortaDelegata(oldId);
-				obj.setOldNomeForUpdate(idPD.getLocationPD());
-				if(idPD.getSoggettoFruitore()!=null){
-					obj.setOldTipoSoggettoProprietarioForUpdate(idPD.getSoggettoFruitore().getTipoServizio());
-					obj.setOldNomeSoggettoProprietarioForUpdate(idPD.getSoggettoFruitore().getNomeAzione());
-				}
+				obj.setOldNomeForUpdate(idPD.getNome());
 				((IDriverConfigurazioneCRUD)this.portaDelegataService.getDriver()).updatePortaDelegata(obj);
 			}
 			this.logEndMethod("updateOrCreate");
