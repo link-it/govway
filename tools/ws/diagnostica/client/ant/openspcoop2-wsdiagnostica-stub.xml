@@ -19,7 +19,7 @@
 			<arg value="${stubOutputDir}" />
 			<arg value="-validate" />
 			<!-- <arg value="-defaultValues" /> siccome utilizzo l'api, non funziona per le enumerations ad esempio -->
-			<arg value="-client" />
+			<!-- <arg value="-impl" /> -->
 			<arg value="-impl" />
 			<arg value="-autoNameResolution" />
 			<arg value="-p" />

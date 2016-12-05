@@ -64,6 +64,7 @@
 	</path>
 	<path id="classpath_generateStub" >
 		<fileset dir="${required_lib}" >
+			<exclude name="shared/xercesImpl-2.11.0.jar"/>
 			<exclude name="**/axis14/*"/>
 			<exclude name="**/*README"/>
 			<exclude name="openspcoop2.userlibraries"/>

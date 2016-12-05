@@ -20,7 +20,7 @@
 			<arg value="-validate" />
 			<!-- <arg value="-defaultValues" /> siccome utilizzo l'api, non funziona per le enumerations ad esempio -->
 			<arg value="-client" />
-			<arg value="-impl" />
+			<!-- <arg value="-impl" /> -->
 			<arg value="-autoNameResolution" />
 			<arg value="-p" />
 			<arg value="http://www.openspcoop2.org/core/registry/management=${stubPackage}" />
