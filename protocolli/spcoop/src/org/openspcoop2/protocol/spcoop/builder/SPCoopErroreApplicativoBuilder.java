@@ -168,7 +168,7 @@ public class SPCoopErroreApplicativoBuilder extends ErroreApplicativoBuilder imp
 				idFunzione = eccezioneProtocollo.getIdFunzione();
 				codiceEccezione = super.traduttore.toString(eccezioneProtocollo.getEccezioneProtocollo().getCodiceEccezione(),
 						eccezioneProtocollo.getEccezioneProtocollo().getSubCodiceEccezione());
-				descrizioneEccezione = eccezioneProtocollo.getEccezioneProtocollo().getDescrizione(this.factory);
+				descrizioneEccezione = eccezioneProtocollo.getEccezioneProtocollo().getDescrizione(this.protocolFactory);
 				oraRegistrazione = eccezioneProtocollo.getOraRegistrazione();
 			}else{
 				idPorta = eccezioneIntegrazione.getDominioPorta().getCodicePorta();
@@ -176,7 +176,7 @@ public class SPCoopErroreApplicativoBuilder extends ErroreApplicativoBuilder imp
 				codiceEccezione = this.traduttore.toString(eccezioneIntegrazione.getErroreIntegrazione().getCodiceErrore(),
 						eccezioneIntegrazione.getProprieta().getFaultPrefixCode(),
 						eccezioneIntegrazione.getProprieta().isFaultAsGenericCode());
-				descrizioneEccezione = eccezioneIntegrazione.getProprieta().transformFaultMsg(eccezioneIntegrazione.getErroreIntegrazione(),this.factory);
+				descrizioneEccezione = eccezioneIntegrazione.getProprieta().transformFaultMsg(eccezioneIntegrazione.getErroreIntegrazione(),this.protocolFactory);
 				oraRegistrazione = eccezioneIntegrazione.getOraRegistrazione();
 			}
 			
@@ -257,15 +257,15 @@ public class SPCoopErroreApplicativoBuilder extends ErroreApplicativoBuilder imp
 			if( erroreApplicativo.getEccezione().getEccezioneBusta()!=null ){
 				eccezione = new EccezioneProtocolloBuilderParameters();
 				
-				CodiceErroreCooperazione codice = this.factory.createTraduttore().toCodiceErroreCooperazione(erroreApplicativo.getEccezione().getEccezioneBusta().getCodiceEccezione());
+				CodiceErroreCooperazione codice = this.protocolFactory.createTraduttore().toCodiceErroreCooperazione(erroreApplicativo.getEccezione().getEccezioneBusta().getCodiceEccezione());
 				ErroreCooperazione erroreCooperazione = new ErroreCooperazione(erroreApplicativo.getEccezione().getEccezioneBusta().getDescrizioneEccezione(), codice);
 				org.openspcoop2.protocol.sdk.Eccezione eccezioneProtocollo = 
-						new org.openspcoop2.protocol.sdk.Eccezione(erroreCooperazione,true,identificativoFunzione,this.factory);
+						new org.openspcoop2.protocol.sdk.Eccezione(erroreCooperazione,true,identificativoFunzione,this.protocolFactory);
 				((EccezioneProtocolloBuilderParameters)eccezione).setEccezioneProtocollo(eccezioneProtocollo);
 			}
 			else{
 				eccezione = new EccezioneIntegrazioneBuilderParameters();
-				CodiceErroreIntegrazione codice = this.factory.createTraduttore().toCodiceErroreIntegrazione(erroreApplicativo.getEccezione().getEccezioneProcessamento().getCodiceEccezione(),prefixCodiceErroreApplicativoIntegrazione);
+				CodiceErroreIntegrazione codice = this.protocolFactory.createTraduttore().toCodiceErroreIntegrazione(erroreApplicativo.getEccezione().getEccezioneProcessamento().getCodiceEccezione(),prefixCodiceErroreApplicativoIntegrazione);
 				ErroreIntegrazione erroreIntegrazione = new ErroreIntegrazione(erroreApplicativo.getEccezione().getEccezioneProcessamento().getDescrizioneEccezione(), codice);
 				((EccezioneIntegrazioneBuilderParameters)eccezione).setErroreIntegrazione(erroreIntegrazione);
 			}

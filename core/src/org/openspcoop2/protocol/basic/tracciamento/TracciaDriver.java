@@ -38,9 +38,11 @@ import javax.sql.DataSource;
 
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.basic.ProtocolliRegistrati;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiException;
 import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoException;
@@ -65,7 +67,7 @@ import org.slf4j.Logger;
  * @author $Author: apoli $
  * @version $Rev: 12237 $, $Date: 2016-10-04 11:41:45 +0200 (Tue, 04 Oct 2016) $
  */
-public class TracciaDriver implements ITracciaDriver {
+public class TracciaDriver extends BasicComponentFactory implements ITracciaDriver {
 
 	/** 
 	 * DataSource
@@ -81,8 +83,7 @@ public class TracciaDriver implements ITracciaDriver {
 	 */
 	String tipoDatabase = null;
 
-	/** Logger utilizzato per info. */
-	private Logger log = null;
+
 
 	public final static String IDTRACCIA = "@@@@@-----@@@@-----IDTRACCIA-DB----@@@@@-----@@@@";
 	
@@ -94,11 +95,10 @@ public class TracciaDriver implements ITracciaDriver {
 		this.properties = properties;
 	}
 	
-	protected IProtocolFactory<?> protocolFactory;
 	private ProtocolliRegistrati protocolliRegistrati;
-	public TracciaDriver(IProtocolFactory<?> factory){
-		this.log = factory.getLogger();
-		this.protocolFactory = factory;
+	
+	public TracciaDriver(IProtocolFactory<?> factory) throws ProtocolException{
+		super(factory);
 	}
 	
 	

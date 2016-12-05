@@ -61,6 +61,7 @@ import org.openspcoop2.core.registry.MessagePart;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.ServizioAzione;
 import org.openspcoop2.core.registry.constants.BindingStyle;
@@ -68,6 +69,7 @@ import org.openspcoop2.core.registry.constants.BindingUse;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.ProprietariDocumento;
+import org.openspcoop2.core.registry.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
@@ -814,7 +816,8 @@ public class DriverRegistroServiziDB_LIB {
 	 * @param soggetto
 	 * @throws DriverRegistroServiziException
 	 */
-	public static long CRUDSoggetto(int type, org.openspcoop2.core.registry.Soggetto soggetto, Connection con) throws DriverRegistroServiziException {
+	public static long CRUDSoggetto(int type, org.openspcoop2.core.registry.Soggetto soggetto, 
+			Connection con, String tipoDatabase) throws DriverRegistroServiziException {
 		if (soggetto == null)
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDSoggetto] Parametro non valido.");
 
@@ -922,6 +925,13 @@ public class DriverRegistroServiziDB_LIB {
 
 				selectRS.close();
 				selectStmt.close();
+				
+				
+				// ProtocolProperties
+				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.CREATE, soggetto.getProtocolPropertyList(), 
+						idSoggetto, ProprietariProtocolProperty.SOGGETTO, con, tipoDatabase);
+				
+				
 
 				break;
 
@@ -990,14 +1000,27 @@ public class DriverRegistroServiziDB_LIB {
 
 				DriverRegistroServiziDB_LIB.log.debug("CRUDSoggetto UPDATE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(updateQuery, nome, descizione, identificativoPorta, tipo, idSoggetto));
 
+				
+				// ProtocolProperties
+				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.UPDATE, soggetto.getProtocolPropertyList(), 
+						idSoggetto, ProprietariProtocolProperty.SOGGETTO, con, tipoDatabase);
+				
+				
 				break;
 
 			case DELETE:
+								
 				// DELETE
 				idSoggetto = DBUtils.getIdSoggetto(nome, tipo, con, DriverRegistroServiziDB_LIB.tipoDB);
 				idConnettore = DriverRegistroServiziDB_LIB.getIdConnettoreSoggetto(nome, tipo, con);
 				if (idSoggetto <= 0)
 					throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDSoggetto(DELETE)] Id Soggetto non valido.");
+				
+				// ProtocolProperties
+				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
+						idSoggetto, ProprietariProtocolProperty.SOGGETTO, con, tipoDatabase);
+				
+				// elimino il soggetto
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.SOGGETTI);
 				sqlQueryObject.addWhereCondition("id=?");
@@ -1314,6 +1337,11 @@ public class DriverRegistroServiziDB_LIB {
 				DriverRegistroServiziDB_LIB.CRUDDocumento(CostantiDB.CREATE, documenti, idServizio, ProprietariDocumento.servizio, con, tipoDatabase);
 				
 
+				// ProtocolProperties
+				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.CREATE, asps.getProtocolPropertyList(), 
+						idServizio, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA, con, tipoDB);
+				
+				
 				break;
 
 			case UPDATE:
@@ -1484,6 +1512,12 @@ public class DriverRegistroServiziDB_LIB {
 				// CRUD
 				DriverRegistroServiziDB_LIB.CRUDDocumento(CostantiDB.UPDATE, documenti, idServizio, ProprietariDocumento.servizio, con, tipoDatabase);
 				
+				
+				// ProtocolProperties
+				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.UPDATE, asps.getProtocolPropertyList(), 
+						idServizio, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA, con, tipoDB);
+				
+				
 				break;
 
 			case DELETE:
@@ -1523,6 +1557,12 @@ public class DriverRegistroServiziDB_LIB {
 				// Specifiche Livelli di Servizio
 				// Specifiche Sicurezza
 				DriverRegistroServiziDB_LIB.CRUDDocumento(CostantiDB.DELETE, null, idServizio, ProprietariDocumento.servizio, con, tipoDatabase);
+				
+				
+				// ProtocolProperties
+				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
+						idServizio, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA, con, tipoDB);
+				
 				
 				
 				// Delete servizio
@@ -1633,6 +1673,11 @@ public class DriverRegistroServiziDB_LIB {
 		wsdlImplementativoFruitore = wsdlImplementativoFruitore!=null && !"".equals(wsdlImplementativoFruitore.trim().replaceAll("\n", "")) ? wsdlImplementativoFruitore : null;
 		StatoFunzionalita clientAuth = fruitore.getClientAuth();
 
+		long idFruizione = 0;
+		if (CostantiDB.CREATE != type) {
+			idFruizione = DriverRegistroServiziDB_LIB.getIdFruizione(idServizio, nomeSoggetto, tipoSoggetto, con);
+		}
+		
 		long idConnettore = 0;
 		long n = 0;
 		try {
@@ -1702,6 +1747,15 @@ public class DriverRegistroServiziDB_LIB {
 				selectStmt.setLong(2, idSoggettoFruitore);
 				selectStmt.setLong(3, idConnettore);
 
+				selectRS = selectStmt.executeQuery();
+				if (selectRS.next())
+					idFruizione = selectRS.getLong("id");
+				
+				
+				// ProtocolProperties
+				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.UPDATE, fruitore.getProtocolPropertyList(), 
+						idFruizione, ProprietariProtocolProperty.FRUITORE, con, tipoDB);
+				
 				break;
 
 			case 2:
@@ -1763,10 +1817,20 @@ public class DriverRegistroServiziDB_LIB {
 				connettore.setNome(newNomeConnettore);
 				DriverRegistroServiziDB_LIB.log.debug("nuovo nome connettore ["+newNomeConnettore+"]");
 				DriverRegistroServiziDB_LIB.CRUDConnettore(2, connettore, con);
-
+				
+				
+				// ProtocolProperties
+				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.UPDATE, fruitore.getProtocolPropertyList(), 
+						idFruizione, ProprietariProtocolProperty.FRUITORE, con, tipoDB);
+				
 				break;
 
 			case 3:
+				
+				// ProtocolProperties
+				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
+						idFruizione, ProprietariProtocolProperty.FRUITORE, con, tipoDB);
+				
 				// delete
 				idConnettore = DriverRegistroServiziDB_LIB.getIdConnettoreServizioFruitore(idServizio, nomeSoggetto, tipoSoggetto, con);
 				connettore.setId(idConnettore);
@@ -1796,9 +1860,7 @@ public class DriverRegistroServiziDB_LIB {
 			DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoServizioParteSpecificaFruitore type = " + type + " row affected =" + n);
 
 			if (CostantiDB.CREATE == type) {
-				selectRS = selectStmt.executeQuery();
-				if (selectRS.next())
-					return selectRS.getLong("id");
+				return idFruizione;
 			}
 
 			return n;
@@ -2101,6 +2163,10 @@ public class DriverRegistroServiziDB_LIB {
 			case DELETE:
 				// delete
 
+				// ProtocolProperties
+				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
+						azione.getId(), ProprietariProtocolProperty.AZIONE_ACCORDO, con, tipoDB);
+				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.ACCORDI_AZIONI);
 				sqlQueryObject.addWhereCondition("id_accordo=?");
@@ -2126,6 +2192,11 @@ public class DriverRegistroServiziDB_LIB {
 				if (selectRS.next()) {
 
 					azione.setId(selectRS.getLong("id"));
+					
+					// ProtocolProperties
+					DriverRegistroServiziDB_LIB.CRUDProtocolProperty(type, azione.getProtocolPropertyList(), 
+							azione.getId(), ProprietariProtocolProperty.AZIONE_ACCORDO, con, tipoDB);
+					
 					return azione.getId();
 
 				}
@@ -2303,10 +2374,15 @@ public class DriverRegistroServiziDB_LIB {
 						throw new Exception("ID del porttype["+pt.getNome()+"] idAccordo["+idAccordo+"] non trovato");
 				}
 
+				// Operations
 				for(int i=0;i<pt.sizeAzioneList();i++){
 					DriverRegistroServiziDB_LIB.CRUDAzionePortType(CostantiDB.DELETE, as, pt, pt.getAzione(i), con, idPT);
 				}
 
+				// ProtocolProperties
+				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
+						idPT, ProprietariProtocolProperty.PORT_TYPE, con, tipoDB);
+				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORT_TYPE);
 				sqlQueryObject.addWhereCondition("id_accordo=?");
@@ -2360,6 +2436,11 @@ public class DriverRegistroServiziDB_LIB {
 					DriverRegistroServiziDB_LIB.CRUDAzionePortType(CostantiDB.CREATE,as,pt, azione, con, idPT);
 				}
 				DriverRegistroServiziDB_LIB.log.debug("inserite " + pt.sizeAzioneList() + " azioni relative al port type["+pt.getNome()+"] id-porttype["+pt.getId()+"] dell'accordo :" + IDAccordoFactory.getInstance().getUriFromAccordo(as) + " id-accordo :" + idAccordo);
+				
+				
+				// ProtocolProperties
+				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(type, pt.getProtocolPropertyList(), 
+						idPT, ProprietariProtocolProperty.PORT_TYPE, con, tipoDB);
 			}
 
 
@@ -2632,6 +2713,10 @@ public class DriverRegistroServiziDB_LIB {
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
 
+				// ProtocolProperties
+				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
+						azione.getId(), ProprietariProtocolProperty.OPERATION, con, tipoDB);
+				
 				// azioni
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORT_TYPE_AZIONI);
@@ -2662,6 +2747,10 @@ public class DriverRegistroServiziDB_LIB {
 					// creo message-part
 					DriverRegistroServiziDB_LIB.CRUDMessageAzionePortType(CostantiDB.CREATE, azione, con);
 
+					// ProtocolProperties
+					DriverRegistroServiziDB_LIB.CRUDProtocolProperty(type, azione.getProtocolPropertyList(), 
+							azione.getId(), ProprietariProtocolProperty.OPERATION, con, tipoDB);
+					
 					return azione.getId();
 
 				}
@@ -2907,6 +2996,54 @@ public class DriverRegistroServiziDB_LIB {
 		}
 	}
 
+	private static long getIdFruizione(long idServizio, String nomeSoggetto, String tipoSoggetto, Connection con) throws DriverRegistroServiziException {
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		long idFruizione = -1;
+		long idSoggetto;
+		try {
+
+			idSoggetto = DBUtils.getIdSoggetto(nomeSoggetto, tipoSoggetto, con, DriverRegistroServiziDB_LIB.tipoDB);
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addWhereCondition("id_servizio = ?");
+			sqlQueryObject.addWhereCondition("id_soggetto = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String query = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(query);
+			stm.setLong(1, idServizio);
+			stm.setLong(2, idSoggetto);
+
+			rs = stm.executeQuery();
+
+			if (rs.next()) {
+				idFruizione = rs.getLong("id");
+			}
+
+			return idFruizione;
+
+		} catch (CoreException e) {
+			DriverRegistroServiziDB_LIB.log.error("Errore Core: "+e.getMessage(),e);
+			throw new DriverRegistroServiziException(e);
+		} catch (SQLException e) {
+			DriverRegistroServiziDB_LIB.log.error("Errore SQL: "+e.getMessage(), e);
+			throw new DriverRegistroServiziException(e);
+		}catch (Exception e) {
+			DriverRegistroServiziDB_LIB.log.error("Errore Generico: "+e.getMessage(), e);
+			throw new DriverRegistroServiziException(e);
+		} finally {
+			try {
+				rs.close();
+				stm.close();
+			} catch (Exception e) {
+
+			}
+
+		}
+	}
+	
 	private static long getIdConnettoreServizioFruitore(long idServizio, String nomeSoggetto, String tipoSoggetto, Connection con) throws DriverRegistroServiziException {
 		PreparedStatement stm = null;
 		ResultSet rs = null;
@@ -4124,6 +4261,11 @@ public class DriverRegistroServiziDB_LIB {
 				// CRUD
 				DriverRegistroServiziDB_LIB.CRUDDocumento(CostantiDB.CREATE, documenti, idAccordoCooperazione, ProprietariDocumento.accordoCooperazione, con, tipoDatabase);
 				
+				
+				// ProtocolProperties
+				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.CREATE, accordoCooperazione.getProtocolPropertyList(), 
+						idAccordoCooperazione, ProprietariProtocolProperty.ACCORDO_COOPERAZIONE, con, tipoDatabase);
+				
 
 				break;
 
@@ -4311,6 +4453,12 @@ public class DriverRegistroServiziDB_LIB {
 				DriverRegistroServiziDB_LIB.CRUDDocumento(CostantiDB.UPDATE, documenti, idAccordoLong, ProprietariDocumento.accordoCooperazione, con,tipoDatabase);
 				
 				
+				// ProtocolProperties
+				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.UPDATE, accordoCooperazione.getProtocolPropertyList(), 
+						idAccordoLong, ProprietariProtocolProperty.ACCORDO_COOPERAZIONE, con, tipoDatabase);
+				
+				
+				
 				break;
 
 			case DELETE:
@@ -4349,6 +4497,12 @@ public class DriverRegistroServiziDB_LIB {
 				// Allegati
 				// Specifiche Semiformali
 				DriverRegistroServiziDB_LIB.CRUDDocumento(CostantiDB.DELETE, null, idAccordoLong, ProprietariDocumento.accordoCooperazione, con,tipoDatabase);
+				
+				
+				// ProtocolProperties
+				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
+						idAccordoLong, ProprietariProtocolProperty.ACCORDO_COOPERAZIONE, con, tipoDatabase);
+				
 				
 				// delete Accordo di Cooperazione
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
@@ -4589,5 +4743,505 @@ public class DriverRegistroServiziDB_LIB {
 	}
 	
 	
+
+	
+	
+	
+	
+
+	public static void CRUDProtocolProperty(int type, List<ProtocolProperty> listPP, long idProprietario,
+			ProprietariProtocolProperty tipologiaProprietarioProtocolProperty, Connection connection,
+			String tipoDatabase) throws DriverRegistroServiziException {
+		
+		// NOTA: l'update dei documenti, essendo mega di documenti non puo' essere implementata come delete + create
+		
+		PreparedStatement stm = null;
+		ResultSet rs=null;
+		String sqlQuery;
+
+		if((listPP == null) && (type!= CostantiDB.DELETE)) 
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDProtocolProperty] L'oggetto listPP non puo essere null");
+		if(idProprietario <= 0 ) 
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDProtocolProperty] id proprietario non definito");
+		
+		IJDBCAdapter jdbcAdapter = null;
+		
+		try {
+
+			jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(tipoDatabase);
+			
+			switch (type) {
+			case CREATE:
+
+				for(int i=0; i<listPP.size(); i++){
+				
+					ProtocolProperty protocolProperty = listPP.get(i);
+					if(protocolProperty.getName()==null || "".equals(protocolProperty.getName()))
+						throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDProtocolProperty] Nome non definito per protocolProperty ["+i+"]");
+					
+					int contenutiDefiniti = 0;
+					
+					boolean stringValue = protocolProperty.getValue()!=null && !"".equals(protocolProperty.getValue());
+					String contenutoString = null;
+					if(stringValue){
+						contenutiDefiniti++;
+						contenutoString = protocolProperty.getValue();
+					}
+					
+					boolean numberValue = protocolProperty.getNumberValue()!=null;
+					Long contenutoNumber = null;
+					if(numberValue){
+						contenutiDefiniti++;
+						contenutoNumber = protocolProperty.getNumberValue();
+					}
+					
+					boolean binaryValue = protocolProperty.getByteFile()!=null && protocolProperty.getByteFile().length>0;
+					byte[] contenutoBinario = null; 
+					if(binaryValue){
+						contenutiDefiniti++;
+						contenutoBinario = protocolProperty.getByteFile();
+						if(contenutoBinario.length<3){
+							String test = new String(contenutoBinario);
+							if("".equals(test.trim().replaceAll("\n", ""))){
+								// eliminare \n\n
+								contenutoBinario = null;	
+								binaryValue = false;
+								contenutiDefiniti--;
+							}
+						}
+					}
+					
+					if(!stringValue && !numberValue && !binaryValue){
+						throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDProtocolProperty] Contenuto non definito per protocolProperty ["+protocolProperty.getName()+"]");
+					}
+					if(contenutiDefiniti>1){
+						throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDProtocolProperty] Contenuto definito con più tipologie per protocolProperty ["+protocolProperty.getName()+
+								"] (string:"+stringValue+" number:"+numberValue+" binary:"+binaryValue+")");
+					}
+					
+					
+					// create
+					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+					sqlQueryObject.addInsertTable(CostantiDB.PROTOCOL_PROPERTIES);
+					sqlQueryObject.addInsertField("tipo_proprietario", "?");
+					sqlQueryObject.addInsertField("id_proprietario", "?");
+					sqlQueryObject.addInsertField("name", "?");
+					if(stringValue){
+						sqlQueryObject.addInsertField("value_string", "?");
+					}
+					if(numberValue){
+						sqlQueryObject.addInsertField("value_number", "?");
+					}
+					if(binaryValue){
+						sqlQueryObject.addInsertField("value_binary", "?");
+					}
+					sqlQuery = sqlQueryObject.createSQLInsert();
+					stm = connection.prepareStatement(sqlQuery);
+					int index = 1;
+					stm.setString(index++, tipologiaProprietarioProtocolProperty.name());
+					stm.setLong(index++, idProprietario);
+					stm.setString(index++, protocolProperty.getName());
+					String debug = null;
+					if(stringValue){
+						stm.setString(index++, contenutoString);
+						debug = contenutoString;
+					}
+					if(numberValue){
+						stm.setLong(index++, contenutoNumber);
+						debug = contenutoNumber+"";
+					}
+					if(binaryValue){
+						jdbcAdapter.setBinaryData(stm,index++,contenutoBinario);
+						debug = "BinaryData";
+					}
+					
+					DriverRegistroServiziDB_LIB.log.debug("CRUDProtocolProperty CREATE : \n" + DBUtils.
+							formatSQLString(sqlQuery, tipologiaProprietarioProtocolProperty.name(), idProprietario, protocolProperty.getName(), debug));
+	
+					int n = stm.executeUpdate();
+					stm.close();
+					DriverRegistroServiziDB_LIB.log.debug("Inserted " + n + " row(s)");
+		
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+					sqlQueryObject.addFromTable(CostantiDB.PROTOCOL_PROPERTIES);
+					sqlQueryObject.addSelectField("id");
+					sqlQueryObject.addWhereCondition("tipo_proprietario = ?");
+					sqlQueryObject.addWhereCondition("id_proprietario = ?");
+					sqlQueryObject.addWhereCondition("name = ?");
+					sqlQueryObject.setANDLogicOperator(true);
+					sqlQuery = sqlQueryObject.createSQLQuery();
+					stm = connection.prepareStatement(sqlQuery);
+					index = 1;
+					stm.setString(index++, tipologiaProprietarioProtocolProperty.name());
+					stm.setLong(index++, idProprietario);
+					stm.setString(index++, protocolProperty.getName());
+	
+					DriverRegistroServiziDB_LIB.log.debug("Recupero id inserito : \n" + DBUtils.
+							formatSQLString(sqlQuery, tipologiaProprietarioProtocolProperty.name(), idProprietario, protocolProperty.getName()));
+	
+					rs = stm.executeQuery();
+	
+					if (rs.next()) {
+						listPP.get(i).setId(rs.getLong("id"));
+					} else {
+						throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDProtocolProperty] Errore avvenuto durante il recupero dell'id dopo una create");
+					}
+	
+					rs.close();
+					stm.close();
+					
+				}
+				break;
+
+			case UPDATE:
+				
+				// Prelevo vecchia lista
+				List<ProtocolProperty> oldLista = null;
+				try{
+					oldLista = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idProprietario,tipologiaProprietarioProtocolProperty, connection, tipoDatabase);
+				}catch(DriverRegistroServiziNotFound dNotFound){
+					oldLista = new ArrayList<ProtocolProperty>();
+				}
+				
+				// Gestico la nuova immagine
+				for(int i=0; i<listPP.size(); i++){
+					
+					ProtocolProperty protocolProperty = listPP.get(i);
+					if(protocolProperty.getName()==null || "".equals(protocolProperty.getName()))
+						throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDProtocolProperty] Nome non definito per protocolProperty ["+i+"]");
+					
+					int contenutiDefiniti = 0;
+					
+					boolean stringValue = protocolProperty.getValue()!=null && !"".equals(protocolProperty.getValue());
+					String contenutoString = null;
+					if(stringValue){
+						contenutiDefiniti++;
+						contenutoString = protocolProperty.getValue();
+					}
+					
+					boolean numberValue = protocolProperty.getNumberValue()!=null;
+					Long contenutoNumber = null;
+					if(numberValue){
+						contenutiDefiniti++;
+						contenutoNumber = protocolProperty.getNumberValue();
+					}
+					
+					boolean binaryValue = protocolProperty.getByteFile()!=null && protocolProperty.getByteFile().length>0;
+					byte[] contenutoBinario = null; 
+					if(binaryValue){
+						contenutiDefiniti++;
+						contenutoBinario = protocolProperty.getByteFile();
+						if(contenutoBinario.length<3){
+							String test = new String(contenutoBinario);
+							if("".equals(test.trim().replaceAll("\n", ""))){
+								// eliminare \n\n
+								contenutoBinario = null;	
+								binaryValue = false;
+								contenutiDefiniti--;
+							}
+						}
+					}
+					
+					if(!stringValue && !numberValue && !binaryValue){
+						throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDProtocolProperty] Contenuto non definito per protocolProperty ["+protocolProperty.getName()+"]");
+					}
+					if(contenutiDefiniti>1){
+						throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDProtocolProperty] Contenuto definito con più tipologie per protocolProperty ["+protocolProperty.getName()+
+								"] (string:"+stringValue+" number:"+numberValue+" binary:"+binaryValue+")");
+					}
+					
+									
+					//if(doc.getId()<=0){
+					// Rileggo sempre id, puo' essere diverso (es. importato tramite sincronizzazioni)
+					protocolProperty.setId(DBUtils.getIdProtocolProperty(protocolProperty.getTipoProprietarioDocumento(), idProprietario,protocolProperty.getName(), 
+							connection, 
+							DriverRegistroServiziDB_LIB.tipoDB));
+					
+					// Assegno corretto idProprietario se id e' diverso (es. importato tramite sincronizzazioni)
+					protocolProperty.setIdProprietarioDocumento(idProprietario);
+					
+					boolean ppGiaPresente = false;
+					boolean ppDaAggiornare = false;
+					if(protocolProperty.getId()>0){
+						for(int j=0; j<oldLista.size(); j++){
+							ProtocolProperty old = oldLista.get(j);
+		
+							//System.out.println("OLD["+old.getId().longValue()+"]==ATTUALE["+doc.getId().longValue()+"] ("+((doc.getId().longValue() == old.getId().longValue()))+")");
+							if(protocolProperty.getId().longValue() == old.getId().longValue()){		
+									ppGiaPresente = true; // non devo fare una insert, ma una update...
+										
+									// rimuovo la vecchia immagine del documento dalla lista dei doc vecchi
+									oldLista.remove(j);
+									
+									ppDaAggiornare = true;
+							}
+						}
+					}
+
+					if(ppGiaPresente){
+						if(ppDaAggiornare){
+							// update
+							long idPP = protocolProperty.getId();
+							if(idPP<=0){
+								throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDProtocolProperty] ID non definito per documento da aggiorare ["+protocolProperty.getName()+"]");
+							}
+							ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+							sqlQueryObject.addUpdateTable(CostantiDB.PROTOCOL_PROPERTIES);
+							sqlQueryObject.addUpdateField("value_string", "?");
+							sqlQueryObject.addUpdateField("value_number", "?");
+							sqlQueryObject.addUpdateField("value_binary", "?");
+							sqlQueryObject.addWhereCondition("id=?");
+							sqlQuery = sqlQueryObject.createSQLUpdate();
+							stm = connection.prepareStatement(sqlQuery);
+							int index = 1;
+							stm.setString(index++, contenutoString);
+							stm.setLong(index++, contenutoNumber);
+							jdbcAdapter.setBinaryData(stm,index++,contenutoBinario);
+							stm.setLong(index++, idPP);
+							stm.executeUpdate();
+							stm.close();
+						}
+					}else{
+						// create
+						ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PROTOCOL_PROPERTIES);
+						sqlQueryObject.addInsertField("tipo_proprietario", "?");
+						sqlQueryObject.addInsertField("id_proprietario", "?");
+						sqlQueryObject.addInsertField("name", "?");
+						if(stringValue){
+							sqlQueryObject.addInsertField("value_string", "?");
+						}
+						if(numberValue){
+							sqlQueryObject.addInsertField("value_number", "?");
+						}
+						if(binaryValue){
+							sqlQueryObject.addInsertField("value_binary", "?");
+						}
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = connection.prepareStatement(sqlQuery);
+						int index = 1;
+						stm.setString(index++, tipologiaProprietarioProtocolProperty.name());
+						stm.setLong(index++, idProprietario);
+						stm.setString(index++, protocolProperty.getName());
+						String debug = null;
+						if(stringValue){
+							stm.setString(index++, contenutoString);
+							debug = contenutoString;
+						}
+						if(numberValue){
+							stm.setLong(index++, contenutoNumber);
+							debug = contenutoNumber+"";
+						}
+						if(binaryValue){
+							jdbcAdapter.setBinaryData(stm,index++,contenutoBinario);
+							debug = "BinaryData";
+						}
+						
+						DriverRegistroServiziDB_LIB.log.debug("CRUDProtocolProperty CREATE : \n" + DBUtils.
+								formatSQLString(sqlQuery, tipologiaProprietarioProtocolProperty.name(), idProprietario, protocolProperty.getName(), debug));
+		
+						int n = stm.executeUpdate();
+						stm.close();
+						DriverRegistroServiziDB_LIB.log.debug("Inserted " + n + " row(s)");
+			
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+						sqlQueryObject.addFromTable(CostantiDB.PROTOCOL_PROPERTIES);
+						sqlQueryObject.addSelectField("id");
+						sqlQueryObject.addWhereCondition("tipo_proprietario = ?");
+						sqlQueryObject.addWhereCondition("id_proprietario = ?");
+						sqlQueryObject.addWhereCondition("name = ?");
+						sqlQueryObject.setANDLogicOperator(true);
+						sqlQuery = sqlQueryObject.createSQLQuery();
+						stm = connection.prepareStatement(sqlQuery);
+						index = 1;
+						stm.setString(index++, tipologiaProprietarioProtocolProperty.name());
+						stm.setLong(index++, idProprietario);
+						stm.setString(index++, protocolProperty.getName());
+		
+						DriverRegistroServiziDB_LIB.log.debug("Recupero id inserito : \n" + DBUtils.
+								formatSQLString(sqlQuery, tipologiaProprietarioProtocolProperty.name(), idProprietario, protocolProperty.getName()));
+		
+						rs = stm.executeQuery();
+		
+						if (rs.next()) {
+							listPP.get(i).setId(rs.getLong("id"));
+						} else {
+							throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDProtocolProperty] Errore avvenuto durante il recupero dell'id dopo una create");
+						}
+		
+						rs.close();
+						stm.close();
+						
+					}
+					
+				}
+				
+				if(oldLista.size()>0){
+					// Qualche documento e' stato cancellato.
+					// Non e' piu' presente.
+					for(int j=0; j<oldLista.size(); j++){
+						ProtocolProperty old = oldLista.get(j);
+						
+						ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+						sqlQueryObject.addDeleteTable(CostantiDB.PROTOCOL_PROPERTIES);
+						sqlQueryObject.addWhereCondition("id=?");
+						sqlQuery = sqlQueryObject.createSQLDelete();
+						stm = connection.prepareStatement(sqlQuery);
+						stm.setLong(1, old.getId());
+						stm.executeUpdate();
+						stm.close();
+					}
+				}
+				
+				break;
+
+			case DELETE:
+				// delete
+				
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PROTOCOL_PROPERTIES);
+				sqlQueryObject.addWhereCondition("tipo_proprietario = ?");
+				sqlQueryObject.addWhereCondition("id_proprietario=?");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = connection.prepareStatement(sqlQuery);
+				stm.setString(1, tipologiaProprietarioProtocolProperty.name());
+				stm.setLong(2, idProprietario);
+				stm.executeUpdate();
+				stm.close();
+
+				DriverRegistroServiziDB_LIB.log.debug("CRUDDocumento DELETE : \n" + DBUtils.formatSQLString(sqlQuery, tipologiaProprietarioProtocolProperty.name(), idProprietario));
+
+				break;
+			}
+
+		} catch (SQLException se) {
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDDocumento] SQLException : " + se.getMessage(),se);
+		}catch (Exception se) {
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDDocumento] Exception : " + se.getMessage(),se);
+		} finally {
+			try {
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			} catch (Exception e) {
+			}
+		}
+	}
+	
+	
+	public static List<ProtocolProperty> getListaProtocolProperty(long idProprietario, ProprietariProtocolProperty tipologiaProprietario, 
+			Connection connection,
+			String tipoDatabase) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		
+		PreparedStatement stm = null;
+		ResultSet rs=null;
+		String sqlQuery;
+
+		if(idProprietario <= 0 ) 
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::getListaProtocolProperty] id proprietario non definito");
+		
+		try {
+		
+			List<ProtocolProperty> listPP = new ArrayList<ProtocolProperty>();
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PROTOCOL_PROPERTIES);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addWhereCondition("tipo_proprietario = ?");
+			sqlQueryObject.addWhereCondition("id_proprietario = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = connection.prepareStatement(sqlQuery);
+			stm.setString(1, tipologiaProprietario.name());
+			stm.setLong(2, idProprietario);
+			rs = stm.executeQuery();
+			
+			while(rs.next()){
+				ProtocolProperty pp = DriverRegistroServiziDB_LIB.getProtocolProperty(rs.getLong("id"), connection,tipoDatabase); 
+				listPP.add(pp);
+			}
+			
+			if(listPP.size()<=0)
+				throw new DriverRegistroServiziNotFound("ProtocolProperty con tipologiaProprietario["+tipologiaProprietario.name()+
+						"] e idProprietario["+idProprietario+"] non trovati");
+			
+			return listPP;
+
+		} catch (SQLException se) {
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::getListaProtocolProperty] SQLException : " + se.getMessage(),se);
+		}catch (DriverRegistroServiziNotFound dnf) {
+			throw dnf;
+		}catch (Exception se) {
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::getListaProtocolProperty] Exception : " + se.getMessage(),se);
+		} finally {
+			try {
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			} catch (Exception e) {
+			}
+		}
+	}
+	
+	public static ProtocolProperty getProtocolProperty(long id, Connection connection, String tipoDatabase) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		
+		PreparedStatement stm = null;
+		ResultSet rs=null;
+		String sqlQuery;
+
+		if(id <= 0 ) 
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::getProtocolProperty] id non definito");
+		
+		try {
+		
+			IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(tipoDatabase);
+				
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PROTOCOL_PROPERTIES);
+			sqlQueryObject.addSelectField("tipo_proprietario");
+			sqlQueryObject.addSelectField("id_proprietario");
+			sqlQueryObject.addSelectField("name");
+			sqlQueryObject.addSelectField("value_string");
+			sqlQueryObject.addSelectField("value_number");
+			sqlQueryObject.addSelectField("value_binary");
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addWhereCondition("id = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = connection.prepareStatement(sqlQuery);
+			stm.setLong(1, id);
+			rs = stm.executeQuery();
+			
+			ProtocolProperty pp = null;
+			if(rs.next()){
+				pp = new ProtocolProperty();
+				pp.setTipoProprietarioDocumento(rs.getString("tipo_proprietario"));
+				pp.setIdProprietarioDocumento(rs.getLong("id_proprietario"));
+				pp.setName(rs.getString("name"));
+				pp.setValue(rs.getString("value_string"));
+				pp.setNumberValue(rs.getLong("value_number"));
+				pp.setByteFile(jdbcAdapter.getBinaryData(rs,"value_binary"));
+				pp.setId(rs.getLong("id"));
+			}
+			
+			if(pp==null)
+				throw new DriverRegistroServiziNotFound("ProtocolProperty con id["+id+"] non trovato");
+			
+			return pp;
+
+		} catch (SQLException se) {
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::getProtocolProperty] SQLException : " + se.getMessage(),se);
+		}catch (DriverRegistroServiziNotFound dnf) {
+			throw dnf;
+		}catch (Exception se) {
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::getProtocolProperty] Exception : " + se.getMessage(),se);
+		} finally {
+			try {
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			} catch (Exception e) {
+			}
+		}
+	}
 	
 }

@@ -28,6 +28,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.protocol.registry.RisultatoValidazione;
@@ -53,7 +54,6 @@ import org.openspcoop2.protocol.sdk.validator.ValidazioneSemanticaResult;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostantiPosizioneEccezione;
 import org.openspcoop2.utils.digest.IDigestReader;
-import org.slf4j.Logger;
 
 
 
@@ -65,7 +65,7 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 
-public class SPCoopValidazioneSemantica implements IValidazioneSemantica {
+public class SPCoopValidazioneSemantica extends BasicComponentFactory implements IValidazioneSemantica {
 
 	/** Se IState e' un'istanza di StatefulMessage possiede una Connessione SQL in autoCommit mode su cui effettuare query 
 	 *  Altrimenti, e' un'istanza di StatelessMessage e nn necessita di connessioni  */
@@ -93,21 +93,17 @@ public class SPCoopValidazioneSemantica implements IValidazioneSemantica {
 	/** informazioni Servizio */
 	private Servizio infoServizio = null;
 	
-	/** Logger utilizzato per debug. */
-	private Logger log = null;
-	private IProtocolFactory<?> protocolFactory;
-	
 	
 
 	/**
 	 * Costruttore.
 	 *
 	 * @param protocolFactory ProtocolFactory
+	 * @throws ProtocolException 
 	 * 
 	 */
-	public SPCoopValidazioneSemantica(IProtocolFactory<?> protocolFactory){
-		this.log = protocolFactory.getLogger();
-		this.protocolFactory = protocolFactory;
+	public SPCoopValidazioneSemantica(IProtocolFactory<?> protocolFactory) throws ProtocolException{
+		super(protocolFactory);
 	}
 
 

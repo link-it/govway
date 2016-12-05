@@ -37,12 +37,18 @@ import org.openspcoop2.core.commons.IDriverWS;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDAzione;
+import org.openspcoop2.core.id.IDFruizione;
+import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.Operation;
+import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.ServizioAzione;
@@ -55,12 +61,17 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
+import org.openspcoop2.core.registry.driver.FiltroRicercaAzioni;
+import org.openspcoop2.core.registry.driver.FiltroRicercaFruizioniServizio;
+import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
+import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziCRUD;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
+import org.openspcoop2.core.registry.driver.ProtocolPropertiesUtilities;
 import org.openspcoop2.core.registry.driver.web.XMLLib;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -385,6 +396,10 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 							}
 						}
 					}
+					// ProtocolProperties
+					if(ProtocolPropertiesUtilities.isMatch(ac, filtroRicerca.getProtocolPropertiesAccordo())==false){
+						continue;
+					}
 				}
 				idAccordi.add(this.idAccordoCooperazioneFactory.getIDAccordoFromValues(ac.getNome(),ac.getVersione()));
 			}
@@ -494,16 +509,47 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 		return accRichiesto;
 	}
 
-	/**
-	 * Ritorna gli identificatori degli accordi che rispettano il parametro di ricerca
-	 * 
-	 * @param filtroRicerca
-	 * @return Una lista di ID degli accordi trovati
-	 * @throws DriverRegistroServiziException
-	 * @throws DriverRegistroServiziNotFound
-	 */
 	@Override
 	public List<IDAccordo> getAllIdAccordiServizioParteComune(FiltroRicercaAccordi filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+
+		List<IDAccordo> list = new ArrayList<IDAccordo>();
+		_fillAllIdAccordiServizioParteComuneEngine("getAllIdAccordiServizioParteComune", filtroRicerca, null, null, null, list);
+		return list;
+	
+	}
+	
+	@Override
+	public List<IDPortType> getAllIdPortType(FiltroRicercaPortTypes filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		
+		List<IDPortType> list = new ArrayList<IDPortType>();
+		_fillAllIdAccordiServizioParteComuneEngine("getAllIdPortType", filtroRicerca, filtroRicerca, null, null, list);
+		return list;
+		
+	}
+	
+	@Override
+	public List<IDAzione> getAllIdAzionePortType(FiltroRicercaOperations filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	
+		List<IDAzione> list = new ArrayList<IDAzione>();
+		_fillAllIdAccordiServizioParteComuneEngine("getAllIdAzionePortType", filtroRicerca, null, filtroRicerca, null, list);
+		return list;
+		
+	}
+	
+	@Override
+	public List<IDAzione> getAllIdAzioneAccordo(FiltroRicercaAzioni filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		
+		List<IDAzione> list = new ArrayList<IDAzione>();
+		_fillAllIdAccordiServizioParteComuneEngine("getAllIdAzioneAccordo", filtroRicerca, null, null, filtroRicerca, list);
+		return list;
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> void _fillAllIdAccordiServizioParteComuneEngine(String nomeMetodo, 
+			FiltroRicercaAccordi filtroRicercaBase,
+			FiltroRicercaPortTypes filtroPT, FiltroRicercaOperations filtroOP, FiltroRicercaAzioni filtroAZ,
+			List<T> listReturn) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		try{
 
 			// Ricerca UDDI degli accordi
@@ -512,12 +558,12 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			}*/
 			
 			IDAccordo idAccordoFiltro = null;
-			if(filtroRicerca!=null && filtroRicerca.getNomeAccordo()!=null){
+			if(filtroRicercaBase!=null && filtroRicercaBase.getNomeAccordo()!=null){
 				IDSoggetto soggettoReferente = null;
-				if(filtroRicerca.getTipoSoggettoReferente()!=null && filtroRicerca.getNomeSoggettoReferente()!=null){
-					soggettoReferente = new IDSoggetto(filtroRicerca.getTipoSoggettoReferente(),filtroRicerca.getNomeSoggettoReferente());
+				if(filtroRicercaBase.getTipoSoggettoReferente()!=null && filtroRicercaBase.getNomeSoggettoReferente()!=null){
+					soggettoReferente = new IDSoggetto(filtroRicercaBase.getTipoSoggettoReferente(),filtroRicercaBase.getNomeSoggettoReferente());
 				}
-				idAccordoFiltro = this.idAccordoFactory.getIDAccordoFromValues(filtroRicerca.getNomeAccordo(),soggettoReferente,filtroRicerca.getVersione());
+				idAccordoFiltro = this.idAccordoFactory.getIDAccordoFromValues(filtroRicercaBase.getNomeAccordo(),soggettoReferente,filtroRicercaBase.getVersione());
 			}
 			
 			String [] urlXMLAccordi = this.uddiLib.getUrlXmlAccordiServizio(idAccordoFiltro,this.urlPrefix);
@@ -531,7 +577,7 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 				try{
 					this.validatoreRegistro.valida(urlXMLAccordi[i]);  
 				}catch (Exception e) {
-					throw new DriverRegistroServiziException("[getAllIdAccordiServizioParteComune] Riscontrato errore durante la validazione XSD ("+urlXMLAccordi[i]+"): "+e.getMessage(),e);
+					throw new DriverRegistroServiziException("["+nomeMetodo+"] Riscontrato errore durante la validazione XSD ("+urlXMLAccordi[i]+"): "+e.getMessage(),e);
 				}
 				
 				// Ottengo oggetto Accordo
@@ -558,76 +604,76 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 						if(bin!=null)
 							bin.close();
 					} catch(Exception eis) {}
-					throw new DriverRegistroServiziException("[getAllIdAccordiServizioParteComune] Errore durante il parsing xml ("+urlXMLAccordi[i]+"): "+e.getMessage(),e);
+					throw new DriverRegistroServiziException("["+nomeMetodo+"] Errore durante il parsing xml ("+urlXMLAccordi[i]+"): "+e.getMessage(),e);
 				}
 				if(as==null)
-					throw new DriverRegistroServiziException("[getAllIdAccordiServizioParteComune] accordo non definito per la url ["+urlXMLAccordi[i]+"]");
+					throw new DriverRegistroServiziException("["+nomeMetodo+"] accordo non definito per la url ["+urlXMLAccordi[i]+"]");
 				String asURI = this.idAccordoFactory.getUriFromAccordo(as);
 				
-				if(filtroRicerca!=null){
+				if(filtroRicercaBase!=null){
 					// Filtro By Data
-					if(filtroRicerca.getMinDate()!=null){
+					if(filtroRicercaBase.getMinDate()!=null){
 						if(as.getOraRegistrazione()==null){
-							this.log.debug("[getAllIdAccordiServizioParteComune](FiltroByMinDate) Accordo di servizio ["+asURI+"] non valorizzato nell'ora-registrazione. Non inserito nella lista ritornata.");
+							this.log.debug("["+nomeMetodo+"](FiltroByMinDate) Accordo di servizio ["+asURI+"] non valorizzato nell'ora-registrazione. Non inserito nella lista ritornata.");
 							continue;
-						}else if(as.getOraRegistrazione().before(filtroRicerca.getMinDate())){
+						}else if(as.getOraRegistrazione().before(filtroRicercaBase.getMinDate())){
 							continue;
 						}
 					}
-					if(filtroRicerca.getMaxDate()!=null){
+					if(filtroRicercaBase.getMaxDate()!=null){
 						if(as.getOraRegistrazione()==null){
-							this.log.debug("[getAllIdAccordiServizioParteComune](FiltroByMaxDate) Accordo di servizio ["+asURI+"] non valorizzato nell'ora-registrazione. Non inserito nella lista ritornata.");
+							this.log.debug("["+nomeMetodo+"](FiltroByMaxDate) Accordo di servizio ["+asURI+"] non valorizzato nell'ora-registrazione. Non inserito nella lista ritornata.");
 							continue;
-						}else if(as.getOraRegistrazione().after(filtroRicerca.getMaxDate())){
+						}else if(as.getOraRegistrazione().after(filtroRicercaBase.getMaxDate())){
 							continue;
 						}
 					}
 					// Filtro By Nome
-					if(filtroRicerca.getNomeAccordo()!=null){
-						if(as.getNome().equals(filtroRicerca.getNomeAccordo()) == false){
+					if(filtroRicercaBase.getNomeAccordo()!=null){
+						if(as.getNome().equals(filtroRicercaBase.getNomeAccordo()) == false){
 							continue;
 						}
 					}
-					if(filtroRicerca.getVersione()!=null){
-						if(as.getVersione().equals(filtroRicerca.getVersione()) == false){
+					if(filtroRicercaBase.getVersione()!=null){
+						if(as.getVersione().equals(filtroRicercaBase.getVersione()) == false){
 							continue;
 						}
 					}
-					if(filtroRicerca.getTipoSoggettoReferente()!=null || filtroRicerca.getNomeSoggettoReferente()!=null){
+					if(filtroRicercaBase.getTipoSoggettoReferente()!=null || filtroRicercaBase.getNomeSoggettoReferente()!=null){
 						if(as.getSoggettoReferente()==null)
 							continue;
-						if(filtroRicerca.getTipoSoggettoReferente()!=null){
-							if(as.getSoggettoReferente().getTipo().equals(filtroRicerca.getTipoSoggettoReferente()) == false){
+						if(filtroRicercaBase.getTipoSoggettoReferente()!=null){
+							if(as.getSoggettoReferente().getTipo().equals(filtroRicercaBase.getTipoSoggettoReferente()) == false){
 								continue;
 							}
 						}
-						if(filtroRicerca.getNomeSoggettoReferente()!=null){
-							if(as.getSoggettoReferente().getNome().equals(filtroRicerca.getNomeSoggettoReferente()) == false){
+						if(filtroRicercaBase.getNomeSoggettoReferente()!=null){
+							if(as.getSoggettoReferente().getNome().equals(filtroRicercaBase.getNomeSoggettoReferente()) == false){
 								continue;
 							}
 						}
 					}
 					
-					if(filtroRicerca.getIdAccordoCooperazione()!=null &&
-							(filtroRicerca.getIdAccordoCooperazione().getNome()!=null || 
-							filtroRicerca.getIdAccordoCooperazione().getVersione()!=null) ){
+					if(filtroRicercaBase.getIdAccordoCooperazione()!=null &&
+							(filtroRicercaBase.getIdAccordoCooperazione().getNome()!=null || 
+							filtroRicercaBase.getIdAccordoCooperazione().getVersione()!=null) ){
 						if(as.getServizioComposto()==null){
 							continue;
 						}
 						IDAccordoCooperazione idAC = this.idAccordoCooperazioneFactory.getIDAccordoFromUri(as.getServizioComposto().getAccordoCooperazione());
-						if(filtroRicerca.getIdAccordoCooperazione().getNome()!=null){
-							if(idAC.getNome().equals(filtroRicerca.getIdAccordoCooperazione().getNome())== false){
+						if(filtroRicercaBase.getIdAccordoCooperazione().getNome()!=null){
+							if(idAC.getNome().equals(filtroRicercaBase.getIdAccordoCooperazione().getNome())== false){
 								continue;
 							}
 						}
-						if(filtroRicerca.getIdAccordoCooperazione().getVersione()!=null){
-							if(idAC.getVersione().equals(filtroRicerca.getIdAccordoCooperazione().getVersione())== false){
+						if(filtroRicercaBase.getIdAccordoCooperazione().getVersione()!=null){
+							if(idAC.getVersione().equals(filtroRicercaBase.getIdAccordoCooperazione().getVersione())== false){
 								continue;
 							}
 						}
 					}
-					else if(filtroRicerca.isServizioComposto()!=null){
-						if(filtroRicerca.isServizioComposto()){
+					else if(filtroRicercaBase.isServizioComposto()!=null){
+						if(filtroRicercaBase.isServizioComposto()){
 							if(as.getServizioComposto()==null){
 								continue;
 							}
@@ -639,19 +685,116 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 						}
 					}
 					
+					// ProtocolProperties
+					if(ProtocolPropertiesUtilities.isMatch(as, filtroRicercaBase.getProtocolPropertiesAccordo())==false){
+						continue;
+					}
+					
 				}
-				idAccordi.add(this.idAccordoFactory.getIDAccordoFromValues(as.getNome(),BeanUtilities.getSoggettoReferenteID(as.getSoggettoReferente()),as.getVersione()));
+				
+				IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromValues(as.getNome(),BeanUtilities.getSoggettoReferenteID(as.getSoggettoReferente()),as.getVersione());
+				
+				if(filtroPT!=null){
+					for (PortType pt : as.getPortTypeList()) {
+						// Nome PT
+						if(filtroPT.getNomePortType()!=null){
+							if(pt.getNome().equals(filtroPT.getNomePortType()) == false){
+								continue;
+							}
+						}
+						// ProtocolProperties PT
+						if(ProtocolPropertiesUtilities.isMatch(pt, filtroPT.getProtocolPropertiesPortType())==false){
+							continue;
+						}
+						
+						IDPortType idPT = new IDPortType();
+						idPT.setIdAccordo(idAccordo);
+						idPT.setNome(pt.getNome());
+						listReturn.add((T)idPT);
+					}
+				}
+				else if(filtroOP!=null){
+					for (PortType pt : as.getPortTypeList()) {
+						
+						// Nome PT
+						if(filtroOP.getNomePortType()!=null){
+							if(pt.getNome().equals(filtroOP.getNomePortType()) == false){
+								continue;
+							}
+						}
+						// ProtocolProperties PT
+						if(ProtocolPropertiesUtilities.isMatch(pt, filtroOP.getProtocolPropertiesPortType())==false){
+							continue;
+						}
+						
+						for (Operation op : pt.getAzioneList()) {
+							
+							// Nome OP
+							if(filtroOP.getNomeAzione()!=null){
+								if(op.getNome().equals(filtroOP.getNomeAzione()) == false){
+									continue;
+								}
+							}
+							// ProtocolProperties OP
+							if(ProtocolPropertiesUtilities.isMatch(pt, filtroOP.getProtocolPropertiesAzione())==false){
+								continue;
+							}
+						
+							IDAzione idAzione = new IDAzione();
+							idAzione.setIdAccordo(idAccordo);
+							idAzione.setNome(op.getNome());
+							idAzione.setPortType(pt.getNome());
+							listReturn.add((T)idAzione);
+						}
+					}
+				}
+				else if(filtroAZ!=null){
+					for (Azione az : as.getAzioneList()) {
+						
+						// Nome AZ
+						if(filtroAZ.getNomeAzione()!=null){
+							if(az.getNome().equals(filtroAZ.getNomeAzione()) == false){
+								continue;
+							}
+						}
+						// ProtocolProperties PT
+						if(ProtocolPropertiesUtilities.isMatch(az, filtroAZ.getProtocolPropertiesAzione())==false){
+							continue;
+						}
+						
+						IDAzione idAzione = new IDAzione();
+						idAzione.setIdAccordo(idAccordo);
+						idAzione.setNome(az.getNome());
+						listReturn.add((T)idAzione);
+					}
+				}
+				else{
+					listReturn.add((T)idAccordo);
+				}
 			}
-			if(idAccordi.size()==0){
-				throw new DriverRegistroServiziNotFound("Accordi non trovati che rispettano il filtro di ricerca selezionato: "+filtroRicerca.toString());
-			}else{
-				return idAccordi;
+			if(idAccordi.size()<=0){
+				String msgFiltro = "Elementi non trovati che rispettano il filtro di ricerca selezionato: ";
+				if(filtroPT!=null){
+					throw new DriverRegistroServiziNotFound(msgFiltro+filtroPT.toString());
+				}
+				else if(filtroOP!=null){
+					throw new DriverRegistroServiziNotFound(msgFiltro+filtroOP.toString());
+				}
+				else if(filtroAZ!=null){
+					throw new DriverRegistroServiziNotFound(msgFiltro+filtroAZ.toString());
+				}
+				else if(filtroRicercaBase!=null){
+					throw new DriverRegistroServiziNotFound(msgFiltro+filtroRicercaBase.toString());
+				}
+				else{
+					throw new DriverRegistroServiziNotFound("Elementi non trovati");
+				}
 			}
 		}catch(Exception e){
 			if(e instanceof DriverRegistroServiziNotFound)
 				throw (DriverRegistroServiziNotFound)e;
 			else
-				throw new DriverRegistroServiziException("getAllIdAccordiServizioParteComune error",e);
+				throw new DriverRegistroServiziException(nomeMetodo+" error",e);
 		}
 	}
 	
@@ -1028,6 +1171,10 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 							continue;
 						}
 					}
+					// ProtocolProperties
+					if(ProtocolPropertiesUtilities.isMatch(ss, filtroRicerca.getProtocolProperties())==false){
+						continue;
+					}
 				}
 				IDSoggetto idS = new IDSoggetto(ss.getTipo(),ss.getNome());
 				idSoggetti.add(idS);
@@ -1250,19 +1397,37 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 	}
 
 	
-	/**
-	 *  Ritorna gli identificatori dei servizi che rispettano il parametro di ricerca
-	 * 
-	 * @param filtroRicerca
-	 * @return Una lista di ID dei servizi trovati
-	 * @throws DriverRegistroServiziException
-	 * @throws DriverRegistroServiziNotFound
-	 */
 	@Override
-	public List<IDServizio> getAllIdServizi(FiltroRicercaServizi filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	public List<IDServizio> getAllIdServizi(FiltroRicercaServizi filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		
+		List<IDServizio> list = new ArrayList<IDServizio>();
+		_fillAllIdServiziEngine("getAllIdServizi", filtroRicerca, list);
+		return list;
+		
+	}
+	
+	@Override
+	public List<IDFruizione> getAllIdFruizioniServizio(
+			FiltroRicercaFruizioniServizio filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+	
+		List<IDFruizione> list = new ArrayList<IDFruizione>();
+		_fillAllIdServiziEngine("getAllIdFruizioniServizio", filtroRicerca, list);
+		return list;
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> void _fillAllIdServiziEngine(String nomeMetodo, 
+			FiltroRicercaServizi filtroRicerca,
+			List<T> listReturn) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 			
 		try{
 	
+			FiltroRicercaFruizioniServizio filtroFruizioni = null;
+			if(filtroRicerca instanceof FiltroRicercaFruizioniServizio){
+				filtroFruizioni = (FiltroRicercaFruizioniServizio) filtroRicerca;
+			}
+			
 			// Ricerca UDDI
 			IDAccordo idAccordo = null;
 			IDSoggetto soggettoErogatore = null;
@@ -1281,7 +1446,6 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			
 			
 			// Esamina dei servizi
-			List<IDServizio> idServizi = new ArrayList<IDServizio>();
 			for(int i=0; i<urlXMLServizi.length; i++){
 			
 				org.openspcoop2.core.registry.AccordoServizioParteSpecifica serv = null;
@@ -1378,16 +1542,59 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 							continue;
 						}
 					}
-					IDServizio idServ = new IDServizio(serv.getServizio().getTipoSoggettoErogatore(),serv.getServizio().getNomeSoggettoErogatore(),serv.getServizio().getTipo(),serv.getServizio().getNome());
-					idServ.setUriAccordo(serv.getAccordoServizioParteComune());
-					idServ.setTipologiaServizio(serv.getServizio().getTipologiaServizio().toString());
-					idServizi.add(idServ);
+					// ProtocolProperties
+					if(ProtocolPropertiesUtilities.isMatch(serv, filtroRicerca.getProtocolProperties())==false){
+						continue;
+					}
+					
+				}
+				
+				IDServizio idServ = new IDServizio(serv.getServizio().getTipoSoggettoErogatore(),serv.getServizio().getNomeSoggettoErogatore(),serv.getServizio().getTipo(),serv.getServizio().getNome());
+				idServ.setUriAccordo(serv.getAccordoServizioParteComune());
+				idServ.setTipologiaServizio(serv.getServizio().getTipologiaServizio().toString());
+				
+				if(filtroFruizioni!=null){
+					
+					for (Fruitore fruitore : serv.getFruitoreList()) {
+						
+						// Tipo
+						if(filtroFruizioni.getTipoSoggettoFruitore()!=null){
+							if(fruitore.getTipo().equals(filtroFruizioni.getTipoSoggettoFruitore()) == false){
+								continue;
+							}
+						}
+						// Nome
+						if(filtroFruizioni.getNomeSoggettoFruitore()!=null){
+							if(fruitore.getNome().equals(filtroFruizioni.getNomeSoggettoFruitore()) == false){
+								continue;
+							}
+						}
+						// ProtocolProperties
+						if(ProtocolPropertiesUtilities.isMatch(fruitore, filtroFruizioni.getProtocolPropertiesFruizione())==false){
+							continue;
+						}
+						
+						IDFruizione idFruizione = new IDFruizione();
+						idFruizione.setIdServizio(idServ);
+						idFruizione.setIdFruitore(new IDSoggetto(fruitore.getTipo(), fruitore.getNome()));
+						listReturn.add((T)idFruizione);
+					}
+					
+				}
+				else{
+					listReturn.add((T)idServ);
 				}
 			}
-			if(idServizi.size()==0){
-				throw new DriverRegistroServiziNotFound("Servizi non trovati che rispettano il filtro di ricerca selezionato: "+filtroRicerca.toString());
-			}else{
-				return idServizi;
+			if(listReturn.size()<=0){
+				String msgFiltro = "Elementi non trovati che rispettano il filtro di ricerca selezionato: ";
+				if(filtroFruizioni!=null){
+					throw new DriverRegistroServiziNotFound(msgFiltro+filtroFruizioni.toString());
+				}
+				else if(filtroRicerca!=null){
+					throw new DriverRegistroServiziNotFound(msgFiltro+filtroRicerca.toString());
+				}
+				else
+					throw new DriverRegistroServiziNotFound("Elementi non trovati");
 			}
 
 		}catch(Exception e){

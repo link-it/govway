@@ -30,8 +30,8 @@ import java.util.Hashtable;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazione;
@@ -193,4 +193,5 @@ public class MsgDiagnosticoOpenSPCoopProtocolAppender implements IDiagnosticProd
 	public IProtocolFactory<?> getProtocolFactory() {
 		return null; // non e' possibile localizzarla
 	}
+
 }

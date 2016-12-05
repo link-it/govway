@@ -45,7 +45,6 @@ import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
-import org.openspcoop2.pdd.config.RegistryReader;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
@@ -73,9 +72,9 @@ import org.openspcoop2.pdd.services.connector.messages.DumpRawConnectorOutMessag
 import org.openspcoop2.pdd.services.core.RicezioneBuste;
 import org.openspcoop2.pdd.services.core.RicezioneBusteContext;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
+import org.openspcoop2.protocol.basic.registry.ServiceIdentificationReader;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
-import org.openspcoop2.protocol.engine.registry.ServiceIdentificationReader;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.builder.InformazioniErroriInfrastrutturali;
@@ -192,11 +191,9 @@ public class RicezioneBusteService  {
 		}
 		
 		// Identifico Servizio per comprendere correttamente il messageType
-		RegistryReader registryReader = null;
 		ServiceIdentificationReader serviceIdentificationReader = null;
 		try{
-			registryReader = new RegistryReader(logCore, requestInfo.getProtocolFactory());
-			serviceIdentificationReader = new ServiceIdentificationReader(registryReader, requestInfo.getProtocolFactory(), logCore);
+			serviceIdentificationReader = ServicesUtils.getServiceIdentificationReader(logCore, requestInfo);
 		}catch(Exception e){
 			String msg = "Inizializzazione RegistryReader fallita: "+e.getMessage();
 			logCore.error(msg,e);
@@ -215,7 +212,7 @@ public class RicezioneBusteService  {
 		
 		// Aggiorno RequestInfo
 		if(RicezioneBusteServiceUtils.updatePortaApplicativaRequestInfo(requestInfo, logCore, res,
-				this.generatoreErrore, registryReader, serviceIdentificationReader,msgDiag)==false){
+				this.generatoreErrore, serviceIdentificationReader,msgDiag)==false){
 			return; // l'errore in response viene impostato direttamente dentro il metodo
 		}
 				

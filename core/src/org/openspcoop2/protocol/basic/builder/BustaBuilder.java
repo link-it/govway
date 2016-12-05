@@ -37,6 +37,7 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SOAPFaultCode;
 import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.BustaRawContent;
@@ -59,7 +60,6 @@ import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
-import org.slf4j.Logger;
 
 /**	
  * BustaBuilder
@@ -68,27 +68,19 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class BustaBuilder<BustaRawType> implements org.openspcoop2.protocol.sdk.builder.IBustaBuilder<BustaRawType> {
+public class BustaBuilder<BustaRawType> extends BasicComponentFactory implements org.openspcoop2.protocol.sdk.builder.IBustaBuilder<BustaRawType> {
 	
-	protected Logger log;
-	protected IProtocolFactory<?> protocolFactory;
 	protected OpenSPCoop2MessageFactory msgFactory;
 	protected AbstractXMLUtils xmlUtils;
 	protected ITraduttore traduttore;
 	protected IErroreApplicativoBuilder erroreApplicativoBuilder = null;
 		
 	public BustaBuilder(IProtocolFactory<?> factory) throws ProtocolException{
-		this.log = factory.getLogger();
-		this.protocolFactory = factory;
+		super(factory);
 		this.msgFactory = OpenSPCoop2MessageFactory.getMessageFactory();
 		this.xmlUtils = XMLUtils.getInstance();
 		this.traduttore = this.protocolFactory.createTraduttore();
 		this.erroreApplicativoBuilder = this.protocolFactory.createErroreApplicativoBuilder();
-	}
-	
-	@Override
-	public IProtocolFactory<?> getProtocolFactory() {
-		return this.protocolFactory;
 	}
 
 	private final static String dateformatPattern = "yyyyMMddHHmmssSSS"; // utile per il filtro duplicati

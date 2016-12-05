@@ -86,7 +86,7 @@ public abstract class PortaDelegataImpl extends BaseImpl  implements PortaDelega
 	private IDPortaDelegata convertToIdPortaDelegata(IdPortaDelegata id) throws DriverConfigurazioneException{
 		IDSoggetto idSoggettoProprietario = null;
 		if(id.getIdSoggetto()!=null){
-			idSoggettoProprietario = new IDSoggetto(id.getIdSoggetto().getTipo(), id.getIdSoggetto().getNome());
+			idSoggettoProprietario = new IDSoggetto(id.getIdSoggetto().getTipoServizio(), id.getIdSoggetto().getNomeAzione());
 		}
 		return this.buildIdPortaDelegata(id.getNome(), idSoggettoProprietario);
 	}
@@ -99,10 +99,10 @@ public abstract class PortaDelegataImpl extends BaseImpl  implements PortaDelega
 
 	private IdPortaDelegata convertToIdPortaDelegataWS(IDPortaDelegata id) throws DriverConfigurazioneException{
 		IdPortaDelegata IdPortaDelegata = new IdPortaDelegata();
-		IdPortaDelegata.setNome(id.getLocationPD());
+		IdPortaDelegata.setNomeAzione(id.getLocationPD());
 		IdSoggetto soggettoProprietario = new IdSoggetto();
-		soggettoProprietario.setTipo(id.getSoggettoFruitore().getTipo());
-		soggettoProprietario.setNome(id.getSoggettoFruitore().getNome());
+		soggettoProprietario.setTipoServizio(id.getSoggettoFruitore().getTipoServizio());
+		soggettoProprietario.setNomeAzione(id.getSoggettoFruitore().getNomeAzione());
 		IdPortaDelegata.setIdSoggetto(soggettoProprietario);
 		return IdPortaDelegata;
 	}
@@ -691,8 +691,8 @@ public abstract class PortaDelegataImpl extends BaseImpl  implements PortaDelega
 			IDPortaDelegata idPD = this.convertToIdPortaDelegata(oldId);
 			obj.setOldNomeForUpdate(idPD.getLocationPD());
 			if(idPD.getSoggettoFruitore()!=null){
-				obj.setOldTipoSoggettoProprietarioForUpdate(idPD.getSoggettoFruitore().getTipo());
-				obj.setOldNomeSoggettoProprietarioForUpdate(idPD.getSoggettoFruitore().getNome());
+				obj.setOldTipoSoggettoProprietarioForUpdate(idPD.getSoggettoFruitore().getTipoServizio());
+				obj.setOldNomeSoggettoProprietarioForUpdate(idPD.getSoggettoFruitore().getNomeAzione());
 			}
 			((IDriverConfigurazioneCRUD)this.portaDelegataService.getDriver()).updatePortaDelegata(obj);
 			this.logEndMethod("update");
@@ -725,8 +725,8 @@ public abstract class PortaDelegataImpl extends BaseImpl  implements PortaDelega
 				IDPortaDelegata idPD = this.convertToIdPortaDelegata(oldId);
 				obj.setOldNomeForUpdate(idPD.getLocationPD());
 				if(idPD.getSoggettoFruitore()!=null){
-					obj.setOldTipoSoggettoProprietarioForUpdate(idPD.getSoggettoFruitore().getTipo());
-					obj.setOldNomeSoggettoProprietarioForUpdate(idPD.getSoggettoFruitore().getNome());
+					obj.setOldTipoSoggettoProprietarioForUpdate(idPD.getSoggettoFruitore().getTipoServizio());
+					obj.setOldNomeSoggettoProprietarioForUpdate(idPD.getSoggettoFruitore().getNomeAzione());
 				}
 				((IDriverConfigurazioneCRUD)this.portaDelegataService.getDriver()).updatePortaDelegata(obj);
 			}

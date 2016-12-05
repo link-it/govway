@@ -42,6 +42,7 @@ import java.util.List;
  * 		&lt;sequence>
  * 			&lt;element name="servizio-applicativo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="connettore" type="{http://www.openspcoop2.org/core/registry}connettore" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/registry}protocol-property" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="stato-package" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="byte-wsdl-implementativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/>
@@ -73,7 +74,8 @@ import java.util.List;
 @XmlType(name = "fruitore", 
   propOrder = {
   	"servizioApplicativo",
-  	"connettore"
+  	"connettore",
+  	"protocolProperty"
   }
 )
 
@@ -127,6 +129,30 @@ public class Fruitore extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   public void setConnettore(Connettore connettore) {
     this.connettore = connettore;
+  }
+
+  public void addProtocolProperty(ProtocolProperty protocolProperty) {
+    this.protocolProperty.add(protocolProperty);
+  }
+
+  public ProtocolProperty getProtocolProperty(int index) {
+    return this.protocolProperty.get( index );
+  }
+
+  public ProtocolProperty removeProtocolProperty(int index) {
+    return this.protocolProperty.remove( index );
+  }
+
+  public List<ProtocolProperty> getProtocolPropertyList() {
+    return this.protocolProperty;
+  }
+
+  public void setProtocolPropertyList(List<ProtocolProperty> protocolProperty) {
+    this.protocolProperty=protocolProperty;
+  }
+
+  public int sizeProtocolPropertyList() {
+    return this.protocolProperty.size();
   }
 
   public java.lang.String getStatoPackage() {
@@ -365,6 +391,36 @@ public class Fruitore extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   @XmlElement(name="connettore",required=false,nillable=false)
   protected Connettore connettore;
+
+  @XmlElement(name="protocol-property",required=true,nillable=false)
+  protected List<ProtocolProperty> protocolProperty = new ArrayList<ProtocolProperty>();
+
+  /**
+   * @deprecated Use method getProtocolPropertyList
+   * @return List<ProtocolProperty>
+  */
+  @Deprecated
+  public List<ProtocolProperty> getProtocolProperty() {
+  	return this.protocolProperty;
+  }
+
+  /**
+   * @deprecated Use method setProtocolPropertyList
+   * @param protocolProperty List<ProtocolProperty>
+  */
+  @Deprecated
+  public void setProtocolProperty(List<ProtocolProperty> protocolProperty) {
+  	this.protocolProperty=protocolProperty;
+  }
+
+  /**
+   * @deprecated Use method sizeProtocolPropertyList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeProtocolProperty() {
+  	return this.protocolProperty.size();
+  }
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="stato-package",required=false)

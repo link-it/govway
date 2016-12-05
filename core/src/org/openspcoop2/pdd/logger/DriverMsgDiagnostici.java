@@ -58,6 +58,7 @@ public class DriverMsgDiagnostici implements IDiagnosticDriver {
 	}
 
 
+
 	public void setPropertiesMsgDiagnostici(List<String> properties) {
 		this.driverBase.setPropertiesMsgDiagnostici(properties);
 	}
@@ -237,6 +238,7 @@ public class DriverMsgDiagnostici implements IDiagnosticDriver {
 	public long getTotUnionEntry(FiltroRicercaDiagnosticiConPaginazione filter) throws DriverMsgDiagnosticiException, SQLQueryObjectException{
 		return this.driverBase.getTotUnionEntry(filter);
 	}
+
 }
 
 

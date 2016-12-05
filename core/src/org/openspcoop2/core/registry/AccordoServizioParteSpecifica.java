@@ -46,6 +46,7 @@ import java.util.List;
  * 			&lt;element name="specifica-semiformale" type="{http://www.openspcoop2.org/core/registry}documento" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="specifica-livello-servizio" type="{http://www.openspcoop2.org/core/registry}documento" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="specifica-sicurezza" type="{http://www.openspcoop2.org/core/registry}documento" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/registry}protocol-property" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="super-user" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="stato-package" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
@@ -87,7 +88,8 @@ import java.util.List;
   	"allegato",
   	"specificaSemiformale",
   	"specificaLivelloServizio",
-  	"specificaSicurezza"
+  	"specificaSicurezza",
+  	"protocolProperty"
   }
 )
 
@@ -263,6 +265,30 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
 
   public int sizeSpecificaSicurezzaList() {
     return this.specificaSicurezza.size();
+  }
+
+  public void addProtocolProperty(ProtocolProperty protocolProperty) {
+    this.protocolProperty.add(protocolProperty);
+  }
+
+  public ProtocolProperty getProtocolProperty(int index) {
+    return this.protocolProperty.get( index );
+  }
+
+  public ProtocolProperty removeProtocolProperty(int index) {
+    return this.protocolProperty.remove( index );
+  }
+
+  public List<ProtocolProperty> getProtocolPropertyList() {
+    return this.protocolProperty;
+  }
+
+  public void setProtocolPropertyList(List<ProtocolProperty> protocolProperty) {
+    this.protocolProperty=protocolProperty;
+  }
+
+  public int sizeProtocolPropertyList() {
+    return this.protocolProperty.size();
   }
 
   public java.lang.String getSuperUser() {
@@ -657,6 +683,36 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
   @Deprecated
   public int sizeSpecificaSicurezza() {
   	return this.specificaSicurezza.size();
+  }
+
+  @XmlElement(name="protocol-property",required=true,nillable=false)
+  protected List<ProtocolProperty> protocolProperty = new ArrayList<ProtocolProperty>();
+
+  /**
+   * @deprecated Use method getProtocolPropertyList
+   * @return List<ProtocolProperty>
+  */
+  @Deprecated
+  public List<ProtocolProperty> getProtocolProperty() {
+  	return this.protocolProperty;
+  }
+
+  /**
+   * @deprecated Use method setProtocolPropertyList
+   * @param protocolProperty List<ProtocolProperty>
+  */
+  @Deprecated
+  public void setProtocolProperty(List<ProtocolProperty> protocolProperty) {
+  	this.protocolProperty=protocolProperty;
+  }
+
+  /**
+   * @deprecated Use method sizeProtocolPropertyList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeProtocolProperty() {
+  	return this.protocolProperty.size();
   }
 
   @javax.xml.bind.annotation.XmlTransient

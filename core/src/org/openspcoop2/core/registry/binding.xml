@@ -31,6 +31,9 @@
     <collection field="specificaSemiformale" create-type="java.util.ArrayList">
       <structure name="specifica-semiformale" map-as="_Documento_Type"/>
     </collection>
+    <collection field="protocolProperty" create-type="java.util.ArrayList">
+      <structure name="protocol-property" map-as="_ProtocolProperty_Type"/>
+    </collection>
     <value name="super-user" field="superUser" usage="optional" style="attribute"/>
     <value name="stato-package" field="statoPackage" usage="optional" style="attribute"/>
     <value name="privato" field="privato" default="false" usage="optional" style="attribute"/>
@@ -60,6 +63,9 @@
     </collection>
     <collection field="specificaSemiformale" create-type="java.util.ArrayList">
       <structure name="specifica-semiformale" map-as="_Documento_Type"/>
+    </collection>
+    <collection field="protocolProperty" create-type="java.util.ArrayList">
+      <structure name="protocol-property" map-as="_ProtocolProperty_Type"/>
     </collection>
     <value name="super-user" field="superUser" usage="optional" style="attribute"/>
     <value name="stato-package" field="statoPackage" usage="optional" style="attribute"/>
@@ -116,6 +122,9 @@
     <collection field="azione" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.core.registry.Operation"/>
     </collection>
+    <collection field="protocolProperty" create-type="java.util.ArrayList">
+      <structure name="protocol-property" map-as="_ProtocolProperty_Type"/>
+    </collection>
     <value name="profilo-p-t" field="profiloPT" usage="optional" style="attribute"/>
     <value name="id-accordo" field="idAccordo" usage="optional" style="attribute"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
@@ -130,6 +139,9 @@
   </mapping>
   <mapping name="azione" class="org.openspcoop2.core.registry.Azione">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
+    <collection field="protocolProperty" create-type="java.util.ArrayList">
+      <structure name="protocol-property" map-as="_ProtocolProperty_Type"/>
+    </collection>
     <value name="prof-azione" field="profAzione" usage="optional" style="attribute"/>
     <value name="id-accordo" field="idAccordo" usage="optional" style="attribute"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
@@ -145,6 +157,9 @@
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
     <structure name="message-input" field="messageInput" usage="optional" map-as="_Message_Type"/>
     <structure name="message-output" field="messageOutput" usage="optional" map-as="_Message_Type"/>
+    <collection field="protocolProperty" create-type="java.util.ArrayList">
+      <structure name="protocol-property" map-as="_ProtocolProperty_Type"/>
+    </collection>
     <value name="prof-azione" field="profAzione" usage="optional" style="attribute"/>
     <value name="id-port-type" field="idPortType" usage="optional" style="attribute"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
@@ -197,6 +212,9 @@
   <mapping name="soggetto" class="org.openspcoop2.core.registry.Soggetto">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
     <structure name="connettore" field="connettore" usage="optional" map-as="_Connettore_Type"/>
+    <collection field="protocolProperty" create-type="java.util.ArrayList">
+      <structure name="protocol-property" map-as="_ProtocolProperty_Type"/>
+    </collection>
     <collection field="accordoServizioParteSpecifica" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.core.registry.AccordoServizioParteSpecifica"/>
     </collection>
@@ -247,6 +265,9 @@
     </collection>
     <collection field="specificaSicurezza" create-type="java.util.ArrayList">
       <structure name="specifica-sicurezza" map-as="_Documento_Type"/>
+    </collection>
+    <collection field="protocolProperty" create-type="java.util.ArrayList">
+      <structure name="protocol-property" map-as="_ProtocolProperty_Type"/>
     </collection>
     <value name="super-user" field="superUser" usage="optional" style="attribute"/>
     <value name="stato-package" field="statoPackage" usage="optional" style="attribute"/>
@@ -302,6 +323,9 @@
       <value name="servizio-applicativo" type="java.lang.String"/>
     </collection>
     <structure name="connettore" field="connettore" usage="optional" map-as="_Connettore_Type"/>
+    <collection field="protocolProperty" create-type="java.util.ArrayList">
+      <structure name="protocol-property" map-as="_ProtocolProperty_Type"/>
+    </collection>
     <value name="stato-package" field="statoPackage" usage="optional" style="attribute"/>
     <value name="byte-wsdl-implementativo-erogatore" field="byteWsdlImplementativoErogatore" usage="optional" style="attribute"/>
     <value name="byte-wsdl-implementativo-fruitore" field="byteWsdlImplementativoFruitore" usage="optional" style="attribute"/>
@@ -340,6 +364,27 @@
     <value name="tipo" field="tipo" usage="required" style="attribute"/>
     <value name="file" field="file" usage="required" style="attribute"/>
     <value name="ora-registrazione" field="oraRegistrazione" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="protocol-property" class="org.openspcoop2.core.registry.ProtocolProperty" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="value" field="value" usage="optional" style="attribute"/>
+    <value name="number-value" field="numberValue" usage="optional" style="attribute"/>
+    <value name="file" field="file" usage="optional" style="attribute"/>
+    <value name="byte-file" field="byteFile" usage="optional" style="attribute"/>
+    <value name="tipo-proprietario-documento" field="tipoProprietarioDocumento" usage="optional" style="attribute"/>
+    <value name="id-proprietario-documento" field="idProprietarioDocumento" usage="optional" style="attribute"/>
+  </mapping>
+
+  <mapping type-name="_ProtocolProperty_Type" class="org.openspcoop2.core.registry.ProtocolProperty" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
+    <value name="name" field="name" usage="required" style="attribute"/>
+    <value name="value" field="value" usage="optional" style="attribute"/>
+    <value name="number-value" field="numberValue" usage="optional" style="attribute"/>
+    <value name="file" field="file" usage="optional" style="attribute"/>
+    <value name="byte-file" field="byteFile" usage="optional" style="attribute"/>
+    <value name="tipo-proprietario-documento" field="tipoProprietarioDocumento" usage="optional" style="attribute"/>
+    <value name="id-proprietario-documento" field="idProprietarioDocumento" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="property" class="org.openspcoop2.core.registry.Property">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>

@@ -25,6 +25,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.protocol.basic.validator.ValidazioneAccordi;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopContext;
 
@@ -37,7 +38,7 @@ import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopContext;
  */
 public class SPCoopValidazioneAccordi extends ValidazioneAccordi  {
 
-	public SPCoopValidazioneAccordi(IProtocolFactory<?> factory) {
+	public SPCoopValidazioneAccordi(IProtocolFactory<?> factory) throws ProtocolException {
 		super(factory);
 	}
 	

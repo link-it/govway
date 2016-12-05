@@ -43,7 +43,7 @@ import org.w3c.dom.Element;
  */
 public class SPCoopDiagnosticSerializer extends DiagnosticSerializer implements org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticSerializer {
 
-	public SPCoopDiagnosticSerializer(IProtocolFactory<?> protocolFactory){
+	public SPCoopDiagnosticSerializer(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		super(protocolFactory);
 	}
 

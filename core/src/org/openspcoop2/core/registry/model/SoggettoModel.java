@@ -42,6 +42,7 @@ public class SoggettoModel extends AbstractModel<Soggetto> {
 		super();
 	
 		this.CONNETTORE = new org.openspcoop2.core.registry.model.ConnettoreModel(new Field("connettore",org.openspcoop2.core.registry.Connettore.class,"soggetto",Soggetto.class));
+		this.PROTOCOL_PROPERTY = new org.openspcoop2.core.registry.model.ProtocolPropertyModel(new Field("protocol-property",org.openspcoop2.core.registry.ProtocolProperty.class,"soggetto",Soggetto.class));
 		this.ACCORDO_SERVIZIO_PARTE_SPECIFICA = new org.openspcoop2.core.registry.model.AccordoServizioParteSpecificaModel(new Field("accordo-servizio-parte-specifica",org.openspcoop2.core.registry.AccordoServizioParteSpecifica.class,"soggetto",Soggetto.class));
 		this.SUPER_USER = new Field("super-user",java.lang.String.class,"soggetto",Soggetto.class);
 		this.PRIVATO = new Field("privato",Boolean.class,"soggetto",Soggetto.class);
@@ -61,6 +62,7 @@ public class SoggettoModel extends AbstractModel<Soggetto> {
 		super(father);
 	
 		this.CONNETTORE = new org.openspcoop2.core.registry.model.ConnettoreModel(new ComplexField(father,"connettore",org.openspcoop2.core.registry.Connettore.class,"soggetto",Soggetto.class));
+		this.PROTOCOL_PROPERTY = new org.openspcoop2.core.registry.model.ProtocolPropertyModel(new ComplexField(father,"protocol-property",org.openspcoop2.core.registry.ProtocolProperty.class,"soggetto",Soggetto.class));
 		this.ACCORDO_SERVIZIO_PARTE_SPECIFICA = new org.openspcoop2.core.registry.model.AccordoServizioParteSpecificaModel(new ComplexField(father,"accordo-servizio-parte-specifica",org.openspcoop2.core.registry.AccordoServizioParteSpecifica.class,"soggetto",Soggetto.class));
 		this.SUPER_USER = new ComplexField(father,"super-user",java.lang.String.class,"soggetto",Soggetto.class);
 		this.PRIVATO = new ComplexField(father,"privato",Boolean.class,"soggetto",Soggetto.class);
@@ -78,6 +80,8 @@ public class SoggettoModel extends AbstractModel<Soggetto> {
 	
 
 	public org.openspcoop2.core.registry.model.ConnettoreModel CONNETTORE = null;
+	 
+	public org.openspcoop2.core.registry.model.ProtocolPropertyModel PROTOCOL_PROPERTY = null;
 	 
 	public org.openspcoop2.core.registry.model.AccordoServizioParteSpecificaModel ACCORDO_SERVIZIO_PARTE_SPECIFICA = null;
 	 

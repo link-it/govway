@@ -24,8 +24,8 @@ package org.openspcoop2.protocol.spcoop.config;
 
 import java.util.Map;
 
-import org.slf4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -44,15 +44,12 @@ import org.openspcoop2.utils.transport.TransportResponseContext;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SPCoopProtocolManager implements IProtocolManager {
+public class SPCoopProtocolManager extends BasicComponentFactory implements IProtocolManager {
 	
 	protected SPCoopProperties spcoopProperties = null;
-	protected IProtocolFactory<?> protocolFactory = null;
-	protected Logger logger = null;
 	public SPCoopProtocolManager(IProtocolFactory<?> protocolFactory) throws ProtocolException{
-		this.protocolFactory = protocolFactory;
-		this.logger = this.protocolFactory.getLogger();
-		this.spcoopProperties = SPCoopProperties.getInstance(this.logger);
+		super(protocolFactory);
+		this.spcoopProperties = SPCoopProperties.getInstance(this.log);
 	}
 
 	@Override

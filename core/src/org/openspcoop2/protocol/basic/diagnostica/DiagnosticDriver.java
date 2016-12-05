@@ -39,8 +39,10 @@ import org.slf4j.Logger;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiException;
 import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiNotFoundException;
 import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnostici;
@@ -65,7 +67,7 @@ import org.openspcoop2.utils.sql.SQLQueryObjectException;
  * @author $Author: mergefairy $
  * @version $Rev: 12326 $, $Date: 2016-10-27 13:36:15 +0200 (Thu, 27 Oct 2016) $
  */
-public class DiagnosticDriver implements IDiagnosticDriver {
+public class DiagnosticDriver extends BasicComponentFactory implements IDiagnosticDriver {
 	/** 
 	 * DataSource
 	 */
@@ -77,21 +79,11 @@ public class DiagnosticDriver implements IDiagnosticDriver {
 	
 	Connection con = null;
 	boolean connectionOpenViaJDBCInCostructor = false;
-	
-	/** Logger utilizzato per info. */
-	private Logger log = null;
+		
+	public DiagnosticDriver(IProtocolFactory<?> factory) throws ProtocolException{
+		super(factory);
+	}
 
-	protected IProtocolFactory<?> protocolFactory;
-	
-	public DiagnosticDriver(IProtocolFactory<?> factory){
-		this.log = factory.getLogger();
-		this.protocolFactory = factory;
-	}
-	
-	@Override
-	public IProtocolFactory<?> getProtocolFactory() {
-		return this.protocolFactory;
-	}
 	
 	public final static String IDDIAGNOSTICI = "@@@@@-----@@@@-----IDDIAGNOSTICI-DB----@@@@@-----@@@@";
 	

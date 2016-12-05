@@ -25,9 +25,9 @@ package org.openspcoop2.protocol.spcoop.validator;
 
 import javax.xml.soap.SOAPFault;
 
-import org.slf4j.Logger;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -43,12 +43,8 @@ import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SPCoopValidatoreErrori implements IValidatoreErrori {
+public class SPCoopValidatoreErrori extends BasicComponentFactory implements IValidatoreErrori {
 
-	/** Logger utilizzato per debug. */
-	private IProtocolFactory<?> protocolFactory;
-	private Logger log;
-	
 
 	/**
 	 * Costruttore.
@@ -58,15 +54,10 @@ public class SPCoopValidatoreErrori implements IValidatoreErrori {
 	 * 
 	 */
 	public SPCoopValidatoreErrori(IProtocolFactory<?> protocolFactory) throws ProtocolException{
-		this.protocolFactory = protocolFactory;
-		this.log = this.protocolFactory.getLogger();
+		super(protocolFactory);
 	}
 	
 
-	@Override
-	public IProtocolFactory<?> getProtocolFactory() {
-		return this.protocolFactory;
-	}
 
 	@Override
 	public boolean isBustaErrore(Busta busta,OpenSPCoop2Message msgParam,ProprietaValidazioneErrori proprietaValidazioneErrori) {

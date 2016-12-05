@@ -43,6 +43,7 @@ import org.openspcoop2.core.registry.constants.TipiDocumentoInterfaccia;
 import org.openspcoop2.core.registry.constants.TipiDocumentoLivelloServizio;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneDocumenti;
@@ -54,7 +55,6 @@ import org.openspcoop2.utils.wsdl.WSDLUtilities;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.XMLUtils;
 import org.openspcoop2.utils.xml.XSDUtils;
-import org.slf4j.Logger;
 import org.w3c.dom.Document;
 
 /**
@@ -64,25 +64,17 @@ import org.w3c.dom.Document;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ValidazioneDocumenti implements IValidazioneDocumenti{
+public class ValidazioneDocumenti extends BasicComponentFactory implements IValidazioneDocumenti{
 
-	protected IProtocolFactory<?> protocolFactory;
-	protected Logger log;
 	protected AbstractXMLUtils xmlUtils = null;
 	protected XSDUtils xsdUtils = null;
 	protected WSDLUtilities wsdlUtilities = null;
 
-	public ValidazioneDocumenti(IProtocolFactory<?> factory){
-		this.log = factory.getLogger();
-		this.protocolFactory = factory;
+	public ValidazioneDocumenti(IProtocolFactory<?> factory) throws ProtocolException{
+		super(factory);
 		this.xmlUtils = XMLUtils.getInstance();
 		this.xsdUtils = new XSDUtils(this.xmlUtils);
 		this.wsdlUtilities = WSDLUtilities.getInstance(this.xmlUtils);
-	}
-
-	@Override
-	public IProtocolFactory<?> getProtocolFactory() {
-		return this.protocolFactory;
 	}
 
 	@Override

@@ -19,7 +19,7 @@
  *
  */
 
-package org.openspcoop2.protocol.engine.registry;
+package org.openspcoop2.protocol.basic.registry;
 
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -31,6 +31,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.IServiceIdentificationReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
@@ -47,11 +48,13 @@ import org.slf4j.Logger;
 public class ServiceIdentificationReader implements IServiceIdentificationReader {
 
 	private IRegistryReader registryReader;
+	private IConfigIntegrationReader configIntegrationReader;
 	private IProtocolFactory<?> protocolFactory;
 	private Logger log;
-	public ServiceIdentificationReader(IRegistryReader registryReader,
+	public ServiceIdentificationReader(IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader,
 			IProtocolFactory<?> protocolFactory, Logger log) {
 		this.registryReader = registryReader;
+		this.configIntegrationReader = configIntegrationReader;
 		this.protocolFactory = protocolFactory;
 		this.log = log;
 	}
@@ -60,6 +63,14 @@ public class ServiceIdentificationReader implements IServiceIdentificationReader
 	
 	public ErroreIntegrazione getErroreIntegrazioneNotFound() {
 		return this.erroreIntegrazioneNotFound;
+	}
+	
+	public IRegistryReader getRegistryReader() {
+		return this.registryReader;
+	}
+
+	public IConfigIntegrationReader getConfigIntegrationReader() {
+		return this.configIntegrationReader;
 	}
 	
 	
@@ -74,8 +85,8 @@ public class ServiceIdentificationReader implements IServiceIdentificationReader
 		IdentificazionePortaDelegata idPD = null;
 		try{
 		
-			idPD = 
-					new IdentificazionePortaDelegata(transportRequestContext, this.log, portaUrlBased, this.registryReader, this.protocolFactory);
+			idPD = new IdentificazionePortaDelegata(transportRequestContext, this.log, portaUrlBased, 
+					this.registryReader, this.configIntegrationReader, this.protocolFactory);
 			if(idPD.process()==false){
 				if(CodiceErroreIntegrazione.CODICE_401_PORTA_INESISTENTE.equals(idPD.getCodiceErrore())){
 					throw new RegistryNotFound(idPD.getMessaggioErrore());
@@ -87,7 +98,26 @@ public class ServiceIdentificationReader implements IServiceIdentificationReader
 			this.pd = idPD.getPortaDelegata();
 			this.idPD = idPD.getIDPortaDelegata();
 			
-			return idPD.getIDPortaDelegata();
+			if(this.idPD.getIdentificativiFruizione()!=null){
+				if(this.idPD.getIdentificativiFruizione().getIdServizio()!=null){
+					if(this.idPD.getIdentificativiFruizione().getIdServizio().getSoggettoErogatore()!=null){
+						if(this.idPD.getIdentificativiFruizione().getIdServizio().getSoggettoErogatore().getCodicePorta()==null){
+							this.idPD.getIdentificativiFruizione().getIdServizio().getSoggettoErogatore().setCodicePorta(
+									this.registryReader.getDominio(this.idPD.getIdentificativiFruizione().getIdServizio().getSoggettoErogatore()));
+						}
+					}
+				}
+				if(this.idPD.getIdentificativiFruizione().getSoggettoFruitore()!=null){
+					if(this.idPD.getIdentificativiFruizione().getSoggettoFruitore()!=null){
+						if(this.idPD.getIdentificativiFruizione().getSoggettoFruitore().getCodicePorta()==null){
+							this.idPD.getIdentificativiFruizione().getSoggettoFruitore().setCodicePorta(
+									this.registryReader.getDominio(this.idPD.getIdentificativiFruizione().getSoggettoFruitore()));
+						}
+					}
+				}
+			}
+			
+			return this.idPD;
 			
 		}
 		catch(RegistryNotFound e){
@@ -111,7 +141,7 @@ public class ServiceIdentificationReader implements IServiceIdentificationReader
 			}
 			
 			if(this.pd==null){
-				this.pd = this.registryReader.getPortaDelegata(idPortaDelegata);
+				this.pd = this.configIntegrationReader.getPortaDelegata(idPortaDelegata);
 			}
 			IDServizio idS = new IDServizio(new IDSoggetto(this.pd.getSoggettoErogatore().getTipo(), this.pd.getSoggettoErogatore().getNome()), 
 					this.pd.getServizio().getTipo(), this.pd.getServizio().getNome());
@@ -146,8 +176,8 @@ public class ServiceIdentificationReader implements IServiceIdentificationReader
 		IdentificazionePortaApplicativa idPA = null;
 		try{
 			
-			idPA = 
-					new IdentificazionePortaApplicativa(transportRequestContext, this.log, portaUrlBased, this.registryReader, this.protocolFactory);
+			idPA = new IdentificazionePortaApplicativa(transportRequestContext, this.log, portaUrlBased, 
+					this.registryReader, this.configIntegrationReader, this.protocolFactory);
 			if(idPA.process()==false){
 				if(CodiceErroreIntegrazione.CODICE_401_PORTA_INESISTENTE.equals(idPA.getCodiceErrore())){
 					throw new RegistryNotFound(idPA.getMessaggioErrore());
@@ -159,7 +189,23 @@ public class ServiceIdentificationReader implements IServiceIdentificationReader
 			this.pa = idPA.getPortaApplicativa();
 			this.idPA = idPA.getIDPortaApplicativa();
 			
-			return idPA.getIDPortaApplicativa();
+			if(this.idPA.getIdentificativiErogazione()!=null){
+				if(this.idPA.getIdentificativiErogazione().getSoggettoVirtuale()!=null){
+					if(this.idPA.getIdentificativiErogazione().getSoggettoVirtuale().getCodicePorta()==null){
+						this.idPA.getIdentificativiErogazione().getSoggettoVirtuale().setCodicePorta(this.registryReader.getDominio(this.idPA.getIdentificativiErogazione().getSoggettoVirtuale()));
+					}
+				}
+				if(this.idPA.getIdentificativiErogazione().getIdServizio()!=null){
+					if(this.idPA.getIdentificativiErogazione().getIdServizio().getSoggettoErogatore()!=null){
+						if(this.idPA.getIdentificativiErogazione().getIdServizio().getSoggettoErogatore().getCodicePorta()==null){
+							this.idPA.getIdentificativiErogazione().getIdServizio().getSoggettoErogatore().setCodicePorta(
+									this.registryReader.getDominio(this.idPA.getIdentificativiErogazione().getIdServizio().getSoggettoErogatore()));
+						}
+					}
+				}
+			}
+			
+			return this.idPA;
 			
 		}
 		catch(RegistryNotFound e){
@@ -183,7 +229,7 @@ public class ServiceIdentificationReader implements IServiceIdentificationReader
 			}
 			
 			if(this.pa==null){
-				this.pa = this.registryReader.getPortaApplicativa(idPortaApplicativa);
+				this.pa = this.configIntegrationReader.getPortaApplicativa(idPortaApplicativa);
 			}
 			IDServizio idS = new IDServizio(this.pa.getTipoSoggettoProprietario(),this.pa.getNomeSoggettoProprietario(), 
 					this.pa.getServizio().getTipo(), this.pa.getServizio().getNome());

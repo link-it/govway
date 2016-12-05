@@ -50,6 +50,7 @@ import org.openspcoop2.protocol.sdk.archive.ImportMode;
 import org.openspcoop2.protocol.sdk.archive.MapPlaceholder;
 import org.openspcoop2.protocol.sdk.archive.MappingModeTypesExtensions;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostantiArchivi;
 import org.openspcoop2.utils.Utilities;
@@ -69,7 +70,7 @@ public class SPCoopArchive extends BasicArchive {
 	private SPCoopArchiveImport importEngine = null;
 	private SPCoopArchiveExport exportEngine = null;
 	
-	public SPCoopArchive(IProtocolFactory<?> protocolFactory) {
+	public SPCoopArchive(IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		super(protocolFactory);
 		this.importEngine = new SPCoopArchiveImport(protocolFactory);
 		this.exportEngine = new SPCoopArchiveExport(protocolFactory);
@@ -363,12 +364,12 @@ public class SPCoopArchive extends BasicArchive {
 
 	@Override
 	public Archive importArchive(byte[]archive,ArchiveMode mode,ArchiveModeType type,
-			IRegistryReader registryReader,boolean validationDocuments,
-			MapPlaceholder placeholder) throws ProtocolException {	
+			IRegistryReader registryReader,IConfigIntegrationReader configIntegrationReader,
+			boolean validationDocuments, MapPlaceholder placeholder) throws ProtocolException {	
 		
 		if(org.openspcoop2.protocol.basic.Costanti.OPENSPCOOP_IMPORT_ARCHIVE_MODE.equals(mode)){
-			return super.importArchive(archive, mode, type, registryReader,validationDocuments,
-					placeholder);
+			return super.importArchive(archive, mode, type, registryReader,configIntegrationReader,
+					validationDocuments, placeholder);
 		}
 		else if(SPCoopCostantiArchivi.CNIPA_MODE.equals(mode)){
 			
@@ -438,8 +439,8 @@ public class SPCoopArchive extends BasicArchive {
 	
 	@Override
 	public Archive importArchive(InputStream archive,ArchiveMode mode,ArchiveModeType type,
-			IRegistryReader registryReader,boolean validationDocuments,
-			MapPlaceholder placeholder) throws ProtocolException {	
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader,
+			boolean validationDocuments, MapPlaceholder placeholder) throws ProtocolException {	
 		
 		byte[] bytes = null;
 		try{
@@ -455,7 +456,8 @@ public class SPCoopArchive extends BasicArchive {
 				}
 			}catch(Exception eClose){}
 		}
-		return this.importArchive(bytes, mode, type, registryReader, validationDocuments, placeholder);
+		return this.importArchive(bytes, mode, type, registryReader, configIntegrationReader,
+				validationDocuments, placeholder);
 	}
 	
 	@Override
@@ -512,11 +514,11 @@ public class SPCoopArchive extends BasicArchive {
 	
 	@Override
 	public byte[] exportArchive(Archive archive, ArchiveMode mode,
-			IRegistryReader registroReader)
+			IRegistryReader registroReader, IConfigIntegrationReader configIntegrationReader)
 			throws ProtocolException {
 		
 		if(org.openspcoop2.protocol.basic.Costanti.OPENSPCOOP_EXPORT_ARCHIVE_MODE.equals(mode)){
-			return super.exportArchive(archive, mode, registroReader);
+			return super.exportArchive(archive, mode, registroReader, configIntegrationReader);
 		}
 		else if(SPCoopCostantiArchivi.EXPORT_MODE_COMPATIBILITA_CLIENT_SICA.equals(mode) ||
 				SPCoopCostantiArchivi.EXPORT_MODE_INFORMAZIONI_COMPLETE.equals(mode)){
@@ -538,10 +540,10 @@ public class SPCoopArchive extends BasicArchive {
 
 	@Override
 	public void exportArchive(Archive archive, OutputStream out, ArchiveMode mode,
-			IRegistryReader registroReader)
+			IRegistryReader registroReader, IConfigIntegrationReader configIntegrationReader)
 			throws ProtocolException {
 		if(org.openspcoop2.protocol.basic.Costanti.OPENSPCOOP_EXPORT_ARCHIVE_MODE.equals(mode)){
-			super.exportArchive(archive, out, mode, registroReader);
+			super.exportArchive(archive, out, mode, registroReader, configIntegrationReader);
 		}
 		else if(SPCoopCostantiArchivi.EXPORT_MODE_COMPATIBILITA_CLIENT_SICA.equals(mode) ||
 				SPCoopCostantiArchivi.EXPORT_MODE_INFORMAZIONI_COMPLETE.equals(mode)){

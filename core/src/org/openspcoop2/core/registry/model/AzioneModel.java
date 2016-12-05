@@ -41,6 +41,7 @@ public class AzioneModel extends AbstractModel<Azione> {
 	
 		super();
 	
+		this.PROTOCOL_PROPERTY = new org.openspcoop2.core.registry.model.ProtocolPropertyModel(new Field("protocol-property",org.openspcoop2.core.registry.ProtocolProperty.class,"azione",Azione.class));
 		this.PROF_AZIONE = new Field("prof-azione",java.lang.String.class,"azione",Azione.class);
 		this.ID_ACCORDO = new Field("id-accordo",java.lang.Long.class,"azione",Azione.class);
 		this.NOME = new Field("nome",java.lang.String.class,"azione",Azione.class);
@@ -58,6 +59,7 @@ public class AzioneModel extends AbstractModel<Azione> {
 	
 		super(father);
 	
+		this.PROTOCOL_PROPERTY = new org.openspcoop2.core.registry.model.ProtocolPropertyModel(new ComplexField(father,"protocol-property",org.openspcoop2.core.registry.ProtocolProperty.class,"azione",Azione.class));
 		this.PROF_AZIONE = new ComplexField(father,"prof-azione",java.lang.String.class,"azione",Azione.class);
 		this.ID_ACCORDO = new ComplexField(father,"id-accordo",java.lang.Long.class,"azione",Azione.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"azione",Azione.class);
@@ -73,6 +75,8 @@ public class AzioneModel extends AbstractModel<Azione> {
 	
 	
 
+	public org.openspcoop2.core.registry.model.ProtocolPropertyModel PROTOCOL_PROPERTY = null;
+	 
 	public IField PROF_AZIONE = null;
 	 
 	public IField ID_ACCORDO = null;

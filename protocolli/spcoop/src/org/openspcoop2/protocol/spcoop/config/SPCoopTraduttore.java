@@ -26,6 +26,7 @@ import java.util.Date;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.basic.config.BasicTraduttore;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ContestoCodificaEccezione;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
@@ -50,7 +51,7 @@ import org.openspcoop2.protocol.spcoop.utils.SPCoopUtils;
 public class SPCoopTraduttore extends BasicTraduttore {
 
 
-	public SPCoopTraduttore(IProtocolFactory<?> protocolFactory){
+	public SPCoopTraduttore(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		super(protocolFactory);
 	}
 

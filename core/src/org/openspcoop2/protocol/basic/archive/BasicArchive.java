@@ -39,6 +39,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapperUtilities;
 import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -53,6 +54,7 @@ import org.openspcoop2.protocol.sdk.archive.ImportMode;
 import org.openspcoop2.protocol.sdk.archive.MapPlaceholder;
 import org.openspcoop2.protocol.sdk.archive.MappingModeTypesExtensions;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 import org.openspcoop2.utils.wsdl.WSDLUtilities;
@@ -66,22 +68,16 @@ import org.w3c.dom.Document;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class BasicArchive implements IArchive {
+public class BasicArchive extends BasicComponentFactory implements IArchive {
 
-	protected IProtocolFactory<?> protocolFactory = null;
 	protected IDAccordoCooperazioneFactory idAccordoCooperazioneFactory;
 	protected IDAccordoFactory idAccordoFactory;
 	protected EsitoUtils esitoUtils;
-	public BasicArchive(IProtocolFactory<?> protocolFactory){
-		this.protocolFactory = protocolFactory;
+	public BasicArchive(IProtocolFactory<?> protocolFactory) throws ProtocolException{
+		super(protocolFactory);
 		this.idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
 		this.idAccordoFactory = IDAccordoFactory.getInstance();
 		this.esitoUtils = new EsitoUtils(protocolFactory);
-	}
-	
-	@Override
-	public IProtocolFactory<?> getProtocolFactory() {
-		return this.protocolFactory;
 	}
 
 	
@@ -302,8 +298,8 @@ public class BasicArchive implements IArchive {
 
 	@Override
 	public Archive importArchive(byte[]archive,ArchiveMode mode,ArchiveModeType type,
-			IRegistryReader registryReader,boolean validationDocuments,
-			MapPlaceholder placeholder) throws ProtocolException {
+			IRegistryReader registryReader,IConfigIntegrationReader configIntegrationReader,
+			boolean validationDocuments, MapPlaceholder placeholder) throws ProtocolException {
 		
 		ZIPUtils zipUtils = new ZIPUtils(this.protocolFactory.getLogger(),registryReader);
 		return zipUtils.getArchive(archive,placeholder,validationDocuments);
@@ -312,8 +308,8 @@ public class BasicArchive implements IArchive {
 	
 	@Override
 	public Archive importArchive(InputStream archive,ArchiveMode mode,ArchiveModeType type,
-			IRegistryReader registryReader,boolean validationDocuments,
-			MapPlaceholder placeholder) throws ProtocolException {
+			IRegistryReader registryReader,IConfigIntegrationReader configIntegrationReader,
+			boolean validationDocuments, MapPlaceholder placeholder) throws ProtocolException {
 		
 		try{
 			ZIPUtils zipUtils = new ZIPUtils(this.protocolFactory.getLogger(),registryReader);
@@ -354,14 +350,14 @@ public class BasicArchive implements IArchive {
 	
 	@Override
 	public byte[] exportArchive(Archive archive, ArchiveMode mode,
-			IRegistryReader registroReader)
+			IRegistryReader registryReader,IConfigIntegrationReader configIntegrationReader)
 			throws ProtocolException {
 		throw new ProtocolException("Not Implemented");
 	}
 
 	@Override
 	public void exportArchive(Archive archive, OutputStream out, ArchiveMode mode,
-			IRegistryReader registroReader)
+			IRegistryReader registryReader,IConfigIntegrationReader configIntegrationReader)
 			throws ProtocolException {
 		throw new ProtocolException("Not Implemented");
 	}

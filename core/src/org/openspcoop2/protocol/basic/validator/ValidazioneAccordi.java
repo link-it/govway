@@ -21,11 +21,12 @@
 
 package org.openspcoop2.protocol.basic.validator;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneAccordi;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
@@ -37,15 +38,12 @@ import org.openspcoop2.utils.xml.AbstractXMLUtils;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ValidazioneAccordi implements IValidazioneAccordi{
+public class ValidazioneAccordi extends BasicComponentFactory implements IValidazioneAccordi{
 
-	protected IProtocolFactory<?> protocolFactory;
-	protected Logger log;
 	protected AbstractXMLUtils xmlUtils = null;
 
-	public ValidazioneAccordi(IProtocolFactory<?> factory){
-		this.log = factory.getLogger();
-		this.protocolFactory = factory;
+	public ValidazioneAccordi(IProtocolFactory<?> factory) throws ProtocolException{
+		super(factory);
 	}
 
 	@Override

@@ -27,13 +27,13 @@ import java.util.List;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPFault;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.eccezione.errore_applicativo.Eccezione;
 import org.openspcoop2.core.eccezione.errore_applicativo.ErroreApplicativo;
 import org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione;
 import org.openspcoop2.core.eccezione.errore_applicativo.utils.XMLUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -57,22 +57,15 @@ import org.w3c.dom.Node;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class EsitoBuilder implements org.openspcoop2.protocol.sdk.builder.IEsitoBuilder {
+public class EsitoBuilder extends BasicComponentFactory implements org.openspcoop2.protocol.sdk.builder.IEsitoBuilder {
 	
-	protected Logger log;
-	protected IProtocolFactory<?> factory;
 	protected EsitiProperties esitiProperties;
 	
 	public EsitoBuilder(IProtocolFactory<?> protocolFactory) throws ProtocolException{
-		this.log = protocolFactory.getLogger();
-		this.factory = protocolFactory;
+		super(protocolFactory);
 		this.esitiProperties = EsitiProperties.getInstance(this.log);
 	}
-	
-	@Override
-	public IProtocolFactory<?> getProtocolFactory() {
-		return this.factory;
-	}
+
 
 	protected String getTipoContext(TransportRequestContext transportRequestContext) throws ProtocolException{
 		String tipoContext = CostantiProtocollo.ESITO_TRANSACTION_CONTEXT_STANDARD;
@@ -176,7 +169,7 @@ public class EsitoBuilder implements org.openspcoop2.protocol.sdk.builder.IEsito
 				informazioniErroriInfrastrutturali = new InformazioniErroriInfrastrutturali();
 			}
 			
-			ITraduttore trasl = this.factory.createTraduttore();
+			ITraduttore trasl = this.protocolFactory.createTraduttore();
 			
 			String tipoContext = this.getTipoContext(transportRequestContext);
 			

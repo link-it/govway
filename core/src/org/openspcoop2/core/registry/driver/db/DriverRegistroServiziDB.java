@@ -56,6 +56,8 @@ import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDAccordoCooperazioneWithSoggetto;
+import org.openspcoop2.core.id.IDAzione;
+import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -78,12 +80,14 @@ import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Property;
+import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.ServizioAzione;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.ProprietariDocumento;
+import org.openspcoop2.core.registry.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
@@ -94,6 +98,11 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
+import org.openspcoop2.core.registry.driver.FiltroRicercaAzioni;
+import org.openspcoop2.core.registry.driver.FiltroRicercaFruizioniServizio;
+import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
+import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
+import org.openspcoop2.core.registry.driver.FiltroRicercaProtocolProperty;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
@@ -110,6 +119,7 @@ import org.openspcoop2.utils.datasource.DataSourceParams;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.openspcoop2.utils.sql.SQLQueryObjectException;
 import org.slf4j.Logger;
 
 /**
@@ -551,6 +561,16 @@ IDriverWS ,IMonitoraggioRisorsa{
 					}
 				}catch(DriverRegistroServiziNotFound dNotFound){}
 
+				
+				// Protocol Properties
+				List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idAccordoLong, ProprietariProtocolProperty.ACCORDO_COOPERAZIONE, con, this.tipoDB);
+				if(listPP!=null && listPP.size()>0){
+					for (ProtocolProperty protocolProperty : listPP) {
+						accordoCooperazione.addProtocolProperty(protocolProperty);
+					}
+				}
+				
+				
 
 			} else {
 				throw new DriverRegistroServiziNotFound("[DriverRegistroServiziDB::getAccordoCooperazione] rs.next non ha restituito valori con la seguente interrogazione :\n" + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordoLong));
@@ -807,6 +827,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 			sqlQueryObject.addSelectField(CostantiDB.ACCORDI_COOPERAZIONE,"nome");
 			sqlQueryObject.addSelectField(CostantiDB.ACCORDI_COOPERAZIONE,"versione");
+			sqlQueryObject.setSelectDistinct(true);
 			if(filtroRicerca!=null){
 				// Filtro By Data
 				if(filtroRicerca.getMinDate()!=null)
@@ -824,6 +845,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 					if(filtroRicerca.getNomeSoggettoReferente()!=null)
 						sqlQueryObject.addWhereCondition(this.tabellaSoggetti+".nome_soggetto=?");
 				}
+				setProtocolPropertiesForSearch(sqlQueryObject, filtroRicerca, CostantiDB.ACCORDI_COOPERAZIONE);
 			}
 
 			sqlQueryObject.setANDLogicOperator(true);
@@ -863,7 +885,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 						stm.setString(indexStmt, filtroRicerca.getNomeSoggettoReferente());
 						indexStmt++;
 					}
-				}
+				}	
+				setProtocolPropertiesForSearch(stm, indexStmt, filtroRicerca, ProprietariProtocolProperty.ACCORDO_COOPERAZIONE);
 			}
 			rs = stm.executeQuery();
 			List<IDAccordoCooperazione> idAccordi = new ArrayList<IDAccordoCooperazione>();
@@ -1378,6 +1401,15 @@ IDriverWS ,IMonitoraggioRisorsa{
 					long idAzione = rs.getLong("id");
 					azione.setId(idAzione);
 
+					
+					// Protocol Properties
+					List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idAzione, ProprietariProtocolProperty.AZIONE_ACCORDO, con, this.tipoDB);
+					if(listPP!=null && listPP.size()>0){
+						for (ProtocolProperty protocolProperty : listPP) {
+							azione.addProtocolProperty(protocolProperty);
+						}
+					}
+					
 					accordoServizio.addAzione(azione);
 
 				}
@@ -1421,6 +1453,16 @@ IDriverWS ,IMonitoraggioRisorsa{
 					}catch(DriverRegistroServiziNotFound dNotFound){}
 				}
 
+				
+				// Protocol Properties
+				List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idAccordoLong, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, con, this.tipoDB);
+				if(listPP!=null && listPP.size()>0){
+					for (ProtocolProperty protocolProperty : listPP) {
+						accordoServizio.addProtocolProperty(protocolProperty);
+					}
+				}
+				
+				
 			} else {
 				throw new DriverRegistroServiziNotFound("[DriverRegistroServiziDB::getAccordoServizioParteComune] rs.next non ha restituito valori con la seguente interrogazione :\n" + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idAccordoLong));
 			}
@@ -1535,6 +1577,14 @@ IDriverWS ,IMonitoraggioRisorsa{
 				// Aggiungo azioni a port type
 				this.readAzioniPortTypes(pt,con);
 
+				// Protocol Properties
+				List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idPortType, ProprietariProtocolProperty.PORT_TYPE, con, this.tipoDB);
+				if(listPP!=null && listPP.size()>0){
+					for (ProtocolProperty protocolProperty : listPP) {
+						pt.addProtocolProperty(protocolProperty);
+					}
+				}
+				
 				as.addPortType(pt);
 
 			}
@@ -1673,6 +1723,14 @@ IDriverWS ,IMonitoraggioRisorsa{
 					azionePT.getMessageOutput().setSoapNamespace(((tmp == null || tmp.equals("")) ? null : tmp));
 				}
 
+				// Protocol Properties
+				List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idAzionePortType, ProprietariProtocolProperty.OPERATION, con, this.tipoDB);
+				if(listPP!=null && listPP.size()>0){
+					for (ProtocolProperty protocolProperty : listPP) {
+						azionePT.addProtocolProperty(protocolProperty);
+					}
+				}
+				
 				pt.addAzione(azionePT);
 
 			}
@@ -1961,62 +2019,127 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 
 
-	/**
-	 * Ritorna gli identificatori degli accordi che rispettano il parametro di ricerca
-	 * 
-	 * @param filtroRicerca
-	 * @return Una lista di ID degli accordi trovati
-	 * @throws DriverRegistroServiziException
-	 * @throws DriverRegistroServiziNotFound
-	 */
 	@Override
 	public List<IDAccordo> getAllIdAccordiServizioParteComune(FiltroRicercaAccordi filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+
+		List<IDAccordo> list = new ArrayList<IDAccordo>();
+		_fillAllIdAccordiServizioParteComuneEngine("getAllIdAccordiServizioParteComune", filtroRicerca, null, null, null, list);
+		return list;
+	
+	}
+	
+	@Override
+	public List<IDPortType> getAllIdPortType(FiltroRicercaPortTypes filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		
+		List<IDPortType> list = new ArrayList<IDPortType>();
+		_fillAllIdAccordiServizioParteComuneEngine("getAllIdPortType", filtroRicerca, filtroRicerca, null, null, list);
+		return list;
+		
+	}
+	
+	@Override
+	public List<IDAzione> getAllIdAzionePortType(FiltroRicercaOperations filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	
+		List<IDAzione> list = new ArrayList<IDAzione>();
+		_fillAllIdAccordiServizioParteComuneEngine("getAllIdAzionePortType", filtroRicerca, null, filtroRicerca, null, list);
+		return list;
+		
+	}
+	
+	@Override
+	public List<IDAzione> getAllIdAzioneAccordo(FiltroRicercaAzioni filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		
+		List<IDAzione> list = new ArrayList<IDAzione>();
+		_fillAllIdAccordiServizioParteComuneEngine("getAllIdAzioneAccordo", filtroRicerca, null, null, filtroRicerca, list);
+		return list;
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> void _fillAllIdAccordiServizioParteComuneEngine(String nomeMetodo, 
+			FiltroRicercaAccordi filtroRicercaBase,
+			FiltroRicercaPortTypes filtroPT, FiltroRicercaOperations filtroOP, FiltroRicercaAzioni filtroAZ,
+			List<T> listReturn) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
 		Connection con = null;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 
-		this.log.debug("getAllIdAccordiServizioParteComune...");
+		this.log.debug(nomeMetodo+"...");
 
+		if(listReturn==null){
+			throw new DriverRegistroServiziException("Lista per collezionare i risultati non definita");
+		}
+		
 		try {
 			this.log.debug("operazione atomica = " + this.atomica);
 			// prendo la connessione dal pool
 			if (this.atomica)
-				con = this.getConnectionFromDatasource("getAllIdAccordiServizioParteComune");
+				con = this.getConnectionFromDatasource(nomeMetodo);
 			else
 				con = this.globalConnection;
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			
+			// from
 			sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
-			if(filtroRicerca!=null){
-				if(filtroRicerca.getTipoSoggettoReferente()!=null || filtroRicerca.getNomeSoggettoReferente()!=null){
+			if(filtroRicercaBase!=null){
+				if(filtroRicercaBase.getTipoSoggettoReferente()!=null || filtroRicercaBase.getNomeSoggettoReferente()!=null){
 					sqlQueryObject.addFromTable(this.tabellaSoggetti);
 				}
 			}
-			sqlQueryObject.addSelectField(CostantiDB.ACCORDI,"nome");
+			if(filtroPT!=null){
+				sqlQueryObject.addFromTable(CostantiDB.PORT_TYPE);
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".id="+CostantiDB.PORT_TYPE+".id_accordo");
+			}
+			if(filtroOP!=null){
+				sqlQueryObject.addFromTable(CostantiDB.PORT_TYPE);
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".id="+CostantiDB.PORT_TYPE+".id_accordo");
+				sqlQueryObject.addFromTable(CostantiDB.PORT_TYPE_AZIONI);
+				sqlQueryObject.addWhereCondition(CostantiDB.PORT_TYPE+".id="+CostantiDB.PORT_TYPE_AZIONI+".id_port_type");
+			}
+			if(filtroAZ!=null){
+				sqlQueryObject.addFromTable(CostantiDB.ACCORDI_AZIONI);
+				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".id="+CostantiDB.ACCORDI_AZIONI+".id_accordo");
+			}
+			
+			// select field
+			sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI,"nome","nomeAccordo");
 			sqlQueryObject.addSelectField(CostantiDB.ACCORDI,"versione");
 			sqlQueryObject.addSelectField(CostantiDB.ACCORDI,"id_referente");
-			if(filtroRicerca!=null){
-				// Filtro By Data
-				if(filtroRicerca.getMinDate()!=null)
+			if(filtroPT!=null){
+				sqlQueryObject.addSelectAliasField(CostantiDB.PORT_TYPE,"nome","nomePT");
+			}
+			if(filtroOP!=null){
+				sqlQueryObject.addSelectAliasField(CostantiDB.PORT_TYPE,"nome","nomePT");
+				sqlQueryObject.addSelectAliasField(CostantiDB.PORT_TYPE_AZIONI,"nome","nomeOP");
+			}
+			if(filtroAZ!=null){
+				sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI_AZIONI,"nome","nomeAZ");
+			}
+			sqlQueryObject.setSelectDistinct(true);
+			
+			if(filtroRicercaBase!=null){
+				// Filtro Base
+				if(filtroRicercaBase.getMinDate()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".ora_registrazione > ?");
-				if(filtroRicerca.getMaxDate()!=null)
+				if(filtroRicercaBase.getMaxDate()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".ora_registrazione < ?");
-				if(filtroRicerca.getNomeAccordo()!=null)
+				if(filtroRicercaBase.getNomeAccordo()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".nome = ?");
-				if(filtroRicerca.getVersione()!=null)
+				if(filtroRicercaBase.getVersione()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".versione = ?");
-				if(filtroRicerca.getTipoSoggettoReferente()!=null || filtroRicerca.getNomeSoggettoReferente()!=null){
+				if(filtroRicercaBase.getTipoSoggettoReferente()!=null || filtroRicercaBase.getNomeSoggettoReferente()!=null){
 					sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".id_referente="+this.tabellaSoggetti+".id");
-					if(filtroRicerca.getTipoSoggettoReferente()!=null)
+					if(filtroRicercaBase.getTipoSoggettoReferente()!=null)
 						sqlQueryObject.addWhereCondition(this.tabellaSoggetti+".tipo_soggetto=?");
-					if(filtroRicerca.getNomeSoggettoReferente()!=null)
+					if(filtroRicercaBase.getNomeSoggettoReferente()!=null)
 						sqlQueryObject.addWhereCondition(this.tabellaSoggetti+".nome_soggetto=?");
 				}
 
-				if( (filtroRicerca.getIdAccordoCooperazione()!=null &&
-						(filtroRicerca.getIdAccordoCooperazione().getNome()!=null || 
-						filtroRicerca.getIdAccordoCooperazione().getVersione()!=null)) ){
+				if( (filtroRicercaBase.getIdAccordoCooperazione()!=null &&
+						(filtroRicercaBase.getIdAccordoCooperazione().getNome()!=null || 
+						filtroRicercaBase.getIdAccordoCooperazione().getVersione()!=null)) ){
 					ISQLQueryObject sqlQueryObjectASComposti = sqlQueryObject.newSQLQueryObject();
 					sqlQueryObjectASComposti.addFromTable(CostantiDB.ACCORDI_SERVIZI_COMPOSTO);
 					sqlQueryObjectASComposti.addFromTable(CostantiDB.ACCORDI_COOPERAZIONE);
@@ -2024,23 +2147,45 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObjectASComposti.setANDLogicOperator(true);
 					sqlQueryObjectASComposti.addWhereCondition(CostantiDB.ACCORDI+".id="+CostantiDB.ACCORDI_SERVIZI_COMPOSTO+".id_accordo");
 					sqlQueryObjectASComposti.addWhereCondition(CostantiDB.ACCORDI_COOPERAZIONE+".id="+CostantiDB.ACCORDI_SERVIZI_COMPOSTO+".id_accordo_cooperazione");
-					if(filtroRicerca.getIdAccordoCooperazione().getNome()!=null){
+					if(filtroRicercaBase.getIdAccordoCooperazione().getNome()!=null){
 						sqlQueryObjectASComposti.addWhereCondition(CostantiDB.ACCORDI_COOPERAZIONE+".nome=?");
 					}
-					if(filtroRicerca.getIdAccordoCooperazione().getVersione()!=null){
+					if(filtroRicercaBase.getIdAccordoCooperazione().getVersione()!=null){
 						sqlQueryObjectASComposti.addWhereCondition(CostantiDB.ACCORDI_COOPERAZIONE+".versione=?");
 					}
 					sqlQueryObject.addWhereExistsCondition(false, sqlQueryObjectASComposti);
 				}
-				else if(filtroRicerca.isServizioComposto()!=null){
+				else if(filtroRicercaBase.isServizioComposto()!=null){
 					ISQLQueryObject sqlQueryObjectASComposti = sqlQueryObject.newSQLQueryObject();
 					sqlQueryObjectASComposti.addFromTable(CostantiDB.ACCORDI_SERVIZI_COMPOSTO);
 					sqlQueryObjectASComposti.addSelectField("id");
 					sqlQueryObjectASComposti.setANDLogicOperator(true);
 					sqlQueryObjectASComposti.addWhereCondition(CostantiDB.ACCORDI+".id="+CostantiDB.ACCORDI_SERVIZI_COMPOSTO+".id_accordo");
-					sqlQueryObject.addWhereExistsCondition(!filtroRicerca.isServizioComposto(), sqlQueryObjectASComposti);
+					sqlQueryObject.addWhereExistsCondition(!filtroRicercaBase.isServizioComposto(), sqlQueryObjectASComposti);
 				}
-
+				setProtocolPropertiesForSearch(sqlQueryObject, filtroRicercaBase, CostantiDB.ACCORDI);
+			}
+			
+			if(filtroPT!=null){
+				if(filtroPT.getNomePortType()!=null)
+					sqlQueryObject.addWhereCondition(CostantiDB.PORT_TYPE+".nome=?");
+				setProtocolPropertiesForSearch(sqlQueryObject, filtroPT, CostantiDB.PORT_TYPE);
+			}
+			
+			if(filtroOP!=null){
+				if(filtroOP.getNomePortType()!=null)
+					sqlQueryObject.addWhereCondition(CostantiDB.PORT_TYPE+".nome=?");
+				setProtocolPropertiesForSearch(sqlQueryObject, filtroOP, CostantiDB.PORT_TYPE);
+				
+				if(filtroOP.getNomeAzione()!=null)
+					sqlQueryObject.addWhereCondition(CostantiDB.PORT_TYPE_AZIONI+".nome=?");
+				setProtocolPropertiesForSearch(sqlQueryObject, filtroOP, CostantiDB.PORT_TYPE_AZIONI);
+			}
+			
+			if(filtroAZ!=null){
+				if(filtroAZ.getNomeAzione()!=null)
+					sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI_AZIONI+".nome=?");
+				setProtocolPropertiesForSearch(sqlQueryObject, filtroAZ, CostantiDB.ACCORDI_AZIONI);
 			}
 
 			sqlQueryObject.setANDLogicOperator(true);
@@ -2048,56 +2193,88 @@ IDriverWS ,IMonitoraggioRisorsa{
 			this.log.debug("eseguo query : " + sqlQuery );
 			stm = con.prepareStatement(sqlQuery);
 			int indexStmt = 1;
-			if(filtroRicerca!=null){
-				if(filtroRicerca.getMinDate()!=null){
-					this.log.debug("minDate stmt.setTimestamp("+filtroRicerca.getMinDate()+")");
-					stm.setTimestamp(indexStmt, new Timestamp(filtroRicerca.getMinDate().getTime()));
+			if(filtroRicercaBase!=null){
+				if(filtroRicercaBase.getMinDate()!=null){
+					this.log.debug("minDate stmt.setTimestamp("+filtroRicercaBase.getMinDate()+")");
+					stm.setTimestamp(indexStmt, new Timestamp(filtroRicercaBase.getMinDate().getTime()));
 					indexStmt++;
 				}
-				if(filtroRicerca.getMaxDate()!=null){
-					this.log.debug("maxDate stmt.setTimestamp("+filtroRicerca.getMaxDate()+")");
-					stm.setTimestamp(indexStmt, new Timestamp(filtroRicerca.getMaxDate().getTime()));
+				if(filtroRicercaBase.getMaxDate()!=null){
+					this.log.debug("maxDate stmt.setTimestamp("+filtroRicercaBase.getMaxDate()+")");
+					stm.setTimestamp(indexStmt, new Timestamp(filtroRicercaBase.getMaxDate().getTime()));
 					indexStmt++;
 				}	
-				if(filtroRicerca.getNomeAccordo()!=null){
-					this.log.debug("nomeAccordo stmt.setString("+filtroRicerca.getNomeAccordo()+")");
-					stm.setString(indexStmt, filtroRicerca.getNomeAccordo());
+				if(filtroRicercaBase.getNomeAccordo()!=null){
+					this.log.debug("nomeAccordo stmt.setString("+filtroRicercaBase.getNomeAccordo()+")");
+					stm.setString(indexStmt, filtroRicercaBase.getNomeAccordo());
 					indexStmt++;
 				}	
-				if(filtroRicerca.getVersione()!=null){
-					this.log.debug("versioneAccordo stmt.setString("+filtroRicerca.getVersione()+")");
-					stm.setString(indexStmt, filtroRicerca.getVersione());
+				if(filtroRicercaBase.getVersione()!=null){
+					this.log.debug("versioneAccordo stmt.setString("+filtroRicercaBase.getVersione()+")");
+					stm.setString(indexStmt, filtroRicercaBase.getVersione());
 					indexStmt++;
 				}	
-				if(filtroRicerca.getTipoSoggettoReferente()!=null || filtroRicerca.getNomeSoggettoReferente()!=null){
-					if(filtroRicerca.getTipoSoggettoReferente()!=null){
-						this.log.debug("tipoSoggettoReferenteAccordo stmt.setString("+filtroRicerca.getTipoSoggettoReferente()+")");
-						stm.setString(indexStmt, filtroRicerca.getTipoSoggettoReferente());
+				if(filtroRicercaBase.getTipoSoggettoReferente()!=null || filtroRicercaBase.getNomeSoggettoReferente()!=null){
+					if(filtroRicercaBase.getTipoSoggettoReferente()!=null){
+						this.log.debug("tipoSoggettoReferenteAccordo stmt.setString("+filtroRicercaBase.getTipoSoggettoReferente()+")");
+						stm.setString(indexStmt, filtroRicercaBase.getTipoSoggettoReferente());
 						indexStmt++;
 					}
-					if(filtroRicerca.getNomeSoggettoReferente()!=null){
-						this.log.debug("nomeSoggettoReferenteAccordo stmt.setString("+filtroRicerca.getNomeSoggettoReferente()+")");
-						stm.setString(indexStmt, filtroRicerca.getNomeSoggettoReferente());
-						indexStmt++;
-					}
-				}
-				if(filtroRicerca.getIdAccordoCooperazione()!=null &&
-						(filtroRicerca.getIdAccordoCooperazione().getNome()!=null || 
-						filtroRicerca.getIdAccordoCooperazione().getVersione()!=null) ){
-					if(filtroRicerca.getIdAccordoCooperazione().getNome()!=null){
-						this.log.debug("nomeAccordoCooperazione stmt.setString("+filtroRicerca.getIdAccordoCooperazione().getNome()+")");
-						stm.setString(indexStmt, filtroRicerca.getIdAccordoCooperazione().getNome());
-						indexStmt++;
-					}
-					if(filtroRicerca.getIdAccordoCooperazione().getVersione()!=null){
-						this.log.debug("versioneAccordoCooperazione stmt.setString("+filtroRicerca.getIdAccordoCooperazione().getVersione()+")");
-						stm.setString(indexStmt, filtroRicerca.getIdAccordoCooperazione().getVersione());
+					if(filtroRicercaBase.getNomeSoggettoReferente()!=null){
+						this.log.debug("nomeSoggettoReferenteAccordo stmt.setString("+filtroRicercaBase.getNomeSoggettoReferente()+")");
+						stm.setString(indexStmt, filtroRicercaBase.getNomeSoggettoReferente());
 						indexStmt++;
 					}
 				}
+				if(filtroRicercaBase.getIdAccordoCooperazione()!=null &&
+						(filtroRicercaBase.getIdAccordoCooperazione().getNome()!=null || 
+						filtroRicercaBase.getIdAccordoCooperazione().getVersione()!=null) ){
+					if(filtroRicercaBase.getIdAccordoCooperazione().getNome()!=null){
+						this.log.debug("nomeAccordoCooperazione stmt.setString("+filtroRicercaBase.getIdAccordoCooperazione().getNome()+")");
+						stm.setString(indexStmt, filtroRicercaBase.getIdAccordoCooperazione().getNome());
+						indexStmt++;
+					}
+					if(filtroRicercaBase.getIdAccordoCooperazione().getVersione()!=null){
+						this.log.debug("versioneAccordoCooperazione stmt.setString("+filtroRicercaBase.getIdAccordoCooperazione().getVersione()+")");
+						stm.setString(indexStmt, filtroRicercaBase.getIdAccordoCooperazione().getVersione());
+						indexStmt++;
+					}
+				}
+				
+				setProtocolPropertiesForSearch(stm, indexStmt, filtroRicercaBase, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE);
 			}
+			
+			if(filtroPT!=null){
+				if(filtroPT.getNomePortType()!=null){
+					stm.setString(indexStmt, filtroPT.getNomePortType());
+					indexStmt++;
+				}
+				setProtocolPropertiesForSearch(stm, indexStmt, filtroPT, ProprietariProtocolProperty.PORT_TYPE);
+			}
+			
+			if(filtroOP!=null){
+				if(filtroOP.getNomePortType()!=null){
+					stm.setString(indexStmt, filtroOP.getNomePortType());
+					indexStmt++;
+				}
+				setProtocolPropertiesForSearch(stm, indexStmt, filtroOP, ProprietariProtocolProperty.PORT_TYPE);
+				
+				if(filtroOP.getNomeAzione()!=null){
+					stm.setString(indexStmt, filtroOP.getNomeAzione());
+					indexStmt++;
+				}
+				setProtocolPropertiesForSearch(stm, indexStmt, filtroOP, ProprietariProtocolProperty.OPERATION);
+			}
+			
+			if(filtroAZ!=null){
+				if(filtroAZ.getNomeAzione()!=null){
+					stm.setString(indexStmt, filtroAZ.getNomeAzione());
+					indexStmt++;
+				}
+				setProtocolPropertiesForSearch(stm, indexStmt, filtroAZ, ProprietariProtocolProperty.AZIONE_ACCORDO);
+			}
+			
 			rs = stm.executeQuery();
-			List<IDAccordo> idAccordi = new ArrayList<IDAccordo>();
 			while (rs.next()) {
 				long idReferente = rs.getLong("id_referente");
 				IDSoggetto idSoggettoReferente = null;
@@ -2121,22 +2298,53 @@ IDriverWS ,IMonitoraggioRisorsa{
 					idSoggettoReferente = new IDSoggetto(soggettoReferente.getTipo(),soggettoReferente.getNome());
 				}
 
-				IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromValues(rs.getString("nome"),idSoggettoReferente,rs.getString("versione"));
-				idAccordi.add(idAccordo);
+				IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromValues(rs.getString("nomeAccordo"),idSoggettoReferente,rs.getString("versione"));
+				if(filtroPT!=null){
+					IDPortType idPT = new IDPortType();
+					idPT.setIdAccordo(idAccordo);
+					idPT.setNome(rs.getString("nomePT"));
+					listReturn.add((T) idPT);	
+				}
+				else if(filtroOP!=null){
+					IDAzione idAzione = new IDAzione();
+					idAzione.setIdAccordo(idAccordo);
+					idAzione.setPortType(rs.getString("nomePT"));
+					idAzione.setNome(rs.getString("nomeOP"));
+					listReturn.add((T) idAzione);	
+				}
+				else if(filtroAZ!=null){
+					IDAzione idAzione = new IDAzione();
+					idAzione.setIdAccordo(idAccordo);
+					idAzione.setNome(rs.getString("nomeAZ"));
+					listReturn.add((T) idAzione);	
+				}
+				else{
+					listReturn.add((T) idAccordo);	
+				}
 			}
-			if(idAccordi.size()==0){
-				if(filtroRicerca!=null)
-					throw new DriverRegistroServiziNotFound("Accordi non trovati che rispettano il filtro di ricerca selezionato: "+filtroRicerca.toString());
-				else
-					throw new DriverRegistroServiziNotFound("Accordi non trovati");
-			}else{
-				return idAccordi;
+			if(listReturn.size()<=0){
+				String msgFiltro = "Elementi non trovati che rispettano il filtro di ricerca selezionato: ";
+				if(filtroPT!=null){
+					throw new DriverRegistroServiziNotFound(msgFiltro+filtroPT.toString());
+				}
+				else if(filtroOP!=null){
+					throw new DriverRegistroServiziNotFound(msgFiltro+filtroOP.toString());
+				}
+				else if(filtroAZ!=null){
+					throw new DriverRegistroServiziNotFound(msgFiltro+filtroAZ.toString());
+				}
+				else if(filtroRicercaBase!=null){
+					throw new DriverRegistroServiziNotFound(msgFiltro+filtroRicercaBase.toString());
+				}
+				else{
+					throw new DriverRegistroServiziNotFound("Elementi non trovati");
+				}
 			}
 		}catch(DriverRegistroServiziNotFound de){
 			throw de;
 		}
 		catch(Exception e){
-			throw new DriverRegistroServiziException("getAllIdAccordiServizioParteComune error",e);
+			throw new DriverRegistroServiziException(nomeMetodo+" error",e);
 		} finally {
 
 			//Chiudo statement and resultset
@@ -2159,6 +2367,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 	}
 
+
+	
 	/**
 	 * Crea un nuovo AccordoServizio inserendolo nel DB Se il parametro
 	 * Connection e' null vuol dire che e' un'operazione atomica, altrimenti
@@ -2383,6 +2593,11 @@ IDriverWS ,IMonitoraggioRisorsa{
 			// CRUD
 			DriverRegistroServiziDB_LIB.CRUDDocumento(CostantiDB.CREATE, documenti, idAccordo, ProprietariDocumento.accordoServizio, connection, this.tipoDB);
 
+			
+			// ProtocolProperties
+			DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.CREATE, accordoServizio.getProtocolPropertyList(), 
+					idAccordo, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, connection, this.tipoDB);
+			
 
 		} catch (SQLException se) {
 			error = true;
@@ -3315,6 +3530,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 			// CRUD
 			DriverRegistroServiziDB_LIB.CRUDDocumento(CostantiDB.UPDATE, documenti, idAccordoLong, ProprietariDocumento.accordoServizio, connection, this.tipoDB);
 
+			
+			// ProtocolProperties
+			DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.UPDATE, accordoServizio.getProtocolPropertyList(), 
+					idAccordoLong, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, connection, this.tipoDB);
+			
+			
 		}catch (SQLException se) {
 			this.log.error(se.getMessage(),se);
 			error = true;
@@ -3732,6 +3953,11 @@ IDriverWS ,IMonitoraggioRisorsa{
 						null, connection, idAccordoLong);
 			}
 
+			
+			// ProtocolProperties
+			DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.DELETE, null, 
+					idAccordoLong, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, connection, this.tipoDB);
+			
 
 			// elimino accordoservizio
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
@@ -4453,6 +4679,16 @@ IDriverWS ,IMonitoraggioRisorsa{
 				throw new DriverRegistroServiziNotFound("Nessun soggetto trovato eseguendo: "+DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, nomeSogg, tipoSogg));
 			}
 
+			
+			// Protocol Properties
+			List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(soggetto.getId(), ProprietariProtocolProperty.SOGGETTO, con, this.tipoDB);
+			if(listPP!=null && listPP.size()>0){
+				for (ProtocolProperty protocolProperty : listPP) {
+					soggetto.addProtocolProperty(protocolProperty);
+				}
+			}
+			
+			
 			return soggetto;
 		}catch (DriverRegistroServiziNotFound e) {
 			throw e;
@@ -4512,6 +4748,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
 			sqlQueryObject.addSelectField("tipo_soggetto");
 			sqlQueryObject.addSelectField("nome_soggetto");
+			sqlQueryObject.setSelectDistinct(true);
 			if(filtroRicerca!=null){
 				// Filtro By Data
 				if(filtroRicerca.getMinDate()!=null)
@@ -4524,6 +4761,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 					sqlQueryObject.addWhereCondition("nome_soggetto = ?");
 				if(filtroRicerca.getNomePdd()!=null)
 					sqlQueryObject.addWhereCondition("server = ?");
+				setProtocolPropertiesForSearch(sqlQueryObject, filtroRicerca, CostantiDB.SOGGETTI);
 			}
 
 			sqlQueryObject.setANDLogicOperator(true);
@@ -4556,7 +4794,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 					this.log.debug("nomePdD stmt.setString("+filtroRicerca.getNomePdd()+")");
 					stm.setString(indexStmt, filtroRicerca.getNomePdd());
 					indexStmt++;
-				}	
+				}
+				setProtocolPropertiesForSearch(stm, indexStmt, filtroRicerca, ProprietariProtocolProperty.SOGGETTO);
 			}
 			rs = stm.executeQuery();
 			List<IDSoggetto> idSoggetti = new ArrayList<IDSoggetto>();
@@ -4630,7 +4869,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		try {
 			this.log.debug("CRUDSoggetto type = 1");
 			// creo soggetto
-			DriverRegistroServiziDB_LIB.CRUDSoggetto(1, soggetto, con);
+			DriverRegistroServiziDB_LIB.CRUDSoggetto(1, soggetto, con, this.tipoDB);
 
 		} catch (Exception qe) {
 			error = true;
@@ -5129,7 +5368,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 
 			// UPDATE soggetto
-			DriverRegistroServiziDB_LIB.CRUDSoggetto(2, soggetto, con);
+			DriverRegistroServiziDB_LIB.CRUDSoggetto(2, soggetto, con, this.tipoDB);
 
 		} catch (Exception qe) {
 			error = true;
@@ -5194,7 +5433,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		try {
 			this.log.debug("CRUDSoggetto type = 3");
 			// DELETE soggetto
-			DriverRegistroServiziDB_LIB.CRUDSoggetto(3, soggetto, con);
+			DriverRegistroServiziDB_LIB.CRUDSoggetto(3, soggetto, con, this.tipoDB);
 
 		} catch (Exception qe) {
 			error = true;
@@ -5348,47 +5587,78 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 
 
-	/**
-	 *  Ritorna gli identificatori dei servizi che rispettano il parametro di ricerca
-	 * 
-	 * @param filtroRicerca
-	 * @return lista di IDServizio
-	 * @throws DriverRegistroServiziException
-	 * @throws DriverRegistroServiziNotFound
-	 */
 	@Override
 	public List<IDServizio> getAllIdServizi(FiltroRicercaServizi filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		
+		List<IDServizio> list = new ArrayList<IDServizio>();
+		_fillAllIdServiziEngine("getAllIdServizi", filtroRicerca, list);
+		return list;
+		
+	}
+	
+	@Override
+	public List<IDFruizione> getAllIdFruizioniServizio(
+			FiltroRicercaFruizioniServizio filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+	
+		List<IDFruizione> list = new ArrayList<IDFruizione>();
+		_fillAllIdServiziEngine("getAllIdFruizioniServizio", filtroRicerca, list);
+		return list;
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> void _fillAllIdServiziEngine(String nomeMetodo, 
+			FiltroRicercaServizi filtroRicerca,
+			List<T> listReturn) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
 		Connection con = null;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 
-		this.log.debug("getAllIdServizi ...");
+		FiltroRicercaFruizioniServizio filtroFruizioni = null;
+		if(filtroRicerca instanceof FiltroRicercaFruizioniServizio){
+			filtroFruizioni = (FiltroRicercaFruizioniServizio) filtroRicerca;
+		}
+		
+		this.log.debug(nomeMetodo+" ...");
 
 		try {
 			this.log.debug("operazione atomica = " + this.atomica);
 			// prendo la connessione dal pool
 			if (this.atomica)
-				con = this.getConnectionFromDatasource("getAllIdServizi");
+				con = this.getConnectionFromDatasource(nomeMetodo);
 			else
 				con = this.globalConnection;
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
-			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI,"erogatore");
 			sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
+			if(filtroFruizioni!=null){
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI,"fruitore");
+			}
 
-			sqlQueryObject.addSelectField("tipo_soggetto");
-			sqlQueryObject.addSelectField("nome_soggetto");
+			sqlQueryObject.addSelectAliasField("erogatore", "tipo_soggetto", "tipo_soggetto_erogatore");
+			sqlQueryObject.addSelectAliasField("erogatore", "nome_soggetto", "nome_soggetto_erogatore");
 			sqlQueryObject.addSelectField("tipo_servizio");
 			sqlQueryObject.addSelectField("nome_servizio");
 			sqlQueryObject.addSelectField("id_referente");
 			sqlQueryObject.addSelectField("nome");
 			sqlQueryObject.addSelectField("versione");
 			sqlQueryObject.addSelectField("servizio_correlato");
-			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+			if(filtroFruizioni!=null){
+				sqlQueryObject.addSelectAliasField("fruitore", "tipo_soggetto", "tipo_soggetto_fruitore");
+				sqlQueryObject.addSelectAliasField("fruitore", "nome_soggetto", "nome_soggetto_fruitore");
+			}
+			sqlQueryObject.setSelectDistinct(true);
+			
+			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_soggetto = erogatore.id");
 			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo = "+CostantiDB.ACCORDI+".id");
+			if(filtroFruizioni!=null){
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_soggetto = fruitore.id");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_servizio = "+CostantiDB.SERVIZI+".id");
+			}
 
 			if(filtroRicerca!=null){
 				// Filtro By Data
@@ -5403,9 +5673,9 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(filtroRicerca.getTipologiaServizio()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".servizio_correlato = ?");
 				if(filtroRicerca.getTipoSoggettoErogatore()!=null)
-					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".tipo_soggetto = ?");
+					sqlQueryObject.addWhereCondition("erogatore.tipo_soggetto = ?");
 				if(filtroRicerca.getNomeSoggettoErogatore()!=null)
-					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".nome_soggetto = ?");
+					sqlQueryObject.addWhereCondition("erogatore.nome_soggetto = ?");
 				if(filtroRicerca.getIdAccordo()!=null){
 					IDAccordo idAccordo = filtroRicerca.getIdAccordo();
 					if(idAccordo.getNome()!=null){
@@ -5417,7 +5687,16 @@ IDriverWS ,IMonitoraggioRisorsa{
 					if(idAccordo.getVersione()!=null){
 						sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".versione = ?");
 					}
-				}	
+				}
+				setProtocolPropertiesForSearch(sqlQueryObject, filtroRicerca, CostantiDB.SERVIZI);
+			}
+			
+			if(filtroFruizioni!=null){
+				if(filtroFruizioni.getTipoSoggettoFruitore()!=null)
+					sqlQueryObject.addWhereCondition("fruitore.tipo_soggetto = ?");
+				if(filtroFruizioni.getNomeSoggettoFruitore()!=null)
+					sqlQueryObject.addWhereCondition("fruitore.nome_soggetto = ?");
+				setProtocolPropertiesForSearch(sqlQueryObject, filtroFruizioni, CostantiDB.SERVIZI_FRUITORI);
 			}
 
 			sqlQueryObject.setANDLogicOperator(true);
@@ -5482,12 +5761,27 @@ IDriverWS ,IMonitoraggioRisorsa{
 						stm.setString(indexStmt, idAccordo.getVersione());
 						indexStmt++;
 					}
-				}	
+				}
+				setProtocolPropertiesForSearch(stm, indexStmt, filtroRicerca, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA);
 			}
+			
+			if(filtroFruizioni!=null){
+				if(filtroFruizioni.getTipoSoggettoFruitore()!=null){
+					this.log.debug("tipoSoggettoFruitore stmt.setString("+filtroFruizioni.getTipoSoggettoFruitore()+")");
+					stm.setString(indexStmt, filtroFruizioni.getTipoSoggettoFruitore());
+					indexStmt++;
+				}
+				if(filtroFruizioni.getNomeSoggettoFruitore()!=null){
+					this.log.debug("nomeSoggettoFruitore stmt.setString("+filtroFruizioni.getNomeSoggettoFruitore()+")");
+					stm.setString(indexStmt, filtroFruizioni.getNomeSoggettoFruitore());
+					indexStmt++;
+				}
+				setProtocolPropertiesForSearch(stm, indexStmt, filtroFruizioni, ProprietariProtocolProperty.FRUITORE);
+			}
+			
 			rs = stm.executeQuery();
-			List<IDServizio> idServizi = new ArrayList<IDServizio>();
 			while (rs.next()) {
-				IDServizio idServ = new IDServizio(rs.getString("tipo_soggetto"),rs.getString("nome_soggetto"),
+				IDServizio idServ = new IDServizio(rs.getString("tipo_soggetto_erogatore"),rs.getString("nome_soggetto_erogatore"),
 						rs.getString("tipo_servizio"),rs.getString("nome_servizio"));
 
 				// uriAccordoServizio
@@ -5505,21 +5799,33 @@ IDriverWS ,IMonitoraggioRisorsa{
 					idServ.setTipologiaServizio(TipologiaServizio.CORRELATO.toString());
 				else
 					idServ.setTipologiaServizio(TipologiaServizio.NORMALE.toString());
-				idServizi.add(idServ);
+				
+				if(filtroFruizioni!=null){
+					IDFruizione idFruizione = new IDFruizione();
+					idFruizione.setIdServizio(idServ);
+					idFruizione.setIdFruitore(new IDSoggetto(rs.getString("tipo_soggetto_fruitore"),rs.getString("nome_soggetto_fruitore")));
+					listReturn.add((T)idFruizione);
+				}
+				else{
+					listReturn.add((T)idServ);
+				}
 			}
-			if(idServizi.size()==0){
-				if(filtroRicerca!=null)
-					throw new DriverRegistroServiziNotFound("Servizi non trovati che rispettano il filtro di ricerca selezionato: "+filtroRicerca.toString());
+			if(listReturn.size()<=0){
+				String msgFiltro = "Elementi non trovati che rispettano il filtro di ricerca selezionato: ";
+				if(filtroFruizioni!=null){
+					throw new DriverRegistroServiziNotFound(msgFiltro+filtroFruizioni.toString());
+				}
+				else if(filtroRicerca!=null){
+					throw new DriverRegistroServiziNotFound(msgFiltro+filtroRicerca.toString());
+				}
 				else
-					throw new DriverRegistroServiziNotFound("Servizi non trovati");
-			}else{
-				return idServizi;
+					throw new DriverRegistroServiziNotFound("Elementi non trovati");
 			}
 		}catch(DriverRegistroServiziNotFound de){
 			throw de;
 		}
 		catch(Exception e){
-			throw new DriverRegistroServiziException("getAllIdServizi error",e);
+			throw new DriverRegistroServiziException(nomeMetodo+" error",e);
 		} finally {
 
 			//Chiudo statement and resultset
@@ -5569,6 +5875,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addSelectField("id_soggetto");
 			sqlQueryObject.addSelectField("aps_nome");
 			sqlQueryObject.addSelectField("aps_versione");
+			sqlQueryObject.setSelectDistinct(true);
+			
 			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
 			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI+".id_accordo = "+CostantiDB.ACCORDI+".id");
 
@@ -5600,6 +5908,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 						sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".versione = ?");
 					}
 				}	
+				setProtocolPropertiesForSearch(sqlQueryObject, filtroRicerca, CostantiDB.SERVIZI);
 			}
 
 			sqlQueryObject.setANDLogicOperator(true);
@@ -5665,6 +5974,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 						indexStmt++;
 					}
 				}	
+				setProtocolPropertiesForSearch(stm, indexStmt, filtroRicerca, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA);
 			}
 			rs = stm.executeQuery();
 			List<IDAccordo> idAccordi = new ArrayList<IDAccordo>();
@@ -7542,6 +7852,18 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 				// aggiungo il fruitore al servizio da restituire
 				fruitore.setId(rs.getLong("id"));
+				
+				
+				// Protocol Properties
+				List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(fruitore.getId(), ProprietariProtocolProperty.FRUITORE, con, this.tipoDB);
+				if(listPP!=null && listPP.size()>0){
+					for (ProtocolProperty protocolProperty : listPP) {
+						fruitore.addProtocolProperty(protocolProperty);
+					}
+				}
+				
+				
+				
 				accordoServizioParteSpecifica.addFruitore(fruitore);
 
 			}
@@ -7666,6 +7988,19 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 			}catch(DriverRegistroServiziNotFound dNotFound){}
 
+			
+			
+			
+			// Protocol Properties
+			List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(longIdAccordoServizioParteSpecifica, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA, con, this.tipoDB);
+			if(listPP!=null && listPP.size()>0){
+				for (ProtocolProperty protocolProperty : listPP) {
+					accordoServizioParteSpecifica.addProtocolProperty(protocolProperty);
+				}
+			}
+			
+			
+			
 			return accordoServizioParteSpecifica;
 
 		} catch (DriverRegistroServiziNotFound e) {
@@ -11820,6 +12155,13 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.PDD);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PROTOCOL_PROPERTIES);
 			updateString = sqlQueryObject.createSQLDelete();
 			stmt = con.prepareStatement(updateString);
 			stmt.executeUpdate();
@@ -17637,5 +17979,276 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 	}
 
+	
+	
+	
+	
+	
+	
+	public boolean existsProtocolProperty(ProprietariProtocolProperty proprietarioProtocolProperty, long idProprietario, String nome) throws DriverRegistroServiziException {
+
+		boolean exist = false;
+		Connection connection;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		if (this.atomica) {
+			try {
+				connection = this.getConnectionFromDatasource("existsProtocolProperty");
+				connection.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsProtocolProperty] Exception accedendo al datasource :" + e.getMessage());
+
+			}
+
+		} else
+			connection = this.globalConnection;
+
+		this.log.debug("operazione atomica = " + this.atomica);
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PROTOCOL_PROPERTIES);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addWhereCondition("tipo_proprietario = ?");
+			sqlQueryObject.addWhereCondition("id_proprietario = ?");
+			sqlQueryObject.addWhereCondition("name = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = connection.prepareStatement(sqlQuery);
+			stm.setString(1, proprietarioProtocolProperty.name());
+			stm.setLong(2, idProprietario);
+			stm.setString(3, nome);
+			rs = stm.executeQuery();
+			if (rs.next())
+				exist = true;
+			rs.close();
+			stm.close();
+		} catch (Exception e) {
+			exist = false;
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			if (this.atomica) {
+				try {
+					connection.close();
+				} catch (Exception e) {
+					// ignore
+				}
+			}
+		}
+
+		return exist;
+	}
+
+	public ProtocolProperty getProtocolProperty(ProprietariProtocolProperty proprietarioProtocolProperty, long idProprietario, String nome) throws DriverRegistroServiziException {
+		String nomeMetodo = "getProtocolProperty";
+
+		Connection con = null;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("getProtocolProperty");
+
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(), e);
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		try {
+			long idPP = DBUtils.getIdProtocolProperty(proprietarioProtocolProperty.name(),idProprietario,nome,con,this.tipoDB);
+			return DriverRegistroServiziDB_LIB.getProtocolProperty(idPP, con, this.tipoDB);
+
+		} catch (Exception se) {
+			throw new DriverRegistroServiziException("[DriverRegistroServiziException::" + nomeMetodo + "] Exception: " + se.getMessage());
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+
+	public ProtocolProperty getProtocolProperty(long idProtocolProperty) throws DriverRegistroServiziException {
+		String nomeMetodo = "getProtocolProperty";
+
+		Connection con = null;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("getProtocolProperty");
+
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(), e);
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		try {
+
+			return DriverRegistroServiziDB_LIB.getProtocolProperty(idProtocolProperty, con, this.tipoDB);
+
+		} catch (Exception se) {
+			throw new DriverRegistroServiziException("[DriverRegistroServiziException::" + nomeMetodo + "] Exception: " + se.getMessage());
+		} finally {
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	private void setProtocolPropertiesForSearch(ISQLQueryObject sqlQueryObject, FiltroRicercaFruizioniServizio filtroRicerca, String tabella) throws SQLQueryObjectException{
+		if(filtroRicerca!=null){
+			this._setProtocolPropertiesForSearch(sqlQueryObject, filtroRicerca.getProtocolPropertiesFruizione(), tabella);
+		}
+	}
+	private void setProtocolPropertiesForSearch(ISQLQueryObject sqlQueryObject, FiltroRicercaAzioni filtroRicerca, String tabella) throws SQLQueryObjectException{
+		if(filtroRicerca!=null){
+			this._setProtocolPropertiesForSearch(sqlQueryObject, filtroRicerca.getProtocolPropertiesAzione(), tabella);
+		}
+	}
+	private void setProtocolPropertiesForSearch(ISQLQueryObject sqlQueryObject, FiltroRicercaOperations filtroRicerca, String tabella) throws SQLQueryObjectException{
+		if(filtroRicerca!=null){
+			if(CostantiDB.PORT_TYPE.equals(tabella)){
+				this._setProtocolPropertiesForSearch(sqlQueryObject, filtroRicerca.getProtocolPropertiesPortType(), tabella);
+			}
+			else{
+				this._setProtocolPropertiesForSearch(sqlQueryObject, filtroRicerca.getProtocolPropertiesAzione(), tabella);
+			}
+		}
+	}
+	private void setProtocolPropertiesForSearch(ISQLQueryObject sqlQueryObject, FiltroRicercaPortTypes filtroRicerca, String tabella) throws SQLQueryObjectException{
+		if(filtroRicerca!=null){
+			this._setProtocolPropertiesForSearch(sqlQueryObject, filtroRicerca.getProtocolPropertiesPortType(), tabella);
+		}
+	}
+	private void setProtocolPropertiesForSearch(ISQLQueryObject sqlQueryObject, FiltroRicercaAccordi filtroRicerca, String tabella) throws SQLQueryObjectException{
+		if(filtroRicerca!=null){
+			this._setProtocolPropertiesForSearch(sqlQueryObject, filtroRicerca.getProtocolPropertiesAccordo(), tabella);
+		}
+	}
+	private void setProtocolPropertiesForSearch(ISQLQueryObject sqlQueryObject, FiltroRicerca filtroRicerca, String tabella) throws SQLQueryObjectException{
+		if(filtroRicerca!=null){
+			this._setProtocolPropertiesForSearch(sqlQueryObject, filtroRicerca.getProtocolProperties(), tabella);
+		}
+	}
+	private void _setProtocolPropertiesForSearch(ISQLQueryObject sqlQueryObject, List<FiltroRicercaProtocolProperty> list, String tabella) throws SQLQueryObjectException{
+		if(list!=null && list.size()>0){
+			String [] conditions = new String[list.size()];
+			for (int i = 0; i < conditions.length; i++) {
+				String aliasTabella = "pp"+i+tabella;
+				sqlQueryObject.addFromTable(CostantiDB.PROTOCOL_PROPERTIES, aliasTabella);
+				sqlQueryObject.addWhereCondition(aliasTabella+".tipo_proprietario=?");
+				sqlQueryObject.addWhereCondition(aliasTabella+"id_proprietario="+tabella+".id");
+				FiltroRicercaProtocolProperty f = list.get(i);
+				if(f.getNome()!=null){
+					if(conditions[i]!=null){
+						conditions[i] = conditions[i] + " AND ";
+					}
+					else {
+						conditions[i] = "";
+					}
+					conditions[i] = conditions[i] + " " + aliasTabella+".name=?";
+				}
+				if(f.getValore()!=null){
+					if(conditions[i]!=null){
+						conditions[i] = conditions[i] + " AND ";
+					}
+					else {
+						conditions[i] = "";
+					}
+					conditions[i] = conditions[i] + " " + aliasTabella+".value_string=?";
+				}
+				if(f.getValoreNumerico()!=null){
+					if(conditions[i]!=null){
+						conditions[i] = conditions[i] + " AND ";
+					}
+					else {
+						conditions[i] = "";
+					}
+					conditions[i] = conditions[i] + " " + aliasTabella+".value_number=?";
+				}
+			}
+			sqlQueryObject.addWhereCondition(true, conditions);
+		}
+	}
+	
+	private void setProtocolPropertiesForSearch(PreparedStatement stmt, int index, FiltroRicercaFruizioniServizio filtroRicerca, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException{
+		if(filtroRicerca!=null){
+			this._setProtocolPropertiesForSearch(stmt, index, filtroRicerca.getProtocolPropertiesFruizione(), proprietario);
+		}
+	}
+	private void setProtocolPropertiesForSearch(PreparedStatement stmt, int index, FiltroRicercaAzioni filtroRicerca, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException{
+		if(filtroRicerca!=null){
+			this._setProtocolPropertiesForSearch(stmt, index, filtroRicerca.getProtocolPropertiesAzione(), proprietario);
+		}
+	}
+	private void setProtocolPropertiesForSearch(PreparedStatement stmt, int index, FiltroRicercaOperations filtroRicerca, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException{
+		if(filtroRicerca!=null){
+			if(ProprietariProtocolProperty.PORT_TYPE.equals(proprietario)){
+				this._setProtocolPropertiesForSearch(stmt, index, filtroRicerca.getProtocolPropertiesPortType(), proprietario);
+			}
+			else{
+				this._setProtocolPropertiesForSearch(stmt, index, filtroRicerca.getProtocolPropertiesAzione(), proprietario);
+			}
+		}
+	}
+	private void setProtocolPropertiesForSearch(PreparedStatement stmt, int index, FiltroRicercaPortTypes filtroRicerca, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException{
+		if(filtroRicerca!=null){
+			this._setProtocolPropertiesForSearch(stmt, index, filtroRicerca.getProtocolPropertiesPortType(), proprietario);
+		}
+	}
+	private void setProtocolPropertiesForSearch(PreparedStatement stmt, int index, FiltroRicercaAccordi filtroRicerca, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException{
+		if(filtroRicerca!=null){
+			this._setProtocolPropertiesForSearch(stmt, index, filtroRicerca.getProtocolPropertiesAccordo(), proprietario);
+		}
+	}
+	private void setProtocolPropertiesForSearch(PreparedStatement stmt, int index, FiltroRicerca filtroRicerca, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException{
+		if(filtroRicerca!=null){
+			this._setProtocolPropertiesForSearch(stmt, index, filtroRicerca.getProtocolProperties(), proprietario);
+		}
+	}
+	
+	private void _setProtocolPropertiesForSearch(PreparedStatement stmt, int index, 
+			List<FiltroRicercaProtocolProperty> list, ProprietariProtocolProperty proprietario) throws SQLQueryObjectException, SQLException{
+		if(list!=null && list.size()>0){
+			stmt.setString(index++, proprietario.name());
+			for (int i = 0; i < list.size(); i++) {
+				FiltroRicercaProtocolProperty f = list.get(i);
+				if(f.getNome()!=null){
+					stmt.setString(index++, f.getNome());
+				}
+				if(f.getValore()!=null){
+					stmt.setString(index++, f.getValore());
+				}
+				if(f.getValoreNumerico()!=null){
+					stmt.setLong(index++, f.getValoreNumerico());
+				}
+			}
+		}
+	}
+		
 }
 

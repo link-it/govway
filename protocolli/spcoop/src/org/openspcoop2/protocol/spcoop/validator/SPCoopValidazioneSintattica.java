@@ -48,6 +48,7 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -86,7 +87,7 @@ import org.w3c.dom.Node;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAPHeaderElement>{
+public class SPCoopValidazioneSintattica extends BasicComponentFactory implements IValidazioneSintattica<SOAPHeaderElement>{
 
 	/** Messaggio. */
 	private OpenSPCoop2SoapMessage msg;
@@ -117,9 +118,6 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 	public void setReadQualifiedAttribute(boolean readQualifiedAttribute) {
 		this.readQualifiedAttribute = readQualifiedAttribute;
 	}
-	private IProtocolFactory<SOAPHeaderElement> protocolFactory;
-	/** Logger utilizzato per debug. */
-	private org.slf4j.Logger log = null;
 
 	private boolean segnalazioneElementoPresentePiuVolte = false;
 	
@@ -145,8 +143,7 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 	 * 
 	 */
 	public SPCoopValidazioneSintattica(IProtocolFactory<SOAPHeaderElement> protocolFactory) throws ProtocolException{
-		this.log = protocolFactory.getLogger();
-		this.protocolFactory = protocolFactory;
+		super(protocolFactory);
 		if(this.errorsTrovatiSullaListaEccezioni == null)
 			this.errorsTrovatiSullaListaEccezioni = new java.util.ArrayList<Eccezione>();
 		if(this.erroriProcessamento == null)
@@ -4461,10 +4458,6 @@ public class SPCoopValidazioneSintattica  implements IValidazioneSintattica<SOAP
 		}
 	}
 
-	@Override
-	public IProtocolFactory<SOAPHeaderElement> getProtocolFactory() {
-		return this.protocolFactory;
-	}
 
 	@Override
 	public ValidazioneSintatticaResult<SOAPHeaderElement> validaRichiesta(IState state, OpenSPCoop2Message msg,  Busta datiBustaLettiURLMappingProperties, ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException{

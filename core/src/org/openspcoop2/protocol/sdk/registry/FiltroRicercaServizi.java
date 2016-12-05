@@ -22,6 +22,7 @@
 package org.openspcoop2.protocol.sdk.registry;
 
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 
 /**
  *  FiltroRicercaServizi
@@ -32,27 +33,34 @@ import org.openspcoop2.core.id.IDSoggetto;
  */
 public class FiltroRicercaServizi {
 
-	private String tipo;
-	private String nome;
-	private IDSoggetto soggetto;
+	private String tipoServizio;
+	private String nomeServizio;
+	private IDSoggetto soggettoErogatore;
+	private ProtocolProperties protocolPropertiesServizi;
 
-	public String getTipo() {
-		return this.tipo;
+	public String getTipoServizio() {
+		return this.tipoServizio;
 	}
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
+	public void setTipoServizio(String tipo) {
+		this.tipoServizio = tipo;
 	}
-	public String getNome() {
-		return this.nome;
+	public String getNomeServizio() {
+		return this.nomeServizio;
 	}
-	public void setNome(String nome) {
-		this.nome = nome;
+	public void setNomeServizio(String nome) {
+		this.nomeServizio = nome;
 	}
-	public IDSoggetto getSoggetto() {
-		return this.soggetto;
+	public IDSoggetto getSoggettoErogatore() {
+		return this.soggettoErogatore;
 	}
-	public void setSoggetto(IDSoggetto soggetto) {
-		this.soggetto = soggetto;
+	public void setSoggettoErogatore(IDSoggetto soggetto) {
+		this.soggettoErogatore = soggetto;
+	}
+	public ProtocolProperties getProtocolPropertiesServizi() {
+		return this.protocolPropertiesServizi;
+	}
+	public void setProtocolPropertiesServizi(ProtocolProperties protocolProperties) {
+		this.protocolPropertiesServizi = protocolProperties;
 	}
 	
 }

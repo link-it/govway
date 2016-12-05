@@ -22,12 +22,17 @@
 package org.openspcoop2.protocol.basic;
 
 
+import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
+import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.protocol.basic.archive.BasicArchive;
 import org.openspcoop2.protocol.basic.builder.BustaBuilder;
 import org.openspcoop2.protocol.basic.builder.ErroreApplicativoBuilder;
 import org.openspcoop2.protocol.basic.builder.EsitoBuilder;
 import org.openspcoop2.protocol.basic.config.BasicTraduttore;
 import org.openspcoop2.protocol.basic.diagnostica.DiagnosticSerializer;
+import org.openspcoop2.protocol.basic.properties.BasicDynamicConfiguration;
+import org.openspcoop2.protocol.basic.registry.ConfigIntegrationReader;
+import org.openspcoop2.protocol.basic.registry.RegistryReader;
 import org.openspcoop2.protocol.basic.tracciamento.TracciaSerializer;
 import org.openspcoop2.protocol.basic.validator.ValidatoreErrori;
 import org.openspcoop2.protocol.basic.validator.ValidazioneAccordi;
@@ -36,12 +41,17 @@ import org.openspcoop2.protocol.basic.validator.ValidazioneDocumenti;
 import org.openspcoop2.protocol.basic.validator.ValidazioneSemantica;
 import org.openspcoop2.protocol.basic.validator.ValidazioneSintattica;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
+import org.openspcoop2.protocol.registry.CachedRegistryReader;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.archive.IArchive;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
+import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
 import org.openspcoop2.protocol.sdk.validator.IValidazioneAccordi;
@@ -204,5 +214,50 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 		return new BasicTraduttore(this);
 	}
 
+	
+	/* ** CONSOLE ** */
+	
+	@Override
+	public IConsoleDynamicConfiguration createDynamicConfigurationConsole() throws ProtocolException{
+		return new BasicDynamicConfiguration(this);
+	}
+	
+	
+	/* ** REGISTRY  ** */
+	
+	@Override
+	public IRegistryReader getRegistryReader(IDriverRegistroServiziGet driver) throws ProtocolException{
+		try{
+			return new RegistryReader(driver, this.log);
+		}catch(Exception e){
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public IRegistryReader getCachedRegistryReader(IState state) throws ProtocolException{
+		try{
+			return new CachedRegistryReader(this.log, this, state);
+		}catch(Exception e){
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public IConfigIntegrationReader getConfigIntegrationReader(IDriverConfigurazioneGet driver) throws ProtocolException{
+		try{
+			return new ConfigIntegrationReader(driver, this.log);
+		}catch(Exception e){
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	@Override
+	public IConfigIntegrationReader getCachedConfigIntegrationReader(IState state) throws ProtocolException{
+		try{
+			Class<?> c = Class.forName("org.openspcoop2.pdd.config.CachedConfigIntegrationReader");
+			return (IConfigIntegrationReader) c.getConstructor(Logger.class,IProtocolFactory.class,IState.class).
+				newInstance(this.log,this,state);
+		}catch(Exception e){
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
 
 }

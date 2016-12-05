@@ -24,7 +24,9 @@
 package org.openspcoop2.core.registry.driver;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 
@@ -66,6 +68,21 @@ public class FiltroRicercaAccordi implements Serializable{
 	private IDAccordoCooperazione idAccordoCooperazione;
 	private Boolean servizioComposto;
 
+	/** ProtocolProperty */
+	private List<FiltroRicercaProtocolProperty> protocolPropertiesAccordo = new ArrayList<FiltroRicercaProtocolProperty>();
+
+	public List<FiltroRicercaProtocolProperty> getProtocolPropertiesAccordo() {
+		return this.protocolPropertiesAccordo;
+	}
+
+	public void setProtocolPropertiesAccordo(
+			List<FiltroRicercaProtocolProperty> list) {
+		this.protocolPropertiesAccordo = list;
+	}
+
+	public void addProtocolPropertyAccordo(FiltroRicercaProtocolProperty filtro){
+		this.protocolPropertiesAccordo.add(filtro);
+	}
 	
 	/**
 	 * @return the maxDate
@@ -149,6 +166,12 @@ public class FiltroRicercaAccordi implements Serializable{
 	public String toString(){
 		StringBuffer bf = new StringBuffer();
 		bf.append("Filtro Accordi:");
+		this.addDetails(bf);
+		if(bf.length()=="Filtro Accordi:".length())
+			bf.append(" nessun filtro presente");
+		return bf.toString();
+	}
+	public void addDetails(StringBuffer bf){
 		if(this.minDate!=null)
 			bf.append(" [intervallo-inferiore-data:"+this.minDate+"]");
 		if(this.maxDate!=null)
@@ -162,12 +185,17 @@ public class FiltroRicercaAccordi implements Serializable{
 		if(this.versione!=null)
 			bf.append(" [versione:"+this.versione+"]");
 		if(this.idAccordoCooperazione!=null)
-			bf.append(" [idAccordoCooperazione:"+this.idAccordoCooperazione+"]");
+			bf.append(" [id-accordo-cooperazione:"+this.idAccordoCooperazione+"]");
 		if(this.servizioComposto!=null)
-			bf.append(" [servizioComposto:"+this.servizioComposto+"]");
-		if(bf.length()=="Filtro Accordi:".length())
-			bf.append(" nessun filtro presente");
-		return bf.toString();
+			bf.append(" [servizio-composto:"+this.servizioComposto+"]");
+		if(this.protocolPropertiesAccordo!=null && this.protocolPropertiesAccordo.size()>0){
+			bf.append(" [protocol-properties-accordo:"+this.protocolPropertiesAccordo.size()+"]");
+			for (int i = 0; i < this.protocolPropertiesAccordo.size(); i++) {
+				bf.append(" [protocol-properties-accordo["+i+"]:");
+				this.protocolPropertiesAccordo.get(i).addDetails(bf);
+				bf.append("]");
+			}
+		}
 	}
 
 }

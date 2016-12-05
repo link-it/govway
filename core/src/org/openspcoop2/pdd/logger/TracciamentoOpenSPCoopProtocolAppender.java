@@ -30,8 +30,8 @@ import java.util.Hashtable;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.protocol.sdk.tracciamento.TracciamentoException;
@@ -136,6 +136,5 @@ public class TracciamentoOpenSPCoopProtocolAppender implements ITracciaProducer{
 	public IProtocolFactory<?> getProtocolFactory() {
 		return null; // non e' possibile localizzarla
 	}
-
 
 }

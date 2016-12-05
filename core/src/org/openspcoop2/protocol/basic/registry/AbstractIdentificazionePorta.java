@@ -21,13 +21,14 @@
 
 
 
-package org.openspcoop2.protocol.engine.registry;
+package org.openspcoop2.protocol.basic.registry;
 
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.transport.TransportRequestContext;
@@ -69,6 +70,7 @@ public abstract class AbstractIdentificazionePorta {
     protected IProtocolFactory<?> protocolFactory = null;
 
 	protected IRegistryReader registryReader;
+	protected IConfigIntegrationReader configIntegrationReader;
 
 	/* ---- Log ----- */
 	protected Logger log;
@@ -82,7 +84,7 @@ public abstract class AbstractIdentificazionePorta {
 	 * 
 	 */
 	public AbstractIdentificazionePorta(TransportRequestContext urlProtocolContext, Logger log,
-			boolean portaUrlBased, IRegistryReader registryReader,
+			boolean portaUrlBased, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader,
 			IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		this.location = urlProtocolContext.getFunctionParameters();
 		this.urlCompleta = urlProtocolContext.getUrlInvocazione_formBased();
@@ -90,6 +92,7 @@ public abstract class AbstractIdentificazionePorta {
 		this.protocolFactory = protocolFactory;
 		this.log = log;
 		this.registryReader = registryReader;
+		this.configIntegrationReader = configIntegrationReader;
 	}
 
 

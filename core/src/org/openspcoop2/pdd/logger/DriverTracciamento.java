@@ -61,7 +61,7 @@ public class DriverTracciamento implements ITracciaDriver {
 	public IProtocolFactory<?> getProtocolFactory() {
 		return this.basicProtocolFactory;
 	}
-	
+
 	/**
 	 * Properties
 	 */

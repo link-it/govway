@@ -23,6 +23,7 @@ package org.openspcoop2.protocol.basic.validator;
 
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -32,7 +33,6 @@ import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneSemanticaResult;
 import org.openspcoop2.utils.digest.IDigestReader;
-import org.slf4j.Logger;
 
 /**
  * ValidazioneSemantica
@@ -42,15 +42,11 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  * 
  */
-public class ValidazioneSemantica implements
+public class ValidazioneSemantica extends BasicComponentFactory implements
 		org.openspcoop2.protocol.sdk.validator.IValidazioneSemantica {
 
-	protected IProtocolFactory<?> protocolFactory;
-	protected Logger log;
-		
-	public ValidazioneSemantica(IProtocolFactory<?> factory){
-		this.log = factory.getLogger();
-		this.protocolFactory = factory;
+	public ValidazioneSemantica(IProtocolFactory<?> factory) throws ProtocolException{
+		super(factory);
 	}
 
 	

@@ -24,10 +24,10 @@ package org.openspcoop2.protocol.basic.validator;
 import java.util.List;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.slf4j.Logger;
 
 /**
  * ValidazioneConSchema
@@ -38,15 +38,11 @@ import org.slf4j.Logger;
  * 
  */
 
-public class ValidazioneConSchema implements
+public class ValidazioneConSchema extends BasicComponentFactory implements
 		org.openspcoop2.protocol.sdk.validator.IValidazioneConSchema {
 
-	protected IProtocolFactory<?> protocolFactory;
-	protected Logger log;
-		
-	public ValidazioneConSchema(IProtocolFactory<?> factory){
-		this.log = factory.getLogger();
-		this.protocolFactory = factory;
+	public ValidazioneConSchema(IProtocolFactory<?> factory) throws ProtocolException{
+		super(factory);
 	}
 
 	@Override

@@ -56,11 +56,16 @@ public class FiltroRicercaSoggetti extends FiltroRicerca implements Serializable
 	@Override
 	public String toString(){
 		StringBuffer bf = new StringBuffer();
-		super.toString(false);
-		if(this.nomePdd!=null)
-			bf.append(" [nomePdd:"+this.nomePdd+"]");
+		bf.append("Filtro:");
+		this.addDetails(bf);
 		if(bf.length()=="Filtro:".length())
 			bf.append(" nessun filtro presente");
 		return bf.toString();
+	}
+	@Override
+	public void addDetails(StringBuffer bf){
+		if(this.nomePdd!=null)
+			bf.append(" [nomePdd:"+this.nomePdd+"]");
+		super.addDetails(bf);
 	}
 }

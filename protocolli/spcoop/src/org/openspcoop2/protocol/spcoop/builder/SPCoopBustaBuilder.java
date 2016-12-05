@@ -28,6 +28,7 @@ import javax.xml.soap.SOAPHeaderElement;
 
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -36,7 +37,6 @@ import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.spcoop.SPCoopBustaRawContent;
-import org.slf4j.Logger;
 
 /**
  * Classe che implementa, in base al protocollo SPCoop, l'interfaccia {@link org.openspcoop2.protocol.sdk.builder.IBustaBuilder} 
@@ -45,23 +45,18 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SPCoopBustaBuilder implements org.openspcoop2.protocol.sdk.builder.IBustaBuilder<SOAPHeaderElement> {
+public class SPCoopBustaBuilder extends BasicComponentFactory implements org.openspcoop2.protocol.sdk.builder.IBustaBuilder<SOAPHeaderElement> {
 
 	private SPCoopImbustamento spcoopImbustamento = null;
 	private SPCoopSbustamento spcoopSbustamento = null;
-	@SuppressWarnings("unused")
-	private Logger log = null;
 	
 	public SPCoopBustaBuilder(IProtocolFactory<SOAPHeaderElement> factory) throws ProtocolException{
+		super(factory);
 		this.spcoopImbustamento = new SPCoopImbustamento(factory);
 		this.spcoopSbustamento = new SPCoopSbustamento(factory);
 		this.log = factory.getLogger();
 	}
 	
-	@Override
-	public IProtocolFactory<?> getProtocolFactory() {
-		return this.spcoopImbustamento.getProtocolFactory();
-	}
 
 	@Override
 	public String newID(IState state, IDSoggetto idSoggetto, String idTransazione,

@@ -34,6 +34,7 @@ import org.openspcoop2.core.tracciamento.constants.TipoProfiloCollaborazione;
 import org.openspcoop2.core.tracciamento.constants.TipoRilevanzaEccezione;
 import org.openspcoop2.core.tracciamento.constants.TipoTempo;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
@@ -45,7 +46,6 @@ import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
-import org.slf4j.Logger;
 import org.w3c.dom.Element;
 
 /**
@@ -55,21 +55,14 @@ import org.w3c.dom.Element;
  * @author $Author: apoli $
  * @version $Rev: 12359 $, $Date: 2016-11-18 17:24:57 +0100 (Fri, 18 Nov 2016) $
  */
-public class TracciaSerializer implements org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer {
+public class TracciaSerializer extends BasicComponentFactory implements org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer {
 	
-	protected Logger log;
-	protected IProtocolFactory<?> factory;
 	protected OpenSPCoop2MessageFactory fac = null;
 	protected AbstractXMLUtils xmlUtils;
 	
-	@Override
-	public IProtocolFactory<?> getProtocolFactory() {
-		return this.factory;
-	}
-	
-	public TracciaSerializer(IProtocolFactory<?> factory) {
-		this.log = factory.getLogger();
-		this.factory = factory;
+
+	public TracciaSerializer(IProtocolFactory<?> factory) throws ProtocolException {
+		super(factory);
 		this.fac = OpenSPCoop2MessageFactory.getMessageFactory();
 		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 	}
@@ -100,7 +93,7 @@ public class TracciaSerializer implements org.openspcoop2.protocol.sdk.tracciame
 			}
 			
 			// Traduzioni da factory
-			ITraduttore protocolTraduttore = this.factory.createTraduttore();
+			ITraduttore protocolTraduttore = this.protocolFactory.createTraduttore();
 			if(tracciaBase!=null){
 				if(tracciaBase.getBusta()!=null){
 					if(tracciaBase.getBusta().getProfiloCollaborazione()!=null){

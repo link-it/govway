@@ -36,15 +36,16 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.Allegato;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.Riscontro;
 import org.openspcoop2.protocol.sdk.Trasmissione;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
@@ -69,7 +70,7 @@ import org.openspcoop2.utils.resources.GestoreJNDI;
  * @version $Rev: 12237 $, $Date: 2016-10-04 11:41:45 +0200 (Tue, 04 Oct 2016) $
  */
 
-public class TracciaProducer implements ITracciaProducer{
+public class TracciaProducer extends BasicComponentFactory implements ITracciaProducer{
 
 	/** Properties */
 	protected Properties appenderProperties;
@@ -101,21 +102,9 @@ public class TracciaProducer implements ITracciaProducer{
 	/** AddGdoInfoAllTables */
 	protected boolean addGdoForAllTables = false;
 	
-	/** Logger utilizzato per info. */
-	protected Logger log = null;
-	
-	/** ProtocolFactory */
-	protected IProtocolFactory<?> protocolFactory;
-	@Override
-	public IProtocolFactory<?> getProtocolFactory() {
-		return this.protocolFactory;
-	}
-	
-	
 
-	public TracciaProducer(IProtocolFactory<?> factory){
-		this.log = factory.getLogger();
-		this.protocolFactory = factory;
+	public TracciaProducer(IProtocolFactory<?> factory) throws ProtocolException{
+		super(factory);
 	}
 
 

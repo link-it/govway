@@ -31,6 +31,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 
 
@@ -83,16 +84,17 @@ public interface IArchive extends IComponentFactory {
 	 * 
 	 * @param archive bytes dell'archivio
 	 * @param mode ArchiveMode
-	 * @param type ArchiveModeType
-	 * @param registryReader Reader delle informazioni presenti nel Registro
+	 * @param type ArchiveModeType	 
+	 * @param registryReader Registro
+	 * @param configIntegrationReader Configurazione per l'integrazione
 	 * @param validationDocuments Indicazione se devono essere validati i documenti
 	 * @param placeholder MapPlaceholder
 	 * @return org.openspcoop2.protocol.sdk.archive.Archive
 	 * @throws ProtocolException
 	 */
 	public Archive importArchive(byte[]archive,ArchiveMode mode,ArchiveModeType type,
-			IRegistryReader registryReader,boolean validationDocuments,
-			MapPlaceholder placeholder) throws ProtocolException;
+			IRegistryReader registryReader,IConfigIntegrationReader configIntegrationReader,
+			boolean validationDocuments, MapPlaceholder placeholder) throws ProtocolException;
 	
 	/**
 	 * Converte l'archivio fornito come parametro in un oggetto org.openspcoop2.protocol.sdk.archive.Archive 
@@ -100,15 +102,16 @@ public interface IArchive extends IComponentFactory {
 	 * @param archive Stream che restituisce i bytes dell'archivio
 	 * @param mode ArchiveMode
 	 * @param type ArchiveModeType
-	 * @param registryReader Reader delle informazioni presenti nel Registro
+	 * @param registryReader Registro
+	 * @param configIntegrationReader Configurazione per l'integrazione
 	 * @param validationDocuments Indicazione se devono essere validati i documenti
 	 * @param placeholder MapPlaceholder
 	 * @return org.openspcoop2.protocol.sdk.archive.Archive
 	 * @throws ProtocolException
 	 */
 	public Archive importArchive(InputStream archive,ArchiveMode mode,ArchiveModeType type,
-			IRegistryReader registryReader,boolean validationDocuments,
-			MapPlaceholder placeholder) throws ProtocolException;
+			IRegistryReader registryReader,IConfigIntegrationReader configIntegrationReader,
+			boolean validationDocuments, MapPlaceholder placeholder) throws ProtocolException;
 	
 	/**
 	 * Converte l'esito dell'operazione di import di un archivio in una stringa
@@ -148,22 +151,24 @@ public interface IArchive extends IComponentFactory {
 	 * @param archive archivio da esportare
 	 * @param out stream su cui deve essere serializzato l'archivio
 	 * @param mode ArchiveMode
-	 * @param registryReader Reader delle informazioni presenti nel Registro
+	 * @param registryReader Registro
+	 * @param configIntegrationReader Configurazione per l'integrazione
 	 * @throws ProtocolException
 	 */
 	public void exportArchive(Archive archive, OutputStream out, ArchiveMode mode,
-			IRegistryReader registryReader) throws ProtocolException;
+			IRegistryReader registryReader,IConfigIntegrationReader configIntegrationReader) throws ProtocolException;
 		
 	/**
 	 * Converte l'archivio org.openspcoop2.protocol.sdk.archive.Archive in un formato binario serializzato nell'output stream 
 	 * 
 	 * @param archive archivio da esportare
 	 * @param mode ArchiveMode
-	 * @param registryReader Reader delle informazioni presenti nel Registro
+	 * @param registryReader Registro
+	 * @param configIntegrationReader Configurazione per l'integrazione
 	 * @throws ProtocolException
 	 */
 	public byte[] exportArchive(Archive archive, ArchiveMode mode,
-			IRegistryReader registryReader) throws ProtocolException;
+			IRegistryReader registryReader,IConfigIntegrationReader configIntegrationReader) throws ProtocolException;
 	
 	
 }

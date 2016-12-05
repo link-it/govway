@@ -8,7 +8,7 @@ import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.pdd.config.RegistryReader;
+import org.openspcoop2.pdd.config.CachedConfigIntegrationReader;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -17,10 +17,11 @@ import org.openspcoop2.pdd.services.connector.ConnectorDispatcherUtils;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorOutMessage;
 import org.openspcoop2.pdd.services.error.RicezioneContenutiApplicativiInternalErrorGenerator;
+import org.openspcoop2.protocol.basic.registry.ServiceIdentificationReader;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
-import org.openspcoop2.protocol.engine.registry.ServiceIdentificationReader;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.slf4j.Logger;
 
@@ -28,7 +29,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 
 	public static boolean updatePortaDelegataRequestInfo(RequestInfo requestInfo, Logger logCore, 
 			ConnectorOutMessage res, RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore,
-			RegistryReader registryReader, ServiceIdentificationReader serviceIdentificationReader,
+			ServiceIdentificationReader serviceIdentificationReader,
 			MsgDiagnostico msgDiag) throws ConnectorException{
 		
 		URLProtocolContext protocolContext = requestInfo.getProtocolContext();
@@ -36,7 +37,10 @@ public class RicezioneContenutiApplicativiServiceUtils {
 		ServiceBindingConfiguration bindingConfig = requestInfo.getBindingConfig();
 		ServiceBinding serviceBinding = requestInfo.getServiceBinding();
 		MessageType requestMessageType = requestInfo.getRequestMessageType();
-						
+				
+		IRegistryReader registryReader = serviceIdentificationReader.getRegistryReader();
+		CachedConfigIntegrationReader configIntegrationReader = (CachedConfigIntegrationReader) serviceIdentificationReader.getConfigIntegrationReader();
+		
 		IDPortaDelegata idPD = null;
 		try{
 			idPD = serviceIdentificationReader.findPortaDelegata(protocolContext, true);
@@ -83,7 +87,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 				// provo a leggere anche l'azione
 				// l'eventuale errore lo genero dopo
 				try{
-					idServizio.setAzione(registryReader.getAzione(registryReader.getPortaDelegata(idPD), protocolContext, requestInfo.getProtocolFactory()));
+					idServizio.setAzione(configIntegrationReader.getAzione(configIntegrationReader.getPortaDelegata(idPD), protocolContext, requestInfo.getProtocolFactory()));
 				}catch(Exception e){
 					logCore.debug("Azione non trovata: "+e.getMessage(),e);
 				}

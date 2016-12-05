@@ -7,7 +7,7 @@ import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
-import org.openspcoop2.pdd.config.RegistryReader;
+import org.openspcoop2.pdd.config.CachedConfigIntegrationReader;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -16,10 +16,11 @@ import org.openspcoop2.pdd.services.connector.ConnectorDispatcherUtils;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorOutMessage;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
+import org.openspcoop2.protocol.basic.registry.ServiceIdentificationReader;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
-import org.openspcoop2.protocol.engine.registry.ServiceIdentificationReader;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.slf4j.Logger;
 
@@ -28,7 +29,7 @@ public class RicezioneBusteServiceUtils {
 	
 	public static boolean updatePortaApplicativaRequestInfo(RequestInfo requestInfo, Logger logCore, 
 			ConnectorOutMessage res, RicezioneBusteExternalErrorGenerator generatoreErrore,
-			RegistryReader registryReader, ServiceIdentificationReader serviceIdentificationReader,
+			ServiceIdentificationReader serviceIdentificationReader,
 			MsgDiagnostico msgDiag) throws ConnectorException{
 		
 		URLProtocolContext protocolContext = requestInfo.getProtocolContext();
@@ -37,6 +38,9 @@ public class RicezioneBusteServiceUtils {
 		ServiceBinding serviceBinding = requestInfo.getServiceBinding();
 		MessageType requestMessageType = requestInfo.getRequestMessageType();
 						
+		IRegistryReader registryReader = serviceIdentificationReader.getRegistryReader();
+		CachedConfigIntegrationReader configIntegrationReader = (CachedConfigIntegrationReader) serviceIdentificationReader.getConfigIntegrationReader();
+		
 		IDPortaApplicativa idPA = null;
 		try{
 			idPA = serviceIdentificationReader.findPortaApplicativa(protocolContext, true);
@@ -77,7 +81,7 @@ public class RicezioneBusteServiceUtils {
 				// provo a leggere anche l'azione
 				// l'eventuale errore lo genero dopo
 				try{
-					idServizio.setAzione(registryReader.getAzione(registryReader.getPortaApplicativa(idPA), protocolContext, requestInfo.getProtocolFactory()));
+					idServizio.setAzione(configIntegrationReader.getAzione(configIntegrationReader.getPortaApplicativa(idPA), protocolContext, requestInfo.getProtocolFactory()));
 				}catch(Exception e){
 					logCore.debug("Azione non trovata: "+e.getMessage(),e);
 				}

@@ -43,6 +43,7 @@ import java.util.List;
  * &lt;complexType name="port-type">
  * 		&lt;sequence>
  * 			&lt;element name="azione" type="{http://www.openspcoop2.org/core/registry}operation" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/registry}protocol-property" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="profilo-p-t" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="id-accordo" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
@@ -67,7 +68,8 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "port-type", 
   propOrder = {
-  	"azione"
+  	"azione",
+  	"protocolProperty"
   }
 )
 
@@ -113,6 +115,30 @@ public class PortType extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   public int sizeAzioneList() {
     return this.azione.size();
+  }
+
+  public void addProtocolProperty(ProtocolProperty protocolProperty) {
+    this.protocolProperty.add(protocolProperty);
+  }
+
+  public ProtocolProperty getProtocolProperty(int index) {
+    return this.protocolProperty.get( index );
+  }
+
+  public ProtocolProperty removeProtocolProperty(int index) {
+    return this.protocolProperty.remove( index );
+  }
+
+  public List<ProtocolProperty> getProtocolPropertyList() {
+    return this.protocolProperty;
+  }
+
+  public void setProtocolPropertyList(List<ProtocolProperty> protocolProperty) {
+    this.protocolProperty=protocolProperty;
+  }
+
+  public int sizeProtocolPropertyList() {
+    return this.protocolProperty.size();
   }
 
   public java.lang.String getProfiloPT() {
@@ -310,6 +336,36 @@ public class PortType extends org.openspcoop2.utils.beans.BaseBean implements Se
   @Deprecated
   public int sizeAzione() {
   	return this.azione.size();
+  }
+
+  @XmlElement(name="protocol-property",required=true,nillable=false)
+  protected List<ProtocolProperty> protocolProperty = new ArrayList<ProtocolProperty>();
+
+  /**
+   * @deprecated Use method getProtocolPropertyList
+   * @return List<ProtocolProperty>
+  */
+  @Deprecated
+  public List<ProtocolProperty> getProtocolProperty() {
+  	return this.protocolProperty;
+  }
+
+  /**
+   * @deprecated Use method setProtocolPropertyList
+   * @param protocolProperty List<ProtocolProperty>
+  */
+  @Deprecated
+  public void setProtocolProperty(List<ProtocolProperty> protocolProperty) {
+  	this.protocolProperty=protocolProperty;
+  }
+
+  /**
+   * @deprecated Use method sizeProtocolPropertyList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeProtocolProperty() {
+  	return this.protocolProperty.size();
   }
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")

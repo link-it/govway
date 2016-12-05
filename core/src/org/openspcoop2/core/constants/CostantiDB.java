@@ -54,6 +54,7 @@ public final class CostantiDB {
     public static final String TIPI = "tipi";
     
     /*REGSERV*/
+    public static final String PROTOCOL_PROPERTIES = "protocol_properties";
     public static final String SERVIZI = "servizi";
     public static final String SERVIZI_FRUITORI = "servizi_fruitori";
     public static final String SERVIZI_AZIONI = "servizi_azioni";

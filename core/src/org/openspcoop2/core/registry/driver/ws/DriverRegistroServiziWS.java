@@ -38,6 +38,9 @@ import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDAccordoCooperazioneWithSoggetto;
+import org.openspcoop2.core.id.IDAzione;
+import org.openspcoop2.core.id.IDFruizione;
+import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -56,6 +59,10 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
+import org.openspcoop2.core.registry.driver.FiltroRicercaAzioni;
+import org.openspcoop2.core.registry.driver.FiltroRicercaFruizioniServizio;
+import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
+import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
@@ -629,6 +636,31 @@ public class DriverRegistroServiziWS extends BeanUtilities
 		}
 		return listIdsTradotti;
 	}
+	@Override
+	public List<IDPortType> getAllIdPortType(FiltroRicercaPortTypes filtroRicerca)
+			throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public List<IDAzione> getAllIdAzionePortType(FiltroRicercaOperations filtroRicerca)
+			throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public List<IDAzione> getAllIdAzioneAccordo(FiltroRicercaAzioni filtroRicerca)
+			throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public List<IDFruizione> getAllIdFruizioniServizio(FiltroRicercaFruizioniServizio filtroRicerca)
+			throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 
 
 }

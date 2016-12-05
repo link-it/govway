@@ -25,26 +25,39 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDAzione;
+import org.openspcoop2.core.id.IDFruizione;
+import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziAzioneNotFound;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziCorrelatoNotFound;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziPortTypeNotFound;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziServizioNotFound;
+import org.openspcoop2.core.registry.driver.FiltroRicerca;
+import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
+import org.openspcoop2.core.registry.driver.FiltroRicercaAzioni;
+import org.openspcoop2.core.registry.driver.FiltroRicercaFruizioniServizio;
+import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
+import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
+import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
+import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Servizio;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
+import org.slf4j.Logger;
 
 /**
  * RegistroServiziManager
@@ -218,6 +231,14 @@ public class RegistroServiziManager {
 	
 	/* ********  R I C E R C A  E L E M E N T I   P R I M I T I V I  ******** */
 	
+	public PortaDominio getPortaDominio(String nome,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getPortaDominio(this.getConnection(), nome, nomeRegistro);
+	}
+	
+	public Soggetto getSoggetto(IDSoggetto idSoggetto,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getSoggetto(this.getConnection(), idSoggetto, nomeRegistro);
+	}
+	
 	public AccordoServizioParteComune getAccordoServizioParteComune(IDAccordo idAccordo,String nomeRegistro,Boolean readContenutiAllegati) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return this.registroServiziReader.getAccordoServizioParteComune(this.getConnection(), idAccordo, readContenutiAllegati, nomeRegistro);
 	}
@@ -228,5 +249,44 @@ public class RegistroServiziManager {
 	
 	public AccordoCooperazione getAccordoCooperazione(IDAccordoCooperazione idAccordo,String nomeRegistro,Boolean readContenutiAllegati) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return this.registroServiziReader.getAccordoCooperazione(this.getConnection(), idAccordo, readContenutiAllegati, nomeRegistro);
+	}
+	
+	
+	/* ********  R I C E R C A  I D   E L E M E N T I   P R I M I T I V I  ******** */
+	
+	public List<String> getAllIdPorteDominio(FiltroRicerca filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getAllIdPorteDominio(this.getConnection(), filtroRicerca, nomeRegistro);
+	}
+	
+	public List<IDSoggetto> getAllIdSoggetti(FiltroRicercaSoggetti filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getAllIdSoggetti(this.getConnection(), filtroRicerca, nomeRegistro);
+	}
+	
+	public List<IDAccordoCooperazione> getAllIdAccordiCooperazione(FiltroRicercaAccordi filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getAllIdAccordiCooperazione(this.getConnection(), filtroRicerca, nomeRegistro);
+	}
+	
+	public List<IDAccordo> getAllIdAccordiServizioParteComune(FiltroRicercaAccordi filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getAllIdAccordiServizioParteComune(this.getConnection(), filtroRicerca, nomeRegistro);
+	}
+	
+	public List<IDPortType> getAllIdPortType(FiltroRicercaPortTypes filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getAllIdPortType(this.getConnection(), filtroRicerca, nomeRegistro);
+	}
+	
+	public List<IDAzione> getAllIdAzionePortType(FiltroRicercaOperations filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getAllIdAzionePortType(this.getConnection(), filtroRicerca, nomeRegistro);
+	}
+	
+	public List<IDAzione> getAllIdAzioneAccordo(FiltroRicercaAzioni filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getAllIdAzioneAccordo(this.getConnection(), filtroRicerca, nomeRegistro);
+	}
+	
+	public List<IDServizio> getAllIdServizi(FiltroRicercaServizi filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getAllIdServizi(this.getConnection(), filtroRicerca, nomeRegistro);
+	}
+	
+	public List<IDFruizione> getAllIdFruizioniServizio(FiltroRicercaFruizioniServizio filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getAllIdFruizioniServizio(this.getConnection(), filtroRicerca, nomeRegistro);
 	}
 }

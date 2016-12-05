@@ -42,6 +42,7 @@ public class PortTypeModel extends AbstractModel<PortType> {
 		super();
 	
 		this.AZIONE = new org.openspcoop2.core.registry.model.OperationModel(new Field("azione",org.openspcoop2.core.registry.Operation.class,"port-type",PortType.class));
+		this.PROTOCOL_PROPERTY = new org.openspcoop2.core.registry.model.ProtocolPropertyModel(new Field("protocol-property",org.openspcoop2.core.registry.ProtocolProperty.class,"port-type",PortType.class));
 		this.PROFILO_P_T = new Field("profilo-p-t",java.lang.String.class,"port-type",PortType.class);
 		this.ID_ACCORDO = new Field("id-accordo",java.lang.Long.class,"port-type",PortType.class);
 		this.NOME = new Field("nome",java.lang.String.class,"port-type",PortType.class);
@@ -61,6 +62,7 @@ public class PortTypeModel extends AbstractModel<PortType> {
 		super(father);
 	
 		this.AZIONE = new org.openspcoop2.core.registry.model.OperationModel(new ComplexField(father,"azione",org.openspcoop2.core.registry.Operation.class,"port-type",PortType.class));
+		this.PROTOCOL_PROPERTY = new org.openspcoop2.core.registry.model.ProtocolPropertyModel(new ComplexField(father,"protocol-property",org.openspcoop2.core.registry.ProtocolProperty.class,"port-type",PortType.class));
 		this.PROFILO_P_T = new ComplexField(father,"profilo-p-t",java.lang.String.class,"port-type",PortType.class);
 		this.ID_ACCORDO = new ComplexField(father,"id-accordo",java.lang.Long.class,"port-type",PortType.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"port-type",PortType.class);
@@ -78,6 +80,8 @@ public class PortTypeModel extends AbstractModel<PortType> {
 	
 
 	public org.openspcoop2.core.registry.model.OperationModel AZIONE = null;
+	 
+	public org.openspcoop2.core.registry.model.ProtocolPropertyModel PROTOCOL_PROPERTY = null;
 	 
 	public IField PROFILO_P_T = null;
 	 

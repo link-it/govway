@@ -22,21 +22,18 @@ package org.openspcoop2.protocol.sdk.registry;
 
 import java.util.List;
 
-import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.PortaDelegata;
-import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
-import org.openspcoop2.core.id.IDPortaApplicativa;
-import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDAzione;
+import org.openspcoop2.core.id.IDFruizione;
+import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDServizio;
-import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Soggetto;
-import org.openspcoop2.protocol.sdk.IProtocolFactory;
 
 /**
  * IRegistryReader
@@ -50,8 +47,8 @@ public interface IRegistryReader {
 	// PDD
 	
 	public boolean existsPortaDominio(String nome);
-	
-	public List<String> findPorteDominio(boolean operativo) throws RegistryNotFound;
+	public PortaDominio getPortaDominio(String nome) throws RegistryNotFound;
+	public List<String> findIdPorteDominio(Boolean operativo) throws RegistryNotFound;
 	
 	
 	// SOGGETTI
@@ -67,13 +64,22 @@ public interface IRegistryReader {
 	public String getDominio(IDSoggetto idSoggetto) throws RegistryNotFound;
 	
 	public Soggetto getSoggetto(IDSoggetto idSoggetto) throws RegistryNotFound;
+	
+	public List<IDSoggetto> findIdSoggetti(FiltroRicercaSoggetti filtro) throws RegistryNotFound;
 		
 	
 	// ACCORDI PARTE COMUNE
 	
 	public AccordoServizioParteComune getAccordoServizioParteComune(IDAccordo idAccordo) throws RegistryNotFound;
 	public AccordoServizioParteComune getAccordoServizioParteComune(IDAccordo idAccordo,boolean readAllegati) throws RegistryNotFound;
-	public List<IDAccordo> findAccordiServizioParteComune(FiltroRicercaAccordi filtro) throws RegistryNotFound; 
+	public List<IDAccordo> findIdAccordiServizioParteComune(FiltroRicercaAccordi filtro) throws RegistryNotFound; 
+	
+	
+	// ELEMENTI INTERNI ALL'ACCORDO PARTE COMUNE
+	
+	public List<IDPortType> findIdPortType(FiltroRicercaPortType filtro) throws RegistryNotFound; 
+	public List<IDAzione> findIdAzionePortType(FiltroRicercaPortTypeAzioni filtro) throws RegistryNotFound; 
+	public List<IDAzione> findIdAzioneAccordo(FiltroRicercaAccordoAzioni filtro) throws RegistryNotFound; 
 	
 	
 	// ACCORDI PARTE SPECIFICA
@@ -82,39 +88,23 @@ public interface IRegistryReader {
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDAccordo idAccordo,boolean readAllegati) throws RegistryNotFound;
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDServizio idServizio) throws RegistryNotFound;
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDServizio idServizio,boolean readAllegati) throws RegistryNotFound;
-	public List<IDAccordo> findAccordiServizioParteSpecifica(FiltroRicercaServizi filtro) throws RegistryNotFound; 
+	public List<IDServizio> findIdAccordiServizioParteSpecifica(FiltroRicercaServizi filtro) throws RegistryNotFound; 
 	
 	public IDServizio convertToIDServizio(IDAccordo idAccordoServizioParteSpecifica) throws RegistryNotFound;
 	
 	public IDAccordo convertToIDAccordo(IDServizio idServizio) throws RegistryNotFound;
 	
 	
+	// ELEMENTI INTERNI ALL'ACCORDO PARTE SPECIFICA
+	
+	public List<IDFruizione> findIdFruizioni(FiltroRicercaFruizioniServizio filtro) throws RegistryNotFound; 
+	
+	
 	// ACCORDI COOPERAZIONE
 	
 	public AccordoCooperazione getAccordoCooperazione(IDAccordoCooperazione idAccordo) throws RegistryNotFound;
 	public AccordoCooperazione getAccordoCooperazione(IDAccordoCooperazione idAccordo,boolean readAllegati) throws RegistryNotFound;
-	
-	
-	// SERVIZI APPLICATIVI
-	
-	public boolean existsServizioApplicativo(IDServizioApplicativo idServizioApplicativo);
-	public boolean existsServizioApplicativo(String username, String password);
-	public boolean existsServizioApplicativo(String subject);
-	public ServizioApplicativo getServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws RegistryNotFound;
-	
-	
-	// PORTA DELEGATA
-	
-	public IDPortaDelegata getIdPortaDelegata(String nome, IProtocolFactory<?> protocolFactory) throws RegistryNotFound;
-	public boolean existsPortaDelegata(IDPortaDelegata idPortaDelegata); 
-	public PortaDelegata getPortaDelegata(IDPortaDelegata idPortaDelegata) throws RegistryNotFound; 
-	
-	
-	// PORTA APPLICATIVA
-	
-	public IDPortaApplicativa getIdPortaApplicativa(String nome, IProtocolFactory<?> protocolFactory) throws RegistryNotFound;
-	public boolean existsPortaApplicativa(IDPortaApplicativa idPortaApplicativa); 
-	public PortaApplicativa getPortaApplicativa(IDPortaApplicativa idPortaApplicativa) throws RegistryNotFound; 
+	public List<IDAccordoCooperazione> findIdAccordiCooperazione(FiltroRicercaAccordi filtro) throws RegistryNotFound; 
 	
 	
 }

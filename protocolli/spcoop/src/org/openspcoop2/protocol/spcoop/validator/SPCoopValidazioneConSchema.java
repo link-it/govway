@@ -36,6 +36,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -60,10 +61,7 @@ import org.xml.sax.SAXException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SPCoopValidazioneConSchema implements IValidazioneConSchema {
-
-	/** Logger utilizzato per debug. */
-	private Logger log = null;
+public class SPCoopValidazioneConSchema extends BasicComponentFactory implements IValidazioneConSchema {
 
 	/** Validatore della busta SPCoop */
 	private static ValidatoreXSD validatoreBustaSPCoop = null;
@@ -73,7 +71,6 @@ public class SPCoopValidazioneConSchema implements IValidazioneConSchema {
 	/** Errori di processamento riscontrati sulla busta */
 	private java.util.List<Eccezione> erroriProcessamento;
 
-	private IProtocolFactory<?> protocolFactory;
 	private AbstractXMLUtils xmlUtils;
 	
 	
@@ -86,19 +83,10 @@ public class SPCoopValidazioneConSchema implements IValidazioneConSchema {
 	 * 
 	 */
 	public SPCoopValidazioneConSchema(IProtocolFactory<?> protocolFactory) throws ProtocolException{
-		this.protocolFactory = protocolFactory;
-		if(protocolFactory.getLogger()!=null)
-			this.log = protocolFactory.getLogger();
-		else
-			this.log = LoggerWrapperFactory.getLogger("ValidazioneConSchemaSPCoop");
-		
+		super(protocolFactory);		
 		this.xmlUtils = XMLUtils.getInstance();
 	}
 
-	@Override
-	public IProtocolFactory<?> getProtocolFactory(){
-		return this.protocolFactory;
-	}
 
 	/**
 	 * Ritorna un List contenente eventuali eccezioni di validazione riscontrate nella busta SPCoop.   

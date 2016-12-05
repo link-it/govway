@@ -137,4 +137,5 @@ public class MsgDiagnosticoOpenSPCoopAppenderDB implements IDiagnosticProducer{
 	public IProtocolFactory<?> getProtocolFactory() {
 		return this.basicProtocolFactory;
 	}
+
 }

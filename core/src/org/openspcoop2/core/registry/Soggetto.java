@@ -40,6 +40,7 @@ import java.util.List;
  * &lt;complexType name="soggetto">
  * 		&lt;sequence>
  * 			&lt;element name="connettore" type="{http://www.openspcoop2.org/core/registry}connettore" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/registry}protocol-property" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="accordo-servizio-parte-specifica" type="{http://www.openspcoop2.org/core/registry}accordo-servizio-parte-specifica" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="super-user" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
@@ -67,6 +68,7 @@ import java.util.List;
 @XmlType(name = "soggetto", 
   propOrder = {
   	"connettore",
+  	"protocolProperty",
   	"accordoServizioParteSpecifica"
   }
 )
@@ -123,6 +125,30 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   public void setConnettore(Connettore connettore) {
     this.connettore = connettore;
+  }
+
+  public void addProtocolProperty(ProtocolProperty protocolProperty) {
+    this.protocolProperty.add(protocolProperty);
+  }
+
+  public ProtocolProperty getProtocolProperty(int index) {
+    return this.protocolProperty.get( index );
+  }
+
+  public ProtocolProperty removeProtocolProperty(int index) {
+    return this.protocolProperty.remove( index );
+  }
+
+  public List<ProtocolProperty> getProtocolPropertyList() {
+    return this.protocolProperty;
+  }
+
+  public void setProtocolPropertyList(List<ProtocolProperty> protocolProperty) {
+    this.protocolProperty=protocolProperty;
+  }
+
+  public int sizeProtocolPropertyList() {
+    return this.protocolProperty.size();
   }
 
   public void addAccordoServizioParteSpecifica(AccordoServizioParteSpecifica accordoServizioParteSpecifica) {
@@ -256,6 +282,36 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   @XmlElement(name="connettore",required=false,nillable=false)
   protected Connettore connettore;
+
+  @XmlElement(name="protocol-property",required=true,nillable=false)
+  protected List<ProtocolProperty> protocolProperty = new ArrayList<ProtocolProperty>();
+
+  /**
+   * @deprecated Use method getProtocolPropertyList
+   * @return List<ProtocolProperty>
+  */
+  @Deprecated
+  public List<ProtocolProperty> getProtocolProperty() {
+  	return this.protocolProperty;
+  }
+
+  /**
+   * @deprecated Use method setProtocolPropertyList
+   * @param protocolProperty List<ProtocolProperty>
+  */
+  @Deprecated
+  public void setProtocolProperty(List<ProtocolProperty> protocolProperty) {
+  	this.protocolProperty=protocolProperty;
+  }
+
+  /**
+   * @deprecated Use method sizeProtocolPropertyList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeProtocolProperty() {
+  	return this.protocolProperty.size();
+  }
 
   @XmlElement(name="accordo-servizio-parte-specifica",required=true,nillable=false)
   protected List<AccordoServizioParteSpecifica> accordoServizioParteSpecifica = new ArrayList<AccordoServizioParteSpecifica>();

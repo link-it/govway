@@ -24,7 +24,9 @@
 package org.openspcoop2.core.registry.driver;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Permette il filtro di ricerca attraverso i driver che implementano l'interfaccia 'get'
@@ -55,7 +57,23 @@ public class FiltroRicerca implements Serializable{
 	
 	/** Tipo */
 	private String tipo;
+	
+	/** ProtocolProperty */
+	private List<FiltroRicercaProtocolProperty> protocolProperties = new ArrayList<FiltroRicercaProtocolProperty>();
 
+	public List<FiltroRicercaProtocolProperty> getProtocolProperties() {
+		return this.protocolProperties;
+	}
+
+	public void setProtocolProperties(
+			List<FiltroRicercaProtocolProperty> list) {
+		this.protocolProperties = list;
+	}
+
+	public void addProtocolProperty(FiltroRicercaProtocolProperty filtro){
+		this.protocolProperties.add(filtro);
+	}
+	
 	/**
 	 * @return the maxDate
 	 */
@@ -120,6 +138,15 @@ public class FiltroRicerca implements Serializable{
 	public String toString(boolean checkEmpty){
 		StringBuffer bf = new StringBuffer();
 		bf.append("Filtro:");
+		this.addDetails(bf);
+		if(checkEmpty){
+			if(bf.length()=="Filtro:".length()){
+				bf.append(" nessun filtro presente");
+			}
+		}
+		return bf.toString();
+	}
+	public void addDetails(StringBuffer bf){
 		if(this.minDate!=null)
 			bf.append(" [intervallo-inferiore-data:"+this.minDate+"]");
 		if(this.maxDate!=null)
@@ -128,11 +155,13 @@ public class FiltroRicerca implements Serializable{
 			bf.append(" [tipo:"+this.tipo+"]");
 		if(this.nome!=null)
 			bf.append(" [nome:"+this.nome+"]");
-		if(checkEmpty){
-			if(bf.length()=="Filtro:".length()){
-				bf.append(" nessun filtro presente");
+		if(this.protocolProperties!=null && this.protocolProperties.size()>0){
+			bf.append(" [protocol-properties:"+this.protocolProperties.size()+"]");
+			for (int i = 0; i < this.protocolProperties.size(); i++) {
+				bf.append(" [protocol-properties["+i+"]:");
+				this.protocolProperties.get(i).addDetails(bf);
+				bf.append("]");
 			}
 		}
-		return bf.toString();
 	}
 }

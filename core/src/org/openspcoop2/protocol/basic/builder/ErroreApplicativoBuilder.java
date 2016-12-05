@@ -54,6 +54,7 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.SOAPFaultCode;
 import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.basic.Utilities;
 import org.openspcoop2.protocol.sdk.AbstractEccezioneBuilderParameter;
@@ -72,7 +73,6 @@ import org.openspcoop2.protocol.sdk.constants.SubCodiceErrore;
 import org.openspcoop2.protocol.sdk.constants.TipoErroreApplicativo;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.transport.http.HttpConstants;
-import org.slf4j.Logger;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -84,26 +84,19 @@ import org.w3c.dom.Node;
  * @version $Rev$, $Date$
  */
 
-public class ErroreApplicativoBuilder implements org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder {
+public class ErroreApplicativoBuilder extends BasicComponentFactory implements org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder {
 
-	protected Logger log;
-	protected IProtocolFactory<?> factory;
 	protected ITraduttore traduttore;
 	protected OpenSPCoop2MessageFactory msgFactory = null;
 	protected org.openspcoop2.message.xml.XMLUtils xmlUtils;
 	
 	public ErroreApplicativoBuilder(IProtocolFactory<?> factory) throws ProtocolException{
-		this.log = factory.getLogger();
-		this.factory = factory;
+		super(factory);
 		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 		this.traduttore = factory.createTraduttore();
 		this.msgFactory = OpenSPCoop2MessageFactory.getMessageFactory();
 	}
-	
-	@Override
-	public IProtocolFactory<?> getProtocolFactory() {
-		return this.factory;
-	}
+
 
 	
 	// NAMESPACE
@@ -424,7 +417,7 @@ public class ErroreApplicativoBuilder implements org.openspcoop2.protocol.sdk.bu
 				if(eccezioneProtocollo.getEccezioneProtocollo().getSubCodiceEccezione()!=null){
 					subCodiceEccezioneOpenSPCoop = eccezioneProtocollo.getEccezioneProtocollo().getSubCodiceEccezione().getSubCodice();
 				}
-				descrizioneEccezione = eccezioneProtocollo.getEccezioneProtocollo().getDescrizione(this.factory);
+				descrizioneEccezione = eccezioneProtocollo.getEccezioneProtocollo().getDescrizione(this.protocolFactory);
 				tipoEccezione = TipoEccezione.ECCEZIONE_PROTOCOLLO;
 				oraRegistrazione = eccezioneProtocollo.getOraRegistrazione();
 				messageType = eccezioneProtocollo.getMessageType();
@@ -439,7 +432,7 @@ public class ErroreApplicativoBuilder implements org.openspcoop2.protocol.sdk.bu
 				codiceEccezione = this.traduttore.toString(eccezioneIntegrazione.getErroreIntegrazione().getCodiceErrore(),
 						eccezioneIntegrazione.getProprieta().getFaultPrefixCode(),eccezioneIntegrazione.getProprieta().isFaultAsGenericCode());
 				codiceEccezioneOpenSPCoop = eccezioneIntegrazione.getErroreIntegrazione().getCodiceErrore().getCodice();
-				descrizioneEccezione = eccezioneIntegrazione.getProprieta().transformFaultMsg(eccezioneIntegrazione.getErroreIntegrazione(),this.factory);
+				descrizioneEccezione = eccezioneIntegrazione.getProprieta().transformFaultMsg(eccezioneIntegrazione.getErroreIntegrazione(),this.protocolFactory);
 				tipoEccezione = TipoEccezione.ECCEZIONE_INTEGRAZIONE;
 				oraRegistrazione = eccezioneIntegrazione.getOraRegistrazione();
 				messageType = eccezioneIntegrazione.getMessageType();
@@ -601,22 +594,22 @@ public class ErroreApplicativoBuilder implements org.openspcoop2.protocol.sdk.bu
 							replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE,
 									eccezioneProtocollo.getSoggettoProduceEccezione().getTipo()+
 									eccezioneProtocollo.getSoggettoProduceEccezione().getNome());
-						if(eccezioneProtocollo.getEccezioneProtocollo().getDescrizione(this.factory).indexOf(msgPortaDiDominioNonDisponibile)==-1)
+						if(eccezioneProtocollo.getEccezioneProtocollo().getDescrizione(this.protocolFactory).indexOf(msgPortaDiDominioNonDisponibile)==-1)
 							eccezioneProtocollo.getEccezioneProtocollo().
-							setDescrizione(eccezioneProtocollo.getSoggettoProduceEccezione().toString() +" ha rilevato le seguenti eccezioni:\n"+eccezioneProtocollo.getEccezioneProtocollo().getDescrizione(this.factory));
+							setDescrizione(eccezioneProtocollo.getSoggettoProduceEccezione().toString() +" ha rilevato le seguenti eccezioni:\n"+eccezioneProtocollo.getEccezioneProtocollo().getDescrizione(this.protocolFactory));
 						
 						// Raccolgo codice e messaggio
 						codiceEccezione = 
 							this.traduttore.toString(eccezioneProtocollo.getEccezioneProtocollo().getCodiceEccezione(),
 									eccezioneProtocollo.getEccezioneProtocollo().getSubCodiceEccezione());
-						posizioneEccezione = eccezioneProtocollo.getEccezioneProtocollo().getDescrizione(this.factory);
+						posizioneEccezione = eccezioneProtocollo.getEccezioneProtocollo().getDescrizione(this.protocolFactory);
 						
 					}
 					else{
 					
 						codiceEccezione = this.traduttore.toString(eccezioneIntegrazione.getErroreIntegrazione().getCodiceErrore(),
 								proprieta.getFaultPrefixCode(),proprieta.isFaultAsGenericCode());
-						posizioneEccezione = proprieta.transformFaultMsg(eccezioneIntegrazione.getErroreIntegrazione(),this.factory);
+						posizioneEccezione = proprieta.transformFaultMsg(eccezioneIntegrazione.getErroreIntegrazione(),this.protocolFactory);
 					
 					}
 										
@@ -717,7 +710,7 @@ public class ErroreApplicativoBuilder implements org.openspcoop2.protocol.sdk.bu
 				String descrizione = erroreApplicativo.getEccezione().getCodice().getBase();
 				ErroreCooperazione erroreCooperazione = new ErroreCooperazione(descrizione, codice);
 				org.openspcoop2.protocol.sdk.Eccezione eccezioneProtocollo = 
-						new org.openspcoop2.protocol.sdk.Eccezione(erroreCooperazione,true,erroreApplicativo.getDominio().getFunzione().getValue(),this.factory);
+						new org.openspcoop2.protocol.sdk.Eccezione(erroreCooperazione,true,erroreApplicativo.getDominio().getFunzione().getValue(),this.protocolFactory);
 				if(erroreApplicativo.getEccezione().getCodice().getSottotipo()!=null){
 					SubCodiceErrore sub = new SubCodiceErrore();
 					sub.setSubCodice(erroreApplicativo.getEccezione().getCodice().getSottotipo().intValue());

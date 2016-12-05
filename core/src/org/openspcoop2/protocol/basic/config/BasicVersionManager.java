@@ -23,6 +23,7 @@ package org.openspcoop2.protocol.basic.config;
 
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
@@ -36,7 +37,7 @@ import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
  */
 public abstract class BasicVersionManager extends BasicManager implements IProtocolVersionManager {
 
-	public BasicVersionManager(IProtocolFactory<?> protocolFactory){
+	public BasicVersionManager(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		super(protocolFactory);
 	}
 	

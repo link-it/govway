@@ -857,6 +857,49 @@ public class DBUtils {
 	}
 	
 	
+	public static long getIdProtocolProperty(String tipoProprietario, long idProprietario,String nome, Connection con,String tipoDB) throws CoreException{
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		long idPP=-1;
+		try
+		{
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PROTOCOL_PROPERTIES);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addWhereCondition("tipo_proprietario = ?");
+			sqlQueryObject.addWhereCondition("id_proprietario = ?");
+			sqlQueryObject.addWhereCondition("name = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+			stm.setString(1, tipoProprietario);
+			stm.setLong(2, idProprietario);
+			stm.setString(3, nome);
+			rs = stm.executeQuery();
+			if (rs.next())
+				idPP = rs.getLong("id");
+			rs.close();
+			stm.close();
+
+			return idPP;
+		}catch (SQLException e) {
+			throw new CoreException(e);
+		}catch (Exception e) {
+			throw new CoreException(e);
+		}finally
+		{
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+		}
+	}
+	
+	
 	
 	
 	

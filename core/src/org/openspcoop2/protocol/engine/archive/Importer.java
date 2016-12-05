@@ -24,8 +24,9 @@ package org.openspcoop2.protocol.engine.archive;
 import org.slf4j.Logger;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.protocol.basic.registry.ConfigIntegrationReader;
+import org.openspcoop2.protocol.basic.registry.RegistryReader;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
-import org.openspcoop2.protocol.engine.registry.RegistryReader;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.archive.Archive;
@@ -98,13 +99,14 @@ public class Importer {
 		DriverRegistroServiziDB driverRegistroServizi = null; 
 		DriverConfigurazioneDB driverConfigurazione = null;
 		// TODO INIT
-		RegistryReader archiveRegistryReader = new RegistryReader(driverRegistroServizi,driverConfigurazione,log);
+		RegistryReader archiveRegistryReader = new RegistryReader(driverRegistroServizi,log);
+		ConfigIntegrationReader archiveConfigIntegrationReader = new ConfigIntegrationReader(driverConfigurazione,log);
 		
 		
 		// trasformazione in archivio openspcoop2
 		IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 		IArchive archiveEngine = pf.createArchive();
-		Archive archive = archiveEngine.importArchive(archiveBytes, archiveMode, archiveModeType, archiveRegistryReader, validateDocuments,null);
+		Archive archive = archiveEngine.importArchive(archiveBytes, archiveMode, archiveModeType, archiveRegistryReader, archiveConfigIntegrationReader, validateDocuments,null);
 		
 		
 		// validazione

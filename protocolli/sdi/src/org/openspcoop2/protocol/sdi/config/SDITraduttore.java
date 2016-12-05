@@ -23,6 +23,7 @@ package org.openspcoop2.protocol.sdi.config;
 
 import org.openspcoop2.protocol.basic.config.BasicTraduttore;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 
 /**
@@ -35,7 +36,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 public class SDITraduttore extends BasicTraduttore {
 
 
-	public SDITraduttore(IProtocolFactory<?> protocolFactory){
+	public SDITraduttore(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		super(protocolFactory);
 	}
 

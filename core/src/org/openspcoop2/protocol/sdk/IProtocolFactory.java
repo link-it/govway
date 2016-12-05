@@ -24,6 +24,8 @@ package org.openspcoop2.protocol.sdk;
 import java.io.Serializable;
 
 import org.slf4j.Logger;
+import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
+import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.sdk.archive.IArchive;
 import org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder;
@@ -36,6 +38,10 @@ import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticSerializer;
+import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
@@ -105,5 +111,16 @@ public interface IProtocolFactory<BustaRawType> extends Serializable {
 	public IProtocolManager createProtocolManager() throws ProtocolException;
 	public ITraduttore createTraduttore() throws ProtocolException;
 	public IProtocolConfiguration createProtocolConfiguration() throws ProtocolException;
+	
+	/* ** CONSOLE ** */
+	
+	public IConsoleDynamicConfiguration createDynamicConfigurationConsole() throws ProtocolException;
+	
+	/* ** REGISTRY  ** */
+	
+	public IRegistryReader getRegistryReader(IDriverRegistroServiziGet driver) throws ProtocolException;
+	public IRegistryReader getCachedRegistryReader(IState state) throws ProtocolException;
+	public IConfigIntegrationReader getConfigIntegrationReader(IDriverConfigurazioneGet driver) throws ProtocolException;
+	public IConfigIntegrationReader getCachedConfigIntegrationReader(IState state) throws ProtocolException;
 	
 }

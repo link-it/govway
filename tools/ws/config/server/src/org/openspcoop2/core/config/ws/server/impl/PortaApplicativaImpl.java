@@ -85,23 +85,23 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 	private IDPortaApplicativaByNome convertToIdPortaApplicativa(IdPortaApplicativa id) throws DriverConfigurazioneException{
 		IDSoggetto idSoggettoProprietario = null;
 		if(id.getIdSoggetto()!=null){
-			idSoggettoProprietario = new IDSoggetto(id.getIdSoggetto().getTipo(), id.getIdSoggetto().getNome());
+			idSoggettoProprietario = new IDSoggetto(id.getIdSoggetto().getTipoServizio(), id.getIdSoggetto().getNomeAzione());
 		}
 		return this.buildIDPortaApplicativa(id.getNome(), idSoggettoProprietario);
 	}
 	private IDPortaApplicativaByNome buildIDPortaApplicativa(String nome, IDSoggetto idSoggetto) throws DriverConfigurazioneException{
 		IDPortaApplicativaByNome idPortaApplicativa = new IDPortaApplicativaByNome();
-		idPortaApplicativa.setNome(nome);
-		idPortaApplicativa.setSoggetto(idSoggetto);
+		idPortaApplicativa.setNomeAzione(nome);
+		idPortaApplicativa.setSoggettoErogatore(idSoggetto);
 		return idPortaApplicativa;
 	}
 
 	private IdPortaApplicativa convertToIdPortaApplicativaWS(IDPortaApplicativaByNome id) throws DriverConfigurazioneException{
 		IdPortaApplicativa idPortaApplicativa = new IdPortaApplicativa();
-		idPortaApplicativa.setNome(id.getNome());
+		idPortaApplicativa.setNomeAzione(id.getNomeAzione());
 		IdSoggetto soggettoProprietario = new IdSoggetto();
-		soggettoProprietario.setTipo(id.getSoggetto().getTipo());
-		soggettoProprietario.setNome(id.getSoggetto().getNome());
+		soggettoProprietario.setTipoServizio(id.getSoggettoErogatore().getTipoServizio());
+		soggettoProprietario.setNomeAzione(id.getSoggettoErogatore().getNomeAzione());
 		idPortaApplicativa.setIdSoggetto(soggettoProprietario);
 		return idPortaApplicativa;
 	}
@@ -650,10 +650,10 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 			}
 			//obj.setSuperUser(ServerProperties.getInstance().getUser());
 			IDPortaApplicativaByNome idPA = this.convertToIdPortaApplicativa(oldId);
-			obj.setOldNomeForUpdate(idPA.getNome());
-			if(idPA.getSoggetto()!=null){
-				obj.setOldTipoSoggettoProprietarioForUpdate(idPA.getSoggetto().getTipo());
-				obj.setOldNomeSoggettoProprietarioForUpdate(idPA.getSoggetto().getNome());
+			obj.setOldNomeForUpdate(idPA.getNomeAzione());
+			if(idPA.getSoggettoErogatore()!=null){
+				obj.setOldTipoSoggettoProprietarioForUpdate(idPA.getSoggettoErogatore().getTipoServizio());
+				obj.setOldNomeSoggettoProprietarioForUpdate(idPA.getSoggettoErogatore().getNomeAzione());
 			}
 			((IDriverConfigurazioneCRUD)this.portaApplicativaService.getDriver()).updatePortaApplicativa(obj);
 			this.logEndMethod("update");
@@ -684,10 +684,10 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 			}else{
 				//obj.setSuperUser(ServerProperties.getInstance().getUser());
 				IDPortaApplicativaByNome idPA = this.convertToIdPortaApplicativa(oldId);
-				obj.setOldNomeForUpdate(idPA.getNome());
-				if(idPA.getSoggetto()!=null){
-					obj.setOldTipoSoggettoProprietarioForUpdate(idPA.getSoggetto().getTipo());
-					obj.setOldNomeSoggettoProprietarioForUpdate(idPA.getSoggetto().getNome());
+				obj.setOldNomeForUpdate(idPA.getNomeAzione());
+				if(idPA.getSoggettoErogatore()!=null){
+					obj.setOldTipoSoggettoProprietarioForUpdate(idPA.getSoggettoErogatore().getTipoServizio());
+					obj.setOldNomeSoggettoProprietarioForUpdate(idPA.getSoggettoErogatore().getNomeAzione());
 				}
 				((IDriverConfigurazioneCRUD)this.portaApplicativaService.getDriver()).updatePortaApplicativa(obj);
 			}

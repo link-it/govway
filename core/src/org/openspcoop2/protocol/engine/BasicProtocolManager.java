@@ -23,6 +23,7 @@ package org.openspcoop2.protocol.engine;
 
 import org.openspcoop2.protocol.basic.config.BasicManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 
 /**
  * Protocol Manager di Base
@@ -34,7 +35,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 
 public class BasicProtocolManager extends BasicManager {
 
-	public BasicProtocolManager(IProtocolFactory<?> protocolFactory) {
+	public BasicProtocolManager(IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		super(protocolFactory);
 	}
 

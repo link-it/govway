@@ -24,10 +24,10 @@ package org.openspcoop2.protocol.basic.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.manifest.CollaborationProfile;
 import org.openspcoop2.protocol.manifest.Functionality;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
@@ -37,8 +37,8 @@ import org.openspcoop2.protocol.manifest.ServiceType;
 import org.openspcoop2.protocol.manifest.SoapHeaderBypassMustUnderstandHeader;
 import org.openspcoop2.protocol.manifest.Version;
 import org.openspcoop2.protocol.sdk.BypassMustUnderstandCheck;
-import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
@@ -52,27 +52,19 @@ import org.openspcoop2.utils.transport.TransportRequestContext;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class BasicConfiguration implements org.openspcoop2.protocol.sdk.config.IProtocolConfiguration {
+public class BasicConfiguration extends BasicComponentFactory implements org.openspcoop2.protocol.sdk.config.IProtocolConfiguration {
 
-	private IProtocolFactory<?> factory;
-	@SuppressWarnings("unused")
-	private Logger log;
 	private Registry registroManifest;
 	private Openspcoop2 manifest;
 
 	public BasicConfiguration(IProtocolFactory<?> factory) throws ProtocolException {
-		this.factory = factory;
-		this.log = this.factory.getLogger();
-		this.manifest = this.factory.getManifest();
+		super(factory);
+		this.manifest = this.protocolFactory.getManifest();
 		this.registroManifest = this.manifest.getRegistry();
 	}
 	
 
 	
-	@Override
-	public IProtocolFactory<?> getProtocolFactory() {
-		return this.factory;
-	}
 	
 	@Override
 	public ServiceBindingConfiguration getDefaultServiceBindingConfiguration(TransportRequestContext transportRequest) throws ProtocolException{

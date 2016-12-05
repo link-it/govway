@@ -21,11 +21,10 @@
 
 package org.openspcoop2.protocol.basic.diagnostica;
 
-import org.slf4j.Logger;
-
 import java.io.ByteArrayOutputStream;
 
 import org.openspcoop2.core.diagnostica.utils.XMLUtils;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
@@ -39,22 +38,12 @@ import org.w3c.dom.Element;
  * @author $Author: apoli $
  * @version $Rev: 12359 $, $Date: 2016-11-18 17:24:57 +0100 (Fri, 18 Nov 2016) $
  */
-public class DiagnosticSerializer implements org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticSerializer {
+public class DiagnosticSerializer extends BasicComponentFactory implements org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticSerializer {
 
 	protected org.openspcoop2.message.xml.XMLUtils xmlUtils;
-	/** Logger utilizzato per debug. */
 
-	protected Logger log;
-	protected IProtocolFactory<?> factory;
-	
-	@Override
-	public IProtocolFactory<?> getProtocolFactory() {
-		return this.factory;
-	}
-	
-	public DiagnosticSerializer(IProtocolFactory<?> protocolFactory){
-		this.log = protocolFactory.getLogger();
-		this.factory = protocolFactory;
+	public DiagnosticSerializer(IProtocolFactory<?> protocolFactory) throws ProtocolException{
+		super(protocolFactory);
 		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 	}
 

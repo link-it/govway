@@ -24,8 +24,8 @@ package org.openspcoop2.protocol.basic.config;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -50,21 +50,13 @@ import org.openspcoop2.utils.date.DateManager;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class BasicTraduttore implements org.openspcoop2.protocol.sdk.config.ITraduttore {
+public class BasicTraduttore extends BasicComponentFactory implements org.openspcoop2.protocol.sdk.config.ITraduttore {
 
-	protected Logger log = null;
-	protected IProtocolFactory<?> protocolFactory;
-	
 
-	public BasicTraduttore(IProtocolFactory<?> factory){
-		this.log = factory.getLogger();
-		this.protocolFactory = factory;
+	public BasicTraduttore(IProtocolFactory<?> factory) throws ProtocolException{
+		super(factory);
 	}
 
-	@Override
-	public IProtocolFactory<?> getProtocolFactory() {
-		return this.protocolFactory;
-	}
 	
 	
 	public String getPrefissoEccezioni() {

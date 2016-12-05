@@ -21,14 +21,15 @@
 
 
 
-package org.openspcoop2.protocol.engine.registry;
+package org.openspcoop2.protocol.basic.registry;
 
-import org.openspcoop2.core.config.PortaDelegata;
-import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.transport.TransportRequestContext;
@@ -36,38 +37,37 @@ import org.slf4j.Logger;
 
 
 /**
- * Classe utilizzabile per identificare la porta delegata richiesta.
+ * Classe utilizzabile per identificare la porta applicativa richiesta.
  *
  * @author Andrea Poli <apoli@link.it>
  * @author $Author: apoli $
  * @version $Rev: 12237 $, $Date: 2016-10-04 11:41:45 +0200 (Tue, 04 Oct 2016) $
  */
 
-public class IdentificazionePortaDelegata extends AbstractIdentificazionePorta {
+public class IdentificazionePortaApplicativa extends AbstractIdentificazionePorta {
 
 
-    /* ---- Porta Delegata ---- */
-    private PortaDelegata pd = null;
+    /* ---- Porta Applicativa ---- */
+    private PortaApplicativa pa = null;
 	
 	/**
 	 * Costruttore
 	 *
-	 * @param urlProtocolContext Parametri identificativi della porta delegata.
+	 * @param urlProtocolContext Parametri identificativi della porta applicativa.
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public IdentificazionePortaDelegata(TransportRequestContext urlProtocolContext, Logger log,
-			boolean portaUrlBased, IRegistryReader registryReader,
+	public IdentificazionePortaApplicativa(TransportRequestContext urlProtocolContext, Logger log,
+			boolean portaUrlBased, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader,
 			IProtocolFactory<?> protocolFactory) throws ProtocolException {
-		super(urlProtocolContext, log, portaUrlBased, registryReader, protocolFactory);
+		super(urlProtocolContext, log, portaUrlBased, registryReader, configIntegrationReader, protocolFactory);
 	}
-
 
 	@Override
 	protected Object getIDPorta(String porta) throws RegistryNotFound{
-		return this.registryReader.getIdPortaDelegata(porta, this.protocolFactory);
+		return this.configIntegrationReader.getIdPortaApplicativa(porta, this.protocolFactory);
 	}
-	
+
 	/**
 	 * Avvia il processo di identificazione.
 	 *
@@ -83,31 +83,31 @@ public class IdentificazionePortaDelegata extends AbstractIdentificazionePorta {
 				return false;
 			}
 			
-			IDPortaDelegata idPD = this.getIDPortaDelegata();
+			IDPortaApplicativa idPA = this.getIDPortaApplicativa();
 			
-			// Get Porta Delegata
+			// Get Porta Applicativa
 			try{
-				this.pd = this.registryReader.getPortaDelegata(idPD);
+				this.pa = this.configIntegrationReader.getPortaApplicativa(idPA);
 			}catch(RegistryNotFound notFound){
 				this.erroreIntegrazione = 
 						ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
-							getErrore401_PortaInesistente(notFound.getMessage(),idPD.getNome(),this.urlCompleta);
+							getErrore401_PortaInesistente(notFound.getMessage(),idPA.getNome(),this.urlCompleta);
 				return false;
 			}
 			
-			// tipo di Autenticazione
-			this.tipoAutenticazione = this.pd.getAutenticazione();
-
-			// tipo di Autorizzazione
-			this.tipoAutorizzazione = this.pd.getAutorizzazione();
+//			// tipo di Autenticazione
+//			this.tipoAutenticazione = this.pa.getAutenticazione();
+//
+//			// tipo di Autorizzazione
+//			this.tipoAutorizzazione = this.pa.getAutorizzazione();
 			
 			// tipo di Autorizzazione per contenuto
-			this.tipoAutorizzazioneContenuto = this.pd.getAutorizzazioneContenuto();
+			this.tipoAutorizzazioneContenuto = this.pa.getAutorizzazioneContenuto();
 
 			return true;
 
 		}catch(Exception e){
-			this.log.error("Identificazione porta delegata non riuscita location["+this.location+"] urlInvocazione["+this.urlCompleta+"]",e);
+			this.log.error("Identificazione porta applicativa non riuscita location["+this.location+"] urlInvocazione["+this.urlCompleta+"]",e);
 			try{
 				this.erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_502_IDENTIFICAZIONE_PD);
@@ -118,12 +118,12 @@ public class IdentificazionePortaDelegata extends AbstractIdentificazionePorta {
 		}
 	}
 
-	public IDPortaDelegata getIDPortaDelegata(){
-		return (IDPortaDelegata) this.identificativoPorta;
+	public IDPortaApplicativa getIDPortaApplicativa(){
+		return (IDPortaApplicativa) this.identificativoPorta;
 	}
 
-	public PortaDelegata getPortaDelegata() {
-		return this.pd;
+	public PortaApplicativa getPortaApplicativa() {
+		return this.pa;
 	} 
 
 }

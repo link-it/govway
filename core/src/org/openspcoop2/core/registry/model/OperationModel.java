@@ -43,6 +43,7 @@ public class OperationModel extends AbstractModel<Operation> {
 	
 		this.MESSAGE_INPUT = new org.openspcoop2.core.registry.model.MessageModel(new Field("message-input",org.openspcoop2.core.registry.Message.class,"operation",Operation.class));
 		this.MESSAGE_OUTPUT = new org.openspcoop2.core.registry.model.MessageModel(new Field("message-output",org.openspcoop2.core.registry.Message.class,"operation",Operation.class));
+		this.PROTOCOL_PROPERTY = new org.openspcoop2.core.registry.model.ProtocolPropertyModel(new Field("protocol-property",org.openspcoop2.core.registry.ProtocolProperty.class,"operation",Operation.class));
 		this.PROF_AZIONE = new Field("prof-azione",java.lang.String.class,"operation",Operation.class);
 		this.ID_PORT_TYPE = new Field("id-port-type",java.lang.Long.class,"operation",Operation.class);
 		this.NOME = new Field("nome",java.lang.String.class,"operation",Operation.class);
@@ -65,6 +66,7 @@ public class OperationModel extends AbstractModel<Operation> {
 	
 		this.MESSAGE_INPUT = new org.openspcoop2.core.registry.model.MessageModel(new ComplexField(father,"message-input",org.openspcoop2.core.registry.Message.class,"operation",Operation.class));
 		this.MESSAGE_OUTPUT = new org.openspcoop2.core.registry.model.MessageModel(new ComplexField(father,"message-output",org.openspcoop2.core.registry.Message.class,"operation",Operation.class));
+		this.PROTOCOL_PROPERTY = new org.openspcoop2.core.registry.model.ProtocolPropertyModel(new ComplexField(father,"protocol-property",org.openspcoop2.core.registry.ProtocolProperty.class,"operation",Operation.class));
 		this.PROF_AZIONE = new ComplexField(father,"prof-azione",java.lang.String.class,"operation",Operation.class);
 		this.ID_PORT_TYPE = new ComplexField(father,"id-port-type",java.lang.Long.class,"operation",Operation.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"operation",Operation.class);
@@ -86,6 +88,8 @@ public class OperationModel extends AbstractModel<Operation> {
 	public org.openspcoop2.core.registry.model.MessageModel MESSAGE_INPUT = null;
 	 
 	public org.openspcoop2.core.registry.model.MessageModel MESSAGE_OUTPUT = null;
+	 
+	public org.openspcoop2.core.registry.model.ProtocolPropertyModel PROTOCOL_PROPERTY = null;
 	 
 	public IField PROF_AZIONE = null;
 	 

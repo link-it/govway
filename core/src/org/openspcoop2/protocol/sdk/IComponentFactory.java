@@ -38,4 +38,5 @@ public interface IComponentFactory {
 	 */
 	public IProtocolFactory<?> getProtocolFactory();
 	
+	
 }

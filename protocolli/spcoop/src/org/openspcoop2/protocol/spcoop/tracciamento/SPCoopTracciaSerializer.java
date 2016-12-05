@@ -69,9 +69,9 @@ public class SPCoopTracciaSerializer extends TracciaSerializer implements ITracc
 			
 			SOAPElement GDO =  traccia.addChildElement("GDO","eGov_IT_Trac","http://www.cnipa.it/schemas/2003/eGovIT/Tracciamento1_0/");
 			if(tracciaObject.getGdo()==null){
-				GDO.setValue(this.factory.createTraduttore().getDate_protocolFormat());
+				GDO.setValue(this.protocolFactory.createTraduttore().getDate_protocolFormat());
 			}else{
-				GDO.setValue(this.factory.createTraduttore().getDate_protocolFormat(tracciaObject.getGdo()));
+				GDO.setValue(this.protocolFactory.createTraduttore().getDate_protocolFormat(tracciaObject.getGdo()));
 			}
 
 

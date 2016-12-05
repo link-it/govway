@@ -27,6 +27,7 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -42,7 +43,6 @@ import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneSintatticaResult;
 import org.openspcoop2.utils.date.DateManager;
-import org.slf4j.Logger;
 
 /**
  * ValidazioneSintattica
@@ -52,23 +52,14 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  * 
  */
-public class ValidazioneSintattica<BustaRawType> implements
+public class ValidazioneSintattica<BustaRawType> extends BasicComponentFactory implements
 		org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica<BustaRawType> {
 
-	protected IProtocolFactory<BustaRawType> protocolFactory;
 	private IBustaBuilder<BustaRawType> bustaBuilder = null;
-	protected Logger log;
 		
 	public ValidazioneSintattica(IProtocolFactory<BustaRawType> factory) throws ProtocolException{
-		this.log = factory.getLogger();
-		this.protocolFactory = factory;
-		this.bustaBuilder = this.protocolFactory.createBustaBuilder();
-	}
-
-	
-	@Override
-	public IProtocolFactory<BustaRawType> getProtocolFactory() {
-		return this.protocolFactory;
+		super(factory);
+		this.bustaBuilder = factory.createBustaBuilder();
 	}
 
 	

@@ -98,23 +98,22 @@ public class FiltroRicercaServizi extends FiltroRicerca implements Serializable{
 	public String toString(){
 		StringBuffer bf = new StringBuffer();
 		bf.append("Filtro Servizi:");
-		if(this.getMinDate()!=null)
-			bf.append(" [intervallo-inferiore-data:"+this.getMinDate()+"]");
-		if(this.getMaxDate()!=null)
-			bf.append(" [intervallo-superiore-data:"+this.getMaxDate()+"]");
-		if(this.getTipo()!=null)
-			bf.append(" [tipo:"+this.getTipo()+"]");
-		if(this.getNome()!=null)
-			bf.append(" [nome:"+this.getNome()+"]");
+		this.addDetails(bf);
+		if(bf.length()=="Filtro Servizi:".length())
+			bf.append(" nessun filtro presente");
+		return bf.toString();
+	}
+	@Override
+	public void addDetails(StringBuffer bf){
 		if(this.idAccordo!=null)
 			bf.append(" [accordo-servizio:"+this.idAccordo+"]");
 		if(this.tipoSoggettoErogatore!=null)
 			bf.append(" [tipo-soggetto-erogatore:"+this.tipoSoggettoErogatore+"]");
 		if(this.nomeSoggettoErogatore!=null)
 			bf.append(" [nome-soggetto-erogatore:"+this.nomeSoggettoErogatore+"]");
-		if(bf.length()=="Filtro Servizi:".length())
-			bf.append(" nessun filtro presente");
-		return bf.toString();
+		if(this.tipologiaServizio!=null)
+			bf.append(" [tipologia-servizio:"+this.tipologiaServizio+"]");
+		super.addDetails(bf);
 	}
 
 }

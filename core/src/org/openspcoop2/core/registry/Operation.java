@@ -31,6 +31,8 @@ import org.openspcoop2.core.registry.constants.BindingStyle;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /** <p>Java class for operation complex type.
@@ -42,6 +44,7 @@ import java.io.Serializable;
  * 		&lt;sequence>
  * 			&lt;element name="message-input" type="{http://www.openspcoop2.org/core/registry}message" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="message-output" type="{http://www.openspcoop2.org/core/registry}message" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/registry}protocol-property" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="prof-azione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="id-port-type" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
@@ -69,7 +72,8 @@ import java.io.Serializable;
 @XmlType(name = "operation", 
   propOrder = {
   	"messageInput",
-  	"messageOutput"
+  	"messageOutput",
+  	"protocolProperty"
   }
 )
 
@@ -107,6 +111,30 @@ public class Operation extends org.openspcoop2.utils.beans.BaseBean implements S
 
   public void setMessageOutput(Message messageOutput) {
     this.messageOutput = messageOutput;
+  }
+
+  public void addProtocolProperty(ProtocolProperty protocolProperty) {
+    this.protocolProperty.add(protocolProperty);
+  }
+
+  public ProtocolProperty getProtocolProperty(int index) {
+    return this.protocolProperty.get( index );
+  }
+
+  public ProtocolProperty removeProtocolProperty(int index) {
+    return this.protocolProperty.remove( index );
+  }
+
+  public List<ProtocolProperty> getProtocolPropertyList() {
+    return this.protocolProperty;
+  }
+
+  public void setProtocolPropertyList(List<ProtocolProperty> protocolProperty) {
+    this.protocolProperty=protocolProperty;
+  }
+
+  public int sizeProtocolPropertyList() {
+    return this.protocolProperty.size();
   }
 
   public java.lang.String getProfAzione() {
@@ -297,6 +325,36 @@ public class Operation extends org.openspcoop2.utils.beans.BaseBean implements S
 
   @XmlElement(name="message-output",required=false,nillable=false)
   protected Message messageOutput;
+
+  @XmlElement(name="protocol-property",required=true,nillable=false)
+  protected List<ProtocolProperty> protocolProperty = new ArrayList<ProtocolProperty>();
+
+  /**
+   * @deprecated Use method getProtocolPropertyList
+   * @return List<ProtocolProperty>
+  */
+  @Deprecated
+  public List<ProtocolProperty> getProtocolProperty() {
+  	return this.protocolProperty;
+  }
+
+  /**
+   * @deprecated Use method setProtocolPropertyList
+   * @param protocolProperty List<ProtocolProperty>
+  */
+  @Deprecated
+  public void setProtocolProperty(List<ProtocolProperty> protocolProperty) {
+  	this.protocolProperty=protocolProperty;
+  }
+
+  /**
+   * @deprecated Use method sizeProtocolPropertyList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeProtocolProperty() {
+  	return this.protocolProperty.size();
+  }
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="prof-azione",required=false)

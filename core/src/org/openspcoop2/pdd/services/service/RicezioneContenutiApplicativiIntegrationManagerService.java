@@ -21,7 +21,6 @@ import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
-import org.openspcoop2.pdd.config.RegistryReader;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -50,10 +49,10 @@ import org.openspcoop2.pdd.services.skeleton.IntegrationManagerException;
 import org.openspcoop2.pdd.services.skeleton.IntegrationManagerMessage;
 import org.openspcoop2.pdd.services.skeleton.IntegrationManagerUtility;
 import org.openspcoop2.pdd.services.skeleton.ProtocolHeaderInfo;
+import org.openspcoop2.protocol.basic.registry.ServiceIdentificationReader;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.constants.IDService;
-import org.openspcoop2.protocol.engine.registry.ServiceIdentificationReader;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.builder.InformazioniErroriInfrastrutturali;
@@ -143,11 +142,9 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		
 		
 		// Identifico Servizio per comprendere correttamente il messageType
-		RegistryReader registryReader = null;
 		ServiceIdentificationReader serviceIdentificationReader = null;
 		try{
-			registryReader = new RegistryReader(logCore, requestInfo.getProtocolFactory());
-			serviceIdentificationReader = new ServiceIdentificationReader(registryReader, requestInfo.getProtocolFactory(), logCore);
+			serviceIdentificationReader = ServicesUtils.getServiceIdentificationReader(logCore, requestInfo);
 		}catch(Exception e){
 			String msgError = "Inizializzazione RegistryReader fallita: "+e.getMessage();
 			logCore.error(msgError,e);
@@ -170,7 +167,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		// Aggiorno RequestInfo
 		try{
 			if(RicezioneContenutiApplicativiServiceUtils.updatePortaDelegataRequestInfo(requestInfo, logCore, null,
-					null, registryReader, serviceIdentificationReader,msgDiag)==false){
+					null, serviceIdentificationReader,msgDiag)==false){
 				try{
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							getErroreIntegrazione());

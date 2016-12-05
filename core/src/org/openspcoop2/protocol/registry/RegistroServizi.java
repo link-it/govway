@@ -35,6 +35,9 @@ import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDAzione;
+import org.openspcoop2.core.id.IDFruizione;
+import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -50,6 +53,14 @@ import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.FiltroRicerca;
+import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
+import org.openspcoop2.core.registry.driver.FiltroRicercaAzioni;
+import org.openspcoop2.core.registry.driver.FiltroRicercaFruizioniServizio;
+import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
+import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
+import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
+import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
@@ -913,7 +924,7 @@ public class RegistroServizi  {
 
 
 	/* ********  R I C E R C A    S E R V I Z I  (utilizzo dei driver) ******** */ 
-
+	
 	/**
 	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.AccordoServizioParteComune}, 
 	 * identificato grazie al parametro 
@@ -971,7 +982,7 @@ public class RegistroServizi  {
 		if(as!=null)
 			return as;
 		else
-			throw new DriverRegistroServiziNotFound("[getAccordoServizio] Accordo di Servizio ["+idAccordo+"] non Trovato");
+			throw new DriverRegistroServiziNotFound("[getAccordoServizio] Accordo di Servizio ["+idAccordo+"] non trovato");
 
 
 
@@ -1079,7 +1090,7 @@ public class RegistroServizi  {
 		if(soggetto!=null)
 			return soggetto;
 		else
-			throw new DriverRegistroServiziNotFound("[getSoggetto] Soggetto non Trovato");
+			throw new DriverRegistroServiziNotFound("[getSoggetto] Soggetto non trovato");
 
 	}
 
@@ -1149,7 +1160,7 @@ public class RegistroServizi  {
 		if(serv!=null)
 			return serv;
 		else
-			throw new DriverRegistroServiziNotFound("[getAccordoServizioParteSpecifica] Servizio non Trovato");
+			throw new DriverRegistroServiziNotFound("[getAccordoServizioParteSpecifica] Servizio non trovato");
 	}
 
 	
@@ -1214,7 +1225,7 @@ public class RegistroServizi  {
 		if(servCorrelato!=null)
 			return servCorrelato;
 		else
-			throw new DriverRegistroServiziNotFound("[getAccordoServizioParteSpecifica_ServizioCorrelato] ServizioCorrelato non Trovato");
+			throw new DriverRegistroServiziNotFound("[getAccordoServizioParteSpecifica_ServizioCorrelato] ServizioCorrelato non trovato");
 	}
 	
 	/**
@@ -1272,9 +1283,101 @@ public class RegistroServizi  {
 		if(ac!=null)
 			return ac;
 		else
-			throw new DriverRegistroServiziNotFound("[getAccordoCooperazione] Servizio non Trovato");
+			throw new DriverRegistroServiziNotFound("[getAccordoCooperazione] Accordo non trovato");
 	}
 
+	
+	
+	
+	
+	/* ********  R I C E R C A  I D   E L E M E N T I   P R I M I T I V I  ******** */
+	
+	@SuppressWarnings("unchecked")
+	public List<String> getAllIdPorteDominio(Connection connectionPdD,String nomeRegistro,FiltroRicerca filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return (List<String>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdPorteDominio");
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<IDSoggetto> getAllIdSoggetti(Connection connectionPdD,String nomeRegistro, FiltroRicercaSoggetti filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return (List<IDSoggetto>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdSoggetti");
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<IDAccordoCooperazione> getAllIdAccordiCooperazione(Connection connectionPdD,String nomeRegistro, FiltroRicercaAccordi filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return (List<IDAccordoCooperazione>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdAccordiCooperazione");
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<IDAccordo> getAllIdAccordiServizioParteComune(Connection connectionPdD,String nomeRegistro, FiltroRicercaAccordi filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return (List<IDAccordo>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdAccordiServizioParteComune");
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<IDPortType> getAllIdPortType(Connection connectionPdD,String nomeRegistro, FiltroRicercaPortTypes filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return (List<IDPortType>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdPortType");
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<IDAzione> getAllIdAzionePortType(Connection connectionPdD, String nomeRegistro, FiltroRicercaOperations filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return (List<IDAzione>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdAzionePortType");
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<IDAzione> getAllIdAzioneAccordo(Connection connectionPdD, String nomeRegistro, FiltroRicercaAzioni filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return (List<IDAzione>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdAzioneAccordo");
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<IDServizio> getAllIdServizi(Connection connectionPdD, String nomeRegistro, FiltroRicercaServizi filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return (List<IDServizio>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdServizi");
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<IDFruizione> getAllIdFruizioniServizio(Connection connectionPdD, String nomeRegistro, FiltroRicercaFruizioniServizio filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return (List<IDFruizione>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdFruizioniServizio");
+	}
+	
+	private List<?> _getAllIdEngine(Connection connectionPdD,String nomeRegistro,Object filtroRicerca,String nomeMetodo) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		
+		// Raccolta dati
+		if(filtroRicerca == null)
+			throw new DriverRegistroServiziException("["+nomeMetodo+"]: Parametro non definito");	
+
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = nomeMetodo+"_" + filtroRicerca.toString();   
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverRegistroServiziNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverRegistroServiziNotFound) response.getException();
+					else
+						throw (DriverRegistroServiziException) response.getException();
+				}else{
+					return ((List<?>) response.getObject());
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		List<?> list = null;
+		if(this.cache!=null){
+			list = (List<?>) this.getObjectCache(key,nomeMetodo,nomeRegistro,null,connectionPdD,filtroRicerca);
+		}else{
+			list = (List<?>) this.getObject(nomeMetodo,nomeRegistro,null,connectionPdD,filtroRicerca);
+		}
+
+		if(list!=null)
+			return list;
+		else
+			throw new DriverRegistroServiziNotFound("["+nomeMetodo+"] Elementi non trovati");
+	}
+	
+	
+	
+	
 
 	/**
 	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.RegistroServizi}, 
@@ -1362,7 +1465,7 @@ public class RegistroServizi  {
 		if(wsdlAS!=null)
 			return wsdlAS;
 		else
-			throw new DriverRegistroServiziNotFound("[getWsdlAccordoServizio] WSDLAccordoServizio non Trovato");
+			throw new DriverRegistroServiziNotFound("[getWsdlAccordoServizio] WSDLAccordoServizio non trovato");
 	}
 
 

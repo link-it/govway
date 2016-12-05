@@ -25,6 +25,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -42,16 +43,10 @@ import org.openspcoop2.utils.transport.TransportResponseContext;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public abstract class BasicManager implements IProtocolManager {
+public abstract class BasicManager extends BasicComponentFactory implements IProtocolManager {
 
-	private IProtocolFactory<?> protocolFactory = null;
-	public BasicManager(IProtocolFactory<?> protocolFactory){
-		this.protocolFactory = protocolFactory;
-	}
-	
-	@Override
-	public IProtocolFactory<?> getProtocolFactory() {
-		return this.protocolFactory;
+	public BasicManager(IProtocolFactory<?> protocolFactory) throws ProtocolException{
+		super(protocolFactory);
 	}
 	
 

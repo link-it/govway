@@ -37,18 +37,24 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.pdd.config.CachedConfigIntegrationReader;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorOutMessage;
+import org.openspcoop2.protocol.basic.registry.ServiceIdentificationReader;
+import org.openspcoop2.protocol.registry.CachedRegistryReader;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.InformazioniErroriInfrastrutturali;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.slf4j.Logger;
 
 
 /**
@@ -62,6 +68,14 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
  */
 public class ServicesUtils {
 
+	
+	public static ServiceIdentificationReader getServiceIdentificationReader(Logger logCore, RequestInfo requestInfo) throws Exception{
+		IRegistryReader registryReader = new CachedRegistryReader(logCore, requestInfo.getProtocolFactory());
+		IConfigIntegrationReader configIntegrationReader = new CachedConfigIntegrationReader(logCore, requestInfo.getProtocolFactory());
+		return new ServiceIdentificationReader(registryReader, configIntegrationReader, requestInfo.getProtocolFactory(), logCore);
+	}
+	
+	
 	public static boolean isConnessioneClientNonDisponibile(Throwable t){
 		if(t instanceof java.net.SocketException){
 			return true;

@@ -116,6 +116,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ProtocolProperty }
+     */
+    public ProtocolProperty createProtocolProperty() {
+        return new ProtocolProperty();
+    }
+
+    /**
      * Create an instance of {@link IdAccordoServizioParteComune }
      */
     public IdAccordoServizioParteComune createIdAccordoServizioParteComune() {

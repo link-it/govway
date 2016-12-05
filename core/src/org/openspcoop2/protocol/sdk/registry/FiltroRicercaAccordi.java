@@ -22,6 +22,7 @@
 package org.openspcoop2.protocol.sdk.registry;
 
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 
 /**
  *  FiltroRicercaAccordi
@@ -35,6 +36,10 @@ public class FiltroRicercaAccordi {
 	private String nome;
 	private Integer versione;
 	private IDSoggetto soggetto;
+	private ProtocolProperties protocolProperties;
+	
+	private Boolean escludiServiziComposti;
+	private Boolean escludiServiziNonComposti;
 	
 	public String getNome() {
 		return this.nome;
@@ -53,5 +58,24 @@ public class FiltroRicercaAccordi {
 	}
 	public void setSoggetto(IDSoggetto soggetto) {
 		this.soggetto = soggetto;
+	}
+	public ProtocolProperties getProtocolProperties() {
+		return this.protocolProperties;
+	}
+	public void setProtocolProperties(ProtocolProperties protocolProperties) {
+		this.protocolProperties = protocolProperties;
+	}
+	
+	public Boolean getEscludiServiziComposti() {
+		return this.escludiServiziComposti;
+	}
+	public void setEscludiServiziComposti(Boolean escludiServiziComposti) {
+		this.escludiServiziComposti = escludiServiziComposti;
+	}
+	public Boolean getEscludiServiziNonComposti() {
+		return this.escludiServiziNonComposti;
+	}
+	public void setEscludiServiziNonComposti(Boolean escludiServiziNonComposti) {
+		this.escludiServiziNonComposti = escludiServiziNonComposti;
 	}
 }

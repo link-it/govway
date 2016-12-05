@@ -35,6 +35,8 @@
 			<!-- Specifiche Semiformale -->
 			<xsd:element name="specifica-semiformale" maxOccurs="unbounded" minOccurs="0"
 				type="documento"/>
+			<!-- Protocol Properties -->
+			<xsd:element name="protocol-property" type="protocol-property" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
@@ -74,7 +76,8 @@
 			<!-- Specifiche Semiformale -->
 			<xsd:element name="specifica-semiformale" maxOccurs="unbounded" minOccurs="0"
 				type="documento"/>
-			
+			<!-- Protocol Properties -->
+			<xsd:element name="protocol-property" type="protocol-property" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="service-binding" type="ServiceBinding" use="required"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
@@ -131,6 +134,8 @@
 		<xsd:sequence>
 			<!-- Operations indicate per il port-type -->
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="azione" type="operation"/>
+			<!-- Protocol Properties -->
+			<xsd:element name="protocol-property" type="protocol-property" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
@@ -145,6 +150,10 @@
 	
 	<!-- azione -->
 	<xsd:complexType name="azione">
+		<xsd:sequence>
+			<!-- Protocol Properties -->
+			<xsd:element name="protocol-property" type="protocol-property" maxOccurs="unbounded" minOccurs="0"/>
+		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="profilo-collaborazione" type="ProfiloCollaborazione"/>
 		<xsd:attribute name="filtro-duplicati" type="StatoFunzionalita"/>
@@ -160,6 +169,8 @@
 		<xsd:sequence>
 			<xsd:element maxOccurs="1" minOccurs="0" name="message-input" type="message"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="message-output" type="message"/>
+			<!-- Protocol Properties -->
+			<xsd:element name="protocol-property" type="protocol-property" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="style" type="BindingStyle" />
@@ -210,7 +221,11 @@
 	<xsd:element name="soggetto" type="soggetto"/>
 	<xsd:complexType name="soggetto">
 		<xsd:sequence>
+			<!-- Connettore -->
 			<xsd:element maxOccurs="1" minOccurs="0" ref="connettore"/>
+			<!-- Protocol Properties -->
+			<xsd:element name="protocol-property" type="protocol-property" maxOccurs="unbounded" minOccurs="0"/>
+			<!-- Accordi Servizio Parte Specifica -->
 			<xsd:element ref="accordo-servizio-parte-specifica" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
@@ -255,6 +270,8 @@
 			<!-- Specifiche Sicurezza -->
 			<xsd:element name="specifica-sicurezza" maxOccurs="unbounded" minOccurs="0"
 				type="documento"/>
+			<!-- Protocol Properties -->
+			<xsd:element name="protocol-property" type="protocol-property" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="versione"> <!-- default="1"> -->
@@ -310,7 +327,10 @@
 	<xsd:element name="fruitore" type="fruitore"/>
 	<xsd:complexType name="fruitore">
 		<xsd:sequence>
+			<!-- Connettore -->
 			<xsd:element maxOccurs="1" minOccurs="0" ref="connettore"/>
+			<!-- Protocol Properties -->
+			<xsd:element name="protocol-property" type="protocol-property" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
@@ -333,6 +353,18 @@
 		<xsd:attribute name="file" type="xsd:string" use="required"/>
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime"/>
 	</xsd:complexType>
+	
+	
+	<!-- ProtocolProperty -->
+	<xsd:complexType name="protocol-property">
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<!-- Uno dei 3 campi sottostanti e' obbligatorio -->
+		<xsd:attribute name="value" type="xsd:string" use="optional"/>
+		<xsd:attribute name="number-value" type="xsd:unsignedLong" use="optional"/>
+		<xsd:attribute name="file" type="xsd:string" use="optional"/>
+	</xsd:complexType>
+	
+
 	
 	
 	

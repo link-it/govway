@@ -47,6 +47,7 @@ public class AccordoServizioParteSpecificaModel extends AbstractModel<AccordoSer
 		this.SPECIFICA_SEMIFORMALE = new org.openspcoop2.core.registry.model.DocumentoModel(new Field("specifica-semiformale",org.openspcoop2.core.registry.Documento.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class));
 		this.SPECIFICA_LIVELLO_SERVIZIO = new org.openspcoop2.core.registry.model.DocumentoModel(new Field("specifica-livello-servizio",org.openspcoop2.core.registry.Documento.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class));
 		this.SPECIFICA_SICUREZZA = new org.openspcoop2.core.registry.model.DocumentoModel(new Field("specifica-sicurezza",org.openspcoop2.core.registry.Documento.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class));
+		this.PROTOCOL_PROPERTY = new org.openspcoop2.core.registry.model.ProtocolPropertyModel(new Field("protocol-property",org.openspcoop2.core.registry.ProtocolProperty.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class));
 		this.SUPER_USER = new Field("super-user",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.STATO_PACKAGE = new Field("stato-package",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.PRIVATO = new Field("privato",Boolean.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
@@ -81,6 +82,7 @@ public class AccordoServizioParteSpecificaModel extends AbstractModel<AccordoSer
 		this.SPECIFICA_SEMIFORMALE = new org.openspcoop2.core.registry.model.DocumentoModel(new ComplexField(father,"specifica-semiformale",org.openspcoop2.core.registry.Documento.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class));
 		this.SPECIFICA_LIVELLO_SERVIZIO = new org.openspcoop2.core.registry.model.DocumentoModel(new ComplexField(father,"specifica-livello-servizio",org.openspcoop2.core.registry.Documento.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class));
 		this.SPECIFICA_SICUREZZA = new org.openspcoop2.core.registry.model.DocumentoModel(new ComplexField(father,"specifica-sicurezza",org.openspcoop2.core.registry.Documento.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class));
+		this.PROTOCOL_PROPERTY = new org.openspcoop2.core.registry.model.ProtocolPropertyModel(new ComplexField(father,"protocol-property",org.openspcoop2.core.registry.ProtocolProperty.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class));
 		this.SUPER_USER = new ComplexField(father,"super-user",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.STATO_PACKAGE = new ComplexField(father,"stato-package",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.PRIVATO = new ComplexField(father,"privato",Boolean.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
@@ -118,6 +120,8 @@ public class AccordoServizioParteSpecificaModel extends AbstractModel<AccordoSer
 	public org.openspcoop2.core.registry.model.DocumentoModel SPECIFICA_LIVELLO_SERVIZIO = null;
 	 
 	public org.openspcoop2.core.registry.model.DocumentoModel SPECIFICA_SICUREZZA = null;
+	 
+	public org.openspcoop2.core.registry.model.ProtocolPropertyModel PROTOCOL_PROPERTY = null;
 	 
 	public IField SUPER_USER = null;
 	 
