@@ -20,7 +20,7 @@
  */
 package it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.utils;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
 import org.openspcoop2.generic_project.exception.ServiceException;
 
