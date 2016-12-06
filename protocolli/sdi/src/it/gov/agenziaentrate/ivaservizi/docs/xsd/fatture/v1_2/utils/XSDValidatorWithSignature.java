@@ -61,7 +61,7 @@ public class XSDValidatorWithSignature {
 	}
 	public static AbstractValidatoreXSD getOpenSPCoop2MessageXSDValidator(Logger log) throws ServiceException{
 		if(validator==null){
-			initValidator(org.openspcoop2.message.ValidatoreXSD.class,log);
+			initValidator(org.openspcoop2.message.xml.ValidatoreXSD.class,log);
 		}
 		return validator.getXsdValidator();
 	}
