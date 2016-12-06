@@ -191,6 +191,26 @@ public class FatturaPABehaviour extends DefaultBehaviour {
 							
 						}
 					}
+					else if(fatturaPAObject instanceof it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.FatturaElettronicaType){
+						it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.FatturaElettronicaType fattura = 
+								(it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.FatturaElettronicaType) fatturaPAObject;
+						for (int i = 0; i < fattura.sizeFatturaElettronicaBodyList(); i++) {
+							
+							it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.FatturaElettronicaType fatturaSingola = 
+									new it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.FatturaElettronicaType();
+							fatturaSingola.setVersione(fattura.getVersione());
+							fatturaSingola.setFatturaElettronicaHeader(fattura.getFatturaElettronicaHeader());
+							fatturaSingola.addFatturaElettronicaBody(fattura.getFatturaElettronicaBody(i));
+							
+							it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.utils.serializer.JaxbSerializer serializer =
+									new it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.utils.serializer.JaxbSerializer();
+							it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.ObjectFactory of = new it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.ObjectFactory();
+							byte[] xml = serializer.toByteArray(of.createFatturaElettronica(fatturaSingola));
+							listForwardToList.add(xml);
+							listForwardToObjectList.add(fatturaSingola);
+							
+						}
+					}
 					else{
 						throw new CoreException("Tipo ["+fatturaPAObject.getClass().getName()+"] non gestito");
 					}
