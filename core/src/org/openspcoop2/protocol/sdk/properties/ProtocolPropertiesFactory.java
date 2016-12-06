@@ -28,6 +28,21 @@ public class ProtocolPropertiesFactory {
 		throw new ProtocolException("Type ["+type+"] unsupported");
 	}
 	
+	public static ConsoleItemValueType getConsoleItemValueType(BaseConsoleItem item){
+		if(item instanceof AbstractConsoleItem<?>){
+			if(item instanceof StringConsoleItem){
+				return ConsoleItemValueType.STRING;
+			}
+			else if(item instanceof NumberConsoleItem){
+				return ConsoleItemValueType.NUMBER;
+			}
+			else if(item instanceof BinaryConsoleItem){
+				return ConsoleItemValueType.BINARY;
+			}
+		}
+		return null;
+	}
+	
 	public static BinaryProperty newProperty(String id, byte[] value){
 		return new BinaryProperty(id, value);
 	}
