@@ -578,15 +578,17 @@ public class SDIValidatoreServizioRicezioneFatture {
 		
 		// Metadati.FormatoFattura (validazione necessaria per riconoscere poi il tipo di fattura da parsare)
 		String formatoFattura = metadatiObject.getFormato();
-		if(!it.gov.fatturapa.sdi.fatturapa.v1_0.constants.FormatoTrasmissioneType.SDI10.name().equals(formatoFattura) &&
-			!it.gov.fatturapa.sdi.fatturapa.v1_1.constants.FormatoTrasmissioneType.SDI11.name().equals(formatoFattura) ){
+		if(!SDICostanti.SDI_VERSIONE_FATTURA_PA_10.equals(formatoFattura) &&
+			!SDICostanti.SDI_VERSIONE_FATTURA_PA_11.equals(formatoFattura) &&
+			!SDICostanti.SDI_VERSIONE_FATTURA_PA_12.equals(formatoFattura) &&
+			!SDICostanti.SDI_VERSIONE_FATTURA_PR_12.equals(formatoFattura) ){
 			eccezioniValidazione.add(
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
 							"FormatoFattura presente nei metadati ["+formatoFattura+
 							"] non valido"));
 			return false;	
 		}
-		this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_FATTURA_PA, formatoFattura);
+		this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_VERSIONE_FATTURA_PA, formatoFattura);
 		
 		// Metadati.TentativiInvio
 		this.busta.addProperty(SDICostanti.SDI_BUSTA_EXT_TENTATIVI_INVIO, metadatiObject.getTentativiInvio().toString());

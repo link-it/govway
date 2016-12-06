@@ -48,8 +48,8 @@ public class SDIFatturaUtils {
 			Busta busta,OpenSPCoop2Message msg,boolean addMsgInContextIfEnabled,
 			boolean validaDatiTrasmissione, boolean forceDisableValidazioneXSD) throws Exception{
 			
-		// Valori letti nel file Metadati
-		String formatoFattura = busta.getProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_FATTURA_PA);
+		// Valori letti nel file Metadati o come parametro nel caso di fattura da inviare
+		String versioneFattura = busta.getProperty(SDICostanti.SDI_BUSTA_EXT_VERSIONE_FATTURA_PA);
 				
 		String codiceDestinatario = busta.getProperty(SDICostanti.SDI_BUSTA_EXT_CODICE_DESTINATARIO);
 		
@@ -57,15 +57,18 @@ public class SDIFatturaUtils {
 		if(forceDisableValidazioneXSD==false && sdiProperties.isEnableValidazioneXsdFattura()){
 			try{
 				AbstractValidatoreXSD validatore = null;
-				if(it.gov.fatturapa.sdi.fatturapa.v1_0.constants.FormatoTrasmissioneType.SDI10.name().equals(formatoFattura)){
+				if(SDICostanti.SDI_VERSIONE_FATTURA_PA_10.equals(versioneFattura)){
 					validatore = it.gov.fatturapa.sdi.fatturapa.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
 				}
-				else{
+				else if(SDICostanti.SDI_VERSIONE_FATTURA_PA_11.equals(versioneFattura)){
 					validatore = it.gov.fatturapa.sdi.fatturapa.v1_1.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
+				}
+				else{
+					validatore = it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(protocolFactory.getLogger());
 				}
 				validatore.valida(new ByteArrayInputStream(fattura));
 			}catch(Exception e){
-				String msgErrore = "Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE+"] contiene un file Fattura("+formatoFattura+") non valido rispetto allo schema XSD: "+e.getMessage();
+				String msgErrore = "Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE+"] contiene un file Fattura("+versioneFattura+") non valido rispetto allo schema XSD: "+e.getMessage();
 				eccezioniValidazione.add(
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,msgErrore,e));
 				return;	
@@ -73,11 +76,13 @@ public class SDIFatturaUtils {
 		}
 		
 		// Lettura fattura
+		String attributoVersione = null;
 		String trasmittenteIdPaese = null;
 		String trasmittenteIdCodice = null;
 		String trasmissioneProgressivoInvio = null;
 		String trasmissioneFormatoTrasmissione = null;
 		String trasmissioneCodiceDestinatario = null;
+		String trasmissionePECDestinatario = null; // solo per versione 1.2
 		String cedentePrestatoreIdPaese = null;
 		String cedentePrestatoreIdCodice = null;
 		String cedentePrestatoreDenominazione = null;
@@ -99,7 +104,7 @@ public class SDIFatturaUtils {
 		String soggettoEmittente = null;
 		try{
 			// Fattura v1.0
-			if(it.gov.fatturapa.sdi.fatturapa.v1_0.constants.FormatoTrasmissioneType.SDI10.name().equals(formatoFattura)){
+			if(SDICostanti.SDI_VERSIONE_FATTURA_PA_10.equals(versioneFattura)){
 				it.gov.fatturapa.sdi.fatturapa.v1_0.utils.serializer.JaxbDeserializer deserializer =
 						new it.gov.fatturapa.sdi.fatturapa.v1_0.utils.serializer.JaxbDeserializer();
 				
@@ -108,6 +113,9 @@ public class SDIFatturaUtils {
 					msg.addContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_FATTURA, fatturaObject);
 				}
 				it.gov.fatturapa.sdi.fatturapa.v1_0.FatturaElettronicaHeaderType fatturaHeaderObject = fatturaObject.getFatturaElettronicaHeader();
+				
+				// Attributo Versione
+				attributoVersione = fatturaObject.getVersione();
 				
 				// Fattura.DatiTrasmissione.IdTrasmittente
 				trasmittenteIdPaese = fatturaHeaderObject.getDatiTrasmissione().getIdTrasmittente().getIdPaese();
@@ -180,7 +188,7 @@ public class SDIFatturaUtils {
 			}
 			
 			// Fattura v1.1
-			else{
+			else if(SDICostanti.SDI_VERSIONE_FATTURA_PA_11.equals(versioneFattura)){
 				it.gov.fatturapa.sdi.fatturapa.v1_1.utils.serializer.JaxbDeserializer deserializer =
 						new it.gov.fatturapa.sdi.fatturapa.v1_1.utils.serializer.JaxbDeserializer();
 				it.gov.fatturapa.sdi.fatturapa.v1_1.FatturaElettronicaType fatturaObject = deserializer.readFatturaElettronicaType(fattura);
@@ -188,6 +196,9 @@ public class SDIFatturaUtils {
 					msg.addContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_FATTURA, fatturaObject);
 				}
 				it.gov.fatturapa.sdi.fatturapa.v1_1.FatturaElettronicaHeaderType fatturaHeaderObject = fatturaObject.getFatturaElettronicaHeader();
+				
+				// Attributo Versione
+				attributoVersione = fatturaObject.getVersione();
 				
 				// Fattura.DatiTrasmissione.IdTrasmittente
 				trasmittenteIdPaese = fatturaHeaderObject.getDatiTrasmissione().getIdTrasmittente().getIdPaese();
@@ -260,13 +271,139 @@ public class SDIFatturaUtils {
 				
 			}
 			
+			// Fattura v1.2
+			else{
+				
+				it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.utils.serializer.JaxbDeserializer deserializer =
+						new it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.utils.serializer.JaxbDeserializer();
+				it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.FatturaElettronicaType fatturaObject = deserializer.readFatturaElettronicaType(fattura);
+				if(addMsgInContextIfEnabled && sdiProperties.isSaveFatturaInContext()){
+					msg.addContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_FATTURA, fatturaObject);
+				}
+				it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.FatturaElettronicaHeaderType fatturaHeaderObject = fatturaObject.getFatturaElettronicaHeader();
+				
+				// Attributo Versione
+				if(fatturaObject.getVersione()!=null){
+					attributoVersione = fatturaObject.getVersione().getValue();
+				}
+				
+				// Fattura.DatiTrasmissione.IdTrasmittente
+				trasmittenteIdPaese = fatturaHeaderObject.getDatiTrasmissione().getIdTrasmittente().getIdPaese();
+				trasmittenteIdCodice = fatturaHeaderObject.getDatiTrasmissione().getIdTrasmittente().getIdCodice();
+				
+				// Fattura.DatiTrasmissione.ProgressivoInvio
+				trasmissioneProgressivoInvio = fatturaHeaderObject.getDatiTrasmissione().getProgressivoInvio();
+				
+				// Fattura.DatiTrasmissione.FormatoTrasmissione
+				trasmissioneFormatoTrasmissione = fatturaHeaderObject.getDatiTrasmissione().getFormatoTrasmissione().name();
+				
+				// Fattura.DatiTrasmissione.CodiceDestinatario
+				trasmissioneCodiceDestinatario = fatturaHeaderObject.getDatiTrasmissione().getCodiceDestinatario();
+				
+				// Fattura.DatiTrasmissione.PECDestinatario
+				trasmissionePECDestinatario = fatturaHeaderObject.getDatiTrasmissione().getPecDestinatario();
+				
+				if(fatturaHeaderObject.getCedentePrestatore().getDatiAnagrafici()!=null){
+					if(fatturaHeaderObject.getCedentePrestatore().getDatiAnagrafici().getIdFiscaleIVA()!=null){
+						// Fattura.CedentePrestatore.DatiAnagrafici.IdFiscaleIVA
+						cedentePrestatoreIdPaese = fatturaHeaderObject.getCedentePrestatore().getDatiAnagrafici().getIdFiscaleIVA().getIdPaese();
+						cedentePrestatoreIdCodice = fatturaHeaderObject.getCedentePrestatore().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice();
+					}
+					if(fatturaHeaderObject.getCedentePrestatore().getDatiAnagrafici().getCodiceFiscale()!=null){
+						cedentePrestatoreCodiceFiscale = fatturaHeaderObject.getCedentePrestatore().getDatiAnagrafici().getCodiceFiscale();
+					}
+					if(fatturaHeaderObject.getCedentePrestatore().getDatiAnagrafici().getAnagrafica()!=null){
+						// Fattura.CedentePrestatore.DatiAnagrafici.Anagrafica.[Denominazione,Nome/Cognome] sono in choice
+						cedentePrestatoreDenominazione = fatturaHeaderObject.getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getDenominazione();
+						cedentePrestatoreNome = fatturaHeaderObject.getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getNome();
+						cedentePrestatoreCognome = fatturaHeaderObject.getCedentePrestatore().getDatiAnagrafici().getAnagrafica().getCognome();
+					}
+				}
+					
+				if(fatturaHeaderObject.getCessionarioCommittente().getDatiAnagrafici()!=null){
+					if(fatturaHeaderObject.getCessionarioCommittente().getDatiAnagrafici().getIdFiscaleIVA()!=null){
+						// Fattura.CessionarioCommittente.DatiAnagrafici.IdFiscaleIVA
+						cessionarioCommittenteIdPaese = fatturaHeaderObject.getCessionarioCommittente().getDatiAnagrafici().getIdFiscaleIVA().getIdPaese();
+						cessionarioCommittenteIdCodice = fatturaHeaderObject.getCessionarioCommittente().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice();
+					}
+					if(fatturaHeaderObject.getCessionarioCommittente().getDatiAnagrafici().getCodiceFiscale()!=null){
+						cessionarioCommittenteCodiceFiscale = fatturaHeaderObject.getCessionarioCommittente().getDatiAnagrafici().getCodiceFiscale();
+					}
+					if(fatturaHeaderObject.getCessionarioCommittente().getDatiAnagrafici().getAnagrafica()!=null){
+						// Fattura.CessionarioCommittente.DatiAnagrafici.Anagrafica.[Denominazione,Nome/Cognome] sono in choice
+						cessionarioCommittenteDenominazione = fatturaHeaderObject.getCessionarioCommittente().getDatiAnagrafici().getAnagrafica().getDenominazione();
+						cessionarioCommittenteNome = fatturaHeaderObject.getCessionarioCommittente().getDatiAnagrafici().getAnagrafica().getNome();
+						cessionarioCommittenteCognome = fatturaHeaderObject.getCessionarioCommittente().getDatiAnagrafici().getAnagrafica().getCognome();
+					}
+				}
+					
+				if(fatturaHeaderObject.getTerzoIntermediarioOSoggettoEmittente()!=null && 
+						fatturaHeaderObject.getTerzoIntermediarioOSoggettoEmittente().getDatiAnagrafici()!=null){
+					if(fatturaHeaderObject.getTerzoIntermediarioOSoggettoEmittente().getDatiAnagrafici().getIdFiscaleIVA()!=null){
+						// Fattura.TerzoIntermediarioOSoggettoEmittente.DatiAnagrafici.IdFiscaleIVA
+						terzoIdPaese = fatturaHeaderObject.getTerzoIntermediarioOSoggettoEmittente().getDatiAnagrafici().getIdFiscaleIVA().getIdPaese();
+						terzoIdCodice = fatturaHeaderObject.getTerzoIntermediarioOSoggettoEmittente().getDatiAnagrafici().getIdFiscaleIVA().getIdCodice();
+					}
+					if(fatturaHeaderObject.getTerzoIntermediarioOSoggettoEmittente().getDatiAnagrafici().getCodiceFiscale()!=null){
+						terzoCodiceFiscale = fatturaHeaderObject.getTerzoIntermediarioOSoggettoEmittente().getDatiAnagrafici().getCodiceFiscale();
+					}
+					if(fatturaHeaderObject.getTerzoIntermediarioOSoggettoEmittente().getDatiAnagrafici().getAnagrafica()!=null){
+						// Fattura.TerzoIntermediarioOSoggettoEmittente.DatiAnagrafici.Anagrafica.[Denominazione,Nome/Cognome] sono in choice
+						terzoDenominazione = fatturaHeaderObject.getTerzoIntermediarioOSoggettoEmittente().getDatiAnagrafici().getAnagrafica().getDenominazione();
+						terzoNome = fatturaHeaderObject.getTerzoIntermediarioOSoggettoEmittente().getDatiAnagrafici().getAnagrafica().getNome();
+						terzoCognome = fatturaHeaderObject.getTerzoIntermediarioOSoggettoEmittente().getDatiAnagrafici().getAnagrafica().getCognome();
+					}
+				}
+				if(fatturaHeaderObject.getSoggettoEmittente()!=null){
+					// Fattura.SoggettoEmittente
+					soggettoEmittente = fatturaHeaderObject.getSoggettoEmittente().name();
+				}
+			}
+			
 		}catch(Exception e){
-			String msgErrore = "Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE+"] contiene un file Fattura("+formatoFattura+") non valido: "+e.getMessage();
+			String msgErrore = "Elemento ["+SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE+"] contiene un file Fattura("+versioneFattura+") non valido: "+e.getMessage();
 			eccezioniValidazione.add(
 					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,msgErrore,e));
 			return;	
 		}
 		
+		// Attributo Versione
+		String attributoAtteso = null;
+		boolean attributoVersioneNonCorretto = false;
+		if(SDICostanti.SDI_VERSIONE_FATTURA_PA_10.equals(versioneFattura)){
+			if(!SDICostanti.SDI_ATTRIBUTE_VERSION_FATTURA_PA_10.equals(attributoVersione)){
+				attributoAtteso = SDICostanti.SDI_ATTRIBUTE_VERSION_FATTURA_PA_10;
+				attributoVersioneNonCorretto = true;
+			}
+		}
+		else if(SDICostanti.SDI_VERSIONE_FATTURA_PA_11.equals(versioneFattura)){
+			if(!SDICostanti.SDI_ATTRIBUTE_VERSION_FATTURA_PA_11.equals(attributoVersione)){
+				attributoAtteso = SDICostanti.SDI_ATTRIBUTE_VERSION_FATTURA_PA_11;
+				attributoVersioneNonCorretto = true;
+			}
+		}
+		else if(SDICostanti.SDI_VERSIONE_FATTURA_PA_12.equals(versioneFattura)){
+			if(!SDICostanti.SDI_ATTRIBUTE_VERSION_FATTURA_PA_12.equals(attributoVersione)){
+				attributoAtteso = SDICostanti.SDI_ATTRIBUTE_VERSION_FATTURA_PA_12;
+				attributoVersioneNonCorretto = true;
+			}
+		}
+		else if(SDICostanti.SDI_VERSIONE_FATTURA_PR_12.equals(versioneFattura)){
+			if(!SDICostanti.SDI_ATTRIBUTE_VERSION_FATTURA_PR_12.equals(attributoVersione)){
+				attributoAtteso = SDICostanti.SDI_ATTRIBUTE_VERSION_FATTURA_PR_12;
+				attributoVersioneNonCorretto = true;
+			}
+		}
+		if(attributoVersioneNonCorretto){
+			eccezioniValidazione.add(
+					validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
+							"Attributo versione presente ["+attributoVersione+
+							"] differente da quello atteso ["+attributoAtteso+"] per la versione della fattura ["+versioneFattura+"]",
+							!sdiProperties.isEnableValidazioneCampiInterniFattura()));
+			if(sdiProperties.isEnableValidazioneCampiInterniFattura()){
+				return;	
+			}
+		}
 		
 		// Fattura.DatiTrasmissione.IdTrasmittente (la validazione del nome file e' stata effettuata nella validazione sintattica)
 		if(validaDatiTrasmissione){
@@ -316,10 +453,10 @@ public class SDIFatturaUtils {
 		
 		// Fattura.DatiTrasmissione.FormatoTrasmissione
 		if(validaDatiTrasmissione){
-			if(formatoFattura.equals(trasmissioneFormatoTrasmissione)==false){
+			if(versioneFattura.equals(trasmissioneFormatoTrasmissione)==false){
 				eccezioniValidazione.add(
 						validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO,
-								"Formato di trasmissione indicato nel file Metadati ["+formatoFattura+
+								"Formato di trasmissione indicato nel file Metadati ["+versioneFattura+
 								"] differente da quello presente nella fattura ["+trasmissioneFormatoTrasmissione+"]",
 								!sdiProperties.isEnableValidazioneCampiInterniFattura()));
 				if(sdiProperties.isEnableValidazioneCampiInterniFattura()){
@@ -341,6 +478,9 @@ public class SDIFatturaUtils {
 				}
 			}
 		}
+		
+		// Fattura.DatiTrasmissione.PECDestinatario
+		busta.addProperty(SDICostanti.SDI_BUSTA_EXT_TRASMISSIONE_PEC_DESTINATARIO, trasmissionePECDestinatario);
 		
 		// Fattura.CedentePrestatore.DatiAnagrafici.IdFiscaleIVA
 		if(cedentePrestatoreIdPaese!=null){

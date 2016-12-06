@@ -90,6 +90,8 @@ public class SDIImbustamento {
 			}
 			
 		
+			// !!NOTA!! : Per comprendere cosa sia presente nel soapBody e negli attachments vedere org.openspcoop2.protocol.sdi.utils.PreInRequestHandler
+			
 			
 			// childElement
 			List<SOAPElement> childs = SoapUtils.getNotEmptyChildSOAPElement(soapBody);
@@ -108,8 +110,29 @@ public class SDIImbustamento {
 			byte[] fatturaAllegata = null;
 			String idPaese = null;
 			String idCodice = null;
+			String versioneFattura = null;
 			if(Costanti.SOAP_TUNNEL_NAMESPACE.equals(fatturaSOAPElement.getNamespaceURI())){
-							
+				
+				// Grazie alla classe org.openspcoop2.protocol.sdi.utils.PreInRequestHandler entreremo qua nel caso ZIP o P7M
+				
+				// versioneFattura
+				if(msg.getTransportRequestContext()!=null){
+					versioneFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_VERSIONE_FATTURA);
+					if(versioneFattura==null){
+						versioneFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_1);
+					}
+					if(versioneFattura==null){
+						versioneFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_2);
+					}
+				}
+				if(versioneFattura==null){
+					throw new Exception("Versione non fornita (indicare una delle seguenti versioni: "+SDICostanti.SDI_VERSIONI_FATTURA+")");
+				}
+				versioneFattura = versioneFattura.trim().toUpperCase();
+				if(SDICostanti.SDI_VERSIONI_FATTURA.contains(versioneFattura)==false){
+					throw new Exception("Versione fornita ["+versioneFattura+"] non supportata (indicare una delle seguenti versioni: "+SDICostanti.SDI_VERSIONI_FATTURA+")");
+				}
+				
 				// idPaese
 				if(msg.getTransportRequestContext()!=null){
 					idPaese =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_ID_PAESE);
@@ -190,27 +213,60 @@ public class SDIImbustamento {
 				fatturaAllegata = Utilities.getAsByteArray(ap.getDataHandler().getInputStream());
 			}
 			else{
+				
 				tipoInvioFattura = SDICostanti.SDI_TIPO_FATTURA_XML;
-			}
-			busta.addProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_ARCHIVIO_INVIO_FATTURA, tipoInvioFattura);
-			
-			
-			// formatoFattura
-			String formatoFattura = null;
-			if(SDICostanti.SDI_TIPO_FATTURA_XML.equals(tipoInvioFattura)){
-				if(it.gov.fatturapa.sdi.fatturapa.v1_0.utils.ProjectInfo.getInstance().getProjectNamespace().equals(fatturaSOAPElement.getNamespaceURI())){
-					formatoFattura = it.gov.fatturapa.sdi.fatturapa.v1_0.constants.FormatoTrasmissioneType.SDI10.name();
+				
+				// versioneFattura
+				if(msg.getTransportRequestContext()!=null){
+					versioneFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_URLBASED_VERSIONE_FATTURA);
+					if(versioneFattura==null){
+						versioneFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_1);
+					}
+					if(versioneFattura==null){
+						versioneFattura =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviFile.RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_2);
+					}
+				}
+				if(versioneFattura==null){
+					if(it.gov.fatturapa.sdi.fatturapa.v1_0.utils.ProjectInfo.getInstance().getProjectNamespace().equals(fatturaSOAPElement.getNamespaceURI())){
+						versioneFattura = SDICostanti.SDI_VERSIONE_FATTURA_PA_10;
+					}
+					else if(it.gov.fatturapa.sdi.fatturapa.v1_1.utils.ProjectInfo.getInstance().getProjectNamespace().equals(fatturaSOAPElement.getNamespaceURI())){
+						versioneFattura = SDICostanti.SDI_VERSIONE_FATTURA_PA_11;
+					}
+					else{
+						// non e' possibile capire la versione dal namespace, la versione 1.2 contiene due versioni interne, una per private ed una per PA
+						throw new Exception("Versione non fornita (indicare una delle seguenti versioni: "+SDICostanti.SDI_VERSIONI_FATTURA+")");
+					}
 				}
 				else{
-					formatoFattura = it.gov.fatturapa.sdi.fatturapa.v1_1.constants.FormatoTrasmissioneType.SDI11.name();
+					if(SDICostanti.SDI_VERSIONI_FATTURA.contains(versioneFattura)==false){
+						throw new Exception("Versione fornita ["+versioneFattura+"] non supportata (indicare una delle seguenti versioni: "+SDICostanti.SDI_VERSIONI_FATTURA+")");
+					}
+					// check in accordo alla versione
+					if(SDICostanti.SDI_VERSIONE_FATTURA_PA_10.equals(versioneFattura)){
+						if(!it.gov.fatturapa.sdi.fatturapa.v1_0.utils.ProjectInfo.getInstance().getProjectNamespace().equals(fatturaSOAPElement.getNamespaceURI())){
+							throw new Exception("Versione fornita ["+versioneFattura+"] non è utilizzabile con la fattura fornita che appartiene ad una differente versione di namespace ["+fatturaSOAPElement.getNamespaceURI()+"]");
+						}
+					}
+					else if(SDICostanti.SDI_VERSIONE_FATTURA_PA_11.equals(versioneFattura)){
+						if(!it.gov.fatturapa.sdi.fatturapa.v1_1.utils.ProjectInfo.getInstance().getProjectNamespace().equals(fatturaSOAPElement.getNamespaceURI())){
+							throw new Exception("Versione fornita ["+versioneFattura+"] non è utilizzabile con la fattura fornita che appartiene ad una differente versione di namespace ["+fatturaSOAPElement.getNamespaceURI()+"]");
+						}
+					}
+					else{
+						if(!it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.utils.ProjectInfo.getInstance().getProjectNamespace().equals(fatturaSOAPElement.getNamespaceURI())){
+							throw new Exception("Versione fornita ["+versioneFattura+"] non è utilizzabile con la fattura fornita che appartiene ad una differente versione di namespace ["+fatturaSOAPElement.getNamespaceURI()+"]");
+						}
+					}
 				}
-				busta.addProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_FATTURA_PA,formatoFattura);
-			}
-			else{
-				// TODO: capirlo aprendo lo zip o ignorarlo per p7m
+				
 			}
 			
+			// Add Property in Busta
+			busta.addProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_ARCHIVIO_INVIO_FATTURA, tipoInvioFattura);
+			busta.addProperty(SDICostanti.SDI_BUSTA_EXT_VERSIONE_FATTURA_PA, versioneFattura);
 			
+
 			
 			// Leggo Fattura
 			byte[]fatturaBytes = fatturaAllegata;
@@ -228,11 +284,14 @@ public class SDIImbustamento {
 			if(this.sdiProperties.isEnableValidazioneXsdFattura()){
 				AbstractValidatoreXSD validatore = null;
 				try{			
-					if(it.gov.fatturapa.sdi.fatturapa.v1_0.constants.FormatoTrasmissioneType.SDI10.name().equals(formatoFattura)){
+					if(SDICostanti.SDI_VERSIONE_FATTURA_PA_10.equals(versioneFattura)){
 						validatore = it.gov.fatturapa.sdi.fatturapa.v1_0.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(this.bustaBuilder.getProtocolFactory().getLogger());
 					}
-					else{
+					else if(SDICostanti.SDI_VERSIONE_FATTURA_PA_11.equals(versioneFattura)){
 						validatore = it.gov.fatturapa.sdi.fatturapa.v1_1.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(this.bustaBuilder.getProtocolFactory().getLogger());
+					}
+					else{
+						validatore = it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.utils.XSDValidatorWithSignature.getOpenSPCoop2MessageXSDValidator(this.bustaBuilder.getProtocolFactory().getLogger());
 					}
 				}catch(Exception e){
 					throw new Exception("Inizializzazione schema per validazione fattura non riuscita: "+e.getMessage(),e);

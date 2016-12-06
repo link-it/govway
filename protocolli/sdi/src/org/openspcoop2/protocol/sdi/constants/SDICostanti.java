@@ -23,6 +23,8 @@
 
 package org.openspcoop2.protocol.sdi.constants;
 
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe dove sono fornite le stringhe costanti, definite dalla specifica del protocollo SdI, 
@@ -53,6 +55,22 @@ public class SDICostanti {
     public final static String SDI_FATTURA_ESTENSIONE_P7M = "xml.p7m";
     public final static String SDI_FATTURA_ESTENSIONE_ZIP = "zip";
     
+    public final static String SDI_ATTRIBUTE_VERSION_FATTURA_PA_10 = "1.0";
+    public final static String SDI_ATTRIBUTE_VERSION_FATTURA_PA_11 = "1.1";
+    public final static String SDI_ATTRIBUTE_VERSION_FATTURA_PA_12 = it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.constants.FormatoTrasmissioneType.FPA12.name();
+    public final static String SDI_ATTRIBUTE_VERSION_FATTURA_PR_12 = it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.constants.FormatoTrasmissioneType.FPR12.name();
+    
+    public final static String SDI_VERSIONE_FATTURA_PA_10 = it.gov.fatturapa.sdi.fatturapa.v1_0.constants.FormatoTrasmissioneType.SDI10.name();
+    public final static String SDI_VERSIONE_FATTURA_PA_11 = it.gov.fatturapa.sdi.fatturapa.v1_1.constants.FormatoTrasmissioneType.SDI11.name();
+    public final static String SDI_VERSIONE_FATTURA_PA_12 = it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.constants.FormatoTrasmissioneType.FPA12.name();
+    public final static String SDI_VERSIONE_FATTURA_PR_12 = it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.constants.FormatoTrasmissioneType.FPR12.name();
+    public final static List<String> SDI_VERSIONI_FATTURA = new ArrayList<String>();
+    static{
+    	SDI_VERSIONI_FATTURA.add(SDI_VERSIONE_FATTURA_PA_12);
+    	SDI_VERSIONI_FATTURA.add(SDI_VERSIONE_FATTURA_PR_12);
+    	SDI_VERSIONI_FATTURA.add(SDI_VERSIONE_FATTURA_PA_11);
+    	SDI_VERSIONI_FATTURA.add(SDI_VERSIONE_FATTURA_PA_10);
+    }
     
     public final static String SDI_MESSAGE_CONTEXT_FATTURA = "FatturaPA";
     public final static String SDI_MESSAGE_CONTEXT_FATTURA_METADATI = "FatturaPAMetadati";
@@ -71,7 +89,7 @@ public class SDICostanti {
     public final static String SDI_BUSTA_EXT_NOME_FILE_IN_NOTIFICA = "NomeFileInternoNotifica";
     public final static String SDI_BUSTA_EXT_MESSAGE_ID = "MessageId";
     public final static String SDI_BUSTA_EXT_MESSAGE_ID_COMMITTENTE = "MessageIdCommittente";
-    public final static String SDI_BUSTA_EXT_FORMATO_FATTURA_PA = "FormatoFatturaPA";
+    public final static String SDI_BUSTA_EXT_VERSIONE_FATTURA_PA = "FormatoFatturaPA";
     public final static String SDI_BUSTA_EXT_POSIZIONE_FATTURA_PA = "PosizioneFatturaPA";
     public final static String SDI_BUSTA_EXT_TENTATIVI_INVIO = "TentativiInvio";
     public final static String SDI_BUSTA_EXT_NOTE = "Note";
@@ -97,6 +115,8 @@ public class SDICostanti {
     public final static String SDI_BUSTA_EXT_TRASMITTENTE_ID_CODICE = "DatiTrasmissione-IdTrasmittente-IdCodice";
     
     public final static String SDI_BUSTA_EXT_TRASMISSIONE_PROGRESSIVO_INVIO = "DatiTrasmissione-ProgressivoInvio";
+    
+    public final static String SDI_BUSTA_EXT_TRASMISSIONE_PEC_DESTINATARIO = "DatiTrasmissione-PECDestinatario";
     
     public final static String SDI_BUSTA_EXT_CODICE_DESTINATARIO = "CodiceDestinatario";
     

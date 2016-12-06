@@ -51,6 +51,9 @@ public class SDICostantiServizioRiceviFile {
     public final static String RICEVI_FILE_RISPOSTA_ELEMENT_DATA_ORA_RICEZIONE = "DataOraRicezione";
     public final static String RICEVI_FILE_RISPOSTA_ELEMENT_ERRORE = "Errore";
 	
+	public final static String RICEVI_FILE_INTEGRAZIONE_URLBASED_VERSIONE_FATTURA  = "Versione";
+	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_1  = "SDI-Versione";
+	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_VERSIONE_FATTURA_2  = "X-SDI-Versione";
 	
 	public final static String RICEVI_FILE_INTEGRAZIONE_URLBASED_TIPO_FILE  = "TipoFile";
 	public final static String RICEVI_FILE_INTEGRAZIONE_TRASPORTO_TIPO_FILE_1  = "SDI-TipoFile";

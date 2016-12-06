@@ -108,7 +108,7 @@ public class SDISbustamento {
 			
 			SOAPElement element = null;
 			Object ctxFatturaPA = msg.removeContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_FATTURA);
-			String formatoFattura = busta.getProperty(SDICostanti.SDI_BUSTA_EXT_FORMATO_FATTURA_PA);
+			String versioneFattura = busta.getProperty(SDICostanti.SDI_BUSTA_EXT_VERSIONE_FATTURA_PA);
 						
 			SOAPBody soapBody = msg.getSOAPBody();
 			
@@ -121,16 +121,22 @@ public class SDISbustamento {
 			if(ctxFatturaPA!=null){
 				
 				//System.out.println("OTTIMIZZATO");
-				if(it.gov.fatturapa.sdi.fatturapa.v1_0.constants.FormatoTrasmissioneType.SDI10.name().equals(formatoFattura)){
+				if(SDICostanti.SDI_VERSIONE_FATTURA_PA_10.equals(versioneFattura)){
 					it.gov.fatturapa.sdi.fatturapa.v1_0.FatturaElettronicaType fattura = (it.gov.fatturapa.sdi.fatturapa.v1_0.FatturaElettronicaType) ctxFatturaPA;
 					it.gov.fatturapa.sdi.fatturapa.v1_0.ObjectFactory of = new it.gov.fatturapa.sdi.fatturapa.v1_0.ObjectFactory();
 					it.gov.fatturapa.sdi.fatturapa.v1_0.utils.serializer.JaxbSerializer serializer = new it.gov.fatturapa.sdi.fatturapa.v1_0.utils.serializer.JaxbSerializer();
 					xmlFattura = serializer.toByteArray(of.createFatturaElettronica(fattura));
 				}
-				else {
+				else if(SDICostanti.SDI_VERSIONE_FATTURA_PA_11.equals(versioneFattura)){
 					it.gov.fatturapa.sdi.fatturapa.v1_1.FatturaElettronicaType fattura = (it.gov.fatturapa.sdi.fatturapa.v1_1.FatturaElettronicaType) ctxFatturaPA;
 					it.gov.fatturapa.sdi.fatturapa.v1_1.ObjectFactory of = new it.gov.fatturapa.sdi.fatturapa.v1_1.ObjectFactory();
 					it.gov.fatturapa.sdi.fatturapa.v1_1.utils.serializer.JaxbSerializer serializer = new it.gov.fatturapa.sdi.fatturapa.v1_1.utils.serializer.JaxbSerializer();
+					xmlFattura = serializer.toByteArray(of.createFatturaElettronica(fattura));
+				}
+				else{
+					it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.FatturaElettronicaType fattura = (it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.FatturaElettronicaType) ctxFatturaPA;
+					it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.ObjectFactory of = new it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.ObjectFactory();
+					it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.utils.serializer.JaxbSerializer serializer = new it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.utils.serializer.JaxbSerializer();
 					xmlFattura = serializer.toByteArray(of.createFatturaElettronica(fattura));
 				}
 				

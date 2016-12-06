@@ -37,7 +37,7 @@ busta.notificaDecorrenzaTermini=spcoopFiles/notificaDecorrenzaTermini.xml
 #fattura=sdiFiles/esempiFatture/1.0/IT01234567890_33333.xml
 #metadati=sdiFiles/esempiMetadati/1.0/IT01234567890_33333_MT_001.xml
 
-# Fattura che contiene valori non validi
+# Fattura versione 1.0 che contiene valori non validi
 #fattura=sdiFiles/esempiFatture/1.0/ITAAABBB00C11D222E_00001.xml
 #metadati=sdiFiles/esempiMetadati/1.0/ITAAABBB00C11D222E_00001_MT_001.xml
 
@@ -45,8 +45,8 @@ busta.notificaDecorrenzaTermini=spcoopFiles/notificaDecorrenzaTermini.xml
 # --- Fattura 1.1 (usata in riceviFatture) ---
 
 # Fattura singola versione 1.1 con una sola linea di fattura:
-fattura=sdiFiles/esempiFatture/1.1/IT01234567890_11001.xml
-metadati=sdiFiles/esempiMetadati/1.1/IT01234567890_11001_MT_001.xml
+#fattura=sdiFiles/esempiFatture/1.1/IT01234567890_11001.xml
+#metadati=sdiFiles/esempiMetadati/1.1/IT01234567890_11001_MT_001.xml
 
 # Fattura singola versione 1.1 con più linee di fattura:
 #fattura=sdiFiles/esempiFatture/1.1/IT01234567890_11002.xml
@@ -56,9 +56,44 @@ metadati=sdiFiles/esempiMetadati/1.1/IT01234567890_11001_MT_001.xml
 #fattura=sdiFiles/esempiFatture/1.1/IT01234567890_11003.xml
 #metadati=sdiFiles/esempiMetadati/1.1/IT01234567890_11003_MT_001.xml
 
-# Fattura che contiene valori non validi
+# Fattura versione 1.1 che contiene valori non validi
 #fattura=sdiFiles/esempiFatture/1.1/ITAAABBB00C11D222E_11001.xml
 #metadati=sdiFiles/esempiMetadati/1.1/ITAAABBB00C11D222E_11001_MT_001.xml
+
+
+# --- Fattura 1.2 (usata in riceviFatture) ---
+
+# Fattura singola versione 1.2 (per PA) con una sola linea di fattura:
+fattura=sdiFiles/esempiFatture/1.2/IT01234567890_12001.xml
+metadati=sdiFiles/esempiMetadati/1.2/IT01234567890_12001_MT_001.xml
+
+# Fattura singola versione 1.2 (per Privati) con una sola linea di fattura:
+#fattura=sdiFiles/esempiFatture/1.2/IT01234567890_12011.xml
+#metadati=sdiFiles/esempiMetadati/1.2/IT01234567890_12011_MT_001.xml
+
+# Fattura singola versione 1.2 (per PA) con più linee di fattura:
+#fattura=sdiFiles/esempiFatture/1.2/IT01234567890_12002.xml
+#metadati=sdiFiles/esempiMetadati/1.2/IT01234567890_12002_MT_001.xml
+
+# Fattura singola versione 1.2 (per Privati) con più linee di fattura:
+#fattura=sdiFiles/esempiFatture/1.2/IT01234567890_12012.xml
+#metadati=sdiFiles/esempiMetadati/1.2/IT01234567890_12012_MT_001.xml
+
+# Lotto di fatture versione 1.2 (per PA)
+#fattura=sdiFiles/esempiFatture/1.2/IT01234567890_12003.xml
+#metadati=sdiFiles/esempiMetadati/1.2/IT01234567890_12003_MT_001.xml
+
+# Lotto di fatture versione 1.2 (per Privati)
+#fattura=sdiFiles/esempiFatture/1.2/IT01234567890_12013.xml
+#metadati=sdiFiles/esempiMetadati/1.2/IT01234567890_12013_MT_001.xml
+
+# Fattura versione 1.2 (per PA) che contiene valori non validi
+#fattura=sdiFiles/esempiFatture/1.2/ITAAABBB00C11D222E_12001.xml
+#metadati=sdiFiles/esempiMetadati/1.2/ITAAABBB00C11D222E_12001_MT_001.xml
+
+# Fattura versione 1.2 (per Privati) che contiene valori non validi
+#fattura=sdiFiles/esempiFatture/1.2/ITAAABBB00C11D222E_12011.xml
+#metadati=sdiFiles/esempiMetadati/1.2/ITAAABBB00C11D222E_12011_MT_001.xml
 
 
 # --- NotificaDecorrenzaTermini ---
