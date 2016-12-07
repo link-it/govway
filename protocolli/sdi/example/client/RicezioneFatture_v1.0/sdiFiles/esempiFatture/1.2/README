@@ -7,13 +7,19 @@ IT01234567890_12002.xml (per PA)
 IT01234567890_12012.xml (per Privati)
 
 Lotto di fatture versione 1.2
-IT01234567890_12003.xml
+IT01234567890_12003.xml (per PA)
+IT01234567890_12013.xml (per Privati)
 
 Esempio di fattura singola versione 1.2 che prevede, nell'intestazione, una visualizzazione attraverso il foglio di stile
 (per visualizzare il file FatturaPA attraverso il foglio di stile occorre scaricare entrambi i files nella stessa cartella):
 IT01234567890_12004.xml (per PA)
 IT01234567890_12014.xml (per Privati)
 Foglio di stile per la visualizzazione della FatturaPA versione 1.2 - xslt
+
+Esempio di fattura singola versione 1.2 che prevede la valorizzazione degli elementi aggiuntivi non presenti nella versione 1.2
+Tali elementi sono quotati con il commento <!-- NEW1.2 -->
+IT01234567890_12007.xml (per PA)
+IT01234567890_12017.xml (per Privati)
 
 Esempio di fattura che non supera la validazione XSD
 ITAAABBB00C11D222E_12001.xml (per PA)

@@ -19,6 +19,11 @@ Esempio di archivio ZIP contenente piu' fatture
 IT01234567890_12006.zip (per PA)
 IT01234567890_12016.zip (per Privati)
 
+Esempio di fattura singola versione 1.2 che prevede la valorizzazione degli elementi aggiuntivi non presenti nella versione 1.2
+Tali elementi sono quotati con il commento <!-- NEW1.2 -->
+IT01234567890_12007.xml (per PA)
+IT01234567890_12017.xml (per Privati)
+
 Esempio di fattura che non supera la validazione XSD
 ITAAABBB00C11D222E_12001.xml (per PA)
 ITAAABBB00C11D222E_12011.xml (per Privati)

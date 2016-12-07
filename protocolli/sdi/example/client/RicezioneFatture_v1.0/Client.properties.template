@@ -87,6 +87,14 @@ metadati=sdiFiles/esempiMetadati/1.2/IT01234567890_12001_MT_001.xml
 #fattura=sdiFiles/esempiFatture/1.2/IT01234567890_12013.xml
 #metadati=sdiFiles/esempiMetadati/1.2/IT01234567890_12013_MT_001.xml
 
+# Fattura singola versione 1.2 (per PA) con una sola linea di fattura contenente le novità della Fattura 1.2:
+#fattura=sdiFiles/esempiFatture/1.2/IT01234567890_12007.xml
+#metadati=sdiFiles/esempiMetadati/1.2/IT01234567890_12007_MT_001.xml
+
+# Fattura singola versione 1.2 (per Privati) con una sola linea di fattura contenente le novità della Fattura 1.2:
+#fattura=sdiFiles/esempiFatture/1.2/IT01234567890_12017.xml
+#metadati=sdiFiles/esempiMetadati/1.2/IT01234567890_12017_MT_001.xml
+
 # Fattura versione 1.2 (per PA) che contiene valori non validi
 #fattura=sdiFiles/esempiFatture/1.2/ITAAABBB00C11D222E_12001.xml
 #metadati=sdiFiles/esempiMetadati/1.2/ITAAABBB00C11D222E_12001_MT_001.xml

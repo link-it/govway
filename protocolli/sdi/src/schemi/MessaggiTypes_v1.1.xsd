@@ -201,7 +201,7 @@
 	
 	<xsd:simpleType name="CodiceDestinatario_Type">
 		<xsd:restriction base="xsd:string">
-			<xsd:pattern value="[A-Z0-9]{6}"/>
+			<xsd:pattern value="[A-Z0-9]{6,7}"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	
