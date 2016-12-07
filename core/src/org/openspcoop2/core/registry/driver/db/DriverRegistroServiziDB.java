@@ -563,13 +563,14 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 				
 				// Protocol Properties
-				List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idAccordoLong, ProprietariProtocolProperty.ACCORDO_COOPERAZIONE, con, this.tipoDB);
-				if(listPP!=null && listPP.size()>0){
-					for (ProtocolProperty protocolProperty : listPP) {
-						accordoCooperazione.addProtocolProperty(protocolProperty);
+				try{
+					List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idAccordoLong, ProprietariProtocolProperty.ACCORDO_COOPERAZIONE, con, this.tipoDB);
+					if(listPP!=null && listPP.size()>0){
+						for (ProtocolProperty protocolProperty : listPP) {
+							accordoCooperazione.addProtocolProperty(protocolProperty);
+						}
 					}
-				}
-				
+				}catch(DriverRegistroServiziNotFound dNotFound){}
 				
 
 			} else {
@@ -1403,12 +1404,14 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 					
 					// Protocol Properties
-					List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idAzione, ProprietariProtocolProperty.AZIONE_ACCORDO, con, this.tipoDB);
-					if(listPP!=null && listPP.size()>0){
-						for (ProtocolProperty protocolProperty : listPP) {
-							azione.addProtocolProperty(protocolProperty);
+					try{
+						List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idAzione, ProprietariProtocolProperty.AZIONE_ACCORDO, con, this.tipoDB);
+						if(listPP!=null && listPP.size()>0){
+							for (ProtocolProperty protocolProperty : listPP) {
+								azione.addProtocolProperty(protocolProperty);
+							}
 						}
-					}
+					}catch(DriverRegistroServiziNotFound dNotFound){}
 					
 					accordoServizio.addAzione(azione);
 
@@ -1455,12 +1458,14 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 				
 				// Protocol Properties
-				List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idAccordoLong, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, con, this.tipoDB);
-				if(listPP!=null && listPP.size()>0){
-					for (ProtocolProperty protocolProperty : listPP) {
-						accordoServizio.addProtocolProperty(protocolProperty);
+				try{
+					List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idAccordoLong, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, con, this.tipoDB);
+					if(listPP!=null && listPP.size()>0){
+						for (ProtocolProperty protocolProperty : listPP) {
+							accordoServizio.addProtocolProperty(protocolProperty);
+						}
 					}
-				}
+				}catch(DriverRegistroServiziNotFound dNotFound){}
 				
 				
 			} else {
@@ -1578,12 +1583,14 @@ IDriverWS ,IMonitoraggioRisorsa{
 				this.readAzioniPortTypes(pt,con);
 
 				// Protocol Properties
-				List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idPortType, ProprietariProtocolProperty.PORT_TYPE, con, this.tipoDB);
-				if(listPP!=null && listPP.size()>0){
-					for (ProtocolProperty protocolProperty : listPP) {
-						pt.addProtocolProperty(protocolProperty);
+				try{
+					List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idPortType, ProprietariProtocolProperty.PORT_TYPE, con, this.tipoDB);
+					if(listPP!=null && listPP.size()>0){
+						for (ProtocolProperty protocolProperty : listPP) {
+							pt.addProtocolProperty(protocolProperty);
+						}
 					}
-				}
+				}catch(DriverRegistroServiziNotFound dNotFound){}
 				
 				as.addPortType(pt);
 
@@ -1724,12 +1731,14 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 
 				// Protocol Properties
-				List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idAzionePortType, ProprietariProtocolProperty.OPERATION, con, this.tipoDB);
-				if(listPP!=null && listPP.size()>0){
-					for (ProtocolProperty protocolProperty : listPP) {
-						azionePT.addProtocolProperty(protocolProperty);
+				try{
+					List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(idAzionePortType, ProprietariProtocolProperty.OPERATION, con, this.tipoDB);
+					if(listPP!=null && listPP.size()>0){
+						for (ProtocolProperty protocolProperty : listPP) {
+							azionePT.addProtocolProperty(protocolProperty);
+						}
 					}
-				}
+				}catch(DriverRegistroServiziNotFound dNotFound){}
 				
 				pt.addAzione(azionePT);
 
@@ -4681,12 +4690,14 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 			
 			// Protocol Properties
-			List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(soggetto.getId(), ProprietariProtocolProperty.SOGGETTO, con, this.tipoDB);
-			if(listPP!=null && listPP.size()>0){
-				for (ProtocolProperty protocolProperty : listPP) {
-					soggetto.addProtocolProperty(protocolProperty);
+			try{
+				List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(soggetto.getId(), ProprietariProtocolProperty.SOGGETTO, con, this.tipoDB);
+				if(listPP!=null && listPP.size()>0){
+					for (ProtocolProperty protocolProperty : listPP) {
+						soggetto.addProtocolProperty(protocolProperty);
+					}
 				}
-			}
+			}catch(DriverRegistroServiziNotFound dNotFound){}
 			
 			
 			return soggetto;
@@ -7855,13 +7866,14 @@ IDriverWS ,IMonitoraggioRisorsa{
 				
 				
 				// Protocol Properties
-				List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(fruitore.getId(), ProprietariProtocolProperty.FRUITORE, con, this.tipoDB);
-				if(listPP!=null && listPP.size()>0){
-					for (ProtocolProperty protocolProperty : listPP) {
-						fruitore.addProtocolProperty(protocolProperty);
+				try{
+					List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(fruitore.getId(), ProprietariProtocolProperty.FRUITORE, con, this.tipoDB);
+					if(listPP!=null && listPP.size()>0){
+						for (ProtocolProperty protocolProperty : listPP) {
+							fruitore.addProtocolProperty(protocolProperty);
+						}
 					}
-				}
-				
+				}catch(DriverRegistroServiziNotFound dNotFound){}
 				
 				
 				accordoServizioParteSpecifica.addFruitore(fruitore);
@@ -7992,13 +8004,14 @@ IDriverWS ,IMonitoraggioRisorsa{
 			
 			
 			// Protocol Properties
-			List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(longIdAccordoServizioParteSpecifica, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA, con, this.tipoDB);
-			if(listPP!=null && listPP.size()>0){
-				for (ProtocolProperty protocolProperty : listPP) {
-					accordoServizioParteSpecifica.addProtocolProperty(protocolProperty);
+			try{
+				List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(longIdAccordoServizioParteSpecifica, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA, con, this.tipoDB);
+				if(listPP!=null && listPP.size()>0){
+					for (ProtocolProperty protocolProperty : listPP) {
+						accordoServizioParteSpecifica.addProtocolProperty(protocolProperty);
+					}
 				}
-			}
-			
+			}catch(DriverRegistroServiziNotFound dNotFound){}	
 			
 			
 			return accordoServizioParteSpecifica;
