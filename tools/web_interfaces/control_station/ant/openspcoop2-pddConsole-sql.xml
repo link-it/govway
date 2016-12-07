@@ -126,6 +126,7 @@
 		<var name="sqlSourceFiles" value="pddConsole_PorteDominio.sql"/>
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} configurazionePdD/configurazionePdD_Connettori.sql"/>
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} configurazionePdD/configurazionePdD_ConnettoriGestioneErrore.sql"/>
+		<var name="sqlSourceFiles" value="${sqlSourceFiles} registroServizi/registroServizi_ProtocolProperties.sql"/>
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} pddConsole_Soggetti.sql"/>
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} registroServizi/registroServizi_Accordi.sql"/>
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} configurazionePdD/configurazionePdD_ServiziApplicativi.sql"/>
@@ -193,6 +194,7 @@
 		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} configurazionePdD/configurazionePdD_ServiziApplicativi_delete.sql"/>
 		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} registroServizi/registroServizi_Accordi_delete.sql"/>
 		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} pddConsole_Soggetti_delete.sql"/>
+		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} registroServizi/registroServizi_ProtocolProperties_delete.sql"/>
 		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} configurazionePdD/configurazionePdD_Connettori_delete.sql"/>
  		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} configurazionePdD/configurazionePdD_ConnettoriGestioneErrore_delete.sql"/>
 		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} pddConsole_PorteDominio_delete.sql"/>
@@ -228,6 +230,7 @@
 		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} configurazionePdD/configurazionePdD_ServiziApplicativi_drop.sql"/>
 		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} registroServizi/registroServizi_Accordi_drop.sql"/>
 		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} pddConsole_Soggetti_drop.sql"/>
+		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} registroServizi/registroServizi_ProtocolProperties_drop.sql"/>
 		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} configurazionePdD/configurazionePdD_Connettori_drop.sql"/>
  		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} configurazionePdD/configurazionePdD_ConnettoriGestioneErrore_drop.sql"/>
 		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} pddConsole_PorteDominio_drop.sql"/>

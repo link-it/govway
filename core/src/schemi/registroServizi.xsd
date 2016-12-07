@@ -40,13 +40,7 @@
 		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
-		<xsd:attribute name="versione"> <!-- default="1"> -->
-			<xsd:simpleType>
-				<xsd:restriction base="xsd:string">
-					<xsd:pattern value="[1-9]+[0-9]*"/>
-				</xsd:restriction>
-			</xsd:simpleType>
-		</xsd:attribute>
+		<xsd:attribute name="versione" use="optional" type="xsd:unsignedInt" default="1"/>
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime"/>
 	</xsd:complexType>
 	<xsd:complexType name="accordo-cooperazione-partecipanti">
@@ -97,13 +91,7 @@
 		<xsd:attribute name="consegna-in-ordine" type="StatoFunzionalita" default="disabilitato"/>
 		<xsd:attribute name="scadenza" type="xsd:string"/>
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime"/>
-		<xsd:attribute name="versione"> <!-- default="1"> -->
-			<xsd:simpleType>
-				<xsd:restriction base="xsd:string">
-					<xsd:pattern value="[1-9]+[0-9]*"/>
-				</xsd:restriction>
-			</xsd:simpleType>
-		</xsd:attribute>
+		<xsd:attribute name="versione" use="optional" type="xsd:unsignedInt" default="1"/>
 	</xsd:complexType>
 	<xsd:complexType name="accordo-servizio-parte-comune-servizio-composto">
 		<xsd:sequence>

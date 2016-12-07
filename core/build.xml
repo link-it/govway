@@ -456,18 +456,18 @@
 		<antcall target="build_sql">
 			<param name="SQLDirectory" value="${sql}"/>
 			<param name="SQLDestFile" value="${dist}/RegistroServizi.sql"/>
-			<param name="SQLSourceFiles" value="registroServizi/registroServizi_Connettori.sql registroServizi/registroServizi_PorteDominio.sql registroServizi/registroServizi_Soggetti.sql registroServizi/registroServizi_Accordi.sql DBInfo.sql"/>
+			<param name="SQLSourceFiles" value="registroServizi/registroServizi_Connettori.sql registroServizi/registroServizi_PorteDominio.sql registroServizi/registroServizi_ProtocolProperties.sql registroServizi/registroServizi_Soggetti.sql registroServizi/registroServizi_Accordi.sql DBInfo.sql"/>
 			<param name="SQLInsertDBInfo" value="INSERT INTO db_info (major_version,minor_version,notes) VALUES (@MAJOR_VERSION@,@MINOR_VERSION@,'[v@FULL_VERSION@] Registro dei Servizi di OpenSPCoop2');" />
 		</antcall>
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql}"/>
 			<param name="SQLDestFile" value="${dist}/RegistroServizi_delete.sql"/>
-			<param name="SQLSourceFiles" value="registroServizi/registroServizi_Accordi_delete.sql registroServizi/registroServizi_Soggetti_delete.sql registroServizi/registroServizi_Connettori_delete.sql registroServizi/registroServizi_PorteDominio_delete.sql"/> <!-- Non devo svuotare: DBInfo_delete.sql -->
+			<param name="SQLSourceFiles" value="registroServizi/registroServizi_Accordi_delete.sql registroServizi/registroServizi_Soggetti_delete.sql registroServizi/registroServizi_ProtocolProperties_delete.sql registroServizi/registroServizi_Connettori_delete.sql registroServizi/registroServizi_PorteDominio_delete.sql"/> <!-- Non devo svuotare: DBInfo_delete.sql -->
 		</antcall>
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql}"/>
 			<param name="SQLDestFile" value="${dist}/RegistroServizi_drop.sql"/>
-			<param name="SQLSourceFiles" value="registroServizi/registroServizi_Accordi_drop.sql registroServizi/registroServizi_Soggetti_drop.sql registroServizi/registroServizi_Connettori_drop.sql registroServizi/registroServizi_PorteDominio_drop.sql DBInfo_drop.sql"/>
+			<param name="SQLSourceFiles" value="registroServizi/registroServizi_Accordi_drop.sql registroServizi/registroServizi_Soggetti_drop.sql registroServizi/registroServizi_ProtocolProperties_drop.sql registroServizi/registroServizi_Connettori_drop.sql registroServizi/registroServizi_PorteDominio_drop.sql DBInfo_drop.sql"/>
 		</antcall>
 			
 	</target>
