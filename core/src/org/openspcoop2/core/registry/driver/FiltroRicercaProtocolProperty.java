@@ -44,31 +44,40 @@ public class FiltroRicercaProtocolProperty implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	/** Nome */
-	private String nome;
+	private String name;
 	
-	/** Nome */
-	private String valore;
+	/** Valore */
+	private String valueAsString;
 	
-	/** Nome */
-	private Long valoreNumerico;
+	/** ValoreNumerico */
+	private Long valueAsLong;
 	
-	public String getNome() {
-		return this.nome;
+	/** ValoreBoolean */
+	private Boolean valueAsBoolean;
+	
+	public String getName() {
+		return this.name;
 	}
-	public void setNome(String nome) {
-		this.nome = nome;
+	public void setName(String name) {
+		this.name = name;
 	}
-	public String getValore() {
-		return this.valore;
+	public String getValueAsString() {
+		return this.valueAsString;
 	}
-	public void setValore(String valore) {
-		this.valore = valore;
+	public void setValueAsString(String valore) {
+		this.valueAsString = valore;
 	}
-	public Long getValoreNumerico() {
-		return this.valoreNumerico;
+	public Long getValueAsLong() {
+		return this.valueAsLong;
 	}
-	public void setValoreNumerico(Long valoreNumerico) {
-		this.valoreNumerico = valoreNumerico;
+	public void setValueAsLong(Long valoreNumerico) {
+		this.valueAsLong = valoreNumerico;
+	}
+	public Boolean getValueAsBoolean() {
+		return this.valueAsBoolean;
+	}
+	public void setValueAsBoolean(Boolean valueAsBoolean) {
+		this.valueAsBoolean = valueAsBoolean;
 	}
 	
 	@Override
@@ -87,11 +96,13 @@ public class FiltroRicercaProtocolProperty implements Serializable{
 		return bf.toString();
 	}
 	public void addDetails(StringBuffer bf){
-		if(this.nome!=null)
-			bf.append(" [nome:"+this.nome+"]");
-		if(this.valore!=null)
-			bf.append(" [valore:"+this.valore+"]");
-		if(this.valoreNumerico!=null)
-			bf.append(" [valore-numerico:"+this.valoreNumerico+"]");
+		if(this.name!=null)
+			bf.append(" [name:"+this.name+"]");
+		if(this.valueAsString!=null)
+			bf.append(" [value-string:"+this.valueAsString+"]");
+		if(this.valueAsLong!=null)
+			bf.append(" [value-long:"+this.valueAsLong+"]");
+		if(this.valueAsBoolean!=null)
+			bf.append(" [value-boolean:"+this.valueAsBoolean+"]");
 	}
 }

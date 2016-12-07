@@ -14,6 +14,8 @@ CREATE TABLE protocol_properties
 	value_string VARCHAR2(4000),
 	-- valore come numero
 	value_number NUMBER,
+	-- valore true o false
+	value_boolean NUMBER,
 	-- valore binario
 	value_binary BLOB,
 	-- fk/pk columns

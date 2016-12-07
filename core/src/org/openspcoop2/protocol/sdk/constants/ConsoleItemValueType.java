@@ -31,6 +31,6 @@ package org.openspcoop2.protocol.sdk.constants;
  */
 public enum ConsoleItemValueType {
 
-	BINARY, STRING, NUMBER;
+	BINARY, STRING, NUMBER, BOOLEAN;
 	
 }

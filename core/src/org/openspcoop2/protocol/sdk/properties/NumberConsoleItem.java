@@ -3,7 +3,7 @@ package org.openspcoop2.protocol.sdk.properties;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemType;
 
-public class NumberConsoleItem extends AbstractConsoleItem<String> {
+public class NumberConsoleItem extends AbstractConsoleItem<Long> {
 
 	protected NumberConsoleItem(String id, String label, ConsoleItemType type) throws ProtocolException {
 		super(id, label, type);

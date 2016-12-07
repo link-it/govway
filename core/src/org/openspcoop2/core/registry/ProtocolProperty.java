@@ -38,6 +38,7 @@ import java.io.Serializable;
  * 		&lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="value" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="number-value" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
+ * 		&lt;attribute name="boolean-value" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="file" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="byte-file" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/>
  * 		&lt;attribute name="tipo-proprietario-documento" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
@@ -98,6 +99,14 @@ public class ProtocolProperty extends org.openspcoop2.utils.beans.BaseBean imple
     this.numberValue = numberValue;
   }
 
+  public Boolean getBooleanValue() {
+    return this.booleanValue;
+  }
+
+  public void setBooleanValue(Boolean booleanValue) {
+    this.booleanValue = booleanValue;
+  }
+
   public java.lang.String getFile() {
     return this.file;
   }
@@ -148,6 +157,10 @@ public class ProtocolProperty extends org.openspcoop2.utils.beans.BaseBean imple
   @javax.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
   @XmlAttribute(name="number-value",required=false)
   protected java.lang.Long numberValue;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="boolean-value",required=false)
+  protected Boolean booleanValue;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="file",required=false)

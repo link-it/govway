@@ -22,6 +22,8 @@ public class ProtocolPropertiesFactory {
 				return new StringConsoleItem(id, label, itemType);
 			case NUMBER:
 				return new NumberConsoleItem(id, label, itemType);
+			case BOOLEAN:
+				return new BooleanConsoleItem(id, label, itemType);
 			case BINARY:
 				return new BinaryConsoleItem(id, label, itemType);
 		}
@@ -35,6 +37,9 @@ public class ProtocolPropertiesFactory {
 			}
 			else if(item instanceof NumberConsoleItem){
 				return ConsoleItemValueType.NUMBER;
+			}
+			else if(item instanceof BooleanConsoleItem){
+				return ConsoleItemValueType.BOOLEAN;
 			}
 			else if(item instanceof BinaryConsoleItem){
 				return ConsoleItemValueType.BINARY;
@@ -51,6 +56,9 @@ public class ProtocolPropertiesFactory {
 	}
 	public static NumberProperty newProperty(String id, int value){
 		return new NumberProperty(id, (long) value);
+	}
+	public static BooleanProperty newProperty(String id, boolean value){
+		return new BooleanProperty(id, value);
 	}
 	public static StringProperty newProperty(String id, String value){
 		return new StringProperty(id, value);

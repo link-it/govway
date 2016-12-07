@@ -45,22 +45,30 @@ public class ProtocolPropertiesUtilities {
 		for (int i = 0; i < list.size(); i++) {
 			FiltroRicercaProtocolProperty filtro = list.get(i);
 			
-			if(filtro.getNome()!=null){
+			if(filtro.getName()!=null){
 				boolean found = false;
 				for (ProtocolProperty pp : protocolProperties) {
-					if(filtro.getNome().equals(pp.getName())){
+					if(filtro.getName().equals(pp.getName())){
 						
 						// check altri valori
-						if(filtro.getValore()!=null){
-							if(!filtro.getValore().equals(pp.getValue())){
+						if(filtro.getValueAsString()!=null){
+							if(!filtro.getValueAsString().equals(pp.getValue())){
 								continue;
 							}
 						}
-						if(filtro.getValoreNumerico()!=null){
+						else if(filtro.getValueAsLong()!=null){
 							if(pp.getNumberValue()==null){
 								continue;
 							}
-							if(filtro.getValoreNumerico().longValue() != pp.getNumberValue().longValue()){
+							if(filtro.getValueAsLong().longValue() != pp.getNumberValue().longValue()){
+								continue;
+							}
+						}
+						else if(filtro.getValueAsBoolean()!=null){
+							if(pp.getBooleanValue()==null){
+								continue;
+							}
+							if(filtro.getValueAsBoolean().booleanValue() != pp.getBooleanValue().booleanValue()){
 								continue;
 							}
 						}
@@ -75,10 +83,10 @@ public class ProtocolPropertiesUtilities {
 			}
 			else{
 				
-				if(filtro.getValore()!=null){
+				if(filtro.getValueAsString()!=null){
 					boolean found = false;
 					for (ProtocolProperty pp : protocolProperties) {
-						if(filtro.getValore().equals(pp.getValue())){
+						if(filtro.getValueAsString().equals(pp.getValue())){
 							found = true;
 							break;
 						}
@@ -87,13 +95,28 @@ public class ProtocolPropertiesUtilities {
 						return false;
 					}
 				}
-				else if(filtro.getValoreNumerico()!=null){
+				else if(filtro.getValueAsLong()!=null){
 					boolean found = false;
 					for (ProtocolProperty pp : protocolProperties) {
 						if(pp.getNumberValue()==null){
 							continue;
 						}
-						if(filtro.getValoreNumerico().longValue() == pp.getNumberValue().longValue()){
+						if(filtro.getValueAsLong().longValue() == pp.getNumberValue().longValue()){
+							found = true;
+							break;
+						}
+					}
+					if(!found){
+						return false;
+					}
+				}
+				else if(filtro.getValueAsBoolean()!=null){
+					boolean found = false;
+					for (ProtocolProperty pp : protocolProperties) {
+						if(pp.getBooleanValue()==null){
+							continue;
+						}
+						if(filtro.getValueAsBoolean().booleanValue() == pp.getBooleanValue().booleanValue()){
 							found = true;
 							break;
 						}
@@ -109,5 +132,6 @@ public class ProtocolPropertiesUtilities {
 		
 		return true;
 	}
+
 	
 }

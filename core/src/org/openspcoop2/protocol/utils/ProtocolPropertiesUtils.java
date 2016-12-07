@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.openspcoop2.core.registry.driver.FiltroRicercaProtocolProperty;
 import org.openspcoop2.protocol.sdk.properties.AbstractProperty;
+import org.openspcoop2.protocol.sdk.properties.BooleanProperty;
 import org.openspcoop2.protocol.sdk.properties.NumberProperty;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.StringProperty;
@@ -20,14 +21,18 @@ public class ProtocolPropertiesUtils {
 			for (int i = 0; i < protocolProperties.sizeProperties(); i++) {
 				FiltroRicercaProtocolProperty fpp = new FiltroRicercaProtocolProperty();
 				AbstractProperty<?> p = protocolProperties.getProperty(i);
-				fpp.setNome(p.getId());
+				fpp.setName(p.getId());
 				if(p instanceof StringProperty){
 					StringProperty sp = (StringProperty) p;
-					fpp.setValore(sp.getValue());
+					fpp.setValueAsString(sp.getValue());
 				}
 				else if(p instanceof NumberProperty){
 					NumberProperty np = (NumberProperty) p;
-					fpp.setValoreNumerico(np.getValue());
+					fpp.setValueAsLong(np.getValue());
+				}
+				else if(p instanceof BooleanProperty){
+					BooleanProperty bp = (BooleanProperty) p;
+					fpp.setValueAsBoolean(bp.getValue());
 				}
 				else{
 					throw new RuntimeException("Tipo di Filtro ["+p.getClass().getName()+"] non supportato");

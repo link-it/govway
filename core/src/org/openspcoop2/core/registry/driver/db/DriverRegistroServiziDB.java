@@ -18163,7 +18163,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				sqlQueryObject.addWhereCondition(aliasTabella+".tipo_proprietario=?");
 				sqlQueryObject.addWhereCondition(aliasTabella+"id_proprietario="+tabella+".id");
 				FiltroRicercaProtocolProperty f = list.get(i);
-				if(f.getNome()!=null){
+				if(f.getName()!=null){
 					if(conditions[i]!=null){
 						conditions[i] = conditions[i] + " AND ";
 					}
@@ -18172,7 +18172,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 					}
 					conditions[i] = conditions[i] + " " + aliasTabella+".name=?";
 				}
-				if(f.getValore()!=null){
+				if(f.getValueAsString()!=null){
 					if(conditions[i]!=null){
 						conditions[i] = conditions[i] + " AND ";
 					}
@@ -18181,7 +18181,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 					}
 					conditions[i] = conditions[i] + " " + aliasTabella+".value_string=?";
 				}
-				if(f.getValoreNumerico()!=null){
+				if(f.getValueAsLong()!=null){
 					if(conditions[i]!=null){
 						conditions[i] = conditions[i] + " AND ";
 					}
@@ -18237,14 +18237,14 @@ IDriverWS ,IMonitoraggioRisorsa{
 			stmt.setString(index++, proprietario.name());
 			for (int i = 0; i < list.size(); i++) {
 				FiltroRicercaProtocolProperty f = list.get(i);
-				if(f.getNome()!=null){
-					stmt.setString(index++, f.getNome());
+				if(f.getName()!=null){
+					stmt.setString(index++, f.getName());
 				}
-				if(f.getValore()!=null){
-					stmt.setString(index++, f.getValore());
+				if(f.getValueAsString()!=null){
+					stmt.setString(index++, f.getValueAsString());
 				}
-				if(f.getValoreNumerico()!=null){
-					stmt.setLong(index++, f.getValoreNumerico());
+				if(f.getValueAsLong()!=null){
+					stmt.setLong(index++, f.getValueAsLong());
 				}
 			}
 		}

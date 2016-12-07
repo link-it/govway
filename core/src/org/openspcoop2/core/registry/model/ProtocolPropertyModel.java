@@ -44,6 +44,7 @@ public class ProtocolPropertyModel extends AbstractModel<ProtocolProperty> {
 		this.NAME = new Field("name",java.lang.String.class,"protocol-property",ProtocolProperty.class);
 		this.VALUE = new Field("value",java.lang.String.class,"protocol-property",ProtocolProperty.class);
 		this.NUMBER_VALUE = new Field("number-value",java.lang.Long.class,"protocol-property",ProtocolProperty.class);
+		this.BOOLEAN_VALUE = new Field("boolean-value",Boolean.class,"protocol-property",ProtocolProperty.class);
 		this.FILE = new Field("file",java.lang.String.class,"protocol-property",ProtocolProperty.class);
 		this.BYTE_FILE = new Field("byte-file",byte[].class,"protocol-property",ProtocolProperty.class);
 		this.TIPO_PROPRIETARIO_DOCUMENTO = new Field("tipo-proprietario-documento",java.lang.String.class,"protocol-property",ProtocolProperty.class);
@@ -58,6 +59,7 @@ public class ProtocolPropertyModel extends AbstractModel<ProtocolProperty> {
 		this.NAME = new ComplexField(father,"name",java.lang.String.class,"protocol-property",ProtocolProperty.class);
 		this.VALUE = new ComplexField(father,"value",java.lang.String.class,"protocol-property",ProtocolProperty.class);
 		this.NUMBER_VALUE = new ComplexField(father,"number-value",java.lang.Long.class,"protocol-property",ProtocolProperty.class);
+		this.BOOLEAN_VALUE = new ComplexField(father,"boolean-value",Boolean.class,"protocol-property",ProtocolProperty.class);
 		this.FILE = new ComplexField(father,"file",java.lang.String.class,"protocol-property",ProtocolProperty.class);
 		this.BYTE_FILE = new ComplexField(father,"byte-file",byte[].class,"protocol-property",ProtocolProperty.class);
 		this.TIPO_PROPRIETARIO_DOCUMENTO = new ComplexField(father,"tipo-proprietario-documento",java.lang.String.class,"protocol-property",ProtocolProperty.class);
@@ -72,6 +74,8 @@ public class ProtocolPropertyModel extends AbstractModel<ProtocolProperty> {
 	public IField VALUE = null;
 	 
 	public IField NUMBER_VALUE = null;
+	 
+	public IField BOOLEAN_VALUE = null;
 	 
 	public IField FILE = null;
 	 

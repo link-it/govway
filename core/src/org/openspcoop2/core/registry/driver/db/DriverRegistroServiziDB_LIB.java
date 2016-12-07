@@ -4795,6 +4795,13 @@ public class DriverRegistroServiziDB_LIB {
 						contenutoNumber = protocolProperty.getNumberValue();
 					}
 					
+					boolean booleanValue = protocolProperty.getBooleanValue()!=null;
+					Boolean contenutoBoolean = null;
+					if(booleanValue){
+						contenutiDefiniti++;
+						contenutoBoolean = protocolProperty.getBooleanValue();
+					}
+					
 					boolean binaryValue = protocolProperty.getByteFile()!=null && protocolProperty.getByteFile().length>0;
 					byte[] contenutoBinario = null; 
 					if(binaryValue){
@@ -4832,6 +4839,9 @@ public class DriverRegistroServiziDB_LIB {
 					if(numberValue){
 						sqlQueryObject.addInsertField("value_number", "?");
 					}
+					if(booleanValue){
+						sqlQueryObject.addInsertField("value_boolean", "?");
+					}
 					if(binaryValue){
 						sqlQueryObject.addInsertField("value_binary", "?");
 					}
@@ -4849,6 +4859,16 @@ public class DriverRegistroServiziDB_LIB {
 					if(numberValue){
 						stm.setLong(index++, contenutoNumber);
 						debug = contenutoNumber+"";
+					}
+					if(booleanValue){
+						if(contenutoBoolean){
+							stm.setInt(index++,CostantiDB.TRUE);
+							debug = CostantiDB.TRUE+"";
+						}
+						else{
+							stm.setInt(index++,CostantiDB.FALSE);
+							debug = CostantiDB.FALSE+"";
+						}
 					}
 					if(binaryValue){
 						jdbcAdapter.setBinaryData(stm,index++,contenutoBinario);
@@ -4926,6 +4946,13 @@ public class DriverRegistroServiziDB_LIB {
 						contenutoNumber = protocolProperty.getNumberValue();
 					}
 					
+					boolean booleanValue = protocolProperty.getBooleanValue()!=null;
+					Boolean contenutoBoolean = null;
+					if(booleanValue){
+						contenutiDefiniti++;
+						contenutoBoolean = protocolProperty.getBooleanValue();
+					}
+					
 					boolean binaryValue = protocolProperty.getByteFile()!=null && protocolProperty.getByteFile().length>0;
 					byte[] contenutoBinario = null; 
 					if(binaryValue){
@@ -4989,6 +5016,7 @@ public class DriverRegistroServiziDB_LIB {
 							sqlQueryObject.addUpdateTable(CostantiDB.PROTOCOL_PROPERTIES);
 							sqlQueryObject.addUpdateField("value_string", "?");
 							sqlQueryObject.addUpdateField("value_number", "?");
+							sqlQueryObject.addUpdateField("value_boolean", "?");
 							sqlQueryObject.addUpdateField("value_binary", "?");
 							sqlQueryObject.addWhereCondition("id=?");
 							sqlQuery = sqlQueryObject.createSQLUpdate();
@@ -4996,6 +5024,17 @@ public class DriverRegistroServiziDB_LIB {
 							int index = 1;
 							stm.setString(index++, contenutoString);
 							stm.setLong(index++, contenutoNumber);
+							if(booleanValue){
+								if(contenutoBoolean){
+									stm.setInt(index++,CostantiDB.TRUE);
+								}
+								else{
+									stm.setInt(index++,CostantiDB.FALSE);
+								}
+							}
+							else{
+								stm.setNull(index++, java.sql.Types.INTEGER);
+							}
 							jdbcAdapter.setBinaryData(stm,index++,contenutoBinario);
 							stm.setLong(index++, idPP);
 							stm.executeUpdate();
@@ -5014,6 +5053,9 @@ public class DriverRegistroServiziDB_LIB {
 						if(numberValue){
 							sqlQueryObject.addInsertField("value_number", "?");
 						}
+						if(booleanValue){
+							sqlQueryObject.addInsertField("value_boolean", "?");
+						}
 						if(binaryValue){
 							sqlQueryObject.addInsertField("value_binary", "?");
 						}
@@ -5031,6 +5073,16 @@ public class DriverRegistroServiziDB_LIB {
 						if(numberValue){
 							stm.setLong(index++, contenutoNumber);
 							debug = contenutoNumber+"";
+						}
+						if(booleanValue){
+							if(contenutoBoolean){
+								stm.setInt(index++,CostantiDB.TRUE);
+								debug = CostantiDB.TRUE+"";
+							}
+							else{
+								stm.setInt(index++,CostantiDB.FALSE);
+								debug = CostantiDB.FALSE+"";
+							}
 						}
 						if(binaryValue){
 							jdbcAdapter.setBinaryData(stm,index++,contenutoBinario);
@@ -5203,6 +5255,7 @@ public class DriverRegistroServiziDB_LIB {
 			sqlQueryObject.addSelectField("name");
 			sqlQueryObject.addSelectField("value_string");
 			sqlQueryObject.addSelectField("value_number");
+			sqlQueryObject.addSelectField("value_boolean");
 			sqlQueryObject.addSelectField("value_binary");
 			sqlQueryObject.addSelectField("id");
 			sqlQueryObject.addWhereCondition("id = ?");
@@ -5220,6 +5273,8 @@ public class DriverRegistroServiziDB_LIB {
 				pp.setName(rs.getString("name"));
 				pp.setValue(rs.getString("value_string"));
 				pp.setNumberValue(rs.getLong("value_number"));
+				int value = rs.getInt("value_boolean");
+				pp.setBooleanValue(value == CostantiDB.TRUE);
 				pp.setByteFile(jdbcAdapter.getBinaryData(rs,"value_binary"));
 				pp.setId(rs.getLong("id"));
 			}

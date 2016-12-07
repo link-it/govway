@@ -108,6 +108,17 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="value_boolean" type="xsd:int" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="value_boolean"/>
+                                <linkit:sql-column-comment><![CDATA[valore true o false]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="value_binary" type="xsd:hexBinary" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>

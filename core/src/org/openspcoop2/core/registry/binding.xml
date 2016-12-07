@@ -370,6 +370,7 @@
     <value name="name" field="name" usage="required" style="attribute"/>
     <value name="value" field="value" usage="optional" style="attribute"/>
     <value name="number-value" field="numberValue" usage="optional" style="attribute"/>
+    <value name="boolean-value" field="booleanValue" usage="optional" style="attribute"/>
     <value name="file" field="file" usage="optional" style="attribute"/>
     <value name="byte-file" field="byteFile" usage="optional" style="attribute"/>
     <value name="tipo-proprietario-documento" field="tipoProprietarioDocumento" usage="optional" style="attribute"/>
@@ -381,6 +382,7 @@
     <value name="name" field="name" usage="required" style="attribute"/>
     <value name="value" field="value" usage="optional" style="attribute"/>
     <value name="number-value" field="numberValue" usage="optional" style="attribute"/>
+    <value name="boolean-value" field="booleanValue" usage="optional" style="attribute"/>
     <value name="file" field="file" usage="optional" style="attribute"/>
     <value name="byte-file" field="byteFile" usage="optional" style="attribute"/>
     <value name="tipo-proprietario-documento" field="tipoProprietarioDocumento" usage="optional" style="attribute"/>
