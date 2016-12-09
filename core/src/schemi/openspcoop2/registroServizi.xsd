@@ -1146,8 +1146,8 @@
 				</xsd:appinfo>
 			</xsd:annotation>
 		</xsd:attribute>
-		<xsd:attribute name="tipo-proprietario-documento" type="xsd:string" use="optional"/>
-		<xsd:attribute name="id-proprietario-documento" type="xsd:unsignedLong" use="optional">
+		<xsd:attribute name="tipo-proprietario" type="xsd:string" use="optional"/>
+		<xsd:attribute name="id-proprietario" type="xsd:unsignedLong" use="optional">
 			<xsd:annotation>
 				<xsd:appinfo>
 					<linkit:generator

@@ -41,8 +41,8 @@ import java.io.Serializable;
  * 		&lt;attribute name="boolean-value" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="file" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="byte-file" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/>
- * 		&lt;attribute name="tipo-proprietario-documento" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="id-proprietario-documento" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
+ * 		&lt;attribute name="tipo-proprietario" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="id-proprietario" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -123,20 +123,20 @@ public class ProtocolProperty extends org.openspcoop2.utils.beans.BaseBean imple
     this.byteFile = byteFile;
   }
 
-  public java.lang.String getTipoProprietarioDocumento() {
-    return this.tipoProprietarioDocumento;
+  public java.lang.String getTipoProprietario() {
+    return this.tipoProprietario;
   }
 
-  public void setTipoProprietarioDocumento(java.lang.String tipoProprietarioDocumento) {
-    this.tipoProprietarioDocumento = tipoProprietarioDocumento;
+  public void setTipoProprietario(java.lang.String tipoProprietario) {
+    this.tipoProprietario = tipoProprietario;
   }
 
-  public java.lang.Long getIdProprietarioDocumento() {
-    return this.idProprietarioDocumento;
+  public java.lang.Long getIdProprietario() {
+    return this.idProprietario;
   }
 
-  public void setIdProprietarioDocumento(java.lang.Long idProprietarioDocumento) {
-    this.idProprietarioDocumento = idProprietarioDocumento;
+  public void setIdProprietario(java.lang.Long idProprietario) {
+    this.idProprietario = idProprietario;
   }
 
   private static final long serialVersionUID = 1L;
@@ -171,10 +171,10 @@ public class ProtocolProperty extends org.openspcoop2.utils.beans.BaseBean imple
   protected byte[] byteFile;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlAttribute(name="tipo-proprietario-documento",required=false)
-  protected java.lang.String tipoProprietarioDocumento;
+  @XmlAttribute(name="tipo-proprietario",required=false)
+  protected java.lang.String tipoProprietario;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Long idProprietarioDocumento;
+  protected java.lang.Long idProprietario;
 
 }

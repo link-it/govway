@@ -4779,6 +4779,10 @@ public class DriverRegistroServiziDB_LIB {
 					if(protocolProperty.getName()==null || "".equals(protocolProperty.getName()))
 						throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDProtocolProperty] Nome non definito per protocolProperty ["+i+"]");
 					
+					// Aggiorno proprietari
+					protocolProperty.setIdProprietario(idProprietario);
+					protocolProperty.setTipoProprietario(tipologiaProprietarioProtocolProperty.name());
+					
 					int contenutiDefiniti = 0;
 					
 					boolean stringValue = protocolProperty.getValue()!=null && !"".equals(protocolProperty.getValue());
@@ -4930,6 +4934,10 @@ public class DriverRegistroServiziDB_LIB {
 					if(protocolProperty.getName()==null || "".equals(protocolProperty.getName()))
 						throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDProtocolProperty] Nome non definito per protocolProperty ["+i+"]");
 					
+					// Aggiorno proprietari
+					protocolProperty.setIdProprietario(idProprietario);
+					protocolProperty.setTipoProprietario(tipologiaProprietarioProtocolProperty.name());
+					
 					int contenutiDefiniti = 0;
 					
 					boolean stringValue = protocolProperty.getValue()!=null && !"".equals(protocolProperty.getValue());
@@ -4980,13 +4988,10 @@ public class DriverRegistroServiziDB_LIB {
 									
 					//if(doc.getId()<=0){
 					// Rileggo sempre id, puo' essere diverso (es. importato tramite sincronizzazioni)
-					protocolProperty.setId(DBUtils.getIdProtocolProperty(protocolProperty.getTipoProprietarioDocumento(), idProprietario,protocolProperty.getName(), 
+					protocolProperty.setId(DBUtils.getIdProtocolProperty(protocolProperty.getTipoProprietario(), idProprietario,protocolProperty.getName(), 
 							connection, 
 							DriverRegistroServiziDB_LIB.tipoDB));
-					
-					// Assegno corretto idProprietario se id e' diverso (es. importato tramite sincronizzazioni)
-					protocolProperty.setIdProprietarioDocumento(idProprietario);
-					
+										
 					boolean ppGiaPresente = false;
 					boolean ppDaAggiornare = false;
 					if(protocolProperty.getId()>0){
@@ -5268,8 +5273,8 @@ public class DriverRegistroServiziDB_LIB {
 			ProtocolProperty pp = null;
 			if(rs.next()){
 				pp = new ProtocolProperty();
-				pp.setTipoProprietarioDocumento(rs.getString("tipo_proprietario"));
-				pp.setIdProprietarioDocumento(rs.getLong("id_proprietario"));
+				pp.setTipoProprietario(rs.getString("tipo_proprietario"));
+				pp.setIdProprietario(rs.getLong("id_proprietario"));
 				pp.setName(rs.getString("name"));
 				pp.setValue(rs.getString("value_string"));
 				pp.setNumberValue(rs.getLong("value_number"));

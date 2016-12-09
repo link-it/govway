@@ -47,8 +47,8 @@ public class ProtocolPropertyModel extends AbstractModel<ProtocolProperty> {
 		this.BOOLEAN_VALUE = new Field("boolean-value",Boolean.class,"protocol-property",ProtocolProperty.class);
 		this.FILE = new Field("file",java.lang.String.class,"protocol-property",ProtocolProperty.class);
 		this.BYTE_FILE = new Field("byte-file",byte[].class,"protocol-property",ProtocolProperty.class);
-		this.TIPO_PROPRIETARIO_DOCUMENTO = new Field("tipo-proprietario-documento",java.lang.String.class,"protocol-property",ProtocolProperty.class);
-		this.ID_PROPRIETARIO_DOCUMENTO = new Field("id-proprietario-documento",java.lang.Long.class,"protocol-property",ProtocolProperty.class);
+		this.TIPO_PROPRIETARIO = new Field("tipo-proprietario",java.lang.String.class,"protocol-property",ProtocolProperty.class);
+		this.ID_PROPRIETARIO = new Field("id-proprietario",java.lang.Long.class,"protocol-property",ProtocolProperty.class);
 	
 	}
 	
@@ -62,8 +62,8 @@ public class ProtocolPropertyModel extends AbstractModel<ProtocolProperty> {
 		this.BOOLEAN_VALUE = new ComplexField(father,"boolean-value",Boolean.class,"protocol-property",ProtocolProperty.class);
 		this.FILE = new ComplexField(father,"file",java.lang.String.class,"protocol-property",ProtocolProperty.class);
 		this.BYTE_FILE = new ComplexField(father,"byte-file",byte[].class,"protocol-property",ProtocolProperty.class);
-		this.TIPO_PROPRIETARIO_DOCUMENTO = new ComplexField(father,"tipo-proprietario-documento",java.lang.String.class,"protocol-property",ProtocolProperty.class);
-		this.ID_PROPRIETARIO_DOCUMENTO = new ComplexField(father,"id-proprietario-documento",java.lang.Long.class,"protocol-property",ProtocolProperty.class);
+		this.TIPO_PROPRIETARIO = new ComplexField(father,"tipo-proprietario",java.lang.String.class,"protocol-property",ProtocolProperty.class);
+		this.ID_PROPRIETARIO = new ComplexField(father,"id-proprietario",java.lang.Long.class,"protocol-property",ProtocolProperty.class);
 	
 	}
 	
@@ -81,9 +81,9 @@ public class ProtocolPropertyModel extends AbstractModel<ProtocolProperty> {
 	 
 	public IField BYTE_FILE = null;
 	 
-	public IField TIPO_PROPRIETARIO_DOCUMENTO = null;
+	public IField TIPO_PROPRIETARIO = null;
 	 
-	public IField ID_PROPRIETARIO_DOCUMENTO = null;
+	public IField ID_PROPRIETARIO = null;
 	 
 
 	@Override
