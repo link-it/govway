@@ -1174,8 +1174,12 @@ public class Utilities {
 			bout = null;
 			return tmp;
 			
-		}catch(Exception e){
-			throw new UtilsException("Visualizzazione non riuscita: Documento binario?");
+		}
+		catch(UtilsException e){
+			throw e;
+		}
+		catch(Exception e){
+			throw new UtilsException("Visualizzazione non riuscita: Documento binario?",e);
 		}finally{
 			try{
 				if(bout!=null){
