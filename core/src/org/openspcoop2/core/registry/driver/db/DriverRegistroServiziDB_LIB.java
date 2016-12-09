@@ -5027,8 +5027,16 @@ public class DriverRegistroServiziDB_LIB {
 							sqlQuery = sqlQueryObject.createSQLUpdate();
 							stm = connection.prepareStatement(sqlQuery);
 							int index = 1;
+							
 							stm.setString(index++, contenutoString);
-							stm.setLong(index++, contenutoNumber);
+							
+							if(numberValue){
+								stm.setLong(index++, contenutoNumber);
+							}
+							else{
+								stm.setNull(index++, java.sql.Types.BIGINT);
+							}
+							
 							if(booleanValue){
 								if(contenutoBoolean){
 									stm.setInt(index++,CostantiDB.TRUE);
@@ -5040,6 +5048,7 @@ public class DriverRegistroServiziDB_LIB {
 							else{
 								stm.setNull(index++, java.sql.Types.INTEGER);
 							}
+							
 							jdbcAdapter.setBinaryData(stm,index++,contenutoBinario);
 							stm.setLong(index++, idPP);
 							stm.executeUpdate();
