@@ -373,8 +373,8 @@
     <value name="boolean-value" field="booleanValue" usage="optional" style="attribute"/>
     <value name="file" field="file" usage="optional" style="attribute"/>
     <value name="byte-file" field="byteFile" usage="optional" style="attribute"/>
-    <value name="tipo-proprietario-documento" field="tipoProprietarioDocumento" usage="optional" style="attribute"/>
-    <value name="id-proprietario-documento" field="idProprietarioDocumento" usage="optional" style="attribute"/>
+    <value name="tipo-proprietario" field="tipoProprietario" usage="optional" style="attribute"/>
+    <value name="id-proprietario" field="idProprietario" usage="optional" style="attribute"/>
   </mapping>
 
   <mapping type-name="_ProtocolProperty_Type" class="org.openspcoop2.core.registry.ProtocolProperty" abstract="true">
@@ -385,8 +385,8 @@
     <value name="boolean-value" field="booleanValue" usage="optional" style="attribute"/>
     <value name="file" field="file" usage="optional" style="attribute"/>
     <value name="byte-file" field="byteFile" usage="optional" style="attribute"/>
-    <value name="tipo-proprietario-documento" field="tipoProprietarioDocumento" usage="optional" style="attribute"/>
-    <value name="id-proprietario-documento" field="idProprietarioDocumento" usage="optional" style="attribute"/>
+    <value name="tipo-proprietario" field="tipoProprietario" usage="optional" style="attribute"/>
+    <value name="id-proprietario" field="idProprietario" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="property" class="org.openspcoop2.core.registry.Property">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
