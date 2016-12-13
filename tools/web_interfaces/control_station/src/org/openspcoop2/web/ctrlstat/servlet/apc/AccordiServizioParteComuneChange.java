@@ -651,7 +651,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 
 
 		//imposto properties custom
-		as.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties));
+		as.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties, this.consoleOperationType));
 
 
 		// Modifico i dati dell'accordo nel db

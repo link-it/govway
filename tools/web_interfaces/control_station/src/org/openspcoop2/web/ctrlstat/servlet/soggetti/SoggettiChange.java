@@ -548,7 +548,7 @@ public final class SoggettiChange extends Action {
 			soggettoConfig.setPaUrlPrefixRewriter(this.pa_url_prefix_rewriter);
 
 			//imposto properties custom
-			soggettoRegistry.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties)); 
+			soggettoRegistry.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties, this.consoleOperationType)); 
 
 			SoggettoCtrlStat sog = new SoggettoCtrlStat(soggettoRegistry, soggettoConfig);
 			sog.setOldNomeForUpdate(oldnomeprov);

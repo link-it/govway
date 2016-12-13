@@ -603,7 +603,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			}
 			
 			//imposto properties custom
-			as.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties));
+			as.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties, this.consoleOperationType));
 
 			// effettuo le operazioni
 			apcCore.performCreateOperation(userLogin, apcHelper.smista(), as);
