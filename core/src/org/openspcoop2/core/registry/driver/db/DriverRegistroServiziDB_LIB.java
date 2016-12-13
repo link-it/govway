@@ -4822,7 +4822,7 @@ public class DriverRegistroServiziDB_LIB {
 						}
 					}
 					
-					if(!stringValue && !numberValue && !binaryValue){
+					if(!stringValue && !numberValue && !binaryValue && !booleanValue){
 						throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDProtocolProperty] Contenuto non definito per protocolProperty ["+protocolProperty.getName()+"]");
 					}
 					if(contenutiDefiniti>1){
@@ -4977,7 +4977,7 @@ public class DriverRegistroServiziDB_LIB {
 						}
 					}
 					
-					if(!stringValue && !numberValue && !binaryValue){
+					if(!stringValue && !numberValue && !binaryValue && !booleanValue){
 						throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDProtocolProperty] Contenuto non definito per protocolProperty ["+protocolProperty.getName()+"]");
 					}
 					if(contenutiDefiniti>1){

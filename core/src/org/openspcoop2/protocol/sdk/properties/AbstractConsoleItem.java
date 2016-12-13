@@ -2,7 +2,7 @@ package org.openspcoop2.protocol.sdk.properties;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.TreeMap;
 
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemType;
@@ -13,10 +13,11 @@ public abstract class AbstractConsoleItem<T> extends BaseConsoleItem {
 	private boolean reloadOnChange;
 	private boolean required;
 	private String regexpr;
-	private Map<String,T> mapLabelValues;
+	private TreeMap<String,T> mapLabelValues;
 
 	protected AbstractConsoleItem(String id, String label, ConsoleItemType type) throws ProtocolException{
 		super(id, label, type);
+		this.mapLabelValues = new TreeMap<String,T>();
 	}
 
 	public T getDefaultValue() {
@@ -47,7 +48,7 @@ public abstract class AbstractConsoleItem<T> extends BaseConsoleItem {
 		this.regexpr = regexpr;
 	}
 	
-	public Map<String, T> getMapLabelValues() {
+	public TreeMap<String, T> getMapLabelValues() {
 		return this.mapLabelValues;
 	}
 	public List<String> getLabels(){
