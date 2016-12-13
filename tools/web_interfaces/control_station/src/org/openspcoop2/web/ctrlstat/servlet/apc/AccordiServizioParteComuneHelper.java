@@ -4245,6 +4245,33 @@ public class AccordiServizioParteComuneHelper extends ConsoleHelper {
 			throw new Exception(e);
 		}
 	}
+	
+	public  IDAccordo getIDAccordoFromValues(String nome, String referente, String versione,boolean visibilitaAccordoServizio) throws Exception {
+		IDSoggetto soggettoReferente = null;
+		IDAccordo idAccordo = null;
+		Soggetto sRef = null;
+		
+		if(referente!=null && !referente.equals("") && !referente.equals("-")){
+			boolean trovatoProv = this.soggettiCore.existsSoggetto(Integer.parseInt(referente));
+			
+			if(trovatoProv){
+				sRef = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(referente));
+				// Visibilita rispetto all'accordo
+				boolean visibile = false;
+				if(visibilitaAccordoServizio==visibile){
+					if(sRef.getPrivato()!=null && sRef.getPrivato()==true){
+//						this.pd.setMessage("Non e' possibile utilizzare un soggetto referente con visibilita' privata, in un accordo di servizio con visibilita' pubblica.");
+						return null;
+					}
+				}
+				soggettoReferente = new IDSoggetto(sRef.getTipo(),sRef.getNome());
+			}
+		
+		idAccordo = this.idAccordoFactory.getIDAccordoFromValues(nome,soggettoReferente,versione);
+		}
+		
+		return idAccordo;
+	}
 
 	public void prepareAccordiList(List<AccordoServizioParteComune> lista, ISearch ricerca, String tipoAccordo) throws Exception {
 		try {

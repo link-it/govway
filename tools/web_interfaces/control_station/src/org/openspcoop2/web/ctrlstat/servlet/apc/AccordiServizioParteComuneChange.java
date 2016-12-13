@@ -57,6 +57,16 @@ import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
+import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
+import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.dao.Ruolo;
@@ -66,6 +76,7 @@ import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCor
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.lib.mvc.ConsoleConfigurationUtils;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -86,6 +97,21 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public final class AccordiServizioParteComuneChange extends Action {
 
+	private String editMode = null;
+	private String id, descr, profcoll, filtrodup, confric, idcoll, consord, scadenza, utilizzo, referente, versione,accordoCooperazioneId,statoPackage,
+	tipoAccordo, tipoProtocollo, actionConfirm, backToStato;
+	boolean utilizzoSenzaAzione, showUtilizzoSenzaAzione = false,privato ,isServizioComposto,  validazioneDocumenti = true;
+
+	// Protocol Properties
+	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
+	private ConsoleConfiguration consoleConfiguration =null;
+	private ProtocolProperties protocolProperties = null;
+	private IProtocolFactory<?> protocolFactory= null;
+	private IRegistryReader registryReader = null; 
+	private ConsoleOperationType consoleOperationType = null;
+	private ConsoleInterfaceType consoleInterfaceType = null;
+
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -104,73 +130,81 @@ public final class AccordiServizioParteComuneChange extends Action {
 		IDAccordoCooperazioneFactory idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
 		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 
+		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
+		this.consoleOperationType = ConsoleOperationType.CHANGE;
+		this.consoleInterfaceType = ConsoleConfigurationUtils.getTipoInterfaccia(session); 
+
+		// Parametri relativi al tipo operazione
+		TipoOperazione tipoOp = TipoOperazione.CHANGE;
+
 		AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
-		String id = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+		this.id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 		int idAcc = 0;
 		try {
-			idAcc = Integer.parseInt(id);
+			idAcc = Integer.parseInt(this.id);
 		} catch (Exception e) {
 		}
-		String descr = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_DESCRIZIONE);
-		String profcoll = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROFILO_COLLABORAZIONE);
-		String filtrodup = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_FILTRO_DUPLICATI);
-		String confric = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_CONFERMA_RICEZIONE);
-		String idcoll = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_COLLABORAZIONE);
-		String consord = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_CONSEGNA_ORDINE);
-		String scadenza = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SCADENZA);
-		String utilizzo = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_UTILIZZO_SENZA_AZIONE);
-		boolean utilizzoSenzaAzione = ServletUtils.isCheckBoxEnabled(utilizzo);
-		boolean showUtilizzoSenzaAzione = false;
+		this.editMode = apcHelper.getProtocolloFromParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+		this.descr = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_DESCRIZIONE);
+		this.profcoll = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROFILO_COLLABORAZIONE);
+		this.filtrodup = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_FILTRO_DUPLICATI);
+		this.confric = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_CONFERMA_RICEZIONE);
+		this.idcoll = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_COLLABORAZIONE);
+		this.consord = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_CONSEGNA_ORDINE);
+		this.scadenza = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SCADENZA);
+		this.utilizzo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_UTILIZZO_SENZA_AZIONE);
+		this.utilizzoSenzaAzione = ServletUtils.isCheckBoxEnabled(this.utilizzo);
+		this.showUtilizzoSenzaAzione = false;
 		String oldProfiloCollaborazione = "";
-		String referente = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_REFERENTE);
-		String versione = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VERSIONE);
+		this.referente = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_REFERENTE);
+		this.versione = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VERSIONE);
 		// patch per version spinner fino a che non si trova un modo piu' elegante
 		/*if(ch.core.isBackwardCompatibilityAccordo11()){
 			if("0".equals(versione))
 				versione = "";
 		}*/
-		String privatoS = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PRIVATO);
-		boolean privato = ServletUtils.isCheckBoxEnabled(privatoS);
-		String isServizioCompostoS = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_IS_SERVIZIO_COMPOSTO);
-		boolean isServizioComposto = ServletUtils.isCheckBoxEnabled(isServizioCompostoS);
-		String accordoCooperazioneId = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ACCORDO_COOPERAZIONE);
-		String statoPackage = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_STATO_PACKAGE);
-		String tipoAccordo = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
-		String tipoProtocollo = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
-		String actionConfirm = request.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
-		String backToStato = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RIPRISTINA_STATO);
+		String privatoS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PRIVATO);
+		this.privato = ServletUtils.isCheckBoxEnabled(privatoS);
+		String isServizioCompostoS = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_IS_SERVIZIO_COMPOSTO);
+		this.isServizioComposto = ServletUtils.isCheckBoxEnabled(isServizioCompostoS);
+		this.accordoCooperazioneId = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ACCORDO_COOPERAZIONE);
+		this.statoPackage = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_STATO_PACKAGE);
+		this.tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
+		this.tipoProtocollo = apcHelper.getProtocolloFromParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
+		this.actionConfirm = apcHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
+		this.backToStato = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RIPRISTINA_STATO);
 
-		if("".equals(tipoAccordo))
-			tipoAccordo = null;
-		if(tipoAccordo!=null){
-			if(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE.equals(tipoAccordo)){
-				isServizioComposto = false;
-			}else if(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_SERVIZIO_COMPOSTO.equals(tipoAccordo)){
-				isServizioComposto = true;
+		if("".equals(this.tipoAccordo))
+			this.tipoAccordo = null;
+		if(this.tipoAccordo!=null){
+			if(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_PARTE_COMUNE.equals(this.tipoAccordo)){
+				this.isServizioComposto = false;
+			}else if(AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_SERVIZIO_COMPOSTO.equals(this.tipoAccordo)){
+				this.isServizioComposto = true;
 			}
 		}
-		boolean validazioneDocumenti = true;
-		String tmpValidazioneDocumenti = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VALIDAZIONE_DOCUMENTI);
 
-		if(ServletUtils.isEditModeInProgress(request) ){
+		String tmpValidazioneDocumenti = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VALIDAZIONE_DOCUMENTI);
+
+		if(ServletUtils.isEditModeInProgress(this.editMode) ){
 
 			// primo accesso alla servlet
 
 			if(tmpValidazioneDocumenti!=null){
-				validazioneDocumenti = ServletUtils.isCheckBoxEnabled(tmpValidazioneDocumenti);
+				this.validazioneDocumenti = ServletUtils.isCheckBoxEnabled(tmpValidazioneDocumenti);
 			}else{
-				validazioneDocumenti = true;
+				this.validazioneDocumenti = true;
 			}
 		}else{
-			validazioneDocumenti = ServletUtils.isCheckBoxEnabled(tmpValidazioneDocumenti);
+			this.validazioneDocumenti = ServletUtils.isCheckBoxEnabled(tmpValidazioneDocumenti);
 		}
 
 		// Preparo il menu
 		apcHelper.makeMenu();
 
 		// Prendo il nome dell'accordo
-		String nome = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME);
+		String nome = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME);
 
 		AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 		AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(apcCore);
@@ -178,7 +212,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 		PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apcCore);
 		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apcCore);
 		AccordiCooperazioneCore acCore = new AccordiCooperazioneCore(apcCore);
-		String labelAccordoServizio = AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo);
+		String labelAccordoServizio = AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(this.tipoAccordo);
 
 		Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
@@ -196,6 +230,12 @@ public final class AccordiServizioParteComuneChange extends Action {
 
 		IDAccordo idAccordoOLD = idAccordoFactory.getIDAccordoFromValues(as.getNome(),BeanUtilities.getSoggettoReferenteID(as.getSoggettoReferente()),as.getVersione());
 
+		this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.tipoProtocollo);
+		this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
+		this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
+		this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteComune(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idAccordoOLD );
+		this.protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
+
 		try {
 
 			// controllo se l'accordo e' utilizzato da qualche asps
@@ -206,16 +246,16 @@ public final class AccordiServizioParteComuneChange extends Action {
 			listaTipiProtocollo = apcCore.getProtocolli();
 
 			// se il protocollo e' null (primo accesso ) lo ricavo dall'accordo di servizio
-			if(tipoProtocollo == null){
+			if(this.tipoProtocollo == null){
 				if(as!=null && as.getSoggettoReferente()!=null){
-					tipoProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
+					this.tipoProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 				}
 				else{
-					tipoProtocollo = apsCore.getProtocolloDefault();
+					this.tipoProtocollo = apsCore.getProtocolloDefault();
 				}
 			}
 
-			List<String> tipiSoggettiGestitiProtocollo = soggettiCore.getTipiSoggettiGestitiProtocollo(tipoProtocollo);
+			List<String> tipiSoggettiGestitiProtocollo = soggettiCore.getTipiSoggettiGestitiProtocollo(this.tipoProtocollo);
 			List<Soggetto> listaSoggetti=null;
 
 			if(apcCore.isVisioneOggettiGlobale(userLogin)){
@@ -272,91 +312,91 @@ public final class AccordiServizioParteComuneChange extends Action {
 		}
 
 		//se passo dal link diretto di ripristino stato imposto il nuovo stato
-		if(backToStato != null)
-			statoPackage = backToStato;
+		if(this.backToStato != null)
+			this.statoPackage = this.backToStato;
 
 		String uriAS = idAccordoFactory.getUriFromIDAccordo(idAccordoOLD);
 		String oldStatoPackage = as.getStatoPackage();			
 
 		// Se idhid = null, devo visualizzare la pagina per la modifica dati
-		if(ServletUtils.isEditModeInProgress(request)){
+		if(ServletUtils.isEditModeInProgress(this.editMode)){
 
 			try {
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle_ServletChange(pd, labelAccordoServizio,
 						AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
-								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
-								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue(),
+								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
+								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue(),
 								uriAS);
 
-				if(descr==null){
+				if(this.descr==null){
 					//inizializzazione default
-					descr = as.getDescrizione();
+					this.descr = as.getDescrizione();
 
-					if(tipoAccordo!=null){
-						if("apc".equals(tipoAccordo)){
-							isServizioComposto = false;
-						}else if("asc".equals(tipoAccordo)){
-							isServizioComposto = true;
+					if(this.tipoAccordo!=null){
+						if("apc".equals(this.tipoAccordo)){
+							this.isServizioComposto = false;
+						}else if("asc".equals(this.tipoAccordo)){
+							this.isServizioComposto = true;
 						}
 					}else{
-						isServizioComposto = as.getServizioComposto()!=null ? true : false;
+						this.isServizioComposto = as.getServizioComposto()!=null ? true : false;
 					}
-					if(isServizioComposto){
-						accordoCooperazioneId = ""+as.getServizioComposto().getIdAccordoCooperazione();
+					if(this.isServizioComposto){
+						this.accordoCooperazioneId = ""+as.getServizioComposto().getIdAccordoCooperazione();
 					}else{
-						accordoCooperazioneId="-";
+						this.accordoCooperazioneId="-";
 					}
 				}
 
 				int idReferente = -1;
 				try{
-					idReferente = Integer.parseInt(referente);
+					idReferente = Integer.parseInt(this.referente);
 				}catch(Exception e){}
-				if(idReferente<=0 && !"-".equals(referente)){
+				if(idReferente<=0 && !"-".equals(this.referente)){
 					IdSoggetto assr = as.getSoggettoReferente();
 					if (assr != null) {
 						Soggetto s = soggettiCore.getSoggetto(new IDSoggetto(assr.getTipo(),assr.getNome()));
-						referente = "" + s.getId();
+						this.referente = "" + s.getId();
 					}else{
-						referente = "-";
+						this.referente = "-";
 					}
 				}
 
-				if(versione == null)
-					versione = as.getVersione();
+				if(this.versione == null)
+					this.versione = as.getVersione();
 
 				// controllo profilo collaborazione
-				if(profcoll == null)
-					profcoll = AccordiServizioParteComuneHelper.convertProfiloCollaborazioneDB2View(as.getProfiloCollaborazione());
+				if(this.profcoll == null)
+					this.profcoll = AccordiServizioParteComuneHelper.convertProfiloCollaborazioneDB2View(as.getProfiloCollaborazione());
 
-				if(filtrodup == null)
-					filtrodup = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getFiltroDuplicati());
-				if(confric == null)
-					confric = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getConfermaRicezione());
-				if(idcoll == null)
-					idcoll = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getIdCollaborazione());
-				if(consord == null)
-					consord = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getConsegnaInOrdine());
-				if(scadenza == null)
-					scadenza = as.getScadenza() != null ? as.getScadenza() : "";
-					if(request.getParameter("privato")==null){
-						privato = as.getPrivato()!=null && as.getPrivato();
+				if(this.filtrodup == null)
+					this.filtrodup = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getFiltroDuplicati());
+				if(this.confric == null)
+					this.confric = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getConfermaRicezione());
+				if(this.idcoll == null)
+					this.idcoll = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getIdCollaborazione());
+				if(this.consord == null)
+					this.consord = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getConsegnaInOrdine());
+				if(this.scadenza == null)
+					this.scadenza = as.getScadenza() != null ? as.getScadenza() : "";
+					if(privatoS==null){
+						this.privato = as.getPrivato()!=null && as.getPrivato();
 					}
 
-					showUtilizzoSenzaAzione = as.sizeAzioneList() > 0;// se ci
+					this.showUtilizzoSenzaAzione = as.sizeAzioneList() > 0;// se ci
 					// sono
 					// azioni
 					// allora
 					// visualizzo
 					// il
 					// checkbox
-					if(utilizzo==null)
-						utilizzoSenzaAzione = as.getUtilizzoSenzaAzione();	
+					if(this.utilizzo==null)
+						this.utilizzoSenzaAzione = as.getUtilizzoSenzaAzione();	
 
-					if(statoPackage==null)
-						statoPackage = as.getStatoPackage();
+					if(this.statoPackage==null)
+						this.statoPackage = as.getStatoPackage();
 
 			} catch (Exception ex) {
 				return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), ex, pd, session, gd, mapping, 
@@ -364,18 +404,25 @@ public final class AccordiServizioParteComuneChange extends Action {
 			}
 
 
-			if( backToStato == null){
+			if( this.backToStato == null){
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = apcHelper.addAccordiToDati(dati, nome, descr, profcoll, "", "", "", "", 
-						filtrodup, confric, idcoll, consord, scadenza, id, TipoOperazione.CHANGE, 
-						showUtilizzoSenzaAzione, utilizzoSenzaAzione,referente,versione,providersList,providersListLabel,
-						privato,isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
-						accordoCooperazioneId,statoPackage,oldStatoPackage, tipoAccordo, validazioneDocumenti,
-						tipoProtocollo, listaTipiProtocollo,used,asWithAllegati);
+				// valorizzo i campi dinamici
+				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
+						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD); 
+
+				dati = apcHelper.addAccordiToDati(dati, nome, this.descr, this.profcoll, "", "", "", "", 
+						this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, this.id, tipoOp, 
+						this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
+						this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
+						this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
+						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati);
+
+				// aggiunta campi custom
+				dati = apcHelper.addProtocolPropertiesToDati(tipoOp, dati, this.consoleConfiguration);
 
 				pd.setDati(dati);
 
@@ -391,38 +438,57 @@ public final class AccordiServizioParteComuneChange extends Action {
 		}
 
 		boolean visibilitaAccordoCooperazione=false;
-		if("-".equals(accordoCooperazioneId)==false && "".equals(accordoCooperazioneId)==false  && accordoCooperazioneId!=null){
-			AccordoCooperazione ac = acCore.getAccordoCooperazione(Long.parseLong(accordoCooperazioneId));
+		if("-".equals(this.accordoCooperazioneId)==false && "".equals(this.accordoCooperazioneId)==false  && this.accordoCooperazioneId!=null){
+			AccordoCooperazione ac = acCore.getAccordoCooperazione(Long.parseLong(this.accordoCooperazioneId));
 			visibilitaAccordoCooperazione=ac.getPrivato()!=null && ac.getPrivato();
 		}
 
 		// Controlli sui campi immessi
-		boolean isOk = apcHelper.accordiCheckData(TipoOperazione.CHANGE, nome, descr, profcoll, 
+		boolean isOk = apcHelper.accordiCheckData(tipoOp, nome, this.descr, this.profcoll, 
 				"", "", "", "", 
-				filtrodup, confric, idcoll, consord, 
-				scadenza, id,referente,versione,accordoCooperazioneId,privato,visibilitaAccordoCooperazione,idAccordoOLD, 
-				"", "", "", validazioneDocumenti,tipoProtocollo,backToStato);
+				this.filtrodup, this.confric, this.idcoll, this.consord, 
+				this.scadenza, this.id,this.referente,this.versione,this.accordoCooperazioneId,this.privato,visibilitaAccordoCooperazione,idAccordoOLD, 
+				"", "", "", this.validazioneDocumenti,this.tipoProtocollo,this.backToStato);
+
+		// Valido i parametri custom se ho gia' passato tutta la validazione prevista
+		if(isOk){
+			try{
+				//validazione campi dinamici
+				this.consoleDynamicConfiguration.validateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idAccordoOLD); 
+			}catch(ProtocolException e){
+				pd.setMessage(e.getMessage());
+				isOk = false;
+			}
+		}
+
 		if (!isOk) {
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle_ServletChange(pd, labelAccordoServizio,
 					AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
-							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
-							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue(),
+							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
+							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue(),
 							uriAS);
 
 			// preparo i campi
 			Vector<DataElement> dati = new Vector<DataElement>();
 
 			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+			
+			// valorizzo i campi dinamici
+			this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
+					this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD); 
 
-			dati = apcHelper.addAccordiToDati(dati, nome, descr, profcoll, "", "", "", "", 
-					filtrodup, confric, idcoll, consord, scadenza, id, TipoOperazione.CHANGE, 
-					showUtilizzoSenzaAzione, utilizzoSenzaAzione,referente,versione,providersList,providersListLabel,
-					privato,isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
-					accordoCooperazioneId,statoPackage,oldStatoPackage, tipoAccordo, validazioneDocumenti,
-					tipoProtocollo, listaTipiProtocollo,used,asWithAllegati);
+			dati = apcHelper.addAccordiToDati(dati, nome, this.descr, this.profcoll, "", "", "", "", 
+					this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, this.id, tipoOp, 
+					this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
+					this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
+					this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
+					this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati);
 
+			// aggiunta campi custom
+			dati = apcHelper.addProtocolPropertiesToDati(tipoOp, dati, this.consoleConfiguration);
+			
 			pd.setDati(dati);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
@@ -432,25 +498,32 @@ public final class AccordiServizioParteComuneChange extends Action {
 		}
 
 		// I dati dell'utente sono validi, lo informo che l'accordo e' utilizzato da asps 
-		if( actionConfirm == null){
-			if(used || backToStato != null){
+		if( this.actionConfirm == null){
+			if(used || this.backToStato != null){
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle_ServletChange(pd, labelAccordoServizio,
 						AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
-								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
-								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue(),
+								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
+								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue(),
 								uriAS);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeInProgress());
+				
+				// valorizzo i campi dinamici
+				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
+						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD); 
 
-				dati = apcHelper.addAccordiToDatiAsHidden(dati, nome, descr, profcoll, "", "", "", "", 
-						filtrodup, confric, idcoll, consord, scadenza, id, TipoOperazione.CHANGE, 
-						showUtilizzoSenzaAzione, utilizzoSenzaAzione,referente,versione,providersList,providersListLabel,
-						privato,isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
-						accordoCooperazioneId,statoPackage,oldStatoPackage, tipoAccordo, validazioneDocumenti,tipoProtocollo, listaTipiProtocollo,used);
+				dati = apcHelper.addAccordiToDatiAsHidden(dati, nome, this.descr, this.profcoll, "", "", "", "", 
+						this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, this.id, tipoOp, 
+						this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
+						this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
+						this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,this.tipoProtocollo, listaTipiProtocollo,used);
+				
+				// aggiunta campi custom
+				dati = apcHelper.addProtocolPropertiesToDati(tipoOp, dati, this.consoleConfiguration);
 
 				pd.setDati(dati);
 
@@ -459,7 +532,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 				if(used)
 					msg = "Attenzione, esistono delle erogazioni che riferiscono l''accordo [{0}] che si sta modificando, continuare?";
 
-				if(backToStato != null){
+				if(this.backToStato != null){
 					msg = "&Egrave; stato richiesto di ripristinare lo stato dell''accordo [{0}] in operativo. Tale operazione permetter&agrave; successive modifiche all''accordo. Vuoi procedere?";
 				}
 
@@ -487,22 +560,22 @@ public final class AccordiServizioParteComuneChange extends Action {
 		oldProfiloCollaborazione = AccordiServizioParteComuneHelper.convertProfiloCollaborazioneDB2View(as.getProfiloCollaborazione());
 
 		as.setNome(nome);
-		as.setDescrizione(descr);
-		as.setConfermaRicezione(StatoFunzionalita.toEnumConstant(AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoView2DB(confric)));
-		as.setConsegnaInOrdine(StatoFunzionalita.toEnumConstant(AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoView2DB(consord)));
-		as.setFiltroDuplicati(StatoFunzionalita.toEnumConstant(AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoView2DB(filtrodup)));
-		as.setIdCollaborazione(StatoFunzionalita.toEnumConstant(AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoView2DB(idcoll)));
-		as.setProfiloCollaborazione(ProfiloCollaborazione.toEnumConstant(AccordiServizioParteComuneHelper.convertProfiloCollaborazioneView2DB(profcoll)));
-		as.setScadenza(scadenza);
-		as.setUtilizzoSenzaAzione(as.sizeAzioneList() > 0 ? utilizzoSenzaAzione : true);
-		if(referente!=null && !"".equals(referente) && !"-".equals(referente)){
+		as.setDescrizione(this.descr);
+		as.setConfermaRicezione(StatoFunzionalita.toEnumConstant(AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoView2DB(this.confric)));
+		as.setConsegnaInOrdine(StatoFunzionalita.toEnumConstant(AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoView2DB(this.consord)));
+		as.setFiltroDuplicati(StatoFunzionalita.toEnumConstant(AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoView2DB(this.filtrodup)));
+		as.setIdCollaborazione(StatoFunzionalita.toEnumConstant(AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoView2DB(this.idcoll)));
+		as.setProfiloCollaborazione(ProfiloCollaborazione.toEnumConstant(AccordiServizioParteComuneHelper.convertProfiloCollaborazioneView2DB(this.profcoll)));
+		as.setScadenza(this.scadenza);
+		as.setUtilizzoSenzaAzione(as.sizeAzioneList() > 0 ? this.utilizzoSenzaAzione : true);
+		if(this.referente!=null && !"".equals(this.referente) && !"-".equals(this.referente)){
 			int idRef = 0;
 			try {
-				idRef = Integer.parseInt(referente);
+				idRef = Integer.parseInt(this.referente);
 			} catch (Exception e) {
 			}
 			if (idRef != 0) {
-				int idReferente = Integer.parseInt(referente);
+				int idReferente = Integer.parseInt(this.referente);
 				Soggetto s = soggettiCore.getSoggetto(idReferente);			
 				IdSoggetto assr = new IdSoggetto();
 				assr.setTipo(s.getTipo());
@@ -512,13 +585,13 @@ public final class AccordiServizioParteComuneChange extends Action {
 		}else{
 			as.setSoggettoReferente(null);
 		}
-		as.setVersione(versione);
-		as.setPrivato(privato ? Boolean.TRUE : Boolean.FALSE);
+		as.setVersione(this.versione);
+		as.setPrivato(this.privato ? Boolean.TRUE : Boolean.FALSE);
 
-		if(accordoCooperazioneId!=null && !"".equals(accordoCooperazioneId) && !"-".equals(accordoCooperazioneId)){
+		if(this.accordoCooperazioneId!=null && !"".equals(this.accordoCooperazioneId) && !"-".equals(this.accordoCooperazioneId)){
 			AccordoServizioParteComuneServizioComposto assc = as.getServizioComposto();
 			if(assc==null) assc = new AccordoServizioParteComuneServizioComposto();
-			assc.setIdAccordoCooperazione(Long.parseLong(accordoCooperazioneId));
+			assc.setIdAccordoCooperazione(Long.parseLong(this.accordoCooperazioneId));
 			as.setServizioComposto(assc);
 		}else{
 			as.setServizioComposto(null);
@@ -529,10 +602,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 
 
 		// stato
-		as.setStatoPackage(statoPackage);
-
-
-
+		as.setStatoPackage(this.statoPackage);
+		
 		// Check stato
 		if(apcCore.isShowGestioneWorkflowStatoDocumenti()){
 
@@ -547,22 +618,29 @@ public final class AccordiServizioParteComuneChange extends Action {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle_ServletChange(pd, labelAccordoServizio,
 						AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
-								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
-								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue(),
+								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
+								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue(),
 								uriAS);
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				
+				// valorizzo i campi dinamici
+				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
+						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD); 
 
-				dati = apcHelper.addAccordiToDati(dati, nome, descr, profcoll, "", "", "", "", 
-						filtrodup, confric, idcoll, consord, scadenza, id, TipoOperazione.CHANGE, 
-						showUtilizzoSenzaAzione, utilizzoSenzaAzione,referente,versione,providersList,providersListLabel,
-						privato,isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
-						accordoCooperazioneId,statoPackage,oldStatoPackage, tipoAccordo, validazioneDocumenti,
-						tipoProtocollo, listaTipiProtocollo,used,asWithAllegati);
+				dati = apcHelper.addAccordiToDati(dati, nome, this.descr, this.profcoll, "", "", "", "", 
+						this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, this.id, tipoOp, 
+						this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
+						this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
+						this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
+						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati);
 
+				// aggiunta campi custom
+				dati = apcHelper.addProtocolPropertiesToDati(tipoOp, dati, this.consoleConfiguration);
+				
 				pd.setDati(dati);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
@@ -572,7 +650,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 		}
 
 
-
+		//imposto properties custom
+		as.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties));
 
 
 		// Modifico i dati dell'accordo nel db
@@ -640,21 +719,28 @@ public final class AccordiServizioParteComuneChange extends Action {
 							// setto la barra del titolo
 							ServletUtils.setPageDataTitle_ServletChange(pd, labelAccordoServizio,
 									AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
-											AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
-											AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue(),
+											AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
+											AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue(),
 											uriAS);
 
 							// preparo i campi
 							Vector<DataElement> dati = new Vector<DataElement>();
 
 							dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+							
+							// valorizzo i campi dinamici
+							this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
+									this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD); 
 
-							dati = apcHelper.addAccordiToDati(dati, nome, descr, profcoll, "", "", "", "", 
-									filtrodup, confric, idcoll, consord, scadenza, id, TipoOperazione.CHANGE, 
-									showUtilizzoSenzaAzione, utilizzoSenzaAzione,referente,versione,providersList,providersListLabel,
-									privato,isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
-									accordoCooperazioneId,statoPackage,oldStatoPackage, tipoAccordo, validazioneDocumenti,
-									tipoProtocollo, listaTipiProtocollo,used,asWithAllegati);
+							dati = apcHelper.addAccordiToDati(dati, nome, this.descr, this.profcoll, "", "", "", "", 
+									this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, this.id, tipoOp, 
+									this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
+									this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
+									this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
+									this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati);
+							
+							// aggiunta campi custom
+							dati = apcHelper.addProtocolPropertiesToDati(tipoOp, dati, this.consoleConfiguration);
 
 							pd.setDati(dati);
 
@@ -749,13 +835,13 @@ public final class AccordiServizioParteComuneChange extends Action {
 			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), operazioniDaEffettuare);
 
 			// preparo lista
-			List<AccordoServizioParteComune> lista = AccordiServizioParteComuneUtilities.accordiList(apcCore, userLogin, ricerca, tipoAccordo);
+			List<AccordoServizioParteComune> lista = AccordiServizioParteComuneUtilities.accordiList(apcCore, userLogin, ricerca, this.tipoAccordo);
 			//			if(apcCore.isVisioneOggettiGlobale(userLogin)){
 			//				lista = apcCore.accordiServizioParteComuneList(null, ricerca);
 			//			}else{
 			//				lista = apcCore.accordiServizioParteComuneList(userLogin, ricerca);
 			//			}
-			apcHelper.prepareAccordiList(lista, ricerca, tipoAccordo);
+			apcHelper.prepareAccordiList(lista, ricerca, this.tipoAccordo);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

@@ -369,18 +369,18 @@ public class SoggettiHelper extends ConsoleHelper {
 		return dati;
 	}
 
-	boolean soggettiCheckData(TipoOperazione tipoOp) throws Exception {
+	boolean soggettiCheckData(TipoOperazione tipoOp, String id, String tipoprov, String nomeprov, String codiceIpa, String pd_url_prefix_rewriter, String pa_url_prefix_rewriter) throws Exception {
 		try {
-			String id = this.request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
+//			String id = this.request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
 			int idInt = 0;
 			if (tipoOp.equals(TipoOperazione.CHANGE)) {
 				idInt = Integer.parseInt(id);
 			}
-			String nomeprov = this.request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
-			String tipoprov = this.request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
-			String codiceIpa = this.request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_IPA);
-			String pd_url_prefix_rewriter = this.request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER);
-			String pa_url_prefix_rewriter = this.request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PA_URL_PREFIX_REWRITER);
+//			String nomeprov = this.request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
+//			String tipoprov = this.request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
+//			String codiceIpa = this.request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_IPA);
+//			String pd_url_prefix_rewriter = this.request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER);
+//			String pa_url_prefix_rewriter = this.request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PA_URL_PREFIX_REWRITER);
 
 			// Campi obbligatori
 			if (nomeprov.equals("") || tipoprov.equals("") ) {

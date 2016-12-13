@@ -52,6 +52,7 @@ import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB_LIB;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
@@ -79,6 +80,8 @@ import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.MapReader;
@@ -4003,6 +4006,34 @@ public class ControlStationCore {
 
 	/* ************** UTILITA' GENERALI A TUTTI I CORE ED HELPER ***************** */
 
+	public IRegistryReader getRegistryReader(IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException{
+		String nomeMetodo = "getRegistryReader";
+		
+		try {
+			// istanzio il driver
+			DriverRegistroServiziDB driver = new DriverRegistroServiziDB(ControlStationCore.dbM.getDataSourceName(),ControlStationCore.dbM.getDataSourceContext(),ControlStationCore.log, this.tipoDB);
+			return protocolFactory.getRegistryReader(driver);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} 
+	}
+	
+	public IConfigIntegrationReader getConfigIntegrationReader(IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException{
+		String nomeMetodo = "getConfigIntegrationReader";
+		
+		try {
+			// istanzio il driver
+			DriverConfigurazioneDB driver = new DriverConfigurazioneDB(ControlStationCore.dbM.getDataSourceName(),ControlStationCore.dbM.getDataSourceContext(),ControlStationCore.log, this.tipoDB);
+			return protocolFactory.getConfigIntegrationReader(driver);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}
+	}
+	
 
 	/**
 	 * Accesso alla configurazione generale della Pdd

@@ -145,6 +145,9 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_APPLICA_MTOM_RISPOSTA = "applicaMTOMRes";
 	public final static String PARAMETRO_USAIDSOGG = "usaidsogg";
 	public final static String PARAMETRO_EXTENDED_FORM_ID = "extendedFormUniqueId";
+	public final static String PARAMETRO_CONTENT_DISPOSITION = "Content-Disposition";
+	public final static String PREFIX_CONTENT_DISPOSITION = "form-data; name=\"";
+	public final static String SUFFIX_CONTENT_DISPOSITION = "\"";
 	
 	
 	/** DEFAULT VALUES **/

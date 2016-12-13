@@ -22,13 +22,21 @@
 
 package org.openspcoop2.web.ctrlstat.servlet;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
+import javax.mail.BodyPart;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
@@ -41,7 +49,20 @@ import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
+import org.openspcoop2.protocol.sdk.constants.ConsoleItemValueType;
+import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.protocol.sdk.properties.AbstractConsoleItem;
+import org.openspcoop2.protocol.sdk.properties.BaseConsoleItem;
+import org.openspcoop2.protocol.sdk.properties.BinaryProperty;
+import org.openspcoop2.protocol.sdk.properties.BooleanProperty;
+import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
+import org.openspcoop2.protocol.sdk.properties.NumberProperty;
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesFactory;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.properties.StringProperty;
 import org.openspcoop2.utils.crypt.Password;
+import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -76,6 +97,7 @@ import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCostanti;
 import org.openspcoop2.web.lib.audit.web.AuditCostanti;
+import org.openspcoop2.web.lib.mvc.ConsoleConfigurationUtils;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -131,6 +153,18 @@ public class ConsoleHelper {
 	protected ConnettoriCore connettoriCore = null;
 	protected OperazioniCore operazioniCore = null;
 
+	/** Gestione dei parametri unica sia per le chiamate multipart che per quelle normali*/
+	private boolean multipart = false;
+	public boolean isMultipart() {
+		return this.multipart;
+	}
+	private String contentType = null; 
+	public String getContentType() {
+		return this.contentType;
+	}
+	private MimeMultipart mimeMultipart = null;
+	private Map<String, InputStream> mapParametri = null;
+
 	/** Logger utilizzato per debug. */
 	protected Logger log = null;
 
@@ -158,6 +192,23 @@ public class ConsoleHelper {
 			this.confCore = new ConfigurazioneCore(this.core);
 			this.connettoriCore = new ConnettoriCore(this.core);
 			this.operazioniCore = new OperazioniCore(this.core);
+
+			// analisi dei parametri della request
+			this.contentType = request.getContentType();
+			if ((this.contentType != null) && (this.contentType.indexOf(Costanti.MULTIPART) != -1)) {
+				this.multipart = true;
+				this.mimeMultipart = new MimeMultipart(request.getInputStream(), this.contentType);
+				this.mapParametri = new HashMap<String,InputStream>();
+
+				for(int i = 0 ; i < this.mimeMultipart.countBodyParts() ;  i ++) {
+					BodyPart bodyPart = this.mimeMultipart.getBodyPart(i);
+					String partName = getBodyPartName(bodyPart);
+					if(!this.mapParametri.containsKey(partName)) {
+						this.mapParametri.put(partName, bodyPart.getInputStream());
+					}else throw new Exception("Parametro ["+partName+"] Duplicato.");
+				}
+			}
+
 		} catch (Exception e) {
 			this.log.error("Exception ctrlstatHelper: " + e.getMessage(), e);
 		}
@@ -167,6 +218,130 @@ public class ConsoleHelper {
 
 	public int getSize() {
 		return 50;
+	}
+
+	private String getBodyPartName (BodyPart bodyPart) throws Exception{
+		String partName =  null;
+		String[] headers = bodyPart.getHeader(CostantiControlStation.PARAMETRO_CONTENT_DISPOSITION);
+		if(headers != null && headers.length > 0){
+			String header = headers[0];
+
+			// in due parti perche il suffisso con solo " imbrogliava il controllo
+			int prefixIndex = header.indexOf(CostantiControlStation.PREFIX_CONTENT_DISPOSITION) + CostantiControlStation.PREFIX_CONTENT_DISPOSITION.length();
+			partName = header.substring(prefixIndex);
+
+			int suffixIndex = partName.indexOf(CostantiControlStation.SUFFIX_CONTENT_DISPOSITION);
+			partName = partName.substring(0,suffixIndex);
+		}
+
+		return partName;
+	}
+
+	public String getProtocolloFromParameter(String parameterName) throws Exception {
+		return getParameter(parameterName, String.class, this.core.getProtocolloDefault());
+	}
+
+	public String getParameter(String parameterName) throws Exception {
+		return getParameter(parameterName, String.class, null);
+	}
+
+	public <T> T getParameter(String parameterName, Class<T> type) throws Exception {
+		return getParameter(parameterName, type, null);
+	}
+
+	public <T> T getParameter(String parameterName, Class<T> type, T defaultValue) throws Exception {
+		T toReturn = null;
+
+		if(type == byte[].class){
+			throw new Exception("Per leggere un parametro di tipo byte[] utilizzare il metodo getBinaryParameter");
+		}
+
+		String paramAsString = null;
+
+		if(this.multipart){
+			InputStream inputStream = this.mapParametri.get(parameterName);
+			if(inputStream != null){
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				IOUtils.copy(inputStream, baos);
+				baos.flush();
+				baos.close();
+				paramAsString = baos.toString();
+			}
+		}else{
+			paramAsString = this.request.getParameter(parameterName);
+		}
+
+		if(StringUtils.isNotEmpty(paramAsString)) {
+			Constructor<T> constructor = type.getConstructor(String.class);
+			if(constructor != null)
+				toReturn = constructor.newInstance(paramAsString);
+			else
+				toReturn = type.cast(paramAsString);
+		}
+
+		if(toReturn == null && defaultValue != null)
+			return defaultValue;
+
+
+		return toReturn;
+	}
+
+	public byte[] getBinaryParameter(String parameterName) throws Exception {
+		if(this.multipart){
+			InputStream inputStream = this.mapParametri.get(parameterName);
+			if(inputStream != null){
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				IOUtils.copy(inputStream, baos);
+				return baos.toByteArray();
+			}
+		}else{
+			String paramAsString = this.request.getParameter(parameterName);
+			if(StringUtils.isNotEmpty(paramAsString))
+				return paramAsString.getBytes();
+		}
+
+		return null;
+	}
+
+	public ProtocolProperties estraiProtocolPropertiesDaRequest(ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType) throws Exception {
+		ProtocolProperties properties = new ProtocolProperties();
+
+		List<BaseConsoleItem> consoleItems = consoleConfiguration.getConsoleItem();
+
+		for (BaseConsoleItem item : consoleItems) {
+			// per ora prelevo solo i parametri che possono avere un valore non considero titoli e note
+			if(item instanceof AbstractConsoleItem<?>){
+				ConsoleItemValueType consoleItemValueType = ProtocolPropertiesUtils.getConsoleItemValueType(item);
+				if(consoleItemValueType != null){
+					switch (consoleItemValueType) {
+					case BINARY:
+						byte[] binaryParameter = this.getBinaryParameter(item.getId());
+						BinaryProperty binaryProperty = ProtocolPropertiesFactory.newProperty(item.getId(), binaryParameter);
+						properties.addProperty(binaryProperty); 
+						break;
+					case NUMBER:
+						Long longValue = this.getParameter(item.getId(), Long.class);
+						NumberProperty numberProperty = ProtocolPropertiesFactory.newProperty(item.getId(), longValue); 
+						properties.addProperty(numberProperty); 
+						break;
+					case BOOLEAN:
+						String bvS = this.getParameter(item.getId());
+						Boolean booleanValue = ServletUtils.isCheckBoxEnabled(bvS);
+						BooleanProperty booleanProperty = ProtocolPropertiesFactory.newProperty(item.getId(), booleanValue ? booleanValue : null); 
+						properties.addProperty(booleanProperty); 
+						break;
+					case STRING:
+					default:
+						String parameterValue = this.getParameter(item.getId());
+						StringProperty stringProperty = ProtocolPropertiesFactory.newProperty(item.getId(), parameterValue);
+						properties.addProperty(stringProperty);
+						break;
+					}
+				}
+			}
+		}
+
+		return properties;
 	}
 
 	// Prepara il menu'
@@ -408,7 +583,7 @@ public class ConsoleHelper {
 							}
 						}
 					}
-					
+
 					// Creo le entries e le valorizzo
 					entries = new String[totEntries][2];
 
@@ -481,7 +656,7 @@ public class ConsoleHelper {
 						entries[index][1] = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_LIST;
 						index++;
 					}
-					
+
 					// Extended Menu
 					if(extendedMenu!=null){
 						for (IExtendedMenu extMenu : extendedMenu) {
@@ -507,12 +682,12 @@ public class ConsoleHelper {
 
 
 			if (singlePdD) {
-				
+
 				// SinglePdD=true
 				if (pu.isDiagnostica()) {
 					MenuEntry me = new MenuEntry();
 					me.setTitle(CostantiControlStation.LABEL_STRUMENTI);
-					
+
 					int totEntries = 2;
 					// Se l'utente ha anche i permessi "auditing", la
 					// sezione reportistica ha una voce in più
@@ -522,7 +697,7 @@ public class ConsoleHelper {
 					// sezione reportistica ha una voce in più
 					if (pu.isCodeMessaggi())
 						totEntries++;
-					
+
 					// Extended Menu
 					if(extendedMenu!=null){
 						for (IExtendedMenu extMenu : extendedMenu) {
@@ -534,7 +709,7 @@ public class ConsoleHelper {
 							}
 						}
 					}
-					
+
 					String[][] entries = new String[totEntries][2];
 					int i = 0;
 					entries[i][0] = ArchiviCostanti.LABEL_DIAGNOSTICA;
@@ -554,7 +729,7 @@ public class ConsoleHelper {
 						entries[i][1] = MonitorCostanti.SERVLET_NAME_MONITOR;
 						i++;
 					}
-					
+
 					// Extended Menu
 					if(extendedMenu!=null){
 						for (IExtendedMenu extMenu : extendedMenu) {
@@ -570,7 +745,7 @@ public class ConsoleHelper {
 							}
 						}
 					}
-					
+
 					me.setEntries(entries);
 					menu.addElement(me);
 
@@ -621,7 +796,7 @@ public class ConsoleHelper {
 							}
 						}
 					}
-					
+
 					entries = new String[dimensioneEntries][2];
 
 					int index = 0;
@@ -650,7 +825,7 @@ public class ConsoleHelper {
 							entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_EXPORT;
 							entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_EXPORT+"?"+ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE.name();
 							index++;
-							
+
 							if(isModalitaAvanzata){
 								entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_ELIMINA;
 								entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
@@ -662,14 +837,14 @@ public class ConsoleHelper {
 					entries[index][0] = AuditCostanti.LABEL_AUDIT;
 					entries[index][1] = AuditCostanti.SERVLET_NAME_AUDIT;
 					index++;
-					
+
 					//link cambio password
 					if (!pu.isUtenti()) {
 						entries[index][0] = UtentiCostanti.LABEL_UTENTE;
 						entries[index][1] = UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE;
 						index++;
 					}
-					
+
 					// Extended Menu
 					if(extendedMenu!=null){
 						for (IExtendedMenu extMenu : extendedMenu) {
@@ -685,7 +860,7 @@ public class ConsoleHelper {
 							}
 						}
 					}
-					
+
 					me.setEntries(entries);
 					menu.addElement(me);
 
@@ -721,7 +896,7 @@ public class ConsoleHelper {
 							}
 						}
 					}
-					
+
 					if(dimensioneEntries>0){
 						// Comunque devo permettere di cambiare la password ad ogni utente, se l'utente stesso non puo' gestire gli utenti
 						MenuEntry me = new MenuEntry();
@@ -745,7 +920,7 @@ public class ConsoleHelper {
 								entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_EXPORT;
 								entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_EXPORT+"?"+ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE.name();
 								index++;
-								
+
 								if(isModalitaAvanzata){
 									entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_ELIMINA;
 									entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
@@ -759,7 +934,7 @@ public class ConsoleHelper {
 							entries[index][1] = UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE;
 							index++;
 						}
-						
+
 						// Extended Menu
 						if(extendedMenu!=null){
 							for (IExtendedMenu extMenu : extendedMenu) {
@@ -775,7 +950,7 @@ public class ConsoleHelper {
 								}
 							}
 						}
-						
+
 						me.setEntries(entries);
 						menu.addElement(me);
 					}
@@ -786,13 +961,13 @@ public class ConsoleHelper {
 					// gestire la reportistica
 					MenuEntry me = new MenuEntry();
 					me.setTitle(CostantiControlStation.LABEL_STRUMENTI);
-					
+
 					int totEntries = 0;
 					if (pu.isCodeMessaggi() && pu.isAuditing())
 						totEntries = 2;
 					else
 						totEntries = 1;
-					
+
 					// Extended Menu
 					if(extendedMenu!=null){
 						for (IExtendedMenu extMenu : extendedMenu) {
@@ -804,13 +979,13 @@ public class ConsoleHelper {
 							}
 						}
 					}
-					
+
 					String[][] entries = null;
 					if (pu.isCodeMessaggi() && pu.isAuditing())
 						entries = new String[totEntries][2];
 					else
 						entries = new String[totEntries][2];
-					
+
 					int i = 0;
 
 					if (pu.isAuditing()) {
@@ -823,7 +998,7 @@ public class ConsoleHelper {
 						entries[i][1] = MonitorCostanti.SERVLET_NAME_MONITOR;
 						i++;
 					}
-					
+
 					// Extended Menu
 					if(extendedMenu!=null){
 						for (IExtendedMenu extMenu : extendedMenu) {
@@ -839,7 +1014,7 @@ public class ConsoleHelper {
 							}
 						}
 					}
-					
+
 					me.setEntries(entries);
 					menu.addElement(me);
 				}
@@ -850,7 +1025,7 @@ public class ConsoleHelper {
 
 					MenuEntry me = new MenuEntry();
 					me.setTitle(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE);
-					
+
 					// Se l'utente ha anche i permessi "utenti", la
 					// configurazione utente la gestisco dopo
 					String[][] entries = null;
@@ -871,7 +1046,7 @@ public class ConsoleHelper {
 						entriesUtenti = getVoceMenuUtenti();
 						dimensioneEntries += entriesUtenti.length;
 					}
-					
+
 					// Extended Menu
 					if(extendedMenu!=null){
 						for (IExtendedMenu extMenu : extendedMenu) {
@@ -883,7 +1058,7 @@ public class ConsoleHelper {
 							}
 						}
 					}
-					
+
 					entries = new String[dimensioneEntries][2];
 
 					int index = 0;
@@ -904,7 +1079,7 @@ public class ConsoleHelper {
 							entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_EXPORT;
 							entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_EXPORT+"?"+ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE.name();
 							index++;
-							
+
 							if(isModalitaAvanzata){
 								entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_ELIMINA;
 								entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
@@ -921,7 +1096,7 @@ public class ConsoleHelper {
 						entries[index][1] = UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE;
 						index++;
 					}
-					
+
 					// Extended Menu
 					if(extendedMenu!=null){
 						for (IExtendedMenu extMenu : extendedMenu) {
@@ -937,7 +1112,7 @@ public class ConsoleHelper {
 							}
 						}
 					}
-					
+
 					me.setEntries(entries);
 					menu.addElement(me);
 
@@ -973,7 +1148,7 @@ public class ConsoleHelper {
 							}
 						}
 					}
-					
+
 					if(dimensioneEntries>0){
 						// Comunque devo permettere di cambiare la password ad ogni utente, se l'utente stesso non puo' gestire gli utenti
 						MenuEntry me = new MenuEntry();
@@ -997,7 +1172,7 @@ public class ConsoleHelper {
 								entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_EXPORT;
 								entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_EXPORT+"?"+ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO+"="+ArchiveType.CONFIGURAZIONE.name();
 								index++;
-								
+
 								if(isModalitaAvanzata){
 									entries[index][0] = ArchiviCostanti.LABEL_ARCHIVI_ELIMINA;
 									entries[index][1] = ArchiviCostanti.SERVLET_NAME_ARCHIVI_IMPORT+"?"+
@@ -1011,7 +1186,7 @@ public class ConsoleHelper {
 							entries[index][1] = UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE;
 							index++;
 						}
-						
+
 						// Extended Menu
 						if(extendedMenu!=null){
 							for (IExtendedMenu extMenu : extendedMenu) {
@@ -1027,7 +1202,7 @@ public class ConsoleHelper {
 								}
 							}
 						}
-						
+
 						me.setEntries(entries);
 						menu.addElement(me);
 					}
@@ -1049,7 +1224,7 @@ public class ConsoleHelper {
 					if (pu.isAuditing()) {
 						size++;
 					}
-					
+
 					// Extended Menu
 					if(extendedMenu!=null){
 						for (IExtendedMenu extMenu : extendedMenu) {
@@ -1061,9 +1236,9 @@ public class ConsoleHelper {
 							}
 						}
 					}
-					
+
 					entries = new String[size][2];
-					
+
 					int i = 0;
 
 					if (pu.isAuditing()) {
@@ -1081,7 +1256,7 @@ public class ConsoleHelper {
 						entries[i][1] = MonitorCostanti.SERVLET_NAME_MONITOR;
 						i++;
 					}
-				 
+
 					// Extended Menu
 					if(extendedMenu!=null){
 						for (IExtendedMenu extMenu : extendedMenu) {
@@ -1097,7 +1272,7 @@ public class ConsoleHelper {
 							}
 						}
 					}
-					
+
 					me.setEntries(entries);
 					menu.addElement(me);
 				}
@@ -1807,6 +1982,14 @@ public class ConsoleHelper {
 		de.setName(CostantiControlStation.PARAMETRO_OBBLIGATORIO);
 		dati.addElement(de);
 
+		return dati;
+	}
+
+	public Vector<DataElement> addProtocolPropertiesToDati(TipoOperazione tipoOp,Vector<DataElement> dati, ConsoleConfiguration consoleConfiguration) throws Exception{
+		for (BaseConsoleItem item : consoleConfiguration.getConsoleItem()) {
+			DataElement de = ConsoleConfigurationUtils.itemToDataElement(item, this.getSize());
+			dati.addElement(de);
+		}
 		return dati;
 	}
 }

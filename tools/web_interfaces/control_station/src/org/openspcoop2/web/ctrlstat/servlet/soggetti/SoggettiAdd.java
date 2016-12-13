@@ -39,6 +39,16 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
+import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
+import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -47,6 +57,8 @@ import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
+import org.openspcoop2.web.lib.mvc.ConsoleConfigurationUtils;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -67,9 +79,23 @@ import org.openspcoop2.web.lib.users.dao.InterfaceType;
  */
 public final class SoggettiAdd extends Action {
 
+
+	private String editMode = null;
+	private String nomeprov , tipoprov, portadom, descr, versioneProtocollo,pdd, codiceIpa, pd_url_prefix_rewriter,pa_url_prefix_rewriter,protocollo;
+	private boolean isRouter,privato; 
+	private Boolean singlePdD = null;
+	
+	// Protocol Properties
+	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
+	private ConsoleConfiguration consoleConfiguration =null;
+	private ProtocolProperties protocolProperties = null;
+	private IProtocolFactory<?> protocolFactory= null;
+	private IRegistryReader registryReader = null; 
+	private ConsoleOperationType consoleOperationType = null;
+	private ConsoleInterfaceType consoleInterfaceType = null;
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-
 		HttpSession session = request.getSession(true);
 
 		// Inizializzo PageData
@@ -80,32 +106,39 @@ public final class SoggettiAdd extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
+		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
+		this.consoleOperationType = ConsoleOperationType.ADD;
+		this.consoleInterfaceType = ConsoleConfigurationUtils.getTipoInterfaccia(session); 
+
+		// Parametri relativi al tipo operazione
+		TipoOperazione tipoOp = TipoOperazione.ADD; 
 
 		try {
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 
-			String nomeprov = request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
-			String tipoprov = request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
-			String portadom = request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_PORTA);
-			String descr = request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DESCRIZIONE);
-			String versioneProtocollo = request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_VERSIONE_PROTOCOLLO);
-			String pdd = request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PDD);
-			String is_router = request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_IS_ROUTER);
-			boolean privato = ServletUtils.isCheckBoxEnabled(request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_IS_PRIVATO));
-			String codiceIpa = request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_IPA);
-
-			String protocollo = request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PROTOCOLLO);
-
-			boolean isRouter = ServletUtils.isCheckBoxEnabled(is_router);
+			this.protocollo = soggettiHelper.getProtocolloFromParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PROTOCOLLO);
+			this.nomeprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
+			this.tipoprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
+			this.portadom = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_PORTA);
+			this.descr = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DESCRIZIONE);
+			this.versioneProtocollo = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_VERSIONE_PROTOCOLLO);
+			this.pdd = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PDD);
+			String is_router = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_IS_ROUTER);
+			String is_privato = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_IS_PRIVATO);
+			this.privato = ServletUtils.isCheckBoxEnabled(is_privato);
+			this.codiceIpa = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_IPA);
+			this.pd_url_prefix_rewriter = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER);
+			this.pa_url_prefix_rewriter = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PA_URL_PREFIX_REWRITER);
+			this.isRouter = ServletUtils.isCheckBoxEnabled(is_router);
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
-			Boolean singlePdD = (Boolean) session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
+			this.singlePdD = (Boolean) session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
+
+			this.editMode = soggettiHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+			this.protocolFactory  = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.protocollo); 
 
 			// Preparo il menu
 			soggettiHelper.makeMenu();
-
-			SoggettiCore soggettiCore = new SoggettiCore();
-			PddCore pddCore = new PddCore(soggettiCore);
 
 			// Prendo la lista di pdd e la metto in un array
 			String[] pddList = null;
@@ -114,6 +147,15 @@ public final class SoggettiAdd extends Action {
 			String nomePddGestioneLocale = null;
 			List<String> versioniProtocollo = null;
 
+			SoggettiCore soggettiCore = new SoggettiCore();
+			PddCore pddCore = new PddCore(soggettiCore);
+
+			// Tipi protocollo supportati
+			List<String> listaTipiProtocollo = soggettiCore.getProtocolli();
+			// primo accesso inizializzo con il protocollo di default inizializzato nell'helper
+//			if(this.protocollo == null){
+//				this.protocollo = soggettiCore.getProtocolloDefault();
+//			}
 
 			if(soggettiCore.isRegistroServiziLocale()){
 				List<PdDControlStation> lista = new ArrayList<PdDControlStation>();
@@ -138,55 +180,55 @@ public final class SoggettiAdd extends Action {
 				for (PdDControlStation pddTmp : lista) {
 					pddList[i] = pddTmp.getNome();
 					i++;
-					if( singlePdD && (nomePddGestioneLocale==null) && (PddTipologia.OPERATIVO.toString().equals(pddTmp.getTipo())) ){
+					if(this.singlePdD && (nomePddGestioneLocale==null) && (PddTipologia.OPERATIVO.toString().equals(pddTmp.getTipo())) ){
 						nomePddGestioneLocale = pddTmp.getNome();
 					}
 				}
 			}
 
-			// Tipi protocollo supportati
-			List<String> listaTipiProtocollo = soggettiCore.getProtocolli();
-			// primo accesso inizializzo con il protocollo di default
-			if(protocollo == null){
-				protocollo = soggettiCore.getProtocolloDefault();
-			}
-
 			//Carico la lista dei tipi di soggetti gestiti dal protocollo
-			 tipiSoggetti = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
+			tipiSoggetti = soggettiCore.getTipiSoggettiGestitiProtocollo(this.protocollo);
 
 			// lista tipi
-//			tipiSoggetti = soggettiCore.getTipiSoggettiGestiti(); // all tipi soggetti gestiti
-			if(tipoprov==null){
-				tipoprov = soggettiCore.getTipoSoggettoDefault();
+			//			tipiSoggetti = soggettiCore.getTipiSoggettiGestiti(); // all tipi soggetti gestiti
+			if(this.tipoprov==null){
+				this.tipoprov = soggettiCore.getTipoSoggettoDefault();
 			}
-			
+
 			String postBackElementName = ServletUtils.getPostBackElementName(request);
 
 			// Controllo se ho modificato il protocollo, ricalcolo il default della versione del protocollo
 			if(postBackElementName != null ){
 				if(postBackElementName.equalsIgnoreCase(SoggettiCostanti.PARAMETRO_SOGGETTO_PROTOCOLLO)){
-					versioneProtocollo = null;
+					this.versioneProtocollo = null;
 				}  
 			}
-			
-			
-//			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoprov);
-			if(versioneProtocollo == null){
-				versioneProtocollo = soggettiCore.getVersioneDefaultProtocollo(protocollo);
+
+
+			//			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoprov);
+			if(this.versioneProtocollo == null){
+				this.versioneProtocollo = soggettiCore.getVersioneDefaultProtocollo(this.protocollo);
 			}
-			
+
 			if(InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(session).getInterfaceType())){
-				versioniProtocollo = soggettiCore.getVersioniProtocollo(protocollo);
+				versioniProtocollo = soggettiCore.getVersioniProtocollo(this.protocollo);
 			}else {
 				versioniProtocollo = new ArrayList<String>();
-//				versioneProtocollo = soggettiCore.getVersioneDefaultProtocollo(protocollo);
-				versioniProtocollo.add(versioneProtocollo);
+				//				versioneProtocollo = soggettiCore.getVersioneDefaultProtocollo(protocollo);
+				versioniProtocollo.add(this.versioneProtocollo);
 			}
-			boolean isSupportatoCodiceIPA = soggettiCore.isSupportatoCodiceIPA(protocollo); 
+			boolean isSupportatoCodiceIPA = soggettiCore.isSupportatoCodiceIPA(this.protocollo); 
 
-			// Se nomehid = null, devo visualizzare la pagina per
-			// l'inserimento dati
-			if(ServletUtils.isEditModeInProgress(request)){
+
+			IDSoggetto idSoggetto = new IDSoggetto(this.tipoprov,this.nomeprov);
+
+			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
+			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
+			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigSoggetto(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idSoggetto);
+			this.protocolProperties = soggettiHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
+
+			// Se nomehid = null, devo visualizzare la pagina per l'inserimento dati
+			if(ServletUtils.isEditModeInProgress(this.editMode)){
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle_ServletAdd(pd, SoggettiCostanti.LABEL_SOGGETTI);
@@ -196,19 +238,26 @@ public final class SoggettiAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				if(nomeprov==null){
-					nomeprov = "";
+				if(this.nomeprov==null){
+					this.nomeprov = "";
+					idSoggetto = new IDSoggetto(this.tipoprov,this.nomeprov);
 				}
-				if(portadom==null){
-					portadom = "";
+				if(this.portadom==null){
+					this.portadom = "";
 				}
-				if(descr==null){
-					descr = "";
+				if(this.descr==null){
+					this.descr = "";
 				}
 
-				dati = soggettiHelper.addSoggettiToDati(TipoOperazione.ADD,dati, nomeprov, tipoprov, portadom, descr, 
-						isRouter, tipiSoggetti, versioneProtocollo, privato,codiceIpa,versioniProtocollo,isSupportatoCodiceIPA,
-						pddList,nomePddGestioneLocale, listaTipiProtocollo, protocollo );
+				// valorizzo i campi dinamici
+				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idSoggetto); 
+
+				dati = soggettiHelper.addSoggettiToDati(tipoOp,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
+						this.isRouter, tipiSoggetti, this.versioneProtocollo, this.privato,this.codiceIpa,versioniProtocollo,isSupportatoCodiceIPA,
+						pddList,nomePddGestioneLocale, listaTipiProtocollo, this.protocollo );
+
+				// aggiunta campi custom
+				dati = soggettiHelper.addProtocolPropertiesToDati(tipoOp, dati, this.consoleConfiguration);
 
 				pd.setDati(dati);
 
@@ -218,17 +267,17 @@ public final class SoggettiAdd extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = soggettiHelper.soggettiCheckData(TipoOperazione.ADD);
-			if (isOk) {
+			boolean isOk = soggettiHelper.soggettiCheckData(tipoOp, null, this.tipoprov, this.nomeprov, this.codiceIpa, this.pd_url_prefix_rewriter, this.pa_url_prefix_rewriter);
 
+			if (isOk) {
 				if(soggettiCore.isRegistroServiziLocale()){
-					if (!singlePdD) {
+					if (!this.singlePdD) {
 						isOk = false;
 						// Controllo che pdd appartenga alla lista di pdd
 						// esistenti
 						for (int i = 0; i < totPdd; i++) {
 							String tmpPdd = pddList[i];
-							if (tmpPdd.equals(pdd) && !pdd.equals("-")) {
+							if (tmpPdd.equals(this.pdd) && !this.pdd.equals("-")) {
 								isOk = true;
 							}
 						}
@@ -238,6 +287,18 @@ public final class SoggettiAdd extends Action {
 					}
 				}
 			}
+
+			// Valido i parametri custom se ho gia' passato tutta la validazione prevista
+			if(isOk){
+				try{
+					//validazione campi dinamici
+					this.consoleDynamicConfiguration.validateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idSoggetto); 
+				}catch(ProtocolException e){
+					pd.setMessage(e.getMessage());
+					isOk = false;
+				}
+			}
+
 			if (!isOk) {
 
 				// setto la barra del titolo
@@ -248,9 +309,15 @@ public final class SoggettiAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = soggettiHelper.addSoggettiToDati(TipoOperazione.ADD,dati, nomeprov, tipoprov, portadom, descr, 
-						isRouter, tipiSoggetti, versioneProtocollo, privato,codiceIpa,versioniProtocollo,isSupportatoCodiceIPA,
-						pddList,nomePddGestioneLocale, listaTipiProtocollo, protocollo);
+				// valorizzo i campi dinamici
+				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idSoggetto); 
+
+				dati = soggettiHelper.addSoggettiToDati(tipoOp,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
+						this.isRouter, tipiSoggetti, this.versioneProtocollo, this.privato,this.codiceIpa,versioniProtocollo,isSupportatoCodiceIPA,
+						pddList,nomePddGestioneLocale, listaTipiProtocollo, this.protocollo);
+
+				// aggiunta campi custom
+				dati = soggettiHelper.addProtocolPropertiesToDati(tipoOp, dati, this.consoleConfiguration);
 
 				pd.setDati(dati);
 
@@ -260,13 +327,12 @@ public final class SoggettiAdd extends Action {
 			}
 
 			// Inserisco il soggetto nel db
-
-			if (codiceIpa==null || codiceIpa.equals("")) {
-				codiceIpa = soggettiCore.getCodiceIPADefault(protocollo, new IDSoggetto(tipoprov,nomeprov), false);
+			if (this.codiceIpa==null || this.codiceIpa.equals("")) {
+				this.codiceIpa = soggettiCore.getCodiceIPADefault(this.protocollo, idSoggetto, false);
 			}
 
-			if (portadom==null || portadom.equals("")) {
-				portadom=soggettiCore.getIdentificativoPortaDefault(protocollo, new IDSoggetto(tipoprov,nomeprov));
+			if (this.portadom==null || this.portadom.equals("")) {
+				this.portadom=soggettiCore.getIdentificativoPortaDefault(this.protocollo, idSoggetto);
 			}
 
 			// utilizzo il soggetto del registro che e' un
@@ -279,22 +345,22 @@ public final class SoggettiAdd extends Action {
 
 			// imposto soggettoRegistro
 			if(soggettiCore.isRegistroServiziLocale()){
-				soggettoRegistro.setNome(nomeprov);
-				soggettoRegistro.setTipo(tipoprov);
-				soggettoRegistro.setDescrizione(descr);
-				soggettoRegistro.setVersioneProtocollo(versioneProtocollo);
-				soggettoRegistro.setIdentificativoPorta(portadom);
-				soggettoRegistro.setCodiceIpa(codiceIpa);
+				soggettoRegistro.setNome(this.nomeprov);
+				soggettoRegistro.setTipo(this.tipoprov);
+				soggettoRegistro.setDescrizione(this.descr);
+				soggettoRegistro.setVersioneProtocollo(this.versioneProtocollo);
+				soggettoRegistro.setIdentificativoPorta(this.portadom);
+				soggettoRegistro.setCodiceIpa(this.codiceIpa);
 				if(soggettiCore.isSinglePdD()){
-					if (pdd.equals("-"))
+					if (this.pdd.equals("-"))
 						soggettoRegistro.setPortaDominio(null);
 					else
-						soggettoRegistro.setPortaDominio(pdd);
+						soggettoRegistro.setPortaDominio(this.pdd);
 				}else{
-					soggettoRegistro.setPortaDominio(pdd);
+					soggettoRegistro.setPortaDominio(this.pdd);
 				}
 				soggettoRegistro.setSuperUser(userLogin);
-				soggettoRegistro.setPrivato(privato);
+				soggettoRegistro.setPrivato(this.privato);
 			}
 
 			Connettore connettore = null;
@@ -303,9 +369,9 @@ public final class SoggettiAdd extends Action {
 				connettore.setTipo(CostantiDB.CONNETTORE_TIPO_DISABILITATO);
 			}
 
-			if ( soggettiCore.isRegistroServiziLocale() && !pdd.equals("-")) {
+			if ( soggettiCore.isRegistroServiziLocale() && !this.pdd.equals("-")) {
 
-				PdDControlStation aPdD = pddCore.getPdDControlStation(pdd);
+				PdDControlStation aPdD = pddCore.getPdDControlStation(this.pdd);
 				int porta = aPdD.getPorta() <= 0 ? 80 : aPdD.getPorta();
 
 				// nel caso in cui e' stata selezionato un nal
@@ -313,12 +379,12 @@ public final class SoggettiAdd extends Action {
 				// allora setto come default il tipo HTTP
 				// altrimenti il connettore e' disabilitato
 				String tipoPdD = aPdD.getTipo();
-				if ((tipoPdD != null) && (!singlePdD) && (tipoPdD.equals(PddTipologia.OPERATIVO.toString()) || tipoPdD.equals(PddTipologia.NONOPERATIVO.toString()))) {
+				if ((tipoPdD != null) && (!this.singlePdD) && (tipoPdD.equals(PddTipologia.OPERATIVO.toString()) || tipoPdD.equals(PddTipologia.NONOPERATIVO.toString()))) {
 					String ipPdd = aPdD.getIp();
 
 					String url = aPdD.getProtocollo() + "://" + ipPdd + ":" + porta + "/" + soggettiCore.getSuffissoConnettoreAutomatico();
 					url = url.replace(CostantiControlStation.PLACEHOLDER_SOGGETTO_ENDPOINT_CREAZIONE_AUTOMATICA, 
-							soggettiCore.getWebContextProtocolAssociatoTipoSoggetto(tipoprov));
+							soggettiCore.getWebContextProtocolAssociatoTipoSoggetto(this.tipoprov));
 					connettore.setTipo(CostantiDB.CONNETTORE_TIPO_HTTP);
 
 					Property property = new Property();
@@ -334,12 +400,16 @@ public final class SoggettiAdd extends Action {
 			}
 
 			// imposto soggettoConfig
-			soggettoConfig.setNome(nomeprov);
-			soggettoConfig.setTipo(tipoprov);
-			soggettoConfig.setDescrizione(descr);
-			soggettoConfig.setIdentificativoPorta(portadom);
-			soggettoConfig.setRouter(isRouter);
+			soggettoConfig.setNome(this.nomeprov);
+			soggettoConfig.setTipo(this.tipoprov);
+			soggettoConfig.setDescrizione(this.descr);
+			soggettoConfig.setIdentificativoPorta(this.portadom);
+			soggettoConfig.setRouter(this.isRouter);
 			soggettoConfig.setSuperUser(userLogin);
+
+			//imposto properties custom
+			soggettoRegistro.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties)); 
+
 
 			SoggettoCtrlStat sog = new SoggettoCtrlStat(soggettoRegistro, soggettoConfig);
 			// eseguo le operazioni
@@ -384,5 +454,4 @@ public final class SoggettiAdd extends Action {
 					SoggettiCostanti.OBJECT_NAME_SOGGETTI, ForwardParams.ADD());
 		}
 	}
-
 }

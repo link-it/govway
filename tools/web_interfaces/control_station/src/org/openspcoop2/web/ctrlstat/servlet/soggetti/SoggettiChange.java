@@ -40,16 +40,28 @@ import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
+import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
+import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
+import org.openspcoop2.web.lib.mvc.ConsoleConfigurationUtils;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -71,6 +83,19 @@ import org.openspcoop2.web.lib.users.dao.InterfaceType;
  */
 public final class SoggettiChange extends Action {
 
+	private String editMode = null;
+	private String id, nomeprov , tipoprov, portadom, descr, versioneProtocollo,pdd, codiceIpa, pd_url_prefix_rewriter,pa_url_prefix_rewriter,protocollo;
+	private boolean isRouter,privato; 
+
+	// Protocol Properties
+	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
+	private ConsoleConfiguration consoleConfiguration =null;
+	private ProtocolProperties protocolProperties = null;
+	private IProtocolFactory<?> protocolFactory= null;
+	private IRegistryReader registryReader = null; 
+	private ConsoleOperationType consoleOperationType = null;
+	private ConsoleInterfaceType consoleInterfaceType = null;
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -84,35 +109,42 @@ public final class SoggettiChange extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-		
-		
+		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
+		this.consoleOperationType = ConsoleOperationType.CHANGE;
+		this.consoleInterfaceType = ConsoleConfigurationUtils.getTipoInterfaccia(session); 
+
+		// Parametri relativi al tipo operazione
+		TipoOperazione tipoOp = TipoOperazione.CHANGE; 
+
 		try {
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
-			
-			String id = request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
-			int idSogg = Integer.parseInt(id);
-			String nomeprov = request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
-			String tipoprov = request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
-			String portadom = request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_PORTA);
-			String descr = request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DESCRIZIONE);
-			String versioneProtocollo = request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_VERSIONE_PROTOCOLLO);
-			String pdd = request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PDD);
-			String is_router = request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_IS_ROUTER);
-			boolean isRouter = ServletUtils.isCheckBoxEnabled(is_router);
-			boolean privato = ServletUtils.isCheckBoxEnabled(request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_IS_PRIVATO));
-			String codiceIpa = request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_IPA);
-			String pd_url_prefix_rewriter = request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER);
-			String pa_url_prefix_rewriter = request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PA_URL_PREFIX_REWRITER);
-	
+
+			this.id = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
+			int idSogg = Integer.parseInt(this.id);
+			this.nomeprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
+			this.tipoprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
+			this.portadom = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_PORTA);
+			this.descr = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DESCRIZIONE);
+			this.versioneProtocollo = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_VERSIONE_PROTOCOLLO);
+			this.pdd = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PDD);
+			String is_router = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_IS_ROUTER);
+			this.isRouter = ServletUtils.isCheckBoxEnabled(is_router);
+			String is_privato = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_IS_PRIVATO);
+			this.privato = ServletUtils.isCheckBoxEnabled(is_privato);
+			this.codiceIpa = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_IPA);
+			this.pd_url_prefix_rewriter = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER);
+			this.pa_url_prefix_rewriter = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PA_URL_PREFIX_REWRITER);
+
+			this.editMode = soggettiHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			// Preparo il menu
 			soggettiHelper.makeMenu();
-	
+
 			// Prendo i vecchi nome e tipo
 			String oldnomeprov = "", oldtipoprov = "";
-	
+
 			Boolean contaListe = ServletUtils.getContaListeFromSession(session);
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
-	
+
 			Soggetto soggettoRegistry = null;
 			org.openspcoop2.core.config.Soggetto soggettoConfig = null;
 			List<String> tipiSoggetti = null;
@@ -125,7 +157,7 @@ public final class SoggettiChange extends Action {
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(soggettiCore);
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(soggettiCore);
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(soggettiCore);
-			
+
 
 			if(soggettiCore.isRegistroServiziLocale()){
 				soggettoRegistry = soggettiCore.getSoggettoRegistro(idSogg);// core.getSoggettoRegistro(new
@@ -143,24 +175,24 @@ public final class SoggettiChange extends Action {
 				oldnomeprov = soggettoConfig.getNome();
 				oldtipoprov = soggettoConfig.getTipo();
 			}
-			
+
 			// Tipi protocollo supportati
-						List<String> listaTipiProtocollo = soggettiCore.getProtocolli();
+			List<String> listaTipiProtocollo = soggettiCore.getProtocolli();
 			//tipiSoggetti = soggettiCore.getTipiSoggettiGestiti(versioneProtocollo); // all tipi soggetti gestiti
 			// Nella change non e' piu' possibile cambiare il protocollo
-			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoprov);
-			tipiSoggetti = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
-			
+			this.protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(this.tipoprov);
+			tipiSoggetti = soggettiCore.getTipiSoggettiGestitiProtocollo(this.protocollo);
+
 			if(InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(session).getInterfaceType())){
-				versioniProtocollo = soggettiCore.getVersioniProtocollo(protocollo);
+				versioniProtocollo = soggettiCore.getVersioniProtocollo(this.protocollo);
 			}else {
 				versioniProtocollo = new ArrayList<String>();
-				versioneProtocollo = soggettiCore.getVersioneDefaultProtocollo(protocollo);
-				versioniProtocollo.add(versioneProtocollo);
+				this.versioneProtocollo = soggettiCore.getVersioneDefaultProtocollo(this.protocollo);
+				versioniProtocollo.add(this.versioneProtocollo);
 			}
-			
-			boolean isSupportatoCodiceIPA = soggettiCore.isSupportatoCodiceIPA(protocollo); 
-			
+
+			boolean isSupportatoCodiceIPA = soggettiCore.isSupportatoCodiceIPA(this.protocollo); 
+
 
 			if (contaListe) {
 				// Conto il numero di porte applicative
@@ -169,20 +201,20 @@ public final class SoggettiChange extends Action {
 				numPD = porteDelegateCore.porteDelegateList(idSogg, new Search(true)).size();// soggettoConfig.sizePortaDelegataList();
 				numSA = saCore.servizioApplicativoList(soggetto, new Search(true)).size();
 			}
-			
+
 			if(soggettiCore.isSinglePdD()){
 				if(soggettiCore.isRegistroServiziLocale()){
 					// Prendo la lista di pdd e la metto in un array
 					// In pratica se un soggetto e' associato ad una PdD Operativa,
 					// e possiede gia' delle PD o PA o SA,
 					// non e' piu' possibile cambiargli la porta di dominio in una esterna.
-					
+
 					boolean pddOperativa = false;
 					if(soggettoRegistry.getPortaDominio()!=null && !"".equals(soggettoRegistry.getPortaDominio())){
 						PdDControlStation pddCtrlstat = pddCore.getPdDControlStation(soggettoRegistry.getPortaDominio());
 						pddOperativa = PddTipologia.OPERATIVO.toString().equals(pddCtrlstat.getTipo());
 					}
-						
+
 					List<PortaDominio> lista = new ArrayList<PortaDominio>();
 					if( (numPA<=0 && numPD<=0 && numSA<=0) || !pddOperativa ){
 						// aggiungo un elemento di comodo
@@ -209,98 +241,114 @@ public final class SoggettiChange extends Action {
 					}
 				}
 			}
-			
+
 			org.openspcoop2.core.registry.Connettore connettore = null;
 			if(soggettiCore.isRegistroServiziLocale()){
 				connettore = soggettoRegistry.getConnettore();
 			}
-	
+
+
+			IDSoggetto idSoggetto = new IDSoggetto(oldtipoprov,oldnomeprov);
+			// Protocol Properties	
+			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.protocollo);
+			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
+			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
+			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigSoggetto(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idSoggetto);
+			this.protocolProperties = soggettiHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
+
 			// Se nomehid = null, devo visualizzare la pagina per la modifica dati
-			if(ServletUtils.isEditModeInProgress(request)){
+			if(ServletUtils.isEditModeInProgress(this.editMode)){
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle_ServletChange(pd, SoggettiCostanti.LABEL_SOGGETTI, 
 						SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST, oldtipoprov + "/" + oldnomeprov);
-	
+
 				if (is_router == null) 
-					isRouter = soggettoConfig.getRouter();
+					this.isRouter = soggettoConfig.getRouter();
 				if(soggettiCore.isRegistroServiziLocale()){
-					if(portadom==null){
-						portadom = soggettoRegistry.getIdentificativoPorta();
+					if(this.portadom==null){
+						this.portadom = soggettoRegistry.getIdentificativoPorta();
 					}else{
 						String old_protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(oldtipoprov);
-						if(old_protocollo.equals(protocollo)==false){
+						if(old_protocollo.equals(this.protocollo)==false){
 							// e' cambiato il protocollo: setto a empty il portadom
-							portadom = null;
+							this.portadom = null;
 						}
 					}
-					if(descr==null)
-						descr = soggettoRegistry.getDescrizione();
-					if(pdd==null)
-						pdd = soggettoRegistry.getPortaDominio();
-					if(versioneProtocollo==null)
-						versioneProtocollo = soggettoRegistry.getVersioneProtocollo();
+					if(this.descr==null)
+						this.descr = soggettoRegistry.getDescrizione();
+					if(this.pdd==null)
+						this.pdd = soggettoRegistry.getPortaDominio();
+					if(this.versioneProtocollo==null)
+						this.versioneProtocollo = soggettoRegistry.getVersioneProtocollo();
 					if(request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_IS_PRIVATO) == null){
-						privato = soggettoRegistry.getPrivato()!=null && soggettoRegistry.getPrivato();
+						this.privato = soggettoRegistry.getPrivato()!=null && soggettoRegistry.getPrivato();
 					}
-					if(codiceIpa==null){
-						codiceIpa = soggettoRegistry.getCodiceIpa();
+					if(this.codiceIpa==null){
+						this.codiceIpa = soggettoRegistry.getCodiceIpa();
 					}
 				}
 				else{
-					if(portadom==null){
-						portadom = soggettoConfig.getIdentificativoPorta();
+					if(this.portadom==null){
+						this.portadom = soggettoConfig.getIdentificativoPorta();
 					}else{
 						String old_protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(oldtipoprov);
-						if(old_protocollo.equals(protocollo)==false){
+						if(old_protocollo.equals(this.protocollo)==false){
 							// e' cambiato il protocollo: setto a empty il portadom
-							portadom = null;
+							this.portadom = null;
 						}
 					}
-					if(descr==null)
-						descr = soggettoConfig.getDescrizione();
+					if(this.descr==null)
+						this.descr = soggettoConfig.getDescrizione();
 					if (is_router == null) 
-						isRouter = soggettoConfig.getRouter();
+						this.isRouter = soggettoConfig.getRouter();
 				}
-				
-				if(pd_url_prefix_rewriter==null){
-					pd_url_prefix_rewriter = soggettoConfig.getPdUrlPrefixRewriter();
+
+				if(this.pd_url_prefix_rewriter==null){
+					this.pd_url_prefix_rewriter = soggettoConfig.getPdUrlPrefixRewriter();
 				}
-				if(pa_url_prefix_rewriter==null){
-					pa_url_prefix_rewriter = soggettoConfig.getPaUrlPrefixRewriter();
+				if(this.pa_url_prefix_rewriter==null){
+					this.pa_url_prefix_rewriter = soggettoConfig.getPaUrlPrefixRewriter();
 				}
-				if(tipoprov==null){
-					tipoprov=oldtipoprov;
+				if(this.tipoprov==null){
+					this.tipoprov=oldtipoprov;
 				}
-				if(nomeprov==null){
-					nomeprov=oldnomeprov;
+				if(this.nomeprov==null){
+					this.nomeprov=oldnomeprov;
 				}
-	
+				idSoggetto = new IDSoggetto(this.tipoprov,this.nomeprov);
+
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
-	
+
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-						
-				dati = soggettiHelper.addSoggettiToDati(TipoOperazione.CHANGE,dati, nomeprov, tipoprov, portadom, descr, 
-						isRouter, tipiSoggetti, versioneProtocollo, privato, codiceIpa, versioniProtocollo,isSupportatoCodiceIPA,
-						pddList,null,pdd,id,oldnomeprov,oldtipoprov,connettore,
-						numPD,pd_url_prefix_rewriter,numPA,pa_url_prefix_rewriter,listaTipiProtocollo,protocollo);
-								
+
+				// valorizzo i campi dinamici
+				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idSoggetto); 
+
+				dati = soggettiHelper.addSoggettiToDati(tipoOp,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
+						this.isRouter, tipiSoggetti, this.versioneProtocollo, this.privato, this.codiceIpa, versioniProtocollo,isSupportatoCodiceIPA,
+						pddList,null,this.pdd,this.id,oldnomeprov,oldtipoprov,connettore,
+						numPD,this.pd_url_prefix_rewriter,numPA,this.pa_url_prefix_rewriter,listaTipiProtocollo,this.protocollo);
+
+				// aggiunta campi custom
+				dati = soggettiHelper.addProtocolPropertiesToDati(tipoOp, dati, this.consoleConfiguration);
+
 				pd.setDati(dati);
-	
+
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-				
+
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI, ForwardParams.CHANGE());
-				
+
 			}
-	
+
 			// Controlli sui campi immessi
-			boolean isOk = soggettiHelper.soggettiCheckData(TipoOperazione.CHANGE);
-			
+			boolean isOk = soggettiHelper.soggettiCheckData(tipoOp, this.id, this.tipoprov, this.nomeprov, this.codiceIpa, this.pd_url_prefix_rewriter, this.pa_url_prefix_rewriter);
+
 			if(isOk){
 				// check change tipo/nome con gestione workflow abilitata
 				if(soggettiCore.isRegistroServiziLocale() && soggettiCore.isShowGestioneWorkflowStatoDocumenti()){
-					if( (oldnomeprov.equals(nomeprov)==false) || (oldtipoprov.equals(tipoprov)==false) ){
+					if( (oldnomeprov.equals(this.nomeprov)==false) || (oldtipoprov.equals(this.tipoprov)==false) ){
 						HashMap<ErrorsHandlerCostant, String> whereIsInUso = new HashMap<ErrorsHandlerCostant, String>();
 						if (soggettiCore.isSoggettoInUsoInPackageFinali(soggettoRegistry, whereIsInUso)) {
 							Set<ErrorsHandlerCostant> keys = whereIsInUso.keySet();
@@ -311,7 +359,7 @@ public final class SoggettiChange extends Action {
 							bf.append(" non modificabile poiche' :<br>");
 							for (ErrorsHandlerCostant key : keys) {
 								String msg = whereIsInUso.get(key);
-		
+
 								if (ErrorsHandlerCostant.IN_USO_IN_SERVIZI.toString().equals(key.toString())) {
 									bf.append("- erogatore di Servizi in uno stato finale: " + msg + "<BR>");
 								}
@@ -327,9 +375,9 @@ public final class SoggettiChange extends Action {
 								else if (ErrorsHandlerCostant.IS_PARTECIPANTE_COOPERAZIONE.toString().equals(key.toString())) {
 									bf.append("- soggetto partecipante di un accordo di cooperazione in uno stato finale: " + msg + "<BR>");
 								}
-		
+
 							}// chiudo for
-		
+
 							bf.append("<br>");
 							isOk = false;
 							pd.setMessage(bf.toString());
@@ -337,10 +385,10 @@ public final class SoggettiChange extends Action {
 					}
 				}
 			}
-			
+
 			if(isOk){
 				// check visibilita
-				if (soggettiCore.isRegistroServiziLocale() && soggettiCore.isShowFlagPrivato() && privato) {
+				if (soggettiCore.isRegistroServiziLocale() && soggettiCore.isShowFlagPrivato() && this.privato) {
 					HashMap<ErrorsHandlerCostant, String> whereIsInUso = new HashMap<ErrorsHandlerCostant, String>();
 					if (soggettiCore.isSoggettoInUsoInPackagePubblici(soggettoRegistry, whereIsInUso)) {
 						Set<ErrorsHandlerCostant> keys = whereIsInUso.keySet();
@@ -351,7 +399,7 @@ public final class SoggettiChange extends Action {
 						bf.append(" non impostabile a privata poiche' :<br>");
 						for (ErrorsHandlerCostant key : keys) {
 							String msg = whereIsInUso.get(key);
-	
+
 							if (ErrorsHandlerCostant.IN_USO_IN_SERVIZI.toString().equals(key.toString())) {
 								bf.append("- erogatore di Servizi con visibilita' pubblica: " + msg + "<BR>");
 							}
@@ -367,120 +415,140 @@ public final class SoggettiChange extends Action {
 							else if (ErrorsHandlerCostant.IS_PARTECIPANTE_COOPERAZIONE.toString().equals(key.toString())) {
 								bf.append("- soggetto partecipante di un accordo di cooperazione con visibilita' pubblica: " + msg + "<BR>");
 							}
-	
+
 						}// chiudo for
-	
+
 						bf.append("<br>");
 						isOk = false;
 						pd.setMessage(bf.toString());
 					} 
 				}
 			}
-			
+
+			// Valido i parametri custom se ho gia' passato tutta la validazione prevista
+			if(isOk){
+				try{
+					//validazione campi dinamici
+					this.consoleDynamicConfiguration.validateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idSoggetto); 
+				}catch(ProtocolException e){
+					pd.setMessage(e.getMessage());
+					isOk = false;
+				}
+			}
+
 			if (!isOk) {
-				
+
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle_ServletChange(pd, SoggettiCostanti.LABEL_SOGGETTI, 
 						SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST, oldtipoprov + "/" + oldnomeprov);
-					
+
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
-	
+
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-				
-				dati = soggettiHelper.addSoggettiToDati(TipoOperazione.CHANGE,dati, nomeprov, tipoprov, portadom, descr, 
-						isRouter, tipiSoggetti, versioneProtocollo, privato, codiceIpa, versioniProtocollo,isSupportatoCodiceIPA,
-						pddList,null,pdd,id,oldnomeprov,oldtipoprov,connettore,
-						numPD,pd_url_prefix_rewriter,numPA,pa_url_prefix_rewriter,listaTipiProtocollo,protocollo);
-								
+
+				// valorizzo i campi dinamici
+				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idSoggetto); 
+
+				dati = soggettiHelper.addSoggettiToDati(tipoOp,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
+						this.isRouter, tipiSoggetti, this.versioneProtocollo, this.privato, this.codiceIpa, versioniProtocollo,isSupportatoCodiceIPA,
+						pddList,null,this.pdd,this.id,oldnomeprov,oldtipoprov,connettore,
+						numPD,this.pd_url_prefix_rewriter,numPA,this.pa_url_prefix_rewriter,listaTipiProtocollo,this.protocollo);
+
+				// aggiunta campi custom
+				dati = soggettiHelper.addProtocolPropertiesToDati(tipoOp, dati, this.consoleConfiguration);
+
 				pd.setDati(dati);
-	
+
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-				
+
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI, ForwardParams.CHANGE());
 
 			}
-	
+
 			// Modifico i dati del soggetto nel db
 
 			// Se portadom = "", lo imposto
 			// se identificativo porta e' di default allora aggiorno il nome
 			String identificativoPortaCalcolato = null;
-			String identificativoPortaAttuale = portadom;
+			String identificativoPortaAttuale = this.portadom;
 			if(!soggettiCore.isRegistroServiziLocale()){
 				identificativoPortaAttuale = soggettoConfig.getIdentificativoPorta();
 			}
-			IDSoggetto idSoggetto = new IDSoggetto(tipoprov,nomeprov);
-			if(portadom!=null && !portadom.equals("")){
-				
+			idSoggetto = new IDSoggetto(this.tipoprov,this.nomeprov);
+			if(this.portadom!=null && !this.portadom.equals("")){
+
 				IDSoggetto oldSoggetto = new IDSoggetto(oldtipoprov,oldnomeprov);
-				String oldIdentificativoPorta = soggettiCore.getIdentificativoPortaDefault(protocollo, oldSoggetto);
-				if (oldIdentificativoPorta.equals(portadom)) {
+				String oldIdentificativoPorta = soggettiCore.getIdentificativoPortaDefault(this.protocollo, oldSoggetto);
+				if (oldIdentificativoPorta.equals(this.portadom)) {
 					// gli identificativi porta sono rimasti invariati
 					// setto l identificativo porta di default (in caso sia
 					// cambiato il nome)
-					identificativoPortaCalcolato = soggettiCore.getIdentificativoPortaDefault(protocollo, idSoggetto);
+					identificativoPortaCalcolato = soggettiCore.getIdentificativoPortaDefault(this.protocollo, idSoggetto);
 				} else {					
 					// in questo caso ho cambiato l'identificativo porta
 					// e il valore inserito nel campo va inserito
 					identificativoPortaCalcolato = identificativoPortaAttuale;
 				}
 			}else{
-				identificativoPortaCalcolato = soggettiCore.getIdentificativoPortaDefault(protocollo, idSoggetto);
+				identificativoPortaCalcolato = soggettiCore.getIdentificativoPortaDefault(this.protocollo, idSoggetto);
 			}
 
 			if(soggettiCore.isRegistroServiziLocale()){
-				
+
 				soggettoRegistry.setIdentificativoPorta(identificativoPortaCalcolato);
-				soggettoRegistry.setNome(nomeprov);
-				soggettoRegistry.setTipo(tipoprov);
+				soggettoRegistry.setNome(this.nomeprov);
+				soggettoRegistry.setTipo(this.tipoprov);
 				soggettoRegistry.setOldNomeForUpdate(oldnomeprov);
 				soggettoRegistry.setOldTipoForUpdate(oldtipoprov);
-				soggettoRegistry.setDescrizione(descr);
-				soggettoRegistry.setVersioneProtocollo(versioneProtocollo);
-				soggettoRegistry.setPrivato(privato);
-				soggettoRegistry.setPortaDominio(pdd);
-				
+				soggettoRegistry.setDescrizione(this.descr);
+				soggettoRegistry.setVersioneProtocollo(this.versioneProtocollo);
+				soggettoRegistry.setPrivato(this.privato);
+				soggettoRegistry.setPortaDominio(this.pdd);
+
 			}
-			
+
 			if(soggettiCore.isRegistroServiziLocale()){
-				if ((codiceIpa != null && !"".equals(codiceIpa))) {
-					String oldCodiceIpa = soggettiCore.getCodiceIPADefault(protocollo, new IDSoggetto(oldtipoprov,oldnomeprov), false);
-					if (oldCodiceIpa.equals(codiceIpa)) {
+				if ((this.codiceIpa != null && !"".equals(this.codiceIpa))) {
+					String oldCodiceIpa = soggettiCore.getCodiceIPADefault(this.protocollo, new IDSoggetto(oldtipoprov,oldnomeprov), false);
+					if (oldCodiceIpa.equals(this.codiceIpa)) {
 						// il codice ipa e' rimasto invariato
 						// setto il codice ipa di default (in caso sia cambiato il nome)
-						soggettoRegistry.setCodiceIpa(soggettiCore.getCodiceIPADefault(protocollo, new IDSoggetto(tipoprov,nomeprov), false));
+						soggettoRegistry.setCodiceIpa(soggettiCore.getCodiceIPADefault(this.protocollo, new IDSoggetto(this.tipoprov,this.nomeprov), false));
 					} else {
 						// in questo caso ho cambiato il codice ipa e il valore inserito nel campo va inserito
-						soggettoRegistry.setCodiceIpa(codiceIpa);
+						soggettoRegistry.setCodiceIpa(this.codiceIpa);
 					}
 				} else {
-					codiceIpa = soggettiCore.getCodiceIPADefault(protocollo, new IDSoggetto(tipoprov,nomeprov), false);
-					soggettoRegistry.setCodiceIpa(codiceIpa);
+					this.codiceIpa = soggettiCore.getCodiceIPADefault(this.protocollo, new IDSoggetto(this.tipoprov,this.nomeprov), false);
+					soggettoRegistry.setCodiceIpa(this.codiceIpa);
 				}
 			}
-			
+
 			if(soggettiCore.isRegistroServiziLocale()){
 				if(soggettiCore.isSinglePdD()){
-					if (pdd.equals("-"))
+					if (this.pdd.equals("-"))
 						soggettoRegistry.setPortaDominio(null);
 					else
-						soggettoRegistry.setPortaDominio(pdd);
+						soggettoRegistry.setPortaDominio(this.pdd);
 				}else{
-					soggettoRegistry.setPortaDominio(pdd);
+					soggettoRegistry.setPortaDominio(this.pdd);
 				}
 			}
-			
+
 			soggettoConfig.setOldNomeForUpdate(oldnomeprov);
 			soggettoConfig.setOldTipoForUpdate(oldtipoprov);
-			soggettoConfig.setDescrizione(descr);
-			soggettoConfig.setTipo(tipoprov);
-			soggettoConfig.setNome(nomeprov);
-			soggettoConfig.setDescrizione(descr);
+			soggettoConfig.setDescrizione(this.descr);
+			soggettoConfig.setTipo(this.tipoprov);
+			soggettoConfig.setNome(this.nomeprov);
+			soggettoConfig.setDescrizione(this.descr);
 			soggettoConfig.setIdentificativoPorta(identificativoPortaCalcolato);
-			soggettoConfig.setRouter(isRouter);
-			soggettoConfig.setPdUrlPrefixRewriter(pd_url_prefix_rewriter);
-			soggettoConfig.setPaUrlPrefixRewriter(pa_url_prefix_rewriter);
+			soggettoConfig.setRouter(this.isRouter);
+			soggettoConfig.setPdUrlPrefixRewriter(this.pd_url_prefix_rewriter);
+			soggettoConfig.setPaUrlPrefixRewriter(this.pa_url_prefix_rewriter);
+
+			//imposto properties custom
+			soggettoRegistry.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties)); 
 
 			SoggettoCtrlStat sog = new SoggettoCtrlStat(soggettoRegistry, soggettoConfig);
 			sog.setOldNomeForUpdate(oldnomeprov);
@@ -488,49 +556,49 @@ public final class SoggettiChange extends Action {
 
 			// Oggetti da modificare (per riflettere la modifica sul connettore)
 			SoggettoUpdateUtilities soggettoUpdateUtilities = 
-					new SoggettoUpdateUtilities(soggettiCore, oldnomeprov, nomeprov, oldtipoprov, tipoprov, sog);
-			
+					new SoggettoUpdateUtilities(soggettiCore, oldnomeprov, this.nomeprov, oldtipoprov, this.tipoprov, sog);
+
 			// Soggetto
 			// aggiungo il soggetto da aggiornare
 			soggettoUpdateUtilities.addSoggetto();
-						
+
 			// Servizi Applicativi
 			// Se e' cambiato il tipo o il nome del soggetto devo effettuare la modifica dei servizi applicativi
 			// poiche il cambio si riflette sul nome dei connettori del servizio applicativo
 			soggettoUpdateUtilities.checkServiziApplicativi();
-						
+
 			// Accordi di Cooperazione
 			// Se e' cambiato il tipo o il nome del soggetto devo effettuare la modifica degli accordi di cooperazione:
 			// - soggetto referente
 			// - soggetti partecipanti
 			soggettoUpdateUtilities.checkAccordiCooperazione();
-	
+
 			// Accordi di Servizio Parte Comune
 			// Se e' cambiato il tipo o il nome del soggetto devo effettuare la modifica degli accordi di servizio 
 			// poiche il cambio si riflette sul soggetto gestore
 			soggettoUpdateUtilities.checkAccordiServizioParteComune();
-						
+
 			// Accordi di Servizio Parte Specifica
 			// Se e' cambiato il tipo o il nome del soggetto devo effettuare la modifica dei servizi 
 			// poiche il cambio si riflette sul nome dei connettori del servizio 
 			soggettoUpdateUtilities.checkAccordiServizioParteSpecifica();
-			
+
 			// Porte Delegate
 			// Se e' cambiato il tipo o il nome del soggetto devo effettuare la modifica delle porte delegate
 			// poiche il cambio si riflette sul nome della porta delegata
 			soggettoUpdateUtilities.checkPorteDelegate();
-	
+
 			// Porte Applicative
 			// Se e' cambiato il tipo o il nome del soggetto virtuale devo effettuare la modifica delle porte applicative
 			// poiche il cambio si riflette all'interno delle informazioni delle porte applicative
 			soggettoUpdateUtilities.checkPorteApplicative();	
-							
+
 			// Fruitori nei servizi 
 			soggettoUpdateUtilities.checkFruitori();
-			
+
 			// eseguo l'aggiornamento
 			soggettiCore.performUpdateOperation(userLogin, soggettiHelper.smista(), soggettoUpdateUtilities.getOggettiDaAggiornare().toArray());
-				
+
 			// preparo lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
@@ -554,9 +622,9 @@ public final class SoggettiChange extends Action {
 			}
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-			
+
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, SoggettiCostanti.OBJECT_NAME_SOGGETTI, ForwardParams.CHANGE());
-			
+
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
 					SoggettiCostanti.OBJECT_NAME_SOGGETTI, ForwardParams.CHANGE());
