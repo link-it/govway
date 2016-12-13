@@ -276,7 +276,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			String[] accordiCooperazioneEsistentiLabel=null;
 
 
-			String postBackElementName = ServletUtils.getPostBackElementName(request);
+			String postBackElementName = apcHelper.getParameter(Costanti.POSTBACK_ELEMENT_NAME); //ServletUtils.getPostBackElementName(request);
 
 			// Controllo se ho modificato il protocollo, resetto il referente
 			if(postBackElementName != null ){
@@ -348,7 +348,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					this.accordoCooperazione = "-1";
 					this.scadenza= "";
 					this.privato = false;
-					this.tipoProtocollo = apcCore.getProtocolloDefault();
+					// commentato perche' se si ricarica la pagina senza inserire un nome viene resettato al default... 
+					//this.tipoProtocollo = apcCore.getProtocolloDefault();
 
 					if(this.tipoAccordo!=null){
 						if("apc".equals(this.tipoAccordo)){
@@ -378,6 +379,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				// valorizzo i campi dinamici
+				apcHelper.updateProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+				
 				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
 						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idApc); 
 
@@ -412,6 +415,16 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					this.filtrodup, this.confric, this.idcoll, this.consord, 
 					this.scadenza, "0",this.referente, this.versione,this.accordoCooperazione,this.privato,visibilitaAccordoCooperazione,null,
 					this.wsblconc,this.wsblserv,this.wsblservcorr, this.validazioneDocumenti, this.tipoProtocollo,null);
+			
+			// Validazione base dei parametri custom 
+			if(isOk){
+				try{
+					apcHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+				}catch(ProtocolException e){
+					pd.setMessage(e.getMessage());
+					isOk = false;
+				}
+			}
 
 			// Valido i parametri custom se ho gia' passato tutta la validazione prevista
 			if(isOk){
@@ -436,6 +449,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				// valorizzo i campi dinamici
+				apcHelper.updateProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties); 
+				
 				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
 						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idApc); 
 
@@ -544,6 +559,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 					
 					// valorizzo i campi dinamici
+					apcHelper.updateProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties); 
+					
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
 							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idApc); 
 

@@ -250,6 +250,7 @@ public final class SoggettiAdd extends Action {
 				}
 
 				// valorizzo i campi dinamici
+				soggettiHelper.updateProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties); 
 				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idSoggetto); 
 
 				dati = soggettiHelper.addSoggettiToDati(tipoOp,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
@@ -287,6 +288,16 @@ public final class SoggettiAdd extends Action {
 					}
 				}
 			}
+			
+			// Validazione base dei parametri custom 
+			if(isOk){
+				try{
+					soggettiHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+				}catch(ProtocolException e){
+					pd.setMessage(e.getMessage());
+					isOk = false;
+				}
+			}
 
 			// Valido i parametri custom se ho gia' passato tutta la validazione prevista
 			if(isOk){
@@ -310,6 +321,7 @@ public final class SoggettiAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				// valorizzo i campi dinamici
+				soggettiHelper.updateProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties); 
 				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idSoggetto); 
 
 				dati = soggettiHelper.addSoggettiToDati(tipoOp,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 

@@ -34,7 +34,6 @@ import javax.mail.BodyPart;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
@@ -48,21 +47,31 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
+import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemValueType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.AbstractConsoleItem;
+import org.openspcoop2.protocol.sdk.properties.AbstractProperty;
 import org.openspcoop2.protocol.sdk.properties.BaseConsoleItem;
+import org.openspcoop2.protocol.sdk.properties.BinaryConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.BinaryProperty;
+import org.openspcoop2.protocol.sdk.properties.BooleanConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.BooleanProperty;
 import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
+import org.openspcoop2.protocol.sdk.properties.NumberConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.NumberProperty;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesFactory;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.properties.StringConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.StringProperty;
 import org.openspcoop2.utils.crypt.Password;
 import org.openspcoop2.utils.mime.MimeMultipart;
+import org.openspcoop2.utils.regexp.RegExpException;
+import org.openspcoop2.utils.regexp.RegExpNotFoundException;
+import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -108,6 +117,7 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 import org.openspcoop2.web.lib.users.dao.User;
+import org.slf4j.Logger;
 
 /**
  * ctrlstatHelper
@@ -1991,5 +2001,68 @@ public class ConsoleHelper {
 			dati.addElement(de);
 		}
 		return dati;
+	}
+	
+	
+	public void updateProtocolProperties(ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
+			ProtocolProperties properties) throws ProtocolException {
+
+		for (int i = 0; i < properties.sizeProperties(); i++) {
+			AbstractProperty<?> property = properties.getProperty(i);
+			ProtocolPropertiesUtils.setDefaultValue(consoleConfiguration.getConsoleItem(), property);
+		}
+	}
+	
+	public void validaProtocolProperties(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, ProtocolProperties properties) throws ProtocolException{
+		try {
+			List<BaseConsoleItem> consoleItems = consoleConfiguration.getConsoleItem();
+			for (int i = 0; i < properties.sizeProperties(); i++) {
+				AbstractProperty<?> property = properties.getProperty(i);
+				AbstractConsoleItem<?> consoleItem = ProtocolPropertiesUtils.getAbstractConsoleItem(consoleItems, property);
+
+				if(consoleItem != null) {
+					if(consoleItem instanceof StringConsoleItem){
+						StringProperty sp = (StringProperty) property;
+						if (consoleItem.isRequired() && StringUtils.isEmpty(sp.getValue())) {
+							throw new ProtocolException("Dati incompleti. E' necessario indicare un"+consoleItem.getLabel());
+						}
+
+						if(StringUtils.isNotEmpty(consoleItem.getRegexpr())){
+							if(!RegularExpressionEngine.isMatch(sp.getValue(),consoleItem.getRegexpr())){
+								throw new ProtocolException("Il campo "+consoleItem.getLabel()+" deve rispettare il seguente pattern "+consoleItem.getRegexpr());
+							}
+						}
+					}
+					else if(consoleItem instanceof NumberConsoleItem){
+						NumberProperty np = (NumberProperty) property;
+						if (consoleItem.isRequired() && np.getValue() == null) {
+							throw new ProtocolException("Dati incompleti. E' necessario indicare un"+consoleItem.getLabel());
+						}
+					}
+					else if(consoleItem instanceof BinaryConsoleItem){
+						BinaryProperty bp = (BinaryProperty) property;
+						if (consoleItem.isRequired() && bp.getValue() == null) {
+							throw new ProtocolException("Dati incompleti. E' necessario indicare un"+consoleItem.getLabel());
+						}
+					}
+					else if(consoleItem instanceof BooleanConsoleItem){
+						BooleanProperty bp = (BooleanProperty) property;
+						// le checkbox obbligatorie non dovrebbero esserci...
+						if (consoleItem.isRequired() && bp.getValue() == null) {
+							throw new ProtocolException("Dati incompleti. E' necessario indicare un"+consoleItem.getLabel());
+						}
+					}
+				}
+			}
+
+		} catch (RegExpException e) {
+			throw new ProtocolException(e);
+		} catch (RegExpNotFoundException e) {
+			throw new ProtocolException(e);
+		} catch (ProtocolException e) {
+			throw e;
+		}
+		
 	}
 }

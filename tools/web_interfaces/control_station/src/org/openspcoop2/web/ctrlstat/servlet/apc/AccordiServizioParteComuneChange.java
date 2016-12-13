@@ -411,6 +411,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				// valorizzo i campi dinamici
+				apcHelper.updateProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties); 
 				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
 						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD); 
 
@@ -450,6 +451,16 @@ public final class AccordiServizioParteComuneChange extends Action {
 				this.scadenza, this.id,this.referente,this.versione,this.accordoCooperazioneId,this.privato,visibilitaAccordoCooperazione,idAccordoOLD, 
 				"", "", "", this.validazioneDocumenti,this.tipoProtocollo,this.backToStato);
 
+		// Validazione base dei parametri custom 
+		if(isOk){
+			try{
+				apcHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+			}catch(ProtocolException e){
+				pd.setMessage(e.getMessage());
+				isOk = false;
+			}
+		}
+
 		// Valido i parametri custom se ho gia' passato tutta la validazione prevista
 		if(isOk){
 			try{
@@ -474,8 +485,9 @@ public final class AccordiServizioParteComuneChange extends Action {
 			Vector<DataElement> dati = new Vector<DataElement>();
 
 			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-			
+
 			// valorizzo i campi dinamici
+			apcHelper.updateProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties); 
 			this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
 					this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD); 
 
@@ -488,7 +500,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 
 			// aggiunta campi custom
 			dati = apcHelper.addProtocolPropertiesToDati(tipoOp, dati, this.consoleConfiguration);
-			
+
 			pd.setDati(dati);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
@@ -511,8 +523,9 @@ public final class AccordiServizioParteComuneChange extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeInProgress());
-				
+
 				// valorizzo i campi dinamici
+				apcHelper.updateProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties); 
 				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
 						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD); 
 
@@ -521,7 +534,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 						this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
 						this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 						this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,this.tipoProtocollo, listaTipiProtocollo,used);
-				
+
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDati(tipoOp, dati, this.consoleConfiguration);
 
@@ -603,7 +616,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 
 		// stato
 		as.setStatoPackage(this.statoPackage);
-		
+
 		// Check stato
 		if(apcCore.isShowGestioneWorkflowStatoDocumenti()){
 
@@ -626,8 +639,9 @@ public final class AccordiServizioParteComuneChange extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-				
+
 				// valorizzo i campi dinamici
+				apcHelper.updateProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties); 
 				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
 						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD); 
 
@@ -640,7 +654,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDati(tipoOp, dati, this.consoleConfiguration);
-				
+
 				pd.setDati(dati);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
@@ -727,8 +741,9 @@ public final class AccordiServizioParteComuneChange extends Action {
 							Vector<DataElement> dati = new Vector<DataElement>();
 
 							dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-							
+
 							// valorizzo i campi dinamici
+							apcHelper.updateProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties); 
 							this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
 									this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD); 
 
@@ -738,7 +753,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 									this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 									this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
 									this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati);
-							
+
 							// aggiunta campi custom
 							dati = apcHelper.addProtocolPropertiesToDati(tipoOp, dati, this.consoleConfiguration);
 
