@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemValueType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 
 public class ProtocolPropertiesUtils {
 
-	//[TODO] set Valore attuale
-	public static void setDefaultValue(List<BaseConsoleItem> consoleItems, AbstractProperty<?> property){
+	public static void setDefaultValue(List<BaseConsoleItem> consoleItems, AbstractProperty<?> property) throws ProtocolException{
 		if(property ==null)
 			return;
 
@@ -40,7 +40,7 @@ public class ProtocolPropertiesUtils {
 					Boolean booleanValue = property.getBooleanValue();
 					((BooleanConsoleItem) consoleItem).setDefaultValue(booleanValue);
 				}
-				
+
 			}
 		}
 	}
@@ -91,19 +91,23 @@ public class ProtocolPropertiesUtils {
 		return null;
 	}
 
-	public static void setDefaultValue(BaseConsoleItem item, Object defaultValue){
-		if(item instanceof AbstractConsoleItem<?> && defaultValue != null){
-			if(item instanceof StringConsoleItem){
-				((StringConsoleItem) item).setDefaultValue((String) defaultValue);
+	public static void setDefaultValue(BaseConsoleItem item, Object defaultValue) throws ProtocolException{
+		try{
+			if(item instanceof AbstractConsoleItem<?> && defaultValue != null){
+				if(item instanceof StringConsoleItem){
+					((StringConsoleItem) item).setDefaultValue((String) defaultValue);
+				}
+				else if(item instanceof NumberConsoleItem){
+					((NumberConsoleItem) item).setDefaultValue((Long) defaultValue);
+				}
+				else if(item instanceof BinaryConsoleItem){
+					((BinaryConsoleItem) item).setDefaultValue((byte[]) defaultValue);
+				}else if(item instanceof BooleanConsoleItem){
+					((BooleanConsoleItem) item).setDefaultValue((Boolean) defaultValue);
+				}
 			}
-			else if(item instanceof NumberConsoleItem){
-				((NumberConsoleItem) item).setDefaultValue((Long) defaultValue);
-			}
-			else if(item instanceof BinaryConsoleItem){
-				((BinaryConsoleItem) item).setDefaultValue((byte[]) defaultValue);
-			}else if(item instanceof BooleanConsoleItem){
-				((BooleanConsoleItem) item).setDefaultValue((Boolean) defaultValue);
-			}
+		}catch(Exception e){
+			throw new ProtocolException("Impossibile assegnare un valore ci tipo ["+defaultValue.getClass().getName()+"] all'item ["+item.getId()+"]");
 		}
 	}
 	public static ConsoleItemValueType getConsoleItemValueType(BaseConsoleItem item){
@@ -124,17 +128,17 @@ public class ProtocolPropertiesUtils {
 		return null;
 	}
 
-	
+
 	public static List<ProtocolProperty> toProtocolProperties (ProtocolProperties protocolProperties, ConsoleOperationType consoleOperationType){
 		List<ProtocolProperty> lstProtocolProperty = new ArrayList<>();
-		
+
 		for (int i = 0; i < protocolProperties.sizeProperties(); i++) {
 			AbstractProperty<?> property = protocolProperties.getProperty(i);
-			
+
 			ProtocolProperty prop = new ProtocolProperty();
 
 			prop.setName(property.getId()); 
-			
+
 			if(property instanceof StringProperty){
 				StringProperty sp = (StringProperty) property;
 				prop.setValue(sp.getValue());
@@ -148,12 +152,12 @@ public class ProtocolPropertiesUtils {
 				BooleanProperty bp = (BooleanProperty) property;
 				prop.setBooleanValue(bp.getValue() != null ? bp.getValue() : false); 
 			}   
-			
+
 			lstProtocolProperty.add(prop);
 		}
-		
+
 		return lstProtocolProperty;
 	}
-	
+
 
 }
