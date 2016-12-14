@@ -9,7 +9,7 @@
         <accordo-servizio-parte-comune nome="EsempioREST" profilo-collaborazione="sincrono" 
 		utilizzo-senza-azione="true" versione="1" service-binding="rest">
                     <soggetto-referente tipo="API" nome="MinisteroReferente"/>
-                    <port-type nome="API" profilo-collaborazione="sincrono" filtro-duplicati="abilitato">
+                    <port-type nome="API" profilo-collaborazione="sincrono">
                         <azione nome="invoke"/>
                     </port-type>
         </accordo-servizio-parte-comune>
