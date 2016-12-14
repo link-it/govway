@@ -3,6 +3,7 @@ package org.openspcoop2.protocol.sdk.properties;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemValueType;
@@ -90,6 +91,20 @@ public class ProtocolPropertiesUtils {
 		}
 		return null;
 	}
+	
+	public static AbstractProperty<?> getAbstractPropertyById(ProtocolProperties protocolProperties, String propertyId){
+		if(propertyId ==null)
+			return null;
+
+		for (int i = 0; i < protocolProperties.sizeProperties(); i++) {
+			AbstractProperty<?> property = protocolProperties.getProperty(i);
+			
+			if(property.getId().equals(propertyId))
+				return property;
+		}
+		
+		return null;
+	}
 
 	public static void setDefaultValue(BaseConsoleItem item, Object defaultValue) throws ProtocolException{
 		try{
@@ -132,32 +147,69 @@ public class ProtocolPropertiesUtils {
 	public static List<ProtocolProperty> toProtocolProperties (ProtocolProperties protocolProperties, ConsoleOperationType consoleOperationType){
 		List<ProtocolProperty> lstProtocolProperty = new ArrayList<>();
 
+
 		for (int i = 0; i < protocolProperties.sizeProperties(); i++) {
 			AbstractProperty<?> property = protocolProperties.getProperty(i);
 
 			ProtocolProperty prop = new ProtocolProperty();
 
-			prop.setName(property.getId()); 
+			prop.setName(property.getId());
+			boolean add = false;
 
 			if(property instanceof StringProperty){
 				StringProperty sp = (StringProperty) property;
 				prop.setValue(sp.getValue());
+				if(StringUtils.isNotEmpty(sp.getValue()))
+					add = true;
 			} else if(property instanceof NumberProperty){
 				NumberProperty np = (NumberProperty) property;
 				prop.setNumberValue(np.getValue());
+				if(np.getValue() != null)
+					add = true;
+				
 			} else if(property instanceof BinaryProperty){
 				BinaryProperty bp = (BinaryProperty) property;
-				prop.setByteFile(bp.getValue()); 
+				prop.setByteFile(bp.getValue());
+				if(bp.getValue() != null && bp.getValue().length > 0)
+					add = true;
+				
 			} else if(property instanceof BooleanProperty){
 				BooleanProperty bp = (BooleanProperty) property;
-				prop.setBooleanValue(bp.getValue() != null ? bp.getValue() : false); 
+				prop.setBooleanValue(bp.getValue() != null ? bp.getValue() : false);
+				if(bp.getValue() != null)
+					add = true;
 			}   
 
-			lstProtocolProperty.add(prop);
+			if(add)
+				lstProtocolProperty.add(prop);
 		}
 
 		return lstProtocolProperty;
 	}
 
+	public static void mergeProtocolProperties (ProtocolProperties protocolProperties, List<ProtocolProperty> listaProtocolPropertiesDaDB, ConsoleOperationType consoleOperationType){
+		for (int i = 0; i < protocolProperties.sizeProperties(); i++) {
+			AbstractProperty<?> property = protocolProperties.getProperty(i);
+
+			for (ProtocolProperty protocolProperty : listaProtocolPropertiesDaDB) {
+				if(property.getId().equals(protocolProperty.getName())){
+					if(property instanceof StringProperty){
+						StringProperty sp = (StringProperty) property;
+						sp.setValue(protocolProperty.getValue());
+					} else if(property instanceof NumberProperty){
+						NumberProperty np = (NumberProperty) property;
+						np.setValue(protocolProperty.getNumberValue());
+					} else if(property instanceof BinaryProperty){
+						BinaryProperty bp = (BinaryProperty) property;
+						bp.setValue(protocolProperty.getByteFile());
+					} else if(property instanceof BooleanProperty){
+						BooleanProperty bp = (BooleanProperty) property;
+						bp.setValue(protocolProperty.getBooleanValue());
+					}
+					break;
+				}
+			}
+		}
+	}
 
 }
