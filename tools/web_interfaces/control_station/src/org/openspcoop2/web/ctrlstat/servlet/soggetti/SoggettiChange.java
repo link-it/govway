@@ -39,6 +39,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -50,6 +51,7 @@ import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
@@ -59,8 +61,9 @@ import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
+import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
-import org.openspcoop2.web.lib.mvc.ConsoleConfigurationUtils;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -95,6 +98,7 @@ public final class SoggettiChange extends Action {
 	private IRegistryReader registryReader = null; 
 	private ConsoleOperationType consoleOperationType = null;
 	private ConsoleInterfaceType consoleInterfaceType = null;
+	private String protocolPropertiesSet = null;
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -111,7 +115,7 @@ public final class SoggettiChange extends Action {
 
 		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
 		this.consoleOperationType = ConsoleOperationType.CHANGE;
-		this.consoleInterfaceType = ConsoleConfigurationUtils.getTipoInterfaccia(session); 
+		this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(session); 
 
 		// Parametri relativi al tipo operazione
 		TipoOperazione tipoOp = TipoOperazione.CHANGE; 
@@ -136,6 +140,8 @@ public final class SoggettiChange extends Action {
 			this.pa_url_prefix_rewriter = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PA_URL_PREFIX_REWRITER);
 
 			this.editMode = soggettiHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+			this.protocolPropertiesSet = soggettiHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
+			
 			// Preparo il menu
 			soggettiHelper.makeMenu();
 
@@ -318,13 +324,22 @@ public final class SoggettiChange extends Action {
 				}
 				idSoggetto = new IDSoggetto(this.tipoprov,this.nomeprov);
 
+				// Inizializzazione delle properties da db al primo accesso alla pagina
+				if(this.protocolPropertiesSet == null){
+					try{
+						Soggetto soggetto = this.registryReader.getSoggetto(idSoggetto);
+						List<ProtocolProperty> protocolPropertyList = soggetto.getProtocolPropertyList(); 
+						ProtocolPropertiesUtils.mergeProtocolProperties(this.protocolProperties, protocolPropertyList, this.consoleOperationType); 
+					}catch(RegistryNotFound r){}
+				}
+
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				// valorizzo i campi dinamici
-				soggettiHelper.updateProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties); 
+
+				// update della configurazione 
 				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idSoggetto); 
 
 				dati = soggettiHelper.addSoggettiToDati(tipoOp,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
@@ -333,7 +348,7 @@ public final class SoggettiChange extends Action {
 						numPD,this.pd_url_prefix_rewriter,numPA,this.pa_url_prefix_rewriter,listaTipiProtocollo,this.protocollo);
 
 				// aggiunta campi custom
-				dati = soggettiHelper.addProtocolPropertiesToDati(tipoOp, dati, this.consoleConfiguration);
+				dati = soggettiHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType,this.protocolProperties);
 
 				pd.setDati(dati);
 
@@ -457,8 +472,7 @@ public final class SoggettiChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				// valorizzo i campi dinamici
-				soggettiHelper.updateProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties); 
+				// update della configurazione 
 				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idSoggetto); 
 
 				dati = soggettiHelper.addSoggettiToDati(tipoOp,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
@@ -467,7 +481,7 @@ public final class SoggettiChange extends Action {
 						numPD,this.pd_url_prefix_rewriter,numPA,this.pa_url_prefix_rewriter,listaTipiProtocollo,this.protocollo);
 
 				// aggiunta campi custom
-				dati = soggettiHelper.addProtocolPropertiesToDati(tipoOp, dati, this.consoleConfiguration);
+				dati = soggettiHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType,this.protocolProperties);
 
 				pd.setDati(dati);
 

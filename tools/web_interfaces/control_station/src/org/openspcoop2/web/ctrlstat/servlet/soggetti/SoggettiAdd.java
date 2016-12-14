@@ -57,7 +57,7 @@ import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
-import org.openspcoop2.web.lib.mvc.ConsoleConfigurationUtils;
+import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -84,7 +84,7 @@ public final class SoggettiAdd extends Action {
 	private String nomeprov , tipoprov, portadom, descr, versioneProtocollo,pdd, codiceIpa, pd_url_prefix_rewriter,pa_url_prefix_rewriter,protocollo;
 	private boolean isRouter,privato; 
 	private Boolean singlePdD = null;
-	
+		
 	// Protocol Properties
 	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
 	private ConsoleConfiguration consoleConfiguration =null;
@@ -108,7 +108,7 @@ public final class SoggettiAdd extends Action {
 
 		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
 		this.consoleOperationType = ConsoleOperationType.ADD;
-		this.consoleInterfaceType = ConsoleConfigurationUtils.getTipoInterfaccia(session); 
+		this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(session); 
 
 		// Parametri relativi al tipo operazione
 		TipoOperazione tipoOp = TipoOperazione.ADD; 
@@ -116,7 +116,7 @@ public final class SoggettiAdd extends Action {
 		try {
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 
-			this.protocollo = soggettiHelper.getProtocolloFromParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PROTOCOLLO);
+			this.protocollo = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PROTOCOLLO);
 			this.nomeprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
 			this.tipoprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
 			this.portadom = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_PORTA);
@@ -135,7 +135,7 @@ public final class SoggettiAdd extends Action {
 			this.singlePdD = (Boolean) session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 
 			this.editMode = soggettiHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
-			this.protocolFactory  = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.protocollo); 
+			
 
 			// Preparo il menu
 			soggettiHelper.makeMenu();
@@ -152,10 +152,10 @@ public final class SoggettiAdd extends Action {
 
 			// Tipi protocollo supportati
 			List<String> listaTipiProtocollo = soggettiCore.getProtocolli();
-			// primo accesso inizializzo con il protocollo di default inizializzato nell'helper
-//			if(this.protocollo == null){
-//				this.protocollo = soggettiCore.getProtocolloDefault();
-//			}
+			// primo accesso
+			if(this.protocollo == null){
+				this.protocollo = soggettiCore.getProtocolloDefault();
+			}
 
 			if(soggettiCore.isRegistroServiziLocale()){
 				List<PdDControlStation> lista = new ArrayList<PdDControlStation>();
@@ -221,7 +221,7 @@ public final class SoggettiAdd extends Action {
 
 
 			IDSoggetto idSoggetto = new IDSoggetto(this.tipoprov,this.nomeprov);
-
+			this.protocolFactory  = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.protocollo); 
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
 			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigSoggetto(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idSoggetto);
@@ -249,8 +249,7 @@ public final class SoggettiAdd extends Action {
 					this.descr = "";
 				}
 
-				// valorizzo i campi dinamici
-				soggettiHelper.updateProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties); 
+				// update della configurazione 
 				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idSoggetto); 
 
 				dati = soggettiHelper.addSoggettiToDati(tipoOp,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
@@ -258,7 +257,7 @@ public final class SoggettiAdd extends Action {
 						pddList,nomePddGestioneLocale, listaTipiProtocollo, this.protocollo );
 
 				// aggiunta campi custom
-				dati = soggettiHelper.addProtocolPropertiesToDati(tipoOp, dati, this.consoleConfiguration);
+				dati = soggettiHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType , this.protocolProperties);
 
 				pd.setDati(dati);
 
@@ -320,8 +319,7 @@ public final class SoggettiAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				// valorizzo i campi dinamici
-				soggettiHelper.updateProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties); 
+				// update della configurazione 
 				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idSoggetto); 
 
 				dati = soggettiHelper.addSoggettiToDati(tipoOp,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
@@ -329,7 +327,7 @@ public final class SoggettiAdd extends Action {
 						pddList,nomePddGestioneLocale, listaTipiProtocollo, this.protocollo);
 
 				// aggiunta campi custom
-				dati = soggettiHelper.addProtocolPropertiesToDati(tipoOp, dati, this.consoleConfiguration);
+				dati = soggettiHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
 
 				pd.setDati(dati);
 

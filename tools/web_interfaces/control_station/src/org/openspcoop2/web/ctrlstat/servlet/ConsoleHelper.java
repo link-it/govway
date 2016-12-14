@@ -99,6 +99,8 @@ import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
+import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -106,7 +108,6 @@ import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCostanti;
 import org.openspcoop2.web.lib.audit.web.AuditCostanti;
-import org.openspcoop2.web.lib.mvc.ConsoleConfigurationUtils;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -247,9 +248,9 @@ public class ConsoleHelper {
 		return partName;
 	}
 
-	public String getProtocolloFromParameter(String parameterName) throws Exception {
-		return getParameter(parameterName, String.class, this.core.getProtocolloDefault());
-	}
+//	public String getProtocolloFromParameter(String parameterName) throws Exception {
+//		return getParameter(parameterName, String.class, this.core.getProtocolloDefault());
+//	}
 
 	public String getParameter(String parameterName) throws Exception {
 		return getParameter(parameterName, String.class, null);
@@ -281,7 +282,7 @@ public class ConsoleHelper {
 			paramAsString = this.request.getParameter(parameterName);
 		}
 
-		if(StringUtils.isNotEmpty(paramAsString)) {
+		if(paramAsString != null) {
 			Constructor<T> constructor = type.getConstructor(String.class);
 			if(constructor != null)
 				toReturn = constructor.newInstance(paramAsString);
@@ -306,7 +307,7 @@ public class ConsoleHelper {
 			}
 		}else{
 			String paramAsString = this.request.getParameter(parameterName);
-			if(StringUtils.isNotEmpty(paramAsString))
+			if(paramAsString != null)
 				return paramAsString.getBytes();
 		}
 
@@ -330,7 +331,8 @@ public class ConsoleHelper {
 						properties.addProperty(binaryProperty); 
 						break;
 					case NUMBER:
-						Long longValue = this.getParameter(item.getId(), Long.class);
+						String lvS = this.getParameter(item.getId());
+						Long longValue = StringUtils.isNotEmpty(lvS) ? Long.parseLong(lvS) : null;
 						NumberProperty numberProperty = ProtocolPropertiesFactory.newProperty(item.getId(), longValue); 
 						properties.addProperty(numberProperty); 
 						break;
@@ -1995,24 +1997,36 @@ public class ConsoleHelper {
 		return dati;
 	}
 
-	public Vector<DataElement> addProtocolPropertiesToDati(TipoOperazione tipoOp,Vector<DataElement> dati, ConsoleConfiguration consoleConfiguration) throws Exception{
+	public Vector<DataElement> addProtocolPropertiesToDati(Vector<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
+			ConsoleInterfaceType consoleInterfaceType, ProtocolProperties protocolProperties) throws Exception{
 		for (BaseConsoleItem item : consoleConfiguration.getConsoleItem()) {
-			DataElement de = ConsoleConfigurationUtils.itemToDataElement(item, this.getSize());
+			AbstractProperty<?> property = ProtocolPropertiesUtils.getAbstractPropertyById(protocolProperties, item.getId());
+			// imposto il default value
+			ProtocolPropertiesUtils.setDefaultValue(item, property != null ? property.getValue() : null); 
+			DataElement de = ProtocolPropertiesUtilities.itemToDataElement(item,  consoleOperationType, consoleInterfaceType, this.getSize());
 			dati.addElement(de);
 		}
+		
+		// Imposto il flag per indicare che ho caricato la configurazione
+		DataElement de = new DataElement();
+		de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue("ok");
+		dati.add(de);
+		
 		return dati;
 	}
 	
 	
-	public void updateProtocolProperties(ConsoleConfiguration consoleConfiguration,
-			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
-			ProtocolProperties properties) throws ProtocolException {
-
-		for (int i = 0; i < properties.sizeProperties(); i++) {
-			AbstractProperty<?> property = properties.getProperty(i);
-			ProtocolPropertiesUtils.setDefaultValue(consoleConfiguration.getConsoleItem(), property);
-		}
-	}
+//	public void impostaDefaultValuesConsoleItems(ConsoleConfiguration consoleConfiguration,
+//			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
+//			ProtocolProperties properties) throws ProtocolException {
+//
+//		for (int i = 0; i < properties.sizeProperties(); i++) {
+//			AbstractProperty<?> property = properties.getProperty(i);
+//			ProtocolPropertiesUtils.setDefaultValue(consoleConfiguration.getConsoleItem(), property);
+//		}
+//	}
 	
 	public void validaProtocolProperties(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, ProtocolProperties properties) throws ProtocolException{
 		try {

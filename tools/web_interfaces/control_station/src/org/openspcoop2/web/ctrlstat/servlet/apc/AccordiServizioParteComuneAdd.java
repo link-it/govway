@@ -65,8 +65,8 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
-import org.openspcoop2.web.lib.mvc.ConsoleConfigurationUtils;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -109,8 +109,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 	private IRegistryReader registryReader = null; 
 	private ConsoleOperationType consoleOperationType = null;
 	private ConsoleInterfaceType consoleInterfaceType = null;
-	
-	
+
+
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -129,7 +129,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 
 		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
 		this.consoleOperationType = ConsoleOperationType.ADD;
-		this.consoleInterfaceType = ConsoleConfigurationUtils.getTipoInterfaccia(session); 
+		this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(session); 
 
 		// Parametri relativi al tipo operazione
 		TipoOperazione tipoOp = TipoOperazione.ADD; 
@@ -140,7 +140,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
-			this.editMode = apcHelper.getProtocolloFromParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+			this.editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			this.nome = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME);
 			this.descr = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_DESCRIZIONE);
 			this.profcoll = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROFILO_COLLABORAZIONE);
@@ -160,13 +160,13 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			this.scadenza = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SCADENZA);
 			this.referente = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_REFERENTE);
 			this.versione = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VERSIONE);
-			
+
 			// patch per version spinner fino a che non si trova un modo piu' elegante
 			// Veniva sempre impostato false, lo lascio commentato in questo punto perche' veniva passato nella decode della richiesta multipart...
-//			if(this.isBackwardCompatibilityAccordo11){
-//				if("0".equals(this.versione))
-//					this.versione = "";
-//			}
+			//			if(this.isBackwardCompatibilityAccordo11){
+			//				if("0".equals(this.versione))
+			//					this.versione = "";
+			//			}
 
 			String priv = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PRIVATO);
 			this.privato = ServletUtils.isCheckBoxEnabled(priv);
@@ -188,22 +188,13 @@ public final class AccordiServizioParteComuneAdd extends Action {
 				}
 			}
 
-			this.tipoProtocollo =   apcHelper.getProtocolloFromParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
-			// primo accesso inizializzo con il protocollo di default Inizializzato nell'helper
-			//						if(this.tipoProtocollo == null){
-			//							this.tipoProtocollo = apcCore.getProtocolloDefault();
-			//						}
-			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.tipoProtocollo); 
-
-			
-			
-//			String ct = request.getContentType();
-//			if ((ct != null) && (ct.indexOf(Costanti.MULTIPART) != -1)) {
+			//			String ct = request.getContentType();
+			//			if ((ct != null) && (ct.indexOf(Costanti.MULTIPART) != -1)) {
 			if (apcHelper.isMultipart()) {
 				//this.decodeRequest(request,ch.core.isBackwardCompatibilityAccordo11());
-//				this.decodeRequestValidazioneDocumenti = false; // init
-//				this.decodeRequest(request,false);
-				
+				//				this.decodeRequestValidazioneDocumenti = false; // init
+				//				this.decodeRequest(request,false);
+
 				//Quando trovava la linea corrispondente a AccordiServizioParteComuneCostanti.PARAMETRO_APC_VALIDAZIONE_DOCUMENTI  
 				//eseguiva questo codice 
 				this.decodeRequestValidazioneDocumenti = true;
@@ -225,10 +216,17 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			SoggettiCore soggettiCore = new SoggettiCore(apcCore);
 			AccordiCooperazioneCore acCore = new AccordiCooperazioneCore(apcCore);
 			String labelAccordoServizio = AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(this.tipoAccordo);
+			
+			this.tipoProtocollo =  apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO);
+			// primo accesso 
+			if(this.tipoProtocollo == null){
+				this.tipoProtocollo = apcCore.getProtocolloDefault();
+			}
+			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.tipoProtocollo);
 
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
-			
+
 			// ID Accordo Null per default
 			IDAccordo idApc = null;
 			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteComune(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idApc );
@@ -344,12 +342,11 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					this.filtrodup = "yes";
 					this.idcoll = "";
 					this.profcoll = "oneway";
-					this.referente= "";
 					this.accordoCooperazione = "-1";
 					this.scadenza= "";
 					this.privato = false;
-					// commentato perche' se si ricarica la pagina senza inserire un nome viene resettato al default... 
-					//this.tipoProtocollo = apcCore.getProtocolloDefault();
+					this.tipoProtocollo = apcCore.getProtocolloDefault();
+					this.referente= "";
 
 					if(this.tipoAccordo!=null){
 						if("apc".equals(this.tipoAccordo)){
@@ -378,9 +375,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				// valorizzo i campi dinamici
-				apcHelper.updateProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
-				
+				// update della configurazione 
 				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
 						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idApc); 
 
@@ -393,7 +388,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 						this.tipoProtocollo, listaTipiProtocollo,false,false);
 
 				// aggiunta campi custom
-				dati = apcHelper.addProtocolPropertiesToDati(tipoOp, dati, this.consoleConfiguration);
+				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
 
 				pd.setDati(dati);
 
@@ -415,7 +410,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					this.filtrodup, this.confric, this.idcoll, this.consord, 
 					this.scadenza, "0",this.referente, this.versione,this.accordoCooperazione,this.privato,visibilitaAccordoCooperazione,null,
 					this.wsblconc,this.wsblserv,this.wsblservcorr, this.validazioneDocumenti, this.tipoProtocollo,null);
-			
+
 			// Validazione base dei parametri custom 
 			if(isOk){
 				try{
@@ -447,10 +442,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-				
-				// valorizzo i campi dinamici
-				apcHelper.updateProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties); 
-				
+
+				// update della configurazione 
 				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
 						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idApc); 
 
@@ -460,9 +453,9 @@ public final class AccordiServizioParteComuneAdd extends Action {
 						this.privato, this.isServizioComposto, accordiCooperazioneEsistenti, accordiCooperazioneEsistentiLabel, 
 						this.accordoCooperazione, this.statoPackage, this.statoPackage, this.tipoAccordo, this.validazioneDocumenti, 
 						this.tipoProtocollo, listaTipiProtocollo,false,false);
-				
+
 				// aggiunta campi custom
-				dati = apcHelper.addProtocolPropertiesToDati(tipoOp, dati, this.consoleConfiguration);
+				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
 
 				pd.setDati(dati);
 
@@ -557,10 +550,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					Vector<DataElement> dati = new Vector<DataElement>();
 
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-					
-					// valorizzo i campi dinamici
-					apcHelper.updateProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties); 
-					
+
+					// update della configurazione 
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteComune(this.consoleConfiguration,
 							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idApc); 
 
@@ -570,9 +561,9 @@ public final class AccordiServizioParteComuneAdd extends Action {
 							this.privato, this.isServizioComposto, accordiCooperazioneEsistenti, accordiCooperazioneEsistentiLabel, 
 							this.accordoCooperazione, this.statoPackage, this.statoPackage, this.tipoAccordo, this.validazioneDocumenti, 
 							this.tipoProtocollo, listaTipiProtocollo,false,false);
-					
+
 					// aggiunta campi custom
-					dati = apcHelper.addProtocolPropertiesToDati(tipoOp, dati, this.consoleConfiguration);
+					dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType,this.protocolProperties);
 
 					pd.setDati(dati);
 
@@ -618,7 +609,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					}
 				}
 			}
-			
+
 			//imposto properties custom
 			as.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties, this.consoleOperationType));
 
