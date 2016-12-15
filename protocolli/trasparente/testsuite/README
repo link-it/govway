@@ -153,6 +153,15 @@ Altrimenti e' possibile lanciare per sottogruppi i test attraverso i seguenti gr
 - 'PortaApplicativaFault500': vengono effettuate le stesse verifiche del gruppo 'PortaApplicativaNonAutenticato', dove il servizio applicativo invocato restituisce un SOAPF
 ault con codice di trasporto 500
 
+** REST **
+
+Scrivere poi il readme....
+
+inoltre come requisito c'è da abilitare il TRACE METHOD http che senno è '405 Not Allowed'
+Per farlo su wildfly aggiungere l'attributo disallowed-methods valorizzato vuoto:
+  <http-listener name="default" socket-binding="http" redirect-socket="https" disallowed-methods=""/>
+Scoprire come fare sugli altri AS
+
 
 
 2. Installazione
