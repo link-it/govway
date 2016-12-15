@@ -37,6 +37,7 @@ import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapperUtilities;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
@@ -72,11 +73,13 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 
 	protected IDAccordoCooperazioneFactory idAccordoCooperazioneFactory;
 	protected IDAccordoFactory idAccordoFactory;
+	protected IDServizioFactory idServizioFactory;
 	protected EsitoUtils esitoUtils;
 	public BasicArchive(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		super(protocolFactory);
 		this.idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
 		this.idAccordoFactory = IDAccordoFactory.getInstance();
+		this.idServizioFactory = IDServizioFactory.getInstance();
 		this.esitoUtils = new EsitoUtils(protocolFactory);
 	}
 

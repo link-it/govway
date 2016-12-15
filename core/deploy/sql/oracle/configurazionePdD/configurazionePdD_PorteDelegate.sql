@@ -8,18 +8,17 @@ CREATE TABLE porte_delegate
 	descrizione VARCHAR2(255),
 	-- * Soggetto Erogatore *
 	-- tipo/nome per le modalita static
-	-- tipo/pattern per la modalita contentBased/urlBased
 	-- id utilizzato in caso di registryInput
 	id_soggetto_erogatore NUMBER,
-	tipo_soggetto_erogatore VARCHAR2(255),
-	nome_soggetto_erogatore VARCHAR2(255),
+	tipo_soggetto_erogatore VARCHAR2(255) NOT NULL,
+	nome_soggetto_erogatore VARCHAR2(255) NOT NULL,
 	-- * Servizio *
-	-- tipo/nome per le modalita static
-	-- tipo/pattern per la modalita contentBased/urlBased
+	-- tipo/nome/versione per le modalita static
 	-- id utilizzato in caso di registryInput
 	id_servizio NUMBER,
-	tipo_servizio VARCHAR2(255),
-	nome_servizio VARCHAR2(255),
+	tipo_servizio VARCHAR2(255) NOT NULL,
+	nome_servizio VARCHAR2(255) NOT NULL,
+	versione NUMBER NOT NULL,
 	id_accordo NUMBER,
 	id_port_type NUMBER,
 	-- * Azione *
@@ -70,6 +69,8 @@ CREATE TABLE porte_delegate
 	stateless VARCHAR2(255),
 	-- abilitato/disabilitato
 	local_forward VARCHAR2(255),
+	-- Nome della PortaApplicativa
+	local_forward_pa VARCHAR2(255),
 	-- proprietario porta delegata (Soggetto fruitore)
 	id_soggetto NUMBER NOT NULL,
 	ora_registrazione TIMESTAMP,
@@ -83,6 +84,7 @@ CREATE TABLE porte_delegate
 );
 
 
+ALTER TABLE porte_delegate MODIFY versione DEFAULT 1;
 ALTER TABLE porte_delegate MODIFY ora_registrazione DEFAULT CURRENT_TIMESTAMP;
 
 CREATE TRIGGER trg_porte_delegate

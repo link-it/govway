@@ -16,6 +16,7 @@
  			<xsd:element name="soggetto-erogatore" type="tns:porta-delegata-soggetto-erogatore" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="servizio" type="tns:porta-delegata-servizio" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="azione" type="tns:porta-delegata-azione" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="local-forward" type="tns:porta-delegata-local-forward" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="mtom-processor" type="tns:mtom-processor" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="validazione-contenuti-applicativi" type="tns:validazione-contenuti-applicativi" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="tipo-soggetto-proprietario" type="xsd:string" minOccurs="0" maxOccurs="1" />
@@ -33,7 +34,6 @@
  			<xsd:element name="scarta-body" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="gestione-manifest" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="stateless" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="local-forward" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="ora-registrazione-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="ora-registrazione-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="orCondition" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
@@ -55,6 +55,7 @@
 		<xsd:sequence>
  			<xsd:element name="tipo" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="nome" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="versione" type="xsd:unsignedInt" minOccurs="0" maxOccurs="1" />
 		</xsd:sequence>
 	</xsd:complexType>
 	
@@ -65,6 +66,14 @@
  			<xsd:element name="pattern" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="nome" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="force-wsdl-based" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:element name="porta-delegata-local-forward" type="tns:porta-delegata-local-forward" />
+	<xsd:complexType name="porta-delegata-local-forward">
+		<xsd:sequence>
+ 			<xsd:element name="stato" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="porta-applicativa" type="xsd:string" minOccurs="0" maxOccurs="1" />
 		</xsd:sequence>
 	</xsd:complexType>
 	

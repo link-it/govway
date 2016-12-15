@@ -40,6 +40,7 @@ import javax.xml.soap.SOAPElement;
 import org.apache.axis.Message;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.integrazione.UtilitiesIntegrazioneWSAddressing;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.testsuite.axis14.Axis14SoapUtils;
 
@@ -151,11 +152,18 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 				returnSOAPFault(response.getOutputStream(),"Trasporto, tipo servizio non presente");
 				return;
 			} 
-			String idServizio=request.getHeader(this.testsuiteProperties.getServizioTrasporto());
-			this.log.debug("trovato nel trasporto: "+idServizio);
-			if(idServizio==null){
-				this.log.error("Servizio della richiesta non presente nell'header di trasporto");
-				returnSOAPFault(response.getOutputStream(),"Trasporto, servizio non presente");
+			String idNomeServizio=request.getHeader(this.testsuiteProperties.getNomeServizioTrasporto());
+			this.log.debug("trovato nel trasporto: "+idNomeServizio);
+			if(idNomeServizio==null){
+				this.log.error("Nome Servizio della richiesta non presente nell'header di trasporto");
+				returnSOAPFault(response.getOutputStream(),"Trasporto, nome servizio non presente");
+				return;
+			} 
+			String idVersioneServizio=request.getHeader(this.testsuiteProperties.getVersioneServizioTrasporto());
+			this.log.debug("trovato nel trasporto: "+idVersioneServizio);
+			if(idVersioneServizio==null){
+				this.log.error("Versione Servizio della richiesta non presente nell'header di trasporto");
+				returnSOAPFault(response.getOutputStream(),"Trasporto, versione servizio non presente");
 				return;
 			} 
 			String idAzione=request.getHeader(this.testsuiteProperties.getAzioneTrasporto());
@@ -276,16 +284,28 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 				returnSOAPFault(response.getOutputStream(),"Tipo servizio trovato nel trasporto["+idTipoServizio+"] diverso da quello trovato nella url["+param+"]");
 				return;
 			}
-			param = request.getParameter(this.testsuiteProperties.getServizioUrlBased());
+			param = request.getParameter(this.testsuiteProperties.getNomeServizioUrlBased());
 			this.log.debug("trovato nella url: "+param);
 			if(param==null){
-				this.log.error("Servizio della richiesta non presente nell'url invocata");
-				returnSOAPFault(response.getOutputStream(),"Url, servizio non presente");
+				this.log.error("Nome servizio della richiesta non presente nell'url invocata");
+				returnSOAPFault(response.getOutputStream(),"Url, nome servizio non presente");
 				return;
 			} 
-			if(param.equals(idServizio)==false){
-				this.log.error("Servizio trovato nel trasporto["+idServizio+"] diverso da quello trovato nella url["+param+"]");
-				returnSOAPFault(response.getOutputStream(),"Servizio trovato nel trasporto["+idServizio+"] diverso da quello trovato nella url["+param+"]");
+			if(param.equals(idNomeServizio)==false){
+				this.log.error("Servizio trovato nel trasporto["+idNomeServizio+"] diverso da quello trovato nella url["+param+"]");
+				returnSOAPFault(response.getOutputStream(),"Servizio trovato nel trasporto["+idNomeServizio+"] diverso da quello trovato nella url["+param+"]");
+				return;
+			}
+			param = request.getParameter(this.testsuiteProperties.getVersioneServizioUrlBased());
+			this.log.debug("trovato nella url: "+param);
+			if(param==null){
+				this.log.error("Versione servizio della richiesta non presente nell'url invocata");
+				returnSOAPFault(response.getOutputStream(),"Url, Versione servizio non presente");
+				return;
+			} 
+			if(param.equals(idVersioneServizio)==false){
+				this.log.error("Versione servizio trovato nel trasporto["+idVersioneServizio+"] diverso da quello trovato nella url["+param+"]");
+				returnSOAPFault(response.getOutputStream(),"Versione servizio trovato nel trasporto["+idVersioneServizio+"] diverso da quello trovato nella url["+param+"]");
 				return;
 			}
 			param = request.getParameter(this.testsuiteProperties.getAzioneUrlBased());
@@ -350,6 +370,7 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 			boolean findDestinatario = false;
 			boolean findTipoServizio = false;
 			boolean findServizio = false;
+			boolean findVersioneServizio = false;
 			boolean findAzione = (idAzione==null);
 			boolean findID = false;
 			boolean findProductVersion = false;
@@ -427,16 +448,26 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 									throw new Exception("Attributo ["+attr.getLocalName()+"] con valore ["+v+"] diverso da quello atteso ["+idTipoServizio+"]");
 								}
 								findTipoServizio = true;
-							}else if(this.testsuiteProperties.getServizioSoap().equals(attr.getLocalName())){
+							}else if(this.testsuiteProperties.getNomeServizioSoap().equals(attr.getLocalName())){
 								String v = elem.getAttributeValue(attr.getLocalName());
 								this.log.debug("trovato nell'header soap: "+v);
 								if(v==null){
 									throw new Exception("Attributo ["+attr.getLocalName()+"] con valore null");
 								}
-								if(v.equals(idServizio)==false){
-									throw new Exception("Attributo ["+attr.getLocalName()+"] con valore ["+v+"] diverso da quello atteso ["+idServizio+"]");
+								if(v.equals(idNomeServizio)==false){
+									throw new Exception("Attributo ["+attr.getLocalName()+"] con valore ["+v+"] diverso da quello atteso ["+idNomeServizio+"]");
 								}
 								findServizio = true;
+							}else if(this.testsuiteProperties.getVersioneServizioSoap().equals(attr.getLocalName())){
+								String v = elem.getAttributeValue(attr.getLocalName());
+								this.log.debug("trovato nell'header soap: "+v);
+								if(v==null){
+									throw new Exception("Attributo ["+attr.getLocalName()+"] con valore null");
+								}
+								if(v.equals(idVersioneServizio)==false){
+									throw new Exception("Attributo ["+attr.getLocalName()+"] con valore ["+v+"] diverso da quello atteso ["+idVersioneServizio+"]");
+								}
+								findVersioneServizio = true;
 							}else if(this.testsuiteProperties.getAzioneSoap().equals(attr.getLocalName())){
 								String v = elem.getAttributeValue(attr.getLocalName());
 								this.log.debug("trovato nell'header soap: "+v);
@@ -491,7 +522,7 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 							if(v==null){
 								throw new Exception("Valore dell'elemento WSA-To non definito");
 							}else{
-								String test = "http://"+idTipoDestinatario+"_"+idDestinatario+".openspcoop2.org/servizi/"+idTipoServizio+"_"+idServizio;
+								String test = UtilitiesIntegrazioneWSAddressing.buildDatiWSATo(idTipoDestinatario,idDestinatario, idTipoServizio,idNomeServizio,Integer.parseInt(idVersioneServizio));
 								if(test.equals(v)==false){
 									throw new Exception("WSATo con valore ["+v+"] diverso da quello atteso ["+test+"]");
 								}
@@ -521,7 +552,7 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 							if(v==null){
 								throw new Exception("Valore dell'elemento WSA-From non definito");
 							}else{
-								String test = "http://"+idTipoMittente+"_"+idMittente+".openspcoop2.org";
+								String test = UtilitiesIntegrazioneWSAddressing.buildDatiWSAFrom(null,idTipoMittente, idMittente);
 								if(test.equals(v)==false){
 									throw new Exception("WSAFrom con valore ["+v+"] diverso da quello atteso ["+test+"]");
 								}
@@ -535,7 +566,7 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 							if(v==null){
 								throw new Exception("Valore dell'elemento WSA-Action non definito");
 							}else{
-								String test = "http://"+idTipoDestinatario+"_"+idDestinatario+".openspcoop2.org/servizi/"+idTipoServizio+"_"+idServizio+"/"+idAzione;
+								String test = UtilitiesIntegrazioneWSAddressing.buildDatiWSAAction(idTipoDestinatario,idDestinatario, idTipoServizio,idNomeServizio,Integer.parseInt(idVersioneServizio), idAzione);
 								if(test.equals(v)==false){
 									throw new Exception("WSAAction con valore ["+v+"] diverso da quello atteso ["+test+"]");
 								}
@@ -578,6 +609,9 @@ public class ServerRaccoltaInfoIntegrazione extends ServerCore{
 				}
 				if(findServizio==false){
 					throw new Exception("Integrazione.servizio non trovata");
+				}
+				if(findVersioneServizio==false){
+					throw new Exception("Integrazione.versioneServizio non trovata");
 				}
 				if(findAzione==false){
 					throw new Exception("Integrazione.azione non trovata");

@@ -142,6 +142,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			//IDSoggetto soggettoReferente = null;
 			//if (gestioneWSBL.equals("yes")) {
 			Soggetto sRef = null;
+			IDSoggetto idSoggettoReferente = null;
 			if(referente!=null && !referente.equals("") && !referente.equals("-")){
 				boolean trovatoProv = this.soggettiCore.existsSoggetto(Integer.parseInt(referente));
 				if (!trovatoProv) {
@@ -157,6 +158,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 							return false;
 						}
 					}
+					idSoggettoReferente = new IDSoggetto(sRef.getTipo(), sRef.getNome());
 				}
 			}
 			//	}
@@ -165,7 +167,11 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			// Se tipoOp = change, devo fare attenzione a non escludere nome
 			// del servizio selezionato
 			int idAcc = 0;
-			IDAccordoCooperazione idAccordo = this.idAccordoCooperazioneFactory.getIDAccordoFromValues(nome,versione);
+			Integer versioneInt = null;
+			if(versione!=null){
+				versioneInt = Integer.parseInt(versione);
+			}
+			IDAccordoCooperazione idAccordo = this.idAccordoCooperazioneFactory.getIDAccordoFromValues(nome,idSoggettoReferente,versioneInt);
 			boolean esisteAC = this.acCore.existsAccordoCooperazione(idAccordo);
 			AccordoCooperazione ac = null;
 			if (esisteAC) {
@@ -173,10 +179,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 				idAcc = ac.getId().intValue();
 			}
 			if ((idAcc != 0) && (tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && (idInt != idAcc)))) {
-				if(this.idAccordoCooperazioneFactory.versioneNonDefinita(versione))
-					this.pd.setMessage("Esiste gi&agrave; un accordo con nome " + nome);
-				else
-					this.pd.setMessage("Esiste gi&agrave; un accordo (versione "+versione+") con nome " + nome);
+				this.pd.setMessage("Esiste gi&agrave; un accordo (versione "+versione+") con nome " + nome);
 				return false;
 			}
 
@@ -203,7 +206,9 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			AccordoCooperazione accordoCooperazione = new AccordoCooperazione();
 			accordoCooperazione.setDescrizione(descr);
 			accordoCooperazione.setNome(nome);
-			accordoCooperazione.setVersione(versione);
+			if(versione!=null){
+				accordoCooperazione.setVersione(Integer.parseInt(versione));
+			}
 			if(sRef!=null){
 				IdSoggetto soggettoReferente = new IdSoggetto();
 				soggettoReferente.setTipo(sRef.getTipo());

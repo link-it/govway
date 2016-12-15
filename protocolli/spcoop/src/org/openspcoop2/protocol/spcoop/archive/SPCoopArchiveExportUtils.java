@@ -27,6 +27,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopContext;
 
@@ -110,11 +111,11 @@ public class SPCoopArchiveExportUtils {
 	                for(int i=0;i<as.getServizioComposto().sizeServizioComponenteList();i++){
 	                        IDSoggetto soggettoErogatoreServizioComponente = 
 	                                new IDSoggetto(as.getServizioComposto().getServizioComponente(i).getTipoSoggetto(),as.getServizioComposto().getServizioComponente(i).getNomeSoggetto());
-	                        IDServizio idServizioComponente = new IDServizio(soggettoErogatoreServizioComponente,
-	                                        as.getServizioComposto().getServizioComponente(i).getTipo(),
-	                                        as.getServizioComposto().getServizioComponente(i).getNome());
-	                        IDAccordo idAccordoServizioParteSpecifica = registryReader.convertToIDAccordo(idServizioComponente);
-	                        contextSICA.addMappingServizioToUriAPS(idServizioComponente, idAccordoServizioParteSpecifica);
+	                        IDServizio idServizioComponente = IDServizioFactory.getInstance().getIDServizioFromValues(as.getServizioComposto().getServizioComponente(i).getTipo(),
+                                    as.getServizioComposto().getServizioComponente(i).getNome(),
+                                    soggettoErogatoreServizioComponente, 
+                                    as.getServizioComposto().getServizioComponente(i).getVersione()); 
+	                        contextSICA.addMappingServizioToUriAPS(registryReader, idServizioComponente);
 	                }
 	        }
 	}

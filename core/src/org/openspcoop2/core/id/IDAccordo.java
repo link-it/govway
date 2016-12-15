@@ -41,26 +41,22 @@ public class IDAccordo implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	/* ********  F I E L D S  P R I V A T I  ******** */
 
 	/** Nome dell'accordo */
 	protected String nome;
 	/** Soggetto Referente (Puo' non essere definito). */
 	protected IDSoggetto soggettoReferente;
 	/** Versione. */
-	protected String versione;
+	protected Integer versione = 1;
 
 
-	/* ********  C O S T R U T T O R E  ******** */
-
-		
 	public String getNome() {
 		return this.nome;
 	}
 	public IDSoggetto getSoggettoReferente() {
 		return this.soggettoReferente;
 	}
-	public String getVersione() {
+	public Integer getVersione() {
 		return this.versione;
 	}
 	
@@ -73,7 +69,7 @@ public class IDAccordo implements java.io.Serializable {
 		this.soggettoReferente = soggettoReferente;
 	}
 	@Deprecated
-	public void setVersione(String versione) {
+	public void setVersione(Integer versione) {
 		this.versione = versione;
 	}
 	
@@ -81,11 +77,13 @@ public class IDAccordo implements java.io.Serializable {
 	@Override 
 	public String toString(){
 		StringBuffer bf = new StringBuffer();
+		if(this.soggettoReferente!=null){
+			bf.append(this.soggettoReferente.toString());
+			bf.append(":");
+		}
 		bf.append(this.nome);
-		if(this.versione!=null)
-			bf.append("["+this.versione+"]");
-		if(this.soggettoReferente!=null)
-			bf.append("["+this.soggettoReferente.toString()+"]");
+		bf.append(":");
+		bf.append(this.versione);
 		return bf.toString();
 	}
 		
@@ -105,12 +103,8 @@ public class IDAccordo implements java.io.Serializable {
 				return false;
 		}
 
-		if(this.versione==null){
-			if(id.versione!=null)
-				return false;
-		}else{
-			if(this.versione.equals(id.versione)==false)
-				return false;
+		if(this.getVersione()!=id.getVersione()){
+			return false;
 		}
 		
 		if(this.soggettoReferente==null){
@@ -133,15 +127,17 @@ public class IDAccordo implements java.io.Serializable {
 	@Override
 	public IDAccordo clone(){
 		IDAccordo idAccordo = new IDAccordo();
+		
 		if(this.nome!=null){
 			idAccordo.nome = new String(this.nome);
 		}
-		if(this.versione!=null){
-			idAccordo.versione = new String(this.versione);
-		}
+		
+		idAccordo.versione = this.versione;
+		
 		if(this.soggettoReferente!=null){
 			idAccordo.soggettoReferente = this.soggettoReferente.clone();
 		}
+		
 		return idAccordo;
 	}
 }

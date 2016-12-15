@@ -24,6 +24,7 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 
 /**
@@ -147,9 +148,14 @@ public class ArchivePortaApplicativa implements IArchiveObject {
 			if(portaApplicativa.getServizio().getNome()==null){
 				throw new ProtocolException("PortaApplicativa.servizio.nome non definito");
 			}
-			this.idServizio = new IDServizio(this.idSoggettoProprietario, 
-					portaApplicativa.getServizio().getTipo(), 
-					portaApplicativa.getServizio().getNome());
+			try{
+				this.idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaApplicativa.getServizio().getTipo(), 
+						portaApplicativa.getServizio().getNome(), 
+						this.idSoggettoProprietario, 
+						portaApplicativa.getServizio().getVersione()); 
+			}catch(Exception e){
+				throw new ProtocolException(e.getMessage(),e);
+			}
 			if(portaApplicativa.getAzione()!=null &&
 					portaApplicativa.getAzione().getNome()!=null){
 				this.idServizio.setAzione(portaApplicativa.getAzione().getNome());

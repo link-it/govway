@@ -34,6 +34,7 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageRole;
@@ -913,6 +914,7 @@ public class Sbustamento extends GenericLib{
 							r.setTipoOraRegistrazione(this.propertiesReader.getTipoTempoBusta(implementazionePdDMittente));
 							bustaHTTPReply.setTipoServizioRichiedenteBustaDiServizio(bustaRichiesta.getTipoServizio());
 							bustaHTTPReply.setServizioRichiedenteBustaDiServizio(bustaRichiesta.getServizio());
+							bustaHTTPReply.setVersioneServizioRichiedenteBustaDiServizio(bustaRichiesta.getVersioneServizio());
 							bustaHTTPReply.setAzioneRichiedenteBustaDiServizio(bustaRichiesta.getAzione());
 							bustaHTTPReply.addRiscontro(r);
 	
@@ -1394,6 +1396,7 @@ public class Sbustamento extends GenericLib{
 					try{
 						String tipoServizioCorrelato = null;
 						String servizioCorrelato = null;
+						Integer versioneServizioCorrelato = null;
 						if(bustaRichiesta.getTipoServizioCorrelato()!=null &&
 								bustaRichiesta.getServizioCorrelato() != null){
 							tipoServizioCorrelato = bustaRichiesta.getTipoServizioCorrelato();
@@ -1402,10 +1405,11 @@ public class Sbustamento extends GenericLib{
 							RisultatoValidazione validazione = registroServiziManager.validaServizio(idSoggettoFruitore,idServizio,null);
 							if( (validazione==null) || (validazione.getServizioRegistrato()==false))
 								throw new Exception("Servizio ["+idServizio.toString()+"] non esiste nel registro dei servizi");
-							if( (validazione.getServizioCorrelato()==null) || (validazione.getTipoServizioCorrelato()==null) )
+							if( (validazione.getServizioCorrelato()==null) || (validazione.getTipoServizioCorrelato()==null) || (validazione.getVersioneServizioCorrelato()==null) )
 								throw new Exception("Servizio ["+idServizio.toString()+"] non possiede un servizio correlato associato");
 							tipoServizioCorrelato = validazione.getTipoServizioCorrelato();
 							servizioCorrelato = validazione.getServizioCorrelato();
+							versioneServizioCorrelato = validazione.getVersioneServizioCorrelato();
 						}
 
 						String collaborazione = null;
@@ -1413,7 +1417,7 @@ public class Sbustamento extends GenericLib{
 						if(this.propertiesReader.isGestioneElementoCollaborazione(implementazionePdDMittente))
 							collaborazione = bustaRichiesta.getCollaborazione();
 						profiloCollaborazione.asincronoSimmetrico_registraRichiestaRicevuta(bustaRichiesta.getID(),collaborazione,
-								tipoServizioCorrelato,servizioCorrelato,richiestaApplicativa.isRicevutaAsincrona(),
+								tipoServizioCorrelato,servizioCorrelato,versioneServizioCorrelato,richiestaApplicativa.isRicevutaAsincrona(),
 								this.propertiesReader.getRepositoryIntervalloScadenzaMessaggi());
 					}catch(Exception e){
 						msgDiag.logErroreGenerico(e, "SalvataggioInformazioniProfiloAsincronoSimmetrico");
@@ -1692,7 +1696,7 @@ public class Sbustamento extends GenericLib{
 						if(this.propertiesReader.isGestioneElementoCollaborazione(implementazionePdDMittente))
 							collaborazione = bustaRichiesta.getCollaborazione();
 						profiloCollaborazione.asincronoAsimmetrico_registraRichiestaRicevuta(bustaRichiesta.getID(),collaborazione,
-								sbustamentoMsg.getTipoServizioCorrelato(),sbustamentoMsg.getServizioCorrelato(),
+								sbustamentoMsg.getTipoServizioCorrelato(),sbustamentoMsg.getServizioCorrelato(),sbustamentoMsg.getVersioneServizioCorrelato(),
 								richiestaApplicativa.isRicevutaAsincrona(),
 								this.propertiesReader.getRepositoryIntervalloScadenzaMessaggi());
 					}catch(Exception e){
@@ -1762,10 +1766,14 @@ public class Sbustamento extends GenericLib{
 						} 
 
 						// ripristino richiestaApplicativa con valori del servizio di richiesta (sovrascrivendo i valori del servizio correlato)
-						richiestaApplicativa.getIDServizio().setServizio(idServizioOriginale.getServizio());
-						richiestaApplicativa.getIDServizio().setTipoServizio(idServizioOriginale.getTipoServizio());
-						richiestaApplicativa.getIDServizio().setAzione(idServizioOriginale.getAzione());
-
+						IDServizio idServizioRichiesta = 
+								IDServizioFactory.getInstance().getIDServizioFromValues(idServizioOriginale.getTipo(), idServizioOriginale.getNome(), 
+										richiestaApplicativa.getIDServizio().getSoggettoErogatore(), idServizioOriginale.getVersione());
+						idServizioRichiesta.setAzione(idServizioOriginale.getAzione());
+						idServizioRichiesta.setTipologia(richiestaApplicativa.getIDServizio().getTipologia());
+						idServizioRichiesta.setUriAccordoServizioParteComune(richiestaApplicativa.getIDServizio().getUriAccordoServizioParteComune());
+						richiestaApplicativa.updateIDServizio(idServizioRichiesta);
+						
 						// check esistenza porta applicativa
 						msgDiag.mediumDebug("Gestione profilo di collaborazione AsincronoSimmetrico richiesta Stato (existsPA)...");
 						try{
@@ -1900,8 +1908,10 @@ public class Sbustamento extends GenericLib{
 				if(integrazioneAsincrona!=null){
 					IDSoggetto soggettoFruitoreRichiestaAsincrona = new IDSoggetto(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario());
 					IDSoggetto soggettoErogatoreRichiestaAsincrona = new IDSoggetto(bustaRichiesta.getTipoMittente(),bustaRichiesta.getMittente());
-					@SuppressWarnings("unused")
-					IDServizio servizioRichiestaAsincrona = new IDServizio(soggettoErogatoreRichiestaAsincrona,bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(),bustaRichiesta.getAzione());
+					IDServizio servizioRichiestaAsincrona = 
+						IDServizioFactory.getInstance().getIDServizioFromValues(bustaRichiesta.getTipoServizio(),bustaRichiesta.getServizio(), 
+								soggettoErogatoreRichiestaAsincrona, bustaRichiesta.getVersioneServizio()); 
+					servizioRichiestaAsincrona.setAzione(bustaRichiesta.getAzione());
 					ProprietaErroreApplicativo proprietaErroreApplAsincrono = this.propertiesReader.getProprietaGestioneErrorePD(protocolManager);
 					proprietaErroreApplAsincrono.setDominio(identitaPdD.getCodicePorta());
 					proprietaErroreApplAsincrono.setIdModulo(Sbustamento.ID_MODULO);
@@ -2352,8 +2362,10 @@ public class Sbustamento extends GenericLib{
 						// Costruzione Richiesta Delegata
 						IDSoggetto soggettoFruitoreAsincrono = new IDSoggetto(busta.getTipoDestinatario(),busta.getDestinatario());
 						IDSoggetto soggettoErogatoreAsincrono = new IDSoggetto(busta.getTipoMittente(),busta.getMittente());
-						@SuppressWarnings("unused")
-						IDServizio servizioAsincrono = new IDServizio(soggettoErogatoreAsincrono,busta.getTipoServizio(),busta.getServizio(),busta.getAzione());
+						IDServizio servizioAsincrono = 
+							IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(),busta.getServizio(), 
+									soggettoErogatoreAsincrono, busta.getVersioneServizio()); 
+						servizioAsincrono.setAzione(busta.getAzione());
 						ProprietaErroreApplicativo proprietaErroreApplAsincrono = this.propertiesReader.getProprietaGestioneErrorePD(protocolManager);
 						proprietaErroreApplAsincrono.setDominio(identitaPdD.getCodicePorta());
 						proprietaErroreApplAsincrono.setIdModulo(Sbustamento.ID_MODULO);

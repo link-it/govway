@@ -37,10 +37,11 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="id-accordo-servizio-parte-specifica">
  * 		&lt;sequence>
- * 			&lt;element name="soggetto-erogatore" type="{http://www.openspcoop2.org/core/registry}id-soggetto" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="soggetto-erogatore" type="{http://www.openspcoop2.org/core/registry}id-soggetto" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
+ * 		&lt;attribute name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="versione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" use="optional" default="1"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -85,6 +86,14 @@ public class IdAccordoServizioParteSpecifica extends org.openspcoop2.utils.beans
     this.soggettoErogatore = soggettoErogatore;
   }
 
+  public java.lang.String getTipo() {
+    return this.tipo;
+  }
+
+  public void setTipo(java.lang.String tipo) {
+    this.tipo = tipo;
+  }
+
   public java.lang.String getNome() {
     return this.nome;
   }
@@ -93,11 +102,11 @@ public class IdAccordoServizioParteSpecifica extends org.openspcoop2.utils.beans
     this.nome = nome;
   }
 
-  public java.lang.String getVersione() {
+  public java.lang.Integer getVersione() {
     return this.versione;
   }
 
-  public void setVersione(java.lang.String versione) {
+  public void setVersione(java.lang.Integer versione) {
     this.versione = versione;
   }
 
@@ -108,29 +117,46 @@ public class IdAccordoServizioParteSpecifica extends org.openspcoop2.utils.beans
 
 
 
-  public IdAccordoServizioParteSpecifica(org.openspcoop2.core.id.IDAccordo idAccordo){
-  	if(idAccordo!=null){
-  		this.nome = idAccordo.getNome();
-  		this.versione = idAccordo.getVersione();
-  		if(idAccordo.getSoggettoReferente()!=null){
+  public IdAccordoServizioParteSpecifica(org.openspcoop2.core.id.IDServizio idServizio){
+  	if(idServizio!=null){
+  		this.tipo = idServizio.getTipo();
+  		this.nome = idServizio.getNome();
+  		this.versione = idServizio.getVersione();
+  		if(idServizio.getSoggettoErogatore()!=null){
   			this.soggettoErogatore = new IdSoggetto();
-  			this.soggettoErogatore.setNome(idAccordo.getSoggettoReferente().getNome());
-  			this.soggettoErogatore.setTipo(idAccordo.getSoggettoReferente().getTipo());
+  			this.soggettoErogatore.setNome(idServizio.getSoggettoErogatore().getNome());
+  			this.soggettoErogatore.setTipo(idServizio.getSoggettoErogatore().getTipo());
   		}
   	}
   }
 
   @SuppressWarnings("deprecation")
-  public org.openspcoop2.core.id.IDAccordo toIDAccordo() throws org.openspcoop2.core.commons.CoreException{
+  public org.openspcoop2.core.id.IDServizio toIDServizio() throws org.openspcoop2.core.commons.CoreException{
+  	if(this.tipo==null){
+  		throw new org.openspcoop2.core.commons.CoreException("Tipo undefined");
+  	}
   	if(this.nome==null){
   		throw new org.openspcoop2.core.commons.CoreException("Nome undefined");
   	}
+  	if(this.versione==null){
+  		throw new org.openspcoop2.core.commons.CoreException("Versione undefined");
+  	}
+  	if(this.soggettoErogatore==null){
+  		throw new org.openspcoop2.core.commons.CoreException("SoggettoErogatore undefined");
+  	}
+  	if(this.soggettoErogatore.getTipo()==null){
+  		throw new org.openspcoop2.core.commons.CoreException("TipoSoggettoErogatore undefined");
+  	}
+  	if(this.soggettoErogatore.getNome()==null){
+  		throw new org.openspcoop2.core.commons.CoreException("NomeSoggettoErogatore undefined");
+  	}
   	try{
-  		org.openspcoop2.core.id.IDAccordo id = new org.openspcoop2.core.id.IDAccordo();
+  		org.openspcoop2.core.id.IDServizio id = new org.openspcoop2.core.id.IDServizio();
+  		id.setTipo(this.tipo);
   		id.setNome(this.nome);
   		id.setVersione(this.versione);
   		if(this.soggettoErogatore!=null){
-  			id.setSoggettoReferente(new org.openspcoop2.core.id.IDSoggetto(this.soggettoErogatore.getTipo(),this.soggettoErogatore.getNome()));
+  			id.setSoggettoErogatore(new org.openspcoop2.core.id.IDSoggetto(this.soggettoErogatore.getTipo(),this.soggettoErogatore.getNome()));
   		}
   		return id;
   	}catch(Exception e){
@@ -138,15 +164,19 @@ public class IdAccordoServizioParteSpecifica extends org.openspcoop2.utils.beans
   	}
   }
 
-  @XmlElement(name="soggetto-erogatore",required=false,nillable=false)
+  @XmlElement(name="soggetto-erogatore",required=true,nillable=false)
   protected IdSoggetto soggettoErogatore;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="tipo",required=true)
+  protected java.lang.String tipo;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)
   protected java.lang.String nome;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlAttribute(name="versione",required=false)
-  protected java.lang.String versione;
+  protected java.lang.Integer versione = new java.lang.Integer("1");
 
 }

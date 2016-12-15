@@ -80,7 +80,7 @@ import org.openspcoop2.core.config.PortaDelegataServizio;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.Property;
-import org.openspcoop2.core.config.ProprietaProtocollo;
+import org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.Risposte;
 import org.openspcoop2.core.config.Route;
@@ -539,8 +539,12 @@ public class DriverConfigurazioneDB_LIB {
 
 			case UPDATE:
 				// UPDATE
-				String oldNomeSoggetto = soggetto.getOldNomeForUpdate();
-				String oldTipoSoggetto = soggetto.getOldTipoForUpdate();
+				String oldNomeSoggetto = null;
+				String oldTipoSoggetto = null;
+				if(soggetto.getOldIDSoggettoForUpdate()!=null){
+					oldNomeSoggetto = soggetto.getOldIDSoggettoForUpdate().getNome();
+					oldTipoSoggetto = soggetto.getOldIDSoggettoForUpdate().getTipo();
+				}
 				// controllo se sono presenti i campi necessari per
 				// l'aggiornamento
 				if (oldNomeSoggetto == null || oldNomeSoggetto.equals(""))
@@ -1132,8 +1136,10 @@ public class DriverConfigurazioneDB_LIB {
 				//servizio
 				String tipoServizio = (servizio != null ? servizio.getTipo() : null);
 				String nomeServizio = (servizio != null ? servizio.getNome() : null);
+				Integer versioneServizio = (servizio != null ? servizio.getVersione() : null);
 				if(tipoServizio==null || tipoServizio.equals("")) throw new DriverConfigurazioneException("Tipo Servizio non impostato.");
 				if(nomeServizio==null || nomeServizio.equals("")) throw new DriverConfigurazioneException("Nome Servizio non impostato.");
+				if(versioneServizio==null) throw new DriverConfigurazioneException("Versione Servizio non impostato.");
 
 				//Azione
 				String nomeAzione = (azione != null ? azione.getNome() : null);
@@ -1179,6 +1185,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("id_servizio", "?");
 				sqlQueryObject.addInsertField("tipo_servizio", "?");
 				sqlQueryObject.addInsertField("nome_servizio", "?");
+				sqlQueryObject.addInsertField("versione_servizio", "?");
 				sqlQueryObject.addInsertField("id_azione", "?");
 				sqlQueryObject.addInsertField("nome_azione", "?");
 				sqlQueryObject.addInsertField("mode_azione", "?");
@@ -1205,6 +1212,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("gestione_manifest", "?");
 				sqlQueryObject.addInsertField("stateless", "?");
 				sqlQueryObject.addInsertField("local_forward", "?");
+				sqlQueryObject.addInsertField("local_forward_pa", "?");
 				sqlQueryObject.addInsertField("id_accordo", "?");
 				sqlQueryObject.addInsertField("id_port_type", "?");
 				sqlQuery = sqlQueryObject.createSQLInsert();
@@ -1218,6 +1226,7 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setLong(index++, idServizioPD);
 				stm.setString(index++, tipoServizio);
 				stm.setString(index++, nomeServizio);
+				stm.setInt(index++, versioneServizio);
 				stm.setLong(index++, idAzione);
 				stm.setString(index++, nomeAzione);
 				if(modeAzione!=null){
@@ -1261,7 +1270,8 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getStateless()) : null);
 				
 				// LocalForward
-				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getLocalForward()) : null);
+				stm.setString(index++, aPD!=null && aPD.getLocalForward()!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getLocalForward().getStato()) : null);
+				stm.setString(index++, aPD!=null && aPD.getLocalForward()!=null ? aPD.getLocalForward().getPortaApplicativa() : null);
 				
 				//idaccordo
 				stm.setLong(index++, aPD.getIdAccordo()!=null ? aPD.getIdAccordo() : -1L);
@@ -1545,8 +1555,10 @@ public class DriverConfigurazioneDB_LIB {
 				//servizio
 				tipoServizio = (servizio != null ? servizio.getTipo() : null);
 				nomeServizio = (servizio != null ? servizio.getNome() : null);
+				versioneServizio = (servizio != null ? servizio.getVersione() : null);
 				if(tipoServizio==null || tipoServizio.equals("")) throw new DriverConfigurazioneException("Tipo Servizio non impostato.");
 				if(nomeServizio==null || nomeServizio.equals("")) throw new DriverConfigurazioneException("Nome Servizio non impostato.");
+				if(versioneServizio==null) throw new DriverConfigurazioneException("Versione Servizio non impostato.");
 
 				//Azione
 				nomeAzione = (azione != null ? azione.getNome() : null);
@@ -1582,7 +1594,10 @@ public class DriverConfigurazioneDB_LIB {
 				}
 
 				// update
-				String oldNomePD = aPD.getOldNomeForUpdate();
+				String oldNomePD = null;
+				if(aPD.getOldIDPortaDelegataForUpdate()!=null){
+					oldNomePD = aPD.getOldIDPortaDelegataForUpdate().getNome();
+				}
 				DriverConfigurazioneDB_LIB.log.debug("OLD-PD["+oldNomePD+"] PD["+nomePorta+"]");
 				
 				if (oldNomePD == null || oldNomePD.equals("")){
@@ -1614,6 +1629,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("id_servizio", "?");
 				sqlQueryObject.addUpdateField("tipo_servizio", "?");
 				sqlQueryObject.addUpdateField("nome_servizio", "?");
+				sqlQueryObject.addUpdateField("versione_servizio", "?");
 				sqlQueryObject.addUpdateField("id_azione", "?");
 				sqlQueryObject.addUpdateField("nome_azione", "?");
 				sqlQueryObject.addUpdateField("mode_azione", "?");
@@ -1640,6 +1656,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("gestione_manifest", "?");
 				sqlQueryObject.addUpdateField("stateless", "?");
 				sqlQueryObject.addUpdateField("local_forward", "?");
+				sqlQueryObject.addUpdateField("local_forward_pa", "?");
 				sqlQueryObject.addUpdateField("id_accordo", "?");
 				sqlQueryObject.addUpdateField("id_port_type", "?");
 				sqlQueryObject.addWhereCondition("id=?");
@@ -1656,6 +1673,7 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setLong(index++, idServizioPD);
 				stm.setString(index++, tipoServizio);
 				stm.setString(index++, nomeServizio);
+				stm.setInt(index++, versioneServizio);
 				stm.setLong(index++, idAzione);
 				stm.setString(index++, nomeAzione);
 				if(modeAzione!=null)
@@ -1694,7 +1712,8 @@ public class DriverConfigurazioneDB_LIB {
 				// Stateless
 				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getStateless()) : null);
 				// LocalForward
-				stm.setString(index++, aPD!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getLocalForward()) : null);
+				stm.setString(index++, aPD!=null && aPD.getLocalForward()!=null ? DriverConfigurazioneDB_LIB.getValue(aPD.getLocalForward().getStato()) : null);
+				stm.setString(index++, aPD!=null && aPD.getLocalForward()!=null ? aPD.getLocalForward().getPortaApplicativa() : null);
 				//idAccordo
 				stm.setLong(index++,aPD.getIdAccordo() != null ? aPD.getIdAccordo() : -1L);
 				stm.setLong(index++, aPD.getIdPortType() != null ? aPD.getIdPortType() : -1L);
@@ -2426,9 +2445,16 @@ public class DriverConfigurazioneDB_LIB {
 				break;
 
 			case UPDATE:
-				String oldNomeSA = aSA.getOldNomeForUpdate();
-				String oldNomeProprietario = aSA.getOldNomeSoggettoProprietarioForUpdate();
-				String oldTipoProprietario = aSA.getOldTipoSoggettoProprietarioForUpdate();
+				String oldNomeSA = null;
+				String oldNomeProprietario = null;
+				String oldTipoProprietario = null;
+				if(aSA.getOldIDServizioApplicativoForUpdate()!=null){
+					oldNomeSA = aSA.getOldIDServizioApplicativoForUpdate().getNome();
+					if(aSA.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario()!=null){
+						oldNomeProprietario = aSA.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario().getNome();
+						oldTipoProprietario = aSA.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario().getTipo();
+					}
+				}
 
 				if (oldNomeSA == null || oldNomeSA.equals(""))
 					oldNomeSA = nomeSA;
@@ -2828,7 +2854,7 @@ public class DriverConfigurazioneDB_LIB {
 			DriverConfigurazioneDB_LIB.log.error(e1.getMessage(),e1);
 		}
 
-		ProprietaProtocollo propProtocollo = null;
+		PortaApplicativaProprietaIntegrazioneProtocollo propProtocollo = null;
 
 		MtomProcessor mtomProcessor = aPA.getMtomProcessor();
 		MTOMProcessorType mtomMode_request = null;
@@ -2875,10 +2901,12 @@ public class DriverConfigurazioneDB_LIB {
 				//servizio ci deve essere l'id oppure tipo e nome
 				String tipoServizio = (servizio != null ? servizio.getTipo() : null);
 				String nomeServizio = (servizio != null ? servizio.getNome() : null);
+				Integer versioneServizio = (servizio != null ? servizio.getVersione() : null);
 				//se l'id non e' valido allora devono esserci necessariamente il tipo e il nome
 				if(idServizio<=0){
 					if(tipoServizio==null || tipoServizio.equals("")) throw new DriverConfigurazioneException("Tipo Servizio non impostato.");
 					if(nomeServizio==null || nomeServizio.equals("")) throw new DriverConfigurazioneException("Nome Servizio non impostato.");
+					if(versioneServizio==null) throw new DriverConfigurazioneException("Nome Servizio non impostato.");
 				}
 
 				//Azione
@@ -2923,6 +2951,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("id_servizio", "?");
 				sqlQueryObject.addInsertField("tipo_servizio", "?");
 				sqlQueryObject.addInsertField("servizio", "?");
+				sqlQueryObject.addInsertField("versione_servizio", "?");
 				sqlQueryObject.addInsertField("azione", "?");
 				sqlQueryObject.addInsertField("mode_azione", "?");
 				sqlQueryObject.addInsertField("pattern_azione", "?");
@@ -2961,6 +2990,7 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setLong(index++, idServizio);
 				stm.setString(index++, tipoServizio);
 				stm.setString(index++, nomeServizio);
+				stm.setInt(index++, versioneServizio);
 				stm.setString(index++, (azione != null ? azione.getNome() : null));
 				if(modeAzione!=null){
 					stm.setString(index++, modeAzione.toString());
@@ -3250,8 +3280,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("valore", "?");
 				sqlQuery = sqlQueryObject.createSQLInsert();
 				stm = con.prepareStatement(sqlQuery);
-				for (i = 0; i < aPA.sizeProprietaProtocolloList(); i++) {
-					propProtocollo = aPA.getProprietaProtocollo(i);
+				for (i = 0; i < aPA.sizeProprietaIntegrazioneProtocolloList(); i++) {
+					propProtocollo = aPA.getProprietaIntegrazioneProtocollo(i);
 					stm.setLong(1, idPortaApplicativa);
 					stm.setString(2, propProtocollo.getNome());
 					stm.setString(3, propProtocollo.getValore());
@@ -3276,7 +3306,10 @@ public class DriverConfigurazioneDB_LIB {
 
 			case UPDATE:
 				// UPDATE
-				String oldNomePA = aPA.getOldNomeForUpdate();
+				String oldNomePA = null;
+				if(aPA.getOldIDPortaApplicativaForUpdate()!=null){
+					oldNomePA = aPA.getOldIDPortaApplicativaForUpdate().getNome();
+				}
 				if (oldNomePA == null || oldNomePA.equals(""))
 					oldNomePA = nomePorta;
 
@@ -3284,10 +3317,12 @@ public class DriverConfigurazioneDB_LIB {
 				//servizio ci deve essere l'id oppure tipo e nome
 				tipoServizio = (servizio != null ? servizio.getTipo() : null);
 				nomeServizio = (servizio != null ? servizio.getNome() : null);
+				versioneServizio = (servizio != null ? servizio.getVersione() : null);
 				//se l'id non e' valido allora devono esserci necessariamente il tipo e il nome
 				if(idServizio<=0){
 					if(tipoServizio==null || tipoServizio.equals("")) throw new DriverConfigurazioneException("Tipo Servizio non impostato.");
 					if(nomeServizio==null || nomeServizio.equals("")) throw new DriverConfigurazioneException("Nome Servizio non impostato.");
+					if(versioneServizio==null) throw new DriverConfigurazioneException("Versione Servizio non impostato.");
 				}
 				
 				//Azione
@@ -3331,6 +3366,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("id_servizio", "?");
 				sqlQueryObject.addUpdateField("tipo_servizio", "?");
 				sqlQueryObject.addUpdateField("servizio", "?");
+				sqlQueryObject.addUpdateField("versione_servizio", "?");
 				sqlQueryObject.addUpdateField("azione", "?");
 				sqlQueryObject.addUpdateField("mode_azione", "?");
 				sqlQueryObject.addUpdateField("pattern_azione", "?");
@@ -3368,7 +3404,8 @@ public class DriverConfigurazioneDB_LIB {
 					idPortaApplicativa = DBUtils.getIdPortaApplicativa(oldNomePA, con, DriverConfigurazioneDB_LIB.tipoDB);
 				}
 				if(idPortaApplicativa<=0) 
-					throw new DriverConfigurazioneException("Impossibile recuperare l'id della Porta Applicativa nomePA["+oldNomePA+"] (old["+aPA.getOldNomeForUpdate()+"]");
+					throw new DriverConfigurazioneException("Impossibile recuperare l'id della Porta Applicativa nomePA["+oldNomePA+"] (old["+
+							(aPA.getOldIDPortaApplicativaForUpdate()!=null?aPA.getOldIDPortaApplicativaForUpdate().getNome():null)+"]");
 										
 				index = 1;
 				
@@ -3379,6 +3416,7 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setLong(index++, idServizio);
 				stm.setString(index++, tipoServizio);
 				stm.setString(index++, nomeServizio);
+				stm.setInt(index++, versioneServizio);
 				stm.setString(index++, (azione != null ? azione.getNome() : null));
 				if(modeAzione!=null){
 					stm.setString(index++, modeAzione.toString());
@@ -3732,8 +3770,8 @@ public class DriverConfigurazioneDB_LIB {
 				DriverConfigurazioneDB_LIB.log.debug("Eliminate "+n+" proprieta associate alla Porta Applicativa "+idPortaApplicativa);
 				// set prop
 				int newProps = 0;
-				for (i = 0; i < aPA.sizeProprietaProtocolloList(); i++) {
-					propProtocollo = aPA.getProprietaProtocollo(i);
+				for (i = 0; i < aPA.sizeProprietaIntegrazioneProtocolloList(); i++) {
+					propProtocollo = aPA.getProprietaIntegrazioneProtocollo(i);
 
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_PROP);
@@ -4900,6 +4938,7 @@ public class DriverConfigurazioneDB_LIB {
 			sqlQueryObject.addInsertField("identificativo_porta_erogatore", "?");
 			sqlQueryObject.addInsertField("tipo_servizio", "?");
 			sqlQueryObject.addInsertField("servizio", "?");
+			sqlQueryObject.addInsertField("versione_servizio", "?");
 			sqlQueryObject.addInsertField("azione", "?");
 			updateQuery = sqlQueryObject.createSQLInsert();
 			
@@ -4922,6 +4961,12 @@ public class DriverConfigurazioneDB_LIB {
 					
 					updateStmt.setString(index++,filtro.getTipoServizio());
 					updateStmt.setString(index++,filtro.getServizio());
+					if(filtro.getVersioneServizio()!=null){
+						updateStmt.setInt(index++,filtro.getVersioneServizio());
+					}
+					else{
+						updateStmt.setNull(index++, java.sql.Types.INTEGER);
+					}
 					
 					updateStmt.setString(index++,filtro.getAzione());
 					
@@ -4950,6 +4995,12 @@ public class DriverConfigurazioneDB_LIB {
 					
 					updateStmt.setString(index++,filtro.getTipoServizio());
 					updateStmt.setString(index++,filtro.getServizio());
+					if(filtro.getVersioneServizio()!=null){
+						updateStmt.setInt(index++,filtro.getVersioneServizio());
+					}
+					else{
+						updateStmt.setNull(index++, java.sql.Types.INTEGER);
+					}
 					
 					updateStmt.setString(index++,filtro.getAzione());
 					

@@ -45,7 +45,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="privato" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/&gt;
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
- *         &lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0"/&gt;
  *         &lt;element name="ora-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/&gt;
  *         &lt;element name="ora-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/&gt;
  *         &lt;element name="orCondition" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/&gt;
@@ -82,7 +82,8 @@ public class SearchFilterAccordoCooperazione {
     protected Boolean privato;
     protected String nome;
     protected String descrizione;
-    protected String versione;
+    @XmlSchemaType(name = "unsignedInt")
+    protected Long versione;
     @XmlElement(name = "ora-registrazione-min")
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar oraRegistrazioneMin;
@@ -218,10 +219,10 @@ public class SearchFilterAccordoCooperazione {
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link Long }
      *     
      */
-    public String getVersione() {
+    public Long getVersione() {
         return this.versione;
     }
 
@@ -230,10 +231,10 @@ public class SearchFilterAccordoCooperazione {
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link Long }
      *     
      */
-    public void setVersione(String value) {
+    public void setVersione(Long value) {
         this.versione = value;
     }
 

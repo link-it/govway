@@ -123,21 +123,6 @@ public interface IBeanUtilities  {
 			IDServizio idService,
 			AccordoServizioParteSpecifica accordoServizioParteSpecifica,
 			boolean checkID)throws DriverRegistroServiziException;
-	/**
-	 * Controlla che il bean presente nel registro, sia uguale al bean passato come parametro
-	 * 
-	 * @param idAccordo
-	 * @param accordoServizioParteSpecifica
-	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
-	 * @throws DriverRegistroServiziException
-	 */
-	public boolean verificaAccordoServizioParteSpecifica(
-			IDAccordo idAccordo,
-			AccordoServizioParteSpecifica accordoServizioParteSpecifica)throws DriverRegistroServiziException;
-	public boolean verificaAccordoServizioParteSpecifica(
-			IDAccordo idAccordo,
-			AccordoServizioParteSpecifica accordoServizioParteSpecifica,
-			boolean checkID)throws DriverRegistroServiziException;
 
 	
 	

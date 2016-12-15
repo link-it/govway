@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.core.id.IDAccordo;
-import org.openspcoop2.core.id.IDAccordoCooperazioneWithSoggetto;
+import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -280,7 +280,7 @@ public class ArchiviExporter extends HttpServlet {
 					fileName = "AccordiCooperazione."+ext;
 				}
 				else{
-					IDAccordoCooperazioneWithSoggetto idAccordo = ((IDAccordoCooperazioneWithSoggetto)identificativi.get(0));
+					IDAccordoCooperazione idAccordo = ((IDAccordoCooperazione)identificativi.get(0));
 					fileName = idAccordo.getNome();
 					if(idAccordo.getSoggettoReferente()!=null){
 						fileName+="_"+idAccordo.getSoggettoReferente().getTipo()+idAccordo.getSoggettoReferente().getNome();

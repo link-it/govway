@@ -64,12 +64,12 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
@@ -247,6 +247,7 @@ public class ControlStationCore {
 	/** IDFactory */
 	private IDAccordoFactory idAccordoFactory = null;
 	private IDAccordoCooperazioneFactory idAccordoCooperazioneFactory = null;
+	private IDServizioFactory idServizioFactory = null;
 
 	/** Protocollo */
 	private String protocolloDefault = null;
@@ -1037,6 +1038,7 @@ public class ControlStationCore {
 
 			this.idAccordoFactory = IDAccordoFactory.getInstance();
 			this.idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
+			this.idServizioFactory = IDServizioFactory.getInstance();
 
 			ConfigurazionePdD configPdD = new ConfigurazionePdD();
 			configPdD.setLog(ControlStationCore.log);
@@ -1079,6 +1081,7 @@ public class ControlStationCore {
 		/** IDFactory */
 		this.idAccordoFactory = core.idAccordoFactory;
 		this.idAccordoCooperazioneFactory = core.idAccordoCooperazioneFactory;
+		this.idServizioFactory = core.idServizioFactory;
 
 		/** Protocollo */
 		this.protocolloDefault = core.protocolloDefault;
@@ -1784,8 +1787,8 @@ public class ControlStationCore {
 							driver.getDriverRegistroServiziDB().createSoggetto(soggetto.getSoggettoReg());
 
 							sogConf.setId(soggetto.getSoggettoReg().getId());
-							sogConf.setOldNomeForUpdate(sogConf.getNome());
-							sogConf.setOldTipoForUpdate(sogConf.getTipo());
+							IDSoggetto oldIDSoggettoForUpdate = new IDSoggetto(sogConf.getTipo(), sogConf.getNome());
+							sogConf.setOldIDSoggettoForUpdate(oldIDSoggettoForUpdate);
 							driver.getDriverConfigurazioneDB().updateSoggetto(sogConf);
 						}
 						else{
@@ -1818,8 +1821,8 @@ public class ControlStationCore {
 						// anche se e' stato chiesta una create. Puo' darsi che serva una update essendomi arrivata una informazione puntuale su di un tipo di soggetto
 						IDSoggetto idSoggetto = new IDSoggetto(sogConf.getTipo(),sogConf.getNome());
 						if(driver.getDriverConfigurazioneDB().existsSoggetto(idSoggetto)){
-							sogConf.setOldNomeForUpdate(sogConf.getNome());
-							sogConf.setOldTipoForUpdate(sogConf.getTipo());
+							IDSoggetto oldIDSoggettoForUpdate = new IDSoggetto(sogConf.getTipo(), sogConf.getNome());
+							sogConf.setOldIDSoggettoForUpdate(oldIDSoggettoForUpdate);
 							driver.getDriverConfigurazioneDB().updateSoggetto(sogConf);
 						}
 						else{
@@ -1935,6 +1938,7 @@ public class ControlStationCore {
 								String tipoSoggetto = pa.getTipoSoggettoProprietario();
 								String nomeServizio = paSE.getNome();
 								String tipoServizio = paSE.getTipo();
+								Integer versioneServizio = paSE.getVersione();
 
 								// controllo presenza soggetto virtuale
 								// se presente soggetto virtuale override di
@@ -1954,7 +1958,7 @@ public class ControlStationCore {
 								}
 
 								// recupero informazioni su servizio
-								long idServizio = DBUtils.getIdServizio(nomeServizio, tipoServizio, nomeSoggetto, tipoSoggetto, con, this.tipoDB, CostantiDB.SOGGETTI);
+								long idServizio = DBUtils.getIdServizio(nomeServizio, tipoServizio, versioneServizio, nomeSoggetto, tipoSoggetto, con, this.tipoDB, CostantiDB.SOGGETTI);
 
 								paSE.setId(idServizio);
 								pa.setServizio(paSE);
@@ -2067,7 +2071,9 @@ public class ControlStationCore {
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordo);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, as.getNome());
-						operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, as.getVersione());
+						if(as.getVersione()!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, as.getVersione().intValue()+"");
+						}
 						if(as.getSoggettoReferente()!=null){
 							operazioneDaSmistare.addParameter(OperationsParameter.TIPO_REFERENTE, as.getSoggettoReferente().getTipo());
 							operazioneDaSmistare.addParameter(OperationsParameter.NOME_REFERENTE, as.getSoggettoReferente().getNome());
@@ -2083,7 +2089,9 @@ public class ControlStationCore {
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordoRuolo);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, as.getNome());
-						operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, as.getVersione());
+						if(as.getVersione()!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, as.getVersione().intValue()+"");
+						}
 						if(as.getSoggettoReferente()!=null){
 							operazioneDaSmistare.addParameter(OperationsParameter.TIPO_REFERENTE, as.getSoggettoReferente().getTipo());
 							operazioneDaSmistare.addParameter(OperationsParameter.NOME_REFERENTE, as.getSoggettoReferente().getNome());
@@ -2098,7 +2106,9 @@ public class ControlStationCore {
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordoRuolo);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, as.getNome() + "Correlato");
-						operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, as.getVersione());
+						if(as.getVersione()!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, as.getVersione().intValue()+"");
+						}
 						if(as.getSoggettoReferente()!=null){
 							operazioneDaSmistare.addParameter(OperationsParameter.TIPO_REFERENTE, as.getSoggettoReferente().getTipo());
 							operazioneDaSmistare.addParameter(OperationsParameter.NOME_REFERENTE, as.getSoggettoReferente().getNome());
@@ -2118,7 +2128,13 @@ public class ControlStationCore {
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordoCooperazione);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, ac.getNome());
-						operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, ac.getVersione());
+						if(ac.getSoggettoReferente()!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.TIPO_REFERENTE, ac.getSoggettoReferente().getTipo());
+							operazioneDaSmistare.addParameter(OperationsParameter.NOME_REFERENTE, ac.getSoggettoReferente().getNome());
+						}
+						if(ac.getVersione()!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, ac.getVersione().intValue()+"");
+						}
 
 						doSetDati = true;
 					}
@@ -2127,7 +2143,6 @@ public class ControlStationCore {
 					// Servizio Correlato
 					if (oggetto instanceof AccordoServizioParteSpecifica) {
 						AccordoServizioParteSpecifica asps = (AccordoServizioParteSpecifica) oggetto;
-						Servizio servizio = asps.getServizio();
 
 						driver.getDriverRegistroServiziDB().createAccordoServizioParteSpecifica(asps);
 
@@ -2137,13 +2152,13 @@ public class ControlStationCore {
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.servizio);
 						
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, servizio.getTipoSoggettoErogatore());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, servizio.getNomeSoggettoErogatore());
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SERVIZIO, servizio.getTipo());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SERVIZIO, servizio.getNome());
-						
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, asps.getNome());
-						operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, asps.getVersione());
+						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, asps.getTipoSoggettoErogatore());
+						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, asps.getNomeSoggettoErogatore());
+						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SERVIZIO, asps.getTipo());
+						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SERVIZIO, asps.getNome());
+						if(asps.getVersione()!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, asps.getVersione().intValue()+"");
+						}
 
 						doSetDati = true;
 					}
@@ -2237,8 +2252,7 @@ public class ControlStationCore {
 						// in quanto sono stati gia' modificati dalla
 						// updateSoggetto (config) precedente
 						if(this.registroServiziLocale){
-							sogConf.setOldNomeForUpdate(soggetto.getNome());
-							sogConf.setOldTipoForUpdate(soggetto.getTipo());
+							sogConf.setOldIDSoggettoForUpdate(new IDSoggetto(soggetto.getTipo(), soggetto.getNome()));
 						}
 						driver.getDriverConfigurazioneDB().updateSoggetto(sogConf);
 
@@ -2252,8 +2266,8 @@ public class ControlStationCore {
 							operazioneDaSmistare.setPdd(soggetto.getSoggettoReg().getPortaDominio());
 						}
 
-						operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SOGGETTO, soggetto.getOldNomeForUpdate());
 						operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_SOGGETTO, soggetto.getOldTipoForUpdate());
+						operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SOGGETTO, soggetto.getOldNomeForUpdate());
 						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, soggetto.getTipo());
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, soggetto.getNome());
 
@@ -2278,8 +2292,10 @@ public class ControlStationCore {
 						operazioneDaSmistare.setIDTable(sogConf.getId().intValue());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.soggetto);
-						operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SOGGETTO, sogConf.getOldNomeForUpdate());
-						operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_SOGGETTO, sogConf.getOldTipoForUpdate());
+						if(sogConf.getOldIDSoggettoForUpdate()!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_SOGGETTO, sogConf.getOldIDSoggettoForUpdate().getTipo());
+							operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SOGGETTO, sogConf.getOldIDSoggettoForUpdate().getNome());
+						}
 						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, sogConf.getTipo());
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, sogConf.getNome());
 
@@ -2302,8 +2318,10 @@ public class ControlStationCore {
 						operazioneDaSmistare.setIDTable(sogReg.getId().intValue());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.soggetto);
-						operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SOGGETTO, sogReg.getOldNomeForUpdate());
-						operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_SOGGETTO, sogReg.getOldTipoForUpdate());
+						if(sogReg.getOldIDSoggettoForUpdate()!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_SOGGETTO, sogReg.getOldIDSoggettoForUpdate().getTipo());
+							operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SOGGETTO, sogReg.getOldIDSoggettoForUpdate().getNome());
+						}
 						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, sogReg.getTipo());
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, sogReg.getNome());
 
@@ -2337,9 +2355,13 @@ public class ControlStationCore {
 						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, sa.getTipoSoggettoProprietario());
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, sa.getNomeSoggettoProprietario());
 						
-						operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SERVIZIO_APPLICATIVO, sa.getOldNomeForUpdate());
-						operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_SOGGETTO, sa.getOldTipoSoggettoProprietarioForUpdate());
-						operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SOGGETTO, sa.getOldNomeSoggettoProprietarioForUpdate());
+						if(sa.getOldIDServizioApplicativoForUpdate()!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SERVIZIO_APPLICATIVO, sa.getOldIDServizioApplicativoForUpdate().getNome());
+							if(sa.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario()!=null){
+								operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_SOGGETTO, sa.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario().getTipo());
+								operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SOGGETTO, sa.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario().getNome());
+							}
+						}
 
 						if(this.isRegistroServiziLocale()){
 							org.openspcoop2.core.registry.Soggetto sogg = driver.getDriverRegistroServiziDB().getSoggetto(sa.getIdSoggetto());
@@ -2366,7 +2388,9 @@ public class ControlStationCore {
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, pd.getNomeSoggettoProprietario());
 						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, pd.getTipoSoggettoProprietario());
 						
-						operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_PD, pd.getOldNomeForUpdate());
+						if(pd.getOldIDPortaDelegataForUpdate()!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_PD, pd.getOldIDPortaDelegataForUpdate().getNome());
+						}
 						
 						if(this.isRegistroServiziLocale()){
 							org.openspcoop2.core.registry.Soggetto sogg = driver.getDriverRegistroServiziDB().getSoggetto(pd.getIdSoggetto());
@@ -2392,7 +2416,9 @@ public class ControlStationCore {
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, pa.getNomeSoggettoProprietario());
 						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, pa.getTipoSoggettoProprietario());
 						
-						operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_PA, pa.getOldNomeForUpdate());
+						if(pa.getOldIDPortaApplicativaForUpdate()!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_PA, pa.getOldIDPortaApplicativaForUpdate().getNome());
+						}
 						
 						if(this.isRegistroServiziLocale()){
 							org.openspcoop2.core.registry.Soggetto sogg = driver.getDriverRegistroServiziDB().getSoggetto(pa.getIdSoggetto());
@@ -2480,7 +2506,9 @@ public class ControlStationCore {
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordo);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, as.getNome());
-						operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, as.getVersione());
+						if(as.getVersione()!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, as.getVersione().intValue()+"");
+						}
 						if(as.getSoggettoReferente()!=null){
 							operazioneDaSmistare.addParameter(OperationsParameter.TIPO_REFERENTE, as.getSoggettoReferente().getTipo());
 							operazioneDaSmistare.addParameter(OperationsParameter.NOME_REFERENTE, as.getSoggettoReferente().getNome());
@@ -2488,7 +2516,9 @@ public class ControlStationCore {
 						IDAccordo idAccordoOLD = as.getOldIDAccordoForUpdate();
 						if(idAccordoOLD!=null){
 							operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_ACCORDO, idAccordoOLD.getNome());
-							operazioneDaSmistare.addParameter(OperationsParameter.OLD_VERSIONE_ACCORDO, idAccordoOLD.getVersione());
+							if(idAccordoOLD.getVersione()!=null){
+								operazioneDaSmistare.addParameter(OperationsParameter.OLD_VERSIONE_ACCORDO, idAccordoOLD.getVersione().intValue()+"");
+							}
 							if(idAccordoOLD.getSoggettoReferente()!=null){
 								operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_REFERENTE, idAccordoOLD.getSoggettoReferente().getTipo());
 								operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_REFERENTE, idAccordoOLD.getSoggettoReferente().getNome());
@@ -2512,12 +2542,27 @@ public class ControlStationCore {
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordoCooperazione);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, ac.getNome());
-						operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, ac.getVersione());
+						if(ac.getVersione()!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, ac.getVersione().intValue()+"");
+						}
+						if(ac.getSoggettoReferente()!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.TIPO_REFERENTE, ac.getSoggettoReferente().getTipo());
+							operazioneDaSmistare.addParameter(OperationsParameter.NOME_REFERENTE, ac.getSoggettoReferente().getNome());
+						}
 
 						IDAccordoCooperazione idAccordoOLD = ac.getOldIDAccordoForUpdate();
 						if(idAccordoOLD!=null){
 							operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_ACCORDO, idAccordoOLD.getNome());
-							operazioneDaSmistare.addParameter(OperationsParameter.OLD_VERSIONE_ACCORDO, idAccordoOLD.getVersione());
+							if(idAccordoOLD.getVersione()!=null){
+								operazioneDaSmistare.addParameter(OperationsParameter.OLD_VERSIONE_ACCORDO, idAccordoOLD.getVersione().intValue()+"");
+							}
+							if(idAccordoOLD.getSoggettoReferente()!=null){
+								operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_REFERENTE, idAccordoOLD.getSoggettoReferente().getTipo());
+								operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_REFERENTE, idAccordoOLD.getSoggettoReferente().getNome());
+							}else{
+								operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_REFERENTE, null);
+								operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_REFERENTE, null);
+							}
 						}
 
 						doSetDati = true;
@@ -2527,7 +2572,6 @@ public class ControlStationCore {
 					// Servizio Correlato
 					if (oggetto instanceof AccordoServizioParteSpecifica) {
 						AccordoServizioParteSpecifica asps = (AccordoServizioParteSpecifica) oggetto;
-						Servizio servizio = asps.getServizio();
 
 						driver.getDriverRegistroServiziDB().updateAccordoServizioParteSpecifica(asps);
 
@@ -2537,21 +2581,25 @@ public class ControlStationCore {
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.servizio);
 						
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, servizio.getTipoSoggettoErogatore());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, servizio.getNomeSoggettoErogatore());
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SERVIZIO, servizio.getTipo());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SERVIZIO, servizio.getNome());
+						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, asps.getTipoSoggettoErogatore());
+						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, asps.getNomeSoggettoErogatore());
+						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SERVIZIO, asps.getTipo());
+						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SERVIZIO, asps.getNome());
+						if(asps.getVersione()!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, asps.getVersione().intValue()+"");
+						}
 						
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, asps.getNome());
-						operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, asps.getVersione());
-						
-						operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SERVIZIO, servizio.getOldNomeForUpdate());
-						operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_SERVIZIO, servizio.getOldTipoForUpdate());
-						operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SOGGETTO, servizio.getOldNomeSoggettoErogatoreForUpdate());
-						operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_SOGGETTO, servizio.getOldTipoSoggettoErogatoreForUpdate());
-						
-						operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_ACCORDO, asps.getOldNomeAccordoForUpdate());
-						operazioneDaSmistare.addParameter(OperationsParameter.OLD_VERSIONE_ACCORDO, asps.getOldVersioneAccordoForUpdate());
+						if(asps.getOldIDServizioForUpdate()!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_SERVIZIO, asps.getOldIDServizioForUpdate().getTipo());
+							operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SERVIZIO, asps.getOldIDServizioForUpdate().getNome());
+							if(asps.getOldIDServizioForUpdate().getSoggettoErogatore()!=null){
+								operazioneDaSmistare.addParameter(OperationsParameter.OLD_TIPO_SOGGETTO, asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo());
+								operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_SOGGETTO, asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome());
+							}
+							if(asps.getOldIDServizioForUpdate().getVersione()!=null){
+								operazioneDaSmistare.addParameter(OperationsParameter.OLD_VERSIONE_ACCORDO, asps.getOldIDServizioForUpdate().getVersione().intValue()+"");
+							}
+						}
 
 						doSetDati = true;
 
@@ -2571,7 +2619,9 @@ public class ControlStationCore {
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordo);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, as.getNome());
-						operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, as.getVersione());
+						if(as.getVersione()!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, as.getVersione().intValue()+"");
+						}
 						if(as.getSoggettoReferente()!=null){
 							operazioneDaSmistare.addParameter(OperationsParameter.TIPO_REFERENTE, as.getSoggettoReferente().getTipo());
 							operazioneDaSmistare.addParameter(OperationsParameter.NOME_REFERENTE, as.getSoggettoReferente().getNome());
@@ -2911,7 +2961,9 @@ public class ControlStationCore {
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordo);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, as.getNome());
-						operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, as.getVersione());
+						if(as.getVersione()!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, as.getVersione().intValue()+"");
+						}
 						if(as.getSoggettoReferente()!=null){
 							operazioneDaSmistare.addParameter(OperationsParameter.TIPO_REFERENTE, as.getSoggettoReferente().getTipo());
 							operazioneDaSmistare.addParameter(OperationsParameter.NOME_REFERENTE, as.getSoggettoReferente().getNome());
@@ -2926,7 +2978,9 @@ public class ControlStationCore {
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordoRuolo);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, as.getNome());
-						operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, as.getVersione());
+						if(as.getVersione()!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, as.getVersione().intValue()+"");
+						}
 						if(as.getSoggettoReferente()!=null){
 							operazioneDaSmistare.addParameter(OperationsParameter.TIPO_REFERENTE, as.getSoggettoReferente().getTipo());
 							operazioneDaSmistare.addParameter(OperationsParameter.NOME_REFERENTE, as.getSoggettoReferente().getNome());
@@ -2941,7 +2995,9 @@ public class ControlStationCore {
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordoRuolo);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, as.getNome() + "Correlato");
-						operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, as.getVersione());
+						if(as.getVersione()!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, as.getVersione().intValue()+"");
+						}
 						if(as.getSoggettoReferente()!=null){
 							operazioneDaSmistare.addParameter(OperationsParameter.TIPO_REFERENTE, as.getSoggettoReferente().getTipo());
 							operazioneDaSmistare.addParameter(OperationsParameter.NOME_REFERENTE, as.getSoggettoReferente().getNome());
@@ -2961,7 +3017,13 @@ public class ControlStationCore {
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordoCooperazione);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, ac.getNome());
-						operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, ac.getVersione());
+						if(ac.getVersione()!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, ac.getVersione().intValue()+"");
+						}
+						if(ac.getSoggettoReferente()!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.TIPO_REFERENTE, ac.getSoggettoReferente().getTipo());
+							operazioneDaSmistare.addParameter(OperationsParameter.NOME_REFERENTE, ac.getSoggettoReferente().getNome());
+						}
 
 						doSetDati = true;
 					}
@@ -2970,8 +3032,7 @@ public class ControlStationCore {
 					// Servizio Correlato
 					if (oggetto instanceof AccordoServizioParteSpecifica) {
 						AccordoServizioParteSpecifica asps = (AccordoServizioParteSpecifica) oggetto;
-						Servizio servizio = asps.getServizio();
-
+						
 						driver.getDriverRegistroServiziDB().deleteAccordoServizioParteSpecifica(asps);
 
 						operazioneDaSmistare = new OperazioneDaSmistare();
@@ -2980,13 +3041,13 @@ public class ControlStationCore {
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.servizio);
 						
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, servizio.getTipoSoggettoErogatore());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, servizio.getNomeSoggettoErogatore());
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SERVIZIO, servizio.getTipo());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SERVIZIO, servizio.getNome());
-						
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, asps.getNome());
-						operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, asps.getVersione());
+						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, asps.getTipoSoggettoErogatore());
+						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, asps.getNomeSoggettoErogatore());
+						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SERVIZIO, asps.getTipo());
+						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SERVIZIO, asps.getNome());
+						if(asps.getVersione()!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.VERSIONE_ACCORDO, asps.getVersione().intValue()+"");
+						}
 
 						doSetDati = true;
 
@@ -3834,8 +3895,10 @@ public class ControlStationCore {
 			msg+=":"+oggetto.getClass().getSimpleName();
 			msg+=":<"+soggetto.getTipo()+"/"+soggetto.getNome()+">";
 			if(TipoOperazione.CHANGE.toString().equals(tipoOperazione.toString())){
-				String oldTipo = soggetto.getOldTipoForUpdate()!=null ? soggetto.getOldTipoForUpdate() : soggetto.getTipo(); 
-				String oldNome = soggetto.getOldNomeForUpdate()!=null ? soggetto.getOldNomeForUpdate() : soggetto.getNome();
+				String oldTipo = (soggetto.getOldIDSoggettoForUpdate()!=null && soggetto.getOldIDSoggettoForUpdate().getTipo()!=null) ? 
+						soggetto.getOldIDSoggettoForUpdate().getTipo() : soggetto.getTipo(); 
+				String oldNome = (soggetto.getOldIDSoggettoForUpdate()!=null && soggetto.getOldIDSoggettoForUpdate().getNome()!=null) ? 
+						soggetto.getOldIDSoggettoForUpdate().getNome() : soggetto.getNome(); 
 				if( (oldTipo.equals(soggetto.getTipo())==false) || (oldNome.equals(soggetto.getNome())==false) )
 					msg+=":OLD<"+oldTipo+"/"+oldNome+">";
 			}
@@ -3844,21 +3907,12 @@ public class ControlStationCore {
 		// Servizio
 		else if (oggetto instanceof AccordoServizioParteSpecifica) {
 			AccordoServizioParteSpecifica asps = (AccordoServizioParteSpecifica) oggetto;
-			Servizio servizio = asps.getServizio();
 			msg+=":"+oggetto.getClass().getSimpleName();
-			msg+=":<"+servizio.getTipoSoggettoErogatore()+"/"+servizio.getNomeSoggettoErogatore()+"_"+servizio.getTipo()+"/"+servizio.getNome()+">";
+			msg+=":<"+this.idServizioFactory.getUriFromAccordo(asps)+">";
 			if(TipoOperazione.CHANGE.toString().equals(tipoOperazione.toString())){
-				String oldTipo = servizio.getOldTipoForUpdate()!=null ? servizio.getOldTipoForUpdate() : servizio.getTipo(); 
-				String oldNome = servizio.getOldNomeForUpdate()!=null ? servizio.getOldNomeForUpdate() : servizio.getNome();
-				String oldTipoErogatore = servizio.getOldTipoSoggettoErogatoreForUpdate()!=null ? servizio.getOldTipoSoggettoErogatoreForUpdate() : servizio.getTipoSoggettoErogatore();
-				String oldNomeErogatore = servizio.getOldNomeSoggettoErogatoreForUpdate()!=null ? servizio.getOldNomeSoggettoErogatoreForUpdate() : servizio.getNomeSoggettoErogatore();
-//				System.out.println("TIPO OLD["+oldTipo+"] NEW["+servizio.getTipo()+"]");
-//				System.out.println("NOME OLD["+oldNome+"] NEW["+servizio.getNome()+"]");
-//				System.out.println("TIPO EROGATORE OLD["+oldTipoErogatore+"] NEW["+servizio.getTipoSoggettoErogatore()+"]");
-//				System.out.println("NOME EROGATORE OLD["+oldNomeErogatore+"] NEW["+servizio.getNomeSoggettoErogatore()+"]");
-				if( (oldTipo.equals(servizio.getTipo())==false) || (oldNome.equals(servizio.getNome())==false) || 
-						(oldTipoErogatore.equals(servizio.getTipoSoggettoErogatore())==false) || (oldNomeErogatore.equals(servizio.getNomeSoggettoErogatore())==false) )
-					msg+=":OLD<"+oldTipoErogatore+"/"+oldNomeErogatore+"_"+oldTipo+"/"+oldNome+">";
+				String oldnome = asps.getOldIDServizioForUpdate()!=null ? this.idServizioFactory.getUriFromIDServizio(asps.getOldIDServizioForUpdate()) : this.idServizioFactory.getUriFromAccordo(asps);
+				if(oldnome.equals(this.idServizioFactory.getUriFromAccordo(asps))==false)
+					msg+=":OLD<"+oldnome+">";
 			}
 		}
 
@@ -3895,8 +3949,10 @@ public class ControlStationCore {
 			msg+=":"+oggetto.getClass().getSimpleName();
 			msg+=":<"+soggetto.getTipo()+"/"+soggetto.getNome()+">";
 			if(TipoOperazione.CHANGE.toString().equals(tipoOperazione.toString())){
-				String oldTipo = soggetto.getOldTipoForUpdate()!=null ? soggetto.getOldTipoForUpdate() : soggetto.getTipo(); 
-				String oldNome = soggetto.getOldNomeForUpdate()!=null ? soggetto.getOldNomeForUpdate() : soggetto.getNome();
+				String oldTipo = (soggetto.getOldIDSoggettoForUpdate()!=null && soggetto.getOldIDSoggettoForUpdate().getTipo()!=null) ? 
+						soggetto.getOldIDSoggettoForUpdate().getTipo() : soggetto.getTipo(); 
+				String oldNome = (soggetto.getOldIDSoggettoForUpdate()!=null && soggetto.getOldIDSoggettoForUpdate().getNome()!=null) ? 
+						soggetto.getOldIDSoggettoForUpdate().getNome() : soggetto.getNome(); 
 				if( (oldTipo.equals(soggetto.getTipo())==false) || (oldNome.equals(soggetto.getNome())==false) )
 					msg+=":OLD<"+oldTipo+"/"+oldNome+">";
 			}
@@ -3908,9 +3964,14 @@ public class ControlStationCore {
 			msg+=":"+oggetto.getClass().getSimpleName();
 			msg+=":<"+sa.getTipoSoggettoProprietario()+"/"+sa.getNomeSoggettoProprietario()+"_"+sa.getNome()+">";
 			if(TipoOperazione.CHANGE.toString().equals(tipoOperazione.toString())){
-				String oldNome = sa.getOldNomeForUpdate()!=null ? sa.getOldNomeForUpdate() : sa.getNome();
-				String oldTipoProp = sa.getOldTipoSoggettoProprietarioForUpdate()!=null ? sa.getOldTipoSoggettoProprietarioForUpdate() : sa.getTipoSoggettoProprietario();
-				String oldNomeProp = sa.getOldNomeSoggettoProprietarioForUpdate()!=null ? sa.getOldNomeSoggettoProprietarioForUpdate() : sa.getNomeSoggettoProprietario();
+				String oldTipoProp = (sa.getOldIDServizioApplicativoForUpdate()!=null && sa.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario()!=null && 
+						sa.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario().getTipo()!=null) ? 
+						sa.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario().getTipo() : sa.getTipoSoggettoProprietario(); 
+				String oldNomeProp = (sa.getOldIDServizioApplicativoForUpdate()!=null && sa.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario()!=null && 
+						sa.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario().getNome()!=null) ? 
+						sa.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario().getNome() : sa.getNomeSoggettoProprietario(); 
+				String oldNome = (sa.getOldIDServizioApplicativoForUpdate()!=null && sa.getOldIDServizioApplicativoForUpdate().getNome()!=null) ? 
+						sa.getOldIDServizioApplicativoForUpdate().getNome() : sa.getNome(); 
 				if(  (oldNome.equals(sa.getNome())==false) || (oldTipoProp.equals(sa.getTipoSoggettoProprietario())==false) || (oldNomeProp.equals(sa.getNomeSoggettoProprietario())==false) )
 					msg+=":OLD<"+oldTipoProp+"/"+oldNomeProp+"_"+oldNome+">";
 			}
@@ -3922,7 +3983,8 @@ public class ControlStationCore {
 			msg+=":"+oggetto.getClass().getSimpleName();
 			msg+=":<"+pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario()+"_"+pd.getNome()+">";
 			if(TipoOperazione.CHANGE.toString().equals(tipoOperazione.toString())){
-				String oldNome = pd.getOldNomeForUpdate()!=null ? pd.getOldNomeForUpdate() : pd.getNome();
+				String oldNome = (pd.getOldIDPortaDelegataForUpdate()!=null && pd.getOldIDPortaDelegataForUpdate().getNome()!=null) ? 
+						pd.getOldIDPortaDelegataForUpdate().getNome() : pd.getNome(); 
 				if(  (oldNome.equals(pd.getNome())==false) )
 					msg+=":OLD<"+pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario()+"_"+oldNome+">";
 			}
@@ -3934,7 +3996,8 @@ public class ControlStationCore {
 			msg+=":"+oggetto.getClass().getSimpleName();
 			msg+=":<"+pa.getTipoSoggettoProprietario()+"/"+pa.getNomeSoggettoProprietario()+"_"+pa.getNome()+">";
 			if(TipoOperazione.CHANGE.toString().equals(tipoOperazione.toString())){
-				String oldNome = pa.getOldNomeForUpdate()!=null ? pa.getOldNomeForUpdate() : pa.getNome();
+				String oldNome = (pa.getOldIDPortaApplicativaForUpdate()!=null && pa.getOldIDPortaApplicativaForUpdate().getNome()!=null) ? 
+						pa.getOldIDPortaApplicativaForUpdate().getNome() : pa.getNome(); 
 				if(  (oldNome.equals(pa.getNome())==false) )
 					msg+=":OLD<"+pa.getTipoSoggettoProprietario()+"/"+pa.getNomeSoggettoProprietario()+"_"+oldNome+">";
 			}

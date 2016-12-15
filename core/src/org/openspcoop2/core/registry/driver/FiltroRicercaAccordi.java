@@ -57,7 +57,7 @@ public class FiltroRicercaAccordi implements Serializable{
 	private String nomeAccordo;
 	
 	/** Versione */
-	private String versione;
+	private Integer versione;
 	
 	/** Nome */
 	private String nomeSoggettoReferente;
@@ -121,11 +121,11 @@ public class FiltroRicercaAccordi implements Serializable{
 		this.nomeAccordo = nomeAccordo;
 	}
 
-	public String getVersione() {
+	public Integer getVersione() {
 		return this.versione;
 	}
 
-	public void setVersione(String versione) {
+	public void setVersione(Integer versione) {
 		this.versione = versione;
 	}
 

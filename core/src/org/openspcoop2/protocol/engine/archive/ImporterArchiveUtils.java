@@ -54,6 +54,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.wsdl.RegistroOpenSPCoopUtilities;
 import org.openspcoop2.message.xml.XMLUtils;
@@ -521,8 +522,8 @@ public class ImporterArchiveUtils {
 					
 					org.openspcoop2.core.registry.Soggetto old = this.importerEngine.getSoggettoRegistro(idSoggetto);
 					archiveSoggetto.getSoggettoRegistro().setId(old.getId());
-					archiveSoggetto.getSoggettoRegistro().setOldTipoForUpdate(old.getTipo());
-					archiveSoggetto.getSoggettoRegistro().setOldNomeForUpdate(old.getNome());
+					IDSoggetto oldIDSoggettoForUpdate = new IDSoggetto(old.getTipo(), old.getNome());
+					archiveSoggetto.getSoggettoRegistro().setOldIDSoggettoForUpdate(oldIDSoggettoForUpdate);
 					org.openspcoop2.core.registry.driver.utils.XMLDataConverter.
 						impostaInformazioniRegistroDB_Soggetto_update(archiveSoggetto.getSoggettoRegistro(), old);
 					
@@ -594,8 +595,8 @@ public class ImporterArchiveUtils {
 					
 					org.openspcoop2.core.config.Soggetto old = this.importerEngine.getSoggettoConfigurazione(idSoggetto);
 					archiveSoggetto.getSoggettoConfigurazione().setId(old.getId());
-					archiveSoggetto.getSoggettoRegistro().setOldTipoForUpdate(old.getTipo());
-					archiveSoggetto.getSoggettoRegistro().setOldNomeForUpdate(old.getNome());
+					IDSoggetto oldIDSoggettoForUpdate = new IDSoggetto(old.getTipo(), old.getNome());
+					archiveSoggetto.getSoggettoRegistro().setOldIDSoggettoForUpdate(oldIDSoggettoForUpdate);
 					
 					// visibilita' oggetto stesso per update
 					if(this.importerEngine.isVisioneOggettiGlobale(this.userLogin)==false){
@@ -691,9 +692,10 @@ public class ImporterArchiveUtils {
 				
 				org.openspcoop2.core.config.ServizioApplicativo old = this.importerEngine.getServizioApplicativo(idServizioApplicativo);
 				archiveServizioApplicativo.getServizioApplicativo().setId(old.getId());
-				archiveServizioApplicativo.getServizioApplicativo().setOldNomeForUpdate(old.getNome());
-				archiveServizioApplicativo.getServizioApplicativo().setOldTipoSoggettoProprietarioForUpdate(old.getTipoSoggettoProprietario());
-				archiveServizioApplicativo.getServizioApplicativo().setOldNomeSoggettoProprietarioForUpdate(old.getNomeSoggettoProprietario());
+				IDServizioApplicativo oldIDServizioApplicativoForUpdate = new IDServizioApplicativo();
+				oldIDServizioApplicativoForUpdate.setNome(old.getNome());
+				oldIDServizioApplicativoForUpdate.setIdSoggettoProprietario(new IDSoggetto(old.getTipoSoggettoProprietario(), old.getNomeSoggettoProprietario()));
+				archiveServizioApplicativo.getServizioApplicativo().setOldIDServizioApplicativoForUpdate(oldIDServizioApplicativoForUpdate);
 				org.openspcoop2.core.config.driver.utils.XMLDataConverter.
 					impostaInformazioniConfigurazione_ServizioApplicativo_update(archiveServizioApplicativo.getServizioApplicativo(), old);
 				
@@ -1051,7 +1053,7 @@ public class ImporterArchiveUtils {
 			}
 			// servizi componenti
 			for (IDServizio idServizioComponente : idServiziComponenti) {
-				String protocolloAssociatoServizioComponente = this.protocolFactoryManager.getProtocolByServiceType(idServizioComponente.getTipoServizio());
+				String protocolloAssociatoServizioComponente = this.protocolFactoryManager.getProtocolByServiceType(idServizioComponente.getTipo());
 				if(protocolloAssociatoAccordo.equals(protocolloAssociatoServizioComponente)==false){
 					throw new Exception("ServizioComponente ["+idServizioComponente+"] (protocollo:"+protocolloAssociatoServizioComponente+
 							") non utilizzabile in un accordo con soggetto referente ["+idSoggettoReferente+"] (protocollo:"+protocolloAssociatoAccordo+")");
@@ -1129,9 +1131,10 @@ public class ImporterArchiveUtils {
 			for(int i=0; i<archiveAccordoServizioComposto.getAccordoServizioParteComune().getServizioComposto().sizeServizioComponenteList();i++){
 				AccordoServizioParteComuneServizioCompostoServizioComponente componente =
 						archiveAccordoServizioComposto.getAccordoServizioParteComune().getServizioComposto().getServizioComponente(i);
-				IDServizio idServizioComponente = 
-						new IDServizio(componente.getTipoSoggetto(), componente.getNomeSoggetto(), 
-								componente.getTipo(), componente.getNome(), componente.getAzione());
+				IDServizio idServizioComponente = IDServizioFactory.getInstance().getIDServizioFromValues(componente.getTipo(), componente.getNome(), 
+						componente.getTipoSoggetto(), componente.getNomeSoggetto(), 
+						componente.getVersione()); 
+				idServizioComponente.setAzione(componente.getAzione());
 				AccordoServizioParteSpecifica asps = serviziComponenti.get(idServizioComponente.toString());
 				if(asps==null){
 					Enumeration<String> idServizi = serviziComponenti.keys();
@@ -1367,8 +1370,7 @@ public class ImporterArchiveUtils {
 			ArchiveEsitoImportDetail detail){
 		
 		IDAccordo idAccordoServizioParteComune = archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteComune();
-		IDAccordo idAccordoServizioParteSpecifica = archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica();
-		IDServizio idServizio = archiveAccordoServizioParteSpecifica.getIdServizio();
+		IDServizio idAccordoServizioParteSpecifica = archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica();
 		IDSoggetto idSoggettoErogatore = archiveAccordoServizioParteSpecifica.getIdSoggettoErogatore();
 		String labelAccordoParteComune = "Accordo di Servizio Parte Comune";
 		if(servizioComposto){
@@ -1401,34 +1403,39 @@ public class ImporterArchiveUtils {
 			boolean isUpdate = false;
 			boolean servizioCorrelato = 
 					TipologiaServizio.CORRELATO.
-						equals(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getServizio().getTipologiaServizio());
+						equals(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getTipologiaServizio());
 			if(this.importerEngine.existsAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica)){
 				old = this.importerEngine.getAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica);
 				idAccordoServizioParteSpecificaLong = old.getId();
 				isUpdate = true;
 			}
+			// uri
+			String uriAccordo = null;
+			try{
+				uriAccordo = IDServizioFactory.getInstance().getUriFromIDServizio(idAccordoServizioParteSpecifica);
+			}catch(Exception e){
+				uriAccordo = idAccordoServizioParteSpecifica.toString(false);
+			}
 			// exists other service che implementa lo stesso accordo di servizio parte comune
 			this.importerEngine.controlloUnicitaImplementazioneAccordoPerSoggetto(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getPortType(), 
 					idSoggettoErogatore, soggetto.getId(), 
 					idAccordoServizioParteComune, accordoServizioParteComune.getId(), 
-					idServizio, idAccordoServizioParteSpecificaLong, 
+					idAccordoServizioParteSpecifica, idAccordoServizioParteSpecificaLong, 
 					isUpdate, servizioCorrelato,
 					isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto,
 					isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto);
 			// exists other service with same tipo/nome e tipo/nome soggetto erogatore 
-			if(this.importerEngine.existsAccordoServizioParteSpecifica(idServizio)){
+			if(this.importerEngine.existsAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica)){
 				if(!isUpdate){
-					AccordoServizioParteSpecifica aspsCheck = this.importerEngine.getAccordoServizioParteSpecifica(idServizio);
-					throw new Exception("Servizio ["+idServizio.getTipoServizio()+"/"+idServizio.getServizio()+"] erogato dal soggetto ["+idSoggettoErogatore
-							+"] già esistente definito all'interno dell'accordo di servizio parte specifica ["+IDAccordoFactory.getInstance().getUriFromAccordo(aspsCheck)+"]");
+					AccordoServizioParteSpecifica aspsCheck = this.importerEngine.getAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica);
+					throw new Exception("Servizio ["+uriAccordo+"] già esistente definito all'interno dell'accordo di servizio parte specifica ["+IDServizioFactory.getInstance().getUriFromAccordo(aspsCheck)+"]");
 				}
 				else{
 					// change
-					AccordoServizioParteSpecifica aspsCheck = this.importerEngine.getAccordoServizioParteSpecifica(idServizio);
-					IDAccordo idAccordoASPSCheck = IDAccordoFactory.getInstance().getIDAccordoFromAccordo(aspsCheck);
+					AccordoServizioParteSpecifica aspsCheck = this.importerEngine.getAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica);
+					IDServizio idAccordoASPSCheck = IDServizioFactory.getInstance().getIDServizioFromAccordo(aspsCheck);
 					if(idAccordoASPSCheck.equals(idAccordoServizioParteSpecifica)==false){
-						throw new Exception("Servizio ["+idServizio.getTipoServizio()+"/"+idServizio.getServizio()+"] erogato dal soggetto ["+idSoggettoErogatore
-								+"] già esistente definito all'interno dell'accordo di servizio parte specifica ["+IDAccordoFactory.getInstance().getUriFromAccordo(aspsCheck)+"]");
+						throw new Exception("Servizio ["+uriAccordo+"] già esistente definito all'interno dell'accordo di servizio parte specifica ["+IDServizioFactory.getInstance().getUriFromAccordo(aspsCheck)+"]");
 					}
 				}
 			}
@@ -1521,10 +1528,10 @@ public class ImporterArchiveUtils {
 			if(this.importerEngine.existsAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica)){
 				
 				archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().setId(old.getId());
-				archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getServizio().setOldTipoForUpdate(old.getServizio().getTipo());
-				archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getServizio().setOldNomeForUpdate(old.getServizio().getNome());
-				archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getServizio().setOldTipoSoggettoErogatoreForUpdate(old.getServizio().getTipoSoggettoErogatore());
-				archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getServizio().setOldNomeSoggettoErogatoreForUpdate(old.getServizio().getNomeSoggettoErogatore());
+				IDServizio oldIDServizioForUpdate = IDServizioFactory.getInstance().getIDServizioFromValues(old.getTipo(), old.getNome(), 
+						old.getTipoSoggettoErogatore(),	old.getNomeSoggettoErogatore(),
+						old.getVersione());
+				archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().setOldIDServizioForUpdate(oldIDServizioForUpdate);
 				boolean mantieniFruitoriEsistenti = true; 
 				org.openspcoop2.core.registry.driver.utils.XMLDataConverter.
 					impostaInformazioniRegistro_AccordoServizioParteSpecifica_update(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica(),
@@ -1566,7 +1573,7 @@ public class ImporterArchiveUtils {
 	public void importFruitore(ArchiveFruitore archiveFruitore,
 			ArchiveEsitoImportDetail detail){
 		
-		IDAccordo idAccordoServizioParteSpecifica = archiveFruitore.getIdAccordoServizioParteSpecifica();
+		IDServizio idAccordoServizioParteSpecifica = archiveFruitore.getIdAccordoServizioParteSpecifica();
 		IDSoggetto idSoggettoFruitore = archiveFruitore.getIdSoggettoFruitore();
 
 		try{
@@ -1607,7 +1614,7 @@ public class ImporterArchiveUtils {
 			// --- compatibilita' elementi riferiti ---
 			String protocolloAssociatoFruitore = this.protocolFactoryManager.getProtocolByOrganizationType(idSoggettoFruitore.getTipo());
 			// accordo di servizio parte specifica
-			String protocolloAssociatoAccordoParteSpecifica = this.protocolFactoryManager.getProtocolByOrganizationType(idAccordoServizioParteSpecifica.getSoggettoReferente().getTipo());
+			String protocolloAssociatoAccordoParteSpecifica = this.protocolFactoryManager.getProtocolByOrganizationType(idAccordoServizioParteSpecifica.getSoggettoErogatore().getTipo());
 			if(protocolloAssociatoFruitore.equals(protocolloAssociatoAccordoParteSpecifica)==false){
 				throw new Exception("AccordoServizioParteSpecifica ["+idAccordoServizioParteSpecifica+"] (protocollo:"+protocolloAssociatoAccordoParteSpecifica+
 						") non utilizzabile in un fruitore ["+idSoggettoFruitore+"] (protocollo:"+protocolloAssociatoFruitore+")");
@@ -1675,10 +1682,10 @@ public class ImporterArchiveUtils {
 			oldAccordo.addFruitore(archiveFruitore.getFruitore());
 			
 			// update
-			oldAccordo.getServizio().setOldTipoForUpdate(oldAccordo.getServizio().getTipo());
-			oldAccordo.getServizio().setOldNomeForUpdate(oldAccordo.getServizio().getNome());
-			oldAccordo.getServizio().setOldTipoSoggettoErogatoreForUpdate(oldAccordo.getServizio().getTipoSoggettoErogatore());
-			oldAccordo.getServizio().setOldNomeSoggettoErogatoreForUpdate(oldAccordo.getServizio().getNomeSoggettoErogatore());
+			IDServizio oldIDServizioForUpdate = IDServizioFactory.getInstance().getIDServizioFromValues(oldAccordo.getTipo(), oldAccordo.getNome(), 
+					oldAccordo.getTipoSoggettoErogatore(),oldAccordo.getNomeSoggettoErogatore(),
+					oldAccordo.getVersione());
+			oldAccordo.setOldIDServizioForUpdate(oldIDServizioForUpdate);
 			this.importerEngine.updateAccordoServizioParteSpecifica(oldAccordo);
 			
 			// gestione serviziApplicativiAutorizzati
@@ -1750,9 +1757,10 @@ public class ImporterArchiveUtils {
 			if(idSoggettoErogatore!=null){
 				if(pd.getServizio()!=null &&
 						pd.getServizio().getTipo()!=null &&
-						pd.getServizio().getNome()!=null  ){
-					idServizio = new IDServizio(idSoggettoErogatore, 
-							pd.getServizio().getTipo(), pd.getServizio().getNome());
+						pd.getServizio().getNome()!=null &&
+						pd.getServizio().getVersione()!=null){
+					idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pd.getServizio().getTipo(), pd.getServizio().getNome(), 
+							idSoggettoErogatore, pd.getServizio().getVersione());
 				}
 			}
 			
@@ -1785,7 +1793,7 @@ public class ImporterArchiveUtils {
 			}
 			// accordo di servizio parte specifica
 			if(idServizio!=null){
-				String protocolloAssociatoAccordoParteSpecifica = this.protocolFactoryManager.getProtocolByServiceType(idServizio.getTipoServizio());
+				String protocolloAssociatoAccordoParteSpecifica = this.protocolFactoryManager.getProtocolByServiceType(idServizio.getTipo());
 				if(protocolloAssociatoSoggettoProprietario.equals(protocolloAssociatoAccordoParteSpecifica)==false){
 					throw new Exception("AccordoServizioParteSpecifica ["+idServizio+"] (protocollo:"+protocolloAssociatoAccordoParteSpecifica+
 							") con servizio non utilizzabile in una porta delegata appartenete al soggetto ["+idSoggettoProprietario+"] (protocollo:"+protocolloAssociatoSoggettoProprietario+")");
@@ -1847,7 +1855,9 @@ public class ImporterArchiveUtils {
 				
 				org.openspcoop2.core.config.PortaDelegata old = this.importerEngine.getPortaDelegata(idPortaDelegata);
 				pd.setId(old.getId());
-				pd.setOldNomeForUpdate(old.getNome());
+				IDPortaDelegata oldIDPortaDelegataForUpdate = new IDPortaDelegata();
+				oldIDPortaDelegataForUpdate.setNome(old.getNome());
+				pd.setOldIDPortaDelegataForUpdate(oldIDPortaDelegataForUpdate);
 				org.openspcoop2.core.config.driver.utils.XMLDataConverter.
 					impostaInformazioniConfigurazione_PortaDelegata(pd);
 				
@@ -1906,9 +1916,10 @@ public class ImporterArchiveUtils {
 			if(idSoggettoErogatore!=null){
 				if(pa.getServizio()!=null &&
 						pa.getServizio().getTipo()!=null &&
-						pa.getServizio().getNome()!=null  ){
-					idServizio = new IDServizio(idSoggettoErogatore, 
-							pa.getServizio().getTipo(), pa.getServizio().getNome());
+						pa.getServizio().getNome()!=null &&
+						pa.getServizio().getVersione()!=null){
+					idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
+							idSoggettoErogatore, pa.getServizio().getVersione());
 				}
 			}
 			
@@ -1938,7 +1949,7 @@ public class ImporterArchiveUtils {
 						") non utilizzabile in una porta applicativa appartenete al soggetto ["+idSoggettoProprietario+"] (protocollo:"+protocolloAssociatoSoggettoProprietario+")");
 			}
 			// accordo di servizio parte specifica
-			String protocolloAssociatoAccordoParteSpecifica = this.protocolFactoryManager.getProtocolByServiceType(idServizio.getTipoServizio());
+			String protocolloAssociatoAccordoParteSpecifica = this.protocolFactoryManager.getProtocolByServiceType(idServizio.getTipo());
 			if(protocolloAssociatoSoggettoProprietario.equals(protocolloAssociatoAccordoParteSpecifica)==false){
 				throw new Exception("AccordoServizioParteSpecifica ["+idServizio+"] (protocollo:"+protocolloAssociatoAccordoParteSpecifica+
 						") con servizio non utilizzabile in una porta applicativa appartenete al soggetto ["+idSoggettoProprietario+"] (protocollo:"+protocolloAssociatoSoggettoProprietario+")");
@@ -2000,7 +2011,9 @@ public class ImporterArchiveUtils {
 				
 				org.openspcoop2.core.config.PortaApplicativa old = this.importerEngine.getPortaApplicativa(idPortaApplicativa);
 				pa.setId(old.getId());
-				pa.setOldNomeForUpdate(old.getNome());
+				IDPortaApplicativa oldIDPortaApplicativaForUpdate = new IDPortaApplicativa();
+				oldIDPortaApplicativaForUpdate.setNome(old.getNome());
+				pa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
 				org.openspcoop2.core.config.driver.utils.XMLDataConverter.
 					impostaInformazioniConfigurazione_PortaApplicativa(pa);
 				

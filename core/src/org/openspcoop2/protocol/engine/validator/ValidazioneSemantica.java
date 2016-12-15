@@ -28,6 +28,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.engine.driver.ProfiloDiCollaborazione;
@@ -75,6 +76,8 @@ public class ValidazioneSemantica  {
 	protected String servizioCorrelato;
 	/** Tipo ServizioCorrelato */
 	protected String tipoServizioCorrelato;
+	/** Versione ServizioCorrelato */
+	protected Integer versioneServizioCorrelato;
 	/** Azione Correlata */
 	protected String azioneCorrelata;
 	/** Reader Registro */
@@ -159,6 +162,7 @@ public class ValidazioneSemantica  {
 			this.infoServizio = result.getInfoServizio();
 			this.servizioCorrelato = result.getServizioCorrelato();
 			this.tipoServizioCorrelato = result.getTipoServizioCorrelato();
+			this.versioneServizioCorrelato = result.getVersioneServizioCorrelato();
 			this.erroriProcessamento = result.getErroriProcessamento();
 			if(this.erroriProcessamento == null) 
 				this.erroriProcessamento = new java.util.ArrayList<Eccezione>();
@@ -218,33 +222,36 @@ public class ValidazioneSemantica  {
 		// Altrimenti, questo non puo' succedere e verrà segnalato un errore
 
 		IDSoggetto idSoggettoFruitoreProfiloGestito = null;
-		if(busta.getTipoServizio()!=null && busta.getServizio()!=null){
-			IDServizio idServizioProfiloGestito = new IDServizio();
-			idServizioProfiloGestito.setTipoServizio(busta.getTipoServizio());
-			idServizioProfiloGestito.setServizio(busta.getServizio());
-			idServizioProfiloGestito.setAzione(busta.getAzione());
+		if(busta.getTipoServizio()!=null && busta.getServizio()!=null){		
+			IDSoggetto idSoggettoErogatoreProfiloGestito = null;
 			if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(busta.getProfiloDiCollaborazione()) && RuoloBusta.RISPOSTA.equals(tipoBusta.toString())){
-				idServizioProfiloGestito.setSoggettoErogatore(busta.getTipoMittente(), busta.getMittente());
+				idSoggettoErogatoreProfiloGestito = new IDSoggetto(busta.getTipoMittente(), busta.getMittente());
 				idSoggettoFruitoreProfiloGestito = new IDSoggetto(busta.getTipoDestinatario(), busta.getDestinatario());
 			}else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(busta.getProfiloDiCollaborazione()) && (RuoloBusta.RICHIESTA.equals(tipoBusta.toString())==false) ){
 				if(RuoloBusta.RICEVUTA_RICHIESTA.equals(tipoBusta.toString())){
-					idServizioProfiloGestito.setSoggettoErogatore(busta.getTipoMittente(), busta.getMittente());
+					idSoggettoErogatoreProfiloGestito = new IDSoggetto(busta.getTipoMittente(), busta.getMittente());
 					idSoggettoFruitoreProfiloGestito = new IDSoggetto(busta.getTipoDestinatario(), busta.getDestinatario());
 				}else if(RuoloBusta.RISPOSTA.equals(tipoBusta.toString())){
-					idServizioProfiloGestito.setSoggettoErogatore(busta.getTipoDestinatario(), busta.getDestinatario());
+					idSoggettoErogatoreProfiloGestito = new IDSoggetto(busta.getTipoDestinatario(), busta.getDestinatario());
 					idSoggettoFruitoreProfiloGestito = new IDSoggetto(busta.getTipoDestinatario(), busta.getDestinatario());
 				}else { // RICEVUTA_RISPOSTA
-					idServizioProfiloGestito.setSoggettoErogatore(busta.getTipoMittente(), busta.getMittente());
+					idSoggettoErogatoreProfiloGestito = new IDSoggetto(busta.getTipoMittente(), busta.getMittente());
 					idSoggettoFruitoreProfiloGestito = new IDSoggetto(busta.getTipoMittente(), busta.getMittente());
 				}
 			}else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(busta.getProfiloDiCollaborazione()) &&
 					(RuoloBusta.RICEVUTA_RICHIESTA.equals(tipoBusta.toString()) || RuoloBusta.RICEVUTA_RISPOSTA.equals(tipoBusta.toString())) ){
-				idServizioProfiloGestito.setSoggettoErogatore(busta.getTipoMittente(), busta.getMittente());
+				idSoggettoErogatoreProfiloGestito = new IDSoggetto(busta.getTipoMittente(), busta.getMittente());
 				idSoggettoFruitoreProfiloGestito = new IDSoggetto(busta.getTipoDestinatario(), busta.getDestinatario());
 			}else{
-				idServizioProfiloGestito.setSoggettoErogatore(busta.getTipoDestinatario(), busta.getDestinatario());
+				idSoggettoErogatoreProfiloGestito = new IDSoggetto(busta.getTipoDestinatario(), busta.getDestinatario());
 				idSoggettoFruitoreProfiloGestito = new IDSoggetto(busta.getTipoMittente(), busta.getMittente());
 			}
+			
+			IDServizio idServizioProfiloGestito = IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(), busta.getServizio(), 
+					idSoggettoErogatoreProfiloGestito, 
+					busta.getVersioneServizio());
+			idServizioProfiloGestito.setAzione(busta.getAzione());
+			
 			return RegistroServiziManager.getInstance(state).getProfiloGestioneErogazioneServizio(idSoggettoFruitoreProfiloGestito, idServizioProfiloGestito, null);
 		}
 		else{
@@ -699,6 +706,9 @@ public class ValidazioneSemantica  {
 	 */
 	public String getTipoServizioCorrelato() {
 		return this.tipoServizioCorrelato;
+	}
+	public Integer getVersioneServizioCorrelato() {
+		return this.versioneServizioCorrelato;
 	}
 	public Servizio getInfoServizio() {
 		return this.infoServizio;

@@ -38,7 +38,6 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioCompostoServizioComponente;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -248,18 +247,18 @@ public final class AccordiServizioParteComuneComponentiAdd extends Action {
 
 			//inserimento accordo componente
 			AccordoServizioParteSpecifica aspsComponente = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(idServizioComponente));
-			Servizio ssComponente = aspsComponente.getServizio();
-
+			
 			AccordoServizioParteComuneServizioComposto assc = as.getServizioComposto();
 			if(assc==null) assc = new AccordoServizioParteComuneServizioComposto();
 
 			AccordoServizioParteComuneServizioCompostoServizioComponente asscc = 
 					new AccordoServizioParteComuneServizioCompostoServizioComponente();
 			asscc.setIdServizioComponente(aspsComponente.getId());
-			asscc.setNome(ssComponente.getNome());
-			asscc.setTipo(ssComponente.getTipo());
-			asscc.setTipoSoggetto(ssComponente.getTipoSoggettoErogatore());
-			asscc.setNomeSoggetto(ssComponente.getNomeSoggettoErogatore());
+			asscc.setNome(aspsComponente.getNome());
+			asscc.setTipo(aspsComponente.getTipo());
+			asscc.setVersione(aspsComponente.getVersione());
+			asscc.setTipoSoggetto(aspsComponente.getTipoSoggettoErogatore());
+			asscc.setNomeSoggetto(aspsComponente.getNomeSoggettoErogatore());
 			//aggiungo componente
 			assc.addServizioComponente(asscc);
 			//aggiungo servizio componente ad accordo

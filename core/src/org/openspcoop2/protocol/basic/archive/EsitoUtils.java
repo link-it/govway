@@ -31,10 +31,12 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoCooperazione;
@@ -64,10 +66,12 @@ public class EsitoUtils {
 	protected IProtocolFactory<?> protocolFactory = null;
 	protected IDAccordoCooperazioneFactory idAccordoCooperazioneFactory;
 	protected IDAccordoFactory idAccordoFactory;
+	protected IDServizioFactory idServizioFactory;
 	public EsitoUtils(IProtocolFactory<?> protocolFactory){
 		this.protocolFactory = protocolFactory;
 		this.idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
 		this.idAccordoFactory = IDAccordoFactory.getInstance();
+		this.idServizioFactory = IDServizioFactory.getInstance();
 	}
 	
 	public String toString(ArchiveEsitoImport archive, boolean readIdCorrelazione, boolean importOperation) throws ProtocolException{
@@ -265,8 +269,8 @@ public class EsitoUtils {
 		for (int i = 0; i < archive.getAccordiServizioParteSpecifica().size(); i++) {
 			try{
 				ArchiveEsitoImportDetail archiveAccordoServizioParteSpecifica = archive.getAccordiServizioParteSpecifica().get(i);
-				IDAccordo idAccordo = ((ArchiveAccordoServizioParteSpecifica)archiveAccordoServizioParteSpecifica.getArchiveObject()).getIdAccordoServizioParteSpecifica();
-				String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
+				IDServizio idServizio = ((ArchiveAccordoServizioParteSpecifica)archiveAccordoServizioParteSpecifica.getArchiveObject()).getIdAccordoServizioParteSpecifica();
+				String uriAccordo = this.idServizioFactory.getUriFromIDServizio(idServizio);
 				bfEsito.append("\t- [").append(uriAccordo).append("] ");
 				serializeStato(archiveAccordoServizioParteSpecifica, bfEsito, importOperation);
 			}catch(Exception e){
@@ -308,8 +312,8 @@ public class EsitoUtils {
 		for (int i = 0; i < archive.getAccordiServizioParteSpecificaServiziComposti().size(); i++) {
 			try{
 				ArchiveEsitoImportDetail archiveAccordoServizioParteSpecifica = archive.getAccordiServizioParteSpecificaServiziComposti().get(i);
-				IDAccordo idAccordo = ((ArchiveAccordoServizioParteSpecifica)archiveAccordoServizioParteSpecifica.getArchiveObject()).getIdAccordoServizioParteSpecifica();
-				String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
+				IDServizio idServizio = ((ArchiveAccordoServizioParteSpecifica)archiveAccordoServizioParteSpecifica.getArchiveObject()).getIdAccordoServizioParteSpecifica();
+				String uriAccordo = this.idServizioFactory.getUriFromIDServizio(idServizio);
 				bfEsito.append("\t- [").append(uriAccordo).append("] ");
 				serializeStato(archiveAccordoServizioParteSpecifica, bfEsito, importOperation);
 			}catch(Exception e){
@@ -329,8 +333,8 @@ public class EsitoUtils {
 		for (int i = 0; i < archive.getAccordiFruitori().size(); i++) {
 			try{
 				ArchiveEsitoImportDetail archiveFruitore = archive.getAccordiFruitori().get(i);
-				IDAccordo idAccordo = ((ArchiveFruitore)archiveFruitore.getArchiveObject()).getIdAccordoServizioParteSpecifica();
-				String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
+				IDServizio idServizio = ((ArchiveFruitore)archiveFruitore.getArchiveObject()).getIdAccordoServizioParteSpecifica();
+				String uriAccordo = this.idServizioFactory.getUriFromIDServizio(idServizio);
 				IDSoggetto idFruitore = ((ArchiveFruitore)archiveFruitore.getArchiveObject()).getIdSoggettoFruitore();
 				bfEsito.append("\t- ["+idFruitore+"] -> [").append(uriAccordo).append("] ");
 				serializeStato(archiveFruitore, bfEsito, importOperation);

@@ -34,7 +34,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
 import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IUnmarshallingContext;
@@ -61,6 +60,7 @@ import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.core.config.driver.FiltroRicercaSoggetti;
+import org.openspcoop2.core.config.driver.IDServizioUtils;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
 import org.openspcoop2.core.config.driver.ValidazioneSemantica;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -74,6 +74,7 @@ import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.slf4j.Logger;
 
 /**
  * Contiene un 'reader' della configurazione dell'infrastruttura OpenSPCoop.
@@ -524,10 +525,9 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 					if(pa.getSoggettoVirtuale()!=null && 
 							pa.getSoggettoVirtuale().getTipo()!=null &&
 							pa.getSoggettoVirtuale().getNome()!=null){
-						IDServizio s = new IDServizio();
-						s.setSoggettoErogatore(new IDSoggetto(pa.getSoggettoVirtuale().getTipo(),pa.getSoggettoVirtuale().getNome()));
-						s.setTipoServizio(pa.getServizio().getTipo());
-						s.setServizio(pa.getServizio().getNome());
+						IDServizio s = IDServizioUtils.buildIDServizio(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
+								new IDSoggetto(pa.getSoggettoVirtuale().getTipo(),pa.getSoggettoVirtuale().getNome()), 
+								pa.getServizio().getVersione());
 						if(unique.contains(s.toString())==false){
 							//log.info("aggiunto Servizio "+s.toString()+" alla lista dei servizi erogati da Soggetti Virtuali");
 							lista.add(s);
@@ -619,7 +619,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	
 	// PORTA DELEGATA
 
-	private IDPortaDelegata convertToIDPortaDelegata(PortaDelegata pd){
+	private IDPortaDelegata convertToIDPortaDelegata(PortaDelegata pd) throws DriverConfigurazioneException{
 		
 		IDPortaDelegata idPD = new IDPortaDelegata();
 		idPD.setNome(pd.getNome());
@@ -629,12 +629,17 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		IDSoggetto soggettoFruitore = new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario());
 		idFruizione.setSoggettoFruitore(soggettoFruitore);
 		
-		IDServizio idServizio = new IDServizio(pd.getSoggettoErogatore().getTipo(),pd.getSoggettoErogatore().getNome(),
-				pd.getServizio().getTipo(),pd.getServizio().getNome());
-		if(pd.getAzione()!=null && pd.getAzione().getNome()!=null && !"".equals(pd.getAzione().getNome())){
-			idServizio.setAzione(pd.getAzione().getNome());	
+		try{
+			IDServizio idServizio = IDServizioUtils.buildIDServizio(pd.getServizio().getTipo(), pd.getServizio().getNome(), 
+					new IDSoggetto(pd.getSoggettoErogatore().getTipo(),pd.getSoggettoErogatore().getNome()), 
+					pd.getServizio().getVersione()); 
+			if(pd.getAzione()!=null && pd.getAzione().getNome()!=null && !"".equals(pd.getAzione().getNome())){
+				idServizio.setAzione(pd.getAzione().getNome());	
+			}
+			idFruizione.setIdServizio(idServizio);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
-		idFruizione.setIdServizio(idServizio);
 		
 		idPD.setIdentificativiFruizione(idFruizione);
 		
@@ -810,7 +815,7 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	
 	// PORTA APPLICATIVA
 	
-	private IDPortaApplicativa convertToIDPortaApplicativa(PortaApplicativa pa){
+	private IDPortaApplicativa convertToIDPortaApplicativa(PortaApplicativa pa) throws DriverConfigurazioneException{
 		
 		IDPortaApplicativa idPA = new IDPortaApplicativa();
 		idPA.setNome(pa.getNome());
@@ -822,12 +827,17 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 			idErogazione.setSoggettoVirtuale(soggettoVirtuale);
 		}
 		
-		IDServizio idServizio = new IDServizio(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(),
-				pa.getServizio().getTipo(),pa.getServizio().getNome());
-		if(pa.getAzione()!=null && pa.getAzione().getNome()!=null && !"".equals(pa.getAzione().getNome())){
-			idServizio.setAzione(pa.getAzione().getNome());	
+		try{
+			IDServizio idServizio = IDServizioUtils.buildIDServizio(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
+					new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()), 
+					pa.getServizio().getVersione()); 
+			if(pa.getAzione()!=null && pa.getAzione().getNome()!=null && !"".equals(pa.getAzione().getNome())){
+				idServizio.setAzione(pa.getAzione().getNome());	
+			}
+			idErogazione.setIdServizio(idServizio);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
-		idErogazione.setIdServizio(idServizio);
 		
 		idPA.setIdentificativiErogazione(idErogazione);
 		
@@ -915,10 +925,11 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		if(soggettoErogatore == null)
 			throw new DriverConfigurazioneException("[getPortaApplicativa] Parametri non validi (Soggetto Erogatore is null)");
 	
-		String servizio = service.getServizio();
-		String tipoServizio = service.getTipoServizio();
+		String servizio = service.getNome();
+		String tipoServizio = service.getTipo();
+		Integer versioneServizio = service.getVersione();
 		String azione = service.getAzione();
-		if((servizio==null)||(tipoServizio==null))
+		if((servizio==null)||(tipoServizio==null)||versioneServizio==null)
 			throw new DriverConfigurazioneException("[getPortaApplicativa] Parametri (Servizio) non validi");
 
 		//	Il getSoggetto effettua il REFRESH XML
@@ -947,10 +958,12 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 			boolean paMatchaCriteriDiRicerca = false;
 			if(soggettoVirtuale==null){
 				paMatchaCriteriDiRicerca = servizio.equals(pa.getServizio().getNome()) && 
-										   tipoServizio.equals(pa.getServizio().getTipo());
+										   tipoServizio.equals(pa.getServizio().getTipo()) &&
+										   versioneServizio.intValue() == pa.getServizio().getVersione().intValue();
 			}else{
 				paMatchaCriteriDiRicerca = servizio.equals(pa.getServizio().getNome()) && 
 				                           tipoServizio.equals(pa.getServizio().getTipo()) &&
+				                           versioneServizio.intValue() == pa.getServizio().getVersione().intValue() &&
 				                           pa.getSoggettoVirtuale()!=null &&
 				                           soggettoVirtuale.getTipo().equals(pa.getSoggettoVirtuale().getTipo()) &&
 				                           soggettoVirtuale.getNome().equals(pa.getSoggettoVirtuale().getNome());
@@ -1006,10 +1019,11 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 
 		Hashtable<IDSoggetto,PortaApplicativa> paConSoggetti = new Hashtable<IDSoggetto,PortaApplicativa>();
 		IDSoggetto soggettoVirtuale = idServizio.getSoggettoErogatore();	
-		String servizio = idServizio.getServizio();
-		String tipoServizio = idServizio.getTipoServizio();
+		String servizio = idServizio.getNome();
+		String tipoServizio = idServizio.getTipo();
+		Integer versioneServizio = idServizio.getVersione();
 		String azione = idServizio.getAzione();
-		if((servizio==null)||(tipoServizio==null))
+		if((servizio==null)||(tipoServizio==null)||versioneServizio==null)
 			throw new DriverConfigurazioneException("[getPortaApplicativa_SoggettiVirtuali] Parametri (Servizio) Non Validi");
 
 
@@ -1029,7 +1043,8 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 
 						// Porta applicativa con tale soggetto virtuale... guardo se possiede il servizio e l'azione della busta
 						if(servizio.equals(pa.getServizio().getNome()) &&
-								tipoServizio.equals(pa.getServizio().getTipo())){
+								tipoServizio.equals(pa.getServizio().getTipo()) &&
+								versioneServizio.intValue() == pa.getServizio().getVersione().intValue()){
 
 							// ricerca di una porta applicativa senza azione
 							if(azione==null){

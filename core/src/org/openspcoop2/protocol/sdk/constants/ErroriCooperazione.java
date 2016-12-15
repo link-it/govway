@@ -52,6 +52,9 @@ public enum ErroriCooperazione {
 	TIPO_SERVIZIO_NON_VALIDO("Il Tipo del servizio presente nella busta non è valido",
 			CodiceErroreCooperazione.TIPO_SERVIZIO_NON_VALIDO),
 	
+	VERSIONE_SERVIZIO_NON_VALIDO("La versione del servizio presente nella busta non è valido",
+			CodiceErroreCooperazione.VERSIONE_SERVIZIO_NON_VALIDO),
+	
 	AZIONE_NON_VALIDA("L'azione presente nella busta non è valida",
 			CodiceErroreCooperazione.AZIONE_NON_VALIDA),		
 			

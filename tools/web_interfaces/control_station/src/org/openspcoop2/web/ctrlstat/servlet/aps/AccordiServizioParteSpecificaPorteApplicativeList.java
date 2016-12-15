@@ -35,7 +35,6 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -98,9 +97,9 @@ public final class AccordiServizioParteSpecificaPorteApplicativeList extends Act
 			ricerca = apsHelper.checkSearchParameters(idLista, ricerca);
 	
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
-			Servizio servizio = asps.getServizio();
 			
-			List<PortaApplicativa> lista = apsCore.serviziPorteAppList(servizio.getTipo(),servizio.getNome(),Integer.parseInt(id), Integer.parseInt(idSoggettoErogatoreDelServizio), ricerca);
+			List<PortaApplicativa> lista = apsCore.serviziPorteAppList(asps.getTipo(),asps.getNome(),asps.getVersione(),
+					Integer.parseInt(id), Integer.parseInt(idSoggettoErogatoreDelServizio), ricerca);
 	
 			apsHelper.prepareServiziPorteAppList(lista, id, ricerca);
 	

@@ -56,10 +56,10 @@ import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.ConfigurazioneServizio;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
@@ -123,7 +123,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 	private String tipoSoggettoErogatore = "";
 	private boolean privato = false;
 	private String statoPackage = "";
-	private String nome_aps,versione;
+	private String versione;
 	private boolean validazioneDocumenti = true;
 	private boolean decodeRequestValidazioneDocumenti = false;
 	private String editMode = null;
@@ -224,7 +224,6 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			this.descrizione = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_DESCRIZIONE);
 			this.statoPackage = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO_PACKAGE);
 						
-			this.nome_aps = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_APS);
 			this.versione = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE);
 			this.nomePA = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_PA);
 			this.nomeSA = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SA);
@@ -674,7 +673,6 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.httpstipokey =ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TIPOLOGIA_KEYSTORE_TYPE;
 					this.httpspwdkey = "";
 					this.httpspwdprivatekey = "";
-					this.nome_aps="";
 					this.versione="1";
 				}
 
@@ -698,14 +696,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					}
 					
 					if(ptValid){
-					
-						if(this.nome_aps==null || "".equals(this.nome_aps)){
-							this.nome_aps = this.portType;
-						}
-						else if(this.nome_aps.equals(this.oldPortType)){
-							this.nome_aps = this.portType;
-						}
-	
+						
 						if(this.nomeservizio==null || "".equals(this.nomeservizio)){
 							this.nomeservizio = this.portType;
 						}
@@ -725,7 +716,6 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					}
 					else{
 						
-						this.nome_aps = null;
 						this.nomeservizio = null;
 						this.nomePA = null;
 						this.portType = null;
@@ -773,7 +763,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						soggettiList, soggettiListLabel, this.accordo, accordiList, accordiListLabel, this.servcorr, 
 						this.wsdlimpler, this.wsdlimplfru, TipoOperazione.ADD, "0", tipiServizioCompatibiliAccordo, 
 						this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,this.statoPackage,
-						this.nome_aps,this.versione,versioniProtocollo,this.validazioneDocumenti,
+						this.versione,versioniProtocollo,this.validazioneDocumenti,
 						this.nomePA,saSoggetti,this.nomeSA,protocollo,generaPACheckSoggetto,null);
 
 				dati = connettoriHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null, 
@@ -787,7 +777,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.httpspwdprivatekeytrust, this.httpspathkey,
 						this.httpstipokey, this.httpspwdkey, this.httpspwdprivatekey,
 						this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
-						null, null, null, null, null, true,
+						null, null, null, null, null, null, true,
 						isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 
 				pd.setDati(dati);
@@ -819,7 +809,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.httpskeystore, this.httpspwdprivatekeytrust,
 					this.httpspathkey, this.httpstipokey,
 					this.httpspwdkey, this.httpspwdprivatekey,
-					this.httpsalgoritmokey, this.tipoconn,this.nome_aps,this.versione,this.validazioneDocumenti,this.nomePA,null,this.autenticazioneHttp,
+					this.httpsalgoritmokey, this.tipoconn,this.versione,this.validazioneDocumenti,this.nomePA,null,this.autenticazioneHttp,
 					listExtendedConnettore);
 			
 			if(isOk){
@@ -866,7 +856,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						soggettiList, soggettiListLabel, this.accordo, accordiList, accordiListLabel,
 						this.servcorr, this.wsdlimpler, this.wsdlimplfru, TipoOperazione.ADD, "0", tipiServizioCompatibiliAccordo, 
 						this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,
-						this.statoPackage,this.nome_aps,this.versione,versioniProtocollo,this.validazioneDocumenti,
+						this.statoPackage,this.versione,versioniProtocollo,this.validazioneDocumenti,
 						this.nomePA,saSoggetti,this.nomeSA,protocollo,generaPACheckSoggetto,null);
 
 				dati = connettoriHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
@@ -880,7 +870,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.httpspathkey, this.httpstipokey,
 						this.httpspwdkey, this.httpspwdprivatekey,
 						this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
-						null, null, null, null, null, true,
+						null, null, null, null, null, null, true,
 						isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 
 				pd.setDati(dati);
@@ -896,19 +886,17 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			long idAcc = Long.parseLong(this.accordo);
 
 			AccordoServizioParteSpecifica asps = new AccordoServizioParteSpecifica();
-			Servizio servizio = new Servizio();
-			asps.setServizio(servizio);
-			servizio.setNome(this.nomeservizio);
-			servizio.setTipo(this.tiposervizio);
+			asps.setNome(this.nomeservizio);
+			asps.setTipo(this.tiposervizio);
 			asps.setDescrizione(this.descrizione);
 			asps.setIdAccordo(idAcc);
 			// nome accordo
 			as = apcCore.getAccordoServizio(idAcc);
 			asps.setAccordoServizioParteComune(idAccordoFactory.getUriFromAccordo(as));
 			asps.setIdSoggetto(idProv);
-			servizio.setNomeSoggettoErogatore(this.nomeSoggettoErogatore);
-			servizio.setTipoSoggettoErogatore(this.tipoSoggettoErogatore);
-			servizio.setTipologiaServizio(((this.servcorr != null) && this.servcorr.equals(Costanti.CHECK_BOX_ENABLED)) ? TipologiaServizio.CORRELATO : TipologiaServizio.NORMALE);
+			asps.setNomeSoggettoErogatore(this.nomeSoggettoErogatore);
+			asps.setTipoSoggettoErogatore(this.tipoSoggettoErogatore);
+			asps.setTipologiaServizio(((this.servcorr != null) && this.servcorr.equals(Costanti.CHECK_BOX_ENABLED)) ? TipologiaServizio.CORRELATO : TipologiaServizio.NORMALE);
 			asps.setSuperUser(ServletUtils.getUserLoginFromSession(session));
 			if ("-".equals(this.profilo) == false)
 				asps.setVersioneProtocollo(this.profilo);
@@ -943,14 +931,18 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.httpsalgoritmokey,
 					listExtendedConnettore);
 
-			servizio.setConnettore(connettore);
+			if(asps.getConfigurazioneServizio()==null)
+				asps.setConfigurazioneServizio(new ConfigurazioneServizio());
+			asps.getConfigurazioneServizio().setConnettore(connettore);
 
-			// Accordo di servizio parte specifica
-			asps.setNome(this.nome_aps);
-			if(apsCore.isShowPulsantiImportExport()){
-				asps.setVersione(this.versione);
+			// Versione
+			if(apsCore.isShowVersioneAccordoServizioParteSpecifica()){
+				if(this.versione!=null)
+					asps.setVersione(Integer.parseInt(this.versione));
+				else
+					asps.setVersione(1);
 			}else{
-				asps.setVersione("1");
+				asps.setVersione(1);
 			}
 
 			// stato
@@ -989,7 +981,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							soggettiList, soggettiListLabel, this.accordo, accordiList, accordiListLabel, this.servcorr, 
 							this.wsdlimpler, this.wsdlimplfru, TipoOperazione.ADD, "0", tipiServizioCompatibiliAccordo, 
 							this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,
-							this.statoPackage,this.nome_aps,this.versione,versioniProtocollo,this.validazioneDocumenti,
+							this.statoPackage,this.versione,versioniProtocollo,this.validazioneDocumenti,
 							this.nomePA,saSoggetti,this.nomeSA,protocollo,generaPACheckSoggetto,null);
 
 					dati = connettoriHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
@@ -1003,7 +995,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.httpspathkey, this.httpstipokey,
 							this.httpspwdkey, this.httpspwdprivatekey,
 							this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
-							null, null, null, null, null, true,
+							null, null, null, null, null, null, true,
 							isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 
 					pd.setDati(dati);
@@ -1377,10 +1369,6 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM+"\"") != -1) {
 					line = dis.readLine();
 					this.httpsalgoritmokey = dis.readLine();
-				}
-				if (line.indexOf("\""+AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_APS+"\"") != -1) {
-					line = dis.readLine();
-					this.nome_aps = dis.readLine();
 				}
 				if (line.indexOf("\""+AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE+"\"") != -1) {
 					line = dis.readLine();

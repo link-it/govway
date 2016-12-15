@@ -40,6 +40,7 @@ import java.io.Serializable;
  * 		&lt;attribute name="nome-soggetto" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" use="optional" default="1"/>
  * 		&lt;attribute name="azione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * &lt;/complexType>
  * </pre>
@@ -113,6 +114,14 @@ public class AccordoServizioParteComuneServizioCompostoServizioComponente extend
     this.nome = nome;
   }
 
+  public java.lang.Integer getVersione() {
+    return this.versione;
+  }
+
+  public void setVersione(java.lang.Integer versione) {
+    this.versione = versione;
+  }
+
   public java.lang.String getAzione() {
     return this.azione;
   }
@@ -146,6 +155,9 @@ public class AccordoServizioParteComuneServizioCompostoServizioComponente extend
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)
   protected java.lang.String nome;
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.Integer versione = new java.lang.Integer("1");
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="azione",required=false)

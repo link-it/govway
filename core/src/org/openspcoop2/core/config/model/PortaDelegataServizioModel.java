@@ -43,6 +43,7 @@ public class PortaDelegataServizioModel extends AbstractModel<PortaDelegataServi
 	
 		this.TIPO = new Field("tipo",java.lang.String.class,"porta-delegata-servizio",PortaDelegataServizio.class);
 		this.NOME = new Field("nome",java.lang.String.class,"porta-delegata-servizio",PortaDelegataServizio.class);
+		this.VERSIONE = new Field("versione",java.lang.Integer.class,"porta-delegata-servizio",PortaDelegataServizio.class);
 	
 	}
 	
@@ -52,6 +53,7 @@ public class PortaDelegataServizioModel extends AbstractModel<PortaDelegataServi
 	
 		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"porta-delegata-servizio",PortaDelegataServizio.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"porta-delegata-servizio",PortaDelegataServizio.class);
+		this.VERSIONE = new ComplexField(father,"versione",java.lang.Integer.class,"porta-delegata-servizio",PortaDelegataServizio.class);
 	
 	}
 	
@@ -60,6 +62,8 @@ public class PortaDelegataServizioModel extends AbstractModel<PortaDelegataServi
 	public IField TIPO = null;
 	 
 	public IField NOME = null;
+	 
+	public IField VERSIONE = null;
 	 
 
 	@Override

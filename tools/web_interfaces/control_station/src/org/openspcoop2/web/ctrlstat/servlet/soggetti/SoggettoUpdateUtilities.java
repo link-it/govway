@@ -36,21 +36,23 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
@@ -128,8 +130,10 @@ public class SoggettoUpdateUtilities {
 					idListSA.add(idSA);
 					servizioApplicativo.setTipoSoggettoProprietario(this.tipoprov);
 					servizioApplicativo.setNomeSoggettoProprietario(this.nomeprov);
-					servizioApplicativo.setOldNomeSoggettoProprietarioForUpdate(this.oldnomeprov);
-					servizioApplicativo.setOldTipoSoggettoProprietarioForUpdate(this.oldtipoprov);
+					IDServizioApplicativo oldIDServizioApplicativoForUpdate = new IDServizioApplicativo();
+					oldIDServizioApplicativoForUpdate.setNome(servizioApplicativo.getNome());
+					oldIDServizioApplicativoForUpdate.setIdSoggettoProprietario(new IDSoggetto(this.oldtipoprov, this.oldnomeprov));
+					servizioApplicativo.setOldIDServizioApplicativoForUpdate(oldIDServizioApplicativoForUpdate);
 					listSA.add(servizioApplicativo);
 				}
 
@@ -319,11 +323,12 @@ public class SoggettoUpdateUtilities {
 			if(idServizio!=null){
 				for(int i=0; i<idServizio.size(); i++){
 					AccordoServizioParteSpecifica asps = this.apsCore.getServizio(idServizio.get(i));
-					Servizio servizio = asps.getServizio();
-					servizio.setTipoSoggettoErogatore(this.tipoprov);
-					servizio.setNomeSoggettoErogatore(this.nomeprov);
-					servizio.setOldTipoSoggettoErogatoreForUpdate(this.oldtipoprov);
-					servizio.setOldNomeSoggettoErogatoreForUpdate(this.oldnomeprov);
+					asps.setTipoSoggettoErogatore(this.tipoprov);
+					asps.setNomeSoggettoErogatore(this.nomeprov);
+					IDServizio oldIDServizioForUpdate = IDServizioFactory.getInstance().getIDServizioFromValues(asps.getTipo(), asps.getNome(), 
+							new IDSoggetto(this.oldtipoprov, this.oldnomeprov), 
+							asps.getVersione());
+					asps.setOldIDServizioForUpdate(oldIDServizioForUpdate);
 
 					// Check accordo di Servizio
 					IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune());
@@ -370,7 +375,7 @@ public class SoggettoUpdateUtilities {
 			// (1) se ci sono porte delegate in loopback cioe' se il
 			// soggetto proprietario e' anche erogatore
 			// allora aggiorno anche la seconda parte del pattern
-			// pattern (fruitore)/(erogatore)/(servizio)
+			// pattern (fruitore)/(erogatore)/(servizio)/(versioneServizio)
 			//
 			// (2) Questo soggetto ha tra le sue porte delegate anche quelle
 			// automaticamente create
@@ -383,14 +388,15 @@ public class SoggettoUpdateUtilities {
 			for (PortaDelegata portaDelegata : tmpList) {
 				String oldLocation = portaDelegata.getNome();
 				// se la location e' quella di default cioe'
-				// (fruitore)/(erogatore)/(servizio)
-				String regex = "(.*)\\/(.*)\\/(.*)";
+				// (fruitore)/(erogatore)/(servizio)/(versioneServizio)
+				String regex = "(.*)\\/(.*)\\/(.*)\\/(.*)";
 				if (oldLocation.matches(regex)) {
 
 					String[] val = oldLocation.split("\\/");
 					String pat1 = val[0];
 					String pat2 = val[1];
 					String pat3 = val[2];
+					String pat4 = val[3];
 
 					// vedo se matcha la prima parte del pattern [il
 					// fruitore (caso 1)]
@@ -405,7 +411,7 @@ public class SoggettoUpdateUtilities {
 						pat2 = this.tipoprov + this.nomeprov;
 					}
 
-					String newLocation = pat1 + "/" + pat2 + "/" + pat3;
+					String newLocation = pat1 + "/" + pat2 + "/" + pat3 +"/" + pat4;
 					portaDelegata.setNome(newLocation);
 
 					// controllo se anche nome porta di default ed effettuo
@@ -419,6 +425,7 @@ public class SoggettoUpdateUtilities {
 						pat1 = val[0];
 						pat2 = val[1];
 						pat3 = val[2];
+						pat4 = val[3];
 						// vedo se matcha la prima parte del pattern [il
 						// fruitore (caso 1)]
 						if (pat1.equals(this.oldtipoprov + this.oldnomeprov)) {
@@ -430,9 +437,11 @@ public class SoggettoUpdateUtilities {
 						if (pat2.equals(this.oldtipoprov + this.oldnomeprov)) {
 							pat2 = this.tipoprov + this.nomeprov;
 						}
-						String newNomePD = pat1 + "/" + pat2 + "/" + pat3;
+						String newNomePD = pat1 + "/" + pat2 + "/" + pat3 +"/" + pat4;
 						portaDelegata.setNome(newNomePD);
-						portaDelegata.setOldNomeForUpdate(oldNomePD);
+						IDPortaDelegata oldIDPortaDelegataForUpdate = new IDPortaDelegata();
+						oldIDPortaDelegataForUpdate.setNome(oldNomePD);
+						portaDelegata.setOldIDPortaDelegataForUpdate(oldIDPortaDelegataForUpdate);
 					}
 
 					// modifica della descrizione
@@ -576,7 +585,6 @@ public class SoggettoUpdateUtilities {
 			for (int j=0; j<this.accordiServizioParteSpecifica.size(); j++) {
 
 				AccordoServizioParteSpecifica asps = this.accordiServizioParteSpecifica.get(j);
-				Servizio servizio = asps.getServizio();
 
 				List<PortaDelegata> tmpListPD = null;
 				// modifico le porte delegate interessate dal cambiamento
@@ -584,7 +592,7 @@ public class SoggettoUpdateUtilities {
 				// recupero lo porte delegate per location
 				// e aggiorno il nome e la location
 				String locationPrefix = "";
-				String locationSuffix = "/" + this.oldtipoprov + this.oldnomeprov + "/" + servizio.getTipo() + servizio.getNome();
+				String locationSuffix = "/" + this.oldtipoprov + this.oldnomeprov + "/" + asps.getTipo() + asps.getNome() + "/" + asps.getVersione().intValue();
 				for (Fruitore fruitore : asps.getFruitoreList()) {
 					locationPrefix = fruitore.getTipo() + fruitore.getNome();
 					String location = locationPrefix + locationSuffix;
@@ -609,7 +617,7 @@ public class SoggettoUpdateUtilities {
 							portaDelegata = listaPD.get(idPorta);
 						}
 						// new locationSuffix
-						String newLocationSuffix = "/" + this.tipoprov + this.nomeprov + "/" + servizio.getTipo() + servizio.getNome();
+						String newLocationSuffix = "/" + this.tipoprov + this.nomeprov + "/" + asps.getTipo() + asps.getNome() + "/" + asps.getVersione().intValue();
 						String newLocationPrefix = "";
 						if(fruitore.getTipo().equals(this.oldtipoprov))
 							newLocationPrefix = newLocationPrefix + this.tipoprov;
@@ -621,9 +629,11 @@ public class SoggettoUpdateUtilities {
 							newLocationPrefix = newLocationPrefix + fruitore.getNome();
 						String newLocation = newLocationPrefix + newLocationSuffix;
 
-						if(portaDelegata.getOldNomeForUpdate()==null){
+						if(portaDelegata.getOldIDPortaDelegataForUpdate()==null){
 							// Il vecchio nome e' gia essere stato messo prima nella passata sopra.
-							portaDelegata.setOldNomeForUpdate(portaDelegata.getNome());
+							IDPortaDelegata oldIDPortaDelegataForUpdate = new IDPortaDelegata();
+							oldIDPortaDelegataForUpdate.setNome(portaDelegata.getNome());
+							portaDelegata.setOldIDPortaDelegataForUpdate(oldIDPortaDelegataForUpdate);
 						}
 						portaDelegata.setNome(newLocation);
 						// aggiorno la descrizione della porta
@@ -633,7 +643,7 @@ public class SoggettoUpdateUtilities {
 							// servizio(.*)erogato da(.*) (old tipo/nome
 							// soggetto)
 							String descrRegex = "Invocazione servizio(.*)erogato da(.*)";// +oldtipoprov+oldnomeprov;
-							if (  portaDelegata.getOldNomeForUpdate()==null  && descrizionePD.matches(descrRegex)) {
+							if (  portaDelegata.getOldIDPortaDelegataForUpdate()==null  && descrizionePD.matches(descrRegex)) {
 								String tmpDescrizione = descrizionePD.substring(0,descrizionePD.indexOf("erogato da")+"erogato da".length());
 								descrizionePD = tmpDescrizione;
 								//descrizionePD = descrizionePD.replaceFirst((oldtipoprov + oldnomeprov), (tipoprov + nomeprov));
@@ -781,18 +791,19 @@ public class SoggettoUpdateUtilities {
 				tmpList = this.porteApplicativeCore.porteAppList(this.sog.getId().intValue(), new Search());
 				for (PortaApplicativa portaApplicativa : tmpList) {
 					String nome = portaApplicativa.getNome();
-					// se il nome e' quello di default cioe' (erogatore)/(servizio) o (erogatore)/(servizio)/azione
-					String regex = "(.*)\\/(.*)";
+					// se il nome e' quello di default cioe' (erogatore)/(servizio)/(versioneServizio) o (erogatore)/(servizio)/(versioneServizio)/azione
+					String regex = "(.*)\\/(.*)\\/(.*)";
 					if (nome.matches(regex)) {
 
 						String[] val = nome.split("\\/");
 						String patErogatore = val[0];
 						String patServizio = val[1];
+						String patVersioneServizio = val[2];
 						String patAzione = null;
-						if(val.length>2){
+						if(val.length>3){
 							patAzione = "";
-							for (int i = 2; i < val.length; i++) {
-								if(i>2){
+							for (int i = 3; i < val.length; i++) {
+								if(i>3){
 									patAzione = patAzione + "/";
 								}
 								patAzione = patAzione + val[i];
@@ -804,13 +815,15 @@ public class SoggettoUpdateUtilities {
 							patErogatore = this.tipoprov + this.nomeprov;
 						}
 
-						String newNome = patErogatore + "/" + patServizio;
+						String newNome = patErogatore + "/" + patServizio + "/" + patVersioneServizio ;
 						if(patAzione!=null){
 							newNome = newNome + "/" + patAzione;
 						}
 						
 						portaApplicativa.setNome(newNome);
-						portaApplicativa.setOldNomeForUpdate(nome);
+						IDPortaApplicativa oldIDPortaApplicativaForUpdate = new IDPortaApplicativa();
+						oldIDPortaApplicativaForUpdate.setNome(nome);
+						portaApplicativa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
 
 						// modifica della descrizione
 						String descrizionePA = portaApplicativa.getDescrizione();
@@ -853,11 +866,10 @@ public class SoggettoUpdateUtilities {
 			List<AccordoServizioParteSpecifica> sfruitori = this.apsCore.servizioWithSoggettoFruitore(new IDSoggetto(this.oldtipoprov,this.oldnomeprov));
 			for(int i=0; i<sfruitori.size(); i++){
 				AccordoServizioParteSpecifica asps = sfruitori.get(i);
-				Servizio s = asps.getServizio();
-				if(s.getTipoSoggettoErogatore().equals(this.oldtipoprov) &&
-						s.getNomeSoggettoErogatore().equals(this.oldnomeprov)){
-					s.setTipoSoggettoErogatore(this.tipoprov);
-					s.setNomeSoggettoErogatore(this.nomeprov);
+				if(asps.getTipoSoggettoErogatore().equals(this.oldtipoprov) &&
+						asps.getNomeSoggettoErogatore().equals(this.oldnomeprov)){
+					asps.setTipoSoggettoErogatore(this.tipoprov);
+					asps.setNomeSoggettoErogatore(this.nomeprov);
 				}
 				// Check accordo di Servizio
 				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());

@@ -121,7 +121,7 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="tipo_servizio" type="xsd:string" minOccurs="0">
+                <xsd:element name="tipo_servizio" type="xsd:string">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
@@ -131,12 +131,22 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="servizio" type="xsd:string" minOccurs="0">
+                <xsd:element name="servizio" type="xsd:string">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="servizio"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="versione_servizio" type="xsd:int" default="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="versione"/>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

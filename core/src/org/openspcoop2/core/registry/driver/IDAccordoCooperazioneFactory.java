@@ -21,8 +21,9 @@
 
 package org.openspcoop2.core.registry.driver;
 
-import org.openspcoop2.core.commons.AccordiUtils;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 
 /**
@@ -49,102 +50,107 @@ public class IDAccordoCooperazioneFactory {
 		return IDAccordoCooperazioneFactory.factory;
 	}
 	
+	private IDAccordoFactory idAccordoFactory = null;
+	private IDAccordoCooperazioneFactory(){
+		this.idAccordoFactory = IDAccordoFactory.getInstance();
+	}
 	
+	
+
 	@SuppressWarnings("deprecation")
-	private IDAccordoCooperazione build(String nome,String versione){
+	private IDAccordoCooperazione build(IDAccordo idAccordo){
 		IDAccordoCooperazione idAccordoCooperazione = new IDAccordoCooperazione();
-		idAccordoCooperazione.setNome(nome);
-		String v = null;
-		if(versione!=null && !("".equals(versione))){
-			v = versione;
-		}
-		idAccordoCooperazione.setVersione(v);
+		idAccordoCooperazione.setNome(idAccordo.getNome());
+		idAccordoCooperazione.setSoggettoReferente(idAccordo.getSoggettoReferente());
+		idAccordoCooperazione.setVersione(idAccordo.getVersione());
 		return idAccordoCooperazione;
+	}
+	@SuppressWarnings("deprecation")
+	private IDAccordo build(IDAccordoCooperazione idAccordoCooperazione){
+		IDAccordo idAccordo = new IDAccordo();
+		idAccordo.setNome(idAccordoCooperazione.getNome());
+		idAccordo.setSoggettoReferente(idAccordoCooperazione.getSoggettoReferente());
+		idAccordo.setVersione(idAccordoCooperazione.getVersione());
+		return idAccordo;
+	}
+	@SuppressWarnings("deprecation")
+	private IDAccordo build(String nome, IDSoggetto soggettoReferente, int versione){
+		IDAccordo idAccordo = new IDAccordo();
+		idAccordo.setNome(nome);
+		idAccordo.setSoggettoReferente(soggettoReferente);
+		idAccordo.setVersione(versione);
+		return idAccordo;
 	}
 	
 	public String getUriFromIDAccordo(IDAccordoCooperazione idAccordo) throws DriverRegistroServiziException{
-		if(idAccordo==null){
-			throw new DriverRegistroServiziException("IDAccordo non fornito");
-		}
-		if(idAccordo.getNome()==null){
-			throw new DriverRegistroServiziException("Nome accordo non fornito");
-		}
-		if(idAccordo.getVersione()!=null){
-			return idAccordo.getNome() + ":" + idAccordo.getVersione();
-		}else{
-			return idAccordo.getNome();
-		}
+		
+		return this.idAccordoFactory.getUriFromIDAccordo(build(idAccordo));
 	}
 	
 	public String getUriFromAccordo(AccordoCooperazione accordo)  throws DriverRegistroServiziException{
 		if(accordo==null){
 			throw new DriverRegistroServiziException("Accordo non fornito");
 		}
-		IDAccordoCooperazione idAccordo = this.build(accordo.getNome(),accordo.getVersione());
-		return this.getUriFromIDAccordo(idAccordo);
+		IDAccordo idAccordo = this.build(accordo.getNome(),BeanUtilities.getSoggettoReferenteID(accordo.getSoggettoReferente()),accordo.getVersione());
+		return this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
 	}
 	
-	public String getUriFromValues(String nomeAS,String ver)  throws DriverRegistroServiziException{
+	public String getUriFromValues(String nomeAS,String tipoSoggettoReferente,String nomeSoggettoReferente,int ver)  throws DriverRegistroServiziException{
 		if(nomeAS==null){
 			throw new DriverRegistroServiziException("Accordo non fornito");
 		}
-		IDAccordoCooperazione idAccordo = this.build(nomeAS,ver);
-		return this.getUriFromIDAccordo(idAccordo);
+		IDSoggetto soggettoReferente = null;
+		if(tipoSoggettoReferente!=null && nomeSoggettoReferente!=null)
+			soggettoReferente = new IDSoggetto(tipoSoggettoReferente,nomeSoggettoReferente);
+		IDAccordo idAccordo = this.build(nomeAS,soggettoReferente,ver);
+		return this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
+	}
+	
+	public String getUriFromValues(String nomeAS,IDSoggetto soggettoReferente,int ver)  throws DriverRegistroServiziException{
+		if(nomeAS==null){
+			throw new DriverRegistroServiziException("Accordo non fornito");
+		}
+		if(soggettoReferente==null){
+			return this.getUriFromValues(nomeAS,null,null,ver);
+		}else{
+			return this.getUriFromValues(nomeAS,soggettoReferente.getTipo(),soggettoReferente.getNome(),ver);
+		}
 	}
 	
 	public IDAccordoCooperazione getIDAccordoFromUri(String uriAccordo) throws DriverRegistroServiziException{
-		try{
-		
-			// possibili casi:
-			// nomeAccordo
-			// nomeAccordo:versione
-			
-			if(uriAccordo==null){
-				throw new Exception("Uri accordo non fornita");
-			}
-			int primoMarcatore = uriAccordo.indexOf(":");
-			int secondoMarcatore = -1;
-			if(primoMarcatore>=0){
-				secondoMarcatore = uriAccordo.indexOf(":",primoMarcatore+1);
-				if(secondoMarcatore>0){
-					throw new Exception("sintassi non corretta, possibili usi: nomeAccordo  nomeAccordo:versione");
-				}
-			}
-						
-			if(primoMarcatore<0){
-				IDAccordoCooperazione idAccordo = this.build(uriAccordo,null);
-				return idAccordo;
-			}
-			
-			String tmp1 = uriAccordo.substring(0, primoMarcatore);
-			String tmp2 = uriAccordo.substring((primoMarcatore+1),uriAccordo.length());
-			// nomeAccordo:versione
-			IDAccordoCooperazione idAccordo = this.build(tmp1,tmp2);
-			return idAccordo;
-		
-		}catch(Exception e){
-			throw new DriverRegistroServiziException("Parsing uriAccordo["+uriAccordo+"] non riusciuto: "+e.getMessage());
-		}
+		return this.build(this.idAccordoFactory.getIDAccordoFromUri(uriAccordo));
 	}
 	
 	public IDAccordoCooperazione getIDAccordoFromAccordo(AccordoCooperazione accordo) throws DriverRegistroServiziException{
 		if(accordo==null){
 			throw new DriverRegistroServiziException("Accordo non fornito");
 		}
-		IDAccordoCooperazione idAccordo = this.build(accordo.getNome(),accordo.getVersione());
-		return idAccordo;
+		IDAccordo idAccordo = this.build(accordo.getNome(),BeanUtilities.getSoggettoReferenteID(accordo.getSoggettoReferente()),accordo.getVersione());
+		return this.build(idAccordo);
 	}
 	
-	public IDAccordoCooperazione getIDAccordoFromValues(String nomeAS,String ver) throws DriverRegistroServiziException{
+	public IDAccordoCooperazione getIDAccordoFromValues(String nomeAS,String tipoSoggettoReferente,String nomeSoggettoReferente,int ver) throws DriverRegistroServiziException{
 		if(nomeAS==null){
 			throw new DriverRegistroServiziException("Accordo non fornito");
 		}
-		IDAccordoCooperazione idAccordo = this.build(nomeAS,ver);
-		return idAccordo;
+		IDSoggetto soggettoReferente = null;
+		if(tipoSoggettoReferente!=null && nomeSoggettoReferente!=null)
+			soggettoReferente = new IDSoggetto(tipoSoggettoReferente,nomeSoggettoReferente);
+		IDAccordo idAccordo = this.build(nomeAS,soggettoReferente,ver);
+		return this.build(idAccordo);
+	}
+	public IDAccordoCooperazione getIDAccordoFromValuesWithoutCheck(String nomeAS,String tipoSoggettoReferente,String nomeSoggettoReferente,int ver) throws DriverRegistroServiziException{
+		IDSoggetto soggettoReferente = new IDSoggetto(tipoSoggettoReferente,nomeSoggettoReferente);
+		IDAccordo idAccordo = this.build(nomeAS,soggettoReferente,ver);
+		return this.build(idAccordo);
+	}
+	public IDAccordoCooperazione getIDAccordoFromValues(String nomeAS,IDSoggetto soggettoReferente,int ver) throws DriverRegistroServiziException{
+		if(soggettoReferente==null){
+			return this.getIDAccordoFromValues(nomeAS,null,null,ver);
+		}else{
+			return this.getIDAccordoFromValues(nomeAS,soggettoReferente.getTipo(),soggettoReferente.getNome(),ver);
+		}
 	}
 	
-	public boolean versioneNonDefinita(String value){
-		return AccordiUtils.versioneNonDefinita(value);
-	}
 	
 }

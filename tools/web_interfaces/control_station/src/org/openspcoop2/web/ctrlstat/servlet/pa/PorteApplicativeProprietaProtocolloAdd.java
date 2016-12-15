@@ -35,7 +35,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.ProprietaProtocollo;
+import org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -206,10 +206,10 @@ public final class PorteApplicativeProprietaProtocolloAdd extends Action {
 			}
 
 			// Inserisco la property della porta applicativa nel db
-			ProprietaProtocollo ssp = new ProprietaProtocollo();
+			PortaApplicativaProprietaIntegrazioneProtocollo ssp = new PortaApplicativaProprietaIntegrazioneProtocollo();
 			ssp.setNome(nome);
 			ssp.setValore(valore);
-			pa.addProprietaProtocollo(ssp);
+			pa.addProprietaIntegrazioneProtocollo(ssp);
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			
@@ -222,7 +222,7 @@ public final class PorteApplicativeProprietaProtocolloAdd extends Action {
 
 			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 
-			List<ProprietaProtocollo> lista = porteApplicativeCore.porteAppPropList(Integer.parseInt(idPorta), ricerca);
+			List<PortaApplicativaProprietaIntegrazioneProtocollo> lista = porteApplicativeCore.porteAppPropList(Integer.parseInt(idPorta), ricerca);
 
 			porteApplicativeHelper.preparePorteAppPropList(idporta, ricerca, lista);
 

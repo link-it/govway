@@ -120,7 +120,7 @@ public class ValidatoreMessaggiApplicativi {
 			throw ex;
 		}
 		
-		if(idServizio==null || idServizio.getSoggettoErogatore()==null || idServizio.getTipoServizio()==null || idServizio.getServizio()==null ||
+		if(idServizio==null || idServizio.getSoggettoErogatore()==null || idServizio.getTipo()==null || idServizio.getNome()==null || idServizio.getVersione()==null ||
 				idServizio.getSoggettoErogatore().getTipo()==null || idServizio.getSoggettoErogatore().getNome()==null){
 			ValidatoreMessaggiApplicativiException ex 
 			= new ValidatoreMessaggiApplicativiException("ID del servizio da validare, non fornito");

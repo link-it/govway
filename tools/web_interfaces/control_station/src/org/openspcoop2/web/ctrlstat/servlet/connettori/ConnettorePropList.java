@@ -119,7 +119,7 @@ public final class ConnettorePropList extends Action {
 			}
 			if (servlet.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE)) {
 				AccordoServizioParteSpecifica servizio = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(id));
-				connettore = servizio.getServizio().getConnettore();
+				connettore = servizio.getConfigurazioneServizio().getConnettore();
 			}
 			if (servlet.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE)) {
 				int idServizioFruitoreInt = Integer.parseInt(myId);

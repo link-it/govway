@@ -28,7 +28,6 @@ import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
-import org.openspcoop2.core.id.IDAccordoCooperazioneWithSoggetto;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.Documento;
@@ -221,7 +220,7 @@ public class AccordiCooperazioneCore extends ControlStationCore {
 		}
 	}
 
-	public IDAccordoCooperazioneWithSoggetto getIdAccordoCooperazione(long idAccordo)
+	public IDAccordoCooperazione getIdAccordoCooperazione(long idAccordo)
 			throws DriverRegistroServiziException,
 			DriverRegistroServiziNotFound {
 		Connection con = null;

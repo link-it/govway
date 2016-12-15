@@ -10,11 +10,11 @@
 	<xsd:element name="registro-servizi">
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="accordo-cooperazione"/>
-				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="accordo-servizio-parte-comune"/>
-				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="porta-dominio"/>
-				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="soggetto"/>
-				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="connettore"/>
+				<xsd:element ref="accordo-cooperazione" maxOccurs="unbounded" minOccurs="0" />
+				<xsd:element ref="accordo-servizio-parte-comune" maxOccurs="unbounded" minOccurs="0" />
+				<xsd:element ref="porta-dominio" maxOccurs="unbounded" minOccurs="0" />
+				<xsd:element ref="soggetto" maxOccurs="unbounded" minOccurs="0" />
+				<xsd:element ref="connettore" maxOccurs="unbounded" minOccurs="0" />
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
@@ -108,12 +108,11 @@
 			use="required"/>
 	</xsd:complexType>
 	<xsd:complexType name="accordo-servizio-parte-comune-servizio-composto-servizio-componente">
-		<xsd:attribute name="tipo-soggetto" type="xsd:string"
-			use="required"/>
-		<xsd:attribute name="nome-soggetto" type="xsd:string"
-			use="required"/>
+		<xsd:attribute name="tipo-soggetto" type="xsd:string" use="required"/>
+		<xsd:attribute name="nome-soggetto" type="xsd:string" use="required"/>
 		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="versione" use="optional" type="xsd:unsignedInt" default="1"/>
 		<xsd:attribute name="azione" type="xsd:string"/>
 	</xsd:complexType>
 	
@@ -155,8 +154,8 @@
 	<!-- operation -->
 	<xsd:complexType name="operation">
 		<xsd:sequence>
-			<xsd:element maxOccurs="1" minOccurs="0" name="message-input" type="message"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="message-output" type="message"/>
+			<xsd:element name="message-input" type="message" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="message-output" type="message" maxOccurs="1" minOccurs="0" />
 			<!-- Protocol Properties -->
 			<xsd:element name="protocol-property" type="protocol-property" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>
@@ -210,7 +209,7 @@
 	<xsd:complexType name="soggetto">
 		<xsd:sequence>
 			<!-- Connettore -->
-			<xsd:element maxOccurs="1" minOccurs="0" ref="connettore"/>
+			<xsd:element ref="connettore" maxOccurs="1" minOccurs="0" />
 			<!-- Protocol Properties -->
 			<xsd:element name="protocol-property" type="protocol-property" maxOccurs="unbounded" minOccurs="0"/>
 			<!-- Accordi Servizio Parte Specifica -->
@@ -245,8 +244,8 @@
 	<xsd:element name="accordo-servizio-parte-specifica" type="accordo-servizio-parte-specifica"/>
 	<xsd:complexType name="accordo-servizio-parte-specifica">
 		<xsd:sequence>
-			<xsd:element maxOccurs="1" minOccurs="1" name="servizio" type="servizio"/>
-			<xsd:element maxOccurs="unbounded" minOccurs="0" ref="fruitore"/>
+			<xsd:element name="configurazione-servizio" type="configurazione-servizio" maxOccurs="1" minOccurs="0" />
+			<xsd:element minOccurs="0" ref="fruitore" maxOccurs="unbounded" />
 			<!-- Allegati -->
 			<xsd:element name="allegato" maxOccurs="unbounded" minOccurs="0" type="documento"/>
 			<!-- Specifiche Semiformale -->
@@ -261,15 +260,11 @@
 			<!-- Protocol Properties -->
 			<xsd:element name="protocol-property" type="protocol-property" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>
+		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
-		<xsd:attribute name="versione"> <!-- default="1"> -->
-			<xsd:simpleType>
-				<xsd:restriction base="xsd:string">
-					<xsd:pattern value="[1-9]+[0-9]*"/>
-				</xsd:restriction>
-			</xsd:simpleType>
-		</xsd:attribute>
+		<xsd:attribute name="versione" use="optional" type="xsd:unsignedInt" default="1"/>
 		<xsd:attribute name="accordo-servizio-parte-comune" type="xsd:string" use="required"/>
+		<xsd:attribute name="tipologia-servizio" type="TipologiaServizio" default="normale"/>
 		<!-- Eventuale precisazione del port-type dell'accordo da utilizzare -->
 		<xsd:attribute name="port-type" type="xsd:string"/>
 		<xsd:attribute name="wsdl-implementativo-erogatore" type="xsd:string"/>
@@ -285,26 +280,23 @@
 	</xsd:complexType>
 	
 	<!-- Servizio/ServizioCorrelato -->
-	<xsd:complexType name="servizio">
+	<xsd:complexType name="configurazione-servizio">
 		<xsd:sequence>
 			<!-- dati del servizio -->
-			<xsd:element maxOccurs="1" minOccurs="0" ref="connettore"/>
-			<xsd:element name="parametri-azione" type="servizio-azione" maxOccurs="unbounded" minOccurs="0"/>			
+			<xsd:element ref="connettore" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="configurazione-azione" type="configurazione-servizio-azione" maxOccurs="unbounded" minOccurs="0"/>			
 		</xsd:sequence>
-		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
-		<xsd:attribute name="nome" type="xsd:string" use="required"/>
-		<xsd:attribute name="tipologia-servizio" type="TipologiaServizio" default="normale"/>
 	</xsd:complexType>
-	<xsd:complexType name="servizio-azione">
+	<xsd:complexType name="configurazione-servizio-azione">
 		<xsd:sequence>
-			<xsd:element maxOccurs="1" minOccurs="1" ref="connettore"/>
-			<xsd:element name="parametri-fruitore" type="servizio-azione-fruitore" maxOccurs="unbounded" minOccurs="0"/>		
+			<xsd:element ref="connettore" maxOccurs="1" minOccurs="1" />
+			<xsd:element name="configurazione-fruitore" type="configurazione-servizio-azione-fruitore" maxOccurs="unbounded" minOccurs="0"/>		
 		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
-	<xsd:complexType name="servizio-azione-fruitore">
+	<xsd:complexType name="configurazione-servizio-azione-fruitore">
 		<xsd:sequence>
-			<xsd:element maxOccurs="1" minOccurs="1" ref="connettore"/>
+			<xsd:element ref="connettore" maxOccurs="1" minOccurs="1" />
 		</xsd:sequence>
 		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
@@ -316,7 +308,7 @@
 	<xsd:complexType name="fruitore">
 		<xsd:sequence>
 			<!-- Connettore -->
-			<xsd:element maxOccurs="1" minOccurs="0" ref="connettore"/>
+			<xsd:element ref="connettore" maxOccurs="1" minOccurs="0" />
 			<!-- Protocol Properties -->
 			<xsd:element name="protocol-property" type="protocol-property" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>
@@ -461,39 +453,22 @@
 			<xsd:element name="soggetto-referente" type="id-soggetto" maxOccurs="1" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
-		<xsd:attribute name="versione"> <!-- default="1"> -->
-			<xsd:simpleType>
-				<xsd:restriction base="xsd:string">
-					<xsd:pattern value="[1-9]+[0-9]*"/>
-				</xsd:restriction>
-			</xsd:simpleType>
-		</xsd:attribute>
+		<xsd:attribute name="versione" use="optional" type="xsd:unsignedInt" default="1"/>
 	</xsd:complexType>
 	<xsd:complexType name="id-accordo-servizio-parte-comune">
 		<xsd:sequence>
 			<xsd:element name="soggetto-referente" type="id-soggetto" maxOccurs="1" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
-		<xsd:attribute name="versione"> <!-- default="1"> -->
-			<xsd:simpleType>
-				<xsd:restriction base="xsd:string">
-					<xsd:pattern value="[1-9]+[0-9]*"/>
-				</xsd:restriction>
-			</xsd:simpleType>
-		</xsd:attribute>
+		<xsd:attribute name="versione" use="optional" type="xsd:unsignedInt" default="1"/>
 	</xsd:complexType>
 	<xsd:complexType name="id-accordo-servizio-parte-specifica">
 		<xsd:sequence>
-			<xsd:element name="soggetto-erogatore" type="id-soggetto" maxOccurs="1" minOccurs="0"/>
+			<xsd:element name="soggetto-erogatore" type="id-soggetto" maxOccurs="1" minOccurs="1"/>
 		</xsd:sequence>
+		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
-		<xsd:attribute name="versione"> <!-- default="1"> -->
-			<xsd:simpleType>
-				<xsd:restriction base="xsd:string">
-					<xsd:pattern value="[1-9]+[0-9]*"/>
-				</xsd:restriction>
-			</xsd:simpleType>
-		</xsd:attribute>
+		<xsd:attribute name="versione" use="optional" type="xsd:unsignedInt" default="1"/>
 	</xsd:complexType>
 	
 </xsd:schema>

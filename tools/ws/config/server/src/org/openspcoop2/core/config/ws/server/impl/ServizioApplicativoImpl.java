@@ -722,11 +722,7 @@ public abstract class ServizioApplicativoImpl extends BaseImpl  implements Servi
 			}
 			//obj.setSuperUser(ServerProperties.getInstance().getUser());
 			IDServizioApplicativo idSA = this.convertToIdServizioApplicativo(oldId);
-			obj.setOldNomeForUpdate(idSA.getNome());
-			if(idSA.getIdSoggettoProprietario()!=null){
-				obj.setOldTipoSoggettoProprietarioForUpdate(idSA.getIdSoggettoProprietario().getTipo());
-				obj.setOldNomeSoggettoProprietarioForUpdate(idSA.getIdSoggettoProprietario().getNome());
-			}
+			obj.setOldIDServizioApplicativoForUpdate(idSA);
 			((IDriverConfigurazioneCRUD)this.servizioApplicativoService.getDriver()).updateServizioApplicativo(obj);
 			this.logEndMethod("update");
 			
@@ -756,11 +752,7 @@ public abstract class ServizioApplicativoImpl extends BaseImpl  implements Servi
 			}else{
 				//obj.setSuperUser(ServerProperties.getInstance().getUser());
 				IDServizioApplicativo idSA = this.convertToIdServizioApplicativo(oldId);
-				obj.setOldNomeForUpdate(idSA.getNome());
-				if(idSA.getIdSoggettoProprietario()!=null){
-					obj.setOldTipoSoggettoProprietarioForUpdate(idSA.getIdSoggettoProprietario().getTipo());
-					obj.setOldNomeSoggettoProprietarioForUpdate(idSA.getIdSoggettoProprietario().getNome());
-				}
+				obj.setOldIDServizioApplicativoForUpdate(idSA);
 				((IDriverConfigurazioneCRUD)this.servizioApplicativoService.getDriver()).updateServizioApplicativo(obj);
 			}
 			this.logEndMethod("updateOrCreate");

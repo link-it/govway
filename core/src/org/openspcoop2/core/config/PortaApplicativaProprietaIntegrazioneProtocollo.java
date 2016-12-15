@@ -18,29 +18,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.core.registry;
+package org.openspcoop2.core.config;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
 
-/** <p>Java class for servizio-azione-fruitore complex type.
+/** <p>Java class for porta-applicativa-proprieta-integrazione-protocollo complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="servizio-azione-fruitore">
- * 		&lt;sequence>
- * 			&lt;element name="connettore" type="{http://www.openspcoop2.org/core/registry}connettore" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * &lt;complexType name="porta-applicativa-proprieta-integrazione-protocollo">
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="valore" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -51,16 +47,12 @@ import java.io.Serializable;
  * */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "servizio-azione-fruitore", 
-  propOrder = {
-  	"connettore"
-  }
-)
+@XmlType(name = "porta-applicativa-proprieta-integrazione-protocollo")
 
-@XmlRootElement(name = "servizio-azione-fruitore")
+@XmlRootElement(name = "porta-applicativa-proprieta-integrazione-protocollo")
 
-public class ServizioAzioneFruitore extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  public ServizioAzioneFruitore() {
+public class PortaApplicativaProprietaIntegrazioneProtocollo extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
+  public PortaApplicativaProprietaIntegrazioneProtocollo() {
   }
 
   public Long getId() {
@@ -77,28 +69,20 @@ public class ServizioAzioneFruitore extends org.openspcoop2.utils.beans.BaseBean
 		this.id=new Long(-1);
   }
 
-  public Connettore getConnettore() {
-    return this.connettore;
-  }
-
-  public void setConnettore(Connettore connettore) {
-    this.connettore = connettore;
-  }
-
-  public java.lang.String getTipo() {
-    return this.tipo;
-  }
-
-  public void setTipo(java.lang.String tipo) {
-    this.tipo = tipo;
-  }
-
   public java.lang.String getNome() {
     return this.nome;
   }
 
   public void setNome(java.lang.String nome) {
     this.nome = nome;
+  }
+
+  public java.lang.String getValore() {
+    return this.valore;
+  }
+
+  public void setValore(java.lang.String valore) {
+    this.valore = valore;
   }
 
   private static final long serialVersionUID = 1L;
@@ -108,15 +92,12 @@ public class ServizioAzioneFruitore extends org.openspcoop2.utils.beans.BaseBean
 
 
 
-  @XmlElement(name="connettore",required=true,nillable=false)
-  protected Connettore connettore;
-
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlAttribute(name="tipo",required=true)
-  protected java.lang.String tipo;
-
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)
   protected java.lang.String nome;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="valore",required=true)
+  protected java.lang.String valore;
 
 }

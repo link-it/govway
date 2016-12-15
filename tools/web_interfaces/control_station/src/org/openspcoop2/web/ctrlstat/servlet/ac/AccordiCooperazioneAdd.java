@@ -294,7 +294,9 @@ public final class AccordiCooperazioneAdd extends Action {
 			}else{
 				ac.setSoggettoReferente(null);
 			}
-			ac.setVersione(this.versione);
+			if(this.versione!=null){
+				ac.setVersione(Integer.parseInt(this.versione));
+			}
 			ac.setPrivato(this.privato ? Boolean.TRUE : Boolean.FALSE);
 			ac.setSuperUser(userLogin);
 

@@ -144,27 +144,7 @@ public class LocalForwardEngine {
 					scenarioCooperazione = Costanti.SCENARIO_SINCRONO_INVOCAZIONE_SERVIZIO;
 				}
 				
-				// TODO Fare opzione che si indica nella PD il nome della PA su cui effettuare il localForward
-				String nomePA = null; // TODO
-				if(nomePA==null){
-					try{
-						List<PortaApplicativa> list = this.localForwardParameter.getConfigurazionePdDReader().getPorteApplicative(idServizio, false);
-						if(list.size()<=0){
-							throw new DriverConfigurazioneNotFound("NotFound");
-						}
-						if(list.size()>1){
-							throw new Exception("Esiste più di una porta applicativa indirizzabile tramite il servizio ["+idServizio+"] indicato nella porta delegata ["+
-									this.richiestaDelegata.getIdPortaDelegata().getNome()+"]");
-						}
-						this.idPA = this.localForwardParameter.getConfigurazionePdDReader().convertToIDPortaApplicativa(list.get(0));
-					}catch(DriverConfigurazioneNotFound n){
-						throw new Exception("Non esiste alcuna porta applicativa indirizzabile tramite il servizio ["+idServizio+"] indicato nella porta delegata ["+
-								this.richiestaDelegata.getIdPortaDelegata().getNome()+"]",n);
-					}
-				}
-				else{
-					this.idPA=this.localForwardParameter.getConfigurazionePdDReader().getIDPortaApplicativa(nomePA, this.localForwardParameter.getProtocolFactory());
-				}
+				this.idPA = this.localForwardParameter.getIdPortaApplicativaIndirizzata();
 				
 				this.richiestaApplicativa = 
 						new RichiestaApplicativa(soggettoFruitore,  

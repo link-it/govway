@@ -60,6 +60,7 @@ import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -147,10 +148,12 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 			int idServizio = -1;
 			String tipo_servizio = null;
 			String nome_servizio = null;
+			Integer versione_servizio = null;
 			if (pas != null) {
 				idServizio = pas.getId().intValue();
 				tipo_servizio = pas.getTipo();
 				nome_servizio = pas.getNome();
+				versione_servizio = pas.getVersione();
 			}
 			PortaApplicativaSoggettoVirtuale pasv = pa.getSoggettoVirtuale();
 			long id_soggetto_virtuale = -1;
@@ -178,7 +181,7 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 						idSoggettoServizio = soggInt;
 					}
 					Soggetto soggServ = soggettiCore.getSoggetto(idSoggettoServizio);
-					idServizio = (int) apsCore.getIdAccordoServizioParteSpecifica(nome_servizio, tipo_servizio, soggServ.getNome(), soggServ.getTipo()); 
+					idServizio = (int) apsCore.getIdAccordoServizioParteSpecifica(nome_servizio, tipo_servizio, versione_servizio, soggServ.getNome(), soggServ.getTipo()); 
 				}
 			}
 
@@ -233,7 +236,9 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 					}else{
 						soggettoErogatoreServizio = new IDSoggetto(tipoSoggettoProprietario,nomeSoggettoProprietario);
 					}
-					IDServizio idServ = new IDServizio(soggettoErogatoreServizio, tipo_servizio, nome_servizio);
+					IDServizio idServ = IDServizioFactory.getInstance().getIDServizioFromValues(tipo_servizio, nome_servizio, 
+							soggettoErogatoreServizio, 
+							versione_servizio); 
 					try{
 						servSp = apsCore.getServizio(idServ);
 					}catch(DriverRegistroServiziNotFound dNot){
@@ -408,7 +413,9 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 					}else{
 						soggettoErogatoreServizio = new IDSoggetto(tipoSoggettoProprietario,nomeSoggettoProprietario);
 					}
-					IDServizio idServ = new IDServizio(soggettoErogatoreServizio, tipo_servizio, nome_servizio);
+					IDServizio idServ = IDServizioFactory.getInstance().getIDServizioFromValues(tipo_servizio, nome_servizio, 
+							soggettoErogatoreServizio, 
+							versione_servizio); 
 					try{
 						servSp = apsCore.getServizio(idServ);
 					}catch(DriverRegistroServiziNotFound dNot){

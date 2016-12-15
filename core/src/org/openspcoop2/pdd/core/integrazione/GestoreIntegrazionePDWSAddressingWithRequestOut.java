@@ -61,12 +61,16 @@ public class GestoreIntegrazionePDWSAddressingWithRequestOut extends GestoreInte
 				if(hBusta.getDestinatario()!=null && hBusta.getServizio()!=null){
 					
 					// To
-					SOAPHeaderElement wsaTO = UtilitiesIntegrazioneWSAddressing.buildWSATo(soapMsg,this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa", hBusta.getTipoDestinatario(),hBusta.getDestinatario(), hBusta.getTipoServizio(), hBusta.getServizio());
+					SOAPHeaderElement wsaTO = UtilitiesIntegrazioneWSAddressing.buildWSATo(soapMsg,this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa", 
+							hBusta.getTipoDestinatario(),hBusta.getDestinatario(), 
+							hBusta.getTipoServizio(), hBusta.getServizio(), hBusta.getVersioneServizio());
 					soapMsg.addHeaderElement(soapMsg.getSOAPHeader(), wsaTO);
 					
 					// Action
 					if(hBusta.getAzione()!=null){
-						SOAPHeaderElement wsaAction = UtilitiesIntegrazioneWSAddressing.buildWSAAction(soapMsg,this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa",hBusta.getTipoDestinatario(),hBusta.getDestinatario(), hBusta.getTipoServizio(), hBusta.getServizio(),hBusta.getAzione());
+						SOAPHeaderElement wsaAction = UtilitiesIntegrazioneWSAddressing.buildWSAAction(soapMsg,this.openspcoopProperties.getHeaderSoapActorIntegrazione()+"/wsa",
+								hBusta.getTipoDestinatario(),hBusta.getDestinatario(), 
+								hBusta.getTipoServizio(), hBusta.getServizio(), hBusta.getVersioneServizio(), hBusta.getAzione());
 						soapMsg.addHeaderElement(soapMsg.getSOAPHeader(), wsaAction);
 					}
 				}

@@ -25,9 +25,10 @@ package org.openspcoop2.protocol.spcoop.sica;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 
 
 
@@ -265,32 +266,28 @@ public class SICAtoOpenSPCoopContext {
 	// --------- Array list contenente il mapping fra uri AccordiServizioParteSpecifica e IDServizio OpenSPCoop
 	private Hashtable<String,String> mappingServizioSPCoopToUriAPS = new Hashtable<String,String>();
 	
-	public void addMappingServizioToUriAPS(IDServizio idServizioSPCoop,IDAccordo idAccordoServizioParteSpecifica) throws SICAToOpenSPCoopUtilitiesException{
+	public void addMappingServizioToUriAPS(IRegistryReader registryReader,IDServizio idServizioSPCoop) throws SICAToOpenSPCoopUtilitiesException{
 		if(idServizioSPCoop==null || 
-				idServizioSPCoop.getTipoServizio()==null || idServizioSPCoop.getServizio()==null ||
+				idServizioSPCoop.getTipo()==null || idServizioSPCoop.getNome()==null || idServizioSPCoop.getVersione()==null ||
 				idServizioSPCoop.getSoggettoErogatore()==null ||
 				idServizioSPCoop.getSoggettoErogatore().getTipo()==null || idServizioSPCoop.getSoggettoErogatore().getNome()==null){
 			return;
 		}
-		if(idAccordoServizioParteSpecifica==null || idAccordoServizioParteSpecifica.getNome()==null || idAccordoServizioParteSpecifica.getVersione()==null ||
-				idAccordoServizioParteSpecifica.getSoggettoReferente()==null ||
-				idAccordoServizioParteSpecifica.getSoggettoReferente().getTipo()==null ||
-				idAccordoServizioParteSpecifica.getSoggettoReferente().getNome()==null){
+		String keyServizioSPCoop = null;
+		try{
+			keyServizioSPCoop = IDServizioFactory.getInstance().getUriFromIDServizio(idServizioSPCoop);
+		}catch(Exception e){
+			// non dovrebbe avvenire errore
 			return;
 		}
-		idServizioSPCoop.setAzione(null); // per il toString non deve essere usato senno viene processato
-		String keyServizioSPCoop = idServizioSPCoop.toString();
 		if(this.mappingServizioSPCoopToUriAPS.containsKey(keyServizioSPCoop)==false){
-			this.mappingServizioSPCoopToUriAPS.put(keyServizioSPCoop, SICAtoOpenSPCoopUtilities.idAccordoServizioParteSpecifica_openspcoopToSica(idAccordoServizioParteSpecifica, this));
+			this.mappingServizioSPCoopToUriAPS.put(keyServizioSPCoop, 
+					SICAtoOpenSPCoopUtilities.idAccordoServizioParteSpecifica_openspcoopToSica(registryReader,idServizioSPCoop, this));
 		}
 	}
 	
 	public String getUriAPS(IDServizio idServizioSPCoop){
 		return this.mappingServizioSPCoopToUriAPS.get(idServizioSPCoop.toString());
-	}
-	
-	public IDServizio getIDServizio(IDAccordo idAccordoServizioParteSpecifica) throws SICAToOpenSPCoopUtilitiesException{
-		return getIDServizio(SICAtoOpenSPCoopUtilities.idAccordoServizioParteSpecifica_openspcoopToSica(idAccordoServizioParteSpecifica, this));
 	}
 	
 	public IDServizio getIDServizio(String uriAPS){
@@ -301,23 +298,7 @@ public class SICAtoOpenSPCoopContext {
 				String value = this.mappingServizioSPCoopToUriAPS.get(key);
 				if(value.equals(uriAPS)){
 					try{
-						String [] split = key.split("--");
-						
-						String soggetto = split[0];
-						String tipoSoggetto = soggetto.split("/")[0];
-						String nomeSoggetto = soggetto.split("/")[1];
-						
-						String servizio = split[1];
-						String tipoServizio = servizio.split("/")[0];
-						String nomeServizio = servizio.split("/")[1];
-						int indexOf = nomeServizio.lastIndexOf(":");
-						if(indexOf>0){
-							nomeServizio = nomeServizio.substring(0,indexOf);
-						}
-						
-						IDServizio idS = new IDServizio(tipoSoggetto,nomeSoggetto,
-								tipoServizio,nomeServizio); 
-						return idS;
+						return IDServizioFactory.getInstance().getIDServizioFromUri(key);
 					}catch(Exception e){
 						throw new RuntimeException("(key["+key+"] value["+value+"]) "+ e.getMessage(),e);
 					}

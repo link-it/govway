@@ -43,13 +43,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Servizio }
-     */
-    public Servizio createServizio() {
-        return new Servizio();
-    }
-    
-    /**
      * Create an instance of {@link IdSoggetto }
      */
     public IdSoggetto createIdSoggetto() {
@@ -68,6 +61,13 @@ public class ObjectFactory {
      */
     public AccordoServizioParteComuneServizioComposto createAccordoServizioParteComuneServizioComposto() {
         return new AccordoServizioParteComuneServizioComposto();
+    }
+    
+    /**
+     * Create an instance of {@link ConfigurazioneServizio }
+     */
+    public ConfigurazioneServizio createConfigurazioneServizio() {
+        return new ConfigurazioneServizio();
     }
     
 

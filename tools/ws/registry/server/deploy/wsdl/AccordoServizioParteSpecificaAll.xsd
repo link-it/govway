@@ -13,12 +13,16 @@
 	<xsd:element name="search-filter-accordo-servizio-parte-specifica" type="tns:search-filter-accordo-servizio-parte-specifica" />
 	<xsd:complexType name="search-filter-accordo-servizio-parte-specifica">
 		<xsd:sequence>
- 			<xsd:element name="servizio" type="tns:servizio" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="configurazione-servizio" type="tns:configurazione-servizio" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="stato-package" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="privato" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="tipo-soggetto-erogatore" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="nome-soggetto-erogatore" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="tipo" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="nome" type="xsd:string" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="versione" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="versione" type="xsd:unsignedInt" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="accordo-servizio-parte-comune" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="tipologia-servizio" type="api:TipologiaServizio" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="port-type" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="ora-registrazione-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="ora-registrazione-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
@@ -39,15 +43,10 @@
 		</xsd:sequence>
 	</xsd:complexType>
 	
-	<xsd:element name="servizio" type="tns:servizio" />
-	<xsd:complexType name="servizio">
+	<xsd:element name="configurazione-servizio" type="tns:configurazione-servizio" />
+	<xsd:complexType name="configurazione-servizio">
 		<xsd:sequence>
  			<xsd:element name="connettore" type="tns:connettore" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="tipo-soggetto-erogatore" type="xsd:string" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="nome-soggetto-erogatore" type="xsd:string" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="tipo" type="xsd:string" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="nome" type="xsd:string" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="tipologia-servizio" type="api:TipologiaServizio" minOccurs="0" maxOccurs="1" />
 		</xsd:sequence>
 	</xsd:complexType>
 

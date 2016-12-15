@@ -378,7 +378,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
 					// asincrono
 					ProfiloDiCollaborazione profiloCollaborazione = new ProfiloDiCollaborazione(state,this.getProtocolFactory());
 					profiloCollaborazione.asincronoSimmetrico_registraRichiestaRicevuta(bustaRichiesta.getID(),bustaRichiesta.getCollaborazione(),
-							bustaRichiesta.getTipoServizioCorrelato(),bustaRichiesta.getServizioCorrelato(),true,
+							bustaRichiesta.getTipoServizioCorrelato(),bustaRichiesta.getServizioCorrelato(),bustaRichiesta.getVersioneServizioCorrelato(),true,
 							this.openspcoopProperties.getRepositoryIntervalloScadenzaMessaggi());
 				
 					// commit

@@ -976,7 +976,7 @@ public class ConfigurazionePdD  {
 	public List<PortaApplicativa> getPorteApplicative(Connection connectionPdD,IDServizio idServizio, boolean ricercaPuntuale) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Raccolta dati
-		if(idServizio == null || idServizio.getServizio()==null || idServizio.getTipoServizio()==null || 
+		if(idServizio == null || idServizio.getNome()==null || idServizio.getTipo()==null || idServizio.getVersione()==null ||
 				idServizio.getSoggettoErogatore()==null || idServizio.getSoggettoErogatore().getTipo()==null || idServizio.getSoggettoErogatore().getNome()==null)
 			throw new DriverConfigurazioneException("[getPorteApplicative]: Parametri non definito");	
 		
@@ -986,7 +986,7 @@ public class ConfigurazionePdD  {
 		if(this.cache!=null){
 			key = "getPorteApplicative_ricercaPuntuale("+ricercaPuntuale+")_" + 
 					idServizio.getSoggettoErogatore().getTipo()+idServizio.getSoggettoErogatore().getNome() + "_" + 
-					idServizio.getTipoServizio() + idServizio.getServizio();
+					idServizio.getTipo() + idServizio.getNome()+ ":" + idServizio.getVersione();
 			if(idServizio.getAzione()!=null)
 				key = key + "_" + idServizio.getAzione();
 			
@@ -1033,7 +1033,7 @@ public class ConfigurazionePdD  {
 		if(soggettoVirtuale==null || soggettoVirtuale.getTipo()==null || soggettoVirtuale.getNome()==null){
 			throw new DriverConfigurazioneException("[getPorteApplicative]: Parametri (SoggettoVirtuale) non definito");	
 		}
-		if(idServizio == null || idServizio.getServizio()==null || idServizio.getTipoServizio()==null || 
+		if(idServizio == null || idServizio.getNome()==null || idServizio.getTipo()==null || idServizio.getVersione()==null ||
 				idServizio.getSoggettoErogatore()==null || idServizio.getSoggettoErogatore().getTipo()==null || idServizio.getSoggettoErogatore().getNome()==null)
 			throw new DriverConfigurazioneException("[getPorteApplicative]: Parametri (IDServizio) non definito");	
 		
@@ -1044,7 +1044,7 @@ public class ConfigurazionePdD  {
 			key = "getPorteApplicativeVirtuali_ricercaPuntuale("+ricercaPuntuale+")_" + 
 					soggettoVirtuale.getTipo()+soggettoVirtuale.getNome()+"_"+
 					idServizio.getSoggettoErogatore().getTipo()+idServizio.getSoggettoErogatore().getNome() + "_" + 
-					idServizio.getTipoServizio() + idServizio.getServizio();
+					idServizio.getTipo() + idServizio.getNome()+":"+idServizio.getVersione();
 			if(idServizio.getAzione()!=null)
 				key = key + "_" + idServizio.getAzione();
 			
@@ -1089,7 +1089,7 @@ public class ConfigurazionePdD  {
 			Map<String, String> proprietaPresentiBustaRicevuta,boolean useFiltroProprieta)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
 		// Raccolta dati
-		if(idServizio == null || idServizio.getServizio()==null || idServizio.getTipoServizio()==null || 
+		if(idServizio == null || idServizio.getNome()==null || idServizio.getTipo()==null || idServizio.getVersione()==null ||
 				idServizio.getSoggettoErogatore()==null || idServizio.getSoggettoErogatore().getTipo()==null || idServizio.getSoggettoErogatore().getNome()==null)
 			throw new DriverConfigurazioneException("[getPorteApplicative_SoggettiVirtuali]: Parametro non definito");	
 
@@ -1098,7 +1098,7 @@ public class ConfigurazionePdD  {
 		if(this.cache!=null){
 			this.log.debug("Search porte applicative soggetti virtuali in cache...");
 			key = "getPorteApplicative_SoggettiVirtuali_" + idServizio.getSoggettoErogatore().getTipo()+idServizio.getSoggettoErogatore().getNome() + "_" + 
-					idServizio.getTipoServizio() + idServizio.getServizio();
+					idServizio.getTipo() + idServizio.getNome()+":"+idServizio.getVersione();
 			if(idServizio.getAzione()!=null)
 				key = key + "_" + idServizio.getAzione();
 			org.openspcoop2.utils.cache.CacheResponse response = 
@@ -1202,9 +1202,9 @@ public class ConfigurazionePdD  {
 
 		if(proprietaPresentiBustaRicevuta!=null && (proprietaPresentiBustaRicevuta.size()>0) ){
 
-			for(int i=0; i<pa.sizeProprietaProtocolloList(); i++){
-				String nome = pa.getProprietaProtocollo(i).getNome();
-				String value = pa.getProprietaProtocollo(i).getValore();
+			for(int i=0; i<pa.sizeProprietaIntegrazioneProtocolloList(); i++){
+				String nome = pa.getProprietaIntegrazioneProtocollo(i).getNome();
+				String value = pa.getProprietaIntegrazioneProtocollo(i).getValore();
 				this.log.debug("ProprietaProtocollo della PA["+pa.getNome()+"] nome["+nome+"] valore["+value+"]");
 
 				//System.out.println("Esamino ["+nome+"]["+value+"]");
@@ -1272,9 +1272,9 @@ public class ConfigurazionePdD  {
 
 			// Proprieta' non presenti nella busta ricevuta
 			// Controllo se la PA richiedeva un filtro per protocol properties.
-			for(int i=0; i<pa.sizeProprietaProtocolloList(); i++){
-				String nome = pa.getProprietaProtocollo(i).getNome();
-				String value = pa.getProprietaProtocollo(i).getValore();
+			for(int i=0; i<pa.sizeProprietaIntegrazioneProtocolloList(); i++){
+				String nome = pa.getProprietaIntegrazioneProtocollo(i).getNome();
+				String value = pa.getProprietaIntegrazioneProtocollo(i).getValore();
 				this.log.debug("ProtocolProperty della PA["+pa.getNome()+"] nome["+nome+"] valore["+value+"]");
 
 				//System.out.println("Esamino ["+nome+"]["+value+"]");

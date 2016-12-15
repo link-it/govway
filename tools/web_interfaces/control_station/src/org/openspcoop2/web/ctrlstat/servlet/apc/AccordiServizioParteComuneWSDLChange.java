@@ -611,7 +611,10 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 			}else{
 				referente = "" + soggettiCore.getSoggettoRegistro(new IDSoggetto(as.getSoggettoReferente().getTipo(),as.getSoggettoReferente().getNome())).getId();
 			}
-			String versione = as.getVersione();
+			String versione = null;
+			if(as.getVersione()!=null){
+				versione = as.getVersione().intValue()+"";
+			}
 			boolean isServizioComposto = as.getServizioComposto()!=null ? true : false;
 			String accordoCooperazioneId = "";
 			if(isServizioComposto){

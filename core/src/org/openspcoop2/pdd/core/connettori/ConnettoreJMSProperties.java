@@ -31,6 +31,7 @@ import java.util.Properties;
 
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.slf4j.Logger;
 
@@ -151,14 +152,17 @@ public class ConnettoreJMSProperties {
 		
 		for(int i=0; i<idServizi.size(); i++){
 		    //log.info("Raccolta variabili per servizio ["+idServizi.get(i)+"]");
-		    IDServizio idServizio = new IDServizio();
-		    idServizio.setTipoServizio((String)this.reader.get("org.openspcoop.pubblicazione."+idServizi.get(i)+".tipoServizio"));
-		    idServizio.setServizio((String)this.reader.get("org.openspcoop.pubblicazione."+idServizi.get(i)+".servizio"));
+			
 		    IDSoggetto idSoggetto = new IDSoggetto();
 		    idSoggetto.setTipo((String)this.reader.get("org.openspcoop.pubblicazione."+idServizi.get(i)+".tipoSoggettoErogatore"));
 		    idSoggetto.setNome((String)this.reader.get("org.openspcoop.pubblicazione."+idServizi.get(i)+".soggettoErogatore"));
-		    idServizio.setSoggettoErogatore(idSoggetto);
-		    //log.info("Servizio ["+idServizio.getTipoServizio()+"/"+idServizio.getServizio()+"] erogato da ["+idSoggetto.getTipo()+"/"+idSoggetto.getNome()+"]");
+			
+		    String tipoServizio = (String)this.reader.get("org.openspcoop.pubblicazione."+idServizi.get(i)+".tipoServizio");
+		    String nomeServizio = (String)this.reader.get("org.openspcoop.pubblicazione."+idServizi.get(i)+".servizio");
+		    Integer versioneServizio = Integer.parseInt(((String)this.reader.get("org.openspcoop.pubblicazione."+idServizi.get(i)+".versioneServizio")));
+		    IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipoServizio, nomeServizio, idSoggetto, versioneServizio);
+		    
+		    //log.info("Servizio ["+IDServizioFactory.getInstance().getUriFromIDServizio(idServizio)+"]");
 		    servizi.put(idServizi.get(i),idServizio);
 		}
 		

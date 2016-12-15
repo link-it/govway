@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -857,16 +858,20 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 					//informazioni busta
 					IDSoggetto fruitore = new IDSoggetto(rs.getString("tipo_fruitore"),rs.getString("fruitore"));
 					IDSoggetto erogatore = new IDSoggetto(rs.getString("tipo_erogatore"),rs.getString("erogatore"));
-					IDServizio servizio = new IDServizio(erogatore);
-					servizio.setServizio(rs.getString("servizio"));
-					servizio.setTipoServizio(rs.getString("tipo_servizio"));
+					Integer versioneServizio = rs.getInt("versione_servizio");
+					if(rs.wasNull()){
+						versioneServizio = null;
+					}
+					IDServizio servizio = 
+							IDServizioFactory.getInstance().getIDServizioFromValues(rs.getString("tipo_servizio"), rs.getString("servizio"), erogatore, versioneServizio); 
 					
 					InformazioniProtocollo infoBusta = new InformazioniProtocollo();
 					infoBusta.setAzione(rs.getString("azione"));
 					infoBusta.setErogatore(erogatore);
 					infoBusta.setFruitore(fruitore);
-					infoBusta.setServizio(servizio.getServizio());
-					infoBusta.setTipoServizio(servizio.getTipoServizio());
+					infoBusta.setServizio(servizio.getNome());
+					infoBusta.setTipoServizio(servizio.getTipo());
+					infoBusta.setVersioneServizio(servizio.getVersione());
 					
 					entry.setInformazioniProtocollo(infoBusta);
 				

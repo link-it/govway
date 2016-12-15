@@ -44,6 +44,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
+import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
@@ -129,7 +130,8 @@ public final class AccordiCooperazioneChange extends Action {
 			// prelevo l'accordo
 			AccordoCooperazione ac = acCore.getAccordoCooperazione(idAcc);
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(acCore);
-			IDAccordoCooperazione idAccordoOLD = idAccordoCooperazioneFactory.getIDAccordoFromValues(ac.getNome(),ac.getVersione());
+			IDAccordoCooperazione idAccordoOLD = idAccordoCooperazioneFactory.getIDAccordoFromValues(ac.getNome(),
+					BeanUtilities.getSoggettoReferenteID(ac.getSoggettoReferente()),ac.getVersione());
 			String uriAS = idAccordoCooperazioneFactory.getUriFromIDAccordo(idAccordoOLD);
 			String oldStatoPackage = ac.getStatoPackage();	
 
@@ -256,7 +258,8 @@ public final class AccordiCooperazioneChange extends Action {
 				}else{
 					referente = "-";
 				}
-				versione = ac.getVersione();
+				if(ac.getVersione()!=null)
+					versione = ac.getVersione().intValue()+"";
 				privato = ac.getPrivato()!=null && ac.getPrivato();
 				if(statoPackage==null)
 					statoPackage = ac.getStatoPackage();
@@ -384,7 +387,9 @@ public final class AccordiCooperazioneChange extends Action {
 			}else{
 				ac.setSoggettoReferente(null);
 			}
-			ac.setVersione(versione);
+			if(versione!=null){
+				ac.setVersione(Integer.parseInt(versione));
+			}
 			ac.setOraRegistrazione(Calendar.getInstance().getTime());
 			ac.setPrivato(privato ? Boolean.TRUE : Boolean.FALSE);
 			ac.setSuperUser(userLogin);

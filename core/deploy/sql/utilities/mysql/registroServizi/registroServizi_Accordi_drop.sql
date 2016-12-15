@@ -11,7 +11,6 @@
 -- DROP INDEX index_documenti_1 ON documenti ;
 -- DROP INDEX INDEX_AC_SC_SC ON acc_serv_componenti ;
 -- DROP INDEX INDEX_AC_SC ON acc_serv_composti ;
--- DROP INDEX INDEX_APS ON servizi ;
 -- DROP INDEX INDEX_AC_COOP_PAR ON accordi_coop_partecipanti ;
 -- DROP INDEX INDEX_OP_MESSAGES ON operation_messages ;
 -- DROP INDEX INDEX_DOC_SEARCH ON documenti ;

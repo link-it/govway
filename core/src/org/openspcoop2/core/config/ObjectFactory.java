@@ -389,6 +389,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link PortaDelegataLocalForward }
+     */
+    public PortaDelegataLocalForward createPortaDelegataLocalForward() {
+        return new PortaDelegataLocalForward();
+    }
+
+    /**
      * Create an instance of {@link Tracciamento }
      */
     public Tracciamento createTracciamento() {
@@ -494,6 +501,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link PortaApplicativaProprietaIntegrazioneProtocollo }
+     */
+    public PortaApplicativaProprietaIntegrazioneProtocollo createPortaApplicativaProprietaIntegrazioneProtocollo() {
+        return new PortaApplicativaProprietaIntegrazioneProtocollo();
+    }
+
+    /**
      * Create an instance of {@link GestioneErrore }
      */
     public GestioneErrore createGestioneErrore() {
@@ -512,13 +526,6 @@ public class ObjectFactory {
      */
     public RouteRegistro createRouteRegistro() {
         return new RouteRegistro();
-    }
-
-    /**
-     * Create an instance of {@link ProprietaProtocollo }
-     */
-    public ProprietaProtocollo createProprietaProtocollo() {
-        return new ProprietaProtocollo();
     }
 
     /**

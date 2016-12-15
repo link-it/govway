@@ -39,7 +39,7 @@
     <value name="privato" field="privato" default="false" usage="optional" style="attribute"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
     <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
-    <value name="versione" field="versione" usage="optional" style="attribute"/>
+    <value name="versione" field="versione" default="1" usage="optional" style="attribute"/>
     <value name="ora-registrazione" field="oraRegistrazione" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="elenco-partecipanti" class="org.openspcoop2.core.registry.AccordoCooperazionePartecipanti">
@@ -95,7 +95,7 @@
     <value name="consegna-in-ordine" field="consegnaInOrdine" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="scadenza" field="scadenza" usage="optional" style="attribute"/>
     <value name="ora-registrazione" field="oraRegistrazione" usage="optional" style="attribute"/>
-    <value name="versione" field="versione" usage="optional" style="attribute"/>
+    <value name="versione" field="versione" default="1" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="servizio-composto" class="org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
@@ -115,6 +115,7 @@
     <value name="nome-soggetto" field="nomeSoggetto" usage="required" style="attribute"/>
     <value name="tipo" field="tipo" usage="required" style="attribute"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
+    <value name="versione" field="versione" usage="optional" style="attribute"/>
     <value name="azione" field="azione" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="port-type" class="org.openspcoop2.core.registry.PortType">
@@ -250,7 +251,7 @@
   </mapping>
   <mapping name="accordo-servizio-parte-specifica" class="org.openspcoop2.core.registry.AccordoServizioParteSpecifica">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
-    <structure field="servizio" usage="required" map-as="org.openspcoop2.core.registry.Servizio"/>
+    <structure field="configurazioneServizio" usage="optional" map-as="org.openspcoop2.core.registry.ConfigurazioneServizio"/>
     <collection field="fruitore" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.core.registry.Fruitore"/>
     </collection>
@@ -276,9 +277,13 @@
     <value name="id-soggetto" field="idSoggetto" usage="optional" style="attribute"/>
     <value name="byte-wsdl-implementativo-erogatore" field="byteWsdlImplementativoErogatore" usage="optional" style="attribute"/>
     <value name="byte-wsdl-implementativo-fruitore" field="byteWsdlImplementativoFruitore" usage="optional" style="attribute"/>
+    <value name="tipo-soggetto-erogatore" field="tipoSoggettoErogatore" usage="optional" style="attribute"/>
+    <value name="nome-soggetto-erogatore" field="nomeSoggettoErogatore" usage="optional" style="attribute"/>
+    <value name="tipo" field="tipo" usage="required" style="attribute"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
-    <value name="versione" field="versione" usage="optional" style="attribute"/>
+    <value name="versione" field="versione" default="1" usage="optional" style="attribute"/>
     <value name="accordo-servizio-parte-comune" field="accordoServizioParteComune" usage="required" style="attribute"/>
+    <value name="tipologia-servizio" field="tipologiaServizio" default="normale" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="port-type" field="portType" usage="optional" style="attribute"/>
     <value name="wsdl-implementativo-erogatore" field="wsdlImplementativoErogatore" usage="optional" style="attribute"/>
     <value name="wsdl-implementativo-fruitore" field="wsdlImplementativoFruitore" usage="optional" style="attribute"/>
@@ -291,27 +296,22 @@
     <value name="versione-protocollo" field="versioneProtocollo" usage="optional" style="attribute"/>
     <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
   </mapping>
-  <mapping name="servizio" class="org.openspcoop2.core.registry.Servizio">
+  <mapping name="configurazione-servizio" class="org.openspcoop2.core.registry.ConfigurazioneServizio">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
     <structure name="connettore" field="connettore" usage="optional" map-as="_Connettore_Type"/>
-    <collection field="parametriAzione" create-type="java.util.ArrayList">
-      <structure map-as="org.openspcoop2.core.registry.ServizioAzione"/>
+    <collection field="configurazioneAzione" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.registry.ConfigurazioneServizioAzione"/>
     </collection>
-    <value name="tipo-soggetto-erogatore" field="tipoSoggettoErogatore" usage="optional" style="attribute"/>
-    <value name="nome-soggetto-erogatore" field="nomeSoggettoErogatore" usage="optional" style="attribute"/>
-    <value name="tipo" field="tipo" usage="required" style="attribute"/>
-    <value name="nome" field="nome" usage="required" style="attribute"/>
-    <value name="tipologia-servizio" field="tipologiaServizio" default="normale" usage="optional" enum-value-method="toString" style="attribute"/>
   </mapping>
-  <mapping name="parametri-azione" class="org.openspcoop2.core.registry.ServizioAzione">
+  <mapping name="configurazione-azione" class="org.openspcoop2.core.registry.ConfigurazioneServizioAzione">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
     <structure name="connettore" field="connettore" usage="required" map-as="_Connettore_Type"/>
-    <collection field="parametriFruitore" create-type="java.util.ArrayList">
-      <structure map-as="org.openspcoop2.core.registry.ServizioAzioneFruitore"/>
+    <collection field="configurazioneFruitore" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore"/>
     </collection>
     <value name="nome" field="nome" usage="required" style="attribute"/>
   </mapping>
-  <mapping name="parametri-fruitore" class="org.openspcoop2.core.registry.ServizioAzioneFruitore">
+  <mapping name="configurazione-fruitore" class="org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
     <structure name="connettore" field="connettore" usage="required" map-as="_Connettore_Type"/>
     <value name="tipo" field="tipo" usage="required" style="attribute"/>
@@ -414,18 +414,19 @@
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
     <structure name="soggetto-referente" field="soggettoReferente" usage="optional" map-as="_IdSoggetto_Type"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
-    <value name="versione" field="versione" usage="optional" style="attribute"/>
+    <value name="versione" field="versione" default="1" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="id-accordo-servizio-parte-comune" class="org.openspcoop2.core.registry.IdAccordoServizioParteComune">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
     <structure name="soggetto-referente" field="soggettoReferente" usage="optional" map-as="_IdSoggetto_Type"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
-    <value name="versione" field="versione" usage="optional" style="attribute"/>
+    <value name="versione" field="versione" default="1" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="id-accordo-servizio-parte-specifica" class="org.openspcoop2.core.registry.IdAccordoServizioParteSpecifica">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
-    <structure name="soggetto-erogatore" field="soggettoErogatore" usage="optional" map-as="_IdSoggetto_Type"/>
+    <structure name="soggetto-erogatore" field="soggettoErogatore" usage="required" map-as="_IdSoggetto_Type"/>
+    <value name="tipo" field="tipo" usage="required" style="attribute"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
-    <value name="versione" field="versione" usage="optional" style="attribute"/>
+    <value name="versione" field="versione" default="1" usage="optional" style="attribute"/>
   </mapping>
 </binding>

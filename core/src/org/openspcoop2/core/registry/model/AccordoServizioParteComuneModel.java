@@ -76,7 +76,7 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 		this.CONSEGNA_IN_ORDINE = new Field("consegna-in-ordine",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.SCADENZA = new Field("scadenza",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.ORA_REGISTRAZIONE = new Field("ora-registrazione",java.util.Date.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
-		this.VERSIONE = new Field("versione",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
+		this.VERSIONE = new Field("versione",java.lang.Integer.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 	
 	}
 	
@@ -119,7 +119,7 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 		this.CONSEGNA_IN_ORDINE = new ComplexField(father,"consegna-in-ordine",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.SCADENZA = new ComplexField(father,"scadenza",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 		this.ORA_REGISTRAZIONE = new ComplexField(father,"ora-registrazione",java.util.Date.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
-		this.VERSIONE = new ComplexField(father,"versione",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
+		this.VERSIONE = new ComplexField(father,"versione",java.lang.Integer.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
 	
 	}
 	

@@ -582,6 +582,14 @@ public class TracciaDriverUtilities {
 					busta.setProfiloDiCollaborazioneValue(rs.getString("profilo_collaborazione"));
 				if(rs.getString("profilo_collaborazione_meta")!=null && ("".equals(rs.getString("profilo_collaborazione_meta"))==false))
 					busta.setProfiloDiCollaborazione(ProfiloDiCollaborazione.toProfiloDiCollaborazione(rs.getString("profilo_collaborazione_meta")));
+				
+				Integer versioneServizioCorrelato = rs.getInt("versione_servizio_correlato");
+				if(rs.wasNull()){
+					versioneServizioCorrelato = null;
+				}
+				if(versioneServizioCorrelato!=null){
+					busta.setVersioneServizioCorrelato(versioneServizioCorrelato);
+				}
 				if(rs.getString("servizio_correlato")!=null && ("".equals(rs.getString("servizio_correlato"))==false))
 					busta.setServizioCorrelato(rs.getString("servizio_correlato"));
 				if(rs.getString("tipo_servizio_correlato")!=null && ("".equals(rs.getString("tipo_servizio_correlato"))==false))
@@ -590,8 +598,13 @@ public class TracciaDriverUtilities {
 				if(rs.getString("collaborazione")!=null && ("".equals(rs.getString("collaborazione"))==false))
 					busta.setCollaborazione(rs.getString("collaborazione"));
 				
-				if(rs.getString("versione_servizio")!=null && ("".equals(rs.getString("versione_servizio"))==false))
-					busta.setVersioneServizio(rs.getString("versione_servizio"));
+				Integer versioneServizio = rs.getInt("versione_servizio");
+				if(rs.wasNull()){
+					versioneServizio = null;
+				}
+				if(versioneServizio!=null){
+					busta.setVersioneServizio(versioneServizio);
+				}
 				if(rs.getString("servizio")!=null && ("".equals(rs.getString("servizio"))==false))
 					busta.setServizio(rs.getString("servizio"));
 				if(rs.getString("tipo_servizio")!=null && ("".equals(rs.getString("tipo_servizio"))==false))

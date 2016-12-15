@@ -54,6 +54,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.ConfigurazioneServizio;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
@@ -70,6 +71,7 @@ import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziCRUD;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
@@ -108,6 +110,7 @@ public class XMLDataConverter {
 	// Factory
 	private IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 	private IDAccordoCooperazioneFactory idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
+	private IDServizioFactory idServizioFactory = IDServizioFactory.getInstance();
 
 	
 	public XMLDataConverter(String sorgente,AccessoRegistroRegistro destinazione,String superUser,String protocolloDefault) throws DriverRegistroServiziException{
@@ -701,11 +704,8 @@ public class XMLDataConverter {
 					}
 					// accordo parte specifica
 					if(CostantiConfigurazione.REGISTRO_DB.equals(this.tipoBEDestinazione)){
-						if(servizio.getNome()==null){
-							servizio.setNome(servizio.getServizio().getNome());
-						}
 						if(servizio.getVersione()==null){
-							servizio.setVersione("1");
+							servizio.setVersione(1);
 						}
 					}
 					
@@ -713,7 +713,8 @@ public class XMLDataConverter {
 					if(!servizioComposto){
 						this.gestioneServizio(servizio, soggetto, reset, mantieniFruitoriEsistenti,statoAccordo);
 					}else{
-						this.log.debug("Servizio ["+soggetto.getTipo()+"/"+soggetto.getNome()+"_"+servizio.getServizio().getTipo()+"/"+servizio.getServizio().getNome()+"] e' un servizio composto, verra posticipata la gestione dopo la creazione degli accordi di servizio composti");
+						String uri = this.idServizioFactory.getUriFromAccordo(servizio);
+						this.log.debug("Servizio ["+uri+"] e' un servizio composto, verra posticipata la gestione dopo la creazione degli accordi di servizio composti");
 						servizioComposti.add(servizio);
 						servizioComposti_Soggetti.add(soggetto);
 					}
@@ -841,13 +842,13 @@ public class XMLDataConverter {
 				Soggetto soggetto = this.sorgenteRegistro.getSoggetto(i);
 				for(int j=0; j<soggetto.sizeAccordoServizioParteSpecificaList(); j++){
 					AccordoServizioParteSpecifica servizio = soggetto.getAccordoServizioParteSpecifica(j);
-					IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipo(),soggetto.getNome());
-					IDServizio idServizio = new IDServizio(idSoggetto,servizio.getServizio().getTipo(),servizio.getServizio().getNome());
-					this.log.info("Servizio "+servizio.getServizio().getTipo()+"/"+servizio.getServizio().getNome()+" erogato da "+soggetto.getTipo()+"/"+soggetto.getNome()+" eliminazione in corso...");
+					IDServizio idServizio = this.idServizioFactory.getIDServizioFromAccordo(servizio);
+					String uri = this.idServizioFactory.getUriFromAccordo(servizio);
+					this.log.info("Servizio "+uri+" eliminazione in corso...");
 					if(this.gestoreCRUD.existsAccordoServizioParteSpecifica(idServizio)){
 						this.gestoreCRUD.deleteAccordoServizioParteSpecifica(((IDriverRegistroServiziGet)this.gestoreCRUD).getAccordoServizioParteSpecifica(idServizio));
 					}
-					this.log.info("Servizio "+servizio.getServizio().getTipo()+"/"+servizio.getServizio().getNome()+" erogato da "+soggetto.getTipo()+"/"+soggetto.getNome()+" eliminato.");
+					this.log.info("Servizio "+uri+" eliminato.");
 				}
 			}
 			
@@ -1077,14 +1078,26 @@ public class XMLDataConverter {
 			try{
 				s.setByteWsdlImplementativoErogatore(gestioneBytesDocumenti_Wsdl_Wsbl(s.getWsdlImplementativoErogatore()));
 			}catch(Exception e){
-				this.log.warn("Servizio "+s.getServizio().getTipo()+s.getServizio().getNome()+", lettura wsdl implementativo erogatore ["+s.getWsdlImplementativoErogatore()+"] non riuscita:",e);
+				String uri = null;
+				try{
+					uri = this.idServizioFactory.getUriFromAccordo(s);
+				}catch(Exception eInternal){
+					throw new RuntimeException(eInternal);
+				}
+				this.log.warn("Servizio "+uri+", lettura wsdl implementativo erogatore ["+s.getWsdlImplementativoErogatore()+"] non riuscita:",e);
 			}
 		}
 		if(s.getWsdlImplementativoFruitore()!=null){
 			try{
 				s.setByteWsdlImplementativoFruitore(gestioneBytesDocumenti_Wsdl_Wsbl(s.getWsdlImplementativoFruitore()));
 			}catch(Exception e){
-				this.log.warn("Servizio "+s.getServizio().getTipo()+s.getServizio().getNome()+", lettura wsdl implementativo fruitore ["+s.getWsdlImplementativoFruitore()+"] non riuscita:",e);
+				String uri = null;
+				try{
+					uri = this.idServizioFactory.getUriFromAccordo(s);
+				}catch(Exception eInternal){
+					throw new RuntimeException(eInternal);
+				}
+				this.log.warn("Servizio "+uri+", lettura wsdl implementativo fruitore ["+s.getWsdlImplementativoFruitore()+"] non riuscita:",e);
 			}	
 		}
 	}
@@ -1282,7 +1295,7 @@ public class XMLDataConverter {
 			ac.getSpecificaSemiformale(k).setRuolo(RuoliDocumento.specificaSemiformale.toString());
 			ac.getSpecificaSemiformale(k).setTipoProprietarioDocumento(ProprietariDocumento.accordoCooperazione.toString());
 		}
-		IDAccordoCooperazione idAccordo = this.idAccordoCooperazioneFactory.getIDAccordoFromValues(ac.getNome(),ac.getVersione());
+		IDAccordoCooperazione idAccordo = this.idAccordoCooperazioneFactory.getIDAccordoFromAccordo(ac);
 		String uriAC = this.idAccordoCooperazioneFactory.getUriFromIDAccordo(idAccordo);
 		if( (reset==false) && this.gestoreCRUD.existsAccordoCooperazione(idAccordo)){
 			this.log.info("Accordo di Cooperazione "+uriAC+" aggiornamento in corso...");
@@ -1421,19 +1434,19 @@ public class XMLDataConverter {
 		}
 	}
 	public static void impostaInformazioniRegistroDB_AccordoServizioParteSpecifica(AccordoServizioParteSpecifica servizio){
-		if(servizio.getServizio().getConnettore()!=null){
+		if(servizio.getConfigurazioneServizio()!=null && servizio.getConfigurazioneServizio().getConnettore()!=null){
 			// I nomi vengono autogenerati dal driver
-			servizio.getServizio().getConnettore().setNome(null);
+			servizio.getConfigurazioneServizio().getConnettore().setNome(null);
 			// I tipi diversi da disabilitato,http,jms,null,nullEcho sono custom
-			String tipoConnettore = servizio.getServizio().getConnettore().getTipo();
+			String tipoConnettore = servizio.getConfigurazioneServizio().getConnettore().getTipo();
 			if ( !TipiConnettore.JMS.getNome().equals(tipoConnettore) && !TipiConnettore.HTTP.getNome().equals(tipoConnettore) &&
 				 !TipiConnettore.DISABILITATO.getNome().equals(tipoConnettore) && !TipiConnettore.NULL.getNome().equals(tipoConnettore) &&
 				 !TipiConnettore.NULLECHO.getNome().equals(tipoConnettore) ){
-				servizio.getServizio().getConnettore().setCustom(true);
+				servizio.getConfigurazioneServizio().getConnettore().setCustom(true);
 			}
 			// Gestione default per connettore https
 			if(TipiConnettore.HTTPS.getNome().equals(tipoConnettore)){
-				gestioneDefaultConnettoreHTTP(servizio.getServizio().getConnettore());
+				gestioneDefaultConnettoreHTTP(servizio.getConfigurazioneServizio().getConnettore());
 			}
 		}
 		for(int k=0; k< servizio.sizeFruitoreList();k++){
@@ -1441,20 +1454,22 @@ public class XMLDataConverter {
 				impostaInformazioniRegistroDB_AccordoServizioParteSpecifica_Fruitore(servizio.getFruitore(k));
 			}
 		}
-		for(int k=0; k< servizio.getServizio().sizeParametriAzioneList();k++){
-			if(servizio.getServizio().getParametriAzione(k).getConnettore()!=null){
-				// I nomi vengono autogenerati dal driver
-				servizio.getServizio().getParametriAzione(k).getConnettore().setNome(null);
-				// I tipi diversi da disabilitato,http,jms,null,nullEcho sono custom
-				String tipoConnettore = servizio.getServizio().getParametriAzione(k).getConnettore().getTipo();
-				if ( !TipiConnettore.JMS.getNome().equals(tipoConnettore) && !TipiConnettore.HTTP.getNome().equals(tipoConnettore) &&
-					 !TipiConnettore.DISABILITATO.getNome().equals(tipoConnettore) && !TipiConnettore.NULL.getNome().equals(tipoConnettore) &&
-					 !TipiConnettore.NULLECHO.getNome().equals(tipoConnettore) ){
-					servizio.getServizio().getParametriAzione(k).getConnettore().setCustom(true);
-				}
-				// Gestione default per connettore https
-				if(TipiConnettore.HTTPS.getNome().equals(tipoConnettore)){
-					gestioneDefaultConnettoreHTTP(servizio.getServizio().getParametriAzione(k).getConnettore());
+		if(servizio.getConfigurazioneServizio()!=null){
+			for(int k=0; k< servizio.getConfigurazioneServizio().sizeConfigurazioneAzioneList();k++){
+				if(servizio.getConfigurazioneServizio().getConfigurazioneAzione(k).getConnettore()!=null){
+					// I nomi vengono autogenerati dal driver
+					servizio.getConfigurazioneServizio().getConfigurazioneAzione(k).getConnettore().setNome(null);
+					// I tipi diversi da disabilitato,http,jms,null,nullEcho sono custom
+					String tipoConnettore = servizio.getConfigurazioneServizio().getConfigurazioneAzione(k).getConnettore().getTipo();
+					if ( !TipiConnettore.JMS.getNome().equals(tipoConnettore) && !TipiConnettore.HTTP.getNome().equals(tipoConnettore) &&
+						 !TipiConnettore.DISABILITATO.getNome().equals(tipoConnettore) && !TipiConnettore.NULL.getNome().equals(tipoConnettore) &&
+						 !TipiConnettore.NULLECHO.getNome().equals(tipoConnettore) ){
+						servizio.getConfigurazioneServizio().getConfigurazioneAzione(k).getConnettore().setCustom(true);
+					}
+					// Gestione default per connettore https
+					if(TipiConnettore.HTTPS.getNome().equals(tipoConnettore)){
+						gestioneDefaultConnettoreHTTP(servizio.getConfigurazioneServizio().getConfigurazioneAzione(k).getConnettore());
+					}
 				}
 			}
 		}
@@ -1462,11 +1477,16 @@ public class XMLDataConverter {
 	
 	public static void impostaInformazioniRegistro_AccordoServizioParteSpecifica_update(AccordoServizioParteSpecifica servizio,AccordoServizioParteSpecifica old,
 			boolean mantieniFruitoriEsistenti){
-		if(servizio.getServizio().getConnettore()==null){
-			servizio.getServizio().setConnettore(old.getServizio().getConnettore());
-		}else{
-			servizio.getServizio().getConnettore().setId(old.getServizio().getConnettore().getId());
-			servizio.getServizio().getConnettore().setNome(old.getServizio().getConnettore().getNome());
+		if(old.getConfigurazioneServizio()!=null && old.getConfigurazioneServizio().getConnettore()!=null){
+			if(servizio.getConfigurazioneServizio()==null || servizio.getConfigurazioneServizio().getConnettore()==null){
+				if(servizio.getConfigurazioneServizio()==null){
+					servizio.setConfigurazioneServizio(new ConfigurazioneServizio());
+				}
+				servizio.getConfigurazioneServizio().setConnettore(old.getConfigurazioneServizio().getConnettore());
+			}else{
+				servizio.getConfigurazioneServizio().getConnettore().setId(old.getConfigurazioneServizio().getConnettore().getId());
+				servizio.getConfigurazioneServizio().getConnettore().setNome(old.getConfigurazioneServizio().getConnettore().getNome());
+			}
 		}
 		if(mantieniFruitoriEsistenti){
 			mantieniFruitori(old, servizio);
@@ -1475,8 +1495,8 @@ public class XMLDataConverter {
 	
 	private void gestioneServizio(AccordoServizioParteSpecifica servizio,Soggetto soggetto,boolean reset,boolean mantieniFruitoriEsistenti,StatiAccordo statoAccordo) throws Exception{
 		servizio.setSuperUser(this.superUser);
-		servizio.getServizio().setTipoSoggettoErogatore(soggetto.getTipo());
-		servizio.getServizio().setNomeSoggettoErogatore(soggetto.getNome());
+		servizio.setTipoSoggettoErogatore(soggetto.getTipo());
+		servizio.setNomeSoggettoErogatore(soggetto.getNome());
 		if(CostantiConfigurazione.REGISTRO_DB.equals(this.tipoBEDestinazione)){
 			impostaInformazioniRegistroDB_AccordoServizioParteSpecifica(servizio);
 		}
@@ -1520,9 +1540,10 @@ public class XMLDataConverter {
 		}
 		
 		IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipo(),soggetto.getNome());
-		IDServizio idServizio = new IDServizio(idSoggetto,servizio.getServizio().getTipo(),servizio.getServizio().getNome());
+		IDServizio idServizio = this.idServizioFactory.getIDServizioFromValues(servizio.getTipo(), servizio.getNome(), idSoggetto, servizio.getVersione());
+		String uri = this.idServizioFactory.getUriFromIDServizio(idServizio);
 		if( (reset==false) && (this.gestoreCRUD.existsAccordoServizioParteSpecifica(idServizio)) ){
-			this.log.info("Servizio "+servizio.getServizio().getTipo()+"/"+servizio.getServizio().getNome()+" erogato da "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornamento in corso...");
+			this.log.info("Servizio "+uri+" aggiornamento in corso...");
 			
 			AccordoServizioParteSpecifica old = ((IDriverRegistroServiziGet)this.gestoreCRUD).getAccordoServizioParteSpecifica(idServizio);
 			impostaInformazioniRegistro_AccordoServizioParteSpecifica_update(servizio, old, mantieniFruitoriEsistenti);
@@ -1533,15 +1554,15 @@ public class XMLDataConverter {
 			}
 			this.gestoreCRUD.updateAccordoServizioParteSpecifica(servizio);
 			
-			this.log.info("Servizio "+servizio.getServizio().getTipo()+"/"+servizio.getServizio().getNome()+" erogato da "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornato.");
+			this.log.info("Servizio "+uri+" aggiornato.");
 		}else{
-			this.log.info("Servizio "+servizio.getServizio().getTipo()+"/"+servizio.getServizio().getNome()+" erogato da "+soggetto.getTipo()+"/"+soggetto.getNome()+" creazione in corso...");
+			this.log.info("Servizio "+uri+" creazione in corso...");
 			// stato package
 			if(CostantiConfigurazione.REGISTRO_DB.equals(this.tipoBEDestinazione)){
 				aggiornatoStatoFruitori(servizio, statoAccordo);
 			}
 			this.gestoreCRUD.createAccordoServizioParteSpecifica(servizio);
-			this.log.info("Servizio "+servizio.getServizio().getTipo()+"/"+servizio.getServizio().getNome()+" erogato da "+soggetto.getTipo()+"/"+soggetto.getNome()+" creato.");
+			this.log.info("Servizio "+uri+" creato.");
 		}
 	}
 	

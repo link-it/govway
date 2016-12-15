@@ -52,7 +52,7 @@ import java.util.List;
  * 		&lt;attribute name="privato" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="false"/>
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="versione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" use="optional" default="1"/>
  * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
  * &lt;/complexType>
  * </pre>
@@ -255,11 +255,11 @@ public class AccordoCooperazione extends org.openspcoop2.utils.beans.BaseBean im
     this.descrizione = descrizione;
   }
 
-  public java.lang.String getVersione() {
+  public java.lang.Integer getVersione() {
     return this.versione;
   }
 
-  public void setVersione(java.lang.String versione) {
+  public void setVersione(java.lang.Integer versione) {
     this.versione = versione;
   }
 
@@ -439,9 +439,9 @@ public class AccordoCooperazione extends org.openspcoop2.utils.beans.BaseBean im
   @XmlAttribute(name="descrizione",required=false)
   protected java.lang.String descrizione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlAttribute(name="versione",required=false)
-  protected java.lang.String versione;
+  protected java.lang.Integer versione = new java.lang.Integer("1");
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")

@@ -42,6 +42,7 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -378,8 +379,10 @@ public final class AccordiServizioParteComuneChange extends Action {
 					}
 				}
 
-				if(this.versione == null)
-					this.versione = as.getVersione();
+				if(this.versione == null){
+					if(as.getVersione()!=null)
+						this.versione = as.getVersione().intValue()+"";
+				}
 
 				// controllo profilo collaborazione
 				if(this.profcoll == null)
@@ -609,7 +612,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 		}else{
 			as.setSoggettoReferente(null);
 		}
-		as.setVersione(this.versione);
+		if(this.versione!=null)
+			as.setVersione(Integer.parseInt(this.versione));
 		as.setPrivato(this.privato ? Boolean.TRUE : Boolean.FALSE);
 
 		if(this.accordoCooperazioneId!=null && !"".equals(this.accordoCooperazioneId) && !"-".equals(this.accordoCooperazioneId)){
@@ -829,7 +833,9 @@ public final class AccordiServizioParteComuneChange extends Action {
 						}
 
 						// nome e location PD
-						portaDelegata.setOldNomeForUpdate(portaDelegata.getNome());
+						IDPortaDelegata oldIDPortaDelegataForUpdate = new IDPortaDelegata();
+						oldIDPortaDelegataForUpdate.setNome(portaDelegata.getNome());
+						portaDelegata.setOldIDPortaDelegataForUpdate(oldIDPortaDelegataForUpdate);
 						newName = oldName.replace(nomeRuoloOLD, nomeRuoloNEW);
 						portaDelegata.setNome(newName);
 

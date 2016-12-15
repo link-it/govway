@@ -81,6 +81,7 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.soap.mtom.MtomXomPackageInfo;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
@@ -570,9 +571,16 @@ public class ConfigurazionePdDReader {
 	 * 
 	 */
 	protected Connettore getForwardRoute(Connection connectionPdD, RegistroServiziManager registroServiziManager ,IDSoggetto idSoggettoDestinatario,boolean functionAsRouter) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return getForwardRoute(connectionPdD,registroServiziManager,null,new IDServizio(idSoggettoDestinatario),functionAsRouter);
+		return getForwardRoute(connectionPdD,registroServiziManager,null,this.buildIDServizioWithOnlySoggetto(idSoggettoDestinatario),functionAsRouter);
 	}
 
+	@SuppressWarnings("deprecation")
+	private IDServizio buildIDServizioWithOnlySoggetto(IDSoggetto idSoggettoDestinatario){
+		IDServizio idServizio = new IDServizio();
+		idServizio.setSoggettoErogatore(idSoggettoDestinatario);
+		return idServizio;
+	}
+	
 	/**
 	 * Restituisce la rotta per il dato soggetto seguendo queste regole:
 	 * <ul>
@@ -645,7 +653,7 @@ public class ConfigurazionePdDReader {
 
 			Connettore connettoreDominio = null;
 			try{
-				if(idSoggettoMittente!=null && idServizio.getServizio()!=null){
+				if(idSoggettoMittente!=null && idServizio.getNome()!=null){
 					connettoreDominio = registroServiziManager.getConnettore(idSoggettoMittente,idServizio,null); // null=allRegistri
 					if(!functionAsRouter)
 						setPDUrlPrefixRewriter(connectionPdD,connettoreDominio, idSoggettoMittente);
@@ -693,7 +701,7 @@ public class ConfigurazionePdDReader {
 							bf.append("\tRegistro nomeRegistro["+route.getRegistro().getNome()+"]: ");
 
 							// Utilizzo del registro con l'identita reale della busta
-							if(idSoggettoMittente!=null && idServizio.getServizio()!=null){
+							if(idSoggettoMittente!=null && idServizio.getNome()!=null){
 								connettoreDominio = registroServiziManager.getConnettore(idSoggettoMittente,idServizio,route.getRegistro().getNome());
 								if(!functionAsRouter)
 									setPDUrlPrefixRewriter(connectionPdD,connettoreDominio, idSoggettoMittente);
@@ -759,7 +767,7 @@ public class ConfigurazionePdDReader {
 						bf.append(" Registro nomeRegistro["+route.getRegistro().getNome()+"]: ");
 
 						// Utilizzo del registro con l'identita reale della busta
-						if(idSoggettoMittente!=null && idServizio.getServizio()!=null){
+						if(idSoggettoMittente!=null && idServizio.getNome()!=null){
 							connettoreDominio = registroServiziManager.getConnettore(idSoggettoMittente,idServizio,route.getRegistro().getNome());
 							if(!functionAsRouter)
 								setPDUrlPrefixRewriter(connectionPdD,connettoreDominio, idSoggettoMittente);
@@ -1068,7 +1076,9 @@ public class ConfigurazionePdDReader {
 				throw new DriverConfigurazioneException("Porta Delegata non fornita");
 			}
 			IDSoggetto soggettoErogatore = new IDSoggetto(pd.getSoggettoErogatore().getTipo(),pd.getSoggettoErogatore().getNome());
-			IDServizio idServizio = new IDServizio(soggettoErogatore,pd.getServizio().getTipo(),pd.getServizio().getNome());
+			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pd.getServizio().getTipo(),pd.getServizio().getNome(), 
+					soggettoErogatore, 
+					pd.getServizio().getVersione()); 
 
 			String azioneHeaderIntegrazione = null;
 			if(headerIntegrazione!=null && headerIntegrazione.getBusta()!=null && headerIntegrazione.getBusta().getAzione()!=null){
@@ -1452,19 +1462,29 @@ public class ConfigurazionePdDReader {
 
 	protected boolean isLocalForwardMode(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
-		if(pd==null){
+		if(pd==null || pd.getLocalForward()==null){
 			// configurazione di default
 			return false;
 		}
 
-		if( CostantiConfigurazione.ABILITATO.equals(pd.getLocalForward())  )
+		if( CostantiConfigurazione.ABILITATO.equals(pd.getLocalForward().getStato())  )
 			return true;
-		else if( CostantiConfigurazione.DISABILITATO.equals(pd.getLocalForward())  )
+		else if( CostantiConfigurazione.DISABILITATO.equals(pd.getLocalForward().getStato())  )
 			return false;
 		else {
 			//configurazione di default
 			return false;
 		}
+	}
+	
+	protected String getLocalForward_NomePortaApplicativa(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+
+		if(pd==null || pd.getLocalForward()==null){
+			// configurazione di default
+			return null;
+		}
+
+		return pd.getLocalForward().getPortaApplicativa();
 	}
 
 	protected List<Object> getExtendedInfo(PortaDelegata pd)throws DriverConfigurazioneException{
@@ -1500,7 +1520,9 @@ public class ConfigurazionePdDReader {
 		// Se non c'e' un servizio non puo' esistere una porta applicativa
 		if(richiestaApplicativa.getIDServizio()==null)
 			return false;
-		if( (richiestaApplicativa.getIDServizio().getServizio()==null) || (richiestaApplicativa.getIDServizio().getTipoServizio()==null)  )
+		if( (richiestaApplicativa.getIDServizio().getNome()==null) || 
+				(richiestaApplicativa.getIDServizio().getTipo()==null) || 
+				(richiestaApplicativa.getIDServizio().getVersione()==null)  )
 			return false;
 
 		if( isSoggettoVirtuale(connectionPdD,richiestaApplicativa.getIDServizio().getSoggettoErogatore())  ){
@@ -1585,7 +1607,8 @@ public class ConfigurazionePdDReader {
 				throw new DriverConfigurazioneException("Porta Applicativa non fornita");
 			}
 			IDSoggetto soggettoErogatore = new IDSoggetto(pa.getTipoSoggettoProprietario(),pa.getNomeSoggettoProprietario());
-			IDServizio idServizio = new IDServizio(soggettoErogatore,pa.getServizio().getTipo(),pa.getServizio().getNome());
+			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pa.getServizio().getTipo(),pa.getServizio().getNome(), 
+					soggettoErogatore, pa.getServizio().getVersione()); 
 
 			String azioneHeaderIntegrazione = null;
 			if(headerIntegrazione!=null && headerIntegrazione.getBusta()!=null && headerIntegrazione.getBusta().getAzione()!=null){
@@ -2250,8 +2273,8 @@ public class ConfigurazionePdDReader {
 
 		// PROTOCOL-PROPERTIES
 		java.util.Properties protocol_properties = new java.util.Properties();
-		for(int i=0;i<pa.sizeProprietaProtocolloList();i++){
-			protocol_properties.put(pa.getProprietaProtocollo(i).getNome(),pa.getProprietaProtocollo(i).getValore());
+		for(int i=0;i<pa.sizeProprietaIntegrazioneProtocolloList();i++){
+			protocol_properties.put(pa.getProprietaIntegrazioneProtocollo(i).getNome(),pa.getProprietaIntegrazioneProtocollo(i).getValore());
 		}
 
 		// Autenticazione
@@ -2523,8 +2546,8 @@ public class ConfigurazionePdDReader {
 
 		// PROTOCOL-PROPERTIES
 		java.util.Properties protocol_properties = new java.util.Properties();
-		for(int i=0;i<pa.sizeProprietaProtocolloList();i++){
-			protocol_properties.put(pa.getProprietaProtocollo(i).getNome(),pa.getProprietaProtocollo(i).getValore());
+		for(int i=0;i<pa.sizeProprietaIntegrazioneProtocolloList();i++){
+			protocol_properties.put(pa.getProprietaIntegrazioneProtocollo(i).getNome(),pa.getProprietaIntegrazioneProtocollo(i).getValore());
 		}
 
 		// Autenticazione

@@ -46,6 +46,7 @@ public class AccordoServizioParteComuneServizioCompostoServizioComponenteModel e
 		this.NOME_SOGGETTO = new Field("nome-soggetto",java.lang.String.class,"accordo-servizio-parte-comune-servizio-composto-servizio-componente",AccordoServizioParteComuneServizioCompostoServizioComponente.class);
 		this.TIPO = new Field("tipo",java.lang.String.class,"accordo-servizio-parte-comune-servizio-composto-servizio-componente",AccordoServizioParteComuneServizioCompostoServizioComponente.class);
 		this.NOME = new Field("nome",java.lang.String.class,"accordo-servizio-parte-comune-servizio-composto-servizio-componente",AccordoServizioParteComuneServizioCompostoServizioComponente.class);
+		this.VERSIONE = new Field("versione",java.lang.Integer.class,"accordo-servizio-parte-comune-servizio-composto-servizio-componente",AccordoServizioParteComuneServizioCompostoServizioComponente.class);
 		this.AZIONE = new Field("azione",java.lang.String.class,"accordo-servizio-parte-comune-servizio-composto-servizio-componente",AccordoServizioParteComuneServizioCompostoServizioComponente.class);
 	
 	}
@@ -59,6 +60,7 @@ public class AccordoServizioParteComuneServizioCompostoServizioComponenteModel e
 		this.NOME_SOGGETTO = new ComplexField(father,"nome-soggetto",java.lang.String.class,"accordo-servizio-parte-comune-servizio-composto-servizio-componente",AccordoServizioParteComuneServizioCompostoServizioComponente.class);
 		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"accordo-servizio-parte-comune-servizio-composto-servizio-componente",AccordoServizioParteComuneServizioCompostoServizioComponente.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"accordo-servizio-parte-comune-servizio-composto-servizio-componente",AccordoServizioParteComuneServizioCompostoServizioComponente.class);
+		this.VERSIONE = new ComplexField(father,"versione",java.lang.Integer.class,"accordo-servizio-parte-comune-servizio-composto-servizio-componente",AccordoServizioParteComuneServizioCompostoServizioComponente.class);
 		this.AZIONE = new ComplexField(father,"azione",java.lang.String.class,"accordo-servizio-parte-comune-servizio-composto-servizio-componente",AccordoServizioParteComuneServizioCompostoServizioComponente.class);
 	
 	}
@@ -74,6 +76,8 @@ public class AccordoServizioParteComuneServizioCompostoServizioComponenteModel e
 	public IField TIPO = null;
 	 
 	public IField NOME = null;
+	 
+	public IField VERSIONE = null;
 	 
 	public IField AZIONE = null;
 	 

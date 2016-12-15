@@ -52,7 +52,7 @@ public class AccordoCooperazioneModel extends AbstractModel<AccordoCooperazione>
 		this.PRIVATO = new Field("privato",Boolean.class,"accordo-cooperazione",AccordoCooperazione.class);
 		this.NOME = new Field("nome",java.lang.String.class,"accordo-cooperazione",AccordoCooperazione.class);
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"accordo-cooperazione",AccordoCooperazione.class);
-		this.VERSIONE = new Field("versione",java.lang.String.class,"accordo-cooperazione",AccordoCooperazione.class);
+		this.VERSIONE = new Field("versione",java.lang.Integer.class,"accordo-cooperazione",AccordoCooperazione.class);
 		this.ORA_REGISTRAZIONE = new Field("ora-registrazione",java.util.Date.class,"accordo-cooperazione",AccordoCooperazione.class);
 	
 	}
@@ -72,7 +72,7 @@ public class AccordoCooperazioneModel extends AbstractModel<AccordoCooperazione>
 		this.PRIVATO = new ComplexField(father,"privato",Boolean.class,"accordo-cooperazione",AccordoCooperazione.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"accordo-cooperazione",AccordoCooperazione.class);
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"accordo-cooperazione",AccordoCooperazione.class);
-		this.VERSIONE = new ComplexField(father,"versione",java.lang.String.class,"accordo-cooperazione",AccordoCooperazione.class);
+		this.VERSIONE = new ComplexField(father,"versione",java.lang.Integer.class,"accordo-cooperazione",AccordoCooperazione.class);
 		this.ORA_REGISTRAZIONE = new ComplexField(father,"ora-registrazione",java.util.Date.class,"accordo-cooperazione",AccordoCooperazione.class);
 	
 	}

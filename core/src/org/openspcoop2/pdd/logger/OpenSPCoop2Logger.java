@@ -38,6 +38,7 @@ import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -660,19 +661,18 @@ public class OpenSPCoop2Logger {
 		if( fruitore!=null && servizio!=null)
 			showMsg.append(" -> ");
 		if( servizio!=null ){
-			if(servizio.getSoggettoErogatore()!=null){
+			if(servizio.getNome()!=null){
+				showMsg.append(" S:");
+				try{
+					showMsg.append(IDServizioFactory.getInstance().getUriFromIDServizio(servizio));
+				}catch(Exception e){
+					showMsg.append(servizio.toString(false));
+				}
+			}else if(servizio.getSoggettoErogatore()!=null){
 				showMsg.append(" ER:");
 				showMsg.append(servizio.getSoggettoErogatore().toString());
 			}
-			if(servizio.getServizio()!=null && servizio.getTipoServizio()!=null){
-				if(servizio.getVersioneServizio()!=null)
-					showMsg.append(" S(v"+servizio.getVersioneServizio()+"):");
-				else
-					showMsg.append(" S:");
-				showMsg.append(servizio.getTipoServizio());
-				showMsg.append("/");
-				showMsg.append(servizio.getServizio());
-			}
+			
 			if(servizio.getAzione()!=null){
 				showMsg.append(" A:");
 				showMsg.append(servizio.getAzione());

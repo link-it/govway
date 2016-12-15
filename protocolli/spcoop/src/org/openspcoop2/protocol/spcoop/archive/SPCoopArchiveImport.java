@@ -101,7 +101,7 @@ public class SPCoopArchiveImport {
 			// *** Trasformazione in oggetto OpenSPCoop2 ***
 			AccordoServizioParteComune aspcOpenSPCoop2 = null;
 			try{
-				aspcOpenSPCoop2 = SICAtoOpenSPCoopUtilities.accordoServizioParteComune_sicaToOpenspcoop(aspcSICA, sicaContext, this.logger);
+				aspcOpenSPCoop2 = SICAtoOpenSPCoopUtilities.accordoServizioParteComune_sicaToOpenspcoop(registryReader, aspcSICA, sicaContext, this.logger);
 				
 				Archive archiveObject = new Archive();
 				
@@ -171,7 +171,7 @@ public class SPCoopArchiveImport {
 			// *** Trasformazione in oggetto OpenSPCoop2 ***
 			AccordoServizioParteComune asCompostoOpenSPCoop2 = null;
 			try{
-				asCompostoOpenSPCoop2 = SICAtoOpenSPCoopUtilities.accordoServizioComposto_sicaToOpenspcoop(asCompostoSICA, sicaContext, this.logger);
+				asCompostoOpenSPCoop2 = SICAtoOpenSPCoopUtilities.accordoServizioComposto_sicaToOpenspcoop(registryReader, asCompostoSICA, sicaContext, this.logger);
 				
 				Archive archiveObject = new Archive();
 				
@@ -240,7 +240,7 @@ public class SPCoopArchiveImport {
 			
 			// *** Trasformazione in oggetto OpenSPCoop2 ***
 			try{
-				AccordoServizioParteSpecifica aspsOpenSPCoop2 = SICAtoOpenSPCoopUtilities.accordoServizioParteSpecifica_sicaToOpenspcoop(aspsSICA, sicaContext, this.logger);
+				AccordoServizioParteSpecifica aspsOpenSPCoop2 = SICAtoOpenSPCoopUtilities.accordoServizioParteSpecifica_sicaToOpenspcoop(registryReader, aspsSICA, sicaContext, this.logger);
 				
 				Archive archiveObject = new Archive();
 				
@@ -315,7 +315,7 @@ public class SPCoopArchiveImport {
 			// *** Trasformazione in oggetto OpenSPCoop2 ***
 			AccordoCooperazione acOpenSPCoop2 = null;
 			try{
-				acOpenSPCoop2 = SICAtoOpenSPCoopUtilities.accordoCooperazione_sicaToOpenspcoop(acSICA, sicaContext, this.logger);
+				acOpenSPCoop2 = SICAtoOpenSPCoopUtilities.accordoCooperazione_sicaToOpenspcoop(registryReader, acSICA, sicaContext, this.logger);
 				
 				Archive archiveObject = new Archive();
 				

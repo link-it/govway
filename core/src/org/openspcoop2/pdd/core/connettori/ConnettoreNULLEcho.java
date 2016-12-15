@@ -274,7 +274,7 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 						// asincrono
 						ProfiloDiCollaborazione profiloCollaborazione = new ProfiloDiCollaborazione(state,protocolFactory);
 						profiloCollaborazione.asincronoSimmetrico_registraRichiestaRicevuta(busta.getID(),busta.getCollaborazione(),
-								busta.getTipoServizioCorrelato(),busta.getServizioCorrelato(),true,
+								busta.getTipoServizioCorrelato(),busta.getServizioCorrelato(),busta.getVersioneServizioCorrelato(),true,
 								this.openspcoopProperties.getRepositoryIntervalloScadenzaMessaggi());
 					
 						// commit

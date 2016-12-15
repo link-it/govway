@@ -25,7 +25,6 @@ package org.openspcoop2.web.ctrlstat.servlet.aps;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,8 +41,8 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
@@ -139,47 +138,10 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 
 				PortaApplicativa paGenerataAutomcaticamente = null;
 				
-				String nomeEtipo = idsToRemove.get(i);
-				StringTokenizer servTok = new StringTokenizer(nomeEtipo, "/");
-				tiposervizio = servTok.nextToken();
-				nomeservizio = servTok.nextToken();
+				String uri = idsToRemove.get(i);
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromUri(uri);
 
-				tiposogg = servTok.nextToken();
-				nomesogg = servTok.nextToken();
-
-				IDServizio idS = new IDServizio(tiposogg, nomesogg, tiposervizio, nomeservizio);
-
-				// DataElement de = (DataElement) ((Vector<?>)
-				// pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				// String nomeEtipo = de.getValue();
-				// StringTokenizer servTok = new StringTokenizer(nomeEtipo,
-				// "/");
-				// tiposervizio = servTok.nextToken();
-				// nomeservizio = servTok.nextToken();
-				// de = (DataElement) ((Vector<?>)
-				// pdold.getDati().elementAt(
-				// idToRemove[i])).elementAt(1);
-				// String tmpprov = de.getValue();
-				// StringTokenizer provTok = new StringTokenizer(tmpprov,
-				// "/");
-				// String tipoprov = provTok.nextToken();
-				// String nomeprov = provTok.nextToken();
-
-				// IDSoggetto idS = new IDSoggetto(tipoprov, nomeprov);
-				// Soggetto soggetto = core.getSoggettoRegistro(idS);
-				// int idProv = soggetto.getId().intValue();
-
-				// Prendo l'id del servizio e del connettore associato al
-				// servizio
-				// IDServizio idServ = new IDServizio(tipoprov, nomeprov,
-				// tiposervizio, nomeservizio);
-				AccordoServizioParteSpecifica asps = apsCore.getServizio(idS);
-				Servizio ss = asps.getServizio();
-				// int idInt = ss.getId().intValue();
-				// Connettore connServ = ss.getConnettore();
-				// idConnettore = connServ.getId().intValue();
-
+				AccordoServizioParteSpecifica asps = apsCore.getServizio(idServizio);
 				
 				// Verifico se sono in modalità di interfaccia 'standard' che non si tratti della PortaApplicativa generata automaticamente.
 				// In tal caso la posso eliminare.
@@ -187,7 +149,7 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 				String nomeGenerato = null;
 				if(apsCore.isGenerazioneAutomaticaPorteApplicative() && asps!=null && asps.getPortType()!=null && !"".equals(asps.getPortType())){
 					boolean generaPACheckSoggetto = true;
-					IDSoggetto idSoggettoEr = new IDSoggetto(ss.getTipoSoggettoErogatore(), ss.getNomeSoggettoErogatore());
+					IDSoggetto idSoggettoEr = new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore());
 					Soggetto soggetto = soggettiCore.getSoggettoRegistro(idSoggettoEr );
 						
 					if (soggetto.getPortaDominio() != null) {
@@ -205,8 +167,8 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 						
 					if(generaPACheckSoggetto){
 							
-						nomeGenerato = ss.getTipoSoggettoErogatore()+ss.getNomeSoggettoErogatore()+"/"+
-								ss.getTipo()+asps.getPortType();
+						nomeGenerato = asps.getTipoSoggettoErogatore()+asps.getNomeSoggettoErogatore()+"/"+
+								asps.getTipo()+asps.getNome()+"/"+asps.getVersione().intValue();
 						// provo a vedere se esiste
 						IDPortaApplicativa idPA = new IDPortaApplicativa();
 						idPA.setNome(nomeGenerato);
@@ -223,7 +185,7 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 				
 				if (apsCore.isAccordoServizioParteSpecificaInUso(asps, whereIsInUso, nomeGenerato)) {// accordo in uso
 					isInUso = true;
-					msg += DBOggettiInUsoUtils.toString(idS, whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+					msg += DBOggettiInUsoUtils.toString(idServizio, whereIsInUso, true, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 					msg += org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
 				} else {// accordo non in uso
 					

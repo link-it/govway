@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.openspcoop2.core.registry.constants.TipologiaServizio;
 
 
 /**
@@ -40,12 +41,16 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element name="servizio" type="{http://www.openspcoop2.org/core/registry/management}servizio" minOccurs="0"/&gt;
+ *         &lt;element name="configurazione-servizio" type="{http://www.openspcoop2.org/core/registry/management}configurazione-servizio" minOccurs="0"/&gt;
  *         &lt;element name="stato-package" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="privato" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/&gt;
+ *         &lt;element name="tipo-soggetto-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="nome-soggetto-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
- *         &lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0"/&gt;
  *         &lt;element name="accordo-servizio-parte-comune" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="tipologia-servizio" type="{http://www.openspcoop2.org/core/registry}TipologiaServizio" minOccurs="0"/&gt;
  *         &lt;element name="port-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="ora-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/&gt;
  *         &lt;element name="ora-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/&gt;
@@ -64,12 +69,16 @@ import javax.xml.datatype.XMLGregorianCalendar;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "search-filter-accordo-servizio-parte-specifica", propOrder = {
-    "servizio",
+    "configurazioneServizio",
     "statoPackage",
     "privato",
+    "tipoSoggettoErogatore",
+    "nomeSoggettoErogatore",
+    "tipo",
     "nome",
     "versione",
     "accordoServizioParteComune",
+    "tipologiaServizio",
     "portType",
     "oraRegistrazioneMin",
     "oraRegistrazioneMax",
@@ -81,14 +90,24 @@ import javax.xml.datatype.XMLGregorianCalendar;
 })
 public class SearchFilterAccordoServizioParteSpecifica {
 
-    protected Servizio servizio;
+    @XmlElement(name = "configurazione-servizio")
+    protected ConfigurazioneServizio configurazioneServizio;
     @XmlElement(name = "stato-package")
     protected String statoPackage;
     protected Boolean privato;
+    @XmlElement(name = "tipo-soggetto-erogatore")
+    protected String tipoSoggettoErogatore;
+    @XmlElement(name = "nome-soggetto-erogatore")
+    protected String nomeSoggettoErogatore;
+    protected String tipo;
     protected String nome;
-    protected String versione;
+    @XmlSchemaType(name = "unsignedInt")
+    protected Long versione;
     @XmlElement(name = "accordo-servizio-parte-comune")
     protected String accordoServizioParteComune;
+    @XmlElement(name = "tipologia-servizio")
+    @XmlSchemaType(name = "string")
+    protected TipologiaServizio tipologiaServizio;
     @XmlElement(name = "port-type")
     protected String portType;
     @XmlElement(name = "ora-registrazione-min")
@@ -105,27 +124,27 @@ public class SearchFilterAccordoServizioParteSpecifica {
     protected BigInteger offset;
 
     /**
-     * Gets the value of the servizio property.
+     * Gets the value of the configurazioneServizio property.
      * 
      * @return
      *     possible object is
-     *     {@link Servizio }
+     *     {@link ConfigurazioneServizio }
      *     
      */
-    public Servizio getServizio() {
-        return this.servizio;
+    public ConfigurazioneServizio getConfigurazioneServizio() {
+        return this.configurazioneServizio;
     }
 
     /**
-     * Sets the value of the servizio property.
+     * Sets the value of the configurazioneServizio property.
      * 
      * @param value
      *     allowed object is
-     *     {@link Servizio }
+     *     {@link ConfigurazioneServizio }
      *     
      */
-    public void setServizio(Servizio value) {
-        this.servizio = value;
+    public void setConfigurazioneServizio(ConfigurazioneServizio value) {
+        this.configurazioneServizio = value;
     }
 
     /**
@@ -177,6 +196,78 @@ public class SearchFilterAccordoServizioParteSpecifica {
     }
 
     /**
+     * Gets the value of the tipoSoggettoErogatore property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTipoSoggettoErogatore() {
+        return this.tipoSoggettoErogatore;
+    }
+
+    /**
+     * Sets the value of the tipoSoggettoErogatore property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTipoSoggettoErogatore(String value) {
+        this.tipoSoggettoErogatore = value;
+    }
+
+    /**
+     * Gets the value of the nomeSoggettoErogatore property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNomeSoggettoErogatore() {
+        return this.nomeSoggettoErogatore;
+    }
+
+    /**
+     * Sets the value of the nomeSoggettoErogatore property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNomeSoggettoErogatore(String value) {
+        this.nomeSoggettoErogatore = value;
+    }
+
+    /**
+     * Gets the value of the tipo property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTipo() {
+        return this.tipo;
+    }
+
+    /**
+     * Sets the value of the tipo property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTipo(String value) {
+        this.tipo = value;
+    }
+
+    /**
      * Gets the value of the nome property.
      * 
      * @return
@@ -205,10 +296,10 @@ public class SearchFilterAccordoServizioParteSpecifica {
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link Long }
      *     
      */
-    public String getVersione() {
+    public Long getVersione() {
         return this.versione;
     }
 
@@ -217,10 +308,10 @@ public class SearchFilterAccordoServizioParteSpecifica {
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link Long }
      *     
      */
-    public void setVersione(String value) {
+    public void setVersione(Long value) {
         this.versione = value;
     }
 
@@ -246,6 +337,30 @@ public class SearchFilterAccordoServizioParteSpecifica {
      */
     public void setAccordoServizioParteComune(String value) {
         this.accordoServizioParteComune = value;
+    }
+
+    /**
+     * Gets the value of the tipologiaServizio property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link TipologiaServizio }
+     *     
+     */
+    public TipologiaServizio getTipologiaServizio() {
+        return this.tipologiaServizio;
+    }
+
+    /**
+     * Sets the value of the tipologiaServizio property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link TipologiaServizio }
+     *     
+     */
+    public void setTipologiaServizio(TipologiaServizio value) {
+        this.tipologiaServizio = value;
     }
 
     /**

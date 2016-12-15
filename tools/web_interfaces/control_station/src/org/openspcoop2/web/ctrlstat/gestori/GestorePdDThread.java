@@ -49,6 +49,10 @@ import org.openspcoop2.core.config.ws.client.portaapplicativa.all.PortaApplicati
 import org.openspcoop2.core.config.ws.client.portadelegata.all.PortaDelegataSoap11Service;
 import org.openspcoop2.core.config.ws.client.servizioapplicativo.all.ServizioApplicativoSoap11Service;
 import org.openspcoop2.core.config.ws.client.soggetto.all.SoggettoSoap11Service;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
 import org.openspcoop2.utils.transport.jms.ExceptionListenerJMS;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
@@ -568,8 +572,10 @@ public class GestorePdDThread extends GestoreGeneral {
 									operazioneInGestione.error("Riscontrato errore durante la get dell'immagine del soggetto: " + e.toString(), e);
 									continue;
 								}
-								soggetto.setOldNomeForUpdate(oldNomeSoggetto);
-								soggetto.setOldTipoForUpdate(oldTipoSoggetto);
+								if(oldTipoSoggetto!=null && oldNomeSoggetto!=null){
+									IDSoggetto oldIDSoggettoForUpdate = new IDSoggetto(oldTipoSoggetto, oldNomeSoggetto);
+									soggetto.setOldIDSoggettoForUpdate(oldIDSoggettoForUpdate);
+								}
 
 								IdSoggetto idSoggetto = new IdSoggetto();
 								if(oldTipoSoggetto!=null)
@@ -652,11 +658,15 @@ public class GestorePdDThread extends GestoreGeneral {
 								pa.setNomeSoggettoProprietario(soggettoProprietario.getNome());
 								
 								// vecchi dati per update
-								pa.setOldNomeForUpdate(oldNomePA);
+								if(oldNomePA!=null){
+									IDPortaApplicativa oldIDPortaApplicativaForUpdate = new IDPortaApplicativa();
+									oldIDPortaApplicativaForUpdate.setNome(oldNomePA);
+									pa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
+								}
 								
 								IdPortaApplicativa idPA = new IdPortaApplicativa();
-								if(pa.getOldNomeForUpdate()!=null){
-									idPA.setNome(pa.getOldNomeForUpdate());
+								if(oldNomePA!=null){
+									idPA.setNome(oldNomePA);
 								}
 								else{
 									idPA.setNome(pa.getNome());
@@ -743,11 +753,15 @@ public class GestorePdDThread extends GestoreGeneral {
 								pd.setNomeSoggettoProprietario(soggettoProprietario.getNome());
 								
 								// vecchi dati per update
-								pd.setOldNomeForUpdate(oldNomePD);
+								if(oldNomePD!=null){
+									IDPortaDelegata oldIDPortaDelegataForUpdate = new IDPortaDelegata();
+									oldIDPortaDelegataForUpdate.setNome(oldNomePD);
+									pd.setOldIDPortaDelegataForUpdate(oldIDPortaDelegataForUpdate);
+								}
 								
 								IdPortaDelegata idPD = new IdPortaDelegata();
-								if(pd.getOldNomeForUpdate()!=null){
-									idPD.setNome(pd.getOldNomeForUpdate());
+								if(oldNomePD!=null){
+									idPD.setNome(oldNomePD);
 								}
 								else{
 									idPD.setNome(pd.getNome());
@@ -813,14 +827,19 @@ public class GestorePdDThread extends GestoreGeneral {
 									operazioneInGestione.error("Riscontrato errore durante la get dell'immagine del Servizio Applicativo: " + e.toString(), e);
 									continue;
 								}
-								servizioApplicativo.setOldNomeForUpdate(nomeServizioApplicativo);
+								
+								IDServizioApplicativo oldIDServizioApplicativoForUpdate = new IDServizioApplicativo();
+								oldIDServizioApplicativoForUpdate.setIdSoggettoProprietario(new IDSoggetto());
+								servizioApplicativo.setOldIDServizioApplicativoForUpdate(oldIDServizioApplicativoForUpdate);
+								
+								oldIDServizioApplicativoForUpdate.setNome(nomeServizioApplicativo);
 								if (tipoSoggetto != null && !tipoSoggetto.equals(""))
-									servizioApplicativo.setTipoSoggettoProprietario(tipoSoggetto);
+									oldIDServizioApplicativoForUpdate.getIdSoggettoProprietario().setTipo(tipoSoggetto);
 								if (nomeSoggetto != null && !nomeSoggetto.equals(""))
-									servizioApplicativo.setNomeSoggettoProprietario(nomeSoggetto);
+									oldIDServizioApplicativoForUpdate.getIdSoggettoProprietario().setNome(nomeSoggetto);
 								
 								// vecchi dati per update
-								servizioApplicativo.setOldNomeForUpdate(oldNomeServizioApplicativo);
+								oldIDServizioApplicativoForUpdate.setNome(oldNomeServizioApplicativo);
 								
 								if(oldTipoSoggetto!=null && oldNomeSoggetto!=null){
 									// Check se operazione di change che  l'operazione di modifica del soggetto non sia ancora in rollback.
@@ -828,8 +847,8 @@ public class GestorePdDThread extends GestoreGeneral {
 									FilterParameter filtro = operazioneInGestione.getFilterChangeIDSoggetto(tipoSoggetto,
 											nomeSoggetto,oldTipoSoggetto,oldNomeSoggetto);										
 									if(operazioneInGestione.existsOperationNotCompleted("change", operation.getHostname(), filtro)){
-										servizioApplicativo.setOldNomeSoggettoProprietarioForUpdate(oldNomeSoggetto);
-										servizioApplicativo.setOldTipoSoggettoProprietarioForUpdate(oldTipoSoggetto);
+										oldIDServizioApplicativoForUpdate.getIdSoggettoProprietario().setTipo(oldTipoSoggetto);
+										oldIDServizioApplicativoForUpdate.getIdSoggettoProprietario().setNome(oldNomeSoggetto);
 										this.log.debug("ChangeServizioApplicativo: operazione change ID Soggetto non ancora completata: utilizzo OLD nome");
 									}else{
 										this.log.debug("ChangeServizioApplicativo: operazione change ID Soggetto completata: utilizzo nome");
@@ -837,21 +856,23 @@ public class GestorePdDThread extends GestoreGeneral {
 								}
 								
 								IdServizioApplicativo idSA = new IdServizioApplicativo();
-								if(servizioApplicativo.getOldNomeForUpdate()!=null){
-									idSA.setNome(servizioApplicativo.getOldNomeForUpdate());
+								if(oldIDServizioApplicativoForUpdate!=null && oldIDServizioApplicativoForUpdate.getNome()!=null){
+									idSA.setNome(oldIDServizioApplicativoForUpdate.getNome());
 								}
 								else{
 									idSA.setNome(servizioApplicativo.getNome());
 								}
 								idSA.setIdSoggetto(new IdSoggetto());
-								if(servizioApplicativo.getOldTipoSoggettoProprietarioForUpdate()!=null){
-									idSA.getIdSoggetto().setTipo(servizioApplicativo.getOldTipoSoggettoProprietarioForUpdate());
+								if(oldIDServizioApplicativoForUpdate.getIdSoggettoProprietario()!=null &&
+										oldIDServizioApplicativoForUpdate.getIdSoggettoProprietario().getTipo()!=null){
+									idSA.getIdSoggetto().setTipo(oldIDServizioApplicativoForUpdate.getIdSoggettoProprietario().getTipo());
 								}
 								else{
 									idSA.getIdSoggetto().setTipo(servizioApplicativo.getTipoSoggettoProprietario());
 								}
-								if(servizioApplicativo.getOldNomeSoggettoProprietarioForUpdate()!=null){
-									idSA.getIdSoggetto().setNome(servizioApplicativo.getOldNomeSoggettoProprietarioForUpdate());
+								if(oldIDServizioApplicativoForUpdate.getIdSoggettoProprietario()!=null &&
+										oldIDServizioApplicativoForUpdate.getIdSoggettoProprietario().getNome()!=null){
+									idSA.getIdSoggetto().setNome(oldIDServizioApplicativoForUpdate.getIdSoggettoProprietario().getNome());
 								}
 								else{
 									idSA.getIdSoggetto().setNome(servizioApplicativo.getNomeSoggettoProprietario());

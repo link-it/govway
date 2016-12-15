@@ -33,6 +33,7 @@ import org.openspcoop2.core.constants.TipoMessaggio;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -416,9 +417,13 @@ public class Dump {
 				if( this.fruitore!=null && this.servizio!=null)
 					out.append(" -> ");
 				if( this.servizio!=null ){
-					if(this.servizio.getServizio()!=null && this.servizio.getTipoServizio()!=null && this.servizio.getSoggettoErogatore()!=null){
+					if(this.servizio.getNome()!=null){
 						out.append(" S:");
-						out.append(this.servizio.toString());
+						try{
+							out.append(IDServizioFactory.getInstance().getUriFromIDServizio(this.servizio));
+						}catch(Exception e){
+							out.append(this.servizio.toString(false));
+						}
 					}else if(this.servizio.getSoggettoErogatore()!=null){
 						out.append(" ER:");
 						out.append(this.servizio.getSoggettoErogatore().toString());

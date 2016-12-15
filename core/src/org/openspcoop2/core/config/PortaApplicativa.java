@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,7 @@ import java.util.List;
  * 			&lt;element name="servizio" type="{http://www.openspcoop2.org/core/config}porta-applicativa-servizio" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="azione" type="{http://www.openspcoop2.org/core/config}porta-applicativa-azione" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}porta-applicativa-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="proprieta-protocollo" type="{http://www.openspcoop2.org/core/config}proprieta-protocollo" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="proprieta-integrazione-protocollo" type="{http://www.openspcoop2.org/core/config}porta-applicativa-proprieta-integrazione-protocollo" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="mtom-processor" type="{http://www.openspcoop2.org/core/config}mtom-processor" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="message-security" type="{http://www.openspcoop2.org/core/config}message-security" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="validazione-contenuti-applicativi" type="{http://www.openspcoop2.org/core/config}validazione-contenuti-applicativi" minOccurs="0" maxOccurs="1"/>
@@ -85,7 +86,7 @@ import java.util.List;
   	"servizio",
   	"azione",
   	"servizioApplicativo",
-  	"proprietaProtocollo",
+  	"proprietaIntegrazioneProtocollo",
   	"mtomProcessor",
   	"messageSecurity",
   	"validazioneContenutiApplicativi",
@@ -114,17 +115,12 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
 		this.id=new Long(-1);
   }
 
-  public String getOldNomeForUpdate() {
-    if(this.oldNomeForUpdate!=null && ("".equals(this.oldNomeForUpdate)==false)){
-		return this.oldNomeForUpdate.trim();
-	}else{
-		return null;
-	}
-
+  public IDPortaApplicativa getOldIDPortaApplicativaForUpdate() {
+    return this.oldIDPortaApplicativaForUpdate;
   }
 
-  public void setOldNomeForUpdate(String oldNomeForUpdate) {
-    this.oldNomeForUpdate=oldNomeForUpdate;
+  public void setOldIDPortaApplicativaForUpdate(IDPortaApplicativa oldIDPortaApplicativaForUpdate) {
+    this.oldIDPortaApplicativaForUpdate=oldIDPortaApplicativaForUpdate;
   }
 
   public void addExtendedInfo(Object extendedInfo) {
@@ -199,28 +195,28 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
     return this.servizioApplicativo.size();
   }
 
-  public void addProprietaProtocollo(ProprietaProtocollo proprietaProtocollo) {
-    this.proprietaProtocollo.add(proprietaProtocollo);
+  public void addProprietaIntegrazioneProtocollo(PortaApplicativaProprietaIntegrazioneProtocollo proprietaIntegrazioneProtocollo) {
+    this.proprietaIntegrazioneProtocollo.add(proprietaIntegrazioneProtocollo);
   }
 
-  public ProprietaProtocollo getProprietaProtocollo(int index) {
-    return this.proprietaProtocollo.get( index );
+  public PortaApplicativaProprietaIntegrazioneProtocollo getProprietaIntegrazioneProtocollo(int index) {
+    return this.proprietaIntegrazioneProtocollo.get( index );
   }
 
-  public ProprietaProtocollo removeProprietaProtocollo(int index) {
-    return this.proprietaProtocollo.remove( index );
+  public PortaApplicativaProprietaIntegrazioneProtocollo removeProprietaIntegrazioneProtocollo(int index) {
+    return this.proprietaIntegrazioneProtocollo.remove( index );
   }
 
-  public List<ProprietaProtocollo> getProprietaProtocolloList() {
-    return this.proprietaProtocollo;
+  public List<PortaApplicativaProprietaIntegrazioneProtocollo> getProprietaIntegrazioneProtocolloList() {
+    return this.proprietaIntegrazioneProtocollo;
   }
 
-  public void setProprietaProtocolloList(List<ProprietaProtocollo> proprietaProtocollo) {
-    this.proprietaProtocollo=proprietaProtocollo;
+  public void setProprietaIntegrazioneProtocolloList(List<PortaApplicativaProprietaIntegrazioneProtocollo> proprietaIntegrazioneProtocollo) {
+    this.proprietaIntegrazioneProtocollo=proprietaIntegrazioneProtocollo;
   }
 
-  public int sizeProprietaProtocolloList() {
-    return this.proprietaProtocollo.size();
+  public int sizeProprietaIntegrazioneProtocolloList() {
+    return this.proprietaIntegrazioneProtocollo.size();
   }
 
   public MtomProcessor getMtomProcessor() {
@@ -498,8 +494,8 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
   }
 
 
-  @XmlTransient
-  private String oldNomeForUpdate;
+  @javax.xml.bind.annotation.XmlTransient
+  protected IDPortaApplicativa oldIDPortaApplicativaForUpdate;
 
   @javax.xml.bind.annotation.XmlTransient
   protected List<Object> extendedInfo = new ArrayList<Object>();
@@ -570,34 +566,34 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
   	return this.servizioApplicativo.size();
   }
 
-  @XmlElement(name="proprieta-protocollo",required=true,nillable=false)
-  protected List<ProprietaProtocollo> proprietaProtocollo = new ArrayList<ProprietaProtocollo>();
+  @XmlElement(name="proprieta-integrazione-protocollo",required=true,nillable=false)
+  protected List<PortaApplicativaProprietaIntegrazioneProtocollo> proprietaIntegrazioneProtocollo = new ArrayList<PortaApplicativaProprietaIntegrazioneProtocollo>();
 
   /**
-   * @deprecated Use method getProprietaProtocolloList
-   * @return List<ProprietaProtocollo>
+   * @deprecated Use method getProprietaIntegrazioneProtocolloList
+   * @return List<PortaApplicativaProprietaIntegrazioneProtocollo>
   */
   @Deprecated
-  public List<ProprietaProtocollo> getProprietaProtocollo() {
-  	return this.proprietaProtocollo;
+  public List<PortaApplicativaProprietaIntegrazioneProtocollo> getProprietaIntegrazioneProtocollo() {
+  	return this.proprietaIntegrazioneProtocollo;
   }
 
   /**
-   * @deprecated Use method setProprietaProtocolloList
-   * @param proprietaProtocollo List<ProprietaProtocollo>
+   * @deprecated Use method setProprietaIntegrazioneProtocolloList
+   * @param proprietaIntegrazioneProtocollo List<PortaApplicativaProprietaIntegrazioneProtocollo>
   */
   @Deprecated
-  public void setProprietaProtocollo(List<ProprietaProtocollo> proprietaProtocollo) {
-  	this.proprietaProtocollo=proprietaProtocollo;
+  public void setProprietaIntegrazioneProtocollo(List<PortaApplicativaProprietaIntegrazioneProtocollo> proprietaIntegrazioneProtocollo) {
+  	this.proprietaIntegrazioneProtocollo=proprietaIntegrazioneProtocollo;
   }
 
   /**
-   * @deprecated Use method sizeProprietaProtocolloList
+   * @deprecated Use method sizeProprietaIntegrazioneProtocolloList
    * @return lunghezza della lista
   */
   @Deprecated
-  public int sizeProprietaProtocollo() {
-  	return this.proprietaProtocollo.size();
+  public int sizeProprietaIntegrazioneProtocollo() {
+  	return this.proprietaIntegrazioneProtocollo.size();
   }
 
   @XmlElement(name="mtom-processor",required=false,nillable=false)

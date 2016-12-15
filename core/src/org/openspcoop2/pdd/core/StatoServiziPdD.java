@@ -400,6 +400,10 @@ public class StatoServiziPdD {
 			bf.append(" SERVIZIO:");
 			bf.append(tipo.getServizio());
 		}
+		if(tipo.getVersioneServizio()!=null){
+			bf.append(" VERSIONE_SERVIZIO:");
+			bf.append(tipo.getVersioneServizio());
+		}
 		
 		if(tipo.getAzione()!=null){
 			bf.append(" AZIONE:");
@@ -495,12 +499,17 @@ public class StatoServiziPdD {
 		}
 		
 		if(tipo.getTipoServizio()!=null){
-			if(!tipo.getTipoServizio().equals(idServizio.getTipoServizio())){
+			if(!tipo.getTipoServizio().equals(idServizio.getTipo())){
 				return false;
 			}
 		}
 		if(tipo.getServizio()!=null){
-			if(!tipo.getServizio().equals(idServizio.getServizio())){
+			if(!tipo.getServizio().equals(idServizio.getNome())){
+				return false;
+			}
+		}
+		if(tipo.getVersioneServizio()!=null){
+			if(tipo.getVersioneServizio().intValue() != idServizio.getVersione().intValue() ){
 				return false;
 			}
 		}

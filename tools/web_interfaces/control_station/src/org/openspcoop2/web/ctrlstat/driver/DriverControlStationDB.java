@@ -2032,7 +2032,7 @@ public class DriverControlStationDB  {
 				ruolo.setId(idRuolo);
 				
 				String accordoNome = risultato.getString("nomeAccordo");
-				String accordoVersione = risultato.getString("versioneAccordo");
+				Integer accordoVersione = risultato.getInt("versioneAccordo");
 				long referenteAccordo = risultato.getLong("referenteAccordo");
 				IDSoggetto soggettoReferente = null;
 				if(referenteAccordo>0){
@@ -2292,7 +2292,7 @@ public class DriverControlStationDB  {
 				ruolo.setCorrelato(risultato.getInt("servizio_correlato") == CostantiDB.TRUE ? true : false);
 				
 				String accordoNome = risultato.getString("nomeAccordo");
-				String accordoVersione = risultato.getString("versioneAccordo");
+				Integer accordoVersione = risultato.getInt("versioneAccordo");
 				long referenteAccordo = risultato.getLong("referenteAccordo");
 				IDSoggetto soggettoReferente = null;
 				if(referenteAccordo>0){
@@ -2381,7 +2381,7 @@ public class DriverControlStationDB  {
 				ruolo.setIdAccordo(risultato.getLong("id"));
 				
 				String accordoNome = risultato.getString("nomeAccordo");
-				String accordoVersione = risultato.getString("versioneAccordo");
+				Integer accordoVersione = risultato.getInt("versioneAccordo");
 				long referenteAccordo = risultato.getLong("referenteAccordo");
 				IDSoggetto soggettoReferente = null;
 				if(referenteAccordo>0){
@@ -2483,7 +2483,7 @@ public class DriverControlStationDB  {
 			while (risultato.next()) {
 				
 				String accordoNome = risultato.getString("nomeAccordo");
-				String accordoVersione = risultato.getString("versioneAccordo");
+				Integer accordoVersione = risultato.getInt("versioneAccordo");
 				long referenteAccordo = risultato.getLong("referenteAccordo");
 				IDSoggetto soggettoReferente = null;
 				if(referenteAccordo>0){

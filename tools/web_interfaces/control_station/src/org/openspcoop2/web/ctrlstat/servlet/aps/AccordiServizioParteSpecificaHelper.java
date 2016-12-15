@@ -49,7 +49,6 @@ import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.PortaDominio;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
@@ -57,6 +56,7 @@ import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
@@ -180,7 +180,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			String httpsalgoritmo, boolean httpsstato, String httpskeystore,
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
-			String httpspwdprivatekey, String httpsalgoritmokey, String tipoconn, String nome_aps, String versione,
+			String httpspwdprivatekey, String httpsalgoritmokey, String tipoconn, String versione,
 			boolean validazioneDocumenti,String nomePA, String backToStato,
 			String autenticazioneHttp,
 			List<ExtendedConnettore> listExtendedConnettore)
@@ -235,9 +235,6 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			if (sendas == null) {
 				sendas = "";
 			}
-			if (nome_aps == null) {
-				nome_aps = "";
-			}
 			if (versione == null) {
 				versione = "";
 			}
@@ -255,8 +252,13 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 
 			if (tipoOp.equals(TipoOperazione.CHANGE)) {
 
-				IDServizio idService = new IDServizio(tiposervizio, nomeservizio);
-				idService.setSoggettoErogatore(tipoErogatore, nomeErogatore);
+				Integer versioneInt = 1;
+				if(versione!=null){
+					versioneInt = Integer.parseInt(versione);
+				}
+				@SuppressWarnings("unused")
+				IDServizio idService = IDServizioFactory.getInstance().getIDServizioFromValues(tiposervizio, nomeservizio, 
+						tipoErogatore, nomeErogatore, versioneInt);
 
 				try {
 					AccordoServizioParteSpecifica servizio = this.apsCore.getAccordoServizioParteSpecifica(idInt);
@@ -274,7 +276,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 					return false;
 				}
 			}
-			if (nomeservizio.equals("") || tiposervizio.equals("") || idSoggErogatore.equals("") || idAccordo.equals("") || nome_aps.equals("") || versione.equals("")) {
+			if (nomeservizio.equals("") || tiposervizio.equals("") || idSoggErogatore.equals("") || idAccordo.equals("") || versione.equals("")) {
 				String tmpElenco = "";
 				if (nomeservizio.equals("")) {
 					tmpElenco = "Nome Servizio";
@@ -299,13 +301,6 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 					} else {
 						tmpElenco = tmpElenco + ", Accordo Servizio Parte Comune";
 					}
-				}
-				if (nome_aps.equals("")) {
-					if (tmpElenco.equals("")) {
-						tmpElenco = "Nome Accordo Servizio Parte Specifica";
-					} else {
-						tmpElenco = tmpElenco + ", Nome Accordo Servizio Parte Specifica";
-					}	
 				}
 				if (versione.equals("")) {
 					if (tmpElenco.equals("")) {
@@ -458,7 +453,14 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			Soggetto soggettoErogatore = this.soggettiCore.getSoggettoRegistro(idSoggettoErogatoreLong);
 			long idAccordoServizioParteComuneLong = Long.parseLong(idAccordo);
 			AccordoServizioParteComune accordoServizioParteComune = this.apcCore.getAccordoServizio(idAccordoServizioParteComuneLong);
-			IDServizio idAccordoServizioParteSpecifica = new IDServizio(tipoErogatore, nomeErogatore, tiposervizio, nomeservizio);
+			
+			Integer versioneInt = 1;
+			if(versione!=null){
+				versioneInt = Integer.parseInt(versione);
+			}
+			IDServizio idAccordoServizioParteSpecifica = IDServizioFactory.getInstance().getIDServizioFromValues(tiposervizio, nomeservizio, 
+					tipoErogatore, nomeErogatore, versioneInt);
+			
 			long idAccordoServizioParteSpecificaLong = idInt;
 			boolean servizioCorrelato = false;
 			if ((servcorr != null) && (servcorr.equals(Costanti.CHECK_BOX_ENABLED) || servcorr.equals(CostantiConfigurazione.ABILITATO))) {
@@ -477,25 +479,24 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 
 
 			// Controllo che non esistano altri accordi di servizio parte specifica con stesso nome, versione e soggetto
-			IDAccordo idAPS = this.idAccordoFactory.getIDAccordoFromValues(nome_aps, tipoErogatore, nomeErogatore, versione);
 			if (tipoOp.equals(TipoOperazione.ADD)){
-				if(this.apsCore.existsAccordoServizioParteSpecifica(idAPS)){
+				if(this.apsCore.existsAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica)){
 					if(this.core.isShowVersioneAccordoServizioParteSpecifica())
-						this.pd.setMessage("Esiste gi&agrave; un accordo di servizio parte specifica con il nome, la versione e il Soggetto indicato.");
+						this.pd.setMessage("Esiste gi&agrave; un accordo di servizio parte specifica con tipo, nome, versione e soggetto indicato.");
 					else
-						this.pd.setMessage("Esiste gi&agrave; un accordo di servizio parte specifica con il nome e il Soggetto indicato.");
+						this.pd.setMessage("Esiste gi&agrave; un accordo di servizio parte specifica con tipo, nome, versione e soggetto indicato.");
 					return false;
 				}
 			}else{
 				// change
 				try{
-					AccordoServizioParteSpecifica servizio =  this.apsCore.getAccordoServizioParteSpecifica(idAPS);
+					AccordoServizioParteSpecifica servizio =  this.apsCore.getServizio(idAccordoServizioParteSpecifica);
 					if(servizio!=null){
 						if (idInt != servizio.getId()) {
 							if(this.core.isShowVersioneAccordoServizioParteSpecifica())
-								this.pd.setMessage("Esiste gi&agrave; un accordo di servizio parte specifica con il nome, la versione e il Soggetto indicato.");
+								this.pd.setMessage("Esiste gi&agrave; un accordo di servizio parte specifica con tipo, nome, versione e soggetto indicato.");
 							else
-								this.pd.setMessage("Esiste gi&agrave; un accordo di servizio parte specifica con il nome e il Soggetto indicato.");
+								this.pd.setMessage("Esiste gi&agrave; un accordo di servizio parte specifica con tipo, nome, versione e soggetto indicato.");
 							return false;
 						}
 					}
@@ -527,19 +528,18 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			}
 
 			AccordoServizioParteSpecifica aps = new AccordoServizioParteSpecifica();
-			aps.setServizio(new Servizio());
-			aps.setNome(nome_aps);
-			aps.setVersione(versione);
-			aps.getServizio().setNome(nomeservizio);
-			aps.getServizio().setTipo(tiposervizio);
+			aps.setTipo(tiposervizio);
+			aps.setNome(nomeservizio);
+			if(versione!=null)
+				aps.setVersione(Integer.parseInt(versione));
 			if(Costanti.CHECK_BOX_ENABLED.equals(servcorr)){
-				aps.getServizio().setTipologiaServizio(TipologiaServizio.CORRELATO);
+				aps.setTipologiaServizio(TipologiaServizio.CORRELATO);
 			}
 			else{
-				aps.getServizio().setTipologiaServizio(TipologiaServizio.NORMALE);
+				aps.setTipologiaServizio(TipologiaServizio.NORMALE);
 			}
-			aps.getServizio().setTipoSoggettoErogatore(tipoErogatore);
-			aps.getServizio().setNomeSoggettoErogatore(nomeErogatore);
+			aps.setTipoSoggettoErogatore(tipoErogatore);
+			aps.setNomeSoggettoErogatore(nomeErogatore);
 
 			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoErogatore);
 
@@ -580,7 +580,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 
 	// Controlla i dati del fruitore del servizio
 	public boolean serviziFruitoriCheckData(TipoOperazione tipoOp, String[] soggettiList,
-			String id, String nomeservizio, String tiposervizio,
+			String id, String nomeservizio, String tiposervizio, Integer versioneservizio,
 			String nomeprov, String tipoprov, String provider,
 			String endpointtype, String url, String nome, String tipo,
 			String user, String password, String initcont,
@@ -687,7 +687,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 				int idInt = 0;
 				if (!nomeservizio.equals("")) {
 					IDSoggetto ids = new IDSoggetto(tipoprov, nomeprov);
-					IDServizio idserv = new IDServizio(ids, tiposervizio, nomeservizio);
+					IDServizio idserv = IDServizioFactory.getInstance().getIDServizioFromValues(tiposervizio, nomeservizio, ids, versioneservizio); 
 					AccordoServizioParteSpecifica myServ = this.apsCore.getServizio(idserv);
 					idInt = myServ.getId().intValue();
 				} else {
@@ -695,11 +695,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 				}
 
 				AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(idInt);
-				Servizio myServ = asps.getServizio();
-				String nomeSoggEr = myServ.getNomeSoggettoErogatore();
-				String tipoSoggEr = myServ.getTipoSoggettoErogatore();
-				IDSoggetto idsogger = new IDSoggetto(tipoSoggEr, nomeSoggEr);
-				IDServizio idserv = new IDServizio(idsogger, myServ.getTipo(), myServ.getNome());
+				IDServizio idserv = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
 				int idFru = this.apsCore.getServizioFruitore(idserv, idProv);
 				if ((idFru != 0) && (tipoOp.equals(TipoOperazione.ADD) || ((tipoOp.equals(TipoOperazione.CHANGE)) && (myIdInt != idFru)))) {
 					this.pd.setMessage("Esiste gi&agrave; un fruitore del Servizio con lo stesso Soggetto");
@@ -711,7 +707,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 				int idInt = 0;
 				if (!nomeservizio.equals("")) {
 					IDSoggetto ids = new IDSoggetto(tipoprov, nomeprov);
-					IDServizio idserv = new IDServizio(ids, tiposervizio, nomeservizio);
+					IDServizio idserv = IDServizioFactory.getInstance().getIDServizioFromValues(tiposervizio, nomeservizio, ids, versioneservizio); 
 					AccordoServizioParteSpecifica myServ = this.apsCore.getServizio(idserv);
 					idInt = myServ.getId().intValue();
 				} else {
@@ -845,16 +841,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			this.pd.setPageSize(limit);
 			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
 
-			Servizio ss = asps.getServizio();
-			String tmpTitle = ss.getTipo()+"/"+ss.getNome();
-			// aggiorno tmpTitle
-			String tmpVersione = asps.getVersione();
-			if(this.core.isShowVersioneAccordoServizioParteSpecifica()==false){
-				tmpVersione = null;
-			}
-			tmpTitle = this.idAccordoFactory.getUriFromValues(asps.getNome(), 
-					ss.getTipoSoggettoErogatore(), ss.getNomeSoggettoErogatore(), 
-					tmpVersione);
+			String tmpTitle = IDServizioFactory.getInstance().getUriFromAccordo(asps); 
 
 			// setto la barra del titolo
 			List<Parameter> lstParm = new ArrayList<Parameter>();
@@ -1026,7 +1013,6 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			List<String> listaLabelTabella = new ArrayList<String>();
 
 			listaLabelTabella.add(servizioLabel);
-			listaLabelTabella.add(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO);
 			listaLabelTabella.add(asLabel);
 			if(showRuoli)
 				listaLabelTabella.add(correlatoLabel);
@@ -1057,31 +1043,21 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 
 				Vector<DataElement> e = new Vector<DataElement>();
 
-				Servizio servizio = asps.getServizio();
-
 				Parameter pIdsoggErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+asps.getIdSoggetto());
-				Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, servizio.getNome());
-				Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, servizio.getTipo());
+				Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
+				Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
+				Parameter pVersioneServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE, asps.getVersione().intValue()+"");
 
 
 				DataElement de = new DataElement();
 				de.setUrl(
 						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE,
-						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, servizio.getId() + ""),
-						pNomeServizio, pTipoServizio, pIdsoggErogatore);
-				String versione = asps.getVersione();
-				if(this.core.isShowVersioneAccordoServizioParteSpecifica()==false){
-					versione = null;
-				}
-				de.setValue(this.idAccordoFactory.getUriFromValues(asps.getNome(), 
-						servizio.getTipoSoggettoErogatore(), servizio.getNomeSoggettoErogatore(), 
-						versione));
-				de.setIdToRemove(servizio.getTipo() + "/" + servizio.getNome() + "/" + servizio.getTipoSoggettoErogatore() + "/" + servizio.getNomeSoggettoErogatore());
+						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""),
+						pNomeServizio, pTipoServizio, pVersioneServizio, pIdsoggErogatore);
+				String uri = IDServizioFactory.getInstance().getUriFromAccordo(asps);
+				de.setValue(uri);
+				de.setIdToRemove(uri);
 				de.setToolTip(asps.getDescrizione());
-				e.addElement(de);
-
-				de = new DataElement();
-				de.setValue(servizio.getTipo()+"/"+servizio.getNome());
 				e.addElement(de);
 
 				//[TODO] controllare
@@ -1105,13 +1081,13 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 
 
 				// Colonna ruoli
-				String tipoSoggetto = servizio.getTipoSoggettoErogatore();
+				String tipoSoggetto = asps.getTipoSoggettoErogatore();
 				String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggetto);
 
 				if(showRuoli){
 					de = new DataElement();
 					if(this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo)){ 
-						de.setValue((TipologiaServizio.CORRELATO.equals(servizio.getTipologiaServizio()) ?
+						de.setValue((TipologiaServizio.CORRELATO.equals(asps.getTipologiaServizio()) ?
 								AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_CORRELATO :
 									AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_NORMALE));
 	
@@ -1148,7 +1124,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 						pNomeServizio, pTipoServizio, pIdsoggErogatore );
 				// +"&nomeprov="+soggErogatore+"&tipoprov="+tipoSoggEr);
 				if (contaListe) {
-					List<PortaApplicativa> lista1 = this.apsCore.serviziPorteAppList(servizio.getTipo(),servizio.getNome(),
+					List<PortaApplicativa> lista1 = this.apsCore.serviziPorteAppList(asps.getTipo(),asps.getNome(),asps.getVersione(),
 							asps.getId().intValue(), asps.getIdSoggetto(), new Search(true));
 					int numPA = lista1.size();
 					ServletUtils.setDataElementVisualizzaLabel(de, (long) numPA );
@@ -1243,9 +1219,8 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 
 				if (idSoggettoErogatoreDelServizio == null || idSoggettoErogatoreDelServizio.equals("")) {
 					AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(id));
-					Servizio servizio = asps.getServizio();
-					String tipoSoggettoErogatore = servizio.getTipoSoggettoErogatore();
-					String nomesoggettoErogatore = servizio.getNomeSoggettoErogatore();
+					String tipoSoggettoErogatore = asps.getTipoSoggettoErogatore();
+					String nomesoggettoErogatore = asps.getNomeSoggettoErogatore();
 					IDSoggetto idSE = new IDSoggetto(tipoSoggettoErogatore, nomesoggettoErogatore);
 					Soggetto SE = this.soggettiCore.getSoggettoRegistro(idSE);
 					idSoggettoErogatoreDelServizio = "" + SE.getId();
@@ -1257,20 +1232,11 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 
 			// Prendo il nome e il tipo del servizio
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(id));
-			Servizio serv = asps.getServizio();
-
+			
 			// Prendo il nome e il tipo del soggetto erogatore del servizio
-			Soggetto sogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggettoErogatoreDelServizio));
+			//Soggetto sogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggettoErogatoreDelServizio));
 
-			String tmpTitle = serv.getTipo() + "/" + serv.getNome() + " erogato da " + sogg.getTipo() + "/" + sogg.getNome();
-			// aggiorno tmpTitle
-			String tmpVersione = asps.getVersione();
-			if(this.core.isShowVersioneAccordoServizioParteSpecifica()==false){
-				tmpVersione = null;
-			}
-			tmpTitle = this.idAccordoFactory.getUriFromValues(asps.getNome(), 
-					serv.getTipoSoggettoErogatore(), serv.getNomeSoggettoErogatore(), 
-					tmpVersione);
+			String tmpTitle = IDServizioFactory.getInstance().getUriFromAccordo(asps); 
 
 			// setto la barra del titolo
 			List<Parameter> lstParm = new ArrayList<Parameter>();
@@ -1346,8 +1312,9 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 
 			Parameter pIdSoggettoErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, idSoggettoErogatoreDelServizio);
 			Parameter pId = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, id);
-			Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, serv.getNome());
-			Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, serv.getTipo());
+			Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
+			Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
+			Parameter pVersioneServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE, asps.getVersione().intValue()+"");
 
 			// preparo i dati
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
@@ -1388,7 +1355,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 					de = new DataElement();
 					de.setUrl(
 							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_SERVIZI_APPLICATIVI_LIST,
-							pId, pIdSogg, pIdSoggettoErogatore, pNomeServizio, pTipoServizio, pMyId);
+							pId, pIdSogg, pIdSoggettoErogatore, pNomeServizio, pTipoServizio, pVersioneServizio, pMyId);
 					if (contaListe) {
 						List<String> polSic = this.apsCore.getPoliticheSicurezza(Integer.parseInt(id), fru.getIdSoggetto());
 						int numPolitiche = polSic.size();
@@ -1471,20 +1438,12 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 
 			// Prendo il nome e il tipo del servizio
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(id));
-			Servizio serv = asps.getServizio();
 
 			// Prendo il nome e il tipo del soggetto erogatore del servizio
+			@SuppressWarnings("unused")
 			Soggetto sogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggettoErogatoreDelServizio));
 
-			String tmpTitle = serv.getTipo() + "/" + serv.getNome() + " erogato da " + sogg.getTipo() + "/" + sogg.getNome();
-			// aggiorno tmpTitle
-			String tmpVersione = asps.getVersione();
-			if(this.core.isShowVersioneAccordoServizioParteSpecifica()==false){
-				tmpVersione = null;
-			}
-			tmpTitle = this.idAccordoFactory.getUriFromValues(asps.getNome(), 
-					serv.getTipoSoggettoErogatore(), serv.getNomeSoggettoErogatore(), 
-					tmpVersione);
+			String tmpTitle = IDServizioFactory.getInstance().getUriFromAccordo(asps); 
 
 			// setto la barra del titolo
 			List<Parameter> lstParm = new ArrayList<Parameter>();
@@ -1602,7 +1561,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 							PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_LIST,
 							pIdSogg, pID);
 					if (contaListe) {
-						int numProp = pa.sizeProprietaProtocolloList();
+						int numProp = pa.sizeProprietaIntegrazioneProtocolloList();
 						ServletUtils.setDataElementVisualizzaLabel(de, (long) numProp );
 					} else
 						ServletUtils.setDataElementVisualizzaLabel(de);
@@ -1625,13 +1584,12 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 					idSoggEr = pa.getIdSoggetto().intValue();
 				PortaApplicativaServizio pas = pa.getServizio();
 				int idServ = pas.getId().intValue();
+				@SuppressWarnings("unused")
 				Soggetto soggEr = null;
 				AccordoServizioParteSpecifica aspsServ = null;
-				Servizio servizio = null;
 				try {
 					soggEr = this.soggettiCore.getSoggettoRegistro(idSoggEr);
 					aspsServ = this.apsCore.getAccordoServizioParteSpecifica(idServ);
-					servizio = aspsServ.getServizio();
 				} catch (DriverRegistroServiziNotFound drsnf) {
 					// ok
 				} catch (DriverRegistroServiziException drse) {
@@ -1644,13 +1602,14 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 				de = new DataElement();
 
 				pID = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, idServ+ "");
-				Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, servizio.getNome());
-				Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, servizio.getTipo());
+				Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, aspsServ.getNome());
+				Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, aspsServ.getTipo());
+				Parameter pVersioneServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE, aspsServ.getVersione().intValue()+"");
 
 				de.setUrl(
 						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE,
-						pID,pNomeServizio, pTipoServizio);
-				de.setValue(soggEr.getTipo() + "/" + soggEr.getNome() + "-" + servizio.getTipo() + "/" + servizio.getNome() + tmpAz);
+						pID,pNomeServizio, pTipoServizio, pVersioneServizio);
+				de.setValue(IDServizioFactory.getInstance().getUriFromAccordo(aspsServ) + tmpAz);
 				e.addElement(de);
 
 				dati.addElement(e);
@@ -1670,7 +1629,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			String accordo, String[] accordiList, String[] accordiListLabel, String servcorr, String wsdlimpler,
 			String wsdlimplfru, TipoOperazione tipoOp, String id, List<String> tipi, String profilo, String portType, 
 			String[] ptList, boolean privato, String uriAccordo, String descrizione, long idSoggettoErogatore,
-			String statoPackage,String oldStato,String nome_aps,String versione,
+			String statoPackage,String oldStato,String versione,
 			List<String> versioni,boolean validazioneDocumenti,String nomePA,
 			String [] saSoggetti, String nomeSA, String protocollo, boolean generaPACheckSoggetto,
 			List<AccordoServizioParteComune> asCompatibili) throws Exception{
@@ -1770,14 +1729,17 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			if(!modificaAbilitata || (asCompatibili==null || asCompatibili.size()<=1)){
 				de.setType(DataElementType.TEXT);
 				de.setName("param_"+AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_ACCORDO_PARTE_COMUNE_VERSIONE );
-				de.setValue(idAccordoParteComune.getVersione());
+				if(idAccordoParteComune.getVersione()!=null)
+					de.setValue(idAccordoParteComune.getVersione().intValue()+"");
 			}
 			else{
 				String [] accordiCompatibiliList = new String[asCompatibili.size()];
 				String [] accordiCompatibiliLabelList = new String[asCompatibili.size()];
 				for (int i = 0; i < asCompatibili.size(); i++) {
 					accordiCompatibiliList[i] = asCompatibili.get(i).getId() + "";
-					accordiCompatibiliLabelList[i] = asCompatibili.get(i).getVersione();
+					if(asCompatibili.get(i).getVersione()!=null){
+						accordiCompatibiliLabelList[i] = asCompatibili.get(i).getVersione().intValue()+"";
+					}
 				}
 				de.setType(DataElementType.SELECT);
 				de.setValues(accordiCompatibiliList);
@@ -1864,27 +1826,16 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 		}
 		dati.addElement(de);
 
-		// accordo di servizio parte specifica + servizio 
+
+		//Sezione Servizio
+
+		de = new DataElement();
+		de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
 
 		if(isModalitaAvanzata){
-			de = new DataElement();
-			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SINGOLO);
-			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
-
-			de = new DataElement();
-			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_NOME_FILE);
-			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_APS);
-			if(tipoOp.equals(TipoOperazione.ADD) || modificaAbilitata){
-				de.setType(DataElementType.TEXT_EDIT);
-				de.setRequired(true);
-			}else{
-				de.setType(DataElementType.TEXT);
-			}
-			de.setValue(nome_aps);
-			de.setSize(getSize());
-			dati.addElement(de);
-
+			
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_DESCRIZIONE);
 			de.setType(DataElementType.TEXT_EDIT);
@@ -1894,26 +1845,24 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			if( !modificaAbilitata && (descrizione==null || "".equals(descrizione)) )
 				de.setValue(" ");
 			dati.addElement(de);
-
-
-
+			
+		}
+		else{
+			
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_VERSIONE);
-			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE);
-			de.setValue(versione);
-			if(visualizzaVersione){
-				if( modificaAbilitata ){
-					de.setType(DataElementType.TEXT_EDIT);
-					//de.setRequired(true);
-					this.session.setAttribute("version", "required");
-				}else{
-					de.setType(DataElementType.TEXT);
-				}
-			}else{
-				de.setType(DataElementType.HIDDEN);
-			}
-			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE);
+			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_DESCRIZIONE);
+			de.setType(DataElementType.HIDDEN);
+			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_DESCRIZIONE);
+			de.setSize(getSize());
+			de.setValue(descrizione!=null ? descrizione : "");
+			if( !modificaAbilitata && (descrizione==null || "".equals(descrizione)) )
+				de.setValue(" ");
 			dati.addElement(de);
+			
+		}
+		
+		// stato
+		if(isModalitaAvanzata){
 
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_STATO);
@@ -1955,43 +1904,10 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 
 			dati.addElement(de);
 
-
-		}else {
-			de = new DataElement();
-			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_NOME_FILE);
-			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_APS);
-			de.setType(DataElementType.HIDDEN);
-			de.setValue(nome_aps);
-			dati.addElement(de);
-
-			de = new DataElement();
-			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_DESCRIZIONE);
-			de.setType(DataElementType.HIDDEN);
-			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_DESCRIZIONE);
-			de.setSize(getSize());
-			de.setValue(descrizione!=null ? descrizione : "");
-			if( !modificaAbilitata && (descrizione==null || "".equals(descrizione)) )
-				de.setValue(" ");
-			dati.addElement(de);
-
-			de = new DataElement();
-			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_VERSIONE);
-			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE);
-			de.setValue(versione);
-			de.setType(DataElementType.HIDDEN);
-			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE);
-			dati.addElement(de);
 		}
-
-		//Sezione Servizio
-
-		de = new DataElement();
-		de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZIO);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
-
-		// Modalita' standard faccio vedere lo stato
-		if(!isModalitaAvanzata){
+		
+		else{
+			
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_STATO);
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO_PACKAGE);
@@ -2087,6 +2003,40 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			de.setSize(this.getSize());
 			dati.addElement(de);
 		}
+		
+		if(isModalitaAvanzata){
+
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_VERSIONE);
+			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE);
+			de.setValue(versione);
+			if(visualizzaVersione){
+				if( modificaAbilitata ){
+					de.setType(DataElementType.TEXT_EDIT);
+					//de.setRequired(true);
+					this.session.setAttribute("version", "required");
+				}else{
+					de.setType(DataElementType.TEXT);
+				}
+			}else{
+				de.setType(DataElementType.HIDDEN);
+			}
+			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE);
+			dati.addElement(de);
+			
+		}
+		else{
+			
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_VERSIONE);
+			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE);
+			de.setValue(versione);
+			de.setType(DataElementType.HIDDEN);
+			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE);
+			dati.addElement(de);
+			
+		}
+		
 
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_SERVIZIO_CORRELATO);
@@ -2399,7 +2349,8 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 					new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, tiposervizio));
 			if(contaListe){
 				try{
-					int num = this.apsCore.serviziPorteAppList(tiposervizio,nomeservizio,Long.parseLong(id),idSoggettoErogatore, new Search(true)).size();
+					int num = this.apsCore.serviziPorteAppList(tiposervizio,nomeservizio,Integer.parseInt(versione),
+							Long.parseLong(id),idSoggettoErogatore, new Search(true)).size();
 					ServletUtils.setDataElementCustomLabel(de, AccordiServizioParteSpecificaCostanti.LABEL_APS_PORTE_APPLICATIVE, (long) num);
 				}catch(Exception e){
 					this.log.error("Calcolo numero pa non riuscito",e);
@@ -2438,7 +2389,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			String accordo, String[] accordiList, String[] accordiListLabel, String servcorr, String wsdlimpler,
 			String wsdlimplfru, TipoOperazione tipoOp, String id, List<String> tipi, String profilo, String portType, 
 			String[] ptList, boolean privato, String uriAccordo, String descrizione, long idSoggettoErogatore,
-			String statoPackage,String oldStato,String nome_aps,String versione,
+			String statoPackage,String oldStato,String versione,
 			List<String> versioni,boolean validazioneDocumenti,String nomePA,String [] saSoggetti, String nomeSA, String protocollo, boolean generaPACheckSoggetto) throws Exception{
 
 		String[] tipiLabel = new String[tipi.size()];
@@ -2488,14 +2439,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 		de.setType(DataElementType.HIDDEN);
 		dati.addElement(de);
 
-		// accordo di servizio parte specifica + servizio 
-
-		de = new DataElement();
-		de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_NOME_FILE);
-		de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_APS);
-		de.setType(DataElementType.HIDDEN);
-		de.setValue(nome_aps);
-		dati.addElement(de);
+		// Sezione Servizio 
 
 		de = new DataElement();
 		de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_DESCRIZIONE);
@@ -2508,20 +2452,11 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_VERSIONE);
-		de.setValue(versione);
-		de.setType(DataElementType.HIDDEN);
-		de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE);
-		dati.addElement(de);
-
-		de = new DataElement();
 		de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_STATO);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue(statoPackage);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO_PACKAGE);
 		dati.addElement(de);
-
-		//Sezione Servizio
 
 		//Tipo Servizio
 		de = new DataElement();
@@ -2539,6 +2474,14 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 		de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO  );
 		de.setValue(nomeservizio);
 		de.setSize(this.getSize());
+		dati.addElement(de);
+		
+		// Versione Servizio
+		de = new DataElement();
+		de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_VERSIONE);
+		de.setValue(versione);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE);
 		dati.addElement(de);
 
 		// SErvizio Correlato
@@ -2743,24 +2686,15 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 
 			// Prendo il servizio
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(idServizioInt);
-			Servizio servizio = asps.getServizio();
-			String nomeServizio = servizio.getNome();
-			String tipoServizio = servizio.getTipo();
+			String nomeServizio = asps.getNome();
+			String tipoServizio = asps.getTipo();
 
-			// Prendo il soggetto erogatore
-			Soggetto soggEr = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggettoErogatoreServizio));
-			String nomesoggettoErogatore = soggEr.getNome();
-			String tipoSoggettoErogatore = soggEr.getTipo();
+//			// Prendo il soggetto erogatore
+//			Soggetto soggEr = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggettoErogatoreServizio));
+//			String nomesoggettoErogatore = soggEr.getNome();
+//			String tipoSoggettoErogatore = soggEr.getTipo();
 
-			String tmpTitle = tipoServizio + "/" + nomeServizio + " erogato da " + tipoSoggettoErogatore + "/" + nomesoggettoErogatore;
-			// aggiorno tmpTitle
-			String tmpVersione = asps.getVersione();
-			if(this.core.isShowVersioneAccordoServizioParteSpecifica()==false){
-				tmpVersione = null;
-			}
-			tmpTitle = this.idAccordoFactory.getUriFromValues(asps.getNome(), 
-					servizio.getTipoSoggettoErogatore(), servizio.getNomeSoggettoErogatore(), 
-					tmpVersione);
+			String tmpTitle = IDServizioFactory.getInstance().getUriFromAccordo(asps);
 
 			int idLista = Liste.SERVIZI_SERVIZIO_APPLICATIVO;
 			int limit = ricerca.getPageSize(idLista);
@@ -2982,7 +2916,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 	}
 
 
-	public Vector<DataElement> addTipoNomeServizioToDati(TipoOperazione tipoOp,  String myId, String tipoServizio, String nomeServizio, Vector<DataElement> dati ){
+	public Vector<DataElement> addTipoNomeServizioToDati(TipoOperazione tipoOp,  String myId, String tipoServizio, String nomeServizio, Integer versioneServizio, Vector<DataElement> dati ){
 		DataElement de = new DataElement();
 
 		if(nomeServizio !=null){
@@ -2998,6 +2932,14 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO);
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(tipoServizio);
+			dati.addElement(de);
+		}
+		
+		if(versioneServizio != null){
+			de = new DataElement();
+			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(versioneServizio.intValue()+"");
 			dati.addElement(de);
 		}
 
@@ -3148,7 +3090,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 	public Vector<DataElement> addServiziFruitoriToDati(Vector<DataElement> dati, String provider, String wsdlimpler, 
 			String wsdlimplfru, String[] soggettiList, String[] soggettiListLabel, String idServ, String id, 
 			TipoOperazione tipoOp, String idSoggettoErogatoreDelServizio, String nomeprov, String tipoprov,
-			String nomeservizio, String tiposervizio, String correlato, String stato, String oldStato, String statoServizio,
+			String nomeservizio, String tiposervizio, Integer versioneservizio, String correlato, String stato, String oldStato, String statoServizio,
 			String tipoAccordo, boolean validazioneDocumenti,
 			String nomeSA,List<String> saList) throws Exception {
 
@@ -3394,6 +3336,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			Parameter pTipoProv = new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO, tipoprov);
 			Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, nomeservizio);
 			Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, tiposervizio);
+			Parameter pVersioneServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE, versioneservizio.intValue()+"");
 
 			Parameter pTipoAccordo = AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo);
 
@@ -3427,6 +3370,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 							lstParam.add(pTipoProv);
 							lstParam.add(pNomeServizio);
 							lstParam.add(pTipoServizio);
+							lstParam.add(pVersioneServizio);
 							lstParam.add(pTipoAccordo);
 
 							de.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_WSDL_CHANGE,
@@ -3458,6 +3402,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 							lstParam.add(pTipoProv);
 							lstParam.add(pNomeServizio);
 							lstParam.add(pTipoServizio);
+							lstParam.add(pVersioneServizio);
 							lstParam.add(pTipoAccordo);
 
 							de.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_WSDL_CHANGE,
@@ -3490,6 +3435,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 						lstParam.add(pTipoProv);
 						lstParam.add(pNomeServizio);
 						lstParam.add(pTipoServizio);
+						lstParam.add(pVersioneServizio);
 						lstParam.add(pTipoAccordo);
 
 						de.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_WSDL_CHANGE,
@@ -3602,7 +3548,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 			String profilo, String clientAuth,
 			Vector<DataElement> dati,
 			String oldStatoPackage, String idServizio, String idServizioFruitore, String idSoggettoErogatoreDelServizio,
-			String nomeservizio, String tiposervizio, String provider){
+			String nomeservizio, String tiposervizio, Integer versioneservizio, String provider){
 
 		boolean isModalitaAvanzata = ServletUtils.getUserFromSession(this.session).getInterfaceType().equals(InterfaceType.AVANZATA);
 
@@ -3734,6 +3680,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, idSoggettoErogatoreDelServizio),
 						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, nomeservizio),
 						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, tiposervizio),
+						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE, versioneservizio.intValue()+""),
 						new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, idServizioFruitore));
 
 				de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZI_APPLICATIVI_AUTORIZZATI);

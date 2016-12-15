@@ -40,7 +40,7 @@ import java.io.Serializable;
  * 			&lt;element name="soggetto-referente" type="{http://www.openspcoop2.org/core/registry}id-soggetto" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="versione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" use="optional" default="1"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -93,11 +93,11 @@ public class IdAccordoServizioParteComune extends org.openspcoop2.utils.beans.Ba
     this.nome = nome;
   }
 
-  public java.lang.String getVersione() {
+  public java.lang.Integer getVersione() {
     return this.versione;
   }
 
-  public void setVersione(java.lang.String versione) {
+  public void setVersione(java.lang.Integer versione) {
     this.versione = versione;
   }
 
@@ -145,8 +145,8 @@ public class IdAccordoServizioParteComune extends org.openspcoop2.utils.beans.Ba
   @XmlAttribute(name="nome",required=true)
   protected java.lang.String nome;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlAttribute(name="versione",required=false)
-  protected java.lang.String versione;
+  protected java.lang.Integer versione = new java.lang.Integer("1");
 
 }

@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,8 +53,6 @@ import java.util.List;
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
- * 		&lt;attribute name="old-nome-soggetto-proprietario-for-update" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="old-tipo-soggetto-proprietario-for-update" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -93,43 +92,12 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
 		this.id=new Long(-1);
   }
 
-  public String getOldNomeForUpdate() {
-    if(this.oldNomeForUpdate!=null && ("".equals(this.oldNomeForUpdate)==false)){
-		return this.oldNomeForUpdate.trim();
-	}else{
-		return null;
-	}
-
+  public IDServizioApplicativo getOldIDServizioApplicativoForUpdate() {
+    return this.oldIDServizioApplicativoForUpdate;
   }
 
-  public void setOldNomeForUpdate(String oldNomeForUpdate) {
-    this.oldNomeForUpdate=oldNomeForUpdate;
-  }
-
-  public String getOldNomeSoggettoProprietarioForUpdate() {
-    if(this.oldNomeSoggettoProprietarioForUpdate!=null && ("".equals(this.oldNomeSoggettoProprietarioForUpdate)==false)){
-		return this.oldNomeSoggettoProprietarioForUpdate.trim();
-	}else{
-		return null;
-	}
-
-  }
-
-  public void setOldNomeSoggettoProprietarioForUpdate(String oldNomeSoggettoProprietarioForUpdate) {
-    this.oldNomeSoggettoProprietarioForUpdate=oldNomeSoggettoProprietarioForUpdate;
-  }
-
-  public String getOldTipoSoggettoProprietarioForUpdate() {
-    if(this.oldTipoSoggettoProprietarioForUpdate!=null && ("".equals(this.oldTipoSoggettoProprietarioForUpdate)==false)){
-		return this.oldTipoSoggettoProprietarioForUpdate.trim();
-	}else{
-		return null;
-	}
-
-  }
-
-  public void setOldTipoSoggettoProprietarioForUpdate(String oldTipoSoggettoProprietarioForUpdate) {
-    this.oldTipoSoggettoProprietarioForUpdate=oldTipoSoggettoProprietarioForUpdate;
+  public void setOldIDServizioApplicativoForUpdate(IDServizioApplicativo oldIDServizioApplicativoForUpdate) {
+    this.oldIDServizioApplicativoForUpdate=oldIDServizioApplicativoForUpdate;
   }
 
   public void addRuolo(java.lang.String ruolo) {
@@ -263,14 +231,8 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
   }
 
 
-  @XmlTransient
-  private String oldNomeForUpdate;
-
   @javax.xml.bind.annotation.XmlTransient
-  protected String oldNomeSoggettoProprietarioForUpdate;
-
-  @javax.xml.bind.annotation.XmlTransient
-  protected String oldTipoSoggettoProprietarioForUpdate;
+  protected IDServizioApplicativo oldIDServizioApplicativoForUpdate;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="ruolo",required=true,nillable=false)

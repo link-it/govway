@@ -42,6 +42,7 @@ import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -518,12 +519,11 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 				IDServizio servizio = null;
 				if(msgDiagCorrelazione.getInformazioniProtocollo()!=null){
 					fruitore = msgDiagCorrelazione.getInformazioniProtocollo().getFruitore();
-					servizio = new IDServizio();
+					servizio = IDServizioFactory.getInstance().getIDServizioFromValues(msgDiagCorrelazione.getInformazioniProtocollo().getTipoServizio(), 
+							msgDiagCorrelazione.getInformazioniProtocollo().getServizio(), 
+							msgDiagCorrelazione.getInformazioniProtocollo().getErogatore(), 
+							msgDiagCorrelazione.getInformazioniProtocollo().getVersioneServizio());
 					servizio.setAzione(msgDiagCorrelazione.getInformazioniProtocollo().getAzione());
-					servizio.setServizio(msgDiagCorrelazione.getInformazioniProtocollo().getServizio());
-					servizio.setSoggettoErogatore(msgDiagCorrelazione.getInformazioniProtocollo().getErogatore());
-					servizio.setTipoServizio(msgDiagCorrelazione.getInformazioniProtocollo().getTipoServizio());
-					servizio.setVersioneServizio(msgDiagCorrelazione.getInformazioniProtocollo().getVersioneServizio()+"");
 				}
 				String idCorrelazioneApplicativa = msgDiagCorrelazione.getCorrelazioneApplicativa();
 				
@@ -614,16 +614,16 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 								throw new Exception("Nome soggetto erogatore non definito");
 						}else
 							throw new Exception("Soggetto erogatore non definito");
-						if(servizio.getTipoServizio()!=null)
-							JDBCUtilities.setSQLStringValue(stmt,index++, servizio.getTipoServizio());
+						if(servizio.getTipo()!=null)
+							JDBCUtilities.setSQLStringValue(stmt,index++, servizio.getTipo());
 						else
 							throw new Exception("Tipo servizio non definito");
-						if(servizio.getServizio()!=null)
-							JDBCUtilities.setSQLStringValue(stmt,index++, servizio.getServizio());
+						if(servizio.getNome()!=null)
+							JDBCUtilities.setSQLStringValue(stmt,index++, servizio.getNome());
 						else
 							throw new Exception("Nome servizio non definito");
-						if(servizio.getVersioneServizio()!=null)
-							stmt.setInt(index++, Integer.parseInt(servizio.getVersioneServizio()));
+						if(servizio.getVersione()!=null)
+							stmt.setInt(index++, servizio.getVersione());
 						else
 							throw new Exception("Versione servizio non definita");
 						JDBCUtilities.setSQLStringValue(stmt,index++, servizio.getAzione());
@@ -693,16 +693,16 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 								throw new Exception("Nome soggetto erogatore non definito");
 						}else
 							throw new Exception("Soggetto erogatore non definito");
-						if(servizio.getTipoServizio()!=null)
-							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo_servizio", getSQLStringValue(servizio.getTipoServizio()), InsertAndGeneratedKeyJDBCType.STRING) );
+						if(servizio.getTipo()!=null)
+							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("tipo_servizio", getSQLStringValue(servizio.getTipo()), InsertAndGeneratedKeyJDBCType.STRING) );
 						else
 							throw new Exception("Tipo servizio non definito");
-						if(servizio.getServizio()!=null)
-							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("servizio", getSQLStringValue(servizio.getServizio()), InsertAndGeneratedKeyJDBCType.STRING) );
+						if(servizio.getNome()!=null)
+							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("servizio", getSQLStringValue(servizio.getNome()), InsertAndGeneratedKeyJDBCType.STRING) );
 						else
 							throw new Exception("Nome servizio non definito");
-						if(servizio.getVersioneServizio()!=null)
-							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("versione_servizio", Integer.parseInt(servizio.getVersioneServizio()), InsertAndGeneratedKeyJDBCType.INT) );
+						if(servizio.getVersione()!=null)
+							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("versione_servizio", servizio.getVersione(), InsertAndGeneratedKeyJDBCType.INT) );
 						else
 							throw new Exception("Versione servizio non definita");
 						listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("azione", getSQLStringValue(servizio.getAzione()), InsertAndGeneratedKeyJDBCType.STRING) );

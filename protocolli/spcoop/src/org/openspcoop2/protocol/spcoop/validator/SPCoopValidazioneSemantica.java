@@ -27,6 +27,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
@@ -86,6 +87,8 @@ public class SPCoopValidazioneSemantica extends BasicComponentFactory implements
 	private String servizioCorrelato;
 	/** Tipo ServizioCorrelato */
 	private String tipoServizioCorrelato;
+	/** Versione ServizioCorrelato */
+	private Integer versioneServizioCorrelato = 1; // in spcoop è fissa
 	/** Azione Correlata */
 	private String azioneCorrelata;
 	/** Reader Registro */
@@ -241,7 +244,10 @@ public class SPCoopValidazioneSemantica extends BasicComponentFactory implements
 					IDSoggetto idSoggettoErogatore = new IDSoggetto();
 					this.impostaFruitoreErogatoreRealiServizio(idSoggettoFruitore,idSoggettoErogatore,tipoBusta);
 					
-					IDServizio idServizio = new IDServizio(idSoggettoErogatore,this.busta.getTipoServizio(),this.busta.getServizio(),this.busta.getAzione());
+					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(this.busta.getTipoServizio(),this.busta.getServizio(), 
+							idSoggettoErogatore, 
+							this.busta.getVersioneServizio());
+					idServizio.setAzione(this.busta.getAzione());
 					try{
 						this.infoServizio = this.registroServiziReader.getInfoServizio(idSoggettoFruitore,idServizio,null,false);//null=allRegistri
 					}catch(DriverRegistroServiziNotFound dnot){}
@@ -528,9 +534,10 @@ public class SPCoopValidazioneSemantica extends BasicComponentFactory implements
 		// 1) Validazione Servizio
 		RisultatoValidazione validazione = null;
 		if(this.busta.getServizio()!=null && this.busta.getTipoServizio()!=null){
-			IDServizio idService = 
-				new IDServizio(idSoggettoErogatore,this.busta.getTipoServizio(),
-						this.busta.getServizio(),this.busta.getAzione());
+			IDServizio idService = IDServizioFactory.getInstance().getIDServizioFromValues(this.busta.getTipoServizio(),this.busta.getServizio(), 
+					idSoggettoErogatore, 
+					this.busta.getVersioneServizio());
+			idService.setAzione(this.busta.getAzione());
 			try{
 				validazione = this.registroServiziReader.validaServizio(idSoggettoFruitore,idService,null); //null=allRegistri	
 			}catch(Exception e){
@@ -554,6 +561,7 @@ public class SPCoopValidazioneSemantica extends BasicComponentFactory implements
 			}
 			this.servizioCorrelato = validazione.getServizioCorrelato();
 			this.tipoServizioCorrelato = validazione.getTipoServizioCorrelato();
+			this.versioneServizioCorrelato = validazione.getVersioneServizioCorrelato();
 			this.azioneCorrelata = validazione.getAzioneCorrelata();
 		}
 
@@ -1172,7 +1180,8 @@ public class SPCoopValidazioneSemantica extends BasicComponentFactory implements
 		this.registroServiziReader = RegistroServiziManager.getInstance(state);
 		this.validazioneIDEGovCompleta = proprietaValidazione.isValidazioneIDCompleta();
 		this.valida(proprietaValidazione, tipoBusta, proprietaValidazione.getVersioneProtocollo());
-		ValidazioneSemanticaResult result = new ValidazioneSemanticaResult(this.erroriValidazione, this.erroriProcessamento, this.servizioCorrelato, this.tipoServizioCorrelato, this.infoServizio);
+		ValidazioneSemanticaResult result = new ValidazioneSemanticaResult(this.erroriValidazione, this.erroriProcessamento, 
+				this.servizioCorrelato, this.tipoServizioCorrelato, this.versioneServizioCorrelato, this.infoServizio);
 		return result;
 	}
 

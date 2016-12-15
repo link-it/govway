@@ -56,7 +56,7 @@ CREATE TABLE accordi
 	superuser VARCHAR(255),
 	-- id del soggetto referente
 	id_referente BIGINT DEFAULT 0,
-	versione VARCHAR(255) DEFAULT '',
+	versione INT DEFAULT 1,
 	-- 1/0 (vero/falso) indica se questo accordo di servizio e' utilizzabile in mancanza di azioni associate
 	utilizzo_senza_azione INT DEFAULT 1,
 	-- 1/0 (true/false) indica se il soggetto e' privato/pubblico
@@ -205,7 +205,7 @@ CREATE TABLE accordi_cooperazione
 	descrizione VARCHAR(255),
 	-- id del soggetto referente
 	id_referente BIGINT DEFAULT 0,
-	versione VARCHAR(255) DEFAULT '',
+	versione INT DEFAULT 1,
 	stato VARCHAR(255) NOT NULL DEFAULT 'finale',
 	-- 1/0 (true/false) indica se il soggetto e' privato/pubblico
 	privato INT DEFAULT 0,
@@ -216,7 +216,7 @@ CREATE TABLE accordi_cooperazione
 	-- check constraints
 	CONSTRAINT chk_accordi_cooperazione_1 CHECK (stato IN ('finale','bozza','operativo')),
 	-- unique constraints
-	CONSTRAINT unique_accordi_cooperazione_1 UNIQUE (nome,versione),
+	CONSTRAINT unique_accordi_cooperazione_1 UNIQUE (nome,id_referente,versione),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_accordi_cooperazione PRIMARY KEY (id)
 );
@@ -253,6 +253,7 @@ CREATE TABLE servizi
 (
 	nome_servizio VARCHAR(255) NOT NULL,
 	tipo_servizio VARCHAR(255) NOT NULL,
+	versione_servizio INT DEFAULT 1,
 	id_soggetto BIGINT NOT NULL,
 	id_accordo BIGINT NOT NULL,
 	servizio_correlato VARCHAR(255),
@@ -267,15 +268,12 @@ CREATE TABLE servizi
 	profilo VARCHAR(255),
 	descrizione VARCHAR(255),
 	stato VARCHAR(255) NOT NULL DEFAULT 'finale',
-	-- identificativi accordo di servizio parte specifica
-	aps_nome VARCHAR(255),
-	aps_versione VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_servizi') NOT NULL,
 	-- check constraints
 	CONSTRAINT chk_servizi_1 CHECK (stato IN ('finale','bozza','operativo')),
 	-- unique constraints
-	CONSTRAINT unique_servizi_1 UNIQUE (nome_servizio,tipo_servizio,id_soggetto),
+	CONSTRAINT unique_servizi_1 UNIQUE (id_soggetto,tipo_servizio,nome_servizio,versione_servizio),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_servizi_1 FOREIGN KEY (id_connettore) REFERENCES connettori(id),
 	CONSTRAINT fk_servizi_2 FOREIGN KEY (id_soggetto) REFERENCES soggetti(id),
@@ -283,8 +281,6 @@ CREATE TABLE servizi
 	CONSTRAINT pk_servizi PRIMARY KEY (id)
 );
 
--- index
-CREATE INDEX INDEX_APS ON servizi (aps_nome,aps_versione,id_soggetto);
 
 
 

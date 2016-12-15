@@ -21,6 +21,14 @@
 
 package org.openspcoop2.protocol.spcoop.archive;
 
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
+import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopContext;
+import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopUtilities;
+
 import it.gov.spcoop.sica.dao.AccordoServizioComposto;
 import it.gov.spcoop.sica.dao.AccordoServizioParteComune;
 import it.gov.spcoop.sica.dao.AccordoServizioParteSpecifica;
@@ -28,16 +36,6 @@ import it.gov.spcoop.sica.manifest.ElencoPartecipanti;
 import it.gov.spcoop.sica.manifest.ElencoServiziComponenti;
 import it.gov.spcoop.sica.manifest.ElencoServiziComposti;
 import it.gov.spcoop.sica.manifest.driver.TipiDocumentoConversazione;
-
-import org.openspcoop2.core.id.IDAccordo;
-import org.openspcoop2.core.id.IDServizio;
-import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
-import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
-import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
-import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopContext;
-import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopUtilities;
 
 /**
  * SPCoopArchiveImportUtils 
@@ -105,20 +103,8 @@ public class SPCoopArchiveImportUtils {
 			ElencoServiziComponenti sComponenti = asc.getManifesto().getServiziComponenti();
 			for(int i=0; i<sComponenti.sizeServizioComponenteList(); i++){
 				String servComponente = sComponenti.getServizioComponente(i);
-				IDAccordo idAccordoServizioParteSpecifica = null;
-				try{
-					idAccordoServizioParteSpecifica = SICAtoOpenSPCoopUtilities.idAccordoServizioParteSpecifica_sicaToOpenspcoop(servComponente, contextSICA);
-					IDServizio idServizio = registryReader.convertToIDServizio(idAccordoServizioParteSpecifica);
-					contextSICA.addMappingServizioToUriAPS(idServizio, idAccordoServizioParteSpecifica);
-				}catch(RegistryNotFound dNotF){
-					if(idAccordoServizioParteSpecifica!=null){
-						throw new ProtocolException("L'accordo di servizio parte specifica ["+IDAccordoFactory.getInstance().getUriFromIDAccordo(idAccordoServizioParteSpecifica)
-								+"] non esiste (servizio componente: "+servComponente+").");
-					}
-					else{
-						throw new ProtocolException("L'accordo di servizio parte specifica relativo al servizio componente ("+servComponente+") non esiste");
-					}
-				}
+				IDServizio idAccordoServizioParteSpecifica = SICAtoOpenSPCoopUtilities.idAccordoServizioParteSpecifica_sicaToOpenspcoop(registryReader, servComponente, contextSICA);
+				contextSICA.addMappingServizioToUriAPS(registryReader, idAccordoServizioParteSpecifica);
 			}
 		}
 	}

@@ -236,15 +236,6 @@ public interface IDriverRegistroServiziCRUD {
 	/**
      * Verifica l'esistenza di un accordoServizioParteSpecifica registrato.
      *
-	 * @param idAccordo Identificativo dell'accordo di cooperazione
-     * @return true se il servizio esiste, false altrimenti
-	 * @throws DriverRegistroServiziException TODO
-     */    
-    public boolean existsAccordoServizioParteSpecifica(IDAccordo idAccordo) throws DriverRegistroServiziException;
-	
-	/**
-     * Verifica l'esistenza di un accordoServizioParteSpecifica registrato.
-     *
 	 * @param idServizio Identificativo del servizio
      * @return true se il servizio esiste, false altrimenti
 	 * @throws DriverRegistroServiziException TODO

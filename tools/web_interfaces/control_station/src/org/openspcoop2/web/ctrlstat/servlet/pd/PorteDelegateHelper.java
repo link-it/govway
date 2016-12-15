@@ -92,7 +92,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			String[] soggettiList, String[] soggettiListLabel, String sp,
 			String tiposp, String patternErogatore, String modeservizio,
 			String servid, String[] serviziList, String[] serviziListLabel,
-			String servizio, String tiposervizio, String patternServizio,
+			String servizio, String tiposervizio,String versioneServizio, String patternServizio,
 			String modeaz, String azid, String[] azioniListLabel,
 			String[] azioniList, String azione, String patternAzione,
 			long totAzioni,  String stateless, String localForward, String ricsim,
@@ -392,7 +392,6 @@ public class PorteDelegateHelper extends ConsoleHelper {
 					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
 					de.setValue(servizio);
 				}
-	
 				if (!modeservizio.equals(IdentificazioneView.INPUT_BASED.toString())){
 					de.setType(DataElementType.TEXT_EDIT);
 					de.setRequired(true);
@@ -400,6 +399,15 @@ public class PorteDelegateHelper extends ConsoleHelper {
 					de.setType(DataElementType.HIDDEN);
 				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SERVIZIO);
 				de.setSize(alternativeSize);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_VERSIONE_SERVIZIO);
+				de.setValue(tiposervizio);
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VERSIONE_SERVIZIO);
+				de.setSize(alternativeSize);
+				de.setRequired(true);
 				dati.addElement(de);
 			}
 		}

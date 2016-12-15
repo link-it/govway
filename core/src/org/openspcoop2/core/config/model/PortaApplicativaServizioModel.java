@@ -43,6 +43,7 @@ public class PortaApplicativaServizioModel extends AbstractModel<PortaApplicativ
 	
 		this.TIPO = new Field("tipo",java.lang.String.class,"porta-applicativa-servizio",PortaApplicativaServizio.class);
 		this.NOME = new Field("nome",java.lang.String.class,"porta-applicativa-servizio",PortaApplicativaServizio.class);
+		this.VERSIONE = new Field("versione",java.lang.Integer.class,"porta-applicativa-servizio",PortaApplicativaServizio.class);
 	
 	}
 	
@@ -52,6 +53,7 @@ public class PortaApplicativaServizioModel extends AbstractModel<PortaApplicativ
 	
 		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"porta-applicativa-servizio",PortaApplicativaServizio.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"porta-applicativa-servizio",PortaApplicativaServizio.class);
+		this.VERSIONE = new ComplexField(father,"versione",java.lang.Integer.class,"porta-applicativa-servizio",PortaApplicativaServizio.class);
 	
 	}
 	
@@ -60,6 +62,8 @@ public class PortaApplicativaServizioModel extends AbstractModel<PortaApplicativ
 	public IField TIPO = null;
 	 
 	public IField NOME = null;
+	 
+	public IField VERSIONE = null;
 	 
 
 	@Override

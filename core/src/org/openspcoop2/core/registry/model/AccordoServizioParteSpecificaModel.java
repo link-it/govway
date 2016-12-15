@@ -41,7 +41,7 @@ public class AccordoServizioParteSpecificaModel extends AbstractModel<AccordoSer
 	
 		super();
 	
-		this.SERVIZIO = new org.openspcoop2.core.registry.model.ServizioModel(new Field("servizio",org.openspcoop2.core.registry.Servizio.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class));
+		this.CONFIGURAZIONE_SERVIZIO = new org.openspcoop2.core.registry.model.ConfigurazioneServizioModel(new Field("configurazione-servizio",org.openspcoop2.core.registry.ConfigurazioneServizio.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class));
 		this.FRUITORE = new org.openspcoop2.core.registry.model.FruitoreModel(new Field("fruitore",org.openspcoop2.core.registry.Fruitore.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class));
 		this.ALLEGATO = new org.openspcoop2.core.registry.model.DocumentoModel(new Field("allegato",org.openspcoop2.core.registry.Documento.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class));
 		this.SPECIFICA_SEMIFORMALE = new org.openspcoop2.core.registry.model.DocumentoModel(new Field("specifica-semiformale",org.openspcoop2.core.registry.Documento.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class));
@@ -55,9 +55,13 @@ public class AccordoServizioParteSpecificaModel extends AbstractModel<AccordoSer
 		this.ID_SOGGETTO = new Field("id-soggetto",java.lang.Long.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.BYTE_WSDL_IMPLEMENTATIVO_EROGATORE = new Field("byte-wsdl-implementativo-erogatore",byte[].class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.BYTE_WSDL_IMPLEMENTATIVO_FRUITORE = new Field("byte-wsdl-implementativo-fruitore",byte[].class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
+		this.TIPO_SOGGETTO_EROGATORE = new Field("tipo-soggetto-erogatore",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
+		this.NOME_SOGGETTO_EROGATORE = new Field("nome-soggetto-erogatore",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
+		this.TIPO = new Field("tipo",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.NOME = new Field("nome",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
-		this.VERSIONE = new Field("versione",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
+		this.VERSIONE = new Field("versione",java.lang.Integer.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.ACCORDO_SERVIZIO_PARTE_COMUNE = new Field("accordo-servizio-parte-comune",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
+		this.TIPOLOGIA_SERVIZIO = new Field("tipologia-servizio",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.PORT_TYPE = new Field("port-type",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.WSDL_IMPLEMENTATIVO_EROGATORE = new Field("wsdl-implementativo-erogatore",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.WSDL_IMPLEMENTATIVO_FRUITORE = new Field("wsdl-implementativo-fruitore",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
@@ -76,7 +80,7 @@ public class AccordoServizioParteSpecificaModel extends AbstractModel<AccordoSer
 	
 		super(father);
 	
-		this.SERVIZIO = new org.openspcoop2.core.registry.model.ServizioModel(new ComplexField(father,"servizio",org.openspcoop2.core.registry.Servizio.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class));
+		this.CONFIGURAZIONE_SERVIZIO = new org.openspcoop2.core.registry.model.ConfigurazioneServizioModel(new ComplexField(father,"configurazione-servizio",org.openspcoop2.core.registry.ConfigurazioneServizio.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class));
 		this.FRUITORE = new org.openspcoop2.core.registry.model.FruitoreModel(new ComplexField(father,"fruitore",org.openspcoop2.core.registry.Fruitore.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class));
 		this.ALLEGATO = new org.openspcoop2.core.registry.model.DocumentoModel(new ComplexField(father,"allegato",org.openspcoop2.core.registry.Documento.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class));
 		this.SPECIFICA_SEMIFORMALE = new org.openspcoop2.core.registry.model.DocumentoModel(new ComplexField(father,"specifica-semiformale",org.openspcoop2.core.registry.Documento.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class));
@@ -90,9 +94,13 @@ public class AccordoServizioParteSpecificaModel extends AbstractModel<AccordoSer
 		this.ID_SOGGETTO = new ComplexField(father,"id-soggetto",java.lang.Long.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.BYTE_WSDL_IMPLEMENTATIVO_EROGATORE = new ComplexField(father,"byte-wsdl-implementativo-erogatore",byte[].class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.BYTE_WSDL_IMPLEMENTATIVO_FRUITORE = new ComplexField(father,"byte-wsdl-implementativo-fruitore",byte[].class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
+		this.TIPO_SOGGETTO_EROGATORE = new ComplexField(father,"tipo-soggetto-erogatore",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
+		this.NOME_SOGGETTO_EROGATORE = new ComplexField(father,"nome-soggetto-erogatore",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
+		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
-		this.VERSIONE = new ComplexField(father,"versione",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
+		this.VERSIONE = new ComplexField(father,"versione",java.lang.Integer.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.ACCORDO_SERVIZIO_PARTE_COMUNE = new ComplexField(father,"accordo-servizio-parte-comune",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
+		this.TIPOLOGIA_SERVIZIO = new ComplexField(father,"tipologia-servizio",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.PORT_TYPE = new ComplexField(father,"port-type",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.WSDL_IMPLEMENTATIVO_EROGATORE = new ComplexField(father,"wsdl-implementativo-erogatore",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
 		this.WSDL_IMPLEMENTATIVO_FRUITORE = new ComplexField(father,"wsdl-implementativo-fruitore",java.lang.String.class,"accordo-servizio-parte-specifica",AccordoServizioParteSpecifica.class);
@@ -109,7 +117,7 @@ public class AccordoServizioParteSpecificaModel extends AbstractModel<AccordoSer
 	
 	
 
-	public org.openspcoop2.core.registry.model.ServizioModel SERVIZIO = null;
+	public org.openspcoop2.core.registry.model.ConfigurazioneServizioModel CONFIGURAZIONE_SERVIZIO = null;
 	 
 	public org.openspcoop2.core.registry.model.FruitoreModel FRUITORE = null;
 	 
@@ -137,11 +145,19 @@ public class AccordoServizioParteSpecificaModel extends AbstractModel<AccordoSer
 	 
 	public IField BYTE_WSDL_IMPLEMENTATIVO_FRUITORE = null;
 	 
+	public IField TIPO_SOGGETTO_EROGATORE = null;
+	 
+	public IField NOME_SOGGETTO_EROGATORE = null;
+	 
+	public IField TIPO = null;
+	 
 	public IField NOME = null;
 	 
 	public IField VERSIONE = null;
 	 
 	public IField ACCORDO_SERVIZIO_PARTE_COMUNE = null;
+	 
+	public IField TIPOLOGIA_SERVIZIO = null;
 	 
 	public IField PORT_TYPE = null;
 	 

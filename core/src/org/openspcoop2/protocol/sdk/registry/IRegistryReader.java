@@ -84,15 +84,9 @@ public interface IRegistryReader {
 	
 	// ACCORDI PARTE SPECIFICA
 	
-	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDAccordo idAccordo) throws RegistryNotFound;
-	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDAccordo idAccordo,boolean readAllegati) throws RegistryNotFound;
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDServizio idServizio) throws RegistryNotFound;
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDServizio idServizio,boolean readAllegati) throws RegistryNotFound;
 	public List<IDServizio> findIdAccordiServizioParteSpecifica(FiltroRicercaServizi filtro) throws RegistryNotFound; 
-	
-	public IDServizio convertToIDServizio(IDAccordo idAccordoServizioParteSpecifica) throws RegistryNotFound;
-	
-	public IDAccordo convertToIDAccordo(IDServizio idServizio) throws RegistryNotFound;
 	
 	
 	// ELEMENTI INTERNI ALL'ACCORDO PARTE SPECIFICA

@@ -21,11 +21,9 @@
 
 package org.openspcoop2.core.registry.driver;
 
-import org.openspcoop2.core.commons.AccordiUtils;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
-import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 
 /**
  * IDAccordoFactory
@@ -54,15 +52,11 @@ public class IDAccordoFactory {
 	
 	
 	@SuppressWarnings("deprecation")
-	private IDAccordo build(String nome,IDSoggetto soggettoReferente,String versione){
+	private IDAccordo build(String nome,IDSoggetto soggettoReferente,int versione){
 		IDAccordo idAccordo = new IDAccordo();
 		idAccordo.setNome(nome);
 		idAccordo.setSoggettoReferente(soggettoReferente);
-		String v = null;
-		if(versione!=null && !("".equals(versione))){
-			v = versione;
-		}
-		idAccordo.setVersione(v);
+		idAccordo.setVersione(versione);
 		return idAccordo;
 	}
 	
@@ -82,14 +76,10 @@ public class IDAccordoFactory {
 				throw new DriverRegistroServiziException("Nome soggetto referente non fornito?");
 			}
 		}
-		if(soggettoReferente!=null && idAccordo.getVersione()!=null){
+		if(soggettoReferente!=null){
 			return soggettoReferente.toString() + ":" + idAccordo.getNome() + ":" + idAccordo.getVersione();
-		}else if(idAccordo.getVersione()!=null){
-			return idAccordo.getNome() + ":" + idAccordo.getVersione();
-		}else if(soggettoReferente!=null){
-			return soggettoReferente.toString() + ":" + idAccordo.getNome();
 		}else{
-			return idAccordo.getNome();
+			return idAccordo.getNome() + ":" + idAccordo.getVersione();
 		}
 	}
 	
@@ -100,16 +90,8 @@ public class IDAccordoFactory {
 		IDAccordo idAccordo = this.build(accordo.getNome(),BeanUtilities.getSoggettoReferenteID(accordo.getSoggettoReferente()),accordo.getVersione());
 		return this.getUriFromIDAccordo(idAccordo);
 	}
-	public String getUriFromAccordo(AccordoServizioParteSpecifica accordo)  throws DriverRegistroServiziException{
-		if(accordo==null){
-			throw new DriverRegistroServiziException("Accordo non fornito");
-		}
-		IDAccordo idAccordo = this.build(accordo.getNome(),BeanUtilities.getSoggettoErogatore(accordo.getServizio()),
-				accordo.getVersione());
-		return this.getUriFromIDAccordo(idAccordo);
-	}
 	
-	public String getUriFromValues(String nomeAS,String tipoSoggettoReferente,String nomeSoggettoReferente,String ver)  throws DriverRegistroServiziException{
+	public String getUriFromValues(String nomeAS,String tipoSoggettoReferente,String nomeSoggettoReferente,int ver)  throws DriverRegistroServiziException{
 		if(nomeAS==null){
 			throw new DriverRegistroServiziException("Accordo non fornito");
 		}
@@ -120,7 +102,7 @@ public class IDAccordoFactory {
 		return this.getUriFromIDAccordo(idAccordo);
 	}
 	
-	public String getUriFromValues(String nomeAS,IDSoggetto soggettoReferente,String ver)  throws DriverRegistroServiziException{
+	public String getUriFromValues(String nomeAS,IDSoggetto soggettoReferente,int ver)  throws DriverRegistroServiziException{
 		if(nomeAS==null){
 			throw new DriverRegistroServiziException("Accordo non fornito");
 		}
@@ -136,7 +118,6 @@ public class IDAccordoFactory {
 		
 			// possibili casi:
 			// nomeAccordo
-			// tipoSoggettoReferente/nomeSoggettoReferente:nomeAccordo
 			// nomeAccordo:versione
 			// tipoSoggettoReferente/nomeSoggettoReferente:nomeAccordo:versione
 			
@@ -152,12 +133,12 @@ public class IDAccordoFactory {
 			if(secondoMarcatore>0){
 				terzoMarcatore = uriAccordo.indexOf(":",secondoMarcatore+1);
 				if(terzoMarcatore>0){
-					throw new Exception("sintassi non corretta, possibili usi: nomeAccordo  tipoSoggettoReferente/nomeSoggettoReferente:nomeAccordo  nomeAccordo:versione  tipoSoggettoReferente/nomeSoggettoReferente:nomeAccordo:versione");
+					throw new Exception("sintassi non corretta, possibili usi: nomeAccordo  nomeAccordo:versione  tipoSoggettoReferente/nomeSoggettoReferente:nomeAccordo:versione");
 				}
 			}
 			
 			if(primoMarcatore<0){
-				IDAccordo idAccordo = this.build(uriAccordo,null,null);
+				IDAccordo idAccordo = this.build(uriAccordo,null,1);
 				return idAccordo;
 			}
 			
@@ -169,13 +150,20 @@ public class IDAccordoFactory {
 				tmp2 = uriAccordo.substring((primoMarcatore+1), secondoMarcatore); // nome accordo
 				tmp3 = uriAccordo.substring((secondoMarcatore+1),uriAccordo.length()); // versione
 				
+				int versione = 1;
+				try{
+					versione = Integer.parseInt(tmp3);
+				}catch(Exception e){
+					throw new Exception("sintassi della versione non corretta: "+e.getMessage(),e);
+				}
+				
 				int divisorioSoggettoReferente = tmp1.indexOf("/");
 				if(divisorioSoggettoReferente<=0){
 					throw new Exception("sintassi del soggetto referente non corretta, l'uri deve essere definita con la seguente forma: tipoSoggettoReferente/nomeSoggettoReferente:nomeAccordo:versione");
 				}
 				String tipoSoggettoReferente = tmp1.substring(0,divisorioSoggettoReferente);
 				String nomeSoggettoReferente = tmp1.substring((divisorioSoggettoReferente+1),tmp1.length());
-				IDAccordo idAccordo = this.build(tmp2,new IDSoggetto(tipoSoggettoReferente,nomeSoggettoReferente),tmp3);
+				IDAccordo idAccordo = this.build(tmp2,new IDSoggetto(tipoSoggettoReferente,nomeSoggettoReferente),versione);
 				return idAccordo;
 			}else {
 				tmp1 = uriAccordo.substring(0, primoMarcatore);
@@ -184,7 +172,15 @@ public class IDAccordoFactory {
 				int divisorioSoggettoReferente = tmp1.indexOf("/");
 				if(divisorioSoggettoReferente<0){
 					// nomeAccordo:versione
-					IDAccordo idAccordo = this.build(tmp1,null,tmp2);
+					
+					int versione = 1;
+					try{
+						versione = Integer.parseInt(tmp2);
+					}catch(Exception e){
+						throw new Exception("sintassi della versione non corretta: "+e.getMessage(),e);
+					}
+					
+					IDAccordo idAccordo = this.build(tmp1,null,versione);
 					return idAccordo;
 				}else if(divisorioSoggettoReferente==0){
 					throw new Exception("sintassi non corretta, possibili usi: nomeAccordo  tipoSoggettoReferente/nomeSoggettoReferente:nomeAccordo  nomeAccordo:versione  tipoSoggettoReferente/nomeSoggettoReferente:nomeAccordo:versione");
@@ -192,7 +188,7 @@ public class IDAccordoFactory {
 					// tipoSoggettoReferente/nomeSoggettoReferente:nomeAccordo
 					String tipoSoggettoReferente = tmp1.substring(0,divisorioSoggettoReferente);
 					String nomeSoggettoReferente = tmp1.substring((divisorioSoggettoReferente+1),tmp1.length());
-					IDAccordo idAccordo = this.build(tmp2,new IDSoggetto(tipoSoggettoReferente,nomeSoggettoReferente),null);
+					IDAccordo idAccordo = this.build(tmp2,new IDSoggetto(tipoSoggettoReferente,nomeSoggettoReferente),1);
 					return idAccordo;
 				}
 			}
@@ -209,17 +205,8 @@ public class IDAccordoFactory {
 		IDAccordo idAccordo = this.build(accordo.getNome(),BeanUtilities.getSoggettoReferenteID(accordo.getSoggettoReferente()),accordo.getVersione());
 		return idAccordo;
 	}
-	public IDAccordo getIDAccordoFromAccordo(AccordoServizioParteSpecifica accordo) throws DriverRegistroServiziException{
-		if(accordo==null){
-			throw new DriverRegistroServiziException("Accordo non fornito");
-		}
-		IDAccordo idAccordo = this.build(accordo.getNome(),
-				new IDSoggetto(accordo.getServizio().getTipoSoggettoErogatore(),accordo.getServizio().getNomeSoggettoErogatore()),
-				accordo.getVersione());
-		return idAccordo;
-	}
 	
-	public IDAccordo getIDAccordoFromValues(String nomeAS,String tipoSoggettoReferente,String nomeSoggettoReferente,String ver) throws DriverRegistroServiziException{
+	public IDAccordo getIDAccordoFromValues(String nomeAS,String tipoSoggettoReferente,String nomeSoggettoReferente,int ver) throws DriverRegistroServiziException{
 		if(nomeAS==null){
 			throw new DriverRegistroServiziException("Accordo non fornito");
 		}
@@ -229,21 +216,17 @@ public class IDAccordoFactory {
 		IDAccordo idAccordo = this.build(nomeAS,soggettoReferente,ver);
 		return idAccordo;
 	}
-	public IDAccordo getIDAccordoFromValuesWithoutCheck(String nomeAS,String tipoSoggettoReferente,String nomeSoggettoReferente,String ver) throws DriverRegistroServiziException{
+	public IDAccordo getIDAccordoFromValuesWithoutCheck(String nomeAS,String tipoSoggettoReferente,String nomeSoggettoReferente,int ver) throws DriverRegistroServiziException{
 		IDSoggetto soggettoReferente = new IDSoggetto(tipoSoggettoReferente,nomeSoggettoReferente);
 		IDAccordo idAccordo = this.build(nomeAS,soggettoReferente,ver);
 		return idAccordo;
 	}
-	public IDAccordo getIDAccordoFromValues(String nomeAS,IDSoggetto soggettoReferente,String ver) throws DriverRegistroServiziException{
+	public IDAccordo getIDAccordoFromValues(String nomeAS,IDSoggetto soggettoReferente,int ver) throws DriverRegistroServiziException{
 		if(soggettoReferente==null){
 			return this.getIDAccordoFromValues(nomeAS,null,null,ver);
 		}else{
 			return this.getIDAccordoFromValues(nomeAS,soggettoReferente.getTipo(),soggettoReferente.getNome(),ver);
 		}
-	}
-	
-	public boolean versioneNonDefinita(String value){
-		return AccordiUtils.versioneNonDefinita(value);
 	}
 	
 }

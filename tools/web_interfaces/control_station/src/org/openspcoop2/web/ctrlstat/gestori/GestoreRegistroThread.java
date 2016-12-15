@@ -622,25 +622,17 @@ public class GestoreRegistroThread extends GestoreGeneral {
 
 						AccordoServizioParteSpecifica accordoServizioParteSpecifica = null;
 						
-						@SuppressWarnings("unused")
-						String tipoServ = operation.getParameterValue(OperationsParameter.TIPO_SERVIZIO.getNome());
-						@SuppressWarnings("unused")
-						String nomeServ = operation.getParameterValue(OperationsParameter.NOME_SERVIZIO.getNome());
+						String tipoServizio = operation.getParameterValue(OperationsParameter.TIPO_SERVIZIO.getNome());
+						String nomeServizio = operation.getParameterValue(OperationsParameter.NOME_SERVIZIO.getNome());
 						String tipoSogg = operation.getParameterValue(OperationsParameter.TIPO_SOGGETTO.getNome());
 						String nomeSogg = operation.getParameterValue(OperationsParameter.NOME_SOGGETTO.getNome());
+						String versioneServizio = operation.getParameterValue(OperationsParameter.VERSIONE_ACCORDO.getNome());
 						
-						String nomeAccordo = operation.getParameterValue(OperationsParameter.NOME_ACCORDO.getNome());
-						String versioneAccordo = operation.getParameterValue(OperationsParameter.VERSIONE_ACCORDO.getNome());
-						
-						@SuppressWarnings("unused")
-						String oldtipoServizio = operation.getParameterValue(OperationsParameter.OLD_TIPO_SERVIZIO.getNome());
-						@SuppressWarnings("unused")
+						String oldTipoServizio = operation.getParameterValue(OperationsParameter.OLD_TIPO_SERVIZIO.getNome());
 						String oldNomeServizio = operation.getParameterValue(OperationsParameter.OLD_NOME_SERVIZIO.getNome());
 						String oldTipoSogg = operation.getParameterValue(OperationsParameter.OLD_TIPO_SOGGETTO.getNome());
 						String oldNomeSogg = operation.getParameterValue(OperationsParameter.OLD_NOME_SOGGETTO.getNome());
-						
-						String oldnomeAccordo = operation.getParameterValue(OperationsParameter.OLD_NOME_ACCORDO.getNome());
-						String oldversioneAccordo = operation.getParameterValue(OperationsParameter.OLD_VERSIONE_ACCORDO.getNome());
+						String oldVersioneServizio = operation.getParameterValue(OperationsParameter.OLD_VERSIONE_ACCORDO.getNome());
 
 						// CREAZIONE/MODIFICA
 						if (
@@ -681,16 +673,21 @@ public class GestoreRegistroThread extends GestoreGeneral {
 								} else if (TipoOggettoDaSmistare.servizio.equals(tipoOggettoDaSmistare) && Operazione.change.equals(tipoOperazioneCRUD)) {
 
 									IdAccordoServizioParteSpecifica idAccordoServizioParteSpecifica = new IdAccordoServizioParteSpecifica();
-									if(oldnomeAccordo!=null){
-										idAccordoServizioParteSpecifica.setNome(oldnomeAccordo);
+									if(oldTipoServizio!=null){
+										idAccordoServizioParteSpecifica.setNome(oldTipoServizio);
 									}else{
-										idAccordoServizioParteSpecifica.setNome(nomeAccordo);
+										idAccordoServizioParteSpecifica.setNome(tipoServizio);
 									}
-									if(oldversioneAccordo!=null){
-										idAccordoServizioParteSpecifica.setVersione(oldversioneAccordo);
+									if(oldNomeServizio!=null){
+										idAccordoServizioParteSpecifica.setNome(oldNomeServizio);
+									}else{
+										idAccordoServizioParteSpecifica.setNome(nomeServizio);
+									}
+									if(oldVersioneServizio!=null){
+										idAccordoServizioParteSpecifica.setVersione(Integer.parseInt(oldVersioneServizio));
 									}
 									else{
-										idAccordoServizioParteSpecifica.setVersione(versioneAccordo);
+										idAccordoServizioParteSpecifica.setVersione(Integer.parseInt(versioneServizio));
 									}
 									idAccordoServizioParteSpecifica.setSoggettoErogatore(new IdSoggetto());
 									idAccordoServizioParteSpecifica.getSoggettoErogatore().setTipo(tipoSogg);
@@ -738,8 +735,9 @@ public class GestoreRegistroThread extends GestoreGeneral {
 
 							try {
 								IdAccordoServizioParteSpecifica idAccordoServizioParteSpecifica = new IdAccordoServizioParteSpecifica();
-								idAccordoServizioParteSpecifica.setNome(nomeAccordo);
-								idAccordoServizioParteSpecifica.setVersione(versioneAccordo);
+								idAccordoServizioParteSpecifica.setTipo(tipoServizio);
+								idAccordoServizioParteSpecifica.setNome(nomeServizio);
+								idAccordoServizioParteSpecifica.setVersione(Integer.parseInt(versioneServizio));
 								idAccordoServizioParteSpecifica.setSoggettoErogatore(new IdSoggetto());
 								idAccordoServizioParteSpecifica.getSoggettoErogatore().setTipo(tipoSogg);
 								idAccordoServizioParteSpecifica.getSoggettoErogatore().setNome(nomeSogg);
@@ -758,9 +756,11 @@ public class GestoreRegistroThread extends GestoreGeneral {
 
 						String nomeAcc = operation.getParameterValue(OperationsParameter.NOME_ACCORDO.getNome());
 						String versioneAcc = operation.getParameterValue(OperationsParameter.VERSIONE_ACCORDO.getNome());
+						Integer versioneAccordoInt = Integer.parseInt(versioneAcc);
 						String tipoReferenteAcc = operation.getParameterValue(OperationsParameter.TIPO_REFERENTE.getNome());
 						String nomeReferenteAcc = operation.getParameterValue(OperationsParameter.NOME_REFERENTE.getNome());
-						IDAccordo idAccordoServizioParteComune = IDAccordoFactory.getInstance().getIDAccordoFromValues(nomeAcc,tipoReferenteAcc,nomeReferenteAcc,versioneAcc);
+						IDAccordo idAccordoServizioParteComune = 
+								IDAccordoFactory.getInstance().getIDAccordoFromValues(nomeAcc,tipoReferenteAcc,nomeReferenteAcc,versioneAccordoInt);
 
 						AccordoServizioParteComune accordoServizioParteComune = null;
 						
@@ -789,9 +789,11 @@ public class GestoreRegistroThread extends GestoreGeneral {
 									String nomeOLDAcc = operation.getParameterValue(OperationsParameter.OLD_NOME_ACCORDO.getNome());
 									if(nomeOLDAcc!=null){
 										String versioneOLDAcc = operation.getParameterValue(OperationsParameter.OLD_VERSIONE_ACCORDO.getNome());
+										Integer versioneOldAccordoInt = Integer.parseInt(versioneOLDAcc);
 										String tipoReferenteOLDAcc = operation.getParameterValue(OperationsParameter.OLD_TIPO_REFERENTE.getNome());
 										String nomeReferenteOLDAcc = operation.getParameterValue(OperationsParameter.OLD_NOME_REFERENTE.getNome());
-										IDAccordo oldIdAccordoServizioParteComune = IDAccordoFactory.getInstance().getIDAccordoFromValues(nomeOLDAcc,tipoReferenteOLDAcc,nomeReferenteOLDAcc,versioneOLDAcc);
+										IDAccordo oldIdAccordoServizioParteComune = IDAccordoFactory.getInstance().
+												getIDAccordoFromValues(nomeOLDAcc,tipoReferenteOLDAcc,nomeReferenteOLDAcc,versioneOldAccordoInt);
 										
 										if(tipoReferenteOLDAcc!=null && nomeReferenteOLDAcc!=null){
 											// Check se operazione di change che  l'operazione di modifica del soggetto non sia ancora in rollback.
@@ -843,7 +845,11 @@ public class GestoreRegistroThread extends GestoreGeneral {
 
 						String nomeAcc = operation.getParameterValue(OperationsParameter.NOME_ACCORDO.getNome());
 						String versioneAcc = operation.getParameterValue(OperationsParameter.VERSIONE_ACCORDO.getNome());
-						IDAccordoCooperazione idAccordoCooperazione = IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromValues(nomeAcc,versioneAcc);
+						Integer versioneAccordoInt = Integer.parseInt(versioneAcc);
+						String tipoReferenteAcc = operation.getParameterValue(OperationsParameter.TIPO_REFERENTE.getNome());
+						String nomeReferenteAcc = operation.getParameterValue(OperationsParameter.NOME_REFERENTE.getNome());
+						IDAccordoCooperazione idAccordoCooperazione = 
+								IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromValues(nomeAcc,tipoReferenteAcc,nomeReferenteAcc,versioneAccordoInt);
 
 						AccordoCooperazione accordoCooperazione = null;
 						
@@ -872,7 +878,25 @@ public class GestoreRegistroThread extends GestoreGeneral {
 									String nomeOLDAcc = operation.getParameterValue(OperationsParameter.OLD_NOME_ACCORDO.getNome());
 									if(nomeOLDAcc!=null){
 										String versioneOLDAcc = operation.getParameterValue(OperationsParameter.OLD_VERSIONE_ACCORDO.getNome());
-										IDAccordoCooperazione oldIdAccordoCooperazione = IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromValues(nomeOLDAcc,versioneOLDAcc);
+										Integer versioneOldAccordoInt = Integer.parseInt(versioneOLDAcc);
+										String tipoReferenteOLDAcc = operation.getParameterValue(OperationsParameter.OLD_TIPO_REFERENTE.getNome());
+										String nomeReferenteOLDAcc = operation.getParameterValue(OperationsParameter.OLD_NOME_REFERENTE.getNome());
+										IDAccordoCooperazione oldIdAccordoCooperazione = IDAccordoCooperazioneFactory.getInstance().
+												getIDAccordoFromValues(nomeOLDAcc,tipoReferenteOLDAcc,nomeReferenteOLDAcc,versioneOldAccordoInt);
+										
+										if(tipoReferenteOLDAcc!=null && nomeReferenteOLDAcc!=null){
+											// Check se operazione di change che  l'operazione di modifica del soggetto non sia ancora in rollback.
+											// Se sussite, aspetto l'operazione.
+											FilterParameter filtro = operazioneInGestione.getFilterChangeIDSoggetto(tipoReferenteAcc,nomeReferenteAcc,tipoReferenteOLDAcc,nomeReferenteOLDAcc);										
+											if(operazioneInGestione.existsOperationNotCompleted("change", operation.getHostname(), filtro)){
+												this.log.debug("ChangeServizio: operazione change ID Soggetto non ancora completata: utilizzo OLD nome");
+											}else{
+												this.log.debug("ChangeServizio: operazione change ID Soggetto completata: utilizzo nome");
+												oldIdAccordoCooperazione.getSoggettoReferente().setTipo(tipoReferenteAcc);
+												oldIdAccordoCooperazione.getSoggettoReferente().setNome(nomeReferenteAcc);
+											}
+										}
+										
 										accordoCooperazione.setOldIDAccordoForUpdate(oldIdAccordoCooperazione);
 										
 										this.accordoCooperazionePort.update(new IdAccordoCooperazione(oldIdAccordoCooperazione), accordoCooperazione);

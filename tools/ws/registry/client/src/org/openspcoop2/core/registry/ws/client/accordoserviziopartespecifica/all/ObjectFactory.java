@@ -46,7 +46,7 @@ public class ObjectFactory {
 
     private final static QName _SearchFilterAccordoServizioParteSpecifica_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "search-filter-accordo-servizio-parte-specifica");
     private final static QName _Connettore_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "connettore");
-    private final static QName _Servizio_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "servizio");
+    private final static QName _ConfigurazioneServizio_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "configurazione-servizio");
     private final static QName _WrapperIdAccordoCooperazione_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdAccordoCooperazione");
     private final static QName _WrapperIdAccordoServizioParteComune_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdAccordoServizioParteComune");
     private final static QName _WrapperIdPortaDominio_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdPortaDominio");
@@ -110,11 +110,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Servizio }
+     * Create an instance of {@link ConfigurazioneServizio }
      * 
      */
-    public Servizio createServizio() {
-        return new Servizio();
+    public ConfigurazioneServizio createConfigurazioneServizio() {
+        return new ConfigurazioneServizio();
     }
 
     /**
@@ -464,12 +464,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Servizio }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link ConfigurazioneServizio }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "servizio")
-    public JAXBElement<Servizio> createServizio(Servizio value) {
-        return new JAXBElement<Servizio>(ObjectFactory._Servizio_QNAME, Servizio.class, null, value);
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "configurazione-servizio")
+    public JAXBElement<ConfigurazioneServizio> createConfigurazioneServizio(ConfigurazioneServizio value) {
+        return new JAXBElement<ConfigurazioneServizio>(ObjectFactory._ConfigurazioneServizio_QNAME, ConfigurazioneServizio.class, null, value);
     }
 
     /**

@@ -197,6 +197,7 @@ public enum ErroriIntegrazione {
 			
 	ERRORE_438_TIPO_SERVIZIO_NOT_SUPPORTED_BY_PROTOCOL("Il tipo "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO+
 			" associato al servizio"+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_NOME+
+			" versione "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_VERSIONE+
 			" non è tra i tipi supportati dal protocollo "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PROTOCOL+" (tipi supportati: "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPI_SUPPORTATI,
 			CodiceErroreIntegrazione.CODICE_438_TIPO_SERVIZIO_NOT_SUPPORTED_BY_PROTOCOL),
 			
@@ -737,8 +738,9 @@ public enum ErroriIntegrazione {
 			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_438_TIPO_SERVIZIO_NOT_SUPPORTED_BY_PROTOCOL.name());
 		}
 		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
-		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO,servizio.getTipoServizio()));
-		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_NOME,servizio.getServizio()));
+		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPO,servizio.getTipo()));
+		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_NOME,servizio.getNome()));
+		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_VERSIONE,servizio.getVersione().intValue()+""));
 		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PROTOCOL,protocolFactory.getProtocol()));
 		try{
 			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_TIPI_SUPPORTATI,protocolFactory.createProtocolConfiguration().getTipiServizi(serviceBinding).toString()));

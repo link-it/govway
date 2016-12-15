@@ -33,7 +33,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.config.ProprietaProtocollo;
+import org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -84,7 +84,7 @@ public final class PorteApplicativeProprietaProtocolloList extends Action {
 			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 	
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
-			List<ProprietaProtocollo> lista = porteApplicativeCore.porteAppPropList(Integer.parseInt(idPorta), ricerca);
+			List<PortaApplicativaProprietaIntegrazioneProtocollo> lista = porteApplicativeCore.porteAppPropList(Integer.parseInt(idPorta), ricerca);
 	
 			porteApplicativeHelper.preparePorteAppPropList(nomePorta, ricerca, lista);
 	

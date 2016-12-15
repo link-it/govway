@@ -51,6 +51,8 @@ public class ValidazioneSemanticaResult {
 	private String servizioCorrelato;
 	/** Tipo ServizioCorrelato */
 	private String tipoServizioCorrelato;
+	/** Versione ServizioCorrelato */
+	private Integer versioneServizioCorrelato;
 	/** informazioni Servizio */
 	private Servizio infoServizio;
 
@@ -64,11 +66,13 @@ public class ValidazioneSemanticaResult {
 	 * @param infoServizio Informazioni sul servizio
 	 */
 	public ValidazioneSemanticaResult(List<Eccezione> erroriValidazione, List<Eccezione> erroriProcessamento,
-			String servizioCorrelato, String tipoServizioCorrelato, Servizio infoServizio) {
+			String servizioCorrelato, String tipoServizioCorrelato, Integer versioneServizioCorrelato,
+			Servizio infoServizio) {
 		this.erroriProcessamento = erroriProcessamento;
 		this.erroriValidazione = erroriValidazione;
 		this.infoServizio = infoServizio;
 		this.tipoServizioCorrelato = tipoServizioCorrelato;
+		this.versioneServizioCorrelato = versioneServizioCorrelato;
 		this.servizioCorrelato = servizioCorrelato;
 	}
 	
@@ -86,6 +90,10 @@ public class ValidazioneSemanticaResult {
 	
 	public String getTipoServizioCorrelato() {
 		return this.tipoServizioCorrelato;
+	}
+	
+	public Integer getVersioneServizioCorrelato() {
+		return this.versioneServizioCorrelato;
 	}
 	
 	public Servizio getInfoServizio() {

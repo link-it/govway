@@ -182,6 +182,9 @@ public class RichiestaApplicativa implements java.io.Serializable {
 		return this.idServizio;
 	}
 
+	public void updateIDServizio(IDServizio idServizio) {
+		this.idServizio = idServizio;
+	}
 	/**
 	 * Ritorna il nome del Servizio Applicativo che eroga il servizio
 	 *

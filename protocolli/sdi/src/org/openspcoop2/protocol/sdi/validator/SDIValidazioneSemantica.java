@@ -96,7 +96,7 @@ public class SDIValidazioneSemantica extends ValidazioneSemantica {
 		if(this.erroriProcessamento.size()>0){
 			erroriValidazione = this.erroriProcessamento;
 		}
-		ValidazioneSemanticaResult validazioneSemantica = new ValidazioneSemanticaResult(erroriValidazione, erroriProcessamento, null, null, null);
+		ValidazioneSemanticaResult validazioneSemantica = new ValidazioneSemanticaResult(erroriValidazione, erroriProcessamento, null, null, null, null);
 		return validazioneSemantica;
 		
 	}

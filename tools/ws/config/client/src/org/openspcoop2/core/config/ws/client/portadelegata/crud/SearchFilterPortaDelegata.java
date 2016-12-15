@@ -44,6 +44,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
  *         &lt;element name="soggetto-erogatore" type="{http://www.openspcoop2.org/core/config/management}porta-delegata-soggetto-erogatore" minOccurs="0"/&gt;
  *         &lt;element name="servizio" type="{http://www.openspcoop2.org/core/config/management}porta-delegata-servizio" minOccurs="0"/&gt;
  *         &lt;element name="azione" type="{http://www.openspcoop2.org/core/config/management}porta-delegata-azione" minOccurs="0"/&gt;
+ *         &lt;element name="local-forward" type="{http://www.openspcoop2.org/core/config/management}porta-delegata-local-forward" minOccurs="0"/&gt;
  *         &lt;element name="mtom-processor" type="{http://www.openspcoop2.org/core/config/management}mtom-processor" minOccurs="0"/&gt;
  *         &lt;element name="validazione-contenuti-applicativi" type="{http://www.openspcoop2.org/core/config/management}validazione-contenuti-applicativi" minOccurs="0"/&gt;
  *         &lt;element name="tipo-soggetto-proprietario" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
@@ -61,7 +62,6 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
  *         &lt;element name="scarta-body" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0"/&gt;
  *         &lt;element name="gestione-manifest" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0"/&gt;
  *         &lt;element name="stateless" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0"/&gt;
- *         &lt;element name="local-forward" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0"/&gt;
  *         &lt;element name="ora-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/&gt;
  *         &lt;element name="ora-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/&gt;
  *         &lt;element name="orCondition" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/&gt;
@@ -80,6 +80,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
     "soggettoErogatore",
     "servizio",
     "azione",
+    "localForward",
     "mtomProcessor",
     "validazioneContenutiApplicativi",
     "tipoSoggettoProprietario",
@@ -97,7 +98,6 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
     "scartaBody",
     "gestioneManifest",
     "stateless",
-    "localForward",
     "oraRegistrazioneMin",
     "oraRegistrazioneMax",
     "orCondition",
@@ -110,6 +110,8 @@ public class SearchFilterPortaDelegata {
     protected PortaDelegataSoggettoErogatore soggettoErogatore;
     protected PortaDelegataServizio servizio;
     protected PortaDelegataAzione azione;
+    @XmlElement(name = "local-forward")
+    protected PortaDelegataLocalForward localForward;
     @XmlElement(name = "mtom-processor")
     protected MtomProcessor mtomProcessor;
     @XmlElement(name = "validazione-contenuti-applicativi")
@@ -144,9 +146,6 @@ public class SearchFilterPortaDelegata {
     protected StatoFunzionalita gestioneManifest;
     @XmlSchemaType(name = "string")
     protected StatoFunzionalita stateless;
-    @XmlElement(name = "local-forward")
-    @XmlSchemaType(name = "string")
-    protected StatoFunzionalita localForward;
     @XmlElement(name = "ora-registrazione-min")
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar oraRegistrazioneMin;
@@ -227,6 +226,30 @@ public class SearchFilterPortaDelegata {
      */
     public void setAzione(PortaDelegataAzione value) {
         this.azione = value;
+    }
+
+    /**
+     * Gets the value of the localForward property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link PortaDelegataLocalForward }
+     *     
+     */
+    public PortaDelegataLocalForward getLocalForward() {
+        return this.localForward;
+    }
+
+    /**
+     * Sets the value of the localForward property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link PortaDelegataLocalForward }
+     *     
+     */
+    public void setLocalForward(PortaDelegataLocalForward value) {
+        this.localForward = value;
     }
 
     /**
@@ -635,30 +658,6 @@ public class SearchFilterPortaDelegata {
      */
     public void setStateless(StatoFunzionalita value) {
         this.stateless = value;
-    }
-
-    /**
-     * Gets the value of the localForward property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link StatoFunzionalita }
-     *     
-     */
-    public StatoFunzionalita getLocalForward() {
-        return this.localForward;
-    }
-
-    /**
-     * Sets the value of the localForward property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link StatoFunzionalita }
-     *     
-     */
-    public void setLocalForward(StatoFunzionalita value) {
-        this.localForward = value;
     }
 
     /**

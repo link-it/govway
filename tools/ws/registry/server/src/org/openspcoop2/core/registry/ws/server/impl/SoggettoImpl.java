@@ -565,8 +565,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 				throw new DriverRegistroServiziNotFound("Soggetto non esistente");
 			}
 			obj.setSuperUser(ServerProperties.getInstance().getUser());
-			obj.setOldTipoForUpdate(oldId.getTipo());
-			obj.setOldNomeForUpdate(oldId.getNome());
+			obj.setOldIDSoggettoForUpdate(new IDSoggetto(oldId.getTipo(), oldId.getNome()));
 			((IDriverRegistroServiziCRUD)this.soggettoService.getDriver()).updateSoggetto(obj);
 			this.logEndMethod("update");
 			
@@ -595,8 +594,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 				((IDriverRegistroServiziCRUD)this.soggettoService.getDriver()).createSoggetto(obj);	
 			}else{
 				obj.setSuperUser(ServerProperties.getInstance().getUser());
-				obj.setOldTipoForUpdate(oldId.getTipo());
-				obj.setOldNomeForUpdate(oldId.getNome());
+				obj.setOldIDSoggettoForUpdate(new IDSoggetto(oldId.getTipo(), oldId.getNome()));
 				((IDriverRegistroServiziCRUD)this.soggettoService.getDriver()).updateSoggetto(obj);
 			}
 			this.logEndMethod("updateOrCreate");

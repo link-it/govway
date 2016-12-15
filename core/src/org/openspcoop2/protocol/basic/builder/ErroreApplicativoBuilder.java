@@ -46,6 +46,7 @@ import org.openspcoop2.core.eccezione.errore_applicativo.constants.TipoEccezione
 import org.openspcoop2.core.eccezione.errore_applicativo.utils.XMLUtils;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
@@ -495,13 +496,11 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 					datiCooperazione.setErogatore(erogatoreErroreApplicativo);
 				}
 				
-				if(servizio!=null && servizio.getTipoServizio()!=null && servizio.getServizio()!=null){
+				if(servizio!=null && servizio.getTipo()!=null && servizio.getNome()!=null && servizio.getVersione()!=null){
 					Servizio servizioErroreApplicativo = new Servizio();
-					servizioErroreApplicativo.setBase(servizio.getServizio());
-					servizioErroreApplicativo.setTipo(servizio.getTipoServizio());
-					if(servizio.getVersioneServizio()!=null && !"".equals(servizio.getVersioneServizio())){
-						servizioErroreApplicativo.setVersione(Integer.parseInt(servizio.getVersioneServizio()));
-					}
+					servizioErroreApplicativo.setBase(servizio.getNome());
+					servizioErroreApplicativo.setTipo(servizio.getTipo());
+					servizioErroreApplicativo.setVersione(servizio.getVersione());
 					datiCooperazione.setServizio(servizioErroreApplicativo);
 				}
 				
@@ -758,23 +757,20 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 				}
 				
 				IDServizio idServizio = null;
+				IDSoggetto idSoggettoErogatore = null;
 				if(datiCooperazione.getErogatore()!=null){
-					if(idServizio==null){
-						idServizio = new IDServizio();
-					}
-					idServizio.setSoggettoErogatore(new IDSoggetto(datiCooperazione.getErogatore().getIdentificativo().getTipo(), 
+					idSoggettoErogatore = new IDSoggetto(datiCooperazione.getErogatore().getIdentificativo().getTipo(), 
 							datiCooperazione.getErogatore().getIdentificativo().getBase(), 
-							datiCooperazione.getErogatore().getIdentificativoPorta()));
+							datiCooperazione.getErogatore().getIdentificativoPorta());
 				}
 				if(datiCooperazione.getServizio()!=null){
-					idServizio.setTipoServizio(datiCooperazione.getServizio().getTipo());
-					idServizio.setServizio(datiCooperazione.getServizio().getBase());
-					if(datiCooperazione.getServizio().getVersione()!=null){
-						idServizio.setVersioneServizio(datiCooperazione.getServizio().getVersione().toString());
-					}
+					idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(datiCooperazione.getServizio().getTipo(), 
+							datiCooperazione.getServizio().getBase(), 
+							idSoggettoErogatore, 
+							datiCooperazione.getServizio().getVersione());
 				}
-				idServizio.setAzione(datiCooperazione.getAzione());
 				if(idServizio!=null){
+					idServizio.setAzione(datiCooperazione.getAzione());
 					eccezione.setServizio(idServizio);
 				}
 				

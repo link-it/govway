@@ -40,7 +40,6 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
@@ -136,9 +135,9 @@ public final class AccordiServizioParteSpecificaServizioApplicativoDel extends A
 
 			// prendo nome e tipo del servizio
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idDelServizioInt);
-			Servizio servizio = asps.getServizio();
-			nomeServizio = servizio.getNome();
-			tipoServizio = servizio.getTipo();
+			nomeServizio = asps.getNome();
+			tipoServizio = asps.getTipo();
+			Integer versioneServizio = asps.getVersione();
 
 			org.openspcoop2.core.registry.Soggetto soggEr = soggettiCore.getSoggettoRegistro(idSoggErogatoreServizioInt);
 			nomeSoggettoErogatore = soggEr.getNome();
@@ -179,7 +178,10 @@ public final class AccordiServizioParteSpecificaServizioApplicativoDel extends A
 					// Servizio)
 					// la variabile idErogatore in questo caso contiene l'id
 					// del soggetto Fruitore nel caso delle portadelegata
-					String idporta = tipoSoggFruitoreServ + nomeSoggFruitoreServ + "/" + tipoSoggettoErogatore + nomeSoggettoErogatore + "/" + tipoServizio + nomeServizio;
+					String idporta = tipoSoggFruitoreServ + nomeSoggFruitoreServ + "/" + 
+							tipoSoggettoErogatore + nomeSoggettoErogatore + "/" + 
+							tipoServizio + nomeServizio + "/"+
+							versioneServizio;
 					IDPortaDelegata idpd = new IDPortaDelegata();
 					idpd.setNome(idporta);
 					if (porteDelegateCore.existsPortaDelegata(idpd)) {

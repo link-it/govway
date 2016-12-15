@@ -125,6 +125,13 @@ public class UtilitiesIntegrazione {
 							integrazione.getBusta().setTipoServizio(prop.getProperty(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO)))
 							integrazione.getBusta().setServizio(prop.getProperty(key));
+						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_VERSIONE_SERVIZIO))){
+							try{
+								integrazione.getBusta().setVersioneServizio(Integer.parseInt(prop.getProperty(key)));
+							}catch(Exception e){
+								throw new Exception("Formato versione ["+prop.getProperty(key)+"] non corretto: "+e.getMessage(),e);
+							}
+						}
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_AZIONE)))
 							integrazione.getBusta().setAzione(prop.getProperty(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_MESSAGGIO)))
@@ -173,6 +180,13 @@ public class UtilitiesIntegrazione {
 							integrazione.getBusta().setTipoServizio(prop.getProperty(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO)))
 							integrazione.getBusta().setServizio(prop.getProperty(key));
+						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_VERSIONE_SERVIZIO))){
+							try{
+								integrazione.getBusta().setVersioneServizio(Integer.parseInt(prop.getProperty(key)));
+							}catch(Exception e){
+								throw new Exception("Formato versione ["+prop.getProperty(key)+"] non corretto: "+e.getMessage(),e);
+							}
+						}
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_AZIONE)))
 							integrazione.getBusta().setAzione(prop.getProperty(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_MESSAGGIO)))
@@ -228,6 +242,8 @@ public class UtilitiesIntegrazione {
 						properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO), integrazione.getBusta().getTipoServizio());
 					if(integrazione.getBusta().getServizio()!=null)
 						properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO), integrazione.getBusta().getServizio());
+					if(integrazione.getBusta().getVersioneServizio()!=null)
+						properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_VERSIONE_SERVIZIO), integrazione.getBusta().getVersioneServizio().intValue()+"");
 					if(integrazione.getBusta().getAzione()!=null)
 						properties.put(this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_AZIONE), integrazione.getBusta().getAzione());
 					if(integrazione.getBusta().getID()!=null)
@@ -299,6 +315,8 @@ public class UtilitiesIntegrazione {
 						properties.put(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO), integrazione.getBusta().getTipoServizio());
 					if(integrazione.getBusta().getServizio()!=null)
 						properties.put(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO), integrazione.getBusta().getServizio());
+					if(integrazione.getBusta().getVersioneServizio()!=null)
+						properties.put(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_VERSIONE_SERVIZIO), integrazione.getBusta().getVersioneServizio().intValue()+"");
 					if(integrazione.getBusta().getAzione()!=null)
 						properties.put(this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_AZIONE), integrazione.getBusta().getAzione());
 					if(integrazione.getBusta().getID()!=null)
@@ -416,6 +434,18 @@ public class UtilitiesIntegrazione {
 			}catch(Exception e){}
 			if(servizio!=null && servizio.compareTo("")!=0)
 				integrazione.getBusta().setServizio(servizio);
+			
+			String versioneServizio = null;
+			try{
+				versioneServizio = headerElement.getAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_VERSIONE_SERVIZIO));
+			}catch(Exception e){}
+			if(versioneServizio!=null && versioneServizio.compareTo("")!=0){
+				try{
+					integrazione.getBusta().setVersioneServizio(Integer.parseInt(versioneServizio));
+				}catch(Exception e){
+					throw new Exception("Formato versione ["+versioneServizio+"] non corretto: "+e.getMessage(),e);
+				}
+			}
 
 			String azione= null;
 			try{
@@ -499,8 +529,9 @@ public class UtilitiesIntegrazione {
 		busta.setMittente(soggettoFruitore.getNome());
 		busta.setTipoDestinatario(idServizio.getSoggettoErogatore().getTipo());
 		busta.setDestinatario(idServizio.getSoggettoErogatore().getNome());
-		busta.setTipoServizio(idServizio.getTipoServizio());
-		busta.setServizio(idServizio.getServizio());
+		busta.setTipoServizio(idServizio.getTipo());
+		busta.setServizio(idServizio.getNome());
+		busta.setVersioneServizio(idServizio.getVersione());
 		busta.setAzione(idServizio.getAzione());
 		if(idBustaRisposta==null){
 			busta.setID(idBusta);
@@ -643,6 +674,9 @@ public class UtilitiesIntegrazione {
 			}
 			if(integrazione.getBusta().getServizio()!=null){
 				header.setAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO), integrazione.getBusta().getServizio());
+			}
+			if(integrazione.getBusta().getVersioneServizio()!=null){
+				header.setAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_VERSIONE_SERVIZIO), integrazione.getBusta().getVersioneServizio().intValue()+"");
 			}
 
 			if(integrazione.getBusta().getAzione()!=null){

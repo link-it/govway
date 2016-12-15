@@ -37,7 +37,7 @@ package org.openspcoop2.core.registry.ws.server.filter;
  *         &lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="orCondition" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="new Boolean("false")" />
  *         &lt;element name="limit" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="offset" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
@@ -201,15 +201,15 @@ public class SearchFilterAccordoServizioParteComune extends org.openspcoop2.util
 	}
 	
 	
-	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+	@javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlElement(name="versione",required=false,nillable=false)
-	private String versione;
+	private Integer versione;
 	
-	public void setVersione(String versione){
+	public void setVersione(Integer versione){
 		this.versione = versione;
 	}
 	
-	public String getVersione(){
+	public Integer getVersione(){
 		return this.versione;
 	}
 	

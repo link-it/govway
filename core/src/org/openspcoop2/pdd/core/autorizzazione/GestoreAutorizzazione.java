@@ -410,7 +410,7 @@ public class GestoreAutorizzazione {
     	IDServizio idServizio = datiInvocazione.getIdServizio();
     	if(idServizio==null)
 			throw new AutorizzazioneException("(Parametri) IDServizio non definito");
-		if(idServizio.getTipoServizio()==null || idServizio.getServizio()==null)
+		if(idServizio.getTipo()==null || idServizio.getNome()==null || idServizio.getVersione()==null)
 			throw new AutorizzazioneException("(Parametri) Servizio non definito");
 		if(idServizio.getSoggettoErogatore()==null || idServizio.getSoggettoErogatore().getTipo()==null || idServizio.getSoggettoErogatore().getNome()==null)
 			throw new AutorizzazioneException("(Parametri) Soggetto erogatore non definito");
@@ -441,7 +441,7 @@ public class GestoreAutorizzazione {
     	IDServizio idServizio = datiInvocazione.getIdServizio();
     	if(idServizio==null)
 			throw new AutorizzazioneException("(Parametri) IDServizio non definito");
-		if(idServizio.getTipoServizio()==null || idServizio.getServizio()==null)
+    	if(idServizio.getTipo()==null || idServizio.getNome()==null || idServizio.getVersione()==null)
 			throw new AutorizzazioneException("(Parametri) Servizio non definito");
 		if(idServizio.getSoggettoErogatore()==null || idServizio.getSoggettoErogatore().getTipo()==null || idServizio.getSoggettoErogatore().getNome()==null)
 			throw new AutorizzazioneException("(Parametri) Soggetto erogatore non definito");

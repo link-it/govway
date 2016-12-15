@@ -1049,8 +1049,9 @@ public class InoltroBuste extends GenericLib{
 			headerIntegrazione.getBusta().setMittente(soggettoFruitore.getNome());
 			headerIntegrazione.getBusta().setTipoDestinatario(idServizio.getSoggettoErogatore().getTipo());
 			headerIntegrazione.getBusta().setDestinatario(idServizio.getSoggettoErogatore().getNome());
-			headerIntegrazione.getBusta().setTipoServizio(idServizio.getTipoServizio());
-			headerIntegrazione.getBusta().setServizio(idServizio.getServizio());
+			headerIntegrazione.getBusta().setTipoServizio(idServizio.getTipo());
+			headerIntegrazione.getBusta().setServizio(idServizio.getNome());
+			headerIntegrazione.getBusta().setVersioneServizio(idServizio.getVersione());
 			headerIntegrazione.getBusta().setAzione(idServizio.getAzione());
 			headerIntegrazione.getBusta().setID(bustaRichiesta.getID());
 			headerIntegrazione.getBusta().setRiferimentoMessaggio(bustaRichiesta.getRiferimentoMessaggio());
@@ -1717,9 +1718,9 @@ public class InoltroBuste extends GenericLib{
 					if(bustaRichiesta!=null){
 						protocolContext.setIndirizzoErogatore(bustaRichiesta.getIndirizzoDestinatario());
 					}
-					protocolContext.setTipoServizio(idServizio.getTipoServizio());
-					protocolContext.setServizio(idServizio.getServizio());
-					protocolContext.setVersioneServizio(idServizio.getVersioneServizioAsInt());
+					protocolContext.setTipoServizio(idServizio.getTipo());
+					protocolContext.setServizio(idServizio.getNome());
+					protocolContext.setVersioneServizio(idServizio.getVersione());
 					protocolContext.setAzione(idServizio.getAzione());
 				}
 				if(idAccordoServizio!=null){

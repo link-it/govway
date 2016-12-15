@@ -318,11 +318,25 @@ public class TestSuiteProperties {
 	 * Ritorna il nome della proprieta' nel trasporto contenente il servizio della richiesta in corso
 	 *
 	 */
-	public String getServizioTrasporto(){
+	public String getNomeServizioTrasporto(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_SERVIZIO_TRASPORTO).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_NOME_SERVIZIO_TRASPORTO).trim();
 		}catch(Exception e){
-			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_SERVIZIO_TRASPORTO+"':"+e.getMessage();
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_NOME_SERVIZIO_TRASPORTO+"':"+e.getMessage();
+			this.log.error(msgErrore);
+			return null;
+		}
+	}
+	
+	/**
+	 * Ritorna il nome della proprieta' nel trasporto contenente la versione del servizio della richiesta in corso
+	 *
+	 */
+	public String getVersioneServizioTrasporto(){
+		try{
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_VERSIONE_SERVIZIO_TRASPORTO).trim();
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_VERSIONE_SERVIZIO_TRASPORTO+"':"+e.getMessage();
 			this.log.error(msgErrore);
 			return null;
 		}
@@ -490,11 +504,25 @@ public class TestSuiteProperties {
 	 * Ritorna il nome della proprieta' nella url contenente il servizio della richiesta in corso
 	 *
 	 */
-	public String getServizioUrlBased(){
+	public String getNomeServizioUrlBased(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_SERVIZIO_URL_BASED).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_NOME_SERVIZIO_URL_BASED).trim();
 		}catch(Exception e){
-			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_SERVIZIO_URL_BASED+"':"+e.getMessage();
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_NOME_SERVIZIO_URL_BASED+"':"+e.getMessage();
+			this.log.error(msgErrore);
+			return null;
+		}
+	}
+	
+	/**
+	 * Ritorna il nome della proprieta' nella url contenente la versione del servizio della richiesta in corso
+	 *
+	 */
+	public String getVersioneServizioUrlBased(){
+		try{
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_VERSIONE_SERVIZIO_URL_BASED).trim();
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_VERSIONE_SERVIZIO_URL_BASED+"':"+e.getMessage();
 			this.log.error(msgErrore);
 			return null;
 		}
@@ -662,11 +690,25 @@ public class TestSuiteProperties {
 	 * Ritorna il nome della proprieta' nell'header soap contenente il servizio della richiesta in corso
 	 *
 	 */
-	public String getServizioSoap(){
+	public String getNomeServizioSoap(){
 		try{
-			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_SERVIZIO_SOAP).trim();
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_NOME_SERVIZIO_SOAP).trim();
 		}catch(Exception e){
-			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_SERVIZIO_SOAP+"':"+e.getMessage();
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_NOME_SERVIZIO_SOAP+"':"+e.getMessage();
+			this.log.error(msgErrore);
+			return null;
+		}
+	}
+	
+	/**
+	 * Ritorna il nome della proprieta' nell'header soap contenente la versione del servizio della richiesta in corso
+	 *
+	 */
+	public String getVersioneServizioSoap(){
+		try{
+			return this.reader.getValue_convertEnvProperties(CostantiTestSuite.PROPERTY_VERSIONE_SERVIZIO_SOAP).trim();
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_VERSIONE_SERVIZIO_SOAP+"':"+e.getMessage();
 			this.log.error(msgErrore);
 			return null;
 		}

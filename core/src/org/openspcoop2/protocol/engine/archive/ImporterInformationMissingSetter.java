@@ -31,18 +31,20 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.ConfigurazioneServizio;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Property;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.information_missing.ReplaceMatchFieldType;
 import org.openspcoop2.protocol.information_missing.ReplaceMatchType;
 import org.openspcoop2.protocol.information_missing.Soggetto;
@@ -370,20 +372,12 @@ public class ImporterInformationMissingSetter {
 		// Accordi di Servizio Parte Specifica 
 		for (int i = 0; i < archive.getAccordiServizioParteSpecifica().size(); i++) {
 			AccordoServizioParteSpecifica as = archive.getAccordiServizioParteSpecifica().get(i).getAccordoServizioParteSpecifica();
-			Servizio servizio = as.getServizio();
-			String tipoSoggettoReferente = null;
-			String nomeSoggettoReferente = null;
-			if(servizio!=null){
-				tipoSoggettoReferente = servizio.getTipoSoggettoErogatore();
-				nomeSoggettoReferente = servizio.getNomeSoggettoErogatore();
-			}
+			String tipoSoggettoReferente = as.getTipoSoggettoErogatore();
+			String nomeSoggettoReferente = as.getNomeSoggettoErogatore();
 			if(matchSoggetto(soggetto.getReplaceMatch(), 
 					tipoSoggettoReferente, nomeSoggettoReferente)){
-				if(servizio==null){
-					as.setServizio(new Servizio());
-				}
-				as.getServizio().setTipoSoggettoErogatore(idSoggetto.getTipo());
-				as.getServizio().setNomeSoggettoErogatore(idSoggetto.getNome());
+				as.setTipoSoggettoErogatore(idSoggetto.getTipo());
+				as.setNomeSoggettoErogatore(idSoggetto.getNome());
 				archive.getAccordiServizioParteSpecifica().get(i).update(as, false);
 			}
 		}
@@ -412,12 +406,12 @@ public class ImporterInformationMissingSetter {
 		// Fruizioni
 		for (int i = 0; i < archive.getAccordiFruitori().size(); i++) {
 			Fruitore fruitore = archive.getAccordiFruitori().get(i).getFruitore();
-			IDAccordo idAps = archive.getAccordiFruitori().get(i).getIdAccordoServizioParteSpecifica();
+			IDServizio idAps = archive.getAccordiFruitori().get(i).getIdAccordoServizioParteSpecifica();
 			String tipoSoggettoReferente = null;
 			String nomeSoggettoReferente = null;
-			if(idAps.getSoggettoReferente()!=null){
-				tipoSoggettoReferente = idAps.getSoggettoReferente().getTipo();
-				nomeSoggettoReferente = idAps.getSoggettoReferente().getNome();
+			if(idAps.getSoggettoErogatore()!=null){
+				tipoSoggettoReferente = idAps.getSoggettoErogatore().getTipo();
+				nomeSoggettoReferente = idAps.getSoggettoErogatore().getNome();
 			}
 			if(matchSoggetto(soggetto.getReplaceMatch(), 
 					fruitore.getTipo(), fruitore.getNome())){
@@ -428,7 +422,7 @@ public class ImporterInformationMissingSetter {
 			else if(matchSoggetto(soggetto.getReplaceMatch(), 
 					tipoSoggettoReferente, nomeSoggettoReferente)){
 				try{
-					idAps = IDAccordoFactory.getInstance().getIDAccordoFromValuesWithoutCheck(idAps.getNome(),
+					idAps = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(idAps.getTipo(),idAps.getNome(),
 							idSoggetto.getTipo(),idSoggetto.getNome(), idAps.getVersione());
 				}catch(Exception e){
 					throw new ProtocolException(e.getMessage(),e);
@@ -704,14 +698,14 @@ public class ImporterInformationMissingSetter {
 		// Accordi
 		for (int i = 0; i < archive.getAccordiServizioParteSpecifica().size(); i++) {
 			org.openspcoop2.core.registry.AccordoServizioParteSpecifica asps = archive.getAccordiServizioParteSpecifica().get(i).getAccordoServizioParteSpecifica();
-			if(asps.getServizio()!=null){
+			if(asps!=null){
 				
 				boolean matchTipoNome = matchServizio(aspsMissingInfo.getReplaceMatch(), 
-						asps.getServizio().getTipo(), asps.getServizio().getNome());
+						asps.getTipo(), asps.getNome());
 					
 				String uriAccordo = null;
 				try{
-					uriAccordo = IDAccordoFactory.getInstance().getUriFromAccordo(asps);
+					uriAccordo = IDServizioFactory.getInstance().getUriFromAccordo(asps);
 				}catch(Exception e){
 					throw new ProtocolException(e.getMessage(),e);
 				}
@@ -719,15 +713,18 @@ public class ImporterInformationMissingSetter {
 						uriAccordo);
 				
 				if(matchTipoNome || matchAccordo){
-					if(asps.getServizio().getConnettore()==null)
-						asps.getServizio().setConnettore(connettore);
+					if(asps.getConfigurazioneServizio()==null){
+						asps.setConfigurazioneServizio(new ConfigurazioneServizio());
+					}
+					if(asps.getConfigurazioneServizio().getConnettore()==null)
+						asps.getConfigurazioneServizio().setConnettore(connettore);
 					else{
-						asps.getServizio().getConnettore().setCustom(connettore.getCustom());
-						asps.getServizio().getConnettore().setTipo(connettore.getTipo());
-						while(asps.getServizio().getConnettore().sizePropertyList()>0)
-							asps.getServizio().getConnettore().removeProperty(0);
+						asps.getConfigurazioneServizio().getConnettore().setCustom(connettore.getCustom());
+						asps.getConfigurazioneServizio().getConnettore().setTipo(connettore.getTipo());
+						while(asps.getConfigurazioneServizio().getConnettore().sizePropertyList()>0)
+							asps.getConfigurazioneServizio().getConnettore().removeProperty(0);
 						if(connettore.sizePropertyList()>0)
-							asps.getServizio().getConnettore().getPropertyList().addAll(connettore.getPropertyList());
+							asps.getConfigurazioneServizio().getConnettore().getPropertyList().addAll(connettore.getPropertyList());
 					}
 				}
 			}
@@ -741,14 +738,14 @@ public class ImporterInformationMissingSetter {
 		if(aspsMissingInfo.getStato()!=null){
 			for (int i = 0; i < archive.getAccordiServizioParteSpecifica().size(); i++) {
 				org.openspcoop2.core.registry.AccordoServizioParteSpecifica asps = archive.getAccordiServizioParteSpecifica().get(i).getAccordoServizioParteSpecifica();
-				if(asps.getServizio()!=null){
+				if(asps!=null){
 					
 					boolean matchTipoNome = matchServizio(aspsMissingInfo.getReplaceMatch(), 
-							asps.getServizio().getTipo(), asps.getServizio().getNome());
+							asps.getTipo(), asps.getNome());
 						
 					String uriAccordo = null;
 					try{
-						uriAccordo = IDAccordoFactory.getInstance().getUriFromAccordo(asps);
+						uriAccordo = IDServizioFactory.getInstance().getUriFromAccordo(asps);
 					}catch(Exception e){
 						throw new ProtocolException(e.getMessage(),e);
 					}
@@ -1103,25 +1100,25 @@ public class ImporterInformationMissingSetter {
 		for (int i = 0; i < archive.getAccordiServizioParteSpecifica().size(); i++) {
 			AccordoServizioParteSpecifica as = archive.getAccordiServizioParteSpecifica().get(i).getAccordoServizioParteSpecifica();
 			
-			if(as.getServizio()!=null && as.getServizio().getConnettore()!=null){
-				for (int j = 0; j < as.getServizio().getConnettore().sizePropertyList(); j++) {
-					Property p = as.getServizio().getConnettore().getProperty(j);
-					p.setNome(replaceSoggettoProprietario(p.getNome(), as.getServizio().getTipoSoggettoErogatore(),as.getServizio().getNomeSoggettoErogatore()));
-					p.setValore(replaceSoggettoProprietario(p.getValore(), as.getServizio().getTipoSoggettoErogatore(),as.getServizio().getNomeSoggettoErogatore()));
+			if(as.getConfigurazioneServizio()!=null && as.getConfigurazioneServizio().getConnettore()!=null){
+				for (int j = 0; j < as.getConfigurazioneServizio().getConnettore().sizePropertyList(); j++) {
+					Property p = as.getConfigurazioneServizio().getConnettore().getProperty(j);
+					p.setNome(replaceSoggettoProprietario(p.getNome(), as.getTipoSoggettoErogatore(),as.getNomeSoggettoErogatore()));
+					p.setValore(replaceSoggettoProprietario(p.getValore(), as.getTipoSoggettoErogatore(),as.getNomeSoggettoErogatore()));
 				}
 			}
-			if(as.getServizio()!=null && as.getServizio().getConnettore()!=null){
-				for (int j = 0; j < as.getServizio().getConnettore().sizePropertyList(); j++) {
-					Property p = as.getServizio().getConnettore().getProperty(j);
-					p.setNome(replaceSoggettoErogatore(p.getNome(), as.getServizio().getTipoSoggettoErogatore(),as.getServizio().getNomeSoggettoErogatore()));
-					p.setValore(replaceSoggettoErogatore(p.getValore(), as.getServizio().getTipoSoggettoErogatore(),as.getServizio().getNomeSoggettoErogatore()));
+			if(as.getConfigurazioneServizio()!=null && as.getConfigurazioneServizio().getConnettore()!=null){
+				for (int j = 0; j < as.getConfigurazioneServizio().getConnettore().sizePropertyList(); j++) {
+					Property p = as.getConfigurazioneServizio().getConnettore().getProperty(j);
+					p.setNome(replaceSoggettoErogatore(p.getNome(), as.getTipoSoggettoErogatore(),as.getNomeSoggettoErogatore()));
+					p.setValore(replaceSoggettoErogatore(p.getValore(), as.getTipoSoggettoErogatore(),as.getNomeSoggettoErogatore()));
 				}
 			}
 			
 			if(as.sizeFruitoreList()==1){
-				if(as.getServizio()!=null && as.getServizio().getConnettore()!=null){
-					for (int j = 0; j < as.getServizio().getConnettore().sizePropertyList(); j++) {
-						Property p = as.getServizio().getConnettore().getProperty(j);
+				if(as.getConfigurazioneServizio()!=null && as.getConfigurazioneServizio().getConnettore()!=null){
+					for (int j = 0; j < as.getConfigurazioneServizio().getConnettore().sizePropertyList(); j++) {
+						Property p = as.getConfigurazioneServizio().getConnettore().getProperty(j);
 						p.setNome(replaceFruitore(p.getNome(), as.getFruitore(0).getTipo(), as.getFruitore(0).getNome()));
 						p.setValore(replaceFruitore(p.getValore(), as.getFruitore(0).getTipo(), as.getFruitore(0).getNome()));
 					}
@@ -1130,9 +1127,9 @@ public class ImporterInformationMissingSetter {
 			else{
 				if(as.sizeFruitoreList()==0){
 					
-					IDAccordo idAccordoAttuale = null;
+					IDServizio idAccordoAttuale = null;
 					try{
-						idAccordoAttuale = IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as);
+						idAccordoAttuale = IDServizioFactory.getInstance().getIDServizioFromAccordo(as);
 					}catch(Exception e){
 						throw new ProtocolException(e.getMessage(),e);
 					}
@@ -1141,15 +1138,15 @@ public class ImporterInformationMissingSetter {
 					List<Fruitore> listFruitori = new ArrayList<Fruitore>();
 					for (int j = 0; j < archive.getAccordiFruitori().size(); j++) {
 						Fruitore fr = archive.getAccordiFruitori().get(j).getFruitore();
-						IDAccordo idAccordo = archive.getAccordiFruitori().get(j).getIdAccordoServizioParteSpecifica();
+						IDServizio idAccordo = archive.getAccordiFruitori().get(j).getIdAccordoServizioParteSpecifica();
 						if(idAccordo.equals(idAccordoAttuale)){
 							listFruitori.add(fr);
 						}
 					}
 					if(listFruitori.size()==1){
-						if(as.getServizio()!=null && as.getServizio().getConnettore()!=null){
-							for (int j = 0; j < as.getServizio().getConnettore().sizePropertyList(); j++) {
-								Property p = as.getServizio().getConnettore().getProperty(j);
+						if(as.getConfigurazioneServizio()!=null && as.getConfigurazioneServizio().getConnettore()!=null){
+							for (int j = 0; j < as.getConfigurazioneServizio().getConnettore().sizePropertyList(); j++) {
+								Property p = as.getConfigurazioneServizio().getConnettore().getProperty(j);
 								p.setNome(replaceFruitore(p.getNome(), listFruitori.get(0).getTipo(), listFruitori.get(0).getNome()));
 								p.setValore(replaceFruitore(p.getValore(), listFruitori.get(0).getTipo(), listFruitori.get(0).getNome()));
 							}
@@ -1162,12 +1159,12 @@ public class ImporterInformationMissingSetter {
 		// Fruitori
 		for (int i = 0; i < archive.getAccordiFruitori().size(); i++) {
 			Fruitore fr = archive.getAccordiFruitori().get(i).getFruitore();
-			IDAccordo idAccordo = archive.getAccordiFruitori().get(i).getIdAccordoServizioParteSpecifica();
+			IDServizio idAccordo = archive.getAccordiFruitori().get(i).getIdAccordoServizioParteSpecifica();
 			String tipoSoggettoErogatore = null;
 			String nomeSoggettoErogatore = null;
-			if(idAccordo!=null && idAccordo.getSoggettoReferente()!=null){
-				tipoSoggettoErogatore = idAccordo.getSoggettoReferente().getTipo();
-				nomeSoggettoErogatore = idAccordo.getSoggettoReferente().getNome();
+			if(idAccordo!=null && idAccordo.getSoggettoErogatore()!=null){
+				tipoSoggettoErogatore = idAccordo.getSoggettoErogatore().getTipo();
+				nomeSoggettoErogatore = idAccordo.getSoggettoErogatore().getNome();
 			}
 			if(fr.getConnettore()!=null){
 				for (int j = 0; j < fr.getConnettore().sizePropertyList(); j++) {

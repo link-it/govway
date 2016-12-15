@@ -43,6 +43,7 @@ import java.io.Serializable;
  * 		&lt;attribute name="identificativo-porta-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="tipo-servizio" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="servizio" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="versione-servizio" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" use="optional"/>
  * 		&lt;attribute name="azione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * &lt;/complexType>
  * </pre>
@@ -140,6 +141,14 @@ public class TipoFiltroAbilitazioneServizi extends org.openspcoop2.utils.beans.B
     this.servizio = servizio;
   }
 
+  public java.lang.Integer getVersioneServizio() {
+    return this.versioneServizio;
+  }
+
+  public void setVersioneServizio(java.lang.Integer versioneServizio) {
+    this.versioneServizio = versioneServizio;
+  }
+
   public java.lang.String getAzione() {
     return this.azione;
   }
@@ -186,6 +195,10 @@ public class TipoFiltroAbilitazioneServizi extends org.openspcoop2.utils.beans.B
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="servizio",required=false)
   protected java.lang.String servizio;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
+  @XmlAttribute(name="versione-servizio",required=false)
+  protected java.lang.Integer versioneServizio;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="azione",required=false)

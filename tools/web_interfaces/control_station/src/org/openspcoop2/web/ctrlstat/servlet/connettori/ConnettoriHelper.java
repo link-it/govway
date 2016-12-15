@@ -47,11 +47,11 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Fruitore;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.utils.transport.http.SSLConstants;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 import org.openspcoop2.web.ctrlstat.core.Connettori;
@@ -167,8 +167,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		if (AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE.equals(servlet)) {
 			int idServizioInt = Integer.parseInt(id);
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(idServizioInt);
-			Servizio servizio = asps.getServizio();
-
+			
 			ServletUtils.setPageDataTitle(pd, 
 					// t1
 					new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null),
@@ -178,7 +177,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST), 
 					// t3
 					new Parameter(
-						"Connettore del servizio "+tiposervizio + "/" + nomeservizio+" erogato dal soggetto "+servizio.getTipoSoggettoErogatore()+"/"+servizio.getNomeSoggettoErogatore(), 
+						"Connettore del servizio "+IDServizioFactory.getInstance().getUriFromAccordo(asps), 
 						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE+
 						"?"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID+"=" + id+
 						"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO+"=" + nomeservizio + 
@@ -191,9 +190,6 @@ public class ConnettoriHelper extends ConsoleHelper {
 		if (AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE.equals(servlet)) {
 			int idServizioInt = Integer.parseInt(id);
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(idServizioInt);
-			Servizio servizio = asps.getServizio();
-			String tipoSoggettoErogatore = servizio.getTipoSoggettoErogatore();
-			String nomesoggettoErogatore = servizio.getNomeSoggettoErogatore();
 			int idServizioFruitoreInt = Integer.parseInt(myId);
 			Fruitore servFru = this.apsCore.getServizioFruitore(idServizioFruitoreInt);
 			String nomefru = servFru.getNome();
@@ -208,7 +204,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST), 
 					// t3
 					new Parameter(
-						"Fruitori del servizio " + servizio.getTipo() + "/" + servizio.getNome() + " erogato da " + tipoSoggettoErogatore + "/" + nomesoggettoErogatore,
+						"Fruitori del servizio " + IDServizioFactory.getInstance().getUriFromAccordo(asps),
 						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST+
 						"?"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID+"=" + id + 
 						"&"+ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SOGGETTO_EROGATORE+"=" + idSoggErogatore),
@@ -446,7 +442,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
 			String tipoconn, String servletChiamante, String elem1, String elem2, String elem3,
-			String elem4, String elem5, String elem6, String elem7,
+			String elem4, String elem5, String elem6, String elem7, String elem8,
 			boolean showSectionTitle,
 			Boolean isConnettoreCustomUltimaImmagineSalvata,
 			List<ExtendedConnettore> listExtendedConnettore) {
@@ -457,7 +453,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				httpskeystore, httpspwdprivatekeytrust, httpspathkey,
 				httpstipokey, httpspwdkey, httpspwdprivatekey,
 				httpsalgoritmokey, tipoconn, servletChiamante, elem1, elem2, elem3,
-				elem4, elem5, elem6, elem7, null, showSectionTitle,
+				elem4, elem5, elem6, elem7, elem8, null, showSectionTitle,
 				isConnettoreCustomUltimaImmagineSalvata,listExtendedConnettore);
 	}
 
@@ -524,8 +520,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			}
 			if (servlet.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE)) {
 				AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Long.parseLong(id));
-				Servizio servizio = asps.getServizio();
-				org.openspcoop2.core.registry.Connettore connettore = servizio.getConnettore();
+				org.openspcoop2.core.registry.Connettore connettore = asps.getConfigurazioneServizio().getConnettore();
 				for (int j = 0; j < connettore.sizePropertyList(); j++) {
 					Property tmpProp = connettore.getProperty(j);
 					if (tmpProp.getNome().equals(nome)) {
@@ -841,7 +836,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
 			String tipoconn, String servletChiamante, String elem1, String elem2, String elem3,
-			String elem4, String elem5, String elem6, String elem7, String stato,
+			String elem4, String elem5, String elem6, String elem7, String elem8,
+			String stato,
 			boolean showSectionTitle,
 			Boolean isConnettoreCustomUltimaImmagineSalvata,
 			List<ExtendedConnettore> listExtendedConnettore) {
@@ -1192,6 +1188,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SOGGETTO, elem3),
 								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO, elem4),
 								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SERVIZIO, elem5),
+								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_VERSIONE_SERVIZIO, elem8),
 								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_MY_ID, elem6),
 								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_CORRELATO, elem7));
 						int myIdInt = Integer.parseInt(elem6);
@@ -1212,10 +1209,10 @@ public class ConnettoriHelper extends ConsoleHelper {
 								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servletChiamante),
 								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID, elem1),
 								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO, elem2),
-								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SERVIZIO, elem3));
+								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SERVIZIO, elem3),
+								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_VERSIONE_SERVIZIO, elem4));
 						AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Long.parseLong(elem1));
-						Servizio servizio = asps.getServizio();
-						org.openspcoop2.core.registry.Connettore connettore = servizio.getConnettore();
+						org.openspcoop2.core.registry.Connettore connettore = asps.getConfigurazioneServizio().getConnettore();
 						if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) ){
 							for (int i = 0; i < connettore.sizePropertyList(); i++) {
 								if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false  &&

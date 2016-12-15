@@ -227,37 +227,23 @@ public class DBUtils {
 
 	/**
 	 * Recupero l'id del servizio
-	 * @param nomeServizio
-	 * @param tipoServizio
-	 * @param nomeProprietario
-	 * @param tipoProprietario
-	 * @param con
-	 * @return L'id del servizio se esiste, -1 altrimenti
-	 * @throws CoreException TODO
 	 */
-	public static long getIdServizio(String nomeServizio, String tipoServizio,String nomeProprietario,String tipoProprietario,Connection con, String tipoDB) throws CoreException{
-		return DBUtils.getIdServizio(nomeServizio,tipoServizio,nomeProprietario,tipoProprietario,con,false,tipoDB, CostantiDB.SOGGETTI);
+	public static long getIdServizio(String nomeServizio, String tipoServizio,Integer versioneServizio, String nomeSoggettoErogatore,String tipoSoggettoErogatore,Connection con, String tipoDB) throws CoreException{
+		return DBUtils.getIdServizio(nomeServizio,tipoServizio,versioneServizio,nomeSoggettoErogatore,tipoSoggettoErogatore,con,false,tipoDB, CostantiDB.SOGGETTI);
 	}
-	public static long getIdServizio(String nomeServizio, String tipoServizio,String nomeProprietario,String tipoProprietario,Connection con, String tipoDB,String tabellaSoggetti) throws CoreException{
-		return DBUtils.getIdServizio(nomeServizio,tipoServizio,nomeProprietario,tipoProprietario,con,false,tipoDB,tabellaSoggetti);
+	public static long getIdServizio(String nomeServizio, String tipoServizio,Integer versioneServizio, String nomeSoggettoErogatore,String tipoSoggettoErogatore,Connection con, String tipoDB,String tabellaSoggetti) throws CoreException{
+		return DBUtils.getIdServizio(nomeServizio,tipoServizio,versioneServizio,nomeSoggettoErogatore,tipoSoggettoErogatore,con,false,tipoDB,tabellaSoggetti);
 	}
 
 	/**
 	 * Recupero l'id del servizio
-	 * @param nomeServizio
-	 * @param tipoServizio
-	 * @param nomeProprietario
-	 * @param tipoProprietario
-	 * @param con
-	 * @return L'id del servizio se esiste, -1 altrimenti
-	 * @throws CoreException TODO
 	 */
-	public static long getIdServizio(String nomeServizio, String tipoServizio,String nomeProprietario,String tipoProprietario,
+	public static long getIdServizio(String nomeServizio, String tipoServizio,Integer versioneServizio, String nomeSoggettoErogatore,String tipoSoggettoErogatore,
 			Connection con,boolean testServizioNonCorrelato,String tipoDB) throws CoreException
 	{
-		return DBUtils.getIdServizio(nomeServizio, tipoServizio, nomeProprietario, tipoProprietario, con, testServizioNonCorrelato, tipoDB, CostantiDB.SOGGETTI);
+		return DBUtils.getIdServizio(nomeServizio, tipoServizio, versioneServizio, nomeSoggettoErogatore, tipoSoggettoErogatore, con, testServizioNonCorrelato, tipoDB, CostantiDB.SOGGETTI);
 	}
-	public static long getIdServizio(String nomeServizio, String tipoServizio,String nomeProprietario,String tipoProprietario,
+	public static long getIdServizio(String nomeServizio, String tipoServizio,Integer versioneServizio, String nomeSoggettoErogatore,String tipoSoggettoErogatore,
 			Connection con,boolean testServizioNonCorrelato,String tipoDB,String tabellaSoggetti) throws CoreException
 	{
 		PreparedStatement stm = null;
@@ -266,14 +252,15 @@ public class DBUtils {
 		long idServizio=0;
 		try
 		{
-			idSoggetto = DBUtils.getIdSoggetto(nomeProprietario, tipoProprietario, con, tipoDB,tabellaSoggetti);
+			idSoggetto = DBUtils.getIdSoggetto(nomeSoggettoErogatore, tipoSoggettoErogatore, con, tipoDB,tabellaSoggetti);
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
 			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("id_soggetto = ?");
 			sqlQueryObject.addWhereCondition("tipo_servizio = ?");
 			sqlQueryObject.addWhereCondition("nome_servizio = ?");
-			sqlQueryObject.addWhereCondition("id_soggetto = ?");
+			sqlQueryObject.addWhereCondition("versione_servizio = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			String query = sqlQueryObject.createSQLQuery();
 			if(testServizioNonCorrelato)
@@ -282,9 +269,10 @@ public class DBUtils {
 //			if(testServizioNonCorrelato)
 //			query = query + " AND servizio_correlato=?";
 			stm=con.prepareStatement(query);
+			stm.setLong(1, idSoggetto);
 			stm.setString(1, tipoServizio);
 			stm.setString(2, nomeServizio);
-			stm.setLong(3, idSoggetto);
+			stm.setInt(3, versioneServizio);
 			if(testServizioNonCorrelato)
 				stm.setString(4, "disabilitato");
 
@@ -514,11 +502,11 @@ public class DBUtils {
 	
 	
 
-	public static long getIdAccordo(String nomeServizio, String tipoServizio,String nomeProprietario,String tipoProprietario,Connection con, String tipoDB) throws CoreException
+	public static long getIdAccordoServizioParteComune(String nomeServizio, String tipoServizio,Integer versioneServizio, String nomeSoggettoErogatore,String tipoSoggettoErogatore,Connection con, String tipoDB) throws CoreException
 	{
-		return DBUtils.getIdAccordo(nomeServizio,tipoServizio,nomeProprietario,tipoProprietario,con,tipoDB,CostantiDB.SOGGETTI);
+		return DBUtils.getIdAccordoServizioParteComune(nomeServizio,tipoServizio,versioneServizio, nomeSoggettoErogatore,tipoSoggettoErogatore,con,tipoDB,CostantiDB.SOGGETTI);
 	}
-	public static long getIdAccordo(String nomeServizio, String tipoServizio,String nomeProprietario,String tipoProprietario,Connection con, String tipoDB,String tabellaSoggetti) throws CoreException
+	public static long getIdAccordoServizioParteComune(String nomeServizio, String tipoServizio,Integer versioneServizio, String nomeSoggettoErogatore,String tipoSoggettoErogatore,Connection con, String tipoDB,String tabellaSoggetti) throws CoreException
 	{
 		PreparedStatement stm = null;
 		ResultSet rs = null;
@@ -526,7 +514,7 @@ public class DBUtils {
 		long idAccordo = -1;
 		try
 		{
-			idServizio = DBUtils.getIdServizio(nomeServizio, tipoServizio, nomeProprietario, tipoProprietario, con, tipoDB,tabellaSoggetti);
+			idServizio = DBUtils.getIdServizio(nomeServizio, tipoServizio, versioneServizio, nomeSoggettoErogatore, tipoSoggettoErogatore, con, tipoDB,tabellaSoggetti);
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
@@ -604,16 +592,13 @@ public class DBUtils {
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition("nome = ?");
 			sqlQueryObject.addWhereCondition("id_referente = ?");
-			if(AccordiUtils.versioneNonDefinita(idAccordo.getVersione()))
-				sqlQueryObject.addWhereCondition(false,"versione = ?","versione is null");
-			else
-				sqlQueryObject.addWhereCondition("versione = ?");
+			sqlQueryObject.addWhereCondition("versione = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			String query = sqlQueryObject.createSQLQuery();
 			stm=con.prepareStatement(query);
 			stm.setString(1, idAccordo.getNome());
 			
-			long idSoggettoReferente =  AccordiUtils.SOGGETTO_REFERENTE_DEFAULT;
+			long idSoggettoReferente =  0;
 			if(idAccordo.getSoggettoReferente()!=null){
 				idSoggettoReferente = DBUtils.getIdSoggetto(idAccordo.getSoggettoReferente().getNome(), idAccordo.getSoggettoReferente().getTipo(), con, tipoDB);
 				if(idSoggettoReferente<=0){
@@ -622,10 +607,7 @@ public class DBUtils {
 			}
 			stm.setLong(2, idSoggettoReferente);
 				
-			String vers = AccordiUtils.VERSIONE_DEFAULT;
-			if(idAccordo.getVersione()!=null)
-				vers = idAccordo.getVersione();
-			stm.setString(3, vers);
+			stm.setInt(3, idAccordo.getVersione());
 						
 			rs=stm.executeQuery();
 
@@ -666,19 +648,23 @@ public class DBUtils {
 			sqlQueryObject.addFromTable(CostantiDB.ACCORDI_COOPERAZIONE);
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition("nome = ?");
-			if(AccordiUtils.versioneNonDefinita(idAccordo.getVersione()))
-				sqlQueryObject.addWhereCondition(false,"versione = ?","versione is null");
-			else
-				sqlQueryObject.addWhereCondition("versione = ?");
+			sqlQueryObject.addWhereCondition("id_referente = ?");
+			sqlQueryObject.addWhereCondition("versione = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			String query = sqlQueryObject.createSQLQuery();
 			stm=con.prepareStatement(query);
 			stm.setString(1, idAccordo.getNome());
 				
-			String vers = AccordiUtils.VERSIONE_DEFAULT;
-			if(idAccordo.getVersione()!=null)
-				vers = idAccordo.getVersione();
-			stm.setString(2, vers);
+			long idSoggettoReferente =  0;
+			if(idAccordo.getSoggettoReferente()!=null){
+				idSoggettoReferente = DBUtils.getIdSoggetto(idAccordo.getSoggettoReferente().getNome(), idAccordo.getSoggettoReferente().getTipo(), con, tipoDB);
+				if(idSoggettoReferente<=0){
+					throw new CoreException("[getIdAccordoCooperazione] Soggetto Referente ["+idAccordo.getSoggettoReferente().toString()+"] non esiste");
+				}
+			}
+			stm.setLong(2, idSoggettoReferente);
+				
+			stm.setInt(3, idAccordo.getVersione());
 						
 			rs=stm.executeQuery();
 
@@ -705,58 +691,6 @@ public class DBUtils {
 		}
 	}
 	
-	public static long getIdAccordoServizioParteSpecifica(IDAccordo idAccordo,Connection con, String tipoDB) throws CoreException{
-		PreparedStatement stm = null;
-		ResultSet rs = null;
-		long idAccordoLong=-1;
-		try
-		{
-			
-			// NOTA: nell'APS, il soggetto e la versione sono obbligatori
-			
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
-			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition("aps_nome = ?");
-			sqlQueryObject.addWhereCondition("id_soggetto = ?");
-			sqlQueryObject.addWhereCondition("aps_versione = ?");
-			sqlQueryObject.setANDLogicOperator(true);
-			String query = sqlQueryObject.createSQLQuery();
-			stm=con.prepareStatement(query);
-			stm.setString(1, idAccordo.getNome());
-			
-			long idSoggettoReferente =  DBUtils.getIdSoggetto(idAccordo.getSoggettoReferente().getNome(), idAccordo.getSoggettoReferente().getTipo(), con, tipoDB);
-			if(idSoggettoReferente<=0){
-				throw new CoreException("[getIdAccordoServizio] Soggetto Referente ["+idAccordo.getSoggettoReferente().toString()+"] non esiste");
-			}
-			stm.setLong(2, idSoggettoReferente);
-				
-			stm.setString(3, idAccordo.getVersione());
-						
-			rs=stm.executeQuery();
-
-			if(rs.next()){
-				idAccordoLong = rs.getLong("id");
-			}
-
-			return idAccordoLong;
-
-		}catch (SQLException e) {
-			throw new CoreException(e);
-		}catch (Exception e) {
-			throw new CoreException(e);
-		}finally
-		{
-			//Chiudo statement and resultset
-			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
-
-		}
-	}
 	
 	public static long getIdAccordoServizioParteSpecifica(IDServizio idServizio,Connection con, String tipoDB) throws CoreException{
 		PreparedStatement stm = null;
@@ -777,12 +711,14 @@ public class DBUtils {
 			sqlQueryObject.addWhereCondition("nome_soggetto = ?");
 			sqlQueryObject.addWhereCondition("tipo_servizio = ?");
 			sqlQueryObject.addWhereCondition("nome_servizio = ?");
+			sqlQueryObject.addWhereCondition("versione_servizio = ?");
 			String query = sqlQueryObject.createSQLQuery();
 			stm=con.prepareStatement(query);
 			stm.setString(1, idServizio.getSoggettoErogatore().getTipo());
 			stm.setString(2, idServizio.getSoggettoErogatore().getNome());
-			stm.setString(3, idServizio.getTipoServizio());
-			stm.setString(4, idServizio.getServizio());
+			stm.setString(3, idServizio.getTipo());
+			stm.setString(4, idServizio.getNome());
+			stm.setInt(5, idServizio.getVersione());
 			
 			rs=stm.executeQuery();
 

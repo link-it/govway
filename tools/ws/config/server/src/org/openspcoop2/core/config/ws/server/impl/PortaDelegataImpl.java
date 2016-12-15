@@ -271,8 +271,14 @@ public abstract class PortaDelegataImpl extends BaseImpl  implements PortaDelega
 		}
 		
 		if(filter.getLocalForward()!= null) {
-			sqlQueryObjectCondition.addWhereCondition(CostantiDB.PORTE_DELEGATE+".local_forward=?");
-			paramTypes.add(new JDBCObject(filter.getLocalForward().getValue(),String.class));
+			if(filter.getLocalForward().getStato()!= null) {
+				sqlQueryObjectCondition.addWhereCondition(CostantiDB.PORTE_DELEGATE+".local_forward=?");
+				paramTypes.add(new JDBCObject(filter.getLocalForward().getStato().getValue(),String.class));
+			}
+			if(filter.getLocalForward().getPortaApplicativa()!= null) {
+				sqlQueryObjectCondition.addWhereCondition(CostantiDB.PORTE_DELEGATE+".local_forward_pa=?");
+				paramTypes.add(new JDBCObject(filter.getLocalForward().getPortaApplicativa(),String.class));
+			}
 		}
 		
 		if(filter.getSoggettoErogatore()!= null) {
@@ -652,7 +658,7 @@ public abstract class PortaDelegataImpl extends BaseImpl  implements PortaDelega
 			}
 			//obj.setSuperUser(ServerProperties.getInstance().getUser());
 			IDPortaDelegata idPD = this.convertToIdPortaDelegata(oldId);
-			obj.setOldNomeForUpdate(idPD.getNome());
+			obj.setOldIDPortaDelegataForUpdate(idPD);
 			((IDriverConfigurazioneCRUD)this.portaDelegataService.getDriver()).updatePortaDelegata(obj);
 			this.logEndMethod("update");
 			
@@ -682,7 +688,7 @@ public abstract class PortaDelegataImpl extends BaseImpl  implements PortaDelega
 			}else{
 				//obj.setSuperUser(ServerProperties.getInstance().getUser());
 				IDPortaDelegata idPD = this.convertToIdPortaDelegata(oldId);
-				obj.setOldNomeForUpdate(idPD.getNome());
+				obj.setOldIDPortaDelegataForUpdate(idPD);
 				((IDriverConfigurazioneCRUD)this.portaDelegataService.getDriver()).updatePortaDelegata(obj);
 			}
 			this.logEndMethod("updateOrCreate");

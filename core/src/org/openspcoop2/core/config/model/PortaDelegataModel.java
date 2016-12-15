@@ -45,6 +45,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.SERVIZIO = new org.openspcoop2.core.config.model.PortaDelegataServizioModel(new Field("servizio",org.openspcoop2.core.config.PortaDelegataServizio.class,"porta-delegata",PortaDelegata.class));
 		this.AZIONE = new org.openspcoop2.core.config.model.PortaDelegataAzioneModel(new Field("azione",org.openspcoop2.core.config.PortaDelegataAzione.class,"porta-delegata",PortaDelegata.class));
 		this.SERVIZIO_APPLICATIVO = new org.openspcoop2.core.config.model.PortaDelegataServizioApplicativoModel(new Field("servizio-applicativo",org.openspcoop2.core.config.PortaDelegataServizioApplicativo.class,"porta-delegata",PortaDelegata.class));
+		this.LOCAL_FORWARD = new org.openspcoop2.core.config.model.PortaDelegataLocalForwardModel(new Field("local-forward",org.openspcoop2.core.config.PortaDelegataLocalForward.class,"porta-delegata",PortaDelegata.class));
 		this.MTOM_PROCESSOR = new org.openspcoop2.core.config.model.MtomProcessorModel(new Field("mtom-processor",org.openspcoop2.core.config.MtomProcessor.class,"porta-delegata",PortaDelegata.class));
 		this.MESSAGE_SECURITY = new org.openspcoop2.core.config.model.MessageSecurityModel(new Field("message-security",org.openspcoop2.core.config.MessageSecurity.class,"porta-delegata",PortaDelegata.class));
 		this.VALIDAZIONE_CONTENUTI_APPLICATIVI = new org.openspcoop2.core.config.model.ValidazioneContenutiApplicativiModel(new Field("validazione-contenuti-applicativi",org.openspcoop2.core.config.ValidazioneContenutiApplicativi.class,"porta-delegata",PortaDelegata.class));
@@ -68,7 +69,6 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.SCARTA_BODY = new Field("scarta-body",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.GESTIONE_MANIFEST = new Field("gestione-manifest",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.STATELESS = new Field("stateless",java.lang.String.class,"porta-delegata",PortaDelegata.class);
-		this.LOCAL_FORWARD = new Field("local-forward",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.ORA_REGISTRAZIONE = new Field("ora-registrazione",java.util.Date.class,"porta-delegata",PortaDelegata.class);
 	
 	}
@@ -81,6 +81,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.SERVIZIO = new org.openspcoop2.core.config.model.PortaDelegataServizioModel(new ComplexField(father,"servizio",org.openspcoop2.core.config.PortaDelegataServizio.class,"porta-delegata",PortaDelegata.class));
 		this.AZIONE = new org.openspcoop2.core.config.model.PortaDelegataAzioneModel(new ComplexField(father,"azione",org.openspcoop2.core.config.PortaDelegataAzione.class,"porta-delegata",PortaDelegata.class));
 		this.SERVIZIO_APPLICATIVO = new org.openspcoop2.core.config.model.PortaDelegataServizioApplicativoModel(new ComplexField(father,"servizio-applicativo",org.openspcoop2.core.config.PortaDelegataServizioApplicativo.class,"porta-delegata",PortaDelegata.class));
+		this.LOCAL_FORWARD = new org.openspcoop2.core.config.model.PortaDelegataLocalForwardModel(new ComplexField(father,"local-forward",org.openspcoop2.core.config.PortaDelegataLocalForward.class,"porta-delegata",PortaDelegata.class));
 		this.MTOM_PROCESSOR = new org.openspcoop2.core.config.model.MtomProcessorModel(new ComplexField(father,"mtom-processor",org.openspcoop2.core.config.MtomProcessor.class,"porta-delegata",PortaDelegata.class));
 		this.MESSAGE_SECURITY = new org.openspcoop2.core.config.model.MessageSecurityModel(new ComplexField(father,"message-security",org.openspcoop2.core.config.MessageSecurity.class,"porta-delegata",PortaDelegata.class));
 		this.VALIDAZIONE_CONTENUTI_APPLICATIVI = new org.openspcoop2.core.config.model.ValidazioneContenutiApplicativiModel(new ComplexField(father,"validazione-contenuti-applicativi",org.openspcoop2.core.config.ValidazioneContenutiApplicativi.class,"porta-delegata",PortaDelegata.class));
@@ -104,7 +105,6 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.SCARTA_BODY = new ComplexField(father,"scarta-body",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.GESTIONE_MANIFEST = new ComplexField(father,"gestione-manifest",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.STATELESS = new ComplexField(father,"stateless",java.lang.String.class,"porta-delegata",PortaDelegata.class);
-		this.LOCAL_FORWARD = new ComplexField(father,"local-forward",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.ORA_REGISTRAZIONE = new ComplexField(father,"ora-registrazione",java.util.Date.class,"porta-delegata",PortaDelegata.class);
 	
 	}
@@ -118,6 +118,8 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 	public org.openspcoop2.core.config.model.PortaDelegataAzioneModel AZIONE = null;
 	 
 	public org.openspcoop2.core.config.model.PortaDelegataServizioApplicativoModel SERVIZIO_APPLICATIVO = null;
+	 
+	public org.openspcoop2.core.config.model.PortaDelegataLocalForwardModel LOCAL_FORWARD = null;
 	 
 	public org.openspcoop2.core.config.model.MtomProcessorModel MTOM_PROCESSOR = null;
 	 
@@ -164,8 +166,6 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 	public IField GESTIONE_MANIFEST = null;
 	 
 	public IField STATELESS = null;
-	 
-	public IField LOCAL_FORWARD = null;
 	 
 	public IField ORA_REGISTRAZIONE = null;
 	 

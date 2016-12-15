@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
-import org.openspcoop2.core.id.IDAccordoCooperazioneWithSoggetto;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.IdAccordoCooperazione;
@@ -90,26 +89,18 @@ public abstract class AccordoCooperazioneImpl extends BaseImpl  implements Accor
 		}
 		return this.buildIDAccordoCooperazione(id.getNome(), id.getVersione(), idSoggettoReferente);
 	}
-	private IDAccordoCooperazione buildIDAccordoCooperazione(String nome, String versione, IDSoggetto idSoggetto) throws DriverRegistroServiziException{
-		IDAccordoCooperazione idAccordo = IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromValues(nome, versione);
-		IDAccordoCooperazione idSearch = idAccordo;
-		if(idSoggetto!=null){
-			IDAccordoCooperazioneWithSoggetto idAccordoWithSoggetto = new IDAccordoCooperazioneWithSoggetto(idAccordo);
-			idAccordoWithSoggetto.setSoggettoReferente(idSoggetto);
-			idSearch = idAccordoWithSoggetto;
-		}
-		return idSearch;
+	private IDAccordoCooperazione buildIDAccordoCooperazione(String nome, Integer versione, IDSoggetto idSoggetto) throws DriverRegistroServiziException{
+		return IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromValues(nome, idSoggetto, versione);
 	}
 
 	private IdAccordoCooperazione convertToIdAccordoCooperazioneWS(IDAccordoCooperazione id) throws DriverRegistroServiziException{
 		IdAccordoCooperazione idAccordo = new IdAccordoCooperazione();
 		idAccordo.setNome(id.getNome());
 		idAccordo.setVersione(id.getVersione());
-		if(id instanceof IDAccordoCooperazioneWithSoggetto){
-			IDAccordoCooperazioneWithSoggetto idWithSoggetto = (IDAccordoCooperazioneWithSoggetto) id;
+		if(id.getSoggettoReferente()!=null){
 			IdSoggetto soggettoReferente = new IdSoggetto();
-			soggettoReferente.setTipo(idWithSoggetto.getSoggettoReferente().getTipo());
-			soggettoReferente.setNome(idWithSoggetto.getSoggettoReferente().getNome());
+			soggettoReferente.setTipo(id.getSoggettoReferente().getTipo());
+			soggettoReferente.setNome(id.getSoggettoReferente().getNome());
 			idAccordo.setSoggettoReferente(soggettoReferente);
 		}
 		return idAccordo;
@@ -164,7 +155,7 @@ public abstract class AccordoCooperazioneImpl extends BaseImpl  implements Accor
 			returnTypes.add(String.class);
 			
 			sqlQueryObject.addSelectField(CostantiDB.ACCORDI_COOPERAZIONE, "versione");
-			returnTypes.add(String.class);
+			returnTypes.add(Integer.class);
 		}
 		
 		
@@ -185,7 +176,7 @@ public abstract class AccordoCooperazioneImpl extends BaseImpl  implements Accor
 			for (List<Object> list : listaRisultati) {
 				Long idReferente = (Long)list.get(0);
 				String name = (String)list.get(1);
-				String versione = (String)list.get(2);
+				Integer versione = (Integer)list.get(2);
 				IDSoggetto idSoggettoReferente = null;
 				if(idReferente!=null && idReferente>0){
 					idSoggettoReferente = driverDB.getIdSoggetto(idReferente);

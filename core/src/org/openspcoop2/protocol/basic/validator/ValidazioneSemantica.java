@@ -65,7 +65,7 @@ public class ValidazioneSemantica extends BasicComponentFactory implements
 	public ValidazioneSemanticaResult valida(OpenSPCoop2Message msg, Busta busta, IState state,
 			ProprietaValidazione tipoValidazione, RuoloBusta tipoBusta)
 			throws ProtocolException {
-		return new ValidazioneSemanticaResult(null, null, null, null, null);
+		return new ValidazioneSemanticaResult(null, null, null, null, null, null);
 	}
 
 	@Override

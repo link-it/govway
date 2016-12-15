@@ -1577,12 +1577,12 @@ public class UDDILib
 	 * @return un oggetto BusinessService se la ricerca ha successo
 	 */
 	protected BusinessService getBusinessService(BusinessEntity be, IDServizio idServ) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		if ( be==null || idServ==null || idServ.getTipoServizio()==null || idServ.getServizio()==null)
+		if ( be==null || idServ==null || idServ.getTipo()==null || idServ.getNome()==null || idServ.getVersione()==null)
 			throw new DriverRegistroServiziException("[UDDILib.getBusinessService]: Alcuni parametri non definiti");
 	
 		try{    
 
-			String keyService = idServ.getTipoServizio() + "/" + idServ.getServizio();
+			String keyService = idServ.getTipo() + "/" + idServ.getNome() + ":"+ idServ.getVersione();
 
 			BusinessService bs=null;
 
@@ -1635,14 +1635,14 @@ public class UDDILib
 	 * @return il BusinessService inserito, se l'inserimento ha successo, null altrimenti.
 	 */
 	protected BusinessService createBusinessService(BusinessEntity be, IDServizio idServ) throws DriverRegistroServiziException{
-		if ( be==null || idServ==null || idServ.getTipoServizio()==null || idServ.getServizio()==null)
+		if ( be==null || idServ==null || idServ.getTipo()==null || idServ.getNome()==null || idServ.getVersione()==null)
 			throw new DriverRegistroServiziException("[UDDILib.createBusinessService]: Alcuni parametri non definiti");
 	
 		BusinessService bs = null;
 		try{
 			AuthToken token = this.proxy.get_authToken(this.username,this.password);
 
-			String keyService = idServ.getTipoServizio() + "/" + idServ.getServizio();
+			String keyService = idServ.getTipo() + "/" + idServ.getNome()+ ":"+idServ.getVersione();
 
 			String businessKey = be.getBusinessKey();   
 			
@@ -1692,7 +1692,7 @@ public class UDDILib
 	 * @param idServ Identificativo del Servizio
 	 */	
 	protected void deleteBusinessService(IDServizio idServ) throws DriverRegistroServiziException{
-		if ( idServ==null || idServ.getTipoServizio()==null || idServ.getServizio()==null ||
+		if ( idServ==null || idServ.getTipo()==null || idServ.getNome()==null || idServ.getVersione()==null ||
 				idServ.getSoggettoErogatore()==null || idServ.getSoggettoErogatore().getTipo()==null || idServ.getSoggettoErogatore().getNome()==null)
 			throw new DriverRegistroServiziException("[UDDILib.deleteBusinessService]: Alcuni parametri non definiti");
 	
@@ -1717,7 +1717,7 @@ public class UDDILib
 
 			Vector<Name> names = new Vector<Name>();
 
-			String keyService = idServ.getTipoServizio() + "/" + idServ.getServizio();
+			String keyService = idServ.getTipo() + "/" + idServ.getNome()+":"+idServ.getVersione();
 
 			names.add(new Name(keyService));
 
@@ -1759,14 +1759,14 @@ public class UDDILib
 	 * @return la BusinessService modificata, se la modifica ha successo, null altrimenti.
 	 */
 	protected BusinessService updateNomeBusinessService(BusinessService bs, IDServizio idServ)throws DriverRegistroServiziException{
-		if (bs==null || idServ==null || idServ.getTipoServizio()==null || idServ.getServizio()==null){
+		if (bs==null || idServ==null || idServ.getTipo()==null || idServ.getNome()==null || idServ.getVersione()==null){
 			throw new DriverRegistroServiziException("[UDDILib.updateNomeBusinessService]: Alcuni parametri non definiti");
 		}
 
 		try{
 			AuthToken token = this.proxy.get_authToken(this.username,this.password);
 
-			String keyService = idServ.getTipoServizio() + "/" + idServ.getServizio();
+			String keyService = idServ.getTipo() + "/" + idServ.getNome() + ":" + idServ.getVersione();
 
 
 			bs.setDefaultName(new Name(keyService));
@@ -2156,11 +2156,11 @@ public class UDDILib
 	 * @param idServNEW Nuovo Identificativo del Servizio
 	 */
 	public void updateIdServizio(IDServizio idServOLD,IDServizio idServNEW)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		if ( idServOLD==null || idServOLD.getTipoServizio()==null || idServOLD.getServizio()==null ||
+		if ( idServOLD==null || idServOLD.getTipo()==null || idServOLD.getNome()==null || idServOLD.getVersione()==null ||
 				idServOLD.getSoggettoErogatore()==null || idServOLD.getSoggettoErogatore().getTipo()==null || idServOLD.getSoggettoErogatore().getNome()==null)
 			throw new DriverRegistroServiziException("[UDDILib.modificaNomeServizio]: Alcuni parametri non definiti");
 	
-		if ( idServNEW==null || idServNEW.getTipoServizio()==null || idServNEW.getServizio()==null ||
+		if ( idServNEW==null || idServNEW.getTipo()==null || idServNEW.getNome()==null || idServNEW.getVersione()==null ||
 				idServNEW.getSoggettoErogatore()==null || idServNEW.getSoggettoErogatore().getTipo()==null || idServNEW.getSoggettoErogatore().getNome()==null)
 			throw new DriverRegistroServiziException("[UDDILib.modificaNomeServizio]: Alcuni parametri non definiti");
 	

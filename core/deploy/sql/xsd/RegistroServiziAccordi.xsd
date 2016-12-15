@@ -359,7 +359,7 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="versione" type="xsd:string" minOccurs="0" default="">
+                <xsd:element name="versione" type="xsd:int" minOccurs="0" default="1">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
@@ -1000,6 +1000,7 @@
                     <linkit:sql-table-mapping name="accordi_cooperazione">
                         <linkit:sql-table-unique create-index="true">
                             <linkit:sql-table-unique-field name="nome"/>
+                            <linkit:sql-table-unique-field name="id_referente"/>
                             <linkit:sql-table-unique-field name="versione"/>
                         </linkit:sql-table-unique>
                     </linkit:sql-table-mapping>
@@ -1039,7 +1040,7 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="versione" type="xsd:string" minOccurs="0" default="">
+                <xsd:element name="versione" type="xsd:int" minOccurs="0" default="1">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
@@ -1177,15 +1178,11 @@
                             <linkit:sql-table-fk-reference-column name="id"/>
                         </linkit:sql-table-foreign-key>
                         <linkit:sql-table-unique create-index="true">
-                            <linkit:sql-table-unique-field name="nome_servizio"/>
-                            <linkit:sql-table-unique-field name="tipo_servizio"/>
                             <linkit:sql-table-unique-field name="id_soggetto"/>
+                            <linkit:sql-table-unique-field name="tipo_servizio"/>
+                            <linkit:sql-table-unique-field name="nome_servizio"/>
+                            <linkit:sql-table-unique-field name="versione_servizio"/>
                         </linkit:sql-table-unique>
-                        <linkit:sql-table-index name="INDEX_APS">
-                            <linkit:sql-table-index-field name="aps_nome"/>
-                            <linkit:sql-table-index-field name="aps_versione"/>
-                            <linkit:sql-table-index-field name="id_soggetto"/>
-                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
@@ -1208,6 +1205,16 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo_servizio"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="versione_servizio" type="xsd:int" minOccurs="0" default="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="versione_servizio"/>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1339,27 +1346,6 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="stato"/>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="aps_nome" type="xsd:string" minOccurs="0">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="aps_nome"/>
-                                <linkit:sql-column-comment><![CDATA[identificativi accordo di servizio parte specifica]]></linkit:sql-column-comment>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="aps_versione" type="xsd:string" minOccurs="0">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="aps_versione"/>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

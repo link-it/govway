@@ -509,8 +509,11 @@ public class UtilitiesIntegrazione {
 		busta.setMittente(soggettoFruitore.getNome());
 		busta.setTipoDestinatario(idServizio.getSoggettoErogatore().getTipo());
 		busta.setDestinatario(idServizio.getSoggettoErogatore().getNome());
-		busta.setTipoServizio(idServizio.getTipoServizio());
-		busta.setServizio(idServizio.getServizio());
+		busta.setTipoServizio(idServizio.getTipo());
+		busta.setServizio(idServizio.getNome());
+		if(idServizio.getVersione()!=null){
+			busta.setVersioneServizio(idServizio.getVersione());
+		}
 		busta.setAzione(idServizio.getAzione());
 		if(idBustaRisposta==null){
 			busta.setID(idBusta);

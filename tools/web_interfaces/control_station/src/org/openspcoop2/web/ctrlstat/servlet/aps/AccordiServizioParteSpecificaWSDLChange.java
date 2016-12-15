@@ -46,10 +46,10 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.PortType;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.basic.Utilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -151,18 +151,11 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
 
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServ);
-			Servizio ss = asps.getServizio();
-			String nomeservizio = ss.getNome();
-			String tiposervizio = ss.getTipo();
-			String tmpTitle = tiposervizio + "/" + nomeservizio;
-			// aggiorno tmpTitle
-			String tmpVersione = asps.getVersione();
-			if(apsCore.isShowVersioneAccordoServizioParteSpecifica()==false){
-				tmpVersione = null;
-			}
-			tmpTitle = idAccordoFactory.getUriFromValues(asps.getNome(), 
-					ss.getTipoSoggettoErogatore(), ss.getNomeSoggettoErogatore(), 
-					tmpVersione);
+			String nomeservizio = asps.getNome();
+			String tiposervizio = asps.getTipo();
+			Integer versioneservizio = asps.getVersione();
+		
+			String tmpTitle = IDServizioFactory.getInstance().getUriFromAccordo(asps);
 
 			// Prendo Accordo di servizio parte comune
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
@@ -187,7 +180,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			if (wsdlbyte != null) {
 				oldwsdl = new String(wsdlbyte);
 			}
-			Soggetto soggettoErogatoreID = soggettiCore.getSoggettoRegistro(new IDSoggetto(ss.getTipoSoggettoErogatore(),ss.getNomeSoggettoErogatore()));
+			Soggetto soggettoErogatoreID = soggettiCore.getSoggettoRegistro(new IDSoggetto(asps.getTipoSoggettoErogatore(),asps.getNomeSoggettoErogatore()));
 
 			// Se idhid = null, devo visualizzare la pagina per l'inserimento
 			// dati
@@ -292,7 +285,6 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					new Parameter(tmpTitle, null)					);
 
 			AccordoServizioParteSpecifica aspsT = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(this.id));
-			Servizio servizio = aspsT.getServizio();
 
 			String[] ptList = null;
 			String[] soggettiList = null;
@@ -334,11 +326,11 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 				}
 			}
 
-			String nomeSoggettoErogatore = servizio.getNomeSoggettoErogatore();
-			String tipoSoggettoErogatore = servizio.getTipoSoggettoErogatore();
+			String nomeSoggettoErogatore = aspsT.getNomeSoggettoErogatore();
+			String tipoSoggettoErogatore = aspsT.getTipoSoggettoErogatore();
 			String provString = tipoSoggettoErogatore + "/" + nomeSoggettoErogatore;
 			String servcorr = "";
-			if (TipologiaServizio.CORRELATO.equals(servizio.getTipologiaServizio()))
+			if (TipologiaServizio.CORRELATO.equals(aspsT.getTipologiaServizio()))
 				servcorr = Costanti.CHECK_BOX_ENABLED;
 			else
 				servcorr = Costanti.CHECK_BOX_DISABLED;
@@ -347,10 +339,8 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			String portType = aspsT.getPortType();
 			String descrizione = aspsT.getDescrizione();
 			String statoPackage = aspsT.getStatoPackage();
-			String nome_aps = aspsT.getNome();
-			String versione = aspsT.getVersione();
-
-			Connettore connettore = servizio.getConnettore();
+			
+			Connettore connettore = aspsT.getConfigurazioneServizio().getConnettore();
 
 			// if(endpointtype==null || endpointtype.equals(""))
 			// endpointtype = connettore.getTipo();
@@ -497,7 +487,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					TipoOperazione.CHANGE, this.id, tipiServizi, profilo, portType, ptList,
 					(aspsT.getPrivato()!=null && aspsT.getPrivato()),idAccordoFactory.getUriFromAccordo(as),
 					descrizione,soggettoErogatoreID.getId(), statoPackage,statoPackage,
-					nome_aps, versione, versioniProtocollo,this.validazioneDocumenti,
+					versioneservizio.intValue()+"", versioniProtocollo,this.validazioneDocumenti,
 					null,null,null,protocollo,true,null);
 
 			dati = connettoriHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
@@ -509,7 +499,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey, httpspwdprivatekey,
 					httpsalgoritmokey, tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, this.id,
-					nomeservizio, tiposervizio, null, null, null, null, true,
+					nomeservizio, tiposervizio, versioneservizio.intValue()+"", null, null, null, null, true,
 					isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 
 			pd.setDati(dati);

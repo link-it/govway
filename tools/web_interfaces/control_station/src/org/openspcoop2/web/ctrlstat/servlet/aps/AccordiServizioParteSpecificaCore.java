@@ -51,6 +51,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
@@ -224,7 +225,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 
 				int idAccordoServizioParteSpecificaAlreadyExists = 
 						this.getServizioWithSoggettoAccordoServCorr(idSoggettoErogatoreLong, idAccordoServizioParteComuneLong, 
-								idAccordoServizioParteSpecifica, tmpServCorr);
+								tmpServCorr);
 
 				boolean addError = (tipoOperazione.equals(TipoOperazione.ADD) && (idAccordoServizioParteSpecificaAlreadyExists > 0));
 				boolean changeError = false;
@@ -248,7 +249,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 
 				int idAccordoServizioParteSpecificaAlreadyExists =  
 						this.getServizioWithSoggettoAccordoServCorrPt(idSoggettoErogatoreLong, idAccordoServizioParteComuneLong, 
-								idAccordoServizioParteSpecifica, tmpServCorr, portType);
+								tmpServCorr, portType);
 
 				boolean addError = (tipoOperazione.equals(TipoOperazione.ADD) && (idAccordoServizioParteSpecificaAlreadyExists > 0));
 				boolean changeError = false;
@@ -273,7 +274,8 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		try {
 			// prendo una connessione
 			con = ControlStationCore.dbM.getConnection();
-			return DBUtils.getIdServizio(idAccordo.getServizio(), idAccordo.getTipoServizio(), idAccordo.getSoggettoErogatore().getNome(), idAccordo.getSoggettoErogatore().getTipo(),
+			return DBUtils.getIdServizio(idAccordo.getNome(), idAccordo.getTipo(), idAccordo.getVersione(),
+					idAccordo.getSoggettoErogatore().getNome(), idAccordo.getSoggettoErogatore().getTipo(),
 					con, this.tipoDB);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -343,7 +345,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			DriverRegistroServiziDB driverRegistro = driver.getDriverRegistroServiziDB();
 
 			FiltroRicercaServizi filtroRicerca = new FiltroRicercaServizi();
-			filtroRicerca.setIdAccordo(idAccordo);
+			filtroRicerca.setIdAccordoServizioParteComune(idAccordo);
 						
 			List<IDServizio> idServizi = null;
 			try{
@@ -375,8 +377,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			// prendo una connessione
 			con = ControlStationCore.dbM.getConnection();
 			
-			IDServizio idServizio = new IDServizio(as.getServizio().getTipoSoggettoErogatore(), as.getServizio().getNomeSoggettoErogatore(), 
-					as.getServizio().getTipo(), as.getServizio().getNome());
+			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(as);
 			return DBOggettiInUsoUtils.isAccordoServizioParteSpecificaInUso(con, this.tipoDB, idServizio, whereIsInUso, nomePAGenerataAutomaticamente);			
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -574,29 +575,8 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
-
-	public List<AccordoServizioParteSpecifica> serviziSoggettoList(long idSoggetto) throws DriverRegistroServiziException {
-		Connection con = null;
-		String nomeMetodo = "serviziSoggettoList";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getDriverRegistroServiziDB().serviziSoggettoList(idSoggetto);
-
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-	}
 	
-	public int getServizioWithSoggettoAccordoServCorr(long idSoggetto, long idAccordo, IDServizio idServizio, String servizioCorrelato) throws DriverRegistroServiziException {
+	public int getServizioWithSoggettoAccordoServCorr(long idSoggetto, long idAccordo, String servizioCorrelato) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "getServizioWithSoggettoAccordoServCorr";
 		DriverControlStationDB driver = null;
@@ -607,7 +587,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverRegistroServiziDB().getServizioWithSoggettoAccordoServCorr(idSoggetto, idAccordo, idServizio, servizioCorrelato);
+			return driver.getDriverRegistroServiziDB().getServizioWithSoggettoAccordoServCorr(idSoggetto, idAccordo, servizioCorrelato);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -617,7 +597,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		}
 	}
 
-	public int getServizioWithSoggettoAccordoServCorrPt(long idSoggetto, long idAccordo, IDServizio idServizio, String servizioCorrelato, String portType) throws DriverRegistroServiziException {
+	public int getServizioWithSoggettoAccordoServCorrPt(long idSoggetto, long idAccordo, String servizioCorrelato, String portType) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "getServizioWithSoggettoAccordoServCorrPt";
 		DriverControlStationDB driver = null;
@@ -628,7 +608,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverRegistroServiziDB().getServizioWithSoggettoAccordoServCorrPt(idSoggetto, idAccordo, idServizio, servizioCorrelato, portType);
+			return driver.getDriverRegistroServiziDB().getServizioWithSoggettoAccordoServCorrPt(idSoggetto, idAccordo, servizioCorrelato, portType);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -766,28 +746,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 	}
 
 
-	public boolean existsServizioWithTipoAndNome(String tipoServ, String nomeServ) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
-		Connection con = null;
-		String nomeMetodo = "existsServizioWithTipoAndNome";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getDriverRegistroServiziDB().existsServizioWithTipoAndNome(tipoServ, nomeServ);
-
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-	}
-
-	public boolean existsAccordoServizioParteSpecifica(IDAccordo idAccordo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	public boolean existsAccordoServizioParteSpecifica(IDServizio idAccordo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "existsAccordoServizioParteSpecifica";
 		DriverControlStationDB driver = null;
@@ -893,29 +852,6 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 
 
 	
-	
-
-	public List<AccordoServizioParteSpecifica> soggettiServizioList(int soggId) throws DriverRegistroServiziException {
-		Connection con = null;
-		String nomeMetodo = "soggettiServizioList";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getDriverRegistroServiziDB().soggettiServizioList(soggId);
-
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-
-	}
 	
 	public List<AccordoServizioParteSpecifica> soggettiServizioList(String superuser, ISearch ricerca,boolean [] permessiUtente) throws DriverRegistroServiziException {
 		Connection con = null;
@@ -1209,7 +1145,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 	public ValidazioneResult validazione(AccordoServizioParteSpecifica as,SoggettiCore soggettiCore) throws DriverRegistroServiziException {
 		String nomeMetodo = "validazione";
 		try {
-			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getServizio().getTipoSoggettoErogatore());
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getTipoSoggettoErogatore());
 			IProtocolFactory<?> protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			return protocol.createValidazioneAccordi().valida(as);
 		}catch (Exception e) {
@@ -1221,7 +1157,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 	public ValidazioneResult validaInterfacciaWsdlParteSpecifica(AccordoServizioParteSpecifica as,AccordoServizioParteComune apc,SoggettiCore soggettiCore) throws DriverRegistroServiziException {
 		String nomeMetodo = "validaInterfacciaWsdlParteSpecifica";
 		try {
-			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getServizio().getTipoSoggettoErogatore());
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getTipoSoggettoErogatore());
 			IProtocolFactory<?> protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			return protocol.createValidazioneDocumenti().validaSpecificaInterfaccia(as,apc);
 		}catch (Exception e) {
@@ -1233,7 +1169,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 	public ValidazioneResult validaInterfacciaWsdlParteSpecifica(Fruitore fruitore,AccordoServizioParteSpecifica as,AccordoServizioParteComune apc,SoggettiCore soggettiCore) throws DriverRegistroServiziException {
 		String nomeMetodo = "validaInterfacciaWsdlParteSpecifica_Fruitore";
 		try {
-			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getServizio().getTipoSoggettoErogatore());
+			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getTipoSoggettoErogatore());
 			IProtocolFactory<?> protocol = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 			return protocol.createValidazioneDocumenti().validaSpecificaInterfaccia(fruitore, as, apc);
 		}catch (Exception e) {
@@ -1242,7 +1178,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		}
 	}
 
-	public  long getIdAccordoServizioParteSpecifica(String nomeServizio, String tipoServizio,String nomeProprietario,String tipoProprietario) throws DriverRegistroServiziException{
+	public  long getIdAccordoServizioParteSpecifica(String nomeServizio, String tipoServizio,Integer versioneServizio, String nomeProprietario,String tipoProprietario) throws DriverRegistroServiziException{
 		Connection con = null;
 		String nomeMetodo = "getIdAccordoServizioParteSpecifica";
 
@@ -1252,7 +1188,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			// prendo una connessione
 			con = ControlStationCore.dbM.getConnection();
 
-			idServizio = DBUtils.getIdServizio(nomeServizio, tipoServizio, nomeProprietario, tipoProprietario, con, this.tipoDB);
+			idServizio = DBUtils.getIdServizio(nomeServizio, tipoServizio, versioneServizio, nomeProprietario, tipoProprietario, con, this.tipoDB);
 
 
 		} catch (Exception e) {
@@ -1289,31 +1225,8 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		}
 	}
 
-	public IDAccordo getIDAccordoServizioParteSpecifica(IDServizio idServizio) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
-		Connection con = null;
-		String nomeMetodo = "getIDAccordoServizioParteSpecifica";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getDriverRegistroServiziDB().getIDAccordoServizioParteSpecifica(idServizio);
-
-		} catch (DriverRegistroServiziNotFound de) {
-			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
-			throw de;
-		}catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-	}
-
-	public List<PortaApplicativa> serviziPorteAppList(String tipoServizio,String nomeServizio,long idServizio, long idSoggettoErogatore, ISearch ricerca) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	public List<PortaApplicativa> serviziPorteAppList(String tipoServizio,String nomeServizio, Integer versioneServizio,
+			long idServizio, long idSoggettoErogatore, ISearch ricerca) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;
 		String nomeMetodo = "serviziPorteAppList";
 		DriverControlStationDB driver = null;
@@ -1324,7 +1237,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverConfigurazioneDB().serviziPorteAppList(tipoServizio,nomeServizio,idServizio, idSoggettoErogatore, ricerca);
+			return driver.getDriverConfigurazioneDB().serviziPorteAppList(tipoServizio,nomeServizio,versioneServizio,idServizio, idSoggettoErogatore, ricerca);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -1379,7 +1292,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 	}
 
 
-	public IDAccordo getIdAccordoServizioParteSpecifica(long idAccordo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	public IDServizio getIdAccordoServizioParteSpecifica(long idAccordo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "getIdAccordoServizioParteSpecifica";
 		DriverControlStationDB driver = null;
@@ -1390,7 +1303,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverRegistroServiziDB().getIdAccordoServizioParteSpecifica(idAccordo);
+			return IDServizioFactory.getInstance().getIDServizioFromAccordo(driver.getDriverRegistroServiziDB().getAccordoServizioParteSpecifica(idAccordo,con));
 
 		} catch (DriverRegistroServiziNotFound de) {
 			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
@@ -1404,30 +1317,6 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 
 	}
 	
-	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDAccordo idAccordo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
-		Connection con = null;
-		String nomeMetodo = "getAccordoServizioParteSpecifica";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getDriverRegistroServiziDB().getAccordoServizioParteSpecifica(idAccordo);
-
-		} catch (DriverRegistroServiziNotFound de) {
-			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
-			throw de;
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-
-	}
 
 
 	public List<Fruitore> getServiziFruitoriWithServizio(int idServizio) throws DriverRegistroServiziException {
@@ -1551,7 +1440,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 
 
 					accordiListLabel[i] = idAccordoFactory.getUriFromValues(risultato.getString("nomeAccordo"),soggettoReferente,
-							risultato.getString("versione"));
+							risultato.getInt("versione"));
 
 					i++;
 				}

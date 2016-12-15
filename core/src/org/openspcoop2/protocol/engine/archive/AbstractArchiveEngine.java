@@ -369,16 +369,8 @@ public abstract class AbstractArchiveEngine {
 	
 	// --- Accordi di Servizio Parte Specifica ---
 	
-	public List<IDAccordo> getAllIdAccordiServizioParteSpecifica(FiltroRicercaServizi filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
-		return this.driverRegistroServizi.getAllIdAccordiServizioParteSpecifica(filtroRicerca);
-	}
-	
-	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDAccordo idAccordoServizioParteSpecifica) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
-		return this.driverRegistroServizi.getAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica);
-	}
-	
-	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDAccordo idAccordoServizioParteSpecifica, boolean readContenutoAllegati) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
-		return this.driverRegistroServizi.getAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica, readContenutoAllegati);
+	public List<IDServizio> getAllIdAccordiServizioParteSpecifica(FiltroRicercaServizi filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return this.driverRegistroServizi.getAllIdServizi(filtroRicerca);
 	}
 	
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDServizio idServizio) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
@@ -387,10 +379,6 @@ public abstract class AbstractArchiveEngine {
 	
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDServizio idServizio, boolean readContenutoAllegati) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
 		return this.driverRegistroServizi.getAccordoServizioParteSpecifica(idServizio,readContenutoAllegati);
-	}
-	
-	public boolean existsAccordoServizioParteSpecifica(IDAccordo idAccordoServizioParteSpecifica) throws DriverRegistroServiziException {
-		return this.driverRegistroServizi.existsAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica);
 	}
 	
 	public boolean existsAccordoServizioParteSpecifica(IDServizio idServizio) throws DriverRegistroServiziException {
@@ -432,23 +420,6 @@ public abstract class AbstractArchiveEngine {
 				isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto);
 	}
 	
-	public boolean isAccordoServizioParteSpecificaInUso(IDAccordo idAccordo, 
-			Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverRegistroServiziException {
-		Connection con = null;
-		try{
-			con = this.driverRegistroServizi.getConnection("archive.isAccordoServizioParteSpecificaInUso");
-			return DBOggettiInUsoUtils.isAccordoServizioParteSpecificaInUso(con, this.driverRegistroServizi.getTipoDB(), idAccordo, whereIsInUso, null);
-		}
-		catch(Exception e){
-			throw new DriverRegistroServiziException(e.getMessage(),e);
-		}
-		finally{
-			try{
-				this.driverRegistroServizi.releaseConnection(con);
-			}catch(Exception eClose){}
-		}
-	}
-	
 	public boolean isAccordoServizioParteSpecificaInUso(IDServizio idServizio, 
 			Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverRegistroServiziException {
 		Connection con = null;
@@ -470,15 +441,15 @@ public abstract class AbstractArchiveEngine {
 	
 	// --- Politiche di Sicurezza ---
 	
-	public void createServizioApplicativoAutorizzato(IDAccordo idAccordoServizioParteSpecifica, IDSoggetto idFruitore, String nomeServizioApplicativo) throws DriverRegistroServiziException {
+	public void createServizioApplicativoAutorizzato(IDServizio idAccordoServizioParteSpecifica, IDSoggetto idFruitore, String nomeServizioApplicativo) throws DriverRegistroServiziException {
 		this.driverRegistroServizi.createServizioApplicativoAutorizzato(idAccordoServizioParteSpecifica, idFruitore, nomeServizioApplicativo);
 	}
 	
-	public List<IDServizioApplicativo> getAllIdServiziApplicativiAutorizzati(IDAccordo idAccordoServizioParteSpecifica, IDSoggetto idFruitore) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	public List<IDServizioApplicativo> getAllIdServiziApplicativiAutorizzati(IDServizio idAccordoServizioParteSpecifica, IDSoggetto idFruitore) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return this.driverRegistroServizi.getAllIdServiziApplicativiAutorizzati(idAccordoServizioParteSpecifica, idFruitore);
 	}
 	
-	public void deleteServizioApplicativoAutorizzato(IDAccordo idAccordoServizioParteSpecifica, IDSoggetto idFruitore, String nomeServizioApplicativo) throws DriverRegistroServiziException {
+	public void deleteServizioApplicativoAutorizzato(IDServizio idAccordoServizioParteSpecifica, IDSoggetto idFruitore, String nomeServizioApplicativo) throws DriverRegistroServiziException {
 		this.driverRegistroServizi.deleteServizioApplicativoAutorizzato(idAccordoServizioParteSpecifica, idFruitore, nomeServizioApplicativo);
 	}
 		

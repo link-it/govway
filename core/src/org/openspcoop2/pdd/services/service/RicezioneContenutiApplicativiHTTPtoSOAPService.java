@@ -33,6 +33,7 @@ import javax.xml.soap.SOAPElement;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
@@ -602,18 +603,24 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			
 			this.generatoreErrore.updateDominio(context.getIdentitaPdD());
 			
-			IDServizio idServizio = new IDServizio();
-			idServizio.setSoggettoErogatore(context.getProtocol().getErogatore());
-			idServizio.setTipoServizio(context.getProtocol().getTipoServizio());
-			idServizio.setServizio(context.getProtocol().getServizio());
-			idServizio.setAzione(context.getProtocol().getAzione());
-			
+			IDServizio idServizio = null;
+			try{
+				idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(context.getProtocol().getTipoServizio(), 
+						context.getProtocol().getServizio(), 
+						context.getProtocol().getErogatore(), 
+						context.getProtocol().getVersioneServizio());
+			}catch(Exception e){ 
+				// non dovrebbe succedere eccezione}
+			}
+			if(idServizio!=null){
+				idServizio.setAzione(context.getProtocol().getAzione());
+				this.generatoreErrore.updateInformazioniCooperazione(context.getProtocol().getFruitore(), idServizio);
+			}
+						
 			String servizioApplicativo = null;
 			if(context.getIntegrazione()!=null){
 				servizioApplicativo = context.getIntegrazione().getServizioApplicativoFruitore();
 			}
-			
-			this.generatoreErrore.updateInformazioniCooperazione(context.getProtocol().getFruitore(), idServizio);
 			this.generatoreErrore.updateInformazioniCooperazione(servizioApplicativo);
 			
 			this.generatoreErrore.updateProprietaErroreApplicativo(context.getProprietaErroreAppl());

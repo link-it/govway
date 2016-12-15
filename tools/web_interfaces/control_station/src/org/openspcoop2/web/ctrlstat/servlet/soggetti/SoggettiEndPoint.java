@@ -278,7 +278,7 @@ public final class SoggettiEndPoint extends Action {
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey, httpspwdprivatekey,
 						httpsalgoritmokey, tipoconn, SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT, id, nomeprov,
-						tipoprov, null, null, null, null, true, 
+						tipoprov, null, null, null, null, null, true, 
 						isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 
 				pd.setDati(dati);
@@ -317,7 +317,7 @@ public final class SoggettiEndPoint extends Action {
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey, httpspwdprivatekey,
 						httpsalgoritmokey, tipoconn, SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT, id, nomeprov,
-						tipoprov, null, null, null, null, true,
+						tipoprov, null, null, null, null, null, true,
 						isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 
 				pd.setDati(dati);

@@ -22,6 +22,7 @@
 package org.openspcoop2.pdd.core;
 
 import org.slf4j.Logger;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.RichiestaApplicativa;
@@ -64,6 +65,7 @@ public class LocalForwardParameter {
 	private boolean stateless;
 	private boolean oneWayVersione11;
 	private Busta busta;
+	private IDPortaApplicativa idPortaApplicativaIndirizzata;
 	
 	public LocalForwardParameter(){}
 
@@ -235,5 +237,13 @@ public class LocalForwardParameter {
 
 	public void setIdPdDDestinatario(String idPdDDestinatario) {
 		this.idPdDDestinatario = idPdDDestinatario;
+	}
+	
+	public IDPortaApplicativa getIdPortaApplicativaIndirizzata() {
+		return this.idPortaApplicativaIndirizzata;
+	}
+
+	public void setIdPortaApplicativaIndirizzata(IDPortaApplicativa idPortaApplicativaIndirizzata) {
+		this.idPortaApplicativaIndirizzata = idPortaApplicativaIndirizzata;
 	}
 }

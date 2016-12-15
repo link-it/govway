@@ -129,11 +129,18 @@ public class ServerHeaderIntegrazioneRisposta extends ServerCore{
 				returnSOAPFault(response.getOutputStream(),"Trasporto, tipo servizio non presente");
 				return;
 			} 
-			String idServizio=request.getHeader(this.testsuiteProperties.getServizioTrasporto());
-			this.log.debug("trovato nel trasporto: "+idServizio);
-			if(idServizio==null){
-				this.log.error("Servizio della richiesta non presente nell'header di trasporto");
-				returnSOAPFault(response.getOutputStream(),"Trasporto, servizio non presente");
+			String idNomeServizio=request.getHeader(this.testsuiteProperties.getNomeServizioTrasporto());
+			this.log.debug("trovato nel trasporto: "+idNomeServizio);
+			if(idNomeServizio==null){
+				this.log.error("Nome Servizio della richiesta non presente nell'header di trasporto");
+				returnSOAPFault(response.getOutputStream(),"Trasporto, nome servizio non presente");
+				return;
+			} 
+			String idVersioneServizio=request.getHeader(this.testsuiteProperties.getVersioneServizioTrasporto());
+			this.log.debug("trovato nel trasporto: "+idVersioneServizio);
+			if(idVersioneServizio==null){
+				this.log.error("Versione Servizio della richiesta non presente nell'header di trasporto");
+				returnSOAPFault(response.getOutputStream(),"Trasporto, versione servizio non presente");
 				return;
 			} 
 			String idAzione=request.getHeader(this.testsuiteProperties.getAzioneTrasporto());
@@ -162,7 +169,8 @@ public class ServerHeaderIntegrazioneRisposta extends ServerCore{
 				response.setHeader(this.testsuiteProperties.getTipoDestinatarioTrasporto(), idTipoDestinatario);
 				response.setHeader(this.testsuiteProperties.getDestinatarioTrasporto(), idDestinatario);
 				response.setHeader(this.testsuiteProperties.getTipoServizioTrasporto(), idTipoServizio);
-				response.setHeader(this.testsuiteProperties.getServizioTrasporto(), idServizio);
+				response.setHeader(this.testsuiteProperties.getNomeServizioTrasporto(), idNomeServizio);
+				response.setHeader(this.testsuiteProperties.getVersioneServizioTrasporto(), idVersioneServizio);
 				response.setHeader(this.testsuiteProperties.getAzioneTrasporto(), idAzione);
 				response.setHeader(this.testsuiteProperties.getIDApplicativoTrasporto(), "ID-APPLICATIVO-RISPOSTA-HTTP-"+UniqueIDGenerator.getUniqueID());
 			}
@@ -181,7 +189,8 @@ public class ServerHeaderIntegrazioneRisposta extends ServerCore{
 				header.setAttribute(this.testsuiteProperties.getTipoDestinatarioSoap(), idTipoDestinatario);
 				header.setAttribute(this.testsuiteProperties.getDestinatarioSoap(), idDestinatario);
 				header.setAttribute(this.testsuiteProperties.getTipoServizioSoap(), idTipoServizio);
-				header.setAttribute(this.testsuiteProperties.getServizioSoap(), idServizio);
+				header.setAttribute(this.testsuiteProperties.getNomeServizioSoap(), idNomeServizio);
+				header.setAttribute(this.testsuiteProperties.getVersioneServizioSoap(), idVersioneServizio);
 				header.setAttribute(this.testsuiteProperties.getAzioneSoap(), idAzione);
 				header.setAttribute(this.testsuiteProperties.getIDApplicativoSoap(), "ID-APPLICATIVO-RISPOSTA-SOAP-"+UniqueIDGenerator.getUniqueID());
 				
@@ -201,7 +210,7 @@ public class ServerHeaderIntegrazioneRisposta extends ServerCore{
 				headerTo.setActor("http://www.openspcoop2.org/core/integrazione/wsa");
 				headerTo.setMustUnderstand(false);
 				headerTo.addNamespaceDeclaration("SOAP_ENV","http://schemas.xmlsoap.org/soap/envelope/");
-				headerTo.setValue(UtilitiesIntegrazioneWSAddressing.buildDatiWSATo(idTipoDestinatario,idDestinatario, idTipoServizio,idServizio));
+				headerTo.setValue(UtilitiesIntegrazioneWSAddressing.buildDatiWSATo(idTipoDestinatario,idDestinatario, idTipoServizio,idNomeServizio,Integer.parseInt(idVersioneServizio)));
 				byte [] headerByteTo = Axis14SoapUtils.msgElementoToByte(headerTo);
 				ByteArrayInputStream inputTo = new ByteArrayInputStream(headerByteTo);
 				Document documentTo = org.apache.axis.utils.XMLUtils.newDocument(inputTo);
@@ -229,7 +238,7 @@ public class ServerHeaderIntegrazioneRisposta extends ServerCore{
 					headerAction.setActor("http://www.openspcoop2.org/core/integrazione/wsa");
 					headerAction.setMustUnderstand(false);
 					headerAction.addNamespaceDeclaration("SOAP_ENV","http://schemas.xmlsoap.org/soap/envelope/");
-					headerAction.setValue(UtilitiesIntegrazioneWSAddressing.buildDatiWSAAction(idTipoDestinatario,idDestinatario, idTipoServizio,idServizio, idAzione));
+					headerAction.setValue(UtilitiesIntegrazioneWSAddressing.buildDatiWSAAction(idTipoDestinatario,idDestinatario, idTipoServizio,idNomeServizio,Integer.parseInt(idVersioneServizio), idAzione));
 					byte [] headerByteAction = Axis14SoapUtils.msgElementoToByte(headerAction);
 					ByteArrayInputStream inputAction = new ByteArrayInputStream(headerByteAction);
 					Document documentAction = org.apache.axis.utils.XMLUtils.newDocument(inputAction);

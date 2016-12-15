@@ -43,15 +43,14 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Connettore;
-import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Fruitore;
-import org.openspcoop2.core.registry.Servizio;
+import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Soggetto;
-import org.openspcoop2.core.registry.constants.TipologiaServizio;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
@@ -100,6 +99,7 @@ public final class ConnettorePropAdd extends Action {
 			String tipoprov = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SOGGETTO);
 			String nomeservizio = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO);
 			String tiposervizio = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SERVIZIO);
+			String versioneservizio = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_VERSIONE_SERVIZIO);
 			String myId = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_MY_ID);
 			String correlato = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_CORRELATO);
 			String idSoggErogatore = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SOGGETTO_EROGATORE);
@@ -136,7 +136,7 @@ public final class ConnettorePropAdd extends Action {
 				
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				ConnettoreCustomUtils.addProprietaConnettoriCustom(dati, nome, valore, servlet, id, nomeprov, tipoprov, nomeservizio, tiposervizio,
+				ConnettoreCustomUtils.addProprietaConnettoriCustom(dati, nome, valore, servlet, id, nomeprov, tipoprov, nomeservizio, tiposervizio, versioneservizio,
 						myId, correlato, idSoggErogatore, nomeservizioApplicativo, idsil, tipoAccordo, provider);
 				
 				pd.setDati(dati);
@@ -159,7 +159,7 @@ public final class ConnettorePropAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				ConnettoreCustomUtils.addProprietaConnettoriCustom(dati, nome, valore, servlet, id, nomeprov, tipoprov, nomeservizio, tiposervizio,
+				ConnettoreCustomUtils.addProprietaConnettoriCustom(dati, nome, valore, servlet, id, nomeprov, tipoprov, nomeservizio, tiposervizio, versioneservizio,
 						myId, correlato, idSoggErogatore, nomeservizioApplicativo, idsil, tipoAccordo, provider);
 				
 				pd.setDati(dati);
@@ -175,13 +175,11 @@ public final class ConnettorePropAdd extends Action {
 			String saveNomeFru = "", saveTipoFru = "";
 			if (servlet.equals(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_EROGATORI_FRUITORI_CHANGE)) {
 				IDSoggetto idSoggetto = new IDSoggetto(tipoprov, nomeprov);
-				IDServizio idServizio = new IDServizio(idSoggetto);
-				idServizio.setServizio(nomeservizio);
-				idServizio.setTipoServizio(tiposervizio);
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tiposervizio, nomeservizio, idSoggetto, Integer.parseInt(versioneservizio)); 
 				if("true".equals(correlato)){
-					idServizio.setTipologiaServizio(TipologiaServizio.CORRELATO.toString());
+					idServizio.setTipologia(org.openspcoop2.core.constants.TipologiaServizio.CORRELATO);
 				}else{
-					idServizio.setTipologiaServizio(TipologiaServizio.NORMALE.toString());
+					idServizio.setTipologia(org.openspcoop2.core.constants.TipologiaServizio.NORMALE);
 				}
 				AccordoServizioParteSpecifica serviziosp = null;
 				serviziosp = apsCore.getServizio(idServizio);
@@ -210,14 +208,13 @@ public final class ConnettorePropAdd extends Action {
 			}
 			if (servlet.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE)) {
 				AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(id));
-				Servizio servizio = asps.getServizio();
-				Connettore connettore = servizio.getConnettore();
+				Connettore connettore = asps.getConfigurazioneServizio().getConnettore();
 				connettore.setCustom(true);
 				Property cp = new Property();
 				cp.setNome(nome);
 				cp.setValore(valore);
 				connettore.addProperty(cp);
-				servizio.setConnettore(connettore);
+				asps.getConfigurazioneServizio().setConnettore(connettore);
 				connettoriCore.performUpdateOperation(userLogin, connettoriHelper.smista(), asps);
 			}
 			if (servlet.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE)) {
@@ -300,13 +297,11 @@ public final class ConnettorePropAdd extends Action {
 			if (servlet.equals(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_EROGATORI_FRUITORI_CHANGE)) {
 				//int myIdInt = Integer.parseInt(myId);
 				IDSoggetto idSoggetto = new IDSoggetto(tipoprov, nomeprov);
-				IDServizio idServizio = new IDServizio(idSoggetto);
-				idServizio.setServizio(nomeservizio);
-				idServizio.setTipoServizio(tiposervizio);
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tiposervizio, nomeservizio, idSoggetto, Integer.parseInt(versioneservizio)); 
 				if("true".equals(correlato)){
-					idServizio.setTipologiaServizio(TipologiaServizio.CORRELATO.toString());
+					idServizio.setTipologia(org.openspcoop2.core.constants.TipologiaServizio.CORRELATO);
 				}else{
-					idServizio.setTipologiaServizio(TipologiaServizio.NORMALE.toString());
+					idServizio.setTipologia(org.openspcoop2.core.constants.TipologiaServizio.NORMALE);
 				}
 				AccordoServizioParteSpecifica serviziosp = null;
 				serviziosp = apsCore.getServizio(idServizio);
@@ -323,7 +318,7 @@ public final class ConnettorePropAdd extends Action {
 			}
 			if (servlet.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE)) {
 				AccordoServizioParteSpecifica servizio = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(id));
-				connettore = servizio.getServizio().getConnettore();
+				connettore = servizio.getConfigurazioneServizio().getConnettore();
 			}
 			if (servlet.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE)) {
 				//int idServizioFruitoreInt = Integer.parseInt(myId);

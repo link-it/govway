@@ -37,7 +37,6 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.RegistroServizi;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.TipiDocumentoCoordinamento;
@@ -242,45 +241,6 @@ public abstract class BeanUtilities implements IDriverRegistroServiziGet {
 	/**
 	 * Controlla che il bean presente nel registro, sia uguale al bean passato come parametro
 	 * 
-	 * @param idAccordo
-	 * @param accordoServizioParteSpecifica
-	 * @return true se il bean presente nel registro, sia uguale al bean passato come parametro
-	 * @throws DriverRegistroServiziException
-	 */
-	@Override
-	public boolean verificaAccordoServizioParteSpecifica(IDAccordo idAccordo,AccordoServizioParteSpecifica accordoServizioParteSpecifica)throws DriverRegistroServiziException {
-		return verificaAccordoServizioParteSpecifica(idAccordo,accordoServizioParteSpecifica,true);
-	}
-	@Override
-	public boolean verificaAccordoServizioParteSpecifica(IDAccordo idAccordo,AccordoServizioParteSpecifica accordoServizioParteSpecifica,boolean checkID)throws DriverRegistroServiziException{
-		AccordoServizioParteSpecifica beanRegistro = null;
-		try{
-			if(this.getClass().getName().equals(BeanUtilities.DRIVER_REGISTRO_SERVIZI_DB)){
-				Method m = this.getClass().getMethod("getAccordoServizioParteSpecifica", IDAccordo.class,boolean.class);
-				beanRegistro = (AccordoServizioParteSpecifica) m.invoke(this, idAccordo, true);
-			}
-			else
-				beanRegistro =  this.getAccordoServizioParteSpecifica(idAccordo);
-		}catch(DriverRegistroServiziNotFound dNotFound){}
-		catch(Exception e){
-			throw new DriverRegistroServiziException(e.getMessage(),e);
-		}
-		if(beanRegistro==null){
-			if(accordoServizioParteSpecifica==null)
-				return true;
-			else
-				return false;
-		}else{
-			if(accordoServizioParteSpecifica==null)
-				return false;
-			else
-				return beanRegistro.equals(accordoServizioParteSpecifica,checkID);
-		}
-	}
-	
-	/**
-	 * Controlla che il bean presente nel registro, sia uguale al bean passato come parametro
-	 * 
 	 * @param idSoggetto Identificatore del Soggetto di tipo {@link org.openspcoop2.core.id.IDSoggetto}.
 	 * @param idAccordoServizioParteComune ID dell'accordo che deve implementare il servizio correlato
 	 * @param accordoServizioParteSpecifica
@@ -329,7 +289,7 @@ public abstract class BeanUtilities implements IDriverRegistroServiziGet {
 		}
 	}
 
-	public static IDSoggetto getSoggettoErogatore(Servizio asps){
+	public static IDSoggetto getSoggettoErogatore(AccordoServizioParteSpecifica asps){
 		if(asps!=null && asps.getTipoSoggettoErogatore()!=null && asps.getNomeSoggettoErogatore()!=null){
 			return new IDSoggetto(asps.getTipoSoggettoErogatore(),asps.getNomeSoggettoErogatore());
 		}else{

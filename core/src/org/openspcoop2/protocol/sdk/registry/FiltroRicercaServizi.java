@@ -35,6 +35,7 @@ public class FiltroRicercaServizi {
 
 	private String tipoServizio;
 	private String nomeServizio;
+	private Integer versioneServizio;
 	private IDSoggetto soggettoErogatore;
 	private ProtocolProperties protocolPropertiesServizi;
 
@@ -49,6 +50,12 @@ public class FiltroRicercaServizi {
 	}
 	public void setNomeServizio(String nome) {
 		this.nomeServizio = nome;
+	}
+	public Integer getVersioneServizio() {
+		return this.versioneServizio;
+	}
+	public void setVersioneServizio(Integer versioneServizio) {
+		this.versioneServizio = versioneServizio;
 	}
 	public IDSoggetto getSoggettoErogatore() {
 		return this.soggettoErogatore;

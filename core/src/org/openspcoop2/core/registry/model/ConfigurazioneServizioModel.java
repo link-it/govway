@@ -20,7 +20,7 @@
  */
 package org.openspcoop2.core.registry.model;
 
-import org.openspcoop2.core.registry.ServizioAzioneFruitore;
+import org.openspcoop2.core.registry.ConfigurazioneServizio;
 
 import org.openspcoop2.generic_project.beans.AbstractModel;
 import org.openspcoop2.generic_project.beans.IField;
@@ -29,31 +29,29 @@ import org.openspcoop2.generic_project.beans.ComplexField;
 
 
 /**     
- * Model ServizioAzioneFruitore 
+ * Model ConfigurazioneServizio 
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ServizioAzioneFruitoreModel extends AbstractModel<ServizioAzioneFruitore> {
+public class ConfigurazioneServizioModel extends AbstractModel<ConfigurazioneServizio> {
 
-	public ServizioAzioneFruitoreModel(){
+	public ConfigurazioneServizioModel(){
 	
 		super();
 	
-		this.CONNETTORE = new org.openspcoop2.core.registry.model.ConnettoreModel(new Field("connettore",org.openspcoop2.core.registry.Connettore.class,"servizio-azione-fruitore",ServizioAzioneFruitore.class));
-		this.TIPO = new Field("tipo",java.lang.String.class,"servizio-azione-fruitore",ServizioAzioneFruitore.class);
-		this.NOME = new Field("nome",java.lang.String.class,"servizio-azione-fruitore",ServizioAzioneFruitore.class);
+		this.CONNETTORE = new org.openspcoop2.core.registry.model.ConnettoreModel(new Field("connettore",org.openspcoop2.core.registry.Connettore.class,"configurazione-servizio",ConfigurazioneServizio.class));
+		this.CONFIGURAZIONE_AZIONE = new org.openspcoop2.core.registry.model.ConfigurazioneServizioAzioneModel(new Field("configurazione-azione",org.openspcoop2.core.registry.ConfigurazioneServizioAzione.class,"configurazione-servizio",ConfigurazioneServizio.class));
 	
 	}
 	
-	public ServizioAzioneFruitoreModel(IField father){
+	public ConfigurazioneServizioModel(IField father){
 	
 		super(father);
 	
-		this.CONNETTORE = new org.openspcoop2.core.registry.model.ConnettoreModel(new ComplexField(father,"connettore",org.openspcoop2.core.registry.Connettore.class,"servizio-azione-fruitore",ServizioAzioneFruitore.class));
-		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"servizio-azione-fruitore",ServizioAzioneFruitore.class);
-		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"servizio-azione-fruitore",ServizioAzioneFruitore.class);
+		this.CONNETTORE = new org.openspcoop2.core.registry.model.ConnettoreModel(new ComplexField(father,"connettore",org.openspcoop2.core.registry.Connettore.class,"configurazione-servizio",ConfigurazioneServizio.class));
+		this.CONFIGURAZIONE_AZIONE = new org.openspcoop2.core.registry.model.ConfigurazioneServizioAzioneModel(new ComplexField(father,"configurazione-azione",org.openspcoop2.core.registry.ConfigurazioneServizioAzione.class,"configurazione-servizio",ConfigurazioneServizio.class));
 	
 	}
 	
@@ -61,14 +59,12 @@ public class ServizioAzioneFruitoreModel extends AbstractModel<ServizioAzioneFru
 
 	public org.openspcoop2.core.registry.model.ConnettoreModel CONNETTORE = null;
 	 
-	public IField TIPO = null;
-	 
-	public IField NOME = null;
+	public org.openspcoop2.core.registry.model.ConfigurazioneServizioAzioneModel CONFIGURAZIONE_AZIONE = null;
 	 
 
 	@Override
-	public Class<ServizioAzioneFruitore> getModeledClass(){
-		return ServizioAzioneFruitore.class;
+	public Class<ConfigurazioneServizio> getModeledClass(){
+		return ConfigurazioneServizio.class;
 	}
 	
 	@Override

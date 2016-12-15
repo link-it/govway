@@ -84,11 +84,12 @@ import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAzione;
+import org.openspcoop2.core.config.PortaDelegataLocalForward;
 import org.openspcoop2.core.config.PortaDelegataServizio;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.Property;
-import org.openspcoop2.core.config.ProprietaProtocollo;
+import org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.Risposte;
 import org.openspcoop2.core.config.Route;
@@ -127,6 +128,7 @@ import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.core.config.driver.FiltroRicercaSoggetti;
+import org.openspcoop2.core.config.driver.IDServizioUtils;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneCRUD;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneSearch;
@@ -1269,6 +1271,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 				String tipoServizio = rs.getString("tipo_servizio");
 				String nomeServizio = rs.getString("nome_servizio");
+				Integer versioneServizio = rs.getInt("versione_servizio");
 				long idServizioDB = rs.getLong("id_servizio");
 				long idServizio=-1;
 				if( (idServizioDB==-2) || (idServizioDB>0) ){
@@ -1276,7 +1279,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				}
 				else{
 					try {
-						idServizio = DBUtils.getIdServizio(nomeServizio, tipoServizio, nomeSoggettoErogatore, tipoSoggettoErogatore, con, this.tipoDB,this.tabellaSoggetti);
+						idServizio = DBUtils.getIdServizio(nomeServizio, tipoServizio, versioneServizio, nomeSoggettoErogatore, tipoSoggettoErogatore, con, this.tipoDB,this.tabellaSoggetti);
 					} catch (Exception e) {
 						// NON Abilitare il log, poiche' la tabella servizi puo' non esistere per il driver di configurazione 
 						// in un database che non ' quello della controlstation ma quello pdd.
@@ -1285,10 +1288,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				}
 				IDServizio idServizioObject = null;
 				if(idServizio>0){
-					idServizioObject=new IDServizio();
-					idServizioObject.setSoggettoErogatore(idSoggettoErogatore);
-					idServizioObject.setTipoServizio(tipoServizio);
-					idServizioObject.setServizio(nomeServizio);
+					idServizioObject= IDServizioUtils.buildIDServizio(tipoServizio, nomeServizio, idSoggettoErogatore, versioneServizio);
 				}
 
 				String azione = rs.getString("nome_azione");
@@ -1649,6 +1649,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 				String tipoServizio = rs.getString("tipo_servizio");
 				String nomeServizio = rs.getString("servizio");
+				Integer versioneServizio = rs.getInt("versione_servizio");
 
 				String nomeProprietarioServizio = null;
 				String tipoProprietarioServizio = null;
@@ -1662,7 +1663,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 				long idServizioPA=-1;
 				try {
-					idServizioPA = DBUtils.getIdServizio(nomeServizio, tipoServizio, nomeProprietarioServizio, tipoProprietarioServizio, con, this.tipoDB,this.tabellaSoggetti);
+					idServizioPA = DBUtils.getIdServizio(nomeServizio, tipoServizio, versioneServizio, nomeProprietarioServizio, tipoProprietarioServizio, con, this.tipoDB,this.tabellaSoggetti);
 				} catch (Exception e) {
 					// NON Abilitare il log, poiche' la tabella servizi puo' non esistere per il driver di configurazione 
 					// in un database che non ' quello della controlstation ma quello pdd.
@@ -1670,10 +1671,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				}
 				IDServizio idServizio = null;
 				if( (idServizioPA>0) || (nomeServizio!=null && !nomeServizio.equals("") && tipoServizio!=null && !tipoServizio.equals("")) ){
-					idServizio = new IDServizio();
-					idServizio.setSoggettoErogatore(idSoggettoProprietario);
-					idServizio.setTipoServizio(tipoServizio);
-					idServizio.setServizio(nomeServizio);
+					idServizio = IDServizioUtils.buildIDServizio(tipoServizio, nomeServizio, 
+							new IDSoggetto(tipoProprietarioServizio,nomeProprietarioServizio), versioneServizio);
 				}
 				
 				String azione = rs.getString("azione");
@@ -1806,8 +1805,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		IDSoggetto soggettoErogatore = service.getSoggettoErogatore();
 		if ((soggettoErogatore == null) || (service == null))
 			throw new DriverConfigurazioneException("[getPortaApplicativa] Parametri Non Validi");
-		String servizio = service.getServizio();
-		String tipoServizio = service.getTipoServizio();
+		String servizio = service.getNome();
+		String tipoServizio = service.getTipo();
+		Integer versioneServizio = service.getVersione();
 		String azione = service.getAzione();
 		if ((servizio == null) || (tipoServizio == null))
 			throw new DriverConfigurazioneException("[getPortaApplicativa] Parametri (Servizio) Non Validi");
@@ -1914,6 +1914,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition("id_soggetto = ?");
 					sqlQueryObject.addWhereCondition("tipo_servizio = ?");
 					sqlQueryObject.addWhereCondition("servizio = ?");
+					sqlQueryObject.addWhereCondition("versione_servizio = ?");
 					sqlQueryObject.addWhereCondition(false, "azione IS NULL", "azione = ?", "azione = ?");
 					sqlQueryObject.setANDLogicOperator(true);
 					sqlQuery = sqlQueryObject.createSQLQuery();
@@ -1925,6 +1926,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition(false, "id_soggetto_virtuale = ?", "tipo_soggetto_virtuale = ? AND nome_soggetto_virtuale = ?");
 					sqlQueryObject.addWhereCondition("tipo_servizio = ?");
 					sqlQueryObject.addWhereCondition("servizio = ?");
+					sqlQueryObject.addWhereCondition("versione_servizio = ?");
 					sqlQueryObject.addWhereCondition(false, "azione IS NULL", "azione = ?", "azione = ?");
 					sqlQueryObject.setANDLogicOperator(true);
 					sqlQuery = sqlQueryObject.createSQLQuery();
@@ -1933,22 +1935,27 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				stm = con.prepareStatement(sqlQuery,ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
 				if(soggettoVirtuale==null){
-					stm.setLong(1, idSoggErog);
-					stm.setString(2, tipoServizio);
-					stm.setString(3, servizio);
-					stm.setString(4, "");
-					stm.setString(5, "-");
-					this.log.debug("eseguo query " + DBUtils.formatSQLString(sqlQuery, idSoggErog, tipoServizio, servizio,"","-"));
+					int index = 1;
+					stm.setLong(index++, idSoggErog);
+					stm.setString(index++, tipoServizio);
+					stm.setString(index++, servizio);
+					stm.setInt(index++, versioneServizio);
+					stm.setString(index++, "");
+					stm.setString(index++, "-");
+					this.log.debug("eseguo query " + DBUtils.formatSQLString(sqlQuery, idSoggErog, tipoServizio, servizio,versioneServizio,"","-"));
 				}else{
-					stm.setLong(1, idSoggErog);
-					stm.setLong(2, idSoggVirtuale);
-					stm.setString(3, soggettoVirtuale.getTipo());
-					stm.setString(4, soggettoVirtuale.getNome());
-					stm.setString(5, tipoServizio);
-					stm.setString(6, servizio);
-					stm.setString(7, "");
-					stm.setString(8, "-");
-					this.log.debug("eseguo query " + DBUtils.formatSQLString(sqlQuery, idSoggErog, soggettoErogatore.getTipo(),soggettoErogatore.getNome(),tipoServizio, servizio,"","-"));
+					int index = 1;
+					stm.setLong(index++, idSoggErog);
+					stm.setLong(index++, idSoggVirtuale);
+					stm.setString(index++, soggettoVirtuale.getTipo());
+					stm.setString(index++, soggettoVirtuale.getNome());
+					stm.setString(index++, tipoServizio);
+					stm.setString(index++, servizio);
+					stm.setInt(index++, versioneServizio);
+					stm.setString(index++, "");
+					stm.setString(index++, "-");
+					this.log.debug("eseguo query " + DBUtils.formatSQLString(sqlQuery, idSoggErog, soggettoErogatore.getTipo(),soggettoErogatore.getNome(),
+							tipoServizio, servizio,versioneServizio,"","-"));
 				}
 
 
@@ -1962,6 +1969,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition("id_soggetto=?");
 					sqlQueryObject.addWhereCondition("tipo_servizio=?");
 					sqlQueryObject.addWhereCondition("servizio=?");
+					sqlQueryObject.addWhereCondition("versione_servizio = ?");
 					sqlQueryObject.addWhereCondition("azione=?");
 					sqlQueryObject.setANDLogicOperator(true);
 					sqlQuery = sqlQueryObject.createSQLQuery();
@@ -1973,6 +1981,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition(false, "id_soggetto_virtuale = ?", "tipo_soggetto_virtuale = ? AND nome_soggetto_virtuale = ?");
 					sqlQueryObject.addWhereCondition("tipo_servizio = ?");
 					sqlQueryObject.addWhereCondition("servizio = ?");
+					sqlQueryObject.addWhereCondition("versione_servizio = ?");
 					sqlQueryObject.addWhereCondition("azione = ?");
 					sqlQueryObject.setANDLogicOperator(true);
 					sqlQuery = sqlQueryObject.createSQLQuery();
@@ -1981,21 +1990,25 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				stm = con.prepareStatement(sqlQuery,ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
 				if(soggettoVirtuale==null){
-					stm.setLong(1, idSoggErog);
-					stm.setString(2, tipoServizio);
-					stm.setString(3, servizio);
-					stm.setString(4, azione);
-					this.log.debug("eseguo query " + DBUtils.formatSQLString(sqlQuery, idSoggErog, tipoServizio, servizio, azione));
+					int index = 1;
+					stm.setLong(index++, idSoggErog);
+					stm.setString(index++, tipoServizio);
+					stm.setString(index++, servizio);
+					stm.setInt(index++, versioneServizio);
+					stm.setString(index++, azione);
+					this.log.debug("eseguo query " + DBUtils.formatSQLString(sqlQuery, idSoggErog, tipoServizio, servizio, versioneServizio, azione));
 				}else
 				{
-					stm.setLong(1, idSoggErog);
-					stm.setLong(2, idSoggVirtuale);
-					stm.setString(3, soggettoVirtuale.getTipo());
-					stm.setString(4, soggettoVirtuale.getNome());
-					stm.setString(5, tipoServizio);
-					stm.setString(6, servizio);
-					stm.setString(7, azione);
-					this.log.debug("eseguo query " + DBUtils.formatSQLString(sqlQuery, idSoggErog, tipoServizio, servizio, azione));
+					int index = 1;
+					stm.setLong(index++, idSoggErog);
+					stm.setLong(index++, idSoggVirtuale);
+					stm.setString(index++, soggettoVirtuale.getTipo());
+					stm.setString(index++, soggettoVirtuale.getNome());
+					stm.setString(index++, tipoServizio);
+					stm.setString(index++, servizio);
+					stm.setInt(index++, versioneServizio);
+					stm.setString(index++, azione);
+					this.log.debug("eseguo query " + DBUtils.formatSQLString(sqlQuery, idSoggErog, tipoServizio, servizio, versioneServizio, azione));
 				}
 			}
 
@@ -2298,8 +2311,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			throw new DriverConfigurazioneException("[getPortaApplicativa_SoggettiVirtuali] Parametro Soggetto Erogatore Non Valido");
 		Hashtable<IDSoggetto, PortaApplicativa> paConSoggetti = new Hashtable<IDSoggetto, PortaApplicativa>();
 		IDSoggetto soggettoVirtuale = idServizio.getSoggettoErogatore();
-		String servizio = idServizio.getServizio();
-		String tipoServizio = idServizio.getTipoServizio();
+		String servizio = idServizio.getNome();
+		String tipoServizio = idServizio.getTipo();
+		Integer versioneServizio = idServizio.getVersione();
 		String azione = idServizio.getAzione();
 		if ((servizio == null) || (tipoServizio == null))
 			throw new DriverConfigurazioneException("[getPortaApplicativa_SoggettiVirtuali] Parametri (Servizio) Non Validi");
@@ -2376,6 +2390,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".tipo_soggetto_virtuale = ?");
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".tipo_servizio = ?");
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".servizio = ?");
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".versione_servizio = ?");
 					sqlQueryObject.addWhereCondition(false, CostantiDB.PORTE_APPLICATIVE+".azione IS NULL", CostantiDB.PORTE_APPLICATIVE+".azione = ?", CostantiDB.PORTE_APPLICATIVE+".azione = ?");
 					sqlQueryObject.addWhereCondition(this.tabellaSoggetti+".id = ?");
 					sqlQueryObject.setANDLogicOperator(true);
@@ -2383,13 +2398,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 					stm = con.prepareStatement(sqlQuery, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
-					stm.setString(1, nomeSoggVirt);
-					stm.setString(2, tipoSoggVirt);
-					stm.setString(3, tipoServizio);
-					stm.setString(4, servizio);
-					stm.setString(5, "");
-					stm.setString(6, "-");
-					stm.setLong(7, idSoggetto);
+					int index = 1;
+					stm.setString(index++, nomeSoggVirt);
+					stm.setString(index++, tipoSoggVirt);
+					stm.setString(index++, tipoServizio);
+					stm.setString(index++, servizio);
+					stm.setInt(index++, versioneServizio);
+					stm.setString(index++, "");
+					stm.setString(index++, "-");
+					stm.setLong(index++, idSoggetto);
 
 					this.log.debug("eseguo query " + DBUtils.formatSQLString(sqlQuery, nomeSoggVirt, tipoSoggVirt, tipoServizio, servizio));
 				} else {
@@ -2406,20 +2423,24 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".tipo_soggetto_virtuale = ?");
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".tipo_servizio = ?");
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".servizio = ?");
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".versione_servizio = ?");
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".azione = ?");
 					sqlQueryObject.addWhereCondition(this.tabellaSoggetti+".id = ?");
 					sqlQueryObject.setANDLogicOperator(true);
 					sqlQuery = sqlQueryObject.createSQLQuery();
 
 					stm = con.prepareStatement(sqlQuery, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-					stm.setString(1, nomeSoggVirt);
-					stm.setString(2, tipoSoggVirt);
-					stm.setString(3, tipoServizio);
-					stm.setString(4, servizio);
-					stm.setString(5, azione);
-					stm.setLong(6, idSoggetto);
+					
+					int index = 1;
+					stm.setString(index++, nomeSoggVirt);
+					stm.setString(index++, tipoSoggVirt);
+					stm.setString(index++, tipoServizio);
+					stm.setString(index++, servizio);
+					stm.setInt(index++, versioneServizio);
+					stm.setString(index++, azione);
+					stm.setLong(index++, idSoggetto);
 
-					this.log.debug("eseguo query " + DBUtils.formatSQLString(sqlQuery, nomeSoggVirt, tipoSoggVirt, tipoServizio, servizio, azione));
+					this.log.debug("eseguo query " + DBUtils.formatSQLString(sqlQuery, nomeSoggVirt, tipoSoggVirt, tipoServizio, servizio, versioneServizio, azione));
 				}
 
 				rs = stm.executeQuery();
@@ -2446,21 +2467,25 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".tipo_soggetto_virtuale = ?");
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".tipo_servizio = ?");
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".servizio = ?");
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".versione_servizio = ?");
 					sqlQueryObject.addWhereCondition(false, CostantiDB.PORTE_APPLICATIVE+".azione IS NULL", CostantiDB.PORTE_APPLICATIVE+".azione = ?", CostantiDB.PORTE_APPLICATIVE+".azione = ?");
 					sqlQueryObject.addWhereCondition(this.tabellaSoggetti+".id = ?");
 					sqlQueryObject.setANDLogicOperator(true);
 					sqlQuery = sqlQueryObject.createSQLQuery();
-					this.log.debug("eseguo query " + DBUtils.formatSQLString(sqlQuery, nomeSoggVirt, tipoSoggVirt, tipoServizio, servizio));
+					this.log.debug("eseguo query " + DBUtils.formatSQLString(sqlQuery, nomeSoggVirt, tipoSoggVirt, tipoServizio, servizio, versioneServizio));
 					this.log.debug("QUERY RAW: "+sqlQuery);
 
 					stm = con.prepareStatement(sqlQuery, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-					stm.setString(1, nomeSoggVirt);
-					stm.setString(2, tipoSoggVirt);
-					stm.setString(3, tipoServizio);
-					stm.setString(4, servizio);
-					stm.setString(5, "");
-					stm.setString(6, "-");
-					stm.setLong(7, idSoggetto);
+					
+					int index = 1;
+					stm.setString(index++, nomeSoggVirt);
+					stm.setString(index++, tipoSoggVirt);
+					stm.setString(index++, tipoServizio);
+					stm.setString(index++, servizio);
+					stm.setInt(index++, versioneServizio);
+					stm.setString(index++, "");
+					stm.setString(index++, "-");
+					stm.setLong(index++, idSoggetto);
 
 
 
@@ -4739,6 +4764,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			tipoFiltro.setTipoServizio(tipoServizio);
 			String servizio = rsFiltri.getString("servizio");
 			tipoFiltro.setServizio(servizio);
+			Integer versioneServizio = rsFiltri.getInt("versione_servizio");
+			if(rsFiltri.wasNull()==false){
+				tipoFiltro.setVersioneServizio(versioneServizio);
+			}
 
 			String azione = rsFiltri.getString("azione");
 			tipoFiltro.setAzione(azione);
@@ -6762,7 +6791,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	 * Ritorna la lista di proprieta di una Porta Applicativa
 	 */
 	@Override
-	public List<ProprietaProtocollo> porteAppPropList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<PortaApplicativaProprietaIntegrazioneProtocollo> porteAppPropList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
 		int offset;
 		int limit;
 		int idLista = Liste.PORTE_APPLICATIVE_PROP;
@@ -6778,7 +6807,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<ProprietaProtocollo> lista = new ArrayList<ProprietaProtocollo>();
+		ArrayList<PortaApplicativaProprietaIntegrazioneProtocollo> lista = new ArrayList<PortaApplicativaProprietaIntegrazioneProtocollo>();
 
 		if (this.atomica) {
 			try {
@@ -6855,10 +6884,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			stmt.setLong(1, idPortaApplicativa);
 			risultato = stmt.executeQuery();
 
-			ProprietaProtocollo prop = null;
+			PortaApplicativaProprietaIntegrazioneProtocollo prop = null;
 			while (risultato.next()) {
 
-				prop = new ProprietaProtocollo();
+				prop = new PortaApplicativaProprietaIntegrazioneProtocollo();
 
 				prop.setId(risultato.getLong("id_porta"));
 				prop.setNome(risultato.getString("nome"));
@@ -7801,7 +7830,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		}
 	}
 
-	public List<PortaApplicativa> porteAppWithTipoNomeServizio(long idSoggettoErogatore, String tipoServizio,String nomeServizio) throws DriverConfigurazioneException {
+	public List<PortaApplicativa> porteAppWithServizio(long idSoggettoErogatore, String tipoServizio,String nomeServizio, Integer versioneServizio) throws DriverConfigurazioneException {
 		String nomeMetodo = "porteAppWithTipoNomeServizio";
 		String queryString;
 
@@ -7832,13 +7861,16 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition("tipo_servizio = ?");
 			sqlQueryObject.addWhereCondition("servizio = ?");
+			sqlQueryObject.addWhereCondition("versione_servizio = ?");
 			sqlQueryObject.addWhereCondition("id_soggetto = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
-			stmt.setString(1, tipoServizio);
-			stmt.setString(2, nomeServizio);
-			stmt.setLong(3, idSoggettoErogatore);
+			int index = 1;
+			stmt.setString(index++, tipoServizio);
+			stmt.setString(index++, nomeServizio);
+			stmt.setInt(index++, versioneServizio);
+			stmt.setLong(index++, idSoggettoErogatore);
 			risultato = stmt.executeQuery();
 
 			PortaApplicativa pa;
@@ -10311,6 +10343,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			sqlQueryObject.addSelectField("nome_soggetto_virtuale");
 			sqlQueryObject.addSelectField("tipo_servizio");
 			sqlQueryObject.addSelectField("servizio");
+			sqlQueryObject.addSelectField("versione_servizio");
 			sqlQueryObject.setANDLogicOperator(false);
 			sqlQueryObject.addWhereCondition("id_soggetto_virtuale<>-1");
 			sqlQueryObject.addWhereCondition(true, "tipo_soggetto_virtuale is not null", "nome_soggetto_virtuale is not null");
@@ -10323,10 +10356,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			rs = stm.executeQuery();
 
 			while (rs.next()) {
-				IDServizio servizio = new IDServizio();
-				servizio.setSoggettoErogatore(new IDSoggetto(rs.getString("tipo_soggetto_virtuale"), rs.getString("nome_soggetto_virtuale")));
-				servizio.setServizio(rs.getString("servizio"));
-				servizio.setTipoServizio(rs.getString("tipo_servizio"));
+				IDServizio servizio = IDServizioUtils.buildIDServizio(rs.getString("tipo_servizio"), rs.getString("servizio"), 
+						new IDSoggetto(rs.getString("tipo_soggetto_virtuale"), rs.getString("nome_soggetto_virtuale")), 
+						rs.getInt("versione_servizio"));
 				servizi.add(servizio);
 				this.log.info("aggiunto Servizio " + servizio.toString() + " alla lista dei servizi erogati da Soggetti Virtuali");
 			}
@@ -10548,6 +10580,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			sqlQueryObject.addSelectField("tipo_soggetto_virtuale");
 			sqlQueryObject.addSelectField("servizio");
 			sqlQueryObject.addSelectField("tipo_servizio");
+			sqlQueryObject.addSelectField("versione_servizio");
 			sqlQueryObject.addSelectField("ricevuta_asincrona_asim");
 			sqlQueryObject.addSelectField("ricevuta_asincrona_sim");
 			sqlQueryObject.addSelectField("integrazione");
@@ -10626,6 +10659,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				PortaApplicativaServizio paServizio = null;
 				String nomeServizio = rs.getString("servizio");
 				String tipoServizioPA = rs.getString("tipo_servizio");
+				Integer versioneServizioPA = rs.getInt("versione_servizio");
 
 				String nomeProprietarioServizio = null;
 				String tipoProprietarioServizio = null;
@@ -10639,7 +10673,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 				long idServizioPA=-1;
 				try {
-					idServizioPA = DBUtils.getIdServizio(nomeServizio, tipoServizioPA, nomeProprietarioServizio, tipoProprietarioServizio, con, this.tipoDB,this.tabellaSoggetti);
+					idServizioPA = DBUtils.getIdServizio(nomeServizio, tipoServizioPA, versioneServizioPA, nomeProprietarioServizio, tipoProprietarioServizio, con, this.tipoDB,this.tabellaSoggetti);
 				} catch (Exception e) {
 					// NON Abilitare il log, poiche' la tabella servizi puo' non esistere per il driver di configurazione 
 					// in un database che non ' quello della controlstation ma quello pdd.
@@ -10649,6 +10683,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					paServizio = new PortaApplicativaServizio();
 					paServizio.setNome(nomeServizio);
 					paServizio.setTipo(tipoServizioPA);
+					paServizio.setVersione(versioneServizioPA);
 					paServizio.setId(idServizioPA);
 				}
 				pa.setServizio(paServizio);
@@ -11002,7 +11037,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				rs.close();
 				stm.close();
 				// pa.addSetProperty(setProperty); .....
-				ProprietaProtocollo prop = null;
+				PortaApplicativaProprietaIntegrazioneProtocollo prop = null;
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_PROP);
 				sqlQueryObject.addSelectField("*");
@@ -11012,11 +11047,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				stm.setLong(1, idPortaApplicativa);
 				rs=stm.executeQuery();
 				while (rs.next()) {
-					prop = new ProprietaProtocollo();
+					prop = new PortaApplicativaProprietaIntegrazioneProtocollo();
 					prop.setId(idPortaApplicativa);
 					prop.setNome(rs.getString("nome"));
 					prop.setValore(rs.getString("valore"));
-					pa.addProprietaProtocollo(prop);
+					pa.addProprietaIntegrazioneProtocollo(prop);
 				}
 				rs.close();
 				stm.close();
@@ -11121,6 +11156,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			sqlQueryObject.addSelectField("id_servizio");
 			sqlQueryObject.addSelectField("tipo_servizio");
 			sqlQueryObject.addSelectField("nome_servizio");
+			sqlQueryObject.addSelectField("versione_servizio");
 			sqlQueryObject.addSelectField("id_azione");
 			sqlQueryObject.addSelectField("nome_azione");
 			sqlQueryObject.addSelectField("mode_azione");
@@ -11144,6 +11180,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			sqlQueryObject.addSelectAliasField(CostantiDB.PORTE_DELEGATE+".descrizione", "descrizionePD");
 			sqlQueryObject.addSelectField("stateless");
 			sqlQueryObject.addSelectField("local_forward");
+			sqlQueryObject.addSelectField("local_forward_pa");
 			sqlQueryObject.addSelectField("id_accordo");
 			sqlQueryObject.addSelectField("id_port_type");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id_soggetto = "+this.tabellaSoggetti+".id");
@@ -11206,6 +11243,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				//se mode e' settato allora creo oggetto
 				String tipoServizio = rs.getString("tipo_servizio");
 				String nomeServizio = rs.getString("nome_servizio");
+				Integer versioneServizio = rs.getInt("versione_servizio");
 				long idServizioDB = rs.getLong("id_servizio");
 				long idServizio=-1;
 				if( (idServizioDB==-2) || (idServizioDB>0) ){
@@ -11213,7 +11251,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				}
 				else{
 					try {
-						idServizio = DBUtils.getIdServizio(nomeServizio, tipoServizio, nomeSoggettoErogatore, tipoSoggettoErogatore, con, this.tipoDB,this.tabellaSoggetti);
+						idServizio = DBUtils.getIdServizio(nomeServizio, tipoServizio, versioneServizio, nomeSoggettoErogatore, tipoSoggettoErogatore, con, this.tipoDB,this.tabellaSoggetti);
 					} catch (Exception e) {
 						// NON Abilitare il log, poiche' la tabella servizi puo' non esistere per il driver di configurazione 
 						// in un database che non ' quello della controlstation ma quello pdd.
@@ -11226,6 +11264,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					pdServizio.setId(idServizio);
 					pdServizio.setNome(nomeServizio);
 					pdServizio.setTipo(tipoServizio);
+					pdServizio.setVersione(versioneServizio);
 				}
 				pd.setServizio(pdServizio);
 
@@ -11367,8 +11406,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				pd.setStateless(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("stateless")));
 
 				// LocalForward
-				pd.setLocalForward(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("local_forward")));
-
+				String statoLocalForward = rs.getString("local_forward");
+				PortaDelegataLocalForward pdLocalForward = new PortaDelegataLocalForward();
+				pdLocalForward.setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(statoLocalForward));
+				pdLocalForward.setPortaApplicativa(rs.getString("local_forward_pa"));
+				pd.setLocalForward(pdLocalForward);
+				
 				// messageSecurity			
 				String ws_security = rs.getString("ws_security");
 				String ws_security_mtom_req = rs.getString("ws_security_mtom_req");
@@ -12082,7 +12125,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 	}
 
-	public List<PortaApplicativa> getPorteApplicativeWithServizio(Long idServizio, String tiposervizio, String nomeservizio, Long idSoggetto, String tiposoggetto, String nomesoggetto) throws DriverConfigurazioneException {
+	public List<PortaApplicativa> getPorteApplicativeWithServizio(Long idServizio, String tiposervizio, String nomeservizio, Integer versioneServizio,
+			Long idSoggetto, String tiposoggetto, String nomesoggetto) throws DriverConfigurazioneException {
 
 		Connection con = null;
 		PreparedStatement stm = null;
@@ -12105,21 +12149,23 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
 			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition(false, "id_servizio = ?", "tipo_servizio = ? AND servizio = ?");
+			sqlQueryObject.addWhereCondition(false, "id_servizio = ?", "tipo_servizio = ? AND servizio = ? AND versione_servizio = ?");
 			sqlQueryObject.addWhereCondition(false, "id_soggetto = ?", "id_soggetto_virtuale = ?", "tipo_soggetto_virtuale = ? AND nome_soggetto_virtuale = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 
-			stm.setLong(1, idServizio);
-			stm.setString(2, tiposervizio);
-			stm.setString(3, nomeservizio);
-			stm.setLong(4, idSoggetto);
-			stm.setLong(5, idSoggetto);
-			stm.setString(6, tiposoggetto);
-			stm.setString(7, nomesoggetto);
+			int index = 1;
+			stm.setLong(index++, idServizio);
+			stm.setString(index++, tiposervizio);
+			stm.setString(index++, nomeservizio);
+			stm.setInt(index++, versioneServizio);
+			stm.setLong(index++, idSoggetto);
+			stm.setLong(index++, idSoggetto);
+			stm.setString(index++, tiposoggetto);
+			stm.setString(index++, nomesoggetto);
 
-			this.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idServizio, tiposervizio, nomeservizio, idSoggetto, idSoggetto, tiposoggetto, nomesoggetto));
+			this.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idServizio, tiposervizio, nomeservizio, versioneServizio, idSoggetto, idSoggetto, tiposoggetto, nomesoggetto));
 			rs = stm.executeQuery();
 
 			while (rs.next()) {
@@ -12149,7 +12195,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 	}
 
-	public PortaApplicativa getPortaApplicativaWithSoggettoAndServizio(String nome, Long idSoggetto, Long idServizio, String tipoServizio, String nomeServizio) throws DriverConfigurazioneException {
+	public PortaApplicativa getPortaApplicativaWithSoggettoAndServizio(String nome, Long idSoggetto, Long idServizio, 
+			String tipoServizio, String nomeServizio, Integer versioneServizio) throws DriverConfigurazioneException {
 
 		Connection con = null;
 		PreparedStatement stm = null;
@@ -12173,31 +12220,35 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition("nome_porta = ?");
-			sqlQueryObject.addWhereCondition(false, "id_soggetto = ? AND tipo_servizio = ? AND servizio=? AND id_soggetto_virtuale <= ?",
+			sqlQueryObject.addWhereCondition(false, "id_soggetto = ? AND tipo_servizio = ? AND servizio=? AND versione_servizio=? AND id_soggetto_virtuale <= ?",
 					"id_soggetto = ? AND id_servizio = ? AND id_soggetto_virtuale <= ?", 
-					"id_soggetto_virtuale = ? AND tipo_servizio = ? AND servizio=?",
+					"id_soggetto_virtuale = ? AND tipo_servizio = ? AND servizio=? AND versione_servizio=? ",
 					"id_soggetto_virtuale = ? AND id_servizio = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 
-			stm.setString(1, nome);
+			int index = 1;
+			
+			stm.setString(index++, nome);
 
-			stm.setLong(2, idSoggetto);
-			stm.setString(3, tipoServizio);
-			stm.setString(4, nomeServizio);
-			stm.setLong(5, 0);
+			stm.setLong(index++, idSoggetto);
+			stm.setString(index++, tipoServizio);
+			stm.setString(index++, nomeServizio);
+			stm.setInt(index++, versioneServizio);
+			stm.setLong(index++, 0);
 
-			stm.setLong(6, idSoggetto);
-			stm.setLong(7, idServizio);
-			stm.setLong(8, 0);
+			stm.setLong(index++, idSoggetto);
+			stm.setLong(index++, idServizio);
+			stm.setLong(index++, 0);
 
-			stm.setLong(9, idSoggetto);
-			stm.setString(10, tipoServizio);
-			stm.setString(11, nomeServizio);
+			stm.setLong(index++, idSoggetto);
+			stm.setString(index++, tipoServizio);
+			stm.setString(index++, nomeServizio);
+			stm.setInt(index++, versioneServizio);
 
-			stm.setLong(12, idSoggetto);
-			stm.setLong(13, idServizio);
+			stm.setLong(index++, idSoggetto);
+			stm.setLong(index++, idServizio);
 
 			this.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idSoggetto, idServizio, -1, idSoggetto, idServizio));
 			rs = stm.executeQuery();
@@ -12479,7 +12530,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 	}
 
-	public List<PortaDelegata> getPorteDelegateWithServizio(Long idServizio, String tiposervizio, String nomeservizio, Long idSoggetto, String tiposoggetto, String nomesoggetto) throws DriverConfigurazioneException {
+	public List<PortaDelegata> getPorteDelegateWithServizio(Long idServizio, String tiposervizio, String nomeservizio,
+			Integer versioneServizio,
+			Long idSoggetto, String tiposoggetto, String nomesoggetto) throws DriverConfigurazioneException {
 
 		Connection con = null;
 		PreparedStatement stm = null;
@@ -12502,20 +12555,22 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
 			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition(false, "id_servizio = ?", "tipo_servizio = ? AND nome_servizio = ?");
+			sqlQueryObject.addWhereCondition(false, "id_servizio = ?", "tipo_servizio = ? AND nome_servizio = ? AND versione_servizio = ?");
 			sqlQueryObject.addWhereCondition(false, "id_soggetto_erogatore = ?", "tipo_soggetto_erogatore = ? AND nome_soggetto_erogatore = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 
-			stm.setLong(1, idServizio);
-			stm.setString(2, tiposervizio);
-			stm.setString(3, nomeservizio);
-			stm.setLong(4, idSoggetto);
-			stm.setString(5, tiposoggetto);
-			stm.setString(6, nomesoggetto);
+			int index = 1;
+			stm.setLong(index++, idServizio);
+			stm.setString(index++, tiposervizio);
+			stm.setString(index++, nomeservizio);
+			stm.setInt(index++, versioneServizio);
+			stm.setLong(index++, idSoggetto);
+			stm.setString(index++, tiposoggetto);
+			stm.setString(index++, nomesoggetto);
 
-			this.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idServizio, tiposervizio, nomeservizio, idSoggetto, tiposoggetto, nomesoggetto));
+			this.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idServizio, tiposervizio, nomeservizio, versioneServizio, idSoggetto, tiposoggetto, nomesoggetto));
 			rs = stm.executeQuery();
 
 			while (rs.next()) {
@@ -13222,7 +13277,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	}
 
 
-	public List<PortaApplicativa> serviziPorteAppList(String tipoServizio,String nomeServizio,long idServizio, long idSoggettoErogatore, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<PortaApplicativa> serviziPorteAppList(String tipoServizio,String nomeServizio, Integer versioneServizio,
+			long idServizio, long idSoggettoErogatore, ISearch ricerca) throws DriverConfigurazioneException {
 		String nomeMetodo = "serviziPorteAppList";
 		int idLista = Liste.SERVIZI_PORTE_APPLICATIVE;
 		int offset;
@@ -13262,9 +13318,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
 				sqlQueryObject.addSelectCountField("*", "cont");
-				sqlQueryObject.addWhereCondition(false, "id_soggetto = ? AND tipo_servizio = ? AND servizio=? AND id_soggetto_virtuale <= ?",
+				sqlQueryObject.addWhereCondition(false, "id_soggetto = ? AND tipo_servizio = ? AND servizio=? AND versione_servizio=? AND id_soggetto_virtuale <= ?",
 						"id_soggetto = ? AND id_servizio = ? AND id_soggetto_virtuale <= ?", 
-						"id_soggetto_virtuale = ? AND tipo_servizio = ? AND servizio=?",
+						"id_soggetto_virtuale = ? AND tipo_servizio = ? AND servizio=?  AND versione_servizio=?",
 						"id_soggetto_virtuale = ? AND id_servizio = ?");
 				sqlQueryObject.addWhereLikeCondition("nome_porta", search, true, true);
 				sqlQueryObject.setANDLogicOperator(true);
@@ -13273,30 +13329,34 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
 				sqlQueryObject.addSelectCountField("*", "cont");
-				sqlQueryObject.addWhereCondition(false, "id_soggetto = ? AND tipo_servizio = ? AND servizio=? AND id_soggetto_virtuale <= ?",
+				sqlQueryObject.addWhereCondition(false, "id_soggetto = ? AND tipo_servizio = ? AND servizio=? AND versione_servizio=? AND id_soggetto_virtuale <= ?",
 						"id_soggetto = ? AND id_servizio = ? AND id_soggetto_virtuale <= ?", 
-						"id_soggetto_virtuale = ? AND tipo_servizio = ? AND servizio=?",
+						"id_soggetto_virtuale = ? AND tipo_servizio = ? AND servizio=? AND versione_servizio=?",
 						"id_soggetto_virtuale = ? AND id_servizio = ?");
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
 			}
 			stmt = con.prepareStatement(queryString);
 
-			stmt.setLong(1, idSoggettoErogatore);
-			stmt.setString(2, tipoServizio);
-			stmt.setString(3, nomeServizio);
-			stmt.setLong(4, 0);
+			int index = 1;
+			
+			stmt.setLong(index++, idSoggettoErogatore);
+			stmt.setString(index++, tipoServizio);
+			stmt.setString(index++, nomeServizio);
+			stmt.setInt(index++, versioneServizio);
+			stmt.setLong(index++, 0);
 
-			stmt.setLong(5, idSoggettoErogatore);
-			stmt.setLong(6, idServizio);
-			stmt.setLong(7, 0);
+			stmt.setLong(index++, idSoggettoErogatore);
+			stmt.setLong(index++, idServizio);
+			stmt.setLong(index++, 0);
 
-			stmt.setLong(8, idSoggettoErogatore);
-			stmt.setString(9, tipoServizio);
-			stmt.setString(10, nomeServizio);
+			stmt.setLong(index++, idSoggettoErogatore);
+			stmt.setString(index++, tipoServizio);
+			stmt.setString(index++, nomeServizio);
+			stmt.setInt(index++, versioneServizio);
 
-			stmt.setLong(11, idSoggettoErogatore);
-			stmt.setLong(12, idServizio);
+			stmt.setLong(index++, idSoggettoErogatore);
+			stmt.setLong(index++, idServizio);
 
 			risultato = stmt.executeQuery();
 			if (risultato.next())
@@ -13315,9 +13375,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				sqlQueryObject.addSelectField("id_soggetto_virtuale");
 				sqlQueryObject.addSelectField("nome_porta");
 				sqlQueryObject.addSelectField("id");
-				sqlQueryObject.addWhereCondition(false, "id_soggetto = ? AND tipo_servizio = ? AND servizio=? AND id_soggetto_virtuale <= ?",
+				sqlQueryObject.addWhereCondition(false, "id_soggetto = ? AND tipo_servizio = ? AND servizio=? AND versione_servizio=? AND id_soggetto_virtuale <= ?",
 						"id_soggetto = ? AND id_servizio = ? AND id_soggetto_virtuale <= ?", 
-						"id_soggetto_virtuale = ? AND tipo_servizio = ? AND servizio=?",
+						"id_soggetto_virtuale = ? AND tipo_servizio = ? AND servizio=? AND versione_servizio=?",
 						"id_soggetto_virtuale = ? AND id_servizio = ?");
 				sqlQueryObject.addWhereLikeCondition("nome_porta", search, true, true);
 				sqlQueryObject.setANDLogicOperator(true);
@@ -13335,9 +13395,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				sqlQueryObject.addSelectField("id_soggetto_virtuale");
 				sqlQueryObject.addSelectField("nome_porta");
 				sqlQueryObject.addSelectField("id");
-				sqlQueryObject.addWhereCondition(false, "id_soggetto = ? AND tipo_servizio = ? AND servizio=? AND id_soggetto_virtuale <= ?",
+				sqlQueryObject.addWhereCondition(false, "id_soggetto = ? AND tipo_servizio = ? AND servizio=? AND versione_servizio=? AND id_soggetto_virtuale <= ?",
 						"id_soggetto = ? AND id_servizio = ? AND id_soggetto_virtuale <= ?", 
-						"id_soggetto_virtuale = ? AND tipo_servizio = ? AND servizio=?",
+						"id_soggetto_virtuale = ? AND tipo_servizio = ? AND servizio=? AND versione_servizio=?",
 						"id_soggetto_virtuale = ? AND id_servizio = ?");
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome_porta");
@@ -13348,21 +13408,25 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			}
 			stmt = con.prepareStatement(queryString);
 
-			stmt.setLong(1, idSoggettoErogatore);
-			stmt.setString(2, tipoServizio);
-			stmt.setString(3, nomeServizio);
-			stmt.setLong(4, 0);
+			index = 1;
+			
+			stmt.setLong(index++, idSoggettoErogatore);
+			stmt.setString(index++, tipoServizio);
+			stmt.setString(index++, nomeServizio);
+			stmt.setInt(index++, versioneServizio);
+			stmt.setLong(index++, 0);
 
-			stmt.setLong(5, idSoggettoErogatore);
-			stmt.setLong(6, idServizio);
-			stmt.setLong(7, 0);
+			stmt.setLong(index++, idSoggettoErogatore);
+			stmt.setLong(index++, idServizio);
+			stmt.setLong(index++, 0);
 
-			stmt.setLong(8, idSoggettoErogatore);
-			stmt.setString(9, tipoServizio);
-			stmt.setString(10, nomeServizio);
+			stmt.setLong(index++, idSoggettoErogatore);
+			stmt.setString(index++, tipoServizio);
+			stmt.setString(index++, nomeServizio);
+			stmt.setInt(index++, versioneServizio);
 
-			stmt.setLong(11, idSoggettoErogatore);
-			stmt.setLong(12, idServizio);
+			stmt.setLong(index++, idSoggettoErogatore);
+			stmt.setLong(index++, idServizio);
 
 			risultato = stmt.executeQuery();
 
@@ -13555,11 +13619,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		ArrayList<PortaApplicativa> lista = null;
 		try {
 			IDSoggetto erogatore = idSE.getSoggettoErogatore();
-			String tipoServizio = idSE.getTipoServizio();
-			String nomeServizio = idSE.getServizio();
+			String tipoServizio = idSE.getTipo();
+			String nomeServizio = idSE.getNome();
+			Integer versioneServizio = idSE.getVersione();
 
 			long idSoggetto = DBUtils.getIdSoggetto(erogatore.getNome(), erogatore.getTipo(), con, this.tipoDB);
-			long idServizio = DBUtils.getIdServizio(nomeServizio, tipoServizio, erogatore.getNome(), erogatore.getTipo(), con, this.tipoDB);
+			long idServizio = DBUtils.getIdServizio(nomeServizio, tipoServizio, versioneServizio, erogatore.getNome(), erogatore.getTipo(), con, this.tipoDB);
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
@@ -13653,13 +13718,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			String tipoErogatore = null;
 			String tipoServizio = null;
 			String nomeServizio = null;
+			Integer versioneServizio = null;
 
 			if(idSE!=null){
 				erogatore = idSE.getSoggettoErogatore();
 				nomeErogatore = erogatore.getNome();
 				tipoErogatore = erogatore.getTipo();
-				tipoServizio = idSE.getTipoServizio();
-				nomeServizio = idSE.getServizio();
+				tipoServizio = idSE.getTipo();
+				nomeServizio = idSE.getNome();
+				versioneServizio = idSE.getVersione();
 			}
 
 			long idSoggettoFruitore = DBUtils.getIdSoggetto(fruitore.getNome(), fruitore.getTipo(), con, this.tipoDB);
@@ -13668,7 +13735,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			long idServizio = -1;
 			if(idSE!=null){
 				idSoggettoErogatore = DBUtils.getIdSoggetto(erogatore.getNome(), erogatore.getTipo(), con, this.tipoDB);
-				idServizio = DBUtils.getIdServizio(nomeServizio, tipoServizio, erogatore.getNome(), erogatore.getTipo(), con, this.tipoDB);
+				idServizio = DBUtils.getIdServizio(nomeServizio, tipoServizio, versioneServizio, erogatore.getNome(), erogatore.getTipo(), con, this.tipoDB);
 			}
 
 
@@ -16158,4 +16225,5 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			}
 		}
 	}
+	
 }

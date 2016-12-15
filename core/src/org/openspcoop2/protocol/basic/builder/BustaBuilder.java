@@ -31,6 +31,7 @@ import javax.xml.soap.SOAPFault;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -290,7 +291,10 @@ public class BustaBuilder<BustaRawType> extends BasicComponentFactory implements
 			params.setMittente(idSoggettoMittente);
 						
 			// Servizio
-			IDServizio idServizio = new IDServizio(soggettoProduceEccezione, busta.getTipoServizio(), busta.getServizio(), busta.getAzione());
+			IDServizio idServizio = 
+					IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(), busta.getServizio(), 
+							soggettoProduceEccezione, busta.getVersioneServizio());
+			idServizio.setAzione(busta.getAzione());
 			params.setServizio(idServizio);
 			
 			// MessageType

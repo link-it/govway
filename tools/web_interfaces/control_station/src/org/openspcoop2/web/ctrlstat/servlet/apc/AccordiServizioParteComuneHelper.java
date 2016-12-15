@@ -50,7 +50,6 @@ import org.openspcoop2.core.registry.Message;
 import org.openspcoop2.core.registry.MessagePart;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
@@ -59,6 +58,7 @@ import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
@@ -210,222 +210,7 @@ public class AccordiServizioParteComuneHelper extends ConsoleHelper {
 
 
 
-	public void prepareAccordiErogatoriFruitoriList(List<Fruitore> lista, ISearch ricerca,String tipoAccordo)
-			throws Exception {
-		try {
-			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
-			String superUser = ServletUtils.getUserLoginFromSession(this.session);
 
-			String id = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-			int idInt = Integer.parseInt(id);
-
-
-			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_EROGATORI_FRUITORI,
-					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
-					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO, tipoAccordo));
-
-
-			String nomeprov = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_NOME_SOGGETTO);
-			String tipoprov = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_TIPO_SOGGETTO);
-			String nomeservizio = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_NOME_SERVIZIO);
-			String tiposervizio = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_TIPO_SERVIZIO);
-			String correlato = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_CORRELATO);
-
-			int idLista = Liste.ACCORDI_EROGATORI_FRUITORI;
-			int limit = ricerca.getPageSize(idLista);
-			int offset = ricerca.getIndexIniziale(idLista);
-			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
-
-			this.pd.setIndex(offset);
-			this.pd.setPageSize(limit);
-			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
-
-			Hashtable<String, String> campiHidden = new Hashtable<String, String>();
-			campiHidden.put(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_NOME_SOGGETTO, nomeprov);
-			campiHidden.put(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_TIPO_SOGGETTO, tipoprov);
-			campiHidden.put(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_NOME_SERVIZIO, nomeservizio);
-			campiHidden.put(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_TIPO_SERVIZIO, tiposervizio);
-			this.pd.setHidden(campiHidden);
-
-			// Prendo il nome dell'accordo
-			AccordoServizioParteComune as = this.apcCore.getAccordoServizio(idInt);
-			String uriAS = this.idAccordoFactory.getUriFromAccordo(as);
-
-			// setto la barra del titolo
-			if (search.equals("")) {
-				this.pd.setSearchDescription("");
-				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
-								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
-										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
-										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
-										new Parameter(AccordiServizioParteComuneCostanti.LABEL_ACCORDI_EROGATORI_DI + " di " + uriAS, 
-												AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_EROGATORI_LIST+"?"+
-														AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+id+"&"+
-														AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME+"="+uriAS+"&"+
-														AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
-														AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
-														new Parameter(AccordiServizioParteComuneCostanti.LABEL_ACCORDI_FRUITORI_DI+ 
-																tipoprov + "/" + nomeprov + " - " + tiposervizio + "/" + nomeservizio, null)
-						);
-			}else{
-				ServletUtils.setPageDataTitle(this.pd, 
-						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, 
-								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
-										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
-										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
-										new Parameter(AccordiServizioParteComuneCostanti.LABEL_ACCORDI_EROGATORI_DI + " di " + uriAS, 
-												AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_EROGATORI_LIST+"?"+
-														AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+id+"&"+
-														AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME+"="+uriAS+"&"+
-														AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
-														AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
-														new Parameter(AccordiServizioParteComuneCostanti.LABEL_ACCORDI_FRUITORI_DI+ 
-																tipoprov + "/" + nomeprov + " - " + tiposervizio + "/" + nomeservizio, 
-																AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_EROGATORI_FRUITORI_LIST+"?"+
-																		AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+id+"&"+
-																		AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_NOME_SOGGETTO+"="+nomeprov+"&"+
-																		AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_TIPO_SOGGETTO+"="+tipoprov+"&"+
-																		AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_NOME_SERVIZIO+"="+nomeservizio+"&"+
-																		AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_TIPO_SERVIZIO+"="+tiposervizio+"&"+
-																		AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_CORRELATO+"="+correlato+"&"+
-																		AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
-																		AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
-																		new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null)
-						);
-			}
-
-
-			// controllo eventuali risultati ricerca
-			if (!search.equals("")) {
-				ServletUtils.enabledPageDataSearch(this.pd, AccordiServizioParteComuneCostanti.LABEL_ACCORDI_FRUITORI_DI+ 
-						tipoprov + "/" + nomeprov + " - " + tiposervizio + "/" + nomeservizio, search);
-			}
-
-			IDSoggetto ids = new IDSoggetto(tipoprov, nomeprov);
-			Soggetto sogg = this.soggettiCore.getSoggettoRegistro(ids);
-			IDServizio idserv = new IDServizio(ids, tiposervizio, nomeservizio);
-			AccordoServizioParteSpecifica servCfg = null;
-			if ("true".equals(correlato)) {
-				idserv.setTipologiaServizio(TipologiaServizio.CORRELATO.toString());
-			}
-			servCfg = this.apsCore.getServizio(idserv);
-			AccordoServizioParteSpecifica serv = this.apsCore.getAccordoServizioParteSpecifica(servCfg.getId());
-
-			// setto le label delle colonne
-			User user = ServletUtils.getUserFromSession(this.session);
-			String[] labels;
-			String labelFruitore = AccordiServizioParteComuneCostanti.LABEL_FRUITORE;
-			if (InterfaceType.STANDARD.equals(user.getInterfaceType())) {
-				if(this.core.isShowGestioneWorkflowStatoDocumenti()){
-					String[] l = { labelFruitore,AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_STATO_PACKAGE };
-					labels = l;
-				}else{
-					String[] l = { labelFruitore };
-					labels = l;
-				}
-			} else {
-				if(this.core.isShowGestioneWorkflowStatoDocumenti()){
-					String[] l = { labelFruitore,AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_STATO_PACKAGE, 
-							AccordiServizioParteComuneCostanti.LABEL_POLITICHE_SICUREZZA, 
-							AccordiServizioParteComuneCostanti.LABEL_POLITICHE_SLA};
-					labels = l;
-				}else{
-					String[] l = { labelFruitore, 
-							AccordiServizioParteComuneCostanti.LABEL_POLITICHE_SICUREZZA, 
-							AccordiServizioParteComuneCostanti.LABEL_POLITICHE_SLA};
-					labels = l;
-				}
-			}
-			this.pd.setLabels(labels);
-
-			// Prendo la lista di soggetti dell'utente connesso
-			List<Long> idsSogg = new ArrayList<Long>();
-			List<Soggetto> listaSog = this.soggettiCore.soggettiRegistroList(superUser, new Search());
-			Iterator<Soggetto> itS = listaSog.iterator();
-			while (itS.hasNext()) {
-				Soggetto ss = itS.next();
-				idsSogg.add(ss.getId());
-			}
-
-			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
-
-			Iterator<Fruitore> it = lista.iterator();
-			Fruitore fru = null;
-			while (it.hasNext()) {
-				fru = it.next();
-				Vector<DataElement> e = new Vector<DataElement>();
-
-				String nomefruit = fru.getNome();
-				String tipofruit = fru.getTipo();
-
-				// IDSoggetto fruitore
-				long idSoggettoFruitore = this.soggettiCore.getSoggettoRegistro(new IDSoggetto(tipofruit, nomefruit)).getId();
-
-				DataElement de = new DataElement();
-				if (idsSogg.contains(id))
-					de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_EROGATORI_FRUITORI_CHANGE, 
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_NOME_SOGGETTO, nomeprov),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_TIPO_SOGGETTO, tipoprov),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_NOME_SERVIZIO, nomeservizio),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_TIPO_SERVIZIO, tiposervizio),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_CORRELATO, correlato),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_ID_FRUITORE, fru.getId()+""),
-							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
-							);
-				de.setValue(tipofruit + "/" + nomefruit);
-				e.addElement(de);
-
-				if(this.core.isShowGestioneWorkflowStatoDocumenti()){
-					de = new DataElement();
-					de.setValue(fru.getStatoPackage());
-					e.addElement(de);
-				}
-
-				if (!InterfaceType.STANDARD.equals(user.getInterfaceType())) {
-					de = new DataElement();
-					// de.setValue("non disp.");
-					de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_SERVIZI_APPLICATIVI_LIST, 
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SERVIZI_APPLICATIVI_ID_SOGGETTO, sogg.getId()+""),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_NOME_SOGGETTO, nomeprov),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_TIPO_SOGGETTO, tipoprov),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_NOME_SERVIZIO, nomeservizio),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_TIPO_SERVIZIO, tiposervizio),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_CORRELATO, correlato),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_ID_FRUITORE, fru.getId()+""),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SERVIZI_APPLICATIVI_ID_SERVIZIO, serv.getId()+""),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SERVIZI_APPLICATIVI_ID_SOGGETTO_FRUITORE_SERVIZIO, idSoggettoFruitore+""),
-							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
-					if (contaListe) {
-						List<String> polSic = this.apsCore.getPoliticheSicurezza(serv.getId(), idSoggettoFruitore);
-						int numPolitiche = polSic.size();
-						ServletUtils.setDataElementVisualizzaLabel(de, new Long(numPolitiche));
-					} else {
-						ServletUtils.setDataElementVisualizzaLabel(de);
-					}
-					e.addElement(de);
-
-					de = new DataElement();
-					de.setValue(AccordiServizioParteComuneCostanti.LABEL_NON_DISPONIBILE);
-					e.addElement(de);
-				}
-
-				dati.addElement(e);
-			}
-
-			this.pd.setDati(dati);
-			this.pd.setSelect(false);
-
-		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
-		}
-	}
 
 	public void prepareAccordiErogatoriList(AccordoServizioParteComune as, List<org.openspcoop2.core.registry.Soggetto> lista, ISearch ricerca,String tipoAccordo)
 			throws Exception {
@@ -546,7 +331,6 @@ public class AccordiServizioParteComuneHelper extends ConsoleHelper {
 					for (int i = 0; i < listaServizi.size(); i++) {
 
 						AccordoServizioParteSpecifica asps = listaServizi.get(i);
-						Servizio servizio = asps.getServizio();
 
 						Vector<DataElement> e = new Vector<DataElement>();
 
@@ -559,26 +343,28 @@ public class AccordiServizioParteComuneHelper extends ConsoleHelper {
 						de.setValue(sog.getTipo() + "/" + sog.getNome());
 						e.addElement(de);
 
-						boolean isServizioCorrelato = TipologiaServizio.CORRELATO.equals(servizio.getTipologiaServizio());
+						boolean isServizioCorrelato = TipologiaServizio.CORRELATO.equals(asps.getTipologiaServizio());
 
 						int idServ = asps.getId().intValue();
 						de = new DataElement();
 						//if (idsServ.contains(servizio.getId()))
 						de.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE,
 								new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID,idServ+""),
-								new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO,servizio.getNome()),
-								new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO,servizio.getTipo()));
-						de.setValue(servizio.getTipo() + "/" + servizio.getNome() + (isServizioCorrelato ? " ["+AccordiServizioParteSpecificaCostanti.LABEL_APS_CORRELATO+"]" : ""));
+								new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO,asps.getNome()),
+								new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO,asps.getTipo()));
+								new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE,asps.getVersione().intValue()+"");
+						de.setValue(IDServizioFactory.getInstance().getUriFromAccordo(asps) + (isServizioCorrelato ? " ["+AccordiServizioParteSpecificaCostanti.LABEL_APS_CORRELATO+"]" : ""));
 						e.addElement(de);
 
 						de = new DataElement();
 						Parameter pIdsoggErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+sog.getId());
-						Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, servizio.getNome());
-						Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, servizio.getTipo());
+						Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
+						Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
+						Parameter pVersioneServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE, asps.getVersione().intValue()+"");
 						de.setUrl(
 								AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST,
 								new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""),
-								pNomeServizio, pTipoServizio, pIdsoggErogatore);
+								pNomeServizio, pTipoServizio,pVersioneServizio, pIdsoggErogatore);
 						//						de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_EROGATORI_FRUITORI_CHANGE, 
 						//								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID,id),
 						//								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_NOME_SOGGETTO,sog.getNome()),
@@ -4127,7 +3913,7 @@ public class AccordiServizioParteComuneHelper extends ConsoleHelper {
 			// Se tipoOp = change, devo fare attenzione a non escludere nome
 			// del servizio selezionato
 			int idAcc = 0;
-			IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromValues(nome,soggettoReferente,versione);
+			IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromValues(nome,soggettoReferente,Integer.parseInt(versione));
 			boolean esisteAS = this.apcCore.existsAccordoServizio(idAccordo);
 			AccordoServizioParteComune as = null;
 			if (esisteAS) {
@@ -4135,14 +3921,7 @@ public class AccordiServizioParteComuneHelper extends ConsoleHelper {
 				idAcc = as.getId().intValue();
 			}
 			if ((idAcc != 0) && (tipoOperazione.equals(TipoOperazione.ADD) || (tipoOperazione.equals(TipoOperazione.CHANGE) && (idInt != idAcc)))) {
-				if(this.idAccordoFactory.versioneNonDefinita(versione) && soggettoReferente==null)
-					this.pd.setMessage("Esiste gi&agrave; un accordo con nome " + nome);
-				else if(this.idAccordoFactory.versioneNonDefinita(versione) && soggettoReferente!=null)
-					this.pd.setMessage("Esiste gi&agrave; un accordo con nome " + nome+" del soggetto referente "+soggettoReferente.toString());
-				else if(!this.idAccordoFactory.versioneNonDefinita(versione) && soggettoReferente==null)
-					this.pd.setMessage("Esiste gi&agrave; un accordo (versione "+versione+") con nome " + nome);
-				else
-					this.pd.setMessage("Esiste gi&agrave; un accordo (versione "+versione+") con nome " + nome+" del soggetto referente "+soggettoReferente.toString());
+				this.pd.setMessage("Esiste gi&agrave; un accordo (versione "+versione+") con nome " + nome+" del soggetto referente "+soggettoReferente.toString());
 				return false;
 			}
 
@@ -4154,10 +3933,9 @@ public class AccordiServizioParteComuneHelper extends ConsoleHelper {
 				if((as.getPrivato()==null || as.getPrivato()==false) && as.getServizioComposto()!=null){
 					for(int i=0;i<as.getServizioComposto().sizeServizioComponenteList(); i++){
 						AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(as.getServizioComposto().getServizioComponente(i).getIdServizioComponente());
-						Servizio s = asps.getServizio();
 						if(asps.getPrivato()!=null && asps.getPrivato()){
-							this.pd.setMessage("Non e' possibile impostare una visibilita' pubblica all'accordo di servizio, poiche' possiede un servizio componente ["+s.getTipo()+"/"+s.getNome()+"_"
-									+s.getTipoSoggettoErogatore()+"/"+s.getNomeSoggettoErogatore()+"] con visibilita' privata.");
+							this.pd.setMessage("Non e' possibile impostare una visibilita' pubblica all'accordo di servizio, poiche' possiede un servizio componente ["+
+									IDServizioFactory.getInstance().getUriFromAccordo(asps)+"] con visibilita' privata.");
 							return false;
 						}
 					}
@@ -4180,7 +3958,9 @@ public class AccordiServizioParteComuneHelper extends ConsoleHelper {
 				soggRef.setNome(sRef.getNome());
 				accordoServizioParteComune.setSoggettoReferente(soggRef);
 			}
-			accordoServizioParteComune.setVersione(versione);
+			if(versione!=null){
+				accordoServizioParteComune.setVersione(Integer.parseInt(versione));
+			}
 
 			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(accordoServizioParteComune.getSoggettoReferente().getTipo());
 
@@ -4267,7 +4047,7 @@ public class AccordiServizioParteComuneHelper extends ConsoleHelper {
 				soggettoReferente = new IDSoggetto(sRef.getTipo(),sRef.getNome());
 			}
 		
-		idAccordo = this.idAccordoFactory.getIDAccordoFromValues(nome,soggettoReferente,versione);
+			idAccordo = this.idAccordoFactory.getIDAccordoFromValues(nome,soggettoReferente,Integer.parseInt(versione));
 		}
 		
 		return idAccordo;
@@ -4642,10 +4422,10 @@ public class AccordiServizioParteComuneHelper extends ConsoleHelper {
 					Vector<DataElement> e = new Vector<DataElement>();
 
 					DataElement de = new DataElement();
-					IDServizio idServizio = new IDServizio(componente.getTipoSoggetto(),componente.getNomeSoggetto(),
-							componente.getTipo(),componente.getNome());
-					IDAccordo idAccordoParteSpecifica = this.apsCore.getIDAccordoServizioParteSpecifica(idServizio);
-					de.setValue(this.idAccordoFactory.getUriFromIDAccordo(idAccordoParteSpecifica));
+					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(componente.getTipo(),componente.getNome(), 
+							componente.getTipoSoggetto(),componente.getNomeSoggetto(), 
+							componente.getVersione());
+					de.setValue(IDServizioFactory.getInstance().getUriFromIDServizio(idServizio));
 					de.setIdToRemove(""+componente.getIdServizioComponente());
 					e.addElement(de);
 

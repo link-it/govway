@@ -44,10 +44,10 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.pdd.monitor.driver.FilterSearch;
 import org.openspcoop2.utils.serialization.IOException;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
@@ -78,11 +78,13 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 	
 	private IDAccordoFactory idAccordoFactory = null;
 	private IDAccordoCooperazioneFactory idAccordoCooperazioneFactory = null;
+	private IDServizioFactory idServizioFactory = null;
 	
 	public IDBuilder(boolean insertClassNamePrefix){
 		this.prefix = insertClassNamePrefix; 
 		this.idAccordoFactory = IDAccordoFactory.getInstance();
 		this.idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
+		this.idServizioFactory = IDServizioFactory.getInstance();
 	}
 	public IDBuilder(){
 		this(false);
@@ -205,9 +207,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				}
 			}else if(o instanceof AccordoServizioParteSpecifica){
 				AccordoServizioParteSpecifica asps = (AccordoServizioParteSpecifica) o;
-				Servizio s = asps.getServizio();
-				String id = s.getTipoSoggettoErogatore()+"/"+s.getNomeSoggettoErogatore()+"#"+
-					s.getTipo()+"/"+s.getNome();
+				String id = this.idServizioFactory.getUriFromAccordo(asps);
 				if(this.prefix){
 					return "[AccordoServizioParteSpecifica] "+ id;
 				}else{
@@ -424,10 +424,10 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			
 			else if(o instanceof org.openspcoop2.core.registry.Soggetto){
 				org.openspcoop2.core.registry.Soggetto s = (org.openspcoop2.core.registry.Soggetto) o;
-				if(s.getOldTipoForUpdate()==null || s.getOldNomeForUpdate()==null){
+				if(s.getOldIDSoggettoForUpdate()==null || s.getOldIDSoggettoForUpdate().getTipo()==null || s.getOldIDSoggettoForUpdate().getNome()==null){
 					return null; // non lancio un errore
 				}
-				String id = s.getOldTipoForUpdate()+"/"+s.getOldNomeForUpdate();
+				String id = s.getOldIDSoggettoForUpdate().getTipo()+"/"+s.getOldIDSoggettoForUpdate().getNome();
 				if(this.prefix){
 					return "[SoggettoRegistro] "+ id;
 				}else{
@@ -477,26 +477,10 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				}
 			}else if(o instanceof AccordoServizioParteSpecifica){
 				AccordoServizioParteSpecifica asps = (AccordoServizioParteSpecifica) o;
-				Servizio s = asps.getServizio();
-				if(s.getOldTipoSoggettoErogatoreForUpdate()==null && s.getOldNomeSoggettoErogatoreForUpdate()==null &&
-						s.getOldTipoForUpdate()==null && s.getOldNomeForUpdate()==null){
+				if(asps.getOldIDServizioForUpdate()==null){
 					return null; // non lancio un errore
-				}
-				
-				String id = null;
-				if(s.getOldTipoSoggettoErogatoreForUpdate()!=null && s.getOldNomeSoggettoErogatoreForUpdate()!=null &&
-						s.getOldTipoForUpdate()!=null && s.getOldNomeForUpdate()!=null){
-					id = s.getOldTipoSoggettoErogatoreForUpdate()+"/"+s.getOldNomeSoggettoErogatoreForUpdate()+"#"+
-						s.getOldTipoForUpdate()+"/"+s.getOldNomeForUpdate();
-				}
-				else if(s.getOldTipoSoggettoErogatoreForUpdate()==null && s.getOldNomeSoggettoErogatoreForUpdate()==null){
-					id = s.getTipoSoggettoErogatore()+"/"+s.getNomeSoggettoErogatore()+"#"+
-					s.getOldTipoForUpdate()+"/"+s.getOldNomeForUpdate();
-				}
-				else{
-					id = s.getOldTipoSoggettoErogatoreForUpdate()+"/"+s.getOldNomeSoggettoErogatoreForUpdate()+"#"+
-					s.getTipo()+"/"+s.getNome();
-				}
+				}	
+				String id = this.idServizioFactory.getUriFromIDServizio(asps.getOldIDServizioForUpdate());
 				if(this.prefix){
 					return "[AccordoServizioParteSpecifica] "+ id;
 				}else{
@@ -507,10 +491,10 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			// Configurazione
 			else if(o instanceof org.openspcoop2.core.config.Soggetto){
 				org.openspcoop2.core.config.Soggetto s = (org.openspcoop2.core.config.Soggetto) o;
-				if(s.getOldTipoForUpdate()==null || s.getOldNomeForUpdate()==null){
+				if(s.getOldIDSoggettoForUpdate()==null || s.getOldIDSoggettoForUpdate().getTipo()==null || s.getOldIDSoggettoForUpdate().getNome()==null){
 					return null; // non lancio un errore
 				}
-				String id = s.getOldTipoForUpdate()+"/"+s.getOldNomeForUpdate();
+				String id = s.getOldIDSoggettoForUpdate().getTipo()+"/"+s.getOldIDSoggettoForUpdate().getNome();
 				if(this.prefix){
 					return "[SoggettoConfigurazione] "+ id;
 				}else{
@@ -518,21 +502,32 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				}
 			}else if(o instanceof ServizioApplicativo){
 				ServizioApplicativo s = (ServizioApplicativo) o;
-				if(s.getOldTipoSoggettoProprietarioForUpdate()==null && s.getOldNomeSoggettoProprietarioForUpdate()==null && s.getOldNomeForUpdate()==null){
+				if( (s.getOldIDServizioApplicativoForUpdate()==null)) {
+					return null; // non lancio un errore
+				}
+				if( (s.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario()==null || 
+						s.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario().getTipo()==null ||
+						s.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario().getNome()==null) 
+						&& s.getOldIDServizioApplicativoForUpdate().getNome()==null) {
 					return null; // non lancio un errore
 				}
 				String id = null;
-				if(s.getOldTipoSoggettoProprietarioForUpdate()!=null && s.getOldNomeSoggettoProprietarioForUpdate()!=null && s.getOldNomeForUpdate()!=null){
-					id = s.getOldTipoSoggettoProprietarioForUpdate()+"/"+s.getOldNomeSoggettoProprietarioForUpdate()+"_"+s.getOldNomeForUpdate();
+				if(s.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario()!=null && s.getOldIDServizioApplicativoForUpdate().getNome()!=null){
+					id = s.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario().getTipo()+"/"+
+							s.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario().getNome()+"_"+
+							s.getOldIDServizioApplicativoForUpdate().getNome();
 				}
-				else if(s.getOldNomeForUpdate()!=null){
-					id = s.getTipoSoggettoProprietario()+"/"+s.getNomeSoggettoProprietario()+"_"+s.getOldNomeForUpdate();
+				else if(s.getOldIDServizioApplicativoForUpdate().getNome()!=null){
+					id = s.getTipoSoggettoProprietario()+"/"+s.getNomeSoggettoProprietario()+"_"+
+							s.getOldIDServizioApplicativoForUpdate().getNome();
 				}
-				else if(s.getOldTipoSoggettoProprietarioForUpdate()==null || s.getOldNomeSoggettoProprietarioForUpdate()==null){
+				else if(s.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario()==null){
 					throw new DriverConfigurazioneException("Oggetto in modifica non correttamente valorizzato");
 				}
 				else{
-					id = s.getOldTipoSoggettoProprietarioForUpdate()+"/"+s.getOldNomeSoggettoProprietarioForUpdate()+"_"+s.getNome();
+					id = s.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario().getTipo()+"/"+
+							s.getOldIDServizioApplicativoForUpdate().getIdSoggettoProprietario().getNome()+"_"+
+							"_"+s.getNome();
 				}				
 				if(this.prefix){
 					return "[ServizioApplicativo] "+ id;
@@ -542,10 +537,10 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			}
 			else if(o instanceof PortaDelegata){
 				PortaDelegata pd = (PortaDelegata) o;
-				if(pd.getOldNomeForUpdate()==null){
+				if(pd.getOldIDPortaDelegataForUpdate()==null || pd.getOldIDPortaDelegataForUpdate().getNome()==null){
 					return null; // non lancio un errore
 				}
-				String id = pd.getOldNomeForUpdate();
+				String id = pd.getOldIDPortaDelegataForUpdate().getNome();
 				if(this.prefix){
 					return "[PortaDelegata] "+ id;
 				}else{
@@ -554,10 +549,10 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			}
 			else if(o instanceof PortaApplicativa){
 				PortaApplicativa pa = (PortaApplicativa) o;
-				if(pa.getOldNomeForUpdate()==null){
+				if(pa.getOldIDPortaApplicativaForUpdate()==null || pa.getOldIDPortaApplicativaForUpdate().getNome()==null){
 					return null; // non lancio un errore
 				}
-				String id = pa.getOldNomeForUpdate();
+				String id = pa.getOldIDPortaApplicativaForUpdate().getNome();
 				if(this.prefix){
 					return "[PortaApplicativa] "+ id;
 				}else{

@@ -233,20 +233,6 @@ public interface IDriverRegistroServiziGet extends IBeanUtilities{
 	
 	/**
 	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.AccordoServizioParteSpecifica}
-	 * contenente le informazioni sulle funzionalita'  associate
-	 * al servizio  identificato grazie ai fields Soggetto,
-	 * 'Servizio','TipoServizio' e 'Azione' impostati
-	 * all'interno del parametro <var>idAccordo</var> di tipo {@link org.openspcoop2.core.id.IDAccordo}. 
-	 *
-	 * @param idAccordo Identificatore del Servizio di tipo {@link org.openspcoop2.core.id.IDAccordo}.
-	 * @return l'oggetto di tipo {@link org.openspcoop2.core.registry.AccordoServizioParteSpecifica}.
-	 * 
-	 */
-	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(
-			IDAccordo idAccordo) throws DriverRegistroServiziException, DriverRegistroServiziNotFound;
-
-	/**
-	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.AccordoServizioParteSpecifica}
 	 * contenente le informazioni sulle funzionalita' associate
 	 * al servizio  correlato identificato grazie ai fields Soggetto
 	 * e nomeAccordo
@@ -258,17 +244,6 @@ public interface IDriverRegistroServiziGet extends IBeanUtilities{
 	 */
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica_ServizioCorrelato(
 			IDSoggetto idSoggetto, IDAccordo idAccordoServizioParteComune) throws DriverRegistroServiziException, DriverRegistroServiziNotFound;
-
-	/**
-	 *  Ritorna gli identificatori dei servizi che rispettano il parametro di ricerca
-	 * 
-	 * @param filtroRicerca
-	 * @return Una lista di ID dei servizi trovati
-	 * @throws DriverRegistroServiziException
-	 * @throws DriverRegistroServiziNotFound
-	 */
-	public List<IDAccordo> getAllIdAccordiServizioParteSpecifica(
-			FiltroRicercaServizi filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound;
 		
 	/**
 	 *  Ritorna gli identificatori dei servizi che rispettano il parametro di ricerca

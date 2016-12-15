@@ -518,7 +518,9 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			}else{
 				as.setSoggettoReferente(null);
 			}
-			as.setVersione(this.versione);
+			if(this.versione!=null){
+				as.setVersione(Integer.parseInt(this.versione));
+			}
 			as.setPrivato(this.privato ? Boolean.TRUE : Boolean.FALSE);
 
 			if(this.accordoCooperazione!=null && !"".equals(this.accordoCooperazione) && !"-".equals(this.accordoCooperazione)){

@@ -46,11 +46,11 @@ import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.MessagePart;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.message.xml.XMLDiff;
@@ -1239,11 +1239,10 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 				while (risultato.next()) {
 					long idServizio = risultato.getLong("idServizio");
 					AccordoServizioParteSpecifica asps =  apsCore.getAccordoServizioParteSpecifica(idServizio);
-					Servizio ss = asps.getServizio();
-
-					if(tipiServiziCompatibili.contains(ss.getTipo()) && tipiSoggettiCompatibili.contains(ss.getTipoSoggettoErogatore())){
+					
+					if(tipiServiziCompatibili.contains(asps.getTipo()) && tipiSoggettiCompatibili.contains(asps.getTipoSoggettoErogatore())){
 						serviziL.add(""+idServizio);
-						serviziLabelL.add(ss.getTipoSoggettoErogatore()+"/"+ss.getNomeSoggettoErogatore()+"_"+ss.getTipo()+"/"+ss.getNome());
+						serviziLabelL.add(IDServizioFactory.getInstance().getUriFromAccordo(asps));
 					}
 
 					//i++;

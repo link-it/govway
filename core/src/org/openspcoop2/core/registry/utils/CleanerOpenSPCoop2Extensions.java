@@ -31,8 +31,8 @@ import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
-import org.openspcoop2.core.registry.ServizioAzione;
-import org.openspcoop2.core.registry.ServizioAzioneFruitore;
+import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
+import org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore;
 import org.openspcoop2.core.registry.constants.BindingUse;
 
 /**
@@ -151,22 +151,22 @@ public class CleanerOpenSPCoop2Extensions {
 		accordo.setByteWsdlImplementativoErogatore(null);
 		accordo.setByteWsdlImplementativoFruitore(null);
 		
-		if(accordo.getServizio()!=null){
-			
-			accordo.getServizio().setTipoSoggettoErogatore(null);
-			accordo.getServizio().setNomeSoggettoErogatore(null);
-			
-			if(accordo.getServizio().getConnettore()!=null){
-				this.clean(accordo.getServizio().getConnettore());
+		accordo.setTipoSoggettoErogatore(null);
+		accordo.setNomeSoggettoErogatore(null);
+		
+		if(accordo.getConfigurazioneServizio()!=null){
+						
+			if(accordo.getConfigurazioneServizio().getConnettore()!=null){
+				this.clean(accordo.getConfigurazioneServizio().getConnettore());
 			}
 			
-			if(accordo.getServizio().sizeParametriAzioneList()>0){
-				for (ServizioAzione servizioAzione : accordo.getServizio().getParametriAzioneList()) {
+			if(accordo.getConfigurazioneServizio().sizeConfigurazioneAzioneList()>0){
+				for (ConfigurazioneServizioAzione servizioAzione : accordo.getConfigurazioneServizio().getConfigurazioneAzioneList()) {
 					if(servizioAzione.getConnettore()!=null){
 						this.clean(servizioAzione.getConnettore());
 					}
-					if(servizioAzione.sizeParametriFruitoreList()>0){
-						for (ServizioAzioneFruitore servizioAzioneFruitore : servizioAzione.getParametriFruitoreList()) {
+					if(servizioAzione.sizeConfigurazioneFruitoreList()>0){
+						for (ConfigurazioneServizioAzioneFruitore servizioAzioneFruitore : servizioAzione.getConfigurazioneFruitoreList()) {
 							if(servizioAzioneFruitore.getConnettore()!=null){
 								this.clean(servizioAzioneFruitore.getConnettore());
 							}

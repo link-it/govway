@@ -43,13 +43,14 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
 import org.openspcoop2.utils.transport.jms.ExceptionListenerJMS;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
@@ -579,8 +580,7 @@ public class GestoreRepositoryAutorizzazioniThread extends GestoreGeneral {
 							try {
 
 								Soggetto sogg = this.driver.getDriverRegistroServiziDB().getSoggetto(idTable);
-								sogg.setOldNomeForUpdate(oldNomeSoggetto);
-								sogg.setOldTipoForUpdate(oldTipoSoggetto);
+								sogg.setOldIDSoggettoForUpdate(new IDSoggetto(oldTipoSoggetto, oldNomeSoggetto));
 
 								String pattern = "Soggetto per RepositoryAutorizzazioni :\n\t Nome [{0}] \n\tDescr[{1}] \n\tTipo[{2}] \n\tServer[{3}]";
 								String info = MessageFormat.format(pattern, sogg.getNome(), sogg.getDescrizione(), sogg.getTipo(), sogg.getPortaDominio());
@@ -611,35 +611,39 @@ public class GestoreRepositoryAutorizzazioniThread extends GestoreGeneral {
 					// SERVIZIO
 					if (TipoOggettoDaSmistare.servizio.equals(tipoOggettoDaSmistare)) {
 
+						String tipoServizio = operation.getParameterValue(OperationsParameter.TIPO_SERVIZIO.getNome());
+						String nomeServizio = operation.getParameterValue(OperationsParameter.NOME_SERVIZIO.getNome());
 						String tipoSogg = operation.getParameterValue(OperationsParameter.TIPO_SOGGETTO.getNome());
 						String nomeSogg = operation.getParameterValue(OperationsParameter.NOME_SOGGETTO.getNome());
-						String tipoServ = operation.getParameterValue(OperationsParameter.TIPO_SERVIZIO.getNome());
-						String nomeServ = operation.getParameterValue(OperationsParameter.NOME_SERVIZIO.getNome());
+						String versioneServizio = operation.getParameterValue(OperationsParameter.VERSIONE_ACCORDO.getNome());
+						
 						String oldTipoServizio = operation.getParameterValue(OperationsParameter.OLD_TIPO_SERVIZIO.getNome());
 						String oldNomeServizio = operation.getParameterValue(OperationsParameter.OLD_NOME_SERVIZIO.getNome());
+						String oldTipoSogg = operation.getParameterValue(OperationsParameter.OLD_TIPO_SOGGETTO.getNome());
+						String oldNomeSogg = operation.getParameterValue(OperationsParameter.OLD_NOME_SOGGETTO.getNome());
+						String oldVersioneServizio = operation.getParameterValue(OperationsParameter.OLD_VERSIONE_ACCORDO.getNome());
 
 						// DELETE
 						if (Operazione.del.equals(tipoOperazioneCRUD)) {
 							try {
 								AccordoServizioParteSpecifica serv = new AccordoServizioParteSpecifica();
-								serv.setServizio(new Servizio());
+								
+								serv.setTipo(tipoServizio);
+								serv.setNome(nomeServizio);
+								serv.setVersione(Integer.parseInt(versioneServizio));
+								serv.setTipoSoggettoErogatore(tipoSogg);
+								serv.setNomeSoggettoErogatore(nomeSogg);
 
-								serv.getServizio().setNome(nomeServ);
-								serv.getServizio().setTipo(tipoServ);
-								serv.getServizio().setNomeSoggettoErogatore(nomeSogg);
-								serv.getServizio().setTipoSoggettoErogatore(tipoSogg);
-
-								String pattern = "Servizio per RepositoryAutorizzazioni :" + "\n\t Nome [{0}] " + "\n\t Tipo[{1}] " + "\n\t AccordoServizio[{2}] " + "\n\t NomeSoggettoErogatore[{3}]" + "\n\t TipoSoggettoErogatore[{4}]" + "\n\t ServizioCorrelato[{5}]";
-								String info = MessageFormat.format(pattern, serv.getServizio().getNome(), serv.getServizio().getTipo(), 
-										serv.getAccordoServizioParteComune(), serv.getServizio().getNomeSoggettoErogatore(), 
-										serv.getServizio().getTipoSoggettoErogatore(), TipologiaServizio.CORRELATO.equals(serv.getServizio().getTipologiaServizio()));
+								String pattern = "Servizio per RepositoryAutorizzazioni :" + "\n\t Uri [{0}] " + "\n\t AccordoServizio[{1}] " +
+										"\n\t ServizioCorrelato[{2}]";
+								String info = MessageFormat.format(pattern, IDServizioFactory.getInstance().getUriFromAccordo(serv),
+										serv.getAccordoServizioParteComune(), 
+										TipologiaServizio.CORRELATO.equals(serv.getTipologiaServizio()));
 
 								this.log.info(info);
 
 								// delete
-								IDServizio idSE = new IDServizio(tipoSogg, nomeSogg);
-								idSE.setTipoServizio(tipoServ);
-								idSE.setServizio(nomeServ);
+								IDServizio idSE = IDServizioFactory.getInstance().getIDServizioFromAccordo(serv);
 								if (this.gestoreRepositoryAutorizzazioni.existsServizio(idSE))
 									this.gestoreRepositoryAutorizzazioni.deleteServizio(serv);
 								else
@@ -679,21 +683,20 @@ public class GestoreRepositoryAutorizzazioniThread extends GestoreGeneral {
 
 							try {
 
-								serv.getServizio().setOldNomeForUpdate(oldNomeServizio);
-								serv.getServizio().setOldTipoForUpdate(oldTipoServizio);
-
-								// serv.setOldNomeSoggettoForUpdate(servizio.getNomeSoggetto());//questo
-								// non viene modificato nel servizio
-								// serv.setOldTipoSoggettoForUpdate(servizio.getTipoSoggetto());//quindi
-								// va bene utilizzare gli stessi nome e tipo
-								// sogg
-								// erogatore
-
-								String pattern = "Servizio per RepositoryAutorizzazioni :" + "\n\t Nome [{0}] " + "\n\t Tipo[{1}] " + "\n\t AccordoServizio[{2}] " + "\n\t NomeSoggettoErogatore[{3}]" + "\n\t TipoSoggettoErogatore[{4}]" + "\n\t ServizioCorrelato[{5}]";
-								String info = MessageFormat.format(pattern, serv.getServizio().getNome(), serv.getServizio().getTipo(),
+								String idTipoServizio = oldTipoServizio!=null ? oldTipoServizio : tipoServizio;
+								String idNomeServizio = oldNomeServizio!=null ? oldNomeServizio : nomeServizio;
+								String idTipoSogg = oldTipoSogg!=null ? oldTipoSogg : tipoSogg;
+								String idNomeSogg = oldNomeSogg!=null ? oldNomeSogg : nomeSogg;
+								String idVersioneServizio = oldVersioneServizio!=null ? oldVersioneServizio : versioneServizio;
+								IDServizio oldIDServizioForUpdate = IDServizioFactory.getInstance().getIDServizioFromValues(idTipoServizio, idNomeServizio, 
+										idTipoSogg, idNomeSogg, Integer.parseInt(idVersioneServizio));
+								serv.setOldIDServizioForUpdate(oldIDServizioForUpdate);
+								
+								String pattern = "Servizio per RepositoryAutorizzazioni :" + "\n\t Uri [{0}] " + "\n\t AccordoServizio[{1}] " +
+										"\n\t ServizioCorrelato[{2}]";
+								String info = MessageFormat.format(pattern, IDServizioFactory.getInstance().getUriFromAccordo(serv),
 										serv.getAccordoServizioParteComune(), 
-										serv.getServizio().getNomeSoggettoErogatore(), serv.getServizio().getTipoSoggettoErogatore(),
-										TipologiaServizio.CORRELATO.equals(serv.getServizio().getTipologiaServizio()));
+										TipologiaServizio.CORRELATO.equals(serv.getTipologiaServizio()));
 
 								this.log.info(info);
 
@@ -735,6 +738,7 @@ public class GestoreRepositoryAutorizzazioniThread extends GestoreGeneral {
 					if (TipoOggettoDaSmistare.servizioApplicativo.equals(tipoOggettoDaSmistare)) {
 
 						String nomeServizioApplicativo = operation.getParameterValue(OperationsParameter.NOME_SERVIZIO_APPLICATIVO.getNome());
+						String oldNomeServizioApplicativo = operation.getParameterValue(OperationsParameter.OLD_NOME_SERVIZIO_APPLICATIVO.getNome());
 						String tipoSoggetto = operation.getParameterValue(OperationsParameter.TIPO_SOGGETTO.getNome());
 						String nomeSoggetto = operation.getParameterValue(OperationsParameter.NOME_SOGGETTO.getNome());
 						String oldTipoSoggetto = operation.getParameterValue(OperationsParameter.OLD_TIPO_SOGGETTO.getNome());
@@ -807,13 +811,27 @@ public class GestoreRepositoryAutorizzazioniThread extends GestoreGeneral {
 								}
 								// update
 								else if (Operazione.change.equals(tipoOperazioneCRUD)) {
-									sa.setOldNomeForUpdate(sa.getNome());// il
-									// nome
-									// nn
-									// puo
-									// cambiare
-									sa.setOldNomeSoggettoProprietarioForUpdate(oldNomeSoggetto);
-									sa.setOldTipoSoggettoProprietarioForUpdate(oldTipoSoggetto);
+									
+									IDServizioApplicativo oldIDServizioApplicativoForUpdate = new IDServizioApplicativo();
+									oldIDServizioApplicativoForUpdate.setIdSoggettoProprietario(new IDSoggetto());
+									sa.setOldIDServizioApplicativoForUpdate(oldIDServizioApplicativoForUpdate);
+									
+									oldIDServizioApplicativoForUpdate.setNome(nomeServizioApplicativo);
+									if (tipoSoggetto != null && !tipoSoggetto.equals(""))
+										oldIDServizioApplicativoForUpdate.getIdSoggettoProprietario().setTipo(tipoSoggetto);
+									if (nomeSoggetto != null && !nomeSoggetto.equals(""))
+										oldIDServizioApplicativoForUpdate.getIdSoggettoProprietario().setNome(nomeSoggetto);
+									
+									if(oldNomeServizioApplicativo!=null){
+										oldIDServizioApplicativoForUpdate.setNome(oldNomeServizioApplicativo);
+									}
+									
+									if(oldTipoSoggetto!=null && oldNomeSoggetto!=null){
+										oldIDServizioApplicativoForUpdate.getIdSoggettoProprietario().setTipo(oldTipoSoggetto);
+										oldIDServizioApplicativoForUpdate.getIdSoggettoProprietario().setNome(oldNomeSoggetto);
+
+									}
+									
 									this.gestoreRepositoryAutorizzazioni.updateServizioApplicativo(sa);
 								}
 
@@ -952,12 +970,12 @@ public class GestoreRepositoryAutorizzazioniThread extends GestoreGeneral {
 							// aggiungo il fruitore al ServizioSPcoop
 							serv.addFruitore(fruitore);
 
-							String pattern = "PoliticheSicurezza per RepositoryAutorizzazioni :" + "\n\t[SERVIZIO]" + "\n\t Nome [{0}] " + "\n\t Tipo [{1}] " + "\n\t AccordoServizio [{2}]" + "\n\t NomeSoggettoErogatore [{3}]" + "\n\t TipoSoggettoErogatore [{4}]" + "\n\t ServizioCorrelato [{5}]" + "\n\n\t[FRUITORE]" + "\n\tNome [{6}]" + "\n\tTipo [{7}]" + "\n\t[SERVIZIOAPPLICATIVO]" + "\n\tNome [{8}]";
-
-							String info = MessageFormat.format(pattern, serv.getServizio().getNome(), serv.getServizio().getTipo(), 
+							String pattern = "PoliticheSicurezza per RepositoryAutorizzazioni :" + "\n\t Uri [{0}] " + "\n\t AccordoServizio[{1}] " +
+									"\n\t ServizioCorrelato[{2}]"+ 
+									"\n\n\t[FRUITORE]" + "\n\tNome [{3}]" + "\n\tTipo [{4}]" + "\n\t[SERVIZIOAPPLICATIVO]" + "\n\tNome [{5}]";
+							String info = MessageFormat.format(pattern, IDServizioFactory.getInstance().getUriFromAccordo(serv),
 									serv.getAccordoServizioParteComune(), 
-									serv.getServizio().getNomeSoggettoErogatore(), serv.getServizio().getTipoSoggettoErogatore(), 
-									TipologiaServizio.CORRELATO.equals(serv.getServizio().getTipologiaServizio()),
+									TipologiaServizio.CORRELATO.equals(serv.getTipologiaServizio()),
 									fruitore.getNome(), fruitore.getTipo(), sa.getNome());
 
 							this.log.info(info);
@@ -1212,7 +1230,7 @@ public class GestoreRepositoryAutorizzazioniThread extends GestoreGeneral {
 						String versioneAcc = operation.getParameterValue(OperationsParameter.VERSIONE_ACCORDO.getNome());
 						String tipoReferenteAcc = operation.getParameterValue(OperationsParameter.TIPO_REFERENTE.getNome());
 						String nomeReferenteAcc = operation.getParameterValue(OperationsParameter.NOME_REFERENTE.getNome());
-						IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromValues(nomeAcc,tipoReferenteAcc,nomeReferenteAcc,versioneAcc);
+						IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromValues(nomeAcc,tipoReferenteAcc,nomeReferenteAcc,Integer.parseInt(versioneAcc));
 						IDAccordo idAccordoCorrelato = IDAccordoFactory.getInstance().getIDAccordoFromValues(idAccordo.getNome()+"Correlato", idAccordo.getSoggettoReferente(), idAccordo.getVersione());
 						
 						this.log.debug("Gestione Ruolo id:" + idTable);

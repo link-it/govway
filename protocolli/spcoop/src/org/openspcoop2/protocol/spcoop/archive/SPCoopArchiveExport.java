@@ -38,12 +38,14 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.ConfigurazioneServizio;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.archive.Archive;
@@ -177,10 +179,10 @@ public class SPCoopArchiveExport {
 			for (int i = 0; i < archive.getAccordiServizioParteSpecifica().size(); i++) {
 				AccordoServizioParteSpecifica accordo = archive.getAccordiServizioParteSpecifica().get(i).getAccordoServizioParteSpecifica();
 				
-				String filename = accordo.getNome();
-                filename+="_"+accordo.getServizio().getTipoSoggettoErogatore()+accordo.getServizio().getNomeSoggettoErogatore();
-                if(accordo.getVersione()!=null && !"".equals(accordo.getVersione())){
-                        filename+="_"+accordo.getVersione();
+				String filename = accordo.getTipo()+accordo.getNome();
+                filename+="_"+accordo.getTipoSoggettoErogatore()+accordo.getNomeSoggettoErogatore();
+                if(accordo.getVersione()!=null){
+                	filename+="_"+accordo.getVersione().intValue();
                 }
                 filename += "." + Costanti.ESTENSIONE_ACCORDO_SERVIZIO_PARTE_SPECIFICA;
                 
@@ -269,10 +271,10 @@ public class SPCoopArchiveExport {
 			XMLUtils xmlSICAUtilities = new XMLUtils(sicaContext,this.logger);
 			byte[]archivio = null;
 			if(servizioComposto){
-				AccordoServizioComposto asc = SICAtoOpenSPCoopUtilities.accordoServizioComposto_openspcoopToSica(accordo,sicaContext,this.logger);
+				AccordoServizioComposto asc = SICAtoOpenSPCoopUtilities.accordoServizioComposto_openspcoopToSica(registryReader, accordo,sicaContext,this.logger);
 				archivio = xmlSICAUtilities.generateAccordoServizioComposto(asc);
 			}else{
-				it.gov.spcoop.sica.dao.AccordoServizioParteComune aspc = SICAtoOpenSPCoopUtilities.accordoServizioParteComune_openspcoopToSica(accordo,sicaContext,this.logger);
+				it.gov.spcoop.sica.dao.AccordoServizioParteComune aspc = SICAtoOpenSPCoopUtilities.accordoServizioParteComune_openspcoopToSica(registryReader, accordo,sicaContext,this.logger);
 				archivio = xmlSICAUtilities.generateAccordoServizioParteComune(aspc);
 			}
 			out.write(archivio);
@@ -293,7 +295,7 @@ public class SPCoopArchiveExport {
 
 		String uriAccordo = null;
 		try{
-			uriAccordo = IDAccordoFactory.getInstance().getUriFromAccordo(accordo);
+			uriAccordo = IDServizioFactory.getInstance().getUriFromAccordo(accordo);
 
 			SICAtoOpenSPCoopContext sicaContext = new SICAtoOpenSPCoopContext();
 			sicaContext.setSICAClientCompatibility(clientSICACompatibility);
@@ -310,24 +312,26 @@ public class SPCoopArchiveExport {
 
 			// descrizione
 			if(accordo.getDescrizione()==null){
-				accordo.setDescrizione(tipoAccordo+" (Versione:"+accordo.getVersione()+") "+
-						accordo.getNome()+" con soggetto referente "+accordo.getServizio().getTipoSoggettoErogatore()+"/"+accordo.getServizio().getNomeSoggettoErogatore());
+				accordo.setDescrizione(tipoAccordo+" (Versione:"+accordo.getVersione()+" Tipo:"+accordo.getTipo()+") "+
+						accordo.getNome()+" con soggetto referente "+accordo.getTipoSoggettoErogatore()+"/"+accordo.getNomeSoggettoErogatore());
 			}
 
 			// connettore
-			if(accordo.getServizio().getConnettore()!=null && !TipiConnettore.DISABILITATO.toString().equals(accordo.getServizio().getConnettore().getTipo()) && 
-					!TipiConnettore.HTTP.toString().equals(accordo.getServizio().getConnettore().getTipo()) && 
-					!TipiConnettore.HTTPS.toString().equals(accordo.getServizio().getConnettore().getTipo())){
-				throw new Exception("Accordo di servizio parte specifica possiede un connettore ("+accordo.getServizio().getConnettore().getTipo()+") non utilizzabile nella rete SPC");
+			if(accordo.getConfigurazioneServizio()!=null && accordo.getConfigurazioneServizio().getConnettore()!=null && 
+					!TipiConnettore.DISABILITATO.toString().equals(accordo.getConfigurazioneServizio().getConnettore().getTipo()) && 
+					!TipiConnettore.HTTP.toString().equals(accordo.getConfigurazioneServizio().getConnettore().getTipo()) && 
+					!TipiConnettore.HTTPS.toString().equals(accordo.getConfigurazioneServizio().getConnettore().getTipo())){
+				throw new Exception("Accordo di servizio parte specifica possiede un connettore ("+accordo.getConfigurazioneServizio().getConnettore().getTipo()+") non utilizzabile nella rete SPC");
 			}
-			if(accordo.getServizio().getConnettore()==null || TipiConnettore.DISABILITATO.toString().equals(accordo.getServizio().getConnettore().getTipo())){
+			if(accordo.getConfigurazioneServizio()==null || accordo.getConfigurazioneServizio().getConnettore()==null || 
+					TipiConnettore.DISABILITATO.toString().equals(accordo.getConfigurazioneServizio().getConnettore().getTipo())){
 				// imposto connettore del soggetto erogatore
-				Soggetto soggettoErogatore = registryReader.getSoggetto(new IDSoggetto(accordo.getServizio().getTipoSoggettoErogatore(),accordo.getServizio().getNomeSoggettoErogatore()));
+				Soggetto soggettoErogatore = registryReader.getSoggetto(new IDSoggetto(accordo.getTipoSoggettoErogatore(),accordo.getNomeSoggettoErogatore()));
 				if(soggettoErogatore.getConnettore()!=null && !TipiConnettore.DISABILITATO.toString().equals(soggettoErogatore.getConnettore().getTipo()) && 
 						!TipiConnettore.HTTP.toString().equals(soggettoErogatore.getConnettore().getTipo()) && 
 						!TipiConnettore.HTTPS.toString().equals(soggettoErogatore.getConnettore().getTipo())){
 					throw new Exception("Accordo di servizio parte specifica non possiede un connettore e soggetto erogatore "+
-							accordo.getServizio().getTipoSoggettoErogatore()+"/"+accordo.getServizio().getNomeSoggettoErogatore()+
+							accordo.getTipoSoggettoErogatore()+"/"+accordo.getNomeSoggettoErogatore()+
 							" possiede un connettore ("+soggettoErogatore.getConnettore().getTipo()+") non utilizzabile nella rete SPC");
 				}
 				else if(soggettoErogatore.getConnettore()==null || TipiConnettore.DISABILITATO.toString().equals(soggettoErogatore.getConnettore().getTipo()) ){
@@ -335,16 +339,22 @@ public class SPCoopArchiveExport {
 				}
 				else{
 					Connettore cSoggettoErogatore = soggettoErogatore.getConnettore();
-					accordo.getServizio().getConnettore().setCustom(cSoggettoErogatore.getCustom()!=null && cSoggettoErogatore.getCustom());
-					accordo.getServizio().getConnettore().setTipo(cSoggettoErogatore.getTipo());
-					while(accordo.getServizio().getConnettore().sizePropertyList()>0){
-						accordo.getServizio().getConnettore().removeProperty(0);
+					if(accordo.getConfigurazioneServizio()==null){
+						accordo.setConfigurazioneServizio(new ConfigurazioneServizio());
+					}
+					if(accordo.getConfigurazioneServizio().getConnettore()==null){
+						accordo.getConfigurazioneServizio().setConnettore(new Connettore());	
+					}
+					accordo.getConfigurazioneServizio().getConnettore().setCustom(cSoggettoErogatore.getCustom()!=null && cSoggettoErogatore.getCustom());
+					accordo.getConfigurazioneServizio().getConnettore().setTipo(cSoggettoErogatore.getTipo());
+					while(accordo.getConfigurazioneServizio().getConnettore().sizePropertyList()>0){
+						accordo.getConfigurazioneServizio().getConnettore().removeProperty(0);
 					}
 					for(int i=0; i<cSoggettoErogatore.sizePropertyList(); i++){
 						Property cp = new Property();
 						cp.setNome(cSoggettoErogatore.getProperty(i).getNome());
 						cp.setValore(cSoggettoErogatore.getProperty(i).getValore());
-						accordo.getServizio().getConnettore().addProperty(cp);
+						accordo.getConfigurazioneServizio().getConnettore().addProperty(cp);
 					}
 				}
 			}
@@ -354,8 +364,9 @@ public class SPCoopArchiveExport {
 			// *** impostazione mapping soggetto con codice IPA ***
 
             IDAccordo idAccordoServizioParteComune = IDAccordoFactory.getInstance().getIDAccordoFromUri(accordo.getAccordoServizioParteComune());
-            IDServizio idS = new IDServizio(accordo.getServizio().getTipoSoggettoErogatore(), accordo.getServizio().getNomeSoggettoErogatore(), 
-            		accordo.getServizio().getTipo(), accordo.getServizio().getNome());
+            IDServizio idS = IDServizioFactory.getInstance().getIDServizioFromValues(accordo.getTipo(), accordo.getNome(), 
+            		accordo.getTipoSoggettoErogatore(), accordo.getNomeSoggettoErogatore(), 
+            		accordo.getVersione()); 
             SPCoopArchiveExportUtils.setCodiceIPA(idS, idAccordoServizioParteComune, sicaContext, registryReader);
 
 
@@ -376,7 +387,7 @@ public class SPCoopArchiveExport {
             
             // Trasformazione da openspcoop a sica
             it.gov.spcoop.sica.dao.AccordoServizioParteSpecifica aspc = 
-            		SICAtoOpenSPCoopUtilities.accordoServizioParteSpecifica_openspcoopToSica(accordo,implementazioneAccordoServizioComposto,
+            		SICAtoOpenSPCoopUtilities.accordoServizioParteSpecifica_openspcoopToSica(registryReader,accordo,implementazioneAccordoServizioComposto,
             				asIncludereWSDLParteSpecifica,sicaContext,this.logger);
             byte[]archivio = xmlSICAUtilities.generateAccordoServizioParteSpecifica(aspc);
 			out.write(archivio);
@@ -435,7 +446,7 @@ public class SPCoopArchiveExport {
 			// *** Trasformazione in package CNIPA ***
             
 			XMLUtils xmlSICAUtilities = new XMLUtils(sicaContext,this.logger);
-			it.gov.spcoop.sica.dao.AccordoCooperazione ac_sica = SICAtoOpenSPCoopUtilities.accordoCooperazione_openspcoopToSica(accordo,sicaContext,this.logger);
+			it.gov.spcoop.sica.dao.AccordoCooperazione ac_sica = SICAtoOpenSPCoopUtilities.accordoCooperazione_openspcoopToSica(registryReader,accordo,sicaContext,this.logger);
 			byte[]archivio = xmlSICAUtilities.generateAccordoCooperazione(ac_sica);
 			out.write(archivio);
 

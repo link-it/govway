@@ -49,6 +49,7 @@ public class TipoFiltroAbilitazioneServiziModel extends AbstractModel<TipoFiltro
 		this.IDENTIFICATIVO_PORTA_EROGATORE = new Field("identificativo-porta-erogatore",java.lang.String.class,"tipo-filtro-abilitazione-servizi",TipoFiltroAbilitazioneServizi.class);
 		this.TIPO_SERVIZIO = new Field("tipo-servizio",java.lang.String.class,"tipo-filtro-abilitazione-servizi",TipoFiltroAbilitazioneServizi.class);
 		this.SERVIZIO = new Field("servizio",java.lang.String.class,"tipo-filtro-abilitazione-servizi",TipoFiltroAbilitazioneServizi.class);
+		this.VERSIONE_SERVIZIO = new Field("versione-servizio",java.lang.Integer.class,"tipo-filtro-abilitazione-servizi",TipoFiltroAbilitazioneServizi.class);
 		this.AZIONE = new Field("azione",java.lang.String.class,"tipo-filtro-abilitazione-servizi",TipoFiltroAbilitazioneServizi.class);
 	
 	}
@@ -65,6 +66,7 @@ public class TipoFiltroAbilitazioneServiziModel extends AbstractModel<TipoFiltro
 		this.IDENTIFICATIVO_PORTA_EROGATORE = new ComplexField(father,"identificativo-porta-erogatore",java.lang.String.class,"tipo-filtro-abilitazione-servizi",TipoFiltroAbilitazioneServizi.class);
 		this.TIPO_SERVIZIO = new ComplexField(father,"tipo-servizio",java.lang.String.class,"tipo-filtro-abilitazione-servizi",TipoFiltroAbilitazioneServizi.class);
 		this.SERVIZIO = new ComplexField(father,"servizio",java.lang.String.class,"tipo-filtro-abilitazione-servizi",TipoFiltroAbilitazioneServizi.class);
+		this.VERSIONE_SERVIZIO = new ComplexField(father,"versione-servizio",java.lang.Integer.class,"tipo-filtro-abilitazione-servizi",TipoFiltroAbilitazioneServizi.class);
 		this.AZIONE = new ComplexField(father,"azione",java.lang.String.class,"tipo-filtro-abilitazione-servizi",TipoFiltroAbilitazioneServizi.class);
 	
 	}
@@ -86,6 +88,8 @@ public class TipoFiltroAbilitazioneServiziModel extends AbstractModel<TipoFiltro
 	public IField TIPO_SERVIZIO = null;
 	 
 	public IField SERVIZIO = null;
+	 
+	public IField VERSIONE_SERVIZIO = null;
 	 
 	public IField AZIONE = null;
 	 

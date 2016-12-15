@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.IdAccordoServizioParteSpecifica;
@@ -36,6 +37,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziCRUD;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
@@ -86,33 +88,33 @@ public abstract class AccordoServizioParteSpecificaImpl extends BaseImpl  implem
 	
 	
 	
-	private IDAccordo convertToIDAccordo(IdAccordoServizioParteSpecifica id) throws DriverRegistroServiziException{
+	private IDServizio convertToIDAccordo(IdAccordoServizioParteSpecifica id) throws DriverRegistroServiziException{
 		IDSoggetto idSoggettoErogatore = null;
 		if(id.getSoggettoErogatore()!=null){
 			idSoggettoErogatore = new IDSoggetto(id.getSoggettoErogatore().getTipo(), id.getSoggettoErogatore().getNome());
 		}
-		return this.buildIDAccordo(id.getNome(), id.getVersione(), idSoggettoErogatore);
+		return this.buildIDServizio(id.getTipo(), id.getNome(), id.getVersione(), idSoggettoErogatore);
 	}
-	private IDAccordo buildIDAccordo(String nome, String versione, IDSoggetto idSoggetto) throws DriverRegistroServiziException{
-		IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromValues(nome, idSoggetto, versione);
-		return idAccordo;
+	private IDServizio buildIDServizio(String tipo, String nome, Integer versione, IDSoggetto idSoggetto) throws DriverRegistroServiziException{
+		return IDServizioFactory.getInstance().getIDServizioFromValues(tipo, nome, idSoggetto, versione);
 	}
 
-	private IdAccordoServizioParteSpecifica convertToIDAccordoWS(IDAccordo id) throws DriverRegistroServiziException{
+	private IdAccordoServizioParteSpecifica convertToIDAccordoWS(IDServizio id) throws DriverRegistroServiziException{
 		IdAccordoServizioParteSpecifica idAccordo = new IdAccordoServizioParteSpecifica();
+		idAccordo.setTipo(id.getTipo());
 		idAccordo.setNome(id.getNome());
 		idAccordo.setVersione(id.getVersione());
-		if(id.getSoggettoReferente()!=null){
+		if(id.getSoggettoErogatore()!=null){
 			IdSoggetto soggettoErogatore = new IdSoggetto();
-			soggettoErogatore.setTipo(id.getSoggettoReferente().getTipo());
-			soggettoErogatore.setNome(id.getSoggettoReferente().getNome());
+			soggettoErogatore.setTipo(id.getSoggettoErogatore().getTipo());
+			soggettoErogatore.setNome(id.getSoggettoErogatore().getNome());
 			idAccordo.setSoggettoErogatore(soggettoErogatore);
 		}
 		return idAccordo;
 	}
 	
 	private List<org.openspcoop2.core.registry.IdAccordoServizioParteSpecifica> readAccordiIds(SearchFilterAccordoServizioParteSpecifica filter, boolean paginated) throws ServiceException, NotImplementedException, Exception{
-		List<IDAccordo> listIds = this.readIds(filter, true);
+		List<IDServizio> listIds = this.readIds(filter, true);
 		List<org.openspcoop2.core.registry.IdAccordoServizioParteSpecifica> listIdsWS = new ArrayList<org.openspcoop2.core.registry.IdAccordoServizioParteSpecifica>();
 		for (int i = 0; i < listIds.size(); i++) {
 			listIdsWS.add(this.convertToIDAccordoWS(listIds.get(i)));
@@ -134,8 +136,8 @@ public abstract class AccordoServizioParteSpecificaImpl extends BaseImpl  implem
 		return (List<Long>) this.toList(filter, true, paginated);
 	}
 	@SuppressWarnings("unchecked")
-	private List<IDAccordo> readIds(SearchFilterAccordoServizioParteSpecifica filter, boolean paginated) throws ServiceException, NotImplementedException, Exception{
-		return (List<IDAccordo>) this.toList(filter, false, paginated);
+	private List<IDServizio> readIds(SearchFilterAccordoServizioParteSpecifica filter, boolean paginated) throws ServiceException, NotImplementedException, Exception{
+		return (List<IDServizio>) this.toList(filter, false, paginated);
 	}
 	private List<?> toList(SearchFilterAccordoServizioParteSpecifica filter, boolean idLong, boolean paginated) throws ServiceException, NotImplementedException, Exception{
 		
@@ -156,11 +158,14 @@ public abstract class AccordoServizioParteSpecificaImpl extends BaseImpl  implem
 			sqlQueryObject.addSelectField(CostantiDB.SERVIZI, "id_soggetto");
 			returnTypes.add(Long.class);
 			
-			sqlQueryObject.addSelectField(CostantiDB.SERVIZI, "aps_nome");
+			sqlQueryObject.addSelectField(CostantiDB.SERVIZI, "nome_servizio");
 			returnTypes.add(String.class);
 			
-			sqlQueryObject.addSelectField(CostantiDB.SERVIZI, "aps_versione");
+			sqlQueryObject.addSelectField(CostantiDB.SERVIZI, "tipo_servizio");
 			returnTypes.add(String.class);
+			
+			sqlQueryObject.addSelectField(CostantiDB.SERVIZI, "versione_servizio");
+			returnTypes.add(Integer.class);
 		}
 		
 		
@@ -177,16 +182,17 @@ public abstract class AccordoServizioParteSpecificaImpl extends BaseImpl  implem
 			return listIds;
 		}
 		else{
-			List<IDAccordo> listIds = new ArrayList<IDAccordo>();
+			List<IDServizio> listIds = new ArrayList<IDServizio>();
 			for (List<Object> list : listaRisultati) {
 				Long idReferente = (Long)list.get(0);
 				String name = (String)list.get(1);
-				String versione = (String)list.get(2);
+				String tipo = (String)list.get(2);
+				Integer versione = (Integer)list.get(3);
 				IDSoggetto idSoggettoReferente = null;
 				if(idReferente!=null && idReferente>0){
 					idSoggettoReferente = driverDB.getIdSoggetto(idReferente);
 				}
-				listIds.add(this.buildIDAccordo(name, versione, idSoggettoReferente));
+				listIds.add(this.buildIDServizio(tipo, name, versione, idSoggettoReferente));
 			}
 			return listIds;
 		}
@@ -217,15 +223,13 @@ public abstract class AccordoServizioParteSpecificaImpl extends BaseImpl  implem
 	private void setFilter(ISQLQueryObject sqlQueryObjectParam, List<JDBCObject> paramTypes,
 			SearchFilterAccordoServizioParteSpecifica filter, boolean paginated) throws ServiceException, NotImplementedException, Exception{
 		
-		if(filter.getServizio()!= null) {
-			if(filter.getServizio().getNomeSoggettoErogatore()!= null || filter.getServizio().getTipoSoggettoErogatore()!= null) {
-				sqlQueryObjectParam.addFromTable(CostantiDB.SOGGETTI);
-				sqlQueryObjectParam.addWhereCondition(CostantiDB.SERVIZI+".id_soggetto="+CostantiDB.SOGGETTI+".id");
-			}
-			if(filter.getServizio().getConnettore()!= null) {
-				sqlQueryObjectParam.addFromTable(CostantiDB.CONNETTORI);
-				sqlQueryObjectParam.addWhereCondition(CostantiDB.SERVIZI+".id_connettore="+CostantiDB.CONNETTORI+".id");
-			}
+		if(filter.getNomeSoggettoErogatore()!= null || filter.getTipoSoggettoErogatore()!= null) {
+			sqlQueryObjectParam.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObjectParam.addWhereCondition(CostantiDB.SERVIZI+".id_soggetto="+CostantiDB.SOGGETTI+".id");
+		}
+		if(filter.getConfigurazioneServizio()!= null && filter.getConfigurazioneServizio().getConnettore()!= null) {
+			sqlQueryObjectParam.addFromTable(CostantiDB.CONNETTORI);
+			sqlQueryObjectParam.addWhereCondition(CostantiDB.SERVIZI+".id_connettore="+CostantiDB.CONNETTORI+".id");
 		}
 		IDAccordo idAccordo = null;
 		if(filter.getAccordoServizioParteComune()!= null) {
@@ -260,63 +264,57 @@ public abstract class AccordoServizioParteSpecificaImpl extends BaseImpl  implem
 			paramTypes.add(new JDBCObject(filter.getPrivato()?1:0,Integer.class));
 		}
 		
-		if(filter.getServizio()!= null) {
-			if(filter.getServizio().getNomeSoggettoErogatore()!= null) {
-				sqlQueryObjectCondition.addWhereCondition(CostantiDB.SOGGETTI+".nome_soggetto=?");
-				paramTypes.add(new JDBCObject(filter.getServizio().getNomeSoggettoErogatore(),String.class));
-			}
-			if(filter.getServizio().getTipoSoggettoErogatore()!= null) {
-				sqlQueryObjectCondition.addWhereCondition(CostantiDB.SOGGETTI+".tipo_soggetto=?");
-				paramTypes.add(new JDBCObject(filter.getServizio().getTipoSoggettoErogatore(),String.class));
-			}
-			if(filter.getServizio().getConnettore()!= null) {
-				if(filter.getServizio().getConnettore().getCustom()!= null) {
-					sqlQueryObjectCondition.addWhereCondition(CostantiDB.CONNETTORI+".custom=?");
-					paramTypes.add(new JDBCObject(filter.getServizio().getConnettore().getCustom()?1:0,Integer.class));
-				}
-				if(filter.getServizio().getConnettore().getTipo()!= null) {
-					sqlQueryObjectCondition.addWhereCondition(CostantiDB.CONNETTORI+".endpointtype=?");
-					paramTypes.add(new JDBCObject(filter.getServizio().getConnettore().getTipo(),String.class));
-				}
-				if(filter.getServizio().getConnettore().getNome()!= null) {
-					sqlQueryObjectCondition.addWhereCondition(CostantiDB.CONNETTORI+".nome_connettore=?");
-					paramTypes.add(new JDBCObject(filter.getServizio().getConnettore().getNome(),String.class));
-				}
-			}
-			if(filter.getServizio().getTipo()!= null) {
-				sqlQueryObjectCondition.addWhereCondition(CostantiDB.SERVIZI+".tipo_servizio=?");
-				paramTypes.add(new JDBCObject(filter.getServizio().getTipo(),String.class));
-			}
-			if(filter.getServizio().getNome()!= null) {
-				sqlQueryObjectCondition.addWhereCondition(CostantiDB.SERVIZI+".nome_servizio=?");
-				paramTypes.add(new JDBCObject(filter.getServizio().getNome(),String.class));
-			}
-			if(filter.getServizio().getTipologiaServizio()!= null) {
-				if(TipologiaServizio.CORRELATO.equals(filter.getServizio().getTipologiaServizio())){
-					sqlQueryObjectCondition.addWhereCondition(CostantiDB.SERVIZI+".servizio_correlato='"+CostantiRegistroServizi.ABILITATO.getValue()+"'");
-				}
-				else{
-					sqlQueryObjectCondition.addWhereCondition(CostantiDB.SERVIZI+".servizio_correlato='"+CostantiRegistroServizi.DISABILITATO.getValue()+"'");
-				}
-			}
+		if(filter.getNomeSoggettoErogatore()!= null) {
+			sqlQueryObjectCondition.addWhereCondition(CostantiDB.SOGGETTI+".nome_soggetto=?");
+			paramTypes.add(new JDBCObject(filter.getNomeSoggettoErogatore(),String.class));
 		}
-		
+		if(filter.getTipoSoggettoErogatore()!= null) {
+			sqlQueryObjectCondition.addWhereCondition(CostantiDB.SOGGETTI+".tipo_soggetto=?");
+			paramTypes.add(new JDBCObject(filter.getTipoSoggettoErogatore(),String.class));
+		}
+		if(filter.getTipo()!= null) {
+			sqlQueryObjectCondition.addWhereCondition(CostantiDB.SERVIZI+".tipo_servizio=?");
+			paramTypes.add(new JDBCObject(filter.getTipo(),String.class));
+		}
 		if(filter.getNome()!= null) {
-			sqlQueryObjectCondition.addWhereCondition(CostantiDB.SERVIZI+".aps_nome=?");
+			sqlQueryObjectCondition.addWhereCondition(CostantiDB.SERVIZI+".nome_servizio=?");
 			paramTypes.add(new JDBCObject(filter.getNome(),String.class));
+		}
+		if(filter.getVersione()!= null) {
+			sqlQueryObjectCondition.addWhereCondition(CostantiDB.SERVIZI+".versione_servizio=?");
+			paramTypes.add(new JDBCObject(filter.getVersione(),String.class));
+		}
+		if(filter.getTipologiaServizio()!= null) {
+			if(TipologiaServizio.CORRELATO.equals(filter.getTipologiaServizio())){
+				sqlQueryObjectCondition.addWhereCondition(CostantiDB.SERVIZI+".servizio_correlato='"+CostantiRegistroServizi.ABILITATO.getValue()+"'");
+			}
+			else{
+				sqlQueryObjectCondition.addWhereCondition(CostantiDB.SERVIZI+".servizio_correlato='"+CostantiRegistroServizi.DISABILITATO.getValue()+"'");
+			}
 		}
 		if(filter.getDescrizione()!= null) {
 			sqlQueryObjectCondition.addWhereLikeCondition(CostantiDB.SERVIZI+".descrizione=?",filter.getDescrizione(),true,true);
-		}
-		if(filter.getVersione()!= null) {
-			sqlQueryObjectCondition.addWhereCondition(CostantiDB.SERVIZI+".aps_versione=?");
-			paramTypes.add(new JDBCObject(filter.getVersione(),String.class));
 		}
 		if(filter.getVersioneProtocollo()!= null) {
 			sqlQueryObjectCondition.addWhereCondition(CostantiDB.SERVIZI+".profilo=?");
 			paramTypes.add(new JDBCObject(filter.getVersioneProtocollo(),String.class));
 		}
-
+		
+		if(filter.getConfigurazioneServizio()!= null && filter.getConfigurazioneServizio().getConnettore()!= null) {
+			if(filter.getConfigurazioneServizio().getConnettore().getCustom()!= null) {
+				sqlQueryObjectCondition.addWhereCondition(CostantiDB.CONNETTORI+".custom=?");
+				paramTypes.add(new JDBCObject(filter.getConfigurazioneServizio().getConnettore().getCustom()?1:0,Integer.class));
+			}
+			if(filter.getConfigurazioneServizio().getConnettore().getTipo()!= null) {
+				sqlQueryObjectCondition.addWhereCondition(CostantiDB.CONNETTORI+".endpointtype=?");
+				paramTypes.add(new JDBCObject(filter.getConfigurazioneServizio().getConnettore().getTipo(),String.class));
+			}
+			if(filter.getConfigurazioneServizio().getConnettore().getNome()!= null) {
+				sqlQueryObjectCondition.addWhereCondition(CostantiDB.CONNETTORI+".nome_connettore=?");
+				paramTypes.add(new JDBCObject(filter.getConfigurazioneServizio().getConnettore().getNome(),String.class));
+			}
+		}
+		
 		if(filter.getAccordoServizioParteComune()!= null) {
 			if(idAccordo.getNome()!=null){
 				sqlQueryObjectCondition.addWhereCondition(CostantiDB.ACCORDI+".nome=?");
@@ -363,8 +361,9 @@ public abstract class AccordoServizioParteSpecificaImpl extends BaseImpl  implem
 				sqlQueryObjectParam.setOffset(filter.getOffset());
 			}
 			sqlQueryObjectParam.addOrderBy(CostantiDB.SERVIZI+".id_soggetto");
-			sqlQueryObjectParam.addOrderBy(CostantiDB.SERVIZI+".aps_nome");
-			sqlQueryObjectParam.addOrderBy(CostantiDB.SERVIZI+".aps_versione");
+			sqlQueryObjectParam.addOrderBy(CostantiDB.SERVIZI+".tipo_servizio");
+			sqlQueryObjectParam.addOrderBy(CostantiDB.SERVIZI+".nome_servizio");
+			sqlQueryObjectParam.addOrderBy(CostantiDB.SERVIZI+".versione_servizio");
 			sqlQueryObjectParam.setSortType(true);
 		}
 		
@@ -655,10 +654,10 @@ public abstract class AccordoServizioParteSpecificaImpl extends BaseImpl  implem
 			}
 			AccordoServizioParteSpecifica tmp = ((IDriverRegistroServiziGet)this.accordoServizioParteSpecificaService.getDriver()).getAccordoServizioParteSpecifica(this.convertToIDAccordo(oldId));
 			obj.setSuperUser(ServerProperties.getInstance().getUser());
-			obj.getServizio().setOldTipoForUpdate(tmp.getServizio().getTipo());
-			obj.getServizio().setOldNomeForUpdate(tmp.getServizio().getNome());
-			obj.getServizio().setOldTipoSoggettoErogatoreForUpdate(tmp.getServizio().getTipoSoggettoErogatore());
-			obj.getServizio().setOldNomeSoggettoErogatoreForUpdate(tmp.getServizio().getNomeSoggettoErogatore());
+			IDServizio oldIDServizioForUpdate = IDServizioFactory.getInstance().getIDServizioFromValues(tmp.getTipo(), tmp.getNome(), 
+					tmp.getTipoSoggettoErogatore(),tmp.getNomeSoggettoErogatore(), 
+					tmp.getVersione());
+			obj.setOldIDServizioForUpdate(oldIDServizioForUpdate);
 			((IDriverRegistroServiziCRUD)this.accordoServizioParteSpecificaService.getDriver()).updateAccordoServizioParteSpecifica(obj);
 			this.logEndMethod("update");
 			
@@ -688,10 +687,10 @@ public abstract class AccordoServizioParteSpecificaImpl extends BaseImpl  implem
 			}else{
 				AccordoServizioParteSpecifica tmp = ((IDriverRegistroServiziGet)this.accordoServizioParteSpecificaService.getDriver()).getAccordoServizioParteSpecifica(this.convertToIDAccordo(oldId));
 				obj.setSuperUser(ServerProperties.getInstance().getUser());
-				obj.getServizio().setOldTipoForUpdate(tmp.getServizio().getTipo());
-				obj.getServizio().setOldNomeForUpdate(tmp.getServizio().getNome());
-				obj.getServizio().setOldTipoSoggettoErogatoreForUpdate(tmp.getServizio().getTipoSoggettoErogatore());
-				obj.getServizio().setOldNomeSoggettoErogatoreForUpdate(tmp.getServizio().getNomeSoggettoErogatore());
+				IDServizio oldIDServizioForUpdate = IDServizioFactory.getInstance().getIDServizioFromValues(tmp.getTipo(), tmp.getNome(), 
+						tmp.getTipoSoggettoErogatore(),tmp.getNomeSoggettoErogatore(), 
+						tmp.getVersione());
+				obj.setOldIDServizioForUpdate(oldIDServizioForUpdate);
 				((IDriverRegistroServiziCRUD)this.accordoServizioParteSpecificaService.getDriver()).updateAccordoServizioParteSpecifica(obj);
 			}
 			this.logEndMethod("updateOrCreate");
@@ -741,14 +740,14 @@ public abstract class AccordoServizioParteSpecificaImpl extends BaseImpl  implem
 			checkInitDriverRegistroServiziCRUD(this.accordoServizioParteSpecificaService);
 			this.logStartMethod("deleteAll");
 			this.authorize(false);
-			List<IDAccordo> list = null; 
+			List<IDServizio> list = null; 
 			try{
-				list = ((IDriverRegistroServiziGet)this.accordoServizioParteSpecificaService.getDriver()).getAllIdAccordiServizioParteSpecifica(new FiltroRicercaServizi());
+				list = ((IDriverRegistroServiziGet)this.accordoServizioParteSpecificaService.getDriver()).getAllIdServizi(new FiltroRicercaServizi());
 			}catch(DriverRegistroServiziNotFound notFound){}
 			long result = 0;
 			if(list!=null && list.size()>0){
 				result = list.size();
-				for (IDAccordo idAccordo : list) {
+				for (IDServizio idAccordo : list) {
 					try{
 						((IDriverRegistroServiziCRUD)this.accordoServizioParteSpecificaService.getDriver()).
 							deleteAccordoServizioParteSpecifica(((IDriverRegistroServiziGet)this.accordoServizioParteSpecificaService.getDriver()).getAccordoServizioParteSpecifica(idAccordo));
@@ -777,11 +776,11 @@ public abstract class AccordoServizioParteSpecificaImpl extends BaseImpl  implem
 			checkInitDriverRegistroServiziCRUD(this.accordoServizioParteSpecificaService);
 			this.logStartMethod("deleteAllByFilter", filter);
 			this.authorize(false);
-			List<IDAccordo> list = this.readIds(filter, true);
+			List<IDServizio> list = this.readIds(filter, true);
 			long result = 0;
 			if(list!=null && list.size()>0){
 				result = list.size();
-				for (IDAccordo idAccordo : list) {
+				for (IDServizio idAccordo : list) {
 					try{
 						((IDriverRegistroServiziCRUD)this.accordoServizioParteSpecificaService.getDriver()).
 							deleteAccordoServizioParteSpecifica(((IDriverRegistroServiziGet)this.accordoServizioParteSpecificaService.getDriver()).getAccordoServizioParteSpecifica(idAccordo));

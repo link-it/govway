@@ -111,6 +111,7 @@ CREATE TABLE CORRELAZIONE_APPLICATIVA
 	DESTINATARIO VARCHAR(255) NOT NULL,
 	TIPO_SERVIZIO VARCHAR(255),
 	SERVIZIO VARCHAR(255),
+	VERSIONE_SERVIZIO INT NOT NULL,
 	AZIONE VARCHAR(255),
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	SCADENZA TIMESTAMP(3) DEFAULT 0,

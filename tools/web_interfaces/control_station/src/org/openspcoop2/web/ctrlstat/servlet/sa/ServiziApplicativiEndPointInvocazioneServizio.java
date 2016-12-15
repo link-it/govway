@@ -428,7 +428,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey, httpspwdprivatekey,
 						httpsalgoritmokey, tipoconn, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,
-						nomeservizioApplicativo, idsil, null, null, null,
+						nomeservizioApplicativo, idsil, null, null, null, null,
 						null, null, true,
 						isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 				
@@ -481,7 +481,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey, httpspwdprivatekey,
 						httpsalgoritmokey, tipoconn, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,
-						nomeservizioApplicativo, idsil, null, null, null,
+						nomeservizioApplicativo, idsil, null, null, null, null,
 						null, null, true,
 						isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 				

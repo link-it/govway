@@ -32,12 +32,10 @@ import java.util.List;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.ws.BindingProvider;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
-import org.openspcoop2.core.id.IDAccordoCooperazioneWithSoggetto;
 import org.openspcoop2.core.id.IDAzione;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortType;
@@ -71,6 +69,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.ProtocolPropertiesUtilities;
 import org.openspcoop2.core.registry.ws.client.accordocooperazione.search.AccordoCooperazioneSoap11Service;
@@ -79,12 +78,12 @@ import org.openspcoop2.core.registry.ws.client.accordoserviziopartecomune.search
 import org.openspcoop2.core.registry.ws.client.accordoserviziopartecomune.search.SearchFilterAccordoServizioParteComune;
 import org.openspcoop2.core.registry.ws.client.accordoserviziopartespecifica.search.AccordoServizioParteSpecificaSoap11Service;
 import org.openspcoop2.core.registry.ws.client.accordoserviziopartespecifica.search.SearchFilterAccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.ws.client.accordoserviziopartespecifica.search.Servizio;
 import org.openspcoop2.core.registry.ws.client.portadominio.search.PortaDominioSoap11Service;
 import org.openspcoop2.core.registry.ws.client.portadominio.search.SearchFilterPortaDominio;
 import org.openspcoop2.core.registry.ws.client.soggetto.search.SearchFilterSoggetto;
 import org.openspcoop2.core.registry.ws.client.soggetto.search.SoggettoSoap11Service;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.slf4j.Logger;
 
 
 
@@ -402,7 +401,7 @@ public class DriverRegistroServiziWS extends BeanUtilities
 			SearchFilterAccordoCooperazione filter = new SearchFilterAccordoCooperazione();
 			if(filtroRicerca!=null){
 				if(filtroRicerca.getVersione()!=null){
-					filter.setVersione(filtroRicerca.getVersione());
+					filter.setVersione(new Long(filtroRicerca.getVersione()));
 				}
 				if(filtroRicerca.getTipoSoggettoReferente()!=null || filtroRicerca.getNomeSoggettoReferente()!=null){
 					filter.setSoggettoReferente(new org.openspcoop2.core.registry.ws.client.accordocooperazione.search.IdSoggetto());
@@ -435,11 +434,10 @@ public class DriverRegistroServiziWS extends BeanUtilities
 				}
 				for (IdAccordoCooperazione idAccordoCooperazione : ids) {
 					IDAccordoCooperazione idAccordoCooperazioneOpenSPCoop = 
-							IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromValues(idAccordoCooperazione.getNome(), idAccordoCooperazione.getVersione());
-					IDAccordoCooperazioneWithSoggetto idAccordoCooperazioneOpenSPCoopWithSoggetto = new IDAccordoCooperazioneWithSoggetto(idAccordoCooperazioneOpenSPCoop);
-					idAccordoCooperazioneOpenSPCoopWithSoggetto.
-						setSoggettoReferente(new IDSoggetto(idAccordoCooperazione.getSoggettoReferente().getTipo(), idAccordoCooperazione.getSoggettoReferente().getNome()));
-					idsOpenSPCoop.add(idAccordoCooperazioneOpenSPCoopWithSoggetto);
+							IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromValues(idAccordoCooperazione.getNome(), 
+									new IDSoggetto(idAccordoCooperazione.getSoggettoReferente().getTipo(), idAccordoCooperazione.getSoggettoReferente().getNome()),
+									idAccordoCooperazione.getVersione());
+					idsOpenSPCoop.add(idAccordoCooperazioneOpenSPCoop);
 				}
 			}
 			else{
@@ -453,11 +451,10 @@ public class DriverRegistroServiziWS extends BeanUtilities
 						continue;
 					}
 					IDAccordoCooperazione idAccordoCooperazioneOpenSPCoop = 
-							IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromValues(accordoCooperazione.getNome(), accordoCooperazione.getVersione());
-					IDAccordoCooperazioneWithSoggetto idAccordoCooperazioneOpenSPCoopWithSoggetto = new IDAccordoCooperazioneWithSoggetto(idAccordoCooperazioneOpenSPCoop);
-					idAccordoCooperazioneOpenSPCoopWithSoggetto.
-						setSoggettoReferente(new IDSoggetto(accordoCooperazione.getSoggettoReferente().getTipo(), accordoCooperazione.getSoggettoReferente().getNome()));
-					idsOpenSPCoop.add(idAccordoCooperazioneOpenSPCoopWithSoggetto);
+							IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromValues(accordoCooperazione.getNome(), 
+									new IDSoggetto(accordoCooperazione.getSoggettoReferente().getTipo(), accordoCooperazione.getSoggettoReferente().getNome()),
+									accordoCooperazione.getVersione());
+					idsOpenSPCoop.add(idAccordoCooperazioneOpenSPCoop);
 				}
 				if(idsOpenSPCoop==null || idsOpenSPCoop.size()<=0){
 					throw new org.openspcoop2.core.registry.ws.client.accordoserviziopartecomune.search.RegistryNotFoundException_Exception("La ricerca non ha trovato accordi");
@@ -498,7 +495,7 @@ public class DriverRegistroServiziWS extends BeanUtilities
 			SearchFilterAccordoServizioParteComune filter = new SearchFilterAccordoServizioParteComune();
 			if(filtroRicerca!=null){
 				if(filtroRicerca.getVersione()!=null){
-					filter.setVersione(filtroRicerca.getVersione());
+					filter.setVersione(new Long(filtroRicerca.getVersione()));
 				}
 				if(filtroRicerca.getTipoSoggettoReferente()!=null || filtroRicerca.getNomeSoggettoReferente()!=null){
 					filter.setSoggettoReferente(new org.openspcoop2.core.registry.ws.client.accordoserviziopartecomune.search.IdSoggetto());
@@ -612,7 +609,7 @@ public class DriverRegistroServiziWS extends BeanUtilities
 			SearchFilterAccordoServizioParteComune filter = new SearchFilterAccordoServizioParteComune();
 			if(filtroRicercaBase!=null){
 				if(filtroRicercaBase.getVersione()!=null){
-					filter.setVersione(filtroRicercaBase.getVersione());
+					filter.setVersione(new Long(filtroRicercaBase.getVersione()));
 				}
 				if(filtroRicercaBase.getTipoSoggettoReferente()!=null || filtroRicercaBase.getNomeSoggettoReferente()!=null){
 					filter.setSoggettoReferente(new org.openspcoop2.core.registry.ws.client.accordoserviziopartecomune.search.IdSoggetto());
@@ -760,26 +757,14 @@ public class DriverRegistroServiziWS extends BeanUtilities
 			DriverRegistroServiziNotFound {
 		try{
 			SearchFilterAccordoServizioParteSpecifica filter = new SearchFilterAccordoServizioParteSpecifica();
-			filter.setServizio(new Servizio());
-			filter.getServizio().setTipo(idServizio.getTipoServizio());
-			filter.getServizio().setNome(idServizio.getServizio());
+			filter.setTipo(idServizio.getTipo());
+			filter.setNome(idServizio.getNome());
+			filter.setVersione(new Long(idServizio.getVersione()));
 			if(idServizio.getSoggettoErogatore()!=null){
-				filter.getServizio().setTipoSoggettoErogatore(idServizio.getSoggettoErogatore().getTipo());
-				filter.getServizio().setNomeSoggettoErogatore(idServizio.getSoggettoErogatore().getNome());
+				filter.setTipoSoggettoErogatore(idServizio.getSoggettoErogatore().getTipo());
+				filter.setNomeSoggettoErogatore(idServizio.getSoggettoErogatore().getNome());
 			}
 			return this.accordoServizioParteSpecificaPort.find(filter);
-		}catch(org.openspcoop2.core.registry.ws.client.accordoserviziopartespecifica.search.RegistryNotFoundException_Exception e){
-			throw new DriverRegistroServiziNotFound(e.getMessage(),e);
-		}catch(Exception e){
-			throw new DriverRegistroServiziException(e.getMessage(),e);
-		}
-	}
-	@Override
-	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(
-			IDAccordo idAccordo) throws DriverRegistroServiziException,
-			DriverRegistroServiziNotFound {
-		try{
-			return this.accordoServizioParteSpecificaPort.get(new IdAccordoServizioParteSpecifica(idAccordo));
 		}catch(org.openspcoop2.core.registry.ws.client.accordoserviziopartespecifica.search.RegistryNotFoundException_Exception e){
 			throw new DriverRegistroServiziNotFound(e.getMessage(),e);
 		}catch(Exception e){
@@ -795,10 +780,9 @@ public class DriverRegistroServiziWS extends BeanUtilities
 			SearchFilterAccordoServizioParteSpecifica filter = new SearchFilterAccordoServizioParteSpecifica();
 			filter.setAccordoServizioParteComune(IDAccordoFactory.getInstance().getUriFromIDAccordo(idAccordoServizioParteComune));
 			if(idSoggetto!=null){
-				filter.setServizio(new Servizio());
-				filter.getServizio().setTipoSoggettoErogatore(idSoggetto.getTipo());
-				filter.getServizio().setNomeSoggettoErogatore(idSoggetto.getNome());
-				filter.getServizio().setTipologiaServizio(TipologiaServizio.CORRELATO);
+				filter.setTipoSoggettoErogatore(idSoggetto.getTipo());
+				filter.setNomeSoggettoErogatore(idSoggetto.getNome());
+				filter.setTipologiaServizio(TipologiaServizio.CORRELATO);
 			}
 			return this.accordoServizioParteSpecificaPort.find(filter);
 		}catch(org.openspcoop2.core.registry.ws.client.accordoserviziopartespecifica.search.RegistryNotFoundException_Exception e){
@@ -807,62 +791,7 @@ public class DriverRegistroServiziWS extends BeanUtilities
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
 	}
-	@Override
-	public List<IDAccordo> getAllIdAccordiServizioParteSpecifica(
-			FiltroRicercaServizi filtroRicerca)
-			throws DriverRegistroServiziException,
-			DriverRegistroServiziNotFound {
-		try{
-			SearchFilterAccordoServizioParteSpecifica filter = new SearchFilterAccordoServizioParteSpecifica();
-			if(filtroRicerca!=null){
-				if(filtroRicerca.getIdAccordo()!=null){
-					filter.setAccordoServizioParteComune(IDAccordoFactory.getInstance().getUriFromIDAccordo(filtroRicerca.getIdAccordo()));
-				}
-				if(filtroRicerca.getNome()!=null || filtroRicerca.getTipo()!=null ||
-						filtroRicerca.getNomeSoggettoErogatore()!=null ||
-						filtroRicerca.getTipoSoggettoErogatore()!=null ||
-						filtroRicerca.getTipologiaServizio()!=null){
-					filter.setServizio(new Servizio());
-					filter.getServizio().setTipo(filtroRicerca.getTipo());
-					filter.getServizio().setNome(filtroRicerca.getNome());
-					filter.getServizio().setTipoSoggettoErogatore(filtroRicerca.getTipoSoggettoErogatore());
-					filter.getServizio().setNomeSoggettoErogatore(filtroRicerca.getNomeSoggettoErogatore());
-					filter.getServizio().setTipologiaServizio(TipologiaServizio.toEnumConstant(filtroRicerca.getTipologiaServizio()));
-				}
-				if(filtroRicerca.getMaxDate()!=null){
-					GregorianCalendar cal = (GregorianCalendar) Calendar.getInstance();
-					cal.setTime(filtroRicerca.getMaxDate());
-					filter.setOraRegistrazioneMax(this.dataTypeFactory.newXMLGregorianCalendar(cal));
-				}
-				if(filtroRicerca.getMinDate()!=null){
-					GregorianCalendar cal = (GregorianCalendar) Calendar.getInstance();
-					cal.setTime(filtroRicerca.getMinDate());
-					filter.setOraRegistrazioneMax(this.dataTypeFactory.newXMLGregorianCalendar(cal));
-				}	
-			}
-			List<IdAccordoServizioParteSpecifica> ids = this.accordoServizioParteSpecificaPort.findAllIds(filter);
-			if(ids==null || ids.size()<=0){
-				throw new org.openspcoop2.core.registry.ws.client.accordoserviziopartespecifica.search.RegistryNotFoundException_Exception("La ricerca non ha trovato accordi");
-			}
-			List<IDAccordo> idsOpenSPCoop = new ArrayList<IDAccordo>();
-			for (IdAccordoServizioParteSpecifica idAccordoServizioParteSpecifica : ids) {
-				IDSoggetto idSoggetto = null;
-				if(idAccordoServizioParteSpecifica.getSoggettoErogatore()!=null){
-					idSoggetto = new IDSoggetto(idAccordoServizioParteSpecifica.getSoggettoErogatore().getTipo(), idAccordoServizioParteSpecifica.getSoggettoErogatore().getNome());
-				}
-				IDAccordo idAccordoServizioParteSpecificaOpenSPCoop = 
-						IDAccordoFactory.getInstance().getIDAccordoFromValues(idAccordoServizioParteSpecifica.getNome(), idSoggetto, idAccordoServizioParteSpecifica.getVersione());
-				idsOpenSPCoop.add(idAccordoServizioParteSpecificaOpenSPCoop);
-			}
-			
-			return idsOpenSPCoop;
-			
-		}catch(org.openspcoop2.core.registry.ws.client.accordoserviziopartespecifica.search.RegistryNotFoundException_Exception e){
-			throw new DriverRegistroServiziNotFound(e.getMessage(),e);
-		}catch(Exception e){
-			throw new DriverRegistroServiziException(e.getMessage(),e);
-		}
-	}
+	
 	@Override
 	public List<IDServizio> getAllIdServizi(FiltroRicercaServizi filtroRicerca)
 			throws DriverRegistroServiziException,
@@ -870,19 +799,21 @@ public class DriverRegistroServiziWS extends BeanUtilities
 		try{
 			SearchFilterAccordoServizioParteSpecifica filter = new SearchFilterAccordoServizioParteSpecifica();
 			if(filtroRicerca!=null){
-				if(filtroRicerca.getIdAccordo()!=null){
-					filter.setAccordoServizioParteComune(IDAccordoFactory.getInstance().getUriFromIDAccordo(filtroRicerca.getIdAccordo()));
+				if(filtroRicerca.getIdAccordoServizioParteComune()!=null){
+					filter.setAccordoServizioParteComune(IDAccordoFactory.getInstance().getUriFromIDAccordo(filtroRicerca.getIdAccordoServizioParteComune()));
 				}
-				if(filtroRicerca.getNome()!=null || filtroRicerca.getTipo()!=null ||
+				if(filtroRicerca.getNome()!=null || filtroRicerca.getTipo()!=null || filtroRicerca.getVersione()!=null ||
 						filtroRicerca.getNomeSoggettoErogatore()!=null ||
 						filtroRicerca.getTipoSoggettoErogatore()!=null ||
-						filtroRicerca.getTipologiaServizio()!=null){
-					filter.setServizio(new Servizio());
-					filter.getServizio().setTipo(filtroRicerca.getTipo());
-					filter.getServizio().setNome(filtroRicerca.getNome());
-					filter.getServizio().setTipoSoggettoErogatore(filtroRicerca.getTipoSoggettoErogatore());
-					filter.getServizio().setNomeSoggettoErogatore(filtroRicerca.getNomeSoggettoErogatore());
-					filter.getServizio().setTipologiaServizio(TipologiaServizio.toEnumConstant(filtroRicerca.getTipologiaServizio()));
+						filtroRicerca.getTipologia()!=null){
+					filter.setTipo(filtroRicerca.getTipo());
+					filter.setNome(filtroRicerca.getNome());
+					filter.setVersione(new Long(filtroRicerca.getVersione()));
+					filter.setTipoSoggettoErogatore(filtroRicerca.getTipoSoggettoErogatore());
+					filter.setNomeSoggettoErogatore(filtroRicerca.getNomeSoggettoErogatore());
+					if(filtroRicerca.getTipologia()!=null){
+						filter.setTipologiaServizio(TipologiaServizio.toEnumConstant(filtroRicerca.getTipologia().getValue()));
+					}
 				}
 				if(filtroRicerca.getMaxDate()!=null){
 					GregorianCalendar cal = (GregorianCalendar) Calendar.getInstance();
@@ -903,8 +834,9 @@ public class DriverRegistroServiziWS extends BeanUtilities
 				}
 				for (IdAccordoServizioParteSpecifica idAccordoServizioParteSpecifica : ids) {
 					AccordoServizioParteSpecifica asps = this.accordoServizioParteSpecificaPort.get(idAccordoServizioParteSpecifica);
-					IDServizio idServizio = new IDServizio(asps.getServizio().getTipoSoggettoErogatore(), asps.getServizio().getNomeSoggettoErogatore(), 
-							asps.getServizio().getTipo(), asps.getServizio().getNome());
+					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(asps.getTipo(), asps.getNome(), 
+							new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()), 
+							asps.getVersione()); 
 					idsOpenSPCoop.add(idServizio);
 				}
 			}
@@ -920,8 +852,9 @@ public class DriverRegistroServiziWS extends BeanUtilities
 						continue;
 					}
 					
-					IDServizio idServizio = new IDServizio(asps.getServizio().getTipoSoggettoErogatore(), asps.getServizio().getNomeSoggettoErogatore(), 
-							asps.getServizio().getTipo(), asps.getServizio().getNome());
+					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(asps.getTipo(), asps.getNome(), 
+							new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()), 
+							asps.getVersione()); 
 					idsOpenSPCoop.add(idServizio);
 				}
 				if(idsOpenSPCoop==null || idsOpenSPCoop.size()<=0){
@@ -945,19 +878,21 @@ public class DriverRegistroServiziWS extends BeanUtilities
 		try{
 			SearchFilterAccordoServizioParteSpecifica filter = new SearchFilterAccordoServizioParteSpecifica();
 			if(filtroRicerca!=null){
-				if(filtroRicerca.getIdAccordo()!=null){
-					filter.setAccordoServizioParteComune(IDAccordoFactory.getInstance().getUriFromIDAccordo(filtroRicerca.getIdAccordo()));
+				if(filtroRicerca.getIdAccordoServizioParteComune()!=null){
+					filter.setAccordoServizioParteComune(IDAccordoFactory.getInstance().getUriFromIDAccordo(filtroRicerca.getIdAccordoServizioParteComune()));
 				}
-				if(filtroRicerca.getNome()!=null || filtroRicerca.getTipo()!=null ||
+				if(filtroRicerca.getNome()!=null || filtroRicerca.getTipo()!=null || filtroRicerca.getVersione()!=null ||
 						filtroRicerca.getNomeSoggettoErogatore()!=null ||
 						filtroRicerca.getTipoSoggettoErogatore()!=null ||
-						filtroRicerca.getTipologiaServizio()!=null){
-					filter.setServizio(new Servizio());
-					filter.getServizio().setTipo(filtroRicerca.getTipo());
-					filter.getServizio().setNome(filtroRicerca.getNome());
-					filter.getServizio().setTipoSoggettoErogatore(filtroRicerca.getTipoSoggettoErogatore());
-					filter.getServizio().setNomeSoggettoErogatore(filtroRicerca.getNomeSoggettoErogatore());
-					filter.getServizio().setTipologiaServizio(TipologiaServizio.toEnumConstant(filtroRicerca.getTipologiaServizio()));
+						filtroRicerca.getTipologia()!=null){
+					filter.setTipo(filtroRicerca.getTipo());
+					filter.setNome(filtroRicerca.getNome());
+					filter.setVersione(new Long(filtroRicerca.getVersione()));
+					filter.setTipoSoggettoErogatore(filtroRicerca.getTipoSoggettoErogatore());
+					filter.setNomeSoggettoErogatore(filtroRicerca.getNomeSoggettoErogatore());
+					if(filtroRicerca.getTipologia()!=null){
+						filter.setTipologiaServizio(TipologiaServizio.toEnumConstant(filtroRicerca.getTipologia().getValue()));
+					}
 				}
 				if(filtroRicerca.getMaxDate()!=null){
 					GregorianCalendar cal = (GregorianCalendar) Calendar.getInstance();
@@ -983,9 +918,9 @@ public class DriverRegistroServiziWS extends BeanUtilities
 					continue;
 				}
 				
-				IDServizio idServizio = new IDServizio(asps.getServizio().getTipoSoggettoErogatore(), asps.getServizio().getNomeSoggettoErogatore(), 
-						asps.getServizio().getTipo(), asps.getServizio().getNome());
-				
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(asps.getTipo(), asps.getNome(), 
+						new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()), 
+						asps.getVersione()); 
 				
 				for (Fruitore fruitore : asps.getFruitoreList()) {
 					

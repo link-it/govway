@@ -27,7 +27,7 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
-import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -304,7 +304,7 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	// --- Politiche di Sicurezza ---
 		
 	@Override
-	public void createServizioApplicativoAutorizzato(IDAccordo idAccordoServizioParteSpecifica, IDSoggetto idFruitore, String nomeServizioApplicativo) throws DriverRegistroServiziException {
+	public void createServizioApplicativoAutorizzato(IDServizio idAccordoServizioParteSpecifica, IDSoggetto idFruitore, String nomeServizioApplicativo) throws DriverRegistroServiziException {
 		try{
 			AccordoServizioParteSpecifica asps = this.getAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica,false);
 			Soggetto s = this.getSoggettoRegistro(idFruitore);
@@ -320,7 +320,7 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 		}
 	}	
 	@Override
-	public void deleteServizioApplicativoAutorizzato(IDAccordo idAccordoServizioParteSpecifica, IDSoggetto idFruitore, String nomeServizioApplicativo) throws DriverRegistroServiziException {
+	public void deleteServizioApplicativoAutorizzato(IDServizio idAccordoServizioParteSpecifica, IDSoggetto idFruitore, String nomeServizioApplicativo) throws DriverRegistroServiziException {
 		try{
 			AccordoServizioParteSpecifica asps = this.getAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica,false);
 			Soggetto s = this.getSoggettoRegistro(idFruitore);

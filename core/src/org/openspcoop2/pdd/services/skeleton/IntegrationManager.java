@@ -35,6 +35,7 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.config.ClassNameProperties;
@@ -479,7 +480,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	 * @return una Collezione di ID di risposte applicative destinate al servizio applicativo che ha invocato il servizio
 	 * 
 	 */
-	private List<String> getAllMessagesId_engine(Operazione tipoOperazione,String tipoServizio,String servizio,String azione,int counter, int offset) throws IntegrationManagerException {
+	private List<String> getAllMessagesId_engine(Operazione tipoOperazione,String tipoServizio,String servizio, Integer versioneServizio,
+			String azione,int counter, int offset) throws IntegrationManagerException {
 
 		// Timestamp
 		Timestamp dataRichiestaOperazione = DateManager.getTimestamp();
@@ -509,9 +511,17 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		String idTransazione = this.getUniqueIdentifier(protocolFactory,msgDiag,tipoOperazione.toString()).getAsString();
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, idTransazione);
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
-		IDServizio idServizio = new IDServizio();
-		idServizio.setTipoServizio(tipoServizio);
-		idServizio.setServizio(servizio);
+		
+		IDServizio idServizio = null;
+		try {
+			idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tipoServizio,servizio, 
+				OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory.getProtocol()), 
+				versioneServizio);
+		} catch(Exception e) {
+			msgDiag.logErroreGenerico(e, "IDServizioFactory.getIDServizioFromValues");
+			ErroreIntegrazione erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione();
+			throw new IntegrationManagerException(protocolFactory,erroreIntegrazione);
+		}
 		idServizio.setAzione(azione);
 		pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_SERVIZIO,idServizio);
 		msgDiag.setPddContext(pddContext, protocolFactory);
@@ -666,7 +676,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	@Override
 	public List<String> getAllMessagesId() throws IntegrationManagerException {
 		init();
-		return getAllMessagesId_engine(Operazione.getAllMessagesId,null,null,null,-1,-1);
+		return getAllMessagesId_engine(Operazione.getAllMessagesId,null,null,null,null,-1,-1);
 	}
 
 
@@ -682,7 +692,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	@Override
 	public List<String> getAllMessagesIdByService(String tipoServizio, String servizio, String azione) throws IntegrationManagerException {
 		init();
-		return getAllMessagesId_engine(Operazione.getAllMessagesIdByService,tipoServizio,servizio,azione,-1,-1);
+		return getAllMessagesId_engine(Operazione.getAllMessagesIdByService,tipoServizio,servizio,null,azione,-1,-1);
 	}
 
 
@@ -697,7 +707,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	@Deprecated
 	public List<String> getNextMessagesId(int counter) throws IntegrationManagerException {
 		init();
-		return getAllMessagesId_engine(Operazione.getNextMessagesId,null,null,null,counter,-1);	
+		return getAllMessagesId_engine(Operazione.getNextMessagesId,null,null,null,null,counter,-1);	
 	}
 
 	/**
@@ -714,7 +724,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	@Deprecated
 	public List<String> getNextMessagesIdByService(int counter,String tipoServizio,String servizio, String azione) throws IntegrationManagerException {
 		init();
-		return getAllMessagesId_engine(Operazione.getNextMessagesIdByService,tipoServizio,servizio,azione,counter,-1);	
+		return getAllMessagesId_engine(Operazione.getNextMessagesIdByService,tipoServizio,servizio,null,azione,counter,-1);	
 	}
 	
 	/**
@@ -727,7 +737,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	@Override
 	public List<String> getMessagesIdArray(int offset,int counter) throws IntegrationManagerException {
 		init();
-		return getAllMessagesId_engine(Operazione.getMessagesIdArray,null,null,null,counter,offset);	
+		return getAllMessagesId_engine(Operazione.getMessagesIdArray,null,null,null,null,counter,offset);	
 	}
 
 	/**
@@ -743,7 +753,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	@Override
 	public List<String> getMessagesIdArrayByService(int offset,int counter,String tipoServizio,String servizio, String azione) throws IntegrationManagerException {
 		init();
-		return getAllMessagesId_engine(Operazione.getMessagesIdArrayByService,tipoServizio,servizio,azione,counter,offset);	
+		return getAllMessagesId_engine(Operazione.getMessagesIdArrayByService,tipoServizio,servizio,null,azione,counter,offset);	
 	}
 
 
@@ -918,8 +928,10 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					msgDiag.addKeywords(busta, true);
 					
 					fruitore = new IDSoggetto(busta.getTipoMittente(),busta.getMittente());
-					idServizio = new IDServizio(busta.getTipoDestinatario(),busta.getDestinatario(),
-							busta.getTipoServizio(),busta.getServizio());
+					idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(),busta.getServizio(), 
+							busta.getTipoDestinatario(),busta.getDestinatario(), 
+							busta.getVersioneServizio());
+
 				}
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e,"ReadInformazioniProtocollo("+tipoOperazione+","+idMessaggioRichiesto+")");

@@ -113,6 +113,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link PortaDelegataLocalForward }
+     */
+    public PortaDelegataLocalForward createPortaDelegataLocalForward() {
+        return new PortaDelegataLocalForward();
+    }
+    
+    /**
      * Create an instance of {@link ValidazioneContenutiApplicativi }
      */
     public ValidazioneContenutiApplicativi createValidazioneContenutiApplicativi() {

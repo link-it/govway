@@ -26,6 +26,7 @@ import java.io.ByteArrayOutputStream;
 
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
@@ -61,8 +62,8 @@ public class AutorizzazioneContenutoBusteKO extends AbstractCore implements IAut
     		IDSoggetto soggettoFruitore = datiInvocazione.getIdSoggettoFruitore();
     		IDServizio servizio = datiInvocazione.getIdServizio();
     		
-    		String errore = "Il soggetto "+soggettoFruitore.getTipo()+"/"+soggettoFruitore.getNome() +" non e' autorizzato ad invocare il servizio "+servizio.getTipoServizio()+"/"+servizio.getServizio()+" erogato da "
-    		+servizio.getSoggettoErogatore().getTipo()+"/"+servizio.getSoggettoErogatore().getNome()+" con il contenuto applicativo fornito";
+    		String errore = "Il soggetto "+soggettoFruitore.getTipo()+"/"+soggettoFruitore.getNome() +" non e' autorizzato ad invocare il servizio "+
+    				IDServizioFactory.getInstance().getUriFromIDServizio(servizio)+" con il contenuto applicativo fornito";
 			
     		esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
 			esito.setServizioAutorizzato(false);

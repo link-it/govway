@@ -79,7 +79,7 @@ import java.util.List;
  * 		&lt;attribute name="consegna-in-ordine" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional" default="disabilitato"/>
  * 		&lt;attribute name="scadenza" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
- * 		&lt;attribute name="versione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" use="optional" default="1"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -566,11 +566,11 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
     this.oraRegistrazione = oraRegistrazione;
   }
 
-  public java.lang.String getVersione() {
+  public java.lang.Integer getVersione() {
     return this.versione;
   }
 
-  public void setVersione(java.lang.String versione) {
+  public void setVersione(java.lang.Integer versione) {
     this.versione = versione;
   }
 
@@ -876,8 +876,8 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
   @XmlAttribute(name="ora-registrazione",required=false)
   protected java.util.Date oraRegistrazione;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlAttribute(name="versione",required=false)
-  protected java.lang.String versione;
+  protected java.lang.Integer versione = new java.lang.Integer("1");
 
 }

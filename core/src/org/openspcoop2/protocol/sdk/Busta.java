@@ -69,6 +69,7 @@ public class Busta implements java.io.Serializable {
 	// servizio [info-richiedente]
 	protected String tipoServizioRichiedenteBustaDiServizio;
 	protected String servizioRichiedenteBustaDiServizio;
+	protected Integer versioneServizioRichiedenteBustaDiServizio;
 
 	// azione [info-richiedente]
 	protected String azioneRichiedenteBustaDiServizio;
@@ -107,8 +108,9 @@ public class Busta implements java.io.Serializable {
 			this.setConfermaRicezione(infoServizio.getConfermaRicezione());
 			this.setScadenza(infoServizio.getScadenza());
 			if(infoServizio.getIDServizio()!=null){
-				this.setTipoServizio(infoServizio.getIDServizio().getTipoServizio());
-				this.setServizio(infoServizio.getIDServizio().getServizio());
+				this.setTipoServizio(infoServizio.getIDServizio().getTipo());
+				this.setServizio(infoServizio.getIDServizio().getNome());
+				this.setVersioneServizio(infoServizio.getIDServizio().getVersione());
 				this.setAzione(infoServizio.getIDServizio().getAzione());
 			}
 			this.setTipoServizioCorrelato(infoServizio.getTipoServizioCorrelato());
@@ -614,6 +616,29 @@ public class Busta implements java.io.Serializable {
 		}
 	}
 	
+	public Integer getVersioneServizioCorrelato() {
+		if(this.busta.getServizioCorrelato()!=null){
+			return this.busta.getServizioCorrelato().getVersione();
+		}
+		return null;
+	}
+	public void setVersioneServizioCorrelato(Integer value) {
+		if(value!=null){
+			if(this.busta.getServizioCorrelato()==null){
+				this.busta.setServizioCorrelato(new org.openspcoop2.core.tracciamento.Servizio());
+			}
+			this.busta.getServizioCorrelato().setVersione(value);
+		}else{
+			if(this.busta.getServizioCorrelato()!=null){
+				this.busta.getServizioCorrelato().setVersione(null);
+				if(this.busta.getServizioCorrelato().getBase()==null &&
+						this.busta.getServizioCorrelato().getTipo()==null){
+					this.busta.setServizioCorrelato(null);
+				}
+			}
+		}
+	}
+	
 
 	
 	
@@ -676,23 +701,17 @@ public class Busta implements java.io.Serializable {
 		}
 	}
 
-	public int getVersioneServizio() {
+	public Integer getVersioneServizio() {
 		if(this.busta.getServizio()!=null && this.busta.getServizio().getVersione()!=null){
 			return this.busta.getServizio().getVersione();
 		}
 		return 1;
 	}
-	public void setVersioneServizio(int versioneServizio) {
+	public void setVersioneServizio(Integer versioneServizio) {
 		if(this.busta.getServizio()==null){
 			this.busta.setServizio(new org.openspcoop2.core.tracciamento.Servizio());
 		}
 		this.busta.getServizio().setVersione(versioneServizio);
-	}
-	public void setVersioneServizio(String versioneServizio) {
-		if(versioneServizio==null){
-			return;
-		}
-		this.setVersioneServizio(Integer.parseInt(versioneServizio));
 	}
 	
 	
@@ -713,6 +732,13 @@ public class Busta implements java.io.Serializable {
 		this.servizioRichiedenteBustaDiServizio = value;
 	}
 	
+	public Integer getVersioneServizioRichiedenteBustaDiServizio() {
+		return this.versioneServizioRichiedenteBustaDiServizio;
+	}
+
+	public void setVersioneServizioRichiedenteBustaDiServizio(Integer versioneServizioRichiedenteBustaDiServizio) {
+		this.versioneServizioRichiedenteBustaDiServizio = versioneServizioRichiedenteBustaDiServizio;
+	}
 	
 	
 	
@@ -1526,6 +1552,7 @@ public class Busta implements java.io.Serializable {
 		// servizio [info-richiedente]
 		clone.setServizioRichiedenteBustaDiServizio(this.servizioRichiedenteBustaDiServizio!=null ? new String(this.servizioRichiedenteBustaDiServizio) : null);
 		clone.setTipoServizioRichiedenteBustaDiServizio(this.tipoServizioRichiedenteBustaDiServizio!=null ? new String(this.tipoServizioRichiedenteBustaDiServizio) : null);
+		clone.setVersioneServizioRichiedenteBustaDiServizio(this.versioneServizioRichiedenteBustaDiServizio!=null ? new Integer(this.versioneServizioRichiedenteBustaDiServizio.intValue()) : null);
 		
 		// azione
 		clone.setAzione(this.getAzione()!=null ? new String(this.getAzione()) : null);

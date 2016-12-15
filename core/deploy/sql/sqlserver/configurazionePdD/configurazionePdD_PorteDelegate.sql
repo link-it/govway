@@ -6,18 +6,17 @@ CREATE TABLE porte_delegate
 	descrizione VARCHAR(255),
 	-- * Soggetto Erogatore *
 	-- tipo/nome per le modalita static
-	-- tipo/pattern per la modalita contentBased/urlBased
 	-- id utilizzato in caso di registryInput
 	id_soggetto_erogatore BIGINT,
-	tipo_soggetto_erogatore VARCHAR(255),
-	nome_soggetto_erogatore VARCHAR(255),
+	tipo_soggetto_erogatore VARCHAR(255) NOT NULL,
+	nome_soggetto_erogatore VARCHAR(255) NOT NULL,
 	-- * Servizio *
-	-- tipo/nome per le modalita static
-	-- tipo/pattern per la modalita contentBased/urlBased
+	-- tipo/nome/versione per le modalita static
 	-- id utilizzato in caso di registryInput
 	id_servizio BIGINT,
-	tipo_servizio VARCHAR(255),
-	nome_servizio VARCHAR(255),
+	tipo_servizio VARCHAR(255) NOT NULL,
+	nome_servizio VARCHAR(255) NOT NULL,
+	versione INT NOT NULL DEFAULT 1,
 	id_accordo BIGINT,
 	id_port_type BIGINT,
 	-- * Azione *
@@ -68,6 +67,8 @@ CREATE TABLE porte_delegate
 	stateless VARCHAR(255),
 	-- abilitato/disabilitato
 	local_forward VARCHAR(255),
+	-- Nome della PortaApplicativa
+	local_forward_pa VARCHAR(255),
 	-- proprietario porta delegata (Soggetto fruitore)
 	id_soggetto BIGINT NOT NULL,
 	ora_registrazione DATETIME2 DEFAULT CURRENT_TIMESTAMP,

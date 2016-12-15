@@ -67,6 +67,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneSemantica;
 import org.openspcoop2.core.registry.driver.xml.DriverRegistroServiziXML;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper;
@@ -610,7 +611,7 @@ public class RegistroServiziReader {
 		if(servizio == null){
 			throw new DriverRegistroServiziNotFound("getInfoServizio, servizio non definito");
 		}
-		TipologiaServizio tipologiaServizio = servizio.getServizio().getTipologiaServizio();
+		TipologiaServizio tipologiaServizio = servizio.getTipologiaServizio();
 		if(servizioCorrelato){
 			if(!TipologiaServizio.CORRELATO.equals(tipologiaServizio)){
 				throw new DriverRegistroServiziNotFound("getInfoServizio, servizio ["+idService.toString()+"] (tipologiaServizio:"+tipologiaServizio+") non e' di tipologia correlata");
@@ -620,7 +621,6 @@ public class RegistroServiziReader {
 				throw new DriverRegistroServiziNotFound("getInfoServizio, servizio ["+idService.toString()+"] (tipologiaServizio:"+tipologiaServizio+") e' di tipologia normale");
 			}
 		}
-		idService.setVersioneServizio(servizio.getVersione());
 
 		String azione = idService.getAzione();
 
@@ -1089,13 +1089,14 @@ public class RegistroServiziReader {
 				if(servizioC==null){
 					throw new DriverRegistroServiziCorrelatoNotFound("getInfoServizio, servizio correlato da associare al servizio asincrono simmetrico non trovato");
 				}
-				if(servizioC.getServizio().getNome()==null || servizioC.getServizio().getTipo()==null){
+				if(servizioC.getNome()==null || servizioC.getTipo()==null || servizioC.getVersione()==null){
 					throw new DriverRegistroServiziCorrelatoNotFound("getInfoServizio, servizio correlato al servizio asincrono simmetrico non configurato correttamente (tipo e/o nome is null?)");
 				}
 				
 				// ritorno valori per farli inserire nella richiesta
-				infoServizio.setServizioCorrelato(servizioC.getServizio().getNome());
-				infoServizio.setTipoServizioCorrelato(servizioC.getServizio().getTipo());
+				infoServizio.setServizioCorrelato(servizioC.getNome());
+				infoServizio.setTipoServizioCorrelato(servizioC.getTipo());
+				infoServizio.setVersioneServizioCorrelato(servizioC.getVersione());
 			}
 		
 			// Profilo Asincrono Asimmetrico
@@ -1115,7 +1116,7 @@ public class RegistroServiziReader {
 					if(servizioC==null){
 						eFound = new DriverRegistroServiziCorrelatoNotFound("servizio correlato da associare al servizio asincrono asimmetrico non trovato");
 					}else{
-						if(servizioC.getServizio().getNome()==null || servizioC.getServizio().getTipo()==null){
+						if(servizioC.getNome()==null || servizioC.getTipo()==null || servizioC.getVersione()==null){
 							throw new DriverRegistroServiziCorrelatoNotFound("servizio correlato al servizio asincrono asimmetrico non configurato correttamente (tipo e/o nome is null?)");
 						}
 					}
@@ -1179,8 +1180,15 @@ public class RegistroServiziReader {
 				correlazione = az.getCorrelata();
 			}
 			
+			String uriServizio = null;
+			try{
+				uriServizio = IDServizioFactory.getInstance().getUriFromIDServizio(idService);
+			}catch(Exception e){
+				uriServizio = idService.toString(false);
+			}
+			
 			if(correlazione==null){
-				throw new DriverRegistroServiziNotFound("getInfoServizio, l'azione ["+azionePT+"] invocata con il servizio ["+idService.getTipoServizio()+idService.getServizio()+"] non e' correlata ad un'altra azione dell'accordo");
+				throw new DriverRegistroServiziNotFound("getInfoServizio, l'azione ["+azionePT+"] invocata con il servizio ["+uriServizio+"] non e' correlata ad un'altra azione dell'accordo");
 			}else{
 				// check azione correlata esista
 				boolean find = false;
@@ -1202,9 +1210,9 @@ public class RegistroServiziReader {
 				
 				if(!find){
 					if(pt!=null){
-						throw new DriverRegistroServiziNotFound("getInfoServizio, l'operation ["+correlazione+"] definita come correlata nell'operation ["+azionePT+"] non esiste ( port type["+pt.getNome()+"], servizio["+idService.getTipoServizio()+idService.getServizio()+"] accordo di servizio["+uriAccordo+"]");
+						throw new DriverRegistroServiziNotFound("getInfoServizio, l'operation ["+correlazione+"] definita come correlata nell'operation ["+azionePT+"] non esiste ( port type["+pt.getNome()+"], servizio["+uriServizio+"] accordo di servizio["+uriAccordo+"]");
 					}else{
-						throw new DriverRegistroServiziNotFound("getInfoServizio, l'azione ["+correlazione+"] definita come correlata nell'azione ["+azionePT+"] non esiste ( servizio["+idService.getTipoServizio()+idService.getServizio()+"] accordo di servizio["+uriAccordo+"]");
+						throw new DriverRegistroServiziNotFound("getInfoServizio, l'azione ["+correlazione+"] definita come correlata nell'azione ["+azionePT+"] non esiste ( servizio["+uriServizio+"] accordo di servizio["+uriAccordo+"]");
 					}
 				}
 			}
@@ -1482,8 +1490,14 @@ public class RegistroServiziReader {
 		try{
 			servizio = this.registroServizi.getAccordoServizioParteSpecifica(connectionPdD,nomeRegistro,idService);
 		}catch(DriverRegistroServiziNotFound e){}
+		String uriServizio = null;
+		try{
+			uriServizio = IDServizioFactory.getInstance().getUriFromIDServizio(idService);
+		}catch(Exception e){
+			uriServizio = idService.toString(false);
+		}
 		if(servizio == null)
-			throw new DriverRegistroServiziNotFound("getConnettore, Servizio ["+idService.getTipoServizio()+idService.getServizio()+" erogato da "+idService.getSoggettoErogatore().getTipo()+idService.getSoggettoErogatore().getNome()+"] non definito nel registro");
+			throw new DriverRegistroServiziNotFound("getConnettore, Servizio ["+uriServizio+"] non definito nel registro");
 		org.openspcoop2.core.config.Connettore connector = null;
 
 		String azione = idService.getAzione();
@@ -1491,38 +1505,40 @@ public class RegistroServiziReader {
 		String tipoFruitore = idSoggetto.getTipo();
 
 		if(azione != null){
-			for(int i=0; i<servizio.getServizio().sizeParametriAzioneList();i++){
-				if(azione.equals(servizio.getServizio().getParametriAzione(i).getNome())){
-					org.openspcoop2.core.registry.ServizioAzione azSPC = 
-						servizio.getServizio().getParametriAzione(i);
-
-					// Cerco il connettore nel fruitore di un azione
-					for(int j=0; j<azSPC.sizeParametriFruitoreList();j++){
-						if( (azSPC.getParametriFruitore(i).getTipo() != null) && 
-								(azSPC.getParametriFruitore(i).getNome() != null) ){
-							if( (azSPC.getParametriFruitore(i).getTipo().equals(tipoFruitore)) && 
-									(azSPC.getParametriFruitore(i).getNome().equals(nomeFruitore)) ){
-								if(azSPC.getParametriFruitore(i).getConnettore()!=null){
-									if (azSPC.getParametriFruitore(i).getConnettore().getTipo() != null)
-										connector = azSPC.getParametriFruitore(i).getConnettore().mappingIntoConnettoreConfigurazione();
-									else
-										connector = this.getConnettore(idService,azSPC.getParametriFruitore(i).getConnettore().getNome(),nomeRegistro);
+			if(servizio.getConfigurazioneServizio()!=null){
+				for(int i=0; i<servizio.getConfigurazioneServizio().sizeConfigurazioneAzioneList();i++){
+					if(azione.equals(servizio.getConfigurazioneServizio().getConfigurazioneAzione(i).getNome())){
+						org.openspcoop2.core.registry.ConfigurazioneServizioAzione azSPC = 
+							servizio.getConfigurazioneServizio().getConfigurazioneAzione(i);
+	
+						// Cerco il connettore nel fruitore di un azione
+						for(int j=0; j<azSPC.sizeConfigurazioneFruitoreList();j++){
+							if( (azSPC.getConfigurazioneFruitore(i).getTipo() != null) && 
+									(azSPC.getConfigurazioneFruitore(i).getNome() != null) ){
+								if( (azSPC.getConfigurazioneFruitore(i).getTipo().equals(tipoFruitore)) && 
+										(azSPC.getConfigurazioneFruitore(i).getNome().equals(nomeFruitore)) ){
+									if(azSPC.getConfigurazioneFruitore(i).getConnettore()!=null){
+										if (azSPC.getConfigurazioneFruitore(i).getConnettore().getTipo() != null)
+											connector = azSPC.getConfigurazioneFruitore(i).getConnettore().mappingIntoConnettoreConfigurazione();
+										else
+											connector = this.getConnettore(idService,azSPC.getConfigurazioneFruitore(i).getConnettore().getNome(),nomeRegistro);
+									}
+									break;
 								}
-								break;
 							}
 						}
-					}
-					if(connector!=null && !CostantiRegistroServizi.DISABILITATO.equals(connector.getTipo()))
+						if(connector!=null && !CostantiRegistroServizi.DISABILITATO.equals(connector.getTipo()))
+							break;
+	
+						//	Uso il connettore dell'azione
+						if(azSPC.getConnettore()!=null){
+							if (azSPC.getConnettore().getTipo() != null)
+								connector = azSPC.getConnettore().mappingIntoConnettoreConfigurazione();
+							else
+								connector = getConnettore(idService,connector.getNome(),nomeRegistro);
+						}
 						break;
-
-					//	Uso il connettore dell'azione
-					if(azSPC.getConnettore()!=null){
-						if (azSPC.getConnettore().getTipo() != null)
-							connector = azSPC.getConnettore().mappingIntoConnettoreConfigurazione();
-						else
-							connector = getConnettore(idService,connector.getNome(),nomeRegistro);
 					}
-					break;
 				}
 			}
 		}
@@ -1549,9 +1565,9 @@ public class RegistroServiziReader {
 
 		//Cerco il connettore nel servizio
 		if (connector == null || CostantiRegistroServizi.DISABILITATO.equals(connector.getTipo())) {
-			if(servizio.getServizio().getConnettore()!=null){
-				if (servizio.getServizio().getConnettore().getTipo() != null)
-					connector = servizio.getServizio().getConnettore().mappingIntoConnettoreConfigurazione();
+			if(servizio.getConfigurazioneServizio()!=null && servizio.getConfigurazioneServizio().getConnettore()!=null){
+				if (servizio.getConfigurazioneServizio().getConnettore().getTipo() != null)
+					connector = servizio.getConfigurazioneServizio().getConnettore().mappingIntoConnettoreConfigurazione();
 				else
 					connector = getConnettore(idService,connector.getNome(),nomeRegistro);
 			}
@@ -1788,7 +1804,7 @@ public class RegistroServiziReader {
 			return risultato;
 		}
 		else{
-			correlato = TipologiaServizio.CORRELATO.equals(servizio.getServizio().getTipologiaServizio());
+			correlato = TipologiaServizio.CORRELATO.equals(servizio.getTipologiaServizio());
 		}
 		risultato.setIsServizioCorrelato(correlato);
 
@@ -1872,9 +1888,10 @@ public class RegistroServiziReader {
 					servizioC = this.registroServizi.getAccordoServizioParteSpecifica_ServizioCorrelato(connectionPdD,nomeRegistro,soggettoFruitore,idAccordo);
 				}catch(DriverRegistroServiziNotFound e){}
 				if(servizioC!=null){
-					if(servizioC.getServizio().getNome()!=null && servizioC.getServizio().getTipo()!=null){
-						risultato.setTipoServizioCorrelato(servizioC.getServizio().getTipo());
-						risultato.setServizioCorrelato(servizioC.getServizio().getNome());
+					if(servizioC.getNome()!=null && servizioC.getTipo()!=null && servizioC.getVersione()!=null){
+						risultato.setTipoServizioCorrelato(servizioC.getTipo());
+						risultato.setServizioCorrelato(servizioC.getNome());
+						risultato.setVersioneServizioCorrelato(servizioC.getVersione());
 					}
 				}
 			}
@@ -1905,8 +1922,9 @@ public class RegistroServiziReader {
 				}
 				
 				if(azioneCorrelata!=null){
-					risultato.setTipoServizioCorrelato(idService.getTipoServizio());
-					risultato.setServizioCorrelato(idService.getServizio());
+					risultato.setTipoServizioCorrelato(idService.getTipo());
+					risultato.setServizioCorrelato(idService.getNome());
+					risultato.setVersioneServizioCorrelato(idService.getVersione());
 					risultato.setAzioneCorrelata(azioneCorrelata);
 				}else{
 					org.openspcoop2.core.registry.AccordoServizioParteSpecifica servizioC = null;
@@ -1914,9 +1932,10 @@ public class RegistroServiziReader {
 						servizioC = this.registroServizi.getAccordoServizioParteSpecifica_ServizioCorrelato(connectionPdD,nomeRegistro,idService.getSoggettoErogatore(),idAccordo);
 					}catch(DriverRegistroServiziNotFound e){}
 					if(servizioC!=null){
-						if(servizioC.getServizio().getNome()!=null && servizioC.getServizio().getTipo()!=null){
-							risultato.setTipoServizioCorrelato(servizioC.getServizio().getTipo());
-							risultato.setServizioCorrelato(servizioC.getServizio().getNome());
+						if(servizioC.getNome()!=null && servizioC.getTipo()!=null && servizioC.getVersione()!=null){
+							risultato.setTipoServizioCorrelato(servizioC.getTipo());
+							risultato.setServizioCorrelato(servizioC.getNome());
+							risultato.setVersioneServizioCorrelato(servizioC.getVersione());
 						}
 					}
 				}

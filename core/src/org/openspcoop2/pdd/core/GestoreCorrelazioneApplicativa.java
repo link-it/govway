@@ -467,18 +467,21 @@ public class GestoreCorrelazioneApplicativa {
 				
 				StringBuffer query = new StringBuffer();
 				query.append("SELECT * FROM "+GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA+" WHERE ID_APPLICATIVO=? AND SERVIZIO_APPLICATIVO=? AND"+
-						" TIPO_MITTENTE=? AND MITTENTE=? AND TIPO_DESTINATARIO=? AND DESTINATARIO=? AND TIPO_SERVIZIO=? AND SERVIZIO=? AND "+valoreAzione);
+						" TIPO_MITTENTE=? AND MITTENTE=? AND TIPO_DESTINATARIO=? AND DESTINATARIO=? AND TIPO_SERVIZIO=? AND SERVIZIO=? AND VERSIONE_SERVIZIO=? AND "+valoreAzione);
 				pstmt = connectionDB.prepareStatement(query.toString());
-				pstmt.setString(1,idCorrelazioneApplicativa);
-				pstmt.setString(2,this.servizioApplicativo);
-				pstmt.setString(3,this.soggettoFruitore.getTipo());
-				pstmt.setString(4,this.soggettoFruitore.getNome());
-				pstmt.setString(5,this.idServizio.getSoggettoErogatore().getTipo());
-				pstmt.setString(6,this.idServizio.getSoggettoErogatore().getNome());
-				pstmt.setString(7,this.idServizio.getTipoServizio());
-				pstmt.setString(8,this.idServizio.getServizio());
+				int index = 1;
+				pstmt.setString(index++,idCorrelazioneApplicativa);
+				pstmt.setString(index++,this.servizioApplicativo);
+				pstmt.setString(index++,this.soggettoFruitore.getTipo());
+				pstmt.setString(index++,this.soggettoFruitore.getNome());
+				pstmt.setString(index++,this.idServizio.getSoggettoErogatore().getTipo());
+				pstmt.setString(index++,this.idServizio.getSoggettoErogatore().getNome());
+				pstmt.setString(index++,this.idServizio.getTipo());
+				pstmt.setString(index++,this.idServizio.getNome());
+				pstmt.setInt(index++,this.idServizio.getVersione());
+				
 				if( (this.idServizio.getAzione()!=null) && ("".equals(this.idServizio.getAzione())==false) ){
-					pstmt.setString(9,this.idServizio.getAzione());
+					pstmt.setString(index++,this.idServizio.getAzione());
 				}
 				rs = pstmt.executeQuery();
 				if(rs == null) {
@@ -862,28 +865,30 @@ public class GestoreCorrelazioneApplicativa {
 			// nuova correlazione
 			StringBuffer queryInsert = new StringBuffer();
 			queryInsert.append("INSERT INTO "+GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA);
-			queryInsert.append(" (ID_MESSAGGIO,ID_APPLICATIVO,SERVIZIO_APPLICATIVO,TIPO_MITTENTE,MITTENTE,TIPO_DESTINATARIO,DESTINATARIO,TIPO_SERVIZIO,SERVIZIO,AZIONE ");
+			queryInsert.append(" (ID_MESSAGGIO,ID_APPLICATIVO,SERVIZIO_APPLICATIVO,TIPO_MITTENTE,MITTENTE,TIPO_DESTINATARIO,DESTINATARIO,TIPO_SERVIZIO,SERVIZIO,VERSIONE_SERVIZIO,AZIONE ");
 			if(scadenzaCorrelazioneT!=null){
 				queryInsert.append(",SCADENZA");
 			}
-			queryInsert.append(") VALUES (?,?,?,?,?,?,?,?,?,?");
+			queryInsert.append(") VALUES (?,?,?,?,?,?,?,?,?,?,?");
 			if(scadenzaCorrelazioneT!=null){
 				queryInsert.append(",?");
 			}
 			queryInsert.append(")");
 			pstmtInsert = connectionDB.prepareStatement(queryInsert.toString());
-			pstmtInsert.setString(1,idBustaRequest);
-			pstmtInsert.setString(2,idApplicativo);
-			pstmtInsert.setString(3,this.servizioApplicativo);
-			pstmtInsert.setString(4,this.soggettoFruitore.getTipo());
-			pstmtInsert.setString(5,this.soggettoFruitore.getNome());
-			pstmtInsert.setString(6,this.idServizio.getSoggettoErogatore().getTipo());
-			pstmtInsert.setString(7,this.idServizio.getSoggettoErogatore().getNome());
-			pstmtInsert.setString(8,this.idServizio.getTipoServizio());
-			pstmtInsert.setString(9,this.idServizio.getServizio());
-			pstmtInsert.setString(10,this.idServizio.getAzione());
+			int index = 1;
+			pstmtInsert.setString(index++,idBustaRequest);
+			pstmtInsert.setString(index++,idApplicativo);
+			pstmtInsert.setString(index++,this.servizioApplicativo);
+			pstmtInsert.setString(index++,this.soggettoFruitore.getTipo());
+			pstmtInsert.setString(index++,this.soggettoFruitore.getNome());
+			pstmtInsert.setString(index++,this.idServizio.getSoggettoErogatore().getTipo());
+			pstmtInsert.setString(index++,this.idServizio.getSoggettoErogatore().getNome());
+			pstmtInsert.setString(index++,this.idServizio.getTipo());
+			pstmtInsert.setString(index++,this.idServizio.getNome());
+			pstmtInsert.setInt(index++,this.idServizio.getVersione());
+			pstmtInsert.setString(index++,this.idServizio.getAzione());
 			if(scadenzaCorrelazioneT!=null){
-				pstmtInsert.setTimestamp(11,scadenzaCorrelazioneT);
+				pstmtInsert.setTimestamp(index++,scadenzaCorrelazioneT);
 			}
 
 			//	Add PreparedStatement
@@ -893,7 +898,7 @@ public class GestoreCorrelazioneApplicativa {
 			}
 			stateMSG.getPreparedStatement().put("INSERT CorrelazioneApplicativa_"+idBustaRequest+"_"+idApplicativo+"_"+this.soggettoFruitore.getTipo()+this.soggettoFruitore.getNome()+
 					"_"+this.idServizio.getSoggettoErogatore().getTipo()+this.idServizio.getSoggettoErogatore().getNome()+"_"+
-					this.idServizio.getTipoServizio()+this.idServizio.getServizio()+"_"+valoreAzione,pstmtInsert);
+					this.idServizio.getTipo()+this.idServizio.getNome()+":"+this.idServizio.getVersione()+"_"+valoreAzione,pstmtInsert);
 
 		}catch(Exception er){
 			this.errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.

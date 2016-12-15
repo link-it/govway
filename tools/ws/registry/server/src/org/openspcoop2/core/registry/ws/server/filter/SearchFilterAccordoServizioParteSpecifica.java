@@ -28,12 +28,16 @@ package org.openspcoop2.core.registry.ws.server.filter;
  * <pre>
  * &lt;complexType name="search-filter-accordo-servizio-parte-specifica">
  *     &lt;sequence>
- *         &lt;element name="servizio" type="{http://www.openspcoop2.org/core/registry/management}servizio" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="configurazione-servizio" type="{http://www.openspcoop2.org/core/registry/management}configurazione-servizio" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="stato-package" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="privato" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="tipo-soggetto-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="nome-soggetto-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="accordo-servizio-parte-comune" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="tipologia-servizio" type="{http://www.openspcoop2.org/core/registry}TipologiaServizio" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="port-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
@@ -52,8 +56,9 @@ package org.openspcoop2.core.registry.ws.server.filter;
 import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
-import org.openspcoop2.core.registry.ws.server.filter.beans.Servizio;
+import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import java.util.Date;
+import org.openspcoop2.core.registry.ws.server.filter.beans.ConfigurazioneServizio;
 
 /**     
  * SearchFilterAccordoServizioParteSpecifica
@@ -65,12 +70,16 @@ import java.util.Date;
 
 @javax.xml.bind.annotation.XmlAccessorType(javax.xml.bind.annotation.XmlAccessType.FIELD)
 @javax.xml.bind.annotation.XmlType(name = "search-filter-accordo-servizio-parte-specifica", namespace="http://www.openspcoop2.org/core/registry/management", propOrder = {
-    "servizio",
+    "configurazioneServizio",
     "statoPackage",
     "privato",
+    "tipoSoggettoErogatore",
+    "nomeSoggettoErogatore",
+    "tipo",
     "nome",
     "versione",
     "accordoServizioParteComune",
+    "tipologiaServizio",
     "portType",
     "oraRegistrazioneMin",
     "oraRegistrazioneMax",
@@ -85,15 +94,15 @@ public class SearchFilterAccordoServizioParteSpecifica extends org.openspcoop2.u
 	
 	private static final long serialVersionUID = -1L;
 	
-	@XmlElement(name="servizio",required=false,nillable=false)
-	private Servizio servizio;
+	@XmlElement(name="configurazione-servizio",required=false,nillable=false)
+	private ConfigurazioneServizio configurazioneServizio;
 	
-	public void setServizio(Servizio servizio){
-		this.servizio = servizio;
+	public void setConfigurazioneServizio(ConfigurazioneServizio configurazioneServizio){
+		this.configurazioneServizio = configurazioneServizio;
 	}
 	
-	public Servizio getServizio(){
-		return this.servizio;
+	public ConfigurazioneServizio getConfigurazioneServizio(){
+		return this.configurazioneServizio;
 	}
 	
 	
@@ -124,6 +133,45 @@ public class SearchFilterAccordoServizioParteSpecifica extends org.openspcoop2.u
 	
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="tipo-soggetto-erogatore",required=false,nillable=false)
+	private String tipoSoggettoErogatore;
+	
+	public void setTipoSoggettoErogatore(String tipoSoggettoErogatore){
+		this.tipoSoggettoErogatore = tipoSoggettoErogatore;
+	}
+	
+	public String getTipoSoggettoErogatore(){
+		return this.tipoSoggettoErogatore;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="nome-soggetto-erogatore",required=false,nillable=false)
+	private String nomeSoggettoErogatore;
+	
+	public void setNomeSoggettoErogatore(String nomeSoggettoErogatore){
+		this.nomeSoggettoErogatore = nomeSoggettoErogatore;
+	}
+	
+	public String getNomeSoggettoErogatore(){
+		return this.nomeSoggettoErogatore;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="tipo",required=false,nillable=false)
+	private String tipo;
+	
+	public void setTipo(String tipo){
+		this.tipo = tipo;
+	}
+	
+	public String getTipo(){
+		return this.tipo;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="nome",required=false,nillable=false)
 	private String nome;
 	
@@ -136,15 +184,15 @@ public class SearchFilterAccordoServizioParteSpecifica extends org.openspcoop2.u
 	}
 	
 	
-	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+	@javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlElement(name="versione",required=false,nillable=false)
-	private String versione;
+	private Integer versione;
 	
-	public void setVersione(String versione){
+	public void setVersione(Integer versione){
 		this.versione = versione;
 	}
 	
-	public String getVersione(){
+	public Integer getVersione(){
 		return this.versione;
 	}
 	
@@ -159,6 +207,18 @@ public class SearchFilterAccordoServizioParteSpecifica extends org.openspcoop2.u
 	
 	public String getAccordoServizioParteComune(){
 		return this.accordoServizioParteComune;
+	}
+	
+	
+	@XmlElement(name="tipologia-servizio",required=false,nillable=false)
+	private TipologiaServizio tipologiaServizio;
+	
+	public void setTipologiaServizio(TipologiaServizio tipologiaServizio){
+		this.tipologiaServizio = tipologiaServizio;
+	}
+	
+	public TipologiaServizio getTipologiaServizio(){
+		return this.tipologiaServizio;
 	}
 	
 	

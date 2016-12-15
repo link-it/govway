@@ -52,6 +52,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziCorrelatoNotFou
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziPortTypeNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageRole;
@@ -495,9 +496,12 @@ public class RicezioneContenutiApplicativi {
 					ProtocolContext protocolContext = this.msgContext.getProtocol();
 					Dump dumpApplicativo = null;
 					if(protocolContext!=null){
+						IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(protocolContext.getTipoServizio(), protocolContext.getServizio(), 
+								protocolContext.getErogatore(), protocolContext.getVersioneServizio());
+						idServizio.setAzione(protocolContext.getAzione());
 						dumpApplicativo = new Dump(protocolContext.getDominio(),
 								this.msgContext.getIdModulo(), protocolContext.getIdRichiesta(),
-								protocolContext.getFruitore(),new IDServizio(protocolContext.getErogatore(), protocolContext.getTipoServizio(), protocolContext.getServizio(), protocolContext.getAzione()),
+								protocolContext.getFruitore(),idServizio,
 								this.msgContext.getTipoPorta(),this.msgContext.getPddContext(),
 								null,null);
 					}else{
@@ -1253,7 +1257,8 @@ public class RicezioneContenutiApplicativi {
 				idModuloInAttesa, proprietaErroreAppl, identitaPdD);
 		try {
 			IDSoggetto soggettoErogatore = new IDSoggetto(pd.getTipoSoggettoProprietario(),pd.getNomeSoggettoProprietario());
-			IDServizio idServizio = new IDServizio(soggettoErogatore,pd.getServizio().getTipo(),pd.getServizio().getNome());
+			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pd.getServizio().getTipo(),pd.getServizio().getNome(), 
+					soggettoErogatore, pd.getServizio().getVersione());
 			if(requestInfo.getIdServizio()!=null && requestInfo.getIdServizio().getAzione()!=null){
 				// gia identificata
 				idServizio.setAzione(requestInfo.getIdServizio().getAzione());
@@ -1269,8 +1274,9 @@ public class RicezioneContenutiApplicativi {
 			headerIntegrazioneRisposta.getBusta().setMittente(soggettoFruitore.getNome());
 			headerIntegrazioneRisposta.getBusta().setTipoDestinatario(richiestaDelegata.getIdServizio().getSoggettoErogatore().getTipo());
 			headerIntegrazioneRisposta.getBusta().setDestinatario(richiestaDelegata.getIdServizio().getSoggettoErogatore().getNome());
-			headerIntegrazioneRisposta.getBusta().setTipoServizio(richiestaDelegata.getIdServizio().getTipoServizio());
-			headerIntegrazioneRisposta.getBusta().setServizio(richiestaDelegata.getIdServizio().getServizio());
+			headerIntegrazioneRisposta.getBusta().setTipoServizio(richiestaDelegata.getIdServizio().getTipo());
+			headerIntegrazioneRisposta.getBusta().setServizio(richiestaDelegata.getIdServizio().getNome());
+			headerIntegrazioneRisposta.getBusta().setVersioneServizio(richiestaDelegata.getIdServizio().getVersione());
 			headerIntegrazioneRisposta.getBusta().setAzione(richiestaDelegata.getIdServizio().getAzione());
 			if (headerIntegrazioneRichiesta.getBusta() != null
 					&& headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio() != null) {
@@ -1342,8 +1348,8 @@ public class RicezioneContenutiApplicativi {
 			return;
 		}
 		if(richiestaDelegata!=null && richiestaDelegata.getIdServizio()!=null &&
-				richiestaDelegata.getIdServizio().getTipoServizio()!=null && 
-				tipiServiziSupportatiCanale.contains(richiestaDelegata.getIdServizio().getTipoServizio())==false){
+				richiestaDelegata.getIdServizio().getTipo()!=null && 
+				tipiServiziSupportatiCanale.contains(richiestaDelegata.getIdServizio().getTipo())==false){
 			msgDiag.logPersonalizzato("protocolli.tipoServizio.unsupported");
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
@@ -1603,9 +1609,9 @@ public class RicezioneContenutiApplicativi {
 		IDServizio idServizio = richiestaDelegata.getIdServizio();	
 		this.msgContext.getProtocol().setFruitore(soggettoFruitore);	
 		this.msgContext.getProtocol().setErogatore(idServizio.getSoggettoErogatore());		
-		this.msgContext.getProtocol().setTipoServizio(idServizio.getTipoServizio());
-		this.msgContext.getProtocol().setServizio(idServizio.getServizio());
-		this.msgContext.getProtocol().setVersioneServizio(idServizio.getVersioneServizioAsInt());
+		this.msgContext.getProtocol().setTipoServizio(idServizio.getTipo());
+		this.msgContext.getProtocol().setServizio(idServizio.getNome());
+		this.msgContext.getProtocol().setVersioneServizio(idServizio.getVersione());
 		this.msgContext.getProtocol().setAzione(idServizio.getAzione());
 		this.msgContext.getProtocol().setIdRichiesta(idMessageRequest);
 		
@@ -1705,10 +1711,12 @@ public class RicezioneContenutiApplicativi {
 		
 		
 		/* -------------- Identificazione servizio ------------------ */
-		String infoSearch = idServizio.getTipoServizio() + "/"
-				+ idServizio.getServizio() + " erogato dal Soggetto "
-				+ idServizio.getSoggettoErogatore().getTipo() + "/"
-				+ idServizio.getSoggettoErogatore().getNome();
+		String infoSearch = null;
+		try{
+			infoSearch = IDServizioFactory.getInstance().getUriFromIDServizio(idServizio);
+		}catch(Exception e){
+			infoSearch = idServizio.toString(false);
+		}
 		if (idServizio.getAzione() != null)
 			infoSearch = infoSearch + " azione " + idServizio.getAzione();
 		
@@ -1934,7 +1942,7 @@ public class RicezioneContenutiApplicativi {
 			this.msgContext.getProtocol().setIdAccordo(infoServizio.getIdAccordo());
 			richiestaDelegata.setIdAccordo(infoServizio.getIdAccordo());
 			try{
-				idServizio.setUriAccordo(IDAccordoFactory.getInstance().getUriFromIDAccordo(infoServizio.getIdAccordo()));
+				idServizio.setUriAccordoServizioParteComune(IDAccordoFactory.getInstance().getUriFromIDAccordo(infoServizio.getIdAccordo()));
 			}catch(Exception e){}
 		}
 		Busta bustaRichiesta = infoServizio.convertToBusta(protocol, soggettoFruitore);
@@ -2691,14 +2699,10 @@ public class RicezioneContenutiApplicativi {
 			localForward = configurazionePdDReader.isLocalForwardMode(pd);
 			
 			if(localForward){
-				
+								
 				String erroreConfigurazione = null;
 				
-				String prefix = "( Servizio v"+idServizio.getVersioneServizio()+" "+idServizio.getTipoServizio()+"/"+idServizio.getServizio();
-				if(idServizio.getAzione()!=null){
-					prefix = prefix+" Azione "+idServizio.getAzione();
-				}
-				prefix = prefix+" Erogatore "+idServizio.getSoggettoErogatore().toString()+" ) ";
+				String prefix = "( Servizio "+IDServizioFactory.getInstance().getUriFromIDServizio(idServizio)+" ) ";
 				
 				if(ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(infoServizio.getProfiloDiCollaborazione()) ||
 						ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(infoServizio.getProfiloDiCollaborazione())){
@@ -2720,11 +2724,10 @@ public class RicezioneContenutiApplicativi {
 				}
 				
 				RichiestaApplicativa ra = null;
+				IDPortaApplicativa idPA = null;
 				if(erroreConfigurazione==null){
-					
-					// TODO Fare opzione che si indica nella PD il nome della PA su cui effettuare il localForward
-					IDPortaApplicativa idPA = null;
-					String nomePA = null; // TODO
+
+					String nomePA = configurazionePdDReader.getLocalForward_NomePortaApplicativa(pd);
 					if(nomePA==null){
 						try{
 							List<PortaApplicativa> list = configurazionePdDReader.getPorteApplicative(idServizio, false);
@@ -2795,6 +2798,7 @@ public class RicezioneContenutiApplicativi {
 				localForwardParameter.setRichiestaDelegata(richiestaDelegata);
 				localForwardParameter.setStateless(portaStateless);
 				localForwardParameter.setOneWayVersione11(oneWayVersione11);
+				localForwardParameter.setIdPortaApplicativaIndirizzata(idPA);
 				
 				localForwardEngine = new LocalForwardEngine(localForwardParameter);
 							

@@ -46,6 +46,7 @@ import org.openspcoop2.core.config.PortaDelegataServizio;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -55,11 +56,11 @@ import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.basic.Utilities;
@@ -199,7 +200,6 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			String descrizione = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_DESCRIZIONE);
 			String statoPackage = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO_PACKAGE);
 			
-			String nome_aps = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_APS);
 			String versione = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE);
 			String backToStato = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RIPRISTINA_STATO);
 			String actionConfirm = request.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
@@ -248,9 +248,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			String nomeSoggettoErogatore = "";
 			String tipoSoggettoErogatore = "";
 			AccordoServizioParteSpecifica asps = null;
-			Servizio servizio = null;
 
-			String oldnomeaccordo = null;
 			String oldversioneaccordo = null;
 			String oldtiposervizio = null;
 			String oldnomeservizio = null;
@@ -308,12 +306,13 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 			// Servizio
 			asps = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(id));
-			servizio = asps.getServizio();
 
-			Boolean isConnettoreCustomUltimaImmagineSalvata = servizio.getConnettore().getCustom();
+			Boolean isConnettoreCustomUltimaImmagineSalvata = asps.getConfigurazioneServizio()!=null &&
+					asps.getConfigurazioneServizio().getConnettore()!=null &&
+					asps.getConfigurazioneServizio().getConnettore().getCustom();
 			
 			List<ExtendedConnettore> listExtendedConnettore = 
-					ServletExtendedConnettoreUtils.getExtendedConnettore(servizio.getConnettore(), ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_CHANGE, apsCore, 
+					ServletExtendedConnettoreUtils.getExtendedConnettore(asps.getConfigurazioneServizio().getConnettore(), ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_CHANGE, apsCore, 
 							request, session, (endpointtype==null), endpointtype); // uso endpointtype per capire se è la prima volta che entro
 			
 			// Lista port-type associati all'accordo di servizio
@@ -376,25 +375,21 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			// provString = tipoSoggettoErogatore+"/"+nomeSoggettoErogatore;
 			// }
 
-			nomeSoggettoErogatore = servizio.getNomeSoggettoErogatore();
-			tipoSoggettoErogatore = servizio.getTipoSoggettoErogatore();
-			oldnomeaccordo = asps.getNome();
-			oldversioneaccordo = asps.getVersione();
-			oldtiposervizio = servizio.getTipo();
-			oldnomeservizio = servizio.getNome();
-			oldtiposoggetto = servizio.getTipoSoggettoErogatore();
-			oldnomesoggetto = servizio.getNomeSoggettoErogatore();
+			nomeSoggettoErogatore = asps.getNomeSoggettoErogatore();
+			tipoSoggettoErogatore = asps.getTipoSoggettoErogatore();
+
+			if(asps.getVersione()!=null)
+				oldversioneaccordo = asps.getVersione()+"";
+			oldtiposervizio = asps.getTipo();
+			oldnomeservizio = asps.getNome();
+			oldtiposoggetto = asps.getTipoSoggettoErogatore();
+			oldnomesoggetto = asps.getNomeSoggettoErogatore();
 			provString = tipoSoggettoErogatore + "/" + nomeSoggettoErogatore;
 			oldStatoPackage = asps.getStatoPackage();		
 
 			// aggiorno tmpTitle
-			String tmpVersione = asps.getVersione();
-			if(apsCore.isShowVersioneAccordoServizioParteSpecifica()==false){
-				tmpVersione = null;
-			}
-			tmpTitle = idAccordoFactory.getUriFromValues(asps.getNome(), 
-					tipoSoggettoErogatore, nomeSoggettoErogatore, 
-					tmpVersione);
+			@SuppressWarnings("unused")
+			String tmpVersione = IDServizioFactory.getInstance().getUriFromAccordo(asps);
 
 			soggettoErogatoreID = soggettiCore.getSoggettoRegistro(new IDSoggetto(tipoSoggettoErogatore,nomeSoggettoErogatore));
 
@@ -463,11 +458,11 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParm );
 
 
-				nomeSoggettoErogatore = servizio.getNomeSoggettoErogatore();
-				tipoSoggettoErogatore = servizio.getTipoSoggettoErogatore();
+				nomeSoggettoErogatore = asps.getNomeSoggettoErogatore();
+				tipoSoggettoErogatore = asps.getTipoSoggettoErogatore();
 				provString = tipoSoggettoErogatore + "/" + nomeSoggettoErogatore;
 				if (servcorr == null) {
-					if(TipologiaServizio.CORRELATO.equals(servizio.getTipologiaServizio()))
+					if(TipologiaServizio.CORRELATO.equals(asps.getTipologiaServizio()))
 						servcorr = Costanti.CHECK_BOX_ENABLED;
 					else
 						servcorr = Costanti.CHECK_BOX_DISABLED;
@@ -481,20 +476,16 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				if(statoPackage==null)
 					statoPackage = asps.getStatoPackage();
 
-				if(nome_aps==null)
-					nome_aps=asps.getNome();
-				if(versione==null)
-					versione=asps.getVersione();
+				if(versione==null){
+					if(asps.getVersione()!=null)
+						versione=asps.getVersione().intValue()+"";
+				}
 
 				if(tiposervizio==null){
-					if(asps.getServizio()!=null){
-						tiposervizio = asps.getServizio().getTipo();
-					}
+					tiposervizio = asps.getTipo();
 				}
 				if(nomeservizio==null){
-					if(asps.getServizio()!=null){
-						nomeservizio = asps.getServizio().getNome();
-					}
+					nomeservizio = asps.getNome();
 				}
 
 
@@ -516,7 +507,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				}
 
 
-				Connettore connettore = servizio.getConnettore();
+				Connettore connettore = asps.getConfigurazioneServizio().getConnettore();
 
 				// if(endpointtype==null || endpointtype.equals(""))
 				// endpointtype = connettore.getTipo();
@@ -625,7 +616,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, provider, provString,
 							soggettiList, soggettiListLabel, accordo, accordiList, accordiListLabel, servcorr, "", "", TipoOperazione.CHANGE, 
 							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList,  privato,uriAccordo, descrizione, 
-							soggettoErogatoreID.getId(),statoPackage,oldStatoPackage,nome_aps
+							soggettoErogatoreID.getId(),statoPackage,oldStatoPackage
 							,versione,versioniProtocollo,validazioneDocumenti,
 							null,null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili);
 
@@ -662,7 +653,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 			// Controlli sui campi immessi
 			boolean isOk = apsHelper.serviziCheckData(TipoOperazione.CHANGE, soggettiList,
-					accordiList, servizio.getNome(), servizio.getTipo(),
+					accordiList, asps.getNome(), asps.getTipo(),
 					nomeservizio, tiposervizio, provider,
 					nomeSoggettoErogatore, tipoSoggettoErogatore, accordo,
 					servcorr, endpointtype, url, nome, tipo, user, password,
@@ -673,7 +664,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					httpsstato, httpskeystore,
 					httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey, httpspwdprivatekey,
-					httpsalgoritmokey, tipoconn,nome_aps,versione,validazioneDocumenti,null,backToStato,autenticazioneHttp,
+					httpsalgoritmokey, tipoconn,versione,validazioneDocumenti,null,backToStato,autenticazioneHttp,
 					listExtendedConnettore);
 			if (!isOk) {
 				// setto la barra del titolo
@@ -698,7 +689,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, provider, provString, soggettiList, 
 						soggettiListLabel, accordo, accordiList, accordiListLabel, servcorr, "", "", TipoOperazione.CHANGE, 
 						id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, soggettoErogatoreID.getId(),
-						statoPackage,oldStatoPackage,nome_aps,versione,versioniProtocollo,validazioneDocumenti,
+						statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
 						null,null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili);
 
 				dati = connettoriHelper.addEndPointToDati(dati, connettoreDebug,  endpointtype, autenticazioneHttp, null, 
@@ -748,7 +739,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					dati = apsHelper.addServiziToDatiAsHidden(dati, nomeservizio, tiposervizio, provider, provString, soggettiList, 
 							soggettiListLabel, accordo, accordiList, accordiListLabel, servcorr, "", "", TipoOperazione.CHANGE, 
 							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, soggettoErogatoreID.getId(),
-							statoPackage,oldStatoPackage,nome_aps,versione,versioniProtocollo,validazioneDocumenti,
+							statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
 							null,null,null,protocollo,generaPACheckSoggetto);
 
 					dati = connettoriHelper.addEndPointToDatiAsHidden(dati, endpointtype, url, nome,
@@ -791,18 +782,13 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			// Modifico i dati del servizio nel db
 
 			asps = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(id));
-			servizio = asps.getServizio();
 
 			// idErogatoreServizio
-			Soggetto soggettoErogatore = soggettiCore.getSoggettoRegistro(new IDSoggetto(servizio.getTipoSoggettoErogatore(), servizio.getNomeSoggettoErogatore()));
-
-			// Old dati for update
-			servizio.setOldNomeForUpdate(servizio.getNome());
-			servizio.setOldTipoForUpdate(servizio.getTipo());
-
+			Soggetto soggettoErogatore = soggettiCore.getSoggettoRegistro(new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()));
+			
 			// nuovi valori
-			servizio.setNome(nomeservizio);
-			servizio.setTipo(tiposervizio);
+			asps.setNome(nomeservizio);
+			asps.setTipo(tiposervizio);
 			asps.setDescrizione(descrizione);
 			if ("-".equals(profilo) == false)
 				asps.setVersioneProtocollo(profilo);
@@ -818,19 +804,20 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 			// Connettore
 			Connettore newConnettore = new Connettore();
-			newConnettore.setId(servizio.getConnettore().getId());
-			newConnettore.setNome(servizio.getConnettore().getNome());
+			newConnettore.setId(asps.getConfigurazioneServizio().getConnettore().getId());
+			newConnettore.setNome(asps.getConfigurazioneServizio().getConnettore().getNome());
 			if (endpointtype.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM))
 				newConnettore.setTipo(tipoconn);
 			else
 				newConnettore.setTipo(endpointtype);
 
-			String oldConnT = servizio.getConnettore().getTipo();
-			if ((servizio.getConnettore().getCustom()!=null && servizio.getConnettore().getCustom()) && !servizio.getConnettore().getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS)){
+			String oldConnT = asps.getConfigurazioneServizio().getConnettore().getTipo();
+			if ((asps.getConfigurazioneServizio().getConnettore().getCustom()!=null && asps.getConfigurazioneServizio().getConnettore().getCustom()) && 
+					!asps.getConfigurazioneServizio().getConnettore().getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS)){
 				oldConnT = ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM;
 				// mantengo vecchie proprieta connettore custom
-				for(int i=0; i<servizio.getConnettore().sizePropertyList(); i++){
-					newConnettore.addProperty(servizio.getConnettore().getProperty(i));
+				for(int i=0; i<asps.getConfigurazioneServizio().getConnettore().sizePropertyList(); i++){
+					newConnettore.addProperty(asps.getConfigurazioneServizio().getConnettore().getProperty(i));
 				}
 			}
 			connettoriHelper.fillConnettore(newConnettore, connettoreDebug, endpointtype, oldConnT,
@@ -844,30 +831,31 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					httpsalgoritmokey,
 					listExtendedConnettore);
 
-			servizio.setConnettore(newConnettore);
+			asps.getConfigurazioneServizio().setConnettore(newConnettore);
 
 			// Accordo
 			as = apcCore.getAccordoServizio(Long.parseLong(accordo));
 			asps.setAccordoServizioParteComune(idAccordoFactory.getUriFromAccordo(as));
 			asps.setIdAccordo(as.getId());
 
-			servizio.setTipologiaServizio(((servcorr != null) && servcorr.equals(Costanti.CHECK_BOX_ENABLED)) ? TipologiaServizio.CORRELATO : TipologiaServizio.NORMALE);
+			asps.setTipologiaServizio(((servcorr != null) && servcorr.equals(Costanti.CHECK_BOX_ENABLED)) ? TipologiaServizio.CORRELATO : TipologiaServizio.NORMALE);
 
-			servizio.setOldNomeSoggettoErogatoreForUpdate(oldnomesoggetto);
-			servizio.setOldTipoSoggettoErogatoreForUpdate(oldtiposoggetto);
-			servizio.setOldNomeForUpdate(oldnomeservizio);
-			servizio.setOldTipoForUpdate(oldtiposervizio);
-
-			// Accordo di servizio parte specifica
-			asps.setNome(nome_aps);
-			if(apsCore.isShowPulsantiImportExport()){
-				asps.setVersione(versione);
-			}else{
-				asps.setVersione("1");
-			}
+			IDServizio oldIDServizioForUpdate = 
+					IDServizioFactory.getInstance().getIDServizioFromValues(oldtiposervizio, oldnomeservizio,
+							oldtiposoggetto, oldnomesoggetto, Integer.parseInt(oldversioneaccordo));
+			asps.setOldIDServizioForUpdate(oldIDServizioForUpdate);
 			
-			asps.setOldNomeAccordoForUpdate(oldnomeaccordo);
-			asps.setOldVersioneAccordoForUpdate(oldversioneaccordo);
+			// Versione
+			if(apsCore.isShowVersioneAccordoServizioParteSpecifica()){
+				if(versione!=null){
+					asps.setVersione(Integer.parseInt(versione));
+				}
+				else{
+					asps.setVersione(1);
+				}
+			}else{
+				asps.setVersione(1);
+			}
 
 			// stato
 			asps.setStatoPackage(statoPackage);
@@ -905,7 +893,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					dati = apsHelper.addServiziToDati(dati, nomeservizio, tiposervizio, provider, provString, soggettiList,
 							soggettiListLabel, accordo, accordiList, accordiListLabel, servcorr, "", "", TipoOperazione.CHANGE, 
 							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, 
-							soggettoErogatoreID.getId(),statoPackage,oldStatoPackage,nome_aps,versione,versioniProtocollo,validazioneDocumenti,
+							soggettoErogatoreID.getId(),statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
 							null,null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili);
 
 					dati = connettoriHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
@@ -941,12 +929,15 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			// Lista di id per tenere traccia delle Porte Delegate inserite
 			List<Long> idListPD = new ArrayList<Long>();
 			List<Long> idListPA = new ArrayList<Long>();
-			if (!servizio.getNome().equals(servizio.getOldNomeForUpdate()) || !servizio.getTipo().equals(servizio.getOldTipoForUpdate())) {
+			String newUri = IDServizioFactory.getInstance().getUriFromAccordo(asps);
+			String oldUri = IDServizioFactory.getInstance().getUriFromIDServizio(asps.getOldIDServizioForUpdate());
+			if (!newUri.equals(oldUri)) {
 				List<PortaDelegata> tmpListPD = null;
-				// recupero lo porte delegate per location
-				// e aggiorno il nome e la location
+				// recupero lo porte delegate per nome e le aggiorno
 				String locationPrefix = "";
-				String locationSuffix = "/" + servizio.getTipoSoggettoErogatore() + servizio.getNomeSoggettoErogatore() + "/" + servizio.getOldTipoForUpdate() + servizio.getOldNomeForUpdate();
+				String locationSuffix = "/" + asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo() + asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome() + 
+						"/" + asps.getOldIDServizioForUpdate().getTipo() + asps.getOldIDServizioForUpdate().getNome() +
+						"/" + asps.getOldIDServizioForUpdate().getVersione().intValue();
 				for (Fruitore fruitore : asps.getFruitoreList()) {
 					locationPrefix = fruitore.getTipo() + fruitore.getNome();
 					String location = locationPrefix + locationSuffix;
@@ -957,10 +948,14 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						Long idPorta = tmpPorta.getId();
 						if (!idListPD.contains(idPorta)) {
 							// new locationSuffix
-							String newLocationSuffix = "/" + servizio.getTipoSoggettoErogatore() + servizio.getNomeSoggettoErogatore() + "/" + servizio.getTipo() + servizio.getNome();
+							String newLocationSuffix = "/" + asps.getTipoSoggettoErogatore() + asps.getNomeSoggettoErogatore() + 
+									"/" + asps.getTipo() + asps.getNome() +
+									"/" + asps.getVersione().intValue();
 							String newLocation = locationPrefix + newLocationSuffix;
 							idListPD.add(idPorta);
-							tmpPorta.setOldNomeForUpdate(tmpPorta.getNome());
+							IDPortaDelegata oldIDPortaDelegataForUpdate = new IDPortaDelegata();
+							oldIDPortaDelegataForUpdate.setNome(tmpPorta.getNome());
+							tmpPorta.setOldIDPortaDelegataForUpdate(oldIDPortaDelegataForUpdate);
 							tmpPorta.setNome(newLocation);
 							// aggiorno la descrizione della porta
 							String descrizionePD = tmpPorta.getDescrizione();
@@ -970,15 +965,17 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								// tipo/nome soggetto)
 								String descrRegex = "Invocazione servizio(.*)erogato da(.*)";
 								if (descrizionePD.matches(descrRegex)) {
-									descrizionePD = descrizionePD.replaceFirst((servizio.getOldTipoForUpdate() + servizio.getOldNomeForUpdate()), (servizio.getTipo() + servizio.getNome()));
+									descrizionePD = descrizionePD.replaceFirst((asps.getOldIDServizioForUpdate().getTipo() + asps.getOldIDServizioForUpdate().getNome()+":"+asps.getOldIDServizioForUpdate().getVersione().intValue()), 
+											(asps.getTipo() + asps.getNome()+":"+asps.getVersione().intValue()));
 								}
 
 								tmpPorta.setDescrizione(descrizionePD);
 							}
 							// aggiorno anche il servizio
 							PortaDelegataServizio servizioPD = tmpPorta.getServizio();
-							servizioPD.setTipo(servizio.getTipo());
-							servizioPD.setNome(servizio.getNome());
+							servizioPD.setTipo(asps.getTipo());
+							servizioPD.setNome(asps.getNome());
+							servizioPD.setVersione(asps.getVersione());
 							tmpPorta.setServizio(servizioPD);
 
 							/*
@@ -1033,10 +1030,13 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					// se la porta non e' gia in lista
 					if (!idListPD.contains(idPorta)) {
 						idListPD.add(idPorta);
-						tmpPorta.setOldNomeForUpdate(tmpPorta.getNome());
+						IDPortaDelegata oldIDPortaDelegataForUpdate = new IDPortaDelegata();
+						oldIDPortaDelegataForUpdate.setNome(tmpPorta.getNome());
+						tmpPorta.setOldIDPortaDelegataForUpdate(oldIDPortaDelegataForUpdate);
 						PortaDelegataServizio servizioPD = tmpPorta.getServizio();
-						servizioPD.setTipo(servizio.getTipo());
-						servizioPD.setNome(servizio.getNome());
+						servizioPD.setTipo(asps.getTipo());
+						servizioPD.setNome(asps.getNome());
+						servizioPD.setVersione(asps.getVersione());
 						tmpPorta.setServizio(servizioPD);
 						listaPD.add(tmpPorta);
 					}
@@ -1044,14 +1044,17 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 				// recupero le porte delegate per tipo e nome servizio
 				// aggiorno il tipo e il nome servizio
-				tmpListPD = porteDelegateCore.getPorteDelegateWithServizio(new Long(0), servizio.getOldTipoForUpdate(), servizio.getOldNomeForUpdate(), soggettoErogatore.getId(), servizio.getTipoSoggettoErogatore(), servizio.getNomeSoggettoErogatore());
+				tmpListPD = porteDelegateCore.getPorteDelegateWithServizio(new Long(0),
+						asps.getOldIDServizioForUpdate().getTipo(), asps.getOldIDServizioForUpdate().getNome(), asps.getOldIDServizioForUpdate().getVersione(), 
+						soggettoErogatore.getId(), asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore());
 				for (PortaDelegata tmpPorta : tmpListPD) {
 					Long idPorta = tmpPorta.getId();
 					if (!idListPD.contains(idPorta)) {
 						idListPD.add(idPorta);
 						PortaDelegataServizio servizioPD = tmpPorta.getServizio();
-						servizioPD.setTipo(servizio.getTipo());
-						servizioPD.setNome(servizio.getNome());
+						servizioPD.setTipo(asps.getTipo());
+						servizioPD.setNome(asps.getNome());
+						servizioPD.setVersione(asps.getVersione());
 						tmpPorta.setServizio(servizioPD);
 						listaPD.add(tmpPorta);
 					}
@@ -1067,28 +1070,37 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						idListPA.add(idPA);
 						
 						PortaApplicativaServizio paServizio = portaApplicativa.getServizio();
-						paServizio.setNome(servizio.getNome());
-						paServizio.setTipo(servizio.getTipo());
+						paServizio.setNome(asps.getNome());
+						paServizio.setTipo(asps.getTipo());
+						paServizio.setVersione(asps.getVersione());
 						portaApplicativa.setServizio(paServizio);
 						
 						String nomePA = portaApplicativa.getNome();
-						// se il nome e' quello di default cioe' (erogatore)/(servizio)
-						String regex = "(.*)\\/(.*)";
+						// se il nome e' quello di default cioe' (erogatore)/(servizio)/(versioneServizio)
+						String regex = "(.*)\\/(.*)\\/(.*)";
 						if (nomePA.matches(regex)) {
 
 							String[] val = nomePA.split("\\/");
 							String pat1 = val[0];
 							String pat2 = val[1];
+							String pat3= val[2];
 
 							// servizio
-							if (pat2.equals(servizio.getOldTipoForUpdate() + servizio.getOldNomeForUpdate())) {
-								pat2 = servizio.getTipo() + servizio.getNome();
+							if (pat2.equals(asps.getOldIDServizioForUpdate().getTipo() + asps.getOldIDServizioForUpdate().getNome())) {
+								pat2 = asps.getTipo() + asps.getNome();
+							}
+							
+							// versioneServizio
+							if(pat3.equals(asps.getOldIDServizioForUpdate().getVersione().intValue()+"")){
+								pat3 = asps.getVersione().intValue()+"";
 							}
 
-							String newNome = pat1 + "/" + pat2;
+							String newNome = pat1 + "/" + pat2 + "/" + pat3;
 							
 							portaApplicativa.setNome(newNome);
-							portaApplicativa.setOldNomeForUpdate(nomePA);
+							IDPortaApplicativa oldIDPortaApplicativaForUpdate = new IDPortaApplicativa();
+							oldIDPortaApplicativaForUpdate.setNome(nomePA);
+							portaApplicativa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
 
 							// modifica della descrizione
 							String descrizionePA = portaApplicativa.getDescrizione();
@@ -1099,7 +1111,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								// servizio(.*)erogato da(.*) (pat1)
 								String descrRegex = "Servizio(.*)erogato da(.*)";
 								if (descrizionePA.matches(descrRegex)) {
-									descrizionePA = descrizionePA.replaceFirst((servizio.getOldTipoForUpdate() + servizio.getOldNomeForUpdate()), (servizio.getTipo() + servizio.getNome()));
+									descrizionePA = descrizionePA.replaceFirst((asps.getOldIDServizioForUpdate().getTipo() + asps.getOldIDServizioForUpdate().getNome()+":"+asps.getOldIDServizioForUpdate().getVersione().intValue()), 
+											(asps.getTipo() + asps.getNome()+":"+asps.getVersione().intValue()));
 								}
 
 								portaApplicativa.setDescrizione(descrizionePA);
@@ -1110,7 +1123,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					}
 				}
 				// recupero porte applicative per tipo/nome servizio
-				tmpListPA = porteApplicativeCore.porteAppWithTipoNomeServizio(soggettoErogatore.getId(), servizio.getOldTipoForUpdate(), servizio.getOldNomeForUpdate());
+				tmpListPA = porteApplicativeCore.porteAppWithServizio(soggettoErogatore.getId(), 
+						asps.getOldIDServizioForUpdate().getTipo(),
+						asps.getOldIDServizioForUpdate().getNome(),
+						asps.getOldIDServizioForUpdate().getVersione());
 				for (PortaApplicativa portaApplicativa : tmpListPA) {
 					Long idPA = portaApplicativa.getId();
 					if (!idListPA.contains(idPA)) {
@@ -1118,28 +1134,37 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						idListPA.add(idPA);
 												
 						PortaApplicativaServizio paServizio = portaApplicativa.getServizio();
-						paServizio.setNome(servizio.getNome());
-						paServizio.setTipo(servizio.getTipo());
+						paServizio.setNome(asps.getNome());
+						paServizio.setTipo(asps.getTipo());
+						paServizio.setVersione(asps.getVersione());
 						portaApplicativa.setServizio(paServizio);
 						
 						String nomePA = portaApplicativa.getNome();
-						// se il nome e' quello di default cioe' (erogatore)/(servizio)
-						String regex = "(.*)\\/(.*)";
+						// se il nome e' quello di default cioe' (erogatore)/(servizio)/(versioneServizio)
+						String regex = "(.*)\\/(.*)\\/(.*)";
 						if (nomePA.matches(regex)) {
 
 							String[] val = nomePA.split("\\/");
 							String pat1 = val[0];
 							String pat2 = val[1];
+							String pat3= val[2];
 
 							// servizio
-							if (pat2.equals(servizio.getOldTipoForUpdate() + servizio.getOldNomeForUpdate())) {
-								pat2 = servizio.getTipo() + servizio.getNome();
+							if (pat2.equals(asps.getOldIDServizioForUpdate().getTipo() + asps.getOldIDServizioForUpdate().getNome())) {
+								pat2 = asps.getTipo() + asps.getNome();
+							}
+							
+							// versioneServizio
+							if(pat3.equals(asps.getOldIDServizioForUpdate().getVersione().intValue()+"")){
+								pat3 = asps.getVersione().intValue()+"";
 							}
 
-							String newNome = pat1 + "/" + pat2;
+							String newNome = pat1 + "/" + pat2 + "/" + pat3;
 							
 							portaApplicativa.setNome(newNome);
-							portaApplicativa.setOldNomeForUpdate(nomePA);
+							IDPortaApplicativa oldIDPortaApplicativaForUpdate = new IDPortaApplicativa();
+							oldIDPortaApplicativaForUpdate.setNome(nomePA);
+							portaApplicativa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
 
 							// modifica della descrizione
 							String descrizionePA = portaApplicativa.getDescrizione();
@@ -1150,7 +1175,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								// servizio(.*)erogato da(.*) (pat1)
 								String descrRegex = "Servizio(.*)erogato da(.*)";
 								if (descrizionePA.matches(descrRegex)) {
-									descrizionePA = descrizionePA.replaceFirst((servizio.getOldTipoForUpdate() + servizio.getOldNomeForUpdate()), (servizio.getTipo() + servizio.getNome()));
+									descrizionePA = descrizionePA.replaceFirst((asps.getOldIDServizioForUpdate().getTipo() + asps.getOldIDServizioForUpdate().getNome()+":"+asps.getOldIDServizioForUpdate().getVersione().intValue()), 
+											(asps.getTipo() + asps.getNome()+":"+asps.getVersione().intValue()));
 								}
 
 								portaApplicativa.setDescrizione(descrizionePA);
@@ -1179,26 +1205,26 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 			// Se ho cambiato i dati significativi del servizio devo effettuare anche l'update degli accordi di servizio
 			// che includono questi servizi come servizi componenti.
-			if(  (servizio.getTipo().equals(servizio.getOldTipoForUpdate()) == false)  ||
-					(servizio.getNome().equals(servizio.getOldNomeForUpdate()) == false) ||
-					(servizio.getTipoSoggettoErogatore().equals(servizio.getOldTipoSoggettoErogatoreForUpdate()) == false) ||
-					(servizio.getNomeSoggettoErogatore().equals(servizio.getOldNomeSoggettoErogatoreForUpdate()) == false) ){
+			if (!newUri.equals(oldUri)) {
 
-				IDServizio idServizioOLD = new IDServizio(servizio.getOldTipoSoggettoErogatoreForUpdate(),servizio.getOldNomeSoggettoErogatoreForUpdate(),
-						servizio.getOldTipoForUpdate(),servizio.getOldNomeForUpdate());
+				IDServizio idServizioOLD =  asps.getOldIDServizioForUpdate();
+				String uriOLD = IDServizioFactory.getInstance().getUriFromIDServizio(idServizioOLD);
 				List<AccordoServizioParteComune> ass = apcCore.accordiServizio_serviziComponenti(idServizioOLD);
 				for(int i=0; i<ass.size(); i++){
 					AccordoServizioParteComune accordoServizioComposto = ass.get(i);
 					if(accordoServizioComposto.getServizioComposto()!=null){
 						for(int j=0;j<accordoServizioComposto.getServizioComposto().sizeServizioComponenteList();j++){
-							if(accordoServizioComposto.getServizioComposto().getServizioComponente(j).getTipoSoggetto().equals(servizio.getOldTipoSoggettoErogatoreForUpdate()) &&
-									accordoServizioComposto.getServizioComposto().getServizioComponente(j).getNomeSoggetto().equals(servizio.getOldNomeSoggettoErogatoreForUpdate()) &&
-									accordoServizioComposto.getServizioComposto().getServizioComponente(j).getTipo().equals(servizio.getOldTipoForUpdate()) &&
-									accordoServizioComposto.getServizioComposto().getServizioComponente(j).getNome().equals(servizio.getOldNomeForUpdate())){
-								accordoServizioComposto.getServizioComposto().getServizioComponente(j).setTipoSoggetto(servizio.getTipoSoggettoErogatore());
-								accordoServizioComposto.getServizioComposto().getServizioComponente(j).setNomeSoggetto(servizio.getNomeSoggettoErogatore());
-								accordoServizioComposto.getServizioComposto().getServizioComponente(j).setTipo(servizio.getTipo());
-								accordoServizioComposto.getServizioComposto().getServizioComponente(j).setNome(servizio.getNome());
+							IDServizio idServizioComponente = IDServizioFactory.getInstance().
+									getIDServizioFromValues(accordoServizioComposto.getServizioComposto().getServizioComponente(j).getTipo(), accordoServizioComposto.getServizioComposto().getServizioComponente(j).getNome(), 
+											accordoServizioComposto.getServizioComposto().getServizioComponente(j).getTipoSoggetto(),accordoServizioComposto.getServizioComposto().getServizioComponente(j).getNomeSoggetto(), 
+											accordoServizioComposto.getServizioComposto().getServizioComponente(j).getVersione());
+							String uriServizioComponente = IDServizioFactory.getInstance().getUriFromIDServizio(idServizioComponente);
+							if(uriServizioComponente.equals(uriOLD)){
+								accordoServizioComposto.getServizioComposto().getServizioComponente(j).setTipoSoggetto(asps.getTipoSoggettoErogatore());
+								accordoServizioComposto.getServizioComposto().getServizioComponente(j).setNomeSoggetto(asps.getNomeSoggettoErogatore());
+								accordoServizioComposto.getServizioComposto().getServizioComponente(j).setTipo(asps.getTipo());
+								accordoServizioComposto.getServizioComposto().getServizioComponente(j).setNome(asps.getNome());
+								accordoServizioComposto.getServizioComposto().getServizioComponente(j).setVersione(asps.getVersione());
 							}
 						}
 						oggettiDaAggiornare.add(accordoServizioComposto);

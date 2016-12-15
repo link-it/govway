@@ -36,6 +36,7 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -293,11 +294,12 @@ public class TimerGestoreBusteNonRiscontrateLib {
 									identitaPdD = new IDSoggetto(bustaToSend.getTipoMittente(),
 											bustaToSend.getMittente(),dominioRD);
 								}
-								IDServizio servizioBusta = new IDServizio(bustaToSend.getTipoDestinatario(),
-										bustaToSend.getDestinatario(),
-										bustaToSend.getTipoServizio(),
+								IDServizio servizioBusta = IDServizioFactory.getInstance().getIDServizioFromValues(bustaToSend.getTipoServizio(),
 										bustaToSend.getServizio(),
-										bustaToSend.getAzione());
+										bustaToSend.getTipoDestinatario(), 
+										bustaToSend.getDestinatario(), 
+										bustaToSend.getVersioneServizio()); 
+								servizioBusta.setAzione(bustaToSend.getAzione());	
 								
 								// Dati integrazione
 								repositoryBuste = new RepositoryBuste(openspcoopState.getStatoRichiesta(), true,protocolFactory);
@@ -536,12 +538,12 @@ public class TimerGestoreBusteNonRiscontrateLib {
 									identitaPdD = new IDSoggetto(bustaToSend.getTipoMittente(),
 											bustaToSend.getMittente(),dominioRD);
 								}
-								@SuppressWarnings("unused")
-								IDServizio servizioBusta = new IDServizio(bustaToSend.getTipoDestinatario(),
-										bustaToSend.getDestinatario(),
-										bustaToSend.getTipoServizio(),
+								IDServizio servizioBusta = IDServizioFactory.getInstance().getIDServizioFromValues(bustaToSend.getTipoServizio(),
 										bustaToSend.getServizio(),
-										bustaToSend.getAzione());
+										bustaToSend.getTipoDestinatario(), 
+										bustaToSend.getDestinatario(), 
+										bustaToSend.getVersioneServizio()); 
+								servizioBusta.setAzione(bustaToSend.getAzione());	
 								
 								// Dati integrazione
 								repositoryBuste = new RepositoryBuste(openspcoopState.getStatoRichiesta(), true,protocolFactory);

@@ -50,17 +50,17 @@ public class UtilitiesIntegrazioneWSAddressing {
 	// ***** STATIC *****
 	
 	/**
-	   SOAPHeaderElement wsaTO      ->     http://<tipoSoggettoErogatore>_<nomeSoggettoErogatore>.openspcoop2.org/servizi/<tipoServizio>_<nomeServizio>
+	   SOAPHeaderElement wsaTO      ->     http://<tipoSoggettoErogatore>_<nomeSoggettoErogatore>.openspcoop2.org/servizi/<tipoServizio>_<nomeServizio>/<versioneServizio>
 	   SOAPHeaderElement wsaFROM    ->     http://[<nomeServizioApplicativoFruitore>.]<tipoSoggettoFruitore>_<nomeSoggettoFruitore>.openspcoop2.org
-	   SOAPHeaderElement wsaAction  ->     http://<tipoSoggettoErogatore>_<nomeSoggettoErogatore>.openspcoop2.org/servizi/<tipoServizio>_<nomeServizio>/<nomeAzione>
+	   SOAPHeaderElement wsaAction  ->     http://<tipoSoggettoErogatore>_<nomeSoggettoErogatore>.openspcoop2.org/servizi/<tipoServizio>_<nomeServizio>/<versioneServizio>/<nomeAzione>
 	   SOAPHeaderElement wsaID      ->     uuid:<IDBusta> in caso di Messaggio di Protocollo (restituzione di una risposto lato PD o in caso di consegna tramite PA
 										   uuid:<IDApplicativo> in caso di Messaggio di Integrazione (invocazione lato PD o lettura risposta lato PA, es. per correlazione applicativa)
 	   SOAPHeaderElement wsaRelatesTo = null; // uuid:<IDBusta> equivale al riferimento messaggio
 
 	 */
-	private final static String WSA_TO_FORMAT = "http://<tipoSoggettoErogatore>_<nomeSoggettoErogatore>.openspcoop2.org/servizi/<tipoServizio>_<nomeServizio>";
+	private final static String WSA_TO_FORMAT = "http://<tipoSoggettoErogatore>_<nomeSoggettoErogatore>.openspcoop2.org/servizi/<tipoServizio>_<nomeServizio>/<versioneServizio>";
 	private final static String WSA_FROM_FORMAT = "http://[<nomeServizioApplicativoFruitore>.]<tipoSoggettoFruitore>_<nomeSoggettoFruitore>.openspcoop2.org";
-	private final static String WSA_ACTION_FORMAT = "http://<tipoSoggettoErogatore>_<nomeSoggettoErogatore>.openspcoop2.org/servizi/<tipoServizio>_<nomeServizio>/<nomeAzione>";
+	private final static String WSA_ACTION_FORMAT = "http://<tipoSoggettoErogatore>_<nomeSoggettoErogatore>.openspcoop2.org/servizi/<tipoServizio>_<nomeServizio>/<versioneServizio>/<nomeAzione>";
 	private final static String WSA_ID_FORMAT = "uuid:<id>";
 	private final static String WSA_RELATES_TO_FORMAT = "uuid:<id>";
 	
@@ -83,75 +83,172 @@ public class UtilitiesIntegrazioneWSAddressing {
 	public final static boolean BUILD_VALUE_RAW = false;
 	
 	
-	public static void readDatiWSATo(String wsaTO,HeaderIntegrazione integrazione) throws HeaderIntegrazioneException{
-		if(wsaTO==null)
-			throw new HeaderIntegrazioneException("WSATO value is null");
-		wsaTO = wsaTO.trim();
-		if(wsaTO.startsWith("http://")==false)
-			throw new HeaderIntegrazioneException("WSATO Value is not valid: "+WSA_TO_FORMAT);
-		if(wsaTO.contains(".openspcoop2.org/servizi/")==false)
-			throw new HeaderIntegrazioneException("WSATO Value is not valid: "+WSA_TO_FORMAT);
+	public static void _readDatiWSAToOrAction(String wsaValue,String format, HeaderIntegrazione integrazione) throws HeaderIntegrazioneException{
 		
-		wsaTO = wsaTO.substring(7, wsaTO.length());
+		String type = null;
+		boolean action = false;
+		if(WSA_TO_FORMAT.equals(format)){
+			type = "WSAddressingTo";	
+		}
+		else if(WSA_ACTION_FORMAT.equals(format)){
+			type = "WSAddressingAction";	
+			action = true;
+		}
+		else{
+			throw new HeaderIntegrazioneException("Format ["+format+"] Not Supported");
+		}
+		
+		if(wsaValue==null)
+			throw new HeaderIntegrazioneException(type+" value is null");
+		wsaValue = wsaValue.trim();
+		if(wsaValue.startsWith("http://")==false)
+			throw new HeaderIntegrazioneException(type+" Value is not valid: "+format);
+		if(wsaValue.contains(".openspcoop2.org/servizi/")==false)
+			throw new HeaderIntegrazioneException(type+" Value is not valid: "+format);
+		
+		wsaValue = wsaValue.substring(7, wsaValue.length());
 		
 		// soggetto
-		int indexSoggetto = wsaTO.indexOf(".openspcoop2.org/servizi/");
-		String soggetto = wsaTO.substring(0, indexSoggetto);
+		int indexSoggetto = wsaValue.indexOf(".openspcoop2.org/servizi/");
+		String soggetto = wsaValue.substring(0, indexSoggetto);
 		if(soggetto==null){
-			throw new HeaderIntegrazioneException("WSATO Value is not valid (Soggetto non identificabile): "+WSA_TO_FORMAT);
+			throw new HeaderIntegrazioneException(type+" Value is not valid (Soggetto non identificabile): "+format);
 		}
 		if(soggetto.contains("_")==false){
-			throw new HeaderIntegrazioneException("WSATO Value is not valid (Soggetto non identificabile, '_' non trovato ): "+WSA_TO_FORMAT);
+			throw new HeaderIntegrazioneException(type+" Value is not valid (Soggetto non identificabile, '_' non trovato ): "+format);
 		}
 		String [] soggetto_split = soggetto.split("_");
 		if(soggetto_split==null || soggetto_split.length<2){
-			throw new HeaderIntegrazioneException("WSATO Value is not valid (Soggetto non identificabile, formato errato ): "+WSA_TO_FORMAT);
+			throw new HeaderIntegrazioneException(type+" Value is not valid (Soggetto non identificabile, formato errato ): "+format);
 		}
+		
 		String tipoSoggetto = soggetto_split[0];
+		if(tipoSoggetto!=null){
+			tipoSoggetto = tipoSoggetto.trim();
+		}
+		if(tipoSoggetto==null || "".equals(tipoSoggetto)){
+			throw new HeaderIntegrazioneException(type+" Value is not valid (TipoSoggetto non identificabile): "+format);
+		}
+		
 		String nomeSoggetto = soggetto.substring((tipoSoggetto+"_").length());
-		if(tipoSoggetto==null){
-			throw new HeaderIntegrazioneException("WSATO Value is not valid (TipoSoggetto non identificabile): "+WSA_TO_FORMAT);
+		if(nomeSoggetto!=null){
+			nomeSoggetto = nomeSoggetto.trim();
 		}
-		if(nomeSoggetto==null){
-			throw new HeaderIntegrazioneException("WSATO Value is not valid (NomeSoggetto non identificabile): "+WSA_TO_FORMAT);
+		if(nomeSoggetto==null || "".equals(nomeSoggetto)){
+			throw new HeaderIntegrazioneException(type+" Value is not valid (NomeSoggetto non identificabile): "+format);
 		}
-		tipoSoggetto = tipoSoggetto.trim();
-		nomeSoggetto = nomeSoggetto.trim();
-		integrazione.getBusta().setTipoDestinatario(tipoSoggetto);
-		integrazione.getBusta().setDestinatario(nomeSoggetto);
+
+		if(!action){
+			integrazione.getBusta().setTipoDestinatario(tipoSoggetto);
+			integrazione.getBusta().setDestinatario(nomeSoggetto);
+		}
 		
 		// servizio
-		String servizio = wsaTO.substring((indexSoggetto+".openspcoop2.org/servizi/".length()), wsaTO.length());
+		String servizio = wsaValue.substring((indexSoggetto+".openspcoop2.org/servizi/".length()), wsaValue.length());
 		if(servizio==null){
-			throw new HeaderIntegrazioneException("WSATO Value is not valid (Servizio non identificabile): "+WSA_TO_FORMAT);
+			throw new HeaderIntegrazioneException(type+" Value is not valid (Servizio non identificabile): "+format);
 		}
 		if(servizio.contains("_")==false){
-			throw new HeaderIntegrazioneException("WSATO Value is not valid (Servizio non identificabile, '_' non trovato ): "+WSA_TO_FORMAT);
+			throw new HeaderIntegrazioneException(type+" Value is not valid (Servizio non identificabile, '_' non trovato ): "+format);
 		}
 		String [] servizio_split = servizio.split("_");
 		if(servizio_split==null || servizio_split.length<2){
-			throw new HeaderIntegrazioneException("WSATO Value is not valid (Servizio non identificabile, formato errato ): "+WSA_TO_FORMAT);
+			throw new HeaderIntegrazioneException(type+" Value is not valid (Servizio non identificabile, formato errato ): "+format);
 		}
 		String tipoServizio = servizio_split[0];
-		String nomeServizio = servizio.substring((tipoServizio+"_").length());
-		if(tipoServizio==null){
-			throw new HeaderIntegrazioneException("WSATO Value is not valid (TipoServizio non identificabile): "+WSA_TO_FORMAT);
+		if(tipoServizio!=null){
+			tipoServizio = tipoServizio.trim();
 		}
-		if(nomeServizio==null){
-			throw new HeaderIntegrazioneException("WSATO Value is not valid (NomeServizio non identificabile): "+WSA_TO_FORMAT);
+		if(tipoServizio==null || "".equals(tipoServizio)){
+			throw new HeaderIntegrazioneException(type+" Value is not valid (TipoServizio non identificabile): "+format);
 		}
-		tipoServizio = tipoServizio.trim();
-		nomeServizio = nomeServizio.trim();
-		integrazione.getBusta().setTipoServizio(tipoServizio);
-		integrazione.getBusta().setServizio(nomeServizio);
+		
+		String nomeVersioneServizio = servizio.substring((tipoServizio+"_").length());
+		if(nomeVersioneServizio!=null){
+			nomeVersioneServizio = nomeVersioneServizio.trim();
+		}
+		if(nomeVersioneServizio==null || "".equals(nomeVersioneServizio)){
+			throw new HeaderIntegrazioneException(type+" Value is not valid (Nome e VersioneServizio non identificabile): "+format);
+		}
+		if(nomeVersioneServizio.contains("/")==false){
+			throw new HeaderIntegrazioneException(type+" Value is not valid (Nome e VersioneServizio non identificabile, '/' non trovato ): "+format);
+		}
+		
+		if(action){
+			// gli slash sono due
+			// nomeVersioneServizio contiene anche l'azione
+			
+			int indexAzione = nomeVersioneServizio.lastIndexOf("/");
+			if(indexAzione<=0){
+				throw new HeaderIntegrazioneException(type+" Value is not valid (Azione non identificabile, '/' non trovato, index("+indexAzione+") ): "+format);
+			}
+			
+			String azione = nomeVersioneServizio.substring(indexAzione+1);
+			if(azione!=null){
+				azione = azione.trim();
+			}
+			if(azione==null  || "".equals(azione)){
+				throw new HeaderIntegrazioneException(type+" Value is not valid (Azione non identificabile): "+format);
+			}
+			
+			integrazione.getBusta().setAzione(azione);
+			
+			nomeVersioneServizio =  nomeVersioneServizio.substring(0, indexAzione);
+			if(nomeVersioneServizio!=null){
+				nomeVersioneServizio = nomeVersioneServizio.trim();
+			}
+			if(nomeVersioneServizio==null || "".equals(nomeVersioneServizio)){
+				throw new HeaderIntegrazioneException(type+" Value is not valid (Nome e VersioneServizio non identificabile non identificabile prima dell'Azione): "+format);
+			}
+		}
+		
+			
+		int indexVersioneServizio = nomeVersioneServizio.lastIndexOf("/");
+		if(indexVersioneServizio<=0){
+			throw new HeaderIntegrazioneException(type+" Value is not valid (VersioneServizio non identificabile, '/' non trovato, index("+indexVersioneServizio+") ): "+format);
+		}
+		
+		String nomeServizio = nomeVersioneServizio.substring(0, indexVersioneServizio);
+		if(nomeServizio!=null){
+			nomeServizio = nomeServizio.trim();
+		}
+		if(nomeServizio==null || "".equals(nomeServizio)){
+			throw new HeaderIntegrazioneException(type+" Value is not valid (NomeServizio non identificabile): "+format);
+		}
+		
+		String tmpVersioneServizio = nomeServizio.substring(indexVersioneServizio+1);
+		if(tmpVersioneServizio!=null){
+			tmpVersioneServizio = tmpVersioneServizio.trim();
+		}
+		if(tmpVersioneServizio==null  || "".equals(tmpVersioneServizio)){
+			throw new HeaderIntegrazioneException(type+" Value is not valid (VersioneServizio non identificabile): "+format);
+		}
+		Integer versioneServizio = null;
+		try{
+			versioneServizio = Integer.parseInt(tmpVersioneServizio);
+		}catch(Exception e){
+			throw new HeaderIntegrazioneException(type+" Value is not valid (VersioneServizio non identificabile, formato errato "+e.getMessage()+"): "+format);
+		}
+		
+		if(!action){
+			integrazione.getBusta().setTipoServizio(tipoServizio);
+			integrazione.getBusta().setServizio(nomeServizio);
+			integrazione.getBusta().setVersioneServizio(versioneServizio);
+		}
 		
 	}
-	public static String buildDatiWSATo(String tipoSoggettoErogatore,String nomeSoggettoErogatore,String tipoServizio,String nomeServizio){
-		return "http://"+tipoSoggettoErogatore+"_"+nomeSoggettoErogatore+".openspcoop2.org/servizi/"+tipoServizio+"_"+nomeServizio;
+	
+	
+	public static void readDatiWSATo(String wsaTO,HeaderIntegrazione integrazione) throws HeaderIntegrazioneException{
+		_readDatiWSAToOrAction(wsaTO, WSA_TO_FORMAT, integrazione);
 	}
-	public static SOAPHeaderElement buildWSATo(OpenSPCoop2SoapMessage msg,String actor,String tipoSoggettoErogatore,String nomeSoggettoErogatore,String tipoServizio,String nomeServizio) throws Exception{
+	public static String buildDatiWSATo(String tipoSoggettoErogatore,String nomeSoggettoErogatore,String tipoServizio,String nomeServizio,Integer versioneServizio){
+		return "http://"+tipoSoggettoErogatore+"_"+nomeSoggettoErogatore+".openspcoop2.org/servizi/"+tipoServizio+"_"+nomeServizio+"/"+versioneServizio;
+	}
+	public static SOAPHeaderElement buildWSATo(OpenSPCoop2SoapMessage msg,String actor,String tipoSoggettoErogatore,String nomeSoggettoErogatore,String tipoServizio,String nomeServizio,Integer versioneServizio) throws Exception{
 		QName name =  new QName(UtilitiesIntegrazioneWSAddressing.WSA_NAMESPACE,UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_TO,UtilitiesIntegrazioneWSAddressing.WSA_PREFIX);
-		SOAPHeaderElement header = UtilitiesIntegrazioneWSAddressing.buildHeaderElement(msg,name,UtilitiesIntegrazioneWSAddressing.buildDatiWSATo(tipoSoggettoErogatore,nomeSoggettoErogatore,tipoServizio,nomeServizio),actor,BUILD_VALUE_RAW);
+		SOAPHeaderElement header = UtilitiesIntegrazioneWSAddressing.buildHeaderElement(msg,name,
+				UtilitiesIntegrazioneWSAddressing.buildDatiWSATo(tipoSoggettoErogatore,nomeSoggettoErogatore,tipoServizio,nomeServizio,versioneServizio),actor,BUILD_VALUE_RAW);
 		return header;
 	}
 	
@@ -179,12 +276,20 @@ public class UtilitiesIntegrazioneWSAddressing {
 		if(soggetto_split==null || soggetto_split.length<2){
 			throw new HeaderIntegrazioneException("WSAFrom Value is not valid (Soggetto non identificabile, formato errato ): "+WSA_FROM_FORMAT);
 		}
+		
 		String tipoSoggetto = soggetto_split[0];
-		String nomeSoggetto = soggetto.substring((tipoSoggetto+"_").length());
-		if(tipoSoggetto==null){
+		if(tipoSoggetto!=null){
+			tipoSoggetto = tipoSoggetto.trim();
+		}
+		if(tipoSoggetto==null || "".equals(tipoSoggetto)){
 			throw new HeaderIntegrazioneException("WSAFrom Value is not valid (TipoSoggetto non identificabile): "+WSA_FROM_FORMAT);
 		}
-		if(nomeSoggetto==null){
+		
+		String nomeSoggetto = soggetto.substring((tipoSoggetto+"_").length());
+		if(nomeSoggetto!=null){
+			nomeSoggetto = nomeSoggetto.trim();
+		}
+		if(nomeSoggetto==null || "".equals(nomeSoggetto)){
 			throw new HeaderIntegrazioneException("WSAFrom Value is not valid (NomeSoggetto non identificabile): "+WSA_FROM_FORMAT);
 		}
 		
@@ -203,8 +308,6 @@ public class UtilitiesIntegrazioneWSAddressing {
 			integrazione.setServizioApplicativo(sa);
 		}
 		
-		tipoSoggetto = tipoSoggetto.trim();
-		nomeSoggetto = nomeSoggetto.trim();
 		integrazione.getBusta().setTipoMittente(tipoSoggetto);
 		integrazione.getBusta().setMittente(nomeSoggetto);
 	}
@@ -221,77 +324,15 @@ public class UtilitiesIntegrazioneWSAddressing {
 	}
 	
 	
-	public static void readDatiWSAAction(String wsaAction,HeaderIntegrazione integrazione) throws HeaderIntegrazioneException{
-		if(wsaAction==null)
-			throw new HeaderIntegrazioneException("WSAAction value is null");
-		wsaAction = wsaAction.trim();
-		if(wsaAction.startsWith("http://")==false)
-			throw new HeaderIntegrazioneException("WSAAction Value is not valid: "+WSA_ACTION_FORMAT);
-		if(wsaAction.contains(".openspcoop2.org/")==false)
-			throw new HeaderIntegrazioneException("WSAAction Value is not valid: "+WSA_ACTION_FORMAT);
-		
-		// soggetto
-		int indexSoggetto = wsaAction.indexOf(".openspcoop2.org/servizi/");
-		String soggetto = wsaAction.substring(0, indexSoggetto);
-		if(soggetto==null){
-			throw new HeaderIntegrazioneException("WSAAction Value is not valid (Soggetto non identificabile): "+WSA_ACTION_FORMAT);
-		}
-		if(soggetto.contains("_")==false){
-			throw new HeaderIntegrazioneException("WSAAction Value is not valid (Soggetto non identificabile, '_' non trovato ): "+WSA_ACTION_FORMAT);
-		}
-		String [] soggetto_split = soggetto.split("_");
-		if(soggetto_split==null || soggetto_split.length<2){
-			throw new HeaderIntegrazioneException("WSAAction Value is not valid (Soggetto non identificabile, formato errato ): "+WSA_ACTION_FORMAT);
-		}
-		String tipoSoggetto = soggetto_split[0];
-		String nomeSoggetto = soggetto.substring((tipoSoggetto+"_").length());
-		if(tipoSoggetto==null){
-			throw new HeaderIntegrazioneException("WSAAction Value is not valid (TipoSoggetto non identificabile): "+WSA_ACTION_FORMAT);
-		}
-		if(nomeSoggetto==null){
-			throw new HeaderIntegrazioneException("WSAAction Value is not valid (NomeSoggetto non identificabile): "+WSA_ACTION_FORMAT);
-		}
-		
-		// servizio
-		String servizio = wsaAction.substring((indexSoggetto+".openspcoop2.org/servizi/".length()), wsaAction.length());
-		if(servizio==null){
-			throw new HeaderIntegrazioneException("WSAAction Value is not valid (Servizio non identificabile): "+WSA_ACTION_FORMAT);
-		}
-		if(servizio.contains("_")==false){
-			throw new HeaderIntegrazioneException("WSAAction Value is not valid (Servizio non identificabile, '_' non trovato ): "+WSA_ACTION_FORMAT);
-		}
-		String [] servizio_split = servizio.split("_");
-		if(servizio_split==null || servizio_split.length<2){
-			throw new HeaderIntegrazioneException("WSAAction Value is not valid (Servizio non identificabile, formato errato ): "+WSA_ACTION_FORMAT);
-		}
-		String tipoServizio = servizio_split[0];
-		String nomeServizio = servizio.substring((tipoServizio+"_").length());
-		if(tipoServizio==null){
-			throw new HeaderIntegrazioneException("WSAAction Value is not valid (TipoServizio non identificabile): "+WSA_ACTION_FORMAT);
-		}
-		if(nomeServizio==null){
-			throw new HeaderIntegrazioneException("WSAAction Value is not valid (NomeServizio non identificabile): "+WSA_ACTION_FORMAT);
-		}
-		
-		// azione
-		int indexServizi = wsaAction.indexOf(".openspcoop2.org/servizi/");
-		String servizioAzione = wsaAction.substring((indexServizi+".openspcoop2.org/servizi/".length()),wsaAction.length());
-		int indexAzione = servizioAzione.indexOf("/");
-		if(indexAzione<=0){
-			throw new HeaderIntegrazioneException("WSAAction Value is not valid (Azione non identificabile): "+WSA_ACTION_FORMAT);
-		}
-		String azione = servizioAzione.substring((indexAzione+1),servizioAzione.length());
-		if(azione==null){
-			throw new HeaderIntegrazioneException("WSAAction Value is not valid (Azione non identificabile): "+WSA_ACTION_FORMAT);
-		}
-		integrazione.getBusta().setAzione(azione);
+	public static void readDatiWSAAction(String wsaAction,HeaderIntegrazione integrazione) throws HeaderIntegrazioneException{	
+		_readDatiWSAToOrAction(wsaAction, WSA_ACTION_FORMAT, integrazione);
 	}
-	public static String buildDatiWSAAction(String tipoSoggettoErogatore,String nomeSoggettoErogatore,String tipoServizio,String nomeServizio,String azione){
-		return "http://"+tipoSoggettoErogatore+"_"+nomeSoggettoErogatore+".openspcoop2.org/servizi/"+tipoServizio+"_"+nomeServizio+"/"+azione;
+	public static String buildDatiWSAAction(String tipoSoggettoErogatore,String nomeSoggettoErogatore,String tipoServizio,String nomeServizio,Integer versioneServizio,String azione){
+		return "http://"+tipoSoggettoErogatore+"_"+nomeSoggettoErogatore+".openspcoop2.org/servizi/"+tipoServizio+"_"+nomeServizio+"/"+versioneServizio+"/"+azione;
 	}
-	public static SOAPHeaderElement buildWSAAction(OpenSPCoop2SoapMessage msg,String actor,String tipoSoggettoErogatore,String nomeSoggettoErogatore,String tipoServizio,String nomeServizio,String azione) throws Exception{
+	public static SOAPHeaderElement buildWSAAction(OpenSPCoop2SoapMessage msg,String actor,String tipoSoggettoErogatore,String nomeSoggettoErogatore,String tipoServizio,String nomeServizio,Integer versioneServizio,String azione) throws Exception{
 		QName name =  new QName(UtilitiesIntegrazioneWSAddressing.WSA_NAMESPACE,UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_ACTION,UtilitiesIntegrazioneWSAddressing.WSA_PREFIX);
-		SOAPHeaderElement header = UtilitiesIntegrazioneWSAddressing.buildHeaderElement(msg,name,UtilitiesIntegrazioneWSAddressing.buildDatiWSAAction(tipoSoggettoErogatore,nomeSoggettoErogatore,tipoServizio,nomeServizio,azione),actor,BUILD_VALUE_RAW);
+		SOAPHeaderElement header = UtilitiesIntegrazioneWSAddressing.buildHeaderElement(msg,name,UtilitiesIntegrazioneWSAddressing.buildDatiWSAAction(tipoSoggettoErogatore,nomeSoggettoErogatore,tipoServizio,nomeServizio,versioneServizio,azione),actor,BUILD_VALUE_RAW);
 		return header;
 	}
 	
@@ -530,8 +571,9 @@ public class UtilitiesIntegrazioneWSAddressing {
 		busta.setMittente(soggettoFruitore.getNome());
 		busta.setTipoDestinatario(idServizio.getSoggettoErogatore().getTipo());
 		busta.setDestinatario(idServizio.getSoggettoErogatore().getNome());
-		busta.setTipoServizio(idServizio.getTipoServizio());
-		busta.setServizio(idServizio.getServizio());
+		busta.setTipoServizio(idServizio.getTipo());
+		busta.setServizio(idServizio.getNome());
+		busta.setVersioneServizio(idServizio.getVersione());
 		busta.setAzione(idServizio.getAzione());
 		if(idBustaRisposta==null){
 			busta.setID(idBusta);
@@ -609,10 +651,12 @@ public class UtilitiesIntegrazioneWSAddressing {
 				// To
 				if(wsaTO!=null){
 					// aggiorno
-					wsaTO.setValue(UtilitiesIntegrazioneWSAddressing.buildDatiWSATo(hBusta.getTipoDestinatario(), hBusta.getDestinatario(), hBusta.getTipoServizio() , hBusta.getServizio()));
+					wsaTO.setValue(UtilitiesIntegrazioneWSAddressing.buildDatiWSATo(hBusta.getTipoDestinatario(), hBusta.getDestinatario(), 
+							hBusta.getTipoServizio() , hBusta.getServizio(), hBusta.getVersioneServizio()));
 				}
 				else{
-					wsaTO = UtilitiesIntegrazioneWSAddressing.buildWSATo(message,actorIntegrazione,hBusta.getTipoDestinatario(), hBusta.getDestinatario(), hBusta.getTipoServizio() , hBusta.getServizio());
+					wsaTO = UtilitiesIntegrazioneWSAddressing.buildWSATo(message,actorIntegrazione,hBusta.getTipoDestinatario(), hBusta.getDestinatario(), 
+							hBusta.getTipoServizio() , hBusta.getServizio(), hBusta.getVersioneServizio());
 					//header.addChildElement(wsaTO);
 					message.addHeaderElement(header, wsaTO);
 				}
@@ -622,10 +666,12 @@ public class UtilitiesIntegrazioneWSAddressing {
 				if(hBusta.getAzione()!=null){
 					if(wsaAction!=null){
 						// aggiorno
-						wsaAction.setValue(UtilitiesIntegrazioneWSAddressing.buildDatiWSAAction(hBusta.getTipoDestinatario(), hBusta.getDestinatario(), hBusta.getTipoServizio() , hBusta.getServizio(),hBusta.getAzione()));
+						wsaAction.setValue(UtilitiesIntegrazioneWSAddressing.buildDatiWSAAction(hBusta.getTipoDestinatario(), hBusta.getDestinatario(), 
+								hBusta.getTipoServizio() , hBusta.getServizio(), hBusta.getVersioneServizio(), hBusta.getAzione()));
 					}
 					else{
-						wsaAction = UtilitiesIntegrazioneWSAddressing.buildWSAAction(message,actorIntegrazione,hBusta.getTipoDestinatario(), hBusta.getDestinatario(), hBusta.getTipoServizio() , hBusta.getServizio(),hBusta.getAzione());
+						wsaAction = UtilitiesIntegrazioneWSAddressing.buildWSAAction(message,actorIntegrazione,hBusta.getTipoDestinatario(), hBusta.getDestinatario(), 
+								hBusta.getTipoServizio() , hBusta.getServizio(), hBusta.getVersioneServizio(), hBusta.getAzione());
 						//header.addChildElement(wsaTO);
 						message.addHeaderElement(header, wsaTO);
 					}

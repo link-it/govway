@@ -29,7 +29,7 @@ import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.ProprietaProtocollo;
+import org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -55,7 +55,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 		super(core);
 	}
 	
-	public List<PortaApplicativa> porteAppWithTipoNomeServizio(long idSoggettoErogatore, String tipoServizio, String nomeServizio) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	public List<PortaApplicativa> porteAppWithServizio(long idSoggettoErogatore, String tipoServizio, String nomeServizio, Integer versioneServizio) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;
 		String nomeMetodo = "porteAppWithTipoNomeServizio";
 		DriverControlStationDB driver = null;
@@ -66,7 +66,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverConfigurazioneDB().porteAppWithTipoNomeServizio(idSoggettoErogatore, tipoServizio, nomeServizio);
+			return driver.getDriverConfigurazioneDB().porteAppWithServizio(idSoggettoErogatore, tipoServizio, nomeServizio, versioneServizio);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -170,7 +170,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 
 	
 
-	public List<ProprietaProtocollo> porteAppPropList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
+	public List<PortaApplicativaProprietaIntegrazioneProtocollo> porteAppPropList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "porteAppPropList";
 		DriverControlStationDB driver = null;
@@ -486,7 +486,8 @@ public class PorteApplicativeCore extends ControlStationCore {
 		}
 	}
 
-	public List<PortaApplicativa> getPorteApplicativeWithServizio(Long idServizio, String tiposervizio, String nomeservizio, Long idSoggetto, String tiposoggetto, String nomesoggetto) throws DriverConfigurazioneException {
+	public List<PortaApplicativa> getPorteApplicativeWithServizio(Long idServizio, String tiposervizio, String nomeservizio, Integer versioneServizio,
+			Long idSoggetto, String tiposoggetto, String nomesoggetto) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "getPorteApplicativeWithServizio";
 		DriverControlStationDB driver = null;
@@ -497,7 +498,8 @@ public class PorteApplicativeCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverConfigurazioneDB().getPorteApplicativeWithServizio(idServizio, tiposervizio, nomeservizio, idSoggetto, tiposoggetto, nomesoggetto);
+			return driver.getDriverConfigurazioneDB().getPorteApplicativeWithServizio(idServizio, tiposervizio, nomeservizio, versioneServizio,
+					idSoggetto, tiposoggetto, nomesoggetto);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -507,7 +509,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 		}
 	}
 
-	public PortaApplicativa getPortaApplicativaWithSoggettoAndServizio(String nome, Long idSoggetto, Long idServizio, String tipoServizio, String nomeServizio) throws DriverConfigurazioneException {
+	public PortaApplicativa getPortaApplicativaWithSoggettoAndServizio(String nome, Long idSoggetto, Long idServizio, String tipoServizio, String nomeServizio, Integer versioneServizio) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "getPortaApplicativaWithSoggettoAndServizio";
 		DriverControlStationDB driver = null;
@@ -518,7 +520,7 @@ public class PorteApplicativeCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverConfigurazioneDB().getPortaApplicativaWithSoggettoAndServizio(nome, idSoggetto, idServizio, tipoServizio, nomeServizio);
+			return driver.getDriverConfigurazioneDB().getPortaApplicativaWithSoggettoAndServizio(nome, idSoggetto, idServizio, tipoServizio, nomeServizio, versioneServizio);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

@@ -55,6 +55,8 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.id.IdentificativiErogazione;
 import org.openspcoop2.core.id.IdentificativiFruizione;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
@@ -223,7 +225,7 @@ public class ConfigurazionePdDManager {
 	
 	/* ********  PORTE DELEGATE (Interfaccia)  ******** */
 	
-	public IDPortaDelegata convertToIDPortaDelegata(PortaDelegata pd){
+	public IDPortaDelegata convertToIDPortaDelegata(PortaDelegata pd) throws DriverRegistroServiziException{
 		
 		IDPortaDelegata idPD = new IDPortaDelegata();
 		idPD.setNome(pd.getNome());
@@ -233,8 +235,9 @@ public class ConfigurazionePdDManager {
 		IDSoggetto soggettoFruitore = new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario());
 		idFruizione.setSoggettoFruitore(soggettoFruitore);
 		
-		IDServizio idServizio = new IDServizio(pd.getSoggettoErogatore().getTipo(),pd.getSoggettoErogatore().getNome(),
-				pd.getServizio().getTipo(),pd.getServizio().getNome());
+		IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pd.getServizio().getTipo(),pd.getServizio().getNome(), 
+				new IDSoggetto(pd.getSoggettoErogatore().getTipo(),pd.getSoggettoErogatore().getNome()), 
+				pd.getServizio().getVersione()); 
 		if(pd.getAzione()!=null && pd.getAzione().getNome()!=null && !"".equals(pd.getAzione().getNome())){
 			idServizio.setAzione(pd.getAzione().getNome());	
 		}
@@ -366,6 +369,10 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.isLocalForwardMode(pd);
 	}
 	
+	public String getLocalForward_NomePortaApplicativa(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		return this.configurazionePdDReader.getLocalForward_NomePortaApplicativa(pd);
+	}
+	
 	public List<Object> getExtendedInfo(PortaDelegata pd)throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getExtendedInfo(pd);
 	}
@@ -374,7 +381,7 @@ public class ConfigurazionePdDManager {
 	
 	/* ********  PORTE APPLICATIVE  (Interfaccia) ******** */
 	
-	public IDPortaApplicativa convertToIDPortaApplicativa(PortaApplicativa pa){
+	public IDPortaApplicativa convertToIDPortaApplicativa(PortaApplicativa pa) throws DriverRegistroServiziException{
 		
 		IDPortaApplicativa idPA = new IDPortaApplicativa();
 		idPA.setNome(pa.getNome());
@@ -386,8 +393,9 @@ public class ConfigurazionePdDManager {
 			idErogazione.setSoggettoVirtuale(soggettoVirtuale);
 		}
 		
-		IDServizio idServizio = new IDServizio(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(),
-				pa.getServizio().getTipo(),pa.getServizio().getNome());
+		IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pa.getServizio().getTipo(),pa.getServizio().getNome(), 
+				new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()), 
+				pa.getServizio().getVersione()); 
 		if(pa.getAzione()!=null && pa.getAzione().getNome()!=null && !"".equals(pa.getAzione().getNome())){
 			idServizio.setAzione(pa.getAzione().getNome());	
 		}

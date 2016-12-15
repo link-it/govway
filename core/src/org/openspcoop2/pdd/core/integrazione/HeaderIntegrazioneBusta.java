@@ -53,8 +53,10 @@ public class HeaderIntegrazioneBusta implements java.io.Serializable{
     private String servizio;
     /** Tipo di Servizio. */
     private String tipoServizio; 
+    /** Versione Servizio */
+    private Integer versioneServizio;
 
-    /** Azione. */
+	/** Azione. */
     private String azione;
     
     /** Identificativo Messaggio. */
@@ -276,5 +278,13 @@ public class HeaderIntegrazioneBusta implements java.io.Serializable{
 	 */
 	public void setProfiloDiCollaborazione(ProfiloDiCollaborazione profiloDiCollaborazione) {
 		this.profiloDiCollaborazione = profiloDiCollaborazione;
+	}
+	
+    public Integer getVersioneServizio() {
+		return this.versioneServizio;
+	}
+
+	public void setVersioneServizio(Integer versioneServizio) {
+		this.versioneServizio = versioneServizio;
 	}
 }

@@ -102,10 +102,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Servizio }
+     * Create an instance of {@link ConfigurazioneServizioAzioneFruitore }
      */
-    public Servizio createServizio() {
-        return new Servizio();
+    public ConfigurazioneServizioAzioneFruitore createConfigurazioneServizioAzioneFruitore() {
+        return new ConfigurazioneServizioAzioneFruitore();
     }
 
     /**
@@ -137,24 +137,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ServizioAzioneFruitore }
-     */
-    public ServizioAzioneFruitore createServizioAzioneFruitore() {
-        return new ServizioAzioneFruitore();
-    }
-
-    /**
      * Create an instance of {@link IdAccordoServizioParteSpecifica }
      */
     public IdAccordoServizioParteSpecifica createIdAccordoServizioParteSpecifica() {
         return new IdAccordoServizioParteSpecifica();
-    }
-
-    /**
-     * Create an instance of {@link ServizioAzione }
-     */
-    public ServizioAzione createServizioAzione() {
-        return new ServizioAzione();
     }
 
     /**
@@ -186,6 +172,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ConfigurazioneServizioAzione }
+     */
+    public ConfigurazioneServizioAzione createConfigurazioneServizioAzione() {
+        return new ConfigurazioneServizioAzione();
+    }
+
+    /**
      * Create an instance of {@link Connettore }
      */
     public Connettore createConnettore() {
@@ -204,6 +197,13 @@ public class ObjectFactory {
      */
     public IdPortaDominio createIdPortaDominio() {
         return new IdPortaDominio();
+    }
+
+    /**
+     * Create an instance of {@link ConfigurazioneServizio }
+     */
+    public ConfigurazioneServizio createConfigurazioneServizio() {
+        return new ConfigurazioneServizio();
     }
 
     /**

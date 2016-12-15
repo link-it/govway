@@ -26,6 +26,7 @@ package org.openspcoop2.pdd.core.autorizzazione.pa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziServizioNotFound;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.protocol.registry.EsitoAutorizzazioneRegistro;
@@ -70,7 +71,8 @@ public class AutorizzazioneBusteRegistro extends AbstractCore implements IAutori
     		
     		EsitoAutorizzazioneRegistro esitoAutorizzazione = reg.isFruitoreServizioAutorizzato(pdd, identitaServizioApplicativoFruitore, idSoggetto, idServizio);
     		if(esitoAutorizzazione.isServizioAutorizzato()==false){
-    			String errore = "Il soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome() +" non e' autorizzato ad invocare il servizio "+idServizio.getTipoServizio()+"/"+idServizio.getServizio()+" erogato da "+idServizio.getSoggettoErogatore().getTipo()+"/"+idServizio.getSoggettoErogatore().getNome();
+    			String errore = "Il soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome() +" non e' autorizzato ad invocare il servizio "+
+    					IDServizioFactory.getInstance().getUriFromIDServizio(idServizio);
     			if(esitoAutorizzazione.getDetails()!=null){
     				errore = errore + " ("+esitoAutorizzazione.getDetails()+")";
     			}

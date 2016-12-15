@@ -23,6 +23,7 @@ CREATE TABLE tracce
 	profilo_collaborazione_meta VARCHAR(255),
 	servizio_correlato VARCHAR(255),
 	tipo_servizio_correlato VARCHAR(255),
+	versione_servizio_correlato INT,
 	collaborazione VARCHAR(255),
 	versione_servizio INT,
 	servizio VARCHAR(255),

@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.openspcoop2.core.id.IDSoggetto;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,8 +54,6 @@ import java.util.List;
  * 		&lt;attribute name="pd-url-prefix-rewriter" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="pa-url-prefix-rewriter" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
- * 		&lt;attribute name="old-nome-for-update" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="old-tipo-for-update" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -94,30 +93,12 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
 		this.id=new Long(-1);
   }
 
-  public String getOldNomeForUpdate() {
-    if(this.oldNomeForUpdate!=null && ("".equals(this.oldNomeForUpdate)==false)){
-		return this.oldNomeForUpdate.trim();
-	}else{
-		return null;
-	}
-
+  public IDSoggetto getOldIDSoggettoForUpdate() {
+    return this.oldIDSoggettoForUpdate;
   }
 
-  public void setOldNomeForUpdate(String oldNomeForUpdate) {
-    this.oldNomeForUpdate=oldNomeForUpdate;
-  }
-
-  public String getOldTipoForUpdate() {
-    if(this.oldTipoForUpdate!=null && ("".equals(this.oldTipoForUpdate)==false)){
-		return this.oldTipoForUpdate.trim();
-	}else{
-		return null;
-	}
-
-  }
-
-  public void setOldTipoForUpdate(String oldTipoForUpdate) {
-    this.oldTipoForUpdate=oldTipoForUpdate;
+  public void setOldIDSoggettoForUpdate(IDSoggetto oldIDSoggettoForUpdate) {
+    this.oldIDSoggettoForUpdate=oldIDSoggettoForUpdate;
   }
 
   public void addPortaDelegata(PortaDelegata portaDelegata) {
@@ -312,10 +293,7 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected String oldNomeForUpdate;
-
-  @javax.xml.bind.annotation.XmlTransient
-  protected String oldTipoForUpdate;
+  protected IDSoggetto oldIDSoggettoForUpdate;
 
   @XmlElement(name="porta-delegata",required=true,nillable=false)
   protected List<PortaDelegata> portaDelegata = new ArrayList<PortaDelegata>();

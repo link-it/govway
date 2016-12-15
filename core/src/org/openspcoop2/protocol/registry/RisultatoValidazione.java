@@ -54,6 +54,8 @@ public class RisultatoValidazione implements java.io.Serializable {
 	private String tipoServizioCorrelato;
 	/** Nome dell'eventuale servizio correlato associato ad un normale servizio */
 	private String servizioCorrelato;
+	/** Nome dell'eventuale servizio correlato associato ad un normale servizio */
+	private Integer versioneServizioCorrelato;
 	/** Azione correlata (presente se il servizio trovato non e' correlato, ma l'azione si) */
 	private String azioneCorrelata;
 	/**  Azioni associate al servizio */
@@ -128,7 +130,9 @@ public class RisultatoValidazione implements java.io.Serializable {
 		this.tipoServizioCorrelato = tipoServizioCorrelato;
 	}
 
-
+	public void setVersioneServizioCorrelato(Integer versioneServizioCorrelato) {
+		this.versioneServizioCorrelato = versioneServizioCorrelato;
+	}
 
 
 
@@ -183,6 +187,13 @@ public class RisultatoValidazione implements java.io.Serializable {
 	public String getTipoServizioCorrelato() {
 		return this.tipoServizioCorrelato;
 	}
+
+	public Integer getVersioneServizioCorrelato() {
+		return this.versioneServizioCorrelato;
+	}
+
+
+
 
 
 

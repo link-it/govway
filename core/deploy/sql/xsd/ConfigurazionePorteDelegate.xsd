@@ -86,13 +86,12 @@
                                 <linkit:sql-column-mapping name="id_soggetto_erogatore"/>
                                 <linkit:sql-column-comment><![CDATA[* Soggetto Erogatore *
 tipo/nome per le modalita static
-tipo/pattern per la modalita contentBased/urlBased
 id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="tipo_soggetto_erogatore" type="xsd:string" minOccurs="0">
+                <xsd:element name="tipo_soggetto_erogatore" type="xsd:string">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
@@ -102,7 +101,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="nome_soggetto_erogatore" type="xsd:string" minOccurs="0">
+                <xsd:element name="nome_soggetto_erogatore" type="xsd:string">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
@@ -119,14 +118,13 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_servizio"/>
                                 <linkit:sql-column-comment><![CDATA[* Servizio *
-tipo/nome per le modalita static
-tipo/pattern per la modalita contentBased/urlBased
+tipo/nome/versione per le modalita static
 id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="tipo_servizio" type="xsd:string" minOccurs="0">
+                <xsd:element name="tipo_servizio" type="xsd:string">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
@@ -136,12 +134,22 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="nome_servizio" type="xsd:string" minOccurs="0">
+                <xsd:element name="nome_servizio" type="xsd:string">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome_servizio"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="versione_servizio" type="xsd:int" default="1">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="versione"/>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -435,6 +443,17 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="local_forward"/>
                                 <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="local_forward_pa" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="local_forward_pa"/>
+                                <linkit:sql-column-comment><![CDATA[Nome della PortaApplicativa]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

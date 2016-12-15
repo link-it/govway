@@ -429,6 +429,7 @@ CREATE TABLE servizi_pdd_filtri
 	identificativo_porta_erogatore VARCHAR2(255),
 	tipo_servizio VARCHAR2(255),
 	servizio VARCHAR2(255),
+	versione_servizio NUMBER,
 	azione VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,

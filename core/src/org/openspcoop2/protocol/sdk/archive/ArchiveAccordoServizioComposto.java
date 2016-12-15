@@ -29,6 +29,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioCompostoServizioComponente;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 
 /**
@@ -40,7 +41,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
  */
 public class ArchiveAccordoServizioComposto extends ArchiveAccordoServizioParteComune {
 
-	public static String buildKey(String tipoSoggetto,String nomeSoggetto,String nomeAccordo,String versione) throws ProtocolException{
+	public static String buildKey(String tipoSoggetto,String nomeSoggetto,String nomeAccordo,Integer versione) throws ProtocolException{
 		
 		if(tipoSoggetto==null){
 			throw new ProtocolException("tipoSoggetto non fornito");
@@ -72,7 +73,7 @@ public class ArchiveAccordoServizioComposto extends ArchiveAccordoServizioParteC
 		String tipoSoggetto = "-";
 		String nomeSoggetto = "-";
 		String nomeAccordo = this.accordoServizioParteComune.getNome();
-		String versione = "-";
+		Integer versione = null;
 		if(this.accordoServizioParteComune.getSoggettoReferente()!=null){
 			if(this.accordoServizioParteComune.getSoggettoReferente().getTipo()!=null){
 				tipoSoggetto = this.accordoServizioParteComune.getSoggettoReferente().getTipo();
@@ -153,9 +154,15 @@ public class ArchiveAccordoServizioComposto extends ArchiveAccordoServizioParteC
 			if(sComponente.getNomeSoggetto()==null){
 				throw new ProtocolException("AccordoServizioComposto.servizioComposto.serviziComponente["+i+"].nomeSoggetto non definito");
 			}
-			IDServizio idServizioComponente = new IDServizio(sComponente.getTipoSoggetto(), sComponente.getNomeSoggetto(), 
-					sComponente.getTipo(), sComponente.getNome(), sComponente.getAzione());
-			this.idServiziComponenti.add(idServizioComponente);
+			try{
+				IDServizio idServizioComponente = IDServizioFactory.getInstance().getIDServizioFromValues(sComponente.getTipo(), sComponente.getNome(), 
+						sComponente.getTipoSoggetto(), sComponente.getNomeSoggetto(), 
+						sComponente.getVersione()); 
+				idServizioComponente.setAzione(sComponente.getAzione());
+				this.idServiziComponenti.add(idServizioComponente);
+			}catch(Exception e){
+				throw new ProtocolException(e.getMessage(),e);
+			}
 		}
 		
 	}

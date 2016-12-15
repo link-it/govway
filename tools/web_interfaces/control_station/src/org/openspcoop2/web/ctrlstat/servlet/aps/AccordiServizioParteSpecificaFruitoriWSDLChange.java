@@ -42,9 +42,9 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
@@ -156,22 +156,14 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 
 			// Prendo il nome e il tipo del servizio
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServ);
-			Servizio myServ = asps.getServizio();
-			String nomeservizio = myServ.getNome();
-			String tiposervizio = myServ.getTipo();
-			int provider = asps.getIdSoggetto().intValue();
-
-			// Prendo il nome e il tipo del soggetto
-			Soggetto mySogg = soggettiCore.getSoggettoRegistro(provider);
-			String nomesoggetto = mySogg.getNome();
-			String tiposoggetto = mySogg.getTipo();
-
+			String uriServizio = IDServizioFactory.getInstance().getUriFromAccordo(asps);
+			
 			// Prendo Accordo di servizio parte comune
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
 
 			// Mi calcolo IDServizio, che servirà per recuperare il fruitore una
 			// volta che sarà stato rimosso/aggiunto e se ne sarà perso l'id
-			IDServizio ids = new IDServizio(tiposoggetto, nomesoggetto, tiposervizio, nomeservizio);
+			IDServizio ids = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
 
 			Soggetto mySogg2 = soggettiCore.getSoggettoRegistro(tmpProv);
 			String tmpTitle = mySogg2.getTipo() + "/" + mySogg2.getNome();
@@ -183,7 +175,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
 				lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + tiposervizio + "/" + nomeservizio, 
+				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + uriServizio, 
 						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST ,
 						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ idServ),
 						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+ this.idSoggettoErogatoreDelServizio)
@@ -227,7 +219,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 
 				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
 				lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
-				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + tiposervizio + "/" + nomeservizio, 
+				lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + uriServizio, 
 						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST ,
 						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ idServ),
 						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+ this.idSoggettoErogatoreDelServizio)
@@ -294,7 +286,7 @@ public final class AccordiServizioParteSpecificaFruitoriWSDLChange extends Actio
 
 			lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
 			lstParm.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST));
-			lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + tiposervizio + "/" + nomeservizio, 
+			lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_FUITORI_DI  + uriServizio, 
 					AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_LIST ,
 					new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ idServ),
 					new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+ this.idSoggettoErogatoreDelServizio)

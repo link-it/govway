@@ -641,7 +641,7 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 			}
 			//obj.setSuperUser(ServerProperties.getInstance().getUser());
 			IDPortaApplicativa idPA = this.convertToIdPortaApplicativa(oldId);
-			obj.setOldNomeForUpdate(idPA.getNome());
+			obj.setOldIDPortaApplicativaForUpdate(idPA);
 			((IDriverConfigurazioneCRUD)this.portaApplicativaService.getDriver()).updatePortaApplicativa(obj);
 			this.logEndMethod("update");
 			
@@ -671,7 +671,7 @@ public abstract class PortaApplicativaImpl extends BaseImpl  implements PortaApp
 			}else{
 				//obj.setSuperUser(ServerProperties.getInstance().getUser());
 				IDPortaApplicativa idPA = this.convertToIdPortaApplicativa(oldId);
-				obj.setOldNomeForUpdate(idPA.getNome());
+				obj.setOldIDPortaApplicativaForUpdate(idPA);
 				((IDriverConfigurazioneCRUD)this.portaApplicativaService.getDriver()).updatePortaApplicativa(obj);
 			}
 			this.logEndMethod("updateOrCreate");

@@ -66,7 +66,7 @@ import org.openspcoop2.core.config.PortaDelegataServizio;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.Property;
-import org.openspcoop2.core.config.ProprietaProtocollo;
+import org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.Risposte;
 import org.openspcoop2.core.config.Route;
@@ -843,7 +843,10 @@ public class ValidazioneSemantica {
 					CostantiConfigurazione.ABILITATO+" o "+CostantiConfigurazione.DISABILITATO);
 		
 		// XSD: local-forward: abilitato, disabilitato
-		StatoFunzionalita localForward = pd.getLocalForward();
+		StatoFunzionalita localForward = null;
+		if(pd.getLocalForward()!=null){
+			localForward = pd.getLocalForward().getStato();
+		}
 		if ((localForward != null) && !localForward.equals(CostantiConfigurazione.ABILITATO) && !localForward.equals(CostantiConfigurazione.DISABILITATO))
 			this.errori.add("La funzionalita' 'local-forward' della porta delegata "+idPortaDelegata+" deve assumere i valori: "+
 					CostantiConfigurazione.ABILITATO+" o "+CostantiConfigurazione.DISABILITATO);
@@ -1026,8 +1029,8 @@ public class ValidazioneSemantica {
 		}
 		
 		// Valida SetProtocolProperties
-		for (int j=0; j<pa.sizeProprietaProtocolloList();j++) {
-			ProprietaProtocollo ssp = pa.getProprietaProtocollo(j);
+		for (int j=0; j<pa.sizeProprietaIntegrazioneProtocolloList();j++) {
+			PortaApplicativaProprietaIntegrazioneProtocollo ssp = pa.getProprietaIntegrazioneProtocollo(j);
 			validaProtocolProperty(ssp, idPortaApplicativa);
 		}
 
@@ -2635,7 +2638,7 @@ public class ValidazioneSemantica {
 					CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP);
 	}
 
-	private  void validaProtocolProperty(ProprietaProtocollo ssp, String oggetto) throws DriverConfigurazioneException {
+	private  void validaProtocolProperty(PortaApplicativaProprietaIntegrazioneProtocollo ssp, String oggetto) throws DriverConfigurazioneException {
 		// Controlli sui valori definiti nell'xsd.
 
 		if(ssp.getNome()==null){

@@ -264,8 +264,13 @@ public class ConnettoriDiversiHTTP {
 			checkInformazioneEgov("Proprieta' di trasporto",msg, keyTrasporto, valoreAtteso);
 			
 			// Servizio
-			keyTrasporto = testsuiteProperties.getServizioTrasporto().replace("X-", "").replaceAll("-", "");
+			keyTrasporto = testsuiteProperties.getNomeServizioTrasporto().replace("X-", "").replaceAll("-", "");
 			valoreAtteso = CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY;
+			checkInformazioneEgov("Proprieta' di trasporto",msg, keyTrasporto, valoreAtteso);
+			
+			// VersioneServizio
+			keyTrasporto = testsuiteProperties.getVersioneServizioTrasporto().replace("X-", "").replaceAll("-", "");
+			valoreAtteso = "1";
 			checkInformazioneEgov("Proprieta' di trasporto",msg, keyTrasporto, valoreAtteso);
 			
 			// Azione

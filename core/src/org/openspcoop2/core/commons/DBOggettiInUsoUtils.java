@@ -623,11 +623,7 @@ public class DBOggettiInUsoUtils  {
 	public static String toString(IDAccordoCooperazione idAccordo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean prefix, String separator){
 
 		StringBuffer bf = new StringBuffer();
-		bf.append(idAccordo.getNome());
-		if(idAccordo.getVersione()!=null){
-			bf.append(":");
-			bf.append(idAccordo.getVersione());
-		}
+		bf.append(idAccordo.toString());
 
 		Set<ErrorsHandlerCostant> keys = whereIsInUso.keySet();
 		String msg = bf.toString() + " non eliminabile perch&egrave; :"+separator;
@@ -829,15 +825,7 @@ public class DBOggettiInUsoUtils  {
 	public static String toString(IDAccordo idAccordo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean prefix, String separator){
 
 		StringBuffer bf = new StringBuffer();
-		if(idAccordo.getSoggettoReferente()!=null){
-			bf.append(idAccordo.getSoggettoReferente().toString());
-			bf.append(":");
-		}
-		bf.append(idAccordo.getNome());
-		if(idAccordo.getVersione()!=null){
-			bf.append(":");
-			bf.append(idAccordo.getVersione());
-		}
+		bf.append(idAccordo.toString());
 
 		Set<ErrorsHandlerCostant> keys = whereIsInUso.keySet();
 		String msg = bf.toString() + " non eliminabile perch&egrave; :"+separator;
@@ -1141,49 +1129,10 @@ public class DBOggettiInUsoUtils  {
 		}
 		return isAccordoServizioParteSpecificaInUso(con, tipoDB, idAccordoServizioParteSpecifica, whereIsInUso,nomeMetodo,nomePAGenerataAutomaticamente);
 	}
-	
-	public static boolean isAccordoServizioParteSpecificaInUso(Connection con, String tipoDB, IDAccordo idAccordo, 
-			Map<ErrorsHandlerCostant,List<String>> whereIsInUso,
-			String nomePAGenerataAutomaticamente) throws UtilsException {
-		String nomeMetodo = "isAccordoServizioParteSpecificaInUso(IDAccordo)";
-		long idAccordoServizioParteSpecifica = -1;
-		try {
-			idAccordoServizioParteSpecifica = DBUtils.getIdAccordoServizioParteSpecifica(idAccordo, con, tipoDB);
-			if(idAccordoServizioParteSpecifica<=0){
-				throw new UtilsException("Accordi di Servizio Parte Specifica con id ["+idAccordo.toString()+"] non trovato");
-			}
-		}catch (Exception se) {
-			throw new UtilsException("[DBOggettiInUsoUtils::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
-		}
-		return isAccordoServizioParteSpecificaInUso(con, tipoDB, idAccordoServizioParteSpecifica, whereIsInUso,nomeMetodo,nomePAGenerataAutomaticamente);
-	}
-
 	public static String toString(IDServizio idServizio, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean prefix, String separator){
-		StringBuffer bf = new StringBuffer();
-		bf.append(idServizio.getSoggettoErogatore().toString());
-		bf.append("_");
-		bf.append(idServizio.getTipoServizio());
-		bf.append("/");
-		bf.append(idServizio.getServizio());
-		return _toStringServizio(bf.toString(), whereIsInUso,prefix,separator);
-	}
-	public static String toStringAccordoServizioParteSpecifica(IDAccordo idAccordo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean prefix, String separator){
-		StringBuffer bf = new StringBuffer();
-		if(idAccordo.getSoggettoReferente()!=null){
-			bf.append(idAccordo.getSoggettoReferente().toString());
-			bf.append(":");
-		}
-		bf.append(idAccordo.getNome());
-		if(idAccordo.getVersione()!=null){
-			bf.append(":");
-			bf.append(idAccordo.getVersione());
-		}
-		return _toStringServizio(bf.toString(), whereIsInUso,prefix,separator);
-	}
-	private static String _toStringServizio(String nome, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean prefix, String separator){
-
+		
 		Set<ErrorsHandlerCostant> keys = whereIsInUso.keySet();
-		String msg = nome + " non eliminabile perch&egrave; :"+separator;
+		String msg = idServizio.toString() + " non eliminabile perch&egrave; :"+separator;
 		if(prefix==false){
 			msg = "";
 		}

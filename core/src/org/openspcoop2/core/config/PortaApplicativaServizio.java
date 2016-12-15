@@ -37,6 +37,7 @@ import java.io.Serializable;
  * &lt;complexType name="porta-applicativa-servizio">
  * 		&lt;attribute name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" use="required"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -85,6 +86,14 @@ public class PortaApplicativaServizio extends org.openspcoop2.utils.beans.BaseBe
     this.nome = nome;
   }
 
+  public java.lang.Integer getVersione() {
+    return this.versione;
+  }
+
+  public void setVersione(java.lang.Integer versione) {
+    this.versione = versione;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -99,5 +108,9 @@ public class PortaApplicativaServizio extends org.openspcoop2.utils.beans.BaseBe
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)
   protected java.lang.String nome;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
+  @XmlAttribute(name="versione",required=true)
+  protected java.lang.Integer versione;
 
 }

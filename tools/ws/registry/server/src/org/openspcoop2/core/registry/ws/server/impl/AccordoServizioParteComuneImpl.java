@@ -93,9 +93,8 @@ public abstract class AccordoServizioParteComuneImpl extends BaseImpl  implement
 		}
 		return this.buildIDAccordo(id.getNome(), id.getVersione(), idSoggettoReferente);
 	}
-	private IDAccordo buildIDAccordo(String nome, String versione, IDSoggetto idSoggetto) throws DriverRegistroServiziException{
-		IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromValues(nome, idSoggetto, versione);
-		return idAccordo;
+	private IDAccordo buildIDAccordo(String nome, Integer versione, IDSoggetto idSoggetto) throws DriverRegistroServiziException{
+		return IDAccordoFactory.getInstance().getIDAccordoFromValues(nome, idSoggetto, versione);
 	}
 
 	private IdAccordoServizioParteComune convertToIDAccordoWS(IDAccordo id) throws DriverRegistroServiziException{
@@ -160,7 +159,7 @@ public abstract class AccordoServizioParteComuneImpl extends BaseImpl  implement
 			returnTypes.add(String.class);
 			
 			sqlQueryObject.addSelectField(CostantiDB.ACCORDI, "versione");
-			returnTypes.add(String.class);
+			returnTypes.add(Integer.class);
 		}
 		
 		
@@ -181,7 +180,7 @@ public abstract class AccordoServizioParteComuneImpl extends BaseImpl  implement
 			for (List<Object> list : listaRisultati) {
 				Long idReferente = (Long)list.get(0);
 				String name = (String)list.get(1);
-				String versione = (String)list.get(2);
+				Integer versione = (Integer)list.get(2);
 				IDSoggetto idSoggettoReferente = null;
 				if(idReferente!=null && idReferente>0){
 					idSoggettoReferente = driverDB.getIdSoggetto(idReferente);

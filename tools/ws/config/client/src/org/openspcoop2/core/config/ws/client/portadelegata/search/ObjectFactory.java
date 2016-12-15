@@ -48,6 +48,7 @@ public class ObjectFactory {
     private final static QName _PortaDelegataSoggettoErogatore_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "porta-delegata-soggetto-erogatore");
     private final static QName _PortaDelegataServizio_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "porta-delegata-servizio");
     private final static QName _PortaDelegataAzione_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "porta-delegata-azione");
+    private final static QName _PortaDelegataLocalForward_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "porta-delegata-local-forward");
     private final static QName _MtomProcessorFlow_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "mtom-processor-flow");
     private final static QName _MtomProcessor_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "mtom-processor");
     private final static QName _ValidazioneContenutiApplicativi_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "validazione-contenuti-applicativi");
@@ -112,6 +113,14 @@ public class ObjectFactory {
      */
     public PortaDelegataAzione createPortaDelegataAzione() {
         return new PortaDelegataAzione();
+    }
+
+    /**
+     * Create an instance of {@link PortaDelegataLocalForward }
+     * 
+     */
+    public PortaDelegataLocalForward createPortaDelegataLocalForward() {
+        return new PortaDelegataLocalForward();
     }
 
     /**
@@ -380,6 +389,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "porta-delegata-azione")
     public JAXBElement<PortaDelegataAzione> createPortaDelegataAzione(PortaDelegataAzione value) {
         return new JAXBElement<PortaDelegataAzione>(ObjectFactory._PortaDelegataAzione_QNAME, PortaDelegataAzione.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link PortaDelegataLocalForward }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "porta-delegata-local-forward")
+    public JAXBElement<PortaDelegataLocalForward> createPortaDelegataLocalForward(PortaDelegataLocalForward value) {
+        return new JAXBElement<PortaDelegataLocalForward>(ObjectFactory._PortaDelegataLocalForward_QNAME, PortaDelegataLocalForward.class, null, value);
     }
 
     /**

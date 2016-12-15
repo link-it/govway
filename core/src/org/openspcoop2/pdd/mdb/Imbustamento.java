@@ -269,9 +269,9 @@ public class Imbustamento extends GenericLib{
 			busta.setIdentificativoPortaDestinatario(idServizio.getSoggettoErogatore().getCodicePorta());
 			busta.setIndirizzoDestinatario(imbustamentoMsg.getIndirizzoSoggettoDestinatario());
 			
-			busta.setVersioneServizio(idServizio.getVersioneServizio());
-			busta.setServizio(idServizio.getServizio());
-			busta.setTipoServizio(idServizio.getTipoServizio());
+			busta.setVersioneServizio(idServizio.getVersione());
+			busta.setServizio(idServizio.getNome());
+			busta.setTipoServizio(idServizio.getTipo());
 			busta.setAzione(idServizio.getAzione());
 
 			// mittente della richiesta
@@ -708,8 +708,11 @@ public class Imbustamento extends GenericLib{
 								((StatelessMessage)openspcoopstate.getStatoRichiesta()).setBusta(busta);
 							}
 						}
-						profiloCollaborazione.asincronoSimmetrico_registraRichiestaInviata(idMessageRequest,busta.getCollaborazione(),infoServizio.getTipoServizioCorrelato(),
-								infoServizio.getServizioCorrelato(),richiestaDelegata.isRicevutaAsincrona(),infoIntegrazione,scadenzaBusta);
+						profiloCollaborazione.asincronoSimmetrico_registraRichiestaInviata(idMessageRequest,busta.getCollaborazione(),
+								infoServizio.getTipoServizioCorrelato(),
+								infoServizio.getServizioCorrelato(),
+								infoServizio.getVersioneServizioCorrelato(),
+								richiestaDelegata.isRicevutaAsincrona(),infoIntegrazione,scadenzaBusta);
 					}catch(ProtocolException e){
 						msgDiag.logErroreGenerico(e, "profiloDiCollaborazione.asincronoSimmetrico_registraRichiestaInviata");
 						openspcoopstate.releaseResource();

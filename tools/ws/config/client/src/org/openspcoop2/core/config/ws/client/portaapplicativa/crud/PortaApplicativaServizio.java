@@ -23,6 +23,7 @@ package org.openspcoop2.core.config.ws.client.portaapplicativa.crud;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -38,6 +39,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence&gt;
  *         &lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -49,12 +51,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "porta-applicativa-servizio", propOrder = {
     "tipo",
-    "nome"
+    "nome",
+    "versione"
 })
 public class PortaApplicativaServizio {
 
     protected String tipo;
     protected String nome;
+    @XmlSchemaType(name = "unsignedInt")
+    protected Long versione;
 
     /**
      * Gets the value of the tipo property.
@@ -102,6 +107,30 @@ public class PortaApplicativaServizio {
      */
     public void setNome(String value) {
         this.nome = value;
+    }
+
+    /**
+     * Gets the value of the versione property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Long }
+     *     
+     */
+    public Long getVersione() {
+        return this.versione;
+    }
+
+    /**
+     * Sets the value of the versione property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Long }
+     *     
+     */
+    public void setVersione(Long value) {
+        this.versione = value;
     }
 
 }

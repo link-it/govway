@@ -40,7 +40,7 @@ import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
-import org.openspcoop2.core.config.ProprietaProtocollo;
+import org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
@@ -50,11 +50,11 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -266,12 +266,10 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 					virtuale = this.soggettiCore.getSoggettoRegistro(idSoggettoVirtuale);
 				}
 				IDSoggetto idSO = new IDSoggetto(proprietario.getTipo(), proprietario.getNome());
-				IDServizio idSE = new IDServizio(idSO);
 				String [] tmp = servizio.split(" ");
-//				IDServizio idServizio = new IDServizio(tmp[0].split("/")[0],tmp[0].split("/")[1],
-//						tmp[1].split("/")[0],tmp[1].split("/")[1]);
-				idSE.setTipoServizio(tmp[1].split("/")[0]);
-				idSE.setServizio(tmp[1].split("/")[1]);
+				IDServizio idSE = IDServizioFactory.getInstance().getIDServizioFromValues(tmp[1].split("/")[0], tmp[1].split("/")[1], 
+						idSO, Integer.parseInt(tmp[1].split("/")[2]));
+				
 				if (azione!=null && !"".equals(azione) && !"-".equals(azione) ) {
 					idSE.setAzione(azione);
 				}
@@ -300,14 +298,10 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 					PortaApplicativaServizio pa_servizio_precedente = pa.getServizio();
 					PortaApplicativaAzione pa_azione = pa.getAzione();
 
-					IDServizio idServPrec = new IDServizio();
-					if (pa_servizio_precedente != null) {
-						idServPrec.setTipoServizio(pa_servizio_precedente.getTipo());
-						idServPrec.setServizio(pa_servizio_precedente.getNome());
-					}
+					IDServizio idServPrec = IDServizioFactory.getInstance().getIDServizioFromValues(pa_servizio_precedente.getTipo(), 
+							pa_servizio_precedente.getNome(), idSO, pa_servizio_precedente.getVersione());
 					if (pa_azione != null)
 						idServPrec.setAzione(pa_azione.getNome());
-					idServPrec.setSoggettoErogatore(idSO);
 
 					// se e' cambiato il servizio e/o azione
 					// allora devo controllare se esistono altre porte
@@ -325,7 +319,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				}
 
 				if (giaRegistrato) {
-					this.pd.setMessage("Esiste gia' una Porta Applicativa per il " + "Servizio [" + idSE.getTipoServizio() + "/" + idSE.getServizio() + 
+					this.pd.setMessage("Esiste gia' una Porta Applicativa per il " + "Servizio [" + idSE.getTipo() + "/" + idSE.getNome() +  "/" + idSE.getVersione()+
 							"] " + "con Azione [" + (idSE.getAzione() != null ? idSE.getAzione() : "not set") + 
 							"] " + "erogato dal Soggetto " + (!soggvirt.equals("-") ? "Virtuale" : "") + " [" 
 							+ (!soggvirt.equals("-") ? virtuale.getTipo() + "/" + virtuale.getNome() : idSE.getSoggettoErogatore().toString()) + "]");
@@ -483,8 +477,8 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(idInt);
 				String nomeporta = pa.getNome();
 
-				for (int i = 0; i < pa.sizeProprietaProtocolloList(); i++) {
-					ProprietaProtocollo tmpProp = pa.getProprietaProtocollo(i);
+				for (int i = 0; i < pa.sizeProprietaIntegrazioneProtocolloList(); i++) {
+					PortaApplicativaProprietaIntegrazioneProtocollo tmpProp = pa.getProprietaIntegrazioneProtocollo(i);
 					if (nome.equals(tmpProp.getNome())) {
 						giaRegistrato = true;
 						break;
@@ -1481,7 +1475,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 						de = new DataElement();
 						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_LIST, pIdSogg, pId );
 						if (contaListe) {
-							int numProp = pa.sizeProprietaProtocolloList();
+							int numProp = pa.sizeProprietaIntegrazioneProtocolloList();
 							ServletUtils.setDataElementVisualizzaLabel(de,new Long(numProp));
 						} else
 							ServletUtils.setDataElementVisualizzaLabel(de);
@@ -1508,11 +1502,9 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 						int idServ = pas.getId().intValue();
 						Soggetto soggEr = null;
 						AccordoServizioParteSpecifica asps = null;
-						Servizio servizio = null;
 						try {
 							soggEr = this.soggettiCore.getSoggettoRegistro(idSoggEr);
 							asps = this.apsCore.getAccordoServizioParteSpecifica(idServ);
-							servizio = asps.getServizio();
 						} catch (DriverRegistroServiziNotFound drsnf) {
 							// ok
 						} catch (DriverRegistroServiziException drse) {
@@ -1524,31 +1516,17 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 							tmpAz = "-" + paa.getNome();
 						de = new DataElement();
 						Parameter pId2 = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ idServ);
-						Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, servizio.getNome());
-						Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, servizio.getTipo());
+						Parameter pNomeServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, asps.getNome());
+						Parameter pTipoServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, asps.getTipo());
+						Parameter pVersioneServizio = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE, asps.getVersione().intValue()+"");
 
 						de.setUrl(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE, 
-								pId2, pNomeServizio, pTipoServizio);
-						try {
-							de.setValue(soggEr.getTipo() + "/" + soggEr.getNome() + "-" + servizio.getTipo() + "/" + servizio.getNome() + tmpAz);
-						} catch (Exception eDE) {
-							String tipoSE = null;
-							String nomeSE = null;
-							String tipoSERV = null;
-							String nomeSERV = null;
-							if (soggEr != null) {
-								tipoSE = soggEr.getTipo();
-								nomeSE = soggEr.getNome();
-							}
-							if (servizio != null) {
-								tipoSERV = servizio.getTipo();
-								nomeSERV = servizio.getNome();
-							}
-							String v = tipoSE + "/" + nomeSE + "-" + tipoSERV + "/" + nomeSERV;
-							if (tmpAz != null)
-								v = v + tmpAz;
-							de.setValue(v);
-						}
+								pId2, pNomeServizio, pTipoServizio, pVersioneServizio);
+						IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(asps.getTipo(), asps.getNome(), 
+								soggEr.getTipo(),soggEr.getNome(), 
+								asps.getVersione());
+						de.setValue(IDServizioFactory.getInstance().getUriFromIDServizio(idServizio) + tmpAz);
+
 						e.addElement(de);
 					}
 
@@ -1591,7 +1569,7 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 	}
 
 	// Prepara la lista di  properties delle porte applicative
-	public void preparePorteAppPropList(String nomePorta, ISearch ricerca, List<ProprietaProtocollo> lista)
+	public void preparePorteAppPropList(String nomePorta, ISearch ricerca, List<PortaApplicativaProprietaIntegrazioneProtocollo> lista)
 			throws Exception {
 		try {
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
@@ -1673,9 +1651,9 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
 
 			if (lista != null) {
-				Iterator<ProprietaProtocollo> it = lista.iterator();
+				Iterator<PortaApplicativaProprietaIntegrazioneProtocollo> it = lista.iterator();
 				while (it.hasNext()) {
-					ProprietaProtocollo ssp = it.next();
+					PortaApplicativaProprietaIntegrazioneProtocollo ssp = it.next();
 
 					Vector<DataElement> e = new Vector<DataElement>();
 

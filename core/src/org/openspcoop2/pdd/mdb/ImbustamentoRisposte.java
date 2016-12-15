@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
@@ -126,20 +127,13 @@ public class ImbustamentoRisposte extends GenericLib {
 		IDSoggetto soggettoFruitore = null;
 		IDServizio idServizio = null;
 		String servizioApplicativo = null;
-		IDServizio servizioHeaderIntegrazione = null;
-		if(bustaRichiesta!=null){
-			servizioHeaderIntegrazione = new IDServizio();
-			// Per ricambiare il servizio in correlato per AsincronoAsimmetrico, richiestaStato
-			servizioHeaderIntegrazione.setTipoServizio(bustaRichiesta.getTipoServizio());
-			servizioHeaderIntegrazione.setServizio(bustaRichiesta.getServizio());
-			servizioHeaderIntegrazione.setAzione(bustaRichiesta.getAzione());
-		}
 		String profiloGestione = null;
 		String servizioApplicativoFruitore = null;
 		String servizioApplicativoErogatore = null;
 		String idCorrelazioneApplicativa = null;
 		String idCorrelazioneApplicativaRisposta = null;
-
+		IDSoggetto soggettoErogatoreServizioHeaderIntegrazione = null;
+		
 		if(richiestaApplicativa!=null){
 			identitaPdD = richiestaApplicativa.getDominio();
 			idModuloInAttesa = richiestaApplicativa.getIdModuloInAttesa();
@@ -147,9 +141,7 @@ public class ImbustamentoRisposte extends GenericLib {
 			soggettoFruitore = richiestaApplicativa.getSoggettoFruitore();
 			idServizio = richiestaApplicativa.getIDServizio();
 			servizioApplicativo = richiestaApplicativa.getServizioApplicativo();
-			if(servizioHeaderIntegrazione!=null){
-				servizioHeaderIntegrazione.setSoggettoErogatore(idServizio.getSoggettoErogatore());
-			}
+			soggettoErogatoreServizioHeaderIntegrazione = idServizio.getSoggettoErogatore();
 			profiloGestione = richiestaApplicativa.getProfiloGestione();
 			servizioApplicativoFruitore = richiestaApplicativa.getIdentitaServizioApplicativoFruitore();
 			servizioApplicativoErogatore = richiestaApplicativa.getServizioApplicativo();
@@ -162,14 +154,29 @@ public class ImbustamentoRisposte extends GenericLib {
 			soggettoFruitore = richiestaDelegata.getIdSoggettoFruitore();
 			idServizio = richiestaDelegata.getIdServizio();
 			servizioApplicativo = richiestaDelegata.getServizioApplicativo();
-			if(servizioHeaderIntegrazione!=null){
-				servizioHeaderIntegrazione.setSoggettoErogatore(idServizio.getSoggettoErogatore());
-			}
+			soggettoErogatoreServizioHeaderIntegrazione = idServizio.getSoggettoErogatore();
 			profiloGestione = richiestaDelegata.getProfiloGestione();
 			servizioApplicativoFruitore = richiestaDelegata.getServizioApplicativo();
 			idCorrelazioneApplicativa = richiestaDelegata.getIdCorrelazioneApplicativa();
 			idCorrelazioneApplicativaRisposta = richiestaDelegata.getIdCorrelazioneApplicativaRisposta();
 		}
+		
+		IDServizio servizioHeaderIntegrazione = null;
+		if(bustaRichiesta!=null){
+			try{
+				servizioHeaderIntegrazione = IDServizioFactory.getInstance().getIDServizioFromValues(bustaRichiesta.getTipoServizio(), bustaRichiesta.getServizio(), 
+						soggettoErogatoreServizioHeaderIntegrazione, bustaRichiesta.getVersioneServizio());
+				// Per ricambiare il servizio in correlato per AsincronoAsimmetrico, richiestaStato
+				servizioHeaderIntegrazione.setAzione(bustaRichiesta.getAzione());
+			}catch(Exception e){
+				msgDiag.logErroreGenerico(e, "IDServizioFactory.getIDServizioFromValues"); 
+				openspcoopstate.releaseResource(); 
+				esito.setEsitoInvocazione(false); 
+				esito.setStatoInvocazioneErroreNonGestito(e); 
+				return esito;
+			}
+		}
+		
 		msgDiag.mediumDebug("Profilo di gestione ["+ImbustamentoRisposte.ID_MODULO+"] della busta: "+profiloGestione);
 		msgDiag.setDominio(identitaPdD);  // imposto anche il dominio nel msgDiag
 

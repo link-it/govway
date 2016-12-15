@@ -35,6 +35,7 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -48,6 +49,7 @@ import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.information_missing.Openspcoop2;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -80,6 +82,7 @@ public class ImporterInformationMissingUtils {
 
 	private IDAccordoCooperazioneFactory idAccordoCooperazioneFactory = null;
 	private IDAccordoFactory idAccordoFactory = null;
+	private IDServizioFactory idServizioFactory = null;
 	private ImportInformationMissingCollection importInformationMissingCollection = null;
 	private boolean validateDocuments = false;
 	private IProtocolFactory<?> protocolFactory;
@@ -92,6 +95,7 @@ public class ImporterInformationMissingUtils {
 			boolean validateDocuments,IProtocolFactory<?> protocolFactory, String userLogin, Archive archive) throws Exception{
 		this.idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
 		this.idAccordoFactory = IDAccordoFactory.getInstance();
+		this.idServizioFactory = IDServizioFactory.getInstance();
 		this.importInformationMissingCollection = importInformationMissingCollection;
 		this.validateDocuments = validateDocuments;
 		this.protocolFactory = protocolFactory;
@@ -791,7 +795,7 @@ public class ImporterInformationMissingUtils {
 			// *** campi da verificare ***
 			
 			IdSoggetto acSoggettoReferente = ac.getSoggettoReferente();
-			String versione = ac.getVersione();
+			Integer versione = ac.getVersione();
 			if( (acSoggettoReferente==null || acSoggettoReferente.getTipo()==null || acSoggettoReferente.getNome()==null) 
 					|| 
 					versione==null){
@@ -833,7 +837,7 @@ public class ImporterInformationMissingUtils {
 				// versione
 				if(versione==null){
 					if(importInformationMissing!=null && importInformationMissing.getVersione()!=null){
-						ac.setVersione(importInformationMissing.getVersione()+"");
+						ac.setVersione(importInformationMissing.getVersione());
 					}else{
 						infoException.setMissingInfoVersione(true);
 						throwException = true;
@@ -902,7 +906,7 @@ public class ImporterInformationMissingUtils {
 			// *** campi da verificare ***
 			
 			IdSoggetto aspcSoggettoReferente = aspc.getSoggettoReferente();
-			String versione = aspc.getVersione();
+			Integer versione = aspc.getVersione();
 			boolean informazioniProfiloServiziPresenti = this.isInformazioniProfiloServiziPresenti(aspc,checkCorrelazioneAsincrona);
 			String uriAccordoCooperazione = null;
 			if(aspc.getServizioComposto()!=null){
@@ -957,7 +961,7 @@ public class ImporterInformationMissingUtils {
 				// versione
 				if(versione==null){
 					if(importInformationMissing!=null && importInformationMissing.getVersione()!=null){
-						aspc.setVersione(importInformationMissing.getVersione()+"");
+						aspc.setVersione(importInformationMissing.getVersione());
 					}else{
 						infoException.setMissingInfoVersione(true);
 						throwException = true;
@@ -1133,7 +1137,7 @@ public class ImporterInformationMissingUtils {
 		
 		// *** object id ***
 		AccordoServizioParteSpecifica asps = archiveAsps.getAccordoServizioParteSpecifica();
-		String uri = this.idAccordoFactory.getUriFromAccordo(asps);
+		String uri = this.idServizioFactory.getUriFromAccordo(asps);
 		String objectId = "[[ASPS]]"+uri; 
 		String objectIdDescription = "Accordo di Servizio Parte Specifica ["+uri+"]";
 		if(asps.getAccordoServizioParteComune()!=null && !"".equals(asps.getAccordoServizioParteComune().trim())){
@@ -1191,9 +1195,9 @@ public class ImporterInformationMissingUtils {
 			
 			
 			// *** campi da verificare ***
-			String tipoSoggettoErogatore = asps.getServizio().getTipoSoggettoErogatore();
-			String nomeSoggettoErogatore = asps.getServizio().getNomeSoggettoErogatore();
-			String versione = asps.getVersione();
+			String tipoSoggettoErogatore = asps.getTipoSoggettoErogatore();
+			String nomeSoggettoErogatore = asps.getNomeSoggettoErogatore();
+			Integer versione = asps.getVersione();
 								
 			if(tipoSoggettoErogatore==null || nomeSoggettoErogatore==null || versione==null || aspc==null ){
 				
@@ -1221,8 +1225,8 @@ public class ImporterInformationMissingUtils {
 								throw new ProtocolException("Il Soggetto "+importInformationMissing.getSoggetto().toString()+" non esiste (indicato in ImportInformationMissing parameter??)");
 							}
 						}
-						asps.getServizio().setTipoSoggettoErogatore(importInformationMissing.getSoggetto().getTipo());
-						asps.getServizio().setNomeSoggettoErogatore(importInformationMissing.getSoggetto().getNome());
+						asps.setTipoSoggettoErogatore(importInformationMissing.getSoggetto().getTipo());
+						asps.setNomeSoggettoErogatore(importInformationMissing.getSoggetto().getNome());
 //						if(asps.getServizio().getConnettore().getNome()==null){
 //							String nomeConn = "CNT_" + importInformationMissing.getSoggetto().getTipo() + "/" + importInformationMissing.getSoggetto().getNome() + "_" +
 //									asps.getServizio().getTipo() + "/" + asps.getServizio().getNome();
@@ -1237,7 +1241,7 @@ public class ImporterInformationMissingUtils {
 				// versione
 				if(versione==null){
 					if(importInformationMissing!=null && importInformationMissing.getVersione()!=null){
-						asps.setVersione(importInformationMissing.getVersione()+"");
+						asps.setVersione(importInformationMissing.getVersione());
 					}else{
 						infoException.setMissingInfoVersione(true);
 						throwException = true;
@@ -1289,8 +1293,8 @@ public class ImporterInformationMissingUtils {
 				
 				// *** Verifica portType riferito ***
 				if(importInformationMissing!=null && importInformationMissing.getPortTypeImplemented()!=null){
-					if(asps.getPortType()!=null && asps.getPortType().equals(asps.getServizio().getNome())){
-						asps.getServizio().setNome(importInformationMissing.getPortTypeImplemented());
+					if(asps.getPortType()!=null && asps.getPortType().equals(asps.getNome())){
+						asps.setNome(importInformationMissing.getPortTypeImplemented());
 					}
 					asps.setPortType(importInformationMissing.getPortTypeImplemented());
 				}
@@ -1332,8 +1336,8 @@ public class ImporterInformationMissingUtils {
 		// Comprensione attraverso tipologia
 		if(correlato==null){
 			TipologiaServizio tipologiaServizio = TipologiaServizio.NORMALE;
-			if(asps.getServizio()!=null){
-				tipologiaServizio = asps.getServizio().getTipologiaServizio();
+			if(asps!=null){
+				tipologiaServizio = asps.getTipologiaServizio();
 			}
 			correlato = TipologiaServizio.CORRELATO.equals(tipologiaServizio);
 		}
@@ -1354,8 +1358,8 @@ public class ImporterInformationMissingUtils {
 		// Comprensione attraverso tipologia
 		if(correlato==null){
 			TipologiaServizio tipologiaServizio = TipologiaServizio.NORMALE;
-			if(asps.getServizio()!=null){
-				tipologiaServizio = asps.getServizio().getTipologiaServizio();
+			if(asps!=null){
+				tipologiaServizio = asps.getTipologiaServizio();
 			}
 			correlato = TipologiaServizio.CORRELATO.equals(tipologiaServizio);
 		}
@@ -1486,11 +1490,11 @@ public class ImporterInformationMissingUtils {
 		
 		// *** object id ***
 		Fruitore fruitore = archiveFruitore.getFruitore();
-		IDAccordo asps = archiveFruitore.getIdAccordoServizioParteSpecifica();
-		String uri = fruitore.getTipo()+"/"+fruitore.getNome()+"_"+this.idAccordoFactory.getUriFromIDAccordo(asps);
+		IDServizio asps = archiveFruitore.getIdAccordoServizioParteSpecifica();
+		String uri = fruitore.getTipo()+"/"+fruitore.getNome()+"_"+this.idServizioFactory.getUriFromIDServizio(asps);
 		String objectId = "[[Fruitore]]"+uri; 
 		String objectIdDescription = "Fruitore ["+fruitore.getTipo()+"/"+fruitore.getNome()
-				+"] dell'Accordo di Servizio Parte Specifica ["+this.idAccordoFactory.getUriFromIDAccordo(asps)+"]";
+				+"] dell'Accordo di Servizio Parte Specifica ["+this.idServizioFactory.getUriFromIDServizio(asps)+"]";
 		ImportInformationMissing importInformationMissing = null;
 		if(this.importInformationMissingCollection!=null){
 			importInformationMissing = this.importInformationMissingCollection.get(objectId);
@@ -1502,11 +1506,11 @@ public class ImporterInformationMissingUtils {
 			// *** campi da verificare ***
 			String tipoSoggettoErogatore = null;
 			String nomeSoggettoErogatore = null;
-			if(asps.getSoggettoReferente()!=null){
-				tipoSoggettoErogatore = asps.getSoggettoReferente().getTipo();
-				nomeSoggettoErogatore = asps.getSoggettoReferente().getNome();
+			if(asps.getSoggettoErogatore()!=null){
+				tipoSoggettoErogatore = asps.getSoggettoErogatore().getTipo();
+				nomeSoggettoErogatore = asps.getSoggettoErogatore().getNome();
 			}
-			String versione = asps.getVersione();
+			Integer versione = asps.getVersione();
 								
 			if(tipoSoggettoErogatore==null || nomeSoggettoErogatore==null || versione==null ){
 				
@@ -1534,8 +1538,8 @@ public class ImporterInformationMissingUtils {
 								throw new ProtocolException("Il Soggetto "+importInformationMissing.getSoggetto().toString()+" non esiste (indicato in ImportInformationMissing parameter??)");
 							}
 						}
-						if(asps.getSoggettoReferente()==null){
-							asps.setSoggettoReferente(importInformationMissing.getSoggetto());
+						if(asps.getSoggettoErogatore()==null){
+							asps.setSoggettoErogatore(importInformationMissing.getSoggetto());
 						}
 					}else{
 						infoException.setMissingInfoSoggetto(true);
@@ -1546,7 +1550,7 @@ public class ImporterInformationMissingUtils {
 				// versione
 				if(versione==null){
 					if(importInformationMissing!=null && importInformationMissing.getVersione()!=null){
-						asps.setVersione(importInformationMissing.getVersione()+"");
+						asps.setVersione(importInformationMissing.getVersione());
 					}else{
 						infoException.setMissingInfoVersione(true);
 						throwException = true;
@@ -1573,7 +1577,7 @@ public class ImporterInformationMissingUtils {
 				if(this.archive.getAccordiServizioParteSpecifica()!=null && this.archive.getAccordiServizioParteSpecifica().size()>0){
 					for (int i = 0; i < this.archive.getAccordiServizioParteSpecifica().size(); i++) {
 						ArchiveAccordoServizioParteSpecifica archiveAccordo = this.archive.getAccordiServizioParteSpecifica().get(i);
-						IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromAccordo(archiveAccordo.getAccordoServizioParteSpecifica());
+						IDServizio idAccordo = this.idServizioFactory.getIDServizioFromAccordo(archiveAccordo.getAccordoServizioParteSpecifica());
 						if(idAccordo.equals(asps)){
 							found = true;
 							accordoAsps = archiveAccordo.getAccordoServizioParteSpecifica();

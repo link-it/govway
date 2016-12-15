@@ -42,13 +42,12 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.PortaDominio;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiXMLRepository;
-import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.utils.xml.JiBXUtils;
 
 /**
@@ -71,6 +70,7 @@ public class XMLLib{
 	// Factory
 	private IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 	private IDAccordoCooperazioneFactory idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
+	private IDServizioFactory idServizioFactory = IDServizioFactory.getInstance();
 
 	private org.openspcoop2.core.registry.utils.CleanerOpenSPCoop2Extensions cleanerOpenSPCoop2ExtensionsRegistry = null;
 
@@ -314,14 +314,17 @@ public class XMLLib{
 	 * @return linea di un servizio nell'indice
 	 */
 	private String generaIndexServiziLine(IDServizio idS) throws DriverRegistroServiziException{
-		if(idS.getUriAccordo()==null){
+		if(idS.getUriAccordoServizioParteComune()==null){
 			throw new DriverRegistroServiziException("[generaIndexServiziLine] uri accordo is null");
 		}
-		if(idS.getTipoServizio()==null){
+		if(idS.getTipo()==null){
 			throw new DriverRegistroServiziException("[generaIndexServiziLine] tipo Servizio is null");
 		}
-		if(idS.getServizio()==null){
+		if(idS.getNome()==null){
 			throw new DriverRegistroServiziException("[generaIndexServiziLine] nome Servizio is null");
+		}
+		if(idS.getVersione()==null){
+			throw new DriverRegistroServiziException("[generaIndexServiziLine] versione Servizio is null");
 		}
 		if(idS.getSoggettoErogatore()==null){
 			throw new DriverRegistroServiziException("[generaIndexServiziLine] soggetto Erogatore is null");
@@ -332,10 +335,10 @@ public class XMLLib{
 		if(idS.getSoggettoErogatore().getNome()==null){
 			throw new DriverRegistroServiziException("[generaIndexServiziLine] nome soggetto Erogatore is null");
 		}
-		return idS.getUriAccordo() +CostantiXMLRepository.INDEX_SERVIZI_SEPARATORE+
+		return idS.getUriAccordoServizioParteComune() +CostantiXMLRepository.INDEX_SERVIZI_SEPARATORE+
 			idS.getSoggettoErogatore().getTipo()+"/"+idS.getSoggettoErogatore().getNome()+CostantiXMLRepository.INDEX_SERVIZI_SEPARATORE+
-			idS.getTipoServizio()+"/"+idS.getServizio()+CostantiXMLRepository.INDEX_SERVIZI_SEPARATORE+
-			"tipologiaServizio("+idS.getTipologiaServizio()+")"+"\n";
+			idS.getTipo()+"/"+idS.getNome()+CostantiXMLRepository.INDEX_SERVIZI_SEPARATORE+idS.getVersione()+CostantiXMLRepository.INDEX_SERVIZI_SEPARATORE+
+			"tipologiaServizio("+idS.getTipologia().getValue()+")"+"\n";
 	}
 
 	private boolean existsIndexServizi(String directoryServiziSoggetto){
@@ -446,7 +449,7 @@ public class XMLLib{
 				String [] splitLine = line.split(CostantiXMLRepository.INDEX_SERVIZI_SEPARATORE);
 				if(splitLine==null){
 					throw new Exception("Non e' un file index servizi del registro dei servizi di OpenSPCoop (read line '"+CostantiXMLRepository.INDEX_SERVIZI_SEPARATORE+"') ["+line+"]");
-				}else if(splitLine.length!=4){
+				}else if(splitLine.length!=5){
 					throw new Exception("Non e' un file index servizi del registro dei servizi di OpenSPCoop (read line '"+CostantiXMLRepository.INDEX_SERVIZI_SEPARATORE+"') ["+line+"][lenght:"+splitLine.length+"]");
 				}else if(splitLine[0]==null){
 					throw new Exception("Non e' un file index servizi del registro dei servizi di OpenSPCoop (read line '"+CostantiXMLRepository.INDEX_SERVIZI_SEPARATORE+"') ["+line+"][split[0]:"+splitLine[0]+"]");
@@ -456,35 +459,51 @@ public class XMLLib{
 					throw new Exception("Non e' un file index servizi del registro dei servizi di OpenSPCoop (read line '"+CostantiXMLRepository.INDEX_SERVIZI_SEPARATORE+"') ["+line+"][split[2]:"+splitLine[2]+"]");
 				}else if(splitLine[3]==null){
 					throw new Exception("Non e' un file index servizi del registro dei servizi di OpenSPCoop (read line '"+CostantiXMLRepository.INDEX_SERVIZI_SEPARATORE+"') ["+line+"][split[3]:"+splitLine[3]+"]");
+				}else if(splitLine[4]==null){
+					throw new Exception("Non e' un file index servizi del registro dei servizi di OpenSPCoop (read line '"+CostantiXMLRepository.INDEX_SERVIZI_SEPARATORE+"') ["+line+"][split[4]:"+splitLine[4]+"]");
 				}else if(splitLine[1].indexOf("/")==-1){
 					throw new Exception("Non e' un file index servizi del registro dei servizi di OpenSPCoop (read line '"+CostantiXMLRepository.INDEX_SERVIZI_SEPARATORE+"') '/' ["+line+"][split[1]:"+splitLine[1]+"]");
 				}else if(splitLine[2].indexOf("/")==-1){
 					throw new Exception("Non e' un file index servizi del registro dei servizi di OpenSPCoop (read line '"+CostantiXMLRepository.INDEX_SERVIZI_SEPARATORE+"') '/' ["+line+"][split[2]:"+splitLine[2]+"]");
-				}else if( (splitLine[3].equals("tipologiaServizio(normale)")==false) && (splitLine[3].equals("tipologiaServizio(correlato)")==false) ){
-					throw new Exception("Non e' un file index servizi del registro dei servizi di OpenSPCoop (read line '"+CostantiXMLRepository.INDEX_SERVIZI_SEPARATORE+"') 'tipologiaServizio' ["+line+"][split[3]:"+splitLine[3]+"]");
+				}else if( (splitLine[4].equals("tipologiaServizio(normale)")==false) && (splitLine[4].equals("tipologiaServizio(correlato)")==false) ){
+					throw new Exception("Non e' un file index servizi del registro dei servizi di OpenSPCoop (read line '"+CostantiXMLRepository.INDEX_SERVIZI_SEPARATORE+"') 'tipologiaServizio' ["+line+"][split[4]:"+splitLine[4]+"]");
 				}
 
-				IDServizio idServ = new IDServizio();
-				// uri accordo
-				idServ.setUriAccordo(splitLine[0]);
 				// soggetto Erogatore
+				IDSoggetto idSoggettoErogatore = null;
 				String [] splitSoggetto = splitLine[1].split("/");
 				if(splitSoggetto==null || splitSoggetto.length!=2 || splitSoggetto[0]==null || splitSoggetto[1]==null){
 					throw new Exception("Non e' un file index servizi del registro dei servizi di OpenSPCoop (read soggetto ':') ["+splitLine[1]+"]");
 				}
-				idServ.setSoggettoErogatore(splitSoggetto[0], splitSoggetto[1]);
+				idSoggettoErogatore = new IDSoggetto(splitSoggetto[0], splitSoggetto[1]);
+				
 				// servizio
 				String [] splitServizio = splitLine[2].split("/");
 				if(splitServizio==null || splitServizio.length!=2 || splitServizio[0]==null || splitServizio[1]==null){
 					throw new Exception("Non e' un file index servizi del registro dei servizi di OpenSPCoop (read servizio ':') ["+splitLine[2]+"]");
 				}
-				idServ.setTipoServizio(splitServizio[0]);
-				idServ.setServizio(splitServizio[1]);
+				String tipoServizio = splitServizio[0];
+				String nomeServizio = splitServizio[1];
+				
+				// versioneServizio
+				Integer versioneServizio = null;
+				try{
+					versioneServizio = Integer.parseInt(splitLine[3]);
+				}catch(Exception e){
+					throw new Exception("Non e' un file index servizi del registro dei servizi di OpenSPCoop (read versioneServizio) ["+splitLine[3]+"]: " +e.getMessage(),e);
+				}
+				
+				IDServizio idServ = this.idServizioFactory.getIDServizioFromValues(tipoServizio, nomeServizio, idSoggettoErogatore, versioneServizio);
+				
+				// uri accordo
+				String uriAccordoServizioParteComune = splitLine[0];
+				idServ.setUriAccordoServizioParteComune(uriAccordoServizioParteComune);
+				
 				// servizio correlato
 				if( splitLine[3].equals("tipologiaServizio(correlato)") )
-					idServ.setTipologiaServizio(TipologiaServizio.CORRELATO.toString());
+					idServ.setTipologia(org.openspcoop2.core.constants.TipologiaServizio.CORRELATO);
 				else
-					idServ.setTipologiaServizio(TipologiaServizio.NORMALE.toString());
+					idServ.setTipologia(org.openspcoop2.core.constants.TipologiaServizio.NORMALE);
 				ids.add(idServ);
 			}
 
@@ -1799,7 +1818,7 @@ public class XMLLib{
 
 		String idSoggetto = idServ.getSoggettoErogatore().getTipo()+
 		idServ.getSoggettoErogatore().getNome();
-		String idServizio = idServ.getTipoServizio()+idServ.getServizio();
+		String idServizio = idServ.getTipo()+idServ.getNome()+idServ.getVersione();
 		try {
 			File definizioneXML = new File(this.pathPrefix+idSoggetto+File.separator+CostantiXMLRepository.SERVIZI
 					+File.separator+idServizio+ ".xml");
@@ -1828,9 +1847,8 @@ public class XMLLib{
 
 		String idSoggetto = idServ.getSoggettoErogatore().getTipo()+
 		idServ.getSoggettoErogatore().getNome();
-		String idServizioOLD = idServ.getTipoServizio()+idServ.getServizio();
-		Servizio servizio = asps.getServizio();
-		String idServizioNEW = servizio.getTipo() + servizio.getNome();	
+		String idServizioOLD = idServ.getTipo()+idServ.getNome()+idServ.getVersione();
+		String idServizioNEW = asps.getTipo() + asps.getNome() + asps.getVersione();	
 
 		String dirSoggetto = this.pathPrefix+idSoggetto+File.separator;
 		String dirServiziSoggetto = dirSoggetto + CostantiXMLRepository.SERVIZI + File.separator;
@@ -1844,7 +1862,9 @@ public class XMLLib{
 				// elimino vecchia definizione
 				IDServizio [] oldImage = this.readIndexServiziFromFile(dirServiziSoggetto);
 				for(int i=0; i< oldImage.length; i++){
-					if( !(oldImage[i].getTipoServizio().equals(idServ.getTipoServizio()) && oldImage[i].getServizio().equals(idServ.getServizio())) ){
+					if( !(oldImage[i].getTipo().equals(idServ.getTipo()) && 
+							oldImage[i].getNome().equals(idServ.getNome()) && 
+							oldImage[i].getVersione().intValue() == idServ.getVersione().intValue()) ){
 						nID.add(oldImage[i]);
 					}
 				}
@@ -2104,11 +2124,7 @@ public class XMLLib{
 			int imageIndex = 0;
 			for(; imageIndex<nID.size(); imageIndex++)
 				newImage[imageIndex] = nID.get(imageIndex);
-			IDServizio newImageS = (IDServizio) idServ.clone();
-			newImageS.setUriAccordo(asps.getAccordoServizioParteComune());
-			newImageS.setTipologiaServizio(servizio.getTipologiaServizio().toString());
-			newImageS.setTipoServizio(servizio.getTipo());
-			newImageS.setServizio(servizio.getNome());
+			IDServizio newImageS = this.idServizioFactory.getIDServizioFromAccordo(asps);
 			newImage[imageIndex] = newImageS;
 			this.setContenutoIndexServizi(dirServiziSoggetto,newImage);
 			
@@ -2117,8 +2133,8 @@ public class XMLLib{
 
 			org.openspcoop2.core.registry.RegistroServizi registroXML = new org.openspcoop2.core.registry.RegistroServizi();
 			org.openspcoop2.core.registry.Soggetto  soggXML = new org.openspcoop2.core.registry.Soggetto();
-			soggXML.setTipo(servizio.getTipoSoggettoErogatore());
-			soggXML.setNome(servizio.getNomeSoggettoErogatore());
+			soggXML.setTipo(asps.getTipoSoggettoErogatore());
+			soggXML.setNome(asps.getNomeSoggettoErogatore());
 
 			//	WSDL implementativo Erogatore
 			if( asps.getByteWsdlImplementativoErogatore() == null  )
@@ -2255,7 +2271,7 @@ public class XMLLib{
 
 		String idSoggetto = idServ.getSoggettoErogatore().getTipo()+
 		idServ.getSoggettoErogatore().getNome();
-		String idServizio = idServ.getTipoServizio()+idServ.getServizio();
+		String idServizio = idServ.getTipo()+idServ.getNome()+idServ.getVersione();
 
 		try {
 
@@ -2271,7 +2287,9 @@ public class XMLLib{
 					IDServizio [] newImage = new IDServizio[index.length-1];
 					int j=0;
 					for(int i=0; i< index.length; i++){
-						if( !(index[i].getTipoServizio().equals(idServ.getTipoServizio()) && index[i].getServizio().equals(idServ.getServizio())) ){
+						if( !(index[i].getTipo().equals(idServ.getTipo()) &&
+								index[i].getNome().equals(idServ.getNome()) &&
+								index[i].getVersione().intValue() == idServ.getVersione().intValue()) ){
 							newImage[j]=index[i];
 							j++;
 						}
@@ -2406,8 +2424,8 @@ public class XMLLib{
 												org.openspcoop2.core.registry.RegistroServizi.class);
 									if(r.getSoggetto(0).sizeAccordoServizioParteSpecificaList()>0){
 										AccordoServizioParteSpecifica s = r.getSoggetto(0).getAccordoServizioParteSpecifica(0);
-										s.getServizio().setTipoSoggettoErogatore(soggettiRegistrati[indexSoggetto].getTipo());
-										s.getServizio().setNomeSoggettoErogatore(soggettiRegistrati[indexSoggetto].getNome());
+										s.setTipoSoggettoErogatore(soggettiRegistrati[indexSoggetto].getTipo());
+										s.setNomeSoggettoErogatore(soggettiRegistrati[indexSoggetto].getNome());
 										servizi.add(s);
 									}
 								}

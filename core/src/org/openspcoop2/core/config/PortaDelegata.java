@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,7 @@ import java.util.List;
  * 			&lt;element name="servizio" type="{http://www.openspcoop2.org/core/config}porta-delegata-servizio" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="azione" type="{http://www.openspcoop2.org/core/config}porta-delegata-azione" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}porta-delegata-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="local-forward" type="{http://www.openspcoop2.org/core/config}porta-delegata-local-forward" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="mtom-processor" type="{http://www.openspcoop2.org/core/config}mtom-processor" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="message-security" type="{http://www.openspcoop2.org/core/config}message-security" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="validazione-contenuti-applicativi" type="{http://www.openspcoop2.org/core/config}validazione-contenuti-applicativi" minOccurs="0" maxOccurs="1"/>
@@ -68,7 +70,6 @@ import java.util.List;
  * 		&lt;attribute name="scarta-body" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
  * 		&lt;attribute name="gestione-manifest" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional"/>
  * 		&lt;attribute name="stateless" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional"/>
- * 		&lt;attribute name="local-forward" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
  * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
  * &lt;/complexType>
  * </pre>
@@ -86,6 +87,7 @@ import java.util.List;
   	"servizio",
   	"azione",
   	"servizioApplicativo",
+  	"localForward",
   	"mtomProcessor",
   	"messageSecurity",
   	"validazioneContenutiApplicativi",
@@ -114,17 +116,12 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 		this.id=new Long(-1);
   }
 
-  public String getOldNomeForUpdate() {
-    if(this.oldNomeForUpdate!=null && ("".equals(this.oldNomeForUpdate)==false)){
-		return this.oldNomeForUpdate.trim();
-	}else{
-		return null;
-	}
-
+  public IDPortaDelegata getOldIDPortaDelegataForUpdate() {
+    return this.oldIDPortaDelegataForUpdate;
   }
 
-  public void setOldNomeForUpdate(String oldNomeForUpdate) {
-    this.oldNomeForUpdate=oldNomeForUpdate;
+  public void setOldIDPortaDelegataForUpdate(IDPortaDelegata oldIDPortaDelegataForUpdate) {
+    this.oldIDPortaDelegataForUpdate=oldIDPortaDelegataForUpdate;
   }
 
   public void addExtendedInfo(Object extendedInfo) {
@@ -197,6 +194,14 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   public int sizeServizioApplicativoList() {
     return this.servizioApplicativo.size();
+  }
+
+  public PortaDelegataLocalForward getLocalForward() {
+    return this.localForward;
+  }
+
+  public void setLocalForward(PortaDelegataLocalForward localForward) {
+    this.localForward = localForward;
   }
 
   public MtomProcessor getMtomProcessor() {
@@ -455,26 +460,6 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
     this.stateless = stateless;
   }
 
-  public void set_value_localForward(String value) {
-    this.localForward = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
-  }
-
-  public String get_value_localForward() {
-    if(this.localForward == null){
-    	return null;
-    }else{
-    	return this.localForward.toString();
-    }
-  }
-
-  public org.openspcoop2.core.config.constants.StatoFunzionalita getLocalForward() {
-    return this.localForward;
-  }
-
-  public void setLocalForward(org.openspcoop2.core.config.constants.StatoFunzionalita localForward) {
-    this.localForward = localForward;
-  }
-
   public java.util.Date getOraRegistrazione() {
     return this.oraRegistrazione;
   }
@@ -502,8 +487,8 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
   }
 
 
-  @XmlTransient
-  private String oldNomeForUpdate;
+  @javax.xml.bind.annotation.XmlTransient
+  protected IDPortaDelegata oldIDPortaDelegataForUpdate;
 
   @javax.xml.bind.annotation.XmlTransient
   protected List<Object> extendedInfo = new ArrayList<Object>();
@@ -573,6 +558,9 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
   public int sizeServizioApplicativo() {
   	return this.servizioApplicativo.size();
   }
+
+  @XmlElement(name="local-forward",required=false,nillable=false)
+  protected PortaDelegataLocalForward localForward;
 
   @XmlElement(name="mtom-processor",required=false,nillable=false)
   protected MtomProcessor mtomProcessor;
@@ -669,12 +657,6 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   @XmlAttribute(name="stateless",required=false)
   protected StatoFunzionalita stateless;
-
-  @XmlTransient
-  protected java.lang.String _value_localForward;
-
-  @XmlAttribute(name="local-forward",required=false)
-  protected StatoFunzionalita localForward = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")

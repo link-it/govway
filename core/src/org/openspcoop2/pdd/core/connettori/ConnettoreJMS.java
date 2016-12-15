@@ -287,10 +287,12 @@ public class ConnettoreJMS extends ConnettoreBase {
 					if(this.busta !=null){
 						String keyElement = e.nextElement();
 						IDServizio match = idServizi.get(keyElement);
-						if(match !=null && match.getServizio()!=null && match.getTipoServizio()!=null && match.getSoggettoErogatore()!=null && match.getSoggettoErogatore().getNome()!=null && match.getSoggettoErogatore().getTipo()!=null)
+						if(match !=null && match.getNome()!=null && match.getTipo()!=null && match.getVersione()!=null && 
+								match.getSoggettoErogatore()!=null && match.getSoggettoErogatore().getNome()!=null && match.getSoggettoErogatore().getTipo()!=null)
 						{
-							if( (match.getServizio().equals(this.busta.getServizio())) &&
-									(match.getTipoServizio().equals(this.busta.getTipoServizio())) &&	
+							if( (match.getNome().equals(this.busta.getServizio())) &&
+									(match.getTipo().equals(this.busta.getTipoServizio())) &&	
+									(match.getVersione().intValue() == this.busta.getVersioneServizio().intValue()) &&	
 									(match.getSoggettoErogatore().getNome().equals(this.busta.getDestinatario())) &&
 									(match.getSoggettoErogatore().getTipo().equals(this.busta.getTipoDestinatario())) ){
 

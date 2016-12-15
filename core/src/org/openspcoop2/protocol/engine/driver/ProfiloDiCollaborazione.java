@@ -32,6 +32,7 @@ import java.util.List;
 
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.engine.LetturaParametriBusta;
 import org.openspcoop2.protocol.engine.constants.Costanti;
@@ -522,8 +523,9 @@ public class ProfiloDiCollaborazione {
 	 * @param servizioCorrelato Servizio Correlato
 	 * @param ricevutaApplicativa Indicazione sull'abilitazione di una ricevuta applicativa
 	 */
-	public void asincronoSimmetrico_registraRichiestaInviata(String id,String idCollaborazione,String tipoServizioCorrelato,
-			String servizioCorrelato,boolean ricevutaApplicativa,Integrazione integrazione,
+	public void asincronoSimmetrico_registraRichiestaInviata(String id,String idCollaborazione,
+			String tipoServizioCorrelato,String servizioCorrelato,Integer versioneServizioCorrelato,
+			boolean ricevutaApplicativa,Integrazione integrazione,
 			long scadenzaMessaggi) throws ProtocolException{
 		
 		StateMessage state = (StateMessage)this.state;
@@ -538,24 +540,31 @@ public class ProfiloDiCollaborazione {
 			StringBuffer query = new StringBuffer();
 			query.append("INSERT INTO  ");
 			query.append(Costanti.PROFILO_ASINCRONO);
-			query.append(" (ID_MESSAGGIO,TIPO,ORA_REGISTRAZIONE,RICEVUTA_ASINCRONA,TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO");
+			query.append(" (ID_MESSAGGIO,TIPO,ORA_REGISTRAZIONE,RICEVUTA_ASINCRONA,TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO,VERSIONE_SERVIZIO_CORRELATO");
 			query.append(",IS_RICHIESTA,ID_ASINCRONO,ID_COLLABORAZIONE,RICEVUTA_APPLICATIVA) ");
-			query.append(" VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? )");
+			query.append(" VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? )");
 
 			pstmt = connectionDB.prepareStatement(query.toString());
-			pstmt.setString(1,id);
-			pstmt.setString(2,Costanti.OUTBOX);
-			pstmt.setTimestamp(3,oraInvio);
-			pstmt.setInt(4,0); // stato ricevuta: attesa
-			pstmt.setString(5,tipoServizioCorrelato);
-			pstmt.setString(6,servizioCorrelato);
-			pstmt.setInt(7,1); // is richiesta
-			pstmt.setString(8,id); // idasincrono utilizzato per identificare questa instanza di cooperazione asincrona
-			pstmt.setString(9,idCollaborazione); // idcollaborazione
+			int index = 1;
+			pstmt.setString(index++,id);
+			pstmt.setString(index++,Costanti.OUTBOX);
+			pstmt.setTimestamp(index++,oraInvio);
+			pstmt.setInt(index++,0); // stato ricevuta: attesa
+			pstmt.setString(index++,tipoServizioCorrelato);
+			pstmt.setString(index++,servizioCorrelato);
+			if(versioneServizioCorrelato!=null){
+				pstmt.setInt(index++,versioneServizioCorrelato);
+			}
+			else{
+				pstmt.setNull(index++, java.sql.Types.INTEGER);
+			}
+			pstmt.setInt(index++,1); // is richiesta
+			pstmt.setString(index++,id); // idasincrono utilizzato per identificare questa instanza di cooperazione asincrona
+			pstmt.setString(index++,idCollaborazione); // idcollaborazione
 			if(ricevutaApplicativa){
-				pstmt.setInt(10,1); // ricevuta applicativa abilitata
+				pstmt.setInt(index++,1); // ricevuta applicativa abilitata
 			}else{
-				pstmt.setInt(10,0); // ricevuta applicativa non abilitata
+				pstmt.setInt(index++,0); // ricevuta applicativa non abilitata
 			}
 
 			//	Add PreparedStatement
@@ -681,7 +690,7 @@ public class ProfiloDiCollaborazione {
 	 * @param ricevutaApplicativa Indicazione sull'abilitazione di una ricevuta applicativa
 	 */
 	public void asincronoSimmetrico_registraRichiestaRicevuta(String id,String idCollaborazione, 
-			String tipoServizioCorrelato,String servizioCorrelato,
+			String tipoServizioCorrelato,String servizioCorrelato, Integer versioneServizioCorrelato,
 			boolean ricevutaApplicativa,long scadenzaMessaggi)throws ProtocolException{
 		StateMessage state = (StateMessage)this.state;
 		Connection connectionDB = state.getConnectionDB();
@@ -708,35 +717,42 @@ public class ProfiloDiCollaborazione {
 			if(exists){
 				query.append("UPDATE ");
 				query.append(Costanti.PROFILO_ASINCRONO);
-				query.append(" SET ID_MESSAGGIO=?,TIPO=?,ORA_REGISTRAZIONE=?,RICEVUTA_ASINCRONA=?,TIPO_SERVIZIO_CORRELATO=?,SERVIZIO_CORRELATO=?," +
+				query.append(" SET ID_MESSAGGIO=?,TIPO=?,ORA_REGISTRAZIONE=?,RICEVUTA_ASINCRONA=?,TIPO_SERVIZIO_CORRELATO=?,SERVIZIO_CORRELATO=?,VERSIONE_SERVIZIO_CORRELATO=?," +
 				"IS_RICHIESTA=?,ID_ASINCRONO=?,ID_COLLABORAZIONE=?,RICEVUTA_APPLICATIVA=? WHERE ID_MESSAGGIO=? AND TIPO=?");
 			}else{
 				query.append("INSERT INTO  ");
 				query.append(Costanti.PROFILO_ASINCRONO);
-				query.append(" (ID_MESSAGGIO,TIPO,ORA_REGISTRAZIONE,RICEVUTA_ASINCRONA,TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO");
+				query.append(" (ID_MESSAGGIO,TIPO,ORA_REGISTRAZIONE,RICEVUTA_ASINCRONA,TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO,VERSIONE_SERVIZIO_CORRELATO");
 				query.append(",IS_RICHIESTA,ID_ASINCRONO,ID_COLLABORAZIONE,RICEVUTA_APPLICATIVA) ");
-				query.append(" VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? )");
+				query.append(" VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? )");
 			}
 
 
 			pstmt = connectionDB.prepareStatement(query.toString());
-			pstmt.setString(1,id);
-			pstmt.setString(2,Costanti.INBOX);
-			pstmt.setTimestamp(3,oraRicezione);
-			pstmt.setInt(4,1); // stato ricevuta: non attesa
-			pstmt.setString(5,tipoServizioCorrelato);
-			pstmt.setString(6,servizioCorrelato);
-			pstmt.setInt(7,1); // is richiesta
-			pstmt.setString(8,id); // idasincrono utilizzato per identificare questa instanza di cooperazione asincrona
-			pstmt.setString(9,idCollaborazione); // idCollaborazione
+			int index = 1;
+			pstmt.setString(index++,id);
+			pstmt.setString(index++,Costanti.INBOX);
+			pstmt.setTimestamp(index++,oraRicezione);
+			pstmt.setInt(index++,1); // stato ricevuta: non attesa
+			pstmt.setString(index++,tipoServizioCorrelato);
+			pstmt.setString(index++,servizioCorrelato);
+			if(versioneServizioCorrelato!=null){
+				pstmt.setInt(index++,versioneServizioCorrelato);
+			}
+			else{
+				pstmt.setNull(index++, java.sql.Types.INTEGER);
+			}
+			pstmt.setInt(index++,1); // is richiesta
+			pstmt.setString(index++,id); // idasincrono utilizzato per identificare questa instanza di cooperazione asincrona
+			pstmt.setString(index++,idCollaborazione); // idCollaborazione
 			if(ricevutaApplicativa){
-				pstmt.setInt(10,1); // ricevuta applicativa abilitata
+				pstmt.setInt(index++,1); // ricevuta applicativa abilitata
 			}else{
-				pstmt.setInt(10,0); // ricevuta applicativa non abilitata
+				pstmt.setInt(index++,0); // ricevuta applicativa non abilitata
 			}
 			if(exists){
-				pstmt.setString(11,id);
-				pstmt.setString(12,Costanti.INBOX);
+				pstmt.setString(index++,id);
+				pstmt.setString(index++,Costanti.INBOX);
 			}
 
 			//	Add PreparedStatement
@@ -942,9 +958,10 @@ public class ProfiloDiCollaborazione {
 			ResultSet rsServizioCorrelato = null;
 			String tipoSC = null;
 			String nomeSC = null;
+			Integer versioneSC = null;
 			try{
 				StringBuffer query = new StringBuffer();
-				query.append("SELECT TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO FROM ");
+				query.append("SELECT TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO,VERSIONE_SERVIZIO_CORRELATO FROM ");
 				query.append(Costanti.PROFILO_ASINCRONO);
 				query.append(" WHERE ID_MESSAGGIO = ? AND TIPO=?");
 
@@ -963,12 +980,16 @@ public class ProfiloDiCollaborazione {
 				if(rsServizioCorrelato.next()){
 					tipoSC = rsServizioCorrelato.getString("TIPO_SERVIZIO_CORRELATO");
 					nomeSC = rsServizioCorrelato.getString("SERVIZIO_CORRELATO");
+					versioneSC = rsServizioCorrelato.getInt("VERSIONE_SERVIZIO_CORRELATO");
+					if(rsServizioCorrelato.wasNull()){
+						versioneSC = null;
+					}
 				}		
 				rsServizioCorrelato.close();
 				pstmtServizioCorrelato.close();
 
-				if(tipoSC==null || nomeSC==null)
-					throw new Exception("Tipo/Nome servizio correlato non trovato");
+				if(tipoSC==null || nomeSC==null || versioneSC==null)
+					throw new Exception("Tipo/Nome/Versione servizio correlato non trovato");
 
 			}catch(Exception e){	
 				String errorMsg = "PROFILO_DI_COLLABORAZIONE_ASINCRONOSIMMETRICO, asincronoSimmetrico_getBustaRisposta "+id+": "+e.getMessage();
@@ -989,6 +1010,7 @@ public class ProfiloDiCollaborazione {
 			}
 			busta.setTipoServizioCorrelato(tipoSC);
 			busta.setServizioCorrelato(nomeSC);
+			busta.setVersioneServizioCorrelato(versioneSC);
 		}
 
 		if(this.state instanceof StatefulMessage) {
@@ -1108,13 +1130,14 @@ public class ProfiloDiCollaborazione {
 
 				String tipoServizioCorrelato = busta.getTipoServizioCorrelato();
 				String servizioCorrelato = busta.getServizioCorrelato();
+				Integer versioneServizioCorrelato = busta.getVersioneServizioCorrelato();
 
-				if(tipoServizioCorrelato==null || servizioCorrelato==null){
+				if(tipoServizioCorrelato==null || servizioCorrelato==null || versioneServizioCorrelato==null){
 					PreparedStatement pstmtServizioCorrelato = null;
 					ResultSet rsServizioCorrelato = null;
 					try{
 						StringBuffer query = new StringBuffer();
-						query.append("SELECT TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO FROM ");
+						query.append("SELECT TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO,VERSIONE_SERVIZIO_CORRELATO FROM ");
 						query.append(Costanti.PROFILO_ASINCRONO);
 						query.append(" WHERE ID_MESSAGGIO = ? AND TIPO=?");
 						pstmtServizioCorrelato = connectionDB.prepareStatement(query.toString());
@@ -1127,11 +1150,15 @@ public class ProfiloDiCollaborazione {
 						if(rsServizioCorrelato.next()){
 							tipoServizioCorrelato = rsServizioCorrelato.getString("TIPO_SERVIZIO_CORRELATO");
 							servizioCorrelato = rsServizioCorrelato.getString("SERVIZIO_CORRELATO");
+							versioneServizioCorrelato = rsServizioCorrelato.getInt("VERSIONE_SERVIZIO_CORRELATO");
+							if(rsServizioCorrelato.wasNull()){
+								versioneServizioCorrelato = null;
+							}
 						}		
 						rsServizioCorrelato.close();
 						pstmtServizioCorrelato.close();
-						if(tipoServizioCorrelato==null || servizioCorrelato==null)
-							throw new Exception("Tipo/Nome servizio correlato non trovato");
+						if(tipoServizioCorrelato==null || servizioCorrelato==null || versioneServizioCorrelato==null)
+							throw new Exception("Tipo/Nome/Versione servizio correlato non trovato");
 
 					}catch(Exception e){
 						throw new Exception("Lettura Servizio correlato non riuscita "+e.getMessage(),e );
@@ -1250,7 +1277,7 @@ public class ProfiloDiCollaborazione {
 			ResultSet rs = null;
 			try{
 				StringBuffer query = new StringBuffer();
-				query.append("SELECT TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO FROM ");
+				query.append("SELECT TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO,VERSIONE_SERVIZIO_CORRELATO FROM ");
 				query.append(Costanti.PROFILO_ASINCRONO);
 				query.append(" WHERE ID_MESSAGGIO=? AND TIPO=?");
 
@@ -1270,9 +1297,14 @@ public class ProfiloDiCollaborazione {
 				}
 				String tipoServizioCorrelatoRegistrato = null;
 				String servizioCorrelatoRegistrato = null;
+				Integer versioneServizioCorrelatoRegistrato = null;
 				if(rs.next()){
 					tipoServizioCorrelatoRegistrato = rs.getString("TIPO_SERVIZIO_CORRELATO");
 					servizioCorrelatoRegistrato = rs.getString("SERVIZIO_CORRELATO");
+					versioneServizioCorrelatoRegistrato = rs.getInt("VERSIONE_SERVIZIO_CORRELATO");
+					if(rs.wasNull()){
+						versioneServizioCorrelatoRegistrato = null;
+					}
 				}
 
 				rs.close();
@@ -1289,6 +1321,17 @@ public class ProfiloDiCollaborazione {
 				if (bustaDaValidare.getServizio().equals(servizioCorrelatoRegistrato) == false){
 					String msgErrore = "Servizio diverso da quello atteso nella gestione del profilo di collaborazione Asincrono Simmetrico";
 					Eccezione eccValidazione = new Eccezione(ErroriCooperazione.SERVIZIO_NON_VALIDO.
+							getErroreCooperazione(msgErrore),
+							true,null,protocolFactory);
+					this.log.error(msgErrore);
+					return eccValidazione;
+				}
+				if(versioneServizioCorrelatoRegistrato==null){
+					versioneServizioCorrelatoRegistrato = -1; // valore apposta errato
+				}
+				if (bustaDaValidare.getVersioneServizio().intValue() != versioneServizioCorrelatoRegistrato.intValue()){
+					String msgErrore = "Versione del servizio diverso da quello atteso nella gestione del profilo di collaborazione Asincrono Simmetrico";
+					Eccezione eccValidazione = new Eccezione(ErroriCooperazione.VERSIONE_SERVIZIO_NON_VALIDO.
 							getErroreCooperazione(msgErrore),
 							true,null,protocolFactory);
 					this.log.error(msgErrore);
@@ -1535,25 +1578,26 @@ public class ProfiloDiCollaborazione {
 			StringBuffer query = new StringBuffer();
 			query.append("INSERT INTO  ");
 			query.append(Costanti.PROFILO_ASINCRONO);
-			query.append(" (ID_MESSAGGIO,TIPO,ORA_REGISTRAZIONE,RICEVUTA_ASINCRONA,TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO");
+			query.append(" (ID_MESSAGGIO,TIPO,ORA_REGISTRAZIONE,RICEVUTA_ASINCRONA,TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO,VERSIONE_SERVIZIO_CORRELATO");
 			query.append(",IS_RICHIESTA,ID_ASINCRONO,ID_COLLABORAZIONE,RICEVUTA_APPLICATIVA) ");
-			query.append(" VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ?)");
-
+			query.append(" VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ?, ?)");
 
 			pstmt = connectionDB.prepareStatement(query.toString());
-			pstmt.setString(1,id);
-			pstmt.setString(2,Costanti.OUTBOX);
-			pstmt.setTimestamp(3,oraInvio);
-			pstmt.setInt(4,0); // stato ricevuta: attesa
-			pstmt.setString(5,null); // servizioCorrelato non conosciuto a priori
-			pstmt.setString(6,null); // servizioCorrelato non conosciuto a priori
-			pstmt.setInt(7,1); // is richiesta
-			pstmt.setString(8,id); // idasincrono utilizzato per identificare questa instanza di cooperazione asincrona
-			pstmt.setString(9,idCollaborazione); // idcollaborazione
+			int index = 1;
+			pstmt.setString(index++,id);
+			pstmt.setString(index++,Costanti.OUTBOX);
+			pstmt.setTimestamp(index++,oraInvio);
+			pstmt.setInt(index++,0); // stato ricevuta: attesa
+			pstmt.setString(index++,null); // servizioCorrelato non conosciuto a priori
+			pstmt.setString(index++,null); // servizioCorrelato non conosciuto a priori
+			pstmt.setNull(index++, java.sql.Types.INTEGER); // servizioCorrelato non conosciuto a priori
+			pstmt.setInt(index++,1); // is richiesta
+			pstmt.setString(index++,id); // idasincrono utilizzato per identificare questa instanza di cooperazione asincrona
+			pstmt.setString(index++,idCollaborazione); // idcollaborazione
 			if(ricevutaApplicativa){
-				pstmt.setInt(10,1); // ricevuta applicativa abilitata
+				pstmt.setInt(index++,1); // ricevuta applicativa abilitata
 			}else{
-				pstmt.setInt(10,0); // ricevuta applicativa non abilitata
+				pstmt.setInt(index++,0); // ricevuta applicativa non abilitata
 			}
 
 			//	Add PreparedStatement
@@ -1667,9 +1711,9 @@ public class ProfiloDiCollaborazione {
 			if(busta==null)
 				throw new Exception("Dati non trovati");
 			else{
-				IDServizio id = new IDServizio();
-				id.setTipoServizio(busta.getTipoServizio());
-				id.setServizio(busta.getServizio());
+				IDServizio id = IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(), busta.getServizio(),
+						busta.getTipoDestinatario(), busta.getDestinatario(),
+						busta.getVersioneServizio());
 				id.setAzione(busta.getAzione());
 				return id;
 			}
@@ -1722,7 +1766,7 @@ public class ProfiloDiCollaborazione {
 	 * @param ricevutaApplicativa Indicazione sull'abilitazione di una ricevuta applicativa
 	 */
 	public void asincronoAsimmetrico_registraRichiestaRicevuta(String id,String idCollaborazione,
-			String tipoServizioCorrelato,String servizioCorrelato,
+			String tipoServizioCorrelato,String servizioCorrelato, Integer versioneServizioCorrelato,
 			boolean ricevutaApplicativa,long scadenzaMessaggi)throws ProtocolException{
 		StateMessage state = (StateMessage)this.state;
 		Connection connectionDB = state.getConnectionDB();
@@ -1750,35 +1794,42 @@ public class ProfiloDiCollaborazione {
 			if(exists){
 				query.append("UPDATE ");
 				query.append(Costanti.PROFILO_ASINCRONO);
-				query.append(" SET ID_MESSAGGIO=?,TIPO=?,ORA_REGISTRAZIONE=?,RICEVUTA_ASINCRONA=?,TIPO_SERVIZIO_CORRELATO=?,SERVIZIO_CORRELATO=?," +
+				query.append(" SET ID_MESSAGGIO=?,TIPO=?,ORA_REGISTRAZIONE=?,RICEVUTA_ASINCRONA=?,TIPO_SERVIZIO_CORRELATO=?,SERVIZIO_CORRELATO=?,VERSIONE_SERVIZIO_CORRELATO=?," +
 				"IS_RICHIESTA=?,ID_ASINCRONO=?,ID_COLLABORAZIONE=?,RICEVUTA_APPLICATIVA=? WHERE ID_MESSAGGIO=? AND TIPO=?");
 			}else{
 				query.append("INSERT INTO  ");
 				query.append(Costanti.PROFILO_ASINCRONO);
-				query.append(" (ID_MESSAGGIO,TIPO,ORA_REGISTRAZIONE,RICEVUTA_ASINCRONA,TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO");
+				query.append(" (ID_MESSAGGIO,TIPO,ORA_REGISTRAZIONE,RICEVUTA_ASINCRONA,TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO,VERSIONE_SERVIZIO_CORRELATO");
 				query.append(",IS_RICHIESTA,ID_ASINCRONO,ID_COLLABORAZIONE,RICEVUTA_APPLICATIVA) ");
-				query.append(" VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? )");
+				query.append(" VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ?)");
 			}
 
 
 			pstmt = connectionDB.prepareStatement(query.toString());
-			pstmt.setString(1,id);
-			pstmt.setString(2,Costanti.INBOX);
-			pstmt.setTimestamp(3,oraRicezione);
-			pstmt.setInt(4,1); // stato ricevuta: non attesa
-			pstmt.setString(5,tipoServizioCorrelato);
-			pstmt.setString(6,servizioCorrelato);
-			pstmt.setInt(7,0); // passo nella fase di ricezione richiesta-stato
-			pstmt.setString(8,id); // idasincrono utilizzato per identificare questa instanza di cooperazione asincrona
-			pstmt.setString(9,idCollaborazione); // idCollaborazione
+			int index = 1;
+			pstmt.setString(index++,id);
+			pstmt.setString(index++,Costanti.INBOX);
+			pstmt.setTimestamp(index++,oraRicezione);
+			pstmt.setInt(index++,1); // stato ricevuta: non attesa
+			pstmt.setString(index++,tipoServizioCorrelato);
+			pstmt.setString(index++,servizioCorrelato);
+			if(versioneServizioCorrelato!=null){
+				pstmt.setInt(index++,versioneServizioCorrelato);
+			}
+			else{
+				pstmt.setNull(index++, java.sql.Types.INTEGER);
+			}
+			pstmt.setInt(index++,0); // passo nella fase di ricezione richiesta-stato
+			pstmt.setString(index++,id); // idasincrono utilizzato per identificare questa instanza di cooperazione asincrona
+			pstmt.setString(index++,idCollaborazione); // idCollaborazione
 			if(ricevutaApplicativa){
-				pstmt.setInt(10,1); // ricevuta applicativa abilitata
+				pstmt.setInt(index++,1); // ricevuta applicativa abilitata
 			}else{
-				pstmt.setInt(10,0); // ricevuta applicativa non abilitata
+				pstmt.setInt(index++,0); // ricevuta applicativa non abilitata
 			}
 			if(exists){
-				pstmt.setString(11,id);
-				pstmt.setString(12,Costanti.INBOX);
+				pstmt.setString(index++,id);
+				pstmt.setString(index++,Costanti.INBOX);
 			}
 
 			//	Add PreparedStatement
@@ -1931,11 +1982,12 @@ public class ProfiloDiCollaborazione {
 		//		 leggo servizio correlato
 		String tipoServizioCorrelato = null;
 		String servizioCorrelato = null;
+		Integer versioneServizioCorrelato = null;
 		PreparedStatement pstmtRead = null;
 		ResultSet rsRead = null;
 		try{
 			StringBuffer query = new StringBuffer();
-			query.append("SELECT TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO FROM ");
+			query.append("SELECT TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO,VERSIONE_SERVIZIO_CORRELATO FROM ");
 			query.append(Costanti.PROFILO_ASINCRONO);
 			query.append(" WHERE ID_MESSAGGIO=? AND TIPO=?");
 
@@ -1954,6 +2006,10 @@ public class ProfiloDiCollaborazione {
 			if(rsRead.next()){
 				tipoServizioCorrelato = rsRead.getString("TIPO_SERVIZIO_CORRELATO");
 				servizioCorrelato = rsRead.getString("SERVIZIO_CORRELATO");
+				versioneServizioCorrelato = rsRead.getInt("VERSIONE_SERVIZIO_CORRELATO");
+				if(rsRead.wasNull()){
+					versioneServizioCorrelato = null;
+				}
 			}		
 			rsRead.close();
 			pstmtRead.close();
@@ -1977,6 +2033,7 @@ public class ProfiloDiCollaborazione {
 		}
 		busta.setTipoServizioCorrelato(tipoServizioCorrelato);
 		busta.setServizioCorrelato(servizioCorrelato);
+		busta.setVersioneServizioCorrelato(versioneServizioCorrelato);
 
 		// Imposto parametri per la consegna della risposta
 		PreparedStatement pstmt = null;
@@ -2100,11 +2157,12 @@ public class ProfiloDiCollaborazione {
 		// leggo servizio correlato
 		String tipoServizioCorrelato = null;
 		String servizioCorrelato = null;
+		Integer versioneServizioCorrelato = null;
 		PreparedStatement pstmtRead = null;
 		ResultSet rsRead = null;
 		try{
 			StringBuffer query = new StringBuffer();
-			query.append("SELECT TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO FROM ");
+			query.append("SELECT TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO,VERSIONE_SERVIZIO_CORRELATO FROM ");
 			query.append(Costanti.PROFILO_ASINCRONO);
 			query.append(" WHERE ID_MESSAGGIO=? AND TIPO=?");
 
@@ -2118,6 +2176,10 @@ public class ProfiloDiCollaborazione {
 			if(rsRead.next()){
 				tipoServizioCorrelato = rsRead.getString("TIPO_SERVIZIO_CORRELATO");
 				servizioCorrelato = rsRead.getString("SERVIZIO_CORRELATO");
+				versioneServizioCorrelato = rsRead.getInt("VERSIONE_SERVIZIO_CORRELATO");
+				if(rsRead.wasNull()){
+					versioneServizioCorrelato = null;
+				}
 			}		
 			rsRead.close();
 			pstmtRead.close();
@@ -2185,11 +2247,13 @@ public class ProfiloDiCollaborazione {
 				if(generazioneAttributiAsincroni){
 					busta.setTipoServizioCorrelato(tipoServizioCorrelato);
 					busta.setServizioCorrelato(servizioCorrelato);
+					busta.setVersioneServizioCorrelato(versioneServizioCorrelato);
 				}
 			}
 			else{
 				busta.setTipoServizio(tipoServizioCorrelato);
 				busta.setServizio(servizioCorrelato);
+				busta.setVersioneServizio(versioneServizioCorrelato);
 			}
 
 			busta.setRiferimentoMessaggio(rifMsgRicevuta);
@@ -2306,7 +2370,7 @@ public class ProfiloDiCollaborazione {
 			ResultSet rs = null;
 			try{
 				StringBuffer query = new StringBuffer();
-				query.append("SELECT TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO FROM ");
+				query.append("SELECT TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO,VERSIONE_SERVIZIO_CORRELATO FROM ");
 				query.append(Costanti.PROFILO_ASINCRONO);
 				query.append(" WHERE ID_MESSAGGIO=? AND TIPO=?");
 
@@ -2329,9 +2393,11 @@ public class ProfiloDiCollaborazione {
 				}
 				String tipoServizioCorrelatoRegistrato = null;
 				String servizioCorrelatoRegistrato = null;
+				Integer versioneServizioCorrelatoRegistrato = null;
 				if(rs.next()){
 					tipoServizioCorrelatoRegistrato = rs.getString("TIPO_SERVIZIO_CORRELATO");
 					servizioCorrelatoRegistrato = rs.getString("SERVIZIO_CORRELATO");
+					versioneServizioCorrelatoRegistrato = rs.getInt("VERSIONE_SERVIZIO_CORRELATO");
 				}
 				rs.close();
 				pstmt.close();
@@ -2347,6 +2413,17 @@ public class ProfiloDiCollaborazione {
 				if (bustaDaValidare.getServizio().equals(servizioCorrelatoRegistrato) == false){
 					String msgErrore = "Servizio diverso da quello atteso nella gestione del profilo di collaborazione Asincrono Asimmetrico";
 					Eccezione eccValidazione = new Eccezione(ErroriCooperazione.SERVIZIO_NON_VALIDO.
+							getErroreCooperazione(msgErrore),
+							true,null,protocolFactory);
+					this.log.error(msgErrore);
+					return eccValidazione;
+				}
+				if(versioneServizioCorrelatoRegistrato==null){
+					versioneServizioCorrelatoRegistrato = -1; //valore errato inserito appositamente
+				}
+				if (bustaDaValidare.getVersioneServizio().intValue() != versioneServizioCorrelatoRegistrato.intValue()){
+					String msgErrore = "Versione del servizio diverso da quello atteso nella gestione del profilo di collaborazione Asincrono Asimmetrico";
+					Eccezione eccValidazione = new Eccezione(ErroriCooperazione.VERSIONE_SERVIZIO_NON_VALIDO.
 							getErroreCooperazione(msgErrore),
 							true,null,protocolFactory);
 					this.log.error(msgErrore);
@@ -3168,12 +3245,18 @@ public class ProfiloDiCollaborazione {
 						query.append("UPDATE ");
 						query.append(Costanti.PROFILO_ASINCRONO);
 						if(ricevuta.getServizioCorrelato()!=null && org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(ricevuta.getProfiloDiCollaborazione())){
-							query.append(" SET RICEVUTA_ASINCRONA=1,IS_RICHIESTA=0,TIPO_SERVIZIO_CORRELATO=?,SERVIZIO_CORRELATO=? WHERE  ID_MESSAGGIO = ? AND TIPO=?");
+							query.append(" SET RICEVUTA_ASINCRONA=1,IS_RICHIESTA=0,TIPO_SERVIZIO_CORRELATO=?,SERVIZIO_CORRELATO=?,VERSIONE_SERVIZIO_CORRELATO=? WHERE  ID_MESSAGGIO = ? AND TIPO=?");
 							pstmtValidazione = connectionDB.prepareStatement(query.toString());
 							pstmtValidazione.setString(1,ricevuta.getTipoServizioCorrelato());
 							pstmtValidazione.setString(2,ricevuta.getServizioCorrelato());
-							pstmtValidazione.setString(3,idRicevuta);
-							pstmtValidazione.setString(4,Costanti.OUTBOX);
+							if(ricevuta.getVersioneServizioCorrelato()!=null){
+								pstmt.setInt(3,ricevuta.getVersioneServizioCorrelato());
+							}
+							else{
+								pstmt.setNull(3, java.sql.Types.INTEGER);
+							}
+							pstmtValidazione.setString(4,idRicevuta);
+							pstmtValidazione.setString(5,Costanti.OUTBOX);
 						}else{
 							query.append(" SET RICEVUTA_ASINCRONA=1,IS_RICHIESTA=0 WHERE  ID_MESSAGGIO = ? AND TIPO=?");
 							pstmtValidazione = connectionDB.prepareStatement(query.toString());
@@ -3320,23 +3403,34 @@ public class ProfiloDiCollaborazione {
 				if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(ricevuta.getProfiloDiCollaborazione())){
 					String tipoServizioCorrelato = ricevuta.getTipoServizioCorrelato();
 					String servizioCorrelato = ricevuta.getServizioCorrelato();
-					if(servizioCorrelato==null || tipoServizioCorrelato==null){
+					Integer versioneServizioCorrelato = ricevuta.getVersioneServizioCorrelato();
+					if(servizioCorrelato==null || tipoServizioCorrelato==null || versioneServizioCorrelato==null){
 						IDSoggetto fruitore = new IDSoggetto(ricevuta.getTipoDestinatario(),ricevuta.getDestinatario());
-						IDServizio servizio = new IDServizio(ricevuta.getTipoMittente(),ricevuta.getMittente(),ricevuta.getTipoServizio(),ricevuta.getServizio(),ricevuta.getAzione());
+						IDServizio servizio = IDServizioFactory.getInstance().getIDServizioFromValues(ricevuta.getTipoServizio(),ricevuta.getServizio(), 
+								ricevuta.getTipoMittente(),ricevuta.getMittente(), 
+								ricevuta.getVersioneServizio());
+						servizio.setAzione(ricevuta.getAzione());
 						RisultatoValidazione validazione = RegistroServiziManager.getInstance(state).validaServizio(fruitore,servizio,null);
 						if( (validazione==null) || (validazione.getServizioRegistrato()==false))
 							throw new Exception("Servizio ["+servizio.toString()+"] non esiste nel registro dei servizi");
-						if( (validazione.getServizioCorrelato()==null) || (validazione.getTipoServizioCorrelato()==null) )
+						if( (validazione.getServizioCorrelato()==null) || (validazione.getTipoServizioCorrelato()==null) || (validazione.getVersioneServizioCorrelato()==null) )
 							throw new Exception("Servizio ["+servizio.toString()+"] non possiede un servizio correlato associato");
 						tipoServizioCorrelato = validazione.getTipoServizioCorrelato();
 						servizioCorrelato = validazione.getServizioCorrelato();
+						versioneServizioCorrelato = validazione.getVersioneServizioCorrelato();
 					}
-					query.append(" SET RICEVUTA_ASINCRONA=1,IS_RICHIESTA=0,TIPO_SERVIZIO_CORRELATO=?,SERVIZIO_CORRELATO=? WHERE  ID_MESSAGGIO = ? AND TIPO=?");
+					query.append(" SET RICEVUTA_ASINCRONA=1,IS_RICHIESTA=0,TIPO_SERVIZIO_CORRELATO=?,SERVIZIO_CORRELATO=?,VERSIONE_SERVIZIO_CORRELATO=? WHERE  ID_MESSAGGIO = ? AND TIPO=?");
 					pstmtValidazione = connectionDB.prepareStatement(query.toString());
 					pstmtValidazione.setString(1,tipoServizioCorrelato);
 					pstmtValidazione.setString(2,servizioCorrelato);
-					pstmtValidazione.setString(3,idRicevuta);
-					pstmtValidazione.setString(4,Costanti.OUTBOX);
+					if(versioneServizioCorrelato!=null){
+						pstmt.setInt(3,versioneServizioCorrelato);
+					}
+					else{
+						pstmt.setNull(3, java.sql.Types.INTEGER);
+					}
+					pstmtValidazione.setString(4,idRicevuta);
+					pstmtValidazione.setString(5,Costanti.OUTBOX);
 				}
 				else{
 					query.append(" SET RICEVUTA_ASINCRONA=1,IS_RICHIESTA=0 WHERE  ID_MESSAGGIO = ? AND TIPO=?");
@@ -3461,7 +3555,8 @@ public class ProfiloDiCollaborazione {
 						(rs.getString("TIPO_SERVIZIO_CORRELATO")!=null) &&
 						(rs.getString("TIPO_SERVIZIO_CORRELATO").equals(busta.getTipoServizio())) &&
 						(rs.getString("SERVIZIO_CORRELATO")!=null) &&
-						(rs.getString("SERVIZIO_CORRELATO").equals(busta.getServizio()))
+						(rs.getString("SERVIZIO_CORRELATO").equals(busta.getServizio())) &&
+						(rs.getInt("VERSIONE_SERVIZIO_CORRELATO") == busta.getVersioneServizio().intValue()) 
 				)
 					value = true;
 			}

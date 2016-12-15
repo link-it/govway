@@ -233,7 +233,7 @@ public class CachedRegistryReader implements IRegistryReader {
 				filtroDriver.setNomeAccordo(filtro.getNome());
 			}
 			if(filtro.getVersione()!=null){
-				filtroDriver.setVersione(filtro.getVersione()+"");
+				filtroDriver.setVersione(filtro.getVersione());
 			}
 			if(filtro.getSoggetto()!=null){
 				if(filtro.getSoggetto().getTipo()!=null){
@@ -285,7 +285,7 @@ public class CachedRegistryReader implements IRegistryReader {
 				filtroDriver.setNomeAccordo(filtro.getNome());
 			}
 			if(filtro.getVersione()!=null){
-				filtroDriver.setVersione(filtro.getVersione()+"");
+				filtroDriver.setVersione(filtro.getVersione());
 			}
 			if(filtro.getSoggetto()!=null){
 				if(filtro.getSoggetto().getTipo()!=null){
@@ -342,7 +342,7 @@ public class CachedRegistryReader implements IRegistryReader {
 				filtroDriver.setNomeAccordo(filtro.getNome());
 			}
 			if(filtro.getVersione()!=null){
-				filtroDriver.setVersione(filtro.getVersione()+"");
+				filtroDriver.setVersione(filtro.getVersione());
 			}
 			if(filtro.getSoggetto()!=null){
 				if(filtro.getSoggetto().getTipo()!=null){
@@ -390,7 +390,7 @@ public class CachedRegistryReader implements IRegistryReader {
 				filtroDriver.setNomeAccordo(filtro.getNome());
 			}
 			if(filtro.getVersione()!=null){
-				filtroDriver.setVersione(filtro.getVersione()+"");
+				filtroDriver.setVersione(filtro.getVersione());
 			}
 			if(filtro.getSoggetto()!=null){
 				if(filtro.getSoggetto().getTipo()!=null){
@@ -423,19 +423,6 @@ public class CachedRegistryReader implements IRegistryReader {
 	
 	// ACCORDI PARTE SPECIFICA
 	
-	@Override
-	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(
-			IDAccordo idAccordo) throws RegistryNotFound {
-		throw new RuntimeException("Not Implemented");
-	}
-	
-	@Override
-	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(
-			IDAccordo idAccordo, boolean readAllegati) throws RegistryNotFound {
-		throw new RuntimeException("Not Implemented");
-	}
-
-
 	@Override
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(
 			IDServizio idServizio) throws RegistryNotFound {
@@ -474,6 +461,9 @@ public class CachedRegistryReader implements IRegistryReader {
 			if(filtro.getNomeServizio()!=null){
 				filtroDriver.setNome(filtro.getNomeServizio());
 			}
+			if(filtro.getVersioneServizio()!=null){
+				filtroDriver.setVersione(filtro.getVersioneServizio());
+			}
 			if(filtro.getSoggettoErogatore()!=null){
 				if(filtro.getSoggettoErogatore().getTipo()!=null){
 					filtroDriver.setTipoSoggettoErogatore(filtro.getSoggettoErogatore().getTipo());
@@ -494,19 +484,7 @@ public class CachedRegistryReader implements IRegistryReader {
 			return null;
 		}
 	}
-	
-	
-	@Override
-	public IDServizio convertToIDServizio(
-			IDAccordo idAccordoServizioParteSpecifica) throws RegistryNotFound {
-		throw new RuntimeException("Not Implemented");
-	}
 
-	@Override
-	public IDAccordo convertToIDAccordo(IDServizio idServizio)
-			throws RegistryNotFound {
-		throw new RuntimeException("Not Implemented");
-	}
 
 	
 	
@@ -537,6 +515,9 @@ public class CachedRegistryReader implements IRegistryReader {
 			}
 			if(filtro.getNomeServizio()!=null){
 				filtroDriver.setNome(filtro.getNomeServizio());
+			}
+			if(filtro.getVersioneServizio()!=null){
+				filtroDriver.setVersione(filtro.getVersioneServizio());
 			}
 			if(filtro.getSoggettoErogatore()!=null){
 				if(filtro.getSoggettoErogatore().getTipo()!=null){
@@ -597,7 +578,7 @@ public class CachedRegistryReader implements IRegistryReader {
 				filtroDriver.setNomeAccordo(filtro.getNome());
 			}
 			if(filtro.getVersione()!=null){
-				filtroDriver.setVersione(filtro.getVersione()+"");
+				filtroDriver.setVersione(filtro.getVersione());
 			}
 			if(filtro.getSoggetto()!=null){
 				if(filtro.getSoggetto().getTipo()!=null){

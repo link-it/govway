@@ -39,6 +39,7 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
@@ -175,8 +176,19 @@ public class InoltroRisposte extends GenericLib{
 		// Dati consegna
 		IDSoggetto soggettoMittente = new IDSoggetto(busta.getTipoMittente(),busta.getMittente());
 		IDSoggetto soggettoDestinatario = new IDSoggetto(busta.getTipoDestinatario(),busta.getDestinatario());
-		IDServizio idServizio = new IDServizio(soggettoDestinatario,
-				busta.getTipoServizio(),busta.getServizio(),busta.getAzione());
+		IDServizio idServizio = null;
+		try{
+			idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(),busta.getServizio(), 
+					soggettoDestinatario, busta.getVersioneServizio()); 
+		}catch(Exception e){
+			msgDiag.logErroreGenerico(e, "IDServizioFactory.getIDServizioFromValues");  
+			openspcoopstate.releaseResource();
+			esito.setStatoInvocazioneErroreNonGestito(e);
+			esito.setEsitoInvocazione(false); 
+			return esito;
+		}
+		idServizio.setAzione(busta.getAzione());
+
 		String idMessageResponse = busta.getID();
 		
 		msgDiag.setIdMessaggioRichiesta(busta.getRiferimentoMessaggio());
@@ -499,7 +511,11 @@ public class InoltroRisposte extends GenericLib{
 			PortaApplicativa pa = null;
 			if(functionAsRouter==false){
 				try{
-					pa = getPortaApplicativa(configurazionePdDManager, new IDServizio(busta.getTipoMittente(),busta.getMittente(),busta.getTipoServizio(),busta.getServizio(),busta.getAzione()));
+					IDServizio idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(),busta.getServizio(), 
+							busta.getTipoMittente(),busta.getMittente(), 
+							busta.getVersioneServizio());
+					idServizioPA.setAzione(busta.getAzione());
+					pa = getPortaApplicativa(configurazionePdDManager, idServizioPA);
 				}catch(Exception e){
 					if( !(e instanceof DriverConfigurazioneNotFound)  ){
 						msgDiag.logErroreGenerico(e, "getPortaApplicativa_SafeMethod");
@@ -773,7 +789,7 @@ public class InoltroRisposte extends GenericLib{
 				if(busta!=null){
 					protocolContext.setTipoServizio(busta.getTipoServizio());
 					protocolContext.setServizio(busta.getServizio());
-					protocolContext.setVersioneServizio(idServizio.getVersioneServizioAsInt());
+					protocolContext.setVersioneServizio(busta.getVersioneServizio());
 					protocolContext.setAzione(busta.getAzione());
 					protocolContext.setProfiloCollaborazione(busta.getProfiloDiCollaborazione(),busta.getProfiloDiCollaborazioneValue());
 					protocolContext.setCollaborazione(busta.getCollaborazione());
@@ -1450,10 +1466,12 @@ public class InoltroRisposte extends GenericLib{
 						bustaRisposta.getServizioRichiedenteBustaDiServizio()!=null){
 					PortaApplicativa pa = paFind;
 					if(pa==null){
+						IDServizio idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(bustaRisposta.getTipoServizioRichiedenteBustaDiServizio(),bustaRisposta.getServizioRichiedenteBustaDiServizio(), 
+								bustaRisposta.getTipoMittente(),bustaRisposta.getMittente(), 
+								bustaRisposta.getVersioneServizioRichiedenteBustaDiServizio());
+						idServizioPA.setAzione(bustaRisposta.getAzioneRichiedenteBustaDiServizio());
 						pa = getPortaApplicativa(configurazionePdDManager, 
-								new IDServizio(bustaRisposta.getTipoMittente(),bustaRisposta.getMittente(),
-										bustaRisposta.getTipoServizioRichiedenteBustaDiServizio(),bustaRisposta.getServizioRichiedenteBustaDiServizio(),
-										bustaRisposta.getAzioneRichiedenteBustaDiServizio()));
+								idServizioPA);
 					}
 					flowProperties.messageSecurity = configurazionePdDManager.getPA_MessageSecurityForSender(pa);
 					flowProperties.mtom = configurazionePdDManager.getPA_MTOMProcessorForSender(pa);
@@ -1465,10 +1483,11 @@ public class InoltroRisposte extends GenericLib{
 			) {	
 				PortaApplicativa pa = paFind;
 				if(pa==null){
-					pa = getPortaApplicativa(configurazionePdDManager, 
-							new IDServizio(bustaRisposta.getTipoMittente(),bustaRisposta.getMittente(),
-									bustaRisposta.getTipoServizio(),bustaRisposta.getServizio(),
-									bustaRisposta.getAzione()));
+					IDServizio idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(bustaRisposta.getTipoServizio(),bustaRisposta.getServizio(), 
+							bustaRisposta.getTipoMittente(),bustaRisposta.getMittente(), 
+							bustaRisposta.getVersioneServizio());
+					idServizioPA.setAzione(bustaRisposta.getAzione());
+					pa = getPortaApplicativa(configurazionePdDManager, idServizioPA);
 				}
 				flowProperties.messageSecurity = configurazionePdDManager.getPA_MessageSecurityForSender(pa);
 				flowProperties.mtom = configurazionePdDManager.getPA_MTOMProcessorForSender(pa);
@@ -1484,10 +1503,11 @@ public class InoltroRisposte extends GenericLib{
 
 					PortaApplicativa pa = paFind;
 					if(pa==null){
-						pa = getPortaApplicativa(configurazionePdDManager, 
-								new IDServizio(bustaRisposta.getTipoMittente(),bustaRisposta.getMittente(),
-										bustaRisposta.getTipoServizio(),bustaRisposta.getServizio(),
-										bustaRisposta.getAzione()));
+						IDServizio idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(bustaRisposta.getTipoServizio(),bustaRisposta.getServizio(), 
+								bustaRisposta.getTipoMittente(),bustaRisposta.getMittente(), 
+								bustaRisposta.getVersioneServizio());
+						idServizioPA.setAzione(bustaRisposta.getAzione());
+						pa = getPortaApplicativa(configurazionePdDManager, idServizioPA);
 					}
 					flowProperties.messageSecurity = configurazionePdDManager.getPA_MessageSecurityForSender(pa);
 					flowProperties.mtom = configurazionePdDManager.getPA_MTOMProcessorForSender(pa);
@@ -1519,10 +1539,11 @@ public class InoltroRisposte extends GenericLib{
 
 					PortaApplicativa pa = paFind;
 					if(pa==null){
-						pa = getPortaApplicativa(configurazionePdDManager, 
-								new IDServizio(bustaRisposta.getTipoMittente(),bustaRisposta.getMittente(),
-										bustaRisposta.getTipoServizio(),bustaRisposta.getServizio(),
-										bustaRisposta.getAzione()));
+						IDServizio idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(bustaRisposta.getTipoServizio(),bustaRisposta.getServizio(), 
+								bustaRisposta.getTipoMittente(),bustaRisposta.getMittente(), 
+								bustaRisposta.getVersioneServizio());
+						idServizioPA.setAzione(bustaRisposta.getAzione());
+						pa = getPortaApplicativa(configurazionePdDManager, idServizioPA);
 					}
 					flowProperties.messageSecurity = configurazionePdDManager.getPA_MessageSecurityForSender(pa);
 					flowProperties.mtom = configurazionePdDManager.getPA_MTOMProcessorForSender(pa);
@@ -1536,10 +1557,12 @@ public class InoltroRisposte extends GenericLib{
 					if(pa==null){
 						// ConversioneServizio.
 						IDServizio idServizioOriginale = profiloCollaborazione.asincronoAsimmetrico_getDatiConsegnaRisposta(bustaRisposta.getRiferimentoMsgBustaRichiedenteServizio());
-						pa = getPortaApplicativa(configurazionePdDManager, 
-								new IDServizio(bustaRisposta.getTipoMittente(),bustaRisposta.getMittente(),
-										idServizioOriginale.getTipoServizio(),idServizioOriginale.getServizio(),
-										idServizioOriginale.getAzione()));
+						IDServizio idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(idServizioOriginale.getTipo(),idServizioOriginale.getNome(), 
+								bustaRisposta.getTipoMittente(),bustaRisposta.getMittente(), 
+								idServizioOriginale.getVersione());
+						idServizioPA.setAzione(idServizioOriginale.getAzione());
+						
+						pa = getPortaApplicativa(configurazionePdDManager, idServizioPA);
 					}
 					flowProperties.messageSecurity = configurazionePdDManager.getPA_MessageSecurityForSender(pa);
 					flowProperties.mtom = configurazionePdDManager.getPA_MTOMProcessorForSender(pa);

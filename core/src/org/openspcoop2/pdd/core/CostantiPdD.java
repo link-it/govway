@@ -132,6 +132,8 @@ public class CostantiPdD {
     public final static String HEADER_INTEGRAZIONE_TIPO_SERVIZIO = "tipoServizio";
     /** Costante che indica il valore dell'header di integrazione: servizio*/
     public final static String HEADER_INTEGRAZIONE_SERVIZIO = "servizio";
+    /** Costante che indica il valore dell'header di integrazione: versioneServizio*/
+    public final static String HEADER_INTEGRAZIONE_VERSIONE_SERVIZIO = "versioneServizio";
     /** Costante che indica il valore dell'header di integrazione: azione*/
     public final static String HEADER_INTEGRAZIONE_AZIONE = "azione";
     /** Costante che indica il valore dell'header di integrazione: identificativo*/
@@ -294,6 +296,8 @@ public class CostantiPdD {
     public final static String KEY_TIPO_SERVIZIO_BUSTA_RICHIESTA = "@TIPO_SERVIZIO_BUSTA_RICHIESTA@";
     /** Costante che identifica una keyword per rappresentare il servizio di una busta richiesta */
     public final static String KEY_SERVIZIO_BUSTA_RICHIESTA = "@SERVIZIO_BUSTA_RICHIESTA@";
+    /** Costante che identifica una keyword per rappresentare la versione del servizio di una busta richiesta */
+    public final static String KEY_VERSIONE_SERVIZIO_BUSTA_RICHIESTA = "@VERSIONE_SERVIZIO_BUSTA_RICHIESTA@";
     /** Costante che identifica una keyword per rappresentare il servizio di una busta azione */
     public final static String KEY_AZIONE_BUSTA_RICHIESTA = "@AZIONE_BUSTA_RICHIESTA@";
     /** Costante che identifica l'indirizzo telematico del mittente della richiesta */
@@ -315,6 +319,8 @@ public class CostantiPdD {
     public final static String KEY_TIPO_SERVIZIO_BUSTA_RISPOSTA = "@TIPO_SERVIZIO_BUSTA_RISPOSTA@";
     /** Costante che identifica una keyword per rappresentare il servizio di una busta risposta */
     public final static String KEY_SERVIZIO_BUSTA_RISPOSTA = "@SERVIZIO_BUSTA_RISPOSTA@";
+    /** Costante che identifica una keyword per rappresentare la versione del servizio di una busta risposta */
+    public final static String KEY_VERSIONE_SERVIZIO_BUSTA_RISPOSTA = "@VERSIONE_SERVIZIO_BUSTA_RISPOSTA@";
     /** Costante che identifica una keyword per rappresentare il servizio di una busta azione */
     public final static String KEY_AZIONE_BUSTA_RISPOSTA = "@AZIONE_BUSTA_RISPOSTA@";
     /** Costante che identifica l'indirizzo telematico del mittente della risposta */
@@ -324,6 +330,9 @@ public class CostantiPdD {
     /** Costante che identifica una keyword per rappresentare la scadenza */
     public final static String KEY_SCADENZA_BUSTA_RISPOSTA = "@SCADENZA_BUSTA_RISPOSTA@";
 
+    /** Costante che indica la sequenza presente in busta  */
+    public final static String KEY_URI_ACCORDO_PARTE_SPECIFICA = "@URI_ACCORDO_PARTE_SPECIFICA@";
+    
     /** Costante che indica la sequenza presente in busta  */
     public final static String KEY_SEQUENZA = "@SEQUENZA@";
     

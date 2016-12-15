@@ -20,7 +20,7 @@
  */
 package org.openspcoop2.core.config.model;
 
-import org.openspcoop2.core.config.ProprietaProtocollo;
+import org.openspcoop2.core.config.PortaDelegataLocalForward;
 
 import org.openspcoop2.generic_project.beans.AbstractModel;
 import org.openspcoop2.generic_project.beans.IField;
@@ -29,42 +29,42 @@ import org.openspcoop2.generic_project.beans.ComplexField;
 
 
 /**     
- * Model ProprietaProtocollo 
+ * Model PortaDelegataLocalForward 
  *
  * @author Poli Andrea (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ProprietaProtocolloModel extends AbstractModel<ProprietaProtocollo> {
+public class PortaDelegataLocalForwardModel extends AbstractModel<PortaDelegataLocalForward> {
 
-	public ProprietaProtocolloModel(){
+	public PortaDelegataLocalForwardModel(){
 	
 		super();
 	
-		this.NOME = new Field("nome",java.lang.String.class,"proprieta-protocollo",ProprietaProtocollo.class);
-		this.VALORE = new Field("valore",java.lang.String.class,"proprieta-protocollo",ProprietaProtocollo.class);
+		this.STATO = new Field("stato",java.lang.String.class,"porta-delegata-local-forward",PortaDelegataLocalForward.class);
+		this.PORTA_APPLICATIVA = new Field("porta-applicativa",java.lang.String.class,"porta-delegata-local-forward",PortaDelegataLocalForward.class);
 	
 	}
 	
-	public ProprietaProtocolloModel(IField father){
+	public PortaDelegataLocalForwardModel(IField father){
 	
 		super(father);
 	
-		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"proprieta-protocollo",ProprietaProtocollo.class);
-		this.VALORE = new ComplexField(father,"valore",java.lang.String.class,"proprieta-protocollo",ProprietaProtocollo.class);
+		this.STATO = new ComplexField(father,"stato",java.lang.String.class,"porta-delegata-local-forward",PortaDelegataLocalForward.class);
+		this.PORTA_APPLICATIVA = new ComplexField(father,"porta-applicativa",java.lang.String.class,"porta-delegata-local-forward",PortaDelegataLocalForward.class);
 	
 	}
 	
 	
 
-	public IField NOME = null;
+	public IField STATO = null;
 	 
-	public IField VALORE = null;
+	public IField PORTA_APPLICATIVA = null;
 	 
 
 	@Override
-	public Class<ProprietaProtocollo> getModeledClass(){
-		return ProprietaProtocollo.class;
+	public Class<PortaDelegataLocalForward> getModeledClass(){
+		return PortaDelegataLocalForward.class;
 	}
 	
 	@Override

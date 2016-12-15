@@ -524,8 +524,9 @@ public final class SoggettiChange extends Action {
 				soggettoRegistry.setIdentificativoPorta(identificativoPortaCalcolato);
 				soggettoRegistry.setNome(this.nomeprov);
 				soggettoRegistry.setTipo(this.tipoprov);
-				soggettoRegistry.setOldNomeForUpdate(oldnomeprov);
-				soggettoRegistry.setOldTipoForUpdate(oldtipoprov);
+				if(oldtipoprov!=null && oldnomeprov!=null){
+					soggettoRegistry.setOldIDSoggettoForUpdate(new IDSoggetto(oldtipoprov, oldnomeprov));
+				}
 				soggettoRegistry.setDescrizione(this.descr);
 				soggettoRegistry.setVersioneProtocollo(this.versioneProtocollo);
 				soggettoRegistry.setPrivato(this.privato);
@@ -561,8 +562,9 @@ public final class SoggettiChange extends Action {
 				}
 			}
 
-			soggettoConfig.setOldNomeForUpdate(oldnomeprov);
-			soggettoConfig.setOldTipoForUpdate(oldtipoprov);
+			if(oldtipoprov!=null && oldnomeprov!=null){
+				soggettoConfig.setOldIDSoggettoForUpdate(new IDSoggetto(oldtipoprov, oldnomeprov));
+			}
 			soggettoConfig.setDescrizione(this.descr);
 			soggettoConfig.setTipo(this.tipoprov);
 			soggettoConfig.setNome(this.nomeprov);

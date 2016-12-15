@@ -181,7 +181,6 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String PARAMETRO_APS_PORT_TYPE_OLD = "port_type_old";
 	public final static String PARAMETRO_APS_DESCRIZIONE = "descrizione";
 	public final static String PARAMETRO_APS_PRIVATO = "privato";
-	public final static String PARAMETRO_APS_NOME_APS = "nome_aps";
 	public final static String PARAMETRO_APS_VERSIONE = "versione";
 	public final static String PARAMETRO_APS_RUOLO = "ruolo";
 	public final static String PARAMETRO_APS_TIPO_FILE = "tipoFile";

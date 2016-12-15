@@ -31,7 +31,7 @@ import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
-import org.openspcoop2.core.config.ProprietaProtocollo;
+import org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.MessageSecurityFlowParameter;
 
@@ -68,7 +68,7 @@ public interface IDriverConfigurazioneSearch {
 	 * Ritorna la liste delle proprieta associate alla porta applicativa di un soggetto
 	 * tiene conto dei criteri di ricerca settati
 	 */
-	public List<ProprietaProtocollo> porteAppPropList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException;
+	public List<PortaApplicativaProprietaIntegrazioneProtocollo> porteAppPropList(int idPortaApplicativa, ISearch ricerca) throws DriverConfigurazioneException;
 
 	/**
 	 * Ritorna la lista di Servizi Applicativi di una Porta Applicativa associata ad un Soggetto

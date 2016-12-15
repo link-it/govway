@@ -63,6 +63,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.registry.driver.uddi.DriverRegistroServiziUDDI;
@@ -1115,10 +1116,11 @@ public class RegistroServizi  {
 		// Raccolta dati
 		if(idService == null)
 			throw new DriverRegistroServiziException("[getAccordoServizioParteSpecifica] Parametro Non Valido");
-		String servizio = idService.getServizio();
-		String tipoServizio = idService.getTipoServizio();
+		String servizio = idService.getNome();
+		String tipoServizio = idService.getTipo();
+		Integer versioneServizio = idService.getVersione();
 		String azione = idService.getAzione();
-		if(servizio == null || tipoServizio == null)
+		if(servizio == null || tipoServizio == null || versioneServizio==null)
 			throw new DriverRegistroServiziException("[getAccordoServizioParteSpecifica] Parametri (Servizio) Non Validi");
 		String tipoSogg = idService.getSoggettoErogatore().getTipo();
 		String nomeSogg = idService.getSoggettoErogatore().getNome();
@@ -1129,7 +1131,7 @@ public class RegistroServizi  {
 		String key = null;	
 		if(this.cache!=null){
 			key = "getServizio_"+ tipoSogg +"/" + nomeSogg +
-			"_" + tipoServizio + "/" + servizio;
+			"_" + tipoServizio + "/" + servizio+"/"+versioneServizio.intValue();
 			if(azione !=null)
 				key = key + "_" + azione;	   
 			if(readContenutiAllegati!=null){
@@ -1425,9 +1427,10 @@ public class RegistroServizi  {
 		// Raccolta dati
 		if(idService == null)
 			throw new DriverRegistroServiziException("[getWsdlAccordoServizio] Parametro Non Valido");
-		String servizio = idService.getServizio();
-		String tipoServizio = idService.getTipoServizio();
-		if(servizio == null || tipoServizio == null)
+		String servizio = idService.getNome();
+		String tipoServizio = idService.getTipo();
+		Integer versioneServizio = idService.getVersione();
+		if(servizio == null || tipoServizio == null || versioneServizio==null)
 			throw new DriverRegistroServiziException("[getWsdlAccordoServizio] Parametri (Servizio) Non Validi");
 		String tipoSogg = idService.getSoggettoErogatore().getTipo();
 		String nomeSogg = idService.getSoggettoErogatore().getNome();
@@ -1438,7 +1441,7 @@ public class RegistroServizi  {
 		String key = null;	
 		if(this.cache!=null){
 			key = "getWsdlAccordoServizio_"+infoWsdlSource.name()+"_"+ tipoSogg +"/" + nomeSogg +
-			"_" + tipoServizio + "/" + servizio
+			"_" + tipoServizio + "/" + servizio+"/"+versioneServizio.intValue()
 			+"_schema_"+buildSchemaXSD;
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
@@ -1581,6 +1584,8 @@ public class RegistroServizi  {
 		if(nomeRegistro!=null){
 			this.log.debug("Cerco wsdl nel registro ["+nomeRegistro+"]");
 			try{
+				String uriServizio = IDServizioFactory.getInstance().getUriFromIDServizio(idService);
+				
 				//org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet driver = this.driverRegistroServizi.get(nomeRegistro);
 				org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet driver = this.getDriver(connectionPdD, nomeRegistro);
 				this.log.debug("invocazione metodo getWSDLAccordoServizio (search servizio)...");
@@ -1592,7 +1597,7 @@ public class RegistroServizi  {
 						servizio = driver.getAccordoServizioParteSpecifica(idService);	
 				}catch(DriverRegistroServiziNotFound e){}
 				if(servizio == null){
-					throw new DriverRegistroServiziNotFound("Servizio ["+idService.getTipoServizio()+idService.getServizio()+"] non definito");
+					throw new DriverRegistroServiziNotFound("Servizio ["+uriServizio+"] non definito");
 				}
 				IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromUri(servizio.getAccordoServizioParteComune());
 				this.log.debug("invocazione metodo getWSDLAccordoServizio (search accordo)...");
@@ -1601,7 +1606,7 @@ public class RegistroServizi  {
 				else
 					as = driver.getAccordoServizioParteComune(idAccordo);
 				if (as == null){
-					throw new DriverRegistroServiziNotFound("Accordo di servizio ["+idAccordo+"] associato al servizio ["+idService.getTipoServizio()+idService.getServizio()+"] non presente nel registro");
+					throw new DriverRegistroServiziNotFound("Accordo di servizio ["+idAccordo+"] associato al servizio ["+uriServizio+"] non presente nel registro");
 				}
 				if(servizio.getPortType()!=null && ("".equals(servizio.getPortType())==false)){
 					// verifico presenza portType in accordo di servizio
@@ -1613,7 +1618,7 @@ public class RegistroServizi  {
 						}
 					}
 					if(findPortType==false){
-						throw new DriverRegistroServiziNotFound("PortType["+servizio.getPortType()+"] associato al servizio ["+idService.getTipoServizio()+idService.getServizio()+"] non presente nell'Accordo di servizio ["+idAccordo+"]");
+						throw new DriverRegistroServiziNotFound("PortType["+servizio.getPortType()+"] associato al servizio ["+uriServizio+"] non presente nell'Accordo di servizio ["+idAccordo+"]");
 					}
 				}
 
@@ -1640,6 +1645,8 @@ public class RegistroServizi  {
 				String nomeRegInLista= (String) en.nextElement();
 				this.log.debug("Cerco nel registro con nome["+nomeRegInLista+"]");
 				try{
+					String uriServizio = IDServizioFactory.getInstance().getUriFromIDServizio(idService);
+					
 					//org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet driver = this.driverRegistroServizi.get(nomeRegInLista);
 					org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet driver = this.getDriver(connectionPdD, nomeRegInLista);
 					this.log.debug("invocazione metodo getWSDLAccordoServizio (search servizio) nel registro["+nomeRegInLista+"]...");
@@ -1651,7 +1658,7 @@ public class RegistroServizi  {
 							servizio = driver.getAccordoServizioParteSpecifica(idService);	
 					}catch(DriverRegistroServiziNotFound e){}
 					if(servizio == null){
-						throw new DriverRegistroServiziNotFound("Servizio ["+idService.getTipoServizio()+idService.getServizio()+"] non definito");
+						throw new DriverRegistroServiziNotFound("Servizio ["+uriServizio+"] non definito");
 					}
 					IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromUri(servizio.getAccordoServizioParteComune());
 					this.log.debug("invocazione metodo getWSDLAccordoServizio (search accordo) nel registro["+nomeRegInLista+"]...");
@@ -1660,7 +1667,7 @@ public class RegistroServizi  {
 					else
 						as = driver.getAccordoServizioParteComune(idAccordo);
 					if (as == null){
-						throw new DriverRegistroServiziNotFound("Accordo di servizio ["+idAccordo+"] associato al servizio ["+idService.getTipoServizio()+idService.getServizio()+"] non presente nel registro");
+						throw new DriverRegistroServiziNotFound("Accordo di servizio ["+idAccordo+"] associato al servizio ["+uriServizio+"] non presente nel registro");
 					}
 					if(servizio.getPortType()!=null && ("".equals(servizio.getPortType())==false)){
 						// verifico presenza portType in accordo di servizio
@@ -1672,7 +1679,7 @@ public class RegistroServizi  {
 							}
 						}
 						if(findPortType==false){
-							throw new DriverRegistroServiziNotFound("PortType["+servizio.getPortType()+"] associato al servizio ["+idService.getTipoServizio()+idService.getServizio()+"] non presente nell'Accordo di servizio ["+idAccordo+"]");
+							throw new DriverRegistroServiziNotFound("PortType["+servizio.getPortType()+"] associato al servizio ["+uriServizio+"] non presente nell'Accordo di servizio ["+idAccordo+"]");
 						}
 					}
 					
@@ -1720,7 +1727,7 @@ public class RegistroServizi  {
 		
 		accordoServizioWrapper.setNomePortType(servizio.getPortType());
 		
-		accordoServizioWrapper.setTipologiaServizio(servizio.getServizio().getTipologiaServizio());
+		accordoServizioWrapper.setTipologiaServizio(servizio.getTipologiaServizio());
 		
 		accordoServizioWrapper.setAccordoServizio(as);
 		
@@ -1813,7 +1820,7 @@ public class RegistroServizi  {
 								
 			}
 		}catch(DriverRegistroServiziException e){
-			if(TipologiaServizio.CORRELATO.equals(servizio.getServizio().getTipologiaServizio())){
+			if(TipologiaServizio.CORRELATO.equals(servizio.getTipologiaServizio())){
 				throw new DriverRegistroServiziException("[WSDL-FRUITORE] "+e.getMessage(),e);
 			}else{
 				throw new DriverRegistroServiziException("[WSDL-EROGATORE] "+e.getMessage(),e);
@@ -1825,7 +1832,7 @@ public class RegistroServizi  {
 	}
 
 	private void _loadFromWsdl(AccordoServizioParteSpecifica servizio, boolean registroServiziDB, AccordoServizioWrapperUtilities wsdlWrapperUtilities) throws DriverRegistroServiziException{
-		if(TipologiaServizio.CORRELATO.equals(servizio.getServizio().getTipologiaServizio())){
+		if(TipologiaServizio.CORRELATO.equals(servizio.getTipologiaServizio())){
 			javax.wsdl.Definition wsdlFruitore = null;
 			if(registroServiziDB){
 				wsdlFruitore = wsdlWrapperUtilities.buildWsdlFruitoreFromBytes();

@@ -37,6 +37,7 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -182,7 +183,7 @@ public class AutorizzazionePdDConsole extends AbstractCore implements IAutorizza
     		// Controllo parametri forniti
     		if(idSoggetto==null || idSoggetto.getTipo()==null || idSoggetto.getNome()==null)
     			throw new Exception("Dati soggetto fruitore non forniti");
-    		if(idServizio==null || idServizio.getTipoServizio()==null || idServizio.getServizio()==null)
+    		if(idServizio==null || idServizio.getTipo()==null || idServizio.getNome()==null || idServizio.getVersione()==null)
     			throw new Exception("Dati servizio non forniti");
     		if(idServizio.getSoggettoErogatore()==null || idServizio.getSoggettoErogatore().getTipo()==null || idServizio.getSoggettoErogatore().getNome()==null)
     			throw new Exception("Dati soggetto erogatore non forniti");
@@ -205,7 +206,9 @@ public class AutorizzazionePdDConsole extends AbstractCore implements IAutorizza
 			if(rs.next() == false){
 				rs.close();
     			pstmt.close();
-    			String errore = "Il soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome() +" non appartiene a nessuna Porta di Dominio??? Non e' autorizzato ad invocare il servizio "+idServizio.getTipoServizio()+"/"+idServizio.getServizio()+" erogato da "+idServizio.getSoggettoErogatore().getTipo()+"/"+idServizio.getSoggettoErogatore().getNome();
+    			String errore = "Il soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome() +
+    					" non appartiene a nessuna Porta di Dominio??? Non e' autorizzato ad invocare il servizio "+
+    						IDServizioFactory.getInstance().getUriFromIDServizio(idServizio);
     			esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
     			esito.setServizioAutorizzato(false);
     			return esito;
@@ -263,7 +266,8 @@ public class AutorizzazionePdDConsole extends AbstractCore implements IAutorizza
 				if(match == false){
     				rs.close();
         			pstmt.close();
-    				String errore = "Il soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome() +" non appartiene alla Porta di Dominio con subject ["+pdd+"], quindi non e' autorizzato ad invocare il servizio "+idServizio.getTipoServizio()+"/"+idServizio.getServizio()+" erogato da "+idServizio.getSoggettoErogatore().getTipo()+"/"+idServizio.getSoggettoErogatore().getNome();    			
+    				String errore = "Il soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome() +" non appartiene alla Porta di Dominio con subject ["+pdd+
+    						"], quindi non e' autorizzato ad invocare il servizio "+IDServizioFactory.getInstance().getUriFromIDServizio(idServizio);    			
         			esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_FALSIFICAZIONE_MITTENTE));
         			esito.setServizioAutorizzato(false);
         			return esito;
@@ -288,7 +292,7 @@ public class AutorizzazionePdDConsole extends AbstractCore implements IAutorizza
     				+CostantiDB.POLITICHE_SICUREZZA+".id_servizio_applicativo="+CostantiDB.SERVIZI_APPLICATIVI+".id AND "
     				// id servizio 
     				+CostantiDB.POLITICHE_SICUREZZA+".id_servizio in ( select servizi.id from "+CostantiDB.SERVIZI+","+CostantiDB.SOGGETTI+" where "+
-    								CostantiDB.SERVIZI+".tipo_servizio=? AND "+CostantiDB.SERVIZI+".nome_servizio=? AND "+
+    								CostantiDB.SERVIZI+".tipo_servizio=? AND "+CostantiDB.SERVIZI+".nome_servizio=? AND "+CostantiDB.SERVIZI+".versione_servizio=? AND "+
     								CostantiDB.SERVIZI+".id_soggetto="+CostantiDB.SOGGETTI+".id AND "+CostantiDB.SOGGETTI+".tipo_soggetto=? AND "
     								+CostantiDB.SOGGETTI+".nome_soggetto=? )";
     			boolean checkFallitoPerMancanzaIdentitaServizioApplicativo = false;
@@ -301,38 +305,40 @@ public class AutorizzazionePdDConsole extends AbstractCore implements IAutorizza
     					query = query + " AND "+CostantiDB.SERVIZI_APPLICATIVI+".subject=?";
     				else{
     					log.debug("CheckFruizioneServizioApplicativo (sa non fornito) ["+AutorizzazionePdDConsole.checkFruizioneServizioApplicativo+"] QUERY["+query+"] SA("+
-    	    						identitaServizioApplicativoFruitore+") MessageSecuritySubject("+subjectServizioApplicativoFruitoreFromMessageSecurityHeader+"). Il soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome() +" non e' autorizzato ad invocare" +
-    	    								"il servizio "+idServizio.getTipoServizio()+"/"+idServizio.getServizio()+" erogato da "
-    	    								+idServizio.getSoggettoErogatore().getTipo()+"/"+idServizio.getSoggettoErogatore().getNome() +".");
+    	    						identitaServizioApplicativoFruitore+") MessageSecuritySubject("+subjectServizioApplicativoFruitoreFromMessageSecurityHeader+
+    	    							"). Il soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome() +" non e' autorizzato ad invocare" +
+    	    								"il servizio "+IDServizioFactory.getInstance().getUriFromIDServizio(idServizio));
     					checkFallitoPerMancanzaIdentitaServizioApplicativo = true;
     				}
     			}
     			
     			if(checkFallitoPerMancanzaIdentitaServizioApplicativo==false){
 	    			pstmt = connectionDB.prepareStatement(query);
-	    			pstmt.setString(1,idSoggetto.getTipo());
-	    			pstmt.setString(2,idSoggetto.getNome());
-	    			pstmt.setString(3,idServizio.getTipoServizio());
-	    			pstmt.setString(4,idServizio.getServizio());
-	    			pstmt.setString(5,idServizio.getSoggettoErogatore().getTipo());
-	    			pstmt.setString(6,idServizio.getSoggettoErogatore().getNome());
+	    			int index = 1;
+	    			pstmt.setString(index++,idSoggetto.getTipo());
+	    			pstmt.setString(index++,idSoggetto.getNome());
+	    			pstmt.setString(index++,idServizio.getTipo());
+	    			pstmt.setString(index++,idServizio.getNome());
+	    			pstmt.setInt(index++,idServizio.getVersione());
+	    			pstmt.setString(index++,idServizio.getSoggettoErogatore().getTipo());
+	    			pstmt.setString(index++,idServizio.getSoggettoErogatore().getNome());
 	    			if((!pddEsterna) && CostantiRegistroServizi.ABILITATO.equals(AutorizzazionePdDConsole.checkFruizioneServizioApplicativo)){
 	    				if(identitaServizioApplicativoFruitore!=null && subjectServizioApplicativoFruitoreFromMessageSecurityHeader!=null){
-	    					pstmt.setString(7,identitaServizioApplicativoFruitore); 			
-	    					pstmt.setString(8,subjectServizioApplicativoFruitoreFromMessageSecurityHeader); 
+	    					pstmt.setString(index++,identitaServizioApplicativoFruitore); 			
+	    					pstmt.setString(index++,subjectServizioApplicativoFruitoreFromMessageSecurityHeader); 
 	    				}else if(identitaServizioApplicativoFruitore!=null){
-	    					pstmt.setString(7,identitaServizioApplicativoFruitore); 
+	    					pstmt.setString(index++,identitaServizioApplicativoFruitore); 
 	    				}else if(subjectServizioApplicativoFruitoreFromMessageSecurityHeader!=null){
-	    					pstmt.setString(8,subjectServizioApplicativoFruitoreFromMessageSecurityHeader); 
+	    					pstmt.setString(index++,subjectServizioApplicativoFruitoreFromMessageSecurityHeader); 
 	    				}
 	    			}
 	    			rs = pstmt.executeQuery();
 	    			autorizzato = rs.next();
 	    			if(autorizzato==false){
 	    				log.debug("CheckFruizioneServizioApplicativo["+AutorizzazionePdDConsole.checkFruizioneServizioApplicativo+"] QUERY["+query+"] SA("+
-	    						identitaServizioApplicativoFruitore+") MessageSecuritySubject("+subjectServizioApplicativoFruitoreFromMessageSecurityHeader+"). Il soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome() +" non e' autorizzato ad invocare" +
-	    								"il servizio "+idServizio.getTipoServizio()+"/"+idServizio.getServizio()+" erogato da "
-	    								+idServizio.getSoggettoErogatore().getTipo()+"/"+idServizio.getSoggettoErogatore().getNome() +".");
+	    						identitaServizioApplicativoFruitore+") MessageSecuritySubject("+subjectServizioApplicativoFruitoreFromMessageSecurityHeader+
+	    							"). Il soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome() +" non e' autorizzato ad invocare" +
+	    								"il servizio "+IDServizioFactory.getInstance().getUriFromIDServizio(idServizio));
 	    			}
 	    			rs.close();
 	    			pstmt.close();
@@ -347,27 +353,27 @@ public class AutorizzazionePdDConsole extends AbstractCore implements IAutorizza
         			// Ottengo informazione se il servizio richiesto e' correlato o meno.
         			boolean isCorrelato = false;
         			query="select servizio_correlato from "+CostantiDB.SERVIZI+","+CostantiDB.SOGGETTI+" where " 
-        				+CostantiDB.SERVIZI+".tipo_servizio=? AND "+CostantiDB.SERVIZI+".nome_servizio=? AND "+
+        				+CostantiDB.SERVIZI+".tipo_servizio=? AND "+CostantiDB.SERVIZI+".nome_servizio=? AND "+CostantiDB.SERVIZI+".versione_servizio=? AND "+
         				CostantiDB.SERVIZI+".id_soggetto="+CostantiDB.SOGGETTI+".id AND "
         				+CostantiDB.SOGGETTI+".tipo_soggetto=? AND "+CostantiDB.SOGGETTI+".nome_soggetto=?";
         			pstmt = connectionDB.prepareStatement(query);
-        			pstmt.setString(1,idServizio.getTipoServizio());
-        			pstmt.setString(2,idServizio.getServizio());
-        			pstmt.setString(3,idServizio.getSoggettoErogatore().getTipo());
-        			pstmt.setString(4,idServizio.getSoggettoErogatore().getNome());
+        			int index = 1;
+        			pstmt.setString(index++,idServizio.getTipo());
+        			pstmt.setString(index++,idServizio.getNome());
+        			pstmt.setInt(index++,idServizio.getVersione());
+        			pstmt.setString(index++,idServizio.getSoggettoErogatore().getTipo());
+        			pstmt.setString(index++,idServizio.getSoggettoErogatore().getNome());
         			rs = pstmt.executeQuery();
         			if(rs.next()){
         				isCorrelato = CostantiRegistroServizi.ABILITATO.equals(rs.getString("servizio_correlato"));
         			}else{
         				log.debug("CheckFruizionePerRuolo["+AutorizzazionePdDConsole.checkFruizionePerRuolo+"] QUERY["+query+"]. " +
         						"Il soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome() +" cerca di usufruire di un servizio non esistente: " 
-								+idServizio.getTipoServizio()+"/"+idServizio.getServizio()+" erogato da "
-								+idServizio.getSoggettoErogatore().getTipo()+"/"+idServizio.getSoggettoErogatore().getNome() +".");
+								+IDServizioFactory.getInstance().getUriFromIDServizio(idServizio));
         				rs.close();
             			pstmt.close();
-        				String errore = "Il soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome() +" cerca di usufruire di un servizio non esistente: " 
-								+idServizio.getTipoServizio()+"/"+idServizio.getServizio()+" erogato da "
-								+idServizio.getSoggettoErogatore().getTipo()+"/"+idServizio.getSoggettoErogatore().getNome() +".";    			
+        				String errore = "Il soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome() +" cerca di usufruire di un servizio non esistente: " +
+        						IDServizioFactory.getInstance().getUriFromIDServizio(idServizio);    			
             			esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
             			esito.setServizioAutorizzato(false);
             			return esito;
@@ -384,6 +390,7 @@ public class AutorizzazionePdDConsole extends AbstractCore implements IAutorizza
         						+CostantiDB.ACCORDI+".nome = "+CostantiDB.SERVIZI+".nome_servizio AND "
         						+CostantiDB.SERVIZI+".tipo_servizio=? AND "
         						+CostantiDB.SERVIZI+".nome_servizio=? AND "
+        						+CostantiDB.SERVIZI+".versione_servizio=? AND "
         						+CostantiDB.SERVIZI+".id_soggetto="+CostantiDB.SOGGETTI+".id AND "
         						+CostantiDB.SOGGETTI+".tipo_soggetto=? AND "
         						+CostantiDB.SOGGETTI+".nome_soggetto=? AND "
@@ -414,51 +421,53 @@ public class AutorizzazionePdDConsole extends AbstractCore implements IAutorizza
         				}
         				else{
         					log.debug("CheckFruizionePerRuolo (sa non fornito) ["+AutorizzazionePdDConsole.checkFruizionePerRuolo+"] QUERY["+query+"] SA("+
-        							identitaServizioApplicativoFruitore+") MessageSecuritySubject("+subjectServizioApplicativoFruitoreFromMessageSecurityHeader+"). Il soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome() +" non e' autorizzato ad invocare" +
-            								"il servizio "+idServizio.getTipoServizio()+"/"+idServizio.getServizio()+" erogato da "
-            								+idServizio.getSoggettoErogatore().getTipo()+"/"+idServizio.getSoggettoErogatore().getNome() +".");
+        							identitaServizioApplicativoFruitore+") MessageSecuritySubject("+subjectServizioApplicativoFruitoreFromMessageSecurityHeader+
+        								"). Il soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome() +" non e' autorizzato ad invocare" +
+            								"il servizio "+IDServizioFactory.getInstance().getUriFromIDServizio(idServizio));
         					checkFallitoPerMancanzaIdentitaServizioApplicativo = true;
         				}
         			}
         			
         			if(checkFallitoPerMancanzaIdentitaServizioApplicativo==false){
 	        			pstmt = connectionDB.prepareStatement(query);
-	        			pstmt.setString(1,idServizio.getTipoServizio());
-	        			pstmt.setString(2,idServizio.getServizio());
-	        			pstmt.setString(3,idServizio.getSoggettoErogatore().getTipo());
-	        			pstmt.setString(4,idServizio.getSoggettoErogatore().getNome());
+	        			index = 1;
+	        			pstmt.setString(index++,idServizio.getTipo());
+	        			pstmt.setString(index++,idServizio.getNome());
+	        			pstmt.setInt(index++,idServizio.getVersione());
+	        			pstmt.setString(index++,idServizio.getSoggettoErogatore().getTipo());
+	        			pstmt.setString(index++,idServizio.getSoggettoErogatore().getNome());
 	        			if(isCorrelato)
-	        				pstmt.setString(5,CostantiRegistroServizi.ABILITATO.toString());
+	        				pstmt.setString(index++,CostantiRegistroServizi.ABILITATO.toString());
 	        			else
-	        				pstmt.setString(5,CostantiRegistroServizi.DISABILITATO.toString());
+	        				pstmt.setString(index++,CostantiRegistroServizi.DISABILITATO.toString());
 	        			if(isCorrelato)
-	        				pstmt.setInt(6,1);
+	        				pstmt.setInt(index++,1);
 	        			else
-	        				pstmt.setInt(6,0);
+	        				pstmt.setInt(index++,0);
 	        			
 	        			if( (!pddEsterna) && CostantiRegistroServizi.ABILITATO.equals(AutorizzazionePdDConsole.checkFruizionePerRuolo)  ) {
 	        				if(identitaServizioApplicativoFruitore!=null && subjectServizioApplicativoFruitoreFromMessageSecurityHeader!=null){
-		    					pstmt.setString(7,identitaServizioApplicativoFruitore); 			
-		    					pstmt.setString(8,subjectServizioApplicativoFruitoreFromMessageSecurityHeader); 
-		    					pstmt.setString(9,idSoggetto.getTipo());
-		        				pstmt.setString(10,idSoggetto.getNome());
+		    					pstmt.setString(index++,identitaServizioApplicativoFruitore); 			
+		    					pstmt.setString(index++,subjectServizioApplicativoFruitoreFromMessageSecurityHeader); 
+		    					pstmt.setString(index++,idSoggetto.getTipo());
+		        				pstmt.setString(index++,idSoggetto.getNome());
 		    				}else if(identitaServizioApplicativoFruitore!=null){
-		    					pstmt.setString(7,identitaServizioApplicativoFruitore);
-		    					pstmt.setString(8,idSoggetto.getTipo());
-		        				pstmt.setString(9,idSoggetto.getNome());
+		    					pstmt.setString(index++,identitaServizioApplicativoFruitore);
+		    					pstmt.setString(index++,idSoggetto.getTipo());
+		        				pstmt.setString(index++,idSoggetto.getNome());
 		    				}else if(subjectServizioApplicativoFruitoreFromMessageSecurityHeader!=null){
-		    					pstmt.setString(7,subjectServizioApplicativoFruitoreFromMessageSecurityHeader);
-		    					pstmt.setString(8,idSoggetto.getTipo());
-		        				pstmt.setString(9,idSoggetto.getNome());
+		    					pstmt.setString(index++,subjectServizioApplicativoFruitoreFromMessageSecurityHeader);
+		    					pstmt.setString(index++,idSoggetto.getTipo());
+		        				pstmt.setString(index++,idSoggetto.getNome());
 		    				}
 	        			}
 	        			
 	        			rs = pstmt.executeQuery();
 	        			autorizzato = rs.next();
 	        			log.debug("CheckFruizionePerRuolo["+AutorizzazionePdDConsole.checkFruizionePerRuolo+"] QUERY["+query+"] SA("+
-	    						identitaServizioApplicativoFruitore+") MessageSecuritySubject("+subjectServizioApplicativoFruitoreFromMessageSecurityHeader+"). Il soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome() +" non e' autorizzato ad invocare" +
-	    								"il servizio "+idServizio.getTipoServizio()+"/"+idServizio.getServizio()+" erogato da "
-	    								+idServizio.getSoggettoErogatore().getTipo()+"/"+idServizio.getSoggettoErogatore().getNome() +".");
+	    						identitaServizioApplicativoFruitore+") MessageSecuritySubject("+subjectServizioApplicativoFruitoreFromMessageSecurityHeader+
+	    							"). Il soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome() +" non e' autorizzato ad invocare" +
+	    								"il servizio "+IDServizioFactory.getInstance().getUriFromIDServizio(idServizio));
 	        			
 	        			rs.close();
 	        			pstmt.close();
@@ -481,7 +490,8 @@ public class AutorizzazionePdDConsole extends AbstractCore implements IAutorizza
     					servizioApplicativoMsg = "servizio applicativo ANONIMO (ne identita' ne subject-messageSecurity fornito) del ";
     				}
     			}
-    			String errore = "Il "+servizioApplicativoMsg+"soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome() +" non e' autorizzato ad invocare il servizio "+idServizio.getTipoServizio()+"/"+idServizio.getServizio()+" erogato da "+idServizio.getSoggettoErogatore().getTipo()+"/"+idServizio.getSoggettoErogatore().getNome();    			
+    			String errore = "Il "+servizioApplicativoMsg+"soggetto "+idSoggetto.getTipo()+"/"+idSoggetto.getNome() +
+    					" non e' autorizzato ad invocare il servizio "+IDServizioFactory.getInstance().getUriFromIDServizio(idServizio);    			
     			esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
     			esito.setServizioAutorizzato(false);
     		}else{

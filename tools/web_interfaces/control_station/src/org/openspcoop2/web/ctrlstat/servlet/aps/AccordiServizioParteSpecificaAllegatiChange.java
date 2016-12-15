@@ -38,16 +38,15 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.TipiDocumentoLivelloServizio;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.FileUploadForm;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -86,8 +85,6 @@ public final class AccordiServizioParteSpecificaAllegatiChange extends Action {
 
 		String userLogin = ServletUtils.getUserLoginFromSession(session);
 
-		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
-
 		try {
 
 			FileUploadForm fileUpload = (FileUploadForm) form;
@@ -111,17 +108,8 @@ public final class AccordiServizioParteSpecificaAllegatiChange extends Action {
 
 			// Prendo il nome
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(new Long(idServizioInt));
-			Servizio ss = asps.getServizio();
-
-			String tmpTitle = ss.getTipo()+"/"+ss.getNome();
-			// aggiorno tmpTitle
-			String tmpVersione = asps.getVersione();
-			if(apsCore.isShowVersioneAccordoServizioParteSpecifica()==false){
-				tmpVersione = null;
-			}
-			tmpTitle = idAccordoFactory.getUriFromValues(asps.getNome(), 
-					ss.getTipoSoggettoErogatore(), ss.getNomeSoggettoErogatore(), 
-					tmpVersione);
+			
+			String tmpTitle = IDServizioFactory.getInstance().getUriFromAccordo(asps);
 
 			Documento doc = archiviCore.getDocumento(idAllegatoInt,false);
 

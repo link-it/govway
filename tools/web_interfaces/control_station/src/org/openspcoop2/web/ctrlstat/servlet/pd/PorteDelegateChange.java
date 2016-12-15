@@ -39,6 +39,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAzione;
+import org.openspcoop2.core.config.PortaDelegataLocalForward;
 import org.openspcoop2.core.config.PortaDelegataServizio;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
@@ -58,6 +59,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -125,6 +127,7 @@ public final class PorteDelegateChange extends Action {
 			String tiposervizio = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SERVIZIO);
 			String modeservizio = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SERVIZIO);
 			String servizio = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SERVIZIO);
+			String versioneServizio = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VERSIONE_SERVIZIO);
 			String servid = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SERVIZIO_ID);
 			String modeaz = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_AZIONE);
 			String azione = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
@@ -539,8 +542,8 @@ public final class PorteDelegateChange extends Action {
 							List<String> serviziListTmp = new ArrayList<String>();
 
 							for (IDServizio idServizio : list) {
-								if(tipiServizioCompatibiliAccordo.contains(idServizio.getTipoServizio())){
-									serviziListTmp.add(idServizio.getTipoServizio() + "/" + idServizio.getServizio());
+								if(tipiServizioCompatibiliAccordo.contains(idServizio.getTipo())){
+									serviziListTmp.add(idServizio.getTipo() + "/" + idServizio.getNome() + "/" + idServizio.getVersione().intValue());
 								}
 							}
 
@@ -559,7 +562,8 @@ public final class PorteDelegateChange extends Action {
 						(idSoggettoErogatore != null && !"".equals(idSoggettoErogatore) && idSoggettoErogatore.contains("/"))
 						) {
 					idSoggetto = new IDSoggetto(idSoggettoErogatore.split("/")[0], idSoggettoErogatore.split("/")[1]);
-					idServizio = new IDServizio(idSoggetto, servid.split("/")[0], servid.split("/")[1]);
+					idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(servid.split("/")[0], servid.split("/")[1], idSoggetto, 
+							Integer.parseInt(servid.split("/")[2])); 
 					try{
 						servS = apsCore.getServizio(idServizio);
 					}catch(DriverRegistroServiziNotFound dNotFound){
@@ -570,7 +574,8 @@ public final class PorteDelegateChange extends Action {
 						idServizio = null;
 						if(serviziList!=null && serviziList.length>0){
 							servid = serviziList[0];
-							idServizio = new IDServizio(idSoggetto, servid.split("/")[0], servid.split("/")[1]);
+							idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(servid.split("/")[0], servid.split("/")[1], idSoggetto, 
+									Integer.parseInt(servid.split("/")[2])); 
 							try{
 								servS = apsCore.getServizio(idServizio);
 							}catch(DriverRegistroServiziNotFound dNotFound){
@@ -659,7 +664,7 @@ public final class PorteDelegateChange extends Action {
 						idSoggettoErogatore, soggettiList, soggettiListLabel,
 						nomeSoggettoErogatore, tipoSoggettoErogatore,
 						patternErogatore, modeservizio, servid, serviziList,
-						serviziListLabel, servizio, tiposervizio,
+						serviziListLabel, servizio, tiposervizio, versioneServizio,
 						patternServizio, modeaz, azid, azioniListLabel,
 						azioniList, azione, patternAzione, numAzioni,
 						stateless, localForward, ricsim, ricasim, xsd,
@@ -755,9 +760,9 @@ public final class PorteDelegateChange extends Action {
 							List<String> serviziListLabelTmp = new ArrayList<String>();
 
 							for (IDServizio idServizio : list) {
-								if(tipiServizioCompatibiliAccordo.contains(idServizio.getTipoServizio())){
-									serviziListTmp.add(idServizio.getTipoServizio() + "/" + idServizio.getServizio());
-									serviziListLabelTmp.add(idServizio.getTipoServizio() + "/" + idServizio.getServizio());
+								if(tipiServizioCompatibiliAccordo.contains(idServizio.getTipo())){
+									serviziListTmp.add(idServizio.getTipo() + "/" + idServizio.getNome()+ "/" + idServizio.getVersione().intValue());
+									serviziListLabelTmp.add(idServizio.getTipo() + "/" + idServizio.getNome()+ "/" + idServizio.getVersione().intValue());
 								}
 							}
 
@@ -777,7 +782,8 @@ public final class PorteDelegateChange extends Action {
 							(idSoggettoErogatore != null && !"".equals(idSoggettoErogatore) && idSoggettoErogatore.contains("/"))
 							) {
 						IDSoggetto idSoggetto = new IDSoggetto(idSoggettoErogatore.split("/")[0], idSoggettoErogatore.split("/")[1]);
-						IDServizio idServizio = new IDServizio(idSoggetto, servid.split("/")[0], servid.split("/")[1]);
+						IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(servid.split("/")[0], servid.split("/")[1], idSoggetto, 
+								Integer.parseInt(servid.split("/")[2])); 
 						AccordoServizioParteSpecifica servS = null;
 						try{
 							servS = apsCore.getServizio(idServizio);
@@ -848,7 +854,7 @@ public final class PorteDelegateChange extends Action {
 						nomeSoggettoErogatore, tipoSoggettoErogatore,
 						nomeSoggettoErogatore, modeservizio, servid,
 						serviziList, serviziListLabel, servizio,
-						tiposervizio, servizio, modeaz, azid,
+						tiposervizio, servizio, versioneServizio, modeaz, azid,
 						azioniListLabel, azioniList, azione, azione,
 						numAzioni,  stateless, localForward, ricsim, ricasim,
 						xsd, tipoValidazione, numCorrApp, scadcorr, gestBody,
@@ -892,7 +898,9 @@ public final class PorteDelegateChange extends Action {
 			portaDelegata.setId(idPA);
 
 			portaDelegata.setNome(nomePorta);
-			portaDelegata.setOldNomeForUpdate(oldPD.getNome());
+			IDPortaDelegata oldIDPortaDelegataForUpdate = new IDPortaDelegata();
+			oldIDPortaDelegataForUpdate.setNome(oldPD.getNome());
+			portaDelegata.setOldIDPortaDelegataForUpdate(oldIDPortaDelegataForUpdate);
 			portaDelegata.setDescrizione(descr);
 			if (autenticazione == null || !autenticazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE_CUSTOM))
 				portaDelegata.setAutenticazione(autenticazione);
@@ -920,7 +928,10 @@ public final class PorteDelegateChange extends Action {
 				portaDelegata.setGestioneManifest(StatoFunzionalita.toEnumConstant(gestManifest));
 			portaDelegata.setRicevutaAsincronaSimmetrica(StatoFunzionalita.toEnumConstant(ricsim));
 			portaDelegata.setRicevutaAsincronaAsimmetrica(StatoFunzionalita.toEnumConstant(ricasim));
-			portaDelegata.setLocalForward(StatoFunzionalita.toEnumConstant(localForward));
+			if(localForward!=null){
+				portaDelegata.setLocalForward(new PortaDelegataLocalForward());
+				portaDelegata.getLocalForward().setStato(StatoFunzionalita.toEnumConstant(localForward));
+			}
 
 			PortaDelegataSoggettoErogatore pdSogg = new PortaDelegataSoggettoErogatore();
 			IDSoggetto idSoggErogatore = new IDSoggetto(tipoSoggettoErogatore, nomeSoggettoErogatore);
@@ -939,7 +950,7 @@ public final class PorteDelegateChange extends Action {
 			AccordoServizioParteSpecifica asps = null;
 			IDServizio idServizio = null;
 			if (modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-				idServizio = new IDServizio(idSoggErogatore, tiposervizio, servizio);
+				idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tiposervizio, servizio, idSoggErogatore, Integer.parseInt(versioneServizio)); 
 				try{
 					asps = apsCore.getServizio(idServizio);
 					pdServizio.setId(asps.getId());

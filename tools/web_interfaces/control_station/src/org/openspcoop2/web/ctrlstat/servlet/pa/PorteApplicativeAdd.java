@@ -55,6 +55,7 @@ import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -235,7 +236,9 @@ public final class PorteApplicativeAdd extends Action {
 				List<IDServizio> ordered = new ArrayList<IDServizio>();
 				Hashtable<String, IDServizio> map = new Hashtable<String, IDServizio>();
 				for (IDServizio servizioInLista : list1) {
-					String key = servizioInLista.getSoggettoErogatore().getTipo()+ "/" + servizioInLista.getSoggettoErogatore().getNome() + " " + servizioInLista.getTipoServizio() + "/" + servizioInLista.getServizio();
+					String key = servizioInLista.getSoggettoErogatore().getTipo()+ "/" + servizioInLista.getSoggettoErogatore().getNome() + " " + 
+							servizioInLista.getTipo() + "/" + servizioInLista.getNome() + "/"+
+							servizioInLista.getVersione().intValue();
 					tmp.add(key);
 					map.put(key, servizioInLista);
 				}
@@ -247,9 +250,14 @@ public final class PorteApplicativeAdd extends Action {
 				int i = 0;
 				for (IDServizio servizioInLista : ordered) {
 					if (servizio == null)
-						servizio = servizioInLista.getSoggettoErogatore().getTipo()+ "/" + servizioInLista.getSoggettoErogatore().getNome() + " " + servizioInLista.getTipoServizio() + "/" + servizioInLista.getServizio();
-					serviziList[i] = servizioInLista.getSoggettoErogatore().getTipo()+ "/" + servizioInLista.getSoggettoErogatore().getNome() + " " + servizioInLista.getTipoServizio() + "/" + servizioInLista.getServizio();
-					serviziListLabel[i] = servizioInLista.getTipoServizio() + "/" + servizioInLista.getServizio();
+						servizio = servizioInLista.getSoggettoErogatore().getTipo()+ "/" + servizioInLista.getSoggettoErogatore().getNome() + " " + 
+								servizioInLista.getTipo() + "/" + servizioInLista.getNome()+ "/"+
+								servizioInLista.getVersione().intValue();
+					serviziList[i] = servizioInLista.getSoggettoErogatore().getTipo()+ "/" + servizioInLista.getSoggettoErogatore().getNome() + " " + 
+								servizioInLista.getTipo() + "/" + servizioInLista.getNome()+"/"+
+								servizioInLista.getVersione().intValue();
+					serviziListLabel[i] = servizioInLista.getTipo() + "/" + servizioInLista.getNome()+"/"+
+							servizioInLista.getVersione().intValue();
 					i++;
 				}
 			}
@@ -268,8 +276,9 @@ public final class PorteApplicativeAdd extends Action {
 				}
 				if(servizioPresenteInLista){
 					String [] tmp = servizio.split(" ");
-					idServizio = new IDServizio(tmp[0].split("/")[0],tmp[0].split("/")[1],
-							tmp[1].split("/")[0],tmp[1].split("/")[1]);
+					idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tmp[1].split("/")[0],tmp[1].split("/")[1], 
+							tmp[0].split("/")[0],tmp[0].split("/")[1], 
+							Integer.parseInt(tmp[1].split("/")[2])); 
 					try{
 						servS = apsCore.getServizio(idServizio);
 					}catch(DriverRegistroServiziNotFound dNotFound){
@@ -283,8 +292,9 @@ public final class PorteApplicativeAdd extends Action {
 					if(serviziList!=null && serviziList.length>0){
 						servizio = serviziList[0];
 						String []tmp = servizio.split(" ");
-						idServizio = new IDServizio(tmp[0].split("/")[0],tmp[0].split("/")[1],
-								tmp[1].split("/")[0],tmp[1].split("/")[1]);
+						idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tmp[1].split("/")[0],tmp[1].split("/")[1], 
+								tmp[0].split("/")[0],tmp[0].split("/")[1], 
+								Integer.parseInt(tmp[1].split("/")[2])); 
 						try{
 							servS = apsCore.getServizio(idServizio);
 						}catch(DriverRegistroServiziNotFound dNotFound){
@@ -488,13 +498,13 @@ public final class PorteApplicativeAdd extends Action {
 
 			if (servizio!=null) {
 				String [] tmp = servizio.split(" ");
-				idServizio = new IDServizio(tmp[0].split("/")[0],tmp[0].split("/")[1],
-						tmp[1].split("/")[0],tmp[1].split("/")[1]);
-				String nomeServizio = idServizio.getServizio();
-				String tipoServizio = idServizio.getTipoServizio();
+				idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tmp[1].split("/")[0],tmp[1].split("/")[1], 
+						tmp[0].split("/")[0],tmp[0].split("/")[1], 
+						Integer.parseInt(tmp[1].split("/")[2])); 
 				PortaApplicativaServizio pas = new PortaApplicativaServizio();
-				pas.setTipo(tipoServizio);
-				pas.setNome(nomeServizio);
+				pas.setTipo(idServizio.getTipo());
+				pas.setNome(idServizio.getNome());
+				pas.setVersione(idServizio.getVersione());
 				pa.setServizio(pas);
 			}
 

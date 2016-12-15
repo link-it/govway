@@ -156,6 +156,8 @@ public final class CostantiDB {
     /*DB INFO*/
     public static final String DB_INFO = "db_info";
     
+    // VALORI DI COMODO
+    
     public static final int CREATE = 1;
     public static final int UPDATE = 2;
     public static final int DELETE = 3;

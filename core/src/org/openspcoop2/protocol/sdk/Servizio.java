@@ -73,6 +73,8 @@ public class Servizio implements java.io.Serializable {
 	private String tipoServizioCorrelato;
 	/** Servizio Correlato associato al servizio */
 	private String servizioCorrelato;
+	/** Versione Servizio Correlato associato al servizio */
+	private Integer versioneServizioCorrelato;
 	/** Indicazione se e' un servizio correlato */
 	private boolean correlato;
 
@@ -92,9 +94,9 @@ public class Servizio implements java.io.Serializable {
 				busta.setDestinatario(this.idServizio.getSoggettoErogatore().getNome());
 				busta.setIdentificativoPortaDestinatario(this.idServizio.getSoggettoErogatore().getCodicePorta());
 			}
-			busta.setTipoServizio(this.idServizio.getTipoServizio());
-			busta.setServizio(this.idServizio.getServizio());
-			busta.setVersioneServizio(this.idServizio.getVersioneServizio());
+			busta.setTipoServizio(this.idServizio.getTipo());
+			busta.setServizio(this.idServizio.getNome());
+			busta.setVersioneServizio(this.idServizio.getVersione());
 			busta.setAzione(this.idServizio.getAzione());
 		}
 		busta.setProfiloDiCollaborazione(this.profiloDiCollaborazione);
@@ -102,6 +104,8 @@ public class Servizio implements java.io.Serializable {
 		busta.setConfermaRicezione(this.confermaRicezione);
 		busta.setTipoServizioCorrelato(this.tipoServizioCorrelato);
 		busta.setServizioCorrelato(this.servizioCorrelato);
+		busta.setVersioneServizioCorrelato(this.versioneServizioCorrelato);
+
 		return busta;
 	}
 	
@@ -209,7 +213,11 @@ public class Servizio implements java.io.Serializable {
 	public void setTipoServizioCorrelato(String tipoServizioCorrelato) {
 		this.tipoServizioCorrelato = tipoServizioCorrelato;
 	} 
-
+	
+	public void setVersioneServizioCorrelato(Integer versioneServizioCorrelato) {
+		this.versioneServizioCorrelato = versioneServizioCorrelato;
+	}
+	
 	public void setCorrelato(boolean correlato) {
 		this.correlato = correlato;
 	}
@@ -304,6 +312,10 @@ public class Servizio implements java.io.Serializable {
 	 */
 	public String getTipoServizioCorrelato() {
 		return this.tipoServizioCorrelato;
+	}
+	
+	public Integer getVersioneServizioCorrelato() {
+		return this.versioneServizioCorrelato;
 	}
 
 	public boolean isCorrelato() {

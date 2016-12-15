@@ -70,7 +70,7 @@ CREATE TABLE accordi
 	superuser VARCHAR2(255),
 	-- id del soggetto referente
 	id_referente NUMBER,
-	versione VARCHAR2(255),
+	versione NUMBER,
 	-- 1/0 (vero/falso) indica se questo accordo di servizio e' utilizzabile in mancanza di azioni associate
 	utilizzo_senza_azione NUMBER,
 	-- 1/0 (true/false) indica se il soggetto e' privato/pubblico
@@ -89,7 +89,7 @@ CREATE TABLE accordi
 
 
 ALTER TABLE accordi MODIFY id_referente DEFAULT 0;
-ALTER TABLE accordi MODIFY versione DEFAULT '';
+ALTER TABLE accordi MODIFY versione DEFAULT 1;
 ALTER TABLE accordi MODIFY utilizzo_senza_azione DEFAULT 1;
 ALTER TABLE accordi MODIFY privato DEFAULT 0;
 ALTER TABLE accordi MODIFY ora_registrazione DEFAULT CURRENT_TIMESTAMP;
@@ -285,7 +285,7 @@ CREATE TABLE accordi_cooperazione
 	descrizione VARCHAR2(255),
 	-- id del soggetto referente
 	id_referente NUMBER,
-	versione VARCHAR2(255),
+	versione NUMBER,
 	stato VARCHAR2(255) NOT NULL,
 	-- 1/0 (true/false) indica se il soggetto e' privato/pubblico
 	privato NUMBER,
@@ -296,14 +296,14 @@ CREATE TABLE accordi_cooperazione
 	-- check constraints
 	CONSTRAINT chk_accordi_cooperazione_1 CHECK (stato IN ('finale','bozza','operativo')),
 	-- unique constraints
-	CONSTRAINT unique_accordi_cooperazione_1 UNIQUE (nome,versione),
+	CONSTRAINT unique_accordi_cooperazione_1 UNIQUE (nome,id_referente,versione),
 	-- fk/pk keys constraints
 	CONSTRAINT pk_accordi_cooperazione PRIMARY KEY (id)
 );
 
 
 ALTER TABLE accordi_cooperazione MODIFY id_referente DEFAULT 0;
-ALTER TABLE accordi_cooperazione MODIFY versione DEFAULT '';
+ALTER TABLE accordi_cooperazione MODIFY versione DEFAULT 1;
 ALTER TABLE accordi_cooperazione MODIFY stato DEFAULT 'finale';
 ALTER TABLE accordi_cooperazione MODIFY privato DEFAULT 0;
 ALTER TABLE accordi_cooperazione MODIFY ora_registrazione DEFAULT CURRENT_TIMESTAMP;
@@ -362,6 +362,7 @@ CREATE TABLE servizi
 (
 	nome_servizio VARCHAR2(255) NOT NULL,
 	tipo_servizio VARCHAR2(255) NOT NULL,
+	versione_servizio NUMBER,
 	id_soggetto NUMBER NOT NULL,
 	id_accordo NUMBER NOT NULL,
 	servizio_correlato VARCHAR2(255),
@@ -376,15 +377,12 @@ CREATE TABLE servizi
 	profilo VARCHAR2(255),
 	descrizione VARCHAR2(255),
 	stato VARCHAR2(255) NOT NULL,
-	-- identificativi accordo di servizio parte specifica
-	aps_nome VARCHAR2(255),
-	aps_versione VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- check constraints
 	CONSTRAINT chk_servizi_1 CHECK (stato IN ('finale','bozza','operativo')),
 	-- unique constraints
-	CONSTRAINT unique_servizi_1 UNIQUE (nome_servizio,tipo_servizio,id_soggetto),
+	CONSTRAINT unique_servizi_1 UNIQUE (id_soggetto,tipo_servizio,nome_servizio,versione_servizio),
 	-- fk/pk keys constraints
 	CONSTRAINT fk_servizi_1 FOREIGN KEY (id_connettore) REFERENCES connettori(id),
 	CONSTRAINT fk_servizi_2 FOREIGN KEY (id_soggetto) REFERENCES soggetti(id),
@@ -392,9 +390,8 @@ CREATE TABLE servizi
 	CONSTRAINT pk_servizi PRIMARY KEY (id)
 );
 
--- index
-CREATE INDEX INDEX_APS ON servizi (aps_nome,aps_versione,id_soggetto);
 
+ALTER TABLE servizi MODIFY versione_servizio DEFAULT 1;
 ALTER TABLE servizi MODIFY privato DEFAULT 0;
 ALTER TABLE servizi MODIFY ora_registrazione DEFAULT CURRENT_TIMESTAMP;
 ALTER TABLE servizi MODIFY stato DEFAULT 'finale';

@@ -140,7 +140,8 @@ public class PorteDelegateCore extends ControlStationCore {
 
 	}
 	
-	public List<PortaDelegata> getPorteDelegateWithServizio(Long idServizio, String tiposervizio, String nomeservizio, Long idSoggetto, String tiposoggetto, String nomesoggetto) throws DriverConfigurazioneException {
+	public List<PortaDelegata> getPorteDelegateWithServizio(Long idServizio, String tiposervizio, String nomeservizio, Integer versioneServizio,
+			Long idSoggetto, String tiposoggetto, String nomesoggetto) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "getPorteDelegateWithServizio";
 		DriverControlStationDB driver = null;
@@ -151,7 +152,8 @@ public class PorteDelegateCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverConfigurazioneDB().getPorteDelegateWithServizio(idServizio, tiposervizio, nomeservizio, idSoggetto, tiposoggetto, nomesoggetto);
+			return driver.getDriverConfigurazioneDB().getPorteDelegateWithServizio(idServizio, tiposervizio, nomeservizio, versioneServizio,
+					idSoggetto, tiposoggetto, nomesoggetto);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

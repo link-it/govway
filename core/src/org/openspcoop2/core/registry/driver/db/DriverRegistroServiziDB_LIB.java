@@ -39,8 +39,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.openspcoop2.core.commons.AccordiUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.constants.CostantiConnettori;
@@ -48,11 +46,14 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioCompostoServizioComponente;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
+import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
@@ -62,8 +63,6 @@ import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.ProtocolProperty;
-import org.openspcoop2.core.registry.Servizio;
-import org.openspcoop2.core.registry.ServizioAzione;
 import org.openspcoop2.core.registry.constants.BindingStyle;
 import org.openspcoop2.core.registry.constants.BindingUse;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
@@ -84,6 +83,7 @@ import org.openspcoop2.utils.jdbc.IJDBCAdapter;
 import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.slf4j.Logger;
 
 /**
  * Classe utilizzata per effettuare query ad un registro dei servizi openspcoop
@@ -937,8 +937,12 @@ public class DriverRegistroServiziDB_LIB {
 
 			case UPDATE:
 				// UPDATE
-				String oldNomeSoggetto = soggetto.getOldNomeForUpdate();
-				String oldTipoSoggetto = soggetto.getOldTipoForUpdate();
+				String oldNomeSoggetto = null;
+				String oldTipoSoggetto = null;
+				if(soggetto.getOldIDSoggettoForUpdate()!=null){
+					oldNomeSoggetto = soggetto.getOldIDSoggettoForUpdate().getNome();
+					oldTipoSoggetto = soggetto.getOldIDSoggettoForUpdate().getTipo();
+				}
 
 				// se i valori old... non sono settati allora uso quelli normali
 				if (oldNomeSoggetto == null || oldNomeSoggetto.equals(""))
@@ -1081,11 +1085,11 @@ public class DriverRegistroServiziDB_LIB {
 		if (asps == null)
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecifica] asps non valido.");
 
-		Servizio servizio = asps.getServizio();
-		String nomeProprietario = servizio.getNomeSoggettoErogatore();
-		String tipoProprietario = servizio.getTipoSoggettoErogatore();
-		String nomeServizio = servizio.getNome();
-		String tipoServizio = servizio.getTipo();
+		String nomeProprietario = asps.getNomeSoggettoErogatore();
+		String tipoProprietario = asps.getTipoSoggettoErogatore();
+		String nomeServizio = asps.getNome();
+		String tipoServizio = asps.getTipo();
+		Integer versioneServizio = asps.getVersione();
 		String descrizione = asps.getDescrizione();
 		String stato = asps.getStatoPackage();
 
@@ -1097,11 +1101,16 @@ public class DriverRegistroServiziDB_LIB {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecifica] Parametro Nome Servizio non valido.");
 		if (tipoServizio == null || tipoServizio.equals(""))
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecifica] Parametro Tipo Servizio non valido.");
+		if (versioneServizio == null)
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecifica] Parametro Versione Servizio non valido.");
 
 		// String accordoServizio=servizio.getAccordoServizio();
 
 		// String confermaRicezione=servizio.getConfermaRicezione();
-		Connettore connettore = servizio.getConnettore();
+		Connettore connettore = null;
+		if(asps.getConfigurazioneServizio()!=null){
+			connettore = asps.getConfigurazioneServizio().getConnettore();
+		}
 		// String consegnaInOrdine=servizio.getConsegnaInOrdine();
 		// String filtroDuplicati=servizio.getFiltroDuplicati();
 
@@ -1117,7 +1126,7 @@ public class DriverRegistroServiziDB_LIB {
 		wsdlImplementativoFruitore = wsdlImplementativoFruitore!=null && !"".equals(wsdlImplementativoFruitore.trim().replaceAll("\n", "")) ? wsdlImplementativoFruitore : null;
 				
 		String superUser = asps.getSuperUser();
-		StatoFunzionalita servizioCorrelato = (TipologiaServizio.CORRELATO.equals(servizio.getTipologiaServizio()) ? CostantiRegistroServizi.ABILITATO : CostantiRegistroServizi.DISABILITATO);
+		StatoFunzionalita servizioCorrelato = (TipologiaServizio.CORRELATO.equals(asps.getTipologiaServizio()) ? CostantiRegistroServizi.ABILITATO : CostantiRegistroServizi.DISABILITATO);
 		String port_type = (asps.getPortType()!=null ? asps.getPortType() : null );
 		
 		
@@ -1175,7 +1184,7 @@ public class DriverRegistroServiziDB_LIB {
 			int sizeFruitori=0;
 			int sizeAzioni=0;
 			Fruitore fruitore;
-			ServizioAzione azione = null;
+			ConfigurazioneServizioAzione azione = null;
 			asps.setIdAccordo(idAccordoLong);
 			switch (type) {
 			case CREATE:
@@ -1183,12 +1192,12 @@ public class DriverRegistroServiziDB_LIB {
 
 				if (connettore == null) {
 					connettore = new Connettore();
-					connettore.setNome("CNT_" + tipoProprietario+"/"+nomeProprietario +"_"+ tipoServizio + "/" +nomeServizio);
+					connettore.setNome("CNT_" + tipoProprietario+"/"+nomeProprietario +"_"+ tipoServizio + "/" +nomeServizio+"/"+versioneServizio);
 				}
 
 				if (connettore.getNome() == null || connettore.getNome().equals("")) {
 					// setto il nome del connettore
-					connettore.setNome("CNT_" + tipoProprietario+"/"+nomeProprietario +"_"+ tipoServizio + "/" +nomeServizio );
+					connettore.setNome("CNT_" + tipoProprietario+"/"+nomeProprietario +"_"+ tipoServizio + "/" +nomeServizio+"/"+versioneServizio );
 				}
 
 				// creo il connettore del servizio
@@ -1198,6 +1207,7 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addInsertTable(CostantiDB.SERVIZI);
 				sqlQueryObject.addInsertField("nome_servizio", "?");
 				sqlQueryObject.addInsertField("tipo_servizio", "?");
+				sqlQueryObject.addInsertField("versione_servizio", "?");
 				sqlQueryObject.addInsertField("id_soggetto", "?");
 				sqlQueryObject.addInsertField("id_accordo", "?");
 				sqlQueryObject.addInsertField("servizio_correlato", "?");
@@ -1213,51 +1223,43 @@ public class DriverRegistroServiziDB_LIB {
 					sqlQueryObject.addInsertField("stato", "?");
 				if(asps.getOraRegistrazione()!=null)
 					sqlQueryObject.addInsertField("ora_registrazione", "?");
-				sqlQueryObject.addInsertField("aps_nome", "?");
-				sqlQueryObject.addInsertField("aps_versione", "?");
 				
 				updateQuery = sqlQueryObject.createSQLInsert();
 				updateStmt = con.prepareStatement(updateQuery);
 
-				updateStmt.setString(1, nomeServizio);
-				updateStmt.setString(2, tipoServizio);
-				updateStmt.setLong(3, idSoggetto);
-				updateStmt.setLong(4, idAccordoLong);
-				updateStmt.setString(5, getValue(servizioCorrelato));
-				updateStmt.setLong(6, idConnettore);
-				updateStmt.setString(7, wsdlImplementativoErogatore);
-				updateStmt.setString(8, wsdlImplementativoFruitore);
-				updateStmt.setString(9, superUser);
+				int index = 1;
+				updateStmt.setString(index++, nomeServizio);
+				updateStmt.setString(index++, tipoServizio);
+				updateStmt.setInt(index++, versioneServizio);
+				updateStmt.setLong(index++, idSoggetto);
+				updateStmt.setLong(index++, idAccordoLong);
+				updateStmt.setString(index++, getValue(servizioCorrelato));
+				updateStmt.setLong(index++, idConnettore);
+				updateStmt.setString(index++, wsdlImplementativoErogatore);
+				updateStmt.setString(index++, wsdlImplementativoFruitore);
+				updateStmt.setString(index++, superUser);
 				if(asps.getPrivato()!=null && asps.getPrivato())
-					updateStmt.setInt(10, 1);
+					updateStmt.setInt(index++, 1);
 				else
-					updateStmt.setInt(10, 0);
-				updateStmt.setString(11, port_type);
-				updateStmt.setString(12, asps.getVersioneProtocollo());
-				updateStmt.setString(13, descrizione);
+					updateStmt.setInt(index++, 0);
+				updateStmt.setString(index++, port_type);
+				updateStmt.setString(index++, asps.getVersioneProtocollo());
+				updateStmt.setString(index++, descrizione);
 								
-				int index = 14;
-				
 				if(stato!=null){
-					updateStmt.setString(index, stato);
-					index++;
+					updateStmt.setString(index++, stato);
 				}
 				
 				if(asps.getOraRegistrazione()!=null){
-					updateStmt.setTimestamp(index, new Timestamp(asps.getOraRegistrazione().getTime()));
-					index++;
+					updateStmt.setTimestamp(index++, new Timestamp(asps.getOraRegistrazione().getTime()));
 				}
-		
-				
-				updateStmt.setString(index, asps.getNome());
-				index++;
-				updateStmt.setString(index, asps.getVersione());
-				index++;
 				
 				// eseguo lo statement
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
-				DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoServizioParteSpecifica CREATE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(updateQuery, nomeServizio, tipoServizio, idSoggetto, idAccordoLong, servizioCorrelato, idConnettore, wsdlImplementativoErogatore, wsdlImplementativoFruitore, superUser));
+				DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoServizioParteSpecifica CREATE : \n" + 
+						DriverRegistroServiziDB_LIB.formatSQLString(updateQuery, nomeServizio, tipoServizio, versioneServizio,
+								idSoggetto, idAccordoLong, servizioCorrelato, idConnettore, wsdlImplementativoErogatore, wsdlImplementativoFruitore, superUser));
 				DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoServizioParteSpecifica type = " + type + " row affected =" + n);
 
 				
@@ -1295,16 +1297,18 @@ public class DriverRegistroServiziDB_LIB {
 				fruitore = null;
 				for (int i = 0; i < sizeFruitori; i++) {
 					fruitore = asps.getFruitore(i);
-					DriverRegistroServiziDB_LIB.CRUDAccordoServizioParteSpecificaFruitore(1, fruitore, con, servizio);
+					DriverRegistroServiziDB_LIB.CRUDAccordoServizioParteSpecificaFruitore(1, fruitore, con, asps);
 				}
 				
 				// aggiungo azioni
-				sizeAzioni = servizio.sizeParametriAzioneList();
-				azione = null;
-				for (int i = 0; i < sizeAzioni; i++) {
-					azione = servizio.getParametriAzione(i);
-					DriverRegistroServiziDB_LIB.log.debug("CRUD AZIONE -----------["+azione.getNome()+"]");
-					DriverRegistroServiziDB_LIB.CRUDAccordoServizioParteSpecificaAzioni(1, azione, con, servizio);
+				if(asps.getConfigurazioneServizio()!=null){
+					sizeAzioni = asps.getConfigurazioneServizio().sizeConfigurazioneAzioneList();
+					azione = null;
+					for (int i = 0; i < sizeAzioni; i++) {
+						azione = asps.getConfigurazioneServizio().getConfigurazioneAzione(i);
+						DriverRegistroServiziDB_LIB.log.debug("CRUD AZIONE -----------["+azione.getNome()+"]");
+						DriverRegistroServiziDB_LIB.CRUDAccordoServizioParteSpecificaAzioni(1, azione, con, asps);
+					}
 				}
 				
 				// Documenti generici servizio
@@ -1346,10 +1350,20 @@ public class DriverRegistroServiziDB_LIB {
 
 			case UPDATE:
 				// UPDATE
-				String oldNomeSoggetto = servizio.getOldNomeSoggettoErogatoreForUpdate();
-				String oldTipoSoggetto = servizio.getOldTipoSoggettoErogatoreForUpdate();
-				String oldNomeServizio = servizio.getOldNomeForUpdate();
-				String oldTipoServizio = servizio.getOldTipoForUpdate();
+				String oldNomeSoggetto = null;
+				String oldTipoSoggetto = null;
+				String oldNomeServizio = null;
+				String oldTipoServizio = null;
+				Integer oldVersioneServizio = null;
+				if(asps.getOldIDServizioForUpdate()!=null){
+					if(asps.getOldIDServizioForUpdate().getSoggettoErogatore()!=null){
+						oldNomeSoggetto = asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome();
+						oldTipoSoggetto = asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo();
+					}
+					oldNomeServizio = asps.getOldIDServizioForUpdate().getNome();
+					oldTipoSoggetto = asps.getOldIDServizioForUpdate().getTipo();
+					oldVersioneServizio = asps.getOldIDServizioForUpdate().getVersione();
+				}
 
 				if (oldNomeServizio == null || oldNomeServizio.equals(""))
 					oldNomeServizio = nomeServizio;
@@ -1359,21 +1373,23 @@ public class DriverRegistroServiziDB_LIB {
 					oldNomeSoggetto = nomeProprietario;
 				if (oldTipoSoggetto == null || oldTipoSoggetto.equals(""))
 					oldTipoSoggetto = tipoProprietario;
+				if (oldVersioneServizio == null)
+					oldVersioneServizio = versioneServizio;
 
 				//recupero id servizio
-				idServizio = DBUtils.getIdServizio(oldNomeServizio, oldTipoServizio, oldNomeSoggetto, oldTipoSoggetto, con, DriverRegistroServiziDB_LIB.tipoDB);
+				idServizio = DBUtils.getIdServizio(oldNomeServizio, oldTipoServizio, oldVersioneServizio, oldNomeSoggetto, oldTipoSoggetto, con, DriverRegistroServiziDB_LIB.tipoDB);
 				if (idServizio <= 0){
 					// Puo' darsi che l'old soggetto e il nuovo soggetto siano la stesso soggetto della tabella. E' stato cambiato il nome.
-					idServizio = DBUtils.getIdServizio(oldNomeServizio, oldTipoServizio, nomeProprietario, tipoProprietario, con, DriverRegistroServiziDB_LIB.tipoDB);
+					idServizio = DBUtils.getIdServizio(oldNomeServizio, oldTipoServizio, oldVersioneServizio, nomeProprietario, tipoProprietario, con, DriverRegistroServiziDB_LIB.tipoDB);
 				}
 				if (idServizio <= 0)
 					throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecifica(UPDATE)] Id Servizio non valido.");
 
 				//recupero l'id del connettore
-				idConnettore = DriverRegistroServiziDB_LIB.getIdConnettoreServizio(oldNomeServizio, oldTipoServizio, oldNomeSoggetto, oldTipoSoggetto, con);
+				idConnettore = DriverRegistroServiziDB_LIB.getIdConnettoreServizio(oldNomeServizio, oldTipoServizio, oldVersioneServizio, oldNomeSoggetto, oldTipoSoggetto, con);
 				if (idConnettore <= 0){
 					// Puo' darsi che l'old soggetto e il nuovo soggetto siano la stesso soggetto della tabella. E' stato cambiato il nome.
-					idConnettore = DriverRegistroServiziDB_LIB.getIdConnettoreServizio(oldNomeServizio, oldTipoServizio, nomeProprietario, tipoProprietario, con);
+					idConnettore = DriverRegistroServiziDB_LIB.getIdConnettoreServizio(oldNomeServizio, oldTipoServizio, oldVersioneServizio, nomeProprietario, tipoProprietario, con);
 				}
 				if (idConnettore <= 0)
 					throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecifica] id connettore nullo.");
@@ -1383,6 +1399,7 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addUpdateTable(CostantiDB.SERVIZI);
 				sqlQueryObject.addUpdateField("nome_servizio", "?");
 				sqlQueryObject.addUpdateField("tipo_servizio", "?");
+				sqlQueryObject.addUpdateField("versione_servizio", "?");
 				sqlQueryObject.addUpdateField("id_soggetto", "?");
 				sqlQueryObject.addUpdateField("id_accordo", "?");
 				sqlQueryObject.addUpdateField("servizio_correlato", "?");
@@ -1398,47 +1415,39 @@ public class DriverRegistroServiziDB_LIB {
 					sqlQueryObject.addUpdateField("stato", "?");
 				if(asps.getOraRegistrazione()!=null)
 					sqlQueryObject.addUpdateField("ora_registrazione", "?");
-				sqlQueryObject.addUpdateField("aps_nome", "?");
-				sqlQueryObject.addUpdateField("aps_versione", "?");
 				sqlQueryObject.addWhereCondition("id=?");
 				updateQuery = sqlQueryObject.createSQLUpdate();
 				updateStmt = con.prepareStatement(updateQuery);
 
-				updateStmt.setString(1, nomeServizio);
-				updateStmt.setString(2, tipoServizio);
-				updateStmt.setLong(3, idSoggetto);
-				updateStmt.setLong(4, idAccordoLong);
-				updateStmt.setString(5, getValue(servizioCorrelato));
-				updateStmt.setLong(6, idConnettore);
-				updateStmt.setString(7, wsdlImplementativoErogatore);
-				updateStmt.setString(8, wsdlImplementativoFruitore);
-				updateStmt.setString(9, superUser);
-				if(asps.getPrivato()!=null && asps.getPrivato())
-					updateStmt.setInt(10, 1);
-				else
-					updateStmt.setInt(10, 0);
-				updateStmt.setString(11, port_type);
-				updateStmt.setString(12, asps.getVersioneProtocollo());
-				updateStmt.setString(13, descrizione);
+				index = 1;
 				
-				index = 14;
-								
+				updateStmt.setString(index++, nomeServizio);
+				updateStmt.setString(index++, tipoServizio);
+				updateStmt.setInt(index++, versioneServizio);
+				updateStmt.setLong(index++, idSoggetto);
+				updateStmt.setLong(index++, idAccordoLong);
+				updateStmt.setString(index++, getValue(servizioCorrelato));
+				updateStmt.setLong(index++, idConnettore);
+				updateStmt.setString(index++, wsdlImplementativoErogatore);
+				updateStmt.setString(index++, wsdlImplementativoFruitore);
+				updateStmt.setString(index++, superUser);
+				if(asps.getPrivato()!=null && asps.getPrivato())
+					updateStmt.setInt(index++, 1);
+				else
+					updateStmt.setInt(index++, 0);
+				updateStmt.setString(index++, port_type);
+				updateStmt.setString(index++, asps.getVersioneProtocollo());
+				updateStmt.setString(index++, descrizione);
+			
 				if(stato!=null){
-					updateStmt.setString(index, stato);
-					index++;
+					updateStmt.setString(index++, stato);
 				}
 				
 				if(asps.getOraRegistrazione()!=null){
-					updateStmt.setTimestamp(index, new Timestamp(asps.getOraRegistrazione().getTime()));
-					index++;
+					updateStmt.setTimestamp(index++, new Timestamp(asps.getOraRegistrazione().getTime()));
 				}
-				
-				updateStmt.setString(index, asps.getNome());
-				index++;
-				updateStmt.setString(index, asps.getVersione());
-				index++;
 								
-				updateStmt.setLong(index, idServizio);
+				updateStmt.setLong(index++, idServizio);
 
 
 				// eseguo lo statement
@@ -1447,7 +1456,7 @@ public class DriverRegistroServiziDB_LIB {
 				DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoServizioParteSpecifica type = " + type + " row affected =" + n);
 
 				// aggiorno nome connettore
-				String newNomeConnettore = "CNT_" + tipoProprietario+"/"+nomeProprietario +"_"+ tipoServizio + "/" +nomeServizio;
+				String newNomeConnettore = "CNT_" + tipoProprietario+"/"+nomeProprietario +"_"+ tipoServizio + "/" +nomeServizio+ "/"+versioneServizio;
 				connettore.setNome(newNomeConnettore);
 				DriverRegistroServiziDB_LIB.CRUDConnettore(2, connettore, con);
 
@@ -1461,7 +1470,7 @@ public class DriverRegistroServiziDB_LIB {
 				//creazione
 				for (int i = 0; i < sizeFruitori; i++) {
 					fruitore = asps.getFruitore(i);
-					DriverRegistroServiziDB_LIB.CRUDAccordoServizioParteSpecificaFruitore(1, fruitore, con, servizio);
+					DriverRegistroServiziDB_LIB.CRUDAccordoServizioParteSpecificaFruitore(1, fruitore, con, asps);
 				}
 
 				DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoServizioParteSpecifica UPDATE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(updateQuery, nomeServizio, tipoServizio, idSoggetto, idAccordoLong, servizioCorrelato, idConnettore, wsdlImplementativoErogatore, wsdlImplementativoFruitore, superUser, idServizio));
@@ -1470,15 +1479,17 @@ public class DriverRegistroServiziDB_LIB {
 				//aggiorno azioni
 				//La lista delle azioni del servizio contiene tutti e soli le azioni di questo servizio
 				//prima vengono cancellati le azioni esistenti e poi vengono riaggiunte
-				sizeAzioni = servizio.sizeParametriAzioneList();
-				azione = null;
-				//cancellazione
-				DriverRegistroServiziDB_LIB.deleteAllAzioniServizio(idServizio, con);
-				//creazione
-				for (int i = 0; i < sizeAzioni; i++) {
-					azione = servizio.getParametriAzione(i);
-					DriverRegistroServiziDB_LIB.log.debug("CRUD AZIONE -----------["+azione.getNome()+"]");
-					DriverRegistroServiziDB_LIB.CRUDAccordoServizioParteSpecificaAzioni(1, azione, con, servizio);
+				if(asps.getConfigurazioneServizio()!=null){
+					sizeAzioni = asps.getConfigurazioneServizio().sizeConfigurazioneAzioneList();
+					azione = null;
+					//cancellazione
+					DriverRegistroServiziDB_LIB.deleteAllAzioniServizio(idServizio, con);
+					//creazione
+					for (int i = 0; i < sizeAzioni; i++) {
+						azione = asps.getConfigurazioneServizio().getConfigurazioneAzione(i);
+						DriverRegistroServiziDB_LIB.log.debug("CRUD AZIONE -----------["+azione.getNome()+"]");
+						DriverRegistroServiziDB_LIB.CRUDAccordoServizioParteSpecificaAzioni(1, azione, con, asps);
+					}
 				}
 			
 
@@ -1526,10 +1537,10 @@ public class DriverRegistroServiziDB_LIB {
 				// DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecifica(DELETE)]
 				// ID Servizio non valido.");
 				// idServizio=servizio.getId();
-				idServizio = DBUtils.getIdServizio(nomeServizio, tipoServizio, nomeProprietario, tipoProprietario, con, DriverRegistroServiziDB_LIB.tipoDB);
+				idServizio = DBUtils.getIdServizio(nomeServizio, tipoServizio, versioneServizio, nomeProprietario, tipoProprietario, con, DriverRegistroServiziDB_LIB.tipoDB);
 				if (idServizio <= 0)
 					throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecifica(DELETE)] Id Servizio non valido.");
-				idConnettore = DriverRegistroServiziDB_LIB.getIdConnettoreServizio(nomeServizio, tipoServizio, nomeProprietario, tipoProprietario, con);
+				idConnettore = DriverRegistroServiziDB_LIB.getIdConnettoreServizio(nomeServizio, tipoServizio, versioneServizio, nomeProprietario, tipoProprietario, con);
 				if (idConnettore <= 0)
 					throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoServizioParteSpecifica(DELETE)] Id Connettore non valido.");
 
@@ -1539,15 +1550,17 @@ public class DriverRegistroServiziDB_LIB {
 				for (int i = 0; i < sizeFruitori; i++) {
 					fruitore = asps.getFruitore(i);
 
-					DriverRegistroServiziDB_LIB.CRUDAccordoServizioParteSpecificaFruitore(3, fruitore, con, servizio);
+					DriverRegistroServiziDB_LIB.CRUDAccordoServizioParteSpecificaFruitore(3, fruitore, con, asps);
 				}
 				
 				// elimino azioni
-				sizeAzioni = servizio.sizeParametriAzioneList();
-				azione = null;
-				for (int i = 0; i < sizeAzioni; i++) {
-					azione = servizio.getParametriAzione(i);
-					DriverRegistroServiziDB_LIB.CRUDAccordoServizioParteSpecificaAzioni(3, azione, con, servizio);
+				if(asps.getConfigurazioneServizio()!=null){
+					sizeAzioni = asps.getConfigurazioneServizio().sizeConfigurazioneAzioneList();
+					azione = null;
+					for (int i = 0; i < sizeAzioni; i++) {
+						azione = asps.getConfigurazioneServizio().getConfigurazioneAzione(i);
+						DriverRegistroServiziDB_LIB.CRUDAccordoServizioParteSpecificaAzioni(3, azione, con, asps);
+					}
 				}
 
 				
@@ -1612,7 +1625,7 @@ public class DriverRegistroServiziDB_LIB {
 	 * @param fruitore
 	 * @param con
 	 */
-	public static long CRUDAccordoServizioParteSpecificaFruitore(int type, Fruitore fruitore, Connection con, Servizio servizio) throws DriverRegistroServiziException {
+	public static long CRUDAccordoServizioParteSpecificaFruitore(int type, Fruitore fruitore, Connection con, AccordoServizioParteSpecifica servizio) throws DriverRegistroServiziException {
 		PreparedStatement updateStmt = null;
 		String updateQuery;
 		PreparedStatement selectStmt = null;
@@ -1623,6 +1636,7 @@ public class DriverRegistroServiziDB_LIB {
 		try{
 			String tipoServ = servizio.getTipo();
 			String nomeServ = servizio.getNome();
+			Integer verServ = servizio.getVersione();
 			String tipoSogg = servizio.getTipoSoggettoErogatore();
 			String nomeSogg = servizio.getNomeSoggettoErogatore();
 			// A questo punto sono gia modificati.
@@ -1635,7 +1649,7 @@ public class DriverRegistroServiziDB_LIB {
 			//if(servizio.getOldNomeSoggettoErogatoreForUpdate()!=null)
 			//	nomeSogg = servizio.getOldNomeSoggettoErogatoreForUpdate();
 			
-			idServizio = DBUtils.getIdServizio(nomeServ, tipoServ, nomeSogg, tipoSogg, con, DriverRegistroServiziDB_LIB.tipoDB);
+			idServizio = DBUtils.getIdServizio(nomeServ, tipoServ, verServ, nomeSogg, tipoSogg, con, DriverRegistroServiziDB_LIB.tipoDB);
 			//long idServizio = servizio.getId();
 		} catch (CoreException e1) {
 			DriverRegistroServiziDB_LIB.log.error("Driver Error.", e1);
@@ -1888,7 +1902,7 @@ public class DriverRegistroServiziDB_LIB {
 	 * @param azione azione
 	 * @param con
 	 */
-	public static long CRUDAccordoServizioParteSpecificaAzioni(int type, ServizioAzione azione, Connection con, Servizio servizio) throws DriverRegistroServiziException {
+	public static long CRUDAccordoServizioParteSpecificaAzioni(int type, ConfigurazioneServizioAzione azione, Connection con, AccordoServizioParteSpecifica servizio) throws DriverRegistroServiziException {
 		PreparedStatement updateStmt = null;
 		String updateQuery;
 		PreparedStatement selectStmt = null;
@@ -1899,6 +1913,7 @@ public class DriverRegistroServiziDB_LIB {
 		try{
 			String tipoServ = servizio.getTipo();
 			String nomeServ = servizio.getNome();
+			Integer verServ = servizio.getVersione();
 			String tipoSogg = servizio.getTipoSoggettoErogatore();
 			String nomeSogg = servizio.getNomeSoggettoErogatore();
 			// A questo punto sono gia modificati.
@@ -1911,7 +1926,7 @@ public class DriverRegistroServiziDB_LIB {
 			//if(servizio.getOldNomeSoggettoErogatoreForUpdate()!=null)
 			//	nomeSogg = servizio.getOldNomeSoggettoErogatoreForUpdate();
 			
-			idServizio = DBUtils.getIdServizio(nomeServ, tipoServ, nomeSogg, tipoSogg, con, DriverRegistroServiziDB_LIB.tipoDB);
+			idServizio = DBUtils.getIdServizio(nomeServ, tipoServ, verServ, nomeSogg, tipoSogg, con, DriverRegistroServiziDB_LIB.tipoDB);
 			//long idServizio = servizio.getId();
 		} catch (CoreException e1) {
 			DriverRegistroServiziDB_LIB.log.error("Driver Error.", e1);
@@ -2946,7 +2961,7 @@ public class DriverRegistroServiziDB_LIB {
 	 * @return id del connettore del servizio
 	 * @throws DriverRegistroServiziException
 	 */
-	private static long getIdConnettoreServizio(String nomeServizio, String tipoServizio, String nomeSoggetto, String tipoSoggetto, Connection con) throws DriverRegistroServiziException {
+	private static long getIdConnettoreServizio(String nomeServizio, String tipoServizio, Integer versioneServizio, String nomeSoggetto, String tipoSoggetto, Connection con) throws DriverRegistroServiziException {
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 		long idConnettore = -1;
@@ -2960,13 +2975,16 @@ public class DriverRegistroServiziDB_LIB {
 			sqlQueryObject.addSelectField("*");
 			sqlQueryObject.addWhereCondition("tipo_servizio = ?");
 			sqlQueryObject.addWhereCondition("nome_servizio = ?");
+			sqlQueryObject.addWhereCondition("versione_servizio = ?");
 			sqlQueryObject.addWhereCondition("id_soggetto = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			String query = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(query);
-			stm.setString(1, tipoServizio);
-			stm.setString(2, nomeServizio);
-			stm.setLong(3, idSoggetto);
+			int index = 1;
+			stm.setString(index++, tipoServizio);
+			stm.setString(index++, nomeServizio);
+			stm.setInt(index++, versioneServizio);
+			stm.setLong(index++, idSoggetto);
 
 			rs = stm.executeQuery();
 
@@ -3875,7 +3893,7 @@ public class DriverRegistroServiziDB_LIB {
 						DriverRegistroServiziDB_LIB.log.debug("Provo a recuperare l'id del servizio con tipo/nome soggetto erogatore ["+tmp.getTipoSoggetto()+"/"+tmp.getNomeSoggetto()
 								+"] e tipo/nome servizio ["+tmp.getTipo()+"/"+tmp.getNome()+"]");
 						if(tmp.getTipoSoggetto()!=null && tmp.getNomeSoggetto()!=null && tmp.getTipo()!=null  &&  tmp.getNome()!=null)
-							idServizioComponente = DBUtils.getIdServizio(tmp.getNome(), tmp.getTipo(), tmp.getNomeSoggetto(), tmp.getTipoSoggetto(), con, DriverRegistroServiziDB_LIB.tipoDB);
+							idServizioComponente = DBUtils.getIdServizio(tmp.getNome(), tmp.getTipo(), tmp.getVersione(), tmp.getNomeSoggetto(), tmp.getTipoSoggetto(), con, DriverRegistroServiziDB_LIB.tipoDB);
 					}
 					if(idServizioComponente<=0){
 						idServizioComponente = tmp.getIdServizioComponente();
@@ -3964,7 +3982,7 @@ public class DriverRegistroServiziDB_LIB {
 						DriverRegistroServiziDB_LIB.log.debug("Provo a recuperare l'id del servizio con tipo/nome soggetto erogatore ["+tmp.getTipoSoggetto()+"/"+tmp.getNomeSoggetto()
 								+"] e tipo/nome servizio ["+tmp.getTipo()+"/"+tmp.getNome()+"]");
 						if(tmp.getTipoSoggetto()!=null && tmp.getNomeSoggetto()!=null && tmp.getTipo()!=null  &&  tmp.getNome()!=null)
-							idServizioComponente = DBUtils.getIdServizio(tmp.getNome(), tmp.getTipo(), tmp.getNomeSoggetto(), tmp.getTipoSoggetto(), con, DriverRegistroServiziDB_LIB.tipoDB);
+							idServizioComponente = DBUtils.getIdServizio(tmp.getNome(), tmp.getTipo(), tmp.getVersione(), tmp.getNomeSoggetto(), tmp.getTipoSoggetto(), con, DriverRegistroServiziDB_LIB.tipoDB);
 					}
 					if(idServizioComponente<=0){
 						idServizioComponente = tmp.getIdServizioComponente();
@@ -4101,6 +4119,11 @@ public class DriverRegistroServiziDB_LIB {
 		if (nome == null || nome.equals(""))
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoCooperazione] Parametro Nome non valido.");
 		
+		IDSoggetto soggettoReferente = null;
+		if(accordoCooperazione.getSoggettoReferente()!=null){
+			soggettoReferente = new IDSoggetto(accordoCooperazione.getSoggettoReferente().getTipo(), accordoCooperazione.getSoggettoReferente().getNome());
+		}
+		
 		PreparedStatement updateStmt = null;
 		ResultSet updateRS = null;
 		try {
@@ -4129,11 +4152,7 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setString(1, nome);
 				updateStmt.setString(2, descrizione);
 				
-				if(accordoCooperazione.getVersione()!=null && !"".equals(accordoCooperazione.getVersione())){
-					updateStmt.setString(3, accordoCooperazione.getVersione());
-				}else{
-					updateStmt.setString(3, AccordiUtils.VERSIONE_DEFAULT);
-				}
+				updateStmt.setInt(3, accordoCooperazione.getVersione());
 				
 				if(privato)
 					updateStmt.setInt(4, 1);
@@ -4170,43 +4189,14 @@ public class DriverRegistroServiziDB_LIB {
 
 				
 				// recupero l-id dell'accordo appena inserito
-				IDAccordoCooperazione idAccordoObject = IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromValues(accordoCooperazione.getNome(),accordoCooperazione.getVersione());
+				IDAccordoCooperazione idAccordoObject = IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromValues(accordoCooperazione.getNome(),
+						soggettoReferente, accordoCooperazione.getVersione());
 				long idAccordoCooperazione = DBUtils.getIdAccordoCooperazione(idAccordoObject, con, DriverRegistroServiziDB_LIB.tipoDB);
 				if (idAccordoCooperazione<=0) {
 					throw new DriverRegistroServiziException("[DriverRegistroServiziDB::CRUDAccordoCooperazione] non riesco a trovare l'id del'Accordo inserito");
 				}
 				accordoCooperazione.setId(idAccordoCooperazione);
 								
-				
-				// aggiungo servizi componenti
-				/*for(int i=0; i<accordoCooperazione.sizeServizioCompostoList(); i++){
-					
-					AccordoCooperazioneServizioComposto sComposto = accordoCooperazione.getServizioComposto(i);
-					long idAccordoServizioComposto = sComposto.getIdAccordo();
-					if(idAccordoServizioComposto <=0 ){
-						// Provo a prenderlo attraverso la uri dell'accordo
-						DriverRegistroServiziDB_LIB.log.debug("Provo a recuperare l'id dell'accordo di servizio con uri ["+sComposto.getNomeAccordoServizio()+"]");
-						if(sComposto.getNomeAccordoServizio()!=null)
-							idAccordoServizioComposto = DBUtils.getIdAccordoServizio(IDAccordo.getIDAccordoFromUri(sComposto.getNomeAccordoServizio()), con, DriverRegistroServiziDB_LIB.tipoDB);
-					}
-					if(idAccordoServizioComposto<=0)
-						throw new DriverRegistroServiziException("[DriverRegistroServiziDB::CRUDAccordoCooperazione] idAccordoServizio composto non presente");
-					
-					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
-					sqlQueryObject.addInsertTable(CostantiDB.ACCORDI_COOPERAZIONE_SERVIZI_COMPOSTI);
-					sqlQueryObject.addInsertField("id_accordo_cooperazione", "?");
-					sqlQueryObject.addInsertField("id_accordo_servizio", "?");
-					updateQuery = sqlQueryObject.createSQLInsert();
-					updateStmt = con.prepareStatement(updateQuery);
-
-					updateStmt.setLong(1, idAccordoCooperazione);
-					updateStmt.setLong(2, idAccordoServizioComposto);
-					
-					n = updateStmt.executeUpdate();
-					updateStmt.close();
-					DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoCooperazione (Partecipante) type = " + type + " row affected =" + n);
-				}*/
-				
 				
 				// aggiungo partecipanti
 				if(accordoCooperazione.getElencoPartecipanti()!=null){
@@ -4305,11 +4295,7 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setString(1, nome);
 				updateStmt.setString(2, descrizione);
 				
-				if(accordoCooperazione.getVersione()!=null && !"".equals(accordoCooperazione.getVersione())){
-					updateStmt.setString(3, accordoCooperazione.getVersione());
-				}else{
-					updateStmt.setString(3, AccordiUtils.VERSIONE_DEFAULT);
-				}
+				updateStmt.setInt(3, accordoCooperazione.getVersione());
 				
 				if(privato)
 					updateStmt.setInt(4, 1);
@@ -4324,7 +4310,7 @@ public class DriverRegistroServiziDB_LIB {
 							accordoCooperazione.getSoggettoReferente().getTipo(), con, DriverRegistroServiziDB_LIB.tipoDB);
 					updateStmt.setLong(index, idSRef);
 				}else{
-					updateStmt.setLong(index, AccordiUtils.SOGGETTO_REFERENTE_DEFAULT);
+					updateStmt.setLong(index, CostantiRegistroServizi.SOGGETTO_REFERENTE_DEFAULT);
 				}
 				index++;
 				
@@ -4464,7 +4450,7 @@ public class DriverRegistroServiziDB_LIB {
 			case DELETE:
 				// DELETE
 				
-				IDAccordoCooperazione idAccordo = IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromValues(nome,accordoCooperazione.getVersione());
+				IDAccordoCooperazione idAccordo = IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromValues(nome,soggettoReferente,accordoCooperazione.getVersione());
 				idAccordoLong = DBUtils.getIdAccordoCooperazione(idAccordo, con, DriverRegistroServiziDB_LIB.tipoDB);
 				if (idAccordoLong <= 0)
 					throw new DriverRegistroServiziException("Impossibile recuperare l'id dell'Accordo di Cooperazione : " + nome);
@@ -5287,8 +5273,14 @@ public class DriverRegistroServiziDB_LIB {
 				pp.setName(rs.getString("name"));
 				pp.setValue(rs.getString("value_string"));
 				pp.setNumberValue(rs.getLong("value_number"));
+				if(rs.wasNull()){
+					pp.setNumberValue(null);
+				}
 				int value = rs.getInt("value_boolean");
 				pp.setBooleanValue(value == CostantiDB.TRUE);
+				if(rs.wasNull()){
+					pp.setBooleanValue(null);
+				}
 				pp.setByteFile(jdbcAdapter.getBinaryData(rs,"value_binary"));
 				pp.setId(rs.getLong("id"));
 			}

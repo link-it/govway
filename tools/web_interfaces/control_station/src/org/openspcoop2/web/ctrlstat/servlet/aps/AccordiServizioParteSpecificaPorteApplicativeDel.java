@@ -36,7 +36,6 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -113,7 +112,6 @@ public final class AccordiServizioParteSpecificaPorteApplicativeDel extends Acti
 
 			// Prendo l'id del soggetto erogatore del servizio
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
-			Servizio servizio = asps.getServizio();
 			int idSoggettoErogatoreDelServizio = asps.getIdSoggetto().intValue();
 
 			String superUser   = ServletUtils.getUserLoginFromSession(session);
@@ -125,8 +123,9 @@ public final class AccordiServizioParteSpecificaPorteApplicativeDel extends Acti
 				// idporta = de.getValue();
 				idporta = idsToRemove.get(i);
 				// Prendo la porta applicativa
-				PortaApplicativa tmpPA = porteApplicativeCore.getPortaApplicativaWithSoggettoAndServizio(idporta, new Long(idSoggettoErogatoreDelServizio), new Long(idServizio),
-						servizio.getTipo(),servizio.getNome());
+				PortaApplicativa tmpPA = porteApplicativeCore.getPortaApplicativaWithSoggettoAndServizio(idporta, new Long(idSoggettoErogatoreDelServizio), 
+						new Long(idServizio),
+						asps.getTipo(),asps.getNome(),asps.getVersione());
 				// Elimino la porta applicativa
 				apsCore.performDeleteOperation(superUser, apsHelper.smista(), tmpPA);
 			}// for
@@ -138,7 +137,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeDel extends Acti
 
 			ricerca = apsHelper.checkSearchParameters(idLista, ricerca);
 
-			List<PortaApplicativa> lista = apsCore.serviziPorteAppList(servizio.getTipo(),servizio.getNome(),new Long(id), new Long(idSoggettoErogatoreDelServizio), ricerca);
+			List<PortaApplicativa> lista = apsCore.serviziPorteAppList(asps.getTipo(),asps.getNome(),asps.getVersione(),
+					new Long(id), new Long(idSoggettoErogatoreDelServizio), ricerca);
 
 			apsHelper.prepareServiziPorteAppList(lista, id, ricerca);
 

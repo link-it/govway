@@ -193,12 +193,14 @@ public class PorteDelegateCostanti {
 	public final static String PARAMETRO_PORTE_DELEGATE_TIPO_SERVIZIO = "tiposervizio";
 	public final static String PARAMETRO_PORTE_DELEGATE_MODE_SERVIZIO = "modeservizio";
 	public final static String PARAMETRO_PORTE_DELEGATE_SERVIZIO = "servizio";
+	public final static String PARAMETRO_PORTE_DELEGATE_VERSIONE_SERVIZIO = "versioneservizio";
 	public final static String PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI = "autorizzazioneContenuti";
 	public final static String PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE = "tipo_validazione";
 	public final static String PARAMETRO_PORTE_DELEGATE_XSD = "xsd";
 	public final static String PARAMETRO_PORTE_DELEGATE_GESTIONE_MANIFEST = "gestManifest";
 	public final static String PARAMETRO_PORTE_DELEGATE_GESTIONE_BODY = "gestBody";
 	public final static String PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD = "localForward";
+	public final static String PARAMETRO_PORTE_DELEGATE_LOCAL_FORWARD_PA = "localForwardPA";
 	public final static String PARAMETRO_PORTE_DELEGATE_STATELESS = "stateless";
 	public final static String PARAMETRO_PORTE_DELEGATE_AZIONE = "azione";
 	public final static String PARAMETRO_PORTE_DELEGATE_MODE_AZIONE = "modeaz";
@@ -280,6 +282,7 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO = "Servizio";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_TIPO_SERVIZIO = "Tipo Servizio";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_NOME_SERVIZIO = "Nome Servizio";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VERSIONE_SERVIZIO = "Versione Servizio";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA = "Modalit&agrave;";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_AZIONE = "Azione";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_QUALSIASI_AZIONE = "Tutte le azioni del servizio";

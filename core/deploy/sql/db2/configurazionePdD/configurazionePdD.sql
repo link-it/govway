@@ -270,6 +270,7 @@ CREATE TABLE servizi_pdd_filtri
 	identificativo_porta_erogatore VARCHAR(255),
 	tipo_servizio VARCHAR(255),
 	servizio VARCHAR(255),
+	versione_servizio INT,
 	azione VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),

@@ -154,6 +154,9 @@ public class SPCoopCostanti {
    public static final String ATTACHMENTS_MANIFEST_ALLEGATO = "Allegato";
    public static final String MANIFEST_KEY_ROLE_RICHIESTA = "@RICHIESTA@";
    public static final String MANIFEST_KEY_ROLE_RISPOSTA = "@RISPOSTA@";
+   
+   /** Nome Accordo CNIPA */
+   public static final String SPCOOP_PROTOCOL_PROPERTIES_NOME_ACCORDO_CNIPA = "SPCoop_NomeAccordoCNIPA"; 
 }
 
 

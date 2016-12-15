@@ -51,6 +51,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -366,18 +367,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		boolean gestioneManifest = false;
 		ProprietaManifestAttachments proprietaManifestAttachments = this.propertiesReader.getProprietaManifestAttachments(implementazionePdDMittente);
 
-		IDServizio servizioHeaderIntegrazione = null;
+		IDSoggetto soggettoErogatoreServizioHeaderIntegrazione = null;
 		IDSoggetto soggettoFruitoreHeaderIntegrazione = null;
-		if(bustaRichiesta!=null){
-			// Per ricambiare il servizio in correlato per:
-			// - AsincronoAsimmetrico, richiestaStato
-			// - AsincronoSimmetrico, risposta
-			servizioHeaderIntegrazione = new IDServizio();
-			servizioHeaderIntegrazione.setTipoServizio(bustaRichiesta.getTipoServizio());
-			servizioHeaderIntegrazione.setServizio(bustaRichiesta.getServizio());
-			servizioHeaderIntegrazione.setVersioneServizio(""+bustaRichiesta.getVersioneServizio());
-			servizioHeaderIntegrazione.setAzione(bustaRichiesta.getAzione());
-		}	
 		String profiloGestione = null;
 		
 		boolean localForward = false;
@@ -396,15 +387,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						idServizio.getSoggettoErogatore().setCodicePorta(bustaRichiesta.getIdentificativoPortaDestinatario());
 					}
 				}
-				if(idServizio.getVersioneServizio()==null){
-					if(bustaRichiesta.getVersioneServizio()>0)
-						idServizio.setVersioneServizio(bustaRichiesta.getVersioneServizio()+"");
-				}
 			}
 			idAccordoServizio = richiestaApplicativa.getIdAccordo();
-			if(servizioHeaderIntegrazione!=null){
-				servizioHeaderIntegrazione.setSoggettoErogatore(idServizio.getSoggettoErogatore());
-			}
+			soggettoErogatoreServizioHeaderIntegrazione = idServizio.getSoggettoErogatore();
 			profiloGestione = richiestaApplicativa.getProfiloGestione();
 			servizioApplicativoFruitore = richiestaApplicativa.getIdentitaServizioApplicativoFruitore();
 			idCorrelazioneApplicativa = richiestaApplicativa.getIdCorrelazioneApplicativa();
@@ -425,22 +410,36 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						idServizio.getSoggettoErogatore().setCodicePorta(bustaRichiesta.getIdentificativoPortaDestinatario());
 					}
 				}
-				if(idServizio.getVersioneServizio()==null){
-					if(bustaRichiesta.getVersioneServizio()>0)
-						idServizio.setVersioneServizio(bustaRichiesta.getVersioneServizio()+"");
-				}
 			}
 			idAccordoServizio = richiestaDelegata.getIdAccordo();
-			if ( servizioHeaderIntegrazione!=null && Costanti.SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA.equals(scenarioCooperazione) ){
-				servizioHeaderIntegrazione.setSoggettoErogatore(new IDSoggetto(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario()));
+			if ( bustaRichiesta!=null && Costanti.SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA.equals(scenarioCooperazione) ){
+				soggettoErogatoreServizioHeaderIntegrazione = new IDSoggetto(bustaRichiesta.getTipoDestinatario(),bustaRichiesta.getDestinatario());
 				soggettoFruitoreHeaderIntegrazione = new IDSoggetto(bustaRichiesta.getTipoMittente(),bustaRichiesta.getMittente(), bustaRichiesta.getIdentificativoPortaMittente());
 			}else{
-				servizioHeaderIntegrazione.setSoggettoErogatore(idServizio.getSoggettoErogatore());
+				soggettoErogatoreServizioHeaderIntegrazione = idServizio.getSoggettoErogatore();
 			}
 			profiloGestione = richiestaDelegata.getProfiloGestione();
 			servizioApplicativoFruitore = richiestaDelegata.getServizioApplicativo();
 			idCorrelazioneApplicativa = richiestaDelegata.getIdCorrelazioneApplicativa();
 		}
+		
+		IDServizio servizioHeaderIntegrazione = null;
+		if(bustaRichiesta!=null){
+			// Per ricambiare il servizio in correlato per:
+			// - AsincronoAsimmetrico, richiestaStato
+			// - AsincronoSimmetrico, risposta
+			try{
+				servizioHeaderIntegrazione = IDServizioFactory.getInstance().getIDServizioFromValues(bustaRichiesta.getTipoServizio(), bustaRichiesta.getServizio(), 
+						soggettoErogatoreServizioHeaderIntegrazione, bustaRichiesta.getVersioneServizio());
+				servizioHeaderIntegrazione.setAzione(bustaRichiesta.getAzione());
+			}catch(Exception e){
+				msgDiag.logErroreGenerico(e, "RichiestaApplicativa.getIDServizioFromValues");
+				esito.setEsitoInvocazione(false); 
+				esito.setStatoInvocazioneErroreNonGestito(e);
+				return esito;
+			}
+		}	
+		
 		msgDiag.mediumDebug("Profilo di gestione ["+ConsegnaContenutiApplicativi.ID_MODULO+"] della busta: "+profiloGestione);
 		msgDiag.setDominio(identitaPdD);  // imposto anche il dominio nel msgDiag
 		msgDiag.setIdCorrelazioneApplicativa(idCorrelazioneApplicativa);
@@ -1150,14 +1149,16 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			if(servizioHeaderIntegrazione!=null){
 				headerIntegrazione.getBusta().setTipoDestinatario(servizioHeaderIntegrazione.getSoggettoErogatore().getTipo());
 				headerIntegrazione.getBusta().setDestinatario(servizioHeaderIntegrazione.getSoggettoErogatore().getNome());
-				headerIntegrazione.getBusta().setTipoServizio(servizioHeaderIntegrazione.getTipoServizio());
-				headerIntegrazione.getBusta().setServizio(servizioHeaderIntegrazione.getServizio());
+				headerIntegrazione.getBusta().setTipoServizio(servizioHeaderIntegrazione.getTipo());
+				headerIntegrazione.getBusta().setServizio(servizioHeaderIntegrazione.getNome());
+				headerIntegrazione.getBusta().setVersioneServizio(servizioHeaderIntegrazione.getVersione());
 				headerIntegrazione.getBusta().setAzione(servizioHeaderIntegrazione.getAzione());
 			}else{
 				headerIntegrazione.getBusta().setTipoDestinatario(idServizio.getSoggettoErogatore().getTipo());
 				headerIntegrazione.getBusta().setDestinatario(idServizio.getSoggettoErogatore().getNome());
-				headerIntegrazione.getBusta().setTipoServizio(idServizio.getTipoServizio());
-				headerIntegrazione.getBusta().setServizio(idServizio.getServizio());
+				headerIntegrazione.getBusta().setTipoServizio(idServizio.getTipo());
+				headerIntegrazione.getBusta().setServizio(idServizio.getNome());
+				headerIntegrazione.getBusta().setVersioneServizio(idServizio.getVersione());
 				headerIntegrazione.getBusta().setAzione(idServizio.getAzione());
 			}
 			headerIntegrazione.getBusta().setID(bustaRichiesta.getID());
@@ -1428,16 +1429,16 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					if(bustaRichiesta!=null){
 						protocolContext.setIndirizzoErogatore(bustaRichiesta.getIndirizzoDestinatario());
 					}
-					protocolContext.setTipoServizio(idServizio.getTipoServizio());
-					protocolContext.setServizio(idServizio.getServizio());
-					protocolContext.setVersioneServizio(idServizio.getVersioneServizioAsInt());
+					protocolContext.setTipoServizio(idServizio.getTipo());
+					protocolContext.setServizio(idServizio.getNome());
+					protocolContext.setVersioneServizio(idServizio.getVersione());
 					protocolContext.setAzione(idServizio.getAzione());
 				}
 				if(idAccordoServizio!=null){
 					protocolContext.setIdAccordo(idAccordoServizio);
 				}
-				else if(idServizio.getUriAccordo()!=null){
-					protocolContext.setIdAccordo(IDAccordoFactory.getInstance().getIDAccordoFromUri(idServizio.getUriAccordo()));
+				else if(idServizio.getUriAccordoServizioParteComune()!=null){
+					protocolContext.setIdAccordo(IDAccordoFactory.getInstance().getIDAccordoFromUri(idServizio.getUriAccordoServizioParteComune()));
 				}
 				String profiloCollorazioneValue = null;
 				if(bustaRichiesta!=null){
@@ -2211,6 +2212,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							bustaHTTPReply.addRiscontro(r);
 							bustaHTTPReply.setTipoServizioRichiedenteBustaDiServizio(bustaRichiesta.getTipoServizio());
 							bustaHTTPReply.setServizioRichiedenteBustaDiServizio(bustaRichiesta.getServizio());
+							bustaHTTPReply.setVersioneServizioRichiedenteBustaDiServizio(bustaRichiesta.getVersioneServizio());
 							bustaHTTPReply.setAzioneRichiedenteBustaDiServizio(bustaRichiesta.getAzione());
 
 							returnProtocolReply = true;
@@ -3041,30 +3043,30 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				}
 
 				if(ProprietaProtocolloValore.TIPO_SERVIZIO.equals(value)){
-					if(servizioHeaderIntegrazione!=null && servizioHeaderIntegrazione.getTipoServizio()!=null){
-						propertiesDaImpostare.put(key,servizioHeaderIntegrazione.getTipoServizio());
-					}else if(idServizio!=null && idServizio.getTipoServizio()!=null){
-						propertiesDaImpostare.put(key,idServizio.getTipoServizio());
+					if(servizioHeaderIntegrazione!=null && servizioHeaderIntegrazione.getTipo()!=null){
+						propertiesDaImpostare.put(key,servizioHeaderIntegrazione.getTipo());
+					}else if(idServizio!=null && idServizio.getTipo()!=null){
+						propertiesDaImpostare.put(key,idServizio.getTipo());
 					}else if(bustaRichiesta!=null && bustaRichiesta.getTipoServizio()!=null){
 						propertiesDaImpostare.put(key,bustaRichiesta.getTipoServizio());
 					}
 				}
 				if(ProprietaProtocolloValore.SERVIZIO.equals(value)){
-					if(servizioHeaderIntegrazione!=null && servizioHeaderIntegrazione.getServizio()!=null){
-						propertiesDaImpostare.put(key,servizioHeaderIntegrazione.getServizio());
-					}else if(idServizio!=null && idServizio.getServizio()!=null){
-						propertiesDaImpostare.put(key,idServizio.getServizio());
+					if(servizioHeaderIntegrazione!=null && servizioHeaderIntegrazione.getNome()!=null){
+						propertiesDaImpostare.put(key,servizioHeaderIntegrazione.getNome());
+					}else if(idServizio!=null && idServizio.getNome()!=null){
+						propertiesDaImpostare.put(key,idServizio.getNome());
 					}else if(bustaRichiesta!=null && bustaRichiesta.getServizio()!=null){
 						propertiesDaImpostare.put(key,bustaRichiesta.getServizio());
 					}
 				}
 				if(ProprietaProtocolloValore.VERSIONE_SERVIZIO.equals(value)){
-					if(servizioHeaderIntegrazione!=null && servizioHeaderIntegrazione.getVersioneServizio()!=null){
-						propertiesDaImpostare.put(key,servizioHeaderIntegrazione.getVersioneServizio());
-					}else if(idServizio!=null && idServizio.getVersioneServizio()!=null){
-						propertiesDaImpostare.put(key,idServizio.getVersioneServizio());
-					}else if(bustaRichiesta!=null && bustaRichiesta.getVersioneServizio()>0){
-						propertiesDaImpostare.put(key,bustaRichiesta.getVersioneServizio()+"");
+					if(servizioHeaderIntegrazione!=null && servizioHeaderIntegrazione.getVersione()!=null){
+						propertiesDaImpostare.put(key,servizioHeaderIntegrazione.getVersione().intValue()+"");
+					}else if(idServizio!=null && idServizio.getVersione()!=null){
+						propertiesDaImpostare.put(key,idServizio.getVersione().intValue()+"");
+					}else if(bustaRichiesta!=null && bustaRichiesta.getVersioneServizio()!=null){
+						propertiesDaImpostare.put(key,bustaRichiesta.getVersioneServizio().intValue()+"");
 					}
 				}
 				

@@ -34,7 +34,6 @@ import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.utils.serialization.IOException;
 
@@ -56,6 +55,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 	// Factory
 	private IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 	private IDAccordoCooperazioneFactory idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
+	private IDServizioFactory idServizioFactory = IDServizioFactory.getInstance();
 	
 	public IDBuilder(boolean insertClassNamePrefix){
 		this.prefix = insertClassNamePrefix; 
@@ -121,8 +121,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				}
 			}else if(o instanceof AccordoServizioParteSpecifica){
 				AccordoServizioParteSpecifica s = (AccordoServizioParteSpecifica) o;
-				String id = s.getServizio().getTipoSoggettoErogatore()+"/"+s.getServizio().getNomeSoggettoErogatore()+"#"+
-					s.getServizio().getTipo()+"/"+s.getNome();
+				String id = this.idServizioFactory.getUriFromAccordo(s);
 				if(this.prefix){
 					return "[Servizio] "+ id;
 				}else{
@@ -223,26 +222,11 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				}
 			}else if(o instanceof AccordoServizioParteSpecifica){
 				AccordoServizioParteSpecifica as = (AccordoServizioParteSpecifica) o;
-				Servizio s = as.getServizio();
-				if(s.getOldTipoSoggettoErogatoreForUpdate()==null && s.getOldNomeSoggettoErogatoreForUpdate()==null &&
-						s.getOldTipoForUpdate()==null && s.getOldNomeForUpdate()==null){
+				if(as.getOldIDServizioForUpdate()==null){
 					return null; // non lancio un errore
 				}
 				
-				String id = null;
-				if(s.getOldTipoSoggettoErogatoreForUpdate()!=null && s.getOldNomeSoggettoErogatoreForUpdate()!=null &&
-						s.getOldTipoForUpdate()!=null && s.getOldNomeForUpdate()!=null){
-					id = s.getOldTipoSoggettoErogatoreForUpdate()+"/"+s.getOldNomeSoggettoErogatoreForUpdate()+"#"+
-						s.getOldTipoForUpdate()+"/"+s.getOldNomeForUpdate();
-				}
-				else if(s.getOldTipoSoggettoErogatoreForUpdate()==null && s.getOldNomeSoggettoErogatoreForUpdate()==null){
-					id = s.getTipoSoggettoErogatore()+"/"+s.getNomeSoggettoErogatore()+"#"+
-					s.getOldTipoForUpdate()+"/"+s.getOldNomeForUpdate();
-				}
-				else{
-					id = s.getOldTipoSoggettoErogatoreForUpdate()+"/"+s.getOldNomeSoggettoErogatoreForUpdate()+"#"+
-					s.getTipo()+"/"+s.getNome();
-				}
+				String id = this.idServizioFactory.getUriFromIDServizio(as.getOldIDServizioForUpdate());
 				if(this.prefix){
 					return "[Servizio] "+ id;
 				}else{
@@ -250,10 +234,10 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				}
 			}else if(o instanceof Soggetto){
 				Soggetto s = (Soggetto) o;
-				if(s.getOldTipoForUpdate()==null || s.getOldNomeForUpdate()==null){
+				if(s.getOldIDSoggettoForUpdate()==null){
 					return null; // non lancio un errore
 				}
-				String id = s.getOldTipoForUpdate()+"/"+s.getOldNomeForUpdate();
+				String id = s.getOldIDSoggettoForUpdate().toString();
 				if(this.prefix){
 					return "[Soggetto] "+ id;
 				}else{

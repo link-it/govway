@@ -25,6 +25,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 
 /**
@@ -36,7 +37,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
  */
 public class ArchiveAccordoServizioParteSpecifica implements IArchiveObject {
 
-	public static String buildKey(String tipoSoggetto,String nomeSoggetto,String nomeAccordo,String versione) throws ProtocolException{
+	public static String buildKey(String tipoSoggetto,String nomeSoggetto,String tipoServizio,String nomeServizio,Integer versione) throws ProtocolException{
 		
 		if(tipoSoggetto==null){
 			throw new ProtocolException("tipoSoggetto non fornito");
@@ -44,11 +45,14 @@ public class ArchiveAccordoServizioParteSpecifica implements IArchiveObject {
 		if(nomeSoggetto==null){
 			throw new ProtocolException("nomeSoggetto non fornito");
 		}
-		if(nomeAccordo==null){
-			throw new ProtocolException("nomeAccordo non fornito");
+		if(tipoServizio==null){
+			throw new ProtocolException("tipoServizio non fornito");
+		}
+		if(nomeServizio==null){
+			throw new ProtocolException("nomeServizio non fornito");
 		}
 		if(versione==null){
-			throw new ProtocolException("versione non fornita");
+			throw new ProtocolException("versioneServizio non fornita");
 		}
 		
 		StringBuffer bf = new StringBuffer();
@@ -57,7 +61,9 @@ public class ArchiveAccordoServizioParteSpecifica implements IArchiveObject {
 		bf.append("/");
 		bf.append(nomeSoggetto);
 		bf.append("_");
-		bf.append(nomeAccordo);
+		bf.append(tipoServizio);
+		bf.append("/");
+		bf.append(nomeServizio);
 		bf.append("_");
 		bf.append(versione);
 		return bf.toString();
@@ -67,28 +73,26 @@ public class ArchiveAccordoServizioParteSpecifica implements IArchiveObject {
 	public String key() throws ProtocolException {
 		String tipoSoggetto = "-";
 		String nomeSoggetto = "-";
-		String nomeAccordo = this.accordoServizioParteSpecifica.getNome();
-		String versione = "-";
-		if(this.accordoServizioParteSpecifica.getServizio()!=null){
-			if(this.accordoServizioParteSpecifica.getServizio().getTipoSoggettoErogatore()!=null){
-				tipoSoggetto = this.accordoServizioParteSpecifica.getServizio().getTipoSoggettoErogatore();
-			}
-			if(this.accordoServizioParteSpecifica.getServizio().getNomeSoggettoErogatore()!=null){
-				nomeSoggetto = this.accordoServizioParteSpecifica.getServizio().getNomeSoggettoErogatore();
-			}
+		String tipoServizio = this.accordoServizioParteSpecifica.getTipo();
+		String nomeServizio = this.accordoServizioParteSpecifica.getNome();
+		Integer versione = null;
+		if(this.accordoServizioParteSpecifica.getTipoSoggettoErogatore()!=null){
+			tipoSoggetto = this.accordoServizioParteSpecifica.getTipoSoggettoErogatore();
+		}
+		if(this.accordoServizioParteSpecifica.getNomeSoggettoErogatore()!=null){
+			nomeSoggetto = this.accordoServizioParteSpecifica.getNomeSoggettoErogatore();
 		}
 		if(this.accordoServizioParteSpecifica.getVersione()!=null){
 			versione = this.accordoServizioParteSpecifica.getVersione();
 		}
 		return ArchiveAccordoServizioParteSpecifica.buildKey(tipoSoggetto, nomeSoggetto, 
-				nomeAccordo,versione);
+				tipoServizio,nomeServizio,versione);
 	}
 	
 	
 	
 	private IDSoggetto idSoggettoErogatore;
-	private IDAccordo idAccordoServizioParteSpecifica;
-	private IDServizio idServizio;
+	private IDServizio idAccordoServizioParteSpecifica;
 	private IDAccordo idAccordoServizioParteComune;
 	private AccordoServizioParteSpecifica accordoServizioParteSpecifica;
 	
@@ -113,9 +117,6 @@ public class ArchiveAccordoServizioParteSpecifica implements IArchiveObject {
 		if(accordoServizioParteSpecifica==null){
 			throw new ProtocolException("AccordoServizioParteSpecifica non fornito");
 		}
-		if(accordoServizioParteSpecifica.getServizio()==null){
-			throw new ProtocolException("AccordoServizioParteSpecifica.servizio non definito");
-		}
 		if(idSoggettoProprietario==null){
 			throw new ProtocolException("idSoggettoProprietario non fornito");
 		}
@@ -125,8 +126,8 @@ public class ArchiveAccordoServizioParteSpecifica implements IArchiveObject {
 		if(idSoggettoProprietario.getNome()==null){
 			throw new ProtocolException("idSoggettoProprietario.nome non definito");
 		}
-		accordoServizioParteSpecifica.getServizio().setTipoSoggettoErogatore(idSoggettoProprietario.getTipo());
-		accordoServizioParteSpecifica.getServizio().setNomeSoggettoErogatore(idSoggettoProprietario.getNome());
+		accordoServizioParteSpecifica.setTipoSoggettoErogatore(idSoggettoProprietario.getTipo());
+		accordoServizioParteSpecifica.setNomeSoggettoErogatore(idSoggettoProprietario.getNome());
 		return accordoServizioParteSpecifica;
 	}
 	
@@ -141,47 +142,40 @@ public class ArchiveAccordoServizioParteSpecifica implements IArchiveObject {
 	public void update(AccordoServizioParteSpecifica accordoServizioParteSpecifica, boolean informationMissingManagementEnabled) throws ProtocolException{
 		
 		if(accordoServizioParteSpecifica==null){
-			throw new ProtocolException("AccordoServizioParteComune non fornito");
+			throw new ProtocolException("AccordoServizioParteSpecifica non fornito");
+		}
+		if(accordoServizioParteSpecifica.getTipo()==null){
+			throw new ProtocolException("AccordoServizioParteSpecifica.tipo non definito");
 		}
 		if(accordoServizioParteSpecifica.getNome()==null){
-			throw new ProtocolException("AccordoServizioParteComune.nome non definito");
-		}
-		if(accordoServizioParteSpecifica.getServizio()==null){
-			throw new ProtocolException("AccordoServizioParteSpecifica.servizio non definito");
-		}
-		if(accordoServizioParteSpecifica.getServizio().getTipo()==null){
-			throw new ProtocolException("AccordoServizioParteComune.servizio.tipo non definito");
-		}
-		if(accordoServizioParteSpecifica.getServizio().getNome()==null){
-			throw new ProtocolException("AccordoServizioParteComune.servizio.nome non definito");
+			throw new ProtocolException("AccordoServizioParteSpecifica.nome non definito");
 		}
 		this.accordoServizioParteSpecifica = accordoServizioParteSpecifica;
 		
 		if(informationMissingManagementEnabled==false){
 			if(accordoServizioParteSpecifica.getVersione()==null){
-				throw new ProtocolException("AccordoServizioParteComune.versione non definito");
+				throw new ProtocolException("AccordoServizioParteSpecifica.versione non definito");
 			}		
-			if(accordoServizioParteSpecifica.getServizio().getTipoSoggettoErogatore()==null){
-				throw new ProtocolException("AccordoServizioParteComune.servizio.tipoSoggettoErogatore non definito");
+			if(accordoServizioParteSpecifica.getTipoSoggettoErogatore()==null){
+				throw new ProtocolException("AccordoServizioParteSpecifica.servizio.tipoSoggettoErogatore non definito");
 			}
-			if(accordoServizioParteSpecifica.getServizio().getNomeSoggettoErogatore()==null){
-				throw new ProtocolException("AccordoServizioParteComune.servizio.nomeSoggettoErogatore non definito");
+			if(accordoServizioParteSpecifica.getNomeSoggettoErogatore()==null){
+				throw new ProtocolException("AccordoServizioParteSpecifica.servizio.nomeSoggettoErogatore non definito");
 			}
 		
 			this.idSoggettoErogatore = 
-					new IDSoggetto(accordoServizioParteSpecifica.getServizio().getTipoSoggettoErogatore(), 
-							accordoServizioParteSpecifica.getServizio().getNomeSoggettoErogatore());
+					new IDSoggetto(accordoServizioParteSpecifica.getTipoSoggettoErogatore(), 
+							accordoServizioParteSpecifica.getNomeSoggettoErogatore());
 			
 			try{
-				this.idAccordoServizioParteSpecifica = IDAccordoFactory.getInstance().getIDAccordoFromAccordo(accordoServizioParteSpecifica);
+				this.idAccordoServizioParteSpecifica = IDServizioFactory.getInstance().getIDServizioFromValues(accordoServizioParteSpecifica.getTipo(), 
+						accordoServizioParteSpecifica.getNome(), 
+						this.idSoggettoErogatore, 
+						accordoServizioParteSpecifica.getVersione());
 			}catch(Exception e){
 				throw new ProtocolException(e.getMessage(),e);
 			}
-			
-			this.idServizio = new IDServizio(this.idSoggettoErogatore, 
-					accordoServizioParteSpecifica.getServizio().getTipo(), 
-					accordoServizioParteSpecifica.getServizio().getNome());
-			
+						
 			if(accordoServizioParteSpecifica.getAccordoServizioParteComune()==null){
 				throw new ProtocolException("AccordoServizioParteSpecifica.accordoServizioParteComune non definito");
 			}
@@ -198,11 +192,8 @@ public class ArchiveAccordoServizioParteSpecifica implements IArchiveObject {
 	public IDSoggetto getIdSoggettoErogatore() {
 		return this.idSoggettoErogatore;
 	}
-	public IDAccordo getIdAccordoServizioParteSpecifica() {
+	public IDServizio getIdAccordoServizioParteSpecifica() {
 		return this.idAccordoServizioParteSpecifica;
-	}
-	public IDServizio getIdServizio() {
-		return this.idServizio;
 	}
 	public IDAccordo getIdAccordoServizioParteComune() {
 		return this.idAccordoServizioParteComune;

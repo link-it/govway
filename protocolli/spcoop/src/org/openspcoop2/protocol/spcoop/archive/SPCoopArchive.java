@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
@@ -302,8 +303,8 @@ public class SPCoopArchive extends BasicArchive {
 			bfEsito.append("Accordi di Servizio Parte Specifica\n");
 			try{
 				ArchiveEsitoImportDetail archiveAccordoServizioParteSpecifica = archive.getAccordiServizioParteSpecifica().get(0);
-				IDAccordo idAccordo = ((ArchiveAccordoServizioParteSpecifica)archiveAccordoServizioParteSpecifica.getArchiveObject()).getIdAccordoServizioParteSpecifica();
-				String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
+				IDServizio idServizio = ((ArchiveAccordoServizioParteSpecifica)archiveAccordoServizioParteSpecifica.getArchiveObject()).getIdAccordoServizioParteSpecifica();
+				String uriAccordo = this.idServizioFactory.getUriFromIDServizio(idServizio);
 				bfEsito.append("\t- [").append(uriAccordo).append("] ");
 				this.esitoUtils.serializeStato(archiveAccordoServizioParteSpecifica, bfEsito, importOperation);
 			}catch(Exception e){
@@ -332,8 +333,8 @@ public class SPCoopArchive extends BasicArchive {
 			bfEsito.append("Accordi di Servizio Composto Parte Specifica\n");
 			try{
 				ArchiveEsitoImportDetail archiveAccordoServizioParteSpecifica = archive.getAccordiServizioParteSpecificaServiziComposti().get(0);
-				IDAccordo idAccordo = ((ArchiveAccordoServizioParteSpecifica)archiveAccordoServizioParteSpecifica.getArchiveObject()).getIdAccordoServizioParteSpecifica();
-				String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
+				IDServizio idServizio = ((ArchiveAccordoServizioParteSpecifica)archiveAccordoServizioParteSpecifica.getArchiveObject()).getIdAccordoServizioParteSpecifica();
+				String uriAccordo = this.idServizioFactory.getUriFromIDServizio(idServizio);
 				bfEsito.append("\t- [").append(uriAccordo).append("] ");
 				this.esitoUtils.serializeStato(archiveAccordoServizioParteSpecifica, bfEsito, importOperation);
 			}catch(Exception e){

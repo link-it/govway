@@ -42,8 +42,7 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.Servizio;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.dao.PoliticheSicurezza;
@@ -86,8 +85,6 @@ public final class AccordiServizioParteSpecificaServizioApplicativoAdd extends A
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
-		
 		try {
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 			String idServizio = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
@@ -113,6 +110,7 @@ public final class AccordiServizioParteSpecificaServizioApplicativoAdd extends A
 			String tipoSoggFruitoreServ = "";
 			String nomeServizio = "";
 			String tipoServizio = "";
+			Integer versioneServizio = null;
 			// String pdd = "";
 
 			// Preparo il menu
@@ -141,24 +139,16 @@ public final class AccordiServizioParteSpecificaServizioApplicativoAdd extends A
 
 			// prendo nome e tipo del servizio
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizioInt);
-			Servizio servizio = asps.getServizio();
-			nomeServizio = servizio.getNome();
-			tipoServizio = servizio.getTipo();
+			nomeServizio = asps.getNome();
+			tipoServizio = asps.getTipo();
+			versioneServizio = asps.getVersione();
 
 			// Prendo il nome e il tipo del soggetto erogatore del servizio
 			org.openspcoop2.core.registry.Soggetto soggEr = soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggettoErogatore));
 			String tipoSoggettoErogatore = soggEr.getTipo();
 			String nomeSoggettoErogatore = soggEr.getNome();
 
-			tmpTitle = tipoServizio + "/" + nomeServizio + " erogato da " + tipoSoggettoErogatore + "/" + nomeSoggettoErogatore;
-			// aggiorno tmpTitle
-			String tmpVersione = asps.getVersione();
-			if(apsCore.isShowVersioneAccordoServizioParteSpecifica()==false){
-				tmpVersione = null;
-			}
-			tmpTitle = idAccordoFactory.getUriFromValues(asps.getNome(), 
-					servizio.getTipoSoggettoErogatore(), servizio.getNomeSoggettoErogatore(), 
-					tmpVersione);
+			tmpTitle = IDServizioFactory.getInstance().getUriFromAccordo(asps);
 			
 			// recupero lista servizi applicativi
 			for (int i = 0; i < soggetto.sizeServizioApplicativoList(); i++) {
@@ -186,6 +176,7 @@ public final class AccordiServizioParteSpecificaServizioApplicativoAdd extends A
 								new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+idSoggettoErogatore),
 								new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO, nomeServizio),
 								new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO, tipoServizio),
+								new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE, versioneServizio.intValue()+""),
 								new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, myID)
 								),
 								new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS_SERVIZI_APPLICATIVI_AUTORIZZATI_DI + tipoSoggFruitoreServ + "/" + nomeSoggFruitoreServ , null)
@@ -198,7 +189,7 @@ public final class AccordiServizioParteSpecificaServizioApplicativoAdd extends A
 
 				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idServizio, idSoggFruitoreDelServizio, null, dati);
 				
-				dati = apsHelper.addTipoNomeServizioToDati(TipoOperazione.ADD, myID, tipoServizio, nomeServizio, dati);
+				dati = apsHelper.addTipoNomeServizioToDati(TipoOperazione.ADD, myID, tipoServizio, nomeServizio, versioneServizio, dati);
 
 				pd.setDati(dati);
 
@@ -230,7 +221,11 @@ public final class AccordiServizioParteSpecificaServizioApplicativoAdd extends A
 				String superUser =   ServletUtils.getUserLoginFromSession(session);
 				apsCore.performCreateOperation(superUser, apsHelper.smista(), polSic);
 
-				String idporta = tipoSoggFruitoreServ + nomeSoggFruitoreServ + "/" + tipoSoggettoErogatore + nomeSoggettoErogatore + "/" + tipoServizio + nomeServizio;
+				String idporta = tipoSoggFruitoreServ + nomeSoggFruitoreServ + "/" + 
+						tipoSoggettoErogatore + nomeSoggettoErogatore + "/" + 
+						tipoServizio + nomeServizio + "/" +
+						versioneServizio;
+				
 				IDPortaDelegata idpd = new IDPortaDelegata();
 				idpd.setNome(idporta);
 				if (porteDelegateCore.existsPortaDelegata(idpd)) {

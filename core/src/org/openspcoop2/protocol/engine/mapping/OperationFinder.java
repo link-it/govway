@@ -260,11 +260,14 @@ public class OperationFinder {
 		if(idServizio.getSoggettoErogatore().getNome()==null){
 			throw new Exception("Nome soggetto erogatore del servizio non trovato (necessari per procedere con la modalità di identificazione "+modalitaIdentificazione+" dell'azione)");
 		}
-		if(idServizio.getTipoServizio()==null){
+		if(idServizio.getTipo()==null){
 			throw new Exception("Tipo servizio non trovato (necessari per procedere con la modalità di identificazione "+modalitaIdentificazione+" dell'azione)");
 		}
-		if(idServizio.getServizio()==null){
+		if(idServizio.getNome()==null){
 			throw new Exception("Nome servizio non trovato (necessari per procedere con la modalità di identificazione "+modalitaIdentificazione+" dell'azione)");
+		}
+		if(idServizio.getVersione()==null){
+			throw new Exception("Versione servizio non trovata (necessari per procedere con la modalità di identificazione "+modalitaIdentificazione+" dell'azione)");
 		}
 	}
 	

@@ -121,7 +121,7 @@ public class SerializationClientTest {
 		
 		AccordoServizioParteComune as = new AccordoServizioParteComune();
 		as.setNome("ASTEST");
-		as.setVersione("1");
+		as.setVersione(1);
 		IdSoggetto sogg = new IdSoggetto();
 		sogg.setTipo("SPC");
 		sogg.setNome("SoggettoReferente");

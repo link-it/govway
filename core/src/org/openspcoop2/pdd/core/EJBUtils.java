@@ -38,6 +38,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.integrazione.EsitoRichiesta;
@@ -1259,9 +1260,9 @@ public class EJBUtils {
 			busta.setTipoDestinatario(richiestaDelegata.getIdServizio().getSoggettoErogatore().getTipo());
 			busta.setDestinatario(richiestaDelegata.getIdServizio().getSoggettoErogatore().getNome());
 			busta.setIdentificativoPortaDestinatario(richiestaDelegata.getIdServizio().getSoggettoErogatore().getCodicePorta());
-			busta.setTipoServizio(richiestaDelegata.getIdServizio().getTipoServizio());
-			busta.setServizio(richiestaDelegata.getIdServizio().getServizio());
-			busta.setVersioneServizio(richiestaDelegata.getIdServizio().getVersioneServizio());
+			busta.setTipoServizio(richiestaDelegata.getIdServizio().getTipo());
+			busta.setServizio(richiestaDelegata.getIdServizio().getNome());
+			busta.setVersioneServizio(richiestaDelegata.getIdServizio().getVersione());
 			busta.setAzione(richiestaDelegata.getIdServizio().getAzione());
 			busta.setID(idBustaConsegna);
 			busta.setRiferimentoMessaggio(this.idSessione);
@@ -1443,6 +1444,9 @@ public class EJBUtils {
 				stateless = this.configurazionePdDReader.isModalitaStateless(pa, busta.getProfiloDiCollaborazione());
 			}
 			
+			if(pa!=null){
+				this.msgDiag.addKeyword(CostantiPdD.KEY_PORTA_APPLICATIVA, pa.getNome());
+			}
 			
 			
 			/* ----- Recupero eventuale processo di behaviour ----- */
@@ -1753,6 +1757,10 @@ public class EJBUtils {
 	}
 
 
+	@SuppressWarnings("deprecation")
+	private void overwriteIdSoggetto(IDServizio idServizio, IDSoggetto idSoggetto){
+		idServizio.setSoggettoErogatore(idSoggetto);
+	}
 
 	private void _sendMessageToServiziApplicativi(List<String> serviziApplicativi, SoggettoVirtuale soggettiRealiMappatiInUnSoggettoVirtuale,
 			RichiestaApplicativa richiestaApplicativa, RichiestaDelegata localForwardRichiestaDelegata,
@@ -1785,7 +1793,7 @@ public class EJBUtils {
 			if(soggettiRealiMappatiInUnSoggettoVirtuale!=null){
 				
 				String oldDominio = richiestaApplicativa.getIDServizio().getSoggettoErogatore().getCodicePorta();
-				richiestaApplicativa.getIDServizio().setSoggettoErogatore(soggettiRealiMappatiInUnSoggettoVirtuale.getSoggettoReale(servizioApplicativo));
+				this.overwriteIdSoggetto(richiestaApplicativa.getIDServizio(), soggettiRealiMappatiInUnSoggettoVirtuale.getSoggettoReale(servizioApplicativo));
 				richiestaApplicativa.getIDServizio().getSoggettoErogatore().setCodicePorta(oldDominio);
 				
 				richiestaApplicativa.setIdPortaApplicativa(soggettiRealiMappatiInUnSoggettoVirtuale.getIDPortaApplicativa(servizioApplicativo));
@@ -1919,7 +1927,7 @@ public class EJBUtils {
 			if(soggettiRealiMappatiInUnSoggettoVirtuale!=null){
 				
 				String oldDominio = richiestaApplicativa.getIDServizio().getSoggettoErogatore().getCodicePorta();
-				richiestaApplicativa.getIDServizio().setSoggettoErogatore(soggettiRealiMappatiInUnSoggettoVirtuale.getSoggettoReale(servizioApplicativo));
+				this.overwriteIdSoggetto(richiestaApplicativa.getIDServizio(), soggettiRealiMappatiInUnSoggettoVirtuale.getSoggettoReale(servizioApplicativo));
 				richiestaApplicativa.getIDServizio().getSoggettoErogatore().setCodicePorta(oldDominio);
 				
 				richiestaApplicativa.setIdPortaApplicativa(soggettiRealiMappatiInUnSoggettoVirtuale.getIDPortaApplicativa(servizioApplicativo));

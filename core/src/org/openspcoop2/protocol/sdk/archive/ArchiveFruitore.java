@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.sdk.archive;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -38,7 +38,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 public class ArchiveFruitore implements IArchiveObject {
 
 	public static String buildKey(String tipoSoggettoFruitore,String nomeSoggettoFruitore,
-			String tipoSoggettoErogatore,String nomeSoggettoErogatore,String nomeAccordo,String versione) throws ProtocolException{
+			String tipoSoggettoErogatore,String nomeSoggettoErogatore,String tipoServizio,String nomeServizio,Integer versione) throws ProtocolException{
 		
 		if(tipoSoggettoFruitore==null){
 			throw new ProtocolException("tipoSoggettoFruitore non fornito");
@@ -53,11 +53,14 @@ public class ArchiveFruitore implements IArchiveObject {
 		if(nomeSoggettoErogatore==null){
 			throw new ProtocolException("nomeSoggettoErogatore non fornito");
 		}
-		if(nomeAccordo==null){
-			throw new ProtocolException("nomeAccordo non fornito");
+		if(tipoServizio==null){
+			throw new ProtocolException("tipoServizio non fornito");
+		}
+		if(nomeServizio==null){
+			throw new ProtocolException("nomeServizio non fornito");
 		}
 		if(versione==null){
-			throw new ProtocolException("versione non fornito");
+			throw new ProtocolException("versioneServizio non fornito");
 		}
 		
 		StringBuffer bf = new StringBuffer();
@@ -70,7 +73,9 @@ public class ArchiveFruitore implements IArchiveObject {
 		bf.append("/");
 		bf.append(nomeSoggettoErogatore);
 		bf.append("_");
-		bf.append(nomeAccordo);
+		bf.append(tipoServizio);
+		bf.append("/");
+		bf.append(nomeServizio);
 		bf.append("_");
 		bf.append(versione);
 		return bf.toString();
@@ -79,14 +84,14 @@ public class ArchiveFruitore implements IArchiveObject {
 	@Override
 	public String key() throws ProtocolException {
 		return ArchiveFruitore.buildKey(this.idSoggettoFruitore.getTipo(),this.idSoggettoFruitore.getNome(),
-				this.idAccordoServizioParteSpecifica.getSoggettoReferente().getTipo(), this.idAccordoServizioParteSpecifica.getSoggettoReferente().getNome(), 
-					this.idAccordoServizioParteSpecifica.getNome(),this.idAccordoServizioParteSpecifica.getVersione());
+				this.idAccordoServizioParteSpecifica.getSoggettoErogatore().getTipo(), this.idAccordoServizioParteSpecifica.getSoggettoErogatore().getNome(), 
+				this.idAccordoServizioParteSpecifica.getTipo(),this.idAccordoServizioParteSpecifica.getNome(),this.idAccordoServizioParteSpecifica.getVersione());
 	}
 	
 	
 	
 	private IDSoggetto idSoggettoFruitore;
-	private IDAccordo idAccordoServizioParteSpecifica;
+	private IDServizio idAccordoServizioParteSpecifica;
 	private Fruitore fruitore;
 	
 	private List<String> serviziApplicativiAutorizzati = new ArrayList<String>();
@@ -97,10 +102,10 @@ public class ArchiveFruitore implements IArchiveObject {
 	private ArchiveIdCorrelazione idCorrelazione; // permette di correlare più oggetti tra di loro 
 	
 	
-	public ArchiveFruitore(IDAccordo idAccordoServizioParteSpecifica, Fruitore fruitore, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+	public ArchiveFruitore(IDServizio idAccordoServizioParteSpecifica, Fruitore fruitore, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
 		this(idAccordoServizioParteSpecifica, fruitore, idCorrelazione, false);
 	}
-	public ArchiveFruitore(IDAccordo idAccordoServizioParteSpecifica, Fruitore fruitore, ArchiveIdCorrelazione idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
+	public ArchiveFruitore(IDServizio idAccordoServizioParteSpecifica, Fruitore fruitore, ArchiveIdCorrelazione idCorrelazione, boolean informationMissingManagementEnabled) throws ProtocolException{
 		update(idAccordoServizioParteSpecifica, fruitore, informationMissingManagementEnabled);
 		this.idCorrelazione = idCorrelazione;
 	}
@@ -110,10 +115,10 @@ public class ArchiveFruitore implements IArchiveObject {
 	public void update() throws ProtocolException{
 		this.update(this.idAccordoServizioParteSpecifica, this.fruitore, false);
 	}
-	public void update(IDAccordo idAccordoServizioParteSpecifica, Fruitore fruitore) throws ProtocolException{
+	public void update(IDServizio idAccordoServizioParteSpecifica, Fruitore fruitore) throws ProtocolException{
 		this.update(idAccordoServizioParteSpecifica, fruitore, false);
 	}
-	public void update(IDAccordo idAccordoServizioParteSpecifica, Fruitore fruitore, boolean informationMissingManagementEnabled) throws ProtocolException{
+	public void update(IDServizio idAccordoServizioParteSpecifica, Fruitore fruitore, boolean informationMissingManagementEnabled) throws ProtocolException{
 		
 		if(fruitore==null){
 			throw new ProtocolException("fruitore non definito");
@@ -131,6 +136,9 @@ public class ArchiveFruitore implements IArchiveObject {
 		if(idAccordoServizioParteSpecifica==null){
 			throw new ProtocolException("idAccordoServizioParteSpecifica non fornito");
 		}
+		if(idAccordoServizioParteSpecifica.getTipo()==null){
+			throw new ProtocolException("idAccordoServizioParteSpecifica.tipo non definito");
+		}
 		if(idAccordoServizioParteSpecifica.getNome()==null){
 			throw new ProtocolException("idAccordoServizioParteSpecifica.nome non definito");
 		}
@@ -140,14 +148,14 @@ public class ArchiveFruitore implements IArchiveObject {
 			if(idAccordoServizioParteSpecifica.getVersione()==null){
 				throw new ProtocolException("idAccordoServizioParteSpecifica.versione non definito");
 			}
-			if(idAccordoServizioParteSpecifica.getSoggettoReferente()==null){
-				throw new ProtocolException("idAccordoServizioParteSpecifica.soggettoReferente non definito");
+			if(idAccordoServizioParteSpecifica.getSoggettoErogatore()==null){
+				throw new ProtocolException("idAccordoServizioParteSpecifica.soggettoErogatore non definito");
 			}
-			if(idAccordoServizioParteSpecifica.getSoggettoReferente().getTipo()==null){
-				throw new ProtocolException("idAccordoServizioParteSpecifica.soggettoReferente.tipo non definito");
+			if(idAccordoServizioParteSpecifica.getSoggettoErogatore().getTipo()==null){
+				throw new ProtocolException("idAccordoServizioParteSpecifica.soggettoErogatore.tipo non definito");
 			}
-			if(idAccordoServizioParteSpecifica.getSoggettoReferente().getNome()==null){
-				throw new ProtocolException("idAccordoServizioParteSpecifica.soggettoReferente.nome non definito");
+			if(idAccordoServizioParteSpecifica.getSoggettoErogatore().getNome()==null){
+				throw new ProtocolException("idAccordoServizioParteSpecifica.soggettoErogatore.nome non definito");
 			}
 			
 		}
@@ -162,7 +170,7 @@ public class ArchiveFruitore implements IArchiveObject {
 	public IDSoggetto getIdSoggettoFruitore() {
 		return this.idSoggettoFruitore;
 	}
-	public IDAccordo getIdAccordoServizioParteSpecifica() {
+	public IDServizio getIdAccordoServizioParteSpecifica() {
 		return this.idAccordoServizioParteSpecifica;
 	}
 	public Fruitore getFruitore() {

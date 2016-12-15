@@ -39,31 +39,35 @@ public class IDAccordoCooperazione implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	/* ********  F I E L D S  P R I V A T I  ******** */
 
 	/** Nome dell'accordo */
 	protected String nome;
+	/** Soggetto Referente (Puo' non essere definito). */
+	protected IDSoggetto soggettoReferente;
 	/** Versione. */
-	protected String versione;
+	protected Integer versione = 1;
 	
 
-	/* ********  C O S T R U T T O R E  ******** */
-
-		
 	public String getNome() {
 		return this.nome;
 	}
-	public String getVersione() {
+	public IDSoggetto getSoggettoReferente() {
+		return this.soggettoReferente;
+	}
+	public Integer getVersione() {
 		return this.versione;
 	}
-	
 	
 	@Deprecated
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
 	@Deprecated
-	public void setVersione(String versione) {
+	public void setSoggettoReferente(IDSoggetto soggettoReferente) {
+		this.soggettoReferente = soggettoReferente;
+	}
+	@Deprecated
+	public void setVersione(Integer versione) {
 		this.versione = versione;
 	}
 	
@@ -71,37 +75,67 @@ public class IDAccordoCooperazione implements java.io.Serializable {
 	@Override 
 	public String toString(){
 		StringBuffer bf = new StringBuffer();
+		if(this.soggettoReferente!=null){
+			bf.append(this.soggettoReferente.toString());
+			bf.append(":");
+		}
 		bf.append(this.nome);
-		if(this.versione!=null)
-			bf.append("["+this.versione+"]");
+		bf.append(":");
+		bf.append(this.versione);
 		return bf.toString();
 	}
-	
+		
 	@Override 
-	public boolean equals(Object idAS){
-		if(idAS == null)
+	public boolean equals(Object object){
+		if(object == null)
 			return false;
-		if(idAS.getClass().getName().equals(this.getClass().getName()) == false)
+		if(object.getClass().getName().equals(this.getClass().getName()) == false)
 			return false;
-		IDAccordoCooperazione id = (IDAccordoCooperazione) idAS;
-		return (this.toString().equals(id.toString()));
+		IDAccordo id = (IDAccordo) object;
+		
+		if(this.nome==null){
+			if(id.nome!=null)
+				return false;
+		}else{
+			if(this.nome.equals(id.nome)==false)
+				return false;
+		}
+
+		if(this.getVersione()!=id.getVersione()){
+			return false;
+		}
+		
+		if(this.soggettoReferente==null){
+			if(id.soggettoReferente!=null)
+				return false;
+		}else{
+			if(this.soggettoReferente.equals(id.soggettoReferente)==false)
+				return false;
+		}
+		
+		return true;
 	}
-	
+
 	// Utile per usare l'oggetto in hashtable come chiave
 	@Override
 	public int hashCode(){
 		return this.toString().hashCode();
 	}
-	
+
 	@Override
-	public IDAccordoCooperazione clone(){
-		IDAccordoCooperazione idAccordo = new IDAccordoCooperazione();
+	public IDAccordo clone(){
+		IDAccordo idAccordo = new IDAccordo();
+		
 		if(this.nome!=null){
 			idAccordo.nome = new String(this.nome);
 		}
-		if(this.versione!=null){
-			idAccordo.versione = new String(this.versione);
+		
+		idAccordo.versione = this.versione;
+		
+		if(this.soggettoReferente!=null){
+			idAccordo.soggettoReferente = this.soggettoReferente.clone();
 		}
+		
 		return idAccordo;
 	}
 	

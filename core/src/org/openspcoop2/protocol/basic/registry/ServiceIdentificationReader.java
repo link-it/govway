@@ -27,6 +27,7 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
@@ -143,9 +144,9 @@ public class ServiceIdentificationReader implements IServiceIdentificationReader
 			if(this.pd==null){
 				this.pd = this.configIntegrationReader.getPortaDelegata(idPortaDelegata);
 			}
-			IDServizio idS = new IDServizio(new IDSoggetto(this.pd.getSoggettoErogatore().getTipo(), this.pd.getSoggettoErogatore().getNome()), 
-					this.pd.getServizio().getTipo(), this.pd.getServizio().getNome());
-			
+			IDServizio idS = IDServizioFactory.getInstance().getIDServizioFromValues(this.pd.getServizio().getTipo(), this.pd.getServizio().getNome(), 
+					new IDSoggetto(this.pd.getSoggettoErogatore().getTipo(), this.pd.getSoggettoErogatore().getNome()), 
+					this.pd.getServizio().getVersione()); 			
 			if(idS.getSoggettoErogatore().getCodicePorta()==null){
 				idS.getSoggettoErogatore().setCodicePorta(this.registryReader.getDominio(idS.getSoggettoErogatore()));
 			}
@@ -231,8 +232,9 @@ public class ServiceIdentificationReader implements IServiceIdentificationReader
 			if(this.pa==null){
 				this.pa = this.configIntegrationReader.getPortaApplicativa(idPortaApplicativa);
 			}
-			IDServizio idS = new IDServizio(this.pa.getTipoSoggettoProprietario(),this.pa.getNomeSoggettoProprietario(), 
-					this.pa.getServizio().getTipo(), this.pa.getServizio().getNome());
+			IDServizio idS = IDServizioFactory.getInstance().getIDServizioFromValues(this.pa.getServizio().getTipo(), this.pa.getServizio().getNome(), 
+					new IDSoggetto(this.pa.getTipoSoggettoProprietario(),this.pa.getNomeSoggettoProprietario()), 
+					this.pa.getServizio().getVersione()); 		
 			
 			if(idS.getSoggettoErogatore().getCodicePorta()==null){
 				idS.getSoggettoErogatore().setCodicePorta(this.registryReader.getDominio(idS.getSoggettoErogatore()));

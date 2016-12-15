@@ -30,6 +30,7 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
  *     &lt;sequence>
  *         &lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0" maxOccurs="1" />
  *     &lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -52,7 +53,8 @@ import javax.xml.bind.annotation.XmlElement;
 @javax.xml.bind.annotation.XmlAccessorType(javax.xml.bind.annotation.XmlAccessType.FIELD)
 @javax.xml.bind.annotation.XmlType(name = "porta-applicativa-servizio", namespace="http://www.openspcoop2.org/core/config/management", propOrder = {
     "tipo",
-    "nome"
+    "nome",
+    "versione"
 })
 @javax.xml.bind.annotation.XmlRootElement(name = "porta-applicativa-servizio")
 public class PortaApplicativaServizio extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
@@ -82,6 +84,19 @@ public class PortaApplicativaServizio extends org.openspcoop2.utils.beans.BaseBe
 	
 	public String getNome(){
 		return this.nome;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
+  @XmlElement(name="versione",required=false,nillable=false)
+	private Integer versione;
+	
+	public void setVersione(Integer versione){
+		this.versione = versione;
+	}
+	
+	public Integer getVersione(){
+		return this.versione;
 	}
 	
 	

@@ -25,14 +25,14 @@ package org.openspcoop2.web.ctrlstat.servlet.archivi;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import org.openspcoop2.core.id.IDAccordo;
-import org.openspcoop2.core.id.IDAccordoCooperazioneWithSoggetto;
+import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -57,6 +57,7 @@ public class ExporterUtils {
 	private ArchiviCore archiviCore;
 	private SoggettiCore soggettiCore;
 	private AccordiServizioParteComuneCore aspcCore;
+	@SuppressWarnings("unused")
 	private AccordiServizioParteSpecificaCore aspsCore;
 	private AccordiCooperazioneCore acCore;
 	
@@ -155,24 +156,17 @@ public class ExporterUtils {
 	}
 	
 	public List<?> getIdsAccordiServizioParteSpecifica(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
-		List<IDAccordo> idsAccordi = new ArrayList<IDAccordo>();
+		List<IDServizio> idsAccordi = new ArrayList<IDServizio>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
 		for (String id : idsToExport) {
-			//long idLong = Long.parseLong(id);
-			//idsAccordi.add(this.aspsCore.getIdAccordoServizioParteSpecifica(idLong));
-			StringTokenizer servTok = new StringTokenizer(id, "/");
-			String tiposervizio = servTok.nextToken();
-			String nomeservizio = servTok.nextToken();
-			String tiposogg = servTok.nextToken();
-			String nomesogg = servTok.nextToken();
-			IDServizio idS = new IDServizio(tiposogg, nomesogg, tiposervizio, nomeservizio);
-			idsAccordi.add(this.aspsCore.getIDAccordoServizioParteSpecifica(idS));
+			IDServizio idS = IDServizioFactory.getInstance().getIDServizioFromUri(id);
+			idsAccordi.add(idS);
 		}
 		return idsAccordi;
 	}
 	
 	public List<?> getIdsAccordiCooperazione(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
-		List<IDAccordoCooperazioneWithSoggetto> idsAccordi = new ArrayList<IDAccordoCooperazioneWithSoggetto>();
+		List<IDAccordoCooperazione> idsAccordi = new ArrayList<IDAccordoCooperazione>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
 		for (String id : idsToExport) {
 			long idLong = Long.parseLong(id);

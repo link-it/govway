@@ -27,7 +27,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
+import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +42,7 @@ import java.util.List;
  * <pre>
  * &lt;complexType name="accordo-servizio-parte-specifica">
  * 		&lt;sequence>
- * 			&lt;element name="servizio" type="{http://www.openspcoop2.org/core/registry}servizio" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="configurazione-servizio" type="{http://www.openspcoop2.org/core/registry}configurazione-servizio" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="fruitore" type="{http://www.openspcoop2.org/core/registry}fruitore" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="allegato" type="{http://www.openspcoop2.org/core/registry}documento" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="specifica-semiformale" type="{http://www.openspcoop2.org/core/registry}documento" minOccurs="0" maxOccurs="unbounded"/>
@@ -55,9 +57,13 @@ import java.util.List;
  * 		&lt;attribute name="id-soggetto" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
  * 		&lt;attribute name="byte-wsdl-implementativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/>
  * 		&lt;attribute name="byte-wsdl-implementativo-fruitore" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/>
+ * 		&lt;attribute name="tipo-soggetto-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="nome-soggetto-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="versione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" use="optional" default="1"/>
  * 		&lt;attribute name="accordo-servizio-parte-comune" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="tipologia-servizio" type="{http://www.openspcoop2.org/core/registry}TipologiaServizio" use="optional" default="normale"/>
  * 		&lt;attribute name="port-type" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="wsdl-implementativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="wsdl-implementativo-fruitore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
@@ -69,8 +75,6 @@ import java.util.List;
  * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
  * 		&lt;attribute name="versione-protocollo" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="old-nome-accordo-for-update" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="old-versione-accordo-for-update" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -83,7 +87,7 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "accordo-servizio-parte-specifica", 
   propOrder = {
-  	"servizio",
+  	"configurazioneServizio",
   	"fruitore",
   	"allegato",
   	"specificaSemiformale",
@@ -113,38 +117,20 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
 		this.id=new Long(-1);
   }
 
-  public String getOldNomeAccordoForUpdate() {
-    if(this.oldNomeAccordoForUpdate!=null && ("".equals(this.oldNomeAccordoForUpdate)==false)){
-		return this.oldNomeAccordoForUpdate.trim();
-	}else{
-		return null;
-	}
-
+  public IDServizio getOldIDServizioForUpdate() {
+    return this.oldIDServizioForUpdate;
   }
 
-  public void setOldNomeAccordoForUpdate(String oldNomeAccordoForUpdate) {
-    this.oldNomeAccordoForUpdate=oldNomeAccordoForUpdate;
+  public void setOldIDServizioForUpdate(IDServizio oldIDServizioForUpdate) {
+    this.oldIDServizioForUpdate=oldIDServizioForUpdate;
   }
 
-  public String getOldVersioneAccordoForUpdate() {
-    if(this.oldVersioneAccordoForUpdate!=null && ("".equals(this.oldVersioneAccordoForUpdate)==false)){
-		return this.oldVersioneAccordoForUpdate.trim();
-	}else{
-		return null;
-	}
-
+  public ConfigurazioneServizio getConfigurazioneServizio() {
+    return this.configurazioneServizio;
   }
 
-  public void setOldVersioneAccordoForUpdate(String oldVersioneAccordoForUpdate) {
-    this.oldVersioneAccordoForUpdate=oldVersioneAccordoForUpdate;
-  }
-
-  public Servizio getServizio() {
-    return this.servizio;
-  }
-
-  public void setServizio(Servizio servizio) {
-    this.servizio = servizio;
+  public void setConfigurazioneServizio(ConfigurazioneServizio configurazioneServizio) {
+    this.configurazioneServizio = configurazioneServizio;
   }
 
   public void addFruitore(Fruitore fruitore) {
@@ -347,6 +333,30 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
     this.byteWsdlImplementativoFruitore = byteWsdlImplementativoFruitore;
   }
 
+  public java.lang.String getTipoSoggettoErogatore() {
+    return this.tipoSoggettoErogatore;
+  }
+
+  public void setTipoSoggettoErogatore(java.lang.String tipoSoggettoErogatore) {
+    this.tipoSoggettoErogatore = tipoSoggettoErogatore;
+  }
+
+  public java.lang.String getNomeSoggettoErogatore() {
+    return this.nomeSoggettoErogatore;
+  }
+
+  public void setNomeSoggettoErogatore(java.lang.String nomeSoggettoErogatore) {
+    this.nomeSoggettoErogatore = nomeSoggettoErogatore;
+  }
+
+  public java.lang.String getTipo() {
+    return this.tipo;
+  }
+
+  public void setTipo(java.lang.String tipo) {
+    this.tipo = tipo;
+  }
+
   public java.lang.String getNome() {
     return this.nome;
   }
@@ -355,11 +365,11 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
     this.nome = nome;
   }
 
-  public java.lang.String getVersione() {
+  public java.lang.Integer getVersione() {
     return this.versione;
   }
 
-  public void setVersione(java.lang.String versione) {
+  public void setVersione(java.lang.Integer versione) {
     this.versione = versione;
   }
 
@@ -369,6 +379,26 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
 
   public void setAccordoServizioParteComune(java.lang.String accordoServizioParteComune) {
     this.accordoServizioParteComune = accordoServizioParteComune;
+  }
+
+  public void set_value_tipologiaServizio(String value) {
+    this.tipologiaServizio = (TipologiaServizio) TipologiaServizio.toEnumConstantFromString(value);
+  }
+
+  public String get_value_tipologiaServizio() {
+    if(this.tipologiaServizio == null){
+    	return null;
+    }else{
+    	return this.tipologiaServizio.toString();
+    }
+  }
+
+  public org.openspcoop2.core.registry.constants.TipologiaServizio getTipologiaServizio() {
+    return this.tipologiaServizio;
+  }
+
+  public void setTipologiaServizio(org.openspcoop2.core.registry.constants.TipologiaServizio tipologiaServizio) {
+    this.tipologiaServizio = tipologiaServizio;
   }
 
   public java.lang.String getPortType() {
@@ -527,13 +557,10 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
 
 
   @javax.xml.bind.annotation.XmlTransient
-  protected String oldNomeAccordoForUpdate;
+  protected IDServizio oldIDServizioForUpdate;
 
-  @javax.xml.bind.annotation.XmlTransient
-  protected String oldVersioneAccordoForUpdate;
-
-  @XmlElement(name="servizio",required=true,nillable=false)
-  protected Servizio servizio;
+  @XmlElement(name="configurazione-servizio",required=false,nillable=false)
+  protected ConfigurazioneServizio configurazioneServizio;
 
   @XmlElement(name="fruitore",required=true,nillable=false)
   protected List<Fruitore> fruitore = new ArrayList<Fruitore>();
@@ -741,16 +768,34 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
   protected byte[] byteWsdlImplementativoFruitore;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="tipo-soggetto-erogatore",required=false)
+  protected java.lang.String tipoSoggettoErogatore;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="nome-soggetto-erogatore",required=false)
+  protected java.lang.String nomeSoggettoErogatore;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="tipo",required=true)
+  protected java.lang.String tipo;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)
   protected java.lang.String nome;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
   @XmlAttribute(name="versione",required=false)
-  protected java.lang.String versione;
+  protected java.lang.Integer versione = new java.lang.Integer("1");
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="accordo-servizio-parte-comune",required=true)
   protected java.lang.String accordoServizioParteComune;
+
+  @XmlTransient
+  protected java.lang.String _value_tipologiaServizio;
+
+  @XmlAttribute(name="tipologia-servizio",required=false)
+  protected TipologiaServizio tipologiaServizio = (TipologiaServizio) TipologiaServizio.toEnumConstantFromString("normale");
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="port-type",required=false)

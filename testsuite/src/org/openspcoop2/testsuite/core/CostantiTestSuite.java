@@ -88,7 +88,8 @@ public class CostantiTestSuite {
 	public static final String PROPERTY_TIPO_DESTINATARIO_TRASPORTO="org.openspcoop2.testsuite.server.trasporto.tipoDestinatario";
 	public static final String PROPERTY_DESTINATARIO_TRASPORTO="org.openspcoop2.testsuite.server.trasporto.destinatario";
 	public static final String PROPERTY_TIPO_SERVIZIO_TRASPORTO="org.openspcoop2.testsuite.server.trasporto.tipoServizio";
-	public static final String PROPERTY_SERVIZIO_TRASPORTO="org.openspcoop2.testsuite.server.trasporto.servizio";
+	public static final String PROPERTY_NOME_SERVIZIO_TRASPORTO="org.openspcoop2.testsuite.server.trasporto.servizio";
+	public static final String PROPERTY_VERSIONE_SERVIZIO_TRASPORTO="org.openspcoop2.testsuite.server.trasporto.versioneServizio";
 	public static final String PROPERTY_AZIONE_TRASPORTO="org.openspcoop2.testsuite.server.trasporto.azione";
 	/** Nome della Proprieta' che contiene la collaborazione */
 	public static final String PROPERTY_COLLABORAZIONE_TRASPORTO="org.openspcoop2.testsuite.server.trasporto.collaborazione";
@@ -108,7 +109,8 @@ public class CostantiTestSuite {
 	public static final String PROPERTY_TIPO_DESTINATARIO_URL_BASED="org.openspcoop2.testsuite.server.urlBased.tipoDestinatario";
 	public static final String PROPERTY_DESTINATARIO_URL_BASED="org.openspcoop2.testsuite.server.urlBased.destinatario";
 	public static final String PROPERTY_TIPO_SERVIZIO_URL_BASED="org.openspcoop2.testsuite.server.urlBased.tipoServizio";
-	public static final String PROPERTY_SERVIZIO_URL_BASED="org.openspcoop2.testsuite.server.urlBased.servizio";
+	public static final String PROPERTY_NOME_SERVIZIO_URL_BASED="org.openspcoop2.testsuite.server.urlBased.servizio";
+	public static final String PROPERTY_VERSIONE_SERVIZIO_URL_BASED="org.openspcoop2.testsuite.server.urlBased.versioneServizio";
 	public static final String PROPERTY_AZIONE_URL_BASED="org.openspcoop2.testsuite.server.urlBased.azione";
 	/** Nome della Proprieta' che contiene la collaborazione */
 	public static final String PROPERTY_COLLABORAZIONE_URL_BASED="org.openspcoop2.testsuite.server.urlBased.collaborazione";
@@ -128,7 +130,8 @@ public class CostantiTestSuite {
 	public static final String PROPERTY_TIPO_DESTINATARIO_SOAP="org.openspcoop2.testsuite.server.soap.tipoDestinatario";
 	public static final String PROPERTY_DESTINATARIO_SOAP="org.openspcoop2.testsuite.server.soap.destinatario";
 	public static final String PROPERTY_TIPO_SERVIZIO_SOAP="org.openspcoop2.testsuite.server.soap.tipoServizio";
-	public static final String PROPERTY_SERVIZIO_SOAP="org.openspcoop2.testsuite.server.soap.servizio";
+	public static final String PROPERTY_NOME_SERVIZIO_SOAP="org.openspcoop2.testsuite.server.soap.servizio";
+	public static final String PROPERTY_VERSIONE_SERVIZIO_SOAP="org.openspcoop2.testsuite.server.soap.versioneServizio";
 	public static final String PROPERTY_AZIONE_SOAP="org.openspcoop2.testsuite.server.soap.azione";
 	/** Nome della Proprieta' che contiene la collaborazione */
 	public static final String PROPERTY_COLLABORAZIONE_SOAP="org.openspcoop2.testsuite.server.soap.collaborazione";

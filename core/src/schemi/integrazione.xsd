@@ -22,6 +22,7 @@
                         <xsd:attribute name="Destinatario" type="xsd:string" use="optional"/>
                         <xsd:attribute name="TipoServizio" type="xsd:string" use="optional"/>
                         <xsd:attribute name="Servizio" type="xsd:string" use="optional"/>
+                        <xsd:attribute name="VersioneServizio" type="xsd:unsignedInt" use="optional"/>
                         <xsd:attribute name="Azione" type="xsd:string" use="optional"/>
                         <xsd:attribute name="IdMessaggio" type="xsd:string" use="optional"/>
                         <xsd:attribute name="RiferimentoMessaggio" type="xsd:string" use="optional"/>

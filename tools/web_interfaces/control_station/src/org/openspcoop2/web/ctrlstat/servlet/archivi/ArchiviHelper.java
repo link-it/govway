@@ -1969,7 +1969,7 @@ public class ArchiviHelper extends ConsoleHelper {
 					httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey, httpspwdprivatekey,
 					httpsalgoritmokey, tipoconn, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,
-					"", "", null, null, null,
+					"", "", null, null, null,null,
 					null, null, showSectionTitle,
 					isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 			

@@ -70,7 +70,7 @@ public class ProtocolContext implements Serializable {
 	private IDAccordo idAccordo;
 	private String tipoServizio;
 	private String servizio;
-	private int versioneServizio;
+	private Integer versioneServizio;
 	private String azione;
 	
 	/** Profilo di Collaborazione */
@@ -176,10 +176,10 @@ public class ProtocolContext implements Serializable {
 	public void setServizio(String servizio) {
 		this.servizio = servizio;
 	}
-	public int getVersioneServizio() {
+	public Integer getVersioneServizio() {
 		return this.versioneServizio;
 	}
-	public void setVersioneServizio(int versioneServizio) {
+	public void setVersioneServizio(Integer versioneServizio) {
 		this.versioneServizio = versioneServizio;
 	}
 	public String getAzione() {

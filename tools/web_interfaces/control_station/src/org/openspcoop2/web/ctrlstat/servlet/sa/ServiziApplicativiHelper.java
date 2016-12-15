@@ -706,7 +706,7 @@ public class ServiziApplicativiHelper extends ConsoleHelper {
 						httpspwdprivatekeytrust, httpspathkey,
 						httpstipokey, httpspwdkey, httpspwdprivatekey,
 						httpsalgoritmokey, tipoconn, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,
-						nome, id, null, null, null,
+						nome, id, null, null, null, null,
 						null, null, true,
 						isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 			}

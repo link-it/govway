@@ -73,6 +73,8 @@ public class SbustamentoMessage implements GenericMessage {
 	private String servizioCorrelato;
 	/** Tipo ServizioCorrelato necessario per la richiesta Asincrona Asimmetrica*/
 	private String tipoServizioCorrelato;
+	/** Versione ServizioCorrelato necessario per la richiesta Asincrona Asimmetrica*/
+	private Integer versioneServizioCorrelato;
 	/** RuoloBusta */
 	private RuoloBusta ruoloBustaRicevuta = null;
 
@@ -178,6 +180,10 @@ public class SbustamentoMessage implements GenericMessage {
 		this.tipoServizioCorrelato = tipo;
 	}
 
+	public void setVersioneServizioCorrelato(Integer versioneServizioCorrelato) {
+		this.versioneServizioCorrelato = versioneServizioCorrelato;
+	}
+	
 	public void setRuoloBustaRicevuta(RuoloBusta ruoloBustaRicevuta) {
 		this.ruoloBustaRicevuta = ruoloBustaRicevuta;
 	}
@@ -266,6 +272,10 @@ public class SbustamentoMessage implements GenericMessage {
 	 */
 	public String getTipoServizioCorrelato() {
 		return this.tipoServizioCorrelato;
+	}
+
+	public Integer getVersioneServizioCorrelato() {
+		return this.versioneServizioCorrelato;
 	}
 
 	public RuoloBusta getRuoloBustaRicevuta() {

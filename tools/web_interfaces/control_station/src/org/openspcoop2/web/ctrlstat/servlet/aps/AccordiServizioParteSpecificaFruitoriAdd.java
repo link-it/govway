@@ -60,12 +60,11 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Fruitore;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -139,8 +138,6 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
-
-		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 
 		String superUser =  ServletUtils.getUserLoginFromSession(session);
 
@@ -282,12 +279,12 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			// Prendo nome e tipo dal db
 
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(new Long(idInt));
-			Servizio servizio = asps.getServizio();
-			String nomeservizio = servizio.getNome();
-			String tiposervizio = servizio.getTipo();
+			String nomeservizio = asps.getNome();
+			String tiposervizio = asps.getTipo();
+			Integer versioneservizio = asps.getVersione();
 
 			if(this.correlato == null){
-				this.correlato = ((TipologiaServizio.CORRELATO.equals(servizio.getTipologiaServizio()) ?
+				this.correlato = ((TipologiaServizio.CORRELATO.equals(asps.getTipologiaServizio()) ?
 						AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_CORRELATO :
 							AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_NORMALE));
 			}
@@ -308,19 +305,11 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			List<String> tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
 
 			// Prendo il nome e il tipo del soggetto erogatore del servizio
-			Soggetto soggErogatore = soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggErogatore));
-			String tipoSoggettoErogatore = soggErogatore.getTipo();
-			String nomesoggettoErogatore = soggErogatore.getNome();
+//			Soggetto soggErogatore = soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggErogatore));
+//			String tipoSoggettoErogatore = soggErogatore.getTipo();
+//			String nomesoggettoErogatore = soggErogatore.getNome();
 
-			String tmpTitle = tiposervizio + "/" + nomeservizio + " erogato da " + tipoSoggettoErogatore + "/" + nomesoggettoErogatore;
-			// aggiorno tmpTitle
-			String tmpVersione = asps.getVersione();
-			if(apsCore.isShowVersioneAccordoServizioParteSpecifica()==false){
-				tmpVersione = null;
-			}
-			tmpTitle = idAccordoFactory.getUriFromValues(asps.getNome(), 
-					servizio.getTipoSoggettoErogatore(), servizio.getNomeSoggettoErogatore(), 
-					tmpVersione);
+			String tmpTitle = IDServizioFactory.getInstance().getUriFromAccordo(asps);
 
 			// Soggetti fruitori
 			// tutti i soggetti anche il soggetto attuale
@@ -492,11 +481,11 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					this.autenticazioneHttp = connettoriHelper.getAutenticazioneHttp(this.autenticazioneHttp, this.endpointtype, this.user);
 					
 					dati = apsHelper.addServiziFruitoriToDati(dati, this.provider, this.wsdlimpler, this.wsdlimplfru, soggettiList,
-							soggettiListLabel, "0", this.id, TipoOperazione.ADD, "", "", "", nomeservizio, tiposervizio, this.correlato, this.statoPackage, this.statoPackage,asps.getStatoPackage(), null,this.validazioneDocumenti,
+							soggettiListLabel, "0", this.id, TipoOperazione.ADD, "", "", "", nomeservizio, tiposervizio, versioneservizio, this.correlato, this.statoPackage, this.statoPackage,asps.getStatoPackage(), null,this.validazioneDocumenti,
 							this.servizioApplicativo,saList);
 	
 					dati = apsHelper.addFruitoreToDati(TipoOperazione.ADD, versioniLabel, versioniValues, this.profilo, this.clientAuth, dati,null
-							,null,null,null,null,null,null);
+							,null,null,null,null,null,null,null);
 	
 					String tipoSendas = ConnettoriCostanti.TIPO_SEND_AS[0];
 					String tipoJms = ConnettoriCostanti.TIPI_CODE_JMS[0];
@@ -512,7 +501,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								this.httpspwdprivatekeytrust, this.httpspathkey,
 								this.httpstipokey, this.httpspwdkey, this.httpspwdprivatekey,
 								this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD, null,
-								null, null, null, null, null, null, true,
+								null, null, null, null, null, null, null, true,
 								isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 					}else{
 						//spostato dentro l'helper
@@ -530,7 +519,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 			// Controlli sui campi immessi
 			boolean isOk = apsHelper.serviziFruitoriCheckData(TipoOperazione.ADD, soggettiList,
-					this.id, "", "", "", "", this.provider,
+					this.id, "", "", null, "", "", this.provider,
 					this.endpointtype, this.url, this.nome, this.tipo,
 					this.user, this.password, this.initcont, this.urlpgk,
 					this.provurl, this.connfact, this.sendas,
@@ -568,12 +557,12 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.ADD, this.id, null, null, dati);
 
 				dati = apsHelper.addServiziFruitoriToDati(dati, this.provider, this.wsdlimpler, this.wsdlimplfru, soggettiList, soggettiListLabel, "0", this.id, TipoOperazione.ADD,
-						"", "", "", nomeservizio, tiposervizio, this.correlato, this.statoPackage, this.statoPackage,asps.getStatoPackage(),null,this.validazioneDocumenti,
+						"", "", "", nomeservizio, tiposervizio, versioneservizio, this.correlato, this.statoPackage, this.statoPackage,asps.getStatoPackage(),null,this.validazioneDocumenti,
 						this.servizioApplicativo,saList);
 
 				dati = apsHelper.addFruitoreToDati(TipoOperazione.ADD, versioniLabel, versioniValues, this.profilo, this.clientAuth,
 						dati,null
-						,null,null,null,null,null,null);
+						,null,null,null,null,null,null,null);
 
 				if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
 					dati = connettoriHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
@@ -587,7 +576,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							this.httpspathkey, this.httpstipokey,
 							this.httpspwdkey, this.httpspwdprivatekey,
 							this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD, null,
-							null, null, null, null, null, null, true,
+							null, null, null, null, null, null, null, true,
 							isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 				}else{
 					//spostato dentro l'helper
@@ -693,12 +682,12 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.ADD, this.id, null, null, dati);
 
 					dati = apsHelper.addServiziFruitoriToDati(dati, this.provider, this.wsdlimpler, this.wsdlimplfru, 
-							soggettiList, soggettiListLabel, "0", this.id, TipoOperazione.ADD, "", "", "", nomeservizio, tiposervizio, this.correlato, 
+							soggettiList, soggettiListLabel, "0", this.id, TipoOperazione.ADD, "", "", "", nomeservizio, tiposervizio, versioneservizio, this.correlato, 
 							this.statoPackage, this.statoPackage,asps.getStatoPackage(),null,this.validazioneDocumenti,
 							this.servizioApplicativo,saList);
 
 					dati = apsHelper.addFruitoreToDati(TipoOperazione.ADD, versioniLabel, versioniValues, this.profilo, this.clientAuth, dati,null
-							,null,null,null,null,null,null);
+							,null,null,null,null,null,null,null);
 
 					if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
 						dati = connettoriHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
@@ -713,7 +702,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								this.httpspwdkey, this.httpspwdprivatekey,
 								this.httpsalgoritmokey, this.tipoconn, 
 								AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD, null,
-								null, null, null, null, null, null, true,
+								null, null, null, null, null, null, null, true,
 								isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
 					}else{
 						//spostato dentro l'helper
@@ -733,8 +722,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			apsCore.performUpdateOperation(superUser, apsHelper.smista(), servsp);
 
 			// Prendo i dati del soggetto erogatore del servizio
-			String mynomeprov = asps.getServizio().getNomeSoggettoErogatore();
-			String mytipoprov = asps.getServizio().getTipoSoggettoErogatore();
+			String mynomeprov = asps.getNomeSoggettoErogatore();
+			String mytipoprov = asps.getTipoSoggettoErogatore();
 
 			// creo la porta delegata in automatico uso i dati nella
 			// sessione
@@ -762,8 +751,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				}
 			}
 			if (generazionePortaDelegata) {
-				String nomePD = tipoFruitore + nomeFruitore + "/" + mytipoprov + mynomeprov + "/" + tiposervizio + nomeservizio;
-				String descr = "Invocazione servizio " + tiposervizio + nomeservizio + " erogato da " + mytipoprov + mynomeprov;
+				String nomePD = tipoFruitore + nomeFruitore + "/" + mytipoprov + mynomeprov + "/" + tiposervizio + nomeservizio + "/" + versioneservizio;
+				String descr = "Invocazione servizio " + tiposervizio + nomeservizio + ":"+versioneservizio+" erogato da " + mytipoprov + mynomeprov;
 
 				PortaDelegata portaDelegata = new PortaDelegata();
 				portaDelegata.setNome(nomePD);
@@ -779,6 +768,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				PortaDelegataServizio pdServizio = new PortaDelegataServizio();
 				pdServizio.setNome(nomeservizio);
 				pdServizio.setTipo(tiposervizio);
+				pdServizio.setVersione(versioneservizio);
 				portaDelegata.setServizio(pdServizio);
 
 				PortaDelegataAzione pdAzione = new PortaDelegataAzione();

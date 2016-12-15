@@ -23,6 +23,8 @@
 
 package org.openspcoop2.core.id;
 
+import org.openspcoop2.core.constants.TipologiaServizio;
+
 /**
  * Classe utilizzata per rappresentare un identificatore di un Servizio nel registro dei servizi
  * 
@@ -41,271 +43,98 @@ public class IDServizio implements java.io.Serializable {
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
-	protected String tipoServizio;
-	protected String servizio;
-	protected String versioneServizio = "1";
+	protected String tipo;
+	protected String nome;
+	protected Integer versione = 1;
     protected IDSoggetto soggettoErogatore;
-    protected String uriAccordo;
+    
+    // Campi opzionali
     protected String azione;
-	private String tipologiaServizio;
+    protected String uriAccordoServizioParteComune;
+    protected TipologiaServizio tipologia;
 	
-   
-   
-    
-   
-    
+  
 
-
-
-	/* ********  C O S T R U T T O R E  ******** */
-
-
-	/**
-	 * Costruttore. 
-	 *
-	 * @param soggettoErogatore Identificatore del Soggetto Erogatore
-	 * @param tipoServizio tipo di Servizio
-	 * @param servizio Servizio
-	 * @param azione Azione
-	 * 
-	 */
-	public IDServizio(IDSoggetto soggettoErogatore, 
-			String tipoServizio, String servizio,
-			String azione){
-		this.soggettoErogatore = soggettoErogatore;
-		this.tipoServizio = tipoServizio;
-		this.servizio = servizio;
-		this.azione = azione;
+	public String getTipo() {
+		return this.tipo;
 	}
-	/**
-	 * Costruttore. 
-	 *
-	 * @param soggettoErogatore Identificatore del Soggetto Erogatore
-	 * @param tipoServizio tipo di Servizio
-	 * @param servizio Servizio
-	 * 
-	 */
-	public IDServizio(IDSoggetto soggettoErogatore, 
-			String tipoServizio, String servizio){
-		this.soggettoErogatore = soggettoErogatore;
-		this.tipoServizio = tipoServizio;
-		this.servizio = servizio;
-		this.azione = null;
+	public String getNome() {
+		return this.nome;
 	}
-	/**
-	 * Costruttore. 
-	 *
-	 * @param aTipoSoggetto Tipo del Soggetto Erogatore
-	 * @param aSoggetto Soggetto
-	 * @param tipoServizio tipo di Servizio
-	 * @param servizio Servizio
-	 * @param azione Azione
-	 * 
-	 */
-	public IDServizio(String aTipoSoggetto, String aSoggetto, 
-			String tipoServizio, String servizio,
-			String azione){
-		this.soggettoErogatore = new IDSoggetto(aTipoSoggetto,aSoggetto);
-		this.tipoServizio = tipoServizio;
-		this.servizio = servizio;
-		this.azione = azione;
+	public Integer getVersione() {
+		return this.versione;
 	}
-	/**
-	 * Costruttore. 
-	 *
-	 * @param aTipoSoggetto Tipo del Soggetto Erogatore
-	 * @param aSoggetto Soggetto
-	 * @param tipoServizio tipo di Servizio
-	 * @param servizio Servizio
-	 * 
-	 */
-	public IDServizio(String aTipoSoggetto, String aSoggetto, 
-			String tipoServizio, String servizio){
-		this.soggettoErogatore = new IDSoggetto(aTipoSoggetto,aSoggetto);
-		this.tipoServizio = tipoServizio;
-		this.servizio = servizio;
-		this.azione = null;
-	}
-	/**
-	 * Costruttore. 
-	 *
-	 * @param soggettoErogatore Identificatore del Soggetto Erogatore
-	 * 
-	 */
-	public IDServizio(IDSoggetto soggettoErogatore){
-		this.soggettoErogatore = soggettoErogatore;
-	}
-	/**
-	 * Costruttore. 
-	 *
-	 * @param aTipoSoggetto Tipo del Soggetto Erogatore
-	 * @param aSoggetto Soggetto Erogatore
-	 * 
-	 */
-	public IDServizio(String aTipoSoggetto, String aSoggetto){
-		this.soggettoErogatore = new IDSoggetto(aTipoSoggetto,aSoggetto);
-	}
-	/**
-	 * Costruttore. 
-	 *
-	 * 
-	 */
-	public IDServizio(){}
-
-
-
-
-
-
-
-	/* ********  S E T T E R   ******** */
-
-	/**
-	 * Imposta l'identificativo del Soggetto Erogatore.
-	 *
-	 * @param soggettoErogatore Identificativo del Soggetto Erogatore
-	 * 
-	 */
-	public void setSoggettoErogatore(IDSoggetto soggettoErogatore){
-		this.soggettoErogatore = soggettoErogatore;
-	}
-	/**
-	 * Imposta l'identificativo del Soggetto Erogatore.
-	 *
-	 * @param aTipoSoggetto Tipo del Soggetto Erogatore
-	 * @param aSoggetto Soggetto Erogatore
-	 * 
-	 */
-	public void setSoggettoErogatore(String aTipoSoggetto, String aSoggetto){
-		this.soggettoErogatore = new IDSoggetto(aTipoSoggetto,aSoggetto);
-	}
-
-	/**
-	 * Imposta il tipo del Servizio associato alla Porta Applicativa
-	 *
-	 * @param tipoServizio tipo del Servizio
-	 * 
-	 */
-	public void setTipoServizio(String tipoServizio){
-		this.tipoServizio = tipoServizio;
-	}
-
-	/**
-	 * Imposta il servizio associato alla Porta Applicativa
-	 *
-	 * @param servizio Servizio
-	 * 
-	 */
-	public void setServizio(String servizio){
-		this.servizio = servizio;
-	}
-
-	/**
-	 * Imposta l'azione associata alla Porta Applicativa
-	 *
-	 * @param azione azione
-	 * 
-	 */
-	public void setAzione(String azione){
-		this.azione = azione;
-	}
-
-
-
-	/* ********  G E T T E R   ******** */
-
-	/**
-	 * Ritorna l'identificativo del Soggetto Erogatore.
-	 *
-	 * @return Identificativo del Soggetto Erogatore.
-	 * 
-	 */
-	public IDSoggetto getSoggettoErogatore(){
+	public IDSoggetto getSoggettoErogatore() {
 		return this.soggettoErogatore;
 	}
-
-	/**
-	 * Ritorna il tipo del Servizio associato alla Porta Applicativa
-	 *
-	 * @return tipo del Servizio
-	 * 
-	 */
-	public String getTipoServizio(){
-		return this.tipoServizio;
+	
+	@Deprecated
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
 	}
-
-	/**
-	 * Ritorna il servizio associato alla Porta Applicativa
-	 *
-	 * @return Servizio
-	 * 
-	 */
-	public String getServizio(){
-		return this.servizio;
+	@Deprecated
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
-
-	/**
-	 * Ritorna l'azione associata alla Porta Applicativa
-	 *
-	 * @return azione
-	 * 
-	 */
-	public String getAzione(){
+	@Deprecated
+	public void setVersione(Integer versione) {
+		this.versione = versione;
+	}
+	@Deprecated
+	public void setSoggettoErogatore(IDSoggetto erogatore) {
+		this.soggettoErogatore = erogatore;
+	}
+	
+	
+	// Campi opzionali
+	public String getAzione() {
 		return this.azione;
 	}
+	public void setAzione(String azione) {
+		this.azione = azione;
+	}
+	public String getUriAccordoServizioParteComune() {
+		return this.uriAccordoServizioParteComune;
+	}
+	public void setUriAccordoServizioParteComune(String uriAccordoServizioParteComune) {
+		this.uriAccordoServizioParteComune = uriAccordoServizioParteComune;
+	}
+	public TipologiaServizio getTipologia() {
+		return this.tipologia;
+	}
+	public void setTipologia(TipologiaServizio tipologia) {
+		this.tipologia = tipologia;
+	}
+	
+
 
 	@Override 
 	public String toString(){
+		return this.toString(true);
+	}
+	public String toString(boolean printAzione){
 		StringBuffer bf = new StringBuffer();
 		if(this.soggettoErogatore!=null){
 			bf.append(this.soggettoErogatore.getTipo());
 			bf.append("/");
 			bf.append(this.soggettoErogatore.getNome());
 		}
-		bf.append("--");
-		bf.append(this.tipoServizio);
+		bf.append(":");
+		bf.append(this.tipo);
 		bf.append("/");
-		bf.append(this.servizio);
-		if(this.versioneServizio!=null){
+		bf.append(this.nome);
+		bf.append(":");
+		bf.append(this.versione);
+		if(printAzione && this.azione!=null){
 			bf.append(":");
-			bf.append(this.versioneServizio);
-		}
-		if(this.azione!=null){
-			bf.append("--");
 			bf.append(this.azione);
 		}
 		return bf.toString();
 	}
 
-	public String getUriAccordo() {
-		return this.uriAccordo;
-	}
-	public void setUriAccordo(String uriAccordo) {
-		this.uriAccordo = uriAccordo;
-	}
 
-	public String getTipologiaServizio() {
-		return this.tipologiaServizio;
-	}
-	public void setTipologiaServizio(String tipologiaServizio) {
-		this.tipologiaServizio = tipologiaServizio;
-	}
-	public String getVersioneServizio() {
-		if(this.versioneServizio==null){
-			return "1";
-		}else{
-			return this.versioneServizio;
-		}
-	}
-	public int getVersioneServizioAsInt() {
-		return Integer.parseInt(this.getVersioneServizio());
-	}
-	public void setVersioneServizio(String versioneServizio) {
-		if(versioneServizio==null)
-			this.versioneServizio = "1";
-		else
-			this.versioneServizio = versioneServizio;
-	}
+
+	
 	
 	
 	@Override
@@ -317,29 +146,26 @@ public class IDServizio implements java.io.Serializable {
 		IDServizio id = (IDServizio) servizio;
 
 		// TIPO
-		if(this.getTipoServizio()==null){
-			if(id.getTipoServizio()!=null)
+		if(this.getTipo()==null){
+			if(id.getTipo()!=null)
 				return false;
 		}else{
-			if(this.getTipoServizio().equals(id.getTipoServizio())==false)
+			if(this.getTipo().equals(id.getTipo())==false)
 				return false;
 		}
 		// NOME
-		if(this.getServizio()==null){
-			if(id.getServizio()!=null)
+		if(this.getNome()==null){
+			if(id.getNome()!=null)
 				return false;
 		}else{
-			if(this.getServizio().equals(id.getServizio())==false)
+			if(this.getNome().equals(id.getNome())==false)
 				return false;
 		}
 		// VERSIONE
-		if(this.getVersioneServizio()==null){
-			if(id.getVersioneServizio()!=null)
-				return false;
-		}else{
-			if(this.getVersioneServizio().equals(id.getVersioneServizio())==false)
-				return false;
+		if(this.getVersione()!=id.getVersione()){
+			return false;
 		}
+		
 		// AZIONE
 		if(this.getAzione()==null){
 			if(id.getAzione()!=null)
@@ -348,6 +174,7 @@ public class IDServizio implements java.io.Serializable {
 			if(this.getAzione().equals(id.getAzione())==false)
 				return false;
 		}
+		
 		// Soggetto EROGATORE
 		if(this.getSoggettoErogatore()==null){
 			if(id.getSoggettoErogatore()!=null)
@@ -370,24 +197,27 @@ public class IDServizio implements java.io.Serializable {
 	@Override
 	public IDServizio clone(){
 		IDServizio s = new IDServizio();
-		if(this.azione!=null)
-			s.setAzione(new String(this.azione));
-		if(this.tipologiaServizio!=null)
-			s.setTipologiaServizio(new String(this.tipologiaServizio));
-		if(this.servizio!=null)
-			s.setServizio(new String(this.servizio));
-		if(this.versioneServizio!=null)
-			s.setVersioneServizio(new String(this.versioneServizio));
-		if(this.tipoServizio!=null)
-			s.setTipoServizio(new String(this.tipoServizio));
-		if(this.uriAccordo!=null)
-			s.setUriAccordo(new String(this.uriAccordo));
 		
 		if(this.soggettoErogatore!=null){
 			IDSoggetto sogg = this.soggettoErogatore.clone();
 			s.setSoggettoErogatore(sogg);
 		}
 		
+		if(this.tipo!=null)
+			s.setTipo(new String(this.tipo));
+		if(this.nome!=null)
+			s.setNome(new String(this.nome));
+		s.setVersione(this.versione);
+		
+		if(this.azione!=null)
+			s.setAzione(new String(this.azione));
+		
+		if(this.tipologia!=null)
+			s.setTipologia(this.tipologia);
+				
+		if(this.uriAccordoServizioParteComune!=null)
+			s.setUriAccordoServizioParteComune(new String(this.uriAccordoServizioParteComune));
+				
 		return s;
 	}
 

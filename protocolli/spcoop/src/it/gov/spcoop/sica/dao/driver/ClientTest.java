@@ -38,17 +38,21 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioCompostoServizioComponente;
+import org.openspcoop2.core.registry.ConfigurazioneServizio;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.RegistroServizi;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.xml.DriverRegistroServiziXML;
+import org.openspcoop2.protocol.basic.registry.RegistryReader;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopContext;
 import org.openspcoop2.protocol.spcoop.sica.SICAtoOpenSPCoopUtilities;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -220,7 +224,7 @@ public class ClientTest {
 					throw new Exception("Proprieta' ["+args[1].trim()+"] non gestita. (Forse volevi usare la proprieta' '0/1/2'?) ");
 				}
 			}
-			
+						
 			SICAtoOpenSPCoopContext context = ClientTest.getContextSICAToOpenSPCoop(invertiOpzioni, invertireOpzioniCheCausanoFallimentoPerValidazioneETrasformazione, sicaClientCompatibility);
 			
 			String dir = args[0].trim();
@@ -237,6 +241,9 @@ public class ClientTest {
 			loggerProperties.load(RegistroServizi.class.getResourceAsStream("/openspcoop2.log4j2.properties"));
 			LoggerWrapperFactory.setLogConfiguration(loggerProperties);
 			Logger log = LoggerWrapperFactory.getLogger("openspcoop2.core");
+			
+			DriverRegistroServiziXML driver = new DriverRegistroServiziXML("/etc/openspcoop2/registroServizi.xml", log);
+			IRegistryReader registryReader = new RegistryReader(driver, log);
 			
 			XMLUtils xmlSICAUtilities = new XMLUtils(context,log);
 			
@@ -315,7 +322,7 @@ public class ClientTest {
 			// 3. Ritrasformazione in oggetto java
 			AccordoServizioParteComune asParteComune = xmlSICAUtilities.getAccordoServizioParteComune(fileName);
 			org.openspcoop2.core.registry.AccordoServizioParteComune asParteComuneOpenSPCoop = 
-				SICAtoOpenSPCoopUtilities.accordoServizioParteComune_sicaToOpenspcoop(asParteComune,context,log);
+				SICAtoOpenSPCoopUtilities.accordoServizioParteComune_sicaToOpenspcoop(registryReader,asParteComune,context,log);
 			ClientTest.printAccordoServizioParteComune(log,asParteComuneOpenSPCoop,false,false);
 			
 			
@@ -371,7 +378,7 @@ public class ClientTest {
 			// 3. Ritrasformazione in oggetto java
 			AccordoServizioParteSpecifica asParteSpecifica = xmlSICAUtilities.getAccordoServizioParteSpecifica(fileName);
 			org.openspcoop2.core.registry.AccordoServizioParteSpecifica asParteSpecificaOpenSPCoop = 
-				SICAtoOpenSPCoopUtilities.accordoServizioParteSpecifica_sicaToOpenspcoop(asParteSpecifica,context,log);
+				SICAtoOpenSPCoopUtilities.accordoServizioParteSpecifica_sicaToOpenspcoop(registryReader,asParteSpecifica,context,log);
 			ClientTest.printAccordoServizioParteSpecifica(log,asParteSpecificaOpenSPCoop,false);
 			
 			// 4. Trasformazione in package (package.aps) per il servizio composto
@@ -411,7 +418,7 @@ public class ClientTest {
 			
 			// 3. Ritrasformazione in oggetto java
 			AccordoCooperazione acSICA = xmlSICAUtilities.getAccordoCooperazione(fileName);
-			org.openspcoop2.core.registry.AccordoCooperazione acOpenSPCoop = SICAtoOpenSPCoopUtilities.accordoCooperazione_sicaToOpenspcoop(acSICA,context,log);
+			org.openspcoop2.core.registry.AccordoCooperazione acOpenSPCoop = SICAtoOpenSPCoopUtilities.accordoCooperazione_sicaToOpenspcoop(registryReader,acSICA,context,log);
 			ClientTest.printAccordoCooperazione(acOpenSPCoop);
 			
 			
@@ -496,12 +503,10 @@ public class ClientTest {
 			// 3. Ritrasformazione in oggetto java
 			AccordoServizioComposto asComposto = xmlSICAUtilities.getAccordoServizioComposto(fileName);
 			// aggiungo mapping dei servizi SPCoop to uriAPS
-			context.addMappingServizioToUriAPS(new IDServizio("SPC", "SoggettoEsempio", "SPC", "ASParteSpecifica"), 
-					idAccordoFactory.getIDAccordoFromValues("ASParteSpecifica", new IDSoggetto("SPC", "SoggettoEsempio"), "2"));
-			context.addMappingServizioToUriAPS(new IDServizio("SPC", "SoggettoEsempio", "SPC", "ASParteSpecifica2"), 
-					idAccordoFactory.getIDAccordoFromValues("ASParteSpecifica2", new IDSoggetto("SPC", "SoggettoEsempio"), "2"));
+			context.addMappingServizioToUriAPS(registryReader, IDServizioFactory.getInstance().getIDServizioFromValues("SPC", "ASParteSpecifica","SPC", "SoggettoEsempio",2));
+			context.addMappingServizioToUriAPS(registryReader, IDServizioFactory.getInstance().getIDServizioFromValues("SPC", "ASParteSpecifica2","SPC", "SoggettoEsempio",2)); 
 			org.openspcoop2.core.registry.AccordoServizioParteComune asCompostoOpenSPCoop = 
-				SICAtoOpenSPCoopUtilities.accordoServizioComposto_sicaToOpenspcoop(asComposto,context,log);
+				SICAtoOpenSPCoopUtilities.accordoServizioComposto_sicaToOpenspcoop(registryReader,asComposto,context,log);
 			ClientTest.printAccordoServizioParteComune(log,asCompostoOpenSPCoop,false,true);
 			
 			
@@ -555,7 +560,7 @@ public class ClientTest {
 					// traduzione in package CNIPA
 					ClientTest.normalizzaPackageCNIPA(as,dirFiles,servizioComposto);
 					AccordoServizioParteComune tmp = 
-						SICAtoOpenSPCoopUtilities.accordoServizioParteComune_openspcoopToSica(as,context,log);
+						SICAtoOpenSPCoopUtilities.accordoServizioParteComune_openspcoopToSica(registryReader,as,context,log);
 					if(tmp==null){
 						throw new Exception("AccordoServizioParteComune ["+idAccordi.get(i)+"] non generato in formato CNIPA?");
 					}
@@ -577,7 +582,7 @@ public class ClientTest {
 					if(context.isSICAClient_includiInfoRegistroGenerale()){
 						AccordoServizioParteComune tmpRitrasformato = xmlSICAUtilities.getAccordoServizioParteComune(nomeFile);
 						org.openspcoop2.core.registry.AccordoServizioParteComune asRitrasformatopenSPCoop = 
-							SICAtoOpenSPCoopUtilities.accordoServizioParteComune_sicaToOpenspcoop(tmpRitrasformato,context,log);
+							SICAtoOpenSPCoopUtilities.accordoServizioParteComune_sicaToOpenspcoop(registryReader,tmpRitrasformato,context,log);
 						ClientTest.printAccordoServizioParteComune(log,asRitrasformatopenSPCoop,true,false);
 					}else{
 						System.out.println("------------------------------------------------------------------------------------------------");
@@ -593,9 +598,8 @@ public class ClientTest {
 				for(int i=0; i<idServizio.size(); i++){
 					org.openspcoop2.core.registry.AccordoServizioParteSpecifica asps = 
 						driverRegistroServiziASParteComuneESpecificaXML.getAccordoServizioParteSpecifica(idServizio.get(i));
-					Servizio s = asps.getServizio();
-					String nomeServizio = s.getTipoSoggettoErogatore()+s.getNomeSoggettoErogatore()+"_"+
-						s.getTipo()+s.getNome();
+					String nomeServizio = asps.getTipoSoggettoErogatore()+asps.getNomeSoggettoErogatore()+"_"+
+							asps.getTipo()+asps.getNome()+asps.getVersione();
 					String nomeFile = nomeServizio+"."+Costanti.ESTENSIONE_ACCORDO_SERVIZIO_PARTE_SPECIFICA;
 					nomeFile = nomeFile.replace("/", "");
 					nomeFile = DIR_ESEMPI_AS+File.separatorChar+nomeFile;
@@ -608,15 +612,15 @@ public class ClientTest {
 							throw new Exception("Accordo di servizio parte comune ["+asps.getAccordoServizioParteComune()+"] per il Servizio SPCoop ["+nomeServizio+"] non trovata sul Registro dei Servizi");
 						}
 					}
-					Soggetto soggettoErogatore = driverRegistroServiziASParteComuneESpecificaXML.getSoggetto(new IDSoggetto(s.getTipoSoggettoErogatore(),s.getNomeSoggettoErogatore()));
+					Soggetto soggettoErogatore = driverRegistroServiziASParteComuneESpecificaXML.getSoggetto(new IDSoggetto(asps.getTipoSoggettoErogatore(),asps.getNomeSoggettoErogatore()));
 					if(soggettoErogatore==null){
-						throw new Exception("Soggetto erogatore ["+s.getTipoSoggettoErogatore()+"/"+s.getNomeSoggettoErogatore()+"] per il Servizio SPCoop ["+nomeServizio+"] non trovato sul Registro dei Servizi");
+						throw new Exception("Soggetto erogatore ["+asps.getTipoSoggettoErogatore()+"/"+asps.getNomeSoggettoErogatore()+"] per il Servizio SPCoop ["+nomeServizio+"] non trovato sul Registro dei Servizi");
 					}
 					
 					// traduzione in package CNIPA
 					ClientTest.normalizzaPackageCNIPA(asps,dirFiles,soggettoErogatore.getConnettore());
 					AccordoServizioParteSpecifica tmp = 
-						SICAtoOpenSPCoopUtilities.accordoServizioParteSpecifica_openspcoopToSica(asps,implementazioneServizioComposto,asParteComuneDaIncludere,context,log);
+						SICAtoOpenSPCoopUtilities.accordoServizioParteSpecifica_openspcoopToSica(registryReader,asps,implementazioneServizioComposto,asParteComuneDaIncludere,context,log);
 					if(tmp==null){
 						throw new Exception("AccordoServizioParteSpecifica ["+idAccordi.get(i)+"] non generato in formato CNIPA?");
 					}
@@ -642,7 +646,7 @@ public class ClientTest {
 					if(context.isSICAClient_includiInfoRegistroGenerale()){
 						AccordoServizioParteSpecifica tmpRitrasformato = xmlSICAUtilities.getAccordoServizioParteSpecifica(nomeFile);
 						org.openspcoop2.core.registry.AccordoServizioParteSpecifica asRitrasformatopenSPCoop = 
-							SICAtoOpenSPCoopUtilities.accordoServizioParteSpecifica_sicaToOpenspcoop(tmpRitrasformato,context,log);
+							SICAtoOpenSPCoopUtilities.accordoServizioParteSpecifica_sicaToOpenspcoop(registryReader,tmpRitrasformato,context,log);
 						ClientTest.printAccordoServizioParteSpecifica(log,asRitrasformatopenSPCoop,true);
 					}else{
 						System.out.println("------------------------------------------------------------------------------------------------");
@@ -710,7 +714,7 @@ public class ClientTest {
 					// traduzione in package CNIPA
 					ClientTest.normalizzaPackageCNIPA(acoop,dirFiles);
 					AccordoCooperazione tmp = 
-						SICAtoOpenSPCoopUtilities.accordoCooperazione_openspcoopToSica(acoop,context,log);
+						SICAtoOpenSPCoopUtilities.accordoCooperazione_openspcoopToSica(registryReader,acoop,context,log);
 					if(tmp==null){
 						throw new Exception("AccordoCooperazione ["+idAccordiCooperazione.get(i)+"] non generato in formato CNIPA?");
 					}
@@ -732,7 +736,7 @@ public class ClientTest {
 					if(context.isSICAClient_includiInfoRegistroGenerale()){
 						AccordoCooperazione tmpRitrasformato = xmlSICAUtilities.getAccordoCooperazione(nomeFile);
 						org.openspcoop2.core.registry.AccordoCooperazione acRitrasformatopenSPCoop = 
-							SICAtoOpenSPCoopUtilities.accordoCooperazione_sicaToOpenspcoop(tmpRitrasformato,context,log);
+							SICAtoOpenSPCoopUtilities.accordoCooperazione_sicaToOpenspcoop(registryReader,tmpRitrasformato,context,log);
 						ClientTest.printAccordoCooperazione(acRitrasformatopenSPCoop);
 					}else{
 						System.out.println("------------------------------------------------------------------------------------------------");
@@ -764,21 +768,17 @@ public class ClientTest {
 					if(as.getServizioComposto()!=null){
 						for(int j=0;j<as.getServizioComposto().sizeServizioComponenteList();j++){
 							AccordoServizioParteComuneServizioCompostoServizioComponente sc = as.getServizioComposto().getServizioComponente(j);
-							IDServizio idServizioComponente = new IDServizio(sc.getTipoSoggetto(), sc.getNomeSoggetto(), 
-									sc.getTipo(), sc.getNome());
-							org.openspcoop2.core.registry.AccordoServizioParteSpecifica servComponente = 
-								driverRegistroServiziASCompostiEACooperazioneXML.getAccordoServizioParteSpecifica(idServizioComponente);
-							IDAccordo idAccordoParteSpecifica = idAccordoFactory.getIDAccordoFromValues(servComponente.getNome(),
-									idServizioComponente.getSoggettoErogatore(),
-									servComponente.getVersione());
-							context.addMappingServizioToUriAPS(idServizioComponente, idAccordoParteSpecifica);
+							IDServizio idServizioComponente = IDServizioFactory.getInstance().getIDServizioFromValues(sc.getTipo(), sc.getNome(), 
+									sc.getTipoSoggetto(), sc.getNomeSoggetto(), 
+									sc.getVersione()); 
+							context.addMappingServizioToUriAPS(registryReader, idServizioComponente);
 						}
 					}
 					
 					// traduzione in package CNIPA
 					ClientTest.normalizzaPackageCNIPA(as,dirFiles,servizioComposto);
 					AccordoServizioComposto tmp = 
-						SICAtoOpenSPCoopUtilities.accordoServizioComposto_openspcoopToSica(as,context,log);
+						SICAtoOpenSPCoopUtilities.accordoServizioComposto_openspcoopToSica(registryReader,as,context,log);
 					if(tmp==null){
 						throw new Exception("AccordoServizioComposto ["+idAccordiServiziComposti.get(i)+"] non generato in formato CNIPA?");
 					}
@@ -800,7 +800,7 @@ public class ClientTest {
 					if(context.isSICAClient_includiInfoRegistroGenerale()){
 						AccordoServizioComposto tmpRitrasformato = xmlSICAUtilities.getAccordoServizioComposto(nomeFile);
 						org.openspcoop2.core.registry.AccordoServizioParteComune asRitrasformatopenSPCoop = 
-							SICAtoOpenSPCoopUtilities.accordoServizioComposto_sicaToOpenspcoop(tmpRitrasformato,context,log);
+							SICAtoOpenSPCoopUtilities.accordoServizioComposto_sicaToOpenspcoop(registryReader,tmpRitrasformato,context,log);
 						ClientTest.printAccordoServizioParteComune(log,asRitrasformatopenSPCoop,true,true);
 					}else{
 						System.out.println("------------------------------------------------------------------------------------------------");
@@ -818,17 +818,16 @@ public class ClientTest {
 				for(int i=0; i<idServiziComponenti.size(); i++){
 					org.openspcoop2.core.registry.AccordoServizioParteSpecifica asps = 
 						driverRegistroServiziASCompostiEACooperazioneXML.getAccordoServizioParteSpecifica(idServiziComponenti.get(i));
-					Servizio s = asps.getServizio();
-					String nomeServizio = s.getTipoSoggettoErogatore()+s.getNomeSoggettoErogatore()+"_"+
-						s.getTipo()+s.getNome();
+					String nomeServizio = asps.getTipoSoggettoErogatore()+asps.getNomeSoggettoErogatore()+"_"+
+							asps.getTipo()+asps.getNome()+asps.getVersione();
 					String nomeFile = nomeServizio+"."+Costanti.ESTENSIONE_ACCORDO_SERVIZIO_PARTE_SPECIFICA;
 					nomeFile = nomeFile.replace("/", "");
 					nomeFile = DIR_ESEMPI_AC+File.separatorChar+nomeFile;
 					String dirFiles = dirRegistroServizi.getAbsolutePath()+File.separatorChar+"accordiCooperazione"+File.separatorChar;
-					boolean implementazioneServizioComposto = "EsempioServizioComposto".equals(s.getNome());
+					boolean implementazioneServizioComposto = "EsempioServizioComposto".equals(asps.getNome());
 					org.openspcoop2.core.registry.AccordoServizioParteComune asParteComuneDaIncludere = null;
 					if(context.isWSDL_XSD_accordiParteSpecifica_gestioneParteComune()){
-						if("EsempioServizioComposto".equals(s.getNome())){
+						if("EsempioServizioComposto".equals(asps.getNome())){
 							asParteComuneDaIncludere = driverRegistroServiziASCompostiEACooperazioneXML.getAccordoServizioParteComune(idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
 						}else{
 							asParteComuneDaIncludere = driverRegistroServiziASParteComuneESpecificaXML.getAccordoServizioParteComune(idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
@@ -837,15 +836,15 @@ public class ClientTest {
 							throw new Exception("Accordo di servizio parte comune ["+asps.getAccordoServizioParteComune()+"] per il Servizio SPCoop ["+nomeServizio+"] non trovata sul Registro dei Servizi");
 						}
 					}
-					Soggetto soggettoErogatore = driverRegistroServiziASCompostiEACooperazioneXML.getSoggetto(new IDSoggetto(s.getTipoSoggettoErogatore(),s.getNomeSoggettoErogatore()));
+					Soggetto soggettoErogatore = driverRegistroServiziASCompostiEACooperazioneXML.getSoggetto(new IDSoggetto(asps.getTipoSoggettoErogatore(),asps.getNomeSoggettoErogatore()));
 					if(soggettoErogatore==null){
-						throw new Exception("Soggetto erogatore ["+s.getTipoSoggettoErogatore()+"/"+s.getNomeSoggettoErogatore()+"] per il Servizio SPCoop ["+nomeServizio+"] non trovato sul Registro dei Servizi");
+						throw new Exception("Soggetto erogatore ["+asps.getTipoSoggettoErogatore()+"/"+asps.getNomeSoggettoErogatore()+"] per il Servizio SPCoop ["+nomeServizio+"] non trovato sul Registro dei Servizi");
 					}
 					
 					// traduzione in package CNIPA
 					ClientTest.normalizzaPackageCNIPA(asps,dirFiles,soggettoErogatore.getConnettore());
 					AccordoServizioParteSpecifica tmp = 
-						SICAtoOpenSPCoopUtilities.accordoServizioParteSpecifica_openspcoopToSica(asps,implementazioneServizioComposto,asParteComuneDaIncludere,context,log);
+						SICAtoOpenSPCoopUtilities.accordoServizioParteSpecifica_openspcoopToSica(registryReader,asps,implementazioneServizioComposto,asParteComuneDaIncludere,context,log);
 					if(tmp==null){
 						throw new Exception("AccordoServizioParteSpecifica ["+idAccordi.get(i)+"] non generato in formato CNIPA?");
 					}
@@ -871,7 +870,7 @@ public class ClientTest {
 					if(context.isSICAClient_includiInfoRegistroGenerale()){
 						AccordoServizioParteSpecifica tmpRitrasformato = xmlSICAUtilities.getAccordoServizioParteSpecifica(nomeFile);
 						org.openspcoop2.core.registry.AccordoServizioParteSpecifica asRitrasformatopenSPCoop = 
-							SICAtoOpenSPCoopUtilities.accordoServizioParteSpecifica_sicaToOpenspcoop(tmpRitrasformato,context,log);
+							SICAtoOpenSPCoopUtilities.accordoServizioParteSpecifica_sicaToOpenspcoop(registryReader,tmpRitrasformato,context,log);
 						ClientTest.printAccordoServizioParteSpecifica(log,asRitrasformatopenSPCoop,true);
 					}else{
 						System.out.println("------------------------------------------------------------------------------------------------");
@@ -1143,16 +1142,17 @@ public class ClientTest {
 	}
 	private static void printAccordoServizioParteSpecifica(Logger log,org.openspcoop2.core.registry.AccordoServizioParteSpecifica aspsOpenSPCoop, boolean readWSDL) throws Exception {
 		
-		Servizio servizioOpenSPCoop = aspsOpenSPCoop.getServizio();
-		
 		System.out.println("------------------------------------------------------------------------------------------------");
-		System.out.println("Servizio SPCoop (tipologia:"+servizioOpenSPCoop.getTipologiaServizio()+") ["+servizioOpenSPCoop.getTipo()+"/"+servizioOpenSPCoop.getNome()+"] (erogatore:"+
-				servizioOpenSPCoop.getTipoSoggettoErogatore()+"/"+servizioOpenSPCoop.getNomeSoggettoErogatore()+") gestito correttamente");
+		System.out.println("Servizio SPCoop (tipologia:"+aspsOpenSPCoop.getTipologiaServizio()+") ["+aspsOpenSPCoop.getTipo()+"/"+aspsOpenSPCoop.getNome()+" v"+aspsOpenSPCoop.getVersione()
+			+"] (erogatore:"+
+			aspsOpenSPCoop.getTipoSoggettoErogatore()+"/"+aspsOpenSPCoop.getNomeSoggettoErogatore()+") gestito correttamente");
 		System.out.println("- Allegati: "+aspsOpenSPCoop.sizeAllegatoList());
 		System.out.println("- SpecificheSemiformali: "+aspsOpenSPCoop.sizeSpecificaSemiformaleList());
 		System.out.println("- SpecificheLivelliServizio: "+aspsOpenSPCoop.sizeSpecificaLivelloServizioList());
 		System.out.println("- SpecificheSicurezza: "+aspsOpenSPCoop.sizeSpecificaSicurezzaList());
-		System.out.println("- Connettore servizio: "+servizioOpenSPCoop.getConnettore().getProperty(0).getValore());
+		if(aspsOpenSPCoop.getConfigurazioneServizio()!=null){
+			System.out.println("- Connettore servizio: "+aspsOpenSPCoop.getConfigurazioneServizio().getConnettore().getProperty(0).getValore());
+		}
 		if(aspsOpenSPCoop.getByteWsdlImplementativoErogatore()!=null){
 			System.out.println("- WSDL Implementativo Erogatore");
 			if(readWSDL){
@@ -1264,19 +1264,20 @@ public class ClientTest {
 		// Adesione automatica
 		//asps.setTipoAdesione(TipiAdesione.AUTOMATICA.toString());
 		
-		Servizio servizio = asps.getServizio();
-		
 		// Connettore
 		String url = connettoreSoggetto.getProperty(0).getValore();
 		//System.out.println("URL "+url+"/TEST_"+servizio.getTipo()+servizio.getNome());
 		Connettore con = new Connettore();
 		con.setTipo("http");
-		con.setNome("Connettore per servizio "+servizio.toString());
+		con.setNome("Connettore per servizio "+asps.getNome());
 		Property cp = new Property();
 		cp.setNome("location");
-		cp.setValore(url+"/TEST_"+servizio.getTipo()+servizio.getNome());
+		cp.setValore(url+"/TEST_"+asps.getTipo()+asps.getNome());
 		con.addProperty(cp);
-		servizio.setConnettore(con);
+		if(asps.getConfigurazioneServizio()==null){
+			asps.setConfigurazioneServizio(new ConfigurazioneServizio());
+		}
+		asps.getConfigurazioneServizio().setConnettore(con);
 
 		
 		// WSDL
@@ -1528,10 +1529,8 @@ public class ClientTest {
 			throw new Exception("Accordo ["+nomeFile+"] non leggibile");
 		}
 			
-		Servizio servizio = asps.getServizio();
-		
 		String dir = null;
-		if(TipologiaServizio.CORRELATO.equals(servizio.getTipologiaServizio())){
+		if(TipologiaServizio.CORRELATO.equals(asps.getTipologiaServizio())){
 			dir = "DIR_IMPL_FRUITORE_"+nomeFile.replace("/", "");
 		}else{
 			dir = "DIR_IMPL_EROGATORE_"+nomeFile.replace("/", "");
@@ -1561,20 +1560,20 @@ public class ClientTest {
 		
 		
 		ZipUtilities.unzipFile(nomeFile, dir);
-		if(TipologiaServizio.CORRELATO.equals(servizio.getTipologiaServizio())){
+		if(TipologiaServizio.CORRELATO.equals(asps.getTipologiaServizio())){
 			System.out.println(Costanti.SPECIFICA_PORTI_ACCESSO_FRUITORE_WSDL +" in corso di verifica (sintassi/import/include) ...");
 			if(implementazioneServizioComposto){
-				ClientTest.verificaAccordoServizioCompostoParteSpecifica(dir, asps.getNome(),servizio.getNome(),Costanti.SPECIFICA_PORTI_ACCESSO_FRUITORE_WSDL);
+				ClientTest.verificaAccordoServizioCompostoParteSpecifica(dir, asps.getNome(),asps.getNome(),Costanti.SPECIFICA_PORTI_ACCESSO_FRUITORE_WSDL);
 			}else{
-				ClientTest.verificaAccordoServizioParteSpecifica(dir, asps.getNome(),servizio.getNome(),Costanti.SPECIFICA_PORTI_ACCESSO_FRUITORE_WSDL);
+				ClientTest.verificaAccordoServizioParteSpecifica(dir, asps.getNome(),asps.getNome(),Costanti.SPECIFICA_PORTI_ACCESSO_FRUITORE_WSDL);
 			}
 			System.out.println(Costanti.SPECIFICA_PORTI_ACCESSO_FRUITORE_WSDL +" correttamente formato");
 		}else{
 			System.out.println(Costanti.SPECIFICA_PORTI_ACCESSO_EROGATORE_WSDL +" in corso di verifica (sintassi/import/include) ...");
 			if(implementazioneServizioComposto){
-				ClientTest.verificaAccordoServizioCompostoParteSpecifica(dir, asps.getNome(),servizio.getNome(),Costanti.SPECIFICA_PORTI_ACCESSO_EROGATORE_WSDL);
+				ClientTest.verificaAccordoServizioCompostoParteSpecifica(dir, asps.getNome(),asps.getNome(),Costanti.SPECIFICA_PORTI_ACCESSO_EROGATORE_WSDL);
 			}else{
-				ClientTest.verificaAccordoServizioParteSpecifica(dir, asps.getNome(),servizio.getNome(),Costanti.SPECIFICA_PORTI_ACCESSO_EROGATORE_WSDL);
+				ClientTest.verificaAccordoServizioParteSpecifica(dir, asps.getNome(),asps.getNome(),Costanti.SPECIFICA_PORTI_ACCESSO_EROGATORE_WSDL);
 			}
 			System.out.println(Costanti.SPECIFICA_PORTI_ACCESSO_EROGATORE_WSDL +" correttamente formato");
 		}
@@ -1833,7 +1832,7 @@ public class ClientTest {
 		// Parte specifica manifest
 		it.gov.spcoop.sica.manifest.AccordoServizioParteSpecifica parteSpecifica = new it.gov.spcoop.sica.manifest.AccordoServizioParteSpecifica();
 		parteSpecifica.setRiferimentoParteComune(SICAtoOpenSPCoopUtilities.buildIDAccordoSica(Costanti.TIPO_ACCORDO_SERVIZIO_PARTE_COMUNE, 
-				SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoEsempio", false), "ASParteComune", "2"));
+				SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoEsempio", false), "ASParteComune", 2));
 		parteSpecifica.setAdesione(TipiAdesione.AUTOMATICA.toString());
 		parteSpecifica.setErogatore(SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoEsempio", true));
 		// -- SpecificaPortiAccesso
@@ -1940,11 +1939,11 @@ public class ClientTest {
 		// ServiziComposti
 		ElencoServiziComposti eSC = new ElencoServiziComposti();
 		eSC.addServizioComposto(SICAtoOpenSPCoopUtilities.buildIDAccordoSica(Costanti.TIPO_ACCORDO_SERVIZIO_COMPOSTO, 
-				SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoErogatoreServizioComposto1", false), "ASServizioComposto1", "2"));
+				SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoErogatoreServizioComposto1", false), "ASServizioComposto1", 2));
 		eSC.addServizioComposto(SICAtoOpenSPCoopUtilities.buildIDAccordoSica(Costanti.TIPO_ACCORDO_SERVIZIO_COMPOSTO, 
-				SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoErogatoreServizioComposto2", false), "ASServizioComposto2", "2"));
+				SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoErogatoreServizioComposto2", false), "ASServizioComposto2", 2));
 		eSC.addServizioComposto(SICAtoOpenSPCoopUtilities.buildIDAccordoSica(Costanti.TIPO_ACCORDO_SERVIZIO_COMPOSTO, 
-				SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoErogatoreServizioComposto3", false), "ASServizioComposto3", "2"));
+				SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoErogatoreServizioComposto3", false), "ASServizioComposto3", 2));
 		manifest.setServiziComposti(eSC);
 		
 		return manifest;
@@ -1964,7 +1963,7 @@ public class ClientTest {
 		manifest.setVersione("2");
 		
 		manifest.setPubblicatore(SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoEsempio", true));
-		manifest.setRiferimentoAccordoCooperazione(SICAtoOpenSPCoopUtilities.buildIDAccordoCooperazioneSica("AC", "2"));
+		manifest.setRiferimentoAccordoCooperazione(SICAtoOpenSPCoopUtilities.buildIDAccordoCooperazioneSica("AC", 2));
 		
 		// -- SpecificaConversazione
 		SpecificaConversazione conversazione = new SpecificaConversazione();
@@ -2013,9 +2012,9 @@ public class ClientTest {
 		// Servizi Componente
 		ElencoServiziComponenti componenti = new ElencoServiziComponenti();
 		componenti.addServizioComponente(SICAtoOpenSPCoopUtilities.buildIDAccordoSica(Costanti.TIPO_ACCORDO_SERVIZIO_PARTE_SPECIFICA, 
-				SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoEsempio", false), "ASParteSpecifica", "2"));
+				SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoEsempio", false), "ASParteSpecifica", 2));
 		componenti.addServizioComponente(SICAtoOpenSPCoopUtilities.buildIDAccordoSica(Costanti.TIPO_ACCORDO_SERVIZIO_PARTE_SPECIFICA, 
-				SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoEsempio", false), "ASParteSpecifica2", "2"));
+				SICAtoOpenSPCoopUtilities.buildIDSoggettoSica("SoggettoEsempio", false), "ASParteSpecifica2", 2));
 		manifest.setServiziComponenti(componenti);
 		
 		// Allegati

@@ -39,6 +39,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAzione;
+import org.openspcoop2.core.config.PortaDelegataLocalForward;
 import org.openspcoop2.core.config.PortaDelegataServizio;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
@@ -55,6 +56,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -119,6 +121,7 @@ public final class PorteDelegateAdd extends Action {
 			String tiposervizio = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SERVIZIO);
 			String modeservizio = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SERVIZIO);
 			String servizio = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SERVIZIO);
+			String versioneServizio = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_VERSIONE_SERVIZIO);
 			String azid = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE_ID);
 			String modeaz = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_AZIONE);
 			String azione = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AZIONE);
@@ -244,8 +247,8 @@ public final class PorteDelegateAdd extends Action {
 						List<String> serviziListTmp = new ArrayList<String>();
 
 						for (IDServizio idServizio : list) {
-							if(tipiServizioCompatibiliAccordo.contains(idServizio.getTipoServizio())){
-								serviziListTmp.add(idServizio.getTipoServizio() + "/" + idServizio.getServizio());
+							if(tipiServizioCompatibiliAccordo.contains(idServizio.getTipo())){
+								serviziListTmp.add(idServizio.getTipo() + "/" + idServizio.getNome() + "/" + idServizio.getVersione());
 							}
 						}
 
@@ -265,7 +268,8 @@ public final class PorteDelegateAdd extends Action {
 					(soggid != null && !"".equals(soggid) && soggid.contains("/"))
 					) {
 				idSoggetto = new IDSoggetto(soggid.split("/")[0], soggid.split("/")[1]);
-				idServizio = new IDServizio(idSoggetto, servid.split("/")[0], servid.split("/")[1]);
+				idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(servid.split("/")[0], servid.split("/")[1], idSoggetto, 
+						Integer.parseInt(servid.split("/")[2])); 
 				try{
 					servS = apsCore.getServizio(idServizio);
 				}catch(DriverRegistroServiziNotFound dNotFound){
@@ -276,7 +280,8 @@ public final class PorteDelegateAdd extends Action {
 					idServizio = null;
 					if(serviziList!=null && serviziList.length>0){
 						servid = serviziList[0];
-						idServizio = new IDServizio(idSoggetto, servid.split("/")[0], servid.split("/")[1]);
+						idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(servid.split("/")[0], servid.split("/")[1], idSoggetto, 
+								Integer.parseInt(servid.split("/")[2])); 
 						try{
 							servS = apsCore.getServizio(idServizio);
 						}catch(DriverRegistroServiziNotFound dNotFound){
@@ -436,7 +441,7 @@ public final class PorteDelegateAdd extends Action {
 						descr, autenticazione, autorizzazione,
 						modesp, soggid, soggettiList, soggettiListLabel,
 						sp, tiposp, sp, modeservizio, servid, serviziList,
-						serviziListLabel, servizio, tiposervizio, servizio,
+						serviziListLabel, servizio, tiposervizio, versioneServizio, servizio,
 						modeaz, azid, azioniListLabel, azioniList, azione,
 						azione, numAzioni,  stateless, localForward, ricsim, ricasim,
 						xsd, tipoValidazione, 0, "", gestBody, gestManifest,
@@ -478,7 +483,7 @@ public final class PorteDelegateAdd extends Action {
 						descr, autenticazione, autorizzazione,
 						modesp, soggid, soggettiList, soggettiListLabel,
 						sp, tiposp, sp, modeservizio, servid, serviziList,
-						serviziListLabel, servizio, tiposervizio, servizio,
+						serviziListLabel, servizio, tiposervizio,versioneServizio, servizio,
 						modeaz, azid, azioniListLabel, azioniList, azione,
 						azione, numAzioni, stateless, localForward, ricsim, ricasim,
 						xsd, tipoValidazione, 0, "", gestBody, gestManifest,
@@ -535,7 +540,10 @@ public final class PorteDelegateAdd extends Action {
 				portaDelegata.setGestioneManifest(StatoFunzionalita.toEnumConstant(gestManifest));
 			portaDelegata.setRicevutaAsincronaSimmetrica(StatoFunzionalita.toEnumConstant(ricsim));
 			portaDelegata.setRicevutaAsincronaAsimmetrica(StatoFunzionalita.toEnumConstant(ricasim));
-			portaDelegata.setLocalForward(StatoFunzionalita.toEnumConstant(localForward));
+			if(localForward!=null){
+				portaDelegata.setLocalForward(new PortaDelegataLocalForward());
+				portaDelegata.getLocalForward().setStato(StatoFunzionalita.toEnumConstant(localForward));
+			}
 
 			PortaDelegataSoggettoErogatore pdSogg = new PortaDelegataSoggettoErogatore();
 			IDSoggetto idSoggettoErogatore = new IDSoggetto(tiposp, sp);
@@ -554,7 +562,8 @@ public final class PorteDelegateAdd extends Action {
 			AccordoServizioParteSpecifica asps = null;
 			idServizio = null;
 			if (modeservizio.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-				idServizio = new IDServizio(idSoggettoErogatore, tiposervizio, servizio);
+				idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tiposervizio, servizio, 
+						idSoggettoErogatore, Integer.parseInt(versioneServizio)); 
 				try{
 					asps = apsCore.getServizio(idServizio);
 					pdServizio.setId(asps.getId());

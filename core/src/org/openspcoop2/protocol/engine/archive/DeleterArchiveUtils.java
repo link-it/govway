@@ -35,6 +35,7 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -44,6 +45,7 @@ import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.sdk.archive.Archive;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoCooperazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioComposto;
@@ -593,7 +595,7 @@ public class DeleterArchiveUtils {
 			boolean servizioComposto,
 			ArchiveEsitoImportDetail detail){
 		
-		IDAccordo idAccordoServizioParteSpecifica = archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica();
+		IDServizio idAccordoServizioParteSpecifica = archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica();
 		try{
 			// --- check esistenza ---
 			if(this.importerEngine.existsAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica)==false){
@@ -616,8 +618,8 @@ public class DeleterArchiveUtils {
 			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
 			
 			HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
-			if (this.importerEngine.isAccordoServizioParteSpecificaInUso(archiveAccordoServizioParteSpecifica.getIdServizio(), whereIsInUso)){
-				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(archiveAccordoServizioParteSpecifica.getIdServizio(), whereIsInUso,false,NEW_LINE));
+			if (this.importerEngine.isAccordoServizioParteSpecificaInUso(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica(), whereIsInUso)){
+				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica(), whereIsInUso,false,NEW_LINE));
 			}
 			
 			
@@ -639,7 +641,7 @@ public class DeleterArchiveUtils {
 	public void deleteFruitore(ArchiveFruitore archiveFruitore,
 			ArchiveEsitoImportDetail detail){
 		
-		IDAccordo idAccordoServizioParteSpecifica = archiveFruitore.getIdAccordoServizioParteSpecifica();
+		IDServizio idAccordoServizioParteSpecifica = archiveFruitore.getIdAccordoServizioParteSpecifica();
 		IDSoggetto idSoggettoFruitore = archiveFruitore.getIdSoggettoFruitore();
 
 		try{
@@ -711,10 +713,9 @@ public class DeleterArchiveUtils {
 			
 			// prima ho rimosso il fruitore se gia' esisteva.
 			// update
-			oldAccordo.getServizio().setOldTipoForUpdate(oldAccordo.getServizio().getTipo());
-			oldAccordo.getServizio().setOldNomeForUpdate(oldAccordo.getServizio().getNome());
-			oldAccordo.getServizio().setOldTipoSoggettoErogatoreForUpdate(oldAccordo.getServizio().getTipoSoggettoErogatore());
-			oldAccordo.getServizio().setOldNomeSoggettoErogatoreForUpdate(oldAccordo.getServizio().getNomeSoggettoErogatore());
+			IDServizio oldIDServizioForUpdate = IDServizioFactory.getInstance().getIDServizioFromValues(oldAccordo.getTipo(), oldAccordo.getNome(), 
+					oldAccordo.getTipoSoggettoErogatore(),oldAccordo.getNomeSoggettoErogatore(),oldAccordo.getVersione());
+			oldAccordo.setOldIDServizioForUpdate(oldIDServizioForUpdate);
 			this.importerEngine.updateAccordoServizioParteSpecifica(oldAccordo);
 			
 			detail.setState(ArchiveStatoImport.DELETED);

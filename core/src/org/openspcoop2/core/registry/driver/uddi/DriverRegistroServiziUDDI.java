@@ -46,13 +46,12 @@ import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
+import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
+import org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
-import org.openspcoop2.core.registry.Servizio;
-import org.openspcoop2.core.registry.ServizioAzione;
-import org.openspcoop2.core.registry.ServizioAzioneFruitore;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.CostantiXMLRepository;
@@ -69,6 +68,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziCRUD;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.ProtocolPropertiesUtilities;
@@ -117,6 +117,7 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 	// Factory
 	private IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 	private IDAccordoCooperazioneFactory idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
+	private IDServizioFactory idServizioFactory = IDServizioFactory.getInstance();
 
 
 	/* ********  C O S T R U T T O R E  ******** */
@@ -306,7 +307,11 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			
 			IDAccordoCooperazione idAccordoFiltro = null;
 			if(filtroRicerca!=null && filtroRicerca.getNomeAccordo()!=null){
-				idAccordoFiltro = this.idAccordoCooperazioneFactory.getIDAccordoFromValues(filtroRicerca.getNomeAccordo(),filtroRicerca.getVersione());
+				IDSoggetto soggettoReferente = null;
+				if(filtroRicerca.getTipoSoggettoReferente()!=null && filtroRicerca.getNomeSoggettoReferente()!=null){
+					soggettoReferente = new IDSoggetto(filtroRicerca.getTipoSoggettoReferente(), filtroRicerca.getNomeSoggettoReferente());
+				}
+				idAccordoFiltro = this.idAccordoCooperazioneFactory.getIDAccordoFromValues(filtroRicerca.getNomeAccordo(),soggettoReferente,filtroRicerca.getVersione());
 			}
 			
 			String [] urlXMLAccordi = this.uddiLib.getUrlXmlAccordiCooperazione(idAccordoFiltro,this.urlPrefix);
@@ -401,7 +406,7 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 						continue;
 					}
 				}
-				idAccordi.add(this.idAccordoCooperazioneFactory.getIDAccordoFromValues(ac.getNome(),ac.getVersione()));
+				idAccordi.add(this.idAccordoCooperazioneFactory.getIDAccordoFromAccordo(ac));
 			}
 			if(idAccordi.size()==0){
 				throw new DriverRegistroServiziNotFound("Accordi non trovati che rispettano il filtro di ricerca selezionato: "+filtroRicerca.toString());
@@ -1221,7 +1226,7 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 		} 
 		// Controllo pre-esistenza del servizio
 		if (this.uddiLib.existsServizio(idServizio)==false){
-			throw new DriverRegistroServiziNotFound("[getAccordoServizioParteSpecifica] Il servizio ["+idServizio.getTipoServizio()+"/"+idServizio.getServizio()+"] erogato dal soggetto ["+idServizio.getSoggettoErogatore()+"] non risulta gia' registrato nel registro");
+			throw new DriverRegistroServiziNotFound("[getAccordoServizioParteSpecifica] Il servizio ["+idServizio.toString()+"] non risulta gia' registrato nel registro");
 		}
 		
 		org.openspcoop2.core.registry.AccordoServizioParteSpecifica servRichiesto = null;
@@ -1262,8 +1267,8 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			if(rs.sizeSoggettoList()>0){
 				if(rs.getSoggetto(0).sizeAccordoServizioParteSpecificaList()>0){
 					servRichiesto = rs.getSoggetto(0).getAccordoServizioParteSpecifica(0);
-					servRichiesto.getServizio().setNomeSoggettoErogatore(idServizio.getSoggettoErogatore().getNome());
-					servRichiesto.getServizio().setTipoSoggettoErogatore(idServizio.getSoggettoErogatore().getTipo());
+					servRichiesto.setNomeSoggettoErogatore(idServizio.getSoggettoErogatore().getNome());
+					servRichiesto.setTipoSoggettoErogatore(idServizio.getSoggettoErogatore().getTipo());
 				}
 			}
 			istr.close();
@@ -1290,13 +1295,6 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 	}
 	
 	
-	@Override
-	public org.openspcoop2.core.registry.AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDAccordo idAccordo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		
-		throw new DriverRegistroServiziException("Not Implemented");
-		
-	}
-
 	
 	/**
 	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.AccordoServizioParteSpecifica}
@@ -1366,8 +1364,8 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 				if(rs.sizeSoggettoList()>0){
 					if(rs.getSoggetto(0).sizeAccordoServizioParteSpecificaList()>0){
 						servCorrelatoRichiesto = rs.getSoggetto(0).getAccordoServizioParteSpecifica(0);
-						servCorrelatoRichiesto.getServizio().setNomeSoggettoErogatore(idSoggetto.getNome());
-						servCorrelatoRichiesto.getServizio().setTipoSoggettoErogatore(idSoggetto.getTipo());
+						servCorrelatoRichiesto.setNomeSoggettoErogatore(idSoggetto.getNome());
+						servCorrelatoRichiesto.setTipoSoggettoErogatore(idSoggetto.getTipo());
 					}
 				}
 				istr.close();
@@ -1434,7 +1432,7 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			String tipoServizio = null;
 			String nomeServizio = null;
 			if(filtroRicerca!=null){
-				idAccordo = filtroRicerca.getIdAccordo();
+				idAccordo = filtroRicerca.getIdAccordoServizioParteComune();
 				if(filtroRicerca.getTipoSoggettoErogatore()!=null && filtroRicerca.getNomeSoggettoErogatore()!=null){
 					soggettoErogatore = new IDSoggetto(filtroRicerca.getTipoSoggettoErogatore(),filtroRicerca.getNomeSoggettoErogatore());
 				}
@@ -1472,8 +1470,8 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 							org.openspcoop2.core.registry.Soggetto s = rs.getSoggetto(0);
 							if(s.sizeAccordoServizioParteSpecificaList()>0){
 								serv = s.getAccordoServizioParteSpecifica(0);
-								serv.getServizio().setNomeSoggettoErogatore(s.getNome());
-								serv.getServizio().setTipoSoggettoErogatore(s.getTipo());
+								serv.setNomeSoggettoErogatore(s.getNome());
+								serv.setTipoSoggettoErogatore(s.getTipo());
 							}else{
 								continue;
 							}
@@ -1498,19 +1496,19 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 				if(filtroRicerca!=null){
 					// Filtro By Tipo e Nome Soggetto Erogatore
 					if(filtroRicerca.getTipoSoggettoErogatore()!=null){
-						if(serv.getServizio().getTipoSoggettoErogatore().equals(filtroRicerca.getTipoSoggettoErogatore()) == false){
+						if(serv.getTipoSoggettoErogatore().equals(filtroRicerca.getTipoSoggettoErogatore()) == false){
 							continue;
 						}
 					}
 					if(filtroRicerca.getNomeSoggettoErogatore()!=null){
-						if(serv.getServizio().getNomeSoggettoErogatore().equals(filtroRicerca.getNomeSoggettoErogatore()) == false){
+						if(serv.getNomeSoggettoErogatore().equals(filtroRicerca.getNomeSoggettoErogatore()) == false){
 							continue;
 						}
 					}
 					// Filtro By Data
 					if(filtroRicerca.getMinDate()!=null){
 						if(serv.getOraRegistrazione()==null){
-							this.log.debug("[getAllIdServizi](FiltroByMinDate) Servizio["+serv.getServizio().getTipo()+"/"+serv.getServizio().getNome()+"] SoggettoErogatore["+serv.getServizio().getTipoSoggettoErogatore()+"/"+serv.getServizio().getNomeSoggettoErogatore()+"] non valorizzato nell'ora-registrazione. Non inserito nella lista ritornata.");
+							this.log.debug("[getAllIdServizi](FiltroByMinDate) ["+this.idServizioFactory.getUriFromAccordo(serv)+"] non valorizzato nell'ora-registrazione. Non inserito nella lista ritornata.");
 							continue;
 						}else if(serv.getOraRegistrazione().before(filtroRicerca.getMinDate())){
 							continue;
@@ -1518,26 +1516,31 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 					}
 					if(filtroRicerca.getMaxDate()!=null){
 						if(serv.getOraRegistrazione()==null){
-							this.log.debug("[getAllIdServizi](FiltroByMaxDate) Servizio["+serv.getServizio().getTipo()+"/"+serv.getServizio().getNome()+"] SoggettoErogatore["+serv.getServizio().getTipoSoggettoErogatore()+"/"+serv.getServizio().getNomeSoggettoErogatore()+"] non valorizzato nell'ora-registrazione. Non inserito nella lista ritornata.");
+							this.log.debug("[getAllIdServizi](FiltroByMaxDate) Servizio["+this.idServizioFactory.getUriFromAccordo(serv)+"] non valorizzato nell'ora-registrazione. Non inserito nella lista ritornata.");
 							continue;
 						}else if(serv.getOraRegistrazione().after(filtroRicerca.getMaxDate())){
 							continue;
 						}
 					}
-					// Filtro By Tipo e Nome
+					// Filtro By Tipo, Nome e Versione
 					if(filtroRicerca.getTipo()!=null){
-						if(serv.getServizio().getTipo().equals(filtroRicerca.getTipo()) == false){
+						if(serv.getTipo().equals(filtroRicerca.getTipo()) == false){
 							continue;
 						}
-						}
+					}
 					if(filtroRicerca.getNome()!=null){
-						if(serv.getServizio().getNome().equals(filtroRicerca.getNome()) == false){
+						if(serv.getNome().equals(filtroRicerca.getNome()) == false){
+							continue;
+						}
+					}
+					if(filtroRicerca.getVersione()!=null){
+						if(serv.getVersione().intValue() != filtroRicerca.getVersione().intValue()){
 							continue;
 						}
 					}
 					// Filtro by Accordo
-					if(filtroRicerca.getIdAccordo()!=null){
-						String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(filtroRicerca.getIdAccordo());
+					if(filtroRicerca.getIdAccordoServizioParteComune()!=null){
+						String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(filtroRicerca.getIdAccordoServizioParteComune());
 						if(serv.getAccordoServizioParteComune().equals(uriAccordo) == false){
 							continue;
 						}
@@ -1549,9 +1552,7 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 					
 				}
 				
-				IDServizio idServ = new IDServizio(serv.getServizio().getTipoSoggettoErogatore(),serv.getServizio().getNomeSoggettoErogatore(),serv.getServizio().getTipo(),serv.getServizio().getNome());
-				idServ.setUriAccordo(serv.getAccordoServizioParteComune());
-				idServ.setTipologiaServizio(serv.getServizio().getTipologiaServizio().toString());
+				IDServizio idServ = this.idServizioFactory.getIDServizioFromAccordo(serv); 
 				
 				if(filtroFruizioni!=null){
 					
@@ -1605,142 +1606,6 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 		}
 	}
 	
-	@Override
-	public List<IDAccordo> getAllIdAccordiServizioParteSpecifica(FiltroRicercaServizi filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		
-		try{
-	
-			// Ricerca UDDI
-			IDAccordo idAccordo = null;
-			IDSoggetto soggettoErogatore = null;
-			String tipoServizio = null;
-			String nomeServizio = null;
-			if(filtroRicerca!=null){
-				idAccordo = filtroRicerca.getIdAccordo();
-				if(filtroRicerca.getTipoSoggettoErogatore()!=null && filtroRicerca.getNomeSoggettoErogatore()!=null){
-					soggettoErogatore = new IDSoggetto(filtroRicerca.getTipoSoggettoErogatore(),filtroRicerca.getNomeSoggettoErogatore());
-				}
-				tipoServizio = filtroRicerca.getTipo();
-				nomeServizio = filtroRicerca.getNome();
-			}
-			String [] urlXMLServizi = this.uddiLib.getUrlXMLServiziBySearch(idAccordo, soggettoErogatore, tipoServizio, nomeServizio);
-			
-			
-			
-			// Esamina dei servizi
-			List<IDAccordo> idServizi = new ArrayList<IDAccordo>();
-			for(int i=0; i<urlXMLServizi.length; i++){
-			
-				org.openspcoop2.core.registry.AccordoServizioParteSpecifica serv = null;
-				
-				/* --- Validazione XSD -- */
-				try{
-					this.validatoreRegistro.valida(urlXMLServizi[i]);  
-				}catch (Exception e) {
-					throw new DriverRegistroServiziException("[getAllIdAccordiServizioParteSpecifica] Riscontrato errore durante la validazione XSD URL("+urlXMLServizi[i]+"): "+e.getMessage(),e);
-				}
-				
-				ByteArrayInputStream bin = null;
-				InputStreamReader istr = null;
-				try{
-					IBindingFactory bfact = BindingDirectory.getFactory(org.openspcoop2.core.registry.RegistroServizi.class);
-					IUnmarshallingContext uctx = bfact.createUnmarshallingContext();
-					byte[] fileXML = HttpUtilities.requestHTTPFile(urlXMLServizi[i]);
-					bin = new ByteArrayInputStream(fileXML);
-					istr = new InputStreamReader(bin);
-					org.openspcoop2.core.registry.RegistroServizi rs = 
-						(org.openspcoop2.core.registry.RegistroServizi) uctx.unmarshalDocument(istr, null);
-					if(rs.sizeSoggettoList()>0){
-						if(rs.getSoggetto(0).sizeAccordoServizioParteSpecificaList()>0 ){
-							org.openspcoop2.core.registry.Soggetto s = rs.getSoggetto(0);
-							if(s.sizeAccordoServizioParteSpecificaList()>0){
-								serv = s.getAccordoServizioParteSpecifica(0);
-								serv.getServizio().setNomeSoggettoErogatore(s.getNome());
-								serv.getServizio().setTipoSoggettoErogatore(s.getTipo());
-							}else{
-								continue;
-							}
-						}
-					}
-					istr.close();
-					bin.close();
-				}catch(Exception e){
-					try{
-						if(istr!=null)
-							istr.close();
-					} catch(Exception eis) {}
-					try{
-						if(bin!=null)
-							bin.close();
-					} catch(Exception eis) {}
-					throw new DriverRegistroServiziException("[getAllIdAccordiServizioParteSpecifica] Errore durante il parsing xml del servizio("+urlXMLServizi[i]+"): "+e.getMessage(),e);
-				}
-				if(serv==null)
-					throw new DriverRegistroServiziException("[getAllIdAccordiServizioParteSpecifica] servizio non definito per la url ["+urlXMLServizi[i]+"]");
-				
-				if(filtroRicerca!=null){
-					// Filtro By Tipo e Nome Soggetto Erogatore
-					if(filtroRicerca.getTipoSoggettoErogatore()!=null){
-						if(serv.getServizio().getTipoSoggettoErogatore().equals(filtroRicerca.getTipoSoggettoErogatore()) == false){
-							continue;
-						}
-					}
-					if(filtroRicerca.getNomeSoggettoErogatore()!=null){
-						if(serv.getServizio().getNomeSoggettoErogatore().equals(filtroRicerca.getNomeSoggettoErogatore()) == false){
-							continue;
-						}
-					}
-					// Filtro By Data
-					if(filtroRicerca.getMinDate()!=null){
-						if(serv.getOraRegistrazione()==null){
-							this.log.debug("[getAllIdAccordiServizioParteSpecifica](FiltroByMinDate) Servizio["+serv.getServizio().getTipo()+"/"+serv.getServizio().getNome()+"] SoggettoErogatore["+serv.getServizio().getTipoSoggettoErogatore()+"/"+serv.getServizio().getNomeSoggettoErogatore()+"] non valorizzato nell'ora-registrazione. Non inserito nella lista ritornata.");
-							continue;
-						}else if(serv.getOraRegistrazione().before(filtroRicerca.getMinDate())){
-							continue;
-						}
-					}
-					if(filtroRicerca.getMaxDate()!=null){
-						if(serv.getOraRegistrazione()==null){
-							this.log.debug("[getAllIdAccordiServizioParteSpecifica](FiltroByMaxDate) Servizio["+serv.getServizio().getTipo()+"/"+serv.getServizio().getNome()+"] SoggettoErogatore["+serv.getServizio().getTipoSoggettoErogatore()+"/"+serv.getServizio().getNomeSoggettoErogatore()+"] non valorizzato nell'ora-registrazione. Non inserito nella lista ritornata.");
-							continue;
-						}else if(serv.getOraRegistrazione().after(filtroRicerca.getMaxDate())){
-							continue;
-						}
-					}
-					// Filtro By Tipo e Nome
-					if(filtroRicerca.getTipo()!=null){
-						if(serv.getServizio().getTipo().equals(filtroRicerca.getTipo()) == false){
-							continue;
-						}
-						}
-					if(filtroRicerca.getNome()!=null){
-						if(serv.getServizio().getNome().equals(filtroRicerca.getNome()) == false){
-							continue;
-						}
-					}
-					// Filtro by Accordo
-					if(filtroRicerca.getIdAccordo()!=null){
-						String uriAccordo = this.idAccordoFactory.getUriFromIDAccordo(filtroRicerca.getIdAccordo());
-						if(serv.getAccordoServizioParteComune().equals(uriAccordo) == false){
-							continue;
-						}
-					}
-					idServizi.add(this.idAccordoFactory.getIDAccordoFromAccordo(serv));
-				}
-			}
-			if(idServizi.size()==0){
-				throw new DriverRegistroServiziNotFound("Servizi non trovati che rispettano il filtro di ricerca selezionato: "+filtroRicerca.toString());
-			}else{
-				return idServizi;
-			}
-
-		}catch(Exception e){
-			if(e instanceof DriverRegistroServiziNotFound)
-				throw (DriverRegistroServiziNotFound)e;
-			else
-				throw new DriverRegistroServiziException("getAllIdAccordiServizioParteSpecifica error",e);
-		}
-	}
 
 
 	
@@ -2377,8 +2242,12 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 		if( soggetto == null)
 			throw new DriverRegistroServiziException("[updateSoggetto] Parametro Non Valido");
 		
-		String tipoOLD = soggetto.getOldTipoForUpdate();
-		String nomeOLD = soggetto.getOldNomeForUpdate();
+		String tipoOLD = null;
+		String nomeOLD = null;
+		if(soggetto.getOldIDSoggettoForUpdate()!=null){
+			tipoOLD = soggetto.getOldIDSoggettoForUpdate().getTipo();
+			nomeOLD = soggetto.getOldIDSoggettoForUpdate().getNome();
+		}
 		if(tipoOLD==null||nomeOLD==null){
 			tipoOLD = soggetto.getTipo();
 			nomeOLD = soggetto.getNome();
@@ -2524,7 +2393,6 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 		if( asps == null)
 			throw new DriverRegistroServiziException("[createAccordoServizioParteSpecifica] Parametro Non Valido");
 		
-		Servizio servizio = asps.getServizio();
 		
 	
 		try {
@@ -2535,20 +2403,22 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			}
 
 			// Controllo elementi obbligatori
-			if( (servizio.getNomeSoggettoErogatore() == null) || 
-					(servizio.getTipoSoggettoErogatore() == null) ){
+			if( (asps.getNomeSoggettoErogatore() == null) || 
+					(asps.getTipoSoggettoErogatore() == null) ){
 				throw new DriverRegistroServiziException("Soggetto, erogatore del servizio, non definito");
 			}
-			if( (servizio.getNome() == null) || 
-					(servizio.getTipo() == null) ){
+			if( (asps.getNome() == null) || 
+					(asps.getTipo() == null)  || 
+					(asps.getVersione() == null)  ){
 				throw new DriverRegistroServiziException("Servizio, non definito");
 			}
 			if(asps.getAccordoServizioParteComune()==null){
 				throw new DriverRegistroServiziException("Accordo di Servizio, da associare al servizio, non definito");
 			}
-			if(servizio.getConnettore() !=null && !CostantiRegistroServizi.DISABILITATO.equals(servizio.getConnettore().getTipo())){
+			if(asps.getConfigurazioneServizio()!=null && asps.getConfigurazioneServizio().getConnettore() !=null && 
+					!CostantiRegistroServizi.DISABILITATO.equals(asps.getConfigurazioneServizio().getConnettore().getTipo())){
 				boolean connettoreNonDefinito = false;
-				if( servizio.getConnettore().getTipo() == null ){
+				if( asps.getConfigurazioneServizio().getConnettore().getTipo() == null ){
 					connettoreNonDefinito = true;
 				}
 				if(connettoreNonDefinito){
@@ -2568,52 +2438,55 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 					+"] non risulta gia' inserito nel registro dei servizi.");
 				} 
 			}
-			for(int i=0;i<servizio.sizeParametriAzioneList();i++){
-				ServizioAzione checkAz = servizio.getParametriAzione(i);
-				if( (checkAz.getNome()==null) || (checkAz.getConnettore()==null)){
-					throw new DriverRegistroServiziException("Definizione di un azione senza nome o connettore");
-				}
-				// controllo connettore
-				if(checkAz.getConnettore() !=null && !CostantiRegistroServizi.DISABILITATO.equals(checkAz.getConnettore().getTipo())){
-					boolean connettoreNonDefinito = false;
-					if( checkAz.getConnettore().getTipo() == null ){
-						connettoreNonDefinito = true;
-					}
-					if(connettoreNonDefinito){
-						throw new DriverRegistroServiziException("Definizione del punto di accesso dell'azione "+checkAz.getNome()+" del servizio non corretta");
-					}
-				}
-				for(int j=0;j<checkAz.sizeParametriFruitoreList();j++){
-					ServizioAzioneFruitore checkAzFr = checkAz.getParametriFruitore(j);
-					if( (checkAzFr.getNome()==null) || (checkAzFr.getTipo()==null) || (checkAzFr.getConnettore()==null)){
-						throw new DriverRegistroServiziException("Definizione di un fruitore di una azione senza nome o connettore");
+			if(asps.getConfigurazioneServizio()!=null){
+				for(int i=0;i<asps.getConfigurazioneServizio().sizeConfigurazioneAzioneList();i++){
+					ConfigurazioneServizioAzione checkAz = asps.getConfigurazioneServizio().getConfigurazioneAzione(i);
+					if( (checkAz.getNome()==null) || (checkAz.getConnettore()==null)){
+						throw new DriverRegistroServiziException("Definizione di un azione senza nome o connettore");
 					}
 					// controllo connettore
-					if(checkAzFr.getConnettore() !=null && !CostantiRegistroServizi.DISABILITATO.equals(checkAzFr.getConnettore().getTipo())){
+					if(checkAz.getConnettore() !=null && !CostantiRegistroServizi.DISABILITATO.equals(checkAz.getConnettore().getTipo())){
 						boolean connettoreNonDefinito = false;
-						if( checkAzFr.getConnettore().getTipo() == null ){
+						if( checkAz.getConnettore().getTipo() == null ){
 							connettoreNonDefinito = true;
 						}
 						if(connettoreNonDefinito){
-							throw new DriverRegistroServiziException("Definizione del punto di accesso del fruitore "+checkAzFr.getTipo()+checkAzFr.getNome()+" dell'azione "+checkAz.getNome()+" del servizio non corretta");
+							throw new DriverRegistroServiziException("Definizione del punto di accesso dell'azione "+checkAz.getNome()+" del servizio non corretta");
+						}
+					}
+					for(int j=0;j<checkAz.sizeConfigurazioneFruitoreList();j++){
+						ConfigurazioneServizioAzioneFruitore checkAzFr = checkAz.getConfigurazioneFruitore(j);
+						if( (checkAzFr.getNome()==null) || (checkAzFr.getTipo()==null) || (checkAzFr.getConnettore()==null)){
+							throw new DriverRegistroServiziException("Definizione di un fruitore di una azione senza nome o connettore");
+						}
+						// controllo connettore
+						if(checkAzFr.getConnettore() !=null && !CostantiRegistroServizi.DISABILITATO.equals(checkAzFr.getConnettore().getTipo())){
+							boolean connettoreNonDefinito = false;
+							if( checkAzFr.getConnettore().getTipo() == null ){
+								connettoreNonDefinito = true;
+							}
+							if(connettoreNonDefinito){
+								throw new DriverRegistroServiziException("Definizione del punto di accesso del fruitore "+checkAzFr.getTipo()+checkAzFr.getNome()+" dell'azione "+checkAz.getNome()+" del servizio non corretta");
+							}
 						}
 					}
 				}
 			}
 
 			// Controllo pre-esistenza del soggetto erogatore
-			IDSoggetto idSoggettoErogatore = new IDSoggetto(servizio.getTipoSoggettoErogatore(),servizio.getNomeSoggettoErogatore());
-			String idSoggettoErogatore_string = servizio.getTipoSoggettoErogatore()+servizio.getNomeSoggettoErogatore();
+			IDSoggetto idSoggettoErogatore = new IDSoggetto(asps.getTipoSoggettoErogatore(),asps.getNomeSoggettoErogatore());
+			String idSoggettoErogatore_string = asps.getTipoSoggettoErogatore()+asps.getNomeSoggettoErogatore();
 			if( this.uddiLib.existsSoggetto(idSoggettoErogatore) == false){
 				throw new DriverRegistroServiziException("Il soggetto ["+idSoggettoErogatore_string
 				+"] non risulta gia' inserito nel registro dei servizi.");
 			} 
 
 			// Controllo pre-esistenza del servizio
-			String idServizio_string = servizio.getTipo() + servizio.getNome();
-			IDServizio idServizio = new IDServizio(idSoggettoErogatore,servizio.getTipo(),servizio.getNome());
+			String idServizio_string = asps.getTipo() + asps.getNome() + asps.getVersione();
+			String uriServizio = this.idServizioFactory.getUriFromAccordo(asps);
+			IDServizio idServizio = this.idServizioFactory.getIDServizioFromAccordo(asps);
 			if (this.uddiLib.existsServizio(idServizio)==true){
-				throw new DriverRegistroServiziException("Il servizio ["+idServizio_string+"] erogato dal soggetto ["+idSoggettoErogatore_string+"] risulta gia' registrato nel registro");
+				throw new DriverRegistroServiziException("Il servizio ["+uriServizio+"] risulta gia' registrato nel registro");
 			}
 
 			String urlXML = this.urlPrefix + idSoggettoErogatore_string + CostantiRegistroServizi.URL_SEPARATOR +CostantiXMLRepository.SERVIZI+ 
@@ -2627,8 +2500,8 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 					urlXML,this.idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
 				
 		}catch (Exception e) {
-			throw new DriverRegistroServiziException("[createAccordoServizioParteSpecifica] Errore generatosi durante la creazione del nuovo Servizio ["+servizio.getTipo()+servizio.getNome()
-			+"] erogato dal soggetto ["+servizio.getTipoSoggettoErogatore()+servizio.getNomeSoggettoErogatore()+"]: "+e.getMessage(),e);
+			throw new DriverRegistroServiziException("[createAccordoServizioParteSpecifica] Errore generatosi durante la creazione del nuovo Servizio ["+
+					this.idServizioFactory.getUriFromAccordo(asps)+"]: "+e.getMessage(),e);
 		}
 	}		
 	
@@ -2656,24 +2529,6 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
     	}
     }
 	
-    @Override
-	public boolean existsAccordoServizioParteSpecifica(IDAccordo idAccordo) throws DriverRegistroServiziException{
-    	if( idAccordo == null)
-			return false;
-	
-		try{
-			this.getAccordoServizioParteSpecifica(idAccordo);
-			
-			return true;
-		}catch(DriverRegistroServiziNotFound de){
-			return false;
-		}
-		catch(Exception e){
-			this.log.error("[existsAccordoServizioParteSpecifica] Servizio non trovato: "+e.getMessage(),e);
-    		return false;
-    	}
-    }
-	
     
 	/**
 	 * Aggiorna un Accordo Servizio Parte Specifica
@@ -2687,25 +2542,34 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 		if( asps == null)
 			throw new DriverRegistroServiziException("[updateAccordoServizioParteSpecifica] Parametro Non Valido");
 		
-		Servizio servizio = asps.getServizio();
-		
 	
-		String tipoServizioOLD = servizio.getOldTipoForUpdate();
-		String nomeServizioOLD = servizio.getOldNomeForUpdate();
-		if(tipoServizioOLD==null||nomeServizioOLD==null){
-			tipoServizioOLD = servizio.getTipo();
-			nomeServizioOLD = servizio.getNome();
+		String tipoServizioOLD = null;
+		String nomeServizioOLD = null;
+		Integer versioneServizioOLD = null;
+		if(asps.getOldIDServizioForUpdate()!=null){
+			tipoServizioOLD = asps.getOldIDServizioForUpdate().getTipo();
+			nomeServizioOLD = asps.getOldIDServizioForUpdate().getNome();
+			versioneServizioOLD = asps.getOldIDServizioForUpdate().getVersione();
 		}
-		String tipoSoggettoOLD = servizio.getOldTipoSoggettoErogatoreForUpdate();
-		String nomeSoggettoOLD = servizio.getOldNomeSoggettoErogatoreForUpdate();
+		if(tipoServizioOLD==null||nomeServizioOLD==null||versioneServizioOLD==null){
+			tipoServizioOLD = asps.getTipo();
+			nomeServizioOLD = asps.getNome();
+			versioneServizioOLD = asps.getVersione();
+		}
+		String tipoSoggettoOLD = null;
+		String nomeSoggettoOLD = null;
+		if(asps.getOldIDServizioForUpdate()!=null && asps.getOldIDServizioForUpdate().getSoggettoErogatore()!=null){
+			tipoSoggettoOLD = asps.getOldIDServizioForUpdate().getSoggettoErogatore().getTipo();
+			nomeSoggettoOLD = asps.getOldIDServizioForUpdate().getSoggettoErogatore().getNome();
+		}
 		if(tipoSoggettoOLD==null||nomeSoggettoOLD==null){
-			tipoSoggettoOLD = servizio.getTipoSoggettoErogatore();
-			nomeSoggettoOLD = servizio.getNomeSoggettoErogatore();
+			tipoSoggettoOLD = asps.getTipoSoggettoErogatore();
+			nomeSoggettoOLD = asps.getNomeSoggettoErogatore();
 		}
 		String idSoggettoOLD_string = tipoSoggettoOLD+nomeSoggettoOLD;
 		IDSoggetto idSoggettoOLD = new IDSoggetto(tipoSoggettoOLD,nomeSoggettoOLD);
-		String idServizioOLD_string = tipoServizioOLD + nomeServizioOLD;
-		IDServizio idServizioOLD = new IDServizio(idSoggettoOLD,tipoServizioOLD,nomeServizioOLD);
+		String idServizioOLD_string = tipoServizioOLD + nomeServizioOLD+versioneServizioOLD;
+		IDServizio idServizioOLD = this.idServizioFactory.getIDServizioFromValues(tipoServizioOLD,nomeServizioOLD, idSoggettoOLD, versioneServizioOLD);
 				
 		try {
 
@@ -2721,8 +2585,8 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 				throw new DriverRegistroServiziException("Soggetto da modificare, erogatore del servizio, non definito");
 			}
 			// nuovo ID Soggetto
-			if( (servizio.getTipoSoggettoErogatore() == null) || 
-					(servizio.getNomeSoggettoErogatore() == null) ){
+			if( (asps.getTipoSoggettoErogatore() == null) || 
+					(asps.getNomeSoggettoErogatore() == null) ){
 				throw new DriverRegistroServiziException("Soggetto, erogatore del servizio, non definito");
 			}
 			// vecchio ID Servizio
@@ -2731,8 +2595,9 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 				throw new DriverRegistroServiziException("Servizio da modificare non definito");
 			}
 			// nuovo ID Servizio
-			if( (servizio.getNome() == null) || 
-					(servizio.getTipo() == null) ){
+			if( (asps.getNome() == null) || 
+					(asps.getTipo() == null) || 
+					(asps.getVersione() == null) ){
 				throw new DriverRegistroServiziException("Dati del nuovo servizio, non definiti");
 			}
 			// accordo
@@ -2740,9 +2605,10 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 				throw new DriverRegistroServiziException("Accordo di Servizio, da associare al servizio, non definito");
 			}
 			// connettore
-			if(servizio.getConnettore() !=null && !CostantiRegistroServizi.DISABILITATO.equals(servizio.getConnettore().getTipo())){
+			if(asps.getConfigurazioneServizio()!=null && asps.getConfigurazioneServizio().getConnettore() !=null && 
+					!CostantiRegistroServizi.DISABILITATO.equals(asps.getConfigurazioneServizio().getConnettore().getTipo())){
 				boolean connettoreNonDefinito = false;
-				if( servizio.getConnettore().getTipo() == null ){
+				if( asps.getConfigurazioneServizio().getConnettore().getTipo() == null ){
 					connettoreNonDefinito = true;
 				}
 				if(connettoreNonDefinito){
@@ -2764,34 +2630,36 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 				} */
 			}
 			// azioni-fruitori-connettori
-			for(int i=0;i<servizio.sizeParametriAzioneList();i++){
-				ServizioAzione checkAz = servizio.getParametriAzione(i);
-				if( (checkAz.getNome()==null) || (checkAz.getConnettore()==null)){
-					throw new DriverRegistroServiziException("Definizione di un fruitore senza nome o connettore");
-				}
-				// controllo connettore
-				if(checkAz.getConnettore() !=null && !CostantiRegistroServizi.DISABILITATO.equals(checkAz.getConnettore().getTipo())){
-					boolean connettoreNonDefinito = false;
-					if( checkAz.getConnettore().getTipo() == null ){
-						connettoreNonDefinito = true;
-					}
-					if(connettoreNonDefinito){
-						throw new DriverRegistroServiziException("Definizione del punto di accesso dell'azione "+checkAz.getNome()+" del servizio non corretta");
-					}
-				}
-				for(int j=0;j<checkAz.sizeParametriFruitoreList();j++){
-					ServizioAzioneFruitore checkAzFr = checkAz.getParametriFruitore(j);
-					if( (checkAzFr.getNome()==null) || (checkAzFr.getNome()==null) || (checkAzFr.getConnettore()==null)){
-						throw new DriverRegistroServiziException("Definizione di un fruitore di una azione senza nome/tipo o connettore");
+			if(asps.getConfigurazioneServizio()!=null){
+				for(int i=0;i<asps.getConfigurazioneServizio().sizeConfigurazioneAzioneList();i++){
+					ConfigurazioneServizioAzione checkAz = asps.getConfigurazioneServizio().getConfigurazioneAzione(i);
+					if( (checkAz.getNome()==null) || (checkAz.getConnettore()==null)){
+						throw new DriverRegistroServiziException("Definizione di un fruitore senza nome o connettore");
 					}
 					// controllo connettore
-					if(checkAzFr.getConnettore() !=null && !CostantiRegistroServizi.DISABILITATO.equals(checkAzFr.getConnettore().getTipo())){
+					if(checkAz.getConnettore() !=null && !CostantiRegistroServizi.DISABILITATO.equals(checkAz.getConnettore().getTipo())){
 						boolean connettoreNonDefinito = false;
-						if( checkAzFr.getConnettore().getTipo() == null ){
+						if( checkAz.getConnettore().getTipo() == null ){
 							connettoreNonDefinito = true;
 						}
 						if(connettoreNonDefinito){
-							throw new DriverRegistroServiziException("Definizione del punto di accesso del fruitore "+checkAzFr.getTipo()+checkAzFr.getNome()+" dell'azione "+checkAz.getNome()+" del servizio non corretta");
+							throw new DriverRegistroServiziException("Definizione del punto di accesso dell'azione "+checkAz.getNome()+" del servizio non corretta");
+						}
+					}
+					for(int j=0;j<checkAz.sizeConfigurazioneFruitoreList();j++){
+						ConfigurazioneServizioAzioneFruitore checkAzFr = checkAz.getConfigurazioneFruitore(j);
+						if( (checkAzFr.getNome()==null) || (checkAzFr.getNome()==null) || (checkAzFr.getConnettore()==null)){
+							throw new DriverRegistroServiziException("Definizione di un fruitore di una azione senza nome/tipo o connettore");
+						}
+						// controllo connettore
+						if(checkAzFr.getConnettore() !=null && !CostantiRegistroServizi.DISABILITATO.equals(checkAzFr.getConnettore().getTipo())){
+							boolean connettoreNonDefinito = false;
+							if( checkAzFr.getConnettore().getTipo() == null ){
+								connettoreNonDefinito = true;
+							}
+							if(connettoreNonDefinito){
+								throw new DriverRegistroServiziException("Definizione del punto di accesso del fruitore "+checkAzFr.getTipo()+checkAzFr.getNome()+" dell'azione "+checkAz.getNome()+" del servizio non corretta");
+							}
 						}
 					}
 				}
@@ -2808,8 +2676,8 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 	
 			
 			// Controllo pre-esistenza del nuovo soggetto erogatore
-			String idSoggettoNEW_string = servizio.getTipoSoggettoErogatore() + servizio.getNomeSoggettoErogatore();
-			IDSoggetto idSoggettoNEW = new IDSoggetto(servizio.getTipoSoggettoErogatore(),servizio.getNomeSoggettoErogatore());
+			String idSoggettoNEW_string = asps.getTipoSoggettoErogatore() + asps.getNomeSoggettoErogatore();
+			IDSoggetto idSoggettoNEW = new IDSoggetto(asps.getTipoSoggettoErogatore(),asps.getNomeSoggettoErogatore());
 			if( idSoggettoOLD_string.equals(idSoggettoNEW_string) == false ){
 				if( this.uddiLib.existsSoggetto(idSoggettoNEW) == false){
 					throw new DriverRegistroServiziException("Il soggetto ["+idSoggettoNEW_string
@@ -2825,8 +2693,8 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			}
 	
 			// check esistenza nuovo servizio
-			IDServizio idServizioNEW = new IDServizio(idSoggettoNEW,servizio.getTipo(),servizio.getNome());
-			String idServizioNEW_string = servizio.getTipo() + servizio.getNome();
+			IDServizio idServizioNEW = this.idServizioFactory.getIDServizioFromValues(asps.getTipo(),asps.getNome(), idSoggettoNEW, asps.getVersione());
+			String idServizioNEW_string = asps.getTipo() + asps.getNome() + asps.getVersione();
 			if(idServizioOLD_string.equals(idServizioNEW_string) == false){
 				// Controllo non esistenza del servizio da creare
 				if (this.uddiLib.existsServizio(idServizioNEW)==true){
@@ -2894,28 +2762,27 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 		if( asps == null)
 			throw new DriverRegistroServiziException("[deleteAccordoServizioParteSpecifica] Parametro Non Valido");
 		
-		Servizio servizio = asps.getServizio();
 		
-		String idSoggetto_string = servizio.getTipoSoggettoErogatore() + servizio.getNomeSoggettoErogatore();
-		String idServizio_string = servizio.getTipo() + servizio.getNome();
+		String idSoggetto_string = asps.getTipoSoggettoErogatore() + asps.getNomeSoggettoErogatore();
+		String idServizio_string = asps.getTipo() + asps.getNome() + asps.getVersione();
 				
 		try {
 			// Controllo id del soggetto 
-			if(servizio.getTipoSoggettoErogatore()==null || servizio.getNomeSoggettoErogatore()==null){
+			if(asps.getTipoSoggettoErogatore()==null || asps.getNomeSoggettoErogatore()==null){
 				throw new DriverRegistroServiziException("Soggetto non definito");
 			}
 			// Controllo id del servizio da eliminare
-			if(servizio.getTipo()==null || servizio.getNome()==null){
+			if(asps.getTipo()==null || asps.getNome()==null || asps.getVersione()==null){
 				throw new DriverRegistroServiziException("Servizio da eliminare non definito");
 			}
 			// Controllo pre-esistenza del soggetto
-			IDSoggetto idSoggetto = new IDSoggetto(servizio.getTipoSoggettoErogatore(),servizio.getNomeSoggettoErogatore());
+			IDSoggetto idSoggetto = new IDSoggetto(asps.getTipoSoggettoErogatore(),asps.getNomeSoggettoErogatore());
 			if( this.uddiLib.existsSoggetto(idSoggetto) == false){
 				throw new DriverRegistroServiziException("Il soggetto ["+idSoggetto_string
 				+"] non risulta gia' inserito nel registro dei servizi.");
 			} 
 			// Controllo pre-esistenza del servizio
-			IDServizio idServizio = new IDServizio(idSoggetto,servizio.getTipo(),servizio.getNome());
+			IDServizio idServizio = this.idServizioFactory.getIDServizioFromValues(asps.getTipo(),asps.getNome(), idSoggetto, asps.getVersione());
 			if (this.uddiLib.existsServizio(idServizio)==false){
 				throw new DriverRegistroServiziException("Il servizio ["+idServizio_string+"] erogato dal soggetto ["+idSoggetto_string+"] non risulta gia' registrato nel registro");
 			}
@@ -2978,12 +2845,9 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			AccordoServizioParteSpecifica[] serviziRegistrati = this.generatoreXML.getAccordiServiziParteSpecifica();
 			if(serviziRegistrati!=null){
 				for(int i=0; i<serviziRegistrati.length;i++){
-					inEliminazione=serviziRegistrati[i].getServizio().getTipo()+"/"+serviziRegistrati[i].getServizio().getNome()
-					+ " erogato da ["+serviziRegistrati[i].getServizio().getTipoSoggettoErogatore()+"/"+serviziRegistrati[i].getServizio().getNomeSoggettoErogatore();
+					inEliminazione=this.idServizioFactory.getUriFromAccordo(serviziRegistrati[i]);
 					this.log.info("eliminazione servizio ["+inEliminazione+"] in corso...");
-					IDServizio idS = new IDServizio(serviziRegistrati[i].getServizio().getTipoSoggettoErogatore(),
-							serviziRegistrati[i].getServizio().getNomeSoggettoErogatore(),
-							serviziRegistrati[i].getServizio().getTipo(),serviziRegistrati[i].getServizio().getNome());
+					IDServizio idS = this.idServizioFactory.getIDServizioFromAccordo(serviziRegistrati[i]);
 					if(this.existsAccordoServizioParteSpecifica(idS)){
 						this.deleteAccordoServizioParteSpecifica(serviziRegistrati[i]);
 					}else{

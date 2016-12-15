@@ -45,7 +45,6 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.IdSoggetto;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -393,10 +392,9 @@ public class OpenSPCoop2DBConfigurationUtility {
 				IDServizio idServizio = idServizi.remove(0);
 				log.debug("Gestione eliminazione servizio ["+idServizio.toString()+"] ...");
 				AccordoServizioParteSpecifica asps = driverRegistroServizi.getAccordoServizioParteSpecifica(idServizio);
-				Servizio servizio = asps.getServizio();
 				@SuppressWarnings("unused")
-				IDSoggetto soggettoErogatore = new IDSoggetto(servizio.getTipoSoggettoErogatore(), servizio.getNomeSoggettoErogatore());
-				log.debug("\t dati servizio SoggettoErogatore["+servizio.getTipoSoggettoErogatore()+"/"+servizio.getNomeSoggettoErogatore()+"] Tipologia["+servizio.getTipologiaServizio().toString()+"] ...");
+				IDSoggetto soggettoErogatore = new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore());
+				log.debug("\t dati servizio SoggettoErogatore["+asps.getTipoSoggettoErogatore()+"/"+asps.getNomeSoggettoErogatore()+"] Tipologia["+asps.getTipologiaServizio().toString()+"] ...");
 								
 				if(OpenSPCoop2DBConfigurationUtility.TIPOLOGIA_ELIMINAZIONE_FRUIZIONE.equals(tipologiaEliminazione)){
 					
@@ -426,8 +424,8 @@ public class OpenSPCoop2DBConfigurationUtility {
 					// PORTE DELEGATE CON TALE SERVIZIO e con tale fruitore
 					List<String> nomiServiziApplicativi = new ArrayList<String>();
 					List<PortaDelegata> listaPorteDelegate = 
-						driverConfigurazione.getPorteDelegateWithServizio(asps.getId(), servizio.getTipo(), servizio.getNome(), 
-								asps.getIdSoggetto(), servizio.getTipoSoggettoErogatore(), servizio.getNomeSoggettoErogatore());
+						driverConfigurazione.getPorteDelegateWithServizio(asps.getId(), asps.getTipo(), asps.getNome(), asps.getVersione(),
+								asps.getIdSoggetto(), asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore());
 					List<PortaDelegata> listaPorteDelegateFruitoreDaEliminare = new ArrayList<PortaDelegata>();
 					while(listaPorteDelegate.size()>0){
 						PortaDelegata pd = listaPorteDelegate.remove(0);
@@ -479,8 +477,8 @@ public class OpenSPCoop2DBConfigurationUtility {
 					// PORTE DELEGATE
 					List<IDServizioApplicativo> nomiServiziApplicativi = new ArrayList<IDServizioApplicativo>();
 					List<PortaDelegata> listaPorteDelegate = 
-						driverConfigurazione.getPorteDelegateWithServizio(asps.getId(), servizio.getTipo(), servizio.getNome(), 
-								asps.getIdSoggetto(), servizio.getTipoSoggettoErogatore(), servizio.getNomeSoggettoErogatore());
+						driverConfigurazione.getPorteDelegateWithServizio(asps.getId(), asps.getTipo(), asps.getNome(), asps.getVersione(),
+								asps.getIdSoggetto(), asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore());
 					log.debug("\t- eliminazione porte delegate ("+listaPorteDelegate.size()+") ...");
 					while(listaPorteDelegate.size()>0){
 						PortaDelegata pd = listaPorteDelegate.remove(0);
@@ -502,8 +500,8 @@ public class OpenSPCoop2DBConfigurationUtility {
 					
 					// PORTE APPLICATIVE
 					List<PortaApplicativa> listaPorteApplicative = 
-						driverConfigurazione.getPorteApplicativeWithServizio(asps.getId(), servizio.getTipo(), servizio.getNome(), 
-								asps.getIdSoggetto(), servizio.getTipoSoggettoErogatore(), servizio.getNomeSoggettoErogatore());
+						driverConfigurazione.getPorteApplicativeWithServizio(asps.getId(), asps.getTipo(), asps.getNome(), asps.getVersione(),
+								asps.getIdSoggetto(), asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore());
 					log.debug("\t- eliminazione porte applicative ("+listaPorteApplicative.size()+") ...");
 					while(listaPorteApplicative.size()>0){
 						PortaApplicativa pa = listaPorteApplicative.remove(0);
@@ -552,7 +550,7 @@ public class OpenSPCoop2DBConfigurationUtility {
 					log.debug("\t- eliminazione accordo parte comune ...");
 					FiltroRicercaServizi filtroAltriServizi = new FiltroRicercaServizi();
 					IDAccordo idAccordoParteComune = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
-					filtroAltriServizi.setIdAccordo(idAccordoParteComune);
+					filtroAltriServizi.setIdAccordoServizioParteComune(idAccordoParteComune);
 					boolean existsAltriServizi = false;
 					StringBuffer bfAltriServizi = new StringBuffer();
 					try{

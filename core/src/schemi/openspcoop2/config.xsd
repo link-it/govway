@@ -34,8 +34,8 @@
 	<xsd:element name="openspcoop2">
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element maxOccurs="unbounded" minOccurs="1" ref="soggetto"/>
-				<xsd:element maxOccurs="1" minOccurs="1" ref="configurazione"/>
+				<xsd:element ref="soggetto" maxOccurs="unbounded" minOccurs="1"/>
+				<xsd:element ref="configurazione" maxOccurs="1" minOccurs="1"/>
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
@@ -59,10 +59,10 @@
 			</xsd:appinfo>
 		</xsd:annotation>
 		<xsd:sequence>
-			<xsd:element maxOccurs="unbounded" minOccurs="0" ref="porta-delegata"/>
-			<xsd:element maxOccurs="unbounded" minOccurs="0" ref="porta-applicativa"/>
-			<xsd:element maxOccurs="unbounded" minOccurs="0" ref="servizio-applicativo"/>
-			<xsd:element maxOccurs="unbounded" minOccurs="0" ref="connettore"/>
+			<xsd:element ref="porta-delegata" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element ref="porta-applicativa" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element ref="servizio-applicativo" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element ref="connettore" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="super-user" type="xsd:string" use="optional">
@@ -136,6 +136,7 @@
 			<xsd:element name="servizio" type="porta-delegata-servizio" maxOccurs="1" minOccurs="1"/>
 			<xsd:element name="azione" type="porta-delegata-azione" maxOccurs="1" minOccurs="0"/>
 			<xsd:element name="servizio-applicativo" type="porta-delegata-servizio-applicativo" maxOccurs="unbounded" minOccurs="0" />
+			<xsd:element name="local-forward" type="porta-delegata-local-forward" maxOccurs="1" minOccurs="0"/>
 			<xsd:element name="mtom-processor" type="mtom-processor" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="message-security" type="message-security" maxOccurs="1" minOccurs="0">
 				<xsd:annotation>
@@ -270,16 +271,6 @@
 		</xsd:attribute>
 		<xsd:attribute name="gestione-manifest" type="StatoFunzionalita" />
 		<xsd:attribute name="stateless" type="StatoFunzionalita" />
-		<xsd:attribute name="local-forward" type="StatoFunzionalita" default="disabilitato">
-			<xsd:annotation>
-				<xsd:appinfo>
-					<linkit:generator
-						xmlns:linkit="http://www.link.it/project_generator">
-						<linkit:ws-field-mapping filter-use-default="false"/>
-					</linkit:generator>
-				</xsd:appinfo>
-			</xsd:annotation>
-		</xsd:attribute>
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
 			<xsd:annotation>
 				<xsd:appinfo>
@@ -300,6 +291,7 @@
 	<xsd:complexType name="porta-delegata-servizio">
 		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="versione" type="xsd:unsignedInt" use="required"/>
 	</xsd:complexType>
 	<!-- PortaDelegata.Azione -->
 	<xsd:complexType name="porta-delegata-azione">
@@ -320,6 +312,20 @@
 	<!-- PortaDelegata.ServizioApplicativo -->
 	<xsd:complexType name="porta-delegata-servizio-applicativo">
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	<!-- PortaDelegata.LocalForward -->
+	<xsd:complexType name="porta-delegata-local-forward">
+		<xsd:attribute name="stato" type="StatoFunzionalita" default="abilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="porta-applicativa" type="xsd:string" use="optional"/>
 	</xsd:complexType>
 
 
@@ -343,7 +349,7 @@
 			<xsd:element name="azione" type="porta-applicativa-azione" maxOccurs="1" minOccurs="0"/>
 			<!-- Modificato in minOccurs=0 per gestire la possibile configurazione incrementale via WS -->
 			<xsd:element name="servizio-applicativo" type="porta-applicativa-servizio-applicativo" maxOccurs="unbounded" minOccurs="0" />
-			<xsd:element name="proprieta-protocollo" type="proprieta-protocollo" maxOccurs="unbounded" minOccurs="0" />
+			<xsd:element name="proprieta-integrazione-protocollo" type="porta-applicativa-proprieta-integrazione-protocollo" maxOccurs="unbounded" minOccurs="0" />
 			<xsd:element name="mtom-processor" type="mtom-processor" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="message-security" type="message-security" maxOccurs="1" minOccurs="0" >
 				<xsd:annotation>
@@ -479,6 +485,7 @@
 	<xsd:complexType name="porta-applicativa-servizio">
 		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="versione" type="xsd:unsignedInt" use="required"/>
 	</xsd:complexType>
 	<!-- PortaApplicativa.Azione -->
 	<xsd:complexType name="porta-applicativa-azione">
@@ -500,6 +507,11 @@
 	<xsd:complexType name="porta-applicativa-servizio-applicativo">
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
+	<!-- openspcoop-property -->
+	<xsd:complexType name="porta-applicativa-proprieta-integrazione-protocollo">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="valore" type="xsd:string" use="required"/> <!-- Non e' possibile altrimenti avere la possibilita' di indicare qualsiasi valore type="ProprietaProtocolloValore" -->
+	</xsd:complexType>
 
 
 	<!-- ** ServizioApplicativo ** -->
@@ -518,11 +530,11 @@
 		</xsd:annotation>
 		<xsd:sequence>
 			<!-- start-extensions -->
-			<xsd:element maxOccurs="unbounded" minOccurs="0" name="ruolo" type="xsd:string"/>
+			<xsd:element name="ruolo" type="xsd:string" maxOccurs="unbounded" minOccurs="0" />
 			<!-- end-extensions -->
-			<xsd:element maxOccurs="1" minOccurs="0" name="invocazione-porta" type="invocazione-porta"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="invocazione-servizio" type="invocazione-servizio"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="risposta-asincrona" type="risposta-asincrona"/>
+			<xsd:element name="invocazione-porta" type="invocazione-porta" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="invocazione-servizio" type="invocazione-servizio" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="risposta-asincrona" type="risposta-asincrona" maxOccurs="1" minOccurs="0" />
 		</xsd:sequence>
 		<!-- start-extensions -->
 		<xsd:attribute name="id-soggetto" type="xsd:unsignedLong" use="optional">
@@ -589,10 +601,9 @@
 	<!-- ServizioApplicativo.InvocazioneServizio -->
 	<xsd:complexType name="invocazione-servizio">
 		<xsd:sequence>
-			<xsd:element maxOccurs="1" minOccurs="0" name="credenziali" type="credenziali"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="connettore" type="connettore"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="gestione-errore"
-				type="gestione-errore">
+			<xsd:element name="credenziali" type="credenziali" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="connettore" type="connettore" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="gestione-errore"	type="gestione-errore" maxOccurs="1" minOccurs="0" >
 				<xsd:annotation>
 					<xsd:appinfo>
 						<linkit:generator
@@ -667,10 +678,9 @@
 	<!-- ServizioApplicativo.RispostaAsincrona -->
 	<xsd:complexType name="risposta-asincrona">
 		<xsd:sequence>
-			<xsd:element maxOccurs="1" minOccurs="0" name="credenziali" type="credenziali"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="connettore" type="connettore"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="gestione-errore"
-				type="gestione-errore">
+			<xsd:element name="credenziali" type="credenziali" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="connettore" type="connettore" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="gestione-errore"	type="gestione-errore" maxOccurs="1" minOccurs="0" >
 				<xsd:annotation>
 					<xsd:appinfo>
 						<linkit:generator
@@ -844,12 +854,6 @@
 		<xsd:attribute name="password" type="xsd:string"/>
 		<xsd:attribute name="subject" type="xsd:string"/>
 	</xsd:complexType>
-
-	<!-- openspcoop-property -->
-	<xsd:complexType name="proprieta-protocollo">
-		<xsd:attribute name="nome" type="xsd:string" use="required"/>
-		<xsd:attribute name="valore" type="xsd:string" use="required"/> <!-- Non e' possibile altrimenti avere la possibilita' di indicare qualsiasi valore type="ProprietaProtocolloValore" -->
-	</xsd:complexType>
 	
 	<!-- Connettore -->
 	<xsd:element name="connettore" type="connettore"/>
@@ -984,22 +988,22 @@
 			</xsd:appinfo>
 		</xsd:annotation>
 		<xsd:sequence>
-			<xsd:element maxOccurs="1" minOccurs="0" name="routing-table" type="routing-table"/>
-			<xsd:element maxOccurs="1" minOccurs="1" name="accesso-registro" type="accesso-registro"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-configurazione" type="accesso-configurazione"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-autorizzazione" type="accesso-dati-autorizzazione"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="validazione-buste" type="validazione-buste"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="validazione-contenuti-applicativi" type="validazione-contenuti-applicativi"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="indirizzo-risposta" type="indirizzo-risposta"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="attachments" type="attachments"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="risposte" type="risposte"/>
-			<xsd:element maxOccurs="1" minOccurs="1" name="inoltro-buste-non-riscontrate" type="inoltro-buste-non-riscontrate"/>
-			<xsd:element maxOccurs="1" minOccurs="1" name="messaggi-diagnostici" type="messaggi-diagnostici"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="tracciamento" type="tracciamento"/>
+			<xsd:element name="routing-table" type="routing-table" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="accesso-registro" type="accesso-registro" maxOccurs="1" minOccurs="1" />
+			<xsd:element name="accesso-configurazione" type="accesso-configurazione" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="accesso-dati-autorizzazione" type="accesso-dati-autorizzazione" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="validazione-buste" type="validazione-buste" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="validazione-contenuti-applicativi" type="validazione-contenuti-applicativi" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="indirizzo-risposta" type="indirizzo-risposta" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="attachments" type="attachments" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="risposte" type="risposte" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="inoltro-buste-non-riscontrate" type="inoltro-buste-non-riscontrate" maxOccurs="1" minOccurs="1" />
+			<xsd:element name="messaggi-diagnostici" type="messaggi-diagnostici" maxOccurs="1" minOccurs="1" />
+			<xsd:element name="tracciamento" type="tracciamento" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="gestione-errore" type="configurazione-gestione-errore" maxOccurs="1" minOccurs="0"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="integration-manager" type="integration-manager"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="stato-servizi-pdd" type="stato-servizi-pdd"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="system-properties" type="system-properties"/>
+			<xsd:element name="integration-manager" type="integration-manager" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="stato-servizi-pdd" type="stato-servizi-pdd" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="system-properties" type="system-properties" maxOccurs="1" minOccurs="0" />
 		</xsd:sequence>
 	</xsd:complexType>
 	
@@ -1021,12 +1025,12 @@
 	</xsd:complexType>
 	<xsd:complexType name="routing-table-default">
 		<xsd:sequence>
-			<xsd:element maxOccurs="unbounded" minOccurs="1" name="route" type="route"/>
+			<xsd:element name="route" type="route" maxOccurs="unbounded" minOccurs="1" />
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="routing-table-destinazione">
 		<xsd:sequence>
-			<xsd:element maxOccurs="unbounded" minOccurs="1" name="route" type="route"/>
+			<xsd:element name="route" type="route" maxOccurs="unbounded" minOccurs="1" />
 		</xsd:sequence>
 		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
@@ -1165,10 +1169,8 @@
 	<!-- Gestione Errore -->
 	<xsd:complexType name="configurazione-gestione-errore">
 		<xsd:sequence>
-			<xsd:element maxOccurs="1" minOccurs="0" name="componente-cooperazione"
-				type="gestione-errore"/>
-			<xsd:element maxOccurs="1" minOccurs="0" name="componente-integrazione"
-				type="gestione-errore"/>
+			<xsd:element name="componente-cooperazione"	type="gestione-errore" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="componente-integrazione"	type="gestione-errore" maxOccurs="1" minOccurs="0" />
 		</xsd:sequence>
 	</xsd:complexType>
 	
@@ -1189,6 +1191,7 @@
 		<xsd:attribute name="identificativo-porta-erogatore" type="xsd:string" use="optional"/>
 		<xsd:attribute name="tipo-servizio" type="xsd:string" use="optional"/>
 		<xsd:attribute name="servizio" type="xsd:string" use="optional"/>
+		<xsd:attribute name="versione-servizio" type="xsd:unsignedInt" use="optional"/>
 		<xsd:attribute name="azione" type="xsd:string" use="optional"/>
 	</xsd:complexType>
 	<xsd:complexType name="stato-servizi-pdd-porta-delegata">

@@ -36,7 +36,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
  */
 public class ArchiveAccordoServizioParteComune implements IArchiveObject {
 
-	public static String buildKey(String tipoSoggetto,String nomeSoggetto,String nomeAccordo,String versione) throws ProtocolException{
+	public static String buildKey(String tipoSoggetto,String nomeSoggetto,String nomeAccordo,Integer versione) throws ProtocolException{
 		
 		if(tipoSoggetto==null){
 			throw new ProtocolException("tipoSoggetto non fornito");
@@ -68,7 +68,7 @@ public class ArchiveAccordoServizioParteComune implements IArchiveObject {
 		String tipoSoggetto = "-";
 		String nomeSoggetto = "-";
 		String nomeAccordo = this.accordoServizioParteComune.getNome();
-		String versione = "-";
+		Integer versione = null;
 		if(this.accordoServizioParteComune.getSoggettoReferente()!=null){
 			if(this.accordoServizioParteComune.getSoggettoReferente().getTipo()!=null){
 				tipoSoggetto = this.accordoServizioParteComune.getSoggettoReferente().getTipo();

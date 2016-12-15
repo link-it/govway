@@ -36,8 +36,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
-import org.openspcoop2.core.registry.Servizio;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -78,8 +77,6 @@ public final class AccordiServizioParteSpecificaAllegatiView extends Action {
 		//	@SuppressWarnings("unused")
 		//	String userLogin = ServletUtils.getUserLoginFromSession(session);
 
-		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
-
 		try {
 
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
@@ -98,17 +95,8 @@ public final class AccordiServizioParteSpecificaAllegatiView extends Action {
 
 			// Prendo il nome
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(new Long(idServizioInt));
-			Servizio ss = asps.getServizio();
 
-			String tmpTitle = ss.getTipo()+"/"+ss.getNome();
-			// aggiorno tmpTitle
-			String tmpVersione = asps.getVersione();
-			if(apsCore.isShowVersioneAccordoServizioParteSpecifica()==false){
-				tmpVersione = null;
-			}
-			tmpTitle = idAccordoFactory.getUriFromValues(asps.getNome(), 
-					ss.getTipoSoggettoErogatore(), ss.getNomeSoggettoErogatore(), 
-					tmpVersione);
+			String tmpTitle = IDServizioFactory.getInstance().getUriFromAccordo(asps);
 
 			Documento doc = archiviCore.getDocumento(idAllegatoInt,true);
 

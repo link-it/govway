@@ -35,6 +35,7 @@ import org.apache.logging.log4j.Level;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -411,6 +412,8 @@ public class MsgDiagnostico {
 					this.keywordLogPersonalizzati.put(CostantiPdD.KEY_TIPO_SERVIZIO_BUSTA_RICHIESTA, busta.getTipoServizio());
 				if(busta.getServizio()!=null)
 					this.keywordLogPersonalizzati.put(CostantiPdD.KEY_SERVIZIO_BUSTA_RICHIESTA, busta.getServizio());
+				if(busta.getVersioneServizio()!=null)
+					this.keywordLogPersonalizzati.put(CostantiPdD.KEY_VERSIONE_SERVIZIO_BUSTA_RICHIESTA, busta.getVersioneServizio().intValue()+"");
 				if(busta.getAzione()!=null)
 					this.keywordLogPersonalizzati.put(CostantiPdD.KEY_AZIONE_BUSTA_RICHIESTA, busta.getAzione());
 				else
@@ -426,6 +429,17 @@ public class MsgDiagnostico {
 					this.keywordLogPersonalizzati.put(CostantiPdD.KEY_INDIRIZZO_TELEMATICO_DESTINATARIO_RICHIESTA, busta.getIndirizzoDestinatario());
 				if(busta.getScadenza()!=null)
 					this.keywordLogPersonalizzati.put(CostantiPdD.KEY_SCADENZA_BUSTA_RICHIESTA, busta.getScadenza().toString());
+				
+				if(busta.getTipoDestinatario()!=null && busta.getDestinatario()!=null &&
+						busta.getTipoServizio()!=null && busta.getServizio()!=null && busta.getVersioneServizio()!=null){
+					try{
+						this.keywordLogPersonalizzati.put(CostantiPdD.KEY_URI_ACCORDO_PARTE_SPECIFICA, 
+								IDServizioFactory.getInstance().getUriFromValues(busta.getTipoServizio(), busta.getServizio(), 
+										busta.getTipoDestinatario(), busta.getDestinatario(), busta.getVersioneServizio()));
+					}catch(Exception e){
+						throw new RuntimeException(e.getMessage(),e);
+					}
+				}
 			}
 			else{
 				if(busta.getID()!=null)
@@ -465,6 +479,8 @@ public class MsgDiagnostico {
 					this.keywordLogPersonalizzati.put(CostantiPdD.KEY_TIPO_SERVIZIO_BUSTA_RISPOSTA, busta.getTipoServizio());
 				if(busta.getServizio()!=null)
 					this.keywordLogPersonalizzati.put(CostantiPdD.KEY_SERVIZIO_BUSTA_RISPOSTA, busta.getServizio());
+				if(busta.getVersioneServizio()!=null)
+					this.keywordLogPersonalizzati.put(CostantiPdD.KEY_VERSIONE_SERVIZIO_BUSTA_RISPOSTA, busta.getVersioneServizio().intValue()+"");
 				if(busta.getAzione()!=null)
 					this.keywordLogPersonalizzati.put(CostantiPdD.KEY_AZIONE_BUSTA_RISPOSTA, busta.getAzione());
 				else
@@ -502,10 +518,18 @@ public class MsgDiagnostico {
 				this.keywordLogPersonalizzati.put(CostantiPdD.KEY_TIPO_DESTINATARIO_BUSTA_RICHIESTA, idServizio.getSoggettoErogatore().getTipo());
 				this.keywordLogPersonalizzati.put(CostantiPdD.KEY_DESTINATARIO_BUSTA_RICHIESTA, idServizio.getSoggettoErogatore().getNome());
 			}
-			this.keywordLogPersonalizzati.put(CostantiPdD.KEY_TIPO_SERVIZIO_BUSTA_RICHIESTA, idServizio.getTipoServizio());
-			this.keywordLogPersonalizzati.put(CostantiPdD.KEY_SERVIZIO_BUSTA_RICHIESTA, idServizio.getServizio());
+			this.keywordLogPersonalizzati.put(CostantiPdD.KEY_TIPO_SERVIZIO_BUSTA_RICHIESTA, idServizio.getTipo());
+			this.keywordLogPersonalizzati.put(CostantiPdD.KEY_SERVIZIO_BUSTA_RICHIESTA, idServizio.getNome());
+			if(idServizio.getVersione()!=null){
+				this.keywordLogPersonalizzati.put(CostantiPdD.KEY_VERSIONE_SERVIZIO_BUSTA_RICHIESTA, idServizio.getVersione().intValue()+"");
+			}
 			if(idServizio.getAzione()!=null)
 				this.keywordLogPersonalizzati.put(CostantiPdD.KEY_AZIONE_BUSTA_RICHIESTA, idServizio.getAzione());
+			try{
+				this.keywordLogPersonalizzati.put(CostantiPdD.KEY_URI_ACCORDO_PARTE_SPECIFICA, IDServizioFactory.getInstance().getUriFromIDServizio(idServizio));
+			}catch(Exception e){
+				throw new RuntimeException(e.getMessage(),e);
+			}
 		}
 	}
 	public String replaceKeywords(String msg){
@@ -667,9 +691,9 @@ public class MsgDiagnostico {
 							informazioniBusta.setFruitore(this.fruitore);
 							if(this.servizio!=null){
 								informazioniBusta.setErogatore(this.servizio.getSoggettoErogatore());
-								informazioniBusta.setTipoServizio(this.servizio.getTipoServizio());
-								informazioniBusta.setServizio(this.servizio.getServizio());
-								informazioniBusta.setVersioneServizio(Integer.parseInt(this.servizio.getVersioneServizio()));
+								informazioniBusta.setTipoServizio(this.servizio.getTipo());
+								informazioniBusta.setServizio(this.servizio.getNome());
+								informazioniBusta.setVersioneServizio(this.servizio.getVersione());
 								informazioniBusta.setAzione(this.servizio.getAzione());
 							}
 							msgDiagCorrelazione.setInformazioniProtocollo(informazioniBusta);

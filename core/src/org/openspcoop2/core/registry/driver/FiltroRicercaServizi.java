@@ -25,6 +25,7 @@ package org.openspcoop2.core.registry.driver;
 
 import java.io.Serializable;
 
+import org.openspcoop2.core.constants.TipologiaServizio;
 import org.openspcoop2.core.id.IDAccordo;
 
 
@@ -46,25 +47,39 @@ public class FiltroRicercaServizi extends FiltroRicerca implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	/** id Accordo di Servizio */
-	private IDAccordo idAccordo;
+	/** id Accordo di Servizio Parte Comune */
+	private IDAccordo idAccordoServizioParteComune;
+	
 	/** tipo Soggetto Erogatore */
 	private String tipoSoggettoErogatore;
 	/** nome Soggetto Erogatore */
 	private String nomeSoggettoErogatore;
-	private String tipologiaServizio;
 	
-	public String getTipologiaServizio() {
-		return this.tipologiaServizio;
+	/** Versione */
+	private Integer versione;
+	
+	
+	private TipologiaServizio tipologia;
+	
+	public TipologiaServizio getTipologia() {
+		return this.tipologia;
 	}
-	public void setTipologiaServizio(String tipologiaServizio) {
-		this.tipologiaServizio = tipologiaServizio;
+	public void setTipologia(TipologiaServizio tipologiaServizio) {
+		this.tipologia = tipologiaServizio;
 	}
-	public IDAccordo getIdAccordo() {
-		return this.idAccordo;
+	public IDAccordo getIdAccordoServizioParteComune() {
+		return this.idAccordoServizioParteComune;
 	}
-	public void setIdAccordo(IDAccordo idAccordo) {
-		this.idAccordo = idAccordo;
+	public void setIdAccordoServizioParteComune(IDAccordo idAccordo) {
+		this.idAccordoServizioParteComune = idAccordo;
+	}
+	
+	public Integer getVersione() {
+		return this.versione;
+	}
+
+	public void setVersione(Integer versione) {
+		this.versione = versione;
 	}
 	
 	/**
@@ -105,14 +120,16 @@ public class FiltroRicercaServizi extends FiltroRicerca implements Serializable{
 	}
 	@Override
 	public void addDetails(StringBuffer bf){
-		if(this.idAccordo!=null)
-			bf.append(" [accordo-servizio:"+this.idAccordo+"]");
+		if(this.idAccordoServizioParteComune!=null)
+			bf.append(" [accordo-servizio-parte-comune:"+this.idAccordoServizioParteComune+"]");
 		if(this.tipoSoggettoErogatore!=null)
 			bf.append(" [tipo-soggetto-erogatore:"+this.tipoSoggettoErogatore+"]");
 		if(this.nomeSoggettoErogatore!=null)
 			bf.append(" [nome-soggetto-erogatore:"+this.nomeSoggettoErogatore+"]");
-		if(this.tipologiaServizio!=null)
-			bf.append(" [tipologia-servizio:"+this.tipologiaServizio+"]");
+		if(this.tipologia!=null)
+			bf.append(" [tipologia-servizio:"+this.tipologia+"]");
+		if(this.versione!=null)
+			bf.append(" [versione:"+this.versione+"]");
 		super.addDetails(bf);
 	}
 

@@ -28,12 +28,32 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.registry.AccordoCooperazione;
+import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto;
+import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioCompostoServizioComponente;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Azione;
+import org.openspcoop2.core.registry.ConfigurazioneServizio;
+import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
+import org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore;
+import org.openspcoop2.core.registry.Connettore;
+import org.openspcoop2.core.registry.Documento;
+import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.IdSoggetto;
+import org.openspcoop2.core.registry.Message;
+import org.openspcoop2.core.registry.MessagePart;
+import org.openspcoop2.core.registry.Operation;
+import org.openspcoop2.core.registry.PortType;
+import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.Property;
+import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.BindingStyle;
 import org.openspcoop2.core.registry.constants.BindingUse;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
@@ -45,29 +65,9 @@ import org.openspcoop2.core.registry.constants.TipiDocumentoCoordinamento;
 import org.openspcoop2.core.registry.constants.TipiDocumentoLivelloServizio;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
-import org.openspcoop2.core.registry.AccordoCooperazione;
-import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
-import org.openspcoop2.core.registry.IdSoggetto;
-import org.openspcoop2.core.registry.AccordoServizioParteComune;
-import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto;
-import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioCompostoServizioComponente;
-import org.openspcoop2.core.registry.Azione;
-import org.openspcoop2.core.registry.Connettore;
-import org.openspcoop2.core.registry.Property;
-import org.openspcoop2.core.registry.Documento;
-import org.openspcoop2.core.registry.Fruitore;
-import org.openspcoop2.core.registry.Message;
-import org.openspcoop2.core.registry.MessagePart;
-import org.openspcoop2.core.registry.Operation;
-import org.openspcoop2.core.registry.PortType;
-import org.openspcoop2.core.registry.PortaDominio;
-import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.Servizio;
-import org.openspcoop2.core.registry.ServizioAzione;
-import org.openspcoop2.core.registry.ServizioAzioneFruitore;
-import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.utils.regexp.RegExpUtilities;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
+import org.slf4j.Logger;
 
 
 /**
@@ -91,6 +91,7 @@ public class ValidazioneSemantica {
 	// Factory
 	private IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 	private IDAccordoCooperazioneFactory idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
+	private IDServizioFactory idServizioFactory = IDServizioFactory.getInstance();
 
 
 	/** Lista di tipi di connettori validi */
@@ -355,17 +356,6 @@ public class ValidazioneSemantica {
 			throw new DriverRegistroServiziException("Errore durante l'analisi tramite espressione regolare del nome dell'accordo di cooperazione ["+uriAC+"]: "+e.getMessage(),e);
 		}
 
-		// La versione dell'accordo deve essere un numero intero
-		if(ac.getVersione()!=null){
-			try{
-				if (!RegularExpressionEngine.isMatch(ac.getVersione(),"^[1-9]+[0-9]*$")) {
-					this.errori.add("La versione dell'accordo di cooperazione ["+uriAC+"] dev'essere rappresentata da un numero intero");
-				}
-			}catch(Exception e){
-				throw new DriverRegistroServiziException("Errore durante l'analisi tramite espressione regolare della versione dell'accordo di cooperazione ["+uriAC+"]: "+e.getMessage(),e);
-			}
-		}
-
 		// Ogni accordo di cooperazione deve possedere un nome diverso
 		int numAc = 0;
 		for(int j=0; j<this.registro.sizeAccordoCooperazioneList();j++){
@@ -423,6 +413,9 @@ public class ValidazioneSemantica {
 				else if(asscsc.getNome()==null){
 					this.errori.add("Nome di un servizio componente nel "+uriAS+" non definito");
 				}
+				else if(asscsc.getVersione()==null){
+					this.errori.add("Versione di un servizio componente nel "+uriAS+" non definito");
+				}
 				else if(asscsc.getTipoSoggetto()==null){
 					this.errori.add("Tipo dell'erogatore di un servizio componente nel "+uriAS+" non definito");
 				}
@@ -431,14 +424,16 @@ public class ValidazioneSemantica {
 				}
 				else {
 					// Check servizio
-					if (!this.existsAccordoServizioParteSpecifica(asscsc.getTipo(), asscsc.getNome(), asscsc.getTipoSoggetto(), asscsc.getNomeSoggetto()))
-						this.errori.add("Il servizio componente ["+asscsc.getTipo()+"/"+asscsc.getNome()+"] erogato dal soggetto ["+asscsc.getTipoSoggetto()+"/"+asscsc.getNomeSoggetto()+
+					if (!this.existsAccordoServizioParteSpecifica(asscsc.getTipo(), asscsc.getNome(), asscsc.getVersione(), 
+							asscsc.getTipoSoggetto(), asscsc.getNomeSoggetto()))
+						this.errori.add("Il servizio componente ["+asscsc.getTipo()+"/"+asscsc.getNome()+":"+asscsc.getVersione()+
+								"] erogato dal soggetto ["+asscsc.getTipoSoggetto()+"/"+asscsc.getNomeSoggetto()+
 								"], referenziato nel "+uriAS+", non corrisponde a nessun servizio registrato");
 				}
 
 				// Check azione associata al servizio
 				if(asscsc.getAzione()!=null){
-					AccordoServizioParteSpecifica serv = this.getAccordoServizioParteSpecifica(asscsc.getTipo(), asscsc.getNome(), asscsc.getTipoSoggetto(), asscsc.getNomeSoggetto());
+					AccordoServizioParteSpecifica serv = this.getAccordoServizioParteSpecifica(asscsc.getTipo(), asscsc.getNome(), asscsc.getVersione(), asscsc.getTipoSoggetto(), asscsc.getNomeSoggetto());
 					if(this.existsAccordoServizioParteComune(serv.getAccordoServizioParteComune())){
 						AccordoServizioParteComune asServizioComposto = this.getAccordoServizioParteComune(serv.getAccordoServizioParteComune());
 						if(serv.getPortType()!=null){
@@ -892,18 +887,6 @@ public class ValidazioneSemantica {
 			}
 		}
 
-		// La versione dell'accordo deve essere un numero intero
-		if(as.getVersione()!=null){
-			try{
-				if (!RegularExpressionEngine.isMatch(as.getVersione(),"^[1-9]+[0-9]*$")) {
-					this.errori.add("La versione nel "+uriAS+" dev'essere rappresentata da un numero intero");
-				}
-			}catch(Exception e){
-				throw new DriverRegistroServiziException("Errore durante l'analisi tramite espressione regolare della versione nel "+uriAS+" :" +e.getMessage(),e);
-			}
-		}
-
-
 		// Ogni accordo di servizio deve possedere un nome diverso
 		int numAs = 0;
 		for(int j=0; j<this.registro.sizeAccordoServizioParteComuneList();j++){
@@ -936,8 +919,10 @@ public class ValidazioneSemantica {
 		// Valida i servizi
 		for (int j=0; j<sogg.sizeAccordoServizioParteSpecificaList(); j++) {
 			AccordoServizioParteSpecifica serv = sogg.getAccordoServizioParteSpecifica(j);
-			if(showIDOggettiAnalizzati)
-				printMsg("\tServizio: "+sogg.getTipo()+"/"+sogg.getNome()+"_"+serv.getServizio().getTipo()+"/"+serv.getServizio().getNome());
+			if(showIDOggettiAnalizzati){
+				String uriServizio = this.idServizioFactory.getUriFromAccordo(serv);
+				printMsg("\tServizio: "+uriServizio);
+			}
 			validaAccordoServizioParteSpecifica(serv, sogg);
 		}
 
@@ -977,127 +962,118 @@ public class ValidazioneSemantica {
 	private  void validaAccordoServizioParteSpecifica(AccordoServizioParteSpecifica asps, Soggetto sogg) throws DriverRegistroServiziException {
 		
 		// required		
+		if(asps.getTipo()==null){
+			this.errori.add("Non e' stato fornito un tipo per l'accordo di servizio parte specifica");
+			return;
+		}
+		
+		// required		
 		if(asps.getNome()==null){
 			this.errori.add("Non e' stato fornito un nome per l'accordo di servizio parte specifica");
 			return;
 		}
 		
-		// La versione dell'accordo parte specifica, se non specificato varra "1", altrimenti deve essere un numero intero
-		if(asps.getVersione()!=null){
-			try{
-				if (!RegularExpressionEngine.isMatch(asps.getVersione(),"^[1-9]+[0-9]*$")) {
-					this.errori.add("La versione nell'accordo di servizio parte specifica ["+asps.getNome()+"] dev'essere rappresentata da un numero intero");
+		// required		
+		if(asps.getVersione()==null){
+			this.errori.add("Non e' stato fornito una versione per l'accordo di servizio parte specifica");
+			return;
+		}
+		
+		String uriServizio = this.idServizioFactory.getUriFromAccordo(asps);
+		
+		ConfigurazioneServizio serv = asps.getConfigurazioneServizio();
+		if(serv!=null){
+		
+			// Il connettore, se presente, deve essere validato.
+			Connettore conn = serv.getConnettore();
+			if (conn != null){
+				validaConnettore(conn, "servizio", uriServizio);
+			}else{
+				if(sogg.getConnettore()==null || CostantiRegistroServizi.DISABILITATO.equals(sogg.getConnettore().getTipo())){
+					this.errori.add("Il servizio ["+uriServizio+"] deve obbligatoriamente definire un connettore, poiche' il soggetto erogatore non ne possiede uno");
 				}
-			}catch(Exception e){
-				throw new DriverRegistroServiziException("Errore durante l'analisi tramite espressione regolare della versione nell'accordo di servizio parte specifica ["+asps.getNome()+"] :" +e.getMessage(),e);
 			}
-		}
-		
-		if(asps.getServizio()==null){
-			this.errori.add("Esiste un accordo di servizio parte specifica senza servizio");
-			return;
-		}
-		if(asps.getServizio().getNome()==null){
-			this.errori.add("Esiste un servizio senza nome");
-			return;
-		}
-		if(asps.getServizio().getTipo()==null){
-			this.errori.add("Esiste un servizio senza tipo");
-			return;
-		}
-		Servizio serv = asps.getServizio();
-		
-		String idServizio = sogg.getTipo()+"/"+sogg.getNome()+"_"+serv.getTipo()+"/"+serv.getNome();
-		
-		// Il connettore, se presente, deve essere validato.
-		Connettore conn = serv.getConnettore();
-		if (conn != null){
-			validaConnettore(conn, "servizio", serv.getTipo()+"/"+serv.getNome());
-		}else{
-			if(sogg.getConnettore()==null || CostantiRegistroServizi.DISABILITATO.equals(sogg.getConnettore().getTipo())){
-				this.errori.add("Il servizio ["+idServizio+"] deve obbligatoriamente definire un connettore, poiche' il soggetto erogatore non ne possiede uno");
-			}
-		}
-
-		// Azione di un servizio
-		for(int k=0; k<serv.sizeParametriAzioneList();k++){
-			ServizioAzione az = serv.getParametriAzione(k);
-			
-			if(az.getNome()==null){
-				this.errori.add("Esiste un'azione del servizio "+idServizio+" per cui non è definito il nome");
-				continue;
-			}
-			
-			// 1. ogni azione di un servizio deve essere univoca
-			int numA = 0;
-			for (int h=0; h<serv.sizeParametriAzioneList(); h++) {
-				ServizioAzione tmpSsa = serv.getParametriAzione(h);
-				if (az.getNome().equals(tmpSsa.getNome()))
-					numA++;
-			}
-			if (numA > 1)
-				this.errori.add("Non può esistere più di un'azione con nome "+az.getNome()+" nel servizio "+idServizio);
-			
-			// L'azione deve esistere nell'accordo implementato dal servizio
-			if(this.existsAccordoServizioParteComune(asps.getAccordoServizioParteComune())){
-				AccordoServizioParteComune as = this.getAccordoServizioParteComune(asps.getAccordoServizioParteComune());
-				if(asps.getPortType()!=null){
-					if(this.existsPortType_AccordoServizioParteComune(as, asps.getPortType()) ){
-						PortType pt = this.getPortType_AccordoServizioParteComune(as, asps.getPortType());
-						if(this.existsAzione_PortType_AccordoServizio(pt, az.getNome())==false){
-							this.errori.add("Il servizio ["+idServizio+
-									"], utilizza un'azione ["+az.getNome()+"] che non risulta definita nell'accordo di servizio ["+
-									asps.getAccordoServizioParteComune()+"] implementato dal servizio (istanziato per il servizio ["+asps.getPortType()+"])");
+	
+			// Azione di un servizio
+			for(int k=0; k<serv.sizeConfigurazioneAzioneList();k++){
+				ConfigurazioneServizioAzione az = serv.getConfigurazioneAzione(k);
+				
+				if(az.getNome()==null){
+					this.errori.add("Esiste un'azione del servizio "+uriServizio+" per cui non è definito il nome");
+					continue;
+				}
+				
+				// 1. ogni azione di un servizio deve essere univoca
+				int numA = 0;
+				for (int h=0; h<serv.sizeConfigurazioneAzioneList(); h++) {
+					ConfigurazioneServizioAzione tmpSsa = serv.getConfigurazioneAzione(h);
+					if (az.getNome().equals(tmpSsa.getNome()))
+						numA++;
+				}
+				if (numA > 1)
+					this.errori.add("Non può esistere più di un'azione con nome "+az.getNome()+" nel servizio "+uriServizio);
+				
+				// L'azione deve esistere nell'accordo implementato dal servizio
+				if(this.existsAccordoServizioParteComune(asps.getAccordoServizioParteComune())){
+					AccordoServizioParteComune as = this.getAccordoServizioParteComune(asps.getAccordoServizioParteComune());
+					if(asps.getPortType()!=null){
+						if(this.existsPortType_AccordoServizioParteComune(as, asps.getPortType()) ){
+							PortType pt = this.getPortType_AccordoServizioParteComune(as, asps.getPortType());
+							if(this.existsAzione_PortType_AccordoServizio(pt, az.getNome())==false){
+								this.errori.add("Il servizio ["+uriServizio+
+										"], utilizza un'azione ["+az.getNome()+"] che non risulta definita nell'accordo di servizio ["+
+										asps.getAccordoServizioParteComune()+"] implementato dal servizio (istanziato per il servizio ["+asps.getPortType()+"])");
+							}
+						}else{
+							// Caso gestito nel seguito di questo metodo
 						}
 					}else{
-						// Caso gestito nel seguito di questo metodo
+						if(this.existsAzione_AccordoServizioParteComune(as, az.getNome())==false){
+							this.errori.add("Il servizio ["+uriServizio+
+									"], utilizza un'azione ["+az.getNome()+"] che non risulta definita nell'accordo di servizio ["+asps.getAccordoServizioParteComune()+"] implementato dal servizio");
+						}
 					}
 				}else{
-					if(this.existsAzione_AccordoServizioParteComune(as, az.getNome())==false){
-						this.errori.add("Il servizio ["+idServizio+
-								"], utilizza un'azione ["+az.getNome()+"] che non risulta definita nell'accordo di servizio ["+asps.getAccordoServizioParteComune()+"] implementato dal servizio");
+					// Caso gestito nel seguito di questo metodo
+				}
+				
+				// Deve almeno o essere definito un connettore o essere definito i fruitori
+				if( (az.getConnettore()==null || CostantiRegistroServizi.DISABILITATO.equals(az.getConnettore().getTipo())) && 
+						az.sizeConfigurazioneFruitoreList()==0){
+					this.errori.add("Non può esistere un'azione con nome "+az.getNome()+" nel servizio "+uriServizio+" che non definisce ne al suo interno un connettore, ne una lista di fruitori");	
+				}
+				
+				// Validazione connettore azione
+				conn = az.getConnettore();
+				if(conn!=null){
+					this.validaConnettore(conn, "Azione ["+az.getNome()+"] ridefinita nel Servizio", uriServizio);
+				}
+				
+				// 3. Se presenti fruitori deve essere controllato che il tipo/nome indicano un soggetto realmente esistente nel registro dei servizi. 
+				// Inoltre il connettore deve essere validato con le solite convenzioni.
+				for(int w=0; w<az.sizeConfigurazioneFruitoreList();w++){
+					ConfigurazioneServizioAzioneFruitore ssaf = az.getConfigurazioneFruitore(w);
+					String tipoSsaf = ssaf.getTipo();
+					String nomeSsaf = ssaf.getNome();
+					
+					if(tipoSsaf==null){
+						this.errori.add("Esiste un fruitore dell'azione "+az.getNome()+" del servizio "+uriServizio+" per cui non è definito il tipo");
+						continue;
 					}
-				}
-			}else{
-				// Caso gestito nel seguito di questo metodo
-			}
-			
-			// Deve almeno o essere definito un connettore o essere definito i fruitori
-			if( (az.getConnettore()==null || CostantiRegistroServizi.DISABILITATO.equals(az.getConnettore().getTipo())) && 
-					az.sizeParametriFruitoreList()==0){
-				this.errori.add("Non può esistere un'azione con nome "+az.getNome()+" nel servizio "+idServizio+" che non definisce ne al suo interno un connettore, ne una lista di fruitori");	
-			}
-			
-			// Validazione connettore azione
-			conn = az.getConnettore();
-			if(conn!=null){
-				this.validaConnettore(conn, "Azione ["+az.getNome()+"] ridefinita nel Servizio", idServizio);
-			}
-			
-			// 3. Se presenti fruitori deve essere controllato che il tipo/nome indicano un soggetto realmente esistente nel registro dei servizi. 
-			// Inoltre il connettore deve essere validato con le solite convenzioni.
-			for(int w=0; w<az.sizeParametriFruitoreList();w++){
-				ServizioAzioneFruitore ssaf = az.getParametriFruitore(w);
-				String tipoSsaf = ssaf.getTipo();
-				String nomeSsaf = ssaf.getNome();
-				
-				if(tipoSsaf==null){
-					this.errori.add("Esiste un fruitore dell'azione "+az.getNome()+" del servizio "+serv.getTipo()+"/"+serv.getNome()+" per cui non è definito il tipo");
-					continue;
-				}
-				if(nomeSsaf==null){
-					this.errori.add("Esiste un fruitore dell'azione "+az.getNome()+" del servizio "+serv.getTipo()+"/"+serv.getNome()+" per cui non è definito il nome");
-					continue;
-				}
-				
-				if(this.existsSoggetto(tipoSsaf, nomeSsaf)==false){
-					this.errori.add("Il fruitore "+tipoSsaf+"/"+nomeSsaf+" dell'azione "+az.getNome()+" del servizio "+serv.getTipo()+"/"+serv.getNome()+" non corrisponde a nessuno dei soggetti registrati");
-				}
-				conn = ssaf.getConnettore();
-				if (conn != null){
-					validaConnettore(conn, "", idServizio);
-				}else{
-					this.errori.add("Non e' stato definito il connettore per il Fruitore ["+tipoSsaf+"/"+nomeSsaf+"] dell'azione ["+az.getNome()+"] ridefinita nel Servizio "+idServizio);	
+					if(nomeSsaf==null){
+						this.errori.add("Esiste un fruitore dell'azione "+az.getNome()+" del servizio "+uriServizio+" per cui non è definito il nome");
+						continue;
+					}
+					
+					if(this.existsSoggetto(tipoSsaf, nomeSsaf)==false){
+						this.errori.add("Il fruitore "+tipoSsaf+"/"+nomeSsaf+" dell'azione "+az.getNome()+" del servizio "+uriServizio+" non corrisponde a nessuno dei soggetti registrati");
+					}
+					conn = ssaf.getConnettore();
+					if (conn != null){
+						validaConnettore(conn, "", uriServizio);
+					}else{
+						this.errori.add("Non e' stato definito il connettore per il Fruitore ["+tipoSsaf+"/"+nomeSsaf+"] dell'azione ["+az.getNome()+"] ridefinita nel Servizio "+uriServizio);	
+					}
 				}
 			}
 		}
@@ -1107,17 +1083,17 @@ public class ValidazioneSemantica {
 			Fruitore fru = asps.getFruitore(k);
 		
 			if(fru.getTipo()==null){
-				this.errori.add("Esiste un fruitore del servizio ["+idServizio+"] per cui non è definito il tipo");
+				this.errori.add("Esiste un fruitore del servizio ["+uriServizio+"] per cui non è definito il tipo");
 				continue;
 			}
 			if(fru.getNome()==null){
-				this.errori.add("Esiste un fruitore del servizio ["+idServizio+"] per cui non è definito il nome");
+				this.errori.add("Esiste un fruitore del servizio ["+uriServizio+"] per cui non è definito il nome");
 				continue;
 			}
 						
 			// 3. Il tipo e il nome deve puntare ad un soggetto realmente esistente nel registro dei servizi.
 			if(this.existsSoggetto(fru.getTipo(), fru.getNome())==false){
-				this.errori.add("Il fruitore "+fru.getTipo()+"/"+fru.getNome()+" del servizio "+idServizio+" non corrisponde a nessuno dei soggetti registrati");
+				this.errori.add("Il fruitore "+fru.getTipo()+"/"+fru.getNome()+" del servizio "+uriServizio+" non corrisponde a nessuno dei soggetti registrati");
 			}
 				
 			// 1. ogni fruitore (identificato dalla coppia tipo/nome) di un servizio deve essere univoco
@@ -1128,115 +1104,115 @@ public class ValidazioneSemantica {
 					numF++;
 			}
 			if (numF > 1)
-				this.errori.add("Non può esistere più di un fruitore con nome "+fru.getNome()+" e tipo "+fru.getTipo()+" per il servizio "+idServizio);
+				this.errori.add("Non può esistere più di un fruitore con nome "+fru.getNome()+" e tipo "+fru.getTipo()+" per il servizio "+uriServizio);
 			
 			// 2.  Il connettore, se presente, deve essere validato. NOTA: che il connettore puo' essere definito all'interno del servizio o direttamente nella root del registro dei servizi. In tal caso all'interno del servizio vi e' solo il nome del connettore. La validazione deve tenere conto di cio, e quindi se vi e' presente solo il nome, deve prima cercare il connettore nella root e poi validarlo come descritto nel paragrafo apposta.
-			conn = fru.getConnettore();
+			Connettore conn = fru.getConnettore();
 			if (conn != null)
-				validaConnettore(conn, "fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] del servizio", idServizio);
+				validaConnettore(conn, "fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] del servizio", uriServizio);
 			
 			// Wsdl
 			if(fru.getWsdlImplementativoErogatore()!=null){
 				try{
 					RegExpUtilities.validateUri(fru.getWsdlImplementativoErogatore(),this.checkEsistenzaFileDefinitoTramiteURI);
 				}catch(Exception e){
-					this.errori.add("Il wsdl implementativo erogatore del fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] del servizio "+idServizio+" non è valido: "+e.getMessage());
+					this.errori.add("Il wsdl implementativo erogatore del fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] del servizio "+uriServizio+" non è valido: "+e.getMessage());
 				}
 			}
 			if(fru.getWsdlImplementativoFruitore()!=null){
 				try{
 					RegExpUtilities.validateUri(fru.getWsdlImplementativoFruitore(),this.checkEsistenzaFileDefinitoTramiteURI);
 				}catch(Exception e){
-					this.errori.add("Il wsdl implementativo fruitore del fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] del servizio "+idServizio+" non è valido: "+e.getMessage());
+					this.errori.add("Il wsdl implementativo fruitore del fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] del servizio "+uriServizio+" non è valido: "+e.getMessage());
 				}
 			}
 			
 			// XSD: filtro-duplicati: abilitato, disabilitato
 			StatoFunzionalita filtroDup = fru.getFiltroDuplicati();
 			if ( filtroDup != null && !filtroDup.equals(CostantiRegistroServizi.ABILITATO) && !filtroDup.equals(CostantiRegistroServizi.DISABILITATO))
-				this.errori.add("Il filtro duplicati del fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] nel servizio "+idServizio+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+" o "+CostantiRegistroServizi.DISABILITATO);
+				this.errori.add("Il filtro duplicati del fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] nel servizio "+uriServizio+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+" o "+CostantiRegistroServizi.DISABILITATO);
 			// XSD: conferma-ricezione: abilitato, disabilitato
 			StatoFunzionalita confRic = fru.getConfermaRicezione();
 			if ( confRic != null && !confRic.equals(CostantiRegistroServizi.ABILITATO) && !confRic.equals(CostantiRegistroServizi.DISABILITATO))
-				this.errori.add("La conferma ricezione del fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] nel servizio "+idServizio+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+" o "+CostantiRegistroServizi.DISABILITATO);
+				this.errori.add("La conferma ricezione del fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] nel servizio "+uriServizio+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+" o "+CostantiRegistroServizi.DISABILITATO);
 			// XSD: id-collaborazione: abilitato, disabilitato
 			StatoFunzionalita idColl = fru.getIdCollaborazione();
 			if (idColl != null && !idColl.equals(CostantiRegistroServizi.ABILITATO) && !idColl.equals(CostantiRegistroServizi.DISABILITATO))
-				this.errori.add("L'id collaborazione del fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] nel servizio "+idServizio+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+" o "+CostantiRegistroServizi.DISABILITATO);
+				this.errori.add("L'id collaborazione del fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] nel servizio "+uriServizio+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+" o "+CostantiRegistroServizi.DISABILITATO);
 			// XSD: consegna-in-ordine: abilitato, disabilitato
 			StatoFunzionalita consOrd = fru.getConsegnaInOrdine();
 			if (consOrd != null && !consOrd.equals(CostantiRegistroServizi.ABILITATO) && !consOrd.equals(CostantiRegistroServizi.DISABILITATO))
-				this.errori.add("La consegna in ordine del fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] nel servizio "+idServizio+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+" o "+CostantiRegistroServizi.DISABILITATO);
+				this.errori.add("La consegna in ordine del fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] nel servizio "+uriServizio+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+" o "+CostantiRegistroServizi.DISABILITATO);
 			// Scadenza
 			if(fru.getScadenza()!=null){
 				try{
 					Integer.parseInt(fru.getScadenza());
 				}catch(Exception e){
-					this.errori.add("Il valore associato alla scadenza del fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] nel servizio "+idServizio+" dev'essere un numero intero");
+					this.errori.add("Il valore associato alla scadenza del fruitore ["+fru.getTipo()+"/"+fru.getNome()+"] nel servizio "+uriServizio+" dev'essere un numero intero");
 				}
 			}
 
 			// XSD: client-auth: abilitato, disabilitato, default
 			StatoFunzionalita clA = fru.getClientAuth();
 			if (clA != null && !clA.equals(CostantiRegistroServizi.ABILITATO) && !clA.equals(CostantiRegistroServizi.DISABILITATO) && !clA.equals("default"))
-				this.errori.add("Il client-auth del fruitore "+fru.getTipo()+"/"+fru.getNome()+" nel servizio "+idServizio+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+","+CostantiRegistroServizi.DISABILITATO+" o default");
+				this.errori.add("Il client-auth del fruitore "+fru.getTipo()+"/"+fru.getNome()+" nel servizio "+uriServizio+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+","+CostantiRegistroServizi.DISABILITATO+" o default");
 		}
 
 		
 		// Allegati
 		for(int i=0; i<asps.sizeAllegatoList(); i++){
 			Documento allegato = asps.getAllegato(i);
-			this.validateDocumento(allegato, RuoliDocumento.allegato,"Servizio["+idServizio+"]");
+			this.validateDocumento(allegato, RuoliDocumento.allegato,"Servizio["+uriServizio+"]");
 		}
 		// SpecificheSemiformali
 		for(int i=0; i<asps.sizeSpecificaSemiformaleList(); i++){
 			Documento specificaSemiformale = asps.getSpecificaSemiformale(i);
-			this.validateDocumento(specificaSemiformale, RuoliDocumento.specificaSemiformale,"Servizio["+idServizio+"]");
+			this.validateDocumento(specificaSemiformale, RuoliDocumento.specificaSemiformale,"Servizio["+uriServizio+"]");
 		}
 		// SpecificheLivelliServizio
 		for(int i=0; i<asps.sizeSpecificaLivelloServizioList(); i++){
 			Documento specificaLivelloServizio = asps.getSpecificaLivelloServizio(i);
-			this.validateDocumento(specificaLivelloServizio, RuoliDocumento.specificaLivelloServizio,"Servizio["+idServizio+"]");
+			this.validateDocumento(specificaLivelloServizio, RuoliDocumento.specificaLivelloServizio,"Servizio["+uriServizio+"]");
 		}
 		// SpecificheSicurezza
 		for(int i=0; i<asps.sizeSpecificaSicurezzaList(); i++){
 			Documento specificaSicurezza = asps.getSpecificaSicurezza(i);
-			this.validateDocumento(specificaSicurezza, RuoliDocumento.specificaSicurezza,"Servizio["+idServizio+"]");
+			this.validateDocumento(specificaSicurezza, RuoliDocumento.specificaSicurezza,"Servizio["+uriServizio+"]");
 		}
 		
 		
 		// Il tipo deve essere uno tra quelli definiti in openspcoop2.properties. Ci puoi accedere attraverso il comando: org.openspcoop.pdd.config.OpenSPCoopProperties.getInstance().getTipiServizi()
 		ServiceBinding binding = this.mappingAccordiToServiceBinding.get(asps.getAccordoServizioParteComune());
 		if(binding==null){
-			this.errori.add("Il servizio "+serv.getTipo()+"/"+serv.getNome()+" implementa un accordo parte comune ["+asps.getAccordoServizioParteComune()+"] non esistente");
+			this.errori.add("Il servizio "+uriServizio+" implementa un accordo parte comune ["+asps.getAccordoServizioParteComune()+"] non esistente");
 		}
 		if(ServiceBinding.SOAP.equals(binding)){
-			if(this.tipoServiziSoap.contains(serv.getTipo())==false){
-				this.errori.add("Il tipo del servizio "+serv.getTipo()+"/"+serv.getNome()+" non è valido (tipi utilizzabili: "+this.getTipoServiziSoap()+")");
+			if(this.tipoServiziSoap.contains(asps.getTipo())==false){
+				this.errori.add("Il tipo del servizio "+uriServizio+" non è valido (tipi utilizzabili: "+this.getTipoServiziSoap()+")");
 			}
 		}
 		else{
-			if(this.tipoServiziRest.contains(serv.getTipo())==false){
-				this.errori.add("Il tipo del servizio "+serv.getTipo()+"/"+serv.getNome()+" non è valido (tipi utilizzabili: "+this.getTipoServiziRest()+")");
+			if(this.tipoServiziRest.contains(asps.getTipo())==false){
+				this.errori.add("Il tipo del servizio "+uriServizio+" non è valido (tipi utilizzabili: "+this.getTipoServiziRest()+")");
 			}
 		}
 
 		// Il nome del servizio deve possedere i stessi vincoli presenti per il nome di un servizio inserito nell'interfaccia grafica regserv.
 		// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
 		try{
-			if (!RegularExpressionEngine.isMatch(serv.getNome(),"^[0-9A-Za-z_\\-\\.]+$")) {
-				this.errori.add("Il nome del servizio "+serv.getTipo()+"/"+serv.getNome()+" dev'essere formato solo caratteri, cifre, '_' , '-' e '.'");
+			if (!RegularExpressionEngine.isMatch(asps.getNome(),"^[0-9A-Za-z_\\-\\.]+$")) {
+				this.errori.add("Il nome del servizio "+uriServizio+" dev'essere formato solo caratteri, cifre, '_' , '-' e '.'");
 			}
 		}catch(Exception e){
-			throw new DriverRegistroServiziException("Errore durante l'analisi tramite espressione regolare del servizio "+serv.getTipo()+"/"+serv.getNome()+" :" +e.getMessage(),e);
+			throw new DriverRegistroServiziException("Errore durante l'analisi tramite espressione regolare del servizio "+uriServizio+" :" +e.getMessage(),e);
 		}
 	
 		if(asps.getAccordoServizioParteComune()==null){
-			this.errori.add("Il Servizio "+idServizio+" non implementa un accordo di servizio");
+			this.errori.add("Il Servizio "+uriServizio+" non implementa un accordo di servizio");
 		}else{
 			// Il nome di un accordo di servizio deve puntare ad un accordo realmente esistente.
 			if(this.existsAccordoServizioParteComune(asps.getAccordoServizioParteComune())==false){
-				this.errori.add("L'accordo servizio "+asps.getAccordoServizioParteComune()+" del servizio "+idServizio+" non corrisponde a nessuno degli accordi servizio registrati");
+				this.errori.add("L'accordo servizio "+asps.getAccordoServizioParteComune()+" del servizio "+uriServizio+" non corrisponde a nessuno degli accordi servizio registrati");
 			}
 			else{
 				// Il nome di un port type, se presente, deve puntare ad un porttype definito dentro l'accordo di servizio del punto 7.
@@ -1244,22 +1220,27 @@ public class ValidazioneSemantica {
 				if (nomePT != null) {
 					AccordoServizioParteComune as = this.getAccordoServizioParteComune(asps.getAccordoServizioParteComune());
 					if(this.existsPortType_AccordoServizioParteComune(as, nomePT)==false){
-						this.errori.add("Il servizio "+nomePT+" del servizio "+idServizio+" non corrisponde a nessuno dei servizi dell'accordo servizio implementato ["+asps.getAccordoServizioParteComune()+"]");
+						this.errori.add("Il servizio "+nomePT+" del servizio "+uriServizio+" non corrisponde a nessuno dei servizi dell'accordo servizio implementato ["+asps.getAccordoServizioParteComune()+"]");
 					}
 				}
 			}
 		}
 			
 		
-		// ogni servizio identificato dalla quadrupla tipo/nome del servizio e tipo/nome del soggetto erogatore, deve essere univoco
+		// ogni servizio identificato dalla quintupla tipo/nome/versione del servizio e tipo/nome del soggetto erogatore, deve essere univoco
 		int numS = 0;
 		for (int j=0; j<sogg.sizeAccordoServizioParteSpecificaList(); j++) {
 			AccordoServizioParteSpecifica tmpS = sogg.getAccordoServizioParteSpecifica(j);
-			if (serv.getNome().equals(tmpS.getServizio().getNome()) && serv.getTipo().equals(tmpS.getServizio().getTipo()) && ((serv.getNomeSoggettoErogatore() == null && tmpS.getServizio().getNomeSoggettoErogatore() == null) || serv.getNomeSoggettoErogatore().equals(tmpS.getServizio().getNomeSoggettoErogatore())) && ((serv.getTipoSoggettoErogatore() == null && tmpS.getServizio().getTipoSoggettoErogatore() == null) || serv.getTipoSoggettoErogatore().equals(tmpS.getServizio().getTipoSoggettoErogatore())))
+			if (asps.getNome().equals(tmpS.getNome()) && 
+					asps.getTipo().equals(tmpS.getTipo()) && 
+					(asps.getVersione().intValue() == tmpS.getVersione().intValue()) && 
+					asps.getNomeSoggettoErogatore().equals(tmpS.getNomeSoggettoErogatore()) &&
+					asps.getTipoSoggettoErogatore().equals(tmpS.getTipoSoggettoErogatore()) )
 				numS++;
 		}
 		if (numS > 1)
-			this.errori.add("Non può esistere più di un servizio con nome "+serv.getNome()+" e tipo "+serv.getTipo()+" e nome soggetto erogatore "+serv.getNomeSoggettoErogatore()+" e tipo soggetto erogatore "+serv.getTipoSoggettoErogatore());
+			this.errori.add("Non può esistere più di un servizio con tipo:"+asps.getTipo()+", nome:"+asps.getNome()+", versione:"+asps.getVersione()+
+					" tipoSoggettoErogatore:"+asps.getTipoSoggettoErogatore()+" e nomeSoggettoErogatore "+asps.getNomeSoggettoErogatore());
 
 			
 		// Wsdl
@@ -1267,14 +1248,14 @@ public class ValidazioneSemantica {
 			try{
 				RegExpUtilities.validateUri(asps.getWsdlImplementativoErogatore(),this.checkEsistenzaFileDefinitoTramiteURI);
 			}catch(Exception e){
-				this.errori.add("Il wsdl implementativo erogatore del servizio "+idServizio+" non è valido: "+e.getMessage());
+				this.errori.add("Il wsdl implementativo erogatore del servizio "+uriServizio+" non è valido: "+e.getMessage());
 			}
 		}
 		if(asps.getWsdlImplementativoFruitore()!=null){
 			try{
 				RegExpUtilities.validateUri(asps.getWsdlImplementativoFruitore(),this.checkEsistenzaFileDefinitoTramiteURI);
 			}catch(Exception e){
-				this.errori.add("Il wsdl implementativo fruitore del servizio "+idServizio+" non è valido: "+e.getMessage());
+				this.errori.add("Il wsdl implementativo fruitore del servizio "+uriServizio+" non è valido: "+e.getMessage());
 			}
 		}
 		
@@ -1282,25 +1263,25 @@ public class ValidazioneSemantica {
 		// XSD: filtro-duplicati: abilitato, disabilitato
 		StatoFunzionalita filtroDup = asps.getFiltroDuplicati();
 		if ( filtroDup != null && !filtroDup.equals(CostantiRegistroServizi.ABILITATO) && !filtroDup.equals(CostantiRegistroServizi.DISABILITATO))
-			this.errori.add("Il filtro duplicati del servizio "+idServizio+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+" o "+CostantiRegistroServizi.DISABILITATO);
+			this.errori.add("Il filtro duplicati del servizio "+uriServizio+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+" o "+CostantiRegistroServizi.DISABILITATO);
 		// XSD: conferma-ricezione: abilitato, disabilitato
 		StatoFunzionalita confRic = asps.getConfermaRicezione();
 		if (confRic != null && !confRic.equals(CostantiRegistroServizi.ABILITATO) && !confRic.equals(CostantiRegistroServizi.DISABILITATO))
-			this.errori.add("La conferma ricezione del servizio "+idServizio+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+" o "+CostantiRegistroServizi.DISABILITATO);
+			this.errori.add("La conferma ricezione del servizio "+uriServizio+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+" o "+CostantiRegistroServizi.DISABILITATO);
 		// XSD: id-collaborazione: abilitato, disabilitato
 		StatoFunzionalita idColl = asps.getIdCollaborazione();
 		if (idColl != null && !idColl.equals(CostantiRegistroServizi.ABILITATO) && !idColl.equals(CostantiRegistroServizi.DISABILITATO))
-			this.errori.add("L'id collaborazione del servizio "+idServizio+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+" o "+CostantiRegistroServizi.DISABILITATO);
+			this.errori.add("L'id collaborazione del servizio "+uriServizio+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+" o "+CostantiRegistroServizi.DISABILITATO);
 		// XSD: consegna-in-ordine: abilitato, disabilitato
 		StatoFunzionalita consOrd = asps.getConsegnaInOrdine();
 		if (consOrd != null && !consOrd.equals(CostantiRegistroServizi.ABILITATO) && !consOrd.equals(CostantiRegistroServizi.DISABILITATO))
-			this.errori.add("La consegna in ordine del servizio "+idServizio+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+" o "+CostantiRegistroServizi.DISABILITATO);
+			this.errori.add("La consegna in ordine del servizio "+uriServizio+" deve possedere il valore "+CostantiRegistroServizi.ABILITATO+" o "+CostantiRegistroServizi.DISABILITATO);
 		// Scadenza
 		if(asps.getScadenza()!=null){
 			try{
 				Integer.parseInt(asps.getScadenza());
 			}catch(Exception e){
-				this.errori.add("Il valore associato alla scadenza del servizio "+idServizio+" dev'essere un numero intero");
+				this.errori.add("Il valore associato alla scadenza del servizio "+uriServizio+" dev'essere un numero intero");
 			}
 		}
 
@@ -1837,16 +1818,18 @@ public class ValidazioneSemantica {
 		return null;
 	}
 
-	private boolean existsAccordoServizioParteSpecifica(String tipo,String nome,String tipoSoggetto,String nomeSoggetto){
-		return this.getAccordoServizioParteSpecifica(tipo, nome, tipoSoggetto, nomeSoggetto)!=null;
+	private boolean existsAccordoServizioParteSpecifica(String tipo,String nome,Integer versione, String tipoSoggetto,String nomeSoggetto){
+		return this.getAccordoServizioParteSpecifica(tipo, nome, versione, tipoSoggetto, nomeSoggetto)!=null;
 	}
-	private AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(String tipo,String nome,String tipoSoggetto,String nomeSoggetto){
+	private AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(String tipo,String nome,Integer versione, String tipoSoggetto,String nomeSoggetto){
 		for(int j=0; j<this.registro.sizeSoggettoList();j++){
 			Soggetto ss = this.registro.getSoggetto(j);
 			if (tipoSoggetto.equals(ss.getTipo()) && nomeSoggetto.equals(ss.getNome())) {
 				for(int h=0; h<ss.sizeAccordoServizioParteSpecificaList();h++){
 					AccordoServizioParteSpecifica serv = ss.getAccordoServizioParteSpecifica(h);
-					if (tipo.equals(serv.getServizio().getTipo()) && nome.equals(serv.getServizio().getNome())) {	
+					if (tipo.equals(serv.getTipo()) && 
+							nome.equals(serv.getNome()) &&
+							versione.intValue() == serv.getVersione().intValue()) {	
 						return serv;
 					}
 				}

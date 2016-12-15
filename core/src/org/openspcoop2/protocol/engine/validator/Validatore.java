@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -117,6 +118,8 @@ public class Validatore  {
 	private String servizioCorrelato;
 	/** Tipo ServizioCorrelato */
 	private String tipoServizioCorrelato;
+	/** Versione ServizioCorrelato */
+	private Integer versioneServizioCorrelato;
 	/** informazioni Servizio */
 	private Servizio infoServizio = null;
 	/** Profilo di Gestione */
@@ -255,9 +258,10 @@ public class Validatore  {
 			// Costruzione IDMittente e IDServizio
 			this.mittente = new IDSoggetto(this.busta.getTipoMittente(),this.busta.getMittente());
 			this.mittente.setCodicePorta(this.busta.getIdentificativoPortaMittente());
-			this.servizio = new IDServizio(this.busta.getTipoDestinatario(),this.busta.getDestinatario(),
-					this.busta.getTipoServizio(),this.busta.getServizio(),
-					this.busta.getAzione());
+			this.servizio = IDServizioFactory.getInstance().getIDServizioFromValues(this.busta.getTipoServizio(),this.busta.getServizio(), 
+					this.busta.getTipoDestinatario(),this.busta.getDestinatario(),
+					this.busta.getVersioneServizio());
+			this.servizio.setAzione(this.busta.getAzione());
 			this.servizio.getSoggettoErogatore().setCodicePorta(this.busta.getIdentificativoPortaDestinatario());
 			
 			//	Se la lettura precedente ha riscontrato anomalie, ho gia' finito
@@ -518,6 +522,7 @@ public class Validatore  {
 				addListaEccezioni(registryValidator.getEccezioniProcessamento(),this.erroriProcessamento);
 				this.servizioCorrelato = registryValidator.getServizioCorrelato();
 				this.tipoServizioCorrelato = registryValidator.getTipoServizioCorrelato();
+				this.versioneServizioCorrelato = registryValidator.getVersioneServizioCorrelato();
 				this.infoServizio = registryValidator.getInfoServizio();
 				if( ( (this.erroriValidazione!=null) && (this.erroriValidazione.size()>0) ) 
 						|| 
@@ -686,6 +691,10 @@ public class Validatore  {
 	 */
 	public String getTipoServizioCorrelato() {
 		return this.tipoServizioCorrelato;
+	}
+	
+	public Integer getVersioneServizioCorrelato() {
+		return this.versioneServizioCorrelato;
 	}
 	
 	public Servizio getInfoServizio() {

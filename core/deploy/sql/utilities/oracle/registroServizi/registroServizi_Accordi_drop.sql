@@ -1,7 +1,6 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
 -- DROP INDEX INDEX_AC_SC_SC;
 -- DROP INDEX INDEX_AC_SC;
--- DROP INDEX INDEX_APS;
 -- DROP INDEX INDEX_AC_COOP_PAR;
 -- DROP INDEX INDEX_OP_MESSAGES;
 -- DROP INDEX INDEX_DOC_SEARCH;

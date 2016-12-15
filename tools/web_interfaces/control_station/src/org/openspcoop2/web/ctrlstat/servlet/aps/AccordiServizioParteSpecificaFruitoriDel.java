@@ -40,7 +40,6 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
-import org.openspcoop2.core.registry.Servizio;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
@@ -122,12 +121,12 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
 			
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
-			Servizio ss = asps.getServizio();
-			String nomeservizio = ss.getNome();
-			String tiposervizio = ss.getTipo();
+			String nomeservizio = asps.getNome();
+			String tiposervizio = asps.getTipo();
+			Integer versioneservzio = asps.getVersione();
 			// Prendo i dati del soggetto erogatore del servizio
-			String mynomeprov = ss.getNomeSoggettoErogatore();
-			String mytipoprov = ss.getTipoSoggettoErogatore();
+			String mynomeprov = asps.getNomeSoggettoErogatore();
+			String mytipoprov = asps.getTipoSoggettoErogatore();
 
 			String superUser =  ServletUtils.getUserLoginFromSession(session);
 
@@ -154,7 +153,7 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 
 				// cancello la porta delegata associata al fruitore
 				// del servizio, se esiste
-				String nomePD = fru.getTipo() + fru.getNome() + "/" + mytipoprov + mynomeprov + "/" + tiposervizio + nomeservizio;
+				String nomePD = fru.getTipo() + fru.getNome() + "/" + mytipoprov + mynomeprov + "/" + tiposervizio + nomeservizio + "/" +versioneservzio;
 				IDPortaDelegata myidpd = new IDPortaDelegata();
 				myidpd.setNome(nomePD);
 				if (porteDelegateCore.existsPortaDelegata(myidpd)) {

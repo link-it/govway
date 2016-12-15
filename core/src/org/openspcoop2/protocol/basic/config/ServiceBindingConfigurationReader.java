@@ -129,7 +129,7 @@ public class ServiceBindingConfigurationReader  {
 				// aggiornamento per tipo servizio
 				for (int i = 0; i < manifest.getRegistry().getService().getTypes().sizeTypeList(); i++) {
 					String serviceType = manifest.getRegistry().getService().getTypes().getType(i).getName();
-					if(serviceType.equals(idServizio.getTipoServizio())){
+					if(serviceType.equals(idServizio.getTipo())){
 						if( manifest.getRegistry().getService().getTypes().getType(i).getSoapMediaTypeCollection()!=null){
 							updateMediaTypeCollection(soap, manifest.getRegistry().getService().getTypes().getType(i).getSoapMediaTypeCollection(), true, true);
 						}

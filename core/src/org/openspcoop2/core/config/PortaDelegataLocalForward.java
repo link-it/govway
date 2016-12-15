@@ -26,17 +26,18 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import java.io.Serializable;
 
 
-/** <p>Java class for proprieta-protocollo complex type.
+/** <p>Java class for porta-delegata-local-forward complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="proprieta-protocollo">
- * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="valore" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * &lt;complexType name="porta-delegata-local-forward">
+ * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
+ * 		&lt;attribute name="porta-applicativa" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -47,12 +48,12 @@ import java.io.Serializable;
  * */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "proprieta-protocollo")
+@XmlType(name = "porta-delegata-local-forward")
 
-@XmlRootElement(name = "proprieta-protocollo")
+@XmlRootElement(name = "porta-delegata-local-forward")
 
-public class ProprietaProtocollo extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
-  public ProprietaProtocollo() {
+public class PortaDelegataLocalForward extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
+  public PortaDelegataLocalForward() {
   }
 
   public Long getId() {
@@ -69,20 +70,32 @@ public class ProprietaProtocollo extends org.openspcoop2.utils.beans.BaseBean im
 		this.id=new Long(-1);
   }
 
-  public java.lang.String getNome() {
-    return this.nome;
+  public void set_value_stato(String value) {
+    this.stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
 
-  public void setNome(java.lang.String nome) {
-    this.nome = nome;
+  public String get_value_stato() {
+    if(this.stato == null){
+    	return null;
+    }else{
+    	return this.stato.toString();
+    }
   }
 
-  public java.lang.String getValore() {
-    return this.valore;
+  public org.openspcoop2.core.config.constants.StatoFunzionalita getStato() {
+    return this.stato;
   }
 
-  public void setValore(java.lang.String valore) {
-    this.valore = valore;
+  public void setStato(org.openspcoop2.core.config.constants.StatoFunzionalita stato) {
+    this.stato = stato;
+  }
+
+  public java.lang.String getPortaApplicativa() {
+    return this.portaApplicativa;
+  }
+
+  public void setPortaApplicativa(java.lang.String portaApplicativa) {
+    this.portaApplicativa = portaApplicativa;
   }
 
   private static final long serialVersionUID = 1L;
@@ -92,12 +105,14 @@ public class ProprietaProtocollo extends org.openspcoop2.utils.beans.BaseBean im
 
 
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlAttribute(name="nome",required=true)
-  protected java.lang.String nome;
+  @XmlTransient
+  protected java.lang.String _value_stato;
+
+  @XmlAttribute(name="stato",required=false)
+  protected StatoFunzionalita stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlAttribute(name="valore",required=true)
-  protected java.lang.String valore;
+  @XmlAttribute(name="porta-applicativa",required=false)
+  protected java.lang.String portaApplicativa;
 
 }

@@ -33,7 +33,6 @@ import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
-import org.openspcoop2.core.id.IDAccordoCooperazioneWithSoggetto;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -50,6 +49,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.basic.registry.ConfigIntegrationReader;
 import org.openspcoop2.protocol.basic.registry.RegistryReader;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -164,7 +164,7 @@ public class ExporterArchiveUtils {
 			break;
 		case ACCORDO_COOPERAZIONE:
 			for (Object object : listObject) {
-				this.readAccordoCooperazione(archive, (IDAccordoCooperazioneWithSoggetto)object, cascadeConfig, exportSourceArchiveType);
+				this.readAccordoCooperazione(archive, (IDAccordoCooperazione)object, cascadeConfig, exportSourceArchiveType);
 			}
 			break;
 		case ACCORDO_SERVIZIO_PARTE_COMUNE:
@@ -179,7 +179,7 @@ public class ExporterArchiveUtils {
 			break;
 		case ACCORDO_SERVIZIO_PARTE_SPECIFICA:
 			for (Object object : listObject) {
-				this.readAccordoServizioParteSpecifica(archive, (IDAccordo)object, cascadeConfig, exportSourceArchiveType);
+				this.readAccordoServizioParteSpecifica(archive, (IDServizio)object, cascadeConfig, exportSourceArchiveType);
 			}
 			break;
 		case CONFIGURAZIONE:
@@ -322,9 +322,7 @@ public class ExporterArchiveUtils {
 				List<IDAccordoCooperazione> idsAC = this.archiveEngine.getAllIdAccordiCooperazione(filtroAccordiCooperazione);
 				if(idsAC!=null && idsAC.size()>0){
 					for (IDAccordoCooperazione idAccordoCooperazione : idsAC) {
-						IDAccordoCooperazioneWithSoggetto idAccordoCooperazioneWithSoggetto = new IDAccordoCooperazioneWithSoggetto(idAccordoCooperazione);
-						idAccordoCooperazioneWithSoggetto.setSoggettoReferente(idSoggetto);
-						this.readAccordoCooperazione(archive, idAccordoCooperazioneWithSoggetto, cascadeConfig, ArchiveType.SOGGETTO);
+						this.readAccordoCooperazione(archive, idAccordoCooperazione, cascadeConfig, ArchiveType.SOGGETTO);
 					}
 				}
 			}catch(DriverRegistroServiziNotFound notFound){}
@@ -362,9 +360,9 @@ public class ExporterArchiveUtils {
 			filtroAccordiServizioParteSpecifica.setTipoSoggettoErogatore(idSoggetto.getTipo());
 			filtroAccordiServizioParteSpecifica.setNomeSoggettoErogatore(idSoggetto.getNome());
 			try{
-				List<IDAccordo> idsAccordi = this.archiveEngine.getAllIdAccordiServizioParteSpecifica(filtroAccordiServizioParteSpecifica);
+				List<IDServizio> idsAccordi = this.archiveEngine.getAllIdAccordiServizioParteSpecifica(filtroAccordiServizioParteSpecifica);
 				if(idsAccordi!=null && idsAccordi.size()>0){
-					for (IDAccordo idAccordo : idsAccordi) {
+					for (IDServizio idAccordo : idsAccordi) {
 						this.readAccordoServizioParteSpecifica(archive, idAccordo, cascadeConfig, ArchiveType.SOGGETTO);
 					}
 				}
@@ -475,11 +473,11 @@ public class ExporterArchiveUtils {
 		
 	}
 	
-	private void readAccordoCooperazione(Archive archive, IDAccordoCooperazioneWithSoggetto idAccordoCooperazione, 
+	private void readAccordoCooperazione(Archive archive, IDAccordoCooperazione idAccordoCooperazione, 
 			ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception{
 		this.readAccordoCooperazione(archive, idAccordoCooperazione, cascadeConfig, true, provenienza);
 	}
-	private void readAccordoCooperazione(Archive archive, IDAccordoCooperazioneWithSoggetto idAccordoCooperazione, 
+	private void readAccordoCooperazione(Archive archive, IDAccordoCooperazione idAccordoCooperazione, 
 			ArchiveCascadeConfiguration cascadeConfig, boolean cascadeAvanti, ArchiveType provenienza) throws Exception{
 		
 		String tipoSoggetto = null;
@@ -592,11 +590,11 @@ public class ExporterArchiveUtils {
 		
 			// accordi di servizio parte specifica
 			FiltroRicercaServizi filtroRicercaAccordi = new FiltroRicercaServizi();
-			filtroRicercaAccordi.setIdAccordo(idAccordoServizio);
+			filtroRicercaAccordi.setIdAccordoServizioParteComune(idAccordoServizio);
 			try{
-				List<IDAccordo> idsAS = this.archiveEngine.getAllIdAccordiServizioParteSpecifica(filtroRicercaAccordi);
+				List<IDServizio> idsAS = this.archiveEngine.getAllIdAccordiServizioParteSpecifica(filtroRicercaAccordi);
 				if(idsAS!=null && idsAS.size()>0){
-					for (IDAccordo idAccordo : idsAS) {
+					for (IDServizio idAccordo : idsAS) {
 						this.readAccordoServizioParteSpecifica(archive, idAccordo, cascadeConfig, ArchiveType.ACCORDO_SERVIZIO_PARTE_COMUNE);
 					}
 				}
@@ -655,11 +653,11 @@ public class ExporterArchiveUtils {
 		
 			// accordi di servizio parte specifica
 			FiltroRicercaServizi filtroRicercaAccordi = new FiltroRicercaServizi();
-			filtroRicercaAccordi.setIdAccordo(idAccordoServizio);
+			filtroRicercaAccordi.setIdAccordoServizioParteComune(idAccordoServizio);
 			try{
-				List<IDAccordo> idsAS = this.archiveEngine.getAllIdAccordiServizioParteSpecifica(filtroRicercaAccordi);
+				List<IDServizio> idsAS = this.archiveEngine.getAllIdAccordiServizioParteSpecifica(filtroRicercaAccordi);
 				if(idsAS!=null && idsAS.size()>0){
-					for (IDAccordo idAccordo : idsAS) {
+					for (IDServizio idAccordo : idsAS) {
 						this.readAccordoServizioParteSpecifica(archive, idAccordo, cascadeConfig, ArchiveType.ACCORDO_SERVIZIO_COMPOSTO);
 					}
 				}
@@ -667,8 +665,9 @@ public class ExporterArchiveUtils {
 
 			// servizi componenti
 			for (AccordoServizioParteComuneServizioCompostoServizioComponente servizioComponente : as.getServizioComposto().getServizioComponenteList()) {
-				IDServizio idServizio = new IDServizio(servizioComponente.getTipoSoggetto(),servizioComponente.getNomeSoggetto(),
-						servizioComponente.getTipo(),servizioComponente.getNome());
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(servizioComponente.getTipo(),servizioComponente.getNome(), 
+						servizioComponente.getTipoSoggetto(),servizioComponente.getNomeSoggetto(), 
+						servizioComponente.getVersione()); 
 				this.readAccordoServizioParteSpecifica(archive, idServizio, cascadeConfig, ArchiveType.ACCORDO_SERVIZIO_COMPOSTO); 
 			}
 			
@@ -677,21 +676,21 @@ public class ExporterArchiveUtils {
 
 	}
 
-	private void readAccordoServizioParteSpecifica(Archive archive, IDAccordo idAccordoServizio, 
+	private void readAccordoServizioParteSpecifica(Archive archive, IDServizio idAccordoServizio, 
 			ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception{
 		this.readAccordoServizioParteSpecifica(archive, idAccordoServizio, cascadeConfig, true, provenienza);
 	}
-	private void readAccordoServizioParteSpecifica(Archive archive, IDAccordo idAccordoServizio, 
+	private void readAccordoServizioParteSpecifica(Archive archive, IDServizio idAccordoServizio, 
 			ArchiveCascadeConfiguration cascadeConfig, boolean cascadeAvanti, ArchiveType provenienza) throws Exception{
 		
 		String tipoSoggetto = null;
 		String nomeSoggetto = null;
-		if(idAccordoServizio.getSoggettoReferente()!=null){
-			tipoSoggetto = idAccordoServizio.getSoggettoReferente().getTipo();
-			nomeSoggetto = idAccordoServizio.getSoggettoReferente().getNome();
+		if(idAccordoServizio.getSoggettoErogatore()!=null){
+			tipoSoggetto = idAccordoServizio.getSoggettoErogatore().getTipo();
+			nomeSoggetto = idAccordoServizio.getSoggettoErogatore().getNome();
 		}
 		String key =  ArchiveAccordoServizioParteSpecifica.buildKey(tipoSoggetto,nomeSoggetto,
-				idAccordoServizio.getNome(),idAccordoServizio.getVersione());
+				idAccordoServizio.getTipo(),idAccordoServizio.getNome(),idAccordoServizio.getVersione());
 		List<Fruitore> fruitoriList = null;
 		org.openspcoop2.core.registry.AccordoServizioParteSpecifica  as = null;
 		if(archive.getAccordiServizioParteSpecifica().containsKey(key)){
@@ -705,11 +704,11 @@ public class ExporterArchiveUtils {
 				
 					// add
 					as = this.archiveEngine.getAccordoServizioParteSpecifica(idAccordoServizio,true);
-					if(as.getServizio().getTipoSoggettoErogatore()==null){
-						as.getServizio().setTipoSoggettoErogatore(tipoSoggetto);
+					if(as.getTipoSoggettoErogatore()==null){
+						as.setTipoSoggettoErogatore(tipoSoggetto);
 					}
-					if(as.getServizio().getNomeSoggettoErogatore()==null){
-						as.getServizio().setNomeSoggettoErogatore(nomeSoggetto);
+					if(as.getNomeSoggettoErogatore()==null){
+						as.setNomeSoggettoErogatore(nomeSoggetto);
 					}
 					ArchiveAccordoServizioParteSpecifica archiveAs = new ArchiveAccordoServizioParteSpecifica(as, this.idCorrelazione);
 					while(as.sizeFruitoreList()>0){
@@ -720,7 +719,7 @@ public class ExporterArchiveUtils {
 					// *** dipendenze: oggetti necessari per la creazione dell'oggetto sopra aggiunto ***
 					
 					// soggetto proprietario
-					this.readSoggetto(archive, idAccordoServizio.getSoggettoReferente(), cascadeConfig, false, ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA); // per evitare loop
+					this.readSoggetto(archive, idAccordoServizio.getSoggettoErogatore(), cascadeConfig, false, ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA); // per evitare loop
 				
 					// accordoServizioParteComune
 					IDAccordo idAccordoServizioParteComune = IDAccordoFactory.getInstance().getIDAccordoFromUri(as.getAccordoServizioParteComune());
@@ -734,7 +733,7 @@ public class ExporterArchiveUtils {
 				}
 					
 			}catch(Exception e){
-				throw new ProtocolException("(AccordoServizioParteSpecifica "+IDAccordoFactory.getInstance().getUriFromIDAccordo(idAccordoServizio)+") "+e.getMessage(),e);
+				throw new ProtocolException("(AccordoServizioParteSpecifica "+IDServizioFactory.getInstance().getUriFromIDServizio(idAccordoServizio)+") "+e.getMessage(),e);
 			}
 		}
 		
@@ -759,10 +758,10 @@ public class ExporterArchiveUtils {
 			
 			// porteDelegate
 			FiltroRicercaPorteDelegate filtroRicercaPorteDelegate = new FiltroRicercaPorteDelegate();
-			filtroRicercaPorteDelegate.setTipoSoggettoErogatore(idAccordoServizio.getSoggettoReferente().getTipo());
-			filtroRicercaPorteDelegate.setNomeSoggettoErogatore(idAccordoServizio.getSoggettoReferente().getNome());
-			filtroRicercaPorteDelegate.setTipoServizio(as.getServizio().getTipo());
-			filtroRicercaPorteDelegate.setNomeServizio(as.getServizio().getNome());
+			filtroRicercaPorteDelegate.setTipoSoggettoErogatore(idAccordoServizio.getSoggettoErogatore().getTipo());
+			filtroRicercaPorteDelegate.setNomeSoggettoErogatore(idAccordoServizio.getSoggettoErogatore().getNome());
+			filtroRicercaPorteDelegate.setTipoServizio(as.getTipo());
+			filtroRicercaPorteDelegate.setNomeServizio(as.getNome());
 			try{
 				List<IDPortaDelegata> idsPD = this.archiveEngine.getAllIdPorteDelegate(filtroRicercaPorteDelegate);
 				if(idsPD!=null && idsPD.size()>0){
@@ -774,10 +773,10 @@ public class ExporterArchiveUtils {
 			
 			// porteApplicative "normali"
 			FiltroRicercaPorteApplicative filtroRicercaPorteApplicative = new FiltroRicercaPorteApplicative();
-			filtroRicercaPorteApplicative.setTipoSoggetto(idAccordoServizio.getSoggettoReferente().getTipo());
-			filtroRicercaPorteApplicative.setNomeSoggetto(idAccordoServizio.getSoggettoReferente().getNome());
-			filtroRicercaPorteApplicative.setTipoServizio(as.getServizio().getTipo());
-			filtroRicercaPorteApplicative.setNomeServizio(as.getServizio().getNome());
+			filtroRicercaPorteApplicative.setTipoSoggetto(idAccordoServizio.getSoggettoErogatore().getTipo());
+			filtroRicercaPorteApplicative.setNomeSoggetto(idAccordoServizio.getSoggettoErogatore().getNome());
+			filtroRicercaPorteApplicative.setTipoServizio(as.getTipo());
+			filtroRicercaPorteApplicative.setNomeServizio(as.getNome());
 			try{
 				List<IDPortaApplicativa> idsPA = this.archiveEngine.getAllIdPorteApplicative(filtroRicercaPorteApplicative);
 				if(idsPA!=null && idsPA.size()>0){
@@ -789,10 +788,10 @@ public class ExporterArchiveUtils {
 				
 			// porteApplicative "virtuali"
 			filtroRicercaPorteApplicative = new FiltroRicercaPorteApplicative();
-			filtroRicercaPorteApplicative.setTipoSoggettoVirtuale(idAccordoServizio.getSoggettoReferente().getTipo());
-			filtroRicercaPorteApplicative.setNomeSoggettoVirtuale(idAccordoServizio.getSoggettoReferente().getNome());
-			filtroRicercaPorteApplicative.setTipoServizio(as.getServizio().getTipo());
-			filtroRicercaPorteApplicative.setNomeServizio(as.getServizio().getNome());
+			filtroRicercaPorteApplicative.setTipoSoggettoVirtuale(idAccordoServizio.getSoggettoErogatore().getTipo());
+			filtroRicercaPorteApplicative.setNomeSoggettoVirtuale(idAccordoServizio.getSoggettoErogatore().getNome());
+			filtroRicercaPorteApplicative.setTipoServizio(as.getTipo());
+			filtroRicercaPorteApplicative.setNomeServizio(as.getNome());
 			try{
 				List<IDPortaApplicativa> idsPA = this.archiveEngine.getAllIdPorteApplicative(filtroRicercaPorteApplicative);
 				if(idsPA!=null && idsPA.size()>0){
@@ -806,35 +805,23 @@ public class ExporterArchiveUtils {
 		
 	}
 	
-	private void readAccordoServizioParteSpecifica(Archive archive, IDServizio idServizio, 
-			ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception{
-		this.readAccordoServizioParteSpecifica(archive, idServizio, cascadeConfig, true, provenienza);
-	}
-	private void readAccordoServizioParteSpecifica(Archive archive, IDServizio idServizio, 
-			ArchiveCascadeConfiguration cascadeConfig, boolean cascadeAvanti, ArchiveType provenienza) throws Exception{
-		
-		org.openspcoop2.core.registry.AccordoServizioParteSpecifica as = this.archiveEngine.getAccordoServizioParteSpecifica(idServizio,false);
-		IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as);		
-		this.readAccordoServizioParteSpecifica(archive, idAccordo, cascadeConfig, cascadeAvanti, provenienza);
-		
-	}
 	
-	private void readFruitore(Archive archive, IDAccordo idAccordoServizio, IDSoggetto idFruitore, Fruitore fruitore, 
+	private void readFruitore(Archive archive, IDServizio idAccordoServizio, IDSoggetto idFruitore, Fruitore fruitore, 
 			ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception{
 		this.readFruitore(archive, idAccordoServizio, idFruitore, fruitore, cascadeConfig, true, provenienza);
 	}
-	private void readFruitore(Archive archive, IDAccordo idAccordoServizio, IDSoggetto idFruitore, Fruitore fruitore, 
+	private void readFruitore(Archive archive, IDServizio idAccordoServizio, IDSoggetto idFruitore, Fruitore fruitore, 
 			ArchiveCascadeConfiguration cascadeConfig, boolean cascadeAvanti, ArchiveType provenienza) throws Exception{
 		
 		String tipoSoggetto = null;
 		String nomeSoggetto = null;
-		if(idAccordoServizio.getSoggettoReferente()!=null){
-			tipoSoggetto = idAccordoServizio.getSoggettoReferente().getTipo();
-			nomeSoggetto = idAccordoServizio.getSoggettoReferente().getNome();
+		if(idAccordoServizio.getSoggettoErogatore()!=null){
+			tipoSoggetto = idAccordoServizio.getSoggettoErogatore().getTipo();
+			nomeSoggetto = idAccordoServizio.getSoggettoErogatore().getNome();
 		}
 		String key =  ArchiveFruitore.buildKey(idFruitore.getTipo(),idFruitore.getNome(),
 				tipoSoggetto,nomeSoggetto,
-				idAccordoServizio.getNome(),idAccordoServizio.getVersione());
+				idAccordoServizio.getTipo(),idAccordoServizio.getNome(),idAccordoServizio.getVersione());
 		if(archive.getAccordiFruitori().containsKey(key)){
 			// gia gestito
 		}
@@ -878,7 +865,7 @@ public class ExporterArchiveUtils {
 				}
 					
 			}catch(Exception e){
-				throw new ProtocolException("(Fruitore "+idFruitore+" dell'accordo "+IDAccordoFactory.getInstance().getUriFromIDAccordo(idAccordoServizio)+") "+e.getMessage(),e);
+				throw new ProtocolException("(Fruitore "+idFruitore+" dell'accordo "+IDServizioFactory.getInstance().getUriFromIDServizio(idAccordoServizio)+") "+e.getMessage(),e);
 			}
 		}
 		
@@ -945,11 +932,13 @@ public class ExporterArchiveUtils {
 							pd.getSoggettoErogatore().getNome()!=null && !"".equals(pd.getSoggettoErogatore().getNome()) &&
 							pd.getServizio()!=null && 
 							pd.getServizio().getTipo()!=null && !"".equals(pd.getServizio().getTipo()) &&
-							pd.getServizio().getNome()!=null && !"".equals(pd.getServizio().getNome())
+							pd.getServizio().getNome()!=null && !"".equals(pd.getServizio().getNome()) &&
+							pd.getServizio().getVersione()!=null
 							){
 						
-						IDServizio idServizio = new IDServizio(pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome(),
-								pd.getServizio().getTipo(), pd.getServizio().getNome());
+						IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pd.getServizio().getTipo(), pd.getServizio().getNome(), 
+								pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome(), 
+								pd.getServizio().getVersione()); 
 						this.readAccordoServizioParteSpecifica(archive, idServizio, cascadeConfig, false, ArchiveType.PORTA_DELEGATA); // per evitare loop
 					}
 				}
@@ -1029,21 +1018,24 @@ public class ExporterArchiveUtils {
 					// eventuale servizio riferito
 					if(pa.getServizio()!=null && 
 							pa.getServizio().getTipo()!=null && !"".equals(pa.getServizio().getTipo()) &&
-							pa.getServizio().getNome()!=null && !"".equals(pa.getServizio().getNome())
+							pa.getServizio().getNome()!=null && !"".equals(pa.getServizio().getNome()) &&
+							pa.getServizio().getVersione()!=null
 							){
 						if(pa.getSoggettoVirtuale()!=null && 
 								pa.getSoggettoVirtuale().getTipo()!=null && !"".equals(pa.getSoggettoVirtuale().getTipo()) &&
 								pa.getSoggettoVirtuale().getNome()!=null && !"".equals(pa.getSoggettoVirtuale().getNome()) ){
 							
-							IDServizio idServizio = new IDServizio(pa.getSoggettoVirtuale().getTipo(), pa.getSoggettoVirtuale().getNome(),
-									pa.getServizio().getTipo(), pa.getServizio().getNome());
+							IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
+									pa.getSoggettoVirtuale().getTipo(), pa.getSoggettoVirtuale().getNome(), 
+									pa.getServizio().getVersione());
 							this.readAccordoServizioParteSpecifica(archive, idServizio, cascadeConfig, false, ArchiveType.PORTA_APPLICATIVA); // per evitare loop
 							
 						}
 						else {
 							
-							IDServizio idServizio = new IDServizio(idSoggettoErogatore,
-									pa.getServizio().getTipo(), pa.getServizio().getNome());
+							IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
+									idSoggettoErogatore, 
+									pa.getServizio().getVersione());
 							this.readAccordoServizioParteSpecifica(archive, idServizio, cascadeConfig, false, ArchiveType.PORTA_APPLICATIVA); // per evitare loop
 							
 						}

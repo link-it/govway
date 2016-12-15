@@ -257,43 +257,43 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 		}
 
 		else if(actionName.equals(StatoServiziJMXResource.ABILITA_ADD_FILTRO_ABILITAZIONE_PD)){
-			if(params.length != 9)
+			if(params.length != 10)
 				throw new MBeanException(new Exception("["+StatoServiziJMXResource.ABILITA_ADD_FILTRO_ABILITAZIONE_PD+"] Lunghezza parametri non corretta: "+params.length));
 			return addFiltroAbilitazioneServizioPortaDelegata(getTipoFiltroAbilitazioneServizi(params));
 		}
 		else if(actionName.equals(StatoServiziJMXResource.ABILITA_ADD_FILTRO_DISABILITAZIONE_PD)){
-			if(params.length != 9)
+			if(params.length != 10)
 				throw new MBeanException(new Exception("["+StatoServiziJMXResource.ABILITA_ADD_FILTRO_DISABILITAZIONE_PD+"] Lunghezza parametri non corretta: "+params.length));
 			return addFiltroDisabilitazioneServizioPortaDelegata(getTipoFiltroAbilitazioneServizi(params));
 		}
 		else if(actionName.equals(StatoServiziJMXResource.ABILITA_REMOVE_FILTRO_ABILITAZIONE_PD)){
-			if(params.length != 9)
+			if(params.length != 10)
 				throw new MBeanException(new Exception("["+StatoServiziJMXResource.ABILITA_REMOVE_FILTRO_ABILITAZIONE_PD+"] Lunghezza parametri non corretta: "+params.length));
 			return removeFiltroAbilitazioneServizioPortaDelegata(getTipoFiltroAbilitazioneServizi(params));
 		}
 		else if(actionName.equals(StatoServiziJMXResource.ABILITA_REMOVE_FILTRO_DISABILITAZIONE_PD)){
-			if(params.length != 9)
+			if(params.length != 10)
 				throw new MBeanException(new Exception("["+StatoServiziJMXResource.ABILITA_REMOVE_FILTRO_DISABILITAZIONE_PD+"] Lunghezza parametri non corretta: "+params.length));
 			return removeFiltroDisabilitazioneServizioPortaDelegata(getTipoFiltroAbilitazioneServizi(params));
 		}
 
 		else if(actionName.equals(StatoServiziJMXResource.ABILITA_ADD_FILTRO_ABILITAZIONE_PA)){
-			if(params.length != 9)
+			if(params.length != 10)
 				throw new MBeanException(new Exception("["+StatoServiziJMXResource.ABILITA_ADD_FILTRO_ABILITAZIONE_PA+"] Lunghezza parametri non corretta: "+params.length));
 			return addFiltroAbilitazioneServizioPortaApplicativa(getTipoFiltroAbilitazioneServizi(params));
 		}
 		else if(actionName.equals(StatoServiziJMXResource.ABILITA_ADD_FILTRO_DISABILITAZIONE_PA)){
-			if(params.length != 9)
+			if(params.length != 10)
 				throw new MBeanException(new Exception("["+StatoServiziJMXResource.ABILITA_ADD_FILTRO_DISABILITAZIONE_PA+"] Lunghezza parametri non corretta: "+params.length));
 			return addFiltroDisabilitazioneServizioPortaApplicativa(getTipoFiltroAbilitazioneServizi(params));
 		}
 		else if(actionName.equals(StatoServiziJMXResource.ABILITA_REMOVE_FILTRO_ABILITAZIONE_PA)){
-			if(params.length != 9)
+			if(params.length != 10)
 				throw new MBeanException(new Exception("["+StatoServiziJMXResource.ABILITA_REMOVE_FILTRO_ABILITAZIONE_PA+"] Lunghezza parametri non corretta: "+params.length));
 			return removeFiltroAbilitazioneServizioPortaApplicativa(getTipoFiltroAbilitazioneServizi(params));
 		}
 		else if(actionName.equals(StatoServiziJMXResource.ABILITA_REMOVE_FILTRO_DISABILITAZIONE_PA)){
-			if(params.length != 9)
+			if(params.length != 10)
 				throw new MBeanException(new Exception("["+StatoServiziJMXResource.ABILITA_REMOVE_FILTRO_DISABILITAZIONE_PA+"] Lunghezza parametri non corretta: "+params.length));
 			return removeFiltroDisabilitazioneServizioPortaApplicativa(getTipoFiltroAbilitazioneServizi(params));
 		}
@@ -346,6 +346,11 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 		tmp = (String) params[index];
 		if(tmp!=null && !"".equals(tmp)){
 			tipo.setServizio(tmp);
+		}
+		index++;
+		Integer tmpI = (Integer) params[index];
+		if(tmpI!=null){
+			tipo.setVersioneServizio(tmpI);
 		}
 
 		index++;
@@ -520,6 +525,7 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 
 				new MBeanParameterInfo("tipoServizio",String.class.getName(),"Tipo del servizio"),
 				new MBeanParameterInfo("nomeServizio",String.class.getName(),"Nome del servizio"),
+				new MBeanParameterInfo("versioneServizio",Integer.class.getName(),"Versione del servizio"),
 
 				new MBeanParameterInfo("azione",String.class.getName(),"azione")
 		};

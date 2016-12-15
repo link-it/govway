@@ -139,6 +139,7 @@ public class Integrazione {
 		boolean findDestinatario = false;
 		boolean findTipoServizio = false;
 		boolean findServizio = false;
+		boolean findVersioneServizio = false;
 		boolean findAzione = (azione==null);
 		boolean findID = false;
 		TestSuiteProperties testsuiteProperties = TestSuiteProperties.getInstance();
@@ -191,7 +192,7 @@ public class Integrazione {
 				}
 				findTipoServizio = true;
 			}
-			else if(testsuiteProperties.getServizioTrasporto().equalsIgnoreCase(key)){
+			else if(testsuiteProperties.getNomeServizioTrasporto().equalsIgnoreCase(key)){
 				if(value==null){
 					throw new Exception("Attributo ["+key+"] con valore null");
 				}
@@ -199,6 +200,15 @@ public class Integrazione {
 					throw new Exception("Attributo ["+key+"] con valore ["+value+"] diverso da quello atteso ["+servizio+"]");
 				}
 				findServizio = true;
+			}
+			else if(testsuiteProperties.getVersioneServizioTrasporto().equalsIgnoreCase(key)){
+				if(value==null){
+					throw new Exception("Attributo ["+key+"] con valore null");
+				}
+				if(value.equals("1")==false){
+					throw new Exception("Attributo ["+key+"] con valore ["+value+"] diverso da quello atteso ["+"1"+"]");
+				}
+				findVersioneServizio = true;
 			}
 			else if(testsuiteProperties.getAzioneTrasporto().equalsIgnoreCase(key)){
 				if(value==null){
@@ -235,7 +245,10 @@ public class Integrazione {
 			throw new Exception("HTTP Header "+testsuiteProperties.getTipoServizioTrasporto()+" non trovato");
 		}
 		if(findServizio==false){
-			throw new Exception("HTTP Header "+testsuiteProperties.getServizioTrasporto()+" non trovato");
+			throw new Exception("HTTP Header "+testsuiteProperties.getNomeServizioTrasporto()+" non trovato");
+		}
+		if(findVersioneServizio==false){
+			throw new Exception("HTTP Header "+testsuiteProperties.getVersioneServizioTrasporto()+" non trovato");
 		}
 		if(findAzione==false){
 			throw new Exception("HTTP Header "+testsuiteProperties.getAzioneTrasporto()+" non trovato");
@@ -306,6 +319,7 @@ public class Integrazione {
 		boolean findDestinatario = false;
 		boolean findTipoServizio = false;
 		boolean findServizio = false;
+		boolean findVersioneServizio = false;
 		boolean findAzione = (azione==null);
 		boolean findID = false;
 		boolean findProductVersion = false;
@@ -368,7 +382,7 @@ public class Integrazione {
 							throw new Exception("Attributo ["+attr.getLocalName()+"] con valore ["+v+"] diverso da quello atteso ["+tipoServizio+"]");
 						}
 						findTipoServizio = true;
-					}else if(testsuiteProperties.getServizioSoap().equals(attr.getLocalName())){
+					}else if(testsuiteProperties.getNomeServizioSoap().equals(attr.getLocalName())){
 						String v = elem.getAttributeValue(attr.getLocalName());
 						if(v==null){
 							throw new Exception("Attributo ["+attr.getLocalName()+"] con valore null");
@@ -377,6 +391,15 @@ public class Integrazione {
 							throw new Exception("Attributo ["+attr.getLocalName()+"] con valore ["+v+"] diverso da quello atteso ["+servizio+"]");
 						}
 						findServizio = true;
+					}else if(testsuiteProperties.getVersioneServizioSoap().equals(attr.getLocalName())){
+						String v = elem.getAttributeValue(attr.getLocalName());
+						if(v==null){
+							throw new Exception("Attributo ["+attr.getLocalName()+"] con valore null");
+						}
+						if(v.equals("1")==false){
+							throw new Exception("Attributo ["+attr.getLocalName()+"] con valore ["+v+"] diverso da quello atteso [1]");
+						}
+						findVersioneServizio = true;
 					}else if(testsuiteProperties.getAzioneSoap().equals(attr.getLocalName())){
 						String v = elem.getAttributeValue(attr.getLocalName());
 						if(v==null){
@@ -440,6 +463,9 @@ public class Integrazione {
 		}
 		if(findServizio==false){
 			throw new Exception("Integrazione.servizio non trovata");
+		}
+		if(findVersioneServizio==false){
+			throw new Exception("Integrazione.versioneServizio non trovata");
 		}
 		if(findAzione==false){
 			throw new Exception("Integrazione.azione non trovata");
@@ -2613,7 +2639,7 @@ public class Integrazione {
 			client.setSoapAction("\"TEST\"");
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_INPUT_BASED+"?"+testsuiteProperties.getDestinatarioUrlBased()+"="+
-					this.collaborazioneSPCoopBase.getDestinatario().getNome()+"&"+testsuiteProperties.getServizioUrlBased()+"="+
+					this.collaborazioneSPCoopBase.getDestinatario().getNome()+"&"+testsuiteProperties.getNomeServizioUrlBased()+"="+
 					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO+"&"+testsuiteProperties.getAzioneUrlBased()+"="+
 					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE);
 			client.connectToSoapEngine();
@@ -2706,7 +2732,7 @@ public class Integrazione {
 			client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO_INTEGRAZIONE_INPUT_BASED);
 			client.connectToSoapEngine();
 			client.setProperty(testsuiteProperties.getDestinatarioTrasporto(), this.collaborazioneSPCoopBase.getDestinatario().getNome());
-			client.setProperty(testsuiteProperties.getServizioTrasporto(), CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
+			client.setProperty(testsuiteProperties.getNomeServizioTrasporto(), CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
 			client.setProperty(testsuiteProperties.getAzioneTrasporto(), CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE);
 			client.setMessage(msg);
 			client.setRispostaDaGestire(true);
@@ -2801,7 +2827,7 @@ public class Integrazione {
 			header.addNamespaceDeclaration("SOAP_ENV","http://schemas.xmlsoap.org/soap/envelope/");
 
 			header.setAttribute(testsuiteProperties.getDestinatarioSoap(), this.collaborazioneSPCoopBase.getDestinatario().getNome());
-			header.setAttribute(testsuiteProperties.getServizioSoap(), CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
+			header.setAttribute(testsuiteProperties.getNomeServizioSoap(), CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
 			header.setAttribute(testsuiteProperties.getAzioneSoap(), CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_INTEGRAZIONE);
 			
 			if(msg.getSOAPHeader()==null)
