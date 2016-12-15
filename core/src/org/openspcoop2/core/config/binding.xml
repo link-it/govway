@@ -74,7 +74,7 @@
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
     <value name="tipo" field="tipo" usage="required" style="attribute"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
-    <value name="versione" field="versione" usage="required" style="attribute"/>
+    <value name="versione" field="versione" default="1" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="azione" class="org.openspcoop2.core.config.PortaDelegataAzione">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
@@ -136,7 +136,7 @@
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
     <value name="tipo" field="tipo" usage="required" style="attribute"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
-    <value name="versione" field="versione" usage="required" style="attribute"/>
+    <value name="versione" field="versione" default="1" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="azione" class="org.openspcoop2.core.config.PortaApplicativaAzione">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>

@@ -30,7 +30,7 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
  *     &lt;sequence>
  *         &lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0" maxOccurs="1" default="new Integer("1")" />
  *     &lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -88,8 +88,8 @@ public class PortaDelegataServizio extends org.openspcoop2.utils.beans.BaseBean 
 	
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="unsignedInt")
-  @XmlElement(name="versione",required=false,nillable=false)
-	private Integer versione;
+  @XmlElement(name="versione",required=false,nillable=false,defaultValue="1")
+	private Integer versione = new Integer("1");
 	
 	public void setVersione(Integer versione){
 		this.versione = versione;

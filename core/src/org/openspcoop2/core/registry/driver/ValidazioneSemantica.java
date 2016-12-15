@@ -923,6 +923,8 @@ public class ValidazioneSemantica {
 				String uriServizio = this.idServizioFactory.getUriFromAccordo(serv);
 				printMsg("\tServizio: "+uriServizio);
 			}
+			serv.setTipoSoggettoErogatore(sogg.getTipo());
+			serv.setNomeSoggettoErogatore(sogg.getNome());
 			validaAccordoServizioParteSpecifica(serv, sogg);
 		}
 
@@ -1182,7 +1184,7 @@ public class ValidazioneSemantica {
 		
 		
 		// Il tipo deve essere uno tra quelli definiti in openspcoop2.properties. Ci puoi accedere attraverso il comando: org.openspcoop.pdd.config.OpenSPCoopProperties.getInstance().getTipiServizi()
-		ServiceBinding binding = this.mappingAccordiToServiceBinding.get(asps.getAccordoServizioParteComune());
+		ServiceBinding binding = this.mappingAccordiToServiceBinding.get(this.idAccordoFactory.normalizeUri(asps.getAccordoServizioParteComune()));
 		if(binding==null){
 			this.errori.add("Il servizio "+uriServizio+" implementa un accordo parte comune ["+asps.getAccordoServizioParteComune()+"] non esistente");
 		}
@@ -1749,7 +1751,7 @@ public class ValidazioneSemantica {
 	private AccordoServizioParteComune getAccordoServizioParteComune(String uriAccordo) throws DriverRegistroServiziException{
 		for(int j=0; j<this.registro.sizeAccordoServizioParteComuneList();j++){
 			AccordoServizioParteComune as = this.registro.getAccordoServizioParteComune(j);
-			if (this.idAccordoFactory.getUriFromAccordo(as).equals(uriAccordo)) {
+			if (this.idAccordoFactory.getUriFromAccordo(as).equals(this.idAccordoFactory.normalizeUri(uriAccordo))) {
 				return as;
 			}
 		}

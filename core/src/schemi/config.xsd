@@ -89,7 +89,7 @@
 	<xsd:complexType name="porta-delegata-servizio">
 		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
-		<xsd:attribute name="versione" type="xsd:unsignedInt" use="required"/>
+		<xsd:attribute name="versione" type="xsd:unsignedInt" use="optional" default="1"/>
 	</xsd:complexType>
 	<!-- PortaDelegata.Azione -->
 	<xsd:complexType name="porta-delegata-azione">
@@ -146,7 +146,7 @@
 	<xsd:complexType name="porta-applicativa-servizio">
 		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
-		<xsd:attribute name="versione" type="xsd:unsignedInt" use="required"/>
+		<xsd:attribute name="versione" type="xsd:unsignedInt" use="optional" default="1"/>
 	</xsd:complexType>
 	<!-- PortaApplicativa.Azione -->
 	<xsd:complexType name="porta-applicativa-azione">

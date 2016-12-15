@@ -76,12 +76,12 @@
 
 		<!-- **** Configurazione REST **** -->
 
-                <accordo-servizio-parte-specifica nome="API" versione="1" accordo-servizio-parte-comune="API/MinisteroReferente:EsempioREST:1" port-type="API">
-                        <servizio tipo="REST" nome="API">
+                <accordo-servizio-parte-specifica tipo="REST" nome="API" versione="1" accordo-servizio-parte-comune="API/MinisteroReferente:EsempioREST:1" port-type="API">
+                        <configurazione-servizio>
                                 <connettore tipo="http" nome="CNT_API/MinisteroErogatore_REST/API">
                                         <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/api?traceIsArrived=mittente"/>
                                 </connettore>
-                        </servizio>
+                        </configurazione-servizio>
                         <fruitore tipo="API" nome="Anonimo" />
                         <fruitore tipo="API" nome="applicativoComunePisa"/>
                 </accordo-servizio-parte-specifica>
@@ -89,22 +89,22 @@
 
 		<!-- **** Configurazione SOAP **** -->
 
-		<accordo-servizio-parte-specifica nome="Oneway" versione="1" accordo-servizio-parte-comune="API/MinisteroReferente:EsempioASParteComune:1" port-type="Oneway">
-			<servizio tipo="SOAP" nome="Oneway">
+		<accordo-servizio-parte-specifica tipo="SOAP" nome="Oneway" versione="1" accordo-servizio-parte-comune="API/MinisteroReferente:EsempioASParteComune:1" port-type="Oneway">
+			<configurazione-servizio>
 			        <connettore tipo="http" nome="CNT_API/MinisteroErogatore_SOAP/Oneway">
 			            <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?traceIsArrived=mittente"/>
 			        </connettore>
-			</servizio>
+			</configurazione-servizio>
 			<fruitore tipo="API" nome="Anonimo" />
 			<fruitore tipo="API" nome="applicativoComunePisa"/>
 		</accordo-servizio-parte-specifica>
 
-                <accordo-servizio-parte-specifica nome="Sincrono" versione="1" accordo-servizio-parte-comune="API/MinisteroReferente:EsempioASParteComune:1" port-type="Sincrono">
-                        <servizio tipo="SOAP" nome="Sincrono">
+                <accordo-servizio-parte-specifica tipo="SOAP" nome="Sincrono" versione="1" accordo-servizio-parte-comune="API/MinisteroReferente:EsempioASParteComune:1" port-type="Sincrono">
+                        <configurazione-servizio>
                                 <connettore tipo="http" nome="CNT_API/MinisteroErogatore_SOAP/Sincrono">
                                     <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?traceIsArrived=mittente"/>
                                 </connettore>
-                        </servizio>
+                        </configurazione-servizio>
                         <fruitore tipo="API" nome="Anonimo" />
                         <fruitore tipo="API" nome="applicativoComunePisa"/>
 		</accordo-servizio-parte-specifica>
@@ -119,12 +119,12 @@
 
 		<!-- **** Configurazione SOAP **** -->
 
-                <accordo-servizio-parte-specifica nome="Oneway" versione="1" accordo-servizio-parte-comune="API/MinisteroReferente:EsempioASParteComune:1" port-type="Oneway">
-                        <servizio tipo="SOAP" nome="Oneway">
+                <accordo-servizio-parte-specifica tipo="SOAP" nome="Oneway" versione="1" accordo-servizio-parte-comune="API/MinisteroReferente:EsempioASParteComune:1" port-type="Oneway">
+                        <configurazione-servizio>
                                 <connettore tipo="http" nome="CNT_API/MinisteroErogatore_SOAP/Oneway">
                                     <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?traceIsArrived=mittente"/>
                                 </connettore>
-                        </servizio>
+                        </configurazione-servizio>
                         <fruitore tipo="API" nome="MinisteroFruitore" />
 			<fruitore tipo="API" nome="ClientSoapFault11">
 			    <connettore tipo="http" nome="CNT_SF_API/ClientSoapFault11_SOAP/MinisteroErogatoreEsterno_SOAP/Oneway">
@@ -148,12 +148,12 @@
 			</fruitore>
                 </accordo-servizio-parte-specifica>
 
-                <accordo-servizio-parte-specifica nome="Sincrono" versione="1" accordo-servizio-parte-comune="API/MinisteroReferente:EsempioASParteComune:1" port-type="Sincrono">
-                        <servizio tipo="SOAP" nome="Sincrono">
+                <accordo-servizio-parte-specifica tipo="SOAP" nome="Sincrono" versione="1" accordo-servizio-parte-comune="API/MinisteroReferente:EsempioASParteComune:1" port-type="Sincrono">
+                        <configurazione-servizio>
                                 <connettore tipo="http" nome="CNT_API/MinisteroErogatore_SOAP/Sincrono">
                                     <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?traceIsArrived=mittente"/>
                                 </connettore>
-                        </servizio>
+                        </configurazione-servizio>
                         <fruitore tipo="API" nome="MinisteroFruitore" />
                         <fruitore tipo="API" nome="ClientSoapFault11">
                             <connettore tipo="http" nome="CNT_SF_API/ClientSoapFault11_SOAP/MinisteroErogatoreEsterno_SOAP/Sincrono">

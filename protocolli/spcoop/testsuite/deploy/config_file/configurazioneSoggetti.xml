@@ -2590,59 +2590,68 @@
         
         
         <!-- LocalForward, casi OK -->
-        <porta-delegata gestione-manifest="abilitato" nome="HelloWorld_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" local-forward="abilitato">
+        <porta-delegata gestione-manifest="abilitato" nome="HelloWorld_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
+	    <local-forward stato="abilitato"/>
         </porta-delegata>
         
-        <porta-delegata gestione-manifest="abilitato" nome="HelloWorld_Stateless_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" stateless="abilitato" local-forward="abilitato">
+        <porta-delegata gestione-manifest="abilitato" nome="HelloWorld_Stateless_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" stateless="abilitato">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="stateless" />
+	    <local-forward stato="abilitato"/>
         </porta-delegata>
         
-        <porta-delegata gestione-manifest="abilitato" nome="HelloWorld_Stateless2_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" stateless="abilitato" local-forward="abilitato">
+        <porta-delegata gestione-manifest="abilitato" nome="HelloWorld_Stateless2_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" stateless="abilitato">
             <!-- La PA e' stateful, ma viene cmq letta la modalita' stateless della PD -->
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
+	    <local-forward stato="abilitato"/>
         </porta-delegata>
         
-        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincrona_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" local-forward="abilitato">
+        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincrona_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+	    <local-forward stato="abilitato"/>
         </porta-delegata>
         
-        <porta-delegata gestione-manifest="abilitato" nome="HelloWorldIntegrationManager_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" local-forward="abilitato">
+        <porta-delegata gestione-manifest="abilitato" nome="HelloWorldIntegrationManager_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="GetMessage" />
+	    <local-forward stato="abilitato"/>
         </porta-delegata>
         
         <!-- LocalForward, casi errati -->
         <porta-delegata gestione-manifest="abilitato" nome="CooperazioneAsincronaAsimmetrica_richiestaAsincrona_LocalForward" autenticazione="none" autorizzazione="none"
             ricevuta-asincrona-asimmetrica="disabilitato"
-            integrazione="trasporto,urlBased,soap"  local-forward="abilitato">
+            integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="richiestaAsincrona" />
+	    <local-forward stato="abilitato"/>
         </porta-delegata>
         
-        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincrona_Stateful_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap"  stateless="disabilitato" local-forward="abilitato">
+        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincrona_Stateful_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap"  stateless="disabilitato">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="stateful" />
+	    <local-forward stato="abilitato"/>
         </porta-delegata>
         
-        <porta-delegata gestione-manifest="abilitato" nome="SoggettoLocaleNonEsistente_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" local-forward="abilitato">
+        <porta-delegata gestione-manifest="abilitato" nome="SoggettoLocaleNonEsistente_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="SoggettoConnettoreErrato" />
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
+	    <local-forward stato="abilitato"/>
         </porta-delegata>
         
         
         <!-- LocalForward, casi WSSEncrypt -->
-        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincrona_WSSEncrypt_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" local-forward="abilitato">
+        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincrona_WSSEncrypt_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+	    <local-forward stato="abilitato"/>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt" />
@@ -2656,10 +2665,11 @@
             </message-security>
         </porta-delegata>
         
-        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincrona_WSSEncryptDecrypt_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" local-forward="abilitato">
+        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincrona_WSSEncryptDecrypt_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptLocalForwardSoloRichiesta" />
+	    <local-forward stato="abilitato"/>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt" />
@@ -2673,16 +2683,18 @@
             </message-security> 
         </porta-delegata>
         
-        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincrona_WSSEncryptDecryptSenzaEncrypt_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" local-forward="abilitato">
+        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincrona_WSSEncryptDecryptSenzaEncrypt_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncrypt" />
+	    <local-forward stato="abilitato"/>
         </porta-delegata>
         
-        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincrona_WSSEncryptResponse_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" local-forward="abilitato">
+        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincrona_WSSEncryptResponse_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncrypt" />
+	    <local-forward stato="abilitato"/>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt" />
@@ -2697,10 +2709,11 @@
             </message-security>
         </porta-delegata>
         
-        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincrona_WSSEncryptResponseDecrypt_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" local-forward="abilitato">
+        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincrona_WSSEncryptResponseDecrypt_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncrypt" />
+	    <local-forward stato="abilitato"/>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Encrypt" />
@@ -2724,9 +2737,10 @@
         
         
         <!-- LocalForward, casi WSSSignature -->
-        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincrona_WSSSignature_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" local-forward="abilitato">
+        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincrona_WSSSignature_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+	    <local-forward stato="abilitato"/>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature" />
@@ -2742,10 +2756,11 @@
             </message-security>
         </porta-delegata>
         
-        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincrona_WSSSignatureVerifica" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" local-forward="abilitato">
+        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincrona_WSSSignatureVerifica" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureLocalForwardSolaRichiesta" />
+	    <local-forward stato="abilitato"/>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature" />
@@ -2761,16 +2776,18 @@
             </message-security> 
         </porta-delegata>
         
-        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincrona_WSSSignatureVerificaSenzaFirma_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" local-forward="abilitato">
+        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincrona_WSSSignatureVerificaSenzaFirma_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureLocalForward" />
+	    <local-forward stato="abilitato"/>
         </porta-delegata>
         
-        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincrona_WSSSignatureResponse_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" local-forward="abilitato">
+        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincrona_WSSSignatureResponse_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureLocalForward" />
+	    <local-forward stato="abilitato"/>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature" />
@@ -2787,10 +2804,11 @@
             </message-security>
         </porta-delegata>
         
-        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincrona_WSSSignatureResponseVerificata_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" local-forward="abilitato">
+        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincrona_WSSSignatureResponseVerificata_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureLocalForward" />
+	    <local-forward stato="abilitato"/>
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature" />
@@ -2815,27 +2833,31 @@
         </porta-delegata>
         
         <!-- LocalForward casi errati -->
-        <porta-delegata gestione-manifest="abilitato" nome="ConnettoreSAErratoOneway_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" local-forward="abilitato">
+        <porta-delegata gestione-manifest="abilitato" nome="ConnettoreSAErratoOneway_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="testConnettoreErratoApplicativo" />
+	    <local-forward stato="abilitato"/>
         </porta-delegata>
         <porta-delegata gestione-manifest="abilitato" nome="ConnettoreSAErratoOnewayStateless_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap"
-            stateless="abilitato" local-forward="abilitato">
+            stateless="abilitato">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="testConnettoreErratoApplicativoStateless" />
+	    <local-forward stato="abilitato"/>
         </porta-delegata>
-        <porta-delegata gestione-manifest="abilitato" nome="testSOAPFaultApplicativoOneway_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" local-forward="abilitato">
+        <porta-delegata gestione-manifest="abilitato" nome="testSOAPFaultApplicativoOneway_LocalForward" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="testSoapFaultApplicativo" />
+	    <local-forward stato="abilitato"/>
         </porta-delegata>
         <porta-delegata gestione-manifest="abilitato" nome="testSOAPFaultApplicativoOnewayStateless_LocalForward" autenticazione="none" autorizzazione="none"
-            integrazione="trasporto,urlBased,soap" stateless="abilitato" local-forward="abilitato">
+            integrazione="trasporto,urlBased,soap" stateless="abilitato">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="testSoapFaultApplicativoStateless" />
+	    <local-forward stato="abilitato"/>
         </porta-delegata>
         
         
@@ -4563,7 +4585,7 @@
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="WSS" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
-            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <proprieta-integrazione-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
                     <parameter nome="authorizationClass"
@@ -4585,7 +4607,7 @@
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="WSSNonAutorizzato" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
-            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <proprieta-integrazione-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
                     <parameter nome="authorizationClass"
@@ -4607,7 +4629,7 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSTimestamp" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
-            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <proprieta-integrazione-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Timestamp" />
@@ -4889,7 +4911,7 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignature" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
-            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <proprieta-integrazione-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature" />
@@ -4917,7 +4939,7 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureP12" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
-            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <proprieta-integrazione-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature" />
@@ -4945,7 +4967,7 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureAttachments" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
-            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <proprieta-integrazione-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature" />
@@ -4974,7 +4996,7 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureAttachmentsContent" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
-            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <proprieta-integrazione-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature" />
@@ -5003,7 +5025,7 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureAttachmentsElement" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
-            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <proprieta-integrazione-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature" />
@@ -5032,7 +5054,7 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureAttachmentsContentOp2Format" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
-            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <proprieta-integrazione-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature" />
@@ -5061,7 +5083,7 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureAttachmentsElementOp2Format" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
-            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <proprieta-integrazione-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature" />
@@ -5090,7 +5112,7 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureAttachmentsOp2FormatOneOnly" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
-            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <proprieta-integrazione-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature" />
@@ -5119,7 +5141,7 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureP12Attachments" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
-            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <proprieta-integrazione-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature" />
@@ -5148,7 +5170,7 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureLocalForwardSolaRichiesta" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
-            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <proprieta-integrazione-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature" />
@@ -5165,7 +5187,7 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureLocalForward" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
-            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <proprieta-integrazione-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature" />
@@ -5329,7 +5351,7 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSS" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
-            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <proprieta-integrazione-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
                     <parameter nome="authorizationClass"
@@ -5366,7 +5388,7 @@
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="AffidabileConFiltroDuplicatiWSS" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
-            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <proprieta-integrazione-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
                     <parameter nome="authorizationClass"
@@ -5507,7 +5529,7 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureError" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite" />
-            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <proprieta-integrazione-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
                     <parameter nome="action" valore="Signature" />
@@ -5912,7 +5934,7 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSAnnidamento" />
             <servizio-applicativo nome="OpenSPCoop2TestSuite_SignatureAndEncrypt_MustUnderstand1_ActorClient" />
-            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <proprieta-integrazione-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
             <message-security>
                 <request-flow>
                     <parameter nome="authorizationClass"
@@ -6359,27 +6381,27 @@
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="PropagazioneInfoEGovOnQueue" />
             <servizio-applicativo nome="PubbTestQueueAsText" />
-            <proprieta-protocollo nome="tipoMittQUEUE" valore="tipoMittente" />
-            <proprieta-protocollo nome="mittQUEUE" valore="mittente" />
-            <proprieta-protocollo nome="tipoDestinatarioQUEUE" valore="tipoDestinatario" />
-            <proprieta-protocollo nome="destinatarioQUEUE" valore="destinatario" />
-            <proprieta-protocollo nome="tipoServizioQUEUE" valore="tipoServizio" />
-            <proprieta-protocollo nome="servizioQUEUE" valore="servizio" />
-            <proprieta-protocollo nome="azioneQUEUE" valore="azione" />
-            <proprieta-protocollo nome="idQUEUE" valore="identificativo" />
+            <proprieta-integrazione-protocollo nome="tipoMittQUEUE" valore="tipoMittente" />
+            <proprieta-integrazione-protocollo nome="mittQUEUE" valore="mittente" />
+            <proprieta-integrazione-protocollo nome="tipoDestinatarioQUEUE" valore="tipoDestinatario" />
+            <proprieta-integrazione-protocollo nome="destinatarioQUEUE" valore="destinatario" />
+            <proprieta-integrazione-protocollo nome="tipoServizioQUEUE" valore="tipoServizio" />
+            <proprieta-integrazione-protocollo nome="servizioQUEUE" valore="servizio" />
+            <proprieta-integrazione-protocollo nome="azioneQUEUE" valore="azione" />
+            <proprieta-integrazione-protocollo nome="idQUEUE" valore="identificativo" />
         </porta-applicativa>
         <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioPropagazioneEGov_topic">
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <azione nome="PropagazioneInfoEGovOnTopic" />
             <servizio-applicativo nome="PubbTestTopicAsText" />
-            <proprieta-protocollo nome="tipoMittTOPIC" valore="tipoMittente" />
-            <proprieta-protocollo nome="mittTOPIC" valore="mittente" />
-            <proprieta-protocollo nome="tipoDestinatarioTOPIC" valore="tipoDestinatario" />
-            <proprieta-protocollo nome="destinatarioTOPIC" valore="destinatario" />
-            <proprieta-protocollo nome="tipoServizioTOPIC" valore="tipoServizio" />
-            <proprieta-protocollo nome="servizioTOPIC" valore="servizio" />
-            <proprieta-protocollo nome="azioneTOPIC" valore="azione" />
-            <proprieta-protocollo nome="idTOPIC" valore="identificativo" />
+            <proprieta-integrazione-protocollo nome="tipoMittTOPIC" valore="tipoMittente" />
+            <proprieta-integrazione-protocollo nome="mittTOPIC" valore="mittente" />
+            <proprieta-integrazione-protocollo nome="tipoDestinatarioTOPIC" valore="tipoDestinatario" />
+            <proprieta-integrazione-protocollo nome="destinatarioTOPIC" valore="destinatario" />
+            <proprieta-integrazione-protocollo nome="tipoServizioTOPIC" valore="tipoServizio" />
+            <proprieta-integrazione-protocollo nome="servizioTOPIC" valore="servizio" />
+            <proprieta-integrazione-protocollo nome="azioneTOPIC" valore="azione" />
+            <proprieta-integrazione-protocollo nome="idTOPIC" valore="identificativo" />
         </porta-applicativa>
         
         <!-- JMS sbustato -->
@@ -6408,7 +6430,7 @@
             <azione nome="GetMessage" />
             <servizio-applicativo nome="silGop1" />
             <servizio-applicativo nome="silGop3" />
-            <proprieta-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
+            <proprieta-integrazione-protocollo nome="DestinatarioSPCoop" valore="destinatario" />
         </porta-applicativa>
         
         <!-- Utilizzo del servizio di MessageBox offerto dall'Integration Manager -->

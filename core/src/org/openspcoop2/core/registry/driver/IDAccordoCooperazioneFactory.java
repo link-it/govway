@@ -82,6 +82,13 @@ public class IDAccordoCooperazioneFactory {
 		return idAccordo;
 	}
 	
+	public String normalizeUri(String uri) throws DriverRegistroServiziException{
+		// La uri può non contenere la versione, che invece nella 3.0 è obbligatoria.
+		// Facendo la doppia conversione, viene aggiunta la versione di default
+		IDAccordoCooperazione idAccordo = this.getIDAccordoFromUri(uri);
+		return this.getUriFromIDAccordo(idAccordo);
+	}
+	
 	public String getUriFromIDAccordo(IDAccordoCooperazione idAccordo) throws DriverRegistroServiziException{
 		
 		return this.idAccordoFactory.getUriFromIDAccordo(build(idAccordo));

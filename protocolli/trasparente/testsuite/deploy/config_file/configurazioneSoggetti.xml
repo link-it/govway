@@ -17,10 +17,11 @@
                          <azione identificazione="static" nome="invoke"/>
                 </porta-delegata>
 
-                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/RESTAPI_viaLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt" local-forward="abilitato">
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/RESTAPI_viaLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt">
                          <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
                          <servizio tipo="REST" nome="API"/>
                          <azione identificazione="static" nome="invoke"/>
+			 <local-forward stato="abilitato" porta-applicativa="APIMinisteroErogatore/RESTAPI"/>
                 </porta-delegata>
 
 
@@ -55,16 +56,18 @@
 		    <servizio-applicativo nome="EsempioFruitoreTrasparente"/>
 		</porta-delegata>
 
-                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPOnewayStatefulLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" local-forward="abilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPOnewayStatefulLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
                     <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
                     <servizio tipo="SOAP" nome="Oneway"/>
                     <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatore/SOAPOnewayStatefulLocalForward/([^/|^?]*).*"/>
+		    <local-forward stato="abilitato"/>
                 </porta-delegata>
 
-		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPOnewayStatelessLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" local-forward="abilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPOnewayStatelessLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
 		    <servizio tipo="SOAP" nome="Oneway"/>
 		    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatore/SOAPOnewayStatelessLocalForward/([^/|^?]*).*"/>
+		    <local-forward stato="abilitato"/>
 		</porta-delegata>
 
 	
@@ -96,16 +99,18 @@
 		    <servizio-applicativo nome="EsempioFruitoreTrasparente"/>
 		</porta-delegata>
 
-                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatefulLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" local-forward="abilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatefulLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
                     <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
                     <servizio tipo="SOAP" nome="Sincrono"/>
                     <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatefulLocalForward/([^/|^?]*).*"/>
+		    <local-forward stato="abilitato"/>
                 </porta-delegata>
 
-		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatelessLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" local-forward="abilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatelessLocalForward" autenticazione="none" autorizzazione="none" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <soggetto-erogatore tipo="API" nome="MinisteroErogatore"/>
 		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatore/SOAPSincronoStatelessLocalForward/([^/|^?]*).*"/>
+		    <local-forward stato="abilitato"/>
 		</porta-delegata>
 
 
