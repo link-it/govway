@@ -310,17 +310,6 @@ public class TestSuiteProperties implements UnitsTestSuiteProperties {
 		}
 	}
 	
-	
-	public String getDOCFileName(){
-		try{
-			return this.reader.getProperty("org.openspcoop2.testsuite.files.doc").trim();
-		}catch(Exception e){
-			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.files.doc':"+e.getMessage();
-			TestSuiteProperties.log.error(msgErrore);
-			return null;
-		}
-	}
-	
 	public String getPDFFileName(){
 		try{
 			return this.reader.getProperty("org.openspcoop2.testsuite.files.pdf").trim();
@@ -341,6 +330,16 @@ public class TestSuiteProperties implements UnitsTestSuiteProperties {
 		}
 	}
 	
+	public String getDOCFileName(){
+		try{
+			return this.reader.getProperty("org.openspcoop2.testsuite.files.doc").trim();
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.files.doc':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return null;
+		}
+	}
+	
 	public String getXMLFileName(){
 		try{
 			return this.reader.getProperty("org.openspcoop2.testsuite.files.xml").trim();
@@ -351,11 +350,31 @@ public class TestSuiteProperties implements UnitsTestSuiteProperties {
 		}
 	}
 	
+	public String getXMLFileNameRispostaKo(){
+		try{
+			return this.reader.getProperty("org.openspcoop2.testsuite.files.xml.rispostaKO").trim();
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.files.xml.rispostaKO':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return null;
+		}
+	}
+	
 	public String getJSONFileName(){
 		try{
 			return this.reader.getProperty("org.openspcoop2.testsuite.files.json").trim();
 		}catch(Exception e){
 			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.files.json':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return null;
+		}
+	}
+	
+	public String getJSONFileNameRispostaKo(){
+		try{
+			return this.reader.getProperty("org.openspcoop2.testsuite.files.json.rispostaKO").trim();
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.files.json.rispostaKO':"+e.getMessage();
 			TestSuiteProperties.log.error(msgErrore);
 			return null;
 		}
