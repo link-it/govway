@@ -148,57 +148,200 @@ public class XMLDiffClientTest {
 				
 		System.out.println("========= AS DOCUMENT / DOCUMENT ==========");
 		
-		System.out.println(xmlDiffEngine.diff(xmlDiffEngine.getXMLUtils().newDocument(originalFile), xmlDiffEngine.getXMLUtils().newDocument(compareFile)));
+		boolean result = xmlDiffEngine.diff(xmlDiffEngine.getXMLUtils().newDocument(originalFile), xmlDiffEngine.getXMLUtils().newDocument(compareFile));
+		if(result){
+			System.out.println("OK");
+		}
+		else{
+			if(XMLDiffImplType.XML_UNIT.equals(AbstractXMLDiff.getImplType())){
+				System.out.println("ERRORE Differenze non attese: "+xmlDiffEngine.getDifferenceDetails());
+			}
+			else{
+				System.out.println("ERRORE Differenze non attese");
+			}
+		}
 		
 		System.out.println("======== AS ELEMENT / ELEMENT ===========");
 		
-		System.out.println(xmlDiffEngine.diff(xmlDiffEngine.getXMLUtils().newElement(originalFile), xmlDiffEngine.getXMLUtils().newElement(compareFile)));
+		result = xmlDiffEngine.diff(xmlDiffEngine.getXMLUtils().newElement(originalFile), xmlDiffEngine.getXMLUtils().newElement(compareFile));
+		if(result){
+			System.out.println("OK");
+		}
+		else{
+			if(XMLDiffImplType.XML_UNIT.equals(AbstractXMLDiff.getImplType())){
+				System.out.println("ERRORE Differenze non attese: "+xmlDiffEngine.getDifferenceDetails());
+			}
+			else{
+				System.out.println("ERRORE Differenze non attese");
+			}
+		}
 		
 		System.out.println("======== AS NODE / NODE ===========");
 		
-		System.out.println(xmlDiffEngine.diff(xmlDiffEngine.getXMLUtils().newDocument(originalFile).getDocumentElement().getLastChild(), 
-				xmlDiffEngine.getXMLUtils().newDocument(compareFile).getDocumentElement().getLastChild()));
+		result = xmlDiffEngine.diff(xmlDiffEngine.getXMLUtils().newDocument(originalFile).getDocumentElement().getLastChild(), 
+				xmlDiffEngine.getXMLUtils().newDocument(compareFile).getDocumentElement().getLastChild());
+		if(result){
+			System.out.println("OK");
+		}
+		else{
+			if(XMLDiffImplType.XML_UNIT.equals(AbstractXMLDiff.getImplType())){
+				System.out.println("ERRORE Differenze non attese: "+xmlDiffEngine.getDifferenceDetails());
+			}
+			else{
+				System.out.println("ERRORE Differenze non attese");
+			}
+		}
 		
 		System.out.println("======== AS FILE / FILE ===========");
 		
-		System.out.println(xmlDiffEngine.diff(originalFile, compareFile));
+		result = xmlDiffEngine.diff(originalFile, compareFile);
+		if(result){
+			System.out.println("OK");
+		}
+		else{
+			if(XMLDiffImplType.XML_UNIT.equals(AbstractXMLDiff.getImplType())){
+				System.out.println("ERRORE Differenze non attese: "+xmlDiffEngine.getDifferenceDetails());
+			}
+			else{
+				System.out.println("ERRORE Differenze non attese");
+			}
+		}
 		
 		System.out.println("======== AS INPUT STREAM  / INPUT STREAM ===========");
 		
-		System.out.println(xmlDiffEngine.diff(new FileInputStream(originalFile), new FileInputStream(compareFile)));
+		result = xmlDiffEngine.diff(new FileInputStream(originalFile), new FileInputStream(compareFile));
+		if(result){
+			System.out.println("OK");
+		}
+		else{
+			if(XMLDiffImplType.XML_UNIT.equals(AbstractXMLDiff.getImplType())){
+				System.out.println("ERRORE Differenze non attese: "+xmlDiffEngine.getDifferenceDetails());
+			}
+			else{
+				System.out.println("ERRORE Differenze non attese");
+			}
+		}
 		
 		System.out.println("======== AS FILE / INPUT STREAM ===========");
 		
-		System.out.println(xmlDiffEngine.diff(originalFile, new FileInputStream(compareFile)));	
+		result = xmlDiffEngine.diff(originalFile, new FileInputStream(compareFile));	
+		if(result){
+			System.out.println("OK");
+		}
+		else{
+			if(XMLDiffImplType.XML_UNIT.equals(AbstractXMLDiff.getImplType())){
+				System.out.println("ERRORE Differenze non attese: "+xmlDiffEngine.getDifferenceDetails());
+			}
+			else{
+				System.out.println("ERRORE Differenze non attese");
+			}
+		}
 		
 		System.out.println("======== AS INPUT STREAM / FILE ===========");
 		
-		System.out.println(xmlDiffEngine.diff(new FileInputStream(originalFile), compareFile));
+		result = xmlDiffEngine.diff(new FileInputStream(originalFile), compareFile);
+		if(result){
+			System.out.println("OK");
+		}
+		else{
+			if(XMLDiffImplType.XML_UNIT.equals(AbstractXMLDiff.getImplType())){
+				System.out.println("ERRORE Differenze non attese: "+xmlDiffEngine.getDifferenceDetails());
+			}
+			else{
+				System.out.println("ERRORE Differenze non attese");
+			}
+		}
 		
 		System.out.println("======== AS READER / READER ===========");
 		
-		System.out.println(xmlDiffEngine.diff(new FileReader(originalFile), new FileReader(compareFile) ));
+		result = xmlDiffEngine.diff(new FileReader(originalFile), new FileReader(compareFile) );
+		if(result){
+			System.out.println("OK");
+		}
+		else{
+			if(XMLDiffImplType.XML_UNIT.equals(AbstractXMLDiff.getImplType())){
+				System.out.println("ERRORE Differenze non attese: "+xmlDiffEngine.getDifferenceDetails());
+			}
+			else{
+				System.out.println("ERRORE Differenze non attese");
+			}
+		}
 		
 		System.out.println("======== AS STRING / STRING ===========");
 		
-		System.out.println(xmlDiffEngine.diff(FileSystemUtilities.readFile(originalFile), FileSystemUtilities.readFile(compareFile) ));
+		result = xmlDiffEngine.diff(FileSystemUtilities.readFile(originalFile), FileSystemUtilities.readFile(compareFile) );
+		if(result){
+			System.out.println("OK");
+		}
+		else{
+			if(XMLDiffImplType.XML_UNIT.equals(AbstractXMLDiff.getImplType())){
+				System.out.println("ERRORE Differenze non attese: "+xmlDiffEngine.getDifferenceDetails());
+			}
+			else{
+				System.out.println("ERRORE Differenze non attese");
+			}
+		}
 		
 		System.out.println("======== AS READER / STRING ===========");
 		
-		System.out.println(xmlDiffEngine.diff(new FileReader(originalFile), FileSystemUtilities.readFile(compareFile) ));
+		result = xmlDiffEngine.diff(new FileReader(originalFile), FileSystemUtilities.readFile(compareFile) );
+		if(result){
+			System.out.println("OK");
+		}
+		else{
+			if(XMLDiffImplType.XML_UNIT.equals(AbstractXMLDiff.getImplType())){
+				System.out.println("ERRORE Differenze non attese: "+xmlDiffEngine.getDifferenceDetails());
+			}
+			else{
+				System.out.println("ERRORE Differenze non attese");
+			}
+		}
 		
 		System.out.println("======== AS STRING / READER ===========");
 		
-		System.out.println(xmlDiffEngine.diff(FileSystemUtilities.readFile(originalFile), new FileReader(compareFile) ));
+		result = xmlDiffEngine.diff(FileSystemUtilities.readFile(originalFile), new FileReader(compareFile) );
+		if(result){
+			System.out.println("OK");
+		}
+		else{
+			if(XMLDiffImplType.XML_UNIT.equals(AbstractXMLDiff.getImplType())){
+				System.out.println("ERRORE Differenze non attese: "+xmlDiffEngine.getDifferenceDetails());
+			}
+			else{
+				System.out.println("ERRORE Differenze non attese");
+			}
+		}
 		
 		System.out.println("======== AS STRING / DOCUMENT ===========");
 		
-		System.out.println(xmlDiffEngine.diff(FileSystemUtilities.readFile(originalFile), xmlDiffEngine.getXMLUtils().newDocument(compareFile)) );
+		result = xmlDiffEngine.diff(FileSystemUtilities.readFile(originalFile), xmlDiffEngine.getXMLUtils().newDocument(compareFile));
+		if(result){
+			System.out.println("OK");
+		}
+		else{
+			if(XMLDiffImplType.XML_UNIT.equals(AbstractXMLDiff.getImplType())){
+				System.out.println("ERRORE Differenze non attese: "+xmlDiffEngine.getDifferenceDetails());
+			}
+			else{
+				System.out.println("ERRORE Differenze non attese");
+			}
+		}
 		
 		System.out.println("======== AS INPUT STREAM / NODE ===========");
 		
-		System.out.println(xmlDiffEngine.diff(new FileInputStream(originalFile),
-				xmlDiffEngine.getXMLUtils().newDocument(compareFile).getDocumentElement().getLastChild()));
+		result = xmlDiffEngine.diff(new FileInputStream(originalFile),
+				xmlDiffEngine.getXMLUtils().newDocument(compareFile).getDocumentElement().getLastChild());
+		if(result){
+			System.out.println("OK");
+		}
+		else{
+			if(XMLDiffImplType.XML_UNIT.equals(AbstractXMLDiff.getImplType())){
+				System.out.println("ERRORE Differenze non attese: "+xmlDiffEngine.getDifferenceDetails());
+			}
+			else{
+				System.out.println("ERRORE Differenze non attese");
+			}
+		}
 		
 		
 		
@@ -209,8 +352,20 @@ public class XMLDiffClientTest {
 		File compareErrato = File.createTempFile("compareErrato", ".xml");
 		FileSystemUtilities.writeFile(compareErrato, (XML_COMPARE.replace(" a=", " b=\"3\" a=")).getBytes());
 		
-		System.out.println(xmlDiffEngine.diff(originalFile, compareErrato));
-		System.out.println(xmlDiffEngine.getDifferenceDetails());
+		result = xmlDiffEngine.diff(originalFile, compareErrato);
+		
+		if(result==false){
+			if(XMLDiffImplType.XML_UNIT.equals(AbstractXMLDiff.getImplType())){
+				System.out.println("Trovate differenze come previsto dal test: ");
+				System.out.println(xmlDiffEngine.getDifferenceDetails());
+			}
+			else{
+				System.out.println("Trovate differenze come previsto dal test");
+			}
+		}
+		else{
+			System.out.println("ERRORE: era previsto di trovare differenze, ma non ne sono state trovate");
+		}
 		
 	}
 	
