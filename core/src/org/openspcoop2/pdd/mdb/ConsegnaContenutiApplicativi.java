@@ -2245,7 +2245,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						else{
 							msgDiag.mediumDebug("Invio messaggio a Ricezione/Consegna ContenutiApplicativi...");
 							msgResponse = ejbUtils.buildAndSendBustaRisposta(richiestaApplicativa.getIdModuloInAttesa(),bustaHTTPReply,
-									MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(), MessageRole.RESPONSE),profiloGestione,
+									MessageUtilities.buildEmptyMessage(requestInfo.getProtocolRequestMessageType(), MessageRole.RESPONSE),profiloGestione,
 									idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore);
 						}
 					}
@@ -2340,7 +2340,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								&& portaDiTipoStateless
 								&& (!isRicevutaAsincrona) ){
 							rispostaVuotaValidaPerAsincroniStateless_modalitaAsincrona = true;
-							responseMessage = MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(), MessageRole.RESPONSE); // Costruisce messaggio vuoto per inserire busta (ricevuta asincrona)
+							responseMessage = MessageUtilities.buildEmptyMessage(requestInfo.getProtocolRequestMessageType(), MessageRole.RESPONSE); // Costruisce messaggio vuoto per inserire busta (ricevuta asincrona)
 						}
 						else{
 							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA, ("risposta applicativa attesa ma non ricevuta"));

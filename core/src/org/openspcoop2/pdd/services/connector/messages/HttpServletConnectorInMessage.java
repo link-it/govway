@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -63,6 +64,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	protected Logger log;
 	protected String idModulo;
 	private IDService idModuloAsIDService;
+	private MessageType requestMessageType;
 	
 	public HttpServletConnectorInMessage(RequestInfo requestInfo, HttpServletRequest req,
 			IDService idModuloAsIDService, String idModulo) throws ConnectorException{
@@ -78,6 +80,13 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			
 			this.idModuloAsIDService = idModuloAsIDService;
 			this.idModulo = idModulo;
+			
+			if(IDService.PORTA_APPLICATIVA.equals(idModuloAsIDService)){
+				this.requestMessageType = this.getRequestInfo().getProtocolRequestMessageType();
+			}
+			else{
+				this.requestMessageType = this.getRequestInfo().getIntegrationRequestMessageType();
+			}
 			
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
@@ -132,7 +141,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	public String getSOAPAction() throws ConnectorException{
 		try{
 			String contentType = this.getContentType();
-			return SoapUtils.getSoapAction(this.requestInfo.getProtocolContext(), this.getRequestInfo().getRequestMessageType(), contentType);
+			return SoapUtils.getSoapAction(this.requestInfo.getProtocolContext(), this.requestMessageType, contentType);
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}
@@ -141,7 +150,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	@Override
 	public OpenSPCoop2MessageParseResult getRequest(NotifierInputStreamParams notifierInputStreamParams) throws ConnectorException{
 		try{
-			return factory.createMessage(this.getRequestInfo().getRequestMessageType(),
+			return factory.createMessage(this.requestMessageType,
 					this.requestInfo.getProtocolContext(),
 					this.is,notifierInputStreamParams,
 					this.openspcoopProperties.getAttachmentsProcessingMode());
@@ -163,7 +172,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 				return result;
 			}
 			buffer.write(b);
-			return factory.createMessage(this.getRequestInfo().getRequestMessageType(),
+			return factory.createMessage(this.requestMessageType,
 					this.requestInfo.getProtocolContext(),
 					bin,notifierInputStreamParams,
 					this.openspcoopProperties.getAttachmentsProcessingMode());

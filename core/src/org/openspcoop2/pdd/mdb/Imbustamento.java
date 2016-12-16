@@ -1118,9 +1118,9 @@ public class Imbustamento extends GenericLib{
 				
 				msgDiag.mediumDebug("Invio messaggio 'OK' al modulo di RicezioneContenutiApplicativi...");
 				if(protocolManager.isHttpEmptyResponseOneWay())
-					msgOK = ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(), MessageRole.RESPONSE),richiestaDelegata,pd,sa);
+					msgOK = ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(requestInfo.getIntegrationRequestMessageType(), MessageRole.RESPONSE),richiestaDelegata,pd,sa);
 				else
-					msgOK = ejbUtils.sendRispostaApplicativaOK(ejbUtils.buildOpenSPCoopOK(requestInfo.getRequestMessageType(), idMessageRequest),richiestaDelegata,pd,sa);
+					msgOK = ejbUtils.sendRispostaApplicativaOK(ejbUtils.buildOpenSPCoopOK(requestInfo.getIntegrationRequestMessageType(), idMessageRequest),richiestaDelegata,pd,sa);
 			}
 
 

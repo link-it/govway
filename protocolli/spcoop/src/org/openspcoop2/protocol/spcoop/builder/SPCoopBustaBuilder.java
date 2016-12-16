@@ -32,8 +32,10 @@ import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.Trasmissione;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
+import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.spcoop.SPCoopBustaRawContent;
@@ -90,28 +92,45 @@ public class SPCoopBustaBuilder extends BasicComponentFactory implements org.ope
 	}
 	
 	@Override
-	public SPCoopBustaRawContent imbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
+	public ProtocolMessage imbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
 			RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments)
 			throws ProtocolException {
 		SOAPHeaderElement element =  this.spcoopImbustamento.imbustamento(msg, busta, 
 				ruoloMessaggio, 
 				proprietaManifestAttachments);
-		return new SPCoopBustaRawContent(element);
+		ProtocolMessage protocolMessage = new ProtocolMessage();
+		protocolMessage.setBustaRawContent(new SPCoopBustaRawContent(element));
+		protocolMessage.setMessage(msg);
+		return protocolMessage;
 	}
 
 	@Override
-	public SPCoopBustaRawContent addTrasmissione(OpenSPCoop2Message message,
+	public ProtocolMessage addTrasmissione(OpenSPCoop2Message message,
 			Trasmissione trasmissione) throws ProtocolException {
 		SOAPHeaderElement element =  this.spcoopImbustamento.addTrasmissione(message, trasmissione);
-		return new SPCoopBustaRawContent(element);
+		ProtocolMessage protocolMessage = new ProtocolMessage();
+		protocolMessage.setBustaRawContent(new SPCoopBustaRawContent(element));
+		protocolMessage.setMessage(message);
+		return protocolMessage;
 	}
 
 	@Override
-	public SPCoopBustaRawContent sbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
-			RuoloMessaggio ruoloMessaggio, ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException {
-		SOAPHeaderElement element =  this.spcoopSbustamento.sbustamento(msg, proprietaManifestAttachments);
-		return new SPCoopBustaRawContent(element);
+	public ProtocolMessage sbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
+			RuoloMessaggio ruoloMessaggio, ProprietaManifestAttachments proprietaManifestAttachments,
+			FaseSbustamento faseSbustamento) throws ProtocolException {
+		
+		ProtocolMessage protocolMessage = new ProtocolMessage();
+		protocolMessage.setMessage(msg);
+		
+		if(FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RICHIESTA.equals(faseSbustamento) == false){
+			// Lo sbustamento effettivo in spcoop viene ritardato fino alla consegna del servizio applicativo per quanto concerne la richiesta
+			SOAPHeaderElement element =  this.spcoopSbustamento.sbustamento(msg, proprietaManifestAttachments);
+			protocolMessage.setBustaRawContent(new SPCoopBustaRawContent(element));
+			protocolMessage.setMessage(msg);
+		}
+		
+		return protocolMessage;
 	}
 
 }

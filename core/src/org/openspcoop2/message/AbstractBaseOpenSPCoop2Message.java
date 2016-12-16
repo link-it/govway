@@ -90,6 +90,53 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 	}
 	
 	
+	/* Copy Resources to another instance */
+	
+	@Override
+	public void copyResourcesTo(OpenSPCoop2Message newInstance) throws MessageException{
+		
+		// Le seguenti risorse non vengono ricopiate poichè varieranno nella nuova versione
+		// - contentTypeParamaters
+		// - messageType
+		// - outgoingsize
+		// - notifierInputStream
+		
+		if(this.parseException!=null){
+			throw new MessageException(this.getParseException().getSourceException());
+		}
+		
+		if(newInstance instanceof AbstractBaseOpenSPCoop2Message){
+			AbstractBaseOpenSPCoop2Message base = (AbstractBaseOpenSPCoop2Message) newInstance; 
+			base.transportRequestContext = this.transportRequestContext;
+			base.transportResponseContext = this.transportResponseContext;
+			base.forcedResponseCode = this.forcedResponseCode;
+			base.forwardTransportHeader = this.forwardTransportHeader;
+			base.forwardUrlProperties = this.forwardUrlProperties;
+			base.context = this.context;
+			base.messageRole = this.messageRole;
+			base.incomingsize = this.incomingsize;
+			base.incomingSizeForced = this.incomingSizeForced;
+			base.protocolName = this.protocolName;
+		}
+		else{
+			// Viene riversato solo quello che è possibile riversare
+			newInstance.setTransportRequestContext(this.transportRequestContext);
+			newInstance.setTransportResponseContext(this.transportResponseContext);
+			newInstance.setForcedResponseCode(this.forcedResponseCode);
+			if(this.context.size()>0){
+				Iterator<String> it = this.context.keySet().iterator();
+				while (it.hasNext()) {
+					String contextKey = (String) it.next();
+					newInstance.addContextProperty(contextKey, this.context.get(contextKey));
+				}
+			}	
+			newInstance.setMessageRole(this.messageRole);
+			newInstance.setProtocolName(this.protocolName);
+		}
+	}
+	
+	
+	
 	/* Cast */
 	
 	@Override

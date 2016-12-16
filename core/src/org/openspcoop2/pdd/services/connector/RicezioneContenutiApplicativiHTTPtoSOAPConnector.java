@@ -62,9 +62,9 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPConnector {
 	public void doEngine(RequestInfo requestInfo, 
 			HttpServletRequest req, HttpServletResponse res, HttpRequestMethod method) throws ServletException, IOException {
 
-		if(!ServiceBinding.SOAP.equals(requestInfo.getServiceBinding())){
+		if(!ServiceBinding.SOAP.equals(requestInfo.getIntegrationServiceBinding())){
 
-			ConnectorDispatcherUtils.doServiceBindingNotSupported(req, res, method, requestInfo.getServiceBinding(), ID_SERVICE);
+			ConnectorDispatcherUtils.doServiceBindingNotSupported(req, res, method, requestInfo.getIntegrationServiceBinding(), ID_SERVICE);
 			return;
 			
 		}

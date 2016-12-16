@@ -61,11 +61,20 @@ public interface IProtocolConfiguration extends IComponentFactory {
 	 * 
 	 * @param idServizio servizio richiesto
 	 * @param registryReader Reader delle informazioni interne al registro
-	 * @return service binding associato al servizio
+	 * @return service binding associato al servizio per l'integrazione
 	 * @throws ProtocolException
 	 */
-	public ServiceBinding getServiceBinding(IDServizio idServizio, IRegistryReader registryReader) throws ProtocolException, RegistryNotFound;
+	public ServiceBinding getIntegrationServiceBinding(IDServizio idServizio, IRegistryReader registryReader) throws ProtocolException, RegistryNotFound;
 	
+	/**
+	 * Restituisce il ServiceBinding del Protocollo
+	 * 
+	 * @param transportRequest informazioni di trasporto
+	 * @return service binding associato al servizio per il protocollo
+	 * @throws ProtocolException
+	 */
+	public ServiceBinding getProtocolServiceBinding(ServiceBinding integrationServiceBinding, TransportRequestContext transportRequest) throws ProtocolException;
+		
 	/**
 	 * Restituisce la configurazione del service binding compatibile con il servizio richiesto
 	 * 

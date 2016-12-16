@@ -41,17 +41,18 @@ import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.Busta;
-import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.EccezioneProtocolloBuilderParameters;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.Riscontro;
 import org.openspcoop2.protocol.sdk.Trasmissione;
 import org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
+import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
@@ -164,7 +165,7 @@ public class BustaBuilder<BustaRawType> extends BasicComponentFactory implements
 
 	
 	@Override
-	public BustaRawContent<BustaRawType> imbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
+	public ProtocolMessage imbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
 			RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments)
 			throws ProtocolException {
@@ -236,20 +237,27 @@ public class BustaBuilder<BustaRawType> extends BasicComponentFactory implements
 			 
 		}
 		
-		return null;
+		ProtocolMessage protocolMessage = new ProtocolMessage();
+		protocolMessage.setMessage(msg);
+		return protocolMessage;
 	}
 	
 	@Override
-	public BustaRawContent<BustaRawType> addTrasmissione(OpenSPCoop2Message message,
+	public ProtocolMessage addTrasmissione(OpenSPCoop2Message message,
 			Trasmissione trasmissione) throws ProtocolException {
-		return null;
+		ProtocolMessage protocolMessage = new ProtocolMessage();
+		protocolMessage.setMessage(message);
+		return protocolMessage;
 	}
 
 	@Override
-	public BustaRawContent<BustaRawType> sbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
-			RuoloMessaggio ruoloMessaggio, ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException {
+	public ProtocolMessage sbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
+			RuoloMessaggio ruoloMessaggio, ProprietaManifestAttachments proprietaManifestAttachments,
+			FaseSbustamento faseSbustamento) throws ProtocolException {
 		
-		return null;
+		ProtocolMessage protocolMessage = new ProtocolMessage();
+		protocolMessage.setMessage(msg);
+		return protocolMessage;
 		
 	}
 	

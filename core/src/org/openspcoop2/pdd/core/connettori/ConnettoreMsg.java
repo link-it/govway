@@ -32,7 +32,9 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
+import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 
@@ -272,8 +274,11 @@ public class ConnettoreMsg  {
 		if(!this.localForward && this.sbustamentoInformazioniProtocollo && !this.sbustamentoProtocolInfoEffettuato){
 			org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = 
 				new org.openspcoop2.protocol.engine.builder.Sbustamento(this.protocolFactory);
-			this.soapProtocolInfo = sbustatore.sbustamento(this.state,this.request,this.busta,
-					this.ruoloMessaggio,this.gestioneManifest,this.proprietaManifestAttachments);
+			ProtocolMessage protocolMessage = sbustatore.sbustamento(this.state,this.request,this.busta,
+					this.ruoloMessaggio,this.gestioneManifest,this.proprietaManifestAttachments,
+					FaseSbustamento.PRE_CONSEGNA_RICHIESTA);
+			this.soapProtocolInfo = protocolMessage.getBustaRawContent();
+			this.request = protocolMessage.getMessage(); // updated
 			this.sbustamentoProtocolInfoEffettuato = true;
 		}
 		return this.request;

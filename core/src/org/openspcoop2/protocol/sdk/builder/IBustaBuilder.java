@@ -28,10 +28,11 @@ import java.util.Date;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.Busta;
-import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.Trasmissione;
+import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 
@@ -80,11 +81,11 @@ public interface IBustaBuilder<BustaRawType> extends IComponentFactory {
 	 * @param busta Busta contenente i metadati di cooperazione da convertire in informazione raw del protocollo
 	 * @param ruoloMessaggio Indicazione se la busta appartiene ad un messaggio di richiesta o di risposta
 	 * @param proprietaManifestAttachments Propriet&agrave; necessarie per la generazione del manifest degli attachments (se presenti e la funzionalità è abilitata e supportata dal protocollo)
-	 * @return Oggetto che contiene l'informazione raw del protocollo (es. header soap, header di trasporto o altra informazione dipendente dal protocollo)
+	 * @return Oggetto che contiene l'informazione raw del protocollo (es. header soap, header di trasporto o altra informazione dipendente dal protocollo) e l'eventuale messaggio modificato
 	 * @throws ProtocolException
 	 */
 	
-	public BustaRawContent<BustaRawType> imbustamento(IState state, OpenSPCoop2Message msg, Busta busta, RuoloMessaggio ruoloMessaggio, 
+	public ProtocolMessage imbustamento(IState state, OpenSPCoop2Message msg, Busta busta, RuoloMessaggio ruoloMessaggio, 
 			ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException;
 
 	/**
@@ -92,10 +93,10 @@ public interface IBustaBuilder<BustaRawType> extends IComponentFactory {
 	 * 
 	 * @param message Messaggio di cooperazione in cui inserire le informazioni di trasmissione.
 	 * @param trasmissione Trasmissione da aggiungere
-	 * @return Oggetto che contiene l'informazione raw del protocollo (es. header soap, header di trasporto o altra informazione dipendente dal protocollo)
+	 * @return Oggetto che contiene l'informazione raw del protocollo (es. header soap, header di trasporto o altra informazione dipendente dal protocollo) e l'eventuale messaggio modificato
 	 * @throws ProtocolException
 	 */
-	public BustaRawContent<BustaRawType> addTrasmissione(OpenSPCoop2Message message, Trasmissione trasmissione) throws ProtocolException;
+	public ProtocolMessage addTrasmissione(OpenSPCoop2Message message, Trasmissione trasmissione) throws ProtocolException;
 
 	/**
 	 * Rimuove le informazioni di cooperazione dal messaggio. 
@@ -105,9 +106,13 @@ public interface IBustaBuilder<BustaRawType> extends IComponentFactory {
 	 * @param busta Busta contenente i metadati di cooperazione
 	 * @param ruoloMessaggio Indicazione se la busta appartiene ad un messaggio di richiesta o di risposta
 	 * @param proprietaManifestAttachments Propriet&agrave; necessarie per la gestione del manifest degli attachments (se la funzionalità è abilitata e supportata dal protocollo)
+	 * @param faseSbustamento Indicazione sul momento in cui viene invocato il metodo durante il trattamento del messaggio
+	 * @return Oggetto che contiene l'informazione raw del protocollo (es. header soap, header di trasporto o altra informazione dipendente dal protocollo) e l'eventuale messaggio modificato
+	 * @throws ProtocolException
 	 */
-	public BustaRawContent<BustaRawType> sbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
-			RuoloMessaggio ruoloMessaggio, ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException;
+	public ProtocolMessage sbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
+			RuoloMessaggio ruoloMessaggio, ProprietaManifestAttachments proprietaManifestAttachments,
+			FaseSbustamento faseSbustamento) throws ProtocolException;
 }
 
 

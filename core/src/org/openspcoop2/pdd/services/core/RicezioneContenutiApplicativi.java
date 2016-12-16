@@ -136,6 +136,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Integrazione;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.Servizio;
 import org.openspcoop2.protocol.sdk.builder.IBustaBuilder;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
@@ -147,6 +148,7 @@ import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
@@ -2390,7 +2392,9 @@ public class RicezioneContenutiApplicativi {
 					// attachments non gestiti!
 					ProprietaManifestAttachments proprietaManifest = propertiesReader.getProprietaManifestAttachments("standard");
 					proprietaManifest.setGestioneManifest(false);
-					bustaBuilder.sbustamento(openspcoopstate.getStatoRichiesta(),requestMessage, bustaRichiesta, RuoloMessaggio.RICHIESTA, proprietaManifest);
+					ProtocolMessage protocolMessage = bustaBuilder.sbustamento(openspcoopstate.getStatoRichiesta(),requestMessage, bustaRichiesta, RuoloMessaggio.RICHIESTA, proprietaManifest,
+							FaseSbustamento.PRE_INVIO_RICHIESTA_PER_RIFERIMENTO);
+					requestMessage = protocolMessage.getMessage(); // updated
 				}
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e,"invocazionePortaDelegataPerRiferimento.sbustamentoProtocolHeader()");
@@ -3693,7 +3697,7 @@ public class RicezioneContenutiApplicativi {
 				// Gestione stateful
 				
 				try {
-					responseMessage = MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(), MessageRole.RESPONSE);
+					responseMessage = MessageUtilities.buildEmptyMessage(requestInfo.getIntegrationRequestMessageType(), MessageRole.RESPONSE);
 
 					String classType = null;
 					INodeReceiver nodeReceiver = null;
@@ -3922,7 +3926,7 @@ public class RicezioneContenutiApplicativi {
 						if(propertiesReader.processHeaderIntegrazionePDResponse(false)){
 							if(propertiesReader.deleteHeaderIntegrazioneResponsePD()){
 								if(responseMessage==null){
-									responseMessage = MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(), MessageRole.RESPONSE);
+									responseMessage = MessageUtilities.buildEmptyMessage(requestInfo.getIntegrationRequestMessageType(), MessageRole.RESPONSE);
 									outResponsePDMessage.setMessage(responseMessage);
 								}
 								gestore.setOutResponseHeader(headerIntegrazioneRisposta,outResponsePDMessage);
@@ -3931,7 +3935,7 @@ public class RicezioneContenutiApplicativi {
 							}
 						}else{
 							if(responseMessage==null){
-								responseMessage = MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(), MessageRole.RESPONSE);
+								responseMessage = MessageUtilities.buildEmptyMessage(requestInfo.getIntegrationRequestMessageType(), MessageRole.RESPONSE);
 								outResponsePDMessage.setMessage(responseMessage);
 							}
 							gestore.setOutResponseHeader(headerIntegrazioneRisposta,outResponsePDMessage);

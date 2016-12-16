@@ -143,6 +143,7 @@ import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Integrazione;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.Riscontro;
 import org.openspcoop2.protocol.sdk.SecurityInfo;
 import org.openspcoop2.protocol.sdk.Servizio;
@@ -158,6 +159,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
@@ -2874,9 +2876,26 @@ public class RicezioneBuste {
 		
 		
 		
-		
-		
-		
+		/* ----------- Sbustamento ------------ */
+		BustaRawContent<?> headerProtocolloRichiesta = null;
+		if(functionAsRouter == false && 
+				isMessaggioErroreProtocollo==false && 
+				erroriProcessamento.size()==0 && erroriValidazione.size()==0 &&
+				bustaDiServizio==false){
+			msgDiag.highDebug("Tipo Messaggio Richiesta prima dello sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA
+					+"] ["+requestMessage.getClass().getName()+"]");
+			org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = new org.openspcoop2.protocol.engine.builder.Sbustamento(protocolFactory);
+			ProtocolMessage protocolMessage = sbustatore.sbustamento(openspcoopstate.getStatoRichiesta(),requestMessage,bustaRichiesta,
+					RuoloMessaggio.RICHIESTA,properties.isValidazioneManifestAttachments(),proprietaManifestAttachments,
+					FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RICHIESTA);
+			headerProtocolloRichiesta = protocolMessage.getBustaRawContent();
+			requestMessage = protocolMessage.getMessage(); // updated
+			msgDiag.highDebug("Tipo Messaggio Richiesta dopo lo sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA
+					+"] ["+requestMessage.getClass().getName()+"]");
+		}
+		else{
+			headerProtocolloRichiesta = validatore.getHeaderProtocollo();
+		}
 		
 		
 		
@@ -3186,7 +3205,6 @@ public class RicezioneBuste {
 		
 		
 		/* -------- Tracciamento ------------- */
-		BustaRawContent<?> headerProtocolloRichiesta = validatore.getHeaderProtocollo();
 		if(this.msgContext.isTracciamentoAbilitato()){
 			msgDiag.mediumDebug("Tracciamento busta di richiesta...");
 			
@@ -5059,15 +5077,23 @@ public class RicezioneBuste {
 						// Aggiungo trasmissione solo se la busta e' stata generata dalla porta di dominio destinataria della richiesta.
 						// Se il mittente e' il router, logicamente la busta sara' un errore generato dal router
 						if( propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente)){
-							headerBustaRisposta = imbustatore.addTrasmissione(responseMessage, tras, readQualifiedAttribute);
+							msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento ["+responseMessage.getClass().getName()+"]");
+							ProtocolMessage protocolMessage = imbustatore.addTrasmissione(responseMessage, tras, readQualifiedAttribute);
+							headerBustaRisposta = protocolMessage.getBustaRawContent();
+							responseMessage = protocolMessage.getMessage(); // updated
+							msgDiag.highDebug("Tipo Messaggio Risposta dopo l'imbustamento ["+responseMessage.getClass().getName()+"]");
 						}
 						else{
 							Validatore v = new Validatore(responseMessage,openspcoopstate.getStatoRichiesta(), logCore, protocolFactory);
 							headerBustaRisposta = v.getHeaderProtocollo_senzaControlli();
 						}
 					}else{
-						headerBustaRisposta = imbustatore.imbustamento(openspcoopstate.getStatoRichiesta(),responseMessage,bustaRisposta,infoIntegrazione,
+						msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento ["+responseMessage.getClass().getName()+"]");
+						ProtocolMessage protocolMessage = imbustatore.imbustamento(openspcoopstate.getStatoRichiesta(),responseMessage,bustaRisposta,infoIntegrazione,
 								gestioneManifestRisposta,RuoloMessaggio.RISPOSTA,scartaBody,proprietaManifestAttachments);
+						headerBustaRisposta = protocolMessage.getBustaRawContent();
+						responseMessage = protocolMessage.getMessage(); // updated
+						msgDiag.highDebug("Tipo Messaggio Risposta dopo l'imbustamento ["+responseMessage.getClass().getName()+"]");
 					}
 				}catch(Exception e){
 					if(functionAsRouter && 
@@ -5790,7 +5816,7 @@ public class RicezioneBuste {
 				}
 
 				// Imposto messaggio ritornato nella connection-reply
-				OpenSPCoop2Message soapBodyEmpty = MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(), MessageRole.RESPONSE);
+				OpenSPCoop2Message soapBodyEmpty = MessageUtilities.buildEmptyMessage(requestInfo.getProtocolRequestMessageType(), MessageRole.RESPONSE);
 				this.msgContext.setMessageResponse(soapBodyEmpty);
 				
 			}else{
@@ -6602,18 +6628,19 @@ public class RicezioneBuste {
 		}
 
 		if(bustaHTTPReply==null){
-			return MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(), MessageRole.RESPONSE);
+			return MessageUtilities.buildEmptyMessage(requestInfo.getProtocolRequestMessageType(), MessageRole.RESPONSE);
 		}else{
 						
 			OpenSPCoop2Message msg = null;
 			if(http200){
-				msg = MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(), MessageRole.RESPONSE);
+				msg = MessageUtilities.buildEmptyMessage(requestInfo.getProtocolRequestMessageType(), MessageRole.RESPONSE);
 			}
 			else{
 				msg = this.generatoreErrore.buildErroreIntestazione(IntegrationError.INTERNAL_ERROR);
 			}
-			imbustatore.imbustamento(openspcoopstate.getStatoRichiesta(),msg,bustaHTTPReply,integrazione,
+			ProtocolMessage protocolMessage = imbustatore.imbustamento(openspcoopstate.getStatoRichiesta(),msg,bustaHTTPReply,integrazione,
 					false,RuoloMessaggio.RISPOSTA,false,null);
+			msg = protocolMessage.getMessage(); // updated
 			
 			
 			//			Tracciamento Busta Ritornata: cambiata nel metodo msgErroreProcessamento

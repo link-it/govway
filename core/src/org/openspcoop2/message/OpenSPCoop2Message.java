@@ -51,6 +51,10 @@ public interface OpenSPCoop2Message {
 	
 	public OpenSPCoop2Message normalizeToSaajImpl() throws MessageException;
 	
+	/* Copy Resources to another instance */
+	
+	public void copyResourcesTo(OpenSPCoop2Message newInstance) throws MessageException;
+	
 	
 	/* Cast */
 	

@@ -920,7 +920,7 @@ public class Sbustamento extends GenericLib{
 	
 							// Re-invio Riscontro
 							msgResponse = ejbUtils.buildAndSendBustaRisposta(richiestaApplicativa.getIdModuloInAttesa(),bustaHTTPReply,
-									MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(),MessageRole.RESPONSE),profiloGestione,
+									MessageUtilities.buildEmptyMessage(requestInfo.getProtocolRequestMessageType(),MessageRole.RESPONSE),profiloGestione,
 									idCorrelazioneApplicativa,servizioApplicativoFruitore);
 						}
 						// 1b) 
@@ -1053,7 +1053,7 @@ public class Sbustamento extends GenericLib{
 								}
 								//	Re-invio Ricevuta
 								msgResponse = ejbUtils.buildAndSendBustaRisposta(richiestaApplicativa.getIdModuloInAttesa(),bustaHTTPReply,
-										MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(),MessageRole.RESPONSE),profiloGestione,
+										MessageUtilities.buildEmptyMessage(requestInfo.getProtocolRequestMessageType(),MessageRole.RESPONSE),profiloGestione,
 										idCorrelazioneApplicativa,servizioApplicativoFruitore);	
 							}
 	
@@ -2163,7 +2163,7 @@ public class Sbustamento extends GenericLib{
 							bustaReplyTo = behaviour.getResponseTo().getBusta();
 						}
 						if(msgReplyTo==null){
-							msgReplyTo = MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(),MessageRole.RESPONSE);
+							msgReplyTo = MessageUtilities.buildEmptyMessage(requestInfo.getProtocolRequestMessageType(),MessageRole.RESPONSE);
 						}
 						msgDiag.mediumDebug("Invio messaggio a Ricezione/Consegna ContenutiApplicativi (Behaviour)...");
 						msgResponse = ejbUtils.buildAndSendBustaRisposta(richiestaApplicativa.getIdModuloInAttesa(),
@@ -2184,7 +2184,7 @@ public class Sbustamento extends GenericLib{
 						// Invio risposta immediata in seguito alla richiesta ricevuta
 						msgDiag.mediumDebug("Invio messaggio a Ricezione/Consegna ContenutiApplicativi...");
 						msgResponse = ejbUtils.buildAndSendBustaRisposta(richiestaApplicativa.getIdModuloInAttesa(),bustaHTTPReply,
-								MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(),MessageRole.RESPONSE),profiloGestione,
+								MessageUtilities.buildEmptyMessage(requestInfo.getProtocolRequestMessageType(),MessageRole.RESPONSE),profiloGestione,
 								idCorrelazioneApplicativa,servizioApplicativoFruitore);
 					}
 				}catch(Exception e){

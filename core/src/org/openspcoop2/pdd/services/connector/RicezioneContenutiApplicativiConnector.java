@@ -79,7 +79,7 @@ public class RicezioneContenutiApplicativiConnector {
 			}
 		}
 		
-		if(ServiceBinding.SOAP.equals(requestInfo.getServiceBinding()) && !HttpRequestMethod.POST.equals(method)){
+		if(ServiceBinding.SOAP.equals(requestInfo.getIntegrationServiceBinding()) && !HttpRequestMethod.POST.equals(method)){
 
 			ConnectorDispatcherUtils.doMethodNotSupported(req, res, method, ID_SERVICE);
 			return;

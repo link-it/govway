@@ -50,9 +50,11 @@ import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Integrazione;
+import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.Riscontro;
 import org.openspcoop2.protocol.sdk.Trasmissione;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
+import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.state.StatefulMessage;
@@ -210,8 +212,11 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 				
 				// rimozione vecchia busta
 				Sbustamento sbustatore = new Sbustamento(protocolFactory);
-				headerProtocolloRisposta = sbustatore.sbustamento(state,this.responseMsg,busta,RuoloMessaggio.RICHIESTA, gestioneManifest, 
-						this.openspcoopProperties.getProprietaManifestAttachments(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD));
+				ProtocolMessage protocolMessage = sbustatore.sbustamento(state,this.responseMsg,busta,RuoloMessaggio.RICHIESTA, gestioneManifest, 
+						this.openspcoopProperties.getProprietaManifestAttachments(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD),
+						FaseSbustamento.PRE_CONSEGNA_RICHIESTA);
+				headerProtocolloRisposta = protocolMessage.getBustaRawContent();
+				this.responseMsg = protocolMessage.getMessage(); // updated
 				
 				// Creo busta di risposta solo se la busta di richiesta non conteneva una busta Errore
 				if(!isBustaSPCoopErrore){
@@ -373,8 +378,9 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 					// imbustamento nuova busta
 					Integrazione integrazione = new Integrazione();
 					integrazione.setStateless(true);
-					imbustatore.imbustamento(state,this.responseMsg,bustaRisposta,integrazione,gestioneManifest,RuoloMessaggio.RISPOSTA,false,
+					ProtocolMessage protocolMessageRisposta = imbustatore.imbustamento(state,this.responseMsg,bustaRisposta,integrazione,gestioneManifest,RuoloMessaggio.RISPOSTA,false,
 							this.openspcoopProperties.getProprietaManifestAttachments(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD));
+					this.responseMsg = protocolMessageRisposta.getMessage(); // updated
 
 				}
 				else{

@@ -256,12 +256,15 @@ public class RicezioneBusteService  {
 		IProtocolFactory<?> protocolFactory = null;
 		String protocol = null;
 		MessageType messageTypeReq = null;
+		ServiceBinding protocolServiceBinding = null;
 		try{
 			
 			/* --------------- Creo il context che genera l'id univoco ----------------------- */
 			
 			protocolFactory = req.getProtocolFactory();
 			protocol = protocolFactory.getProtocol();
+			
+			protocolServiceBinding = requestInfo.getProtocolServiceBinding();
 			
 			proprietaErroreAppl = openSPCoopProperties.getProprietaGestioneErrorePD(protocolFactory.createProtocolManager());
 			proprietaErroreAppl.setDominio(openSPCoopProperties.getIdentificativoPortaDefault(protocolFactory.getProtocol()));
@@ -352,8 +355,8 @@ public class RicezioneBusteService  {
 			
 			msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.tipologiaMessaggio");
 			
-			messageTypeReq = requestInfo.getRequestMessageType();
-			if(ServiceBinding.SOAP.equals(requestInfo.getServiceBinding()) && messageTypeReq!=null){
+			messageTypeReq = requestInfo.getProtocolRequestMessageType();
+			if(ServiceBinding.SOAP.equals(protocolServiceBinding) && messageTypeReq!=null){
 				msgDiag.addKeyword(CostantiPdD.KEY_SOAP_VERSION, messageTypeReq.getMessageVersionAsString());
 				msgDiag.addKeyword(CostantiPdD.KEY_SOAP_ENVELOPE_NAMESPACE_ATTESO, SoapUtils.getSoapEnvelopeNS(messageTypeReq));
 			}
@@ -361,13 +364,13 @@ public class RicezioneBusteService  {
 			String contentTypeReq = req.getContentType();
 			boolean contentTypeSupportato = messageTypeReq!=null;
 			msgDiag.addKeyword(CostantiPdD.KEY_CONTENT_TYPES_ATTESI, 
-					requestInfo.getBindingConfig().getContentTypesSupportedAsString(requestInfo.getServiceBinding(), 
+					requestInfo.getBindingConfig().getContentTypesSupportedAsString(protocolServiceBinding, 
 							MessageRole.REQUEST,requestInfo.getProtocolContext()));
-			List<String> supportedContentTypes = requestInfo.getBindingConfig().getContentTypesSupported(requestInfo.getServiceBinding(), 
+			List<String> supportedContentTypes = requestInfo.getBindingConfig().getContentTypesSupported(protocolServiceBinding, 
 					MessageRole.REQUEST,requestInfo.getProtocolContext()); 
 			msgDiag.addKeyword(CostantiPdD.KEY_HTTP_HEADER, contentTypeReq);
 			
-			if(ServiceBinding.SOAP.equals(requestInfo.getServiceBinding())){	
+			if(ServiceBinding.SOAP.equals(protocolServiceBinding)){	
 				if(openSPCoopProperties.isControlloContentTypeAbilitatoRicezioneBuste() == false){
 					if(!contentTypeSupportato){
 						if(HttpConstants.CONTENT_TYPE_NON_PRESENTE.equals(contentTypeReq)){
@@ -404,7 +407,7 @@ public class RicezioneBusteService  {
 				/* ------------  SoapAction check 1 (controlla che non sia null e ne ritorna il valore) ------------- */			
 				String soapAction = null;
 				try{
-					if(ServiceBinding.SOAP.equals(requestInfo.getServiceBinding())){
+					if(ServiceBinding.SOAP.equals(protocolServiceBinding)){
 						soapAction = req.getSOAPAction();
 					}
 				}catch(Exception e){
@@ -426,7 +429,7 @@ public class RicezioneBusteService  {
 				/* ------------ Controllo MustUnderstand -------------------- */
 				String mustUnderstandError = null;
 				try{
-					if(ServiceBinding.SOAP.equals(requestInfo.getServiceBinding())){
+					if(ServiceBinding.SOAP.equals(protocolServiceBinding)){
 						mustUnderstandError = ServicesUtils.checkMustUnderstand(requestMessage.castAsSoap(),protocolFactory);
 					}
 				}catch(Exception e){
@@ -437,7 +440,7 @@ public class RicezioneBusteService  {
 				/* ------------ Controllo Soap namespace -------------------- */
 				String soapEnvelopeNamespaceVersionMismatch = null;
 				try{
-					if(ServiceBinding.SOAP.equals(requestInfo.getServiceBinding())){
+					if(ServiceBinding.SOAP.equals(protocolServiceBinding)){
 						soapEnvelopeNamespaceVersionMismatch = ServicesUtils.checkSOAPEnvelopeNamespace(requestMessage.castAsSoap(), messageTypeReq);
 					}
 				}catch(Exception e){
@@ -528,7 +531,7 @@ public class RicezioneBusteService  {
 			}
 				
 			// Ricerca org.xml.sax.SAXParseException || com.ctc.wstx.exc.WstxParsingException ||  com.ctc.wstx.exc.WstxUnexpectedCharException
-			if(	ServiceBinding.SOAP.equals(requestInfo.getServiceBinding()) &&
+			if(	ServiceBinding.SOAP.equals(protocolServiceBinding) &&
 					messageTypeReq!=null &&
 					(
 					
@@ -754,7 +757,7 @@ public class RicezioneBusteService  {
 				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessage, proprietaErroreAppl,informazioniErrori,
 						(pddContext!=null ? pddContext.getContext() : null));
 				boolean consume = true;
-				if(ServiceBinding.SOAP.equals(requestInfo.getServiceBinding())){
+				if(ServiceBinding.SOAP.equals(protocolServiceBinding)){
 					SOAPBody body = responseMessage.castAsSoap().getSOAPBody();
 					if(body!=null && body.hasFault()){
 						consume = false; // può essere usato nel post out response handler
@@ -826,7 +829,7 @@ public class RicezioneBusteService  {
 				// http status (puo' essere 200 se il msg di errore e' un msg errore applicativo cnipa non in un soap fault)
 				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(), responseMessageError, proprietaErroreAppl, informazioniErrori_error,
 						(pddContext!=null ? pddContext.getContext() : null));
-				if(ServiceBinding.SOAP.equals(requestInfo.getServiceBinding())){
+				if(ServiceBinding.SOAP.equals(protocolServiceBinding)){
 					SOAPBody body = responseMessageError.castAsSoap().getSOAPBody();
 					if(body!=null && body.hasFault()){
 						statoServletResponse = 500;

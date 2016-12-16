@@ -43,6 +43,7 @@ import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.manifest.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -70,17 +71,36 @@ public class ConnectorUtils {
 	public static RequestInfo getRequestInfo(IProtocolFactory<?> pf,URLProtocolContext protocolContext) throws ProtocolException, MessageException{
 		
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+		IProtocolConfiguration pc = pf.createProtocolConfiguration();
 		
-		ServiceBindingConfiguration bindingConfig = pf.createProtocolConfiguration().getDefaultServiceBindingConfiguration(protocolContext);
-		ServiceBinding serviceBinding = bindingConfig.getDefaultBinding();
-		MessageType requestMessageType = bindingConfig.getMessageType(serviceBinding, MessageRole.REQUEST, 
+		ServiceBindingConfiguration bindingConfig = pc.getDefaultServiceBindingConfiguration(protocolContext);
+		ServiceBinding integrationServiceBinding = bindingConfig.getDefaultBinding();
+		
+		ServiceBinding protocolServiceBinding = pc.getProtocolServiceBinding(integrationServiceBinding, protocolContext);
+				
+		ServiceBinding serviceBindingDaUtilizzare = integrationServiceBinding;
+		boolean pa = false;
+		if(integrationServiceBinding.equals(protocolServiceBinding)==false){
+			if(URLProtocolContext.PA_FUNCTION.equals(protocolContext.getFunction())){
+				serviceBindingDaUtilizzare = protocolServiceBinding;
+				pa = true;
+			}
+		}
+		
+		MessageType requestMessageType = bindingConfig.getMessageType(serviceBindingDaUtilizzare, MessageRole.REQUEST, 
 				protocolContext, protocolContext.getContentType());
 		
 		RequestInfo requestInfo = new RequestInfo();
 		requestInfo.setProtocolContext(protocolContext);
 		requestInfo.setProtocolFactory(pf);
-		requestInfo.setRequestMessageType(requestMessageType);
-		requestInfo.setServiceBinding(serviceBinding);
+		if(pa){
+			requestInfo.setProtocolRequestMessageType(requestMessageType);
+		}
+		else{
+			requestInfo.setIntegrationRequestMessageType(requestMessageType);
+		}
+		requestInfo.setProtocolServiceBinding(protocolServiceBinding);
+		requestInfo.setIntegrationServiceBinding(integrationServiceBinding);
 		requestInfo.setBindingConfig(bindingConfig);
 		requestInfo.setIdentitaPdD(op2Properties.getIdentitaPortaDefault(pf.getProtocol()));
 		

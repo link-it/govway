@@ -250,13 +250,16 @@ public class RicezioneContenutiApplicativiService {
 		OpenSPCoop2Message requestMessage = null;
 		String protocol = null;
 		MessageType messageTypeReq = null;
+		ServiceBinding integrationServiceBinding = null;
 		try{
 			
 			/* --------------- Creo il context che genera l'id univoco ----------------------- */
 			
 			protocolFactory = req.getProtocolFactory();
 			protocol = protocolFactory.getProtocol();
-						
+					
+			integrationServiceBinding = requestInfo.getIntegrationServiceBinding();
+			
 			context = new RicezioneContenutiApplicativiContext(idModuloAsService,dataIngressoMessaggio,requestInfo);
 			context.setTipoPorta(TipoPdD.DELEGATA);
 			context.setIdModulo(idModulo);
@@ -340,8 +343,8 @@ public class RicezioneContenutiApplicativiService {
 			
 			msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.tipologiaMessaggio");
 			
-			messageTypeReq = requestInfo.getRequestMessageType();
-			if(ServiceBinding.SOAP.equals(requestInfo.getServiceBinding()) && messageTypeReq!=null){
+			messageTypeReq = requestInfo.getIntegrationRequestMessageType();
+			if(ServiceBinding.SOAP.equals(integrationServiceBinding) && messageTypeReq!=null){
 				msgDiag.addKeyword(CostantiPdD.KEY_SOAP_VERSION, messageTypeReq.getMessageVersionAsString());
 				msgDiag.addKeyword(CostantiPdD.KEY_SOAP_ENVELOPE_NAMESPACE_ATTESO, SoapUtils.getSoapEnvelopeNS(messageTypeReq));
 			}
@@ -349,13 +352,13 @@ public class RicezioneContenutiApplicativiService {
 			String contentTypeReq = req.getContentType();
 			boolean contentTypeSupportato = messageTypeReq!=null;
 			msgDiag.addKeyword(CostantiPdD.KEY_CONTENT_TYPES_ATTESI, 
-					requestInfo.getBindingConfig().getContentTypesSupportedAsString(requestInfo.getServiceBinding(), 
+					requestInfo.getBindingConfig().getContentTypesSupportedAsString(integrationServiceBinding, 
 							MessageRole.REQUEST,requestInfo.getProtocolContext()));
-			List<String> supportedContentTypes = requestInfo.getBindingConfig().getContentTypesSupported(requestInfo.getServiceBinding(), 
+			List<String> supportedContentTypes = requestInfo.getBindingConfig().getContentTypesSupported(integrationServiceBinding, 
 					MessageRole.REQUEST,requestInfo.getProtocolContext()); 
 			msgDiag.addKeyword(CostantiPdD.KEY_HTTP_HEADER, contentTypeReq);
 			
-			if(ServiceBinding.SOAP.equals(requestInfo.getServiceBinding())){
+			if(ServiceBinding.SOAP.equals(integrationServiceBinding)){
 				if(openSPCoopProperties.isControlloContentTypeAbilitatoRicezioneContenutiApplicativi() == false){
 					if(!contentTypeSupportato){
 						if(HttpConstants.CONTENT_TYPE_NON_PRESENTE.equals(contentTypeReq)){
@@ -394,7 +397,7 @@ public class RicezioneContenutiApplicativiService {
 				/* ------------  SoapAction check 1 (controlla che non sia null e ne ritorna il valore) ------------- */			
 				String soapAction = null;
 				try{
-					if(ServiceBinding.SOAP.equals(requestInfo.getServiceBinding())){
+					if(ServiceBinding.SOAP.equals(integrationServiceBinding)){
 						soapAction = req.getSOAPAction();
 					}
 				}catch(Exception e){
@@ -416,7 +419,7 @@ public class RicezioneContenutiApplicativiService {
 				/* ------------ Controllo MustUnderstand -------------------- */
 				String mustUnderstandError = null;
 				try{
-					if(ServiceBinding.SOAP.equals(requestInfo.getServiceBinding())){
+					if(ServiceBinding.SOAP.equals(integrationServiceBinding)){
 						mustUnderstandError = ServicesUtils.checkMustUnderstand(requestMessage.castAsSoap(),protocolFactory);
 					}
 				}catch(Exception e){
@@ -427,7 +430,7 @@ public class RicezioneContenutiApplicativiService {
 				/* ------------ Controllo Soap namespace -------------------- */
 				String soapEnvelopeNamespaceVersionMismatch = null;
 				try{
-					if(ServiceBinding.SOAP.equals(requestInfo.getServiceBinding())){
+					if(ServiceBinding.SOAP.equals(integrationServiceBinding)){
 						soapEnvelopeNamespaceVersionMismatch = ServicesUtils.checkSOAPEnvelopeNamespace(requestMessage.castAsSoap(), messageTypeReq);
 					}
 				}catch(Exception e){
@@ -518,7 +521,7 @@ public class RicezioneContenutiApplicativiService {
 			if(msgErrore==null){
 				msgErrore = e.toString();
 			}
-			if(	ServiceBinding.SOAP.equals(requestInfo.getServiceBinding()) &&
+			if(	ServiceBinding.SOAP.equals(integrationServiceBinding) &&
 				messageTypeReq!=null &&
 					(
 							// Messaggio lanciato dallo streaming engine
@@ -742,7 +745,7 @@ public class RicezioneContenutiApplicativiService {
 						responseMessage, context.getProprietaErroreAppl(), informazioniErrori,
 						(pddContext!=null ? pddContext.getContext() : null));
 				boolean consume = true;
-				if(ServiceBinding.SOAP.equals(requestInfo.getServiceBinding())){
+				if(ServiceBinding.SOAP.equals(integrationServiceBinding)){
 					SOAPBody body = responseMessage.castAsSoap().getSOAPBody();
 					if(body!=null && body.hasFault()){
 						consume = false; // può essere usato nel post out response handler
@@ -821,7 +824,7 @@ public class RicezioneContenutiApplicativiService {
 				// http status (puo' essere 200 se il msg di errore e' un msg errore applicativo cnipa non in un soap fault)
 				esito = protocolFactory.createEsitoBuilder().getEsito(req.getURLProtocolContext(),responseMessageError, context.getProprietaErroreAppl(), informazioniErrori_error,
 						(pddContext!=null ? pddContext.getContext() : null));
-				if(ServiceBinding.SOAP.equals(requestInfo.getServiceBinding())){
+				if(ServiceBinding.SOAP.equals(integrationServiceBinding)){
 					SOAPBody body = responseMessageError.castAsSoap().getSOAPBody();
 					if(body!=null && body.hasFault()){
 						statoServletResponse = 500;

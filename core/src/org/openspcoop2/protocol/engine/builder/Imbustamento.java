@@ -26,9 +26,9 @@ package org.openspcoop2.protocol.engine.builder;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.Busta;
-import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.Integrazione;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.Trasmissione;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
@@ -94,12 +94,12 @@ public class Imbustamento  {
 
 	/* ----------------  Metodi per la costruzione di una busta  -------------------- */
 
-	public void imbustamento(IState state, OpenSPCoop2Message msg,Busta busta,Integrazione integrazione,ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{	
-		this.imbustamento(state, msg, busta,integrazione, false, RuoloMessaggio.RISPOSTA, false, proprietaManifestAttachments);
+	public ProtocolMessage imbustamento(IState state, OpenSPCoop2Message msg,Busta busta,Integrazione integrazione,ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{	
+		return this.imbustamento(state, msg, busta,integrazione, false, RuoloMessaggio.RISPOSTA, false, proprietaManifestAttachments);
 	}
 
 
-	public BustaRawContent<?> imbustamento(IState state, OpenSPCoop2Message msg,Busta busta,Integrazione integrazione,
+	public ProtocolMessage imbustamento(IState state, OpenSPCoop2Message msg,Busta busta,Integrazione integrazione,
 			boolean gestioneManifest,RuoloMessaggio ruoloMessaggio,boolean scartaBody,
 			ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{	
 		if(proprietaManifestAttachments==null){
@@ -118,7 +118,7 @@ public class Imbustamento  {
 	 * 
 	 */
 
-	public BustaRawContent<?> addTrasmissione(OpenSPCoop2Message message,Trasmissione trasmissione,boolean readQualifiedAttribute) throws ProtocolException{
+	public ProtocolMessage addTrasmissione(OpenSPCoop2Message message,Trasmissione trasmissione,boolean readQualifiedAttribute) throws ProtocolException{
 		return this.protocolFactory.createBustaBuilder().addTrasmissione(message, trasmissione);
 	}
 

@@ -72,8 +72,13 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 	}
 	
 	@Override
-	public ServiceBinding getServiceBinding(IDServizio idServizio, IRegistryReader registryReader) throws ProtocolException, RegistryNotFound{
+	public ServiceBinding getIntegrationServiceBinding(IDServizio idServizio, IRegistryReader registryReader) throws ProtocolException, RegistryNotFound{
 		return ServiceBindingConfigurationReader.getServiceBinding(idServizio, registryReader);
+	}
+	
+	@Override
+	public ServiceBinding getProtocolServiceBinding(ServiceBinding integrationServiceBinding, TransportRequestContext transportRequest) throws ProtocolException{
+		return integrationServiceBinding; // stesso service binding tra integration e protocol per default
 	}
 	
 	@Override

@@ -17,8 +17,10 @@ public class RequestInfo implements java.io.Serializable {
 	
 	private URLProtocolContext protocolContext;
 	private ServiceBindingConfiguration bindingConfig;
-	private ServiceBinding serviceBinding;
-	private MessageType requestMessageType;
+	private ServiceBinding integrationServiceBinding;
+	private MessageType integrationRequestMessageType;
+	private ServiceBinding protocolServiceBinding;
+	private MessageType protocolRequestMessageType;
 	private IProtocolFactory<?> protocolFactory;
 	private IDSoggetto identitaPdD;
 	private IDSoggetto fruitore;
@@ -42,17 +44,29 @@ public class RequestInfo implements java.io.Serializable {
 	public void setBindingConfig(ServiceBindingConfiguration bindingConfig) {
 		this.bindingConfig = bindingConfig;
 	}
-	public ServiceBinding getServiceBinding() {
-		return this.serviceBinding;
+	public ServiceBinding getIntegrationServiceBinding() {
+		return this.integrationServiceBinding;
 	}
-	public void setServiceBinding(ServiceBinding serviceBinding) {
-		this.serviceBinding = serviceBinding;
+	public void setIntegrationServiceBinding(ServiceBinding integrationServiceBinding) {
+		this.integrationServiceBinding = integrationServiceBinding;
 	}
-	public MessageType getRequestMessageType() {
-		return this.requestMessageType;
+	public ServiceBinding getProtocolServiceBinding() {
+		return this.protocolServiceBinding;
 	}
-	public void setRequestMessageType(MessageType messageType) {
-		this.requestMessageType = messageType;
+	public void setProtocolServiceBinding(ServiceBinding protocolServiceBinding) {
+		this.protocolServiceBinding = protocolServiceBinding;
+	}
+	public MessageType getIntegrationRequestMessageType() {
+		return this.integrationRequestMessageType;
+	}
+	public void setIntegrationRequestMessageType(MessageType integrationRequestMessageType) {
+		this.integrationRequestMessageType = integrationRequestMessageType;
+	}
+	public MessageType getProtocolRequestMessageType() {
+		return this.protocolRequestMessageType;
+	}
+	public void setProtocolRequestMessageType(MessageType protocolRequestMessageType) {
+		this.protocolRequestMessageType = protocolRequestMessageType;
 	}
 	public IDSoggetto getIdentitaPdD() {
 		return this.identitaPdD;

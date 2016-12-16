@@ -609,10 +609,10 @@ public class LocalForwardEngine {
 				}
 				if(responseToMessage==null){
 					if(this.localForwardParameter.getProtocolFactory().createProtocolManager().isHttpEmptyResponseOneWay()){
-						responseToMessage =  MessageUtilities.buildEmptyMessage(this.requestInfo.getRequestMessageType(),MessageRole.RESPONSE);
+						responseToMessage =  MessageUtilities.buildEmptyMessage(this.requestInfo.getIntegrationRequestMessageType(),MessageRole.RESPONSE);
 					}
 					else{
-						responseToMessage = this.ejbUtils.buildOpenSPCoopOK(this.requestInfo.getRequestMessageType(), this.localForwardParameter.getIdRequest());
+						responseToMessage = this.ejbUtils.buildOpenSPCoopOK(this.requestInfo.getIntegrationRequestMessageType(), this.localForwardParameter.getIdRequest());
 					}
 				}
 				msgOK = this.ejbUtils.sendRispostaApplicativaOK(responseToMessage,
@@ -626,9 +626,9 @@ public class LocalForwardEngine {
 				this.localForwardParameter.getMsgDiag().mediumDebug("Invio messaggio 'OK' al modulo di RicezioneContenutiApplicativi...");	
 				
 				if(this.localForwardParameter.getProtocolFactory().createProtocolManager().isHttpEmptyResponseOneWay())
-					msgOK = this.ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(this.requestInfo.getRequestMessageType(),MessageRole.RESPONSE),this.richiestaDelegata,this.pd,this.sa);
+					msgOK = this.ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(this.requestInfo.getIntegrationRequestMessageType(),MessageRole.RESPONSE),this.richiestaDelegata,this.pd,this.sa);
 				else
-					msgOK = this.ejbUtils.sendRispostaApplicativaOK(this.ejbUtils.buildOpenSPCoopOK(this.requestInfo.getRequestMessageType(), this.localForwardParameter.getIdRequest()),
+					msgOK = this.ejbUtils.sendRispostaApplicativaOK(this.ejbUtils.buildOpenSPCoopOK(this.requestInfo.getIntegrationRequestMessageType(), this.localForwardParameter.getIdRequest()),
 							this.richiestaDelegata,this.pd,this.sa);
 			}
 			

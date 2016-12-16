@@ -27,10 +27,11 @@ package org.openspcoop2.protocol.engine.builder;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.sdk.Busta;
-import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
+import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.slf4j.Logger;
@@ -70,13 +71,14 @@ public class Sbustamento  {
 	 * @param gestioneManifest Indicazione se deve essere gestito il manifest degli attachments	
 	 * 
 	 */
-	public BustaRawContent<?> sbustamento(IState state, OpenSPCoop2Message msg,Busta busta,
-			RuoloMessaggio ruoloMessaggio, boolean gestioneManifest,ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{
+	public ProtocolMessage sbustamento(IState state, OpenSPCoop2Message msg,Busta busta,
+			RuoloMessaggio ruoloMessaggio, boolean gestioneManifest,ProprietaManifestAttachments proprietaManifestAttachments,
+			FaseSbustamento faseSbustamento) throws ProtocolException{
 		if(proprietaManifestAttachments==null){
 			proprietaManifestAttachments = new ProprietaManifestAttachments();
 		}
 		proprietaManifestAttachments.setGestioneManifest(gestioneManifest);
-		return this.protocolFactory.createBustaBuilder().sbustamento(state, msg, busta, ruoloMessaggio, proprietaManifestAttachments);
+		return this.protocolFactory.createBustaBuilder().sbustamento(state, msg, busta, ruoloMessaggio, proprietaManifestAttachments,faseSbustamento);
 	}
 }
 

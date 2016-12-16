@@ -84,11 +84,13 @@ import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Integrazione;
+import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.SecurityInfo;
 import org.openspcoop2.protocol.sdk.Trasmissione;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
+import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
@@ -594,13 +596,21 @@ public class InoltroRisposte extends GenericLib{
 					){
 						// Aggiungo trasmissione solo se la busta e' stata generata dalla porta di dominio destinataria della richiesta.
 						// Se il mittente e' il router, logicamente la busta sara' un errore generato dal router
-						headerBusta = imbustatore.addTrasmissione(responseMessage, tras, readQualifiedAttribute);
+						msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento ["+responseMessage.getClass().getName()+"]");
+						ProtocolMessage protocolMessage = imbustatore.addTrasmissione(responseMessage, tras, readQualifiedAttribute);
+						headerBusta = protocolMessage.getBustaRawContent();
+						responseMessage = protocolMessage.getMessage(); // updated
+						msgDiag.highDebug("Tipo Messaggio Risposta dopo l'imbustamento ["+responseMessage.getClass().getName()+"]");
 					}
 					else{
 						Integrazione integrazione = new Integrazione();
 						integrazione.setStateless(false);
-						headerBusta = imbustatore.imbustamento(openspcoopstate.getStatoRichiesta(),responseMessage,busta,integrazione,
+						msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento ["+responseMessage.getClass().getName()+"]");
+						ProtocolMessage protocolMessage = imbustatore.imbustamento(openspcoopstate.getStatoRichiesta(),responseMessage,busta,integrazione,
 								gestioneManifest,ruoloMessaggio,scartaBody,proprietaManifestAttachments);
+						headerBusta = protocolMessage.getBustaRawContent();
+						responseMessage = protocolMessage.getMessage(); // updated
+						msgDiag.highDebug("Tipo Messaggio Risposta dopo l'imbustamento ["+responseMessage.getClass().getName()+"]");
 					}
 				}catch(Exception e){
 					if(functionAsRouter)
@@ -1207,8 +1217,11 @@ public class InoltroRisposte extends GenericLib{
 					if(functionAsRouter==false)
 						gestioneManifestRispostaHttp = configurazionePdDManager.isGestioneManifestAttachments();
 					org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = new org.openspcoop2.protocol.engine.builder.Sbustamento(protocolFactory);
-					headerProtocolloRispostaConnectionReply = sbustatore.sbustamento(openspcoopstate.getStatoRichiesta(),responseHttpReply,busta,
-							RuoloMessaggio.RISPOSTA,gestioneManifestRispostaHttp,proprietaManifestAttachments);
+					ProtocolMessage protocolMessage = sbustatore.sbustamento(openspcoopstate.getStatoRichiesta(),responseHttpReply,busta,
+							RuoloMessaggio.RISPOSTA,gestioneManifestRispostaHttp,proprietaManifestAttachments,
+							FaseSbustamento.POST_CONSEGNA_RISPOSTA_NEW_CONNECTION);
+					headerProtocolloRispostaConnectionReply = protocolMessage.getBustaRawContent();
+					responseHttpReply = protocolMessage.getMessage(); // updated
 				}catch(Exception e){
 					EsitoElaborazioneMessaggioTracciato esitoTraccia = EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Sbustamento busta nella connection Reply non riuscita: "+e.getMessage());
 					tracciamento.registraRisposta(responseHttpReply,null,

@@ -37,7 +37,9 @@ import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioTrasmissioneFat
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
+import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 
@@ -65,12 +67,12 @@ public class SDIBustaBuilder extends BustaBuilder<SOAPElement> {
 	}
 
 	@Override
-	public SDIBustaRawContent imbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
+	public ProtocolMessage imbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
 			RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments)
 			throws ProtocolException {
 		
-		super.imbustamento(state, msg, busta, ruoloMessaggio, proprietaManifestAttachments);
+		ProtocolMessage protocolMessage = super.imbustamento(state, msg, busta, ruoloMessaggio, proprietaManifestAttachments);
 		
 		// Modifico il messaggio per aggiungere la struttura SDI in base all'azione invocata e al ruolo (Richiesta/Risposta) e al fatto che non vi sono errori.
 		// TODO: il body attuale lo devo inserire come valore codificato in base 64 tramite la struttura Corretta
@@ -163,96 +165,107 @@ public class SDIBustaBuilder extends BustaBuilder<SOAPElement> {
 			
 		}
 
-		return new SDIBustaRawContent(element);
+		protocolMessage.setBustaRawContent(new SDIBustaRawContent(element));
+		return protocolMessage;
 		
 	}
 	
 	@Override
-	public SDIBustaRawContent sbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
-			RuoloMessaggio ruoloMessaggio, ProprietaManifestAttachments proprietaManifestAttachments) throws ProtocolException{
+	public ProtocolMessage sbustamento(IState state, OpenSPCoop2Message msg, Busta busta,
+			RuoloMessaggio ruoloMessaggio, ProprietaManifestAttachments proprietaManifestAttachments,
+			FaseSbustamento faseSbustamento) throws ProtocolException{
 		
 		try{
 		
-			SOAPElement se = null;
+			ProtocolMessage protocolMessage = new ProtocolMessage();
+			protocolMessage.setMessage(msg);
+			
+			if(FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RICHIESTA.equals(faseSbustamento) == false){
+				// Lo sbustamento effettivo in sdi viene ritardato fino alla consegna del servizio applicativo per quanto concerne la richiesta
+				SOAPElement se = null;
 						
-			if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)){
-				
-				// Servizio
-				if(SDICostantiServizioTrasmissioneFatture.TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE.equals(busta.getServizio())){
-					if(SDICostantiServizioTrasmissioneFatture.TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_AZIONE_RICEVUTA_CONSEGNA.equals(busta.getAzione())){
-						se = this.sdiSbustamento.sbustamentoRichiesta_ServizioTrasmissioneFatture_Notifiche(TipiMessaggi.RC, busta, msg);
-					}
-					else if(SDICostantiServizioTrasmissioneFatture.TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_AZIONE_NOTIFICA_MANCATA_CONSEGNA.equals(busta.getAzione())){
-						se = this.sdiSbustamento.sbustamentoRichiesta_ServizioTrasmissioneFatture_Notifiche(TipiMessaggi.MC, busta, msg);
-					}
-					else if(SDICostantiServizioTrasmissioneFatture.TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_AZIONE_NOTIFICA_SCARTO.equals(busta.getAzione())){
-						se = this.sdiSbustamento.sbustamentoRichiesta_ServizioTrasmissioneFatture_Notifiche(TipiMessaggi.NS, busta, msg);
-					}
-					else if(SDICostantiServizioTrasmissioneFatture.TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_AZIONE_NOTIFICA_ESITO.equals(busta.getAzione())){
-						se = this.sdiSbustamento.sbustamentoRichiesta_ServizioTrasmissioneFatture_Notifiche(TipiMessaggi.NE, busta, msg);
-					}
-					else if(SDICostantiServizioTrasmissioneFatture.TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_AZIONE_NOTIFICA_DECORRENZA_TERMINI.equals(busta.getAzione())){
-						se = this.sdiSbustamento.sbustamentoRichiesta_ServizioTrasmissioneFatture_Notifiche(TipiMessaggi.DT, busta, msg);
-					}
-					else if(SDICostantiServizioTrasmissioneFatture.TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_AZIONE_ATTESTAZIONE_TRASMISSIONE_FATTURA.equals(busta.getAzione())){
-						se = this.sdiSbustamento.sbustamentoRichiesta_ServizioTrasmissioneFatture_Notifiche(TipiMessaggi.AT, busta, msg);
-					}
-					else{
-						throw new ProtocolException("Servizio["+busta.getServizio()+"] con Azione["+busta.getAzione()+"] non gestita dal protocollo durante la fase di richiesta");
-					}
-				}
-				else if(SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE.equals(busta.getServizio())){
-					if(SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE_AZIONE_RICEVI_FATTURE.equals(busta.getAzione())){
-						se = this.sdiSbustamento.sbustamentoRichiesta_ServizioRicezioneFatture_AzioneRiceviFatture(busta, msg);
-					}
-					else if(SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE_AZIONE_NOTIFICA_DECORRENZA_TERMINI.equals(busta.getAzione())){
-						se = this.sdiSbustamento.sbustamentoRichiesta_ServizioTrasmissioneFatture_Notifiche(TipiMessaggi.DT, busta, msg); // e' uguale a ricezione
-					}
-					else{
-						throw new ProtocolException("Servizio["+busta.getServizio()+"] con Azione["+busta.getAzione()+"] non gestita dal protocollo durante la fase di richiesta");
-					}
-				}
-				else{
-					boolean whiteList = false;
-					if(busta.getServizio()!=null && this.sdiProperties.getServiziWhiteList().contains(busta.getServizio())){
-						if(busta.getAzione()!=null && this.sdiProperties.getAzioniWhiteList().contains(busta.getAzione())){
-							this.log.debug("Servizio ["+busta.getServizio()+"] e Azione ["+busta.getAzione()+"] in white list");
-							whiteList = true;
+				if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)){
+					
+					// Servizio
+					if(SDICostantiServizioTrasmissioneFatture.TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE.equals(busta.getServizio())){
+						if(SDICostantiServizioTrasmissioneFatture.TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_AZIONE_RICEVUTA_CONSEGNA.equals(busta.getAzione())){
+							se = this.sdiSbustamento.sbustamentoRichiesta_ServizioTrasmissioneFatture_Notifiche(TipiMessaggi.RC, busta, msg);
+						}
+						else if(SDICostantiServizioTrasmissioneFatture.TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_AZIONE_NOTIFICA_MANCATA_CONSEGNA.equals(busta.getAzione())){
+							se = this.sdiSbustamento.sbustamentoRichiesta_ServizioTrasmissioneFatture_Notifiche(TipiMessaggi.MC, busta, msg);
+						}
+						else if(SDICostantiServizioTrasmissioneFatture.TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_AZIONE_NOTIFICA_SCARTO.equals(busta.getAzione())){
+							se = this.sdiSbustamento.sbustamentoRichiesta_ServizioTrasmissioneFatture_Notifiche(TipiMessaggi.NS, busta, msg);
+						}
+						else if(SDICostantiServizioTrasmissioneFatture.TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_AZIONE_NOTIFICA_ESITO.equals(busta.getAzione())){
+							se = this.sdiSbustamento.sbustamentoRichiesta_ServizioTrasmissioneFatture_Notifiche(TipiMessaggi.NE, busta, msg);
+						}
+						else if(SDICostantiServizioTrasmissioneFatture.TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_AZIONE_NOTIFICA_DECORRENZA_TERMINI.equals(busta.getAzione())){
+							se = this.sdiSbustamento.sbustamentoRichiesta_ServizioTrasmissioneFatture_Notifiche(TipiMessaggi.DT, busta, msg);
+						}
+						else if(SDICostantiServizioTrasmissioneFatture.TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_AZIONE_ATTESTAZIONE_TRASMISSIONE_FATTURA.equals(busta.getAzione())){
+							se = this.sdiSbustamento.sbustamentoRichiesta_ServizioTrasmissioneFatture_Notifiche(TipiMessaggi.AT, busta, msg);
+						}
+						else{
+							throw new ProtocolException("Servizio["+busta.getServizio()+"] con Azione["+busta.getAzione()+"] non gestita dal protocollo durante la fase di richiesta");
 						}
 					}
-					if(!whiteList){
-						throw new ProtocolException("Servizio["+busta.getServizio()+"] non gestite dal protocollo durante la fase di richiesta");
-					}
-				}
-				
-			}
-			else{
-	
-				// Servizio
-				if(SDICostantiServizioRiceviFile.SDI_SERVIZIO_RICEVI_FILE.equals(busta.getServizio())
-						&& SDICostantiServizioRiceviFile.SDI_SERVIZIO_RICEVI_FILE_AZIONE_RICEVI_FILE.equals(busta.getAzione())){
-					se = this.sdiSbustamento.sbustamentoRisposta_ServizioSdIRiceviFile_AzioneRiceviFile(busta, msg);
-				}
-				else if(SDICostantiServizioRiceviNotifica.SDI_SERVIZIO_RICEVI_NOTIFICA.equals(busta.getServizio())
-						&& SDICostantiServizioRiceviNotifica.SDI_SERVIZIO_NOTIFICA_ESITO_AZIONE_NOTIFICA_ESITO.equals(busta.getAzione())){
-					se = this.sdiSbustamento.sbustamentoRisposta_ServizioSdIRiceviNotifica_AzioneNotificaEsito(busta, msg);
-				}
-				else{
-					boolean whiteList = false;
-					if(busta.getServizio()!=null && this.sdiProperties.getServiziWhiteList().contains(busta.getServizio())){
-						if(busta.getAzione()!=null && this.sdiProperties.getAzioniWhiteList().contains(busta.getAzione())){
-							this.log.debug("Servizio ["+busta.getServizio()+"] e Azione ["+busta.getAzione()+"] in white list");
-							whiteList = true;
+					else if(SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE.equals(busta.getServizio())){
+						if(SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE_AZIONE_RICEVI_FATTURE.equals(busta.getAzione())){
+							se = this.sdiSbustamento.sbustamentoRichiesta_ServizioRicezioneFatture_AzioneRiceviFatture(busta, msg);
+						}
+						else if(SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE_AZIONE_NOTIFICA_DECORRENZA_TERMINI.equals(busta.getAzione())){
+							se = this.sdiSbustamento.sbustamentoRichiesta_ServizioTrasmissioneFatture_Notifiche(TipiMessaggi.DT, busta, msg); // e' uguale a ricezione
+						}
+						else{
+							throw new ProtocolException("Servizio["+busta.getServizio()+"] con Azione["+busta.getAzione()+"] non gestita dal protocollo durante la fase di richiesta");
 						}
 					}
-					if(!whiteList){
-						throw new ProtocolException("Servizio["+busta.getServizio()+"] e Azione["+busta.getAzione()+"] non gestite dal protocollo durante la fase di risposta");
+					else{
+						boolean whiteList = false;
+						if(busta.getServizio()!=null && this.sdiProperties.getServiziWhiteList().contains(busta.getServizio())){
+							if(busta.getAzione()!=null && this.sdiProperties.getAzioniWhiteList().contains(busta.getAzione())){
+								this.log.debug("Servizio ["+busta.getServizio()+"] e Azione ["+busta.getAzione()+"] in white list");
+								whiteList = true;
+							}
+						}
+						if(!whiteList){
+							throw new ProtocolException("Servizio["+busta.getServizio()+"] non gestite dal protocollo durante la fase di richiesta");
+						}
 					}
+					
+				}
+				else{
+		
+					// Servizio
+					if(SDICostantiServizioRiceviFile.SDI_SERVIZIO_RICEVI_FILE.equals(busta.getServizio())
+							&& SDICostantiServizioRiceviFile.SDI_SERVIZIO_RICEVI_FILE_AZIONE_RICEVI_FILE.equals(busta.getAzione())){
+						se = this.sdiSbustamento.sbustamentoRisposta_ServizioSdIRiceviFile_AzioneRiceviFile(busta, msg);
+					}
+					else if(SDICostantiServizioRiceviNotifica.SDI_SERVIZIO_RICEVI_NOTIFICA.equals(busta.getServizio())
+							&& SDICostantiServizioRiceviNotifica.SDI_SERVIZIO_NOTIFICA_ESITO_AZIONE_NOTIFICA_ESITO.equals(busta.getAzione())){
+						se = this.sdiSbustamento.sbustamentoRisposta_ServizioSdIRiceviNotifica_AzioneNotificaEsito(busta, msg);
+					}
+					else{
+						boolean whiteList = false;
+						if(busta.getServizio()!=null && this.sdiProperties.getServiziWhiteList().contains(busta.getServizio())){
+							if(busta.getAzione()!=null && this.sdiProperties.getAzioniWhiteList().contains(busta.getAzione())){
+								this.log.debug("Servizio ["+busta.getServizio()+"] e Azione ["+busta.getAzione()+"] in white list");
+								whiteList = true;
+							}
+						}
+						if(!whiteList){
+							throw new ProtocolException("Servizio["+busta.getServizio()+"] e Azione["+busta.getAzione()+"] non gestite dal protocollo durante la fase di risposta");
+						}
+					}
+					
 				}
 				
+				protocolMessage.setBustaRawContent(new SDIBustaRawContent(se));
+				protocolMessage.setMessage(msg);
 			}
 			
-			return new SDIBustaRawContent(se);
+			return protocolMessage;
 			
 		}catch(Exception e){
 			throw new ProtocolException(e.getMessage(),e);

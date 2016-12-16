@@ -2494,7 +2494,7 @@ public class EJBUtils {
 					this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 					this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
 					RuoloMessaggio.RISPOSTA);
-		return sendBustaRisposta(idModuloInAttesa,null,MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(), MessageRole.RESPONSE)
+		return sendBustaRisposta(idModuloInAttesa,null,MessageUtilities.buildEmptyMessage(requestInfo.getProtocolRequestMessageType(), MessageRole.RESPONSE)
 				,idSblocco,null,null,null,null);
 	}
 	

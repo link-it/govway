@@ -119,6 +119,7 @@ import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Integrazione;
+import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.SecurityInfo;
 import org.openspcoop2.protocol.sdk.Trasmissione;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
@@ -129,6 +130,7 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
@@ -1217,15 +1219,23 @@ public class InoltroBuste extends GenericLib{
 				org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore =  new org.openspcoop2.protocol.engine.builder.Imbustamento(this.log, protocolFactory);
 				if(functionAsRouter){
 					if(this.propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDDestinatario)){
-						headerBustaRichiesta = imbustatore.addTrasmissione(requestMessage, tras, readQualifiedAttribute);
+						msgDiag.highDebug("Tipo Messaggio Richiesta prima dell'imbustamento ["+requestMessage.getClass().getName()+"]");
+						ProtocolMessage protocolMessage = imbustatore.addTrasmissione(requestMessage, tras, readQualifiedAttribute);
+						headerBustaRichiesta = protocolMessage.getBustaRawContent();
+						requestMessage = protocolMessage.getMessage(); // updated
+						msgDiag.highDebug("Tipo Messaggio Richiesta dopo l'imbustamento ["+requestMessage.getClass().getName()+"]");
 					}
 					else{
 						Validatore v = new Validatore(requestMessage, openspcoopstate.getStatoRichiesta(),this.log, protocolFactory);
 						headerBustaRichiesta = v.getHeaderProtocollo_senzaControlli();
 					}
 				}else{
-					headerBustaRichiesta = imbustatore.imbustamento(openspcoopstate.getStatoRichiesta(),requestMessage,bustaRichiesta,integrazione,gestioneManifest,
+					msgDiag.highDebug("Tipo Messaggio Richiesta prima dell'imbustamento ["+requestMessage.getClass().getName()+"]");
+					ProtocolMessage protocolMessage = imbustatore.imbustamento(openspcoopstate.getStatoRichiesta(),requestMessage,bustaRichiesta,integrazione,gestioneManifest,
 							RuoloMessaggio.RICHIESTA,scartaBody,proprietaManifestAttachments);
+					headerBustaRichiesta = protocolMessage.getBustaRawContent();
+					requestMessage = protocolMessage.getMessage(); // updated
+					msgDiag.highDebug("Tipo Messaggio Richiesta dopo l'imbustamento ["+requestMessage.getClass().getName()+"]");
 				}
 			}catch(Exception e){
 				String msgErroreImbusta = null;
@@ -2745,6 +2755,98 @@ public class InoltroBuste extends GenericLib{
 							return esito;
 						}
 					}
+					
+				}
+					
+				if(presenzaRispostaProtocollo ){		
+					
+					// Qua dentro ci entro sia se sono router, che se è ancora rilevata la presenza di un protocollo dopo la validazione semantica
+					
+					// Estrazione header busta
+					msgDiag.mediumDebug("Sbustamento della risposta...");
+					Busta bustaRisposta = validatore.getBusta();
+					try{
+						boolean isMessaggioErroreProtocollo = validatore.isErroreProtocollo();
+						
+						boolean gestioneManifestRisposta = false;
+						if(functionAsRouter==false && !isMessaggioErroreProtocollo && sbustamentoInformazioniProtocolloRisposta){
+							gestioneManifestRisposta = configurazionePdDManager.isGestioneManifestAttachments(pd,protocolFactory);
+							
+							List<Eccezione> erroriValidazione = validatore.getEccezioniValidazione();
+							
+							// GestioneManifest solo se ho ricevuto una busta correttamente formata nel manifest
+							boolean sbustamentoManifestRisposta = gestioneManifestRisposta;
+							for(int k = 0; k < erroriValidazione.size() ; k++){
+								Eccezione er = erroriValidazione.get(k);
+								if(CodiceErroreCooperazione.isEccezioneAllegati(er.getCodiceEccezione())){
+									sbustamentoManifestRisposta = false;
+								}
+							}	
+							msgDiag.highDebug("Tipo Messaggio Risposta prima dello sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA
+									+"] ["+responseMessage.getClass().getName()+"]");
+							org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = new org.openspcoop2.protocol.engine.builder.Sbustamento(protocolFactory);
+							ProtocolMessage protocolMessage = sbustatore.sbustamento(openspcoopstate.getStatoRichiesta(),responseMessage,bustaRisposta,
+									RuoloMessaggio.RISPOSTA,sbustamentoManifestRisposta,proprietaManifestAttachments,
+									FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA);
+							headerProtocolloRisposta = protocolMessage.getBustaRawContent();
+							responseMessage = protocolMessage.getMessage(); // updated
+							msgDiag.highDebug("Tipo Messaggio Risposta dopo lo sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA
+									+"] ["+responseMessage.getClass().getName()+"]");					
+						}else{
+							headerProtocolloRisposta = validatore.getHeaderProtocollo();
+						}
+					}catch(Exception e){
+						if(functionAsRouter==false){
+							msgDiag.logErroreGenerico(e,"sbustatore.sbustamento("+bustaRisposta.getID()+")");
+						}else{
+							msgDiag.logErroreGenerico(e,"validator.getHeader("+bustaRisposta.getID()+")");
+						}
+						
+						EsitoElaborazioneMessaggioTracciato esitoTraccia = EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Errore durante lo sbustamento della risposta: "+e.getMessage());
+						tracciamento.registraRisposta(responseMessage,securityInfoResponse,headerBustaRisposta,bustaRisposta,esitoTraccia,
+								Tracciamento.createLocationString(true, location),
+								idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta); // non ancora registrata
+						
+						if(functionAsRouter){
+							ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaDelegata.getIdModuloInAttesa(),
+									bustaRichiesta,
+									ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+										get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_527_GESTIONE_SBUSTAMENTO),
+									idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,e,
+									(responseMessage!=null ? responseMessage.getParseException() : null));
+							esito.setEsitoInvocazione(true);
+							esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
+									"Sbustamento non riuscito");
+						}else{
+													
+							ErroreIntegrazione erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+									get5XX_ErroreProcessamento(e.getMessage(),CodiceErroreIntegrazione.CODICE_527_GESTIONE_SBUSTAMENTO);
+							if(sendRispostaApplicativa){
+								OpenSPCoop2Message responseMessageError = this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
+										erroreIntegrazione,e,
+											(responseMessage!=null ? responseMessage.getParseException() : null));
+								ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
+								esito.setEsitoInvocazione(true);
+								esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"Sbustamento non riuscito");
+							}else{
+								// Se Non e' attivo una gestione dei riscontri, faccio il rollback sulla coda.
+								// Altrimenti verra attivato la gestione dei riscontri che riprovera' dopo un tot.
+								if(gestioneBusteNonRiscontrateAttive==false){
+									ejbUtils.rollbackMessage("Sbustamento non riuscito", esito);
+									esito.setStatoInvocazioneErroreNonGestito(e);
+									esito.setEsitoInvocazione(false);
+								}else{
+									ejbUtils.updateErroreProcessamentoMessage("Sbustamento non riuscito", esito);
+									esito.setEsitoInvocazione(true);
+									esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"Sbustamento non riuscito");
+								}
+							}
+							
+						}
+						openspcoopstate.releaseResource();
+						return esito;
+
+					}
 				}
 			}
 
@@ -3206,74 +3308,6 @@ public class InoltroBuste extends GenericLib{
 					return esito;
 				}
 
-				// Estrazione header busta
-				msgDiag.mediumDebug("Sbustamento della risposta...");
-				try{
-					boolean gestioneManifestRisposta = false;
-					if(functionAsRouter==false && sbustamentoInformazioniProtocolloRisposta){
-						gestioneManifestRisposta = configurazionePdDManager.isGestioneManifestAttachments(pd,protocolFactory);
-						// GestioneManifest solo se ho ricevuto una busta correttamente formata nel manifest
-						boolean sbustamentoManifestRisposta = gestioneManifestRisposta;
-						for(int k = 0; k < erroriValidazione.size() ; k++){
-							Eccezione er = erroriValidazione.get(k);
-							if(CodiceErroreCooperazione.isEccezioneAllegati(er.getCodiceEccezione())){
-								sbustamentoManifestRisposta = false;
-							}
-						}	
-						org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = new org.openspcoop2.protocol.engine.builder.Sbustamento(protocolFactory);
-						headerProtocolloRisposta = sbustatore.sbustamento(openspcoopstate.getStatoRichiesta(),responseMessage,bustaRisposta,
-								RuoloMessaggio.RISPOSTA,sbustamentoManifestRisposta,proprietaManifestAttachments);
-					}else{
-						headerProtocolloRisposta = validatore.getHeaderProtocollo();
-					}
-				}catch(Exception e){
-					if(functionAsRouter==false){
-						msgDiag.logErroreGenerico(e,"sbustatore.sbustamento("+idMessageResponse+")");
-					}else{
-						msgDiag.logErroreGenerico(e,"validator.getHeader("+idMessageResponse+")");
-					}
-					EsitoElaborazioneMessaggioTracciato esitoTraccia = EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Errore durante lo sbustamento della risposta: "+e.getMessage());
-					tracciamento.registraRisposta(responseMessage,securityInfoResponse,headerBustaRisposta,bustaRisposta,esitoTraccia,
-							Tracciamento.createLocationString(true, location),
-							idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta); // non ancora registrata
-					if(functionAsRouter){
-						ejbUtils.sendAsRispostaBustaErroreProcessamento(richiestaDelegata.getIdModuloInAttesa(),
-								bustaRichiesta,
-								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_527_GESTIONE_SBUSTAMENTO),
-								idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,e,
-								(responseMessage!=null ? responseMessage.getParseException() : null));
-						esito.setEsitoInvocazione(true);
-						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
-								"Sbustamento non riuscito");
-					}else{
-						if(sendRispostaApplicativa){
-							OpenSPCoop2Message responseMessageError = 
-									this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
-											ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-												get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_527_GESTIONE_SBUSTAMENTO),e,
-													(responseMessage!=null ? responseMessage.getParseException() : null));
-							ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
-							esito.setEsitoInvocazione(true);
-							esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"Sbustamento non riuscito");
-						}else{
-							// Se Non e' attivo una gestione dei riscontri, faccio il rollback sulla coda.
-							// Altrimenti verra attivato la gestione dei riscontri che riprovera' dopo un tot.
-							if(gestioneBusteNonRiscontrateAttive==false){
-								ejbUtils.rollbackMessage("Sbustamento non riuscito", esito);
-								esito.setEsitoInvocazione(false);
-								esito.setStatoInvocazioneErroreNonGestito(e);
-							}else{
-								ejbUtils.updateErroreProcessamentoMessage("Sbustamento non riuscito", esito);
-								esito.setEsitoInvocazione(true);
-								esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,"Sbustamento non riuscito");
-							}
-						}
-					}
-					openspcoopstate.releaseResource();
-					return esito;
-				}
-
 				// Tracciamento Risposta
 				msgDiag.mediumDebug("Tracciamento della busta di risposta...");
 				EsitoElaborazioneMessaggioTracciato esitoTraccia = EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneMessaggioRicevuto();
@@ -3592,10 +3626,10 @@ public class InoltroBuste extends GenericLib{
 						sendRispostaApplicativa){
 					msgDiag.mediumDebug("Invio messaggio 'OK' al modulo di RicezioneContenutiApplicativi (Carico HTTP Reply vuoto)...");
 					if(protocolManager.isHttpEmptyResponseOneWay())
-						msgResponse = ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(),MessageRole.RESPONSE),
+						msgResponse = ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(requestInfo.getIntegrationRequestMessageType(),MessageRole.RESPONSE),
 								richiestaDelegata,pd,sa);
 					else
-						msgResponse = ejbUtils.sendRispostaApplicativaOK(ejbUtils.buildOpenSPCoopOK(requestInfo.getRequestMessageType(), idMessageRequest),richiestaDelegata,pd,sa);
+						msgResponse = ejbUtils.sendRispostaApplicativaOK(ejbUtils.buildOpenSPCoopOK(requestInfo.getIntegrationRequestMessageType(), idMessageRequest),richiestaDelegata,pd,sa);
 				}
 				// Scenario Sincrono
 				else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(bustaRichiesta.getProfiloDiCollaborazione())){
@@ -3653,9 +3687,9 @@ public class InoltroBuste extends GenericLib{
 					else{
 					
 						if(protocolManager.isHttpEmptyResponseOneWay())
-							msgResponse = ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(),MessageRole.RESPONSE),richiestaDelegata,pd,sa);
+							msgResponse = ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(requestInfo.getIntegrationRequestMessageType(),MessageRole.RESPONSE),richiestaDelegata,pd,sa);
 						else
-							msgResponse = ejbUtils.sendRispostaApplicativaOK(ejbUtils.buildOpenSPCoopOK(requestInfo.getRequestMessageType(), idMessageRequest),richiestaDelegata,pd,sa);
+							msgResponse = ejbUtils.sendRispostaApplicativaOK(ejbUtils.buildOpenSPCoopOK(requestInfo.getIntegrationRequestMessageType(), idMessageRequest),richiestaDelegata,pd,sa);
 					}
 					
 					
@@ -4079,9 +4113,9 @@ public class InoltroBuste extends GenericLib{
 							}
 							msgDiag.mediumDebug("Invio messaggio 'OK' al modulo di RicezioneContenutiApplicativi (Carico HTTP Reply vuoto)...");
 							if(protocolManager.isHttpEmptyResponseOneWay())
-								msgResponse = ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(),MessageRole.RESPONSE),richiestaDelegata,pd,sa);
+								msgResponse = ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(requestInfo.getIntegrationRequestMessageType(),MessageRole.RESPONSE),richiestaDelegata,pd,sa);
 							else
-								msgResponse = ejbUtils.sendRispostaApplicativaOK(ejbUtils.buildOpenSPCoopOK(requestInfo.getRequestMessageType(), idMessageRequest),richiestaDelegata,pd,sa);
+								msgResponse = ejbUtils.sendRispostaApplicativaOK(ejbUtils.buildOpenSPCoopOK(requestInfo.getIntegrationRequestMessageType(), idMessageRequest),richiestaDelegata,pd,sa);
 							fineGestione = false;
 						}else{
 							// Se non ho un fault, e non sono in profilo oneway stateless segnalo l'anomalia

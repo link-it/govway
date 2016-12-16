@@ -46,6 +46,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.Integrazione;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.Trasmissione;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
@@ -704,7 +705,8 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 
 			
 			// imbustamento
-			this.imbustamento.imbustamento(state, responseMessage, busta, integrazione, null);
+			ProtocolMessage protocolMessage = this.imbustamento.imbustamento(state, responseMessage, busta, integrazione, null);
+			responseMessage = protocolMessage.getMessage(); // updated
 
 
 			// Message-Security
@@ -868,7 +870,8 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 
 			// Add header
 
-			this.imbustamento.imbustamento(state, responseMessage, busta,integrazione, null);
+			ProtocolMessage protocolMessage = this.imbustamento.imbustamento(state, responseMessage, busta,integrazione, null);
+			responseMessage = protocolMessage.getMessage(); // updated
 
 			// Message-Security
 			if(messageSecurityPropertiesResponse != null){

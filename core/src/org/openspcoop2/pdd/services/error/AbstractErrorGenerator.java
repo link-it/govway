@@ -9,6 +9,7 @@ import org.openspcoop2.message.config.IntegrationErrorCollection;
 import org.openspcoop2.message.config.IntegrationErrorConfiguration;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.services.RequestInfo;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -33,6 +34,8 @@ public abstract class AbstractErrorGenerator {
 	
 	protected OpenSPCoop2Properties openspcoopProperties;
 	protected RequestInfo requestInfo;
+	protected MessageType requestMessageType;
+	protected ServiceBinding serviceBinding;
 	
 	protected TipoPdD tipoPdD;
 	public void updateTipoPdD(TipoPdD tipoPdD) {
@@ -58,6 +61,15 @@ public abstract class AbstractErrorGenerator {
 		this.tipoPdD = tipoPdD;
 		
 		this.internalErrorConfiguration = internalErrorConfiguration;
+		
+		if(TipoPdD.APPLICATIVA.equals(tipoPdD)){
+			this.requestMessageType = requestInfo.getProtocolRequestMessageType();
+			this.serviceBinding = requestInfo.getProtocolServiceBinding();
+		}
+		else{
+			this.requestMessageType = requestInfo.getIntegrationRequestMessageType();
+			this.serviceBinding = requestInfo.getProtocolServiceBinding();
+		}
 	}
 	
 	public void updateDominio(IDSoggetto identitaPdD){
@@ -75,9 +87,9 @@ public abstract class AbstractErrorGenerator {
 	protected IntegrationErrorConfiguration getConfigurationForError(IntegrationError integrationError){
 		IntegrationErrorCollection errorCollection = null;
 		if(this.internalErrorConfiguration){
-			errorCollection = this.requestInfo.getBindingConfig().getInternalIntegrationErrorConfiguration(this.requestInfo.getServiceBinding());
+			errorCollection = this.requestInfo.getBindingConfig().getInternalIntegrationErrorConfiguration(this.serviceBinding);
 		}else{
-			errorCollection = this.requestInfo.getBindingConfig().getExternalIntegrationErrorConfiguration(this.requestInfo.getServiceBinding());
+			errorCollection = this.requestInfo.getBindingConfig().getExternalIntegrationErrorConfiguration(this.serviceBinding);
 		}
 		IntegrationErrorConfiguration config = errorCollection.getIntegrationError(integrationError);
 		if(config==null){
@@ -87,7 +99,7 @@ public abstract class AbstractErrorGenerator {
 	}
 	protected MessageType getMessageTypeForError(IntegrationError integrationError){
 		IntegrationErrorConfiguration config = this.getConfigurationForError(integrationError);
-		return config.getMessageType(this.requestInfo.getRequestMessageType());
+		return config.getMessageType(this.requestMessageType);
 	}
 
 	protected int getReturnCodeForError(IntegrationError integrationError){
@@ -98,7 +110,7 @@ public abstract class AbstractErrorGenerator {
 	protected MessageType getMessageTypeForErrorSafeMode(IntegrationError integrationError){
 		MessageType msgTypeErrorResponse = null;
 		try{
-			msgTypeErrorResponse = this.requestInfo.getRequestMessageType();
+			msgTypeErrorResponse = this.requestMessageType;
 			if(this.forceMessageTypeResponse!=null){
 				msgTypeErrorResponse = this.forceMessageTypeResponse;
 			}

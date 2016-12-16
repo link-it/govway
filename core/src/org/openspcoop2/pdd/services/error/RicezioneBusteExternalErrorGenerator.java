@@ -35,7 +35,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 		
 		super(log, idModulo, requestInfo, TipoPdD.APPLICATIVA, false);
 			
-		this.imbustamentoErrore = new ImbustamentoErrore(this.log, this.protocolFactory, this.requestInfo.getServiceBinding());
+		this.imbustamentoErrore = new ImbustamentoErrore(this.log, this.protocolFactory, this.serviceBinding);
 		
 		this.forceSoapPrefixCompatibilitOpenSPCoopV1 = this.openspcoopProperties.isForceSoapPrefixCompatibilitaOpenSPCoopV1();
 	}

@@ -35,8 +35,7 @@ public class RicezioneBusteServiceUtils {
 		URLProtocolContext protocolContext = requestInfo.getProtocolContext();
 		IProtocolFactory<?> pf = requestInfo.getProtocolFactory();
 		ServiceBindingConfiguration bindingConfig = requestInfo.getBindingConfig();
-		ServiceBinding serviceBinding = requestInfo.getServiceBinding();
-		MessageType requestMessageType = requestInfo.getRequestMessageType();
+		ServiceBinding integrationServiceBinding = requestInfo.getIntegrationServiceBinding();
 						
 		IRegistryReader registryReader = serviceIdentificationReader.getRegistryReader();
 		CachedConfigIntegrationReader configIntegrationReader = (CachedConfigIntegrationReader) serviceIdentificationReader.getConfigIntegrationReader();
@@ -92,8 +91,8 @@ public class RicezioneBusteServiceUtils {
 				
 				// Aggiorno service binding rispetto al servizio localizzato
 				try{
-					serviceBinding = pf.createProtocolConfiguration().getServiceBinding(idServizio, registryReader);
-					requestInfo.setServiceBinding(serviceBinding);
+					integrationServiceBinding = pf.createProtocolConfiguration().getIntegrationServiceBinding(idServizio, registryReader);
+					requestInfo.setIntegrationServiceBinding(integrationServiceBinding);
 				}catch(RegistryNotFound notFound){
 					logCore.debug("Lettura ServiceBinding fallita (notFound): "+notFound.getMessage(),notFound);
 					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, notFound.getMessage());
@@ -114,7 +113,7 @@ public class RicezioneBusteServiceUtils {
 				
 				// Aggiorno service binding configuration rispetto al servizio localizzato
 				try{
-					bindingConfig = pf.createProtocolConfiguration().getServiceBindingConfiguration(protocolContext, serviceBinding, idServizio, registryReader);
+					bindingConfig = pf.createProtocolConfiguration().getServiceBindingConfiguration(protocolContext, integrationServiceBinding, idServizio, registryReader);
 					requestInfo.setBindingConfig(bindingConfig);
 				}catch(RegistryNotFound notFound){
 					logCore.debug("Lettura Configurazione Servizio fallita (notFound): "+notFound.getMessage(),notFound);
@@ -136,9 +135,9 @@ public class RicezioneBusteServiceUtils {
 				
 				// Aggiorno message type
 				try{
-					requestMessageType = bindingConfig.getMessageType(serviceBinding, MessageRole.REQUEST, 
+					MessageType requestMessageType = bindingConfig.getMessageType(integrationServiceBinding, MessageRole.REQUEST, 
 							protocolContext, protocolContext.getContentType());
-					requestInfo.setRequestMessageType(requestMessageType);
+					requestInfo.setIntegrationRequestMessageType(requestMessageType);
 				}catch(Exception error){
 					logCore.error("Comprensione MessageType fallita: "+error.getMessage(),error);
 					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, error.getMessage());

@@ -36,6 +36,7 @@ import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -45,6 +46,7 @@ import org.openspcoop2.pdd.services.RequestInfo;
 import org.openspcoop2.pdd.services.skeleton.IntegrationManager;
 import org.openspcoop2.protocol.engine.BasicProtocolFactory;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.builder.DiagnosticoBuilder;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -368,7 +370,14 @@ public class MsgDiagnostico {
 			if(this.pddContext!=null && this.pddContext.containsKey(Costanti.REQUEST_INFO)){
 				RequestInfo requestInfo = (RequestInfo) this.pddContext.getObject(Costanti.REQUEST_INFO);
 				this.addKeyword(CostantiPdD.KEY_PROTOCOLLO_TIPI_SOGGETTI, protocolFactory.createProtocolConfiguration().getTipiSoggetti().toString());
-				this.addKeyword(CostantiPdD.KEY_PROTOCOLLO_TIPI_SERVIZI, protocolFactory.createProtocolConfiguration().getTipiServizi(requestInfo.getServiceBinding()).toString());
+				ServiceBinding serviceBinding = null;
+				if(URLProtocolContext.PA_FUNCTION.equals(requestInfo.getProtocolContext().getFunction())){
+					serviceBinding = requestInfo.getProtocolServiceBinding();
+				}
+				else{
+					serviceBinding = requestInfo.getIntegrationServiceBinding();
+				}
+				this.addKeyword(CostantiPdD.KEY_PROTOCOLLO_TIPI_SERVIZI, protocolFactory.createProtocolConfiguration().getTipiServizi(serviceBinding).toString());
 			}
 		}catch(Exception e){}
 	}

@@ -73,6 +73,7 @@ import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.builder.IBustaBuilder;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
@@ -80,6 +81,7 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
@@ -976,7 +978,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					// attachments non gestiti!
 					ProprietaManifestAttachments proprietaManifest = this.propertiesReader.getProprietaManifestAttachments("standard");
 					proprietaManifest.setGestioneManifest(false);
-					bustaBuilder.sbustamento(stato.getStatoRichiesta(),consegnaMessage, busta, ruoloMessaggio, proprietaManifest);
+					ProtocolMessage  protocolMessage = bustaBuilder.sbustamento(stato.getStatoRichiesta(),consegnaMessage, 
+							busta, ruoloMessaggio, proprietaManifest, FaseSbustamento.PRE_CONSEGNA_INTEGRATION_MANAGER_MESSAGE_BOX);
+					consegnaMessage = protocolMessage.getMessage(); // updated
 				}catch(Exception e){
 					msgDiag.logErroreGenerico(e,"gestoreMessaggi.getMessage("+isRiferimentoMessaggio+","+tipoOperazione+")");
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.

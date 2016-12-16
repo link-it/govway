@@ -1128,9 +1128,9 @@ public class SbustamentoRisposte extends GenericLib {
 					msgDiag.mediumDebug("Invio messaggio 'OK' al modulo di RicezioneContenutiApplicativi, oneway con scenario sincrono...");
 
 					if(protocolManager.isHttpEmptyResponseOneWay())
-						msgResponse = ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(requestInfo.getRequestMessageType(),MessageRole.RESPONSE),richiestaDelegata,pd,sa);
+						msgResponse = ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(requestInfo.getIntegrationRequestMessageType(),MessageRole.RESPONSE),richiestaDelegata,pd,sa);
 					else
-						msgResponse = ejbUtils.sendRispostaApplicativaOK(ejbUtils.buildOpenSPCoopOK(requestInfo.getRequestMessageType(), idMessageRequest),richiestaDelegata,pd,sa);
+						msgResponse = ejbUtils.sendRispostaApplicativaOK(ejbUtils.buildOpenSPCoopOK(requestInfo.getIntegrationRequestMessageType(), idMessageRequest),richiestaDelegata,pd,sa);
 					
 				} else {
 					msgDiag.mediumDebug("Send risposta applicativa...");

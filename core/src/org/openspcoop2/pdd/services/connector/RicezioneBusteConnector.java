@@ -78,7 +78,7 @@ public class RicezioneBusteConnector {
 			}
 		}
 		
-		if(ServiceBinding.SOAP.equals(requestInfo.getServiceBinding()) && !HttpRequestMethod.POST.equals(method)){
+		if(ServiceBinding.SOAP.equals(requestInfo.getProtocolServiceBinding()) && !HttpRequestMethod.POST.equals(method)){
 
 			ConnectorDispatcherUtils.doMethodNotSupported(req, res, method, ID_SERVICE);
 			return;
