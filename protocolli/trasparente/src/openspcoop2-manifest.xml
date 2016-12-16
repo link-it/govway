@@ -60,32 +60,46 @@
     </binding>
 
     <web>
-        <context name="api"/>
-
-		<!-- Altri esempi -->
-        <context name="soap" binding="soap">
-        	<soapMediaTypeCollection>
-    			<mediaType messageType="soap11">text/xml</mediaType>
-    			<default messageType="soap12"/>
-    		</soapMediaTypeCollection>
-        </context>
-        <context name="soap11" binding="soap">
-        	<soapMediaTypeCollection>
-    			<default messageType="soap11"/>
-    		</soapMediaTypeCollection>
-        </context>
-        <context name="soap12" binding="soap">
-        	<soapMediaTypeCollection>
-    			<default messageType="soap12"/>
-    		</soapMediaTypeCollection>
-        </context>
-        <context name="rest" binding="rest"/>
- 		<context name="binary" binding="rest">
- 			<restMediaTypeCollection>
- 				<default messageType="binary"/>
- 				<undefined messageType="binary"/>
- 			</restMediaTypeCollection>
- 		</context>
+    
+		<!-- Contesto api supporta sia soap che rest 
+		     con il mapping definito a livello generare di binding -->
+	    <context name="api"/>
+	
+		<!-- Contesto soap supporta solamente il service binding soap 
+	 	     (Controllo Runtime) -->
+	    <context name="soap" binding="soap"/>
+	
+		<!-- Contesto soap11 supporta solamente il service binding soap 
+		     (Controllo Runtime) e forza la conversione del content type
+			in message type soap11 qualsiasi sia il content type presente -->
+	    <context name="soap11" binding="soap">
+	        	<soapMediaTypeCollection>
+	    			<default messageType="soap11"/>
+	    		</soapMediaTypeCollection>
+	    </context>
+	
+		<!-- Contesto soap12 supporta solamente il service binding soap 
+		     (Controllo Runtime) e forza la conversione del content type
+			in message type soap12 qualsiasi sia il content type presente -->
+	    <context name="soap12" binding="soap">
+	        	<soapMediaTypeCollection>
+	    			<default messageType="soap12"/>
+	    		</soapMediaTypeCollection>
+	    </context>
+	
+		<!-- Contesto rest supporta solamente il service binding rest
+	 	     (Controllo Runtime) -->
+	    <context name="rest" binding="rest"/>
+	 		
+		<!-- Contesto binary supporta solamente il service binding rest
+		     (Controllo Runtime) e forza la conversione del content type
+			in message type binary qualsiasi sia il content type presente -->
+		<context name="binary" binding="rest">
+	 			<restMediaTypeCollection>
+	 				<default messageType="binary"/>
+	 				<undefined messageType="binary"/>
+	 			</restMediaTypeCollection>
+	 	</context>
 
     </web>
 
@@ -99,35 +113,74 @@
 
         <service>
             <types>
+            
+                <!-- Il tipo API supporta sia soap che rest 
+		     		con il mapping definito a livello generare di binding -->
+                <type name="API" binding="soap"/>
+            
+            	<!-- Il tipo SOAP è compatibile solamente 
+			   		 con il service binding soap -->
                 <type name="SOAP" binding="soap"/>
+                
+                <!-- Il tipo SOAP11 è compatibile solamente 
+			   		 con il service binding soap e forza la conversione del content type
+					in message type soap11 qualsiasi sia il content type presente -->
                 <type name="SOAP11" binding="soap">
 	                <soapMediaTypeCollection>
 		    			<default messageType="soap11"/>
 		    		</soapMediaTypeCollection>
                 </type>
+                
+                <!-- Il tipo SOAP12 è compatibile solamente 
+			   		 con il service binding soap e forza la conversione del content type
+					in message type soap12 qualsiasi sia il content type presente -->
                 <type name="SOAP12" binding="soap">
 	                <soapMediaTypeCollection>
 		    			<default messageType="soap12"/>
 		    		</soapMediaTypeCollection>
                 </type>
+                
+                <!-- Il tipo REST è compatibile solamente 
+			   		 con il service binding rest -->
                 <type name="REST" binding="rest"/>
-                <!--  Altri esempi -->
+                
+               <!-- Il tipo XML è compatibile solamente 
+			   		con il service binding rest e forza la conversione del content type
+					in message type xml qualsiasi sia il content type presente -->
                 <type name="XML" binding="rest">
                 	<restMediaTypeCollection>
  						<default messageType="xml"/>
  						<undefined messageType="xml"/>
  					</restMediaTypeCollection>
                 </type>
+                
+                <!-- Il tipo JSON è compatibile solamente 
+			   		con il service binding rest e forza la conversione del content type
+					in message type json qualsiasi sia il content type presente -->
                 <type name="JSON" binding="rest">
                 	<restMediaTypeCollection>
  						<default messageType="json"/>
  						<undefined messageType="json"/>
  					</restMediaTypeCollection>
                 </type>
+                
+                <!-- Il tipo BINARY è compatibile solamente 
+			   		con il service binding rest e forza la conversione del content type
+					in message type binary qualsiasi sia il content type presente -->
 				<type name="BINARY" binding="rest">
                 	<restMediaTypeCollection>
  						<default messageType="binary"/>
  						<undefined messageType="binary"/>
+ 					</restMediaTypeCollection>
+                </type>
+                
+                <!-- Il tipo BINARY è compatibile solamente 
+			   		con il service binding rest e forza la conversione del content type
+					in message type mimeMultipart qualsiasi sia il content type presente -->
+				<type name="MULTIPART" binding="rest">
+                	<restMediaTypeCollection>
+ 						<default messageType="mimeMultipart"/>
+ 						<undefined messageType="mimeMultipart"/>
  					</restMediaTypeCollection>
                 </type>
             </types>

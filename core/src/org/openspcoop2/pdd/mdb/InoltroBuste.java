@@ -2769,10 +2769,12 @@ public class InoltroBuste extends GenericLib{
 						boolean isMessaggioErroreProtocollo = validatore.isErroreProtocollo();
 						
 						boolean gestioneManifestRisposta = false;
-						if(functionAsRouter==false && !isMessaggioErroreProtocollo && sbustamentoInformazioniProtocolloRisposta){
+						if(functionAsRouter==false && !isMessaggioErroreProtocollo){
 							gestioneManifestRisposta = configurazionePdDManager.isGestioneManifestAttachments(pd,protocolFactory);
 							
 							List<Eccezione> erroriValidazione = validatore.getEccezioniValidazione();
+							
+							org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = new org.openspcoop2.protocol.engine.builder.Sbustamento(protocolFactory);
 							
 							// GestioneManifest solo se ho ricevuto una busta correttamente formata nel manifest
 							boolean sbustamentoManifestRisposta = gestioneManifestRisposta;
@@ -2784,14 +2786,29 @@ public class InoltroBuste extends GenericLib{
 							}	
 							msgDiag.highDebug("Tipo Messaggio Risposta prima dello sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA
 									+"] ["+responseMessage.getClass().getName()+"]");
-							org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = new org.openspcoop2.protocol.engine.builder.Sbustamento(protocolFactory);
 							ProtocolMessage protocolMessage = sbustatore.sbustamento(openspcoopstate.getStatoRichiesta(),responseMessage,bustaRisposta,
 									RuoloMessaggio.RISPOSTA,sbustamentoManifestRisposta,proprietaManifestAttachments,
 									FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA);
 							headerProtocolloRisposta = protocolMessage.getBustaRawContent();
 							responseMessage = protocolMessage.getMessage(); // updated
 							msgDiag.highDebug("Tipo Messaggio Risposta dopo lo sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA
-									+"] ["+responseMessage.getClass().getName()+"]");					
+									+"] ["+responseMessage.getClass().getName()+"]");		
+							
+							
+							if(sbustamentoInformazioniProtocolloRisposta){
+								// effettuo lo stesso sbustamento invocandolo con la nuova fase
+								// Questa invocazione andrebbe implementata su ricezionecontenutiApplicativi teoricamente
+								msgDiag.highDebug("Tipo Messaggio Risposta prima dello sbustamento ["+FaseSbustamento.PRE_CONSEGNA_RISPOSTA
+										+"] ["+responseMessage.getClass().getName()+"]");
+								protocolMessage = sbustatore.sbustamento(openspcoopstate.getStatoRichiesta(),responseMessage,bustaRisposta,
+										RuoloMessaggio.RISPOSTA,sbustamentoManifestRisposta,proprietaManifestAttachments,
+										FaseSbustamento.PRE_CONSEGNA_RISPOSTA);
+								headerProtocolloRisposta = protocolMessage.getBustaRawContent();
+								responseMessage = protocolMessage.getMessage(); // updated
+								msgDiag.highDebug("Tipo Messaggio Risposta dopo lo sbustamento ["+FaseSbustamento.PRE_CONSEGNA_RISPOSTA
+										+"] ["+responseMessage.getClass().getName()+"]");	
+							}
+							
 						}else{
 							headerProtocolloRisposta = validatore.getHeaderProtocollo();
 						}

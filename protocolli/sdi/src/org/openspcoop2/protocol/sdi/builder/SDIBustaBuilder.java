@@ -180,8 +180,11 @@ public class SDIBustaBuilder extends BustaBuilder<SOAPElement> {
 			ProtocolMessage protocolMessage = new ProtocolMessage();
 			protocolMessage.setMessage(msg);
 			
-			if(FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RICHIESTA.equals(faseSbustamento) == false){
-				// Lo sbustamento effettivo in sdi viene ritardato fino alla consegna del servizio applicativo per quanto concerne la richiesta
+			if(FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RICHIESTA.equals(faseSbustamento) == false &&
+					FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA.equals(faseSbustamento) == false){
+				
+				// Lo sbustamento effettivo in sdi viene ritardato fino alla consegna del servizio applicativo
+				// il servizio applicativo può richiederlo di non effettuarlo
 				SOAPElement se = null;
 						
 				if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)){

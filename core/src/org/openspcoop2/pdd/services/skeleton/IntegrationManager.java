@@ -975,11 +975,19 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			if(sbustamento_informazioni_protocollo){
 				try{
 					IBustaBuilder<?> bustaBuilder = protocolFactory.createBustaBuilder();
+					
+					FaseSbustamento fase = null;
+					if(RuoloMessaggio.RICHIESTA.equals(fase)){
+						fase = FaseSbustamento.PRE_CONSEGNA_RICHIESTA;
+					}else{
+						fase = FaseSbustamento.PRE_CONSEGNA_RISPOSTA;
+					}
+					
 					// attachments non gestiti!
 					ProprietaManifestAttachments proprietaManifest = this.propertiesReader.getProprietaManifestAttachments("standard");
 					proprietaManifest.setGestioneManifest(false);
 					ProtocolMessage  protocolMessage = bustaBuilder.sbustamento(stato.getStatoRichiesta(),consegnaMessage, 
-							busta, ruoloMessaggio, proprietaManifest, FaseSbustamento.PRE_CONSEGNA_INTEGRATION_MANAGER_MESSAGE_BOX);
+							busta, ruoloMessaggio, proprietaManifest, fase);
 					consegnaMessage = protocolMessage.getMessage(); // updated
 				}catch(Exception e){
 					msgDiag.logErroreGenerico(e,"gestoreMessaggi.getMessage("+isRiferimentoMessaggio+","+tipoOperazione+")");

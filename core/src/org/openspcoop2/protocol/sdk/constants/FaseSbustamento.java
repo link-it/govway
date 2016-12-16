@@ -40,8 +40,7 @@ public enum FaseSbustamento implements Serializable {
 	PRE_CONSEGNA_RICHIESTA, // connettore
 	
 	POST_VALIDAZIONE_SEMANTICA_RISPOSTA, // inoltroBuste
-	
-	PRE_CONSEGNA_INTEGRATION_MANAGER_MESSAGE_BOX, // integrationManager
+	PRE_CONSEGNA_RISPOSTA, // teoricamente sul servizio ricezioneContenutiApplicativi, in pratica su inoltroBuste
 	
 	POST_CONSEGNA_RISPOSTA_NEW_CONNECTION; // inoltroRisposte
 	

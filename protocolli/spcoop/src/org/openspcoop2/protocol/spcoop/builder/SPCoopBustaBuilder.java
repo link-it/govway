@@ -123,8 +123,11 @@ public class SPCoopBustaBuilder extends BasicComponentFactory implements org.ope
 		ProtocolMessage protocolMessage = new ProtocolMessage();
 		protocolMessage.setMessage(msg);
 		
-		if(FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RICHIESTA.equals(faseSbustamento) == false){
-			// Lo sbustamento effettivo in spcoop viene ritardato fino alla consegna del servizio applicativo per quanto concerne la richiesta
+		if(FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RICHIESTA.equals(faseSbustamento) == false &&
+				FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA.equals(faseSbustamento) == false){
+			
+			// Lo sbustamento effettivo in spcoop viene ritardato fino alla consegna del servizio applicativo
+			// il servizio applicativo può richiederlo di non effettuarlo
 			SOAPHeaderElement element =  this.spcoopSbustamento.sbustamento(msg, proprietaManifestAttachments);
 			protocolMessage.setBustaRawContent(new SPCoopBustaRawContent(element));
 			protocolMessage.setMessage(msg);
