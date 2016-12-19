@@ -45,6 +45,14 @@ public class MimeMultipart {
 	private javax.mail.internet.MimeMultipart mimeMultipart = null;
 	
 	
+	public MimeMultipart() throws UtilsException{
+		try{
+			this.mimeMultipart = new javax.mail.internet.MimeMultipart();
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
 	public MimeMultipart(InputStream is, String contentType) throws UtilsException{
 		try{
 			javax.activation.DataSource ds = new ByteArrayDataSource(is, contentType);
