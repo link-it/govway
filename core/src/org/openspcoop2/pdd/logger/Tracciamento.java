@@ -825,6 +825,10 @@ public class Tracciamento {
 						for (int i = 0; i < mime.countBodyParts(); i++) {
 							BodyPart bodyPart = mime.getBodyPart(i);
 							String contentId = mime.getContentID(bodyPart);
+							if(contentId==null){
+								// provo a vedere se c'e' un disposition
+								contentId = mime.getContentDisposition(bodyPart);
+							}
 							
 							Allegato allegato = new Allegato();
 					    	allegato.setContentId(contentId);

@@ -59,11 +59,34 @@ public class DumpRestMessageUtils {
 				OpenSPCoop2RestMimeMultipartMessage msgMime = msg.castAsRestMimeMultipart();
 				for (int i = 0; i < msgMime.getContent().countBodyParts(); i++) {
 					BodyPart bodyPart = msgMime.getContent().getBodyPart(i);
-					String contentID = msgMime.getContent().getContentID(bodyPart);
-			    	if(contentID!=null)
-			    		out.append("\n------ BodyPart "+HttpConstants.CONTENT_ID+" ["+contentID+"]------");
-			    	else
-			    		out.append("\n------ BodyPart Position-"+(i+1)+" ------");
+					
+					String tipoIdentificatore = "Position";
+					String valoreIdentificatore = (i+1)+"";
+					
+					String tmp = msgMime.getContent().getContentID(bodyPart);
+					if(tmp!=null){
+						tipoIdentificatore = HttpConstants.CONTENT_ID;
+						valoreIdentificatore = tmp;
+					}
+					
+					if(tmp==null){
+						tmp = msgMime.getContent().getContentLocation(bodyPart);
+						if(tmp!=null){
+							tipoIdentificatore = HttpConstants.CONTENT_LOCATION;
+							valoreIdentificatore = tmp;
+						}
+					}
+					
+					if(tmp==null){
+						tmp = msgMime.getContent().getContentDisposition(bodyPart);
+						if(tmp!=null){
+							tipoIdentificatore = HttpConstants.CONTENT_DISPOSITION;
+							valoreIdentificatore = tmp;
+						}
+					}
+					
+					out.append("\n------ BodyPart "+tipoIdentificatore+" ["+valoreIdentificatore+"]------");
+			    	
 			    	out.append("\ntype["+bodyPart.getContentType()+"]: ");
 			    	if(dumpAllBodyParts){
 			    		out.append(DumpRestMessageUtils.dumpBodyPart(msg, bodyPart));

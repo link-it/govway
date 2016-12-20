@@ -154,20 +154,39 @@ public class MimeMultipart {
 	
 	private final static String CONTENT_ID = "Content-ID"; // Non e' utilizzabile HttpConstants per problemi di dipendenza di compilazione
 	private final static String CONTENT_LOCATION = "Content-Location"; // Non e' utilizzabile HttpConstants per problemi di dipendenza di compilazione
+	private final static String CONTENT_DISPOSITION = "Content-Disposition"; // Non e' utilizzabile HttpConstants per problemi di dipendenza di compilazione
 	
 	public String getContentID(BodyPart bodyPart) throws UtilsException{
+		return this.getHeaderValue(CONTENT_ID, bodyPart);
+	}
+	
+	public String getContentLocation(BodyPart bodyPart) throws UtilsException{
+		return this.getHeaderValue(CONTENT_LOCATION, bodyPart);
+	}
+	
+	public String getContentDisposition(BodyPart bodyPart) throws UtilsException{
+		return this.getHeaderValue(CONTENT_DISPOSITION, bodyPart);
+	}
+	
+	private String getHeaderValue(String headerName, BodyPart bodyPart) throws UtilsException{
 		try{
 			Enumeration<?> enHdr = bodyPart.getAllHeaders();
 			while (enHdr.hasMoreElements()) {
-				String header = (String) enHdr.nextElement();
-				if(CONTENT_ID.equals(header)){
-					return bodyPart.getHeader(header)[0];
-				}	
-				else if(CONTENT_ID.toLowerCase().equals(header.toLowerCase())){
-					return bodyPart.getHeader(header)[0];
-				}	
-				else if(CONTENT_ID.toUpperCase().equals(header.toUpperCase())){
-					return bodyPart.getHeader(header)[0];
+				Object o = enHdr.nextElement();
+				String header = null;
+				javax.mail.Header mh = null;
+				if(o instanceof String){
+					header = (String) o;
+					if(match(headerName, header)){
+						return bodyPart.getHeader(header)[0];
+					}
+				}
+				else if(o instanceof  javax.mail.Header){
+					mh = ( javax.mail.Header) o;
+					header = mh.getName();
+					if(match(headerName, header)){
+						return mh.getValue();
+					}
 				}
 			}
 			return null;
@@ -176,24 +195,9 @@ public class MimeMultipart {
 		}
 	}
 	
-	public String getContentLocation(BodyPart bodyPart) throws UtilsException{
-		try{
-			Enumeration<?> enHdr = bodyPart.getAllHeaders();
-			while (enHdr.hasMoreElements()) {
-				String header = (String) enHdr.nextElement();
-				if(CONTENT_LOCATION.equals(header)){
-					return bodyPart.getHeader(header)[0];
-				}	
-				else if(CONTENT_LOCATION.toLowerCase().equals(header.toLowerCase())){
-					return bodyPart.getHeader(header)[0];
-				}	
-				else if(CONTENT_LOCATION.toUpperCase().equals(header.toUpperCase())){
-					return bodyPart.getHeader(header)[0];
-				}
-			}
-			return null;
-		}catch(Exception e){
-			throw new UtilsException(e.getMessage(),e);
-		}
+	private boolean match(String headerName, String check){
+		return headerName.equals(check) || 
+				headerName.toLowerCase().equals(check.toLowerCase()) || 
+				headerName.toUpperCase().equals(check.toUpperCase()) ;
 	}
 }
