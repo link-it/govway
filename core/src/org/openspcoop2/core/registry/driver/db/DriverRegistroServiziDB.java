@@ -54,10 +54,11 @@ import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
-import org.openspcoop2.core.id.IDAzione;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortType;
+import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -2039,18 +2040,18 @@ IDriverWS ,IMonitoraggioRisorsa{
 	}
 	
 	@Override
-	public List<IDAzione> getAllIdAzionePortType(FiltroRicercaOperations filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	public List<IDPortTypeAzione> getAllIdAzionePortType(FiltroRicercaOperations filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 	
-		List<IDAzione> list = new ArrayList<IDAzione>();
+		List<IDPortTypeAzione> list = new ArrayList<IDPortTypeAzione>();
 		_fillAllIdAccordiServizioParteComuneEngine("getAllIdAzionePortType", filtroRicerca, null, filtroRicerca, null, list);
 		return list;
 		
 	}
 	
 	@Override
-	public List<IDAzione> getAllIdAzioneAccordo(FiltroRicercaAzioni filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	public List<IDAccordoAzione> getAllIdAzioneAccordo(FiltroRicercaAzioni filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		
-		List<IDAzione> list = new ArrayList<IDAzione>();
+		List<IDAccordoAzione> list = new ArrayList<IDAccordoAzione>();
 		_fillAllIdAccordiServizioParteComuneEngine("getAllIdAzioneAccordo", filtroRicerca, null, null, filtroRicerca, list);
 		return list;
 		
@@ -2319,14 +2320,16 @@ IDriverWS ,IMonitoraggioRisorsa{
 					listReturn.add((T) idPT);	
 				}
 				else if(filtroOP!=null){
-					IDAzione idAzione = new IDAzione();
-					idAzione.setIdAccordo(idAccordo);
-					idAzione.setPortType(rs.getString("nomePT"));
+					IDPortTypeAzione idAzione = new IDPortTypeAzione();
+					IDPortType idPT = new IDPortType();
+					idPT.setIdAccordo(idAccordo);
+					idPT.setNome(rs.getString("nomePT"));
+					idAzione.setIdPortType(idPT);
 					idAzione.setNome(rs.getString("nomeOP"));
 					listReturn.add((T) idAzione);	
 				}
 				else if(filtroAZ!=null){
-					IDAzione idAzione = new IDAzione();
+					IDAccordoAzione idAzione = new IDAccordoAzione();
 					idAzione.setIdAccordo(idAccordo);
 					idAzione.setNome(rs.getString("nomeAZ"));
 					listReturn.add((T) idAzione);	

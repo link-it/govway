@@ -23,10 +23,11 @@ package org.openspcoop2.protocol.sdk.registry;
 import java.util.List;
 
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
-import org.openspcoop2.core.id.IDAzione;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortType;
+import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -78,8 +79,8 @@ public interface IRegistryReader {
 	// ELEMENTI INTERNI ALL'ACCORDO PARTE COMUNE
 	
 	public List<IDPortType> findIdPortType(FiltroRicercaPortType filtro) throws RegistryNotFound; 
-	public List<IDAzione> findIdAzionePortType(FiltroRicercaPortTypeAzioni filtro) throws RegistryNotFound; 
-	public List<IDAzione> findIdAzioneAccordo(FiltroRicercaAccordoAzioni filtro) throws RegistryNotFound; 
+	public List<IDPortTypeAzione> findIdAzionePortType(FiltroRicercaPortTypeAzioni filtro) throws RegistryNotFound; 
+	public List<IDAccordoAzione> findIdAzioneAccordo(FiltroRicercaAccordoAzioni filtro) throws RegistryNotFound; 
 	
 	
 	// ACCORDI PARTE SPECIFICA

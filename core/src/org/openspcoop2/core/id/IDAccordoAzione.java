@@ -26,7 +26,7 @@ import java.io.Serializable;
 
 
 /**
- * Classe utilizzata per rappresentare un identificatore di una azione
+ * Classe utilizzata per rappresentare un identificatore di un azione di un Accordo di Servizio nel registro dei Servizi.
  * 
  * @author Poli Andrea (apoli@link.it)
  * @author Nardi Lorenzo (nardi@link.it)
@@ -34,7 +34,7 @@ import java.io.Serializable;
  * @version $Rev: 12237 $, $Date: 2016-10-04 11:41:45 +0200 (Tue, 04 Oct 2016) $
  */
 
-public class IDAzione implements Serializable {
+public class IDAccordoAzione implements Serializable {
 
 	/**
 	 * 
@@ -45,14 +45,6 @@ public class IDAzione implements Serializable {
 
 	protected IDAccordo idAccordo;
 	
-	protected String portType;
-	
-	public String getPortType() {
-		return this.portType;
-	}
-	public void setPortType(String idPortType) {
-		this.portType = idPortType;
-	}
 	public String getNome() {
 		return this.nome;
 	}
@@ -71,9 +63,7 @@ public class IDAzione implements Serializable {
 		StringBuffer bf = new StringBuffer();
 		bf.append(this.nome);
 		if(this.idAccordo!=null)
-			bf.append(" idAccordo["+this.idAccordo+"]");
-		if(this.portType!=null)
-			bf.append(" portType["+this.portType+"]");
+			bf.append("["+this.idAccordo+"]");
 		return bf.toString();
 	}
 	
@@ -83,7 +73,7 @@ public class IDAzione implements Serializable {
 			return false;
 		if(object.getClass().getName().equals(this.getClass().getName()) == false)
 			return false;
-		IDAzione id = (IDAzione) object;
+		IDAccordoAzione id = (IDAccordoAzione) object;
 		
 		if(this.nome==null){
 			if(id.nome!=null)
@@ -101,14 +91,6 @@ public class IDAzione implements Serializable {
 				return false;
 		}
 		
-		if(this.portType==null){
-			if(id.portType!=null)
-				return false;
-		}else{
-			if(this.portType.equals(id.portType)==false)
-				return false;
-		}
-		
 		return true;
 	}
 	
@@ -119,18 +101,15 @@ public class IDAzione implements Serializable {
 	}
 	
 	@Override
-	public IDAzione clone(){
-		IDAzione idAzione = new IDAzione();
-		if(this.nome!=null){
-			idAzione.nome = new String(this.nome);
-		}
+	public IDAccordoAzione clone(){
+		IDAccordoAzione idPT = new IDAccordoAzione();
 		if(this.idAccordo!=null){
-			idAzione.idAccordo = this.idAccordo.clone();
+			idPT.idAccordo = this.idAccordo.clone();
 		}
-		if(this.portType!=null){
-			idAzione.portType = new String(this.portType);
+		if(this.nome!=null){
+			idPT.nome = new String(this.nome);
 		}
-		return idAzione;
+		return idPT;
 	}
 }
 

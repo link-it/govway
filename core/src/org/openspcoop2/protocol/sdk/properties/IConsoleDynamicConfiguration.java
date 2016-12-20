@@ -1,7 +1,10 @@
 package org.openspcoop2.protocol.sdk.properties;
 
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDAccordoAzione;
+import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortType;
+import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -52,20 +55,20 @@ public interface IConsoleDynamicConfiguration {
 			IRegistryReader registryReader, IDPortType id) throws ProtocolException;
 	
 	public ConsoleConfiguration getDynamicConfigOperation(ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
-			IRegistryReader registryReader, IDPortType id, String azione) throws ProtocolException;
+			IRegistryReader registryReader, IDPortTypeAzione id) throws ProtocolException;
 	public void updateDynamicConfigOperation(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ConsoleInterfaceType consoleInterfaceType, 
 			ProtocolProperties properties, 
-			IRegistryReader registryReader, IDPortType id, String azione) throws ProtocolException;
+			IRegistryReader registryReader, IDPortTypeAzione id) throws ProtocolException;
 	public void validateDynamicConfigOperation(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ProtocolProperties properties, 
-			IRegistryReader registryReader, IDPortType id, String azione) throws ProtocolException;
+			IRegistryReader registryReader, IDPortTypeAzione id) throws ProtocolException;
 	
 	public ConsoleConfiguration getDynamicConfigAzione(ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
-			IRegistryReader registryReader, String azione) throws ProtocolException;
+			IRegistryReader registryReader, IDAccordoAzione id) throws ProtocolException;
 	public void updateDynamicConfigAzione(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ConsoleInterfaceType consoleInterfaceType, 
 			ProtocolProperties properties, 
-			IRegistryReader registryReader, String azione) throws ProtocolException;
+			IRegistryReader registryReader, IDAccordoAzione id) throws ProtocolException;
 	public void validateDynamicConfigAzione(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ProtocolProperties properties, 
-			IRegistryReader registryReader, String azione) throws ProtocolException;
+			IRegistryReader registryReader, IDAccordoAzione id) throws ProtocolException;
 	
 	public ConsoleConfiguration getDynamicConfigAccordoServizioParteSpecifica(ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
 			IRegistryReader registryReader, IDServizio id) throws ProtocolException;
@@ -76,11 +79,11 @@ public interface IConsoleDynamicConfiguration {
 			IRegistryReader registryReader, IDServizio id) throws ProtocolException;
 	
 	public ConsoleConfiguration getDynamicConfigFruizioneAccordoServizioParteSpecifica(ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
-			IRegistryReader registryReader, IDServizio idServizio, IDSoggetto fruitore) throws ProtocolException;
+			IRegistryReader registryReader, IDFruizione id) throws ProtocolException;
 	public void updateDynamicConfigFruizioneAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
 			ProtocolProperties properties,  
-			IRegistryReader registryReader, IDServizio idServizio, IDSoggetto fruitore) throws ProtocolException;
+			IRegistryReader registryReader, IDFruizione id) throws ProtocolException;
 	public void validateDynamicConfigFruizioneAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, ProtocolProperties properties, 
-			IRegistryReader registryReader, IDServizio idServizio, IDSoggetto fruitore) throws ProtocolException;
+			IRegistryReader registryReader, IDFruizione id) throws ProtocolException;
 	
 }

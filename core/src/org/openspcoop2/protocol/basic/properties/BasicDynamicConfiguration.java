@@ -22,7 +22,10 @@
 package org.openspcoop2.protocol.basic.properties;
 
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDAccordoAzione;
+import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortType;
+import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
@@ -127,32 +130,32 @@ public class BasicDynamicConfiguration extends BasicComponentFactory implements 
 	
 	@Override
 	public ConsoleConfiguration getDynamicConfigOperation(ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
-			IRegistryReader registryReader, IDPortType id, String azione) throws ProtocolException{
+			IRegistryReader registryReader, IDPortTypeAzione id) throws ProtocolException{
 		return new ConsoleConfiguration();
 	}
 	@Override
 	public void updateDynamicConfigOperation(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ConsoleInterfaceType consoleInterfaceType, 
 			ProtocolProperties properties, 
-			IRegistryReader registryReader, IDPortType id, String azione) throws ProtocolException{
+			IRegistryReader registryReader, IDPortTypeAzione id) throws ProtocolException{
 	}
 	@Override
 	public void validateDynamicConfigOperation(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ProtocolProperties properties, 
-			IRegistryReader registryReader, IDPortType id, String azione) throws ProtocolException{
+			IRegistryReader registryReader, IDPortTypeAzione id) throws ProtocolException{
 	}
 	
 	@Override
 	public ConsoleConfiguration getDynamicConfigAzione(ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
-			IRegistryReader registryReader, String azione) throws ProtocolException{
+			IRegistryReader registryReader, IDAccordoAzione id) throws ProtocolException{
 		return new ConsoleConfiguration();
 	}
 	@Override
 	public void updateDynamicConfigAzione(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ConsoleInterfaceType consoleInterfaceType, 
 			ProtocolProperties properties, 
-			IRegistryReader registryReader, String azione) throws ProtocolException{
+			IRegistryReader registryReader, IDAccordoAzione id) throws ProtocolException{
 	}
 	@Override
 	public void validateDynamicConfigAzione(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType,  ProtocolProperties properties, 
-			IRegistryReader registryReader, String azione) throws ProtocolException{
+			IRegistryReader registryReader, IDAccordoAzione id) throws ProtocolException{
 	}
 	
 	@Override
@@ -172,17 +175,17 @@ public class BasicDynamicConfiguration extends BasicComponentFactory implements 
 	
 	@Override
 	public ConsoleConfiguration getDynamicConfigFruizioneAccordoServizioParteSpecifica(ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
-			IRegistryReader registryReader, IDServizio idServizio, IDSoggetto fruitore) throws ProtocolException{
+			IRegistryReader registryReader, IDFruizione id) throws ProtocolException{
 		return new ConsoleConfiguration();
 	}
 	@Override
 	public void updateDynamicConfigFruizioneAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, 
 			ProtocolProperties properties,  
-			IRegistryReader registryReader, IDServizio idServizio, IDSoggetto fruitore) throws ProtocolException{
+			IRegistryReader registryReader, IDFruizione id) throws ProtocolException{
 	}
 	@Override
 	public void validateDynamicConfigFruizioneAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, ProtocolProperties properties, 
-			IRegistryReader registryReader, IDServizio idServizio, IDSoggetto fruitore) throws ProtocolException{
+			IRegistryReader registryReader, IDFruizione id) throws ProtocolException{
 	}
 
 }

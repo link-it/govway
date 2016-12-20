@@ -4838,7 +4838,7 @@ public class DriverRegistroServiziDB_LIB {
 					}
 					if(binaryValue){
 						sqlQueryObject.addInsertField("value_binary", "?");
-						sqlQueryObject.addInsertField("filename", "?");
+						sqlQueryObject.addInsertField("file_name", "?");
 					}
 					sqlQuery = sqlQueryObject.createSQLInsert();
 					stm = connection.prepareStatement(sqlQuery);
@@ -5020,7 +5020,7 @@ public class DriverRegistroServiziDB_LIB {
 							sqlQueryObject.addUpdateField("value_number", "?");
 							sqlQueryObject.addUpdateField("value_boolean", "?");
 							sqlQueryObject.addUpdateField("value_binary", "?");
-							sqlQueryObject.addUpdateField("filename", "?");
+							sqlQueryObject.addUpdateField("file_name", "?");
 							sqlQueryObject.addWhereCondition("id=?");
 							sqlQuery = sqlQueryObject.createSQLUpdate();
 							stm = connection.prepareStatement(sqlQuery);
@@ -5072,7 +5072,7 @@ public class DriverRegistroServiziDB_LIB {
 						}
 						if(binaryValue){
 							sqlQueryObject.addInsertField("value_binary", "?");
-							sqlQueryObject.addInsertField("filename", "?");
+							sqlQueryObject.addInsertField("file_name", "?");
 						}
 						sqlQuery = sqlQueryObject.createSQLInsert();
 						stm = connection.prepareStatement(sqlQuery);
@@ -5274,7 +5274,7 @@ public class DriverRegistroServiziDB_LIB {
 			sqlQueryObject.addSelectField("value_number");
 			sqlQueryObject.addSelectField("value_boolean");
 			sqlQueryObject.addSelectField("value_binary");
-			sqlQueryObject.addSelectField("filename");
+			sqlQueryObject.addSelectField("file_name");
 			sqlQueryObject.addSelectField("id");
 			sqlQueryObject.addWhereCondition("id = ?");
 			sqlQueryObject.setANDLogicOperator(true);
@@ -5300,7 +5300,7 @@ public class DriverRegistroServiziDB_LIB {
 					pp.setBooleanValue(null);
 				}
 				pp.setByteFile(jdbcAdapter.getBinaryData(rs,"value_binary"));
-				pp.setFile(rs.getString("filename"));
+				pp.setFile(rs.getString("file_name"));
 				pp.setId(rs.getLong("id"));
 			}
 			

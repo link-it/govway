@@ -16,7 +16,7 @@ CREATE TABLE protocol_properties
 	value_boolean INT,
 	-- valore binario
 	value_binary BLOB,
-	filename VARCHAR(4000),
+	file_name VARCHAR(4000),
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
 	-- unique constraints

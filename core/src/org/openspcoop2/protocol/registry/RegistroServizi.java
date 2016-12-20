@@ -34,10 +34,11 @@ import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
-import org.openspcoop2.core.id.IDAzione;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortType;
+import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -1320,13 +1321,13 @@ public class RegistroServizi  {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<IDAzione> getAllIdAzionePortType(Connection connectionPdD, String nomeRegistro, FiltroRicercaOperations filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return (List<IDAzione>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdAzionePortType");
+	public List<IDPortTypeAzione> getAllIdAzionePortType(Connection connectionPdD, String nomeRegistro, FiltroRicercaOperations filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return (List<IDPortTypeAzione>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdAzionePortType");
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<IDAzione> getAllIdAzioneAccordo(Connection connectionPdD, String nomeRegistro, FiltroRicercaAzioni filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return (List<IDAzione>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdAzioneAccordo");
+	public List<IDAccordoAzione> getAllIdAzioneAccordo(Connection connectionPdD, String nomeRegistro, FiltroRicercaAzioni filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return (List<IDAccordoAzione>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdAzioneAccordo");
 	}
 	
 	@SuppressWarnings("unchecked")

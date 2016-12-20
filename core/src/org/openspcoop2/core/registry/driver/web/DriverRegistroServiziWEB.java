@@ -36,10 +36,11 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IDriverWS;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
-import org.openspcoop2.core.id.IDAzione;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortType;
+import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -457,18 +458,18 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 	}
 	
 	@Override
-	public List<IDAzione> getAllIdAzionePortType(FiltroRicercaOperations filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	public List<IDPortTypeAzione> getAllIdAzionePortType(FiltroRicercaOperations filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 	
-		List<IDAzione> list = new ArrayList<IDAzione>();
+		List<IDPortTypeAzione> list = new ArrayList<IDPortTypeAzione>();
 		_fillAllIdAccordiServizioParteComuneEngine("getAllIdAzionePortType", filtroRicerca, null, filtroRicerca, null, list);
 		return list;
 		
 	}
 	
 	@Override
-	public List<IDAzione> getAllIdAzioneAccordo(FiltroRicercaAzioni filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	public List<IDAccordoAzione> getAllIdAzioneAccordo(FiltroRicercaAzioni filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		
-		List<IDAzione> list = new ArrayList<IDAzione>();
+		List<IDAccordoAzione> list = new ArrayList<IDAccordoAzione>();
 		_fillAllIdAccordiServizioParteComuneEngine("getAllIdAzioneAccordo", filtroRicerca, null, null, filtroRicerca, list);
 		return list;
 		
@@ -633,10 +634,12 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 								continue;
 							}
 						
-							IDAzione idAzione = new IDAzione();
-							idAzione.setIdAccordo(idAccordo);
+							IDPortTypeAzione idAzione = new IDPortTypeAzione();
+							IDPortType idPT = new IDPortType();
+							idPT.setIdAccordo(idAccordo);
+							idPT.setNome(pt.getNome());
+							idAzione.setIdPortType(idPT);
 							idAzione.setNome(op.getNome());
-							idAzione.setPortType(pt.getNome());
 							listReturn.add((T)idAzione);
 						}
 					}
@@ -655,7 +658,7 @@ implements IDriverRegistroServiziGet,IDriverRegistroServiziCRUD, IDriverWS,IMoni
 							continue;
 						}
 						
-						IDAzione idAzione = new IDAzione();
+						IDAccordoAzione idAzione = new IDAccordoAzione();
 						idAzione.setIdAccordo(idAccordo);
 						idAzione.setNome(az.getNome());
 						listReturn.add((T)idAzione);

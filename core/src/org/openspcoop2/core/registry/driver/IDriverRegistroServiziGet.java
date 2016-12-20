@@ -26,10 +26,11 @@ package org.openspcoop2.core.registry.driver;
 
 import java.util.List;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
-import org.openspcoop2.core.id.IDAzione;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortType;
+import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -136,7 +137,7 @@ public interface IDriverRegistroServiziGet extends IBeanUtilities{
 	 * @throws DriverRegistroServiziException
 	 * @throws DriverRegistroServiziNotFound
 	 */
-	public List<IDAzione> getAllIdAzionePortType(FiltroRicercaOperations filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound;
+	public List<IDPortTypeAzione> getAllIdAzionePortType(FiltroRicercaOperations filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound;
 	
 	/**
 	 * Ritorna gli identificatori delle azioni che rispettano il parametro di ricerca
@@ -146,7 +147,7 @@ public interface IDriverRegistroServiziGet extends IBeanUtilities{
 	 * @throws DriverRegistroServiziException
 	 * @throws DriverRegistroServiziNotFound
 	 */
-	public List<IDAzione> getAllIdAzioneAccordo(FiltroRicercaAzioni filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound;
+	public List<IDAccordoAzione> getAllIdAzioneAccordo(FiltroRicercaAzioni filtroRicerca) throws DriverRegistroServiziException,DriverRegistroServiziNotFound;
 	
 	
 	

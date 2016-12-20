@@ -18,7 +18,7 @@ CREATE TABLE protocol_properties
 	value_boolean INT,
 	-- valore binario
 	value_binary BYTEA,
-	filename VARCHAR(4000),
+	file_name VARCHAR(4000),
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_protocol_properties') NOT NULL,
 	-- unique constraints

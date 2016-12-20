@@ -27,10 +27,11 @@ import java.util.List;
 
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
-import org.openspcoop2.core.id.IDAzione;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortType;
+import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -274,11 +275,11 @@ public class RegistroServiziManager {
 		return this.registroServiziReader.getAllIdPortType(this.getConnection(), filtroRicerca, nomeRegistro);
 	}
 	
-	public List<IDAzione> getAllIdAzionePortType(FiltroRicercaOperations filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	public List<IDPortTypeAzione> getAllIdAzionePortType(FiltroRicercaOperations filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return this.registroServiziReader.getAllIdAzionePortType(this.getConnection(), filtroRicerca, nomeRegistro);
 	}
 	
-	public List<IDAzione> getAllIdAzioneAccordo(FiltroRicercaAzioni filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	public List<IDAccordoAzione> getAllIdAzioneAccordo(FiltroRicercaAzioni filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return this.registroServiziReader.getAllIdAzioneAccordo(this.getConnection(), filtroRicerca, nomeRegistro);
 	}
 	
