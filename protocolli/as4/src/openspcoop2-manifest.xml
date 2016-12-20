@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openspcoop2 xmlns="http://www.openspcoop2.org/protocol/manifest">
+
+    <protocol name="as4">
+    	<factory>org.openspcoop2.protocol.as4.AS4Factory</factory>
+    </protocol>
+    
+
+
+    <binding default="rest">
+    	<soap soap11="true" soap11_withAttachments="true" soap11_mtom="true"
+    		  soap12="true" soap12_withAttachments="true" soap12_mtom="true">
+    		<integrationError>
+    			<internal>
+    				<default httpReturnCode="500" messageType="soap" />
+    			</internal>	
+    			<external>
+    				<default httpReturnCode="500" messageType="soap" />
+    			</external>	
+    		</integrationError>
+    		<mediaTypeCollection>
+    			<mediaType messageType="soap11">text/xml</mediaType>
+    			<default messageType="soap12"/>
+    		</mediaTypeCollection>
+    	</soap>
+    	<rest xml="true" json="true" 
+    		  binary="true" mimeMultipart="true">
+    		<integrationError>
+    			<internal>
+	    			<authentication httpReturnCode="401" messageType="sameAsRequest" />
+	    			<authorization httpReturnCode="403" messageType="sameAsRequest" />
+	    			<notFound httpReturnCode="404" messageType="sameAsRequest" />
+	    			<badRequest httpReturnCode="400" messageType="sameAsRequest" />
+	    			<internalError httpReturnCode="500" messageType="sameAsRequest" />
+	    			<default httpReturnCode="500" messageType="xml" />
+    			</internal>
+    			<external>
+	    			<authentication httpReturnCode="401" messageType="none" />
+	    			<authorization httpReturnCode="403" messageType="none" />
+	    			<notFound httpReturnCode="404" messageType="none" />
+	    			<badRequest httpReturnCode="400" messageType="none" />
+	    			<internalError httpReturnCode="500" messageType="none" />
+	    			<default httpReturnCode="500" messageType="none" />
+    			</external>
+    		</integrationError>
+    		<mediaTypeCollection>
+    			<mediaType messageType="xml">text/xml</mediaType>
+    			<mediaType messageType="xml">application/xml</mediaType>
+    			<mediaType messageType="xml" regExpr="true">.*\+xml</mediaType>
+    			<mediaType messageType="json">text/json</mediaType>
+				<mediaType messageType="json">text/x-json</mediaType>
+    			<mediaType messageType="json">application/json</mediaType>
+    			<mediaType messageType="json">application/x-json</mediaType>
+    			<mediaType messageType="json" regExpr="true">.*\+json</mediaType>
+    			<mediaType messageType="mimeMultipart" regExpr="true">multipart\/related*</mediaType>
+    			<default messageType="binary"/>
+    			<undefined messageType="binary"/>
+    		</mediaTypeCollection>
+    	</rest>
+    </binding>
+
+    <web>
+    
+		<!-- Contesto api supporta sia soap che rest 
+		     con il mapping definito a livello generare di binding -->
+	    <context name="as4"/>
+
+    </web>
+
+    <registry>
+
+        <organization>
+            <types>
+            	<type name="AS4"/>
+            </types>
+        </organization>
+
+        <service>
+            <types>
+
+                <!-- Il tipo AS4 è compatibile sia con soap che con rest -->
+                <type name="REST"/>
+                
+            </types>
+        </service>
+
+        <versions>
+        	<version name="1.0"/>
+        </versions>
+
+    </registry>
+
+    <urlMapping type="PROPERTIES">
+        <file>/as4-url-mapping.properties</file>
+    </urlMapping>
+
+</openspcoop2>
