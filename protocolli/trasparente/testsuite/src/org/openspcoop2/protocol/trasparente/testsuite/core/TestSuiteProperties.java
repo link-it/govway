@@ -350,6 +350,26 @@ public class TestSuiteProperties implements UnitsTestSuiteProperties {
 		}
 	}
 	
+	public String getPngFileName(){
+		try{
+			return this.reader.getProperty("org.openspcoop2.testsuite.files.png").trim();
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.files.png':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return null;
+		}
+	}
+	
+	public String getMultipartFileName(){
+		try{
+			return this.reader.getProperty("org.openspcoop2.testsuite.files.multipart").trim();
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.files.multipart':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return null;
+		}
+	}
+	
 	public String getXMLFileNameRispostaKo(){
 		try{
 			return this.reader.getProperty("org.openspcoop2.testsuite.files.xml.rispostaKO").trim();

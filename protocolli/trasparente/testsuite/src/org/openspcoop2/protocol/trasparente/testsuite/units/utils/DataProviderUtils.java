@@ -1,4 +1,4 @@
-package org.openspcoop2.protocol.trasparente.testsuite.units;
+package org.openspcoop2.protocol.trasparente.testsuite.units.utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,6 +97,30 @@ public class DataProviderUtils {
 		return returned;
 	}
 	
+	public static Object[][] responseCodeConCon() {
+		Object[] returnCodeLst = returnCodeConCon();
+		Object[][] returned = new Object[returnCodeLst.length][1];
+		
+		int i = 0;
+		for(Object rc: returnCodeLst) {
+			returned[i++][0] = rc;
+		}
+		return returned;
+
+	}
+	
+	public static Object[][] responseCodeConSenza() {
+		Object[] returnCodeLst = returnCodeConSenza();
+		Object[][] returned = new Object[returnCodeLst.length][1];
+		
+		int i = 0;
+		for(Object rc: returnCodeLst) {
+			returned[i++][0] = rc;
+		}
+		return returned;
+
+	}
+	
 	private static Object[] returnCodeConCon() {
 		return new Object[] {200, 400, 403, 500, 501};
 	}
@@ -121,7 +145,7 @@ public class DataProviderUtils {
 	}
 	
 	private static Object[] contentTypeBinaryLst(){
-		return new Object[]{"NULL"};
+		return new Object[]{"pdf", "doc", "zip", "png"};
 	}
 
 }

@@ -21,7 +21,10 @@
 
 package org.openspcoop2.protocol.trasparente.testsuite.units;
 
+import java.io.ByteArrayInputStream;
 import java.util.Properties;
+
+import javax.mail.internet.ContentType;
 
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.constants.MessageType;
@@ -39,7 +42,9 @@ import org.openspcoop2.testsuite.core.TestSuiteProperties;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
 import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
+import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.mime.MimeTypes;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpRequest;
@@ -129,9 +134,6 @@ public class RESTCore {
 	
 	public void invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, String contentType) throws TestSuiteException, Exception{
 		
-		if(contentType != null && contentType.equals("NULL")) {
-			contentType = null;
-		}
 		TestFileEntry fileEntry = FileCache.get(tipoTest);
 
 		try{
@@ -140,13 +142,14 @@ public class RESTCore {
 			byte[] richiesta = fileEntry.getBytesRichiesta();
 			// Definiire un content type corretto rispetto al tipo di file che si invia
 			// Per conoscere il tipo di file corretto è possibile utilizzare l'utility sottostante
-			String contentTypeRichiesta = contentType != null ? contentType : MimeTypes.getInstance().getMimeType(fileEntry.getExtRichiesta());
+
+			String contentTypeRichiesta = contentType != null ? contentType : fileEntry.getExtRichiesta();
 			
 			// 2. Variabile sul tipo di HttpRequestMethod
 			// Per sapere se il metodo prevede un input od un output come contenuto è possibile usare la seguente utility
 			
 			
-			boolean rispostaOk = returnCodeAtteso == 200;
+			boolean rispostaOk = returnCodeAtteso < 299;
 
 			HttpBodyParameters httpBody = new HttpBodyParameters(this.method, fileEntry.getExtRichiesta());
 			boolean contenutoRichiesta = httpBody.isDoOutput();
@@ -186,11 +189,10 @@ public class RESTCore {
 			
 			// String url
 			// 3. Costruzione url
-			// NOTA: il file che si invia e quello che si riceve in alcuni test è differente
 			StringBuffer bf = new StringBuffer();
 			bf.append(this.servizioRichiesto);
 			bf.append(this.portaApplicativaDelegata);
-			bf.append("/service/").append(action);//.append("?").
+			bf.append("/service/").append(action);
 			Properties propertiesURLBased = new Properties();
 			propertiesURLBased.put("checkEqualsHttpMethod", this.method.name());
 			propertiesURLBased.put("checkEqualsHttpHeader", nomeHeaderHttpInviato + ":" + valoreHeaderRichiesto);
@@ -202,10 +204,12 @@ public class RESTCore {
 
 			if(contenutoRisposta) {
 				if(rispostaOk) {
-					propertiesURLBased.put("destFileContentType", contentType != null ? contentType : MimeTypes.getInstance().getMimeType(fileEntry.getExtRichiesta()));
-					propertiesURLBased.put("destFile", fileEntry.getFilenameRichiesta());
+					if(!tipoTest.equals("multi") || !isRichiesta) {
+						propertiesURLBased.put("destFileContentType", contentType != null ? contentType : fileEntry.getExtRisposta());
+						propertiesURLBased.put("destFile", fileEntry.getFilenameRichiesta());
+					}
 				} else {
-					propertiesURLBased.put("destFileContentType", contentType != null ? contentType : MimeTypes.getInstance().getMimeType(fileEntry.getExtRispostaKo()));
+					propertiesURLBased.put("destFileContentType", contentType != null ? contentType : fileEntry.getExtRispostaKo());
 					propertiesURLBased.put("destFile", fileEntry.getFilenameRispostaKo());
 				}
 			}
@@ -236,11 +240,19 @@ public class RESTCore {
 			if(contenutoRisposta){
 				
 				byte[] contentAttesoRisposta = rispostaOk ? fileEntry.getBytesRichiesta(): fileEntry.getBytesRispostaKo();
-				String contentTypeAttesoRisposta = contentType != null ? contentType : MimeTypes.getInstance().getMimeType((rispostaOk) ? fileEntry.getExtRichiesta(): fileEntry.getExtRispostaKo());
+				String contentTypeAttesoRisposta = contentType != null ? contentType : (rispostaOk) ? fileEntry.getExtRisposta(): fileEntry.getExtRispostaKo();
+				String contentTypeRisposta = httpResponse.getContentType();
 
 				
-				String contentTypeRisposta = httpResponse.getContentType();
-				Assert.assertEquals(contentTypeRisposta, contentTypeAttesoRisposta, "Content-Type del file di risposta ["+contentTypeRisposta+"] diverso da quello atteso ["+contentTypeAttesoRisposta+"]");
+				if(tipoTest.equals("multi") && rispostaOk) {
+					ContentType ctRisp = new ContentType(contentTypeRisposta);
+					ContentType ctAttesoRisp = new ContentType(contentTypeAttesoRisposta);
+					Assert.assertEquals(ctRisp.getBaseType(), ctAttesoRisp.getBaseType(), "Content-Type del file di risposta ["+ctRisp.getBaseType()+"] diverso da quello atteso ["+ctAttesoRisp.getBaseType()+"]");
+					Assert.assertEquals(ctRisp.getParameter("type"), ctAttesoRisp.getParameter("type"), "Content-Type del file di risposta ["+ctRisp.getParameter("type")+"] diverso da quello atteso ["+ctAttesoRisp.getParameter("type")+"]");
+						
+				} else {
+					Assert.assertEquals(contentTypeRisposta, contentTypeAttesoRisposta, "Content-Type del file di risposta ["+contentTypeRisposta+"] diverso da quello atteso ["+contentTypeAttesoRisposta+"]");
+				}
 
 				byte[] contentRisposta = httpResponse.getContent();
 
@@ -250,6 +262,21 @@ public class RESTCore {
 					xmlDiffEngine.initialize(XMLDiffImplType.XML_UNIT, xmlDiffOptions);
 					Assert.assertTrue(xmlDiffEngine.diff(xmlDiffEngine.getXMLUtils().newDocument(contentRisposta),xmlDiffEngine.getXMLUtils().newDocument(contentAttesoRisposta))
 							, "File di risposta ["+new String(contentRisposta)+"]diverso da quello atteso ["+new String(contentAttesoRisposta)+"]: " + xmlDiffEngine.getDifferenceDetails());
+				} else if(tipoTest.equals("multi")) {
+					if(!isRichiesta && rispostaOk) {
+						MimeMultipart mm = new MimeMultipart(new ByteArrayInputStream(contentRisposta), contentTypeRisposta);
+						MimeMultipart mmAtteso = new MimeMultipart(new ByteArrayInputStream(FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getMultipartFileName())), contentTypeAttesoRisposta);
+						Assert.assertEquals(mm.countBodyParts(),mmAtteso.countBodyParts());
+
+						for(int i = 0; i < mm.countBodyParts(); i++) {
+							Assert.assertEquals(mm.getBodyPart(i).getContentType(),mmAtteso.getBodyPart(i).getContentType());
+							Assert.assertEquals(mm.getBodyPart(i).getSize(),mmAtteso.getBodyPart(i).getSize());
+//							Assert.assertEquals(mm.getBodyPart(i).getContent(),mmAtteso.getBodyPart(i).getContent());
+						}
+					} else {
+						Assert.assertEquals(contentRisposta,contentAttesoRisposta, "File di risposta ["+new String(contentRisposta)+"]diverso da quello atteso ["+new String(contentAttesoRisposta)+"]");
+					}
+					
 				} else {
 					Assert.assertEquals(contentRisposta,contentAttesoRisposta, "File di risposta ["+new String(contentRisposta)+"]diverso da quello atteso ["+new String(contentAttesoRisposta)+"]");
 				}
