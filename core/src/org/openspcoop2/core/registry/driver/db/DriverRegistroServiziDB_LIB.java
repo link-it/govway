@@ -4794,6 +4794,7 @@ public class DriverRegistroServiziDB_LIB {
 					
 					boolean binaryValue = protocolProperty.getByteFile()!=null && protocolProperty.getByteFile().length>0;
 					byte[] contenutoBinario = null; 
+					String contenutoBinarioFileName = null;
 					if(binaryValue){
 						contenutiDefiniti++;
 						contenutoBinario = protocolProperty.getByteFile();
@@ -4805,6 +4806,9 @@ public class DriverRegistroServiziDB_LIB {
 								binaryValue = false;
 								contenutiDefiniti--;
 							}
+						}
+						if(binaryValue){
+							contenutoBinarioFileName = protocolProperty.getFile();
 						}
 					}
 					
@@ -4834,6 +4838,7 @@ public class DriverRegistroServiziDB_LIB {
 					}
 					if(binaryValue){
 						sqlQueryObject.addInsertField("value_binary", "?");
+						sqlQueryObject.addInsertField("filename", "?");
 					}
 					sqlQuery = sqlQueryObject.createSQLInsert();
 					stm = connection.prepareStatement(sqlQuery);
@@ -4863,6 +4868,8 @@ public class DriverRegistroServiziDB_LIB {
 					if(binaryValue){
 						jdbcAdapter.setBinaryData(stm,index++,contenutoBinario);
 						debug = "BinaryData";
+						stm.setString(index++, contenutoBinarioFileName);
+						debug = debug + "," + contenutoBinarioFileName;
 					}
 					
 					DriverRegistroServiziDB_LIB.log.debug("CRUDProtocolProperty CREATE : \n" + DBUtils.
@@ -4949,6 +4956,7 @@ public class DriverRegistroServiziDB_LIB {
 					
 					boolean binaryValue = protocolProperty.getByteFile()!=null && protocolProperty.getByteFile().length>0;
 					byte[] contenutoBinario = null; 
+					String contenutoBinarioFileName = null;
 					if(binaryValue){
 						contenutiDefiniti++;
 						contenutoBinario = protocolProperty.getByteFile();
@@ -4960,6 +4968,9 @@ public class DriverRegistroServiziDB_LIB {
 								binaryValue = false;
 								contenutiDefiniti--;
 							}
+						}
+						if(binaryValue){
+							contenutoBinarioFileName = protocolProperty.getFile();
 						}
 					}
 					
@@ -5009,6 +5020,7 @@ public class DriverRegistroServiziDB_LIB {
 							sqlQueryObject.addUpdateField("value_number", "?");
 							sqlQueryObject.addUpdateField("value_boolean", "?");
 							sqlQueryObject.addUpdateField("value_binary", "?");
+							sqlQueryObject.addUpdateField("filename", "?");
 							sqlQueryObject.addWhereCondition("id=?");
 							sqlQuery = sqlQueryObject.createSQLUpdate();
 							stm = connection.prepareStatement(sqlQuery);
@@ -5036,6 +5048,8 @@ public class DriverRegistroServiziDB_LIB {
 							}
 							
 							jdbcAdapter.setBinaryData(stm,index++,contenutoBinario);
+							stm.setString(index++, contenutoBinarioFileName);
+							
 							stm.setLong(index++, idPP);
 							stm.executeUpdate();
 							stm.close();
@@ -5058,6 +5072,7 @@ public class DriverRegistroServiziDB_LIB {
 						}
 						if(binaryValue){
 							sqlQueryObject.addInsertField("value_binary", "?");
+							sqlQueryObject.addInsertField("filename", "?");
 						}
 						sqlQuery = sqlQueryObject.createSQLInsert();
 						stm = connection.prepareStatement(sqlQuery);
@@ -5087,6 +5102,8 @@ public class DriverRegistroServiziDB_LIB {
 						if(binaryValue){
 							jdbcAdapter.setBinaryData(stm,index++,contenutoBinario);
 							debug = "BinaryData";
+							stm.setString(index++, contenutoBinarioFileName);
+							debug = debug + "," + contenutoBinarioFileName;
 						}
 						
 						DriverRegistroServiziDB_LIB.log.debug("CRUDProtocolProperty CREATE : \n" + DBUtils.
@@ -5257,6 +5274,7 @@ public class DriverRegistroServiziDB_LIB {
 			sqlQueryObject.addSelectField("value_number");
 			sqlQueryObject.addSelectField("value_boolean");
 			sqlQueryObject.addSelectField("value_binary");
+			sqlQueryObject.addSelectField("filename");
 			sqlQueryObject.addSelectField("id");
 			sqlQueryObject.addWhereCondition("id = ?");
 			sqlQueryObject.setANDLogicOperator(true);
@@ -5282,6 +5300,7 @@ public class DriverRegistroServiziDB_LIB {
 					pp.setBooleanValue(null);
 				}
 				pp.setByteFile(jdbcAdapter.getBinaryData(rs,"value_binary"));
+				pp.setFile(rs.getString("filename"));
 				pp.setId(rs.getLong("id"));
 			}
 			

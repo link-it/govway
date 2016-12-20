@@ -16,6 +16,7 @@ CREATE TABLE protocol_properties
 	value_boolean INT,
 	-- valore binario
 	value_binary VARBINARY(MAX),
+	filename VARCHAR(4000),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- unique constraints

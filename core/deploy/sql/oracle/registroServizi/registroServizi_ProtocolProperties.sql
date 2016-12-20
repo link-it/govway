@@ -18,6 +18,7 @@ CREATE TABLE protocol_properties
 	value_boolean NUMBER,
 	-- valore binario
 	value_binary BLOB,
+	filename VARCHAR2(4000),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints

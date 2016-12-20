@@ -16,6 +16,7 @@ CREATE TABLE protocol_properties
 	value_boolean INT,
 	-- valore binario
 	value_binary MEDIUMBLOB,
+	filename VARCHAR(4000),
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- unique constraints

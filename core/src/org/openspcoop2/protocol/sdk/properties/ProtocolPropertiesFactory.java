@@ -29,8 +29,8 @@ public class ProtocolPropertiesFactory {
 		}
 		throw new ProtocolException("Type ["+type+"] unsupported");
 	}
-	public static BinaryProperty newProperty(String id, byte[] value){
-		return new BinaryProperty(id, value);
+	public static BinaryProperty newProperty(String id, byte[] value, String fileName){
+		return new BinaryProperty(id, value, fileName);
 	}
 	public static NumberProperty newProperty(String id, Long value){
 		return new NumberProperty(id, value);
