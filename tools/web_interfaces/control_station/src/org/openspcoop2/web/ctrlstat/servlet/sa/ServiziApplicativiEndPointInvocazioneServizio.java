@@ -59,7 +59,6 @@ import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -103,7 +102,6 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 
 		try {
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
-			ConnettoriHelper connettoriHelper = new ConnettoriHelper(request, pd, session);
 			
 			String nomeservizioApplicativo = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO);
 			String idsil = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
@@ -123,7 +121,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			
 			String provider = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			
-			String endpointtype = connettoriHelper.readEndPointType();
+			String endpointtype = saHelper.readEndPointType();
 			String tipoconn = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
 			String autenticazioneHttp = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
 			String user = null;
@@ -316,7 +314,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 					}
 				}
 				
-				autenticazioneHttp = connettoriHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
+				autenticazioneHttp = saHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 				
 				for (int i = 0; i < connis.sizePropertyList(); i++) {
 					Property singlecp = cp.get(i);
@@ -419,7 +417,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 //				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, user, password, confpw, subject,
 //						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,true,endpointtype,true);
 				
-				dati = connettoriHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
+				dati = saHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl,
 						connfact, sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, httpsurl, httpstipologia,
@@ -472,7 +470,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 //				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, user, password, confpw, subject, 
 //						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,true,endpointtype,true);
 				
-				dati = connettoriHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
+				dati = saHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl,
 						connfact, sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, httpsurl, httpstipologia,
@@ -556,7 +554,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			String oldConnT = connis.getTipo();
 			if ((connis.getCustom()!=null && connis.getCustom()) && !connis.getTipo().equals(TipiConnettore.HTTPS.toString()))
 				oldConnT = TipiConnettore.CUSTOM.toString();
-			connettoriHelper.fillConnettore(connis, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
+			saHelper.fillConnettore(connis, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
 					nome, tipo, user, password,
 					initcont, urlpgk, provurl, connfact,
 					sendas, httpsurl, httpstipologia,

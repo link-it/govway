@@ -61,7 +61,6 @@ import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -108,7 +107,6 @@ public final class ServiziApplicativiChange extends Action {
 			Boolean contaListe = ServletUtils.getContaListeFromSession(session);
 
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
-			ConnettoriHelper connettoriHelper = new ConnettoriHelper(request, pd, session);
 			
 			String id = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
 			int idServizioApplicativo = Integer.parseInt(id);
@@ -172,7 +170,7 @@ public final class ServiziApplicativiChange extends Action {
 			String confpwRichiesta = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_CONFERMA_PASSWORD_CONNETTORE);
 			String subjectRichiesta = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_SUBJECT_CONNETTORE);
 			
-			String endpointtype = connettoriHelper.readEndPointType();
+			String endpointtype = saHelper.readEndPointType();
 			String tipoconn = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
 			String autenticazioneHttp = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
 			String user = null;
@@ -446,7 +444,7 @@ public final class ServiziApplicativiChange extends Action {
 					}
 				}
 				
-				autenticazioneHttp = connettoriHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
+				autenticazioneHttp = saHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 				
 				for (int i = 0; i < connis.sizePropertyList(); i++) {
 					Property singlecp = cp.get(i);
@@ -794,7 +792,7 @@ public final class ServiziApplicativiChange extends Action {
 				String oldConnT = connis.getTipo();
 				if ((connis.getCustom()!=null && connis.getCustom()) && !connis.getTipo().equals(TipiConnettore.HTTPS.toString()))
 					oldConnT = TipiConnettore.CUSTOM.toString();
-				connettoriHelper.fillConnettore(connis, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
+				saHelper.fillConnettore(connis, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
 						nomeCodaJMS, tipo, user, password,
 						initcont, urlpgk, provurl, connfact,
 						sendas, httpsurl, httpstipologia,

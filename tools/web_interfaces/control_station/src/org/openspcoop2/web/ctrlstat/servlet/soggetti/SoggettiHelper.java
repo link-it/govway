@@ -43,7 +43,6 @@ import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
-import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
@@ -70,13 +69,11 @@ import org.openspcoop2.web.lib.users.dao.User;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SoggettiHelper extends ConsoleHelper {
+public class SoggettiHelper extends ConnettoriHelper {
 
-	private ConnettoriHelper connettoriHelper = null;
 	public SoggettiHelper(HttpServletRequest request, PageData pd, 
 			HttpSession session) throws Exception {
 		super(request, pd,  session);
-		this.connettoriHelper = new ConnettoriHelper(request, pd, session);
 	}
 
 	public Vector<DataElement> addSoggettiToDati(TipoOperazione tipoOp,Vector<DataElement> dati, String nomeprov, String tipoprov, String portadom, String descr, 
@@ -861,9 +858,9 @@ public class SoggettiHelper extends ConsoleHelper {
 				idInt = Integer.parseInt(id);
 			}
 			//String endpointtype = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
-			String endpointtype = this.connettoriHelper.readEndPointType();
+			String endpointtype = this.readEndPointType();
 
-			if (!this.connettoriHelper.endPointCheckData(listExtendedConnettore)) {
+			if (!this.endPointCheckData(listExtendedConnettore)) {
 				return false;
 			}
 

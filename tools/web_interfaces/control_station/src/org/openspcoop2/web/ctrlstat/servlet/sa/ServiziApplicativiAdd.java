@@ -60,7 +60,6 @@ import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -115,7 +114,6 @@ public final class ServiziApplicativiAdd extends Action {
 			SoggettiCore soggettiCore = new SoggettiCore(saCore);
 			
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
-			ConnettoriHelper connettoriHelper = new ConnettoriHelper(request, pd, session);
 			
 			String ruoloFruitore = null; //request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLO_FRUITORE);
 			String ruoloErogatore = null; //request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLO_EROGATORE);
@@ -175,7 +173,7 @@ public final class ServiziApplicativiAdd extends Action {
 			String confpwRichiesta = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_CONFERMA_PASSWORD_CONNETTORE);
 			String subjectRichiesta = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_SUBJECT_CONNETTORE);
 			
-			String endpointtype = connettoriHelper.readEndPointType();
+			String endpointtype = saHelper.readEndPointType();
 			if(endpointtype==null){
 				boolean interfacciaAvanzata = InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(session).getInterfaceType());
 				if(interfacciaAvanzata){
@@ -591,7 +589,7 @@ public final class ServiziApplicativiAdd extends Action {
 					String oldConnT = connis.getTipo();
 					if ( (connis.getCustom()!=null && connis.getCustom()) && !connis.getTipo().equals(TipiConnettore.HTTPS.toString()))
 						oldConnT = TipiConnettore.CUSTOM.toString();
-					connettoriHelper.fillConnettore(connis, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
+					saHelper.fillConnettore(connis, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
 							nomeCodaJMS, tipo, user, password,
 							initcont, urlpgk, provurl, connfact,
 							sendas, httpsurl, httpstipologia,

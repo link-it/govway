@@ -63,7 +63,6 @@ import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
-import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
@@ -92,13 +91,11 @@ import org.openspcoop2.web.lib.users.dao.User;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
+public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
-	private ConnettoriHelper connettoriHelper = null;
 	public AccordiServizioParteSpecificaHelper(HttpServletRequest request, PageData pd, 
 			HttpSession session) throws Exception {
 		super(request, pd,  session);
-		this.connettoriHelper = new ConnettoriHelper(request, pd, session);
 	}
 
 
@@ -339,7 +336,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 
 			// Controllo dell'end-point
 			// Non li puo' prendere dalla servtlet
-			if (!this.connettoriHelper.endPointCheckData(endpointtype, url, nome, tipo,
+			if (!this.endPointCheckData(endpointtype, url, nome, tipo,
 					user, password, initcont, urlpgk, provurl, connfact,
 					sendas, httpsurl, httpstipologia, httpshostverify,
 					httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
@@ -663,7 +660,7 @@ public class AccordiServizioParteSpecificaHelper extends ConsoleHelper {
 
 			// Controllo dell'end-point
 			// Non li puo' prendere dalla servtlet
-			if (!this.connettoriHelper.endPointCheckData(endpointtype, url, nome, tipo,
+			if (!this.endPointCheckData(endpointtype, url, nome, tipo,
 					user, password, initcont, urlpgk, provurl, connfact,
 					sendas, httpsurl, httpstipologia, httpshostverify,
 					httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,

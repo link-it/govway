@@ -148,6 +148,8 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_CONTENT_DISPOSITION = "Content-Disposition";
 	public final static String PREFIX_CONTENT_DISPOSITION = "form-data; name=\"";
 	public final static String SUFFIX_CONTENT_DISPOSITION = "\"";
+	public final static String PREFIX_FILENAME = "filename=\"";
+	public final static String SUFFIX_FILENAME = "\"";
 	
 	
 	/** DEFAULT VALUES **/

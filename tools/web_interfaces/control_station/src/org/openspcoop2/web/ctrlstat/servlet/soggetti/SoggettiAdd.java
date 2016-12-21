@@ -418,7 +418,7 @@ public final class SoggettiAdd extends Action {
 			soggettoConfig.setSuperUser(userLogin);
 
 			//imposto properties custom
-			soggettoRegistro.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties, this.consoleOperationType)); 
+			soggettoRegistro.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties, this.consoleOperationType,null)); 
 
 
 			SoggettoCtrlStat sog = new SoggettoCtrlStat(soggettoRegistro, soggettoConfig);

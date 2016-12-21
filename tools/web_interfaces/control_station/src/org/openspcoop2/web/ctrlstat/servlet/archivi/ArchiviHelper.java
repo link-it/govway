@@ -90,10 +90,8 @@ import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.costanti.TipologiaConnettori;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
-import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiHelper;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
@@ -114,7 +112,7 @@ import org.openspcoop2.web.lib.users.dao.User;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ArchiviHelper extends ConsoleHelper {
+public class ArchiviHelper extends ServiziApplicativiHelper {
 
 	public ArchiviHelper(HttpServletRequest request, PageData pd, 
 			HttpSession session) throws Exception {
@@ -553,8 +551,7 @@ public class ArchiviHelper extends ConsoleHelper {
 				if(is!=null){
 					ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(this.request, this.pd, this.session);
 					
-					ConnettoriHelper connettoriHelper = new ConnettoriHelper(this.request, this.pd, this.session);
-					String endpointtype = connettoriHelper.readEndPointType();
+					String endpointtype = this.readEndPointType();
 					List<ExtendedConnettore> listExtendedConnettore = 
 							ServletExtendedConnettoreUtils.getExtendedConnettore(is.getConnettore(), ConnettoreServletType.WIZARD_CONFIG, this.core, 
 									this.request, this.session, false, endpointtype);
@@ -585,13 +582,12 @@ public class ArchiviHelper extends ConsoleHelper {
 				org.openspcoop2.core.registry.Connettore connettore = this.readConnettore();
 				if(connettore!=null){
 					
-					ConnettoriHelper connettoriHelper = new ConnettoriHelper(this.request, this.pd, this.session);
-					String endpointtype = connettoriHelper.readEndPointType();
+					String endpointtype = this.readEndPointType();
 					List<ExtendedConnettore> listExtendedConnettore = 
 							ServletExtendedConnettoreUtils.getExtendedConnettore(connettore, ConnettoreServletType.WIZARD_REGISTRY, this.core, 
 									this.request, this.session, false, endpointtype);
 					
-					boolean isOk = connettoriHelper.endPointCheckData(listExtendedConnettore);
+					boolean isOk = this.endPointCheckData(listExtendedConnettore);
 					if (!isOk) {
 						return false;
 					}
@@ -944,14 +940,12 @@ public class ArchiviHelper extends ConsoleHelper {
 
 		invServizio.setCredenziali(this.readCredenzialiConnettore());
 		
-		ConnettoriHelper connettoriHelper = new ConnettoriHelper(this.request, this.pd, this.session);
-		
 		TipologiaConnettori tipologiaConnettoriOriginale = null;
 		try{
 			tipologiaConnettoriOriginale = Utilities.getTipologiaConnettori(this.core);
 			Utilities.setTipologiaConnettori(TipologiaConnettori.TIPOLOGIA_CONNETTORI_HTTP);
 		
-			String endpointtype = connettoriHelper.readEndPointType();
+			String endpointtype = this.readEndPointType();
 			if(endpointtype==null){
 				return null;
 			}
@@ -1018,7 +1012,7 @@ public class ArchiviHelper extends ConsoleHelper {
 					ServletExtendedConnettoreUtils.getExtendedConnettore(connis, ConnettoreServletType.WIZARD_CONFIG, this.core, 
 							this.request, this.session, false, endpointtype);
 			
-			connettoriHelper.fillConnettore(connis, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
+			this.fillConnettore(connis, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
 					nomeCodaJMS, tipo, user, password,
 					initcont, urlpgk, provurl, connfact,
 					sendas, httpsurl, httpstipologia,
@@ -1040,14 +1034,12 @@ public class ArchiviHelper extends ConsoleHelper {
 	
 	public org.openspcoop2.core.registry.Connettore readConnettore() throws Exception{
 		
-		ConnettoriHelper connettoriHelper = new ConnettoriHelper(this.request, this.pd, this.session);
-		
 		TipologiaConnettori tipologiaConnettoriOriginale = null;
 		try{
 			tipologiaConnettoriOriginale = Utilities.getTipologiaConnettori(this.core);
 			Utilities.setTipologiaConnettori(TipologiaConnettori.TIPOLOGIA_CONNETTORI_HTTP);
 		
-			String endpointtype = connettoriHelper.readEndPointType();
+			String endpointtype = this.readEndPointType();
 			if(endpointtype==null){
 				return null;
 			}
@@ -1111,7 +1103,7 @@ public class ArchiviHelper extends ConsoleHelper {
 							this.request, this.session, false, endpointtype);
 			
 			String oldConnT = TipiConnettore.DISABILITATO.getNome();
-			connettoriHelper.fillConnettore(connettore, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
+			this.fillConnettore(connettore, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
 					nomeCodaJMS, tipo, user, password,
 					initcont, urlpgk, provurl, connfact,
 					sendas, httpsurl, httpstipologia,
@@ -1695,9 +1687,6 @@ public class ArchiviHelper extends ConsoleHelper {
 				// forzo standard
 				userSession.setInterfaceType(InterfaceType.STANDARD);
 			
-				ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(this.request, this.pd, this.session);
-				ConnettoriHelper connettoriHelper = new ConnettoriHelper(this.request, this.pd, this.session);
-				
 				String sbustamento = null;
 				String sbustamentoInformazioniProtocolloRichiesta = null;
 				String getmsg = null;
@@ -1708,7 +1697,7 @@ public class ArchiviHelper extends ConsoleHelper {
 					getmsg = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX);
 				}
 				
-				saHelper.addEndPointToDati(dati,"","",sbustamento,sbustamentoInformazioniProtocolloRichiesta,
+				this.addEndPointToDati(dati,"","",sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 						getmsg,null,null,protocollo,false,true, showSection);
 				
 				if(CostantiConfigurazione.ABILITATO.equals(getmsg)){
@@ -1741,11 +1730,11 @@ public class ArchiviHelper extends ConsoleHelper {
 //					}
 //					dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, 
 //							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ADD, true, null, false, true, null);
-					this.addDatiCredenzialiAccesso(dati, connettoriHelper, readedDatiConnettori, true);
+					this.addDatiCredenzialiAccesso(dati, readedDatiConnettori, true);
 					
 				}
 				
-				addDatiConnettore(dati, connettoriHelper, readedDatiConnettori, true, ConnettoreServletType.WIZARD_CONFIG);
+				addDatiConnettore(dati, readedDatiConnettori, true, ConnettoreServletType.WIZARD_CONFIG);
 			}
 			finally{
 				// ripristino originale
@@ -1768,9 +1757,7 @@ public class ArchiviHelper extends ConsoleHelper {
 				// forzo standard
 				userSession.setInterfaceType(InterfaceType.STANDARD);
 			
-				ConnettoriHelper connettoriHelper = new ConnettoriHelper(this.request, this.pd, this.session);
-				
-				addDatiConnettore(dati, connettoriHelper, readedDatiConnettori, showSection, ConnettoreServletType.WIZARD_REGISTRY);
+				addDatiConnettore(dati, readedDatiConnettori, showSection, ConnettoreServletType.WIZARD_REGISTRY);
 			}
 			finally{
 				// ripristino originale
@@ -1793,9 +1780,7 @@ public class ArchiviHelper extends ConsoleHelper {
 				// forzo standard
 				userSession.setInterfaceType(InterfaceType.STANDARD);
 			
-				ConnettoriHelper connettoriHelper = new ConnettoriHelper(this.request, this.pd, this.session);
-				
-				this.addDatiCredenzialiAccesso(dati, connettoriHelper, readedDatiConnettori, showSection);
+				this.addDatiCredenzialiAccesso(dati, readedDatiConnettori, showSection);
 			}
 			finally{
 				// ripristino originale
@@ -1805,7 +1790,7 @@ public class ArchiviHelper extends ConsoleHelper {
 		}
 	}
 	
-	private void addDatiCredenzialiAccesso(Vector<DataElement> dati,ConnettoriHelper connettoriHelper, boolean readedDatiConnettori, boolean showSectionTitle){
+	private void addDatiCredenzialiAccesso(Vector<DataElement> dati, boolean readedDatiConnettori, boolean showSectionTitle){
 				
 		String tipoauth = null;
 		String utente = null;
@@ -1841,11 +1826,11 @@ public class ArchiviHelper extends ConsoleHelper {
 				subject = "";
 			}
 		}
-		dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, 
+		dati = this.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, 
 				ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ADD, showSectionTitle, null, false, true, null);
 	}
 	
-	private void addDatiConnettore(Vector<DataElement> dati,ConnettoriHelper connettoriHelper, boolean readedDatiConnettori,
+	private void addDatiConnettore(Vector<DataElement> dati, boolean readedDatiConnettori,
 			boolean showSectionTitle,ConnettoreServletType connettoreServletType) throws Exception{
 		
 		TipologiaConnettori tipologiaConnettoriOriginale = null;
@@ -1895,7 +1880,7 @@ public class ArchiviHelper extends ConsoleHelper {
 			
 			if(readedDatiConnettori==false){
 			
-				endpointtype = connettoriHelper.readEndPointType();
+				endpointtype = this.readEndPointType();
 				if(endpointtype==null){
 					endpointtype = TipiConnettore.DISABILITATO.toString();
 				}
@@ -1960,7 +1945,7 @@ public class ArchiviHelper extends ConsoleHelper {
 					ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, connettoreServletType, this.core, 
 							this.request, this.session, false, endpointtype);
 			
-			dati = connettoriHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, "",//ServiziApplicativiCostanti.LABEL_EROGATORE+" ",
+			dati = this.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, "",//ServiziApplicativiCostanti.LABEL_EROGATORE+" ",
 					url, nomeCodaJMS,
 					tipo, user, password, initcont, urlpgk, provurl,
 					connfact, sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, httpsurl, httpstipologia,

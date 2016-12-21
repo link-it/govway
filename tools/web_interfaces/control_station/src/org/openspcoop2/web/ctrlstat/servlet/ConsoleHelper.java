@@ -28,6 +28,7 @@ import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Vector;
 
 import javax.mail.BodyPart;
@@ -44,9 +45,11 @@ import org.openspcoop2.core.config.MtomProcessor;
 import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
@@ -100,6 +103,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
+import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
@@ -163,6 +167,7 @@ public class ConsoleHelper {
 	protected ConfigurazioneCore confCore = null;
 	protected ConnettoriCore connettoriCore = null;
 	protected OperazioniCore operazioniCore = null;
+	protected ProtocolPropertiesCore protocolPropertiesCore = null;
 
 	/** Gestione dei parametri unica sia per le chiamate multipart che per quelle normali*/
 	private boolean multipart = false;
@@ -175,12 +180,14 @@ public class ConsoleHelper {
 	}
 	private MimeMultipart mimeMultipart = null;
 	private Map<String, InputStream> mapParametri = null;
+	private Map<String, String> mapNomiFileParametri = null;
 
 	/** Logger utilizzato per debug. */
 	protected Logger log = null;
 
 	protected IDAccordoCooperazioneFactory idAccordoCooperazioneFactory = null;
 	protected IDAccordoFactory idAccordoFactory = null;
+	protected IDServizioFactory idServizioFactory = null;
 
 	public ConsoleHelper(HttpServletRequest request, PageData pd, HttpSession session) {
 		this.request = request;
@@ -203,6 +210,7 @@ public class ConsoleHelper {
 			this.confCore = new ConfigurazioneCore(this.core);
 			this.connettoriCore = new ConnettoriCore(this.core);
 			this.operazioniCore = new OperazioniCore(this.core);
+			this.protocolPropertiesCore = new ProtocolPropertiesCore(this.core);
 
 			// analisi dei parametri della request
 			this.contentType = request.getContentType();
@@ -210,12 +218,17 @@ public class ConsoleHelper {
 				this.multipart = true;
 				this.mimeMultipart = new MimeMultipart(request.getInputStream(), this.contentType);
 				this.mapParametri = new HashMap<String,InputStream>();
+				this.mapNomiFileParametri = new HashMap<String,String>();
 
 				for(int i = 0 ; i < this.mimeMultipart.countBodyParts() ;  i ++) {
 					BodyPart bodyPart = this.mimeMultipart.getBodyPart(i);
 					String partName = getBodyPartName(bodyPart);
 					if(!this.mapParametri.containsKey(partName)) {
 						this.mapParametri.put(partName, bodyPart.getInputStream());
+						String fileName = getBodyPartFileName(bodyPart);
+						if(fileName != null)
+							this.mapNomiFileParametri.put(partName, fileName);
+						
 					}else throw new Exception("Parametro ["+partName+"] Duplicato.");
 				}
 			}
@@ -225,6 +238,7 @@ public class ConsoleHelper {
 		}
 		this.idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
 		this.idAccordoFactory = IDAccordoFactory.getInstance();
+		this.idServizioFactory = IDServizioFactory.getInstance();
 	}
 
 	public int getSize() {
@@ -248,9 +262,28 @@ public class ConsoleHelper {
 		return partName;
 	}
 
-//	public String getProtocolloFromParameter(String parameterName) throws Exception {
-//		return getParameter(parameterName, String.class, this.core.getProtocolloDefault());
-//	}
+	private String getBodyPartFileName (BodyPart bodyPart) throws Exception{
+		String partName =  null;
+		String[] headers = bodyPart.getHeader(CostantiControlStation.PARAMETRO_CONTENT_DISPOSITION);
+		if(headers != null && headers.length > 0){
+			String header = headers[0];
+
+			// in due parti perche il suffisso con solo " imbrogliava il controllo
+			int prefixIndex = header.indexOf(CostantiControlStation.PREFIX_FILENAME);
+			if(prefixIndex > -1){
+				partName = header.substring(prefixIndex + CostantiControlStation.PREFIX_FILENAME.length());
+
+				int suffixIndex = partName.indexOf(CostantiControlStation.SUFFIX_FILENAME);
+				partName = partName.substring(0,suffixIndex);
+			}
+		}
+
+		return partName;
+	}
+
+	//	public String getProtocolloFromParameter(String parameterName) throws Exception {
+	//		return getParameter(parameterName, String.class, this.core.getProtocolloDefault());
+	//	}
 
 	public String getParameter(String parameterName) throws Exception {
 		return getParameter(parameterName, String.class, null);
@@ -313,8 +346,17 @@ public class ConsoleHelper {
 
 		return null;
 	}
+	
+	public String getFileNameParameter(String parameterName) throws Exception {
+		if(this.multipart){
+			return this.mapNomiFileParametri.get(parameterName);
+		}
 
-	public ProtocolProperties estraiProtocolPropertiesDaRequest(ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType) throws Exception {
+		return null;
+	}
+	
+	
+	public ProtocolProperties estraiProtocolPropertiesDaRequest(ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType, String propertyId, String parameterName, byte[] binaryParameterValue) throws Exception {
 		ProtocolProperties properties = new ProtocolProperties();
 
 		List<BaseConsoleItem> consoleItems = consoleConfiguration.getConsoleItem();
@@ -326,8 +368,15 @@ public class ConsoleHelper {
 				if(consoleItemValueType != null){
 					switch (consoleItemValueType) {
 					case BINARY:
-						byte[] binaryParameter = this.getBinaryParameter(item.getId());
-						BinaryProperty binaryProperty = ProtocolPropertiesFactory.newProperty(item.getId(), binaryParameter);
+						byte[] binaryParameter = binaryParameterValue;
+						String filename = null;
+						if(propertyId == null || !propertyId.equals(item.getId())){
+							binaryParameter = this.getBinaryParameter(item.getId());
+							filename = this.getFileNameParameter(item.getId());
+						} else {
+							filename = this.getFileNameParameter(parameterName);
+						}
+						BinaryProperty binaryProperty = ProtocolPropertiesFactory.newProperty(item.getId(), binaryParameter, filename );
 						properties.addProperty(binaryProperty); 
 						break;
 					case NUMBER:
@@ -354,6 +403,9 @@ public class ConsoleHelper {
 		}
 
 		return properties;
+	}
+	public ProtocolProperties estraiProtocolPropertiesDaRequest(ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType) throws Exception {
+		return estraiProtocolPropertiesDaRequest(consoleConfiguration, consoleOperationType, null ,null, null);
 	}
 
 	// Prepara il menu'
@@ -1999,35 +2051,41 @@ public class ConsoleHelper {
 
 	public Vector<DataElement> addProtocolPropertiesToDati(Vector<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
 			ConsoleInterfaceType consoleInterfaceType, ProtocolProperties protocolProperties) throws Exception{
+		return addProtocolPropertiesToDati(dati, consoleConfiguration, consoleOperationType, consoleInterfaceType, protocolProperties, null, null);
+	}
+
+	public Vector<DataElement> addProtocolPropertiesToDati(Vector<DataElement> dati, ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
+			ConsoleInterfaceType consoleInterfaceType, ProtocolProperties protocolProperties, List<ProtocolProperty> listaProtocolPropertiesDaDB ,Properties binaryPropertyChangeInfoProprietario) throws Exception{
 		for (BaseConsoleItem item : consoleConfiguration.getConsoleItem()) {
 			AbstractProperty<?> property = ProtocolPropertiesUtils.getAbstractPropertyById(protocolProperties, item.getId());
 			// imposto il default value
 			ProtocolPropertiesUtils.setDefaultValue(item, property != null ? property.getValue() : null); 
-			DataElement de = ProtocolPropertiesUtilities.itemToDataElement(item,  consoleOperationType, consoleInterfaceType, this.getSize());
+
+			ProtocolProperty protocolProperty = ProtocolPropertiesUtils.getProtocolProperty(item.getId(), listaProtocolPropertiesDaDB); 
+			DataElement de = ProtocolPropertiesUtilities.itemToDataElement(item,  consoleOperationType, consoleInterfaceType, binaryPropertyChangeInfoProprietario, protocolProperty, this.getSize());
 			dati.addElement(de);
 		}
-		
+
 		// Imposto il flag per indicare che ho caricato la configurazione
 		DataElement de = new DataElement();
 		de.setName(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
 		de.setType(DataElementType.HIDDEN);
 		de.setValue("ok");
 		dati.add(de);
-		
+
 		return dati;
 	}
-	
-	
-//	public void impostaDefaultValuesConsoleItems(ConsoleConfiguration consoleConfiguration,
-//			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
-//			ProtocolProperties properties) throws ProtocolException {
-//
-//		for (int i = 0; i < properties.sizeProperties(); i++) {
-//			AbstractProperty<?> property = properties.getProperty(i);
-//			ProtocolPropertiesUtils.setDefaultValue(consoleConfiguration.getConsoleItem(), property);
-//		}
-//	}
-	
+
+	//	public void impostaDefaultValuesConsoleItems(ConsoleConfiguration consoleConfiguration,
+	//			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
+	//			ProtocolProperties properties) throws ProtocolException {
+	//
+	//		for (int i = 0; i < properties.sizeProperties(); i++) {
+	//			AbstractProperty<?> property = properties.getProperty(i);
+	//			ProtocolPropertiesUtils.setDefaultValue(consoleConfiguration.getConsoleItem(), property);
+	//		}
+	//	}
+
 	public void validaProtocolProperties(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, ProtocolProperties properties) throws ProtocolException{
 		try {
 			List<BaseConsoleItem> consoleItems = consoleConfiguration.getConsoleItem();
@@ -2039,7 +2097,7 @@ public class ConsoleHelper {
 					if(consoleItem instanceof StringConsoleItem){
 						StringProperty sp = (StringProperty) property;
 						if (consoleItem.isRequired() && StringUtils.isEmpty(sp.getValue())) {
-							throw new ProtocolException("Dati incompleti. E' necessario indicare un"+consoleItem.getLabel());
+							throw new ProtocolException("Dati incompleti. E' necessario indicare: "+consoleItem.getLabel());
 						}
 
 						if(StringUtils.isNotEmpty(consoleItem.getRegexpr())){
@@ -2051,20 +2109,20 @@ public class ConsoleHelper {
 					else if(consoleItem instanceof NumberConsoleItem){
 						NumberProperty np = (NumberProperty) property;
 						if (consoleItem.isRequired() && np.getValue() == null) {
-							throw new ProtocolException("Dati incompleti. E' necessario indicare un"+consoleItem.getLabel());
+							throw new ProtocolException("Dati incompleti. E' necessario indicare: "+consoleItem.getLabel());
 						}
 					}
 					else if(consoleItem instanceof BinaryConsoleItem){
 						BinaryProperty bp = (BinaryProperty) property;
 						if (consoleItem.isRequired() && bp.getValue() == null) {
-							throw new ProtocolException("Dati incompleti. E' necessario indicare un"+consoleItem.getLabel());
+							throw new ProtocolException("Dati incompleti. E' necessario indicare: "+consoleItem.getLabel());
 						}
 					}
 					else if(consoleItem instanceof BooleanConsoleItem){
 						BooleanProperty bp = (BooleanProperty) property;
 						// le checkbox obbligatorie non dovrebbero esserci...
 						if (consoleItem.isRequired() && bp.getValue() == null) {
-							throw new ProtocolException("Dati incompleti. E' necessario indicare un"+consoleItem.getLabel());
+							throw new ProtocolException("Dati incompleti. E' necessario indicare: "+consoleItem.getLabel());
 						}
 					}
 				}
@@ -2077,6 +2135,6 @@ public class ConsoleHelper {
 		} catch (ProtocolException e) {
 			throw e;
 		}
-		
+
 	}
 }

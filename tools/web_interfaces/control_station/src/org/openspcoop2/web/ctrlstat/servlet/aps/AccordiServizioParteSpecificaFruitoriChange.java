@@ -52,13 +52,12 @@ import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
+import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -101,7 +100,6 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			pd.setHidden(pdOld.getHidden());
 
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
-			ConnettoriHelper connettoriHelper = new ConnettoriHelper(request, pdOld, session);
 
 			String idServizio = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 			int idServizioInt = Integer.parseInt(idServizio);
@@ -115,7 +113,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			//			String endpointtype = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
 			String correlato = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_CORRELATO);
 			
-			String endpointtype = connettoriHelper.readEndPointType();
+			String endpointtype = apsHelper.readEndPointType();
 			String tipoconn = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
 			String autenticazioneHttp = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
 			String user = null;
@@ -387,7 +385,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					sendas = props.get(CostantiDB.CONNETTORE_JMS_SEND_AS);
 				}
 				
-				autenticazioneHttp = connettoriHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
+				autenticazioneHttp = apsHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 				
 				if (httpsurl == null) {
 					httpsurl = props.get(CostantiDB.CONNETTORE_HTTPS_LOCATION);
@@ -452,7 +450,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							nomeservizio, tiposervizio, versioneservizio, provider);
 
 					if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
-						dati = connettoriHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
+						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
 								url, nome,
 								tipo, user, password, initcont, urlpgk, provurl,
 								connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,TipoOperazione.CHANGE, httpsurl,
@@ -524,7 +522,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, provider);
 
 				if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
-					dati = connettoriHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
+					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
 							url, nome,
 							tipo, user, password, initcont, urlpgk, provurl,
 							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,TipoOperazione.CHANGE, httpsurl,
@@ -580,7 +578,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, provider);
 
 					if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
-						dati = connettoriHelper.addEndPointToDatiAsHidden(dati, endpointtype, url, nome,
+						dati = apsHelper.addEndPointToDatiAsHidden(dati, endpointtype, url, nome,
 								tipo, user, password, initcont, urlpgk, provurl,
 								connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,TipoOperazione.CHANGE, httpsurl,
 								httpstipologia, httpshostverify, httpspath, httpstipo,
@@ -636,7 +634,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					}
 					oldConnT = ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM;
 				}
-				connettoriHelper.fillConnettore(connettoreNew, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
+				apsHelper.fillConnettore(connettoreNew, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
 						nome, tipo, user, password,
 						initcont, urlpgk, provurl, connfact,
 						sendas, httpsurl, httpstipologia,
@@ -727,7 +725,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, provider);
 
 					if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
-						dati = connettoriHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
+						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
 								url,
 								nome, tipo, user, password, initcont, urlpgk,
 								provurl, connfact, sendas,

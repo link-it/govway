@@ -49,7 +49,6 @@ import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -85,13 +84,12 @@ public final class SoggettiEndPoint extends Action {
 
 		try {
 
-			ConnettoriHelper connettoriHelper = new ConnettoriHelper(request, pd, session);
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 			
 			String id = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID);
 			int idInt = Integer.parseInt(id);
 				
-			String endpointtype = connettoriHelper.readEndPointType();
+			String endpointtype = soggettiHelper.readEndPointType();
 			String tipoconn = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
 			String autenticazioneHttp = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
 			String user = null;
@@ -144,7 +142,7 @@ public final class SoggettiEndPoint extends Action {
 			
 			
 			// Preparo il menu
-			connettoriHelper.makeMenu();
+			soggettiHelper.makeMenu();
 
 			// Prendo nome, tipo e pdd dal db
 			SoggettiCore soggettiCore = new SoggettiCore();			
@@ -209,7 +207,7 @@ public final class SoggettiEndPoint extends Action {
 					sendas = props.get(CostantiDB.CONNETTORE_JMS_SEND_AS);
 				}
 				
-				autenticazioneHttp = connettoriHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
+				autenticazioneHttp = soggettiHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 				
 				if (httpsurl == null) {
 					httpsurl = props.get(CostantiDB.CONNETTORE_HTTPS_LOCATION);
@@ -269,7 +267,7 @@ public final class SoggettiEndPoint extends Action {
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID);
 				dati.addElement(de);
 
-				dati = connettoriHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
+				dati = soggettiHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl, 
 						connfact, sendas, SoggettiCostanti.OBJECT_NAME_SOGGETTI,TipoOperazione.CHANGE, httpsurl, httpstipologia,
@@ -308,7 +306,7 @@ public final class SoggettiEndPoint extends Action {
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID);
 				dati.addElement(de);
 
-				dati = connettoriHelper.addEndPointToDati(dati,  connettoreDebug, endpointtype, autenticazioneHttp, null,
+				dati = soggettiHelper.addEndPointToDati(dati,  connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl,
 						connfact, sendas, SoggettiCostanti.OBJECT_NAME_SOGGETTI,TipoOperazione.CHANGE, httpsurl, httpstipologia,
@@ -331,7 +329,7 @@ public final class SoggettiEndPoint extends Action {
 			String oldConnT = c.getTipo();
 			if ((c.getCustom()!=null && c.getCustom()) && !c.getTipo().equals(TipiConnettore.HTTPS.toString()))
 				oldConnT = TipiConnettore.CUSTOM.toString();
-			connettoriHelper.fillConnettore(c, connettoreDebug, endpointtype, oldConnT, tipoconn, url, nome, tipo, user,
+			soggettiHelper.fillConnettore(c, connettoreDebug, endpointtype, oldConnT, tipoconn, url, nome, tipo, user,
 					password, initcont, urlpgk, provurl, connfact, sendas,
 					httpsurl, httpstipologia, httpshostverify, httpspath,
 					httpstipo, httpspwd, httpsalgoritmo, httpsstato,

@@ -22,9 +22,11 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.soggetti;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 
@@ -119,7 +121,7 @@ public final class SoggettiChange extends Action {
 
 		// Parametri relativi al tipo operazione
 		TipoOperazione tipoOp = TipoOperazione.CHANGE; 
-
+		List<ProtocolProperty> oldProtocolPropertyList = null;
 		try {
 			SoggettiHelper soggettiHelper = new SoggettiHelper(request, pd, session);
 
@@ -141,7 +143,7 @@ public final class SoggettiChange extends Action {
 
 			this.editMode = soggettiHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			this.protocolPropertiesSet = soggettiHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
-			
+
 			// Preparo il menu
 			soggettiHelper.makeMenu();
 
@@ -261,7 +263,19 @@ public final class SoggettiChange extends Action {
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
 			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigSoggetto(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idSoggetto);
 			this.protocolProperties = soggettiHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
+			
+			try{
+				Soggetto soggetto = this.registryReader.getSoggetto(idSoggetto);
+				oldProtocolPropertyList = soggetto.getProtocolPropertyList(); 
+			}catch(RegistryNotFound r){}
 
+			Properties propertiesProprietario = new Properties();
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO, this.id);
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO, ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO_VALUE_SOGGETTO);
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PROPRIETARIO, oldtipoprov + "/" + oldnomeprov);
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE, URLEncoder.encode( SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE + "?" + request.getQueryString(), "UTF-8"));
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO, this.protocollo);
+			
 			// Se nomehid = null, devo visualizzare la pagina per la modifica dati
 			if(ServletUtils.isEditModeInProgress(this.editMode)){
 
@@ -324,13 +338,14 @@ public final class SoggettiChange extends Action {
 				}
 				idSoggetto = new IDSoggetto(this.tipoprov,this.nomeprov);
 
+				try{
+					Soggetto soggetto = this.registryReader.getSoggetto(idSoggetto);
+					oldProtocolPropertyList = soggetto.getProtocolPropertyList(); 
+				}catch(RegistryNotFound r){}
+				
 				// Inizializzazione delle properties da db al primo accesso alla pagina
 				if(this.protocolPropertiesSet == null){
-					try{
-						Soggetto soggetto = this.registryReader.getSoggetto(idSoggetto);
-						List<ProtocolProperty> protocolPropertyList = soggetto.getProtocolPropertyList(); 
-						ProtocolPropertiesUtils.mergeProtocolProperties(this.protocolProperties, protocolPropertyList, this.consoleOperationType); 
-					}catch(RegistryNotFound r){}
+					ProtocolPropertiesUtils.mergeProtocolProperties(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
 				}
 
 				// preparo i campi
@@ -348,7 +363,7 @@ public final class SoggettiChange extends Action {
 						numPD,this.pd_url_prefix_rewriter,numPA,this.pa_url_prefix_rewriter,listaTipiProtocollo,this.protocollo);
 
 				// aggiunta campi custom
-				dati = soggettiHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType,this.protocolProperties);
+				dati = soggettiHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType,this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 
 				pd.setDati(dati);
 
@@ -481,7 +496,7 @@ public final class SoggettiChange extends Action {
 						numPD,this.pd_url_prefix_rewriter,numPA,this.pa_url_prefix_rewriter,listaTipiProtocollo,this.protocollo);
 
 				// aggiunta campi custom
-				dati = soggettiHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType,this.protocolProperties);
+				dati = soggettiHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType,this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 
 				pd.setDati(dati);
 
@@ -575,7 +590,7 @@ public final class SoggettiChange extends Action {
 			soggettoConfig.setPaUrlPrefixRewriter(this.pa_url_prefix_rewriter);
 
 			//imposto properties custom
-			soggettoRegistry.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties, this.consoleOperationType)); 
+			soggettoRegistry.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties, this.consoleOperationType, oldProtocolPropertyList)); 
 
 			SoggettoCtrlStat sog = new SoggettoCtrlStat(soggettoRegistry, soggettoConfig);
 			sog.setOldNomeForUpdate(oldnomeprov);

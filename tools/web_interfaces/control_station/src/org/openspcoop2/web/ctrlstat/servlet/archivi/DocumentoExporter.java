@@ -35,11 +35,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.driver.AccordoServizioUtils;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper;
@@ -53,6 +53,8 @@ import org.openspcoop2.utils.xml.XSDSchemaCollection;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCore;
+import org.slf4j.Logger;
 
 /**
  * Questa servlet si occupa di esportare le tracce diagnostiche in formato xml
@@ -113,12 +115,14 @@ public class DocumentoExporter extends HttpServlet {
 		String tipoSoggettoFruitore = request.getParameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_IMPLEMENTATIVO_TIPO_SOGGETTO_FRUITORE);
 		String nomeSoggettoFruitore = request.getParameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_IMPLEMENTATIVO_NOME_SOGGETTO_FRUITORE);
 		
-		int idAccordoInt = Integer.parseInt(idAccordo);
+		int idAccordoInt = 0 ;
+		try{ idAccordoInt = Integer.parseInt(idAccordo); }catch(Exception e){ idAccordoInt = 0 ; }
 		byte[] docBytes = null;
 		String fileName = null;
 		
 		try {
 			ArchiviCore archiviCore = new ArchiviCore();
+			ProtocolPropertiesCore ppCore = new ProtocolPropertiesCore(archiviCore);
 			
 			if( ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_DOCUMENTO.equals(tipoDocumentoDaScaricare) ){
 				
@@ -253,11 +257,21 @@ public class DocumentoExporter extends HttpServlet {
 					}
 					 
 				}
+				else if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_PROTOCOL_PROPERTY.equals(tipoDocumento)){
+					 if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PROTOCOL_PROPERTY_BINARY.equals(tipoDocumentoDaScaricare)){
+						 int idAllegatoInt = Integer.parseInt(idAllegato);
+						 ProtocolProperty bp = ppCore.getProtocolPropertyBinaria(idAllegatoInt);
+						fileName = bp.getFile();
+						docBytes = bp.getByteFile();
+					}else{
+						throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] non gestito per il tipo archivio ["+tipoDocumento+"]");
+					}
+				}
 				else{
 					throw new ServletException("Tipo archivio ["+tipoDocumento+"] non gestito (tipo documento: "+tipoDocumentoDaScaricare+")");
 				}
 				
-			}
+			} 
 		
 			// Setto Proprietà Export File
 			HttpUtilities.setOutputFile(response, true, fileName);

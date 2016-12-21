@@ -66,7 +66,6 @@ import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
-import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
@@ -90,13 +89,11 @@ import org.openspcoop2.web.lib.users.dao.User;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class AccordiServizioParteComuneHelper extends ConsoleHelper {
+public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
-	private ConnettoriHelper connettoriHelper = null;
 	public AccordiServizioParteComuneHelper(HttpServletRequest request, PageData pd, 
 			HttpSession session) throws Exception {
 		super(request, pd,  session);
-		this.connettoriHelper = new ConnettoriHelper(request, pd, session);
 	}
 
 
@@ -3745,7 +3742,7 @@ public class AccordiServizioParteComuneHelper extends ConsoleHelper {
 			// String tiposervizio = this.request.getParameter("tiposervizio");
 			String endpointtype = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_EROGATORI_ENDPOINT_TYPE);
 
-			if (!this.connettoriHelper.endPointCheckData(listExtendedConnettore)) {
+			if (!this.endPointCheckData(listExtendedConnettore)) {
 				return false;
 			}
 

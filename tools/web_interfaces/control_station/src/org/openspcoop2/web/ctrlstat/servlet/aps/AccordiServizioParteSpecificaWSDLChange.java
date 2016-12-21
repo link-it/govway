@@ -59,11 +59,9 @@ import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
-import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -111,8 +109,6 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			this.editMode = null;
 
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
-			ConnettoriHelper connettoriHelper = new ConnettoriHelper(request, pd, session);
-			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
 			this.id = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 			this.tipo = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO);
@@ -253,7 +249,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati =apcHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, this.id, null, null, dati);
+				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, this.id, null, null, dati);
 
 				dati = apsHelper.addWSDLToDati(TipoOperazione.OTHER,  apsHelper.getSize(), asps, oldwsdl, this.tipo, this.validazioneDocumenti, dati, tipologiaDocumentoScaricare);
 
@@ -389,7 +385,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 				autenticazioneHttp = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
 				user = props.get(CostantiDB.CONNETTORE_USER);
 				password = props.get(CostantiDB.CONNETTORE_PWD);
-				autenticazioneHttp = connettoriHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
+				autenticazioneHttp = apsHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 				
 				if(connettoreDebug==null && props!=null){
 					String v = props.get(CostantiDB.CONNETTORE_DEBUG);
@@ -490,7 +486,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					versioneservizio.intValue()+"", versioniProtocollo,this.validazioneDocumenti,
 					null,null,null,protocollo,true,null);
 
-			dati = connettoriHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
+			dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
 					url, nome,
 					this.tipo, user, password, initcont, urlpgk, provurl,
 					connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,TipoOperazione.CHANGE, httpsurl, httpstipologia,

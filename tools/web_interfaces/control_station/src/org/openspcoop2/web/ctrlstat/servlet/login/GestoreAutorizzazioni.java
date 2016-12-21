@@ -40,6 +40,7 @@ import org.openspcoop2.web.ctrlstat.servlet.operazioni.OperazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
@@ -100,6 +101,7 @@ public class GestoreAutorizzazioni {
 	Vector<String> servletLibraryVersion = null;
 	Vector<String> servletChangePWD_Modalita = null;
 	Vector<String> servletOperazioni = null;
+	Vector<String> servletProtocolProperties = null;
 	
 	// Associazione diritti alle funzionalita'
 	PermessiUtente permessiPdD = null;
@@ -123,6 +125,7 @@ public class GestoreAutorizzazioni {
 	PermessiUtente permessiLibraryVersion = null;
 	PermessiUtente permessiChangePWD_Modalita = null;
 	PermessiUtente permessiOperazioni = null;
+	PermessiUtente permessiProtocolProperties = null;
 
 	
 	private boolean singlePdD = false;
@@ -346,6 +349,13 @@ public class GestoreAutorizzazioni {
 		/** Permessi associati alla ricerca delle operazioni */
 		this.permessiOperazioni = new PermessiUtente();
 		this.permessiOperazioni.setSistema(true);
+		
+		/** Gruppo di servlet che gestiscono le protocolproperties */
+		this.servletProtocolProperties = new Vector<String>();
+		this.servletProtocolProperties.addAll(ProtocolPropertiesCostanti.SERVLET_PP);
+		/** Permessi Associati alla gestione delle protocol properties */
+		this.permessiProtocolProperties = new PermessiUtente();
+		this.permessiProtocolProperties.setServizi(true);
 	}
 	
 	
@@ -427,6 +437,8 @@ public class GestoreAutorizzazioni {
 			return this.permessiChangePWD_Modalita.or(user.getPermessi());
 		}else if(this.servletOperazioni.contains(nomeServlet)){
 			return this.permessiOperazioni.or(user.getPermessi());
+		}else if(this.servletProtocolProperties.contains(nomeServlet)){
+			return this.permessiProtocolProperties.or(user.getPermessi());
 		}else{
 			log.error("Servlet richiesta non gestita: "+nomeServlet);
 			return false;

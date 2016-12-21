@@ -1871,7 +1871,16 @@
         </action>
 
     
-    
+    	<!-- Protocol Properties  -->
+    	
+    	<action path="/protocolPropertyBinaryPropertyChange" type="org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertyBinaryPropertyChange" 
+        	scope="request" validate="true">
+            <forward name="protocolPropertyBinaryPropertyChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="protocolPropertyBinaryPropertyChangeOk" path="/jsplib/addElement.jsp"/>
+            <forward name="protocolPropertyBinaryPropertyChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="protocolPropertyBinaryPropertyChangeError" path="/jsplib/info.jsp"/>
+            <forward name="protocolPropertyBinaryPropertyChangeConfirmForm" path="/jsplib/confermaInvio.jsp"/>
+        </action>
     
     
     </action-mappings>

@@ -77,7 +77,6 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
@@ -151,7 +150,6 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 		try {
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
-			ConnettoriHelper connettoriHelper = new ConnettoriHelper(request, pd, session);
 
 			this.parametersPOST = null;
 			
@@ -165,7 +163,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			// this.servpub = request.getParameter("servpub");
 			//			this.endpointtype = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE );
 			
-			this.endpointtype = connettoriHelper.readEndPointType();
+			this.endpointtype = apsHelper.readEndPointType();
 			this.tipoconn = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO );
 			this.autenticazioneHttp = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
 			
@@ -233,7 +231,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			if ((ct != null) && (ct.indexOf(Costanti.MULTIPART) != -1)) {
 				// decodeReq = true;
 				this.decodeRequestValidazioneDocumenti = false; // init
-				this.decodeRequest(request,connettoriHelper);
+				this.decodeRequest(request,apsHelper);
 			}
 
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
@@ -752,7 +750,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				String tipoSendas = ConnettoriCostanti.TIPO_SEND_AS[0];
 				String tipoJms = ConnettoriCostanti.TIPI_CODE_JMS[0];
 
-				this.autenticazioneHttp = connettoriHelper.getAutenticazioneHttp(this.autenticazioneHttp, this.endpointtype, this.user);
+				this.autenticazioneHttp = apsHelper.getAutenticazioneHttp(this.autenticazioneHttp, this.endpointtype, this.user);
 				
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -766,7 +764,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.versione,versioniProtocollo,this.validazioneDocumenti,
 						this.nomePA,saSoggetti,this.nomeSA,protocollo,generaPACheckSoggetto,null);
 
-				dati = connettoriHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null, 
+				dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null, 
 						this.url, this.nome,
 						tipoJms, this.user,
 						this.password, this.initcont, this.urlpgk,
@@ -859,7 +857,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.statoPackage,this.versione,versioniProtocollo,this.validazioneDocumenti,
 						this.nomePA,saSoggetti,this.nomeSA,protocollo,generaPACheckSoggetto,null);
 
-				dati = connettoriHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
+				dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
 						this.url, this.nome, this.tipo, this.user,
 						this.password, this.initcont, this.urlpgk,
 						this.provurl, this.connfact, this.sendas,
@@ -919,7 +917,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			else
 				connettore.setTipo(this.endpointtype);
 
-			connettoriHelper.fillConnettore(connettore, this.connettoreDebug, this.endpointtype, this.endpointtype, this.tipoconn, this.url,
+			apsHelper.fillConnettore(connettore, this.connettoreDebug, this.endpointtype, this.endpointtype, this.tipoconn, this.url,
 					this.nome, this.tipo, this.user, this.password,
 					this.initcont, this.urlpgk, this.url, this.connfact,
 					this.sendas, this.httpsurl, this.httpstipologia,
@@ -984,7 +982,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.statoPackage,this.versione,versioniProtocollo,this.validazioneDocumenti,
 							this.nomePA,saSoggetti,this.nomeSA,protocollo,generaPACheckSoggetto,null);
 
-					dati = connettoriHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
+					dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
 							this.url, this.nome, this.tipo, this.user,
 							this.password, this.initcont, this.urlpgk,
 							this.provurl, this.connfact, this.sendas,
@@ -1086,7 +1084,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 		}  
 	}
 
-	public void decodeRequest(HttpServletRequest request,ConnettoriHelper connettoriHelper) throws Exception {
+	public void decodeRequest(HttpServletRequest request,AccordiServizioParteSpecificaHelper apsHelper) throws Exception {
 		try {
 			
 			String ct = request.getContentType();
@@ -1385,7 +1383,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				line = dis.readLine();
 			}
 
-			this.endpointtype = connettoriHelper.readEndPointType(this.endpointtype,this.endpointtype_check, this.endpointtype_ssl);
+			this.endpointtype = apsHelper.readEndPointType(this.endpointtype,this.endpointtype_check, this.endpointtype_ssl);
 			
 			bin.close();
 			in.close();

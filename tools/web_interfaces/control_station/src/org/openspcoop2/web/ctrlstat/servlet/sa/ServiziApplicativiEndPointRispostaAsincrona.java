@@ -38,8 +38,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Connettore;
-import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.Credenziali;
+import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -48,13 +48,12 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
+import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -96,7 +95,6 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 		try {
 
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
-			ConnettoriHelper connettoriHelper = new ConnettoriHelper(request, pd, session);
 			
 			String nomeservizioApplicativo = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO);
 			String idsil = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
@@ -116,7 +114,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			
 			String provider = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			
-			String endpointtype = connettoriHelper.readEndPointType();
+			String endpointtype = saHelper.readEndPointType();
 			String tipoconn = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
 			String autenticazioneHttp = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
 			String user = null;
@@ -293,7 +291,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 					}
 				}
 				
-				autenticazioneHttp = connettoriHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
+				autenticazioneHttp = saHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 				
 				for (int i = 0; i < connra.sizePropertyList(); i++) {
 					Property singlecp = cp.get(i);
@@ -396,7 +394,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 //				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, 
 //						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,true,endpointtype,true);
 				
-				dati = connettoriHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
+				dati = saHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl,
 						connfact, sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, httpsurl, httpstipologia,
@@ -449,7 +447,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 //				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, 
 //						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,true,endpointtype,true);
 				
-				dati = connettoriHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
+				dati = saHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, "", "", initcont, urlpgk, provurl, connfact,
 						sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, httpsurl, httpstipologia,
@@ -532,7 +530,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			String oldConnT = connra.getTipo();
 			if ((connra.getCustom()!=null && connra.getCustom()) && !connra.getTipo().equals(TipiConnettore.HTTPS.toString()))
 				oldConnT = TipiConnettore.CUSTOM.toString();
-			connettoriHelper.fillConnettore(connra, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
+			saHelper.fillConnettore(connra, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
 					nome, tipo, user, password,
 					initcont, urlpgk, provurl, connfact,
 					sendas, httpsurl, httpstipologia,

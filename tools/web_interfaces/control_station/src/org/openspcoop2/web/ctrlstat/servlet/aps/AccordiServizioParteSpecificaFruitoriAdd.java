@@ -78,7 +78,6 @@ import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCostanti;
@@ -143,7 +142,6 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 		try {
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
-			ConnettoriHelper connettoriHelper = new ConnettoriHelper(request, pd, session);
 
 			this.parametersPOST = null;
 			
@@ -155,7 +153,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			this.correlato = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_CORRELATO);
 			//			this.endpointtype = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE );
 			
-			this.endpointtype = connettoriHelper.readEndPointType();
+			this.endpointtype = apsHelper.readEndPointType();
 			this.tipoconn = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO );
 			this.autenticazioneHttp = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
 			
@@ -213,7 +211,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			if ((ct != null) && (ct.indexOf(Costanti.MULTIPART) != -1)) {
 				// decodeReq = true;
 				this.decodeRequestValidazioneDocumenti = false; // init
-				this.decodeRequest(request,connettoriHelper);
+				this.decodeRequest(request,apsHelper);
 			}
 
 		
@@ -478,7 +476,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						this.httpshostverify = true;
 					}
 	
-					this.autenticazioneHttp = connettoriHelper.getAutenticazioneHttp(this.autenticazioneHttp, this.endpointtype, this.user);
+					this.autenticazioneHttp = apsHelper.getAutenticazioneHttp(this.autenticazioneHttp, this.endpointtype, this.user);
 					
 					dati = apsHelper.addServiziFruitoriToDati(dati, this.provider, this.wsdlimpler, this.wsdlimplfru, soggettiList,
 							soggettiListLabel, "0", this.id, TipoOperazione.ADD, "", "", "", nomeservizio, tiposervizio, versioneservizio, this.correlato, this.statoPackage, this.statoPackage,asps.getStatoPackage(), null,this.validazioneDocumenti,
@@ -490,7 +488,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					String tipoSendas = ConnettoriCostanti.TIPO_SEND_AS[0];
 					String tipoJms = ConnettoriCostanti.TIPI_CODE_JMS[0];
 					if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
-						dati = connettoriHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null, 
+						dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null, 
 								this.url, this.nome,
 								tipoJms, this.user,
 								this.password, this.initcont, this.urlpgk,
@@ -565,7 +563,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						,null,null,null,null,null,null,null);
 
 				if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
-					dati = connettoriHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
+					dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
 							this.url, this.nome, this.tipo, this.user,
 							this.password, this.initcont, this.urlpgk,
 							this.provurl, this.connfact, this.sendas,
@@ -610,7 +608,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			Connettore connettore = new Connettore();
 			connettore.setNome("CNT_SF_" + tipoFruitore + "/" + nomeFruitore + "_" + tipoErogatore + "/" + nomeErogatore + "_" + tiposervizio + "/" + nomeservizio);
 
-			connettoriHelper.fillConnettore(connettore, this.connettoreDebug, this.endpointtype, this.endpointtype, this.tipoconn, this.url,
+			apsHelper.fillConnettore(connettore, this.connettoreDebug, this.endpointtype, this.endpointtype, this.tipoconn, this.url,
 					this.nome, this.tipo, this.user, this.password,
 					this.initcont, this.urlpgk, this.provurl, this.connfact,
 					this.sendas, this.httpsurl, this.httpstipologia,
@@ -690,7 +688,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							,null,null,null,null,null,null,null);
 
 					if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
-						dati = connettoriHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
+						dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
 								this.url, this.nome, this.tipo, this.user,
 								this.password, this.initcont, this.urlpgk,
 								this.provurl, this.connfact, this.sendas,
@@ -834,7 +832,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 		}  
 	}
 
-	public void decodeRequest(HttpServletRequest request,ConnettoriHelper connettoriHelper) throws Exception {
+	public void decodeRequest(HttpServletRequest request,AccordiServizioParteSpecificaHelper apsHelper) throws Exception {
 		try {
 			
 			String ct = request.getContentType();
@@ -1096,7 +1094,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				line = dis.readLine();
 			}
 
-			this.endpointtype = connettoriHelper.readEndPointType(this.endpointtype,this.endpointtype_check, this.endpointtype_ssl);
+			this.endpointtype = apsHelper.readEndPointType(this.endpointtype,this.endpointtype_check, this.endpointtype_ssl);
 			
 			bin.close();
 			in.close();

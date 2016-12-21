@@ -3,9 +3,12 @@ package org.openspcoop2.web.ctrlstat.servlet.protocol_properties;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.http.HttpSession;
 
+import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.registry.constants.ProprietariProtocolProperty;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemValueType;
@@ -17,6 +20,7 @@ import org.openspcoop2.protocol.sdk.properties.BooleanConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.NumberConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.properties.StringConsoleItem;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.Parameter;
@@ -126,7 +130,7 @@ public class ProtocolPropertiesUtilities {
 			return ConsoleInterfaceType.STANDARD;
 	}
 
-	public static DataElement itemToDataElement(BaseConsoleItem item, ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, int size) throws Exception {
+	public static DataElement itemToDataElement(BaseConsoleItem item, ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, Properties binaryChangeProperties, ProtocolProperty protocolProperty, int size) throws Exception {
 		if(item == null)
 			return null;
 
@@ -143,7 +147,7 @@ public class ProtocolPropertiesUtilities {
 				de = getText(abItem, size, DataElementType.CRYPT);
 				break;
 			case FILE:
-				de = getFile(abItem, size, consoleOperationType,consoleInterfaceType); 
+				de = getFile(abItem, size, consoleOperationType,consoleInterfaceType,binaryChangeProperties, protocolProperty); 
 				break;
 			case HIDDEN:
 				de = getHidden(abItem, size);
@@ -228,7 +232,8 @@ public class ProtocolPropertiesUtilities {
 		return de;
 	}
 
-	public static DataElement getFile(AbstractConsoleItem<?> item, int size, ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType) throws Exception{
+	public static DataElement getFile(AbstractConsoleItem<?> item, int size, ConsoleOperationType consoleOperationType, 
+			ConsoleInterfaceType consoleInterfaceType, Properties binaryChangeProperties,ProtocolProperty protocolProperty) throws Exception{
 		DataElement de = new DataElement();
 		de.setName(item.getId());
 		if(consoleOperationType.equals(ConsoleOperationType.ADD)){
@@ -239,14 +244,28 @@ public class ProtocolPropertiesUtilities {
 			de.setSize(size);
 		} else {
 			de.setType(DataElementType.LINK);
-			String idItem = "";
-			String idProprietario = "";
-			String urlChange= "" ;
-			String tipoProprietario = "";
+			String idItem = protocolProperty != null ? protocolProperty.getId() + "" : ""; 
+			String idProprietario = binaryChangeProperties.getProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO);
+			String urlChange= binaryChangeProperties.getProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE);
+			String tipoProprietario = binaryChangeProperties.getProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO);
+			String nomeProprietario = binaryChangeProperties.getProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PROPRIETARIO);
+			String parentProprietario = binaryChangeProperties.getProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PARENT_PROPRIETARIO);
+			if(parentProprietario == null)
+				parentProprietario = "";
+			String protocollo = binaryChangeProperties.getProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO);
+			String tipoAccordo = binaryChangeProperties.getProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO);
+			if(tipoAccordo == null)
+				tipoAccordo = "";
+
 			de.setUrl(ProtocolPropertiesCostanti.SERVLET_NAME_BINARY_PROPERTY_CHANGE, 
 					new Parameter(ProtocolPropertiesCostanti.PARAMETRO_PP_ID,idItem),
+					new Parameter(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME,item.getId()),
 					new Parameter(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO,idProprietario),
 					new Parameter(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO,tipoProprietario),
+					new Parameter(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PROPRIETARIO,nomeProprietario),
+					new Parameter(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PARENT_PROPRIETARIO,parentProprietario),
+					new Parameter(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO,protocollo),
+					new Parameter(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO, tipoAccordo),
 					new Parameter(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE,urlChange));
 		}
 
@@ -405,5 +424,29 @@ public class ProtocolPropertiesUtilities {
 		de.setLabels(labels); 
 
 		return de;
+	}
+
+	public static String getLabelTipoProprietario(ProprietariProtocolProperty tipoProprietario, String tipoAccordo) {
+		if(tipoProprietario != null){
+			switch (tipoProprietario) {
+			case ACCORDO_COOPERAZIONE:
+				return ProtocolPropertiesCostanti.LABEL_AC;
+			case ACCORDO_SERVIZIO_PARTE_COMUNE:
+				return AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo);
+			case ACCORDO_SERVIZIO_PARTE_SPECIFICA:
+				return ProtocolPropertiesCostanti.LABEL_APS;
+			case AZIONE_ACCORDO:
+				return ProtocolPropertiesCostanti.LABEL_AZIONE_ACCORDO;
+			case FRUITORE:
+				return ProtocolPropertiesCostanti.LABEL_FRUITORE;
+			case OPERATION:
+				return ProtocolPropertiesCostanti.LABEL_OPERATION;
+			case PORT_TYPE:
+				return ProtocolPropertiesCostanti.LABEL_PORT_TYPE;
+			case SOGGETTO:
+				return ProtocolPropertiesCostanti.LABEL_SOGGETTO;
+			}
+		}
+		return null;
 	}
 }

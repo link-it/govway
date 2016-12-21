@@ -384,6 +384,9 @@ public class ArchiviCostanti {
 	public final static String PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_IMPLEMENTATIVO_TIPO_SOGGETTO_FRUITORE = "wsdlImplementativoTipoSoggettoFruitore";
 	public final static String PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_IMPLEMENTATIVO_NOME_SOGGETTO_FRUITORE = "wsdlImplementativoNomeSoggettoFruitore";
 	
+	public static final String PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_PROTOCOL_PROPERTY = "protocolProperty";
+	public static final String PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PROTOCOL_PROPERTY_BINARY = "propertyBinaria";
+	
 	public final static String PARAMETRO_VALORE_ARCHIVI_PROFILO_COLLABORAZIONE_ASINCRONO_ASIMMETRICO = "asincrono-asimmetrico";
 	public final static String PARAMETRO_VALORE_ARCHIVI_PROFILO_COLLABORAZIONE_ASINCRONO_SIMMETRICO = "asincrono-simmetrico";
 	public final static String PARAMETRO_VALORE_ARCHIVI_PROFILO_COLLABORAZIONE_SINCRONO = "sincrono";
@@ -399,4 +402,6 @@ public class ArchiviCostanti {
 	
 	public final static String[] PARAMETRO_VALORI_ARCHIVI_EXPORT_TIPO_DUMP = { ArchiveType.ALL.toString(), ArchiveType.ALL_WITHOUT_CONFIGURAZIONE.toString(), ArchiveType.CONFIGURAZIONE.toString() };
 	public final static String[] PARAMETRO_LABEL_ARCHIVI_EXPORT_TIPO_DUMP = { "Esportazione completa", "Dati applicativi", "Parametri di configurazione" };
+	
+
 }

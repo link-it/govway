@@ -78,13 +78,11 @@ import org.openspcoop2.web.lib.users.dao.User;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ServiziApplicativiHelper extends ConsoleHelper {
+public class ServiziApplicativiHelper extends ConnettoriHelper {
 
-	private ConnettoriHelper connettoriHelper = null;
 	public ServiziApplicativiHelper(HttpServletRequest request, PageData pd, 
 			HttpSession session) throws Exception {
 		super(request, pd,  session);
-		this.connettoriHelper = new ConnettoriHelper(request, pd, session);
 	}
 
 	// Controlla i dati dell'invocazione servizio del servizioApplicativo
@@ -179,7 +177,7 @@ public class ServiziApplicativiHelper extends ConsoleHelper {
 			 * this.pd.setMessage("Le password non corrispondono"); return false; }
 			 */
 
-			if (!this.connettoriHelper.endPointCheckData(listExtendedConnettore)) {
+			if (!this.endPointCheckData(listExtendedConnettore)) {
 				return false;
 			}
 
@@ -441,7 +439,7 @@ public class ServiziApplicativiHelper extends ConsoleHelper {
 			if (subject == null) {
 				subject = "";
 			}
-			dati = this.connettoriHelper.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, servlet, true, null, false, true, null);
+			dati = this.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, servlet, true, null, false, true, null);
 			
 		}
 
@@ -693,11 +691,11 @@ public class ServiziApplicativiHelper extends ConsoleHelper {
 					if (subject == null) {
 						subject = "";
 					}
-					dati = this.connettoriHelper.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, servlet, true, null, false, true, null);
+					dati = this.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, servlet, true, null, false, true, null);
 					
 				}
 				
-				dati = this.connettoriHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, "",//ServiziApplicativiCostanti.LABEL_EROGATORE+" ",
+				dati = this.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, "",//ServiziApplicativiCostanti.LABEL_EROGATORE+" ",
 						url, nomeCodaJMS,
 						tipo, userRichiesta, passwordRichiesta, initcont, urlpgk, provurl,
 						connfact, sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, httpsurl, httpstipologia,
