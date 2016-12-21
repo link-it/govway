@@ -256,7 +256,7 @@ public class HttpUtilities {
 
 			HttpBodyParameters httpContent = new  HttpBodyParameters(request.getMethod(), request.getContentType());
 			// Spedizione byte
-			if(httpContent.isDoOutput()){
+			if(httpContent.isDoOutput() && request.getContent() != null){
 				OutputStream out = httpConn.getOutputStream();
 				out.write(request.getContent());
 				out.flush();
