@@ -65,7 +65,7 @@ import org.testng.Reporter;
  */
 public class RESTCore {
 
-	public static final String REST_CORE = "REST";
+	public static final String REST = "REST";
 	public static final String REST_PD = "REST.PD";
 	public static final String REST_PA = "REST.PA";
 
