@@ -102,56 +102,56 @@ public class RESTPDOptions {
 		return DataProviderUtils.contentTypeXMLConCon();
 	}
 	
-	@Test(groups={RESTCore.REST_CORE,RESTPDOptions.ID_GRUPPO,RESTPDOptions.ID_GRUPPO+".SenzaContenutoRichiesta_ConContenutoRispostaJSON"},dataProvider="contentTypeJSONConCon")
+	@Test(groups={RESTCore.REST_CORE,RESTCore.REST_PD,RESTPDOptions.ID_GRUPPO,RESTPDOptions.ID_GRUPPO+".SenzaContenutoRichiesta_ConContenutoRispostaJSON"},dataProvider="contentTypeJSONConCon")
 	public void test_SenzaContenutoRichiesta_ConContenutoRispostaJSON(String contentType, int responseCodeAtteso) throws TestSuiteException, Exception{
 		Repository repository=new Repository();
 		this.restCore.invoke("json", responseCodeAtteso, repository, false, true, contentType);
 		this.restCore.postInvoke(repository);
 	}
 
-	@Test(groups={RESTCore.REST_CORE,RESTPDOptions.ID_GRUPPO,RESTPDOptions.ID_GRUPPO+".SenzaContenutoRichiesta_ConContenutoRispostaBinary"},dataProvider="contentTypeBinaryConCon")
+	@Test(groups={RESTCore.REST_CORE,RESTCore.REST_PD,RESTPDOptions.ID_GRUPPO,RESTPDOptions.ID_GRUPPO+".SenzaContenutoRichiesta_ConContenutoRispostaBinary"},dataProvider="contentTypeBinaryConCon")
 	public void test_SenzaContenutoRichiesta_ConContenutoRispostaBinary(String tipoTest, int responseCodeAtteso) throws TestSuiteException, Exception{
 		Repository repository=new Repository();
 		this.restCore.invoke(tipoTest, responseCodeAtteso, repository, false, true, null);
 		this.restCore.postInvoke(repository);
 	}
 
-	@Test(groups={RESTCore.REST_CORE,RESTPDOptions.ID_GRUPPO,RESTPDOptions.ID_GRUPPO+".SenzaContenutoRichiesta_ConContenutoRispostaXML"},dataProvider="contentTypeXMLConCon")
+	@Test(groups={RESTCore.REST_CORE,RESTCore.REST_PD,RESTPDOptions.ID_GRUPPO,RESTPDOptions.ID_GRUPPO+".SenzaContenutoRichiesta_ConContenutoRispostaXML"},dataProvider="contentTypeXMLConCon")
 	public void test_SenzaContenutoRichiesta_ConContenutoRispostaXML(String contentType, int responseCodeAtteso) throws TestSuiteException, Exception{
 		Repository repository=new Repository();
 		this.restCore.invoke("xml", responseCodeAtteso, repository, false, true, contentType);
 		this.restCore.postInvoke(repository);
 	}
 	
-	@Test(groups={RESTCore.REST_CORE,RESTPDOptions.ID_GRUPPO,RESTPDOptions.ID_GRUPPO+".SenzaContenutoRichiesta_ConContenutoRispostaMulti"},dataProvider="responseCodeConCon")
+	@Test(groups={RESTCore.REST_CORE,RESTCore.REST_PD,RESTPDOptions.ID_GRUPPO,RESTPDOptions.ID_GRUPPO+".SenzaContenutoRichiesta_ConContenutoRispostaMulti"},dataProvider="responseCodeConCon")
 	public void test_SenzaContenutoRichiesta_ConContenutoRispostaMulti(int responseCodeAtteso) throws TestSuiteException, Exception{
 		Repository repository=new Repository();
 		this.restCore.invoke("multi", responseCodeAtteso, repository, false, true, null);
 		this.restCore.postInvoke(repository);
 	}
 
-	@Test(groups={RESTCore.REST_CORE,RESTPDOptions.ID_GRUPPO,RESTPDOptions.ID_GRUPPO+".SenzaContenutoRichiesta_SenzaContenutoRispostaJSON"},dataProvider="contentTypeJSONConCon")
+	@Test(groups={RESTCore.REST_CORE,RESTCore.REST_PD,RESTPDOptions.ID_GRUPPO,RESTPDOptions.ID_GRUPPO+".SenzaContenutoRichiesta_SenzaContenutoRispostaJSON"},dataProvider="contentTypeJSONConCon")
 	public void test_SenzaContenutoRichiesta_SenzaContenutoRispostaJSON(String contentType, int responseCodeAtteso) throws TestSuiteException, Exception{
 		Repository repository=new Repository();
 		this.restCore.invoke("json", responseCodeAtteso, repository, false, false, contentType);
 		this.restCore.postInvoke(repository);
 	}
 
-	@Test(groups={RESTCore.REST_CORE,RESTPDOptions.ID_GRUPPO,RESTPDOptions.ID_GRUPPO+".SenzaContenutoRichiesta_SenzaContenutoRispostaBinary"},dataProvider="contentTypeBinaryConCon")
+	@Test(groups={RESTCore.REST_CORE,RESTCore.REST_PD,RESTPDOptions.ID_GRUPPO,RESTPDOptions.ID_GRUPPO+".SenzaContenutoRichiesta_SenzaContenutoRispostaBinary"},dataProvider="contentTypeBinaryConCon")
 	public void test_SenzaContenutoRichiesta_SenzaContenutoRispostaBinary(String tipoTest, int responseCodeAtteso) throws TestSuiteException, Exception{
 		Repository repository=new Repository();
 		this.restCore.invoke(tipoTest, responseCodeAtteso, repository, false, false, null);
 		this.restCore.postInvoke(repository);
 	}
 
-	@Test(groups={RESTCore.REST_CORE,RESTPDOptions.ID_GRUPPO,RESTPDOptions.ID_GRUPPO+".SenzaContenutoRichiesta_SenzaContenutoRispostaXML"},dataProvider="contentTypeXMLConCon")
+	@Test(groups={RESTCore.REST_CORE,RESTCore.REST_PD,RESTPDOptions.ID_GRUPPO,RESTPDOptions.ID_GRUPPO+".SenzaContenutoRichiesta_SenzaContenutoRispostaXML"},dataProvider="contentTypeXMLConCon")
 	public void test_SenzaContenutoRichiesta_SenzaContenutoRispostaXML(String contentType, int responseCodeAtteso) throws TestSuiteException, Exception{
 		Repository repository=new Repository();
 		this.restCore.invoke("xml", responseCodeAtteso, repository, false, false, contentType);
 		this.restCore.postInvoke(repository);
 	}
 	
-	@Test(groups={RESTCore.REST_CORE,RESTPDOptions.ID_GRUPPO,RESTPDOptions.ID_GRUPPO+".SenzaContenutoRichiesta_SenzaContenutoRispostaMulti"},dataProvider="responseCodeConCon")
+	@Test(groups={RESTCore.REST_CORE,RESTCore.REST_PD,RESTPDOptions.ID_GRUPPO,RESTPDOptions.ID_GRUPPO+".SenzaContenutoRichiesta_SenzaContenutoRispostaMulti"},dataProvider="responseCodeConCon")
 	public void test_SenzaContenutoRichiesta_SenzaContenutoRispostaMulti(int responseCodeAtteso) throws TestSuiteException, Exception{
 		Repository repository=new Repository();
 		this.restCore.invoke("multi", responseCodeAtteso, repository, false, false, null);

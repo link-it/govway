@@ -43,7 +43,6 @@ import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
 import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
 import org.openspcoop2.utils.mime.MimeMultipart;
-import org.openspcoop2.utils.mime.MimeTypes;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
@@ -67,7 +66,9 @@ import org.testng.Reporter;
 public class RESTCore {
 
 	public static final String REST_CORE = "REST";
-	
+	public static final String REST_PD = "REST.PD";
+	public static final String REST_PA = "REST.PA";
+
 	private HttpRequestMethod method;
 	private String servizioRichiesto;
 	private String portaApplicativaDelegata;
@@ -105,6 +106,8 @@ public class RESTCore {
 	
 	
 	public void postInvoke(Repository repository) throws TestSuiteException, Exception{
+
+		
 		String id=repository.getNext();
 		if(org.openspcoop2.protocol.trasparente.testsuite.core.Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
 			try {
@@ -121,6 +124,14 @@ public class RESTCore {
 			data = DatabaseProperties.getDatabaseComponentErogatore();
 		}
 		
+		if(!this.isDelegata) {
+			try {
+				Thread.sleep(2000); // in modo da dare il tempo al servizio di Testsuite di fare l'update delle tracce
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		try{
 			this.collaborazioneTrasparenteBase.testSincrono(data,id, CostantiTestSuite.REST_TIPO_SERVIZIO,
 					CostantiTestSuite.SOAP_NOME_SERVIZIO_API, null, !this.isDelegata,null);
@@ -130,29 +141,31 @@ public class RESTCore {
 			data.close();
 		}
 	}
-	
-	
+
 	public void invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, String contentType) throws TestSuiteException, Exception{
+		this.invoke(tipoTest, returnCodeAtteso, repository, isRichiesta, isRisposta, false, contentType);
+	}
+	
+	public void invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, boolean isHttpMethodOverride, String contentType) throws TestSuiteException, Exception{
 		
 		TestFileEntry fileEntry = FileCache.get(tipoTest);
 
 		try{
 		
-			// 1. Tipo di richiesta da inviare: XML, JSON, DOC, PDF, ZIP e anche vedere di inviare un Multipart (il multipart va aggiunto.... chiedermi come fare)
+			// 1. Tipo di richiesta da inviare: XML, JSON, DOC, PDF, ZIP e Multipart
 			byte[] richiesta = fileEntry.getBytesRichiesta();
 			// Definiire un content type corretto rispetto al tipo di file che si invia
-			// Per conoscere il tipo di file corretto è possibile utilizzare l'utility sottostante
-
+			// Per conoscere il tipo di file corretto è possibile utilizzare l'utility sottostante (spostata in TestFileEntry)
 			String contentTypeRichiesta = contentType != null ? contentType : fileEntry.getExtRichiesta();
 			
 			// 2. Variabile sul tipo di HttpRequestMethod
 			// Per sapere se il metodo prevede un input od un output come contenuto è possibile usare la seguente utility
+			HttpBodyParameters httpBody = new HttpBodyParameters(this.method, fileEntry.getExtRichiesta());
+			boolean contenutoRichiesta = httpBody.isDoOutput();
+			
 			
 			
 			boolean rispostaOk = returnCodeAtteso < 299;
-
-			HttpBodyParameters httpBody = new HttpBodyParameters(this.method, fileEntry.getExtRichiesta());
-			boolean contenutoRichiesta = httpBody.isDoOutput();
 			boolean contenutoRisposta =  httpBody.isDoInput() && (isRisposta || !rispostaOk);
 
 			HttpRequest request = new HttpRequest();
@@ -161,9 +174,9 @@ public class RESTCore {
 				if(isRichiesta){
 					request.setContent(richiesta);
 					request.setContentType(contentTypeRichiesta);
-				} else {
-					request.setContent("".getBytes());
-					request.setContentType(MimeTypes.getInstance().getMimeType("txt"));
+//				} else {
+//					request.setContent("".getBytes());
+//					request.setContentType(MimeTypes.getInstance().getMimeType("txt"));
 				}
 			}
 			
@@ -172,10 +185,18 @@ public class RESTCore {
 			//request.setPassword(password);
 			
 			// Header HTTP da inviare
-			String nomeHeaderHttpInviato = "ProvaHeaderRequest";
-			String valoreHeaderRichiesto = "TEST_"+org.openspcoop2.utils.id.IDUtilities.getUniqueSerialNumber();
+			String nomeHeaderHttpInviato = null;
+			String valoreHeaderRichiesto = null;
+			if(isHttpMethodOverride) {
+				nomeHeaderHttpInviato = "X-HTTP-Method-Override";
+				valoreHeaderRichiesto = "PUT";
+			} else {
+				nomeHeaderHttpInviato = "ProvaHeaderRequest";
+				valoreHeaderRichiesto = "TEST_"+org.openspcoop2.utils.id.IDUtilities.getUniqueSerialNumber();
+			}
+
 			request.addHeader(nomeHeaderHttpInviato, valoreHeaderRichiesto);
- 			
+
 			// Header HTTP da ricevere
 			String nomeHeaderHttpDaRicevere = "ProvaHeaderResponse";
 			String valoreHeaderHttpDaRicevere = "TEST_RESPONSE_"+org.openspcoop2.utils.id.IDUtilities.getUniqueSerialNumber();
