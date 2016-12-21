@@ -112,14 +112,7 @@ public class CostantiPdD {
     
     /** PddContext in Header HTTP */
 	public final static String OPENSPCOOP2_PDD_CONTEXT_HEADER_HTTP = "OPENSPCOOP2_CONTEXT_HEADER_HTTP";
-    
-    /** Informazione SOAP per l'header di integrazione: */
-    public final static String HEADER_INTEGRAZIONE_NAMESPACE = "http://www.openspcoop2.org/core/integrazione";
-    /** Informazione SOAP per l'header di integrazione: */
-    public final static String HEADER_INTEGRAZIONE_PREFIX = "openspcoop";
-    /** Informazione SOAP per l'header di integrazione: */
-    public final static String HEADER_INTEGRAZIONE_ACTOR = "http://www.openspcoop2.org/integrazione";
-    
+        
     /** Costante che indica il valore dell'header di integrazione: tipo mittente*/
     public final static String HEADER_INTEGRAZIONE_TIPO_MITTENTE = "tipoMittente";
     /** Costante che indica il valore dell'header di integrazione: mittente*/

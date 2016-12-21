@@ -38,6 +38,7 @@ import org.apache.wss4j.common.token.DOMX509IssuerSerial;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
+import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.security.SecurityException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -84,16 +85,16 @@ public class WSSUtils {
 		Iterator<?> it = message.getSOAPHeader().getChildElements(new QName(SBConstants.WSSE, "Security"));
 		while(it.hasNext()){
 			SOAPHeaderElement hdr = (SOAPHeaderElement) it.next();
-			String actorFound = hdr.getActor();
+			String actorCheck = SoapUtils.getSoapActor(hdr, message.getMessageType());
 			boolean mustUnderstandFound = hdr.getMustUnderstand();
 			if(mustUnderstand!=mustUnderstandFound)
 				continue;
 			if(actor==null){
-				if(actorFound!=null){
+				if(actorCheck!=null){
 					continue;
 				}
 			}else{
-				if(!actor.equals(actorFound)){
+				if(!actor.equals(actorCheck)){
 					continue;
 				}
 			}

@@ -374,11 +374,11 @@ public abstract class MessageSecurityContext{
 					if(   SecurityConstants.WSS_HEADER_ELEMENT.equals(headerElement.getLocalName()) &&
 							SecurityConstants.WSS_HEADER_ELEMENT_NAMESPACE.equals(headerElement.getNamespaceURI()) ){
 							// potenziale header, verifico l'actor
+						String actorCheck = SoapUtils.getSoapActor(headerElement, msg.getMessageType());
 						if(actor==null){
-							return headerElement.getActor()==null;
+							return actorCheck==null;
 						}else{
-							String actorTrovato = headerElement.getActor();
-							return actor.equals(actorTrovato);
+							return actor.equals(actorCheck);
 						}
 					}
 				}

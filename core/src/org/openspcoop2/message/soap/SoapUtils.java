@@ -175,7 +175,20 @@ public class SoapUtils {
 	
 	// SOAP HEADER E MUST UNDERSTAND
 	
-	public static boolean checkMustUnderstandHeaderElement(SOAPHeader header,List<NameValue> filtri, StringBuffer bfErrorParam) throws MessageException {
+	public static String getSoapActor(SOAPHeaderElement headerElement, MessageType messageType) throws MessageNotSupportedException{
+		
+		if(MessageType.SOAP_11.equals(messageType)){
+			return headerElement.getActor();
+		}
+		else if(MessageType.SOAP_12.equals(messageType)){
+			return headerElement.getRole();
+		}
+		else{
+			throw MessageNotSupportedException.newMessageNotSupportedException(messageType);
+		}
+	}
+	
+	public static boolean checkMustUnderstandHeaderElement(MessageType messageType, SOAPHeader header,List<NameValue> filtri, StringBuffer bfErrorParam) throws MessageException {
 		
 		
 		StringBuffer bfError = new StringBuffer();
@@ -189,8 +202,10 @@ public class SoapUtils {
 				
 				SOAPHeaderElement elementHeader = (SOAPHeaderElement) element;
 				
+				String actor = SoapUtils.getSoapActor(elementHeader, messageType);
+				
 				// Prendo gli headers con MustUnderstand="1" senza Actor
-				if(elementHeader.getActor()==null&&elementHeader.getMustUnderstand()==true){
+				if(actor==null && elementHeader.getMustUnderstand()==true){
 					boolean checked = false;
 					if(filtri!=null && filtri.size()>0){
 						for (NameValue nameValue : filtri) {

@@ -151,7 +151,7 @@ public class ServicesUtils {
 				}else{
 					List<NameValue> filtri = openspcoopProperties.getBypassFilterMustUnderstandProperties(protocolFactory.getProtocol());
 					if(filtri!=null && filtri.size()>0){
-						return ServicesUtils.checkMustUnderstandHeaderElement(header,filtri);
+						return ServicesUtils.checkMustUnderstandHeaderElement(message.getMessageType(),header,filtri);
 					}
 				}
 			}
@@ -176,11 +176,11 @@ public class ServicesUtils {
 		}     	
 		return null;
 	}
-	private static String checkMustUnderstandHeaderElement(SOAPHeader header,List<NameValue> filtri) throws UtilsException{
+	private static String checkMustUnderstandHeaderElement(MessageType messageType, SOAPHeader header,List<NameValue> filtri) throws UtilsException{
 		
 		try{
 			StringBuffer bfError = new StringBuffer();
-			if(SoapUtils.checkMustUnderstandHeaderElement(header, filtri, bfError)==false){
+			if(SoapUtils.checkMustUnderstandHeaderElement(messageType, header, filtri, bfError)==false){
 				return bfError.toString();
 			}
 			return null;

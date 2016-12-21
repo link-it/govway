@@ -33,6 +33,7 @@ import javax.xml.soap.SOAPHeaderElement;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.slf4j.Logger;
@@ -392,7 +393,7 @@ public class UtilitiesIntegrazioneWSAddressing {
 		SOAPHeaderElement element = msg.newSOAPHeaderElement(hdr, name); 
 		element.setActor(actor);
 		element.setMustUnderstand(false);
-		element.addNamespaceDeclaration("SOAP_ENV","http://schemas.xmlsoap.org/soap/envelope/");
+		
 		if(epr==false){
 			element.setValue(value);
 		}
@@ -466,9 +467,9 @@ public class UtilitiesIntegrazioneWSAddressing {
 				
 				//Controllo Namespace
 				String namespace = headerElement.getNamespaceURI();
-				String actor = headerElement.getActor();
+				String actorCheck = SoapUtils.getSoapActor(headerElement, message.getMessageType());
 				
-				if(actorIntegrazione.equals(actor) && UtilitiesIntegrazioneWSAddressing.WSA_NAMESPACE.equals(namespace)){
+				if(actorIntegrazione.equals(actorCheck) && UtilitiesIntegrazioneWSAddressing.WSA_NAMESPACE.equals(namespace)){
 					log.debug("Trovato header WSAddressing ["+headerElement.getLocalName()+"]");
 					
 					if(UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_TO.equals(headerElement.getLocalName())){
@@ -759,9 +760,9 @@ public class UtilitiesIntegrazioneWSAddressing {
 				
 				//Controllo Namespace
 				String namespace = headerElement.getNamespaceURI();
-				String actor = headerElement.getActor();
+				String actorCheck = SoapUtils.getSoapActor(headerElement, message.getMessageType());
 				
-				if(actorIntegrazione.equals(actor) && UtilitiesIntegrazioneWSAddressing.WSA_NAMESPACE.equals(namespace)){
+				if(actorIntegrazione.equals(actorCheck) && UtilitiesIntegrazioneWSAddressing.WSA_NAMESPACE.equals(namespace)){
 					log.debug("Trovato header WSAddressing ["+headerElement.getLocalName()+"]");
 					
 					if(UtilitiesIntegrazioneWSAddressing.WSA_SOAP_HEADER_TO.equals(headerElement.getLocalName())){
