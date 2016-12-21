@@ -91,18 +91,18 @@ public class ProtocolPropertiesUtils {
 		}
 		return null;
 	}
-	
+
 	public static AbstractProperty<?> getAbstractPropertyById(ProtocolProperties protocolProperties, String propertyId){
 		if(propertyId ==null)
 			return null;
 
 		for (int i = 0; i < protocolProperties.sizeProperties(); i++) {
 			AbstractProperty<?> property = protocolProperties.getProperty(i);
-			
+
 			if(property.getId().equals(propertyId))
 				return property;
 		}
-		
+
 		return null;
 	}
 
@@ -144,7 +144,7 @@ public class ProtocolPropertiesUtils {
 	}
 
 
-	public static List<ProtocolProperty> toProtocolProperties (ProtocolProperties protocolProperties, ConsoleOperationType consoleOperationType){
+	public static List<ProtocolProperty> toProtocolProperties (ProtocolProperties protocolProperties, ConsoleOperationType consoleOperationType, List<ProtocolProperty> oldProtocolPropertyList){
 		List<ProtocolProperty> lstProtocolProperty = new ArrayList<>();
 
 
@@ -166,13 +166,28 @@ public class ProtocolPropertiesUtils {
 				prop.setNumberValue(np.getValue());
 				if(np.getValue() != null)
 					add = true;
-				
+
 			} else if(property instanceof BinaryProperty){
 				BinaryProperty bp = (BinaryProperty) property;
-				prop.setByteFile(bp.getValue());
-				if(bp.getValue() != null && bp.getValue().length > 0)
-					add = true;
-				
+				if(consoleOperationType.equals(ConsoleOperationType.ADD)){
+					prop.setByteFile(bp.getValue());
+					prop.setFile(bp.getFileName()); 
+					if(bp.getValue() != null && bp.getValue().length > 0)
+						add = true;
+				}else {
+					// caso change non si puo' modificare un binary quindi riporto il valore che ho trovato sul db a inizio change
+					for (ProtocolProperty protocolProperty : oldProtocolPropertyList) {
+						if(property.getId().equals(protocolProperty.getName())){
+							prop.setByteFile(protocolProperty.getByteFile());
+							prop.setFile(bp.getFileName());
+							if(protocolProperty.getByteFile() != null && protocolProperty.getByteFile().length > 0){
+								add = true;
+							}
+							break;
+						}
+					}
+				}
+
 			} else if(property instanceof BooleanProperty){
 				BooleanProperty bp = (BooleanProperty) property;
 				prop.setBooleanValue(bp.getValue() != null ? bp.getValue() : false);
@@ -202,6 +217,7 @@ public class ProtocolPropertiesUtils {
 					} else if(property instanceof BinaryProperty){
 						BinaryProperty bp = (BinaryProperty) property;
 						bp.setValue(protocolProperty.getByteFile());
+//						bp.setFileName(protocolProperty.getFile());
 					} else if(property instanceof BooleanProperty){
 						BooleanProperty bp = (BooleanProperty) property;
 						bp.setValue(protocolProperty.getBooleanValue());
@@ -210,6 +226,19 @@ public class ProtocolPropertiesUtils {
 				}
 			}
 		}
+	}
+
+	public static ProtocolProperty getProtocolProperty (String propertyId , List<ProtocolProperty> listaProtocolPropertiesDaDB){
+		if(listaProtocolPropertiesDaDB == null || propertyId == null)
+			return null;
+		
+		for (ProtocolProperty protocolProperty : listaProtocolPropertiesDaDB) {
+			if(propertyId.equals(protocolProperty.getName())){
+				return protocolProperty;
+			}
+		}
+		
+		return null;
 	}
 
 }
