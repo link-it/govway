@@ -4566,20 +4566,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	}
 
 
-	/**
-	 * Si occupa di ritornare l'oggetto
-	 * {@link org.openspcoop2.core.registry.Soggetto}, identificato grazie
-	 * al parametro <var>idSoggetto</var> di tipo
-	 * {@link org.openspcoop2.core.id.IDSoggetto}.
-	 * 
-	 * @param idSoggetto
-	 *                Identificatore del Soggetto di tipo
-	 *                {@link org.openspcoop2.core.id.IDSoggetto}.
-	 * @return l'oggetto di tipo
-	 *         {@link org.openspcoop2.core.registry.Soggetto} se la ricerca
-	 *         nel registro ha successo, null altrimenti.
-	 * 
-	 */
+
 	@Override
 	public org.openspcoop2.core.registry.Soggetto getSoggetto(IDSoggetto idSoggetto) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		// conrollo consistenza
@@ -4592,7 +4579,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		if (nomeSogg == null || nomeSogg.trim().equals("") || tipoSogg == null || tipoSogg.trim().equals(""))
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getSoggetto] : soggetto non specificato.");
 
-		Soggetto soggetto = null;
+		long idSoggettoLong;
 
 		Connection con = null;
 		PreparedStatement stm = null;
@@ -4615,7 +4602,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addSelectField("id");
 			sqlQueryObject.addWhereCondition("nome_soggetto = ?");
 			sqlQueryObject.addWhereCondition("tipo_soggetto = ?");
 			sqlQueryObject.setANDLogicOperator(true);
@@ -4630,16 +4617,100 @@ IDriverWS ,IMonitoraggioRisorsa{
 			rs = stm.executeQuery();
 
 			if (rs.next()) {
+				idSoggettoLong = rs.getLong("id");
+				
+			}else{
+				throw new DriverRegistroServiziNotFound("Nessun soggetto trovato eseguendo: "+DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, nomeSogg, tipoSogg));
+			}
+			
+		}catch (DriverRegistroServiziNotFound e) {
+			throw e;
+		} catch (SQLException se) {
+
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getSoggetto] SqlException: " + se.getMessage(),se);
+		}catch (Exception se) {
+
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getSoggetto] Exception: " + se.getMessage(),se);
+		} finally {
+			try {
+				rs.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				stm.close();
+			} catch (Exception e) {
+				// ignore exception
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return this.getSoggetto(idSoggettoLong);
+	}
+
+	
+	public Soggetto getSoggetto(long idSoggetto) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		return getSoggetto(idSoggetto,null);
+	}
+	public Soggetto getSoggetto(long idSoggetto,Connection conParam) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+
+		// conrollo consistenza
+		if (idSoggetto <= 0)
+			return null;
+
+		Soggetto soggetto = null;
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+
+		if(conParam!=null){
+			con = conParam;
+		}
+		else if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("getSoggetto(longId)");
+
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione atomica = " + this.atomica);
+
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("id = ?");
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+
+			stm = con.prepareStatement(sqlQuery);
+
+			stm.setLong(1, idSoggetto);
+
+			this.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idSoggetto));
+			rs = stm.executeQuery();
+
+			if (rs.next()) {
 				soggetto = new Soggetto();
 
 				soggetto.setId(rs.getLong("id"));
-				// String tmp = rs.getString("nomeprov");
-				// soggetto.setNome(( (tmp==null || tmp.equals("") ) ?
-				// null : tmp));
+
+				String nomeSogg = rs.getString("nome_soggetto");
 				soggetto.setNome(nomeSogg);
-				// tmp = rs.getString("tipoprov");
-				// soggetto.setTipo(( (tmp==null || tmp.equals("") ) ?
-				// null : tmp));
+
+				String tipoSogg = rs.getString("tipo_soggetto");
 				soggetto.setTipo(tipoSogg);
 
 				String tmp = rs.getString("descrizione");
@@ -4679,15 +4750,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 				// aggiungo connettore
 				soggetto.setConnettore(connettore);
 
-				// Questi non li implemento per adesso
-				// soggetto.addServizio()
-				// soggetto.addServizioCorrelato()
-
 			}else{
-				throw new DriverRegistroServiziNotFound("Nessun soggetto trovato eseguendo: "+DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, nomeSogg, tipoSogg));
+				throw new DriverRegistroServiziNotFound("Nessun risultato trovat eseguendo: "+DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idSoggetto));
 			}
 
-			
 			// Protocol Properties
 			try{
 				List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(soggetto.getId(), ProprietariProtocolProperty.SOGGETTO, con, this.tipoDB);
@@ -4698,29 +4764,25 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 			}catch(DriverRegistroServiziNotFound dNotFound){}
 			
-			
 			return soggetto;
-		}catch (DriverRegistroServiziNotFound e) {
-			throw e;
 		} catch (SQLException se) {
-
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getSoggetto] SqlException: " + se.getMessage(),se);
+		}catch (DriverRegistroServiziNotFound se) {
+			throw se;
 		}catch (Exception se) {
-
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getSoggetto] Exception: " + se.getMessage(),se);
 		} finally {
-			try {
-				rs.close();
-			} catch (Exception e) {
-				// ignore exception
+
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
 			}
+
 			try {
-				stm.close();
-			} catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				if (this.atomica) {
+				if (conParam==null && this.atomica) {
 					this.log.debug("rilascio connessioni al db...");
 					con.close();
 				}
@@ -4729,7 +4791,8 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 		}
 	}
-
+	
+	
 	/**
 	 *  Ritorna gli identificatori dei soggetti che rispettano il parametro di ricerca
 	 * 
@@ -11165,131 +11228,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		}
 	}
 
-	public Soggetto getSoggetto(long idSoggetto) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
-		return getSoggetto(idSoggetto,null);
-	}
-	public Soggetto getSoggetto(long idSoggetto,Connection conParam) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 
-		// conrollo consistenza
-		if (idSoggetto <= 0)
-			return null;
-
-		Soggetto soggetto = null;
-
-		Connection con = null;
-		PreparedStatement stm = null;
-		ResultSet rs = null;
-
-		if(conParam!=null){
-			con = conParam;
-		}
-		else if (this.atomica) {
-			try {
-				con = this.getConnectionFromDatasource("getSoggetto(longId)");
-
-			} catch (Exception e) {
-				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
-
-			}
-
-		} else
-			con = this.globalConnection;
-
-		this.log.debug("operazione atomica = " + this.atomica);
-
-		try {
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition("id = ?");
-			String sqlQuery = sqlQueryObject.createSQLQuery();
-
-			stm = con.prepareStatement(sqlQuery);
-
-			stm.setLong(1, idSoggetto);
-
-			this.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idSoggetto));
-			rs = stm.executeQuery();
-
-			if (rs.next()) {
-				soggetto = new Soggetto();
-
-				soggetto.setId(rs.getLong("id"));
-				// String tmp = rs.getString("nomeprov");
-				// soggetto.setNome(( (tmp==null || tmp.equals("") ) ?
-				// null : tmp));
-				soggetto.setNome(rs.getString("nome_soggetto"));
-				// tmp = rs.getString("tipoprov");
-				// soggetto.setTipo(( (tmp==null || tmp.equals("") ) ?
-				// null : tmp));
-				soggetto.setTipo(rs.getString("tipo_soggetto"));
-
-				String tmp = rs.getString("descrizione");
-				soggetto.setDescrizione(((tmp == null || tmp.equals("")) ? null : tmp));
-
-				tmp = rs.getString("identificativo_porta");
-				soggetto.setIdentificativoPorta(((tmp == null || tmp.equals("")) ? null : tmp));
-
-				tmp = rs.getString("server");
-				soggetto.setPortaDominio(((tmp == null || tmp.equals("")) ? null : tmp));
-
-				tmp = rs.getString("superuser");
-				soggetto.setSuperUser(((tmp == null || tmp.equals("")) ? null : tmp));
-				if(rs.getInt("privato")==1)
-					soggetto.setPrivato(true);
-				else
-					soggetto.setPrivato(false);
-
-				long idConnettore = rs.getLong("id_connettore");
-				Connettore connettore = getConnettore(idConnettore, con);
-
-				String profilo = rs.getString("profilo");
-				if(profilo!=null){
-					profilo = profilo.trim();
-					soggetto.setVersioneProtocollo(profilo);
-				}
-
-				tmp = rs.getString("codice_ipa");
-				soggetto.setCodiceIpa(((tmp == null || tmp.equals("")) ? null : tmp));
-
-				// aggiungo connettore
-				soggetto.setConnettore(connettore);
-
-				// Questi non li implemento per adesso
-				// soggetto.addServizio()
-				// soggetto.addServizioCorrelato()
-
-			}else{
-				throw new DriverRegistroServiziNotFound("Nessun risultato trovat eseguendo: "+DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idSoggetto));
-			}
-
-			return soggetto;
-		} catch (SQLException se) {
-			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getSoggetto] SqlException: " + se.getMessage(),se);
-		}catch (DriverRegistroServiziNotFound se) {
-			throw se;
-		}catch (Exception se) {
-			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getSoggetto] Exception: " + se.getMessage(),se);
-		} finally {
-
-			//Chiudo statement and resultset
-			try{
-				if(rs!=null) rs.close();
-				if(stm!=null) stm.close();
-			}catch (Exception e) {
-				//ignore
-			}
-
-			try {
-				if (conParam==null && this.atomica) {
-					this.log.debug("rilascio connessioni al db...");
-					con.close();
-				}
-			} catch (Exception e) {
-				// ignore exception
-			}
-		}
-	}
 
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(long idServizio) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
 		return getAccordoServizioParteSpecifica(idServizio,null);
