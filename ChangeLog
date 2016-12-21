@@ -1,3 +1,20 @@
+2016-12-21  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Risolto Bug OP-581
+	L'header di integrazione proprietario di openspcoop in SOAP 1.2 non veniva correttamente 
+	interpretato dalla PdD se fornito dall'applicativo client. 
+	Il motivo risiedeva nella non corretta gestione dell'elemento 'actor' che in soap 1.2 è stato sostituito con l'elemento 'role'.
+	La PdD validava l'header di integrazione rispetto ad un unico schema xsd che 
+	richiedeva erroneamente la presenza dell'elemento actor anche in presenza di messaggi SOAP 1.2.
+	Il problema è stato risolto e l'header di integrazione di openspcoop è stato differenziato a seconda della versione soap.
+	Durante la risoluzione sono state attuate anche le seguenti migliorie:
+	- tutti gli schemi xsd relativi agli standard (es. XMLSchema.dtd, datatypes.dtd, ws-addr.xsd ...) 
+	  sono stati riportati all'interno del jar schema-xsd di openspcoop.
+	  Prima del refactor, alcuni schemi erano presenti solamente in alcuni jar di protocollo (es. sdi)
+	- la lettura del valore dell'actor/role di un SOAPHeaderElement è stato gestito attraverso una utility 
+	  che legge l'opportuno attributo rispetto alla versione soap in transito
+
 2016-12-06  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloSDI]
