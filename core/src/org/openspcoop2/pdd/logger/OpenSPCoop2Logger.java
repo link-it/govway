@@ -193,6 +193,9 @@ public class OpenSPCoop2Logger {
 	
 	
 	public static boolean initialize(Logger logConsole,String rootDirectory,Properties objectProperties){
+		return initialize(logConsole, rootDirectory, objectProperties, true);
+	}
+	public static boolean initialize(Logger logConsole,String rootDirectory,Properties objectProperties, boolean loadExternalConfiguration){
 		try{
 			
 			// Originale
@@ -214,35 +217,38 @@ public class OpenSPCoop2Logger {
 				}
 			}
 			
-			// File Local Implementation
-			CollectionProperties loggerPropertiesRidefinito =  
-				PropertiesUtilities.searchLocalImplementation(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,logConsole, CostantiPdD.OPENSPCOOP2_LOGGER_PROPERTIES ,CostantiPdD.OPENSPCOOP2_LOGGER_LOCAL_PATH, rootDirectory);
-			if(loggerPropertiesRidefinito!=null && loggerPropertiesRidefinito.size()>0){
-				Enumeration<?> ridefinito = loggerPropertiesRidefinito.keys();
-				while (ridefinito.hasMoreElements()) {
-					String key = (String) ridefinito.nextElement();
-					String value = (String) loggerPropertiesRidefinito.get(key);
-					if(loggerProperties.containsKey(key)){
-						//Object o = 
-						loggerProperties.remove(key);
-					}
-					loggerProperties.put(key, value);
-					//System.out.println("CHECK NUOVO VALORE: "+loggerProperties.get(key));
-				}
-			}
+			if(loadExternalConfiguration){
 			
-			// File Object Implementation
-			if(objectProperties!=null && objectProperties.size()>0){
-				Enumeration<?> ridefinito = objectProperties.keys();
-				while (ridefinito.hasMoreElements()) {
-					String key = (String) ridefinito.nextElement();
-					String value = (String) objectProperties.get(key);
-					if(loggerProperties.containsKey(key)){
-						//Object o = 
-						loggerProperties.remove(key);
+				// File Local Implementation
+				CollectionProperties loggerPropertiesRidefinito =  
+					PropertiesUtilities.searchLocalImplementation(CostantiPdD.OPENSPCOOP2_LOCAL_HOME,logConsole, CostantiPdD.OPENSPCOOP2_LOGGER_PROPERTIES ,CostantiPdD.OPENSPCOOP2_LOGGER_LOCAL_PATH, rootDirectory);
+				if(loggerPropertiesRidefinito!=null && loggerPropertiesRidefinito.size()>0){
+					Enumeration<?> ridefinito = loggerPropertiesRidefinito.keys();
+					while (ridefinito.hasMoreElements()) {
+						String key = (String) ridefinito.nextElement();
+						String value = (String) loggerPropertiesRidefinito.get(key);
+						if(loggerProperties.containsKey(key)){
+							//Object o = 
+							loggerProperties.remove(key);
+						}
+						loggerProperties.put(key, value);
+						//System.out.println("CHECK NUOVO VALORE: "+loggerProperties.get(key));
 					}
-					loggerProperties.put(key, value);
-					//System.out.println("CHECK NUOVO VALORE: "+loggerProperties.get(key));
+				}
+				
+				// File Object Implementation
+				if(objectProperties!=null && objectProperties.size()>0){
+					Enumeration<?> ridefinito = objectProperties.keys();
+					while (ridefinito.hasMoreElements()) {
+						String key = (String) ridefinito.nextElement();
+						String value = (String) objectProperties.get(key);
+						if(loggerProperties.containsKey(key)){
+							//Object o = 
+							loggerProperties.remove(key);
+						}
+						loggerProperties.put(key, value);
+						//System.out.println("CHECK NUOVO VALORE: "+loggerProperties.get(key));
+					}
 				}
 			}
 

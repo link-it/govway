@@ -110,11 +110,25 @@
 		</if>
 		
 		<!-- LOG4J APPEND -->
-		<antcall target="set_property">
-		    <param name="file" value="${file}"/>
-			<param name="token" value="appendLog4j"/>
-			<param name="value" value="true"/>
-		</antcall>
+		<if>
+			<or>
+				<matches string="${antinstaller_as}" pattern="tomcat.*"/>
+			</or>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="appendLog4j"/>
+					<param name="value" value="false"/>
+				</antcall>
+			</then>
+			<else>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="appendLog4j"/>
+					<param name="value" value="true"/>
+				</antcall>
+			</else>
+		</if>
 				
 		<!-- OTHER -->
 		<antcall target="set_property">
