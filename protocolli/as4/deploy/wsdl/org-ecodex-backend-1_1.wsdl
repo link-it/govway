@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:tns="http://org.ecodex.backend/1_1/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="BackendService_1_1" targetNamespace="http://org.ecodex.backend/1_1/">
+  <wsdl:types>
+
+
+		<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/">
+			<import namespace="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" schemaLocation="ebms-header-3_0-200704_subset-ecodex-backend.xsd"/>
+		</schema>
+
+
+		<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://org.ecodex.backend/1_1/">
+			<import namespace="http://org.ecodex.backend/1_1/" schemaLocation="org-ecodex-backend-1_1.xsd"/>
+		</schema>
+
+
+		<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.w3.org/XML/1998/namespace">
+			<import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd"/>
+		</schema>
+
+
+		<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.w3.org/2005/05/xmlmime">
+			<import namespace="http://www.w3.org/2005/05/xmlmime" schemaLocation="xmlmime.xsd"/>
+		</schema>
+
+</wsdl:types>
+  <wsdl:message name="listPendingMessages">
+    <wsdl:part element="tns:listPendingMessagesRequest" name="listPendingMessagesRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="listPendingMessagesResponse">
+    <wsdl:part element="tns:listPendingMessagesResponse" name="listPendingMessagesResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="SendMessageFault">
+    <wsdl:part element="tns:FaultDetail" name="SendMessageFault">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getMessageErrorsResponse">
+    <wsdl:part element="tns:getMessageErrorsResponse" name="getMessageErrorsResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="sendMessage">
+    <wsdl:part element="tns:sendRequest" name="sendRequest">
+    </wsdl:part>
+    <wsdl:part element="ns1:Messaging" name="ebMSHeaderInfo">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="downloadMessage">
+    <wsdl:part element="tns:downloadMessageRequest" name="downloadMessageRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="downloadMessageResponse">
+    <wsdl:part element="tns:downloadMessageResponse" name="downloadMessageResponse">
+    </wsdl:part>
+    <wsdl:part element="ns1:Messaging" name="ebMSHeaderInfo">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="DownloadMessageFault">
+    <wsdl:part element="tns:FaultDetail" name="DownloadMessageFault">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getMessageStatus">
+    <wsdl:part element="tns:getStatusRequest" name="getStatusRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getMessageStatusResponse">
+    <wsdl:part element="tns:getMessageStatusResponse" name="getMessageStatusResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getMessageErrors">
+    <wsdl:part element="tns:getErrorsRequest" name="getErrorsRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="sendMessageResponse">
+    <wsdl:part element="tns:sendResponse" name="sendResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="BackendInterface">
+    <wsdl:operation name="sendMessage">
+      <wsdl:input message="tns:sendMessage" name="sendMessage">
+    </wsdl:input>
+      <wsdl:output message="tns:sendMessageResponse" name="sendMessageResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:SendMessageFault" name="SendMessageFault">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="downloadMessage" parameterOrder="downloadMessageRequest downloadMessageResponse ebMSHeaderInfo">
+      <wsdl:input message="tns:downloadMessage" name="downloadMessage">
+    </wsdl:input>
+      <wsdl:output message="tns:downloadMessageResponse" name="downloadMessageResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:DownloadMessageFault" name="DownloadMessageFault">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="listPendingMessages">
+      <wsdl:input message="tns:listPendingMessages" name="listPendingMessages">
+    </wsdl:input>
+      <wsdl:output message="tns:listPendingMessagesResponse" name="listPendingMessagesResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMessageStatus">
+      <wsdl:input message="tns:getMessageStatus" name="getMessageStatus">
+    </wsdl:input>
+      <wsdl:output message="tns:getMessageStatusResponse" name="getMessageStatusResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMessageErrors">
+      <wsdl:input message="tns:getMessageErrors" name="getMessageErrors">
+    </wsdl:input>
+      <wsdl:output message="tns:getMessageErrorsResponse" name="getMessageErrorsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BackendService_1_1SoapBinding" type="tns:BackendInterface">
+    <soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="sendMessage">
+      <soap12:operation soapAction="" style="document"/>
+      <wsdl:input name="sendMessage">
+        <soap12:header message="tns:sendMessage" part="ebMSHeaderInfo" use="literal">
+        </soap12:header>
+        <soap12:body parts="sendRequest" use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="sendMessageResponse">
+        <soap12:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="SendMessageFault">
+        <soap12:fault name="SendMessageFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="downloadMessage">
+      <soap12:operation soapAction="" style="document"/>
+      <wsdl:input name="downloadMessage">
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="downloadMessageResponse">
+        <soap12:header message="tns:downloadMessageResponse" part="ebMSHeaderInfo" use="literal">
+        </soap12:header>
+        <soap12:body parts="downloadMessageResponse" use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="DownloadMessageFault">
+        <soap12:fault name="DownloadMessageFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="listPendingMessages">
+      <soap12:operation soapAction="" style="document"/>
+      <wsdl:input name="listPendingMessages">
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="listPendingMessagesResponse">
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMessageStatus">
+      <soap12:operation soapAction="" style="document"/>
+      <wsdl:input name="getMessageStatus">
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getMessageStatusResponse">
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getMessageErrors">
+      <soap12:operation soapAction="" style="document"/>
+      <wsdl:input name="getMessageErrors">
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getMessageErrorsResponse">
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="BackendService_1_1">
+    <wsdl:port binding="tns:BackendService_1_1SoapBinding" name="BACKEND_PORT">
+      <soap12:address location="http://papandrea-ws:8080/domibus/services/backend"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

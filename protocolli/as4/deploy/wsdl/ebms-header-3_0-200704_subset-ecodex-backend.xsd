@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/"  xmlns:tns="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/">
+
+
+  <!--    
+  	<xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+  -->
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd" />
+
+    
+  <xsd:annotation>
+        
+    <xsd:appinfo>Schema for Domibus messages' headers submission</xsd:appinfo>
+        
+    <xsd:documentation xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+            This schema defines an XML subset of ebMS-3 headers which is used to validate messages submitted to Domibus
+            through WS plugin.
+        </xsd:documentation>
+    
+  </xsd:annotation>
+
+    
+  <xsd:element name="Messaging" type="Messaging"/>
+
+    
+  <xsd:complexType name="Messaging">
+        
+    <xsd:sequence>
+            
+      <xsd:element maxOccurs="1" minOccurs="0" name="UserMessage" type="UserMessage"/>
+        
+    </xsd:sequence>
+        
+    <xsd:attribute name="mustUnderstand" type="xsd:boolean" use="optional"/>
+    
+  </xsd:complexType>
+
+    
+  <xsd:complexType name="UserMessage">
+        
+    <xsd:all>
+            
+      <xsd:element maxOccurs="1" minOccurs="0" name="MessageInfo" type="MessageInfo"/>
+            
+      <xsd:element maxOccurs="1" minOccurs="1" name="PartyInfo" type="PartyInfo"/>
+            
+      <xsd:element maxOccurs="1" minOccurs="1" name="CollaborationInfo" type="CollaborationInfo"/>
+            
+      <xsd:element maxOccurs="1" minOccurs="1" name="MessageProperties" type="tns:MessageProperties"/>
+            
+      <xsd:element maxOccurs="1" minOccurs="1" name="PayloadInfo" type="tns:PayloadInfo"/>
+        
+    </xsd:all>
+        
+    <xsd:attribute name="mpc" type="xsd:anyURI" use="optional"/>
+    
+  </xsd:complexType>
+
+    
+  <xsd:complexType name="MessageInfo">
+        
+    <xsd:all>
+            
+      <xsd:element maxOccurs="1" minOccurs="0" name="Timestamp" type="xsd:dateTime"/>
+            
+      <xsd:element maxOccurs="1" minOccurs="0" name="MessageId" type="tns:max255-non-empty-string"/>
+            
+      <xsd:element maxOccurs="1" minOccurs="0" name="RefToMessageId" type="tns:max255-non-empty-string"/>
+        
+    </xsd:all>
+    
+  </xsd:complexType>
+
+    
+  <xsd:complexType name="PartyInfo">
+        
+    <xsd:all>
+            
+      <xsd:element name="From" type="tns:From"/>
+            
+      <xsd:element name="To" type="tns:To"/>
+        
+    </xsd:all>
+    
+  </xsd:complexType>
+
+    
+  <xsd:complexType name="PartyId">
+        
+    <xsd:simpleContent>
+            
+      <xsd:extension base="tns:max255-non-empty-string">
+                
+        <xsd:attribute name="type" type="tns:max255-non-empty-string" use="required"/>
+            
+      </xsd:extension>
+        
+    </xsd:simpleContent>
+    
+  </xsd:complexType>
+
+    
+  <xsd:complexType name="From">
+        
+    <xsd:all>
+            
+      <xsd:element maxOccurs="1" minOccurs="1" name="PartyId" type="tns:PartyId"/>
+            
+      <xsd:element maxOccurs="1" minOccurs="1" name="Role" type="tns:max255-non-empty-string"/>
+        
+    </xsd:all>
+    
+  </xsd:complexType>
+
+    
+  <xsd:complexType name="To">
+        
+    <xsd:all>
+            
+      <xsd:element maxOccurs="1" minOccurs="1" name="PartyId" type="tns:PartyId"/>
+            
+      <xsd:element maxOccurs="1" minOccurs="1" name="Role" type="tns:max255-non-empty-string"/>
+        
+    </xsd:all>
+    
+  </xsd:complexType>
+
+    
+  <xsd:complexType name="CollaborationInfo">
+        
+    <xsd:all>
+            
+      <xsd:element minOccurs="0" name="AgreementRef" type="tns:AgreementRef"/>
+            
+      <xsd:element maxOccurs="1" minOccurs="1" name="Service" type="tns:Service"/>
+            
+      <xsd:element maxOccurs="1" minOccurs="1" name="Action" type="xsd:token"/>
+            
+      <xsd:element maxOccurs="1" minOccurs="0" name="ConversationId" type="xsd:token"/>
+        
+    </xsd:all>
+    
+  </xsd:complexType>
+
+    
+  <xsd:complexType name="Service">
+        
+    <xsd:simpleContent>
+            
+      <xsd:extension base="tns:max255-non-empty-string">
+                
+        <xsd:attribute name="type" type="tns:max255-non-empty-string" use="required"/>
+            
+      </xsd:extension>
+        
+    </xsd:simpleContent>
+    
+  </xsd:complexType>
+
+    
+  <xsd:complexType name="AgreementRef">
+        
+    <xsd:simpleContent>
+            
+      <xsd:extension base="tns:max255-non-empty-string">
+                
+        <xsd:attribute name="type" type="tns:max255-non-empty-string" use="optional"/>
+                
+        <xsd:attribute name="pmode" type="tns:max255-non-empty-string" use="optional"/>
+            
+      </xsd:extension>
+        
+    </xsd:simpleContent>
+    
+  </xsd:complexType>
+
+    
+  <xsd:complexType name="PayloadInfo">
+        
+    <xsd:sequence>
+            
+      <xsd:element maxOccurs="unbounded" minOccurs="1" name="PartInfo" type="tns:PartInfo"/>
+        
+    </xsd:sequence>
+    
+  </xsd:complexType>
+
+    
+  <xsd:complexType name="PartInfo">
+        
+    <xsd:all>
+            
+      <xsd:element minOccurs="0" name="Schema" type="Schema"/>
+            
+      <xsd:element maxOccurs="1" minOccurs="0" name="Description" type="tns:Description"/>
+            
+      <xsd:element minOccurs="0" name="PartProperties" type="tns:PartProperties"/>
+        
+    </xsd:all>
+        
+    <xsd:attribute name="href" type="xsd:token" use="required"/>
+    
+  </xsd:complexType>
+
+    
+  <xsd:complexType name="Property">
+        
+    <xsd:simpleContent>
+            
+      <xsd:extension base="tns:max255-non-empty-string">
+                
+        <xsd:attribute name="name" type="tns:max255-non-empty-string" use="required"/>
+                
+        <xsd:attribute name="type" type="tns:max255-non-empty-string" use="optional"/>
+            
+      </xsd:extension>
+        
+    </xsd:simpleContent>
+    
+  </xsd:complexType>
+
+    
+  <xsd:complexType name="PartProperties">
+        
+    <xsd:sequence>
+            
+      <xsd:element maxOccurs="unbounded" name="Property" type="tns:Property"/>
+        
+    </xsd:sequence>
+    
+  </xsd:complexType>
+
+    
+  <xsd:complexType name="MessageProperties">
+        
+    <xsd:sequence>
+            
+      <xsd:element maxOccurs="unbounded" name="Property" type="Property"/>
+        
+    </xsd:sequence>
+    
+  </xsd:complexType>
+
+    
+  <xsd:complexType name="Schema">
+        
+    <xsd:attribute name="location" type="xsd:anyURI" use="optional"/>
+        
+    <xsd:attribute name="version" type="tns:max255-non-empty-string" use="optional"/>
+        
+    <xsd:attribute name="namespace" type="tns:max255-non-empty-string" use="optional"/>
+    
+  </xsd:complexType>
+
+    
+  <xsd:complexType name="Description">
+        
+    <xsd:simpleContent>
+            
+      <xsd:extension base="tns:max255-non-empty-string">
+                
+        <xsd:attribute ref="xml:lang" use="required"/>
+            
+      </xsd:extension>
+        
+    </xsd:simpleContent>
+    
+  </xsd:complexType>
+
+    
+  <xsd:simpleType name="max255-non-empty-string">
+        
+    <xsd:restriction base="xsd:string">
+            
+      <xsd:minLength value="1"/>
+            
+      <xsd:maxLength value="255"/>
+        
+    </xsd:restriction>
+    
+  </xsd:simpleType>
+
+
+</xsd:schema>
