@@ -1,5 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/" xmlns:S12="http://www.w3.org/2003/05/soap-envelope" xmlns:tns="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" targetNamespace="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xsd:schema xmlns="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	xmlns:tns="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" 
+	targetNamespace="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" 
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	
+	<xsd:annotation>
+		<xsd:appinfo>
+			<linkit:project_generator xmlns:linkit="http://www.link.it/project_generator">
+				<linkit:info version="1.0" project-name="openspcoop2_protocol_as4_ebms_v3_0">
+					<linkit:authors>
+						<linkit:author name="Poli Andrea" mail="poli@link.it"/>
+					</linkit:authors>
+				</linkit:info>
+				<linkit:jax-ws xml-annotations="true" ws="false" />
+				<linkit:configuration>
+					<linkit:restriction enableWithOneValue="true" />
+				</linkit:configuration>
+			</linkit:project_generator>
+			<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+				<linkit:dao>
+					<linkit:xml root-element="Messaging" generate="true"/>
+					<linkit:sql>
+						<linkit:sql-script generate="false"/>
+						<linkit:sql-mapping single-table-mapping="false"
+							on-delete-cascade="false" />
+					</linkit:sql>
+				</linkit:dao>
+			</linkit:generator>
+		</xsd:appinfo>
+	</xsd:annotation>
+	
 	<xsd:annotation>
 		<xsd:appinfo>Schema for ebMS-3 XML Infoset</xsd:appinfo>
 		<xsd:documentation xml:lang="en"> 
@@ -8,18 +39,20 @@
 			message.
 		</xsd:documentation>
 	</xsd:annotation>
-	
 	<!--
 	<xsd:import namespace="http://schemas.xmlsoap.org/soap/envelope/" schemaLocation="http://schemas.xmlsoap.org/soap/envelope/"/>
 	<xsd:import namespace="http://www.w3.org/2003/05/soap-envelope" schemaLocation="http://www.w3.org/2003/05/soap-envelope"/>
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/03/xml.xsd"/>
 	-->
-	
-	<xsd:import namespace="http://schemas.xmlsoap.org/soap/envelope/" schemaLocation="soapEnvelope.xsd"/>
-	<xsd:import namespace="http://www.w3.org/2003/05/soap-envelope" schemaLocation="soapEnvelope12.xsd"/>
-	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd"/>
-	
-	<xsd:element name="Messaging" type="Messaging"/>
+	<xsd:element name="Messaging" type="Messaging">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true" />
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+	</xsd:element>
 	<xsd:complexType name="Messaging">
 		<xsd:annotation>
 			<xsd:documentation xml:lang="en"> 
@@ -39,9 +72,12 @@
 		<xsd:sequence>
 			<xsd:element name="SignalMessage" type="SignalMessage" minOccurs="0" maxOccurs="unbounded"/>
 			<xsd:element name="UserMessage" type="UserMessage" minOccurs="0" maxOccurs="unbounded"/>
-			<xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+			<!-- <xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/> -->
 		</xsd:sequence>
-		<xsd:attributeGroup ref="tns:headerExtension"/>
+		<!--
+			<xsd:attributeGroup ref="tns:headerExtension"/>
+		-->
+		<xsd:attribute name="id" type="xsd:ID" use="optional"/>
 	</xsd:complexType>
 	<xsd:complexType name="SignalMessage">
 		<xsd:annotation>
@@ -56,10 +92,14 @@
 		</xsd:annotation>
 		<xsd:sequence>
 			<xsd:element name="MessageInfo" type="MessageInfo"/>
+			<!--
 			<xsd:element name="PullRequest" type="PullRequest" minOccurs="0"/>
 			<xsd:element name="Receipt" type="Receipt" minOccurs="0"/>
+			-->
+			<xsd:element name="PullRequest" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="Receipt" type="xsd:string" minOccurs="0"/>
 			<xsd:element name="Error" type="Error" minOccurs="0" maxOccurs="unbounded"/>
-			<xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+			<!-- <xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/> -->
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="Error">
@@ -74,6 +114,7 @@
 		<xsd:attribute name="severity" type="xsd:token" use="required"/>
 		<xsd:attribute name="shortDescription" type="xsd:token" use="optional"/>
 	</xsd:complexType>
+	<!--
 	<xsd:complexType name="PullRequest">
 		<xsd:sequence>
 			<xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
@@ -85,6 +126,7 @@
 			<xsd:any namespace="##other" processContents="lax" maxOccurs="unbounded"/>
 		</xsd:sequence>
 	</xsd:complexType>
+	-->
 	<xsd:complexType name="UserMessage">
 		<xsd:sequence>
 			<xsd:element name="MessageInfo" type="MessageInfo"/>
@@ -185,6 +227,7 @@
 			<xsd:element name="Property" type="Property" maxOccurs="unbounded"/>
 		</xsd:sequence>
 	</xsd:complexType>
+	<!--
 	<xsd:attributeGroup name="headerExtension">
 		<xsd:attribute name="id" type="xsd:ID" use="optional"/>
 		<xsd:attribute ref="S11:mustUnderstand" use="optional">
@@ -203,14 +246,17 @@
 		</xsd:attribute>
 		<xsd:anyAttribute namespace="##other" processContents="lax"/>
 	</xsd:attributeGroup>
+	-->
+	<!--
 	<xsd:attributeGroup name="pullAttributes">
 		<xsd:attribute name="mpc" type="xsd:anyURI" use="optional"/>
 		<xsd:anyAttribute namespace="##other" processContents="lax"/>
 	</xsd:attributeGroup>
+	-->
 	<xsd:complexType name="Description">
 		<xsd:simpleContent>
 			<xsd:extension base="tns:non-empty-string">
-				<xsd:attribute ref="xml:lang" use="required"/>
+				<!-- <xsd:attribute ref="xml:lang" use="required"/> -->
 			</xsd:extension>
 		</xsd:simpleContent>
 	</xsd:complexType>
