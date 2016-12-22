@@ -791,7 +791,7 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
   @XmlAttribute(name="byte-specifica-conversazione-fruitore",required=false)
   protected byte[] byteSpecificaConversazioneFruitore;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_serviceBinding;
 
   @XmlAttribute(name="service-binding",required=true)

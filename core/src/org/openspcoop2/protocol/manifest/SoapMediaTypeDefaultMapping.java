@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.protocol.manifest.constants.SoapMessageType;
 import java.io.Serializable;
@@ -55,20 +54,6 @@ public class SoapMediaTypeDefaultMapping extends org.openspcoop2.utils.beans.Bas
   public SoapMediaTypeDefaultMapping() {
   }
 
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return new Long(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=new Long(-1);
-  }
-
   public void set_value_messageType(String value) {
     this.messageType = (SoapMessageType) SoapMessageType.toEnumConstantFromString(value);
   }
@@ -91,12 +76,9 @@ public class SoapMediaTypeDefaultMapping extends org.openspcoop2.utils.beans.Bas
 
   private static final long serialVersionUID = 1L;
 
-  @XmlTransient
-  private Long id;
 
 
-
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_messageType;
 
   @XmlAttribute(name="messageType",required=true)

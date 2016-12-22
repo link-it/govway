@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.protocol.manifest.constants.IntegrationErrorMessageType;
 import java.io.Serializable;
@@ -54,20 +53,6 @@ import java.io.Serializable;
 
 public class IntegrationError extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public IntegrationError() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return new Long(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=new Long(-1);
   }
 
   public int getHttpReturnCode() {
@@ -100,16 +85,13 @@ public class IntegrationError extends org.openspcoop2.utils.beans.BaseBean imple
 
   private static final long serialVersionUID = 1L;
 
-  @XmlTransient
-  private Long id;
-
 
 
   @javax.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlAttribute(name="httpReturnCode",required=true)
   protected int httpReturnCode;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_messageType;
 
   @XmlAttribute(name="messageType",required=true)

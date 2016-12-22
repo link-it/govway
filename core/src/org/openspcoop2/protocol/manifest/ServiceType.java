@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.protocol.manifest.constants.MessageType;
 import org.openspcoop2.protocol.manifest.constants.ServiceBinding;
@@ -66,20 +65,6 @@ import java.io.Serializable;
 
 public class ServiceType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ServiceType() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return new Long(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=new Long(-1);
   }
 
   public SoapMediaTypeCollection getSoapMediaTypeCollection() {
@@ -148,9 +133,6 @@ public class ServiceType extends org.openspcoop2.utils.beans.BaseBean implements
 
   private static final long serialVersionUID = 1L;
 
-  @XmlTransient
-  private Long id;
-
 
 
   @XmlElement(name="soapMediaTypeCollection",required=false,nillable=false)
@@ -163,13 +145,13 @@ public class ServiceType extends org.openspcoop2.utils.beans.BaseBean implements
   @XmlAttribute(name="name",required=true)
   protected java.lang.String name;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_messageType;
 
   @XmlAttribute(name="messageType",required=false)
   protected MessageType messageType;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_binding;
 
   @XmlAttribute(name="binding",required=false)

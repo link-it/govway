@@ -25,11 +25,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-
 import org.openspcoop2.protocol.manifest.constants.ServiceBinding;
-
 import java.io.Serializable;
 
 
@@ -113,7 +110,7 @@ public class Binding extends org.openspcoop2.utils.beans.BaseBean implements Ser
   @XmlElement(name="rest",required=false,nillable=false)
   protected RestConfiguration rest;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value__default;
 
   @XmlAttribute(name="default",required=false)

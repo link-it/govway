@@ -791,7 +791,7 @@ public class AccordoServizioParteSpecifica extends org.openspcoop2.utils.beans.B
   @XmlAttribute(name="accordo-servizio-parte-comune",required=true)
   protected java.lang.String accordoServizioParteComune;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_tipologiaServizio;
 
   @XmlAttribute(name="tipologia-servizio",required=false)

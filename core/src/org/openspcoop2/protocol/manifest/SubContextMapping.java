@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.protocol.manifest.constants.FunctionType;
 import org.openspcoop2.protocol.manifest.constants.MessageType;
@@ -59,20 +58,6 @@ import java.io.Serializable;
 
 public class SubContextMapping extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public SubContextMapping() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return new Long(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=new Long(-1);
   }
 
   public String getBase() {
@@ -130,22 +115,19 @@ public class SubContextMapping extends org.openspcoop2.utils.beans.BaseBean impl
 
   private static final long serialVersionUID = 1L;
 
-  @XmlTransient
-  private Long id;
-
 
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @javax.xml.bind.annotation.XmlValue()
   public String base;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_function;
 
   @XmlAttribute(name="function",required=false)
   protected FunctionType function;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_messageType;
 
   @XmlAttribute(name="messageType",required=true)

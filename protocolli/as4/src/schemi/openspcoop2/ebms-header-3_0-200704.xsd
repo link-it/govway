@@ -14,6 +14,7 @@
 				</linkit:info>
 				<linkit:jax-ws xml-annotations="true" ws="false" />
 				<linkit:configuration>
+					<linkit:field generateId="false" />
 					<linkit:restriction enableWithOneValue="true" />
 				</linkit:configuration>
 			</linkit:project_generator>

@@ -25,11 +25,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-
 import org.openspcoop2.protocol.manifest.constants.ServiceBinding;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -201,7 +198,7 @@ public class WebEmptyContext extends org.openspcoop2.utils.beans.BaseBean implem
   @XmlAttribute(name="enabled",required=true)
   protected boolean enabled;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_binding;
 
   @XmlAttribute(name="binding",required=false)
