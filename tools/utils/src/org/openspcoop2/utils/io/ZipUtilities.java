@@ -170,7 +170,15 @@ public class ZipUtilities {
 						// Directory
 						File fDir = new File(targetfile);
 						if(fDir.mkdir()==false){
-							throw new Exception("Creazione directory ["+fDir.getAbsolutePath()+"] per entry ["+ze.getName()+"] non riuscita");
+							try{
+								throw new Exception("Creazione directory ["+fDir.getAbsolutePath()+"] per entry ["+ze.getName()+"] non riuscita");
+							}finally{
+								try{
+									if(zf!=null){
+										zf.close();
+									}
+								}catch(Exception eClose){}
+							}
 						}
 				
 					}

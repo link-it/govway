@@ -1,8 +1,8 @@
 /*
- * OpenSPCoop v2 - Customizable SOAP Message Broker 
+ * OpenSPCoop - Customizable API Gateway 
  * http://www.openspcoop2.org
  * 
- * Copyright (c) 2005-2015 Link.it srl (http://link.it).
+ * Copyright (c) 2005-2016 Link.it srl (http://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
@@ -61,20 +60,6 @@ import java.io.Serializable;
 
 public class DatiBolloType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DatiBolloType() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return new Long(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=new Long(-1);
   }
 
   public void set_value_bolloVirtuale(String value) {
@@ -113,12 +98,9 @@ public class DatiBolloType extends org.openspcoop2.utils.beans.BaseBean implemen
 
   private static final long serialVersionUID = 1L;
 
-  @XmlTransient
-  private Long id;
 
 
-
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_bolloVirtuale;
 
   @XmlElement(name="BolloVirtuale",required=true,nillable=false)
@@ -129,7 +111,7 @@ public class DatiBolloType extends org.openspcoop2.utils.beans.BaseBean implemen
   @XmlElement(name="ImportoBollo",required=true,nillable=false)
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_importoBollo = null;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Double importoBollo;
 
 }

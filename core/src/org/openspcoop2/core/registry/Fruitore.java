@@ -456,25 +456,25 @@ public class Fruitore extends org.openspcoop2.utils.beans.BaseBean implements Se
   @XmlAttribute(name="wsdl-implementativo-fruitore",required=false)
   protected java.lang.String wsdlImplementativoFruitore;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_filtroDuplicati;
 
   @XmlAttribute(name="filtro-duplicati",required=false)
   protected StatoFunzionalita filtroDuplicati;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_confermaRicezione;
 
   @XmlAttribute(name="conferma-ricezione",required=false)
   protected StatoFunzionalita confermaRicezione;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_idCollaborazione;
 
   @XmlAttribute(name="id-collaborazione",required=false)
   protected StatoFunzionalita idCollaborazione;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_consegnaInOrdine;
 
   @XmlAttribute(name="consegna-in-ordine",required=false)
@@ -493,7 +493,7 @@ public class Fruitore extends org.openspcoop2.utils.beans.BaseBean implements Se
   @XmlAttribute(name="versione-protocollo",required=false)
   protected java.lang.String versioneProtocollo;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_clientAuth;
 
   @XmlAttribute(name="client-auth",required=false)

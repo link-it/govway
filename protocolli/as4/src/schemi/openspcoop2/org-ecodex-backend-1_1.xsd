@@ -1,4 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?><xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://www.w3.org/2005/05/xmlmime" xmlns:tns="http://org.ecodex.backend/1_1/" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://org.ecodex.backend/1_1/">
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+  xmlns:tns="http://org.ecodex.backend/1_1/" 
+  attributeFormDefault="unqualified" elementFormDefault="unqualified" 
+  targetNamespace="http://org.ecodex.backend/1_1/">
   
   <xsd:annotation>
     <xsd:appinfo>
@@ -15,7 +19,7 @@
       </linkit:project_generator>
       <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
         <linkit:dao>
-          <linkit:xml root-element="downloadMessageRequest" generate="true"/>
+          <linkit:xml root-element="collection" generate="true"/>
           <linkit:sql>
             <linkit:sql-script generate="false"/>
             <linkit:sql-mapping single-table-mapping="false"
@@ -26,17 +30,7 @@
     </xsd:appinfo>
   </xsd:annotation>
   
-  <!--
-  <xsd:import namespace="http://www.w3.org/2005/05/xmlmime" schemaLocation="xmlmime.xsd" />
-  -->
-
-  <xsd:simpleType name="max255-non-empty-string">
-    <xsd:restriction base="xsd:string">
-      <xsd:minLength value="1"/>
-      <xsd:maxLength value="255"/>
-    </xsd:restriction>
-  </xsd:simpleType>
-  <xsd:element name="FaultDetail">
+  <xsd:element name="collection">
     <xsd:annotation>
       <xsd:appinfo>
         <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
@@ -44,6 +38,39 @@
         </linkit:generator>
       </xsd:appinfo>
     </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+          <xsd:element ref="tns:FaultDetail"/>
+          <xsd:element ref="tns:downloadMessageRequest"/>
+          <xsd:element ref="tns:downloadMessageResponse"/>
+          <!-- <xsd:element ref="tns:listPendingMessagesRequest"/> Elemento semplice 'string' non supportato -->
+          <xsd:element ref="tns:listPendingMessagesResponse"/>
+          <xsd:element ref="tns:messageErrorsRequest"/>
+          <xsd:element ref="tns:messageStatusRequest"/>
+          <xsd:element ref="tns:sendRequest"/>
+          <xsd:element ref="tns:sendRequestURL"/>
+          <xsd:element ref="tns:sendResponse"/>
+          <xsd:element ref="tns:getStatusRequest"/>
+          <!-- <xsd:element ref="tns:getMessageStatusResponse"/> Elemento semplice 'string' non supportato -->
+          <xsd:element ref="tns:getErrorsRequest"/>
+          <xsd:element ref="tns:getMessageErrorsResponse"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  
+  <!--
+  <xsd:import namespace="http://www.w3.org/2005/05/xmlmime" schemaLocation="xmlmime.xsd" />
+  -->
+
+  <!--
+  <xsd:simpleType name="max255-non-empty-string">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1"/>
+      <xsd:maxLength value="255"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  -->
+  <xsd:element name="FaultDetail"> 
     <xsd:complexType>
       <xsd:sequence>
         <xsd:element name="code" type="xsd:string"/>
@@ -52,27 +79,16 @@
     </xsd:complexType>
   </xsd:element>
   <xsd:element name="downloadMessageRequest">
-    <xsd:annotation>
-      <xsd:appinfo>
-        <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
-          <linkit:interface crud="true" />
-        </linkit:generator>
-      </xsd:appinfo>
-    </xsd:annotation>
     <xsd:complexType>
       <xsd:sequence>
+        <!--
         <xsd:element name="messageID" nillable="true" type="tns:max255-non-empty-string"/>
+        -->
+        <xsd:element name="messageID" nillable="true" type="xsd:string"/>
       </xsd:sequence>
     </xsd:complexType>
   </xsd:element>
   <xsd:element name="downloadMessageResponse">
-    <xsd:annotation>
-      <xsd:appinfo>
-        <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
-          <linkit:interface crud="true" />
-        </linkit:generator>
-      </xsd:appinfo>
-    </xsd:annotation>
     <xsd:complexType>
       <xsd:sequence>
         <xsd:element minOccurs="0" name="bodyload" type="tns:PayloadType"/>
@@ -82,23 +98,8 @@
     </xsd:complexType>
   </xsd:element>
   <!-- <xsd:element name="listPendingMessagesRequest" type="xsd:anyType"/> -->
-  <xsd:element name="listPendingMessagesRequest" type="xsd:string">
-    <xsd:annotation>
-      <xsd:appinfo>
-        <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
-          <linkit:interface crud="true" />
-        </linkit:generator>
-      </xsd:appinfo>
-    </xsd:annotation>
-  </xsd:element>
+  <xsd:element name="listPendingMessagesRequest" type="xsd:string"/>
   <xsd:element name="listPendingMessagesResponse">
-    <xsd:annotation>
-      <xsd:appinfo>
-        <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
-          <linkit:interface crud="true" />
-        </linkit:generator>
-      </xsd:appinfo>
-    </xsd:annotation>
     <xsd:complexType>
       <xsd:sequence>
         <xsd:element maxOccurs="unbounded" minOccurs="0" name="messageID" nillable="true" type="xsd:string"/>
@@ -106,41 +107,26 @@
     </xsd:complexType>
   </xsd:element>
   <xsd:element name="messageErrorsRequest">
-    <xsd:annotation>
-      <xsd:appinfo>
-        <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
-          <linkit:interface crud="true" />
-        </linkit:generator>
-      </xsd:appinfo>
-    </xsd:annotation>
     <xsd:complexType>
       <xsd:sequence>
+        <!--
         <xsd:element name="messageID" type="tns:max255-non-empty-string"/>
+        -->
+        <xsd:element name="messageID" type="xsd:string"/>
       </xsd:sequence>
     </xsd:complexType>
   </xsd:element>
   <xsd:element name="messageStatusRequest">
-    <xsd:annotation>
-      <xsd:appinfo>
-        <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
-          <linkit:interface crud="true" />
-        </linkit:generator>
-      </xsd:appinfo>
-    </xsd:annotation>
     <xsd:complexType>
       <xsd:sequence>
+        <!--
         <xsd:element name="messageID" type="tns:max255-non-empty-string"/>
+        -->
+        <xsd:element name="messageID" type="xsd:string"/>
       </xsd:sequence>
     </xsd:complexType>
   </xsd:element>
   <xsd:element name="sendRequest">
-    <xsd:annotation>
-      <xsd:appinfo>
-        <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
-          <linkit:interface crud="true" />
-        </linkit:generator>
-      </xsd:appinfo>
-    </xsd:annotation>
     <xsd:complexType>
       <xsd:sequence>
         <xsd:element minOccurs="0" name="bodyload" type="tns:PayloadType"/>
@@ -149,13 +135,6 @@
     </xsd:complexType>
   </xsd:element>
   <xsd:element name="sendRequestURL">
-    <xsd:annotation>
-      <xsd:appinfo>
-        <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
-          <linkit:interface crud="true" />
-        </linkit:generator>
-      </xsd:appinfo>
-    </xsd:annotation>
     <xsd:complexType>
       <xsd:sequence>
         <xsd:element minOccurs="0" name="bodyload" type="tns:PayloadURLType"/>
@@ -164,13 +143,6 @@
     </xsd:complexType>
   </xsd:element>
   <xsd:element name="sendResponse">
-    <xsd:annotation>
-      <xsd:appinfo>
-        <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
-          <linkit:interface crud="true" />
-        </linkit:generator>
-      </xsd:appinfo>
-    </xsd:annotation>
     <xsd:complexType>
       <xsd:sequence>
         <xsd:element maxOccurs="unbounded" minOccurs="0" name="messageID" nillable="true" type="xsd:string"/>
@@ -279,49 +251,27 @@
     </xsd:sequence>
   </xsd:complexType>
   <xsd:element name="getStatusRequest" nillable="true">
-    <xsd:annotation>
-      <xsd:appinfo>
-        <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
-          <linkit:interface crud="true" />
-        </linkit:generator>
-      </xsd:appinfo>
-    </xsd:annotation>
     <xsd:complexType>
       <xsd:sequence>
+        <!--
         <xsd:element name="messageID" type="tns:max255-non-empty-string"/>
+        -->
+        <xsd:element name="messageID" type="xsd:string"/>
       </xsd:sequence>
     </xsd:complexType>
   </xsd:element>
   <xsd:element name="getMessageStatusResponse" nillable="true" type="tns:messageStatus">
-    <xsd:annotation>
-      <xsd:appinfo>
-        <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
-          <linkit:interface crud="true" />
-        </linkit:generator>
-      </xsd:appinfo>
-    </xsd:annotation>
   </xsd:element>
   <xsd:element name="getErrorsRequest" nillable="true">
-    <xsd:annotation>
-      <xsd:appinfo>
-        <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
-          <linkit:interface crud="true" />
-        </linkit:generator>
-      </xsd:appinfo>
-    </xsd:annotation>
     <xsd:complexType>
       <xsd:sequence>
+        <!--
         <xsd:element name="messageID" type="tns:max255-non-empty-string"/>
+        -->
+        <xsd:element name="messageID" type="xsd:string"/>
       </xsd:sequence>
     </xsd:complexType>
   </xsd:element>
   <xsd:element name="getMessageErrorsResponse" nillable="true" type="tns:errorResultImplArray">
-    <xsd:annotation>
-      <xsd:appinfo>
-        <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
-          <linkit:interface crud="true" />
-        </linkit:generator>
-      </xsd:appinfo>
-    </xsd:annotation>
   </xsd:element>
 </xsd:schema>

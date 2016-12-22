@@ -247,37 +247,37 @@ public class InvocazioneServizio extends org.openspcoop2.utils.beans.BaseBean im
   @XmlElement(name="gestione-errore",required=false,nillable=false)
   protected GestioneErrore gestioneErrore;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_sbustamentoSoap;
 
   @XmlAttribute(name="sbustamento-soap",required=false)
   protected StatoFunzionalita sbustamentoSoap = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_sbustamentoInformazioniProtocollo;
 
   @XmlAttribute(name="sbustamento-informazioni-protocollo",required=false)
   protected StatoFunzionalita sbustamentoInformazioniProtocollo = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_getMessage;
 
   @XmlAttribute(name="get-message",required=false)
   protected StatoFunzionalita getMessage = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_autenticazione;
 
   @XmlAttribute(name="autenticazione",required=false)
   protected InvocazioneServizioTipoAutenticazione autenticazione = (InvocazioneServizioTipoAutenticazione) InvocazioneServizioTipoAutenticazione.toEnumConstantFromString("none");
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_invioPerRiferimento;
 
   @XmlAttribute(name="invio-per-riferimento",required=false)
   protected StatoFunzionalita invioPerRiferimento = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_rispostaPerRiferimento;
 
   @XmlAttribute(name="risposta-per-riferimento",required=false)

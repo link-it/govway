@@ -169,7 +169,7 @@ public class Message extends org.openspcoop2.utils.beans.BaseBean implements Ser
   	return this.part.size();
   }
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_use;
 
   @XmlAttribute(name="use",required=false)

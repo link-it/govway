@@ -235,7 +235,7 @@ public class Filtro extends org.openspcoop2.utils.beans.BaseBean implements Seri
   @XmlElement(name="soglia",required=false,nillable=false)
   protected long soglia = -1; // default utilizzato dal driver
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_stato;
 
   @XmlElement(name="stato",required=false,nillable=false)

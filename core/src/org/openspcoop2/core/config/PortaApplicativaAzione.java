@@ -136,7 +136,7 @@ public class PortaApplicativaAzione extends org.openspcoop2.utils.beans.BaseBean
 
 
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_identificazione;
 
   @XmlAttribute(name="identificazione",required=false)
@@ -150,7 +150,7 @@ public class PortaApplicativaAzione extends org.openspcoop2.utils.beans.BaseBean
   @XmlAttribute(name="nome",required=false)
   protected java.lang.String nome;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_forceWsdlBased;
 
   @XmlAttribute(name="force-wsdl-based",required=false)

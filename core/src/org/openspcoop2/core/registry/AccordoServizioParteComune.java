@@ -805,7 +805,7 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
   @XmlAttribute(name="descrizione",required=false)
   protected java.lang.String descrizione;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_profiloCollaborazione;
 
   @XmlAttribute(name="profilo-collaborazione",required=true)
@@ -843,25 +843,25 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
   @XmlAttribute(name="utilizzo-senza-azione",required=false)
   protected boolean utilizzoSenzaAzione = false;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_filtroDuplicati;
 
   @XmlAttribute(name="filtro-duplicati",required=false)
   protected StatoFunzionalita filtroDuplicati = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_confermaRicezione;
 
   @XmlAttribute(name="conferma-ricezione",required=false)
   protected StatoFunzionalita confermaRicezione = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_idCollaborazione;
 
   @XmlAttribute(name="id-collaborazione",required=false)
   protected StatoFunzionalita idCollaborazione = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_consegnaInOrdine;
 
   @XmlAttribute(name="consegna-in-ordine",required=false)

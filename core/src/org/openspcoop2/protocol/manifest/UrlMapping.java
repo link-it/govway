@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.protocol.manifest.constants.UrlMappingSourceType;
 import java.io.Serializable;
@@ -63,20 +62,6 @@ public class UrlMapping extends org.openspcoop2.utils.beans.BaseBean implements 
   public UrlMapping() {
   }
 
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return new Long(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=new Long(-1);
-  }
-
   public java.lang.String getFile() {
     return this.file;
   }
@@ -107,16 +92,13 @@ public class UrlMapping extends org.openspcoop2.utils.beans.BaseBean implements 
 
   private static final long serialVersionUID = 1L;
 
-  @XmlTransient
-  private Long id;
-
 
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="file",required=true,nillable=false)
   protected java.lang.String file;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_type;
 
   @XmlAttribute(name="type",required=true)

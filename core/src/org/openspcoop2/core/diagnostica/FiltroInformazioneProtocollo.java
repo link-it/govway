@@ -210,7 +210,7 @@ public class FiltroInformazioneProtocollo extends org.openspcoop2.utils.beans.Ba
 
 
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_tipoPorta;
 
   @XmlElement(name="tipo-porta",required=false,nillable=false)

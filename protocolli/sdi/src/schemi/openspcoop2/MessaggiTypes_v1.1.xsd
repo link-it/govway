@@ -14,6 +14,7 @@
 				</linkit:info>
 				<linkit:jax-ws xml-annotations="true" ws="false" />
 				<linkit:configuration>
+					<linkit:field generateId="false" />
 					<linkit:naming enableUnderscoreCharacter="true" />
 					<linkit:restriction enableWithOneValue="true" />
 				</linkit:configuration>

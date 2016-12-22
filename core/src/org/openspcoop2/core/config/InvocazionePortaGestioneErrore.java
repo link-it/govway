@@ -136,7 +136,7 @@ public class InvocazionePortaGestioneErrore extends org.openspcoop2.utils.beans.
 
 
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_fault;
 
   @XmlAttribute(name="fault",required=false)
@@ -146,7 +146,7 @@ public class InvocazionePortaGestioneErrore extends org.openspcoop2.utils.beans.
   @XmlAttribute(name="fault-actor",required=false)
   protected java.lang.String faultActor;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_genericFaultCode;
 
   @XmlAttribute(name="generic-fault-code",required=false)

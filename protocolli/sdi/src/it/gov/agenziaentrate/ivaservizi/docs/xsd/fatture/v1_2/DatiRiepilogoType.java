@@ -1,8 +1,8 @@
 /*
- * OpenSPCoop v2 - Customizable SOAP Message Broker 
+ * OpenSPCoop - Customizable API Gateway 
  * http://www.openspcoop2.org
  * 
- * Copyright (c) 2005-2015 Link.it srl (http://link.it).
+ * Copyright (c) 2005-2016 Link.it srl (http://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
@@ -74,20 +73,6 @@ import java.io.Serializable;
 
 public class DatiRiepilogoType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DatiRiepilogoType() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return new Long(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=new Long(-1);
   }
 
   public java.lang.Double getAliquotaIVA() {
@@ -210,9 +195,6 @@ public class DatiRiepilogoType extends org.openspcoop2.utils.beans.BaseBean impl
 
   private static final long serialVersionUID = 1L;
 
-  @XmlTransient
-  private Long id;
-
 
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
@@ -220,10 +202,10 @@ public class DatiRiepilogoType extends org.openspcoop2.utils.beans.BaseBean impl
   @XmlElement(name="AliquotaIVA",required=true,nillable=false)
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_aliquotaIVA = null;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Double aliquotaIVA;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_natura;
 
   @XmlElement(name="Natura",required=false,nillable=false)
@@ -234,7 +216,7 @@ public class DatiRiepilogoType extends org.openspcoop2.utils.beans.BaseBean impl
   @XmlElement(name="SpeseAccessorie",required=false,nillable=false)
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_speseAccessorie = null;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Double speseAccessorie;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
@@ -242,7 +224,7 @@ public class DatiRiepilogoType extends org.openspcoop2.utils.beans.BaseBean impl
   @XmlElement(name="Arrotondamento",required=false,nillable=false)
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_arrotondamento = null;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Double arrotondamento;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
@@ -250,7 +232,7 @@ public class DatiRiepilogoType extends org.openspcoop2.utils.beans.BaseBean impl
   @XmlElement(name="ImponibileImporto",required=true,nillable=false)
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_imponibileImporto = null;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Double imponibileImporto;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
@@ -258,10 +240,10 @@ public class DatiRiepilogoType extends org.openspcoop2.utils.beans.BaseBean impl
   @XmlElement(name="Imposta",required=true,nillable=false)
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_imposta = null;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Double imposta;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_esigibilitaIVA;
 
   @XmlElement(name="EsigibilitaIVA",required=false,nillable=false)

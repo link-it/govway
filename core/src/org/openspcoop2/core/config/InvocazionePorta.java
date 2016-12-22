@@ -194,13 +194,13 @@ public class InvocazionePorta extends org.openspcoop2.utils.beans.BaseBean imple
   @XmlElement(name="gestione-errore",required=false,nillable=false)
   protected InvocazionePortaGestioneErrore gestioneErrore;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_invioPerRiferimento;
 
   @XmlAttribute(name="invio-per-riferimento",required=false)
   protected StatoFunzionalita invioPerRiferimento = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_sbustamentoInformazioniProtocollo;
 
   @XmlAttribute(name="sbustamento-informazioni-protocollo",required=false)

@@ -640,13 +640,13 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
   @XmlAttribute(name="descrizione",required=false)
   protected java.lang.String descrizione;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_ricevutaAsincronaSimmetrica;
 
   @XmlAttribute(name="ricevuta-asincrona-simmetrica",required=false)
   protected StatoFunzionalita ricevutaAsincronaSimmetrica = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_ricevutaAsincronaAsimmetrica;
 
   @XmlAttribute(name="ricevuta-asincrona-asimmetrica",required=false)
@@ -656,25 +656,25 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
   @XmlAttribute(name="integrazione",required=false)
   protected java.lang.String integrazione;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_allegaBody;
 
   @XmlAttribute(name="allega-body",required=false)
   protected StatoFunzionalita allegaBody = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_scartaBody;
 
   @XmlAttribute(name="scarta-body",required=false)
   protected StatoFunzionalita scartaBody = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_gestioneManifest;
 
   @XmlAttribute(name="gestione-manifest",required=false)
   protected StatoFunzionalita gestioneManifest;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_stateless;
 
   @XmlAttribute(name="stateless",required=false)

@@ -1,8 +1,8 @@
 /*
- * OpenSPCoop v2 - Customizable SOAP Message Broker 
+ * OpenSPCoop - Customizable API Gateway 
  * http://www.openspcoop2.org
  * 
- * Copyright (c) 2005-2015 Link.it srl (http://link.it).
+ * Copyright (c) 2005-2016 Link.it srl (http://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento RegimeFiscaleType xsd (tipo:string) 
@@ -168,89 +169,43 @@ public enum RegimeFiscaleType implements IEnumeration , Serializable , Cloneable
 	}
 	
 	public static RegimeFiscaleType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static RegimeFiscaleType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		RegimeFiscaleType res = null;
-		if(RegimeFiscaleType.RF01.getValue().equals(value)){
-			res = RegimeFiscaleType.RF01;
-		}else if(RegimeFiscaleType.RF02.getValue().equals(value)){
-			res = RegimeFiscaleType.RF02;
-		}else if(RegimeFiscaleType.RF03.getValue().equals(value)){
-			res = RegimeFiscaleType.RF03;
-		}else if(RegimeFiscaleType.RF04.getValue().equals(value)){
-			res = RegimeFiscaleType.RF04;
-		}else if(RegimeFiscaleType.RF05.getValue().equals(value)){
-			res = RegimeFiscaleType.RF05;
-		}else if(RegimeFiscaleType.RF06.getValue().equals(value)){
-			res = RegimeFiscaleType.RF06;
-		}else if(RegimeFiscaleType.RF07.getValue().equals(value)){
-			res = RegimeFiscaleType.RF07;
-		}else if(RegimeFiscaleType.RF08.getValue().equals(value)){
-			res = RegimeFiscaleType.RF08;
-		}else if(RegimeFiscaleType.RF09.getValue().equals(value)){
-			res = RegimeFiscaleType.RF09;
-		}else if(RegimeFiscaleType.RF10.getValue().equals(value)){
-			res = RegimeFiscaleType.RF10;
-		}else if(RegimeFiscaleType.RF11.getValue().equals(value)){
-			res = RegimeFiscaleType.RF11;
-		}else if(RegimeFiscaleType.RF12.getValue().equals(value)){
-			res = RegimeFiscaleType.RF12;
-		}else if(RegimeFiscaleType.RF13.getValue().equals(value)){
-			res = RegimeFiscaleType.RF13;
-		}else if(RegimeFiscaleType.RF14.getValue().equals(value)){
-			res = RegimeFiscaleType.RF14;
-		}else if(RegimeFiscaleType.RF15.getValue().equals(value)){
-			res = RegimeFiscaleType.RF15;
-		}else if(RegimeFiscaleType.RF16.getValue().equals(value)){
-			res = RegimeFiscaleType.RF16;
-		}else if(RegimeFiscaleType.RF17.getValue().equals(value)){
-			res = RegimeFiscaleType.RF17;
-		}else if(RegimeFiscaleType.RF19.getValue().equals(value)){
-			res = RegimeFiscaleType.RF19;
-		}else if(RegimeFiscaleType.RF18.getValue().equals(value)){
-			res = RegimeFiscaleType.RF18;
+		for (RegimeFiscaleType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(res==null && throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		RegimeFiscaleType res = null;
-		if(RegimeFiscaleType.RF01.toString().equals(value)){
-			res = RegimeFiscaleType.RF01;
-		}else if(RegimeFiscaleType.RF02.toString().equals(value)){
-			res = RegimeFiscaleType.RF02;
-		}else if(RegimeFiscaleType.RF03.toString().equals(value)){
-			res = RegimeFiscaleType.RF03;
-		}else if(RegimeFiscaleType.RF04.toString().equals(value)){
-			res = RegimeFiscaleType.RF04;
-		}else if(RegimeFiscaleType.RF05.toString().equals(value)){
-			res = RegimeFiscaleType.RF05;
-		}else if(RegimeFiscaleType.RF06.toString().equals(value)){
-			res = RegimeFiscaleType.RF06;
-		}else if(RegimeFiscaleType.RF07.toString().equals(value)){
-			res = RegimeFiscaleType.RF07;
-		}else if(RegimeFiscaleType.RF08.toString().equals(value)){
-			res = RegimeFiscaleType.RF08;
-		}else if(RegimeFiscaleType.RF09.toString().equals(value)){
-			res = RegimeFiscaleType.RF09;
-		}else if(RegimeFiscaleType.RF10.toString().equals(value)){
-			res = RegimeFiscaleType.RF10;
-		}else if(RegimeFiscaleType.RF11.toString().equals(value)){
-			res = RegimeFiscaleType.RF11;
-		}else if(RegimeFiscaleType.RF12.toString().equals(value)){
-			res = RegimeFiscaleType.RF12;
-		}else if(RegimeFiscaleType.RF13.toString().equals(value)){
-			res = RegimeFiscaleType.RF13;
-		}else if(RegimeFiscaleType.RF14.toString().equals(value)){
-			res = RegimeFiscaleType.RF14;
-		}else if(RegimeFiscaleType.RF15.toString().equals(value)){
-			res = RegimeFiscaleType.RF15;
-		}else if(RegimeFiscaleType.RF16.toString().equals(value)){
-			res = RegimeFiscaleType.RF16;
-		}else if(RegimeFiscaleType.RF17.toString().equals(value)){
-			res = RegimeFiscaleType.RF17;
-		}else if(RegimeFiscaleType.RF19.toString().equals(value)){
-			res = RegimeFiscaleType.RF19;
-		}else if(RegimeFiscaleType.RF18.toString().equals(value)){
-			res = RegimeFiscaleType.RF18;
+		for (RegimeFiscaleType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(res==null && throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"] not found");
 		}
 		return res;
 	}

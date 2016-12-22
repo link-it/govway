@@ -1,8 +1,8 @@
 /*
- * OpenSPCoop v2 - Customizable SOAP Message Broker 
+ * OpenSPCoop - Customizable API Gateway 
  * http://www.openspcoop2.org
  * 
- * Copyright (c) 2005-2015 Link.it srl (http://link.it).
+ * Copyright (c) 2005-2016 Link.it srl (http://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
@@ -60,20 +59,6 @@ public class DatiSALType extends org.openspcoop2.utils.beans.BaseBean implements
   public DatiSALType() {
   }
 
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return new Long(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=new Long(-1);
-  }
-
   public java.lang.Integer getRiferimentoFase() {
     return this.riferimentoFase;
   }
@@ -83,9 +68,6 @@ public class DatiSALType extends org.openspcoop2.utils.beans.BaseBean implements
   }
 
   private static final long serialVersionUID = 1L;
-
-  @XmlTransient
-  private Long id;
 
 
 

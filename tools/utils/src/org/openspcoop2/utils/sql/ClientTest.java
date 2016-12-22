@@ -1133,7 +1133,6 @@ public class ClientTest {
 
 
 
-	@SuppressWarnings("resource")
 	private static void test1_engine(TipiDatabase tipo, boolean distinct, Connection con, boolean selectForUpdate) throws Exception {
 
 
@@ -2006,7 +2005,7 @@ public class ClientTest {
 
 		return sqlQueryObject;
 	}
-	@SuppressWarnings("resource")
+
 	private static void testUnion_engine(TipiDatabase tipo, boolean count, boolean unionAll, Connection con, boolean selectForUpdate) throws Exception {
 
 
@@ -2741,7 +2740,6 @@ public class ClientTest {
 	
 	
 	
-	@SuppressWarnings("resource")
 	private static void testUnionWithGroupBy_engine(TipiDatabase tipo, boolean count, boolean unionAll, Connection con, boolean selectForUpdate) throws Exception {
 
 

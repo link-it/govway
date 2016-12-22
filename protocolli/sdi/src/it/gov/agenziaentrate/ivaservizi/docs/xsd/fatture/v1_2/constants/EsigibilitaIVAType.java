@@ -1,8 +1,8 @@
 /*
- * OpenSPCoop v2 - Customizable SOAP Message Broker 
+ * OpenSPCoop - Customizable API Gateway 
  * http://www.openspcoop2.org
  * 
- * Copyright (c) 2005-2015 Link.it srl (http://link.it).
+ * Copyright (c) 2005-2016 Link.it srl (http://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento EsigibilitaIVAType xsd (tipo:string) 
@@ -134,25 +135,43 @@ public enum EsigibilitaIVAType implements IEnumeration , Serializable , Cloneabl
 	}
 	
 	public static EsigibilitaIVAType toEnumConstant(java.lang.Character value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static EsigibilitaIVAType toEnumConstant(java.lang.Character value, boolean throwNotFoundException) throws NotFoundException{
 		EsigibilitaIVAType res = null;
-		if(EsigibilitaIVAType.D.getValue() == value){
-			res = EsigibilitaIVAType.D;
-		}else if(EsigibilitaIVAType.I.getValue() == value){
-			res = EsigibilitaIVAType.I;
-		}else if(EsigibilitaIVAType.S.getValue() == value){
-			res = EsigibilitaIVAType.S;
+		for (EsigibilitaIVAType tmp : values()) {
+			if(tmp.getValue().toString().equals(value!=null?value.toString():null)){
+				res = tmp;
+				break;
+			}
+		}
+		if(res==null && throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		EsigibilitaIVAType res = null;
-		if(EsigibilitaIVAType.D.toString().equals(value)){
-			res = EsigibilitaIVAType.D;
-		}else if(EsigibilitaIVAType.I.toString().equals(value)){
-			res = EsigibilitaIVAType.I;
-		}else if(EsigibilitaIVAType.S.toString().equals(value)){
-			res = EsigibilitaIVAType.S;
+		for (EsigibilitaIVAType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(res==null && throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"] not found");
 		}
 		return res;
 	}

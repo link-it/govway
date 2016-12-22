@@ -27,7 +27,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+
 import org.openspcoop2.protocol.manifest.constants.ServiceBinding;
+
 import java.io.Serializable;
 
 
@@ -63,20 +65,6 @@ import java.io.Serializable;
 
 public class Binding extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public Binding() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return new Long(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=new Long(-1);
   }
 
   public SoapConfiguration getSoap() {
@@ -116,9 +104,6 @@ public class Binding extends org.openspcoop2.utils.beans.BaseBean implements Ser
   }
 
   private static final long serialVersionUID = 1L;
-
-  @XmlTransient
-  private Long id;
 
 
 

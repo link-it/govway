@@ -237,13 +237,13 @@ public class MessaggiDiagnostici extends org.openspcoop2.utils.beans.BaseBean im
   	return this.openspcoopSorgenteDati.size();
   }
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_severita;
 
   @XmlAttribute(name="severita",required=false)
   protected Severita severita = (Severita) Severita.toEnumConstantFromString("infoIntegration");
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_severitaLog4j;
 
   @XmlAttribute(name="severita-log4j",required=false)

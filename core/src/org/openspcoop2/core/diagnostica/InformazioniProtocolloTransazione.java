@@ -280,7 +280,7 @@ public class InformazioniProtocolloTransazione extends org.openspcoop2.utils.bea
   }
 
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_tipoPdD;
 
   @XmlElement(name="tipoPdD",required=true,nillable=false)

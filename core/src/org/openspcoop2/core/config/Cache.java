@@ -127,7 +127,7 @@ public class Cache extends org.openspcoop2.utils.beans.BaseBean implements Seria
   @XmlAttribute(name="dimensione",required=false)
   protected java.lang.String dimensione;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_algoritmo;
 
   @XmlAttribute(name="algoritmo",required=false)

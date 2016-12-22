@@ -1,8 +1,8 @@
 /*
- * OpenSPCoop v2 - Customizable SOAP Message Broker 
+ * OpenSPCoop - Customizable API Gateway 
  * http://www.openspcoop2.org
  * 
- * Copyright (c) 2005-2015 Link.it srl (http://link.it).
+ * Copyright (c) 2005-2016 Link.it srl (http://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento Art73Type xsd (tipo:string) 
@@ -132,17 +133,43 @@ public enum Art73Type implements IEnumeration , Serializable , Cloneable {
 	}
 	
 	public static Art73Type toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static Art73Type toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		Art73Type res = null;
-		if(Art73Type.SI.getValue().equals(value)){
-			res = Art73Type.SI;
+		for (Art73Type tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(res==null && throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		Art73Type res = null;
-		if(Art73Type.SI.toString().equals(value)){
-			res = Art73Type.SI;
+		for (Art73Type tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(res==null && throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"] not found");
 		}
 		return res;
 	}

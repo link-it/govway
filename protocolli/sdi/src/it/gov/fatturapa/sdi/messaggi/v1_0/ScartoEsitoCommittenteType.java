@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
@@ -73,20 +72,6 @@ import java.io.Serializable;
 
 public class ScartoEsitoCommittenteType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ScartoEsitoCommittenteType() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return new Long(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=new Long(-1);
   }
 
   public java.lang.Integer getIdentificativoSdI() {
@@ -173,9 +158,6 @@ public class ScartoEsitoCommittenteType extends org.openspcoop2.utils.beans.Base
 
   private static final long serialVersionUID = 1L;
 
-  @XmlTransient
-  private Long id;
-
   private static it.gov.fatturapa.sdi.messaggi.v1_0.model.ScartoEsitoCommittenteTypeModel modelStaticInstance = null;
   private static synchronized void initModelStaticInstance(){
 	  if(it.gov.fatturapa.sdi.messaggi.v1_0.ScartoEsitoCommittenteType.modelStaticInstance==null){
@@ -195,13 +177,13 @@ public class ScartoEsitoCommittenteType extends org.openspcoop2.utils.beans.Base
   @XmlElement(name="IdentificativoSdI",required=true,nillable=false)
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_identificativoSdI = null;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Integer identificativoSdI;
 
   @XmlElement(name="RiferimentoFattura",required=false,nillable=false)
   protected RiferimentoFatturaType riferimentoFattura;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_scarto;
 
   @XmlElement(name="Scarto",required=true,nillable=false)

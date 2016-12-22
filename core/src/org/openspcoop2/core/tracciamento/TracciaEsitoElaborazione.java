@@ -116,7 +116,7 @@ public class TracciaEsitoElaborazione extends org.openspcoop2.utils.beans.BaseBe
   @XmlElement(name="dettaglio",required=false,nillable=false)
   protected java.lang.String dettaglio;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_tipo;
 
   @XmlAttribute(name="tipo",required=true)

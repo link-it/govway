@@ -117,7 +117,7 @@ public class RilevanzaEccezione extends org.openspcoop2.utils.beans.BaseBean imp
   @javax.xml.bind.annotation.XmlValue()
   public String base;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_tipo;
 
   @XmlAttribute(name="tipo",required=true)

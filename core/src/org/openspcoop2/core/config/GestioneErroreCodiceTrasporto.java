@@ -131,7 +131,7 @@ public class GestioneErroreCodiceTrasporto extends org.openspcoop2.utils.beans.B
   @XmlAttribute(name="valore-massimo",required=false)
   protected java.lang.Integer valoreMassimo;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_comportamento;
 
   @XmlAttribute(name="comportamento",required=true)

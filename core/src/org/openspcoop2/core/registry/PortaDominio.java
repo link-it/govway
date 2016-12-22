@@ -198,7 +198,7 @@ public class PortaDominio extends org.openspcoop2.utils.beans.BaseBean implement
   @XmlAttribute(name="subject",required=false)
   protected java.lang.String subject;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_clientAuth;
 
   @XmlAttribute(name="client-auth",required=false)

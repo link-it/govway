@@ -96,7 +96,7 @@ public class Attachments extends org.openspcoop2.utils.beans.BaseBean implements
 
 
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_gestioneManifest;
 
   @XmlAttribute(name="gestione-manifest",required=false)

@@ -1,8 +1,8 @@
 /*
- * OpenSPCoop v2 - Customizable SOAP Message Broker 
+ * OpenSPCoop - Customizable API Gateway 
  * http://www.openspcoop2.org
  * 
- * Copyright (c) 2005-2015 Link.it srl (http://link.it).
+ * Copyright (c) 2005-2016 Link.it srl (http://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento NaturaType xsd (tipo:string) 
@@ -144,41 +145,43 @@ public enum NaturaType implements IEnumeration , Serializable , Cloneable {
 	}
 	
 	public static NaturaType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static NaturaType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		NaturaType res = null;
-		if(NaturaType.N1.getValue().equals(value)){
-			res = NaturaType.N1;
-		}else if(NaturaType.N2.getValue().equals(value)){
-			res = NaturaType.N2;
-		}else if(NaturaType.N3.getValue().equals(value)){
-			res = NaturaType.N3;
-		}else if(NaturaType.N4.getValue().equals(value)){
-			res = NaturaType.N4;
-		}else if(NaturaType.N5.getValue().equals(value)){
-			res = NaturaType.N5;
-		}else if(NaturaType.N6.getValue().equals(value)){
-			res = NaturaType.N6;
-		}else if(NaturaType.N7.getValue().equals(value)){
-			res = NaturaType.N7;
+		for (NaturaType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(res==null && throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		NaturaType res = null;
-		if(NaturaType.N1.toString().equals(value)){
-			res = NaturaType.N1;
-		}else if(NaturaType.N2.toString().equals(value)){
-			res = NaturaType.N2;
-		}else if(NaturaType.N3.toString().equals(value)){
-			res = NaturaType.N3;
-		}else if(NaturaType.N4.toString().equals(value)){
-			res = NaturaType.N4;
-		}else if(NaturaType.N5.toString().equals(value)){
-			res = NaturaType.N5;
-		}else if(NaturaType.N6.toString().equals(value)){
-			res = NaturaType.N6;
-		}else if(NaturaType.N7.toString().equals(value)){
-			res = NaturaType.N7;
+		for (NaturaType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(res==null && throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"] not found");
 		}
 		return res;
 	}

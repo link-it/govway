@@ -105,7 +105,7 @@ public class IdInformazioniProtocolloTransazione extends org.openspcoop2.utils.b
 
 
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_tipoPdD;
 
   @XmlAttribute(name="tipoPdD",required=true)

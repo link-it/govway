@@ -238,7 +238,7 @@ public class GestioneErrore extends org.openspcoop2.utils.beans.BaseBean impleme
   @XmlAttribute(name="nome",required=false)
   protected java.lang.String nome;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_comportamento;
 
   @XmlAttribute(name="comportamento",required=true)

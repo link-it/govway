@@ -140,7 +140,7 @@ public class CorrelazioneApplicativaRispostaElemento extends org.openspcoop2.uti
   @XmlAttribute(name="nome",required=false)
   protected java.lang.String nome;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_identificazione;
 
   @XmlAttribute(name="identificazione",required=false)
@@ -150,7 +150,7 @@ public class CorrelazioneApplicativaRispostaElemento extends org.openspcoop2.uti
   @XmlAttribute(name="pattern",required=false)
   protected java.lang.String pattern;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_identificazioneFallita;
 
   @XmlAttribute(name="identificazione-fallita",required=false)

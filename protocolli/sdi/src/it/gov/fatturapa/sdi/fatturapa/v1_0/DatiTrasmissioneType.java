@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
@@ -67,20 +66,6 @@ import java.io.Serializable;
 
 public class DatiTrasmissioneType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DatiTrasmissioneType() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return new Long(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=new Long(-1);
   }
 
   public IdFiscaleType getIdTrasmittente() {
@@ -137,9 +122,6 @@ public class DatiTrasmissioneType extends org.openspcoop2.utils.beans.BaseBean i
 
   private static final long serialVersionUID = 1L;
 
-  @XmlTransient
-  private Long id;
-
 
 
   @XmlElement(name="IdTrasmittente",required=true,nillable=false)
@@ -150,7 +132,7 @@ public class DatiTrasmissioneType extends org.openspcoop2.utils.beans.BaseBean i
   @XmlElement(name="ProgressivoInvio",required=true,nillable=false)
   protected java.lang.String progressivoInvio;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_formatoTrasmissione;
 
   @XmlElement(name="FormatoTrasmissione",required=true,nillable=false)

@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
@@ -68,20 +67,6 @@ import java.io.Serializable;
 
 public class IscrizioneREAType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public IscrizioneREAType() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return new Long(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=new Long(-1);
   }
 
   public java.lang.String getUfficio() {
@@ -156,9 +141,6 @@ public class IscrizioneREAType extends org.openspcoop2.utils.beans.BaseBean impl
 
   private static final long serialVersionUID = 1L;
 
-  @XmlTransient
-  private Long id;
-
 
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
@@ -175,16 +157,16 @@ public class IscrizioneREAType extends org.openspcoop2.utils.beans.BaseBean impl
   @XmlElement(name="CapitaleSociale",required=false,nillable=false)
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_capitaleSociale = null;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Double capitaleSociale;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_socioUnico;
 
   @XmlElement(name="SocioUnico",required=false,nillable=false)
   protected SocioUnicoType socioUnico;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_statoLiquidazione;
 
   @XmlElement(name="StatoLiquidazione",required=true,nillable=false)

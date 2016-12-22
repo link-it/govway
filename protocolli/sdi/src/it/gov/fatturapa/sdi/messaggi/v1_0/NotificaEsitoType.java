@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
@@ -71,20 +70,6 @@ import java.io.Serializable;
 
 public class NotificaEsitoType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public NotificaEsitoType() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return new Long(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=new Long(-1);
   }
 
   public java.lang.Integer getIdentificativoSdI() {
@@ -159,9 +144,6 @@ public class NotificaEsitoType extends org.openspcoop2.utils.beans.BaseBean impl
 
   private static final long serialVersionUID = 1L;
 
-  @XmlTransient
-  private Long id;
-
   private static it.gov.fatturapa.sdi.messaggi.v1_0.model.NotificaEsitoTypeModel modelStaticInstance = null;
   private static synchronized void initModelStaticInstance(){
 	  if(it.gov.fatturapa.sdi.messaggi.v1_0.NotificaEsitoType.modelStaticInstance==null){
@@ -181,7 +163,7 @@ public class NotificaEsitoType extends org.openspcoop2.utils.beans.BaseBean impl
   @XmlElement(name="IdentificativoSdI",required=true,nillable=false)
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_identificativoSdI = null;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Integer identificativoSdI;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")

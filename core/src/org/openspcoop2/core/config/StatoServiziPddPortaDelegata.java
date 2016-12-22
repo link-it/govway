@@ -216,7 +216,7 @@ public class StatoServiziPddPortaDelegata extends org.openspcoop2.utils.beans.Ba
   	return this.filtroDisabilitazione.size();
   }
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_stato;
 
   @XmlAttribute(name="stato",required=false)

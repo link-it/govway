@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
@@ -73,20 +72,6 @@ import java.io.Serializable;
 
 public class DatiAnagraficiCedenteType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public DatiAnagraficiCedenteType() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return new Long(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=new Long(-1);
   }
 
   public IdFiscaleType getIdFiscaleIVA() {
@@ -167,9 +152,6 @@ public class DatiAnagraficiCedenteType extends org.openspcoop2.utils.beans.BaseB
 
   private static final long serialVersionUID = 1L;
 
-  @XmlTransient
-  private Long id;
-
 
 
   @XmlElement(name="IdFiscaleIVA",required=true,nillable=false)
@@ -201,7 +183,7 @@ public class DatiAnagraficiCedenteType extends org.openspcoop2.utils.beans.BaseB
   @XmlElement(name="DataIscrizioneAlbo",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataIscrizioneAlbo;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_regimeFiscale;
 
   @XmlElement(name="RegimeFiscale",required=true,nillable=false)

@@ -161,25 +161,25 @@ public class ValidazioneBuste extends org.openspcoop2.utils.beans.BaseBean imple
 
 
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_stato;
 
   @XmlAttribute(name="stato",required=false)
   protected StatoFunzionalitaConWarning stato = (StatoFunzionalitaConWarning) StatoFunzionalitaConWarning.toEnumConstantFromString("abilitato");
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_controllo;
 
   @XmlAttribute(name="controllo",required=false)
   protected ValidazioneBusteTipoControllo controllo = (ValidazioneBusteTipoControllo) ValidazioneBusteTipoControllo.toEnumConstantFromString("normale");
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_profiloCollaborazione;
 
   @XmlAttribute(name="profiloCollaborazione",required=false)
   protected StatoFunzionalita profiloCollaborazione = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_manifestAttachments;
 
   @XmlAttribute(name="manifestAttachments",required=false)

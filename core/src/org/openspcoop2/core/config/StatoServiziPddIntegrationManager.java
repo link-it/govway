@@ -96,7 +96,7 @@ public class StatoServiziPddIntegrationManager extends org.openspcoop2.utils.bea
 
 
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_stato;
 
   @XmlAttribute(name="stato",required=false)

@@ -279,25 +279,25 @@ public class Tracciamento extends org.openspcoop2.utils.beans.BaseBean implement
   	return this.openspcoopSorgenteDati.size();
   }
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_buste;
 
   @XmlAttribute(name="buste",required=false)
   protected StatoFunzionalita buste = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("abilitato");
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_dump;
 
   @XmlAttribute(name="dump",required=false)
   protected StatoFunzionalita dump = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_dumpBinarioPortaDelegata;
 
   @XmlAttribute(name="dump-binario-porta-delegata",required=false)
   protected StatoFunzionalita dumpBinarioPortaDelegata = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_dumpBinarioPortaApplicativa;
 
   @XmlAttribute(name="dump-binario-porta-applicativa",required=false)

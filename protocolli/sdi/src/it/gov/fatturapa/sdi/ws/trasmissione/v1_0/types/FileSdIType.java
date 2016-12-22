@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
@@ -64,20 +63,6 @@ public class FileSdIType extends org.openspcoop2.utils.beans.BaseBean implements
   public FileSdIType() {
   }
 
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return new Long(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=new Long(-1);
-  }
-
   public java.lang.Integer getIdentificativoSdI() {
     if(this._decimalWrapper_identificativoSdI!=null){
 		return (java.lang.Integer) this._decimalWrapper_identificativoSdI.getObject(java.lang.Integer.class);
@@ -110,9 +95,6 @@ public class FileSdIType extends org.openspcoop2.utils.beans.BaseBean implements
 
   private static final long serialVersionUID = 1L;
 
-  @XmlTransient
-  private Long id;
-
   private static it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types.model.FileSdITypeModel modelStaticInstance = null;
   private static synchronized void initModelStaticInstance(){
 	  if(it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types.FileSdIType.modelStaticInstance==null){
@@ -132,7 +114,7 @@ public class FileSdIType extends org.openspcoop2.utils.beans.BaseBean implements
   @XmlElement(name="IdentificativoSdI",required=true,nillable=false)
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_identificativoSdI = null;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.Integer identificativoSdI;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")

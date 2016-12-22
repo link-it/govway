@@ -383,37 +383,37 @@ public class PortType extends org.openspcoop2.utils.beans.BaseBean implements Se
   @XmlAttribute(name="descrizione",required=false)
   protected java.lang.String descrizione;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_style;
 
   @XmlAttribute(name="style",required=false)
   protected BindingStyle style = (BindingStyle) BindingStyle.toEnumConstantFromString("document");
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_profiloCollaborazione;
 
   @XmlAttribute(name="profilo-collaborazione",required=false)
   protected ProfiloCollaborazione profiloCollaborazione;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_filtroDuplicati;
 
   @XmlAttribute(name="filtro-duplicati",required=false)
   protected StatoFunzionalita filtroDuplicati;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_confermaRicezione;
 
   @XmlAttribute(name="conferma-ricezione",required=false)
   protected StatoFunzionalita confermaRicezione;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_idCollaborazione;
 
   @XmlAttribute(name="id-collaborazione",required=false)
   protected StatoFunzionalita idCollaborazione;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_consegnaInOrdine;
 
   @XmlAttribute(name="consegna-in-ordine",required=false)

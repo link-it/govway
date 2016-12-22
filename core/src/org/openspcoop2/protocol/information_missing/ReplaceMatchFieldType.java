@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.protocol.information_missing.constants.ReplaceKeywordType;
 import java.io.Serializable;
@@ -54,20 +53,6 @@ import java.io.Serializable;
 
 public class ReplaceMatchFieldType extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ReplaceMatchFieldType() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return new Long(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=new Long(-1);
   }
 
   public java.lang.String getValore() {
@@ -100,16 +85,13 @@ public class ReplaceMatchFieldType extends org.openspcoop2.utils.beans.BaseBean 
 
   private static final long serialVersionUID = 1L;
 
-  @XmlTransient
-  private Long id;
-
 
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="valore",required=false)
   protected java.lang.String valore;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_tipo;
 
   @XmlAttribute(name="tipo",required=true)

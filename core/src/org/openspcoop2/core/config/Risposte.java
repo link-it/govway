@@ -96,7 +96,7 @@ public class Risposte extends org.openspcoop2.utils.beans.BaseBean implements Se
 
 
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_connessione;
 
   @XmlAttribute(name="connessione",required=false)

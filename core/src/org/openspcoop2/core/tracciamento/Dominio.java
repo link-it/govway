@@ -129,7 +129,7 @@ public class Dominio extends org.openspcoop2.utils.beans.BaseBean implements Ser
   @XmlElement(name="soggetto",required=true,nillable=false)
   protected DominioSoggetto soggetto;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_funzione;
 
   @XmlAttribute(name="funzione",required=false)

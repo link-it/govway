@@ -267,7 +267,7 @@ public class Traccia extends org.openspcoop2.utils.beans.BaseBean implements Ser
   @XmlElement(name="allegati",required=false,nillable=false)
   protected Allegati allegati;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_tipo;
 
   @XmlAttribute(name="tipo",required=false)

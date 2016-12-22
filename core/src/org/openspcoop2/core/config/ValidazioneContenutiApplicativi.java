@@ -140,19 +140,19 @@ public class ValidazioneContenutiApplicativi extends org.openspcoop2.utils.beans
 
 
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_stato;
 
   @XmlAttribute(name="stato",required=false)
   protected StatoFunzionalitaConWarning stato = (StatoFunzionalitaConWarning) StatoFunzionalitaConWarning.toEnumConstantFromString("disabilitato");
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_tipo;
 
   @XmlAttribute(name="tipo",required=false)
   protected ValidazioneContenutiApplicativiTipo tipo = (ValidazioneContenutiApplicativiTipo) ValidazioneContenutiApplicativiTipo.toEnumConstantFromString("xsd");
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_acceptMtomMessage;
 
   @XmlAttribute(name="accept-mtom-message",required=false)

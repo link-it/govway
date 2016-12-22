@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
@@ -62,20 +61,6 @@ public class ReplaceMatchType extends org.openspcoop2.utils.beans.BaseBean imple
   public ReplaceMatchType() {
   }
 
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return new Long(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=new Long(-1);
-  }
-
   public ReplaceMatchFieldType getNome() {
     return this.nome;
   }
@@ -93,9 +78,6 @@ public class ReplaceMatchType extends org.openspcoop2.utils.beans.BaseBean imple
   }
 
   private static final long serialVersionUID = 1L;
-
-  @XmlTransient
-  private Long id;
 
 
 

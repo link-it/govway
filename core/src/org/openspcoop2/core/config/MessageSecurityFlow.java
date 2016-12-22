@@ -160,7 +160,7 @@ public class MessageSecurityFlow extends org.openspcoop2.utils.beans.BaseBean im
   	return this.parameter.size();
   }
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_applyToMtom;
 
   @XmlAttribute(name="apply-to-mtom",required=false)

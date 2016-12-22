@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.protocol.information_missing.constants.ServizioApplicativoReplaceType;
 import java.io.Serializable;
@@ -62,20 +61,6 @@ import java.io.Serializable;
 
 public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean implements Serializable , Cloneable {
   public ServizioApplicativo() {
-  }
-
-  public Long getId() {
-    if(this.id!=null)
-		return this.id;
-	else
-		return new Long(-1);
-  }
-
-  public void setId(Long id) {
-    if(id!=null)
-		this.id=id;
-	else
-		this.id=new Long(-1);
   }
 
   public ReplaceMatchType getReplaceMatch() {
@@ -116,9 +101,6 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
 
   private static final long serialVersionUID = 1L;
 
-  @XmlTransient
-  private Long id;
-
 
 
   @XmlElement(name="replace-match",required=true,nillable=false)
@@ -128,7 +110,7 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
   @XmlAttribute(name="descrizione",required=true)
   protected java.lang.String descrizione;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_tipo;
 
   @XmlAttribute(name="tipo",required=true)

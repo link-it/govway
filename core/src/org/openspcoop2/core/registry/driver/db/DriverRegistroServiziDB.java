@@ -2296,18 +2296,21 @@ IDriverWS ,IMonitoraggioRisorsa{
 					Soggetto soggettoReferente = this.getSoggetto(idReferente,con);
 					if(soggettoReferente==null){
 						try{
-							if(rs!=null){
-								rs.close();
-								rs = null;
-							}
-						}catch (Exception e) {}
-						try{
-							if(stm!=null){
-								stm.close();
-								stm=null;
-							}
-						}catch (Exception e) {}
-						throw new Exception("Soggetto referente ["+idReferente+"] presente nell'accordo ["+rs.getString("nome")+"] (versione ["+rs.getInt("versione")+"]) non presente?");
+							throw new Exception("Soggetto referente ["+idReferente+"] presente nell'accordo ["+rs.getString("nome")+"] (versione ["+rs.getInt("versione")+"]) non presente?");
+						}finally{
+							try{
+								if(rs!=null){
+									rs.close();
+									rs = null;
+								}
+							}catch (Exception e) {}
+							try{
+								if(stm!=null){
+									stm.close();
+									stm=null;
+								}
+							}catch (Exception e) {}
+						}
 					}
 					idSoggettoReferente = new IDSoggetto(soggettoReferente.getTipo(),soggettoReferente.getNome());
 				}
@@ -5924,6 +5927,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 		}
 	}
+
 
 
 	/**

@@ -2387,19 +2387,22 @@ public class DriverControlStationDB  {
 				if(referenteAccordo>0){
 					Soggetto s = this.getDriverRegistroServiziDB().getSoggetto(referenteAccordo, con);
 					if(s==null){
-						try {
-							if (risultato != null) {
-								risultato.close(); risultato=null;
+						try{
+							throw new Exception("Soggetto referente ["+referenteAccordo+"] non presente?");
+						}finally{
+							try {
+								if (risultato != null) {
+									risultato.close(); risultato=null;
+								}
+							} catch (Exception e) {}
+							try {
+								if (stmt != null) {
+									stmt.close(); stmt=null;
+								}
+							} catch (Exception e) {
+								// ignore
 							}
-						} catch (Exception e) {}
-						try {
-							if (stmt != null) {
-								stmt.close(); stmt=null;
-							}
-						} catch (Exception e) {
-							// ignore
 						}
-						throw new Exception("Soggetto referente ["+referenteAccordo+"] non presente?");
 					}
 					soggettoReferente = new IDSoggetto(s.getTipo(),s.getNome());
 				}
@@ -2489,19 +2492,22 @@ public class DriverControlStationDB  {
 				if(referenteAccordo>0){
 					Soggetto s = this.getDriverRegistroServiziDB().getSoggetto(referenteAccordo, con);
 					if(s==null){
-						try {
-							if (risultato != null) {
-								risultato.close(); risultato=null;
+						try{
+							throw new Exception("Soggetto referente ["+referenteAccordo+"] non presente?");
+						}finally{
+							try {
+								if (risultato != null) {
+									risultato.close(); risultato=null;
+								}
+							} catch (Exception e) {}
+							try {
+								if (stmt != null) {
+									stmt.close(); stmt=null;
+								}
+							} catch (Exception e) {
+								// ignore
 							}
-						} catch (Exception e) {}
-						try {
-							if (stmt != null) {
-								stmt.close(); stmt=null;
-							}
-						} catch (Exception e) {
-							// ignore
 						}
-						throw new Exception("Soggetto referente ["+referenteAccordo+"] non presente?");
 					}
 					soggettoReferente = new IDSoggetto(s.getTipo(),s.getNome());
 				}
@@ -2884,7 +2890,17 @@ public class DriverControlStationDB  {
 			while (risultato.next()) {
 				if (tipoServizio.equals(risultato.getString("tipo_servizio")) && nomeServizio.equals(risultato.getString("nome_servizio")))
 					continue;
-				return risultato.getLong("id");
+				try{
+					return risultato.getLong("id");
+				}finally{
+					try {
+						if (risultato != null) {
+							risultato.close();
+						}
+					} catch (Exception e) {
+						// ignore
+					}
+				}
 			}
 		
 			return 0;

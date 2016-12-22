@@ -203,7 +203,7 @@ public class AccessoRegistroRegistro extends org.openspcoop2.utils.beans.BaseBea
   @XmlAttribute(name="nome",required=true)
   protected java.lang.String nome;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_tipo;
 
   @XmlAttribute(name="tipo",required=false)

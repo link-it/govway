@@ -367,7 +367,7 @@ public class Operation extends org.openspcoop2.utils.beans.BaseBean implements S
   @XmlAttribute(name="nome",required=true)
   protected java.lang.String nome;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_style;
 
   @XmlAttribute(name="style",required=false)
@@ -377,31 +377,31 @@ public class Operation extends org.openspcoop2.utils.beans.BaseBean implements S
   @XmlAttribute(name="soap-action",required=false)
   protected java.lang.String soapAction;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_profiloCollaborazione;
 
   @XmlAttribute(name="profilo-collaborazione",required=false)
   protected ProfiloCollaborazione profiloCollaborazione;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_filtroDuplicati;
 
   @XmlAttribute(name="filtro-duplicati",required=false)
   protected StatoFunzionalita filtroDuplicati;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_confermaRicezione;
 
   @XmlAttribute(name="conferma-ricezione",required=false)
   protected StatoFunzionalita confermaRicezione;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_idCollaborazione;
 
   @XmlAttribute(name="id-collaborazione",required=false)
   protected StatoFunzionalita idCollaborazione;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_consegnaInOrdine;
 
   @XmlAttribute(name="consegna-in-ordine",required=false)

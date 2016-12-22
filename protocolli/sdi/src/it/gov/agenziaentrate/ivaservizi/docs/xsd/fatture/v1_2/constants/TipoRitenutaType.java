@@ -1,8 +1,8 @@
 /*
- * OpenSPCoop v2 - Customizable SOAP Message Broker 
+ * OpenSPCoop - Customizable API Gateway 
  * http://www.openspcoop2.org
  * 
- * Copyright (c) 2005-2015 Link.it srl (http://link.it).
+ * Copyright (c) 2005-2016 Link.it srl (http://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 
 /**     
  * Enumeration dell'elemento TipoRitenutaType xsd (tipo:string) 
@@ -134,21 +135,43 @@ public enum TipoRitenutaType implements IEnumeration , Serializable , Cloneable 
 	}
 	
 	public static TipoRitenutaType toEnumConstant(String value){
+		try{
+			return toEnumConstant(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static TipoRitenutaType toEnumConstant(String value, boolean throwNotFoundException) throws NotFoundException{
 		TipoRitenutaType res = null;
-		if(TipoRitenutaType.RT01.getValue().equals(value)){
-			res = TipoRitenutaType.RT01;
-		}else if(TipoRitenutaType.RT02.getValue().equals(value)){
-			res = TipoRitenutaType.RT02;
+		for (TipoRitenutaType tmp : values()) {
+			if(tmp.getValue().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(res==null && throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"] not found");
 		}
 		return res;
 	}
 	
 	public static IEnumeration toEnumConstantFromString(String value){
+		try{
+			return toEnumConstantFromString(value,false);
+		}catch(NotFoundException notFound){
+			return null;
+		}
+	}
+	public static IEnumeration toEnumConstantFromString(String value, boolean throwNotFoundException) throws NotFoundException{
 		TipoRitenutaType res = null;
-		if(TipoRitenutaType.RT01.toString().equals(value)){
-			res = TipoRitenutaType.RT01;
-		}else if(TipoRitenutaType.RT02.toString().equals(value)){
-			res = TipoRitenutaType.RT02;
+		for (TipoRitenutaType tmp : values()) {
+			if(tmp.toString().equals(value)){
+				res = tmp;
+				break;
+			}
+		}
+		if(res==null && throwNotFoundException){
+			throw new NotFoundException("Enum with value ["+value+"] not found");
 		}
 		return res;
 	}

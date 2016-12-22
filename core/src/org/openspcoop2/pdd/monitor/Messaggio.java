@@ -192,7 +192,7 @@ public class Messaggio extends org.openspcoop2.utils.beans.BaseBean implements S
   @XmlElement(name="ora-registrazione",required=true,nillable=false,type=java.lang.String.class)
   protected java.util.Date oraRegistrazione;
 
-  @XmlTransient
+  @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_stato;
 
   @XmlElement(name="stato",required=true,nillable=false)
