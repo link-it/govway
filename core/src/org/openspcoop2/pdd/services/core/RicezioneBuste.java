@@ -191,8 +191,8 @@ import org.slf4j.Logger;
  * modulo dell'infrastruttura OpenSPCoop.
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: mergefairy $
- * @version $Rev: 12340 $, $Date: 2016-11-08 14:15:11 +0100 (Tue, 08 Nov 2016) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 public class RicezioneBuste {

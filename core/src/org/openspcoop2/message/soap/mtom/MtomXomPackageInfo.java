@@ -24,8 +24,8 @@ package org.openspcoop2.message.soap.mtom;
  * MtomXomPackageInfo
  *
  * @author Andrea Poli (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 12237 $, $Date: 2016-10-04 11:41:45 +0200 (Tue, 04 Oct 2016) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class MtomXomPackageInfo {
 

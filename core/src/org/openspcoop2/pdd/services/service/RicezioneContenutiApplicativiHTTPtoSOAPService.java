@@ -94,8 +94,8 @@ import org.slf4j.Logger;
  * Servlet che serve per creare un tunnel da un servizio che non conosce SOAP verso OpenSPCoop (che utilizza SOAP)
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 12237 $, $Date: 2016-10-04 11:41:45 +0200 (Tue, 04 Oct 2016) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 public class RicezioneContenutiApplicativiHTTPtoSOAPService  {

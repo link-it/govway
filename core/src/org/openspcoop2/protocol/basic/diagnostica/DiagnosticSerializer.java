@@ -35,8 +35,8 @@ import org.w3c.dom.Element;
  * XMLDiagnosticoBuilder
  *
  * @author Andrea Poli <apoli@link.it>
- * @author $Author: apoli $
- * @version $Rev: 12359 $, $Date: 2016-11-18 17:24:57 +0100 (Fri, 18 Nov 2016) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class DiagnosticSerializer extends BasicComponentFactory implements org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticSerializer {
 

@@ -32,8 +32,8 @@ import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoException;
  * Interfaccia di ricerca dei messaggi diagnostici
  *
  * @author Stefano Corallo <corallo@link.it>
- * @author $Author: apoli $
- * @version $Rev: 12237 $, $Date: 2016-10-04 11:41:45 +0200 (Tue, 04 Oct 2016) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public interface IDiagnosticDriver extends IComponentFactory {
 

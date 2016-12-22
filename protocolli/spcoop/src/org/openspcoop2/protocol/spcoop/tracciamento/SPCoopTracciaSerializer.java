@@ -47,8 +47,8 @@ import org.openspcoop2.protocol.spcoop.builder.SPCoopImbustamento;
  * Classe che implementa, in base al protocollo SPCoop, l'interfaccia {@link org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer} 
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 12359 $, $Date: 2016-11-18 17:24:57 +0100 (Fri, 18 Nov 2016) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class SPCoopTracciaSerializer extends TracciaSerializer implements ITracciaSerializer {
 	

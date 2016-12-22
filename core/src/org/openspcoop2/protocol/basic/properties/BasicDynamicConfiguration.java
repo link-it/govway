@@ -42,8 +42,8 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
  * BasicTraduttore
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 12362 $, $Date: 2016-11-21 15:44:14 +0100 (Mon, 21 Nov 2016) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class BasicDynamicConfiguration extends BasicComponentFactory implements org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration {
 

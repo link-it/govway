@@ -30,8 +30,8 @@ import org.openspcoop2.message.exception.MessageException;
  * SoapMediaTypeCollection
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 12237 $, $Date: 2016-10-04 11:41:45 +0200 (Tue, 04 Oct 2016) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class SoapMediaTypeCollection extends AbstractMediaTypeCollection implements Serializable {
 

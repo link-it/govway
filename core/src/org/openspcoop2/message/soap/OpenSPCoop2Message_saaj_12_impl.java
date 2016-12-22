@@ -40,8 +40,8 @@ import com.sun.xml.messaging.saaj.packaging.mime.internet.ContentType;
  * Implementazione dell'OpenSPCoop2Message
  *
  * @author Lorenzo Nardi <nardi@link.it>
- * @author $Author: apoli $
- * @version $Rev: 12237 $, $Date: 2016-10-04 11:41:45 +0200 (Tue, 04 Oct 2016) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 public class OpenSPCoop2Message_saaj_12_impl extends AbstractOpenSPCoop2Message_saaj_impl

@@ -40,8 +40,8 @@ import org.openspcoop2.protocol.as4.config.AS4Properties;
  * Classe che implementa, in base al protocollo AS4, l'interfaccia {@link org.openspcoop2.protocol.sdk.builder.IBustaBuilder} 
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 12499 $, $Date: 2016-12-16 12:25:57 +0100 (Fri, 16 Dec 2016) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class AS4BustaBuilder extends BustaBuilder<BasicEmptyRawContent> {
 

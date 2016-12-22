@@ -42,8 +42,8 @@ import org.slf4j.Logger;
  * Factory del protocollo AS4
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 12362 $, $Date: 2016-11-21 15:44:14 +0100 (Mon, 21 Nov 2016) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class AS4Factory extends BasicEmptyRawContentFactory {
 

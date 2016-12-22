@@ -45,8 +45,8 @@ import com.sun.xml.messaging.saaj.soap.ver1_2.Message1_2Impl;
  *
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 12237 $, $Date: 2016-10-04 11:41:45 +0200 (Tue, 04 Oct 2016) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class Message1_2_FIX_Impl extends Message1_2Impl {
 	
