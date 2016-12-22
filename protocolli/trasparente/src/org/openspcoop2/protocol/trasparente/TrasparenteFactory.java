@@ -29,6 +29,8 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
 import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
+import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
+import org.openspcoop2.protocol.trasparente.properties.TrasparenteTestsuiteDynamicConfiguration;
 import org.openspcoop2.protocol.trasparente.builder.TrasparenteBustaBuilder;
 import org.openspcoop2.protocol.trasparente.config.TrasparenteProperties;
 import org.openspcoop2.protocol.trasparente.config.TrasparenteProtocolConfiguration;
@@ -101,5 +103,14 @@ public class TrasparenteFactory extends BasicEmptyRawContentFactory {
 		return new TrasparenteProtocolConfiguration(this);
 	}
 
+	
+	/* ** CONSOLE ** */
+	
+	@Override
+	public IConsoleDynamicConfiguration createDynamicConfigurationConsole() throws ProtocolException{
+		if(TrasparenteProperties.getInstance(getLogger()).isUtilizzaTestSuiteProtocolProperties())
+			return new TrasparenteTestsuiteDynamicConfiguration(this);
+		else return super.createDynamicConfigurationConsole();
+	}
 	
 }

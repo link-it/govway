@@ -249,4 +249,33 @@ public class TrasparenteProperties {
     	return TrasparenteProperties.isAggiungiDetailErroreApplicativo_SoapFaultPdD;
 	}
 
+    
+    /* **** TESTSUITE PROTOCOL PROPERTIES **** */ 
+    
+	private static Boolean utilizzaTestSuiteProtocolProperties = null;
+	public Boolean isUtilizzaTestSuiteProtocolProperties(){
+		if(TrasparenteProperties.utilizzaTestSuiteProtocolProperties==null){
+			
+			Boolean defaultValue = false;
+			String propertyName = "org.openspcoop2.protocol.trasparente.protocolProperties.testsuite.enabled";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					TrasparenteProperties.utilizzaTestSuiteProtocolProperties = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue);
+					TrasparenteProperties.utilizzaTestSuiteProtocolProperties = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+propertyName+"' non impostata, viene utilizzato il default="+defaultValue+", errore:"+e.getMessage());
+				TrasparenteProperties.utilizzaTestSuiteProtocolProperties = defaultValue;
+			}
+		}
+
+		return TrasparenteProperties.utilizzaTestSuiteProtocolProperties;
+	}
 }
