@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Vector;
 
 import javax.servlet.http.HttpSession;
 
@@ -130,42 +131,40 @@ public class ProtocolPropertiesUtilities {
 			return ConsoleInterfaceType.STANDARD;
 	}
 
-	public static DataElement itemToDataElement(BaseConsoleItem item, ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, Properties binaryChangeProperties, ProtocolProperty protocolProperty, int size) throws Exception {
+	public static Vector<DataElement> itemToDataElement(Vector<DataElement> dati ,BaseConsoleItem item, ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, Properties binaryChangeProperties, ProtocolProperty protocolProperty, int size) throws Exception {
 		if(item == null)
-			return null;
-
-		DataElement de = null;
+			return dati;
 
 		// tipi con valore
 		if(item instanceof AbstractConsoleItem<?>){
 			AbstractConsoleItem<?> abItem = (AbstractConsoleItem<?>) item;
 			switch (abItem.getType()) {
 			case CHECKBOX:
-				de = getCheckbox(abItem, size);
+				dati = getCheckbox(dati,abItem, size);
 				break;
 			case CRYPT:
-				de = getText(abItem, size, DataElementType.CRYPT);
+				dati = getText(dati,abItem, size, DataElementType.CRYPT);
 				break;
 			case FILE:
-				de = getFile(abItem, size, consoleOperationType,consoleInterfaceType,binaryChangeProperties, protocolProperty); 
+				dati = getFile(dati,abItem, size, consoleOperationType,consoleInterfaceType,binaryChangeProperties, protocolProperty); 
 				break;
 			case HIDDEN:
-				de = getHidden(abItem, size);
+				dati = getHidden(dati,abItem, size);
 				break;
 			case SELECT:
-				de = getSelect(abItem,size);
+				dati = getSelect(dati,abItem,size);
 				break;
 			case TEXT:
-				de = getText(abItem, size, DataElementType.TEXT);
+				dati = getText(dati,abItem, size, DataElementType.TEXT);
 				break;
 			case TEXT_AREA:
-				de = getText(abItem, size, DataElementType.TEXT_AREA);
+				dati = getText(dati,abItem, size, DataElementType.TEXT_AREA);
 				break;
 			case TEXT_AREA_NO_EDIT:
-				de = getText(abItem, size, DataElementType.TEXT_AREA_NO_EDIT);
+				dati = getText(dati,abItem, size, DataElementType.TEXT_AREA_NO_EDIT);
 				break;
 			case TEXT_EDIT:
-				de = getText(abItem, size, DataElementType.TEXT_EDIT);
+				dati = getText(dati,abItem, size, DataElementType.TEXT_EDIT);
 				break;
 			default:
 				throw new ProtocolException("Item con classe ["+abItem.getClass()+"] identificato come tipo AbstractConsoleItem ma con Type: ["+abItem.getType()+"] di tipo titolo o note");
@@ -174,30 +173,33 @@ public class ProtocolPropertiesUtilities {
 			// titoli e note
 			switch (item.getType()) {
 			case NOTE:
-				de = getTitle(item, size,DataElementType.NOTE);
+				dati = getTitle(dati,item, size,DataElementType.NOTE);
 				break;
 			case TITLE:
-				de = getTitle(item, size,DataElementType.TITLE);
+				dati = getTitle(dati,item, size,DataElementType.TITLE);
 				break;
 			default:
 				throw new ProtocolException("Item con classe ["+item.getClass()+"] non identificato come tipo AbstractConsoleItem ma con Type: ["+item.getType()+"] non di tipo titolo o note");
 			}
 		}
 
-		return de;
+		return dati;
 	}
 
-	public static DataElement getTitle(BaseConsoleItem item, int size, DataElementType type) throws Exception{
+	public static Vector<DataElement> getTitle(Vector<DataElement> dati ,BaseConsoleItem item, int size, DataElementType type) throws Exception{
 		DataElement de = new DataElement();
 		de.setName(item.getId());
 		de.setType(type);
 		de.setLabel(item.getLabel());
 		de.setSize(size);
 		de.setValue("");
-		return de;
+
+		dati.addElement(de);
+
+		return dati;
 	}
 
-	public static DataElement getText(AbstractConsoleItem<?> item, int size, DataElementType type) throws Exception{
+	public static Vector<DataElement> getText(Vector<DataElement> dati ,AbstractConsoleItem<?> item, int size, DataElementType type) throws Exception{
 		DataElement de = new DataElement();
 		de.setName(item.getId());
 		de.setType(type);
@@ -229,12 +231,15 @@ public class ProtocolPropertiesUtilities {
 			throw new ProtocolException("Item con consoleItemType ["+consoleItemValueType+"] non puo' essere visualizzato come un "+type);
 		}
 
-		return de;
+		dati.addElement(de);
+
+		return dati;
 	}
 
-	public static DataElement getFile(AbstractConsoleItem<?> item, int size, ConsoleOperationType consoleOperationType, 
+	public static Vector<DataElement> getFile(Vector<DataElement> dati ,AbstractConsoleItem<?> item, int size, ConsoleOperationType consoleOperationType, 
 			ConsoleInterfaceType consoleInterfaceType, Properties binaryChangeProperties,ProtocolProperty protocolProperty) throws Exception{
 		DataElement de = new DataElement();
+		DataElement de2 =null;
 		de.setName(item.getId());
 		if(consoleOperationType.equals(ConsoleOperationType.ADD)){
 			de.setType(DataElementType.FILE);
@@ -267,6 +272,15 @@ public class ProtocolPropertiesUtilities {
 					new Parameter(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO,protocollo),
 					new Parameter(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO, tipoAccordo),
 					new Parameter(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE,urlChange));
+
+
+			if(protocolProperty != null){
+				de2 = new DataElement();
+				de2.setName(item.getId()+ ProtocolPropertiesCostanti.SUFFIX_PARAMETER_FILENAME);
+				de2.setValue(protocolProperty.getFile());
+				de2.setType(DataElementType.HIDDEN);
+				
+			}
 		}
 
 		ConsoleItemValueType consoleItemValueType = ProtocolPropertiesUtils.getConsoleItemValueType(item);
@@ -298,10 +312,15 @@ public class ProtocolPropertiesUtilities {
 			throw new ProtocolException("Item con consoleItemType ["+consoleItemValueType+"] non puo' essere visualizzato come un file");
 		}
 
-		return de;
+		dati.addElement(de);
+		
+		if(de2 != null)
+			dati.addElement(de2);
+
+		return dati;
 	}
 
-	public static DataElement getCheckbox(AbstractConsoleItem<?> item, int size) throws Exception{
+	public static Vector<DataElement> getCheckbox(Vector<DataElement> dati ,AbstractConsoleItem<?> item, int size) throws Exception{
 		DataElement de = new DataElement();
 		de.setName(item.getId());
 		de.setType(DataElementType.CHECKBOX);
@@ -331,10 +350,12 @@ public class ProtocolPropertiesUtilities {
 			throw new ProtocolException("Item con consoleItemType ["+consoleItemValueType+"] non puo' essere visualizzato come una CheckBox");
 		}
 
-		return de;
+		dati.addElement(de);
+
+		return dati;
 	}
 
-	public static DataElement getHidden(AbstractConsoleItem<?> item, int size) throws Exception{
+	public static Vector<DataElement> getHidden(Vector<DataElement> dati ,AbstractConsoleItem<?> item, int size) throws Exception{
 		DataElement de = new DataElement();
 		de.setName(item.getId());
 		de.setType(DataElementType.HIDDEN);
@@ -366,10 +387,12 @@ public class ProtocolPropertiesUtilities {
 			throw new ProtocolException("Item con consoleItemType ["+consoleItemValueType+"] non puo' essere visualizzato come una Hidden");
 		}
 
-		return de;
+		dati.addElement(de);
+
+		return dati;
 	}
 
-	public static DataElement getSelect(AbstractConsoleItem<?> item, int size) throws Exception{
+	public static Vector<DataElement> getSelect(Vector<DataElement> dati ,AbstractConsoleItem<?> item, int size) throws Exception{
 		DataElement de = new DataElement();
 		de.setName(item.getId());
 		de.setType(DataElementType.SELECT);
@@ -423,7 +446,9 @@ public class ProtocolPropertiesUtilities {
 		de.setValues(values);
 		de.setLabels(labels); 
 
-		return de;
+		dati.addElement(de);
+
+		return dati;
 	}
 
 	public static String getLabelTipoProprietario(ProprietariProtocolProperty tipoProprietario, String tipoAccordo) {
@@ -448,5 +473,14 @@ public class ProtocolPropertiesUtilities {
 			}
 		}
 		return null;
+	}
+
+	public static String getValueParametroTipoProprietarioAccordoServizio(String tipo){
+		if(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE.equals(tipo)){
+			return ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO_VALUE_ACCORDO_SERVIZIO_PARTE_COMUNE;
+		}
+		else{
+			return ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO_VALUE_ACCORDO_SERVIZIO_COMPOSTO;
+		}
 	}
 }

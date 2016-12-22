@@ -74,5 +74,7 @@ public class ProtocolPropertiesCostanti {
 	
 	public final static String PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE = "apc";
 	public final static String PARAMETRO_VALORE_PP_TIPO_ACCORDO_SERVIZIO_COMPOSTO = "asc";
+
+	public static final String SUFFIX_PARAMETER_FILENAME = "_fn";  
  
 }

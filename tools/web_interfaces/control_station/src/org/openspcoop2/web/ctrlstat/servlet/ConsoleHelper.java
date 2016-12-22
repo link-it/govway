@@ -228,7 +228,7 @@ public class ConsoleHelper {
 						String fileName = getBodyPartFileName(bodyPart);
 						if(fileName != null)
 							this.mapNomiFileParametri.put(partName, fileName);
-						
+
 					}else throw new Exception("Parametro ["+partName+"] Duplicato.");
 				}
 			}
@@ -346,16 +346,16 @@ public class ConsoleHelper {
 
 		return null;
 	}
-	
+
 	public String getFileNameParameter(String parameterName) throws Exception {
 		if(this.multipart){
 			return this.mapNomiFileParametri.get(parameterName);
-		}
+		} else 
+			return this.request.getParameter(parameterName);
 
-		return null;
 	}
-	
-	
+
+
 	public ProtocolProperties estraiProtocolPropertiesDaRequest(ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType, String propertyId, String parameterName, byte[] binaryParameterValue) throws Exception {
 		ProtocolProperties properties = new ProtocolProperties();
 
@@ -372,7 +372,7 @@ public class ConsoleHelper {
 						String filename = null;
 						if(propertyId == null || !propertyId.equals(item.getId())){
 							binaryParameter = this.getBinaryParameter(item.getId());
-							filename = this.getFileNameParameter(item.getId());
+							filename = this.getFileNameParameter(item.getId() + ProtocolPropertiesCostanti.SUFFIX_PARAMETER_FILENAME);
 						} else {
 							filename = this.getFileNameParameter(parameterName);
 						}
@@ -2062,8 +2062,7 @@ public class ConsoleHelper {
 			ProtocolPropertiesUtils.setDefaultValue(item, property != null ? property.getValue() : null); 
 
 			ProtocolProperty protocolProperty = ProtocolPropertiesUtils.getProtocolProperty(item.getId(), listaProtocolPropertiesDaDB); 
-			DataElement de = ProtocolPropertiesUtilities.itemToDataElement(item,  consoleOperationType, consoleInterfaceType, binaryPropertyChangeInfoProprietario, protocolProperty, this.getSize());
-			dati.addElement(de);
+			dati = ProtocolPropertiesUtilities.itemToDataElement(dati,item,  consoleOperationType, consoleInterfaceType, binaryPropertyChangeInfoProprietario, protocolProperty, this.getSize());
 		}
 
 		// Imposto il flag per indicare che ho caricato la configurazione
@@ -2114,7 +2113,7 @@ public class ConsoleHelper {
 					}
 					else if(consoleItem instanceof BinaryConsoleItem){
 						BinaryProperty bp = (BinaryProperty) property;
-						if (consoleItem.isRequired() && bp.getValue() == null) {
+						if (consoleOperationType.equals(ConsoleOperationType.ADD) && consoleItem.isRequired() && (bp.getValue() == null || bp.getValue().length == 0)) {
 							throw new ProtocolException("Dati incompleti. E' necessario indicare: "+consoleItem.getLabel());
 						}
 					}
@@ -2132,6 +2131,30 @@ public class ConsoleHelper {
 			throw new ProtocolException(e);
 		} catch (RegExpNotFoundException e) {
 			throw new ProtocolException(e);
+		} catch (ProtocolException e) {
+			throw e;
+		}
+
+	}
+
+	public void validaProtocolPropertyBinaria(String nome, ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType, ProtocolProperties properties) throws ProtocolException{
+		try {
+			List<BaseConsoleItem> consoleItems = consoleConfiguration.getConsoleItem();
+			for (int i = 0; i < properties.sizeProperties(); i++) {
+				AbstractProperty<?> property = properties.getProperty(i);
+				AbstractConsoleItem<?> consoleItem = ProtocolPropertiesUtils.getAbstractConsoleItem(consoleItems, property);
+
+				if(consoleItem != null) {
+					if(consoleItem instanceof BinaryConsoleItem && consoleItem.getId().equals(nome)){ 
+						BinaryProperty bp = (BinaryProperty) property;
+						if (consoleItem.isRequired() && (bp.getValue() == null || bp.getValue().length == 0)) {
+							throw new ProtocolException("Dati incompleti. E' necessario indicare: "+consoleItem.getLabel());
+						}
+
+					}
+				}
+			}
+
 		} catch (ProtocolException e) {
 			throw e;
 		}

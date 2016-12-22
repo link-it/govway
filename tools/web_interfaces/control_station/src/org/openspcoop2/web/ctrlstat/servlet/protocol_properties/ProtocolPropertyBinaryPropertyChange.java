@@ -184,7 +184,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			boolean isOk = true;
 
 			try{
-				ppHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+				ppHelper.validaProtocolPropertyBinaria(this.nome,this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
 			}catch(ProtocolException e){
 				pd.setMessage(e.getMessage());
 				isOk = false;
