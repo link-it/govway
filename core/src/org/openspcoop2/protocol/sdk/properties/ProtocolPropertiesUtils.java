@@ -217,7 +217,7 @@ public class ProtocolPropertiesUtils {
 					} else if(property instanceof BinaryProperty){
 						BinaryProperty bp = (BinaryProperty) property;
 						bp.setValue(protocolProperty.getByteFile());
-//						bp.setFileName(protocolProperty.getFile());
+						bp.setFileName(protocolProperty.getFile());
 					} else if(property instanceof BooleanProperty){
 						BooleanProperty bp = (BooleanProperty) property;
 						bp.setValue(protocolProperty.getBooleanValue());
