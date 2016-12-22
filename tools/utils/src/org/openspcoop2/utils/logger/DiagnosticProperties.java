@@ -34,8 +34,8 @@ import org.openspcoop2.utils.logger.constants.Severity;
  * DiagnosticManager
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 11983 $, $Date: 2016-05-27 13:07:16 +0200 (Fri, 27 May 2016) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class DiagnosticProperties {
 
