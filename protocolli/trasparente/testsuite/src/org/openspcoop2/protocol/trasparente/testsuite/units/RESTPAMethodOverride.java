@@ -24,6 +24,7 @@ package org.openspcoop2.protocol.trasparente.testsuite.units;
 import java.util.Date;
 import java.util.Vector;
 
+import org.openspcoop2.protocol.trasparente.testsuite.units.RESTCore.RUOLO;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.DataProviderUtils;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
 import org.openspcoop2.testsuite.core.Repository;
@@ -50,7 +51,7 @@ public class RESTPAMethodOverride {
 	private RESTCore restCore;
 	
 	public RESTPAMethodOverride() {
-		this.restCore = new RESTCore(this.method, false);
+		this.restCore = new RESTCore(this.method, RUOLO.PORTA_APPLICATIVA);
 	}
 	
 	private Date dataAvvioGruppoTest = null;

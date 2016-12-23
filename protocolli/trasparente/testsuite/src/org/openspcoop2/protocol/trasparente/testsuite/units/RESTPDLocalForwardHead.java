@@ -37,21 +37,21 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
- * RESTPAPost
+ * RESTPDPost
  * 
  * @author Giovanni Bussu (bussu@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 12535 $, $Date: 2016-12-22 11:35:59 +0100(gio, 22 dic 2016) $
  */
-public class RESTPAHead {
+public class RESTPDLocalForwardHead {
 
-	private final static String ID_GRUPPO = "REST.PA.HEAD";
+	private final static String ID_GRUPPO = "REST.PD.LOCAL_FORWARD.HEAD";
 	private HttpRequestMethod method = HttpRequestMethod.HEAD;
 
 	private RESTCore restCore;
 	
-	public RESTPAHead() {
-		this.restCore = new RESTCore(this.method, RUOLO.PORTA_APPLICATIVA);
+	public RESTPDLocalForwardHead() {
+		this.restCore = new RESTCore(this.method, RUOLO.PORTA_DELEGATA_LOCAL_FORWARD);
 	}
 	
 	private Date dataAvvioGruppoTest = null;
@@ -103,32 +103,32 @@ public class RESTPAHead {
 		return DataProviderUtils.contentTypeXMLConCon();
 	}
 
-	@Test(groups={RESTCore.REST,RESTCore.REST_PA,RESTPAHead.ID_GRUPPO,RESTPAHead.ID_GRUPPO+".SenzaContenutoRichiesta_ConContenutoRispostaJSON"},dataProvider="contentTypeJSONConCon")
+	@Test(groups={RESTCore.REST,RESTCore.REST_PD_LOCAL_FORWARD,RESTPDLocalForwardHead.ID_GRUPPO,RESTPDLocalForwardHead.ID_GRUPPO+".SenzaContenutoRichiesta_ConContenutoRispostaJSON"},dataProvider="contentTypeJSONConCon")
 	public void test_SenzaContenutoRichiesta_ConContenutoRispostaJSON(String contentType, int responseCodeAtteso) throws TestSuiteException, Exception{
 		Repository repository=new Repository();
 		this.restCore.invoke("json", responseCodeAtteso, repository, false, true, contentType);
-		this.restCore.postInvoke(repository);
+		this.restCore.postInvokeLocalForward(repository, responseCodeAtteso > 299);
 	}
 
-	@Test(groups={RESTCore.REST,RESTCore.REST_PA,RESTPAHead.ID_GRUPPO,RESTPAHead.ID_GRUPPO+".SenzaContenutoRichiesta_ConContenutoRispostaBinary"},dataProvider="contentTypeBinaryConCon")
+	@Test(groups={RESTCore.REST,RESTCore.REST_PD_LOCAL_FORWARD,RESTPDLocalForwardHead.ID_GRUPPO,RESTPDLocalForwardHead.ID_GRUPPO+".SenzaContenutoRichiesta_ConContenutoRispostaBinary"},dataProvider="contentTypeBinaryConCon")
 	public void test_SenzaContenutoRichiesta_ConContenutoRispostaBinary(String tipoTest, int responseCodeAtteso) throws TestSuiteException, Exception{
 		Repository repository=new Repository();
 		this.restCore.invoke(tipoTest, responseCodeAtteso, repository, false, true, null);
-		this.restCore.postInvoke(repository);
+		this.restCore.postInvokeLocalForward(repository, responseCodeAtteso > 299);
 	}
 	
-	@Test(groups={RESTCore.REST,RESTCore.REST_PA,RESTPAHead.ID_GRUPPO,RESTPAHead.ID_GRUPPO+".SenzaContenutoRichiesta_ConContenutoRispostaXML"},dataProvider="contentTypeXMLConCon")
+	@Test(groups={RESTCore.REST,RESTCore.REST_PD_LOCAL_FORWARD,RESTPDLocalForwardHead.ID_GRUPPO,RESTPDLocalForwardHead.ID_GRUPPO+".SenzaContenutoRichiesta_ConContenutoRispostaXML"},dataProvider="contentTypeXMLConCon")
 	public void test_SenzaContenutoRichiesta_ConContenutoRispostaXML(String contentType, int responseCodeAtteso) throws TestSuiteException, Exception{
 		Repository repository=new Repository();
 		this.restCore.invoke("xml", responseCodeAtteso, repository, false, true, contentType);
-		this.restCore.postInvoke(repository);
+		this.restCore.postInvokeLocalForward(repository, responseCodeAtteso > 299);
 	}
 	
-	@Test(groups={RESTCore.REST,RESTCore.REST_PA,RESTPAHead.ID_GRUPPO,RESTPAHead.ID_GRUPPO+".SenzaContenutoRichiesta_ConContenutoRispostaMulti"},dataProvider="responseCodeConCon")
+	@Test(groups={RESTCore.REST,RESTCore.REST_PD_LOCAL_FORWARD,RESTPDLocalForwardHead.ID_GRUPPO,RESTPDLocalForwardHead.ID_GRUPPO+".SenzaContenutoRichiesta_ConContenutoRispostaMulti"},dataProvider="responseCodeConCon")
 	public void test_SenzaContenutoRichiesta_ConContenutoRispostaMulti(int responseCodeAtteso) throws TestSuiteException, Exception{
 		Repository repository=new Repository();
 		this.restCore.invoke("multi", responseCodeAtteso, repository, false, true, null);
-		this.restCore.postInvoke(repository);
+		this.restCore.postInvokeLocalForward(repository, responseCodeAtteso > 299);
 	}
 
 

@@ -24,6 +24,7 @@ package org.openspcoop2.protocol.trasparente.testsuite.units;
 import java.util.Date;
 import java.util.Vector;
 
+import org.openspcoop2.protocol.trasparente.testsuite.units.RESTCore.RUOLO;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.DataProviderUtils;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
 import org.openspcoop2.testsuite.core.Repository;
@@ -50,7 +51,7 @@ public class RESTPDTrace {
 	private RESTCore restCore;
 	
 	public RESTPDTrace() {
-		this.restCore = new RESTCore(this.method, true);
+		this.restCore = new RESTCore(this.method, RUOLO.PORTA_DELEGATA);
 	}
 	
 	private Date dataAvvioGruppoTest = null;
