@@ -21,9 +21,11 @@
 
 package org.openspcoop2.protocol.as4.config;
 
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.basic.config.BasicConfiguration;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.utils.transport.TransportRequestContext;
 
 /**
  * Classe che implementa, in base al protocollo AS4, l'interfaccia {@link org.openspcoop2.protocol.sdk.config.IProtocolConfiguration} 
@@ -36,6 +38,11 @@ public class AS4ProtocolConfiguration extends BasicConfiguration {
 
 	public AS4ProtocolConfiguration(IProtocolFactory<?> factory) throws ProtocolException {
 		super(factory);
+	}
+	
+	@Override
+	public ServiceBinding getProtocolServiceBinding(ServiceBinding integrationServiceBinding, TransportRequestContext transportRequest) throws ProtocolException{
+		return ServiceBinding.SOAP; // protocol è forzatamente SOAP1.2
 	}
 	
 }
