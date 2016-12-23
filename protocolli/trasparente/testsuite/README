@@ -125,7 +125,7 @@ Requisiti globali:
 3) Impostare un tempo di rispedizione per la coda JMS 'toInoltroBuste' e 'toConsegnaContenutiApplicativi' a 15 secondi
    (<attribute name="RedeliveryDelay">15000</attribute>)
 
-** Porta Delegata **
+** Porta Delegata (SOAP) **
 
 (NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
 
@@ -139,7 +139,7 @@ Altrimenti e' possibile lanciare per sottogruppi i test attraverso i seguenti gr
 - 'PortaDelegataFault500': vengono effettuate le stesse verifiche del gruppo 'PortaDelegataNonAutenticato', dove il servizio applicativo invocato restituisce un SOAPF
 ault con codice di trasporto 500
 
-** Porta Applicativa **
+** Porta Applicativa (SOAP) **
 
 (NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
 
@@ -148,19 +148,31 @@ Batterie di test che verificano la normale gestione del servizio Porta Delegata
 Altrimenti e' possibile lanciare per sottogruppi i test attraverso i seguenti gruppi:
 - 'PortaApplicativaNonAutenticato': viene verificato il profilo di collaborazione oneway e sincrono utilizzando messaggi SOAP 1.1 e 1.2 sia con che senza attachments. Vengono inoltre verificate sia la modalita' stateless che la modalita' stateful
 - 'PortaApplicativaAutenticato': vengono effettuate le stesse verifiche del gruppo 'PortaApplicativaNonAutenticato', previa autenticazione/autorizzazione del servizio applicativo fruitore.
-- 'PortaApplicativaLocalForward': vengono effettuate le stesse verifiche del gruppo 'PortaApplicativaNonAutenticato', con configurazione in local-forward.
 - 'PortaApplicativaFault200': vengono effettuate le stesse verifiche del gruppo 'PortaApplicativaNonAutenticato', dove il servizio applicativo invocato restituisce un SOAPFault con codice di trasporto 200
 - 'PortaApplicativaFault500': vengono effettuate le stesse verifiche del gruppo 'PortaApplicativaNonAutenticato', dove il servizio applicativo invocato restituisce un SOAPF
 ault con codice di trasporto 500
 
-** REST **
+** Porta Delegata e Applicativa (REST) **
 
-Scrivere poi il readme....
-
-inoltre come requisito c'è da abilitare il TRACE METHOD http che senno è '405 Not Allowed'
+!! Pre-requisito !!
+a. Deve essere abilitato il TRACE METHOD http, altrimenti risulta '405 Not Allowed'
 Per farlo su wildfly aggiungere l'attributo disallowed-methods valorizzato vuoto:
   <http-listener name="default" socket-binding="http" redirect-socket="https" disallowed-methods=""/>
-Scoprire come fare sugli altri AS
+TODO: Scoprire come fare sugli altri AS
+
+Batterie di test che verificano la normale gestione del servizio REST:
+- 'REST.PD': vengono eseguiti tutti i test riguardanti la PortaDelegata
+- 'REST.PA': vengono eseguiti tutti i test riguardanti la PortaApplicativa
+Altrimenti e' possibile lanciare per sottogruppi i test attraverso i seguenti gruppi:
+- 'REST.[PD/PA].DELETE': test che riguardano l'http method 'DELETE'
+- 'REST.[PD/PA].GET': test che riguardano l'http method 'GET'
+- 'REST.[PD/PA].HEAD': test che riguardano l'http method 'HEAD'
+- 'REST.[PD/PA].POST': test che riguardano l'http method 'POST'
+- 'REST.[PD/PA].PUT': test che riguardano l'http method 'PUT'
+- 'REST.[PD/PA].TRACE': test che riguardano l'http method 'TRACE'
+- 'REST.[PD/PA].OPTIONS': test che riguardano l'http method 'OPTIONS'
+- 'REST.[PD/PA].METHOD_OVERRIDE': test che riguardano la verifica dell'inoltro dell'header http 'X-HTTP-Method-Override' durante una POST
+
 
 
 

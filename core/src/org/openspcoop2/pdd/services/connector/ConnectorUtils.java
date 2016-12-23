@@ -80,11 +80,9 @@ public class ConnectorUtils {
 				
 		ServiceBinding serviceBindingDaUtilizzare = integrationServiceBinding;
 		boolean pa = false;
-		if(integrationServiceBinding.equals(protocolServiceBinding)==false){
-			if(URLProtocolContext.PA_FUNCTION.equals(protocolContext.getFunction())){
-				serviceBindingDaUtilizzare = protocolServiceBinding;
-				pa = true;
-			}
+		if(URLProtocolContext.PA_FUNCTION.equals(protocolContext.getFunction())){
+			serviceBindingDaUtilizzare = protocolServiceBinding;
+			pa = true;
 		}
 		
 		MessageType requestMessageType = bindingConfig.getMessageType(serviceBindingDaUtilizzare, MessageRole.REQUEST, 
