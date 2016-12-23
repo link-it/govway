@@ -10,6 +10,7 @@
 	<import file="${openspcoop2}/ant/commons/svn-build.xml" />
 	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
 	<import file="${openspcoop2}/ant/commons/api-build.xml" />
+	<import file="${openspcoop2}/ant/commons/stub-build.xml" />
 
 	<!-- directory root -->
 	<property name="svn_rootDir" location="${openspcoop2}" />
@@ -182,6 +183,36 @@
 			
 	</target>
 	<target name="build" depends="compile_as4_plugin" />
+	
+	
+	
+	
+	
+	<!-- Stub EcodexBackend  CXF-->
+	<target name="build_stub" depends="init_compile">
+	
+		<!-- generazione Stub IntegrationManager.MessageBox -->
+		<!-- <echo message="${build}"/> -->
+		<mkdir dir="${build}/srcStubEcodexBackendCXF" />
+		<mkdir dir="${build}/buildStubEcodexBackendCXF" />
+		<antcall target="build_cxf">
+			<param name="stubBuild.srcDir" value="${build}/srcStubEcodexBackendCXF"/>
+			<param name="stubBuild.cleanSrcDir" value="false"/>
+			<param name="stubBuild.urlWSDL" value="deploy/wsdl/org-ecodex-backend-1_1.wsdl"/>
+			<param name="stubBuild.buildDir" value="${build}/buildStubEcodexBackendCXF"/>
+			<param name="debug" value="${debug}"/>
+			<param name="stubBuild.buildJar" value="true"/>
+			<param name="stubBuild.jar" value="${dist}/openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
+			<param name="stubPackageOverriding" value="org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1"/>
+			<param name="serviceFile" value="${build}/srcStubEcodexBackendCXF/org/openspcoop2/protocol/as4/stub/backend_ecodex/v1_1/BackendService11.java"/>
+			<param name="className" value="BackendService11"/>
+			<param name="wsdlName" value="org-ecodex-backend-1_1.wsdl"/>
+		</antcall>
+		<!-- Copia libreria distribuita -->
+		<copy file="${dist}/openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar" todir="deploy/stub" />
+		
+		
+	</target>
 	
 	
 	
