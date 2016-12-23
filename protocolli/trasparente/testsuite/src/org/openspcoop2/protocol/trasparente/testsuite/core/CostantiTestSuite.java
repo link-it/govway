@@ -114,6 +114,9 @@ public class CostantiTestSuite {
 	/** Porte Delegate per il test dei profili di collaborazione: API */
 	public static final String PORTA_DELEGATA_REST_API="APIMinisteroFruitore/APIMinisteroErogatore/RESTAPI";
 	
+	/** Porte Delegate per il test dei profili di collaborazione: API */
+	public static final String PORTA_DELEGATA_REST_API_LOCAL_FORWARD="APIMinisteroFruitore/APIMinisteroErogatore/RESTAPI_viaLocalForward";
+	
 	
 	
 	/** Porte Applicative per il test dei profili di collaborazione: OneWay */

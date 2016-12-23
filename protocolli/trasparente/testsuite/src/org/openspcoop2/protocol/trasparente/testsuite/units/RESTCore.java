@@ -40,6 +40,7 @@ import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.TestSuiteProperties;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
+import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
 import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
 import org.openspcoop2.utils.mime.MimeMultipart;
@@ -67,7 +68,10 @@ public class RESTCore {
 
 	public static final String REST = "REST";
 	public static final String REST_PD = "REST.PD";
+	public static final String REST_PD_LOCAL_FORWARD = "REST.PD.LOCAL_FORWARD";
 	public static final String REST_PA = "REST.PA";
+
+	private static final String MSG_LOCAL_FORWARD = "Modalità 'local-forward' attiva, messaggio ruotato direttamente verso la porta applicativa";
 
 	private HttpRequestMethod method;
 	private String servizioRichiesto;
@@ -77,21 +81,35 @@ public class RESTCore {
 	/** Gestore della Collaborazione di Base */
 	private CooperazioneBase collaborazioneTrasparenteBase;
 
-	public RESTCore(HttpRequestMethod method, boolean delegata) {
+
+	public RESTCore(HttpRequestMethod method, boolean delegata)  {
+		this(method, delegata, false);
+	}
+	
+	public RESTCore(HttpRequestMethod method, boolean delegata, boolean localForward) {
 		this.method = method;
 		this.isDelegata = delegata;
 		IDSoggetto idSoggettoMittente = null;
 		IDSoggetto idSoggettoDestinatario = null;
-		if(this.isDelegata) {
-			this.servizioRichiesto = Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore();
-			this.portaApplicativaDelegata = CostantiTestSuite.PORTA_DELEGATA_REST_API;
-			idSoggettoMittente = CostantiTestSuite.PROXY_SOGGETTO_FRUITORE;
-			idSoggettoDestinatario = CostantiTestSuite.PROXY_SOGGETTO_EROGATORE;
+		if(!localForward) {
+			if(this.isDelegata) {
+				this.servizioRichiesto = Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore();
+				this.portaApplicativaDelegata = CostantiTestSuite.PORTA_DELEGATA_REST_API;
+				idSoggettoMittente = CostantiTestSuite.PROXY_SOGGETTO_FRUITORE;
+				idSoggettoDestinatario = CostantiTestSuite.PROXY_SOGGETTO_EROGATORE;
+			} else {
+				this.servizioRichiesto = Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore();
+				this.portaApplicativaDelegata = CostantiTestSuite.PORTA_APPLICATIVA_REST_API;
+				idSoggettoMittente = CostantiTestSuite.PROXY_SOGGETTO_FRUITORE_ANONIMO;
+				idSoggettoDestinatario = CostantiTestSuite.PROXY_SOGGETTO_EROGATORE;
+			}
 		} else {
-			this.servizioRichiesto = Utilities.testSuiteProperties.getServizioRicezioneBusteErogatore();
-			this.portaApplicativaDelegata = CostantiTestSuite.PORTA_APPLICATIVA_REST_API;
-			idSoggettoMittente = CostantiTestSuite.PROXY_SOGGETTO_FRUITORE_ANONIMO;
-			idSoggettoDestinatario = CostantiTestSuite.PROXY_SOGGETTO_EROGATORE;
+			if(this.isDelegata) {
+				this.servizioRichiesto = Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore();
+				this.portaApplicativaDelegata = CostantiTestSuite.PORTA_DELEGATA_REST_API_LOCAL_FORWARD;
+				idSoggettoMittente = CostantiTestSuite.PROXY_SOGGETTO_FRUITORE;
+				idSoggettoDestinatario = CostantiTestSuite.PROXY_SOGGETTO_EROGATORE;
+			}
 		}
 		
 		CooperazioneBaseInformazioni info = CooperazioneTrasparenteBase.getCooperazioneBaseInformazioni(idSoggettoMittente,
@@ -140,6 +158,53 @@ public class RESTCore {
 		}finally{
 			data.close();
 		}
+	}
+
+	public void postInvokeLocalForward(Repository repository) throws TestSuiteException, Exception{
+
+		
+		String id=repository.getNext();
+		if(org.openspcoop2.protocol.trasparente.testsuite.core.Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
+			try {
+				Thread.sleep(org.openspcoop2.protocol.trasparente.testsuite.core.Utilities.testSuiteProperties.timeToSleep_verificaDatabase());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		DatabaseMsgDiagnosticiComponent msgDiag = DatabaseProperties.getDatabaseComponentDiagnosticaFruitore();
+		DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
+		
+		if(!this.isDelegata) {
+			try {
+				Thread.sleep(2000); // in modo da dare il tempo al servizio di Testsuite di fare l'update delle tracce
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		try{
+			Reporter.log("Controllo tracciamento non eseguito per id: " +id);
+			Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id)==false);
+
+			Reporter.log("Controllo msg diag local forward per id: " +id);
+			Assert.assertTrue(msgDiag.isTracedMessaggioWithLike(id, MSG_LOCAL_FORWARD));
+
+			Reporter.log("Controllo msg diag local forward per id senza errori: " +id);
+			Assert.assertTrue(msgDiag.isTracedErrorMsg(id)==false);
+			
+			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","001005","007011","007012"));
+		}catch(Exception e){
+			throw e;
+		}finally{
+			try{
+				data.close();
+			}catch(Exception eClose){}
+			try{
+				msgDiag.close();
+			}catch(Exception eClose){}
+		}
+
 	}
 
 	public void invoke(String tipoTest, int returnCodeAtteso, Repository repository, boolean isRichiesta, boolean isRisposta, String contentType) throws TestSuiteException, Exception{
