@@ -25,7 +25,8 @@ import java.util.Date;
 
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.protocol.basic.BasicEmptyRawContent;
+import org.openspcoop2.protocol.as4.AS4RawContent;
+import org.openspcoop2.protocol.as4.config.AS4Properties;
 import org.openspcoop2.protocol.basic.builder.BustaBuilder;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -34,7 +35,6 @@ import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
-import org.openspcoop2.protocol.as4.config.AS4Properties;
 
 /**
  * Classe che implementa, in base al protocollo AS4, l'interfaccia {@link org.openspcoop2.protocol.sdk.builder.IBustaBuilder} 
@@ -43,7 +43,7 @@ import org.openspcoop2.protocol.as4.config.AS4Properties;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class AS4BustaBuilder extends BustaBuilder<BasicEmptyRawContent> {
+public class AS4BustaBuilder extends BustaBuilder<AS4RawContent> {
 
 
 	private AS4Properties as4Properties;
@@ -58,23 +58,9 @@ public class AS4BustaBuilder extends BustaBuilder<BasicEmptyRawContent> {
 			ProprietaManifestAttachments proprietaManifestAttachments)
 			throws ProtocolException {
 		
-		ProtocolMessage protocolMessage = super.imbustamento(state, msg, busta, ruoloMessaggio, proprietaManifestAttachments);
-				
-		if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio) && busta.sizeListaEccezioni()>0 ){
+		AS4Imbustamento imbustamento = new AS4Imbustamento();
+		return imbustamento.buildASMessage(msg, busta, ruoloMessaggio, proprietaManifestAttachments, this.getProtocolFactory().getCachedRegistryReader(state));
 		
-			boolean ignoraEccezioniNonGravi = this.protocolFactory.createProtocolManager().isIgnoraEccezioniNonGravi();
-			if(ignoraEccezioniNonGravi){
-				if(busta.containsEccezioniGravi() ){
-					this.addEccezioniInFault(msg, busta, ignoraEccezioniNonGravi);
-				}	
-			}
-			else{
-				this.addEccezioniInFault(msg, busta, ignoraEccezioniNonGravi);
-			}
-
-		}
-			
-		return protocolMessage;
 	}
 	
 	

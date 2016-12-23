@@ -22,19 +22,19 @@
 package org.openspcoop2.protocol.as4;
 
 
-import org.openspcoop2.protocol.basic.BasicEmptyRawContentFactory;
-import org.openspcoop2.protocol.manifest.Openspcoop2;
-import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
-import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
-import org.openspcoop2.protocol.sdk.config.IProtocolManager;
-import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.openspcoop2.protocol.as4.builder.AS4BustaBuilder;
 import org.openspcoop2.protocol.as4.config.AS4Properties;
 import org.openspcoop2.protocol.as4.config.AS4ProtocolConfiguration;
 import org.openspcoop2.protocol.as4.config.AS4ProtocolManager;
 import org.openspcoop2.protocol.as4.config.AS4ProtocolVersionManager;
 import org.openspcoop2.protocol.as4.validator.AS4ValidazioneSintattica;
+import org.openspcoop2.protocol.basic.BasicFactory;
+import org.openspcoop2.protocol.manifest.Openspcoop2;
+import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
+import org.openspcoop2.protocol.sdk.config.IProtocolManager;
+import org.openspcoop2.protocol.sdk.config.IProtocolVersionManager;
 import org.slf4j.Logger;
 
 
@@ -45,7 +45,7 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class AS4Factory extends BasicEmptyRawContentFactory {
+public class AS4Factory extends BasicFactory<AS4RawContent> {
 
 	/**
 	 * 

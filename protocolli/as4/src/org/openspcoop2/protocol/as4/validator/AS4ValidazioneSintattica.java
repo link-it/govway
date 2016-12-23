@@ -24,7 +24,7 @@
 package org.openspcoop2.protocol.as4.validator;
 
 
-import org.openspcoop2.protocol.basic.BasicEmptyRawContent;
+import org.openspcoop2.protocol.as4.AS4RawContent;
 import org.openspcoop2.protocol.basic.validator.ValidazioneSintattica;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -37,9 +37,9 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class AS4ValidazioneSintattica extends ValidazioneSintattica<BasicEmptyRawContent>{
+public class AS4ValidazioneSintattica extends ValidazioneSintattica<AS4RawContent>{
 
-	public AS4ValidazioneSintattica(IProtocolFactory<BasicEmptyRawContent> factory) throws ProtocolException {
+	public AS4ValidazioneSintattica(IProtocolFactory<AS4RawContent> factory) throws ProtocolException {
 		super(factory);
 	}
 
