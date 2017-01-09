@@ -37,11 +37,12 @@ import org.openspcoop2.utils.transport.Credential;
  * @version $Rev$, $Date$
  */
 public interface ConnectorInMessage {
-
+	
 	public IDService getIdModuloAsIDService();
 	
 	public String getIdModulo();
-	
+
+	public void updateRequestInfo(RequestInfo requestInfo) throws ConnectorException;
 	public RequestInfo getRequestInfo();
 	
 	public Object getAttribute(String key) throws ConnectorException;

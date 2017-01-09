@@ -40,11 +40,8 @@ public class AS4Costanti {
     public final static String AS4_PROPERTIES = "AS4_PROPERTIES";
     
     
-    public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_FROM_PARTY_ID_BASE = "ebmsUserMessageFromPartyId";
-    public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_FROM_PARTY_ID_TYPE = "ebmsUserMessageFromPartyIdType";
-    
-    public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_TO_PARTY_ID_BASE = "ebmsUserMessageToPartyId";
-    public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_TO_PARTY_ID_TYPE = "ebmsUserMessageToPartyIdType";
+    public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_BASE = "ebmsUserMessagePartyId";
+    public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_TYPE = "ebmsUserMessagePartyIdType";
     
     public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_BASE = "ebmsUserMessageCollaborationInfoService";
     public final static String AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_TYPE = "ebmsUserMessageCollaborationInfoServiceType";

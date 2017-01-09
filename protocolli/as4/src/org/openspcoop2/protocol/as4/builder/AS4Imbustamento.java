@@ -24,8 +24,17 @@ import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Property;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Service;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.To;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
+import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDPortType;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Operation;
+import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
@@ -72,9 +81,47 @@ public class AS4Imbustamento {
 			}
 			
 			
+			// **** Read object from Registry *****
+			
+			IDSoggetto idSoggettoMittente = new IDSoggetto(busta.getTipoMittente(),busta.getMittente());
+			Soggetto soggettoMittente = registryReader.getSoggetto(idSoggettoMittente);
+			
+			IDSoggetto idSoggettoDestinatario = new IDSoggetto(busta.getTipoDestinatario(),busta.getDestinatario());
+			Soggetto soggettoDestinatario = registryReader.getSoggetto(idSoggettoDestinatario);
+			
+			IDSoggetto idSoggettoErogatore = null;
+			if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)){
+				idSoggettoErogatore = idSoggettoDestinatario;
+			}
+			else{
+				idSoggettoErogatore = idSoggettoMittente;
+			}
+			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(), busta.getServizio(), 
+					idSoggettoErogatore, busta.getVersioneServizio());
+			AccordoServizioParteSpecifica asps = registryReader.getAccordoServizioParteSpecifica(idServizio);
+			
+			IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+			IDPortType idPT = new IDPortType();
+			idPT.setIdAccordo(idAccordo);
+			idPT.setNome(asps.getPortType());
+			PortType portType = registryReader.getPortType(idPT);
+			
+			Operation operation = null;
+			for (Operation opCheck : portType.getAzioneList()) {
+				if(opCheck.getNome().equals(busta.getAzione())){
+					operation = opCheck;
+					break;
+				}
+			}
+			if(operation==null){
+				throw new ProtocolException("Azione ["+busta.getAzione()+"] non trovata");
+			}
+			
+			
 			// **** Prepare *****
 			
-			Messaging ebmsV3_0Messagging = this.buildEbmsV3_0Messagging(ruoloMessaggio,busta,registryReader);
+			Messaging ebmsV3_0Messagging = this.buildEbmsV3_0Messagging(ruoloMessaggio,busta,
+					soggettoMittente, soggettoDestinatario, portType, operation);
 			
 			// PayloadInfo
 			PayloadInfo payloadInfo = new PayloadInfo();
@@ -86,9 +133,18 @@ public class AS4Imbustamento {
 			if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
 				
 				OpenSPCoop2SoapMessage soapMessage = msg.castAsSoap();
-				as4Message = soapMessage; // viene trasformato il messaggio ricevuto per avere benefici di performance
 				
-				mapAS4InfoFromSoapMessage(soapMessage, payloadInfo, sendRequest);
+				if(MessageType.SOAP_12.equals(msg.getMessageType())){
+					as4Message = soapMessage; // viene trasformato il messaggio ricevuto per avere benefici di performance
+				}
+				else{
+					as4Message = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.SOAP_12, messageRole).castAsSoap(); // viene creato ad hoc
+					msg.copyResourcesTo(as4Message);
+					
+					fillSoap12fromSoap11(as4Message, soapMessage);
+				}
+				
+				mapAS4InfoFromSoapMessage(as4Message, payloadInfo, sendRequest);
 
 			}
 			else{
@@ -100,6 +156,9 @@ public class AS4Imbustamento {
 				mapAS4InfoFromRestMessage(as4Message, restMessage, payloadInfo, sendRequest);
 				
 			}
+			
+			as4Message.setSoapAction("");
+			
 			
 			
 			// **** Build AS4 *****
@@ -133,7 +192,8 @@ public class AS4Imbustamento {
 		
 	}
 	
-	private Messaging buildEbmsV3_0Messagging(RuoloMessaggio ruoloMessaggio, Busta busta, IRegistryReader registryReader) throws RegistryNotFound, ProtocolException{
+	private Messaging buildEbmsV3_0Messagging(RuoloMessaggio ruoloMessaggio, Busta busta, 
+			Soggetto soggettoMittente, Soggetto soggettoDestinatario, PortType portType, Operation operation) throws RegistryNotFound, ProtocolException, DriverRegistroServiziException{
 		
 		Messaging ebmsV3_0Messagging = new Messaging();
 		
@@ -145,13 +205,14 @@ public class AS4Imbustamento {
 		PartyInfo partyInfo = new PartyInfo();
 		userMessage.setPartyInfo(partyInfo);
 		
+		// PartyInfo (From)
+
 		From from = new From();
-		Soggetto soggettoMittente = registryReader.getSoggetto(new IDSoggetto(busta.getTipoMittente(),busta.getMittente()));
 		PartyId partyIdFrom = new PartyId();
 		partyIdFrom.setBase(AS4PropertiesUtils.getRequiredStringValue(soggettoMittente.getProtocolPropertyList(), 
-				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_FROM_PARTY_ID_BASE, true));
+				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_BASE, true));
 		partyIdFrom.setType(AS4PropertiesUtils.getStringValue(soggettoMittente.getProtocolPropertyList(), 
-				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_FROM_PARTY_ID_TYPE, false));
+				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_TYPE, false));
 		from.addPartyId(partyIdFrom);
 		if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)){
 			from.setRole(AS4Costanti.AS4_USER_MESSAGE_FROM_ROLE_INITIATOR);
@@ -161,13 +222,14 @@ public class AS4Imbustamento {
 		}
 		partyInfo.setFrom(from);
 		
+		// PartyInfo (To)
+
 		To destinatario = new To();
-		Soggetto soggettoDestinatario = registryReader.getSoggetto(new IDSoggetto(busta.getTipoDestinatario(),busta.getDestinatario()));
 		PartyId partyIdTo = new PartyId();
 		partyIdTo.setBase(AS4PropertiesUtils.getRequiredStringValue(soggettoDestinatario.getProtocolPropertyList(), 
-				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_TO_PARTY_ID_BASE, true));
+				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_BASE, true));
 		partyIdTo.setType(AS4PropertiesUtils.getStringValue(soggettoDestinatario.getProtocolPropertyList(), 
-				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_TO_PARTY_ID_TYPE, false));
+				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_PARTY_ID_TYPE, false));
 		destinatario.addPartyId(partyIdTo);
 		if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)){
 			destinatario.setRole(AS4Costanti.AS4_USER_MESSAGE_FROM_ROLE_RESPONDER);
@@ -178,18 +240,22 @@ public class AS4Imbustamento {
 		partyInfo.setTo(destinatario);
 		
 		// CollaborationInfo
-		
+
 		CollaborationInfo collaborationInfo = new CollaborationInfo();
 		userMessage.setCollaborationInfo(collaborationInfo);
 		
+		// CollaborationInfo (Service)
+		
 		Service service = new Service();
-		service.setBase(AS4PropertiesUtils.getRequiredStringValue(soggettoDestinatario.getProtocolPropertyList(), 
+		service.setBase(AS4PropertiesUtils.getRequiredStringValue(portType.getProtocolPropertyList(), 
 				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_BASE, true));
-		service.setType(AS4PropertiesUtils.getRequiredStringValue(soggettoDestinatario.getProtocolPropertyList(), 
+		service.setType(AS4PropertiesUtils.getRequiredStringValue(portType.getProtocolPropertyList(), 
 				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_SERVICE_TYPE, true));
 		collaborationInfo.setService(service);
 		
-		collaborationInfo.setAction(AS4PropertiesUtils.getRequiredStringValue(soggettoDestinatario.getProtocolPropertyList(), 
+		// CollaborationInfo (Action)
+		
+		collaborationInfo.setAction(AS4PropertiesUtils.getRequiredStringValue(operation.getProtocolPropertyList(), 
 				AS4Costanti.AS4_PROTOCOL_PROPERTIES_USER_MESSAGE_COLLABORATION_INFO_ACTION, true));
 		
 		// MessageProperties
@@ -211,11 +277,44 @@ public class AS4Imbustamento {
 		return ebmsV3_0Messagging;
 	}
 	
+	private void fillSoap12fromSoap11(OpenSPCoop2SoapMessage soapMessage12, OpenSPCoop2SoapMessage soapMessage11) throws Exception{
+		if(soapMessage11.getSOAPHeader()!=null){
+			List<SOAPElement> listNodeSoapHeader = SoapUtils.getNotEmptyChildSOAPElement(soapMessage11.getSOAPHeader());
+			if(listNodeSoapHeader!=null && listNodeSoapHeader.size()>0){
+				SOAPHeader hdr = soapMessage12.getSOAPHeader();
+				if(hdr==null){
+					hdr = soapMessage12.getSOAPPart().getEnvelope().addHeader(); 
+				}
+				for (SOAPElement soapElement : listNodeSoapHeader) {
+					hdr.addChildElement(soapElement);
+				}
+			}
+		}
+		List<SOAPElement> listNodeSoapBody = SoapUtils.getNotEmptyChildSOAPElement(soapMessage11.getSOAPBody());
+		if(listNodeSoapBody!=null && listNodeSoapBody.size()>0){
+			for (SOAPElement soapElement : listNodeSoapBody) {
+				soapMessage12.getSOAPBody().addChildElement(soapElement);
+			}
+		}
+		if(soapMessage11.countAttachments()>0){
+			java.util.Iterator<?> iter = soapMessage11.getAttachments();
+			while( iter.hasNext() ){
+				AttachmentPart p = (AttachmentPart) iter.next();
+				soapMessage12.addAttachmentPart(p);
+			}
+		}
+	}
 	
 	private void mapAS4InfoFromSoapMessage(OpenSPCoop2SoapMessage soapMessage,PayloadInfo payloadInfo,SendRequest sendRequest) throws Exception{
+		
+		boolean isMtom = MTOMUtilities.isMtom(soapMessage.getContentType());
+		
+
+		
+		// Attachments
+		
 		List<PartInfo> _listPartInfoUserMessage = null; 
 		List<PayloadType> _listPayload = null;
-		boolean isMtom = MTOMUtilities.isMtom(soapMessage.getContentType());
 		
 		if(soapMessage.countAttachments()>0){
 			
@@ -224,6 +323,7 @@ public class AS4Imbustamento {
 			
 			// Attachments
 			java.util.Iterator<?> iter = soapMessage.getAttachments();
+			int index = 1;
 			while( iter.hasNext() ){
 				AttachmentPart p = (AttachmentPart) iter.next();
 				
@@ -231,6 +331,13 @@ public class AS4Imbustamento {
 				if(contentID==null){
 					throw new ProtocolException("Attachment without ContentID");
 				}
+				if(contentID.startsWith("<")){
+					contentID = contentID.substring(1);
+				}
+				if(contentID.endsWith(">")){
+					contentID = contentID.substring(0,contentID.length()-1);
+				}
+				String attachCid = "cid:attach"+(index++);
 				String cid = "cid:"+contentID;
 				
 				String contentType = p.getContentType();
@@ -239,7 +346,7 @@ public class AS4Imbustamento {
 				}
 				
 				PartInfo pInfo = new PartInfo();
-				pInfo.setHref(cid);
+				pInfo.setHref(attachCid);
 				PartProperties partProperties = new PartProperties();
 				Property property = new Property();
 				property.setName(AS4Costanti.AS4_USER_MESSAGE_PAYLOAD_INFO_PROPERTIES_MIME_TYPE);
@@ -249,7 +356,7 @@ public class AS4Imbustamento {
 				_listPartInfoUserMessage.add(pInfo);
 				
 				PayloadType pBodyInfo = new PayloadType();
-				pBodyInfo.setPayloadId(cid);
+				pBodyInfo.setPayloadId(attachCid);
 				if(isMtom){
 					pBodyInfo.setBase(("<inc:Include href=\""+cid+"\" xmlns:inc=\"http://www.w3.org/2004/08/xop/include\"/>").getBytes());
 				}
@@ -259,6 +366,14 @@ public class AS4Imbustamento {
 				_listPayload.add(pBodyInfo);
 			}
 		}
+		
+		if(_listPartInfoUserMessage!=null && _listPartInfoUserMessage.size()>0){
+			payloadInfo.getPartInfoList().addAll(_listPartInfoUserMessage);
+			sendRequest.getPayloadList().addAll(_listPayload);
+		}
+		
+		
+		// Body
 		
 		PartInfo _PartInfoUserMessageBody = null;
 		PayloadType _PayloadBody = null;
@@ -283,12 +398,19 @@ public class AS4Imbustamento {
 				ap.setContent(streamSource, contentType);
 			}
 			String contentID = soapMessage.createContentID(AS4Costanti.AS4_NAMESPACE_CID_MESSAGGIO);
+			if(contentID.startsWith("<")){
+				contentID = contentID.substring(1);
+			}
+			if(contentID.endsWith(">")){
+				contentID = contentID.substring(0,contentID.length()-1);
+			}
+			String bodyCid = "cid:message";
 			String cid = "cid:"+contentID;
 			ap.setContentId(contentID);
 			soapMessage.addAttachmentPart(ap);
 			
 			PartInfo pInfo = new PartInfo();
-			pInfo.setHref(cid);
+			pInfo.setHref(bodyCid);
 			PartProperties partProperties = new PartProperties();
 			Property property = new Property();
 			property.setName(AS4Costanti.AS4_USER_MESSAGE_PAYLOAD_INFO_PROPERTIES_MIME_TYPE);
@@ -298,7 +420,7 @@ public class AS4Imbustamento {
 			_PartInfoUserMessageBody = pInfo;
 			
 			PayloadType pBodyInfo = new PayloadType();
-			pBodyInfo.setPayloadId(cid);
+			pBodyInfo.setPayloadId(bodyCid);
 			if(isMtom){
 				pBodyInfo.setBase(("<inc:Include href=\""+cid+"\" xmlns:inc=\"http://www.w3.org/2004/08/xop/include\"/>").getBytes());
 			}
@@ -307,15 +429,10 @@ public class AS4Imbustamento {
 			}
 			_PayloadBody = pBodyInfo;
 		}
-
-
+		
 		if(_PartInfoUserMessageBody!=null){
 			payloadInfo.addPartInfo(_PartInfoUserMessageBody);
 			sendRequest.addPayload(_PayloadBody);
-		}
-		if(_listPartInfoUserMessage!=null && _listPartInfoUserMessage.size()>0){
-			payloadInfo.getPartInfoList().addAll(_listPartInfoUserMessage);
-			sendRequest.getPayloadList().addAll(_listPayload);
 		}
 	}
 	
@@ -330,6 +447,7 @@ public class AS4Imbustamento {
 		if(MessageType.MIME_MULTIPART.equals(restMessage.getMessageType())){
 					
 			OpenSPCoop2RestMimeMultipartMessage msgMime = restMessage.castAsRestMimeMultipart();
+			int index = 1;
 			for (int i = 0; i < msgMime.getContent().countBodyParts(); i++) {
 				BodyPart bodyPart = msgMime.getContent().getBodyPart(i);
 				
@@ -337,6 +455,13 @@ public class AS4Imbustamento {
 				if(contentID==null){
 					throw new ProtocolException("BodyPart without ContentID");
 				}
+				if(contentID.startsWith("<")){
+					contentID = contentID.substring(1);
+				}
+				if(contentID.endsWith(">")){
+					contentID = contentID.substring(0,contentID.length()-1);
+				}
+				String attachCid = "cid:attach"+(index++);
 				String cid = "cid:"+contentID;
 				
 				String contentType = bodyPart.getContentType();
@@ -345,7 +470,7 @@ public class AS4Imbustamento {
 				}
 				
 				PartInfo pInfo = new PartInfo();
-				pInfo.setHref(cid);
+				pInfo.setHref(attachCid);
 				PartProperties partProperties = new PartProperties();
 				Property property = new Property();
 				property.setName(AS4Costanti.AS4_USER_MESSAGE_PAYLOAD_INFO_PROPERTIES_MIME_TYPE);
@@ -355,7 +480,7 @@ public class AS4Imbustamento {
 				payloadInfo.addPartInfo(pInfo);
 				
 				PayloadType pBodyInfo = new PayloadType();
-				pBodyInfo.setPayloadId(cid);
+				pBodyInfo.setPayloadId(attachCid);
 				pBodyInfo.setBase(cid.getBytes());
 				sendRequest.addPayload(pBodyInfo);
 			}
@@ -382,12 +507,19 @@ public class AS4Imbustamento {
 			}
 
 			String contentID = as4Message.createContentID(AS4Costanti.AS4_NAMESPACE_CID_MESSAGGIO);
+			if(contentID.startsWith("<")){
+				contentID = contentID.substring(1);
+			}
+			if(contentID.endsWith(">")){
+				contentID = contentID.substring(0,contentID.length()-1);
+			}
+			String bodyCid = "cid:message";
 			String cid = "cid:"+contentID;
 			ap.setContentId(contentID);
 			as4Message.addAttachmentPart(ap);
 				
 			PartInfo pInfo = new PartInfo();
-			pInfo.setHref(cid);
+			pInfo.setHref(bodyCid);
 			PartProperties partProperties = new PartProperties();
 			Property property = new Property();
 			property.setName(AS4Costanti.AS4_USER_MESSAGE_PAYLOAD_INFO_PROPERTIES_MIME_TYPE);
@@ -397,7 +529,7 @@ public class AS4Imbustamento {
 			payloadInfo.addPartInfo(pInfo);
 				
 			PayloadType pBodyInfo = new PayloadType();
-			pBodyInfo.setPayloadId(cid);
+			pBodyInfo.setPayloadId(bodyCid);
 			pBodyInfo.setBase(cid.getBytes());
 			sendRequest.addPayload(pBodyInfo);
 

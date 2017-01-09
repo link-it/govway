@@ -695,7 +695,7 @@ public class ConfigurazionePdD  {
 		if(sogg!=null)
 			return sogg;
 		else
-			throw new DriverConfigurazioneNotFound("[getSoggetto] Soggetto non Trovato");
+			throw new DriverConfigurazioneNotFound("[getSoggetto] Soggetto non trovato");
 	}
 
 	public Soggetto getRouter(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -729,7 +729,7 @@ public class ConfigurazionePdD  {
 		if(sogg!=null)
 			return sogg;
 		else
-			throw new DriverConfigurazioneNotFound("[getRouter] Soggetto non Trovato");
+			throw new DriverConfigurazioneNotFound("[getRouter] Soggetto non trovato");
 	}
 
 	@SuppressWarnings(value = "unchecked")

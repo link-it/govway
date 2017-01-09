@@ -92,7 +92,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			throw new ConnectorException(e.getMessage(),e);
 		}
 	}
-
+	
 	@Override
 	public IDService getIdModuloAsIDService(){
 		return this.idModuloAsIDService;
@@ -101,6 +101,17 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	@Override
 	public String getIdModulo(){
 		return this.idModulo;
+	}
+	
+	@Override
+	public void updateRequestInfo(RequestInfo requestInfo) throws ConnectorException{
+		this.requestInfo = requestInfo;
+		if(IDService.PORTA_APPLICATIVA.equals(this.idModuloAsIDService)){
+			this.requestMessageType = this.getRequestInfo().getProtocolRequestMessageType();
+		}
+		else{
+			this.requestMessageType = this.getRequestInfo().getIntegrationRequestMessageType();
+		}
 	}
 	
 	@Override

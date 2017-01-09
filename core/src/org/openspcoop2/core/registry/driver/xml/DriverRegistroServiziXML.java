@@ -456,7 +456,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 			}
 		}
 
-		throw new DriverRegistroServiziNotFound("[getAccordoCooperazione] Accordo di Cooperazione non Trovato");
+		throw new DriverRegistroServiziNotFound("[getAccordoCooperazione] Accordo di Cooperazione non trovato");
 	}
 
 	/**
@@ -601,7 +601,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 			}
 		}
 
-		throw new DriverRegistroServiziNotFound("[getAccordoServizioParteComune] Accordo di Servizio non Trovato");
+		throw new DriverRegistroServiziNotFound("[getAccordoServizioParteComune] Accordo di Servizio non trovato");
 	}
 
 	@Override
@@ -963,7 +963,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 			}
 		}
 
-		throw new DriverRegistroServiziNotFound("[getSoggetto] Soggetto non Trovato");
+		throw new DriverRegistroServiziNotFound("[getSoggetto] Soggetto non trovato");
 	}
 
 	/**
@@ -1073,7 +1073,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 			}
 		}
 
-		throw new DriverRegistroServiziNotFound("[getAccordoServizioParteSpecifica(IDServizio)] Servizio non Trovato");
+		throw new DriverRegistroServiziNotFound("[getAccordoServizioParteSpecifica(IDServizio)] Servizio non trovato");
 	}
 
 
@@ -1111,7 +1111,7 @@ public class DriverRegistroServiziXML extends BeanUtilities
 			}
 		}
 
-		throw new DriverRegistroServiziNotFound("[getAccordoServizioParteSpecifica_ServizioCorrelato] Servizio non Trovato");
+		throw new DriverRegistroServiziNotFound("[getAccordoServizioParteSpecifica_ServizioCorrelato] Servizio non trovato");
 		
 	}
 	

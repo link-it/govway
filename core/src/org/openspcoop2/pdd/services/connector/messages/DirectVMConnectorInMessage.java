@@ -69,6 +69,7 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	private Credenziali credenziali;
 	private String functionParameters;
 	private DirectVMProtocolInfo directVMProtocolInfo;
+	private PdDContext pddContext;
 	
 	public DirectVMConnectorInMessage(OpenSPCoop2Message msg,IDService idModuloAsIDService, String idModulo,
 			Properties trasporto,
@@ -113,8 +114,10 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 			
 			this.directVMProtocolInfo = directVMProtocolInfo;
 			
-			if(pddContext!=null){
-				this.setAttribute(CostantiPdD.OPENSPCOOP2_PDD_CONTEXT_HEADER_HTTP,pddContext);
+			this.pddContext = pddContext;
+			
+			if(this.pddContext!=null){
+				this.setAttribute(CostantiPdD.OPENSPCOOP2_PDD_CONTEXT_HEADER_HTTP,this.pddContext);
 			}
 						
 			URLProtocolContext urlProtocolContext = new URLProtocolContext();
@@ -139,7 +142,7 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 			
 			this.requestInfo = ConnectorUtils.getRequestInfo(this.protocolFactory, urlProtocolContext);
 			
-			if(pddContext!=null){
+			if(this.pddContext!=null){
 				this.setAttribute(Costanti.REQUEST_INFO,this.requestInfo);
 			}
 			
@@ -161,7 +164,14 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	public String getIdModulo(){
 		return this.idModulo;
 	}
-	
+
+	@Override
+	public void updateRequestInfo(RequestInfo requestInfo) throws ConnectorException{
+		this.requestInfo = requestInfo;
+		if(this.pddContext!=null){
+			this.setAttribute(Costanti.REQUEST_INFO,this.requestInfo);
+		}
+	}
 	@Override
 	public RequestInfo getRequestInfo(){
 		return this.requestInfo;

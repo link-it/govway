@@ -210,6 +210,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				this.generatoreErrore, serviceIdentificationReader,msgDiag)==false){
 			return; // l'errore in response viene impostato direttamente dentro il metodo
 		}
+		req.updateRequestInfo(requestInfo);
 			
 		// PddContext from servlet
 		Object oPddContextFromServlet = null;

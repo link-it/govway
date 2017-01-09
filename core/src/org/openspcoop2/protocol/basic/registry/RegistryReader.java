@@ -34,11 +34,15 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Azione;
+import org.openspcoop2.core.registry.Operation;
+import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.FiltroRicercaProtocolProperty;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziCRUD;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
@@ -309,6 +313,23 @@ public class RegistryReader implements IRegistryReader {
 	// ELEMENTI INTERNI ALL'ACCORDO PARTE COMUNE
 	
 	@Override
+	public PortType getPortType(IDPortType id) throws RegistryNotFound{
+		try{
+			AccordoServizioParteComune as = this.driverRegistroServiziGET.getAccordoServizioParteComune(id.getIdAccordo());
+			for (PortType pt : as.getPortTypeList()) {
+				if(pt.getNome().equals(id.getNome())){
+					return pt;
+				}
+			}
+			throw new DriverRegistroServiziNotFound("PortType ["+id.getNome()+"] non trovato nell'accordo ["+IDAccordoFactory.getInstance().getUriFromIDAccordo(id.getIdAccordo())+"]");
+		} catch (DriverRegistroServiziNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			return null;
+		}
+	}
+	
+	@Override
 	public List<IDPortType> findIdPortType(FiltroRicercaPortType filtro) throws RegistryNotFound{
 		try{
 			org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes();
@@ -354,6 +375,25 @@ public class RegistryReader implements IRegistryReader {
 		}catch(Exception e){
 			return null;
 		}
+	}
+	
+	@Override
+	public Operation getAzionePortType(IDPortTypeAzione id) throws RegistryNotFound{
+		PortType portType = this.getPortType(id.getIdPortType());
+		for (Operation opCheck : portType.getAzioneList()) {
+			if(opCheck.getNome().equals(id.getNome())){
+				return opCheck;
+			}
+		}
+
+		String uriAccordo = null;
+		try{
+			uriAccordo = IDAccordoFactory.getInstance().getUriFromIDAccordo(id.getIdPortType().getIdAccordo());
+		}catch(Exception e){
+			uriAccordo = id.getIdPortType().getIdAccordo().toString();
+		}
+		throw new RegistryNotFound("Azione ["+id.getNome()+"] non trovata all'interno del PortType ["+id.getIdPortType().getNome()+
+					"] dell'accordo ["+uriAccordo+"]");
 	}
 	
 	@Override
@@ -411,6 +451,25 @@ public class RegistryReader implements IRegistryReader {
 		}catch(Exception e){
 			return null;
 		}
+	}
+	
+	@Override
+	public Azione getAzioneAccordo(IDAccordoAzione id) throws RegistryNotFound{
+		AccordoServizioParteComune as = this.getAccordoServizioParteComune(id.getIdAccordo());
+		for (Azione azCheck : as.getAzioneList()) {
+			if(azCheck.getNome().equals(id.getNome())){
+				return azCheck;
+			}
+		}
+
+		String uriAccordo = null;
+		try{
+			uriAccordo = IDAccordoFactory.getInstance().getUriFromIDAccordo(id.getIdAccordo());
+		}catch(Exception e){
+			uriAccordo = id.getIdAccordo().toString();
+		}
+		throw new RegistryNotFound("Azione ["+id.getNome()+"] non trovata all'interno del PortType ["+id.getNome()+
+					"] dell'accordo ["+uriAccordo+"]");
 	}
 	
 	@Override

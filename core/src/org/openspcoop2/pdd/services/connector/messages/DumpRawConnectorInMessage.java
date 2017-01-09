@@ -230,6 +230,12 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 	}
 
 	@Override
+	public void updateRequestInfo(RequestInfo requestInfo) throws ConnectorException{
+		// wrapped method
+		this.connectorInMessage.updateRequestInfo(requestInfo);
+	}
+	
+	@Override
 	public RequestInfo getRequestInfo(){
 		// wrapped method
 		return this.connectorInMessage.getRequestInfo();

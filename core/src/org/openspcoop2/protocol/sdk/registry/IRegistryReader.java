@@ -33,6 +33,9 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Azione;
+import org.openspcoop2.core.registry.Operation;
+import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Soggetto;
 
@@ -78,8 +81,13 @@ public interface IRegistryReader {
 	
 	// ELEMENTI INTERNI ALL'ACCORDO PARTE COMUNE
 	
-	public List<IDPortType> findIdPortType(FiltroRicercaPortType filtro) throws RegistryNotFound; 
+	public PortType getPortType(IDPortType id) throws RegistryNotFound; 
+	public List<IDPortType> findIdPortType(FiltroRicercaPortType filtro) throws RegistryNotFound;
+	
+	public Operation getAzionePortType(IDPortTypeAzione id) throws RegistryNotFound; 
 	public List<IDPortTypeAzione> findIdAzionePortType(FiltroRicercaPortTypeAzioni filtro) throws RegistryNotFound; 
+	
+	public Azione getAzioneAccordo(IDAccordoAzione id) throws RegistryNotFound; 
 	public List<IDAccordoAzione> findIdAzioneAccordo(FiltroRicercaAccordoAzioni filtro) throws RegistryNotFound; 
 	
 	

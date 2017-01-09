@@ -79,7 +79,7 @@
             <types>
 
                 <!-- Il tipo AS4 è compatibile sia con soap che con rest -->
-                <type name="REST"/>
+                <type name="AS4"/>
                 
             </types>
         </service>
