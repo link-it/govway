@@ -15,6 +15,18 @@
         </port-type>
     </accordo-servizio-parte-comune>
 
+    <accordo-servizio-parte-comune nome="RestExample" profilo-collaborazione="oneway"
+        utilizzo-senza-azione="false" versione="1" service-binding="rest">
+	<soggetto-referente tipo="AS4" nome="MinisteroErogatore" />
+        <port-type nome="GestioneFileREST" profilo-collaborazione="oneway">
+            <azione nome="pubblica">
+		<protocol-property name="ebmsUserMessageCollaborationInfoAction" value="TC1Leg1" />
+	    </azione>
+	    <protocol-property name="ebmsUserMessageCollaborationInfoService" value="bdx:noprocess2" />
+	    <protocol-property name="ebmsUserMessageCollaborationInfoServiceType" value="tc1" />
+        </port-type>
+    </accordo-servizio-parte-comune>
+
 
     <!-- Soggetto Mittente degli esempi -->
     <soggetto tipo="AS4" nome="MinisteroFruitore">
@@ -40,6 +52,12 @@
         <accordo-servizio-parte-specifica tipo="AS4" nome="GestioneFileSOAP"
             accordo-servizio-parte-comune="AS4/MinisteroErogatore:SoapExample:1"
 	    port-type="GestioneFileSOAP">
+            <fruitore tipo="AS4" nome="MinisteroFruitore"/>
+        </accordo-servizio-parte-specifica>
+
+	<accordo-servizio-parte-specifica tipo="AS4" nome="GestioneFileREST"
+            accordo-servizio-parte-comune="AS4/MinisteroErogatore:RestExample:1"
+	    port-type="GestioneFileREST">
             <fruitore tipo="AS4" nome="MinisteroFruitore"/>
         </accordo-servizio-parte-specifica>
 

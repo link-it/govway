@@ -12,6 +12,14 @@
             <servizio tipo="AS4" nome="GestioneFileSOAP"/>
             <azione nome="pubblica"/>
         </porta-delegata>
+
+        <!-- Esempio REST -->
+        <porta-delegata nome="GestioneFileREST" autenticazione="none" autorizzazione="none"
+            integrazione="trasporto,urlBased" stateless="abilitato">
+            <soggetto-erogatore tipo="AS4" nome="MinisteroErogatore"/>
+            <servizio tipo="AS4" nome="GestioneFileREST"/>
+            <azione nome="pubblica"/>
+        </porta-delegata>
          
     </soggetto>
     
@@ -22,6 +30,13 @@
         <!-- Esempio SOAP -->
         <porta-applicativa nome="GestioneFileSOAP" stateless="abilitato">
             <servizio tipo="AS4" nome="GestioneFileSOAP"/>
+            <azione nome="pubblica"/>
+            <servizio-applicativo nome="TRACE"/>
+        </porta-applicativa>
+
+        <!-- Esempio REST -->
+        <porta-applicativa nome="GestioneFileREST" stateless="abilitato">
+            <servizio tipo="AS4" nome="GestioneFileREST"/>
             <azione nome="pubblica"/>
             <servizio-applicativo nome="TRACE"/>
         </porta-applicativa>

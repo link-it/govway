@@ -68,8 +68,16 @@ public abstract class AbstractErrorGenerator {
 		}
 		else{
 			this.requestMessageType = requestInfo.getIntegrationRequestMessageType();
-			this.serviceBinding = requestInfo.getProtocolServiceBinding();
+			this.serviceBinding = requestInfo.getIntegrationServiceBinding();
 		}
+	}
+	
+	public void updateRequestMessageType(MessageType requestMessageType){
+		this.requestMessageType = requestMessageType;
+	}
+	
+	public void updateServiceBinding(ServiceBinding serviceBinding){
+		this.serviceBinding = serviceBinding;
 	}
 	
 	public void updateDominio(IDSoggetto identitaPdD){

@@ -64,6 +64,15 @@ public class ContentTypeUtilities {
 		}
 	}
 	
+	public static String readBaseTypeFromContentType(String cType) throws UtilsException {
+		try{
+			ContentType contentType = new ContentType(cType);
+			return contentType.getBaseType();
+		} catch (Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
 	public static String readCharsetFromContentType(String cType) throws UtilsException {
 		try{
 			ContentType contentType = new ContentType(cType);

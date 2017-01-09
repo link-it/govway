@@ -93,6 +93,7 @@ public class RicezioneBusteServiceUtils {
 				try{
 					integrationServiceBinding = pf.createProtocolConfiguration().getIntegrationServiceBinding(idServizio, registryReader);
 					requestInfo.setIntegrationServiceBinding(integrationServiceBinding);
+					//generatoreErrore.updateServiceBinding(integrationServiceBinding); NO L'errore ritornato deve riguardare il protocolServiceBinding
 				}catch(RegistryNotFound notFound){
 					logCore.debug("Lettura ServiceBinding fallita (notFound): "+notFound.getMessage(),notFound);
 					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, notFound.getMessage());
@@ -138,6 +139,7 @@ public class RicezioneBusteServiceUtils {
 					MessageType requestMessageType = bindingConfig.getMessageType(integrationServiceBinding, MessageRole.REQUEST, 
 							protocolContext, protocolContext.getContentType());
 					requestInfo.setIntegrationRequestMessageType(requestMessageType);
+					//generatoreErrore.updateRequestMessageType(requestMessageType);  NO L'errore ritornato deve riguardare il protocolServiceBinding
 				}catch(Exception error){
 					logCore.error("Comprensione MessageType fallita: "+error.getMessage(),error);
 					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, error.getMessage());

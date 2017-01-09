@@ -103,6 +103,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 				try{
 					integrationServiceBinding = pf.createProtocolConfiguration().getIntegrationServiceBinding(idServizio, registryReader);
 					requestInfo.setIntegrationServiceBinding(integrationServiceBinding);
+					generatoreErrore.updateServiceBinding(integrationServiceBinding);
 				}catch(RegistryNotFound notFound){
 					logCore.debug("Lettura ServiceBinding fallita (notFound): "+notFound.getMessage(),notFound);
 					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, notFound.getMessage());
@@ -148,6 +149,7 @@ public class RicezioneContenutiApplicativiServiceUtils {
 					requestMessageType = bindingConfig.getMessageType(integrationServiceBinding, MessageRole.REQUEST, 
 							protocolContext, protocolContext.getContentType());
 					requestInfo.setIntegrationRequestMessageType(requestMessageType);
+					generatoreErrore.updateRequestMessageType(requestMessageType);
 				}catch(Exception error){
 					logCore.error("Comprensione MessageType fallita: "+error.getMessage(),error);
 					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, error.getMessage());

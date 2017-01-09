@@ -58,6 +58,7 @@ import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.dch.InputStreamDataSource;
+import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.w3c.dom.Node;
 
@@ -469,6 +470,10 @@ public class AS4Imbustamento {
 					throw new ProtocolException("BodyPart without ContentType");
 				}
 				
+				AttachmentPart ap = as4Message.createAttachmentPart(bodyPart.getDataHandler());
+				ap.setContentId(contentID);
+				as4Message.addAttachmentPart(ap);
+				
 				PartInfo pInfo = new PartInfo();
 				pInfo.setHref(attachCid);
 				PartProperties partProperties = new PartProperties();
@@ -483,6 +488,7 @@ public class AS4Imbustamento {
 				pBodyInfo.setPayloadId(attachCid);
 				pBodyInfo.setBase(cid.getBytes());
 				sendRequest.addPayload(pBodyInfo);
+				
 			}
 			
 		}
@@ -493,9 +499,18 @@ public class AS4Imbustamento {
 
 			String contentType = restMessage.getContentType();
 			if(MessageType.XML.equals(restMessage.getMessageType())){
-				Source streamSource = new DOMSource(restMessage.castAsRestXml().getContent());
-				ap = as4Message.createAttachmentPart();
-				ap.setContent(streamSource, contentType);
+				// solo text/xml può essere costruito con DOMSource
+				String baseType = ContentTypeUtilities.readBaseTypeFromContentType(contentType);
+				if(HttpConstants.CONTENT_TYPE_TEXT_XML.equals(baseType)){
+					Source streamSource = new DOMSource(restMessage.castAsRestXml().getContent());
+					ap = as4Message.createAttachmentPart();
+					ap.setContent(streamSource, contentType);
+				}
+				else{
+					byte [] content = restMessage.getAsByte(restMessage.castAsRestXml().getContent(), true);
+					InputStreamDataSource isSource = new InputStreamDataSource("RestXml", contentType, content);
+					ap = as4Message.createAttachmentPart(new DataHandler(isSource));
+				}
 			}
 			else if(MessageType.JSON.equals(restMessage.getMessageType())){
 				ap = as4Message.createAttachmentPart();
