@@ -47,7 +47,7 @@
 			<include name="soapbox/*"/>
 			<include name="spring/*"/>
 			<include name="spring-security/*"/>
-			<include name="stub/*"/>
+			<include name="stub/cxf/*"/>
 		</fileset>
 	</path>
 	<path id="classpath_dist" >

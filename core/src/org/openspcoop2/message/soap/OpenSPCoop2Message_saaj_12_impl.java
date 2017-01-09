@@ -24,8 +24,11 @@ package org.openspcoop2.message.soap;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.xml.namespace.QName;
 import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.commons.io.input.CountingInputStream;
@@ -118,4 +121,17 @@ public class OpenSPCoop2Message_saaj_12_impl extends AbstractOpenSPCoop2Message_
 	}
 	
 
+	
+	/* SOAP Utilities */
+	
+	@Override
+	public void setFaultCode(SOAPFault fault, SOAPFaultCode code, QName eccezioneName) throws MessageException {
+		try{
+			QName faultCode = new QName(SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE, code.toString());
+			fault.setFaultCode(faultCode);
+			fault.appendFaultSubcode(eccezioneName);
+		}catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
+	}
 }

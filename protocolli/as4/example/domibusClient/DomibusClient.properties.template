@@ -1,0 +1,17 @@
+# URL Servizio
+urlServizio=http://localhost:8080/domibus/services/backend
+
+
+
+#  ------ Tipo di Operazione ------
+
+operazione=listPendingMessages
+#operazione=downloadMessage
+#operazione=getMessageStatus
+#operazione=getMessageErrors
+
+
+# ------ ID Messaggio ----
+
+#msgID=af593640-8c28-4e3f-a5a3-304be9579c2b@domibus.eu
+

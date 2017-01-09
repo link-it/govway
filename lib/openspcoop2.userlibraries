@@ -244,5 +244,6 @@
 	<archive path="/op2_3.0.dev/lib/stub/cxf/openspcoop2_configStub_cxf.jar"/>
 	<archive path="/op2_3.0.dev/lib/stub/cxf/openspcoop2_registryStub_cxf.jar"/>
 	<archive path="/op2_3.0.dev/lib/stub/cxf/openspcoop2_monitorStub_cxf.jar"/>
+	<archive path="/op2_3.0.dev/lib/stub/cxf/openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
     </library>
 </eclipse-userlibraries>

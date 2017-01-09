@@ -1,7 +1,9 @@
 package org.openspcoop2.protocol.as4.builder;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import javax.activation.DataHandler;
 import javax.mail.BodyPart;
@@ -45,7 +47,6 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
-import org.openspcoop2.message.soap.mtom.MTOMUtilities;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.as4.AS4RawContent;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
@@ -60,6 +61,7 @@ import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.dch.InputStreamDataSource;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import backend.ecodex.org._1_1.PayloadType;
@@ -121,6 +123,8 @@ public class AS4Imbustamento {
 			
 			// **** Prepare *****
 			
+			Map<String,String> mapIdPartInfoToIdAttach = new Hashtable<>();
+			
 			Messaging ebmsV3_0Messagging = this.buildEbmsV3_0Messagging(ruoloMessaggio,busta,
 					soggettoMittente, soggettoDestinatario, portType, operation);
 			
@@ -145,7 +149,7 @@ public class AS4Imbustamento {
 					fillSoap12fromSoap11(as4Message, soapMessage);
 				}
 				
-				mapAS4InfoFromSoapMessage(as4Message, payloadInfo, sendRequest);
+				mapAS4InfoFromSoapMessage(as4Message, payloadInfo, sendRequest, mapIdPartInfoToIdAttach);
 
 			}
 			else{
@@ -154,7 +158,7 @@ public class AS4Imbustamento {
 				as4Message = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.SOAP_12, messageRole).castAsSoap(); // viene creato ad hoc
 				msg.copyResourcesTo(as4Message);
 				
-				mapAS4InfoFromRestMessage(as4Message, restMessage, payloadInfo, sendRequest);
+				mapAS4InfoFromRestMessage(as4Message, restMessage, payloadInfo, sendRequest, mapIdPartInfoToIdAttach);
 				
 			}
 			
@@ -180,6 +184,19 @@ public class AS4Imbustamento {
 					new backend.ecodex.org._1_1.utils.serializer.JaxbSerializer();
 			byte[] as4Body = ecodexSerializer.toByteArray(sendRequest);
 			SOAPElement soapElementAs4Body = as4Message.createSOAPElement(as4Body);
+			List<SOAPElement> childAs4Body = SoapUtils.getNotEmptyChildSOAPElement(soapElementAs4Body);
+			for (SOAPElement payloadInfoAs4Body : childAs4Body) {
+				String value = payloadInfoAs4Body.getAttribute("payloadId");
+				if(mapIdPartInfoToIdAttach.containsKey(value)==false){
+					throw new Exception("Attachment with payloadInfo id ["+value+"] not found");
+				}
+				String attachmentId = mapIdPartInfoToIdAttach.get(value);
+				Element xomReference = payloadInfoAs4Body.getOwnerDocument().createElementNS(org.openspcoop2.message.soap.mtom.Costanti.XOP_INCLUDE_NAMESPACE, 
+						"xop:"+org.openspcoop2.message.soap.mtom.Costanti.XOP_INCLUDE_LOCAL_NAME);
+				xomReference.setAttribute(org.openspcoop2.message.soap.mtom.Costanti.XOP_INCLUDE_ATTRIBUTE_HREF, 
+						attachmentId);
+				payloadInfoAs4Body.appendChild(xomReference);
+			}
 			as4Message.getSOAPBody().removeContents();
 			as4Message.getSOAPBody().addChildElement(soapElementAs4Body);
 			
@@ -306,11 +323,9 @@ public class AS4Imbustamento {
 		}
 	}
 	
-	private void mapAS4InfoFromSoapMessage(OpenSPCoop2SoapMessage soapMessage,PayloadInfo payloadInfo,SendRequest sendRequest) throws Exception{
-		
-		boolean isMtom = MTOMUtilities.isMtom(soapMessage.getContentType());
-		
-
+	private void mapAS4InfoFromSoapMessage(OpenSPCoop2SoapMessage soapMessage,PayloadInfo payloadInfo,SendRequest sendRequest,
+			Map<String,String> mapIdPartInfoToIdAttach) throws Exception{
+	
 		
 		// Attachments
 		
@@ -338,8 +353,10 @@ public class AS4Imbustamento {
 				if(contentID.endsWith(">")){
 					contentID = contentID.substring(0,contentID.length()-1);
 				}
-				String attachCid = "cid:attach"+(index++);
+				
+				String partInfoCid = "cid:attach"+(index++);
 				String cid = "cid:"+contentID;
+				mapIdPartInfoToIdAttach.put(partInfoCid, cid);
 				
 				String contentType = p.getContentType();
 				if(contentType==null){
@@ -347,7 +364,7 @@ public class AS4Imbustamento {
 				}
 				
 				PartInfo pInfo = new PartInfo();
-				pInfo.setHref(attachCid);
+				pInfo.setHref(partInfoCid);
 				PartProperties partProperties = new PartProperties();
 				Property property = new Property();
 				property.setName(AS4Costanti.AS4_USER_MESSAGE_PAYLOAD_INFO_PROPERTIES_MIME_TYPE);
@@ -357,13 +374,8 @@ public class AS4Imbustamento {
 				_listPartInfoUserMessage.add(pInfo);
 				
 				PayloadType pBodyInfo = new PayloadType();
-				pBodyInfo.setPayloadId(attachCid);
-				if(isMtom){
-					pBodyInfo.setBase(("<inc:Include href=\""+cid+"\" xmlns:inc=\"http://www.w3.org/2004/08/xop/include\"/>").getBytes());
-				}
-				else{
-					pBodyInfo.setBase(cid.getBytes());
-				}
+				pBodyInfo.setPayloadId(partInfoCid);
+				pBodyInfo.setContentType(contentType);
 				_listPayload.add(pBodyInfo);
 			}
 		}
@@ -405,13 +417,16 @@ public class AS4Imbustamento {
 			if(contentID.endsWith(">")){
 				contentID = contentID.substring(0,contentID.length()-1);
 			}
-			String bodyCid = "cid:message";
+			
+			String partInfoCid = "cid:message";
 			String cid = "cid:"+contentID;
+			mapIdPartInfoToIdAttach.put(partInfoCid, cid);
+			
 			ap.setContentId(contentID);
 			soapMessage.addAttachmentPart(ap);
 			
 			PartInfo pInfo = new PartInfo();
-			pInfo.setHref(bodyCid);
+			pInfo.setHref(partInfoCid);
 			PartProperties partProperties = new PartProperties();
 			Property property = new Property();
 			property.setName(AS4Costanti.AS4_USER_MESSAGE_PAYLOAD_INFO_PROPERTIES_MIME_TYPE);
@@ -421,13 +436,8 @@ public class AS4Imbustamento {
 			_PartInfoUserMessageBody = pInfo;
 			
 			PayloadType pBodyInfo = new PayloadType();
-			pBodyInfo.setPayloadId(bodyCid);
-			if(isMtom){
-				pBodyInfo.setBase(("<inc:Include href=\""+cid+"\" xmlns:inc=\"http://www.w3.org/2004/08/xop/include\"/>").getBytes());
-			}
-			else{
-				pBodyInfo.setBase(cid.getBytes());
-			}
+			pBodyInfo.setPayloadId(partInfoCid);
+			pBodyInfo.setContentType(contentType);
 			_PayloadBody = pBodyInfo;
 		}
 		
@@ -439,7 +449,8 @@ public class AS4Imbustamento {
 	
 
 	private void mapAS4InfoFromRestMessage(OpenSPCoop2SoapMessage as4Message,
-			OpenSPCoop2RestMessage<?> restMessage,PayloadInfo payloadInfo,SendRequest sendRequest) throws Exception{
+			OpenSPCoop2RestMessage<?> restMessage,PayloadInfo payloadInfo,SendRequest sendRequest,
+			Map<String,String> mapIdPartInfoToIdAttach) throws Exception{
 		
 		if(restMessage.hasContent()==false){
 			throw new Exception("Messaggio non contiene dati da inoltrare");
@@ -462,8 +473,10 @@ public class AS4Imbustamento {
 				if(contentID.endsWith(">")){
 					contentID = contentID.substring(0,contentID.length()-1);
 				}
-				String attachCid = "cid:attach"+(index++);
+				
+				String partInfoCid = "cid:attach"+(index++);
 				String cid = "cid:"+contentID;
+				mapIdPartInfoToIdAttach.put(partInfoCid, cid);
 				
 				String contentType = bodyPart.getContentType();
 				if(contentType==null){
@@ -475,7 +488,7 @@ public class AS4Imbustamento {
 				as4Message.addAttachmentPart(ap);
 				
 				PartInfo pInfo = new PartInfo();
-				pInfo.setHref(attachCid);
+				pInfo.setHref(partInfoCid);
 				PartProperties partProperties = new PartProperties();
 				Property property = new Property();
 				property.setName(AS4Costanti.AS4_USER_MESSAGE_PAYLOAD_INFO_PROPERTIES_MIME_TYPE);
@@ -485,8 +498,8 @@ public class AS4Imbustamento {
 				payloadInfo.addPartInfo(pInfo);
 				
 				PayloadType pBodyInfo = new PayloadType();
-				pBodyInfo.setPayloadId(attachCid);
-				pBodyInfo.setBase(cid.getBytes());
+				pBodyInfo.setPayloadId(partInfoCid);
+				pBodyInfo.setContentType(contentType);
 				sendRequest.addPayload(pBodyInfo);
 				
 			}
@@ -528,13 +541,15 @@ public class AS4Imbustamento {
 			if(contentID.endsWith(">")){
 				contentID = contentID.substring(0,contentID.length()-1);
 			}
-			String bodyCid = "cid:message";
+			String partInfoCid = "cid:message";
 			String cid = "cid:"+contentID;
+			mapIdPartInfoToIdAttach.put(partInfoCid, cid);
+			
 			ap.setContentId(contentID);
 			as4Message.addAttachmentPart(ap);
 				
 			PartInfo pInfo = new PartInfo();
-			pInfo.setHref(bodyCid);
+			pInfo.setHref(partInfoCid);
 			PartProperties partProperties = new PartProperties();
 			Property property = new Property();
 			property.setName(AS4Costanti.AS4_USER_MESSAGE_PAYLOAD_INFO_PROPERTIES_MIME_TYPE);
@@ -544,8 +559,8 @@ public class AS4Imbustamento {
 			payloadInfo.addPartInfo(pInfo);
 				
 			PayloadType pBodyInfo = new PayloadType();
-			pBodyInfo.setPayloadId(bodyCid);
-			pBodyInfo.setBase(cid.getBytes());
+			pBodyInfo.setPayloadId(partInfoCid);
+			pBodyInfo.setContentType(contentType);
 			sendRequest.addPayload(pBodyInfo);
 
 		}
