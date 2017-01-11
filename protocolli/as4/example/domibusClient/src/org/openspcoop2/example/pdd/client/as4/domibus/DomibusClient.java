@@ -26,33 +26,18 @@ package org.openspcoop2.example.pdd.client.as4.domibus;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.AgreementRef;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.CollaborationInfo;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Description;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.From;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageInfo;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.MessageProperties;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartInfo;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartProperties;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartyId;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PartyInfo;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.PayloadInfo;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Property;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Schema;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Service;
-import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.To;
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.DownloadMessageRequest;
 import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.DownloadMessageResponse;
+import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.GetStatusRequest;
 import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.ListPendingMessagesResponse;
+import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.MessageStatus;
 import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.Messaging;
 import org.openspcoop2.protocol.as4.utils.AS4StubUtils;
 import org.openspcoop2.utils.mime.MimeTypes;
@@ -125,7 +110,7 @@ public class DomibusClient {
 			
 			
 			// Parametri invocazione
-			if(("downloadMessage".equals(comando)) && (msgID==null)){
+			if(("downloadMessage".equals(comando) || "getMessageStatus".equals(comando)) && (msgID==null)){
 				System.err.println("ERROR : Identificativo del messaggio non definito all'interno del file 'DomibusClient.properties'");
 				return;
 			}
@@ -210,6 +195,21 @@ public class DomibusClient {
 					}
 				}
 
+			}
+			
+			else if(comando.equals("getMessageStatus")){
+				
+				GetStatusRequest getStatusRequest = new GetStatusRequest();
+				getStatusRequest.setMessageID(msgID);
+				
+				MessageStatus status = domibusPort.getMessageStatus(getStatusRequest);
+				if(status==null){
+					System.out.println("Nessun stato trovato per il messaggio");
+				}
+				else{
+					// TODO
+				}
+				
 			}
 			
 			else{

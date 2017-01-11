@@ -294,7 +294,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 		try{
 			infoSSL = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
 					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniSSL(alias));
+					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL(alias));
 		}catch(Exception e){
 			ControlStationCore.logError("Errore durante la lettura delle informazioni SSL (jmxResourcePdD): "+e.getMessage(),e);
 			infoSSL = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;

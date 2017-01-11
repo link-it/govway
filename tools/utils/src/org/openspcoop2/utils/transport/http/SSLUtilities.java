@@ -23,6 +23,9 @@ package org.openspcoop2.utils.transport.http;
 
 import java.io.FileInputStream;
 import java.security.KeyStore;
+import java.security.Provider;
+import java.security.Provider.Service;
+import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -167,6 +170,56 @@ public class SSLUtilities {
 		}
 	}
 		
+	
+	public static List<Provider> getSSLProviders() throws UtilsException{
+		try{
+			List<Provider> p = new ArrayList<Provider>();
+			for (Provider provider : Security.getProviders()){
+				p.add(provider);
+			}
+			return p;
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(), e);
+		}
+	}
+	public static List<String> getSSLProvidersName() throws UtilsException{
+		try{
+			List<String> p = new ArrayList<String>();
+			for (Provider provider : Security.getProviders()){
+				p.add(provider.getName());
+			}
+			return p;
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(), e);
+		}
+	}
+	public static List<String> getServiceTypes(Provider provider) throws UtilsException{
+		try{
+			List<String> p = new ArrayList<String>();
+			for (Service service : provider.getServices()){
+				if(p.contains(service.getType())==false){
+					p.add(service.getType());
+				}
+			}
+			return p;
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(), e);
+		}
+	}
+	public static List<String> getServiceTypeAlgorithms(Provider provider,String serviceType) throws UtilsException{
+		try{
+			List<String> p = new ArrayList<String>();
+			for (Service service : provider.getServices()){
+				if(serviceType.equals(service.getType())){
+					p.add(service.getAlgorithm());
+				}
+			}
+			return p;
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(), e);
+		}
+	}
+	
 	public static SSLContext generateSSLContext(SSLConfig sslConfig, StringBuffer bfLog) throws UtilsException{
 
 		// Gestione https

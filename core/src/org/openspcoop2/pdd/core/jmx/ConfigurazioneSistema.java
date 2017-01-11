@@ -22,6 +22,7 @@
 
 package org.openspcoop2.pdd.core.jmx;
 
+import java.security.Provider;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -79,6 +80,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	public final static String TIPO_DATABASE = "getTipoDatabase";	
 	public final static String INFORMAZIONI_DATABASE = "getInformazioniDatabase";
 	public final static String INFORMAZIONI_SSL = "getInformazioniSSL";
+	public final static String INFORMAZIONI_COMPLETE_SSL = "getInformazioniCompleteSSL";
 	public final static String MESSAGE_FACTORY = "getMessageFactory";
 	public final static String DIRECTORY_CONFIGURAZIONE = "getDirectoryConfigurazione";
 	public final static String PROTOCOLS = "getPluginProtocols";
@@ -185,7 +187,11 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		}
 		
 		else if(actionName.equals(INFORMAZIONI_SSL)){
-			return this.getInformazioniSSL(false);
+			return this.getInformazioniSSL(false,false);
+		}
+		
+		else if(actionName.equals(INFORMAZIONI_COMPLETE_SSL)){
+			return this.getInformazioniSSL(true,true);
 		}
 		
 		else if(actionName.equals(MESSAGE_FACTORY)){
@@ -260,6 +266,13 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
+		
+		// INFORMAZIONI_COMPLETE_SSL
+		MBeanOperationInfo informazioniCompleteSSLOp = new MBeanOperationInfo(INFORMAZIONI_COMPLETE_SSL,"Visualizza le informazioni complete di algoritmi sulle connessioni SSL",
+						null,
+						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
+						String.class.getName(),
+						MBeanOperationInfo.ACTION);
 
 		// MESSAGE_FACTORY
 		MBeanOperationInfo messageFactoryOp = new MBeanOperationInfo(MESSAGE_FACTORY,"Visualizza la MessageFactory utilizzata dal prodotto",
@@ -294,7 +307,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 
 		// Lista operazioni
 		MBeanOperationInfo[] operations = new MBeanOperationInfo[]{versionePddOp,versioneBaseDatiOp,vendorJavaOp,versioneJavaOp,
-				versioneTipoDatabaseOp,informazioniDatabaseOp,informazioniSSLOp,
+				versioneTipoDatabaseOp,informazioniDatabaseOp,informazioniSSLOp,informazioniCompleteSSLOp,
 				messageFactoryOp,confDirectoryOp,protocolsOp};
 
 		return new MBeanInfo(className,description,attributes,constructors,operations,null);
@@ -594,7 +607,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		}
 	}
 	
-	public String getInformazioniSSL(boolean cipherSuites){
+	public String getInformazioniSSL(boolean cipherSuites, boolean providerInfo){
 		try{
 			StringBuffer bf = new StringBuffer();
 			bf.append("SupportedProtocols: "+SSLUtilities.getSSLSupportedProtocols());
@@ -607,19 +620,38 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			List<String> p = SSLUtilities.getSSLSupportedProtocols();
 			if(p!=null && p.size()>0){
 				for (String protocol : p) {
+					if(cipherSuites){
+						bf.append("\n");
+					}
 					printSSLInfo(protocol, bf, cipherSuites);
 				}
 				// Per retrocompatibilità verifico anche alias SSL e TLS in modo da sapere come si comportano se sono stati associati a delle configurazioni
 				if(p.contains(SSLConstants.PROTOCOL_TLS)==false){
+					if(cipherSuites){
+						bf.append("\n");
+					}
 					printSSLInfo(SSLConstants.PROTOCOL_TLS, bf, cipherSuites);
 				}
 				if(p.contains(SSLConstants.PROTOCOL_SSL)==false){
+					if(cipherSuites){
+						bf.append("\n");
+					}
 					printSSLInfo(SSLConstants.PROTOCOL_SSL, bf, cipherSuites);
 				}
 			}
 
+			if(providerInfo){
+				bf.append("\n");
+				bf.append("Providers: "+SSLUtilities.getSSLProvidersName());
+				bf.append("\n");
+				List<Provider> lProviders = SSLUtilities.getSSLProviders();
+				for (Provider provider : lProviders) {
+					printSSLProviderInfo(provider, bf);
+				}
+			}
+			
 			if(bf.length()<=0){
-				throw new Exception("Non sono disponibili informazioni sul database");
+				throw new Exception("Non sono disponibili informazioni sul contesto SSL");
 			}else{
 				return bf.toString();
 			}
@@ -638,13 +670,32 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		}
 		bf.append("\n");
 		if(cipherSuites){
-			bf.append(protocol+" (CipherSuites): ");
+			bf.append("CipherSuites: ");
 			try{
 				bf.append(SSLUtilities.getSSLEnabledCipherSuites(protocol));
 			}catch(Exception n){
 				bf.append(n.getMessage());
 			}
 			bf.append("\n");	
+		}
+	}
+	private void printSSLProviderInfo(Provider provider,StringBuffer bf){
+		bf.append("\n");
+		bf.append(provider.getName());
+		bf.append("\n");	
+		bf.append("Versione: v").append(provider.getVersion()).append(" ");
+		bf.append(provider.getInfo());
+		bf.append("\n");
+		try{
+			List<String> serviceTypes = SSLUtilities.getServiceTypes(provider);
+			bf.append("ServiceTypes: "+serviceTypes);
+			bf.append("\n");	
+			for (String serviceType : serviceTypes) {	
+				bf.append(serviceType+" Algorithms: "+SSLUtilities.getServiceTypeAlgorithms(provider, serviceType));
+				bf.append("\n");	
+			}
+		}catch(Exception n){
+			bf.append(n.getMessage());
 		}
 	}
 	
