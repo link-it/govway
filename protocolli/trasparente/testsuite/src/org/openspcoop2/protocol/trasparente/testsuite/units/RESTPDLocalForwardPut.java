@@ -39,8 +39,8 @@ import org.testng.annotations.Test;
  * RESTPDPost
  * 
  * @author Giovanni Bussu (bussu@link.it)
- * @author $Author: apoli $
- * @version $Rev: 12535 $, $Date: 2016-12-22 11:35:59 +0100(gio, 22 dic 2016) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class RESTPDLocalForwardPut {
 

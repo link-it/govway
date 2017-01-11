@@ -47,8 +47,8 @@ import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
  * Client per il servizio Domibus	
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: mergefairy $
- * @version $Rev: 12394 $, $Date: 2016-11-28 17:18:43 +0100 (Mon, 28 Nov 2016) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class DomibusClient {
 	
