@@ -1,3 +1,12 @@
+2017-01-11  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	Risolto Bug OP-579
+	Risolto problema presente nella maschera di configurazione del connettore https, 
+	dove se si scriveva un endpoint e subito dopo si selezionava una funzionalità che faceva scaturire il reload della pagina
+	(es. autenticazione client) il precedente endpoint indicato non veniva mantenuto. 
+	Al posto dell'originale endpoint indicato la pddConsole impostava una url contenente il solo prefisso 'https://'
+
 2016-12-21  Andrea Poli <apoli@link.it>
 
 	* [Pdd]
