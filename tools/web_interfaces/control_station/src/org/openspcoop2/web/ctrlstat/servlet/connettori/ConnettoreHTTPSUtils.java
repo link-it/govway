@@ -22,6 +22,9 @@ package org.openspcoop2.web.ctrlstat.servlet.connettori;
 import java.util.List;
 import java.util.Vector;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.TrustManagerFactory;
+
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
@@ -274,6 +277,17 @@ public class ConnettoreHTTPSUtils {
 			ControlStationCore core,int pageSize, boolean addUrlParameter,
 			String prefix) {
 		
+		// default
+		if(httpsalgoritmo==null || "".equals(httpsalgoritmo)){
+			httpsalgoritmo = TrustManagerFactory.getDefaultAlgorithm();
+		}
+		if(httpsalgoritmokey==null || "".equals(httpsalgoritmokey)){
+			httpsalgoritmokey = KeyManagerFactory.getDefaultAlgorithm();
+		}
+		if(httpstipologia==null || "".equals(httpstipologia)){
+			httpstipologia = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_TYPE;
+		}
+		
 		if(addUrlParameter){
 			DataElement de = new DataElement();
 			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_URL);
@@ -284,7 +298,7 @@ public class ConnettoreHTTPSUtils {
 			}else{
 				de.setType(DataElementType.TEXT);
 			}
-			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_URL);
+			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 			de.setSize(pageSize);
 			dati.addElement(de);
 		}
@@ -522,7 +536,7 @@ public class ConnettoreHTTPSUtils {
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_URL);
 		de.setValue(httpsurl);
 		de.setType(DataElementType.HIDDEN);
-		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_URL);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 		de.setSize(pageSize);
 		dati.addElement(de);
 

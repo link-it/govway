@@ -210,7 +210,7 @@ public final class ServiziApplicativiAdd extends Action {
 			}
 			
 			// https
-			String httpsurl = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_URL);
+			String httpsurl = url;
 			String httpstipologia = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
 			String httpshostverifyS = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
 			boolean httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);

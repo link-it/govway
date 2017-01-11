@@ -956,7 +956,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			de = new DataElement();
 			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
 			String tmpUrl = url;
-			if(url==null || "".equals(url)){
+			if(url==null || "".equals(url) || "http://".equals(url) || "https://".equals(url) ){
 				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
 					tmpUrl =endpointtype+"://";
 				}
@@ -972,12 +972,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			}else{
 				de.setType(DataElementType.HIDDEN);
 			}
-			if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_URL);
-			}
-			else{
-				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
-			}
+			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 			de.setSize(this.getSize());
 			dati.addElement(de);
 			
@@ -1109,7 +1104,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			de = new DataElement();
 			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
 			String tmpUrl = url;
-			if(url==null || "".equals(url)){
+			if(url==null || "".equals(url) || "http://".equals(url) || "https://".equals(url) ){
 				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
 					tmpUrl =endpointtype+"://";
 				}
@@ -1126,12 +1121,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			else{
 				de.setType(DataElementType.HIDDEN);
 			}
-			if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_URL);
-			}
-			else{
-				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
-			}
+			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 			de.setSize(this.getSize());
 			dati.addElement(de);
 			
@@ -1430,14 +1420,13 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 			de = new DataElement();
 			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
-			de.setValue((url != null) && !"".equals(url) ? url : "http://");
-			de.setType(DataElementType.HIDDEN);
+			String defaultPrefixValue = "http://";
 			if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_URL);
+				defaultPrefixValue = "https://";
 			}
-			else{
-				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
-			}
+			de.setValue((url != null) && !"".equals(url) && !"http://".equals(url) && !"https://".equals(url) ? url : defaultPrefixValue);
+			de.setType(DataElementType.HIDDEN);
+			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 			dati.addElement(de);
 
 		} else {
@@ -1487,12 +1476,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 //			else{
 				de.setType(DataElementType.HIDDEN);
 //		}
-			if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_URL);
-			}
-			else{
-				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
-			}
+			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 			de.setSize(this.getSize());
 			dati.addElement(de);
 
@@ -1558,7 +1542,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String sendas = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
 
 			// https
-			String httpsurl = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_URL);
+			String httpsurl = url;
 			String httpstipologia = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
 			String httpshostverifyS = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
 			boolean httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);

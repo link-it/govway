@@ -979,7 +979,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			}
 			
 			// https
-			String httpsurl = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_URL);
+			String httpsurl = url;
 			String httpstipologia = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
 			String httpshostverifyS = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
 			boolean httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);
@@ -1073,7 +1073,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			}
 			
 			// https
-			String httpsurl = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_URL);
+			String httpsurl = url;
 			String httpstipologia = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
 			String httpshostverifyS = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
 			boolean httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);
@@ -1909,7 +1909,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				}
 				
 				// https
-				httpsurl = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_URL);
+				httpsurl = url;
 				httpstipologia = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
 				httpshostverifyS = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
 				httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);

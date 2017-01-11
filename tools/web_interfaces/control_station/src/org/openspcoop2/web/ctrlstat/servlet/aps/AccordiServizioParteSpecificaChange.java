@@ -162,7 +162,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			}
 			
 			// https
-			String httpsurl = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_URL);
+			String httpsurl = url;
 			String httpstipologia = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE );
 			String httpshostverifyS = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
 			boolean httpshostverify = false;
@@ -552,7 +552,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					
 					autenticazioneHttp = apsHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 					
-					if (httpsurl == null) {
+					if (httpstipologia == null) {
 						httpsurl = props.get(CostantiDB.CONNETTORE_HTTPS_LOCATION);
 						httpstipologia = props.get(CostantiDB.CONNETTORE_HTTPS_SSL_TYPE);
 						httpshostverifyS = props.get(CostantiDB.CONNETTORE_HTTPS_HOSTNAME_VERIFIER);

@@ -95,7 +95,6 @@ public class ConnettoriCostanti {
 	
 	public final static String PARAMETRO_CONNETTORE_HTTPS_CLIENT_AUTH = "clientAuth";
 	public final static String PARAMETRO_CONNETTORE_HTTPS_STATO_PACKAGE = "stato";
-	public final static String PARAMETRO_CONNETTORE_HTTPS_URL = "httpsurl";
 	public final static String PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE ="httpstipologia";
 	public final static String PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY = "httpshostverify";
 	public final static String PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION = "httpspath";

@@ -189,7 +189,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			}
 			
 			// https
-			this.httpsurl = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_URL);
+			this.httpsurl = this.url;
 			this.httpstipologia = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE );
 			this.httpshostverifyS = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
 			this.httpspath = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION );
@@ -1194,6 +1194,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_URL+"\"") != -1) {
 					line = dis.readLine();
 					this.url = dis.readLine();
+					this.httpsurl = this.url;
 				}
 				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_NOME_CODA+"\"") != -1) {
 					line = dis.readLine();
@@ -1306,10 +1307,6 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO_PACKAGE+"\"") != -1) {
 					line = dis.readLine();
 					this.statoPackage = dis.readLine();
-				}
-				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_URL+"\"") != -1) {
-					line = dis.readLine();
-					this.httpsurl = dis.readLine();
 				}
 				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE+"\"") != -1) {
 					line = dis.readLine();
