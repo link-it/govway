@@ -82,6 +82,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -117,6 +118,9 @@ public final class AccordiServizioParteComuneChange extends Action {
 	private ConsoleInterfaceType consoleInterfaceType = null;
 	private String protocolPropertiesSet = null;
 
+	
+	private BinaryParameter wsdlservcorr, wsdldef, wsdlserv, wsdlconc, wsblconc, wsblserv, wsblservcorr;
+	
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -429,6 +433,41 @@ public final class AccordiServizioParteComuneChange extends Action {
 
 					if(this.statoPackage==null)
 						this.statoPackage = as.getStatoPackage();
+					
+					if(this.wsdlconc == null){
+						this.wsdlconc = new BinaryParameter();
+						this.wsdlconc.setValue(as.getByteWsdlConcettuale());
+					}
+					
+					if(this.wsdldef == null){
+						this.wsdldef = new BinaryParameter();
+						this.wsdldef.setValue(as.getByteWsdlDefinitorio());
+					}
+					
+					if(this.wsdlserv == null){
+						this.wsdlserv = new BinaryParameter();
+						this.wsdlserv.setValue(as.getByteWsdlLogicoErogatore());
+					}
+					
+					if(this.wsdlservcorr == null){
+						this.wsdlservcorr = new BinaryParameter();
+						this.wsdlservcorr.setValue(as.getByteWsdlLogicoFruitore());
+					}
+					
+					if(this.wsblconc == null){
+						this.wsblconc = new BinaryParameter();
+						this.wsblconc.setValue(as.getByteSpecificaConversazioneConcettuale());
+					}
+					
+					if(this.wsblserv == null){
+						this.wsblserv = new BinaryParameter();
+						this.wsblserv.setValue(as.getByteSpecificaConversazioneErogatore());
+					}
+					
+					if(this.wsblservcorr == null){
+						this.wsblservcorr = new BinaryParameter();
+						this.wsblservcorr.setValue(as.getByteSpecificaConversazioneFruitore());
+					}
 
 			} catch (Exception ex) {
 				return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), ex, pd, session, gd, mapping, 
@@ -450,7 +489,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioComposto(this.consoleConfiguration,
 							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
 
-				dati = apcHelper.addAccordiToDati(dati, nome, this.descr, this.profcoll, "", "", "", "", 
+				dati = apcHelper.addAccordiToDati(dati, nome, this.descr, this.profcoll, this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr,
+						this.wsblconc,this.wsblserv,this.wsblservcorr,
 						this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, this.id, tipoOp, 
 						this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
 						this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
@@ -481,10 +521,10 @@ public final class AccordiServizioParteComuneChange extends Action {
 
 		// Controlli sui campi immessi
 		boolean isOk = apcHelper.accordiCheckData(tipoOp, nome, this.descr, this.profcoll, 
-				"", "", "", "", 
+				this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr,  
 				this.filtrodup, this.confric, this.idcoll, this.consord, 
 				this.scadenza, this.id,this.referente,this.versione,this.accordoCooperazioneId,this.privato,visibilitaAccordoCooperazione,idAccordoOLD, 
-				"", "", "", this.validazioneDocumenti,this.tipoProtocollo,this.backToStato);
+				this.wsblconc,this.wsblserv,this.wsblservcorr, this.validazioneDocumenti,this.tipoProtocollo,this.backToStato);
 
 		// Validazione base dei parametri custom 
 		if(isOk){
@@ -532,7 +572,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioComposto(this.consoleConfiguration,
 						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
 
-			dati = apcHelper.addAccordiToDati(dati, nome, this.descr, this.profcoll, "", "", "", "", 
+			dati = apcHelper.addAccordiToDati(dati, nome, this.descr, this.profcoll, this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr,this.wsblconc,this.wsblserv,this.wsblservcorr, 
 					this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, this.id, tipoOp, 
 					this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
 					this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
@@ -693,7 +733,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioComposto(this.consoleConfiguration,
 							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
 
-				dati = apcHelper.addAccordiToDati(dati, nome, this.descr, this.profcoll, "", "", "", "", 
+				dati = apcHelper.addAccordiToDati(dati, nome, this.descr, this.profcoll, this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr,this.wsblconc,this.wsblserv,this.wsblservcorr, 
 						this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, this.id, tipoOp, 
 						this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
 						this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
@@ -798,7 +838,7 @@ public final class AccordiServizioParteComuneChange extends Action {
 								this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioComposto(this.consoleConfiguration,
 										this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAccordoOLD);
 
-							dati = apcHelper.addAccordiToDati(dati, nome, this.descr, this.profcoll, "", "", "", "", 
+							dati = apcHelper.addAccordiToDati(dati, nome, this.descr, this.profcoll, this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr, this.wsblconc,this.wsblserv,this.wsblservcorr,
 									this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, this.id, tipoOp, 
 									this.showUtilizzoSenzaAzione, this.utilizzoSenzaAzione,this.referente,this.versione,providersList,providersListLabel,
 									this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,

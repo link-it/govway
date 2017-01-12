@@ -21,16 +21,14 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.apc;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.Vector;
 
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -46,16 +44,29 @@ import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.IdSoggetto;
+import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
+import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
+import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -81,6 +92,16 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 	private boolean validazioneDocumenti = true;
 	private boolean decodeRequestValidazioneDocumenti = false;
 	private String editMode = null;
+	private BinaryParameter wsdlservcorr, wsdldef, wsdlserv, wsdlconc, wsblconc, wsblserv, wsblservcorr;
+	
+	// Protocol Properties
+	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
+	private ConsoleConfiguration consoleConfiguration =null;
+	private ProtocolProperties protocolProperties = null;
+	private IProtocolFactory<?> protocolFactory= null;
+	private IRegistryReader registryReader = null; 
+	private ConsoleOperationType consoleOperationType = null;
+	private ConsoleInterfaceType consoleInterfaceType = null;
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -102,27 +123,28 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 		boolean isModalitaAvanzata = ServletUtils.getUserFromSession(session).getInterfaceType().equals(InterfaceType.AVANZATA);
 		boolean isSupportoProfiloAsincrono = false;
+		
+		this.consoleOperationType = ConsoleOperationType.CHANGE;
+		this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(session); 
 
 		try {
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
-			String actionConfirm = request.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
+			String actionConfirm = apcHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
 
-			this.editMode = null;
+			this.editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 
-			this.id = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-			this.tipo = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL);
-			this.wsdl = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL);
-			this.tipoAccordo = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
+			this.id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+			this.tipo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL);
+			this.wsdl = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL);
+			this.tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(this.tipoAccordo))
 				this.tipoAccordo = null;
 
-			// boolean decodeReq = false;
-			String ct = request.getContentType();
-			if ((ct != null) && (ct.indexOf(Costanti.MULTIPART) != -1)) {
-				// decodeReq = true;
-				this.decodeRequestValidazioneDocumenti = false; // init
-				this.decodeRequest(request);
+			if(apcHelper.isMultipart()){
+				this.decodeRequestValidazioneDocumenti = true;
+				String tmpValidazioneDocumenti = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VALIDAZIONE_DOCUMENTI);
+				this.validazioneDocumenti = ServletUtils.isCheckBoxEnabled(tmpValidazioneDocumenti);
 			}
 
 			//rimuovo eventuali tracce della procedura 
@@ -134,13 +156,13 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 							AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CHANGE_TMP);
 					session.removeAttribute(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CHANGE_TMP);
 			}
-
-			if(ServletUtils.isEditModeInProgress(request) && ServletUtils.isEditModeInProgress(this.editMode)){
+			
+			if(ServletUtils.isEditModeInProgress(this.editMode)){// && ServletUtils.isEditModeInProgress(request)){
 				// primo accesso alla servlet
 				this.validazioneDocumenti = true;
 			}else{
 				if(!this.decodeRequestValidazioneDocumenti){
-					String tmpValidazioneDocumenti = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VALIDAZIONE_DOCUMENTI);
+					String tmpValidazioneDocumenti = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VALIDAZIONE_DOCUMENTI);
 					this.validazioneDocumenti = ServletUtils.isCheckBoxEnabled(tmpValidazioneDocumenti);
 				}
 			}
@@ -249,6 +271,13 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 
 			List<String> tipiSoggettiGestitiProtocollo = soggettiCore.getTipiSoggettiGestitiProtocollo(tipoProtocollo);
 
+			Parameter parameterApcChange = new Parameter(uriAS,
+					AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE+"?"+
+							AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+this.id+"&"+
+							AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME+"="+as.getNome()+"&"+
+							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
+							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue()
+					);
 			if(ServletUtils.isEditModeInProgress(request) && ServletUtils.isEditModeInProgress(this.editMode)){
 
 				// setto la barra del titolo				
@@ -258,13 +287,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue()),
-										new Parameter(uriAS,
-												AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE+"?"+
-														AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+this.id+"&"+
-														AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME+"="+as.getNome()+"&"+
-														AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
-														AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue()
-												),
+										parameterApcChange,
 												new Parameter(label,null)
 						);
 
@@ -295,13 +318,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 								AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue()),
-										new Parameter(uriAS,
-												AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE+"?"+
-														AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+this.id+"&"+
-														AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME+"="+as.getNome()+"&"+
-														AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
-														AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue()
-												),
+										parameterApcChange,
 												new Parameter(label,null)
 						);
 
@@ -321,6 +338,14 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 						AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, AccordiServizioParteComuneCostanti.TIPO_OPERAZIONE_WSDL_CHANGE);
 			}
 
+			// creo parametri binari finti per i wsdl 
+			this.wsdldef = new BinaryParameter();
+			this.wsdlconc = new BinaryParameter();
+			this.wsdlserv = new BinaryParameter();
+			this.wsdlservcorr = new BinaryParameter();
+			this.wsblconc = new BinaryParameter();
+			this.wsblserv = new BinaryParameter();
+			this.wsblservcorr = new BinaryParameter();
 
 			// il wsdl definitorio rimane fuori dal nuovo comportamento quindi il flusso della pagina continua come prima
 			if (this.tipo.equals(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO)) {
@@ -345,13 +370,7 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 											AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 													AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
 													AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue()),
-													new Parameter(uriAS,
-															AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE+"?"+
-																	AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+this.id+"&"+
-																	AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME+"="+as.getNome()+"&"+
-																	AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getName()+"="+
-																	AccordiServizioParteComuneUtilities.getParametroAccordoServizio(this.tipoAccordo).getValue()
-															),
+													parameterApcChange,
 															new Parameter(label,null)
 									);
 
@@ -622,19 +641,43 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 				accordoCooperazioneId="-";
 			}
 			String statoPackage = as.getStatoPackage();
+			
+			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tipoProtocollo);
+			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
+			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
+			this.consoleConfiguration = this.tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE) ? 
+					this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteComune(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idAccordoOLD)
+					: this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioComposto(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idAccordoOLD);
+					
+			List<ProtocolProperty> oldProtocolPropertyList = as.getProtocolPropertyList();
+			this.protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
+			ProtocolPropertiesUtils.mergeProtocolProperties(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
+			
+			Properties propertiesProprietario = new Properties();
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO, this.id);
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO, ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO_VALUE_ACCORDO_SERVIZIO_PARTE_COMUNE);
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PROPRIETARIO, uriAS);
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE,
+					URLEncoder.encode(parameterApcChange.getValue(), "UTF-8"));
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO, tipoProtocollo);
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO, this.tipoAccordo);
 
 			// preparo i campi
 			Vector<DataElement> dati = new Vector<DataElement>();
 
 			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-			dati = apcHelper.addAccordiToDati(dati, as.getNome(), descr, profcoll, "", "", "", "", 
+			dati = apcHelper.addAccordiToDati(dati, as.getNome(), descr, profcoll, this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr,this.wsblconc,this.wsblserv,this.wsblservcorr, 
 					filtrodup, confric, idcoll, consord, scadenza, this.id, TipoOperazione.CHANGE, 
 					showUtilizzoSenzaAzione, utilizzoSenzaAzione,referente,versione,providersList,providersListLabel,
 					(as.getPrivato()!=null && as.getPrivato()),isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 					accordoCooperazioneId,statoPackage,statoPackage,this.tipoAccordo,this.validazioneDocumenti, 
 					tipoProtocollo,listaTipiProtocollo,used,asWithAllegati);
 
+			// aggiunta campi custom
+			dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+
+			
 			pd.setDati(dati);
 
 			// setto la baseurl per il redirect (alla servlet accordiChange)
@@ -648,63 +691,6 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
 					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, AccordiServizioParteComuneCostanti.TIPO_OPERAZIONE_WSDL_CHANGE);
-		}
-	}
-
-	public void decodeRequest(HttpServletRequest request) throws Exception {
-		try {
-			ServletInputStream in = request.getInputStream();
-			BufferedReader dis = new BufferedReader(new InputStreamReader(in));
-			String line = dis.readLine();
-			while (line != null) {
-				if (line.indexOf("Content-Disposition: form-data; name=\""+Costanti.DATA_ELEMENT_EDIT_MODE_NAME+"\"") != -1) {
-					line = dis.readLine();
-					this.editMode = dis.readLine();
-				}
-				if (line.indexOf("Content-Disposition: form-data; name=\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"\"") != -1) {
-					line = dis.readLine();
-					this.id = dis.readLine();
-				}
-				if (line.indexOf("Content-Disposition: form-data; name=\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL+"\"") != -1) {
-					line = dis.readLine();
-					this.tipo = dis.readLine();
-				}
-				if (line.indexOf("Content-Disposition: form-data; name=\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL+"\"") != -1) {
-					int startId = line.indexOf(Costanti.MULTIPART_FILENAME);
-					startId = startId + 10;
-					// int endId = line.lastIndexOf("\"");
-					// String tmpNomeFile = line.substring(startId, endId);
-					line = dis.readLine();
-					line = dis.readLine();
-					this.wsdl = "";
-					while (!line.startsWith(Costanti.MULTIPART_START) || (line.startsWith(Costanti.MULTIPART_START) && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || (line.indexOf(Costanti.MULTIPART_END) != -1)))) {
-						if("".equals(this.wsdl))
-							this.wsdl = line;
-						else
-							this.wsdl = this.wsdl + "\n" + line;
-						line = dis.readLine();
-					}
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO+"\"") != -1) {
-					line = dis.readLine();
-					this.tipoAccordo = dis.readLine();
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_VALIDAZIONE_DOCUMENTI+"\"") != -1) {
-					this.decodeRequestValidazioneDocumenti = true;
-					line = dis.readLine();
-					String tmpValidazioneDocumenti = dis.readLine();
-					if(ServletUtils.isCheckBoxEnabled(tmpValidazioneDocumenti)){
-						this.validazioneDocumenti = true;
-					}
-					else{
-						this.validazioneDocumenti = false;
-					}
-				}
-				line = dis.readLine();
-			}
-			in.close();
-		} catch (IOException ioe) {
-			throw new Exception(ioe);
 		}
 	}
 }

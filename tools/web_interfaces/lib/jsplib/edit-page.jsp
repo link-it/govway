@@ -232,7 +232,12 @@ for (int i = 0; i < dati.size(); i++) {
             %></td>
             <td><%
           }
-          %><small><input size='<%= de.getSize() %>' type=file name="<%= de.getName()  %>"></small><%
+          %><small><input size='<%= de.getSize() %>' type=file name="<%= de.getName()  %>" 
+          	<%
+                  if (!de.getOnChange().equals("")) {
+			    %> onChange="postVersion_<%= de.getOnChange() %>"<%
+			  }
+			  %>  	></small><%
           if (!de.getAffiancato()) {
             %></td><%
           } else {

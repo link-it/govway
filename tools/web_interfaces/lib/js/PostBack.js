@@ -26,7 +26,7 @@ function postBack(dataElementName) {
     
     for (var k=0; k<document.form.elements.length; k++) {
 		var nome = document.form.elements[k].name;
-		if (nome.length > 0 && nome != "idhid") {
+		if (nome.length > 0 && nome != "idhid" && nome != "edit-mode") {
 		    var tipo = document.form.elements[k].type;
 		    var valore = "";
 		    if (tipo == "text" || tipo == "file" || tipo == "hidden" || tipo == "textarea")
@@ -57,4 +57,56 @@ function postBack(dataElementName) {
 		}
     }
     document.location = location;
+}	
+
+function addHidden(theForm, name, value) {
+    // Create a hidden input element, and append it to the form:
+    var input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = name;
+    input.value = value;
+    theForm.appendChild(input);
+}
+
+function postVersion_postBack(dataElementName) {
+        
+    //aggiungo parametro per indicare che si tratta di postback e azzero idhid
+    addHidden(document.form, 'isPostBack' , true);
+//    addHidden(document.form, 'edit-mode' , 'in_progress_postback');
+    if(dataElementName!=null)
+    	addHidden(document.form, 'postBackElementName' , dataElementName);
+    
+    // dump 
+    var dump = true;
+    
+   
+	for (var k=0; k<document.form.elements.length; k++) {
+		var nome = document.form.elements[k].name;
+		
+		if(nome == "edit-mode")
+			document.form.elements[k].value = 'in_progress_postback';
+		
+		if(dump) { 
+		    var tipo = document.form.elements[k].type;
+		    var valore = "";
+		    if (tipo == "text" || tipo == "file" || tipo == "hidden" || tipo == "textarea")
+			valore = document.form.elements[k].value;
+		    if (tipo == "select-one") {
+			for (var j=0; j<document.form.elements[k].options.length; j++)
+			    if (document.form.elements[k].options[j].selected == true)
+				valore = document.form.elements[k].options[j].value;
+		    }
+		    if (tipo == "checkbox") {
+			if (document.form.elements[k].checked)
+			    valore = "yes";
+			else
+			    valore = "no";
+		    }
+		   
+		    console.log('Input ['+nome+'], Tipo ['+tipo+'], Valore ['+valore+']');
+	    }
+    }
+    
+    // form submit
+    document.form.submit();
 }	

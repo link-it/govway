@@ -54,6 +54,8 @@ import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -208,7 +210,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 
 	public Vector<DataElement> addProtocolPropertyChangeToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String protocollo, String id, String nome,
 			String idProprietario, ProprietariProtocolProperty tipoProprietario, String tipoAccordo, String nomeProprietario,String nomeParentProprietario, String urlChange, String label,
-			byte[] byteDocumento, StringBuffer contenutoDocumento, String errore, String tipologiaDocumentoScaricare, AbstractConsoleItem<?> binaryConsoleItem) { 
+			BinaryParameter contenutoDocumento, StringBuffer contenutoDocumentoStringBuffer, String errore, String tipologiaDocumentoScaricare, AbstractConsoleItem<?> binaryConsoleItem) { 
 
 		/* ID */
 		DataElement de = new DataElement();
@@ -283,7 +285,13 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 		dati.addElement(de);
 
 		/* Contenuto Documento */
-		if(byteDocumento != null && byteDocumento.length > 0){
+		if(contenutoDocumento != null && contenutoDocumento.getValue() != null && contenutoDocumento.getValue().length > 0){
+			de = new DataElement();
+			de.setLabel(ProtocolPropertiesCostanti.LABEL_NOME);
+			de.setType(DataElementType.TEXT);
+			de.setValue(contenutoDocumento.getFilename());
+			dati.addElement(de);
+			
 			if(errore!=null){
 				de = new DataElement();
 				de.setValue(errore);
@@ -296,12 +304,12 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 				de = new DataElement();
 				de.setLabel(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_ATTUALE +":");
 				de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-				de.setValue(contenutoDocumento.toString());
+				de.setValue(contenutoDocumentoStringBuffer.toString());
 				de.setRows(30);
 				de.setCols(110);
 				dati.addElement(de);
 			}
-
+			
 			if(id != null){
 				DataElement saveAs = new DataElement();
 				saveAs.setValue(ProtocolPropertiesCostanti.LABEL_DOWNLOAD);
@@ -336,8 +344,20 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 		de.setSize(this.getSize());
 		de.setRequired(binaryConsoleItem.isRequired()); 
 		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setType(DataElementType.HIDDEN);
+		de.setName(Costanti.PARAMETER_FILENAME_PREFIX + ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
+		de.setValue(contenutoDocumento.getFilename());
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setType(DataElementType.HIDDEN);
+		de.setName(Costanti.PARAMETER_FILEID_PREFIX + ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
+		de.setValue(contenutoDocumento.getId());
+		dati.addElement(de);
 
-		if(byteDocumento != null && byteDocumento.length > 0 && !binaryConsoleItem.isRequired()){
+		if(contenutoDocumento != null && contenutoDocumento.getValue() != null && contenutoDocumento.getValue().length > 0 && !binaryConsoleItem.isRequired()){
 			de = new DataElement();
 			de.setBold(true);
 			de.setLabel(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_CHANGE_CLEAR_WARNING);

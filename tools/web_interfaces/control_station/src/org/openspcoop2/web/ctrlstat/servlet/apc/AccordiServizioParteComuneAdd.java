@@ -67,6 +67,7 @@ import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -87,10 +88,9 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public final class AccordiServizioParteComuneAdd extends Action {
 
-	private String nome, descr, profcoll, wsdldef, wsdlconc, wsdlserv,
-	wsdlservcorr, filtrodup, confric, idcoll, consord, scadenza,
-	referente,versione,accordoCooperazione,
-	wsblconc, wsblserv, wsblservcorr;
+	private String nome, descr, profcoll, 
+	 filtrodup, confric, idcoll, consord, scadenza,
+	referente,versione,accordoCooperazione;
 	private boolean privato, isServizioComposto;// showPrivato;
 	private String statoPackage;
 	private String tipoAccordo;
@@ -110,7 +110,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 	private ConsoleOperationType consoleOperationType = null;
 	private ConsoleInterfaceType consoleInterfaceType = null;
 
-
+	private BinaryParameter wsdlservcorr, wsdldef, wsdlserv, wsdlconc, wsblconc, wsblserv, wsblservcorr;
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -144,14 +144,16 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			this.nome = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME);
 			this.descr = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_DESCRIZIONE);
 			this.profcoll = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROFILO_COLLABORAZIONE);
-			this.wsdldef = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO);
-			this.wsdlconc = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE);
-			this.wsdlserv = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE);
-			this.wsdlservcorr = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE);
+			
+			
+			this.wsdldef = apcHelper.getBinaryParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO);
+			this.wsdlconc = apcHelper.getBinaryParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE);
+			this.wsdlserv = apcHelper.getBinaryParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE);
+			this.wsdlservcorr = apcHelper.getBinaryParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE);
 
-			this.wsblconc = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE);
-			this.wsblserv = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE);
-			this.wsblservcorr = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE);
+			this.wsblconc = apcHelper.getBinaryParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE);
+			this.wsblserv = apcHelper.getBinaryParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE);
+			this.wsblservcorr = apcHelper.getBinaryParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE);
 
 			this.filtrodup = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_FILTRO_DUPLICATI);
 			this.confric = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_CONFERMA_RICEZIONE);
@@ -283,6 +285,9 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			if(postBackElementName != null ){
 				if(postBackElementName.equalsIgnoreCase(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO)){
 					this.referente = null;
+					apcHelper.deleteBinaryParameters();
+					apcHelper.deleteBinaryParameters(this.wsdlconc,this.wsdldef,this.wsdlserv,this.wsdlservcorr,this.wsblconc,this.wsblserv,this.wsblservcorr);
+					apcHelper.deleteProtocolPropertiesBinaryParameters(this.wsdlconc,this.wsdldef,this.wsdlserv,this.wsdlservcorr,this.wsblconc,this.wsblserv,this.wsblservcorr);
 				}
 			}
 
@@ -386,7 +391,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioComposto(this.consoleConfiguration,
 							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idApc);
 
-				dati = apcHelper.addAccordiToDati(dati, this.nome, this.descr, this.profcoll, "", "", "", "", 
+				dati = apcHelper.addAccordiToDati(dati, this.nome, this.descr, this.profcoll, this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr, this.wsblconc,this.wsblserv,this.wsblservcorr,
 						this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, "0", tipoOp, 
 						false, true, this.referente, this.versione, providersList, providersListLabel, 
 						this.privato, this.isServizioComposto, accordiCooperazioneEsistenti, accordiCooperazioneEsistentiLabel, 
@@ -460,7 +465,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioComposto(this.consoleConfiguration,
 							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idApc);
 
-				dati = apcHelper.addAccordiToDati(dati, this.nome, this.descr, this.profcoll, this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr, 
+				dati = apcHelper.addAccordiToDati(dati, this.nome, this.descr, this.profcoll, this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr, this.wsblconc,this.wsblserv,this.wsblservcorr,
 						this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, "0", tipoOp, 
 						false, true,this.referente, this.versione, providersList, providersListLabel,
 						this.privato, this.isServizioComposto, accordiCooperazioneEsistenti, accordiCooperazioneEsistentiLabel, 
@@ -489,10 +494,14 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			this.profcoll = AccordiServizioParteComuneHelper.convertProfiloCollaborazioneView2DB(this.profcoll);
 			as.setProfiloCollaborazione(ProfiloCollaborazione.toEnumConstant(this.profcoll));
 
-			as.setByteWsdlConcettuale(this.wsdlconc != null && !this.wsdlconc.trim().replaceAll("\n", "").equals("") ? this.wsdlconc.trim().getBytes() : null);
-			as.setByteWsdlDefinitorio(this.wsdldef != null && !this.wsdldef.trim().replaceAll("\n", "").equals("") ? this.wsdldef.trim().getBytes() : null);
-			as.setByteWsdlLogicoErogatore(this.wsdlserv != null && !this.wsdlserv.trim().replaceAll("\n", "").equals("") ? this.wsdlserv.trim().getBytes() : null);
-			as.setByteWsdlLogicoFruitore(this.wsdlservcorr != null && !this.wsdlservcorr.trim().replaceAll("\n", "").equals("") ? this.wsdlservcorr.trim().getBytes() : null);
+			String wsdlconcS = this.wsdlconc.getValue() != null ? new String(this.wsdlconc.getValue()) : null; 
+			as.setByteWsdlConcettuale(wsdlconcS != null && !wsdlconcS.trim().replaceAll("\n", "").equals("") ? wsdlconcS.trim().getBytes() : null);
+			String wsdldefS = this.wsdldef.getValue() != null ? new String(this.wsdldef.getValue()) : null; 
+			as.setByteWsdlDefinitorio(wsdldefS != null && !wsdldefS.trim().replaceAll("\n", "").equals("") ? wsdldefS.trim().getBytes() : null);
+			String wsdlservS = this.wsdlserv.getValue() != null ? new String(this.wsdlserv.getValue()) : null; 
+			as.setByteWsdlLogicoErogatore(wsdlservS != null && !wsdlservS.trim().replaceAll("\n", "").equals("") ? wsdlservS.trim().getBytes() : null);
+			String wsdlservcorrS = this.wsdlservcorr.getValue() != null ? new String(this.wsdlservcorr.getValue()) : null; 
+			as.setByteWsdlLogicoFruitore(wsdlservcorrS != null && !wsdlservcorrS.trim().replaceAll("\n", "").equals("") ? wsdlservcorrS.trim().getBytes() : null);
 
 			// Se un utente ha impostato solo il logico erogatore (avviene automaticamente nel caso non venga visualizzato il campo concettuale)
 			// imposto lo stesso wsdl anche per il concettuale. Tanto Rappresenta la stessa informazione, ma e' utile per lo stato dell'accordo
@@ -511,9 +520,13 @@ public final class AccordiServizioParteComuneAdd extends Action {
 				as.setScadenza(this.scadenza);
 			as.setSuperUser(userLogin);
 			as.setUtilizzoSenzaAzione(true);// default true
-			as.setByteSpecificaConversazioneConcettuale((this.wsblconc != null) && !this.wsblconc.trim().replaceAll("\n", "").equals("") ? this.wsblconc.trim().getBytes() : null);
-			as.setByteSpecificaConversazioneErogatore((this.wsblserv != null) && !this.wsblserv.trim().replaceAll("\n", "").equals("") ? this.wsblserv.trim().getBytes() : null);
-			as.setByteSpecificaConversazioneFruitore((this.wsblservcorr != null) && !this.wsblservcorr.trim().replaceAll("\n", "").equals("") ? this.wsblservcorr.trim().getBytes() : null);
+			String wsblconcS = this.wsblconc.getValue() != null ? new String(this.wsblconc.getValue()) : null; 
+			as.setByteSpecificaConversazioneConcettuale((wsblconcS != null) && !wsblconcS.trim().replaceAll("\n", "").equals("") ? wsblconcS.trim().getBytes() : null);
+			String wsblservS = this.wsblserv.getValue() != null ? new String(this.wsblserv.getValue()) : null;
+			as.setByteSpecificaConversazioneErogatore((wsblservS != null) && !wsblservS.trim().replaceAll("\n", "").equals("") ? wsblservS.trim().getBytes() : null);
+			String wsblservcorrS = this.wsblservcorr.getValue() != null ? new String(this.wsblservcorr.getValue()) : null;
+			as.setByteSpecificaConversazioneFruitore((wsblservcorrS != null) && !wsblservcorrS.trim().replaceAll("\n", "").equals("") ? wsblservcorrS.trim().getBytes() : null);
+			
 			if(this.referente!=null && !"".equals(this.referente) && !"-".equals(this.referente)){
 				int idRef = 0;
 				try {
@@ -574,7 +587,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 						this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioComposto(this.consoleConfiguration,
 								this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idApc);
 
-					dati = apcHelper.addAccordiToDati(dati, this.nome, this.descr, this.profcoll, this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr, 
+					dati = apcHelper.addAccordiToDati(dati, this.nome, this.descr, this.profcoll, this.wsdldef, this.wsdlconc, this.wsdlserv, this.wsdlservcorr, this.wsblconc,this.wsblserv,this.wsblservcorr,
 							this.filtrodup, this.confric, this.idcoll, this.consord, this.scadenza, "0", tipoOp, 
 							false, true,this.referente, this.versione, providersList, providersListLabel,
 							this.privato, this.isServizioComposto, accordiCooperazioneEsistenti, accordiCooperazioneEsistentiLabel, 
@@ -634,6 +647,10 @@ public final class AccordiServizioParteComuneAdd extends Action {
 
 			// effettuo le operazioni
 			apcCore.performCreateOperation(userLogin, apcHelper.smista(), as);
+			
+			// cancello i file temporanei
+			apcHelper.deleteBinaryParameters(this.wsdlconc,this.wsdldef,this.wsdlserv,this.wsdlservcorr,this.wsblconc,this.wsblserv,this.wsblservcorr);
+			apcHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties);
 
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
@@ -742,14 +759,14 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					// String tmpNomeFile = line.substring(startId, endId);
 					line = dis.readLine();
 					line = dis.readLine();
-					this.wsdldef = "";
-					while (!line.startsWith(Costanti.MULTIPART_START) || (line.startsWith(Costanti.MULTIPART_START) && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || (line.indexOf(Costanti.MULTIPART_END) != -1)))) {
-						if("".equals(this.wsdldef))
-							this.wsdldef = line;
-						else
-							this.wsdldef = this.wsdldef + "\n" + line;
-						line = dis.readLine();
-					}
+//					this.wsdldef = "";
+//					while (!line.startsWith(Costanti.MULTIPART_START) || (line.startsWith(Costanti.MULTIPART_START) && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || (line.indexOf(Costanti.MULTIPART_END) != -1)))) {
+//						if("".equals(this.wsdldef))
+//							this.wsdldef = line;
+//						else
+//							this.wsdldef = this.wsdldef + "\n" + line;
+//						line = dis.readLine();
+//					}
 				}
 				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE+"\"") != -1) {
 					int startId = line.indexOf(Costanti.MULTIPART_FILENAME);
@@ -758,14 +775,14 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					// String tmpNomeFile = line.substring(startId, endId);
 					line = dis.readLine();
 					line = dis.readLine();
-					this.wsdlconc = "";
-					while (!line.startsWith(Costanti.MULTIPART_START) || (line.startsWith(Costanti.MULTIPART_START) && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || (line.indexOf(Costanti.MULTIPART_END) != -1)))) {
-						if("".equals(this.wsdlconc))
-							this.wsdlconc = line;
-						else
-							this.wsdlconc = this.wsdlconc + "\n" + line;
-						line = dis.readLine();
-					}
+//					this.wsdlconc = "";
+//					while (!line.startsWith(Costanti.MULTIPART_START) || (line.startsWith(Costanti.MULTIPART_START) && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || (line.indexOf(Costanti.MULTIPART_END) != -1)))) {
+//						if("".equals(this.wsdlconc))
+//							this.wsdlconc = line;
+//						else
+//							this.wsdlconc = this.wsdlconc + "\n" + line;
+//						line = dis.readLine();
+//					}
 				}
 				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE+"\"") != -1) {
 					int startId = line.indexOf(Costanti.MULTIPART_FILENAME);
@@ -774,14 +791,14 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					// String tmpNomeFile = line.substring(startId, endId);
 					line = dis.readLine();
 					line = dis.readLine();
-					this.wsdlserv = "";
-					while (!line.startsWith(Costanti.MULTIPART_START) || (line.startsWith(Costanti.MULTIPART_START) && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || (line.indexOf(Costanti.MULTIPART_END) != -1)))) {
-						if("".equals(this.wsdlserv))
-							this.wsdlserv = line;
-						else
-							this.wsdlserv = this.wsdlserv + "\n" + line;
-						line = dis.readLine();
-					}
+//					this.wsdlserv = "";
+//					while (!line.startsWith(Costanti.MULTIPART_START) || (line.startsWith(Costanti.MULTIPART_START) && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || (line.indexOf(Costanti.MULTIPART_END) != -1)))) {
+//						if("".equals(this.wsdlserv))
+//							this.wsdlserv = line;
+//						else
+//							this.wsdlserv = this.wsdlserv + "\n" + line;
+//						line = dis.readLine();
+//					}
 				}
 				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE+"\"") != -1) {
 					int startId = line.indexOf(Costanti.MULTIPART_FILENAME);
@@ -790,14 +807,14 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					// String tmpNomeFile = line.substring(startId, endId);
 					line = dis.readLine();
 					line = dis.readLine();
-					this.wsdlservcorr = "";
-					while (!line.startsWith(Costanti.MULTIPART_START) || (line.startsWith(Costanti.MULTIPART_START) && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || (line.indexOf(Costanti.MULTIPART_END) != -1)))) {
-						if("".equals(this.wsdlservcorr))
-							this.wsdlservcorr = line;
-						else
-							this.wsdlservcorr = this.wsdlservcorr + "\n" + line;
-						line = dis.readLine();
-					}
+//					this.wsdlservcorr = "";
+//					while (!line.startsWith(Costanti.MULTIPART_START) || (line.startsWith(Costanti.MULTIPART_START) && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || (line.indexOf(Costanti.MULTIPART_END) != -1)))) {
+//						if("".equals(this.wsdlservcorr))
+//							this.wsdlservcorr = line;
+//						else
+//							this.wsdlservcorr = this.wsdlservcorr + "\n" + line;
+//						line = dis.readLine();
+//					}
 				}
 				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE+"\"") != -1) {
 					int startId = line.indexOf(Costanti.MULTIPART_FILENAME);
@@ -806,14 +823,14 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					// String tmpNomeFile = line.substring(startId, endId);
 					line = dis.readLine();
 					line = dis.readLine();
-					this.wsblconc = "";
-					while (!line.startsWith(Costanti.MULTIPART_START) || (line.startsWith(Costanti.MULTIPART_START) && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || (line.indexOf(Costanti.MULTIPART_END) != -1)))) {
-						if("".equals(this.wsblconc))
-							this.wsblconc = line;
-						else
-							this.wsblconc = this.wsblconc + "\n" + line;
-						line = dis.readLine();
-					}
+//					this.wsblconc = "";
+//					while (!line.startsWith(Costanti.MULTIPART_START) || (line.startsWith(Costanti.MULTIPART_START) && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || (line.indexOf(Costanti.MULTIPART_END) != -1)))) {
+//						if("".equals(this.wsblconc))
+//							this.wsblconc = line;
+//						else
+//							this.wsblconc = this.wsblconc + "\n" + line;
+//						line = dis.readLine();
+//					}
 				}
 				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE+"\"") != -1) {
 					int startId = line.indexOf(Costanti.MULTIPART_FILENAME);
@@ -822,14 +839,14 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					// String tmpNomeFile = line.substring(startId, endId);
 					line = dis.readLine();
 					line = dis.readLine();
-					this.wsblserv = "";
-					while (!line.startsWith(Costanti.MULTIPART_START) || (line.startsWith(Costanti.MULTIPART_START) && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || (line.indexOf(Costanti.MULTIPART_END) != -1)))) {
-						if("".equals(this.wsblserv))
-							this.wsblserv = line;
-						else
-							this.wsblserv = this.wsblserv + "\n" + line;
-						line = dis.readLine();
-					}
+//					this.wsblserv = "";
+//					while (!line.startsWith(Costanti.MULTIPART_START) || (line.startsWith(Costanti.MULTIPART_START) && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || (line.indexOf(Costanti.MULTIPART_END) != -1)))) {
+//						if("".equals(this.wsblserv))
+//							this.wsblserv = line;
+//						else
+//							this.wsblserv = this.wsblserv + "\n" + line;
+//						line = dis.readLine();
+//					}
 				}
 				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE+"\"") != -1) {
 					int startId = line.indexOf(Costanti.MULTIPART_FILENAME);
@@ -838,14 +855,14 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					// String tmpNomeFile = line.substring(startId, endId);
 					line = dis.readLine();
 					line = dis.readLine();
-					this.wsblservcorr = "";
-					while (!line.startsWith(Costanti.MULTIPART_START) || (line.startsWith(Costanti.MULTIPART_START) && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || (line.indexOf(Costanti.MULTIPART_END) != -1)))) {
-						if("".equals(this.wsblservcorr))
-							this.wsblservcorr = line;
-						else
-							this.wsblservcorr = this.wsblservcorr + "\n" + line;
-						line = dis.readLine();
-					}
+//					this.wsblservcorr = "";
+//					while (!line.startsWith(Costanti.MULTIPART_START) || (line.startsWith(Costanti.MULTIPART_START) && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || (line.indexOf(Costanti.MULTIPART_END) != -1)))) {
+//						if("".equals(this.wsblservcorr))
+//							this.wsblservcorr = line;
+//						else
+//							this.wsblservcorr = this.wsblservcorr + "\n" + line;
+//						line = dis.readLine();
+//					}
 				}
 				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_STATO_PACKAGE+"\"") != -1) {
 					line = dis.readLine();

@@ -21,9 +21,15 @@
 
 package org.openspcoop2.web.ctrlstat.servlet;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +40,7 @@ import javax.mail.BodyPart;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
@@ -101,9 +108,9 @@ import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -111,6 +118,7 @@ import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCostanti;
 import org.openspcoop2.web.lib.audit.web.AuditCostanti;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -180,13 +188,32 @@ public class ConsoleHelper {
 	private MimeMultipart mimeMultipart = null;
 	private Map<String, InputStream> mapParametri = null;
 	private Map<String, String> mapNomiFileParametri = null;
-
+	private List<String> idBinaryParameterRicevuti = null;
+	
 	/** Logger utilizzato per debug. */
 	protected Logger log = null;
 
 	protected IDAccordoCooperazioneFactory idAccordoCooperazioneFactory = null;
 	protected IDAccordoFactory idAccordoFactory = null;
 	protected IDServizioFactory idServizioFactory = null;
+	
+	private static String tmpDirectory = null;
+	
+	public static String getTmpDir() throws Exception {
+		if(tmpDirectory == null)
+			initTmpDir();
+		
+		return tmpDirectory;
+	}
+	
+	public static synchronized void initTmpDir() throws Exception {
+		if(tmpDirectory == null){
+			File file = File.createTempFile(CostantiControlStation.TEMP_FILE_PREFIX, CostantiControlStation.TEMP_FILE_SUFFIX);
+			tmpDirectory = FilenameUtils.getFullPath(file.getAbsolutePath());
+			if(file.exists())
+				file.delete();
+		}
+	}
 
 	public ConsoleHelper(HttpServletRequest request, PageData pd, HttpSession session) {
 		this.request = request;
@@ -211,6 +238,7 @@ public class ConsoleHelper {
 			this.operazioniCore = new OperazioniCore(this.core);
 			this.protocolPropertiesCore = new ProtocolPropertiesCore(this.core);
 
+			this.idBinaryParameterRicevuti = new ArrayList<String>();
 			// analisi dei parametri della request
 			this.contentType = request.getContentType();
 			if ((this.contentType != null) && (this.contentType.indexOf(Costanti.MULTIPART) != -1)) {
@@ -223,6 +251,9 @@ public class ConsoleHelper {
 					BodyPart bodyPart = this.mimeMultipart.getBodyPart(i);
 					String partName = getBodyPartName(bodyPart);
 					if(!this.mapParametri.containsKey(partName)) {
+						if(partName.startsWith(Costanti.PARAMETER_FILEID_PREFIX)){
+							this.idBinaryParameterRicevuti.add(partName);
+						}
 						this.mapParametri.put(partName, bodyPart.getInputStream());
 						String fileName = getBodyPartFileName(bodyPart);
 						if(fileName != null)
@@ -230,8 +261,17 @@ public class ConsoleHelper {
 
 					}else throw new Exception("Parametro ["+partName+"] Duplicato.");
 				}
+			} else {
+				@SuppressWarnings("unchecked")
+				Enumeration<String> parameterNames = this.request.getParameterNames();
+				while (parameterNames.hasMoreElements()) {
+					String param = (String) parameterNames.nextElement();
+					if(param.startsWith(Costanti.PARAMETER_FILEID_PREFIX)){
+						this.idBinaryParameterRicevuti.add(param);
+					}
+				}
 			}
-
+			
 		} catch (Exception e) {
 			this.log.error("Exception ctrlstatHelper: " + e.getMessage(), e);
 		}
@@ -239,7 +279,7 @@ public class ConsoleHelper {
 		this.idAccordoFactory = IDAccordoFactory.getInstance();
 		this.idServizioFactory = IDServizioFactory.getInstance();
 	}
-
+	
 	public int getSize() {
 		return 50;
 	}
@@ -328,8 +368,8 @@ public class ConsoleHelper {
 
 		return toReturn;
 	}
-
-	public byte[] getBinaryParameter(String parameterName) throws Exception {
+	
+	public byte[] getBinaryParameterContent(String parameterName) throws Exception {
 		if(this.multipart){
 			InputStream inputStream = this.mapParametri.get(parameterName);
 			if(inputStream != null){
@@ -353,9 +393,230 @@ public class ConsoleHelper {
 			return this.request.getParameter(parameterName);
 
 	}
+	
+	public BinaryParameter getBinaryParameter(String parameterName) throws Exception {
+		BinaryParameter bp = new BinaryParameter();
+		bp.setName(parameterName); 
+		String filename = null;
+		String fileId = null;
+		File file = null;
+		FileOutputStream fos =  null;
+		FileInputStream fis =  null;
+		ByteArrayInputStream bais = null;
+		ByteArrayOutputStream baos = null;
+		
+		// 1. provo a prelevare il valore dalla request
+		byte [] bpContent = this.getBinaryParameterContent(parameterName);
+		
+		if(bpContent != null && bpContent.length > 0) {
+			//  cancello eventuale vecchio contenuto
+			filename = this.getParameter(ProtocolPropertiesCostanti.PARAMETER_FILENAME_PREFIX + parameterName);
+			fileId = this.getParameter(ProtocolPropertiesCostanti.PARAMETER_FILEID_PREFIX+ parameterName);
+			if(StringUtils.isNotBlank(fileId) && StringUtils.isNotBlank(filename)){
+				file = new File(getTmpDir() + File.separator + CostantiControlStation.TEMP_FILE_PREFIX +  fileId + CostantiControlStation.TEMP_FILE_SUFFIX);
+				if(file.exists())
+					file.delete();
+			}
+
+			//salvataggio nuovo contenuto
+			filename = this.getFileNameParameter(parameterName);
+			file = File.createTempFile(CostantiControlStation.TEMP_FILE_PREFIX, CostantiControlStation.TEMP_FILE_SUFFIX);
+			fileId = file.getName().substring(0, file.getName().indexOf(CostantiControlStation.TEMP_FILE_SUFFIX));
+			fileId = fileId.substring(fileId.indexOf(CostantiControlStation.TEMP_FILE_PREFIX) + CostantiControlStation.TEMP_FILE_PREFIX.length());
+			
+			try{
+				bais = new ByteArrayInputStream(bpContent);
+				fos = new FileOutputStream(file);
+				
+				IOUtils.copy(bais, fos);
+			}
+			finally {
+				bais.close();
+				fos.close();
+			}
+			
+			
+		} else {
+			// provo a ricostruire il valore dai campi hidden
+			filename = this.getParameter(ProtocolPropertiesCostanti.PARAMETER_FILENAME_PREFIX + parameterName);
+			fileId = this.getParameter(ProtocolPropertiesCostanti.PARAMETER_FILEID_PREFIX+ parameterName);
+			
+			if(StringUtils.isNotBlank(fileId) && StringUtils.isNotBlank(filename)){
+				file = new File(getTmpDir() + File.separator + CostantiControlStation.TEMP_FILE_PREFIX + fileId + CostantiControlStation.TEMP_FILE_SUFFIX);
+				
+				// puo' non esistere allora il valore e' vuoto
+				if(file.exists()){
+					try{
+						fis = new FileInputStream(file);
+						baos = new ByteArrayOutputStream();
+						
+						IOUtils.copy(fis, baos);
+						
+						baos.flush();
+						bpContent = baos.toByteArray();
+						
+					}
+					finally {
+						fis.close();
+						baos.close();
+					}
+				} else {
+					bpContent = null;
+				}
+			} else {
+				bpContent = null;
+				filename = null;
+				fileId = null;
+			}
+		}
+		
+		bp.setValue(bpContent);
+		bp.setFilename(filename); 
+		bp.setId(fileId);  
+		return bp;
+	}
+	
+	/***
+	 * cancella i file temporanei dei parametri binari del protocollo, da usare dopo il salvataggio dell'oggetto.
+	 * 
+	 * @param protocolProperties
+	 * @throws Exception
+	 */
+	public void deleteBinaryProtocolPropertiesTmpFiles(ProtocolProperties protocolProperties) throws Exception{
+		if(protocolProperties!= null)
+			for (int i = 0; i < protocolProperties.sizeProperties(); i++) {
+				AbstractProperty<?> property = protocolProperties.getProperty(i);
+				if(property instanceof BinaryProperty){
+					BinaryProperty bProp = (BinaryProperty) property;
+					BinaryParameter bp = new BinaryParameter();
+					bp.setName(bProp.getId());
+					bp.setFilename(bProp.getFileName());
+					bp.setId(bProp.getFileId());
+					bp.setValue(bProp.getValue());
+					
+					this.deleteBinaryParameter(bp); 
+				}
+			}
+	}
+	
+	/***
+	 * 
+	 * cancella il file temporaneo del parametro binari del protocollo con id passato come parametro, da usare dopo il salvataggio dell'oggetto.
+	 * 
+	 * @param protocolProperties
+	 * @param propertyId
+	 * @throws Exception
+	 */
+	public void deleteBinaryProtocolPropertyTmpFiles(ProtocolProperties protocolProperties, String propertyId) throws Exception{
+		if(protocolProperties!= null)
+			for (int i = 0; i < protocolProperties.sizeProperties(); i++) {
+				AbstractProperty<?> property = protocolProperties.getProperty(i);
+				if(property instanceof BinaryProperty && property.getId().equals(propertyId)){
+					BinaryProperty bProp = (BinaryProperty) property;
+					BinaryParameter bp = new BinaryParameter();
+					bp.setName(bProp.getId());
+					bp.setFilename(bProp.getFileName());
+					bp.setId(bProp.getFileId());
+					bp.setValue(bProp.getValue());
+					
+					this.deleteBinaryParameter(bp); 
+					break;
+				}
+			}
+	}
+	
+	/****
+	 * 
+	 * cancella il file temporaneo del parametro binari del protocollo con id e alias passato come parametro, da usare dopo il salvataggio dell'oggetto nella schermata di modifica.
+	 * 
+	 * @param protocolProperties
+	 * @param propertyId
+	 * @param aliasId
+	 * @throws Exception
+	 */
+	public void deleteBinaryProtocolPropertyTmpFiles(ProtocolProperties protocolProperties, String propertyId, String aliasId) throws Exception{
+		if(protocolProperties!= null)
+			for (int i = 0; i < protocolProperties.sizeProperties(); i++) {
+				AbstractProperty<?> property = protocolProperties.getProperty(i);
+				if(property instanceof BinaryProperty && property.getId().equals(propertyId)){
+					BinaryProperty bProp = (BinaryProperty) property;
+					BinaryParameter bp = new BinaryParameter();
+					bp.setName(aliasId);
+					bp.setFilename(bProp.getFileName());
+					bp.setId(bProp.getFileId());
+					bp.setValue(bProp.getValue());
+					
+					this.deleteBinaryParameter(bp); 
+					break;
+				}
+			}
+	}
+	
+	/****
+	 * 
+	 * Cancella tutti i file temporanei dei protocol properties ricevuti, da usare durante la fase di edit e postback.
+	 * 
+	 * 
+	 * @param parameters
+	 * @throws Exception
+	 */
+	public void deleteProtocolPropertiesBinaryParameters(BinaryParameter ... parameters) throws Exception{
+		File file = null;
+		if(this.idBinaryParameterRicevuti != null && this.idBinaryParameterRicevuti.size() >0){
+			for (String bp : this.idBinaryParameterRicevuti) {
+				boolean delete = true;
+				if(parameters != null && parameters.length >0){
+					for (BinaryParameter binaryParameter : parameters) {
+						if(binaryParameter.getId() != null && binaryParameter.getId().equals(bp)){
+							delete = false;
+							break;
+						}
+					}
+				}
+				
+				if(delete){
+					String val = this.getParameter(bp);
+					file = new File(getTmpDir() + File.separator + CostantiControlStation.TEMP_FILE_PREFIX +  val + CostantiControlStation.TEMP_FILE_SUFFIX);
+					
+					if(file.exists())
+						file.delete();
+				}
+			}
+		}
+	}
+	
+	/***
+	 * 
+	 * Cancella i file temporanei per i parametri passati.
+	 * 
+	 * @param parameters
+	 * @throws Exception
+	 */
+	public void deleteBinaryParameters(BinaryParameter ... parameters) throws Exception{
+		if(parameters != null && parameters.length >0){
+			for (BinaryParameter binaryParameter : parameters) {
+				this.deleteBinaryParameter(binaryParameter);
+			}
+		}
+	}
+	
+	private void deleteBinaryParameter(BinaryParameter bp) throws Exception{
+		File file = null;
+		if(StringUtils.isNotBlank(bp.getId())){
+			file = new File(getTmpDir() + File.separator + CostantiControlStation.TEMP_FILE_PREFIX +  bp.getId() + CostantiControlStation.TEMP_FILE_SUFFIX);
+			
+			if(file.exists())
+				file.delete();
+		}
+		
+		bp.setValue(null);
+		bp.setFilename(null);
+		bp.setId(null); 
+	}
 
 
-	public ProtocolProperties estraiProtocolPropertiesDaRequest(ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType, String propertyId, String parameterName, byte[] binaryParameterValue) throws Exception {
+	public ProtocolProperties estraiProtocolPropertiesDaRequest(ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType,
+			String propertyId, BinaryParameter contenutoDocumentoParameter) throws Exception {
 		ProtocolProperties properties = new ProtocolProperties();
 
 		List<BaseConsoleItem> consoleItems = consoleConfiguration.getConsoleItem();
@@ -367,15 +628,13 @@ public class ConsoleHelper {
 				if(consoleItemValueType != null){
 					switch (consoleItemValueType) {
 					case BINARY:
-						byte[] binaryParameter = binaryParameterValue;
-						String filename = null;
+						BinaryParameter bp = contenutoDocumentoParameter;
 						if(propertyId == null || !propertyId.equals(item.getId())){
-							binaryParameter = this.getBinaryParameter(item.getId());
-							filename = this.getFileNameParameter(item.getId() + ProtocolPropertiesCostanti.SUFFIX_PARAMETER_FILENAME);
+							bp = this.getBinaryParameter(item.getId());
 						} else {
-							filename = this.getFileNameParameter(parameterName);
+							bp.setName(item.getId()); 
 						}
-						BinaryProperty binaryProperty = ProtocolPropertiesFactory.newProperty(item.getId(), binaryParameter, filename );
+						BinaryProperty binaryProperty = ProtocolPropertiesFactory.newProperty(bp.getName(), bp.getValue(), bp.getFilename(), bp.getId());
 						properties.addProperty(binaryProperty); 
 						break;
 					case NUMBER:
@@ -404,7 +663,7 @@ public class ConsoleHelper {
 		return properties;
 	}
 	public ProtocolProperties estraiProtocolPropertiesDaRequest(ConsoleConfiguration consoleConfiguration,ConsoleOperationType consoleOperationType) throws Exception {
-		return estraiProtocolPropertiesDaRequest(consoleConfiguration, consoleOperationType, null ,null, null);
+		return estraiProtocolPropertiesDaRequest(consoleConfiguration, consoleOperationType, null , null);
 	}
 
 	// Prepara il menu'
@@ -2058,7 +2317,7 @@ public class ConsoleHelper {
 		for (BaseConsoleItem item : consoleConfiguration.getConsoleItem()) {
 			AbstractProperty<?> property = ProtocolPropertiesUtils.getAbstractPropertyById(protocolProperties, item.getId());
 			// imposto il default value
-			ProtocolPropertiesUtils.setDefaultValue(item, property != null ? property.getValue() : null); 
+			ProtocolPropertiesUtils.setDefaultValue(item, property); 
 
 			ProtocolProperty protocolProperty = ProtocolPropertiesUtils.getProtocolProperty(item.getId(), listaProtocolPropertiesDaDB); 
 			dati = ProtocolPropertiesUtilities.itemToDataElement(dati,item,  consoleOperationType, consoleInterfaceType, binaryPropertyChangeInfoProprietario, protocolProperty, this.getSize());

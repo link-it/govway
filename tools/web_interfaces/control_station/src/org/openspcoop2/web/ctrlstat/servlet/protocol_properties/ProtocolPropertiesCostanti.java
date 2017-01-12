@@ -21,6 +21,7 @@ package org.openspcoop2.web.ctrlstat.servlet.protocol_properties;
 
 import java.util.Vector;
 
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
 /**
@@ -78,6 +79,7 @@ public class ProtocolPropertiesCostanti {
 	public final static String LABEL_OPERATION = "Operazione";
 	public final static String LABEL_FRUITORE = "Fruitore";
 	public final static String LABEL_DOCUMENTO_ATTUALE = "Attuale";
+	public final static String LABEL_NOME = "Nome";
 	public final static String LABEL_DOWNLOAD = "Download";
 	public final static String LABEL_DOCUMENTO_AGGIORNAMENTO = "Aggiorna Documento";
 	public final static String LABEL_AGGIORNAMENTO = "Aggiorna ";
@@ -101,6 +103,7 @@ public class ProtocolPropertiesCostanti {
 	public final static String PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE = "apc";
 	public final static String PARAMETRO_VALORE_PP_TIPO_ACCORDO_SERVIZIO_COMPOSTO = "asc";
 
-	public static final String SUFFIX_PARAMETER_FILENAME = "_fn";  
+	public static final String PARAMETER_FILENAME_PREFIX = Costanti.PARAMETER_FILENAME_PREFIX;  
+	public static final String PARAMETER_FILEID_PREFIX = Costanti.PARAMETER_FILEID_PREFIX;
  
 }

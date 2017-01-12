@@ -41,6 +41,7 @@ import org.openspcoop2.protocol.sdk.properties.NumberConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.properties.StringConsoleItem;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.Parameter;
@@ -258,14 +259,23 @@ public class ProtocolPropertiesUtilities {
 	public static Vector<DataElement> getFile(Vector<DataElement> dati ,AbstractConsoleItem<?> item, int size, ConsoleOperationType consoleOperationType, 
 			ConsoleInterfaceType consoleInterfaceType, Properties binaryChangeProperties,ProtocolProperty protocolProperty) throws Exception{
 		DataElement de = new DataElement();
-		DataElement de2 =null;
+		DataElement de2 =null ;
+		List<DataElement> df = null;
 		de.setName(item.getId());
+
 		if(consoleOperationType.equals(ConsoleOperationType.ADD)){
-			de.setType(DataElementType.FILE);
+			BinaryConsoleItem binaryItem = (BinaryConsoleItem) item;
+
+			BinaryParameter bp = new BinaryParameter();
+			bp.setName(binaryItem.getId());
+			bp.setFilename(binaryItem.getFileName());
+			bp.setId(binaryItem.getFileId());
+
+			de = bp.getFileDataElement(item.getLabel(), "", size);
 			de.setRequired(item.isRequired());
-			de.setLabel(item.getLabel());
-			de.setPostBack(item.isReloadOnChange()); 
-			de.setSize(size);
+			//			de.setPostBack(item.isReloadOnChange()); 
+			df = bp.getFileNameDataElement();
+			de2 = bp.getFileIdDataElement();
 		} else {
 			de.setType(DataElementType.LINK);
 			String idItem = protocolProperty != null ? protocolProperty.getId() + "" : ""; 
@@ -291,48 +301,23 @@ public class ProtocolPropertiesUtilities {
 					new Parameter(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO,protocollo),
 					new Parameter(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO, tipoAccordo),
 					new Parameter(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE,urlChange));
-
+			// CHANGE Label del link
+			de.setValue(item.getLabel());
 
 			if(protocolProperty != null){
 				de2 = new DataElement();
-				de2.setName(item.getId()+ ProtocolPropertiesCostanti.SUFFIX_PARAMETER_FILENAME);
+				de2.setName(ProtocolPropertiesCostanti.PARAMETER_FILENAME_PREFIX + item.getId());
 				de2.setValue(protocolProperty.getFile());
 				de2.setType(DataElementType.HIDDEN);
-				
-			}
-		}
 
-		ConsoleItemValueType consoleItemValueType = ProtocolPropertiesUtils.getConsoleItemValueType(item);
-
-		switch(consoleItemValueType){
-		case BOOLEAN:
-			BooleanConsoleItem booleanItem = (BooleanConsoleItem) item;
-			de.setValue(booleanItem.getDefaultValue() + "");
-			break;
-		case NUMBER:
-			NumberConsoleItem numberItem = (NumberConsoleItem) item;
-			de.setValue(numberItem.getDefaultValue() + "");
-			break;
-		case STRING:
-			StringConsoleItem stringItem = (StringConsoleItem) item;
-			de.setValue(stringItem.getDefaultValue());
-			break;
-		case BINARY:  
-			BinaryConsoleItem binaryItem = (BinaryConsoleItem) item;
-			if(consoleOperationType.equals(ConsoleOperationType.ADD)){
-				// ADD valore vuoto
-				de.setValue("");	
-			} else {
-				// CHANGE Label del link
-				de.setValue(binaryItem.getLabel());
 			}
-			break;
-		default:
-			throw new ProtocolException("Item con consoleItemType ["+consoleItemValueType+"] non puo' essere visualizzato come un file");
 		}
 
 		dati.addElement(de);
 		
+		if(df != null)
+			dati.addAll(df);
+
 		if(de2 != null)
 			dati.addElement(de2);
 

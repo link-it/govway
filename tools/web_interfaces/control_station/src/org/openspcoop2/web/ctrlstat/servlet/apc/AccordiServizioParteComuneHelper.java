@@ -71,6 +71,7 @@ import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -2657,7 +2658,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 	}
 
 	public Vector<DataElement> addAccordiToDati(Vector<DataElement> dati, 
-			String nome, String descr, String profcoll, String wsdldef, String wsdlconc, String wsdlserv, String wsdlservcorr, 
+			String nome, String descr, String profcoll, BinaryParameter wsdldef, BinaryParameter wsdlconc, BinaryParameter wsdlserv, BinaryParameter wsdlservcorr,
+			BinaryParameter wsblconc, BinaryParameter wsblserv, BinaryParameter wsblservcorr,
 			String filtrodup, String confric, String idcoll, String consord, String scadenza, String id, 
 			TipoOperazione tipoOperazione, boolean showUtilizzoSenzaAzione, boolean utilizzoSenzaAzione,
 			String referente, String versione, 
@@ -3074,67 +3076,91 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (tipoOperazione.equals(TipoOperazione.ADD)) {
 				//visualizza il link al wsdl definitorio se e' abilitato
 				if(showWsdlDefinitorio){
-					de = new DataElement();
-					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO);
-					de.setValue("");
-					de.setType(DataElementType.FILE);
-					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO);
-					de.setSize(this.getSize());
-					dati.addElement(de);
+					dati.add(wsdldef.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO, "", getSize()));
+					dati.addAll(wsdldef.getFileNameDataElement());
+					dati.add(wsdldef.getFileIdDataElement());
+					
+//					de = new DataElement();
+//					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO);
+//					de.setValue("");
+//					de.setType(DataElementType.FILE);
+//					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO);
+//					de.setSize(this.getSize());
+//					dati.addElement(de);
 				} else {
 					de = new DataElement();
 					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO);
-					de.setValue(wsdldef);
+					String wsdldefS = wsdldef.getValue() != null ?  new String(wsdldef.getValue()) : "";
+					de.setValue(wsdldefS);
 					de.setType(DataElementType.HIDDEN);
 					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO);
 					dati.addElement(de);
 				}
 
-				//se il protocollo supporta almeno un profilo asincorono tengo la visualizzazione attuale altrimenti mostro solo un elemento WSDL Logico.
+				//se il protocollo supporta almeno un profilo asincrono tengo la visualizzazione attuale altrimenti mostro solo un elemento WSDL Logico.
 
 				if(this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(tipoProtocollo)){
-					de = new DataElement();
-					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_CONCETTUALE);
-					de.setValue("");
-					de.setType(DataElementType.FILE);
-					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE);
-					de.setSize(this.getSize());
-					dati.addElement(de);
+					
+					dati.add(wsdlconc.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_CONCETTUALE, "", getSize()));
+					dati.addAll(wsdlconc.getFileNameDataElement());
+					dati.add(wsdlconc.getFileIdDataElement());
+					
+					dati.add(wsdlserv.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_EROGATORE, "", getSize()));
+					dati.addAll(wsdlserv.getFileNameDataElement());
+					dati.add(wsdlserv.getFileIdDataElement());
+					
+					dati.add(wsdlservcorr.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE, "", getSize()));
+					dati.addAll(wsdlservcorr.getFileNameDataElement());
+					dati.add(wsdlservcorr.getFileIdDataElement());
+					
+//					de = new DataElement();
+//					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_CONCETTUALE);
+//					de.setValue("");
+//					de.setType(DataElementType.FILE);
+//					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE);
+//					de.setSize(this.getSize());
+//					dati.addElement(de);
 
-					de = new DataElement();
-					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_EROGATORE );
-					de.setValue("");
-					de.setType(DataElementType.FILE);
-					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE);
-					de.setSize(this.getSize());
-					dati.addElement(de);
-
-					de = new DataElement();
-					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE);
-					de.setValue("");
-					de.setType(DataElementType.FILE);
-					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE);
-					de.setSize(this.getSize());
-					dati.addElement(de);
+//					de = new DataElement();
+//					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_EROGATORE );
+//					de.setValue("");
+//					de.setType(DataElementType.FILE);
+//					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE);
+//					de.setSize(this.getSize());
+//					dati.addElement(de);
+//
+//					de = new DataElement();
+//					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE);
+//					de.setValue("");
+//					de.setType(DataElementType.FILE);
+//					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE);
+//					de.setSize(this.getSize());
+//					dati.addElement(de);
 				} else {
 					de = new DataElement();
 					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_CONCETTUALE);
-					de.setValue(wsdlconc);
+					String wsdlconcS = wsdlconc.getValue() != null ?  new String(wsdlconc.getValue()) : "";
+					de.setValue(wsdlconcS);
 					de.setType(DataElementType.HIDDEN);
 					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE);
 					dati.addElement(de);
+					
+					dati.add(wsdlserv.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_LOGICO, "", getSize()));
+					dati.addAll(wsdlserv.getFileNameDataElement());
+					dati.add(wsdlserv.getFileIdDataElement());
 
-					de = new DataElement();
-					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_LOGICO);
-					de.setValue("");
-					de.setType(DataElementType.FILE);
-					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE);
-					de.setSize(this.getSize());
-					dati.addElement(de);
+//					de = new DataElement();
+//					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_LOGICO);
+//					de.setValue("");
+//					de.setType(DataElementType.FILE);
+//					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE);
+//					de.setSize(this.getSize());
+//					dati.addElement(de);
 
 					de = new DataElement();
 					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE);
-					de.setValue(wsdlservcorr);
+					String wsdlservcorrS = wsdlservcorr.getValue() != null ?  new String(wsdlservcorr.getValue()) : "";
+					de.setValue(wsdlservcorrS);
 					de.setType(DataElementType.HIDDEN);
 					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE);
 					dati.addElement(de);
@@ -3152,7 +3178,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					dati.addElement(de);
 				}
 
-				//se il protocollo supporta almeno un profilo asincorono tengo la visualizzazione attuale altrimenti mostro solo un elemento WSDL Logico.
+				//se il protocollo supporta almeno un profilo asincrono tengo la visualizzazione attuale altrimenti mostro solo un elemento WSDL Logico.
 
 				if(this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(tipoProtocollo)){
 
@@ -3212,29 +3238,36 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if (tipoOperazione.equals(TipoOperazione.ADD)) {
 				de = new DataElement();
 				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO);
-				de.setValue(wsdldef);
+				String wsdldefS = wsdldef.getValue() != null ?  new String(wsdldef.getValue()) : "";
+				de.setValue(wsdldefS);
 				de.setType(DataElementType.HIDDEN);
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO);
 				dati.addElement(de);
 
 				de = new DataElement();
 				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_CONCETTUALE);
-				de.setValue(wsdlconc);
+				String wsdlconcS = wsdlconc.getValue() != null ?  new String(wsdlconc.getValue()) : "";
+				de.setValue(wsdlconcS);
 				de.setType(DataElementType.HIDDEN);
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE);
 				dati.addElement(de);
 
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL );
-				de.setValue("");
-				de.setType(DataElementType.FILE);
-				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE);
-				de.setSize(this.getSize());
-				dati.addElement(de);
+				dati.add(wsdlserv.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL, "", getSize()));
+				dati.addAll(wsdlserv.getFileNameDataElement());
+				dati.add(wsdlserv.getFileIdDataElement());
+				
+//				de = new DataElement();
+//				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL );
+//				de.setValue("");
+//				de.setType(DataElementType.FILE);
+//				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE);
+//				de.setSize(this.getSize());
+//				dati.addElement(de);
 
 				de = new DataElement();
 				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE);
-				de.setValue(wsdlservcorr);
+				String wsdlservcorrS = wsdlservcorr.getValue() != null ?  new String(wsdlservcorr.getValue()) : "";
+				de.setValue(wsdlservcorrS);
 				de.setType(DataElementType.HIDDEN);
 				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE);
 				dati.addElement(de);
@@ -3276,29 +3309,42 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 
 			if (tipoOperazione.equals(TipoOperazione.ADD)) {
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE);
-				de.setValue("");
-				de.setType(DataElementType.FILE);
-				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE);
-				de.setSize(this.getSize());
-				dati.addElement(de);
+				
+				dati.add(wsblconc.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE, "", getSize()));
+				dati.addAll(wsblconc.getFileNameDataElement());
+				dati.add(wsblconc.getFileIdDataElement());
 
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE);
-				de.setValue("");
-				de.setType(DataElementType.FILE);
-				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE);
-				de.setSize(this.getSize());
-				dati.addElement(de);
-
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE);
-				de.setValue("");
-				de.setType(DataElementType.FILE);
-				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE);
-				de.setSize(this.getSize());
-				dati.addElement(de);
+				dati.add(wsblserv.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE, "", getSize()));
+				dati.addAll(wsblserv.getFileNameDataElement());
+				dati.add(wsblserv.getFileIdDataElement());
+				
+				dati.add(wsblservcorr.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE, "", getSize()));
+				dati.addAll(wsblservcorr.getFileNameDataElement());
+				dati.add(wsblservcorr.getFileIdDataElement());
+				
+//				de = new DataElement();
+//				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE);
+//				de.setValue("");
+//				de.setType(DataElementType.FILE);
+//				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE);
+//				de.setSize(this.getSize());
+//				dati.addElement(de);
+//
+//				de = new DataElement();
+//				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE);
+//				de.setValue("");
+//				de.setType(DataElementType.FILE);
+//				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE);
+//				de.setSize(this.getSize());
+//				dati.addElement(de);
+//
+//				de = new DataElement();
+//				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE);
+//				de.setValue("");
+//				de.setType(DataElementType.FILE);
+//				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE);
+//				de.setSize(this.getSize());
+//				dati.addElement(de);
 
 			} else {
 
@@ -3768,11 +3814,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 	// Controlla i dati degli Accordi
 	boolean accordiCheckData(TipoOperazione tipoOperazione, String nome, String descr, String profcoll, 
-			String wsdldef, String wsdlconc, String wsdlserv, String wsdlservcorr, 
+			BinaryParameter wsdldef, BinaryParameter wsdlconc, BinaryParameter wsdlserv, BinaryParameter wsdlservcorr, 
 			String filtrodup, String confric, String idcoll, String consord, String scadenza, String id,
 			String referente,String versione,String accordoCooperazione, 
 			boolean visibilitaAccordoServizio,boolean visibilitaAccordoCooperazione,
-			IDAccordo idAccordoOLD, String wsblconc, String wsblserv, String wsblservcorr,boolean validazioneDocumenti,
+			IDAccordo idAccordoOLD, BinaryParameter wsblconc, BinaryParameter wsblserv, BinaryParameter wsblservcorr,boolean validazioneDocumenti,
 			String tipoProtocollo, String backToStato)
 					throws Exception {
 		try {
@@ -3973,13 +4019,28 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			// Validazione wsdl/sbl
 			if(validazioneDocumenti && tipoOperazione.equals(TipoOperazione.ADD)){
 
-				byte [] wsdlDefinitorio = wsdldef != null && !wsdldef.trim().replaceAll("\n", "").equals("") ? wsdldef.trim().getBytes() : null;
-				byte [] wsdlConcettuale = wsdlconc != null && !wsdlconc.trim().replaceAll("\n", "").equals("") ? wsdlconc.trim().getBytes() : null;
-				byte [] wsdlLogicoErogatore = wsdlserv != null && !wsdlserv.trim().replaceAll("\n", "").equals("") ? wsdlserv.trim().getBytes() : null;
-				byte [] wsdlLogicoFruitore = wsdlservcorr != null && !wsdlservcorr.trim().replaceAll("\n", "").equals("") ? wsdlservcorr.trim().getBytes() : null;
-				byte [] wsblConcettuale = wsblconc != null && !wsblconc.trim().replaceAll("\n", "").equals("") ? wsblconc.trim().getBytes() : null;
-				byte [] wsblLogicoErogatore = wsblserv != null && !wsblserv.trim().replaceAll("\n", "").equals("") ? wsblserv.trim().getBytes() : null;
-				byte [] wsblLogicoFruitore = wsblservcorr != null && !wsblservcorr.trim().replaceAll("\n", "").equals("") ? wsblservcorr.trim().getBytes() : null;
+				// WSDL
+				String wsdlDefinitorioS = wsdldef.getValue() != null ? new String(wsdldef.getValue()) : null; 
+				byte [] wsdlDefinitorio = wsdlDefinitorioS != null && !wsdlDefinitorioS.trim().replaceAll("\n", "").equals("") ? wsdlDefinitorioS.trim().getBytes() : null;
+				
+				String wsdlconcS = wsdlconc.getValue() != null ? new String(wsdlconc.getValue()) : null; 
+				byte [] wsdlConcettuale =   wsdlconcS != null && !wsdlconcS.trim().replaceAll("\n", "").equals("") ? wsdlconcS.trim().getBytes() : null;
+				
+				String wsdlLogicoErogatoreS = wsdlserv.getValue() != null ? new String(wsdlserv.getValue()) : null; 
+				byte [] wsdlLogicoErogatore = wsdlLogicoErogatoreS != null && !wsdlLogicoErogatoreS.trim().replaceAll("\n", "").equals("") ? wsdlLogicoErogatoreS.trim().getBytes() : null;
+				
+				String wsdlLogicoFruitoreS = wsdlservcorr.getValue() != null ? new String(wsdlservcorr.getValue()) : null; 
+				byte [] wsdlLogicoFruitore = wsdlLogicoFruitoreS != null && !wsdlLogicoFruitoreS.trim().replaceAll("\n", "").equals("") ? wsdlLogicoFruitoreS.trim().getBytes() : null;
+				
+				// WSBL
+				String wsblConcettualeS = wsblconc.getValue() != null ? new String(wsblconc.getValue()) : null; 
+				byte [] wsblConcettuale = wsblConcettualeS != null && !wsblConcettualeS.trim().replaceAll("\n", "").equals("") ? wsblConcettualeS.trim().getBytes() : null;
+				
+				String wsblLogicoErogatoreS = wsblserv.getValue() != null ? new String(wsblserv.getValue()) : null; 
+				byte [] wsblLogicoErogatore = wsblLogicoErogatoreS != null && !wsblLogicoErogatoreS.trim().replaceAll("\n", "").equals("") ? wsblLogicoErogatoreS.trim().getBytes() : null;
+				
+				String wsblLogicoFruitoreS = wsblservcorr.getValue() != null ? new String(wsblservcorr.getValue()) : null;
+				byte [] wsblLogicoFruitore = wsblLogicoFruitoreS != null && !wsblLogicoFruitoreS.trim().replaceAll("\n", "").equals("") ? wsblLogicoFruitoreS.trim().getBytes() : null;
 
 				accordoServizioParteComune.setByteWsdlDefinitorio(wsdlDefinitorio);
 				accordoServizioParteComune.setByteWsdlConcettuale(wsdlConcettuale);

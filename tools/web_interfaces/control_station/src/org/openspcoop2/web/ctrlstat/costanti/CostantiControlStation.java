@@ -170,4 +170,9 @@ public class CostantiControlStation {
 	public final static String RESOURCE_JMX_PDD_TIPOLOGIA_ACCESSO_JMX = "jmx";
 	public final static String RESOURCE_JMX_PDD_TIPOLOGIA_ACCESSO_OPENSPCOOP = "openspcoop";
 	
+	
+	/** COSTANTI FILE TEMPORANEI */
+	public final static String TEMP_FILE_PREFIX = "__pddconsole__";
+	public final static String TEMP_FILE_SUFFIX = ".tmp"; 
+	
 }

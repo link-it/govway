@@ -168,4 +168,10 @@ public class Costanti {
 	
 	public final static String PARAMETRO_ACTION_CONFIRM_VALUE_OK = "ok";
 	public final static String PARAMETRO_ACTION_CONFIRM_VALUE_NO = "no";
+	
+	
+	/** PARAMETRI BINARI **/
+	
+	public static final String PARAMETER_FILENAME_PREFIX = "__fn__";  
+	public static final String PARAMETER_FILEID_PREFIX = "__fd__";
 }

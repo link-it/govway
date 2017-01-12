@@ -200,6 +200,8 @@ public final class SoggettiAdd extends Action {
 			if(postBackElementName != null ){
 				if(postBackElementName.equalsIgnoreCase(SoggettiCostanti.PARAMETRO_SOGGETTO_PROTOCOLLO)){
 					this.versioneProtocollo = null;
+					// cancello file temporanei
+					soggettiHelper.deleteProtocolPropertiesBinaryParameters();
 				}  
 			}
 
@@ -423,6 +425,9 @@ public final class SoggettiAdd extends Action {
 			SoggettoCtrlStat sog = new SoggettoCtrlStat(soggettoRegistro, soggettoConfig);
 			// eseguo le operazioni
 			soggettiCore.performCreateOperation(userLogin, soggettiHelper.smista(), sog);
+			
+			// cancello file temporanei
+			soggettiHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties); 
 
 			// recupero la lista dei soggetti
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);

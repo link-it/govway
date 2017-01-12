@@ -49,6 +49,7 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -68,7 +69,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 
 	private String id, nome, idProprietario,  nomeProprietario, nomeParentProprietario, urlChange, editMode, protocollo, tipoAccordo;
 
-	private byte[] byteDocumento;
+//	private byte[] byteDocumento;
 	private ProprietariProtocolProperty tipoProprietario = null;
 	// Protocol Properties
 	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
@@ -78,6 +79,8 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 	private IRegistryReader registryReader = null; 
 	private ConsoleOperationType consoleOperationType = null;
 	private ConsoleInterfaceType consoleInterfaceType = null;
+	
+	private BinaryParameter contenutoDocumento= null;
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -104,7 +107,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 		this.consoleOperationType = ConsoleOperationType.CHANGE;
 		this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(session); 
 
-		byte[] oldByteDocumento = null; 
+		BinaryParameter oldContenutoDocumento = null; 
 		String tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PROTOCOL_PROPERTY_BINARY;
 
 		try{
@@ -120,7 +123,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			this.nomeParentProprietario = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PARENT_PROPRIETARIO);
 			this.urlChange = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE);
 			this.editMode = ppHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
-			this.byteDocumento = ppHelper.getBinaryParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
+			this.contenutoDocumento = ppHelper.getBinaryParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
 			this.protocollo = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO);
 			this.tipoAccordo = ppHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO);
 
@@ -145,7 +148,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			this.consoleConfiguration = ppHelper.getConsoleDynamicConfiguration(idOggettoProprietario, this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo,
 					this.consoleOperationType, this.consoleInterfaceType, this.registryReader,this.consoleDynamicConfiguration);
 
-			this.protocolProperties = ppHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType, this.nome, ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO, this.byteDocumento);
+			this.protocolProperties = ppHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType, this.nome, this.contenutoDocumento);
 
 			oldProtocolPropertyList = ppHelper.getProtocolProperties(oggettoProprietario, this.id, this.nome, this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo);
 			ProtocolPropertiesUtils.mergeProtocolProperties(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
@@ -166,13 +169,17 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 				protocolProperty = ProtocolPropertiesUtils.getProtocolProperty(this.nome, oldProtocolPropertyList); 
 			}
 
+			oldContenutoDocumento = new BinaryParameter();
 			if(protocolProperty != null){
 				// carico il vecchio contenuto della property
-				oldByteDocumento = protocolProperty.getByteFile();
+				oldContenutoDocumento.setValue(protocolProperty.getByteFile());
+				oldContenutoDocumento.setFilename(protocolProperty.getFile());
+				oldContenutoDocumento.setName(this.nome); 
 			}
 
-			StringBuffer contenutoDocumento = new StringBuffer();
-			String errore = Utilities.getTestoVisualizzabile(oldByteDocumento,contenutoDocumento);
+			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
+			byte[] oldValue =  oldContenutoDocumento.getValue() ;
+			String errore = Utilities.getTestoVisualizzabile(oldValue,contenutoDocumentoStringBuffer);
 
 			if(ServletUtils.isEditModeInProgress(this.editMode)){
 
@@ -189,7 +196,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = ppHelper.addProtocolPropertyChangeToDati(tipoOp, dati, this.protocollo, this.id, this.nome, this.idProprietario,this.tipoProprietario,this.tipoAccordo,this.nomeProprietario,this.nomeParentProprietario,this.urlChange, label,
-						oldByteDocumento,contenutoDocumento,errore,tipologiaDocumentoScaricare,binaryConsoleItem);
+						oldContenutoDocumento,contenutoDocumentoStringBuffer,errore,tipologiaDocumentoScaricare,binaryConsoleItem);
 
 				pd.setDati(dati);
 
@@ -203,7 +210,9 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			AbstractProperty<?> abstractPropertyById = ProtocolPropertiesUtils.getAbstractPropertyById(this.protocolProperties, binaryConsoleItem.getId());
 			if(abstractPropertyById != null){
 				BinaryProperty bp = (BinaryProperty) abstractPropertyById;
-				bp.setValue(this.byteDocumento); 
+				bp.setValue(this.contenutoDocumento.getValue());
+				bp.setFileName(this.contenutoDocumento.getFilename());
+				bp.setFileId(this.contenutoDocumento.getId()); 
 			}
 
 			// validazione del contenuto
@@ -230,11 +239,11 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				contenutoDocumento = new StringBuffer();
-				errore = Utilities.getTestoVisualizzabile(this.byteDocumento,contenutoDocumento);
+				contenutoDocumentoStringBuffer = new StringBuffer();
+				errore = Utilities.getTestoVisualizzabile(this.contenutoDocumento.getValue(),contenutoDocumentoStringBuffer);
 
 				dati = ppHelper.addProtocolPropertyChangeToDati(tipoOp, dati, this.protocollo, this.id, this.nome, this.idProprietario,this.tipoProprietario,this.tipoAccordo,this.nomeProprietario,this.nomeParentProprietario,this.urlChange, label,
-						this.byteDocumento,contenutoDocumento,errore,tipologiaDocumentoScaricare,binaryConsoleItem);
+						this.contenutoDocumento,contenutoDocumentoStringBuffer,errore,tipologiaDocumentoScaricare,binaryConsoleItem);
 				
 				pd.setDati(dati);
 
@@ -249,6 +258,8 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			
 			ppHelper.salvaProperties(userLogin, ppHelper.smista(), oggettoProprietario, protocolPropertiesAggiornate, this.id, this.nome, this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo);
 
+			//cancello il file temporaneo
+			ppHelper.deleteBinaryProtocolPropertyTmpFiles(this.protocolProperties, this.nome, ProtocolPropertiesCostanti.PARAMETRO_PP_CONTENUTO_DOCUMENTO);
 			
 			// mostro la visualizzazione del file
 			
@@ -275,11 +286,11 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			if(protocolProperty != null)
 				this.id = ""+ protocolProperty.getId();
 			
-			contenutoDocumento = new StringBuffer();
-			errore = Utilities.getTestoVisualizzabile(this.byteDocumento,contenutoDocumento);
+			contenutoDocumentoStringBuffer = new StringBuffer();
+			errore = Utilities.getTestoVisualizzabile(this.contenutoDocumento.getValue(),contenutoDocumentoStringBuffer);
 
 			dati = ppHelper.addProtocolPropertyChangeToDati(tipoOp, dati, this.protocollo, this.id, this.nome, this.idProprietario,this.tipoProprietario,this.tipoAccordo,this.nomeProprietario,this.nomeParentProprietario,this.urlChange, label,
-					this.byteDocumento,contenutoDocumento,errore,tipologiaDocumentoScaricare,binaryConsoleItem);
+					this.contenutoDocumento,contenutoDocumentoStringBuffer,errore,tipologiaDocumentoScaricare,binaryConsoleItem);
 
 			pd.setDati(dati);
 			
