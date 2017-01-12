@@ -138,6 +138,7 @@ public class TrasparenteConfigurazioneTest {
 		configuration.addConsoleItem(selectConsoleItem);
 		
 		AbstractConsoleItem<?> binaryConsoleItem = ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.BINARY, ConsoleItemType.FILE,TrasparenteConfigurazioneTest.PROP_BINARY_STATICA_ID, TrasparenteConfigurazioneTest.PROP_BINARY_STATICA_LABEL);
+		binaryConsoleItem.setReloadOnChange(true); 
 		configuration.addConsoleItem(binaryConsoleItem);
 		
 		AbstractConsoleItem<?> booleanConsoleItem = ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.BOOLEAN, ConsoleItemType.CHECKBOX,TrasparenteConfigurazioneTest.PROP_BOOLEAN_STATICA_ID, TrasparenteConfigurazioneTest.PROP_BOOLEAN_STATICA_LABEL);
