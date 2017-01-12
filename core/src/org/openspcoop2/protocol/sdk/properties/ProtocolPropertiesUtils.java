@@ -43,7 +43,7 @@ public class ProtocolPropertiesUtils {
 
 		for (BaseConsoleItem consoleItem : consoleItems) {
 			if(consoleItem.getId().equals(property.getId()))
-				setDefaultValue(consoleItem, property.getValue());
+				setDefaultValue(consoleItem, property);
 		}
 	}
 
@@ -62,6 +62,7 @@ public class ProtocolPropertiesUtils {
 				}
 				else if(consoleItem instanceof BinaryConsoleItem){
 					byte[] byteFile = property.getByteFile();
+					((BinaryConsoleItem) consoleItem).setFileName(property.getFile());
 					((BinaryConsoleItem) consoleItem).setDefaultValue(byteFile);
 				}else if(consoleItem instanceof BooleanConsoleItem){
 					Boolean booleanValue = property.getBooleanValue();
@@ -132,23 +133,32 @@ public class ProtocolPropertiesUtils {
 		return null;
 	}
 
-	public static void setDefaultValue(BaseConsoleItem item, Object defaultValue) throws ProtocolException{
+	public static void setDefaultValue(BaseConsoleItem item, AbstractProperty<?> property) throws ProtocolException{
+		Object defaultValue = null;
 		try{
-			if(item instanceof AbstractConsoleItem<?> && defaultValue != null){
+			if(item instanceof AbstractConsoleItem<?> && property != null){
+				defaultValue = property.getValue();
 				if(item instanceof StringConsoleItem){
-					((StringConsoleItem) item).setDefaultValue((String) defaultValue);
+					StringProperty sp = (StringProperty) property;
+					((StringConsoleItem) item).setDefaultValue(sp.getValue());
 				}
 				else if(item instanceof NumberConsoleItem){
-					((NumberConsoleItem) item).setDefaultValue((Long) defaultValue);
+					NumberProperty np = (NumberProperty) property;
+					((NumberConsoleItem) item).setDefaultValue(np.getValue());
 				}
 				else if(item instanceof BinaryConsoleItem){
-					((BinaryConsoleItem) item).setDefaultValue((byte[]) defaultValue);
+					BinaryProperty bp = (BinaryProperty) property;
+					((BinaryConsoleItem) item).setFileId(bp.getFileId());
+					((BinaryConsoleItem) item).setFileName(bp.getFileName());
+					((BinaryConsoleItem) item).setDefaultValue(bp.getValue());
 				}else if(item instanceof BooleanConsoleItem){
-					((BooleanConsoleItem) item).setDefaultValue((Boolean) defaultValue);
+					BooleanProperty bolP = (BooleanProperty) property;
+					((BooleanConsoleItem) item).setDefaultValue(bolP.getValue()); 
 				}
 			}
 		}catch(Exception e){
-			throw new ProtocolException("Impossibile assegnare un valore ci tipo ["+defaultValue.getClass().getName()+"] all'item ["+item.getId()+"]");
+			String defaultValueClassName = defaultValue != null ?  defaultValue.getClass().getName() : "Default Value Null";
+			throw new ProtocolException("Impossibile assegnare un valore di tipo ["+defaultValueClassName+"] all'item ["+item.getId()+"]");
 		}
 	}
 	public static ConsoleItemValueType getConsoleItemValueType(BaseConsoleItem item){
@@ -197,7 +207,7 @@ public class ProtocolPropertiesUtils {
 				BinaryProperty bp = (BinaryProperty) property;
 				if(consoleOperationType.equals(ConsoleOperationType.ADD)){
 					prop.setByteFile(bp.getValue());
-					prop.setFile(bp.getFileName()); 
+					prop.setFile(bp.getFileName());
 					if(bp.getValue() != null && bp.getValue().length > 0)
 						add = true;
 				}else {
@@ -205,7 +215,7 @@ public class ProtocolPropertiesUtils {
 					for (ProtocolProperty protocolProperty : oldProtocolPropertyList) {
 						if(property.getId().equals(protocolProperty.getName())){
 							prop.setByteFile(protocolProperty.getByteFile());
-							prop.setFile(bp.getFileName());
+							prop.setFile(protocolProperty.getFile());
 							if(protocolProperty.getByteFile() != null && protocolProperty.getByteFile().length > 0){
 								add = true;
 							}

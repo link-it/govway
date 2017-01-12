@@ -29,10 +29,12 @@ package org.openspcoop2.protocol.sdk.properties;
 public class BinaryProperty extends AbstractProperty<byte[]> {
 
 	private String fileName;
+	private String fileId;
 	
-	protected BinaryProperty(String id, byte[] value, String fileName) {
+	protected BinaryProperty(String id, byte[] value, String fileName, String fileId) {
 		super(id, value);
 		this.fileName = fileName;
+		this.fileId = fileId;
 	}
 
 	public String getFileName() {
@@ -42,4 +44,13 @@ public class BinaryProperty extends AbstractProperty<byte[]> {
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
+
+	public String getFileId() {
+		return this.fileId;
+	}
+
+	public void setFileId(String fileId) {
+		this.fileId = fileId;
+	}
+	
 }

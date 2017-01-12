@@ -45,8 +45,8 @@ public class ProtocolProperties {
 	public void addProperty(String id, long value){
 		this.list.add(ProtocolPropertiesFactory.newProperty(id, value));
 	}
-	public void addProperty(String id, byte[] value, String fileName){
-		this.list.add(ProtocolPropertiesFactory.newProperty(id, value,fileName));
+	public void addProperty(String id, byte[] value, String fileName, String fileId){
+		this.list.add(ProtocolPropertiesFactory.newProperty(id, value,fileName, fileId));
 	}
 	
 	public AbstractProperty<?> getProperty(int index){

@@ -30,9 +30,34 @@ import org.openspcoop2.protocol.sdk.constants.ConsoleItemType;
  * @version $Rev$, $Date$
  */
 public class BinaryConsoleItem extends AbstractConsoleItem<byte[]> {
+	
+	private String fileName = null;
+	private String fileId = null;
 
 	protected BinaryConsoleItem(String id, String label, ConsoleItemType type) throws ProtocolException {
+		this(id, label, type, null, null);
+	}
+	
+	protected BinaryConsoleItem(String id, String label, ConsoleItemType type, String fileName, String fileId) throws ProtocolException {
 		super(id, label, type);
+		this.fileName = fileName;
+		this.fileId = fileId;
+	}
+
+	public String getFileName() {
+		return this.fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public String getFileId() {
+		return this.fileId;
+	}
+
+	public void setFileId(String fileId) {
+		this.fileId = fileId;
 	}
 
 }

@@ -55,8 +55,11 @@ public class ProtocolPropertiesFactory {
 		}
 		throw new ProtocolException("Type ["+type+"] unsupported");
 	}
-	public static BinaryProperty newProperty(String id, byte[] value, String fileName){
-		return new BinaryProperty(id, value, fileName);
+	public static AbstractConsoleItem<?> newBinaryConsoleItem(ConsoleItemType itemType, String id, String label, String fileName, String fileId) throws ProtocolException{
+		return new BinaryConsoleItem(id, label, itemType, fileName, fileId);
+	}
+	public static BinaryProperty newProperty(String id, byte[] value, String fileName, String fileId){
+		return new BinaryProperty(id, value, fileName, fileId);
 	}
 	public static NumberProperty newProperty(String id, Long value){
 		return new NumberProperty(id, value);
