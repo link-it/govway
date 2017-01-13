@@ -183,9 +183,13 @@ public class RESTCore {
 			Assert.assertTrue(msgDiag.isTracedMessaggioWithLike(id, MSG_LOCAL_FORWARD));
 
 //			Reporter.log("Controllo msg diag local forward per id senza errori: " +id);
-//			Assert.assertTrue(msgDiag.isTracedErrorMsg(id)==isErrore);
-			
-//			Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005")); //"001039","001003",
+			Assert.assertTrue(msgDiag.isTracedErrorMsg(id)==isErrore);
+
+			if(isErrore) {
+				Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007013","001006"));
+			} else {
+				Assert.assertTrue(msgDiag.isTracedMessaggiWithCode(id, "001034","007011","007012","001005"));
+			}
 		}catch(Exception e){
 			throw e;
 		}finally{
