@@ -30,6 +30,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -672,9 +673,24 @@ public class DriverConfigurazioneDB_LIB {
 		String connectionfactory = null;// jms
 		String sendas = null;// jms
 
+		String transfer_mode = null; // in caso di tipo http e https
+		Integer transfer_mode_chunk_size = null; // in caso di tipo http e https
+
+		boolean proxy = false;
+		String proxy_type = null;
+		String proxy_hostname = null;
+		String proxy_port = null;
+		String proxy_username = null;
+		String proxy_password = null;
+
+		String redirect_mode = null; // in caso di tipo http e https
+		Integer redirect_max_hop = null; // in caso di tipo http e https
+		
 		boolean isAbilitato = false;
 
 		Hashtable<String, String> extendedProperties = new Hashtable<String, String>();
+		
+		List<String> propertiesGestiteAttraversoColonneAdHoc = new ArrayList<String>();
 		
 		// setto i dati, se le property non sono presenti il loro valore rimarra
 		// a null e verra settato come tale nel DB
@@ -693,6 +709,55 @@ public class DriverConfigurazioneDB_LIB {
 					debug=true;
 				}
 			}
+			
+			// Proxy
+			if (nomeProperty.equals(CostantiDB.CONNETTORE_PROXY_TYPE)){
+				proxy = true;
+				proxy_type = valoreProperty;
+				
+				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
+				
+				// cerco altri valori del proxy
+				for (Property propertyCheck: connettore.getPropertyList()) {
+					if (propertyCheck.getNome().equals(CostantiDB.CONNETTORE_PROXY_HOSTNAME)){
+						propertiesGestiteAttraversoColonneAdHoc.add(propertyCheck.getNome());
+						proxy_hostname = propertyCheck.getValore();
+					}
+					if (propertyCheck.getNome().equals(CostantiDB.CONNETTORE_PROXY_PORT)){
+						propertiesGestiteAttraversoColonneAdHoc.add(propertyCheck.getNome());
+						proxy_port = propertyCheck.getValore();
+					}
+					if (propertyCheck.getNome().equals(CostantiDB.CONNETTORE_PROXY_USERNAME)){
+						propertiesGestiteAttraversoColonneAdHoc.add(propertyCheck.getNome());
+						proxy_username = propertyCheck.getValore();
+					}
+					if (propertyCheck.getNome().equals(CostantiDB.CONNETTORE_PROXY_PASSWORD)){
+						propertiesGestiteAttraversoColonneAdHoc.add(propertyCheck.getNome());
+						proxy_password = propertyCheck.getValore();
+					}
+				}
+			}
+			
+			// TransferMode
+			if (nomeProperty.equals(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE)){
+				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
+				transfer_mode = valoreProperty;
+			}
+			if (nomeProperty.equals(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE_CHUNK_SIZE)){
+				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
+				transfer_mode_chunk_size = Integer.parseInt(valoreProperty);
+			}
+			
+			// RedirectMode
+			if (nomeProperty.equals(CostantiDB.CONNETTORE_HTTP_REDIRECT_FOLLOW)){
+				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
+				redirect_mode = valoreProperty;
+			}
+			if (nomeProperty.equals(CostantiDB.CONNETTORE_HTTP_REDIRECT_MAX_HOP)){
+				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
+				redirect_max_hop = Integer.parseInt(valoreProperty);
+			}
+			
 
 			if(TipiConnettore.HTTP.getNome().equals(endpointtype)){
 				if (nomeProperty.equals(CostantiDB.CONNETTORE_HTTP_LOCATION))
@@ -742,6 +807,10 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertTable(CostantiDB.CONNETTORI);
 				sqlQueryObject.addInsertField("endpointtype", "?");
 				sqlQueryObject.addInsertField("url", "?");
+				sqlQueryObject.addInsertField("transfer_mode", "?");
+				sqlQueryObject.addInsertField("transfer_mode_chunk_size", "?");
+				sqlQueryObject.addInsertField("redirect_mode", "?");
+				sqlQueryObject.addInsertField("redirect_max_hop", "?");
 				sqlQueryObject.addInsertField("nome", "?");
 				sqlQueryObject.addInsertField("tipo", "?");
 				sqlQueryObject.addInsertField("utente", "?");
@@ -752,35 +821,70 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("connection_factory", "?");
 				sqlQueryObject.addInsertField("send_as", "?");
 				sqlQueryObject.addInsertField("nome_connettore", "?");
-				sqlQueryObject.addInsertField("debug", "?");
+				sqlQueryObject.addInsertField("debug", "?");				
+				sqlQueryObject.addInsertField("proxy", "?");		
+				sqlQueryObject.addInsertField("proxy_type", "?");		
+				sqlQueryObject.addInsertField("proxy_hostname", "?");		
+				sqlQueryObject.addInsertField("proxy_port", "?");		
+				sqlQueryObject.addInsertField("proxy_username", "?");		
+				sqlQueryObject.addInsertField("proxy_password", "?");		
 				sqlQueryObject.addInsertField("custom", "?");
 				sqlQuery = sqlQueryObject.createSQLInsert();
 				stm = connection.prepareStatement(sqlQuery);
 
-				stm.setString(1, endpointtype);
-				stm.setString(2, (isAbilitato ? url : null));
-				stm.setString(3, isAbilitato ? nome : null);
-				stm.setString(4, isAbilitato ? tipo : null);
-				stm.setString(5, (isAbilitato ? utente : null));
-				stm.setString(6, (isAbilitato ? password : null));
-				stm.setString(7, (isAbilitato ? initcont : null));
-				stm.setString(8, (isAbilitato ? urlpkg : null));
-				stm.setString(9, (isAbilitato ? provurl : null));
-				stm.setString(10, (isAbilitato ? connectionfactory : null));
-				stm.setString(11, (isAbilitato ? sendas : null));
-				stm.setString(12, nomeConnettore);
-				if(debug){
-					stm.setInt(13, 1);
-				}else{
-					stm.setInt(13, 0);
+				int index = 1;
+				stm.setString(index++, endpointtype);
+				stm.setString(index++, (isAbilitato ? url : null));
+				stm.setString(index++, (isAbilitato ? transfer_mode : null));
+				if(isAbilitato && transfer_mode_chunk_size!=null){
+					stm.setInt(index++, transfer_mode_chunk_size);
 				}
-				if(connettore.getCustom()!=null && connettore.getCustom()){
-					stm.setInt(14, 1);
+				else{
+					stm.setNull(index++, Types.INTEGER);
+				}
+				stm.setString(index++, (isAbilitato ? redirect_mode : null));
+				if(isAbilitato && redirect_max_hop!=null){
+					stm.setInt(index++, redirect_max_hop);
+				}
+				else{
+					stm.setNull(index++, Types.INTEGER);
+				}
+				stm.setString(index++, isAbilitato ? nome : null);
+				stm.setString(index++, isAbilitato ? tipo : null);
+				stm.setString(index++, (isAbilitato ? utente : null));
+				stm.setString(index++, (isAbilitato ? password : null));
+				stm.setString(index++, (isAbilitato ? initcont : null));
+				stm.setString(index++, (isAbilitato ? urlpkg : null));
+				stm.setString(index++, (isAbilitato ? provurl : null));
+				stm.setString(index++, (isAbilitato ? connectionfactory : null));
+				stm.setString(index++, (isAbilitato ? sendas : null));
+				stm.setString(index++, nomeConnettore);
+				if(debug){
+					stm.setInt(index++, 1);
 				}else{
-					stm.setInt(14, 0);
+					stm.setInt(index++, 0);
+				}
+				if(proxy){
+					stm.setInt(index++, 1);
+				}else{
+					stm.setInt(index++, 0);
+				}
+				stm.setString(index++, isAbilitato && proxy ? proxy_type : null);
+				stm.setString(index++, isAbilitato && proxy ? proxy_hostname : null);
+				stm.setString(index++, isAbilitato && proxy ? proxy_port : null);
+				stm.setString(index++, isAbilitato && proxy ? proxy_username : null);
+				stm.setString(index++, isAbilitato && proxy ? proxy_password : null);
+				if(connettore.getCustom()!=null && connettore.getCustom()){
+					stm.setInt(index++, 1);
+				}else{
+					stm.setInt(index++, 0);
 				}
 
-				DriverConfigurazioneDB_LIB.log.debug("CRUDConnettore CREATE : \n" + DBUtils.formatSQLString(sqlQuery, endpointtype, url, nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas, nomeConnettore,debug,(connettore.getCustom()!=null && connettore.getCustom())));
+				DriverConfigurazioneDB_LIB.log.debug("CRUDConnettore CREATE : \n" + DBUtils.formatSQLString(sqlQuery, endpointtype, url, 
+						transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+						nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas, nomeConnettore,debug,
+						proxy, proxy_type, proxy_hostname, proxy_port, proxy_username, proxy_password,
+						(connettore.getCustom()!=null && connettore.getCustom())));
 
 				n = stm.executeUpdate();
 				stm.close();
@@ -824,6 +928,9 @@ public class DriverConfigurazioneDB_LIB {
 					
 					for (int i = 0; i < connettore.sizePropertyList(); i++) {
 						nomeProperty = connettore.getProperty(i).getNome();
+						if(propertiesGestiteAttraversoColonneAdHoc.contains(nomeProperty)){
+							continue;
+						}
 						valoreProperty = connettore.getProperty(i).getValore();
 						if (valoreProperty != null && valoreProperty.equals(""))
 							valoreProperty = null;
@@ -881,6 +988,10 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateTable(CostantiDB.CONNETTORI);
 				sqlQueryObject.addUpdateField("endpointtype", "?");
 				sqlQueryObject.addUpdateField("url", "?");
+				sqlQueryObject.addUpdateField("transfer_mode", "?");
+				sqlQueryObject.addUpdateField("transfer_mode_chunk_size", "?");
+				sqlQueryObject.addUpdateField("redirect_mode", "?");
+				sqlQueryObject.addUpdateField("redirect_max_hop", "?");
 				sqlQueryObject.addUpdateField("nome", "?");
 				sqlQueryObject.addUpdateField("tipo", "?");
 				sqlQueryObject.addUpdateField("utente", "?");
@@ -892,38 +1003,73 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("send_as", "?");
 				sqlQueryObject.addUpdateField("nome_connettore", "?");
 				sqlQueryObject.addUpdateField("debug", "?");
+				sqlQueryObject.addUpdateField("proxy", "?");		
+				sqlQueryObject.addUpdateField("proxy_type", "?");		
+				sqlQueryObject.addUpdateField("proxy_hostname", "?");		
+				sqlQueryObject.addUpdateField("proxy_port", "?");		
+				sqlQueryObject.addUpdateField("proxy_username", "?");		
+				sqlQueryObject.addUpdateField("proxy_password", "?");
 				sqlQueryObject.addUpdateField("custom", "?");
 				sqlQueryObject.addWhereCondition("id=?");
 				sqlQuery = sqlQueryObject.createSQLUpdate();
 				stm = connection.prepareStatement(sqlQuery);
 
-				stm.setString(1, endpointtype);
-				stm.setString(2, url);
-				stm.setString(3, nome);
-				stm.setString(4, tipo);
-				stm.setString(5, utente);
-				stm.setString(6, password);
-				stm.setString(7, initcont);
-				stm.setString(8, urlpkg);
-				stm.setString(9, provurl);
-				stm.setString(10, connectionfactory);
-				stm.setString(11, sendas);
-				stm.setString(12, nomeConnettore);
+				index = 1;
+				stm.setString(index++, endpointtype);
+				stm.setString(index++, url);
+				stm.setString(index++, (isAbilitato ? transfer_mode : null));
+				if(isAbilitato && transfer_mode_chunk_size!=null){
+					stm.setInt(index++, transfer_mode_chunk_size);
+				}
+				else{
+					stm.setNull(index++, Types.INTEGER);
+				}
+				stm.setString(index++, (isAbilitato ? redirect_mode : null));
+				if(isAbilitato && redirect_max_hop!=null){
+					stm.setInt(index++, redirect_max_hop);
+				}
+				else{
+					stm.setNull(index++, Types.INTEGER);
+				}
+				stm.setString(index++, nome);
+				stm.setString(index++, tipo);
+				stm.setString(index++, utente);
+				stm.setString(index++, password);
+				stm.setString(index++, initcont);
+				stm.setString(index++, urlpkg);
+				stm.setString(index++, provurl);
+				stm.setString(index++, connectionfactory);
+				stm.setString(index++, sendas);
+				stm.setString(index++, nomeConnettore);
 				if(debug){
-					stm.setInt(13, 1);
+					stm.setInt(index++, 1);
 				}else{
-					stm.setInt(13, 0);
+					stm.setInt(index++, 0);
 				}
+				if(proxy){
+					stm.setInt(index++, 1);
+				}else{
+					stm.setInt(index++, 0);
+				}
+				stm.setString(index++, isAbilitato && proxy ? proxy_type : null);
+				stm.setString(index++, isAbilitato && proxy ? proxy_hostname : null);
+				stm.setString(index++, isAbilitato && proxy ? proxy_port : null);
+				stm.setString(index++, isAbilitato && proxy ? proxy_username : null);
+				stm.setString(index++, isAbilitato && proxy ? proxy_password : null);
 				if(connettore.getCustom()!=null && connettore.getCustom()){
-					stm.setInt(14, 1);
+					stm.setInt(index++, 1);
 				}else{
-					stm.setInt(14, 0);
+					stm.setInt(index++, 0);
 				}
-				stm.setLong(15, idConnettore);
+				stm.setLong(index++, idConnettore);
 
 				stm.executeUpdate();
 				stm.close();
-				DriverConfigurazioneDB_LIB.log.debug("CRUDConnettore UPDATE : \n" + DBUtils.formatSQLString(sqlQuery, endpointtype, url, nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas,nomeConnettore, debug,(connettore.getCustom()!=null && connettore.getCustom()),idConnettore));
+				DriverConfigurazioneDB_LIB.log.debug("CRUDConnettore UPDATE : \n" + DBUtils.formatSQLString(sqlQuery, endpointtype, url, 
+						transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+						nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas,nomeConnettore, debug,
+						proxy, proxy_type, proxy_hostname, proxy_port, proxy_username, proxy_password,
+						(connettore.getCustom()!=null && connettore.getCustom()),idConnettore));
 
 				// Custom properties
 				// Delete eventuali vecchie properties
@@ -946,6 +1092,9 @@ public class DriverConfigurazioneDB_LIB {
 					
 					for (int i = 0; i < connettore.sizePropertyList(); i++) {
 						nomeProperty = connettore.getProperty(i).getNome();
+						if(propertiesGestiteAttraversoColonneAdHoc.contains(nomeProperty)){
+							continue;
+						}
 						valoreProperty = connettore.getProperty(i).getValore();
 						if (valoreProperty != null && valoreProperty.equals(""))
 							valoreProperty = null;
@@ -6065,6 +6214,87 @@ public class DriverConfigurazioneDB_LIB {
 						prop.setValore("true");
 						connettore.addProperty(prop);
 					}
+					
+					// Proxy
+					if(rs.getInt("proxy")==1){
+						
+						String tmp = rs.getString("proxy_type");
+						if(tmp!=null && !"".equals(tmp)){
+							prop = new Property();
+							prop.setNome(CostantiDB.CONNETTORE_PROXY_TYPE);
+							prop.setValore(tmp.trim());
+							connettore.addProperty(prop);
+						}
+						
+						tmp = rs.getString("proxy_hostname");
+						if(tmp!=null && !"".equals(tmp)){
+							prop = new Property();
+							prop.setNome(CostantiDB.CONNETTORE_PROXY_HOSTNAME);
+							prop.setValore(tmp.trim());
+							connettore.addProperty(prop);
+						}
+						
+						tmp = rs.getString("proxy_port");
+						if(tmp!=null && !"".equals(tmp)){
+							prop = new Property();
+							prop.setNome(CostantiDB.CONNETTORE_PROXY_PORT);
+							prop.setValore(tmp.trim());
+							connettore.addProperty(prop);
+						}
+						
+						tmp = rs.getString("proxy_username");
+						if(tmp!=null && !"".equals(tmp)){
+							prop = new Property();
+							prop.setNome(CostantiDB.CONNETTORE_PROXY_USERNAME);
+							prop.setValore(tmp.trim());
+							connettore.addProperty(prop);
+						}
+						
+						tmp = rs.getString("proxy_password");
+						if(tmp!=null && !"".equals(tmp)){
+							prop = new Property();
+							prop.setNome(CostantiDB.CONNETTORE_PROXY_PASSWORD);
+							prop.setValore(tmp.trim());
+							connettore.addProperty(prop);
+						}
+						
+					}
+					
+					// transfer_mode
+					String transferMode = rs.getString("transfer_mode");
+					if(transferMode!=null && !"".equals(transferMode)){
+						
+						prop = new Property();
+						prop.setNome(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE);
+						prop.setValore(transferMode.trim());
+						connettore.addProperty(prop);
+						
+						transferMode = rs.getString("transfer_mode_chunk_size");
+						if(transferMode!=null && !"".equals(transferMode)){
+							prop = new Property();
+							prop.setNome(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE_CHUNK_SIZE);
+							prop.setValore(transferMode.trim());
+							connettore.addProperty(prop);
+						}
+					}
+					
+					// redirect_mode
+					String redirectMode = rs.getString("redirect_mode");
+					if(redirectMode!=null && !"".equals(redirectMode)){
+						
+						prop = new Property();
+						prop.setNome(CostantiDB.CONNETTORE_HTTP_REDIRECT_FOLLOW);
+						prop.setValore(redirectMode.trim());
+						connettore.addProperty(prop);
+						
+						redirectMode = rs.getString("redirect_max_hop");
+						if(redirectMode!=null && !"".equals(redirectMode)){
+							prop = new Property();
+							prop.setNome(CostantiDB.CONNETTORE_HTTP_REDIRECT_MAX_HOP);
+							prop.setValore(redirectMode.trim());
+							connettore.addProperty(prop);
+						}
+					}
 
 
 					if (endpoint.equals(CostantiDB.CONNETTORE_TIPO_HTTP)) {
@@ -6230,7 +6460,7 @@ public class DriverConfigurazioneDB_LIB {
 			DriverConfigurazioneDB_LIB.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idConnettore));
 
 			rs = stm.executeQuery();
-
+			
 			while (rs.next()) {
 				String nome = rs.getString("name");
 				String valore = rs.getString("value");
@@ -6247,7 +6477,7 @@ public class DriverConfigurazioneDB_LIB {
 					if(found){
 						continue; // è gia stato aggiunto.
 					}
-			}
+				}
 				
 				Property prop = new Property();
 				prop.setNome(nome);

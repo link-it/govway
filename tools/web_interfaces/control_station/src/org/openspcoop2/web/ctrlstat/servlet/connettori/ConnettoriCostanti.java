@@ -22,6 +22,8 @@ package org.openspcoop2.web.ctrlstat.servlet.connettori;
 import java.util.Vector;
 
 import org.openspcoop2.utils.transport.http.SSLUtilities;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.constants.TransferLengthModes;
 
 
 /**
@@ -56,8 +58,10 @@ public class ConnettoriCostanti {
 
 	public final static String LABEL_CONNETTORE = "Connettore";
 	public final static String LABEL_CONNETTORE_ABILITATO = "Abilitato";
+	public final static String LABEL_CONNETTORE_PROXY = "Proxy";
 	public final static String LABEL_CONNETTORE_HTTP = "Autenticazione Http";
 	public final static String LABEL_CONNETTORE_HTTPS = "Autenticazione Https";
+	public final static String LABEL_CONNETTORE_OPZIONI_AVANZATE = "Opzioni Avanzate";
 	public final static String LABEL_CONNETTORE_PROPRIETA = "Propriet&agrave;";
 	public final static String LABEL_CONNETTORE_AUTENTICAZIONE = "Autenticazione Https";
 	public final static String LABEL_CONNETTORE_AUTENTICAZIONE_SERVER = "Autenticazione Https Server";
@@ -81,6 +85,18 @@ public class ConnettoriCostanti {
 	public final static String PARAMETRO_CONNETTORE_URL = "url";
 	public final static String PARAMETRO_CONNETTORE_PROVIDER = "provider";
 	public final static String PARAMETRO_CONNETTORE_PROFILO = "profilo";
+	
+	public final static String PARAMETRO_CONNETTORE_PROXY_ENABLED = "connettore_proxy_enabled";
+	public final static String PARAMETRO_CONNETTORE_PROXY_HOSTNAME = "connettore_proxy_host";
+	public final static String PARAMETRO_CONNETTORE_PROXY_PORT = "connettore_proxy_port";
+	public final static String PARAMETRO_CONNETTORE_PROXY_USERNAME = "connettore_proxy_username";
+	public final static String PARAMETRO_CONNETTORE_PROXY_PASSWORD = "connettore_proxy_password";
+	
+	public final static String PARAMETRO_CONNETTORE_OPZIONI_AVANZATE = "opzioni_avanzate";
+	public final static String PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE = "transfer_mode";
+	public final static String PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE = "transfer_chunk_size";
+	public final static String PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE = "redirect_mode";
+	public final static String PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP = "redirect_max_hop";
 	
 	public final static String PARAMETRO_CONNETTORE_JMS_NOME_CODA = "nome";
 	public final static String PARAMETRO_CONNETTORE_JMS_TIPO_CODA = "tipo";
@@ -137,6 +153,17 @@ public class ConnettoriCostanti {
 	public final static String LABEL_PARAMETRO_CONNETTORE_URL = "Endpoint";
 	public final static String LABEL_PARAMETRO_CONNETTORE_PROFILO =  "Versione Protocollo";
 	
+	public final static String LABEL_PARAMETRO_CONNETTORE_PROXY_HOSTNAME = "Hostname";
+	public final static String LABEL_PARAMETRO_CONNETTORE_PROXY_PORT = "Porta";
+	public final static String LABEL_PARAMETRO_CONNETTORE_PROXY_USERNAME = "Username";
+	public final static String LABEL_PARAMETRO_CONNETTORE_PROXY_PASSWORD = "Password";
+	
+	public final static String LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE = LABEL_CONNETTORE_OPZIONI_AVANZATE;
+	public final static String LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE = "Modalità Data Transfer";
+	public final static String LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE = "Chunk Length (Bytes)";
+	public final static String LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE = "Gestione Redirect";
+	public final static String LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP = "Massimo numero di Redirect";
+	
 	public final static String LABEL_PARAMETRO_CONNETTORE_JMS_NOME_CODA = "Nome";
 	public final static String LABEL_PARAMETRO_CONNETTORE_JMS_TIPO_CODA = "Tipo";
 	public final static String LABEL_PARAMETRO_CONNETTORE_JMS_USERNAME = "Utente";
@@ -183,6 +210,12 @@ public class ConnettoriCostanti {
 	public final static String[] TIPOLOGIE_KEYSTORE = { "jks", "pkcs12", "jceks", "bks", "uber", "gkr" };
 	
 	public final static String[] TIPO_SEND_AS = { "TextMessage", "BytesMessage" };
+	
+	public final static String DEFAULT_TIPO_DATA_TRANSFER = "default"; 
+	public final static String[] TIPI_DATA_TRANSFER = { DEFAULT_TIPO_DATA_TRANSFER, TransferLengthModes.CONTENT_LENGTH.getNome() , TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome() };
+	
+	public final static String DEFAULT_GESTIONE_REDIRECT = "default"; 
+	public final static String[] TIPI_GESTIONE_REDIRECT = { DEFAULT_GESTIONE_REDIRECT, CostantiConfigurazione.ABILITATO.getValue() , CostantiConfigurazione.DISABILITATO.getValue() , };
 	
 	public final static String DEFAULT_CONNETTORE_TYPE_CUSTOM = "custom";
 }

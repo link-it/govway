@@ -179,6 +179,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String httpspwdprivatekey, String httpsalgoritmokey, String tipoconn, String versione,
 			boolean validazioneDocumenti,String nomePA, String backToStato,
 			String autenticazioneHttp,
+			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
+			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
 			List<ExtendedConnettore> listExtendedConnettore)
 					throws Exception {
 
@@ -342,6 +344,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					httpskeystore, httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey, httpspwdprivatekey,
 					httpsalgoritmokey, tipoconn,autenticazioneHttp,
+					proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
+					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 					listExtendedConnettore)) {
 				return false;
 			}
@@ -591,6 +595,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String httpspwdprivatekey, String httpsalgoritmokey, String tipoconn, String clientAuth,
 			boolean validazioneDocumenti, String backToStato,
 			String autenticazioneHttp,
+			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
+			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
 			List<ExtendedConnettore> listExtendedConnettore)
 					throws Exception {
 		try {
@@ -666,6 +672,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					httpskeystore, httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey, httpspwdprivatekey,
 					httpsalgoritmokey, tipoconn,autenticazioneHttp,
+					proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
+					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 					listExtendedConnettore)) {
 				return false;
 			}

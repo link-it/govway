@@ -91,6 +91,7 @@ import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiHelper;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
@@ -958,6 +959,20 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			
 			String connettoreDebug = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
 			
+			// proxy
+			String proxy_enabled = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+			String proxy_hostname = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
+			String proxy_port = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
+			String proxy_username = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
+			String proxy_password = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+			
+			// opzioni avanzate
+			String transfer_mode = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
+			String transfer_mode_chunk_size = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
+			String redirect_mode = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
+			String redirect_max_hop = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
+			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(this.request, transfer_mode, redirect_mode);
+			
 			// http
 			String url = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 			if(TipiConnettore.HTTP.toString().equals(endpointtype)){
@@ -1021,6 +1036,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					httpspathkey, httpstipokey,
 					httpspwdkey, httpspwdprivatekey,
 					httpsalgoritmokey,
+					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 					listExtendedConnettore);
 			invServizio.setConnettore(connis);
 		
@@ -1051,6 +1068,20 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String password = null;
 			
 			String connettoreDebug = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+			
+			// proxy
+			String proxy_enabled = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+			String proxy_hostname = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
+			String proxy_port = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
+			String proxy_username = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
+			String proxy_password = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+			
+			// opzioni avanzate
+			String transfer_mode = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
+			String transfer_mode_chunk_size = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
+			String redirect_mode = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
+			String redirect_max_hop = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
+			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(this.request, transfer_mode, redirect_mode);
 			
 			// http
 			String url = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
@@ -1112,6 +1143,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					httpspathkey, httpstipokey,
 					httpspwdkey, httpspwdprivatekey,
 					httpsalgoritmokey,
+					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 					listExtendedConnettore);
 			
 			return connettore;
@@ -1877,6 +1910,18 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			boolean httpshostverify = false;
 			boolean httpsstato = false;
 			
+			String proxy_enabled = null;
+			String proxy_hostname = null;
+			String proxy_port = null;
+			String proxy_username = null;
+			String proxy_password = null;
+			
+			String transfer_mode = null;
+			String transfer_mode_chunk_size = null;
+			String redirect_mode = null;
+			String redirect_max_hop = null;
+			String opzioniAvanzate = null;
+			
 			if(readedDatiConnettori==false){
 			
 				endpointtype = this.readEndPointType();
@@ -1887,6 +1932,20 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				autenticazioneHttp = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
 				
 				connettoreDebug = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+				
+				// proxy
+				proxy_enabled = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+				proxy_hostname = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
+				proxy_port = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
+				proxy_username = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
+				proxy_password = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+				
+				// opzioni avanzate
+				transfer_mode = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
+				transfer_mode_chunk_size = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
+				redirect_mode = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
+				redirect_max_hop = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
+				opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(this.request, transfer_mode, redirect_mode);
 				
 				// http
 				url = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
@@ -1955,7 +2014,10 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					httpsalgoritmokey, tipoconn, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,
 					"", "", null, null, null,null,
 					null, null, showSectionTitle,
-					isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
+					isConnettoreCustomUltimaImmagineSalvata, 
+					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+					listExtendedConnettore);
 			
 		}finally{
 			// ripristino tipologia

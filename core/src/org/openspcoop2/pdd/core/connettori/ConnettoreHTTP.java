@@ -43,6 +43,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 
 import org.apache.soap.encoding.soapenc.Base64;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -84,7 +85,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 	
 	/** Proxy Configuration */
 	protected Proxy.Type proxyType = null;
-	protected String proxyUrl = null;
+	protected String proxyHostname = null;
 	protected int proxyPort;
 	protected String proxyUsername;
 	protected String proxyPassword;
@@ -94,6 +95,10 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 	protected String routeRedirect = null;
 	protected int numberRedirect = 0;
 	protected int maxNumberRedirects = 5;
+	
+	/** TransferMode */
+	protected TransferLengthModes tlm = null;
+	protected int chunkLength = -1;
 	
 	/** Connessione */
 	protected HttpURLConnection httpConn = null;
@@ -163,11 +168,11 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 				return false;
 			}
 			
-			this.proxyUrl = this.properties.get(CostantiConnettori.CONNETTORE_HTTP_PROXY_URL);
-			if(this.proxyUrl!=null){
-				this.proxyUrl = this.proxyUrl.trim();
+			this.proxyHostname = this.properties.get(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME);
+			if(this.proxyHostname!=null){
+				this.proxyHostname = this.proxyHostname.trim();
 			}else{
-				this.errore = "Proprieta' '"+CostantiConnettori.CONNETTORE_HTTP_PROXY_URL+
+				this.errore = "Proprieta' '"+CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME+
 						"' non impostata, obbligatoria in presenza della proprietà '"+CostantiConnettori.CONNETTORE_HTTP_PROXY_TYPE+"'";
 				return false;
 			}
@@ -205,6 +210,36 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			}
 		}
 				
+		// TransferMode
+		if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
+			this.tlm = this.openspcoopProperties.getTransferLengthModes_consegnaContenutiApplicativi();
+			this.chunkLength = this.openspcoopProperties.getChunkLength_consegnaContenutiApplicativi();
+		}
+		else{
+			// InoltroBuste e InoltroRisposte
+			this.tlm = this.openspcoopProperties.getTransferLengthModes_inoltroBuste();
+			this.chunkLength = this.openspcoopProperties.getChunkLength_inoltroBuste();
+		}
+		String tlmTmp = this.properties.get(CostantiConnettori.CONNETTORE_HTTP_DATA_TRANSFER_MODE);
+		if(tlmTmp!=null){
+			tlmTmp = tlmTmp.trim();
+			try{
+				this.tlm = TransferLengthModes.getTransferLengthModes(tlmTmp);
+			}catch(Exception e){
+				this.errore = "Proprieta' '"+CostantiConnettori.CONNETTORE_HTTP_DATA_TRANSFER_MODE
+						+"' non impostata correttamente: "+e.getMessage();
+				return false;
+			}
+		}
+		if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(this.tlm)){
+			tlmTmp = this.properties.get(CostantiConnettori.CONNETTORE_HTTP_DATA_TRANSFER_MODE_CHUNK_SIZE);
+			//this.log.info("PROPERTY! ("+redirectTmp+")");
+			if(tlmTmp!=null){
+				tlmTmp = tlmTmp.trim();
+				this.chunkLength = Integer.parseInt(tlmTmp);
+			}
+		}
+		
 		// Redirect
 		if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
 			this.followRedirects = this.openspcoopProperties.isFollowRedirects_consegnaContenutiApplicativi();
@@ -214,14 +249,22 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			// InoltroBuste e InoltroRisposte
 			this.followRedirects = this.openspcoopProperties.isFollowRedirects_inoltroBuste();
 			this.maxNumberRedirects = this.openspcoopProperties.getFollowRedirectsMaxHop_inoltroBuste();
-		}		
+		}
+
 		String redirectTmp = this.properties.get(CostantiConnettori.CONNETTORE_HTTP_REDIRECT_FOLLOW);
 		if(redirectTmp!=null){
 			redirectTmp = redirectTmp.trim();
-			this.followRedirects = Boolean.parseBoolean(redirectTmp);
+			this.followRedirects = "true".equalsIgnoreCase(redirectTmp) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(redirectTmp);
 		}
 		//this.log.info("FOLLOW! ("+this.followRedirects+")");
 		if(this.followRedirects){
+			
+			redirectTmp = this.properties.get(CostantiConnettori.CONNETTORE_HTTP_REDIRECT_MAX_HOP);
+			//this.log.info("PROPERTY! ("+redirectTmp+")");
+			if(redirectTmp!=null){
+				redirectTmp = redirectTmp.trim();
+				this.maxNumberRedirects = Integer.parseInt(redirectTmp);
+			}
 			
 			redirectTmp = this.properties.get(CostantiConnettori._CONNETTORE_HTTP_REDIRECT_NUMBER);
 			//this.log.info("PROPERTY! ("+redirectTmp+")");
@@ -287,13 +330,21 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			else{
 				if(this.debug)
 					this.logger.info("Creazione connessione alla URL ["+this.location+"] (via proxy "+
-								this.proxyUrl+":"+this.proxyPassword+") (username["+this.proxyUsername+"] password["+this.proxyPassword+"])...",false);
+								this.proxyHostname+":"+this.proxyPort+") (username["+this.proxyUsername+"] password["+this.proxyPassword+"])...",false);
 					
 				if(this.proxyUsername!=null){
-					Authenticator.setDefault(new HttpAuthenticator(this.proxyUsername, this.proxyPassword));
+					//The problem with the 2nd code is that it sets a new default Authenticator and 
+					// I don't want to do that, because this proxy is only used by a part of the application 
+					// and a different part of the application could be using a different proxy.
+					// Vedi articolo: http://stackoverflow.com/questions/34877470/basic-proxy-authentification-for-https-urls-returns-http-1-0-407-proxy-authentic
+					// Authenticator.setDefault(new HttpAuthenticator(this.proxyUsername, this.proxyPassword));
+					
+					// Soluzione attuale:
+					// Dopo aver instaurato la connesione, più sotto nel codice, viene creato l'header Proxy-Authorization
+					// NOTA: Works for HTTP only! Doesn't work for HTTPS!
 				}
 				
-				Proxy proxy = new Proxy(this.proxyType, new InetSocketAddress(this.proxyUrl, this.proxyPort));
+				Proxy proxy = new Proxy(this.proxyType, new InetSocketAddress(this.proxyHostname, this.proxyPort));
 				connection = url.openConnection(proxy);
 			}
 			this.httpConn = (HttpURLConnection) connection;	
@@ -336,6 +387,23 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			// Alcune implementazioni richiedono di aggiornare il Content-Type
 			this.requestMsg.updateContentType();
 			
+			
+			
+			// Proxy Authentication BASIC
+			if(this.proxyType!=null && this.proxyUsername!=null){
+				if(this.debug)
+					this.logger.debug("Impostazione autenticazione per proxy (username["+this.proxyUsername+"] password["+this.proxyPassword+"]) ...");
+				if(this.proxyUsername!=null && this.proxyPassword!=null){
+					String authentication = this.proxyUsername + ":" + this.proxyPassword;
+					authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC + 
+					Base64.encode(authentication.getBytes());
+					this.httpConn.setRequestProperty(HttpConstants.PROXY_AUTHORIZATION,authentication);
+					if(this.debug)
+						this.logger.info("Impostazione autenticazione per proxy (username["+this.proxyUsername+"] password["+this.proxyPassword+"]) ["+authentication+"]",false);
+				}
+			}
+			
+			
 					
 			// Impostazione Content-Type della Spedizione su HTTP	        
 			String contentTypeRichiesta = null;
@@ -370,26 +438,13 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			
 			// Impostazione transfer-length
 			if(this.debug)
-				this.logger.debug("Impostazione transfer-length...");
-			boolean transferEncodingChunked = false;
-			TransferLengthModes tlm = null;
-			int chunkLength = -1;
-			if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
-				tlm = this.openspcoopProperties.getTransferLengthModes_consegnaContenutiApplicativi();
-				chunkLength = this.openspcoopProperties.getChunkLength_consegnaContenutiApplicativi();
-			}
-			else{
-				// InoltroBuste e InoltroRisposte
-				tlm = this.openspcoopProperties.getTransferLengthModes_inoltroBuste();
-				chunkLength = this.openspcoopProperties.getChunkLength_inoltroBuste();
-			}
-			transferEncodingChunked = TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(tlm);
-			if(transferEncodingChunked){
-				HttpUtilities.setChunkedStreamingMode(this.httpConn, chunkLength, this.httpMethod, contentTypeRichiesta);
+				this.logger.debug("Impostazione transfer-length...");			
+			if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(this.tlm)){
+				HttpUtilities.setChunkedStreamingMode(this.httpConn, this.chunkLength, this.httpMethod, contentTypeRichiesta);
 				//this.httpConn.setChunkedStreamingMode(chunkLength);
 			}
 			if(this.debug)
-				this.logger.info("Impostazione transfer-length effettuata (chunkLength:"+chunkLength+"): "+tlm,false);
+				this.logger.info("Impostazione transfer-length effettuata (chunkLength:"+this.chunkLength+"): "+this.tlm,false);
 			
 			
 			// Impostazione timeout
@@ -793,12 +848,14 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
      */
     @Override
 	public String getLocation(){
-    	if(this.routeRedirect==null){
-    		return this.location;
+    	String l = new String(this.location);
+    	if(this.routeRedirect!=null){
+    		l = l+" [redirects route path: "+this.routeRedirect+"]";
     	}
-    	else{
-    		return this.location+" [redirects route path: "+this.routeRedirect+"]";
+    	if(this.proxyType!=null){
+    		l = l+" [proxy: "+this.proxyHostname+":"+this.proxyPort+"]";
     	}
+    	return l;
     }
     
 

@@ -57,6 +57,9 @@ public class HttpConstants {
 	/** Redirect */
 	public final static String REDIRECT_LOCATION = "Location";
 	
+	/** Proxy */
+	public final static String PROXY_AUTHORIZATION = "Proxy-Authorization";
+	
 	/** Authorization */
 	public final static String AUTHORIZATION = "Authorization";
 	public final static String AUTHORIZATION_PREFIX_BASIC = "Basic ";

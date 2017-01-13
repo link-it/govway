@@ -206,6 +206,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String tipoconn,
 			String connettoreDebug,
 			Boolean isConnettoreCustomUltimaImmagineSalvata,
+			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
+			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
 			List<ExtendedConnettore> listExtendedConnettore) throws Exception {
 
 		if(ruoloFruitore==null){
@@ -704,7 +706,10 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						httpsalgoritmokey, tipoconn, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,
 						nome, id, null, null, null, null,
 						null, null, true,
-						isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
+						isConnettoreCustomUltimaImmagineSalvata, 
+						proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
+						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+						listExtendedConnettore);
 			}
 		}
 		

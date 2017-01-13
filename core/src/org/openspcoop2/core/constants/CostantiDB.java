@@ -327,8 +327,20 @@ public final class CostantiDB {
     
     public static final String CONNETTORE_DEBUG = CostantiConnettori.CONNETTORE_DEBUG;
 
+    public static final String CONNETTORE_PROXY_TYPE = CostantiConnettori.CONNETTORE_HTTP_PROXY_TYPE;
+    public static final String CONNETTORE_PROXY_HOSTNAME = CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME;
+    public static final String CONNETTORE_PROXY_PORT = CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT;
+    public static final String CONNETTORE_PROXY_USERNAME = CostantiConnettori.CONNETTORE_HTTP_PROXY_USERNAME;
+    public static final String CONNETTORE_PROXY_PASSWORD = CostantiConnettori.CONNETTORE_HTTP_PROXY_PASSWORD;
+    
     public static final String CONNETTORE_HTTP_LOCATION = CostantiConnettori.CONNETTORE_LOCATION;
-
+    
+    public static final String CONNETTORE_HTTP_DATA_TRANSFER_MODE = CostantiConnettori.CONNETTORE_HTTP_DATA_TRANSFER_MODE;
+    public static final String CONNETTORE_HTTP_DATA_TRANSFER_MODE_CHUNK_SIZE = CostantiConnettori.CONNETTORE_HTTP_DATA_TRANSFER_MODE_CHUNK_SIZE;
+    
+    public static final String CONNETTORE_HTTP_REDIRECT_FOLLOW = CostantiConnettori.CONNETTORE_HTTP_REDIRECT_FOLLOW;
+    public static final String CONNETTORE_HTTP_REDIRECT_MAX_HOP = CostantiConnettori.CONNETTORE_HTTP_REDIRECT_MAX_HOP;
+    
     public static final String CONNETTORE_JMS_NOME = CostantiConnettori.CONNETTORE_LOCATION; //il nome del connettore sarebbe la proprieta location
     public static final String CONNETTORE_JMS_TIPO = CostantiConnettori.CONNETTORE_JMS_TIPO;
     public static final String CONNETTORE_USER = CostantiConnettori.CONNETTORE_USERNAME;

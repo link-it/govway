@@ -20,6 +20,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.connettori;
 
 import java.io.File;
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -41,6 +42,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -444,6 +446,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String elem4, String elem5, String elem6, String elem7, String elem8,
 			boolean showSectionTitle,
 			Boolean isConnettoreCustomUltimaImmagineSalvata,
+			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
+			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
 			List<ExtendedConnettore> listExtendedConnettore) {
 		return addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, prefix, url, nome, tipo, user,
 				password, initcont, urlpgk, provurl, connfact, sendas,
@@ -453,7 +457,10 @@ public class ConnettoriHelper extends ConsoleHelper {
 				httpstipokey, httpspwdkey, httpspwdprivatekey,
 				httpsalgoritmokey, tipoconn, servletChiamante, elem1, elem2, elem3,
 				elem4, elem5, elem6, elem7, elem8, null, showSectionTitle,
-				isConnettoreCustomUltimaImmagineSalvata,listExtendedConnettore);
+				isConnettoreCustomUltimaImmagineSalvata,
+				proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
+				opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+				listExtendedConnettore);
 	}
 
 	// Controlla i dati del connettore custom
@@ -650,6 +657,145 @@ public class ConnettoriHelper extends ConsoleHelper {
 		return endpointtype;
 	}
 	
+	public Vector<DataElement> addOpzioniAvanzateHttpToDati(Vector<DataElement> dati,
+			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop){
+		
+		boolean showOpzioniAvanzate = InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())
+				&& ServletUtils.isCheckBoxEnabled(opzioniAvanzate);
+		
+		if(showOpzioniAvanzate){
+			DataElement de = new DataElement();
+			de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_OPZIONI_AVANZATE);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+		}
+		else{
+			if(InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType()) &&
+					!ServletUtils.isCheckBoxEnabled(opzioniAvanzate)){
+				transfer_mode=null;
+				transfer_mode_chunk_size=null;
+				redirect_mode=null;
+				redirect_max_hop=null;
+			}
+		}
+		
+		// DataTransferMode
+		DataElement de = new DataElement();
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
+		if(showOpzioniAvanzate){
+			if(transfer_mode==null || "".equals(transfer_mode)){
+				transfer_mode = ConnettoriCostanti.DEFAULT_TIPO_DATA_TRANSFER;
+			}
+			de.setType(DataElementType.SELECT);
+			de.setValues(ConnettoriCostanti.TIPI_DATA_TRANSFER);
+			de.setPostBack(true);
+			de.setSelected(transfer_mode);
+			de.setSize(this.getSize());
+		}
+		else{
+			de.setType(DataElementType.HIDDEN);
+		}
+		de.setValue(transfer_mode);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
+		if(showOpzioniAvanzate && TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome().equals(transfer_mode)){
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setSize(this.getSize());
+		}
+		else{
+			de.setType(DataElementType.HIDDEN);
+		}
+		de.setValue(transfer_mode_chunk_size);
+		dati.addElement(de);
+		
+		
+		// Redirect
+		de = new DataElement();
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
+		if(showOpzioniAvanzate){
+			if(redirect_mode==null || "".equals(redirect_mode)){
+				redirect_mode = ConnettoriCostanti.DEFAULT_GESTIONE_REDIRECT;
+			}
+			de.setType(DataElementType.SELECT);
+			de.setValues(ConnettoriCostanti.TIPI_GESTIONE_REDIRECT);
+			de.setPostBack(true);
+			de.setSelected(redirect_mode);
+			de.setSize(this.getSize());
+		}
+		else{
+			de.setType(DataElementType.HIDDEN);
+		}
+		de.setValue(redirect_mode);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
+		if(showOpzioniAvanzate && CostantiConfigurazione.ABILITATO.getValue().equals(redirect_mode)){
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setSize(this.getSize());
+		}
+		else{
+			de.setType(DataElementType.HIDDEN);
+		}
+		de.setValue(redirect_max_hop);
+		dati.addElement(de);
+		
+		return dati;
+	}
+	
+	public Vector<DataElement> addProxyToDati(Vector<DataElement> dati,
+			String proxyHostname, String proxyPort, String proxyUsername, String proxyPassword){
+		
+		DataElement de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_PROXY);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
+		de.setValue(proxyHostname);
+		de.setType(DataElementType.TEXT_EDIT);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
+		de.setSize(this.getSize());
+		de.setRequired(true);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PORT);
+		de.setValue(proxyPort);
+		de.setType(DataElementType.TEXT_EDIT);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
+		de.setSize(this.getSize());
+		de.setRequired(true);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_USERNAME);
+		de.setValue(StringEscapeUtils.escapeHtml(proxyUsername));
+		de.setType(DataElementType.TEXT_EDIT);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
+		de.setSize(this.getSize());
+		de.setRequired(false);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+		de.setValue(StringEscapeUtils.escapeHtml(proxyPassword));
+		de.setType(DataElementType.TEXT_EDIT);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+		de.setSize(this.getSize());
+		de.setRequired(false);
+		dati.addElement(de);
+		
+		return dati;
+	}
+	
 	public Vector<DataElement> addCredenzialiToDati(Vector<DataElement> dati, String tipoauth, String utente, String password, String confpw, String subject, 
 			String toCall, boolean showLabelCredenzialiAccesso, String endpointtype,boolean connettore,boolean visualizzaTipoAutenticazione,
 			String prefix) {
@@ -839,6 +985,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String stato,
 			boolean showSectionTitle,
 			Boolean isConnettoreCustomUltimaImmagineSalvata,
+			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
+			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
 			List<ExtendedConnettore> listExtendedConnettore) {
 
 
@@ -986,7 +1134,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 //			}
 			
 			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-				
+								
 //				if(!ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT.equals(servletChiamante) &&
 //						!ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA.equals(servletChiamante) ){
 				de = new DataElement();
@@ -1010,28 +1158,73 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setPostBack(true);
 				dati.addElement(de);
 				
-				// Extended
-				if(listExtendedConnettore!=null && listExtendedConnettore.size()>0){
-					ServletExtendedConnettoreUtils.addToDatiEnabled(dati, listExtendedConnettore);
+				// Proxy
+				de = new DataElement();
+				de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_PROXY);
+				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+				de.setType(DataElementType.CHECKBOX);
+				if ( ServletUtils.isCheckBoxEnabled(proxyEnabled)) {
+					de.setSelected(true);
 				}
+				de.setPostBack(true);
+				dati.addElement(de);
+				
 			}	
 			
+			// Extended
+			if(listExtendedConnettore!=null && listExtendedConnettore.size()>0){
+				ServletExtendedConnettoreUtils.addToDatiEnabled(dati, listExtendedConnettore);
+			}
+			
+			// opzioni avanzate
+			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
+				de = new DataElement();
+				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE);
+				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE);
+				if (InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
+					de.setType(DataElementType.CHECKBOX);
+					de.setValue(opzioniAvanzate);
+					if ( ServletUtils.isCheckBoxEnabled(opzioniAvanzate)) {
+						de.setSelected(true);
+					}
+				}else{
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(Costanti.CHECK_BOX_DISABLED);
+				}
+				de.setPostBack(true);
+				dati.addElement(de);
+			}
+			
+			// Http Autenticazione
 			if (ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
 				this.addCredenzialiToDati(dati, CostantiConfigurazione.CREDENZIALE_BASIC.getValue(), user, password, password, null,
 						servletChiamante,true,endpointtype,true,false, prefix);
 			}
 			
+			// Https
 			if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
 				ConnettoreHTTPSUtils.addHTTPSDati(dati, httpsurl, httpstipologia, httpshostverify, httpspath, httpstipo, 
 						httpspwd, httpsalgoritmo, httpsstato, httpskeystore, httpspwdprivatekeytrust, httpspathkey, 
 						httpstipokey, httpspwdkey, httpspwdprivatekey, httpsalgoritmokey, stato, this.core, this.getSize(), false, prefix);
 			}
 			
+			// Proxy
+			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
+				if (ServletUtils.isCheckBoxEnabled(proxyEnabled)) {
+					this.addProxyToDati(dati, proxyHost, proxyPort, proxyUsername, proxyPassword);
+				}
+			}
+			
 			// Extended
 			if(listExtendedConnettore!=null && listExtendedConnettore.size()>0){
 				ServletExtendedConnettoreUtils.addToDatiExtendedInfo(dati, listExtendedConnettore);
 			}
-
+			
+			// Opzioni Avanzate
+			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
+				this.addOpzioniAvanzateHttpToDati(dati, opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop);
+			}
+			
 		} else {
 
 			/** VISUALIZZAZIONE COMPLETA CONNETTORI MODE */
@@ -1137,6 +1330,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
 //				if(!ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT.equals(servletChiamante) &&
 //						!ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA.equals(servletChiamante) ){
+								
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_HTTP);
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
@@ -1147,6 +1341,16 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setPostBack(true);
 				dati.addElement(de);		
 				//}
+				
+				de = new DataElement();
+				de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_PROXY);
+				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+				de.setType(DataElementType.CHECKBOX);
+				if ( ServletUtils.isCheckBoxEnabled(proxyEnabled)) {
+					de.setSelected(true);
+				}
+				de.setPostBack(true);
+				dati.addElement(de);
 			}
 			
 			// Extended
@@ -1154,12 +1358,32 @@ public class ConnettoriHelper extends ConsoleHelper {
 				ServletExtendedConnettoreUtils.addToDatiEnabled(dati, listExtendedConnettore);
 			}
 			
+			// opzioni avanzate
+			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
+				de = new DataElement();
+				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE);
+				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE);
+				if (InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
+					de.setType(DataElementType.CHECKBOX);
+					de.setValue(opzioniAvanzate);
+					if ( ServletUtils.isCheckBoxEnabled(opzioniAvanzate)) {
+						de.setSelected(true);
+					}
+				}else{
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(Costanti.CHECK_BOX_DISABLED);
+				}
+				de.setPostBack(true);
+				dati.addElement(de);
+			}
 			
+			// Autenticazione http
 			if (ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
 				this.addCredenzialiToDati(dati, CostantiConfigurazione.CREDENZIALE_BASIC.getValue(), user, password, password, null,
 						servletChiamante,true,endpointtype,true,false, prefix);
 			}
 			
+			// Custom
 			if (endpointtype != null && endpointtype.equals(TipiConnettore.CUSTOM.toString()) &&
 					!servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD) &&
 					!servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD) &&
@@ -1304,22 +1528,37 @@ public class ConnettoriHelper extends ConsoleHelper {
 				dati.addElement(de);
 			}
 			
+			// Https
 			if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
 				ConnettoreHTTPSUtils.addHTTPSDati(dati, httpsurl, httpstipologia, httpshostverify, httpspath, httpstipo, httpspwd, httpsalgoritmo, 
 						httpsstato, httpskeystore, httpspwdprivatekeytrust, httpspathkey, httpstipokey, httpspwdkey, httpspwdprivatekey, httpsalgoritmokey, stato,
 						this.core,this.getSize(), false, prefix);
 			}
 
+			// Jms
 			if (endpointtype.equals(TipiConnettore.JMS.getNome())) {
 				ConnettoreJMSUtils.addJMSDati(dati, nome, tipoconn, user, password, initcont, urlpgk, 
 						provurl, connfact, sendas, objectName, tipoOperazione, stato,
 						this.core,this.getSize());
 			}
 			
+			// Proxy
+			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
+				if (ServletUtils.isCheckBoxEnabled(proxyEnabled)) {
+					this.addProxyToDati(dati, proxyHost, proxyPort, proxyUsername, proxyPassword);
+				}
+			}
+			
 			// Extended
 			if(listExtendedConnettore!=null && listExtendedConnettore.size()>0){
 				ServletExtendedConnettoreUtils.addToDatiExtendedInfo(dati, listExtendedConnettore);
 			}
+			
+			// Opzioni Avanzate
+			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
+				this.addOpzioniAvanzateHttpToDati(dati, opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop);
+			}
+
 		}
 
 
@@ -1527,6 +1766,20 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String tipoconn = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
 			String autenticazioneHttp = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
 			
+			// proxy
+			String proxy_enabled = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+			String proxy_hostname = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
+			String proxy_port = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
+			String proxy_username = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
+			String proxy_password = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+
+			// opzioni avanzate
+			String transfer_mode = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
+			String transfer_mode_chunk_size = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
+			String redirect_mode = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
+			String redirect_max_hop = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
+			String opzioniAvanzate = getOpzioniAvanzate(this.request,transfer_mode, redirect_mode);
+						
 			// http
 			String url = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 
@@ -1572,6 +1825,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 					httpskeystore, httpspwdprivatekeytrust, httpspathkey,
 					httpstipokey, httpspwdkey, httpspwdprivatekey,
 					httpsalgoritmokey, tipoconn, autenticazioneHttp,
+					proxy_enabled,proxy_hostname,proxy_port,proxy_username,proxy_password,
+					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 					listExtendedConnettore);
 			
 		} catch (Exception e) {
@@ -1591,9 +1846,12 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
 			String tipoconn, String autenticazioneHttp,
+			String proxy_enabled, String proxy_hostname, String proxy_port, String proxy_username, String proxy_password,
+			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
 			List<ExtendedConnettore> listExtendedConnettore)
 					throws Exception {
 		try{
+			
 			if (url == null)
 				url = "";
 			if (nome == null)
@@ -1641,7 +1899,25 @@ public class ConnettoriHelper extends ConsoleHelper {
 			if (httpsalgoritmokey == null)
 				httpsalgoritmokey = "";
 			if (tipoconn == null)
-				tipoconn = "";
+				tipoconn = "";	
+			if (proxy_enabled == null)
+				proxy_enabled = "";
+			if (proxy_hostname == null)
+				proxy_hostname = "";
+			if (proxy_port == null)
+				proxy_port = "";
+			if (proxy_username == null)
+				proxy_username = "";
+			if (proxy_password == null)
+				proxy_password = "";
+			if (transfer_mode == null)
+				transfer_mode = "";
+			if (transfer_mode_chunk_size == null)
+				transfer_mode_chunk_size = "";
+			if (redirect_mode == null)
+				redirect_mode = "";
+			if (redirect_max_hop == null)
+				redirect_max_hop = "";
 
 			// Controllo che non ci siano spazi nei campi di testo
 			if ((url.indexOf(" ") != -1) || 
@@ -1662,9 +1938,90 @@ public class ConnettoriHelper extends ConsoleHelper {
 					(httpspwdkey.indexOf(" ") != -1) ||
 					(httpspwdprivatekey.indexOf(" ") != -1) ||
 					(httpsalgoritmokey.indexOf(" ") != -1) ||
-					(tipoconn.indexOf(" ") != -1)) {
+					(tipoconn.indexOf(" ") != -1) ||
+					(proxy_hostname.indexOf(" ") != -1) ||
+					(proxy_port.indexOf(" ") != -1) ||
+					(proxy_username.indexOf(" ") != -1) ||
+					(proxy_password.indexOf(" ") != -1) ||
+					(transfer_mode.indexOf(" ") != -1) ||
+					(transfer_mode_chunk_size.indexOf(" ") != -1) ||
+					(redirect_mode.indexOf(" ") != -1) ||
+					(redirect_max_hop.indexOf(" ") != -1) ) {
 				this.pd.setMessage("Non inserire spazi nei campi di testo");
 				return false;
+			}
+			
+			if(ServletUtils.isCheckBoxEnabled(proxy_enabled)){
+				
+				if (proxy_hostname == null || "".equals(proxy_hostname)) {
+					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_HOSTNAME+" obbligatorio se si seleziona la comunicazione tramite Proxy");
+					return false;
+				}
+				if (proxy_port == null || "".equals(proxy_port)) {
+					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PORT+" obbligatorio se si seleziona la comunicazione tramite Proxy");
+					return false;
+				}
+				int value = -1;
+				try{
+					value = Integer.parseInt(proxy_port);
+					if(value<1 || value>65535){
+						this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PORT+" indicata per il Proxy deve essere un intero compreso tra 1 e  65.535");
+						return false;
+					}
+				}catch(Exception e){
+					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PORT+" indicata per il Proxy deve essere un numero intero: "+e.getMessage());
+					return false;
+				}
+				
+				try{
+					new InetSocketAddress(proxy_hostname,value);
+				}catch(Exception e){
+					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_HOSTNAME+" e "+
+							ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PORT+" indicati per il Proxy non sono corretti: "+e.getMessage());
+					return false;
+				}
+				
+			}
+			
+			if(ServletUtils.isCheckBoxEnabled(opzioniAvanzate)){
+				
+				if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome().equals(transfer_mode)){
+					if(transfer_mode_chunk_size!=null && !"".equals(transfer_mode_chunk_size)){
+						int value = -1;
+						try{
+							value = Integer.parseInt(transfer_mode_chunk_size);
+							if(value<1){
+								this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE+
+										"' indicato per la modalità "+TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome()+" deve essere un numero maggiore di zero.");
+								return false;
+							}
+						}catch(Exception e){
+							this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE+
+									"' indicato per la modalità "+TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome()+" deve essere un numero intero: "+e.getMessage());
+							return false;
+						}
+					}
+				}
+				
+				if(CostantiConfigurazione.ABILITATO.getValue().equals(redirect_mode)){
+					if(redirect_max_hop!=null && !"".equals(redirect_max_hop)){
+						int value = -1;
+						try{
+							value = Integer.parseInt(redirect_max_hop);
+							if(value<1){
+								this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP+
+										"' deve essere un numero maggiore di zero.");
+								return false;
+							}
+						}catch(Exception e){
+							this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP+
+									"' deve essere un numero intero: "+e.getMessage());
+							return false;
+						}
+					}
+				}
+				
+				
 			}
 			
 			if(ServletUtils.isCheckBoxEnabled(autenticazioneHttp)){
@@ -1872,6 +2229,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
+			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
+			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
 			List<ExtendedConnettore> listExtendedConnettore)
 					throws Exception {
 		try {
@@ -1963,6 +2322,88 @@ public class ConnettoriHelper extends ConsoleHelper {
 				connettore.setPropertyList(cps);
 			}
 			
+			// Proxy
+			if(ServletUtils.isCheckBoxEnabled(proxyEnabled)){
+				
+				prop = new org.openspcoop2.core.registry.Property();
+				prop.setNome(CostantiDB.CONNETTORE_PROXY_TYPE);
+				prop.setValore(CostantiConnettori.CONNETTORE_HTTP_PROXY_TYPE_VALUE_HTTP);
+				connettore.addProperty(prop);
+				
+				if(proxyHost!=null && !"".equals(proxyHost)){
+					prop = new org.openspcoop2.core.registry.Property();
+					prop.setNome(CostantiDB.CONNETTORE_PROXY_HOSTNAME);
+					prop.setValore(proxyHost);
+					connettore.addProperty(prop);
+				}
+				
+				if(proxyPort!=null && !"".equals(proxyPort)){
+					prop = new org.openspcoop2.core.registry.Property();
+					prop.setNome(CostantiDB.CONNETTORE_PROXY_PORT);
+					prop.setValore(proxyPort);
+					connettore.addProperty(prop);
+				}
+				
+				if(proxyUsername!=null && !"".equals(proxyUsername)){
+					prop = new org.openspcoop2.core.registry.Property();
+					prop.setNome(CostantiDB.CONNETTORE_PROXY_USERNAME);
+					prop.setValore(proxyUsername);
+					connettore.addProperty(prop);
+				}
+				
+				if(proxyPassword!=null && !"".equals(proxyPassword)){
+					prop = new org.openspcoop2.core.registry.Property();
+					prop.setNome(CostantiDB.CONNETTORE_PROXY_PASSWORD);
+					prop.setValore(proxyPassword);
+					connettore.addProperty(prop);
+				}
+				
+			}
+			
+			// OpzioniAvanzate
+			//if(ServletUtils.isCheckBoxEnabled(opzioniAvanzate)){ li devo impostare anche in caso di HIDDEN
+				
+			if(TransferLengthModes.CONTENT_LENGTH.getNome().equals(transfer_mode) ||
+					TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome().equals(transfer_mode)){
+				
+				// nel caso di default non devo creare la proprietà
+				prop = new org.openspcoop2.core.registry.Property();
+				prop.setNome(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE);
+				prop.setValore(transfer_mode);
+				connettore.addProperty(prop);
+				
+			}
+			
+			if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome().equals(transfer_mode)){
+				if(transfer_mode_chunk_size!=null && !"".equals(transfer_mode_chunk_size)){
+					prop = new org.openspcoop2.core.registry.Property();
+					prop.setNome(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE_CHUNK_SIZE);
+					prop.setValore(transfer_mode_chunk_size);
+					connettore.addProperty(prop);
+				}
+			}
+			
+			if(CostantiConfigurazione.ABILITATO.getValue().equals(redirect_mode) ||
+					CostantiConfigurazione.DISABILITATO.getValue().equals(redirect_mode)){
+				
+				// nel caso di default non devo creare la proprietà
+				prop = new org.openspcoop2.core.registry.Property();
+				prop.setNome(CostantiDB.CONNETTORE_HTTP_REDIRECT_FOLLOW);
+				prop.setValore(redirect_mode);
+				connettore.addProperty(prop);
+				
+			}
+			
+			if(CostantiConfigurazione.ABILITATO.getValue().equals(redirect_mode)){
+				if(redirect_max_hop!=null && !"".equals(redirect_max_hop)){
+					prop = new org.openspcoop2.core.registry.Property();
+					prop.setNome(CostantiDB.CONNETTORE_HTTP_REDIRECT_MAX_HOP);
+					prop.setValore(redirect_max_hop);
+					connettore.addProperty(prop);
+				}
+			}
+				
+			
 			// Extended
 			ExtendedConnettoreConverter.fillExtendedInfoIntoConnettore(listExtendedConnettore, connettore);
 
@@ -1986,6 +2427,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String httpspwdprivatekeytrust, String httpspathkey,
 			String httpstipokey, String httpspwdkey,
 			String httpspwdprivatekey, String httpsalgoritmokey,
+			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
+			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
 			List<ExtendedConnettore> listExtendedConnettore)
 					throws Exception {
 		try {
@@ -2062,6 +2505,88 @@ public class ConnettoriHelper extends ConsoleHelper {
 				connettore.setPropertyList(cps);
 			}
 			
+			// Proxy
+			if(ServletUtils.isCheckBoxEnabled(proxyEnabled)){
+				
+				prop = new org.openspcoop2.core.config.Property();
+				prop.setNome(CostantiDB.CONNETTORE_PROXY_TYPE);
+				prop.setValore(CostantiConnettori.CONNETTORE_HTTP_PROXY_TYPE_VALUE_HTTP);
+				connettore.addProperty(prop);
+				
+				if(proxyHost!=null && !"".equals(proxyHost)){
+					prop = new org.openspcoop2.core.config.Property();
+					prop.setNome(CostantiDB.CONNETTORE_PROXY_HOSTNAME);
+					prop.setValore(proxyHost);
+					connettore.addProperty(prop);
+				}
+				
+				if(proxyPort!=null && !"".equals(proxyPort)){
+					prop = new org.openspcoop2.core.config.Property();
+					prop.setNome(CostantiDB.CONNETTORE_PROXY_PORT);
+					prop.setValore(proxyPort);
+					connettore.addProperty(prop);
+				}
+				
+				if(proxyUsername!=null && !"".equals(proxyUsername)){
+					prop = new org.openspcoop2.core.config.Property();
+					prop.setNome(CostantiDB.CONNETTORE_PROXY_USERNAME);
+					prop.setValore(proxyUsername);
+					connettore.addProperty(prop);
+				}
+				
+				if(proxyPassword!=null && !"".equals(proxyPassword)){
+					prop = new org.openspcoop2.core.config.Property();
+					prop.setNome(CostantiDB.CONNETTORE_PROXY_PASSWORD);
+					prop.setValore(proxyPassword);
+					connettore.addProperty(prop);
+				}
+				
+			}
+			
+			// OpzioniAvanzate
+			//if(ServletUtils.isCheckBoxEnabled(opzioniAvanzate)){ li devo impostare anche in caso di HIDDEN
+				
+			if(TransferLengthModes.CONTENT_LENGTH.getNome().equals(transfer_mode) ||
+					TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome().equals(transfer_mode)){
+				
+				// nel caso di default non devo creare la proprietà
+				prop = new org.openspcoop2.core.config.Property();
+				prop.setNome(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE);
+				prop.setValore(transfer_mode);
+				connettore.addProperty(prop);
+				
+			}
+			
+			if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome().equals(transfer_mode)){
+				if(transfer_mode_chunk_size!=null && !"".equals(transfer_mode_chunk_size)){
+					prop = new org.openspcoop2.core.config.Property();
+					prop.setNome(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE_CHUNK_SIZE);
+					prop.setValore(transfer_mode_chunk_size);
+					connettore.addProperty(prop);
+				}
+			}
+			
+			if(CostantiConfigurazione.ABILITATO.getValue().equals(redirect_mode) ||
+					CostantiConfigurazione.DISABILITATO.getValue().equals(redirect_mode)){
+				
+				// nel caso di default non devo creare la proprietà
+				prop = new org.openspcoop2.core.config.Property();
+				prop.setNome(CostantiDB.CONNETTORE_HTTP_REDIRECT_FOLLOW);
+				prop.setValore(redirect_mode);
+				connettore.addProperty(prop);
+				
+			}
+			
+			if(CostantiConfigurazione.ABILITATO.getValue().equals(redirect_mode)){
+				if(redirect_max_hop!=null && !"".equals(redirect_max_hop)){
+					prop = new org.openspcoop2.core.config.Property();
+					prop.setNome(CostantiDB.CONNETTORE_HTTP_REDIRECT_MAX_HOP);
+					prop.setValore(redirect_max_hop);
+					connettore.addProperty(prop);
+				}
+			}
+				
+			
 			// Extended
 			ExtendedConnettoreConverter.fillExtendedInfoIntoConnettore(listExtendedConnettore, connettore);
 
@@ -2072,4 +2597,24 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 	}
 
+	public static String getOpzioniAvanzate(HttpServletRequest request,String transfer_mode, String redirect_mode){
+
+		String opzioniAvanzate = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE);
+		return getOpzioniAvanzate(opzioniAvanzate, transfer_mode, redirect_mode);
+		
+	}
+	public static String getOpzioniAvanzate(String opzioniAvanzate,String transfer_mode, String redirect_mode){
+		
+		if(opzioniAvanzate!=null && !"".equals(opzioniAvanzate)){
+			return opzioniAvanzate;
+		}
+		
+		if(opzioniAvanzate==null || "".equals(opzioniAvanzate)){
+			opzioniAvanzate = Costanti.CHECK_BOX_DISABLED;
+		}
+		if( (transfer_mode!=null && !"".equals(transfer_mode)) || (redirect_mode!=null && !"".equals(redirect_mode)) ){
+			opzioniAvanzate = Costanti.CHECK_BOX_ENABLED;
+		}
+		return opzioniAvanzate;
+	}
 }

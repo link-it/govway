@@ -9,6 +9,12 @@ CREATE TABLE connettori
 	nome_connettore VARCHAR(255) NOT NULL,
 	-- url nel caso http
 	url VARCHAR(255),
+	-- nel caso di http indicazione se usare chunking
+	transfer_mode VARCHAR(255),
+	transfer_mode_chunk_size INT,
+	-- nel caso di http indicazione se seguire il redirect o meno
+	redirect_mode VARCHAR(255),
+	redirect_max_hop INT,
 	-- nome coda jms
 	nome VARCHAR(255),
 	-- tipo coda jms (queue,topic)
@@ -29,6 +35,13 @@ CREATE TABLE connettori
 	send_as VARCHAR(255),
 	-- 1/0 (true/false) abilita il debug tramite il connettore
 	debug INT DEFAULT 0,
+	-- 1/0 (true/false) abilita l'utilizzo di un proxy tramite il connettore
+	proxy INT DEFAULT 0,
+	proxy_type VARCHAR(255),
+	proxy_hostname VARCHAR(255),
+	proxy_port VARCHAR(255),
+	proxy_username VARCHAR(255),
+	proxy_password VARCHAR(255),
 	-- 1/0 (true/false) indica se il connettore e' gestito tramite le proprieta' custom
 	custom INT DEFAULT 0,
 	-- fk/pk columns

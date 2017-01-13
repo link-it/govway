@@ -21,6 +21,7 @@
 package org.openspcoop2.pdd.core.connettori;
 
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Properties;
 
 import org.openspcoop2.core.constants.CostantiConnettori;
@@ -148,5 +149,17 @@ public class ConnettoreUtils {
 
 	public static String limitLocation255Character(String location){
 		return TransportUtils.limitLocation255Character(location);
+	}
+	
+	public static String addProxyInfoToLocationForHTTPConnector(String tipoConnettore, Hashtable<String, String> properties, String location){
+		if(TipiConnettore.HTTP.toString().equals(tipoConnettore) || 
+				TipiConnettore.HTTPS.toString().equals(tipoConnettore)){
+			if(properties.get(CostantiConnettori.CONNETTORE_HTTP_PROXY_TYPE)!=null){
+				String proxyHostname = properties.get(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME);
+				String proxyPort = properties.get(CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT);
+				return location+" [proxy: "+proxyHostname+":"+proxyPort+"]";
+			}
+		}
+		return location;
 	}
 }

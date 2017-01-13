@@ -51,7 +51,7 @@ public class CostantiConnettori {
     /** HTTP PROPERTIES */
 	
     public static final String CONNETTORE_HTTP_PROXY_TYPE = "proxyType";
-    public static final String CONNETTORE_HTTP_PROXY_URL = "proxyUrl";
+    public static final String CONNETTORE_HTTP_PROXY_HOSTNAME = "proxyHostname";
     public static final String CONNETTORE_HTTP_PROXY_PORT = "proxyPort";
     public static final String CONNETTORE_HTTP_PROXY_USERNAME = "proxyUsername";
     public static final String CONNETTORE_HTTP_PROXY_PASSWORD = "proxyPassword";
@@ -60,8 +60,12 @@ public class CostantiConnettori {
     public static final String CONNETTORE_HTTP_PROXY_TYPE_VALUE_HTTPS = TipiConnettore.HTTPS.getNome();
     
     public static final String CONNETTORE_HTTP_REDIRECT_FOLLOW = "followRedirects";
+    public static final String CONNETTORE_HTTP_REDIRECT_MAX_HOP = "maxHopRedirect";
     public static final String _CONNETTORE_HTTP_REDIRECT_NUMBER = "numberRedirect";
     public static final String _CONNETTORE_HTTP_REDIRECT_ROUTE = "routeRedirect";
+    
+    public static final String CONNETTORE_HTTP_DATA_TRANSFER_MODE = "dataTransferMode";
+    public static final String CONNETTORE_HTTP_DATA_TRANSFER_MODE_CHUNK_SIZE = "transferChunkSize";
 
     
 	/** JMS PROPERTIES */

@@ -59,6 +59,7 @@ import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -188,6 +189,20 @@ public final class ServiziApplicativiAdd extends Action {
 			String password = null;
 			
 			String connettoreDebug = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+			
+			// proxy
+			String proxy_enabled = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+			String proxy_hostname = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
+			String proxy_port = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
+			String proxy_username = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
+			String proxy_password = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+			
+			// opzioni avanzate
+			String transfer_mode = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
+			String transfer_mode_chunk_size = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
+			String redirect_mode = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
+			String redirect_max_hop = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
+			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(request, transfer_mode, redirect_mode);
 			
 			// http
 			String url = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
@@ -389,7 +404,10 @@ public final class ServiziApplicativiAdd extends Action {
 						httpstipokey, httpspwdkey,
 						httpspwdprivatekey, httpsalgoritmokey,
 						tipoconn, connettoreDebug,
-						isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
+						isConnettoreCustomUltimaImmagineSalvata, 
+						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+						listExtendedConnettore);
 
 				pd.setDati(dati);
 
@@ -439,7 +457,10 @@ public final class ServiziApplicativiAdd extends Action {
 						httpstipokey, httpspwdkey,
 						httpspwdprivatekey, httpsalgoritmokey,
 						tipoconn, connettoreDebug,
-						isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
+						isConnettoreCustomUltimaImmagineSalvata, 
+						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+						listExtendedConnettore);
 
 				pd.setDati(dati);
 
@@ -598,6 +619,8 @@ public final class ServiziApplicativiAdd extends Action {
 							httpspathkey, httpstipokey,
 							httpspwdkey, httpspwdprivatekey,
 							httpsalgoritmokey,
+							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 							listExtendedConnettore);
 					invServizio.setConnettore(connis);
 				}

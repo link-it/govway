@@ -31,6 +31,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,6 +62,7 @@ import org.openspcoop2.core.registry.MessagePart;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.constants.BindingStyle;
 import org.openspcoop2.core.registry.constants.BindingUse;
@@ -431,11 +433,26 @@ public class DriverRegistroServiziDB_LIB {
 		String connectionfactory = null;
 		String sendas = null;
 
+		String transfer_mode = null; // in caso di tipo http e https
+		Integer transfer_mode_chunk_size = null; // in caso di tipo http e https
+
+		boolean proxy = false;
+		String proxy_type = null;
+		String proxy_hostname = null;
+		String proxy_port = null;
+		String proxy_username = null;
+		String proxy_password = null;
+
+		String redirect_mode = null; // in caso di tipo http e https
+		Integer redirect_max_hop = null; // in caso di tipo http e https
+		
 		// setto i dati, se le property non sono presenti il loro valore rimarra
 		// a null e verra settato come tale nel DB
 		String nomeProperty = null;
 		String valoreProperty = null;
 
+		boolean isAbilitato = false;
+		
 		nomeConnettore = connettore.getNome();
 		endpointtype = connettore.getTipo();
 
@@ -443,6 +460,8 @@ public class DriverRegistroServiziDB_LIB {
 			endpointtype = TipiConnettore.DISABILITATO.getNome();
 
 		Hashtable<String, String> extendedProperties = new Hashtable<String, String>();
+		
+		List<String> propertiesGestiteAttraversoColonneAdHoc = new ArrayList<String>();
 		
 		for (int i = 0; i < connettore.sizePropertyList(); i++) {
 			// prop=connettore.getProperty(i);
@@ -457,6 +476,54 @@ public class DriverRegistroServiziDB_LIB {
 				if("true".equals(valoreProperty)){
 					debug=true;
 				}
+			}
+			
+			// Proxy
+			if (nomeProperty.equals(CostantiDB.CONNETTORE_PROXY_TYPE)){
+				proxy = true;
+				proxy_type = valoreProperty;
+				
+				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
+				
+				// cerco altri valori del proxy
+				for (Property propertyCheck: connettore.getPropertyList()) {
+					if (propertyCheck.getNome().equals(CostantiDB.CONNETTORE_PROXY_HOSTNAME)){
+						propertiesGestiteAttraversoColonneAdHoc.add(propertyCheck.getNome());
+						proxy_hostname = propertyCheck.getValore();
+					}
+					if (propertyCheck.getNome().equals(CostantiDB.CONNETTORE_PROXY_PORT)){
+						propertiesGestiteAttraversoColonneAdHoc.add(propertyCheck.getNome());
+						proxy_port = propertyCheck.getValore();
+					}
+					if (propertyCheck.getNome().equals(CostantiDB.CONNETTORE_PROXY_USERNAME)){
+						propertiesGestiteAttraversoColonneAdHoc.add(propertyCheck.getNome());
+						proxy_username = propertyCheck.getValore();
+					}
+					if (propertyCheck.getNome().equals(CostantiDB.CONNETTORE_PROXY_PASSWORD)){
+						propertiesGestiteAttraversoColonneAdHoc.add(propertyCheck.getNome());
+						proxy_password = propertyCheck.getValore();
+					}
+				}
+			}
+			
+			// TransferMode
+			if (nomeProperty.equals(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE)){
+				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
+				transfer_mode = valoreProperty;
+			}
+			if (nomeProperty.equals(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE_CHUNK_SIZE)){
+				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
+				transfer_mode_chunk_size = Integer.parseInt(valoreProperty);
+			}
+			
+			// RedirectMode
+			if (nomeProperty.equals(CostantiDB.CONNETTORE_HTTP_REDIRECT_FOLLOW)){
+				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
+				redirect_mode = valoreProperty;
+			}
+			if (nomeProperty.equals(CostantiDB.CONNETTORE_HTTP_REDIRECT_MAX_HOP)){
+				propertiesGestiteAttraversoColonneAdHoc.add(nomeProperty);
+				redirect_max_hop = Integer.parseInt(valoreProperty);
 			}
 
 			if(TipiConnettore.HTTP.getNome().equals(endpointtype)){
@@ -488,6 +555,10 @@ public class DriverRegistroServiziDB_LIB {
 					sendas = valoreProperty;
 			}
 
+			// se endpointype != disabilitato allora lo setto abilitato
+			if (!endpointtype.equalsIgnoreCase(TipiConnettore.DISABILITATO.getNome()))
+				isAbilitato = true;
+			
 			// extendedProperties
 			if(nomeProperty.startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)){
 				extendedProperties.put(nomeProperty, valoreProperty);
@@ -505,6 +576,10 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addInsertTable(CostantiDB.CONNETTORI);
 				sqlQueryObject.addInsertField("endpointtype", "?");
 				sqlQueryObject.addInsertField("url", "?");
+				sqlQueryObject.addInsertField("transfer_mode", "?");
+				sqlQueryObject.addInsertField("transfer_mode_chunk_size", "?");
+				sqlQueryObject.addInsertField("redirect_mode", "?");
+				sqlQueryObject.addInsertField("redirect_max_hop", "?");
 				sqlQueryObject.addInsertField("nome", "?");
 				sqlQueryObject.addInsertField("tipo", "?");
 				sqlQueryObject.addInsertField("utente", "?");
@@ -516,34 +591,70 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addInsertField("send_as", "?");
 				sqlQueryObject.addInsertField("nome_connettore", "?");
 				sqlQueryObject.addInsertField("debug", "?");
+				sqlQueryObject.addInsertField("proxy", "?");		
+				sqlQueryObject.addInsertField("proxy_type", "?");		
+				sqlQueryObject.addInsertField("proxy_hostname", "?");		
+				sqlQueryObject.addInsertField("proxy_port", "?");		
+				sqlQueryObject.addInsertField("proxy_username", "?");		
+				sqlQueryObject.addInsertField("proxy_password", "?");
 				sqlQueryObject.addInsertField("custom", "?");
 				sqlQuery = sqlQueryObject.createSQLInsert();
 				stm = connection.prepareStatement(sqlQuery);
 
-				stm.setString(1, endpointtype);
-				stm.setString(2, url);
-				stm.setString(3, nome);
-				stm.setString(4, tipo);
-				stm.setString(5, utente);
-				stm.setString(6, password);
-				stm.setString(7, initcont);
-				stm.setString(8, urlpkg);
-				stm.setString(9, provurl);
-				stm.setString(10, connectionfactory);
-				stm.setString(11, sendas);
-				stm.setString(12, nomeConnettore);
-				if(debug){
-					stm.setInt(13, 1);
-				}else{
-					stm.setInt(13, 0);
+				int index = 1;
+				stm.setString(index++, endpointtype);
+				stm.setString(index++, url);
+				stm.setString(index++, (isAbilitato ? transfer_mode : null));
+				if(isAbilitato && transfer_mode_chunk_size!=null){
+					stm.setInt(index++, transfer_mode_chunk_size);
 				}
-				if(connettore.getCustom()!=null && connettore.getCustom()){
-					stm.setInt(14, 1);
+				else{
+					stm.setNull(index++, Types.INTEGER);
+				}
+				stm.setString(index++, (isAbilitato ? redirect_mode : null));
+				if(isAbilitato && redirect_max_hop!=null){
+					stm.setInt(index++, redirect_max_hop);
+				}
+				else{
+					stm.setNull(index++, Types.INTEGER);
+				}
+				stm.setString(index++, nome);
+				stm.setString(index++, tipo);
+				stm.setString(index++, utente);
+				stm.setString(index++, password);
+				stm.setString(index++, initcont);
+				stm.setString(index++, urlpkg);
+				stm.setString(index++, provurl);
+				stm.setString(index++, connectionfactory);
+				stm.setString(index++, sendas);
+				stm.setString(index++, nomeConnettore);
+				if(debug){
+					stm.setInt(index++, 1);
 				}else{
-					stm.setInt(14, 0);
+					stm.setInt(index++, 0);
+				}
+				if(proxy){
+					stm.setInt(index++, 1);
+				}else{
+					stm.setInt(index++, 0);
+				}
+				stm.setString(index++, isAbilitato && proxy ? proxy_type : null);
+				stm.setString(index++, isAbilitato && proxy ? proxy_hostname : null);
+				stm.setString(index++, isAbilitato && proxy ? proxy_port : null);
+				stm.setString(index++, isAbilitato && proxy ? proxy_username : null);
+				stm.setString(index++, isAbilitato && proxy ? proxy_password : null);
+				if(connettore.getCustom()!=null && connettore.getCustom()){
+					stm.setInt(index++, 1);
+				}else{
+					stm.setInt(index++, 0);
 				}
 
-				DriverRegistroServiziDB_LIB.log.debug("CRUDConnettore CREATE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, endpointtype, url, nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas, nomeConnettore, debug, (connettore.getCustom()!=null && connettore.getCustom())));
+				DriverRegistroServiziDB_LIB.log.debug("CRUDConnettore CREATE : \n" + 
+						DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, endpointtype, url, 
+								transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+								nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas, nomeConnettore, debug, 
+								proxy, proxy_type, proxy_hostname, proxy_port, proxy_username, proxy_password,
+								(connettore.getCustom()!=null && connettore.getCustom())));
 				int n = stm.executeUpdate();
 				DriverRegistroServiziDB_LIB.log.debug("CRUDConnettore type = " + type + " row affected =" + n);
 				stm.close();
@@ -586,6 +697,9 @@ public class DriverRegistroServiziDB_LIB {
 					
 					for (int i = 0; i < connettore.sizePropertyList(); i++) {
 						nomeProperty = connettore.getProperty(i).getNome();
+						if(propertiesGestiteAttraversoColonneAdHoc.contains(nomeProperty)){
+							continue;
+						}
 						valoreProperty = connettore.getProperty(i).getValore();
 						if (valoreProperty != null && valoreProperty.equals(""))
 							valoreProperty = null;
@@ -644,6 +758,10 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addUpdateTable(CostantiDB.CONNETTORI);
 				sqlQueryObject.addUpdateField("endpointtype", "?");
 				sqlQueryObject.addUpdateField("url", "?");
+				sqlQueryObject.addUpdateField("transfer_mode", "?");
+				sqlQueryObject.addUpdateField("transfer_mode_chunk_size", "?");
+				sqlQueryObject.addUpdateField("redirect_mode", "?");
+				sqlQueryObject.addUpdateField("redirect_max_hop", "?");
 				sqlQueryObject.addUpdateField("nome", "?");
 				sqlQueryObject.addUpdateField("tipo", "?");
 				sqlQueryObject.addUpdateField("utente", "?");
@@ -655,36 +773,72 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addUpdateField("send_as", "?");
 				sqlQueryObject.addUpdateField("nome_connettore", "?");
 				sqlQueryObject.addUpdateField("debug", "?");
+				sqlQueryObject.addUpdateField("proxy", "?");		
+				sqlQueryObject.addUpdateField("proxy_type", "?");		
+				sqlQueryObject.addUpdateField("proxy_hostname", "?");		
+				sqlQueryObject.addUpdateField("proxy_port", "?");		
+				sqlQueryObject.addUpdateField("proxy_username", "?");		
+				sqlQueryObject.addUpdateField("proxy_password", "?");
 				sqlQueryObject.addUpdateField("custom", "?");
 				sqlQueryObject.addWhereCondition("id=?");
 				sqlQuery = sqlQueryObject.createSQLUpdate();
 				stm = connection.prepareStatement(sqlQuery);
 
-				stm.setString(1, endpointtype);
-				stm.setString(2, url);
-				stm.setString(3, nome);
-				stm.setString(4, tipo);
-				stm.setString(5, utente);
-				stm.setString(6, password);
-				stm.setString(7, initcont);
-				stm.setString(8, urlpkg);
-				stm.setString(9, provurl);
-				stm.setString(10, connectionfactory);
-				stm.setString(11, sendas);
-				stm.setString(12, nomeConnettore);
+				index = 1;
+				stm.setString(index++, endpointtype);
+				stm.setString(index++, url);
+				stm.setString(index++, (isAbilitato ? transfer_mode : null));
+				if(isAbilitato && transfer_mode_chunk_size!=null){
+					stm.setInt(index++, transfer_mode_chunk_size);
+				}
+				else{
+					stm.setNull(index++, Types.INTEGER);
+				}
+				stm.setString(index++, (isAbilitato ? redirect_mode : null));
+				if(isAbilitato && redirect_max_hop!=null){
+					stm.setInt(index++, redirect_max_hop);
+				}
+				else{
+					stm.setNull(index++, Types.INTEGER);
+				}
+				stm.setString(index++, nome);
+				stm.setString(index++, tipo);
+				stm.setString(index++, utente);
+				stm.setString(index++, password);
+				stm.setString(index++, initcont);
+				stm.setString(index++, urlpkg);
+				stm.setString(index++, provurl);
+				stm.setString(index++, connectionfactory);
+				stm.setString(index++, sendas);
+				stm.setString(index++, nomeConnettore);
 				if(debug){
-					stm.setInt(13, 1);
+					stm.setInt(index++, 1);
 				}else{
-					stm.setInt(13, 0);
+					stm.setInt(index++, 0);
 				}
+				if(proxy){
+					stm.setInt(index++, 1);
+				}else{
+					stm.setInt(index++, 0);
+				}
+				stm.setString(index++, isAbilitato && proxy ? proxy_type : null);
+				stm.setString(index++, isAbilitato && proxy ? proxy_hostname : null);
+				stm.setString(index++, isAbilitato && proxy ? proxy_port : null);
+				stm.setString(index++, isAbilitato && proxy ? proxy_username : null);
+				stm.setString(index++, isAbilitato && proxy ? proxy_password : null);
 				if(connettore.getCustom()!=null && connettore.getCustom()){
-					stm.setInt(14, 1);
+					stm.setInt(index++, 1);
 				}else{
-					stm.setInt(14, 0);
+					stm.setInt(index++, 0);
 				}
-				stm.setLong(15, idConnettore);
+				stm.setLong(index++, idConnettore);
 
-				DriverRegistroServiziDB_LIB.log.debug("CRUDConnettore UPDATE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, endpointtype, url, nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas, nomeConnettore, debug,(connettore.getCustom()!=null && connettore.getCustom()),idConnettore));
+				DriverRegistroServiziDB_LIB.log.debug("CRUDConnettore UPDATE : \n" + 
+						DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, endpointtype, url, 
+								transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+								nome, tipo, utente, password, initcont, urlpkg, provurl, connectionfactory, sendas, nomeConnettore, debug,
+								proxy, proxy_type, proxy_hostname, proxy_port, proxy_username, proxy_password,
+								(connettore.getCustom()!=null && connettore.getCustom()),idConnettore));
 				n = stm.executeUpdate();
 				DriverRegistroServiziDB_LIB.log.debug("CRUDConnettore type = " + type + " row affected =" + n);
 				stm.close();
@@ -713,6 +867,9 @@ public class DriverRegistroServiziDB_LIB {
 					
 					for (int i = 0; i < connettore.sizePropertyList(); i++) {
 						nomeProperty = connettore.getProperty(i).getNome();
+						if(propertiesGestiteAttraversoColonneAdHoc.contains(nomeProperty)){
+							continue;
+						}
 						valoreProperty = connettore.getProperty(i).getValore();
 						if (valoreProperty != null && valoreProperty.equals(""))
 							valoreProperty = null;

@@ -53,6 +53,7 @@ import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
@@ -60,6 +61,7 @@ import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -176,6 +178,20 @@ public final class ServiziApplicativiChange extends Action {
 			String password = null;
 			
 			String connettoreDebug = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+			
+			// proxy
+			String proxy_enabled = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+			String proxy_hostname = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
+			String proxy_port = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
+			String proxy_username = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
+			String proxy_password = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+			
+			// opzioni avanzate
+			String transfer_mode = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
+			String transfer_mode_chunk_size = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
+			String redirect_mode = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
+			String redirect_max_hop = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
+			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(request, transfer_mode, redirect_mode);
 			
 			// http
 			String url = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
@@ -443,6 +459,72 @@ public final class ServiziApplicativiChange extends Action {
 					}
 				}
 				
+				if(proxy_enabled==null && props!=null){
+					String v = props.get(CostantiDB.CONNETTORE_PROXY_TYPE);
+					if(v!=null && !"".equals(v)){
+						proxy_enabled = Costanti.CHECK_BOX_ENABLED_TRUE;
+						
+						// raccolgo anche altre proprietà
+						v = props.get(CostantiDB.CONNETTORE_PROXY_HOSTNAME);
+						if(v!=null && !"".equals(v)){
+							proxy_hostname = v.trim();
+						}
+						v = props.get(CostantiDB.CONNETTORE_PROXY_PORT);
+						if(v!=null && !"".equals(v)){
+							proxy_port = v.trim();
+						}
+						v = props.get(CostantiDB.CONNETTORE_PROXY_USERNAME);
+						if(v!=null && !"".equals(v)){
+							proxy_username = v.trim();
+						}
+						v = props.get(CostantiDB.CONNETTORE_PROXY_PASSWORD);
+						if(v!=null && !"".equals(v)){
+							proxy_password = v.trim();
+						}
+					}
+				}
+				
+				if(transfer_mode==null && props!=null){
+					String v = props.get(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE);
+					if(v!=null && !"".equals(v)){
+						
+						transfer_mode = v.trim();
+						
+						if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome().equals(transfer_mode)){
+							// raccolgo anche altra proprietà correlata
+							v = props.get(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE_CHUNK_SIZE);
+							if(v!=null && !"".equals(v)){
+								transfer_mode_chunk_size = v.trim();
+							}
+						}
+						
+					}
+				}
+				
+				if(redirect_mode==null && props!=null){
+					String v = props.get(CostantiDB.CONNETTORE_HTTP_REDIRECT_FOLLOW);
+					if(v!=null && !"".equals(v)){
+						
+						if("true".equalsIgnoreCase(v.trim()) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v.trim())){
+							redirect_mode = CostantiConfigurazione.ABILITATO.getValue();
+						}
+						else{
+							redirect_mode = CostantiConfigurazione.DISABILITATO.getValue();
+						}					
+						
+						if(CostantiConfigurazione.ABILITATO.getValue().equals(redirect_mode)){
+							// raccolgo anche altra proprietà correlata
+							v = props.get(CostantiDB.CONNETTORE_HTTP_REDIRECT_MAX_HOP);
+							if(v!=null && !"".equals(v)){
+								redirect_max_hop = v.trim();
+							}
+						}
+						
+					}
+				}
+				
+				opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(request, transfer_mode, redirect_mode);
+				
 				autenticazioneHttp = saHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
 				
 				for (int i = 0; i < connis.sizePropertyList(); i++) {
@@ -559,7 +641,10 @@ public final class ServiziApplicativiChange extends Action {
 						httpstipokey, httpspwdkey,
 						httpspwdprivatekey, httpsalgoritmokey,
 						tipoconn, connettoreDebug,
-						isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
+						isConnettoreCustomUltimaImmagineSalvata, 
+						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+						listExtendedConnettore);
 
 				pd.setDati(dati);
 
@@ -617,7 +702,10 @@ public final class ServiziApplicativiChange extends Action {
 						httpstipokey, httpspwdkey,
 						httpspwdprivatekey, httpsalgoritmokey,
 						tipoconn, connettoreDebug,
-						isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
+						isConnettoreCustomUltimaImmagineSalvata, 
+						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+						listExtendedConnettore);
 
 				pd.setDati(dati);
 
@@ -801,6 +889,8 @@ public final class ServiziApplicativiChange extends Action {
 						httpspathkey, httpstipokey,
 						httpspwdkey, httpspwdprivatekey,
 						httpsalgoritmokey,
+						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 						listExtendedConnettore);
 				is.setConnettore(connis);
 				

@@ -6743,6 +6743,87 @@ IDriverWS ,IMonitoraggioRisorsa{
 						connettore.addProperty(prop);
 					}
 
+					// Proxy
+					if(rs.getInt("proxy")==1){
+						
+						String tmp = rs.getString("proxy_type");
+						if(tmp!=null && !"".equals(tmp)){
+							prop = new Property();
+							prop.setNome(CostantiDB.CONNETTORE_PROXY_TYPE);
+							prop.setValore(tmp.trim());
+							connettore.addProperty(prop);
+						}
+						
+						tmp = rs.getString("proxy_hostname");
+						if(tmp!=null && !"".equals(tmp)){
+							prop = new Property();
+							prop.setNome(CostantiDB.CONNETTORE_PROXY_HOSTNAME);
+							prop.setValore(tmp.trim());
+							connettore.addProperty(prop);
+						}
+						
+						tmp = rs.getString("proxy_port");
+						if(tmp!=null && !"".equals(tmp)){
+							prop = new Property();
+							prop.setNome(CostantiDB.CONNETTORE_PROXY_PORT);
+							prop.setValore(tmp.trim());
+							connettore.addProperty(prop);
+						}
+						
+						tmp = rs.getString("proxy_username");
+						if(tmp!=null && !"".equals(tmp)){
+							prop = new Property();
+							prop.setNome(CostantiDB.CONNETTORE_PROXY_USERNAME);
+							prop.setValore(tmp.trim());
+							connettore.addProperty(prop);
+						}
+						
+						tmp = rs.getString("proxy_password");
+						if(tmp!=null && !"".equals(tmp)){
+							prop = new Property();
+							prop.setNome(CostantiDB.CONNETTORE_PROXY_PASSWORD);
+							prop.setValore(tmp.trim());
+							connettore.addProperty(prop);
+						}
+						
+					}
+					
+					// transfer_mode
+					String transferMode = rs.getString("transfer_mode");
+					if(transferMode!=null && !"".equals(transferMode)){
+						
+						prop = new Property();
+						prop.setNome(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE);
+						prop.setValore(transferMode.trim());
+						connettore.addProperty(prop);
+						
+						transferMode = rs.getString("transfer_mode_chunk_size");
+						if(transferMode!=null && !"".equals(transferMode)){
+							prop = new Property();
+							prop.setNome(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE_CHUNK_SIZE);
+							prop.setValore(transferMode.trim());
+							connettore.addProperty(prop);
+						}
+					}
+					
+					// redirect_mode
+					String redirectMode = rs.getString("redirect_mode");
+					if(redirectMode!=null && !"".equals(redirectMode)){
+						
+						prop = new Property();
+						prop.setNome(CostantiDB.CONNETTORE_HTTP_REDIRECT_FOLLOW);
+						prop.setValore(redirectMode.trim());
+						connettore.addProperty(prop);
+						
+						redirectMode = rs.getString("redirect_max_hop");
+						if(redirectMode!=null && !"".equals(redirectMode)){
+							prop = new Property();
+							prop.setNome(CostantiDB.CONNETTORE_HTTP_REDIRECT_MAX_HOP);
+							prop.setValore(redirectMode.trim());
+							connettore.addProperty(prop);
+						}
+					}
+					
 					if (endpoint.equals(CostantiDB.CONNETTORE_TIPO_HTTP)) {
 
 						// url

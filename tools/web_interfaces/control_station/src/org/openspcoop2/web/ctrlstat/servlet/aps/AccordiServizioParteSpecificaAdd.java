@@ -76,6 +76,7 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
@@ -129,7 +130,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 	private String oldPortType, oldTipoSoggettoErogatore, oldNomeSoggettoErogatore = null;
 	private String autenticazioneHttp;
 	private Properties parametersPOST;
-
+	
+	private String proxy_enabled, proxy_hostname,proxy_port,proxy_username,proxy_password;
+	
+	private String transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop, opzioniAvanzate;
+	
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -167,6 +172,20 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			this.autenticazioneHttp = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
 			
 			this.connettoreDebug = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+					
+			// proxy
+			this.proxy_enabled = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+			this.proxy_hostname = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
+			this.proxy_port = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
+			this.proxy_username = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
+			this.proxy_password = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+			
+			// opzioni avanzate
+			this.transfer_mode = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
+			this.transfer_mode_chunk_size = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
+			this.redirect_mode = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
+			this.redirect_max_hop = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
+			this.opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(request,this.transfer_mode, this.redirect_mode);
 			
 			// http
 			this.url = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL  );
@@ -775,7 +794,10 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.httpstipokey, this.httpspwdkey, this.httpspwdprivatekey,
 						this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
 						null, null, null, null, null, null, true,
-						isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
+						isConnettoreCustomUltimaImmagineSalvata, 
+						this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
+						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+						listExtendedConnettore);
 
 				pd.setDati(dati);
 
@@ -807,6 +829,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.httpspathkey, this.httpstipokey,
 					this.httpspwdkey, this.httpspwdprivatekey,
 					this.httpsalgoritmokey, this.tipoconn,this.versione,this.validazioneDocumenti,this.nomePA,null,this.autenticazioneHttp,
+					this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
+					this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
 					listExtendedConnettore);
 			
 			if(isOk){
@@ -868,7 +892,10 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.httpspwdkey, this.httpspwdprivatekey,
 						this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
 						null, null, null, null, null, null, true,
-						isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
+						isConnettoreCustomUltimaImmagineSalvata, 
+						this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
+						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+						listExtendedConnettore);
 
 				pd.setDati(dati);
 
@@ -926,6 +953,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.httpspathkey, this.httpstipokey,
 					this.httpspwdkey, this.httpspwdprivatekey,
 					this.httpsalgoritmokey,
+					this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
+					this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
 					listExtendedConnettore);
 
 			if(asps.getConfigurazioneServizio()==null)
@@ -993,7 +1022,10 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.httpspwdkey, this.httpspwdprivatekey,
 							this.httpsalgoritmokey, this.tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null, null,
 							null, null, null, null, null, null, true,
-							isConnettoreCustomUltimaImmagineSalvata, listExtendedConnettore);
+							isConnettoreCustomUltimaImmagineSalvata, 
+							this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
+							this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+							listExtendedConnettore);
 
 					pd.setDati(dati);
 
@@ -1190,6 +1222,49 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG+"\"") != -1) {
 					line = dis.readLine();
 					this.connettoreDebug = dis.readLine();
+				}
+				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED+"\"") != -1) {
+					line = dis.readLine();
+					this.proxy_enabled = dis.readLine();
+				}
+				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME+"\"") != -1) {
+					line = dis.readLine();
+					this.proxy_hostname = dis.readLine();
+				}
+				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT+"\"") != -1) {
+					line = dis.readLine();
+					this.proxy_port = dis.readLine();
+				}
+				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME+"\"") != -1) {
+					line = dis.readLine();
+					this.proxy_username = dis.readLine();
+				}
+				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD+"\"") != -1) {
+					line = dis.readLine();
+					this.proxy_password = dis.readLine();
+				}
+				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE+"\"") != -1) {
+					line = dis.readLine();
+					this.opzioniAvanzate = dis.readLine();
+					this.opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(this.opzioniAvanzate,this.transfer_mode, this.redirect_mode);
+				}
+				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE+"\"") != -1) {
+					line = dis.readLine();
+					this.transfer_mode = dis.readLine();
+					this.opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(this.opzioniAvanzate,this.transfer_mode, this.redirect_mode);
+				}
+				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE+"\"") != -1) {
+					line = dis.readLine();
+					this.transfer_mode_chunk_size = dis.readLine();
+				}
+				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE+"\"") != -1) {
+					line = dis.readLine();
+					this.redirect_mode = dis.readLine();
+					this.opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(this.opzioniAvanzate,this.transfer_mode, this.redirect_mode);
+				}
+				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP+"\"") != -1) {
+					line = dis.readLine();
+					this.redirect_max_hop = dis.readLine();
 				}
 				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_URL+"\"") != -1) {
 					line = dis.readLine();

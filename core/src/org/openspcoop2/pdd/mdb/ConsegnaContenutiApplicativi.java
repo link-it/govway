@@ -1344,6 +1344,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connettoreMsg, bustaRichiesta, this.log);
 			if(location!=null){
 				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(consegnaMessage, connettoreMsg.getPropertiesUrlBased(), location);
+				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(connettoreMsg.getTipoConnettore(), connettoreMsg.getConnectorProperties(), locationWithUrl);
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, locationWithUrl));
 			}
 			else{
@@ -1540,6 +1541,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connettoreMsg, bustaRichiesta, this.log);
 			if(location!=null){
 				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(consegnaMessage, connettoreMsg.getPropertiesUrlBased(), location);
+				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(connettoreMsg.getTipoConnettore(), connettoreMsg.getConnectorProperties(), locationWithUrl);
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, locationWithUrl));
 			}
 			else{
