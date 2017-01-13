@@ -1,3 +1,38 @@
+2017-01-13  Andrea Poli <apoli@link.it>
+
+	* [Pdd, PddConsole]
+        Aggiunta funzionalità OP-580
+	E' stata aggiunta alla maschere di configurazione di un connettore http o https la possibilità di impostare l'utilizzo di un proxy http.
+
+	* [Pdd, PddConsole]
+	Risolto Bug OP-577
+	Utilizzando il connettore http, nel caso il server contattato ritornava come codice http di risposta 401, 
+	la PdD non riceveva un eventuale payload http presente nel contenuto.
+	Questo comportamento era presente solamente se la PdD era configurata a livello globale nel file openspcoop2.properties 
+	con la spedizione configurata in modalità chunked:
+	- org.openspcoop2.pdd.connettori.inoltroBuste.httpTransferLength=transfer-encoding-chunked
+	- org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.httpTransferLength=transfer-encoding-chunked
+	Se invece veniva indicatato di utilizzare la modalità no-streaming (valore 'content-length') l'eventuale payload presente nella risposta http, 
+	in presenza di return code 401, veniva correttamente gestito.
+	Per quanto concerne la risoluzione, il problema è presente proprio all'interno della classe java sun.net.www.protocol.http.HttpURLConnection. 
+	Per non entrare nel merito della classe la risoluzione è stata portata a livello di configurazione. 
+	E' stata aggiunta alla maschere di configurazione di un connettore http o https la possibilità di impostare la modalità di trasmissione 
+	se in streaming o meno (ed eventualmente anche il chunk size). Tale configurabilità è attuabile accedendo alla sezione 'Opzioni Avanzate'
+	della maschera di configurazione di un connettore quando l'interfaccia è configurata con modalità di accesso avanzata.
+	Tale configurazione oltre a permettere di superare il problema fornisce nello stesso tempo una maggiore flessibilità di configurazione 
+	rendendo possibile utilizzare una modalità di trasferimento dei dati (chunked o fixed-length) differente rispetto al servizio contattato.
+
+	* [Pdd, PddConsole]
+	Aggiunta funzionalità OP-588
+	E' stata aggiunta la possibilità di rendere configurabile l'abilitazione a "seguire" un eventuale redirect http ritornato da un servizio.
+	La gestione del redirect (abilitato/disabilitato) sulla PdD viene configurata a livello globale sul prodotto nel file openspcoop2.properties
+	dove per default è disabilitata:
+	- org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects=false
+	- org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects=false
+	Con questa nuova funzionalità tale gestione è possibile abilitarla puntualmente sul singolo servizio accedendo alla sezione 'Opzioni Avanzate'
+	della maschera di configurazione di un connettore quando l'interfaccia è configurata con modalità di accesso avanzata.
+	Tale configurazione permettere oltre ad abilitare/disabiltare la gestione dei redirect anche di impostare il max numero di redirect seguiti.
+
 2017-01-11  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]
