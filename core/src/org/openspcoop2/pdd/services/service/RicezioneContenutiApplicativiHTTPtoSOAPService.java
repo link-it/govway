@@ -866,7 +866,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					if(httpEmptyResponse){
 						msgDiag.logPersonalizzato("consegnaRispostaApplicativaVuota");
 					}else{
-						if(statoServletResponse==500)
+						if(statoServletResponse>=400)
 							msgDiag.logPersonalizzato("consegnaRispostaApplicativaKoEffettuata");
 						else
 							msgDiag.logPersonalizzato("consegnaRispostaApplicativaOkEffettuata");

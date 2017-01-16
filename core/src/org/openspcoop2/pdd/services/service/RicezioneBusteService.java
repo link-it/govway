@@ -908,7 +908,7 @@ public class RicezioneBusteService  {
 					if(httpEmptyResponse){
 						msgDiag.logPersonalizzato("consegnaMessaggioNonPresente");
 					}else{
-						if(statoServletResponse==500)
+						if(statoServletResponse>=400)
 							msgDiag.logPersonalizzato("consegnaMessaggioKoEffettuata");
 						else
 							msgDiag.logPersonalizzato("consegnaMessaggioOkEffettuata");
