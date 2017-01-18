@@ -94,7 +94,7 @@ public final class AccordiServizioParteComunePortTypesList extends Action {
 
 			List<PortType> lista = apcCore.accordiPorttypeList(idAccordo, ricerca);
 
-			apcHelper.prepareAccordiPorttypeList(as, lista, ricerca, tipoAccordo);
+			apcHelper.prepareAccordiPorttypeList(id,as, lista, ricerca, tipoAccordo);
 
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);

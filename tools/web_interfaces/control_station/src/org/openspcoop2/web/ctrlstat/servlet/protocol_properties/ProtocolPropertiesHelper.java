@@ -93,7 +93,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 					return idAps;
 				case AZIONE_ACCORDO:
 					Azione azione = (Azione) proprietario;
-					AccordoServizioParteComune apca = this.apcCore.getAccordoServizio(azione.getIdAccordo());
+					AccordoServizioParteComune apca = this.apcCore.getAccordoServizio(Integer.parseInt(idProprietario));
 					IDAccordo idAccordoAz = this.idAccordoFactory.getIDAccordoFromValues(apca.getNome(),BeanUtilities.getSoggettoReferenteID(apca.getSoggettoReferente()),apca.getVersione());
 					IDAccordoAzione idAccordoAzione = new IDAccordoAzione();
 					idAccordoAzione.setIdAccordo(idAccordoAz);
@@ -470,43 +470,99 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 			ProprietariProtocolProperty tipoProprietario, String tipoAccordo) throws Exception {
 		try{
 			if(proprietario != null){
+				int idProp = Integer.parseInt(idProprietario);
+				boolean save = false;
 				switch (tipoProprietario) {
 				case ACCORDO_COOPERAZIONE:
 					AccordoCooperazione ac = (AccordoCooperazione) proprietario;
 					ac.setProtocolPropertyList(protocolPropertiesAggiornate);
+					// salvataggio
+					this.core.performUpdateOperation(userLogin, smista, proprietario);
 					break;
 				case ACCORDO_SERVIZIO_PARTE_COMUNE:
 					AccordoServizioParteComune as = (AccordoServizioParteComune) proprietario;
 					as.setProtocolPropertyList(protocolPropertiesAggiornate);
+					// salvataggio
+					this.core.performUpdateOperation(userLogin, smista, proprietario);
 					break;
 				case ACCORDO_SERVIZIO_PARTE_SPECIFICA:
 					AccordoServizioParteSpecifica aps = (AccordoServizioParteSpecifica) proprietario;
 					aps.setProtocolPropertyList(protocolPropertiesAggiornate);
+					// salvataggio
+					this.core.performUpdateOperation(userLogin, smista, proprietario);
 					break;
 				case AZIONE_ACCORDO:
-					Azione azione = (Azione) proprietario;
-					azione.setProtocolPropertyList(protocolPropertiesAggiornate);
+					Azione newAzione = (Azione) proprietario;
+					AccordoServizioParteComune apca = this.apcCore.getAccordoServizio(idProp);
+					for(Azione azione: apca.getAzioneList()){
+						if(azione.getNome().equals(newAzione.getNome())){
+							azione.setProtocolPropertyList(protocolPropertiesAggiornate);
+							save = true;
+							break;
+						}
+					}
+					
+					// salvataggio
+					if(save)
+						this.core.performUpdateOperation(userLogin, smista, apca);
 					break;
 				case FRUITORE:
 					Fruitore fruitore = (Fruitore) proprietario; 
-					fruitore.setProtocolPropertyList(protocolPropertiesAggiornate);
+					AccordoServizioParteSpecifica apsFrui = this.apsCore.getAccordoServizioParteSpecifica(fruitore.getIdServizio());
+					
+					for (Fruitore fr : apsFrui.getFruitoreList()) {
+						if(fr.getTipo().equals(fruitore.getTipo()) && fr.getNome().equals(fruitore.getNome())){
+							fr.setProtocolPropertyList(protocolPropertiesAggiornate);
+							save = true;
+							break;
+						}
+					}
+					
+					// salvataggio
+					if(save)
+						this.core.performUpdateOperation(userLogin, smista, apsFrui);
 					break;
 				case OPERATION:
-					org.openspcoop2.core.registry.Operation azionePt = (Operation) proprietario;
-					azionePt.setProtocolPropertyList(protocolPropertiesAggiornate);
+					org.openspcoop2.core.registry.Operation newAzionePt = (Operation) proprietario;
+					AccordoServizioParteComune apcop = this.apcCore.getAccordoServizio(idProp);
+					for (PortType pt : apcop.getPortTypeList()) {
+						if(pt.getNome().equals(nomeParentProprietario)){
+							for (org.openspcoop2.core.registry.Operation azione : pt.getAzioneList()) {
+								if(azione.getNome().equals(newAzionePt.getNome())){
+									azione.setProtocolPropertyList(protocolPropertiesAggiornate);
+									save = true;
+									break;
+								}
+							}
+						}
+					}
+					// salvataggio
+					if(save)
+						this.core.performUpdateOperation(userLogin, smista, apcop);
 					break;
 				case PORT_TYPE:
-					PortType pt = (PortType) proprietario;
-					pt.setProtocolPropertyList(protocolPropertiesAggiornate);
+					AccordoServizioParteComune apc = this.apcCore.getAccordoServizio(idProp);
+					PortType newPt = (PortType) proprietario;
+					
+					for (PortType pt : apc.getPortTypeList()) {
+						if(pt.getNome().equals(newPt.getNome())){
+							pt.setProtocolPropertyList(protocolPropertiesAggiornate);
+							save = true;
+							break;
+						}
+							
+					}
+					// salvataggio
+					if(save)
+						this.core.performUpdateOperation(userLogin, smista, apc);
 					break;
 				case SOGGETTO:
 					Soggetto soggettoRegistro = (Soggetto) proprietario;
 					soggettoRegistro.setProtocolPropertyList(protocolPropertiesAggiornate);
+					// salvataggio
+					this.core.performUpdateOperation(userLogin, smista, proprietario);
 					break;
 				}
-
-				// salvataggio
-				this.core.performUpdateOperation(userLogin, smista, proprietario); 
 			}
 		}  catch (Exception e) {
 			throw e;

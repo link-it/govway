@@ -623,10 +623,10 @@ public class ConnettoriHelper extends ConsoleHelper {
 		}
 	}
 
-	public String readEndPointType(){
-		String endpointtype = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
-		String endpointtype_check = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_CHECK);
-		String endpointtype_ssl = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTPS);
+	public String readEndPointType() throws Exception{
+		String endpointtype = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
+		String endpointtype_check = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_CHECK);
+		String endpointtype_ssl = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTPS);
 		return this.readEndPointType(endpointtype, endpointtype_check, endpointtype_ssl);
 	}
 	public String readEndPointType(String endpointtype,String endpointtype_check,String endpointtype_ssl){

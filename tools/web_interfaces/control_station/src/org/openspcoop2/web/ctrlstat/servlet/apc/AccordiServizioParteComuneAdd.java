@@ -21,16 +21,12 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.apc;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -96,11 +92,12 @@ public final class AccordiServizioParteComuneAdd extends Action {
 	private String tipoAccordo;
 	private boolean validazioneDocumenti = true;
 	private boolean decodeRequestValidazioneDocumenti = false;
-	private String editMode = null;
+	
 	private String tipoProtocollo;
 	// Non utilizzato veniva sempre impostato false, lo lascio commentato in questo punto perche' veniva passato nella decode della richiesta multipart... 
 	//	private boolean isBackwardCompatibilityAccordo11 = false;
 
+	private String editMode = null;
 	// Protocol Properties
 	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
 	private ConsoleConfiguration consoleConfiguration =null;
@@ -109,6 +106,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 	private IRegistryReader registryReader = null; 
 	private ConsoleOperationType consoleOperationType = null;
 	private ConsoleInterfaceType consoleInterfaceType = null;
+	
 
 	private BinaryParameter wsdlservcorr, wsdldef, wsdlserv, wsdlconc, wsblconc, wsblserv, wsblservcorr;
 
@@ -225,7 +223,6 @@ public final class AccordiServizioParteComuneAdd extends Action {
 				this.tipoProtocollo = apcCore.getProtocolloDefault();
 			}
 			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.tipoProtocollo);
-
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
 
@@ -279,13 +276,12 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			String[] accordiCooperazioneEsistentiLabel=null;
 
 
-			String postBackElementName = apcHelper.getParameter(Costanti.POSTBACK_ELEMENT_NAME); //ServletUtils.getPostBackElementName(request);
+			String postBackElementName = apcHelper.getParameter(Costanti.POSTBACK_ELEMENT_NAME);
 
 			// Controllo se ho modificato il protocollo, resetto il referente
 			if(postBackElementName != null ){
 				if(postBackElementName.equalsIgnoreCase(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO)){
 					this.referente = null;
-					apcHelper.deleteBinaryParameters();
 					apcHelper.deleteBinaryParameters(this.wsdlconc,this.wsdldef,this.wsdlserv,this.wsdlservcorr,this.wsblconc,this.wsblserv,this.wsblservcorr);
 					apcHelper.deleteProtocolPropertiesBinaryParameters(this.wsdlconc,this.wsdldef,this.wsdlserv,this.wsdlservcorr,this.wsblconc,this.wsblserv,this.wsblservcorr);
 				}
@@ -668,216 +664,5 @@ public final class AccordiServizioParteComuneAdd extends Action {
 					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC, ForwardParams.ADD());
 		} 
 
-	}
-
-	public void decodeRequest(HttpServletRequest request,boolean isBackwardCompatibilityAccordo11) throws Exception {
-		try {
-			ServletInputStream in = request.getInputStream();
-			BufferedReader dis = new BufferedReader(new InputStreamReader(in));
-			String line = dis.readLine();
-			while (line != null) {
-				if (line.indexOf("\""+Costanti.DATA_ELEMENT_EDIT_MODE_NAME+"\"") != -1) {
-					line = dis.readLine();
-					this.editMode = dis.readLine();
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME+"\"") != -1) {
-					line = dis.readLine();
-					this.nome = dis.readLine();
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO+"\"") != -1) {
-					line = dis.readLine();
-					this.tipoProtocollo = dis.readLine();
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_PRIVATO+"\"") != -1) {
-					line = dis.readLine();
-					this.privato = "yes".equals(dis.readLine().trim());
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_IS_SERVIZIO_COMPOSTO+"\"") != -1) {
-					line = dis.readLine();
-					this.isServizioComposto = "yes".equals(dis.readLine().trim());
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_ACCORDO_COOPERAZIONE+"\"") != -1) {
-					line = dis.readLine();
-					this.accordoCooperazione = dis.readLine();
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_DESCRIZIONE+"\"") != -1) {
-					line = dis.readLine();
-					this.descr = dis.readLine();
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_REFERENTE+"\"") != -1) {
-					line = dis.readLine();
-					this.referente = dis.readLine();
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_VERSIONE+"\"") != -1) {
-					line = dis.readLine();
-					this.versione = dis.readLine();
-					// patch per version spinner fino a che non si trova un modo piu' elegante
-					if(isBackwardCompatibilityAccordo11){
-						if("0".equals(this.versione))
-							this.versione = "";
-					}
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROFILO_COLLABORAZIONE+"\"") != -1) {
-					line = dis.readLine();
-					this.profcoll = dis.readLine();
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_FILTRO_DUPLICATI+"\"") != -1) {
-					line = dis.readLine();
-					this.filtrodup = dis.readLine();
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_CONFERMA_RICEZIONE+"\"") != -1) {
-					line = dis.readLine();
-					this.confric = dis.readLine();
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_COLLABORAZIONE+"\"") != -1) {
-					line = dis.readLine();
-					this.idcoll = dis.readLine();
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_CONSEGNA_ORDINE+"\"") != -1) {
-					line = dis.readLine();
-					this.consord = dis.readLine();
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_SCADENZA+"\"") != -1) {
-					line = dis.readLine();
-					this.scadenza = dis.readLine();
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_VALIDAZIONE_DOCUMENTI+"\"") != -1) {
-					this.decodeRequestValidazioneDocumenti = true;
-					line = dis.readLine();
-					String tmpValidazioneDocumenti = dis.readLine();
-					if(ServletUtils.isCheckBoxEnabled(tmpValidazioneDocumenti)){
-						this.validazioneDocumenti = true;
-					}
-					else{
-						this.validazioneDocumenti = false;
-					}
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO+"\"") != -1) {
-					int startId = line.indexOf(Costanti.MULTIPART_FILENAME);
-					startId = startId + 10;
-					// int endId = line.lastIndexOf("\"");
-					// String tmpNomeFile = line.substring(startId, endId);
-					line = dis.readLine();
-					line = dis.readLine();
-//					this.wsdldef = "";
-//					while (!line.startsWith(Costanti.MULTIPART_START) || (line.startsWith(Costanti.MULTIPART_START) && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || (line.indexOf(Costanti.MULTIPART_END) != -1)))) {
-//						if("".equals(this.wsdldef))
-//							this.wsdldef = line;
-//						else
-//							this.wsdldef = this.wsdldef + "\n" + line;
-//						line = dis.readLine();
-//					}
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE+"\"") != -1) {
-					int startId = line.indexOf(Costanti.MULTIPART_FILENAME);
-					startId = startId + 10;
-					// int endId = line.lastIndexOf("\"");
-					// String tmpNomeFile = line.substring(startId, endId);
-					line = dis.readLine();
-					line = dis.readLine();
-//					this.wsdlconc = "";
-//					while (!line.startsWith(Costanti.MULTIPART_START) || (line.startsWith(Costanti.MULTIPART_START) && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || (line.indexOf(Costanti.MULTIPART_END) != -1)))) {
-//						if("".equals(this.wsdlconc))
-//							this.wsdlconc = line;
-//						else
-//							this.wsdlconc = this.wsdlconc + "\n" + line;
-//						line = dis.readLine();
-//					}
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE+"\"") != -1) {
-					int startId = line.indexOf(Costanti.MULTIPART_FILENAME);
-					startId = startId + 10;
-					// int endId = line.lastIndexOf("\"");
-					// String tmpNomeFile = line.substring(startId, endId);
-					line = dis.readLine();
-					line = dis.readLine();
-//					this.wsdlserv = "";
-//					while (!line.startsWith(Costanti.MULTIPART_START) || (line.startsWith(Costanti.MULTIPART_START) && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || (line.indexOf(Costanti.MULTIPART_END) != -1)))) {
-//						if("".equals(this.wsdlserv))
-//							this.wsdlserv = line;
-//						else
-//							this.wsdlserv = this.wsdlserv + "\n" + line;
-//						line = dis.readLine();
-//					}
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE+"\"") != -1) {
-					int startId = line.indexOf(Costanti.MULTIPART_FILENAME);
-					startId = startId + 10;
-					// int endId = line.lastIndexOf("\"");
-					// String tmpNomeFile = line.substring(startId, endId);
-					line = dis.readLine();
-					line = dis.readLine();
-//					this.wsdlservcorr = "";
-//					while (!line.startsWith(Costanti.MULTIPART_START) || (line.startsWith(Costanti.MULTIPART_START) && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || (line.indexOf(Costanti.MULTIPART_END) != -1)))) {
-//						if("".equals(this.wsdlservcorr))
-//							this.wsdlservcorr = line;
-//						else
-//							this.wsdlservcorr = this.wsdlservcorr + "\n" + line;
-//						line = dis.readLine();
-//					}
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE+"\"") != -1) {
-					int startId = line.indexOf(Costanti.MULTIPART_FILENAME);
-					startId = startId + 10;
-					// int endId = line.lastIndexOf("\"");
-					// String tmpNomeFile = line.substring(startId, endId);
-					line = dis.readLine();
-					line = dis.readLine();
-//					this.wsblconc = "";
-//					while (!line.startsWith(Costanti.MULTIPART_START) || (line.startsWith(Costanti.MULTIPART_START) && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || (line.indexOf(Costanti.MULTIPART_END) != -1)))) {
-//						if("".equals(this.wsblconc))
-//							this.wsblconc = line;
-//						else
-//							this.wsblconc = this.wsblconc + "\n" + line;
-//						line = dis.readLine();
-//					}
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE+"\"") != -1) {
-					int startId = line.indexOf(Costanti.MULTIPART_FILENAME);
-					startId = startId + 10;
-					// int endId = line.lastIndexOf("\"");
-					// String tmpNomeFile = line.substring(startId, endId);
-					line = dis.readLine();
-					line = dis.readLine();
-//					this.wsblserv = "";
-//					while (!line.startsWith(Costanti.MULTIPART_START) || (line.startsWith(Costanti.MULTIPART_START) && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || (line.indexOf(Costanti.MULTIPART_END) != -1)))) {
-//						if("".equals(this.wsblserv))
-//							this.wsblserv = line;
-//						else
-//							this.wsblserv = this.wsblserv + "\n" + line;
-//						line = dis.readLine();
-//					}
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE+"\"") != -1) {
-					int startId = line.indexOf(Costanti.MULTIPART_FILENAME);
-					startId = startId + 10;
-					// int endId = line.lastIndexOf("\"");
-					// String tmpNomeFile = line.substring(startId, endId);
-					line = dis.readLine();
-					line = dis.readLine();
-//					this.wsblservcorr = "";
-//					while (!line.startsWith(Costanti.MULTIPART_START) || (line.startsWith(Costanti.MULTIPART_START) && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || (line.indexOf(Costanti.MULTIPART_END) != -1)))) {
-//						if("".equals(this.wsblservcorr))
-//							this.wsblservcorr = line;
-//						else
-//							this.wsblservcorr = this.wsblservcorr + "\n" + line;
-//						line = dis.readLine();
-//					}
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_STATO_PACKAGE+"\"") != -1) {
-					line = dis.readLine();
-					this.statoPackage = dis.readLine();
-				}
-				if (line.indexOf("\""+AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO+"\"") != -1) {
-					line = dis.readLine();
-					this.tipoAccordo = dis.readLine();
-				}
-
-				line = dis.readLine();
-			}
-			in.close();
-		} catch (IOException ioe) {
-			throw new Exception(ioe);
-		}
 	}
 }

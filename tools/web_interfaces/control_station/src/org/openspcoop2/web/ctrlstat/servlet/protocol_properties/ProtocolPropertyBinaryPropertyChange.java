@@ -151,6 +151,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			this.protocolProperties = ppHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType, this.nome, this.contenutoDocumento);
 
 			oldProtocolPropertyList = ppHelper.getProtocolProperties(oggettoProprietario, this.id, this.nome, this.idProprietario, this.nomeProprietario, this.nomeParentProprietario, this.tipoProprietario, this.tipoAccordo);
+			
 			ProtocolPropertiesUtils.mergeProtocolProperties(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
 
 			// vecchio valore della property sul DB 

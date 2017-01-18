@@ -162,6 +162,8 @@ public class AccordiServizioParteSpecificaCostanti {
 	
 	public final static String PARAMETRO_APS_ID = "id";
 	public final static String PARAMETRO_APS_MY_ID = "myId";
+	public final static String PARAMETRO_APS_MY_TIPO = "myTipo";
+	public final static String PARAMETRO_APS_MY_NOME = "myNome";
 	public final static String PARAMETRO_APS_ID_SOGGETTO = "idsogg";
 	public final static String PARAMETRO_APS_ID_SOGGETTO_EROGATORE = "idSoggErogatore";
 	public final static String PARAMETRO_APS_SERVIZIO_APPLICATIVO = "servizioApplicativo";

@@ -232,7 +232,7 @@ public final class AccordiServizioParteComunePortTypeOperationsDel extends Actio
 					
 			List<Operation> lista = apcCore.accordiPorttypeOperationList(pt.getId().intValue(), ricerca);
 
-			apcHelper.prepareAccordiPorttypeOperationsList(ricerca, lista, as, tipoAccordo, pt.getNome());
+			apcHelper.prepareAccordiPorttypeOperationsList(ricerca, lista, id, as, tipoAccordo, pt.getNome());
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			

@@ -52,6 +52,7 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -65,6 +66,16 @@ import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
+import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
+import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -80,8 +91,10 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
+import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -109,7 +122,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 	private String connettoreDebug;
 	private String   nomeservizio, tiposervizio, provider, accordo,
 	servcorr, endpointtype, endpointtype_check, endpointtype_ssl, tipoconn, url, nome, tipo, user, password, initcont,
-	urlpgk, provurl, connfact, sendas, wsdlimpler, wsdlimplfru,
+	urlpgk, provurl, connfact, sendas, 
 	profilo, portType,descrizione,
 	httpsurl, httpstipologia, httpspath,
 	httpstipo, httpspwd, httpsalgoritmo,
@@ -130,11 +143,22 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 	private String oldPortType, oldTipoSoggettoErogatore, oldNomeSoggettoErogatore = null;
 	private String autenticazioneHttp;
 	private Properties parametersPOST;
-	
+
 	private String proxy_enabled, proxy_hostname,proxy_port,proxy_username,proxy_password;
-	
+
 	private String transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop, opzioniAvanzate;
+
+	// Protocol Properties
+	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
+	private ConsoleConfiguration consoleConfiguration =null;
+	private ProtocolProperties protocolProperties = null;
+	private IProtocolFactory<?> protocolFactory= null;
+	private IRegistryReader registryReader = null; 
+	private ConsoleOperationType consoleOperationType = null;
+	private ConsoleInterfaceType consoleInterfaceType = null;
 	
+	private BinaryParameter wsdlimpler, wsdlimplfru;
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -152,105 +176,119 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 
+		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
+		this.consoleOperationType = ConsoleOperationType.ADD;
+		this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(session); 
+
+		// Parametri relativi al tipo operazione
+		TipoOperazione tipoOp = TipoOperazione.ADD;
+
 		try {
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 
 			this.parametersPOST = null;
-			
-			this.editMode = null;
 
-			this.nomeservizio = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO);
-			this.tiposervizio = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO);
-			this.provider = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROVIDER);
-			this.accordo = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ACCORDO);
-			this.servcorr = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_SERVIZIO_CORRELATO);
-			// this.servpub = request.getParameter("servpub");
-			//			this.endpointtype = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE );
-			
+			this.editMode = apsHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+
+			this.nomeservizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SERVIZIO);
+			this.tiposervizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_SERVIZIO);
+			this.provider = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROVIDER);
+			this.accordo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ACCORDO);
+			this.servcorr = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_SERVIZIO_CORRELATO);
+			// this.servpub = apsHelper.getParameter("servpub");
+			//			this.endpointtype = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE );
+
 			this.endpointtype = apsHelper.readEndPointType();
-			this.tipoconn = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO );
-			this.autenticazioneHttp = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
-			
-			this.connettoreDebug = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
-					
+			this.tipoconn = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO );
+			this.autenticazioneHttp = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
+
+			this.connettoreDebug = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+
 			// proxy
-			this.proxy_enabled = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
-			this.proxy_hostname = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
-			this.proxy_port = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
-			this.proxy_username = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
-			this.proxy_password = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
-			
+			this.proxy_enabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+			this.proxy_hostname = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
+			this.proxy_port = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
+			this.proxy_username = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
+			this.proxy_password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+
 			// opzioni avanzate
-			this.transfer_mode = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
-			this.transfer_mode_chunk_size = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
-			this.redirect_mode = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
-			this.redirect_max_hop = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
+			this.transfer_mode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
+			this.transfer_mode_chunk_size = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
+			this.redirect_mode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
+			this.redirect_max_hop = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
 			this.opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(request,this.transfer_mode, this.redirect_mode);
-			
+
 			// http
-			this.url = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL  );
+			this.url = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL  );
 			if(TipiConnettore.HTTP.toString().equals(this.endpointtype)){
-				this.user = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_USERNAME);
-				this.password = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_PASSWORD);
+				this.user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_USERNAME);
+				this.password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_PASSWORD);
 			}
-			
+
 			// jms
-			this.nome = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_NOME_CODA);
-			this.tipo = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_CODA);
-			this.initcont = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_INIT_CTX);
-			this.urlpgk = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_URL_PKG);
-			this.provurl = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PROVIDER_URL);
-			this.connfact = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY);
-			this.sendas = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
+			this.nome = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_NOME_CODA);
+			this.tipo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_CODA);
+			this.initcont = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_INIT_CTX);
+			this.urlpgk = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_URL_PKG);
+			this.provurl = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PROVIDER_URL);
+			this.connfact = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY);
+			this.sendas = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
 			if(TipiConnettore.JMS.toString().equals(this.endpointtype)){
-				this.user = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_USERNAME);
-				this.password = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
+				this.user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_USERNAME);
+				this.password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
 			}
-			
+
 			// https
 			this.httpsurl = this.url;
-			this.httpstipologia = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE );
-			this.httpshostverifyS = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
-			this.httpspath = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION );
-			this.httpstipo = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
-			this.httpspwd = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
-			this.httpsalgoritmo = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
-			this.httpsstatoS = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO);
-			this.httpskeystore = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE);
-			this.httpspwdprivatekeytrust = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
-			this.httpspathkey = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);
-			this.httpstipokey = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE);
-			this.httpspwdkey = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
-			this.httpspwdprivatekey = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
-			this.httpsalgoritmokey = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
+			this.httpstipologia = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE );
+			this.httpshostverifyS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
+			this.httpspath = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION );
+			this.httpstipo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
+			this.httpspwd = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+			this.httpsalgoritmo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
+			this.httpsstatoS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO);
+			this.httpskeystore = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE);
+			this.httpspwdprivatekeytrust = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
+			this.httpspathkey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);
+			this.httpstipokey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE);
+			this.httpspwdkey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
+			this.httpspwdprivatekey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
+			this.httpsalgoritmokey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
 			if(TipiConnettore.HTTPS.toString().equals(this.endpointtype)){
-				this.user = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_USERNAME);
-				this.password = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_PASSWORD);
+				this.user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_USERNAME);
+				this.password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_PASSWORD);
 			}
-			
-			
-			
-			this.profilo = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROFILO);
-			
-			this.wsdlimpler = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE);
-			this.wsdlimplfru = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_FRUITORE);
-			this.portType = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PORT_TYPE);
-			this.privato = (request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PRIVATO) != null) &&
-					Costanti.CHECK_BOX_ENABLED.equals(request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PRIVATO)) ? true : false;
-			this.descrizione = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_DESCRIZIONE);
-			this.statoPackage = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO_PACKAGE);
-						
-			this.versione = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE);
-			this.nomePA = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_PA);
-			this.nomeSA = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SA);
+
+
+
+			this.profilo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROFILO);
+
+			this.wsdlimpler = apsHelper.getBinaryParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE);
+			this.wsdlimplfru = apsHelper.getBinaryParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_FRUITORE);
+			this.portType = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PORT_TYPE);
+
+			String priv = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PRIVATO);
+			this.privato = ServletUtils.isCheckBoxEnabled(priv);
+
+			this.descrizione = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_DESCRIZIONE);
+			this.statoPackage = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO_PACKAGE);
+
+			this.versione = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE);
+			this.nomePA = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_PA);
+			this.nomeSA = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SA);
+
+
+			if(apsHelper.isMultipart()){
+				this.decodeRequestValidazioneDocumenti = true;
+			}
 
 			// boolean decodeReq = false;
-			String ct = request.getContentType();
-			if ((ct != null) && (ct.indexOf(Costanti.MULTIPART) != -1)) {
-				// decodeReq = true;
-				this.decodeRequestValidazioneDocumenti = false; // init
-				this.decodeRequest(request,apsHelper);
-			}
+			//			String ct = request.getContentType();
+			//			if ((ct != null) && (ct.indexOf(Costanti.MULTIPART) != -1)) {
+			//				// decodeReq = true;
+			//				this.decodeRequestValidazioneDocumenti = false; // init
+			//				this.decodeRequest(request,apsHelper);
+			//			}
 
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
 			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
@@ -258,11 +296,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
 			PddCore pddCore = new PddCore(apsCore);
 
-			if(ServletUtils.isEditModeInProgress(this.editMode) && ServletUtils.isEditModeInProgress(request)){
+			if(ServletUtils.isEditModeInProgress(this.editMode)){
 				// primo accesso alla servlet
 				this.validazioneDocumenti = true;
 				if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
-					String tmpValidazioneDocumenti = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VALIDAZIONE_DOCUMENTI);
+					String tmpValidazioneDocumenti = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VALIDAZIONE_DOCUMENTI);
 					if(tmpValidazioneDocumenti!=null){
 						if(Costanti.CHECK_BOX_ENABLED_TRUE.equalsIgnoreCase(tmpValidazioneDocumenti) || Costanti.CHECK_BOX_ENABLED.equalsIgnoreCase(tmpValidazioneDocumenti)){
 							this.validazioneDocumenti = true;
@@ -273,7 +311,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				}
 			}else{
 				if(!this.decodeRequestValidazioneDocumenti){
-					String tmpValidazioneDocumenti = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VALIDAZIONE_DOCUMENTI);
+					String tmpValidazioneDocumenti = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VALIDAZIONE_DOCUMENTI);
 					if(Costanti.CHECK_BOX_ENABLED_TRUE.equalsIgnoreCase(tmpValidazioneDocumenti) || Costanti.CHECK_BOX_ENABLED.equalsIgnoreCase(tmpValidazioneDocumenti)){
 						this.validazioneDocumenti = true;
 					}else{
@@ -290,12 +328,12 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				this.httpsstato = true;
 
 			Boolean isConnettoreCustomUltimaImmagineSalvata = null;
-			
+
 			Connettore conTmp = null;
 			List<ExtendedConnettore> listExtendedConnettore = 
 					ServletExtendedConnettoreUtils.getExtendedConnettore(conTmp, ConnettoreServletType.ACCORDO_SERVIZIO_PARTE_SPECIFICA_ADD, apsCore, 
 							request, session, this.parametersPOST, (this.endpointtype==null), this.endpointtype); // uso endpointtype per capire se è la prima volta che entro
-			
+
 			// Preparo il menu
 			apsHelper.makeMenu();
 
@@ -330,7 +368,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			permessi[1] = pu.isAccordiCooperazione();
 			List<AccordoServizioParteComune> lista =  
 					AccordiServizioParteComuneUtilities.accordiListFromPermessiUtente(apcCore, userLogin, new Search(true), permessi);
-			
+
 			int accordoPrimoAccesso = -1;
 
 			if (lista.size() > 0) {
@@ -349,7 +387,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						soggettoReferente = new IDSoggetto();
 						soggettoReferente.setTipo(sRef.getTipo());
 						soggettoReferente.setNome(sRef.getNome());
-						
+
 						// se ancora non ho scelto l'accordo da mostrare quando entro
 						if(accordoPrimoAccesso == -1){
 							//mostro il primo accordo che ha tipo che corrisponde a quello di default
@@ -362,7 +400,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					i++;
 				}
 			}
-			
+
 			// se ancora non ho scelto l'accordo da mostrare quando entro
 			if(accordoPrimoAccesso == -1 && lista.size() > 0){
 				// Se entro in questo caso significa che tutti gli accordi di servizio parte comune esistente s
@@ -370,7 +408,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				// in questo caso prendo il primo che trovo
 				accordoPrimoAccesso = 0;
 			}
-			
+
 			//			}
 
 
@@ -381,6 +419,10 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				if(postBackElementName.equalsIgnoreCase(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ACCORDO)){
 					this.provider = null;
 					this.tiposervizio = null;
+
+					// reset protocol properties
+					apsHelper.deleteBinaryParameters(this.wsdlimpler,this.wsdlimplfru);
+					apsHelper.deleteProtocolPropertiesBinaryParameters(this.wsdlimpler,this.wsdlimplfru);
 				}  
 			}
 
@@ -393,7 +435,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			} else {
 				if (accordiList != null){
 					if(accordoPrimoAccesso >= 0 && accordoPrimoAccesso < accordiList.length)
-					as = apcCore.getAccordoServizio(Long.parseLong(accordiList[accordoPrimoAccesso]));
+						as = apcCore.getAccordoServizio(Long.parseLong(accordiList[accordoPrimoAccesso]));
 					if(as!=null)
 						this.accordo = as.getId() + "";
 				}
@@ -402,8 +444,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				// salvo il soggetto referente
 				soggettoReferente = new IDSoggetto(as.getSoggettoReferente().getTipo(), as.getSoggettoReferente().getNome());
 
-				serviceBinding = org.openspcoop2.protocol.basic.Utilities.convert(as.getServiceBinding());
-				
+				serviceBinding = as.getServiceBinding() != null ? org.openspcoop2.protocol.basic.Utilities.convert(as.getServiceBinding()) : ServiceBinding.SOAP;
+
 				accordoPrivato = as.getPrivato()!=null && as.getPrivato();
 				uriAccordo = idAccordoFactory.getUriFromAccordo(as);
 
@@ -446,7 +488,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						}							
 					}
 				}
-				
+
 			}
 
 
@@ -486,7 +528,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						soggettiListLabelTmp.add(soggetto.getTipo() + "/" + soggetto.getNome());
 					}
 				}
-				
+
 				boolean existsAPCCompatibili = false;
 				for (AccordoServizioParteComune aspc : lista) {
 					if(tipiSoggettiCompatibiliAccordo.contains(aspc.getSoggettoReferente().getTipo())){
@@ -494,7 +536,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						break;
 					}
 				}
-				
+
 				if(soggettiListTmp.size()>0 && existsAPCCompatibili){
 					soggettiList = soggettiListTmp.toArray(new String[1]);
 					soggettiListLabel = soggettiListLabelTmp.toArray(new String[1]);
@@ -504,13 +546,14 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(lista.get(0).getSoggettoReferente().getTipo());
 					}
 					else{
+
 						pd.setMessage("Non esistono accordi di servizio parte comune");
 						pd.disableEditMode();
-						
+
 						Vector<DataElement> dati = new Vector<DataElement>();
 
 						dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-						
+
 						pd.setDati(dati);
 
 						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
@@ -518,12 +561,12 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS, 
 								ForwardParams.ADD());
 					}
-						
+
 					// refresh di tutte le infromazioni
 					versioniProtocollo = apsCore.getVersioniProtocollo(protocollo);
 					tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
 					tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(protocollo,serviceBinding);
-					
+
 					for (Soggetto soggetto : list) {
 						if(tipiSoggettiCompatibiliAccordo.contains(soggetto.getTipo())){
 							soggettiListTmp.add(soggetto.getId().toString());
@@ -532,7 +575,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					}
 					soggettiList = soggettiListTmp.toArray(new String[1]);
 					soggettiListLabel = soggettiListLabelTmp.toArray(new String[1]);
-					
+
 					if(lista.size()>0){
 						this.accordo = lista.get(0).getId()+"";
 					}
@@ -554,12 +597,12 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.tipoSoggettoErogatore = soggetto.getTipo();
 				}
 			}
-			
+
 			if(this.tiposervizio == null){
 				this.tiposervizio = apsCore.getTipoServizioDefaultProtocollo(protocollo,serviceBinding);
 			}
 
-			
+
 
 			// Lista dei servizi applicativi per la creazione automatica
 			String [] saSoggetti = null;	
@@ -604,25 +647,32 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					&&  this.nomeSoggettoErogatore!=null && !"".equals(this.nomeSoggettoErogatore)){
 				IDSoggetto idSoggettoEr = new IDSoggetto(this.tipoSoggettoErogatore, this.nomeSoggettoErogatore);
 				Soggetto soggetto = soggettiCore.getSoggettoRegistro(idSoggettoEr );
-				
+
 				if (soggetto.getPortaDominio() != null) {
 					String nomePdd = soggetto.getPortaDominio();
-					
+
 					PdDControlStation portaDominio = pddCore.getPdDControlStation(nomePdd);
-					
+
 					if(portaDominio.getTipo().equals(PddTipologia.ESTERNO.toString()))
 						generaPACheckSoggetto = false;
-					
+
 				} else {
 					// se non ho una porta di domini non devo generare la porta applicativa
 					generaPACheckSoggetto  =false;
 				}
 			}
 
+			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
+			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
 
+			// ID Accordo Null per default
+			IDServizio idAps = null;
+			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteSpecifica(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idAps );
+			this.protocolProperties = apsHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
 
 			// Se nomehid = null, devo visualizzare la pagina per l'inserimento dati
-			if(ServletUtils.isEditModeInProgress(this.editMode) && ServletUtils.isEditModeInProgress(request)){
+			if(ServletUtils.isEditModeInProgress(this.editMode)){
 				// setto la barra del titolo
 				List<Parameter> lstParm = new ArrayList<Parameter>();
 
@@ -636,15 +686,15 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					if(this.nomeservizio==null || "".equals(this.nomeservizio)){
 						this.statoPackage=StatiAccordo.bozza.toString();
 					}
-					
+
 					// Se l'accordo Comune che si riferisce ha stato operativo o finale modifico lo stato in operativo
 					// Per visualizzare immediatamente all'utente
 					if(as!=null && 
 							(as.getStatoPackage().equals(StatiAccordo.operativo.toString()) || as.getStatoPackage().equals(StatiAccordo.finale.toString()))
-						){
+							){
 						this.statoPackage = StatiAccordo.operativo.toString(); 
 					}
-					
+
 				}else{
 					this.statoPackage=StatiAccordo.finale.toString();
 				}
@@ -652,14 +702,14 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				if (this.nomeservizio == null) {
 					this.nomeservizio = "";
 					this.tiposervizio = apsCore.getTipoServizioDefault(serviceBinding);
-//					this.provider = "";
-//					this.accordo = "";
+					//					this.provider = "";
+					//					this.accordo = "";
 					this.servcorr = "";
 					// this.servpub = "";
-					if(this.wsdlimpler==null)
-						this.wsdlimpler = "";
-					if(this.wsdlimplfru==null)
-						this.wsdlimplfru = "";
+					if(this.wsdlimpler.getValue() == null)
+						this.wsdlimpler.setValue(new byte[1]);
+					if(this.wsdlimplfru.getValue() == null)
+						this.wsdlimplfru.setValue(new byte[1]); 
 					this.endpointtype = AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_DISABILITATO;
 					this.tipoconn = "";
 					this.url = "";
@@ -695,7 +745,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				if(this.portType!=null && !"".equals(this.portType) && !"-".equals(this.portType)){
 
 					boolean ptValid = true;
-					
+
 					if(ptList!=null && ptList.length>0){
 						// controllo che l'attuale port Type sia tra quelli presenti nell'accordo.
 						boolean found = false;
@@ -708,35 +758,35 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						if(!found){
 							ptValid = false;
 						}
-						
+
 					}
-					
+
 					if(ptValid){
-						
+
 						if(this.nomeservizio==null || "".equals(this.nomeservizio)){
 							this.nomeservizio = this.portType;
 						}
 						else if(this.nomeservizio.equals(this.oldPortType)){
 							this.nomeservizio = this.portType;
 						}
-	
+
 						if(this.nomePA==null || "".equals(this.nomePA)){
 							this.nomePA = this.tipoSoggettoErogatore+this.nomeSoggettoErogatore+"/"+this.tiposervizio+this.portType;
 						}
 						else if(this.nomePA.equals(this.tipoSoggettoErogatore+this.nomeSoggettoErogatore+"/"+this.tiposervizio+this.oldPortType)){
 							this.nomePA = this.tipoSoggettoErogatore+this.nomeSoggettoErogatore+"/"+this.tiposervizio+this.portType;
 						}
-	
+
 						this.oldPortType = this.portType;
-						
+
 					}
 					else{
-						
+
 						this.nomeservizio = null;
 						this.nomePA = null;
 						this.portType = null;
 						this.oldPortType = null;
-						
+
 					}
 				}
 
@@ -764,20 +814,23 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
 					this.httpshostverify = true;
 				}
-				
+
 				String tipoSendas = ConnettoriCostanti.TIPO_SEND_AS[0];
 				String tipoJms = ConnettoriCostanti.TIPI_CODE_JMS[0];
 
 				this.autenticazioneHttp = apsHelper.getAutenticazioneHttp(this.autenticazioneHttp, this.endpointtype, this.user);
-				
+
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
+				// update della configurazione 
+				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAps);
+
 				dati = apsHelper.addServiziToDati(dati, this.nomeservizio, this.tiposervizio, this.provider, "", 
 						soggettiList, soggettiListLabel, this.accordo, accordiList, accordiListLabel, this.servcorr, 
-						this.wsdlimpler, this.wsdlimplfru, TipoOperazione.ADD, "0", tipiServizioCompatibiliAccordo, 
+						this.wsdlimpler, this.wsdlimplfru, tipoOp, "0", tipiServizioCompatibiliAccordo, 
 						this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,this.statoPackage,
 						this.versione,versioniProtocollo,this.validazioneDocumenti,
 						this.nomePA,saSoggetti,this.nomeSA,protocollo,generaPACheckSoggetto,null);
@@ -787,7 +840,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						tipoJms, this.user,
 						this.password, this.initcont, this.urlpgk,
 						this.provurl, this.connfact, tipoSendas,
-						AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,TipoOperazione.ADD, this.httpsurl, this.httpstipologia,
+						AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, this.httpsurl, this.httpstipologia,
 						this.httpshostverify, this.httpspath, this.httpstipo, this.httpspwd,
 						this.httpsalgoritmo, this.httpsstato, this.httpskeystore,
 						this.httpspwdprivatekeytrust, this.httpspathkey,
@@ -798,6 +851,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
 						listExtendedConnettore);
+
+				// aggiunta campi custom
+				dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
 
 				pd.setDati(dati);
 
@@ -813,7 +869,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = apsHelper.serviziCheckData(TipoOperazione.ADD, soggettiList,
+			boolean isOk = apsHelper.serviziCheckData(tipoOp, soggettiList,
 					accordiList, this.nomeservizio, this.tiposervizio,
 					this.nomeservizio, this.tiposervizio, this.provider,
 					this.nomeSoggettoErogatore, this.tipoSoggettoErogatore,
@@ -832,7 +888,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 					this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
 					listExtendedConnettore);
-			
+
 			if(isOk){
 				if(this.nomePA!=null && !"".equals(this.nomePA) && !"-".equals(this.nomePA)){
 					if(this.nomeSA==null || "".equals(this.nomeSA) || "-".equals(this.nomeSA)){
@@ -857,7 +913,29 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					}
 				}
 			}
-			
+
+			// Validazione base dei parametri custom 
+			if(isOk){
+				try{
+					apsHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+				}catch(ProtocolException e){
+					pd.setMessage(e.getMessage());
+					isOk = false;
+				}
+			}
+
+			// Valido i parametri custom se ho gia' passato tutta la validazione prevista
+			if(isOk){
+				try{
+					idAps = apsHelper.getIDServizioFromValues(this.tiposervizio, this.nomeservizio, this.provider, this.versione);
+					//validazione campi dinamici
+					this.consoleDynamicConfiguration.validateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idAps);
+				}catch(ProtocolException e){
+					pd.setMessage(e.getMessage());
+					isOk = false;
+				}
+			}
+
 			if (!isOk) {
 				// setto la barra del titolo
 				List<Parameter> lstParm = new ArrayList<Parameter>();
@@ -871,11 +949,14 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
+				// update della configurazione 
+				this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAps);
+
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = apsHelper.addServiziToDati(dati, this.nomeservizio, this.tiposervizio, this.provider, "", 
 						soggettiList, soggettiListLabel, this.accordo, accordiList, accordiListLabel,
-						this.servcorr, this.wsdlimpler, this.wsdlimplfru, TipoOperazione.ADD, "0", tipiServizioCompatibiliAccordo, 
+						this.servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, "0", tipiServizioCompatibiliAccordo, 
 						this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,
 						this.statoPackage,this.versione,versioniProtocollo,this.validazioneDocumenti,
 						this.nomePA,saSoggetti,this.nomeSA,protocollo,generaPACheckSoggetto,null);
@@ -884,7 +965,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.url, this.nome, this.tipo, this.user,
 						this.password, this.initcont, this.urlpgk,
 						this.provurl, this.connfact, this.sendas,
-						AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,TipoOperazione.ADD, this.httpsurl, this.httpstipologia,
+						AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, this.httpsurl, this.httpstipologia,
 						this.httpshostverify, this.httpspath, this.httpstipo,
 						this.httpspwd, this.httpsalgoritmo, this.httpsstato,
 						this.httpskeystore, this.httpspwdprivatekeytrust,
@@ -896,6 +977,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
 						listExtendedConnettore);
+
+				// aggiunta campi custom
+				dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
 
 				pd.setDati(dati);
 
@@ -929,8 +1013,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 			asps.setPrivato(this.privato);
 
-			asps.setByteWsdlImplementativoErogatore(((this.wsdlimpler != null) && !this.wsdlimpler.trim().replaceAll("\n", "").equals("")) ? this.wsdlimpler.trim().getBytes() : null);
-			asps.setByteWsdlImplementativoFruitore(((this.wsdlimplfru != null) && !this.wsdlimplfru.trim().replaceAll("\n", "").equals("")) ? this.wsdlimplfru.trim().getBytes() : null);
+			String wsdlimplerS = this.wsdlimpler.getValue() != null ? new String(this.wsdlimpler.getValue()) : null; 
+			asps.setByteWsdlImplementativoErogatore(((wsdlimplerS != null) && !wsdlimplerS.trim().replaceAll("\n", "").equals("")) ? wsdlimplerS.trim().getBytes() : null);
+			String wsdlimplfruS = this.wsdlimplfru.getValue() != null ? new String(this.wsdlimplfru.getValue()) : null; 
+			asps.setByteWsdlImplementativoFruitore(((wsdlimplfruS != null) && !wsdlimplfruS.trim().replaceAll("\n", "").equals("")) ? wsdlimplfruS.trim().getBytes() : null);
+			
 			if (this.portType != null && !"".equals(this.portType) && !"-".equals(this.portType))
 				asps.setPortType(this.portType);
 
@@ -973,13 +1060,13 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 			// stato
 			asps.setStatoPackage(this.statoPackage);
-			
-//			Spostato sopra a livello di edit in progress			
-//			// Se l'accordo Comune che si riferisce ha stato operativo o finale modifico lo stato in operativo
-//			if(as.getStatoPackage().equals(StatiAccordo.operativo.toString()) || as.getStatoPackage().equals(StatiAccordo.finale.toString())){
-//				asps.setStatoPackage(StatiAccordo.operativo.toString()); 
-//			}
-			
+
+			//			Spostato sopra a livello di edit in progress			
+			//			// Se l'accordo Comune che si riferisce ha stato operativo o finale modifico lo stato in operativo
+			//			if(as.getStatoPackage().equals(StatiAccordo.operativo.toString()) || as.getStatoPackage().equals(StatiAccordo.finale.toString())){
+			//				asps.setStatoPackage(StatiAccordo.operativo.toString()); 
+			//			}
+
 			// Check stato
 			if(apsCore.isShowGestioneWorkflowStatoDocumenti()){
 
@@ -989,7 +1076,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 					// Setto messaggio di errore
 					pd.setMessage(validazioneException.toString());
-					
+
 					List<Parameter> lstParm = new ArrayList<Parameter>();
 
 					lstParm.add(new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, null));
@@ -1001,11 +1088,14 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					// preparo i campi
 					Vector<DataElement> dati = new Vector<DataElement>();
 
+					// update della configurazione 
+					this.consoleDynamicConfiguration.updateDynamicConfigAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAps);
+
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 					dati = apsHelper.addServiziToDati(dati, this.nomeservizio, this.tiposervizio, this.provider, "", 
 							soggettiList, soggettiListLabel, this.accordo, accordiList, accordiListLabel, this.servcorr, 
-							this.wsdlimpler, this.wsdlimplfru, TipoOperazione.ADD, "0", tipiServizioCompatibiliAccordo, 
+							this.wsdlimpler, this.wsdlimplfru, tipoOp, "0", tipiServizioCompatibiliAccordo, 
 							this.profilo, this.portType, ptList, this.privato,uriAccordo,this.descrizione,-1l,this.statoPackage,
 							this.statoPackage,this.versione,versioniProtocollo,this.validazioneDocumenti,
 							this.nomePA,saSoggetti,this.nomeSA,protocollo,generaPACheckSoggetto,null);
@@ -1014,7 +1104,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.url, this.nome, this.tipo, this.user,
 							this.password, this.initcont, this.urlpgk,
 							this.provurl, this.connfact, this.sendas,
-							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,TipoOperazione.ADD, this.httpsurl, this.httpstipologia,
+							AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, this.httpsurl, this.httpstipologia,
 							this.httpshostverify, this.httpspath, this.httpstipo,
 							this.httpspwd, this.httpsalgoritmo, this.httpsstato,
 							this.httpskeystore, this.httpspwdprivatekeytrust,
@@ -1026,6 +1116,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 							this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
 							listExtendedConnettore);
+
+					// aggiunta campi custom
+					dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
 
 					pd.setDati(dati);
 
@@ -1043,7 +1136,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			List<Object> listaOggettiDaCreare = new ArrayList<Object>();
 			listaOggettiDaCreare.add(asps);
 
-			
+
 			// Creo Porta Applicativa (opzione??)
 			PortaApplicativa pa = null;
 			if(apsCore.isGenerazioneAutomaticaPorteApplicative() && generaPACheckSoggetto){
@@ -1052,7 +1145,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 					pa = new PortaApplicativa();
 					pa.setNome(this.nomePA);
-					
+
 					pa.setNomeSoggettoProprietario(this.nomeSoggettoErogatore);
 					pa.setTipoSoggettoProprietario(this.tipoSoggettoErogatore);
 					pa.setDescrizione("Servizio "+this.tiposervizio+this.nomeservizio+" erogato da "+this.tipoSoggettoErogatore+this.nomeSoggettoErogatore);
@@ -1081,8 +1174,14 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				}
 			}
 
+			//imposto properties custom
+			asps.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties, this.consoleOperationType,null));
 
 			apsCore.performCreateOperation(asps.getSuperUser(), apsHelper.smista(), listaOggettiDaCreare.toArray());
+
+			// cancello i file temporanei
+			apsHelper.deleteBinaryParameters(this.wsdlimpler,this.wsdlimplfru);
+			apsHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties);
 
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 
@@ -1117,14 +1216,14 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 	public void decodeRequest(HttpServletRequest request,AccordiServizioParteSpecificaHelper apsHelper) throws Exception {
 		try {
-			
+
 			String ct = request.getContentType();
 			String boundary = null;
 			ContentType contentType = new ContentType(ct);
 			if(contentType.getParameterList()!=null){
 				Enumeration<?> enNames = contentType.getParameterList().getNames();
 				while (enNames.hasMoreElements()) {
-					Object object = (Object) enNames.nextElement();
+					Object object = enNames.nextElement();
 					if(object instanceof String){
 						if("boundary".equals(object)){
 							boundary = contentType.getParameterList().get((String)object);
@@ -1133,28 +1232,28 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					}
 				}
 			}
-			
+
 			ServletInputStream in = request.getInputStream();
 			byte [] post = Utilities.getAsByteArray(in);
-			
+
 			ByteArrayInputStream bin = new ByteArrayInputStream(post);
 			this.parametersPOST = new Properties();
 			BufferedReader dis = new BufferedReader(new InputStreamReader(bin));
 			String key = dis.readLine();
 			while (key != null) {
-				
+
 				if(boundary==null){
 					// suppongo che il primo sia il boundary
 					boundary = key;
 					key = dis.readLine();
 					continue;
 				}
-				
+
 				if(key.endsWith(boundary)){
 					key = dis.readLine();
 					continue;
 				}
-				
+
 				dis.readLine();
 				String value = dis.readLine();
 				if(key!=null && value!=null)
@@ -1162,7 +1261,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				key = dis.readLine();
 			}
 			bin.close();
-			
+
 			bin = new ByteArrayInputStream(post);
 			dis = new BufferedReader(new InputStreamReader(bin));
 			String line = dis.readLine();
@@ -1330,40 +1429,40 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.validazioneDocumenti = false;
 					}
 				}
-				if (line.indexOf("\""+AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE+"\"") != -1) {
-					int startId = line.indexOf(Costanti.MULTIPART_FILENAME);
-					startId = startId + 10;
-					// int endId = line.lastIndexOf("\"");
-					// String tmpNomeFile = line.substring(startId, endId);
-					line = dis.readLine();
-					line = dis.readLine();
-					this.wsdlimpler = "";
-					while (!line.startsWith("-----") || (line.startsWith("-----") && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || 
-							(line.indexOf(Costanti.MULTIPART_END) != -1)))) {
-						if("".equals(this.wsdlimpler))
-							this.wsdlimpler = line;
-						else
-							this.wsdlimpler = this.wsdlimpler + "\n" + line;
-						line = dis.readLine();
-					}
-				}
-				if (line.indexOf("\""+AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_FRUITORE+"\"") != -1) {
-					int startId = line.indexOf(Costanti.MULTIPART_FILENAME);
-					startId = startId + 10;
-					// int endId = line.lastIndexOf("\"");
-					// String tmpNomeFile = line.substring(startId, endId);
-					line = dis.readLine();
-					line = dis.readLine();
-					this.wsdlimplfru = "";
-					while (!line.startsWith("-----") || (line.startsWith("-----") && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || 
-							(line.indexOf(Costanti.MULTIPART_END) != -1)))) {
-						if("".equals(this.wsdlimplfru))
-							this.wsdlimplfru = line;
-						else
-							this.wsdlimplfru = this.wsdlimplfru + "\n" + line;
-						line = dis.readLine();
-					}
-				}
+//				if (line.indexOf("\""+AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE+"\"") != -1) {
+//					int startId = line.indexOf(Costanti.MULTIPART_FILENAME);
+//					startId = startId + 10;
+//					// int endId = line.lastIndexOf("\"");
+//					// String tmpNomeFile = line.substring(startId, endId);
+//					line = dis.readLine();
+//					line = dis.readLine();
+//					this.wsdlimpler = "";
+//					while (!line.startsWith("-----") || (line.startsWith("-----") && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || 
+//							(line.indexOf(Costanti.MULTIPART_END) != -1)))) {
+//						if("".equals(this.wsdlimpler))
+//							this.wsdlimpler = line;
+//						else
+//							this.wsdlimpler = this.wsdlimpler + "\n" + line;
+//						line = dis.readLine();
+//					}
+//				}
+//				if (line.indexOf("\""+AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_FRUITORE+"\"") != -1) {
+//					int startId = line.indexOf(Costanti.MULTIPART_FILENAME);
+//					startId = startId + 10;
+//					// int endId = line.lastIndexOf("\"");
+//					// String tmpNomeFile = line.substring(startId, endId);
+//					line = dis.readLine();
+//					line = dis.readLine();
+//					this.wsdlimplfru = "";
+//					while (!line.startsWith("-----") || (line.startsWith("-----") && ((line.indexOf(Costanti.MULTIPART_BEGIN) != -1) || 
+//							(line.indexOf(Costanti.MULTIPART_END) != -1)))) {
+//						if("".equals(this.wsdlimplfru))
+//							this.wsdlimplfru = line;
+//						else
+//							this.wsdlimplfru = this.wsdlimplfru + "\n" + line;
+//						line = dis.readLine();
+//					}
+//				}
 				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_PROFILO+"\"") != -1) {
 					line = dis.readLine();
 					this.profilo = dis.readLine();
@@ -1455,7 +1554,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			}
 
 			this.endpointtype = apsHelper.readEndPointType(this.endpointtype,this.endpointtype_check, this.endpointtype_ssl);
-			
+
 			bin.close();
 			in.close();
 		} catch (IOException ioe) {

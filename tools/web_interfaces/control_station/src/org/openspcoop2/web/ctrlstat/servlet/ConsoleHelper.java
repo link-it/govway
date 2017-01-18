@@ -51,6 +51,10 @@ import org.openspcoop2.core.config.MtomProcessor;
 import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.Soggetto;
+import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
@@ -278,6 +282,29 @@ public class ConsoleHelper {
 		this.idAccordoCooperazioneFactory = IDAccordoCooperazioneFactory.getInstance();
 		this.idAccordoFactory = IDAccordoFactory.getInstance();
 		this.idServizioFactory = IDServizioFactory.getInstance();
+	}
+	
+	public IDAccordo getIDAccordoFromValues(String nomeAS, String soggettoReferente, String versione) throws Exception{
+		Soggetto s = this.soggettiCore.getSoggetto(Integer.parseInt(soggettoReferente));			
+		IDSoggetto assr = new IDSoggetto();
+		assr.setTipo(s.getTipo());
+		assr.setNome(s.getNome());
+		return this.idAccordoFactory.getIDAccordoFromValues(nomeAS, assr, Integer.parseInt(versione));
+	}
+	
+	public IDServizio getIDServizioFromValues(String tipo, String nome, String soggettoErogatore, String versione) throws Exception{
+		Soggetto s = this.soggettiCore.getSoggetto(Integer.parseInt(soggettoErogatore));			
+		IDSoggetto assr = new IDSoggetto();
+		assr.setTipo(s.getTipo());
+		assr.setNome(s.getNome());
+		return this.idServizioFactory.getIDServizioFromValues(tipo, nome, assr, Integer.parseInt(versione));
+	}
+	
+	public IDServizio getIDServizioFromValues(String tipo, String nome, String tipoSoggettoErogatore, String soggettoErogatore, String versione) throws Exception{
+		IDSoggetto assr = new IDSoggetto();
+		assr.setTipo(tipoSoggettoErogatore);
+		assr.setNome(soggettoErogatore);
+		return this.idServizioFactory.getIDServizioFromValues(tipo, nome, assr, Integer.parseInt(versione));
 	}
 	
 	public int getSize() {

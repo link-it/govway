@@ -21,7 +21,9 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.apc;
 
+import java.net.URLEncoder;
 import java.util.List;
+import java.util.Properties;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,19 +34,35 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.PortType;
+import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.constants.BindingStyle;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
+import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
+import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.lib.mvc.Costanti;
+import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
@@ -64,6 +82,17 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  */
 public final class AccordiServizioParteComunePortTypesChange extends Action {
 
+	// Protocol Properties
+	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
+	private ConsoleConfiguration consoleConfiguration =null;
+	private ProtocolProperties protocolProperties = null;
+	private IProtocolFactory<?> protocolFactory= null;
+	private IRegistryReader registryReader = null; 
+	private ConsoleOperationType consoleOperationType = null;
+	private ConsoleInterfaceType consoleInterfaceType = null;
+	private String editMode = null;
+	private String protocolPropertiesSet = null;
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -77,60 +106,73 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 
 		GeneralData gd = generalHelper.initGeneralData(request);
 
-		String userLogin = (String) ServletUtils.getUserLoginFromSession(session);
+		String userLogin = ServletUtils.getUserLoginFromSession(session);
 
 		IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
-		
+
+		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
+		this.consoleOperationType = ConsoleOperationType.CHANGE;
+		this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(session); 
+
+		// Parametri relativi al tipo operazione
+		TipoOperazione tipoOp = TipoOperazione.CHANGE;
+		List<ProtocolProperty> oldProtocolPropertyList = null;
+
 		try {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
-			
+
 			SoggettiCore soggettiCore = new SoggettiCore(apcCore);
 			AccordiServizioParteComuneHelper apcHelper = new AccordiServizioParteComuneHelper(request, pd, session);
 
-			String id = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+			this.editMode = apcHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+			this.protocolPropertiesSet = apcHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
+			String id = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 			int idInt = Integer.parseInt(id);
-			String nomept = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME);
+			String nomept = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME);
 			if (nomept == null) {
 				nomept = "";
 			}
-			String descr = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_DESCRIZIONE);
-			String profProtocollo = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_PROFILO_BUSTA);
-			String profcollpt = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_PROFILO_COLLABORAZIONE) != null ? 
-					request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_PROFILO_COLLABORAZIONE) : "";
-			String filtroduppt = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_FILTRO_DUPLICATI);
+			String descr = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_DESCRIZIONE);
+			String profProtocollo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_PROFILO_BUSTA);
+			String profcollpt = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_PROFILO_COLLABORAZIONE);
+			if(profcollpt == null)
+				profcollpt = "";
+
+			String filtroduppt = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_FILTRO_DUPLICATI);
 			if ((filtroduppt != null) && filtroduppt.equals("null")) {
 				filtroduppt = null;
 			}
-			String confricpt = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_CONFERMA_RICEZIONE);
+			String confricpt = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_CONFERMA_RICEZIONE);
 			if ((confricpt != null) && confricpt.equals("null")) {
 				confricpt = null;
 			}
-			String idcollpt = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_COLLABORAZIONE);
+			String idcollpt = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_COLLABORAZIONE);
 			if ((idcollpt != null) && idcollpt.equals("null")) {
 				idcollpt = null;
 			}
-			String consordpt = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_CONSEGNA_ORDINE);
+			String consordpt = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_CONSEGNA_ORDINE);
 			if ((consordpt != null) && consordpt.equals("null")) {
 				consordpt = null;
 			}
-			String scadenzapt = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_SCADENZA);
+			String scadenzapt = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_SCADENZA);
 			if (scadenzapt == null) {
 				scadenzapt = "";
 			}
 
-			String tipoAccordo = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
+			String tipoAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO);
 			if("".equals(tipoAccordo))
 				tipoAccordo = null;
-			
-			String servizioStyle = request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_STYLE);
-			
+
+			String servizioStyle = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_STYLE);
+
 			// Preparo il menu
 			apcHelper.makeMenu();
 
 			// Prendo il nome
 			AccordoServizioParteComune as = apcCore.getAccordoServizio(new Long(idInt));
 			String uriAS = idAccordoFactory.getUriFromAccordo(as);
-			
+			IDAccordo idAs = idAccordoFactory.getIDAccordoFromAccordo(as);
+
 			String protocollo = null;
 			//calcolo del protocollo implementato dall'accordo
 			if(as != null){
@@ -140,12 +182,46 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 			} else {
 				protocollo = apcCore.getProtocolloDefault();
 			}
-			
+
+			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
+			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
+			IDPortType idPt = new IDPortType();
+			idPt.setIdAccordo(idAs);
+			idPt.setNome(nomept);
+			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigPortType(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idPt);
+			this.protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
+
+			PortType ptOLD = null;
+
+			for (int i = 0; i < as.sizePortTypeList(); i++) {
+				PortType pt = as.getPortType(i);
+				if (nomept.equals(pt.getNome())) {
+					ptOLD = pt;
+					break;
+				}
+			}
+
+			if(ptOLD != null)
+				oldProtocolPropertyList = ptOLD.getProtocolPropertyList();
+
+			if(this.protocolPropertiesSet == null){
+				ProtocolPropertiesUtils.mergeProtocolProperties(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
+			}
+
+			Properties propertiesProprietario = new Properties();
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO, id);
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO, ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO_VALUE_PORT_TYPE);
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PROPRIETARIO, nomept);
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE,
+					URLEncoder.encode( AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPES_CHANGE + "?" + request.getQueryString(), "UTF-8"));
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO, protocollo);
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO, tipoAccordo);
 
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
-			if(ServletUtils.isEditModeInProgress(request)){
-				
+			if(ServletUtils.isEditModeInProgress(this.editMode)){
+
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, 
 						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null),
@@ -159,7 +235,7 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
 						new Parameter(nomept, null)
-				);
+						);
 
 				// Prendo i dati dell'accordo
 				String deffiltroduppt = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(as.getFiltroDuplicati());
@@ -169,22 +245,18 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 				String defscadenzapt = as.getScadenza();
 				String defprofcollpt = AccordiServizioParteComuneHelper.convertProfiloCollaborazioneDB2View(as.getProfiloCollaborazione());
 
-				for (int i = 0; i < as.sizePortTypeList(); i++) {
-					PortType pt = as.getPortType(i);
-					if (nomept.equals(pt.getNome())) {
-						filtroduppt = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(pt.getFiltroDuplicati());
-						confricpt = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(pt.getConfermaRicezione());
-						idcollpt = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(pt.getIdCollaborazione());
-						consordpt = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(pt.getConsegnaInOrdine());
-						scadenzapt = pt.getScadenza();
-						profcollpt = AccordiServizioParteComuneHelper.convertProfiloCollaborazioneDB2View(pt.getProfiloCollaborazione());
-						if (profProtocollo == null) {
-							profProtocollo = pt.getProfiloPT();
-						}
-						descr = pt.getDescrizione();
-						servizioStyle = pt.getStyle() != null ? pt.getStyle().getValue() : AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_PORT_TYPES_STYLE;
-						break;
+				if(ptOLD != null){
+					filtroduppt = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(ptOLD.getFiltroDuplicati());
+					confricpt = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(ptOLD.getConfermaRicezione());
+					idcollpt = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(ptOLD.getIdCollaborazione());
+					consordpt = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(ptOLD.getConsegnaInOrdine());
+					scadenzapt = ptOLD.getScadenza();
+					profcollpt = AccordiServizioParteComuneHelper.convertProfiloCollaborazioneDB2View(ptOLD.getProfiloCollaborazione());
+					if (profProtocollo == null) {
+						profProtocollo = ptOLD.getProfiloPT();
 					}
+					descr = ptOLD.getDescrizione();
+					servizioStyle = ptOLD.getStyle() != null ? ptOLD.getStyle().getValue() : AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_PORT_TYPES_STYLE;
 				}
 
 				if (profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT)) {
@@ -197,31 +269,59 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 				}
 
 				// preparo i campi
-				Vector<Object> dati = new Vector<Object>();
+				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
+				// update della configurazione 
+				this.consoleDynamicConfiguration.updateDynamicConfigPortType(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idPt);
+
 				dati = apcHelper.addAccordiPorttypeToDati(dati, id, nomept, profProtocollo, 
 						filtroduppt, deffiltroduppt, confricpt, defconfricpt, idcollpt, defidcollpt, consordpt, defconsordpt, scadenzapt, 
-						defscadenzapt, TipoOperazione.CHANGE, defprofcollpt, profcollpt, descr, as.getStatoPackage(),
+						defscadenzapt, tipoOp, defprofcollpt, profcollpt, descr, as.getStatoPackage(),
 						tipoAccordo,protocollo,servizioStyle);
+
+				// aggiunta campi custom
+				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 
 				pd.setDati(dati);
 
 				if(apcCore.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(as.getStatoPackage())){
 					pd.disableEditMode();
 				}
-				
+
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-				
+
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_PORT_TYPES, ForwardParams.CHANGE());
-				
+
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = apcHelper.accordiPorttypeCheckData(TipoOperazione.CHANGE);
+			boolean isOk = apcHelper.accordiPorttypeCheckData(tipoOp, id, nomept, profProtocollo, filtroduppt, confricpt, idcollpt, consordpt, scadenzapt);
+
+			// Validazione base dei parametri custom 
+			if(isOk){
+				try{
+					apcHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+				}catch(ProtocolException e){
+					pd.setMessage(e.getMessage());
+					isOk = false;
+				}
+			}
+
+			// Valido i parametri custom se ho gia' passato tutta la validazione prevista
+			if(isOk){
+				try{
+					//validazione campi dinamici
+					this.consoleDynamicConfiguration.validateDynamicConfigPortType(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idPt);
+				}catch(ProtocolException e){
+					pd.setMessage(e.getMessage());
+					isOk = false;
+				}
+			}
+
 			if (!isOk) {
-				
+
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, 
 						new Parameter(AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(tipoAccordo),null),
@@ -235,20 +335,27 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
 						new Parameter(nomept, null)
-				);
+						);
 
 				// preparo i campi
-				Vector<Object> dati = new Vector<Object>();
+				Vector<DataElement> dati = new Vector<DataElement>();
+
+				// update della configurazione 
+				this.consoleDynamicConfiguration.updateDynamicConfigPortType(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idPt);
 
 				dati = apcHelper.addAccordiPorttypeToDati(dati, id, nomept, profProtocollo, 
 						filtroduppt, filtroduppt, confricpt, confricpt, idcollpt, idcollpt, consordpt, consordpt, scadenzapt, scadenzapt, 
-						TipoOperazione.CHANGE, profcollpt, profcollpt, descr, as.getStatoPackage(),
+						tipoOp, profcollpt, profcollpt, descr, as.getStatoPackage(),
 						tipoAccordo,protocollo,servizioStyle);
+
+				// aggiunta campi custom
+				dati = apcHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+
 
 				pd.setDati(dati);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-				
+
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_PORT_TYPES, ForwardParams.CHANGE());
 			}
 
@@ -323,31 +430,34 @@ public final class AccordiServizioParteComunePortTypesChange extends Action {
 
 			// ricopio le operation che aveva quel porttye
 			newPT.setAzioneList(oldPt.getAzioneList());
-			
+
 			// style
 			BindingStyle style = BindingStyle.toEnumConstant(servizioStyle);
 			newPT.setStyle(style);
 
 			as.addPortType(newPT);
+			
+			//imposto properties custom
+			newPT.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties, this.consoleOperationType, oldProtocolPropertyList));
 
 			// effettuo le operazioni
 			apcCore.performUpdateOperation(userLogin, apcHelper.smista(), as);
 
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
-			
+
 			List<PortType> lista = apcCore.accordiPorttypeList(idInt, ricerca);
-			
+
 			// Devo rileggere l'accordo dal db, perche' altrimenti
 			// manca l'id dei nuovi port-type
 			as = apcCore.getAccordoServizio(new Long(idInt));
 
-			apcHelper.prepareAccordiPorttypeList(as, lista, ricerca,tipoAccordo);
+			apcHelper.prepareAccordiPorttypeList(id,as, lista, ricerca,tipoAccordo);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-			
+
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_PORT_TYPES, ForwardParams.CHANGE());
-			
+
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
 					AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_PORT_TYPES, ForwardParams.CHANGE());

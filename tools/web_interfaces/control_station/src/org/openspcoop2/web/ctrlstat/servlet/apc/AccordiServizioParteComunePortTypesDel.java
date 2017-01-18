@@ -188,7 +188,7 @@ public final class AccordiServizioParteComunePortTypesDel extends Action {
 			// manca l'id dei port-type
 			as = apcCore.getAccordoServizio(new Long(idInt));
 
-			apcHelper.prepareAccordiPorttypeList(as, lista, ricerca, tipoAccordo);
+			apcHelper.prepareAccordiPorttypeList(id,as, lista, ricerca, tipoAccordo);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			

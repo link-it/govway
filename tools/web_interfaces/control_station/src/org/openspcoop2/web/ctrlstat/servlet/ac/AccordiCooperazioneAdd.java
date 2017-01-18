@@ -21,15 +21,11 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.ac;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Vector;
 
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -38,14 +34,27 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
+import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
+import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -75,6 +84,14 @@ public final class AccordiCooperazioneAdd extends Action {
 	private String editMode = null;
 
 	private String tipoProtocollo = null;
+	// Protocol Properties
+	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
+	private ConsoleConfiguration consoleConfiguration =null;
+	private ProtocolProperties protocolProperties = null;
+	private IProtocolFactory<?> protocolFactory= null;
+	private IRegistryReader registryReader = null; 
+	private ConsoleOperationType consoleOperationType = null;
+	private ConsoleInterfaceType consoleInterfaceType = null;
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -91,35 +108,33 @@ public final class AccordiCooperazioneAdd extends Action {
 
 		String userLogin = ServletUtils.getUserLoginFromSession(session);
 
+		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
+		this.consoleOperationType = ConsoleOperationType.ADD;
+		this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(session); 
+
+		// Parametri relativi al tipo operazione
+		TipoOperazione tipoOp = TipoOperazione.ADD; 
+
 		try {
 			AccordiCooperazioneHelper acHelper = new AccordiCooperazioneHelper(request, pd, session);
 
-			this.editMode = null;
-
-			this.nome = request.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME);
-			this.descr = request.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_DESCRIZIONE);
-			this.referente = request.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_REFERENTE);
-			this.versione = request.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_VERSIONE);
-			this.tipoProtocollo = request.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO);
+			this.editMode = acHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+			this.nome = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME);
+			this.descr = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_DESCRIZIONE);
+			this.referente = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_REFERENTE);
+			this.versione = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_VERSIONE);
+			this.tipoProtocollo = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO);
 			// patch per version spinner fino a che non si trova un modo piu' elegante
 			/*if(ch.core.isBackwardCompatibilityAccordo11()){
 				if("0".equals(this.versione))
 					this.versione = "";
 			}*/
-			this.privato = (request.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO) != null)
-					&& Costanti.CHECK_BOX_ENABLED.equals(request.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO)) ? true : false;
-			this.statoPackage = request.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_STATO);
-			String tipoSICA = request.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA);
+			String privatoS = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO);
+			this.privato = ServletUtils.isCheckBoxEnabled(privatoS); // privatoS != null && Costanti.CHECK_BOX_ENABLED.equals(privatoS) ? true : false;
+			this.statoPackage = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_STATO);
+			String tipoSICA = acHelper.getParameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_SICA);
 			if("".equals(tipoSICA))
 				tipoSICA = null;
-
-			// boolean decodeReq = false;
-			String ct = request.getContentType();
-			if ((ct != null) && (ct.indexOf(Costanti.MULTIPART) != -1)) {
-				// decodeReq = true;
-				//this.decodeRequest(request,ch.core.isBackwardCompatibilityAccordo11());
-				this.decodeRequest(request,false);
-			}
 
 			AccordiCooperazioneCore acCore = new AccordiCooperazioneCore();
 			SoggettiCore soggettiCore = new SoggettiCore(acCore);
@@ -178,12 +193,12 @@ public final class AccordiCooperazioneAdd extends Action {
 			}else{
 				lista = soggettiCore.soggettiRegistroList(userLogin, new Search(true));
 			}
-			
+
 			List<String> soggettiListTmp = new ArrayList<String>();
 			List<String> soggettiListLabelTmp = new ArrayList<String>();
 			soggettiListTmp.add("-");
 			soggettiListLabelTmp.add("-");
-			
+
 			if (lista.size() > 0) {
 				for (Soggetto soggetto : lista) {
 					if(tipiSoggettiGestitiProtocollo.contains(soggetto.getTipo())){
@@ -194,10 +209,30 @@ public final class AccordiCooperazioneAdd extends Action {
 			}
 			providersList = soggettiListTmp.toArray(new String[1]);
 			providersListLabel = soggettiListLabelTmp.toArray(new String[1]);
-			
+
+			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.tipoProtocollo);
+			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
+			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
+
+			// ID Accordo Null per default
+			IDAccordo idAc = null;
+			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigAccordoCooperazione(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idAc );
+			this.protocolProperties = acHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
+
+			String postBackElementName = acHelper.getParameter(Costanti.POSTBACK_ELEMENT_NAME);
+
+			// Controllo se ho modificato il protocollo, resetto il referente
+			if(postBackElementName != null ){
+				if(postBackElementName.equalsIgnoreCase(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PROTOCOLLO)){
+					this.referente = null;
+					acHelper.deleteProtocolPropertiesBinaryParameters();
+				}
+			}
+
+
 			// Se nome = null, devo visualizzare la pagina per l'inserimento
 			// dati
-			if (ServletUtils.isEditModeInProgress(this.editMode) && ServletUtils.isEditModeInProgress(request)) {
+			if (ServletUtils.isEditModeInProgress(this.editMode)) {
 				// setto la barra del titolo
 				List<Parameter> lstParam = new ArrayList<Parameter>();
 				lstParam.add(new Parameter(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE, null));
@@ -222,19 +257,24 @@ public final class AccordiCooperazioneAdd extends Action {
 				//}else{
 				this.versione="1";
 				//}
-				
+
 				if(this.nome == null)
 					this.nome = "";
-				
+
 				if(this.descr == null)
 					this.descr = "";
-				
+
 				if(this.referente == null)
 					this.referente = "";
 
+				this.consoleDynamicConfiguration.updateDynamicConfigAccordoCooperazione(this.consoleConfiguration,
+						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAc);
 
-				dati = acHelper.addAccordiCooperazioneToDati(dati, this.nome, this.descr, "0", TipoOperazione.ADD, this.referente,
+				dati = acHelper.addAccordiCooperazioneToDati(dati, this.nome, this.descr, "0", tipoOp, this.referente,
 						this.versione, providersList, providersListLabel, false,this.statoPackage,this.statoPackage, this.tipoProtocollo, listaTipiProtocollo,false);
+
+				// aggiunta campi custom
+				dati = acHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
 
 				pd.setDati(dati);
 
@@ -245,8 +285,31 @@ public final class AccordiCooperazioneAdd extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = acHelper.accordiCooperazioneCheckData(TipoOperazione.ADD, this.nome, this.descr, "0",
+			boolean isOk = acHelper.accordiCooperazioneCheckData(tipoOp, this.nome, this.descr, "0",
 					this.referente, this.versione, this.privato, null);
+
+			// Validazione base dei parametri custom 
+			if(isOk){
+				try{
+					acHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+				}catch(ProtocolException e){
+					pd.setMessage(e.getMessage());
+					isOk = false;
+				}
+			}
+
+			// Valido i parametri custom se ho gia' passato tutta la validazione prevista
+			if(isOk){
+				try{
+					idAc = acHelper.getIDAccordoFromValues(this.nome, this.referente, this.versione);
+					//validazione campi dinamici
+					this.consoleDynamicConfiguration.validateDynamicConfigCooperazione(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idAc);
+				}catch(ProtocolException e){
+					pd.setMessage(e.getMessage());
+					isOk = false;
+				}
+			}
+
 			if (!isOk) {
 				// setto la barra del titolo
 				List<Parameter> lstParam = new ArrayList<Parameter>();
@@ -260,8 +323,14 @@ public final class AccordiCooperazioneAdd extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = acHelper.addAccordiCooperazioneToDati(dati, this.nome, this.descr, "0", TipoOperazione.ADD, 
+				this.consoleDynamicConfiguration.updateDynamicConfigAccordoCooperazione(this.consoleConfiguration,
+						this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAc);
+
+				dati = acHelper.addAccordiCooperazioneToDati(dati, this.nome, this.descr, "0", tipoOp, 
 						this.referente, this.versione, providersList, providersListLabel, this.privato,this.statoPackage,this.statoPackage, this.tipoProtocollo, listaTipiProtocollo,false);
+
+				// aggiunta campi custom
+				dati = acHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
 
 				pd.setDati(dati);
 
@@ -324,8 +393,14 @@ public final class AccordiCooperazioneAdd extends Action {
 
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-					dati = acHelper.addAccordiCooperazioneToDati(dati, this.nome, this.descr, "0", TipoOperazione.ADD, 
+					this.consoleDynamicConfiguration.updateDynamicConfigAccordoCooperazione(this.consoleConfiguration,
+							this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idAc);
+
+					dati = acHelper.addAccordiCooperazioneToDati(dati, this.nome, this.descr, "0", tipoOp, 
 							this.referente, this.versione, providersList, providersListLabel, this.privato,this.statoPackage,this.statoPackage, this.tipoProtocollo, listaTipiProtocollo,false);
+
+					// aggiunta campi custom
+					dati = acHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
 
 					pd.setDati(dati);
 
@@ -336,9 +411,14 @@ public final class AccordiCooperazioneAdd extends Action {
 				}
 			}
 
+			//imposto properties custom
+			ac.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties, this.consoleOperationType,null));
 
 			// effettuo le operazioni
 			acCore.performCreateOperation(userLogin, acHelper.smista(), ac);
+			
+			// cancello i file temporanei
+			acHelper.deleteBinaryProtocolPropertiesTmpFiles(this.protocolProperties);
 
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
@@ -361,56 +441,5 @@ public final class AccordiCooperazioneAdd extends Action {
 					AccordiCooperazioneCostanti.OBJECT_NAME_ACCORDI_COOPERAZIONE, 
 					ForwardParams.ADD());
 		}  
-	}
-
-	public void decodeRequest(HttpServletRequest request,boolean isBackwardCompatibilityAccordo11) throws Exception {
-		try {
-			ServletInputStream in = request.getInputStream();
-			BufferedReader dis = new BufferedReader(new InputStreamReader(in));
-			String line = dis.readLine();
-			while (line != null) {
-				if (line.indexOf("\""+Costanti.DATA_ELEMENT_EDIT_MODE_NAME+"\"") != -1) {
-					line = dis.readLine();
-					this.editMode = dis.readLine();
-				}
-				if (line.indexOf("\""+AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_NOME+"\"") != -1) {
-					line = dis.readLine();
-					this.nome = dis.readLine();
-				}
-				if (line.indexOf("\""+AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PROTOCOLLO+"\"") != -1) {
-					line = dis.readLine();
-					this.tipoProtocollo = dis.readLine();
-				}
-				if (line.indexOf("\""+AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_PRIVATO+"\"") != -1) {
-					line = dis.readLine();
-					this.privato = "yes".equals(dis.readLine().trim());
-				}
-				if (line.indexOf("\""+AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_DESCRIZIONE+"\"") != -1) {
-					line = dis.readLine();
-					this.descr = dis.readLine();
-				}
-				if (line.indexOf("\""+AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_REFERENTE+"\"") != -1) {
-					line = dis.readLine();
-					this.referente = dis.readLine();
-				}
-				if (line.indexOf("\""+AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_VERSIONE+"\"") != -1) {
-					line = dis.readLine();
-					this.versione = dis.readLine();
-					// patch per version spinner fino a che non si trova un modo piu' elegante
-					if(isBackwardCompatibilityAccordo11){
-						if("0".equals(this.versione))
-							this.versione = "";
-					}
-				}
-				if (line.indexOf("\""+AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_STATO+"\"") != -1) {
-					line = dis.readLine();
-					this.statoPackage = dis.readLine();
-				}
-				line = dis.readLine();
-			}
-			in.close();
-		} catch (IOException ioe) {
-			throw new Exception(ioe);
-		}
 	}
 }

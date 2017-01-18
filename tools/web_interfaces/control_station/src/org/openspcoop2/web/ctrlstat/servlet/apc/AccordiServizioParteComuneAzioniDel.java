@@ -266,7 +266,7 @@ public final class AccordiServizioParteComuneAzioniDel extends Action {
 
 			ricerca = apcHelper.checkSearchParameters(idLista, ricerca);
 			List<Azione> lista = apcCore.accordiAzioniList(idAccordo, ricerca);
-			apcHelper.prepareAccordiAzioniList(as, lista, ricerca, tipoAccordo);
+			apcHelper.prepareAccordiAzioniList(as, lista, ricerca, id, tipoAccordo);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			

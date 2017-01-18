@@ -90,7 +90,7 @@ public final class AccordiServizioParteComuneAzioniList extends Action {
 
 			ricerca = apcHelper.checkSearchParameters(idLista, ricerca);
 			List<Azione> lista = apcCore.accordiAzioniList(idAccordo, ricerca);
-			apcHelper.prepareAccordiAzioniList(as, lista, ricerca, tipoAccordo);
+			apcHelper.prepareAccordiAzioniList(as, lista, ricerca, id, tipoAccordo);
 
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);

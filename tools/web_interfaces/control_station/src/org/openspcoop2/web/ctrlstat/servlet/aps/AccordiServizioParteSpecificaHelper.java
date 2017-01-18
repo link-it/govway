@@ -73,6 +73,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -168,7 +169,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String servcorr, String endpointtype, String url, String nome,
 			String tipo, String user, String password, String initcont,
 			String urlpgk, String provurl, String connfact, String sendas,
-			String wsdlimpler, String wsdlimplfru, String id,
+			BinaryParameter wsdlimpler, BinaryParameter wsdlimplfru, String id,
 			String profilo, String portType,
 			boolean visibilitaAccordoServizio,boolean visibilitaServizio,
 			String httpsurl, String httpstipologia, boolean httpshostverify,
@@ -556,8 +557,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			// Validazione Documenti
 			if(validazioneDocumenti && tipoOp.equals(TipoOperazione.ADD)){
 
-				byte [] wsdlImplementativoErogatore = wsdlimpler != null && !wsdlimpler.trim().replaceAll("\n", "").equals("") ? wsdlimpler.trim().getBytes() : null;
-				byte [] wsdlImplementativoFruitore = wsdlimplfru != null && !wsdlimplfru.trim().replaceAll("\n", "").equals("") ? wsdlimplfru.trim().getBytes() : null;
+				String wsdlimplerS = wsdlimpler.getValue() != null ? new String(wsdlimpler.getValue()) : null; 
+				byte [] wsdlImplementativoErogatore = wsdlimplerS != null && !wsdlimplerS.trim().replaceAll("\n", "").equals("") ? wsdlimplerS.trim().getBytes() : null;
+				String wsdlimplfruS = wsdlimplfru.getValue() != null ? new String(wsdlimplfru.getValue()) : null; 
+				byte [] wsdlImplementativoFruitore = wsdlimplfruS != null && !wsdlimplfruS.trim().replaceAll("\n", "").equals("") ? wsdlimplfruS.trim().getBytes() : null;
+				
 				aps.setByteWsdlImplementativoErogatore(wsdlImplementativoErogatore);
 				aps.setByteWsdlImplementativoFruitore(wsdlImplementativoFruitore);
 
@@ -585,7 +589,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String endpointtype, String url, String nome, String tipo,
 			String user, String password, String initcont,
 			String urlpgk, String provurl, String connfact,
-			String sendas, String wsdlimpler, String wsdlimplfru,
+			String sendas, BinaryParameter wsdlimpler, BinaryParameter wsdlimplfru,
 			String myId, String profilo,
 			String httpsurl, String httpstipologia, boolean httpshostverify,
 			String httpspath, String httpstipo, String httpspwd,
@@ -732,9 +736,11 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				// Validazione Documenti
 				User userLogin = ServletUtils.getUserFromSession(this.session);
 				if(validazioneDocumenti && tipoOp.equals(TipoOperazione.ADD) && InterfaceType.AVANZATA.equals(userLogin.getInterfaceType()) ){
-
-					byte [] wsdlImplementativoErogatore = wsdlimpler != null && !wsdlimpler.trim().replaceAll("\n", "").equals("") ? wsdlimpler.trim().getBytes() : null;
-					byte [] wsdlImplementativoFruitore = wsdlimplfru != null && !wsdlimplfru.trim().replaceAll("\n", "").equals("") ? wsdlimplfru.trim().getBytes() : null;
+					
+					String wsdlimplerS = wsdlimpler.getValue() != null ? new String(wsdlimpler.getValue()) : null; 
+					byte [] wsdlImplementativoErogatore = wsdlimplerS != null && !wsdlimplerS.trim().replaceAll("\n", "").equals("") ? wsdlimplerS.trim().getBytes() : null;
+					String wsdlimplfruS = wsdlimplfru.getValue() != null ? new String(wsdlimplfru.getValue()) : null; 
+					byte [] wsdlImplementativoFruitore = wsdlimplfruS != null && !wsdlimplfruS.trim().replaceAll("\n", "").equals("") ? wsdlimplfruS.trim().getBytes() : null;
 
 					//aps.setByteWsdlImplementativoErogatore(wsdlImplementativoErogatore);
 					//aps.setByteWsdlImplementativoFruitore(wsdlImplementativoFruitore);
@@ -1630,8 +1636,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 	public Vector<DataElement> addServiziToDati(Vector<DataElement> dati, String nomeservizio, String tiposervizio,
 			String provider, String provString, String[] soggettiList, String[] soggettiListLabel,
-			String accordo, String[] accordiList, String[] accordiListLabel, String servcorr, String wsdlimpler,
-			String wsdlimplfru, TipoOperazione tipoOp, String id, List<String> tipi, String profilo, String portType, 
+			String accordo, String[] accordiList, String[] accordiListLabel, String servcorr, BinaryParameter wsdlimpler,
+			BinaryParameter wsdlimplfru, TipoOperazione tipoOp, String id, List<String> tipi, String profilo, String portType, 
 			String[] ptList, boolean privato, String uriAccordo, String descrizione, long idSoggettoErogatore,
 			String statoPackage,String oldStato,String versione,
 			List<String> versioni,boolean validazioneDocumenti,String nomePA,
@@ -2227,30 +2233,42 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if (tipoOp.equals(TipoOperazione.ADD)) {
 				if(isSupportoAsincrono){
 					if(isRuoloNormale){
-						de = new DataElement();
-						de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_EROGATORE);
-						de.setValue(wsdlimpler);
-						de.setType(DataElementType.FILE);
-						de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE);
-						de.setSize(this.getSize());
-						dati.addElement(de);
+						dati.add(wsdlimpler.getFileDataElement(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_EROGATORE, "", getSize()));
+						dati.addAll(wsdlimpler.getFileNameDataElement());
+						dati.add(wsdlimpler.getFileIdDataElement());
+						
+//						de = new DataElement();
+//						de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_EROGATORE);
+//						de.setValue(wsdlimpler);
+//						de.setType(DataElementType.FILE);
+//						de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE);
+//						de.setSize(this.getSize());
+//						dati.addElement(de);
 					} else {
-						de = new DataElement();
-						de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_FRUITORE);
-						de.setValue(wsdlimplfru);
-						de.setType(DataElementType.FILE);
-						de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_FRUITORE);
-						de.setSize(this.getSize());
-						dati.addElement(de);
+						dati.add(wsdlimplfru.getFileDataElement(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_FRUITORE, "", getSize()));
+						dati.addAll(wsdlimplfru.getFileNameDataElement());
+						dati.add(wsdlimplfru.getFileIdDataElement());
+						
+//						de = new DataElement();
+//						de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_FRUITORE);
+//						de.setValue(wsdlimplfru);
+//						de.setType(DataElementType.FILE);
+//						de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_FRUITORE);
+//						de.setSize(this.getSize());
+//						dati.addElement(de);
 					}
 				}else {
-					de = new DataElement();
-					de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO);
-					de.setValue(wsdlimpler);
-					de.setType(DataElementType.FILE);
-					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE);
-					de.setSize(this.getSize());
-					dati.addElement(de);
+					dati.add(wsdlimpler.getFileDataElement(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO, "", getSize()));
+					dati.addAll(wsdlimpler.getFileNameDataElement());
+					dati.add(wsdlimpler.getFileIdDataElement());
+					
+//					de = new DataElement();
+//					de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO);
+//					de.setValue(wsdlimpler);
+//					de.setType(DataElementType.FILE);
+//					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE);
+//					de.setSize(this.getSize());
+//					dati.addElement(de);
 				}
 			} else {
 				if(isSupportoAsincrono){
@@ -2291,14 +2309,16 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if (tipoOp.equals(TipoOperazione.ADD)) {
 				de = new DataElement();
 				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_EROGATORE);
-				de.setValue(wsdlimpler);
+				String wsdlimplerS =  wsdlimpler.getValue() != null ? new String(wsdlimpler.getValue()) : ""; 
+				de.setValue(wsdlimplerS);
 				de.setType(DataElementType.HIDDEN);
 				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE);
 				dati.addElement(de);
 
 				de = new DataElement();
 				de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_FRUITORE);
-				de.setValue(wsdlimplfru);
+				String wsdlimplfruS =  wsdlimpler.getValue() != null ? new String(wsdlimpler.getValue()) : ""; 
+				de.setValue(wsdlimplfruS);
 				de.setType(DataElementType.HIDDEN);
 				de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_FRUITORE);
 				dati.addElement(de);
@@ -3091,8 +3111,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 	}
 
 
-	public Vector<DataElement> addServiziFruitoriToDati(Vector<DataElement> dati, String provider, String wsdlimpler, 
-			String wsdlimplfru, String[] soggettiList, String[] soggettiListLabel, String idServ, String id, 
+	public Vector<DataElement> addServiziFruitoriToDati(Vector<DataElement> dati, String provider, BinaryParameter wsdlimpler, 
+			BinaryParameter wsdlimplfru, String[] soggettiList, String[] soggettiListLabel, String idServ, String id, 
 			TipoOperazione tipoOp, String idSoggettoErogatoreDelServizio, String nomeprov, String tipoprov,
 			String nomeservizio, String tiposervizio, Integer versioneservizio, String correlato, String stato, String oldStato, String statoServizio,
 			String tipoAccordo, boolean validazioneDocumenti,
@@ -3221,30 +3241,42 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			if(isModalitaAvanzata){
 				if(isProfiloAsincronoSupportatoDalProtocollo){
 					if(isRuoloNormale){
-						de = new DataElement();
-						de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_EROGATORE);
-						de.setValue("");
-						de.setType(DataElementType.FILE);
-						de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE);
-						de.setSize(this.getSize());
-						dati.addElement(de);
+						dati.add(wsdlimpler.getFileDataElement(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_EROGATORE, "", getSize()));
+						dati.addAll(wsdlimpler.getFileNameDataElement());
+						dati.add(wsdlimpler.getFileIdDataElement());
+						
+//						de = new DataElement();
+//						de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_EROGATORE);
+//						de.setValue("");
+//						de.setType(DataElementType.FILE);
+//						de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE);
+//						de.setSize(this.getSize());
+//						dati.addElement(de);
 					}else {
-						de = new DataElement();
-						de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_FRUITORE);
-						de.setValue("");
-						de.setType(DataElementType.FILE);
-						de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_FRUITORE);
-						de.setSize(this.getSize());
-						dati.addElement(de);
+						dati.add(wsdlimplfru.getFileDataElement(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_FRUITORE, "", getSize()));
+						dati.addAll(wsdlimplfru.getFileNameDataElement());
+						dati.add(wsdlimplfru.getFileIdDataElement());
+						
+//						de = new DataElement();
+//						de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO_FRUITORE);
+//						de.setValue("");
+//						de.setType(DataElementType.FILE);
+//						de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_FRUITORE);
+//						de.setSize(this.getSize());
+//						dati.addElement(de);
 					}
 				} else {
-					de = new DataElement();
-					de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO);
-					de.setValue("");
-					de.setType(DataElementType.FILE);
-					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE);
-					de.setSize(this.getSize());
-					dati.addElement(de);
+					dati.add(wsdlimpler.getFileDataElement(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO, "", getSize()));
+					dati.addAll(wsdlimpler.getFileNameDataElement());
+					dati.add(wsdlimpler.getFileIdDataElement());
+					
+//					de = new DataElement();
+//					de.setLabel(AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_WSDL_IMPLEMENTATIVO);
+//					de.setValue("");
+//					de.setType(DataElementType.FILE);
+//					de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE);
+//					de.setSize(this.getSize());
+//					dati.addElement(de);
 				}
 			} else {
 				de = new DataElement();

@@ -104,7 +104,7 @@ public final class AccordiServizioParteComunePortTypeOperationsList extends Acti
 
 			List<Operation> lista = apcCore.accordiPorttypeOperationList(idPortType, ricerca);
 
-			apcHelper.prepareAccordiPorttypeOperationsList(ricerca, lista, as, tipoAccordo,nomept);
+			apcHelper.prepareAccordiPorttypeOperationsList(ricerca, lista, id, as, tipoAccordo,nomept);
 
 			// salvo l'oggetto ricerca nella sessione
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);

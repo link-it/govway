@@ -668,20 +668,17 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 	}
 
-	public void prepareAccordiPorttypeOperationsList(ISearch ricerca, List<Operation> lista, AccordoServizioParteComune as,String tipoAccordo,String nomePT) throws Exception {
+	public void prepareAccordiPorttypeOperationsList(ISearch ricerca, List<Operation> lista, String idAs, AccordoServizioParteComune as,String tipoAccordo,String nomept) throws Exception {
 		try {
-			String id = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-
 			String uri = null;
 			uri = this.idAccordoFactory.getUriFromAccordo(as);
 
 			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_PORT_TYPE_OPERATIONS,
-					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
+					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, idAs),
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO, tipoAccordo),
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, uri),
-					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME,nomePT));
+					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME,nomept));
 
-			String nomept = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME);
 			Hashtable<String, String> campiHidden = new Hashtable<String, String>();
 			campiHidden.put("nomept", nomept);
 			this.pd.setHidden(campiHidden);
@@ -706,7 +703,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
 										new Parameter(AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES + " di " + uri, 
 												AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPES_LIST+"?"+
-														AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+id+"&"+
+														AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+idAs+"&"+
 														AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME+"="+as.getNome()+"&"+
 														AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 														AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
@@ -721,13 +718,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
 										new Parameter(AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES + " di " + uri, 
 												AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPES_LIST+"?"+
-														AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+id+"&"+
+														AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+idAs+"&"+
 														AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME+"="+as.getNome()+"&"+
 														AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 														AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
 														new Parameter(AccordiServizioParteComuneCostanti.LABEL_AZIONI + " di " + nomept, 
 																AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_LIST+"?"+
-																		AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+id+"&"+
+																		AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+idAs+"&"+
 																		AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME+"="+nomept+"&"+
 																		AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 																		AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
@@ -758,7 +755,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 					DataElement de = new DataElement();
 					de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_CHANGE,
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
+							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, idAs),
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME, nomept),
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_NOME, op.getNome()),
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
@@ -789,56 +786,37 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 	}
 
-	public boolean accordiPorttypeOperationCheckData(TipoOperazione tipoOperazione)
-			throws Exception {
+	public boolean accordiPorttypeOperationCheckData(TipoOperazione tipoOperazione,String id, String nomept, String nomeop, String profProtocollo, String filtrodupop,
+			String confricop, String idcollop, String consordop, String scadenzaop, String servcorr, String azicorr, String profcollop, String styleOp,
+			String soapActionOp, String useOp, String opTypeOp, String nsWSDLOp ) throws Exception {
 
 		try{
-
-			// String userLogin = (String) this.session.getAttribute("Login");
-
-			String id = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-			String nomept = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME);
-			String nomeop = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_NOME);
-			String profProtocollo = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_PROFILO_BUSTA);
-			String filtrodupop = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_FILTRO_DUPLICATI);
 			if ((filtrodupop != null) && filtrodupop.equals("null")) {
 				filtrodupop = null;
 			}
-			String confricop = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_CONFERMA_RICEZIONE);
 			if ((confricop != null) && confricop.equals("null")) {
 				confricop = null;
 			}
-			String idcollop = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_COLLABORAZIONE);
 			if ((idcollop != null) && idcollop.equals("null")) {
 				idcollop = null;
 			}
-			String consordop = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_CONSEGNA_ORDINE);
 			if ((consordop != null) && consordop.equals("null")) {
 				consordop = null;
 			}
-			String scadenzaop = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_SCADENZA);
-			String servcorr = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_SERVIZIO_CORRELATO);
-			String azicorr = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_AZIONE_CORRELATA);
 			if (servcorr == null || servcorr.equals(""))
 				servcorr = "-";
 			if (azicorr == null || azicorr.equals(""))
 				azicorr = "-";
 
-			String profcollop = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_PROFILO_COLLABORAZIONE);
 			if(profcollop == null)
 				profcollop = "";
 			//parametri WSDL
-			String styleOp = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_STYLE);
 			if(styleOp == null)
 				styleOp = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_PORT_TYPE_OPERATION_STYLE;
-			String soapActionOp = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_SOAP_ACTION);
 			if(soapActionOp == null)
 				soapActionOp = "";
-			String useOp = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_USE);
 			if(useOp == null)
 				useOp = AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_PORT_TYPE_OPERATION_USE;
-			String opTypeOp = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_OPERATION_TYPE);
-			String nsWSDLOp = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_NS_WSDL);
 			if(nsWSDLOp == null)
 				nsWSDLOp = "";
 
@@ -987,7 +965,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 	}
 
-	public Vector<Object> addAccordiPorttypeOperationToDati(Vector<Object> dati, String id, String nomept, String nomeop, String profProtocollo, 
+	public Vector<DataElement> addAccordiPorttypeOperationToDati(Vector<DataElement> dati, String id, String nomept, String nomeop, String profProtocollo, 
 			String filtrodupop, String deffiltrodupop, String confricop, String defconfricop, String idcollop, String defidcollop, String consordop, String defconsordop, 
 			String scadenzaop, String defscadenzaop, TipoOperazione tipoOperazione, String defProfiloCollaborazioneOp, String profiloCollaborazioneOp, 
 			String opcorr, String[] opList, String stato,String tipoSICA, String[] servCorrList, String servcorr, String[] aziCorrList, String azicorr
@@ -1406,16 +1384,14 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 	}
 
-	public void prepareAccordiPorttypeList(AccordoServizioParteComune as, List<org.openspcoop2.core.registry.PortType> lista, ISearch ricerca, String tipoAccordo)
+	public void prepareAccordiPorttypeList(String idApc,AccordoServizioParteComune as, List<org.openspcoop2.core.registry.PortType> lista, ISearch ricerca, String tipoAccordo)
 			throws Exception {
 		try {
-			String id = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-
 			String uri = null;
 			uri = this.idAccordoFactory.getUriFromAccordo(as);
 
 			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_PORT_TYPES,
-					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
+					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, idApc),
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO, tipoAccordo),
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, uri));
 
@@ -1450,7 +1426,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
 										new Parameter(AccordiServizioParteComuneCostanti.LABEL_PORT_TYPES + " di " + uri, 
 												AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPES_LIST+"?"+
-														AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+id+"&"+
+														AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+idApc+"&"+
 														AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME+"="+uri+"&"+
 														AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 														AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
@@ -1484,7 +1460,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 					DataElement de = new DataElement();
 					de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPES_CHANGE, 
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
+							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, idApc),
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME, pt.getNome()),
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
 							);
@@ -1498,7 +1474,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 					de = new DataElement();
 					de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_PORT_TYPE_OPERATIONS_LIST, 
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
+							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, idApc),
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME, pt.getNome()),
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
 							);
@@ -1542,32 +1518,10 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 	}
 
 	// Controlla i dati del porttype dell'accordo
-	public boolean accordiPorttypeCheckData(TipoOperazione tipoOperazione) throws Exception {
+	public boolean accordiPorttypeCheckData(TipoOperazione tipoOperazione,String id,String nomept,String profProtocollo,String filtroduppt,
+			String confricpt,String idcollpt,String consordpt,String scadenzapt) throws Exception {
 
 		try{
-			// String userLogin = (String) this.session.getAttribute("Login");
-
-			String id = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-			String nomept = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME);
-			String profProtocollo = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_PROFILO_BUSTA);
-			String filtroduppt = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_FILTRO_DUPLICATI);
-			if ((filtroduppt != null) && filtroduppt.equals("null")) {
-				filtroduppt = null;
-			}
-			String confricpt = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_CONFERMA_RICEZIONE);
-			if ((confricpt != null) && confricpt.equals("null")) {
-				confricpt = null;
-			}
-			String idcollpt = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_COLLABORAZIONE);
-			if ((idcollpt != null) && idcollpt.equals("null")) {
-				idcollpt = null;
-			}
-			String consordpt = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_CONSEGNA_ORDINE);
-			if ((consordpt != null) && consordpt.equals("null")) {
-				consordpt = null;
-			}
-			String scadenzapt = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_SCADENZA);
-
 			// Campi obbligatori
 			if (nomept.equals("")) {
 				this.pd.setMessage("Dati incompleti. E' necessario indicare un Nome");
@@ -1630,7 +1584,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 	}
 
-	public Vector<Object> addAccordiPorttypeToDati(Vector<Object> dati, String id, String nomept, String profProtocollo, 
+	public Vector<DataElement> addAccordiPorttypeToDati(Vector<DataElement> dati, String id, String nomept, String profProtocollo, 
 			String filtroduppt, String deffiltroduppt, String confricpt, String defconfricpt, String idcollpt, String defidcollpt, 
 			String consordpt, String defconsordpt, String scadenzapt, String defscadenzapt, 
 			TipoOperazione tipoOperazione, String defProfiloCollaborazionePT, String profiloCollaborazionePT, 
@@ -1795,11 +1749,12 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				}
 				dati.addElement(de);
 
-				de = new DataElement();
-				de.setType(DataElementType.HIDDEN);
-				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_PROFILO_BUSTA);
-				de.setValue(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO);
-				dati.addElement(de);
+				// Parametro duplicato
+//				de = new DataElement();
+//				de.setType(DataElementType.HIDDEN);
+//				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_PROFILO_BUSTA);
+//				de.setValue(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO);
+//				dati.addElement(de);
 
 				de = new DataElement();
 				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROFILO_COLLABORAZIONE);
@@ -1977,17 +1932,15 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		}
 	}
 
-	public void prepareAccordiAzioniList(AccordoServizioParteComune as, List<Azione> lista, ISearch ricerca,String tipoAccordo)
+	public void prepareAccordiAzioniList(AccordoServizioParteComune as, List<Azione> lista, ISearch ricerca,String idAs, String tipoAccordo)
 			throws Exception {
 		try {
-
-			String id = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
 
 			String uri = null;
 			uri = this.idAccordoFactory.getUriFromAccordo(as);
 
 			ServletUtils.addListElementIntoSession(this.session, AccordiServizioParteComuneCostanti.OBJECT_NAME_APC_AZIONI,
-					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
+					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, idAs),
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO, tipoAccordo),
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, uri));
 
@@ -2021,7 +1974,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
 										new Parameter(AccordiServizioParteComuneCostanti.LABEL_AZIONI + " di " + uri, 
 												AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_AZIONI_LIST+"?"+
-														AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+id+"&"+
+														AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID+"="+idAs+"&"+
 														AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME+"="+uri+"&"+
 														AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getName()+"="+
 														AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo).getValue()),
@@ -2053,7 +2006,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 					DataElement de = new DataElement();
 					de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_AZIONI_CHANGE, 
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
+							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, idAs),
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_NOME, az.getNome()),
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
 					de.setValue(az.getNome());
@@ -2090,28 +2043,21 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 	}
 
 	// Controlla i dati dell'azione dell'accordo
-	public boolean accordiAzioniCheckData(TipoOperazione tipoOperazione) throws Exception {
+	public boolean accordiAzioniCheckData(TipoOperazione tipoOperazione, String id, String nomeaz, String profProtocollo, String filtrodupaz, String confricaz, String idcollaz, 
+			String consordaz, String scadenzaaz) throws Exception {
 		try {
-			String id = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
-			String nomeaz = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_NOME);
-			String profProtocollo = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_PROFILO_BUSTA);
-			String filtrodupaz = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_FILTRO_DUPLICATI);
 			if ((filtrodupaz != null) && (filtrodupaz.equals("null") || filtrodupaz.equals(Costanti.CHECK_BOX_DISABLED))) {
 				filtrodupaz = null;
 			}
-			String confricaz = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_CONFERMA_RICEZIONE);
 			if ((confricaz != null) && (confricaz.equals("null") || confricaz.equals(Costanti.CHECK_BOX_DISABLED))) {
 				confricaz = null;
 			}
-			String idcollaz = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_COLLABORAZIONE);
 			if ((idcollaz != null) && (idcollaz.equals("null") || idcollaz.equals(Costanti.CHECK_BOX_DISABLED))) {
 				idcollaz = null;
 			}
-			String consordaz = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_CONSEGNA_ORDINE);
 			if ((consordaz != null) && (consordaz.equals("null") || consordaz.equals(Costanti.CHECK_BOX_DISABLED))) {
 				consordaz = null;
 			}
-			String scadenzaaz = this.request.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_AZIONI_SCADENZA);
 
 			if (nomeaz.equals("")) {
 				this.pd.setMessage("Dati incompleti. E' necessario indicare un Nome");

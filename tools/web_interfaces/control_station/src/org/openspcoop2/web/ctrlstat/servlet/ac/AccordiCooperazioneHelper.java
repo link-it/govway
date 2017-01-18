@@ -33,8 +33,8 @@ import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
-import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Documento;
+import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
@@ -67,8 +67,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			HttpSession session) throws Exception {
 		super(request, pd,  session);
 	}
-
-
+	
 	// Controlla i dati degli Accordi cooperazione
 	public boolean accordiCooperazioneCheckData(TipoOperazione tipoOp, String nome, String descr, String id, String referente, String versione,boolean visibilitaAccordoCooperazione,
 			IDAccordoCooperazione idAccordoOLD)

@@ -21,10 +21,12 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.aps;
 
+import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Vector;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -33,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -42,16 +45,29 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
+import org.openspcoop2.core.id.IDFruizione;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
+import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
+import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
@@ -60,7 +76,10 @@ import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUti
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
+import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -83,6 +102,19 @@ import org.openspcoop2.web.lib.users.dao.InterfaceType;
  */
 public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
+	// Protocol Properties
+	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
+	private ConsoleConfiguration consoleConfiguration =null;
+	private ProtocolProperties protocolProperties = null;
+	private IProtocolFactory<?> protocolFactory= null;
+	private IRegistryReader registryReader = null; 
+	private ConsoleOperationType consoleOperationType = null;
+	private ConsoleInterfaceType consoleInterfaceType = null;
+	private String protocolPropertiesSet = null;
+	private String editMode = null;
+
+	private BinaryParameter wsdlimpler, wsdlimplfru;
+
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -96,104 +128,119 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
+		// Parametri Protocol Properties relativi al tipo di operazione e al tipo di visualizzazione
+		this.consoleOperationType = ConsoleOperationType.CHANGE;
+		this.consoleInterfaceType = ProtocolPropertiesUtilities.getTipoInterfaccia(session); 
+
+		// Parametri relativi al tipo operazione
+		TipoOperazione tipoOp = TipoOperazione.CHANGE;
+		List<ProtocolProperty> oldProtocolPropertyList = null;
+
 		try {
 			// prendo i dati hidden del pdold e li metto nel pd attuale
 			PageData pdOld = ServletUtils.getPageDataFromSession(session);
 			pd.setHidden(pdOld.getHidden());
 
 			AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
+			this.editMode = apsHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
+			this.protocolPropertiesSet = apsHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
 
-			String idServizio = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
+			String idServizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 			int idServizioInt = Integer.parseInt(idServizio);
-			String idServizioFruitore = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID);// id
+			String idServizioFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID);// id
 			// row
 			// in
 			// table
 			// servizi_fruitori
 			int idServizioFruitoreInt = Integer.parseInt(idServizioFruitore);
-			String provider = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROVIDER);
-			//			String endpointtype = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
-			String correlato = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_CORRELATO);
 			
+			String myTipo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_TIPO);
+			if(myTipo == null) myTipo = "";
+			String myNome = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_NOME);
+			if(myNome == null) myNome = "";
+			String provider = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROVIDER);
+			//			String endpointtype = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
+			String correlato = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_CORRELATO);
+
 			String endpointtype = apsHelper.readEndPointType();
-			String tipoconn = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
-			String autenticazioneHttp = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
+			String tipoconn = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
+			String autenticazioneHttp = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
 			String user = null;
 			String password = null;
-			
-			String connettoreDebug = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
-			
+
+			String connettoreDebug = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+
 			// proxy
-			String proxy_enabled = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
-			String proxy_hostname = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
-			String proxy_port = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
-			String proxy_username = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
-			String proxy_password = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
-			
+			String proxy_enabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+			String proxy_hostname = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
+			String proxy_port = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
+			String proxy_username = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
+			String proxy_password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
+
 			// opzioni avanzate
-			String transfer_mode = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
-			String transfer_mode_chunk_size = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
-			String redirect_mode = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
-			String redirect_max_hop = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
+			String transfer_mode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
+			String transfer_mode_chunk_size = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
+			String redirect_mode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
+			String redirect_max_hop = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
 			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(request, transfer_mode, redirect_mode);
-			
+
 			// http
-			String url = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
+			String url = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 			if(TipiConnettore.HTTP.toString().equals(endpointtype)){
-				user = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_USERNAME);
-				password = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_PASSWORD);
+				user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_USERNAME);
+				password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_PASSWORD);
 			}
-			
+
 			// jms
-			String nome = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_NOME_CODA);
-			String tipo = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_CODA);
-			String initcont = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_INIT_CTX);
-			String urlpgk = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_URL_PKG);
-			String provurl = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PROVIDER_URL);
-			String connfact = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY);
-			String sendas = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
+			String nome = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_NOME_CODA);
+			String tipo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_CODA);
+			String initcont = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_INIT_CTX);
+			String urlpgk = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_URL_PKG);
+			String provurl = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PROVIDER_URL);
+			String connfact = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY);
+			String sendas = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS);
 			if(TipiConnettore.JMS.toString().equals(endpointtype)){
-				user = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_USERNAME);
-				password = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
+				user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_USERNAME);
+				password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
 			}
-			
+
 			// https
 			String httpsurl = url;
-			String httpstipologia = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE );
-			String httpshostverifyS = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
+			String httpstipologia = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE );
+			String httpshostverifyS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_HOST_VERIFY);
 			boolean httpshostverify = false;
 			if (httpshostverifyS != null && httpshostverifyS.equals(Costanti.CHECK_BOX_ENABLED))
 				httpshostverify = true;
-			String httpspath = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
-			String httpstipo = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
-			String httpspwd = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
-			String httpsalgoritmo = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
-			String httpsstatoS = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO);
+			String httpspath = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION);
+			String httpstipo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
+			String httpspwd = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+			String httpsalgoritmo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM);
+			String httpsstatoS = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO);
 			boolean httpsstato = false;
 			if (httpsstatoS != null && httpsstatoS.equals(Costanti.CHECK_BOX_ENABLED))
 				httpsstato = true;
-			String httpskeystore = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE);
-			String httpspwdprivatekeytrust = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
-			String httpspathkey = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);
-			String httpstipokey = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE);
-			String httpspwdkey = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
-			String httpspwdprivatekey = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
-			String httpsalgoritmokey = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
+			String httpskeystore = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE);
+			String httpspwdprivatekeytrust = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_STORE);
+			String httpspathkey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION);
+			String httpstipokey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE);
+			String httpspwdkey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
+			String httpspwdprivatekey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE);
+			String httpsalgoritmokey = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM);
 			if(TipiConnettore.HTTPS.toString().equals(endpointtype)){
-				user = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_USERNAME);
-				password = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_PASSWORD);
+				user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_USERNAME);
+				password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_PASSWORD);
 			}
-			
-			
-			String profilo = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROFILO);
-			String clientAuth = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_CLIENT_AUTH);
-			String statoPackage = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO_PACKAGE);
-			
-			String backToStato = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RIPRISTINA_STATO);
-			String actionConfirm = request.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
+
+
+			String profilo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROFILO);
+			String clientAuth = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_CLIENT_AUTH);
+			String statoPackage = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO_PACKAGE);
+
+			String backToStato = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_RIPRISTINA_STATO);
+			String actionConfirm = apsHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
 
 			boolean validazioneDocumenti = true;
-			String tmpValidazioneDocumenti = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VALIDAZIONE_DOCUMENTI);
+			String tmpValidazioneDocumenti = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VALIDAZIONE_DOCUMENTI);
 			if(ServletUtils.isEditModeInProgress(request)){
 				// primo accesso alla servlet
 				if(tmpValidazioneDocumenti!=null){
@@ -223,27 +270,35 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			String nomeservizio = asps.getNome();
 			String tiposervizio = asps.getTipo();
 			Integer versioneservizio = asps.getVersione();
+
+			// se ho impostato nome e tipo del fruitore li utilizzo per ricostruire l'id del fruitore
+			if(StringUtils.isNotBlank(myTipo) && StringUtils.isNotBlank(myNome)){
+				long idSoggetto = soggettiCore.getIdSoggetto(myNome,myTipo);
+				idServizioFruitoreInt = apsCore.getServizioFruitore(IDServizioFactory.getInstance().getIDServizioFromAccordo(asps), idSoggetto); 
+			}
 			
 			// Prendo nome e tipo del fruitore dal db
 			Fruitore servFru = apsCore.getServizioFruitore(idServizioFruitoreInt);
+			myTipo = servFru.getTipo();
+			myNome = servFru.getNome();
 
 			Boolean isConnettoreCustomUltimaImmagineSalvata = servFru.getConnettore().getCustom();
-			
+
 			List<ExtendedConnettore> listExtendedConnettore = 
 					ServletExtendedConnettoreUtils.getExtendedConnettore(servFru.getConnettore(), ConnettoreServletType.FRUIZIONE_ACCORDO_SERVIZIO_PARTE_SPECIFICA_CHANGE, apsCore, 
 							request, session, (endpointtype==null), endpointtype); // uso endpointtype per capire se è la prima volta che entro
-			
+
 			// Prendo il soggetto erogatore del servizio
 			String tipoSoggettoErogatore = asps.getTipoSoggettoErogatore();
-			String nomesoggettoErogatore = asps.getNomeSoggettoErogatore();
-			String idSoggettoErogatoreDelServizio = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
+			String nomeSoggettoErogatore = asps.getNomeSoggettoErogatore();
+			String idSoggettoErogatoreDelServizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
 			if ((idSoggettoErogatoreDelServizio == null) || idSoggettoErogatoreDelServizio.equals("")) {
 				PageData oldPD = ServletUtils.getPageDataFromSession(session);
 
 				idSoggettoErogatoreDelServizio = oldPD.getHidden(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE);
 
 				if (idSoggettoErogatoreDelServizio == null || idSoggettoErogatoreDelServizio.equals("")) {
-					IDSoggetto idSE = new IDSoggetto(tipoSoggettoErogatore, nomesoggettoErogatore);
+					IDSoggetto idSE = new IDSoggetto(tipoSoggettoErogatore, nomeSoggettoErogatore);
 					Soggetto SE = soggettiCore.getSoggettoRegistro(idSE);
 					idSoggettoErogatoreDelServizio = "" + SE.getId();
 				}
@@ -272,12 +327,12 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			} 
 			else {
 				profiloSoggettoFruitore = servFru.getVersioneProtocollo();
-//				Soggetto soggetto = soggettiCore.getSoggettoRegistro(new IDSoggetto(servFru.getTipo(),servFru.getNome()));
-//				profiloSoggettoFruitore = soggetto.getVersioneProtocollo();
+				//				Soggetto soggetto = soggettiCore.getSoggettoRegistro(new IDSoggetto(servFru.getTipo(),servFru.getNome()));
+				//				profiloSoggettoFruitore = soggetto.getVersioneProtocollo();
 			}
-			
-			
-			
+
+
+
 			String profiloValue = profiloSoggettoFruitore;
 			if(profilo!=null && !"".equals(profilo) && !"-".equals(profilo)){
 				profiloValue = profilo;
@@ -318,8 +373,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			//se passo dal link diretto di ripristino stato imposto il nuovo stato
 			if(backToStato != null)
 				statoPackage = backToStato;
-			
-			
+
+
 			String nomefru = servFru.getNome();
 			String tipofru = servFru.getTipo();
 			IDSoggetto idSF = new IDSoggetto(tipofru, nomefru);
@@ -332,9 +387,43 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 			Connettore connettore = servFru.getConnettore();
 
+			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
+			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
+			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
+			IDServizio idAps = apsHelper.getIDServizioFromValues(tiposervizio, nomeservizio, tipoSoggettoErogatore,nomeSoggettoErogatore, versioneservizio+"");
+			IDFruizione idFruizione = new IDFruizione();
+			idFruizione.setIdServizio(idAps);
+			idFruizione.setIdFruitore(idSF);
+			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleOperationType, this.consoleInterfaceType, this.registryReader, idFruizione  );
+			this.protocolProperties = apsHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
+
+			oldProtocolPropertyList = servFru.getProtocolPropertyList(); 
+
+			if(this.protocolPropertiesSet == null){
+				ProtocolPropertiesUtils.mergeProtocolProperties(this.protocolProperties, oldProtocolPropertyList, this.consoleOperationType);
+			}
+
+			Parameter pMyId = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID, idServizioFruitoreInt+"");
+			Parameter pMyTipo = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_TIPO, myTipo);
+			Parameter pMyNome = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_NOME, myNome);
+			Parameter pIdSoggettoErogatore = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, idSoggettoErogatoreDelServizio);
+			Parameter pId = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, idServizio);
+			Parameter urlChange = new Parameter("", AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE, pMyId, pId, pIdSoggettoErogatore,pMyTipo,pMyNome);
+			
+			String fruitoreLabel = tipofru + "/" + nomefru;
+			Properties propertiesProprietario = new Properties();
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_PROPRIETARIO, idServizioFruitoreInt+"");
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO, ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_PROPRIETARIO_VALUE_FRUITORE);
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_NOME_PROPRIETARIO, fruitoreLabel);
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_URL_ORIGINALE_CHANGE, 
+					URLEncoder.encode( urlChange.getValue() , "UTF-8"));
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_PROTOCOLLO, protocollo);
+			propertiesProprietario.setProperty(ProtocolPropertiesCostanti.PARAMETRO_PP_TIPO_ACCORDO, "");
+
 			// Se idhid = null, devo visualizzare la pagina per la
 			// modifica dati
-			if (ServletUtils.isEditModeInProgress(request)) {
+
+			if (ServletUtils.isEditModeInProgress(this.editMode)) {
 				// setto la barra del titolo
 				List<Parameter> lstParm = new ArrayList<Parameter>();
 
@@ -345,7 +434,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ idServizio),
 						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+ idSoggettoErogatoreDelServizio)
 						));
-				lstParm.add(new Parameter(tipofru + "/" + nomefru, null));
+				lstParm.add(new Parameter(fruitoreLabel, null));
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParm );
@@ -373,7 +462,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					} else
 						endpointtype = connettore.getTipo();
 				}
-				
+
 				if(connettoreDebug==null && props!=null){
 					String v = props.get(CostantiDB.CONNETTORE_DEBUG);
 					if(v!=null){
@@ -385,12 +474,12 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						}
 					}
 				}
-				
+
 				if(proxy_enabled==null && props!=null){
 					String v = props.get(CostantiDB.CONNETTORE_PROXY_TYPE);
 					if(v!=null && !"".equals(v)){
 						proxy_enabled = Costanti.CHECK_BOX_ENABLED_TRUE;
-						
+
 						// raccolgo anche altre proprietà
 						v = props.get(CostantiDB.CONNETTORE_PROXY_HOSTNAME);
 						if(v!=null && !"".equals(v)){
@@ -410,13 +499,13 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						}
 					}
 				}
-				
+
 				if(transfer_mode==null && props!=null){
 					String v = props.get(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE);
 					if(v!=null && !"".equals(v)){
-						
+
 						transfer_mode = v.trim();
-						
+
 						if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome().equals(transfer_mode)){
 							// raccolgo anche altra proprietà correlata
 							v = props.get(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE_CHUNK_SIZE);
@@ -424,21 +513,21 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 								transfer_mode_chunk_size = v.trim();
 							}
 						}
-						
+
 					}
 				}
-				
+
 				if(redirect_mode==null && props!=null){
 					String v = props.get(CostantiDB.CONNETTORE_HTTP_REDIRECT_FOLLOW);
 					if(v!=null && !"".equals(v)){
-						
+
 						if("true".equalsIgnoreCase(v.trim()) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v.trim())){
 							redirect_mode = CostantiConfigurazione.ABILITATO.getValue();
 						}
 						else{
 							redirect_mode = CostantiConfigurazione.DISABILITATO.getValue();
 						}					
-						
+
 						if(CostantiConfigurazione.ABILITATO.getValue().equals(redirect_mode)){
 							// raccolgo anche altra proprietà correlata
 							v = props.get(CostantiDB.CONNETTORE_HTTP_REDIRECT_MAX_HOP);
@@ -446,12 +535,12 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 								redirect_max_hop = v.trim();
 							}
 						}
-						
+
 					}
 				}
-				
+
 				opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(request, transfer_mode, redirect_mode);
-				
+
 				if (url == null) {
 					url = props.get(CostantiDB.CONNETTORE_HTTP_LOCATION);
 				}
@@ -466,9 +555,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					connfact = props.get(CostantiDB.CONNETTORE_JMS_CONNECTION_FACTORY);
 					sendas = props.get(CostantiDB.CONNETTORE_JMS_SEND_AS);
 				}
-				
+
 				autenticazioneHttp = apsHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
-				
+
 				if (httpstipologia == null) {
 					httpsurl = props.get(CostantiDB.CONNETTORE_HTTPS_LOCATION);
 					httpstipologia = props.get(CostantiDB.CONNETTORE_HTTPS_SSL_TYPE);
@@ -515,19 +604,32 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					httpshostverify = true;
 				}
 
+				if(this.wsdlimpler == null){
+					this.wsdlimpler = new BinaryParameter();
+					this.wsdlimpler.setValue(servFru.getByteWsdlImplementativoErogatore());
+				}
+
+				if(this.wsdlimplfru == null){
+					this.wsdlimplfru = new BinaryParameter();
+					this.wsdlimplfru.setValue(servFru.getByteWsdlImplementativoFruitore());
+				}
+
 				if(backToStato == null){
 					// preparo i campi
 					Vector<DataElement> dati = new Vector<DataElement>();
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-					dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idServizio, null, null, dati);
+					// update della configurazione 
+					this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idFruizione);
 
-					dati = apsHelper.addServiziFruitoriToDati(dati, provider, "", "", soggettiList, soggettiListLabel, idServizio,
-							idServizioFruitore,TipoOperazione.CHANGE, idSoggettoErogatoreDelServizio, "", "", nomeservizio, tiposervizio, versioneservizio, correlato,
+					dati = apsHelper.addHiddenFieldsToDati(tipoOp, idServizio, null, null, dati);
+
+					dati = apsHelper.addServiziFruitoriToDati(dati, provider, this.wsdlimpler, this.wsdlimplfru, soggettiList, soggettiListLabel, idServizio,
+							idServizioFruitore,tipoOp, idSoggettoErogatoreDelServizio, "", "", nomeservizio, tiposervizio, versioneservizio, correlato,
 							statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
 							null,null);
 
-					dati = apsHelper.addFruitoreToDati(TipoOperazione.CHANGE, versioniLabel, versioniValues, profilo, clientAuth, dati, 
+					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, profilo, clientAuth, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio,
 							nomeservizio, tiposervizio, versioneservizio, provider);
 
@@ -535,7 +637,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
 								url, nome,
 								tipo, user, password, initcont, urlpgk, provurl,
-								connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,TipoOperazione.CHANGE, httpsurl,
+								connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
 								httpstipologia, httpshostverify, httpspath, httpstipo,
 								httpspwd, httpsalgoritmo, httpsstato, httpskeystore,
 								httpspwdprivatekeytrust, httpspathkey, httpstipokey,
@@ -551,6 +653,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						//spostato nell'helper
 					}
 
+					// aggiunta campi custom
+					dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+
 					pd.setDati(dati);
 
 					if(apsCore.isShowGestioneWorkflowStatoDocumenti() && StatiAccordo.finale.toString().equals(servFru.getStatoPackage())){
@@ -565,10 +670,10 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = apsHelper.serviziFruitoriCheckData(TipoOperazione.CHANGE,
+			boolean isOk = apsHelper.serviziFruitoriCheckData(tipoOp,
 					soggettiList, idServizio, "", "", null, "", "", provider,
 					endpointtype, url, nome, tipo, user, password, initcont,
-					urlpgk, provurl, connfact, sendas, "", "",
+					urlpgk, provurl, connfact, sendas, this.wsdlimpler, this.wsdlimplfru,
 					idServizioFruitore, profilo, httpsurl,
 					httpstipologia, httpshostverify, httpspath, httpstipo,
 					httpspwd, httpsalgoritmo, httpsstato, httpskeystore,
@@ -578,6 +683,28 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 					listExtendedConnettore);
+
+			// Validazione base dei parametri custom 
+			if(isOk){
+				try{
+					apsHelper.validaProtocolProperties(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
+				}catch(ProtocolException e){
+					pd.setMessage(e.getMessage());
+					isOk = false;
+				}
+			}
+
+			// Valido i parametri custom se ho gia' passato tutta la validazione prevista
+			if(isOk){
+				try{
+					//validazione campi dinamici
+					this.consoleDynamicConfiguration.validateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.protocolProperties, this.registryReader, idFruizione);
+				}catch(ProtocolException e){
+					pd.setMessage(e.getMessage());
+					isOk = false;
+				}
+			}
+
 			if (!isOk) {
 				// setto la barra del titolo
 				List<Parameter> lstParm = new ArrayList<Parameter>();
@@ -589,7 +716,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ idServizio),
 						new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+ idSoggettoErogatoreDelServizio)
 						));
-				lstParm.add(new Parameter(tipofru + "/" + nomefru, null));
+				lstParm.add(new Parameter(fruitoreLabel, null));
 
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParm );
@@ -599,20 +726,23 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idServizio, null, null, dati);
+				// update della configurazione 
+				this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idFruizione);
 
-				dati = apsHelper.addServiziFruitoriToDati(dati, provider, "", "", soggettiList, soggettiListLabel, idServizio,
-						idServizioFruitore, TipoOperazione.CHANGE, idSoggettoErogatoreDelServizio, "", "", nomeservizio, tiposervizio, versioneservizio,  correlato,
+				dati = apsHelper.addHiddenFieldsToDati(tipoOp, idServizio, null, null, dati);
+
+				dati = apsHelper.addServiziFruitoriToDati(dati, provider, this.wsdlimpler, this.wsdlimplfru, soggettiList, soggettiListLabel, idServizio,
+						idServizioFruitore, tipoOp, idSoggettoErogatoreDelServizio, "", "", nomeservizio, tiposervizio, versioneservizio,  correlato,
 						statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,null,null);
 
-				dati = apsHelper.addFruitoreToDati(TipoOperazione.CHANGE, versioniLabel, versioniValues, profiloValue, clientAuth, dati, 
+				dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, profiloValue, clientAuth, dati, 
 						oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, provider);
 
 				if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
 							url, nome,
 							tipo, user, password, initcont, urlpgk, provurl,
-							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,TipoOperazione.CHANGE, httpsurl,
+							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
 							httpstipologia, httpshostverify, httpspath, httpstipo,
 							httpspwd, httpsalgoritmo, httpsstato, httpskeystore,
 							httpspwdprivatekeytrust, httpspathkey, httpstipokey,
@@ -627,6 +757,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				}else{
 					//spostato nell'helper
 				}
+
+				// aggiunta campi custom
+				dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 
 				pd.setDati(dati);
 
@@ -649,28 +782,31 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ idServizio),
 							new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+ idSoggettoErogatoreDelServizio)
 							));
-					lstParm.add(new Parameter(tipofru + "/" + nomefru, null));
+					lstParm.add(new Parameter(fruitoreLabel, null));
 
 					// setto la barra del titolo
 					ServletUtils.setPageDataTitle(pd, lstParm );
-					
+
 					// preparo i campi
 					Vector<DataElement> dati = new Vector<DataElement>();
 
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-					dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idServizio, null, null, dati);
-					
-					dati = apsHelper.addServiziFruitoriToDatiAsHidden(dati, provider, "", "", soggettiList, soggettiListLabel, idServizio,
-							idServizioFruitore, TipoOperazione.CHANGE, idSoggettoErogatoreDelServizio, "", "", nomeservizio, tiposervizio,  correlato,statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti);
+					// update della configurazione 
+					this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idFruizione);
 
-					dati = apsHelper.addFruitoreToDatiAsHidden(TipoOperazione.CHANGE, versioniLabel, versioniValues, profiloValue, clientAuth, dati, 
+					dati = apsHelper.addHiddenFieldsToDati(tipoOp, idServizio, null, null, dati);
+
+					dati = apsHelper.addServiziFruitoriToDatiAsHidden(dati, provider, "", "", soggettiList, soggettiListLabel, idServizio,
+							idServizioFruitore, tipoOp, idSoggettoErogatoreDelServizio, "", "", nomeservizio, tiposervizio,  correlato,statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti);
+
+					dati = apsHelper.addFruitoreToDatiAsHidden(tipoOp, versioniLabel, versioniValues, profiloValue, clientAuth, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, provider);
 
 					if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
 						dati = apsHelper.addEndPointToDatiAsHidden(dati, endpointtype, url, nome,
 								tipo, user, password, initcont, urlpgk, provurl,
-								connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,TipoOperazione.CHANGE, httpsurl,
+								connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
 								httpstipologia, httpshostverify, httpspath, httpstipo,
 								httpspwd, httpsalgoritmo, httpsstato, httpskeystore,
 								httpspwdprivatekeytrust, httpspathkey, httpstipokey,
@@ -681,14 +817,16 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					}else{
 						//spostato nell'helper
 					}
-					
+
+					// aggiunta campi custom
+					dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
 
 					String msg = "&Egrave; stato richiesto di ripristinare lo stato dell soggetto fruitore [{0}] in operativo. Tale operazione permetter&agrave; successive modifiche all''accordo. Vuoi procedere?";
-					
-					pd.setMessage(MessageFormat.format(msg, tipofru + "/" + nomefru));
-					
+
+					pd.setMessage(MessageFormat.format(msg, fruitoreLabel));
+
 					pd.setDati(dati);
-					
+
 					String[][] bottoni = { 
 							{ Costanti.LABEL_MONITOR_BUTTON_ANNULLA, 
 								Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_PREFIX +
@@ -705,7 +843,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 					return ServletUtils.getStrutsForwardEditModeConfirm(mapping, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI, 
 							ForwardParams.CHANGE());
-					
+
 				}
 			}
 
@@ -713,9 +851,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			Connettore connettoreNew = null;
 			if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
 				connettoreNew = new Connettore();
-				connettoreNew.setNome("CNT_SF_" + tipofru + "/" + nomefru + "_" + tipoSoggettoErogatore + "/" + nomesoggettoErogatore + "_" + tiposervizio + "/" + nomeservizio);
+				connettoreNew.setNome("CNT_SF_" + fruitoreLabel + "_" + tipoSoggettoErogatore + "/" + nomeSoggettoErogatore + "_" + tiposervizio + "/" + nomeservizio);
 				connettoreNew.setId(connettore.getId());
-	
+
 				String oldConnT = connettore.getTipo();
 				if ((connettore.getCustom()!=null && connettore.getCustom()) && !connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS)){
 					// mantengo vecchie proprieta connettore custom
@@ -760,7 +898,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			// Prendo i dati del soggetto erogatore del servizio
 			Soggetto SE = soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggettoErogatoreDelServizio));
 			tipoSoggettoErogatore = SE.getTipo();
-			nomesoggettoErogatore = SE.getNome();
+			nomeSoggettoErogatore = SE.getNome();
 
 			AccordoServizioParteSpecifica serviziosp = apsCore.getAccordoServizioParteSpecifica(idServizioInt);
 
@@ -796,7 +934,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, ""+ idServizio),
 							new Parameter( AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_SOGGETTO_EROGATORE, ""+ idSoggettoErogatoreDelServizio)
 							));
-					lstParm.add(new Parameter(tipofru + "/" + nomefru, null));
+					lstParm.add(new Parameter(fruitoreLabel, null));
 
 					// setto la barra del titolo
 					ServletUtils.setPageDataTitle(pd, lstParm );
@@ -806,14 +944,17 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 					dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-					dati = apsHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idServizio, null, null, dati);
+					// update della configurazione 
+					this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idFruizione);
 
-					dati = apsHelper.addServiziFruitoriToDati(dati, provider, "", "", soggettiList, soggettiListLabel, idServizio, 
-							idServizioFruitore, TipoOperazione.CHANGE, idSoggettoErogatoreDelServizio, "", "", nomeservizio, tiposervizio, versioneservizio,  
+					dati = apsHelper.addHiddenFieldsToDati(tipoOp, idServizio, null, null, dati);
+
+					dati = apsHelper.addServiziFruitoriToDati(dati, provider, this.wsdlimpler, this.wsdlimplfru, soggettiList, soggettiListLabel, idServizio, 
+							idServizioFruitore, tipoOp, idSoggettoErogatoreDelServizio, "", "", nomeservizio, tiposervizio, versioneservizio,  
 							correlato,statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
 							null,null);
 
-					dati = apsHelper.addFruitoreToDati(TipoOperazione.CHANGE, versioniLabel, versioniValues, profiloValue, clientAuth, dati, 
+					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, profiloValue, clientAuth, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, provider);
 
 					if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
@@ -821,7 +962,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 								url,
 								nome, tipo, user, password, initcont, urlpgk,
 								provurl, connfact, sendas,
-								AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,TipoOperazione.CHANGE, httpsurl,
+								AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI,tipoOp, httpsurl,
 								httpstipologia, httpshostverify, httpspath,
 								httpstipo, httpspwd, httpsalgoritmo, httpsstato,
 								httpskeystore, httpspwdprivatekeytrust,
@@ -838,6 +979,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						//spostato nell'helper
 					}
 
+					// aggiunta campi custom
+					dati = apsHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
+
 					pd.setDati(dati);
 
 					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
@@ -847,6 +991,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				}
 			}
 
+			//imposto properties custom
+			fruitore.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolProperties(this.protocolProperties, this.consoleOperationType, oldProtocolPropertyList));
+			
 			serviziosp.addFruitore(fruitore);
 			String superUser = ServletUtils.getUserLoginFromSession(session);
 			apsCore.performUpdateOperation(superUser, apsHelper.smista(), serviziosp);
