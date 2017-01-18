@@ -269,11 +269,11 @@ public class DBUtils {
 //			query = query + " AND servizio_correlato=?";
 			stm=con.prepareStatement(query);
 			stm.setLong(1, idSoggetto);
-			stm.setString(1, tipoServizio);
-			stm.setString(2, nomeServizio);
-			stm.setInt(3, versioneServizio);
+			stm.setString(2, tipoServizio);
+			stm.setString(3, nomeServizio);
+			stm.setInt(4, versioneServizio);
 			if(testServizioNonCorrelato)
-				stm.setString(4, "disabilitato");
+				stm.setString(5, "disabilitato");
 
 			rs=stm.executeQuery();
 
