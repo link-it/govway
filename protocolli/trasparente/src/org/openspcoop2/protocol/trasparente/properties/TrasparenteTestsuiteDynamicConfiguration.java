@@ -23,6 +23,11 @@ package org.openspcoop2.protocol.trasparente.properties;
 import java.util.List;
 
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDAccordoAzione;
+import org.openspcoop2.core.id.IDFruizione;
+import org.openspcoop2.core.id.IDPortType;
+import org.openspcoop2.core.id.IDPortTypeAzione;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.protocol.basic.properties.BasicDynamicConfiguration;
@@ -47,6 +52,8 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 		super(factory);
 	}
 
+	/*** SOGGETTO ***/
+
 	@Override
 	public ConsoleConfiguration getDynamicConfigSoggetto(ConsoleOperationType consoleOperationType,
 			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDSoggetto id)
@@ -69,6 +76,8 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 	}
 
 
+	/*** ACCORDO SERVIZIO PARTE COMUNE ***/
+
 	@Override
 	public ConsoleConfiguration getDynamicConfigAccordoServizioParteComune(ConsoleOperationType consoleOperationType,
 			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDAccordo id)
@@ -78,18 +87,194 @@ public class TrasparenteTestsuiteDynamicConfiguration extends BasicDynamicConfig
 		return TrasparenteConfigurazioneTest.getDynamicConfigTest(consoleOperationType, consoleInterfaceType, registryReader, this.protocolFactory, protocolPropertyList);
 
 	}
-	
+
 	@Override
 	public void updateDynamicConfigAccordoServizioParteComune(ConsoleConfiguration consoleConfiguration,
 			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
 			ProtocolProperties properties, IRegistryReader registryReader, IDAccordo id) throws ProtocolException {
 		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleInterfaceType, properties, registryReader);
 	}
-	
+
 	@Override
 	public void validateDynamicConfigAccordoServizioParteComune(ConsoleConfiguration consoleConfiguration,
 			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
 			IDAccordo id) throws ProtocolException {
+		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
+	}
+
+	/*** ACCORDO SERVIZIO COMPOSTO ***/
+
+	@Override
+	public ConsoleConfiguration getDynamicConfigAccordoServizioComposto(ConsoleOperationType consoleOperationType,
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDAccordo id)
+					throws ProtocolException {
+
+		List<ProtocolProperty> protocolPropertyList = null;
+		return TrasparenteConfigurazioneTest.getDynamicConfigTest(consoleOperationType, consoleInterfaceType, registryReader, this.protocolFactory, protocolPropertyList);
+	}
+
+	@Override
+	public void updateDynamicConfigAccordoServizioComposto(ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
+			ProtocolProperties properties, IRegistryReader registryReader, IDAccordo id) throws ProtocolException {
+		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleInterfaceType, properties, registryReader);
+	}
+	
+	@Override
+	public void validateDynamicConfigAccordoServizioComposto(ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
+			IDAccordo id) throws ProtocolException {
+		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
+	}
+
+	/*** AZIONE ACCORDO ***/
+
+	@Override
+	public ConsoleConfiguration getDynamicConfigAzione(ConsoleOperationType consoleOperationType,
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDAccordoAzione id)
+					throws ProtocolException {
+		List<ProtocolProperty> protocolPropertyList = null;
+		return TrasparenteConfigurazioneTest.getDynamicConfigTest(consoleOperationType, consoleInterfaceType, registryReader, this.protocolFactory, protocolPropertyList);
+	}
+
+	@Override
+	public void updateDynamicConfigAzione(ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
+			ProtocolProperties properties, IRegistryReader registryReader, IDAccordoAzione id)
+					throws ProtocolException {
+		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleInterfaceType, properties, registryReader);
+	}
+	
+	@Override
+	public void validateDynamicConfigAzione(ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
+			IDAccordoAzione id) throws ProtocolException {
+		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
+	}
+
+
+	/*** OPERATION PORT TYPE ***/
+
+	@Override
+	public ConsoleConfiguration getDynamicConfigOperation(ConsoleOperationType consoleOperationType,
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDPortTypeAzione id)
+					throws ProtocolException {
+		List<ProtocolProperty> protocolPropertyList = null;
+		return TrasparenteConfigurazioneTest.getDynamicConfigTest(consoleOperationType, consoleInterfaceType, registryReader, this.protocolFactory, protocolPropertyList);
+	}
+
+	@Override
+	public void updateDynamicConfigOperation(ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
+			ProtocolProperties properties, IRegistryReader registryReader, IDPortTypeAzione id)
+					throws ProtocolException {
+		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleInterfaceType, properties, registryReader);
+	}
+	
+	@Override
+	public void validateDynamicConfigOperation(ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
+			IDPortTypeAzione id) throws ProtocolException {
+		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
+	}
+
+
+	/*** PORT TYPE ***/
+
+	@Override
+	public ConsoleConfiguration getDynamicConfigPortType(ConsoleOperationType consoleOperationType,
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDPortType id)
+					throws ProtocolException {
+		List<ProtocolProperty> protocolPropertyList = null;
+		return TrasparenteConfigurazioneTest.getDynamicConfigTest(consoleOperationType, consoleInterfaceType, registryReader, this.protocolFactory, protocolPropertyList);
+	}
+
+	@Override
+	public void updateDynamicConfigPortType(ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
+			ProtocolProperties properties, IRegistryReader registryReader, IDPortType id) throws ProtocolException {
+		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleInterfaceType, properties, registryReader);
+	}
+	
+	@Override
+	public void validateDynamicConfigPortType(ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
+			IDPortType id) throws ProtocolException {
+		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
+	}
+	
+	/*** ACCORDO COOPERAZIONE ***/
+	
+	@Override
+	public ConsoleConfiguration getDynamicConfigAccordoCooperazione(ConsoleOperationType consoleOperationType,
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDAccordo id)
+			throws ProtocolException {
+		List<ProtocolProperty> protocolPropertyList = null;
+		return TrasparenteConfigurazioneTest.getDynamicConfigTest(consoleOperationType, consoleInterfaceType, registryReader, this.protocolFactory, protocolPropertyList);
+	}
+	
+	@Override
+	public void updateDynamicConfigAccordoCooperazione(ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
+			ProtocolProperties properties, IRegistryReader registryReader, IDAccordo id) throws ProtocolException {
+		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleInterfaceType, properties, registryReader);
+	}
+	
+	@Override
+	public void validateDynamicConfigCooperazione(ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
+			IDAccordo id) throws ProtocolException {
+		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
+	}
+	
+	
+	/*** ACCORDI SERVIZIO PARTE SPECIFICA ***/
+	
+	@Override
+	public ConsoleConfiguration getDynamicConfigAccordoServizioParteSpecifica(ConsoleOperationType consoleOperationType,
+			ConsoleInterfaceType consoleInterfaceType, IRegistryReader registryReader, IDServizio id)
+			throws ProtocolException {
+		List<ProtocolProperty> protocolPropertyList = null;
+		return TrasparenteConfigurazioneTest.getDynamicConfigTest(consoleOperationType, consoleInterfaceType, registryReader, this.protocolFactory, protocolPropertyList);
+	}
+	
+	@Override
+	public void updateDynamicConfigAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
+			ProtocolProperties properties, IRegistryReader registryReader, IDServizio id) throws ProtocolException {
+		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleInterfaceType, properties, registryReader);
+	}
+	
+	@Override
+	public void validateDynamicConfigAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
+			IDServizio id) throws ProtocolException {
+		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
+	}
+	
+	
+	/*** FRUITORE ***/
+	
+	@Override
+	public ConsoleConfiguration getDynamicConfigFruizioneAccordoServizioParteSpecifica(
+			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
+			IRegistryReader registryReader, IDFruizione id) throws ProtocolException {
+		List<ProtocolProperty> protocolPropertyList = null;
+		return TrasparenteConfigurazioneTest.getDynamicConfigTest(consoleOperationType, consoleInterfaceType, registryReader, this.protocolFactory, protocolPropertyList);
+	}
+	
+	
+	@Override
+	public void updateDynamicConfigFruizioneAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, ConsoleInterfaceType consoleInterfaceType,
+			ProtocolProperties properties, IRegistryReader registryReader, IDFruizione id) throws ProtocolException {
+		TrasparenteConfigurazioneTest.updateDynamicConfig(consoleConfiguration, consoleOperationType, consoleInterfaceType, properties, registryReader);
+	}
+	
+	@Override
+	public void validateDynamicConfigFruizioneAccordoServizioParteSpecifica(ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, ProtocolProperties properties, IRegistryReader registryReader,
+			IDFruizione id) throws ProtocolException {
 		TrasparenteConfigurazioneTest.validateDynamicConfig(consoleConfiguration, consoleOperationType, properties, registryReader);
 	}
 }
