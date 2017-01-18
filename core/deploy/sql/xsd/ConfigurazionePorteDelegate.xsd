@@ -149,7 +149,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="versione"/>
+                                <linkit:sql-column-mapping name="versione_servizio"/>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

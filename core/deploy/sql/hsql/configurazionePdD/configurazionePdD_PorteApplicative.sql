@@ -14,7 +14,7 @@ CREATE TABLE porte_applicative
 	id_servizio BIGINT,
 	tipo_servizio VARCHAR(255) NOT NULL,
 	servizio VARCHAR(255) NOT NULL,
-	versione INT NOT NULL,
+	versione_servizio INT NOT NULL,
 	id_accordo BIGINT,
 	id_port_type BIGINT,
 	-- azione
@@ -72,7 +72,7 @@ CREATE TABLE porte_applicative
 -- index
 CREATE UNIQUE INDEX index_porte_applicative_1 ON porte_applicative (nome_porta);
 
-ALTER TABLE porte_applicative ALTER COLUMN versione SET DEFAULT 1;
+ALTER TABLE porte_applicative ALTER COLUMN versione_servizio SET DEFAULT 1;
 ALTER TABLE porte_applicative ALTER COLUMN ora_registrazione SET DEFAULT CURRENT_TIMESTAMP;
 
 CREATE TABLE porte_applicative_init_seq (id BIGINT);

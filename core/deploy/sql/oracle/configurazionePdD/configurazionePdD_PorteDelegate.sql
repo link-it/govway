@@ -18,7 +18,7 @@ CREATE TABLE porte_delegate
 	id_servizio NUMBER,
 	tipo_servizio VARCHAR2(255) NOT NULL,
 	nome_servizio VARCHAR2(255) NOT NULL,
-	versione NUMBER NOT NULL,
+	versione_servizio NUMBER NOT NULL,
 	id_accordo NUMBER,
 	id_port_type NUMBER,
 	-- * Azione *
@@ -84,7 +84,7 @@ CREATE TABLE porte_delegate
 );
 
 
-ALTER TABLE porte_delegate MODIFY versione DEFAULT 1;
+ALTER TABLE porte_delegate MODIFY versione_servizio DEFAULT 1;
 ALTER TABLE porte_delegate MODIFY ora_registrazione DEFAULT CURRENT_TIMESTAMP;
 
 CREATE TRIGGER trg_porte_delegate

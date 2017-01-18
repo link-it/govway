@@ -10002,6 +10002,16 @@ IDriverWS ,IMonitoraggioRisorsa{
 				f.setVersioneProtocollo(risultato.getString("profilo"));
 				f.setClientAuth(DriverRegistroServiziDB_LIB.getEnumStatoFunzionalita(risultato.getString("client_auth")));
 				f.setStatoPackage(risultato.getString("stato"));
+				
+				// Protocol Properties
+				try{
+					List<ProtocolProperty> listPP = DriverRegistroServiziDB_LIB.getListaProtocolProperty(f.getId(), ProprietariProtocolProperty.FRUITORE, con, this.tipoDB);
+					if(listPP!=null && listPP.size()>0){
+						for (ProtocolProperty protocolProperty : listPP) {
+							f.addProtocolProperty(protocolProperty);
+						}
+					}
+				}catch(DriverRegistroServiziNotFound dNotFound){}
 			}
 
 			return f;

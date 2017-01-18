@@ -14,7 +14,7 @@ CREATE TABLE porte_applicative
 	id_servizio BIGINT,
 	tipo_servizio VARCHAR(255) NOT NULL,
 	servizio VARCHAR(255) NOT NULL,
-	versione INT NOT NULL DEFAULT 1,
+	versione_servizio INT NOT NULL DEFAULT 1,
 	id_accordo BIGINT,
 	id_port_type BIGINT,
 	-- azione

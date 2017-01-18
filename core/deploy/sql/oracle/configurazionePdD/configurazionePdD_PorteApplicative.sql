@@ -14,7 +14,7 @@ CREATE TABLE porte_applicative
 	id_servizio NUMBER,
 	tipo_servizio VARCHAR2(255) NOT NULL,
 	servizio VARCHAR2(255) NOT NULL,
-	versione NUMBER NOT NULL,
+	versione_servizio NUMBER NOT NULL,
 	id_accordo NUMBER,
 	id_port_type NUMBER,
 	-- azione
@@ -70,7 +70,7 @@ CREATE TABLE porte_applicative
 );
 
 
-ALTER TABLE porte_applicative MODIFY versione DEFAULT 1;
+ALTER TABLE porte_applicative MODIFY versione_servizio DEFAULT 1;
 ALTER TABLE porte_applicative MODIFY ora_registrazione DEFAULT CURRENT_TIMESTAMP;
 
 CREATE TRIGGER trg_porte_applicative

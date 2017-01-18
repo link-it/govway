@@ -18,7 +18,7 @@ CREATE TABLE porte_delegate
 	id_servizio BIGINT,
 	tipo_servizio VARCHAR(255) NOT NULL,
 	nome_servizio VARCHAR(255) NOT NULL,
-	versione INT NOT NULL,
+	versione_servizio INT NOT NULL,
 	id_accordo BIGINT,
 	id_port_type BIGINT,
 	-- * Azione *
@@ -86,7 +86,7 @@ CREATE TABLE porte_delegate
 -- index
 CREATE UNIQUE INDEX index_porte_delegate_1 ON porte_delegate (nome_porta);
 
-ALTER TABLE porte_delegate ALTER COLUMN versione SET DEFAULT 1;
+ALTER TABLE porte_delegate ALTER COLUMN versione_servizio SET DEFAULT 1;
 ALTER TABLE porte_delegate ALTER COLUMN ora_registrazione SET DEFAULT CURRENT_TIMESTAMP;
 
 CREATE TABLE porte_delegate_init_seq (id BIGINT);
