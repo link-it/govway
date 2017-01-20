@@ -1240,4 +1240,115 @@ public class SOAPWithAttachments {
 			data.close();
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	Repository repositorySincronoBodyConPiuChildElement=new Repository();
+	@Test(groups={SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".BODY_CON_PIU_CHILD"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoBodyConPiuChildElement() throws TestSuiteException, IOException, SOAPException{
+		
+		// Creazione client Sincrono
+		ClientSincrono client=new ClientSincrono(this.repositorySincronoBodyConPiuChildElement);
+		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+		client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO);
+		client.connectToSoapEngine();
+		client.setMessageWithAttachmentsFromFile(Utilities.testSuiteProperties.getSoap11WithAttachmentsFileName(), false,addIDUnivoco);
+		
+		// Aggiungo un child al body
+		Message msgSent = client.getSentMessage();
+		msgSent.getSOAPBody().addChildElement("testUlterioreChild", "c1", "http://www.openspcoop2.org/example1");
+		msgSent.getSOAPBody().addChildElement("testUlterioreChild", "c2", "http://www.openspcoop2.org/example2");
+		
+		client.setMessage(msgSent);
+	
+		client.run();
+
+		// Test uguaglianza Body (e attachments)
+		Assert.assertTrue(client.isEqualsSentAndResponseMessage());
+		Assert.assertTrue(client.isEqualsSentAndResponseAttachments());
+		
+	}
+	@DataProvider (name="SincronoBodyConPiuChildElement")
+	public Object[][]testSincronoBodyConPiuChildElement()throws Exception{
+		String id=this.repositorySincronoBodyConPiuChildElement.getNext();
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
+		};
+	}
+	@Test(groups={SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".BODY_CON_PIU_CHILD"},dataProvider="SincronoBodyConPiuChildElement",
+			dependsOnMethods={"sincronoBodyConPiuChildElement"})
+	public void testSincronoBodyConPiuChildElement(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,null , checkServizioApplicativo,null, 
+					SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true, new Integer(2),null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	Repository repositorySincronoBodyVuoto=new Repository();
+	@Test(groups={SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".BODY_VUOTO"},
+			description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void sincronoBodyVuoto() throws TestSuiteException, IOException, SOAPException{
+		
+		// Creazione client Sincrono
+		ClientSincrono client=new ClientSincrono(this.repositorySincronoBodyVuoto);
+		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+		client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_PROFILO_SINCRONO);
+		client.connectToSoapEngine();
+		client.setMessageWithAttachmentsFromFile(Utilities.testSuiteProperties.getSoap11WithAttachmentsFileName(), false,addIDUnivoco);
+		
+		// Rimuovo Body
+		Message msgSent = client.getSentMessage();
+		msgSent.getSOAPBody().removeContents();
+		client.setMessage(msgSent);
+	
+		client.run();
+
+		// Test uguaglianza Body (e attachments)
+		Assert.assertTrue(client.isEqualsSentAndResponseMessage());
+		Assert.assertTrue(client.isEqualsSentAndResponseAttachments());
+		
+	}
+	@DataProvider (name="SincronoBodyVuoto")
+	public Object[][]testSincronoBodyVuoto()throws Exception{
+		String id=this.repositorySincronoBodyVuoto.getNext();
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),id,true}	
+		};
+	}
+	@Test(groups={SOAPWithAttachments.ID_GRUPPO,SOAPWithAttachments.ID_GRUPPO+".BODY_VUOTO"},dataProvider="SincronoBodyVuoto",
+			dependsOnMethods={"sincronoBodyVuoto"})
+	public void testSincronoBodyVuoto(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,null , checkServizioApplicativo,null, 
+					SPCoopCostanti.TIPO_TEMPO_SPC,TipoOraRegistrazione.SINCRONIZZATO,true, new Integer(2),null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
 }
