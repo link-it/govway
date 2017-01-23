@@ -1,0 +1,25 @@
+<Request xmlns="urn:oasis:names:tc:xacml:2.0:context:schema:os">
+	<Subject>
+		<Attribute AttributeId="http://www.openspcoop2.org/esempio/role"
+			DataType="http://www.w3.org/2001/XMLSchema#string">
+			<AttributeValue>cittadino</AttributeValue>
+		</Attribute>
+		<Attribute
+			AttributeId="http://www.openspcoop2.org/esempio/role/cittadino/role-attribute/eta"
+			DataType="http://www.w3.org/2001/XMLSchema#string">
+			<AttributeValue>73</AttributeValue>
+		</Attribute>
+		<Attribute
+			AttributeId="http://www.openspcoop2.org/esempio/role/cittadino/role-attribute/citta"
+			DataType="http://www.w3.org/2001/XMLSchema#string">
+			<AttributeValue>Pisa</AttributeValue>
+		</Attribute>
+	</Subject>
+	<Resource />
+	  <Action>
+	    <Attribute AttributeId="urn:oasis:names:tc:xacml:1.0:action:action-id" DataType="http://www.w3.org/2001/XMLSchema#string">
+	      <AttributeValue>action_0</AttributeValue>
+	    </Attribute>
+	  </Action>
+	<Environment />
+</Request>

@@ -1,0 +1,33 @@
+<Request xmlns="urn:oasis:names:tc:xacml:2.0:context:schema:os">
+	<Subject>
+		<Attribute AttributeId="urn:oasis:names:tc:xacml:1.0:subject:subject-id"
+			DataType="http://www.w3.org/2001/XMLSchema#string"><AttributeValue>CN=PLONDR70C23L8FFE,O=IT,C=IT</AttributeValue></Attribute>
+		<Attribute AttributeId="http://www.openspcoop2.org/esempio/role"
+			DataType="http://www.w3.org/2001/XMLSchema#string">
+			<AttributeValue>ente</AttributeValue>
+		</Attribute>
+		<Attribute
+			AttributeId="http://www.openspcoop2.org/esempio/role/cittadino/role-attribute/eta"
+			DataType="http://www.w3.org/2001/XMLSchema#string">
+			<AttributeValue>73</AttributeValue>
+		</Attribute>
+		<Attribute
+			AttributeId="http://www.openspcoop2.org/esempio/role/cittadino/role-attribute/citta"
+			DataType="http://www.w3.org/2001/XMLSchema#string">
+			<AttributeValue>Pisa</AttributeValue>
+		</Attribute>
+	</Subject>
+	<Resource>
+		<Attribute AttributeId="urn:oasis:names:tc:xacml:1.0:resource:resource-id"
+			DataType="http://www.w3.org/2001/XMLSchema#string">
+			<AttributeValue>localhost:8902:/GC/file.xml</AttributeValue>
+		</Attribute>
+	</Resource>
+	<Action>
+		<Attribute AttributeId="urn:oasis:names:tc:xacml:1.0:resource:resource-id"
+			DataType="http://www.w3.org/2001/XMLSchema#string">
+			<AttributeValue>servizio/azione</AttributeValue>
+		</Attribute>
+	</Action>
+	<Environment />
+</Request>

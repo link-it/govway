@@ -1,0 +1,43 @@
+<Policy PolicyId="Example1Policy"
+	RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:permit-overrides"
+	xmlns="urn:oasis:names:tc:xacml:2.0:policy:schema:os" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="urn:oasis:names:tc:xacml:2.0:policy:schema:os http://docs.oasis-open.org/xacml/2.0/access_control-xacml-2.0-policy-schema-os.xsd">
+	<Target />
+	<Rule Effect="Permit" RuleId="ok">
+		<Condition>
+			<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:or">
+				<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+					<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+						<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">cittadino</AttributeValue>
+						<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
+							<SubjectAttributeDesignator
+								AttributeId="http://www.openspcoop2.org/esempio/role"
+								DataType="http://www.w3.org/2001/XMLSchema#string" />
+						</Apply>
+					</Apply>
+
+					<Apply
+						FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
+						<SubjectAttributeDesignator
+							AttributeId="http://www.openspcoop2.org/esempio/role/cittadino/role-attribute/citta"
+							DataType="http://www.w3.org/2001/XMLSchema#string" />
+						<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-bag">
+							<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Pisa</AttributeValue>
+							<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Milano</AttributeValue>
+						</Apply>
+					</Apply>
+					</Apply>
+					<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+						<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">pensionato
+						</AttributeValue>
+						<Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
+							<SubjectAttributeDesignator
+								AttributeId="http://www.openspcoop2.org/esempio/role"
+								DataType="http://www.w3.org/2001/XMLSchema#string" />
+						</Apply>
+					</Apply>
+				</Apply>
+		</Condition>
+	</Rule>
+	<Rule Effect="Deny" RuleId="ko" />
+</Policy>

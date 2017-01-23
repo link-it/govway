@@ -141,6 +141,7 @@
         <archive path="/op2_3.0.dev/lib/security/neethi-3.0.3.jar"/>
         <archive path="/op2_3.0.dev/lib/security/bcprov-ext-jdk15on-155.jar"/>
 	<archive path="/op2_3.0.dev/lib/security/bcpkix-jdk15on-155.jar"/>
+	<archive path="/op2_2.3.dev/lib/security/herasaf-xacml-core-1.0.4.RELEASE.jar"/>
 	<!-- shared -->
         <archive path="/op2_3.0.dev/lib/shared/xom-1.2.10.jar"/>
         <archive path="/op2_3.0.dev/lib/shared/xmldb.jar"/>
