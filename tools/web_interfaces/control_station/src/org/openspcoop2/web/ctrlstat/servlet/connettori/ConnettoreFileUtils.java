@@ -31,8 +31,8 @@ import org.openspcoop2.web.lib.mvc.ServletUtils;
  * ConnettoreFileUtils
  *
  * @author Andrea Poli (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 12572 $, $Date: 2017-01-11 17:34:30 +0100 (Wed, 11 Jan 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class ConnettoreFileUtils {
 

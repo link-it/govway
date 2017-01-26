@@ -1660,7 +1660,7 @@ public class InoltroBuste extends GenericLib{
 			// Location
 			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connettoreMsg, bustaRichiesta, pddContext, protocolFactory, this.log);
 			if(location!=null){
-				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(requestMessage, connettoreMsg.getPropertiesUrlBased(), location);
+				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(requestMessage, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location);
 				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(connettoreMsg.getTipoConnettore(), connettoreMsg.getConnectorProperties(), locationWithUrl);
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, locationWithUrl));
 			}
@@ -1848,7 +1848,7 @@ public class InoltroBuste extends GenericLib{
 			// L'handler puo' aggiornare le properties che contengono le proprieta' del connettore.
 			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connettoreMsg, bustaRichiesta, pddContext, protocolFactory, this.log);
 			if(location!=null){
-				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(requestMessage, connettoreMsg.getPropertiesUrlBased(), location);
+				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(requestMessage, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location);
 				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(connettoreMsg.getTipoConnettore(), connettoreMsg.getConnectorProperties(), locationWithUrl);
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, locationWithUrl));
 			}

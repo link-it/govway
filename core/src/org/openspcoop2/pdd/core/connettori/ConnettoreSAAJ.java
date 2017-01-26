@@ -65,6 +65,9 @@ import org.openspcoop2.utils.transport.http.RFC2047Utilities;
 
 public class ConnettoreSAAJ extends ConnettoreBase {
 
+	public static final String ENDPOINT_TYPE = "saaj";
+	
+
 	/** Connessione */
 	private SOAPConnection connection = null;
 
@@ -139,7 +142,7 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 			if(this.debug)
 				this.logger.debug("Check validita URL...");
 			this.location = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);
-			this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, this.propertiesUrlBased, this.location);
+			this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, ENDPOINT_TYPE, this.propertiesUrlBased, this.location);
 			
 			// Check tipo di messaggio
 			if(ServiceBinding.SOAP.equals(this.requestMsg.getServiceBinding())==false){

@@ -15,6 +15,11 @@
         <azione nome="AffidabileConScadenza" conferma-ricezione="abilitato" scadenza="1"/>
         <azione nome="ConsegnaInOrdine" conferma-ricezione="abilitato" filtro-duplicati="abilitato"
             id-collaborazione="abilitato" consegna-in-ordine="abilitato"/>
+	<!-- FILE -->
+	<azione nome="serializeFile"/>
+	<azione nome="serializeFileAndHeaders"/>
+	<azione nome="serializeDynamicFile"/>
+	<azione nome="serializeFile_sbustamentoSOAP"/>
         <!-- JMS -->
         <azione nome="sendTextOnQueueJMS"/>
         <azione nome="sendBytesOnQueueJMS"/>
@@ -205,6 +210,12 @@
         <!-- TunnelSOAP -->
         <azione nome="allegaBody"/>
         <azione nome="scartaBody"/>
+	<!-- FILE -->
+	<azione nome="serializeAndReturnFile"/>
+	<azione nome="serializeAndReturnFileAndHeaders"/>
+	<azione nome="serializeAndReturnDynamicFile"/>
+	<azione nome="serializeAndReturnFile_sbustamentoSOAP"/>
+	<azione nome="serializeAndReturnFileAsync"/>
         <!-- SAAJ -->
         <azione nome="saaj"/>
         <!-- HTTP-CORE -->

@@ -65,7 +65,7 @@ import org.openspcoop2.utils.date.DateManager;
  */
 public class ConnettoreStresstest extends ConnettoreBase {
 
-	public final static String TIPO = "stresstest";
+	public final static String ENDPOINT_TYPE = "stresstest";
 	
 	public final static String LOCATION = "openspcoop2://stresstest";
 	
@@ -282,7 +282,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
      */
     @Override
 	public String getLocation() throws ConnettoreException {
-    	return ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, this.propertiesUrlBased, LOCATION);
+    	return ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, ConnettoreStresstest.ENDPOINT_TYPE, this.propertiesUrlBased, LOCATION);
     }
  
     

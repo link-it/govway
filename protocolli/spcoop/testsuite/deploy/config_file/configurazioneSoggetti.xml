@@ -2459,6 +2459,55 @@
             <servizio-applicativo nome="silX" />
         </porta-delegata>
         
+	<!-- ConsegnaApplicativa con connettore di tipo FILE -->
+	<porta-delegata gestione-manifest="abilitato" nome="serializeFile" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" stateless="abilitato" >
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />              
+            <servizio tipo="SPC" nome="ComunicazioneVariazione" />
+            <azione nome="serializeFile" />
+        </porta-delegata>
+	<porta-delegata gestione-manifest="abilitato" nome="serializeFileAndHeaders" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" stateless="abilitato" >
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />              
+            <servizio tipo="SPC" nome="ComunicazioneVariazione" />
+            <azione nome="serializeFileAndHeaders" />
+        </porta-delegata>
+	<porta-delegata gestione-manifest="abilitato" nome="serializeDynamicFile" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" stateless="abilitato" >
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />              
+            <servizio tipo="SPC" nome="ComunicazioneVariazione" />
+            <azione nome="serializeDynamicFile" />
+        </porta-delegata>
+	<porta-delegata gestione-manifest="abilitato" nome="serializeFile_sbustamentoSOAP" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" stateless="abilitato" >
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />              
+            <servizio tipo="SPC" nome="ComunicazioneVariazione" />
+            <azione nome="serializeFile_sbustamentoSOAP" />
+        </porta-delegata>
+
+	<porta-delegata gestione-manifest="abilitato" nome="serializeAndReturnFile" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" stateless="abilitato" >
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />              
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="serializeAndReturnFile" />
+        </porta-delegata>
+	<porta-delegata gestione-manifest="abilitato" nome="serializeAndReturnFileAndHeaders" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" stateless="abilitato" >
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />              
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="serializeAndReturnFileAndHeaders" />
+        </porta-delegata>
+	<porta-delegata gestione-manifest="abilitato" nome="serializeAndReturnDynamicFile" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" stateless="abilitato" >
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />              
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="serializeAndReturnDynamicFile" />
+        </porta-delegata>
+	<porta-delegata gestione-manifest="abilitato" nome="serializeAndReturnFile_sbustamentoSOAP" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" stateless="abilitato" >
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />              
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="serializeAndReturnFile_sbustamentoSOAP" />
+        </porta-delegata>
+	<porta-delegata gestione-manifest="abilitato" nome="serializeAndReturnFileAsync" autenticazione="basic" autorizzazione="openspcoop" integrazione="trasporto,urlBased,soap" stateless="disabilitato" >
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />              
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="serializeAndReturnFileAsync" />
+	    <servizio-applicativo nome="fruitoreSerializeAndReturnFileAsync" />
+        </porta-delegata>
+
         <!-- ConsegnaApplicativa con connettore di tipo JMS -->
         <porta-delegata gestione-manifest="abilitato" nome="sendTextOnQueueJMS" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />              
@@ -3986,7 +4035,22 @@
                 </connettore>
             </risposta-asincrona>
         </servizio-applicativo>
-        
+
+	<!-- Servizi Applicativi che possiedono una consegna asincrona per il mittente -->
+	<servizio-applicativo nome="fruitoreSerializeAndReturnFileAsync" >
+            <invocazione-porta >
+                <credenziali tipo="basic" user="fruitoreSerializeAndReturnFileAsync" password="123456" />
+            </invocazione-porta>
+            <risposta-asincrona get-message="abilitato" >
+		<connettore tipo="file" nome="serializeAndReturnFileAsync">
+		    <!-- Conterra il msg di risposta: /etc/openspcoop2/testfiles/requestSenzaHeader.xml -->
+                    <property nome="outputFile" valore="/var/tmp/TEST/ASYNC/RES.xml" />
+		    <property nome="outputFileAutoCreateParentDirectory" valore="abilitato" />
+		    <property nome="outputFileOverwriteIfExists" valore="abilitato" />
+		    <property nome="response" valore="disabilitato" />
+                </connettore>
+            </risposta-asincrona>
+        </servizio-applicativo>
         
         
         <!--servizio definito a posta per la testsuite per la ricevuta del messaggio su una determinata porta su wss-Security-->
@@ -6354,6 +6418,54 @@
         
         <!-- Funzionalita' di integrazione della porta di dominio OpenSPCoop -->
         
+	<!-- ConsegnaApplicativa con connettore di tipo FILE -->
+	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeFile" stateless="abilitato" >
+            <servizio tipo="SPC" nome="ComunicazioneVariazione" />
+            <azione nome="serializeFile" />
+            <servizio-applicativo nome="serializeFile" />
+        </porta-applicativa>
+	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeFileAndHeaders" stateless="abilitato" >
+            <servizio tipo="SPC" nome="ComunicazioneVariazione" />
+            <azione nome="serializeFileAndHeaders" />
+            <servizio-applicativo nome="serializeFileAndHeaders" />
+        </porta-applicativa>
+	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeDynamicFile" stateless="abilitato" >
+            <servizio tipo="SPC" nome="ComunicazioneVariazione" />
+            <azione nome="serializeDynamicFile" />
+            <servizio-applicativo nome="serializeDynamicFile" />
+        </porta-applicativa>
+	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeFile_sbustamentoSOAP" stateless="abilitato" >
+            <servizio tipo="SPC" nome="ComunicazioneVariazione" />
+            <azione nome="serializeFile_sbustamentoSOAP" />
+            <servizio-applicativo nome="serializeFile_sbustamentoSOAP" />
+        </porta-applicativa>
+
+	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeAndReturnFile" stateless="abilitato" >
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="serializeAndReturnFile" />
+            <servizio-applicativo nome="serializeAndReturnFile" />
+        </porta-applicativa>
+	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeAndReturnFileAndHeaders" stateless="abilitato" >
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="serializeAndReturnFileAndHeaders" />
+            <servizio-applicativo nome="serializeAndReturnFileAndHeaders" />
+        </porta-applicativa>
+	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeAndReturnDynamicFile" stateless="abilitato" >
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="serializeAndReturnDynamicFile" />
+            <servizio-applicativo nome="serializeAndReturnDynamicFile" />
+        </porta-applicativa>
+	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeAndReturnFile_sbustamentoSOAP" stateless="abilitato" >
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="serializeAndReturnFile_sbustamentoSOAP" />
+            <servizio-applicativo nome="serializeAndReturnFile_sbustamentoSOAP" />
+        </porta-applicativa>
+	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeAndReturnFileAsync" stateless="abilitato" integrazione="trasporto" >
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="serializeAndReturnFileAsync" />
+            <servizio-applicativo nome="serializeAndReturnFileAsync" />
+        </porta-applicativa>
+
         <!-- ConsegnaApplicativa con connettore di tipo JMS -->
         <porta-applicativa gestione-manifest="abilitato" nome="PA_sendTextOnQueueJMS">
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
@@ -7596,6 +7708,110 @@
             </invocazione-servizio>  
         </servizio-applicativo>
         
+	<!-- ConsegnaApplicativa con connettore di tipo FILE -->
+        <servizio-applicativo nome="serializeFile" > 
+            <invocazione-servizio>
+                <connettore tipo="file" nome="serializeFile">
+                    <property nome="outputFile" valore="/var/tmp/TEST/ONEWAY/REQ.xml" />
+		    <property nome="outputFileAutoCreateParentDirectory" valore="abilitato" />
+		    <property nome="outputFileOverwriteIfExists" valore="abilitato" />
+                </connettore>
+            </invocazione-servizio>  
+        </servizio-applicativo>
+        <servizio-applicativo nome="serializeFileAndHeaders" > 
+            <invocazione-servizio>
+                <connettore tipo="file" nome="serializeFileAndHeaders">
+                    <property nome="outputFile" valore="/var/tmp/TEST/ONEWAY_HDR/REQ.xml" />
+		    <property nome="outputFileHeaders" valore="/var/tmp/TEST/ONEWAY_HDR/REQ.meta" />
+		    <property nome="outputFileAutoCreateParentDirectory" valore="abilitato" />
+		    <property nome="outputFileOverwriteIfExists" valore="abilitato" />
+                </connettore>
+            </invocazione-servizio>  
+        </servizio-applicativo>
+	<servizio-applicativo nome="serializeDynamicFile" > 
+            <invocazione-servizio>
+                <connettore tipo="file" nome="serializeDynamicFile">
+                    <property nome="outputFile" valore="/var/tmp/TEST/ONEWAY/{date:yyyyMMdd_hhmmssSSS}/REQ_{transaction:id}_{context:PROTOCOLLO}.xml" />
+		    <property nome="outputFileHeaders" valore="/var/tmp/TEST/ONEWAY/{date:yyyyMMdd_hhmmssSSS}/REQ_{busta:tipoMittente}{busta:busta.mittente.identificativo.base}.meta" />
+		    <property nome="outputFileAutoCreateParentDirectory" valore="abilitato" />
+		    <property nome="outputFileOverwriteIfExists" valore="abilitato" />
+                </connettore>
+            </invocazione-servizio>  
+        </servizio-applicativo>
+        <servizio-applicativo nome="serializeFile_sbustamentoSOAP" > 
+            <invocazione-servizio sbustamento-soap="abilitato">
+                <connettore tipo="file" nome="serializeFile_sbustamentoSOAP">
+                    <property nome="outputFile" valore="/var/tmp/TEST/ONEWAY/SBUSTATO/REQ.xml" />
+		    <property nome="outputFileAutoCreateParentDirectory" valore="abilitato" />
+		    <property nome="outputFileOverwriteIfExists" valore="abilitato" />
+                </connettore>
+            </invocazione-servizio>  
+        </servizio-applicativo>
+
+        <servizio-applicativo nome="serializeAndReturnFile" > 
+            <invocazione-servizio>
+                <connettore tipo="file" nome="serializeAndReturnFile">
+                    <property nome="outputFile" valore="/var/tmp/TEST/SINCRONO/REQ.xml" />
+		    <property nome="outputFileAutoCreateParentDirectory" valore="abilitato" />
+		    <property nome="outputFileOverwriteIfExists" valore="abilitato" />
+		    <property nome="response" valore="abilitato" />
+		    <property nome="inputFile" valore="/etc/openspcoop2/testfiles/requestSenzaHeader.xml" />
+                </connettore>
+            </invocazione-servizio>  
+        </servizio-applicativo>
+        <servizio-applicativo nome="serializeAndReturnFileAndHeaders" > 
+            <invocazione-servizio>
+                <connettore tipo="file" nome="serializeAndReturnFileAndHeaders">
+                    <property nome="outputFile" valore="/var/tmp/TEST/SINCRONO_HDR/REQ.xml" />
+		    <property nome="outputFileHeaders" valore="/var/tmp/TEST/SINCRONO_HDR/REQ.meta" />
+		    <property nome="outputFileAutoCreateParentDirectory" valore="abilitato" />
+		    <property nome="outputFileOverwriteIfExists" valore="abilitato" />
+		    <property nome="response" valore="abilitato" />
+		    <property nome="inputFile" valore="/etc/openspcoop2/testfiles/requestSenzaHeader.xml" />
+		    <property nome="inputFileHeaders" valore="/etc/openspcoop2/testfiles/header.properties" />
+                </connettore>
+            </invocazione-servizio>  
+        </servizio-applicativo>
+	<servizio-applicativo nome="serializeAndReturnDynamicFile" > 
+            <invocazione-servizio>
+                <connettore tipo="file" nome="serializeAndReturnDynamicFile">
+                    <property nome="outputFile" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmssSSS}/REQ_{transaction:id}_{context:PROTOCOLLO}.xml" />
+		    <property nome="outputFileHeaders" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmssSSS}/REQ_{busta:tipoMittente}{busta:busta.mittente.identificativo.base}.meta" />
+		    <property nome="outputFileAutoCreateParentDirectory" valore="abilitato" />
+		    <property nome="outputFileOverwriteIfExists" valore="abilitato" />
+		    <property nome="response" valore="abilitato" />
+		    <!-- echo -->
+		    <property nome="inputFile" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmssSSS}/REQ_{transaction:id}_{context:PROTOCOLLO}.xml" />
+		    <property nome="inputFileHeaders" valore="/var/tmp/TEST/SINCRONO/{date:yyyyMMdd_hhmmssSSS}/REQ_{busta:tipoMittente}{busta:busta.mittente.identificativo.base}.meta" />
+		    <property nome="inputFileWaitTimeIfNotExists" valore="10000" />
+                </connettore>
+            </invocazione-servizio>  
+        </servizio-applicativo>
+        <servizio-applicativo nome="serializeAndReturnFile_sbustamentoSOAP" > 
+            <invocazione-servizio sbustamento-soap="abilitato">
+                <connettore tipo="file" nome="serializeAndReturnFile_sbustamentoSOAP">
+                    <property nome="outputFile" valore="/var/tmp/TEST/SINCRONO/SBUSTATO/REQ.xml" />
+		    <property nome="outputFileAutoCreateParentDirectory" valore="abilitato" />
+		    <property nome="outputFileOverwriteIfExists" valore="abilitato" />
+		    <property nome="response" valore="abilitato" />
+		    <property nome="inputFile" valore="/etc/openspcoop2/testfiles/requestBody.xml" />
+                </connettore>
+            </invocazione-servizio>  
+        </servizio-applicativo>
+        <servizio-applicativo nome="serializeAndReturnFileAsync" > 
+            <invocazione-servizio>
+                <connettore tipo="file" nome="serializeAndReturnFileAsync">
+                    <property nome="outputFile" valore="/var/tmp/TEST/ASYNC/REQ.xml" />
+		    <property nome="outputFileAutoCreateParentDirectory" valore="abilitato" />
+		    <property nome="outputFileOverwriteIfExists" valore="abilitato" />
+		    <property nome="response" valore="abilitato" />
+		    <property nome="inputFile" valore="/etc/openspcoop2/testfiles/requestSenzaHeader.xml" />
+                </connettore>
+            </invocazione-servizio>  
+        </servizio-applicativo>
+
+
+
         <!-- JMS -->
         <servizio-applicativo nome="PubbTestQueueAsText" >
             <invocazione-servizio>

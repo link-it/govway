@@ -1113,10 +1113,15 @@ public class EJBUtils {
 					throw new Exception("Identificativo non costruito.");
 				}  
 				msgSbloccoRicezioneContenutiApplicativi = new GestoreMessaggi(this.openSPCoopState, false, idSbloccoRicezioneContenutiApplicativi,Costanti.INBOX,this.msgDiag,this.pddContext);
+				RequestInfo requestInfo = (RequestInfo) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+				MessageType msgTypeSblocco = requestInfo.getIntegrationRequestMessageType();
+				if(msgTypeSblocco==null){
+					throw new Exception("Versione messaggio non definita");
+				}
 				if(this.protocolManager.isHttpEmptyResponseOneWay())
-					msgSbloccoRicezioneContenutiApplicativi.registraMessaggio(MessageUtilities.buildEmptyMessage(msg.getMessageType(), MessageRole.RESPONSE),correlazioneApplicativa,correlazioneApplicativaRisposta);
+					msgSbloccoRicezioneContenutiApplicativi.registraMessaggio(MessageUtilities.buildEmptyMessage(msgTypeSblocco, MessageRole.RESPONSE),correlazioneApplicativa,correlazioneApplicativaRisposta);
 				else
-					msgSbloccoRicezioneContenutiApplicativi.registraMessaggio(this.buildOpenSPCoopOK(msg.getMessageType(),this.idSessione),correlazioneApplicativa,correlazioneApplicativaRisposta);
+					msgSbloccoRicezioneContenutiApplicativi.registraMessaggio(this.buildOpenSPCoopOK(msgTypeSblocco,this.idSessione),correlazioneApplicativa,correlazioneApplicativaRisposta);
 				msgSbloccoRicezioneContenutiApplicativi.aggiornaRiferimentoMessaggio(this.idSessione);
 				//	--- Aggiorno Proprietario
 				msgSbloccoRicezioneContenutiApplicativi.aggiornaProprietarioMessaggio(idModuloInAttesa);

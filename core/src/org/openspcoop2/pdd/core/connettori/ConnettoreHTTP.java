@@ -45,6 +45,7 @@ import javax.net.ssl.SSLContext;
 import org.apache.soap.encoding.soapenc.Base64;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
@@ -313,7 +314,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 				this.logger.debug("Creazione URL...");
 
 			this.location = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);			
-			this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, this.propertiesUrlBased, this.location);			
+			this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, TipiConnettore.HTTP.toString(), this.propertiesUrlBased, this.location);			
 			if(this.debug)
 				this.logger.debug("Creazione URL ["+this.location+"]...");
 			URL url = new URL( this.location );	

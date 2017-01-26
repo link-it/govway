@@ -64,7 +64,7 @@ public class ConnettoreUtils {
 		else if(TipiConnettore.NULLECHO.getNome().equals(connettoreMsg.getTipoConnettore())){
 			location = ConnettoreNULLEcho.LOCATION;
 		}
-		else if(ConnettoreStresstest.TIPO.equals(connettoreMsg.getTipoConnettore())){
+		else if(ConnettoreStresstest.ENDPOINT_TYPE.equals(connettoreMsg.getTipoConnettore())){
 			location = ConnettoreStresstest.LOCATION;
 		}
 		else if(TipiConnettore.FILE.getNome().equals(connettoreMsg.getTipoConnettore())){
@@ -124,39 +124,47 @@ public class ConnettoreUtils {
 		return location;
 	}
 	
-	public static String buildLocationWithURLBasedParameter(OpenSPCoop2Message msg, Properties propertiesURLBased, String locationParam) throws ConnettoreException{
+	public static String buildLocationWithURLBasedParameter(OpenSPCoop2Message msg, String tipoConnettore, Properties propertiesURLBased, String locationParam) throws ConnettoreException{
 		
-		try{
-		
-			Properties p = propertiesURLBased;
-			if(msg.getForwardUrlProperties()!=null && msg.getForwardUrlProperties().size()>0){
-				if(p==null){
-					p = new Properties();
-				}
-				Enumeration<?> keys = msg.getForwardUrlProperties().getKeys();
-				while (keys.hasMoreElements()) {
-					String key = (String) keys.nextElement();
-					String value = msg.getForwardUrlProperties().getProperty(key);
-					if(value!=null){
-						if(p.containsKey(key)){
-							p.remove(key);
+		if(TipiConnettore.HTTP.toString().equals(tipoConnettore) || 
+				TipiConnettore.HTTPS.toString().equals(tipoConnettore) ||
+				ConnettoreHTTPCORE.ENDPOINT_TYPE.equals(tipoConnettore) ||
+				ConnettoreSAAJ.ENDPOINT_TYPE.equals(tipoConnettore)  ||
+				ConnettoreStresstest.ENDPOINT_TYPE.equals(tipoConnettore)){
+	
+			try{
+			
+				Properties p = propertiesURLBased;
+				if(msg.getForwardUrlProperties()!=null && msg.getForwardUrlProperties().size()>0){
+					if(p==null){
+						p = new Properties();
+					}
+					Enumeration<?> keys = msg.getForwardUrlProperties().getKeys();
+					while (keys.hasMoreElements()) {
+						String key = (String) keys.nextElement();
+						String value = msg.getForwardUrlProperties().getProperty(key);
+						if(value!=null){
+							if(p.containsKey(key)){
+								p.remove(key);
+							}
+							p.setProperty(key, value);
 						}
-						p.setProperty(key, value);
 					}
 				}
+				
+				String location = locationParam;
+				if(ServiceBinding.REST.equals(msg.getServiceBinding())){
+					return RestUtilities.buildUrl(location, p, msg.getTransportRequestContext());
+				}
+				else{
+					return TransportUtils.buildLocationWithURLBasedParameter(p, location, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
+				}
+				
+			}catch(Exception e){
+				throw new ConnettoreException(e.getMessage(),e);
 			}
-			
-			String location = locationParam;
-			if(ServiceBinding.REST.equals(msg.getServiceBinding())){
-				return RestUtilities.buildUrl(location, p, msg.getTransportRequestContext());
-			}
-			else{
-				return TransportUtils.buildLocationWithURLBasedParameter(p, location, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
-			}
-			
-		}catch(Exception e){
-			throw new ConnettoreException(e.getMessage(),e);
 		}
+		return locationParam;
 	}
 
 	public static String limitLocation255Character(String location){

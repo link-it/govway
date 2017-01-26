@@ -863,6 +863,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			try{
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getConsegnaRispostaAsincrona) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
 				connettoreMsg = configurazionePdDManager.getConsegnaRispostaAsincrona(sa,richiestaDelegata);
+				if(Costanti.SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI.equals(scenarioCooperazione)){
+					connettoreMsg.setCheckPresenzaHeaderPrimaSbustamento(true);
+				}
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getTipoValidazioneContenutoApplicativo) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
 				validazioneContenutoApplicativoApplicativo = configurazionePdDManager.getTipoValidazioneContenutoApplicativo(pd,implementazionePdDMittente);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getGestioneErroreConnettore_RispostaAsincrona) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
@@ -1343,7 +1346,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			// Location
 			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connettoreMsg, bustaRichiesta, pddContext, protocolFactory,  this.log);
 			if(location!=null){
-				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(consegnaMessage, connettoreMsg.getPropertiesUrlBased(), location);
+				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(consegnaMessage, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location);
 				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(connettoreMsg.getTipoConnettore(), connettoreMsg.getConnectorProperties(), locationWithUrl);
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, locationWithUrl));
 			}
@@ -1540,7 +1543,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			// L'handler puo' aggiornare le properties che contengono le proprieta' del connettore.
 			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connettoreMsg, bustaRichiesta, pddContext, protocolFactory, this.log);
 			if(location!=null){
-				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(consegnaMessage, connettoreMsg.getPropertiesUrlBased(), location);
+				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(consegnaMessage, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location);
 				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(connettoreMsg.getTipoConnettore(), connettoreMsg.getConnectorProperties(), locationWithUrl);
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, locationWithUrl));
 			}

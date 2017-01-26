@@ -435,7 +435,9 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
      */
     @Override
 	public String getLocation() throws ConnettoreException {
-    	return ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, this.propertiesUrlBased, LOCATION);
+    	// Il connettore NULL_ECHO ho possiede possibilita' di consegnare su di una url
+    	//return ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, this.propertiesUrlBased, LOCATION);
+    	return LOCATION;
     }
     
 }

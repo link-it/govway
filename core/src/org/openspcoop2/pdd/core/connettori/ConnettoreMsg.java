@@ -269,16 +269,29 @@ public class ConnettoreMsg  {
 	 * 
 	 */  
 	private boolean sbustamentoProtocolInfoEffettuato = false;
+	private boolean checkPresenzaHeaderPrimaSbustamento = false;
+	public void setCheckPresenzaHeaderPrimaSbustamento(boolean checkPresenzaHeaderPrimaSbustamento) {
+		this.checkPresenzaHeaderPrimaSbustamento = checkPresenzaHeaderPrimaSbustamento;
+	}
 	public OpenSPCoop2Message getRequestMessage() throws ProtocolException {
 		if(!this.localForward && this.sbustamentoInformazioniProtocollo && !this.sbustamentoProtocolInfoEffettuato){
-			org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = 
-				new org.openspcoop2.protocol.engine.builder.Sbustamento(this.protocolFactory);
-			ProtocolMessage protocolMessage = sbustatore.sbustamento(this.state,this.request,this.busta,
-					this.ruoloMessaggio,this.gestioneManifest,this.proprietaManifestAttachments,
-					FaseSbustamento.PRE_CONSEGNA_RICHIESTA);
-			this.soapProtocolInfo = protocolMessage.getBustaRawContent();
-			this.request = protocolMessage.getMessage(); // updated
-			this.sbustamentoProtocolInfoEffettuato = true;
+			boolean protocolloPresente = true;
+			if(this.checkPresenzaHeaderPrimaSbustamento){
+				try{
+					protocolloPresente = this.protocolFactory.createValidazioneSintattica().
+						verifyProtocolPresence(this.outRequestContext.getTipoPorta(), this.busta.getProfiloDiCollaborazione(), this.ruoloMessaggio, this.request);
+				}catch(Exception e){}
+			}
+			if(protocolloPresente){
+				org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = 
+						new org.openspcoop2.protocol.engine.builder.Sbustamento(this.protocolFactory);
+					ProtocolMessage protocolMessage = sbustatore.sbustamento(this.state,this.request,this.busta,
+							this.ruoloMessaggio,this.gestioneManifest,this.proprietaManifestAttachments,
+							FaseSbustamento.PRE_CONSEGNA_RICHIESTA);
+					this.soapProtocolInfo = protocolMessage.getBustaRawContent();
+					this.request = protocolMessage.getMessage(); // updated
+					this.sbustamentoProtocolInfoEffettuato = true;
+			}
 		}
 		return this.request;
 	}

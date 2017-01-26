@@ -143,7 +143,8 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 		}
 		
 		if(setFormBasedParameter){
-			this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, this.propertiesUrlBased, this.location);
+			// Il connettore non possiede possibilita' di consegnare su di una url reale
+			//this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, this.propertiesUrlBased, this.location);
 		}
 	}
 	

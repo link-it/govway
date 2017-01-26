@@ -76,6 +76,9 @@ import org.openspcoop2.utils.transport.http.RFC2047Utilities;
  */
 public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 
+	public static final String ENDPOINT_TYPE = "httpcore";
+	
+	
 	private static boolean USE_POOL = true;
 	
 	private HttpEntity httpEntityResponse = null;
@@ -155,7 +158,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			if(this.debug)
 				this.logger.debug("Creazione URL...");
 			this.location = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);
-			this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, this.propertiesUrlBased, this.location);
+			this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, ConnettoreHTTPCORE.ENDPOINT_TYPE, this.propertiesUrlBased, this.location);
 
 			if(this.debug)
 				this.logger.debug("Creazione URL ["+this.location+"]...");

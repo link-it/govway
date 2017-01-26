@@ -697,6 +697,25 @@ public class CostantiTestSuite {
 	/** Porte Delegate per il test https:  https_sil_consegna*/
 	public static final String PORTA_DELEGATA_HTTPS_SIL_CONSEGNA="https_sil_consegna_contenuti_applicativi";
 	
+	/** Porte Delegate per il test file: serializeFile */
+	public static final String PORTA_DELEGATA_FILE_SERIALIZE_FILE="serializeFile";
+	/** Porte Delegate per il test file: serializeFileAndHeaders */
+	public static final String PORTA_DELEGATA_FILE_SERIALIZE_FILE_AND_HEADERS="serializeFileAndHeaders";
+	/** Porte Delegate per il test file: serializeDynamicFile */
+	public static final String PORTA_DELEGATA_FILE_SERIALIZE_DYNAMIC_FILE="serializeDynamicFile";
+	/** Porte Delegate per il test file: serializeFile_sbustamentoSOAP */
+	public static final String PORTA_DELEGATA_FILE_SERIALIZE_FILE_SBUSTAMENTO_SOAP="serializeFile_sbustamentoSOAP";
+	/** Porte Delegate per il test file: serializeAndReturnFile */
+	public static final String PORTA_DELEGATA_FILE_SERIALIZE_AND_RETURN_FILE="serializeAndReturnFile";
+	/** Porte Delegate per il test file: serializeAndReturnFileAndHeaders */
+	public static final String PORTA_DELEGATA_FILE_SERIALIZE_AND_RETURN_FILE_AND_HEADERS="serializeAndReturnFileAndHeaders";
+	/** Porte Delegate per il test file: serializeAndReturnDynamicFile */
+	public static final String PORTA_DELEGATA_FILE_SERIALIZE_AND_RETURN_DYNAMIC_FILE="serializeAndReturnDynamicFile";
+	/** Porte Delegate per il test file: serializeAndReturnFile_sbustamentoSOAP  */
+	public static final String PORTA_DELEGATA_FILE_SERIALIZE_AND_RETURN_FILE_SBUSTAMENTO_SOAP="serializeAndReturnFile_sbustamentoSOAP";
+	/** Porte Delegate per il test file: serializeAndReturnFileAsync  */
+	public static final String PORTA_DELEGATA_FILE_SERIALIZE_AND_RETURN_FILE_ASYNC="serializeAndReturnFileAsync";
+	
 	/** Porte Delegate per il test sull'autorizzazione spcoop:  funzionante*/
 	public static final String PORTA_DELEGATA_AUTORIZZAZIONE_SPCOOP_FUNZIONANTE="AutorizzazioneSPCoopSoggetto1";
 	/** Porte Delegate per il test sull'autorizzazione spcoop: spoofing rilevato */
@@ -1159,8 +1178,16 @@ public class CostantiTestSuite {
 	public static final String SPCOOP_SERVIZIO_ONEWAY_HTTPCORE = "httpCore";
 	/** ENTITA SPCOOP: Nome Azione del Servizio OneWay risposta vuota */
 	public static final String SPCOOP_SERVIZIO_ONEWAY_AZIONE_RISPOSTA_VUOTA="OnewayCompletamenteNullRisposta";
-	
-	
+	/** ENTITA SPCOOP: Nome Azione del Servizio OneWay  per il test file: serializeFile */
+	public static final String SPCOOP_SERVIZIO_ONEWAY_AZIONE_SERIALIZE_FILE="serializeFile";
+	/** ENTITA SPCOOP: Nome Azione del Servizio OneWay  per il test file: serializeFileAndHeaders */
+	public static final String SPCOOP_SERVIZIO_ONEWAY_AZIONE_SERIALIZE_FILE_AND_HEADERS="serializeFileAndHeaders";
+	/** ENTITA SPCOOP: Nome Azione del Servizio OneWay  per il test file: serializeDynamicFile */
+	public static final String SPCOOP_SERVIZIO_ONEWAY_AZIONE_SERIALIZE_DYNAMIC_FILE="serializeDynamicFile";
+	/** ENTITA SPCOOP: Nome Azione del Servizio OneWay  per il test file: serializeFile_sbustamentoSOAP */
+	public static final String SPCOOP_SERVIZIO_ONEWAY_AZIONE_SERIALIZE_FILE_SBUSTAMENTO_SOAP="serializeFile_sbustamentoSOAP";
+
+		
 	/** ENTITA SPCOOP: Tipo Servizio Sincrono */
 	public static final String SPCOOP_TIPO_SERVIZIO_SINCRONO="SPC";
 	/** ENTITA SPCOOP: Nome Servizio Sincrono */
@@ -1396,6 +1423,16 @@ public class CostantiTestSuite {
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_TEST_CORRELAZIONE_APPLICATIVA_RISPOSTA_INPUT_BASED_SOAP="testCorrelazioneApplicativaRisposta_InputBased_SOAP";
     /** ENTITA SPCOOP: Nome Azione del Servizio Sincrono con Correlazione Applicativa risposta: input based wsa */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_TEST_CORRELAZIONE_APPLICATIVA_RISPOSTA_INPUT_BASED_WSA="testCorrelazioneApplicativaRisposta_InputBased_WSA";
+	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per test file: serializeAndReturnFile */
+	public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_SERIALIZE_AND_RETURN_FILE="serializeAndReturnFile";
+	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per il test file: serializeAndReturnFileAndHeaders */
+	public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_SERIALIZE_AND_RETURN_FILE_AND_HEADERS="serializeAndReturnFileAndHeaders";
+	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per il test file: serializeAndReturnDynamicFile */
+	public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_SERIALIZE_AND_RETURN_DYNAMIC_FILE="serializeAndReturnDynamicFile";
+	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per il test file: serializeAndReturnFile_sbustamentoSOAP  */
+	public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_SERIALIZE_AND_RETURN_FILE_SBUSTAMENTO_SOAP="serializeAndReturnFile_sbustamentoSOAP";
+	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per il test file: serializeAndReturnFileAsync  */
+	public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_SERIALIZE_AND_RETURN_FILE_ASYNC="serializeAndReturnFileAsync";
    
 	/** ENTITA SPCOOP: Tipo Servizio Asincrono Simmetrico */
 	public static final String SPCOOP_TIPO_SERVIZIO_ASINCRONO_SIMMETRICO="SPC";

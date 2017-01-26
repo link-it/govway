@@ -22,6 +22,7 @@
 
 package org.openspcoop2.protocol.spcoop.testsuite.units;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
 import java.util.Properties;
@@ -56,8 +57,10 @@ import org.openspcoop2.protocol.spcoop.testsuite.core.TestSuiteTransformer;
 import org.openspcoop2.protocol.spcoop.testsuite.core.Utilities;
 import org.openspcoop2.testsuite.axis14.Axis14SoapUtils;
 import org.openspcoop2.testsuite.clients.ClientCore;
+import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
 import org.openspcoop2.testsuite.clients.ClientOneWay;
 import org.openspcoop2.testsuite.core.TestSuiteException;
+import org.openspcoop2.testsuite.clients.ClientSincrono;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
@@ -1017,6 +1020,7 @@ public class ConnettoriDiversiHTTP {
 			data.close();
 		}
 	}
+
 	
 	
 	
@@ -1106,4 +1110,433 @@ public class ConnettoriDiversiHTTP {
 			data.close();
 		}
 	}
+
+	
+	
+	
+	
+	
+	
+	
+	/* **************** FILE *********************** */
+	
+	
+	Repository repositoryFILE_serializeFile=new Repository();
+	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".FILE_serializeFile"})
+	public void FILE_serializeFile() throws TestSuiteException, Exception{
+		this.collaborazioneSPCoopBase.sincrono(this.repositoryFILE_serializeFile,CostantiTestSuite.PORTA_DELEGATA_FILE_SERIALIZE_FILE,addIDUnivoco,true);
+	}
+	@DataProvider (name="FILE_serializeFile")
+	public Object[][]testFILE_serializeFile() throws Exception{
+		String id=this.repositoryFILE_serializeFile.getNext();
+		if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
+			try {
+				Thread.sleep(Utilities.testSuiteProperties.timeToSleep_verificaDatabase());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),id,false}	
+		};
+	}
+	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".FILE_serializeFile"},dataProvider="FILE_serializeFile",dependsOnMethods={"FILE_serializeFile"})
+	public void testFILE_serializeFile(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			this.collaborazioneSPCoopBase.testOneWay(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_SERIALIZE_FILE, checkServizioApplicativo,null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	
+	
+	
+	
+	
+	Repository repositoryFILE_serializeFileAndHeaders=new Repository();
+	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".FILE_serializeFileAndHeaders"})
+	public void FILE_serializeFileAndHeaders() throws TestSuiteException, Exception{
+		this.collaborazioneSPCoopBase.sincrono(this.repositoryFILE_serializeFileAndHeaders,CostantiTestSuite.PORTA_DELEGATA_FILE_SERIALIZE_FILE_AND_HEADERS,addIDUnivoco,true);
+	}
+	@DataProvider (name="FILE_serializeFileAndHeaders")
+	public Object[][]testFILE_serializeFileAndHeaders() throws Exception{
+		String id=this.repositoryFILE_serializeFileAndHeaders.getNext();
+		if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
+			try {
+				Thread.sleep(Utilities.testSuiteProperties.timeToSleep_verificaDatabase());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),id,false}	
+		};
+	}
+	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".FILE_serializeFileAndHeaders"},dataProvider="FILE_serializeFileAndHeaders",dependsOnMethods={"FILE_serializeFileAndHeaders"})
+	public void testFILE_serializeFileAndHeaders(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			this.collaborazioneSPCoopBase.testOneWay(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_SERIALIZE_FILE_AND_HEADERS, checkServizioApplicativo,null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	
+	
+	
+	
+	Repository repositoryFILE_serializeDynamicFile=new Repository();
+	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".FILE_serializeDynamicFile"})
+	public void FILE_serializeDynamicFile() throws TestSuiteException, Exception{
+		this.collaborazioneSPCoopBase.sincrono(this.repositoryFILE_serializeDynamicFile,CostantiTestSuite.PORTA_DELEGATA_FILE_SERIALIZE_DYNAMIC_FILE,addIDUnivoco,true);
+	}
+	@DataProvider (name="FILE_serializeDynamicFile")
+	public Object[][]testFILE_serializeDynamicFile() throws Exception{
+		String id=this.repositoryFILE_serializeDynamicFile.getNext();
+		if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
+			try {
+				Thread.sleep(Utilities.testSuiteProperties.timeToSleep_verificaDatabase());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),id,false}	
+		};
+	}
+	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".FILE_serializeDynamicFile"},dataProvider="FILE_serializeDynamicFile",dependsOnMethods={"FILE_serializeDynamicFile"})
+	public void testFILE_serializeDynamicFile(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			this.collaborazioneSPCoopBase.testOneWay(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_SERIALIZE_DYNAMIC_FILE, checkServizioApplicativo,null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	
+	
+	
+	
+	
+	
+	Repository repositoryFILE_serializeFile_sbustamentoSOAP=new Repository();
+	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".FILE_serializeFile_sbustamentoSOAP"})
+	public void FILE_serializeFile_sbustamentoSOAP() throws TestSuiteException, Exception{
+		this.collaborazioneSPCoopBase.sincrono(this.repositoryFILE_serializeFile_sbustamentoSOAP,CostantiTestSuite.PORTA_DELEGATA_FILE_SERIALIZE_FILE_SBUSTAMENTO_SOAP,addIDUnivoco,true);
+	}
+	@DataProvider (name="FILE_serializeFile_sbustamentoSOAP")
+	public Object[][]testFILE_serializeFile_sbustamentoSOAP() throws Exception{
+		String id=this.repositoryFILE_serializeFile_sbustamentoSOAP.getNext();
+		if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
+			try {
+				Thread.sleep(Utilities.testSuiteProperties.timeToSleep_verificaDatabase());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),id,false}	
+		};
+	}
+	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".FILE_serializeFile_sbustamentoSOAP"},dataProvider="FILE_serializeFile_sbustamentoSOAP",dependsOnMethods={"FILE_serializeFile_sbustamentoSOAP"})
+	public void testFILE_serializeFile_sbustamentoSOAP(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			this.collaborazioneSPCoopBase.testOneWay(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY,CostantiTestSuite.SPCOOP_SERVIZIO_ONEWAY_AZIONE_SERIALIZE_FILE_SBUSTAMENTO_SOAP, checkServizioApplicativo,null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	Repository repositoryFILE_serializeAndReturnFile=new Repository();
+	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".FILE_serializeAndReturnFile"},description="Test di tipo FILE_serializeAndReturnFile, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void FILE_serializeAndReturnFile() throws Exception{
+		
+		// Creazione client Sincrono
+		ClientSincrono client=new ClientSincrono(this.repositoryFILE_serializeAndReturnFile);
+		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+		client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_FILE_SERIALIZE_AND_RETURN_FILE);
+		client.connectToSoapEngine(MessageType.SOAP_11);
+		client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false,addIDUnivoco);
+		client.run();
+		
+		org.apache.axis.Message atteso = 
+				new org.apache.axis.Message(new ByteArrayInputStream(org.openspcoop2.utils.resources.FileSystemUtilities.
+							readBytesFromFile(Utilities.testSuiteProperties.getSoapSenzaHeaderFileName())));
+		org.apache.axis.Message receivedMessage = client.getResponseMessage();
+		Assert.assertTrue(ClientCore.isEqualsSentAndResponseMessage(atteso, receivedMessage));
+		
+	}
+	@DataProvider (name="FILE_serializeAndReturnFile")
+	public Object[][]testFILE_serializeAndReturnFile()throws Exception{
+		String id=this.repositoryFILE_serializeAndReturnFile.getNext();
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),id,false}	
+		};
+	}
+	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".FILE_serializeAndReturnFile"},dataProvider="FILE_serializeAndReturnFile",dependsOnMethods={"FILE_serializeAndReturnFile"})
+	public void testFILE_serializeAndReturnFile(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_SERIALIZE_AND_RETURN_FILE, checkServizioApplicativo,
+					null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	Repository repositoryFILE_serializeAndReturnFileAndHeaders=new Repository();
+	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".FILE_serializeAndReturnFileAndHeaders"},description="Test di tipo FILE_serializeAndReturnFileAndHeaders, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void FILE_serializeAndReturnFileAndHeaders() throws Exception{
+		
+		// Creazione client Sincrono
+		ClientSincrono client=new ClientSincrono(this.repositoryFILE_serializeAndReturnFileAndHeaders);
+		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+		client.setPortaDelegata(CostantiTestSuite.PORTA_DELEGATA_FILE_SERIALIZE_AND_RETURN_FILE_AND_HEADERS);
+		client.connectToSoapEngine(MessageType.SOAP_11);
+		client.setMessageFromFile(Utilities.testSuiteProperties.getSoap11FileName(), false,addIDUnivoco);
+		client.run();
+		
+		org.apache.axis.Message atteso = 
+				new org.apache.axis.Message(new ByteArrayInputStream(org.openspcoop2.utils.resources.FileSystemUtilities.
+							readBytesFromFile(Utilities.testSuiteProperties.getSoapSenzaHeaderFileName())));
+		org.apache.axis.Message receivedMessage = client.getResponseMessage();
+		Assert.assertTrue(ClientCore.isEqualsSentAndResponseMessage(atteso, receivedMessage));
+		
+	}
+	@DataProvider (name="FILE_serializeAndReturnFileAndHeaders")
+	public Object[][]testFILE_serializeAndReturnFileAndHeaders()throws Exception{
+		String id=this.repositoryFILE_serializeAndReturnFileAndHeaders.getNext();
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),id,false}	
+		};
+	}
+	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".FILE_serializeAndReturnFileAndHeaders"},dataProvider="FILE_serializeAndReturnFileAndHeaders",dependsOnMethods={"FILE_serializeAndReturnFileAndHeaders"})
+	public void testFILE_serializeAndReturnFileAndHeaders(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_SERIALIZE_AND_RETURN_FILE_AND_HEADERS, checkServizioApplicativo,
+					null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	Repository repositoryFILE_serializeAndReturnDynamicFile=new Repository();
+	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".FILE_serializeAndReturnDynamicFile"},description="Test di tipo FILE_serializeAndReturnDynamicFile, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void FILE_serializeAndReturnDynamicFile() throws Exception{
+		
+		this.collaborazioneSPCoopBase.sincrono(this.repositoryFILE_serializeAndReturnDynamicFile,CostantiTestSuite.PORTA_DELEGATA_FILE_SERIALIZE_AND_RETURN_DYNAMIC_FILE,addIDUnivoco);
+		
+	}
+	@DataProvider (name="FILE_serializeAndReturnDynamicFile")
+	public Object[][]testFILE_serializeAndReturnDynamicFile()throws Exception{
+		String id=this.repositoryFILE_serializeAndReturnDynamicFile.getNext();
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),id,false}	
+		};
+	}
+	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".FILE_serializeAndReturnDynamicFile"},dataProvider="FILE_serializeAndReturnDynamicFile",dependsOnMethods={"FILE_serializeAndReturnDynamicFile"})
+	public void testFILE_serializeAndReturnDynamicFile(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_SERIALIZE_AND_RETURN_DYNAMIC_FILE, checkServizioApplicativo,
+					null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	Repository repositoryFILE_serializeAndReturnFile_sbustamentoSOAP=new Repository();
+	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".FILE_serializeAndReturnFile_sbustamentoSOAP"},description="Test di tipo FILE_serializeAndReturnFile_sbustamentoSOAP, Viene controllato se i body sono uguali e se gli attachment sono uguali")
+	public void FILE_serializeAndReturnFile_sbustamentoSOAP() throws Exception{
+		
+		// Creazione client Sincrono
+		ClientHttpGenerico client=new ClientHttpGenerico(this.repositoryFILE_serializeAndReturnFile_sbustamentoSOAP);
+		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore()+CostantiTestSuite.PORTA_DELEGATA_FILE_SERIALIZE_AND_RETURN_FILE_SBUSTAMENTO_SOAP);
+		client.connectToSoapEngine();	
+		client.setMessaggioXMLRichiesta(org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoap11FileName()));
+		client.setRispostaDaGestire(true);
+		client.run();
+		
+		org.apache.axis.Message atteso = 
+				new org.apache.axis.Message(new ByteArrayInputStream(org.openspcoop2.utils.resources.FileSystemUtilities.
+							readBytesFromFile(Utilities.testSuiteProperties.getXmlSenzaSoapFileName())),true);
+		java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
+		atteso.writeTo(bout);
+		bout.flush();
+		bout.close();
+		
+		org.apache.axis.Message receivedMessage = new org.apache.axis.Message(new ByteArrayInputStream(client.getMessaggioXMLRisposta()),false);
+		java.io.ByteArrayOutputStream boutReceived = new java.io.ByteArrayOutputStream();
+		receivedMessage.writeTo(boutReceived);
+		boutReceived.flush();
+		boutReceived.close();
+		
+		boolean check = ClientCore.isEqualsSentAndResponseMessage(atteso, receivedMessage);
+		if(!check){
+			System.out.println("ATTESO ["+bout.toString()+"]");
+			System.out.println("RECEIVED ["+boutReceived.toString()+"]");
+		}
+		Assert.assertTrue(check);
+		
+	}
+	@DataProvider (name="FILE_serializeAndReturnFile_sbustamentoSOAP")
+	public Object[][]testFILE_serializeAndReturnFile_sbustamentoSOAP()throws Exception{
+		String id=this.repositoryFILE_serializeAndReturnFile_sbustamentoSOAP.getNext();
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),id,false}	
+		};
+	}
+	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".FILE_serializeAndReturnFile_sbustamentoSOAP"},dataProvider="FILE_serializeAndReturnFile_sbustamentoSOAP",dependsOnMethods={"FILE_serializeAndReturnFile_sbustamentoSOAP"})
+	public void testFILE_serializeAndReturnFile_sbustamentoSOAP(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data, id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_SERIALIZE_AND_RETURN_FILE_SBUSTAMENTO_SOAP, checkServizioApplicativo,
+					null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	Repository repositoryFILE_serializeAndReturnFileAsync=new Repository();
+	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".FILE_serializeAndReturnFileAsync"})
+	public void FILE_serializeAndReturnFileAsync() throws TestSuiteException, Exception{
+		this.collaborazioneSPCoopBase.oneWay(this.repositoryFILE_serializeAndReturnFileAsync,
+				CostantiTestSuite.PORTA_DELEGATA_FILE_SERIALIZE_AND_RETURN_FILE_ASYNC,addIDUnivoco,
+				"fruitoreSerializeAndReturnFileAsync","123456");
+		
+		// Check file serializzato in asincrono
+		
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		org.apache.axis.Message atteso = 
+				new org.apache.axis.Message(new ByteArrayInputStream(org.openspcoop2.utils.resources.FileSystemUtilities.
+							readBytesFromFile(Utilities.testSuiteProperties.getSoapSenzaHeaderFileName())),false);
+		java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
+		atteso.writeTo(bout);
+		bout.flush();
+		bout.close();
+		
+		org.apache.axis.Message receivedMessage = new org.apache.axis.Message(new ByteArrayInputStream(org.openspcoop2.utils.resources.FileSystemUtilities.
+				readBytesFromFile("/var/tmp/TEST/ASYNC/RES.xml")),false);
+		receivedMessage.getSOAPHeader().removeContents();
+		java.io.ByteArrayOutputStream boutReceived = new java.io.ByteArrayOutputStream();
+		receivedMessage.writeTo(boutReceived);
+		boutReceived.flush();
+		boutReceived.close();
+		
+		boolean check = ClientCore.isEqualsSentAndResponseMessage(atteso, receivedMessage);
+		if(!check){
+			System.out.println("ATTESO ["+bout.toString()+"]");
+			System.out.println("RECEIVED ["+boutReceived.toString()+"]");
+		}
+		Assert.assertTrue(check);
+		
+	}
+	@DataProvider (name="FILE_serializeAndReturnFileAsync")
+	public Object[][]testFILE_serializeAndReturnFileAsync() throws Exception{
+		String id=this.repositoryFILE_serializeAndReturnFileAsync.getNext();
+		if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
+			try {
+				Thread.sleep(Utilities.testSuiteProperties.timeToSleep_verificaDatabase());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return new Object[][]{
+				{DatabaseProperties.getDatabaseComponentFruitore(),id,false},	
+				{DatabaseProperties.getDatabaseComponentErogatore(),id,false}	
+		};
+	}
+	@Test(groups={ConnettoriDiversiHTTP.ID_GRUPPO,ConnettoriDiversiHTTP.ID_GRUPPO+".FILE_serializeAndReturnFileAsync"},
+			dataProvider="FILE_serializeAndReturnFileAsync",dependsOnMethods={"FILE_serializeAndReturnFileAsync"})
+	public void testFILE_serializeAndReturnFileAsync(DatabaseComponent data,String id,boolean checkServizioApplicativo) throws Exception{
+		try{
+			this.collaborazioneSPCoopBase.testSincrono(data,id, CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+					CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_SERIALIZE_AND_RETURN_FILE_ASYNC, checkServizioApplicativo,null);
+		}catch(Exception e){
+			throw e;
+		}finally{
+			data.close();
+		}
+	}
+	
+	
+
 }
