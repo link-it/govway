@@ -15,11 +15,12 @@
 			<AttributeValue>Pisa</AttributeValue>
 		</Attribute>
 	</Subject>
-	<Resource />
-	  <Action>
-	    <Attribute AttributeId="urn:oasis:names:tc:xacml:1.0:action:action-id" DataType="http://www.w3.org/2001/XMLSchema#string">
-	      <AttributeValue>action_0</AttributeValue>
-	    </Attribute>
-	  </Action>
+	<Resource>
+		<Attribute AttributeId="___resource-id___"
+			DataType="http://www.w3.org/2001/XMLSchema#string">
+			<AttributeValue>resource_0</AttributeValue>
+		</Attribute>
+	</Resource>
+	<Action />
 	<Environment />
 </Request>

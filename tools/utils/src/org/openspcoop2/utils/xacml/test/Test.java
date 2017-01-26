@@ -89,7 +89,7 @@ public class Test {
 		long inizioCaricamentoPolicies = System.currentTimeMillis();
 		PolicyDecisionPoint processor = new PolicyDecisionPoint(singlePdp);
 		for(int i = 0; i < nPolicy; i++) {
-			processor.addPolicy(policyString, "action_"+i);
+			processor.addPolicy(policyString, "resource_"+i);
 		}
 		
 		long fineCaricamentoPolicies = System.currentTimeMillis();
@@ -120,11 +120,6 @@ public class Test {
 		
 		long maxTotale = Long.MIN_VALUE;
 		for(RequestEvaluator item: lst) {
-			int countBadRequests = item.countBadRequests();
-			if(countBadRequests > 0) {
-				System.out.println("Richieste errate : " + countBadRequests);
-			}
-			
 			long maxTimeElapsed = item.getMaxTimeElapsed();
 			if(maxTotale < maxTimeElapsed) {
 				maxTotale = maxTimeElapsed;
@@ -144,7 +139,7 @@ public class Test {
 
 			int countBadRequests = item.countBadRequests();
 			if(countBadRequests > 0) {
-				System.out.println("Richieste errate : " + countBadRequests);
+				System.err.println("Richieste errate : " + countBadRequests);
 			}
 			
 			long maxTimeElapsed = item.getMaxTimeElapsed();

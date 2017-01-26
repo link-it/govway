@@ -33,24 +33,14 @@ import org.herasaf.xacml.core.context.RequestMarshaller;
 import org.herasaf.xacml.core.context.impl.RequestType;
 import org.herasaf.xacml.core.context.impl.ResponseType;
 import org.herasaf.xacml.core.context.impl.ResultType;
-import org.herasaf.xacml.core.dataTypeAttribute.impl.StringDataTypeAttribute;
-import org.herasaf.xacml.core.function.Function;
-import org.herasaf.xacml.core.function.impl.equalityPredicates.StringEqualFunction;
 import org.herasaf.xacml.core.policy.Evaluatable;
 import org.herasaf.xacml.core.policy.PolicyMarshaller;
-import org.herasaf.xacml.core.policy.impl.ActionAttributeDesignatorType;
-import org.herasaf.xacml.core.policy.impl.ActionMatchType;
-import org.herasaf.xacml.core.policy.impl.ActionsType;
 import org.herasaf.xacml.core.policy.impl.EvaluatableIDImpl;
-import org.herasaf.xacml.core.policy.impl.ObjectFactory;
 import org.herasaf.xacml.core.policy.impl.PolicyType;
-import org.herasaf.xacml.core.policy.impl.TargetType;
 import org.herasaf.xacml.core.simplePDP.MapBasedSimplePolicyRepository;
 import org.herasaf.xacml.core.simplePDP.SimplePDPConfiguration;
 import org.herasaf.xacml.core.simplePDP.SimplePDPFactory;
 import org.herasaf.xacml.core.simplePDP.initializers.InitializerExecutor;
-import org.herasaf.xacml.core.targetMatcher.TargetMatcher;
-import org.openspcoop2.utils.xacml.PolicyException;
 
 /**
  * PolicyDecisionPoint
@@ -64,15 +54,13 @@ public class PolicyDecisionPoint {
 	private static final String SINGLE = "SINGLE";
 	private Map<String, PDP> pdp;
 	private boolean singlePDP;
-	private TargetMatcher matcher;
 	
-	public PolicyDecisionPoint(boolean singlePdP) throws PolicyException {
-		this(singlePdP, null);
+	public PolicyDecisionPoint() throws PolicyException {
+		this(true);
 	}
 
-	public PolicyDecisionPoint(boolean singlePDP, TargetMatcher matcher) throws PolicyException {
+	public PolicyDecisionPoint(boolean singlePDP) throws PolicyException {
 		this.singlePDP=singlePDP;
-		this.matcher = matcher;
 		this.pdp = new HashMap<String, PDP>();
 
 		if(singlePDP) {
@@ -82,7 +70,6 @@ public class PolicyDecisionPoint {
 	
 	private PDP newPDP() throws PolicyException {
 		SimplePDPConfiguration configuration = new SimplePDPConfiguration();
-		configuration.setTargetMatcher(this.matcher);
 		PolicyRetrievalPoint policyRetrievalPoint = new CachedMapBasedSimplePolicyRepository();
 		configuration.setPolicyRetrievalPoint(policyRetrievalPoint);
 		return SimplePDPFactory.getSimplePDP(configuration);
@@ -158,7 +145,9 @@ public class PolicyDecisionPoint {
 
 	private void _addPolicy(Evaluatable eval, String key) throws PolicyException {
 		
-		addActionToPolicy((PolicyType)eval, key);
+		EvaluatableIDImpl policyId = new EvaluatableIDImpl(key);
+		((PolicyType)eval).setPolicyId(policyId);
+
 		if(this.singlePDP) {
 			PDP pdp = this.getPDP(SINGLE);
 			MapBasedSimplePolicyRepository repo = (MapBasedSimplePolicyRepository)pdp.getPolicyRepository();
@@ -167,45 +156,9 @@ public class PolicyDecisionPoint {
 			PDP newPDP = this.newPDP();
 			MapBasedSimplePolicyRepository repo = (MapBasedSimplePolicyRepository)newPDP.getPolicyRepository();
 			repo.deploy(eval);
-			
 			this.pdp.put(key, newPDP);
 		}
 	}
-	
-
-	private static void addActionToPolicy(PolicyType policy1, String key) {
-		
-		ObjectFactory factory = new ObjectFactory();
-		
-		TargetType target = factory.createTargetType();
-		
-		if(policy1.getTarget() != null) {
-			target = policy1.getTarget();
-		}
-
-		org.herasaf.xacml.core.policy.impl.ActionType action =  factory.createActionType();
-
-		ActionMatchType actionMatch = factory.createActionMatchType();
-		Function function = new StringEqualFunction();
-		actionMatch.setMatchFunction(function);
-		ActionAttributeDesignatorType attributeDesignator = factory.createActionAttributeDesignatorType();
-		attributeDesignator.setMustBePresent(true);
-		attributeDesignator.setAttributeId("urn:oasis:names:tc:xacml:1.0:action:action-id");
-		attributeDesignator.setDataType(new StringDataTypeAttribute());
-		actionMatch.setActionAttributeDesignator(attributeDesignator);
-		org.herasaf.xacml.core.policy.impl.AttributeValueType attributeValue = new org.herasaf.xacml.core.policy.impl.AttributeValueType();
-		attributeValue.getContent().add(key);
-		attributeValue.setDataType(new StringDataTypeAttribute());
-		actionMatch.setAttributeValue(attributeValue);
-		action.getActionMatches().add(actionMatch);
-		ActionsType actions = factory.createActionsType();
-		actions.getActions().add(action);
-		target.setActions(actions);
-		policy1.setTarget(target);
-		EvaluatableIDImpl policyId = new EvaluatableIDImpl(key);
-		policy1.setPolicyId(policyId);
-	}
-
 
 	private List<ResultType> _evaluate(RequestType request) throws PolicyException {
 		PDP pdp = (this.singlePDP) ? this.getPDP(SINGLE): this.getPDP(request);
