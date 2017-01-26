@@ -1,3 +1,22 @@
+2017-01-26  Andrea Poli <apoli@link.it>
+
+	* [Pdd, PddConsole]
+	Aggiunta funzionalità OP-592
+	Realizzato un connettore che serializza il messaggio di richiesta su file system.
+	Il path dove serializzare il mesaggio può essere indicato dall'utente attraverso differenti meccanismi dinamici quali:
+	- id della transazione
+	- valori della busta di protocollo
+	- oggetti presenti nel contesto della richiesta (alimentati tramite handlers)
+	- data di elaborazione
+	All'utente è permesso anche di abilitare l'eventuale sovrascrittura del file, se risulta già esistere, 
+	e la creazione automatica delle directory padre, se non non esistono.
+	Il connettore permette anche di generare una risposta costruita utilizzando il contenuto di un file
+	indirizzabile a sua volta tramite gli stessi meccanismi dinamici della richiesta. 
+	Il file contenente la risposta può essere eliminato una volta consumato (opzione configurabile).
+	L'utente può inoltre indicare un tempo di attesa (ms) se il file per la risposta non risulta esistere.
+	Infine sia per la richiesta che per la risposta possono essere forniti degli ulteriori path (con criteri dinamici)
+	che consentono rispettivamente di serializzare o leggere gli header di trasporto associati al messaggio.
+
 2017-01-13  Andrea Poli <apoli@link.it>
 
 	* [Pdd, PddConsole]
