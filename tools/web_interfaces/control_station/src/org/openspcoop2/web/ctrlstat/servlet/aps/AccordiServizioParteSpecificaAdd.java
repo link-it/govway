@@ -148,6 +148,17 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 	private String transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop, opzioniAvanzate;
 
+	// file
+	private String requestOutputFileName = null;
+	private String requestOutputFileNameHeaders = null;
+	private String requestOutputParentDirCreateIfNotExists = null;
+	private String requestOutputOverwriteIfExists = null;
+	private String responseInputMode = null;
+	private String responseInputFileName = null;
+	private String responseInputFileNameHeaders = null;
+	private String responseInputDeleteAfterRead = null;
+	private String responseInputWaitTime = null;
+	
 	// Protocol Properties
 	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
 	private ConsoleConfiguration consoleConfiguration =null;
@@ -158,6 +169,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 	private ConsoleInterfaceType consoleInterfaceType = null;
 	
 	private BinaryParameter wsdlimpler, wsdlimplfru;
+
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -258,6 +270,18 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				this.user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_USERNAME);
 				this.password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_PASSWORD);
 			}
+			
+			// file
+			this.requestOutputFileName = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
+			this.requestOutputFileNameHeaders = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
+			this.requestOutputParentDirCreateIfNotExists = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
+			this.requestOutputOverwriteIfExists = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME);
+			this.responseInputMode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE);
+			this.responseInputFileName = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME);
+			this.responseInputFileNameHeaders = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
+			this.responseInputDeleteAfterRead = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
+			this.responseInputWaitTime = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
+
 
 
 
@@ -850,6 +874,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						isConnettoreCustomUltimaImmagineSalvata, 
 						this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+						this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
+						this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 						listExtendedConnettore);
 
 				// aggiunta campi custom
@@ -887,6 +913,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.httpsalgoritmokey, this.tipoconn,this.versione,this.validazioneDocumenti,this.nomePA,null,this.autenticazioneHttp,
 					this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 					this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+					this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
+					this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 					listExtendedConnettore);
 
 			if(isOk){
@@ -976,6 +1004,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						isConnettoreCustomUltimaImmagineSalvata, 
 						this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 						this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+						this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
+						this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 						listExtendedConnettore);
 
 				// aggiunta campi custom
@@ -1042,6 +1072,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.httpsalgoritmokey,
 					this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 					this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+					this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
+					this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 					listExtendedConnettore);
 
 			if(asps.getConfigurazioneServizio()==null)
@@ -1115,6 +1147,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							isConnettoreCustomUltimaImmagineSalvata, 
 							this.proxy_enabled, this.proxy_hostname, this.proxy_port, this.proxy_username, this.proxy_password,
 							this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
+							this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
+							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 							listExtendedConnettore);
 
 					// aggiunta campi custom
@@ -1538,6 +1572,44 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					line = dis.readLine();
 					this.httpsalgoritmokey = dis.readLine();
 				}
+				
+				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME+"\"") != -1) {
+					line = dis.readLine();
+					this.requestOutputFileName = dis.readLine();
+				}
+				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS+"\"") != -1) {
+					line = dis.readLine();
+					this.requestOutputFileNameHeaders = dis.readLine();
+				}
+				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR+"\"") != -1) {
+					line = dis.readLine();
+					this.requestOutputParentDirCreateIfNotExists = dis.readLine();
+				}
+				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME+"\"") != -1) {
+					line = dis.readLine();
+					this.requestOutputOverwriteIfExists = dis.readLine();
+				}
+				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE+"\"") != -1) {
+					line = dis.readLine();
+					this.responseInputMode = dis.readLine();
+				}
+				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME+"\"") != -1) {
+					line = dis.readLine();
+					this.responseInputFileName = dis.readLine();
+				}
+				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS+"\"") != -1) {
+					line = dis.readLine();
+					this.responseInputFileNameHeaders = dis.readLine();
+				}
+				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ+"\"") != -1) {
+					line = dis.readLine();
+					this.responseInputDeleteAfterRead = dis.readLine();
+				}
+				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME+"\"") != -1) {
+					line = dis.readLine();
+					this.responseInputWaitTime = dis.readLine();
+				}
+				
 				if (line.indexOf("\""+AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_VERSIONE+"\"") != -1) {
 					line = dis.readLine();
 					this.versione = dis.readLine();

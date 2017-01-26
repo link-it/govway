@@ -37,6 +37,7 @@ public enum TipiConnettore {
 	JMS ("jms"),
 	NULL ("null"),
 	NULLECHO("nullEcho"),
+	FILE ("file"),
 	CUSTOM("custom");
 	
 	

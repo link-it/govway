@@ -156,6 +156,17 @@ public final class SoggettiEndPoint extends Action {
 				password = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_PASSWORD);
 			}
 			
+			// file
+			String requestOutputFileName = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
+			String requestOutputFileNameHeaders = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
+			String requestOutputParentDirCreateIfNotExists = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
+			String requestOutputOverwriteIfExists = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME);
+			String responseInputMode = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE);
+			String responseInputFileName = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME);
+			String responseInputFileNameHeaders = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
+			String responseInputDeleteAfterRead = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
+			String responseInputWaitTime = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
+
 			
 			// Preparo il menu
 			soggettiHelper.makeMenu();
@@ -187,7 +198,9 @@ public final class SoggettiEndPoint extends Action {
 						SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST, "Connettore di " + tmpTitle);
 			
 				if (endpointtype == null) {
-					if ( (c.getCustom()!=null && c.getCustom()) && !c.getTipo().equals(TipiConnettore.HTTPS.toString())) {
+					if ( (c.getCustom()!=null && c.getCustom()) && 
+							!c.getTipo().equals(TipiConnettore.HTTPS.toString()) && 
+							!c.getTipo().equals(TipiConnettore.FILE.toString())) {
 						endpointtype = TipiConnettore.CUSTOM.toString();
 						tipoconn = c.getTipo();
 					} else
@@ -337,6 +350,44 @@ public final class SoggettiEndPoint extends Action {
 					httpshostverify = true;
 				}
 
+				// file
+				if(responseInputMode==null && props!=null){
+					
+					requestOutputFileName = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE);	
+					requestOutputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS);	
+					String v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
+					if(v!=null && !"".equals(v)){
+						if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
+							requestOutputParentDirCreateIfNotExists = Costanti.CHECK_BOX_ENABLED_TRUE;
+						}
+					}					
+					v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE);
+					if(v!=null && !"".equals(v)){
+						if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
+							requestOutputOverwriteIfExists = Costanti.CHECK_BOX_ENABLED_TRUE;
+						}
+					}	
+					
+					v = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_MODE);
+					if(v!=null && !"".equals(v)){
+						if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
+							responseInputMode = CostantiConfigurazione.ABILITATO.getValue();
+						}
+					}
+					if(CostantiConfigurazione.ABILITATO.getValue().equals(responseInputMode)){						
+						responseInputFileName = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE);
+						responseInputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS);
+						v = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_DELETE_AFTER_READ);
+						if(v!=null && !"".equals(v)){
+							if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
+								responseInputDeleteAfterRead = Costanti.CHECK_BOX_ENABLED_TRUE;
+							}
+						}						
+						responseInputWaitTime = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);						
+					}
+					
+				}
+				
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
@@ -362,6 +413,8 @@ public final class SoggettiEndPoint extends Action {
 						isConnettoreCustomUltimaImmagineSalvata, 
 						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						listExtendedConnettore);
 
 				pd.setDati(dati);
@@ -404,6 +457,8 @@ public final class SoggettiEndPoint extends Action {
 						isConnettoreCustomUltimaImmagineSalvata, 
 						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						listExtendedConnettore);
 
 				pd.setDati(dati);
@@ -415,7 +470,9 @@ public final class SoggettiEndPoint extends Action {
 
 			// Modifico i dati del soggetto nel db
 			String oldConnT = c.getTipo();
-			if ((c.getCustom()!=null && c.getCustom()) && !c.getTipo().equals(TipiConnettore.HTTPS.toString()))
+			if ((c.getCustom()!=null && c.getCustom()) && 
+					!c.getTipo().equals(TipiConnettore.HTTPS.toString()) && 
+					!c.getTipo().equals(TipiConnettore.FILE.toString()))
 				oldConnT = TipiConnettore.CUSTOM.toString();
 			soggettiHelper.fillConnettore(c, connettoreDebug, endpointtype, oldConnT, tipoconn, url, nome, tipo, user,
 					password, initcont, urlpgk, provurl, connfact, sendas,
@@ -426,6 +483,8 @@ public final class SoggettiEndPoint extends Action {
 					httpsalgoritmokey,
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					listExtendedConnettore);
 			ss.setConnettore(c);
 			SoggettoCtrlStat newCsc = new SoggettoCtrlStat(ss, ssconf);

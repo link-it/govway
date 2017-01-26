@@ -1015,6 +1015,18 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				user = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_USERNAME);
 				password = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_PASSWORD);
 			}
+					
+			// file
+			String requestOutputFileName = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
+			String requestOutputFileNameHeaders = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
+			String requestOutputParentDirCreateIfNotExists = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
+			String requestOutputOverwriteIfExists = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME);
+			String responseInputMode = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE);
+			String responseInputFileName = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME);
+			String responseInputFileNameHeaders = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
+			String responseInputDeleteAfterRead = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
+			String responseInputWaitTime = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
+			
 			
 			Connettore connis = invServizio.getConnettore();
 			if(connis==null){
@@ -1038,6 +1050,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					httpsalgoritmokey,
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					listExtendedConnettore);
 			invServizio.setConnettore(connis);
 		
@@ -1126,6 +1140,18 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				password = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_PASSWORD);
 			}
 						
+			// file
+			String requestOutputFileName = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
+			String requestOutputFileNameHeaders = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
+			String requestOutputParentDirCreateIfNotExists = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
+			String requestOutputOverwriteIfExists = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME);
+			String responseInputMode = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE);
+			String responseInputFileName = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME);
+			String responseInputFileNameHeaders = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
+			String responseInputDeleteAfterRead = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
+			String responseInputWaitTime = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
+			
+						
 			org.openspcoop2.core.registry.Connettore connettore = new org.openspcoop2.core.registry.Connettore();
 			
 			List<ExtendedConnettore> listExtendedConnettore = 
@@ -1145,6 +1171,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					httpsalgoritmokey,
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					listExtendedConnettore);
 			
 			return connettore;
@@ -1922,6 +1950,17 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String redirect_max_hop = null;
 			String opzioniAvanzate = null;
 			
+			// file
+			String requestOutputFileName = null;
+			String requestOutputFileNameHeaders = null;
+			String requestOutputParentDirCreateIfNotExists = null;
+			String requestOutputOverwriteIfExists = null;
+			String responseInputMode = null;
+			String responseInputFileName = null;
+			String responseInputFileNameHeaders = null;
+			String responseInputDeleteAfterRead = null;
+			String responseInputWaitTime = null;
+			
 			if(readedDatiConnettori==false){
 			
 				endpointtype = this.readEndPointType();
@@ -1990,6 +2029,16 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					password = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_PASSWORD);
 				}
 				
+				// file
+				requestOutputFileName = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
+				requestOutputFileNameHeaders = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
+				requestOutputParentDirCreateIfNotExists = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
+				requestOutputOverwriteIfExists = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME);
+				responseInputMode = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE);
+				responseInputFileName = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME);
+				responseInputFileNameHeaders = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
+				responseInputDeleteAfterRead = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
+				responseInputWaitTime = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 			}
 
 			Boolean isConnettoreCustomUltimaImmagineSalvata = null;
@@ -2017,6 +2066,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					isConnettoreCustomUltimaImmagineSalvata, 
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					listExtendedConnettore);
 			
 		}finally{

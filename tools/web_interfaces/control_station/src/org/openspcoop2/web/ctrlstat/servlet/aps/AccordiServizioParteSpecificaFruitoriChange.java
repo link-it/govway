@@ -230,6 +230,17 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				user = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_USERNAME);
 				password = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_AUTENTICAZIONE_PASSWORD);
 			}
+			
+			// file
+			String requestOutputFileName = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
+			String requestOutputFileNameHeaders = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
+			String requestOutputParentDirCreateIfNotExists = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
+			String requestOutputOverwriteIfExists = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE_NAME);
+			String responseInputMode = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_MODE);
+			String responseInputFileName = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME);
+			String responseInputFileNameHeaders = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
+			String responseInputDeleteAfterRead = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
+			String responseInputWaitTime = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 
 
 			String profilo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROFILO);
@@ -456,7 +467,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				}
 
 				if (endpointtype == null) {
-					if ((connettore.getCustom()!=null && connettore.getCustom()) && !connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS)) {
+					if ((connettore.getCustom()!=null && connettore.getCustom()) && 
+							!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS) && 
+							!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE)) {
 						endpointtype = ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM;
 						tipoconn = connettore.getTipo();
 					} else
@@ -603,6 +616,44 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					httpshostverifyS = Costanti.CHECK_BOX_ENABLED_TRUE;
 					httpshostverify = true;
 				}
+				
+				// file
+				if(responseInputMode==null && props!=null){
+					
+					requestOutputFileName = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE);	
+					requestOutputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS);	
+					String v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
+					if(v!=null && !"".equals(v)){
+						if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
+							requestOutputParentDirCreateIfNotExists = Costanti.CHECK_BOX_ENABLED_TRUE;
+						}
+					}					
+					v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE);
+					if(v!=null && !"".equals(v)){
+						if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
+							requestOutputOverwriteIfExists = Costanti.CHECK_BOX_ENABLED_TRUE;
+						}
+					}	
+					
+					v = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_MODE);
+					if(v!=null && !"".equals(v)){
+						if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
+							responseInputMode = CostantiConfigurazione.ABILITATO.getValue();
+						}
+					}
+					if(CostantiConfigurazione.ABILITATO.getValue().equals(responseInputMode)){						
+						responseInputFileName = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE);
+						responseInputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS);
+						v = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_DELETE_AFTER_READ);
+						if(v!=null && !"".equals(v)){
+							if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
+								responseInputDeleteAfterRead = Costanti.CHECK_BOX_ENABLED_TRUE;
+							}
+						}						
+						responseInputWaitTime = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);						
+					}
+					
+				}
 
 				if(this.wsdlimpler == null){
 					this.wsdlimpler = new BinaryParameter();
@@ -648,6 +699,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 								isConnettoreCustomUltimaImmagineSalvata, 
 								proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 								listExtendedConnettore);
 					}else{
 						//spostato nell'helper
@@ -682,6 +735,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					tipoconn,clientAuth,validazioneDocumenti,backToStato,autenticazioneHttp,
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					listExtendedConnettore);
 
 			// Validazione base dei parametri custom 
@@ -753,6 +808,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							isConnettoreCustomUltimaImmagineSalvata, 
 							proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 							listExtendedConnettore);
 				}else{
 					//spostato nell'helper
@@ -813,7 +870,10 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 								httpspwdkey, httpspwdprivatekey, httpsalgoritmokey,
 								tipoconn, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE, idServizio, idServizioFruitore,
 								idSoggettoErogatoreDelServizio, null, null, null, null,
-								oldStatoPackage);
+								oldStatoPackage,
+								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime
+								);
 					}else{
 						//spostato nell'helper
 					}
@@ -855,7 +915,9 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 				connettoreNew.setId(connettore.getId());
 
 				String oldConnT = connettore.getTipo();
-				if ((connettore.getCustom()!=null && connettore.getCustom()) && !connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS)){
+				if ((connettore.getCustom()!=null && connettore.getCustom()) && 
+						!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS) && 
+						!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE)){
 					// mantengo vecchie proprieta connettore custom
 					for(int i=0; i<connettore.sizePropertyList(); i++){
 						connettoreNew.addProperty(connettore.getProperty(i));
@@ -874,6 +936,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 						httpsalgoritmokey,
 						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						listExtendedConnettore);
 			}
 			else{
@@ -974,6 +1038,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 								isConnettoreCustomUltimaImmagineSalvata, 
 								proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 								opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+								requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 								listExtendedConnettore);
 					}else{
 						//spostato nell'helper

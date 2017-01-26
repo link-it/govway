@@ -29,11 +29,14 @@ import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.rest.RestUtilities;
+import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
+
 
 /**
  * ConnettoreUtils
@@ -52,7 +55,7 @@ public class ConnettoreUtils {
 			return location;
 	}
 	
-	public static String getAndReplaceLocationWithBustaValues(ConnettoreMsg connettoreMsg,Busta busta,Logger log) throws ConnettoreException{
+	public static String getAndReplaceLocationWithBustaValues(ConnettoreMsg connettoreMsg,Busta busta,PdDContext pddContext,IProtocolFactory<?> protocolFactory,Logger log) throws ConnettoreException{
 		
 		String location = null;
 		if(TipiConnettore.NULL.getNome().equals(connettoreMsg.getTipoConnettore())){
@@ -63,6 +66,15 @@ public class ConnettoreUtils {
 		}
 		else if(ConnettoreStresstest.TIPO.equals(connettoreMsg.getTipoConnettore())){
 			location = ConnettoreStresstest.LOCATION;
+		}
+		else if(TipiConnettore.FILE.getNome().equals(connettoreMsg.getTipoConnettore())){
+			ConnettoreFILE c = new ConnettoreFILE();
+			try{
+				c.init(pddContext, protocolFactory);
+				location = c.buildLocation(connettoreMsg);
+			}catch(Exception e){
+				log.error("Errore durante la costruzione della location: "+e.getMessage(),e);
+			}
 		}
 		else if(ConnettoreRicezioneBusteDirectVM.TIPO.equals(connettoreMsg.getTipoConnettore())){
 			ConnettoreRicezioneBusteDirectVM c = new ConnettoreRicezioneBusteDirectVM();

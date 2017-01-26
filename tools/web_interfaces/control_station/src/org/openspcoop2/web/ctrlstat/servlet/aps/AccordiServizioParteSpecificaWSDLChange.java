@@ -398,11 +398,23 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			String httpsalgoritmokey = "";
 			String proxy_enabled = null, proxy_hostname  = null,proxy_port  = null,proxy_username  = null,proxy_password = null;
 			String transfer_mode = null, transfer_mode_chunk_size = null, redirect_mode = null, redirect_max_hop = null, opzioniAvanzate = null;
+			// file
+			String requestOutputFileName = null;
+			String requestOutputFileNameHeaders = null;
+			String requestOutputParentDirCreateIfNotExists = null;
+			String requestOutputOverwriteIfExists = null;
+			String responseInputMode = null;
+			String responseInputFileName = null;
+			String responseInputFileNameHeaders = null;
+			String responseInputDeleteAfterRead = null;
+			String responseInputWaitTime = null;
 			if ((endpointtype == null) || (url == null) || (nome == null)) {
 				Map<String, String> props = connettore.getProperties();
 
 				if (endpointtype == null) {
-					if ((connettore.getCustom()!=null && connettore.getCustom()) && !connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS)) {
+					if ((connettore.getCustom()!=null && connettore.getCustom()) && 
+							!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS) && 
+							!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE)) {
 						endpointtype = ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM;
 						tipoconn = connettore.getTipo();
 					} else
@@ -537,6 +549,44 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 							httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI;
 					}
 				}
+				
+				// file
+				if(responseInputMode==null && props!=null){
+					
+					requestOutputFileName = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE);	
+					requestOutputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS);	
+					String v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
+					if(v!=null && !"".equals(v)){
+						if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
+							requestOutputParentDirCreateIfNotExists = Costanti.CHECK_BOX_ENABLED_TRUE;
+						}
+					}					
+					v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE);
+					if(v!=null && !"".equals(v)){
+						if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
+							requestOutputOverwriteIfExists = Costanti.CHECK_BOX_ENABLED_TRUE;
+						}
+					}	
+					
+					v = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_MODE);
+					if(v!=null && !"".equals(v)){
+						if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
+							responseInputMode = CostantiConfigurazione.ABILITATO.getValue();
+						}
+					}
+					if(CostantiConfigurazione.ABILITATO.getValue().equals(responseInputMode)){						
+						responseInputFileName = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE);
+						responseInputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS);
+						v = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_FILE_DELETE_AFTER_READ);
+						if(v!=null && !"".equals(v)){
+							if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
+								responseInputDeleteAfterRead = Costanti.CHECK_BOX_ENABLED_TRUE;
+							}
+						}						
+						responseInputWaitTime = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);						
+					}
+					
+				}
 			}
 
 			Boolean isConnettoreCustomUltimaImmagineSalvata = connettore.getCustom();
@@ -615,6 +665,8 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					isConnettoreCustomUltimaImmagineSalvata, 
 					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					listExtendedConnettore);
 
 			pd.setDati(dati);

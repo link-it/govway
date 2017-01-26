@@ -323,6 +323,7 @@ public final class CostantiDB {
     public static final String CONNETTORE_TIPO_HTTP = TipiConnettore.HTTP.getNome();
     public static final String CONNETTORE_TIPO_HTTPS = TipiConnettore.HTTPS.getNome();
     public static final String CONNETTORE_TIPO_JMS = TipiConnettore.JMS.getNome();
+    public static final String CONNETTORE_TIPO_FILE = TipiConnettore.FILE.getNome();
     public static final String CONNETTORE_TIPO_DISABILITATO = TipiConnettore.DISABILITATO.getNome();
     
     public static final String CONNETTORE_DEBUG = CostantiConnettori.CONNETTORE_DEBUG;
@@ -364,6 +365,16 @@ public final class CostantiDB {
     public static final String CONNETTORE_HTTPS_HOSTNAME_VERIFIER = CostantiConnettori.CONNETTORE_HTTPS_HOSTNAME_VERIFIER;
     public static final String CONNETTORE_HTTPS_CLASSNAME_HOSTNAME_VERIFIER = CostantiConnettori.CONNETTORE_HTTPS_CLASSNAME_HOSTNAME_VERIFIER;
     public static final String CONNETTORE_HTTPS_SSL_TYPE = CostantiConnettori.CONNETTORE_HTTPS_SSL_TYPE;
+    
+	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_FILE = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE;
+	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS;
+	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR;
+	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE = CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE;
+	public final static String CONNETTORE_FILE_RESPONSE_INPUT_MODE = CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_MODE;
+	public final static String CONNETTORE_FILE_RESPONSE_INPUT_FILE = CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_FILE;
+	public final static String CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS = CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS;
+	public final static String CONNETTORE_FILE_RESPONSE_INPUT_FILE_DELETE_AFTER_READ = CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_FILE_DELETE_AFTER_READ;
+	public final static String CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME = CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME;
 	
     public static final String COMPONENTE_SERVIZIO_PD = "pd";
     public static final String COMPONENTE_SERVIZIO_PA = "pa";

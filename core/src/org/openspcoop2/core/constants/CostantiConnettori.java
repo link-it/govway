@@ -111,6 +111,27 @@ public class CostantiConnettori {
     public static final String CONNETTORE_HTTPS_SSL_TYPE_DEFAULT_VALUE=SSLUtilities.getSafeDefaultProtocol();
 	
     
+    
+    /** FILE PROPERTIES */
+    
+    public final static String _CONNETTORE_FILE_MAP_DATE_OBJECT = "date";
+    public final static String _CONNETTORE_FILE_MAP_TRANSACTION_OBJECT = "transaction";
+    public final static String _CONNETTORE_FILE_MAP_TRANSACTION_ID = "{transaction:id}";
+    public final static String _CONNETTORE_FILE_MAP_BUSTA_OBJECT = "busta";
+    public final static String _CONNETTORE_FILE_MAP_CTX_OBJECT = "context";
+    
+	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_FILE = "outputFile";
+	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS = "outputFileHeaders";
+	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR = "outputFileAutoCreateParentDirectory";
+	public final static String CONNETTORE_FILE_REQUEST_OUTPUT_OVERWRITE_FILE = "outputFileOverwriteIfExists";
+	public final static String CONNETTORE_FILE_RESPONSE_INPUT_MODE = "response";
+	public final static String CONNETTORE_FILE_RESPONSE_INPUT_FILE = "inputFile";
+	public final static String CONNETTORE_FILE_RESPONSE_INPUT_FILE_HEADERS = "inputFileHeaders";
+	public final static String CONNETTORE_FILE_RESPONSE_INPUT_FILE_DELETE_AFTER_READ = "inputFileDeleteAfterRead";
+	public final static String CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME = "inputFileWaitTimeIfNotExists";
+    
+    
+    
     /** DIRECT VM PROPERTIES */
     
     public static final String CONNETTORE_DIRECT_VM_PROTOCOL = "protocol";

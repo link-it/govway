@@ -208,6 +208,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			Boolean isConnettoreCustomUltimaImmagineSalvata,
 			String proxyEnabled, String proxyHost, String proxyPort, String proxyUsername, String proxyPassword,
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
+			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
+			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			List<ExtendedConnettore> listExtendedConnettore) throws Exception {
 
 		if(ruoloFruitore==null){
@@ -709,6 +711,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						isConnettoreCustomUltimaImmagineSalvata, 
 						proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
 						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						listExtendedConnettore);
 			}
 		}

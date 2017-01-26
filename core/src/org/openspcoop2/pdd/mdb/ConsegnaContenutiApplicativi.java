@@ -1341,7 +1341,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			}
 
 			// Location
-			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connettoreMsg, bustaRichiesta, this.log);
+			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connettoreMsg, bustaRichiesta, pddContext, protocolFactory,  this.log);
 			if(location!=null){
 				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(consegnaMessage, connettoreMsg.getPropertiesUrlBased(), location);
 				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(connettoreMsg.getTipoConnettore(), connettoreMsg.getConnectorProperties(), locationWithUrl);
@@ -1538,7 +1538,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			
 			/* --------------- REFRESH LOCATION ----------------- */
 			// L'handler puo' aggiornare le properties che contengono le proprieta' del connettore.
-			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connettoreMsg, bustaRichiesta, this.log);
+			location = ConnettoreUtils.getAndReplaceLocationWithBustaValues(connettoreMsg, bustaRichiesta, pddContext, protocolFactory, this.log);
 			if(location!=null){
 				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(consegnaMessage, connettoreMsg.getPropertiesUrlBased(), location);
 				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(connettoreMsg.getTipoConnettore(), connettoreMsg.getConnectorProperties(), locationWithUrl);
