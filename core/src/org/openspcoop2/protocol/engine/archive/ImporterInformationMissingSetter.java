@@ -313,6 +313,14 @@ public class ImporterInformationMissingSetter {
 				pd.setNomeSoggettoProprietario(idSoggetto.getNome());
 				archive.getPorteDelegate().get(i).update(pd, false);
 			}
+			if(pd.getSoggettoErogatore()!=null){
+				if(matchSoggetto(soggetto.getReplaceMatch(), 
+						pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome())){
+					pd.getSoggettoErogatore().setTipo(idSoggetto.getTipo());
+					pd.getSoggettoErogatore().setNome(idSoggetto.getNome());
+					archive.getPorteDelegate().get(i).update(pd, false);
+				}
+			}
 		}
 		
 		// PorteApplicative
@@ -323,6 +331,14 @@ public class ImporterInformationMissingSetter {
 				pa.setTipoSoggettoProprietario(idSoggetto.getTipo());
 				pa.setNomeSoggettoProprietario(idSoggetto.getNome());
 				archive.getPorteApplicative().get(i).update(pa, false);
+			}
+			if(pa.getSoggettoVirtuale()!=null){
+				if(matchSoggetto(soggetto.getReplaceMatch(), 
+						pa.getSoggettoVirtuale().getTipo(), pa.getSoggettoVirtuale().getNome())){
+					pa.getSoggettoVirtuale().setTipo(idSoggetto.getTipo());
+					pa.getSoggettoVirtuale().setNome(idSoggetto.getNome());
+					archive.getPorteApplicative().get(i).update(pa, false);
+				}
 			}
 		}
 		
@@ -922,7 +938,23 @@ public class ImporterInformationMissingSetter {
 	}
 	
 	public static void replaceTemplatesNames(Archive archive) throws ProtocolException{
-				
+			
+		// Soggetti
+		for (int i = 0; i < archive.getSoggetti().size(); i++) {
+			org.openspcoop2.core.registry.Soggetto soggetto = archive.getSoggetti().get(i).getSoggettoRegistro();
+			if(soggetto!=null && soggetto.getConnettore()!=null){
+				if(soggetto.getConnettore().sizePropertyList()>0){
+					for (int j = 0; j < soggetto.getConnettore().sizePropertyList(); j++) {
+						org.openspcoop2.core.registry.Property p = soggetto.getConnettore().getProperty(j);
+						p.setNome(replaceSoggettoProprietario(p.getNome(), 
+								soggetto.getTipo(),soggetto.getNome()));
+						p.setValore(replaceSoggettoProprietario(p.getValore(), 
+								soggetto.getTipo(),soggetto.getNome()));
+					}
+				}
+			}
+		}
+		
 		// ServiziApplicativi
 		for (int i = 0; i < archive.getServiziApplicativi().size(); i++) {
 			ServizioApplicativo sa = archive.getServiziApplicativi().get(i).getServizioApplicativo();
@@ -990,7 +1022,7 @@ public class ImporterInformationMissingSetter {
 		// PorteDelegate
 		for (int i = 0; i < archive.getPorteDelegate().size(); i++) {
 			PortaDelegata pd = archive.getPorteDelegate().get(i).getPortaDelegata();
-			
+						
 			pd.setNome(replaceSoggettoProprietario(pd.getNome(), 
 					pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
 			if(pd.getSoggettoErogatore()!=null && 
@@ -1011,7 +1043,30 @@ public class ImporterInformationMissingSetter {
 				pd.setNome(replaceAzione(pd.getNome(), 
 						pd.getAzione().getNome()));
 			}
-						
+			
+			if(pd.getDescrizione()!=null && !"".equals(pd.getDescrizione())){
+				pd.setDescrizione(replaceSoggettoProprietario(pd.getDescrizione(), 
+						pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
+				if(pd.getSoggettoErogatore()!=null && 
+						pd.getSoggettoErogatore().getNome()!=null && 
+						!"".equals(pd.getSoggettoErogatore().getNome()) ){
+					pd.setDescrizione(replaceSoggettoErogatore(pd.getDescrizione(), 
+							pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome()));
+				}
+				if(pd.getServizio()!=null && 
+						pd.getServizio().getNome()!=null && 
+						!"".equals(pd.getServizio().getNome()) ){
+					pd.setDescrizione(replaceServizio(pd.getDescrizione(), 
+							pd.getServizio().getTipo(), pd.getServizio().getNome()));
+				}
+				if(pd.getAzione()!=null && 
+						pd.getAzione().getNome()!=null &&
+						!"".equals(pd.getAzione().getNome()) ){
+					pd.setDescrizione(replaceAzione(pd.getDescrizione(), 
+							pd.getAzione().getNome()));
+				}
+			}
+			
 			if(pd.getAzione()!=null){
 				if(pd.getAzione().getPattern()!=null &&
 						!"".equals(pd.getAzione().getPattern())){
@@ -1063,6 +1118,24 @@ public class ImporterInformationMissingSetter {
 		// PorteApplicative
 		for (int i = 0; i < archive.getPorteApplicative().size(); i++) {
 			PortaApplicativa pa = archive.getPorteApplicative().get(i).getPortaApplicativa();
+			
+			if(pa.getDescrizione()!=null && !"".equals(pa.getDescrizione())){
+				pa.setDescrizione(replaceSoggettoProprietario(pa.getDescrizione(), 
+						pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
+				if(pa.getServizio()!=null && 
+						pa.getServizio().getNome()!=null && 
+						!"".equals(pa.getServizio().getNome()) ){
+					pa.setDescrizione(replaceServizio(pa.getDescrizione(), 
+							pa.getServizio().getTipo(), pa.getServizio().getNome()));
+				}
+				if(pa.getAzione()!=null && 
+						pa.getAzione().getNome()!=null && 
+						!"".equals(pa.getAzione().getNome()) ){
+					pa.setDescrizione(replaceAzione(pa.getDescrizione(), 
+							pa.getAzione().getNome()));
+				}
+			}
+			
 			pa.setNome(replaceSoggettoProprietario(pa.getNome(), 
 					pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
 			if(pa.getServizio()!=null && 
@@ -1077,6 +1150,7 @@ public class ImporterInformationMissingSetter {
 				pa.setNome(replaceAzione(pa.getNome(), 
 						pa.getAzione().getNome()));
 			}
+			
 			for (int j = 0; j < pa.sizeServizioApplicativoList(); j++) {
 				pa.getServizioApplicativo(j).setNome(replaceSoggettoProprietario(pa.getServizioApplicativo(j).getNome(), 
 					pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
