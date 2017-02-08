@@ -230,6 +230,11 @@
         <azione nome="malformazioneXMLBody_BodyFirstChild_Stateful"/>
         <azione nome="malformazioneXMLBody_InsideBody_Stateful"/>
 	<azione nome="malformazioneContentTypeRisposta"/>
+	<!-- FaultErrati -->
+	<azione nome="soapFaultPdDConPrefixErrato"/>
+	<azione nome="soapFaultSAConPrefixErrato"/>
+	<azione nome="soapFaultPdDSenzaPrefix"/>
+	<azione nome="soapFaultSASenzaPrefix"/>
         <!-- Correlazione Applicativa Risposta -->
         <azione nome="testCorrelazioneApplicativaRisposta_ContentBased_SOAP_stateless"/>
         <azione nome="testCorrelazioneApplicativaRisposta_ContentBased_SOAP_stateful"/>
@@ -1031,6 +1036,23 @@
                         />
                     </connettore>
                 </configurazione-azione>
+
+		<!-- FaultErrati -->
+		<configurazione-azione nome="soapFaultPdDConPrefixErrato">
+                    <connettore tipo="http" nome="soapFaultPdDConPrefixErrato">
+                        <property nome="location"
+                            valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?returnCode=500&amp;destFile=/etc/openspcoop2/testfiles/soapFaultPrefixErrato.xml"
+                        />
+                    </connettore>
+                </configurazione-azione>
+                <configurazione-azione nome="soapFaultPdDSenzaPrefix">
+                    <connettore tipo="http" nome="soapFaultPdDSenzaPrefix">
+                        <property nome="location"
+                            valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?returnCode=500&amp;destFile=/etc/openspcoop2/testfiles/soapFaultSenzaPrefix.xml"
+                        />
+                    </connettore>
+                </configurazione-azione>
+
             </configurazione-servizio>
 
             <fruitore tipo="SPC" nome="MinisteroFruitore"/>

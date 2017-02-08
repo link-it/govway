@@ -29,6 +29,8 @@ import java.util.Vector;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
+import org.openspcoop2.message.Costanti;
+import org.openspcoop2.message.SoapUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
@@ -44,6 +46,11 @@ import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.xml.XMLDiff;
+import org.openspcoop2.utils.xml.XMLDiffImplType;
+import org.openspcoop2.utils.xml.XMLDiffOptions;
+import org.openspcoop2.utils.xml.XMLException;
+import org.openspcoop2.utils.xml.XMLUtils;
 import org.testng.Assert;
 import org.testng.Reporter;
 import org.testng.annotations.AfterGroups;
@@ -86,6 +93,15 @@ public class ErroreApplicativoCNIPA {
 	} 
 	
 	
+	private static boolean init = false;
+	private static XMLDiff xmlDiff = null;
+	private static synchronized void init() throws XMLException{
+		if(init==false){
+			xmlDiff = new XMLDiff();
+			xmlDiff.initialize(XMLDiffImplType.XML_UNIT, new XMLDiffOptions());
+			init = true;
+		}
+	}
 	
 	
 	
@@ -670,6 +686,265 @@ public class ErroreApplicativoCNIPA {
 		return response;
 	}
 	
+	@Test(groups={ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".SOAP_FAULT_APPLICATIVO_2"},dataProvider="personalizzazioniFaultApplicativi")
+	public void testFaultApplicativoArricchitoFAULTCNIPA_FaultGeneratoConPrefixErrato(String servizioApplicativoFruitore) throws Exception{
+		testFaultApplicativoArricchitoFAULTCNIPA_FaultGeneratoConPrefixErrato_engine(servizioApplicativoFruitore);
+	}
+	public Object testFaultApplicativoArricchitoFAULTCNIPA_FaultGeneratoConPrefixErrato_engine(String servizioApplicativoFruitore) throws Exception{
+
+		DatabaseComponent dbComponentFruitore = null;
+		DatabaseComponent dbComponentErogatore = null;
+		String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_ERRORE_APPLICATIVO_SOAP_FAULT_CUSTOM+"/"+
+				CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_SOAP_FAULT_SA_CON_PREFIX_ERRATO;
+
+		init();
+		
+		Object response = null;
+		try{
+
+			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setPortaDelegata(portaDelegata);
+			client.connectToSoapEngine();
+			if(servizioApplicativoFruitore!=null){
+				client.setProperty("X-OpenSPCoop2-ServizioApplicativo", servizioApplicativoFruitore);
+			}
+			byte [] xmlRichiesta = org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoap11FileName());
+			client.setMessaggioXMLRichiesta(xmlRichiesta); // in modo da poter verificare a mano la risposta. Axis altrimenti in questi casi particolari non funziona
+			
+			client.setRispostaDaGestire(true);
+			// AttesaTerminazioneMessaggi
+			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
+				dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
+
+				client.setAttesaTerminazioneMessaggi(true);
+				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
+				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
+			}
+			try {
+				client.run();
+
+				byte[] responseByte = client.getMessaggioXMLRisposta();
+				if(responseByte==null){
+					throw new Exception("Risposta non ritornata");
+				}
+				
+				// Risposta
+				Element e = XMLUtils.getInstance().newElement(responseByte);
+				//System.out.println("Ricevuto SOAP ["+e.getLocalName()+"] ["+e.getNamespaceURI()+"]");
+				//System.out.println("RISPOSTA ["+XMLUtils.getInstance().toString(e)+"]");
+				Assert.assertTrue(Costanti.SOAP_ENVELOPE_NAMESPACE.equals(e.getNamespaceURI()));
+				Assert.assertTrue("Envelope".equals(e.getLocalName()));
+				NodeList nL = e.getChildNodes();
+				Node fault = null;
+				for (int i = 0; i < nL.getLength(); i++) {
+					Node n = nL.item(i);
+					if(Costanti.SOAP_ENVELOPE_NAMESPACE.equals(n.getNamespaceURI()) && "Body".equals(n.getLocalName())){
+						fault = SoapUtils.getFirstNotEmptyChildNode(n, false);
+					}
+				}
+
+				Node faultSenzaDetails = fault.cloneNode(true);
+				Node CNIPA = null;
+				nL = faultSenzaDetails.getChildNodes();
+				for (int i = 0; i < nL.getLength(); i++) {
+					Node n = nL.item(i);
+					if("detail".equals(n.getLocalName())){
+						NodeList nDetail = n.getChildNodes();
+						for (int j = 0; j < nDetail.getLength(); j++) {
+							Node nDetailI = nDetail.item(j);
+							if("http://www.cnipa.it/schemas/2003/eGovIT/Exception1_0/".equals(nDetailI.getNamespaceURI()) && 
+									"MessaggioDiErroreApplicativo".equals(nDetailI.getLocalName())){
+								CNIPA = nDetailI;
+								break;
+							}
+						}
+						if(CNIPA!=null){
+							n.removeChild(CNIPA);
+						}
+					}
+				}
+				
+
+				// Atteso
+				byte [] xmlAtteso = org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoapTestSOAPScorretto_soapFaultPrefixErrato());
+				Element eAtteso = XMLUtils.getInstance().newElement(xmlAtteso);
+				nL = eAtteso.getChildNodes();
+				Node faultAtteso = null;
+				for (int i = 0; i < nL.getLength(); i++) {
+					Node n = nL.item(i);
+					if(Costanti.SOAP_ENVELOPE_NAMESPACE.equals(n.getNamespaceURI()) && "Body".equals(n.getLocalName())){
+						faultAtteso = SoapUtils.getFirstNotEmptyChildNode(n, false);
+					}
+				}
+				
+				byte[] tmp = XMLUtils.getInstance().toByteArray(faultSenzaDetails);
+				faultSenzaDetails = XMLUtils.getInstance().newElement(tmp);
+				tmp = XMLUtils.getInstance().toByteArray(faultAtteso);
+				faultAtteso = XMLUtils.getInstance().newElement(tmp);
+				boolean diff = xmlDiff.diff(faultSenzaDetails, faultAtteso);
+				if(!diff){
+					System.out.println("FAULT ["+XMLUtils.getInstance().toString(faultSenzaDetails)+"]");
+					System.out.println("FAULTAtteso ["+XMLUtils.getInstance().toString(faultAtteso)+"]");
+					System.out.println("Diff: "+xmlDiff.getDifferenceDetails());
+				}
+				Assert.assertTrue(diff);
+
+				String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE);
+				if("erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore)){
+					codice = "PREFIX_PERSONALIZZATO_516";
+				}
+				
+				Reporter.log("Controllo xml errore applicativo cnipa definito nei details (Codice:"+codice+")");
+				Utilities.verificaErroreApplicativoCnipa(CNIPA,"MinisteroFruitoreSPCoopIT","InoltroBuste", 
+						codice, 
+						CostantiErroriIntegrazione.MSG_516_SERVIZIO_APPLICATIVO_NON_DISPONIBILE, 
+						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);		
+
+			}finally{
+				dbComponentFruitore.close();
+				dbComponentErogatore.close();
+			}
+		}catch(Exception e){
+			throw e;
+		}finally{
+			dbComponentFruitore.close();
+			dbComponentErogatore.close();
+		}
+		return response;	
+	}
+	
+	@Test(groups={ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".SOAP_FAULT_APPLICATIVO_3"},dataProvider="personalizzazioniFaultApplicativi")
+	public void testFaultApplicativoArricchitoFAULTCNIPA_FaultGeneratoConSenzaPrefix(String servizioApplicativoFruitore) throws Exception{
+		testFaultApplicativoArricchitoFAULTCNIPA_FaultGeneratoConSenzaPrefix_engine(servizioApplicativoFruitore);
+	}
+	public Object testFaultApplicativoArricchitoFAULTCNIPA_FaultGeneratoConSenzaPrefix_engine(String servizioApplicativoFruitore) throws Exception{
+
+		DatabaseComponent dbComponentFruitore = null;
+		DatabaseComponent dbComponentErogatore = null;
+		String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_ERRORE_APPLICATIVO_SOAP_FAULT_CUSTOM+"/"+
+				CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_SOAP_FAULT_SA_SENZA_PREFIX;
+
+		init();
+		
+		Object response = null;
+		try{
+
+			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setPortaDelegata(portaDelegata);
+			client.connectToSoapEngine();
+			if(servizioApplicativoFruitore!=null){
+				client.setProperty("X-OpenSPCoop2-ServizioApplicativo", servizioApplicativoFruitore);
+			}
+			byte [] xmlRichiesta = org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoap11FileName());
+			client.setMessaggioXMLRichiesta(xmlRichiesta); // in modo da poter verificare a mano la risposta. Axis altrimenti in questi casi particolari non funziona
+			
+			client.setRispostaDaGestire(true);
+			// AttesaTerminazioneMessaggi
+			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
+				dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
+
+				client.setAttesaTerminazioneMessaggi(true);
+				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
+				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
+			}
+			try {
+				client.run();
+
+				byte[] responseByte = client.getMessaggioXMLRisposta();
+				if(responseByte==null){
+					throw new Exception("Risposta non ritornata");
+				}
+				
+				// Risposta
+				Element e = XMLUtils.getInstance().newElement(responseByte);
+				//System.out.println("Ricevuto SOAP ["+e.getLocalName()+"] ["+e.getNamespaceURI()+"]");
+				//System.out.println("RISPOSTA ["+XMLUtils.getInstance().toString(e)+"]");
+				Assert.assertTrue(Costanti.SOAP_ENVELOPE_NAMESPACE.equals(e.getNamespaceURI()));
+				Assert.assertTrue("Envelope".equals(e.getLocalName()));
+				NodeList nL = e.getChildNodes();
+				Node fault = null;
+				for (int i = 0; i < nL.getLength(); i++) {
+					Node n = nL.item(i);
+					if(Costanti.SOAP_ENVELOPE_NAMESPACE.equals(n.getNamespaceURI()) && "Body".equals(n.getLocalName())){
+						fault = SoapUtils.getFirstNotEmptyChildNode(n, false);
+					}
+				}
+
+				Node faultSenzaDetails = fault.cloneNode(true);
+				Node CNIPA = null;
+				nL = faultSenzaDetails.getChildNodes();
+				for (int i = 0; i < nL.getLength(); i++) {
+					Node n = nL.item(i);
+					if("detail".equals(n.getLocalName())){
+						NodeList nDetail = n.getChildNodes();
+						for (int j = 0; j < nDetail.getLength(); j++) {
+							Node nDetailI = nDetail.item(j);
+							if("http://www.cnipa.it/schemas/2003/eGovIT/Exception1_0/".equals(nDetailI.getNamespaceURI()) && 
+									"MessaggioDiErroreApplicativo".equals(nDetailI.getLocalName())){
+								CNIPA = nDetailI;
+								break;
+							}
+						}
+						if(CNIPA!=null){
+							n.removeChild(CNIPA);
+						}
+					}
+				}
+				
+
+				// Atteso
+				byte [] xmlAtteso = org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoapTestSOAPScorretto_soapFaultSenzaPrefix());
+				Element eAtteso = XMLUtils.getInstance().newElement(xmlAtteso);
+				nL = eAtteso.getChildNodes();
+				Node faultAtteso = null;
+				for (int i = 0; i < nL.getLength(); i++) {
+					Node n = nL.item(i);
+					if(Costanti.SOAP_ENVELOPE_NAMESPACE.equals(n.getNamespaceURI()) && "Body".equals(n.getLocalName())){
+						faultAtteso = SoapUtils.getFirstNotEmptyChildNode(n, false);
+					}
+				}
+				
+				byte[] tmp = XMLUtils.getInstance().toByteArray(faultSenzaDetails);
+				faultSenzaDetails = XMLUtils.getInstance().newElement(tmp);
+				tmp = XMLUtils.getInstance().toByteArray(faultAtteso);
+				faultAtteso = XMLUtils.getInstance().newElement(tmp);
+				boolean diff = xmlDiff.diff(faultSenzaDetails, faultAtteso);
+				if(!diff){
+					System.out.println("FAULT ["+XMLUtils.getInstance().toString(faultSenzaDetails)+"]");
+					System.out.println("FAULTAtteso ["+XMLUtils.getInstance().toString(faultAtteso)+"]");
+					System.out.println("Diff: "+xmlDiff.getDifferenceDetails());
+				}
+				Assert.assertTrue(diff);
+
+				String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE);
+				if("erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore)){
+					codice = "PREFIX_PERSONALIZZATO_516";
+				}
+				
+				Reporter.log("Controllo xml errore applicativo cnipa definito nei details (Codice:"+codice+")");
+				Utilities.verificaErroreApplicativoCnipa(CNIPA,"MinisteroFruitoreSPCoopIT","InoltroBuste", 
+						codice, 
+						CostantiErroriIntegrazione.MSG_516_SERVIZIO_APPLICATIVO_NON_DISPONIBILE, 
+						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);		
+
+			}finally{
+				dbComponentFruitore.close();
+				dbComponentErogatore.close();
+			}
+		}catch(Exception e){
+			throw e;
+		}finally{
+			dbComponentFruitore.close();
+			dbComponentErogatore.close();
+		}
+		return response;	
+	}
+	
+	
 	/** SERVIZIO TUNNEL SOAP: SOAP FAULT APPLICATIVO ARRICCHITO */
 	
 	@DataProvider (name="personalizzazioniFaultApplicativiTunnelSOAP")
@@ -1051,6 +1326,265 @@ public class ErroreApplicativoCNIPA {
 				Utilities.verificaFaultDetailsRispettoErroreApplicativoCnipa(error,"MinisteroFruitoreSPCoopIT","InoltroBuste", 
 						codice, 
 						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, "SPCSOAPFaultSenzaDetails"), Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);				
+			}finally{
+				dbComponentFruitore.close();
+				dbComponentErogatore.close();
+			}
+		}catch(Exception e){
+			throw e;
+		}finally{
+			dbComponentFruitore.close();
+			dbComponentErogatore.close();
+		}
+		return response;	
+	}
+	
+	@Test(groups={ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".SOAP_FAULT_PDD_4"},dataProvider="personalizzazioniFaultApplicativiPdD")
+	public void testFaultPddArricchitoFAULTCNIPA_FaultGeneratoConPrefixErrato(String servizioApplicativoFruitore) throws Exception{
+		testFaultPddArricchitoFAULTCNIPA_FaultGeneratoConPrefixErrato_engine(servizioApplicativoFruitore);
+	}
+	public Object testFaultPddArricchitoFAULTCNIPA_FaultGeneratoConPrefixErrato_engine(String servizioApplicativoFruitore) throws Exception{
+
+		DatabaseComponent dbComponentFruitore = null;
+		DatabaseComponent dbComponentErogatore = null;
+		String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_ERRORE_APPLICATIVO_SOAP_FAULT_CUSTOM+"/"+CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_SOAP_FAULT_PDD_CON_PREFIX_ERRATO;
+
+		init();
+		
+		Object response = null;
+		try{
+
+			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setPortaDelegata(portaDelegata);
+			client.connectToSoapEngine();
+			if(servizioApplicativoFruitore!=null){
+				client.setProperty("X-OpenSPCoop2-ServizioApplicativo", servizioApplicativoFruitore);
+			}
+			byte [] xmlRichiesta = org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoap11FileName());
+			client.setMessaggioXMLRichiesta(xmlRichiesta); // in modo da poter verificare a mano la risposta. Axis altrimenti in questi casi particolari non funziona
+			
+			client.setRispostaDaGestire(true);
+			// AttesaTerminazioneMessaggi
+			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
+				dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
+
+				client.setAttesaTerminazioneMessaggi(true);
+				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
+				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
+			}
+			try {
+				client.run();
+
+				byte[] responseByte = client.getMessaggioXMLRisposta();
+				if(responseByte==null){
+					throw new Exception("Risposta non ritornata");
+				}
+				
+				// Risposta
+				Element e = XMLUtils.getInstance().newElement(responseByte);
+				//System.out.println("Ricevuto SOAP ["+e.getLocalName()+"] ["+e.getNamespaceURI()+"]");
+				//System.out.println("RISPOSTA ["+XMLUtils.getInstance().toString(e)+"]");
+				Assert.assertTrue(Costanti.SOAP_ENVELOPE_NAMESPACE.equals(e.getNamespaceURI()));
+				Assert.assertTrue("Envelope".equals(e.getLocalName()));
+				NodeList nL = e.getChildNodes();
+				Node fault = null;
+				for (int i = 0; i < nL.getLength(); i++) {
+					Node n = nL.item(i);
+					if(Costanti.SOAP_ENVELOPE_NAMESPACE.equals(n.getNamespaceURI()) && "Body".equals(n.getLocalName())){
+						fault = SoapUtils.getFirstNotEmptyChildNode(n, false);
+					}
+				}
+
+				Node faultSenzaDetails = fault.cloneNode(true);
+				Node CNIPA = null;
+				nL = faultSenzaDetails.getChildNodes();
+				for (int i = 0; i < nL.getLength(); i++) {
+					Node n = nL.item(i);
+					if("detail".equals(n.getLocalName())){
+						NodeList nDetail = n.getChildNodes();
+						for (int j = 0; j < nDetail.getLength(); j++) {
+							Node nDetailI = nDetail.item(j);
+							if("http://www.cnipa.it/schemas/2003/eGovIT/Exception1_0/".equals(nDetailI.getNamespaceURI()) && 
+									"MessaggioDiErroreApplicativo".equals(nDetailI.getLocalName())){
+								CNIPA = nDetailI;
+								break;
+							}
+						}
+						if(CNIPA!=null){
+							n.removeChild(CNIPA);
+						}
+					}
+				}
+				
+
+				// Atteso
+				byte [] xmlAtteso = org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoapTestSOAPScorretto_soapFaultPrefixErrato());
+				Element eAtteso = XMLUtils.getInstance().newElement(xmlAtteso);
+				nL = eAtteso.getChildNodes();
+				Node faultAtteso = null;
+				for (int i = 0; i < nL.getLength(); i++) {
+					Node n = nL.item(i);
+					if(Costanti.SOAP_ENVELOPE_NAMESPACE.equals(n.getNamespaceURI()) && "Body".equals(n.getLocalName())){
+						faultAtteso = SoapUtils.getFirstNotEmptyChildNode(n, false);
+					}
+				}
+				
+				byte[] tmp = XMLUtils.getInstance().toByteArray(faultSenzaDetails);
+				faultSenzaDetails = XMLUtils.getInstance().newElement(tmp);
+				tmp = XMLUtils.getInstance().toByteArray(faultAtteso);
+				faultAtteso = XMLUtils.getInstance().newElement(tmp);
+				boolean diff = xmlDiff.diff(faultSenzaDetails, faultAtteso);
+				if(!diff){
+					System.out.println("FAULT ["+XMLUtils.getInstance().toString(faultSenzaDetails)+"]");
+					System.out.println("FAULTAtteso ["+XMLUtils.getInstance().toString(faultAtteso)+"]");
+					System.out.println("Diff: "+xmlDiff.getDifferenceDetails());
+				}
+				Assert.assertTrue(diff);
+
+				String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE);
+				if("erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore)){
+					codice = "PREFIX_PERSONALIZZATO_516";
+				}
+				
+				Reporter.log("Controllo xml errore applicativo cnipa definito nei details (Codice:"+codice+")");
+				Utilities.verificaErroreApplicativoCnipa(CNIPA,"MinisteroFruitoreSPCoopIT","InoltroBuste", 
+						codice, 
+						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, 
+								CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE), 
+						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);				
+
+			}finally{
+				dbComponentFruitore.close();
+				dbComponentErogatore.close();
+			}
+		}catch(Exception e){
+			throw e;
+		}finally{
+			dbComponentFruitore.close();
+			dbComponentErogatore.close();
+		}
+		return response;	
+	}
+	
+	@Test(groups={ErroreApplicativoCNIPA.ID_GRUPPO,ErroreApplicativoCNIPA.ID_GRUPPO+".SOAP_FAULT_PDD_5"},dataProvider="personalizzazioniFaultApplicativiPdD")
+	public void testFaultPddArricchitoFAULTCNIPA_FaultGeneratoConSenzaPrefix(String servizioApplicativoFruitore) throws Exception{
+		testFaultPddArricchitoFAULTCNIPA_FaultGeneratoConSenzaPrefix_engine(servizioApplicativoFruitore);
+	}
+	public Object testFaultPddArricchitoFAULTCNIPA_FaultGeneratoConSenzaPrefix_engine(String servizioApplicativoFruitore) throws Exception{
+
+		DatabaseComponent dbComponentFruitore = null;
+		DatabaseComponent dbComponentErogatore = null;
+		String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_ERRORE_APPLICATIVO_SOAP_FAULT_CUSTOM+"/"+
+				CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_SOAP_FAULT_PDD_SENZA_PREFIX;
+
+		init();
+		
+		Object response = null;
+		try{
+
+			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
+			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
+			client.setPortaDelegata(portaDelegata);
+			client.connectToSoapEngine();
+			if(servizioApplicativoFruitore!=null){
+				client.setProperty("X-OpenSPCoop2-ServizioApplicativo", servizioApplicativoFruitore);
+			}
+			byte [] xmlRichiesta = org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoap11FileName());
+			client.setMessaggioXMLRichiesta(xmlRichiesta); // in modo da poter verificare a mano la risposta. Axis altrimenti in questi casi particolari non funziona
+			
+			client.setRispostaDaGestire(true);
+			// AttesaTerminazioneMessaggi
+			if(Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()){
+				dbComponentFruitore = DatabaseProperties.getDatabaseComponentFruitore();
+				dbComponentErogatore = DatabaseProperties.getDatabaseComponentErogatore();
+
+				client.setAttesaTerminazioneMessaggi(true);
+				client.setDbAttesaTerminazioneMessaggiFruitore(dbComponentFruitore);
+				client.setDbAttesaTerminazioneMessaggiErogatore(dbComponentErogatore);
+			}
+			try {
+				client.run();
+
+				byte[] responseByte = client.getMessaggioXMLRisposta();
+				if(responseByte==null){
+					throw new Exception("Risposta non ritornata");
+				}
+				
+				// Risposta
+				Element e = XMLUtils.getInstance().newElement(responseByte);
+				//System.out.println("Ricevuto SOAP ["+e.getLocalName()+"] ["+e.getNamespaceURI()+"]");
+				//System.out.println("RISPOSTA ["+XMLUtils.getInstance().toString(e)+"]");
+				Assert.assertTrue(Costanti.SOAP_ENVELOPE_NAMESPACE.equals(e.getNamespaceURI()));
+				Assert.assertTrue("Envelope".equals(e.getLocalName()));
+				NodeList nL = e.getChildNodes();
+				Node fault = null;
+				for (int i = 0; i < nL.getLength(); i++) {
+					Node n = nL.item(i);
+					if(Costanti.SOAP_ENVELOPE_NAMESPACE.equals(n.getNamespaceURI()) && "Body".equals(n.getLocalName())){
+						fault = SoapUtils.getFirstNotEmptyChildNode(n, false);
+					}
+				}
+
+				Node faultSenzaDetails = fault.cloneNode(true);
+				Node CNIPA = null;
+				nL = faultSenzaDetails.getChildNodes();
+				for (int i = 0; i < nL.getLength(); i++) {
+					Node n = nL.item(i);
+					if("detail".equals(n.getLocalName())){
+						NodeList nDetail = n.getChildNodes();
+						for (int j = 0; j < nDetail.getLength(); j++) {
+							Node nDetailI = nDetail.item(j);
+							if("http://www.cnipa.it/schemas/2003/eGovIT/Exception1_0/".equals(nDetailI.getNamespaceURI()) && 
+									"MessaggioDiErroreApplicativo".equals(nDetailI.getLocalName())){
+								CNIPA = nDetailI;
+								break;
+							}
+						}
+						if(CNIPA!=null){
+							n.removeChild(CNIPA);
+						}
+					}
+				}
+				
+
+				// Atteso
+				byte [] xmlAtteso = org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(Utilities.testSuiteProperties.getSoapTestSOAPScorretto_soapFaultSenzaPrefix());
+				Element eAtteso = XMLUtils.getInstance().newElement(xmlAtteso);
+				nL = eAtteso.getChildNodes();
+				Node faultAtteso = null;
+				for (int i = 0; i < nL.getLength(); i++) {
+					Node n = nL.item(i);
+					if(Costanti.SOAP_ENVELOPE_NAMESPACE.equals(n.getNamespaceURI()) && "Body".equals(n.getLocalName())){
+						faultAtteso = SoapUtils.getFirstNotEmptyChildNode(n, false);
+					}
+				}
+				
+				byte[] tmp = XMLUtils.getInstance().toByteArray(faultSenzaDetails);
+				faultSenzaDetails = XMLUtils.getInstance().newElement(tmp);
+				tmp = XMLUtils.getInstance().toByteArray(faultAtteso);
+				faultAtteso = XMLUtils.getInstance().newElement(tmp);
+				boolean diff = xmlDiff.diff(faultSenzaDetails, faultAtteso);
+				if(!diff){
+					System.out.println("FAULT ["+XMLUtils.getInstance().toString(faultSenzaDetails)+"]");
+					System.out.println("FAULTAtteso ["+XMLUtils.getInstance().toString(faultAtteso)+"]");
+					System.out.println("Diff: "+xmlDiff.getDifferenceDetails());
+				}
+				Assert.assertTrue(diff);
+
+				String codice = Utilities.toString(CodiceErroreIntegrazione.CODICE_516_CONNETTORE_UTILIZZO_CON_ERRORE);
+				if("erroreApplicativoAsXmlRidefinito".equals(servizioApplicativoFruitore) || "erroreApplicativoAsSoapFaultRidefinito".equals(servizioApplicativoFruitore)){
+					codice = "PREFIX_PERSONALIZZATO_516";
+				}
+				
+				Reporter.log("Controllo xml errore applicativo cnipa definito nei details (Codice:"+codice+")");
+				Utilities.verificaErroreApplicativoCnipa(CNIPA,"MinisteroFruitoreSPCoopIT","InoltroBuste", 
+						codice, 
+						CostantiErroriIntegrazione.MSG_516_PDD_NON_DISPONIBILE.replace(CostantiProtocollo.KEYWORDPDD_NON_DISPONIBILE, 
+								CostantiTestSuite.SPCOOP_TIPO_SOGGETTO_EROGATORE+CostantiTestSuite.SPCOOP_NOME_SOGGETTO_EROGATORE), 
+						Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_EQUALS);				
+
 			}finally{
 				dbComponentFruitore.close();
 				dbComponentErogatore.close();

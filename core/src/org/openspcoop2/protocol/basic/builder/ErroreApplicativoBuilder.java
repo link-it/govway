@@ -274,7 +274,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 	public void insertInSOAPFault(
 			EccezioneProtocolloBuilderParameters parameters,
 			OpenSPCoop2Message msg) throws ProtocolException {
-		ErroreApplicativoMessageUtils.insertErroreApplicativoIntoSOAPFault(
+		ErroreApplicativoMessageUtils.addErroreApplicativoIntoSOAPFaultDetail(
 				this.toSoapElement(parameters), msg, this.log);
 	}
 
@@ -282,7 +282,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 	public void insertInSOAPFault(
 			EccezioneIntegrazioneBuilderParameters parameters,
 			OpenSPCoop2Message msg) throws ProtocolException {
-		ErroreApplicativoMessageUtils.insertErroreApplicativoIntoSOAPFault(
+		ErroreApplicativoMessageUtils.addErroreApplicativoIntoSOAPFaultDetail(
 				this.toSoapElement(parameters), msg, this.log);
 	}
 

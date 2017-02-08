@@ -525,6 +525,24 @@ public class TestSuiteProperties implements UnitsTestSuiteProperties {
 		}
 	}
 	
+	public String getSoapTestSOAPScorretto_soapFaultPrefixErrato(){
+		try{
+			return this.reader.getProperty("org.openspcoop2.testsuite.files.testSOAPScorretto.soapFaultPrefixErrato").trim();
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.files.testSOAPScorretto.soapFaultPrefixErrato':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return null;
+		}
+	}
+	public String getSoapTestSOAPScorretto_soapFaultSenzaPrefix(){
+		try{
+			return this.reader.getProperty("org.openspcoop2.testsuite.files.testSOAPScorretto.soapFaultSenzaPrefix").trim();
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.files.testSOAPScorretto.soapFaultSenzaPrefix':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return null;
+		}
+	}	
 	
 	
 	public String getDOCFileName(){

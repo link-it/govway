@@ -741,6 +741,8 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_ERRORE_APPLICATIVO_SOAP_FAULT_IM="ErroreApplicativoCNIPASOAPFaultIM";
 	/** Porte Delegate: ErroreApplicativoCNIPASOAPFaultSenzaDetails */
 	public static final String PORTA_DELEGATA_ERRORE_APPLICATIVO_SOAP_FAULT_SENZA_DETAILS="ErroreApplicativoCNIPASOAPFaultSenzaDetails";
+	/** Porte Delegate: ErroreApplicativoCNIPASOAPFaultConPrefixErrato */
+	public static final String PORTA_DELEGATA_ERRORE_APPLICATIVO_SOAP_FAULT_CUSTOM="FaultCustom";
 	
 	/** Porta delegata per verifica richieste applicative scorrette (403): identificazione content based */
 	public static final String PORTA_DELEGATA_CONTENT_BASED_EXAMPLE1 = "HelloWorldContentBasedExample1";
@@ -1433,7 +1435,15 @@ public class CostantiTestSuite {
 	public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_SERIALIZE_AND_RETURN_FILE_SBUSTAMENTO_SOAP="serializeAndReturnFile_sbustamentoSOAP";
 	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per il test file: serializeAndReturnFileAsync  */
 	public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_SERIALIZE_AND_RETURN_FILE_ASYNC="serializeAndReturnFileAsync";
-   
+	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per il test soapFault custom: soapFaultPdDConPrefixErrato  */
+	public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_SOAP_FAULT_PDD_CON_PREFIX_ERRATO="soapFaultPdDConPrefixErrato";
+	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per il test soapFault custom: soapFaultSAConPrefixErrato  */
+	public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_SOAP_FAULT_SA_CON_PREFIX_ERRATO="soapFaultSAConPrefixErrato";
+	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per il test soapFault custom: soapFaultPdDSenzaPrefix  */
+	public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_SOAP_FAULT_PDD_SENZA_PREFIX="soapFaultPdDSenzaPrefix";
+	/** ENTITA SPCOOP: Nome Azione del Servizio Sincrono per il test soapFault custom: soapFaultSASenzaPrefix  */
+	public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_SOAP_FAULT_SA_SENZA_PREFIX="soapFaultSASenzaPrefix";
+	
 	/** ENTITA SPCOOP: Tipo Servizio Asincrono Simmetrico */
 	public static final String SPCOOP_TIPO_SERVIZIO_ASINCRONO_SIMMETRICO="SPC";
 	/** ENTITA SPCOOP: Nome Servizio Asincrono Simmetrico */

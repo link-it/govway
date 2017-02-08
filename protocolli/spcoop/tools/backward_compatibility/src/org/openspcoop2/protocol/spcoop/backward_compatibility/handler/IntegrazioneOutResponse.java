@@ -87,7 +87,16 @@ public class IntegrazioneOutResponse implements OutResponseHandler {
 						SOAPFault fault = msg.getSOAPBody().getFault();
 						
 						CodeMapping codeMapping = CodeMapping.getInstance();
-						String codiceOriginale = fault.getFaultCodeAsQName().getLocalPart();
+						String codiceOriginale = null;
+						@SuppressWarnings("unused")
+						String namespaceCodiceOriginale = null;
+						if(fault.getFaultCodeAsQName()!=null){
+							codiceOriginale = fault.getFaultCodeAsQName().getLocalPart();	
+							namespaceCodiceOriginale = fault.getFaultCodeAsQName().getNamespaceURI();
+						}
+						else{
+							codiceOriginale = fault.getFaultCode();
+						}
 						String codiceErrore = codeMapping.toOpenSPCoopV1Code(codiceOriginale);
 						
 						if(fault.getDetail()!=null){

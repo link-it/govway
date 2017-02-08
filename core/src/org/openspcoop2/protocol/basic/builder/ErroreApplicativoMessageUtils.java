@@ -60,6 +60,41 @@ public class ErroreApplicativoMessageUtils {
 	
 
 	
+	public static void addErroreApplicativoIntoSOAPFaultDetail(SOAPElement erroreApplicativo,
+			OpenSPCoop2Message msg, Logger log) throws ProtocolException{
+		
+		try{
+			if(msg==null)
+				throw new ProtocolException("Messaggio non presente");
+			SOAPBody soapBody = msg.castAsSoap().getSOAPBody();
+			if(soapBody==null)
+				throw new ProtocolException("SOAPBody non presente");
+			SOAPFault fault = null;
+			if(soapBody.hasFault()==false)
+				throw new ProtocolException("SOAPFault non presente");
+			else
+				fault = soapBody.getFault();
+			if(fault==null)
+				throw new ProtocolException("SOAPFault is null");
+			
+			Detail detail = fault.getDetail();
+			if(detail==null){
+				detail = fault.addDetail();
+				detail = fault.getDetail();
+			}
+			if(detail!=null){
+				detail.addChildElement(erroreApplicativo);
+			}
+			
+            msg.saveChanges();
+			
+		}catch(Exception e){
+			log.error("Errore durante la costruzione del messaggio di errore applicativo (InsertDetail)",e);
+			throw new ProtocolException("Errore durante la costruzione del messaggio di errore (InsertDetail)",e);
+		}
+	}
+	
+	@Deprecated
 	public static void insertErroreApplicativoIntoSOAPFault(SOAPElement erroreApplicativo,
 			OpenSPCoop2Message msg, Logger log) throws ProtocolException{
 		try{
@@ -180,7 +215,7 @@ public class ErroreApplicativoMessageUtils {
 			SOAPFactory sf = SoapUtils.getSoapFactory(msg.getMessageType());
 			SOAPElement dettaglioRoutingElementSOAP =  sf.createElement(elementDettaglioRouting);
 			
-			insertErroreApplicativoIntoSOAPFault(dettaglioRoutingElementSOAP, msg, log);
+			addErroreApplicativoIntoSOAPFaultDetail(dettaglioRoutingElementSOAP, msg, log);
 		}catch(Exception e){
 			log.error("Errore durante la costruzione del messaggio di errore",e);
 			throw new ProtocolException("Errore durante la costruzione del messaggio di errore",e);

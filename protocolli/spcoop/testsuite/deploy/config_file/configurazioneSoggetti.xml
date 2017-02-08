@@ -790,8 +790,13 @@
             <azione nome="richiestaSincrona" />
         </porta-delegata>
         
-        
-        
+	<!-- FaultErrati -->
+        <porta-delegata gestione-manifest="abilitato" nome="FaultCustom" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap" 
+            stateless="abilitato">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione identificazione="urlBased" pattern=".*FaultCustom/([^/]*).*" />
+        </porta-delegata>
         
         
         
@@ -6858,6 +6863,20 @@
             <azione nome="testConnettoreConnectTimedOutApplicativo" />
             <servizio-applicativo nome="ConnettoreErratoApplicativoConnectTimedOut" />
         </porta-applicativa>
+
+	<!-- FaultErrati -->
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_FaultErrati_soapFaultSAConPrefixErrato" stateless="abilitato">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="soapFaultSAConPrefixErrato" />
+            <servizio-applicativo nome="FaultErrati_soapFaultSAConPrefixErrato" />
+        </porta-applicativa>
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_FaultErrati_soapFaultSASenzaPrefix" stateless="abilitato">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="soapFaultSASenzaPrefix" />
+            <servizio-applicativo nome="FaultErrati_soapFaultSASenzaPrefix" />
+        </porta-applicativa>
+
+
         
         
         
@@ -7691,6 +7710,22 @@
             </invocazione-servizio>
         </servizio-applicativo>
         
+	<!-- FaultErrati -->
+        <servizio-applicativo nome="FaultErrati_soapFaultSAConPrefixErrato" > 
+            <invocazione-servizio>
+                <connettore tipo="http" nome="soapFaultSAConPrefixErrato">
+                    <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?returnCode=500&amp;destFile=/etc/openspcoop2/testfiles/soapFaultPrefixErrato.xml" />
+                </connettore>
+            </invocazione-servizio>  
+        </servizio-applicativo>
+        <servizio-applicativo nome="FaultErrati_soapFaultSASenzaPrefix" > 
+            <invocazione-servizio>
+                <connettore tipo="http" nome="soapFaultSASenzaPrefix">
+                    <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?returnCode=500&amp;destFile=/etc/openspcoop2/testfiles/soapFaultSenzaPrefix.xml" />
+                </connettore>
+            </invocazione-servizio>  
+        </servizio-applicativo>
+
         
         <!-- Trace -->
         <servizio-applicativo nome="TRACE" > 

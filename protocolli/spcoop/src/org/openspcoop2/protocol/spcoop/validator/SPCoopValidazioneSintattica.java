@@ -3652,6 +3652,8 @@ public class SPCoopValidazioneSintattica extends BasicComponentFactory implement
 				Name codeS = fault.getFaultCodeAsName();
 				
 				if( 
+						(codeS == null) 
+						||
 						!(
 								("Client".equals(codeS.getLocalName()) || "Server".equals(codeS.getLocalName()) ) && 
 								Costanti.SOAP_ENVELOPE_NAMESPACE.equalsIgnoreCase(codeS.getURI()) 

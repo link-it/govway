@@ -274,7 +274,17 @@ public class GestoreErroreConnettore {
 				GestioneErroreSoapFault gestore = gestioneErrore.getSoapFault(i);
 				boolean match = true;
 				if(gestore.getFaultCode()!=null){
-					if(gestore.getFaultCode().equalsIgnoreCase(this.fault.getFaultCodeAsQName().getLocalPart()) == false)
+					String codice = null;
+					@SuppressWarnings("unused")
+					String namespaceCodice = null;
+					if(this.fault.getFaultCodeAsQName()!=null){
+						codice = this.fault.getFaultCodeAsQName().getLocalPart();	
+						namespaceCodice = this.fault.getFaultCodeAsQName().getNamespaceURI();
+					}
+					else{
+						codice = this.fault.getFaultCode();
+					}
+					if(gestore.getFaultCode().equalsIgnoreCase(codice) == false)
 						match = false; // non ha il codice definito
 				}
 				if(gestore.getFaultActor()!=null){

@@ -226,8 +226,15 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 					SOAPFault fault = body.getFault();
 					String actor = fault.getFaultActor();
 					String reason = fault.getFaultString();
-					String codice = fault.getFaultCodeAsQName().getLocalPart();	
-					String namespaceCodice = fault.getFaultCodeAsQName().getNamespaceURI();
+					String codice = null;
+					String namespaceCodice = null;
+					if(fault.getFaultCodeAsQName()!=null){
+						codice = fault.getFaultCodeAsQName().getLocalPart();	
+						namespaceCodice = fault.getFaultCodeAsQName().getNamespaceURI();
+					}
+					else{
+						codice = fault.getFaultCode();
+					}
 					//System.out.println("ACTOR["+actor+"] REASON["+reason+"] CODICE["+codice+"] namespaceCodice["+namespaceCodice+"]");	
 
 					Object backwardCompatibilityActorObject = message.getContextProperty(CostantiProtocollo.BACKWARD_COMPATIBILITY_ACTOR);
