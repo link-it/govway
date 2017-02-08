@@ -29,8 +29,8 @@ import java.util.Vector;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
-import org.openspcoop2.message.Costanti;
-import org.openspcoop2.message.SoapUtils;
+import org.openspcoop2.message.constants.Costanti;
+import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
