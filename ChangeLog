@@ -1,3 +1,23 @@
+2017-02-08  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Risolto Bug OP-594
+	Corretto problema che si verificava in presenza di un SOAPFault restituito dalle applicazioni che presentava un faultcode con prefisso,
+	senza però che tale prefisso fosse effettivamente stato associato ad un namespace.
+	Un tale SoapFault provocava un errore interno della PdD simile al seguente:
+	   org.openspcoop2.protocol.sdk.ProtocolException: Comprensione stato non riuscita: null
+	Corretto inoltre un altro problema per cui la PdD non era trasparente rispetto ad un eventuale testo 
+	presente all'interno dell'elemento detail del SoapFault.
+	Un esempio di SOAPFault con le caratteristiche sopra descritte è il seguente:
+	<soapenv:Fault xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+	   <faultcode>ERR1: SYNTAX ERROR</faultcode>
+	   <faultstring xml:lang="it">Errore di sintassi</faultstring>
+	   <faultactor>Servizio Erogatore</faultactor>
+	   <detail>
+	     Il messaggio inviato non rispetta la sintassi prevista.
+	   </detail>
+	</soapenv:Fault>
+
 2017-01-26  Andrea Poli <apoli@link.it>
 
 	* [Pdd, PddConsole]
