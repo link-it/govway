@@ -162,6 +162,11 @@ public class RESTCore {
 
 	public void postInvokeLocalForward(Repository repository, boolean isErrore) throws TestSuiteException, Exception{
 
+		try {
+			Thread.sleep(1000); // in modo da dare il tempo all'ultimo diagnostico di essere scritto su database
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		
 		String id=repository.getNext();
 		if(org.openspcoop2.protocol.trasparente.testsuite.core.Utilities.testSuiteProperties.attendiTerminazioneMessaggi_verificaDatabase()==false){
