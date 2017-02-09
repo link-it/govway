@@ -1,3 +1,17 @@
+2017-02-09  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	Risolto Bug OP-596
+	In un contesto dove per uno stesso servizio venivano create ulteriori porte applicative o delegate oltre a quelle generate automaticamente,
+	si potevano verificare degli errori simili ai seguenti:
+	- duplicate key value violates unique constraint "unique_porte_applicative_1"
+	- duplicate key value violates unique constraint "unique_porte_delegate_1"
+	Tali errori si manifestavano, utilizzando la modalità avanzata della console, nei seguenti casi:
+	- Modifica del nome del servizio di un accordo parte specifica.
+	- Modifica del nome del soggetto fruitore o erogatore.
+	Inoltre è stato risolto anche un errato comportamento da parte della console che consentiva di creare più porte delegate,
+	associate a soggetti differenti, con lo stesso nome.
+
 2017-02-08  Andrea Poli <apoli@link.it>
 
 	* [Pdd]
