@@ -1318,6 +1318,39 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						servizioPD.setNome(asps.getNome());
 						servizioPD.setVersione(asps.getVersione());
 						tmpPorta.setServizio(servizioPD);
+						
+						String nomeGeneratoAutomaticamente = tmpPorta.getTipoSoggettoProprietario()+tmpPorta.getNomeSoggettoProprietario()+ "/" + 
+								asps.getTipoSoggettoErogatore() + asps.getNomeSoggettoErogatore() + "/" + 
+								asps.getOldIDServizioForUpdate().getTipo() + asps.getOldIDServizioForUpdate().getNome();
+						String nomeAttuale = tmpPorta.getNome();
+						if(nomeAttuale.startsWith(nomeGeneratoAutomaticamente+"/")){					
+							// La PD è stata creata manualmente, e nel nome è stato indicato un pattern simile a quello standard all'inizio.
+							// in tal caso viene effettuato lo switch del nome.
+							String rimanente = "";
+							int lengthParteRimanente = (nomeGeneratoAutomaticamente+"/").length();
+							if(nomeAttuale.length()>lengthParteRimanente){
+								rimanente = nomeAttuale.substring(lengthParteRimanente);
+							}						
+							String newNome = tmpPorta.getTipoSoggettoProprietario()+tmpPorta.getNomeSoggettoProprietario()+ "/" + 
+									asps.getTipoSoggettoErogatore()+asps.getNomeSoggettoErogatore()+"/"+
+									asps.getTipo() + asps.getNome()+"/"+rimanente;
+							oldIDPortaDelegataForUpdate.setNome(nomeAttuale);
+							tmpPorta.setOldIDPortaDelegataForUpdate(oldIDPortaDelegataForUpdate);
+							tmpPorta.setNome(newNome);
+							
+							PortaDelegataAzione pdAzione = tmpPorta.getAzione();
+							PortaDelegataAzioneIdentificazione identificazione = pdAzione != null ? pdAzione.getIdentificazione() : null;
+							String patterAzione = pdAzione != null ? (pdAzione.getPattern() != null ? pdAzione.getPattern() : "") : "";
+							// se identificazione urlbased procedo con i
+							// controlli
+							if (PortaDelegataAzioneIdentificazione.URL_BASED.equals(identificazione)) {
+								if (patterAzione.contains(nomeAttuale)) {
+									String newPatternAzione = patterAzione.replace(nomeAttuale, newNome);
+									pdAzione.setPattern(newPatternAzione);
+								}
+							}// fine controllo azione
+						}
+						
 						listaPD.add(tmpPorta);
 					}
 				}
@@ -1331,11 +1364,47 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					Long idPorta = tmpPorta.getId();
 					if (!idListPD.contains(idPorta)) {
 						idListPD.add(idPorta);
+						IDPortaDelegata oldIDPortaDelegataForUpdate = new IDPortaDelegata();
+						oldIDPortaDelegataForUpdate.setNome(tmpPorta.getNome());
+						tmpPorta.setOldIDPortaDelegataForUpdate(oldIDPortaDelegataForUpdate);
 						PortaDelegataServizio servizioPD = tmpPorta.getServizio();
 						servizioPD.setTipo(asps.getTipo());
 						servizioPD.setNome(asps.getNome());
 						servizioPD.setVersione(asps.getVersione());
 						tmpPorta.setServizio(servizioPD);
+						
+						String nomeGeneratoAutomaticamente = tmpPorta.getTipoSoggettoProprietario()+tmpPorta.getNomeSoggettoProprietario()+ "/" + 
+								asps.getTipoSoggettoErogatore() + asps.getNomeSoggettoErogatore() + "/" + 
+								asps.getOldIDServizioForUpdate().getTipo() + asps.getOldIDServizioForUpdate().getNome();
+						String nomeAttuale = tmpPorta.getNome();
+						if(nomeAttuale.startsWith(nomeGeneratoAutomaticamente+"/")){					
+							// La PD è stata creata manualmente, e nel nome è stato indicato un pattern simile a quello standard all'inizio.
+							// in tal caso viene effettuato lo switch del nome.
+							String rimanente = "";
+							int lengthParteRimanente = (nomeGeneratoAutomaticamente+"/").length();
+							if(nomeAttuale.length()>lengthParteRimanente){
+								rimanente = nomeAttuale.substring(lengthParteRimanente);
+							}						
+							String newNome = tmpPorta.getTipoSoggettoProprietario()+tmpPorta.getNomeSoggettoProprietario()+ "/" + 
+									asps.getTipoSoggettoErogatore()+asps.getNomeSoggettoErogatore()+"/"+
+									asps.getTipo() + asps.getNome()+"/"+rimanente;
+							oldIDPortaDelegataForUpdate.setNome(nomeAttuale);
+							tmpPorta.setOldIDPortaDelegataForUpdate(oldIDPortaDelegataForUpdate);
+							tmpPorta.setNome(newNome);
+							
+							PortaDelegataAzione pdAzione = tmpPorta.getAzione();
+							PortaDelegataAzioneIdentificazione identificazione = pdAzione != null ? pdAzione.getIdentificazione() : null;
+							String patterAzione = pdAzione != null ? (pdAzione.getPattern() != null ? pdAzione.getPattern() : "") : "";
+							// se identificazione urlbased procedo con i
+							// controlli
+							if (PortaDelegataAzioneIdentificazione.URL_BASED.equals(identificazione)) {
+								if (patterAzione.contains(nomeAttuale)) {
+									String newPatternAzione = patterAzione.replace(nomeAttuale, newNome);
+									pdAzione.setPattern(newPatternAzione);
+								}
+							}// fine controllo azione
+						}
+						
 						listaPD.add(tmpPorta);
 					}
 
@@ -1360,43 +1429,55 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						String regex = "(.*)\\/(.*)\\/(.*)";
 						if (nomePA.matches(regex)) {
 
-							String[] val = nomePA.split("\\/");
-							String pat1 = val[0];
-							String pat2 = val[1];
-							String pat3= val[2];
+							// Check che siamo nel caso di nome generato automaticamente
+							String nomeGeneratoAutomaticamente = asps.getTipoSoggettoErogatore()+asps.getNomeSoggettoErogatore()+"/"+
+									asps.getOldIDServizioForUpdate().getTipo() + asps.getOldIDServizioForUpdate().getNome();
+							if(nomeGeneratoAutomaticamente.equals(nomePA)){
+								String newNome = asps.getTipoSoggettoErogatore()+asps.getNomeSoggettoErogatore()+"/"+
+										asps.getTipo() + asps.getNome();
+								
+								portaApplicativa.setNome(newNome);
+								IDPortaApplicativa oldIDPortaApplicativaForUpdate = new IDPortaApplicativa();
+								oldIDPortaApplicativaForUpdate.setNome(nomePA);
+								portaApplicativa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
+								
+								// modifica della descrizione
+								String descrizionePA = portaApplicativa.getDescrizione();
+								if (descrizionePA != null && !descrizionePA.equals("")) {
 
-							// servizio
-							if (pat2.equals(asps.getOldIDServizioForUpdate().getTipo() + asps.getOldIDServizioForUpdate().getNome())) {
-								pat2 = asps.getTipo() + asps.getNome();
-							}
-							
-							// versioneServizio
-							if(pat3.equals(asps.getOldIDServizioForUpdate().getVersione().intValue()+"")){
-								pat3 = asps.getVersione().intValue()+"";
-							}
+									// caso 1
+									// pattern descrizione: Invocazione
+									// servizio(.*)erogato da(.*) (pat1)
+									String descrRegex = "Servizio(.*)erogato da(.*)";
+									if (descrizionePA.matches(descrRegex)) {
+										descrizionePA = descrizionePA.replaceFirst((asps.getOldIDServizioForUpdate().getTipo() + asps.getOldIDServizioForUpdate().getNome()), 
+												(asps.getTipo() + asps.getNome()));
+									}
 
-							String newNome = pat1 + "/" + pat2 + "/" + pat3;
-							
-							portaApplicativa.setNome(newNome);
-							IDPortaApplicativa oldIDPortaApplicativaForUpdate = new IDPortaApplicativa();
-							oldIDPortaApplicativaForUpdate.setNome(nomePA);
-							portaApplicativa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
-
-							// modifica della descrizione
-							String descrizionePA = portaApplicativa.getDescrizione();
-							if (descrizionePA != null && !descrizionePA.equals("")) {
-
-								// caso 1
-								// pattern descrizione: Invocazione
-								// servizio(.*)erogato da(.*) (pat1)
-								String descrRegex = "Servizio(.*)erogato da(.*)";
-								if (descrizionePA.matches(descrRegex)) {
-									descrizionePA = descrizionePA.replaceFirst((asps.getOldIDServizioForUpdate().getTipo() + asps.getOldIDServizioForUpdate().getNome()+":"+asps.getOldIDServizioForUpdate().getVersione().intValue()), 
-											(asps.getTipo() + asps.getNome()+":"+asps.getVersione().intValue()));
+									portaApplicativa.setDescrizione(descrizionePA);
 								}
-
-								portaApplicativa.setDescrizione(descrizionePA);
 							}
+							else if(nomePA.startsWith(nomeGeneratoAutomaticamente+"/")){
+								
+								// La PA è stata creata manualmente, e nel nome è stato indicato un pattern simile a quello standard all'inizio.
+								// in tal caso viene effettuato lo switch del nome.
+								
+								String rimanente = "";
+								int lengthParteRimanente = (nomeGeneratoAutomaticamente+"/").length();
+								if(nomePA.length()>lengthParteRimanente){
+									rimanente = nomePA.substring(lengthParteRimanente);
+								}
+								
+								String newNome = asps.getTipoSoggettoErogatore()+asps.getNomeSoggettoErogatore()+"/"+
+										asps.getTipo() + asps.getNome()+"/"+rimanente;
+								
+								portaApplicativa.setNome(newNome);
+								IDPortaApplicativa oldIDPortaApplicativaForUpdate = new IDPortaApplicativa();
+								oldIDPortaApplicativaForUpdate.setNome(nomePA);
+								portaApplicativa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
+								
+							}
+							
 						}// fine controllo nome
 						
 						listaPA.add(portaApplicativa);

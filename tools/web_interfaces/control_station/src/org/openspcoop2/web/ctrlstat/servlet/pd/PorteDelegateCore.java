@@ -20,6 +20,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.commons.DBUtils;
@@ -32,6 +33,7 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -336,7 +338,30 @@ public class PorteDelegateCore extends ControlStationCore {
 		}
 	}
 	
-	
+	public List<IDPortaDelegata> getAllIdPorteDelegate(FiltroRicercaPorteDelegate filtroRicerca) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getAllIdPorteDelegate";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().getAllIdPorteDelegate(filtroRicerca);
+
+		} catch (DriverConfigurazioneNotFound notFound) {
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + notFound.getMessage(), notFound);
+			return new ArrayList<IDPortaDelegata>();
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
 
 	public List<PortaDelegata> porteDelegateList(int idSoggetto, ISearch ricerca) throws DriverConfigurazioneException {
 		Connection con = null;

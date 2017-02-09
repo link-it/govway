@@ -1681,15 +1681,21 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			// stata registrata
 			if (tipoOp == TipoOperazione.ADD) {
 				boolean giaRegistrato = false;
+				long idPDGiaRegistrata = -1;
 				try {
 					// controllo puntuale su nome
-					giaRegistrato = this.porteDelegateCore.getIdPortaDelegata(nomePD) > 0;
+					idPDGiaRegistrata = this.porteDelegateCore.getIdPortaDelegata(nomePD);
+					giaRegistrato = idPDGiaRegistrata > 0;
+					// controllo su location e nome
+					if (!giaRegistrato)
+						giaRegistrato = this.porteDelegateCore.getPortaDelegata(idPD) != null;
 				} catch (DriverConfigurazioneNotFound e) {
 					giaRegistrato = false;
 				}
 
 				if (giaRegistrato) {
-					this.pd.setMessage("Esiste gia' una Porta Delegata con nome (o location) [" + nomePD + "]");
+					PortaDelegata pd = this.porteDelegateCore.getPortaDelegata(idPDGiaRegistrata);
+					this.pd.setMessage("Esiste gia' una Porta Delegata con nome [" + nomePD + "] associata al Soggetto [" + pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario() + "]");
 					return false;
 				}
 			} else if (TipoOperazione.CHANGE == tipoOp) {
@@ -1700,7 +1706,8 @@ public class PorteDelegateHelper extends ConsoleHelper {
 					if (!nomePD.equals(oldNomePD)) {
 						long curID = this.porteDelegateCore.getIdPortaDelegata(nomePD);
 						if (curID > 0) {
-							this.pd.setMessage("Esiste gia' una Porta Delegata con nome [" + nomePD + "]");
+							PortaDelegata pd = this.porteDelegateCore.getPortaDelegata(curID);
+							this.pd.setMessage("Esiste gia' una Porta Delegata con nome [" + nomePD + "] associata al Soggetto [" + pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario() + "]");
 							return false;
 						}
 					}
@@ -1721,7 +1728,8 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				long oldIDpd =  this.porteDelegateCore.getIdPortaDelegata(oldNomePD);
 				if (portaDelegata != null) {
 					if (oldIDpd != portaDelegata.getId()) {
-						this.pd.setMessage("Esiste gia' una Porta Delegata con nome [" + portaDelegata.getNome() + "]");
+						PortaDelegata pd = this.porteDelegateCore.getPortaDelegata(oldIDpd);
+						this.pd.setMessage("Esiste gia' una Porta Delegata con nome [" + portaDelegata.getNome() + "] associata al Soggetto [" + pd.getTipoSoggettoProprietario()+"/"+pd.getNomeSoggettoProprietario() + "]");
 						return false;
 					}
 				}

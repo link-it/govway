@@ -33,6 +33,7 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -363,218 +364,209 @@ public class SoggettoUpdateUtilities {
 		// Se e' cambiato il tipo o il nome del soggetto devo effettuare la modifica delle porte delegate
 		// poiche il cambio si riflette sul nome della porta delegata
 		Hashtable<Long, PortaDelegata> listaPD = new Hashtable<Long, PortaDelegata>();
-
+		
 		if (!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) {
 
-			// ArrayList<Long> idListPdProprietario=new ArrayList<Long>();
-
-			// Tutte le porte delegate di questo soggetto con la location
-			// "di default"
-			// devono essere cambiate
-			// (1) se ci sono porte delegate in loopback cioe' se il
-			// soggetto proprietario e' anche erogatore
-			// allora aggiorno anche la seconda parte del pattern
-			// pattern (fruitore)/(erogatore)/(servizio)/(versioneServizio)
-			//
-			// (2) Questo soggetto ha tra le sue porte delegate anche quelle
-			// automaticamente create
-			// all'aggiunta di un ruolo al servizio applicativo associato al
-			// soggetto
-			// bisogna cambiare anche il nome di tale porta
-			// il pattern di tale porta e' (nome
-			// ServizioApplicativo)/(tipo+nome Soggetto)/(nome Accordo)
-			List<PortaDelegata> tmpList = this.porteDelegateCore.porteDelegateList(this.sog.getId().intValue(), new Search());
-			for (PortaDelegata portaDelegata : tmpList) {
-				String oldLocation = portaDelegata.getNome();
-				// se la location e' quella di default cioe'
-				// (fruitore)/(erogatore)/(servizio)/(versioneServizio)
-				String regex = "(.*)\\/(.*)\\/(.*)\\/(.*)";
-				if (oldLocation.matches(regex)) {
-
-					String[] val = oldLocation.split("\\/");
-					String pat1 = val[0];
-					String pat2 = val[1];
-					String pat3 = val[2];
-					String pat4 = val[3];
-
-					// vedo se matcha la prima parte del pattern [il
-					// fruitore (caso 1)]
-					if (pat1.equals(this.oldtipoprov + this.oldnomeprov)) {
-						pat1 = this.tipoprov + this.nomeprov;
+			// Vanno modificate tutte le Porte Delegate (appartenenti al soggetto modificato oppure che possiedono come soggetto erogatore il soggetto modificato) 
+			// che presentano la seguente situazione:
+			// - pattern (fruitore)/(erogatore)/....
+			//   se (fruitore) contiene tipoNomeSoggetto proprietario della PortaDelegata deve essere modificato
+			//   se (erogatore) contiene tipoNomeSoggetto erogatore definito all'interno della porta delegata deve essere modificato.
+			List<PortaDelegata> list = new ArrayList<PortaDelegata>();
+			
+			FiltroRicercaPorteDelegate filtroRicerca = new FiltroRicercaPorteDelegate();
+			filtroRicerca.setTipoSoggetto(this.oldtipoprov);
+			filtroRicerca.setNomeSoggetto(this.oldnomeprov);
+			List<IDPortaDelegata> listID = this.porteDelegateCore.getAllIdPorteDelegate(filtroRicerca);
+			if(listID!=null && listID.size()>0){
+				for (IDPortaDelegata idPortaDelegata : listID) {
+					list.add(this.porteDelegateCore.getPortaDelegata(idPortaDelegata));
+				}
+			}
+			filtroRicerca = new FiltroRicercaPorteDelegate();
+			filtroRicerca.setTipoSoggettoErogatore(this.oldtipoprov);
+			filtroRicerca.setNomeSoggettoErogatore(this.oldnomeprov);
+			listID = this.porteDelegateCore.getAllIdPorteDelegate(filtroRicerca);
+			if(listID!=null && listID.size()>0){
+				for (IDPortaDelegata idPortaDelegata : listID) {
+					list.add(this.porteDelegateCore.getPortaDelegata(idPortaDelegata));
+				}
+			}
+			
+			if(list!=null && list.size()>0){
+				List<String> checkUnique = new ArrayList<String>();
+				for (PortaDelegata portaDelegata : list) {
+					
+					if(checkUnique.contains((portaDelegata.getId().longValue()+""))){
+						continue;
 					}
-
-					// vedo se matcha la seconda parte del pattern
-					// [(erogatore loopback)(caso1), (tipo+nome Soggetto)
-					// (caso2)]
-					if (pat2.equals(this.oldtipoprov + this.oldnomeprov)) {
-						pat2 = this.tipoprov + this.nomeprov;
+					
+					boolean modificatoNome = true;
+					
+					boolean soggettoProprietarioCombaciaSoggettoInModifica = false;
+					String tipoNomeSoggettoFruitore = portaDelegata.getTipoSoggettoProprietario()+portaDelegata.getNomeSoggettoProprietario();
+					if(tipoNomeSoggettoFruitore.equals(this.oldtipoprov + this.oldnomeprov)){
+						soggettoProprietarioCombaciaSoggettoInModifica = true;
+						
+						portaDelegata.setTipoSoggettoProprietario(this.tipoprov);
+						portaDelegata.setNomeSoggettoProprietario(this.nomeprov);
+						//portaDelegata.setOldTipoSoggettoProprietarioForUpdate(this.oldtipoprov);
+						//portaDelegata.setOldNomeSoggettoProprietarioForUpdate(this.oldnomeprov);
 					}
-
-					String newLocation = pat1 + "/" + pat2 + "/" + pat3 +"/" + pat4;
-					portaDelegata.setNome(newLocation);
-
-					// controllo se anche nome porta di default ed effettuo
-					// gli stessi cambiamenti di prima
-					String oldNomePD = portaDelegata.getNome();
-					if (oldNomePD.matches(regex)) {
-						// String newNomePD =
-						// oldNomePD.replaceFirst(oldtipoprov+oldnomeprov,
-						// tipoprov+nomeprov);
-						// vedo se matcha il fruitore
-						pat1 = val[0];
-						pat2 = val[1];
-						pat3 = val[2];
-						pat4 = val[3];
-						// vedo se matcha la prima parte del pattern [il
-						// fruitore (caso 1)]
-						if (pat1.equals(this.oldtipoprov + this.oldnomeprov)) {
-							pat1 = this.tipoprov + this.nomeprov;
-						}
-						// vedo se matcha la seconda parte del pattern
-						// [(erogatore loopback)(caso1), (tipo+nome
-						// Soggetto) (caso2)]
-						if (pat2.equals(this.oldtipoprov + this.oldnomeprov)) {
-							pat2 = this.tipoprov + this.nomeprov;
-						}
-						String newNomePD = pat1 + "/" + pat2 + "/" + pat3 +"/" + pat4;
-						portaDelegata.setNome(newNomePD);
-						IDPortaDelegata oldIDPortaDelegataForUpdate = new IDPortaDelegata();
-						oldIDPortaDelegataForUpdate.setNome(oldNomePD);
-						portaDelegata.setOldIDPortaDelegataForUpdate(oldIDPortaDelegataForUpdate);
-					}
-
-					// modifica della descrizione
-					String descrizionePD = portaDelegata.getDescrizione();
-					if (descrizionePD != null && !descrizionePD.equals("")) {
-						// caso 2
-						// pattern descrizione: Ruolo(.*)del Servizio
-						// Applicativo(.*)appartenente a (pat2)
-						String descrRegex = "Ruolo(.*)del Servizio Applicativo(.*)appartenente a(.*)";// +oldtipoprov+oldnomeprov;
-						if (descrizionePD.matches(descrRegex)) {
-							// rimpiazzo il vecchio nome con il nuovo
-							descrizionePD = descrizionePD.replaceFirst((this.oldtipoprov + this.oldnomeprov), pat2);
-						}
-
-						// caso 1
-						// pattern descrizione: Invocazione
-						// servizio(.*)erogato da(.*) (pat1)
-						descrRegex = "Invocazione servizio(.*)erogato da(.*)";// +oldtipoprov+oldnomeprov;
-						if (descrizionePD.matches(descrRegex)) {
-							String tmpDescrizione = descrizionePD.substring(0,descrizionePD.indexOf("erogato da")+"erogato da".length());
-							descrizionePD = tmpDescrizione + " " + pat1;
-							//descrizionePD.replaceFirst((oldtipoprov + oldnomeprov), pat1);
-						}
-
-						portaDelegata.setDescrizione(descrizionePD);
-					}
-
-					// aggiungo la pd alle lista di porte da modificare
-					// listaPD.put(portaDelegata.getId(),portaDelegata);
-					// aggiunto id alla lista per tener traccia delle pd che
-					// devono esserela modificate
-					// idListPdProprietario.add(portaDelegata.getId());
-
-				}// fine controllo location
-
-				/*
-				 * CONTROLLO PATTERN AZIONE inoltre va controllato anche il
-				 * pattern dell'azione in caso il pattern azione fosse
-				 * URLBASED e fosse quello di default allora va cambiato i
-				 * pattern di default sono 2 1)
-				 * .(fruitore)/(erogatore)/(servizio)/([^/|^?]). 2) .(nome
-				 * ServizioApplicativo)/(soggetto)/(nome
-				 * Accordo)/[^/]+/([^/|^?]).
-				 */
-				// regex del pattern azione
-				// .*(fruitore)/(erogatore)/(servizio)/([^/|^?]*).*
-				PortaDelegataAzione pdAzione = portaDelegata.getAzione();
-				PortaDelegataAzioneIdentificazione identificazione = pdAzione != null ? pdAzione.getIdentificazione() : null;
-				String patterAzione = pdAzione != null ? (pdAzione.getPattern() != null ? pdAzione.getPattern() : "") : "";
-				String patternAzionePrefix = ".*";
-				String patternAzioneSuffix1 = "/([^/|^?]*).*";
-				String patternAzioneSuffix2 = "/[^/]+/([^/|^?]*).*";
-				// se identificazione urlbased procedo con i controlli
-				if (PortaDelegataAzioneIdentificazione.URL_BASED.equals(identificazione)) {
-					// caso 2 (prima controllo questo perche' il suffix2 e'
-					// piu specifico del suffix1
-					if (patterAzione.startsWith(patternAzionePrefix) && patterAzione.endsWith(patternAzioneSuffix2)) {
-						// caso2
-						int startidx = patternAzionePrefix.length();
-						int endidx = patterAzione.lastIndexOf(patternAzioneSuffix2);
-						String tmp = patterAzione.substring(startidx, endidx);
-						// a questo punto ho una stringa del tipo
-						// (nome ServizioApplicativo)/(soggetto)/(nome
-						// Accordo)
-						if (tmp.matches(regex)) {
-							String[] val = tmp.split("/");
-							String nomeSA = val[0];
-							String soggetto = val[1];
-							String nomeAccordo = val[2];
-
-							if (soggetto.equals(this.oldtipoprov + this.oldnomeprov)) {
-								soggetto = this.tipoprov + this.nomeprov;
+					
+					String nomeAttuale = portaDelegata.getNome();
+					String regex = ".*\\/.*\\/.*";
+					// pattern (fruitore)/(erogatore)/....
+					if(nomeAttuale.matches(regex)){
+						String[] tmp = nomeAttuale.split("\\/");
+						String partFruitore = tmp[0];
+						String partErogatore = tmp[1];
+						String rimanente = "";
+						int lengthParteRimanente = (partFruitore+"/"+partErogatore).length();
+						if(nomeAttuale.length()>lengthParteRimanente){
+							rimanente = nomeAttuale.substring(lengthParteRimanente);
+						}							
+						
+						// se (fruitore) contiene tipoNomeSoggetto proprietario della PortaDelegata deve essere modificato
+						if(tipoNomeSoggettoFruitore.equals(partFruitore)){
+							if(tipoNomeSoggettoFruitore.equals(this.oldtipoprov + this.oldnomeprov)){
+								partFruitore = this.tipoprov + this.nomeprov;
+								modificatoNome = true;
 							}
-
-							String newPatternAzione = patternAzionePrefix + nomeSA + "/" + soggetto + "/" + nomeAccordo + patternAzioneSuffix2;
-							pdAzione.setPattern(newPatternAzione);
-							portaDelegata.setAzione(pdAzione);
-
-							// //controllo se la porta delegata non e' stata
-							// gia' inserita in quelle da cambiare
-							// if(!idListPdProprietario.contains(portaDelegata.getId())){
-							// //inserisco la porta delegata per la modifica
-							// listaPDProprietario.add(portaDelegata);
-							// idListPdProprietario.add(portaDelegata.getId());
-							// }
 						}
-					} else if (patterAzione.startsWith(patternAzionePrefix) && patterAzione.endsWith(patternAzioneSuffix1)) {
-						// caso1
-						int startidx = patternAzionePrefix.length();
-						int endidx = patterAzione.lastIndexOf(patternAzioneSuffix1);
-						String tmp = patterAzione.substring(startidx, endidx);
-						// a questo punto ottengo una stringa del tipo
-						// (fruitore)/(erogatore)/(servizio)
-						// se rispetta la regex allora vuol dire che il
-						// pattern azione e' quello di default
-						// e devo effettuare i cambiamenti
-						if (tmp.matches(regex)) {
-							String[] val = tmp.split("/");
-							String fruitore = val[0];
-							String erogatore = val[1];
-							String servizio = val[2];
-
-							// vedo se matcha il fruitore
-							if (fruitore.equals(this.oldtipoprov + this.oldnomeprov)) {
-								fruitore = this.tipoprov + this.nomeprov;
-								// vedo se matcha anche erogatore (loopback)
-								if (erogatore.equals(this.oldtipoprov + this.oldnomeprov)) {
-									erogatore = this.tipoprov + this.nomeprov;
+						
+						// se (erogatore) contiene tipoNomeSoggetto erogatore della PortaDelegata deve essere modificato
+						if(portaDelegata.getSoggettoErogatore()!=null && 
+								portaDelegata.getSoggettoErogatore().getTipo()!=null && !"".equals(portaDelegata.getSoggettoErogatore().getTipo()) &&
+								portaDelegata.getSoggettoErogatore().getNome()!=null && !"".equals(portaDelegata.getSoggettoErogatore().getNome())){
+							String tipoNomeSoggettoErogatore = portaDelegata.getSoggettoErogatore().getTipo()+portaDelegata.getSoggettoErogatore().getNome();
+							if(tipoNomeSoggettoErogatore.equals(partErogatore)){
+								if(tipoNomeSoggettoErogatore.equals(this.oldtipoprov + this.oldnomeprov)){
+									partErogatore = this.tipoprov + this.nomeprov;
+									portaDelegata.getSoggettoErogatore().setTipo(this.tipoprov);
+									portaDelegata.getSoggettoErogatore().setNome(this.nomeprov);
+									modificatoNome = true;
+								}
+							}
+						}
+						
+						if(modificatoNome){
+							String nuovoNome = partFruitore + "/" + partErogatore + rimanente;
+							IDPortaDelegata oldIDPortaDelegataForUpdate = new IDPortaDelegata();
+							oldIDPortaDelegataForUpdate.setNome(nomeAttuale);
+							portaDelegata.setOldIDPortaDelegataForUpdate(oldIDPortaDelegataForUpdate);
+							portaDelegata.setNome(nuovoNome);
+							
+							// modifica della descrizione
+							String descrizionePD = portaDelegata.getDescrizione();
+							if (descrizionePD != null && !descrizionePD.equals("")) {
+								// caso 2
+								// pattern descrizione: Ruolo(.*)del Servizio
+								// Applicativo(.*)appartenente a (pat2)
+								String descrRegex = "Ruolo(.*)del Servizio Applicativo(.*)appartenente a(.*)";// +oldtipoprov+oldnomeprov;
+								if (descrizionePD.matches(descrRegex)) {
+									// rimpiazzo il vecchio nome con il nuovo
+									descrizionePD = descrizionePD.replaceFirst((this.oldtipoprov + this.oldnomeprov), partFruitore);
 								}
 
-								String newPatternAzione = patternAzionePrefix + fruitore + "/" + erogatore + "/" + servizio + patternAzioneSuffix1;
-								pdAzione.setPattern(newPatternAzione);
-								portaDelegata.setAzione(pdAzione);
-
-								// //controllo se la porta delegata non e'
-								// stata gia' inserita in quelle da cambiare
-								// if(!idListPdProprietario.contains(portaDelegata.getId())){
-								// //inserisco la porta delegata per la
-								// modifica
-								// listaPDProprietario.add(portaDelegata);
-								// idListPdProprietario.add(portaDelegata.getId());
-								// }
+								// caso 1
+								// pattern descrizione: Invocazione
+								// servizio(.*)erogato da(.*) (pat1)
+								descrRegex = "Invocazione servizio(.*)erogato da(.*)";// +oldtipoprov+oldnomeprov;
+								if (descrizionePD.matches(descrRegex)) {
+									String tmpDescrizione = descrizionePD.substring(0,descrizionePD.indexOf("erogato da")+"erogato da".length());
+									descrizionePD = tmpDescrizione + " " + partErogatore;
+									//descrizionePD.replaceFirst((oldtipoprov + oldnomeprov), pat1);
+								}
+								portaDelegata.setDescrizione(descrizionePD);
 							}
+							
+							// regex del pattern azione
+							// .*(fruitore)/(erogatore)/(servizio)/([^/|^?]*).*
+							PortaDelegataAzione pdAzione = portaDelegata.getAzione();
+							PortaDelegataAzioneIdentificazione identificazione = pdAzione != null ? pdAzione.getIdentificazione() : null;
+							String patterAzione = pdAzione != null ? (pdAzione.getPattern() != null ? pdAzione.getPattern() : "") : "";
+							String patternAzionePrefix = ".*";
+							String patternAzioneSuffix1 = "/([^/|^?]*).*";
+							String patternAzioneSuffix2 = "/[^/]+/([^/|^?]*).*";
+							// se identificazione urlbased procedo con i controlli
+							if (PortaDelegataAzioneIdentificazione.URL_BASED.equals(identificazione)) {
+								// caso 2 (prima controllo questo perche' il suffix2 e'
+								// piu specifico del suffix1
+								if (patterAzione.startsWith(patternAzionePrefix) && patterAzione.endsWith(patternAzioneSuffix2)) {
+									// caso2
+									int startidx = patternAzionePrefix.length();
+									int endidx = patterAzione.lastIndexOf(patternAzioneSuffix2);
+									String tmpPat = patterAzione.substring(startidx, endidx);
+									// a questo punto ho una stringa del tipo
+									// (nome ServizioApplicativo)/(soggetto)/(nome
+									// Accordo)
+									if (tmpPat.matches(regex)) {
+										String[] val = tmpPat.split("/");
+										String nomeSA = val[0];
+										String soggetto = val[1];
+										String nomeAccordo = val[2];
+
+										if (soggetto.equals(this.oldtipoprov + this.oldnomeprov)) {
+											soggetto = this.tipoprov + this.nomeprov;
+										}
+
+										String newPatternAzione = patternAzionePrefix + nomeSA + "/" + soggetto + "/" + nomeAccordo + patternAzioneSuffix2;
+										pdAzione.setPattern(newPatternAzione);
+										portaDelegata.setAzione(pdAzione);
+									}
+								} else if (patterAzione.startsWith(patternAzionePrefix) && patterAzione.endsWith(patternAzioneSuffix1)) {
+									// caso1
+									int startidx = patternAzionePrefix.length();
+									int endidx = patterAzione.lastIndexOf(patternAzioneSuffix1);
+									String tmpPat = patterAzione.substring(startidx, endidx);
+									// a questo punto ottengo una stringa del tipo
+									// (fruitore)/(erogatore)/(servizio)
+									// se rispetta la regex allora vuol dire che il
+									// pattern azione e' quello di default
+									// e devo effettuare i cambiamenti
+									if (tmpPat.matches(regex)) {
+										String[] val = tmpPat.split("/");
+										String fruitore = val[0];
+										String erogatore = val[1];
+										String rimanenteRegExp = "";
+										int lengthParteRimanenteRegExp = (fruitore+"/"+erogatore).length();
+										if(tmpPat.length()>lengthParteRimanenteRegExp){
+											rimanenteRegExp = tmpPat.substring(lengthParteRimanenteRegExp);
+										}	
+
+										boolean match = false;
+										// vedo se matcha il fruitore
+										if (fruitore.equals(this.oldtipoprov + this.oldnomeprov)) {
+											fruitore = this.tipoprov + this.nomeprov;
+											match = true;
+										}
+										
+										// vedo se matcha anche erogatore (loopback)
+										if (erogatore.equals(this.oldtipoprov + this.oldnomeprov)) {
+											erogatore = this.tipoprov + this.nomeprov;
+											match = true;
+										}
+
+										if(match){
+											String newPatternAzione = patternAzionePrefix + fruitore + "/" + erogatore + rimanenteRegExp + patternAzioneSuffix1;
+											pdAzione.setPattern(newPatternAzione);
+											portaDelegata.setAzione(pdAzione);
+										}
+									}
+								}
+							}// fine controllo azione
+	
 						}
 					}
-				}// fine controllo azione
-
-
-				// aggiungo la porta
-				portaDelegata.setTipoSoggettoProprietario(this.tipoprov);
-				portaDelegata.setNomeSoggettoProprietario(this.nomeprov);
-				listaPD.put(portaDelegata.getId(), portaDelegata);
-
-			}// fine for porte delegate
+					
+					// inserisco la porta
+					if(soggettoProprietarioCombaciaSoggettoInModifica || modificatoNome){
+						listaPD.put(portaDelegata.getId(), portaDelegata);
+						checkUnique.add((portaDelegata.getId().longValue()+""));
+					}
+				}
+			}
 
 
 			// PORTE DELEGATE
