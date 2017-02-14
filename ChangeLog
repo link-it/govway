@@ -1,3 +1,14 @@
+2017-02-14  Andrea Poli <apoli@link.it>
+
+	* [BackwardCompatibility OpenSPCoop-v1]
+	Risolto Bug OP-599
+	L'header di Integrazione 'soap' in backward compatibility veniva prodotto con alcune differenze rispetto 
+	a quello generato da una versione di OpenSPCoop di generazione 1.x (es. 1.4).
+	Gli attributi 'SPCoopPdd' e 'SPCoopPddDetails' non erano presenti. 
+	Al loro posto venivano generati i nuovi attributi 'OpenSPCoop2Pdd' e 'OpenSPCoop2PddDetails'. 
+	Questo comportava che l'header non rispettava lo schema di integrazione xsd presente nella versione di OpenSPCoop di generazione 1.x.
+	La stessa problematica, risolta, era presente per l'integrazione 'trasporto' su http e per l'integrazione 'urlBased'.
+
 2017-02-09  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]
