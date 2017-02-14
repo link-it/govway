@@ -287,9 +287,9 @@ public class UtilitiesIntegrazione {
 //					properties.put(CostantiPdD.URL_BASED_PDD_DETAILS,URLEncoder.encode(this.openspcoop2Properties.getHttpXPdDDetails(),"UTF-8"));
 //				}
 				// Tutti i valori delle url vengono codificate. Se si codifica con URLEncoded in questo codice, si ottiene una doppia codifica
-				properties.put(CostantiPdD.URL_BASED_PDD,this.openspcoop2Properties.getHttpServer());
+				properties.put((String)this.keyValueIntegrazioneUrlBased.get(Costanti.HEADER_INTEGRAZIONE_PDD_VERSION),this.openspcoop2Properties.getHttpServer());
 				if(this.openspcoop2Properties.getHttpXPdDDetails()!=null && !"".equals(this.openspcoop2Properties.getHttpXPdDDetails())){
-					properties.put(CostantiPdD.URL_BASED_PDD_DETAILS,this.openspcoop2Properties.getHttpXPdDDetails());
+					properties.put((String)this.keyValueIntegrazioneUrlBased.get(Costanti.HEADER_INTEGRAZIONE_PDD_DETAILS),this.openspcoop2Properties.getHttpXPdDDetails());
 				}
 			}
 		}catch(Exception e){
@@ -342,9 +342,9 @@ public class UtilitiesIntegrazione {
 			if(properties!=null){
 				if(request)
 					properties.put(CostantiPdD.HEADER_HTTP_USER_AGENT,this.openspcoop2Properties.getHttpUserAgent());
-				properties.put(CostantiPdD.HEADER_HTTP_X_PDD,this.openspcoop2Properties.getHttpServer());
+				properties.put((String)this.keyValueIntegrazioneTrasporto.get(Costanti.HEADER_INTEGRAZIONE_PDD_VERSION),this.openspcoop2Properties.getHttpServer());
 				if(this.openspcoop2Properties.getHttpXPdDDetails()!=null && !"".equals(this.openspcoop2Properties.getHttpXPdDDetails())){
-					properties.put(CostantiPdD.HEADER_HTTP_X_PDD_DETAILS,this.openspcoop2Properties.getHttpXPdDDetails());
+					properties.put((String)this.keyValueIntegrazioneTrasporto.get(Costanti.HEADER_INTEGRAZIONE_PDD_DETAILS),this.openspcoop2Properties.getHttpXPdDDetails());
 				}
 			}
 		}catch(Exception e){
@@ -671,9 +671,9 @@ public class UtilitiesIntegrazione {
 			header.setAttribute((String)this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO), integrazione.getServizioApplicativo());
 		}
 		
-		header.setAttribute(CostantiPdD.HEADER_INTEGRAZIONE_SOAP_PDD_VERSION, this.openspcoop2Properties.getHeaderIntegrazioneSOAPPdDVersione());
+		header.setAttribute((String)this.keyValueIntegrazioneSoap.get(Costanti.HEADER_INTEGRAZIONE_PDD_VERSION), this.openspcoop2Properties.getHeaderIntegrazioneSOAPPdDVersione());
 		if(this.openspcoop2Properties.getHeaderIntegrazioneSOAPPdDDetails()!=null && !"".equals(this.openspcoop2Properties.getHeaderIntegrazioneSOAPPdDDetails())){
-			header.setAttribute(CostantiPdD.HEADER_INTEGRAZIONE_SOAP_PDD_DETAILS, this.openspcoop2Properties.getHeaderIntegrazioneSOAPPdDDetails());
+			header.setAttribute((String)this.keyValueIntegrazioneSoap.get(Costanti.HEADER_INTEGRAZIONE_PDD_DETAILS), this.openspcoop2Properties.getHeaderIntegrazioneSOAPPdDDetails());
 		}
 
 	}

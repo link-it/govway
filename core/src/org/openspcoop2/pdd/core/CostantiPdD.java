@@ -151,7 +151,7 @@ public class CostantiPdD {
     /** Costante che indica il valore dell'header X che indica la versione della PdD*/
     public final static String URL_BASED_PDD = "OpenSPCoop2Pdd";
     /** Costante che indica il valore dell'header X che indica il dettaglio della versione della PdD*/
-    public final static String URL_BASED_PDD_DETAILS = "OpenSPCoop2DettagliPdd";
+    public final static String URL_BASED_PDD_DETAILS = "OpenSPCoop2PddDetails";
     
     /** Costante che indica il valore dell'attributo dell'header di integrazione SOAP proprietario di OpenSPCoop che indica la versione della PdD*/
     public final static String HEADER_INTEGRAZIONE_SOAP_PDD_VERSION = "OpenSPCoop2Pdd";

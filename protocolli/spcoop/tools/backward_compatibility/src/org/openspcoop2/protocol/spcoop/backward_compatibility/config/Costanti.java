@@ -58,5 +58,9 @@ public class Costanti {
     public final static String HEADER_INTEGRAZIONE_HTTP_BACKWARD_COMPATIBILITY_COLLABORAZIONE = "SPCoopCollaborazione";
     /** Costante che indica il valore dell'header di integrazione: servizioApplicativo*/
     public final static String HEADER_INTEGRAZIONE_HTTP_BACKWARD_COMPATIBILITY_SERVIZIO_APPLICATIVO = "SPCoopServizioApplicativo";
+    
+    /** Costante che indica il nome della proprietà per la versione della PdD */
+    public final static String HEADER_INTEGRAZIONE_PDD_VERSION = "pddVersion";
+    public final static String HEADER_INTEGRAZIONE_PDD_DETAILS = "pddDetails";
 
 }
