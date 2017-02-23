@@ -235,7 +235,8 @@ public class ContentTypeUtilities {
 				throw new UtilsException("ContentType non conforme a quanto definito nella specifica MTOM/XOP (Parametro '"+
 						HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_START_INFO+"' non presente)");
 			}
-			return startInfo;
+			// startInfo puo' contenere il ';'
+			return readBaseTypeFromContentType(startInfo);
 			
 		}
 		catch(UtilsException e){
