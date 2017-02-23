@@ -8,6 +8,7 @@ package org.openspcoop2.example.server.mtom.ws;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -52,7 +53,7 @@ public class MTOMServiceExampleImpl {
 	        	javax.xml.transform.stream.StreamSource ssi = (javax.xml.transform.stream.StreamSource) imageData;
 	        	documentBuilder = documentFactory.newDocumentBuilder();
 	             if(ssi.getReader()!=null){
-	     	        ReaderInputStream ris = new ReaderInputStream(ssi.getReader());
+	     	        ReaderInputStream ris = new ReaderInputStream(ssi.getReader(),StandardCharsets.UTF_8);
 	     	        d = documentBuilder.parse(ris);
 	             }
 	             else{

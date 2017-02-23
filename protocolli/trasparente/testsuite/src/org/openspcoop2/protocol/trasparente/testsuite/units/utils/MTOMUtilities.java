@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -33,7 +34,6 @@ import org.openspcoop2.protocol.trasparente.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.trasparente.testsuite.core.DatabaseProperties;
 import org.openspcoop2.testsuite.axis14.Axis14SoapUtils;
 import org.openspcoop2.testsuite.clients.ClientHttpGenerico;
-import org.openspcoop2.testsuite.core.FatalTestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.core.SOAPEngine;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
@@ -161,7 +161,7 @@ public class MTOMUtilities {
 	            javax.xml.transform.stream.StreamSource ssi = (javax.xml.transform.stream.StreamSource) _echo_imageDataResponse.value;
 	            Document dResponse = null;
 	            if(ssi.getReader()!=null){
-	    	        ReaderInputStream ris = new ReaderInputStream(ssi.getReader());
+	    	        ReaderInputStream ris = new ReaderInputStream(ssi.getReader(),StandardCharsets.UTF_8);
 	    	        dResponse = XMLUtils.getInstance().newDocument(ris);
 	            }
 	            else{
@@ -425,7 +425,7 @@ public class MTOMUtilities {
         javax.xml.transform.stream.StreamSource ssi = (javax.xml.transform.stream.StreamSource) echoRespone.getImageDataResponse();
         Document dResponse = null;
         if(ssi.getReader()!=null){
-	        ReaderInputStream ris = new ReaderInputStream(ssi.getReader());
+	        ReaderInputStream ris = new ReaderInputStream(ssi.getReader(),StandardCharsets.UTF_8);
 	        dResponse = XMLUtils.getInstance().newDocument(ris);
         }
         else{
@@ -510,7 +510,7 @@ public class MTOMUtilities {
 			String tipoServizio,String servizio,String azione,
 			boolean confermaRicezione, String inoltro, Inoltro inoltroSdk,
 			boolean checkServizioApplicativo,String collaborazione,String tipoTempoAtteso,TipoOraRegistrazione tipoTempoAttesoSdk,
-			boolean manifestAbilitato, int numeroAttachmentsRequest, int numeroAttachmentsResponse, boolean responseIsFault) throws FatalTestSuiteException{
+			boolean manifestAbilitato, int numeroAttachmentsRequest, int numeroAttachmentsResponse, boolean responseIsFault) throws Exception{
 		Reporter.log("Controllo tracciamento richiesta con id: " +id);
 		Assert.assertTrue(data.getVerificatoreTracciaRichiesta().isTraced(id));
 		Reporter.log("Controllo valore Mittente Busta con id: " +id);
@@ -631,7 +631,7 @@ public class MTOMUtilities {
 				}
 			}
 		}catch(Exception e){
-			throw new  FatalTestSuiteException(e.getMessage());
+			throw e;
 		}
 	}
 

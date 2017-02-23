@@ -13,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import javax.activation.DataHandler;
@@ -204,7 +205,7 @@ public final class MTOMServiceExample_MTOMServiceExampleSOAP11InterfaceEndpoint_
         System.out.println("echo._echo_imageDataResponse=" + _echo_imageDataResponse.value.getClass().getName());
         if(_echo_imageDataResponse.value instanceof javax.xml.transform.stream.StreamSource){
         	javax.xml.transform.stream.StreamSource ssi = (javax.xml.transform.stream.StreamSource) _echo_imageDataResponse.value;
-        	ReaderInputStream ris = new ReaderInputStream(ssi.getReader());
+        	ReaderInputStream ris = new ReaderInputStream(ssi.getReader(),StandardCharsets.UTF_8);
         	documentBuilder = documentFactory.newDocumentBuilder();
         	Document dResponse = documentBuilder.parse(ris);
         	System.out.println("XML received: "+dResponse.toString());
