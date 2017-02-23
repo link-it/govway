@@ -20,13 +20,17 @@
 	<!-- CLASSPATH -->
 	<path id="classpath_compile" >
 		<fileset dir="${openspcoop2_lib}" >
+			<include name="**/wss4j/*"/>
+			<include name="**/log/*"/>
 			<include name="**/cxf/*"/>
+			<include name="**/saaj/*"/>
 			<include name="**/jetty/*"/>
 			<include name="**/security/*"/>
 			<include name="**/httpcore/*"/>
 			<include name="**/commons/*"/>
+			<exclude name="**/shared/saxon*"/>
 			<include name="**/shared/*"/>
-            <include name="**/spring/*"/>
+            		<include name="**/spring/*"/>
 		</fileset>
 	</path>
 	<path id="classpath_dist" >
