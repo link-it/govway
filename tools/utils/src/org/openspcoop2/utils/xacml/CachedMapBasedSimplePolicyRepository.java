@@ -53,6 +53,7 @@ import org.herasaf.xacml.core.policy.impl.ResourceMatchType;
 import org.herasaf.xacml.core.policy.impl.ResourcesType;
 import org.herasaf.xacml.core.policy.impl.TargetType;
 import org.herasaf.xacml.core.simplePDP.OrderedMapBasedSimplePolicyRepository;
+import org.slf4j.Logger;
 
 /**
  * CachedMapBasedSimplePolicyRepository
@@ -66,21 +67,22 @@ OrderedMapBasedSimplePolicyRepository {
 
 	private Map<EvaluatableID, String> cacheMap;
 	private MessageDigest md;
-	
+	private Logger log;
 	/**
 	 * Indicazione se usare la risorsa (con attribute id dato da RESOURCE_ATTRIBUTE_ID_TO_MATCH)
 	 * o la action (con attribute id dato da ACTION_ATTRIBUTE_ID_TO_MATCH)
 	 * per capire qual e' la policy da usare
 	 */
-	private static final boolean USE_RESOURCE_TO_MATCH_POLICY = true;
+	public static final boolean USE_RESOURCE_TO_MATCH_POLICY = true;
 	
 	
-	private static final String RESOURCE_ATTRIBUTE_ID_TO_MATCH = "___resource-id___";
-	private static final String ACTION_ATTRIBUTE_ID_TO_MATCH = "urn:oasis:names:tc:xacml:1.0:action:action-id";
+	public static final String RESOURCE_ATTRIBUTE_ID_TO_MATCH = "___resource-id___";
+	public static final String ACTION_ATTRIBUTE_ID_TO_MATCH = "urn:oasis:names:tc:xacml:1.0:action:action-id";
 
-	public CachedMapBasedSimplePolicyRepository() throws PolicyException {
+	public CachedMapBasedSimplePolicyRepository(Logger log) throws PolicyException {
 		super();
 		this.cacheMap = new HashMap<EvaluatableID, String>();
+		this.log = log;
 		try {
 			this.md = MessageDigest.getInstance("MD5");
 		} catch (NoSuchAlgorithmException e) {
@@ -231,9 +233,16 @@ OrderedMapBasedSimplePolicyRepository {
 	public List<Evaluatable> getEvaluatables(RequestType request) {
 		try {
 			String key = getKey(request);
+			this.log.info("KEY: " + key);
 			if(key != null) {
 				EvaluatableIDImpl policyId = new EvaluatableIDImpl(key);
 				Evaluatable eval = super.getEvaluatable(policyId);
+				this.log.info("eval is null? " + (eval == null));
+				if(eval != null) {
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					PolicyMarshaller.marshal(eval, baos);
+					this.log.info("eval:" +new String(baos.toByteArray()));
+				}
 				return Arrays.asList(eval);
 			} else {
 				return new ArrayList<Evaluatable>();

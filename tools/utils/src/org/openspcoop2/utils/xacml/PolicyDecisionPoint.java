@@ -41,6 +41,8 @@ import org.herasaf.xacml.core.simplePDP.MapBasedSimplePolicyRepository;
 import org.herasaf.xacml.core.simplePDP.SimplePDPConfiguration;
 import org.herasaf.xacml.core.simplePDP.SimplePDPFactory;
 import org.herasaf.xacml.core.simplePDP.initializers.InitializerExecutor;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.slf4j.Logger;
 
 /**
  * PolicyDecisionPoint
@@ -54,15 +56,29 @@ public class PolicyDecisionPoint {
 	private static final String SINGLE = "SINGLE";
 	private Map<String, PDP> pdp;
 	private boolean singlePDP;
+	private Logger log;
+
+	public static void runInitializers() {
+		InitializerExecutor.runInitializers(); //Inizializza gli unmarshaller
+	}
 	
 	public PolicyDecisionPoint() throws PolicyException {
-		this(true);
+		this(LoggerWrapperFactory.getLogger(PolicyDecisionPoint.class));
+	}
+
+	public PolicyDecisionPoint(Logger log) throws PolicyException {
+		this(log, true);
 	}
 
 	public PolicyDecisionPoint(boolean singlePDP) throws PolicyException {
+		this(LoggerWrapperFactory.getLogger(PolicyDecisionPoint.class), singlePDP);
+	}
+
+	public PolicyDecisionPoint(Logger log, boolean singlePDP) throws PolicyException {
+		runInitializers();
 		this.singlePDP=singlePDP;
 		this.pdp = new HashMap<String, PDP>();
-
+		this.log = log;
 		if(singlePDP) {
 			this.pdp.put(SINGLE, this.newPDP());
 		}
@@ -70,7 +86,7 @@ public class PolicyDecisionPoint {
 	
 	private PDP newPDP() throws PolicyException {
 		SimplePDPConfiguration configuration = new SimplePDPConfiguration();
-		PolicyRetrievalPoint policyRetrievalPoint = new CachedMapBasedSimplePolicyRepository();
+		PolicyRetrievalPoint policyRetrievalPoint = new CachedMapBasedSimplePolicyRepository(this.log);
 		configuration.setPolicyRetrievalPoint(policyRetrievalPoint);
 		return SimplePDPFactory.getSimplePDP(configuration);
 	}
