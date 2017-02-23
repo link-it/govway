@@ -1,0 +1,75 @@
+<openspcoop2 xmlns="http://www.openspcoop2.org/core/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openspcoop2.org/core/config config.xsd">
+
+
+      <soggetto tipo="PROXY" nome="MinisteroFruitore" > 
+
+          <porta-delegata nome="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/echo" 
+	      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+              <soggetto-erogatore tipo="PROXY" nome="MinisteroErogatore" />
+              <servizio tipo="PROXY" nome="MTOMServiceExampleSOAP11" />
+              <azione nome="echo" />
+	      <servizio-applicativo nome="MinisteroFruitore_SA" />
+          </porta-delegata>
+
+          <porta-delegata nome="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/echo"
+              autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+              <soggetto-erogatore tipo="PROXY" nome="MinisteroErogatore" />
+              <servizio tipo="PROXY" nome="MTOMServiceExampleSOAP12" />
+              <azione nome="echo" />
+              <servizio-applicativo nome="MinisteroFruitore_SA" />
+          </porta-delegata>
+
+         <servizio-applicativo nome="MinisteroFruitore_SA" >
+              <invocazione-porta>
+                 <credenziali tipo="basic" user="MinisteroFruitore" password="123456" />
+              </invocazione-porta>
+          </servizio-applicativo>
+
+
+     </soggetto>
+
+
+
+      <soggetto tipo="PROXY" nome="MinisteroErogatore" > 
+
+          <porta-applicativa nome="MTOMServiceExampleSOAP11" stateless="abilitato">
+              <servizio tipo="PROXY" nome="MTOMServiceExampleSOAP11" />
+              <azione nome="echo" />
+              <servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" /> 
+          </porta-applicativa>
+
+          <porta-applicativa nome="MTOMServiceExampleSOAP12" stateless="abilitato">
+              <servizio tipo="PROXY" nome="MTOMServiceExampleSOAP12" />
+              <azione nome="echo" />
+              <servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
+          </porta-applicativa>
+
+          <servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" >
+                  <invocazione-servizio>
+                     <connettore tipo="http" nome="ConnettoreMTOMServiceExampleSOAP11SA">
+                         <property nome="location" valore="http://localhost:8888/MTOMExample/soap11" />
+                     </connettore>
+                 </invocazione-servizio>
+          </servizio-applicativo>
+
+          <servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" >
+                  <invocazione-servizio>
+                     <connettore tipo="http" nome="ConnettoreMTOMServiceExampleSOAP12SA">
+                         <property nome="location" valore="http://localhost:8888/MTOMExample/soap12" />
+                     </connettore>
+                 </invocazione-servizio>
+          </servizio-applicativo>
+
+     </soggetto>
+
+    <configurazione>
+        <accesso-registro>
+            <registro nome="registroXML" tipo="xml" location="/etc/openspcoop2/registroServizi.xml"
+            />
+        </accesso-registro>
+        <inoltro-buste-non-riscontrate cadenza="60"/>
+        <messaggi-diagnostici severita-log4j="infoIntegration" severita="infoIntegration"/>
+        <tracciamento buste="abilitato" dump="abilitato"/>
+    </configurazione>
+
+</openspcoop2>

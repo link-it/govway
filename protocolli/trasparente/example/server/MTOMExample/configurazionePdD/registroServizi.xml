@@ -1,0 +1,62 @@
+<registro-servizi xmlns="http://www.openspcoop2.org/core/registry" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openspcoop2.org/core/registry registroServizi.xsd">
+
+   <accordo-servizio-parte-comune nome="AS_MTOMExample" 
+		     descrizione="Esempio di Servizio MTOMT"
+		     versione="1"
+		     profilo-collaborazione="sincrono"
+                     wsdl-definitorio="wsdl/definitorio.xsd"
+                     wsdl-concettuale="wsdl/concettuale.wsdl"
+		     wsdl-logico-erogatore="wsdl/logicoErogatore.wsdl">
+	<soggetto-referente tipo="PROXY" nome="MinisteroErogatore" />
+	<port-type nome="MTOMServiceExample" profilo-collaborazione="sincrono" descrizione="Esempio di servizio sincrono">
+           <azione nome="echo" />
+        </port-type>
+   </accordo-servizio-parte-comune>
+
+
+   <soggetto tipo="PROXY" nome="MinisteroErogatore">
+
+        <connettore tipo="http" nome="PdDMinisteroErogatore">
+             <property nome="location" valore="http://127.0.0.1:8080/openspcoop2/proxy/PA" />
+         </connettore>
+
+	<accordo-servizio-parte-specifica
+		 nome="MTOMServiceExampleSOAP11"
+		 accordo-servizio-parte-comune="PROXY/MinisteroErogatore:AS_MTOMExample:1"
+		 port-type="MTOMServiceExample"
+		 descrizione="Esempio di accordo di servizio parte specifica (Sincrono) per binding SOAP11"
+		 wsdl-implementativo-erogatore="wsdl/implementazioneErogatoreSoap11.wsdl">
+	    <servizio tipo="PROXY" nome="MTOMServiceExampleSOAP11">
+                     <connettore tipo="http" nome="Connettore">
+                         <property nome="location" valore="http://localhost:8888/MTOMExample/soap11" />
+                     </connettore>
+	    </servizio> 
+            <fruitore tipo="PROXY" nome="MinisteroFruitore" />
+        </accordo-servizio-parte-specifica>
+
+        <accordo-servizio-parte-specifica
+                 nome="MTOMServiceExampleSOAP12"
+                 accordo-servizio-parte-comune="PROXY/MinisteroErogatore:AS_MTOMExample:1"
+                 port-type="MTOMServiceExample"
+                 descrizione="Esempio di accordo di servizio parte specifica (Sincrono) per binding SOAP12"
+                 wsdl-implementativo-erogatore="wsdl/implementazioneErogatoreSoap12.wsdl">
+            <servizio tipo="PROXY" nome="MTOMServiceExampleSOAP12">
+                     <connettore tipo="http" nome="Connettore">
+                         <property nome="location" valore="http://localhost:8888/MTOMExample/soap12" />
+                     </connettore>
+            </servizio>
+            <fruitore tipo="PROXY" nome="MinisteroFruitore" />
+        </accordo-servizio-parte-specifica>
+
+   </soggetto>
+
+
+   <soggetto tipo="PROXY" nome="MinisteroFruitore">
+
+        <connettore tipo="http" nome="PdDComune">
+             <property nome="location" valore="http://127.0.0.1:8080/openspcoop2/proxy/PA" />
+        </connettore>
+
+   </soggetto>
+
+</registro-servizi>

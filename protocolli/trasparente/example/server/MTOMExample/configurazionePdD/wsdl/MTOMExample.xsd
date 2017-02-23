@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified"
+	targetNamespace="http://www.openspcoop2.org/example/server/mtom"
+	xmlns:ns="http://www.openspcoop2.org/example/server/mtom"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:xmime="http://www.w3.org/2005/05/xmlmime">
+
+	<xs:element name="echo">
+		<xs:complexType>
+			<xs:sequence>
+
+				<xs:element name="richiesta" type="xs:string" maxOccurs="1" minOccurs="1"/>
+				<xs:element xmime:expectedContentTypes="text/xml" name="ImageData" type="xs:base64Binary"/>
+
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="echoResponse">
+		<xs:complexType>
+			<xs:sequence>
+
+				<xs:element name="risposta" type="xs:string" maxOccurs="1" minOccurs="1"/>
+				<xs:element xmime:expectedContentTypes="text/xml" name="ImageDataResponse" type="xs:base64Binary"/>
+
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions 
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://www.openspcoop2.org/example/server/mtom/ws"
+    xmlns:ns="http://www.openspcoop2.org/example/server/mtom"
+    xmlns:ns2="http://www.openspcoop2.org/example/server/mtom/ws"
+    xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy">
+
+    <wsp:Policy
+        xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+        wsu:Id="MTOMPolicy">
+        <wsoma:OptimizedMimeSerialization
+            xmlns:wsoma="http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization"/>
+    </wsp:Policy>
+
+
+
+    <!-- Import XSD -->
+    <wsdl:import namespace="http://www.openspcoop2.org/example/server/mtom"
+        location="MTOMExample.xsd"/>
+
+
+    <!-- MESSAGES -->
+
+    <wsdl:message name="echoMsg">
+        <wsdl:part element="ns:echo" name="param"/>
+    </wsdl:message>
+    <wsdl:message name="echoResponseMsg">
+        <wsdl:part element="ns:echoResponse" name="param"/>
+    </wsdl:message>
+
+
+    <!-- PORT-TYPE -->
+
+    <wsdl:portType name="MTOMServiceExample">
+
+        <wsdl:operation name="echo">
+            <wsdl:input message="ns2:echoMsg" name="echoMsg"/>
+            <wsdl:output message="ns2:echoResponseMsg" name="echoResponseMsg"/>
+        </wsdl:operation>
+
+    </wsdl:portType>
+
+</wsdl:definitions>

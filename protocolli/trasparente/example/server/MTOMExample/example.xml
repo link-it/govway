@@ -1,0 +1,5 @@
+<note xmlns="http://www.openspcoop.org/example">
+   <to>Dest</to>
+   <from>Source</from>
+   <content>Esempio di xml</content>
+</note>

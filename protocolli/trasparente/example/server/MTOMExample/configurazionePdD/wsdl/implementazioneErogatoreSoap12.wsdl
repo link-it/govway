@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions 
+    xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://www.openspcoop2.org/example/server/mtom/ws"
+    xmlns:ns="http://www.openspcoop2.org/example/server/mtom"
+    xmlns:ns2="http://www.openspcoop2.org/example/server/mtom/ws"
+    xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy">
+
+
+        <wsdl:import namespace="http://www.openspcoop2.org/example/server/mtom/ws"
+                location="logicoErogatore.wsdl">
+        </wsdl:import>
+
+
+
+    <!-- BINDING -->
+
+    <wsdl:binding name="MTOMServiceExampleSOAP12Binding" type="ns2:MTOMServiceExample">
+
+        <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+            URI="#MTOMPolicy" wsdl:required="true"/>
+
+
+        <soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+        <wsdl:operation name="echo">
+            <soap12:operation soapAction="echo"/>
+            <wsdl:input name="echoMsg">
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="echoResponseMsg">
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+
+    </wsdl:binding>
+
+
+    <!-- SERVICE -->
+
+    <wsdl:service name="MTOMServiceExampleSOAP12Service">
+        <wsdl:port binding="ns2:MTOMServiceExampleSOAP12Binding" name="MTOMServiceExampleSOAP12InterfaceEndpoint">
+            <soap12:address location="http://localhost:8888/MTOMExample/soap12"/>
+        </wsdl:port>
+    </wsdl:service>
+
+</wsdl:definitions>
