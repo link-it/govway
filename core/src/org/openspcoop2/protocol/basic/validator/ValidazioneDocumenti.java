@@ -444,7 +444,8 @@ public class ValidazioneDocumenti extends BasicComponentFactory implements IVali
 				TipiDocumentoLivelloServizio.WSAGREEMENT.equals(documento.getTipo()) ||
 				TipiDocumentoLivelloServizio.WSLA.equals(documento.getTipo()) ||
 				TipiDocumentoSemiformale.XML.equals(documento.getTipo()) ||
-				TipiDocumentoSicurezza.WSPOLICY.equals(documento.getTipo()) 
+				TipiDocumentoSicurezza.WSPOLICY.equals(documento.getTipo()) ||
+				TipiDocumentoSicurezza.XACML_POLICY.equals(documento.getTipo()) 
 		){
 			// Valido che sia un documento XML corretto.
 			try{

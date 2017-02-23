@@ -31,6 +31,7 @@ public enum TipiDocumentoSicurezza {
 
 	
 	WSPOLICY ("WS-Policy"),
+	XACML_POLICY ("XACML-Policy"),
 	LINGUAGGIO_NATURALE ("Linguaggio Naturale");
 	
 	
@@ -75,8 +76,12 @@ public enum TipiDocumentoSicurezza {
 		
 		if(TipiDocumentoSicurezza.LINGUAGGIO_NATURALE.toString().equals(val)){
 			return TipiDocumentoSicurezza.LINGUAGGIO_NATURALE;
-		}else{
+		}
+		else if(TipiDocumentoSicurezza.WSPOLICY.toString().equals(val)){
 			return TipiDocumentoSicurezza.WSPOLICY;
+		}
+		else{
+			return TipiDocumentoSicurezza.XACML_POLICY;
 		}
 		
 		

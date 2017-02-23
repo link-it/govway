@@ -197,6 +197,10 @@ public class SecurityConstants {
 	public static final String SAML_PROF_FILE =  "samlPropFile";
 	public static final String SAML_CALLBACK_REF = ConfigurationConstants.SAML_CALLBACK_REF;
 	
+	public static final String AUTH_PDP_LOCAL = "pdpLocal"; // true/false (default true)
+	public static final String AUTH_PDP_REMOTE_URL = "pdpRemoteUrl";
+	public static final String AUTH_PDP_REMOTE_CONNECTION_TIMEOUT = "pdpRemoteConnectionTimeout";
+	public static final String AUTH_PDP_REMOTE_READ_CONNECTION_TIMEOUT = "pdpRemoteReadConnectionTimeout";
 	
 	// Do not perform any action, do nothing. Only applies to DOM code.
 	public static final String ACTION_NO_SECURITY = WSHandlerConstants.NO_SECURITY;

@@ -22,6 +22,7 @@
 
 package org.openspcoop2.security.message.authorization;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +36,9 @@ import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.utils.resources.HttpResponseBody;
+import org.openspcoop2.utils.resources.HttpUtilities;
 
 
 /**
@@ -55,6 +59,7 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
     @Override
     public MessageSecurityAuthorizationResult authorize(MessageSecurityAuthorizationRequest request) throws SecurityException{
     	
+    	String principalWSS = request.getWssSecurityPrincipal();
     	Busta busta = request.getBusta();
     	org.openspcoop2.security.message.MessageSecurityContext messageSecurityContext = request.getMessageSecurityContext();
     	OpenSPCoop2Message message = request.getMessage();
@@ -62,27 +67,85 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
     			busta.getTipoServizio(), busta.getServizio());
     	
     	// Proprieta' WSSecurity
+    	
     	String actor = messageSecurityContext.getActor();
 		if("".equals(messageSecurityContext.getActor()))
 			actor = null;
     	
-    	// Localizzo Policy
-    	List<byte[]> policies = new ArrayList<>();
-    	try{
-	    	AccordoServizioParteSpecifica asps = RegistroServiziManager.getInstance().getAccordoServizioParteSpecifica(idServizio, null, true);
-	    	// TODO
-	    	for (int i = 0; i < asps.sizeSpecificaSicurezzaList(); i++) {
-				Documento d = asps.getSpecificaSicurezza(i);
-				if(TipiDocumentoSicurezza.WSPOLICY.getNome().equals(d.getTipo())){
-					policies.add(d.getByteContenuto());	
+		String pdpLocalString = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.AUTH_PDP_LOCAL);
+		boolean pdpLocal = true;
+		if(pdpLocalString==null || "".equals(pdpLocalString.trim())){
+			pdpLocal = true;
+		}
+		else if("true".equalsIgnoreCase(pdpLocalString.trim())){
+			pdpLocal = true;
+		}
+		else if("false".equalsIgnoreCase(pdpLocalString.trim())){
+			pdpLocal = false;
+		}
+		else{
+			throw new SecurityException("Property '"+SecurityConstants.AUTH_PDP_LOCAL+"' with wrong value ["+pdpLocalString.trim()+"]");
+		}
+		
+		String remotePdD_url = null;
+		Integer remotePdD_connectionTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
+		Integer remotePdD_readConnectionTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
+		if(!pdpLocal){
+			remotePdD_url = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.AUTH_PDP_REMOTE_URL);
+			if(pdpLocalString==null || "".equals(pdpLocalString.trim())){
+				throw new SecurityException("Property '"+SecurityConstants.AUTH_PDP_REMOTE_URL+"' not found (required with "+SecurityConstants.AUTH_PDP_LOCAL+"=false)");
+			}
+			pdpLocalString = pdpLocalString.trim();
+			try{
+				(new URI(remotePdD_url)).toString();
+			}catch(Exception e){
+				throw new SecurityException("Property '"+SecurityConstants.AUTH_PDP_REMOTE_URL+"' with wrong value ["+remotePdD_url+"]: "+e.getMessage(),e);
+			}
+			
+			String tmp = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.AUTH_PDP_REMOTE_CONNECTION_TIMEOUT);
+			if(tmp!=null && !"".equals(tmp)){
+				tmp = tmp.trim();
+				try{
+					remotePdD_connectionTimeout = Integer.parseInt(tmp);
+				}catch(Exception e){
+					throw new SecurityException("Property '"+SecurityConstants.AUTH_PDP_REMOTE_CONNECTION_TIMEOUT+"' with wrong value ["+tmp+"]: "+e.getMessage(),e);
 				}
 			}
-    	}catch(Exception e){
-    		throw new SecurityException("Errore durante la ricerca delle policies: "+e.getMessage(),e);
+			
+			tmp = (String) messageSecurityContext.getIncomingProperties().get(SecurityConstants.AUTH_PDP_REMOTE_READ_CONNECTION_TIMEOUT);
+			if(tmp!=null && !"".equals(tmp)){
+				tmp = tmp.trim();
+				try{
+					remotePdD_readConnectionTimeout = Integer.parseInt(tmp);
+				}catch(Exception e){
+					throw new SecurityException("Property '"+SecurityConstants.AUTH_PDP_REMOTE_READ_CONNECTION_TIMEOUT+"' with wrong value ["+tmp+"]: "+e.getMessage(),e);
+				}
+			}
+		}
+		
+		
+    	// Localizzo Policy
+    	List<byte[]> policies = new ArrayList<>();
+    	if(pdpLocal){
+	    	try{
+		    	AccordoServizioParteSpecifica asps = RegistroServiziManager.getInstance().getAccordoServizioParteSpecifica(idServizio, null, true);
+		    	for (int i = 0; i < asps.sizeSpecificaSicurezzaList(); i++) {
+					Documento d = asps.getSpecificaSicurezza(i);
+					if(TipiDocumentoSicurezza.XACML_POLICY.getNome().equals(d.getTipo())){
+						policies.add(d.getByteContenuto());	
+					}
+				}
+	    	}catch(Exception e){
+	    		throw new SecurityException("Errore durante la ricerca delle policies xacml per il servizio "+idServizio.toString()+": "+e.getMessage(),e);
+	    	}
+	    	if(policies.size()<=0){
+	    		throw new SecurityException("Nessuna xacml policy trovata trovata per il servizio "+idServizio.toString());
+	    	}
+	    	
+	    	// Caricamento in PdD vedendo che la policy non sia gia stata caricata ....
+	    	// TODO...
     	}
-    	if(policies.size()<=0){
-    		throw new SecurityException("Nessuna policy trovata per il servizio "+idServizio.toString());
-    	}
+    	
     	
     	// Localizzo Header SAML
     	SOAPElement security = null;
@@ -97,9 +160,35 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
   	
     	// Produzione XACMLRequest a partire dalla SAML
     	// TODO...
+    	messageSecurityContext.getLog().debug("TODO log xml request costruito");
     	
-    	// Caricamento in PdD vedendo che la policy non sia gia stata caricata ....
-    	// TODO...
+    	// Creare un <Action> che contiene una url cosi realizzata: http://<tipoSoggettoErogatore>_<nomeSoggettoErogatore>.openspcoop2.org/servizi/<tipoServizio>_<nomeServizio>/<nomeAzione>
+    	// I valori erogatore servizio e azioni si possono prendere dalla busta. L'azione può essere null
+    	
+    	// Creare un Subject che contiene nel subject id:
+    	// come urn:oasis:names:tc:xacml:1.0:subject:subject-id il valore del principal presente nella richiesta (principalWSS)
+    	// inoltre creare altri attribute del subject che contengano:
+    	// - AttributeId="urn:oasis:names:tc:SAML:2.0:assertion/Subject/NameID il valore del NameID all'interno dell'elemento Subject 
+    	// - AttributeId="urn:oasis:names:tc:SAML:2.0:assertion/Issuer il valore dell'elemento Issuer
+    	// - AttributeId="urn:oasis:names:tc:SAML:2.0:assertion/AttributeStatement/Attribute/Name/<Nome> se il NameFormat non è una uri altrimenti direttamente il nome come attribute Id
+    	
+    	if(pdpLocal){
+    		// TODO...
+    	}
+    	else{
+    		try{
+    			HttpResponseBody response = HttpUtilities.getHTTPResponse(remotePdD_url, remotePdD_readConnectionTimeout, remotePdD_connectionTimeout);
+    			if(response.getResultHTTPOperation()==200){
+    				byte[] res = response.getResponse();
+    				// TODO analizzare xml risposta
+    			}
+    			else{
+    				throw new Exception("invocazione fallita (http-return-code: "+response.getResultHTTPOperation()+")");
+    			}
+    		}catch(Exception e){
+	    		throw new SecurityException("Errore avvenuto durante l'interrogazione del PdD remoto ["+remotePdD_url+"] per l'autorizzazione del servizio "+idServizio.toString()+": "+e.getMessage(),e);
+	    	}
+    	}
     	
     	MessageSecurityAuthorizationResult result = new MessageSecurityAuthorizationResult();
     	result.setAuthorized(true);

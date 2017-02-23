@@ -34,6 +34,7 @@ import it.gov.spcoop.sica.manifest.SpecificaSicurezza;
 import it.gov.spcoop.sica.manifest.driver.TipiAdesione;
 import it.gov.spcoop.sica.manifest.driver.TipiDocumentoConversazione;
 import it.gov.spcoop.sica.manifest.driver.TipiDocumentoInterfaccia;
+import it.gov.spcoop.sica.manifest.driver.TipiDocumentoSicurezza;
 
 import java.io.File;
 import java.util.List;
@@ -2237,13 +2238,19 @@ public class SICAtoOpenSPCoopUtilities {
 			if(specificaSicurezza==null)
 				specificaSicurezza = new it.gov.spcoop.sica.manifest.SpecificaSicurezza();
 			
+			// In OpenSPCoop e' stato aggiunto xacmlPolicy non gestito dal CNIPA
+			String tipo = docOpenspcoop.getTipo();
+			if(!TipiDocumentoSicurezza.LINGUAGGIO_NATURALE.getNome().equals(tipo) && !TipiDocumentoSicurezza.WSPOLICY.getNome().equals(tipo)){
+				tipo = TipiDocumentoSicurezza.LINGUAGGIO_NATURALE.getNome(); // forzo tipo di linguaggio naturale.
+			}
+			
 			it.gov.spcoop.sica.manifest.DocumentoSicurezza docSicurezza = new it.gov.spcoop.sica.manifest.DocumentoSicurezza();
-			docSicurezza.setTipo(docOpenspcoop.getTipo());
+			docSicurezza.setTipo(tipo);
 			docSicurezza.setBase(docOpenspcoop.getFile());
 			specificaSicurezza.addDocumentoSicurezza(docSicurezza);
 					
 			it.gov.spcoop.sica.dao.Documento docSICA = new it.gov.spcoop.sica.dao.Documento();
-			docSICA.setTipo(docOpenspcoop.getTipo());
+			docSICA.setTipo(tipo);
 			docSICA.setNome(docOpenspcoop.getFile());
 			if(docOpenspcoop.getByteContenuto()==null){
 				throw new SICAToOpenSPCoopUtilitiesException("Byte della specifica di sicurezza "+docOpenspcoop.getFile()+" di tipo "+docOpenspcoop.getTipo()+" non forniti");
