@@ -22,7 +22,6 @@
 
 package org.openspcoop2.security.message.authorization;
 
-import org.openspcoop2.protocol.sdk.Busta;
 
 /**
  * Implementazione esempio dell'interfaccia Authorization
@@ -40,17 +39,14 @@ public class MessageSecurityAuthorizationOKDemo  implements IMessageSecurityAuth
 
 
     @Override
-	public boolean authorize(String principal, Busta busta) {
-        //in implementazione reale inserire controllo su file, DB, chiamata ad un
-        //servizio di autorizzazione in rete od altro. 
-        //Ricordarsi che azione puo' essere null
-       //  System.out.println("Autorizzo servizio per: " + principal +
-    	//"|"+ busta.getMittente() + "|" + busta.getServizio() + "|"  + busta.getAzione() + "|");
-        return true;
+    public MessageSecurityAuthorizationResult authorize(MessageSecurityAuthorizationRequest request) throws SecurityException{
+    	
+//    	System.out.println("Autorizzo servizio per: " + request.getWssSecurityPrincipal() +
+//    			"|"+ request.getBusta().getMittente() + "|" + request.getBusta().getServizio() + "|"  + request.getBusta().getAzione() + "|");
+  	
+    	MessageSecurityAuthorizationResult result = new MessageSecurityAuthorizationResult();
+    	result.setAuthorized(true);
+    	return result;
     }
     
-    @Override
-	public String getMessaggioErrore() {
-		return null;
-	}
 }

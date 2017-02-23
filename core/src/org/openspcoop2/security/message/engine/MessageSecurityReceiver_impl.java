@@ -39,6 +39,8 @@ import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.MessageSecurityUtilities;
 import org.openspcoop2.security.message.SubErrorCodeSecurity;
 import org.openspcoop2.security.message.authorization.IMessageSecurityAuthorization;
+import org.openspcoop2.security.message.authorization.MessageSecurityAuthorizationRequest;
+import org.openspcoop2.security.message.authorization.MessageSecurityAuthorizationResult;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 
 
@@ -198,24 +200,24 @@ public class MessageSecurityReceiver_impl extends MessageSecurityReceiver{
 			
 			
 			// ** Autorizzazione Message Security **/
-			if (authClass != null) {
-				if (!authorize(authClass, this.subject , busta)) {
-					this.msgErrore =  "Mittente della busta ["+busta.getTipoMittente()+busta.getMittente()+
-					"] non autorizzato ad invocare il servizio ["+busta.getServizio()+"] erogato dal soggetto ["+busta.getTipoDestinatario()+busta.getDestinatario()+"]";
-					this.codiceErrore = CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA;
-					return false;
-				}
-			}
             if (authClass != null) {
                 try {
             		IMessageSecurityAuthorization auth = (IMessageSecurityAuthorization)org.openspcoop2.utils.resources.Loader.getInstance().newInstance(authClass);
-                    boolean status = auth.authorize(this.subject,busta);
-                    if(!status){
-                        if(auth.getMessaggioErrore()!=null){
-                                this.msgErrore = auth.getMessaggioErrore();
+            		MessageSecurityAuthorizationRequest req = new MessageSecurityAuthorizationRequest();
+            		req.setBusta(busta);
+            		req.setWssSecurityPrincipal(this.subject);
+            		req.setMessageSecurityContext(this.messageSecurityContext);
+            		req.setMessage(message);
+                    MessageSecurityAuthorizationResult result = auth.authorize(req);
+                    if(!result.isAuthorized()){
+                        if(result.getErrorMessage()!=null){
+                                this.msgErrore = result.getErrorMessage();
                         }else{
                                 this.msgErrore =  "Mittente della busta ["+busta.getTipoMittente()+busta.getMittente()+
                                         "] (subject:"+this.subject+") non autorizzato ad invocare il servizio ["+busta.getServizio()+"] erogato dal soggetto ["+busta.getTipoDestinatario()+busta.getDestinatario()+"]";
+                        }
+                        if(result.getException()!=null){
+                        	this.messageSecurityContext.getLog().error(this.msgErrore,result.getException());
                         }
                         this.codiceErrore = CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA;
                         return false;

@@ -29,8 +29,6 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.SubErrorCodeSecurity;
-import org.openspcoop2.security.message.authorization.IMessageSecurityAuthorization;
-import org.openspcoop2.utils.resources.Loader;
 
 
 /**
@@ -97,20 +95,6 @@ public abstract class MessageSecurityReceiver{
 
 	public MessageSecurityContext getMessageSecurityContext() {
 		return this.messageSecurityContext;
-	}
-
-	protected boolean authorize(String authClass,String principal,Busta busta) throws Exception {
-		boolean status=false;
-		try {
-			IMessageSecurityAuthorization auth = (IMessageSecurityAuthorization)Loader.getInstance().newInstance(authClass);
-			status = auth.authorize(principal,busta);
-			return status;
-		}
-		catch (Exception e) {
-			this.messageSecurityContext.getLog().error("Errore durante il check di autorizzazione (MessageSecurity): " + e.getMessage(),e);
-			throw new Exception("Errore durante il check di autorizzazione (MessageSecurity): " + e.getMessage());
-		}
-		
 	}
 
 }

@@ -24,15 +24,35 @@ package org.openspcoop2.security.message.authorization;
 
 
 /**
- * Interfaccia Authorization
+ * MessageSecurityAuthorizationResult
  *
- * @author Montebove Luciano <L.Montebove@finsiel.it>
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author Andrea Poli <apoli@link.it>
+ * @author $Author: apoli $
+ * @version $Rev: 12564 $, $Date: 2017-01-11 14:31:31 +0100 (Wed, 11 Jan 2017) $
  */
 
-public interface IMessageSecurityAuthorization {
+public class MessageSecurityAuthorizationResult {
 
-    public MessageSecurityAuthorizationResult authorize(MessageSecurityAuthorizationRequest request) throws SecurityException;
-    
+	private boolean authorized;
+	private String errorMessage;
+	private SecurityException exception;
+	
+	public boolean isAuthorized() {
+		return this.authorized;
+	}
+	public void setAuthorized(boolean authorized) {
+		this.authorized = authorized;
+	}
+	public String getErrorMessage() {
+		return this.errorMessage;
+	}
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
+	public SecurityException getException() {
+		return this.exception;
+	}
+	public void setException(SecurityException exception) {
+		this.exception = exception;
+	}
 }
