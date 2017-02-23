@@ -14,7 +14,7 @@ public class MTOMServiceExample_MTOMServiceExampleSOAP11InterfaceEndpoint_Server
 
     protected MTOMServiceExample_MTOMServiceExampleSOAP11InterfaceEndpoint_Server() throws java.lang.Exception {
         System.out.println("Starting Server");
-        Object implementor = new MTOMServiceExampleImpl();
+        Object implementor = new MTOMServiceExampleSOAP11Impl();
         String address = "http://localhost:8888/MTOMExample/soap11";
         Endpoint.publish(address, implementor);
     }

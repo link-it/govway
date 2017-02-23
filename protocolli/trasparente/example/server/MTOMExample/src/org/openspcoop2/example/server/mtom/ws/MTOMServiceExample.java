@@ -25,9 +25,13 @@ public interface MTOMServiceExample {
         java.lang.String richiesta,
         @WebParam(name = "ImageData", targetNamespace = "http://www.openspcoop2.org/example/server/mtom")
         javax.xml.transform.Source imageData,
+        @WebParam(name = "other", targetNamespace = "http://www.openspcoop2.org/example/server/mtom")
+        java.util.List<javax.activation.DataHandler> other,
         @WebParam(mode = WebParam.Mode.OUT, name = "risposta", targetNamespace = "http://www.openspcoop2.org/example/server/mtom")
         javax.xml.ws.Holder<java.lang.String> risposta,
         @WebParam(mode = WebParam.Mode.OUT, name = "ImageDataResponse", targetNamespace = "http://www.openspcoop2.org/example/server/mtom")
-        javax.xml.ws.Holder<javax.xml.transform.Source> imageDataResponse
+        javax.xml.ws.Holder<javax.xml.transform.Source> imageDataResponse,
+        @WebParam(mode = WebParam.Mode.OUT, name = "otherResponse", targetNamespace = "http://www.openspcoop2.org/example/server/mtom")
+        javax.xml.ws.Holder<java.util.List<javax.activation.DataHandler>> otherResponse
     );
 }

@@ -1,0 +1,27 @@
+invocazioneTramitePdD=false
+
+# Documento XML da inviare
+file.xml=files/example.xml
+
+# Altri documenti da inviare (opzionali)
+file.other1=files/example.pdf
+file.other2=files/example.zip
+
+# Invocazione diretta del servizio
+endpoint.soap11=http://localhost:8888/MTOMExample/soap11
+endpoint.soap12=http://localhost:8888/MTOMExample/soap12
+
+# Invocazione tramite PdD (Caso Porta Delegata)
+#portaDiDominio=http://localhost:8080/openspcoop2/proxy/PD/
+#Contesto.soap11=PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/echo
+#Contesto.soap12=PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/echo
+
+# Invocazione tramite PdD (Caso Porta Applicativa)
+#portaDiDominio=http://localhost:8080/openspcoop2/proxy/PA/
+#Contesto.soap11=MTOMServiceExampleSOAP11/echo
+#Contesto.soap12=MTOMServiceExampleSOAP12/echo
+
+# Credenziali http basic
+username=MinisteroFruitore
+password=123456
+

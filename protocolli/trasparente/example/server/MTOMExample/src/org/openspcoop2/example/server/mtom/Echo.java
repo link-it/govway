@@ -1,6 +1,9 @@
 
 package org.openspcoop2.example.server.mtom;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.activation.DataHandler;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -22,6 +25,7 @@ import javax.xml.transform.Source;
  *       &lt;sequence>
  *         &lt;element name="richiesta" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="ImageData" type="{http://www.w3.org/2001/XMLSchema}base64Binary"/>
+ *         &lt;element name="other" type="{http://www.w3.org/2001/XMLSchema}base64Binary" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -33,7 +37,8 @@ import javax.xml.transform.Source;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "richiesta",
-    "imageData"
+    "imageData",
+    "other"
 })
 @XmlRootElement(name = "echo")
 public class Echo {
@@ -43,6 +48,8 @@ public class Echo {
     @XmlElement(name = "ImageData", required = true)
     @XmlMimeType("text/xml")
     protected Source imageData;
+    @XmlMimeType("*/*")
+    protected List<DataHandler> other;
 
     /**
      * Gets the value of the richiesta property.
@@ -90,6 +97,35 @@ public class Echo {
      */
     public void setImageData(Source value) {
         this.imageData = value;
+    }
+
+    /**
+     * Gets the value of the other property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the other property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getOther().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link DataHandler }
+     * 
+     * 
+     */
+    public List<DataHandler> getOther() {
+        if (this.other == null) {
+            this.other = new ArrayList<DataHandler>();
+        }
+        return this.other;
     }
 
 }

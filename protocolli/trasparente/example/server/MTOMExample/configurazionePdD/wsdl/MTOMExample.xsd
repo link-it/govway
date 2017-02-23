@@ -11,6 +11,7 @@
 
 				<xs:element name="richiesta" type="xs:string" maxOccurs="1" minOccurs="1"/>
 				<xs:element xmime:expectedContentTypes="text/xml" name="ImageData" type="xs:base64Binary"/>
+				<xs:element xmime:expectedContentTypes="*/*" name="other" type="xs:base64Binary" minOccurs="0" maxOccurs="unbounded"/>
 
 			</xs:sequence>
 		</xs:complexType>
@@ -22,6 +23,7 @@
 
 				<xs:element name="risposta" type="xs:string" maxOccurs="1" minOccurs="1"/>
 				<xs:element xmime:expectedContentTypes="text/xml" name="ImageDataResponse" type="xs:base64Binary"/>
+				<xs:element xmime:expectedContentTypes="*/*" name="otherResponse" type="xs:base64Binary" minOccurs="0" maxOccurs="unbounded"/>
 
 			</xs:sequence>
 		</xs:complexType>

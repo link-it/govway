@@ -1,6 +1,9 @@
 
 package org.openspcoop2.example.server.mtom;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.activation.DataHandler;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -22,6 +25,7 @@ import javax.xml.transform.Source;
  *       &lt;sequence>
  *         &lt;element name="risposta" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="ImageDataResponse" type="{http://www.w3.org/2001/XMLSchema}base64Binary"/>
+ *         &lt;element name="otherResponse" type="{http://www.w3.org/2001/XMLSchema}base64Binary" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -33,7 +37,8 @@ import javax.xml.transform.Source;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "risposta",
-    "imageDataResponse"
+    "imageDataResponse",
+    "otherResponse"
 })
 @XmlRootElement(name = "echoResponse")
 public class EchoResponse {
@@ -43,6 +48,8 @@ public class EchoResponse {
     @XmlElement(name = "ImageDataResponse", required = true)
     @XmlMimeType("text/xml")
     protected Source imageDataResponse;
+    @XmlMimeType("*/*")
+    protected List<DataHandler> otherResponse;
 
     /**
      * Gets the value of the risposta property.
@@ -90,6 +97,35 @@ public class EchoResponse {
      */
     public void setImageDataResponse(Source value) {
         this.imageDataResponse = value;
+    }
+
+    /**
+     * Gets the value of the otherResponse property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the otherResponse property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getOtherResponse().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link DataHandler }
+     * 
+     * 
+     */
+    public List<DataHandler> getOtherResponse() {
+        if (this.otherResponse == null) {
+            this.otherResponse = new ArrayList<DataHandler>();
+        }
+        return this.otherResponse;
     }
 
 }

@@ -1,6 +1,8 @@
 
 package org.openspcoop2.example.server.mtom.ws;
 
+import java.io.ByteArrayOutputStream;
+
 /**
  * Please modify this class to meet your needs
  * This class is not complete
@@ -8,9 +10,13 @@ package org.openspcoop2.example.server.mtom.ws;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -58,14 +64,28 @@ public final class MTOMServiceExample_MTOMServiceExampleSOAP11InterfaceEndpoint_
 		}
 		
 		
-		String file = reader.getProperty("file");
-		if(file == null){
-			System.err.println("ERROR : File da inviare non definito all'interno del file 'Client.properties'");
+		String file_xml = reader.getProperty("file.xml");
+		if(file_xml == null){
+			System.err.println("ERROR : File xml da inviare non definito all'interno del file 'Client.properties'");
 			return;
 		}else{
-			file = file.trim();
+			file_xml = file_xml.trim();
 		}
-		File f = new File(file);
+		File f_xml = new File(file_xml);
+		
+		String file_other1 = reader.getProperty("file.other1");
+		File f_other1 = null;
+		if(file_other1 != null){
+			file_other1 = file_other1.trim();
+			f_other1 = new File(file_other1);
+		}
+		
+		String file_other2 = reader.getProperty("file.other2");
+		File f_other2 = null;
+		if(file_other2 != null){
+			file_other2 = file_other2.trim();
+			f_other2 = new File(file_other2);
+		}
 		
 		
 		
@@ -150,18 +170,34 @@ public final class MTOMServiceExample_MTOMServiceExampleSOAP11InterfaceEndpoint_
     	((BindingProvider)port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY,  password);
         
 
-        System.out.println("Invoking echo (send file:"+f.getName()+")...");
-        java.lang.String _echo_richiesta = f.getName();
+        System.out.println("Invoking echo (send file:"+f_xml.getName()+")...");
+        java.lang.String _echo_richiesta = f_xml.getName();
         
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
 		documentFactory.setNamespaceAware(true);
 		DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
-		Document d = documentBuilder.parse(f);
+		Document d = documentBuilder.parse(f_xml);
         
         javax.xml.transform.Source _echo_imageData = new DOMSource(d);
+        java.util.List<javax.activation.DataHandler> _echo_other = null;
+        if(f_other1!=null || f_other2!=null){
+        	_echo_other = new ArrayList<javax.activation.DataHandler>();
+        	if(f_other1!=null){
+        		FileDataSource fDS = new FileDataSource(f_other1);
+        		javax.activation.DataHandler dh = new DataHandler(fDS);
+        		_echo_other.add(dh);
+        	}
+        	if(f_other2!=null){
+        		FileDataSource fDS = new FileDataSource(f_other2);
+        		javax.activation.DataHandler dh = new DataHandler(fDS);
+        		_echo_other.add(dh);
+        	}
+        }
         javax.xml.ws.Holder<java.lang.String> _echo_risposta = new javax.xml.ws.Holder<java.lang.String>();
         javax.xml.ws.Holder<javax.xml.transform.Source> _echo_imageDataResponse = new javax.xml.ws.Holder<javax.xml.transform.Source>();
-        port.echo(_echo_richiesta, _echo_imageData, _echo_risposta, _echo_imageDataResponse);
+        javax.xml.ws.Holder<java.util.List<javax.activation.DataHandler>> _echo_otherResponse = new javax.xml.ws.Holder<java.util.List<javax.activation.DataHandler>>();
+        port.echo(_echo_richiesta, _echo_imageData, _echo_other,
+        		_echo_risposta, _echo_imageDataResponse,_echo_otherResponse);
 
         System.out.println("echo._echo_risposta=" + _echo_risposta.value);
              
@@ -173,7 +209,29 @@ public final class MTOMServiceExample_MTOMServiceExampleSOAP11InterfaceEndpoint_
         	Document dResponse = documentBuilder.parse(ris);
         	System.out.println("XML received: "+dResponse.toString());
         }
-
+        
+        java.util.List<javax.activation.DataHandler> other = null;
+        if(_echo_otherResponse!=null){
+        	other = _echo_otherResponse.value;
+        }
+        if(other!=null){
+        	System.out.println("risposta.other.size=" + other.size());
+        	for (int i = 0; i < other.size(); i++) {
+        		javax.activation.DataHandler dh = other.get(i);
+        		System.out.println("risposta.other.size[i] received: "+dh.getContent().getClass().getName());
+        		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        		InputStream is = dh.getInputStream();
+        		int letti = 0;
+        		byte [] buffer = new byte[1024];
+        		while((letti=is.read(buffer))!=-1){
+        			bout.write(buffer, 0, letti);
+        		}
+        		bout.flush();
+        		bout.close();
+        		System.out.println("risposta.other.size[i] received bytes: "+bout.size());
+        	}
+        }
+     
         System.exit(0);
     }
 
