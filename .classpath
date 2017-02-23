@@ -12,6 +12,7 @@
 	<classpathentry kind="src" path="protocolli/spcoop/example/tutorial/asincronoSimmetrico/src"/>
 	<classpathentry kind="src" path="protocolli/spcoop/example/tutorial/asincronoAsimmetrico/src"/>
 	<classpathentry excluding="openspcoop2-manifest.xml" kind="src" path="protocolli/trasparente/src"/>
+	<classpathentry kind="src" path="protocolli/trasparente/example/server/MTOMExample/src"/>
 	<classpathentry kind="src" path="protocolli/trasparente/example/tutorial/oneway/src"/>
 	<classpathentry kind="src" path="protocolli/trasparente/example/tutorial/sincrono/src"/>
 	<classpathentry excluding="openspcoop2-manifest.xml" kind="src" path="protocolli/sdi/src"/>

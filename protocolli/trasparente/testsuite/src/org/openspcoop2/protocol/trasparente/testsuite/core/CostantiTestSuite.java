@@ -67,6 +67,8 @@ public class CostantiTestSuite {
 	public static final String PASSWORD_PORTA_DELEGATA_ONEWAY_AUTENTICATA="123456";
 	public static final String USERNAME_PORTA_DELEGATA_SINCRONO_AUTENTICATA="esempioFruitoreTrasparente";
 	public static final String PASSWORD_PORTA_DELEGATA_SINCRONO_AUTENTICATA="123456";
+	public static final String USERNAME_PORTA_DELEGATA_MTOM="MinisteroFruitore";
+	public static final String PASSWORD_PORTA_DELEGATA_MTOM="123456";
 
 	
 	/** Porte Delegate per il test dei profili di collaborazione: OneWay Autenticato */
@@ -109,6 +111,9 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATELESS_FAULT11_500="PROXYClientSoapFault11500/APIMinisteroErogatoreEsterno/SOAPSincronoStateless";
 	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATELESS_FAULT12_500="PROXYClientSoapFault12500/APIMinisteroErogatoreEsterno/SOAPSincronoStateless";
 	
+	/** Porte Delegate per il test MTOM */
+	public static final String PORTA_DELEGATA_MTOM_SOAP11="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/echo";
+	public static final String PORTA_DELEGATA_MTOM_SOAP12="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/echo";
 	
 	/** Porte Delegate per il test dei profili di collaborazione: API */
 	public static final String PORTA_DELEGATA_REST_API="APIMinisteroFruitore/APIMinisteroErogatore/RESTAPI";
@@ -116,6 +121,7 @@ public class CostantiTestSuite {
 	/** Porte Delegate per il test dei profili di collaborazione: API */
 	public static final String PORTA_DELEGATA_REST_API_LOCAL_FORWARD="APIMinisteroFruitore/APIMinisteroErogatore/RESTAPI_viaLocalForward";
 	
+
 	
 	
 	/** Porte Applicative per il test dei profili di collaborazione: OneWay */
@@ -160,11 +166,17 @@ public class CostantiTestSuite {
 	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATELESS_FAULT11_500="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault11500Stateless";
 	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATELESS_FAULT12_500="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault12500Stateless";
 	
+	/** Porte Applicative per il test MTOM */
+	public static final String PORTA_APPLICATIVA_MTOM_SOAP11="MTOMServiceExampleSOAP11";
+	public static final String PORTA_APPLICATIVA_MTOM_SOAP12="MTOMServiceExampleSOAP12";
 	
+
 	/** Porte Delegate per il test dei profili di collaborazione: API */
 	public static final String PORTA_APPLICATIVA_REST_API="APIMinisteroErogatore/RESTAPI";
+		
 	
-	
+	public static final String USERNAME_PORTA_APPLICATIVA_MTOM="MinisteroFruitore";
+	public static final String PASSWORD_PORTA_APPLICATIVA_MTOM="123456";
 	
 		
 	/** Tipo Soggetto */
@@ -265,6 +277,14 @@ public class CostantiTestSuite {
     
 	/** Tipo Servizio */
 	public static final String REST_TIPO_SERVIZIO="REST";
+    
+    
+	/** ENTITA SPCOOP: Nome Servizio MTOM SOAP11  */
+	public static final String PROXY_NOME_SERVIZIO_MTOM_SOAP11="MTOMServiceExampleSOAP11";
+	/** ENTITA SPCOOP: Nome Servizio MTOM SOAP12  */
+	public static final String PROXY_NOME_SERVIZIO_MTOM_SOAP12="MTOMServiceExampleSOAP12";
+    /** ENTITA SPCOOP: Nome Azione Echo del Servizio RichiestaStatoAvanzamento */
+    public static final String PROXY_SERVIZIO_MTOM_AZIONE_ECHO="echo";
    
 	
 	/** Nome Servizio API */

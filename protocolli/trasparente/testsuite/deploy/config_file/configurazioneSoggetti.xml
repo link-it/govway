@@ -114,8 +114,34 @@
 		</porta-delegata>
 
 
+		<!-- MTOM -->
+
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/APIMTOMServiceExampleSOAP11/echo" 
+				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
+				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+				      <azione nome="echo" />
+				      <servizio-applicativo nome="MinisteroFruitore_SA" />
+		</porta-delegata>
+
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/APIMTOMServiceExampleSOAP12/echo"
+				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
+				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+				      <azione nome="echo" />
+				      <servizio-applicativo nome="MinisteroFruitore_SA" />
+		</porta-delegata>
+
+
+
 
 		<!-- **** Configurazione SOAP **** -->
+
+		<servizio-applicativo nome="MinisteroFruitore_SA" >
+		      <invocazione-porta>
+		         <credenziali tipo="basic" user="MinisteroFruitore" password="123456" />
+		      </invocazione-porta>
+		</servizio-applicativo>
 
 		<servizio-applicativo nome="EsempioFruitoreTrasparente">
 		    <invocazione-porta>
@@ -296,6 +322,23 @@
 
 
 
+		<!-- MTOM -->
+
+		<porta-applicativa nome="MTOMServiceExampleSOAP11" stateless="abilitato">
+			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+			<azione nome="echo" />
+			<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" /> 
+		</porta-applicativa>
+
+		<porta-applicativa nome="MTOMServiceExampleSOAP12" stateless="abilitato">
+			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+			<azione nome="echo" />
+			<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
+		</porta-applicativa>
+
+
+
+
 		<!-- **** Configurazione REST **** -->
 
                 <servizio-applicativo nome="api">
@@ -411,6 +454,25 @@
                                 </connettore>
                             </invocazione-servizio>
                 </servizio-applicativo>
+
+
+		<!-- MTOM -->
+
+		<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" >
+			  <invocazione-servizio>
+			     <connettore tipo="http" nome="ConnettoreMTOMServiceExampleSOAP11SA">
+				 <property nome="location" valore="http://localhost:65000/MTOMExample/soap11" />
+			     </connettore>
+			 </invocazione-servizio>
+		</servizio-applicativo>
+
+		<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" >
+			  <invocazione-servizio>
+			     <connettore tipo="http" nome="ConnettoreMTOMServiceExampleSOAP12SA">
+				 <property nome="location" valore="http://localhost:65001/MTOMExample/soap12" />
+			     </connettore>
+			 </invocazione-servizio>
+		</servizio-applicativo>
 
 
 	</soggetto>

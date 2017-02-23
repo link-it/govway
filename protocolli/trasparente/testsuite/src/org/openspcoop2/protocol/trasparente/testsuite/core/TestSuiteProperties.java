@@ -257,6 +257,16 @@ public class TestSuiteProperties implements UnitsTestSuiteProperties {
 		}
 	}
 	
+	public String getXmlSenzaSoap(){
+		try{
+			return this.reader.getProperty("org.openspcoop2.testsuite.files.xmlSenzaSoap").trim();
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.files.xmlSenzaSoap':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return null;
+		}
+	}
+	
 	/**
 	 * Ritorna la location del file da utilizzare per la spedizione di messaggi Soap
 	 *
@@ -516,6 +526,32 @@ public class TestSuiteProperties implements UnitsTestSuiteProperties {
 			return null;
 		}
 	}
+	
+	
+	
+	
+	
+	public int getMtomSoap11Socket(){
+		try{
+			return Integer.parseInt(this.reader.getProperty("org.openspcoop2.testsuite.mtom.soap11.socket").trim());
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.mtom.soap11.socket':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return -1;
+		}
+	}
+	
+	public int getMtomSoap12Socket(){
+		try{
+			return Integer.parseInt(this.reader.getProperty("org.openspcoop2.testsuite.mtom.soap12.socket").trim());
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' 'org.openspcoop2.testsuite.mtom.soap12.socket':"+e.getMessage();
+			TestSuiteProperties.log.error(msgErrore);
+			return -1;
+		}
+	}
+	
+	
 	
 	
 	

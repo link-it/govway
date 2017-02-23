@@ -93,7 +93,7 @@
 		<pathelement path="${openspcoop2_lib}/stub/axis14/openspcoop2_integrationManagerStub_axis14.jar"/>
 		<pathelement path="${openspcoop2_lib}/stub/cxf/openspcoop2_integrationManagerStub_cxf.jar"/>
 		
-		<pathelement path="deploy/lib/validazioneContenutiWS_stub.jar"/>
+		<pathelement path="deploy/lib/openspcoop2_trasparente-protocol_mtom_stub.jar"/>
 		
 		<pathelement path="${jdbc_lib}"/>
 		
@@ -140,8 +140,14 @@
 		<fileset dir="${openspcoop2_lib}/saaj">
 			<include name="*.jar"/>
 		</fileset>
-		<fileset dir="${openspcoop2_lib}/jax" >
+		<!-- Non funziona MTOM <fileset dir="${openspcoop2_lib}/jax" >
 			<include name="jaxb*.jar"/>
+		</fileset> -->
+		<fileset dir="${openspcoop2_lib}/jetty" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${openspcoop2_lib}/spring" >
+			<include name="*.jar"/>
 		</fileset>
 
 	</path>

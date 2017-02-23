@@ -25,11 +25,7 @@ package org.openspcoop2.security.message.authorization;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +34,6 @@ import java.util.Map;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 
-import org.apache.soap.encoding.soapenc.Base64;
 import org.apache.wss4j.dom.util.WSSecurityUtil;
 import org.herasaf.xacml.core.SyntaxException;
 import org.herasaf.xacml.core.WritingException;
@@ -61,17 +56,19 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
-import org.openspcoop2.message.DynamicNamespaceContextFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.security.message.constants.SecurityConstants;
-import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.resources.HttpBodyParameters;
-import org.openspcoop2.utils.resources.HttpResponseBody;
-import org.openspcoop2.utils.resources.HttpUtilities;
+import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpRequest;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
+import org.openspcoop2.utils.transport.http.HttpResponse;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.xacml.CachedMapBasedSimplePolicyRepository;
 import org.openspcoop2.utils.xacml.PolicyDecisionPoint;
 import org.openspcoop2.utils.xacml.ResultCombining;
@@ -112,10 +109,16 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
     	String principalWSS = request.getWssSecurityPrincipal();
     	Busta busta = request.getBusta();
     	org.openspcoop2.security.message.MessageSecurityContext messageSecurityContext = request.getMessageSecurityContext();
-    	OpenSPCoop2Message message = request.getMessage();
-    	IDServizio idServizio = new IDServizio(busta.getTipoDestinatario(), busta.getDestinatario(), 
-    			busta.getTipoServizio(), busta.getServizio());
-    	try {	    	
+    	OpenSPCoop2Message msg = request.getMessage();
+    	
+
+    	IDServizio idServizio = null;
+    	try {
+        	idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(), busta.getServizio(), 
+        			busta.getTipoDestinatario(), busta.getDestinatario(), busta.getVersioneServizio());
+        
+        	OpenSPCoop2SoapMessage soapMessage = msg.castAsSoap();
+        	
 	    	// Proprieta' WSSecurity
 	    	
 	    	String actor = messageSecurityContext.getActor();
@@ -215,7 +218,7 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 	    	// Localizzo Header SAML
 	    	SOAPElement security = null;
 	    	try{
-	    		security = (SOAPElement) WSSecurityUtil.getSecurityHeader(message.getSOAPPart(), actor);
+	    		security = (SOAPElement) WSSecurityUtil.getSecurityHeader(soapMessage.getSOAPPart(), actor);
 	    	}catch(Exception e){
 	    		throw new SecurityException("Errore durante la ricerca dell'header WSSecurity (actor:"+actor+") "+e.getMessage(),e);
 	    	}
@@ -251,7 +254,7 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 			
 	    	// - AttributeId="urn:oasis:names:tc:SAML:2.0:assertion/Subject/NameID il valore del NameID all'interno dell'elemento Subject 
 	
-			SAMLAttributes saml = new SAMLAttributes(security, message);
+			SAMLAttributes saml = new SAMLAttributes(security, soapMessage);
 	
 			roleSubject.getAttributes().add(
 					createAttribute("urn:oasis:names:tc:SAML:2.0:assertion/Subject/NameID", saml.nameID));
@@ -307,13 +310,20 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 	    	    	messageSecurityContext.getLog().debug(new String(xacmlBytes));
 	    	    	messageSecurityContext.getLog().debug("----XACML Request remota end ---");
 
-	    			HttpResponseBody response = post(remotePdD_url, xacmlBytes, remotePdD_readConnectionTimeout, remotePdD_connectionTimeout, null, null);
-	    			if(response.getResultHTTPOperation()==200){
-	    				byte[] res = response.getResponse();
+	    	    	HttpRequest httpRequest = new HttpRequest();
+	    	    	httpRequest.setUrl(remotePdD_url);
+	    	    	httpRequest.setContent(xacmlBytes);
+	    	    	httpRequest.setMethod(HttpRequestMethod.POST);
+	    	    	httpRequest.setContentType(HttpConstants.CONTENT_TYPE_TEXT_XML);
+	    	    	httpRequest.setReadTimeout(remotePdD_readConnectionTimeout);
+	    	    	httpRequest.setConnectTimeout(remotePdD_connectionTimeout);
+	    	    	HttpResponse httpResponse = HttpUtilities.httpInvoke(httpRequest);
+	    			if(httpResponse.getResultHTTPOperation()==200){
+	    				byte[] res = httpResponse.getContent();
 	    				results = unmarshall(res);
 	    			}
 	    			else{
-	    				throw new Exception("invocazione fallita (http-return-code: "+response.getResultHTTPOperation()+")");
+	    				throw new Exception("invocazione fallita (http-return-code: "+httpResponse.getResultHTTPOperation()+")");
 	    			}
 	    		}catch(Exception e){
 		    		throw new SecurityException("Errore avvenuto durante l'interrogazione del PdP remoto ["+remotePdD_url+"] per l'autorizzazione del servizio "+idServizio.toString()+": "+e.getMessage(),e);
@@ -338,10 +348,10 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 	    	}
 	    	return result;
     	} catch(SecurityException e) {
-    		messageSecurityContext.getLog().error("Errore di sicurezza durante la gestione della richiesta per il servizio: " + idServizio.toString(), e);
+    		messageSecurityContext.getLog().error("Errore di sicurezza durante la gestione della richiesta per il servizio: " + idServizio, e);
     		throw e;
     	} catch(Exception e) {
-    		messageSecurityContext.getLog().error("Errore generico durante la gestione della richiesta per il servizio: " + idServizio.toString(), e);
+    		messageSecurityContext.getLog().error("Errore generico durante la gestione della richiesta per il servizio: " + idServizio, e);
     		throw new SecurityException(e);
     	}
     }
@@ -404,17 +414,17 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 		public String issuer;
 		public Map<String, List<String>> customAttributes;
 		
-		public SAMLAttributes(SOAPElement security, OpenSPCoop2Message message) throws Exception {
+		public SAMLAttributes(SOAPElement security, OpenSPCoop2SoapMessage message) throws Exception {
 			this.nameID = find(security, message, "//{urn:oasis:names:tc:SAML:2.0:assertion}:Assertion/{urn:oasis:names:tc:SAML:2.0:assertion}:Subject/{urn:oasis:names:tc:SAML:2.0:assertion}:NameID/text()");
 			this.issuer = find(security, message, "//{urn:oasis:names:tc:SAML:2.0:assertion}:Assertion/{urn:oasis:names:tc:SAML:2.0:assertion}:Issuer/text()");
 			this.customAttributes = findNameAttributes(security, message);
 		}
 
-		private String find(SOAPElement security, OpenSPCoop2Message message,
+		private String find(SOAPElement security, OpenSPCoop2SoapMessage message,
 				String xpath) throws SAXException, SOAPException,
 				XPathException, XPathNotValidException, Exception {
 			DynamicNamespaceContext dnc = null;
-			if(message.getVersioneSoap().equals(SOAPVersion.SOAP11)) {
+			if(MessageType.SOAP_11.equals(message.getMessageType())) {
 				dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContextFromSoapEnvelope11(message.getSOAPPart().getEnvelope());
 			} else {
 				dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContextFromSoapEnvelope12(message.getSOAPPart().getEnvelope());
@@ -429,10 +439,10 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 			return match;
 		}
 
-		private Map<String, List<String>> findNameAttributes(SOAPElement security, OpenSPCoop2Message message) throws SAXException, SOAPException,
+		private Map<String, List<String>> findNameAttributes(SOAPElement security, OpenSPCoop2SoapMessage message) throws SAXException, SOAPException,
 				XPathException, XPathNotValidException, Exception {
 			DynamicNamespaceContext dnc = null;
-			if(message.getVersioneSoap().equals(SOAPVersion.SOAP11)) {
+			if(MessageType.SOAP_11.equals(message.getMessageType())) {
 				dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContextFromSoapEnvelope11(message.getSOAPPart().getEnvelope());
 			} else {
 				dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContextFromSoapEnvelope12(message.getSOAPPart().getEnvelope());
@@ -510,103 +520,5 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 		return createAttribute(name, lst);
 		
 	}
-	private HttpResponseBody post(String path,byte[] body, int readTimeout,int connectTimeout,String username,String password) throws UtilsException{
-		InputStream is = null;
-		ByteArrayOutputStream outResponse = null;
-		try{
-			URL url = new URL(path);
-			URLConnection connection = url.openConnection();
-			HttpURLConnection httpConn = (HttpURLConnection) connection;
-
-			httpConn.setConnectTimeout(connectTimeout);
-			httpConn.setReadTimeout(readTimeout);
-			
-			if(username!=null && password!=null){
-				String authentication = username + ":" + password;
-				authentication = "Basic " + 
-				Base64.encode(authentication.getBytes());
-				httpConn.setRequestProperty("Authorization",authentication);
-			}
-			
-			
-			
-			setStream(httpConn, "POST", "text/xml");
-
-			HttpBodyParameters httpContent = new  HttpBodyParameters("POST", "text/xml");
-			// Spedizione byte
-			if(httpContent.isDoOutput() && body != null){
-				OutputStream out = httpConn.getOutputStream();
-				out.write(body);
-				out.flush();
-				out.close();
-			}
-			
-
-			int resultHTTPOperation = httpConn.getResponseCode();
-			if(resultHTTPOperation==404){
-				throw new UtilsException("404");
-			}
-
-			// Ricezione Risposta
-			outResponse = new ByteArrayOutputStream();
-			if(resultHTTPOperation>399){
-				is = httpConn.getErrorStream();
-				if(is==null){
-					is = httpConn.getInputStream();
-				}
-			}else{
-				is = httpConn.getInputStream();
-				if(is==null){
-					is = httpConn.getErrorStream();
-				}
-			}
-			byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
-			int readByte = 0;
-			while((readByte = is.read(readB))!= -1){
-				outResponse.write(readB,0,readByte);
-			}
-			is.close();
-			// fine HTTP.
-			httpConn.disconnect();
-
-			byte[] xmlottenuto = outResponse.toByteArray();
-			outResponse.close();
-			
-			HttpResponseBody response = new HttpResponseBody();
-			response.setResponse(xmlottenuto);
-			response.setResultHTTPOperation(resultHTTPOperation);
-			return response;
-		}catch(Exception e){
-			try{
-				if(is!=null)
-					is.close();
-			}catch(Exception eis){}
-			try{
-				if(outResponse!=null)
-					outResponse.close();
-			}catch(Exception eis){}
-			if(e.getMessage()!=null && e.getMessage().contains("404"))
-				throw new UtilsException("404");
-			else
-				throw new UtilsException("Utilities.requestHTTPFile error "+e.getMessage(),e);
-		}
-	}
-	
-	public static void setStream(HttpURLConnection httpConn, String httpMethod, String contentType) throws UtilsException{
-		try{
-			HttpBodyParameters params = new HttpBodyParameters(httpMethod, contentType);
-						
-			httpConn.setRequestMethod(httpMethod);
-			if(params.isDoOutput()){
-				httpConn.setDoOutput(params.isDoOutput());
-			}
-			if(params.isDoInput()){
-				httpConn.setDoInput(params.isDoInput());
-			}
-		}catch(Exception e){
-			throw new UtilsException(e.getMessage(),e);
-		}
-	} 
-
     
 }

@@ -173,6 +173,13 @@ Altrimenti e' possibile lanciare per sottogruppi i test attraverso i seguenti gr
 - 'REST.[PD/PA].OPTIONS': test che riguardano l'http method 'OPTIONS'
 - 'REST.[PD/PA].METHOD_OVERRIDE': test che riguardano la verifica dell'inoltro dell'header http 'X-HTTP-Method-Override' durante una POST
 
+** MTOM **
+
+(NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
+
+Batterie di test che verificano la gestione di MTOM all'interno della PdD
+- 'MTOMPortaDelegata':  vengono eseguiti tutti i test riguardanti la PortaDelegata
+- 'MTOMPortaApplicativa':  vengono eseguiti tutti i test riguardanti la PortaApplicativa
 
 
 
