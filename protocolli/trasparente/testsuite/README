@@ -175,6 +175,10 @@ Altrimenti e' possibile lanciare per sottogruppi i test attraverso i seguenti gr
 
 ** MTOM **
 
+Prerequisito: 
+copiare tutti gli xsd e wsdl presenti in ./protocolli/trasparente/example/server/MTOMExample/configurazionePdD/wsdl/ 
+nella directory /etc/openspcoop2/mtom/
+
 (NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
 
 Batterie di test che verificano la gestione di MTOM all'interno della PdD

@@ -28,6 +28,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 
@@ -46,6 +49,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.SOAPFaultCode;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.mime.MimeTypes;
 import org.openspcoop2.utils.mime.MultipartUtils;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -203,6 +207,50 @@ public class ServletTestService extends HttpServlet {
 						System.out.println("ERRORE TestService (param returnCode): "+e.toString());
 				}
 			}
+			
+			
+			
+			
+			// opzione replace
+			// formato: old:new[,old:new,....,old:new]
+			String replace = req.getParameter("replace");
+			Map<String, String> replaceMap = new Hashtable<String, String>();
+			if(replace!=null){
+				// volutamente non faccio il trim
+				if(replace.contains(",")){
+					String [] list = replace.split(",");
+					for (int i = 0; i < list.length; i++) {
+						if(list[i].contains(":")){
+							String [] tmp = list[i].split(":");
+							if(tmp==null || tmp.length!=2){
+								throw new Exception("Opzione replace con valore errato ["+list[i]+"] (caso1 iter"+i+"), formato atteso: old:new[,old:new,....,old:new]");
+							}
+							else{
+								replaceMap.put(tmp[0], tmp[1]);
+							}
+						}
+						else{
+							throw new Exception("Opzione replace con valore errato ["+list[i]+"] (caso2 iter"+i+"), formato atteso: old:new[,old:new,....,old:new]");
+						}	
+					}
+				}else{
+					if(replace.contains(":")){
+						String [] tmp = replace.split(":");
+						if(tmp==null || tmp.length!=2){
+							throw new Exception("Opzione replace con valore errato ["+replace+"] (caso1), formato atteso: old:new[,old:new,....,old:new]");
+						}
+						else{
+							replaceMap.put(tmp[0], tmp[1]);
+						}
+					}
+					else{
+						throw new Exception("Opzione replace con valore errato ["+replace+"] (caso2), formato atteso: old:new[,old:new,....,old:new]");
+					}
+				}
+			}
+
+
+
 			
 			
 			
@@ -508,9 +556,20 @@ public class ServletTestService extends HttpServlet {
 				if(boutStaticFile!=null){
 					res.getOutputStream().write(boutStaticFile.toByteArray());
 				}else if (contenuto!=null){
-					res.getOutputStream().write(contenuto);
+					if(replaceMap!=null && replaceMap.size()>0){
+						res.getOutputStream().write(this.replace(contenuto, replaceMap));
+					}
+					else{
+						res.getOutputStream().write(contenuto);
+					}
 				}else{
-					FileSystemUtilities.copy(req.getInputStream(), res.getOutputStream());
+					if(replaceMap!=null && replaceMap.size()>0){
+						byte[] contenutoRequest = Utilities.getAsByteArray(req.getInputStream());
+						res.getOutputStream().write(this.replace(contenutoRequest, replaceMap));
+					}
+					else{
+						FileSystemUtilities.copy(req.getInputStream(), res.getOutputStream());
+					}
 				}
 					
 				res.getOutputStream().flush();
@@ -534,5 +593,18 @@ public class ServletTestService extends HttpServlet {
 		doGet(req,res);
 	}
 
+	
+	private byte[] replace(byte[]contenuto,Map<String,String> map){
+		String s = new String(contenuto);
+		Iterator<String> it = map.keySet().iterator();
+		while (it.hasNext()) {
+			String oldValue = (String) it.next();
+			String newValue = map.get(oldValue);
+			s = s.replaceAll(oldValue, newValue);
+			//System.out.println("oldValue ["+oldValue+"] replacewith["+map.get(oldValue)+"] ["+s+"]");
+		}
+		//System.out.println("OTTENUTO ["+s+"]");
+		return s.getBytes();
+	}
 
 }

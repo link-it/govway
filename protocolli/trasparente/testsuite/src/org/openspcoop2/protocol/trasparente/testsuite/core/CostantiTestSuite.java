@@ -114,6 +114,18 @@ public class CostantiTestSuite {
 	/** Porte Delegate per il test MTOM */
 	public static final String PORTA_DELEGATA_MTOM_SOAP11="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/echo";
 	public static final String PORTA_DELEGATA_MTOM_SOAP12="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/echo";
+	public static final String PORTA_DELEGATA_MTOM_SOAP11_VALIDAZIONE="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/validazione";
+	public static final String PORTA_DELEGATA_MTOM_SOAP12_VALIDAZIONE="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/validazione";
+	public static final String PORTA_DELEGATA_MTOM_SOAP11_PACKAGE_UNPACKAGE="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/packageUnpackage";
+	public static final String PORTA_DELEGATA_MTOM_SOAP12_PACKAGE_UNPACKAGE="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/packageUnpackage";
+	public static final String PORTA_DELEGATA_MTOM_SOAP11_UNPACKAGE_PACKAGE="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/unpackagePackage";
+	public static final String PORTA_DELEGATA_MTOM_SOAP12_UNPACKAGE_PACKAGE="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/unpackagePackage";
+	public static final String PORTA_DELEGATA_MTOM_SOAP11_VERIFY_OK="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/verifyOk";
+	public static final String PORTA_DELEGATA_MTOM_SOAP12_VERIFY_OK="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/verifyOk";
+	public static final String PORTA_DELEGATA_MTOM_SOAP11_VERIFY_KO_REQUEST="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/verifyKoRequest";
+	public static final String PORTA_DELEGATA_MTOM_SOAP12_VERIFY_KO_REQUEST="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/verifyKoRequest";
+	public static final String PORTA_DELEGATA_MTOM_SOAP11_VERIFY_KO_RESPONSE="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/verifyKoResponse";
+	public static final String PORTA_DELEGATA_MTOM_SOAP12_VERIFY_KO_RESPONSE="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/verifyKoResponse";
 	
 	/** Porte Delegate per il test dei profili di collaborazione: API */
 	public static final String PORTA_DELEGATA_REST_API="APIMinisteroFruitore/APIMinisteroErogatore/RESTAPI";
@@ -169,7 +181,19 @@ public class CostantiTestSuite {
 	/** Porte Applicative per il test MTOM */
 	public static final String PORTA_APPLICATIVA_MTOM_SOAP11="MTOMServiceExampleSOAP11";
 	public static final String PORTA_APPLICATIVA_MTOM_SOAP12="MTOMServiceExampleSOAP12";
-	
+	public static final String PORTA_APPLICATIVA_MTOM_SOAP11_VALIDAZIONE="MTOMServiceExampleSOAP11/validazione";
+	public static final String PORTA_APPLICATIVA_MTOM_SOAP12_VALIDAZIONE="MTOMServiceExampleSOAP12/validazione";
+	public static final String PORTA_APPLICATIVA_MTOM_SOAP11_PACKAGE_UNPACKAGE="MTOMServiceExampleSOAP11/packageUnpackage";
+	public static final String PORTA_APPLICATIVA_MTOM_SOAP12_PACKAGE_UNPACKAGE="MTOMServiceExampleSOAP12/packageUnpackage";
+	public static final String PORTA_APPLICATIVA_MTOM_SOAP11_UNPACKAGE_PACKAGE="MTOMServiceExampleSOAP11/unpackagePackage";
+	public static final String PORTA_APPLICATIVA_MTOM_SOAP12_UNPACKAGE_PACKAGE="MTOMServiceExampleSOAP12/unpackagePackage";
+	public static final String PORTA_APPLICATIVA_MTOM_SOAP11_VERIFY_OK="MTOMServiceExampleSOAP11/verifyOk";
+	public static final String PORTA_APPLICATIVA_MTOM_SOAP12_VERIFY_OK="MTOMServiceExampleSOAP12/verifyOk";
+	public static final String PORTA_APPLICATIVA_MTOM_SOAP11_VERIFY_KO_REQUEST="MTOMServiceExampleSOAP11/verifyKoRequest";
+	public static final String PORTA_APPLICATIVA_MTOM_SOAP12_VERIFY_KO_REQUEST="MTOMServiceExampleSOAP12/verifyKoRequest";
+	public static final String PORTA_APPLICATIVA_MTOM_SOAP11_VERIFY_KO_RESPONSE="MTOMServiceExampleSOAP11/verifyKoResponse";
+	public static final String PORTA_APPLICATIVA_MTOM_SOAP12_VERIFY_KO_RESPONSE="MTOMServiceExampleSOAP12/verifyKoResponse";
+		
 
 	/** Porte Delegate per il test dei profili di collaborazione: API */
 	public static final String PORTA_APPLICATIVA_REST_API="APIMinisteroErogatore/RESTAPI";
@@ -283,8 +307,12 @@ public class CostantiTestSuite {
 	public static final String PROXY_NOME_SERVIZIO_MTOM_SOAP11="MTOMServiceExampleSOAP11";
 	/** ENTITA SPCOOP: Nome Servizio MTOM SOAP12  */
 	public static final String PROXY_NOME_SERVIZIO_MTOM_SOAP12="MTOMServiceExampleSOAP12";
-    /** ENTITA SPCOOP: Nome Azione Echo del Servizio RichiestaStatoAvanzamento */
+    /** ENTITA SPCOOP: Nome Azione Echo del Servizio MTOM */
     public static final String PROXY_SERVIZIO_MTOM_AZIONE_ECHO="echo";
+    /** ENTITA SPCOOP: Nome Azione packageUnpackage del Servizio MTOM  */
+    public static final String PROXY_SERVIZIO_MTOM_AZIONE_PACKAGE_UNPACKAGE="packageUnpackage";
+    /** ENTITA SPCOOP: Nome Azione unpackagePackage del Servizio MTOM  */
+    public static final String PROXY_SERVIZIO_MTOM_AZIONE_UNPACKAGE_PACKAGE="unpackagePackage";
    
 	
 	/** Nome Servizio API */

@@ -116,7 +116,7 @@
 
 		<!-- MTOM -->
 
-		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/APIMTOMServiceExampleSOAP11/echo" 
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP11/echo" 
 				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
 				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
 				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
@@ -124,12 +124,419 @@
 				      <servizio-applicativo nome="MinisteroFruitore_SA" />
 		</porta-delegata>
 
-		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/APIMTOMServiceExampleSOAP12/echo"
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP12/echo"
 				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
 				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
 				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
 				      <azione nome="echo" />
 				      <servizio-applicativo nome="MinisteroFruitore_SA" />
+		</porta-delegata>
+
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP11/validazione" 
+				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
+				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+				      <azione nome="echo" />
+				      <servizio-applicativo nome="MinisteroFruitore_SA" />
+				      <validazione-contenuti-applicativi stato="abilitato" tipo="wsdl" accept-mtom-message="abilitato"/>
+		</porta-delegata>
+
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP12/validazione"
+				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
+				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+				      <azione nome="echo" />
+				      <servizio-applicativo nome="MinisteroFruitore_SA" />
+				      <validazione-contenuti-applicativi stato="abilitato" tipo="wsdl" accept-mtom-message="abilitato"/>
+		</porta-delegata>
+
+
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP11/packageUnpackage" 
+				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
+				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+				      <azione nome="packageUnpackage" />
+				      <servizio-applicativo nome="MinisteroFruitore_SA" />
+				      <mtom-processor>
+						<request-flow mode="packaging">
+							<parameter nome="ImageData" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageData"
+								   content-type="application/xml"
+								   required="true"/>
+							<parameter nome="Other1" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[1]"
+								   content-type="application/octet-stream"
+								   required="false"/>
+							<parameter nome="Other2" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[2]"
+								   content-type="application/octet-stream"
+								   required="false"/>
+						</request-flow>
+						<response-flow mode="unpackaging">
+							<parameter nome="ImageDataResponse" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageDataResponse"
+								   content-type="application/xml"
+								   required="true"/>
+							<parameter nome="Other1Response" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[1]"
+								   content-type="application/octet-stream"
+								   required="false"/>
+							<parameter nome="Other2Response" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[2]"
+								   content-type="application/octet-stream"
+								   required="false"/>
+						</response-flow>
+				      </mtom-processor>
+		</porta-delegata>
+
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP12/packageUnpackage"
+				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
+				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+				      <azione nome="packageUnpackage" />
+				      <servizio-applicativo nome="MinisteroFruitore_SA" />
+				      <mtom-processor>
+						<request-flow mode="packaging">
+							<parameter nome="ImageData" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageData"
+								   content-type="application/xml"
+								   required="true"/>
+							<parameter nome="Other1" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[1]"
+								   content-type="application/octet-stream"
+								   required="false"/>
+							<parameter nome="Other2" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[2]"
+								   content-type="application/octet-stream"
+								   required="false"/>
+						</request-flow>
+						<response-flow mode="unpackaging">
+							<parameter nome="ImageDataResponse" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageDataResponse"
+								   content-type="application/xml"
+								   required="true"/>
+							<parameter nome="Other1Response" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[1]"
+								   content-type="application/octet-stream"
+								   required="false"/>
+							<parameter nome="Other2Response" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[2]"
+								   content-type="application/octet-stream"
+								   required="false"/>
+						</response-flow>
+				      </mtom-processor>
+		</porta-delegata>
+
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP11/unpackagePackage" 
+				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
+				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+				      <azione nome="unpackagePackage" />
+				      <servizio-applicativo nome="MinisteroFruitore_SA" />
+				      <mtom-processor>
+						<request-flow mode="unpackaging">
+							<parameter nome="ImageData" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageData"
+								   content-type="application/xml"
+								   required="true"/>
+							<parameter nome="Other1" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[1]"
+								   content-type="application/octet-stream"
+								   required="false"/>
+							<parameter nome="Other2" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[2]"
+								   content-type="application/octet-stream"
+								   required="false"/>
+						</request-flow>
+						<response-flow mode="packaging">
+							<parameter nome="ImageDataResponse" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageDataResponse"
+								   content-type="application/xml"
+								   required="true"/>
+							<parameter nome="Other1Response" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[1]"
+								   content-type="application/octet-stream"
+								   required="false"/>
+							<parameter nome="Other2Response" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[2]"
+								   content-type="application/octet-stream"
+								   required="false"/>
+						</response-flow>
+				      </mtom-processor>
+		</porta-delegata>
+
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP12/unpackagePackage"
+				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
+				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+				      <azione nome="unpackagePackage" />
+				      <servizio-applicativo nome="MinisteroFruitore_SA" />
+				      <mtom-processor>
+						<request-flow mode="unpackaging">
+							<parameter nome="ImageData" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageData"
+								   content-type="application/xml"
+								   required="true"/>
+							<parameter nome="Other1" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[1]"
+								   content-type="application/octet-stream"
+								   required="false"/>
+							<parameter nome="Other2" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[2]"
+								   content-type="application/octet-stream"
+								   required="false"/>
+						</request-flow>
+						<response-flow mode="packaging">
+							<parameter nome="ImageDataResponse" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageDataResponse"
+								   content-type="application/xml"
+								   required="true"/>
+							<parameter nome="Other1Response" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[1]"
+								   content-type="application/octet-stream"
+								   required="false"/>
+							<parameter nome="Other2Response" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[2]"
+								   content-type="application/octet-stream"
+								   required="false"/>
+						</response-flow>
+				      </mtom-processor>
+		</porta-delegata>
+
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP11/verifyOk" 
+				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
+				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+				      <azione nome="echo" />
+				      <servizio-applicativo nome="MinisteroFruitore_SA" />
+				      <mtom-processor>
+						<request-flow mode="verify">
+							<parameter nome="ImageData" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageData"
+								   content-type="application/xml"
+								   required="true"/>
+							<parameter nome="Other1" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[1]"
+								   content-type="application/octet-stream"
+								   required="true"/>
+							<parameter nome="Other2" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[2]"
+								   content-type="application/octet-stream"
+								   required="true"/>
+						</request-flow>
+						<response-flow mode="verify">
+							<parameter nome="ImageDataResponse" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageDataResponse"
+								   content-type="application/xml"
+								   required="true"/>
+							<parameter nome="Other1Response" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[1]"
+								   content-type="application/octet-stream"
+								   required="true"/>
+							<parameter nome="Other2Response" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[2]"
+								   content-type="application/octet-stream"
+								   required="true"/>
+						</response-flow>
+				      </mtom-processor>
+		</porta-delegata>
+
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP12/verifyOk"
+				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
+				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+				      <azione nome="echo" />
+				      <servizio-applicativo nome="MinisteroFruitore_SA" />
+				      <mtom-processor>
+						<request-flow mode="verify">
+							<parameter nome="ImageData" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageData"
+								   content-type="application/xml"
+								   required="true"/>
+							<parameter nome="Other1" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[1]"
+								   content-type="application/octet-stream"
+								   required="true"/>
+							<parameter nome="Other2" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[2]"
+								   content-type="application/octet-stream"
+								   required="true"/>
+						</request-flow>
+						<response-flow mode="verify">
+							<parameter nome="ImageDataResponse" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageDataResponse"
+								   content-type="application/xml"
+								   required="true"/>
+							<parameter nome="Other1Response" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[1]"
+								   content-type="application/octet-stream"
+								   required="true"/>
+							<parameter nome="Other2Response" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[2]"
+								   content-type="application/octet-stream"
+								   required="true"/>
+						</response-flow>
+				      </mtom-processor>
+		</porta-delegata>
+
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP11/verifyKoRequest" 
+				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
+				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+				      <azione nome="echo" />
+				      <servizio-applicativo nome="MinisteroFruitore_SA" />
+				      <mtom-processor>
+						<request-flow mode="verify">
+							<parameter nome="richiesta" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}richiesta"
+								   content-type="application/xml"
+								   required="true"/>
+							<parameter nome="ImageData" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageData"
+								   content-type="application/xml"
+								   required="true"/>
+							<parameter nome="Other1" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[1]"
+								   content-type="application/octet-stream"
+								   required="true"/>
+							<parameter nome="Other2" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[2]"
+								   content-type="application/octet-stream"
+								   required="true"/>
+						</request-flow>
+						<response-flow mode="verify">
+							<parameter nome="ImageDataResponse" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageDataResponse"
+								   content-type="application/xml"
+								   required="true"/>
+							<parameter nome="Other1Response" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[1]"
+								   content-type="application/octet-stream"
+								   required="true"/>
+							<parameter nome="Other2Response" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[2]"
+								   content-type="application/octet-stream"
+								   required="true"/>
+						</response-flow>
+				      </mtom-processor>
+		</porta-delegata>
+
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP12/verifyKoRequest"
+				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
+				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+				      <azione nome="echo" />
+				      <servizio-applicativo nome="MinisteroFruitore_SA" />
+				      <mtom-processor>
+						<request-flow mode="verify">
+							<parameter nome="richiesta" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}richiesta"
+								   content-type="application/xml"
+								   required="true"/>
+							<parameter nome="ImageData" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageData"
+								   content-type="application/xml"
+								   required="true"/>
+							<parameter nome="Other1" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[1]"
+								   content-type="application/octet-stream"
+								   required="true"/>
+							<parameter nome="Other2" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[2]"
+								   content-type="application/octet-stream"
+								   required="true"/>
+						</request-flow>
+						<response-flow mode="verify">
+							<parameter nome="ImageDataResponse" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageDataResponse"
+								   content-type="application/xml"
+								   required="true"/>
+							<parameter nome="Other1Response" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[1]"
+								   content-type="application/octet-stream"
+								   required="true"/>
+							<parameter nome="Other2Response" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[2]"
+								   content-type="application/octet-stream"
+								   required="true"/>
+						</response-flow>
+				      </mtom-processor>
+		</porta-delegata>
+
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP11/verifyKoResponse" 
+				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
+				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+				      <azione nome="echo" />
+				      <servizio-applicativo nome="MinisteroFruitore_SA" />
+				      <mtom-processor>
+						<request-flow mode="verify">
+							<parameter nome="ImageData" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageData"
+								   content-type="application/xml"
+								   required="true"/>
+							<parameter nome="Other1" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[1]"
+								   content-type="application/octet-stream"
+								   required="true"/>
+							<parameter nome="Other2" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[2]"
+								   content-type="application/octet-stream"
+								   required="true"/>
+						</request-flow>
+						<response-flow mode="verify">
+							<parameter nome="ImageDataResponse" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageDataResponse"
+								   content-type="application/xml"
+								   required="true"/>
+							<parameter nome="Other1Response" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[1]"
+								   content-type="application/altroTipoDiverso"
+								   required="true"/>
+							<parameter nome="Other2Response" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[2]"
+								   content-type="application/octet-stream"
+								   required="true"/>
+						</response-flow>
+				      </mtom-processor>
+		</porta-delegata>
+
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP12/verifyKoResponse"
+				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
+				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+				      <azione nome="echo" />
+				      <servizio-applicativo nome="MinisteroFruitore_SA" />
+				      <mtom-processor>
+						<request-flow mode="verify">
+							<parameter nome="ImageData" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageData"
+								   content-type="application/xml"
+								   required="true"/>
+							<parameter nome="Other1" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[1]"
+								   content-type="application/octet-stream"
+								   required="true"/>
+							<parameter nome="Other2" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[2]"
+								   content-type="application/octet-stream"
+								   required="true"/>
+						</request-flow>
+						<response-flow mode="verify">
+							<parameter nome="ImageDataResponse" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageDataResponse"
+								   content-type="application/xml"
+								   required="true"/>
+							<parameter nome="Other1Response" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[1]"
+								   content-type="application/altroTipoDiverso"
+								   required="true"/>
+							<parameter nome="Other2Response" 
+								   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[2]"
+								   content-type="application/octet-stream"
+								   required="true"/>
+						</response-flow>
+				      </mtom-processor>
 		</porta-delegata>
 
 
@@ -336,6 +743,387 @@
 			<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
 		</porta-applicativa>
 
+		<porta-applicativa nome="MTOMServiceExampleSOAP11/validazione" stateless="abilitato">
+			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+			<azione nome="echo" />
+			<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" /> 
+			<validazione-contenuti-applicativi stato="abilitato" tipo="wsdl" accept-mtom-message="abilitato"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="MTOMServiceExampleSOAP12/validazione" stateless="abilitato">
+			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+			<azione nome="echo" />
+			<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
+			<validazione-contenuti-applicativi stato="abilitato" tipo="wsdl" accept-mtom-message="abilitato"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="MTOMServiceExampleSOAP11/packageUnpackage" stateless="abilitato">
+			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+			<azione nome="packageUnpackage" />
+			<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" /> 
+		        <mtom-processor>
+				<request-flow mode="packaging">
+					<parameter nome="ImageData" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageData"
+						   content-type="application/xml"
+						   required="true"/>
+					<parameter nome="Other1" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[1]"
+						   content-type="application/octet-stream"
+						   required="false"/>
+					<parameter nome="Other2" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[2]"
+						   content-type="application/octet-stream"
+						   required="false"/>
+				</request-flow>
+				<response-flow mode="unpackaging">
+					<parameter nome="ImageDataResponse" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageDataResponse"
+						   content-type="application/xml"
+						   required="true"/>
+					<parameter nome="Other1Response" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[1]"
+						   content-type="application/octet-stream"
+						   required="false"/>
+					<parameter nome="Other2Response" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[2]"
+						   content-type="application/octet-stream"
+						   required="false"/>
+				</response-flow>
+		        </mtom-processor>
+		</porta-applicativa>
+
+		<porta-applicativa nome="MTOMServiceExampleSOAP12/packageUnpackage" stateless="abilitato">
+			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+			<azione nome="packageUnpackage" />
+			<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
+		        <mtom-processor>
+				<request-flow mode="packaging">
+					<parameter nome="ImageData" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageData"
+						   content-type="application/xml"
+						   required="true"/>
+					<parameter nome="Other1" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[1]"
+						   content-type="application/octet-stream"
+						   required="false"/>
+					<parameter nome="Other2" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[2]"
+						   content-type="application/octet-stream"
+						   required="false"/>
+				</request-flow>
+				<response-flow mode="unpackaging">
+					<parameter nome="ImageDataResponse" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageDataResponse"
+						   content-type="application/xml"
+						   required="true"/>
+					<parameter nome="Other1Response" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[1]"
+						   content-type="application/octet-stream"
+						   required="false"/>
+					<parameter nome="Other2Response" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[2]"
+						   content-type="application/octet-stream"
+						   required="false"/>
+				</response-flow>
+		        </mtom-processor>
+		</porta-applicativa>
+
+		<porta-applicativa nome="MTOMServiceExampleSOAP11/unpackagePackage" stateless="abilitato">
+			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+			<azione nome="unpackagePackage" />
+			<servizio-applicativo nome="MTOMecho" /> 
+		        <mtom-processor>
+				<request-flow mode="unpackaging">
+					<parameter nome="ImageData" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageData"
+						   content-type="application/xml"
+						   required="true"/>
+					<parameter nome="Other1" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[1]"
+						   content-type="application/octet-stream"
+						   required="false"/>
+					<parameter nome="Other2" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[2]"
+						   content-type="application/octet-stream"
+						   required="false"/>
+				</request-flow>
+				<response-flow mode="packaging">
+					<parameter nome="ImageDataResponse" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageDataResponse"
+						   content-type="application/xml"
+						   required="true"/>
+					<parameter nome="Other1Response" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[1]"
+						   content-type="application/octet-stream"
+						   required="false"/>
+					<parameter nome="Other2Response" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[2]"
+						   content-type="application/octet-stream"
+						   required="false"/>
+				</response-flow>
+		        </mtom-processor>
+		</porta-applicativa>
+
+		<porta-applicativa nome="MTOMServiceExampleSOAP12/unpackagePackage" stateless="abilitato">
+			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+			<azione nome="unpackagePackage" />
+			<servizio-applicativo nome="MTOMecho" />
+		        <mtom-processor>
+				<request-flow mode="unpackaging">
+					<parameter nome="ImageData" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageData"
+						   content-type="application/xml"
+						   required="true"/>
+					<parameter nome="Other1" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[1]"
+						   content-type="application/octet-stream"
+						   required="false"/>
+					<parameter nome="Other2" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[2]"
+						   content-type="application/octet-stream"
+						   required="false"/>
+				</request-flow>
+				<response-flow mode="packaging">
+					<parameter nome="ImageDataResponse" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageDataResponse"
+						   content-type="application/xml"
+						   required="true"/>
+					<parameter nome="Other1Response" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[1]"
+						   content-type="application/octet-stream"
+						   required="false"/>
+					<parameter nome="Other2Response" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[2]"
+						   content-type="application/octet-stream"
+						   required="false"/>
+				</response-flow>
+		        </mtom-processor>
+		</porta-applicativa>
+
+		<porta-applicativa nome="MTOMServiceExampleSOAP11/verifyOk" stateless="abilitato">
+			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+			<azione nome="echo" />
+			<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" /> 
+		      <mtom-processor>
+				<request-flow mode="verify">
+					<parameter nome="ImageData" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageData"
+						   content-type="application/xml"
+						   required="true"/>
+					<parameter nome="Other1" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[1]"
+						   content-type="application/octet-stream"
+						   required="true"/>
+					<parameter nome="Other2" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[2]"
+						   content-type="application/octet-stream"
+						   required="true"/>
+				</request-flow>
+				<response-flow mode="verify">
+					<parameter nome="ImageDataResponse" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageDataResponse"
+						   content-type="application/xml"
+						   required="true"/>
+					<parameter nome="Other1Response" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[1]"
+						   content-type="application/octet-stream"
+						   required="true"/>
+					<parameter nome="Other2Response" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[2]"
+						   content-type="application/octet-stream"
+						   required="true"/>
+				</response-flow>
+		      </mtom-processor>
+		</porta-applicativa>
+
+		<porta-applicativa nome="MTOMServiceExampleSOAP12/verifyOk" stateless="abilitato">
+			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+			<azione nome="echo" />
+			<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
+		      <mtom-processor>
+				<request-flow mode="verify">
+					<parameter nome="ImageData" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageData"
+						   content-type="application/xml"
+						   required="true"/>
+					<parameter nome="Other1" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[1]"
+						   content-type="application/octet-stream"
+						   required="true"/>
+					<parameter nome="Other2" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[2]"
+						   content-type="application/octet-stream"
+						   required="true"/>
+				</request-flow>
+				<response-flow mode="verify">
+					<parameter nome="ImageDataResponse" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageDataResponse"
+						   content-type="application/xml"
+						   required="true"/>
+					<parameter nome="Other1Response" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[1]"
+						   content-type="application/octet-stream"
+						   required="true"/>
+					<parameter nome="Other2Response" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[2]"
+						   content-type="application/octet-stream"
+						   required="true"/>
+				</response-flow>
+		      </mtom-processor>
+		</porta-applicativa>
+
+		<porta-applicativa nome="MTOMServiceExampleSOAP11/verifyKoRequest" stateless="abilitato">
+			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+			<azione nome="echo" />
+			<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" /> 
+		      <mtom-processor>
+				<request-flow mode="verify">
+					<parameter nome="richiesta" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}richiesta"
+						   content-type="application/xml"
+						   required="true"/>
+					<parameter nome="ImageData" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageData"
+						   content-type="application/xml"
+						   required="true"/>
+					<parameter nome="Other1" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[1]"
+						   content-type="application/octet-stream"
+						   required="true"/>
+					<parameter nome="Other2" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[2]"
+						   content-type="application/octet-stream"
+						   required="true"/>
+				</request-flow>
+				<response-flow mode="verify">
+					<parameter nome="ImageDataResponse" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageDataResponse"
+						   content-type="application/xml"
+						   required="true"/>
+					<parameter nome="Other1Response" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[1]"
+						   content-type="application/octet-stream"
+						   required="true"/>
+					<parameter nome="Other2Response" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[2]"
+						   content-type="application/octet-stream"
+						   required="true"/>
+				</response-flow>
+		      </mtom-processor>
+		</porta-applicativa>
+
+		<porta-applicativa nome="MTOMServiceExampleSOAP12/verifyKoRequest" stateless="abilitato">
+			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+			<azione nome="echo" />
+			<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
+		      <mtom-processor>
+				<request-flow mode="verify">
+					<parameter nome="richiesta" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}richiesta"
+						   content-type="application/xml"
+						   required="true"/>
+					<parameter nome="ImageData" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageData"
+						   content-type="application/xml"
+						   required="true"/>
+					<parameter nome="Other1" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[1]"
+						   content-type="application/octet-stream"
+						   required="true"/>
+					<parameter nome="Other2" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[2]"
+						   content-type="application/octet-stream"
+						   required="true"/>
+				</request-flow>
+				<response-flow mode="verify">
+					<parameter nome="ImageDataResponse" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageDataResponse"
+						   content-type="application/xml"
+						   required="true"/>
+					<parameter nome="Other1Response" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[1]"
+						   content-type="application/octet-stream"
+						   required="true"/>
+					<parameter nome="Other2Response" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[2]"
+						   content-type="application/octet-stream"
+						   required="true"/>
+				</response-flow>
+		      </mtom-processor>
+		</porta-applicativa>
+
+		<porta-applicativa nome="MTOMServiceExampleSOAP11/verifyKoResponse" stateless="abilitato">
+			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
+			<azione nome="echo" />
+			<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" /> 
+			<mtom-processor>
+				<request-flow mode="verify">
+					<parameter nome="ImageData" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageData"
+						   content-type="application/xml"
+						   required="true"/>
+					<parameter nome="Other1" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[1]"
+						   content-type="application/octet-stream"
+						   required="true"/>
+					<parameter nome="Other2" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[2]"
+						   content-type="application/octet-stream"
+						   required="true"/>
+				</request-flow>
+				<response-flow mode="verify">
+					<parameter nome="ImageDataResponse" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageDataResponse"
+						   content-type="application/xml"
+						   required="true"/>
+					<parameter nome="Other1Response" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[1]"
+						   content-type="application/altroTipoDiverso"
+						   required="true"/>
+					<parameter nome="Other2Response" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[2]"
+						   content-type="application/octet-stream"
+						   required="true"/>
+				</response-flow>
+		      </mtom-processor>
+		</porta-applicativa>
+
+		<porta-applicativa nome="MTOMServiceExampleSOAP12/verifyKoResponse" stateless="abilitato">
+			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
+			<azione nome="echo" />
+			<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
+			<mtom-processor>
+				<request-flow mode="verify">
+					<parameter nome="ImageData" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageData"
+						   content-type="application/xml"
+						   required="true"/>
+					<parameter nome="Other1" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[1]"
+						   content-type="application/octet-stream"
+						   required="true"/>
+					<parameter nome="Other2" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}other[2]"
+						   content-type="application/octet-stream"
+						   required="true"/>
+				</request-flow>
+				<response-flow mode="verify">
+					<parameter nome="ImageDataResponse" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}ImageDataResponse"
+						   content-type="application/xml"
+						   required="true"/>
+					<parameter nome="Other1Response" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[1]"
+						   content-type="application/altroTipoDiverso"
+						   required="true"/>
+					<parameter nome="Other2Response" 
+						   pattern="//{http://www.openspcoop2.org/example/server/mtom}otherResponse[2]"
+						   content-type="application/octet-stream"
+						   required="true"/>
+				</response-flow>
+		      </mtom-processor>
+		</porta-applicativa>
 
 
 
@@ -473,6 +1261,14 @@
 			     </connettore>
 			 </invocazione-servizio>
 		</servizio-applicativo>
+
+ 		<servizio-applicativo nome="MTOMecho">
+                        <invocazione-servizio>
+                                <connettore tipo="http" nome="ConnettoreINV_echoAPIMinisteroErogatore">
+                                    <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?replace=echo:echoResponse,richiesta:risposta,ImageData:ImageDataResponse,other:otherResponse"/>
+                                </connettore>
+                        </invocazione-servizio>
+                </servizio-applicativo>
 
 
 	</soggetto>

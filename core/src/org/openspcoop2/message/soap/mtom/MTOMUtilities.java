@@ -566,9 +566,13 @@ public class MTOMUtilities {
 						throw new MessageException("Found XOM Reference with attribute ["+
 								org.openspcoop2.message.soap.mtom.Costanti.XOP_INCLUDE_ATTRIBUTE_HREF+"]=["+contentId+"]. The attachment hasn't content-type");
 					}
-					else if(contentType.equals(ap.getContentType())==false){
-						throw new MessageException("Found XOM Reference with attribute ["+
-								org.openspcoop2.message.soap.mtom.Costanti.XOP_INCLUDE_ATTRIBUTE_HREF+"]=["+contentId+"]. The attachment has wrong content-type (expected:"+contentType+"): "+ap.getContentType());
+					else{
+						String apCT = ap.getContentType();
+						String base = ContentTypeUtilities.readBaseTypeFromContentType(apCT);
+						if(contentType.equals(base)==false){
+							throw new MessageException("Found XOM Reference with attribute ["+
+									org.openspcoop2.message.soap.mtom.Costanti.XOP_INCLUDE_ATTRIBUTE_HREF+"]=["+contentId+"]. The attachment has wrong content-type (expected:"+contentType+"): "+ap.getContentType());
+						}
 					}
 										
 					// add reference

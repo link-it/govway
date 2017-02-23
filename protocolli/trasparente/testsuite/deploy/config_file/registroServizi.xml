@@ -43,13 +43,15 @@
 			     descrizione="Esempio di Servizio MTOMT"
 			     versione="1"
 			     profilo-collaborazione="sincrono"
-			     wsdl-definitorio="wsdl/definitorio.xsd"
-			     wsdl-concettuale="wsdl/concettuale.wsdl"
-			     wsdl-logico-erogatore="wsdl/logicoErogatore.wsdl">
+			     wsdl-concettuale="/etc/openspcoop2/mtom/concettuale.wsdl"
+			     wsdl-logico-erogatore="/etc/openspcoop2/mtom/logicoErogatore.wsdl">
 		<soggetto-referente tipo="PROXY" nome="MinisteroErogatore" />
 		<port-type nome="MTOMServiceExample" profilo-collaborazione="sincrono" descrizione="Esempio di servizio sincrono">
 		   <azione nome="echo" />
+		   <azione nome="packageUnpackage" />
+		   <azione nome="unpackagePackage" />
 		</port-type>
+		<allegato tipo="XML" file="/etc/openspcoop2/mtom/MTOMExample.xsd"/>
 	</accordo-servizio-parte-comune>
 
 
@@ -128,11 +130,19 @@
 			 accordo-servizio-parte-comune="API/MinisteroErogatore:AS_MTOMExample:1"
 			 port-type="MTOMServiceExample"
 			 descrizione="Esempio di accordo di servizio parte specifica (Sincrono) per binding SOAP11"
-			 wsdl-implementativo-erogatore="wsdl/implementazioneErogatoreSoap11.wsdl">
+			 wsdl-implementativo-erogatore="/etc/openspcoop2/mtom/implementazioneErogatoreSoap11.wsdl">
 		    <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11">
 		             <connettore tipo="http" nome="Connettore">
 		                 <property nome="location" valore="http://localhost:65000/MTOMExample/soap11" />
 		             </connettore>
+
+			     <parametri-azione nome="unpackagePackage">
+				    <connettore tipo="http" nome="unpackagePackage">
+				        <property nome="location"
+				            valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?replace=echo:echoResponse,richiesta:risposta,ImageData:ImageDataResponse,other:otherResponse"
+				        />
+				    </connettore>
+			     </parametri-azione>
 		    </servizio> 
 		    <fruitore tipo="API" nome="MinisteroFruitore" />
 		</accordo-servizio-parte-specifica>
@@ -142,11 +152,19 @@
 		         accordo-servizio-parte-comune="API/MinisteroErogatore:AS_MTOMExample:1"
 		         port-type="MTOMServiceExample"
 		         descrizione="Esempio di accordo di servizio parte specifica (Sincrono) per binding SOAP12"
-		         wsdl-implementativo-erogatore="wsdl/implementazioneErogatoreSoap12.wsdl">
+		         wsdl-implementativo-erogatore="/etc/openspcoop2/mtom/implementazioneErogatoreSoap12.wsdl">
 		    <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12">
 		             <connettore tipo="http" nome="Connettore">
 		                 <property nome="location" valore="http://localhost:65001/MTOMExample/soap12" />
 		             </connettore>
+
+			     <parametri-azione nome="unpackagePackage">
+				    <connettore tipo="http" nome="unpackagePackage">
+				        <property nome="location"
+				            valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?replace=echo:echoResponse,richiesta:risposta,ImageData:ImageDataResponse,other:otherResponse"
+				        />
+				    </connettore>
+			     </parametri-azione>
 		    </servizio>
 		    <fruitore tipo="API" nome="MinisteroFruitore" />
 		</accordo-servizio-parte-specifica>

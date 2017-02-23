@@ -199,6 +199,10 @@ public class JaxbUtils {
 	}
 	public static void objToXml(OutputStream out,Class<?> classType,Object object,boolean prettyDocument) 
 			throws java.io.FileNotFoundException, JAXBException{
+		objToXml(out,classType,object,prettyDocument,false);
+	}
+	public static void objToXml(OutputStream out,Class<?> classType,Object object,boolean prettyDocument, boolean omitXmlDeclaration) 
+			throws java.io.FileNotFoundException, JAXBException{
 
 		JAXBContext jc = getJAXBContext(classType.getPackage().getName());
 		Marshaller uctx = jc.createMarshaller();
@@ -206,6 +210,10 @@ public class JaxbUtils {
 			uctx.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 		else
 			uctx.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.FALSE);
+		
+		if(omitXmlDeclaration)
+			uctx.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+		
 		uctx.marshal(object, out);
 		
 	}    

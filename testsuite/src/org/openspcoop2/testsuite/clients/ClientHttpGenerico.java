@@ -268,7 +268,20 @@ public class ClientHttpGenerico extends ClientCore{
 		if(autent!=null)
 			this.conn.setRequestProperty("Authorization",autent);
 	}
-	
+	@Override
+	public void setUsername(String user){
+		this.username = user;
+		if(this.password!=null){
+			this.setAutenticazione(this.username, this.password);
+		}
+	}
+	@Override
+	public void setPassword(String password){
+		this.password = password;
+		if(this.username!=null){
+			this.setAutenticazione(this.username, this.password);
+		}
+	}
 	
 	
 	/**

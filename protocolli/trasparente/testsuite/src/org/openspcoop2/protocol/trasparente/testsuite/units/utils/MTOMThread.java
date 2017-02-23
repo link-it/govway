@@ -52,6 +52,12 @@ public class MTOMThread extends Thread{
 	private int port;
 	private boolean soap11;
 	private int timeout;
+	
+	private boolean started = false;
+	public boolean isStarted() {
+		return this.started;
+	}
+
 	private boolean finished = false;
 	
 	public boolean isFinished() {
@@ -90,6 +96,7 @@ public class MTOMThread extends Thread{
 		        Endpoint.publish(address, implementor);
 		        
 		        System.out.println("Server ["+address+"] started ...");
+		        this.started = true;
 		        
 				// CheckInterval
 				if(this.stop==false){
