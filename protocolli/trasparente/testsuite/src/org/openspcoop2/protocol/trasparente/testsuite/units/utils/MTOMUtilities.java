@@ -24,8 +24,7 @@ import org.openspcoop2.example.server.mtom.EchoResponse;
 import org.openspcoop2.example.server.mtom.ws.MTOMServiceExample;
 import org.openspcoop2.example.server.mtom.ws.MTOMServiceExampleSOAP11Service;
 import org.openspcoop2.example.server.mtom.ws.MTOMServiceExampleSOAP12Service;
-import org.openspcoop2.message.Costanti;
-import org.openspcoop2.message.SOAPVersion;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
@@ -41,6 +40,7 @@ import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
 import org.openspcoop2.testsuite.db.DatiServizio;
 import org.openspcoop2.testsuite.db.DatiServizioAzione;
 import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.xml.JaxbUtils;
 import org.openspcoop2.utils.xml.XMLDiff;
 import org.openspcoop2.utils.xml.XMLDiffImplType;
@@ -128,13 +128,13 @@ public class MTOMUtilities {
     	File f_other1 = null;
     	File f_other2 = null;
     	if(addOtherAttachments){
-	    	f_other1 = new File(org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties.getInstance().getAttachmentsFilePDF());
+	    	f_other1 = new File(org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties.getInstance().getPDFFileName());
 	    	if(f_other1!=null){
 	    		FileDataSource fDS = new FileDataSource(f_other1);
 	    		javax.activation.DataHandler dh = new DataHandler(fDS);
 	    		_echo_other.add(dh);
 	    	}
-	    	f_other2 = new File(org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties.getInstance().getAttachmentsFileZIP());
+	    	f_other2 = new File(org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties.getInstance().getZIPFileName());
 	    	if(f_other2!=null){
 	    		FileDataSource fDS = new FileDataSource(f_other2);
 	    		javax.activation.DataHandler dh = new DataHandler(fDS);
@@ -230,7 +230,7 @@ public class MTOMUtilities {
 	    			testSincrono(data, id,
 	    					CostantiTestSuite.PROXY_SOGGETTO_FRUITORE,
 	    					CostantiTestSuite.PROXY_SOGGETTO_EROGATORE,
-	    					CostantiTestSuite.PROXY_TIPO_SERVIZIO, servizio,azione,
+	    					CostantiTestSuite.SOAP_TIPO_SERVIZIO, servizio,azione,
 	    					false,CostantiTestSuite.PROXY_PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI,
 	    					checkServizioApplicativo, null, null, null, false, numeroAttachmentsRequest, numeroAttachmentResponse, false);
 	    		}catch(Exception e){
@@ -328,20 +328,20 @@ public class MTOMUtilities {
 			
         String servizio = null;
         String envelope = null;
-        SOAPVersion soapVersion = null;
+        MessageType messageType = null;
         String contentType = null;
         
 		if(soap11){
 			servizio = CostantiTestSuite.PROXY_NOME_SERVIZIO_MTOM_SOAP11;
 			envelope = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Body>CORPO</soapenv:Body></soapenv:Envelope>";
-			soapVersion = SOAPVersion.SOAP11;
-			contentType = Costanti.CONTENT_TYPE_SOAP_1_1;
+			messageType = MessageType.SOAP_11;
+			contentType = HttpConstants.CONTENT_TYPE_SOAP_1_1;
 		}
 		else{
 			servizio = CostantiTestSuite.PROXY_NOME_SERVIZIO_MTOM_SOAP12;
 			envelope = "<soapenv:Envelope xmlns:soapenv=\"http://www.w3.org/2003/05/soap-envelope\"><soapenv:Body>CORPO</soapenv:Body></soapenv:Envelope>";
-			soapVersion = SOAPVersion.SOAP12;
-			contentType = Costanti.CONTENT_TYPE_SOAP_1_2;
+			messageType = MessageType.SOAP_12;
+			contentType = HttpConstants.CONTENT_TYPE_SOAP_1_2;
 		}
 		
 		Repository r = new Repository();
@@ -355,7 +355,7 @@ public class MTOMUtilities {
 		}
 		client.setPortaDelegata(nomePorta);
 		client.setSoapAction("\"echo\"");
-		client.connectToSoapEngine(soapVersion);
+		client.connectToSoapEngine(messageType);
 		client.setUsername(username);
 		client.setPassword(password);
 		
@@ -379,13 +379,13 @@ public class MTOMUtilities {
     	File f_other1 = null;
     	File f_other2 = null;
     	if(addOtherAttachments){
-	    	f_other1 = new File(org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties.getInstance().getAttachmentsFilePDF());
+	    	f_other1 = new File(org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties.getInstance().getPDFFileName());
 	    	if(f_other1!=null){
 	    		FileDataSource fDS = new FileDataSource(f_other1);
 	    		javax.activation.DataHandler dh = new DataHandler(fDS);
 	    		_echo_other.add(dh);
 	    	}
-	    	f_other2 = new File(org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties.getInstance().getAttachmentsFileZIP());
+	    	f_other2 = new File(org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties.getInstance().getZIPFileName());
 	    	if(f_other2!=null){
 	    		FileDataSource fDS = new FileDataSource(f_other2);
 	    		javax.activation.DataHandler dh = new DataHandler(fDS);
@@ -492,7 +492,7 @@ public class MTOMUtilities {
 			testSincrono(data, id,
 					CostantiTestSuite.PROXY_SOGGETTO_FRUITORE,
 					CostantiTestSuite.PROXY_SOGGETTO_EROGATORE,
-					CostantiTestSuite.PROXY_TIPO_SERVIZIO, servizio,azione,
+					CostantiTestSuite.SOAP_TIPO_SERVIZIO, servizio,azione,
 					false,CostantiTestSuite.PROXY_PROFILO_TRASMISSIONE_CON_DUPLICATI,Inoltro.CON_DUPLICATI,
 					checkServizioApplicativo, null, null, null, false, numeroAttachmentsRequest, numeroAttachmentResponse, false);
 		}catch(Exception e){
