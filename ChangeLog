@@ -1,3 +1,9 @@
+2017-02-23  Andrea Poli <apoli@link.it>
+
+	* [TestsuiteProtocolloTrasparente]
+	Aggiunta funzionalità OP-603
+	Aggiunta alla testsuite del protocollo trasparente la verifica delle funzionalità MTOM
+
 2017-02-14  Andrea Poli <apoli@link.it>
 
 	* [BackwardCompatibility OpenSPCoop-v1]
