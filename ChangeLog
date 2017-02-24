@@ -1,3 +1,17 @@
+2017-02-24  Giovanni Bussu <bussu@link.it>
+
+	* [Utils]
+	Aggiunta funzionalità OP-590
+	Integrata tra le utilities di OpenSPCoop una libreria per la gestione delle policy XACML (org.openspcoop2.utils.xacml)
+
+	* [Pdd]
+	Aggiunta funzionalità OP-601
+	Aggiunta possibilità lato receiver WSS4J, dopo aver validato una asserziona SAML, di utilizzare le informazioni
+	presenti all'interno dell'asserzione per costruire una XACML Request e farla validare ad un PdP.
+	Il PdP può essere locale alla Porta di Dominio o remoto.
+	Per funzionare da PdD locale deve essere caricata una XACML-Policy nell'accordo di servizio parte specifica
+	come allegato di tipologia 'specifica di sicurezza' (tipo: XACML-Policy).
+
 2017-02-23  Andrea Poli <apoli@link.it>
 
 	* [TestsuiteProtocolloTrasparente]
