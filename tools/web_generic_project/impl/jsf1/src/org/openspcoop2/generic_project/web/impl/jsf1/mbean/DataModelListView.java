@@ -118,7 +118,7 @@ extends BaseMBean<BeanType, KeyType, SearchFormType> {
 			try{
 
 				ParameterizedType parameterizedType =  (ParameterizedType) getClass().getGenericSuperclass();
-				this.dataModel = ((Class<DMType>)parameterizedType.getActualTypeArguments()[4]).newInstance();
+				this.dataModel = ((Class<DMType>)parameterizedType.getActualTypeArguments()[5]).newInstance();
 			}catch (Exception e) {
 				this.getLog().error(e.getMessage(),e);
 				throw e;
