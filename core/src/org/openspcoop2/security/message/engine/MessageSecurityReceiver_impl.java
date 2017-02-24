@@ -210,11 +210,10 @@ public class MessageSecurityReceiver_impl extends MessageSecurityReceiver{
             		req.setMessage(message);
                     MessageSecurityAuthorizationResult result = auth.authorize(req);
                     if(!result.isAuthorized()){
+                        this.msgErrore =  "Mittente della busta ["+busta.getTipoMittente()+busta.getMittente()+
+                                "] (subject:"+this.subject+") non autorizzato ad invocare il servizio ["+busta.getServizio()+"] erogato dal soggetto ["+busta.getTipoDestinatario()+busta.getDestinatario()+"]";
                         if(result.getErrorMessage()!=null){
-                                this.msgErrore = result.getErrorMessage();
-                        }else{
-                                this.msgErrore =  "Mittente della busta ["+busta.getTipoMittente()+busta.getMittente()+
-                                        "] (subject:"+this.subject+") non autorizzato ad invocare il servizio ["+busta.getServizio()+"] erogato dal soggetto ["+busta.getTipoDestinatario()+busta.getDestinatario()+"]";
+                                this.msgErrore = this.msgErrore + "(" +result.getErrorMessage()+")";
                         }
                         if(result.getException()!=null){
                         	this.messageSecurityContext.getLog().error(this.msgErrore,result.getException());

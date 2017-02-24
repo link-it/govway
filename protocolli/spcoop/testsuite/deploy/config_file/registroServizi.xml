@@ -126,6 +126,10 @@
 	<azione nome="WSSSaml20OnlyAuthn"/>
 	<azione nome="WSSSaml20OnlyAuthz"/>
 	<azione nome="WSSSaml20SignedDetachWSSDisable"/>
+	<azione nome="WSSSaml20XACMLPolicyLocaleOk"/>
+	<azione nome="WSSSaml20XACMLPolicyLocaleKo"/>
+	<azione nome="WSSSaml20XACMLPolicyRemotaOk"/>
+	<azione nome="WSSSaml20XACMLPolicyRemotaKo"/>
 	<azione nome="WSSSaml11Unsigned"/>
 	<azione nome="WSSSaml11Signed"/>
 	<azione nome="WSSSaml11SignedP12"/>
@@ -137,6 +141,10 @@
 	<azione nome="WSSSaml11OnlyAuthn"/>
 	<azione nome="WSSSaml11OnlyAuthz"/>
 	<azione nome="WSSSaml11SignedDetachWSSDisable"/>
+	<azione nome="WSSSaml11XACMLPolicyLocaleOk"/>
+	<azione nome="WSSSaml11XACMLPolicyLocaleKo"/>
+	<azione nome="WSSSaml11XACMLPolicyRemotaOk"/>
+	<azione nome="WSSSaml11XACMLPolicyRemotaKo"/>
 	<azione nome="WSSUsernameTokenDigest"/>
 	<azione nome="WSSUsernameTokenText"/>
 	<azione nome="WSSUsernameTokenNoPassword"/>
@@ -917,7 +925,6 @@
         <!-- Profilo di collaborazione Sincrono -->
         <accordo-servizio-parte-specifica tipo="SPC" nome="RichiestaStatoAvanzamento"
             accordo-servizio-parte-comune="ASRichiestaStatoAvanzamento">
-
 	    <configurazione-servizio>
                 <configurazione-azione nome="WSSEncryptError">
                     <connettore tipo="http" nome="PdDAlterazioneMessaggioWSS">
@@ -1106,6 +1113,8 @@
             <fruitore tipo="SPC" nome="TestUrlPrefixRewriter8"/>
             <fruitore tipo="SPC" nome="TestUrlPrefixRewriter9"/>
             <fruitore tipo="SPC" nome="TestUrlPrefixRewriter10"/>
+
+	    <specifica-sicurezza tipo="XACML-Policy" file="/etc/openspcoop2/xacmlPolicy/SAMLPolicy.xml"/>
 
         </accordo-servizio-parte-specifica>
 

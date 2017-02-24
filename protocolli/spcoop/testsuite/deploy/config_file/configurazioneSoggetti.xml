@@ -2203,6 +2203,64 @@
             </message-security>
         </porta-delegata>
 
+	<!-- Funzionalita' SAML 2.0 (XACML-Policy) -->
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSaml20XACMLPolicyLocaleOk" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20XACMLPolicyLocaleOk" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="/etc/openspcoop2/properties/saml20SignedXACMLPolicyRoleAmministratore.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSaml20XACMLPolicyLocaleKo" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20XACMLPolicyLocaleKo" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="/etc/openspcoop2/properties/saml20SignedXACMLPolicyRoleUtente.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSaml20XACMLPolicyRemotaOk" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20XACMLPolicyRemotaOk" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="/etc/openspcoop2/properties/saml20SignedXACMLPolicyRoleAmministratore.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSaml20XACMLPolicyRemotaKo" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20XACMLPolicyRemotaKo" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="/etc/openspcoop2/properties/saml20SignedXACMLPolicyRoleUtente.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
 
 	<!-- Funzionalita' SAML 1.1 -->
 
@@ -2366,6 +2424,64 @@
                     <parameter nome="mustUnderstand" valore="false" />
 		    <parameter nome="detachHeaderWSSecurity" valore="true"/> <!-- Stavolta lo ripulisco -->
                 </response-flow>
+            </message-security>
+        </porta-delegata>
+
+	<!-- Funzionalita' SAML 1.1 (XACML-Policy) -->
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSaml11XACMLPolicyLocaleOk" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11XACMLPolicyLocaleOk" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="saml11SignedXACMLPolicyRoleAmministratore.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSaml11XACMLPolicyLocaleKo" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11XACMLPolicyLocaleKo" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="saml11SignedXACMLPolicyRoleUtente.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSaml11XACMLPolicyRemotaOk" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11XACMLPolicyRemotaOk" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="saml11SignedXACMLPolicyRoleAmministratore.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
+            </message-security>
+        </porta-delegata>
+
+        <porta-delegata gestione-manifest="abilitato" nome="WSSSaml11XACMLPolicyRemotaKo" autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap">
+            <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11XACMLPolicyRemotaKo" />
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenUnsigned" />
+		    <parameter nome="samlPropFile" valore="saml11SignedXACMLPolicyRoleUtente.properties" />
+		    <parameter nome="actor" valore="openspcoop"/>
+		    <parameter nome="mustUnderstand" valore="false" />
+                </request-flow>
             </message-security>
         </porta-delegata>
         
@@ -6187,6 +6303,72 @@
             </message-security>
         </porta-applicativa>
 
+	<!-- Funzionalita' SAML 2.0 (XACML-Policy) -->
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20XACMLPolicyLocaleOk">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20XACMLPolicyLocaleOk" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenSigned" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="authorizationClass" valore="org.openspcoop2.security.message.authorization.MessageSecurityAuthorizationSAMLPolicy" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20XACMLPolicyLocaleKo">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20XACMLPolicyLocaleKo" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenSigned" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="authorizationClass" valore="org.openspcoop2.security.message.authorization.MessageSecurityAuthorizationSAMLPolicy" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20XACMLPolicyRemotaOk">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20XACMLPolicyRemotaOk" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenSigned" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="authorizationClass" valore="org.openspcoop2.security.message.authorization.MessageSecurityAuthorizationSAMLPolicy" />
+		    <parameter nome="pdpLocal" valore="false" />
+		    <parameter nome="pdpRemoteUrl" valore="http://127.0.0.1:8080/OpenSPCoop2TestSuite/echoService?destFile=/etc/openspcoop2/xacmlPolicy/responseOK.xml" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20XACMLPolicyRemotaKo">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml20XACMLPolicyRemotaKo" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenSigned" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="authorizationClass" valore="org.openspcoop2.security.message.authorization.MessageSecurityAuthorizationSAMLPolicy" />
+		    <parameter nome="pdpLocal" valore="false" />
+		    <parameter nome="pdpRemoteUrl" valore="http://127.0.0.1:8080/OpenSPCoop2TestSuite/echoService?destFile=/etc/openspcoop2/xacmlPolicy/responseKO.xml" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
 
 	<!-- Funzionalita' SAML 1.1 -->	
 
@@ -6328,6 +6510,73 @@
                 </request-flow>
             </message-security>
         </porta-applicativa>
+
+	<!-- Funzionalita' SAML 1.1 (XACML-Policy) -->
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11XACMLPolicyLocaleOk">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11XACMLPolicyLocaleOk" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenSigned" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="authorizationClass" valore="org.openspcoop2.security.message.authorization.MessageSecurityAuthorizationSAMLPolicy" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11XACMLPolicyLocaleKo">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11XACMLPolicyLocaleKo" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenSigned" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="authorizationClass" valore="org.openspcoop2.security.message.authorization.MessageSecurityAuthorizationSAMLPolicy" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11XACMLPolicyRemotaOk">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11XACMLPolicyRemotaOk" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenSigned" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="authorizationClass" valore="org.openspcoop2.security.message.authorization.MessageSecurityAuthorizationSAMLPolicy" />
+		    <parameter nome="pdpLocal" valore="false" />
+		    <parameter nome="pdpRemoteUrl" valore="http://127.0.0.1:8080/OpenSPCoop2TestSuite/echoService?destFile=/etc/openspcoop2/xacmlPolicy/responseOK.xml" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
+        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11XACMLPolicyRemotaKo">
+            <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
+            <azione nome="WSSSaml11XACMLPolicyRemotaKo" />
+            <servizio-applicativo nome="OpenSPCoop2TestSuite" /> 
+            <message-security>
+                <request-flow>
+                    <parameter nome="action" valore="SAMLTokenSigned" />
+                    <parameter nome="actor" valore="openspcoop"/>
+                    <parameter nome="signaturePropFile" valore="pa-crypto.properties" />
+                    <parameter nome="mustUnderstand" valore="false" />
+		    <parameter nome="authorizationClass" valore="org.openspcoop2.security.message.authorization.MessageSecurityAuthorizationSAMLPolicy" />
+		    <parameter nome="pdpLocal" valore="false" />
+		    <parameter nome="pdpRemoteUrl" valore="http://127.0.0.1:8080/OpenSPCoop2TestSuite/echoService?destFile=/etc/openspcoop2/xacmlPolicy/responseKO.xml" />
+                </request-flow>
+            </message-security>
+        </porta-applicativa>
+
 
 	<!-- Username Token -->
 

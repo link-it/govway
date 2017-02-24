@@ -54,6 +54,7 @@ import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.asincrono.RepositoryConsegnaRisposteAsincroneSimmetriche;
 import org.openspcoop2.testsuite.core.asincrono.RepositoryCorrelazioneIstanzeAsincrone;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
+import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
 import org.openspcoop2.testsuite.db.DatiServizio;
 import org.openspcoop2.testsuite.server.ServerRicezioneRispostaAsincronaSimmetrica;
 import org.openspcoop2.testsuite.units.CooperazioneBase;
@@ -2574,6 +2575,121 @@ public class WSSecurity {
 			data.close();
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	/***
+	 * Test per XACML POLICY
+	 */
+	Repository repositorySincronoWSS_XACML_POLICY=new Repository();
+	@DataProvider (name="SincronoWSS_XACML_POLICY_invocazione")
+	public Object[][]testSincronoWSS_XACML_POLICY_invocazione()throws Exception{
+		return new Object[][]{
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_XACMLPOLICY_LOCALE_OK},	
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_XACMLPOLICY_LOCALE_KO},
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_XACMLPOLICY_REMOTA_OK},	
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_XACMLPOLICY_REMOTA_KO},
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_XACMLPOLICY_LOCALE_OK},	
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_XACMLPOLICY_LOCALE_KO},
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_XACMLPOLICY_REMOTA_OK},	
+				{CostantiTestSuite.SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_XACMLPOLICY_REMOTA_KO}
+		};
+	}
+	@Test(groups={WSSecurity.ID_GRUPPO,WSSecurity.ID_GRUPPO+".XACML_POLICY"},dataProvider="SincronoWSS_XACML_POLICY_invocazione",
+			description="Test per il profilo di collaborazione Sincrono con WSSecurity")
+	public void sincronoWSS_XACML_POLICY(String azione) throws Exception{
+		
+		if(azione.endsWith("Ok")){
+		
+			this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoWSS_XACML_POLICY,azione,addIDUnivoco);
+			
+			String id=this.repositorySincronoWSS_XACML_POLICY.getNext();
+			
+			// Check Fruitore
+			DatabaseComponent data = DatabaseProperties.getDatabaseComponentFruitore();
+			try{
+				this.collaborazioneSPCoopBase.testSincrono(data, id, 
+						CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+						CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+						azione, false,null);
+			}catch(Exception e){
+				throw e;
+			}finally{
+				data.close();
+			}
+			
+			// Check Erogatore
+			data = DatabaseProperties.getDatabaseComponentErogatore();
+			try{
+				this.collaborazioneSPCoopBase.testSincrono(data, id, 
+						CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO,
+						CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO,
+						azione, true,null);
+			}catch(Exception e){
+				throw e;
+			}finally{
+				data.close();
+			}
+			
+		}
+		else{
+			
+			Date dataInizioTest = DateManager.getDate();
+			
+			DatabaseMsgDiagnosticiComponent data = null;
+			try{
+				this.collaborazioneSPCoopBase.sincrono(this.repositorySincronoWSS_XACML_POLICY,azione,addIDUnivoco);
+				
+				throw new Exception("Atteso errore");
+			
+			}catch(org.apache.axis.AxisFault error){
+				
+				String id=this.repositorySincronoWSS_XACML_POLICY.getNext();
+				
+				Reporter.log("Ricevuto SoapFAULT codice["+error.getFaultCode().getLocalPart()+"] actor["+error.getFaultActor()+"]: "+error.getFaultString());
+				Reporter.log("Controllo fault code ["+Utilities.toString(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA)+"]");
+				Assert.assertTrue(Utilities.toString(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA).equals(error.getFaultCode().getLocalPart()));
+				
+				// Check Fruitore
+				data = DatabaseProperties.getDatabaseComponentDiagnosticaFruitore();
+				try{
+					data.isTracedErrorMsg(id);
+					data.isTracedMessaggioWithLike(id, "XACML-Policy");
+				}catch(Exception e){
+					throw e;
+				}finally{
+					data.close();
+				}
+				
+				// Check Erogatore
+				data = DatabaseProperties.getDatabaseComponentDiagnosticaErogatore();
+				try{
+					data.isTracedErrorMsg(id);
+					data.isTracedMessaggioWithLike(id, "XACML-Policy");
+				}catch(Exception e){
+					throw e;
+				}finally{
+					data.close();
+				}
+			}
+			
+			Date dataFineTest = DateManager.getDate();
+			
+			ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+			err.setIntervalloInferiore(dataInizioTest);
+			err.setIntervalloSuperiore(dataFineTest);
+			err.setMsgErrore("Autorizzazione con XACMLPolicy fallita");
+			this.erroriAttesiOpenSPCoopCore.add(err);
+			
+		}
+	}
+	
+	
 	
 	
 	

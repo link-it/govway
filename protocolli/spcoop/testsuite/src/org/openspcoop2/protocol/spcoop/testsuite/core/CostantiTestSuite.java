@@ -1296,6 +1296,15 @@ public class CostantiTestSuite {
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_ONLY_AUTHZ="WSSSaml20OnlyAuthz";
     /** ENTITA SPCOOP: Nome Azione WSSSaml20SignedDetachWSSDisable del Servizio RichiestaStatoAvanzamento */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_DETACH="WSSSaml20SignedDetachWSSDisable";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml20XACMLPolicyLocaleOk del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_XACMLPOLICY_LOCALE_OK="WSSSaml20XACMLPolicyLocaleOk";   
+    /** ENTITA SPCOOP: Nome Azione WSSSaml20XACMLPolicyLocaleKo del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_XACMLPOLICY_LOCALE_KO="WSSSaml20XACMLPolicyLocaleKo";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml20XACMLPolicyRemotaOk del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_XACMLPOLICY_REMOTA_OK="WSSSaml20XACMLPolicyRemotaOk";   
+    /** ENTITA SPCOOP: Nome Azione WSSSaml20XACMLPolicyRemotaKo del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML20_XACMLPOLICY_REMOTA_KO="WSSSaml20XACMLPolicyRemotaKo";
+    
     /** ENTITA SPCOOP: Nome Azione WSSSaml11Unsigned del Servizio RichiestaStatoAvanzamento */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_UNSIGNED="WSSSaml11Unsigned";
     /** ENTITA SPCOOP: Nome Azione WSSSaml11Signed del Servizio RichiestaStatoAvanzamento */
@@ -1318,6 +1327,15 @@ public class CostantiTestSuite {
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_ONLY_AUTHZ="WSSSaml11OnlyAuthz";
     /** ENTITA SPCOOP: Nome Azione WSSSaml11SignedDetachWSSDisable del Servizio RichiestaStatoAvanzamento */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_DETACH="WSSSaml11SignedDetachWSSDisable";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml11XACMLPolicyLocaleOk del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_XACMLPOLICY_LOCALE_OK="WSSSaml11XACMLPolicyLocaleOk";   
+    /** ENTITA SPCOOP: Nome Azione WSSSaml11XACMLPolicyLocaleKo del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_XACMLPOLICY_LOCALE_KO="WSSSaml11XACMLPolicyLocaleKo";
+    /** ENTITA SPCOOP: Nome Azione WSSSaml11XACMLPolicyRemotaOk del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_XACMLPOLICY_REMOTA_OK="WSSSaml11XACMLPolicyRemotaOk";   
+    /** ENTITA SPCOOP: Nome Azione WSSSaml11XACMLPolicyRemotaKo del Servizio RichiestaStatoAvanzamento */
+    public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_SAML11_XACMLPOLICY_REMOTA_KO="WSSSaml11XACMLPolicyRemotaKo";
+    
     /** ENTITA SPCOOP: Nome Azione WSSUsernameTokenDigest del Servizio RichiestaStatoAvanzamento */
     public static final String SPCOOP_SERVIZIO_SINCRONO_AZIONE_WSS_USERNAME_TOKEN_DIGEST="WSSUsernameTokenDigest";
     /** ENTITA SPCOOP: Nome Azione WSSUsernameTokenText del Servizio RichiestaStatoAvanzamento */

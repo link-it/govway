@@ -24,8 +24,10 @@ package org.openspcoop2.security.message.authorization;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +36,7 @@ import java.util.Map;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 
+import org.apache.wss4j.common.saml.builder.SAML2Constants;
 import org.apache.wss4j.dom.util.WSSecurityUtil;
 import org.herasaf.xacml.core.SyntaxException;
 import org.herasaf.xacml.core.WritingException;
@@ -61,9 +64,13 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
+import org.openspcoop2.message.xml.XPathExpressionEngine;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.security.message.saml.SAMLConstants;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -71,13 +78,16 @@ import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.xacml.CachedMapBasedSimplePolicyRepository;
 import org.openspcoop2.utils.xacml.PolicyDecisionPoint;
+import org.openspcoop2.utils.xacml.PolicyException;
 import org.openspcoop2.utils.xacml.ResultCombining;
+import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
+import org.openspcoop2.utils.xml.JaxbUtils;
 import org.openspcoop2.utils.xml.XPathException;
-import org.openspcoop2.utils.xml.XPathExpressionEngine;
 import org.openspcoop2.utils.xml.XPathNotFoundException;
 import org.openspcoop2.utils.xml.XPathNotValidException;
 import org.openspcoop2.utils.xml.XPathReturnType;
+import org.slf4j.Logger;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -93,13 +103,32 @@ import org.xml.sax.SAXException;
 
 public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurityAuthorization{
 
+	public static final String SAML_20_ISSUER = "urn:oasis:names:tc:SAML:2.0:assertion:Issuer";
+	public static final String SAML_20_SUBJECT_NAME = "urn:oasis:names:tc:SAML:2.0:assertion:Subject:NameID";
+	public static final String SAML_20_ATTRIBUTE_NAME = "urn:oasis:names:tc:SAML:2.0:assertion:AttributeStatement:Attribute:Name:";
+	
+	public static final String SAML_11_ISSUER = "urn:oasis:names:tc:SAML:2.0:assertion:Issuer";
+	public static final String SAML_11_AUTHENTICATION_SUBJECT_NAME = "urn:oasis:names:tc:SAML:1.0:assertion:AuthenticationStatement:Subject:NameIdentifier";
+	public static final String SAML_11_AUTHORIZATION_SUBJECT_NAME = "urn:oasis:names:tc:SAML:1.0:assertion:AttributeStatement:Subject:NameIdentifier";
+	public static final String SAML_11_ATTRIBUTE_NAME = "urn:oasis:names:tc:SAML:1.0:assertion:AttributeStatement:Attribute:Name:";
+	
+	
 
 	private static PolicyDecisionPoint pdp;
+	private static synchronized void initPdD(Logger log) throws PolicyException{
+    	if(MessageSecurityAuthorizationSAMLPolicy.pdp == null) {
+    		MessageSecurityAuthorizationSAMLPolicy.pdp = new PolicyDecisionPoint(log);
+    	}
+	}
+	
+	
 	private ObjectFactory factory;
+	private AbstractXPathExpressionEngine xpathExpressionEngine;
 
     public MessageSecurityAuthorizationSAMLPolicy()  {
 		this.factory = new ObjectFactory();
 		PolicyDecisionPoint.runInitializers(); //necessario per far inizializzare gli unmarshaller in caso di pdp remoto
+		this.xpathExpressionEngine = new XPathExpressionEngine();
     }
 
 
@@ -119,7 +148,7 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
         
         	OpenSPCoop2SoapMessage soapMessage = msg.castAsSoap();
         	
-	    	// Proprieta' WSSecurity
+	    	// ****** Proprieta' WSSecurity ********
 	    	
 	    	String actor = messageSecurityContext.getActor();
 			if("".equals(messageSecurityContext.getActor()))
@@ -176,13 +205,19 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 				}
 			}
 			
+			
+			
+			
+			
+			// ****** Raccolta Dati ********
+			
 			String tipoSoggettoErogatore = busta.getTipoDestinatario();
 			String nomeSoggettoErogatore = busta.getDestinatario();
 			String tipoServizio = busta.getTipoServizio();
 			String nomeServizio = busta.getServizio();
 			String azione = busta.getAzione() != null ? busta.getAzione() : "";
 	
-			String servizioKey = "http://"+tipoSoggettoErogatore+"_"+nomeSoggettoErogatore+".openspcoop2.org/servizi/"+tipoServizio+"_"+nomeServizio;
+			String servizioKey = "http://"+tipoSoggettoErogatore+nomeSoggettoErogatore+".openspcoop2.org/servizi/"+tipoServizio+nomeServizio;
 			String azioneKey = servizioKey+"/" + azione;
 			
 	    	if(pdpLocal){
@@ -193,9 +228,21 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 			    	for (int i = 0; i < asps.sizeSpecificaSicurezzaList(); i++) {
 						Documento d = asps.getSpecificaSicurezza(i);
 						if(TipiDocumentoSicurezza.XACML_POLICY.getNome().equals(d.getTipo())){
-							if(policy == null)
-								policy = d.getByteContenuto();	
-							else
+							if(policy == null){
+								if(d.getByteContenuto()!=null){
+									policy = d.getByteContenuto();	
+								}
+								else if(d.getFile()!=null){
+									if(d.getFile().startsWith("http://") || d.getFile().startsWith("file://")){
+										URL url = new URL(d.getFile());
+										policy = HttpUtilities.requestHTTPFile(url.toString());
+									}
+									else{
+										File f = new File(d.getFile());
+										policy = FileSystemUtilities.readBytesFromFile(f);
+									}
+								}
+							}else
 					    		throw new SecurityException("Piu di una xacml policy trovata trovata per il servizio "+idServizio.toString());
 						}
 					}
@@ -207,7 +254,7 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 		    	}
 		    	
 		    	if(MessageSecurityAuthorizationSAMLPolicy.pdp == null) {
-		    		MessageSecurityAuthorizationSAMLPolicy.pdp = new PolicyDecisionPoint(messageSecurityContext.getLog());
+		    		MessageSecurityAuthorizationSAMLPolicy.initPdD(messageSecurityContext.getLog());
 		    	}
 		    	
 				// Caricamento in PdP vedendo che la policy non sia gia stata caricata ....
@@ -215,7 +262,10 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 	    	}
 	    	
 	    	
-	    	// Localizzo Header SAML
+	    	
+	    	
+	    	// ****** Header WSSecurity con SAML ********
+	    	
 	    	SOAPElement security = null;
 	    	try{
 	    		security = (SOAPElement) WSSecurityUtil.getSecurityHeader(soapMessage.getSOAPPart(), actor);
@@ -225,57 +275,90 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 	    	if(security==null){
 	     		throw new SecurityException("Header WSSecurity (actor:"+actor+") contenente una SAML non trovato");
 	     	}
-	  	
-	    	// Produzione XACMLRequest a partire dalla SAML
-	
-	    	RequestType xacmlRequest = this.factory.createRequestType();
-	
-			
-	    	// Creare un <Action> che contiene una url cosi realizzata: http://<tipoSoggettoErogatore>_<nomeSoggettoErogatore>.openspcoop2.org/servizi/<tipoServizio>_<nomeServizio>/<nomeAzione>
-	    	// I valori erogatore servizio e azioni si possono prendere dalla busta. L'azione può essere null
 	    	
-			ActionType action =  this.factory.createActionType();
-	
+			DynamicNamespaceContext dnc = null;
+			if(MessageType.SOAP_11.equals(soapMessage.getMessageType())) {
+				dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContextFromSoapEnvelope11(soapMessage.getSOAPPart().getEnvelope());
+			} else {
+				dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContextFromSoapEnvelope12(soapMessage.getSOAPPart().getEnvelope());
+			}
+	    	
+			boolean SAML_2_0 = false;
+			try {
+				Object o = this.xpathExpressionEngine.getMatchPattern(security, dnc, SAMLConstants.XPATH_SAML_20_ASSERTION, XPathReturnType.NODE);
+				SAML_2_0 = (o!=null);
+			} catch(XPathNotFoundException e) {
+				SAML_2_0 = false;
+			}
+
+			
+			
+			
+			
+			// ****** Produzione XACMLRequest a partire dalla SAML ********
+	  	
+	    	RequestType xacmlRequest = this.factory.createRequestType();
+			
+	    	// action
+			ActionType action =  this.factory.createActionType();	
 			action.getAttributes().add(createAttribute("urn:oasis:names:tc:xacml:1.0:action:action-id", azioneKey));
 			xacmlRequest.setAction(action);
 	
+			// subject
 			SubjectType roleSubject = this.factory.createSubjectType();
 	
 	    	// Creare un Subject che contiene nel subject id:
 	    	// come urn:oasis:names:tc:xacml:1.0:subject:subject-id il valore del principal presente nella richiesta (principalWSS)
-	
-			
 			if(principalWSS != null) {
 				roleSubject.getAttributes().add(
 						createAttribute("urn:oasis:names:tc:xacml:1.0:subject:subject-id", principalWSS));
 			}
 			
 	    	// inoltre creare altri attribute del subject che contengano:
+			SAMLAttributes saml = new SAMLAttributes(security, dnc, SAML_2_0, this.xpathExpressionEngine);
+
+			// il valore del NameID all'interno dell'elemento Subject 
+			if(SAML_2_0){
+				if(saml.nameIDAuthorization!=null){
+					roleSubject.getAttributes().add(
+							createAttribute(SAML_20_SUBJECT_NAME, saml.nameIDAuthorization));
+				}
+			}
+			else{
+				if(saml.nameIDAuthorization!=null){
+					roleSubject.getAttributes().add(
+							createAttribute(SAML_11_AUTHORIZATION_SUBJECT_NAME, saml.nameIDAuthorization));
+				}
+				if(saml.nameIDAuthentication!=null){
+					roleSubject.getAttributes().add(
+							createAttribute(SAML_11_AUTHENTICATION_SUBJECT_NAME, saml.nameIDAuthentication));
+				}
+			}
+	
+	    	// il valore dell'elemento Issuer
+			if(SAML_2_0){
+				roleSubject.getAttributes().add(
+						createAttribute(SAML_20_ISSUER, saml.issuer));
+			}
+			else{
+				roleSubject.getAttributes().add(
+						createAttribute(SAML_11_ISSUER, saml.issuer));
+			}
 			
-	    	// - AttributeId="urn:oasis:names:tc:SAML:2.0:assertion/Subject/NameID il valore del NameID all'interno dell'elemento Subject 
-	
-			SAMLAttributes saml = new SAMLAttributes(security, soapMessage);
-	
-			roleSubject.getAttributes().add(
-					createAttribute("urn:oasis:names:tc:SAML:2.0:assertion/Subject/NameID", saml.nameID));
-	
-	    	// - AttributeId="urn:oasis:names:tc:SAML:2.0:assertion/Issuer il valore dell'elemento Issuer
-	
-			roleSubject.getAttributes().add(
-					createAttribute("urn:oasis:names:tc:SAML:2.0:assertion/Issuer", saml.issuer));
-			
-	    	// - AttributeId="urn:oasis:names:tc:SAML:2.0:assertion/AttributeStatement/Attribute/Name/<Nome> se il NameFormat non è una uri altrimenti direttamente il nome come attribute Id
-	
+	    	// - AttributeId="urn:oasis:names:tc:SAML:XX:assertion/AttributeStatement/Attribute/Name/<Nome> se il NameFormat non è una uri altrimenti direttamente il nome come attribute Id
 			for(String keyAttribute: saml.customAttributes.keySet()) {
-				
 				roleSubject.getAttributes().add(
 						createAttribute(keyAttribute, saml.customAttributes.get(keyAttribute)));
 			}
 	
-	
 			xacmlRequest.getSubjects().add(roleSubject);
 			xacmlRequest.setEnvironment(this.factory.createEnvironmentType());
 	
+			
+			
+			
+			// ****** Valutazione XACMLRequest con PdD ********
+			
 			List<ResultType> results = null;
 	    	ResourceType resource = this.factory.createResourceType();
 			if(pdpLocal){
@@ -290,7 +373,6 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 	    	    	messageSecurityContext.getLog().debug(new String(marshallRequest(xacmlRequest)));
 	    	    	messageSecurityContext.getLog().debug("----XACML Request locale end ---");
 	    	    	
-
 	    			results = MessageSecurityAuthorizationSAMLPolicy.pdp.evaluate(xacmlRequest);
 	    	    	messageSecurityContext.getLog().debug("----XACML Results begin ---");
 	    			for(ResultType result: results) {
@@ -338,15 +420,72 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 	        	result.setAuthorized(true);
 	        	result.setErrorMessage(null);
 	    	} else {
+	    		
+	    		String url = "";
+	    		String tipo = "XACML-Policy";
+    			if(!pdpLocal){
+    				url = " url["+remotePdD_url+"]";
+    				tipo = "XACML-Policy-RemotePdp";
+    			}
+	    		try{
+	    			StringBuffer bfPolicy = new StringBuffer();
+	    			for (int i = 0; i < results.size(); i++) {
+		        		ResultType res = results.get(i);
+	    				if(bfPolicy.length()>0){
+	    					bfPolicy.append("\n");
+	    				}
+	    				bfPolicy.append("Result["+(i+1)+"]: ");
+	    				ByteArrayOutputStream bout = new ByteArrayOutputStream();
+	    				JaxbUtils.objToXml(bout, res.getClass(), res);
+	    				bout.flush();
+	    				bout.close();
+	    				bfPolicy.append(bout.toString());
+	    			}
+	    			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Autorizzazione con XACMLPolicy fallita pddLocal["+pdpLocal+"]"+url+"; results (size:"+results.size()+"): \n"+bfPolicy.toString());
+	    		}catch(Throwable e){
+	    			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Autorizzazione con XACMLPolicy fallita pddLocal["+pdpLocal+"]"+url+". Serializzazione risposta non riuscita",e);
+	    		}
+	    		
 	        	result.setAuthorized(false);
-	
-	    		for(ResultType res: results) {
-	    	    	if(DecisionType.DENY.equals(res.getDecision()) && res.getStatus() != null) {
-	    	        	result.setErrorMessage(res.getStatus().getStatusMessage());
+		        	
+	        	StringBuffer bf = new StringBuffer();
+	        	for (int i = 0; i < results.size(); i++) {
+	        		ResultType res = results.get(i);
+	        		
+	        		boolean check = false;
+		        	if(DecisionType.DENY.equals(decision)) {
+		        		check = DecisionType.DENY.equals(res.getDecision());
+		        	}
+		        	else{
+		        		check = DecisionType.DENY.equals(res.getDecision()) || DecisionType.INDETERMINATE.equals(res.getDecision()) || DecisionType.NOT_APPLICABLE.equals(res.getDecision());
+		        	}
+	        		
+	    	    	if(check) {
+	    	    		if(bf.length()>0){
+	    	    			bf.append(" - ");
+	    				}
+	    	    		bf.append("(result-"+(i+1)+" "+res.getDecision().name());
+	    	    		if( res.getStatus() != null ){
+		    	    		if(res.getStatus().getStatusCode() != null){
+		    	    			bf.append(" code:").append(res.getStatus().getStatusCode().getValue());
+		    	    		}
+		    	    		if(res.getStatus().getStatusMessage() != null){
+		    	    			bf.append(" ").append(res.getStatus().getStatusMessage());
+		    	    		}
+	    	    		}
+	    	    		bf.append(")");
+	    	        	
 	    	    	}
 	    	    }
+	        	if(bf.length()>0){
+	        		result.setErrorMessage(tipo+" "+bf.toString());
+	        	}
+	        	else{
+	        		result.setErrorMessage(tipo);
+	        	}
 	    	}
 	    	return result;
+	    	
     	} catch(SecurityException e) {
     		messageSecurityContext.getLog().error("Errore di sicurezza durante la gestione della richiesta per il servizio: " + idServizio, e);
     		throw e;
@@ -410,68 +549,120 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
     }
 	
 	private class SAMLAttributes {
-		public String nameID;
+		public String nameIDAuthentication;
+		public String nameIDAuthorization;
 		public String issuer;
 		public Map<String, List<String>> customAttributes;
 		
-		public SAMLAttributes(SOAPElement security, OpenSPCoop2SoapMessage message) throws Exception {
-			this.nameID = find(security, message, "//{urn:oasis:names:tc:SAML:2.0:assertion}:Assertion/{urn:oasis:names:tc:SAML:2.0:assertion}:Subject/{urn:oasis:names:tc:SAML:2.0:assertion}:NameID/text()");
-			this.issuer = find(security, message, "//{urn:oasis:names:tc:SAML:2.0:assertion}:Assertion/{urn:oasis:names:tc:SAML:2.0:assertion}:Issuer/text()");
-			this.customAttributes = findNameAttributes(security, message);
+		private DynamicNamespaceContext dnc;
+		private boolean saml20;
+		private AbstractXPathExpressionEngine xpathExpressionEngine;
+		
+		public SAMLAttributes(SOAPElement security, DynamicNamespaceContext dnc, boolean saml20, AbstractXPathExpressionEngine xpathExpressionEngine) throws Exception {
+			this.dnc = dnc;
+			this.saml20 = saml20;
+			this.xpathExpressionEngine = xpathExpressionEngine;
+			if(this.saml20){
+				this.nameIDAuthorization = find(security, SAMLConstants.XPATH_SAML_20_ASSERTION_SUBJECT_NAMEID,false);
+				this.issuer = find(security,  SAMLConstants.XPATH_SAML_20_ASSERTION_ISSUER,true);
+			}
+			else{
+				this.nameIDAuthorization = find(security, SAMLConstants.XPATH_SAML_11_ASSERTION_ATTRIBUTESTATEMENT_SUBJECT_NAMEID,false);
+				this.nameIDAuthentication = find(security, SAMLConstants.XPATH_SAML_11_ASSERTION_AUTHENTICATIONSTATEMENT_SUBJECT_NAMEID,false);
+				this.issuer = find(security,  SAMLConstants.XPATH_SAML_11_ASSERTION_ISSUER,true);
+			}
+			this.customAttributes = findNameAttributes(security);
 		}
 
-		private String find(SOAPElement security, OpenSPCoop2SoapMessage message,
-				String xpath) throws SAXException, SOAPException,
+		private String find(SOAPElement security,String xpath, boolean required) throws SAXException, SOAPException,
 				XPathException, XPathNotValidException, Exception {
-			DynamicNamespaceContext dnc = null;
-			if(MessageType.SOAP_11.equals(message.getMessageType())) {
-				dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContextFromSoapEnvelope11(message.getSOAPPart().getEnvelope());
-			} else {
-				dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContextFromSoapEnvelope12(message.getSOAPPart().getEnvelope());
-			}
 			
 			String match = null;
 			try {
-				match = (String) new XPathExpressionEngine().getMatchPattern(security, dnc, xpath, XPathReturnType.STRING);
+				match = (String) this.xpathExpressionEngine.getMatchPattern(security, this.dnc, xpath, XPathReturnType.STRING);
 			} catch(XPathNotFoundException e) {
-				throw new Exception("Impossibile trovare l'xPath ["+xpath+"]");
+				if(required)
+					throw new Exception(e.getMessage(),e);
+				else
+					return null;
 			}
 			return match;
 		}
 
-		private Map<String, List<String>> findNameAttributes(SOAPElement security, OpenSPCoop2SoapMessage message) throws SAXException, SOAPException,
+		private Map<String, List<String>> findNameAttributes(SOAPElement security) throws SAXException, SOAPException,
 				XPathException, XPathNotValidException, Exception {
-			DynamicNamespaceContext dnc = null;
-			if(MessageType.SOAP_11.equals(message.getMessageType())) {
-				dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContextFromSoapEnvelope11(message.getSOAPPart().getEnvelope());
-			} else {
-				dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContextFromSoapEnvelope12(message.getSOAPPart().getEnvelope());
-			}
 			
 			Map<String, List<String>> nameAttributes = new HashMap<String, List<String>>();
 
-			String xpath = "//{urn:oasis:names:tc:SAML:2.0:assertion}:Assertion/{urn:oasis:names:tc:SAML:2.0:assertion}:AttributeStatement/{urn:oasis:names:tc:SAML:2.0:assertion}:Attribute";
+			String xpath = null;
+			if(this.saml20){
+				xpath = SAMLConstants.XPATH_SAML_20_ASSERTION_ATTRIBUTESTATEMENT_ATTRIBUTE;
+			}
+			else{
+				xpath = SAMLConstants.XPATH_SAML_11_ASSERTION_ATTRIBUTESTATEMENT_ATTRIBUTE;
+			}
 			try {
-				NodeList attributes = (NodeList) new XPathExpressionEngine().getMatchPattern(security, dnc, xpath, XPathReturnType.NODESET);
+				NodeList attributes = (NodeList) this.xpathExpressionEngine.getMatchPattern(security, this.dnc, xpath, XPathReturnType.NODESET);
 				if(attributes != null) {
 					for(int i = 0; i < attributes.getLength(); i++) {
 						org.w3c.dom.Node attribute = attributes.item(i);
-						Node nameAttribute = attribute.getAttributes().getNamedItem("Name");
-						Node friendlyNameAttribute = attribute.getAttributes().getNamedItem("FriendlyName");
-						Node nameFormatAttribute = attribute.getAttributes().getNamedItem("NameFormat");
-						boolean uriNameFormat = nameFormatAttribute != null && nameFormatAttribute.getNodeValue().equals("urn:oasis:names:tc:SAML:2.0:attrname-format:uri");
-
-						String key = null;
-						if(friendlyNameAttribute != null) {
-							key = "urn:oasis:names:tc:SAML:2.0:assertion/AttributeStatement/Attribute/Name/" + friendlyNameAttribute.getNodeValue();
-						} else {
-							if(uriNameFormat) {
-								key = nameAttribute.getNodeValue();
-							} else {
-								key = "urn:oasis:names:tc:SAML:2.0:assertion/AttributeStatement/Attribute/Name/" + nameAttribute.getNodeValue();
+						String name = null;
+						String friendlyName = null;
+						boolean uriNameFormat = false;
+						if(this.saml20){
+							Node nameAttribute = attribute.getAttributes().getNamedItem("Name");
+							name = nameAttribute.getNodeValue();
+							Node friendlyNameAttribute = attribute.getAttributes().getNamedItem("FriendlyName");
+							if(friendlyNameAttribute!=null){
+								friendlyName = friendlyNameAttribute.getNodeValue();
+							}
+							Node nameFormatAttribute = attribute.getAttributes().getNamedItem("NameFormat");
+							if(nameFormatAttribute!=null){
+								uriNameFormat = SAML2Constants.ATTRNAME_FORMAT_URI.equals(nameFormatAttribute.getNodeValue());
+							}	
+						}
+						else{
+							Node nameAttribute = attribute.getAttributes().getNamedItem("AttributeNamespace");
+							name = nameAttribute.getNodeValue();
+							Node friendlyNameAttribute = attribute.getAttributes().getNamedItem("AttributeName");
+							friendlyName = friendlyNameAttribute.getNodeValue(); // obbligatorio in saml11
+						}
+						if(uriNameFormat==false){
+							if(friendlyName==null){
+								if(name.startsWith("urn:") || name.startsWith("url:") || name.startsWith("http:") || name.startsWith("htts:")){
+									uriNameFormat = true;
+								}
 							}
 						}
 
+						String key = null;
+						if(friendlyName != null) {
+							if(this.saml20){
+								key = SAML_20_ATTRIBUTE_NAME + friendlyName;
+							}
+							else{
+								key = SAML_11_ATTRIBUTE_NAME + friendlyName;
+							}
+						} else {
+							if(uriNameFormat) {
+								key = name;
+							} else {
+								if(this.saml20){
+									key = SAML_20_ATTRIBUTE_NAME + name;
+								}
+								else{
+									key = SAML_11_ATTRIBUTE_NAME + name;
+								}
+							}
+						}
+
+						String samlNamespace = null;
+						if(this.saml20){
+							samlNamespace = SAMLConstants.SAML_20_NAMESPACE;
+						}else{
+							samlNamespace = SAMLConstants.SAML_11_NAMESPACE;
+						}
+						
 						List<String> values = null;
 						if(nameAttributes.containsKey(key)) {
 							values = nameAttributes.remove(key);
@@ -482,7 +673,8 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 						if(attributeValues != null) {
 							for(int j = 0; j < attributeValues.getLength(); j++) {
 								org.w3c.dom.Node attributeValue = attributeValues.item(j);
-								if(attributeValue != null && "AttributeValue".equals(attributeValue.getLocalName()) && "urn:oasis:names:tc:SAML:2.0:assertion".equals(attributeValue.getNamespaceURI())) {
+								if(attributeValue != null && "AttributeValue".equals(attributeValue.getLocalName()) && 
+										samlNamespace.equals(attributeValue.getNamespaceURI())) {
 									values.add(attributeValue.getTextContent());
 								}
 							}

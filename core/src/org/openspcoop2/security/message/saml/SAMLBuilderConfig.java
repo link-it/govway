@@ -101,7 +101,7 @@ public class SAMLBuilderConfig {
 			}
 			return config;
 		}catch(Exception e){
-			throw new IOException("Properties config ["+propertiesName+"]: "+e.getMessage());
+			throw new IOException("Properties config ["+propertiesName+"]: "+e.getMessage(),e);
 		}
 	}	
 	private static boolean isTrue(Properties p,String name, boolean defaultValue) throws IOException{

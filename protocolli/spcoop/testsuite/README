@@ -212,6 +212,7 @@ Il test inoltre richiede l'installazione dei seguenti file di properties in /etc
 Infine il test richiede l'installazione delle configurazioni relative a SAML:
    - copia in /etc/openspcoop2/properties dei files presenti in protocolli/spcoop/testsuite/deploy/saml_examples/saml20
    - copia all'interno dell'archivio della PdD dei files presenti in protocolli/spcoop/testsuite/deploy/saml_examples/saml11
+   - copia in /etc/openspcoop2/xacmlPolicy i files presenti in protocolli/spcoop/testsuite/deploy/saml_examples/xacmlPolicy
 
 ** Connettori **
 

@@ -249,7 +249,8 @@ public class MessageSecurityReceiver_wss4j implements IMessageSecurityReceiver{
 						// only Signature and UsernameToken actions return a principal
 						int actionGet = ((java.lang.Integer)  eResult.get(WSSecurityEngineResult.TAG_ACTION)).intValue();
 						if ((actionGet == WSConstants.SIGN) || 
-								(actionGet == WSConstants.UT)) {
+								(actionGet == WSConstants.UT) || 
+								(actionGet == WSConstants.ST_SIGNED)) {
 							principal =  ((Principal) eResult.get(WSSecurityEngineResult.TAG_PRINCIPAL)).getName();
 							// Signature and UsernameToken actions return a principal
 							//System.out.println("Principal's name: " + principal);
@@ -264,7 +265,8 @@ public class MessageSecurityReceiver_wss4j implements IMessageSecurityReceiver{
 					// only Signature and UsernameToken actions return a principal
 					int actionGet = ((java.lang.Integer)  eResult.get(WSSecurityEngineResult.TAG_ACTION)).intValue();
 					if ((actionGet == WSConstants.SIGN) || 
-							(actionGet == WSConstants.UT)) {
+							(actionGet == WSConstants.UT) || 
+							(actionGet == WSConstants.ST_SIGNED)) {
 						principal =  ((Principal) eResult.get(WSSecurityEngineResult.TAG_PRINCIPAL)).getName();
 						// Signature and UsernameToken actions return a principal
 						//System.out.println("Principal's name: " + principal);
