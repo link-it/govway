@@ -65,7 +65,6 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
-import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.security.message.constants.SecurityConstants;
@@ -441,9 +440,9 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 	    				bout.close();
 	    				bfPolicy.append(bout.toString());
 	    			}
-	    			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Autorizzazione con XACMLPolicy fallita pddLocal["+pdpLocal+"]"+url+"; results (size:"+results.size()+"): \n"+bfPolicy.toString());
+	    			messageSecurityContext.getLog().error("Autorizzazione con XACMLPolicy fallita pddLocal["+pdpLocal+"]"+url+"; results (size:"+results.size()+"): \n"+bfPolicy.toString());
 	    		}catch(Throwable e){
-	    			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Autorizzazione con XACMLPolicy fallita pddLocal["+pdpLocal+"]"+url+". Serializzazione risposta non riuscita",e);
+	    			messageSecurityContext.getLog().error("Autorizzazione con XACMLPolicy fallita pddLocal["+pdpLocal+"]"+url+". Serializzazione risposta non riuscita",e);
 	    		}
 	    		
 	        	result.setAuthorized(false);
