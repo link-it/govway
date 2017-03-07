@@ -13,43 +13,45 @@
 
 	<!-- DEPRECATO: Non utilizzare, manda in OutOfMemory i task ant -->
 	
-	<!-- Check JAVA VERSIONE -->
-	<property environment="env"/>
-	<var name="java_home" value="${env.JAVA_HOME}"/>
-	<echo message="Java home: ${java_home}"/>
-	<!-- <echo message="Java version: ${ant.java.version}"/> L'informazione viene errata, stampa 1.6 anche per java 1.7-->
-	<if>
-		<or>
-			<matches string="${ant.version}" pattern=".*1\.5\..*"/>
-			<matches string="${ant.version}" pattern=".*1\.6\..*"/>
-			<matches string="${ant.version}" pattern=".*1\.7\..*"/>
-			<matches string="${ant.version}" pattern=".*1\.8\.0.*"/>
-			<matches string="${ant.version}" pattern=".*1\.8\.1.*"/>
-		</or>
-		<then>
-			<echo message="Ant version: ${ant.version}"/>
-			<fail message="E' richiesta una versione di apache-ant 1.8.2 o superiore"/>
-		</then>
-	</if>
-	<if>
-		<equals arg1="${java_home}" arg2="$${env.JAVA_HOME}"/>
-		<then>
-			<fail message="JAVA_HOME non impostata"/>
-		</then>
-	</if>
-	<if>
-		<or>
-			<equals arg1="${ant.java.version}" arg2="1.3" />
-			<equals arg1="${ant.java.version}" arg2="1.4" />
-	     	<equals arg1="${ant.java.version}" arg2="1.5" />
-			<equals arg1="${ant.java.version}" arg2="1.6" />
-		</or>
-		<then>
-			<echo message="Java home: ${java_home}"/>
-			<echo message="Java version: ${ant.java.version}"/>
-			<fail message="E' richiesta una versione di java 7 o superiore"/>
-		</then>
-	</if>
+	<target name="check_java_version">
+		<!-- Check JAVA VERSIONE -->
+		<property environment="env"/>
+		<var name="java_home" value="${env.JAVA_HOME}"/>
+		<echo message="Java home: ${java_home}"/>
+		<!-- <echo message="Java version: ${ant.java.version}"/> L'informazione viene errata, stampa 1.6 anche per java 1.7-->
+		<if>
+			<or>
+				<matches string="${ant.version}" pattern=".*1\.5\..*"/>
+				<matches string="${ant.version}" pattern=".*1\.6\..*"/>
+				<matches string="${ant.version}" pattern=".*1\.7\..*"/>
+				<matches string="${ant.version}" pattern=".*1\.8\.0.*"/>
+				<matches string="${ant.version}" pattern=".*1\.8\.1.*"/>
+			</or>
+			<then>
+				<echo message="Ant version: ${ant.version}"/>
+				<fail message="E' richiesta una versione di apache-ant 1.8.2 o superiore"/>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${java_home}" arg2="$${env.JAVA_HOME}"/>
+			<then>
+				<fail message="JAVA_HOME non impostata"/>
+			</then>
+		</if>
+		<if>
+			<or>
+				<equals arg1="${ant.java.version}" arg2="1.3" />
+				<equals arg1="${ant.java.version}" arg2="1.4" />
+		     	<equals arg1="${ant.java.version}" arg2="1.5" />
+				<equals arg1="${ant.java.version}" arg2="1.6" />
+			</or>
+			<then>
+				<echo message="Java home: ${java_home}"/>
+				<echo message="Java version: ${ant.java.version}"/>
+				<fail message="E' richiesta una versione di java 7 o superiore"/>
+			</then>
+		</if>
+	</target>
 		
 		
 </project>
