@@ -1,5 +1,5 @@
 /*
- * OpenSPCoop v2 - Customizable SOAP Message Broker 
+ * OpenSPCoop - Customizable API Gateway 
  * http://www.openspcoop2.org
  * 
  * Copyright (c) 2005-2017 Link.it srl (http://link.it).
