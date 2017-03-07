@@ -34,8 +34,8 @@ import org.openspcoop2.utils.sonde.impl.SondaCoda;
  * 
  *
  * @author Bussu Giovanni (bussu@link.it)
- * @author $Author: gbussu $
- * @version $Rev: 12563 $, $Date: 2017-01-11 13:25:31 +0100(mer, 11 gen 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class ClientTest {
 

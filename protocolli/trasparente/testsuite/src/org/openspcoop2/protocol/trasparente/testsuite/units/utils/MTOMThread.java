@@ -32,8 +32,8 @@ import org.openspcoop2.example.server.mtom.ws.MTOMServiceExampleSOAP12Impl;
  * 
  *  
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 12563 $, $Date: 2017-01-11 13:25:31 +0100 (Wed, 11 Jan 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class MTOMThread extends Thread{
 
