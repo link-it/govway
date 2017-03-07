@@ -173,6 +173,25 @@
                 </classpath>
         </java>
 	</target>
+
+	<target name="runSondeTest">
+		<if>
+			<equals arg1="${tipoDatabase}" arg2="$${tipoDatabase}"/>
+			<then>
+				<fail message="Parametro tipoDatabase non fornito"/>
+			</then>
+		</if>
+        <!-- Run the java code  -->
+        <java classname="org.openspcoop2.utils.sonde.ClientTest" fork="true">
+                <arg value="${tipoDatabase}" />
+        		<arg value="${url}" /> <!-- opzionale -->
+        		<arg value="${username}" /> <!-- opzionale -->
+        		<arg value="${password}" /> <!-- opzionale -->
+                <classpath>
+                		<path refid="classpath_run_dist" />
+                </classpath>
+        </java>
+	</target>
 	
 	<target name="runIdSerialTest">
 		<if>

@@ -1,0 +1,56 @@
+/*
+ * OpenSPCoop v2 - Customizable SOAP Message Broker 
+ * http://www.openspcoop2.org
+ * 
+ * Copyright (c) 2005-2017 Link.it srl (http://link.it). 
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+
+package org.openspcoop2.utils.sonde;
+
+
+
+/**
+ * Contiene la definizione di una eccezione lanciata dalla classe Sonda
+ *
+ * @author Bussu Giovanni (bussu@link.it)
+ * @author $Author: gbussu $
+ * @version $Rev: 12563 $, $Date: 2017-01-11 13:25:31 +0100(mer, 11 gen 2017) $
+ */
+
+
+public class SondaException extends Exception {
+    
+	public SondaException(String message, Throwable cause) {
+		super(message, cause);
+	}
+	public SondaException(Throwable cause) {
+		super(cause);
+	}
+	/**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	public SondaException() {
+		super();
+    }
+	public SondaException(String msg) {
+        super(msg);
+    }
+}
+
