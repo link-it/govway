@@ -1,3 +1,14 @@
+2017-03-08  Andrea Poli <apoli@link.it>
+
+	* [Pdd]
+	Aggiunta funzionalità OP-607
+	Aggiunta alla classe di utility org.openspcoop2.security.utils.ExternalPWCallback la possibilità 
+	di far risolvere eventuali variabili Java indicate all'interno del file.
+	Ad esempio:
+	   user.${ENV1}=${ENV2}
+	Aggiunto inoltre un refresh automatico del file di properties ogni minuto.
+	Il Refresh è disabilitabile aggiungendo al file la proprietà 'refresh=false'.
+
 2017-02-24  Giovanni Bussu <bussu@link.it>
 
 	* [Utils]
