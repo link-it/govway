@@ -52,6 +52,7 @@ public class SondaCoda extends Sonda {
 
 	@Override
 	public StatoSonda getStatoSonda(){
+		
 		long dimensione_coda = Long.valueOf(super.getParam().getDatiCheck().getProperty("dimensione_coda"));
 		StatoSonda statoSonda = new StatoSonda();
 		SimpleDateFormat format = new SimpleDateFormat(PATTERN);
@@ -81,7 +82,7 @@ public class SondaCoda extends Sonda {
  
 		return statoSonda;
 	}
-	
+
 	/**
 	 * @param dimensioneCoda dimensione attuale della coda
 	 * @param connection connessione per il DB

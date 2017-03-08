@@ -52,20 +52,33 @@ public class SondaBatch extends Sonda {
 	@Override
 	public StatoSonda getStatoSonda(){
 
+
+		Date now = new Date();
+		Date data_warn = new Date(now.getTime() - super.getParam().getSogliaWarn());
+		Date data_err = new Date(now.getTime() - super.getParam().getSogliaError());
+
 		StatoSonda statoSonda = new StatoSonda();
 		boolean esito_batch = Boolean.valueOf(super.getParam().getDatiCheck().getProperty("esito_batch"));
 
-		Long dataUltimoBatchLong = (Long) super.getParam().getDatiCheck().get("data_ultimo_batch");
+		Long dataUltimoBatchLong = null;
+		if(super.getParam().getDatiCheck().containsKey("data_ultimo_batch")) {
+			try {
+				dataUltimoBatchLong = Long.valueOf(super.getParam().getDatiCheck().getProperty("data_ultimo_batch"));
+			} catch(NumberFormatException e) {}
+		}
+
+		if(dataUltimoBatchLong == null) {
+			statoSonda.setStato(2);
+			statoSonda.setDescrizione("Il batch "+super.getParam().getNome()+" risulta non essere eseguito.");
+			return statoSonda;
+		}
+
 		Date data_ultimo_batch = new Date(dataUltimoBatchLong);
 
 		SimpleDateFormat format = new SimpleDateFormat(PATTERN);
 		String dataUltimoBatchString = format.format(data_ultimo_batch);
 		
 		if(esito_batch) {
-
-			Date now = new Date();
-			Date data_warn = new Date(now.getTime() - super.getParam().getSogliaWarn());
-			Date data_err = new Date(now.getTime() - super.getParam().getSogliaError());
 
 			//Valuto l'eventuale superamento delle soglie e calcolo lo stato
 			if(data_ultimo_batch.before(data_err)) {

@@ -94,23 +94,30 @@ public class SondaFactory {
 			sqlQueryObject.addWhereCondition("nome = ?");
 			String sql = sqlQueryObject.createSQLUpdate();
 
-			PreparedStatement ps = connection.prepareStatement(sql);
-			int i = 1;
-			if(sonda.getParam().getDataWarn()!= null) {
-				ps.setTimestamp(i++, new java.sql.Timestamp(sonda.getParam().getDataWarn().getTime()));
-			} else {
-				ps.setNull(i++, Types.TIMESTAMP);
+			PreparedStatement ps = null;
+			try {
+				ps = connection.prepareStatement(sql);
+				int i = 1;
+				if(sonda.getParam().getDataWarn()!= null) {
+					ps.setTimestamp(i++, new java.sql.Timestamp(sonda.getParam().getDataWarn().getTime()));
+				} else {
+					ps.setNull(i++, Types.TIMESTAMP);
+				}
+				if(sonda.getParam().getDataError()!= null) {
+					ps.setTimestamp(i++, new java.sql.Timestamp(sonda.getParam().getDataError().getTime()));
+				} else {
+					ps.setNull(i++, Types.TIMESTAMP);
+				}
+				ps.setTimestamp(i++, new java.sql.Timestamp(sonda.getParam().getDataUltimoCheck().getTime()));
+				ps.setString(i++, sonda.getParam().marshallDatiCheck());
+				ps.setInt(i++, sonda.getParam().getStatoUltimoCheck());
+				ps.setString(i++, nome);
+				ps.executeUpdate();
+			} finally {
+				if(ps != null) {
+					try {ps.close();} catch(Exception e) {}
+				}
 			}
-			if(sonda.getParam().getDataError()!= null) {
-				ps.setTimestamp(i++, new java.sql.Timestamp(sonda.getParam().getDataError().getTime()));
-			} else {
-				ps.setNull(i++, Types.TIMESTAMP);
-			}
-			ps.setTimestamp(i++, new java.sql.Timestamp(sonda.getParam().getDataUltimoCheck().getTime()));
-			ps.setString(i++, sonda.getParam().marshallDatiCheck());
-			ps.setInt(i++, sonda.getParam().getStatoUltimoCheck());
-			ps.setString(i++, nome);
-			ps.executeUpdate();
 		} catch(Exception e) {
 			throw new SondaException(e);
 		}
@@ -130,13 +137,24 @@ public class SondaFactory {
 			sqlQueryObject.addWhereCondition("nome = ?");
 			String sql = sqlQueryObject.createSQLQuery();
 
-			PreparedStatement ps = connection.prepareStatement(sql);
-			ps.setString(1, nome);
-			ResultSet rs = ps.executeQuery();
-			if(rs.next()) {
-				return getSonda(rs);
-			}
+			PreparedStatement ps = null;
+			ResultSet rs = null;
+			try {
+				ps = connection.prepareStatement(sql);
+				ps.setString(1, nome);
+				rs = ps.executeQuery();
 
+				if(rs.next()) {
+					return getSonda(rs);
+				}
+			} finally {
+				if(rs != null) {
+					try {rs.close();} catch(Exception e) {}
+				}
+				if(ps != null) {
+					try {ps.close();} catch(Exception e) {}
+				}
+			}
 			return null;
 		} catch(Exception e) {
 			throw new SondaException(e);
@@ -157,13 +175,23 @@ public class SondaFactory {
 
 			String sql = sqlQueryObject.createSQLQuery();
 
-			PreparedStatement ps = connection.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
-			while(rs.next()) {
-				Sonda sonda = getSonda(rs);
-				sondaLst.add(sonda);
+			PreparedStatement ps = null;
+			ResultSet rs = null;
+			try {
+				ps = connection.prepareStatement(sql);
+				rs = ps.executeQuery();
+				while(rs.next()) {
+					Sonda sonda = getSonda(rs);
+					sondaLst.add(sonda);
+				}
+			} finally {
+				if(rs != null) {
+					try {rs.close();} catch(Exception e) {}
+				}
+				if(ps != null) {
+					try {ps.close();} catch(Exception e) {}
+				}
 			}
-
 			return sondaLst;
 		} catch(Exception e) {
 			throw new SondaException(e);
@@ -171,7 +199,7 @@ public class SondaFactory {
 	}
 
 	private static Sonda getSonda(ResultSet rs) throws SQLException,
-	ClassNotFoundException, NoSuchMethodException, Exception,
+	NoSuchMethodException, SondaException,
 	InstantiationException, IllegalAccessException,
 	InvocationTargetException {
 		String nome = rs.getString("nome");
