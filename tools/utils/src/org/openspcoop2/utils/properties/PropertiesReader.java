@@ -54,17 +54,24 @@ public class PropertiesReader extends MapReader<Object, Object> {
 	}
 	
 	public String convertEnvProperties(String value)throws UtilsException{
+		return this.convertEnvProperties(value, false);
+	}
+	public String convertEnvProperties(String value, boolean convertKeyEnvProperties)throws UtilsException{
+		String label = "del valore";
+		if(convertKeyEnvProperties){
+			label = "della chiave";
+		}
 		if(value.indexOf("${")!=-1){
 			while (value.indexOf("${")!=-1){
 				int indexStart = value.indexOf("${");
 				int indexEnd = value.indexOf("}");
 				if(indexEnd==-1){
-					throw new UtilsException("Errore durante l'interpretazione del valore ["+value+"]: ${ utilizzato senza la rispettiva chiusura }");
+					throw new UtilsException("Errore durante l'interpretazione "+label+" ["+value+"]: ${ utilizzato senza la rispettiva chiusura }");
 				}
 				String nameSystemProperty = value.substring(indexStart+"${".length(),indexEnd);
 				String valueSystemProperty = System.getProperty(nameSystemProperty);
 				if(valueSystemProperty==null){
-					throw new UtilsException("Errore durante l'interpretazione del valore ["+value+"]: variabile di sistema ${"+nameSystemProperty+"} non esistente");
+					throw new UtilsException("Errore durante l'interpretazione "+label+" ["+value+"]: variabile di sistema ${"+nameSystemProperty+"} non esistente");
 				}
 				value = value.replace("${"+nameSystemProperty+"}", valueSystemProperty);
 			}
@@ -124,6 +131,9 @@ public class PropertiesReader extends MapReader<Object, Object> {
 	 * @throws UtilsException
 	 */
 	public java.util.Properties readProperties_convertEnvProperties (String prefix)throws UtilsException{
+		return this.readProperties_convertEnvProperties(prefix,false);
+	}
+	public java.util.Properties readProperties_convertEnvProperties (String prefix, boolean convertKeyEnvProperties)throws UtilsException{
 		java.util.Properties prop = new java.util.Properties();
 		try{ 
 			java.util.Properties prop_tmp = this.readProperties(prefix);
@@ -136,7 +146,12 @@ public class PropertiesReader extends MapReader<Object, Object> {
 					value = this.convertEnvProperties(value);
 				}
 				if(property!=null && value!=null){
-					prop.setProperty(property,value);
+					if(convertKeyEnvProperties){
+						prop.setProperty(this.convertEnvProperties(property,true),value);
+					}
+					else{
+						prop.setProperty(property,value);
+					}
 				}
 			}
 			return prop;
