@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -40,6 +41,12 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.generic_project.web.impl.jsf1.mbean.LoginBean;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.transport.http.HttpServletCredential;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.credential.IPrincipalReader;
+import org.openspcoop2.utils.credential.PrincipalReaderException;
+import org.openspcoop2.utils.credential.PrincipalReaderFactory;
+import org.openspcoop2.utils.credential.PrincipalReaderType;
+import org.slf4j.Logger;
 
 /****
 * PrincipalFilter Filtro base per il controllo della login via Container basata sulla presenza del principal.
@@ -59,9 +66,15 @@ public class PrincipalFilter implements Filter {
 
 	private List<String> excludedPages = null;
 
-	public static final String USE_PRINCIPAL = "usePrincipal";
+	public static final String LOGIN_APPLICATION = "login.application";
+	public static final String LOGIN_TIPO = "login.tipo";
+	public static final String LOGIN_PROPR_PREFIX = "login.props.";
 
-	private boolean usePrincipal =false;
+	private boolean loginApplication = true;
+	private String loginTipo = null;
+	private IPrincipalReader principalReader = null;
+	
+	private Logger log = LoggerWrapperFactory.getLogger(PrincipalFilter.class);
 
 	@Override
 	public void destroy() {
@@ -72,18 +85,36 @@ public class PrincipalFilter implements Filter {
 		this.excludedPages = new ArrayList<String>();
 		this.excludedPages.add("public");
 
-		String usePrincipalProp = config.getInitParameter(USE_PRINCIPAL);
+		String usePrincipalProp = config.getInitParameter(LOGIN_APPLICATION);
 
 		if(usePrincipalProp != null){
 			try{
-				this.usePrincipal = Boolean.parseBoolean(usePrincipalProp);
+				this.loginApplication = Boolean.parseBoolean(usePrincipalProp);
 			}catch(Exception e){
-				this.usePrincipal = false;
+				this.loginApplication = true;
 			}
 		}
+		
+		try{
+			if(!this.loginApplication){
+				this.loginTipo = config.getInitParameter(LOGIN_TIPO);
+
+				if(StringUtils.isEmpty(this.loginTipo))
+					this.loginTipo = PrincipalReaderType.PRINCIPAL.getValue();
+				
+				this.principalReader = PrincipalReaderFactory.getReader(this.log, this.loginTipo);
+				Properties prop = new Properties();
+				this.principalReader.init(prop); 
+			}
+		}catch(PrincipalReaderException e){
+			this.log.error("Impossibile caricare il principal reader: "+e.getMessage());
+			throw new ServletException(e);
+		}
+
+		this.log.debug("Usa il principal per il controllo autorizzazione utente ["+this.loginApplication+"]"); 
 
 		// popolo la white list degli oggetti che possono essere visti anche se non authenticati, in particolare css, immagini, js, ecc...
-		if(this.usePrincipal){
+		if(this.loginApplication){
 			this.excludedPages.add("a4j");
 			this.excludedPages.add("images");
 			this.excludedPages.add("css");
@@ -100,7 +131,7 @@ public class PrincipalFilter implements Filter {
 			HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 			HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 			// Autenticazione gestita dall'applicazione 
-			if(!this.usePrincipal){
+			if(this.loginApplication){
 				// is session expire control required for this request?
 				if (isSessionControlRequiredForThisResource(httpServletRequest)) {
 
@@ -150,8 +181,15 @@ public class PrincipalFilter implements Filter {
 					// se non e' loggato lo loggo
 					if(!lb.getIsLoggedIn()){
 						// Controllo principal
-						HttpServletCredential identity = new HttpServletCredential(httpServletRequest,LoggerWrapperFactory.getLogger(PrincipalFilter.class));
-						String username = identity.getPrincipal();
+//						Identity identity = new Identity(httpServletRequest);
+//						String username = identity.getPrincipal();
+						
+						String username = null;
+						try {
+							username = this.principalReader.getPrincipal(httpServletRequest);
+						} catch (PrincipalReaderException e) {
+							this.log.error("Errore durante la lettura del principal: " + e.getMessage(),e);
+						}
 
 						// Se l'username che mi arriva e' settato vuol dire che sono autorizzato dal Container
 						if(username != null){

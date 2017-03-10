@@ -140,7 +140,7 @@ public abstract class ApplicationStartupListener  implements ServletContextListe
 	}
 	
 
-	private String getStringInitParameter(ServletContext ctx,String name){
+	public String getStringInitParameter(ServletContext ctx,String name){
 		String value = ctx.getInitParameter(name);
 		if(value==null || "".equals(value)){
 			return null;
