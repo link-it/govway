@@ -17,19 +17,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.utils.credential;
+package org.openspcoop2.utils.transport.http.credential;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.openspcoop2.utils.Identity;
+import org.openspcoop2.utils.transport.http.HttpServletCredential;
 import org.slf4j.Logger;
 
 /**
- * Implementazione dell'interfaccia {@link IPrincipalReader} che utilizza la classe {@link Identity} come strumento per leggere il principal dalla request.
+ * Implementazione dell'interfaccia {@link IPrincipalReader} che utilizza la classe {@link HttpServletCredential} come strumento per leggere il principal dalla request.
  * 
  * @author Pintori Giuliano (pintori@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: mergefairy $
+ * @version $Rev: 12774 $, $Date: 2017-03-10 10:44:01 +0100 (Fri, 10 Mar 2017) $
  */
 public class IdentityPrincipalReader implements IPrincipalReader{
 
@@ -55,7 +55,7 @@ public class IdentityPrincipalReader implements IPrincipalReader{
 		this.log.debug("Estrazione principal in corso...");
 
 		try{
-			Identity identity = new Identity(request);
+			HttpServletCredential identity = new HttpServletCredential(request,this.log);
 			String username = identity.getPrincipal();
 
 			this.log.debug("Username trovato nel principal [identity.getPrincipal()]: ["+username+"]");

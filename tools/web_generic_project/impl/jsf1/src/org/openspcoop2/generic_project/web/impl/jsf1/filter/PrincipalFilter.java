@@ -40,12 +40,10 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.generic_project.web.impl.jsf1.mbean.LoginBean;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.transport.http.HttpServletCredential;
-import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.credential.IPrincipalReader;
-import org.openspcoop2.utils.credential.PrincipalReaderException;
-import org.openspcoop2.utils.credential.PrincipalReaderFactory;
-import org.openspcoop2.utils.credential.PrincipalReaderType;
+import org.openspcoop2.utils.transport.http.credential.IPrincipalReader;
+import org.openspcoop2.utils.transport.http.credential.PrincipalReaderException;
+import org.openspcoop2.utils.transport.http.credential.PrincipalReaderFactory;
+import org.openspcoop2.utils.transport.http.credential.PrincipalReaderType;
 import org.slf4j.Logger;
 
 /****

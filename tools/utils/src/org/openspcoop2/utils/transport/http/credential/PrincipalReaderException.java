@@ -17,15 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.utils.credential;
+package org.openspcoop2.utils.transport.http.credential;
 
 
 /**
  * PrincipalReaderException eccezione lanciata dal reader.
  * 
  * @author Pintori Giuliano (pintori@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: mergefairy $
+ * @version $Rev: 12774 $, $Date: 2017-03-10 10:44:01 +0100 (Fri, 10 Mar 2017) $
  */
 public class PrincipalReaderException extends Exception{
 
