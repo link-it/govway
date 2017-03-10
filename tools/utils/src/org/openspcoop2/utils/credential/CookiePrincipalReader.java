@@ -1,3 +1,22 @@
+/*
+ * OpenSPCoop - Customizable API Gateway 
+ * http://www.openspcoop2.org
+ * 
+ * Copyright (c) 2005-2017 Link.it srl (http://link.it).
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package org.openspcoop2.utils.credential;
 
 import java.util.Properties;
@@ -8,18 +27,18 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 
-/****
- * 
+/**
  * Implementazione dell'interfaccia {@link IPrincipalReader} che utilizza un cookie come input per riconoscere il principal.
  * 
- * @author pintori
- *
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class CookiePrincipalReader implements IPrincipalReader {
 
 	private Logger log = null;
 	
-	private static final String COOKIENAME_PROP_NAME = "cookieName";
+	public static final String COOKIENAME_PROP_NAME = "cookieName";
 	private String cookieName = null;
 
 	private Properties paramentriConfigurazione = null;
