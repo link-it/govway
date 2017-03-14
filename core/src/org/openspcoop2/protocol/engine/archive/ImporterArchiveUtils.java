@@ -1849,6 +1849,11 @@ public class ImporterArchiveUtils {
 			pd.setOraRegistrazione(DateManager.getDate());
 			
 			
+			// --- set dati obbligatori nel db ----
+			org.openspcoop2.core.config.driver.utils.XMLDataConverter.
+				impostaInformazioniConfigurazione_PortaDelegata(pd);
+			
+			
 			// --- upload ---
 			if(this.importerEngine.existsPortaDelegata(idPortaDelegata)){
 				
@@ -1857,8 +1862,6 @@ public class ImporterArchiveUtils {
 				IDPortaDelegata oldIDPortaDelegataForUpdate = new IDPortaDelegata();
 				oldIDPortaDelegataForUpdate.setNome(old.getNome());
 				pd.setOldIDPortaDelegataForUpdate(oldIDPortaDelegataForUpdate);
-				org.openspcoop2.core.config.driver.utils.XMLDataConverter.
-					impostaInformazioniConfigurazione_PortaDelegata(pd);
 				
 				// visibilita' oggetto stesso per update
 				// L'oggetto non contiene informazione di visibilita, la eredita dal soggetto
@@ -2005,6 +2008,11 @@ public class ImporterArchiveUtils {
 			pa.setOraRegistrazione(DateManager.getDate());
 			
 			
+			// --- set dati obbligatori nel db ----
+			org.openspcoop2.core.config.driver.utils.XMLDataConverter.
+				impostaInformazioniConfigurazione_PortaApplicativa(pa);
+			
+			
 			// --- upload ---
 			if(this.importerEngine.existsPortaApplicativa(idPortaApplicativa)){
 				
@@ -2013,8 +2021,6 @@ public class ImporterArchiveUtils {
 				IDPortaApplicativa oldIDPortaApplicativaForUpdate = new IDPortaApplicativa();
 				oldIDPortaApplicativaForUpdate.setNome(old.getNome());
 				pa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
-				org.openspcoop2.core.config.driver.utils.XMLDataConverter.
-					impostaInformazioniConfigurazione_PortaApplicativa(pa);
 				
 				// visibilita' oggetto stesso per update
 				// L'oggetto non contiene informazione di visibilita, la eredita dal soggetto
