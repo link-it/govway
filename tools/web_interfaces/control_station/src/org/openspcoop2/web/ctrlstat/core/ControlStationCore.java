@@ -640,6 +640,11 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniSSL = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_messageFactory = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols = new Hashtable<String, String>();
@@ -754,6 +759,21 @@ public class ControlStationCore {
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone.get(alias);
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_messageFactory(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeMetodo_messageFactory.get(alias);
@@ -1214,6 +1234,11 @@ public class ControlStationCore {
 		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniSSL = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniSSL;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_messageFactory = core.jmxPdD_configurazioneSistema_nomeMetodo_messageFactory;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione = core.jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols = core.jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols;
@@ -1519,6 +1544,11 @@ public class ControlStationCore {
 					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniSSL.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniSSL(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_messageFactory.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_messageFactory(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_directoryConfigurazione(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_pluginProtocols(alias));

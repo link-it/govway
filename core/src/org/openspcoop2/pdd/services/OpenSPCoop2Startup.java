@@ -1236,6 +1236,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						OpenSPCoop2Logger.loggerTracciamentoAbilitato, OpenSPCoop2Logger.loggerDumpAbilitato,
 						infoConfigSistema.getInformazioniDatabase(),
 						infoConfigSistema.getInformazioniSSL(true,true),
+						infoConfigSistema.getInformazioniCryptographyKeyLength(),
+						infoConfigSistema.getInformazioniInternazionalizzazione(true),
+						infoConfigSistema.getInformazioniTimeZone(true),
 						infoConfigSistema.getPluginProtocols(), 
 						informazioniStatoPortaCache.toArray(new InformazioniStatoPortaCache[1])));
 

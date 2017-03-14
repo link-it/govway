@@ -303,6 +303,9 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_TRACCIAMENTO = "Informazioni Tracciamento";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_DATABASE = "Informazioni Database";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_SSL = "Informazioni SSL";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_CRYPTOGRAPHY_KEY_LENGTH = "Informazioni Cryptography (Key Length)";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_INTERNAZIONALIZZAZIONE = "Informazioni Internazionalizzazione";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_TIMEZONE = "Informazioni TimeZone";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLI = "Informazioni Protocolli";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CACHE = "Cache ";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_DATABASE = "Connessioni Attive al Database";
@@ -385,6 +388,9 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_DIRECTORY_CONFIGURAZIONE = "directoryConfigurazione";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_DATABASE = "infoDatabase_";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_SSL = "infoSsl_";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_CRYPTOGRAPHY_KEY_LENGTH = "infoCrypto_";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_INTERNAZIONALIZZAZIONE = "infoI18N_";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_TIMEZONE = "infoTimeZone_";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO = "infoProtocollo_";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO_CONTESTO = "infoProtocolloContesto_";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_STATO = "Stato";

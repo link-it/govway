@@ -480,6 +480,21 @@ public class ConsoleProperties {
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoSSLComplete");
 	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoCryptographyKeyLength");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoInternazionalizzazione");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoInternazionalizzazioneComplete");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoTimeZone");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoTimeZoneComplete");
+	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_messageFactory(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.messageFactory");
 	}

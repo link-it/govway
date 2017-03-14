@@ -3713,6 +3713,180 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_CRYPTOGRAPHY_KEY_LENGTH);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		String [] infoCryptoKeyLength = null;
+		try{
+			String tmp = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength(alias));
+			if(this.isErroreHttp(tmp, "informazioni CryptographyKeyLength")){
+				// e' un errore
+				tmp = null;
+			}
+			infoCryptoKeyLength = tmp.split("\n");
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni sulla lunghezza delle chiavi di cifratura (jmxResourcePdD): "+e.getMessage(),e);
+		}
+		if(infoCryptoKeyLength==null || infoCryptoKeyLength.length<=0){
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+			de.setType(DataElementType.NOTE);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}
+		else{
+			for (int i = 0; i < infoCryptoKeyLength.length; i++) {
+				
+				try{
+					String label = infoCryptoKeyLength[i];
+					String value = "";
+					if(infoCryptoKeyLength[i].contains(":")){
+						label = infoCryptoKeyLength[i].split(":")[0];
+						value = infoCryptoKeyLength[i].split(":")[1];
+					}
+					
+					de = new DataElement();
+					de.setLabel(label);
+					de.setValue(value);
+					de.setType(DataElementType.TEXT);
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_CRYPTOGRAPHY_KEY_LENGTH+i);
+					de.setSize(this.getSize());
+					dati.addElement(de);
+				}catch(Exception e){
+					this.log.error("Errore durante la lettura delle informazioni sulla lunghezza delle chiavi di cifratura (jmxResourcePdD): "+e.getMessage(),e);
+				}
+			}
+		}
+		
+		
+		
+		
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_INTERNAZIONALIZZAZIONE);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		String [] infoInternazionalizzazione = null;
+		try{
+			String tmp = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione(alias));
+			if(this.isErroreHttp(tmp, "informazioni Internazionalizzazione")){
+				// e' un errore
+				tmp = null;
+			}
+			infoInternazionalizzazione = tmp.split("\n");
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni sull'internazionalizzazione (jmxResourcePdD): "+e.getMessage(),e);
+		}
+		if(infoInternazionalizzazione==null || infoInternazionalizzazione.length<=0){
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+			de.setType(DataElementType.NOTE);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}
+		else{
+			for (int i = 0; i < infoInternazionalizzazione.length; i++) {
+				
+				try{
+					String label = infoInternazionalizzazione[i];
+					String value = "";
+					if(infoInternazionalizzazione[i].contains(":")){
+						label = infoInternazionalizzazione[i].split(":")[0];
+						value = infoInternazionalizzazione[i].substring(infoInternazionalizzazione[i].indexOf(":")+1);
+					}
+					
+					de = new DataElement();
+					if(value==null || "".equals(value)){
+						value = label;
+						label = "Name";
+					}
+					de.setLabel(label);
+					de.setValue(value);
+					de.setType(DataElementType.TEXT);
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_INTERNAZIONALIZZAZIONE+i);
+					de.setSize(this.getSize());
+					dati.addElement(de);
+				}catch(Exception e){
+					this.log.error("Errore durante la lettura delle informazioni sull'internazionalizzazione (jmxResourcePdD): "+e.getMessage(),e);
+				}
+			}
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		de = new DataElement();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_TIMEZONE);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		String [] infoTimezone = null;
+		try{
+			String tmp = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniTimeZone(alias));
+			if(this.isErroreHttp(tmp, "informazioni Internazionalizzazione")){
+				// e' un errore
+				tmp = null;
+			}
+			infoTimezone = tmp.split("\n");
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura delle informazioni sul TimeZone (jmxResourcePdD): "+e.getMessage(),e);
+		}
+		if(infoTimezone==null || infoTimezone.length<=0){
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+			de.setType(DataElementType.NOTE);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}
+		else{
+			for (int i = 0; i < infoTimezone.length; i++) {
+				
+				try{
+					String label = infoTimezone[i];
+					String value = "";
+					if(infoTimezone[i].contains(":")){
+						label = infoTimezone[i].split(":")[0];
+						value = infoTimezone[i].substring(infoTimezone[i].indexOf(":")+1);
+					}
+					
+					de = new DataElement();
+					if(value==null || "".equals(value)){
+						value = label;
+						label = "Name";
+					}
+					de.setLabel(label);
+					de.setValue(value);
+					de.setType(DataElementType.TEXT);
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_TIMEZONE+i);
+					de.setSize(this.getSize());
+					dati.addElement(de);
+				}catch(Exception e){
+					this.log.error("Errore durante la lettura delle informazioni sul TimeZone (jmxResourcePdD): "+e.getMessage(),e);
+				}
+			}
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLI);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);

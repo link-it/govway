@@ -36,14 +36,16 @@ public class InformazioniStatoPorta {
 			boolean log4j_diagnostica,  boolean log4j_openspcoop, boolean log4j_integrationManager, 
 			boolean tracciamento, boolean dumpApplicativo, boolean dumpPD, boolean dumpPA,
 			boolean log4j_tracciamento, boolean log4j_dump,
-			String infoDatabase, String infoSSL,  String infoProtocolli,
+			String infoDatabase, String infoSSL, String infoCryptographyKeyLength, 
+			String infoInternazionalizzazione, String infoTimeZone,  String infoProtocolli,
 			InformazioniStatoPortaCache ... cache){
 		return formatStatoPorta(versionePdD, versioneBaseDati, confDir, versioneJava, vendorJava, messageFactory,
 				livelloSeveritaDiagnostici, livelloSeveritaDiagnosticiLog4j,
 				log4j_diagnostica, log4j_openspcoop, log4j_integrationManager,
 				tracciamento, dumpApplicativo, dumpPD, dumpPA,
 				log4j_tracciamento, log4j_dump,
-				infoDatabase, infoSSL, infoProtocolli,
+				infoDatabase, infoSSL, infoCryptographyKeyLength, 
+				infoInternazionalizzazione, infoTimeZone,infoProtocolli,
 				null,null,null,null,
 				cache);
 	}
@@ -55,7 +57,8 @@ public class InformazioniStatoPorta {
 			boolean log4j_diagnostica,  boolean log4j_openspcoop, boolean log4j_integrationManager, 
 			boolean tracciamento, boolean dumpApplicativo, boolean dumpPD, boolean dumpPA, 
 			boolean log4j_tracciamento, boolean log4j_dump,
-			String infoDatabase, String infoSSL, String infoProtocolli,
+			String infoDatabase, String infoSSL, String infoCryptographyKeyLength, 
+			String infoInternazionalizzazione, String infoTimeZone, String infoProtocolli,
 			String statoConnessioniDB, String statoConnessioniPD, String statoConnessioniPA, String statoConnessioniJMS,
 			InformazioniStatoPortaCache ... cache){
 		
@@ -116,6 +119,28 @@ public class InformazioniStatoPorta {
 		bf.append("===========================\n");
 		bf.append("\n");
 		bf.append(infoSSL);
+		bf.append("\n");
+		
+		bf.append("============================\n");
+		bf.append("Informazioni CipherKeyLength\n");
+		bf.append("============================\n");
+		bf.append("\n");
+		bf.append(infoCryptographyKeyLength);
+		bf.append("\n");
+		
+		bf.append("===================================\n");
+		bf.append("Informazioni Internazionalizzazione\n");
+		bf.append("===================================\n");
+		bf.append("\n");
+		bf.append(infoInternazionalizzazione);
+		bf.append("\n");
+		
+		bf.append("===================================\n");
+		bf.append("Informazioni TimeZone\n");
+		bf.append("===================================\n");
+		bf.append("\n");
+		bf.append(infoTimeZone);
+		bf.append("\n");
 		bf.append("\n");
 		
 		bf.append("===========================\n");

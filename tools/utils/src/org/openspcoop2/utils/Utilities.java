@@ -1200,5 +1200,144 @@ public class Utilities {
 	}
 	
 	
-
+	
+	
+	
+	
+	
+	
+	
+	
+	// ** Locale **
+	
+	public static String toString(java.util.Locale locale){
+		return toString(locale,"\n");
+	}
+	public static String toString(java.util.Locale locale, String separator){
+		StringBuffer bf = new StringBuffer();
+		toString(locale,bf,separator);
+		return bf.toString();
+	}
+	public static void toString(java.util.Locale locale, StringBuffer bf, String separator){
+		
+		bf.append(locale.getDisplayName());
+		bf.append(separator);
+		
+		bf.append("Language: ");
+		if(locale.getLanguage()!=null && !"".equals(locale.getLanguage().trim())){
+			bf.append(locale.getLanguage());
+			bf.append(" (");
+			bf.append(locale.getDisplayLanguage());
+			bf.append(") [ISO3:");
+			try{
+				if(locale.getISO3Language()!=null){
+					bf.append(locale.getISO3Language());
+				}
+				else{
+					bf.append("-");
+				}
+			}catch(Exception e){
+				bf.append(e.getMessage());
+			}
+			bf.append("]");	
+		}
+		else{
+			bf.append("-");
+		}
+		bf.append(separator);
+		
+		bf.append("Country: ");
+		if(locale.getCountry()!=null && !"".equals(locale.getCountry().trim())){
+			bf.append(locale.getCountry());
+			bf.append(" (");
+			bf.append(locale.getDisplayCountry());
+			bf.append(") [ISO3:");
+			try{
+				if(locale.getISO3Language()!=null){
+					bf.append(locale.getISO3Country());
+				}
+				else{
+					bf.append("-");
+				}
+			}catch(Exception e){
+				bf.append(e.getMessage());
+			}
+			bf.append("]");	
+		}
+		else{
+			bf.append("-");
+		}
+		bf.append(separator);
+				
+		bf.append("Script: ");
+		if(locale.getScript()!=null && !"".equals(locale.getScript().trim())){
+			bf.append(locale.getScript());
+			bf.append(" (");
+			bf.append(locale.getDisplayScript());
+			bf.append(")");
+		}
+		else{
+			bf.append("-");
+		}
+		bf.append(separator);
+		
+		bf.append("Variant: ");
+		if(locale.getVariant()!=null && !"".equals(locale.getVariant().trim())){
+			bf.append(locale.getVariant());
+			bf.append(" (");
+			bf.append(locale.getDisplayVariant());
+			bf.append(")");
+		}
+		else{
+			bf.append("-");
+		}
+		bf.append(separator);
+		
+//		Iterator<String> it = locale.getUnicodeLocaleAttributes().iterator();
+//		while (it.hasNext()) {
+//			String attribute = (String) it.next();
+//			bf.append("Attribute["+attribute+"]");
+//			bf.append(separator);
+//		}
+//		
+//		Iterator<Character> itC = locale.getExtensionKeys().iterator();
+//		while (itC.hasNext()) {
+//			Character character = (Character) itC.next();
+//			bf.append("Extension["+character+"]=["+locale.getExtension(character)+"]");
+//			bf.append(separator);
+//		}
+//		
+//		it = locale.getUnicodeLocaleKeys().iterator();
+//		while (it.hasNext()) {
+//			String key = (String) it.next();
+//			bf.append("Key["+key+"]=["+locale.getUnicodeLocaleType(key)+"]");
+//			bf.append(separator);
+//		}
+	
+	}
+	
+	
+	
+	// ** TimeZone **
+	
+	public static String toString(java.util.TimeZone timeZone){
+		return toString(timeZone,false);
+	}
+	public static String toString(java.util.TimeZone timeZone, boolean allInfo){
+		StringBuffer bf = new StringBuffer();
+		toString(timeZone,bf,allInfo);
+		return bf.toString();
+	}
+	public static void toString(java.util.TimeZone timeZone, StringBuffer bf, boolean allInfo){
+		bf.append(timeZone.getID());
+		bf.append(" (");
+		bf.append(timeZone.getDisplayName());
+		bf.append(")");
+		if(allInfo){
+			bf.append(" DSTSaving:");
+			bf.append(timeZone.getDSTSavings());
+			bf.append(" RawOffset:");
+			bf.append(timeZone.getRawOffset());
+		}
+	}
 }

@@ -22,15 +22,22 @@
 package org.openspcoop2.pdd.core.jmx;
 
 import java.security.Provider;
+import java.security.Security;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import javax.crypto.Cipher;
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.AttributeNotFoundException;
@@ -57,6 +64,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.manifest.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.transport.http.SSLConstants;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
@@ -80,6 +88,11 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	public final static String INFORMAZIONI_DATABASE = "getInformazioniDatabase";
 	public final static String INFORMAZIONI_SSL = "getInformazioniSSL";
 	public final static String INFORMAZIONI_COMPLETE_SSL = "getInformazioniCompleteSSL";
+	public final static String INFORMAZIONI_CRYPTOGRAPHY_KEY_LENGTH = "getInformazioniCryptographyKeyLength";
+	public final static String INFORMAZIONI_INTERNAZIONALIZZAZIONE = "getInformazioniInternazionalizzazione";
+	public final static String INFORMAZIONI_COMPLETE_INTERNAZIONALIZZAZIONE = "getInformazioniCompleteInternazionalizzazione";
+	public final static String INFORMAZIONI_TIMEZONE= "getInformazioniTimeZone";
+	public final static String INFORMAZIONI_COMPLETE_TIMEZONE = "getInformazioniCompleteTimeZone";
 	public final static String MESSAGE_FACTORY = "getMessageFactory";
 	public final static String DIRECTORY_CONFIGURAZIONE = "getDirectoryConfigurazione";
 	public final static String PROTOCOLS = "getPluginProtocols";
@@ -193,6 +206,26 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			return this.getInformazioniSSL(true,true);
 		}
 		
+		else if(actionName.equals(INFORMAZIONI_CRYPTOGRAPHY_KEY_LENGTH)){
+			return this.getInformazioniCryptographyKeyLength();
+		}
+		
+		else if(actionName.equals(INFORMAZIONI_INTERNAZIONALIZZAZIONE)){
+			return this.getInformazioniInternazionalizzazione(false);
+		}
+		
+		else if(actionName.equals(INFORMAZIONI_COMPLETE_INTERNAZIONALIZZAZIONE)){
+			return this.getInformazioniInternazionalizzazione(true);
+		}
+		
+		else if(actionName.equals(INFORMAZIONI_TIMEZONE)){
+			return this.getInformazioniTimeZone(false);
+		}
+		
+		else if(actionName.equals(INFORMAZIONI_COMPLETE_TIMEZONE)){
+			return this.getInformazioniTimeZone(true);
+		}
+		
 		else if(actionName.equals(MESSAGE_FACTORY)){
 			return this.getMessageFactory();
 		}
@@ -272,6 +305,41 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
 						String.class.getName(),
 						MBeanOperationInfo.ACTION);
+		
+		// INFORMAZIONI_CRYPTOGRAPHY_KEY_LENGTH
+		MBeanOperationInfo informazioniCRYPTOOp = new MBeanOperationInfo(INFORMAZIONI_CRYPTOGRAPHY_KEY_LENGTH,"Visualizza le informazioni sulla lunghezza delle chiavi di cifratura",
+						null,
+						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
+						String.class.getName(),
+						MBeanOperationInfo.ACTION);
+		
+		// INFORMAZIONI_INTERNAZIONALIZZAZIONE
+		MBeanOperationInfo informazioniINTERNAZIONALIZZAZIONEOp = new MBeanOperationInfo(INFORMAZIONI_INTERNAZIONALIZZAZIONE,"Visualizza le informazioni sull'internazionalizzazione",
+						null,
+						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
+						String.class.getName(),
+						MBeanOperationInfo.ACTION);
+		
+		// INFORMAZIONI_COMPLETE_INTERNAZIONALIZZAZIONE
+		MBeanOperationInfo informazioniCompleteINTERNAZIONALIZZAZIONEOp = new MBeanOperationInfo(INFORMAZIONI_COMPLETE_INTERNAZIONALIZZAZIONE,"Visualizza le informazioni complete sull'internazionalizzazione",
+						null,
+						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
+						String.class.getName(),
+						MBeanOperationInfo.ACTION);
+		
+		// INFORMAZIONI_TIMEZONE
+		MBeanOperationInfo informazioniTIMEZONEOp = new MBeanOperationInfo(INFORMAZIONI_TIMEZONE,"Visualizza le informazioni sul TimeZone",
+						null,
+						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
+						String.class.getName(),
+						MBeanOperationInfo.ACTION);
+		
+		// INFORMAZIONI_COMPLETE_TIMEZONE
+		MBeanOperationInfo informazioniCompleteTIMEZONEOp = new MBeanOperationInfo(INFORMAZIONI_COMPLETE_TIMEZONE,"Visualizza le informazioni complete sul TimeZone",
+						null,
+						//new MBeanParameterInfo[]{new MBeanParameterInfo("param",String.class.getName())}
+						String.class.getName(),
+						MBeanOperationInfo.ACTION);
 
 		// MESSAGE_FACTORY
 		MBeanOperationInfo messageFactoryOp = new MBeanOperationInfo(MESSAGE_FACTORY,"Visualizza la MessageFactory utilizzata dal prodotto",
@@ -306,7 +374,9 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 
 		// Lista operazioni
 		MBeanOperationInfo[] operations = new MBeanOperationInfo[]{versionePddOp,versioneBaseDatiOp,vendorJavaOp,versioneJavaOp,
-				versioneTipoDatabaseOp,informazioniDatabaseOp,informazioniSSLOp,informazioniCompleteSSLOp,
+				versioneTipoDatabaseOp,informazioniDatabaseOp,informazioniSSLOp,informazioniCompleteSSLOp,informazioniCRYPTOOp,
+				informazioniINTERNAZIONALIZZAZIONEOp,informazioniCompleteINTERNAZIONALIZZAZIONEOp,
+				informazioniTIMEZONEOp, informazioniCompleteTIMEZONEOp,
 				messageFactoryOp,confDirectoryOp,protocolsOp};
 
 		return new MBeanInfo(className,description,attributes,constructors,operations,null);
@@ -695,6 +765,116 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			}
 		}catch(Exception n){
 			bf.append(n.getMessage());
+		}
+	}
+	
+	public String getInformazioniCryptographyKeyLength(){
+		try{
+			StringBuffer bf = new StringBuffer();
+			Set<?> algorithms = Security.getAlgorithms("Cipher");
+			if(algorithms!=null && algorithms.size()>0){
+				Iterator<?> it = algorithms.iterator();
+				while (it.hasNext()) {
+					String algorithm = (String) it.next();
+					int max;
+					max = Cipher.getMaxAllowedKeyLength(algorithm);
+					bf.append(algorithm).append(": ").append(max).append(" bit");
+					bf.append("\n");
+				}
+			}
+			if(bf.length()<=0){
+				throw new Exception("Non sono disponibili informazioni sulla lunghezza delle chiavi di cifratura");
+			}else{
+				return bf.toString();
+			}
+		}catch(Throwable e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String getInformazioniInternazionalizzazione(boolean all){
+		try{
+			StringBuffer bf = new StringBuffer();
+			
+			StringBuffer bfInternal = new StringBuffer();
+			Utilities.toString(java.util.Locale.getDefault(), bfInternal, "\n");
+			if(bfInternal.length()>0){
+				if(all){
+					bf.append("DEFAULT ");
+				}
+				bf.append(bfInternal.toString());
+			}
+
+			if(all){
+				java.util.Locale [] l = java.util.Locale.getAvailableLocales();
+				if(l!=null){
+					List<String> ll = new ArrayList<String>();
+					Map<String,java.util.Locale> llMap = new Hashtable<String,java.util.Locale>();
+					for (int i = 0; i < l.length; i++) {
+						ll.add(l[i].getDisplayName());
+						llMap.put(l[i].getDisplayName(), l[i]);
+					}
+					Collections.sort(ll);
+					for (String name : ll) {
+						java.util.Locale locale = llMap.get(name);
+						if(bf.length()>0){
+							bf.append("\n");
+						}
+						Utilities.toString(locale, bf, "\n");
+					}
+				}
+			}
+			
+			if(bf.length()<=0){
+				throw new Exception("Non sono disponibili informazioni sulla internazionalizzazione");
+			}else{
+				return bf.toString();
+			}
+		}catch(Throwable e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String getInformazioniTimeZone(boolean all){
+		try{
+			StringBuffer bf = new StringBuffer();
+			
+			StringBuffer bfInternal = new StringBuffer();
+			Utilities.toString(java.util.TimeZone.getDefault(), bfInternal, all);
+			if(bfInternal.length()>0){
+				if(all){
+					bf.append("DEFAULT ");
+				}
+				bf.append(bfInternal.toString());
+			}
+			
+			if(all){
+				String [] ids = java.util.TimeZone.getAvailableIDs();
+				if(ids!=null){
+					List<String> ll = new ArrayList<String>();
+					for (int i = 0; i < ids.length; i++) {
+						ll.add(ids[i]);
+					}
+					Collections.sort(ll);
+					for (String id : ll) {
+						if(bf.length()>0){
+							bf.append("\n");
+						}
+						Utilities.toString(java.util.TimeZone.getTimeZone(id), bf, all);
+					}
+				}
+			}
+			
+			if(bf.length()<=0){
+				throw new Exception("Non sono disponibili informazioni sulla internazionalizzazione");
+			}else{
+				return bf.toString();
+			}
+		}catch(Throwable e){
+			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
 	

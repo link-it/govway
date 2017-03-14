@@ -299,6 +299,36 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			infoSSL = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
+		String infoCryptographyKeyLength = null;
+		try{
+			infoCryptographyKeyLength = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura delle informazioni sulla lunghezza delle chiavi di cifratura (jmxResourcePdD): "+e.getMessage(),e);
+			infoCryptographyKeyLength = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String infoInternazionalizzazione = null;
+		try{
+			infoInternazionalizzazione = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura delle informazioni sull'internazionalizzazione (jmxResourcePdD): "+e.getMessage(),e);
+			infoInternazionalizzazione = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		String infoTimeZone = null;
+		try{
+			infoTimeZone = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteTimeZone(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura delle informazioni sul TimeZone (jmxResourcePdD): "+e.getMessage(),e);
+			infoTimeZone = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
 		String infoProtocolli = null;
 		try{
 			infoProtocolli = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
@@ -394,7 +424,8 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				"true".equals(log4j_diagnostica), "true".equals(log4j_openspcoop), "true".equals(log4j_integrationManager), 
 				"true".equals(tracciamento), "true".equals(dumpApplicativo), "true".equals(dumpPD), "true".equals(dumpPA),
 				"true".equals(log4j_tracciamento), "true".equals(log4j_dump), 
-				infoDatabase, infoSSL, infoProtocolli,
+				infoDatabase, infoSSL, infoCryptographyKeyLength, 
+				infoInternazionalizzazione, infoTimeZone, infoProtocolli,
 				statoConnessioniDB, statoConnessioniPD, statoConnessioniPA, statoConnessioniJMS,
 				cacheArray);
 	}
