@@ -27,6 +27,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.generic_project.web.impl.jsf1.filter.PrincipalFilter;
@@ -76,6 +77,9 @@ public class LoginPhaseListener implements PhaseListener {
 	        		
 	        		// rimozione messaggio
 	        		ec.getSessionMap().remove(PrincipalFilter.PRINCIPAL_ERROR_MSG);
+	        		HttpSession session = (HttpSession) ec.getSession(false);
+	        		if(session!= null)
+	        			session.invalidate();
 	        		// stampa messaggi
 	        		addError(fc, msg);
 	        	}
