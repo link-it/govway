@@ -3711,52 +3711,54 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		
 		
+		if(this.core.isJmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength()){
 		
-		de = new DataElement();
-		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_CRYPTOGRAPHY_KEY_LENGTH);
-		de.setType(DataElementType.TITLE);
-		dati.addElement(de);
-		
-		String [] infoCryptoKeyLength = null;
-		try{
-			String tmp = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
-					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength(alias));
-			if(this.isErroreHttp(tmp, "informazioni CryptographyKeyLength")){
-				// e' un errore
-				tmp = null;
-			}
-			infoCryptoKeyLength = tmp.split("\n");
-		}catch(Exception e){
-			this.log.error("Errore durante la lettura delle informazioni sulla lunghezza delle chiavi di cifratura (jmxResourcePdD): "+e.getMessage(),e);
-		}
-		if(infoCryptoKeyLength==null || infoCryptoKeyLength.length<=0){
 			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
-			de.setType(DataElementType.NOTE);
-			de.setSize(this.getSize());
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_CRYPTOGRAPHY_KEY_LENGTH);
+			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
-		}
-		else{
-			for (int i = 0; i < infoCryptoKeyLength.length; i++) {
-				
-				try{
-					String label = infoCryptoKeyLength[i];
-					String value = "";
-					if(infoCryptoKeyLength[i].contains(":")){
-						label = infoCryptoKeyLength[i].split(":")[0];
-						value = infoCryptoKeyLength[i].split(":")[1];
-					}
+			
+			String [] infoCryptoKeyLength = null;
+			try{
+				String tmp = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+						this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsa(alias), 
+						this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength(alias));
+				if(this.isErroreHttp(tmp, "informazioni CryptographyKeyLength")){
+					// e' un errore
+					tmp = null;
+				}
+				infoCryptoKeyLength = tmp.split("\n");
+			}catch(Exception e){
+				this.log.error("Errore durante la lettura delle informazioni sulla lunghezza delle chiavi di cifratura (jmxResourcePdD): "+e.getMessage(),e);
+			}
+			if(infoCryptoKeyLength==null || infoCryptoKeyLength.length<=0){
+				de = new DataElement();
+				de.setLabel(ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+				de.setType(DataElementType.NOTE);
+				de.setSize(this.getSize());
+				dati.addElement(de);
+			}
+			else{
+				for (int i = 0; i < infoCryptoKeyLength.length; i++) {
 					
-					de = new DataElement();
-					de.setLabel(label);
-					de.setValue(value);
-					de.setType(DataElementType.TEXT);
-					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_CRYPTOGRAPHY_KEY_LENGTH+i);
-					de.setSize(this.getSize());
-					dati.addElement(de);
-				}catch(Exception e){
-					this.log.error("Errore durante la lettura delle informazioni sulla lunghezza delle chiavi di cifratura (jmxResourcePdD): "+e.getMessage(),e);
+					try{
+						String label = infoCryptoKeyLength[i];
+						String value = "";
+						if(infoCryptoKeyLength[i].contains(":")){
+							label = infoCryptoKeyLength[i].split(":")[0];
+							value = infoCryptoKeyLength[i].split(":")[1];
+						}
+						
+						de = new DataElement();
+						de.setLabel(label);
+						de.setValue(value);
+						de.setType(DataElementType.TEXT);
+						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_CRYPTOGRAPHY_KEY_LENGTH+i);
+						de.setSize(this.getSize());
+						dati.addElement(de);
+					}catch(Exception e){
+						this.log.error("Errore durante la lettura delle informazioni sulla lunghezza delle chiavi di cifratura (jmxResourcePdD): "+e.getMessage(),e);
+					}
 				}
 			}
 		}

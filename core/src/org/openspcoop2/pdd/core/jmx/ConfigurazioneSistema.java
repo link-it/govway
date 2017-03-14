@@ -776,9 +776,13 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				Iterator<?> it = algorithms.iterator();
 				while (it.hasNext()) {
 					String algorithm = (String) it.next();
-					int max;
-					max = Cipher.getMaxAllowedKeyLength(algorithm);
-					bf.append(algorithm).append(": ").append(max).append(" bit");
+					bf.append(algorithm).append(": ");
+					try{
+						bf.append(Cipher.getMaxAllowedKeyLength(algorithm));
+						bf.append(" bit");
+					}catch(Throwable e){
+						bf.append(e.getMessage());
+					}
 					bf.append("\n");
 				}
 			}

@@ -640,6 +640,7 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniSSL = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL = new Hashtable<String, String>();
+	private boolean jmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength = false;
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione = new Hashtable<String, String>();
@@ -759,6 +760,9 @@ public class ControlStationCore {
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL.get(alias);
+	}
+	public boolean isJmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength() {
+		return this.jmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength;
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength.get(alias);
@@ -1234,6 +1238,7 @@ public class ControlStationCore {
 		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniDatabase;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniSSL = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniSSL;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL;
+		this.jmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength = core.jmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniInternazionalizzazione;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione = core.jmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteInternazionalizzazione;
@@ -1512,6 +1517,9 @@ public class ControlStationCore {
 					}catch(Exception e){}
 				}
 			}
+			
+			this.jmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength = consoleProperties.isJmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength();
+			
 			if(this.jmxPdD_aliases!=null){
 				for (String alias : this.jmxPdD_aliases) {
 					String descrizione = consoleProperties.getJmxPdD_descrizione(alias);

@@ -480,6 +480,13 @@ public class ConsoleProperties {
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCompleteSSL(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoSSLComplete");
 	}
+	public boolean isJmxPdD_configurazioneSistema_showInformazioniCryptographyKeyLength() throws UtilsException {
+		String tmp = this.readProperty(false, "risorseJmxPdd.configurazioneSistema.infoCryptographyKeyLength.show");
+		if(tmp==null || "".equals(tmp)){
+			return false;
+		}
+		return "true".equalsIgnoreCase(tmp.trim());
+	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_informazioniCryptographyKeyLength(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.infoCryptographyKeyLength");
 	}
