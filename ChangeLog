@@ -1,3 +1,13 @@
+2017-03-14  Andrea Poli <apoli@link.it>
+
+	* [Pdd,PddConsole]
+	Aggiunta funzionalità OP-611
+	Estesa la sezione ConfigurazioneSistema che attualmente visualizza le informazioni sull'ambiente runtime della PdD,
+	accendendo alle informazioni JMX di ogni singolo nodo, al fine di visualizzare le seguenti ulteriori informazioni:
+	- lunghezza delle chiavi accettate per la cifratura
+	- informazioni sull'internazionalizzazione (java.util.Locale)
+	- informazioni sul TimeZone
+
 2017-03-08  Andrea Poli <apoli@link.it>
 
 	* [Pdd]
