@@ -1,5 +1,13 @@
 2017-03-14  Andrea Poli <apoli@link.it>
 
+	* [PddConsole]
+	Risolto Bug OP-613
+	La funzionalità 'Importa' non abilitava le regole sulla sicurezza del messaggio se presenti su porte delegate o applicative.
+	L'abilitazione avveniva solamente se si effettuava un ulteriore importazione dello stesso archivio 
+	permettendo l'aggiornamento delle informazioni.
+
+2017-03-14  Andrea Poli <apoli@link.it>
+
 	* [Pdd,PddConsole]
 	Aggiunta funzionalità OP-611
 	Estesa la sezione ConfigurazioneSistema che attualmente visualizza le informazioni sull'ambiente runtime della PdD,
