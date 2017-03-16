@@ -1,3 +1,9 @@
+2017-03-16  Giovanni Bussu <bussu@link.it>
+
+	* [Utils]
+	Aggiunta funzionalità OP-605
+	Realizzata una utility di base per la generazione e la gestione di sonde applicative
+
 2017-03-14  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]
