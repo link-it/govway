@@ -378,6 +378,29 @@
 		</if>
 		<property name="build.jar.name" value="openspcoop2_${compile_src_openspcoop2.SVN_ID_NAME}_${compile_src_openspcoop2.ReleaseName}.jar" />
 		
+		<!-- Comprensione valore 'duplicate' jar task -->
+		<var name="jarDuplicate" value="${compile_src_openspcoop2.duplicate}"/>
+		<if>
+			<equals arg1="${jarDuplicate}" arg2="$${compile_src_openspcoop2.duplicate}" />
+			<then>
+				<var name="jarDuplicate" value="add"/> <!-- Valid values are "add", "preserve", and "fail". The default value is "add". -->
+			</then>
+			<else>
+				<if>
+					<not>
+						<or>
+							<equals arg1="${jarDuplicate}" arg2="add" />
+							<equals arg1="${jarDuplicate}" arg2="preserve" />
+							<equals arg1="${jarDuplicate}" arg2="fail" />
+						</or>
+					</not>
+					<then>
+						<fail message="Valid values are 'add', 'preserve' and 'fail' for variable 'compile_src_openspcoop2.duplicate' (found: '${jarDuplicate}')"/>
+					</then>
+				</if>
+			</else>
+		</if>
+		
 		<!-- Creazione jar Libreria Dao-->
 		<if>
 			<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
@@ -409,8 +432,8 @@ Last-Changed-Date:  ${svn.package.lastChangedDate}
 ----------------------------------------
                         
                 </concat>
-				
-				<jar jarfile="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/${build.jar.name}">
+								
+				<jar jarfile="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/${build.jar.name}" duplicate="${jarDuplicate}">
 					<manifest>
 						<section name="[SVN] Version Information">
 							<attribute name="Url" value="${svn.url}" />
@@ -479,7 +502,7 @@ Last-Changed-Date:  ${svn.package.lastChangedDate}
 				</jar>
 			</then>
 			<else>
-				<jar jarfile="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/${build.jar.name}">
+				<jar jarfile="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/${build.jar.name}" duplicate="${jarDuplicate}">
 					<zipfileset dir="${build}/compile-jar-openspcoop2" />
 					<zipfileset dir="${compile_src_openspcoop2.SRC_DIR}" prefix="${compile_src_openspcoop2.SRC_PREFIX}">
 						
@@ -637,6 +660,29 @@ Last-Changed-Date:  ${svn.package.lastChangedDate}
 		</if>
 		<property name="build.jar.name" value="openspcoop2_${compile_src_openspcoop2.SVN_ID_NAME}_${compile_src_openspcoop2.ReleaseName}.jar" />
 		
+		<!-- Comprensione valore 'duplicate' jar task -->
+		<var name="jarDuplicate" value="${compile_src_openspcoop2.duplicate}"/>
+		<if>
+			<equals arg1="${jarDuplicate}" arg2="$${compile_src_openspcoop2.duplicate}" />
+			<then>
+				<var name="jarDuplicate" value="add"/> <!-- Valid values are "add", "preserve", and "fail". The default value is "add". -->
+			</then>
+			<else>
+				<if>
+					<not>
+						<or>
+							<equals arg1="${jarDuplicate}" arg2="add" />
+							<equals arg1="${jarDuplicate}" arg2="preserve" />
+							<equals arg1="${jarDuplicate}" arg2="fail" />
+						</or>
+					</not>
+					<then>
+						<fail message="Valid values are 'add', 'preserve' and 'fail' for variable 'compile_src_openspcoop2.duplicate' (found: '${jarDuplicate}')"/>
+					</then>
+				</if>
+			</else>
+		</if>
+		
 		<!-- Creazione jar Libreria Dao-->
 		<if>
 			<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
@@ -659,7 +705,7 @@ Last-Changed-Date:  ${svn.lastChangedDate}
 					</then>
 				</if>
 				
-				<jar jarfile="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/${build.jar.name}">
+				<jar jarfile="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/${build.jar.name}" duplicate="${jarDuplicate}">
 					<manifest>
 						<section name="[SVN] Version Information">
 							<attribute name="Url" value="${svn.url}" />
@@ -717,7 +763,7 @@ Last-Changed-Date:  ${svn.lastChangedDate}
 				</jar>
 			</then>
 			<else>
-				<jar jarfile="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/${build.jar.name}">
+				<jar jarfile="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}/${build.jar.name}" duplicate="${jarDuplicate}">
 					<zipfileset dir="${compile_src_openspcoop2.JAR_SRC_DIR}" prefix="${compile_src_openspcoop2.JAR_SRC_PREFIX}">
 
 						<include name="${compile_src_openspcoop2.JAR_SRC_INCLUDES}" />
@@ -859,11 +905,34 @@ Last-Changed-Date:  ${svn.lastChangedDate}
 		</if>
 		<property name="build.jar.name" value="openspcoop2_${compile_src_openspcoop2.SVN_ID_NAME}_${compile_src_openspcoop2.ReleaseName}.jar" />
 	
+		<!-- Comprensione valore 'duplicate' jar task -->
+		<var name="jarDuplicate" value="${compile_src_openspcoop2.duplicate}"/>
+		<if>
+			<equals arg1="${jarDuplicate}" arg2="$${compile_src_openspcoop2.duplicate}" />
+			<then>
+				<var name="jarDuplicate" value="add"/> <!-- Valid values are "add", "preserve", and "fail". The default value is "add". -->
+			</then>
+			<else>
+				<if>
+					<not>
+						<or>
+							<equals arg1="${jarDuplicate}" arg2="add" />
+							<equals arg1="${jarDuplicate}" arg2="preserve" />
+							<equals arg1="${jarDuplicate}" arg2="fail" />
+						</or>
+					</not>
+					<then>
+						<fail message="Valid values are 'add', 'preserve' and 'fail' for variable 'compile_src_openspcoop2.duplicate' (found: '${jarDuplicate}')"/>
+					</then>
+				</if>
+			</else>
+		</if>
+		
 		<!-- Creazione jar Libreria Dao-->
 		<if>
 			<istrue value="${compile_src_openspcoop2.SVNINFO}"/>
 			<then>
-				<jar jarfile="${dist}/${build.jar.name}">
+				<jar jarfile="${dist}/${build.jar.name}" duplicate="${jarDuplicate}">
 					<manifest>
 						<section name="[SVN] Version Information">
 							<attribute name="Url" value="${svn.url}" />
@@ -878,7 +947,7 @@ Last-Changed-Date:  ${svn.lastChangedDate}
 				</jar>
 			</then>
 			<else>
-				<jar jarfile="${dist}/${build.jar.name}">
+				<jar jarfile="${dist}/${build.jar.name}" duplicate="${jarDuplicate}">
 					<zipgroupfileset dir="${dist}/${compile_src_openspcoop2.DIST_DIR_NAME}" />
 				</jar>
 			</else>
