@@ -669,9 +669,9 @@ public class Busta implements java.io.Serializable {
 		}else{
 			if(this.busta.getServizio()!=null){
 				this.busta.getServizio().setBase(null);
-				if(this.busta.getServizioCorrelato().getTipo()==null &&
-						(this.busta.getServizioCorrelato().getVersione()==null || this.busta.getServizioCorrelato().getVersione()==1)){
-					this.busta.setServizioCorrelato(null);
+				if(this.busta.getServizio().getTipo()==null &&
+						(this.busta.getServizio().getVersione()==null || this.busta.getServizio().getVersione()==1)){
+					this.busta.setServizio(null);
 				}
 			}
 		}
@@ -692,9 +692,9 @@ public class Busta implements java.io.Serializable {
 		}else{
 			if(this.busta.getServizio()!=null){
 				this.busta.getServizio().setTipo(null);
-				if(this.busta.getServizioCorrelato().getBase()==null &&
-						(this.busta.getServizioCorrelato().getVersione()==null || this.busta.getServizioCorrelato().getVersione()==1)){
-					this.busta.setServizioCorrelato(null);
+				if(this.busta.getServizio().getBase()==null &&
+						(this.busta.getServizio().getVersione()==null || this.busta.getServizio().getVersione()==1)){
+					this.busta.setServizio(null);
 				}
 			}
 		}
