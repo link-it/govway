@@ -5,6 +5,8 @@ CREATE TABLE sonde
 	soglia_warn BIGINT NOT NULL,
 	soglia_error BIGINT NOT NULL,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_ok TIMESTAMP(3) DEFAULT 0,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	data_warn TIMESTAMP(3) DEFAULT 0,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	data_error TIMESTAMP(3) DEFAULT 0,

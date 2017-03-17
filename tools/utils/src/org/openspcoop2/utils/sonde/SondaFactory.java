@@ -86,6 +86,7 @@ public class SondaFactory {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 
 			sqlQueryObject.addUpdateTable("sonde");
+			sqlQueryObject.addUpdateField("data_ok", "?");
 			sqlQueryObject.addUpdateField("data_warn", "?");
 			sqlQueryObject.addUpdateField("data_error", "?");
 			sqlQueryObject.addUpdateField("data_ultimo_check", "?");
@@ -98,6 +99,11 @@ public class SondaFactory {
 			try {
 				ps = connection.prepareStatement(sql);
 				int i = 1;
+				if(sonda.getParam().getDataOk()!= null) {
+					ps.setTimestamp(i++, new java.sql.Timestamp(sonda.getParam().getDataOk().getTime()));
+				} else {
+					ps.setNull(i++, Types.TIMESTAMP);
+				}
 				if(sonda.getParam().getDataWarn()!= null) {
 					ps.setTimestamp(i++, new java.sql.Timestamp(sonda.getParam().getDataWarn().getTime()));
 				} else {
@@ -206,6 +212,7 @@ public class SondaFactory {
 		String classe = rs.getString("classe");
 		Long soglia_warn = rs.getLong("soglia_warn");
 		Long soglia_error = rs.getLong("soglia_error");
+		Date data_ok = rs.getTimestamp("data_ok");
 		Date data_warn = rs.getTimestamp("data_warn");
 		Date data_error = rs.getTimestamp("data_error");
 		Date data_ultimo_check = rs.getDate("data_ultimo_check");
@@ -230,6 +237,7 @@ public class SondaFactory {
 
 		param.setDataError(data_error);
 		param.setDataWarn(data_warn);
+		param.setDataOk(data_ok);
 
 		param.unmarshallDatiCheck(dati_check);
 
@@ -250,6 +258,7 @@ public class SondaFactory {
 		sqlQueryObject.addSelectField("classe");
 		sqlQueryObject.addSelectField("soglia_warn");
 		sqlQueryObject.addSelectField("soglia_error");
+		sqlQueryObject.addSelectField("data_ok");
 		sqlQueryObject.addSelectField("data_warn");
 		sqlQueryObject.addSelectField("data_error");
 		sqlQueryObject.addSelectField("data_ultimo_check");

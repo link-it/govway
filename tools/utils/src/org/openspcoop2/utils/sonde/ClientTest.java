@@ -117,7 +117,7 @@ public class ClientTest {
 		Connection con = null;
 		try{
 			con = DriverManager.getConnection(url, userName, password);
-			testSondaError(tipoDatabase, con);
+//			testSondaError(tipoDatabase, con);
 			testSondaBatch(tipoDatabase, con);
 			testSondaCoda(tipoDatabase, con);
 		} catch(Exception e) {
@@ -161,8 +161,9 @@ public class ClientTest {
 
 		{
 			StatoSonda stato = batch.aggiornaStatoSonda(true, new Date(), null, con, tipoDatabase); //<<-- Aggiornare con uno stato ok
+			
 			checkStato("batch", 0, stato);
-			System.out.println("Test 1 batch ok");
+			System.out.println("Test 1 batch ok. Descrizione: " + stato.getDescrizione());
 		}
 
 		Thread.sleep(1200);
@@ -183,7 +184,7 @@ public class ClientTest {
 		{
 			StatoSonda stato = batch.aggiornaStatoSonda(true, new Date(), null, con, tipoDatabase); //<<-- Aggiornare con uno stato ok
 			checkStato("batch", 0, stato);
-			System.out.println("Test 4 batch ok");
+			System.out.println("Test 4 batch ok. Descrizione: " + stato.getDescrizione());
 		}		
 
 		{
@@ -195,7 +196,7 @@ public class ClientTest {
 		{
 			StatoSonda stato = batch.aggiornaStatoSonda(true, new Date(), null, con, tipoDatabase); // <<-- Aggiornare con uno stato ok
 			checkStato("batch", 0, stato);
-			System.out.println("Test 6 batch ok");
+			System.out.println("Test 6 batch ok. Descrizione: " + stato.getDescrizione());
 		}
 
 	}
@@ -207,7 +208,7 @@ public class ClientTest {
 		{
 			StatoSonda stato = coda.aggiornaStatoSonda(3, con, tipoDatabase);
 			checkStato("coda", 0, stato);
-			System.out.println("Test 1 coda ok");
+			System.out.println("Test 1 coda ok. Descrizione: " + stato.getDescrizione());
 		}
 
 		{
@@ -227,7 +228,7 @@ public class ClientTest {
 		{
 			StatoSonda stato = coda.aggiornaStatoSonda(3, con, tipoDatabase);
 			checkStato("coda", 0, stato);
-			System.out.println("Test 4 coda ok");
+			System.out.println("Test 4 coda ok. Descrizione: " + stato.getDescrizione());
 		}
 
 	}

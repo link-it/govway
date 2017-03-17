@@ -4,6 +4,7 @@ CREATE TABLE sonde
 	classe VARCHAR(255) NOT NULL,
 	soglia_warn NUMBER NOT NULL,
 	soglia_error NUMBER NOT NULL,
+	data_ok TIMESTAMP,
 	data_warn TIMESTAMP,
 	data_error TIMESTAMP,
 	data_ultimo_check TIMESTAMP,

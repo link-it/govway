@@ -58,13 +58,16 @@ public class SondaBatch extends Sonda {
 		Date data_err = new Date(now.getTime() - super.getParam().getSogliaError());
 
 		StatoSonda statoSonda = new StatoSonda();
-		boolean esito_batch = Boolean.valueOf(super.getParam().getDatiCheck().getProperty("esito_batch"));
+		boolean esito_batch = Boolean.valueOf((String) super.getParam().getDatiCheck().get("esito_batch"));
 
 		Long dataUltimoBatchLong = null;
 		if(super.getParam().getDatiCheck().containsKey("data_ultimo_batch")) {
 			try {
-				dataUltimoBatchLong = Long.valueOf(super.getParam().getDatiCheck().getProperty("data_ultimo_batch"));
-			} catch(NumberFormatException e) {}
+				
+				dataUltimoBatchLong = (Long) super.getParam().getDatiCheck().get("data_ultimo_batch");
+			} catch(NumberFormatException e) {
+				e.printStackTrace();
+			}
 		}
 
 		if(dataUltimoBatchLong == null) {
@@ -91,6 +94,7 @@ public class SondaBatch extends Sonda {
 				statoSonda.setDescrizione("Il batch "+super.getParam().getNome()+" risulta non essere eseguito dal "+dataUltimoBatchString+". Data di warn ("+warnDateFormatted+") superata.");
 			} else {
 				statoSonda.setStato(0);
+				statoSonda.setDescrizione("Batch "+super.getParam().getNome()+" eseguito con successo il "+dataUltimoBatchString+".");
 			}
 	 
 			return statoSonda;
