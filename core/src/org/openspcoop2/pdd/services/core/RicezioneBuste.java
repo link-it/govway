@@ -3543,34 +3543,31 @@ public class RicezioneBuste {
 		msgDiag.mediumDebug("Verifica canale utilizzato...");
 		List<String> tipiSoggettiSupportatiCanale = protocolFactory.createProtocolConfiguration().getTipiSoggetti();
 		List<String> tipiServiziSupportatiCanale = protocolFactory.createProtocolConfiguration().getTipiServizi(requestMessage.getServiceBinding());
-		ErroreIntegrazione erroreVerificaTipoByProtocol = null;
+		ErroreCooperazione erroreVerificaTipoByProtocol = null;
 		// Nota: se qualche informazione e' null verranno segnalati altri errori
 		if(soggettoFruitore!=null && soggettoFruitore.getTipo()!=null && 
 				tipiSoggettiSupportatiCanale.contains(soggettoFruitore.getTipo())==false){
 			msgDiag.logPersonalizzato("protocolli.tipoSoggetto.fruitore.unsupported");
-			erroreVerificaTipoByProtocol = ErroriIntegrazione.ERRORE_436_TIPO_SOGGETTO_FRUITORE_NOT_SUPPORTED_BY_PROTOCOL.
-					getErrore436_TipoSoggettoFruitoreNotSupportedByProtocol(soggettoFruitore,protocolFactory);
+			erroreVerificaTipoByProtocol = ErroriCooperazione.TIPO_MITTENTE_NON_VALIDO.getErroreCooperazione();
 		}
 		else if(idServizio!=null && idServizio.getSoggettoErogatore()!=null && idServizio.getSoggettoErogatore().getTipo()!=null &&
 				tipiSoggettiSupportatiCanale.contains(idServizio.getSoggettoErogatore().getTipo())==false){
 			msgDiag.logPersonalizzato("protocolli.tipoSoggetto.erogatore.unsupported");
-			erroreVerificaTipoByProtocol = ErroriIntegrazione.ERRORE_437_TIPO_SOGGETTO_EROGATORE_NOT_SUPPORTED_BY_PROTOCOL.
-					getErrore437_TipoSoggettoErogatoreNotSupportedByProtocol(idServizio.getSoggettoErogatore(),protocolFactory);
+			erroreVerificaTipoByProtocol = ErroriCooperazione.TIPO_DESTINATARIO_NON_VALIDO.getErroreCooperazione();
 		}
 		else if(idServizio!=null && idServizio.getTipo()!=null && 
 				tipiServiziSupportatiCanale.contains(idServizio.getTipo())==false){
 			msgDiag.logPersonalizzato("protocolli.tipoServizio.unsupported");
-			erroreVerificaTipoByProtocol = ErroriIntegrazione.ERRORE_438_TIPO_SERVIZIO_NOT_SUPPORTED_BY_PROTOCOL.
-				getErrore438_TipoServizioNotSupportedByProtocol(requestMessage.getServiceBinding(), idServizio,protocolFactory);
+			erroreVerificaTipoByProtocol = ErroriCooperazione.TIPO_SERVIZIO_NON_VALIDO.getErroreCooperazione();
 		}
 			
 		if(erroreVerificaTipoByProtocol!=null){
 			if(this.msgContext.isGestioneRisposta()){
 
 				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);							
-				parametriGenerazioneBustaErrore.setErroreIntegrazione(erroreVerificaTipoByProtocol);
+				parametriGenerazioneBustaErrore.setErroreCooperazione(erroreVerificaTipoByProtocol);
 
-				OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,null);
+				OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
 				
 				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
 				parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
