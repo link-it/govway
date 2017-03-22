@@ -53,7 +53,7 @@ public class SondaCoda extends Sonda {
 	@Override
 	public StatoSonda getStatoSonda(){
 		
-		long dimensione_coda = (Long) super.getParam().getDatiCheck().get("dimensione_coda");
+		long dimensione_coda = Long.parseLong(super.getParam().getDatiCheck().getProperty("dimensione_coda"));
 		StatoSonda statoSonda = new StatoSonda();
 		SimpleDateFormat format = new SimpleDateFormat(PATTERN);
 
@@ -94,7 +94,7 @@ public class SondaCoda extends Sonda {
 	public StatoSonda aggiornaStatoSonda(long dimensioneCoda, Connection connection, TipiDatabase tipoDatabase) throws SondaException {
 		// inserisce i dati nel properties
 		
-		super.getParam().getDatiCheck().put("dimensione_coda", dimensioneCoda);
+		super.getParam().getDatiCheck().put("dimensione_coda", dimensioneCoda + "");
 		return updateSonda(connection, tipoDatabase);
 	}
 

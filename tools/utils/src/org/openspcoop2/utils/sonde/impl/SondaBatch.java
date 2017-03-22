@@ -58,13 +58,13 @@ public class SondaBatch extends Sonda {
 		Date data_err = new Date(now.getTime() - super.getParam().getSogliaError());
 
 		StatoSonda statoSonda = new StatoSonda();
-		boolean esito_batch = Boolean.valueOf((String) super.getParam().getDatiCheck().get("esito_batch"));
+		boolean esito_batch = Boolean.valueOf((String) super.getParam().getDatiCheck().getProperty("esito_batch"));
 
 		Long dataUltimoBatchLong = null;
 		if(super.getParam().getDatiCheck().containsKey("data_ultimo_batch")) {
 			try {
 				
-				dataUltimoBatchLong = (Long) super.getParam().getDatiCheck().get("data_ultimo_batch");
+				dataUltimoBatchLong = Long.valueOf(super.getParam().getDatiCheck().getProperty("data_ultimo_batch"));
 			} catch(NumberFormatException e) {
 				e.printStackTrace();
 			}
@@ -99,7 +99,7 @@ public class SondaBatch extends Sonda {
 	 
 			return statoSonda;
 		} else {
-			Integer interazioniFallite = (Integer) super.getParam().getDatiCheck().get("interazioni_fallite");
+			Integer interazioniFallite = Integer.parseInt(super.getParam().getDatiCheck().getProperty("interazioni_fallite"));
 
 			statoSonda.setStato(2);
 			statoSonda.setDescrizione("Il batch "+super.getParam().getNome()+" risulta fallire dal "+dataUltimoBatchString+" (fallite "+interazioniFallite+" iterazioni). Descrizione dell'ultimo errore:" + (String)super.getParam().getDatiCheck().get("descrizione_errore"));
@@ -119,14 +119,14 @@ public class SondaBatch extends Sonda {
 	public StatoSonda aggiornaStatoSonda(boolean esito_batch, Date data_ultimo_batch, String descrizioneErrore, Connection connection, TipiDatabase tipoDatabase) throws SondaException {
 		// inserisce i dati nel properties
 		
-		super.getParam().getDatiCheck().put("data_ultimo_batch", data_ultimo_batch.getTime());
+		super.getParam().getDatiCheck().put("data_ultimo_batch", data_ultimo_batch.getTime()+ "");
 		super.getParam().getDatiCheck().put("esito_batch", String.valueOf(esito_batch));
 		if(!esito_batch) {
 			if(super.getParam().getDatiCheck().containsKey("interazioni_fallite")) {
-				Integer interazioniFallite = (Integer) super.getParam().getDatiCheck().get("interazioni_fallite");
-				super.getParam().getDatiCheck().put("interazioni_fallite", interazioniFallite+1);
+				Integer interazioniFallite = Integer.parseInt(super.getParam().getDatiCheck().getProperty("interazioni_fallite"));
+				super.getParam().getDatiCheck().put("interazioni_fallite", (interazioniFallite+1) + "");
 			} else {
-				super.getParam().getDatiCheck().put("interazioni_fallite", 1);
+				super.getParam().getDatiCheck().put("interazioni_fallite", 1 + "");
 			}
 			
 			super.getParam().getDatiCheck().put("descrizione_errore", descrizioneErrore);

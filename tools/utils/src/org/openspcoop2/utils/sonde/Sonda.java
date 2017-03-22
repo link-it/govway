@@ -38,7 +38,7 @@ import org.openspcoop2.utils.TipiDatabase;
 public abstract class Sonda {
 
 	private ParametriSonda param;
-	protected static final String PATTERN = "dd/MM/YYYY hh:mm:ss.sss";
+	protected static final String PATTERN = "dd/MM/yyyy hh:mm:ss.sss";
 
 	
 	/**
