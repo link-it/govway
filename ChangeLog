@@ -1,3 +1,11 @@
+2017-03-22  Andrea Poli <apoli@link.it>
+
+	* [Utils]
+	Aggiunta funzionalità OP-615
+	Aggiunte alle utility di openspcoop le classi necessarie ad attuare:
+	- firma e verifica base (java.security.Signature)
+	- firma e verifica xml (javax.xml.crypto.dsig.XMLSignature)
+	
 2017-03-16  Giovanni Bussu <bussu@link.it>
 
 	* [Utils]
