@@ -73,36 +73,40 @@ public class DumpRaw {
 		
 	public void serializeContext(AbstractContext context,String protocol){
 		try{
-			Date dataIngresso = null;
+			Date dataAccettazioneRichiesta = context.getDataAccettazioneRichiesta();
+			Date dataIngressoRichiesta = context.getDataIngressoRichiesta();
 			String idTransazione = null;
 			IDService serviceType = context.getIdModuloAsIDService();
 			TipoPdD tipoPdD = context.getTipoPorta();
-			if(context.getDataIngressoRichiesta()!=null){
-				dataIngresso = context.getDataIngressoRichiesta();
-			}
 			if(context.getPddContext()!=null){
 				Object tmp = context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
 				if(tmp!=null){
 					idTransazione = (String) tmp;
 				}
 			}
-			this.serializeContext(dataIngresso, idTransazione, serviceType, tipoPdD, protocol);
+			this.serializeContext(dataAccettazioneRichiesta, dataIngressoRichiesta, idTransazione, serviceType, tipoPdD, protocol);
 			
 		}catch(Throwable t){
 			this.bfContext.append("SerializeContext (AbstractContext) error: "+t.getMessage()+"\n");
 			this.log.error("SerializeContext (AbstractContext) error: "+t.getMessage(),t);
 		}
 	}
-	public void serializeContext(Date dataIngresso, String idTransazione, IDService serviceType, TipoPdD tipoPdD,String protocol){
+	public void serializeContext(Date dataAccettazioneRichiesta,Date dataIngressoRichiesta, String idTransazione, IDService serviceType, TipoPdD tipoPdD,String protocol){
 		
 		this.bfContext.append("------ RequestContext ("+idTransazione+") ------\n");
 		this.idTransaction = idTransazione;
 		
 		try{
-			if(dataIngresso!=null){
+			if(dataAccettazioneRichiesta!=null){
 				SimpleDateFormat dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
-				this.bfContext.append("Date: ");
-				this.bfContext.append(dateformat.format(dataIngresso));
+				this.bfContext.append("Date (Accept Request): ");
+				this.bfContext.append(dateformat.format(dataAccettazioneRichiesta));
+				this.bfContext.append("\n");
+			}
+			if(dataIngressoRichiesta!=null){
+				SimpleDateFormat dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+				this.bfContext.append("Date (Received Request): ");
+				this.bfContext.append(dateformat.format(dataIngressoRichiesta));
 				this.bfContext.append("\n");
 			}
 			if(idTransazione!=null){

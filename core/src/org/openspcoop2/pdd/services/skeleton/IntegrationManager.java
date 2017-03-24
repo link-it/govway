@@ -22,8 +22,8 @@
 
 package org.openspcoop2.pdd.services.skeleton;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -173,7 +173,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		return connettoreIngresso;
 	}
 	
-	private IntegrationManagerRequestContext buildIMRequestContext(Timestamp dataRichiestaOperazione,
+	private IntegrationManagerRequestContext buildIMRequestContext(Date dataRichiestaOperazione,
 			Operazione tipoOperazione, PdDContext pddContext, Logger logCore,IProtocolFactory<?> protocolFactory) throws IntegrationManagerException, ProtocolException, UtilsException{
 		
 		IntegrationManagerRequestContext imRequestContext = 
@@ -485,7 +485,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			String azione,int counter, int offset) throws IntegrationManagerException {
 
 		// Timestamp
-		Timestamp dataRichiestaOperazione = DateManager.getTimestamp();
+		Date dataRichiestaOperazione = DateManager.getTimestamp();
 		
 		// Logger
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
@@ -778,7 +778,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	private IntegrationManagerMessage getMessage_engine(Operazione tipoOperazione, String idMessaggio, boolean isRiferimentoMessaggio) throws IntegrationManagerException {
 
 		// Timestamp
-		Timestamp dataRichiestaOperazione = DateManager.getTimestamp();
+		Date dataRichiestaOperazione = DateManager.getTimestamp();
 		
 		// Logger
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
@@ -1135,7 +1135,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 	private void deleteMessage_engine(Operazione tipoOperazione,String idMessaggio,boolean isRiferimentoMessaggio) throws IntegrationManagerException {
 
 		// Timestamp
-		Timestamp dataRichiestaOperazione = DateManager.getTimestamp();
+		Date dataRichiestaOperazione = DateManager.getTimestamp();
 		
 		// Logger
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
@@ -1383,7 +1383,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		Operazione tipoOperazione = Operazione.deleteAllMessages;
 
 		// Timestamp
-		Timestamp dataRichiestaOperazione = DateManager.getTimestamp();
+		Date dataRichiestaOperazione = DateManager.getTimestamp();
 		
 		// Logger
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
@@ -1665,7 +1665,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			String idInvocazionePerRiferimento) throws IntegrationManagerException {
 
 		// Timestamp
-		Timestamp dataIngressoMessaggio = DateManager.getTimestamp();
+		Date dataAccettazioneRichiesta = DateManager.getDate();
+		Date dataIngressoRichiesta = dataAccettazioneRichiesta;
 		
 		// Logger
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
@@ -1684,7 +1685,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		RicezioneContenutiApplicativiIntegrationManagerService service = new RicezioneContenutiApplicativiIntegrationManagerService();
 		return service.process(tipoOperazione, portaDelegata, msg, idInvocazionePerRiferimento, 
 				logCore, getHttpServletRequest(), getHttpServletResponse(), 
-				protocolFactory, dataIngressoMessaggio);
+				protocolFactory, dataAccettazioneRichiesta, dataIngressoRichiesta);
 
 	}
 

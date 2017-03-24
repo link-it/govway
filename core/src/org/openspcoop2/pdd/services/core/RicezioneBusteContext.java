@@ -61,15 +61,15 @@ public class RicezioneBusteContext extends AbstractContext implements java.io.Se
 
 	
 	/** Costruttore */
-	public RicezioneBusteContext(IDService idModuloAsIDService,Date dataIngressoRichiesta,RequestInfo requestInfo) throws UniqueIdentifierException{
-		super(idModuloAsIDService,dataIngressoRichiesta,requestInfo);
+	public RicezioneBusteContext(IDService idModuloAsIDService,Date dataAccettazioneRichiesta,RequestInfo requestInfo) throws UniqueIdentifierException{
+		super(idModuloAsIDService,dataAccettazioneRichiesta,requestInfo);
 	}
 	private RicezioneBusteContext(IDService idModuloAsIDService){
 		super(idModuloAsIDService);
 	}
-	public static RicezioneBusteContext newRicezioneBusteContext(IDService idModuloAsIDService,Date dataIngressoRichiesta,RequestInfo requestInfo){
+	public static RicezioneBusteContext newRicezioneBusteContext(IDService idModuloAsIDService,Date dataAccettazioneRichiesta,RequestInfo requestInfo){
 		RicezioneBusteContext context = new RicezioneBusteContext(idModuloAsIDService);
-		context.dataIngressoRichiesta = dataIngressoRichiesta;
+		context.dataAccettazioneRichiesta = dataAccettazioneRichiesta;
 		context.identitaPdD = requestInfo.getIdentitaPdD();
 		context.pddContext = new PdDContext();
 		context.requestInfo = requestInfo;

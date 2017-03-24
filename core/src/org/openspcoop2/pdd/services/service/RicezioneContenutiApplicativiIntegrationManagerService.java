@@ -21,7 +21,7 @@
 package org.openspcoop2.pdd.services.service;
 
 import java.io.ByteArrayInputStream;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Hashtable;
 
 import javax.servlet.http.HttpServletResponse;
@@ -99,7 +99,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 	public IntegrationManagerMessage process(String tipoOperazione, String portaDelegata, IntegrationManagerMessage msg,
 			String idInvocazionePerRiferimento,
 			Logger logCore, javax.servlet.http.HttpServletRequest req, HttpServletResponse res,
-			IProtocolFactory<?> protocolFactory, Timestamp dataIngressoMessaggio) throws IntegrationManagerException {
+			IProtocolFactory<?> protocolFactory, Date dataAccettazioneRichiesta, Date dataIngressoRichiesta) throws IntegrationManagerException {
 
 		String idModulo = RicezioneContenutiApplicativi.ID_MODULO+IntegrationManager.ID_MODULO;
 				
@@ -229,11 +229,12 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		RicezioneContenutiApplicativiContext context = null;
 		try{
 			// viene generato l'UUID
-			context = new RicezioneContenutiApplicativiContext(IDService.PORTA_DELEGATA_INTEGRATION_MANAGER, dataIngressoMessaggio,requestInfo);
+			context = new RicezioneContenutiApplicativiContext(IDService.PORTA_DELEGATA_INTEGRATION_MANAGER, dataAccettazioneRichiesta,requestInfo);
 		}catch(Exception e){
 			msgDiag.logErroreGenerico(e,"invocaPortaDelegata_engine("+tipoOperazione+").newRicezioneContenutiApplicativiContext()");
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione());
 		}
+		context.setDataIngressoRichiesta(dataIngressoRichiesta);
 		context.getPddContext().addObject(CostantiPdD.KEY_TIPO_OPERAZIONE_IM, tipoOperazione);
 		context.setTipoPorta(TipoPdD.DELEGATA);
 		msgDiag.setPddContext(context.getPddContext(), protocolFactory);
@@ -905,7 +906,10 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			/* ------------  PostOutResponseHandler ------------- */
 			PostOutResponseContext postOutResponseContext = new PostOutResponseContext(logCore, protocolFactory);
 			try{
-				context.getPddContext().addObject(CostantiPdD.DATA_INGRESSO_MESSAGGIO_RICHIESTA, dataIngressoMessaggio);
+				postOutResponseContext.getPddContext().addObject(CostantiPdD.DATA_ACCETTAZIONE_RICHIESTA, dataAccettazioneRichiesta);
+				if(dataIngressoRichiesta!=null){
+					postOutResponseContext.getPddContext().addObject(CostantiPdD.DATA_INGRESSO_RICHIESTA, dataIngressoRichiesta);
+				}
 				postOutResponseContext.setPddContext(context.getPddContext());
 				postOutResponseContext.setDataElaborazioneMessaggio(DateManager.getDate());
 				postOutResponseContext.setEsito(esito);

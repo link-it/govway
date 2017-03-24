@@ -36,6 +36,7 @@ import org.openspcoop2.pdd.services.connector.messages.DirectVMConnectorOutMessa
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.utils.date.DateManager;
 
 /**
  * Classe utilizzata per effettuare consegne di messaggi Soap, attraverso
@@ -202,6 +203,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 			this.contentLength = outMessage.getContentLength();
 			this.propertiesTrasportoRisposta = outMessage.getHeaders();
 			this.codice = outMessage.getResponseStatus();
+			this.dataAccettazioneRisposta = DateManager.getDate();
 			
 			
 			try{

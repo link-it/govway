@@ -20,6 +20,7 @@
 package org.openspcoop2.pdd.services.connector.messages;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
@@ -42,6 +43,7 @@ import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.Credential;
 import org.slf4j.Logger;
@@ -69,6 +71,7 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	private String functionParameters;
 	private DirectVMProtocolInfo directVMProtocolInfo;
 	private PdDContext pddContext;
+	private Date dataIngressoRichiesta;
 	
 	public DirectVMConnectorInMessage(OpenSPCoop2Message msg,IDService idModuloAsIDService, String idModulo,
 			Properties trasporto,
@@ -234,6 +237,7 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 		try{
 			OpenSPCoop2MessageParseResult pr = new OpenSPCoop2MessageParseResult();
 			pr.setMessage(this.message);
+			this.dataIngressoRichiesta = DateManager.getDate();
 			return pr;
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
@@ -247,10 +251,17 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 			this.message.writeTo(bout, true);
 			bout.flush();
 			bout.close();
-			return bout.toByteArray();
+			byte[] b = bout.toByteArray();
+			this.dataIngressoRichiesta = DateManager.getDate();
+			return b;
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}
+	}
+	
+	@Override
+	public Date getDataIngressoRichiesta(){	
+		return this.dataIngressoRichiesta;
 	}
 	
 	@Override

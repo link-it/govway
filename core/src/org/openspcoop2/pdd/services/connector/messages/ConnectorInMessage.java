@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.pdd.services.connector.messages;
 
+import java.util.Date;
+
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.pdd.services.RequestInfo;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
@@ -59,6 +61,8 @@ public interface ConnectorInMessage {
 	public OpenSPCoop2MessageParseResult getRequest(NotifierInputStreamParams notifierInputStreamParams) throws ConnectorException;
 	
 	public byte[] getRequest() throws ConnectorException;
+	
+	public Date getDataIngressoRichiesta();
 	
 	public URLProtocolContext getURLProtocolContext() throws ConnectorException;
 	

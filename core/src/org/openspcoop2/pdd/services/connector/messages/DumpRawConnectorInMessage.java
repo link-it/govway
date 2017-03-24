@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.services.connector.messages;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
+import java.util.Date;
 
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
@@ -193,6 +194,11 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 		else{
 			return null;
 		}
+	}
+	
+	@Override
+	public Date getDataIngressoRichiesta(){	
+		return this.connectorInMessage.getDataIngressoRichiesta();
 	}
 	
 	@Override

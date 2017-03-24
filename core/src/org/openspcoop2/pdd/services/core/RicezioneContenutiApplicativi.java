@@ -23,8 +23,8 @@ package org.openspcoop2.pdd.services.core;
 
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -368,7 +368,9 @@ public class RicezioneContenutiApplicativi {
 		}
 		connettore.setFromLocation(this.msgContext.getFromLocation());
 		inRequestContext.setConnettore(connettore);
-		// Data ingresso messaggio
+		// Data accettazione richiesta
+		inRequestContext.setDataAccettazioneRichiesta(this.msgContext.getDataAccettazioneRichiesta());
+		// Data ingresso richiesta
 		inRequestContext.setDataElaborazioneMessaggio(this.msgContext.getDataIngressoRichiesta());
 		// PdDContext
 		inRequestContext.setPddContext(this.msgContext.getPddContext());
@@ -562,8 +564,8 @@ public class RicezioneContenutiApplicativi {
 		// Logger
 		Logger logCore = inRequestContext.getLogCore();
 		
-		// Data Ingresso Messaggio
-		Timestamp dataIngressoMessaggio = new Timestamp(this.msgContext.getDataIngressoRichiesta().getTime());
+		// Data Ingresso Richiesta
+		Date dataIngressoRichiesta = this.msgContext.getDataIngressoRichiesta();
 		
 		// ID Transazione
 		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, inRequestContext.getPddContext());
@@ -2958,7 +2960,7 @@ public class RicezioneContenutiApplicativi {
 			
 			
 			// Salvataggio messaggio
-			msgRequest.registraMessaggio(requestMessage, dataIngressoMessaggio,
+			msgRequest.registraMessaggio(requestMessage, dataIngressoRichiesta,
 					(oneWayStateless || sincronoStateless || asincronoStateless),
 					idCorrelazioneApplicativa);	
 			if(localForward){
@@ -2968,7 +2970,7 @@ public class RicezioneContenutiApplicativi {
 			}
 						
 			if(richiestaAsincronaSimmetricaStateless){
-				msgRequest.registraInformazioniMessaggio_statelessEngine(dataIngressoMessaggio, org.openspcoop2.pdd.mdb.Imbustamento.ID_MODULO,
+				msgRequest.registraInformazioniMessaggio_statelessEngine(dataIngressoRichiesta, org.openspcoop2.pdd.mdb.Imbustamento.ID_MODULO,
 						idCorrelazioneApplicativa);
 			}
 			

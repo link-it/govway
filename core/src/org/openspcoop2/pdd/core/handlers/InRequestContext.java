@@ -21,6 +21,8 @@
 
 package org.openspcoop2.pdd.core.handlers;
 
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -42,6 +44,17 @@ public class InRequestContext extends BaseContext {
 	
 	/** Informazioni sul connettore di ingresso */
 	private InfoConnettoreIngresso connettore;
+
+	/** Data accettazione Richiesta */
+	private Date dataAccettazioneRichiesta;
+	
+	public Date getDataAccettazioneRichiesta() {
+		return this.dataAccettazioneRichiesta;
+	}
+
+	public void setDataAccettazioneRichiesta(Date dataAccettazioneRichiesta) {
+		this.dataAccettazioneRichiesta = dataAccettazioneRichiesta;
+	}
 
 	public InfoConnettoreIngresso getConnettore() {
 		return this.connettore;

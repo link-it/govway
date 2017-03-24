@@ -22,7 +22,7 @@
 
 package org.openspcoop2.pdd.services.service;
 
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -114,13 +114,14 @@ public class RicezioneBusteService  {
 
 	public void process(ConnectorInMessage req, ConnectorOutMessage res) throws ConnectorException {
 		
+		// Timestamp
+		Date dataAccettazioneRichiesta = DateManager.getDate();
+		Date dataIngressoRichiesta = null;
+		
 		// IDModulo
 		String idModulo = req.getIdModulo();
 		IDService idModuloAsService = req.getIdModuloAsIDService();
 		RequestInfo requestInfo = req.getRequestInfo();
-		
-		// Timestamp
-		Timestamp dataIngressoMessaggio = DateManager.getTimestamp();
 		
 		// Log
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
@@ -270,7 +271,7 @@ public class RicezioneBusteService  {
 			proprietaErroreAppl.setDominio(openSPCoopProperties.getIdentificativoPortaDefault(protocolFactory.getProtocol()));
 			proprietaErroreAppl.setIdModulo(idModulo);
 			
-			context = new RicezioneBusteContext(idModuloAsService, dataIngressoMessaggio,requestInfo);
+			context = new RicezioneBusteContext(idModuloAsService, dataAccettazioneRichiesta,requestInfo);
 			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
 			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO, req.getRequestInfo());
 			context.setTipoPorta(TipoPdD.APPLICATIVA);
@@ -342,6 +343,8 @@ public class RicezioneBusteService  {
 			
 			if(dumpRaw!=null){
 				dumpRaw.serializeRequest(((DumpRawConnectorInMessage)req), true, notifierInputStreamParams);
+				dataIngressoRichiesta = req.getDataIngressoRichiesta();
+				context.setDataIngressoRichiesta(dataIngressoRichiesta);
 			}
 			
 			
@@ -423,6 +426,8 @@ public class RicezioneBusteService  {
 					pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
 				}
 				requestMessage = pr.getMessage_throwParseException();
+				dataIngressoRichiesta = req.getDataIngressoRichiesta();
+				context.setDataIngressoRichiesta(dataIngressoRichiesta);
 				Utilities.printFreeMemory("RicezioneBuste - Post costruzione richiesta");
 				requestMessage.setProtocolName(protocolFactory.getProtocol());
 				
@@ -504,7 +509,8 @@ public class RicezioneBusteService  {
 			
 			if(context==null){
 				// Errore durante la generazione dell'id
-				context = RicezioneBusteContext.newRicezioneBusteContext(idModuloAsService,dataIngressoMessaggio,requestInfo);
+				context = RicezioneBusteContext.newRicezioneBusteContext(idModuloAsService,dataAccettazioneRichiesta,requestInfo);
+				context.setDataIngressoRichiesta(dataIngressoRichiesta);
 				context.setTipoPorta(TipoPdD.APPLICATIVA);
 				context.setIdModulo(idModulo);
 				context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
@@ -993,7 +999,10 @@ public class RicezioneBusteService  {
 		
 		if(postOutResponseContext!=null){
 			try{
-				postOutResponseContext.getPddContext().addObject(CostantiPdD.DATA_INGRESSO_MESSAGGIO_RICHIESTA, dataIngressoMessaggio);
+				postOutResponseContext.getPddContext().addObject(CostantiPdD.DATA_ACCETTAZIONE_RICHIESTA, dataAccettazioneRichiesta);
+				if(dataIngressoRichiesta!=null){
+					postOutResponseContext.getPddContext().addObject(CostantiPdD.DATA_INGRESSO_RICHIESTA, dataIngressoRichiesta);
+				}
 				postOutResponseContext.setDataElaborazioneMessaggio(DateManager.getDate());
 				postOutResponseContext.setEsito(esito);
 				postOutResponseContext.setReturnCode(statoServletResponse);

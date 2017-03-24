@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.services.connector.messages;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -40,6 +41,7 @@ import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.Credential;
 import org.slf4j.Logger;
@@ -64,6 +66,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	protected String idModulo;
 	private IDService idModuloAsIDService;
 	private MessageType requestMessageType;
+	protected Date dataIngressoRichiesta;
 	
 	public HttpServletConnectorInMessage(RequestInfo requestInfo, HttpServletRequest req,
 			IDService idModuloAsIDService, String idModulo) throws ConnectorException{
@@ -160,10 +163,12 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	@Override
 	public OpenSPCoop2MessageParseResult getRequest(NotifierInputStreamParams notifierInputStreamParams) throws ConnectorException{
 		try{
-			return factory.createMessage(this.requestMessageType,
+			OpenSPCoop2MessageParseResult pr = factory.createMessage(this.requestMessageType,
 					this.requestInfo.getProtocolContext(),
 					this.is,notifierInputStreamParams,
 					this.openspcoopProperties.getAttachmentsProcessingMode());
+			this.dataIngressoRichiesta = DateManager.getDate();
+			return pr;
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}	
@@ -182,10 +187,12 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 				return result;
 			}
 			buffer.write(b);
-			return factory.createMessage(this.requestMessageType,
+			OpenSPCoop2MessageParseResult pr = factory.createMessage(this.requestMessageType,
 					this.requestInfo.getProtocolContext(),
 					bin,notifierInputStreamParams,
 					this.openspcoopProperties.getAttachmentsProcessingMode());
+			this.dataIngressoRichiesta = DateManager.getDate();
+			return pr;
 		}catch(Throwable t){
 			//throw new ConnectorException(e.getMessage(),e);
 			OpenSPCoop2MessageParseResult result = new OpenSPCoop2MessageParseResult();
@@ -197,10 +204,17 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	@Override
 	public byte[] getRequest() throws ConnectorException{
 		try{
-			return Utilities.getAsByteArray(this.is);
+			byte[] b = Utilities.getAsByteArray(this.is);
+			this.dataIngressoRichiesta = DateManager.getDate();
+			return b;
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}
+	}
+	
+	@Override
+	public Date getDataIngressoRichiesta(){	
+		return this.dataIngressoRichiesta;
 	}
 	
 	@Override

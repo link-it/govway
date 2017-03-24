@@ -45,6 +45,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -280,6 +281,8 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 				
 				this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().
 						createMessage(this.requestMsg.getMessageType(),MessageRole.RESPONSE,connection.call((SOAPMessage) this.requestMsg,this.location));
+				
+				this.dataAccettazioneRisposta = DateManager.getDate();
 				
 			}catch(javax.xml.soap.SOAPException sendError){
 				this.eccezioneProcessamento = sendError;

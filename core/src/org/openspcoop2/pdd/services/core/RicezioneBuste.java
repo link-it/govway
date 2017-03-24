@@ -24,8 +24,8 @@ package org.openspcoop2.pdd.services.core;
 
 
 import java.io.ByteArrayInputStream;
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -401,7 +401,9 @@ public class RicezioneBuste {
 		}
 		connettore.setFromLocation(this.msgContext.getFromLocation());
 		inRequestContext.setConnettore(connettore);
-		// Data ingresso messaggio
+		// Data accettazione richiesta
+		inRequestContext.setDataAccettazioneRichiesta(this.msgContext.getDataAccettazioneRichiesta());
+		// Data ingresso richiesta
 		inRequestContext.setDataElaborazioneMessaggio(this.msgContext.getDataIngressoRichiesta());
 		// PddContext
 		inRequestContext.setPddContext(this.msgContext.getPddContext());
@@ -654,8 +656,8 @@ public class RicezioneBuste {
 		// Logger
 		Logger logCore = inRequestContext.getLogCore();
 		
-		// Data Ingresso Messaggio
-		Timestamp dataIngressoMessaggio = new Timestamp(this.msgContext.getDataIngressoRichiesta().getTime());
+		// Data Ingresso Richiesta
+		Date dataIngressoRichiesta = this.msgContext.getDataIngressoRichiesta();
 		
 		// ID Transazione
 		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.CLUSTER_ID, inRequestContext.getPddContext());
@@ -4220,7 +4222,7 @@ public class RicezioneBuste {
 		/* ----------------   Creo sessione di gestione del messaggio ricevuto  --------------------- */
 		msgDiag.mediumDebug("Registrazione messaggio di richiesta nel RepositoryMessaggi...");
 		try{
-			msgRequest.registraMessaggio(requestMessage,dataIngressoMessaggio, 
+			msgRequest.registraMessaggio(requestMessage,dataIngressoRichiesta, 
 					(oneWayStateless || sincronoStateless || asincronoStateless || routingStateless),
 					correlazioneApplicativa);
 		}catch(Exception e){

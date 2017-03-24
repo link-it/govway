@@ -68,6 +68,13 @@ public interface IConnettore extends ICore {
     public String getErrore();
     
     /**
+     * Data dalla quale è disponibile la risposta
+     * 
+     * @return data dalla quale è disponibile la risposta
+     */
+    public Date getDataAccettazioneRisposta();
+    
+    /**
      * In caso di avvenuta consegna, questo metodo ritorna il codice di trasporto della consegna.
      *
      * @return se avvenuta una consegna ritorna il codice di trasporto della consegna.

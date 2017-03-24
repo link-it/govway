@@ -22,8 +22,8 @@
 
 package org.openspcoop2.pdd.services.service;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -108,13 +108,14 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 	
 	public void process(ConnectorInMessage req, ConnectorOutMessage res) throws ConnectorException {
 		
+		// Timestamp
+		Date dataAccettazioneRichiesta = DateManager.getDate();
+		Date dataIngressoRichiesta = null;
+		
 		// IDModulo
 		String idModulo = req.getIdModulo();
 		IDService idModuloAsService = req.getIdModuloAsIDService();
 		RequestInfo requestInfo = req.getRequestInfo();
-		
-		// Timestamp
-		Timestamp dataIngressoMessaggio = DateManager.getTimestamp();
 
 		// Log
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
@@ -252,7 +253,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			protocolFactory = req.getProtocolFactory();
 			protocol = protocolFactory.getProtocol();
 			
-			context = new RicezioneContenutiApplicativiContext(idModuloAsService,dataIngressoMessaggio,requestInfo);
+			context = new RicezioneContenutiApplicativiContext(idModuloAsService,dataAccettazioneRichiesta,requestInfo);
 			context.setTipoPorta(TipoPdD.DELEGATA);
 			context.setForceFaultAsXML(true); // siamo in una richiesta http senza SOAP, un SoapFault non ha senso
 			context.setIdModulo(idModulo);
@@ -324,6 +325,8 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			
 			if(dumpRaw!=null){
 				dumpRaw.serializeRequest(((DumpRawConnectorInMessage)req), false, notifierInputStreamParams);
+				dataIngressoRichiesta = req.getDataIngressoRichiesta();
+				context.setDataIngressoRichiesta(dataIngressoRichiesta);
 			}
 
 			
@@ -388,6 +391,8 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					throw new Exception("Ricevuto nessun contenuto da imbustare");
 				}
 				req.close();
+				dataIngressoRichiesta = req.getDataIngressoRichiesta();
+				context.setDataIngressoRichiesta(dataIngressoRichiesta);
 				
 				if(imbustamentoConAttachment){
 					tipoLetturaRisposta = "Costruzione messaggio SOAP per Tunnel con mimeType "+tipoAttachment;
@@ -439,7 +444,8 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			
 			if(context==null){
 				// Errore durante la generazione dell'id
-				context = RicezioneContenutiApplicativiContext.newRicezioneContenutiApplicativiContext(idModuloAsService,dataIngressoMessaggio,requestInfo);
+				context = RicezioneContenutiApplicativiContext.newRicezioneContenutiApplicativiContext(idModuloAsService,dataAccettazioneRichiesta,requestInfo);
+				context.setDataIngressoRichiesta(dataIngressoRichiesta);
 				context.setTipoPorta(TipoPdD.DELEGATA);
 				context.setForceFaultAsXML(true); // siamo in una richiesta http senza SOAP, un SoapFault non ha senso
 				context.setIdModulo(idModulo);
@@ -952,7 +958,10 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 		
 		if(postOutResponseContext!=null){
 			try{
-				postOutResponseContext.getPddContext().addObject(CostantiPdD.DATA_INGRESSO_MESSAGGIO_RICHIESTA, dataIngressoMessaggio);
+				postOutResponseContext.getPddContext().addObject(CostantiPdD.DATA_ACCETTAZIONE_RICHIESTA, dataAccettazioneRichiesta);
+				if(dataIngressoRichiesta!=null){
+					postOutResponseContext.getPddContext().addObject(CostantiPdD.DATA_INGRESSO_RICHIESTA, dataIngressoRichiesta);
+				}
 				postOutResponseContext.setDataElaborazioneMessaggio(DateManager.getDate());
 				if(erroreConsegnaRisposta==null){
 					postOutResponseContext.setEsito(esito);

@@ -127,7 +127,12 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	
 	/** RequestInfo */
 	protected RequestInfo requestInfo;
-	
+
+	protected Date dataAccettazioneRisposta;
+    @Override
+	public Date getDataAccettazioneRisposta(){
+    	return this.dataAccettazioneRisposta;
+    }
 	
 
 	protected ConnettoreBase(){
@@ -368,6 +373,8 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     }
     
     protected void preInResponse() throws Exception{
+    	
+    	this.dataAccettazioneRisposta = DateManager.getDate();
     	
     	if(this.msgDiagnostico!=null && this.outRequestContext!=null){
         

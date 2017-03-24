@@ -958,10 +958,10 @@ public class GestoreMessaggi  {
 		registraMessaggio(message,null, false,correlazioneApplicativaRichiesta,correlazioneApplicativaRisposta);
 	}
 
-	public void registraMessaggio(OpenSPCoop2Message message,Timestamp oraRegistrazione,String correlazioneApplicativaRichiesta) throws GestoreMessaggiException{
+	public void registraMessaggio(OpenSPCoop2Message message,Date oraRegistrazione,String correlazioneApplicativaRichiesta) throws GestoreMessaggiException{
 		registraMessaggio(message,oraRegistrazione, false,correlazioneApplicativaRichiesta,null);
 	}
-	public void registraMessaggio(OpenSPCoop2Message message,Timestamp oraRegistrazione,String correlazioneApplicativaRichiesta,String correlazioneApplicativaRisposta) throws GestoreMessaggiException{
+	public void registraMessaggio(OpenSPCoop2Message message,Date oraRegistrazione,String correlazioneApplicativaRichiesta,String correlazioneApplicativaRisposta) throws GestoreMessaggiException{
 		registraMessaggio(message,oraRegistrazione, false,correlazioneApplicativaRichiesta,correlazioneApplicativaRisposta);
 	}
 
@@ -971,11 +971,11 @@ public class GestoreMessaggi  {
 	 * @param message Messaggio.
 	 * 
 	 */
-	public void registraMessaggio(OpenSPCoop2Message message, Timestamp oraRegistrazione, boolean salvaNelloStateless,
+	public void registraMessaggio(OpenSPCoop2Message message, Date oraRegistrazione, boolean salvaNelloStateless,
 			String correlazioneApplicativaRichiesta) throws GestoreMessaggiException {
 		registraMessaggio(message,oraRegistrazione,salvaNelloStateless,correlazioneApplicativaRichiesta,null);
 	}
-	public void registraMessaggio(OpenSPCoop2Message message, Timestamp oraRegistrazione, boolean salvaNelloStateless,
+	public void registraMessaggio(OpenSPCoop2Message message, Date oraRegistrazione, boolean salvaNelloStateless,
 			String correlazioneApplicativaRichiesta,String correlazioneApplicativaRisposta) throws GestoreMessaggiException {
 
 		// OraRegistrazione
@@ -983,7 +983,7 @@ public class GestoreMessaggi  {
 		if (oraRegistrazione == null) {
 			oraRegistrazioneT = DateManager.getTimestamp();
 		} else {
-			oraRegistrazioneT = oraRegistrazione;       
+			oraRegistrazioneT = new java.sql.Timestamp(oraRegistrazione.getTime());
 		}
 
 		// Gestione stateless 
@@ -1121,11 +1121,11 @@ public class GestoreMessaggi  {
 		}
 	}
 
-	public void registraInformazioniMessaggio_statelessEngine(Timestamp oraRegistrazione,String proprietarioMessaggio,
+	public void registraInformazioniMessaggio_statelessEngine(Date oraRegistrazione,String proprietarioMessaggio,
 			String correlazioneApplicativaRichiesta) throws GestoreMessaggiException {
 		this.registraInformazioniMessaggio_statelessEngine(oraRegistrazione, proprietarioMessaggio, null,correlazioneApplicativaRichiesta,null);
 	}
-	public void registraInformazioniMessaggio_statelessEngine(Timestamp oraRegistrazione,String proprietarioMessaggio,String riferimentoMessaggio,
+	public void registraInformazioniMessaggio_statelessEngine(Date oraRegistrazione,String proprietarioMessaggio,String riferimentoMessaggio,
 			String correlazioneApplicativaRichiesta,String correlazioneApplicativaRisposta) throws GestoreMessaggiException {
 
 		// OraRegistrazione
@@ -1133,7 +1133,7 @@ public class GestoreMessaggi  {
 		if (oraRegistrazione == null) {
 			oraRegistrazioneT = DateManager.getTimestamp();
 		} else {
-			oraRegistrazioneT = oraRegistrazione;       
+			oraRegistrazioneT = new java.sql.Timestamp(oraRegistrazione.getTime());
 		}
 
 		// stato

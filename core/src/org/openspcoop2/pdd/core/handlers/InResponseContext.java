@@ -21,6 +21,8 @@
 
 package org.openspcoop2.pdd.core.handlers;
 
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.ProtocolContext;
 import org.openspcoop2.pdd.core.IntegrationContext;
@@ -60,6 +62,17 @@ public class InResponseContext extends BaseContext {
 	
 	/** Proprieta' di trasporto della risposta */
 	private java.util.Properties propertiesRispostaTrasporto;
+	
+	/** Data accettazione Risposta */
+	private Date dataAccettazioneRisposta;
+	
+	public Date getDataAccettazioneRisposta() {
+		return this.dataAccettazioneRisposta;
+	}
+
+	public void setDataAccettazioneRisposta(Date dataAccettazioneRisposta) {
+		this.dataAccettazioneRisposta = dataAccettazioneRisposta;
+	}
 	
 	public InfoConnettoreUscita getConnettore() {
 		return this.connettore;

@@ -42,6 +42,7 @@ public class InRequestProtocolContext extends InRequestContext {
 	public InRequestProtocolContext(InRequestContext inRequestContext){
 		super(inRequestContext.getLogCore(),inRequestContext.getProtocolFactory());
 		super.setConnettore(inRequestContext.getConnettore());
+		super.setDataAccettazioneRichiesta(inRequestContext.getDataAccettazioneRichiesta());
 		super.setDataElaborazioneMessaggio(inRequestContext.getDataElaborazioneMessaggio());
 		super.setMessaggio(inRequestContext.getMessaggio());
 		super.setPddContext(inRequestContext.getPddContext());

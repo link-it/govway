@@ -22,7 +22,7 @@
 
 package org.openspcoop2.pdd.services.service;
 
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -113,14 +113,15 @@ public class RicezioneContenutiApplicativiService {
 
 	public void process(ConnectorInMessage req, ConnectorOutMessage res) throws ConnectorException {
 
+		// Timestamp
+		Date dataAccettazioneRichiesta = DateManager.getDate();
+		Date dataIngressoRichiesta = null;
+		
 		// IDModulo
 		String idModulo = req.getIdModulo();
 		IDService idModuloAsService = req.getIdModuloAsIDService();
 		RequestInfo requestInfo = req.getRequestInfo();
-		
-		// Timestamp
-		Timestamp dataIngressoMessaggio = DateManager.getTimestamp();
-		
+				
 		// Log
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		if(logCore==null)
@@ -260,7 +261,7 @@ public class RicezioneContenutiApplicativiService {
 					
 			integrationServiceBinding = requestInfo.getIntegrationServiceBinding();
 			
-			context = new RicezioneContenutiApplicativiContext(idModuloAsService,dataIngressoMessaggio,requestInfo);
+			context = new RicezioneContenutiApplicativiContext(idModuloAsService,dataAccettazioneRichiesta,requestInfo);
 			context.setTipoPorta(TipoPdD.DELEGATA);
 			context.setIdModulo(idModulo);
 			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
@@ -333,6 +334,8 @@ public class RicezioneContenutiApplicativiService {
 			
 			if(dumpRaw!=null){
 				dumpRaw.serializeRequest(((DumpRawConnectorInMessage)req), true, notifierInputStreamParams);
+				dataIngressoRichiesta = req.getDataIngressoRichiesta();
+				context.setDataIngressoRichiesta(dataIngressoRichiesta);
 			}
 			
 			
@@ -413,6 +416,8 @@ public class RicezioneContenutiApplicativiService {
 					pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
 				}
 				requestMessage = pr.getMessage_throwParseException();
+				dataIngressoRichiesta = req.getDataIngressoRichiesta();
+				context.setDataIngressoRichiesta(dataIngressoRichiesta);
 				Utilities.printFreeMemory("RicezioneContenutiApplicativi - Post costruzione richiesta");
 				requestMessage.setProtocolName(protocolFactory.getProtocol());
 				
@@ -496,7 +501,8 @@ public class RicezioneContenutiApplicativiService {
 			
 			if(context==null){
 				// Errore durante la generazione dell'id
-				context = RicezioneContenutiApplicativiContext.newRicezioneContenutiApplicativiContext(idModuloAsService,dataIngressoMessaggio,requestInfo);
+				context = RicezioneContenutiApplicativiContext.newRicezioneContenutiApplicativiContext(idModuloAsService,dataAccettazioneRichiesta,requestInfo);
+				context.setDataIngressoRichiesta(dataIngressoRichiesta);
 				context.setTipoPorta(TipoPdD.DELEGATA);
 				context.setIdModulo(idModulo);
 				context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, protocolFactory.getProtocol());
@@ -989,7 +995,10 @@ public class RicezioneContenutiApplicativiService {
 		
 		if(postOutResponseContext!=null){
 			try{
-				postOutResponseContext.getPddContext().addObject(CostantiPdD.DATA_INGRESSO_MESSAGGIO_RICHIESTA, dataIngressoMessaggio);
+				postOutResponseContext.getPddContext().addObject(CostantiPdD.DATA_ACCETTAZIONE_RICHIESTA, dataAccettazioneRichiesta);
+				if(dataIngressoRichiesta!=null){
+					postOutResponseContext.getPddContext().addObject(CostantiPdD.DATA_INGRESSO_RICHIESTA, dataIngressoRichiesta);
+				}
 				postOutResponseContext.setDataElaborazioneMessaggio(DateManager.getDate());
 				postOutResponseContext.setEsito(esito);
 				postOutResponseContext.setReturnCode(statoServletResponse);

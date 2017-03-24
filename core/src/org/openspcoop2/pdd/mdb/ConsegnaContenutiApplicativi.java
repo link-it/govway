@@ -1812,6 +1812,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						outRequestContext.getConnettore().setLocation(location); // aggiorno location ottenuta dal connettore utilizzato
 					}
 					inResponseContext.setConnettore(outRequestContext.getConnettore());
+					inResponseContext.setDataAccettazioneRisposta(connectorSender.getDataAccettazioneRisposta());
 					inResponseContext.setDataElaborazioneMessaggio(ejbUtils.getRicezioneMsgRisposta());
 					inResponseContext.setProtocollo(outRequestContext.getProtocollo());
 					inResponseContext.setPddContext(pddContext);

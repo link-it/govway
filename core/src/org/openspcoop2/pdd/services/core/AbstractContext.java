@@ -54,8 +54,17 @@ public abstract class AbstractContext implements java.io.Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	/** Data di ingresso al servizio */
+	/** Data di accettazione richiesta */
+	protected Date dataAccettazioneRichiesta;
+	public Date getDataAccettazioneRichiesta() {
+		return this.dataAccettazioneRichiesta;
+	}
+	
+	/** Data di ingresso richiesta */
 	protected Date dataIngressoRichiesta;
+	public void setDataIngressoRichiesta(Date dataIngressoRichiesta) {
+		this.dataIngressoRichiesta = dataIngressoRichiesta;
+	}
 	public Date getDataIngressoRichiesta() {
 		return this.dataIngressoRichiesta;
 	}
@@ -111,10 +120,10 @@ public abstract class AbstractContext implements java.io.Serializable{
 	private NotifierInputStreamParams notifierInputStreamParams;
 	
 	/** Costruttore */
-	public AbstractContext(IDService idModuloAsIDService, Date dataIngressoRichiesta,RequestInfo requestInfo) throws UniqueIdentifierException{
+	public AbstractContext(IDService idModuloAsIDService, Date dataAccettazioneRichiesta,RequestInfo requestInfo) throws UniqueIdentifierException{
 		this.pddContext = new PdDContext();
 		this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CLUSTER_ID,UniqueIdentifierManager.newUniqueIdentifier().getAsString());
-		this.dataIngressoRichiesta = dataIngressoRichiesta;
+		this.dataAccettazioneRichiesta = dataAccettazioneRichiesta;
 		this.identitaPdD = requestInfo.getIdentitaPdD();
 		this.idModuloAsIDService = idModuloAsIDService;
 		this.requestInfo = requestInfo;

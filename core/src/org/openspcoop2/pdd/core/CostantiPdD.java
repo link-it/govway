@@ -97,7 +97,8 @@ public class CostantiPdD {
     public final static String TRACCIAMENTO_OUT = "OUT";
     
     /** Dati di integresso del messaggio */
-    public final static String DATA_INGRESSO_MESSAGGIO_RICHIESTA = "CONTEXT_DATA_INGRESSO_MESSAGGIO_RICHIESTA";
+    public final static String DATA_ACCETTAZIONE_RICHIESTA = "CONTEXT_DATA_ACCETTAZIONE_RICHIESTA";
+    public final static String DATA_INGRESSO_RICHIESTA = "CONTEXT_DATA_INGRESSO_RICHIESTA";
     
     /** Variabile che indica un servizio applicativo anonimo */
     public final static String SERVIZIO_APPLICATIVO_ANONIMO = "Anonimo";

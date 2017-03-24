@@ -64,15 +64,15 @@ public class RicezioneContenutiApplicativiContext extends AbstractContext implem
 	
 	
 	/** Costruttore */
-	public RicezioneContenutiApplicativiContext(IDService idModuloAsIDService,Date dataIngressoRichiesta,RequestInfo requestInfo) throws UniqueIdentifierException{
-		super(idModuloAsIDService,dataIngressoRichiesta,requestInfo);
+	public RicezioneContenutiApplicativiContext(IDService idModuloAsIDService,Date dataAccettazioneRichiesta,RequestInfo requestInfo) throws UniqueIdentifierException{
+		super(idModuloAsIDService,dataAccettazioneRichiesta,requestInfo);
 	}
 	private RicezioneContenutiApplicativiContext(IDService idModuloAsIDService){
 		super(idModuloAsIDService);
 	}
-	public static RicezioneContenutiApplicativiContext newRicezioneContenutiApplicativiContext(IDService idModuloAsIDService,Date dataIngressoRichiesta,RequestInfo requestInfo){
+	public static RicezioneContenutiApplicativiContext newRicezioneContenutiApplicativiContext(IDService idModuloAsIDService,Date dataAccettazioneRichiesta,RequestInfo requestInfo){
 		RicezioneContenutiApplicativiContext context = new RicezioneContenutiApplicativiContext(idModuloAsIDService);
-		context.dataIngressoRichiesta = dataIngressoRichiesta;
+		context.dataAccettazioneRichiesta=dataAccettazioneRichiesta;
 		context.identitaPdD = requestInfo.getIdentitaPdD();
 		context.pddContext = new PdDContext();
 		context.requestInfo = requestInfo;
