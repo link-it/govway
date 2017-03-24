@@ -906,9 +906,9 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			/* ------------  PostOutResponseHandler ------------- */
 			PostOutResponseContext postOutResponseContext = new PostOutResponseContext(logCore, protocolFactory);
 			try{
-				postOutResponseContext.getPddContext().addObject(CostantiPdD.DATA_ACCETTAZIONE_RICHIESTA, dataAccettazioneRichiesta);
+				context.getPddContext().addObject(CostantiPdD.DATA_ACCETTAZIONE_RICHIESTA, dataAccettazioneRichiesta);
 				if(dataIngressoRichiesta!=null){
-					postOutResponseContext.getPddContext().addObject(CostantiPdD.DATA_INGRESSO_RICHIESTA, dataIngressoRichiesta);
+					context.getPddContext().addObject(CostantiPdD.DATA_INGRESSO_RICHIESTA, dataIngressoRichiesta);
 				}
 				postOutResponseContext.setPddContext(context.getPddContext());
 				postOutResponseContext.setDataElaborazioneMessaggio(DateManager.getDate());
