@@ -1,3 +1,13 @@
+2017-03-27  Andrea Poli <apoli@link.it>
+
+	* [Utils]
+	Aggiunta funzionalità OP-618
+	Aggiunte alle utility di openspcoop le classi necessarie ad attuare:
+	- Encrypt e Decrypt Java (javax.crypto.Cipher)
+	- Encrypt e Decrypt Xml con standard XMLEncrypt (org.apache.xml.security.encryption)
+	- Codifica e Decodifica Base64
+	- Codifica e Decodifica HexBinary
+
 2017-03-22  Andrea Poli <apoli@link.it>
 
 	* [Utils]

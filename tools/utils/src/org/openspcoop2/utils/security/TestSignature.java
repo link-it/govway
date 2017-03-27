@@ -37,8 +37,8 @@ import org.w3c.dom.Element;
  * TestSignature
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 12820 $, $Date: 2017-03-22 15:27:09 +0100 (Wed, 22 Mar 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class TestSignature {
 
