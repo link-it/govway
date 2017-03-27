@@ -19,7 +19,7 @@
  */
 
 
-package org.openspcoop2.utils.signature;
+package org.openspcoop2.utils.security;
 
 import java.security.Security;
 import java.security.cert.Certificate;
@@ -38,8 +38,8 @@ import org.w3c.dom.Node;
  * VerifyXmlSignature
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 12820 $, $Date: 2017-03-22 15:27:09 +0100 (Wed, 22 Mar 2017) $
  */
 public class VerifyXmlSignature {
 
@@ -93,7 +93,7 @@ public class VerifyXmlSignature {
 			dnc.findPrefixNamespace(element);
 			Object o = xpathEngine.getMatchPattern(element, dnc, "//{http://www.w3.org/2000/09/xmldsig#}Signature", XPathReturnType.NODE);
 			if (o == null) {
-				throw new Exception("Signature element non trovato");
+				throw new Exception("Signature element not found");
 			} 
 			Node signatureElement = (Node) o;
 			

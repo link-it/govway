@@ -19,7 +19,7 @@
  */
 
 
-package org.openspcoop2.utils.signature;
+package org.openspcoop2.utils.security;
 
 import java.security.PrivateKey;
 
@@ -29,8 +29,8 @@ import org.openspcoop2.utils.UtilsException;
  * Signature
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 12820 $, $Date: 2017-03-22 15:27:09 +0100 (Wed, 22 Mar 2017) $
  */
 public class Signature {
 
