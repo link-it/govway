@@ -41,8 +41,6 @@ public class PrincipalReaderFactory {
 		String className = null;
 		if(principalReaderType != null){
 			switch(principalReaderType){
-			case COOKIE:
-				return new CookiePrincipalReader(log);
 			case PRINCIPAL:
 				return new IdentityPrincipalReader(log);
 			}

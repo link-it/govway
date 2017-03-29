@@ -30,7 +30,7 @@ import java.io.Serializable;
  */
 public enum PrincipalReaderType implements  Serializable , Cloneable {
 	
-	PRINCIPAL ("principal"), COOKIE("cookie");
+	PRINCIPAL ("principal");
 
 	/** Value */
 	private String value;
