@@ -136,11 +136,26 @@
 			<param name="token" value="console.configurazioniPersonalizzate"/>
 			<param name="value" value="true"/>
 		</antcall>
-		<antcall target="set_property">
-		    <param name="file" value="${file}"/>
-			<param name="token" value="server.tipo"/>
-			<param name="value" value="web"/>
-		</antcall>
+		<if>
+			<or>
+				<matches string="${antinstaller_as}" pattern="tomcat.*"/>
+				<equals arg1="${antinstaller_stateful}" arg2="false" />
+			</or>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="server.tipo"/>
+					<param name="value" value="web"/>
+				</antcall>
+			</then>
+			<else>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="server.tipo"/>
+					<param name="value" value="j2ee"/>
+				</antcall>
+			</else>
+		</if>
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="risorseJmxPdd.aliases"/>

@@ -16,6 +16,37 @@
 	
 	<target name="_buildPdd">
 
+		<!-- La versione stateless viene sempre creata -->
+		<antcall target="_buildPddInternal">
+			<param name="buildPddInternal_forceDisableJ2eeMode" value="true"/>
+			<param name="buildPddInternal_tipo" value="stateless"/>
+		</antcall>
+			
+		<if>
+			<not>
+				<matches string="${TIPO_AS}" pattern="tomcat.*"/>
+			</not>
+			<then>
+				<antcall target="_buildPddInternal" >
+					<param name="buildPddInternal_forceDisableJ2eeMode" value="false"/>
+					<param name="buildPddInternal_tipo" value="stateful"/>
+				</antcall>
+				
+				<mkdir dir="${deploy_jms}/${TIPO_AS}" />
+				<copy todir="${deploy_jms}/${TIPO_AS}" flatten="true">
+					<fileset dir="${code_jms_pdd}">
+						<include name="${TIPO_AS}*/*"/>
+						<type type="file"/>
+					</fileset>
+				</copy>
+				
+			</then>
+		</if>
+		
+	</target>
+	
+	<target name="_buildPddInternal">
+
 	    <copy todir="${deploy_sw}/${TIPO_AS}/dist">
 		    <fileset dir="${deploy_sw_openspcoop2_jars}">
 		      <include name="*.jar"/>
@@ -32,22 +63,22 @@
 	        <param name="data_content_handler_dir" value="${core}/deploy/data_content_handler" />
 			<param name="properties_dir" value="${core}/deploy/properties" />
 			<param name="printServerInfo" value="true"/>
-			<param name="forceDisableJ2eeMode" value="true"/>
+			<param name="forceDisableJ2eeMode" value="${buildPddInternal_forceDisableJ2eeMode}"/>
 			<param name="wsdlFolder" value="${core}/deploy/deploy_web/web_app" />
 	 	</antcall>
 		<var name="archiveFile" value="" />
 		<if>
 			<available file="${deploy_sw}/${TIPO_AS}/dist/OpenSPCoop2.ear"/>
 			<then>
-				<move file="${deploy_sw}/${TIPO_AS}/dist/OpenSPCoop2.ear" todir="${deploy_sw}/${TIPO_AS}"/>
-				<var name="archiveFile" value="${deploy_sw}/${TIPO_AS}/OpenSPCoop2.ear" />
+				<move file="${deploy_sw}/${TIPO_AS}/dist/OpenSPCoop2.ear" tofile="${deploy_sw}/${TIPO_AS}/OpenSPCoop2_${buildPddInternal_tipo}.ear"/>
+				<var name="archiveFile" value="${deploy_sw}/${TIPO_AS}/OpenSPCoop2_${buildPddInternal_tipo}.ear" />
 			</then>
 			<else>
-				<move file="${deploy_sw}/${TIPO_AS}/dist/openspcoop2.war" todir="${deploy_sw}/${TIPO_AS}"/>
-				<var name="archiveFile" value="${deploy_sw}/${TIPO_AS}/openspcoop2.war" />
+				<move file="${deploy_sw}/${TIPO_AS}/dist/openspcoop2.war" tofile="${deploy_sw}/${TIPO_AS}/openspcoop2_${buildPddInternal_tipo}.war"/>
+				<var name="archiveFile" value="${deploy_sw}/${TIPO_AS}/openspcoop2_${buildPddInternal_tipo}.war" />
 			</else>
 		</if>
-		
+				
 		<delete includeEmptyDirs="true">
 		    <fileset dir="${deploy_sw}/${TIPO_AS}/dist" includes="*"/>
 		</delete>

@@ -14,16 +14,51 @@
 			<matches string="${antinstaller_as}" pattern="jboss.*"/>
 			<then>
 				<if>
-					<or>
-						<equals arg1="${antinstaller_as}" arg2="jboss4" />
-						<equals arg1="${antinstaller_as}" arg2="jboss5" />
-						<equals arg1="${antinstaller_as}" arg2="jboss6" />
-					</or>
+					<equals arg1="${build_openspcoop_archive_suffix}" arg2="stateless"/>
 					<then>
-						<copy file="${deploy_resources}/INSTALL_JBOSS_v4_v5_v6" tofile="${dist}/INSTALL.txt" />
+						<if>
+							<or>
+								<equals arg1="${antinstaller_as}" arg2="jboss4" />
+								<equals arg1="${antinstaller_as}" arg2="jboss5" />
+								<equals arg1="${antinstaller_as}" arg2="jboss6" />
+							</or>
+							<then>
+								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_JBOSS_v4_v5_v6" tofile="${dist}/INSTALL.txt" />
+							</then>
+							<else>
+								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_JBOSS_v7" tofile="${dist}/INSTALL.txt" />
+							</else>
+						</if>
 					</then>
 					<else>
-						<copy file="${deploy_resources}/INSTALL_JBOSS_v7" tofile="${dist}/INSTALL.txt" />
+						<if>
+							<or>
+								<equals arg1="${antinstaller_as}" arg2="jboss4" />
+								<equals arg1="${antinstaller_as}" arg2="jboss5" />
+							</or>
+							<then>
+								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_JBOSS_v4_v5" tofile="${dist}/INSTALL.txt" />
+							</then>
+						</if>
+						<if>
+							<equals arg1="${antinstaller_as}" arg2="jboss6" />
+							<then>
+								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_JBOSS_v6" tofile="${dist}/INSTALL.txt" />
+							</then>
+						</if>
+						<if>
+							<equals arg1="${antinstaller_as}" arg2="jboss7" />
+							<then>
+								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_JBOSS_v7" tofile="${dist}/INSTALL.txt" />
+							</then>
+						</if>
+						<mkdir dir="${dist}/jms" />
+						<copy todir="${dist}/jms" flatten="true">
+							<fileset dir="${deploy_jms}/${antinstaller_as}">
+								<include name="*"/>
+								<type type="file"/>
+							</fileset>
+						</copy>
 					</else>
 				</if>
 			</then>
@@ -31,13 +66,39 @@
 		<if>
 			<matches string="${antinstaller_as}" pattern="wildfly.*"/>
 			<then>
-				<copy file="${deploy_resources}/INSTALL_WILDFLY" tofile="${dist}/INSTALL.txt" />
+				<if>
+					<equals arg1="${build_openspcoop_archive_suffix}" arg2="stateless"/>
+					<then>
+						<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_WILDFLY" tofile="${dist}/INSTALL.txt" />
+					</then>
+					<else>
+						<if>
+							<or>
+								<equals arg1="${antinstaller_as}" arg2="wildfly8" />
+								<equals arg1="${antinstaller_as}" arg2="wildfly9" />
+							</or>
+							<then>
+								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_WILDFLY_v8_v9" tofile="${dist}/INSTALL.txt" />
+							</then>
+							<else>
+								<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_WILDFLY_v10" tofile="${dist}/INSTALL.txt" />
+							</else>
+						</if>
+						<mkdir dir="${dist}/jms" />
+						<copy todir="${dist}/jms" flatten="true">
+							<fileset dir="${deploy_jms}/${antinstaller_as}">
+								<include name="*"/>
+								<type type="file"/>
+							</fileset>
+						</copy>
+					</else>
+				</if>
 			</then>
 		</if>
 		<if>
 			<matches string="${antinstaller_as}" pattern="tomcat.*"/>
 			<then>
-				<copy file="${deploy_resources}/INSTALL_TOMCAT" tofile="${dist}/INSTALL.txt" />
+				<copy file="${deploy_resources}/${build_openspcoop_archive_suffix}/INSTALL_TOMCAT" tofile="${dist}/INSTALL.txt" />
 			</then>
 		</if>
 		

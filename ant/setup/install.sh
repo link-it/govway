@@ -61,4 +61,13 @@ CLASSPATH=${CLASSPATH}:${ANTINSTALLER_LIBRARIES}/jakarta-regexp-1.5.jar
 
 COMMAND=$JAVA_HOME/bin/java
 
+rm -f ant.install.properties
+cp ant.install.properties.template ant.install.properties
+
+# Per utilizzare lo stateful
+if [ -e avanzata.dodeploy ]
+then
+        echo "antinstaller_conf_avanzata_enabled=true" >> ant.install.properties
+fi
+
 $COMMAND -classpath $CLASSPATH  org.tp23.antinstaller.runtime.ExecInstall $GUI ${ROOT_OPENSPCOOP}/ant/setup

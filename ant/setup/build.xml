@@ -26,6 +26,7 @@
 	<property name="deploy_sw" location="deploy/sw" />
 	<property name="deploy_sql" location="deploy/sql" />
 	<property name="deploy_ds" location="deploy/datasource" />
+	<property name="deploy_jms" location="deploy/jms" />
 	<property name="tmp_archivi" location="${build}/archivi" />
 	<property name="tmp_sql" location="${build}/sql" />
 	<property name="tmp_ds" location="${build}/ds" />
@@ -72,6 +73,9 @@
 			antinstaller_tiposoggetto_sdi=SDI
 			antinstaller_tiposoggetto_trasparente=PROXY
 			
+		Configurazione Avanzata
+			antinstaller_stateful=false
+
 		Compatibilità interfacce OpenSPCoop-v1
 			antinstaller_backward_compatibility=true
 			
@@ -103,6 +107,21 @@
 			<var name="build_for_as" value="${antinstaller_as}"/>
 		</else>
 	</if>
+	<if>
+		<or>
+			<matches string="${antinstaller_as}" pattern="tomcat.*"/>
+			<equals arg1="${antinstaller_stateful}" arg2="false" />
+			<equals arg1="${antinstaller_stateful}" arg2="" />
+			<equals arg1="${antinstaller_stateful}" arg2="$${antinstaller_stateful}" />
+		</or>
+		<then>
+			<var name="build_openspcoop_archive_suffix" value="stateless"/>
+		</then>
+		<else>
+			<var name="build_openspcoop_archive_suffix" value="stateful"/>
+		</else>
+	</if>
+
 	
 	<target name="setup" depends="clean,init">
 
@@ -155,7 +174,7 @@
 			</or>
 			<then>
 				<!-- unzip -->
-				<unzip src="${deploy_sw}/${build_for_as}/OpenSPCoop2.ear" dest="${tmp_archivi}/OpenSPCoop2.ear"/>
+				<unzip src="${deploy_sw}/${build_for_as}/OpenSPCoop2_${build_openspcoop_archive_suffix}.ear" dest="${tmp_archivi}/OpenSPCoop2.ear"/>
 				<!-- configuration -->
 				<antcall target="pdd_openspcoop2_properties_settings">
 				    <param name="file" value="${tmp_archivi}/OpenSPCoop2.ear/properties/openspcoop2.properties"/>
@@ -216,7 +235,7 @@
 			</then>
 			<else>
 				<!-- unzip -->
-				<unzip src="${deploy_sw}/${build_for_as}/openspcoop2.war" dest="${tmp_archivi}/openspcoop2.war"/>
+				<unzip src="${deploy_sw}/${build_for_as}/openspcoop2_${build_openspcoop_archive_suffix}.war" dest="${tmp_archivi}/openspcoop2.war"/>
 				<!-- configuration -->
 				<antcall target="pdd_openspcoop2_properties_settings">
 				    <param name="file" value="${tmp_archivi}/openspcoop2.war/WEB-INF/classes/openspcoop2.properties"/>

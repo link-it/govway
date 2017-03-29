@@ -20,6 +20,8 @@
 	<property name="deploy_sw" location="deploy/sw" />
 	<property name="deploy_sw_openspcoop2_jars" location="deploy/sw/openspcoop2" />
 	<property name="deploy_sql" location="deploy/sql" />
+	<property name="deploy_jms" location="deploy/jms" />
+	<property name="code_jms_pdd" location="../../core/deploy/code_jms" />
 
 	<target name="prepare_software" depends="clean_prepare,init_prepare">
 		<antcall target="prepare_shared_jar_setup" />

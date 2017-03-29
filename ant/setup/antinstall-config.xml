@@ -3,7 +3,7 @@
 <installer name="OpenSPCoop2 Installer v2.3" defaultImageResource="/logoSetup.png"
     ui="swing,text"
 	verbose="false"
-    windowIcon="/iconaSetup.png" wide="550:275">
+    windowIcon="/iconaSetup.png" wide="550:275" loadDefaults="true">
     
     <!-- Se si caricano i loadDefaults non funzionano piu' i cambi di stato per il db -->
     <!-- loadDefaults="true" > -->
@@ -15,6 +15,10 @@
         <comment explanatoryText="Per maggiori informazioni sul prodotto:"/>
         <comment explanatoryText="       http://www.openspcoop.org" bold="true"/>
         <comment explanatoryText="       http://www.link.it" bold="true"/>
+
+        <!-- NOTA: le proprieta seguenti NON devono essere utilizzate al di fuori della ifProperty altrimenti su windows non vengono 
+                considerati i valori iniziali presenti nel file ant.install.properties impostato nei comandi install.* -->
+        <hidden property="antinstaller_conf_avanzata_enabled" value=""/>
     </page>
 
     <page name="preinstallazione2" type="input" displayText="Informazioni preliminari">
@@ -153,6 +157,23 @@
 
     </page>
     
+    <page name="preinstallazioneStato" type="input" displayText="Configurazione Avanzata" ifProperty="(${antinstaller_conf_avanzata_enabled}==true) AND (${antinstaller_as}!=tomcat5) AND (${antinstaller_as}!=tomcat6) AND (${antinstaller_as}!=tomcat7) AND (${antinstaller_as}!=tomcat8) AND (${antinstaller_as}!=tomcat9)">
+
+	<checkbox defaultValue="false" property="antinstaller_stateful" value="stateful" displayText="Presa in carico"/>
+
+    </page>
+
+    <page name="preinstallazioneStato" type="input" displayText="Configurazione Avanzata" ifProperty="(${antinstaller_conf_avanzata_enabled}==true) AND (${antinstaller_as}==tomcat5) OR (${antinstaller_as}==tomcat6) OR (${antinstaller_as}==tomcat7) OR (${antinstaller_as}==tomcat8) OR (${antinstaller_as}==tomcat9)">
+
+	<comment displayText="Attenzione: la scelta dell'Application Server Tomcat impedisce l'utilizzo della funzionalità 'presa in carico'."/>
+	<comment displayText="Tornare al pannello precedente e scegliere un Application Server differente"/>
+	<comment displayText="o procedere con la funzionalità disabilitata"/>
+
+	<comment displayText=""/>
+	<checkbox defaultValue="false" property="antinstaller_stateful" force="true" displayText="Presa in carico"/>
+
+    </page>
+
     <page name="preinstallazione5" type="input" displayText="Compatibilità interfacce OpenSPCoop-v1" ifProperty="${antinstaller_protocollo_spcoop}==true">
         
          <checkbox defaultValue="true" property="antinstaller_backward_compatibility" value="backward_compatibility" displayText="Modulo OpenSPCoop-v1"/>

@@ -51,6 +51,13 @@ REM # minimal regular expression env
 set CLASSPATH=%CLASSPATH%;%ANTINSTALLER_LIBRARIES%\ant-apache-regexp-1.9.7.jar
 set CLASSPATH=%CLASSPATH%;%ANTINSTALLER_LIBRARIES%\jakarta-regexp-1.5.jar
 
+del ant.install.properties
+copy ant.install.properties.template ant.install.properties
+echo. >> ant.install.properties
+
+REM # Per utilizzare lo stateful
+if exist avanzata.dodeploy echo antinstaller_conf_avanzata_enabled=true >> ant.install.properties
+
 %COMMAND% -classpath %CLASSPATH%  org.tp23.antinstaller.runtime.ExecInstall %INTERFACE% %ROOT_OPENSPCOOP%\ant\setup
 
 goto end
