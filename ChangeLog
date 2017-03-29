@@ -1,3 +1,11 @@
+2017-03-29  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	Aggiunta funzionalità OP-621
+	Aggiunto supporto per la generazione di una versione con stato 
+	che permette l'utilizzo della funzionalità di presa in carico delle richieste da parte della PdD.
+	Tale versione richiede l'utilizzo di code jms le cui configurazioni vengono generate dall'installer.
+
 2017-03-27  Andrea Poli <apoli@link.it>
 
 	* [Utils]
