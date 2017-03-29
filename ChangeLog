@@ -1,5 +1,12 @@
 2017-03-29  Andrea Poli <apoli@link.it>
 
+	* [Pdd]
+	Risolto Bug OP-620
+	Le patch SQL contenenti operazioni di DROP INDEX sui database mysql e sqlserver possedevano una sintassi scorretta.
+	L'errore risiedeva nella mancanza del costrutto "ON <NOME-TABELLA>";
+
+2017-03-29  Andrea Poli <apoli@link.it>
+
 	* [InstallerVersioneBinaria]
 	Aggiunta funzionalità OP-621
 	Aggiunto supporto per la generazione di una versione con stato 
