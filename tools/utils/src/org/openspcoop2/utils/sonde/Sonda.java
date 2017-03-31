@@ -92,23 +92,26 @@ public abstract class Sonda {
 
 		int statoNew = statoSonda.getStato();
 
-		// Aggiorna ad adesso il data_warn se lo statoSonda.stato e' passato ad 1 da 0 
-		if(this.param.getStatoUltimoCheck() == 0 && statoNew == 1) {
-			this.param.setDataWarn(new Date());
-			this.param.setDataError(null);
-			this.param.setDataOk(null);
-		}
-		// Aggiorna ad adesso il data_error se lo statoSonda.stato e' passato a 2
-		if(statoNew == 2) {
-			this.param.setDataError(new Date());
-			this.param.setDataWarn(null);
-			this.param.setDataOk(null);
-		}
-		// Aggiorna ad adesso il data_ok se lo statoSonda.stato e' passato a 0
-		if(statoNew == 0) {
-			this.param.setDataOk(new Date());
-			this.param.setDataError(null);
-			this.param.setDataWarn(null);
+		if(this.param.getStatoUltimoCheck() != statoNew) {
+			
+			// Aggiorna ad adesso il data_warn se lo statoSonda.stato e' passato ad 1 da 0 
+			if(this.param.getStatoUltimoCheck() == 0 && statoNew == 1) {
+				this.param.setDataWarn(new Date());
+				this.param.setDataError(null);
+				this.param.setDataOk(null);
+			}
+			// Aggiorna ad adesso il data_error se lo statoSonda.stato e' passato a 2
+			if(statoNew == 2) {
+				this.param.setDataError(new Date());
+				this.param.setDataWarn(null);
+				this.param.setDataOk(null);
+			}
+			// Aggiorna ad adesso il data_ok se lo statoSonda.stato e' passato a 0
+			if(statoNew == 0) {
+				this.param.setDataOk(new Date());
+				this.param.setDataError(null);
+				this.param.setDataWarn(null);
+			}
 		}
 
 		this.param.setStatoUltimoCheck(statoNew);

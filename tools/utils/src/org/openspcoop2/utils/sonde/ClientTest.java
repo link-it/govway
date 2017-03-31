@@ -52,7 +52,10 @@ public class ClientTest {
 		String driver = null;
 		String userName = null;
 		String password = null;
-
+		String sondaBatchName = "batch";
+		String sondaCodaName = "coda";
+		
+		
 		switch (tipoDatabase) {
 		case POSTGRESQL:
 			url = "jdbc:postgresql://localhost/prova";
@@ -111,6 +114,18 @@ public class ClientTest {
 				password = passwordCustom;
 			}
 		}
+		if(args.length>4){
+			String sondaBatchNameCustom = args[4].trim();
+			if(!"${sondaBatchName}".equals(sondaBatchNameCustom)){
+				sondaBatchName = sondaBatchNameCustom;
+			}
+		}
+		if(args.length>5){
+			String sondaCodaNameCustom = args[5].trim();
+			if(!"${sondaCodaName}".equals(sondaCodaNameCustom)){
+				sondaCodaName = sondaCodaNameCustom;
+			}
+		}
 
 
 		Class.forName(driver).newInstance();
@@ -118,8 +133,8 @@ public class ClientTest {
 		try{
 			con = DriverManager.getConnection(url, userName, password);
 //			testSondaError(tipoDatabase, con);
-			testSondaBatch(tipoDatabase, con);
-//			testSondaCoda(tipoDatabase, con);
+			testSondaBatch(sondaBatchName, tipoDatabase, con);
+			testSondaCoda(sondaCodaName, tipoDatabase, con);
 		} catch(Exception e) {
 			System.err.println("Errore durante il TestSonda: " + e.getMessage());
 			e.printStackTrace(System.err);
@@ -153,82 +168,83 @@ public class ClientTest {
 		
 	}
 	
-	public static void testSondaBatch(TipiDatabase tipoDatabase, Connection con) throws Exception {
+	public static void testSondaBatch(String sondaName, TipiDatabase tipoDatabase, Connection con) throws Exception {
 		
-//		SondaFactory.updateConfSonda("batch", 1000, 2000, con, tipoDatabase);
-		SondaFactory.get("update-psp", con, tipoDatabase);
-		SondaBatch batch = (SondaBatch) SondaFactory.get("update-psp", con, tipoDatabase);
+		SondaFactory.updateConfSonda(sondaName, 1000, 2000, con, tipoDatabase);
+		SondaBatch batch = (SondaBatch) SondaFactory.get(sondaName, con, tipoDatabase);
+		
+		if(batch == null) throw new Exception("Sonda ["+sondaName+"] non trovata sul db");
 
 		{
 			StatoSonda stato = batch.aggiornaStatoSonda(true, new Date(), "OK", con, tipoDatabase); //<<-- Aggiornare con uno stato ok
 			
-			checkStato("batch", 0, stato);
+			checkStato(sondaName, 0, stato);
 			System.out.println("Test 1 batch ok. Descrizione: " + stato.getDescrizione());
 		}
-//
-//		Thread.sleep(1200);
-//
-//		{
-//			StatoSonda stato = batch.getStatoSonda(); // <<-- l'ultima volta che ha girato il batch e' prima dell'intervallo di warn
-//			checkStato("batch", 1, stato);
-//			System.out.println("Test 2 batch ok. Descrizione: " + stato.getDescrizione());
-//		}
-//		Thread.sleep(1200);
-//
-//		{
-//			StatoSonda stato = batch.getStatoSonda(); // <<-- l'ultima volta che ha girato il batch e' prima dell'intervallo di error
-//			checkStato("batch", 2, stato);
-//			System.out.println("Test 3 batch ok. Descrizione: " + stato.getDescrizione());
-//		}
-//
-//		{
-//			StatoSonda stato = batch.aggiornaStatoSonda(true, new Date(), null, con, tipoDatabase); //<<-- Aggiornare con uno stato ok
-//			checkStato("batch", 0, stato);
-//			System.out.println("Test 4 batch ok. Descrizione: " + stato.getDescrizione());
-//		}		
-//
-//		{
-//			StatoSonda stato = batch.aggiornaStatoSonda(true, new Date(), null, con, tipoDatabase); // <<-- Aggiornare con uno stato ok
-//			checkStato("batch", 0, stato);
-//			System.out.println("Test 6 batch ok. Descrizione: " + stato.getDescrizione());
-//		}
-		batch = (SondaBatch) SondaFactory.get("update-psp", con, tipoDatabase);
+
+		Thread.sleep(1200);
+
+		{
+			StatoSonda stato = batch.getStatoSonda(); // <<-- l'ultima volta che ha girato il batch e' prima dell'intervallo di warn
+			checkStato(sondaName, 1, stato);
+			System.out.println("Test 2 batch ok. Descrizione: " + stato.getDescrizione());
+		}
+		Thread.sleep(1200);
+
+		{
+			StatoSonda stato = batch.getStatoSonda(); // <<-- l'ultima volta che ha girato il batch e' prima dell'intervallo di error
+			checkStato(sondaName, 2, stato);
+			System.out.println("Test 3 batch ok. Descrizione: " + stato.getDescrizione());
+		}
+
+		{
+			StatoSonda stato = batch.aggiornaStatoSonda(true, new Date(), null, con, tipoDatabase); //<<-- Aggiornare con uno stato ok
+			checkStato(sondaName, 0, stato);
+			System.out.println("Test 4 batch ok. Descrizione: " + stato.getDescrizione());
+		}		
+
 		{
 			StatoSonda stato = batch.aggiornaStatoSonda(false, new Date(), "Errore durante l'esecuzione del batch\n\nin due righe", con, tipoDatabase); //<<-- Aggiornare con uno stato ko
-			checkStato("batch", 2, stato);
+			checkStato(sondaName, 2, stato);
 			System.out.println("Test 5 batch ok. Descrizione: " + stato.getDescrizione());
 		}
-		SondaFactory.get("update-psp", con, tipoDatabase);
+
+		{
+			StatoSonda stato = batch.aggiornaStatoSonda(true, new Date(), null, con, tipoDatabase); // <<-- Aggiornare con uno stato ok
+			checkStato(sondaName, 0, stato);
+			System.out.println("Test 6 batch ok. Descrizione: " + stato.getDescrizione());
+		}
 		
 	}
 	
-	public static void testSondaCoda(TipiDatabase tipoDatabase, Connection con) throws Exception {
+	public static void testSondaCoda(String sondaCodaName, TipiDatabase tipoDatabase, Connection con) throws Exception {
 
-		SondaCoda coda = (SondaCoda) SondaFactory.get("coda", con, tipoDatabase);
+		SondaCoda coda = (SondaCoda) SondaFactory.get(sondaCodaName, con, tipoDatabase);
+		if(coda == null) throw new Exception("Sonda ["+sondaCodaName+"] non trovata sul db");
 
 		{
 			StatoSonda stato = coda.aggiornaStatoSonda(3, con, tipoDatabase);
-			checkStato("coda", 0, stato);
+			checkStato(sondaCodaName, 0, stato);
 			System.out.println("Test 1 coda ok. Descrizione: " + stato.getDescrizione());
 		}
 
 		{
 			StatoSonda stato = coda.aggiornaStatoSonda(7, con, tipoDatabase); 
-			checkStato("coda", 1, stato);
+			checkStato(sondaCodaName, 1, stato);
 			System.out.println("Test 2 coda ok. Descrizione: " + stato.getDescrizione());
 		}
 
 
 		{
 			StatoSonda stato = coda.aggiornaStatoSonda(20, con, tipoDatabase);
-			checkStato("coda", 2, stato);
+			checkStato(sondaCodaName, 2, stato);
 			System.out.println("Test 3 coda ok. Descrizione: " + stato.getDescrizione());
 		}
 
 
 		{
 			StatoSonda stato = coda.aggiornaStatoSonda(3, con, tipoDatabase);
-			checkStato("coda", 0, stato);
+			checkStato(sondaCodaName, 0, stato);
 			System.out.println("Test 4 coda ok. Descrizione: " + stato.getDescrizione());
 		}
 

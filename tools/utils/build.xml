@@ -190,6 +190,8 @@
         		<arg value="${url}" /> <!-- opzionale -->
         		<arg value="${username}" /> <!-- opzionale -->
         		<arg value="${password}" /> <!-- opzionale -->
+        		<arg value="${sondaBatchName}" /> <!-- opzionale -->
+        		<arg value="${sondaCodaName}" /> <!-- opzionale -->
                 <classpath>
                 		<path refid="classpath_run_dist" />
                 </classpath>
