@@ -117,6 +117,23 @@
 		</fileset>
 	</path>	
 		
+	
+	<!-- Test -->
+	<path id="classpath_run_sonde" >
+		<fileset dir="${dist_utils}" >
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${ext_lib}" >
+			<include name="*.jar"/>
+		</fileset>
+                <fileset dir="${required_lib}/shared">
+                        <include name="soap.jar"/>
+                </fileset>
+		<fileset dir="${required_lib}/log" >
+			<include name="log4j-1.2.16.jar"/>
+		</fileset>
+	</path>	
+		
 	<target name="runKeyGeneratorTest">
 		<if>
 			<equals arg1="${tipoDatabase}" arg2="$${tipoDatabase}"/>
@@ -188,7 +205,7 @@
         		<arg value="${username}" /> <!-- opzionale -->
         		<arg value="${password}" /> <!-- opzionale -->
                 <classpath>
-                		<path refid="classpath_run_dist" />
+                		<path refid="classpath_run_sonde" />
                 </classpath>
         </java>
 	</target>

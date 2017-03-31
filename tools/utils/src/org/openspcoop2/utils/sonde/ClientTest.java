@@ -119,7 +119,7 @@ public class ClientTest {
 			con = DriverManager.getConnection(url, userName, password);
 //			testSondaError(tipoDatabase, con);
 			testSondaBatch(tipoDatabase, con);
-			testSondaCoda(tipoDatabase, con);
+//			testSondaCoda(tipoDatabase, con);
 		} catch(Exception e) {
 			System.err.println("Errore durante il TestSonda: " + e.getMessage());
 			e.printStackTrace(System.err);
@@ -155,50 +155,51 @@ public class ClientTest {
 	
 	public static void testSondaBatch(TipiDatabase tipoDatabase, Connection con) throws Exception {
 		
-		SondaFactory.updateConfSonda("batch", 1000, 2000, con, tipoDatabase);
-		
-		SondaBatch batch = (SondaBatch) SondaFactory.get("batch", con, tipoDatabase);
+//		SondaFactory.updateConfSonda("batch", 1000, 2000, con, tipoDatabase);
+		SondaFactory.get("update-psp", con, tipoDatabase);
+		SondaBatch batch = (SondaBatch) SondaFactory.get("update-psp", con, tipoDatabase);
 
 		{
-			StatoSonda stato = batch.aggiornaStatoSonda(true, new Date(), null, con, tipoDatabase); //<<-- Aggiornare con uno stato ok
+			StatoSonda stato = batch.aggiornaStatoSonda(true, new Date(), "OK", con, tipoDatabase); //<<-- Aggiornare con uno stato ok
 			
 			checkStato("batch", 0, stato);
 			System.out.println("Test 1 batch ok. Descrizione: " + stato.getDescrizione());
 		}
-
-		Thread.sleep(1200);
-
+//
+//		Thread.sleep(1200);
+//
+//		{
+//			StatoSonda stato = batch.getStatoSonda(); // <<-- l'ultima volta che ha girato il batch e' prima dell'intervallo di warn
+//			checkStato("batch", 1, stato);
+//			System.out.println("Test 2 batch ok. Descrizione: " + stato.getDescrizione());
+//		}
+//		Thread.sleep(1200);
+//
+//		{
+//			StatoSonda stato = batch.getStatoSonda(); // <<-- l'ultima volta che ha girato il batch e' prima dell'intervallo di error
+//			checkStato("batch", 2, stato);
+//			System.out.println("Test 3 batch ok. Descrizione: " + stato.getDescrizione());
+//		}
+//
+//		{
+//			StatoSonda stato = batch.aggiornaStatoSonda(true, new Date(), null, con, tipoDatabase); //<<-- Aggiornare con uno stato ok
+//			checkStato("batch", 0, stato);
+//			System.out.println("Test 4 batch ok. Descrizione: " + stato.getDescrizione());
+//		}		
+//
+//		{
+//			StatoSonda stato = batch.aggiornaStatoSonda(true, new Date(), null, con, tipoDatabase); // <<-- Aggiornare con uno stato ok
+//			checkStato("batch", 0, stato);
+//			System.out.println("Test 6 batch ok. Descrizione: " + stato.getDescrizione());
+//		}
+		batch = (SondaBatch) SondaFactory.get("update-psp", con, tipoDatabase);
 		{
-			StatoSonda stato = batch.getStatoSonda(); // <<-- l'ultima volta che ha girato il batch e' prima dell'intervallo di warn
-			checkStato("batch", 1, stato);
-			System.out.println("Test 2 batch ok. Descrizione: " + stato.getDescrizione());
-		}
-		Thread.sleep(1200);
-
-		{
-			StatoSonda stato = batch.getStatoSonda(); // <<-- l'ultima volta che ha girato il batch e' prima dell'intervallo di error
-			checkStato("batch", 2, stato);
-			System.out.println("Test 3 batch ok. Descrizione: " + stato.getDescrizione());
-		}
-
-		{
-			StatoSonda stato = batch.aggiornaStatoSonda(true, new Date(), null, con, tipoDatabase); //<<-- Aggiornare con uno stato ok
-			checkStato("batch", 0, stato);
-			System.out.println("Test 4 batch ok. Descrizione: " + stato.getDescrizione());
-		}		
-
-		{
-			StatoSonda stato = batch.aggiornaStatoSonda(false, new Date(), "Errore durante l'esecuzione del batch", con, tipoDatabase); //<<-- Aggiornare con uno stato ko
+			StatoSonda stato = batch.aggiornaStatoSonda(false, new Date(), "Errore durante l'esecuzione del batch\n\nin due righe", con, tipoDatabase); //<<-- Aggiornare con uno stato ko
 			checkStato("batch", 2, stato);
 			System.out.println("Test 5 batch ok. Descrizione: " + stato.getDescrizione());
 		}
-
-		{
-			StatoSonda stato = batch.aggiornaStatoSonda(true, new Date(), null, con, tipoDatabase); // <<-- Aggiornare con uno stato ok
-			checkStato("batch", 0, stato);
-			System.out.println("Test 6 batch ok. Descrizione: " + stato.getDescrizione());
-		}
-
+		SondaFactory.get("update-psp", con, tipoDatabase);
+		
 	}
 	
 	public static void testSondaCoda(TipiDatabase tipoDatabase, Connection con) throws Exception {

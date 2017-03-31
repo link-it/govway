@@ -25,6 +25,7 @@ import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.soap.encoding.soapenc.Base64;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.sonde.ParametriSonda;
 import org.openspcoop2.utils.sonde.Sonda;
@@ -102,11 +103,22 @@ public class SondaBatch extends Sonda {
 			Integer interazioniFallite = Integer.parseInt(super.getParam().getDatiCheck().getProperty("interazioni_fallite"));
 
 			statoSonda.setStato(2);
-			statoSonda.setDescrizione("Il batch "+super.getParam().getNome()+" risulta fallire dal "+dataUltimoBatchString+" (fallite "+interazioniFallite+" iterazioni). Descrizione dell'ultimo errore:" + (String)super.getParam().getDatiCheck().get("descrizione_errore"));
+			String descr = null;
+			if(super.getParam().getDatiCheck().containsKey("descrizione_errore")) {
+				descr = new String(Base64.decode((String) super.getParam().getDatiCheck().get("descrizione_errore")));
+			}
+			statoSonda.setDescrizione("Il batch "+super.getParam().getNome()+" risulta fallire dal "+dataUltimoBatchString+" (fallite "+interazioniFallite+" iterazioni). Descrizione dell'ultimo errore:" + descr);
 			return statoSonda;
 		}
 	}
 
+	public static void main(String[] args) {
+		String descrizioneErrore = "aaaaa";
+		String encoded = Base64.encode(descrizioneErrore.getBytes());
+		System.out.println(encoded);
+		byte[] decoded = Base64.decode(encoded);
+		System.out.println(new String(decoded));
+	}
 	/**
 	 * @param esito_batch true se l'esito e' positivo, false altrimenti
 	 * @param data_ultimo_batch ultima data di esecuzione del batch 
@@ -128,8 +140,9 @@ public class SondaBatch extends Sonda {
 			} else {
 				super.getParam().getDatiCheck().put("interazioni_fallite", 1 + "");
 			}
-			
-			super.getParam().getDatiCheck().put("descrizione_errore", descrizioneErrore);
+			if(descrizioneErrore != null) {
+				super.getParam().getDatiCheck().put("descrizione_errore", Base64.encode(descrizioneErrore.getBytes()));
+			}
 		} else {
 			if(super.getParam().getDatiCheck().containsKey("descrizione_errore"))
 				super.getParam().getDatiCheck().remove("descrizione_errore");

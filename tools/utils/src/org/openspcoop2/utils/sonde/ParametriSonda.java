@@ -41,7 +41,7 @@ public class ParametriSonda {
 	private Properties datiCheck;
 	private int statoUltimoCheck;
 	
-	private static final String SEPARATOR = "=";
+	private static final String SEPARATOR = ":";
 
 	/**
 	 * Deserializza una stringa in una lista di properties rappresentanti i dati di check
