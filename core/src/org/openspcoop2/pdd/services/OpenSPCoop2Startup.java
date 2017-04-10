@@ -617,7 +617,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				if(CostantiConfigurazione.NONE.equals(tipoGeneratoreClusterID)){
 					String clusterID = propertiesReader.getClusterId(false);
 					if(clusterID!=null){
-						classClusterID = "org.openspcoop.utils.id.ClusterIdentifierGenerator";
+						classClusterID = "org.openspcoop2.utils.id.ClusterIdentifierGenerator";
 					}
 				}else{
 					classClusterID = classNameReader.getUniqueIdentifier(tipoGeneratoreClusterID);

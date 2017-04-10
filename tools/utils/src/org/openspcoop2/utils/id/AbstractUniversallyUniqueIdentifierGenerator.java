@@ -24,27 +24,30 @@ package org.openspcoop2.utils.id;
 import java.util.UUID;
 
 import org.openspcoop2.utils.id.IUniqueIdentifier;
+import org.openspcoop2.utils.id.IUniqueIdentifierGenerator;
 import org.openspcoop2.utils.id.UniqueIdentifierException;
 
 /**
- * Implementazione tramite java.util.UUID
+ * AbstractUniversallyUniqueIdentifierGenerator
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author$
- * @version $Rev$, $Date$
+ * @author $Author: apoli $
+ * @version $Rev: 12564 $, $Date: 2017-01-11 14:31:31 +0100 (Wed, 11 Jan 2017) $
  */
 
-public class UniversallyUniqueIdentifierGenerator extends AbstractUniversallyUniqueIdentifierGenerator{
+public abstract class AbstractUniversallyUniqueIdentifierGenerator implements IUniqueIdentifierGenerator {
 
-//	The Oracle JVM does not provide a Version 1 generator, apparently because of security and privacy concerns. 
-//	The JVM does not provide access to the MAC address of host machine.
-//  Tutti gli UUID generati in questa classe sono quindi di tipo 4.
-	
 	@Override
-	public IUniqueIdentifier newID() throws UniqueIdentifierException {
+	public IUniqueIdentifier convertFromString(String value)
+			throws UniqueIdentifierException {
 		UniversallyUniqueIdentifier uuidOpenSPCoop = new UniversallyUniqueIdentifier();
-		uuidOpenSPCoop.setUuid(UUID.randomUUID());
+		uuidOpenSPCoop.setUuid(UUID.fromString(value));
 		return uuidOpenSPCoop;
+	}
+
+	@Override
+	public void init(Object... o) throws UniqueIdentifierException {
+		
 	}
 
 }

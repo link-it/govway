@@ -780,6 +780,7 @@
 				<include name="xom-1.2.10.jar" /> <!--jmx mini console -->
 				<include name="joda-time-2.9.4.jar" />
 				<include name="guava-19.0.jar"/>
+				<include name="java-uuid-generator-3.1.4.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/log">
 				<include name="slf4j-api-1.7.21.jar"/>
