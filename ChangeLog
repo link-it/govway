@@ -1,3 +1,11 @@
+2017-04-10  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	Risolto Bug OP-624 
+	Risolto errore che si verificava durante l'esportazione di un accordo di servizio parte specifica in formato CNIPA.
+	L'errore che si otteneva era il seguente:
+	'RegistroOpenSPCoopUtilities.setImportLocation error: Riscontrato errore durante la lettura del wsdl: null'
+
 2017-03-29  Andrea Poli <apoli@link.it>
 
 	* [Pdd]
