@@ -22,6 +22,7 @@
 
 package org.openspcoop2.protocol.registry;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -1898,5 +1899,83 @@ public class RegistroServizi  {
 			}
 		}
 		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public Serializable pushGenericObject(String keyObject, Serializable object) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		if(this.cache!=null){
+			return this._pushGenericObject(keyObject, object);
+		}
+		return object;
+	}
+	
+	private synchronized Serializable _pushGenericObject(String keyObject, Serializable object) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		
+		// Raccolta dati
+		if(keyObject == null)
+			throw new DriverRegistroServiziException("[getGenericObject]: Parametro non definito");	
+		
+		// se e' attiva una cache provo ad utilizzarla per vedere se un altro thread lo ha già aggiunto
+		String key = null;	
+		key = "getGenericObject_" + keyObject;
+		org.openspcoop2.utils.cache.CacheResponse response = 
+			(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+		if(response != null){
+			if(response.getException()!=null){
+				if(DriverRegistroServiziNotFound.class.getName().equals(response.getException().getClass().getName()))
+					throw (DriverRegistroServiziNotFound) response.getException();
+				else
+					throw (DriverRegistroServiziException) response.getException();
+			}else{
+				return ((Serializable) response.getObject());
+			}
+		}
+		
+		// Aggiungo la risposta in cache
+		try{	
+			org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+			responseCache.setObject(object);
+			this.cache.put(key,responseCache);
+		}catch(UtilsException e){
+			this.log.error("Errore durante l'inserimento in cache ["+key+"]: "+e.getMessage());
+		}
+		
+		return object; 
+		
+	}
+	
+	public Serializable getGenericObject(String keyObject) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+
+		// Raccolta dati
+		if(keyObject == null)
+			throw new DriverRegistroServiziException("[getGenericObject]: Parametro non definito");	
+		
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = "getGenericObject_" + keyObject;
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverRegistroServiziNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverRegistroServiziNotFound) response.getException();
+					else
+						throw (DriverRegistroServiziException) response.getException();
+				}else{
+					return ((Serializable) response.getObject());
+				}
+			}
+		}
+
+		throw new DriverRegistroServiziNotFound("GenericObject with key ["+keyObject+"] not found");
 	}
 }

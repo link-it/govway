@@ -20,6 +20,7 @@
 
 package org.openspcoop2.protocol.registry;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -250,6 +251,7 @@ public class RegistroServiziManager {
 	public AccordoCooperazione getAccordoCooperazione(IDAccordoCooperazione idAccordo,String nomeRegistro,Boolean readContenutiAllegati) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return this.registroServiziReader.getAccordoCooperazione(this.getConnection(), idAccordo, readContenutiAllegati, nomeRegistro);
 	}
+
 	
 	
 	/* ********  R I C E R C A  I D   E L E M E N T I   P R I M I T I V I  ******** */
@@ -289,4 +291,17 @@ public class RegistroServiziManager {
 	public List<IDFruizione> getAllIdFruizioniServizio(FiltroRicercaFruizioniServizio filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		return this.registroServiziReader.getAllIdFruizioniServizio(this.getConnection(), filtroRicerca, nomeRegistro);
 	}
+
+	
+	
+	/* ********  R E P O S I T O R Y    O G G E T T I   G E N E R I C I  ******** */
+	
+	public Serializable getGenericObject(String keyObject) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getGenericObject(keyObject);
+	}
+	
+	public Serializable pushGenericObject(String keyObject, Serializable object) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.pushGenericObject(keyObject, object);
+	}
+
 }
