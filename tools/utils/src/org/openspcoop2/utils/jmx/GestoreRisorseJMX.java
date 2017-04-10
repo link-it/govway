@@ -23,6 +23,7 @@ package org.openspcoop2.utils.jmx;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.Hashtable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -150,9 +151,16 @@ public class GestoreRisorseJMX {
                 	Constructor<?> constructorJmxServiceURLClass = jmxServiceURLClass.getConstructor(String.class);
                 	Object serviceURL = constructorJmxServiceURLClass.newInstance(modalita2_serverUrl);
 
+            		java.util.Map<String, Object> env = null;
+                	if(modalita2_username!=null && modalita2_password!=null){
+        				String[] creds = {modalita2_username, modalita2_password};
+        				env = new Hashtable<String, Object>();
+        				env.put("jmx.remote.credentials", creds);
+                	}
+                	
                 	Class<?>jmxConnectorFactoryClass = Class.forName("javax.management.remote.JMXConnectorFactory");
                 	Method connect = jmxConnectorFactoryClass.getMethod("connect", jmxServiceURLClass, java.util.Map.class);
-                	Object jmxConnector = connect.invoke(null, serviceURL, null);
+                	Object jmxConnector = connect.invoke(null, serviceURL, env);
                 	
                 	Class<?>jmxConnectorClass = Class.forName("javax.management.remote.JMXConnector");
                 	Method getMBeanServerConnection = jmxConnectorClass.getMethod("getMBeanServerConnection");
