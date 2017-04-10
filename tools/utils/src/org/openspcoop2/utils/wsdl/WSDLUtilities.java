@@ -253,7 +253,45 @@ public class WSDLUtilities {
 		}
 	}
 	
-	
+	// SCHEMA LOCATION
+	public void updateLocation(Node elemXML, String newLocation) throws org.openspcoop2.utils.wsdl.WSDLException {
+		
+		try{
+			if(this.xmlUtils==null){
+				throw new Exception("XMLUtils not initialized in WSDLUtilities, use static instance 'getInstance(AbstractXMLUtils xmlUtils)'");
+			}
+			if(elemXML == null){
+				throw new Exception("Non e' un import valido");
+			}
+			//System.out.println("LOCAL["+elemXML.getLocalName()+"]  NAMESPACE["+elemXML.getNamespaceURI()+"]");
+			if(!"import".equals(elemXML.getLocalName())){
+				throw new Exception("Root element non e' un import wsdl ("+elemXML.getLocalName()+")");
+			}
+		
+			if(elemXML!=null && elemXML.getAttributes()!=null && elemXML.getAttributes().getLength()>0){
+				
+	//			try{
+	//				System.out.println(" PRIMA: "+this.xmlUtils.toString(schemaImportInclude));
+	//			}catch(Exception e){System.out.println("ERRORE PRIMA");}
+				
+				Attr oldLocation = (Attr) elemXML.getAttributes().getNamedItem("location");
+				this.xmlUtils.removeAttribute(oldLocation, (Element)elemXML);
+				
+	//			try{
+	//				System.out.println(" REMOVE: "+this.xmlUtils.toString(schemaImportInclude));
+	//			}catch(Exception e){System.out.println("ERRORE REMOVE");}
+				
+				oldLocation.setValue(newLocation);
+				this.xmlUtils.addAttribute(oldLocation, (Element)elemXML);
+				
+	//			try{
+	//				System.out.println(" DOPO: "+this.xmlUtils.toString(schemaImportInclude));
+	//			}catch(Exception e){System.out.println("ERRORE DOPO");}
+			}
+		}catch(Exception e){
+			throw new org.openspcoop2.utils.wsdl.WSDLException(e.getMessage(),e);
+		}
+	}
 	
 	
 	

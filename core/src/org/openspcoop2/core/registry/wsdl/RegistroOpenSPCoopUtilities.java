@@ -1036,7 +1036,7 @@ public class RegistroOpenSPCoopUtilities {
 //							Node old = n.getAttributes().removeNamedItem("location");
 //							old.setNodeValue(path);	
 //							n.getAttributes().setNamedItem(old);
-							this.xsdUtils.updateSchemaLocation(n, path);
+							this.wsdlUtilities.updateLocation(n, path);
 							this.logger.debug("Reimpostata location: "+path);
 						}
 					}
