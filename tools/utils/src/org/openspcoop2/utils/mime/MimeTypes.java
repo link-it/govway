@@ -21,6 +21,7 @@
 package org.openspcoop2.utils.mime;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Hashtable;
@@ -98,7 +99,17 @@ public class MimeTypes {
 		
 	} 
 	
-	
+	public String getMimeType(File file){
+		String ext = null;
+		try{
+			String fileName = file.getName();
+			ext = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length());
+		}catch(Exception e){}
+		if(ext==null){
+			ext = "bin";
+		}
+		return this.getMimeType(file);
+	}
 	public String getMimeType(String ext){
 		return this.mapExtToMime.get(ext.trim().toLowerCase());
 	}

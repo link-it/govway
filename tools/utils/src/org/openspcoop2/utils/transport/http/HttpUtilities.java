@@ -22,6 +22,7 @@
 package org.openspcoop2.utils.transport.http;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -37,6 +38,7 @@ import org.apache.soap.encoding.soapenc.Base64;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.mime.MimeTypes;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 
 
 /**
@@ -211,6 +213,29 @@ public class HttpUtilities {
 	
 	
 	public static HttpResponse httpInvoke(HttpRequest request) throws UtilsException{
+		
+		String path = request.getUrl();
+		if(path!=null && path.startsWith("file://")){
+			String filePath = path.substring("file://".length());
+			File f = new File(filePath);
+			if(f.exists()==false){
+				throw new UtilsException("404");
+			}
+			if(f.canRead()==false){
+				throw new UtilsException("404");
+			}
+			HttpResponse response = new HttpResponse();
+			try{
+				response.setContent(FileSystemUtilities.readBytesFromFile(f));
+			}catch(Exception e){
+				throw new UtilsException(e.getMessage(),e);
+			}
+			response.setResultHTTPOperation(200);
+			response.setContentType(MimeTypes.getInstance().getMimeType(f));
+			return response;
+		}
+		
+		
 		InputStream is = null;
 		ByteArrayOutputStream outResponse = null;
 		try{
