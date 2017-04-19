@@ -18,7 +18,7 @@
  *
  */
 
-package org.openspcoop2.utils.resources;
+package org.openspcoop2.utils.transport;
 
 import java.io.IOException;
 
@@ -28,7 +28,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 /**
-* CharsetEncoding
+* IFilter
 *
 * @author Giuliano Pintori <pintori@link.it>
 * @author $Author$
