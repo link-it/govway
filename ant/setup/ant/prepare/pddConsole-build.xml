@@ -61,7 +61,7 @@
 		    <fileset dir="${deploy_sw}/${TIPO_AS}/dist" includes="*"/>
 		</delete>
 		<delete dir="${deploy_sw}/${TIPO_AS}/dist"/>
-		<delete dir="build"/>
+		<delete dir="build" includeEmptyDirs="true"/>
 			
 		<var name="archiveFile" value="${deploy_sw}/${TIPO_AS}/pddConsole.war" />
 		
