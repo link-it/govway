@@ -23,6 +23,7 @@ package org.openspcoop2.web.loader.core;
 
 import java.util.Vector;
 
+import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
 /**
@@ -145,6 +146,6 @@ public class Costanti {
 	public static final String TIPOLOGIA_XML_REGISTRO_SERVIZI = "registroServizi";
 	public static final String TIPOLOGIA_XML_CONFIGURAZIONE_PDD = "configurazionePdD";
 	
-	public static final String PDD_TIPOLOGIA_ESTERNA = "esterno";
-	public static final String PDD_TIPOLOGIA_OPERATIVA = "operativo";
+	public static final String PDD_TIPOLOGIA_ESTERNA = PddTipologia.ESTERNO.toString();
+	public static final String PDD_TIPOLOGIA_OPERATIVA = PddTipologia.OPERATIVO.toString();
 }

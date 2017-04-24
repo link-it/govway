@@ -21,6 +21,8 @@ package org.openspcoop2.web.ctrlstat.servlet.pdd;
 
 import java.util.Vector;
 
+import org.openspcoop2.core.registry.constants.PddTipologia;
+
 /**
  * PddCostanti
  *
@@ -118,9 +120,9 @@ public class PddCostanti {
 	public final static String LABEL_PDD_SOGGETTI = "Soggetti";
 	public final static String LABEL_PDD_CONFIGURAZIONE_SISTEMA = "Configurazione";
 	
-	public final static String[] LABEL_TIPI = { "operativo", "non-operativo", "esterno" };
-	public final static String[] LABEL_TIPI_SOLO_OPERATIVI = { "operativo", "non-operativo" };
-	public final static String[] LABEL_TIPO_SOLO_ESTERNO = { "esterno" };
+	public final static String[] LABEL_TIPI = { PddTipologia.OPERATIVO.toString(), PddTipologia.NONOPERATIVO.toString(), PddTipologia.ESTERNO.toString() };
+	public final static String[] LABEL_TIPI_SOLO_OPERATIVI = { PddTipologia.OPERATIVO.toString(), PddTipologia.NONOPERATIVO.toString() };
+	public final static String[] LABEL_TIPO_SOLO_ESTERNO = {  PddTipologia.ESTERNO.toString() };
 	
 	
 	

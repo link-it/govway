@@ -48,7 +48,6 @@ import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
-import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
@@ -1270,11 +1269,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						IDSoggetto tmpIDS = new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario());
 						Soggetto tmpSogg = this.soggettiCore.getSoggettoRegistro(tmpIDS);
 						String nomePdd = tmpSogg.getPortaDominio();
-						PdDControlStation pdd = null;
-						if("-".equals(nomePdd)==false)
-							pdd = this.pddCore.getPdDControlStation(nomePdd);
-
-						if( (pdd==null) || "esterno".equals(pdd.getTipo())){
+						if(this.pddCore.isPddEsterna(nomePdd)){
 							pddEsterna = true;
 						}
 					}
