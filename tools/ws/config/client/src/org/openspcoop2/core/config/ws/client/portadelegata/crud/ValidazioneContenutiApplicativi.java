@@ -50,7 +50,7 @@ public class ValidazioneContenutiApplicativi {
      *     
      */
     public StatoFunzionalitaConWarning getStato() {
-        return stato;
+        return this.stato;
     }
 
     /**
@@ -74,7 +74,7 @@ public class ValidazioneContenutiApplicativi {
      *     
      */
     public ValidazioneContenutiApplicativiTipo getTipo() {
-        return tipo;
+        return this.tipo;
     }
 
     /**

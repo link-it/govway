@@ -45,7 +45,7 @@ public class DeleteById {
      *     
      */
     public IdAccordoCooperazione getIdAccordoCooperazione() {
-        return idAccordoCooperazione;
+        return this.idAccordoCooperazione;
     }
 
     /**

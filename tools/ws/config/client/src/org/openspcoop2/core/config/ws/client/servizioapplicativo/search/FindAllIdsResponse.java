@@ -59,8 +59,8 @@ public class FindAllIdsResponse {
      * 
      */
     public List<IdServizioApplicativo> getIdServizioApplicativo() {
-        if (idServizioApplicativo == null) {
-            idServizioApplicativo = new ArrayList<IdServizioApplicativo>();
+        if (this.idServizioApplicativo == null) {
+            this.idServizioApplicativo = new ArrayList<IdServizioApplicativo>();
         }
         return this.idServizioApplicativo;
     }

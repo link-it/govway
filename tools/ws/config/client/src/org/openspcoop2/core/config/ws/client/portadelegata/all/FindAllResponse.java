@@ -59,8 +59,8 @@ public class FindAllResponse {
      * 
      */
     public List<PortaDelegata> getPortaDelegata() {
-        if (portaDelegata == null) {
-            portaDelegata = new ArrayList<PortaDelegata>();
+        if (this.portaDelegata == null) {
+            this.portaDelegata = new ArrayList<PortaDelegata>();
         }
         return this.portaDelegata;
     }

@@ -38,7 +38,7 @@ public class DeleteAllByFilterResponse {
      * 
      */
     public long getCount() {
-        return count;
+        return this.count;
     }
 
     /**

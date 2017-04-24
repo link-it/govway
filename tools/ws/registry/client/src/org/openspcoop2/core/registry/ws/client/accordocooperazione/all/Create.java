@@ -45,7 +45,7 @@ public class Create {
      *     
      */
     public AccordoCooperazione getAccordoCooperazione() {
-        return accordoCooperazione;
+        return this.accordoCooperazione;
     }
 
     /**

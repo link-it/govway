@@ -50,7 +50,7 @@ public class Update {
      *     
      */
     public IdPortaDominio getOldIdPortaDominio() {
-        return oldIdPortaDominio;
+        return this.oldIdPortaDominio;
     }
 
     /**
@@ -74,7 +74,7 @@ public class Update {
      *     
      */
     public PortaDominio getPortaDominio() {
-        return portaDominio;
+        return this.portaDominio;
     }
 
     /**

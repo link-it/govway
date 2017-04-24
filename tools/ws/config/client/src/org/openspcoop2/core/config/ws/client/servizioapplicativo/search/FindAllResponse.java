@@ -59,8 +59,8 @@ public class FindAllResponse {
      * 
      */
     public List<ServizioApplicativo> getServizioApplicativo() {
-        if (servizioApplicativo == null) {
-            servizioApplicativo = new ArrayList<ServizioApplicativo>();
+        if (this.servizioApplicativo == null) {
+            this.servizioApplicativo = new ArrayList<ServizioApplicativo>();
         }
         return this.servizioApplicativo;
     }

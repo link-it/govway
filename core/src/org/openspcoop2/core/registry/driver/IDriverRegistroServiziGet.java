@@ -246,7 +246,7 @@ public interface IDriverRegistroServiziGet extends IBeanUtilities{
 	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Soggetto} .
 	 * 
 	 */
-	public Soggetto getSoggettoAutenticatoBasic(
+	public Soggetto getSoggettoByCredenzialiBasic(
 			String user,String password) throws DriverRegistroServiziException, DriverRegistroServiziNotFound;
 	
 	/**
@@ -257,7 +257,7 @@ public interface IDriverRegistroServiziGet extends IBeanUtilities{
 	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Soggetto} .
 	 * 
 	 */
-	public Soggetto getSoggettoAutenticatoSsl(
+	public Soggetto getSoggettoByCredenzialiSsl(
 			String subject) throws DriverRegistroServiziException, DriverRegistroServiziNotFound;
 	
 	/**
@@ -268,7 +268,7 @@ public interface IDriverRegistroServiziGet extends IBeanUtilities{
 	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Soggetto} .
 	 * 
 	 */
-	public Soggetto getSoggettoAutenticatoPrincipal(
+	public Soggetto getSoggettoByCredenzialiPrincipal(
 			String principal) throws DriverRegistroServiziException, DriverRegistroServiziNotFound;
 
 	

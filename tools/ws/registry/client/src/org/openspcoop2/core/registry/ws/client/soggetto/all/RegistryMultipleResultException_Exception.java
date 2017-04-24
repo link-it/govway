@@ -13,7 +13,11 @@ import javax.xml.ws.WebFault;
 @WebFault(name = "registry-multiple-result-exception", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 public class RegistryMultipleResultException_Exception extends Exception {
     
-    private org.openspcoop2.core.registry.ws.client.soggetto.all.RegistryMultipleResultException registryMultipleResultException;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private org.openspcoop2.core.registry.ws.client.soggetto.all.RegistryMultipleResultException registryMultipleResultException;
 
     public RegistryMultipleResultException_Exception() {
         super();

@@ -44,7 +44,7 @@ public class Find {
      *     
      */
     public SearchFilterPortaDominio getFilter() {
-        return filter;
+        return this.filter;
     }
 
     /**

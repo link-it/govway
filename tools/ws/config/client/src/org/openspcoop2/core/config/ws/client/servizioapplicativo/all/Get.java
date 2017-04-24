@@ -45,7 +45,7 @@ public class Get {
      *     
      */
     public IdServizioApplicativo getIdServizioApplicativo() {
-        return idServizioApplicativo;
+        return this.idServizioApplicativo;
     }
 
     /**

@@ -44,7 +44,7 @@ public class Find {
      *     
      */
     public SearchFilterAccordoServizioParteSpecifica getFilter() {
-        return filter;
+        return this.filter;
     }
 
     /**

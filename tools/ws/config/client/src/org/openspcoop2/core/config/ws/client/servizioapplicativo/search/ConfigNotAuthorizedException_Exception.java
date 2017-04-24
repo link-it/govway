@@ -13,7 +13,11 @@ import javax.xml.ws.WebFault;
 @WebFault(name = "config-not-authorized-exception", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 public class ConfigNotAuthorizedException_Exception extends Exception {
     
-    private org.openspcoop2.core.config.ws.client.servizioapplicativo.search.ConfigNotAuthorizedException configNotAuthorizedException;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private org.openspcoop2.core.config.ws.client.servizioapplicativo.search.ConfigNotAuthorizedException configNotAuthorizedException;
 
     public ConfigNotAuthorizedException_Exception() {
         super();

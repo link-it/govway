@@ -36,7 +36,7 @@ public class PortaApplicativaSoap12Service extends Service {
     }
 
     public PortaApplicativaSoap12Service(URL wsdlLocation) {
-        super(wsdlLocation, SERVICE);
+        super(wsdlLocation, PortaApplicativaSoap12Service.SERVICE);
     }
 
     public PortaApplicativaSoap12Service(URL wsdlLocation, QName serviceName) {
@@ -44,7 +44,7 @@ public class PortaApplicativaSoap12Service extends Service {
     }
 
     public PortaApplicativaSoap12Service() {
-        super(WSDL_LOCATION, SERVICE);
+        super(PortaApplicativaSoap12Service.WSDL_LOCATION, PortaApplicativaSoap12Service.SERVICE);
     }
     
 
@@ -58,7 +58,7 @@ public class PortaApplicativaSoap12Service extends Service {
      */
     @WebEndpoint(name = "PortaApplicativaPortSoap12")
     public PortaApplicativa getPortaApplicativaPortSoap12() {
-        return super.getPort(PortaApplicativaPortSoap12, PortaApplicativa.class);
+        return super.getPort(PortaApplicativaSoap12Service.PortaApplicativaPortSoap12, PortaApplicativa.class);
     }
 
     /**
@@ -70,7 +70,7 @@ public class PortaApplicativaSoap12Service extends Service {
      */
     @WebEndpoint(name = "PortaApplicativaPortSoap12")
     public PortaApplicativa getPortaApplicativaPortSoap12(WebServiceFeature... features) {
-        return super.getPort(PortaApplicativaPortSoap12, PortaApplicativa.class, features);
+        return super.getPort(PortaApplicativaSoap12Service.PortaApplicativaPortSoap12, PortaApplicativa.class, features);
     }
 
 }

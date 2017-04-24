@@ -59,8 +59,8 @@ public class FindAllIdsResponse {
      * 
      */
     public List<IdAccordoServizioParteSpecifica> getIdAccordoServizioParteSpecifica() {
-        if (idAccordoServizioParteSpecifica == null) {
-            idAccordoServizioParteSpecifica = new ArrayList<IdAccordoServizioParteSpecifica>();
+        if (this.idAccordoServizioParteSpecifica == null) {
+            this.idAccordoServizioParteSpecifica = new ArrayList<IdAccordoServizioParteSpecifica>();
         }
         return this.idAccordoServizioParteSpecifica;
     }

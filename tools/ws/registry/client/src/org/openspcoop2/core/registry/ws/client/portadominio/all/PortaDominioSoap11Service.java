@@ -36,7 +36,7 @@ public class PortaDominioSoap11Service extends Service {
     }
 
     public PortaDominioSoap11Service(URL wsdlLocation) {
-        super(wsdlLocation, SERVICE);
+        super(wsdlLocation, PortaDominioSoap11Service.SERVICE);
     }
 
     public PortaDominioSoap11Service(URL wsdlLocation, QName serviceName) {
@@ -44,7 +44,7 @@ public class PortaDominioSoap11Service extends Service {
     }
 
     public PortaDominioSoap11Service() {
-        super(WSDL_LOCATION, SERVICE);
+        super(PortaDominioSoap11Service.WSDL_LOCATION, PortaDominioSoap11Service.SERVICE);
     }
     
 
@@ -58,7 +58,7 @@ public class PortaDominioSoap11Service extends Service {
      */
     @WebEndpoint(name = "PortaDominioPortSoap11")
     public PortaDominio getPortaDominioPortSoap11() {
-        return super.getPort(PortaDominioPortSoap11, PortaDominio.class);
+        return super.getPort(PortaDominioSoap11Service.PortaDominioPortSoap11, PortaDominio.class);
     }
 
     /**
@@ -70,7 +70,7 @@ public class PortaDominioSoap11Service extends Service {
      */
     @WebEndpoint(name = "PortaDominioPortSoap11")
     public PortaDominio getPortaDominioPortSoap11(WebServiceFeature... features) {
-        return super.getPort(PortaDominioPortSoap11, PortaDominio.class, features);
+        return super.getPort(PortaDominioSoap11Service.PortaDominioPortSoap11, PortaDominio.class, features);
     }
 
 }

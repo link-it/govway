@@ -45,7 +45,7 @@ public class DeleteById {
      *     
      */
     public IdRuolo getIdRuolo() {
-        return idRuolo;
+        return this.idRuolo;
     }
 
     /**

@@ -45,7 +45,7 @@ public class Create {
      *     
      */
     public PortaDominio getPortaDominio() {
-        return portaDominio;
+        return this.portaDominio;
     }
 
     /**

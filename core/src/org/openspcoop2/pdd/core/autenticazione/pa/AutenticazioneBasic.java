@@ -59,7 +59,7 @@ public class AutenticazioneBasic extends AbstractAutenticazioneBase {
 		
 		IDSoggetto idSoggetto = null;
 		try{
-			idSoggetto = RegistroServiziManager.getInstance(datiInvocazione.getState()).getIdSoggettoAutenticatoBasic(user, password, null); // all registry
+			idSoggetto = RegistroServiziManager.getInstance(datiInvocazione.getState()).getIdSoggettoByCredenzialiBasic(user, password, null); // all registry
 		}
 		catch(DriverRegistroServiziNotFound notFound){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().debug("AutenticazioneBasic non ha trovato risultati",notFound);

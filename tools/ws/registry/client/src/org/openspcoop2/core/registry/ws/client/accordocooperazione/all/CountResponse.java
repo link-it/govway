@@ -38,7 +38,7 @@ public class CountResponse {
      * 
      */
     public long getCount() {
-        return count;
+        return this.count;
     }
 
     /**

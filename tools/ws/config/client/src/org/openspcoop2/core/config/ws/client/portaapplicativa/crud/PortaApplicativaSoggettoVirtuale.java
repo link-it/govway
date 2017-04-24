@@ -45,7 +45,7 @@ public class PortaApplicativaSoggettoVirtuale {
      *     
      */
     public String getTipo() {
-        return tipo;
+        return this.tipo;
     }
 
     /**
@@ -69,7 +69,7 @@ public class PortaApplicativaSoggettoVirtuale {
      *     
      */
     public String getNome() {
-        return nome;
+        return this.nome;
     }
 
     /**

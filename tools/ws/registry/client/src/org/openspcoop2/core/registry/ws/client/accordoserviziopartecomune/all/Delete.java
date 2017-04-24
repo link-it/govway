@@ -45,7 +45,7 @@ public class Delete {
      *     
      */
     public AccordoServizioParteComune getAccordoServizioParteComune() {
-        return accordoServizioParteComune;
+        return this.accordoServizioParteComune;
     }
 
     /**

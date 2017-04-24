@@ -45,7 +45,7 @@ public class AutorizzazioneRuoli {
      *     
      */
     public RuoloTipoMatch getMatch() {
-        return match;
+        return this.match;
     }
 
     /**

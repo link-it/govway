@@ -45,7 +45,7 @@ public class PortaDelegataSoggettoErogatore {
      *     
      */
     public String getTipo() {
-        return tipo;
+        return this.tipo;
     }
 
     /**
@@ -69,7 +69,7 @@ public class PortaDelegataSoggettoErogatore {
      *     
      */
     public String getNome() {
-        return nome;
+        return this.nome;
     }
 
     /**

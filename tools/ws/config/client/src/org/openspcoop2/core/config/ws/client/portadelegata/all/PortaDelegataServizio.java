@@ -50,7 +50,7 @@ public class PortaDelegataServizio {
      *     
      */
     public String getTipo() {
-        return tipo;
+        return this.tipo;
     }
 
     /**
@@ -74,7 +74,7 @@ public class PortaDelegataServizio {
      *     
      */
     public String getNome() {
-        return nome;
+        return this.nome;
     }
 
     /**
@@ -98,7 +98,7 @@ public class PortaDelegataServizio {
      *     
      */
     public Long getVersione() {
-        return versione;
+        return this.versione;
     }
 
     /**

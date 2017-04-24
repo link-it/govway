@@ -45,7 +45,7 @@ public class Create {
      *     
      */
     public PortaDelegata getPortaDelegata() {
-        return portaDelegata;
+        return this.portaDelegata;
     }
 
     /**

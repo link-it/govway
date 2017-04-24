@@ -45,7 +45,7 @@ public class Get {
      *     
      */
     public IdRuolo getIdRuolo() {
-        return idRuolo;
+        return this.idRuolo;
     }
 
     /**

@@ -45,7 +45,7 @@ public class WrapperIdAccordoCooperazione {
      *     
      */
     public IdAccordoCooperazione getId() {
-        return id;
+        return this.id;
     }
 
     /**

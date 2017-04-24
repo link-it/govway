@@ -45,7 +45,7 @@ public class Exists {
      *     
      */
     public IdPortaDominio getIdPortaDominio() {
-        return idPortaDominio;
+        return this.idPortaDominio;
     }
 
     /**

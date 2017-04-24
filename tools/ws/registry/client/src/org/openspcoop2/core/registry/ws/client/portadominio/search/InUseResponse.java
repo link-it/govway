@@ -44,7 +44,7 @@ public class InUseResponse {
      *     
      */
     public UseInfo getInUse() {
-        return inUse;
+        return this.inUse;
     }
 
     /**

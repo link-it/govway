@@ -45,7 +45,7 @@ public class Exists {
      *     
      */
     public IdAccordoServizioParteSpecifica getIdAccordoServizioParteSpecifica() {
-        return idAccordoServizioParteSpecifica;
+        return this.idAccordoServizioParteSpecifica;
     }
 
     /**

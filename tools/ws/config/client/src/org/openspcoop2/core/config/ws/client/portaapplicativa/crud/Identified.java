@@ -38,11 +38,11 @@ public enum Identified {
     private final String value;
 
     Identified(String v) {
-        value = v;
+        this.value = v;
     }
 
     public String value() {
-        return value;
+        return this.value;
     }
 
     public static Identified fromValue(String v) {

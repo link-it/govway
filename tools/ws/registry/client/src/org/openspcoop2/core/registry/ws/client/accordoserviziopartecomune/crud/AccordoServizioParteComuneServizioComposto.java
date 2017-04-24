@@ -44,7 +44,7 @@ public class AccordoServizioParteComuneServizioComposto {
      *     
      */
     public String getAccordoCooperazione() {
-        return accordoCooperazione;
+        return this.accordoCooperazione;
     }
 
     /**

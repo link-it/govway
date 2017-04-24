@@ -79,7 +79,7 @@ public class SearchFilterRuolo {
      *     
      */
     public String getNome() {
-        return nome;
+        return this.nome;
     }
 
     /**
@@ -103,7 +103,7 @@ public class SearchFilterRuolo {
      *     
      */
     public String getDescrizione() {
-        return descrizione;
+        return this.descrizione;
     }
 
     /**
@@ -127,7 +127,7 @@ public class SearchFilterRuolo {
      *     
      */
     public RuoloTipologia getTipologia() {
-        return tipologia;
+        return this.tipologia;
     }
 
     /**
@@ -151,7 +151,7 @@ public class SearchFilterRuolo {
      *     
      */
     public RuoloContesto getContestoUtilizzo() {
-        return contestoUtilizzo;
+        return this.contestoUtilizzo;
     }
 
     /**
@@ -175,7 +175,7 @@ public class SearchFilterRuolo {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMin() {
-        return oraRegistrazioneMin;
+        return this.oraRegistrazioneMin;
     }
 
     /**
@@ -199,7 +199,7 @@ public class SearchFilterRuolo {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMax() {
-        return oraRegistrazioneMax;
+        return this.oraRegistrazioneMax;
     }
 
     /**
@@ -223,7 +223,7 @@ public class SearchFilterRuolo {
      *     
      */
     public Boolean isOrCondition() {
-        return orCondition;
+        return this.orCondition;
     }
 
     /**
@@ -247,7 +247,7 @@ public class SearchFilterRuolo {
      *     
      */
     public BigInteger getLimit() {
-        return limit;
+        return this.limit;
     }
 
     /**
@@ -271,7 +271,7 @@ public class SearchFilterRuolo {
      *     
      */
     public BigInteger getOffset() {
-        return offset;
+        return this.offset;
     }
 
     /**

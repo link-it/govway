@@ -58,7 +58,7 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 		
     	IDSoggetto idSoggetto = null;
 		try{
-			idSoggetto = RegistroServiziManager.getInstance(datiInvocazione.getState()).getIdSoggettoAutenticatoPrincipal(principal, null); // all registry
+			idSoggetto = RegistroServiziManager.getInstance(datiInvocazione.getState()).getIdSoggettoByCredenzialiPrincipal(principal, null); // all registry
 		}
 		catch(DriverRegistroServiziNotFound notFound){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().debug("AutenticazionePrincipal non ha trovato risultati",notFound);

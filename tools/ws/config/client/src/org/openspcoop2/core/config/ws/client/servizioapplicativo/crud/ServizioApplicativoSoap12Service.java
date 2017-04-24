@@ -36,7 +36,7 @@ public class ServizioApplicativoSoap12Service extends Service {
     }
 
     public ServizioApplicativoSoap12Service(URL wsdlLocation) {
-        super(wsdlLocation, SERVICE);
+        super(wsdlLocation, ServizioApplicativoSoap12Service.SERVICE);
     }
 
     public ServizioApplicativoSoap12Service(URL wsdlLocation, QName serviceName) {
@@ -44,7 +44,7 @@ public class ServizioApplicativoSoap12Service extends Service {
     }
 
     public ServizioApplicativoSoap12Service() {
-        super(WSDL_LOCATION, SERVICE);
+        super(ServizioApplicativoSoap12Service.WSDL_LOCATION, ServizioApplicativoSoap12Service.SERVICE);
     }
     
 
@@ -58,7 +58,7 @@ public class ServizioApplicativoSoap12Service extends Service {
      */
     @WebEndpoint(name = "ServizioApplicativoPortSoap12")
     public ServizioApplicativo getServizioApplicativoPortSoap12() {
-        return super.getPort(ServizioApplicativoPortSoap12, ServizioApplicativo.class);
+        return super.getPort(ServizioApplicativoSoap12Service.ServizioApplicativoPortSoap12, ServizioApplicativo.class);
     }
 
     /**
@@ -70,7 +70,7 @@ public class ServizioApplicativoSoap12Service extends Service {
      */
     @WebEndpoint(name = "ServizioApplicativoPortSoap12")
     public ServizioApplicativo getServizioApplicativoPortSoap12(WebServiceFeature... features) {
-        return super.getPort(ServizioApplicativoPortSoap12, ServizioApplicativo.class, features);
+        return super.getPort(ServizioApplicativoSoap12Service.ServizioApplicativoPortSoap12, ServizioApplicativo.class, features);
     }
 
 }

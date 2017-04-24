@@ -45,7 +45,7 @@ public class Create {
      *     
      */
     public ServizioApplicativo getServizioApplicativo() {
-        return servizioApplicativo;
+        return this.servizioApplicativo;
     }
 
     /**

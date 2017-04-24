@@ -54,7 +54,7 @@ public class CredenzialiSoggetto {
      *     
      */
     public CredenzialeTipo getTipo() {
-        return tipo;
+        return this.tipo;
     }
 
     /**
@@ -78,7 +78,7 @@ public class CredenzialiSoggetto {
      *     
      */
     public String getUser() {
-        return user;
+        return this.user;
     }
 
     /**
@@ -102,7 +102,7 @@ public class CredenzialiSoggetto {
      *     
      */
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
     /**
@@ -126,7 +126,7 @@ public class CredenzialiSoggetto {
      *     
      */
     public String getSubject() {
-        return subject;
+        return this.subject;
     }
 
     /**

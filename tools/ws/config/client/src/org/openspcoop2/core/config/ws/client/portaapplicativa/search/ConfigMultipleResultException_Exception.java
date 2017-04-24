@@ -13,7 +13,11 @@ import javax.xml.ws.WebFault;
 @WebFault(name = "config-multiple-result-exception", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 public class ConfigMultipleResultException_Exception extends Exception {
     
-    private org.openspcoop2.core.config.ws.client.portaapplicativa.search.ConfigMultipleResultException configMultipleResultException;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private org.openspcoop2.core.config.ws.client.portaapplicativa.search.ConfigMultipleResultException configMultipleResultException;
 
     public ConfigMultipleResultException_Exception() {
         super();

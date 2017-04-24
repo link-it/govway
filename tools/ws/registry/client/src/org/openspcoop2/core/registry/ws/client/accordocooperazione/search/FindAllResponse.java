@@ -59,8 +59,8 @@ public class FindAllResponse {
      * 
      */
     public List<AccordoCooperazione> getAccordoCooperazione() {
-        if (accordoCooperazione == null) {
-            accordoCooperazione = new ArrayList<AccordoCooperazione>();
+        if (this.accordoCooperazione == null) {
+            this.accordoCooperazione = new ArrayList<AccordoCooperazione>();
         }
         return this.accordoCooperazione;
     }

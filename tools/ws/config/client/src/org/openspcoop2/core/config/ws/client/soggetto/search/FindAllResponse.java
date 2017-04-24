@@ -59,8 +59,8 @@ public class FindAllResponse {
      * 
      */
     public List<Soggetto> getSoggetto() {
-        if (soggetto == null) {
-            soggetto = new ArrayList<Soggetto>();
+        if (this.soggetto == null) {
+            this.soggetto = new ArrayList<Soggetto>();
         }
         return this.soggetto;
     }

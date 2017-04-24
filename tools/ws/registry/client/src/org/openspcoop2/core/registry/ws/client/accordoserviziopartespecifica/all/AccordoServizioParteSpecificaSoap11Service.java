@@ -36,7 +36,7 @@ public class AccordoServizioParteSpecificaSoap11Service extends Service {
     }
 
     public AccordoServizioParteSpecificaSoap11Service(URL wsdlLocation) {
-        super(wsdlLocation, SERVICE);
+        super(wsdlLocation, AccordoServizioParteSpecificaSoap11Service.SERVICE);
     }
 
     public AccordoServizioParteSpecificaSoap11Service(URL wsdlLocation, QName serviceName) {
@@ -44,7 +44,7 @@ public class AccordoServizioParteSpecificaSoap11Service extends Service {
     }
 
     public AccordoServizioParteSpecificaSoap11Service() {
-        super(WSDL_LOCATION, SERVICE);
+        super(AccordoServizioParteSpecificaSoap11Service.WSDL_LOCATION, AccordoServizioParteSpecificaSoap11Service.SERVICE);
     }
     
 
@@ -58,7 +58,7 @@ public class AccordoServizioParteSpecificaSoap11Service extends Service {
      */
     @WebEndpoint(name = "AccordoServizioParteSpecificaPortSoap11")
     public AccordoServizioParteSpecifica getAccordoServizioParteSpecificaPortSoap11() {
-        return super.getPort(AccordoServizioParteSpecificaPortSoap11, AccordoServizioParteSpecifica.class);
+        return super.getPort(AccordoServizioParteSpecificaSoap11Service.AccordoServizioParteSpecificaPortSoap11, AccordoServizioParteSpecifica.class);
     }
 
     /**
@@ -70,7 +70,7 @@ public class AccordoServizioParteSpecificaSoap11Service extends Service {
      */
     @WebEndpoint(name = "AccordoServizioParteSpecificaPortSoap11")
     public AccordoServizioParteSpecifica getAccordoServizioParteSpecificaPortSoap11(WebServiceFeature... features) {
-        return super.getPort(AccordoServizioParteSpecificaPortSoap11, AccordoServizioParteSpecifica.class, features);
+        return super.getPort(AccordoServizioParteSpecificaSoap11Service.AccordoServizioParteSpecificaPortSoap11, AccordoServizioParteSpecifica.class, features);
     }
 
 }

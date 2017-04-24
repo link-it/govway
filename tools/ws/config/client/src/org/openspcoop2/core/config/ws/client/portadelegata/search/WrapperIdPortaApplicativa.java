@@ -45,7 +45,7 @@ public class WrapperIdPortaApplicativa {
      *     
      */
     public IdPortaApplicativa getId() {
-        return id;
+        return this.id;
     }
 
     /**

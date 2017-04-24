@@ -45,7 +45,7 @@ public class Exists {
      *     
      */
     public IdPortaDelegata getIdPortaDelegata() {
-        return idPortaDelegata;
+        return this.idPortaDelegata;
     }
 
     /**

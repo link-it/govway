@@ -44,7 +44,7 @@ public class DeleteAllByFilter {
      *     
      */
     public SearchFilterSoggetto getFilter() {
-        return filter;
+        return this.filter;
     }
 
     /**

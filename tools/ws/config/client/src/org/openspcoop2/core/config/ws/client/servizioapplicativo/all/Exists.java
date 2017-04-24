@@ -45,7 +45,7 @@ public class Exists {
      *     
      */
     public IdServizioApplicativo getIdServizioApplicativo() {
-        return idServizioApplicativo;
+        return this.idServizioApplicativo;
     }
 
     /**

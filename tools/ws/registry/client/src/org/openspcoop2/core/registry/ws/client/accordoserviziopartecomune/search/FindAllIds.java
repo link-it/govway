@@ -44,7 +44,7 @@ public class FindAllIds {
      *     
      */
     public SearchFilterAccordoServizioParteComune getFilter() {
-        return filter;
+        return this.filter;
     }
 
     /**

@@ -50,7 +50,7 @@ public class PortaDelegataLocalForward {
      *     
      */
     public StatoFunzionalita getStato() {
-        return stato;
+        return this.stato;
     }
 
     /**
@@ -74,7 +74,7 @@ public class PortaDelegataLocalForward {
      *     
      */
     public String getPortaApplicativa() {
-        return portaApplicativa;
+        return this.portaApplicativa;
     }
 
     /**

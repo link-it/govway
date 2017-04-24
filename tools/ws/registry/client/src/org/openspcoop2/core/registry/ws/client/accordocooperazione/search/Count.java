@@ -44,7 +44,7 @@ public class Count {
      *     
      */
     public SearchFilterAccordoCooperazione getFilter() {
-        return filter;
+        return this.filter;
     }
 
     /**

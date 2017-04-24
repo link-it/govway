@@ -57,7 +57,7 @@ public class ObjectId {
      *     
      */
     public WrapperIdAccordoCooperazione getWrapperIdAccordoCooperazione() {
-        return wrapperIdAccordoCooperazione;
+        return this.wrapperIdAccordoCooperazione;
     }
 
     /**
@@ -81,7 +81,7 @@ public class ObjectId {
      *     
      */
     public WrapperIdAccordoServizioParteComune getWrapperIdAccordoServizioParteComune() {
-        return wrapperIdAccordoServizioParteComune;
+        return this.wrapperIdAccordoServizioParteComune;
     }
 
     /**
@@ -105,7 +105,7 @@ public class ObjectId {
      *     
      */
     public WrapperIdPortaDominio getWrapperIdPortaDominio() {
-        return wrapperIdPortaDominio;
+        return this.wrapperIdPortaDominio;
     }
 
     /**
@@ -129,7 +129,7 @@ public class ObjectId {
      *     
      */
     public WrapperIdSoggetto getWrapperIdSoggetto() {
-        return wrapperIdSoggetto;
+        return this.wrapperIdSoggetto;
     }
 
     /**
@@ -153,7 +153,7 @@ public class ObjectId {
      *     
      */
     public WrapperIdAccordoServizioParteSpecifica getWrapperIdAccordoServizioParteSpecifica() {
-        return wrapperIdAccordoServizioParteSpecifica;
+        return this.wrapperIdAccordoServizioParteSpecifica;
     }
 
     /**
@@ -177,7 +177,7 @@ public class ObjectId {
      *     
      */
     public WrapperIdRuolo getWrapperIdRuolo() {
-        return wrapperIdRuolo;
+        return this.wrapperIdRuolo;
     }
 
     /**

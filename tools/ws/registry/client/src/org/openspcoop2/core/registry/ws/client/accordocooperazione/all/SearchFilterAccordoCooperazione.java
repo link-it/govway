@@ -83,7 +83,7 @@ public class SearchFilterAccordoCooperazione {
      *     
      */
     public IdSoggetto getSoggettoReferente() {
-        return soggettoReferente;
+        return this.soggettoReferente;
     }
 
     /**
@@ -107,7 +107,7 @@ public class SearchFilterAccordoCooperazione {
      *     
      */
     public String getStatoPackage() {
-        return statoPackage;
+        return this.statoPackage;
     }
 
     /**
@@ -131,7 +131,7 @@ public class SearchFilterAccordoCooperazione {
      *     
      */
     public Boolean isPrivato() {
-        return privato;
+        return this.privato;
     }
 
     /**
@@ -155,7 +155,7 @@ public class SearchFilterAccordoCooperazione {
      *     
      */
     public String getNome() {
-        return nome;
+        return this.nome;
     }
 
     /**
@@ -179,7 +179,7 @@ public class SearchFilterAccordoCooperazione {
      *     
      */
     public String getDescrizione() {
-        return descrizione;
+        return this.descrizione;
     }
 
     /**
@@ -203,7 +203,7 @@ public class SearchFilterAccordoCooperazione {
      *     
      */
     public Long getVersione() {
-        return versione;
+        return this.versione;
     }
 
     /**
@@ -227,7 +227,7 @@ public class SearchFilterAccordoCooperazione {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMin() {
-        return oraRegistrazioneMin;
+        return this.oraRegistrazioneMin;
     }
 
     /**
@@ -251,7 +251,7 @@ public class SearchFilterAccordoCooperazione {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMax() {
-        return oraRegistrazioneMax;
+        return this.oraRegistrazioneMax;
     }
 
     /**
@@ -275,7 +275,7 @@ public class SearchFilterAccordoCooperazione {
      *     
      */
     public Boolean isOrCondition() {
-        return orCondition;
+        return this.orCondition;
     }
 
     /**
@@ -299,7 +299,7 @@ public class SearchFilterAccordoCooperazione {
      *     
      */
     public BigInteger getLimit() {
-        return limit;
+        return this.limit;
     }
 
     /**
@@ -323,7 +323,7 @@ public class SearchFilterAccordoCooperazione {
      *     
      */
     public BigInteger getOffset() {
-        return offset;
+        return this.offset;
     }
 
     /**

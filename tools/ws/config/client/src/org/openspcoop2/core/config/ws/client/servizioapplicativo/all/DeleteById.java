@@ -45,7 +45,7 @@ public class DeleteById {
      *     
      */
     public IdServizioApplicativo getIdServizioApplicativo() {
-        return idServizioApplicativo;
+        return this.idServizioApplicativo;
     }
 
     /**

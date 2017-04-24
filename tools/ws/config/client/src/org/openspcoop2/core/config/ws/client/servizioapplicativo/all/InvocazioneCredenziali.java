@@ -45,7 +45,7 @@ public class InvocazioneCredenziali {
      *     
      */
     public String getUser() {
-        return user;
+        return this.user;
     }
 
     /**
@@ -69,7 +69,7 @@ public class InvocazioneCredenziali {
      *     
      */
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
     /**

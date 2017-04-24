@@ -5644,7 +5644,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	 * 
 	 */
 	@Override
-	public Soggetto getSoggettoAutenticatoBasic(
+	public Soggetto getSoggettoByCredenzialiBasic(
 			String user,String password) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		return this._getSoggettoAutenticato(CredenzialeTipo.BASIC, user, password, null, null);
 	}
@@ -5658,7 +5658,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	 * 
 	 */
 	@Override
-	public Soggetto getSoggettoAutenticatoSsl(
+	public Soggetto getSoggettoByCredenzialiSsl(
 			String subject) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		return this._getSoggettoAutenticato(CredenzialeTipo.SSL, null, null, subject, null);
 	}
@@ -5672,7 +5672,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	 * 
 	 */
 	@Override
-	public Soggetto getSoggettoAutenticatoPrincipal(
+	public Soggetto getSoggettoByCredenzialiPrincipal(
 			String principal) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		return this._getSoggettoAutenticato(CredenzialeTipo.PRINCIPAL, null, null, null, principal);
 	}

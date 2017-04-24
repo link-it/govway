@@ -45,7 +45,7 @@ public class Get {
      *     
      */
     public IdPortaDelegata getIdPortaDelegata() {
-        return idPortaDelegata;
+        return this.idPortaDelegata;
     }
 
     /**

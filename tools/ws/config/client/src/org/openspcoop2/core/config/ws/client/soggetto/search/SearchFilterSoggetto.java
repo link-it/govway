@@ -86,7 +86,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getTipo() {
-        return tipo;
+        return this.tipo;
     }
 
     /**
@@ -110,7 +110,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getNome() {
-        return nome;
+        return this.nome;
     }
 
     /**
@@ -134,7 +134,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getIdentificativoPorta() {
-        return identificativoPorta;
+        return this.identificativoPorta;
     }
 
     /**
@@ -158,7 +158,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getDescrizione() {
-        return descrizione;
+        return this.descrizione;
     }
 
     /**
@@ -182,7 +182,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public Boolean isRouter() {
-        return router;
+        return this.router;
     }
 
     /**
@@ -206,7 +206,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getPdUrlPrefixRewriter() {
-        return pdUrlPrefixRewriter;
+        return this.pdUrlPrefixRewriter;
     }
 
     /**
@@ -230,7 +230,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getPaUrlPrefixRewriter() {
-        return paUrlPrefixRewriter;
+        return this.paUrlPrefixRewriter;
     }
 
     /**
@@ -254,7 +254,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMin() {
-        return oraRegistrazioneMin;
+        return this.oraRegistrazioneMin;
     }
 
     /**
@@ -278,7 +278,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMax() {
-        return oraRegistrazioneMax;
+        return this.oraRegistrazioneMax;
     }
 
     /**
@@ -302,7 +302,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public Boolean isOrCondition() {
-        return orCondition;
+        return this.orCondition;
     }
 
     /**
@@ -326,7 +326,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public BigInteger getLimit() {
-        return limit;
+        return this.limit;
     }
 
     /**
@@ -350,7 +350,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public BigInteger getOffset() {
-        return offset;
+        return this.offset;
     }
 
     /**

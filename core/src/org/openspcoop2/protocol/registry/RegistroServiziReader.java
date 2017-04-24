@@ -2038,28 +2038,28 @@ public class RegistroServiziReader {
 	
 	/* ********  A U T E N T I C A Z I O N E   S O G G E T T I  ******** */ 
 	
-	public Soggetto getSoggettoAutenticatoBasic(Connection connectionPdD,String username, String password, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServizi.getSoggettoAutenticatoBasic(connectionPdD, nomeRegistro, username, password);
+	public Soggetto getSoggettoByCredenzialiBasic(Connection connectionPdD,String username, String password, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getSoggettoByCredenzialiBasic(connectionPdD, nomeRegistro, username, password);
 	}
 	
-	public Soggetto getSoggettoAutenticatoSsl(Connection connectionPdD,String subject, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServizi.getSoggettoAutenticatoSsl(connectionPdD, nomeRegistro, subject);
+	public Soggetto getSoggettoByCredenzialiSsl(Connection connectionPdD,String subject, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getSoggettoByCredenzialiSsl(connectionPdD, nomeRegistro, subject);
 	}
 	
-	public Soggetto getSoggettoAutenticatoPrincipal(Connection connectionPdD,String principal, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServizi.getSoggettoAutenticatoPrincipal(connectionPdD, nomeRegistro, principal);
+	public Soggetto getSoggettoByCredenzialiPrincipal(Connection connectionPdD,String principal, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServizi.getSoggettoByCredenzialiPrincipal(connectionPdD, nomeRegistro, principal);
 	}
 	
-	public IDSoggetto getIdSoggettoAutenticatoBasic(Connection connectionPdD,String username, String password, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return convertToId(this.registroServizi.getSoggettoAutenticatoBasic(connectionPdD, nomeRegistro, username, password));
+	public IDSoggetto getIdSoggettoByCredenzialiBasic(Connection connectionPdD,String username, String password, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return convertToId(this.registroServizi.getSoggettoByCredenzialiBasic(connectionPdD, nomeRegistro, username, password));
 	}
 	
-	public IDSoggetto getIdSoggettoAutenticatoSsl(Connection connectionPdD,String subject, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return convertToId(this.registroServizi.getSoggettoAutenticatoSsl(connectionPdD, nomeRegistro, subject));
+	public IDSoggetto getIdSoggettoByCredenzialiSsl(Connection connectionPdD,String subject, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return convertToId(this.registroServizi.getSoggettoByCredenzialiSsl(connectionPdD, nomeRegistro, subject));
 	}
 	
-	public IDSoggetto getIdSoggettoAutenticatoPrincipal(Connection connectionPdD,String principal, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return convertToId(this.registroServizi.getSoggettoAutenticatoPrincipal(connectionPdD, nomeRegistro, principal));
+	public IDSoggetto getIdSoggettoByCredenzialiPrincipal(Connection connectionPdD,String principal, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return convertToId(this.registroServizi.getSoggettoByCredenzialiPrincipal(connectionPdD, nomeRegistro, principal));
 	}
 	
 	private IDSoggetto convertToId(Soggetto s){

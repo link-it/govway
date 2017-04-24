@@ -96,7 +96,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public InvocazionePorta getInvocazionePorta() {
-        return invocazionePorta;
+        return this.invocazionePorta;
     }
 
     /**
@@ -120,7 +120,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public InvocazioneServizio getInvocazioneServizio() {
-        return invocazioneServizio;
+        return this.invocazioneServizio;
     }
 
     /**
@@ -144,7 +144,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public RispostaAsincrona getRispostaAsincrona() {
-        return rispostaAsincrona;
+        return this.rispostaAsincrona;
     }
 
     /**
@@ -168,7 +168,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public String getTipoSoggettoProprietario() {
-        return tipoSoggettoProprietario;
+        return this.tipoSoggettoProprietario;
     }
 
     /**
@@ -192,7 +192,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public String getNomeSoggettoProprietario() {
-        return nomeSoggettoProprietario;
+        return this.nomeSoggettoProprietario;
     }
 
     /**
@@ -216,7 +216,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public String getTipologiaFruizione() {
-        return tipologiaFruizione;
+        return this.tipologiaFruizione;
     }
 
     /**
@@ -240,7 +240,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public String getTipologiaErogazione() {
-        return tipologiaErogazione;
+        return this.tipologiaErogazione;
     }
 
     /**
@@ -264,7 +264,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public String getNome() {
-        return nome;
+        return this.nome;
     }
 
     /**
@@ -288,7 +288,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public String getDescrizione() {
-        return descrizione;
+        return this.descrizione;
     }
 
     /**
@@ -312,7 +312,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMin() {
-        return oraRegistrazioneMin;
+        return this.oraRegistrazioneMin;
     }
 
     /**
@@ -336,7 +336,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMax() {
-        return oraRegistrazioneMax;
+        return this.oraRegistrazioneMax;
     }
 
     /**
@@ -360,7 +360,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public Boolean isOrCondition() {
-        return orCondition;
+        return this.orCondition;
     }
 
     /**
@@ -384,7 +384,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public BigInteger getLimit() {
-        return limit;
+        return this.limit;
     }
 
     /**
@@ -408,7 +408,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public BigInteger getOffset() {
-        return offset;
+        return this.offset;
     }
 
     /**

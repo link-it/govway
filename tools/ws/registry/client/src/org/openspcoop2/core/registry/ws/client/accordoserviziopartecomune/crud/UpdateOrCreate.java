@@ -50,7 +50,7 @@ public class UpdateOrCreate {
      *     
      */
     public IdAccordoServizioParteComune getOldIdAccordoServizioParteComune() {
-        return oldIdAccordoServizioParteComune;
+        return this.oldIdAccordoServizioParteComune;
     }
 
     /**
@@ -74,7 +74,7 @@ public class UpdateOrCreate {
      *     
      */
     public AccordoServizioParteComune getAccordoServizioParteComune() {
-        return accordoServizioParteComune;
+        return this.accordoServizioParteComune;
     }
 
     /**

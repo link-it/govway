@@ -45,7 +45,7 @@ public class GetResponse {
      *     
      */
     public PortaApplicativa getPortaApplicativa() {
-        return portaApplicativa;
+        return this.portaApplicativa;
     }
 
     /**

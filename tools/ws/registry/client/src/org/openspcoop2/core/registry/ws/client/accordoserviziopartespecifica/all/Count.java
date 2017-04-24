@@ -44,7 +44,7 @@ public class Count {
      *     
      */
     public SearchFilterAccordoServizioParteSpecifica getFilter() {
-        return filter;
+        return this.filter;
     }
 
     /**

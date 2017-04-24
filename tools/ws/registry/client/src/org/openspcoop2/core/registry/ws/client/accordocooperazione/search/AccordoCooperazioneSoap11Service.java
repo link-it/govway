@@ -36,7 +36,7 @@ public class AccordoCooperazioneSoap11Service extends Service {
     }
 
     public AccordoCooperazioneSoap11Service(URL wsdlLocation) {
-        super(wsdlLocation, SERVICE);
+        super(wsdlLocation, AccordoCooperazioneSoap11Service.SERVICE);
     }
 
     public AccordoCooperazioneSoap11Service(URL wsdlLocation, QName serviceName) {
@@ -44,7 +44,7 @@ public class AccordoCooperazioneSoap11Service extends Service {
     }
 
     public AccordoCooperazioneSoap11Service() {
-        super(WSDL_LOCATION, SERVICE);
+        super(AccordoCooperazioneSoap11Service.WSDL_LOCATION, AccordoCooperazioneSoap11Service.SERVICE);
     }
     
 
@@ -58,7 +58,7 @@ public class AccordoCooperazioneSoap11Service extends Service {
      */
     @WebEndpoint(name = "AccordoCooperazionePortSoap11")
     public AccordoCooperazione getAccordoCooperazionePortSoap11() {
-        return super.getPort(AccordoCooperazionePortSoap11, AccordoCooperazione.class);
+        return super.getPort(AccordoCooperazioneSoap11Service.AccordoCooperazionePortSoap11, AccordoCooperazione.class);
     }
 
     /**
@@ -70,7 +70,7 @@ public class AccordoCooperazioneSoap11Service extends Service {
      */
     @WebEndpoint(name = "AccordoCooperazionePortSoap11")
     public AccordoCooperazione getAccordoCooperazionePortSoap11(WebServiceFeature... features) {
-        return super.getPort(AccordoCooperazionePortSoap11, AccordoCooperazione.class, features);
+        return super.getPort(AccordoCooperazioneSoap11Service.AccordoCooperazionePortSoap11, AccordoCooperazione.class, features);
     }
 
 }

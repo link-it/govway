@@ -59,8 +59,8 @@ public class FindAllIdsResponse {
      * 
      */
     public List<IdAccordoCooperazione> getIdAccordoCooperazione() {
-        if (idAccordoCooperazione == null) {
-            idAccordoCooperazione = new ArrayList<IdAccordoCooperazione>();
+        if (this.idAccordoCooperazione == null) {
+            this.idAccordoCooperazione = new ArrayList<IdAccordoCooperazione>();
         }
         return this.idAccordoCooperazione;
     }

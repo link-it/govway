@@ -45,7 +45,7 @@ public class Create {
      *     
      */
     public PortaApplicativa getPortaApplicativa() {
-        return portaApplicativa;
+        return this.portaApplicativa;
     }
 
     /**

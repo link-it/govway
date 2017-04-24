@@ -96,7 +96,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public Connettore getConnettore() {
-        return connettore;
+        return this.connettore;
     }
 
     /**
@@ -120,7 +120,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public CredenzialiSoggetto getCredenziali() {
-        return credenziali;
+        return this.credenziali;
     }
 
     /**
@@ -144,7 +144,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public Boolean isPrivato() {
-        return privato;
+        return this.privato;
     }
 
     /**
@@ -168,7 +168,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getTipo() {
-        return tipo;
+        return this.tipo;
     }
 
     /**
@@ -192,7 +192,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getNome() {
-        return nome;
+        return this.nome;
     }
 
     /**
@@ -216,7 +216,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getIdentificativoPorta() {
-        return identificativoPorta;
+        return this.identificativoPorta;
     }
 
     /**
@@ -240,7 +240,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getDescrizione() {
-        return descrizione;
+        return this.descrizione;
     }
 
     /**
@@ -264,7 +264,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getPortaDominio() {
-        return portaDominio;
+        return this.portaDominio;
     }
 
     /**
@@ -288,7 +288,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMin() {
-        return oraRegistrazioneMin;
+        return this.oraRegistrazioneMin;
     }
 
     /**
@@ -312,7 +312,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMax() {
-        return oraRegistrazioneMax;
+        return this.oraRegistrazioneMax;
     }
 
     /**
@@ -336,7 +336,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getVersioneProtocollo() {
-        return versioneProtocollo;
+        return this.versioneProtocollo;
     }
 
     /**
@@ -360,7 +360,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getCodiceIpa() {
-        return codiceIpa;
+        return this.codiceIpa;
     }
 
     /**
@@ -384,7 +384,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public Boolean isOrCondition() {
-        return orCondition;
+        return this.orCondition;
     }
 
     /**
@@ -408,7 +408,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public BigInteger getLimit() {
-        return limit;
+        return this.limit;
     }
 
     /**
@@ -432,7 +432,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public BigInteger getOffset() {
-        return offset;
+        return this.offset;
     }
 
     /**

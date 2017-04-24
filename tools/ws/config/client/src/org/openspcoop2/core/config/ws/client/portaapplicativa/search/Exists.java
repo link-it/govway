@@ -45,7 +45,7 @@ public class Exists {
      *     
      */
     public IdPortaApplicativa getIdPortaApplicativa() {
-        return idPortaApplicativa;
+        return this.idPortaApplicativa;
     }
 
     /**

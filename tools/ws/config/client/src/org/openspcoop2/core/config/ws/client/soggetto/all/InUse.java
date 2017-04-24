@@ -45,7 +45,7 @@ public class InUse {
      *     
      */
     public IdSoggetto getIdSoggetto() {
-        return idSoggetto;
+        return this.idSoggetto;
     }
 
     /**

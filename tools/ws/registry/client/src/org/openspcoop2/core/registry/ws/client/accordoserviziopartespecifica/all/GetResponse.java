@@ -45,7 +45,7 @@ public class GetResponse {
      *     
      */
     public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica() {
-        return accordoServizioParteSpecifica;
+        return this.accordoServizioParteSpecifica;
     }
 
     /**

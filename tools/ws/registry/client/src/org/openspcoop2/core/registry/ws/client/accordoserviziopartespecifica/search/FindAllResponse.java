@@ -59,8 +59,8 @@ public class FindAllResponse {
      * 
      */
     public List<AccordoServizioParteSpecifica> getAccordoServizioParteSpecifica() {
-        if (accordoServizioParteSpecifica == null) {
-            accordoServizioParteSpecifica = new ArrayList<AccordoServizioParteSpecifica>();
+        if (this.accordoServizioParteSpecifica == null) {
+            this.accordoServizioParteSpecifica = new ArrayList<AccordoServizioParteSpecifica>();
         }
         return this.accordoServizioParteSpecifica;
     }

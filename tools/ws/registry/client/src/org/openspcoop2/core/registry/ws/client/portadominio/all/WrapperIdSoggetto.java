@@ -45,7 +45,7 @@ public class WrapperIdSoggetto {
      *     
      */
     public IdSoggetto getId() {
-        return id;
+        return this.id;
     }
 
     /**

@@ -44,7 +44,7 @@ public class Find {
      *     
      */
     public SearchFilterPortaApplicativa getFilter() {
-        return filter;
+        return this.filter;
     }
 
     /**

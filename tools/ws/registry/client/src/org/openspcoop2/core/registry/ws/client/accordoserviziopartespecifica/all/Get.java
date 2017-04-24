@@ -45,7 +45,7 @@ public class Get {
      *     
      */
     public IdAccordoServizioParteSpecifica getIdAccordoServizioParteSpecifica() {
-        return idAccordoServizioParteSpecifica;
+        return this.idAccordoServizioParteSpecifica;
     }
 
     /**

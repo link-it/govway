@@ -50,7 +50,7 @@ public class Update {
      *     
      */
     public IdAccordoServizioParteSpecifica getOldIdAccordoServizioParteSpecifica() {
-        return oldIdAccordoServizioParteSpecifica;
+        return this.oldIdAccordoServizioParteSpecifica;
     }
 
     /**
@@ -74,7 +74,7 @@ public class Update {
      *     
      */
     public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica() {
-        return accordoServizioParteSpecifica;
+        return this.accordoServizioParteSpecifica;
     }
 
     /**

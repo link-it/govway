@@ -40,9 +40,9 @@ public class RequestContextUtils {
 	
 	public RequestContextUtils(String service) throws Exception {
 		try{
-			InputStream is = RequestContextUtils.class.getResourceAsStream(PROPERTIES);
+			InputStream is = RequestContextUtils.class.getResourceAsStream(RequestContextUtils.PROPERTIES);
 			if(is==null){
-				throw new Exception("File ["+PROPERTIES+"] not found in classpath");
+				throw new Exception("File ["+RequestContextUtils.PROPERTIES+"] not found in classpath");
 			}
 			Properties props = new Properties();
 			props.load(is);

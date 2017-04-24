@@ -57,7 +57,7 @@ public class ConfigServiceException {
      *     
      */
     public String getMethodName() {
-        return methodName;
+        return this.methodName;
     }
 
     /**
@@ -81,7 +81,7 @@ public class ConfigServiceException {
      *     
      */
     public String getObjectId() {
-        return objectId;
+        return this.objectId;
     }
 
     /**
@@ -105,7 +105,7 @@ public class ConfigServiceException {
      *     
      */
     public String getErrorMessage() {
-        return errorMessage;
+        return this.errorMessage;
     }
 
     /**
@@ -129,7 +129,7 @@ public class ConfigServiceException {
      *     
      */
     public String getErrorCode() {
-        return errorCode;
+        return this.errorCode;
     }
 
     /**
@@ -153,7 +153,7 @@ public class ConfigServiceException {
      *     
      */
     public String getErrorStackTrace() {
-        return errorStackTrace;
+        return this.errorStackTrace;
     }
 
     /**

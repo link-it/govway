@@ -45,7 +45,7 @@ public class InUse {
      *     
      */
     public IdAccordoServizioParteSpecifica getIdAccordoServizioParteSpecifica() {
-        return idAccordoServizioParteSpecifica;
+        return this.idAccordoServizioParteSpecifica;
     }
 
     /**

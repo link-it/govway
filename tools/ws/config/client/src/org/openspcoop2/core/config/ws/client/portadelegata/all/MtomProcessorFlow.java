@@ -45,7 +45,7 @@ public class MtomProcessorFlow {
      *     
      */
     public MTOMProcessorType getMode() {
-        return mode;
+        return this.mode;
     }
 
     /**

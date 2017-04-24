@@ -45,7 +45,7 @@ public class GetResponse {
      *     
      */
     public ServizioApplicativo getServizioApplicativo() {
-        return servizioApplicativo;
+        return this.servizioApplicativo;
     }
 
     /**

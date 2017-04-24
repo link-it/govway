@@ -80,7 +80,7 @@ public class SearchFilterPortaDominio {
      *     
      */
     public String getNome() {
-        return nome;
+        return this.nome;
     }
 
     /**
@@ -104,7 +104,7 @@ public class SearchFilterPortaDominio {
      *     
      */
     public String getDescrizione() {
-        return descrizione;
+        return this.descrizione;
     }
 
     /**
@@ -128,7 +128,7 @@ public class SearchFilterPortaDominio {
      *     
      */
     public String getImplementazione() {
-        return implementazione;
+        return this.implementazione;
     }
 
     /**
@@ -152,7 +152,7 @@ public class SearchFilterPortaDominio {
      *     
      */
     public String getSubject() {
-        return subject;
+        return this.subject;
     }
 
     /**
@@ -176,7 +176,7 @@ public class SearchFilterPortaDominio {
      *     
      */
     public StatoFunzionalita getClientAuth() {
-        return clientAuth;
+        return this.clientAuth;
     }
 
     /**
@@ -200,7 +200,7 @@ public class SearchFilterPortaDominio {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMin() {
-        return oraRegistrazioneMin;
+        return this.oraRegistrazioneMin;
     }
 
     /**
@@ -224,7 +224,7 @@ public class SearchFilterPortaDominio {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMax() {
-        return oraRegistrazioneMax;
+        return this.oraRegistrazioneMax;
     }
 
     /**
@@ -248,7 +248,7 @@ public class SearchFilterPortaDominio {
      *     
      */
     public Boolean isOrCondition() {
-        return orCondition;
+        return this.orCondition;
     }
 
     /**
@@ -272,7 +272,7 @@ public class SearchFilterPortaDominio {
      *     
      */
     public BigInteger getLimit() {
-        return limit;
+        return this.limit;
     }
 
     /**
@@ -296,7 +296,7 @@ public class SearchFilterPortaDominio {
      *     
      */
     public BigInteger getOffset() {
-        return offset;
+        return this.offset;
     }
 
     /**

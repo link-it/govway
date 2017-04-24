@@ -45,7 +45,7 @@ public class GetResponse {
      *     
      */
     public Ruolo getRuolo() {
-        return ruolo;
+        return this.ruolo;
     }
 
     /**

@@ -45,7 +45,7 @@ public class InUse {
      *     
      */
     public IdServizioApplicativo getIdServizioApplicativo() {
-        return idServizioApplicativo;
+        return this.idServizioApplicativo;
     }
 
     /**

@@ -45,7 +45,7 @@ public class Create {
      *     
      */
     public Soggetto getSoggetto() {
-        return soggetto;
+        return this.soggetto;
     }
 
     /**

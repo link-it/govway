@@ -44,7 +44,7 @@ public class FindAll {
      *     
      */
     public SearchFilterAccordoCooperazione getFilter() {
-        return filter;
+        return this.filter;
     }
 
     /**

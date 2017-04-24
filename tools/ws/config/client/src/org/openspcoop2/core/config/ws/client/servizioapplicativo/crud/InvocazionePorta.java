@@ -56,7 +56,7 @@ public class InvocazionePorta {
      *     
      */
     public InvocazionePortaGestioneErrore getGestioneErrore() {
-        return gestioneErrore;
+        return this.gestioneErrore;
     }
 
     /**
@@ -80,7 +80,7 @@ public class InvocazionePorta {
      *     
      */
     public StatoFunzionalita getInvioPerRiferimento() {
-        return invioPerRiferimento;
+        return this.invioPerRiferimento;
     }
 
     /**
@@ -104,7 +104,7 @@ public class InvocazionePorta {
      *     
      */
     public StatoFunzionalita getSbustamentoInformazioniProtocollo() {
-        return sbustamentoInformazioniProtocollo;
+        return this.sbustamentoInformazioniProtocollo;
     }
 
     /**

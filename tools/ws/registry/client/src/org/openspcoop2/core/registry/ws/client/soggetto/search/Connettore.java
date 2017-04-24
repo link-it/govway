@@ -48,7 +48,7 @@ public class Connettore {
      *     
      */
     public Boolean isCustom() {
-        return custom;
+        return this.custom;
     }
 
     /**
@@ -72,7 +72,7 @@ public class Connettore {
      *     
      */
     public String getTipo() {
-        return tipo;
+        return this.tipo;
     }
 
     /**
@@ -96,7 +96,7 @@ public class Connettore {
      *     
      */
     public String getNome() {
-        return nome;
+        return this.nome;
     }
 
     /**

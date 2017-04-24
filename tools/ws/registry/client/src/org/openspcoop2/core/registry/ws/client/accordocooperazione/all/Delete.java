@@ -45,7 +45,7 @@ public class Delete {
      *     
      */
     public AccordoCooperazione getAccordoCooperazione() {
-        return accordoCooperazione;
+        return this.accordoCooperazione;
     }
 
     /**

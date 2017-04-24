@@ -45,7 +45,7 @@ public class Delete {
      *     
      */
     public ServizioApplicativo getServizioApplicativo() {
-        return servizioApplicativo;
+        return this.servizioApplicativo;
     }
 
     /**

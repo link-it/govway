@@ -45,7 +45,7 @@ public class InUse {
      *     
      */
     public IdPortaApplicativa getIdPortaApplicativa() {
-        return idPortaApplicativa;
+        return this.idPortaApplicativa;
     }
 
     /**

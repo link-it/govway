@@ -78,7 +78,7 @@ public class RispostaAsincrona {
      *     
      */
     public InvocazioneCredenziali getCredenziali() {
-        return credenziali;
+        return this.credenziali;
     }
 
     /**
@@ -102,7 +102,7 @@ public class RispostaAsincrona {
      *     
      */
     public Connettore getConnettore() {
-        return connettore;
+        return this.connettore;
     }
 
     /**
@@ -126,7 +126,7 @@ public class RispostaAsincrona {
      *     
      */
     public StatoFunzionalita getSbustamentoSoap() {
-        return sbustamentoSoap;
+        return this.sbustamentoSoap;
     }
 
     /**
@@ -150,7 +150,7 @@ public class RispostaAsincrona {
      *     
      */
     public StatoFunzionalita getSbustamentoInformazioniProtocollo() {
-        return sbustamentoInformazioniProtocollo;
+        return this.sbustamentoInformazioniProtocollo;
     }
 
     /**
@@ -174,7 +174,7 @@ public class RispostaAsincrona {
      *     
      */
     public StatoFunzionalita getGetMessage() {
-        return getMessage;
+        return this.getMessage;
     }
 
     /**
@@ -198,7 +198,7 @@ public class RispostaAsincrona {
      *     
      */
     public InvocazioneServizioTipoAutenticazione getAutenticazione() {
-        return autenticazione;
+        return this.autenticazione;
     }
 
     /**
@@ -222,7 +222,7 @@ public class RispostaAsincrona {
      *     
      */
     public StatoFunzionalita getInvioPerRiferimento() {
-        return invioPerRiferimento;
+        return this.invioPerRiferimento;
     }
 
     /**
@@ -246,7 +246,7 @@ public class RispostaAsincrona {
      *     
      */
     public StatoFunzionalita getRispostaPerRiferimento() {
-        return rispostaPerRiferimento;
+        return this.rispostaPerRiferimento;
     }
 
     /**

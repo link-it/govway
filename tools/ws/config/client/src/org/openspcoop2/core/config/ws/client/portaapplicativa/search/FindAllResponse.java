@@ -59,8 +59,8 @@ public class FindAllResponse {
      * 
      */
     public List<PortaApplicativa> getPortaApplicativa() {
-        if (portaApplicativa == null) {
-            portaApplicativa = new ArrayList<PortaApplicativa>();
+        if (this.portaApplicativa == null) {
+            this.portaApplicativa = new ArrayList<PortaApplicativa>();
         }
         return this.portaApplicativa;
     }

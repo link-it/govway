@@ -45,7 +45,7 @@ public class WrapperIdServizioApplicativo {
      *     
      */
     public IdServizioApplicativo getId() {
-        return id;
+        return this.id;
     }
 
     /**

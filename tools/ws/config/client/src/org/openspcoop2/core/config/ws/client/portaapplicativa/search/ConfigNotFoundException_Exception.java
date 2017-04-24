@@ -13,7 +13,11 @@ import javax.xml.ws.WebFault;
 @WebFault(name = "config-not-found-exception", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 public class ConfigNotFoundException_Exception extends Exception {
     
-    private org.openspcoop2.core.config.ws.client.portaapplicativa.search.ConfigNotFoundException configNotFoundException;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private org.openspcoop2.core.config.ws.client.portaapplicativa.search.ConfigNotFoundException configNotFoundException;
 
     public ConfigNotFoundException_Exception() {
         super();

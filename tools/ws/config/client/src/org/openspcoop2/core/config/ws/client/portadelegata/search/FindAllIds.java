@@ -44,7 +44,7 @@ public class FindAllIds {
      *     
      */
     public SearchFilterPortaDelegata getFilter() {
-        return filter;
+        return this.filter;
     }
 
     /**

@@ -13,7 +13,11 @@ import javax.xml.ws.WebFault;
 @WebFault(name = "registry-not-authorized-exception", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 public class RegistryNotAuthorizedException_Exception extends Exception {
     
-    private org.openspcoop2.core.registry.ws.client.portadominio.crud.RegistryNotAuthorizedException registryNotAuthorizedException;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private org.openspcoop2.core.registry.ws.client.portadominio.crud.RegistryNotAuthorizedException registryNotAuthorizedException;
 
     public RegistryNotAuthorizedException_Exception() {
         super();

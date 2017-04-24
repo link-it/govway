@@ -50,7 +50,7 @@ public class Update {
      *     
      */
     public IdAccordoCooperazione getOldIdAccordoCooperazione() {
-        return oldIdAccordoCooperazione;
+        return this.oldIdAccordoCooperazione;
     }
 
     /**
@@ -74,7 +74,7 @@ public class Update {
      *     
      */
     public AccordoCooperazione getAccordoCooperazione() {
-        return accordoCooperazione;
+        return this.accordoCooperazione;
     }
 
     /**

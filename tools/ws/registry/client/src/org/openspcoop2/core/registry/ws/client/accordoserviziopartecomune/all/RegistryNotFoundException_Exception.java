@@ -13,7 +13,11 @@ import javax.xml.ws.WebFault;
 @WebFault(name = "registry-not-found-exception", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 public class RegistryNotFoundException_Exception extends Exception {
     
-    private org.openspcoop2.core.registry.ws.client.accordoserviziopartecomune.all.RegistryNotFoundException registryNotFoundException;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private org.openspcoop2.core.registry.ws.client.accordoserviziopartecomune.all.RegistryNotFoundException registryNotFoundException;
 
     public RegistryNotFoundException_Exception() {
         super();

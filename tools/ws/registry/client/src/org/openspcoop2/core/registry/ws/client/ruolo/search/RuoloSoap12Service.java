@@ -36,7 +36,7 @@ public class RuoloSoap12Service extends Service {
     }
 
     public RuoloSoap12Service(URL wsdlLocation) {
-        super(wsdlLocation, SERVICE);
+        super(wsdlLocation, RuoloSoap12Service.SERVICE);
     }
 
     public RuoloSoap12Service(URL wsdlLocation, QName serviceName) {
@@ -44,7 +44,7 @@ public class RuoloSoap12Service extends Service {
     }
 
     public RuoloSoap12Service() {
-        super(WSDL_LOCATION, SERVICE);
+        super(RuoloSoap12Service.WSDL_LOCATION, RuoloSoap12Service.SERVICE);
     }
     
 
@@ -58,7 +58,7 @@ public class RuoloSoap12Service extends Service {
      */
     @WebEndpoint(name = "RuoloPortSoap12")
     public Ruolo getRuoloPortSoap12() {
-        return super.getPort(RuoloPortSoap12, Ruolo.class);
+        return super.getPort(RuoloSoap12Service.RuoloPortSoap12, Ruolo.class);
     }
 
     /**
@@ -70,7 +70,7 @@ public class RuoloSoap12Service extends Service {
      */
     @WebEndpoint(name = "RuoloPortSoap12")
     public Ruolo getRuoloPortSoap12(WebServiceFeature... features) {
-        return super.getPort(RuoloPortSoap12, Ruolo.class, features);
+        return super.getPort(RuoloSoap12Service.RuoloPortSoap12, Ruolo.class, features);
     }
 
 }

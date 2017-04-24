@@ -44,7 +44,7 @@ public class Find {
      *     
      */
     public SearchFilterSoggetto getFilter() {
-        return filter;
+        return this.filter;
     }
 
     /**

@@ -51,7 +51,7 @@ public class ObjectId {
      *     
      */
     public WrapperIdSoggetto getWrapperIdSoggetto() {
-        return wrapperIdSoggetto;
+        return this.wrapperIdSoggetto;
     }
 
     /**
@@ -75,7 +75,7 @@ public class ObjectId {
      *     
      */
     public WrapperIdPortaDelegata getWrapperIdPortaDelegata() {
-        return wrapperIdPortaDelegata;
+        return this.wrapperIdPortaDelegata;
     }
 
     /**
@@ -99,7 +99,7 @@ public class ObjectId {
      *     
      */
     public WrapperIdPortaApplicativa getWrapperIdPortaApplicativa() {
-        return wrapperIdPortaApplicativa;
+        return this.wrapperIdPortaApplicativa;
     }
 
     /**
@@ -123,7 +123,7 @@ public class ObjectId {
      *     
      */
     public WrapperIdServizioApplicativo getWrapperIdServizioApplicativo() {
-        return wrapperIdServizioApplicativo;
+        return this.wrapperIdServizioApplicativo;
     }
 
     /**

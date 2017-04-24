@@ -45,7 +45,7 @@ public class Exists {
      *     
      */
     public IdAccordoServizioParteComune getIdAccordoServizioParteComune() {
-        return idAccordoServizioParteComune;
+        return this.idAccordoServizioParteComune;
     }
 
     /**

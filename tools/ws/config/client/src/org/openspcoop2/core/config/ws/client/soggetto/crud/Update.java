@@ -50,7 +50,7 @@ public class Update {
      *     
      */
     public IdSoggetto getOldIdSoggetto() {
-        return oldIdSoggetto;
+        return this.oldIdSoggetto;
     }
 
     /**
@@ -74,7 +74,7 @@ public class Update {
      *     
      */
     public Soggetto getSoggetto() {
-        return soggetto;
+        return this.soggetto;
     }
 
     /**

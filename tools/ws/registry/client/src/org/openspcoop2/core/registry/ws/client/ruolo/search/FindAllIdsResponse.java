@@ -59,8 +59,8 @@ public class FindAllIdsResponse {
      * 
      */
     public List<IdRuolo> getIdRuolo() {
-        if (idRuolo == null) {
-            idRuolo = new ArrayList<IdRuolo>();
+        if (this.idRuolo == null) {
+            this.idRuolo = new ArrayList<IdRuolo>();
         }
         return this.idRuolo;
     }

@@ -93,7 +93,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public IdSoggetto getSoggettoReferente() {
-        return soggettoReferente;
+        return this.soggettoReferente;
     }
 
     /**
@@ -117,7 +117,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public AccordoServizioParteComuneServizioComposto getServizioComposto() {
-        return servizioComposto;
+        return this.servizioComposto;
     }
 
     /**
@@ -141,7 +141,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public String getStatoPackage() {
-        return statoPackage;
+        return this.statoPackage;
     }
 
     /**
@@ -165,7 +165,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public Boolean isPrivato() {
-        return privato;
+        return this.privato;
     }
 
     /**
@@ -189,7 +189,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public ServiceBinding getServiceBinding() {
-        return serviceBinding;
+        return this.serviceBinding;
     }
 
     /**
@@ -213,7 +213,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public String getNome() {
-        return nome;
+        return this.nome;
     }
 
     /**
@@ -237,7 +237,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public String getDescrizione() {
-        return descrizione;
+        return this.descrizione;
     }
 
     /**
@@ -261,7 +261,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMin() {
-        return oraRegistrazioneMin;
+        return this.oraRegistrazioneMin;
     }
 
     /**
@@ -285,7 +285,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMax() {
-        return oraRegistrazioneMax;
+        return this.oraRegistrazioneMax;
     }
 
     /**
@@ -309,7 +309,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public Long getVersione() {
-        return versione;
+        return this.versione;
     }
 
     /**
@@ -333,7 +333,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public Boolean isOrCondition() {
-        return orCondition;
+        return this.orCondition;
     }
 
     /**
@@ -357,7 +357,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public BigInteger getLimit() {
-        return limit;
+        return this.limit;
     }
 
     /**
@@ -381,7 +381,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public BigInteger getOffset() {
-        return offset;
+        return this.offset;
     }
 
     /**

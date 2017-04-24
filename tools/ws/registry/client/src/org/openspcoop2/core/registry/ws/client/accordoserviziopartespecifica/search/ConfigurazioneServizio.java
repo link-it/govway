@@ -42,7 +42,7 @@ public class ConfigurazioneServizio {
      *     
      */
     public Connettore getConnettore() {
-        return connettore;
+        return this.connettore;
     }
 
     /**

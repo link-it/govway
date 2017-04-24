@@ -50,7 +50,7 @@ public class Update {
      *     
      */
     public IdPortaApplicativa getOldIdPortaApplicativa() {
-        return oldIdPortaApplicativa;
+        return this.oldIdPortaApplicativa;
     }
 
     /**
@@ -74,7 +74,7 @@ public class Update {
      *     
      */
     public PortaApplicativa getPortaApplicativa() {
-        return portaApplicativa;
+        return this.portaApplicativa;
     }
 
     /**

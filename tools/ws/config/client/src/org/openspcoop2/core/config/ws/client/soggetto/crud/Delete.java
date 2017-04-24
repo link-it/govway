@@ -45,7 +45,7 @@ public class Delete {
      *     
      */
     public Soggetto getSoggetto() {
-        return soggetto;
+        return this.soggetto;
     }
 
     /**

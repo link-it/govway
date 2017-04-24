@@ -1148,18 +1148,18 @@ public class RegistroServizi  {
 
 	}
 
-	public Soggetto getSoggettoAutenticatoBasic(Connection connectionPdD,String nomeRegistro,String user,String password) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	public Soggetto getSoggettoByCredenzialiBasic(Connection connectionPdD,String nomeRegistro,String user,String password) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
 		// Raccolta dati
 		if(user==null)
-			throw new DriverRegistroServiziException("[getSoggettoAutenticatoBasic] Parametro user Non Valido");
+			throw new DriverRegistroServiziException("[getSoggettoByCredenzialiBasic] Parametro user Non Valido");
 		if(password==null)
-			throw new DriverRegistroServiziException("[getSoggettoAutenticatoBasic] Parametro password Non Valido");
+			throw new DriverRegistroServiziException("[getSoggettoByCredenzialiBasic] Parametro password Non Valido");
 
 		//	se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getSoggettoAutenticatoBasic_" + user +"_" + password;
+			key = "getSoggettoByCredenzialiBasic_" + user +"_" + password;
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1177,28 +1177,28 @@ public class RegistroServizi  {
 		// Algoritmo CACHE
 		Soggetto soggetto = null;
 		if(this.cache!=null){
-			soggetto = (Soggetto) this.getObjectCache(key,"getSoggettoAutenticatoBasic",nomeRegistro,null,connectionPdD,user,password);
+			soggetto = (Soggetto) this.getObjectCache(key,"getSoggettoByCredenzialiBasic",nomeRegistro,null,connectionPdD,user,password);
 		}else{
-			soggetto = (Soggetto) this.getObject("getSoggettoAutenticatoBasic",nomeRegistro,null,connectionPdD,user,password);
+			soggetto = (Soggetto) this.getObject("getSoggettoByCredenzialiBasic",nomeRegistro,null,connectionPdD,user,password);
 		}
 
 		if(soggetto!=null)
 			return soggetto;
 		else
-			throw new DriverRegistroServiziNotFound("[getSoggettoAutenticatoBasic] Soggetto non Trovato");
+			throw new DriverRegistroServiziNotFound("[getSoggettoByCredenzialiBasic] Soggetto non Trovato");
 
 	}
 	
-	public Soggetto getSoggettoAutenticatoSsl(Connection connectionPdD,String nomeRegistro,String subject) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	public Soggetto getSoggettoByCredenzialiSsl(Connection connectionPdD,String nomeRegistro,String subject) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
 		// Raccolta dati
 		if(subject==null)
-			throw new DriverRegistroServiziException("[getSoggettoAutenticatoSsl] Parametro subject Non Valido");
+			throw new DriverRegistroServiziException("[getSoggettoByCredenzialiSsl] Parametro subject Non Valido");
 
 		//	se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getSoggettoAutenticatoSsl_" + subject;
+			key = "getSoggettoByCredenzialiSsl_" + subject;
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1216,28 +1216,28 @@ public class RegistroServizi  {
 		// Algoritmo CACHE
 		Soggetto soggetto = null;
 		if(this.cache!=null){
-			soggetto = (Soggetto) this.getObjectCache(key,"getSoggettoAutenticatoSsl",nomeRegistro,null,connectionPdD,subject);
+			soggetto = (Soggetto) this.getObjectCache(key,"getSoggettoByCredenzialiSsl",nomeRegistro,null,connectionPdD,subject);
 		}else{
-			soggetto = (Soggetto) this.getObject("getSoggettoAutenticatoSsl",nomeRegistro,null,connectionPdD,subject);
+			soggetto = (Soggetto) this.getObject("getSoggettoByCredenzialiSsl",nomeRegistro,null,connectionPdD,subject);
 		}
 
 		if(soggetto!=null)
 			return soggetto;
 		else
-			throw new DriverRegistroServiziNotFound("[getSoggettoAutenticatoSsl] Soggetto non Trovato");
+			throw new DriverRegistroServiziNotFound("[getSoggettoByCredenzialiSsl] Soggetto non Trovato");
 
 	}
 	
-	public Soggetto getSoggettoAutenticatoPrincipal(Connection connectionPdD,String nomeRegistro,String principal) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+	public Soggetto getSoggettoByCredenzialiPrincipal(Connection connectionPdD,String nomeRegistro,String principal) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
 		// Raccolta dati
 		if(principal==null)
-			throw new DriverRegistroServiziException("[getSoggettoAutenticatoPrincipal] Parametro principal Non Valido");
+			throw new DriverRegistroServiziException("[getSoggettoByCredenzialiPrincipal] Parametro principal Non Valido");
 
 		//	se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getSoggettoAutenticatoPrincipal_" + principal;
+			key = "getSoggettoByCredenzialiPrincipal_" + principal;
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1255,15 +1255,15 @@ public class RegistroServizi  {
 		// Algoritmo CACHE
 		Soggetto soggetto = null;
 		if(this.cache!=null){
-			soggetto = (Soggetto) this.getObjectCache(key,"getSoggettoAutenticatoPrincipal",nomeRegistro,null,connectionPdD,principal);
+			soggetto = (Soggetto) this.getObjectCache(key,"getSoggettoByCredenzialiPrincipal",nomeRegistro,null,connectionPdD,principal);
 		}else{
-			soggetto = (Soggetto) this.getObject("getSoggettoAutenticatoPrincipal",nomeRegistro,null,connectionPdD,principal);
+			soggetto = (Soggetto) this.getObject("getSoggettoByCredenzialiPrincipal",nomeRegistro,null,connectionPdD,principal);
 		}
 
 		if(soggetto!=null)
 			return soggetto;
 		else
-			throw new DriverRegistroServiziNotFound("[getSoggettoAutenticatoPrincipal] Soggetto non Trovato");
+			throw new DriverRegistroServiziNotFound("[getSoggettoByCredenzialiPrincipal] Soggetto non Trovato");
 
 	}
 	

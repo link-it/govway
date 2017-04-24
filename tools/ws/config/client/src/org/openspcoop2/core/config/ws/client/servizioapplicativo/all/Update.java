@@ -50,7 +50,7 @@ public class Update {
      *     
      */
     public IdServizioApplicativo getOldIdServizioApplicativo() {
-        return oldIdServizioApplicativo;
+        return this.oldIdServizioApplicativo;
     }
 
     /**
@@ -74,7 +74,7 @@ public class Update {
      *     
      */
     public ServizioApplicativo getServizioApplicativo() {
-        return servizioApplicativo;
+        return this.servizioApplicativo;
     }
 
     /**

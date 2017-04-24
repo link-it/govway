@@ -45,7 +45,7 @@ public class WrapperIdAccordoServizioParteComune {
      *     
      */
     public IdAccordoServizioParteComune getId() {
-        return id;
+        return this.id;
     }
 
     /**

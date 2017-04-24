@@ -59,8 +59,8 @@ public class FindAllIdsResponse {
      * 
      */
     public List<IdPortaDominio> getIdPortaDominio() {
-        if (idPortaDominio == null) {
-            idPortaDominio = new ArrayList<IdPortaDominio>();
+        if (this.idPortaDominio == null) {
+            this.idPortaDominio = new ArrayList<IdPortaDominio>();
         }
         return this.idPortaDominio;
     }

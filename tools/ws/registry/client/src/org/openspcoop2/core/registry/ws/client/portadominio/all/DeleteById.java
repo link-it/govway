@@ -45,7 +45,7 @@ public class DeleteById {
      *     
      */
     public IdPortaDominio getIdPortaDominio() {
-        return idPortaDominio;
+        return this.idPortaDominio;
     }
 
     /**

@@ -45,7 +45,7 @@ public class Get {
      *     
      */
     public IdPortaApplicativa getIdPortaApplicativa() {
-        return idPortaApplicativa;
+        return this.idPortaApplicativa;
     }
 
     /**

@@ -45,7 +45,7 @@ public class DeleteById {
      *     
      */
     public IdAccordoServizioParteSpecifica getIdAccordoServizioParteSpecifica() {
-        return idAccordoServizioParteSpecifica;
+        return this.idAccordoServizioParteSpecifica;
     }
 
     /**

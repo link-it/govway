@@ -44,7 +44,7 @@ public class Count {
      *     
      */
     public SearchFilterRuolo getFilter() {
-        return filter;
+        return this.filter;
     }
 
     /**

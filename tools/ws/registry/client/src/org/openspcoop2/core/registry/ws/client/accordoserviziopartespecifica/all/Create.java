@@ -45,7 +45,7 @@ public class Create {
      *     
      */
     public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica() {
-        return accordoServizioParteSpecifica;
+        return this.accordoServizioParteSpecifica;
     }
 
     /**

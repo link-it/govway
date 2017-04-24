@@ -45,7 +45,7 @@ public class Delete {
      *     
      */
     public PortaDelegata getPortaDelegata() {
-        return portaDelegata;
+        return this.portaDelegata;
     }
 
     /**

@@ -44,7 +44,7 @@ public class FindAll {
      *     
      */
     public SearchFilterPortaDelegata getFilter() {
-        return filter;
+        return this.filter;
     }
 
     /**

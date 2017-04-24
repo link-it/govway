@@ -45,7 +45,7 @@ public class Exists {
      *     
      */
     public IdSoggetto getIdSoggetto() {
-        return idSoggetto;
+        return this.idSoggetto;
     }
 
     /**

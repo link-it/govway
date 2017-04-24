@@ -58,7 +58,7 @@ public class AutenticazioneSsl extends AbstractAutenticazioneBase {
 		
     	IDSoggetto idSoggetto = null;
 		try{
-			idSoggetto = RegistroServiziManager.getInstance(datiInvocazione.getState()).getIdSoggettoAutenticatoSsl(subject, null); // all registry
+			idSoggetto = RegistroServiziManager.getInstance(datiInvocazione.getState()).getIdSoggettoByCredenzialiSsl(subject, null); // all registry
 		}
 		catch(DriverRegistroServiziNotFound notFound){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().debug("AutenticazioneSsl non ha trovato risultati",notFound);

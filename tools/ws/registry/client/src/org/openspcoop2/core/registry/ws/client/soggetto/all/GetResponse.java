@@ -45,7 +45,7 @@ public class GetResponse {
      *     
      */
     public Soggetto getSoggetto() {
-        return soggetto;
+        return this.soggetto;
     }
 
     /**

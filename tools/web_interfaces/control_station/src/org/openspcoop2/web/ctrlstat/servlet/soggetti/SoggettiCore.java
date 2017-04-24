@@ -859,7 +859,7 @@ public class SoggettiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverRegistroServiziDB().getSoggettoAutenticatoBasic(user, password);
+			return driver.getDriverRegistroServiziDB().getSoggettoByCredenzialiBasic(user, password);
 
 		} 
 		catch (DriverRegistroServiziNotFound e) {
@@ -885,7 +885,7 @@ public class SoggettiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverRegistroServiziDB().getSoggettoAutenticatoSsl(subject);
+			return driver.getDriverRegistroServiziDB().getSoggettoByCredenzialiSsl(subject);
 
 		} 
 		catch (DriverRegistroServiziNotFound e) {
@@ -911,7 +911,7 @@ public class SoggettiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverRegistroServiziDB().getSoggettoAutenticatoPrincipal(principal);
+			return driver.getDriverRegistroServiziDB().getSoggettoByCredenzialiPrincipal(principal);
 
 		} 
 		catch (DriverRegistroServiziNotFound e) {

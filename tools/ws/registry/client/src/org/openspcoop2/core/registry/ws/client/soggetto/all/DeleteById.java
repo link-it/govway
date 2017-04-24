@@ -45,7 +45,7 @@ public class DeleteById {
      *     
      */
     public IdSoggetto getIdSoggetto() {
-        return idSoggetto;
+        return this.idSoggetto;
     }
 
     /**

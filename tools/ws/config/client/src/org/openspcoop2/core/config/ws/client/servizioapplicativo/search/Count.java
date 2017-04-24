@@ -44,7 +44,7 @@ public class Count {
      *     
      */
     public SearchFilterServizioApplicativo getFilter() {
-        return filter;
+        return this.filter;
     }
 
     /**

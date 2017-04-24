@@ -36,7 +36,7 @@ public class SoggettoSoap11Service extends Service {
     }
 
     public SoggettoSoap11Service(URL wsdlLocation) {
-        super(wsdlLocation, SERVICE);
+        super(wsdlLocation, SoggettoSoap11Service.SERVICE);
     }
 
     public SoggettoSoap11Service(URL wsdlLocation, QName serviceName) {
@@ -44,7 +44,7 @@ public class SoggettoSoap11Service extends Service {
     }
 
     public SoggettoSoap11Service() {
-        super(WSDL_LOCATION, SERVICE);
+        super(SoggettoSoap11Service.WSDL_LOCATION, SoggettoSoap11Service.SERVICE);
     }
     
 
@@ -58,7 +58,7 @@ public class SoggettoSoap11Service extends Service {
      */
     @WebEndpoint(name = "SoggettoPortSoap11")
     public Soggetto getSoggettoPortSoap11() {
-        return super.getPort(SoggettoPortSoap11, Soggetto.class);
+        return super.getPort(SoggettoSoap11Service.SoggettoPortSoap11, Soggetto.class);
     }
 
     /**
@@ -70,7 +70,7 @@ public class SoggettoSoap11Service extends Service {
      */
     @WebEndpoint(name = "SoggettoPortSoap11")
     public Soggetto getSoggettoPortSoap11(WebServiceFeature... features) {
-        return super.getPort(SoggettoPortSoap11, Soggetto.class, features);
+        return super.getPort(SoggettoSoap11Service.SoggettoPortSoap11, Soggetto.class, features);
     }
 
 }

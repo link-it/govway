@@ -44,7 +44,7 @@ public class FindAllIds {
      *     
      */
     public SearchFilterSoggetto getFilter() {
-        return filter;
+        return this.filter;
     }
 
     /**

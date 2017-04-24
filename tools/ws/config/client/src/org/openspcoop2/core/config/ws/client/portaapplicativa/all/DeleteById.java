@@ -45,7 +45,7 @@ public class DeleteById {
      *     
      */
     public IdPortaApplicativa getIdPortaApplicativa() {
-        return idPortaApplicativa;
+        return this.idPortaApplicativa;
     }
 
     /**

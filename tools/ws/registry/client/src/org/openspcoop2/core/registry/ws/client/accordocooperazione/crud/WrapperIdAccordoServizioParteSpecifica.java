@@ -45,7 +45,7 @@ public class WrapperIdAccordoServizioParteSpecifica {
      *     
      */
     public IdAccordoServizioParteSpecifica getId() {
-        return id;
+        return this.id;
     }
 
     /**

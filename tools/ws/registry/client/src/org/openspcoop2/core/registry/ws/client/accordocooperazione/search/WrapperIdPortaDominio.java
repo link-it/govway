@@ -45,7 +45,7 @@ public class WrapperIdPortaDominio {
      *     
      */
     public IdPortaDominio getId() {
-        return id;
+        return this.id;
     }
 
     /**

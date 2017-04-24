@@ -44,7 +44,7 @@ public class FindAll {
      *     
      */
     public SearchFilterAccordoServizioParteSpecifica getFilter() {
-        return filter;
+        return this.filter;
     }
 
     /**

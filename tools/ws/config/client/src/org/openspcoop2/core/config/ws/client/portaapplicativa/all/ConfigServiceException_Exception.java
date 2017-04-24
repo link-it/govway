@@ -13,7 +13,11 @@ import javax.xml.ws.WebFault;
 @WebFault(name = "config-service-exception", targetNamespace = "http://www.openspcoop2.org/core/config/management")
 public class ConfigServiceException_Exception extends Exception {
     
-    private org.openspcoop2.core.config.ws.client.portaapplicativa.all.ConfigServiceException configServiceException;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private org.openspcoop2.core.config.ws.client.portaapplicativa.all.ConfigServiceException configServiceException;
 
     public ConfigServiceException_Exception() {
         super();

@@ -45,7 +45,7 @@ public class GetResponse {
      *     
      */
     public PortaDominio getPortaDominio() {
-        return portaDominio;
+        return this.portaDominio;
     }
 
     /**

@@ -45,7 +45,7 @@ public class Create {
      *     
      */
     public AccordoServizioParteComune getAccordoServizioParteComune() {
-        return accordoServizioParteComune;
+        return this.accordoServizioParteComune;
     }
 
     /**

@@ -152,7 +152,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public PortaApplicativaSoggettoVirtuale getSoggettoVirtuale() {
-        return soggettoVirtuale;
+        return this.soggettoVirtuale;
     }
 
     /**
@@ -176,7 +176,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public PortaApplicativaServizio getServizio() {
-        return servizio;
+        return this.servizio;
     }
 
     /**
@@ -200,7 +200,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public PortaApplicativaAzione getAzione() {
-        return azione;
+        return this.azione;
     }
 
     /**
@@ -224,7 +224,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public AutorizzazioneRuoli getRuoli() {
-        return ruoli;
+        return this.ruoli;
     }
 
     /**
@@ -248,7 +248,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public MtomProcessor getMtomProcessor() {
-        return mtomProcessor;
+        return this.mtomProcessor;
     }
 
     /**
@@ -272,7 +272,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public ValidazioneContenutiApplicativi getValidazioneContenutiApplicativi() {
-        return validazioneContenutiApplicativi;
+        return this.validazioneContenutiApplicativi;
     }
 
     /**
@@ -296,7 +296,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public String getTipoSoggettoProprietario() {
-        return tipoSoggettoProprietario;
+        return this.tipoSoggettoProprietario;
     }
 
     /**
@@ -320,7 +320,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public String getNomeSoggettoProprietario() {
-        return nomeSoggettoProprietario;
+        return this.nomeSoggettoProprietario;
     }
 
     /**
@@ -344,7 +344,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public String getStatoMessageSecurity() {
-        return statoMessageSecurity;
+        return this.statoMessageSecurity;
     }
 
     /**
@@ -368,7 +368,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public String getNome() {
-        return nome;
+        return this.nome;
     }
 
     /**
@@ -392,7 +392,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public String getDescrizione() {
-        return descrizione;
+        return this.descrizione;
     }
 
     /**
@@ -416,7 +416,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public StatoFunzionalita getRicevutaAsincronaSimmetrica() {
-        return ricevutaAsincronaSimmetrica;
+        return this.ricevutaAsincronaSimmetrica;
     }
 
     /**
@@ -440,7 +440,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public StatoFunzionalita getRicevutaAsincronaAsimmetrica() {
-        return ricevutaAsincronaAsimmetrica;
+        return this.ricevutaAsincronaAsimmetrica;
     }
 
     /**
@@ -464,7 +464,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public String getIntegrazione() {
-        return integrazione;
+        return this.integrazione;
     }
 
     /**
@@ -488,7 +488,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public StatoFunzionalita getAllegaBody() {
-        return allegaBody;
+        return this.allegaBody;
     }
 
     /**
@@ -512,7 +512,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public StatoFunzionalita getScartaBody() {
-        return scartaBody;
+        return this.scartaBody;
     }
 
     /**
@@ -536,7 +536,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public StatoFunzionalita getGestioneManifest() {
-        return gestioneManifest;
+        return this.gestioneManifest;
     }
 
     /**
@@ -560,7 +560,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public StatoFunzionalita getStateless() {
-        return stateless;
+        return this.stateless;
     }
 
     /**
@@ -584,7 +584,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public String getBehaviour() {
-        return behaviour;
+        return this.behaviour;
     }
 
     /**
@@ -608,7 +608,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public String getAutenticazione() {
-        return autenticazione;
+        return this.autenticazione;
     }
 
     /**
@@ -632,7 +632,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public StatoFunzionalita getAutenticazioneOpzionale() {
-        return autenticazioneOpzionale;
+        return this.autenticazioneOpzionale;
     }
 
     /**
@@ -656,7 +656,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public String getAutorizzazione() {
-        return autorizzazione;
+        return this.autorizzazione;
     }
 
     /**
@@ -680,7 +680,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public String getAutorizzazioneContenuto() {
-        return autorizzazioneContenuto;
+        return this.autorizzazioneContenuto;
     }
 
     /**
@@ -704,7 +704,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMin() {
-        return oraRegistrazioneMin;
+        return this.oraRegistrazioneMin;
     }
 
     /**
@@ -728,7 +728,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMax() {
-        return oraRegistrazioneMax;
+        return this.oraRegistrazioneMax;
     }
 
     /**
@@ -752,7 +752,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public Boolean isOrCondition() {
-        return orCondition;
+        return this.orCondition;
     }
 
     /**
@@ -776,7 +776,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public BigInteger getLimit() {
-        return limit;
+        return this.limit;
     }
 
     /**
@@ -800,7 +800,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public BigInteger getOffset() {
-        return offset;
+        return this.offset;
     }
 
     /**

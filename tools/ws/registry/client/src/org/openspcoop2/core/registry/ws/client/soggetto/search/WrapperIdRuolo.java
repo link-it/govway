@@ -45,7 +45,7 @@ public class WrapperIdRuolo {
      *     
      */
     public IdRuolo getId() {
-        return id;
+        return this.id;
     }
 
     /**

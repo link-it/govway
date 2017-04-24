@@ -48,7 +48,7 @@ public class MtomProcessor {
      *     
      */
     public MtomProcessorFlow getRequestFlow() {
-        return requestFlow;
+        return this.requestFlow;
     }
 
     /**
@@ -72,7 +72,7 @@ public class MtomProcessor {
      *     
      */
     public MtomProcessorFlow getResponseFlow() {
-        return responseFlow;
+        return this.responseFlow;
     }
 
     /**

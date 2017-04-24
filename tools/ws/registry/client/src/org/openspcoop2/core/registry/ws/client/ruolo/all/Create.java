@@ -45,7 +45,7 @@ public class Create {
      *     
      */
     public Ruolo getRuolo() {
-        return ruolo;
+        return this.ruolo;
     }
 
     /**

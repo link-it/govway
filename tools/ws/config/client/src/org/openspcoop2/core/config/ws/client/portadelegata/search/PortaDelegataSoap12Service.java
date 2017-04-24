@@ -36,7 +36,7 @@ public class PortaDelegataSoap12Service extends Service {
     }
 
     public PortaDelegataSoap12Service(URL wsdlLocation) {
-        super(wsdlLocation, SERVICE);
+        super(wsdlLocation, PortaDelegataSoap12Service.SERVICE);
     }
 
     public PortaDelegataSoap12Service(URL wsdlLocation, QName serviceName) {
@@ -44,7 +44,7 @@ public class PortaDelegataSoap12Service extends Service {
     }
 
     public PortaDelegataSoap12Service() {
-        super(WSDL_LOCATION, SERVICE);
+        super(PortaDelegataSoap12Service.WSDL_LOCATION, PortaDelegataSoap12Service.SERVICE);
     }
     
 
@@ -58,7 +58,7 @@ public class PortaDelegataSoap12Service extends Service {
      */
     @WebEndpoint(name = "PortaDelegataPortSoap12")
     public PortaDelegata getPortaDelegataPortSoap12() {
-        return super.getPort(PortaDelegataPortSoap12, PortaDelegata.class);
+        return super.getPort(PortaDelegataSoap12Service.PortaDelegataPortSoap12, PortaDelegata.class);
     }
 
     /**
@@ -70,7 +70,7 @@ public class PortaDelegataSoap12Service extends Service {
      */
     @WebEndpoint(name = "PortaDelegataPortSoap12")
     public PortaDelegata getPortaDelegataPortSoap12(WebServiceFeature... features) {
-        return super.getPort(PortaDelegataPortSoap12, PortaDelegata.class, features);
+        return super.getPort(PortaDelegataSoap12Service.PortaDelegataPortSoap12, PortaDelegata.class, features);
     }
 
 }

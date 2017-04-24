@@ -44,7 +44,7 @@ public class FindAll {
      *     
      */
     public SearchFilterRuolo getFilter() {
-        return filter;
+        return this.filter;
     }
 
     /**

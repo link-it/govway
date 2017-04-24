@@ -44,7 +44,7 @@ public class DeleteAllByFilter {
      *     
      */
     public SearchFilterRuolo getFilter() {
-        return filter;
+        return this.filter;
     }
 
     /**

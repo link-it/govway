@@ -45,7 +45,7 @@ public class Get {
      *     
      */
     public IdSoggetto getIdSoggetto() {
-        return idSoggetto;
+        return this.idSoggetto;
     }
 
     /**

@@ -61,8 +61,8 @@ public class UseInfo {
      * 
      */
     public List<InUseCondition> getInUseCondition() {
-        if (inUseCondition == null) {
-            inUseCondition = new ArrayList<InUseCondition>();
+        if (this.inUseCondition == null) {
+            this.inUseCondition = new ArrayList<InUseCondition>();
         }
         return this.inUseCondition;
     }
@@ -72,7 +72,7 @@ public class UseInfo {
      * 
      */
     public boolean isUsed() {
-        return used;
+        return this.used;
     }
 
     /**

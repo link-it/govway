@@ -112,7 +112,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public ConfigurazioneServizio getConfigurazioneServizio() {
-        return configurazioneServizio;
+        return this.configurazioneServizio;
     }
 
     /**
@@ -136,7 +136,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public String getStatoPackage() {
-        return statoPackage;
+        return this.statoPackage;
     }
 
     /**
@@ -160,7 +160,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public Boolean isPrivato() {
-        return privato;
+        return this.privato;
     }
 
     /**
@@ -184,7 +184,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public String getTipoSoggettoErogatore() {
-        return tipoSoggettoErogatore;
+        return this.tipoSoggettoErogatore;
     }
 
     /**
@@ -208,7 +208,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public String getNomeSoggettoErogatore() {
-        return nomeSoggettoErogatore;
+        return this.nomeSoggettoErogatore;
     }
 
     /**
@@ -232,7 +232,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public String getTipo() {
-        return tipo;
+        return this.tipo;
     }
 
     /**
@@ -256,7 +256,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public String getNome() {
-        return nome;
+        return this.nome;
     }
 
     /**
@@ -280,7 +280,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public Long getVersione() {
-        return versione;
+        return this.versione;
     }
 
     /**
@@ -304,7 +304,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public String getAccordoServizioParteComune() {
-        return accordoServizioParteComune;
+        return this.accordoServizioParteComune;
     }
 
     /**
@@ -328,7 +328,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public TipologiaServizio getTipologiaServizio() {
-        return tipologiaServizio;
+        return this.tipologiaServizio;
     }
 
     /**
@@ -352,7 +352,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public String getPortType() {
-        return portType;
+        return this.portType;
     }
 
     /**
@@ -376,7 +376,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMin() {
-        return oraRegistrazioneMin;
+        return this.oraRegistrazioneMin;
     }
 
     /**
@@ -400,7 +400,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMax() {
-        return oraRegistrazioneMax;
+        return this.oraRegistrazioneMax;
     }
 
     /**
@@ -424,7 +424,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public String getVersioneProtocollo() {
-        return versioneProtocollo;
+        return this.versioneProtocollo;
     }
 
     /**
@@ -448,7 +448,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public String getDescrizione() {
-        return descrizione;
+        return this.descrizione;
     }
 
     /**
@@ -472,7 +472,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public Boolean isOrCondition() {
-        return orCondition;
+        return this.orCondition;
     }
 
     /**
@@ -496,7 +496,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public BigInteger getLimit() {
-        return limit;
+        return this.limit;
     }
 
     /**
@@ -520,7 +520,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public BigInteger getOffset() {
-        return offset;
+        return this.offset;
     }
 
     /**

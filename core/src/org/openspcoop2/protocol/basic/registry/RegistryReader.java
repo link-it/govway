@@ -221,7 +221,7 @@ public class RegistryReader implements IRegistryReader {
 	@Override
 	public boolean existsSoggettoByCredenzialiBasic(String username, String password){
 		try{
-			return this.driverRegistroServiziGET.getSoggettoAutenticatoBasic(username, password)!=null;
+			return this.driverRegistroServiziGET.getSoggettoByCredenzialiBasic(username, password)!=null;
 		}catch(Exception e){
 			return false;
 		}
@@ -230,7 +230,7 @@ public class RegistryReader implements IRegistryReader {
 	@Override
 	public Soggetto getSoggettoByCredenzialiBasic(String username, String password) throws RegistryNotFound{
 		try{
-			return this.driverRegistroServiziGET.getSoggettoAutenticatoBasic(username, password);
+			return this.driverRegistroServiziGET.getSoggettoByCredenzialiBasic(username, password);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -241,7 +241,7 @@ public class RegistryReader implements IRegistryReader {
 	@Override
 	public boolean existsSoggettoByCredenzialiSsl(String subject){
 		try{
-			return this.driverRegistroServiziGET.getSoggettoAutenticatoSsl(subject)!=null;
+			return this.driverRegistroServiziGET.getSoggettoByCredenzialiSsl(subject)!=null;
 		}catch(Exception e){
 			return false;
 		}
@@ -250,7 +250,7 @@ public class RegistryReader implements IRegistryReader {
 	@Override
 	public Soggetto getSoggettoByCredenzialiSsl(String subject) throws RegistryNotFound{
 		try{
-			return this.driverRegistroServiziGET.getSoggettoAutenticatoSsl(subject);
+			return this.driverRegistroServiziGET.getSoggettoByCredenzialiSsl(subject);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -261,7 +261,7 @@ public class RegistryReader implements IRegistryReader {
 	@Override
 	public boolean existsSoggettoByCredenzialiPrincipal(String principal){
 		try{
-			return this.driverRegistroServiziGET.getSoggettoAutenticatoPrincipal(principal)!=null;
+			return this.driverRegistroServiziGET.getSoggettoByCredenzialiPrincipal(principal)!=null;
 		}catch(Exception e){
 			return false;
 		}
@@ -270,7 +270,7 @@ public class RegistryReader implements IRegistryReader {
 	@Override
 	public Soggetto getSoggettoByCredenzialiPrincipal(String principal) throws RegistryNotFound{
 		try{
-			return this.driverRegistroServiziGET.getSoggettoAutenticatoPrincipal(principal);
+			return this.driverRegistroServiziGET.getSoggettoByCredenzialiPrincipal(principal);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){

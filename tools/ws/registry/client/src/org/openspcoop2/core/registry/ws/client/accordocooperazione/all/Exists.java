@@ -45,7 +45,7 @@ public class Exists {
      *     
      */
     public IdAccordoCooperazione getIdAccordoCooperazione() {
-        return idAccordoCooperazione;
+        return this.idAccordoCooperazione;
     }
 
     /**

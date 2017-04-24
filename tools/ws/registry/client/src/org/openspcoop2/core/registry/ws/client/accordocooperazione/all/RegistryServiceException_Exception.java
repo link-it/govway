@@ -13,7 +13,11 @@ import javax.xml.ws.WebFault;
 @WebFault(name = "registry-service-exception", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 public class RegistryServiceException_Exception extends Exception {
     
-    private org.openspcoop2.core.registry.ws.client.accordocooperazione.all.RegistryServiceException registryServiceException;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private org.openspcoop2.core.registry.ws.client.accordocooperazione.all.RegistryServiceException registryServiceException;
 
     public RegistryServiceException_Exception() {
         super();

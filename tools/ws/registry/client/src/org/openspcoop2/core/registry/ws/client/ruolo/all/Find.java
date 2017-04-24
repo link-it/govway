@@ -44,7 +44,7 @@ public class Find {
      *     
      */
     public SearchFilterRuolo getFilter() {
-        return filter;
+        return this.filter;
     }
 
     /**

@@ -45,7 +45,7 @@ public class InUse {
      *     
      */
     public IdAccordoCooperazione getIdAccordoCooperazione() {
-        return idAccordoCooperazione;
+        return this.idAccordoCooperazione;
     }
 
     /**

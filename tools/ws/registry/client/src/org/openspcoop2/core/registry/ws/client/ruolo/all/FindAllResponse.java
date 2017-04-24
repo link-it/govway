@@ -59,8 +59,8 @@ public class FindAllResponse {
      * 
      */
     public List<Ruolo> getRuolo() {
-        if (ruolo == null) {
-            ruolo = new ArrayList<Ruolo>();
+        if (this.ruolo == null) {
+            this.ruolo = new ArrayList<Ruolo>();
         }
         return this.ruolo;
     }

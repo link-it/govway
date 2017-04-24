@@ -45,7 +45,7 @@ public class Delete {
      *     
      */
     public Ruolo getRuolo() {
-        return ruolo;
+        return this.ruolo;
     }
 
     /**

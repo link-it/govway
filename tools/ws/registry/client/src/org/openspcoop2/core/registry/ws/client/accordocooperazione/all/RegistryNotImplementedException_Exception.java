@@ -13,7 +13,11 @@ import javax.xml.ws.WebFault;
 @WebFault(name = "registry-not-implemented-exception", targetNamespace = "http://www.openspcoop2.org/core/registry/management")
 public class RegistryNotImplementedException_Exception extends Exception {
     
-    private org.openspcoop2.core.registry.ws.client.accordocooperazione.all.RegistryNotImplementedException registryNotImplementedException;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private org.openspcoop2.core.registry.ws.client.accordocooperazione.all.RegistryNotImplementedException registryNotImplementedException;
 
     public RegistryNotImplementedException_Exception() {
         super();

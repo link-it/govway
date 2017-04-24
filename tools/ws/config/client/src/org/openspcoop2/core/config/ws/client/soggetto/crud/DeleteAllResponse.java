@@ -38,7 +38,7 @@ public class DeleteAllResponse {
      * 
      */
     public long getCount() {
-        return count;
+        return this.count;
     }
 
     /**

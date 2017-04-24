@@ -57,7 +57,7 @@ public class InUseCondition {
      *     
      */
     public String getName() {
-        return name;
+        return this.name;
     }
 
     /**
@@ -81,7 +81,7 @@ public class InUseCondition {
      *     
      */
     public Identified getType() {
-        return type;
+        return this.type;
     }
 
     /**
@@ -119,8 +119,8 @@ public class InUseCondition {
      * 
      */
     public List<ObjectId> getId() {
-        if (id == null) {
-            id = new ArrayList<ObjectId>();
+        if (this.id == null) {
+            this.id = new ArrayList<ObjectId>();
         }
         return this.id;
     }
@@ -134,7 +134,7 @@ public class InUseCondition {
      *     
      */
     public String getCause() {
-        return cause;
+        return this.cause;
     }
 
     /**

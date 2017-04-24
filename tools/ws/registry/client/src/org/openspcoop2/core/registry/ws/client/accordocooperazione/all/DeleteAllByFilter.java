@@ -44,7 +44,7 @@ public class DeleteAllByFilter {
      *     
      */
     public SearchFilterAccordoCooperazione getFilter() {
-        return filter;
+        return this.filter;
     }
 
     /**

@@ -58,7 +58,7 @@ public class PortaDelegataAzione {
      *     
      */
     public PortaDelegataAzioneIdentificazione getIdentificazione() {
-        return identificazione;
+        return this.identificazione;
     }
 
     /**
@@ -82,7 +82,7 @@ public class PortaDelegataAzione {
      *     
      */
     public String getPattern() {
-        return pattern;
+        return this.pattern;
     }
 
     /**
@@ -106,7 +106,7 @@ public class PortaDelegataAzione {
      *     
      */
     public String getNome() {
-        return nome;
+        return this.nome;
     }
 
     /**
@@ -130,7 +130,7 @@ public class PortaDelegataAzione {
      *     
      */
     public StatoFunzionalita getForceWsdlBased() {
-        return forceWsdlBased;
+        return this.forceWsdlBased;
     }
 
     /**

@@ -45,7 +45,7 @@ public class InUse {
      *     
      */
     public IdPortaDominio getIdPortaDominio() {
-        return idPortaDominio;
+        return this.idPortaDominio;
     }
 
     /**

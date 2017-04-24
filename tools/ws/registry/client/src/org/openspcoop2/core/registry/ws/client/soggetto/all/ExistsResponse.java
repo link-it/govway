@@ -38,7 +38,7 @@ public class ExistsResponse {
      * 
      */
     public boolean isExists() {
-        return exists;
+        return this.exists;
     }
 
     /**

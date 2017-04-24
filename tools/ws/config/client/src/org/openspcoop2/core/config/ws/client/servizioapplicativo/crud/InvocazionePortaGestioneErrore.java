@@ -60,7 +60,7 @@ public class InvocazionePortaGestioneErrore {
      *     
      */
     public FaultIntegrazioneTipo getFault() {
-        return fault;
+        return this.fault;
     }
 
     /**
@@ -84,7 +84,7 @@ public class InvocazionePortaGestioneErrore {
      *     
      */
     public String getFaultActor() {
-        return faultActor;
+        return this.faultActor;
     }
 
     /**
@@ -108,7 +108,7 @@ public class InvocazionePortaGestioneErrore {
      *     
      */
     public StatoFunzionalita getGenericFaultCode() {
-        return genericFaultCode;
+        return this.genericFaultCode;
     }
 
     /**
@@ -132,7 +132,7 @@ public class InvocazionePortaGestioneErrore {
      *     
      */
     public String getPrefixFaultCode() {
-        return prefixFaultCode;
+        return this.prefixFaultCode;
     }
 
     /**

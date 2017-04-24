@@ -50,7 +50,7 @@ public class Update {
      *     
      */
     public IdRuolo getOldIdRuolo() {
-        return oldIdRuolo;
+        return this.oldIdRuolo;
     }
 
     /**
@@ -74,7 +74,7 @@ public class Update {
      *     
      */
     public Ruolo getRuolo() {
-        return ruolo;
+        return this.ruolo;
     }
 
     /**
