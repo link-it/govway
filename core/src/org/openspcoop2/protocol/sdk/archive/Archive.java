@@ -34,8 +34,10 @@ public class Archive {
 
 	private ArchiveSortedMap<ArchivePdd> pdd = new ArchiveSortedMap<ArchivePdd>();
 	
-	private Openspcoop2 informationMissing;
+	private ArchiveSortedMap<ArchiveRuolo> ruoli = new ArchiveSortedMap<ArchiveRuolo>();
 	
+	private Openspcoop2 informationMissing;
+		
 	private ArchiveSortedMap<ArchiveSoggetto> soggetti = new ArchiveSortedMap<ArchiveSoggetto>();
 	
 	private ArchiveSortedMap<ArchiveServizioApplicativo> serviziApplicativi = new ArchiveSortedMap<ArchiveServizioApplicativo>();
@@ -58,6 +60,9 @@ public class Archive {
 	}
 	public ArchiveSortedMap<ArchivePdd> getPdd() {
 		return this.pdd;
+	}
+	public ArchiveSortedMap<ArchiveRuolo> getRuoli() {
+		return this.ruoli;
 	}
 	public Openspcoop2 getInformationMissing() {
 		return this.informationMissing;

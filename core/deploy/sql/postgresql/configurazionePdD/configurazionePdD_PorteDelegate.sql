@@ -31,8 +31,10 @@ CREATE TABLE porte_delegate
 	pattern_azione VARCHAR(255),
 	-- abilitato/disabilitato
 	force_wsdl_based_azione VARCHAR(255),
-	-- * Configurazione *
+	-- Controllo Accessi
 	autenticazione VARCHAR(255),
+	-- abilitato/disabilitato
+	autenticazione_opzionale VARCHAR(255),
 	autorizzazione VARCHAR(255),
 	autorizzazione_contenuto VARCHAR(255),
 	-- disable/packaging/unpackaging/verify
@@ -71,6 +73,8 @@ CREATE TABLE porte_delegate
 	local_forward VARCHAR(255),
 	-- Nome della PortaApplicativa
 	local_forward_pa VARCHAR(255),
+	-- all/any
+	ruoli_match VARCHAR(255),
 	-- proprietario porta delegata (Soggetto fruitore)
 	id_soggetto BIGINT NOT NULL,
 	ora_registrazione TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -228,6 +232,24 @@ CREATE TABLE pd_correlazione_risposta
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pd_correlazione_risposta_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
 	CONSTRAINT pk_pd_correlazione_risposta PRIMARY KEY (id)
+);
+
+
+
+
+CREATE SEQUENCE seq_pd_ruoli start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE pd_ruoli
+(
+	id_porta BIGINT NOT NULL,
+	ruolo VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_pd_ruoli') NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_pd_ruoli_1 UNIQUE (id_porta,ruolo),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pd_ruoli_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
+	CONSTRAINT pk_pd_ruoli PRIMARY KEY (id)
 );
 
 

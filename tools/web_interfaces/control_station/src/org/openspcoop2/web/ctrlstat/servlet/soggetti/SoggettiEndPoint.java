@@ -425,7 +425,7 @@ public final class SoggettiEndPoint extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = soggettiHelper.soggettiEndPointCheckData(TipoOperazione.CHANGE,listExtendedConnettore);
+			boolean isOk = soggettiHelper.soggettiEndPointCheckData(TipoOperazione.CHANGE,listExtendedConnettore,tipoprov,nomeprov);
 			if (!isOk) {
 				
 				// setto la barra del titolo

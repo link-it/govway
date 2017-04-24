@@ -21,13 +21,6 @@
                     </address-setting>
 		    <!--  GestoreRegistroServizi di OpenSPCoop -->
 
-		    <!--  GestoreRepositoryAutorizzazioni -->
-                    <address-setting match="jms.queue.toConfigurazioneGestoreAutorizzazioni">
-                        <redelivery-delay>120000</redelivery-delay>
-                        <max-delivery-attempts>-1</max-delivery-attempts>
-                    </address-setting>
-		    <!--  GestoreRepositoryAutorizzazioni -->
-
 		    <!--  Gestore Eventi (Propagazione) -->
                     <address-setting match="jms.queue.toConfigurazioneGestoreEventi">
                         <redelivery-delay>120000</redelivery-delay>
@@ -67,12 +60,6 @@
                         <entry name="/queue/toConfigurazioneRegistro"/>
                     </jms-queue>
 		    <!--  GestoreRegistroServizi di OpenSPCoop -->
-
-		    <!--  GestoreRepositoryAutorizzazioni -->
-                    <jms-queue name="toConfigurazioneGestoreAutorizzazioni">
-                        <entry name="/queue/toConfigurazioneGestoreAutorizzazioni"/>
-                    </jms-queue>
-		    <!--  GestoreRepositoryAutorizzazioni -->
 
 		    <!--  Gestore Eventi (Propagazione) -->
                     <jms-queue name="toConfigurazioneGestoreEventi">

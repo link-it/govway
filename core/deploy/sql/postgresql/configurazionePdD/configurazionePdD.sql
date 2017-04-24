@@ -88,6 +88,12 @@ CREATE TABLE configurazione
 	auth_algoritmocache VARCHAR(255),
 	auth_idlecache VARCHAR(255),
 	auth_lifecache VARCHAR(255),
+	-- Cache per l'accesso ai dati di autenticazione
+	authn_statocache VARCHAR(255),
+	authn_dimensionecache VARCHAR(255),
+	authn_algoritmocache VARCHAR(255),
+	authn_idlecache VARCHAR(255),
+	authn_lifecache VARCHAR(255),
 	-- connessione su cui vengono inviate le risposte
 	-- reply: connessione esistente (es. http reply)
 	-- new: nuova connessione

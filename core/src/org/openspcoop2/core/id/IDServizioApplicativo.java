@@ -21,6 +21,7 @@
 
 package org.openspcoop2.core.id;
 
+import java.io.Serializable;
 
 /**
  * Classe utilizzata per rappresentare un identificatore di un Servizio Applicativo nella configurazione
@@ -32,7 +33,12 @@ package org.openspcoop2.core.id;
  * @version $Rev$, $Date$
  */
 
-public class IDServizioApplicativo {
+public class IDServizioApplicativo implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private IDSoggetto idSoggettoProprietario;
 

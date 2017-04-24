@@ -52,8 +52,11 @@ public enum OperationsParameter {
 	NOME_REFERENTE("NomeSoggetto"), TIPO_REFERENTE("TipoSoggetto"), OLD_NOME_REFERENTE("OldNomeSoggetto"), OLD_TIPO_REFERENTE("OldTipoSoggetto"),
 	// Fruitore
 	ID_FRUITORE("IDFruitore"), NOME_FRUITORE("NomeFruitore"), TIPO_FRUITORE("TipoFruitore"),
-	// PoliticheSicurezza
-	PS_ID_FRUITORE("IDFruitore"), PS_ID_SERVIZIO("IDServizio"), PS_ID_SERVIZIO_APPLICATIVO("IDServizioApplicativo"),
+	// Mapping
+	MAPPING_ID_FRUITORE("mIDFruitore"), MAPPING_ID_SERVIZIO("mIDServizio"), 
+	MAPPING_ID_PORTA_DELEGATA("mIDPortaDelegata"), MAPPING_ID_PORTA_APPLICATIVA("mIDPortaApplicativa"), 
+	// Ruolo
+	NOME_RUOLO("NomeRuolo"), OLD_NOME_RUOLO("OldNomeRuolo"),
 
 	// ID Table
 	ID_TABLE("IDTable"),

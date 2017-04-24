@@ -23,13 +23,13 @@ package org.openspcoop2.pdd.core.connettori;
 import java.util.Date;
 import java.util.Properties;
 
+import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.AbstractCore;
-import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.OutRequestContext;
@@ -76,7 +76,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	/** Tipo di Autenticazione */
 	//private String tipoAutenticazione;
 	/** Credenziali per l'autenticazione */
-	protected Credenziali credenziali;
+	protected InvocazioneCredenziali credenziali;
 	
 	/** Busta */
 	protected Busta busta;

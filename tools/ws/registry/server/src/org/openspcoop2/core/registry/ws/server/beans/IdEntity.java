@@ -44,7 +44,9 @@ public class IdEntity extends org.openspcoop2.utils.beans.BaseBean {
 	
 	@XmlElement(name="wrapperIdSoggetto", namespace="http://www.openspcoop2.org/core/registry/management", type=WrapperIdSoggetto.class),
 	
-	@XmlElement(name="wrapperIdAccordoServizioParteSpecifica", namespace="http://www.openspcoop2.org/core/registry/management", type=WrapperIdAccordoServizioParteSpecifica.class)
+	@XmlElement(name="wrapperIdAccordoServizioParteSpecifica", namespace="http://www.openspcoop2.org/core/registry/management", type=WrapperIdAccordoServizioParteSpecifica.class),
+	
+	@XmlElement(name="wrapperIdRuolo", namespace="http://www.openspcoop2.org/core/registry/management", type=WrapperIdRuolo.class)
 	})
 	
 	private Object id;
@@ -66,6 +68,9 @@ public class IdEntity extends org.openspcoop2.utils.beans.BaseBean {
 		this.id = id;
 	}
 	public void setId(WrapperIdAccordoServizioParteSpecifica id) {	
+		this.id = id;
+	}
+	public void setId(WrapperIdRuolo id) {	
 		this.id = id;
 	}
 	

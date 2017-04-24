@@ -122,6 +122,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link InvocazioneCredenziali }
+     */
+    public InvocazioneCredenziali createInvocazioneCredenziali() {
+        return new InvocazioneCredenziali();
+    }
+
+    /**
      * Create an instance of {@link PortaApplicativaAzione }
      */
     public PortaApplicativaAzione createPortaApplicativaAzione() {
@@ -189,6 +196,13 @@ public class ObjectFactory {
      */
     public PortaApplicativaServizio createPortaApplicativaServizio() {
         return new PortaApplicativaServizio();
+    }
+
+    /**
+     * Create an instance of {@link AutorizzazioneRuoli }
+     */
+    public AutorizzazioneRuoli createAutorizzazioneRuoli() {
+        return new AutorizzazioneRuoli();
     }
 
     /**
@@ -367,6 +381,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ServizioApplicativoRuoli }
+     */
+    public ServizioApplicativoRuoli createServizioApplicativoRuoli() {
+        return new ServizioApplicativoRuoli();
+    }
+
+    /**
      * Create an instance of {@link CorrelazioneApplicativaElemento }
      */
     public CorrelazioneApplicativaElemento createCorrelazioneApplicativaElemento() {
@@ -385,6 +406,13 @@ public class ObjectFactory {
      */
     public Cache createCache() {
         return new Cache();
+    }
+
+    /**
+     * Create an instance of {@link Ruolo }
+     */
+    public Ruolo createRuolo() {
+        return new Ruolo();
     }
 
     /**
@@ -448,6 +476,13 @@ public class ObjectFactory {
      */
     public PortaDelegataServizioApplicativo createPortaDelegataServizioApplicativo() {
         return new PortaDelegataServizioApplicativo();
+    }
+
+    /**
+     * Create an instance of {@link AccessoDatiAutenticazione }
+     */
+    public AccessoDatiAutenticazione createAccessoDatiAutenticazione() {
+        return new AccessoDatiAutenticazione();
     }
 
     /**

@@ -20,6 +20,7 @@
                             <linkit:sql-table-list>
                                 <linkit:sql-comment><![CDATA[**** Servizi Applicativi ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="servizi-applicativi" object-type="servizi-applicativi"/>
+                                <linkit:sql-table object-name="servizi-applicativi-ruoli" object-type="servizi-applicativi-ruoli"/>
                             </linkit:sql-table-list>
                         </linkit:sql-script>
                         <linkit:sql-mapping single-table-mapping="false"
@@ -143,16 +144,6 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
-                <xsd:element name="subjectrisp" type="xsd:string" minOccurs="0">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="subjectrisp"/>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
                 <xsd:element name="invio_x_rif_risp" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
@@ -252,16 +243,6 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="passwordinv"/>
-                            </linkit:generator>
-                        </xsd:appinfo>
-                    </xsd:annotation>
-                </xsd:element>
-                <xsd:element name="subjectinv" type="xsd:string" minOccurs="0">
-                    <xsd:annotation>
-                        <xsd:appinfo>
-                            <linkit:generator
-                                xmlns:linkit="http://www.link.it/project_generator">
-                                <linkit:sql-column-mapping name="subjectinv"/>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -451,6 +432,56 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+    
+    
+    <xsd:element name="servizi-applicativi-ruoli">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="sa_ruoli">
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="servizi-applicativi"
+                            reference-object-type="servizi-applicativi"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_servizio_applicativo"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-column name="id_servizio_applicativo" />
+                            <linkit:sql-table-unique-column name="ruolo" />
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_servizio_applicativo" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_servizio_applicativo"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ruolo" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="ruolo"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    
+    
     
     
     <!-- TABELLA DI SERVIZIO PER POTER COSTRUIRE LA FOREIGN KEY -->

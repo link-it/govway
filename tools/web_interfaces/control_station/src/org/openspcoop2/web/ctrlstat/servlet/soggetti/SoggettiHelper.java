@@ -40,6 +40,7 @@ import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
@@ -48,7 +49,7 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
+import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.lib.mvc.AreaBottoni;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -77,17 +78,25 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 	public Vector<DataElement> addSoggettiToDati(TipoOperazione tipoOp,Vector<DataElement> dati, String nomeprov, String tipoprov, String portadom, String descr, 
 			boolean isRouter, List<String> tipiSoggetti, String profilo, boolean privato, String codiceIpa, List<String> versioni, boolean isSupportatoCodiceIPA,
-			String [] pddList,String nomePddGestioneLocale, List<String> listaTipiProtocollo, String protocollo) {
+			String [] pddList,String nomePddGestioneLocale, String pdd, 
+			List<String> listaTipiProtocollo, String protocollo,
+			boolean isSupportatoAutenticazioneSoggetti, String utente,String password, String subject, String principal, String tipoauth,
+			boolean isPddEsterna,String tipologia) throws Exception  {
 		return addSoggettiToDati(tipoOp, dati, nomeprov, tipoprov, portadom, descr, 
-				isRouter, tipiSoggetti, profilo, privato, codiceIpa, versioni, isSupportatoCodiceIPA, pddList, nomePddGestioneLocale,
-				null,null,null,null,null,
-				-1,null,-1,null,listaTipiProtocollo,protocollo);
+				isRouter, tipiSoggetti, profilo, privato, codiceIpa, versioni, isSupportatoCodiceIPA, 
+				pddList, nomePddGestioneLocale, pdd,
+				null,null,null,null,
+				-1,null,-1,null,listaTipiProtocollo,protocollo,
+				isSupportatoAutenticazioneSoggetti, utente, password, subject, principal, tipoauth,
+				isPddEsterna, tipologia);
 	}
 	public Vector<DataElement> addSoggettiToDati(TipoOperazione tipoOp,Vector<DataElement> dati, String nomeprov, String tipoprov, String portadom, String descr, 
 			boolean isRouter, List<String> tipiSoggetti, String profilo, boolean privato, String codiceIpa, List<String> versioni, boolean isSupportatoCodiceIPA,
-			String [] pddList,String nomePddGestioneLocale,
-			String pdd, String id, String oldnomeprov, String oldtipoprov, org.openspcoop2.core.registry.Connettore connettore,
-			long numPD,String pd_url_prefix_rewriter,long numPA, String pa_url_prefix_rewriter, List<String> listaTipiProtocollo, String protocollo) {
+			String [] pddList,String nomePddGestioneLocale,String pdd, 
+			String id, String oldnomeprov, String oldtipoprov, org.openspcoop2.core.registry.Connettore connettore,
+			long numPD,String pd_url_prefix_rewriter,long numPA, String pa_url_prefix_rewriter, List<String> listaTipiProtocollo, String protocollo,
+			boolean isSupportatoAutenticazioneSoggetti, String utente,String password, String subject, String principal, String tipoauth,
+			boolean isPddEsterna,String tipologia) throws Exception {
 
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
@@ -107,9 +116,14 @@ public class SoggettiHelper extends ConnettoriHelper {
 				de.setType(DataElementType.SELECT);
 				de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PDD);
 				de.setValues(pddList);
+				de.setSelected(pdd);
+				de.setPostBack(isSupportatoAutenticazioneSoggetti);
 				if (this.core.isSinglePdD()) {
-					if(nomePddGestioneLocale!=null)
-						de.setSelected(nomePddGestioneLocale);
+					if(pdd==null || "".equals(pdd)){
+						if(nomePddGestioneLocale!=null){
+							de.setSelected(nomePddGestioneLocale);
+						}
+					}
 				}else{
 					de.setRequired(true);
 				}
@@ -125,6 +139,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 					de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_PDD);
 					de.setValues(pddList);
 					de.setSelected(pdd);
+					de.setPostBack(isSupportatoAutenticazioneSoggetti);
 					dati.addElement(de);
 				}
 			}else{
@@ -204,6 +219,26 @@ public class SoggettiHelper extends ConnettoriHelper {
 		de.setSize(this.getSize());
 		de.setRequired(true);
 		dati.addElement(de);
+		
+		if(TipoOperazione.ADD.equals(tipoOp)){
+			de = new DataElement();
+			de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_TIPOLOGIA);
+			de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPOLOGIA);
+			if(isPddEsterna && isSupportatoAutenticazioneSoggetti){
+				de.setValue(tipologia);
+				de.setSelected(tipologia);
+				de.setType(DataElementType.SELECT);
+				de.setValues(SoggettiCostanti.SOGGETTI_RUOLI);
+				de.setPostBack(true);
+			}
+			else{
+				de.setValue("");
+				de.setType(DataElementType.HIDDEN);
+			}
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}
+		
 
 		de = new DataElement();
 		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_CODICE_PORTA);
@@ -291,17 +326,92 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 		if(TipoOperazione.CHANGE.equals(tipoOp)){
 
-			if(this.core.isRegistroServiziLocale()){
+			if(this.core.isRegistroServiziLocale() 
+//					&& 
+//					( !this.core.isSinglePdD() || this.pddCore.isPddEsterna(pdd) )
+					){
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT,
-						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,id+""),
+						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,id),
 						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,oldnomeprov),
 						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,oldtipoprov));
 				Utilities.setDataElementLabelTipoConnettore(de, connettore);
 				dati.addElement(de);
+				
 			}
+		
+		}
+		
+		
+		// Credenziali di accesso
+		if(isSupportatoAutenticazioneSoggetti){
+			if (utente == null) {
+				utente = "";
+			}
+			if (password == null) {
+				password = "";
+			}
+			if (subject == null) {
+				subject = "";
+			}
+			if (principal == null) {
+				principal = "";
+			}
+			String servlet = null;
+			if(TipoOperazione.ADD.equals(tipoOp)){
+				servlet = SoggettiCostanti.SERVLET_NAME_SOGGETTI_ADD;
+			}
+			else{
+				servlet = SoggettiCostanti.SERVLET_NAME_SOGGETTI_CHANGE;
+			}
+			
+			boolean autenticazioneNessunaAbilitata = true;
+			boolean showCredenziali = true;
+			if(this.pddCore.isPddEsterna(pdd)){
+				if(SoggettiCostanti.SOGGETTO_RUOLO_FRUITORE.equals(tipologia) || SoggettiCostanti.SOGGETTO_RUOLO_ENTRAMBI.equals(tipologia)){
+					autenticazioneNessunaAbilitata = false;
+				}
+				if(SoggettiCostanti.SOGGETTO_RUOLO_EROGATORE.equals(tipologia)){
+					showCredenziali = false;
+				}
+			}
+			else{
+				if(TipoOperazione.ADD.equals(tipoOp)){
+					showCredenziali = InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType());
+				}
+			}
+			
+			if(showCredenziali){
+				dati = this.addCredenzialiToDati(dati, tipoauth, utente, password, subject, principal, servlet, true, null, false, true, null, autenticazioneNessunaAbilitata);
+			}
+		}
+		
+		if(TipoOperazione.CHANGE.equals(tipoOp)){
 
+			de = new DataElement();
+			de.setLabel(RuoliCostanti.LABEL_RUOLI);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_RUOLI_LIST,
+					new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,id+""));
+			if (contaListe) {
+				List<String> lista1 = this.soggettiCore.soggettiRuoliList(Long.parseLong(id),new Search(true));
+				int numRuoli = lista1.size();
+				ServletUtils.setDataElementCustomLabel(de,RuoliCostanti.LABEL_RUOLI,new Long(numRuoli));
+			} else{
+				ServletUtils.setDataElementCustomLabel(de,RuoliCostanti.LABEL_RUOLI);
+			}
+			dati.addElement(de);
+			
+		}
+
+		
+		if(TipoOperazione.CHANGE.equals(tipoOp) && !this.pddCore.isPddEsterna(pdd)){
+			
 			de = new DataElement();
 			de.setLabel(SoggettiCostanti.LABEL_CLIENT);
 			de.setType(DataElementType.TITLE);
@@ -487,6 +597,73 @@ public class SoggettiHelper extends ConnettoriHelper {
 				}
 			}
 
+
+			if(this.credenzialiCheckData()==false){
+				return false;
+			}
+
+			String tipoauth = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE);
+			if (tipoauth == null) {
+				tipoauth = ConnettoriCostanti.DEFAULT_AUTENTICAZIONE_TIPO;
+			}
+			String utente = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+			String password = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+			// String confpw = this.request.getParameter("confpw");
+			String subject = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
+			String principal = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
+			
+			// Se sono presenti credenziali, controllo che non siano gia'
+			// utilizzate da altri soggetti
+			if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC)) {
+				// recupero soggetto con stesse credenziali
+				Soggetto soggettoAutenticato = this.soggettiCore.getSoggettoRegistroAutenticatoBasic(utente, password);
+				
+				if(soggettoAutenticato!=null && tipoOp.equals(TipoOperazione.CHANGE)){
+					if(idInt == soggettoAutenticato.getId()){
+						soggettoAutenticato = null;
+					}
+				}
+
+				// Messaggio di errore
+				if(soggettoAutenticato!=null){
+					this.pd.setMessage("Il soggetto "+soggettoAutenticato.getTipo()+"/"+soggettoAutenticato.getNome()+" possiede già le credenziali basic indicate.");
+					return false;
+				}
+				
+			} else if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)) {
+				// recupero soggetto con stesse credenziali
+				Soggetto soggettoAutenticato = this.soggettiCore.getSoggettoRegistroAutenticatoSsl(subject);
+				
+				if(soggettoAutenticato!=null && tipoOp.equals(TipoOperazione.CHANGE)){
+					if(idInt == soggettoAutenticato.getId()){
+						soggettoAutenticato = null;
+					}
+				}
+
+				// Messaggio di errore
+				if(soggettoAutenticato!=null){
+					this.pd.setMessage("Il soggetto "+soggettoAutenticato.getTipo()+"/"+soggettoAutenticato.getNome()+" possiede già le credenziali subject indicate.");
+					return false;
+				}
+			}
+			else if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL)) {
+				// recupero soggetto con stesse credenziali
+				Soggetto soggettoAutenticato = this.soggettiCore.getSoggettoRegistroAutenticatoPrincipal(principal);
+				
+				if(soggettoAutenticato!=null && tipoOp.equals(TipoOperazione.CHANGE)){
+					if(idInt == soggettoAutenticato.getId()){
+						soggettoAutenticato = null;
+					}
+				}
+
+				// Messaggio di errore
+				if(soggettoAutenticato!=null){
+					this.pd.setMessage("Il soggetto "+soggettoAutenticato.getTipo()+"/"+soggettoAutenticato.getNome()+" possiede già le credenziali principal indicate.");
+					return false;
+				}
+			} 
+			
+			
 			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
@@ -525,14 +702,15 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 
 			// setto le label delle colonne
-			int totEl = 6;
+			int totEl = 7;
 			String[] labels = new String[totEl];
 			labels[0] = SoggettiCostanti.LABEL_SOGGETTO;
 			labels[1] = PddCostanti.LABEL_PORTA_DI_DOMINIO;
 			labels[2] = ConnettoriCostanti.LABEL_CONNETTORE;
-			labels[3] = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
-			labels[4] = PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE;
-			labels[5] = PorteDelegateCostanti.LABEL_PORTE_DELEGATE;
+			labels[3] = RuoliCostanti.LABEL_RUOLI;
+			labels[4] = ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI;
+			labels[5] = PorteApplicativeCostanti.LABEL_PORTE_APPLICATIVE;
+			labels[6] = PorteDelegateCostanti.LABEL_PORTE_DELEGATE;
 			this.pd.setLabels(labels);
 
 			// preparo i dati
@@ -560,11 +738,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				String nomePdD = elem.getPortaDominio();
 				if (nomePdD!=null && (!nomePdD.equals("-")) )
 					pdd = this.pddCore.getPdDControlStation(nomePdD);
-				boolean pddEsterna = false;
-				if( (pdd==null) || PddTipologia.ESTERNO.toString().equals(pdd.getTipo())){
-					pddEsterna = true;
-				}
-
+				boolean pddEsterna = this.pddCore.isPddEsterna(nomePdD);
 
 				Vector<DataElement> e = new Vector<DataElement>();
 
@@ -600,13 +774,35 @@ public class SoggettiHelper extends ConnettoriHelper {
 				e.addElement(de);
 
 				de = new DataElement();
-				de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT,
-						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""),
-						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,elem.getNome()),
-						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,elem.getTipo()));
-				ServletUtils.setDataElementVisualizzaLabel(de);
+				if(this.core.isRegistroServiziLocale() 
+//						&& 
+//						( !this.core.isSinglePdD() || this.pddCore.isPddEsterna(nomePdD) )
+						){
+					de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT,
+							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""),
+							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME,elem.getNome()),
+							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,elem.getTipo()));
+					ServletUtils.setDataElementVisualizzaLabel(de);
+				}
+				else{
+					de.setType(DataElementType.TEXT);
+					de.setValue("-");
+				}
 				e.addElement(de);
 
+				
+				// Ruoli
+				de = new DataElement();
+				de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_RUOLI_LIST,
+						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID,elem.getId()+""));
+				if (contaListe) {
+					List<String> lista1 = this.soggettiCore.soggettiRuoliList(elem.getId(),new Search(true));
+					int numRuoli = lista1.size();
+					ServletUtils.setDataElementVisualizzaLabel(de,(long)numRuoli);
+				} else
+					ServletUtils.setDataElementVisualizzaLabel(de);
+				e.addElement(de);
+				
 				
 				//Servizi Appicativi
 				de = new DataElement();
@@ -849,7 +1045,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 
 
 
-	public boolean soggettiEndPointCheckData(TipoOperazione tipoOp,List<ExtendedConnettore> listExtendedConnettore) throws Exception {
+	public boolean soggettiEndPointCheckData(TipoOperazione tipoOp,List<ExtendedConnettore> listExtendedConnettore, String tipoSoggetto, String nomeSoggetto) throws Exception {
 		try {
 			String id = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID);
 			int idInt = 0;
@@ -866,14 +1062,100 @@ public class SoggettiHelper extends ConnettoriHelper {
 			// Se il connettore e' disabilitato devo controllare che i
 			// connettore dei suoi servizi non siano disabilitati
 			if (endpointtype.equals(TipiConnettore.DISABILITATO.toString())) {
-				boolean trovatoServ = this.soggettiCore.existsSoggettoServiziWithoutConnettore(idInt);
-				if (trovatoServ) {
-					this.pd.setMessage("Il connettore deve essere specificato in quanto alcuni servizi del soggetto non hanno un connettore definito");
-					return false;
+				
+				org.openspcoop2.core.registry.Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(new IDSoggetto(tipoSoggetto, nomeSoggetto));
+				if(this.pddCore.isPddEsterna(soggetto.getPortaDominio())){
+				
+					boolean trovatoServ = this.soggettiCore.existsSoggettoServiziWithoutConnettore(idInt);
+					if (trovatoServ) {
+						this.pd.setMessage("Il connettore deve essere specificato poichè alcuni servizi del soggetto non hanno un connettore definito");
+						return false;
+					}
+					
 				}
+				else{
+					
+					boolean escludiSoggettiEsterni = true;
+					boolean trovatoServ = this.soggettiCore.existFruizioniServiziSoggettoWithoutConnettore(idInt, escludiSoggettiEsterni);
+					if (trovatoServ) {
+						this.pd.setMessage("Il connettore deve essere specificato poichè alcune fruizioni dei servizi erogati dal soggetto non hanno un connettore definito");
+						return false;
+					}
+					
+				}
+				
 			}
 
 			return true;
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	
+	public void prepareRuoliList(ISearch ricerca, List<String> lista)
+					throws Exception {
+		try {
+			String id = this.request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
+
+
+			ServletUtils.addListElementIntoSession(this.session, SoggettiCostanti.OBJECT_NAME_SOGGETTI_RUOLI, 
+					new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_ID, id));
+
+			int idLista = Liste.SOGGETTI_RUOLI;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+
+			Soggetto soggettoRegistry = this.soggettiCore.getSoggettoRegistro(Long.parseLong(id));
+			String tmpTitle = soggettoRegistry.getTipo() + "/" + soggettoRegistry.getNome();
+
+
+
+			// setto la barra del titolo
+			ServletUtils.setPageDataTitle_ServletChange(this.pd, SoggettiCostanti.LABEL_SOGGETTI, 
+					SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST, "Ruoli di " + tmpTitle);
+			
+
+			// controllo eventuali risultati ricerca
+			if (!search.equals("")) {
+				this.pd.setSearch("on");
+				this.pd.setSearchDescription("Ruoli contenenti la stringa '" + search + "'");
+			}
+
+			// setto le label delle colonne
+			String[] labels = { 
+					CostantiControlStation.LABEL_PARAMETRO_RUOLO
+			};
+			this.pd.setLabels(labels);
+
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (lista != null) {
+				Iterator<String> it = lista.iterator();
+				while (it.hasNext()) {
+					String ruolo = it.next();
+
+					Vector<DataElement> e = new Vector<DataElement>();
+
+					DataElement de = new DataElement();
+					de.setValue(ruolo);
+					de.setIdToRemove(ruolo);
+					e.addElement(de);
+
+					dati.addElement(e);
+				}
+			}
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);

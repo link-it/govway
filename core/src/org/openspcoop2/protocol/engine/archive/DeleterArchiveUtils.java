@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.config.Configurazione;
@@ -35,6 +34,7 @@ import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -42,8 +42,8 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
-import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.sdk.archive.Archive;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoCooperazione;
@@ -57,9 +57,11 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
 import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
+import org.openspcoop2.protocol.sdk.archive.ArchiveRuolo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
 import org.openspcoop2.protocol.sdk.constants.ArchiveStatoImport;
+import org.slf4j.Logger;
 
 /**
  *  DeleterArchiveUtils
@@ -264,6 +266,19 @@ public class DeleterArchiveUtils {
 				esito.getSoggetti().add(detail);
 			}
 			
+			// Ruoli
+			for (int i = 0; i < archive.getRuoli().size(); i++) {
+				ArchiveRuolo archiveRuolo = archive.getRuoli().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveRuolo);
+				try{
+					this.deleteRuolo(archiveRuolo, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getRuoli().add(detail);
+			}
+			
 			// Pdd
 			for (int i = 0; i < archive.getPdd().size(); i++) {
 				ArchivePdd archivePdd = archive.getPdd().get(i);
@@ -326,6 +341,52 @@ public class DeleterArchiveUtils {
 		}			
 		catch(Exception e){
 			this.log.error("Errore durante l'eliminazione della porta di dominio ["+nomePdd+"]: "+e.getMessage(),e);
+			detail.setState(ArchiveStatoImport.ERROR);
+			detail.setException(e);
+		}
+	}
+	
+	
+	
+	public void deleteRuolo(ArchiveRuolo archiveRuolo,ArchiveEsitoImportDetail detail){
+		
+		IDRuolo idRuolo = archiveRuolo.getIdRuolo();
+		try{
+			
+			// --- check esistenza ---
+			if(this.importerEngine.existsRuolo(idRuolo)==false){
+				detail.setState(ArchiveStatoImport.DELETED_NOT_EXISTS);
+				return;
+			}
+			
+			
+			// ---- visibilita' oggetto che si vuole eliminare ---
+			
+			// ruolo
+			Ruolo ruoloReadFromDb = this.importerEngine.getRuolo(idRuolo);
+			if(this.importerEngine.isVisioneOggettiGlobale(this.userLogin)==false){
+				if(this.userLogin.equals(ruoloReadFromDb.getSuperUser())==false){
+					throw new Exception("Il Ruolo ["+idRuolo+"] non è visibile/eliminabile dall'utente collegato ("+this.userLogin+")");
+				}
+			}
+			
+			
+			// ---- controllo di utilizzo dell'oggetto tramite altri oggetti ---
+			
+			HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+			if (this.importerEngine.isRuoloInUso(idRuolo, whereIsInUso)) {
+				throw new Exception(NEW_LINE+DBOggettiInUsoUtils.toString(idRuolo, whereIsInUso,false,NEW_LINE));
+			}
+			
+			
+			// --- delete ---
+			this.importerEngine.deleteRuolo(archiveRuolo.getRuolo());
+			detail.setState(ArchiveStatoImport.DELETED);				
+
+						
+		}			
+		catch(Exception e){
+			this.log.error("Errore durante l'eliminazione del ruolo ["+idRuolo+"]: "+e.getMessage(),e);
 			detail.setState(ArchiveStatoImport.ERROR);
 			detail.setException(e);
 		}
@@ -623,6 +684,15 @@ public class DeleterArchiveUtils {
 			
 			
 			// --- delete ---
+			
+			// gestione portaApplicativaAssociata
+			if(archiveAccordoServizioParteSpecifica.getIdPortaApplicativaAssociata()!=null){
+				IDPortaApplicativa idPACheck = this.importerEngine.getIDPortaApplicativaAssociataErogazione(idAccordoServizioParteSpecifica);
+				if(idPACheck!=null){
+					this.importerEngine.deleteMappingErogazione(idAccordoServizioParteSpecifica, archiveAccordoServizioParteSpecifica.getIdPortaApplicativaAssociata());
+				}
+			}
+			
 			this.importerEngine.deleteAccordoServizioParteSpecifica(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica());
 			detail.setState(ArchiveStatoImport.DELETED);
 						
@@ -687,26 +757,11 @@ public class DeleterArchiveUtils {
 
 			// --- delete ---
 			
-			// gestione serviziApplicativiAutorizzati
-			if(archiveFruitore.getServiziApplicativiAutorizzati()!=null && archiveFruitore.getServiziApplicativiAutorizzati().size()>0){
-				List<IDServizioApplicativo> listaAttuale = null;
-				try{
-					listaAttuale = this.importerEngine.getAllIdServiziApplicativiAutorizzati(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore());
-				}catch(DriverRegistroServiziNotFound notFound){}
-				if(listaAttuale==null){
-					listaAttuale = new ArrayList<IDServizioApplicativo>();
-				}
-				for (String nomeServizioApplicativo : archiveFruitore.getServiziApplicativiAutorizzati()) {
-					boolean found = false;
-					for (IDServizioApplicativo idServizioApplicativo : listaAttuale) {
-						if(idServizioApplicativo.getNome().equals(nomeServizioApplicativo)){
-							found = true;
-							break;
-						}
-					}
-					if(found){
-						this.importerEngine.deleteServizioApplicativoAutorizzato(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore(), nomeServizioApplicativo);
-					}
+			// gestione portaDelegataAssociata
+			if(archiveFruitore.getIdPortaDelegataAssociata()!=null){
+				IDPortaDelegata idPDCheck = this.importerEngine.getIDPortaDelegataAssociataFruizione(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore());
+				if(idPDCheck!=null){
+					this.importerEngine.deleteMappingFruizione(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore(), archiveFruitore.getIdPortaDelegataAssociata());
 				}
 			}
 			

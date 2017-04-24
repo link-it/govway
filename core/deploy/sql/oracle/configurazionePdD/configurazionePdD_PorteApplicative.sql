@@ -56,7 +56,14 @@ CREATE TABLE porte_applicative
 	-- abilitato/disabilitato
 	stateless VARCHAR2(255),
 	behaviour VARCHAR2(255),
+	-- Controllo Accessi
+	autenticazione VARCHAR2(255),
+	-- abilitato/disabilitato
+	autenticazione_opzionale VARCHAR2(255),
+	autorizzazione VARCHAR2(255),
 	autorizzazione_contenuto VARCHAR2(255),
+	-- all/any
+	ruoli_match VARCHAR2(255),
 	-- proprietario porta applicativa
 	id_soggetto NUMBER NOT NULL,
 	ora_registrazione TIMESTAMP,
@@ -334,6 +341,35 @@ for each row
 begin
    IF (:new.id IS NULL) THEN
       SELECT seq_pa_correlazione_risposta.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_pa_ruoli MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE pa_ruoli
+(
+	id_porta NUMBER NOT NULL,
+	ruolo VARCHAR2(255) NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_pa_ruoli_1 UNIQUE (id_porta,ruolo),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_ruoli_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
+	CONSTRAINT pk_pa_ruoli PRIMARY KEY (id)
+);
+
+CREATE TRIGGER trg_pa_ruoli
+BEFORE
+insert on pa_ruoli
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_pa_ruoli.nextval INTO :new.id
                 FROM DUAL;
    END IF;
 end;

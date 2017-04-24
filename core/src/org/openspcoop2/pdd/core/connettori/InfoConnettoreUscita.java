@@ -21,7 +21,8 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
-import org.openspcoop2.pdd.core.autenticazione.Credenziali;
+import org.openspcoop2.core.config.InvocazioneCredenziali;
+import org.openspcoop2.pdd.core.credenziali.Credenziali;
 
 /**
  * InfoConnettoreUscita
@@ -99,6 +100,13 @@ public class InfoConnettoreUscita {
 	}
 	public void setCredenziali(Credenziali credenziali) {
 		this.credenziali = credenziali;
+	}
+	public void setCredenziali(InvocazioneCredenziali credenziali) {
+		if(credenziali!=null){
+			this.credenziali = new Credenziali();
+			this.credenziali.setUsername(credenziali.getUser());
+			this.credenziali.setPassword(credenziali.getPassword());
+		}
 	}
 	public boolean isSbustamentoInformazioniProtocollo() {
 		return this.sbustamentoInformazioniProtocollo;

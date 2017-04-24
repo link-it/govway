@@ -36,6 +36,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.Credenziali;
+import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.InvocazionePortaGestioneErrore;
 import org.openspcoop2.core.config.InvocazioneServizio;
@@ -54,14 +55,12 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
-import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
-import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -146,14 +145,15 @@ public final class ServiziApplicativiAdd extends Action {
 			String nome = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME);
 			String provider = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			String fault = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_FAULT);
-			String tipoauthSA = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_SA);
+			
+			String tipoauthSA = request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE);
 			if (tipoauthSA == null) {
-				tipoauthSA = ServiziApplicativiCostanti.DEFAULT_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE;
+				tipoauthSA = ConnettoriCostanti.DEFAULT_AUTENTICAZIONE_TIPO;
 			}
-			String utenteSA = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_USERNAME_SA);
-			String passwordSA = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_PASSWORD_SA);
-			String confpwSA = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_CONFERMA_PASSWORD_SA);
-			String subjectSA = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_SUBJECT_SA);
+			String utenteSA = request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+			String passwordSA = request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+			String subjectSA = request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
+			String principalSA = request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
 			
 			String sbustamentoInformazioniProtocolloRisposta = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RISPOSTA);
 
@@ -166,12 +166,7 @@ public final class ServiziApplicativiAdd extends Action {
 			
 			String risprif = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
 			
-			
-			
-			String tipoauthRichiesta = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_CONNETTORE);
-			@SuppressWarnings("unused")
-			String confpwRichiesta = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_CONFERMA_PASSWORD_CONNETTORE);
-			String subjectRichiesta = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_SUBJECT_CONNETTORE);
+			String tipoauthRichiesta = request.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_TIPO_AUTENTICAZIONE);
 			
 			String endpointtype = saHelper.readEndPointType();
 			if(endpointtype==null){
@@ -299,19 +294,9 @@ public final class ServiziApplicativiAdd extends Action {
 				if(singlePdD){
 					List<Soggetto> listFiltrata = new ArrayList<Soggetto>();
 					for (Soggetto soggetto : list) {
-						// Se la PdD non e' selezionata e' come se fosse un soggetto con pdd esterna.
-						if(soggetto.getPortaDominio()!=null){
-							PdDControlStation pdd = null;
-							if("-".equals(soggetto.getPortaDominio())==false)
-								pdd = pddCore.getPdDControlStation(soggetto.getPortaDominio());
-	
-							boolean pddEsterna = false;
-							if( (pdd==null) || PddTipologia.ESTERNO.toString().equals(pdd.getTipo())){
-								pddEsterna = true;
-							}
-							if(!pddEsterna){
-								listFiltrata.add(soggetto);
-							}
+						boolean pddEsterna = pddCore.isPddEsterna(soggetto.getPortaDominio());
+						if(!pddEsterna){
+							listFiltrata.add(soggetto);
 						}
 					}
 					list = listFiltrata;
@@ -401,7 +386,7 @@ public final class ServiziApplicativiAdd extends Action {
 
 				dati = saHelper.addServizioApplicativoToDati(dati, (nome != null ? nome : ""), null, (fault != null ? fault : ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_FAULT_SOAP), 
 						TipoOperazione.ADD, 0, contaListe,soggettiList,
-						soggettiListLabel,provider,utenteSA,passwordSA,confpwSA,subjectSA,tipoauthSA,null,null,null,null,sbustamentoInformazioniProtocolloRisposta,
+						soggettiListLabel,provider,utenteSA,passwordSA,subjectSA,principalSA,tipoauthSA,null,null,null,null,sbustamentoInformazioniProtocolloRisposta,
 						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ADD,null,nomeProtocollo,
 						ruoloFruitore,ruoloErogatore,
 						sbustamento, sbustamentoInformazioniProtocolloRichiesta, getmsg,
@@ -456,7 +441,7 @@ public final class ServiziApplicativiAdd extends Action {
 
 				dati = saHelper.addServizioApplicativoToDati(dati, (nome != null ? nome : ""), null, (fault != null ? fault : ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_FAULT_SOAP),
 						TipoOperazione.ADD, 0, contaListe,soggettiList,
-						soggettiListLabel,provider,utenteSA,passwordSA,confpwSA,subjectSA,tipoauthSA,null,null,null,null,sbustamentoInformazioniProtocolloRisposta,
+						soggettiListLabel,provider,utenteSA,passwordSA,subjectSA,principalSA, tipoauthSA,null,null,null,null,sbustamentoInformazioniProtocolloRisposta,
 						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ADD,null,nomeProtocollo,
 						ruoloFruitore,ruoloErogatore,
 						sbustamento, sbustamentoInformazioniProtocolloRichiesta, getmsg,
@@ -491,17 +476,25 @@ public final class ServiziApplicativiAdd extends Action {
 
 				int idProv = Integer.parseInt(provider);
 
-				if (tipoauthSA.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_BASIC)) {
+				if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC)) {
 					subjectSA = "";
+					principalSA = "";
 				}
-				if (tipoauthSA.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_SSL)) {
+				if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)) {
 					utenteSA = "";
 					passwordSA = "";
+					principalSA = "";
 				}
-				if (tipoauthSA.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_NESSUNA)) {
+				if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL)) {
 					utenteSA = "";
 					passwordSA = "";
 					subjectSA = "";
+				}
+				if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)) {
+					utenteSA = "";
+					passwordSA = "";
+					subjectSA = "";
+					principalSA = "";
 				}
 
 				Soggetto soggettoRegistro = null;
@@ -514,12 +507,9 @@ public final class ServiziApplicativiAdd extends Action {
 
 				User userSession = ServletUtils.getUserFromSession(session);
 				
-				Credenziali credenziali = new Credenziali();
-				credenziali.setSubject("");
-				//credenziali.setTipo(CredenzialeTipo.NONE);
-				credenziali.setTipo(null);
-				credenziali.setUser("");
-				credenziali.setPassword("");
+				InvocazioneCredenziali credenzialiInvocazione = new InvocazioneCredenziali();
+				credenzialiInvocazione.setUser("");
+				credenzialiInvocazione.setPassword("");
 
 				ServizioApplicativo sa = new ServizioApplicativo();
 				sa.setNome(nome);
@@ -546,7 +536,7 @@ public final class ServiziApplicativiAdd extends Action {
 				// *** risposta asinc ***
 				RispostaAsincrona rispostaAsinc = new RispostaAsincrona();
 				rispostaAsinc.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
-				rispostaAsinc.setCredenziali(credenziali);
+				rispostaAsinc.setCredenziali(credenzialiInvocazione);
 				rispostaAsinc.setGetMessage(CostantiConfigurazione.DISABILITATO);
 
 				sa.setRispostaAsincrona(rispostaAsinc);
@@ -556,7 +546,7 @@ public final class ServiziApplicativiAdd extends Action {
 				if(InterfaceType.AVANZATA.equals(userSession.getInterfaceType()) || 
 						TipologiaErogazione.DISABILITATO.getValue().equals(ruoloErogatore)){
 					invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
-					invServizio.setCredenziali(credenziali);
+					invServizio.setCredenziali(credenzialiInvocazione);
 					invServizio.setGetMessage(CostantiConfigurazione.DISABILITATO);
 				}
 				else{
@@ -573,50 +563,30 @@ public final class ServiziApplicativiAdd extends Action {
 					invServizio.setGetMessage(StatoFunzionalita.toEnumConstant(getmsg));
 					invServizio.setInvioPerRiferimento(StatoFunzionalita.toEnumConstant(invrifRichiesta));
 					invServizio.setRispostaPerRiferimento(StatoFunzionalita.toEnumConstant(risprif));
-					Credenziali cis = null;
-					if (tipoauthRichiesta!=null && !tipoauthRichiesta.equals(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_NONE.toString())) {
-										
+					InvocazioneCredenziali cis = null;
+					if (tipoauthRichiesta!=null && tipoauthRichiesta.equals(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC.toString())) {
 						if (cis == null) {
-							cis = new Credenziali();
+							cis = new InvocazioneCredenziali();
 						}
-						if(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_NESSUNA.equals(tipoauthRichiesta)){
-							//cis.setTipo(CredenzialeTipo.toEnumConstant(CostantiConfigurazione.AUTENTICAZIONE_NONE));
-							cis.setTipo(null);
-						}else
-							cis.setTipo(CredenzialeTipo.toEnumConstant(tipoauthRichiesta));
-						if (tipoauthRichiesta.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_BASIC)) {
-							cis.setUser(user);
-							cis.setPassword(password);
-						} else {
-							cis.setUser("");
-							cis.setPassword("");
-						}
-						if (tipoauthRichiesta.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_SSL)) {
-							cis.setSubject(subjectRichiesta);
-						} else {
-							cis.setSubject("");
-						}
+						cis.setUser(user);
+						cis.setPassword(password);
 						invServizio.setCredenziali(cis);
+						invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
 					}
 					else if(endpointtype.equals(TipiConnettore.JMS.toString())){
-						if (cis == null) {
-							cis = new Credenziali();
-						}
 						if(user!=null && password!=null){
-							cis.setTipo(CredenzialeTipo.BASIC);
+							if (cis == null) {
+								cis = new InvocazioneCredenziali();
+							}
 							cis.setUser(user);
 							cis.setPassword(password);
 						}
-						else{
-							cis.setTipo(null);
-							cis.setUser(user);
-							cis.setPassword(password);
-						}
-						cis.setSubject(null);
 						invServizio.setCredenziali(cis);
+						invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
 					}
 					else {
 						invServizio.setCredenziali(null);
+						invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
 					}
 					Connettore connis = invServizio.getConnettore();
 					if(connis==null){
@@ -648,14 +618,17 @@ public final class ServiziApplicativiAdd extends Action {
 
 				// *** Invocazione Porta ***
 				InvocazionePorta invocazionePorta = new InvocazionePorta();
-				credenziali = new Credenziali();
-				if (tipoauthSA.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_NESSUNA)) {
+				Credenziali credenziali = new Credenziali();
+				if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)) {
 					//credenziali.setTipo(CredenzialeTipo.toEnumConstant(CostantiConfigurazione.AUTENTICAZIONE_NONE));
 					credenziali.setTipo(null);
 				}else{
 					credenziali.setTipo(CredenzialeTipo.toEnumConstant(tipoauthSA));
 				}
 				credenziali.setUser(utenteSA);
+				if(principalSA!=null && !"".equals(principalSA)){
+					credenziali.setUser(principalSA); // al posto di user
+				}
 				credenziali.setPassword(passwordSA);
 				credenziali.setSubject(subjectSA);
 				invocazionePorta.addCredenziali(credenziali);

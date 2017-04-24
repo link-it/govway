@@ -40,6 +40,7 @@ import java.util.List;
  * 			&lt;element name="accordo-cooperazione" type="{http://www.openspcoop2.org/core/registry}accordo-cooperazione" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="accordo-servizio-parte-comune" type="{http://www.openspcoop2.org/core/registry}accordo-servizio-parte-comune" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="porta-dominio" type="{http://www.openspcoop2.org/core/registry}porta-dominio" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="ruolo" type="{http://www.openspcoop2.org/core/registry}ruolo" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="soggetto" type="{http://www.openspcoop2.org/core/registry}soggetto" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="connettore" type="{http://www.openspcoop2.org/core/registry}connettore" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
@@ -58,6 +59,7 @@ import java.util.List;
   	"accordoCooperazione",
   	"accordoServizioParteComune",
   	"portaDominio",
+  	"ruolo",
   	"soggetto",
   	"connettore"
   }
@@ -153,6 +155,30 @@ public class RegistroServizi extends org.openspcoop2.utils.beans.BaseBean implem
 
   public int sizePortaDominioList() {
     return this.portaDominio.size();
+  }
+
+  public void addRuolo(Ruolo ruolo) {
+    this.ruolo.add(ruolo);
+  }
+
+  public Ruolo getRuolo(int index) {
+    return this.ruolo.get( index );
+  }
+
+  public Ruolo removeRuolo(int index) {
+    return this.ruolo.remove( index );
+  }
+
+  public List<Ruolo> getRuoloList() {
+    return this.ruolo;
+  }
+
+  public void setRuoloList(List<Ruolo> ruolo) {
+    this.ruolo=ruolo;
+  }
+
+  public int sizeRuoloList() {
+    return this.ruolo.size();
   }
 
   public void addSoggetto(Soggetto soggetto) {
@@ -298,6 +324,36 @@ public class RegistroServizi extends org.openspcoop2.utils.beans.BaseBean implem
   @Deprecated
   public int sizePortaDominio() {
   	return this.portaDominio.size();
+  }
+
+  @XmlElement(name="ruolo",required=true,nillable=false)
+  protected List<Ruolo> ruolo = new ArrayList<Ruolo>();
+
+  /**
+   * @deprecated Use method getRuoloList
+   * @return List<Ruolo>
+  */
+  @Deprecated
+  public List<Ruolo> getRuolo() {
+  	return this.ruolo;
+  }
+
+  /**
+   * @deprecated Use method setRuoloList
+   * @param ruolo List<Ruolo>
+  */
+  @Deprecated
+  public void setRuolo(List<Ruolo> ruolo) {
+  	this.ruolo=ruolo;
+  }
+
+  /**
+   * @deprecated Use method sizeRuoloList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeRuolo() {
+  	return this.ruolo.size();
   }
 
   @XmlElement(name="soggetto",required=true,nillable=false)

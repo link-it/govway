@@ -15,7 +15,6 @@ CREATE TABLE servizi_applicativi
 	tipoauthrisp VARCHAR2(255),
 	utenterisp VARCHAR2(255),
 	passwordrisp VARCHAR2(255),
-	subjectrisp VARCHAR2(255),
 	invio_x_rif_risp VARCHAR2(255),
 	risposta_x_rif_risp VARCHAR2(255),
 	id_connettore_risp NUMBER NOT NULL,
@@ -29,7 +28,6 @@ CREATE TABLE servizi_applicativi
 	tipoauthinv VARCHAR2(255),
 	utenteinv VARCHAR2(255),
 	passwordinv VARCHAR2(255),
-	subjectinv VARCHAR2(255),
 	invio_x_rif_inv VARCHAR2(255),
 	risposta_x_rif_inv VARCHAR2(255),
 	id_connettore_inv NUMBER NOT NULL,
@@ -75,6 +73,35 @@ for each row
 begin
    IF (:new.id IS NULL) THEN
       SELECT seq_servizi_applicativi.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_sa_ruoli MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE sa_ruoli
+(
+	id_servizio_applicativo NUMBER NOT NULL,
+	ruolo VARCHAR2(255) NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_sa_ruoli_1 UNIQUE (id_servizio_applicativo,ruolo),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_sa_ruoli_1 FOREIGN KEY (id_servizio_applicativo) REFERENCES servizi_applicativi(id),
+	CONSTRAINT pk_sa_ruoli PRIMARY KEY (id)
+);
+
+CREATE TRIGGER trg_sa_ruoli
+BEFORE
+insert on sa_ruoli
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_sa_ruoli.nextval INTO :new.id
                 FROM DUAL;
    END IF;
 end;

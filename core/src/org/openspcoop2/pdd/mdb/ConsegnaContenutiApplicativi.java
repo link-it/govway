@@ -1144,7 +1144,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			if(soggettoFruitoreHeaderIntegrazione!=null){
 				headerIntegrazione.getBusta().setTipoMittente(soggettoFruitoreHeaderIntegrazione.getTipo());
 				headerIntegrazione.getBusta().setMittente(soggettoFruitoreHeaderIntegrazione.getNome());
-			}else{
+			}else if(soggettoFruitore!=null){
 				headerIntegrazione.getBusta().setTipoMittente(soggettoFruitore.getTipo());
 				headerIntegrazione.getBusta().setMittente(soggettoFruitore.getNome());
 			}
@@ -1965,10 +1965,19 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 
 			/* ------------------- MsgDiagnostico -----------------------*/
 			if(invokerNonSupportato==false){
-				if(errorConsegna){
-					msgDiag.logPersonalizzato("consegnaConErrore");
-				}else{
-					msgDiag.logPersonalizzato("consegnaEffettuata");
+				if(bustaRichiesta.getMittente()!=null && bustaRichiesta.getTipoMittente()!=null){
+					if(errorConsegna){
+						msgDiag.logPersonalizzato("consegnaConErrore");
+					}else{
+						msgDiag.logPersonalizzato("consegnaEffettuata");
+					}
+				}
+				else{
+					if(errorConsegna){
+						msgDiag.logPersonalizzato("consegnaConErrore.mittenteAnonimo");
+					}else{
+						msgDiag.logPersonalizzato("consegnaEffettuata.mittenteAnonimo");
+					}
 				}
 			}
 
@@ -2311,7 +2320,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							
 						}catch(Exception e){
 							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA, ("risposta per riferimento non costruita, "+e.getMessage()));
-							msgDiag.logPersonalizzato("consegnaConErrore");
+							if(bustaRichiesta.getMittente()!=null && bustaRichiesta.getTipoMittente()!=null){
+								msgDiag.logPersonalizzato("consegnaConErrore");
+							}
+							else{
+								msgDiag.logPersonalizzato("consegnaConErrore.mittenteAnonimo");
+							}
 							
 							this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 									ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -2349,7 +2363,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						}
 						else{
 							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA, ("risposta applicativa attesa ma non ricevuta"));
-							msgDiag.logPersonalizzato("consegnaConErrore");
+							if(bustaRichiesta.getMittente()!=null && bustaRichiesta.getTipoMittente()!=null){
+								msgDiag.logPersonalizzato("consegnaConErrore");
+							}
+							else{
+								msgDiag.logPersonalizzato("consegnaConErrore.mittenteAnonimo");
+							}
 							
 							this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 									ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -2750,7 +2769,13 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							throw responseMessage.getParseException().getSourceException(); // gestito nel cacth
 					}catch(Exception e){
 						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA, ("salvataggio risposta, "+e.getMessage()));
-						msgDiag.logPersonalizzato("consegnaConErrore");
+						if(bustaRichiesta.getMittente()!=null && bustaRichiesta.getTipoMittente()!=null){
+							msgDiag.logPersonalizzato("consegnaConErrore");
+						}
+						else{
+							msgDiag.logPersonalizzato("consegnaConErrore.mittenteAnonimo");
+						}
+						
 						msgResponse.deleteMessageFromFileSystem(); // elimino eventuale risposta salvata su fileSystem
 						msgResponse.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
 						if(responseMessage.getParseException() == null){

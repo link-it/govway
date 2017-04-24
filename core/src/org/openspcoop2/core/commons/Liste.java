@@ -37,83 +37,84 @@ public final class Liste
 	public final static int PDD_SOGGETTI = 1;
 	
 	public final static int SOGGETTI = 2;
+	public final static int SOGGETTI_RUOLI = 3;
 	
-	public final static int PORTE_APPLICATIVE= 3;
-	public final static int PORTE_APPLICATIVE_BY_SOGGETTO= 4;
-	public final static int PORTE_APPLICATIVE_PROP = 5;
-	public final static int PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO = 6;
-	public final static int PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST = 7;
-	public final static int PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE = 8;
-	public final static int PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA = 9;
-	public final static int PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RISPOSTA = 10;
-	public final static int PORTE_APPLICATIVE_MTOM_REQUEST = 11;
-	public final static int PORTE_APPLICATIVE_MTOM_RESPONSE = 12;
-	public final static int PORTE_APPLICATIVE_EXTENDED = 13;
+	public final static int PORTE_APPLICATIVE= 4;
+	public final static int PORTE_APPLICATIVE_BY_SOGGETTO= 5;
+	public final static int PORTE_APPLICATIVE_PROP = 6;
+	public final static int PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO = 7;
+	public final static int PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST = 8;
+	public final static int PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE = 9;
+	public final static int PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA = 10;
+	public final static int PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RISPOSTA = 11;
+	public final static int PORTE_APPLICATIVE_MTOM_REQUEST = 12;
+	public final static int PORTE_APPLICATIVE_MTOM_RESPONSE = 13;
+	public final static int PORTE_APPLICATIVE_RUOLI = 14;
+	public final static int PORTE_APPLICATIVE_EXTENDED = 15;
 	
-	public final static int PORTE_DELEGATE = 14;
-	public final static int PORTE_DELEGATE_BY_SOGGETTO= 15;
-	public final static int PORTE_DELEGATE_SERVIZIO_APPLICATIVO = 16;
-	public final static int PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST = 17;
-	public final static int PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE = 18;
-	public final static int PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA = 19;
-	public final static int PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RISPOSTA = 20;
-	public final static int PORTE_DELEGATE_MTOM_REQUEST = 21;
-	public final static int PORTE_DELEGATE_MTOM_RESPONSE = 22;
-	public final static int PORTE_DELEGATE_EXTENDED = 23;
+	public final static int PORTE_DELEGATE = 16;
+	public final static int PORTE_DELEGATE_BY_SOGGETTO= 17;
+	public final static int PORTE_DELEGATE_SERVIZIO_APPLICATIVO = 18;
+	public final static int PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST = 19;
+	public final static int PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE = 20;
+	public final static int PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA = 21;
+	public final static int PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RISPOSTA = 22;
+	public final static int PORTE_DELEGATE_MTOM_REQUEST = 23;
+	public final static int PORTE_DELEGATE_MTOM_RESPONSE = 24;
+	public final static int PORTE_DELEGATE_RUOLI = 25;
+	public final static int PORTE_DELEGATE_EXTENDED = 26;
 	
-	public final static int SERVIZIO_APPLICATIVO = 24;
-	public final static int SERVIZI_APPLICATIVI_BY_SOGGETTO= 25;
+	public final static int SERVIZIO_APPLICATIVO = 27;
+	public final static int SERVIZI_APPLICATIVI_BY_SOGGETTO= 28;
+	public final static int SERVIZIO_APPLICATIVO_RUOLI = 29;
 	
-	public final static int ACCORDI = 26;
-	public final static int ACCORDI_AZIONI = 27;
-	public final static int ACCORDI_EROGATORI = 28;
-	public final static int ACCORDI_EROGATORI_FRUITORI = 29;
-	public final static int ACCORDI_SERVIZIO_APPLICATIVO = 30;
-	public final static int ACCORDI_PORTTYPE = 31;
-	public final static int ACCORDI_PORTTYPE_AZIONI = 32;
-	public final static int ACCORDI_PORTTYPE_AZIONI_MESSAGE_INPUT = 33;
-	public final static int ACCORDI_PORTTYPE_AZIONI_MESSAGE_OUTPUT = 34;
-	public final static int ACCORDI_ALLEGATI = 35;
+	public final static int ACCORDI = 30;
+	public final static int ACCORDI_AZIONI = 31;
+	public final static int ACCORDI_EROGATORI = 32;
+	public final static int ACCORDI_PORTTYPE = 33;
+	public final static int ACCORDI_PORTTYPE_AZIONI = 34;
+	public final static int ACCORDI_PORTTYPE_AZIONI_MESSAGE_INPUT = 35;
+	public final static int ACCORDI_PORTTYPE_AZIONI_MESSAGE_OUTPUT = 36;
+	public final static int ACCORDI_ALLEGATI = 37;
 	
-	public final static int ACCORDI_COOPERAZIONE = 36;
-	public final static int ACCORDI_COOP_PARTECIPANTI= 37;
-	public final static int ACCORDI_COOP_ALLEGATI= 38;
-	public final static int ACCORDI_COMPONENTI = 39;
+	public final static int ACCORDI_COOPERAZIONE = 38;
+	public final static int ACCORDI_COOP_PARTECIPANTI= 39;
+	public final static int ACCORDI_COOP_ALLEGATI= 40;
+	public final static int ACCORDI_COMPONENTI = 41;
 	
-	public final static int SERVIZI = 40;	
-	public final static int SERVIZI_FRUITORI= 41;
-	public final static int SERVIZI_SERVIZIO_APPLICATIVO = 42;
-	public final static int SERVIZI_ALLEGATI= 43;
-	public final static int SERVIZI_PORTE_APPLICATIVE = 44;
+	public final static int SERVIZI = 42;	
+	public final static int SERVIZI_FRUITORI= 43;
+	public final static int SERVIZI_FRUITORI_PORTE_DELEGATE = 44;
+	public final static int SERVIZI_ALLEGATI= 45;
+	public final static int SERVIZI_PORTE_APPLICATIVE = 46;
 	
-	public final static int	RUOLI	= 45;
+	public final static int	RUOLI	= 47;	
+	public final static int	REGISTRI = 48;
+	public final static int	ROUTING = 49;
+	public final static int SYSTEM_PROPERTIES = 50;
 	
-	public final static int	REGISTRI = 46;
-	public final static int	ROUTING = 47;
-	public final static int SYSTEM_PROPERTIES = 48;
+	public final static int	TRACCE = 51;
 	
-	public final static int	TRACCE = 49;
+	public final static int MESSAGGI_DIAGNOSTICI = 52;
 	
-	public final static int MESSAGGI_DIAGNOSTICI = 50;
+	public final static int STATISTICHE_STATO = 53;
 	
-	public final static int STATISTICHE_STATO = 51;
-	
-	public final static int SU = 52;
+	public final static int SU = 54;
 
-	public final static int MONITOR_MSG = 53;
+	public final static int MONITOR_MSG = 55;
 	
-	public final static int FILTRI = 54;
+	public final static int FILTRI = 56;
 
-	public final static int AUDIT_REPORT = 55;
+	public final static int AUDIT_REPORT = 57;
 	
-	public final static int OPERATIONS_CODA = 56;
-    public final static int OPERATIONS_ESEGUITE = 57;
-    public final static int OPERATIONS_FALLITE = 58;
-    public final static int OPERATIONS_INVALIDE = 59;
-    public final static int OPERATIONS_RICERCA = 60;
-    public final static int OPERATIONS_WAITING = 61;
+	public final static int OPERATIONS_CODA = 58;
+    public final static int OPERATIONS_ESEGUITE = 59;
+    public final static int OPERATIONS_FALLITE = 60;
+    public final static int OPERATIONS_INVALIDE = 61;
+    public final static int OPERATIONS_RICERCA = 62;
+    public final static int OPERATIONS_WAITING = 63;
     
-    public final static int CONFIGURAZIONE_EXTENDED = 62;	
+    public final static int CONFIGURAZIONE_EXTENDED = 64;	
 	
 
     
@@ -121,7 +122,7 @@ public final class Liste
 	
 	public static int getTotaleListe()
 	{
-		return 63;
+		return 65;
 	}
 	
 	

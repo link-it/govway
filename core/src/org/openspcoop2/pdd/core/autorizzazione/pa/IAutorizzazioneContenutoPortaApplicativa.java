@@ -45,6 +45,6 @@ public interface IAutorizzazioneContenutoPortaApplicativa extends ICore {
      * @return Esito dell'autorizzazione.
      * 
      */
-    public EsitoAutorizzazioneCooperazione process(DatiInvocazionePortaApplicativa datiInvocazione,OpenSPCoop2Message msg) throws AutorizzazioneException;
+    public EsitoAutorizzazionePortaApplicativa process(DatiInvocazionePortaApplicativa datiInvocazione,OpenSPCoop2Message msg) throws AutorizzazioneException;
     
 }

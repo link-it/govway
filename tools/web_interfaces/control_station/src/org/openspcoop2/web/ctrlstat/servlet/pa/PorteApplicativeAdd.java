@@ -36,14 +36,17 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
+import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
+import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
@@ -51,10 +54,12 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.PortType;
+import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -123,6 +128,17 @@ public final class PorteApplicativeAdd extends Action {
 			String autorizzazioneContenuti = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI);
 			String applicaMTOM = request.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_APPLICA_MTOM);
 
+			String autenticazione = request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE);
+			String autenticazioneOpzionale = request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE);
+			String autenticazioneCustom = request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM);
+			String autorizzazione = request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE);
+			String autorizzazioneCustom = request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM);
+			
+			String autorizzazioneAutenticati = request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE);
+			String autorizzazioneRuoli = request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI);
+			String autorizzazioneRuoliTipologia = request.getParameter(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA);
+			String ruoloMatch = request.getParameter(CostantiControlStation.PARAMETRO_RUOLO_MATCH);
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
@@ -153,8 +169,11 @@ public final class PorteApplicativeAdd extends Action {
 
 			// String pdd = soggetto.getServer();
 
+			boolean isSupportatoAutenticazioneSoggetti = soggettiCore.isSupportatoAutenticazioneSoggetti(protocollo);
+			
 			// Informazioni sul numero di ServiziApplicativi, Correlazione Applicativa e stato Message-Security
 			int numSA = 0;
+			int numRuoli =0;
 			String statoMessageSecurity  =  "";
 			String statoMTOM  = "";
 			int numCorrelazioneReq =0; 
@@ -306,15 +325,17 @@ public final class PorteApplicativeAdd extends Action {
 				}
 			}
 			
-			
+			AccordoServizioParteComune as = null;
+			if (servS != null) {
+				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(servS.getAccordoServizioParteComune());
+				as = apcCore.getAccordoServizio(idAccordo);
+			}
 			
 			// Prendo le azioni associate al servizio
 			String[] azioniList = null;
 			try {
 				if (servS != null) {
-					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(servS.getAccordoServizioParteComune());
-					AccordoServizioParteComune as = apcCore.getAccordoServizio(idAccordo);
-
+						
 					if(servS.getPortType()!=null){
 						// Bisogna prendere le operations del port type
 						PortType pt = null;
@@ -414,12 +435,38 @@ public final class PorteApplicativeAdd extends Action {
 				if (gestManifest == null) {
 					gestManifest = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_MANIFEST_DEFAULT;
 				}
+				
+				if (autenticazione == null) {
+					autenticazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_AUTENTICAZIONE;
+				}
+				if (autorizzazione == null) {
+					String defaultAutorizzazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE;
+					if (defaultAutorizzazione != null &&
+							!TipoAutorizzazione.getAllValues().contains(defaultAutorizzazione)) {
+						autorizzazioneCustom = defaultAutorizzazione;
+						autorizzazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
+					}
+					else{
+						autorizzazione = AutorizzazioneUtilities.convertToStato(defaultAutorizzazione);
+						if(TipoAutorizzazione.isAuthenticationRequired(defaultAutorizzazione))
+							autorizzazioneAutenticati = Costanti.CHECK_BOX_ENABLED;
+						if(TipoAutorizzazione.isRolesRequired(defaultAutorizzazione))
+							autorizzazioneRuoli = Costanti.CHECK_BOX_ENABLED;
+						autorizzazioneRuoliTipologia = AutorizzazioneUtilities.convertToRuoloTipologia(defaultAutorizzazione).getValue();
+					}
+				}
 
 				dati = porteApplicativeHelper.addPorteAppToDati(TipoOperazione.ADD,dati, nomePorta, descr, soggvirt, soggettiList,
 						soggettiListLabel, servizio, serviziList, serviziListLabel, azione, azioniList, 
 						stateless, ricsim, ricasim, null, null, xsd, tipoValidazione, gestBody, gestManifest,
-						null,0,null,autorizzazioneContenuti,protocollo,numSA,statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,numProprProt,applicaMTOM,
-						behaviour,null,null);
+						null,0,null,autorizzazioneContenuti,protocollo,
+						numSA,numRuoli, ruoloMatch,
+						statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,numProprProt,applicaMTOM,
+						behaviour,null,null,
+						autenticazione, autorizzazione,
+						autenticazioneOpzionale, autenticazioneCustom, autorizzazioneCustom,
+						isSupportatoAutenticazioneSoggetti,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
+						servS,as);
 
 				pd.setDati(dati);
 
@@ -431,7 +478,7 @@ public final class PorteApplicativeAdd extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = porteApplicativeHelper.porteAppCheckData(TipoOperazione.ADD, null);
+			boolean isOk = porteApplicativeHelper.porteAppCheckData(TipoOperazione.ADD, null, isSupportatoAutenticazioneSoggetti);
 			if (!isOk) {
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, 
@@ -454,8 +501,13 @@ public final class PorteApplicativeAdd extends Action {
 						soggettiListLabel, servizio, serviziList,
 						serviziListLabel, azione, azioniList,  stateless, ricsim, ricasim, 
 						null, null, xsd, tipoValidazione, gestBody, gestManifest,null,0,null,autorizzazioneContenuti,protocollo,
-						numSA,statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,numProprProt,applicaMTOM,
-						behaviour,null,null);
+						numSA,numRuoli, ruoloMatch,
+						statoMessageSecurity,statoMTOM,numCorrelazioneReq,numCorrelazioneRes,numProprProt,applicaMTOM,
+						behaviour,null,null,
+						autenticazione, autorizzazione,
+						autenticazioneOpzionale, autenticazioneCustom, autorizzazioneCustom,
+						isSupportatoAutenticazioneSoggetti,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,
+						servS,as);
 
 				pd.setDati(dati);
 
@@ -472,6 +524,37 @@ public final class PorteApplicativeAdd extends Action {
 			pa.setTipoSoggettoProprietario(tipoSoggettoProprietario);
 			pa.setDescrizione(descr);
 			pa.setAutorizzazioneContenuto(autorizzazioneContenuti);
+			
+			if (autenticazione == null ||
+					!autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM))
+				pa.setAutenticazione(autenticazione);
+			else
+				pa.setAutenticazione(autenticazioneCustom);
+			if(autenticazioneOpzionale != null){
+				if(ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale))
+					pa.setAutenticazioneOpzionale(StatoFunzionalita.ABILITATO);
+				else 
+					pa.setAutenticazioneOpzionale(StatoFunzionalita.DISABILITATO);
+			} else 
+				pa.setAutenticazioneOpzionale(null);
+			if (autorizzazione == null || 
+					!autorizzazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM))
+				pa.setAutorizzazione(AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(autorizzazione, 
+						ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati), ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli), 
+						RuoloTipologia.toEnumConstant(autorizzazioneRuoliTipologia)));
+			else
+				pa.setAutorizzazione(autorizzazioneCustom);
+						
+			if(ruoloMatch!=null && !"".equals(ruoloMatch)){
+				RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant(ruoloMatch);
+				if(tipoRuoloMatch!=null){
+					if(pa.getRuoli()==null){
+						pa.setRuoli(new AutorizzazioneRuoli());
+					}
+					pa.getRuoli().setMatch(tipoRuoloMatch);
+				}
+			}
+			
 			if (stateless!=null && !stateless.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_STATELESS_DEFAULT))
 				pa.setStateless(StatoFunzionalita.toEnumConstant(stateless));
 			if (PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_BODY_ALLEGA.equals(gestBody))

@@ -27,15 +27,19 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
-import org.openspcoop2.web.ctrlstat.dao.PoliticheSicurezza;
+import org.openspcoop2.web.ctrlstat.dao.MappingErogazionePortaApplicativa;
+import org.openspcoop2.web.ctrlstat.dao.MappingFruizionePortaDelegata;
 
 /**
  * ArchiveEngine
@@ -92,6 +96,36 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 			throws DriverRegistroServiziException {
 		try{
 			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, pdd);
+		}catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
+	
+	
+	// --- RUOLI ---
+	
+	@Override
+	public void createRuolo(Ruolo ruolo) throws DriverRegistroServiziException {
+		try{
+			this.archiviCore.performCreateOperation(this.userLogin, this.smista, ruolo);
+		}catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public void updateRuolo(Ruolo ruolo) throws DriverRegistroServiziException {
+		try{
+			this.archiviCore.performUpdateOperation(this.userLogin, this.smista, ruolo);
+		}catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public void deleteRuolo(Ruolo ruolo) throws DriverRegistroServiziException {
+		try{
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, ruolo);
 		}catch(Exception e){
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
@@ -300,40 +334,75 @@ public class ArchiveEngine extends org.openspcoop2.protocol.engine.archive.Abstr
 	
 	
 	
-	// --- Politiche di Sicurezza ---
-		
-	@Override
-	public void createServizioApplicativoAutorizzato(IDServizio idAccordoServizioParteSpecifica, IDSoggetto idFruitore, String nomeServizioApplicativo) throws DriverRegistroServiziException {
+	// --- Mapping Erogazione ---
+	
+	@Override	
+	public void createMappingErogazione(IDServizio idServizio, IDPortaApplicativa idPortaApplicativa) throws DriverRegistroServiziException {
 		try{
-			AccordoServizioParteSpecifica asps = this.getAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica,false);
-			Soggetto s = this.getSoggettoRegistro(idFruitore);
+			MappingErogazionePortaApplicativa mapping = new MappingErogazionePortaApplicativa();
+			mapping.setIdServizio(idServizio);
+			mapping.setIdPortaApplicativa(idPortaApplicativa);
 			
-			PoliticheSicurezza polSic = new PoliticheSicurezza();
-			polSic.setNomeServizioApplicativo(nomeServizioApplicativo);
-			polSic.setIdServizio(asps.getId());
-			polSic.setIdFruitore(s.getId());
-			
-			this.archiviCore.performCreateOperation(this.userLogin, this.smista, polSic);
-		}catch(Exception e){
-			throw new DriverRegistroServiziException(e.getMessage(),e);
+			this.archiviCore.performCreateOperation(this.userLogin, this.smista, mapping);
 		}
-	}	
-	@Override
-	public void deleteServizioApplicativoAutorizzato(IDServizio idAccordoServizioParteSpecifica, IDSoggetto idFruitore, String nomeServizioApplicativo) throws DriverRegistroServiziException {
-		try{
-			AccordoServizioParteSpecifica asps = this.getAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica,false);
-			Soggetto s = this.getSoggettoRegistro(idFruitore);
-			
-			PoliticheSicurezza polSic = new PoliticheSicurezza();
-			polSic.setNomeServizioApplicativo(nomeServizioApplicativo);
-			polSic.setIdServizio(asps.getId());
-			polSic.setIdFruitore(s.getId());
-			
-			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, polSic);
-		}catch(Exception e){
+		catch(Exception e){
 			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
 	}
+	
+	@Override
+	public void deleteMappingErogazione(IDServizio idServizio, IDPortaApplicativa idPortaApplicativa) throws DriverRegistroServiziException {
+		try{
+			MappingErogazionePortaApplicativa mapping = new MappingErogazionePortaApplicativa();
+			mapping.setIdServizio(idServizio);
+			mapping.setIdPortaApplicativa(idPortaApplicativa);
+			
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, mapping);
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
+	
+	
+	
+	
+	
+	// --- Mapping Fruizione ---
+	
+	@Override
+	public void createMappingFruizione(IDServizio idServizio, IDSoggetto idFruitore, IDPortaDelegata idPortaDelegata) throws DriverRegistroServiziException {
+		try{
+			MappingFruizionePortaDelegata mapping = new MappingFruizionePortaDelegata();
+			mapping.setIdFruitore(idFruitore);
+			mapping.setIdServizio(idServizio);
+			mapping.setIdPortaDelegata(idPortaDelegata);
+			
+			this.archiviCore.performCreateOperation(this.userLogin, this.smista, mapping);
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public void deleteMappingFruizione(IDServizio idServizio, IDSoggetto idFruitore, IDPortaDelegata idPortaDelegata) throws DriverRegistroServiziException {
+		try{
+			MappingFruizionePortaDelegata mapping = new MappingFruizionePortaDelegata();
+			mapping.setIdFruitore(idFruitore);
+			mapping.setIdServizio(idServizio);
+			mapping.setIdPortaDelegata(idPortaDelegata);
+			
+			this.archiviCore.performDeleteOperation(this.userLogin, this.smista, mapping);
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
+	
+	
+	
+
 
 	
 	// --- Porte Delegate ---

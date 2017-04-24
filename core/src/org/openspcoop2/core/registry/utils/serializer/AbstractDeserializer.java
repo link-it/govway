@@ -36,13 +36,18 @@ import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.RegistroServizi;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.ConfigurazioneServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
+import org.openspcoop2.core.registry.IdRuolo;
 import org.openspcoop2.core.registry.Property;
+import org.openspcoop2.core.registry.RuoloSoggetto;
+import org.openspcoop2.core.registry.RuoliSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioComposto;
 import org.openspcoop2.core.registry.Azione;
+import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.IdAccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore;
 import org.openspcoop2.core.registry.IdAccordoCooperazione;
@@ -1061,6 +1066,69 @@ public abstract class AbstractDeserializer {
 	
 	/*
 	 =================================================================================
+	 Object: ruolo
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.registry.Ruolo}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.Ruolo}
+	 * @return Object type {@link org.openspcoop2.core.registry.Ruolo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Ruolo readRuolo(String fileName) throws DeserializerException {
+		return (Ruolo) this.xmlToObj(fileName, Ruolo.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.registry.Ruolo}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.Ruolo}
+	 * @return Object type {@link org.openspcoop2.core.registry.Ruolo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Ruolo readRuolo(File file) throws DeserializerException {
+		return (Ruolo) this.xmlToObj(file, Ruolo.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.registry.Ruolo}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.Ruolo}
+	 * @return Object type {@link org.openspcoop2.core.registry.Ruolo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Ruolo readRuolo(InputStream in) throws DeserializerException {
+		return (Ruolo) this.xmlToObj(in, Ruolo.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.registry.Ruolo}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.Ruolo}
+	 * @return Object type {@link org.openspcoop2.core.registry.Ruolo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Ruolo readRuolo(byte[] in) throws DeserializerException {
+		return (Ruolo) this.xmlToObj(in, Ruolo.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.registry.Ruolo}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.Ruolo}
+	 * @return Object type {@link org.openspcoop2.core.registry.Ruolo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public Ruolo readRuoloFromString(String in) throws DeserializerException {
+		return (Ruolo) this.xmlToObj(in.getBytes(), Ruolo.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: soggetto
 	 =================================================================================
 	*/
@@ -1313,6 +1381,69 @@ public abstract class AbstractDeserializer {
 	
 	/*
 	 =================================================================================
+	 Object: id-ruolo
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.registry.IdRuolo}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.IdRuolo}
+	 * @return Object type {@link org.openspcoop2.core.registry.IdRuolo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdRuolo readIdRuolo(String fileName) throws DeserializerException {
+		return (IdRuolo) this.xmlToObj(fileName, IdRuolo.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.registry.IdRuolo}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.IdRuolo}
+	 * @return Object type {@link org.openspcoop2.core.registry.IdRuolo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdRuolo readIdRuolo(File file) throws DeserializerException {
+		return (IdRuolo) this.xmlToObj(file, IdRuolo.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.registry.IdRuolo}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.IdRuolo}
+	 * @return Object type {@link org.openspcoop2.core.registry.IdRuolo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdRuolo readIdRuolo(InputStream in) throws DeserializerException {
+		return (IdRuolo) this.xmlToObj(in, IdRuolo.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.registry.IdRuolo}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.IdRuolo}
+	 * @return Object type {@link org.openspcoop2.core.registry.IdRuolo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdRuolo readIdRuolo(byte[] in) throws DeserializerException {
+		return (IdRuolo) this.xmlToObj(in, IdRuolo.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.registry.IdRuolo}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.IdRuolo}
+	 * @return Object type {@link org.openspcoop2.core.registry.IdRuolo}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdRuolo readIdRuoloFromString(String in) throws DeserializerException {
+		return (IdRuolo) this.xmlToObj(in.getBytes(), IdRuolo.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
 	 Object: Property
 	 =================================================================================
 	*/
@@ -1370,6 +1501,132 @@ public abstract class AbstractDeserializer {
 	 */
 	public Property readPropertyFromString(String in) throws DeserializerException {
 		return (Property) this.xmlToObj(in.getBytes(), Property.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: ruolo-soggetto
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.registry.RuoloSoggetto}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.RuoloSoggetto}
+	 * @return Object type {@link org.openspcoop2.core.registry.RuoloSoggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RuoloSoggetto readRuoloSoggetto(String fileName) throws DeserializerException {
+		return (RuoloSoggetto) this.xmlToObj(fileName, RuoloSoggetto.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.registry.RuoloSoggetto}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.RuoloSoggetto}
+	 * @return Object type {@link org.openspcoop2.core.registry.RuoloSoggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RuoloSoggetto readRuoloSoggetto(File file) throws DeserializerException {
+		return (RuoloSoggetto) this.xmlToObj(file, RuoloSoggetto.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.registry.RuoloSoggetto}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.RuoloSoggetto}
+	 * @return Object type {@link org.openspcoop2.core.registry.RuoloSoggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RuoloSoggetto readRuoloSoggetto(InputStream in) throws DeserializerException {
+		return (RuoloSoggetto) this.xmlToObj(in, RuoloSoggetto.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.registry.RuoloSoggetto}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.RuoloSoggetto}
+	 * @return Object type {@link org.openspcoop2.core.registry.RuoloSoggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RuoloSoggetto readRuoloSoggetto(byte[] in) throws DeserializerException {
+		return (RuoloSoggetto) this.xmlToObj(in, RuoloSoggetto.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.registry.RuoloSoggetto}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.RuoloSoggetto}
+	 * @return Object type {@link org.openspcoop2.core.registry.RuoloSoggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RuoloSoggetto readRuoloSoggettoFromString(String in) throws DeserializerException {
+		return (RuoloSoggetto) this.xmlToObj(in.getBytes(), RuoloSoggetto.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: ruoli-soggetto
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.registry.RuoliSoggetto}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.RuoliSoggetto}
+	 * @return Object type {@link org.openspcoop2.core.registry.RuoliSoggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RuoliSoggetto readRuoliSoggetto(String fileName) throws DeserializerException {
+		return (RuoliSoggetto) this.xmlToObj(fileName, RuoliSoggetto.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.registry.RuoliSoggetto}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.RuoliSoggetto}
+	 * @return Object type {@link org.openspcoop2.core.registry.RuoliSoggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RuoliSoggetto readRuoliSoggetto(File file) throws DeserializerException {
+		return (RuoliSoggetto) this.xmlToObj(file, RuoliSoggetto.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.registry.RuoliSoggetto}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.RuoliSoggetto}
+	 * @return Object type {@link org.openspcoop2.core.registry.RuoliSoggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RuoliSoggetto readRuoliSoggetto(InputStream in) throws DeserializerException {
+		return (RuoliSoggetto) this.xmlToObj(in, RuoliSoggetto.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.registry.RuoliSoggetto}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.RuoliSoggetto}
+	 * @return Object type {@link org.openspcoop2.core.registry.RuoliSoggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RuoliSoggetto readRuoliSoggetto(byte[] in) throws DeserializerException {
+		return (RuoliSoggetto) this.xmlToObj(in, RuoliSoggetto.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.registry.RuoliSoggetto}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.RuoliSoggetto}
+	 * @return Object type {@link org.openspcoop2.core.registry.RuoliSoggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public RuoliSoggetto readRuoliSoggettoFromString(String in) throws DeserializerException {
+		return (RuoliSoggetto) this.xmlToObj(in.getBytes(), RuoliSoggetto.class);
 	}	
 	
 	
@@ -1496,6 +1753,69 @@ public abstract class AbstractDeserializer {
 	 */
 	public Azione readAzioneFromString(String in) throws DeserializerException {
 		return (Azione) this.xmlToObj(in.getBytes(), Azione.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: credenziali-soggetto
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.registry.CredenzialiSoggetto}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.CredenzialiSoggetto}
+	 * @return Object type {@link org.openspcoop2.core.registry.CredenzialiSoggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CredenzialiSoggetto readCredenzialiSoggetto(String fileName) throws DeserializerException {
+		return (CredenzialiSoggetto) this.xmlToObj(fileName, CredenzialiSoggetto.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.registry.CredenzialiSoggetto}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.CredenzialiSoggetto}
+	 * @return Object type {@link org.openspcoop2.core.registry.CredenzialiSoggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CredenzialiSoggetto readCredenzialiSoggetto(File file) throws DeserializerException {
+		return (CredenzialiSoggetto) this.xmlToObj(file, CredenzialiSoggetto.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.registry.CredenzialiSoggetto}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.CredenzialiSoggetto}
+	 * @return Object type {@link org.openspcoop2.core.registry.CredenzialiSoggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CredenzialiSoggetto readCredenzialiSoggetto(InputStream in) throws DeserializerException {
+		return (CredenzialiSoggetto) this.xmlToObj(in, CredenzialiSoggetto.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.registry.CredenzialiSoggetto}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.CredenzialiSoggetto}
+	 * @return Object type {@link org.openspcoop2.core.registry.CredenzialiSoggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CredenzialiSoggetto readCredenzialiSoggetto(byte[] in) throws DeserializerException {
+		return (CredenzialiSoggetto) this.xmlToObj(in, CredenzialiSoggetto.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.registry.CredenzialiSoggetto}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.registry.CredenzialiSoggetto}
+	 * @return Object type {@link org.openspcoop2.core.registry.CredenzialiSoggetto}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public CredenzialiSoggetto readCredenzialiSoggettoFromString(String in) throws DeserializerException {
+		return (CredenzialiSoggetto) this.xmlToObj(in.getBytes(), CredenzialiSoggetto.class);
 	}	
 	
 	

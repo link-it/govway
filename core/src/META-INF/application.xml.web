@@ -4,3 +4,9 @@
 			<context-root>openspcoop2</context-root>
 		</web>
 	</module>
+	<module>
+		<web>
+			<web-uri>OpenSPCoop2Sec.war</web-uri>
+			<context-root>openspcoop2sec</context-root>
+		</web>
+	</module>

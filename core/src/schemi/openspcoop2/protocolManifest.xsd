@@ -278,6 +278,7 @@
               <xsd:sequence>
                      <xsd:element name="types" type="OrganizationTypes"/>
               </xsd:sequence>
+              <xsd:attribute name="authentication" type="xsd:boolean" use="optional" default="true"/>
               <xsd:attribute name="codeIPA" type="xsd:boolean" use="optional" default="false"/>
               <xsd:attribute name="replyToAddress" type="xsd:boolean" use="optional" default="false"/> <!-- replyToAddress -->
        </xsd:complexType>

@@ -48,7 +48,6 @@ public class LoginSessionUtilities {
 		Boolean showAccordiPortTypes = core.isShowAccordiColonnaServizi();
 		Boolean gestioneInfoProtocol = core.isShowAccordiInformazioniProtocollo();
 		Boolean soggVirt = core.isShowGestioneSoggettiVirtuali();
-		Boolean ruoli = core.isShowGestioneRuoliServizioApplicativo();
 		Boolean confPers = core.isShowConfigurazioniPersonalizzate();
 		
 		Boolean singlePdD = core.isSinglePdD();
@@ -88,7 +87,6 @@ public class LoginSessionUtilities {
 		session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD, singlePdD);
 		session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_GENERAZIONE_AUTOMATICA_PORTE_DELEGATE, generazioneAutomaticaPD);
 		session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE, showAccordiCooperazione);
-		session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_RUOLI_SA, ruoli);
 		session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE, confPers);
 		session.setAttribute(CostantiControlStation.SESSION_PARAMETRO_SAME_DB_WEBUI, sameDBWebUI);
 	}
@@ -110,7 +108,6 @@ public class LoginSessionUtilities {
 		session.removeAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 		session.removeAttribute(CostantiControlStation.SESSION_PARAMETRO_GENERAZIONE_AUTOMATICA_PORTE_DELEGATE);
 		session.removeAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_COOPERAZIONE);
-		session.removeAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_RUOLI_SA);
 		session.removeAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
 		session.removeAttribute(CostantiControlStation.SESSION_PARAMETRO_SAME_DB_WEBUI);
 		session.removeAttribute(CostantiControlStation.SESSION_PARAMETRO_TIPO_DB);

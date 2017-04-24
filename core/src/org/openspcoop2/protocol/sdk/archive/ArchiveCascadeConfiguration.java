@@ -35,6 +35,8 @@ public class ArchiveCascadeConfiguration {
 		
 		this.cascadePdd = cascadeAllEnabled;
 		
+		this.cascadeRuoli = cascadeAllEnabled;
+		
 		this.cascadeSoggetti = cascadeAllEnabled;
 		
 		this.cascadeServiziApplicativi = cascadeAllEnabled;
@@ -54,6 +56,8 @@ public class ArchiveCascadeConfiguration {
 		
 		config.cascadePdd = this.cascadePdd;
 		
+		config.cascadeRuoli = this.cascadeRuoli;
+		
 		config.cascadeSoggetti = this.cascadeSoggetti;
 		
 		config.cascadeServiziApplicativi = this.cascadeServiziApplicativi;
@@ -71,6 +75,8 @@ public class ArchiveCascadeConfiguration {
 	
 	
 	private boolean cascadePdd = false;
+	
+	private boolean cascadeRuoli = false;
 	
 	private boolean cascadeSoggetti = false;
 	
@@ -90,6 +96,13 @@ public class ArchiveCascadeConfiguration {
 	}
 	public void setCascadePdd(boolean cascadePdd) {
 		this.cascadePdd = cascadePdd;
+	}
+	
+	public boolean isCascadeRuoli() {
+		return this.cascadeRuoli;
+	}
+	public void setCascadeRuoli(boolean cascadeRuoli) {
+		this.cascadeRuoli = cascadeRuoli;
 	}
 	
 	public boolean isCascadeFruizioni() {

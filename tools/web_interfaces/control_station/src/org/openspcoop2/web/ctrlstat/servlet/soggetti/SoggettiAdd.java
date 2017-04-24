@@ -36,6 +36,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Connettore;
+import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -48,14 +49,16 @@ import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.core.registry.constants.CredenzialeTipo;
+import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
-import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -83,6 +86,7 @@ public final class SoggettiAdd extends Action {
 	private String nomeprov , tipoprov, portadom, descr, versioneProtocollo,pdd, codiceIpa, pd_url_prefix_rewriter,pa_url_prefix_rewriter,protocollo;
 	private boolean isRouter,privato; 
 	private Boolean singlePdD = null;
+	private String tipologia = null;
 		
 	// Protocol Properties
 	private IConsoleDynamicConfiguration consoleDynamicConfiguration = null;
@@ -93,6 +97,12 @@ public final class SoggettiAdd extends Action {
 	private ConsoleOperationType consoleOperationType = null;
 	private ConsoleInterfaceType consoleInterfaceType = null;
 
+	private String tipoauthSoggetto = null;
+	private String utenteSoggetto = null;
+	private String passwordSoggetto = null;
+	private String subjectSoggetto = null;
+	private String principalSoggetto = null;
+	
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		HttpSession session = request.getSession(true);
@@ -118,6 +128,7 @@ public final class SoggettiAdd extends Action {
 			this.protocollo = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_PROTOCOLLO);
 			this.nomeprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_NOME);
 			this.tipoprov = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO);
+			this.tipologia = request.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPOLOGIA);
 			this.portadom = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_PORTA);
 			this.descr = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DESCRIZIONE);
 			this.versioneProtocollo = soggettiHelper.getParameter(SoggettiCostanti.PARAMETRO_SOGGETTO_VERSIONE_PROTOCOLLO);
@@ -135,6 +146,13 @@ public final class SoggettiAdd extends Action {
 
 			this.editMode = soggettiHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			
+			this.tipoauthSoggetto = request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE);
+			this.utenteSoggetto = request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+			this.passwordSoggetto = request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+			this.subjectSoggetto = request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
+			this.principalSoggetto = request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
+			
+			boolean isRouter = ServletUtils.isCheckBoxEnabled(is_router);
 
 			// Preparo il menu
 			soggettiHelper.makeMenu();
@@ -220,6 +238,37 @@ public final class SoggettiAdd extends Action {
 			}
 			boolean isSupportatoCodiceIPA = soggettiCore.isSupportatoCodiceIPA(this.protocollo); 
 
+			boolean isSupportatoAutenticazioneSoggetti = soggettiCore.isSupportatoAutenticazioneSoggetti(this.protocollo);
+			boolean isPddEsterna = false;
+			if(this.pdd!=null && !"".equals(this.pdd)){
+				isPddEsterna = pddCore.isPddEsterna(this.pdd);
+				if(isSupportatoAutenticazioneSoggetti){
+					if(isPddEsterna){
+						
+						if(this.tipologia==null || "".equals(this.tipologia)){
+							this.tipologia = SoggettiCostanti.SOGGETTO_RUOLO_EROGATORE;
+						}
+						
+						if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA.equals(this.tipoauthSoggetto)){
+							this.tipoauthSoggetto = null;
+						}
+					}
+					if (this.tipoauthSoggetto == null) {
+						if(isPddEsterna){
+							
+							if(SoggettiCostanti.SOGGETTO_RUOLO_FRUITORE.equals(this.tipologia) || SoggettiCostanti.SOGGETTO_RUOLO_ENTRAMBI.equals(this.tipologia)){
+								this.tipoauthSoggetto = soggettiCore.getAutenticazione_generazioneAutomaticaPorteApplicative();
+							}else{
+								this.tipoauthSoggetto = ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA;
+							}						
+						}
+						else{
+							this.tipoauthSoggetto = ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA;
+						}
+					}
+				}
+			}
+			
 
 			IDSoggetto idSoggetto = new IDSoggetto(this.tipoprov,this.nomeprov);
 			this.protocolFactory  = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.protocollo); 
@@ -252,10 +301,12 @@ public final class SoggettiAdd extends Action {
 
 				// update della configurazione 
 				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idSoggetto); 
-
-				dati = soggettiHelper.addSoggettiToDati(tipoOp,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
-						this.isRouter, tipiSoggetti, this.versioneProtocollo, this.privato,this.codiceIpa,versioniProtocollo,isSupportatoCodiceIPA,
-						pddList,nomePddGestioneLocale, listaTipiProtocollo, this.protocollo );
+				dati = soggettiHelper.addSoggettiToDati(TipoOperazione.ADD,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
+						isRouter, tipiSoggetti, this.versioneProtocollo, this.privato,this.codiceIpa,versioniProtocollo,isSupportatoCodiceIPA,
+						pddList,nomePddGestioneLocale, this.pdd, 
+						listaTipiProtocollo, this.protocollo ,
+						isSupportatoAutenticazioneSoggetti,this.utenteSoggetto,this.passwordSoggetto,this.subjectSoggetto,this.principalSoggetto,this.tipoauthSoggetto,
+						isPddEsterna,this.tipologia);
 
 				// aggiunta campi custom
 				dati = soggettiHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType , this.protocolProperties);
@@ -323,9 +374,12 @@ public final class SoggettiAdd extends Action {
 				// update della configurazione 
 				this.consoleDynamicConfiguration.updateDynamicConfigSoggetto(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idSoggetto); 
 
-				dati = soggettiHelper.addSoggettiToDati(tipoOp,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
-						this.isRouter, tipiSoggetti, this.versioneProtocollo, this.privato,this.codiceIpa,versioniProtocollo,isSupportatoCodiceIPA,
-						pddList,nomePddGestioneLocale, listaTipiProtocollo, this.protocollo);
+				dati = soggettiHelper.addSoggettiToDati(TipoOperazione.ADD,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
+						isRouter, tipiSoggetti, this.versioneProtocollo, this.privato,this.codiceIpa,versioniProtocollo,isSupportatoCodiceIPA,
+						pddList,nomePddGestioneLocale, this.pdd,  
+						listaTipiProtocollo, this.protocollo,
+						isSupportatoAutenticazioneSoggetti,this.utenteSoggetto,this.passwordSoggetto,this.subjectSoggetto,this.principalSoggetto,this.tipoauthSoggetto,
+						isPddEsterna,this.tipologia);
 
 				// aggiunta campi custom
 				dati = soggettiHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties);
@@ -372,6 +426,23 @@ public final class SoggettiAdd extends Action {
 				}
 				soggettoRegistro.setSuperUser(userLogin);
 				soggettoRegistro.setPrivato(this.privato);
+				
+				if(isSupportatoAutenticazioneSoggetti){
+					if(this.tipoauthSoggetto!=null && !"".equals(this.tipoauthSoggetto) && !ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA.equals(this.tipoauthSoggetto)){
+						CredenzialiSoggetto credenziali = new CredenzialiSoggetto();
+						credenziali.setTipo(CredenzialeTipo.toEnumConstant(this.tipoauthSoggetto));
+						credenziali.setUser(this.utenteSoggetto);
+						if(this.principalSoggetto!=null && !"".equals(this.principalSoggetto)){
+							credenziali.setUser(this.principalSoggetto); // al posto di user
+						}
+						credenziali.setPassword(this.passwordSoggetto);
+						credenziali.setSubject(this.subjectSoggetto);
+						soggettoRegistro.setCredenziali(credenziali);
+					}
+					else{
+						soggettoRegistro.setCredenziali(null);
+					}
+				}
 			}
 
 			Connettore connettore = null;

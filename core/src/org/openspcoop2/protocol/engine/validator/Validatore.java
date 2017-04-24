@@ -255,8 +255,10 @@ public class Validatore  {
 			}
 			
 			// Costruzione IDMittente e IDServizio
-			this.mittente = new IDSoggetto(this.busta.getTipoMittente(),this.busta.getMittente());
-			this.mittente.setCodicePorta(this.busta.getIdentificativoPortaMittente());
+			if(this.busta.getTipoMittente()!=null && this.busta.getMittente()!=null){
+				this.mittente = new IDSoggetto(this.busta.getTipoMittente(),this.busta.getMittente());
+				this.mittente.setCodicePorta(this.busta.getIdentificativoPortaMittente());
+			}
 			this.servizio = IDServizioFactory.getInstance().getIDServizioFromValues(this.busta.getTipoServizio(),this.busta.getServizio(), 
 					this.busta.getTipoDestinatario(),this.busta.getDestinatario(),
 					this.busta.getVersioneServizio());
@@ -323,7 +325,13 @@ public class Validatore  {
 				if(rispostaConnectionReply){
 					this.versioneProtocollo = profiloGestione;
 				}else{
-					this.versioneProtocollo = ValidazioneSemantica.riconoscimentoVersioneProtocolloServizioErogato(this.busta, this.protocolFactory.createTraduttore(), this.ruoloBustaRicevuta, this.state);
+					if(this.busta!=null && this.busta.getMittente()!=null && this.busta.getTipoMittente()!=null){
+						this.versioneProtocollo = ValidazioneSemantica.riconoscimentoVersioneProtocolloServizioErogato(this.busta, this.protocolFactory.createTraduttore(), this.ruoloBustaRicevuta, this.state);
+					}
+					else{
+						// caso di protocollo che non richiedono l'autenticazione del soggetto
+						this.versioneProtocollo = profiloGestione;
+					}
 				}
 			}catch(Exception e){
 				// L'eventuale errore, e' dovuto al non riconoscimento nel registro dei servizi del soggetto mittente o destinatario.
@@ -662,6 +670,10 @@ public class Validatore  {
 		return this.mittente;
 	}
 
+	public void setMittente(IDSoggetto mittente) {
+		this.mittente = mittente;
+	}
+	
 	/**
 	 * Identificativo del servizio presente nella busta.
 	 *

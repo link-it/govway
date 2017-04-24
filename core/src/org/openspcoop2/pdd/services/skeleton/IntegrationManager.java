@@ -44,11 +44,12 @@ import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.PdDContext;
-import org.openspcoop2.pdd.core.autenticazione.Credenziali;
-import org.openspcoop2.pdd.core.autenticazione.GestoreCredenzialiConfigurationException;
-import org.openspcoop2.pdd.core.autenticazione.IAutenticazione;
-import org.openspcoop2.pdd.core.autenticazione.IGestoreCredenzialiIM;
+import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
+import org.openspcoop2.pdd.core.autenticazione.pd.EsitoAutenticazionePortaDelegata;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
+import org.openspcoop2.pdd.core.credenziali.Credenziali;
+import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiConfigurationException;
+import org.openspcoop2.pdd.core.credenziali.IGestoreCredenzialiIM;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.IntegrationManagerRequestContext;
@@ -304,18 +305,9 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 		
 		// Autenticazione
 		String credenzialiFornite = "";
-		if (credenziali.getUsername() != null || credenziali.getSubject() != null) {
-			credenzialiFornite = "(";
-			if (credenziali.getUsername() != null){
-				if(credenziali.getPassword()==null || "".equals(credenziali.getPassword()) )
-					credenzialiFornite = credenzialiFornite + " Basic Username: "+ credenziali.getUsername() + "  Basic Password: non definita";
-				else
-					credenzialiFornite = credenzialiFornite + " Basic Username: "+ credenziali.getUsername() + " ";
-			}
-			if (credenziali.getSubject() != null)
-				credenzialiFornite = credenzialiFornite + " SSL Subject: "+ credenziali.getSubject() + " ";
-			credenzialiFornite = credenzialiFornite + ") ";
-		}
+		if(credenziali!=null){
+			credenzialiFornite = credenziali.toString();
+		}		
 		msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_SA_FRUITORE, credenzialiFornite);
 
 		IDServizioApplicativo servizio_applicativo = null;	    
@@ -333,29 +325,30 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			}
 		}
 		
-		Loader loader = Loader.getInstance();
-		
 		StringBuffer errori = new StringBuffer();
 		for(int i=0; i<tipoAutenticazione.length; i++){
 			
-			// Autenticazione: Caricamento classe
-			String authClass = this.className.getAutenticazione(tipoAutenticazione[i]);
-			IAutenticazione auth = null;
+			org.openspcoop2.pdd.core.autenticazione.pd.DatiInvocazionePortaDelegata datiInvocazione = new org.openspcoop2.pdd.core.autenticazione.pd.DatiInvocazionePortaDelegata();
+			datiInvocazione.setInfoConnettoreIngresso(infoConnettoreIngresso);
+			
+			EsitoAutenticazionePortaDelegata esito = null;
 			try{
-				auth = (IAutenticazione) loader.newInstance(authClass);
-				AbstractCore.init(auth, pddContext, protocolFactory);
+				esito = GestoreAutenticazione.verificaAutenticazioneMessageBox(tipoAutenticazione[i], datiInvocazione, pddContext, protocolFactory); 
 			}catch(Exception e){
-				msgDiag.logErroreGenerico(e,"Autenticazione("+tipoAutenticazione+") Class.forName("+authClass+")");
+				msgDiag.logErroreGenerico(e,"Autenticazione("+tipoAutenticazione[i]+")");
 				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_503_AUTENTICAZIONE));
-			}	 
-			
-			// Autenticazione: Controllo
-			if(auth.process(infoConnettoreIngresso,null)==false){
-				if(errori.length()>0)
+			}	
+			if(esito.getDetails()==null){
+				msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
+			}else{
+				msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
+			}
+			if (esito.isClientIdentified() == false) {
+				if(errori.length()>0 || tipoAutenticazione.length>1)
 					errori.append("\n");
 				try{
-					errori.append("(Autenticazione " +tipoAutenticazione[i]+") "+ auth.getErrore().getDescrizione(protocolFactory));
+					errori.append("(Autenticazione " +tipoAutenticazione[i]+") "+ esito.getErroreIntegrazione().getDescrizione(protocolFactory));
 				}catch(Exception e){
 					OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Errore durante la comprensione dell'errore: "+e.getMessage(),e);
 					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -363,7 +356,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				}
 			}
 			else{
-				servizio_applicativo = auth.getServizioApplicativo();
+				servizio_applicativo = esito.getIdServizioApplicativo();
 				break; //sa individuato
 			}
 		}
@@ -882,7 +875,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			boolean authorized = gestoreMessaggi.checkAutorizzazione(id_servizio_applicativo.getNome(),isRiferimentoMessaggio);
 			if(authorized==false){
 				msgDiag.logPersonalizzato("servizioApplicativo.nonAutorizzato");
-				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA.getErrore404_AutorizzazioneFallita(id_servizio_applicativo.getNome()),
+				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
+						getErrore404_AutorizzazioneFallitaServizioApplicativo(id_servizio_applicativo.getNome()),
 						id_servizio_applicativo);
 			}
 
@@ -1242,7 +1236,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			boolean authorized = gestoreMessaggi.checkAutorizzazione(servizio_applicativo,isRiferimentoMessaggio);
 			if(authorized==false){
 				msgDiag.logPersonalizzato("servizioApplicativo.nonAutorizzato");
-				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA.getErrore404_AutorizzazioneFallita(servizio_applicativo),
+				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.
+						getErrore404_AutorizzazioneFallitaServizioApplicativo(servizio_applicativo),
 						id_servizio_applicativo);
 			}
 
@@ -1490,7 +1485,8 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 				boolean authorized = gestoreMessaggi.checkAutorizzazione(id_servizio_applicativo.getNome());
 				if(authorized==false){
 					msgDiag.logPersonalizzato("servizioApplicativo.nonAutorizzato");
-					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA.getErrore404_AutorizzazioneFallita(id_servizio_applicativo.getNome()),
+					throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA
+							.getErrore404_AutorizzazioneFallitaServizioApplicativo(id_servizio_applicativo.getNome()),
 							id_servizio_applicativo);
 				}
 			}

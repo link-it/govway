@@ -57,8 +57,8 @@ CREATE TABLE msgdiag_correlazione
 	porta VARCHAR2(255),
 	-- (1/0 true/false) True se siamo in un contesto di porta delegata, False se in un contesto di porta applicativa
 	delegata NUMBER NOT NULL,
-	tipo_fruitore VARCHAR2(255) NOT NULL,
-	fruitore VARCHAR2(255) NOT NULL,
+	tipo_fruitore VARCHAR2(255),
+	fruitore VARCHAR2(255),
 	tipo_erogatore VARCHAR2(255) NOT NULL,
 	erogatore VARCHAR2(255) NOT NULL,
 	tipo_servizio VARCHAR2(255) NOT NULL,

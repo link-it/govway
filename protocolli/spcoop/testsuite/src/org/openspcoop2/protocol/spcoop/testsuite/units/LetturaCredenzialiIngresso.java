@@ -31,7 +31,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.core.CostantiPdD;
-import org.openspcoop2.pdd.core.autenticazione.GestoreCredenzialiTest;
+import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiTest;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;

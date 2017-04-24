@@ -34,7 +34,9 @@ import org.slf4j.Logger;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCParameterUtilities;
 import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCSqlLogger;
@@ -500,6 +502,52 @@ public class DBUtils {
 	
 	
 	
+	
+	public static long getIdRuolo(IDRuolo idRuolo, Connection con, String tipoDB) throws CoreException
+	{
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		long idPdD=-1;
+		try
+		{
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.RUOLI);
+			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addWhereCondition("nome = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String query = sqlQueryObject.createSQLQuery();
+			stm=con.prepareStatement(query);
+			stm.setString(1, idRuolo.getNome());
+
+			rs=stm.executeQuery();
+
+			if(rs.next()){
+				idPdD = rs.getLong("id");
+			}
+
+			return idPdD;
+
+		}catch (SQLException e) {
+			throw new CoreException(e);
+		}catch (Exception e) {
+			throw new CoreException(e);
+		}finally
+		{
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+		}
+	}
+	
+	
+	
+	
+	
 
 	public static long getIdAccordoServizioParteComune(String nomeServizio, String tipoServizio,Integer versioneServizio, String nomeSoggettoErogatore,String tipoSoggettoErogatore,Connection con, String tipoDB) throws CoreException
 	{
@@ -726,6 +774,59 @@ public class DBUtils {
 			}
 
 			return idAccordoLong;
+
+		}catch (SQLException e) {
+			throw new CoreException(e);
+		}catch (Exception e) {
+			throw new CoreException(e);
+		}finally
+		{
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+		}
+	}
+	
+	
+	public static long getIdFruizioneServizio(IDServizio idServizio,IDSoggetto idFruitore, Connection con, String tipoDB) throws CoreException{
+		return getIdFruizioneServizio(idServizio, idFruitore, con, tipoDB, CostantiDB.SOGGETTI);
+	}
+	public static long getIdFruizioneServizio(IDServizio idServizio,IDSoggetto idFruitore, Connection con, String tipoDB, String tabellaSoggetti) throws CoreException{
+		return _getIdFruizioneServizio(DBUtils.getIdAccordoServizioParteSpecifica(idServizio, con, tipoDB), idFruitore, con, tipoDB, tabellaSoggetti);
+	}
+	
+	private static long _getIdFruizioneServizio(long idServizio,IDSoggetto idFruitore, Connection con, String tipoDB, String tabellaSoggetti) throws CoreException{
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		long idFruizione=-1;
+		try
+		{
+			
+			// NOTA: nell'APS, il soggetto e la versione sono obbligatori
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_servizio = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI+".id_soggetto = ?");
+			String query = sqlQueryObject.createSQLQuery();
+			stm=con.prepareStatement(query);
+			stm.setLong(1, idServizio);
+			stm.setLong(2, DBUtils.getIdSoggetto(idFruitore.getNome(), idFruitore.getTipo(), con, tipoDB,tabellaSoggetti));
+			
+			rs=stm.executeQuery();
+
+			if(rs.next()){
+				idFruizione = rs.getLong("id");
+			}
+
+			return idFruizione;
 
 		}catch (SQLException e) {
 			throw new CoreException(e);

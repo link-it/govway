@@ -226,6 +226,7 @@
   <mapping name="organization" class="org.openspcoop2.protocol.manifest.Organization">
     <namespace uri="http://www.openspcoop2.org/protocol/manifest" default="elements"/>
     <structure field="types" usage="required" map-as="org.openspcoop2.protocol.manifest.OrganizationTypes"/>
+    <value name="authentication" field="authentication" default="true" usage="optional" style="attribute"/>
     <value name="codeIPA" field="codeIPA" default="false" usage="optional" style="attribute"/>
     <value name="replyToAddress" field="replyToAddress" default="false" usage="optional" style="attribute"/>
   </mapping>

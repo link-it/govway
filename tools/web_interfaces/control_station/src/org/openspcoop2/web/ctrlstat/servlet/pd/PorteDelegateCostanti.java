@@ -22,6 +22,8 @@ package org.openspcoop2.web.ctrlstat.servlet.pd;
 import java.util.Vector;
 
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
@@ -44,6 +46,8 @@ public class PorteDelegateCostanti {
 	public final static String OBJECT_NAME_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE = "porteDelegateWSResponse";
 	
 	public final static String OBJECT_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO = "porteDelegateServizioApplicativo";
+	
+	public final static String OBJECT_NAME_PORTE_DELEGATE_RUOLI = "porteDelegateRuoli";
 	
 	public final static String OBJECT_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST = "porteDelegateCorrelazioneApplicativaRequest";
 	public final static String OBJECT_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RESPONSE = "porteDelegateCorrelazioneApplicativaResponse";
@@ -105,6 +109,16 @@ public class PorteDelegateCostanti {
 		SERVLET_PORTE_DELEGATE.add(SERVLET_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_ADD);
 		SERVLET_PORTE_DELEGATE.add(SERVLET_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_DELETE);
 		SERVLET_PORTE_DELEGATE.add(SERVLET_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_LIST);
+	}
+	
+	public final static String SERVLET_NAME_PORTE_DELEGATE_RUOLI_ADD = OBJECT_NAME_PORTE_DELEGATE_RUOLI+"Add.do";
+	public final static String SERVLET_NAME_PORTE_DELEGATE_RUOLI_DELETE = OBJECT_NAME_PORTE_DELEGATE_RUOLI+"Del.do";
+	public final static String SERVLET_NAME_PORTE_DELEGATE_RUOLI_LIST = OBJECT_NAME_PORTE_DELEGATE_RUOLI+"List.do";
+	public final static Vector<String> SERVLET_PORTE_DELEGATE_RUOLI = new Vector<String>();
+	static{
+		SERVLET_PORTE_DELEGATE.add(SERVLET_NAME_PORTE_DELEGATE_RUOLI_ADD);
+		SERVLET_PORTE_DELEGATE.add(SERVLET_NAME_PORTE_DELEGATE_RUOLI_DELETE);
+		SERVLET_PORTE_DELEGATE.add(SERVLET_NAME_PORTE_DELEGATE_RUOLI_LIST);
 	}
 
 	public final static String SERVLET_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST_ADD = OBJECT_NAME_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST+"Add.do";
@@ -177,6 +191,9 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PORTE_DELEGATE = "Porte Delegate";
 
 	public final static String LABEL_PD_MENU_VISUALE_AGGREGATA = "Porte Delegate";
+	
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTO = "Soggetto";
+	
 
 	/* PARAMETRI */
 
@@ -188,7 +205,6 @@ public class PorteDelegateCostanti {
 	public final static String PARAMETRO_PORTE_DELEGATE_TIPO_SOGGETTO = "tipoprov";
 	public final static String PARAMETRO_PORTE_DELEGATE_NOME_SOGGETTO = "nomeprov";
 	public final static String PARAMETRO_PORTE_DELEGATE_DESCRIZIONE = "descr";
-	public final static String PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE = "autenticazione";
 	public final static String PARAMETRO_PORTE_DELEGATE_TIPO_SERVIZIO = "tiposervizio";
 	public final static String PARAMETRO_PORTE_DELEGATE_MODE_SERVIZIO = "modeservizio";
 	public final static String PARAMETRO_PORTE_DELEGATE_SERVIZIO = "servizio";
@@ -206,9 +222,6 @@ public class PorteDelegateCostanti {
 	public final static String PARAMETRO_PORTE_DELEGATE_AZIONE_ID = "azid";
 	public final static String PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA = "ricsim";
 	public final static String PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA = "ricasim";
-	public final static String PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE = "autorizzazione";
-	public final static String PARAMETRO_PORTE_DELEGATE_NOME_AUTORIZZAZIONE = "nomeautor";
-	public final static String PARAMETRO_PORTE_DELEGATE_NOME_AUTENTICAZIONE = "nomeauth";
 	public final static String PARAMETRO_PORTE_DELEGATE_SOGGETTO_ID = "soggid";
 	public final static String PARAMETRO_PORTE_DELEGATE_SERVIZIO_ID = "servid";
 	public final static String PARAMETRO_PORTE_DELEGATE_SP = "sp";
@@ -222,7 +235,7 @@ public class PorteDelegateCostanti {
 	public final static String PARAMETRO_PORTE_DELEGATE_MODE = "mode";
 	public final static String PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML = "elemxml";
 	public final static String PARAMETRO_PORTE_DELEGATE_GESTIONE_IDENTIFICAZIONE_FALLITA = "gif";
-	public final static String PARAMETRO_PORTE_DELEGATE_PATTERN = "pattern";
+	public final static String PARAMETRO_PORTE_DELEGATE_PATTERN = CostantiControlStation.PARAMETRO_PATTERN;
 	public final static String PARAMETRO_PORTE_DELEGATE_RIUSO_ID_MESSAGGIO = "riusoIdMessaggio";
 	public final static String PARAMETRO_PORTE_DELEGATE_VALORE = "valore";
 	public final static String PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY = "messageSecurity";
@@ -248,7 +261,8 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTI = "Soggetti";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTO_EROGATORE = "Soggetto Erogatore";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_PORTE_DELEGATE_DI = "Porte Delegate di ";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_DI = "Servizio Applicativo di ";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_DI = "Servizi Applicativi di ";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RUOLI_DI = "Ruoli di ";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_DI = "Message-Security di ";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_DI = "Message-Security request-flow di ";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE_FLOW_DI = "Message-Security response-flow di ";
@@ -261,10 +275,6 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VALORE = "Valore";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_TIPO = "Tipo";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_DESCRIZIONE = "Descrizione";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE = "Autenticazione";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE = "Autorizzazione";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI = "Autorizzazione Contenuti";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONTROLLO_ACCESSI = "Controllo degli Accessi";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_VALIDAZIONE_CONTENUTI = "Validazione Contenuti";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE = "Tipo Validazione";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_INTEGRAZIONE = "Integrazione";
@@ -299,6 +309,7 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SCADENZA_CORRELAZIONE_APPLICATIVA = "Scadenza Correlazione Applicativa<BR/>(Riuso ID Protocollo)";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA = "Correlazione Applicativa";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZI_APPLICATIVI = "Servizi Applicativi";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RUOLI = "Ruoli";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO = "Servizio Applicativo";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_IDENTIFICAZIONE_FALLITA = "Gestione identificazione fallita";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RIUSO_ID_MESSAGGIO = "Riuso ID";
@@ -323,13 +334,8 @@ public class PorteDelegateCostanti {
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED = "input-based";
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED = "soap-action-based";
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED = "wsdl-based";
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE_SSL = CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_SSL.toString(); 
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE_BASIC = CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC.toString();
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE_NONE = CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_NONE.toString();
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE_CUSTOM =  "custom";
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE_OPENSPCOOP = CostantiConfigurazione.AUTORIZZAZIONE_OPENSPCOOP;
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE_CUSTOM = "custom";
-	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE_NONE = CostantiConfigurazione.AUTORIZZAZIONE_NONE;
+	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE =  TipoAutenticazione.SSL.getValue();
+	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE = TipoAutorizzazione.AUTHENTICATED.getValue();
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_STATELESS_DEFAULT = "default";
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_STATELESS_ABILITATO = CostantiConfigurazione.ABILITATO.toString();
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_STATELESS_DISABILITATO = CostantiConfigurazione.DISABILITATO.toString();

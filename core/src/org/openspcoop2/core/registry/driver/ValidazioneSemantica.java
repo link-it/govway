@@ -43,6 +43,7 @@ import org.openspcoop2.core.registry.ConfigurazioneServizio;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore;
 import org.openspcoop2.core.registry.Connettore;
+import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.IdSoggetto;
@@ -52,10 +53,12 @@ import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Property;
+import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.BindingStyle;
 import org.openspcoop2.core.registry.constants.BindingUse;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
+import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
@@ -64,6 +67,7 @@ import org.openspcoop2.core.registry.constants.TipiDocumentoCoordinamento;
 import org.openspcoop2.core.registry.constants.TipiDocumentoLivelloServizio;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.regexp.RegExpUtilities;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.slf4j.Logger;
@@ -253,6 +257,17 @@ public class ValidazioneSemantica {
 			if(showIDOggettiAnalizzati)
 				printMsg("Porta di dominio: "+pd.getNome());
 			validaPortaDominio(pd);
+		}
+		
+		if(showIDOggettiAnalizzati)
+			printMsg("\n\n------------------------------------Ruoli("+this.registro.sizeRuoloList()+")-----------------------------------------------------");
+
+		// ruoli
+		for(int i=0; i<this.registro.sizeRuoloList();i++){
+			Ruolo ruolo = this.registro.getRuolo(i);
+			if(showIDOggettiAnalizzati)
+				printMsg("Ruolo: "+ruolo.getNome());
+			validaRuolo(ruolo);
 		}
 
 		if(showIDOggettiAnalizzati)
@@ -957,7 +972,81 @@ public class ValidazioneSemantica {
 				this.errori.add("La porta di dominio ["+sogg.getPortaDominio()+"] del soggetto "+sogg.getTipo()+"/"+sogg.getNome()+" non corrisponde a nessuna delle porte di dominio registrate");
 			}
 		}
+		
+		// credenziali
+		if(sogg.getCredenziali()!=null){
+			this.validaCredenziale(sogg.getCredenziali(), "soggetto "+sogg.getTipo()+"/"+sogg.getNome());
+		}
+		
+		// ruoli
+		if(sogg.getRuoli()!=null){
+			for (int i = 0; i < sogg.getRuoli().sizeRuoloList(); i++) {
+				String nomeRuolo = sogg.getRuoli().getRuolo(i).getNome();
+				try{
+					if (!RegularExpressionEngine.isMatch(nomeRuolo,"^[0-9A-Za-z_]+$")) {
+						this.errori.add("Il ruolo ["+nomeRuolo+"] del soggetto "+sogg.getTipo()+"/"+sogg.getNome()+" dev'essere formato solo da caratteri, cifre e '_'");
+					}
+				}catch(Exception e){
+					throw new DriverRegistroServiziException("Errore durante l'analisi tramite espressione regolare del nome del ruolo "+nomeRuolo+" del soggetto "+sogg.getTipo()+"/"+sogg.getNome()+" :" +e.getMessage(),e);
+				}
+			}
+			// Ogni ruolo deve avere un nome diverso!
+			for (int i = 0; i < sogg.getRuoli().sizeRuoloList(); i++) {
+				int numRuolo = 0;
+				String tmpRuolo = sogg.getRuoli().getRuolo(i).getNome();
+				for (int j = 0; j < sogg.getRuoli().sizeRuoloList(); j++) {
+					String checkRuolo = sogg.getRuoli().getRuolo(j).getNome();
+					if (checkRuolo.equals(tmpRuolo))
+						numRuolo++;	
+				}
+				if (numRuolo > 1)
+					this.errori.add("Non può esistere più di un ruolo con nome "+tmpRuolo+". Trovate "+numRuolo+" occorrenze nel soggetto "+sogg.getTipo()+"/"+sogg.getNome());
+			}
+		}
 
+	}
+	
+	private  void validaCredenziale(CredenzialiSoggetto c, String oggetto) throws DriverRegistroServiziException {
+		// Se il tipo e' basic, username e password sono OBBLIGATORI
+		
+		CredenzialeTipo tipo = CredenzialeTipo.SSL;
+		if(c.getTipo()!=null){
+			tipo = c.getTipo();
+		}
+		if ( !tipo.equals(CredenzialeTipo.BASIC) && 
+				!tipo.equals(CredenzialeTipo.SSL) && 
+				!tipo.equals(CredenzialeTipo.PRINCIPAL))
+			this.errori.add("Il tipo delle credenziali del "+oggetto+" deve possedere i valori: "+
+					CredenzialeTipo.BASIC.toString()+" o "+
+					CredenzialeTipo.SSL.toString()+" o "+
+					CredenzialeTipo.PRINCIPAL.toString());
+		
+		
+		if (c.getTipo().equals(CredenzialeTipo.BASIC)) {
+			if ((c.getUser() == null) || (c.getUser().equals("")) || (c.getPassword() == null) || (c.getPassword().equals("")))
+				this.errori.add("Le credenziali di tipo basic del "+oggetto+" devono avere username e password valorizzati");
+		}
+
+		// Se il tipo e' ssl, subject e' OBBLIGATORIO
+		if (c.getTipo().equals(CredenzialeTipo.SSL)){
+			if ((c.getSubject() == null) || (c.getSubject().equals(""))){
+				this.errori.add("Le credenziali di tipo ssl del "+oggetto+" devono avere subject valorizzato");
+			}else{
+				try{
+					Utilities.validaSubject(c.getSubject());
+				}catch(Exception e){
+					this.errori.add("Le credenziali di tipo ssl del "+oggetto+" possiedono un subject non valido: "+e.getMessage());
+				}
+			}
+		}
+			
+		// Se il tipo e' principal, user e' OBBLIGATORIO
+		if (c.getTipo().equals(CredenzialeTipo.PRINCIPAL)){
+			if ((c.getUser() == null) || (c.getUser().equals(""))){
+				this.errori.add("Le credenziali di tipo principal del "+oggetto+" devono avere user valorizzato");
+			}
+		}
+		
 	}
 
 	private  void validaAccordoServizioParteSpecifica(AccordoServizioParteSpecifica asps, Soggetto sogg) throws DriverRegistroServiziException {
@@ -1323,6 +1412,35 @@ public class ValidazioneSemantica {
 		}
 		if (numPd > 1)
 			this.errori.add("Non può esistere più di una porta di dominio con nome "+pdd.getNome());
+	
+	}
+	
+	private  void validaRuolo(Ruolo ruolo) throws DriverRegistroServiziException {
+		
+		// required
+		if(ruolo.getNome()==null){
+			this.errori.add("Esiste un ruolo senza nome");
+			return;
+		}
+		
+		// Controllo sul nome
+		try{
+			if (!RegularExpressionEngine.isMatch(ruolo.getNome(),"^[0-9A-Za-z_]+$")) {
+				this.errori.add("Il nome del ruolo dev'essere formato solo da caratteri, cifre e '_'");
+			}
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("Errore durante l'analisi tramite espressione regolare del nome del ruolo :" +e.getMessage(),e);
+		}	
+		
+		// Ogni ruolo deve avere un nome diverso!
+		int numRuolo = 0;
+		for(int j=0; j<this.registro.sizeRuoloList();j++){
+			Ruolo tmpRuolo = this.registro.getRuolo(j);
+			if (ruolo.getNome().equals(tmpRuolo.getNome()))
+				numRuolo++;
+		}
+		if (numRuolo > 1)
+			this.errori.add("Non può esistere più di un ruolo con nome "+ruolo.getNome());
 	
 	}
 

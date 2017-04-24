@@ -245,6 +245,90 @@
 			<param name="stubJavaClassNameClient" value="PortaDominio_PortaDominioPortSoap12_Client.java"/>
 		</antcall>
 
+
+
+
+
+
+
+
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value="All"/>
+			<param name="stubClassEntity" value="Ruolo"/>
+			<param name="stubVariableEntity" value="ruolo"/>
+			<param name="stubSoapVersion" value="11"/>
+			<param name="stubOutputDir" value="${src_dir_registry_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.registry.ws.client.ruolo.all"/>
+			<param name="stubWsdl" value="deploy/wsdl/RuoloAll_PortSoap11.wsdl"/>
+			<param name="stubDirClient" value="${src_dir_registry_ws_client}/org/openspcoop2/core/registry/ws/client/ruolo/all"/>
+			<param name="stubJavaClassNameClient" value="Ruolo_RuoloPortSoap11_Client.java"/>
+		</antcall>
+
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value="All"/>
+			<param name="stubClassEntity" value="Ruolo"/>
+			<param name="stubVariableEntity" value="ruolo"/>
+			<param name="stubSoapVersion" value="12"/>
+			<param name="stubOutputDir" value="${src_dir_registry_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.registry.ws.client.ruolo.all"/>
+			<param name="stubWsdl" value="deploy/wsdl/RuoloAll_PortSoap12.wsdl"/>
+			<param name="stubDirClient" value="${src_dir_registry_ws_client}/org/openspcoop2/core/registry/ws/client/ruolo/all"/>
+			<param name="stubJavaClassNameClient" value="Ruolo_RuoloPortSoap12_Client.java"/>
+		</antcall>
+
+
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value="Search"/>
+			<param name="stubClassEntity" value="Ruolo"/>
+			<param name="stubVariableEntity" value="ruolo"/>
+			<param name="stubSoapVersion" value="11"/>
+			<param name="stubOutputDir" value="${src_dir_registry_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.registry.ws.client.ruolo.search"/>
+			<param name="stubWsdl" value="deploy/wsdl/RuoloSearch_PortSoap11.wsdl"/>
+			<param name="stubDirClient" value="${src_dir_registry_ws_client}/org/openspcoop2/core/registry/ws/client/ruolo/search"/>
+			<param name="stubJavaClassNameClient" value="Ruolo_RuoloPortSoap11_Client.java"/>
+		</antcall>
+
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value="Search"/>
+			<param name="stubClassEntity" value="Ruolo"/>
+			<param name="stubVariableEntity" value="ruolo"/>
+			<param name="stubSoapVersion" value="12"/>
+			<param name="stubOutputDir" value="${src_dir_registry_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.registry.ws.client.ruolo.search"/>
+			<param name="stubWsdl" value="deploy/wsdl/RuoloSearch_PortSoap12.wsdl"/>
+			<param name="stubDirClient" value="${src_dir_registry_ws_client}/org/openspcoop2/core/registry/ws/client/ruolo/search"/>
+			<param name="stubJavaClassNameClient" value="Ruolo_RuoloPortSoap12_Client.java"/>
+		</antcall>
+
+
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value="CRUD"/>
+			<param name="stubClassEntity" value="Ruolo"/>
+			<param name="stubVariableEntity" value="ruolo"/>
+			<param name="stubSoapVersion" value="11"/>
+			<param name="stubOutputDir" value="${src_dir_registry_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.registry.ws.client.ruolo.crud"/>
+			<param name="stubWsdl" value="deploy/wsdl/RuoloCRUD_PortSoap11.wsdl"/>
+			<param name="stubDirClient" value="${src_dir_registry_ws_client}/org/openspcoop2/core/registry/ws/client/ruolo/crud"/>
+			<param name="stubJavaClassNameClient" value="Ruolo_RuoloPortSoap11_Client.java"/>
+		</antcall>
+
+		<antcall target="-generateStub">
+			<param name="stubInterfaceType" value="CRUD"/>
+			<param name="stubClassEntity" value="Ruolo"/>
+			<param name="stubVariableEntity" value="ruolo"/>
+			<param name="stubSoapVersion" value="12"/>
+			<param name="stubOutputDir" value="${src_dir_registry_ws_client}"/>
+			<param name="stubPackage" value="org.openspcoop2.core.registry.ws.client.ruolo.crud"/>
+			<param name="stubWsdl" value="deploy/wsdl/RuoloCRUD_PortSoap12.wsdl"/>
+			<param name="stubDirClient" value="${src_dir_registry_ws_client}/org/openspcoop2/core/registry/ws/client/ruolo/crud"/>
+			<param name="stubJavaClassNameClient" value="Ruolo_RuoloPortSoap12_Client.java"/>
+		</antcall>
+
+
+
+
 			
 
 			

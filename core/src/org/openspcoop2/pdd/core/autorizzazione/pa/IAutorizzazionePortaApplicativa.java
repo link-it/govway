@@ -22,7 +22,8 @@
 
 package org.openspcoop2.pdd.core.autorizzazione.pa;
 
-import org.openspcoop2.pdd.core.ICore;
+import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
+import org.openspcoop2.pdd.core.autorizzazione.IAutorizzazione;
 
 /**
  * Interfaccia che definisce un processo di autorizzazione per servizi applicativi che invocano richieste delegate.
@@ -32,7 +33,7 @@ import org.openspcoop2.pdd.core.ICore;
  * @version $Rev$, $Date$
  */
 
-public interface IAutorizzazionePortaApplicativa extends ICore {
+public interface IAutorizzazionePortaApplicativa extends IAutorizzazione {
 
 
     /**
@@ -42,8 +43,15 @@ public interface IAutorizzazionePortaApplicativa extends ICore {
      * @return Esito dell'autorizzazione.
      * 
      */
-    public EsitoAutorizzazioneCooperazione process(DatiInvocazionePortaApplicativa datiInvocazione);
+    public EsitoAutorizzazionePortaApplicativa process(DatiInvocazionePortaApplicativa datiInvocazione) throws AutorizzazioneException;
     
-    public boolean saveAuthorizationResultInCache();
+    
+    /**
+     * Permette di personalizzare la chiave utilizzata per salvare il risultato nella cache
+     * 
+     * @param datiInvocazione Dati di invocazione
+     * @return Suffisso che viene aggiunto alla chiave
+     */
+    public String getSuffixKeyAuthorizationResultInCache(DatiInvocazionePortaApplicativa datiInvocazione);
     
 }

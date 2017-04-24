@@ -44,6 +44,7 @@ import java.util.List;
  * 			&lt;element name="servizio" type="{http://www.openspcoop2.org/core/config}porta-delegata-servizio" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="azione" type="{http://www.openspcoop2.org/core/config}porta-delegata-azione" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}porta-delegata-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config}autorizzazione-ruoli" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="local-forward" type="{http://www.openspcoop2.org/core/config}porta-delegata-local-forward" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="mtom-processor" type="{http://www.openspcoop2.org/core/config}mtom-processor" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="message-security" type="{http://www.openspcoop2.org/core/config}message-security" minOccurs="0" maxOccurs="1"/>
@@ -60,7 +61,8 @@ import java.util.List;
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="autenticazione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="ssl"/>
- * 		&lt;attribute name="autorizzazione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="openspcoop"/>
+ * 		&lt;attribute name="autenticazione-opzionale" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
+ * 		&lt;attribute name="autorizzazione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="authenticated"/>
  * 		&lt;attribute name="autorizzazione-contenuto" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="ricevuta-asincrona-simmetrica" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
  * 		&lt;attribute name="ricevuta-asincrona-asimmetrica" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
@@ -86,6 +88,7 @@ import java.util.List;
   	"servizio",
   	"azione",
   	"servizioApplicativo",
+  	"ruoli",
   	"localForward",
   	"mtomProcessor",
   	"messageSecurity",
@@ -193,6 +196,14 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   public int sizeServizioApplicativoList() {
     return this.servizioApplicativo.size();
+  }
+
+  public AutorizzazioneRuoli getRuoli() {
+    return this.ruoli;
+  }
+
+  public void setRuoli(AutorizzazioneRuoli ruoli) {
+    this.ruoli = ruoli;
   }
 
   public PortaDelegataLocalForward getLocalForward() {
@@ -313,6 +324,26 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   public void setAutenticazione(java.lang.String autenticazione) {
     this.autenticazione = autenticazione;
+  }
+
+  public void set_value_autenticazioneOpzionale(String value) {
+    this.autenticazioneOpzionale = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
+  }
+
+  public String get_value_autenticazioneOpzionale() {
+    if(this.autenticazioneOpzionale == null){
+    	return null;
+    }else{
+    	return this.autenticazioneOpzionale.toString();
+    }
+  }
+
+  public org.openspcoop2.core.config.constants.StatoFunzionalita getAutenticazioneOpzionale() {
+    return this.autenticazioneOpzionale;
+  }
+
+  public void setAutenticazioneOpzionale(org.openspcoop2.core.config.constants.StatoFunzionalita autenticazioneOpzionale) {
+    this.autenticazioneOpzionale = autenticazioneOpzionale;
   }
 
   public java.lang.String getAutorizzazione() {
@@ -558,6 +589,9 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
   	return this.servizioApplicativo.size();
   }
 
+  @XmlElement(name="ruoli",required=false,nillable=false)
+  protected AutorizzazioneRuoli ruoli;
+
   @XmlElement(name="local-forward",required=false,nillable=false)
   protected PortaDelegataLocalForward localForward;
 
@@ -609,9 +643,15 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
   @XmlAttribute(name="autenticazione",required=false)
   protected java.lang.String autenticazione = "ssl";
 
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_autenticazioneOpzionale;
+
+  @XmlAttribute(name="autenticazione-opzionale",required=false)
+  protected StatoFunzionalita autenticazioneOpzionale = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
+
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="autorizzazione",required=false)
-  protected java.lang.String autorizzazione = "openspcoop";
+  protected java.lang.String autorizzazione = "authenticated";
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="autorizzazione-contenuto",required=false)

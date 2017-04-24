@@ -24,6 +24,8 @@ package org.openspcoop2.core.config.driver;
 
 import java.io.Serializable;
 
+import org.openspcoop2.core.id.IDRuolo;
+
 /**
  * Permette il filtro di ricerca attraverso i driver che implementano l'interfaccia 'get'
  * 
@@ -62,8 +64,10 @@ public class FiltroRicercaPorteDelegate extends FiltroRicercaBase implements Ser
 
 	/** Azione */
 	private String azione;
-	
 
+	/** Ruolo */
+	private IDRuolo idRuolo;
+		
 	@Override
 	public String toString(){
 		StringBuffer bf = new StringBuffer();
@@ -82,6 +86,8 @@ public class FiltroRicercaPorteDelegate extends FiltroRicercaBase implements Ser
 			bf.append(" [nomeServizio:"+this.nomeServizio+"]");
 		if(this.azione!=null)
 			bf.append(" [azione:"+this.azione+"]");
+		if(this.idRuolo!=null)
+			bf.append(" [ruolo:"+this.idRuolo+"]");
 		if(bf.length()=="Filtro:".length())
 			bf.append(" nessun filtro presente");
 		return bf.toString();
@@ -154,5 +160,13 @@ public class FiltroRicercaPorteDelegate extends FiltroRicercaBase implements Ser
 
 	public void setAzione(String azione) {
 		this.azione = azione;
+	}
+	
+	public IDRuolo getIdRuolo() {
+		return this.idRuolo;
+	}
+
+	public void setIdRuolo(IDRuolo idRuolo) {
+		this.idRuolo = idRuolo;
 	}
 }

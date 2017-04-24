@@ -56,7 +56,14 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.config.constants.RuoloTipoMatch;
+import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
+import org.openspcoop2.core.registry.constants.RuoloContesto;
+import org.openspcoop2.core.registry.constants.RuoloTipologia;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -85,6 +92,7 @@ import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.regexp.RegExpException;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
+import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -115,6 +123,8 @@ import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
+import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCore;
+import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -179,6 +189,7 @@ public class ConsoleHelper {
 	protected ConnettoriCore connettoriCore = null;
 	protected OperazioniCore operazioniCore = null;
 	protected ProtocolPropertiesCore protocolPropertiesCore = null;
+	protected RuoliCore ruoliCore = null;
 
 	/** Gestione dei parametri unica sia per le chiamate multipart che per quelle normali*/
 	private boolean multipart = false;
@@ -241,6 +252,7 @@ public class ConsoleHelper {
 			this.connettoriCore = new ConnettoriCore(this.core);
 			this.operazioniCore = new OperazioniCore(this.core);
 			this.protocolPropertiesCore = new ProtocolPropertiesCore(this.core);
+			this.ruoliCore = new RuoliCore(this.core);
 
 			this.idBinaryParameterRicevuti = new ArrayList<String>();
 			// analisi dei parametri della request
@@ -915,7 +927,14 @@ public class ConsoleHelper {
 							totEntries +=2;
 						}
 					}
-
+	
+					// Ruoli
+					if(pu.isServizi()){
+						if(this.core.isRegistroServiziLocale()){
+							totEntries +=1;
+						}
+					}
+					
 					// PA e PD con permessi S e interfaccia avanzata
 					if(pu.isServizi() && isModalitaAvanzata){
 						totEntries +=2;
@@ -989,6 +1008,15 @@ public class ConsoleHelper {
 							entries[index][1] = AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_LIST+"?"+
 									AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO+"="+
 									AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_SERVIZIO_COMPOSTO;
+							index++;
+						}
+					}
+					
+					// Ruoli
+					if(pu.isServizi()){
+						if(this.core.isRegistroServiziLocale()){
+							entries[index][0] = RuoliCostanti.LABEL_RUOLI;
+							entries[index][1] = RuoliCostanti.SERVLET_NAME_RUOLI_LIST;
 							index++;
 						}
 					}
@@ -1773,14 +1801,31 @@ public class ConsoleHelper {
 
 	// *** Utilities condivise tra Porte Delegate e Porte Applicative ***
 
-	public Vector<DataElement> addPorteServizioApplicativoToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String servizioApplicativo, String[] servizioApplicativoList) {
-		DataElement de = new DataElement();
-		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SERVIZIO_APPLICATIVO );
-		de.setType(DataElementType.SELECT);
-		de.setName(CostantiControlStation.PARAMETRO_SERVIZIO_APPLICATIVO);
-		de.setValues(servizioApplicativoList);
-		de.setSelected(servizioApplicativo);
-		dati.addElement(de);
+	public Vector<DataElement> addPorteServizioApplicativoToDati(TipoOperazione tipoOp, Vector<DataElement> dati, 
+			String servizioApplicativo, String[] servizioApplicativoList, int sizeAttuale, 
+			boolean addMsgServiziApplicativoNonDisponibili) {
+		
+		if(servizioApplicativoList!=null && servizioApplicativoList.length>0){
+		
+			DataElement de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_SERVIZIO_APPLICATIVO );
+			de.setType(DataElementType.SELECT);
+			de.setName(CostantiControlStation.PARAMETRO_SERVIZIO_APPLICATIVO);
+			de.setValues(servizioApplicativoList);
+			de.setSelected(servizioApplicativo);
+			dati.addElement(de);
+			
+		}else{
+			if(addMsgServiziApplicativoNonDisponibili){
+				if(sizeAttuale>0){
+					this.pd.setMessage("Non ulteriori esistono servizi applicativi associabili alla porta");
+				}
+				else{
+					this.pd.setMessage("Non esistono servizi applicativi associabili alla porta");
+				}
+				this.pd.disableEditMode();
+			}
+		}
 
 		return dati;
 	}
@@ -2184,12 +2229,12 @@ public class ConsoleHelper {
 	// Controlla i dati dei parametri MTOM 
 	public boolean MTOMParameterCheckData(TipoOperazione tipoOp, boolean isRisposta, boolean isPortaDelegata) throws Exception {
 		try {
-			String id = this.request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID);
+			String id = this.request.getParameter(CostantiControlStation.PARAMETRO_ID);
 			int idInt = Integer.parseInt(id);
-			String nome = this.request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME);
-			String contentType =this.request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONTENT_TYPE);
-			//	String obbligatorio = this.request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_OBBLIGATORIO);
-			String pattern = this.request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_PATTERN);
+			String nome = this.request.getParameter(CostantiControlStation.PARAMETRO_NOME);
+			String contentType =this.request.getParameter(CostantiControlStation.PARAMETRO_CONTENT_TYPE);
+			//	String obbligatorio = this.request.getParameter(CostantiControlStation.PARAMETRO_OBBLIGATORIO);
+			String pattern = this.request.getParameter(CostantiControlStation.PARAMETRO_PATTERN);
 
 
 			// Campi obbligatori
@@ -2445,4 +2490,483 @@ public class ConsoleHelper {
 		}
 
 	}
+
+	
+	public Vector<DataElement> addRuoliToDati(TipoOperazione tipoOp,Vector<DataElement> dati,boolean enableUpdate, FiltroRicercaRuoli filtroRuoli, String nome, 
+			List<String> ruoliGiaConfigurati, boolean addSelezioneVuota, boolean addMsgServiziApplicativoNonDisponibili) throws DriverRegistroServiziException {
+		return this.addRuoliToDati(tipoOp, dati, enableUpdate, filtroRuoli, nome, ruoliGiaConfigurati, 
+				addSelezioneVuota, addMsgServiziApplicativoNonDisponibili, CostantiControlStation.LABEL_PARAMETRO_RUOLO);
+	}
+	public Vector<DataElement> addRuoliToDati(TipoOperazione tipoOp,Vector<DataElement> dati,boolean enableUpdate, FiltroRicercaRuoli filtroRuoli, String nome, 
+			List<String> ruoliGiaConfigurati, boolean addSelezioneVuota, boolean addMsgServiziApplicativoNonDisponibili, String labelParametro) throws DriverRegistroServiziException {
+
+		List<String> allRuoli = this.confCore.getAllRuoli(filtroRuoli);
+		List<String> ruoliDaFarScegliere = new ArrayList<>();
+		if(ruoliGiaConfigurati!=null && ruoliGiaConfigurati.size()>0){
+			for (String ruolo : allRuoli) {
+				if(ruoliGiaConfigurati.contains(ruolo)==false){
+					ruoliDaFarScegliere.add(ruolo);
+				}
+			}
+		}
+		else{
+			ruoliDaFarScegliere.addAll(allRuoli);
+		}
+		
+		// Nome
+		if(ruoliDaFarScegliere.size()>0){
+			
+			List<String> ruoli = new ArrayList<>();
+			if(addSelezioneVuota){
+				ruoli.add("-");
+			}
+			ruoli.addAll(ruoliDaFarScegliere);
+			
+			DataElement de = new DataElement();
+			de.setLabel(labelParametro);
+			de.setValue(nome);
+			if (tipoOp.equals(TipoOperazione.ADD) || enableUpdate) {
+				de.setType(DataElementType.SELECT);
+				de.setValues(ruoli);
+				de.setSelected(nome);
+			} else {
+				de.setType(DataElementType.TEXT);
+			}
+			de.setName(CostantiControlStation.PARAMETRO_RUOLO);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}
+		else{
+			if(addMsgServiziApplicativoNonDisponibili){
+				if(allRuoli.size()>0){
+					this.pd.setMessage("Non esistono ulteriori ruoli associabili al soggetto");
+				}
+				else{
+					this.pd.setMessage("Non esistono ruoli associabili al soggetto");
+				}
+				this.pd.disableEditMode();
+			}
+		}
+
+		return dati;
+	}
+	
+	public boolean ruoloCheckData(TipoOperazione tipoOp, String nome, List<String> ruoli) throws Exception {
+		try {
+			
+			if(ruoli!=null && ruoli.contains(nome)){
+				this.pd.setMessage("Il ruolo '" + nome + "' &egrave; gi&agrave; stato associata al soggetto");
+				return false;
+			}
+
+			return true;
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public void controlloAccessiAutenticazione(Vector<DataElement> dati, String autenticazione, String autenticazioneCustom, String autenticazioneOpzionale,
+			boolean confPers, boolean isSupportatoAutenticazioneSoggetti){
+		
+		if(isSupportatoAutenticazioneSoggetti){
+			
+			DataElement de = new DataElement();
+			de.setType(DataElementType.TITLE);
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE);
+			dati.addElement(de);
+		
+			List<String> autenticazioneValues = TipoAutenticazione.getValues();
+			List<String> autenticazioneLabels = TipoAutenticazione.getLabels();
+			int totEl = autenticazioneValues.size();
+			if (confPers)
+				totEl++;
+			String[] tipoAutenticazione = new String[totEl];
+			String[] labelTipoAutenticazione = new String[totEl];
+			for (int i = 0; i < autenticazioneValues.size(); i++) {
+				tipoAutenticazione[i]=autenticazioneValues.get(i);
+				labelTipoAutenticazione[i]=autenticazioneLabels.get(i);
+			}
+			if (confPers ){
+				tipoAutenticazione[totEl-1] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
+				labelTipoAutenticazione[totEl-1] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
+			}
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE);
+			de.setType(DataElementType.SELECT);
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE);
+			de.setValues(tipoAutenticazione);
+			de.setLabels(labelTipoAutenticazione);
+			//		de.setOnChange("CambiaTipoAuth('" + tipoOp + "', " + numCorrApp + ")");
+			de.setPostBack(true);
+			de.setSelected(autenticazione);
+			dati.addElement(de);
+	
+			de = new DataElement();
+			de.setLabel("");
+			if (autenticazione == null ||
+					!autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM))
+				de.setType(DataElementType.HIDDEN);
+			else
+				de.setType(DataElementType.TEXT_EDIT);
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM);
+			de.setValue(autenticazioneCustom);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE);
+			de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE);
+			if(TipoAutenticazione.DISABILITATO.equals(autenticazione)==false){
+				de.setType(DataElementType.CHECKBOX);
+				de.setSelected(ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale));
+			}
+			else{
+				de.setType(DataElementType.HIDDEN);
+				de.setValue("");
+			}
+			dati.addElement(de);
+			
+		}
+		
+	}
+	
+	public void controlloAccessiAutorizzazione(Vector<DataElement> dati, TipoOperazione tipoOperazione, String servletChiamante,
+			String autenticazione, 
+			String autorizzazione, String autorizzazioneCustom, 
+			String autorizzazioneAutenticati, String urlAutorizzazioneAutenticati, int numAutenticati, List<String> autenticati, String autenticato,
+			String autorizzazioneRuoli,  String urlAutorizzazioneRuoli, int numRuoli, String ruolo, String autorizzazioneRuoliTipologia, String autorizzazioneRuoliMatch,
+			boolean confPers, boolean isSupportatoAutenticazione, boolean contaListe, boolean isPortaDelegata) throws Exception{
+		
+		DataElement de = new DataElement();
+		de.setType(DataElementType.TITLE);
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE);
+		dati.addElement(de);
+		
+		List<String> auturizzazioneValues = AutorizzazioneUtilities.getStati();
+		int totEl = auturizzazioneValues.size();
+		if (confPers )
+			totEl++;
+		String[] tipoAutorizzazione = new String[totEl];
+		for (int i = 0; i < auturizzazioneValues.size(); i++) {
+			tipoAutorizzazione[i]=auturizzazioneValues.get(i);
+		}
+		if (confPers ){
+			tipoAutorizzazione[totEl-1] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
+		}
+		de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE);
+		de.setType(DataElementType.SELECT);
+		de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE);
+		de.setValues(tipoAutorizzazione);
+		de.setPostBack(true);
+		de.setSelected(autorizzazione);
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel("");
+		if (autorizzazione == null ||
+				!autorizzazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM))
+			de.setType(DataElementType.HIDDEN);
+		else
+			de.setType(DataElementType.TEXT_EDIT);
+		de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM);
+		de.setValue(autorizzazioneCustom);
+		dati.addElement(de);
+		
+		
+		
+		if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)==false){
+		
+			boolean autorizzazione_autenticazione =  false;
+			
+			if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione)){
+			
+				autorizzazione_autenticazione = ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati);
+				
+				de = new DataElement();
+				if(isPortaDelegata){
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI);
+				}
+				else{
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SOGGETTI);
+				}
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE);
+				if( !isSupportatoAutenticazione ||  (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione)) ){   
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(autorizzazione_autenticazione);
+					de.setPostBack(true);
+				}
+				else{
+					de.setType(DataElementType.HIDDEN);
+					de.setValue(Costanti.CHECK_BOX_DISABLED);
+				}
+				dati.addElement(de);
+				
+			}
+			
+			if(TipoOperazione.CHANGE.equals(tipoOperazione)){
+				if(urlAutorizzazioneAutenticati!=null && (autorizzazione_autenticazione || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(autorizzazione)) ){
+					de = new DataElement();
+					de.setType(DataElementType.LINK);
+					de.setUrl(urlAutorizzazioneAutenticati);
+					if(isPortaDelegata){
+						if (contaListe) {
+							ServletUtils.setDataElementCustomLabel(de,PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZI_APPLICATIVI,new Long(numAutenticati));
+						} else
+							ServletUtils.setDataElementCustomLabel(de,PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZI_APPLICATIVI);
+					}
+					else{
+						if (contaListe) {
+							ServletUtils.setDataElementCustomLabel(de,AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI,new Long(numAutenticati));
+						} else
+							ServletUtils.setDataElementCustomLabel(de,AccordiServizioParteSpecificaCostanti.LABEL_APS_FRUITORI);
+					}
+					dati.addElement(de);
+				}
+			}
+			else{
+				if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD.equals(servletChiamante) &&
+						autorizzazione_autenticazione && isPortaDelegata){
+					String [] saArray = null;
+					if(autenticati!=null && autenticati.size()>0){
+						saArray = autenticati.toArray(new String[1]);
+					}
+					this.addPorteServizioApplicativoToDati(tipoOperazione, dati, autenticato, saArray, 0, false);
+				}
+			}
+			
+		}
+		
+		if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)==false){
+				
+			boolean autorizzazione_ruoli = false;
+			
+			if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione)){
+			
+				autorizzazione_ruoli = ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli);
+				
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI);
+				de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI);
+				de.setType(DataElementType.CHECKBOX);
+				de.setSelected(autorizzazione_ruoli);
+				de.setPostBack(true);
+				dati.addElement(de);
+			
+			}
+					
+			if(autorizzazione_ruoli || AutorizzazioneUtilities.STATO_XACML_POLICY.equals(autorizzazione)){
+				
+				de = new DataElement();
+				if(autorizzazione_ruoli){
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RUOLO_TIPOLOGIA);
+				}
+				else{
+					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RUOLO_TIPOLOGIA_XACML_POLICY);
+				}
+				de.setName(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA);
+				de.setValue(autorizzazioneRuoliTipologia);			
+				de.setType(DataElementType.SELECT);
+				de.setValues(RuoliCostanti.RUOLI_TIPOLOGIA);
+				de.setLabels(RuoliCostanti.RUOLI_TIPOLOGIA_LABEL);
+				de.setSelected(autorizzazioneRuoliTipologia);
+				if(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD.equals(servletChiamante) ||
+						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante)){
+					de.setPostBack(true);
+				}
+				dati.add(de);
+				
+			}
+			
+			if(autorizzazione_ruoli){
+				String[] tipoRole = { RuoloTipoMatch.ALL.getValue(),
+						RuoloTipoMatch.ANY.getValue() };
+				String[] labelRole = { CostantiControlStation.LABEL_PARAMETRO_RUOLO_MATCH_ALL, CostantiControlStation.LABEL_PARAMETRO_RUOLO_MATCH_ANY };
+				de = new DataElement();
+				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_RUOLO_MATCH);
+				de.setName(CostantiControlStation.PARAMETRO_RUOLO_MATCH);
+				de.setValue(autorizzazioneRuoliMatch);			
+				de.setType(DataElementType.SELECT);
+				de.setValues(tipoRole);
+				de.setLabels(labelRole);
+				de.setSelected(autorizzazioneRuoliMatch);
+				dati.add(de);
+			}
+			
+			if(TipoOperazione.CHANGE.equals(tipoOperazione)){
+				if(urlAutorizzazioneRuoli!=null && (autorizzazione_ruoli || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(autorizzazione)) ){
+					
+					de = new DataElement();
+					de.setType(DataElementType.LINK);
+					de.setUrl(urlAutorizzazioneRuoli);
+					if (contaListe) {
+						ServletUtils.setDataElementCustomLabel(de,RuoliCostanti.LABEL_RUOLI,new Long(numRuoli));
+					} else
+						ServletUtils.setDataElementCustomLabel(de,RuoliCostanti.LABEL_RUOLI);
+					dati.addElement(de);
+								
+				}
+			}
+			else{
+				if( (AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD.equals(servletChiamante) ||
+						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD.equals(servletChiamante))
+						&& autorizzazione_ruoli){
+					FiltroRicercaRuoli filtroRuoli = new FiltroRicercaRuoli();
+					if(isPortaDelegata){
+						filtroRuoli.setContesto(RuoloContesto.PORTA_DELEGATA);
+					}
+					else{
+						filtroRuoli.setContesto(RuoloContesto.PORTA_APPLICATIVA);
+					}
+					filtroRuoli.setTipologia(RuoloTipologia.QUALSIASI);
+					if(RuoloTipologia.INTERNO.equals(autorizzazioneRuoliTipologia) ){
+						filtroRuoli.setTipologia(RuoloTipologia.INTERNO);
+					}
+					else if(RuoloTipologia.ESTERNO.equals(autorizzazioneRuoliTipologia) ){
+						filtroRuoli.setTipologia(RuoloTipologia.ESTERNO);
+					}
+					this.addRuoliToDati(tipoOperazione, dati, false, filtroRuoli, ruolo, null, true, false,
+							AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_RUOLO);
+				}
+			}
+			
+		}
+	}
+	
+	public void controlloAccessiAutorizzazioneContenuti(Vector<DataElement> dati, String autorizzazioneContenuti){
+		
+		if (InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) {
+			DataElement de = new DataElement();
+			de.setType(DataElementType.TITLE);
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
+			dati.addElement(de);
+		}
+		
+		DataElement de = new DataElement();
+		de.setLabel(CostantiControlStation.LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
+		if (InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())) 
+			de.setType(DataElementType.HIDDEN);
+		else
+			de.setType(DataElementType.TEXT_EDIT);
+
+		de.setName(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
+		de.setValue(autorizzazioneContenuti);
+		dati.addElement(de);
+	}
+	
+	public boolean controlloAccessiCheck(TipoOperazione tipoOperazione, 
+			String autenticazione, String autenticazioneOpzionale, 
+			String autorizzazione, String autorizzazioneAutenticati, String autorizzazioneRuoli,  
+			String autorizzazioneRuoliTipologia, String autorizzazioneRuoliMatch,
+			boolean isSupportatoAutenticazione, boolean isPortaDelegata,
+			List<String> ruoli) throws Exception{
+		try {
+			
+			if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione)){
+				
+				String labelAutenticati = null;
+				if(isPortaDelegata){
+					labelAutenticati = CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI;
+				}
+				else{
+					labelAutenticati = CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SOGGETTI;
+				}
+				
+				// autorizzazione abilitata
+				
+				if(ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati)==false && 
+						ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli)==false){
+					this.pd.setMessage("Selezionare almeno una modalità di autorizzazione tra '"+labelAutenticati+"' e '"+CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI+"'");
+					return false;
+				}
+				
+				if(ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati) && 
+						ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli)==false){
+					// Se l'autorizzazione è solamente basata sull'autenticazione dei chiamanti, una autenticazione DEVE essere presente e non deve essere opzionale
+					if(isSupportatoAutenticazione){
+						if(TipoAutenticazione.DISABILITATO.equals(autenticazione)){
+							this.pd.setMessage("Con la sola modalità di autorizzazione '"+labelAutenticati+"' deve essere indicata anche una modalità di autenticazione");
+							return false;
+						}
+						if(ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale)){
+							this.pd.setMessage("Con la sola modalità di autorizzazione '"+labelAutenticati+"' non è possibile associata una modalità di autenticazione 'opzionale'");
+							return false;
+						}
+					}
+				}
+				
+				if(ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati) && 
+						ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli)){
+					if(isSupportatoAutenticazione && ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale)==false){
+						this.pd.setMessage("Con una modalità di autenticazione obbligatoria non è possibile selezionare entrambe le modalità di autorizzazione '"+labelAutenticati+"' e '"+
+							CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI+"'.<BR/>Per usare entrambe le autorizzazioni rendere opzionale l'autenticazione");
+						return false;
+					}
+				}
+				
+			}
+			
+			if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione) ||
+					AutorizzazioneUtilities.STATO_XACML_POLICY.equals(autorizzazione) ){
+				
+				if(AutorizzazioneUtilities.STATO_XACML_POLICY.equals(autorizzazione)){
+					if(ruoli!=null && ruoli.size()>0){
+						this.pd.setMessage("La porta contiene già dei ruoli che non sono compatibili con la nuova autorizzazione '"+AutorizzazioneUtilities.STATO_XACML_POLICY+"' scelta.<BR/>Eliminare i ruoli prima di procedere con la modifica del tipo di autorizzazione.");
+						return false;
+					}
+				}
+				
+				RuoloTipologia ruoloTipologia = RuoloTipologia.toEnumConstant(autorizzazioneRuoliTipologia);
+				if(RuoloTipologia.INTERNO.equals(ruoloTipologia)){
+					if(isSupportatoAutenticazione){
+						if(TipoAutenticazione.DISABILITATO.equals(autenticazione)){
+							this.pd.setMessage("Con una "+RuoliCostanti.LABEL_PARAMETRO_RUOLO_TIPOLOGIA.toLowerCase()+" per i ruoli di tipo '"+RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_INTERNO+"' deve essere associata una modalità di autenticazione");
+							return false;
+						}
+						if(ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale)){
+							this.pd.setMessage("Con una "+RuoliCostanti.LABEL_PARAMETRO_RUOLO_TIPOLOGIA.toLowerCase()+" per i ruoli di tipo '"+RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_INTERNO+"' non è possibile associata una modalità di autenticazione 'opzionale'");
+							return false;
+						}
+					}
+				}
+				
+				// check tipologia rispetto ai ruoli esistenti
+				List<String> ruoliNonCompatibili = new ArrayList<>();
+				if(ruoli!=null && ruoli.size()>0){
+					for (String ruolo : ruoli) {
+						Ruolo ruoloObject = this.ruoliCore.getRuolo(ruolo);
+						if(RuoloTipologia.INTERNO.equals(ruoloTipologia)){
+							if(RuoloTipologia.ESTERNO.equals(ruoloObject.getTipologia())){
+								ruoliNonCompatibili.add(ruolo);
+							}
+						}
+						if(RuoloTipologia.ESTERNO.equals(ruoloTipologia)){
+							if(RuoloTipologia.INTERNO.equals(ruoloObject.getTipologia())){
+								ruoliNonCompatibili.add(ruolo);
+							}
+						}
+					}
+				}
+				if(ruoliNonCompatibili.size()>0){
+					String label = "";
+					if(RuoloTipologia.INTERNO.equals(ruoloTipologia)){
+						label = RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_INTERNO;
+					}
+					else{
+						label = RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_ESTERNO;
+					}
+					this.pd.setMessage("La porta contiene già dei ruoli ("+ruoliNonCompatibili.toString()+") che non sono compatibili con la nuova "+RuoliCostanti.LABEL_PARAMETRO_RUOLO_TIPOLOGIA.toLowerCase()+" '"+label+"' scelta.");
+					return false;
+				}
+			}
+
+			return true;
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
 }

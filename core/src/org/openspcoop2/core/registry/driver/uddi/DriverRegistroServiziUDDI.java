@@ -40,6 +40,7 @@ import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
+import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -48,13 +49,18 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore;
+import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.CostantiXMLRepository;
+import org.openspcoop2.core.registry.constants.CredenzialeTipo;
+import org.openspcoop2.core.registry.constants.RuoloContesto;
+import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
@@ -64,6 +70,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaAzioni;
 import org.openspcoop2.core.registry.driver.FiltroRicercaFruizioniServizio;
 import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
 import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
+import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
@@ -75,6 +82,7 @@ import org.openspcoop2.core.registry.driver.ProtocolPropertiesUtilities;
 import org.openspcoop2.core.registry.driver.web.XMLLib;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
@@ -198,6 +206,9 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 
 	
 	/* ********  INTERFACCIA IDriverRegistroServiziGet ******** */ 
+	
+	
+	/* Accordi di Cooperazione */
 	
 	/**
 	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.AccordoCooperazione}, 
@@ -421,6 +432,12 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 		}
 	}
 	
+	
+	
+	
+	
+	
+	/* Accordi di Servizio Parte Comune */
 	
 	/**
 	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.AccordoServizioParteComune}, 
@@ -806,6 +823,10 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 	}
 	
 	
+	
+	
+	
+	
 	/* Porte di Dominio */
 	
 	/**
@@ -998,6 +1019,231 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 	}
 	
 	
+	
+	
+	/* Ruoli */
+	
+	/**
+	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Ruolo}, 
+	 * identificato grazie al parametro 
+	 * <var>nome</var> 
+	 *
+	 * @param idRuolo Identificativo del ruolo
+	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Ruolo}.
+	 * 
+	 */
+	@Override
+	public Ruolo getRuolo(
+			IDRuolo idRuolo) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		if(idRuolo==null || idRuolo.getNome()==null)
+			throw new DriverRegistroServiziException("[getRuolo] Parametro Non Valido");
+
+		//		 controllo inizializzazione UDDI
+		if(this.uddiLib.create == false){
+			throw new DriverRegistroServiziException("[getRuolo] Inizializzazione dell'engine UDDI errata");
+		}
+		
+		//		 Controllo pre-esistenza del ruolo
+		if( this.uddiLib.existsRuolo(idRuolo.getNome()) == false){
+			throw new DriverRegistroServiziNotFound("[getRuolo] Ruolo richiesto non esiste: "+idRuolo.getNome());
+		} 
+		
+		org.openspcoop2.core.registry.Ruolo ruoloRichiesto = null;
+
+		// Ottengo URL XML associato al ruolo
+		String urlXMLRuolo = this.uddiLib.getUrlXmlRuolo(idRuolo.getNome());
+		if(urlXMLRuolo == null){
+			throw new DriverRegistroServiziException("[getRuolo] definzione XML non disponibile");
+		}
+
+		// Ottengo oggetto PortaDominio
+		ByteArrayInputStream bin = null;
+		InputStreamReader istr = null;
+		try{
+			IBindingFactory bfact = BindingDirectory.getFactory(org.openspcoop2.core.registry.RegistroServizi.class);
+			IUnmarshallingContext uctx = bfact.createUnmarshallingContext();
+			byte[] fileXML = null;
+			try{
+				fileXML = HttpUtilities.requestHTTPFile(urlXMLRuolo);
+			}catch(UtilsException e){
+				// Controllo pre-esistenza dell'accordo
+				if( "404".equals(e.getMessage()) ){
+					throw new DriverRegistroServiziNotFound("[getRuolo] Ruolo richiesto non esiste nel repository http: "+idRuolo.getNome());
+				} else
+					throw e;
+			}
+			
+			/* --- Validazione XSD (ora che sono sicuro che non ho un 404) -- */
+			try{
+				this.validatoreRegistro.valida(urlXMLRuolo);  
+			}catch (Exception e) {
+				throw new DriverRegistroServiziException("[getRuolo] Riscontrato errore durante la validazione XSD del Ruolo ("+idRuolo.getNome()+"): "+e.getMessage(),e);
+			}
+			
+			// Parsing JIBX
+			bin = new ByteArrayInputStream(fileXML);
+			istr = new InputStreamReader(bin);
+			org.openspcoop2.core.registry.RegistroServizi rs = 
+				(org.openspcoop2.core.registry.RegistroServizi) uctx.unmarshalDocument(istr, null);
+			if(rs.sizeRuoloList()>0)
+				ruoloRichiesto = rs.getRuolo(0);
+			istr.close();
+			bin.close();
+		}catch(Exception e){
+			try{
+				if(istr!=null)
+					istr.close();
+			} catch(Exception eis) {}
+			try{
+				if(bin!=null)
+					bin.close();
+			} catch(Exception eis) {}
+			if(e instanceof DriverRegistroServiziNotFound)
+				throw (DriverRegistroServiziNotFound)e;
+			else
+				throw new DriverRegistroServiziException("[getRuolo] Errore durante il parsing xml del Ruolo ("+idRuolo.getNome()+"): "+e.getMessage(),e);
+		}
+
+		if(ruoloRichiesto==null)
+			throw new DriverRegistroServiziNotFound("[getRuolo] Ruolo ["+idRuolo.getNome()+"] non trovato.");
+		
+		return ruoloRichiesto;
+	}
+
+	/**
+	 * Ritorna gli identificatori dei Ruoli che rispettano il parametro di ricerca
+	 * 
+	 * @param filtroRicerca
+	 * @return Una lista di ID dei ruoli trovati
+	 * @throws DriverRegistroServiziException
+	 * @throws DriverRegistroServiziNotFound
+	 */
+	@Override
+	public List<IDRuolo> getAllIdRuoli(
+			FiltroRicercaRuoli filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		try{
+
+			// Ricerca UDDI delle porte di dominio
+			/*if(this.urlPrefix==null){
+				throw new DriverRegistroServiziException("[getAllIdPorteDominio] Implementazione non eseguibile se il driver non viene inizializzato con urlPrefix.");
+			}*/
+			
+			String nomeFiltro = null;
+			if(filtroRicerca!=null)
+				nomeFiltro = filtroRicerca.getNome();
+			String [] urlXMLRuoli = this.uddiLib.getUrlXmlRuolo(nomeFiltro,this.urlPrefix);
+			
+			// Esamina dei Ruoli
+			List<IDRuolo> idRuoli = new ArrayList<IDRuolo>();
+			for(int i=0; i<urlXMLRuoli.length; i++){
+				org.openspcoop2.core.registry.Ruolo ruolo = null;
+				
+				/* --- Validazione XSD -- */
+				try{
+					this.validatoreRegistro.valida(urlXMLRuoli[i]);  
+				}catch (Exception e) {
+					throw new DriverRegistroServiziException("[getAllIdRuoli] Riscontrato errore durante la validazione XSD ("+urlXMLRuoli[i]+"): "+e.getMessage(),e);
+				}
+				
+				// Ottengo oggetto Porta di dominio
+				ByteArrayInputStream bin = null;
+				InputStreamReader istr = null;
+				try{
+					IBindingFactory bfact = BindingDirectory.getFactory(org.openspcoop2.core.registry.RegistroServizi.class);
+					IUnmarshallingContext uctx = bfact.createUnmarshallingContext();
+					byte[] fileXML = HttpUtilities.requestHTTPFile(urlXMLRuoli[i]);
+					bin = new ByteArrayInputStream(fileXML);
+					istr = new InputStreamReader(bin);
+					org.openspcoop2.core.registry.RegistroServizi rs = 
+						(org.openspcoop2.core.registry.RegistroServizi) uctx.unmarshalDocument(istr, null);
+					if(rs.sizeRuoloList()>0)
+						ruolo = rs.getRuolo(0);
+					istr.close();
+					bin.close();
+				}catch(Exception e){
+					try{
+						if(istr!=null)
+							istr.close();
+					} catch(Exception eis) {}
+					try{
+						if(bin!=null)
+							bin.close();
+					} catch(Exception eis) {}
+					throw new DriverRegistroServiziException("[getAllIdRuoli] Errore durante il parsing xml ("+urlXMLRuoli[i]+"): "+e.getMessage(),e);
+				}
+				if(ruolo==null)
+					throw new DriverRegistroServiziException("[getAllIdRuoli] Ruolo non definito per la url ["+urlXMLRuoli[i]+"]");
+				
+				if(filtroRicerca!=null){
+					// Filtro By Data
+					if(filtroRicerca.getMinDate()!=null){
+						if(ruolo.getOraRegistrazione()==null){
+							this.log.debug("[getAllIdRuoli](FiltroByMinDate) Ruolo ["+ruolo.getNome()+"] non valorizzato nell'ora-registrazione. Non inserito nella lista ritornata.");
+							continue;
+						}else if(ruolo.getOraRegistrazione().before(filtroRicerca.getMinDate())){
+							continue;
+						}
+					}
+					if(filtroRicerca.getMaxDate()!=null){
+						if(ruolo.getOraRegistrazione()==null){
+							this.log.debug("[getAllIdRuoli](FiltroByMaxDate) Ruolo ["+ruolo.getNome()+"] non valorizzato nell'ora-registrazione. Non inserito nella lista ritornata.");
+							continue;
+						}else if(ruolo.getOraRegistrazione().after(filtroRicerca.getMaxDate())){
+							continue;
+						}
+					}
+					// Filtro By Nome
+					if(filtroRicerca.getNome()!=null){
+						if(ruolo.getNome().equals(filtroRicerca.getNome()) == false){
+							continue;
+						}
+					}
+					// Filtro By Tipologia
+					if(filtroRicerca.getTipologia()!=null && !RuoloTipologia.QUALSIASI.equals(filtroRicerca.getTipologia())){
+						if(ruolo.getTipologia()==null){
+							continue;
+						}
+						if(!RuoloTipologia.QUALSIASI.equals(ruolo.getTipologia())){
+							if(ruolo.getTipologia().equals(filtroRicerca.getTipologia()) == false){
+								continue;
+							}
+						}
+					}
+					// Filtro By Contesto
+					if(filtroRicerca.getContesto()!=null && !RuoloContesto.QUALSIASI.equals(filtroRicerca.getContesto())){
+						if(ruolo.getContestoUtilizzo()==null){
+							continue;
+						}
+						if(!RuoloContesto.QUALSIASI.equals(ruolo.getContestoUtilizzo())){
+							if(ruolo.getContestoUtilizzo().equals(filtroRicerca.getContesto()) == false){
+								continue;
+							}
+						}
+					}
+				}
+				IDRuolo id = new IDRuolo(ruolo.getNome());
+				idRuoli.add(id);
+			}
+			if(idRuoli.size()==0){
+				throw new DriverRegistroServiziNotFound("Ruoli non trovati che rispettano il filtro di ricerca selezionato: "+filtroRicerca.toString());
+			}else{
+				return idRuoli;
+			}
+		}catch(Exception e){
+			if(e instanceof DriverRegistroServiziNotFound)
+				throw (DriverRegistroServiziNotFound)e;
+			else
+				throw new DriverRegistroServiziException("getAllIdRuoli error",e);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	/* Soggetti */
+	
 	/**
 	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Soggetto}, 
 	 * identificato grazie al parametro 
@@ -1086,6 +1332,107 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 		return soggRichiesto;
 	}
 
+	/**
+	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Soggetto}, 
+	 * che include le credenziali passate come parametro. 
+	 *
+	 * @param user User utilizzato nell'header HTTP Authentication.
+	 * @param password Password utilizzato nell'header HTTP Authentication.
+	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Soggetto} .
+	 * 
+	 */
+	@Override
+	public Soggetto getSoggettoAutenticatoBasic(
+			String user,String password) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return this._getSoggettoAutenticato(CredenzialeTipo.BASIC, user, password, null, null);
+	}
+	
+	/**
+	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Soggetto}, 
+	 * che include le credenziali passate come parametro. 
+	 *
+	 * @param subject Subject utilizzato nella connessione HTTPS.
+	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Soggetto} .
+	 * 
+	 */
+	@Override
+	public Soggetto getSoggettoAutenticatoSsl(
+			String subject) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return this._getSoggettoAutenticato(CredenzialeTipo.SSL, null, null, subject, null);
+	}
+	
+	/**
+	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Soggetto}, 
+	 * che include le credenziali passate come parametro. 
+	 *
+	 * @param principal User Principal
+	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Soggetto} .
+	 * 
+	 */
+	@Override
+	public Soggetto getSoggettoAutenticatoPrincipal(
+			String principal) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return this._getSoggettoAutenticato(CredenzialeTipo.PRINCIPAL, null, null, null, principal);
+	}
+	
+	private org.openspcoop2.core.registry.Soggetto _getSoggettoAutenticato(CredenzialeTipo tipoCredenziale, String user,String password, String subject, String principal) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+
+		// conrollo consistenza
+		if (tipoCredenziale == null)
+			throw new DriverRegistroServiziException("[getSoggettoAutenticato] Parametro tipoCredenziale is null");
+
+		switch (tipoCredenziale) {
+		case BASIC:
+			if (user == null || "".equalsIgnoreCase(user))
+				throw new DriverRegistroServiziException("[getSoggettoAutenticato] Parametro user is null (required for basic auth)");
+			if (password == null || "".equalsIgnoreCase(password))
+				throw new DriverRegistroServiziException("[getSoggettoAutenticato] Parametro password is null (required for basic auth)");
+			break;
+		case SSL:
+			if (subject == null || "".equalsIgnoreCase(subject))
+				throw new DriverRegistroServiziException("[getSoggettoAutenticato] Parametro subject is null (required for ssl auth)");
+			break;
+		case PRINCIPAL:
+			if (principal == null || "".equalsIgnoreCase(principal))
+				throw new DriverRegistroServiziException("[getSoggettoAutenticato] Parametro principal is null (required for principal auth)");
+			break;
+		}
+
+		IDSoggetto idSoggetto = null;
+		try{
+			FiltroRicercaSoggetti filtroRicerca = new FiltroRicercaSoggetti();
+			CredenzialiSoggetto credenzialiSoggetto = new CredenzialiSoggetto();
+			credenzialiSoggetto.setTipo(tipoCredenziale);
+			switch (tipoCredenziale) {
+			case BASIC:
+				credenzialiSoggetto.setUser(user);
+				credenzialiSoggetto.setPassword(password);
+				break;
+			case SSL:
+				credenzialiSoggetto.setSubject(subject);
+				break;
+			case PRINCIPAL:
+				credenzialiSoggetto.setUser(principal);
+				break;
+			}
+			filtroRicerca.setCredenzialiSoggetto(credenzialiSoggetto);
+			List<IDSoggetto> l = this.getAllIdSoggetti(filtroRicerca);
+			if(l.size()>1){
+				throw new DriverRegistroServiziException("Trovato più di un soggetto che possiede le credenziali '"+tipoCredenziale.toString()+"' fornite");
+			}
+			else if(l.size()==1){
+				idSoggetto = l.get(0);
+			}
+		}catch(DriverRegistroServiziNotFound notFound){}
+		
+		if(idSoggetto==null){
+			throw new DriverRegistroServiziNotFound("Nessun soggetto trovato che possiede le credenziali '"+tipoCredenziale.toString()+"' fornite");
+		}
+		else{
+			return this.getSoggetto(idSoggetto);
+		}
+	}
+	
 	/**
 	 *  Ritorna gli identificatori dei soggetti che rispettano il parametro di ricerca
 	 * 
@@ -1182,6 +1529,63 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 					if(ProtocolPropertiesUtilities.isMatch(ss, filtroRicerca.getProtocolProperties())==false){
 						continue;
 					}
+					// Filtro By Ruoli
+					if(filtroRicerca.getIdRuolo()!=null && filtroRicerca.getIdRuolo().getNome()!=null){
+						if(ss.getRuoli()==null){
+							continue;
+						}
+						boolean contains = false;
+						for (int j = 0; j < ss.getRuoli().sizeRuoloList(); j++) {
+							if(filtroRicerca.getIdRuolo().getNome().equals(ss.getRuoli().getRuolo(j).getNome())){
+								contains = true;
+								break;
+							}
+						}
+						if(!contains){
+							continue;
+						}
+					}
+					// Filtro By Credenziali
+					if(filtroRicerca.getCredenzialiSoggetto()!=null){
+						CredenzialiSoggetto credenziali = ss.getCredenziali();
+						if(credenziali==null){
+							continue;
+						}
+						if(filtroRicerca.getCredenzialiSoggetto().getTipo()!=null){
+							if(credenziali.getTipo()==null){
+								if(filtroRicerca.getCredenzialiSoggetto().getTipo().equals(CredenzialeTipo.SSL) == false){ // ssl è il default
+									continue;
+								}	
+							}
+							else{
+								if(filtroRicerca.getCredenzialiSoggetto().getTipo().equals(credenziali.getTipo())==false){
+									continue;
+								}
+							}
+						}
+						if(filtroRicerca.getCredenzialiSoggetto().getUser()!=null){
+							if(filtroRicerca.getCredenzialiSoggetto().getUser().equals(credenziali.getUser())==false){
+								continue;
+							}
+						}
+						if(filtroRicerca.getCredenzialiSoggetto().getPassword()!=null){
+							if(filtroRicerca.getCredenzialiSoggetto().getPassword().equals(credenziali.getPassword())==false){
+								continue;
+							}
+						}
+						if(filtroRicerca.getCredenzialiSoggetto().getSubject()!=null){
+							try{
+								if(credenziali.getSubject()==null){
+									continue;
+								}
+								if(Utilities.sslVerify(credenziali.getSubject(), filtroRicerca.getCredenzialiSoggetto().getSubject())==false){
+									continue;
+								}
+							}catch(Exception e){
+								throw new DriverRegistroServiziException(e.getMessage(),e);
+							}
+						}
+					}
 				}
 				IDSoggetto idS = new IDSoggetto(ss.getTipo(),ss.getNome());
 				idSoggetti.add(idS);
@@ -1198,6 +1602,13 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 				throw new DriverRegistroServiziException("getAllIdSoggettiRegistro error",e);
 		}
 	}
+	
+	
+	
+	
+	
+	
+	/* Accordi di Servizio Parte Specifica */
 	
 	/**
 	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.AccordoServizioParteSpecifica}
@@ -1551,7 +1962,31 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 					if(ProtocolPropertiesUtilities.isMatch(serv, filtroRicerca.getProtocolProperties())==false){
 						continue;
 					}
-					
+					// Filtro By Tipo e/o Nome Soggetto Fruitore
+					if(filtroRicerca.getTipoSoggettoFruitore()!=null || filtroRicerca.getNomeSoggettoFruitore()!=null){
+						if(serv.sizeFruitoreList()<=0){
+							continue;
+						}
+						boolean found = false;
+						for (int k = 0; k < serv.sizeFruitoreList(); k++) {
+							Fruitore fruitore = serv.getFruitore(k);
+							if(filtroRicerca.getTipoSoggettoFruitore()!=null){
+								if(fruitore.getTipo().equals(filtroRicerca.getTipoSoggettoFruitore()) == false){
+									continue;
+								}
+							}
+							if(filtroRicerca.getNomeSoggettoFruitore()!=null){
+								if(fruitore.getNome().equals(filtroRicerca.getNomeSoggettoFruitore()) == false){
+									continue;
+								}
+							}
+							found = true;
+							break;
+						}
+						if(!found){
+							continue;
+						}
+					}
 				}
 				
 				IDServizio idServ = this.idServizioFactory.getIDServizioFromAccordo(serv); 
@@ -2140,6 +2575,173 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 			
 		}catch (Exception e) {
 			throw new DriverRegistroServiziException("[deletePortaDominio] Errore generatosi durante l'eliminazione della porta di dominio ["+pdd.getNome()+"]: "+e.getMessage(),e);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * Crea una nuovo Ruolo
+	 * 
+	 * @param ruolo
+	 * @throws DriverRegistroServiziException
+	 */
+	@Override
+	public void createRuolo(Ruolo ruolo) throws DriverRegistroServiziException{
+		if( ruolo == null)
+			throw new DriverRegistroServiziException("[createRuolo] Parametro Non Valido");
+		
+		try {
+
+			// controllo inizializzazione UDDI
+			if(this.uddiLib.create == false){
+				throw new DriverRegistroServiziException("Inizializzazione dell'engine UDDI errata");
+			}
+
+			// Controllo elementi obbligatori
+			if( (ruolo.getNome() == null) ){
+				throw new DriverRegistroServiziException("Ruolo non completamente definito nei parametri obbligatori");
+			}
+
+			// Controllo pre-esistenza del ruolo
+			if( this.uddiLib.existsRuolo(ruolo.getNome()) == true){
+				throw new DriverRegistroServiziException("Il ruolo ["+ruolo.getNome()
+				+"] risulta gia' inserito nel registro dei servizi.");
+			} 
+
+			// Generazione XML
+			this.generatoreXML.createRuolo(ruolo.getNome(),ruolo);
+				
+			// Registrazione nel registro UDDI.
+			String urlXML = this.urlPrefix + CostantiXMLRepository.RUOLI + CostantiRegistroServizi.URL_SEPARATOR + ruolo.getNome()  + ".xml";
+			this.uddiLib.createRuolo(ruolo.getNome(),urlXML);
+
+		}catch (Exception e) {
+			throw new DriverRegistroServiziException("[createRuolo] Errore generatosi durante la creazione di un nuovo ruolo ["+ruolo.getNome()+"]: "+e.getMessage(),e);
+		}
+	}
+	
+	/**
+     * Verifica l'esistenza di un Ruolo
+     *
+     * @param idRuolo idRuolo del ruolo da verificare
+     * @return true se il ruolo esiste, false altrimenti
+	 * @throws DriverRegistroServiziException
+     */    
+	@Override
+	public boolean existsRuolo(IDRuolo idRuolo) throws DriverRegistroServiziException{
+    	if( idRuolo == null || idRuolo.getNome()==null)
+			return false;
+    	
+    	try{
+    		return this.uddiLib.existsRuolo(idRuolo.getNome());
+    	}catch(Exception e){
+    		this.log.error("[existsRuolo] Ruolo non trovato: "+e.getMessage(),e);
+    		return false;
+    	}
+    }
+	
+	/**
+	 * Aggiorna il Ruolo con i nuovi valori.
+	 *  
+	 * @param ruolo
+	 * @throws DriverRegistroServiziException
+	 */
+	@Override
+	public void updateRuolo(Ruolo ruolo) throws DriverRegistroServiziException{
+		if( ruolo == null)
+			throw new DriverRegistroServiziException("[updateRuolo] Parametro Non Valido");
+		
+		IDRuolo idRuoloOLD = null;
+		//idRuoloOLD = ruolo.getOldIDRuoloForUpdate();
+		//if(idRuoloOLD==null)
+		idRuoloOLD = new IDRuolo(ruolo.getNome());
+		
+		try {
+
+			// controllo inizializzazione UDDI
+			if(this.uddiLib.create == false){
+				throw new DriverRegistroServiziException("Inizializzazione dell'engine UDDI errata");
+			}
+
+			// Controllo  del ruolo da Modificare
+			if(idRuoloOLD==null || idRuoloOLD.getNome()==null){
+				throw new DriverRegistroServiziException("Ruolo da modificare non definito");
+			}
+
+			// Controllo elementi obbligatori del ruolo modificato
+			if( (ruolo.getNome() == null) ){
+				throw new DriverRegistroServiziException("Ruolo modificato non completamente definita nei parametri obbligatori");
+			}
+
+			// Controllo pre-esistenza del ruolo da modificare
+			if( this.uddiLib.existsRuolo(idRuoloOLD.getNome()) == false){
+				throw new DriverRegistroServiziException("Il Ruolo ["+idRuoloOLD
+				+"] non risulta gia' inserita nel registro dei servizi.");
+			} 
+
+			// Controllo non esistenza della nuova identita del ruolo (se da modificare)
+			IDRuolo idRuoloNEW = new IDRuolo(ruolo.getNome());
+			if(idRuoloOLD.equals(idRuoloNEW) == false){
+				if( this.uddiLib.existsRuolo(idRuoloNEW.getNome()) == true){
+					throw new DriverRegistroServiziException("Il Ruolo ["+idRuoloNEW
+					+"] risulta gia' inserita nel registro dei servizi.");
+				} 
+			}
+
+			// Ri-Generazione XML
+			this.generatoreXML.createRuolo(idRuoloOLD.getNome(),ruolo);
+			
+			// Modifica UDDI
+			if(idRuoloOLD.equals(idRuoloNEW) == false){
+				String urlXML = this.urlPrefix + CostantiXMLRepository.RUOLI + CostantiRegistroServizi.URL_SEPARATOR + idRuoloNEW  + ".xml";
+				this.uddiLib.updateRuolo(idRuoloOLD.getNome(),idRuoloNEW.getNome(),urlXML);
+			}
+
+		}catch (Exception e) {
+			throw new DriverRegistroServiziException("[updateRuolo] Errore generatosi durante la modifica del ruolo ["+idRuoloOLD+"]: "+e);
+		}
+	}
+	
+	/**
+	 * Elimina un Ruolo
+	 *  
+	 * @param ruolo
+	 * @throws DriverRegistroServiziException
+	 */
+	@Override
+	public void deleteRuolo(Ruolo ruolo) throws DriverRegistroServiziException{
+		if( ruolo == null)
+			throw new DriverRegistroServiziException("[deleteRuolo] Parametro Non Valido");
+				
+		try {
+			// controllo inizializzazione UDDI
+			if(this.uddiLib.create == false){
+				throw new DriverRegistroServiziException("Inizializzazione dell'engine UDDI errata");
+			}
+		
+			// Controllo id del ruolo
+			if(ruolo.getNome()==null){
+				throw new DriverRegistroServiziException("Ruolo da eliminare non definito");
+			}
+
+			// Controllo pre-esistenza del ruolo da eliminare
+			if( this.uddiLib.existsRuolo(ruolo.getNome()) == false){
+				throw new DriverRegistroServiziException("Il Ruolo ["+ruolo.getNome()
+				+"] non risulta gia' inserita nel registro dei servizi.");
+			} 
+
+			// Delete from Repository
+			this.generatoreXML.deleteRuolo(ruolo.getNome());
+				
+			// Delete from UDDI
+			this.uddiLib.deleteRuolo(ruolo.getNome());
+			
+		}catch (Exception e) {
+			throw new DriverRegistroServiziException("[deleteRuolo] Errore generatosi durante l'eliminazione del ruolo ["+ruolo.getNome()+"]: "+e.getMessage(),e);
 		}
 	}
 	

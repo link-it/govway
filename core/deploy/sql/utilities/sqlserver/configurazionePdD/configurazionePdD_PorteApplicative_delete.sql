@@ -1,3 +1,4 @@
+DELETE FROM pa_ruoli;
 DELETE FROM pa_correlazione_risposta;
 DELETE FROM pa_correlazione;
 DELETE FROM pa_ws_response;

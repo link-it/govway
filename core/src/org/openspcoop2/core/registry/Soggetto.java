@@ -41,6 +41,8 @@ import java.util.List;
  * 		&lt;sequence>
  * 			&lt;element name="connettore" type="{http://www.openspcoop2.org/core/registry}connettore" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/registry}protocol-property" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="credenziali" type="{http://www.openspcoop2.org/core/registry}credenziali-soggetto" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="ruoli" type="{http://www.openspcoop2.org/core/registry}ruoli-soggetto" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="accordo-servizio-parte-specifica" type="{http://www.openspcoop2.org/core/registry}accordo-servizio-parte-specifica" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="super-user" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
@@ -67,6 +69,8 @@ import java.util.List;
   propOrder = {
   	"connettore",
   	"protocolProperty",
+  	"credenziali",
+  	"ruoli",
   	"accordoServizioParteSpecifica"
   }
 )
@@ -129,6 +133,22 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   public int sizeProtocolPropertyList() {
     return this.protocolProperty.size();
+  }
+
+  public CredenzialiSoggetto getCredenziali() {
+    return this.credenziali;
+  }
+
+  public void setCredenziali(CredenzialiSoggetto credenziali) {
+    this.credenziali = credenziali;
+  }
+
+  public RuoliSoggetto getRuoli() {
+    return this.ruoli;
+  }
+
+  public void setRuoli(RuoliSoggetto ruoli) {
+    this.ruoli = ruoli;
   }
 
   public void addAccordoServizioParteSpecifica(AccordoServizioParteSpecifica accordoServizioParteSpecifica) {
@@ -289,6 +309,12 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
   public int sizeProtocolProperty() {
   	return this.protocolProperty.size();
   }
+
+  @XmlElement(name="credenziali",required=false,nillable=false)
+  protected CredenzialiSoggetto credenziali;
+
+  @XmlElement(name="ruoli",required=false,nillable=false)
+  protected RuoliSoggetto ruoli;
 
   @XmlElement(name="accordo-servizio-parte-specifica",required=true,nillable=false)
   protected List<AccordoServizioParteSpecifica> accordoServizioParteSpecifica = new ArrayList<AccordoServizioParteSpecifica>();

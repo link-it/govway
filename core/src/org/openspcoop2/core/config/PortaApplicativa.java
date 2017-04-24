@@ -44,6 +44,7 @@ import java.util.List;
  * 			&lt;element name="servizio" type="{http://www.openspcoop2.org/core/config}porta-applicativa-servizio" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="azione" type="{http://www.openspcoop2.org/core/config}porta-applicativa-azione" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}porta-applicativa-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config}autorizzazione-ruoli" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="proprieta-integrazione-protocollo" type="{http://www.openspcoop2.org/core/config}porta-applicativa-proprieta-integrazione-protocollo" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="mtom-processor" type="{http://www.openspcoop2.org/core/config}mtom-processor" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="message-security" type="{http://www.openspcoop2.org/core/config}message-security" minOccurs="0" maxOccurs="1"/>
@@ -67,6 +68,9 @@ import java.util.List;
  * 		&lt;attribute name="gestione-manifest" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional"/>
  * 		&lt;attribute name="stateless" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional"/>
  * 		&lt;attribute name="behaviour" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="autenticazione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="ssl"/>
+ * 		&lt;attribute name="autenticazione-opzionale" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
+ * 		&lt;attribute name="autorizzazione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="authenticated"/>
  * 		&lt;attribute name="autorizzazione-contenuto" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
  * &lt;/complexType>
@@ -85,6 +89,7 @@ import java.util.List;
   	"servizio",
   	"azione",
   	"servizioApplicativo",
+  	"ruoli",
   	"proprietaIntegrazioneProtocollo",
   	"mtomProcessor",
   	"messageSecurity",
@@ -192,6 +197,14 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
 
   public int sizeServizioApplicativoList() {
     return this.servizioApplicativo.size();
+  }
+
+  public AutorizzazioneRuoli getRuoli() {
+    return this.ruoli;
+  }
+
+  public void setRuoli(AutorizzazioneRuoli ruoli) {
+    this.ruoli = ruoli;
   }
 
   public void addProprietaIntegrazioneProtocollo(PortaApplicativaProprietaIntegrazioneProtocollo proprietaIntegrazioneProtocollo) {
@@ -458,6 +471,42 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
     this.behaviour = behaviour;
   }
 
+  public java.lang.String getAutenticazione() {
+    return this.autenticazione;
+  }
+
+  public void setAutenticazione(java.lang.String autenticazione) {
+    this.autenticazione = autenticazione;
+  }
+
+  public void set_value_autenticazioneOpzionale(String value) {
+    this.autenticazioneOpzionale = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
+  }
+
+  public String get_value_autenticazioneOpzionale() {
+    if(this.autenticazioneOpzionale == null){
+    	return null;
+    }else{
+    	return this.autenticazioneOpzionale.toString();
+    }
+  }
+
+  public org.openspcoop2.core.config.constants.StatoFunzionalita getAutenticazioneOpzionale() {
+    return this.autenticazioneOpzionale;
+  }
+
+  public void setAutenticazioneOpzionale(org.openspcoop2.core.config.constants.StatoFunzionalita autenticazioneOpzionale) {
+    this.autenticazioneOpzionale = autenticazioneOpzionale;
+  }
+
+  public java.lang.String getAutorizzazione() {
+    return this.autorizzazione;
+  }
+
+  public void setAutorizzazione(java.lang.String autorizzazione) {
+    this.autorizzazione = autorizzazione;
+  }
+
   public java.lang.String getAutorizzazioneContenuto() {
     return this.autorizzazioneContenuto;
   }
@@ -564,6 +613,9 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
   public int sizeServizioApplicativo() {
   	return this.servizioApplicativo.size();
   }
+
+  @XmlElement(name="ruoli",required=false,nillable=false)
+  protected AutorizzazioneRuoli ruoli;
 
   @XmlElement(name="proprieta-integrazione-protocollo",required=true,nillable=false)
   protected List<PortaApplicativaProprietaIntegrazioneProtocollo> proprietaIntegrazioneProtocollo = new ArrayList<PortaApplicativaProprietaIntegrazioneProtocollo>();
@@ -682,6 +734,20 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="behaviour",required=false)
   protected java.lang.String behaviour;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="autenticazione",required=false)
+  protected java.lang.String autenticazione = "ssl";
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.String _value_autenticazioneOpzionale;
+
+  @XmlAttribute(name="autenticazione-opzionale",required=false)
+  protected StatoFunzionalita autenticazioneOpzionale = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato");
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="autorizzazione",required=false)
+  protected java.lang.String autorizzazione = "authenticated";
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="autorizzazione-contenuto",required=false)

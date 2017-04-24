@@ -42,10 +42,9 @@ import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.core.Search;
-import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
@@ -111,11 +110,6 @@ public final class ConnettorePropList extends Action {
 			// Preparo la lista
 			Connettore connettore = null;
 			org.openspcoop2.core.config.Connettore connettoreC = null;
-			if (servlet.equals(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_EROGATORI_FRUITORI_CHANGE)) {
-				int myIdInt = Integer.parseInt(myId);
-				Fruitore myAccErFru = apsCore.getErogatoreFruitore(myIdInt);
-				connettore = myAccErFru.getConnettore();
-			}
 			if (servlet.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE)) {
 				AccordoServizioParteSpecifica servizio = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(id));
 				connettore = servizio.getConfigurazioneServizio().getConnettore();

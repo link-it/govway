@@ -46,10 +46,12 @@ import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Attachments;
+import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.Cache;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneGestioneErrore;
@@ -63,6 +65,7 @@ import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.IndirizzoRisposta;
 import org.openspcoop2.core.config.InoltroBusteNonRiscontrate;
 import org.openspcoop2.core.config.IntegrationManager;
+import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.InvocazionePortaGestioneErrore;
 import org.openspcoop2.core.config.InvocazioneServizio;
@@ -97,7 +100,9 @@ import org.openspcoop2.core.config.RouteRegistro;
 import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.RoutingTableDefault;
 import org.openspcoop2.core.config.RoutingTableDestinazione;
+import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.ServizioApplicativoRuoli;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.StatoServiziPdd;
 import org.openspcoop2.core.config.StatoServiziPddIntegrationManager;
@@ -111,10 +116,12 @@ import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
+import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.RegistroTipo;
 import org.openspcoop2.core.config.constants.RicercaTipologiaErogazione;
 import org.openspcoop2.core.config.constants.RicercaTipologiaFruizione;
+import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
@@ -165,7 +172,7 @@ import org.slf4j.Logger;
  * <li>Porte Applicative
  * <li>SIL-Mittenti
  * <li>Porta di Dominio
- * </ul>
+ * </ul>get
  * 
  * @author Stefano Corallo (corallo@link.it)
  * @author Sandra Giangrandi (sandra@link.it)
@@ -265,7 +272,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				this.create = true;
 		} catch (Exception ne) {
 			this.create = false;
-			this.log.error("Impossibile recuperare il context: " + ne.getMessage());
+			this.log.error("Impossibile recuperare il context: " + ne.getMessage(),ne);
 		}
 
 		if (tipoDB == null) {
@@ -1579,6 +1586,159 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			}
 		}
 	}
+	
+	public List<String> portaDelegataRuoliList(long idPD, ISearch ricerca) throws DriverConfigurazioneException {
+		String nomeMetodo = "portaDelegataRuoliList";
+		int idLista = Liste.PORTE_DELEGATE_RUOLI;
+		int offset;
+		int limit;
+		String search;
+		String queryString;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		List<String> listIdRuoli = null;
+		try {
+
+			if (!search.equals("")) {
+				//query con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_RUOLI);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id="+CostantiDB.PORTE_DELEGATE_RUOLI+".id_porta");
+				sqlQueryObject.addWhereLikeCondition(CostantiDB.PORTE_DELEGATE_RUOLI+".ruolo", search, true, true);	
+				
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_RUOLI);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id="+CostantiDB.PORTE_DELEGATE_RUOLI+".id_porta");
+
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idPD);
+
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt(1));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			if (!search.equals("")) { // con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_RUOLI);
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE_RUOLI+".ruolo");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id="+CostantiDB.PORTE_DELEGATE_RUOLI+".id_porta");
+				sqlQueryObject.addWhereLikeCondition(CostantiDB.PORTE_DELEGATE_RUOLI+".ruolo", search, true, true);	
+				
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy(CostantiDB.PORTE_DELEGATE_RUOLI+".ruolo");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				// senza search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_RUOLI);
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE_RUOLI+".ruolo");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id="+CostantiDB.PORTE_DELEGATE_RUOLI+".id_porta");
+				
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy(CostantiDB.PORTE_DELEGATE_RUOLI+".ruolo");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idPD);
+
+			risultato = stmt.executeQuery();
+
+			listIdRuoli = new ArrayList<>();
+			while (risultato.next()) {
+
+				listIdRuoli.add(risultato.getString(1));
+
+			}
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return listIdRuoli;
+	}
+	
+	
 
 	@Override
 	public IDPortaApplicativa getIDPortaApplicativa(String nome) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
@@ -2577,31 +2737,181 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		}
 
 	}
+	
+	public List<String> portaApplicativaRuoliList(long idPA, ISearch ricerca) throws DriverConfigurazioneException {
+		String nomeMetodo = "portaApplicativaRuoliList";
+		int idLista = Liste.PORTE_APPLICATIVE_RUOLI;
+		int offset;
+		int limit;
+		String search;
+		String queryString;
 
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
-	@Override
-	public ServizioApplicativo getServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this._getServizioApplicativo(idServizioApplicativo, null, null, null, null);
-	}
-	@Override
-	public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String aUser,String aPassword) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this._getServizioApplicativo(null, aUser, aPassword, null, null);
-	}
-	@Override
-	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String aSubject) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this._getServizioApplicativo(null, null, null, aSubject, null);
-	}
-	public ServizioApplicativo getServizioApplicativo(long idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
-		return this._getServizioApplicativo(null, null, null, null, idServizioApplicativo);
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		List<String> listIdRuoli = null;
+		try {
+
+			if (!search.equals("")) {
+				//query con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_RUOLI);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id="+CostantiDB.PORTE_APPLICATIVE_RUOLI+".id_porta");
+				sqlQueryObject.addWhereLikeCondition(CostantiDB.PORTE_APPLICATIVE_RUOLI+".ruolo", search, true, true);	
+				
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_RUOLI);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id="+CostantiDB.PORTE_APPLICATIVE_RUOLI+".id_porta");
+
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idPA);
+
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt(1));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			if (!search.equals("")) { // con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_RUOLI);
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE_RUOLI+".ruolo");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id="+CostantiDB.PORTE_APPLICATIVE_RUOLI+".id_porta");
+				sqlQueryObject.addWhereLikeCondition(CostantiDB.PORTE_APPLICATIVE_RUOLI+".ruolo", search, true, true);	
+				
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy(CostantiDB.PORTE_APPLICATIVE_RUOLI+".ruolo");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				// senza search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_RUOLI);
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE_RUOLI+".ruolo");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id="+CostantiDB.PORTE_APPLICATIVE_RUOLI+".id_porta");
+				
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy(CostantiDB.PORTE_APPLICATIVE_RUOLI+".ruolo");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idPA);
+
+			risultato = stmt.executeQuery();
+
+			listIdRuoli = new ArrayList<>();
+			while (risultato.next()) {
+
+				listIdRuoli.add(risultato.getString(1));
+
+			}
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return listIdRuoli;
 	}
 
-	private ServizioApplicativo _getServizioApplicativo(IDServizioApplicativo idServizioApplicativoObject, String aUser, String aPassord, String aSubject, Long idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
-		// 1: getServizioApplicativo(RichiestaDelegata idPD)
-		// 2: getServizioApplicativo(RichiestaDelegata idPD, String aUser,String
-		// aPassword)
-		// 3: getServizioApplicativo(RichiestaDelegata idPD, String aSubject)
-		// 4: getServizioApplicativo(RichiestaApplicativa idPA)
-		// 5: getServizioApplicativo(IDServizioApplicativo idServizioApplicativo)
+    @Override
+    public ServizioApplicativo getServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+            return this._getServizioApplicativo(idServizioApplicativo, null, null, null, null, null);
+    }
+    @Override
+    public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String aUser,String aPassword) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+            return this._getServizioApplicativo(null, aUser, aPassword, null, null, null);
+    }
+    @Override
+    public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String aSubject) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+            return this._getServizioApplicativo(null, null, null, aSubject, null, null);
+    }
+    @Override
+    public ServizioApplicativo getServizioApplicativoByCredenzialiPrincipal(String principal) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+    	return this._getServizioApplicativo(null, null, null, null, principal, null);
+    }
+    public ServizioApplicativo getServizioApplicativo(long idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+            return this._getServizioApplicativo(null, null, null, null, null, idServizioApplicativo);
+    }
+
+    private ServizioApplicativo _getServizioApplicativo(IDServizioApplicativo idServizioApplicativoObject, String aUser, String aPassord, String aSubject, String principal,
+    		Long idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound {
+
 		Connection con = null;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
@@ -2613,7 +2923,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		final int TYPE_ID_OBJECT = 1;
 		final int TYPE_BASIC = 2;
 		final int TYPE_SSL = 3;
-		final int TYPE_ID_LONG = 4;
+		final int TYPE_PRINCIPAL = 4;
+		final int TYPE_ID_LONG = 5;
 		if(idServizioApplicativoObject!=null){
 			IDSoggetto idSO = idServizioApplicativoObject.getIdSoggettoProprietario();
 			if(idSO==null)throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServizioApplicativo] Soggetto Proprietario non definito.");
@@ -2631,6 +2942,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		}
 		else if(aSubject!=null){
 			type = TYPE_SSL;
+		}
+		else if(principal!=null){
+			type = TYPE_PRINCIPAL;
 		}
 		else{
 			type = TYPE_ID_LONG;
@@ -2752,6 +3066,24 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 				break;
 				
+			case TYPE_PRINCIPAL:
+
+				//cerco un servizio applicativo che contenga utente e password con autenticazione basi
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("tipoauth = ?");
+				sqlQueryObject.addWhereCondition("utente = ?");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = con.prepareStatement(sqlQuery);
+				//stm.setString(1, nome_sa);
+				stm.setString(1, CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString());
+				stm.setString(2, aUser);
+				this.log.debug("eseguo query :" + DBUtils.formatSQLString(sqlQuery, CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString(), aUser));
+
+				break;
+				
 			case TYPE_ID_LONG:
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
@@ -2763,7 +3095,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 				this.log.debug("eseguo query: " + DBUtils.formatSQLString(sqlQuery, idServizioApplicativo));
 				break;
-
+				
 			}
 
 			rs = stm.executeQuery();
@@ -2827,7 +3159,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 						invPorta.setSbustamentoInformazioniProtocollo(CostantiConfigurazione.DISABILITATO);
 					else
 						invPorta.setSbustamentoInformazioniProtocollo(CostantiConfigurazione.ABILITATO);
-
+					
 				}
 
 				// RispostaAsincrona
@@ -2837,18 +3169,18 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				RispostaAsincrona rispAsinc = null;				
 				if (idConnettore > 0 || (getMsgRisp != null && !getMsgRisp.equals("")) ) {
 					rispAsinc = new RispostaAsincrona();
-					Credenziali credenzialiRispA = new Credenziali();
-					credenzialiRispA.setPassword(rs.getString("passwordrisp"));
-					credenzialiRispA.setSubject(rs.getString("subjectrisp"));
-					credenzialiRispA.setTipo(DriverConfigurazioneDB_LIB.getEnumCredenzialeTipo(rs.getString("tipoauthrisp")));
-					credenzialiRispA.setUser(rs.getString("utenterisp"));
-					//se il tipo di autenticazione non e' settato allora nn esistono credenziali
-					rispAsinc.setCredenziali(credenzialiRispA.getTipo() != null ? credenzialiRispA : null);
 
 					rispAsinc.setAutenticazione(DriverConfigurazioneDB_LIB.getEnumInvocazioneServizioTipoAutenticazione(rs.getString("tipoauthrisp")));
 					rispAsinc.setInvioPerRiferimento(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("invio_x_rif_risp")));
 					rispAsinc.setRispostaPerRiferimento(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("risposta_x_rif_risp")));
 
+					if(rispAsinc.getAutenticazione()!=null && InvocazioneServizioTipoAutenticazione.BASIC.equals(rispAsinc.getAutenticazione())){
+						InvocazioneCredenziali credenzialiRispA = new InvocazioneCredenziali();
+						credenzialiRispA.setPassword(rs.getString("passwordrisp"));
+						credenzialiRispA.setUser(rs.getString("utenterisp"));
+						rispAsinc.setCredenziali(credenzialiRispA);
+					}
+					
 					Connettore connettore = DriverConfigurazioneDB_LIB.getConnettore(idConnettore, con);
 					rispAsinc.setConnettore(connettore);
 					rispAsinc.setGetMessage(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(getMsgRisp));
@@ -2884,12 +3216,6 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					invServizio = new InvocazioneServizio();
 					Connettore connserv = DriverConfigurazioneDB_LIB.getConnettore(idConnettore, con);
 					invServizio.setConnettore(connserv);
-					Credenziali credInvServ = new Credenziali();
-					credInvServ.setPassword(rs.getString("passwordinv"));
-					credInvServ.setSubject(rs.getString("subjectinv"));
-					credInvServ.setTipo(DriverConfigurazioneDB_LIB.getEnumCredenzialeTipo(rs.getString("tipoauthinv")));
-					credInvServ.setUser(rs.getString("utenteinv"));
-					invServizio.setCredenziali(credInvServ.getTipo() != null ? credInvServ : null);
 					invServizio.setGetMessage(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(getMsgInv));
 
 					int sbustamentoInfoProtocollo = rs.getInt("sbustamento_protocol_info_inv");
@@ -2908,6 +3234,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					invServizio.setAutenticazione(DriverConfigurazioneDB_LIB.getEnumInvocazioneServizioTipoAutenticazione(rs.getString("tipoauthinv")));
 					invServizio.setInvioPerRiferimento(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("invio_x_rif_inv")));
 					invServizio.setRispostaPerRiferimento(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("risposta_x_rif_inv")));
+					
+					if(invServizio.getAutenticazione()!=null && InvocazioneServizioTipoAutenticazione.BASIC.equals(invServizio.getAutenticazione())){
+						InvocazioneCredenziali credInvServ = new InvocazioneCredenziali();
+						credInvServ.setPassword(rs.getString("passwordinv"));
+						credInvServ.setUser(rs.getString("utenteinv"));
+						invServizio.setCredenziali(credInvServ);
+					}
 
 					// Gestione errore
 					Long idGestioneErroreInvocazioneServizio = rs.getLong("id_gestione_errore_inv");
@@ -2948,7 +3281,41 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 						}
 					}
 						
+				}	
+				
+				rs.close();
+				stm.close();
+				
+				
+				
+				// ruoli
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_RUOLI);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("id_servizio_applicativo=?");
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, sa.getId());
+				rs = stm.executeQuery();
+
+				while (rs.next()) {
+					
+					if(sa.getInvocazionePorta()==null){
+						sa.setInvocazionePorta(new InvocazionePorta());
+					}
+					if(sa.getInvocazionePorta().getRuoli()==null){
+						sa.getInvocazionePorta().setRuoli(new ServizioApplicativoRuoli());
+					}
+					
+					Ruolo ruolo = new Ruolo();
+					ruolo.setNome(rs.getString("ruolo"));
+					sa.getInvocazionePorta().getRuoli().addRuolo(ruolo);
+				
 				}
+				rs.close();
+				stm.close();
+				
+				
 				
 				return sa;
 
@@ -3560,7 +3927,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				con = getConnectionFromDatasource("routingList");
 				con.setAutoCommit(false);
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -3663,7 +4030,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		} catch (Exception qe) {
 			error = true;
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage());
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
@@ -4324,6 +4691,101 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			}
 		}
 	}
+	
+	
+	
+	@Override
+	public AccessoDatiAutenticazione getAccessoDatiAutenticazione() throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		String sqlQuery = "";
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource("getAccessoDatiAutenticazione");
+
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getAccessoDatiAutenticazione] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			AccessoDatiAutenticazione accessoDatiAutenticazione = new AccessoDatiAutenticazione();
+			Cache cache = null;
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.CONFIGURAZIONE);
+			sqlQueryObject.addSelectField("*");
+			sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+
+			this.log.debug("eseguo query : " + sqlQuery);
+
+			rs = stm.executeQuery();
+
+			if (rs.next()) {
+				String tmpCache = rs.getString("authn_statocache");
+				if (CostantiConfigurazione.ABILITATO.equals(tmpCache)) {
+					cache = new Cache();
+
+					String tmpDim = rs.getString("authn_dimensionecache");
+					if (tmpDim != null && !tmpDim.equals(""))
+						cache.setDimensione(tmpDim);
+
+					String tmpAlg = rs.getString("authn_algoritmocache");
+					if (tmpAlg.equalsIgnoreCase("LRU"))
+						cache.setAlgoritmo(CostantiConfigurazione.CACHE_LRU);
+					else
+						cache.setAlgoritmo(CostantiConfigurazione.CACHE_MRU);
+
+					String tmpIdle = rs.getString("authn_idlecache");
+					String tmpLife = rs.getString("authn_lifecache");
+
+					if (tmpIdle != null && !tmpIdle.equals(""))
+						cache.setItemIdleTime(tmpIdle);
+					if (tmpLife != null && !tmpLife.equals(""))
+						cache.setItemLifeSecond(tmpLife);
+
+					accessoDatiAutenticazione.setCache(cache);
+
+				}
+				rs.close();
+				stm.close();
+			}
+
+			return accessoDatiAutenticazione;
+
+		} catch (SQLException se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getAccessoDatiAutenticazione] SqlException: " + se.getMessage(),se);
+		}catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getAccessoDatiAutenticazione] Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	
 
 	public void createAccessoDatiAutorizzazione(AccessoDatiAutorizzazione accessoDatiAutorizzazione) throws DriverConfigurazioneException {
 
@@ -5739,6 +6201,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		// - AccessoDatiAutorizzazione
 		try{
 			config.setAccessoDatiAutorizzazione(getAccessoDatiAutorizzazione());
+		}catch (Exception e) {}
+		
+		// - AccessoDatiAutenticazione
+		try{
+			config.setAccessoDatiAutenticazione(getAccessoDatiAutenticazione());
 		}catch (Exception e) {}
 
 		// - RoutingTable
@@ -8469,7 +8936,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				con = getConnectionFromDatasource("porteDelegateCorrelazioneApplicativaList");
 				con.setAutoCommit(false);
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -8617,7 +9084,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				con = (Connection) getConnectionFromDatasource("porteDelegateCorrelazioneApplicativaRispostaList");
 				con.setAutoCommit(false);
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -8763,7 +9230,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				con = getConnectionFromDatasource("porteApplicativeCorrelazioneApplicativaList");
 				con.setAutoCommit(false);
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -8910,7 +9377,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				con = (Connection) getConnectionFromDatasource("porteApplicativeCorrelazioneApplicativaRispostaList");
 				con.setAutoCommit(false);
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -9030,6 +9497,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			}
 		}
 	}
+
 
 
 
@@ -9246,8 +9714,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		}
 	}
 
-	public List<ServizioApplicativo> servizioApplicativoWithCredenzialiList(String utente, String password) throws DriverConfigurazioneException {
-		String nomeMetodo = "servizioApplicativoWithCredenzialiList";
+	public List<ServizioApplicativo> servizioApplicativoWithCredenzialiBasicList(String utente, String password) throws DriverConfigurazioneException {
+		String nomeMetodo = "servizioApplicativoWithCredenzialiBasicList";
 		String queryString;
 
 		Connection con = null;
@@ -9258,7 +9726,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = getConnectionFromDatasource("servizioApplicativoWithCredenzialiList");
+				con = getConnectionFromDatasource(nomeMetodo);
 				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
@@ -9277,13 +9745,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			sqlQueryObject.addSelectField("id");
 			sqlQueryObject.addSelectField("nome");
 			sqlQueryObject.addSelectField("id_soggetto");
+			sqlQueryObject.addWhereCondition("tipoauth = ?");
 			sqlQueryObject.addWhereCondition("utente = ?");
 			sqlQueryObject.addWhereCondition("password = ?");
 			sqlQueryObject.setANDLogicOperator(true);
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
-			stmt.setString(1, utente);
-			stmt.setString(2, password);			
+			stmt.setString(1, CredenzialeTipo.BASIC.getValue());
+			stmt.setString(2, utente);
+			stmt.setString(3, password);			
 			risultato = stmt.executeQuery();
 
 			ServizioApplicativo sa;
@@ -9330,8 +9800,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		}
 	}
 
-	public List<ServizioApplicativo> servizioApplicativoWithCredenzialiList(String subject) throws DriverConfigurazioneException {
-		String nomeMetodo = "servizioApplicativoWithCredenzialiList";
+	public List<ServizioApplicativo> servizioApplicativoWithCredenzialiSslList(String subject) throws DriverConfigurazioneException {
+		String nomeMetodo = "servizioApplicativoWithCredenzialiSslList";
 		String queryString;
 
 		Connection con = null;
@@ -9342,7 +9812,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		if (this.atomica) {
 			try {
-				con = getConnectionFromDatasource("servizioApplicativoWithCredenzialiList(subject)");
+				con = getConnectionFromDatasource(nomeMetodo);
 				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
@@ -9364,6 +9834,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			sqlQueryObject.addSelectField("nome");
 			sqlQueryObject.addSelectField("subject");
 			sqlQueryObject.addSelectField("id_soggetto");
+			sqlQueryObject.addWhereCondition("tipoauth = ?");
 			Enumeration<String> keys = hashSubject.keys();
 			while(keys.hasMoreElements()){
 				String key = keys.nextElement();
@@ -9373,7 +9844,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			sqlQueryObject.setANDLogicOperator(true);
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
-
+			stmt.setString(1, CredenzialeTipo.SSL.getValue());
+			
 			risultato = stmt.executeQuery();
 
 			ServizioApplicativo sa;
@@ -9421,6 +9893,91 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			}
 		}
 	}
+	
+	public List<ServizioApplicativo> servizioApplicativoWithCredenzialiPrincipalList(String principal) throws DriverConfigurazioneException {
+		String nomeMetodo = "servizioApplicativoWithCredenzialiPrincipalList";
+		String queryString;
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		ArrayList<ServizioApplicativo> lista = new ArrayList<ServizioApplicativo>();
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addSelectField("nome");
+			sqlQueryObject.addSelectField("id_soggetto");
+			sqlQueryObject.addWhereCondition("tipoauth = ?");
+			sqlQueryObject.addWhereCondition("utente = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setString(1, CredenzialeTipo.PRINCIPAL.getValue());
+			stmt.setString(2, principal);		
+			risultato = stmt.executeQuery();
+
+			ServizioApplicativo sa;
+			while (risultato.next()) {
+
+				sa=this.getServizioApplicativo(risultato.getLong("id"));
+
+				lista.add(sa);
+
+			}
+
+			return lista;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
 
 	public List<AccessoRegistroRegistro> registriList(ISearch ricerca) throws DriverConfigurazioneException {
 		String nomeMetodo = "registriList";
@@ -9446,7 +10003,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				con = getConnectionFromDatasource("registriList");
 				con.setAutoCommit(false);
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -9854,7 +10411,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				con = getConnectionFromDatasource("soggettiServizioApplicativoList");
 				con.setAutoCommit(false);
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -9944,7 +10501,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				con = getConnectionFromDatasource(nomeMetodo);
 				con.setAutoCommit(false);
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -10045,7 +10602,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				con = getConnectionFromDatasource(nomeMetodo);
 				con.setAutoCommit(false);
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -10194,7 +10751,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				con = getConnectionFromDatasource(nomeMetodo);
 				con.setAutoCommit(false);
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -10604,7 +11161,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			sqlQueryObject.addSelectAliasField(CostantiDB.PORTE_APPLICATIVE+".descrizione", "descrizionePorta");
 			sqlQueryObject.addSelectField("stateless");
 			sqlQueryObject.addSelectField("behaviour");
+			sqlQueryObject.addSelectField("autenticazione");
+			sqlQueryObject.addSelectField("autenticazione_opzionale");
+			sqlQueryObject.addSelectField("autorizzazione");
 			sqlQueryObject.addSelectField("autorizzazione_contenuto");
+			sqlQueryObject.addSelectField("ruoli_match");
 			sqlQueryObject.addSelectField("id_accordo");
 			sqlQueryObject.addSelectField("id_port_type");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id_soggetto = "+this.tabellaSoggetti+".id");
@@ -10786,7 +11347,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				pa.setStateless(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("stateless")));
 				pa.setBehaviour(rs.getString("behaviour"));
 
-				// Autorizzazione per contenuto
+				// Autorizzazione/Autenticazione
+				pa.setAutenticazione(rs.getString("autenticazione"));
+				pa.setAutenticazioneOpzionale(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("autenticazione_opzionale")));
+				pa.setAutorizzazione(rs.getString("autorizzazione"));
 				pa.setAutorizzazioneContenuto(rs.getString("autorizzazione_contenuto"));
 
 				//mtom
@@ -10845,6 +11409,16 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 						messageSecurity.getResponseFlow().setApplyToMtom(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(ws_security_mtom_res));
 					}
 				}
+				
+				// RuoliMatch
+				String ruoliMatch = rs.getString("ruoli_match");
+				if(ruoliMatch!=null && !"".equals(ruoliMatch)){
+					if(pa.getRuoli()==null){
+						pa.setRuoli(new AutorizzazioneRuoli());
+					}
+					pa.getRuoli().setMatch(RuoloTipoMatch.toEnumConstant(ruoliMatch));
+				}
+				
 				
 				rs.close();
 				stm.close();
@@ -11056,6 +11630,34 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				stm.close();
 				
 				
+								
+				// ruoli
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_RUOLI);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				rs = stm.executeQuery();
+
+				while (rs.next()) {
+					
+					if(pa.getRuoli()==null){
+						pa.setRuoli(new AutorizzazioneRuoli());
+					}
+					
+					Ruolo ruolo = new Ruolo();
+					ruolo.setNome(rs.getString("ruolo"));
+					pa.getRuoli().addRuolo(ruolo);
+				
+				}
+				rs.close();
+				stm.close();
+				
+				
+				
+				
 				// *** Aggiungo extInfo ***
 				
 				this.log.debug("ExtendedInfo ... ");
@@ -11145,6 +11747,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			sqlQueryObject.addSelectField("tipo_soggetto");
 			sqlQueryObject.addSelectField("nome_soggetto");
 			sqlQueryObject.addSelectField("autenticazione");
+			sqlQueryObject.addSelectField("autenticazione_opzionale");
 			sqlQueryObject.addSelectField("autorizzazione");
 			sqlQueryObject.addSelectField("autorizzazione_contenuto");
 			sqlQueryObject.addSelectField("id_soggetto");
@@ -11180,6 +11783,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			sqlQueryObject.addSelectField("stateless");
 			sqlQueryObject.addSelectField("local_forward");
 			sqlQueryObject.addSelectField("local_forward_pa");
+			sqlQueryObject.addSelectField("ruoli_match");
 			sqlQueryObject.addSelectField("id_accordo");
 			sqlQueryObject.addSelectField("id_port_type");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id_soggetto = "+this.tabellaSoggetti+".id");
@@ -11201,6 +11805,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 				pd.setId(idPortaDelegata);
 				pd.setAutenticazione(rs.getString("autenticazione"));
+				pd.setAutenticazioneOpzionale(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(rs.getString("autenticazione_opzionale")));
 				pd.setAutorizzazione(rs.getString("autorizzazione"));
 				pd.setAutorizzazioneContenuto(rs.getString("autorizzazione_contenuto"));
 
@@ -11431,6 +12036,17 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					}
 				}
 
+				
+				// RuoliMatch
+				String ruoliMatch = rs.getString("ruoli_match");
+				if(ruoliMatch!=null && !"".equals(ruoliMatch)){
+					if(pd.getRuoli()==null){
+						pd.setRuoli(new AutorizzazioneRuoli());
+					}
+					pd.getRuoli().setMatch(RuoloTipoMatch.toEnumConstant(ruoliMatch));
+				}
+				
+				
 				rs.close();
 				stm.close();
 
@@ -11621,6 +12237,33 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				stm.close();
 				
 				
+							
+				// ruoli
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_RUOLI);
+				sqlQueryObject.addSelectField("*");
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaDelegata);
+				rs = stm.executeQuery();
+
+				while (rs.next()) {
+					
+					if(pd.getRuoli()==null){
+						pd.setRuoli(new AutorizzazioneRuoli());
+					}
+					
+					Ruolo ruolo = new Ruolo();
+					ruolo.setNome(rs.getString("ruolo"));
+					pd.getRuoli().addRuolo(ruolo);
+				
+				}
+				rs.close();
+				stm.close();
+				
+				
+				
 				
 				// *** Aggiungo extInfo ***
 				
@@ -11671,6 +12314,159 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 
 
+	public List<String> servizioApplicativoRuoliList(long idSA, ISearch ricerca) throws DriverConfigurazioneException {
+		String nomeMetodo = "servizioApplicativoRuoliList";
+		int idLista = Liste.SERVIZIO_APPLICATIVO_RUOLI;
+		int offset;
+		int limit;
+		String search;
+		String queryString;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		List<String> listIdRuoli = null;
+		try {
+
+			if (!search.equals("")) {
+				//query con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_RUOLI);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id="+CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".id_servizio_applicativo");
+				sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".ruolo", search, true, true);	
+				
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_RUOLI);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id="+CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".id_servizio_applicativo");
+
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idSA);
+
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt(1));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			if (!search.equals("")) { // con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_RUOLI);
+				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".ruolo");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id="+CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".id_servizio_applicativo");
+				sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".ruolo", search, true, true);	
+				
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".ruolo");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				// senza search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_RUOLI);
+				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".ruolo");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id="+CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".id_servizio_applicativo");
+				
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".ruolo");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idSA);
+
+			risultato = stmt.executeQuery();
+
+			listIdRuoli = new ArrayList<>();
+			while (risultato.next()) {
+
+				listIdRuoli.add(risultato.getString(1));
+
+			}
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return listIdRuoli;
+	}
+	
+	
+	
 	//RESET
 
 
@@ -11704,8 +12500,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		try {
 
-
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_RUOLI);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();		
+
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SA);
 			updateString = sqlQueryObject.createSQLDelete();
 			stmt = con.prepareStatement(updateString);
@@ -11755,6 +12557,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			stmt.close();
 
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_RUOLI);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.PORTE_DELEGATE_SA);
 			updateString = sqlQueryObject.createSQLDelete();
 			stmt = con.prepareStatement(updateString);
@@ -11796,6 +12605,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			stmt.executeUpdate();
 			stmt.close();
 
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_APPLICATIVI_RUOLI);
+			updateString = sqlQueryObject.createSQLDelete();
+			stmt = con.prepareStatement(updateString);
+			stmt.executeUpdate();
+			stmt.close();
+			
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_APPLICATIVI);
 			updateString = sqlQueryObject.createSQLDelete();
@@ -11932,14 +12748,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addDeleteTable(CostantiDB.RUOLI_SA);
+			sqlQueryObject.addDeleteTable(CostantiDB.MAPPING_EROGAZIONE_PA);
 			updateString = sqlQueryObject.createSQLDelete();
 			stmt = con.prepareStatement(updateString);
 			stmt.executeUpdate();
 			stmt.close();
 
 			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-			sqlQueryObject.addDeleteTable(CostantiDB.POLITICHE_SICUREZZA);
+			sqlQueryObject.addDeleteTable(CostantiDB.MAPPING_FRUIZIONE_PD);
 			updateString = sqlQueryObject.createSQLDelete();
 			stmt = con.prepareStatement(updateString);
 			stmt.executeUpdate();
@@ -12023,7 +12839,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			try {
 				con = getConnectionFromDatasource("existsPortaApplicativaServizioApplicativo");
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaServizioApplicativo] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaServizioApplicativo] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -12079,7 +12895,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			try {
 				con = getConnectionFromDatasource("existsPortaApplicativaSoggetto");
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaSoggetto] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -12137,7 +12953,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			try {
 				con = getConnectionFromDatasource("getPorteApplicativeWithServizio");
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicativeWithServizio] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicativeWithServizio] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -12207,7 +13023,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			try {
 				con = getConnectionFromDatasource("getPortaApplicativaWithSoggettoAndServizio");
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicativeWithSoggettoAndServizio] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteApplicativeWithSoggettoAndServizio] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -12295,7 +13111,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			try {
 				con = getConnectionFromDatasource("getPortaApplicativaAzione");
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaAzione] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaAzione] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -12362,7 +13178,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			try {
 				con = getConnectionFromDatasource("existsPortaApplicativaAzione");
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaAzione] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaAzione] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -12428,7 +13244,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			try {
 				con = getConnectionFromDatasource("existsPortaDelegataServizioApplicativo");
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaDelegataServizioApplicativo] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaDelegataServizioApplicativo] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -12484,7 +13300,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			try {
 				con = getConnectionFromDatasource("existsPortaDelegataSoggetto");
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaDelegataSoggetto] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaDelegataSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -12543,7 +13359,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			try {
 				con = getConnectionFromDatasource("getPorteDelegateWithServizio");
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteDelegateWithServizio] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteDelegateWithServizio] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -12609,7 +13425,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			try {
 				con = getConnectionFromDatasource("getPorteDelegateWithServizio");
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteDelegateWithServizio] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getPorteDelegateWithServizio] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -12667,7 +13483,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			try {
 				con = getConnectionFromDatasource("getServiziApplicativiWithIdErogatore");
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServiziApplicativiWithIdErogatore] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::getServiziApplicativiWithIdErogatore] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -12724,7 +13540,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			try {
 				con = getConnectionFromDatasource("getPortaDelegataAzione");
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaAzione] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaApplicativaAzione] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -12791,7 +13607,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			try {
 				con = getConnectionFromDatasource("existsPortaDelegataAzione");
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaDelegataAzione] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsPortaDelegataAzione] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -12935,7 +13751,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			try {
 				con = getConnectionFromDatasource("existsServizioApplicativoSoggetto");
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsServizioApplicativoSoggetto] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::existsServizioApplicativoSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -13301,7 +14117,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				con = getConnectionFromDatasource(nomeMetodo);
 
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -13443,7 +14259,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 
 		} catch (Exception se) {
 
-			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception: " + se.getMessage());
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
 			//Chiudo statement and resultset
 			try{
@@ -13463,6 +14279,229 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			}
 		}
 	}
+	
+	
+	public List<PortaDelegata> serviziFruitoriPorteDelegateList(long idSoggetto, String tipoServizio,String nomeServizio,Long idServizio, 
+			String tipoSoggettoErogatore, String nomeSoggettoErogatore, Long idSoggettoErogatore, ISearch ricerca) throws DriverConfigurazioneException {
+		String nomeMetodo = "serviziFruitoriPorteDelegateList";
+		int idLista = Liste.SERVIZI_FRUITORI_PORTE_DELEGATE;
+		int offset;
+		int limit;
+		String search;
+		String queryString;
+
+		limit = ricerca.getPageSize(idLista);
+		offset = ricerca.getIndexIniziale(idLista);
+		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
+		ricerca.getSearchString(idLista);
+
+		Connection con = null;
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+
+		ArrayList<PortaDelegata> lista = new ArrayList<PortaDelegata>();
+
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource(nomeMetodo);
+
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			if (!search.equals("")) {
+				//query con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				sqlQueryObject.addWhereCondition("id_soggetto = ?");
+				if(idSoggettoErogatore!=null && idSoggettoErogatore > 0){
+					sqlQueryObject.addWhereCondition(false, "id_soggetto_erogatore=?" , "tipo_soggetto_erogatore=? AND nome_soggetto_erogatore=?");
+				}
+				else{
+					sqlQueryObject.addWhereCondition("tipo_soggetto_erogatore=?");
+					sqlQueryObject.addWhereCondition("nome_soggetto_erogatore=?");
+				}
+				if(idServizio!=null && idServizio > 0){
+					sqlQueryObject.addWhereCondition(false, "id_servizio=?" , "tipo_servizio=? AND nome_servizio=?");
+				}
+				else{
+					sqlQueryObject.addWhereCondition("tipo_servizio=?");
+					sqlQueryObject.addWhereCondition("nome_servizio=?");
+				}
+				sqlQueryObject.addWhereLikeCondition("nome_porta", search, true, true);
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+				sqlQueryObject.addSelectCountField("*", "cont");
+				sqlQueryObject.addWhereCondition("id_soggetto = ?");
+				if(idSoggettoErogatore!=null && idSoggettoErogatore > 0){
+					sqlQueryObject.addWhereCondition(false, "id_soggetto_erogatore=?" , "tipo_soggetto_erogatore=? AND nome_soggetto_erogatore=?");
+				}
+				else{
+					sqlQueryObject.addWhereCondition("tipo_soggetto_erogatore=?");
+					sqlQueryObject.addWhereCondition("nome_soggetto_erogatore=?");
+				}
+				if(idServizio!=null && idServizio > 0){
+					sqlQueryObject.addWhereCondition(false, "id_servizio=?" , "tipo_servizio=? AND nome_servizio=?");
+				}
+				else{
+					sqlQueryObject.addWhereCondition("tipo_servizio=?");
+					sqlQueryObject.addWhereCondition("nome_servizio=?");
+				}
+				sqlQueryObject.setANDLogicOperator(true);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+
+			int index = 1;
+			
+			stmt.setLong(index++, idSoggetto);
+			
+			if(idSoggettoErogatore!=null && idSoggettoErogatore > 0){
+				stmt.setLong(index++, idSoggettoErogatore);
+			}
+			stmt.setString(index++, tipoSoggettoErogatore);
+			stmt.setString(index++, nomeSoggettoErogatore);
+			
+			if(idServizio!=null && idServizio > 0){
+				stmt.setLong(index++, idServizio);
+			}
+			stmt.setString(index++, tipoServizio);
+			stmt.setString(index++, nomeServizio);
+
+			risultato = stmt.executeQuery();
+			if (risultato.next())
+				ricerca.setNumEntries(idLista,risultato.getInt(1));
+			risultato.close();
+			stmt.close();
+
+			// ricavo le entries
+			if (limit == 0) // con limit
+				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
+			if (!search.equals("")) { // con search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+				sqlQueryObject.addSelectField("id");
+				sqlQueryObject.addSelectField("nome_porta");
+				sqlQueryObject.addWhereCondition("id_soggetto = ?");
+				if(idSoggettoErogatore!=null && idSoggettoErogatore > 0){
+					sqlQueryObject.addWhereCondition(false, "id_soggetto_erogatore=?" , "tipo_soggetto_erogatore=? AND nome_soggetto_erogatore=?");
+				}
+				else{
+					sqlQueryObject.addWhereCondition("tipo_soggetto_erogatore=?");
+					sqlQueryObject.addWhereCondition("nome_soggetto_erogatore=?");
+				}
+				if(idServizio!=null && idServizio > 0){
+					sqlQueryObject.addWhereCondition(false, "id_servizio=?" , "tipo_servizio=? AND nome_servizio=?");
+				}
+				else{
+					sqlQueryObject.addWhereCondition("tipo_servizio=?");
+					sqlQueryObject.addWhereCondition("nome_servizio=?");
+				}
+				sqlQueryObject.addWhereLikeCondition("nome_porta", search, true, true);
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy("nome_porta");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			} else {
+				// senza search
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+				sqlQueryObject.addSelectField("id");
+				sqlQueryObject.addSelectField("nome_porta");
+				sqlQueryObject.addWhereCondition("id_soggetto = ?");
+				if(idSoggettoErogatore!=null && idSoggettoErogatore > 0){
+					sqlQueryObject.addWhereCondition(false, "id_soggetto_erogatore=?" , "tipo_soggetto_erogatore=? AND nome_soggetto_erogatore=?");
+				}
+				else{
+					sqlQueryObject.addWhereCondition("tipo_soggetto_erogatore=?");
+					sqlQueryObject.addWhereCondition("nome_soggetto_erogatore=?");
+				}
+				if(idServizio!=null && idServizio > 0){
+					sqlQueryObject.addWhereCondition(false, "id_servizio=?" , "tipo_servizio=? AND nome_servizio=?");
+				}
+				else{
+					sqlQueryObject.addWhereCondition("tipo_servizio=?");
+					sqlQueryObject.addWhereCondition("nome_servizio=?");
+				}
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addOrderBy("nome_porta");
+				sqlQueryObject.setSortType(true);
+				sqlQueryObject.setLimit(limit);
+				sqlQueryObject.setOffset(offset);
+				queryString = sqlQueryObject.createSQLQuery();
+			}
+			stmt = con.prepareStatement(queryString);
+
+			index = 1;
+			
+			stmt.setLong(index++, idSoggetto);
+			
+			if(idSoggettoErogatore!=null && idSoggettoErogatore > 0){
+				stmt.setLong(index++, idSoggettoErogatore);
+			}
+			stmt.setString(index++, tipoSoggettoErogatore);
+			stmt.setString(index++, nomeSoggettoErogatore);
+			
+			if(idServizio!=null && idServizio > 0){
+				stmt.setLong(index++, idServizio);
+			}
+			stmt.setString(index++, tipoServizio);
+			stmt.setString(index++, nomeServizio);
+
+			risultato = stmt.executeQuery();
+
+			PortaDelegata pd = null;
+
+			while (risultato.next()) {
+
+				pd = this.getPortaDelegata(risultato.getLong("id"));
+
+				lista.add(pd);
+
+			}
+
+			return lista;
+
+		} catch (Exception se) {
+
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	
 
 	public List<String> connettoriList() throws DriverConfigurazioneException {
 		String nomeMetodo = "connettoriList";
@@ -13477,7 +14516,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				con = getConnectionFromDatasource(nomeMetodo);
 				con.setAutoCommit(false);
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -13545,7 +14584,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException(
 						"[DriverConfigurazioneDB::getPorteApplicativaByIdProprietario] Exception accedendo al datasource :"
-								+ e.getMessage());
+								+ e.getMessage(),e);
 
 			}
 
@@ -13609,7 +14648,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException(
 						"[DriverConfigurazioneDB::getPorteApplicative] Exception accedendo al datasource :"
-								+ e.getMessage());
+								+ e.getMessage(),e);
 
 			}
 
@@ -13703,7 +14742,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException(
 						"[DriverConfigurazioneDB::getPorteDelegate] Exception accedendo al datasource :"
-								+ e.getMessage());
+								+ e.getMessage(),e);
 
 			}
 
@@ -13942,7 +14981,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				con = getConnectionFromDatasource(nomeMetodo);
 				con.setAutoCommit(false);
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -14149,7 +15188,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				con = getConnectionFromDatasource(nomeMetodo);
 				con.setAutoCommit(false);
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -14376,7 +15415,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				con = getConnectionFromDatasource(nomeMetodo);
 				con.setAutoCommit(false);
 			} catch (Exception e) {
-				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage());
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
 			}
 
@@ -15185,6 +16224,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			if(filtroRicerca!=null && (filtroRicerca.getTipoSoggetto()!=null || filtroRicerca.getNomeSoggetto()!=null) ){
 				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
 			}
+			if(filtroRicerca!=null){
+				if(filtroRicerca.getIdRuolo()!=null){
+					sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_RUOLI);
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_RUOLI+".id_porta = "+CostantiDB.PORTE_DELEGATE+".id");
+				}
+			}
 
 			if(filtroRicerca!=null){
 				// Filtro By Data
@@ -15208,6 +16253,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".nome_azione = ?");
 				if(filtroRicerca.getNome()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".nome_porta = ?");
+				if(filtroRicerca.getIdRuolo()!=null)
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_RUOLI+".ruolo = ?");
 			}
 
 			sqlQueryObject.setANDLogicOperator(true);
@@ -15264,6 +16311,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				if(filtroRicerca.getNome()!=null){
 					this.log.debug("nome stmt.setString("+filtroRicerca.getNome()+")");
 					stm.setString(indexStmt, filtroRicerca.getNome());
+					indexStmt++;
+				}
+				if(filtroRicerca.getIdRuolo()!=null){
+					this.log.debug("ruolo stmt.setString("+filtroRicerca.getIdRuolo().getNome()+")");
+					stm.setString(indexStmt, filtroRicerca.getIdRuolo().getNome());
 					indexStmt++;
 				}
 			}
@@ -15350,6 +16402,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			if(filtroRicerca!=null && (filtroRicerca.getTipoSoggetto()!=null || filtroRicerca.getNomeSoggetto()!=null) ){
 				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
 			}
+			if(filtroRicerca!=null){
+				if(filtroRicerca.getIdRuolo()!=null){
+					sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_RUOLI);
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_RUOLI+".id_porta = "+CostantiDB.PORTE_APPLICATIVE+".id");
+				}
+			}
 
 			if(filtroRicerca!=null){
 				// Filtro By Data
@@ -15373,6 +16431,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".azione = ?");
 				if(filtroRicerca.getNome()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".nome_porta = ?");
+				if(filtroRicerca.getIdRuolo()!=null)
+					sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_RUOLI+".ruolo = ?");
 			}
 
 			sqlQueryObject.setANDLogicOperator(true);
@@ -15429,6 +16489,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				if(filtroRicerca.getNome()!=null){
 					this.log.debug("nome stmt.setString("+filtroRicerca.getNome()+")");
 					stm.setString(indexStmt, filtroRicerca.getNome());
+					indexStmt++;
+				}
+				if(filtroRicerca.getIdRuolo()!=null){
+					this.log.debug("ruolo stmt.setString("+filtroRicerca.getIdRuolo().getNome()+")");
+					stm.setString(indexStmt, filtroRicerca.getIdRuolo().getNome());
 					indexStmt++;
 				}
 			}
@@ -15512,6 +16577,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".tipo_soggetto");
 			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI+".nome_soggetto");
 			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+			if(filtroRicerca!=null){
+				if(filtroRicerca.getIdRuolo()!=null){
+					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_RUOLI);
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".id_servizio_applicativo = "+CostantiDB.SERVIZI_APPLICATIVI+".id");
+				}
+			}
 
 			if(filtroRicerca!=null){
 				// Filtro By Data
@@ -15525,6 +16596,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".nome_soggetto = ?");
 				if(filtroRicerca.getNome()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".nome = ?");
+				if(filtroRicerca.getIdRuolo()!=null)
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".ruolo = ?");
 			}
 
 			sqlQueryObject.setANDLogicOperator(true);
@@ -15558,6 +16631,11 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					stm.setString(indexStmt, filtroRicerca.getNome());
 					indexStmt++;
 				}	
+				if(filtroRicerca.getIdRuolo()!=null){
+					this.log.debug("ruolo stmt.setString("+filtroRicerca.getIdRuolo().getNome()+")");
+					stm.setString(indexStmt, filtroRicerca.getIdRuolo().getNome());
+					indexStmt++;
+				}
 			}
 			rs = stm.executeQuery();
 			List<IDServizioApplicativo> idsSA = new ArrayList<IDServizioApplicativo>();

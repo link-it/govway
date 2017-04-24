@@ -83,12 +83,54 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 	
 	@Override
+	public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String username, String password) throws RegistryNotFound{
+		try{
+			return this.driverConfigurazioneGET.getServizioApplicativoByCredenzialiBasic(username, password);
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			return null;
+		}
+	}
+	
+	@Override
 	public boolean existsServizioApplicativoByCredenzialiSsl(String subject){
 		try{
 			return this.driverConfigurazioneGET.getServizioApplicativoByCredenzialiSsl(subject)!=null;
 		}catch(Exception e){
 			return false;
 		}	
+	}
+	
+	@Override
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String subject) throws RegistryNotFound{
+		try{
+			return this.driverConfigurazioneGET.getServizioApplicativoByCredenzialiSsl(subject);
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			return null;
+		}
+	}
+	
+	@Override
+	public boolean existsServizioApplicativoByCredenzialiPrincipal(String principal){
+		try{
+			return this.driverConfigurazioneGET.getServizioApplicativoByCredenzialiPrincipal(principal)!=null;
+		}catch(Exception e){
+			return false;
+		}	
+	}
+	
+	@Override
+	public ServizioApplicativo getServizioApplicativoByCredenzialiPrincipal(String principal) throws RegistryNotFound{
+		try{
+			return this.driverConfigurazioneGET.getServizioApplicativoByCredenzialiPrincipal(principal);
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			return null;
+		}
 	}
 	
 	@Override

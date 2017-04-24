@@ -41,6 +41,7 @@ import java.util.List;
  * 			&lt;element name="accesso-registro" type="{http://www.openspcoop2.org/core/config}accesso-registro" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="accesso-configurazione" type="{http://www.openspcoop2.org/core/config}accesso-configurazione" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="accesso-dati-autorizzazione" type="{http://www.openspcoop2.org/core/config}accesso-dati-autorizzazione" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="accesso-dati-autenticazione" type="{http://www.openspcoop2.org/core/config}accesso-dati-autenticazione" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="validazione-buste" type="{http://www.openspcoop2.org/core/config}validazione-buste" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="validazione-contenuti-applicativi" type="{http://www.openspcoop2.org/core/config}validazione-contenuti-applicativi" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="indirizzo-risposta" type="{http://www.openspcoop2.org/core/config}indirizzo-risposta" minOccurs="0" maxOccurs="1"/>
@@ -70,6 +71,7 @@ import java.util.List;
   	"accessoRegistro",
   	"accessoConfigurazione",
   	"accessoDatiAutorizzazione",
+  	"accessoDatiAutenticazione",
   	"validazioneBuste",
   	"validazioneContenutiApplicativi",
   	"indirizzoRisposta",
@@ -159,6 +161,14 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
 
   public void setAccessoDatiAutorizzazione(AccessoDatiAutorizzazione accessoDatiAutorizzazione) {
     this.accessoDatiAutorizzazione = accessoDatiAutorizzazione;
+  }
+
+  public AccessoDatiAutenticazione getAccessoDatiAutenticazione() {
+    return this.accessoDatiAutenticazione;
+  }
+
+  public void setAccessoDatiAutenticazione(AccessoDatiAutenticazione accessoDatiAutenticazione) {
+    this.accessoDatiAutenticazione = accessoDatiAutenticazione;
   }
 
   public ValidazioneBuste getValidazioneBuste() {
@@ -317,6 +327,9 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
 
   @XmlElement(name="accesso-dati-autorizzazione",required=false,nillable=false)
   protected AccessoDatiAutorizzazione accessoDatiAutorizzazione;
+
+  @XmlElement(name="accesso-dati-autenticazione",required=false,nillable=false)
+  protected AccessoDatiAutenticazione accessoDatiAutenticazione;
 
   @XmlElement(name="validazione-buste",required=false,nillable=false)
   protected ValidazioneBuste validazioneBuste;

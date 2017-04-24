@@ -296,10 +296,6 @@ public abstract class ServizioApplicativoImpl extends BaseImpl  implements Servi
 
 		if(filter.getInvocazioneServizio()!= null) {
 			if(filter.getInvocazioneServizio().getCredenziali()!= null) {
-				if(filter.getInvocazioneServizio().getCredenziali().getTipo()!= null) {
-					sqlQueryObjectCondition.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipoauthinv=?");
-					paramTypes.add(new JDBCObject(filter.getInvocazioneServizio().getCredenziali().getTipo().getValue(),String.class));
-				}
 				if(filter.getInvocazioneServizio().getCredenziali().getUser()!= null) {
 					sqlQueryObjectCondition.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".utenteinv=?");
 					paramTypes.add(new JDBCObject(filter.getInvocazioneServizio().getCredenziali().getUser(),String.class));
@@ -307,10 +303,6 @@ public abstract class ServizioApplicativoImpl extends BaseImpl  implements Servi
 				if(filter.getInvocazioneServizio().getCredenziali().getPassword()!= null) {
 					sqlQueryObjectCondition.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".passwordinv=?");
 					paramTypes.add(new JDBCObject(filter.getInvocazioneServizio().getCredenziali().getPassword(),String.class));
-				}
-				if(filter.getInvocazioneServizio().getCredenziali().getSubject()!= null) {
-					sqlQueryObjectCondition.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".subjectinv=?");
-					paramTypes.add(new JDBCObject(filter.getInvocazioneServizio().getCredenziali().getSubject(),String.class));
 				}
 			}
 			if(filter.getInvocazioneServizio().getConnettore()!= null) {
@@ -355,10 +347,6 @@ public abstract class ServizioApplicativoImpl extends BaseImpl  implements Servi
 		
 		if(filter.getRispostaAsincrona()!= null) {
 			if(filter.getRispostaAsincrona().getCredenziali()!= null) {
-				if(filter.getRispostaAsincrona().getCredenziali().getTipo()!= null) {
-					sqlQueryObjectCondition.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipoauthrisp=?");
-					paramTypes.add(new JDBCObject(filter.getRispostaAsincrona().getCredenziali().getTipo().getValue(),String.class));
-				}
 				if(filter.getRispostaAsincrona().getCredenziali().getUser()!= null) {
 					sqlQueryObjectCondition.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".utenterisp=?");
 					paramTypes.add(new JDBCObject(filter.getRispostaAsincrona().getCredenziali().getUser(),String.class));
@@ -366,10 +354,6 @@ public abstract class ServizioApplicativoImpl extends BaseImpl  implements Servi
 				if(filter.getRispostaAsincrona().getCredenziali().getPassword()!= null) {
 					sqlQueryObjectCondition.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".passwordrisp=?");
 					paramTypes.add(new JDBCObject(filter.getRispostaAsincrona().getCredenziali().getPassword(),String.class));
-				}
-				if(filter.getRispostaAsincrona().getCredenziali().getSubject()!= null) {
-					sqlQueryObjectCondition.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".subjectrisp=?");
-					paramTypes.add(new JDBCObject(filter.getRispostaAsincrona().getCredenziali().getSubject(),String.class));
 				}
 			}
 			if(filter.getRispostaAsincrona().getConnettore()!= null) {

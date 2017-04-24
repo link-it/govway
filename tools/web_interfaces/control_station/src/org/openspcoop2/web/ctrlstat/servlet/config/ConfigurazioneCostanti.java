@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
@@ -59,7 +60,7 @@ public class ConfigurazioneCostanti {
 	
 	public final static String OBJECT_NAME_CONFIGURAZIONE_ACCESSO_REGISTRO_SERVIZI = "configurazioneAccessoRegistroServizi";
 	public final static ForwardParams TIPO_OPERAZIONE_CONFIGURAZIONE_ACCESSO_REGISTRO_SERVIZI = ForwardParams.OTHER("");
-	
+		
 	public final static String OBJECT_NAME_CONFIGURAZIONE_REGISTRI = "configurazioneRegistri";
 	
 	public final static String OBJECT_NAME_CONFIGURAZIONE_ROUTING = "configurazioneRouting";
@@ -294,7 +295,9 @@ public class ConfigurazioneCostanti {
 	
 	public final static String LABEL_CONFIGURAZIONE_CACHE_CONFIG = "Cache (Configurazione della Porta)";
 	
-	public final static String LABEL_CONFIGURAZIONE_CACHE_AUTH = "Cache (Dati di Autorizzazione)";
+	public final static String LABEL_CONFIGURAZIONE_CACHE_AUTHZ = "Cache (Dati di Autorizzazione)";
+	
+	public final static String LABEL_CONFIGURAZIONE_CACHE_AUTHN = "Cache (Dati di Autenticazione)";
 	
 	public final static String LABEL_INFORMAZIONE_NON_DISPONIBILE = "Informazione non disponibile";
 	
@@ -371,11 +374,17 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_CONFIG = "idlecacheConfig";
 	public final static String PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_CONFIG = "lifecacheConfig";
 	
-	public final static String PARAMETRO_CONFIGURAZIONE_STATO_CACHE_AUTH = "statocacheAuth";
-	public final static String PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_AUTH = "dimensionecacheAuth";
-	public final static String PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_AUTH = "algoritmocacheAuth";
-	public final static String PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_AUTH = "idlecacheAuth";
-	public final static String PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_AUTH = "lifecacheAuth";
+	public final static String PARAMETRO_CONFIGURAZIONE_STATO_CACHE_AUTHZ = "statocacheAuthz";
+	public final static String PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_AUTHZ = "dimensionecacheAuthz";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_AUTHZ = "algoritmocacheAuthz";
+	public final static String PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_AUTHZ = "idlecacheAuthz";
+	public final static String PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_AUTHZ = "lifecacheAuthz";
+	
+	public final static String PARAMETRO_CONFIGURAZIONE_STATO_CACHE_AUTHN = "statocacheAuthn";
+	public final static String PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_AUTHN = "dimensionecacheAuthn";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_AUTHN = "algoritmocacheAuthn";
+	public final static String PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_AUTHN = "idlecacheAuthn";
+	public final static String PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_AUTHN = "lifecacheAuthn";
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER = "aliasNodo";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE = "nomeCache";
@@ -402,6 +411,7 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT = "Download";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES = "ResetAllCaches";
 	
+		
 	/* LABEL PARAMETRI */
 	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_ID = "id";
@@ -467,8 +477,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CACHE_RESET = "Reset Cache";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT = "Download";
-	
-	
+		
 	public final static String RIAVVIO = "<BR><b>Attenzione:</b> Le modifiche saranno operative al prossimo riavvio della PdD";
 	public final static String TEMPORANEE = "<BR><b>Attenzione:</b> Le modifiche saranno operative fino al prossimo riavvio della PdD";
 	public final static String LABEL_CONFIGURAZIONE_GENERALE_MODIFICATA_CON_SUCCESSO = "Configurazione Generale modificata con successo"+RIAVVIO;
@@ -496,10 +505,25 @@ public class ConfigurazioneCostanti {
 	public final static String DEFAULT_VALUE_DISABILITATO = "disabilitato";
 	
 	
-	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_SSL = "ssl";
-	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_BASIC = "basic";
-	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_BASIC_SSL = "basic,ssl";
+	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_SSL = TipoAutenticazione.SSL.getValue();
+	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_BASIC = TipoAutenticazione.BASIC.getValue();
+	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_PRINCIPAL = TipoAutenticazione.PRINCIPAL.getValue();
+	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_SSL_BASIC = TipoAutenticazione.SSL.getValue()+","+TipoAutenticazione.BASIC.getValue();
+	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_PRINCIPAL_SSL_BASIC = TipoAutenticazione.PRINCIPAL.getValue()+","+TipoAutenticazione.SSL.getValue()+","+TipoAutenticazione.BASIC.getValue();
+	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_PRINCIPAL_SSL = TipoAutenticazione.PRINCIPAL.getValue()+","+TipoAutenticazione.SSL.getValue();
+	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_PRINCIPAL_BASIC = TipoAutenticazione.PRINCIPAL.getValue()+","+TipoAutenticazione.BASIC.getValue();
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_CUSTOM = "custom";
+	public final static String [] PARAMETRI_CONFIGURAZIONE_IM = new String[] {
+			DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_SSL,
+			DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_BASIC,
+			DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_PRINCIPAL,
+			DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_SSL_BASIC,
+			DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_PRINCIPAL_SSL_BASIC,
+			DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_PRINCIPAL_SSL,
+			DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_PRINCIPAL_BASIC
+	};
+	
+	
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_STATO_WARNING_ONLY = "warningOnly";
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_CONNESSIONE_REPLY = "reply";
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TIPO_VALIDAZIONE_XSD = "xsd";
@@ -509,7 +533,7 @@ public class ConfigurazioneCostanti {
 	
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_LRU = "lru";
 	public final static String DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_MRU = "mru";
-	
+		
 	
 	public final static List<String> CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI = new ArrayList<String>();
 	static {
@@ -520,6 +544,7 @@ public class ConfigurazioneCostanti {
 		CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI.add("IdleTime");
 		CONFIGURAZIONE_SISTEMA_CACHE_STATO_ELEMENTI_VISUALIZZATI.add("LifeTime");
 	}
+	
 }
 
 	

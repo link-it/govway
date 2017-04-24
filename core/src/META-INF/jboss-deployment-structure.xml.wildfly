@@ -37,6 +37,15 @@
 			<module name="org.log4j"/>
 			<module name="org.jboss.logging"/>
 		</exclusions>
+	</sub-deployment>
+	<sub-deployment name="OpenSPCoop2Sec.war">
+		<exclusions>
+			<module name="org.apache.log4j"/>
+			<module name="org.slf4j" />
+			<module name="org.apache.commons.logging"/>
+			<module name="org.log4j"/>
+			<module name="org.jboss.logging"/>
+		</exclusions>
 	</sub-deployment>	
 	<sub-deployment name="OpenSPCoop2.jar">
 		<exclusions>

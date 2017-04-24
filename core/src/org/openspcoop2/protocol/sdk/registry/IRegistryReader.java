@@ -67,6 +67,15 @@ public interface IRegistryReader {
 	public String getDominio(IDSoggetto idSoggetto) throws RegistryNotFound;
 	
 	public Soggetto getSoggetto(IDSoggetto idSoggetto) throws RegistryNotFound;
+
+	public boolean existsSoggettoByCredenzialiBasic(String username, String password);
+	public Soggetto getSoggettoByCredenzialiBasic(String username, String password) throws RegistryNotFound;
+	
+	public boolean existsSoggettoByCredenzialiSsl(String subject);
+	public Soggetto getSoggettoByCredenzialiSsl(String subject) throws RegistryNotFound;
+	
+	public boolean existsSoggettoByCredenzialiPrincipal(String principal);
+	public Soggetto getSoggettoByCredenzialiPrincipal(String principal) throws RegistryNotFound;
 	
 	public List<IDSoggetto> findIdSoggetti(FiltroRicercaSoggetti filtro) throws RegistryNotFound;
 		

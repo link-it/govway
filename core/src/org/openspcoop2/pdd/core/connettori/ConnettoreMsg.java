@@ -22,9 +22,9 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
+import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.pdd.core.handlers.OutRequestContext;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -69,7 +69,7 @@ public class ConnettoreMsg  {
 	/** Tipo di Autenticazione */
 	private String tipoAutenticazione;
 	/** Credenziali per l'autenticazione */
-	private Credenziali credenziali;
+	private InvocazioneCredenziali credenziali;
 	/** Busta */
 	private Busta busta;
 	/** Identificativo Modulo che utilizza il connettore */
@@ -150,7 +150,7 @@ public class ConnettoreMsg  {
 	 */
 	public ConnettoreMsg(String type,OpenSPCoop2Message r,
 			Property[] p,boolean sb,
-			String tipoAuth,Credenziali cr,
+			String tipoAuth,InvocazioneCredenziali cr,
 			boolean isRichiesta){
 		this(type,r,new java.util.Hashtable<String,String>() ,sb,tipoAuth,cr,isRichiesta);
 
@@ -177,7 +177,7 @@ public class ConnettoreMsg  {
 	 */
 	public ConnettoreMsg(String type,OpenSPCoop2Message r,
 			java.util.Hashtable<String,String> p,boolean sb,
-			String tipoAuth,Credenziali cr,
+			String tipoAuth,InvocazioneCredenziali cr,
 			boolean isRichiesta){
 
 		this.tipoConnector = type;
@@ -245,7 +245,7 @@ public class ConnettoreMsg  {
 	 * @param cr Credenziali
 	 * 
 	 */
-	public void setCredenziali(Credenziali cr){
+	public void setCredenziali(InvocazioneCredenziali cr){
 		this.credenziali = cr;
 	}
 	
@@ -329,7 +329,7 @@ public class ConnettoreMsg  {
 	 * @return Credenziali
 	 * 
 	 */
-	public Credenziali getCredenziali(){
+	public InvocazioneCredenziali getCredenziali(){
 		return this.credenziali;
 	}
 	/**

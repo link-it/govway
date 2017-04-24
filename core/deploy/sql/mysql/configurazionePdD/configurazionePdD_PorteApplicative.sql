@@ -54,7 +54,14 @@ CREATE TABLE porte_applicative
 	-- abilitato/disabilitato
 	stateless VARCHAR(255),
 	behaviour VARCHAR(255),
+	-- Controllo Accessi
+	autenticazione VARCHAR(255),
+	-- abilitato/disabilitato
+	autenticazione_opzionale VARCHAR(255),
+	autorizzazione VARCHAR(255),
 	autorizzazione_contenuto VARCHAR(255),
+	-- all/any
+	ruoli_match VARCHAR(255),
 	-- proprietario porta applicativa
 	id_soggetto BIGINT NOT NULL,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
@@ -220,5 +227,23 @@ CREATE TABLE pa_correlazione_risposta
 	CONSTRAINT pk_pa_correlazione_risposta PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
 
+
+
+
+CREATE TABLE pa_ruoli
+(
+	id_porta BIGINT NOT NULL,
+	ruolo VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	-- unique constraints
+	CONSTRAINT unique_pa_ruoli_1 UNIQUE (id_porta,ruolo),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_ruoli_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
+	CONSTRAINT pk_pa_ruoli PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+
+-- index
+CREATE UNIQUE INDEX index_pa_ruoli_1 ON pa_ruoli (id_porta,ruolo);
 
 

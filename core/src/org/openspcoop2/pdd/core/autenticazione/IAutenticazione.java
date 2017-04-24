@@ -22,15 +22,10 @@
 
 package org.openspcoop2.pdd.core.autenticazione;
 
-import org.openspcoop2.core.id.IDPortaDelegata;
-import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.pdd.core.ICore;
-import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
-import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
-import org.openspcoop2.protocol.sdk.state.IState;
 
 /**
- * Interfaccia che definisce un processo di autenticazione per richieste delegate.
+ * Interfaccia che definisce un processo di autenticazione
  *
  * @author Andrea Poli <apoli@link.it>
  * @author $Author$
@@ -39,45 +34,9 @@ import org.openspcoop2.protocol.sdk.state.IState;
 
 public interface IAutenticazione extends ICore {
 
-	
-    /**
-     * Avvia il processo di autenticazione.
-     *
-     * @return true in caso di autenticazione con successo, false altrimenti.
-     * 
-     */
-    public boolean process(InfoConnettoreIngresso infoConnettoreIngresso,IDPortaDelegata idPD,IState state);
-    
-    /**
-     * Avvia il processo di autenticazione.
-     *
-     * @return true in caso di autenticazione con successo, false altrimenti.
-     * 
-     */
-    public boolean process(InfoConnettoreIngresso infoConnettoreIngresso,IState state);
-    
-    /**
-     * Ritorna il servizio applicativo autenticato. 
-     *
-     * @return servizio applicativo.
-     * 
-     */
-    public IDServizioApplicativo getServizioApplicativo();
 
-    /**
-     * In caso di avvenuto errore, questo metodo ritorna il motivo dell'errore.
-     *
-     * @return motivo dell'errore (se avvenuto).
-     * 
-     */
-    public ErroreIntegrazione getErrore();
+    public boolean saveAuthenticationResultInCache();
     
-    /**
-     * In caso di avvenuto errore, questo metodo ritorna l'eccezione
-     *
-     * @return motivo dell'errore l'eccezione (se avvenuto).
-     * 
-     */
-    public Exception getException();
+ 
 }
 

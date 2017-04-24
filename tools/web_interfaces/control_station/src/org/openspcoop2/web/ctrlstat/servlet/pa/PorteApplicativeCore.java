@@ -20,6 +20,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.commons.ISearch;
@@ -32,6 +33,7 @@ import org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocol
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -563,6 +565,74 @@ public class PorteApplicativeCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
 			return driver.getDriverConfigurazioneDB().porteApplicativeMTOMResponseList(idPortaApplicativa, ricerca);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
+	
+	public IDPortaApplicativa getIDPortaApplicativaAssociata(IDServizio idServizio) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getIDPortaApplicativaAssociata";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getIDPortaApplicativaAssociata(idServizio);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<IDPortaApplicativa> getAllIdPorteApplicative(FiltroRicercaPorteApplicative filtroRicerca) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getAllIdPorteApplicative";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().getAllIdPorteApplicative(filtroRicerca);
+
+		} catch (DriverConfigurazioneNotFound notFound) {
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + notFound.getMessage(), notFound);
+			return new ArrayList<IDPortaApplicativa>();
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<String> portaApplicativaRuoliList(long idPA, ISearch ricerca) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "portaApplicativaRuoliList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().portaApplicativaRuoliList(idPA, ricerca);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

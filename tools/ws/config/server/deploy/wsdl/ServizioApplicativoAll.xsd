@@ -49,13 +49,11 @@
 		</xsd:sequence>
 	</xsd:complexType>
 	
-	<xsd:element name="credenziali" type="tns:credenziali" />
-	<xsd:complexType name="credenziali">
+	<xsd:element name="invocazione-credenziali" type="tns:invocazione-credenziali" />
+	<xsd:complexType name="invocazione-credenziali">
 		<xsd:sequence>
- 			<xsd:element name="tipo" type="api:CredenzialeTipo" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="user" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="password" type="xsd:string" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="subject" type="xsd:string" minOccurs="0" maxOccurs="1" />
 		</xsd:sequence>
 	</xsd:complexType>
 	
@@ -71,7 +69,7 @@
 	<xsd:element name="invocazione-servizio" type="tns:invocazione-servizio" />
 	<xsd:complexType name="invocazione-servizio">
 		<xsd:sequence>
- 			<xsd:element name="credenziali" type="tns:credenziali" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="credenziali" type="tns:invocazione-credenziali" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="connettore" type="tns:connettore" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="sbustamento-soap" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="sbustamento-informazioni-protocollo" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
@@ -85,7 +83,7 @@
 	<xsd:element name="risposta-asincrona" type="tns:risposta-asincrona" />
 	<xsd:complexType name="risposta-asincrona">
 		<xsd:sequence>
- 			<xsd:element name="credenziali" type="tns:credenziali" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="credenziali" type="tns:invocazione-credenziali" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="connettore" type="tns:connettore" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="sbustamento-soap" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="sbustamento-informazioni-protocollo" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />

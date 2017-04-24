@@ -46,7 +46,7 @@ public class OperazioneDaSmistare implements java.io.Serializable {
 	// public static final String MODIFICA = "change";
 	// public static final String ELIMINAZIONE = "del";
 
-	private int idTable;
+	private long idTable;
 	private Operazione operazione;
 	private String pdd;
 	private String superuser;
@@ -101,11 +101,11 @@ public class OperazioneDaSmistare implements java.io.Serializable {
 		return new Hashtable<OperationsParameter, Vector<String>>(this.params);
 	}
 
-	public void setIDTable(int id) {
+	public void setIDTable(long id) {
 		this.idTable = id;
 	}
 
-	public int getIDTable() {
+	public long getIDTable() {
 		return this.idTable;
 	}
 

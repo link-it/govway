@@ -39,12 +39,12 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Connettore;
-import org.openspcoop2.core.config.Credenziali;
+import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
-import org.openspcoop2.core.config.constants.CredenzialeTipo;
+import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -54,14 +54,12 @@ import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
-import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
-import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -115,10 +113,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			
 			String risprif = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
 			
-			String tipoauthRichiesta = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_CONNETTORE);
-			@SuppressWarnings("unused")
-			String confpwRichiesta = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_CONFERMA_PASSWORD_CONNETTORE);
-			String subjectRichiesta = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_SUBJECT_CONNETTORE);
+			String tipoauthRichiesta = request.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_TIPO_AUTENTICAZIONE);
 			
 			String provider = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			
@@ -211,7 +206,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 
 			ServizioApplicativo sa = saCore.getServizioApplicativo(idSilInt);
 			InvocazioneServizio is = sa.getInvocazioneServizio();
-			Credenziali cis = is.getCredenziali();
+			InvocazioneCredenziali cis = is.getCredenziali();
 			Connettore connis = is.getConnettore();
 			List<Property> cp = connis.getPropertyList();
 			
@@ -268,8 +263,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				if(saCore.isRegistroServiziLocale()){
 					Soggetto soggetto = soggettiCore.getSoggettoRegistro(idProprietario);
 					String nomePdd = soggetto.getPortaDominio();
-					PdDControlStation pdd = pddCore.getPdDControlStation(nomePdd);
-					if (PddTipologia.ESTERNO.toString().equals(pdd.getTipo())) {
+					if(pddCore.isPddEsterna(nomePdd)){
 						pd.setMessage("Impossibile Effettuare operazioni su Connettore.<br>Questo Servizio Applicativo appartiene ad un Soggetto associato ad una Porta di Dominio con tipo 'esterno'");
 						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 						return ServletUtils.getStrutsForwardGeneralError(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, 
@@ -305,17 +299,12 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 					}
 				}
 				
-				if ((tipoauthRichiesta == null) && (cis != null)) {
-					if(cis.getTipo()!=null)
-						tipoauthRichiesta = cis.getTipo().toString();
+				if ((tipoauthRichiesta == null) && (is != null) && is.getAutenticazione()!=null) {
+					tipoauthRichiesta = is.getAutenticazione().getValue();
 				}
 				if ((user == null) && (cis != null)) {
 					user = cis.getUser();
 					password = cis.getPassword();
-					confpwRichiesta = password;
-				}
-				if ((subjectRichiesta == null) && (cis != null)) {
-					subjectRichiesta = cis.getSubject();
 				}
 				if (endpointtype == null) {
 					if ((connis.getCustom()!=null && connis.getCustom()) && 
@@ -651,49 +640,29 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			is.setGetMessage(StatoFunzionalita.toEnumConstant(getmsg));
 			is.setInvioPerRiferimento(StatoFunzionalita.toEnumConstant(invrifRichiesta));
 			is.setRispostaPerRiferimento(StatoFunzionalita.toEnumConstant(risprif));
-			if (tipoauthRichiesta!=null && !tipoauthRichiesta.equals(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_NONE.toString())) {
-								
+			if (tipoauthRichiesta!=null && tipoauthRichiesta.equals(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC.toString())) {
 				if (cis == null) {
-					cis = new Credenziali();
+					cis = new InvocazioneCredenziali();
 				}
-				if(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_NESSUNA.equals(tipoauthRichiesta)){
-					//cis.setTipo(CredenzialeTipo.toEnumConstant(CostantiConfigurazione.AUTENTICAZIONE_NONE));
-					cis.setTipo(null);
-				}else
-					cis.setTipo(CredenzialeTipo.toEnumConstant(tipoauthRichiesta));
-				if (tipoauthRichiesta.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_BASIC)) {
-					cis.setUser(user);
-					cis.setPassword(password);
-				} else {
-					cis.setUser("");
-					cis.setPassword("");
-				}
-				if (tipoauthRichiesta.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_SSL)) {
-					cis.setSubject(subjectRichiesta);
-				} else {
-					cis.setSubject("");
-				}
+				cis.setUser(user);
+				cis.setPassword(password);
 				is.setCredenziali(cis);
+				is.setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
 			}
 			else if(endpointtype.equals(TipiConnettore.JMS.toString())){
-				if (cis == null) {
-					cis = new Credenziali();
-				}
 				if(user!=null && password!=null){
-					cis.setTipo(CredenzialeTipo.BASIC);
+					if (cis == null) {
+						cis = new InvocazioneCredenziali();
+					}
 					cis.setUser(user);
 					cis.setPassword(password);
 				}
-				else{
-					cis.setTipo(null);
-					cis.setUser(user);
-					cis.setPassword(password);
-				}
-				cis.setSubject(null);
 				is.setCredenziali(cis);
+				is.setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
 			}
 			else {
 				is.setCredenziali(null);
+				is.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
 			}
 			String oldConnT = connis.getTipo();
 			if ((connis.getCustom()!=null && connis.getCustom()) && 

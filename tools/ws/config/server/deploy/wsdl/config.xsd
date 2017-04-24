@@ -70,6 +70,7 @@
 			<xsd:element maxOccurs="1" minOccurs="1" name="servizio" type="porta-delegata-servizio"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="azione" type="porta-delegata-azione"/>
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="servizio-applicativo" type="porta-delegata-servizio-applicativo"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="ruoli" type="autorizzazione-ruoli"/>	
 			<xsd:element maxOccurs="1" minOccurs="0" name="local-forward" type="porta-delegata-local-forward"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="mtom-processor" type="mtom-processor"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="message-security" type="message-security">
@@ -102,7 +103,10 @@
 		<xsd:attribute default="ssl" name="autenticazione" type="xsd:string">
 			
 		</xsd:attribute>
-		<xsd:attribute default="openspcoop" name="autorizzazione" type="xsd:string">
+		<xsd:attribute default="disabilitato" name="autenticazione-opzionale" type="StatoFunzionalita">
+			
+		</xsd:attribute>
+		<xsd:attribute default="authenticated" name="autorizzazione" type="xsd:string">
 			
 		</xsd:attribute>
 		<xsd:attribute name="autorizzazione-contenuto" type="xsd:string"/>
@@ -168,6 +172,7 @@
 			<xsd:element maxOccurs="1" minOccurs="0" name="azione" type="porta-applicativa-azione"/>
 			<!-- Modificato in minOccurs=0 per gestire la possibile configurazione incrementale via WS -->
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="servizio-applicativo" type="porta-applicativa-servizio-applicativo"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="ruoli" type="autorizzazione-ruoli"/>	
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="proprieta-integrazione-protocollo" type="porta-applicativa-proprieta-integrazione-protocollo"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="mtom-processor" type="mtom-processor"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="message-security" type="message-security">
@@ -213,6 +218,15 @@
 		<xsd:attribute name="gestione-manifest" type="StatoFunzionalita"/>
 		<xsd:attribute name="stateless" type="StatoFunzionalita"/>
 		<xsd:attribute name="behaviour" type="xsd:string" use="optional"/>
+		<xsd:attribute default="ssl" name="autenticazione" type="xsd:string">
+			
+		</xsd:attribute>
+		<xsd:attribute default="disabilitato" name="autenticazione-opzionale" type="StatoFunzionalita">
+			
+		</xsd:attribute>
+		<xsd:attribute default="authenticated" name="autorizzazione" type="xsd:string">
+			
+		</xsd:attribute>
 		<xsd:attribute name="autorizzazione-contenuto" type="xsd:string"/>
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
 			
@@ -280,6 +294,7 @@
 	<xsd:complexType name="invocazione-porta">
 		<xsd:sequence>
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="credenziali" type="credenziali"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="ruoli" type="servizio-applicativo-ruoli"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="gestione-errore" type="invocazione-porta-gestione-errore"/>
 		</xsd:sequence>
 		<xsd:attribute default="disabilitato" name="invio-per-riferimento" type="StatoFunzionalita">
@@ -298,7 +313,7 @@
 	<!-- ServizioApplicativo.InvocazioneServizio -->
 	<xsd:complexType name="invocazione-servizio">
 		<xsd:sequence>
-			<xsd:element maxOccurs="1" minOccurs="0" name="credenziali" type="credenziali"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="credenziali" type="invocazione-credenziali"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="connettore" type="connettore"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="gestione-errore" type="gestione-errore">
 				
@@ -326,7 +341,7 @@
 	<!-- ServizioApplicativo.RispostaAsincrona -->
 	<xsd:complexType name="risposta-asincrona">
 		<xsd:sequence>
-			<xsd:element maxOccurs="1" minOccurs="0" name="credenziali" type="credenziali"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="credenziali" type="invocazione-credenziali"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="connettore" type="connettore"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="gestione-errore" type="gestione-errore">
 				
@@ -351,7 +366,11 @@
 			
 		</xsd:attribute>
 	</xsd:complexType>
-
+	<!-- ServizioApplicativo.InvocazioneServizio/RispostaAsincrona.Credenziali -->
+	<xsd:complexType name="invocazione-credenziali">
+		<xsd:attribute name="user" type="xsd:string"/>
+		<xsd:attribute name="password" type="xsd:string"/>
+	</xsd:complexType>
 
 
 
@@ -507,6 +526,26 @@
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="valore" type="xsd:string" use="required"/>
 	</xsd:complexType>
+	
+	<!-- Ruolo -->
+	<xsd:complexType name="ruolo">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
+	<!-- Ruoli Servizio Applicativo -->
+	<xsd:complexType name="servizio-applicativo-ruoli">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="0" name="ruolo" type="ruolo"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- Autorizzazione per Ruoli -->
+	<xsd:complexType name="autorizzazione-ruoli">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="1" name="ruolo" type="ruolo"/>
+		</xsd:sequence>
+		<xsd:attribute name="match" type="RuoloTipoMatch" use="optional"/>
+	</xsd:complexType>
 
 
 	<!-- Configurazione PortaDeiServizi -->
@@ -518,6 +557,7 @@
 			<xsd:element maxOccurs="1" minOccurs="1" name="accesso-registro" type="accesso-registro"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-configurazione" type="accesso-configurazione"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-autorizzazione" type="accesso-dati-autorizzazione"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-autenticazione" type="accesso-dati-autenticazione"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="validazione-buste" type="validazione-buste"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="validazione-contenuti-applicativi" type="validazione-contenuti-applicativi"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="indirizzo-risposta" type="indirizzo-risposta"/>
@@ -610,6 +650,13 @@
 	
 	<!-- Informazioni per l'autorizzazione -->
 	<xsd:complexType name="accesso-dati-autorizzazione">
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="0" name="cache" type="cache"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- Informazioni per l'autenticazione -->
+	<xsd:complexType name="accesso-dati-autenticazione">
 		<xsd:sequence>
 			<xsd:element maxOccurs="1" minOccurs="0" name="cache" type="cache"/>
 		</xsd:sequence>
@@ -873,6 +920,7 @@
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="basic"/>
 			<xsd:enumeration value="ssl"/>
+			<xsd:enumeration value="principal"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="GestioneErroreComportamento">
@@ -890,7 +938,6 @@
 	<xsd:simpleType name="InvocazioneServizioTipoAutenticazione">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="basic"/>
-			<xsd:enumeration value="ssl"/>
 			<xsd:enumeration value="none"/>
 		</xsd:restriction>
 	</xsd:simpleType>
@@ -913,6 +960,12 @@
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="valore" type="xsd:string" use="required"/>
 	</xsd:complexType>
+	<xsd:simpleType name="RuoloTipoMatch">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="all"/>
+			<xsd:enumeration value="any"/>
+		</xsd:restriction>
+	</xsd:simpleType>
 	
 	<!-- Altre costanti utilizzate poi nel core -->
 	<xsd:simpleType name="RicercaTipologiaErogazione">

@@ -29,10 +29,10 @@ import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.GestioneErrore;
+import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.RoutingTableDestinazione;
 import org.openspcoop2.core.config.SystemProperties;
-import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -97,7 +97,7 @@ public class ConfigurazioneCore extends ControlStationCore {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
 	}
-	
+		
 	/**
 	 * Restituisce la gestione dell'errore di default definita nella Porta di
 	 * Dominio per il componente di cooperazione
@@ -282,7 +282,6 @@ public class ConfigurazioneCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
 			return driver.getDriverConfigurazioneDB().getRoutingTable();
-
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);

@@ -40,7 +40,6 @@ public class GestoriStartupThread implements Runnable {
      // Gestori
      private GestorePdDInitThread pddInit;
      private GestoreRegistroThread registro;
-     private GestoreRepositoryAutorizzazioniThread repositoryAutorizzazioni;
      private SmistatoreThread smistatore;
      //private GestoreEventi gestoreEventi;
 
@@ -70,11 +69,6 @@ public class GestoriStartupThread implements Runnable {
 	         this.log.info("Avvio " + this.registro.getClass().getName());
 	         new Thread(this.registro).start();
 	
-	         // RepositoryAutorizzazioni
-	         this.repositoryAutorizzazioni = new GestoreRepositoryAutorizzazioniThread();
-	         this.log.info("Avvio " + this.repositoryAutorizzazioni.getClass().getName());
-	         new Thread(this.repositoryAutorizzazioni).start();
-	
 	         // Smistatore
 	         this.smistatore = new SmistatoreThread();
 	         this.log.info("Avvio " + this.smistatore.getClass().getName());
@@ -101,7 +95,6 @@ public class GestoriStartupThread implements Runnable {
 
          this.pddInit.stopGestore();
          this.registro.stopGestore();
-         this.repositoryAutorizzazioni.stopGestore();
          this.smistatore.stopGestore();
          //this.gestoreEventi.stopGestore();
 

@@ -30,6 +30,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.gestori.GestoreConsistenzaDati;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -70,12 +71,23 @@ public final class Login extends Action {
 	
 			String login = request.getParameter(LoginCostanti.PARAMETRO_LOGIN_LOGIN);
 	
+			if(GestoreConsistenzaDati.gestoreConsistenzaDatiInEsecuzione){
+				
+				pd.setMessage("<b>Attenzione</b>: è in esecuzione un controllo sulla consistenza dei dati; attendere il completamento dell'operazione");
+				
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd, true);
+				
+				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, LoginCostanti.OBJECT_NAME_LOGIN, ForwardParams.LOGIN());
+
+			}
+			
 			// Se login = null, devo visualizzare la pagina per l'inserimento dati
 			if (login == null) {
 	
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd, true);
-	
+				
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, LoginCostanti.OBJECT_NAME_LOGIN, ForwardParams.LOGIN());
+					
 			}
 	
 			// Controlli sui campi immessi
@@ -97,7 +109,12 @@ public final class Login extends Action {
 			// Preparo il menu
 			loginHelper.makeMenu();
 	
-			pd.setMessage(LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO);
+			if(GestoreConsistenzaDati.gestoreConsistenzaDatiEseguitoConErrore){
+				pd.setMessage(LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO+"<br/><br/><b>Attenzione</b>: il controllo sulla consistenza dei dati è terminato con errore; esaminare i log per maggiori dettagli");
+			}
+			else{
+				pd.setMessage(LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO);
+			}
 	
 			// Inizializzo di nuovo GeneralData, dopo aver messo
 			// in sessione la login dell'utente

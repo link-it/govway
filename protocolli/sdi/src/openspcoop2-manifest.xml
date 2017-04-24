@@ -11,7 +11,7 @@
 
     <registroServizi>
 
-        <soggetti>
+        <soggetti autenticazione="false">
             <tipi>
             	<tipo>SDI</tipo>
             </tipi>

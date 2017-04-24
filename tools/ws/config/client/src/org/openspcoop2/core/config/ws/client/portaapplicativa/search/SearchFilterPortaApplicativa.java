@@ -1,22 +1,3 @@
-/*
- * OpenSPCoop - Customizable API Gateway 
- * http://www.openspcoop2.org
- * 
- * Copyright (c) 2005-2017 Link.it srl (http://link.it).
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3, as published by
- * the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
 
 package org.openspcoop2.core.config.ws.client.portaapplicativa.search;
 
@@ -43,6 +24,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
  *         &lt;element name="soggetto-virtuale" type="{http://www.openspcoop2.org/core/config/management}porta-applicativa-soggetto-virtuale" minOccurs="0"/&gt;
  *         &lt;element name="servizio" type="{http://www.openspcoop2.org/core/config/management}porta-applicativa-servizio" minOccurs="0"/&gt;
  *         &lt;element name="azione" type="{http://www.openspcoop2.org/core/config/management}porta-applicativa-azione" minOccurs="0"/&gt;
+ *         &lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config/management}autorizzazione-ruoli" minOccurs="0"/&gt;
  *         &lt;element name="mtom-processor" type="{http://www.openspcoop2.org/core/config/management}mtom-processor" minOccurs="0"/&gt;
  *         &lt;element name="validazione-contenuti-applicativi" type="{http://www.openspcoop2.org/core/config/management}validazione-contenuti-applicativi" minOccurs="0"/&gt;
  *         &lt;element name="tipo-soggetto-proprietario" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
@@ -58,6 +40,9 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
  *         &lt;element name="gestione-manifest" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0"/&gt;
  *         &lt;element name="stateless" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0"/&gt;
  *         &lt;element name="behaviour" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="autenticazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="autenticazione-opzionale" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0"/&gt;
+ *         &lt;element name="autorizzazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="autorizzazione-contenuto" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="ora-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/&gt;
  *         &lt;element name="ora-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/&gt;
@@ -77,6 +62,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
     "soggettoVirtuale",
     "servizio",
     "azione",
+    "ruoli",
     "mtomProcessor",
     "validazioneContenutiApplicativi",
     "tipoSoggettoProprietario",
@@ -92,6 +78,9 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
     "gestioneManifest",
     "stateless",
     "behaviour",
+    "autenticazione",
+    "autenticazioneOpzionale",
+    "autorizzazione",
     "autorizzazioneContenuto",
     "oraRegistrazioneMin",
     "oraRegistrazioneMax",
@@ -105,6 +94,7 @@ public class SearchFilterPortaApplicativa {
     protected PortaApplicativaSoggettoVirtuale soggettoVirtuale;
     protected PortaApplicativaServizio servizio;
     protected PortaApplicativaAzione azione;
+    protected AutorizzazioneRuoli ruoli;
     @XmlElement(name = "mtom-processor")
     protected MtomProcessor mtomProcessor;
     @XmlElement(name = "validazione-contenuti-applicativi")
@@ -136,6 +126,11 @@ public class SearchFilterPortaApplicativa {
     @XmlSchemaType(name = "string")
     protected StatoFunzionalita stateless;
     protected String behaviour;
+    protected String autenticazione;
+    @XmlElement(name = "autenticazione-opzionale")
+    @XmlSchemaType(name = "string")
+    protected StatoFunzionalita autenticazioneOpzionale;
+    protected String autorizzazione;
     @XmlElement(name = "autorizzazione-contenuto")
     protected String autorizzazioneContenuto;
     @XmlElement(name = "ora-registrazione-min")
@@ -157,7 +152,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public PortaApplicativaSoggettoVirtuale getSoggettoVirtuale() {
-        return this.soggettoVirtuale;
+        return soggettoVirtuale;
     }
 
     /**
@@ -181,7 +176,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public PortaApplicativaServizio getServizio() {
-        return this.servizio;
+        return servizio;
     }
 
     /**
@@ -205,7 +200,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public PortaApplicativaAzione getAzione() {
-        return this.azione;
+        return azione;
     }
 
     /**
@@ -221,6 +216,30 @@ public class SearchFilterPortaApplicativa {
     }
 
     /**
+     * Gets the value of the ruoli property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link AutorizzazioneRuoli }
+     *     
+     */
+    public AutorizzazioneRuoli getRuoli() {
+        return ruoli;
+    }
+
+    /**
+     * Sets the value of the ruoli property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link AutorizzazioneRuoli }
+     *     
+     */
+    public void setRuoli(AutorizzazioneRuoli value) {
+        this.ruoli = value;
+    }
+
+    /**
      * Gets the value of the mtomProcessor property.
      * 
      * @return
@@ -229,7 +248,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public MtomProcessor getMtomProcessor() {
-        return this.mtomProcessor;
+        return mtomProcessor;
     }
 
     /**
@@ -253,7 +272,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public ValidazioneContenutiApplicativi getValidazioneContenutiApplicativi() {
-        return this.validazioneContenutiApplicativi;
+        return validazioneContenutiApplicativi;
     }
 
     /**
@@ -277,7 +296,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public String getTipoSoggettoProprietario() {
-        return this.tipoSoggettoProprietario;
+        return tipoSoggettoProprietario;
     }
 
     /**
@@ -301,7 +320,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public String getNomeSoggettoProprietario() {
-        return this.nomeSoggettoProprietario;
+        return nomeSoggettoProprietario;
     }
 
     /**
@@ -325,7 +344,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public String getStatoMessageSecurity() {
-        return this.statoMessageSecurity;
+        return statoMessageSecurity;
     }
 
     /**
@@ -349,7 +368,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public String getNome() {
-        return this.nome;
+        return nome;
     }
 
     /**
@@ -373,7 +392,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public String getDescrizione() {
-        return this.descrizione;
+        return descrizione;
     }
 
     /**
@@ -397,7 +416,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public StatoFunzionalita getRicevutaAsincronaSimmetrica() {
-        return this.ricevutaAsincronaSimmetrica;
+        return ricevutaAsincronaSimmetrica;
     }
 
     /**
@@ -421,7 +440,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public StatoFunzionalita getRicevutaAsincronaAsimmetrica() {
-        return this.ricevutaAsincronaAsimmetrica;
+        return ricevutaAsincronaAsimmetrica;
     }
 
     /**
@@ -445,7 +464,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public String getIntegrazione() {
-        return this.integrazione;
+        return integrazione;
     }
 
     /**
@@ -469,7 +488,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public StatoFunzionalita getAllegaBody() {
-        return this.allegaBody;
+        return allegaBody;
     }
 
     /**
@@ -493,7 +512,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public StatoFunzionalita getScartaBody() {
-        return this.scartaBody;
+        return scartaBody;
     }
 
     /**
@@ -517,7 +536,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public StatoFunzionalita getGestioneManifest() {
-        return this.gestioneManifest;
+        return gestioneManifest;
     }
 
     /**
@@ -541,7 +560,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public StatoFunzionalita getStateless() {
-        return this.stateless;
+        return stateless;
     }
 
     /**
@@ -565,7 +584,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public String getBehaviour() {
-        return this.behaviour;
+        return behaviour;
     }
 
     /**
@@ -581,6 +600,78 @@ public class SearchFilterPortaApplicativa {
     }
 
     /**
+     * Gets the value of the autenticazione property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getAutenticazione() {
+        return autenticazione;
+    }
+
+    /**
+     * Sets the value of the autenticazione property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setAutenticazione(String value) {
+        this.autenticazione = value;
+    }
+
+    /**
+     * Gets the value of the autenticazioneOpzionale property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link StatoFunzionalita }
+     *     
+     */
+    public StatoFunzionalita getAutenticazioneOpzionale() {
+        return autenticazioneOpzionale;
+    }
+
+    /**
+     * Sets the value of the autenticazioneOpzionale property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link StatoFunzionalita }
+     *     
+     */
+    public void setAutenticazioneOpzionale(StatoFunzionalita value) {
+        this.autenticazioneOpzionale = value;
+    }
+
+    /**
+     * Gets the value of the autorizzazione property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getAutorizzazione() {
+        return autorizzazione;
+    }
+
+    /**
+     * Sets the value of the autorizzazione property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setAutorizzazione(String value) {
+        this.autorizzazione = value;
+    }
+
+    /**
      * Gets the value of the autorizzazioneContenuto property.
      * 
      * @return
@@ -589,7 +680,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public String getAutorizzazioneContenuto() {
-        return this.autorizzazioneContenuto;
+        return autorizzazioneContenuto;
     }
 
     /**
@@ -613,7 +704,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMin() {
-        return this.oraRegistrazioneMin;
+        return oraRegistrazioneMin;
     }
 
     /**
@@ -637,7 +728,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMax() {
-        return this.oraRegistrazioneMax;
+        return oraRegistrazioneMax;
     }
 
     /**
@@ -661,7 +752,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public Boolean isOrCondition() {
-        return this.orCondition;
+        return orCondition;
     }
 
     /**
@@ -685,7 +776,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public BigInteger getLimit() {
-        return this.limit;
+        return limit;
     }
 
     /**
@@ -709,7 +800,7 @@ public class SearchFilterPortaApplicativa {
      *     
      */
     public BigInteger getOffset() {
-        return this.offset;
+        return offset;
     }
 
     /**

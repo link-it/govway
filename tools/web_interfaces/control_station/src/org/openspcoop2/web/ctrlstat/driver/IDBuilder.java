@@ -43,15 +43,16 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.pdd.monitor.driver.FilterSearch;
 import org.openspcoop2.utils.serialization.IOException;
+import org.openspcoop2.web.ctrlstat.dao.MappingErogazionePortaApplicativa;
+import org.openspcoop2.web.ctrlstat.dao.MappingFruizionePortaDelegata;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
-import org.openspcoop2.web.ctrlstat.dao.PoliticheSicurezza;
-import org.openspcoop2.web.ctrlstat.dao.Ruolo;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
 import org.openspcoop2.web.lib.audit.dao.Filtro;
@@ -112,31 +113,30 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 					return id;
 				}
 			}
-			else if (o instanceof Ruolo) {
-				Ruolo r = (Ruolo) o;
-				String id = r.getNome();
-				if(r.isCorrelato()){
-					id = id+" (correlato)";
-				}else{
-					id = id+" (normale)";
-				}
-				if(this.prefix){
-					return "[Ruolo] "+ id;
-				}else{
-					return id;
-				}
-			}
-			else if (o instanceof PoliticheSicurezza) {
-				PoliticheSicurezza p = (PoliticheSicurezza) o;
+			else if(o instanceof MappingFruizionePortaDelegata){
+				MappingFruizionePortaDelegata mapping = (MappingFruizionePortaDelegata) o;
 				StringBuffer bf = new StringBuffer();
 				bf.append("FR[");
-				bf.append(p.getIdFruitore());
-				bf.append("] ER[");
-				bf.append(p.getIdServizio());
-				bf.append("] SA["+p.getIdServizioApplicativo());
-				bf.append("] "+p.getNomeServizioApplicativo());
+				bf.append(mapping.getIdFruitore().getTipo()+"/"+mapping.getIdFruitore().getNome());
+				bf.append("] SERV[");
+				bf.append(mapping.getIdServizio().toString());
+				bf.append("] PD["+mapping.getIdPortaDelegata().getNome());
+				bf.append("]");
 				if(this.prefix){
-					return "[PoliticheSicurezza] "+ bf.toString();
+					return "[MappingFruizionePortaDelegata] "+ bf.toString();
+				}else{
+					return bf.toString();
+				}
+			}
+			else if(o instanceof MappingErogazionePortaApplicativa){
+				MappingErogazionePortaApplicativa mapping = (MappingErogazionePortaApplicativa) o;
+				StringBuffer bf = new StringBuffer();
+				bf.append("SERV[");
+				bf.append(mapping.getIdServizio().toString());
+				bf.append("] PA["+mapping.getIdPortaApplicativa().getNome());
+				bf.append("]");
+				if(this.prefix){
+					return "[MappingErogazionePortaApplicativa] "+ bf.toString();
 				}else{
 					return bf.toString();
 				}
@@ -161,7 +161,17 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				}else{
 					return id;
 				}
-			}else if(o instanceof AccordoCooperazione){
+			}
+			else if (o instanceof Ruolo) {
+				Ruolo r = (Ruolo) o;
+				String id = r.getNome();
+				if(this.prefix){
+					return "[Ruolo] "+ id;
+				}else{
+					return id;
+				}
+			}
+			else if(o instanceof AccordoCooperazione){
 				AccordoCooperazione ac = (AccordoCooperazione) o;
 				String id = this.idAccordoCooperazioneFactory.getUriFromAccordo(ac);
 				if(this.prefix){
@@ -391,19 +401,10 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 					return id;
 				}
 			}
-			else if (o instanceof Ruolo) {
-				Ruolo r = (Ruolo) o;
-				if(r.getOldNomeForUpdate()==null){
-					return null; // non lancio un errore
-				}
-				String id = r.getOldNomeForUpdate();
-				if(this.prefix){
-					return "[Ruolo] "+ id;
-				}else{
-					return id;
-				}
+			else if(o instanceof MappingFruizionePortaDelegata){
+				return null; // oggetto non modificabile nei dati identificativi
 			}
-			else if (o instanceof PoliticheSicurezza) {
+			else if(o instanceof MappingErogazionePortaApplicativa){
 				return null; // oggetto non modificabile nei dati identificativi
 			}
 			else if (o instanceof SoggettoCtrlStat) {
@@ -432,7 +433,20 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 				}else{
 					return id;
 				}
-			}else if(o instanceof AccordoCooperazione){
+			}
+			else if (o instanceof Ruolo) {
+				Ruolo r = (Ruolo) o;
+				if(r.getOldIDRuoloForUpdate()==null){
+					return null; // non lancio un errore
+				}
+				String id = r.getOldIDRuoloForUpdate().getNome();
+				if(this.prefix){
+					return "[Ruolo] "+ id;
+				}else{
+					return id;
+				}
+			}
+			else if(o instanceof AccordoCooperazione){
 				AccordoCooperazione ac = (AccordoCooperazione) o;
 				IDAccordoCooperazione idOLD = ac.getOldIDAccordoForUpdate();
 				if(idOLD==null){
@@ -642,12 +656,13 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			
 			// ControlStation
 			oggetti.add(PortaDominio.class.getSimpleName()); // Al posto di PdDControlStation
-			oggetti.add(Ruolo.class.getSimpleName());
-			oggetti.add(PoliticheSicurezza.class.getSimpleName());
+			oggetti.add(MappingFruizionePortaDelegata.class.getSimpleName());
+			oggetti.add(MappingErogazionePortaApplicativa.class.getSimpleName());
 			oggetti.add(Soggetto.class.getSimpleName()); // Al posto di SoggettoControlStation
 			
 			// RegistroServizi
 			oggetti.add(org.openspcoop2.core.registry.Soggetto.class.getSimpleName());
+			oggetti.add(Ruolo.class.getSimpleName());
 			oggetti.add(AccordoCooperazione.class.getSimpleName());
 			oggetti.add(AccordoServizioParteComune.class.getSimpleName());
 			oggetti.add(PortType.class.getSimpleName());
@@ -687,12 +702,13 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 		
 			// ControlStation
 			oggetti.add(PdDControlStation.class.getName());
-			oggetti.add(Ruolo.class.getName());
-			oggetti.add(PoliticheSicurezza.class.getName());
+			oggetti.add(MappingFruizionePortaDelegata.class.getName());
+			oggetti.add(MappingErogazionePortaApplicativa.class.getName());
 			oggetti.add(SoggettoCtrlStat.class.getName());
 			
 			// RegistroServizi
 			oggetti.add(org.openspcoop2.core.registry.Soggetto.class.getName());
+			oggetti.add(Ruolo.class.getName());
 			oggetti.add(AccordoCooperazione.class.getName());
 			oggetti.add(AccordoServizioParteComune.class.getName());
 			oggetti.add(PortType.class.getName());

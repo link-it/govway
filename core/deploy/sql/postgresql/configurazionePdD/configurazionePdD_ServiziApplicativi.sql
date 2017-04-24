@@ -15,7 +15,6 @@ CREATE TABLE servizi_applicativi
 	tipoauthrisp VARCHAR(255),
 	utenterisp VARCHAR(255),
 	passwordrisp VARCHAR(255),
-	subjectrisp VARCHAR(255),
 	invio_x_rif_risp VARCHAR(255),
 	risposta_x_rif_risp VARCHAR(255),
 	id_connettore_risp BIGINT NOT NULL,
@@ -29,7 +28,6 @@ CREATE TABLE servizi_applicativi
 	tipoauthinv VARCHAR(255),
 	utenteinv VARCHAR(255),
 	passwordinv VARCHAR(255),
-	subjectinv VARCHAR(255),
 	invio_x_rif_inv VARCHAR(255),
 	risposta_x_rif_inv VARCHAR(255),
 	id_connettore_inv BIGINT NOT NULL,
@@ -58,6 +56,24 @@ CREATE TABLE servizi_applicativi
 	CONSTRAINT fk_servizi_applicativi_1 FOREIGN KEY (id_connettore_inv) REFERENCES connettori(id),
 	CONSTRAINT fk_servizi_applicativi_2 FOREIGN KEY (id_soggetto) REFERENCES soggetti(id),
 	CONSTRAINT pk_servizi_applicativi PRIMARY KEY (id)
+);
+
+
+
+
+CREATE SEQUENCE seq_sa_ruoli start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE sa_ruoli
+(
+	id_servizio_applicativo BIGINT NOT NULL,
+	ruolo VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_sa_ruoli') NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_sa_ruoli_1 UNIQUE (id_servizio_applicativo,ruolo),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_sa_ruoli_1 FOREIGN KEY (id_servizio_applicativo) REFERENCES servizi_applicativi(id),
+	CONSTRAINT pk_sa_ruoli PRIMARY KEY (id)
 );
 
 

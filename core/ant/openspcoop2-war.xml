@@ -57,8 +57,39 @@
 			<zipfileset dir="${build}/tmp/mailapi"/>
 		</jar>
 
-		<!-- Creazione WAR -->
-		<war destfile="${dist}/openspcoop2.war" webxml="${deploy_web_dir}/web_app/WEB-INF/web.xml">
+		<!-- Creazione war normale -->
+		<antcall target="-create_openspcoop_web">
+			<param name="openspcoopWeb.warName" value="${dist}/openspcoop2.war"/>
+			<param name="openspcoopWeb.webXml" value="${deploy_web_dir}/web_app/WEB-INF/web.xml"/>
+		</antcall>
+
+		<!-- Creo war per security constraint -->
+		<delete dir="${build}/web-module" />
+		<mkdir dir="${build}/web-module" />
+		<copy file="${deploy_web_dir}/web_app/WEB-INF/web.xml" todir="${build}/web-module" />
+		<replace file="${build}/web-module/web.xml" token="start OpenSPCoop2Startup -->" value="start OpenSPCoop2Startup"/>
+		<replace file="${build}/web-module/web.xml" token="&lt;!-- end OpenSPCoop2Startup" value="end OpenSPCoop2Startup"/>
+		<replace file="${build}/web-module/web.xml" token="start Security Constraint Authentication Container" value="start Security Constraint Authentication Container -->"/>
+		<replace file="${build}/web-module/web.xml" token="end Security Constraint Authentication Container" value="&lt;!--  end Security Constraint Authentication Container"/>
+		<antcall target="-create_openspcoop_web">
+			<param name="openspcoopWeb.warName" value="${dist}/openspcoop2sec.war"/>
+			<param name="openspcoopWeb.webXml" value="${build}/web-module/web.xml"/>
+		</antcall>
+		<delete dir="${build}/web-module"/>
+		
+		
+		<!-- Elimino file temporanei -->
+		<delete file="${build}/tmp/openspcoop2.properties" deleteonexit="true"/>
+		<delete dir="${build}/tmp" deleteonexit="true"/>
+		<delete file="${build}/tmpNative2ASCII_dest/openspcoop2.msgDiagnostici.properties" deleteonexit="true"/>
+		<delete dir="${build}/tmpNative2ASCII_dest" deleteonexit="true"/>
+		<delete file="${build}/tmpNative2ASCII_src/openspcoop2.msgDiagnostici.properties" deleteonexit="true"/>
+		<delete dir="${build}/tmpNative2ASCII_src" deleteonexit="true"/>
+		
+	</target>
+	
+	<target name="-create_openspcoop_web">
+		<war destfile="${openspcoopWeb.warName}" webxml="${openspcoopWeb.webXml}">
 			<!-- Informazioni sulla versione -->
 			<fileset file="${rootDir}/README.txt"/>
 			<fileset file="${rootDir}/COPYING"/>
@@ -192,18 +223,7 @@
 				<include name="${wsdlPortaApplicativa}"/>
 			</classes>
 		</war>
-		
-		
-		<!-- Elimino file temporanei -->
-		<delete file="${build}/tmp/openspcoop2.properties" deleteonexit="true"/>
-		<delete dir="${build}/tmp" deleteonexit="true"/>
-		<delete file="${build}/tmpNative2ASCII_dest/openspcoop2.msgDiagnostici.properties" deleteonexit="true"/>
-		<delete dir="${build}/tmpNative2ASCII_dest" deleteonexit="true"/>
-		<delete file="${build}/tmpNative2ASCII_src/openspcoop2.msgDiagnostici.properties" deleteonexit="true"/>
-		<delete dir="${build}/tmpNative2ASCII_src" deleteonexit="true"/>
-		
 	</target>
-	
 	
 	
 </project>

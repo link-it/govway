@@ -52,10 +52,10 @@ import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
-import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB_LIB;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -63,9 +63,12 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
+import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -93,9 +96,9 @@ import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.OperationsParameter;
 import org.openspcoop2.web.ctrlstat.costanti.TipoOggettoDaSmistare;
+import org.openspcoop2.web.ctrlstat.dao.MappingErogazionePortaApplicativa;
+import org.openspcoop2.web.ctrlstat.dao.MappingFruizionePortaDelegata;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
-import org.openspcoop2.web.ctrlstat.dao.PoliticheSicurezza;
-import org.openspcoop2.web.ctrlstat.dao.Ruolo;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
@@ -108,10 +111,10 @@ import org.openspcoop2.web.ctrlstat.plugins.IExtendedFormServlet;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedMenu;
 import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
+import org.openspcoop2.web.ctrlstat.registro.GestoreRegistroServiziRemoto;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
-import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.audit.DriverAudit;
 import org.openspcoop2.web.lib.audit.appender.AuditAppender;
@@ -384,7 +387,6 @@ public class ControlStationCore {
 	private boolean showAccordiInformazioniProtocollo = false;
 	private boolean showConfigurazioniPersonalizzate = false;
 	private boolean showGestioneSoggettiVirtuali = false;
-	private boolean showGestioneRuoliServizioApplicativo = false;
 	private boolean showGestioneWorkflowStatoDocumenti = false;
 	private boolean gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale = false;
 	private boolean showModalitaInterfacciaSwitchRapido = false;
@@ -446,9 +448,6 @@ public class ControlStationCore {
 	public boolean isShowGestioneSoggettiVirtuali() {
 		return this.showGestioneSoggettiVirtuali;
 	}
-	public boolean isShowGestioneRuoliServizioApplicativo() {
-		return this.showGestioneRuoliServizioApplicativo;
-	}
 	public boolean isShowGestioneWorkflowStatoDocumenti() {
 		return this.showGestioneWorkflowStatoDocumenti;
 	}
@@ -492,7 +491,6 @@ public class ControlStationCore {
 	private String sincronizzazionePddEngineEnabled_scriptShell_Path;
 	private String sincronizzazionePddEngineEnabled_scriptShell_Args;
 	private boolean sincronizzazioneRegistroEngineEnabled;
-	private boolean sincronizzazioneRepositoryAutorizzazioniEngineEnabled;
 	private boolean sincronizzazioneGEEngineEnabled;
 	private String sincronizzazioneGE_TipoSoggetto;
 	private String sincronizzazioneGE_NomeSoggetto;
@@ -511,9 +509,6 @@ public class ControlStationCore {
 	}
 	public boolean isSincronizzazioneRegistroEngineEnabled() {
 		return this.sincronizzazioneRegistroEngineEnabled;
-	}
-	public boolean isSincronizzazioneRepositoryAutorizzazioniEngineEnabled() {
-		return this.sincronizzazioneRepositoryAutorizzazioniEngineEnabled;
 	}
 	public boolean isSincronizzazioneGEEngineEnabled() {
 		return this.sincronizzazioneGEEngineEnabled;
@@ -545,6 +540,8 @@ public class ControlStationCore {
 	private String autenticazione_generazioneAutomaticaPorteDelegate;
 	private String autorizzazione_generazioneAutomaticaPorteDelegate;
 	private boolean generazioneAutomaticaPorteApplicative;
+	private String autenticazione_generazioneAutomaticaPorteApplicative;
+	private String autorizzazione_generazioneAutomaticaPorteApplicative;
 	private boolean isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto;
 	private boolean isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto;
 	public String getSuffissoConnettoreAutomatico() {
@@ -564,6 +561,12 @@ public class ControlStationCore {
 	}
 	public boolean isGenerazioneAutomaticaPorteApplicative() {
 		return this.generazioneAutomaticaPorteApplicative;
+	}
+	public String getAutenticazione_generazioneAutomaticaPorteApplicative() {
+		return this.autenticazione_generazioneAutomaticaPorteApplicative;
+	}
+	public String getAutorizzazione_generazioneAutomaticaPorteApplicative() {
+		return this.autorizzazione_generazioneAutomaticaPorteApplicative;
 	}
 	public boolean isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto() {
 		return this.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto;
@@ -1170,7 +1173,6 @@ public class ControlStationCore {
 		this.showAccordiInformazioniProtocollo = core.showAccordiInformazioniProtocollo;
 		this.showConfigurazioniPersonalizzate = core.showConfigurazioniPersonalizzate;
 		this.showGestioneSoggettiVirtuali = core.showGestioneSoggettiVirtuali;
-		this.showGestioneRuoliServizioApplicativo = core.showGestioneRuoliServizioApplicativo;
 		this.showGestioneWorkflowStatoDocumenti = core.showGestioneWorkflowStatoDocumenti;
 		this.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale = core.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale;
 		this.showModalitaInterfacciaSwitchRapido = core.showModalitaInterfacciaSwitchRapido;
@@ -1190,7 +1192,6 @@ public class ControlStationCore {
 		this.sincronizzazionePddEngineEnabled_scriptShell_Path = core.sincronizzazionePddEngineEnabled_scriptShell_Path;
 		this.sincronizzazionePddEngineEnabled_scriptShell_Args = core.sincronizzazionePddEngineEnabled_scriptShell_Args;
 		this.sincronizzazioneRegistroEngineEnabled = core.sincronizzazioneRegistroEngineEnabled;
-		this.sincronizzazioneRepositoryAutorizzazioniEngineEnabled = core.sincronizzazioneRepositoryAutorizzazioniEngineEnabled;
 		this.sincronizzazioneGEEngineEnabled = core.sincronizzazioneGEEngineEnabled;
 		this.sincronizzazioneGE_TipoSoggetto = core.sincronizzazioneGE_TipoSoggetto;
 		this.sincronizzazioneGE_NomeSoggetto = core.sincronizzazioneGE_NomeSoggetto;
@@ -1207,6 +1208,8 @@ public class ControlStationCore {
 		this.autenticazione_generazioneAutomaticaPorteDelegate = core.autenticazione_generazioneAutomaticaPorteDelegate;
 		this.autorizzazione_generazioneAutomaticaPorteDelegate = core.autorizzazione_generazioneAutomaticaPorteDelegate;
 		this.generazioneAutomaticaPorteApplicative = core.generazioneAutomaticaPorteApplicative;
+		this.autenticazione_generazioneAutomaticaPorteApplicative = core.autenticazione_generazioneAutomaticaPorteApplicative;
+		this.autorizzazione_generazioneAutomaticaPorteApplicative = core.autorizzazione_generazioneAutomaticaPorteApplicative;
 		this.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto = core.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto;
 		this.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto = core.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto;
 		
@@ -1366,6 +1369,8 @@ public class ControlStationCore {
 			this.autenticazione_generazioneAutomaticaPorteDelegate = consoleProperties.getAutenticazione_GenerazioneAutomaticaPorteDelegate();
 			this.autorizzazione_generazioneAutomaticaPorteDelegate = consoleProperties.getAutorizzazione_GenerazioneAutomaticaPorteDelegate();
 			this.generazioneAutomaticaPorteApplicative = consoleProperties.isGenerazioneAutomaticaPorteApplicative();
+			this.autenticazione_generazioneAutomaticaPorteApplicative = consoleProperties.getAutenticazione_GenerazioneAutomaticaPorteApplicative();
+			this.autorizzazione_generazioneAutomaticaPorteApplicative = consoleProperties.getAutorizzazione_GenerazioneAutomaticaPorteApplicative();
 			this.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto = consoleProperties.isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto();
 			this.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto = consoleProperties.isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto();
 			
@@ -1382,7 +1387,6 @@ public class ControlStationCore {
 			this.showJ2eeOptions = consoleProperties.isShowJ2eeOptions();
 			this.showConfigurazioniPersonalizzate = consoleProperties.isConsoleConfigurazioniPersonalizzate();
 			this.showGestioneSoggettiVirtuali = consoleProperties.isConsoleGestioneSoggettiVirtuali();
-			this.showGestioneRuoliServizioApplicativo = consoleProperties.isConsoleGestioneRuoliServiziApplicativi();
 			this.showGestioneWorkflowStatoDocumenti = consoleProperties.isConsoleGestioneWorkflowStatoDocumenti();
 			this.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale = consoleProperties.isConsoleGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale();
 			this.showSelectList_PA_ProtocolProperties = consoleProperties.isMenuPorteApplicative_ProtocolProperties_VisualizzaListaValoriPredefiniti();
@@ -1417,7 +1421,6 @@ public class ControlStationCore {
 				this.sincronizzazionePddEngineEnabled_scriptShell_Path = consoleProperties.getGestioneCentralizzata_GestorePddd_ScriptShell_Path();
 				this.sincronizzazionePddEngineEnabled_scriptShell_Args = consoleProperties.getGestioneCentralizzata_GestorePddd_ScriptShell_Args();
 				this.sincronizzazioneRegistroEngineEnabled = consoleProperties.isGestioneCentralizzata_SincronizzazioneRegistro();
-				this.sincronizzazioneRepositoryAutorizzazioniEngineEnabled = consoleProperties.isGestioneCentralizzata_SincronizzazioneRepositoryAutorizzazioni();
 				this.sincronizzazioneGEEngineEnabled = consoleProperties.isGestioneCentralizzata_SincronizzazioneGestoreEventi();
 				
 				this.smistatoreQueue = consoleProperties.getGestioneCentralizzata_NomeCodaSmistatore();
@@ -1776,7 +1779,7 @@ public class ControlStationCore {
 
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(pdd.getId().intValue());
+						operazioneDaSmistare.setIDTable(pdd.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.pdd);
 						operazioneDaSmistare.addParameter(OperationsParameter.PORTA_DOMINIO, pdd.getNome());
@@ -1784,34 +1787,29 @@ public class ControlStationCore {
 						doSetDati = true;
 					}
 
-					if (oggetto instanceof Ruolo) {
-						Ruolo ruolo = (Ruolo) oggetto;
-						if (ruolo.getIdServizioApplicativo() == null || ruolo.getIdServizioApplicativo() < 0) {
-							ruolo.setIdServizioApplicativo(DriverConfigurazioneDB_LIB.getIdServizioApplicativo(ruolo.getNomeServizioApplicativo(), ruolo.getTipoProprietarioSA(), ruolo.getNomeProprietarioSA(), con, this.tipoDB));
-						}
-						driver.createRuolo(ruolo);
-
+					if (oggetto instanceof MappingFruizionePortaDelegata) {
+						MappingFruizionePortaDelegata mapping = (MappingFruizionePortaDelegata) oggetto;
+						driver.createMappingFruizionePortaDelegata(mapping);
+						
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(ruolo.getId().intValue());
+						operazioneDaSmistare.setIDTable(Integer.parseInt("" + mapping.getTableId()));
 						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.ruolo);
+						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.mappingFruizionePD);
 
 						doSetDati = true;
+
 					}
-
-					if (oggetto instanceof PoliticheSicurezza) {
-						PoliticheSicurezza ps = (PoliticheSicurezza) oggetto;
-						driver.createPoliticheSicurezza(ps);
-
-						org.openspcoop2.core.registry.Soggetto sogg = driver.getDriverRegistroServiziDB().getSoggetto(ps.getIdFruitore());
-
+					
+					if (oggetto instanceof MappingErogazionePortaApplicativa) {
+						MappingErogazionePortaApplicativa mapping = (MappingErogazionePortaApplicativa) oggetto;
+						driver.createMappingErogazionePortaApplicativa(mapping);
+						
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setPdd(sogg.getPortaDominio());
-						operazioneDaSmistare.setIDTable(Integer.parseInt("" + ps.getId()));
+						operazioneDaSmistare.setIDTable(Integer.parseInt("" + mapping.getTableId()));
 						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.politicheSicurezza);
+						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.mappingErogazionePA);
 
 						doSetDati = true;
 
@@ -1841,7 +1839,7 @@ public class ControlStationCore {
 						// Chiedo la setDati
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(sogConf.getId().intValue());
+						operazioneDaSmistare.setIDTable(sogConf.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.soggetto);
 						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, soggetto.getTipo());
@@ -1878,7 +1876,7 @@ public class ControlStationCore {
 						// Chiedo la setDati
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(sogConf.getId().intValue());
+						operazioneDaSmistare.setIDTable(sogConf.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.soggetto);
 						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, sogConf.getTipo());
@@ -1900,7 +1898,7 @@ public class ControlStationCore {
 						// Chiedo la setDati
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(sogReg.getId().intValue());
+						operazioneDaSmistare.setIDTable(sogReg.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.soggetto);
 						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, sogReg.getTipo());
@@ -1929,7 +1927,7 @@ public class ControlStationCore {
 
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(sa.getId().intValue());
+						operazioneDaSmistare.setIDTable(sa.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.servizioApplicativo);
 						if(this.isRegistroServiziLocale()){
@@ -1952,7 +1950,7 @@ public class ControlStationCore {
 						driver.getDriverConfigurazioneDB().createPortaDelegata(pd);
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(pd.getId().intValue());
+						operazioneDaSmistare.setIDTable(pd.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.pd);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_PD, pd.getNome());
@@ -2011,7 +2009,7 @@ public class ControlStationCore {
 						driver.getDriverConfigurazioneDB().createPortaApplicativa(pa);
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(pa.getId().intValue());
+						operazioneDaSmistare.setIDTable(pa.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.pa);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_PA, pa.getNome());
@@ -2090,10 +2088,25 @@ public class ControlStationCore {
 
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(pdd.getId().intValue());
+						operazioneDaSmistare.setIDTable(pdd.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.pdd);
 						operazioneDaSmistare.addParameter(OperationsParameter.PORTA_DOMINIO, pdd.getNome());
+
+						doSetDati = true;
+					}
+					
+					// Ruolo
+					if (oggetto instanceof Ruolo) {
+						Ruolo ruolo = (Ruolo) oggetto;
+						driver.getDriverRegistroServiziDB().createRuolo(ruolo);
+
+						operazioneDaSmistare = new OperazioneDaSmistare();
+						operazioneDaSmistare.setOperazione(Operazione.add);
+						operazioneDaSmistare.setIDTable(ruolo.getId());
+						operazioneDaSmistare.setSuperuser(superUser);
+						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.ruolo);
+						operazioneDaSmistare.addParameter(OperationsParameter.NOME_RUOLO, ruolo.getNome());
 
 						doSetDati = true;
 					}
@@ -2110,7 +2123,7 @@ public class ControlStationCore {
 
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(as.getId().intValue());
+						operazioneDaSmistare.setIDTable(as.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordo);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, as.getNome());
@@ -2128,7 +2141,7 @@ public class ControlStationCore {
 						// preparo operazione da smistare
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(as.getId().intValue());
+						operazioneDaSmistare.setIDTable(as.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordoRuolo);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, as.getNome());
@@ -2145,7 +2158,7 @@ public class ControlStationCore {
 						// preparo l'altra operazione da aggiungere
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(as.getId().intValue());
+						operazioneDaSmistare.setIDTable(as.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordoRuolo);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, as.getNome() + "Correlato");
@@ -2167,7 +2180,7 @@ public class ControlStationCore {
 
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(ac.getId().intValue());
+						operazioneDaSmistare.setIDTable(ac.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordoCooperazione);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, ac.getNome());
@@ -2191,7 +2204,7 @@ public class ControlStationCore {
 
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.add);
-						operazioneDaSmistare.setIDTable(asps.getId().intValue());
+						operazioneDaSmistare.setIDTable(asps.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.servizio);
 						
@@ -2253,23 +2266,13 @@ public class ControlStationCore {
 												
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(pdd.getId().intValue());
+						operazioneDaSmistare.setIDTable(pdd.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.pdd);
 						operazioneDaSmistare.addParameter(OperationsParameter.PORTA_DOMINIO, pdd.getNome());
 						doSetDati = true;
 					}
 
-					if (oggetto instanceof Ruolo) {
-						Ruolo ruolo = (Ruolo) oggetto;
-						driver.updateRuolo(ruolo);
-						operazioneDaSmistare = new OperazioneDaSmistare();
-						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(ruolo.getId().intValue());
-						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.ruolo);
-						doSetDati = true;
-					}
 
 					/***********************************************************
 					 * Caso Speciale dei Soggetti *
@@ -2302,7 +2305,7 @@ public class ControlStationCore {
 						// Chiedo la setDati
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(soggetto.getId().intValue());
+						operazioneDaSmistare.setIDTable(soggetto.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.soggetto);
 						if(this.registroServiziLocale){
@@ -2332,7 +2335,7 @@ public class ControlStationCore {
 						// Chiedo la setDati
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(sogConf.getId().intValue());
+						operazioneDaSmistare.setIDTable(sogConf.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.soggetto);
 						if(sogConf.getOldIDSoggettoForUpdate()!=null){
@@ -2358,7 +2361,7 @@ public class ControlStationCore {
 						// Chiedo la setDati
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(sogReg.getId().intValue());
+						operazioneDaSmistare.setIDTable(sogReg.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.soggetto);
 						if(sogReg.getOldIDSoggettoForUpdate()!=null){
@@ -2390,7 +2393,7 @@ public class ControlStationCore {
 
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(sa.getId().intValue());
+						operazioneDaSmistare.setIDTable(sa.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.servizioApplicativo);
 						
@@ -2423,7 +2426,7 @@ public class ControlStationCore {
 						// Chiedo la setDati
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(pd.getId().intValue());
+						operazioneDaSmistare.setIDTable(pd.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.pd);
 						
@@ -2451,7 +2454,7 @@ public class ControlStationCore {
 						}
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(pa.getId().intValue());
+						operazioneDaSmistare.setIDTable(pa.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.pa);
 						
@@ -2530,7 +2533,7 @@ public class ControlStationCore {
 
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(pdd.getId().intValue());
+						operazioneDaSmistare.setIDTable(pdd.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.pdd);
 						operazioneDaSmistare.addParameter(OperationsParameter.PORTA_DOMINIO, pdd.getNome());
@@ -2538,6 +2541,24 @@ public class ControlStationCore {
 						doSetDati = true;
 					}
 
+					// Ruolo
+					if (oggetto instanceof Ruolo) {
+						Ruolo ruolo = (Ruolo) oggetto;
+						driver.getDriverRegistroServiziDB().updateRuolo(ruolo);
+						// Chiedo la setDati
+						operazioneDaSmistare = new OperazioneDaSmistare();
+						operazioneDaSmistare.setOperazione(Operazione.change);
+						operazioneDaSmistare.setIDTable(ruolo.getId());
+						operazioneDaSmistare.setSuperuser(superUser);
+						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.ruolo);
+						operazioneDaSmistare.addParameter(OperationsParameter.NOME_RUOLO, ruolo.getNome());
+						IDRuolo idRuoloOLD = ruolo.getOldIDRuoloForUpdate();
+						if(idRuoloOLD!=null){
+							operazioneDaSmistare.addParameter(OperationsParameter.OLD_NOME_RUOLO, idRuoloOLD.getNome());
+						}
+						doSetDati = true;
+					}
+					
 					// AccordoServizio
 					if (oggetto instanceof AccordoServizioParteComune) {
 						AccordoServizioParteComune as = (AccordoServizioParteComune) oggetto;
@@ -2545,7 +2566,7 @@ public class ControlStationCore {
 						// Chiedo la setDati
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(as.getId().intValue());
+						operazioneDaSmistare.setIDTable(as.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordo);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, as.getNome());
@@ -2581,7 +2602,7 @@ public class ControlStationCore {
 						// Chiedo la setDati
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(ac.getId().intValue());
+						operazioneDaSmistare.setIDTable(ac.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordoCooperazione);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, ac.getNome());
@@ -2620,7 +2641,7 @@ public class ControlStationCore {
 
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.change);
-						operazioneDaSmistare.setIDTable(asps.getId().intValue());
+						operazioneDaSmistare.setIDTable(asps.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.servizio);
 						
@@ -2730,7 +2751,7 @@ public class ControlStationCore {
 						
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(pdd.getId().intValue());
+						operazioneDaSmistare.setIDTable(pdd.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.pdd);
 						operazioneDaSmistare.addParameter(OperationsParameter.PORTA_DOMINIO, pdd.getNome());
@@ -2738,46 +2759,39 @@ public class ControlStationCore {
 						doSetDati = true;
 					}
 
-					if (oggetto instanceof Ruolo) {
-						Ruolo ruolo = (Ruolo) oggetto;
-						driver.deleteRuolo(ruolo);
+					if (oggetto instanceof MappingFruizionePortaDelegata) {
+						MappingFruizionePortaDelegata mapping = (MappingFruizionePortaDelegata) oggetto;
+						driver.deleteMappingFruizionePortaDelegata(mapping);
+						
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.del);
-						// nel caso di eliminazione del ruolo l'id che mi
-						// serve
-						// sara quello del servizio applicativo
-						operazioneDaSmistare.setIDTable(ruolo.getIdServizioApplicativo().intValue());
-						// setto le informazioni sul servizio applicativo
-						// che mi
-						// servono
-						// per gestire il ruolo
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SERVIZIO_APPLICATIVO, ruolo.getNomeServizioApplicativo());
-						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, ruolo.getTipoProprietarioSA());
-						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SOGGETTO, ruolo.getNomeProprietarioSA());
-
+						//operazioneDaSmistare.setIDTable(Integer.parseInt("" + mapping.getTableId()));
+						operazioneDaSmistare.addParameter(OperationsParameter.MAPPING_ID_FRUITORE, "" + driver.getTableIdSoggetto(mapping.getIdFruitore()));
+						operazioneDaSmistare.addParameter(OperationsParameter.MAPPING_ID_SERVIZIO, "" + driver.getTableIdAccordoServizioParteSpecifica(mapping.getIdServizio()));
+						operazioneDaSmistare.addParameter(OperationsParameter.MAPPING_ID_PORTA_DELEGATA, "" + driver.getTableIdPortaDelegata(mapping.getIdPortaDelegata()));
 						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.ruolo);
+						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.mappingFruizionePD);
+
 						doSetDati = true;
+
 					}
 					
-					if (oggetto instanceof PoliticheSicurezza) {
-						PoliticheSicurezza ps = (PoliticheSicurezza) oggetto;
-						driver.deletePoliticheSicurezza(ps);
-
-						org.openspcoop2.core.registry.Soggetto sogg = driver.getDriverRegistroServiziDB().getSoggetto(ps.getIdFruitore());
-
+					if (oggetto instanceof MappingErogazionePortaApplicativa) {
+						MappingErogazionePortaApplicativa mapping = (MappingErogazionePortaApplicativa) oggetto;
+						driver.deleteMappingErogazionePortaApplicativa(mapping);
+						
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setPdd(sogg.getPortaDominio());
+						//operazioneDaSmistare.setIDTable(Integer.parseInt("" + mapping.getTableId()));
+						operazioneDaSmistare.addParameter(OperationsParameter.MAPPING_ID_SERVIZIO, "" + driver.getTableIdAccordoServizioParteSpecifica(mapping.getIdServizio()));
+						operazioneDaSmistare.addParameter(OperationsParameter.MAPPING_ID_PORTA_APPLICATIVA, "" + driver.getTableIdPortaApplicativa(mapping.getIdPortaApplicativa()));
 						operazioneDaSmistare.setSuperuser(superUser);
-						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.politicheSicurezza);
-						operazioneDaSmistare.addParameter(OperationsParameter.PS_ID_SERVIZIO_APPLICATIVO, ps.getIdServizioApplicativo()+"");
-						operazioneDaSmistare.addParameter(OperationsParameter.PS_ID_FRUITORE, ps.getIdFruitore()+"");
-						operazioneDaSmistare.addParameter(OperationsParameter.PS_ID_SERVIZIO, ps.getIdServizio()+"");
+						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.mappingErogazionePA);
 
 						doSetDati = true;
 
 					}
+					
 					
 					/***********************************************************
 					 * Caso Speciale dei Soggetti *
@@ -2797,7 +2811,7 @@ public class ControlStationCore {
 
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(soggetto.getId().intValue());
+						operazioneDaSmistare.setIDTable(soggetto.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.soggetto);
 						if(soggetto.getSoggettoReg()!=null){
@@ -2819,7 +2833,7 @@ public class ControlStationCore {
 						// Chiedo la setDati
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(sogConf.getId().intValue());
+						operazioneDaSmistare.setIDTable(sogConf.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.soggetto);
 						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, sogConf.getTipo());
@@ -2841,7 +2855,7 @@ public class ControlStationCore {
 						// Chiedo la setDati
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(sogReg.getId().intValue());
+						operazioneDaSmistare.setIDTable(sogReg.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.soggetto);
 						operazioneDaSmistare.addParameter(OperationsParameter.TIPO_SOGGETTO, sogReg.getTipo());
@@ -2868,7 +2882,7 @@ public class ControlStationCore {
 
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(sa.getId().intValue());
+						operazioneDaSmistare.setIDTable(sa.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.servizioApplicativo);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_SERVIZIO_APPLICATIVO, sa.getNome());
@@ -2894,7 +2908,7 @@ public class ControlStationCore {
 						// Chiedo la setDati
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(pd.getId().intValue());
+						operazioneDaSmistare.setIDTable(pd.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.pd);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_PD, pd.getNome());
@@ -2913,7 +2927,7 @@ public class ControlStationCore {
 						driver.getDriverConfigurazioneDB().deletePortaApplicativa(pa);
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(pa.getId().intValue());
+						operazioneDaSmistare.setIDTable(pa.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.pa);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_PA, pa.getNome());
@@ -2986,7 +3000,7 @@ public class ControlStationCore {
 
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(pdd.getId().intValue());
+						operazioneDaSmistare.setIDTable(pdd.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.pdd);
 						operazioneDaSmistare.addParameter(OperationsParameter.PORTA_DOMINIO, pdd.getNome());
@@ -2994,13 +3008,26 @@ public class ControlStationCore {
 						doSetDati = true;
 					}
 
+					// Ruolo
+					if (oggetto instanceof Ruolo) {
+						Ruolo ruolo = (Ruolo) oggetto;
+						driver.getDriverRegistroServiziDB().deleteRuolo(ruolo);
+						operazioneDaSmistare = new OperazioneDaSmistare();
+						operazioneDaSmistare.setOperazione(Operazione.del);
+						operazioneDaSmistare.setIDTable(ruolo.getId());
+						operazioneDaSmistare.setSuperuser(superUser);
+						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.ruolo);
+						operazioneDaSmistare.addParameter(OperationsParameter.NOME_RUOLO, ruolo.getNome());
+						operazioneDaSmistareList.add(operazioneDaSmistare);
+					}
+					
 					// AccordoServizio
 					if (oggetto instanceof AccordoServizioParteComune) {
 						AccordoServizioParteComune as = (AccordoServizioParteComune) oggetto;
 						driver.getDriverRegistroServiziDB().deleteAccordoServizioParteComune(as);
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(as.getId().intValue());
+						operazioneDaSmistare.setIDTable(as.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordo);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, as.getNome());
@@ -3017,7 +3044,7 @@ public class ControlStationCore {
 						// preparo operazione da smistare
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(as.getId().intValue());
+						operazioneDaSmistare.setIDTable(as.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordoRuolo);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, as.getNome());
@@ -3034,7 +3061,7 @@ public class ControlStationCore {
 						// preparo l'altra operazione da aggiungere
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(as.getId().intValue());
+						operazioneDaSmistare.setIDTable(as.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordoRuolo);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, as.getNome() + "Correlato");
@@ -3056,7 +3083,7 @@ public class ControlStationCore {
 
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(ac.getId().intValue());
+						operazioneDaSmistare.setIDTable(ac.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.accordoCooperazione);
 						operazioneDaSmistare.addParameter(OperationsParameter.NOME_ACCORDO, ac.getNome());
@@ -3080,7 +3107,7 @@ public class ControlStationCore {
 
 						operazioneDaSmistare = new OperazioneDaSmistare();
 						operazioneDaSmistare.setOperazione(Operazione.del);
-						operazioneDaSmistare.setIDTable(asps.getId().intValue());
+						operazioneDaSmistare.setIDTable(asps.getId());
 						operazioneDaSmistare.setSuperuser(superUser);
 						operazioneDaSmistare.setOggetto(TipoOggettoDaSmistare.servizio);
 						
@@ -3872,26 +3899,26 @@ public class ControlStationCore {
 			msg+=":"+oggetto.getClass().getSimpleName();
 			msg+=":<"+pdd.getNome()+">";
 		}
-		else if (oggetto instanceof Ruolo) {
-			Ruolo r = (Ruolo) oggetto;
-			msg+=":"+oggetto.getClass().getSimpleName();
-			msg+=":<"+r.getTipoProprietarioSA()+"/"+r.getNomeProprietarioSA()+"_"+r.getNome()+"_Correlato:"+r.isCorrelato()+">";
-			if(TipoOperazione.CHANGE.toString().equals(tipoOperazione.toString())){
-				if(r.getNome().equals(r.getOldNomeForUpdate())==false){
-					msg+=":OLD<"+r.getTipoProprietarioSA()+"/"+r.getNomeProprietarioSA()+"_"+r.getOldNomeForUpdate()+"_Correlato:"+r.isCorrelato()+">";
-				}
-			}
-		}
-		else if (oggetto instanceof PoliticheSicurezza) {
-			PoliticheSicurezza p = (PoliticheSicurezza) oggetto;
+		else if(oggetto instanceof MappingFruizionePortaDelegata){
+			MappingFruizionePortaDelegata mapping = (MappingFruizionePortaDelegata) oggetto;
 			msg+=":"+oggetto.getClass().getSimpleName();
 			StringBuffer bf = new StringBuffer();
 			bf.append("FR[");
-			bf.append(p.getIdFruitore());
-			bf.append("] ER[");
-			bf.append(p.getIdServizio());
-			bf.append("] SA["+p.getIdServizioApplicativo());
-			bf.append("] "+p.getNomeServizioApplicativo());
+			bf.append(mapping.getIdFruitore().getTipo()+"/"+mapping.getIdFruitore().getNome());
+			bf.append("] SERV[");
+			bf.append(mapping.getIdServizio().toString());
+			bf.append("] PD["+mapping.getIdPortaDelegata().getNome());
+			bf.append("]");
+			msg+=":<"+bf.toString()+">";
+		}
+		else if(oggetto instanceof MappingErogazionePortaApplicativa){
+			MappingErogazionePortaApplicativa mapping = (MappingErogazionePortaApplicativa) oggetto;
+			msg+=":"+oggetto.getClass().getSimpleName();
+			StringBuffer bf = new StringBuffer();
+			bf.append("SERV[");
+			bf.append(mapping.getIdServizio().toString());
+			bf.append("] PA["+mapping.getIdPortaApplicativa().getNome());
+			bf.append("]");
 			msg+=":<"+bf.toString()+">";
 		}
 		else if (oggetto instanceof SoggettoCtrlStat) {
@@ -3908,6 +3935,17 @@ public class ControlStationCore {
 
 		// RegistroServizi
 
+		else if (oggetto instanceof Ruolo) {
+			Ruolo r = (Ruolo) oggetto;
+			msg+=":"+oggetto.getClass().getSimpleName();
+			msg+=":<"+r.getNome()+">";
+			if(TipoOperazione.CHANGE.toString().equals(tipoOperazione.toString())){
+				if(r.getOldIDRuoloForUpdate()!=null && r.getNome().equals(r.getOldIDRuoloForUpdate().getNome())==false){
+					msg+=":OLD<"+r.getOldIDRuoloForUpdate().getNome()+">";
+				}
+			}
+		}
+		
 		// AccordoCooperazione
 		else if (oggetto instanceof AccordoCooperazione) {
 			AccordoCooperazione ac = (AccordoCooperazione) oggetto;
@@ -4141,6 +4179,50 @@ public class ControlStationCore {
 	}
 	
 
+	public void initMappingErogazione(boolean forceMapping,Logger log) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "initMappingErogazione";
+		DriverControlStationDB driver = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			driver.initMappingErogazione(forceMapping,log);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
+	public void initMappingFruizione(boolean forceMapping,Logger log) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "initMappingFruizione";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			driver.initMappingFruizione(forceMapping,log);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
+
 	/**
 	 * Accesso alla configurazione generale della Pdd
 	 * 
@@ -4173,7 +4255,42 @@ public class ControlStationCore {
 
 	}
 
+	public List<String> getAllRuoli(FiltroRicercaRuoli filtroRicerca) throws DriverRegistroServiziException {
+		List<String> returnList = new ArrayList<>();
+		List<IDRuolo> list = this.getAllIdRuoli(filtroRicerca);
+		for (IDRuolo idRuolo : list) {
+			returnList.add(idRuolo.getNome());
+		}
+		return returnList;
+	}
+	public List<IDRuolo> getAllIdRuoli(FiltroRicercaRuoli filtroRicerca) throws DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "getAllIdRuoli";
+		DriverControlStationDB driver = null;
 
+		try {
+			if(this.isRegistroServiziLocale()){
+				// prendo una connessione
+				con = ControlStationCore.dbM.getConnection();
+				// istanzio il driver
+				driver = new DriverControlStationDB(con, null, this.tipoDB);
+	
+				return driver.getDriverRegistroServiziDB().getAllIdRuoli(filtroRicerca);
+			}
+			else{
+				return GestoreRegistroServiziRemoto.getDriverRegistroServizi(ControlStationCore.log).getAllIdRuoli(filtroRicerca);
+			}
+
+		} catch (DriverRegistroServiziNotFound de) {
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			return new ArrayList<IDRuolo>();
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
 
 	public List<String> getProtocolli() throws  DriverRegistroServiziException {
 		String getProtocolli = "getProtocolli";

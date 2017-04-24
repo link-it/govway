@@ -105,6 +105,8 @@ public class UDDILib
 	public static final String ACCORDO_SERVIZIO = "AccordoServizio";
 	public static final String PORTA_DOMINIO = "PortaDominio";
 	public static final String PORTA_DOMINIO_PREFIX = "PdD@";
+	public static final String RUOLO = "Ruolo";
+	public static final String RUOLO_PREFIX = "Ruolo@";
 	public static final String ACCORDO_COOPERAZIONE = "AccordoCooperazione";
 	public static final String ACCORDO_COOPERAZIONE_PREFIX = "AccordoCooperazione@";
 	
@@ -757,7 +759,7 @@ public class UDDILib
 	
 	
 	
-	/* ******** M E T O D I   A C C O R D O    D I    S E R V I Z I O   ******** */
+	/* ******** M E T O D I   P D D   ******** */
 
 
 	
@@ -784,8 +786,8 @@ public class UDDILib
 	/**
 	 * Si occupa di registrare come TModel una porta di dominio con nome <var>nome</var>
 	 *
-	 * @param nome Nome che identifica l'accordo di servizio
-	 * @param url url del file XML associato all'accordo di servizio
+	 * @param nome Nome che identifica la pdd
+	 * @param url url del file XML associato alla pdd
 	 */	
 	public void createPortaDominio(String nome, String url) throws DriverRegistroServiziException{
 		this.createTModel(UDDILib.PORTA_DOMINIO, UDDILib.PORTA_DOMINIO_PREFIX+ nome, url);
@@ -918,6 +920,161 @@ public class UDDILib
 			throw new DriverRegistroServiziException("[UDDILib.getUrlXmlPortaDominio]: "+e.getMessage(),e);
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/* ******** M E T O D I   R U O L I   ******** */
+
+
+	
+	/**
+	 * Si occupa di recuperare il TModel che registra il ruolo con nome <var>nome</var>
+	 *
+	 * @param nome nome che identifica il ruolo
+	 * @return la TModel che registra il ruolo
+	 */
+	public TModel getRuolo(String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.getTModel(UDDILib.RUOLO, UDDILib.RUOLO_PREFIX+nome);
+	}
+	
+	/**
+	 * Si occupa di recuperare le TModels che soddisfano il filtro
+	 *
+	 * @param urlRepository Url del Repository
+	 * @return una lista di TModel che registra i ruoli
+	 */
+	public TModel[] getRuoli(String urlRepository) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.getTModelByFilter(UDDILib.RUOLO, UDDILib.RUOLO_PREFIX, urlRepository, false);
+	}
+	
+	/**
+	 * Si occupa di registrare come TModel un ruolo con nome <var>nome</var>
+	 *
+	 * @param nome Nome che identifica il ruolo
+	 * @param url url del file XML associato al ruolo
+	 */	
+	public void createRuolo(String nome, String url) throws DriverRegistroServiziException{
+		this.createTModel(UDDILib.RUOLO, UDDILib.RUOLO_PREFIX+ nome, url);
+	}
+
+	/**
+	 * Il metodo si occupa di verificare se nel registro e' regitrata una TModel identificata dal parametro
+	 *
+	 * @param nome Nome del ruolo
+	 * @return true se la TModel risulta registrata, false altrimenti
+	 * 
+	 */
+	public boolean existsRuolo(String nome) throws DriverRegistroServiziException{
+		
+		if ( nome==null )
+			throw new DriverRegistroServiziException("[UDDILib.existsRuolo]: Alcuni parametri non definiti");
+		try{
+			TModel t = getTModel(UDDILib.RUOLO, UDDILib.RUOLO_PREFIX+nome);
+			if(t == null)
+				throw new Exception("TModel is null");
+		}catch(DriverRegistroServiziNotFound e){
+			return false;
+		}catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		return true;	
+	}
+
+	/**
+	 * Si occupa di modificare il nome della TModel che registra il ruolo con nome <var>nomeOLD</var>
+	 *
+	 * @param nomeOLD vecchio nome che identifica il ruolo
+	 * @param nomeNEW nuovo nome che identifica il ruolo
+	 * @param url nuova url del file XML associato al ruolo
+	 */
+	public void updateRuolo(String nomeOLD,String nomeNEW,String url) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		this.updateTModel(UDDILib.RUOLO, UDDILib.RUOLO_PREFIX+nomeOLD, UDDILib.RUOLO_PREFIX+nomeNEW, url);
+	}
+
+	/**
+	 * Il metodo si occupa di cancellare la TModel identificata dal parametro
+	 *
+	 * @param nome nome che identifica il ruolo
+	 */
+	public void deleteRuolo(String nome) throws DriverRegistroServiziException{
+		this.deleteTModel(UDDILib.RUOLO, UDDILib.RUOLO_PREFIX+nome);
+	}
+
+	/**
+	 * Il metodo si occupa di impostare la url del file XML della TModel
+	 *
+	 * @param nome Nome che identifica il ruolo
+	 * @param url url del file XML associato al ruolo
+	 */
+	public void updateUrlXmlRuolo(String nome, String url) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		this.updateUrlXmlTModel(UDDILib.RUOLO, UDDILib.RUOLO_PREFIX+nome, url);
+	}
+	/**
+	 * Si occupa di recuperare la URL dell'XML associato al ruolo
+	 * registrato con il nome <var>nome</var>
+	 *
+	 * @param nome Nome che identifica il ruolo
+	 * @return la url dell'XML associato al ruolo
+	 * 
+	 */
+	public String getUrlXmlRuolo(String nome) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		if ( nome==null )
+			throw new DriverRegistroServiziException("[UDDILib.getUrlXmlRuolo]: Alcuni parametri non definiti");
+		try{
+			TModel tm = getTModel(UDDILib.RUOLO, UDDILib.RUOLO_PREFIX+nome);
+			return tm.getOverviewDoc().getOverviewURLString();
+		}catch(DriverRegistroServiziNotFound e){
+			throw e;
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("[UDDILib.getUrlXmlRuolo]: "+e.getMessage(),e);
+		}
+	}
+	
+	/**
+	 * Si occupa di recuperare la URL dell'XML associato al ruolo
+	 * registrata con il nome <var>nome</var>
+	 *
+	 * @param searchNome Nome che identifica il ruolo
+	 * @return la url dell'XML associato al ruolo
+	 * 
+	 */
+	public String[] getUrlXmlRuolo(String searchNome,String urlRepository) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		try{
+			TModel[] tm = null;
+			if(searchNome!=null){
+				tm = getTModelByFilter(UDDILib.RUOLO, UDDILib.RUOLO_PREFIX+searchNome,urlRepository,true);
+			}else{
+				tm = getTModelByFilter(UDDILib.RUOLO, UDDILib.RUOLO_PREFIX,urlRepository,false);
+			}
+			
+			if(tm!=null){
+				String[] url = new String[tm.length];
+				for(int i=0; i<tm.length; i++){
+					url[i] = tm[i].getOverviewDoc().getOverviewURLString();
+				}
+				return url;
+			}else{
+				throw new DriverRegistroServiziNotFound("Ruolo (definizione XML) non trovate");
+			}
+		}
+		catch (DriverRegistroServiziNotFound e){
+			throw e;
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException("[UDDILib.getUrlXmlRuolo]: "+e.getMessage(),e);
+		}
+	}
+	
 	
 	
 	

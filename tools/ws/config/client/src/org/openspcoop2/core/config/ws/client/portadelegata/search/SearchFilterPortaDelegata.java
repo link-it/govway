@@ -1,22 +1,3 @@
-/*
- * OpenSPCoop - Customizable API Gateway 
- * http://www.openspcoop2.org
- * 
- * Copyright (c) 2005-2017 Link.it srl (http://link.it).
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3, as published by
- * the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
 
 package org.openspcoop2.core.config.ws.client.portadelegata.search;
 
@@ -43,6 +24,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
  *         &lt;element name="soggetto-erogatore" type="{http://www.openspcoop2.org/core/config/management}porta-delegata-soggetto-erogatore" minOccurs="0"/&gt;
  *         &lt;element name="servizio" type="{http://www.openspcoop2.org/core/config/management}porta-delegata-servizio" minOccurs="0"/&gt;
  *         &lt;element name="azione" type="{http://www.openspcoop2.org/core/config/management}porta-delegata-azione" minOccurs="0"/&gt;
+ *         &lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config/management}autorizzazione-ruoli" minOccurs="0"/&gt;
  *         &lt;element name="local-forward" type="{http://www.openspcoop2.org/core/config/management}porta-delegata-local-forward" minOccurs="0"/&gt;
  *         &lt;element name="mtom-processor" type="{http://www.openspcoop2.org/core/config/management}mtom-processor" minOccurs="0"/&gt;
  *         &lt;element name="validazione-contenuti-applicativi" type="{http://www.openspcoop2.org/core/config/management}validazione-contenuti-applicativi" minOccurs="0"/&gt;
@@ -52,6 +34,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="autenticazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="autenticazione-opzionale" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0"/&gt;
  *         &lt;element name="autorizzazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="autorizzazione-contenuto" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="ricevuta-asincrona-simmetrica" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0"/&gt;
@@ -79,6 +62,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
     "soggettoErogatore",
     "servizio",
     "azione",
+    "ruoli",
     "localForward",
     "mtomProcessor",
     "validazioneContenutiApplicativi",
@@ -88,6 +72,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
     "nome",
     "descrizione",
     "autenticazione",
+    "autenticazioneOpzionale",
     "autorizzazione",
     "autorizzazioneContenuto",
     "ricevutaAsincronaSimmetrica",
@@ -109,6 +94,7 @@ public class SearchFilterPortaDelegata {
     protected PortaDelegataSoggettoErogatore soggettoErogatore;
     protected PortaDelegataServizio servizio;
     protected PortaDelegataAzione azione;
+    protected AutorizzazioneRuoli ruoli;
     @XmlElement(name = "local-forward")
     protected PortaDelegataLocalForward localForward;
     @XmlElement(name = "mtom-processor")
@@ -124,6 +110,9 @@ public class SearchFilterPortaDelegata {
     protected String nome;
     protected String descrizione;
     protected String autenticazione;
+    @XmlElement(name = "autenticazione-opzionale")
+    @XmlSchemaType(name = "string")
+    protected StatoFunzionalita autenticazioneOpzionale;
     protected String autorizzazione;
     @XmlElement(name = "autorizzazione-contenuto")
     protected String autorizzazioneContenuto;
@@ -164,7 +153,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public PortaDelegataSoggettoErogatore getSoggettoErogatore() {
-        return this.soggettoErogatore;
+        return soggettoErogatore;
     }
 
     /**
@@ -188,7 +177,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public PortaDelegataServizio getServizio() {
-        return this.servizio;
+        return servizio;
     }
 
     /**
@@ -212,7 +201,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public PortaDelegataAzione getAzione() {
-        return this.azione;
+        return azione;
     }
 
     /**
@@ -228,6 +217,30 @@ public class SearchFilterPortaDelegata {
     }
 
     /**
+     * Gets the value of the ruoli property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link AutorizzazioneRuoli }
+     *     
+     */
+    public AutorizzazioneRuoli getRuoli() {
+        return ruoli;
+    }
+
+    /**
+     * Sets the value of the ruoli property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link AutorizzazioneRuoli }
+     *     
+     */
+    public void setRuoli(AutorizzazioneRuoli value) {
+        this.ruoli = value;
+    }
+
+    /**
      * Gets the value of the localForward property.
      * 
      * @return
@@ -236,7 +249,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public PortaDelegataLocalForward getLocalForward() {
-        return this.localForward;
+        return localForward;
     }
 
     /**
@@ -260,7 +273,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public MtomProcessor getMtomProcessor() {
-        return this.mtomProcessor;
+        return mtomProcessor;
     }
 
     /**
@@ -284,7 +297,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public ValidazioneContenutiApplicativi getValidazioneContenutiApplicativi() {
-        return this.validazioneContenutiApplicativi;
+        return validazioneContenutiApplicativi;
     }
 
     /**
@@ -308,7 +321,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public String getTipoSoggettoProprietario() {
-        return this.tipoSoggettoProprietario;
+        return tipoSoggettoProprietario;
     }
 
     /**
@@ -332,7 +345,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public String getNomeSoggettoProprietario() {
-        return this.nomeSoggettoProprietario;
+        return nomeSoggettoProprietario;
     }
 
     /**
@@ -356,7 +369,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public String getStatoMessageSecurity() {
-        return this.statoMessageSecurity;
+        return statoMessageSecurity;
     }
 
     /**
@@ -380,7 +393,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public String getNome() {
-        return this.nome;
+        return nome;
     }
 
     /**
@@ -404,7 +417,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public String getDescrizione() {
-        return this.descrizione;
+        return descrizione;
     }
 
     /**
@@ -428,7 +441,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public String getAutenticazione() {
-        return this.autenticazione;
+        return autenticazione;
     }
 
     /**
@@ -444,6 +457,30 @@ public class SearchFilterPortaDelegata {
     }
 
     /**
+     * Gets the value of the autenticazioneOpzionale property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link StatoFunzionalita }
+     *     
+     */
+    public StatoFunzionalita getAutenticazioneOpzionale() {
+        return autenticazioneOpzionale;
+    }
+
+    /**
+     * Sets the value of the autenticazioneOpzionale property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link StatoFunzionalita }
+     *     
+     */
+    public void setAutenticazioneOpzionale(StatoFunzionalita value) {
+        this.autenticazioneOpzionale = value;
+    }
+
+    /**
      * Gets the value of the autorizzazione property.
      * 
      * @return
@@ -452,7 +489,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public String getAutorizzazione() {
-        return this.autorizzazione;
+        return autorizzazione;
     }
 
     /**
@@ -476,7 +513,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public String getAutorizzazioneContenuto() {
-        return this.autorizzazioneContenuto;
+        return autorizzazioneContenuto;
     }
 
     /**
@@ -500,7 +537,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public StatoFunzionalita getRicevutaAsincronaSimmetrica() {
-        return this.ricevutaAsincronaSimmetrica;
+        return ricevutaAsincronaSimmetrica;
     }
 
     /**
@@ -524,7 +561,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public StatoFunzionalita getRicevutaAsincronaAsimmetrica() {
-        return this.ricevutaAsincronaAsimmetrica;
+        return ricevutaAsincronaAsimmetrica;
     }
 
     /**
@@ -548,7 +585,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public String getIntegrazione() {
-        return this.integrazione;
+        return integrazione;
     }
 
     /**
@@ -572,7 +609,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public StatoFunzionalita getAllegaBody() {
-        return this.allegaBody;
+        return allegaBody;
     }
 
     /**
@@ -596,7 +633,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public StatoFunzionalita getScartaBody() {
-        return this.scartaBody;
+        return scartaBody;
     }
 
     /**
@@ -620,7 +657,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public StatoFunzionalita getGestioneManifest() {
-        return this.gestioneManifest;
+        return gestioneManifest;
     }
 
     /**
@@ -644,7 +681,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public StatoFunzionalita getStateless() {
-        return this.stateless;
+        return stateless;
     }
 
     /**
@@ -668,7 +705,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMin() {
-        return this.oraRegistrazioneMin;
+        return oraRegistrazioneMin;
     }
 
     /**
@@ -692,7 +729,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMax() {
-        return this.oraRegistrazioneMax;
+        return oraRegistrazioneMax;
     }
 
     /**
@@ -716,7 +753,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public Boolean isOrCondition() {
-        return this.orCondition;
+        return orCondition;
     }
 
     /**
@@ -740,7 +777,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public BigInteger getLimit() {
-        return this.limit;
+        return limit;
     }
 
     /**
@@ -764,7 +801,7 @@ public class SearchFilterPortaDelegata {
      *     
      */
     public BigInteger getOffset() {
-        return this.offset;
+        return offset;
     }
 
     /**

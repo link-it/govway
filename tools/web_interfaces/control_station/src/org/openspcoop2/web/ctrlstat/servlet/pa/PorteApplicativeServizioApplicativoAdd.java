@@ -348,7 +348,7 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 
 				String [] servizioApplicativoList = loadSAErogatori(pa, saCore, soggInt, true);
 				
-				dati = porteApplicativeHelper.addPorteServizioApplicativoToDati(TipoOperazione.ADD,dati, "", servizioApplicativoList);
+				dati = porteApplicativeHelper.addPorteServizioApplicativoToDati(TipoOperazione.ADD,dati, "", servizioApplicativoList, pa.sizeServizioApplicativoList(),true);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, dati);
 
@@ -499,7 +499,7 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 
 				String[] servizioApplicativoList = loadSAErogatori(pa, saCore, soggInt, true);
 
-				dati = porteApplicativeHelper.addPorteServizioApplicativoToDati(TipoOperazione.ADD, dati, servizioApplicativo, servizioApplicativoList);
+				dati = porteApplicativeHelper.addPorteServizioApplicativoToDati(TipoOperazione.ADD, dati, servizioApplicativo, servizioApplicativoList, pa.sizeServizioApplicativoList(),true);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, dati);
 

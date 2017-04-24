@@ -41,6 +41,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiXMLRepository;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -1567,6 +1568,154 @@ public class XMLLib{
 		}catch(Exception e){
 			e.printStackTrace();
 			throw new DriverRegistroServiziException("[XMLLib] Riscontrato errore durante la ricerca delle porte di dominio: "+e.getMessage(),e);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/* ---------------- GENERAZIONE XML RUOLI ------------------------- */
+	/**
+	 * Metodo che controlla se il ruolo risulta gia' registrato
+	 * 
+	 * @param nome Nome del ruolo da creare/modificare
+	 * @return true se il ruolo risulta registrato, false altrimenti.
+	 * 
+	 */   
+	public boolean existsRuolo(String nome)throws DriverRegistroServiziException{
+
+		try {
+			File fileXML = new File(this.pathPrefix + CostantiXMLRepository.RUOLI + File.separator + nome + ".xml");
+			if( (fileXML.exists()==false) ){
+				return false;
+			}else
+				return true;
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("[XMLLib] Riscontrato errore durante la ricerca ("+CostantiXMLRepository.RUOLI+")  ["+nome+"]: "+e.getMessage(),e);
+		}
+
+	}
+
+	/**
+	 * Metodo che si occupa della generazione/modifica di un file XML a partire da un ruolo
+	 * Sono richiesti interattivamente i parametri che identificano il file XML da generare. 
+	 * 
+	 * @param nome Nome del ruolo da creare/modificare
+	 * @param ruolo Dati del ruolo da trasformare in XML.
+	 * 
+	 */   
+	public void createRuolo(String nome,Ruolo ruolo) throws DriverRegistroServiziException{
+
+
+		try {
+			String ruoliDir = this.pathPrefix + CostantiXMLRepository.RUOLI + File.separator;
+			
+			// Controllo esistenza per modifica
+			String fileXML = ruoliDir + nome + ".xml";
+			File fileXMLF = new File(fileXML);
+			if( fileXMLF.exists() ){
+				// richiesta modifica
+				// elimino vecchia definizione Porta di Dominio
+				try{
+					if(fileXMLF.delete()==false){
+						throw new DriverRegistroServiziException("Eliminazione della vecchia definizione per il ruolo ["+fileXMLF.getAbsolutePath()+"] non riuscita");
+					}
+				}catch(Exception io){
+					throw new DriverRegistroServiziException("Eliminazione della vecchia definizione per il ruolo ["+nome+ "] non riuscita: "+io.toString());
+				}	
+			}
+
+			// Definizione ruolo
+			org.openspcoop2.core.registry.RegistroServizi registroXML = new org.openspcoop2.core.registry.RegistroServizi();
+
+			// generazione XML
+			this.cleanerOpenSPCoop2ExtensionsRegistry.clean(ruolo);
+			registroXML.addRuolo(ruolo);
+			JiBXUtils.objToXml(fileXML,org.openspcoop2.core.registry.RegistroServizi.class,registroXML);
+
+		}catch(DriverRegistroServiziException e){
+			throw e;
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("[XMLLib] Riscontrato errore durante l'elaborazione XML del ruolo  ["+nome+"]: "+e.getMessage(),e);
+		}
+	}  
+
+	/**
+	 * Metodo che si occupa dell'eliminazione del ruolo dal repository. 
+	 * 
+	 * @param nome Nome del ruolo da eliminare
+	 */   
+	public void deleteRuolo(String nome) throws DriverRegistroServiziException {
+
+		try {
+			String fileXML = this.pathPrefix + CostantiXMLRepository.RUOLI + File.separator + nome + ".xml";
+			
+			// Elimino ruolo
+			File ruolo = new File(fileXML);
+			if(ruolo.delete() == false){
+				throw new DriverRegistroServiziException("Eliminazione XML del ruolo ["+nome+"] non riuscta");
+			}
+
+		}catch(DriverRegistroServiziException e){
+			throw e;
+		}catch(Exception e){
+			throw new DriverRegistroServiziException("[XMLlib] Riscontrato errore durante l'eliminazione XML del ruolo ["+nome+"]: "+e.getMessage(),e);
+		}
+	}  
+
+	/**
+	 * Lista dei ruoli registrati
+	 * 
+	 * @return lista dei ruoli registrati
+	 * 
+	 */   
+	public Ruolo[] getRuoli()throws DriverRegistroServiziException{
+
+		Ruolo [] ruoliRegistrate = null;
+		try {
+			File dir = new File(this.pathPrefix + CostantiXMLRepository.RUOLI);
+			if(dir.exists()==false)
+				return null;
+			File[] ruoli = dir.listFiles();
+			int numRuoli = 0;
+			if(ruoli!=null){
+				for(int i=0; i<ruoli.length;i++){
+					if(ruoli[i].isFile()){
+						numRuoli++;
+					}
+				}
+			}
+			if(numRuoli>0){
+				ruoliRegistrate = new Ruolo[numRuoli];
+				for(int i=0,index=0; i<ruoli.length;i++){
+					if(ruoli[i].isFile()){
+						org.openspcoop2.core.registry.RegistroServizi r = 
+							(org.openspcoop2.core.registry.RegistroServizi)  JiBXUtils.xmlToObj(ruoli[i].getAbsolutePath(),
+									org.openspcoop2.core.registry.RegistroServizi.class);
+						ruoliRegistrate[index] = r.getRuolo(0);
+						index++;
+					}
+				}
+			}
+			return ruoliRegistrate;
+		}catch(Exception e){
+			e.printStackTrace();
+			throw new DriverRegistroServiziException("[XMLLib] Riscontrato errore durante la ricerca dei ruoli: "+e.getMessage(),e);
 		}
 	}
 	

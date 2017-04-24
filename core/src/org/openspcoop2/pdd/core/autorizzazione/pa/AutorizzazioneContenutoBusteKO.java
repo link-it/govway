@@ -44,9 +44,9 @@ import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 public class AutorizzazioneContenutoBusteKO extends AbstractCore implements IAutorizzazioneContenutoPortaApplicativa {
 
 	@Override
-	public EsitoAutorizzazioneCooperazione process(DatiInvocazionePortaApplicativa datiInvocazione, OpenSPCoop2Message msg) throws AutorizzazioneException {
+	public EsitoAutorizzazionePortaApplicativa process(DatiInvocazionePortaApplicativa datiInvocazione, OpenSPCoop2Message msg) throws AutorizzazioneException {
 		
-		EsitoAutorizzazioneCooperazione esito = new EsitoAutorizzazioneCooperazione();
+		EsitoAutorizzazionePortaApplicativa esito = new EsitoAutorizzazionePortaApplicativa();
     	
     	// Autorizzazzione servizio applicativo
     	try{
@@ -65,7 +65,7 @@ public class AutorizzazioneContenutoBusteKO extends AbstractCore implements IAut
     				IDServizioFactory.getInstance().getUriFromIDServizio(servizio)+" con il contenuto applicativo fornito";
 			
     		esito.setErroreCooperazione(ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(errore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
-			esito.setServizioAutorizzato(false);
+			esito.setAutorizzato(false);
         	return esito;
     		
     	}catch(Exception e){

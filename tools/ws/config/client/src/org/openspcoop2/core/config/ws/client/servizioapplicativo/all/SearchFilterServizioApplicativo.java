@@ -1,22 +1,3 @@
-/*
- * OpenSPCoop - Customizable API Gateway 
- * http://www.openspcoop2.org
- * 
- * Copyright (c) 2005-2017 Link.it srl (http://link.it).
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3, as published by
- * the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
 
 package org.openspcoop2.core.config.ws.client.servizioapplicativo.all;
 
@@ -115,7 +96,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public InvocazionePorta getInvocazionePorta() {
-        return this.invocazionePorta;
+        return invocazionePorta;
     }
 
     /**
@@ -139,7 +120,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public InvocazioneServizio getInvocazioneServizio() {
-        return this.invocazioneServizio;
+        return invocazioneServizio;
     }
 
     /**
@@ -163,7 +144,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public RispostaAsincrona getRispostaAsincrona() {
-        return this.rispostaAsincrona;
+        return rispostaAsincrona;
     }
 
     /**
@@ -187,7 +168,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public String getTipoSoggettoProprietario() {
-        return this.tipoSoggettoProprietario;
+        return tipoSoggettoProprietario;
     }
 
     /**
@@ -211,7 +192,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public String getNomeSoggettoProprietario() {
-        return this.nomeSoggettoProprietario;
+        return nomeSoggettoProprietario;
     }
 
     /**
@@ -235,7 +216,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public String getTipologiaFruizione() {
-        return this.tipologiaFruizione;
+        return tipologiaFruizione;
     }
 
     /**
@@ -259,7 +240,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public String getTipologiaErogazione() {
-        return this.tipologiaErogazione;
+        return tipologiaErogazione;
     }
 
     /**
@@ -283,7 +264,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public String getNome() {
-        return this.nome;
+        return nome;
     }
 
     /**
@@ -307,7 +288,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public String getDescrizione() {
-        return this.descrizione;
+        return descrizione;
     }
 
     /**
@@ -331,7 +312,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMin() {
-        return this.oraRegistrazioneMin;
+        return oraRegistrazioneMin;
     }
 
     /**
@@ -355,7 +336,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMax() {
-        return this.oraRegistrazioneMax;
+        return oraRegistrazioneMax;
     }
 
     /**
@@ -379,7 +360,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public Boolean isOrCondition() {
-        return this.orCondition;
+        return orCondition;
     }
 
     /**
@@ -403,7 +384,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public BigInteger getLimit() {
-        return this.limit;
+        return limit;
     }
 
     /**
@@ -427,7 +408,7 @@ public class SearchFilterServizioApplicativo {
      *     
      */
     public BigInteger getOffset() {
-        return this.offset;
+        return offset;
     }
 
     /**

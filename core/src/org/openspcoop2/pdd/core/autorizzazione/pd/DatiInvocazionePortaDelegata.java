@@ -21,6 +21,7 @@
 package org.openspcoop2.pdd.core.autorizzazione.pd;
 
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.pdd.core.autorizzazione.AbstractDatiInvocazione;
@@ -38,6 +39,7 @@ public class DatiInvocazionePortaDelegata extends AbstractDatiInvocazione {
 	private PortaDelegata pd;
 	
 	private IDServizioApplicativo idServizioApplicativo;
+	private ServizioApplicativo servizioApplicativo;
 	
 	public IDPortaDelegata getIdPD() {
 		return this.idPD;
@@ -59,7 +61,12 @@ public class DatiInvocazionePortaDelegata extends AbstractDatiInvocazione {
 	public void setIdServizioApplicativo(IDServizioApplicativo idServizioApplicativo) {
 		this.idServizioApplicativo = idServizioApplicativo;
 	}
-	
+	public ServizioApplicativo getServizioApplicativo() {
+		return this.servizioApplicativo;
+	}
+	public void setServizioApplicativo(ServizioApplicativo servizioApplicativo) {
+		this.servizioApplicativo = servizioApplicativo;
+	}
 	
 	@Override
 	public String getKeyCache(){
@@ -92,6 +99,12 @@ public class DatiInvocazionePortaDelegata extends AbstractDatiInvocazione {
 			bf.append(" IDServizioApplicativo(");
 			bf.append(this.idServizioApplicativo.toString());
 			bf.append(")");
+		}
+		
+		if(keyCache==false){
+			if(this.servizioApplicativo!=null){
+				bf.append(" ServizioApplicativo:defined");
+			}
 		}
 		
 		return bf.toString();

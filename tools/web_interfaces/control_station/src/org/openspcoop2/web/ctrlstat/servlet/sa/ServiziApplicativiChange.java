@@ -38,6 +38,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.Credenziali;
+import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.InvocazionePortaGestioneErrore;
 import org.openspcoop2.core.config.InvocazioneServizio;
@@ -141,11 +142,11 @@ public final class ServiziApplicativiChange extends Action {
 			String provider = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			String fault = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_FAULT);
 			
-			String tipoauthSA = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_SA);
-			String utenteSA = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_USERNAME_SA);
-			String passwordSA = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_PASSWORD_SA);
-			String confpwSA = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_CONFERMA_PASSWORD_SA);
-			String subjectSA = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_SUBJECT_SA);
+			String tipoauthSA = request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE);
+			String utenteSA = request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+			String passwordSA = request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+			String subjectSA = request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
+			String principalSA = request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
 			
 			String sbustamentoInformazioniProtocolloRisposta = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RISPOSTA);
 			
@@ -164,12 +165,7 @@ public final class ServiziApplicativiChange extends Action {
 			
 			String risprif = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
 			
-			
-
-			String tipoauthRichiesta = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_CONNETTORE);
-			@SuppressWarnings("unused")
-			String confpwRichiesta = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_CONFERMA_PASSWORD_CONNETTORE);
-			String subjectRichiesta = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_SUBJECT_CONNETTORE);
+			String tipoauthRichiesta = request.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_TIPO_AUTENTICAZIONE);
 			
 			String endpointtype = saHelper.readEndPointType();
 			String tipoconn = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
@@ -276,7 +272,7 @@ public final class ServiziApplicativiChange extends Action {
 			}
 			
 			InvocazioneServizio is = sa.getInvocazioneServizio();
-			Credenziali cis = is.getCredenziali();
+			InvocazioneCredenziali cis = is.getCredenziali();
 			Connettore connis = is.getConnettore();
 			List<Property> cp = connis.getPropertyList();
 			
@@ -389,12 +385,12 @@ public final class ServiziApplicativiChange extends Action {
 							tipoauthSA = credenziali.getTipo().toString();
 						utenteSA = credenziali.getUser();
 						passwordSA = credenziali.getPassword();
-						confpwSA = passwordSA;
 						subjectSA = credenziali.getSubject();
+						principalSA = credenziali.getUser();
 					}
 				}
 				if (tipoauthSA == null) {
-					tipoauthSA = ServiziApplicativiCostanti.DEFAULT_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE;
+					tipoauthSA = ConnettoriCostanti.DEFAULT_AUTENTICAZIONE_TIPO;
 				}
 
 				if(ruoloFruitore==null){
@@ -433,17 +429,12 @@ public final class ServiziApplicativiChange extends Action {
 					}
 				}
 				
-				if ((tipoauthRichiesta == null) && (cis != null)) {
-					if(cis.getTipo()!=null)
-						tipoauthRichiesta = cis.getTipo().toString();
+				if ((tipoauthRichiesta == null) && (is != null) && is.getAutenticazione()!=null) {
+					tipoauthRichiesta = is.getAutenticazione().getValue();
 				}
 				if ((user == null) && (cis != null)) {
 					user = cis.getUser();
 					password = cis.getPassword();
-					confpwRichiesta = password;
-				}
-				if ((subjectRichiesta == null) && (cis != null)) {
-					subjectRichiesta = cis.getSubject();
 				}
 				if (endpointtype == null) {
 					if ((connis.getCustom()!=null && connis.getCustom()) && !connis.getTipo().equals(TipiConnettore.HTTPS.toString())) {
@@ -676,7 +667,7 @@ public final class ServiziApplicativiChange extends Action {
 
 				dati = saHelper.addServizioApplicativoToDati(dati, nome, tipoENomeSoggetto, fault, 
 						TipoOperazione.CHANGE, idServizioApplicativo, contaListe,null,null,provider
-						,utenteSA,passwordSA,confpwSA,subjectSA,tipoauthSA,faultactor,genericfault,prefixfault,invrifRisposta,
+						,utenteSA,passwordSA,subjectSA,principalSA,tipoauthSA,faultactor,genericfault,prefixfault,invrifRisposta,
 						sbustamentoInformazioniProtocolloRisposta,
 						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE,id,nomeProtocollo,
 						ruoloFruitore,ruoloErogatore,
@@ -739,7 +730,7 @@ public final class ServiziApplicativiChange extends Action {
 
 				dati = saHelper.addServizioApplicativoToDati(dati, nome, tipoENomeSoggetto, fault, 
 						TipoOperazione.CHANGE, idServizioApplicativo, contaListe,null,null,provider
-						,utenteSA,passwordSA,confpwSA,subjectSA,tipoauthSA,faultactor,genericfault,prefixfault,invrifRisposta,
+						,utenteSA,passwordSA,subjectSA,principalSA,tipoauthSA,faultactor,genericfault,prefixfault,invrifRisposta,
 						sbustamentoInformazioniProtocolloRisposta,
 						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE,id,nomeProtocollo,
 						ruoloFruitore,ruoloErogatore,
@@ -805,18 +796,19 @@ public final class ServiziApplicativiChange extends Action {
 				if (credenziali == null)
 					credenziali = new Credenziali();
 				credenziali.setTipo(CredenzialeTipo.toEnumConstant(tipoauthSA));
-				if (tipoauthSA.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_BASIC)) {
+				credenziali.setUser("");
+				credenziali.setPassword("");
+				credenziali.setSubject("");
+				if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC)) {
 					credenziali.setUser(utenteSA);
 					credenziali.setPassword(passwordSA);
-				} else {
-					credenziali.setUser("");
-					credenziali.setPassword("");
-				}
-				if (tipoauthSA.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_SSL)) {
+				} 
+				if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)) {
 					credenziali.setSubject(subjectSA);
-				} else {
-					credenziali.setSubject("");
 				}
+				if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL)) {
+					credenziali.setUser(principalSA);
+				} 
 				ip.addCredenziali(credenziali);
 				
 				if(InterfaceType.AVANZATA.equals(userSession.getInterfaceType())) {
@@ -842,13 +834,16 @@ public final class ServiziApplicativiChange extends Action {
 				credenziali = new Credenziali();
 				
 				if(CostantiConfigurazione.ABILITATO.equals(getmsg)){
-					if (tipoauthSA==null || tipoauthSA.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_NESSUNA)) {
+					if (tipoauthSA==null || tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)) {
 						//credenziali.setTipo(CredenzialeTipo.toEnumConstant(CostantiConfigurazione.AUTENTICAZIONE_NONE));
 						credenziali.setTipo(null);
 					}else{
 						credenziali.setTipo(CredenzialeTipo.toEnumConstant(tipoauthSA));
 					}
 					credenziali.setUser(utenteSA);
+					if(principalSA!=null && !"".equals(principalSA)){
+						credenziali.setUser(principalSA); // al posto di user
+					}
 					credenziali.setPassword(passwordSA);
 					credenziali.setSubject(subjectSA);
 				}
@@ -887,49 +882,29 @@ public final class ServiziApplicativiChange extends Action {
 				is.setGetMessage(StatoFunzionalita.toEnumConstant(getmsg));
 				is.setInvioPerRiferimento(StatoFunzionalita.toEnumConstant(invrifRichiesta));
 				is.setRispostaPerRiferimento(StatoFunzionalita.toEnumConstant(risprif));
-				if (tipoauthRichiesta!=null && !tipoauthRichiesta.equals(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_NONE.toString())) {
-									
+				if (tipoauthRichiesta!=null && tipoauthRichiesta.equals(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC.toString())) {
 					if (cis == null) {
-						cis = new Credenziali();
+						cis = new InvocazioneCredenziali();
 					}
-					if(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_NESSUNA.equals(tipoauthRichiesta)){
-						//cis.setTipo(CredenzialeTipo.toEnumConstant(CostantiConfigurazione.AUTENTICAZIONE_NONE));
-						cis.setTipo(null);
-					}else
-						cis.setTipo(CredenzialeTipo.toEnumConstant(tipoauthRichiesta));
-					if (tipoauthRichiesta.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_BASIC)) {
-						cis.setUser(user);
-						cis.setPassword(password);
-					} else {
-						cis.setUser("");
-						cis.setPassword("");
-					}
-					if (tipoauthRichiesta.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_SSL)) {
-						cis.setSubject(subjectRichiesta);
-					} else {
-						cis.setSubject("");
-					}
+					cis.setUser(user);
+					cis.setPassword(password);
 					is.setCredenziali(cis);
+					is.setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
 				}
 				else if(endpointtype.equals(TipiConnettore.JMS.toString())){
-					if (cis == null) {
-						cis = new Credenziali();
-					}
 					if(user!=null && password!=null){
-						cis.setTipo(CredenzialeTipo.BASIC);
+						if (cis == null) {
+							cis = new InvocazioneCredenziali();
+						}
 						cis.setUser(user);
 						cis.setPassword(password);
 					}
-					else{
-						cis.setTipo(null);
-						cis.setUser(user);
-						cis.setPassword(password);
-					}
-					cis.setSubject(null);
 					is.setCredenziali(cis);
+					is.setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
 				}
 				else {
 					is.setCredenziali(null);
+					is.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
 				}
 				String oldConnT = connis.getTipo();
 				if ((connis.getCustom()!=null && connis.getCustom()) && 

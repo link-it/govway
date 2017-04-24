@@ -22,16 +22,6 @@ optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager
     </mbean>
     <!--  GestoreRegistroServizi di OpenSPCoop --> 
 
-    <!--  GestoreRepositoryAutorizzazioni -->
-    <mbean code="org.jboss.mq.server.jmx.Queue"
-         name="jboss.mq.destination:service=Queue,name=toConfigurazioneGestoreAutorizzazioni">
-         <depends
-optional-attribute-name="DestinationManager">jboss.mq:service=DestinationManager</depends>
-         <attribute name="RedeliveryDelay">120000</attribute>
-         <attribute name="RedeliveryLimit">-1</attribute>
-    </mbean>
-    <!-- GestoreRepositoryAutorizzazioni -->
-
     <!--  Gestore Eventi (Propagazione) -->
     <mbean code="org.jboss.mq.server.jmx.Queue"
          name="jboss.mq.destination:service=Queue,name=toConfigurazioneGestoreEventi">

@@ -24,6 +24,9 @@ package org.openspcoop2.core.registry.driver;
 
 import java.io.Serializable;
 
+import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.registry.CredenzialiSoggetto;
+
 /**
  * Permette il filtro di ricerca attraverso i driver che implementano l'interfaccia 'get'
  * 
@@ -41,7 +44,7 @@ public class FiltroRicercaSoggetti extends FiltroRicerca implements Serializable
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	/** Nome */
+	/** Pdd */
 	private String nomePdd;
 		
 	public String getNomePdd() {
@@ -51,12 +54,51 @@ public class FiltroRicercaSoggetti extends FiltroRicerca implements Serializable
 	public void setNomePdd(String nomePdd) {
 		this.nomePdd = nomePdd;
 	}
+	
+	/** Ruolo */
+	private IDRuolo idRuolo;
+		
+	public IDRuolo getIdRuolo() {
+		return this.idRuolo;
+	}
+
+	public void setIdRuolo(IDRuolo idRuolo) {
+		this.idRuolo = idRuolo;
+	}
+
+	
+	/** CredenzialeSoggetto */
+	private CredenzialiSoggetto credenzialiSoggetto;
+	
+	public CredenzialiSoggetto getCredenzialiSoggetto() {
+		return this.credenzialiSoggetto;
+	}
+
+	public void setCredenzialiSoggetto(CredenzialiSoggetto credenzialiSoggetto) {
+		this.credenzialiSoggetto = credenzialiSoggetto;
+	}
 
 	@Override
 	public String toString(){
 		StringBuffer bf = new StringBuffer();
 		bf.append("Filtro:");
 		this.addDetails(bf);
+		if(this.idRuolo!=null)
+			bf.append(" [ruolo:"+this.idRuolo+"]");
+		if(this.credenzialiSoggetto!=null){
+			if(this.credenzialiSoggetto.getTipo()!=null){
+				bf.append(" [credenziali-tipo:"+this.credenzialiSoggetto.getTipo().getValue()+"]");
+			}
+			if(this.credenzialiSoggetto.getUser()!=null){
+				bf.append(" [credenziali-user:"+this.credenzialiSoggetto.getUser()+"]");
+			}
+			if(this.credenzialiSoggetto.getPassword()!=null){
+				bf.append(" [credenziali-password:"+this.credenzialiSoggetto.getPassword()+"]");
+			}
+			if(this.credenzialiSoggetto.getSubject()!=null){
+				bf.append(" [credenziali-subject:"+this.credenzialiSoggetto.getSubject()+"]");
+			}
+		}
 		if(bf.length()=="Filtro:".length())
 			bf.append(" nessun filtro presente");
 		return bf.toString();

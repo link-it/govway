@@ -22,6 +22,8 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 import java.util.Vector;
 
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
@@ -44,6 +46,8 @@ public class PorteApplicativeCostanti {
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE = "porteApplicativeWSResponse";
 	
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO = "porteApplicativeServizioApplicativo";
+	
+	public final static String OBJECT_NAME_PORTE_APPLICATIVE_RUOLI = "porteApplicativeRuoli";
 	
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST = "porteApplicativeCorrelazioneApplicativaRequest";
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE = "porteApplicativeCorrelazioneApplicativaResponse";
@@ -107,6 +111,16 @@ public class PorteApplicativeCostanti {
 		SERVLET_PORTE_APPLICATIVE.add(SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_ADD);
 		SERVLET_PORTE_APPLICATIVE.add(SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_DELETE);
 		SERVLET_PORTE_APPLICATIVE.add(SERVLET_NAME_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_LIST);
+	}
+	
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_ADD = OBJECT_NAME_PORTE_APPLICATIVE_RUOLI+"Add.do";
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_DELETE = OBJECT_NAME_PORTE_APPLICATIVE_RUOLI+"Del.do";
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_LIST = OBJECT_NAME_PORTE_APPLICATIVE_RUOLI+"List.do";
+	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_RUOLI = new Vector<String>();
+	static{
+		SERVLET_PORTE_APPLICATIVE.add(SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_ADD);
+		SERVLET_PORTE_APPLICATIVE.add(SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_DELETE);
+		SERVLET_PORTE_APPLICATIVE.add(SERVLET_NAME_PORTE_APPLICATIVE_RUOLI_LIST);
 	}
 
 	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST_ADD = OBJECT_NAME_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST+"Add.do";
@@ -204,7 +218,7 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE = "mode";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML = "elemxml";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_GESTIONE_IDENTIFICAZIONE_FALLITA = "gif";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_PATTERN = "pattern";
+	public final static String PARAMETRO_PORTE_APPLICATIVE_PATTERN = CostantiControlStation.PARAMETRO_PATTERN;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_RIUSO_ID_MESSAGGIO = "riusoIdMessaggio";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_VALORE = "valore";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY = "messageSecurity";
@@ -253,17 +267,18 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_QUALSIASI_AZIONE = "Tutte le azioni del servizio";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_DESCRIZIONE = "Descrizione";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTROLLO_ACCESSI = "Controllo degli Accessi";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI_EROGATORI = "Servizi Applicativi Erogatori";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_EROGATORE = "Servizio Applicativo Erogatore";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VALORE = "Valore";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PATTERN = "Pattern";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO = "Servizio Applicativo";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI = "Servizi Applicativi";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI = "Ruoli";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES = "Propriet&agrave; Protocollo";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES_DI = "Propriet&agrave; Protocollo di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTE_APPLICATIVE_DI = "Porte Applicative di ";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_DI = "Servizio Applicativo di ";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_DI = "Servizi Applicativi di ";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RUOLI_DI = "Ruoli di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MESSAGGIO = "Trattamento Messaggio";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY = "Message Security";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_SECURITY_DI = "Message-Security di ";
@@ -286,7 +301,6 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_METADATI = "Metadati";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_STATELESS = "Stateless";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_BEHAVIOUR = "Behaviour";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_LOCAL_FORWARD = "Local Forward";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SOAP_WITH_ATTACHMENTS = "SOAP With Attachments";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_BODY = "Gestione Body";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MANIFEST = "Gestione Manifest";
@@ -337,6 +351,8 @@ public class PorteApplicativeCostanti {
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_MANIFEST_DEFAULT = "default";
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_DISABILITATO = CostantiConfigurazione.DISABILITATO.toString();
 	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_ABILITATO = CostantiConfigurazione.ABILITATO.toString();
+	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_AUTENTICAZIONE =  TipoAutenticazione.SSL.getValue();
+	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_AUTORIZZAZIONE = TipoAutorizzazione.AUTHENTICATED.getValue();
      
    
 }

@@ -32,6 +32,7 @@ import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -45,6 +46,7 @@ import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
+import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
@@ -61,8 +63,8 @@ import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.UtilitiesSQLQuery;
-import org.openspcoop2.web.ctrlstat.dao.PoliticheSicurezza;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.registro.GestoreRegistroServiziRemoto;
@@ -533,7 +535,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		}
 	}
 
-	public List<Fruitore> getSoggettiWithServizioNotFruitori(int idServizio) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
+	public List<Fruitore> getSoggettiWithServizioNotFruitori(int idServizio, boolean escludiSoggettiEsterni, CredenzialeTipo credenzialeTipo) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
 		Connection con = null;
 		String nomeMetodo = "getSoggettiWithServizioNotFruitori";
 		DriverControlStationDB driver = null;
@@ -544,7 +546,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverRegistroServiziDB().getSoggettiWithServizioNotFruitori(idServizio);
+			return driver.getDriverRegistroServiziDB().getSoggettiWithServizioNotFruitori(idServizio, escludiSoggettiEsterni, credenzialeTipo);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -989,116 +991,7 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 
 	}
 	
-	public PoliticheSicurezza getPoliticheSicurezza(long idFruitore, long idServizio, long idSA) throws DriverControlStationException {
-		Connection con = null;
-		String nomeMetodo = "getPoliticheSicurezza";
-		DriverControlStationDB driver = null;
 
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getPoliticheSicurezza(idFruitore, idServizio, idSA);
-
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-
-	}
-
-	public List<String> getPoliticheSicurezza(long idServizio, long idFruitore) throws DriverControlStationException {
-		Connection con = null;
-		String nomeMetodo = "getPoliticheSicurezza";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getPoliticheSicurezza(idServizio, idFruitore);
-
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-
-	}
-
-	
-	
-
-	public void deletePoliticheSicurezza(PoliticheSicurezza ps) throws DriverControlStationException {
-		Connection con = null;
-		String nomeMetodo = "deletePoliticheSicurezza";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			driver.deletePoliticheSicurezza(ps);
-
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-	}
-
-	public void deleteAllPoliticheSicurezza(long idServizio, long idFruitore) throws DriverControlStationException {
-		Connection con = null;
-		String nomeMetodo = "deleteAllPoliticheSicurezza";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			driver.deleteAllPoliticheSicurezza(idServizio, idFruitore);
-
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-	}
-
-	public Long createPoliticheSicurezza(PoliticheSicurezza ps) throws DriverControlStationException {
-		Connection con = null;
-		String nomeMetodo = "createPoliticheSicurezza";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.createPoliticheSicurezza(ps);
-
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-	}
-	
 	public long existServizio(String nomeServizio, String tipoServizio, long idSoggettoErogatore) throws DriverControlStationException {
 		Connection con = null;
 		String nomeMetodo = "existServizio";
@@ -1461,5 +1354,65 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 	}
 
 	
+	public List<PortaDelegata> serviziFruitoriPorteDelegateList(Long idSoggetto, 
+			String tipoServizio, String nomeServizio, Long idServizio, 
+			String tipoSoggettoErogatore, String nomeSoggettoErogatore, Long idSoggettoErogatore, 
+			ISearch ricerca) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		Connection con = null;
+		String nomeMetodo = "serviziPorteAppList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().serviziFruitoriPorteDelegateList(idSoggetto, 
+					tipoServizio, nomeServizio, idServizio, 
+					tipoSoggettoErogatore, nomeSoggettoErogatore, idSoggettoErogatore, 
+					ricerca);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean existFruizioniServizioWithoutConnettore(long idServizio, boolean escludiSoggettiEsterni) throws DriverControlStationException {
+		Connection con = null;
+		String nomeMetodo = "existServizio";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverRegistroServiziDB().existFruizioniServizioWithoutConnettore(idServizio,escludiSoggettiEsterni);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverControlStationException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean filterFruitoriRispettoAutenticazione(AccordoServizioParteSpecifica asps) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, DriverRegistroServiziNotFound, DriverRegistroServiziException{
+		List<PortaApplicativa> lista = this.serviziPorteAppList(asps.getTipo(),asps.getNome(),asps.getVersione(),
+				asps.getId().intValue(), asps.getIdSoggetto(), new Search(true));
+		if(lista.size()==1){
+			return true;
+		}
+		return false;
+	}
+	public boolean filterFruitoriRispettoAutenticazione(IDServizio idSE) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, DriverRegistroServiziNotFound, DriverRegistroServiziException{
+		AccordoServizioParteSpecifica asps = this.getServizio(idSE);
+		return filterFruitoriRispettoAutenticazione(asps);
+	}
 	
 }

@@ -41,6 +41,7 @@ public class InvocazionePortaModel extends AbstractModel<InvocazionePorta> {
 		super();
 	
 		this.CREDENZIALI = new org.openspcoop2.core.config.model.CredenzialiModel(new Field("credenziali",org.openspcoop2.core.config.Credenziali.class,"invocazione-porta",InvocazionePorta.class));
+		this.RUOLI = new org.openspcoop2.core.config.model.ServizioApplicativoRuoliModel(new Field("ruoli",org.openspcoop2.core.config.ServizioApplicativoRuoli.class,"invocazione-porta",InvocazionePorta.class));
 		this.GESTIONE_ERRORE = new org.openspcoop2.core.config.model.InvocazionePortaGestioneErroreModel(new Field("gestione-errore",org.openspcoop2.core.config.InvocazionePortaGestioneErrore.class,"invocazione-porta",InvocazionePorta.class));
 		this.INVIO_PER_RIFERIMENTO = new Field("invio-per-riferimento",java.lang.String.class,"invocazione-porta",InvocazionePorta.class);
 		this.SBUSTAMENTO_INFORMAZIONI_PROTOCOLLO = new Field("sbustamento-informazioni-protocollo",java.lang.String.class,"invocazione-porta",InvocazionePorta.class);
@@ -52,6 +53,7 @@ public class InvocazionePortaModel extends AbstractModel<InvocazionePorta> {
 		super(father);
 	
 		this.CREDENZIALI = new org.openspcoop2.core.config.model.CredenzialiModel(new ComplexField(father,"credenziali",org.openspcoop2.core.config.Credenziali.class,"invocazione-porta",InvocazionePorta.class));
+		this.RUOLI = new org.openspcoop2.core.config.model.ServizioApplicativoRuoliModel(new ComplexField(father,"ruoli",org.openspcoop2.core.config.ServizioApplicativoRuoli.class,"invocazione-porta",InvocazionePorta.class));
 		this.GESTIONE_ERRORE = new org.openspcoop2.core.config.model.InvocazionePortaGestioneErroreModel(new ComplexField(father,"gestione-errore",org.openspcoop2.core.config.InvocazionePortaGestioneErrore.class,"invocazione-porta",InvocazionePorta.class));
 		this.INVIO_PER_RIFERIMENTO = new ComplexField(father,"invio-per-riferimento",java.lang.String.class,"invocazione-porta",InvocazionePorta.class);
 		this.SBUSTAMENTO_INFORMAZIONI_PROTOCOLLO = new ComplexField(father,"sbustamento-informazioni-protocollo",java.lang.String.class,"invocazione-porta",InvocazionePorta.class);
@@ -61,6 +63,8 @@ public class InvocazionePortaModel extends AbstractModel<InvocazionePorta> {
 	
 
 	public org.openspcoop2.core.config.model.CredenzialiModel CREDENZIALI = null;
+	 
+	public org.openspcoop2.core.config.model.ServizioApplicativoRuoliModel RUOLI = null;
 	 
 	public org.openspcoop2.core.config.model.InvocazionePortaGestioneErroreModel GESTIONE_ERRORE = null;
 	 

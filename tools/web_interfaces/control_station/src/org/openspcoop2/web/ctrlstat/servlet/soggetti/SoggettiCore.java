@@ -62,7 +62,7 @@ public class SoggettiCore extends ControlStationCore {
 		super(core);
 	}
 	
-	public List<IDSoggetto> getAllIdSoggettiRegistro(FiltroRicercaSoggetti filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
+	public List<IDSoggetto> getAllIdSoggettiRegistro(FiltroRicercaSoggetti filtroRicerca) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "getAllIdSoggettiRegistro";
 		DriverControlStationDB driver = null;
@@ -82,7 +82,7 @@ public class SoggettiCore extends ControlStationCore {
 
 		} catch (DriverRegistroServiziNotFound de) {
 			ControlStationCore.log.info("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage());
-			throw de;
+			return new ArrayList<IDSoggetto>();
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -339,6 +339,27 @@ public class SoggettiCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
 			return driver.getDriverRegistroServiziDB().existsSoggettoServiziWithoutConnettore(idSoggetto);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public boolean existFruizioniServiziSoggettoWithoutConnettore(int idSoggetto, boolean escludiSoggettiEsterni) throws DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "existFruizioniServiziSoggettoWithoutConnettore";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverRegistroServiziDB().existFruizioniServiziSoggettoWithoutConnettore(idSoggetto,escludiSoggettiEsterni);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -770,10 +791,22 @@ public class SoggettiCore extends ControlStationCore {
 	}
 	
 	public boolean isSupportatoCodiceIPA(String protocollo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
-		String nomeMetodo = "getIdentificativoPortaDefault";
+		String nomeMetodo = "isSupportatoCodiceIPA";
 		try{
 			
 			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportoCodiceIPA();
+			
+		}catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		}
+	}
+	
+	public boolean isSupportatoAutenticazioneSoggetti(String protocollo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		String nomeMetodo = "isSupportatoAutenticazioneSoggetti";
+		try{
+			
+			return this.protocolFactoryManager.getProtocolFactoryByName(protocollo).createProtocolConfiguration().isSupportoAutenticazioneSoggetti();
 			
 		}catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -793,5 +826,104 @@ public class SoggettiCore extends ControlStationCore {
 		}
 	}
 	
+	public List<String> soggettiRuoliList(long idSoggetto, ISearch ricerca) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "soggettiRuoliList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverRegistroServiziDB().soggettiRuoliList(idSoggetto, ricerca);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
+	public org.openspcoop2.core.registry.Soggetto getSoggettoRegistroAutenticatoBasic(String user, String password) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getSoggettoAutenticatoBasic";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverRegistroServiziDB().getSoggettoAutenticatoBasic(user, password);
+
+		} 
+		catch (DriverRegistroServiziNotFound e) {
+			return null;
+		}
+		catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
+	public org.openspcoop2.core.registry.Soggetto getSoggettoRegistroAutenticatoSsl(String subject) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getSoggettoRegistroAutenticatoSsl";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverRegistroServiziDB().getSoggettoAutenticatoSsl(subject);
+
+		} 
+		catch (DriverRegistroServiziNotFound e) {
+			return null;
+		}
+		catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
+	public org.openspcoop2.core.registry.Soggetto getSoggettoRegistroAutenticatoPrincipal(String principal) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getSoggettoAutenticatoPrincipal";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverRegistroServiziDB().getSoggettoAutenticatoPrincipal(principal);
+
+		} 
+		catch (DriverRegistroServiziNotFound e) {
+			return null;
+		}
+		catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
 	
 }

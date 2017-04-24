@@ -23,6 +23,7 @@ package org.openspcoop2.utils.resources;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 
 /**
  * Loader
@@ -158,11 +159,30 @@ public class Loader {
 	public Class<?> forName(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException{
 		Class<?> c = null;
 		if(this.classLoader!=null){
-			c = this.classLoader.loadClass(className);
+			//c = this.classLoader.loadClass(className);
+			c = getClass(className, this.classLoader);
 		}else{
-			c = Class.forName(className);
+			//c = Class.forName(className);
+			c = getClass(className, null);
 		}	
 		return c;
 	}
-	
+	private static HashMap<String, Class<?>> mapClass = new HashMap<String, Class<?>>();
+	private static Class<?> getClass(String className,java.lang.ClassLoader classLoader) throws ClassNotFoundException, InstantiationException, IllegalAccessException{
+		if(mapClass.containsKey(className)==false){
+			initClass(className,classLoader);
+		}
+		return mapClass.get(className);
+	}
+	private static synchronized void initClass(String className,java.lang.ClassLoader classLoader) throws ClassNotFoundException, InstantiationException, IllegalAccessException{
+		if(mapClass.containsKey(className)==false){
+			Class<?> c = null;
+			if(classLoader!=null){
+				c = classLoader.loadClass(className);
+			}else{
+				c = Class.forName(className);
+			}	
+			mapClass.put(className, c);
+		}
+	}
 }

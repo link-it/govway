@@ -20,6 +20,7 @@
 package org.openspcoop2.protocol.sdk.archive;
 
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -95,6 +96,16 @@ public class ArchiveAccordoServizioParteSpecifica implements IArchiveObject {
 	private IDAccordo idAccordoServizioParteComune;
 	private AccordoServizioParteSpecifica accordoServizioParteSpecifica;
 	
+	private IDPortaApplicativa idPortaApplicativaAssociata;
+	public IDPortaApplicativa getIdPortaApplicativaAssociata() {
+		return this.idPortaApplicativaAssociata;
+	}
+	public void setIdPortaApplicativaAssociata(IDPortaApplicativa idPortaApplicativaAssociata) {
+		this.idPortaApplicativaAssociata = idPortaApplicativaAssociata;
+	}
+
+
+
 	private ArchiveIdCorrelazione idCorrelazione; // permette di correlare più oggetti tra di loro 
 	
 	

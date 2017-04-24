@@ -32,6 +32,7 @@ import java.util.Properties;
 
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
+import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Configurazione;
@@ -101,6 +102,7 @@ public class ConfigurazionePdD  {
 	private static AccessoRegistro accessoRegistro = null;
 	private static AccessoConfigurazione accessoConfigurazione = null;
 	private static AccessoDatiAutorizzazione accessoDatiAutorizzazione = null;
+	private static AccessoDatiAutenticazione accessoDatiAutenticazione = null;
 	/** ConfigurazioneDinamica */
 	private boolean configurazioneDinamica = false;
 
@@ -1425,9 +1427,50 @@ public class ConfigurazionePdD  {
 			throw new DriverConfigurazioneNotFound("Servizio Applicativo non trovato");
 	} 
 	
+	public ServizioApplicativo getServizioApplicativoByCredenzialiPrincipal(Connection connectionPdD,String principal)throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+
+		// Raccolta dati
+		if(principal == null)
+			throw new DriverConfigurazioneException("[getServizioApplicativo]: Parametro non definito (principal)");		
+		
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = "getServizioApplicativoByCredenzialiPrincipal";
+			key = key +"_"+principal;
+			org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return ((ServizioApplicativo) response.getObject());
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		ServizioApplicativo s = null;
+		if(this.cache!=null){
+			s = (ServizioApplicativo) this.getObjectCache(key,"getServizioApplicativoByCredenzialiPrincipal",connectionPdD,principal);
+		}else{
+			s = (ServizioApplicativo) this.getObject("getServizioApplicativoByCredenzialiPrincipal",connectionPdD,principal);
+		}
+
+		if(s!=null)
+			return s;
+		else
+			throw new DriverConfigurazioneNotFound("Servizio Applicativo non trovato");
+	}
+	
+
 	
 
 
+	
 	// CONFIGURAZIONE
 	/**
 	 * Restituisce la RoutingTable definita nella Porta di Dominio 
@@ -1622,6 +1665,52 @@ public class ConfigurazionePdD  {
 		}
 		else{
 			throw new DriverConfigurazioneNotFound("[getAccessoDatiAutorizzazione] Configurazione di accesso ai dati di autorizzazione non trovata");
+		}
+	} 
+	
+	public AccessoDatiAutenticazione getAccessoDatiAutenticazione(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		// Se e' attiva una configurazione statica, la utilizzo.
+		if(this.configurazioneDinamica==false){
+			if(ConfigurazionePdD.accessoDatiAutenticazione!=null)
+				return ConfigurazionePdD.accessoDatiAutenticazione;
+		}
+		
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = "getAccessoDatiAutenticazione";
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverConfigurazioneNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverConfigurazioneNotFound) response.getException();
+					else
+						throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return ((AccessoDatiAutenticazione) response.getObject());
+				}
+			}
+		}
+			
+		// Algoritmo CACHE
+		AccessoDatiAutenticazione object = null;
+		if(this.cache!=null){
+			object = (AccessoDatiAutenticazione) this.getObjectCache(key,"getAccessoDatiAutenticazione",connectionPdD);
+		}else{
+			object = (AccessoDatiAutenticazione) this.getObject("getAccessoDatiAutenticazione",connectionPdD);
+		}
+		
+		if(object!=null){
+			// Se e' attiva una configurazione statica, la utilizzo.
+			if(this.configurazioneDinamica==false){
+				ConfigurazionePdD.accessoDatiAutenticazione = object;
+			}
+			return object;
+		}
+		else{
+			throw new DriverConfigurazioneNotFound("[getAccessoDatiAutenticazione] Configurazione di accesso ai dati di autenticazione non trovata");
 		}
 	} 
 

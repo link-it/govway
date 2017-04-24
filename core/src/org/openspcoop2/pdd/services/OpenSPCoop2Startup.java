@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.jminix.console.tool.StandaloneMiniConsole;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
+import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
@@ -58,6 +59,7 @@ import org.openspcoop2.pdd.config.SystemPropertiesManager;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
 import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazione;
 import org.openspcoop2.pdd.core.handlers.ExitContext;
 import org.openspcoop2.pdd.core.handlers.GeneratoreCasualeDate;
@@ -235,6 +237,37 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			}
 			OpenSPCoop2Startup.log = LoggerWrapperFactory.getLogger("openspcoop2.startup");
 			
+			
+			
+			
+			
+			/* ------------ 
+			 * Inizializzazione Resource Bundle:
+			 * - org/apache/xml/security/resource/xmlsecurity_en.properties (xmlsec-2.0.7.jar)
+			 * - org/apache/xml/security/resource/xmlsecurity_de.properties (xmlsec-2.0.7.jar)
+			 * - messages/wss4j_errors.properties (wss4j-ws-security-common-2.1.7.jar)
+			 * 
+			 * L'inizializzazione di questa classe DEVE essere all'inizio altrimenti si puo' incorrere in errori tipo il seguente:
+			 * Caused by: org.apache.wss4j.common.ext.WSSecurityException: No message with ID "noUserCertsFound" found in resource bundle "org/apache/xml/security/resource/xmlsecurity"
+			 *
+			 * Il motivo risiede nel fatto che org.apache.wss4j.common.ext.WSSecurityException lancia una eccezione con id "noUserCertsFound".
+			 * Tale eccezione di fatto estende la classe org/apache/xml/security/exceptions/XMLSecurityException che utilizza il proprio resource bundle
+			 * per risolvere l'id. Tale classe utilizza normalmente il properties 'org/apache/xml/security/resource/xmlsecurity_en.properties'
+			 * Mentre l'id 'noUserCertsFound' e' dentro il properties 'messages/wss4j_errors.properties'
+			 * Pero' xmlsec permette di inizializzare il resource bundle da usare anche grazie ad un metodo dove viene fornito l'intero resource bundle.
+			 * Questo avviene in xmlsec-2.0.7/src/main/java/org/apache/xml/security/utils/I18n.java metodo init(ResourceBundle resourceBundle)
+			 * L'inizializzazione avviene pero' solamente una volta. Quindi se qualche altra libreria l'inizializza prima, poi il metodo init diventa una nop.
+			 * Tale init viene quindi richiamata dalla classe org.apache.wss4j.dom.engine.WSSConfig.init che prepara un resource bundle
+			 * contenente sia il contenuto originale del properties 'org/apache/xml/security/resource/xmlsecurity_en.properties' che 
+			 * aggiungendo il contenuto del properties 'messages/wss4j_errors.properties'
+			 *
+			 * -------------------- */
+			try{
+				org.apache.wss4j.dom.engine.WSSConfig.init();
+			}catch(Exception e){
+				this.logError("Inizializzazione org.apache.wss4j.dom.engine.WSSConfig.init",e);
+				return;
+			}
 			
 			
 			
@@ -794,6 +827,57 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+			/*----------- Inizializzazione Autenticazione --------------*/
+			try{
+				AccessoDatiAutenticazione datiAutenticazione = configurazionePdDReader.getAccessoDatiAutenticazione();
+				if(datiAutenticazione!=null && datiAutenticazione.getCache()!=null){
+					
+					int dimensioneCache = -1;
+					if(datiAutenticazione.getCache().getDimensione()!=null){
+						try{
+							dimensioneCache = Integer.parseInt(datiAutenticazione.getCache().getDimensione());
+						}catch(Exception e){
+							throw new Exception("Parametro 'dimensioneCache' errato per la cache di accesso di ai dati di autenticazione");
+						}
+					}
+					
+					String algoritmo = null;
+					if(datiAutenticazione.getCache().getAlgoritmo()!=null){
+						algoritmo = datiAutenticazione.getCache().getAlgoritmo().toString();
+					}
+					
+					long idleTime = -1;
+					if(datiAutenticazione.getCache().getItemIdleTime()!=null){
+						try{
+							idleTime = Integer.parseInt(datiAutenticazione.getCache().getItemIdleTime());
+						}catch(Exception e){
+							throw new Exception("Parametro 'idleTime' errato per la cache di accesso di ai dati di autenticazione");
+						}
+					}
+					
+					long itemLifeSecond = -1;
+					if(datiAutenticazione.getCache().getItemLifeSecond()!=null){
+						try{
+							itemLifeSecond = Integer.parseInt(datiAutenticazione.getCache().getItemLifeSecond());
+						}catch(Exception e){
+							throw new Exception("Parametro 'itemLifeSecond' errato per la cache di accesso di ai dati di autenticazione");
+						}
+					}
+
+					GestoreAutenticazione.initialize(dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+				}
+				else{
+					GestoreAutenticazione.initialize(logCore);
+				}
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Gestore Autenticazione");
+				return;
+			}
+			
+			
+			
+			
+			
 			
 			
 			/* ----------- Inizializzazione Gestore Risorse JMX (le risorse jmx vengono registrate in seguito) ------------ */
@@ -1009,8 +1093,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					ConfigurazionePdDManager.getInstance().validazioneSemantica(classNameReader.getConnettore(), 
 							classNameReader.getMsgDiagnosticoOpenSPCoopAppender(),
 							classNameReader.getTracciamentoOpenSPCoopAppender(),
-							classNameReader.getAutenticazione(), classNameReader.getAutorizzazione(),
-							classNameReader.getAutorizzazioneContenuto(),classNameReader.getAutorizzazioneContenutoBuste(),
+							classNameReader.getAutenticazionePortaDelegata(), classNameReader.getAutenticazionePortaApplicativa(), 
+							classNameReader.getAutorizzazionePortaDelegata(), classNameReader.getAutorizzazionePortaApplicativa(),
+							classNameReader.getAutorizzazioneContenutoPortaDelegata(),classNameReader.getAutorizzazioneContenutoPortaApplicativa(),
 							classNameReader.getIntegrazionePortaDelegata(),
 							classNameReader.getIntegrazionePortaApplicativa(),
 							propertiesReader.isValidazioneSemanticaConfigurazioneStartupXML(),
@@ -1020,8 +1105,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						ConfigurazionePdDManager.getInstance().setValidazioneSemanticaModificaConfigurazionePdDXML(classNameReader.getConnettore(), 
 								classNameReader.getMsgDiagnosticoOpenSPCoopAppender(),
 								classNameReader.getTracciamentoOpenSPCoopAppender(),
-								classNameReader.getAutenticazione(), classNameReader.getAutorizzazione(),
-								classNameReader.getAutorizzazioneContenuto(),classNameReader.getAutorizzazioneContenutoBuste(),
+								classNameReader.getAutenticazionePortaDelegata(), classNameReader.getAutenticazionePortaApplicativa(), 
+								classNameReader.getAutorizzazionePortaDelegata(), classNameReader.getAutorizzazionePortaApplicativa(),
+								classNameReader.getAutorizzazioneContenutoPortaDelegata(),classNameReader.getAutorizzazioneContenutoPortaApplicativa(),
 								classNameReader.getIntegrazionePortaDelegata(),
 								classNameReader.getIntegrazionePortaApplicativa());
 					}
@@ -1078,6 +1164,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				if(wssPropertiesFileExternalPWCallback!=null){
 					ExternalPWCallback.initialize(wssPropertiesFileExternalPWCallback);
 				}
+				
+				// DEVE essere effettuata all'inizio, vedi sopra.
+				//org.apache.wss4j.dom.engine.WSSConfig.init();
+				
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"Inizializzazione MessageSecurity");
 				return;
@@ -1152,6 +1242,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}catch(Exception e){
 					msgDiag.logStartupError(e,"RisorsaJMX - dati di autorizzazione");
 				}
+				// MBean Autenticazione
+				try{
+					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanAutenticazione();
+				}catch(Exception e){
+					msgDiag.logStartupError(e,"RisorsaJMX - dati di autenticazione");
+				}
 				// MBean RepositoryMessaggi
 				try{
 					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanRepositoryMessaggi();
@@ -1215,6 +1311,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				informazioniStatoPortaCache_autorizzazioneDati.setStatoCache(infoAutorizzazioneDati.printStatCache());
 			}
 			informazioniStatoPortaCache.add(informazioniStatoPortaCache_autorizzazioneDati);
+			
+			org.openspcoop2.pdd.core.jmx.EngineAutenticazione infoAutenticazioneDati = new org.openspcoop2.pdd.core.jmx.EngineAutenticazione();
+			InformazioniStatoPortaCache informazioniStatoPortaCache_autenticazioneDati = new InformazioniStatoPortaCache(CostantiPdD.JMX_AUTENTICAZIONE, infoAutenticazioneDati.isCacheAbilitata());
+			if(infoAutenticazioneDati.isCacheAbilitata()){
+				informazioniStatoPortaCache_autenticazioneDati.setStatoCache(infoAutenticazioneDati.printStatCache());
+			}
+			informazioniStatoPortaCache.add(informazioniStatoPortaCache_autenticazioneDati);
 			
 			org.openspcoop2.pdd.core.jmx.RepositoryMessaggi infoRepositoryMessaggi = new org.openspcoop2.pdd.core.jmx.RepositoryMessaggi();
 			InformazioniStatoPortaCache informazioniStatoPortaCache_repositoryMessaggi = new InformazioniStatoPortaCache(CostantiPdD.JMX_REPOSITORY_MESSAGGI, infoRepositoryMessaggi.isCacheAbilitata());

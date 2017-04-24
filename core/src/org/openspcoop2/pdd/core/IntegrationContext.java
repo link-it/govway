@@ -55,6 +55,11 @@ public class IntegrationContext {
 	private String tipoAutenticazione;
 	
 	/**
+	 * Autenticazione opzionale
+	 */
+	private boolean autenticazioneOpzionale = false;
+
+	/**
 	 * Tipo di autorizzazione utilizzato
 	 */
 	private String tipoAutorizzazione;
@@ -110,6 +115,13 @@ public class IntegrationContext {
 	}
 	public void setTipoAutenticazione(String tipoAutenticazione) {
 		this.tipoAutenticazione = tipoAutenticazione;
+	}
+	
+	public boolean isAutenticazioneOpzionale() {
+		return this.autenticazioneOpzionale;
+	}
+	public void setAutenticazioneOpzionale(boolean autenticazioneOpzionale) {
+		this.autenticazioneOpzionale = autenticazioneOpzionale;
 	}
 	
 	public String getTipoAutorizzazioneContenuto() {

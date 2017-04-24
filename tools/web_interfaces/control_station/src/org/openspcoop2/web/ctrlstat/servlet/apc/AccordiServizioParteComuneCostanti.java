@@ -53,11 +53,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String OBJECT_NAME_APC_ALLEGATI = "accordiServizioParteComuneAllegati";
 	public final static ForwardParams TIPO_OPERAZIONE_VIEW = ForwardParams.OTHER("View");
 
-	public final static String OBJECT_NAME_APC_SERVIZI_APPLICATIVI = "accordiServizioParteComuneServiziApplicativi";
-
 	public final static String OBJECT_NAME_APC_EROGATORI = "accordiServizioParteComuneErogatori";
-
-	public final static String OBJECT_NAME_APC_EROGATORI_FRUITORI = "accordiServizioParteComuneErogatoriFruitori";
 
 	public final static String OBJECT_NAME_APC_COMPONENTI = "accordiServizioParteComuneComponenti";
 
@@ -137,24 +133,6 @@ public class AccordiServizioParteComuneCostanti {
 		SERVLET_APC_EROGATORI.add(SERVLET_NAME_APC_EROGATORI_LIST);
 	}
 
-	public final static String SERVLET_NAME_APC_SERVIZI_APPLICATIVI_ADD = OBJECT_NAME_APC_SERVIZI_APPLICATIVI+"Add.do";
-	public final static String SERVLET_NAME_APC_SERVIZI_APPLICATIVI_LIST = OBJECT_NAME_APC_SERVIZI_APPLICATIVI+"List.do";
-	public final static String SERVLET_NAME_APC_SERVIZI_APPLICATIVI_DEL = OBJECT_NAME_APC_SERVIZI_APPLICATIVI+"Del.do";
-	public final static Vector<String> SERVLET_APC_SERVIZI_APPLICATIVI = new Vector<String>();
-	static{
-		SERVLET_APC_EROGATORI.add(SERVLET_NAME_APC_SERVIZI_APPLICATIVI_ADD);
-		SERVLET_APC_EROGATORI.add(SERVLET_NAME_APC_SERVIZI_APPLICATIVI_LIST);
-		SERVLET_APC_EROGATORI.add(SERVLET_NAME_APC_SERVIZI_APPLICATIVI_DEL);
-	}
-
-	public final static String SERVLET_NAME_APC_EROGATORI_FRUITORI_CHANGE = OBJECT_NAME_APC_EROGATORI_FRUITORI+"Change.do";
-	public final static String SERVLET_NAME_APC_EROGATORI_FRUITORI_LIST = OBJECT_NAME_APC_EROGATORI_FRUITORI+"List.do";
-	public final static Vector<String> SERVLET_APC_EROGATORI_FRUITORI = new Vector<String>();
-	static{
-		SERVLET_APC_EROGATORI_FRUITORI.add(SERVLET_NAME_APC_EROGATORI_FRUITORI_CHANGE);
-		SERVLET_APC_EROGATORI_FRUITORI.add(SERVLET_NAME_APC_EROGATORI_FRUITORI_LIST);
-	}
-
 	public final static String SERVLET_NAME_APC_COMPONENTI_ADD = OBJECT_NAME_APC_COMPONENTI+"Add.do";
 	public final static String SERVLET_NAME_APC_COMPONENTI_DELETE = OBJECT_NAME_APC_COMPONENTI+"Del.do";
 	public final static String SERVLET_NAME_APC_COMPONENTI_LIST = OBJECT_NAME_APC_COMPONENTI+"List.do";
@@ -212,7 +190,6 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_ACCORDO_SERVIZIO_PARTE_SPECIFICA = "Accordo Servizio Parte Specifica";
 	public final static String LABEL_FRUITORI = "Fruitori";
 	public final static String LABEL_FRUITORE = "Fruitore";
-	public final static String LABEL_POLITICHE_SICUREZZA = "Politiche sicurezza";
 	public final static String LABEL_POLITICHE_SLA = "Politiche SLA";
 	public final static String LABEL_NON_DISPONIBILE = "non disp.";
 	public final static String LABEL_WSDL_CHANGE_CLEAR_WARNING = "Warning: ";
@@ -327,10 +304,6 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String PARAMETRO_APC_EROGATORI_CORRELATO = "correlato";
 	public final static String PARAMETRO_APC_EROGATORI_ID_FRUITORE = "myId";
 	public final static String PARAMETRO_APC_EROGATORI_EROGATORE = "provider";
-
-	public final static String PARAMETRO_APC_SERVIZI_APPLICATIVI_ID_SOGGETTO = "idsogg";
-	public final static String PARAMETRO_APC_SERVIZI_APPLICATIVI_ID_SERVIZIO = "idDelServizio";
-	public final static String PARAMETRO_APC_SERVIZI_APPLICATIVI_ID_SOGGETTO_FRUITORE_SERVIZIO= "idSoggettoFruitoreDelServizio";
 
 	public final static String PARAMETRO_APC_COMPONENTI_TIPO_SICA = "tipoSICA" ;
 	public final static String PARAMETRO_APC_COMPONENTI_ELEMENTO = "elemento" ;

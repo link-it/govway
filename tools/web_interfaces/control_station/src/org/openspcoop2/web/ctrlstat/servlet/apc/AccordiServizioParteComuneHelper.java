@@ -43,7 +43,6 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Documento;
-import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Message;
 import org.openspcoop2.core.registry.MessagePart;
@@ -373,8 +372,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						//								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
 
 						if (contaListe) {
-							List<Fruitore> lista1 = this.apcCore.accordiErogatoriFruitoriList(idServ, new Search(true));
-							int numEr = lista1.size();
+							int numEr = asps.sizeFruitoreList();
 							ServletUtils.setDataElementVisualizzaLabel(de, new Long(numEr));
 						} else
 							ServletUtils.setDataElementVisualizzaLabel(de);
@@ -3757,6 +3755,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			throw new Exception(e);
 		}
 	}
+
 
 	// Controlla i dati degli Accordi
 	boolean accordiCheckData(TipoOperazione tipoOperazione, String nome, String descr, String profcoll, 

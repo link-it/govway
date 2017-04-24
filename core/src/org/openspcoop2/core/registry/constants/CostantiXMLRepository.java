@@ -39,6 +39,8 @@ public class CostantiXMLRepository {
 	public final static String ACCORDI_DI_COOPERAZIONE = "accordi_cooperazione";
 	/** String che contiene il nome della directory che contiene le porte di dominio */
 	public final static String PORTE_DI_DOMINIO = "porte_di_dominio";
+	/** String che contiene il nome della directory che contiene i ruoli */
+	public final static String RUOLI = "ruoli";
 	/** String che contiene il nome di un wsdl definitorio */
 	public final static String WSDL_DEFINITORIO = "definitorio.xsd";
 	/** String che contiene il nome di un wsdl concettuale */

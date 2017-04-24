@@ -26,7 +26,6 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -48,6 +47,7 @@ import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 import org.openspcoop2.web.lib.users.dao.User;
+import org.slf4j.Logger;
 
 
 // Questa classe, volendo, potrebbe essere usata anche dalla Porta di Dominio e
@@ -225,7 +225,7 @@ public class GeneralHelper {
 		pwd.setName(UtentiCostanti.PARAMETRO_UTENTE_PASSWORD);
 		dati.addElement(login);
 		dati.addElement(pwd);
-		pd.setDati(dati);
+		pd.setDati(dati);		
 		return pd;
 	}
 

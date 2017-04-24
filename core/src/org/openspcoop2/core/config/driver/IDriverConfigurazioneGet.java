@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Configurazione;
@@ -238,7 +239,15 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	 * 
 	 */
 	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String aSubject) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
-	
+
+	/**
+	 * Restituisce Il servizio applicativo che include le credenziali passate come parametro. 
+	 *
+	 * @param principal User Principal
+	 * @return Il servizio applicativo che include le credenziali passate come parametro. 
+	 * 
+	 */
+	public ServizioApplicativo getServizioApplicativoByCredenzialiPrincipal(String principal) throws DriverConfigurazioneException,DriverConfigurazioneNotFound;
 
 	/**
 	 * Restituisce la lista degli identificativi dei servizi applicativi
@@ -289,6 +298,14 @@ public interface IDriverConfigurazioneGet extends IBeanUtilities {
 	 * 
 	 */
 	public AccessoDatiAutorizzazione getAccessoDatiAutorizzazione() throws DriverConfigurazioneException, DriverConfigurazioneNotFound;
+	
+	/**
+	 * Restituisce l'accesso ai dati di autenticazione definiti nella Porta di Dominio 
+	 *
+	 * @return AccessoDatiAutenticazione
+	 * 
+	 */
+	public AccessoDatiAutenticazione getAccessoDatiAutenticazione() throws DriverConfigurazioneException, DriverConfigurazioneNotFound;
 
 	/**
 	 * Restituisce la gestione dell'errore di default definita nella Porta di Dominio per il componente di cooperazione

@@ -1,22 +1,3 @@
-/*
- * OpenSPCoop - Customizable API Gateway 
- * http://www.openspcoop2.org
- * 
- * Copyright (c) 2005-2017 Link.it srl (http://link.it).
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3, as published by
- * the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
 
 package org.openspcoop2.core.registry.ws.client.portadominio.crud;
 
@@ -99,7 +80,7 @@ public class SearchFilterPortaDominio {
      *     
      */
     public String getNome() {
-        return this.nome;
+        return nome;
     }
 
     /**
@@ -123,7 +104,7 @@ public class SearchFilterPortaDominio {
      *     
      */
     public String getDescrizione() {
-        return this.descrizione;
+        return descrizione;
     }
 
     /**
@@ -147,7 +128,7 @@ public class SearchFilterPortaDominio {
      *     
      */
     public String getImplementazione() {
-        return this.implementazione;
+        return implementazione;
     }
 
     /**
@@ -171,7 +152,7 @@ public class SearchFilterPortaDominio {
      *     
      */
     public String getSubject() {
-        return this.subject;
+        return subject;
     }
 
     /**
@@ -195,7 +176,7 @@ public class SearchFilterPortaDominio {
      *     
      */
     public StatoFunzionalita getClientAuth() {
-        return this.clientAuth;
+        return clientAuth;
     }
 
     /**
@@ -219,7 +200,7 @@ public class SearchFilterPortaDominio {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMin() {
-        return this.oraRegistrazioneMin;
+        return oraRegistrazioneMin;
     }
 
     /**
@@ -243,7 +224,7 @@ public class SearchFilterPortaDominio {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMax() {
-        return this.oraRegistrazioneMax;
+        return oraRegistrazioneMax;
     }
 
     /**
@@ -267,7 +248,7 @@ public class SearchFilterPortaDominio {
      *     
      */
     public Boolean isOrCondition() {
-        return this.orCondition;
+        return orCondition;
     }
 
     /**
@@ -291,7 +272,7 @@ public class SearchFilterPortaDominio {
      *     
      */
     public BigInteger getLimit() {
-        return this.limit;
+        return limit;
     }
 
     /**
@@ -315,7 +296,7 @@ public class SearchFilterPortaDominio {
      *     
      */
     public BigInteger getOffset() {
-        return this.offset;
+        return offset;
     }
 
     /**

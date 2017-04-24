@@ -17,6 +17,10 @@ CREATE TABLE soggetti
 	ora_registrazione TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3),
 	profilo VARCHAR(255),
 	codice_ipa VARCHAR(255) NOT NULL,
+	tipoauth VARCHAR(255),
+	utente VARCHAR(255),
+	password VARCHAR(255),
+	subject VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- unique constraints
@@ -30,5 +34,24 @@ CREATE TABLE soggetti
 -- index
 CREATE UNIQUE INDEX index_soggetti_1 ON soggetti (nome_soggetto,tipo_soggetto);
 CREATE UNIQUE INDEX index_soggetti_2 ON soggetti (codice_ipa);
+
+
+
+CREATE TABLE soggetti_ruoli
+(
+	id_soggetto BIGINT NOT NULL,
+	id_ruolo BIGINT NOT NULL,
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	-- unique constraints
+	CONSTRAINT unique_soggetti_ruoli_1 UNIQUE (id_soggetto,id_ruolo),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_soggetti_ruoli_1 FOREIGN KEY (id_soggetto) REFERENCES soggetti(id),
+	CONSTRAINT fk_soggetti_ruoli_2 FOREIGN KEY (id_ruolo) REFERENCES ruoli(id),
+	CONSTRAINT pk_soggetti_ruoli PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+
+-- index
+CREATE UNIQUE INDEX index_soggetti_ruoli_1 ON soggetti_ruoli (id_soggetto,id_ruolo);
 
 

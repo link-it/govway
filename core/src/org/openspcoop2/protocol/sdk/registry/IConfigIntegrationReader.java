@@ -39,9 +39,16 @@ public interface IConfigIntegrationReader {
 	// SERVIZI APPLICATIVI
 	
 	public boolean existsServizioApplicativo(IDServizioApplicativo idServizioApplicativo);
-	public boolean existsServizioApplicativoByCredenzialiBasic(String username, String password);
-	public boolean existsServizioApplicativoByCredenzialiSsl(String subject);
 	public ServizioApplicativo getServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws RegistryNotFound;
+	
+	public boolean existsServizioApplicativoByCredenzialiBasic(String username, String password);
+	public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String username, String password) throws RegistryNotFound;
+	
+	public boolean existsServizioApplicativoByCredenzialiSsl(String subject);
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String subject) throws RegistryNotFound;
+	
+	public boolean existsServizioApplicativoByCredenzialiPrincipal(String principal);
+	public ServizioApplicativo getServizioApplicativoByCredenzialiPrincipal(String principal) throws RegistryNotFound;
 	
 	
 	// PORTA DELEGATA

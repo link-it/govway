@@ -1,22 +1,3 @@
-/*
- * OpenSPCoop - Customizable API Gateway 
- * http://www.openspcoop2.org
- * 
- * Copyright (c) 2005-2017 Link.it srl (http://link.it).
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3, as published by
- * the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
 
 package org.openspcoop2.core.registry.ws.client.portadominio.search;
 
@@ -49,6 +30,7 @@ public class ObjectFactory {
     private final static QName _WrapperIdPortaDominio_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdPortaDominio");
     private final static QName _WrapperIdSoggetto_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdSoggetto");
     private final static QName _WrapperIdAccordoServizioParteSpecifica_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdAccordoServizioParteSpecifica");
+    private final static QName _WrapperIdRuolo_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "wrapperIdRuolo");
     private final static QName _RegistryServiceException_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "registry-service-exception");
     private final static QName _RegistryNotFoundException_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "registry-not-found-exception");
     private final static QName _RegistryMultipleResultException_QNAME = new QName("http://www.openspcoop2.org/core/registry/management", "registry-multiple-result-exception");
@@ -122,6 +104,14 @@ public class ObjectFactory {
      */
     public WrapperIdAccordoServizioParteSpecifica createWrapperIdAccordoServizioParteSpecifica() {
         return new WrapperIdAccordoServizioParteSpecifica();
+    }
+
+    /**
+     * Create an instance of {@link WrapperIdRuolo }
+     * 
+     */
+    public WrapperIdRuolo createWrapperIdRuolo() {
+        return new WrapperIdRuolo();
     }
 
     /**
@@ -306,7 +296,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "search-filter-porta-dominio")
     public JAXBElement<SearchFilterPortaDominio> createSearchFilterPortaDominio(SearchFilterPortaDominio value) {
-        return new JAXBElement<SearchFilterPortaDominio>(ObjectFactory._SearchFilterPortaDominio_QNAME, SearchFilterPortaDominio.class, null, value);
+        return new JAXBElement<SearchFilterPortaDominio>(_SearchFilterPortaDominio_QNAME, SearchFilterPortaDominio.class, null, value);
     }
 
     /**
@@ -315,7 +305,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "wrapperIdAccordoCooperazione")
     public JAXBElement<WrapperIdAccordoCooperazione> createWrapperIdAccordoCooperazione(WrapperIdAccordoCooperazione value) {
-        return new JAXBElement<WrapperIdAccordoCooperazione>(ObjectFactory._WrapperIdAccordoCooperazione_QNAME, WrapperIdAccordoCooperazione.class, null, value);
+        return new JAXBElement<WrapperIdAccordoCooperazione>(_WrapperIdAccordoCooperazione_QNAME, WrapperIdAccordoCooperazione.class, null, value);
     }
 
     /**
@@ -324,7 +314,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "wrapperIdAccordoServizioParteComune")
     public JAXBElement<WrapperIdAccordoServizioParteComune> createWrapperIdAccordoServizioParteComune(WrapperIdAccordoServizioParteComune value) {
-        return new JAXBElement<WrapperIdAccordoServizioParteComune>(ObjectFactory._WrapperIdAccordoServizioParteComune_QNAME, WrapperIdAccordoServizioParteComune.class, null, value);
+        return new JAXBElement<WrapperIdAccordoServizioParteComune>(_WrapperIdAccordoServizioParteComune_QNAME, WrapperIdAccordoServizioParteComune.class, null, value);
     }
 
     /**
@@ -333,7 +323,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "wrapperIdPortaDominio")
     public JAXBElement<WrapperIdPortaDominio> createWrapperIdPortaDominio(WrapperIdPortaDominio value) {
-        return new JAXBElement<WrapperIdPortaDominio>(ObjectFactory._WrapperIdPortaDominio_QNAME, WrapperIdPortaDominio.class, null, value);
+        return new JAXBElement<WrapperIdPortaDominio>(_WrapperIdPortaDominio_QNAME, WrapperIdPortaDominio.class, null, value);
     }
 
     /**
@@ -342,7 +332,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "wrapperIdSoggetto")
     public JAXBElement<WrapperIdSoggetto> createWrapperIdSoggetto(WrapperIdSoggetto value) {
-        return new JAXBElement<WrapperIdSoggetto>(ObjectFactory._WrapperIdSoggetto_QNAME, WrapperIdSoggetto.class, null, value);
+        return new JAXBElement<WrapperIdSoggetto>(_WrapperIdSoggetto_QNAME, WrapperIdSoggetto.class, null, value);
     }
 
     /**
@@ -351,7 +341,16 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "wrapperIdAccordoServizioParteSpecifica")
     public JAXBElement<WrapperIdAccordoServizioParteSpecifica> createWrapperIdAccordoServizioParteSpecifica(WrapperIdAccordoServizioParteSpecifica value) {
-        return new JAXBElement<WrapperIdAccordoServizioParteSpecifica>(ObjectFactory._WrapperIdAccordoServizioParteSpecifica_QNAME, WrapperIdAccordoServizioParteSpecifica.class, null, value);
+        return new JAXBElement<WrapperIdAccordoServizioParteSpecifica>(_WrapperIdAccordoServizioParteSpecifica_QNAME, WrapperIdAccordoServizioParteSpecifica.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link WrapperIdRuolo }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "wrapperIdRuolo")
+    public JAXBElement<WrapperIdRuolo> createWrapperIdRuolo(WrapperIdRuolo value) {
+        return new JAXBElement<WrapperIdRuolo>(_WrapperIdRuolo_QNAME, WrapperIdRuolo.class, null, value);
     }
 
     /**
@@ -360,7 +359,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "registry-service-exception")
     public JAXBElement<RegistryServiceException> createRegistryServiceException(RegistryServiceException value) {
-        return new JAXBElement<RegistryServiceException>(ObjectFactory._RegistryServiceException_QNAME, RegistryServiceException.class, null, value);
+        return new JAXBElement<RegistryServiceException>(_RegistryServiceException_QNAME, RegistryServiceException.class, null, value);
     }
 
     /**
@@ -369,7 +368,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "registry-not-found-exception")
     public JAXBElement<RegistryNotFoundException> createRegistryNotFoundException(RegistryNotFoundException value) {
-        return new JAXBElement<RegistryNotFoundException>(ObjectFactory._RegistryNotFoundException_QNAME, RegistryNotFoundException.class, null, value);
+        return new JAXBElement<RegistryNotFoundException>(_RegistryNotFoundException_QNAME, RegistryNotFoundException.class, null, value);
     }
 
     /**
@@ -378,7 +377,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "registry-multiple-result-exception")
     public JAXBElement<RegistryMultipleResultException> createRegistryMultipleResultException(RegistryMultipleResultException value) {
-        return new JAXBElement<RegistryMultipleResultException>(ObjectFactory._RegistryMultipleResultException_QNAME, RegistryMultipleResultException.class, null, value);
+        return new JAXBElement<RegistryMultipleResultException>(_RegistryMultipleResultException_QNAME, RegistryMultipleResultException.class, null, value);
     }
 
     /**
@@ -387,7 +386,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "registry-not-implemented-exception")
     public JAXBElement<RegistryNotImplementedException> createRegistryNotImplementedException(RegistryNotImplementedException value) {
-        return new JAXBElement<RegistryNotImplementedException>(ObjectFactory._RegistryNotImplementedException_QNAME, RegistryNotImplementedException.class, null, value);
+        return new JAXBElement<RegistryNotImplementedException>(_RegistryNotImplementedException_QNAME, RegistryNotImplementedException.class, null, value);
     }
 
     /**
@@ -396,7 +395,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "registry-not-authorized-exception")
     public JAXBElement<RegistryNotAuthorizedException> createRegistryNotAuthorizedException(RegistryNotAuthorizedException value) {
-        return new JAXBElement<RegistryNotAuthorizedException>(ObjectFactory._RegistryNotAuthorizedException_QNAME, RegistryNotAuthorizedException.class, null, value);
+        return new JAXBElement<RegistryNotAuthorizedException>(_RegistryNotAuthorizedException_QNAME, RegistryNotAuthorizedException.class, null, value);
     }
 
     /**
@@ -405,7 +404,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "findAll")
     public JAXBElement<FindAll> createFindAll(FindAll value) {
-        return new JAXBElement<FindAll>(ObjectFactory._FindAll_QNAME, FindAll.class, null, value);
+        return new JAXBElement<FindAll>(_FindAll_QNAME, FindAll.class, null, value);
     }
 
     /**
@@ -414,7 +413,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "findAllResponse")
     public JAXBElement<FindAllResponse> createFindAllResponse(FindAllResponse value) {
-        return new JAXBElement<FindAllResponse>(ObjectFactory._FindAllResponse_QNAME, FindAllResponse.class, null, value);
+        return new JAXBElement<FindAllResponse>(_FindAllResponse_QNAME, FindAllResponse.class, null, value);
     }
 
     /**
@@ -423,7 +422,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "find")
     public JAXBElement<Find> createFind(Find value) {
-        return new JAXBElement<Find>(ObjectFactory._Find_QNAME, Find.class, null, value);
+        return new JAXBElement<Find>(_Find_QNAME, Find.class, null, value);
     }
 
     /**
@@ -432,7 +431,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "findResponse")
     public JAXBElement<FindResponse> createFindResponse(FindResponse value) {
-        return new JAXBElement<FindResponse>(ObjectFactory._FindResponse_QNAME, FindResponse.class, null, value);
+        return new JAXBElement<FindResponse>(_FindResponse_QNAME, FindResponse.class, null, value);
     }
 
     /**
@@ -441,7 +440,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "count")
     public JAXBElement<Count> createCount(Count value) {
-        return new JAXBElement<Count>(ObjectFactory._Count_QNAME, Count.class, null, value);
+        return new JAXBElement<Count>(_Count_QNAME, Count.class, null, value);
     }
 
     /**
@@ -450,7 +449,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "countResponse")
     public JAXBElement<CountResponse> createCountResponse(CountResponse value) {
-        return new JAXBElement<CountResponse>(ObjectFactory._CountResponse_QNAME, CountResponse.class, null, value);
+        return new JAXBElement<CountResponse>(_CountResponse_QNAME, CountResponse.class, null, value);
     }
 
     /**
@@ -459,7 +458,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "get")
     public JAXBElement<Get> createGet(Get value) {
-        return new JAXBElement<Get>(ObjectFactory._Get_QNAME, Get.class, null, value);
+        return new JAXBElement<Get>(_Get_QNAME, Get.class, null, value);
     }
 
     /**
@@ -468,7 +467,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "getResponse")
     public JAXBElement<GetResponse> createGetResponse(GetResponse value) {
-        return new JAXBElement<GetResponse>(ObjectFactory._GetResponse_QNAME, GetResponse.class, null, value);
+        return new JAXBElement<GetResponse>(_GetResponse_QNAME, GetResponse.class, null, value);
     }
 
     /**
@@ -477,7 +476,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "exists")
     public JAXBElement<Exists> createExists(Exists value) {
-        return new JAXBElement<Exists>(ObjectFactory._Exists_QNAME, Exists.class, null, value);
+        return new JAXBElement<Exists>(_Exists_QNAME, Exists.class, null, value);
     }
 
     /**
@@ -486,7 +485,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "existsResponse")
     public JAXBElement<ExistsResponse> createExistsResponse(ExistsResponse value) {
-        return new JAXBElement<ExistsResponse>(ObjectFactory._ExistsResponse_QNAME, ExistsResponse.class, null, value);
+        return new JAXBElement<ExistsResponse>(_ExistsResponse_QNAME, ExistsResponse.class, null, value);
     }
 
     /**
@@ -495,7 +494,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "findAllIds")
     public JAXBElement<FindAllIds> createFindAllIds(FindAllIds value) {
-        return new JAXBElement<FindAllIds>(ObjectFactory._FindAllIds_QNAME, FindAllIds.class, null, value);
+        return new JAXBElement<FindAllIds>(_FindAllIds_QNAME, FindAllIds.class, null, value);
     }
 
     /**
@@ -504,7 +503,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "findAllIdsResponse")
     public JAXBElement<FindAllIdsResponse> createFindAllIdsResponse(FindAllIdsResponse value) {
-        return new JAXBElement<FindAllIdsResponse>(ObjectFactory._FindAllIdsResponse_QNAME, FindAllIdsResponse.class, null, value);
+        return new JAXBElement<FindAllIdsResponse>(_FindAllIdsResponse_QNAME, FindAllIdsResponse.class, null, value);
     }
 
     /**
@@ -513,7 +512,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "inUse")
     public JAXBElement<InUse> createInUse(InUse value) {
-        return new JAXBElement<InUse>(ObjectFactory._InUse_QNAME, InUse.class, null, value);
+        return new JAXBElement<InUse>(_InUse_QNAME, InUse.class, null, value);
     }
 
     /**
@@ -522,7 +521,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/registry/management", name = "inUseResponse")
     public JAXBElement<InUseResponse> createInUseResponse(InUseResponse value) {
-        return new JAXBElement<InUseResponse>(ObjectFactory._InUseResponse_QNAME, InUseResponse.class, null, value);
+        return new JAXBElement<InUseResponse>(_InUseResponse_QNAME, InUseResponse.class, null, value);
     }
 
 }

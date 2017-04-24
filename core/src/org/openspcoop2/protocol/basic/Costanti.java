@@ -85,7 +85,12 @@ public class Costanti {
 	 *		|		  |
 	 *		|		  | - pdd1.xml
 	 *		|		  |    ...
-	 *      | 
+	 *      |
+	 *      | - ruoli
+	 *		|		  |
+	 *		|		  | - ruolo1.xml
+	 *		|		  |    ...
+	 *      |    
 	 *      | - soggetti
 	 *		|		|
 	 *		|		| - tipo_nome
@@ -175,6 +180,8 @@ public class Costanti {
 	
 	public static final String OPENSPCOOP2_ARCHIVE_PORTE_DOMINIO_DIR = "porteDominio";
 	
+	public static final String OPENSPCOOP2_ARCHIVE_RUOLI_DIR = "ruoli";
+	
 	public static final String OPENSPCOOP2_ARCHIVE_SOGGETTI_DIR = "soggetti";
 	public static final String OPENSPCOOP2_ARCHIVE_SOGGETTI_FILE_NAME_REGISTRO = "soggettoRegistroServizi.xml";
 	public static final String OPENSPCOOP2_ARCHIVE_SOGGETTI_FILE_NAME_CONFIG = "soggettoConfigurazione.xml";
@@ -187,12 +194,14 @@ public class Costanti {
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_COMUNE_FILE_NAME = "accordo.xml";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_SPECIFICA_DIR = "accordiServizioParteSpecifica";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_SPECIFICA_FILE_NAME = "accordo.xml";
+	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_SPECIFICA_MAPPING_PA = "mappingErogazionePA.csv";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_COMPOSTO_DIR = "accordiServizioComposto";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_COMPOSTO_FILE_NAME = "accordo.xml";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_COOPERAZIONE_DIR = "accordiCooperazione";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_COOPERAZIONE_FILE_NAME = "accordo.xml";
 	public static final String OPENSPCOOP2_ARCHIVE_FRUITORE_DIR = "fruitori";
-	public static final String OPENSPCOOP2_ARCHIVE_FRUITORE_SERVIZI_APPLICATIVI_AUTORIZZATI = "serviziApplicativiAutorizzati.csv";
+	public static final String OPENSPCOOP2_ARCHIVE_FRUITORE_MAPPING_PD = "mappingFruizionePD.csv";
+	
 	
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_WSDL = "wsdl";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_INTERFACCIA_DEFINITORIA = "InterfacciaDefinitoria.xsd";
@@ -214,6 +223,7 @@ public class Costanti {
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_COORDINAMENTO = "specificheCoordinamento";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_LIVELLI_SERVIZIO = "specificheLivelliServizio";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SICUREZZA = "specificheSicurezza";
+	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_MAPPING = "mapping";
 	
 	
 }

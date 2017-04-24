@@ -1,0 +1,113 @@
+/*
+ * OpenSPCoop - Customizable API Gateway 
+ * http://www.openspcoop2.org
+ * 
+ * Copyright (c) 2005-2017 Link.it srl (http://link.it). 
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+package org.openspcoop2.web.ctrlstat.servlet.ruoli;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+
+import org.openspcoop2.core.registry.constants.RuoloContesto;
+import org.openspcoop2.core.registry.constants.RuoloTipologia;
+
+/**
+ * RuoliCostanti
+ *
+ * @author Poli Andrea (apoli@link.it)
+ * @author $Author: mergefairy $
+ * @version $Rev: 12788 $, $Date: 2017-03-14 17:04:53 +0100 (Tue, 14 Mar 2017) $
+ */
+public class RuoliCostanti {
+
+	public final static String OBJECT_NAME_RUOLI = "ruoli";
+
+	public final static String SERVLET_NAME_RUOLI_ADD = OBJECT_NAME_RUOLI+"Add.do";
+	public final static String SERVLET_NAME_RUOLI_CHANGE = OBJECT_NAME_RUOLI+"Change.do";
+	public final static String SERVLET_NAME_RUOLI_DELETE = OBJECT_NAME_RUOLI+"Del.do";
+	public final static String SERVLET_NAME_RUOLI_LIST = OBJECT_NAME_RUOLI+"List.do";
+	public final static Vector<String> SERVLET_RUOLI = new Vector<String>();
+	static{
+		SERVLET_RUOLI.add(SERVLET_NAME_RUOLI_ADD);
+		SERVLET_RUOLI.add(SERVLET_NAME_RUOLI_CHANGE);
+		SERVLET_RUOLI.add(SERVLET_NAME_RUOLI_DELETE);
+		SERVLET_RUOLI.add(SERVLET_NAME_RUOLI_LIST);
+	}
+	
+	
+	
+	
+	public final static String LABEL_RUOLO = "Ruolo";
+	public final static String LABEL_RUOLI = "Ruoli";
+	
+	
+	
+	/* PARAMETRI */
+	
+	public final static String PARAMETRO_RUOLO_ID = "ruoloId";
+	public final static String PARAMETRO_RUOLO_NOME = "ruoloNome";
+	public final static String PARAMETRO_RUOLO_DESCRIZIONE = "ruoloDescrizione";
+	public final static String PARAMETRO_RUOLO_TIPOLOGIA = "ruoloTipologia";
+	public final static String PARAMETRO_RUOLO_CONTESTO = "ruoloContesto";
+	
+	
+	/* LABEL PARAMETRI */
+	
+	public final static String LABEL_PARAMETRO_RUOLO_NOME = "Nome";
+	public final static String LABEL_PARAMETRO_RUOLO_DESCRIZIONE = "Descrizione";
+	public final static String LABEL_PARAMETRO_RUOLO_TIPOLOGIA = "Fonte";
+	public final static String LABEL_PARAMETRO_RUOLO_CONTESTO = "Contesto";
+	
+	
+	
+	
+	public final static String DEFAULT_VALUE_PARAMETRO_RUOLO_TIPOLOGIA = RuoloTipologia.QUALSIASI.getValue();
+	public final static String DEFAULT_VALUE_PARAMETRO_RUOLO_CONTESTO_UTILIZZO = RuoloContesto.QUALSIASI.getValue();
+	
+	
+	public final static List<String> RUOLI_TIPOLOGIA = new ArrayList<String>();
+	static {
+		RUOLI_TIPOLOGIA.add(RuoloTipologia.QUALSIASI.getValue());
+		RUOLI_TIPOLOGIA.add(RuoloTipologia.INTERNO.getValue());
+		RUOLI_TIPOLOGIA.add(RuoloTipologia.ESTERNO.getValue());
+	}
+	
+	public final static String RUOLI_TIPOLOGIA_LABEL_INTERNO = "registro";
+	public final static String RUOLI_TIPOLOGIA_LABEL_ESTERNO = "esterna";
+	public final static List<String> RUOLI_TIPOLOGIA_LABEL = new ArrayList<String>();
+	static {
+		RUOLI_TIPOLOGIA_LABEL.add(RuoloTipologia.QUALSIASI.getValue());
+		RUOLI_TIPOLOGIA_LABEL.add(RUOLI_TIPOLOGIA_LABEL_INTERNO);
+		RUOLI_TIPOLOGIA_LABEL.add(RUOLI_TIPOLOGIA_LABEL_ESTERNO);
+	}
+	
+	public final static List<String> RUOLI_CONTESTO_UTILIZZO = new ArrayList<String>();
+	static {
+		RUOLI_CONTESTO_UTILIZZO.add(RuoloContesto.QUALSIASI.getValue());
+		RUOLI_CONTESTO_UTILIZZO.add(RuoloContesto.PORTA_APPLICATIVA.getValue());
+		RUOLI_CONTESTO_UTILIZZO.add(RuoloContesto.PORTA_DELEGATA.getValue());
+	}
+	public final static String RUOLI_CONTESTO_UTILIZZO_LABEL_EROGAZIONE = "erogazione";
+	public final static String RUOLI_CONTESTO_UTILIZZO_LABEL_FRUIZIONE = "fruizione";
+	public final static List<String> RUOLI_CONTESTO_UTILIZZO_LABEL = new ArrayList<String>();
+	static {
+		RUOLI_CONTESTO_UTILIZZO_LABEL.add(RuoloContesto.QUALSIASI.getValue());
+		RUOLI_CONTESTO_UTILIZZO_LABEL.add(RUOLI_CONTESTO_UTILIZZO_LABEL_EROGAZIONE);
+		RUOLI_CONTESTO_UTILIZZO_LABEL.add(RUOLI_CONTESTO_UTILIZZO_LABEL_FRUIZIONE);
+	}
+}

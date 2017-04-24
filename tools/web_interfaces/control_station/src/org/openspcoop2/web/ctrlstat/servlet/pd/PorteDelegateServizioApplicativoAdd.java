@@ -21,6 +21,7 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pd;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -86,6 +87,8 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 			int soggInt = Integer.parseInt(idsogg);
 			String servizioApplicativo = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO);
 
+			Boolean useIdSogg= ServletUtils.getBooleanAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_USA_ID_SOGGETTO, session);
+			
 			// Preparo il menu
 			porteDelegateHelper.makeMenu();
 
@@ -120,20 +123,30 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 			// l'inserimento dati
 			if(	ServletUtils.isEditModeInProgress(request)){
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTI, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-						new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PORTE_DELEGATE_DI + tmpTitle, 
-								PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
-								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg)
-								),
-						new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_DI + idporta, 
-										PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_LIST,
-										new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID,id),
-										new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg)  
-										),
-								new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
-						);
+				if(useIdSogg){
+					ServletUtils.setPageDataTitle(pd, 
+							new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTI, null),
+							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
+							new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PORTE_DELEGATE_DI + tmpTitle, 
+									PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
+									new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg)
+									),
+							new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_DI + idporta, 
+											PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_LIST,
+											new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID,id),
+											new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg)  
+											),
+									new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
+							);
+				}
+				else{
+					List<Parameter> lstParam = new ArrayList<Parameter>();
+					lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PORTE_DELEGATE, null));
+					lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST));
+					pd.setSearchDescription("");
+					lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_DI + idporta,null));
+					ServletUtils.setPageDataTitle(pd, lstParam.toArray(new Parameter[lstParam.size()]));
+				}
  
 
 				// preparo i campi
@@ -166,7 +179,7 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 						servizioApplicativoList[j] = silV.get(j);
 				}
 
-				dati = porteDelegateHelper.addPorteServizioApplicativoToDati(TipoOperazione.ADD,dati, "", servizioApplicativoList);
+				dati = porteDelegateHelper.addPorteServizioApplicativoToDati(TipoOperazione.ADD,dati, "", servizioApplicativoList, oldSilList.size(),true);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD,id, idsogg, null, dati);
 
@@ -183,20 +196,30 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 			boolean isOk = porteDelegateHelper.porteDelegateServizioApplicativoCheckData(TipoOperazione.ADD);
 			if (!isOk) {
 				// setto la barra del titolo
-				ServletUtils.setPageDataTitle(pd, 
-						new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTI, null),
-						new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
-						new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PORTE_DELEGATE_DI + tmpTitle, 
-								PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
-								new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg)
-								),
-						new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_DI + idporta, 
-										PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_LIST,
-										new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID,id),
-										new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg)
-										),
-								new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
-						);
+				if(useIdSogg){
+					ServletUtils.setPageDataTitle(pd, 
+							new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTI, null),
+							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST),
+							new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PORTE_DELEGATE_DI + tmpTitle, 
+									PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST,
+									new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg)
+									),
+							new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_DI + idporta, 
+											PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_LIST,
+											new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID,id),
+											new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO,idsogg)
+											),
+									new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_AGGIUNGI, null)
+							);
+				}
+				else{
+					List<Parameter> lstParam = new ArrayList<Parameter>();
+					lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PORTE_DELEGATE, null));
+					lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_LIST));
+					pd.setSearchDescription("");
+					lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO_DI + idporta,null));
+					ServletUtils.setPageDataTitle(pd, lstParam.toArray(new Parameter[lstParam.size()]));
+				}
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -228,7 +251,7 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 						servizioApplicativoList[j] = silV.get(j);
 				}
 
-				dati = porteDelegateHelper.addPorteServizioApplicativoToDati(TipoOperazione.ADD, dati, servizioApplicativo, servizioApplicativoList);
+				dati = porteDelegateHelper.addPorteServizioApplicativoToDati(TipoOperazione.ADD, dati, servizioApplicativo, servizioApplicativoList, oldSilList.size(),true);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.ADD,id, idsogg, null, dati);
  

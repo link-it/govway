@@ -33,7 +33,8 @@ public enum TipoOggettoDaSmistare {
 
 	pdd,
 	ruolo,
-	politicheSicurezza,
+	mappingFruizionePD,
+	mappingErogazionePA,
 	soggetto,
 	servizioApplicativo,
 	pd,

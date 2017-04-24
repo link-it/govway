@@ -13,7 +13,6 @@ CREATE TABLE servizi_applicativi
 	tipoauthrisp VARCHAR(255),
 	utenterisp VARCHAR(255),
 	passwordrisp VARCHAR(255),
-	subjectrisp VARCHAR(255),
 	invio_x_rif_risp VARCHAR(255),
 	risposta_x_rif_risp VARCHAR(255),
 	id_connettore_risp BIGINT NOT NULL,
@@ -27,7 +26,6 @@ CREATE TABLE servizi_applicativi
 	tipoauthinv VARCHAR(255),
 	utenteinv VARCHAR(255),
 	passwordinv VARCHAR(255),
-	subjectinv VARCHAR(255),
 	invio_x_rif_inv VARCHAR(255),
 	risposta_x_rif_inv VARCHAR(255),
 	id_connettore_inv BIGINT NOT NULL,
@@ -61,5 +59,23 @@ CREATE TABLE servizi_applicativi
 
 -- index
 CREATE UNIQUE INDEX index_servizi_applicativi_1 ON servizi_applicativi (nome,id_soggetto);
+
+
+
+CREATE TABLE sa_ruoli
+(
+	id_servizio_applicativo BIGINT NOT NULL,
+	ruolo VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	-- unique constraints
+	CONSTRAINT unique_sa_ruoli_1 UNIQUE (id_servizio_applicativo,ruolo),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_sa_ruoli_1 FOREIGN KEY (id_servizio_applicativo) REFERENCES servizi_applicativi(id),
+	CONSTRAINT pk_sa_ruoli PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+
+-- index
+CREATE UNIQUE INDEX index_sa_ruoli_1 ON sa_ruoli (id_servizio_applicativo,ruolo);
 
 

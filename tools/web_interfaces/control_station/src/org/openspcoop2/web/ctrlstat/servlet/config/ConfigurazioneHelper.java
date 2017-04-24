@@ -1440,6 +1440,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			throw new Exception(e);
 		}
 	}
+	
 
 	// Prepara la lista di registri
 	public void prepareRegistriList(ISearch ricerca, List<AccessoRegistroRegistro> lista)
@@ -1520,6 +1521,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			throw new Exception(e);
 		}
 	}
+	
+	
 
 
 	// Controlla i dati del pannello Configurazione -> Generale
@@ -1576,11 +1579,16 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					this.pd.setMessage("Livello OpenSPCoop dev'essere off, fatalOpenspcoop, errorSpcoop, errorOpenspcoop, infoSpcoop, infoOpenspcoop, debugLow, debugMedium, debugHigh o all");
 					return false;
 				}*/
-			if (!integman.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_BASIC) &&
-					!integman.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_SSL) && 
-					!integman.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_BASIC_SSL) &&
+			boolean foundIM = false;
+			for (int i = 0; i < ConfigurazioneCostanti.PARAMETRI_CONFIGURAZIONE_IM.length; i++) {
+				if(ConfigurazioneCostanti.PARAMETRI_CONFIGURAZIONE_IM[i].equals(integman)){
+					foundIM = true;
+					break;
+				}
+			}
+			if (!foundIM &&
 					!integman.equals(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_CUSTOM)) {
-				this.pd.setMessage("Tipo autenticazione dev'essere basic, ssl, basic,ssl o custom");
+				this.pd.setMessage("Tipo autenticazione per integrationManager sconosciuto");
 				return false;
 			}
 			if (profcoll != null && !profcoll.equals("") &&
@@ -1683,13 +1691,31 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		try{
 
-			String statocache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_AUTH);
-			String dimensionecache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_AUTH);
-			String algoritmocache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_AUTH);
-			String idlecache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_AUTH);
-			String lifecache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_AUTH);
+			String statocache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_AUTHZ);
+			String dimensionecache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_AUTHZ);
+			String algoritmocache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_AUTHZ);
+			String idlecache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_AUTHZ);
+			String lifecache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_AUTHZ);
 
 			return checkDatiCache(CostantiPdD.JMX_AUTORIZZAZIONE, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public boolean datiAutenticazioneCheckDataCache() throws Exception {
+
+		try{
+
+			String statocache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_AUTHN);
+			String dimensionecache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_AUTHN);
+			String algoritmocache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_AUTHN);
+			String idlecache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_AUTHN);
+			String lifecache = this.request.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_AUTHN);
+
+			return checkDatiCache(CostantiPdD.JMX_AUTENTICAZIONE, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
@@ -2520,6 +2546,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 
 		return dati;
 	}
+	
+	
 
 
 	public Vector<DataElement> addConfigurazioneToDati(  User user,
@@ -2821,15 +2849,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 
-		int totEl = 3;
+		int totEl = ConfigurazioneCostanti.PARAMETRI_CONFIGURAZIONE_IM.length;
 		if (confPers.equals(Costanti.CHECK_BOX_ENABLED_TRUE))
 			totEl++;
 		String[] tipoIM = new String[totEl];
-		tipoIM[0] = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_SSL;
-		tipoIM[1] = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_BASIC;
-		tipoIM[2] = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_BASIC_SSL;
+		for (int i = 0; i < ConfigurazioneCostanti.PARAMETRI_CONFIGURAZIONE_IM.length; i++) {
+			tipoIM[i] = ConfigurazioneCostanti.PARAMETRI_CONFIGURAZIONE_IM[i];
+		}
 		if (confPers.equals(Costanti.CHECK_BOX_ENABLED_TRUE))
-			tipoIM[3] = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_CUSTOM;
+			tipoIM[(totEl-1)] = ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_IM_CUSTOM;
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_INTEGMAN);
 		de.setType(DataElementType.SELECT);
@@ -2985,7 +3013,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setValues(tipoGM);
 		de.setSelected(gestman);
 		dati.addElement(de);
-
+		
 		de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRO_SERVIZI);
 		de.setType(DataElementType.TITLE);

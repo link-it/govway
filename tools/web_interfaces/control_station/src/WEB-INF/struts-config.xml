@@ -182,7 +182,27 @@
             <forward name="soggettiEndPointCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="soggettiError" path="/jsplib/info.jsp"/>
         </action>
-        
+
+        <!--  Soggetti Ruoli -->
+
+        <action path="/soggettiRuoliAdd" type="org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiRuoliAdd"
+            scope="request" validate="true">
+            <forward name="soggettiRuoliAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="soggettiRuoliAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="soggettiRuoliAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="soggettiRuoliError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/soggettiRuoliList" type="org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiRuoliList"
+            scope="request" validate="true">
+            <forward name="soggettiRuoliList" path="/jsplib/listElement.jsp"/>
+            <forward name="soggettiRuoliError" path="/jsplib/info.jsp"/>
+        </action>
+         <action path="/soggettiRuoliDel" type="org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiRuoliDel"
+            scope="request" validate="true">
+            <forward name="soggettiRuoliDel" path="/jsplib/listElement.jsp"/>
+            <forward name="soggettiRuoliError" path="/jsplib/info.jsp"/>
+        </action>
+               
         
         
         
@@ -250,27 +270,26 @@
             <forward name="serviziApplicativiEndPointRispostaAsincronaCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="serviziApplicativiError" path="/jsplib/info.jsp"/>
         </action>
-          
-        <!--  Servizi Applicativi Ruoli -->
         
-        <action path="/serviziApplicativiRuoliAdd" type="org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiRuoli" 
-        	scope="request" validate="true">
+        <!--  Servizi Applicativi Ruoli -->
+
+		<action path="/serviziApplicativiRuoliAdd" type="org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiRuoliAdd" 
+			scope="request" validate="true">
             <forward name="serviziApplicativiRuoliAddForm" path="/jsplib/addElement.jsp"/>
             <forward name="serviziApplicativiRuoliAddOk" path="/jsplib/listElement.jsp"/>
             <forward name="serviziApplicativiRuoliAddCheckError" path="/jsplib/addElement.jsp"/>
             <forward name="serviziApplicativiRuoliError" path="/jsplib/info.jsp"/>
         </action>
-        <action path="/serviziApplicativiRuoliDel" type="org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiRuoli" 
-        	scope="request" validate="true">
-            <forward name="serviziApplicativiRuoliDel" path="/jsplib/listElement.jsp"/>
-            <forward name="serviziApplicativiRuoliError" path="/jsplib/info.jsp"/>
-        </action>
-        <action path="/serviziApplicativiRuoliList" type="org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiRuoli" 
+        <action path="/serviziApplicativiRuoliList" type="org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiRuoliList" 
         	scope="request" validate="true">
             <forward name="serviziApplicativiRuoliList" path="/jsplib/listElement.jsp"/>
             <forward name="serviziApplicativiRuoliError" path="/jsplib/info.jsp"/>
         </action>
-
+        <action path="/serviziApplicativiRuoliDel" type="org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiRuoliDel" 
+        	scope="request" validate="true">
+            <forward name="serviziApplicativiRuoliDel" path="/jsplib/listElement.jsp"/>
+            <forward name="serviziApplicativiRuoliError" path="/jsplib/info.jsp"/>
+        </action>
 
     
     
@@ -438,27 +457,6 @@
             <forward name="accordiServizioParteComuneErogatoriList" path="/jsplib/listElement.jsp"/>
             <forward name="accordiServizioParteComuneErogatoriError" path="/jsplib/info.jsp"/>
         </action>
-
-        <!--  Accordi di Servizio Parte Comune Servizi Applicativi -->
-        <!--   
-        <action path="/accordiServizioParteComuneServiziApplicativiAdd" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneServiziApplicativiAdd"
-            scope="request" validate="true">
-            <forward name="accordiServizioParteComuneServiziApplicativiAddForm" path="/jsplib/addElement.jsp"/>
-            <forward name="accordiServizioParteComuneServiziApplicativiAddOk" path="/jsplib/listElement.jsp"/>
-            <forward name="accordiServizioParteComuneServiziApplicativiAddCheckError" path="/jsplib/addElement.jsp"/>
-            <forward name="accordiServizioParteComuneServiziApplicativiError" path="/jsplib/info.jsp"/>
-        </action>
-        <action path="/accordiServizioParteComuneServiziApplicativiList" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneServiziApplicativiList"
-            scope="request" validate="true">
-            <forward name="accordiServizioParteComuneServiziApplicativiList" path="/jsplib/listElement.jsp"/>
-            <forward name="accordiServizioParteComuneServiziApplicativiError" path="/jsplib/info.jsp"/>
-        </action>
-        <action path="/accordiServizioParteComuneServiziApplicativiDel" type="org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneServiziApplicativiDel"
-            scope="request" validate="true">
-            <forward name="accordiServizioParteComuneServiziApplicativiDel" path="/jsplib/listElement.jsp"/>
-            <forward name="accordiServizioParteComuneServiziApplicativiError" path="/jsplib/info.jsp"/>
-        </action>
-		-->
 		
 		<!--  Accordi di Servizio Composto, Componenti -->
 		
@@ -617,26 +615,6 @@
             <forward name="accordiServizioParteSpecificaFruitoriError" path="/jsplib/info.jsp"/>
         </action>
 
-		<!--  Accordi di Servizio Parte Specifica (ServizioApplicativo) -->
-
-        <action path="/accordiServizioParteSpecificaServizioApplicativoAdd" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaServizioApplicativoAdd"
-            scope="request" validate="true">
-            <forward name="accordiServizioParteSpecificaServizioApplicativoAddForm" path="/jsplib/addElement.jsp"/>
-            <forward name="accordiServizioParteSpecificaServizioApplicativoAddOk" path="/jsplib/listElement.jsp"/>
-            <forward name="accordiServizioParteSpecificaServizioApplicativoAddCheckError" path="/jsplib/addElement.jsp"/>
-            <forward name="accordiServizioParteSpecificaServizioApplicativoError" path="/jsplib/info.jsp"/>
-        </action>
-        <action path="/accordiServizioParteSpecificaServizioApplicativoDel" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaServizioApplicativoDel"
-            scope="request" validate="true">
-            <forward name="accordiServizioParteSpecificaServizioApplicativoDel" path="/jsplib/listElement.jsp"/>
-            <forward name="accordiServizioParteSpecificaServizioApplicativoError" path="/jsplib/info.jsp"/>
-        </action>
-        <action path="/accordiServizioParteSpecificaServizioApplicativoList" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaServizioApplicativoList"
-            scope="request" validate="true">
-            <forward name="accordiServizioParteSpecificaServizioApplicativoList" path="/jsplib/listElement.jsp"/>
-            <forward name="accordiServizioParteSpecificaServizioApplicativoError" path="/jsplib/info.jsp"/>
-        </action>
-
 		<!--  Accordi di Servizio Parte Specifica (PorteApplicative) -->
 
         <action path="/accordiServizioParteSpecificaPorteApplicativeList" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaPorteApplicativeList" 
@@ -648,6 +626,19 @@
         	scope="request" validate="true">
             <forward name="accordiServizioParteSpecificaPorteApplicativeDel" path="/jsplib/listElement.jsp"/>
             <forward name="accordiServizioParteSpecificaPorteApplicativeError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!--  Accordi di Servizio Parte Specifica (Fruitori PorteDelegate) -->
+
+        <action path="/accordiServizioParteSpecificaFruitoriPorteDelegateList" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaFruitoriPorteDelegateList" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteSpecificaFruitoriPorteDelegateList" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaFruitoriPorteDelegateError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/accordiServizioParteSpecificaFruitoriPorteDelegateDel" type="org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaFruitoriPorteDelegateDel" 
+        	scope="request" validate="true">
+            <forward name="accordiServizioParteSpecificaFruitoriPorteDelegateDel" path="/jsplib/listElement.jsp"/>
+            <forward name="accordiServizioParteSpecificaFruitoriPorteDelegateError" path="/jsplib/info.jsp"/>
         </action>
 
 
@@ -742,6 +733,38 @@
         </action>
 
        
+
+
+
+        
+        
+        <!-- Ruoli -->
+
+        <action path="/ruoliAdd" type="org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliAdd"
+            scope="request" validate="true">
+            <forward name="ruoliAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="ruoliAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="ruoliAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="ruoliError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/ruoliList" type="org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliList"
+            scope="request" validate="true">
+            <forward name="ruoliList" path="/jsplib/listElement.jsp"/>
+            <forward name="ruoliError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/ruoliChange" type="org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliChange"
+            scope="request" validate="true">
+            <forward name="ruoliChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="ruoliChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="ruoliChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="ruoliError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/ruoliDel" type="org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliDel"
+            scope="request" validate="true">
+            <forward name="ruoliDel" path="/jsplib/listElement.jsp"/>
+            <forward name="ruoliError" path="/jsplib/info.jsp"/>
+        </action>
+
 
 
         
@@ -923,6 +946,26 @@
             scope="request" validate="true">
             <forward name="porteDelegateServizioApplicativoDel" path="/jsplib/listElement.jsp"/>
             <forward name="porteDelegateServizioApplicativoError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!--  Porte Delegate (Ruoli) -->
+
+        <action path="/porteDelegateRuoliAdd" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateRuoliAdd"
+            scope="request" validate="true">
+            <forward name="porteDelegateRuoliAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateRuoliAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateRuoliAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteDelegateRuoliError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateRuoliList" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateRuoliList"
+            scope="request" validate="true">
+            <forward name="porteDelegateRuoliList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateRuoliError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteDelegateRuoliDel" type="org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateRuoliDel"
+            scope="request" validate="true">
+            <forward name="porteDelegateRuoliDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteDelegateRuoliError" path="/jsplib/info.jsp"/>
         </action>
 
 		<!--  Porte Delegate (Correlazione Applicativa Request Flow) -->
@@ -1186,6 +1229,26 @@
             scope="request" validate="true">
             <forward name="porteApplicativeServizioApplicativoDel" path="/jsplib/listElement.jsp"/>
             <forward name="porteApplicativeServizioApplicativoError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!--  Porte Applicative (Ruoli) -->
+
+        <action path="/porteApplicativeRuoliAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeRuoliAdd"
+            scope="request" validate="true">
+            <forward name="porteApplicativeRuoliAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeRuoliAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeRuoliAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeRuoliError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeRuoliList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeRuoliList"
+            scope="request" validate="true">
+            <forward name="porteApplicativeRuoliList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeRuoliError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeRuoliDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeRuoliDel"
+            scope="request" validate="true">
+            <forward name="porteApplicativeRuoliDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeRuoliError" path="/jsplib/info.jsp"/>
         </action>
 
 		<!--  Porte Applicative (Correlazione Applicativa Request Flow) -->
@@ -1662,7 +1725,6 @@
             <forward name="configurazioneRegistriDel" path="/jsplib/listElement.jsp"/>
             <forward name="configurazioneRegistriError" path="/jsplib/info.jsp"/>
         </action>
-    
     
    		<!-- Configurazione Routing (link alla lista delle rotte) -->
     

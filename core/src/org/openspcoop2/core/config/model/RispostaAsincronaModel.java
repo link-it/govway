@@ -40,7 +40,7 @@ public class RispostaAsincronaModel extends AbstractModel<RispostaAsincrona> {
 	
 		super();
 	
-		this.CREDENZIALI = new org.openspcoop2.core.config.model.CredenzialiModel(new Field("credenziali",org.openspcoop2.core.config.Credenziali.class,"risposta-asincrona",RispostaAsincrona.class));
+		this.CREDENZIALI = new org.openspcoop2.core.config.model.InvocazioneCredenzialiModel(new Field("credenziali",org.openspcoop2.core.config.InvocazioneCredenziali.class,"risposta-asincrona",RispostaAsincrona.class));
 		this.CONNETTORE = new org.openspcoop2.core.config.model.ConnettoreModel(new Field("connettore",org.openspcoop2.core.config.Connettore.class,"risposta-asincrona",RispostaAsincrona.class));
 		this.GESTIONE_ERRORE = new org.openspcoop2.core.config.model.GestioneErroreModel(new Field("gestione-errore",org.openspcoop2.core.config.GestioneErrore.class,"risposta-asincrona",RispostaAsincrona.class));
 		this.SBUSTAMENTO_SOAP = new Field("sbustamento-soap",java.lang.String.class,"risposta-asincrona",RispostaAsincrona.class);
@@ -56,7 +56,7 @@ public class RispostaAsincronaModel extends AbstractModel<RispostaAsincrona> {
 	
 		super(father);
 	
-		this.CREDENZIALI = new org.openspcoop2.core.config.model.CredenzialiModel(new ComplexField(father,"credenziali",org.openspcoop2.core.config.Credenziali.class,"risposta-asincrona",RispostaAsincrona.class));
+		this.CREDENZIALI = new org.openspcoop2.core.config.model.InvocazioneCredenzialiModel(new ComplexField(father,"credenziali",org.openspcoop2.core.config.InvocazioneCredenziali.class,"risposta-asincrona",RispostaAsincrona.class));
 		this.CONNETTORE = new org.openspcoop2.core.config.model.ConnettoreModel(new ComplexField(father,"connettore",org.openspcoop2.core.config.Connettore.class,"risposta-asincrona",RispostaAsincrona.class));
 		this.GESTIONE_ERRORE = new org.openspcoop2.core.config.model.GestioneErroreModel(new ComplexField(father,"gestione-errore",org.openspcoop2.core.config.GestioneErrore.class,"risposta-asincrona",RispostaAsincrona.class));
 		this.SBUSTAMENTO_SOAP = new ComplexField(father,"sbustamento-soap",java.lang.String.class,"risposta-asincrona",RispostaAsincrona.class);
@@ -70,7 +70,7 @@ public class RispostaAsincronaModel extends AbstractModel<RispostaAsincrona> {
 	
 	
 
-	public org.openspcoop2.core.config.model.CredenzialiModel CREDENZIALI = null;
+	public org.openspcoop2.core.config.model.InvocazioneCredenzialiModel CREDENZIALI = null;
 	 
 	public org.openspcoop2.core.config.model.ConnettoreModel CONNETTORE = null;
 	 

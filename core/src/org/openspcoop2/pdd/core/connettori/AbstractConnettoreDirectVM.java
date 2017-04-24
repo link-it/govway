@@ -25,10 +25,11 @@ package org.openspcoop2.pdd.core.connettori;
 
 import java.util.Hashtable;
 
+import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.pdd.core.PdDContext;
-import org.openspcoop2.pdd.core.autenticazione.Credenziali;
+import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.messages.DirectVMConnectorInMessage;
@@ -81,12 +82,10 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 		if(this.credenziali==null){
 			String user = this.properties.get(CostantiConnettori.CONNETTORE_USERNAME);
 			String password = this.properties.get(CostantiConnettori.CONNETTORE_PASSWORD);
-			String subject = this.properties.get(CostantiConnettori.CONNETTORE_SUBJECT);
-			if(user!=null || password!=null || subject!=null){
-				this.credenziali = new Credenziali();
-				this.credenziali.setUsername(user);
+			if(user!=null || password!=null){
+				this.credenziali = new InvocazioneCredenziali();
+				this.credenziali.setUser(user);
 				this.credenziali.setPassword(password);
-				this.credenziali.setSubject(subject);
 			}
 		}
 		
@@ -182,6 +181,14 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 				}
 			}
 			
+			Credenziali credenziali = null;
+			if(this.credenziali!=null &&
+					this.credenziali.getUser()!=null){
+				credenziali = new Credenziali();
+				credenziali.setUsername(this.credenziali.getUser());
+				credenziali.setPassword(this.credenziali.getPassword());
+			}
+			
 			DirectVMConnectorInMessage inMessage = new DirectVMConnectorInMessage(this.requestMsg, 
 					this.getIdModuloAsIDService(),
 					this.getIdModulo(), 
@@ -189,7 +196,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 					this.propertiesUrlBased,
 					pFactory,
 					this.getFunction(), 
-					this.location, this.credenziali,
+					this.location, credenziali,
 					this.getFunctionParameters(),
 					this.requestInfo.getBindingConfig(),
 					directVMProtocolInfo,

@@ -22,10 +22,7 @@
 
 package org.openspcoop2.security.message.authorization;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
@@ -38,23 +35,8 @@ import javax.xml.soap.SOAPException;
 
 import org.apache.wss4j.common.saml.builder.SAML2Constants;
 import org.apache.wss4j.dom.util.WSSecurityUtil;
-import org.herasaf.xacml.core.SyntaxException;
-import org.herasaf.xacml.core.WritingException;
-import org.herasaf.xacml.core.context.RequestMarshaller;
-import org.herasaf.xacml.core.context.ResponseMarshaller;
-import org.herasaf.xacml.core.context.impl.ActionType;
-import org.herasaf.xacml.core.context.impl.AttributeType;
-import org.herasaf.xacml.core.context.impl.AttributeValueType;
 import org.herasaf.xacml.core.context.impl.DecisionType;
-import org.herasaf.xacml.core.context.impl.ObjectFactory;
-import org.herasaf.xacml.core.context.impl.RequestType;
-import org.herasaf.xacml.core.context.impl.ResourceType;
-import org.herasaf.xacml.core.context.impl.ResponseType;
 import org.herasaf.xacml.core.context.impl.ResultType;
-import org.herasaf.xacml.core.context.impl.SubjectType;
-import org.herasaf.xacml.core.dataTypeAttribute.impl.StringDataTypeAttribute;
-import org.herasaf.xacml.core.policy.Evaluatable;
-import org.herasaf.xacml.core.policy.PolicyMarshaller;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
@@ -76,12 +58,14 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.xacml.CachedMapBasedSimplePolicyRepository;
+import org.openspcoop2.utils.xacml.MarshallUtilities;
 import org.openspcoop2.utils.xacml.PolicyDecisionPoint;
 import org.openspcoop2.utils.xacml.PolicyException;
 import org.openspcoop2.utils.xacml.ResultCombining;
+import org.openspcoop2.utils.xacml.ResultUtilities;
+import org.openspcoop2.utils.xacml.XacmlRequest;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
-import org.openspcoop2.utils.xml.JaxbUtils;
 import org.openspcoop2.utils.xml.XPathException;
 import org.openspcoop2.utils.xml.XPathNotFoundException;
 import org.openspcoop2.utils.xml.XPathNotValidException;
@@ -121,12 +105,11 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 	}
 	
 	
-	private ObjectFactory factory;
+	
 	private AbstractXPathExpressionEngine xpathExpressionEngine;
 
     public MessageSecurityAuthorizationSAMLPolicy()  {
-		this.factory = new ObjectFactory();
-		PolicyDecisionPoint.runInitializers(); //necessario per far inizializzare gli unmarshaller in caso di pdp remoto
+    	PolicyDecisionPoint.runInitializers(); //necessario per far inizializzare gli unmarshaller in caso di pdp remoto
 		this.xpathExpressionEngine = new XPathExpressionEngine();
     }
 
@@ -249,7 +232,7 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 		    		throw new SecurityException("Errore durante la ricerca delle policies xacml per il servizio "+idServizio.toString()+": "+e.getMessage(),e);
 		    	}
 		    	if(policy== null){
-		    		throw new SecurityException("Nessuna xacml policy trovata trovata per il servizio "+idServizio.toString());
+		    		throw new SecurityException("Nessuna xacml policy trovata per il servizio "+idServizio.toString());
 		    	}
 		    	
 		    	if(MessageSecurityAuthorizationSAMLPolicy.pdp == null) {
@@ -257,7 +240,7 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 		    	}
 		    	
 				// Caricamento in PdP vedendo che la policy non sia gia stata caricata ....
-		    	MessageSecurityAuthorizationSAMLPolicy.pdp.addPolicy(unmarshallPolicy(policy), servizioKey);
+		    	MessageSecurityAuthorizationSAMLPolicy.pdp.addPolicy(MarshallUtilities.unmarshallPolicy(policy), servizioKey);
 	    	}
 	    	
 	    	
@@ -296,21 +279,18 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 			
 			// ****** Produzione XACMLRequest a partire dalla SAML ********
 	  	
-	    	RequestType xacmlRequest = this.factory.createRequestType();
+			XacmlRequest xacmlRequest = new XacmlRequest();
 			
-	    	// action
-			ActionType action =  this.factory.createActionType();	
-			action.getAttributes().add(createAttribute("urn:oasis:names:tc:xacml:1.0:action:action-id", azioneKey));
-			xacmlRequest.setAction(action);
+		
+	    	// ** action **
+			xacmlRequest.addAction(azioneKey);
 	
-			// subject
-			SubjectType roleSubject = this.factory.createSubjectType();
-	
+			
+			// ** subject **
 	    	// Creare un Subject che contiene nel subject id:
 	    	// come urn:oasis:names:tc:xacml:1.0:subject:subject-id il valore del principal presente nella richiesta (principalWSS)
 			if(principalWSS != null) {
-				roleSubject.getAttributes().add(
-						createAttribute("urn:oasis:names:tc:xacml:1.0:subject:subject-id", principalWSS));
+				xacmlRequest.addSubjectAttribute("urn:oasis:names:tc:xacml:1.0:subject:subject-id", principalWSS);
 			}
 			
 	    	// inoltre creare altri attribute del subject che contengano:
@@ -319,39 +299,35 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 			// il valore del NameID all'interno dell'elemento Subject 
 			if(SAML_2_0){
 				if(saml.nameIDAuthorization!=null){
-					roleSubject.getAttributes().add(
-							createAttribute(SAML_20_SUBJECT_NAME, saml.nameIDAuthorization));
+					xacmlRequest.addSubjectAttribute(SAML_20_SUBJECT_NAME, saml.nameIDAuthorization);
 				}
 			}
 			else{
 				if(saml.nameIDAuthorization!=null){
-					roleSubject.getAttributes().add(
-							createAttribute(SAML_11_AUTHORIZATION_SUBJECT_NAME, saml.nameIDAuthorization));
+					xacmlRequest.addSubjectAttribute(SAML_11_AUTHORIZATION_SUBJECT_NAME, saml.nameIDAuthorization);
 				}
 				if(saml.nameIDAuthentication!=null){
-					roleSubject.getAttributes().add(
-							createAttribute(SAML_11_AUTHENTICATION_SUBJECT_NAME, saml.nameIDAuthentication));
+					xacmlRequest.addSubjectAttribute(SAML_11_AUTHENTICATION_SUBJECT_NAME, saml.nameIDAuthentication);
 				}
 			}
 	
 	    	// il valore dell'elemento Issuer
 			if(SAML_2_0){
-				roleSubject.getAttributes().add(
-						createAttribute(SAML_20_ISSUER, saml.issuer));
+				xacmlRequest.addSubjectAttribute(SAML_20_ISSUER, saml.issuer);
 			}
 			else{
-				roleSubject.getAttributes().add(
-						createAttribute(SAML_11_ISSUER, saml.issuer));
+				xacmlRequest.addSubjectAttribute(SAML_11_ISSUER, saml.issuer);
 			}
 			
 	    	// - AttributeId="urn:oasis:names:tc:SAML:XX:assertion/AttributeStatement/Attribute/Name/<Nome> se il NameFormat non è una uri altrimenti direttamente il nome come attribute Id
 			for(String keyAttribute: saml.customAttributes.keySet()) {
-				roleSubject.getAttributes().add(
-						createAttribute(keyAttribute, saml.customAttributes.get(keyAttribute)));
+				xacmlRequest.addSubjectAttribute(keyAttribute, saml.customAttributes.get(keyAttribute));
 			}
 	
-			xacmlRequest.getSubjects().add(roleSubject);
-			xacmlRequest.setEnvironment(this.factory.createEnvironmentType());
+			
+			// ** environment **
+			
+			xacmlRequest.createEnvironment();
 	
 			
 			
@@ -359,17 +335,15 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 			// ****** Valutazione XACMLRequest con PdD ********
 			
 			List<ResultType> results = null;
-	    	ResourceType resource = this.factory.createResourceType();
 			if(pdpLocal){
 	    		try {
 	    			
 	    			//solo in caso di pdp locale inizializzo la resource __resource_id___ con il nome del servizio in modo da consentire l'identificazione della policy
 	    			
-	    			resource.getAttributes().add(createAttribute(CachedMapBasedSimplePolicyRepository.RESOURCE_ATTRIBUTE_ID_TO_MATCH, servizioKey));
+	    			xacmlRequest.addResourceAttribute(CachedMapBasedSimplePolicyRepository.RESOURCE_ATTRIBUTE_ID_TO_MATCH, servizioKey);
 	    					
-	    			xacmlRequest.getResources().add(resource);
 	    	    	messageSecurityContext.getLog().debug("----XACML Request locale begin ---");
-	    	    	messageSecurityContext.getLog().debug(new String(marshallRequest(xacmlRequest)));
+	    	    	messageSecurityContext.getLog().debug(new String(MarshallUtilities.marshallRequest(xacmlRequest)));
 	    	    	messageSecurityContext.getLog().debug("----XACML Request locale end ---");
 	    	    	
 	    			results = MessageSecurityAuthorizationSAMLPolicy.pdp.evaluate(xacmlRequest);
@@ -385,8 +359,9 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 	    	}
 	    	else{
 	    		try{
-	    			xacmlRequest.getResources().add(resource);	    			
-	    			byte[] xacmlBytes = marshallRequest(xacmlRequest);
+	    			xacmlRequest.createResource();
+	    			
+	    			byte[] xacmlBytes = MarshallUtilities.marshallRequest(xacmlRequest);
 	    	    	messageSecurityContext.getLog().debug("----XACML Request remota begin ---");
 	    	    	messageSecurityContext.getLog().debug(new String(xacmlBytes));
 	    	    	messageSecurityContext.getLog().debug("----XACML Request remota end ---");
@@ -401,7 +376,7 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 	    	    	HttpResponse httpResponse = HttpUtilities.httpInvoke(httpRequest);
 	    			if(httpResponse.getResultHTTPOperation()==200){
 	    				byte[] res = httpResponse.getContent();
-	    				results = unmarshall(res);
+	    				results = MarshallUtilities.unmarshallResult(res);
 	    			}
 	    			else{
 	    				throw new Exception("invocazione fallita (http-return-code: "+httpResponse.getResultHTTPOperation()+")");
@@ -427,57 +402,17 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
     				tipo = "XACML-Policy-RemotePdp";
     			}
 	    		try{
-	    			StringBuffer bfPolicy = new StringBuffer();
-	    			for (int i = 0; i < results.size(); i++) {
-		        		ResultType res = results.get(i);
-	    				if(bfPolicy.length()>0){
-	    					bfPolicy.append("\n");
-	    				}
-	    				bfPolicy.append("Result["+(i+1)+"]: ");
-	    				ByteArrayOutputStream bout = new ByteArrayOutputStream();
-	    				JaxbUtils.objToXml(bout, res.getClass(), res);
-	    				bout.flush();
-	    				bout.close();
-	    				bfPolicy.append(bout.toString());
-	    			}
-	    			messageSecurityContext.getLog().error("Autorizzazione con XACMLPolicy fallita pddLocal["+pdpLocal+"]"+url+"; results (size:"+results.size()+"): \n"+bfPolicy.toString());
+	    			String resultAsString = ResultUtilities.toRawString(results);
+	    			messageSecurityContext.getLog().error("Autorizzazione con XACMLPolicy fallita pddLocal["+pdpLocal+"]"+url+"; results (size:"+results.size()+"): \n"+resultAsString);
 	    		}catch(Throwable e){
 	    			messageSecurityContext.getLog().error("Autorizzazione con XACMLPolicy fallita pddLocal["+pdpLocal+"]"+url+". Serializzazione risposta non riuscita",e);
 	    		}
 	    		
 	        	result.setAuthorized(false);
 		        	
-	        	StringBuffer bf = new StringBuffer();
-	        	for (int i = 0; i < results.size(); i++) {
-	        		ResultType res = results.get(i);
-	        		
-	        		boolean check = false;
-		        	if(DecisionType.DENY.equals(decision)) {
-		        		check = DecisionType.DENY.equals(res.getDecision());
-		        	}
-		        	else{
-		        		check = DecisionType.DENY.equals(res.getDecision()) || DecisionType.INDETERMINATE.equals(res.getDecision()) || DecisionType.NOT_APPLICABLE.equals(res.getDecision());
-		        	}
-	        		
-	    	    	if(check) {
-	    	    		if(bf.length()>0){
-	    	    			bf.append(" - ");
-	    				}
-	    	    		bf.append("(result-"+(i+1)+" "+res.getDecision().name());
-	    	    		if( res.getStatus() != null ){
-		    	    		if(res.getStatus().getStatusCode() != null){
-		    	    			bf.append(" code:").append(res.getStatus().getStatusCode().getValue());
-		    	    		}
-		    	    		if(res.getStatus().getStatusMessage() != null){
-		    	    			bf.append(" ").append(res.getStatus().getStatusMessage());
-		    	    		}
-	    	    		}
-	    	    		bf.append(")");
-	    	        	
-	    	    	}
-	    	    }
-	        	if(bf.length()>0){
-	        		result.setErrorMessage(tipo+" "+bf.toString());
+	        	String resultAsString = ResultUtilities.toString(results, decision);
+	        	if(resultAsString!=null && resultAsString.length()>0){
+	        		result.setErrorMessage(tipo+" "+resultAsString);
 	        	}
 	        	else{
 	        		result.setErrorMessage(tipo);
@@ -494,58 +429,7 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
     	}
     }
 
-    private List<ResultType> unmarshall(byte[] res) throws SyntaxException {
-		
-    	InputStream inputStream = null;
-    	try{
-    		inputStream = new ByteArrayInputStream(res);
-    		ResponseType response = ResponseMarshaller.unmarshal(inputStream);
-    		return response.getResults();
-    	} finally {
-    		if(inputStream != null) {
-    			try {
-    				inputStream.close();
-    			} catch(Exception e) {}
-    		}
-    	}
-	}
-
-    private Evaluatable unmarshallPolicy(byte[] res) throws SyntaxException {
-		
-    	InputStream inputStream = null;
-    	try{
-    		inputStream = new ByteArrayInputStream(res);
-    		Evaluatable response = PolicyMarshaller.unmarshal(inputStream);
-    		return response;
-    	} finally {
-    		if(inputStream != null) {
-    			try {
-    				inputStream.close();
-    			} catch(Exception e) {}
-    		}
-    	}
-	}
-
-
-	private byte[] marshallRequest(RequestType request) throws SecurityException {
-		ByteArrayOutputStream baos = null;
-		try{
-
-			baos = new ByteArrayOutputStream();
-			RequestMarshaller.marshal(request, baos);
-			
-			return baos.toByteArray();
-		} catch (WritingException e) {
-			throw new SecurityException(e);
-		} finally {
-			if(baos != null) {
-				try{
-					baos.flush();
-					baos.close();
-				} catch (Exception e) {}
-			}
-		}
-    }
+ 
 	
 	private class SAMLAttributes {
 		public String nameIDAuthentication;
@@ -688,28 +572,5 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 		}
 	}
 
-	private AttributeType createAttribute(String name, List<String> values) {
-
-		AttributeType attribute = this.factory.createAttributeType();
-		
-		for(String value: values) {
-			AttributeValueType value1 = new AttributeValueType();
-			value1.getContent().add(value);
-			attribute.getAttributeValues().add(value1);
-		}
-
-		attribute.setAttributeId(name);
-		attribute.setDataType(new StringDataTypeAttribute());		
-		return attribute;
-		
-	}
-
-	private AttributeType createAttribute(String name, String value) {
-
-		List<String> lst = new ArrayList<String>();
-		lst.add(value);
-		return createAttribute(name, lst);
-		
-	}
     
 }

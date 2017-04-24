@@ -35,6 +35,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAzione;
@@ -44,8 +45,11 @@ import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
+import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
+import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.constants.ValidazioneContenutiApplicativiTipo;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -54,14 +58,17 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.PortType;
+import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.IdentificazioneView;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -115,10 +122,11 @@ public final class PorteDelegateChange extends Action {
 			String idsogg = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 			int soggInt = Integer.parseInt(idsogg);
 			String descr = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_DESCRIZIONE);
-			String autenticazione = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE );
-			String nomeauth = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_AUTENTICAZIONE );
-			String autorizzazione = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE);
-			String nomeautor = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_NOME_AUTORIZZAZIONE);
+			String autenticazione = request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE );
+			String autenticazioneOpzionale = request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE );
+			String autenticazioneCustom = request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM );
+			String autorizzazione = request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE);
+			String autorizzazioneCustom = request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM);
 			String tipoSoggettoErogatore = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_SP);
 			String modeSoggettoErogatore = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_SP);
 			String nomeSoggettoErogatore = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SP);
@@ -141,10 +149,15 @@ public final class PorteDelegateChange extends Action {
 			String xsd = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_XSD);
 			String tipoValidazione = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE);
 			String scadcorr = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SCADENZA_CORRELAZIONE_APPLICATIVA);
-			String autorizzazioneContenuti = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE_CONTENUTI);
+			String autorizzazioneContenuti = request.getParameter(CostantiControlStation.PARAMETRO_AUTORIZZAZIONE_CONTENUTI);
 			String forceWsdlBased = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_FORCE_WSDL_BASED);
 			String applicaMTOM = request.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_APPLICA_MTOM);
 
+			String autorizzazioneAutenticati = request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE);
+			String autorizzazioneRuoli = request.getParameter(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI);
+			String autorizzazioneRuoliTipologia = request.getParameter(CostantiControlStation.PARAMETRO_RUOLO_TIPOLOGIA);
+			String ruoloMatch = request.getParameter(CostantiControlStation.PARAMETRO_RUOLO_MATCH);
+			
 			// check su oldNomePD
 			PageData pdOld =  ServletUtils.getPageDataFromSession(session);
 			String oldNomePD = pdOld.getHidden(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_OLD_NOME_PD);
@@ -192,6 +205,10 @@ public final class PorteDelegateChange extends Action {
 
 			// Informazioni sul numero di ServiziApplicativi, Correlazione Applicativa e stato Message-Security
 			int numSA =pde.sizeServizioApplicativoList();
+			int numRuoli = 0;
+			if(pde.getRuoli()!=null){
+				numRuoli = pde.getRuoli().sizeRuoloList();
+			}
 			String statoMessageSecurity  = pde.getStatoMessageSecurity() ;
 
 			// Stato MTOM
@@ -324,20 +341,37 @@ public final class PorteDelegateChange extends Action {
 				if (autenticazione == null) {
 					autenticazione = pde.getAutenticazione();
 					if (autenticazione != null &&
-							!autenticazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE_SSL) &&
-							!autenticazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE_BASIC) &&
-							!autenticazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE_NONE)) {
-						nomeauth = autenticazione;
-						autenticazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE_CUSTOM;
+							!TipoAutenticazione.getValues().contains(autenticazione)) {
+						autenticazioneCustom = autenticazione;
+						autenticazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM;
+					}
+				}
+				if(autenticazioneOpzionale==null){
+					autenticazioneOpzionale = "";
+					if(pde.getAutenticazioneOpzionale()!=null){
+						if (pde.getAutenticazioneOpzionale().equals(StatoFunzionalita.ABILITATO)) {
+							autenticazioneOpzionale = Costanti.CHECK_BOX_ENABLED;
+						}
 					}
 				}
 				if (autorizzazione == null) {
-					autorizzazione = pde.getAutorizzazione();
-					if (autorizzazione != null &&
-							!autorizzazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE_OPENSPCOOP) &&
-							!autorizzazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE_NONE)) {
-						nomeautor = autorizzazione;
-						autorizzazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE_CUSTOM;
+					if (pde.getAutorizzazione() != null &&
+							!TipoAutorizzazione.getAllValues().contains(pde.getAutorizzazione())) {
+						autorizzazioneCustom = pde.getAutorizzazione();
+						autorizzazione = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
+					}
+					else{
+						autorizzazione = AutorizzazioneUtilities.convertToStato(pde.getAutorizzazione());
+						if(TipoAutorizzazione.isAuthenticationRequired(pde.getAutorizzazione()))
+							autorizzazioneAutenticati = Costanti.CHECK_BOX_ENABLED;
+						if(TipoAutorizzazione.isRolesRequired(pde.getAutorizzazione()))
+							autorizzazioneRuoli = Costanti.CHECK_BOX_ENABLED;
+						autorizzazioneRuoliTipologia = AutorizzazioneUtilities.convertToRuoloTipologia(pde.getAutorizzazione()).getValue();
+					}
+				}
+				if (ruoloMatch == null) {
+					if(pde.getRuoli()!=null && pde.getRuoli().getMatch()!=null){
+						ruoloMatch = pde.getRuoli().getMatch().getValue();
 					}
 				}
 				if (xsd == null) {
@@ -505,10 +539,7 @@ public final class PorteDelegateChange extends Action {
 				String[] soggettiList = null;
 				String[] soggettiListLabel = null;
 				if (modeSoggettoErogatore.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-					List<IDSoggetto> list = null;
-					try{
-						list = soggettiCore.getAllIdSoggettiRegistro(new FiltroRicercaSoggetti());
-					}catch(DriverRegistroServiziNotFound dNotFound){}
+					List<IDSoggetto> list = soggettiCore.getAllIdSoggettiRegistro(new FiltroRicercaSoggetti());
 					if (list!=null && list.size() > 0) {
 
 						List<String> soggettiListTmp = new ArrayList<String>();
@@ -587,15 +618,18 @@ public final class PorteDelegateChange extends Action {
 					}
 				}
 
+				AccordoServizioParteComune as = null;
+				if ( servS!=null ) {
+					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(servS.getAccordoServizioParteComune());
+					as = apcCore.getAccordoServizio(idAccordo);
+				}
+				
 				// Se modeaz = register-input, prendo la lista delle azioni
 				// associate a servid e la metto in un array
 				String[] azioniList = null;
 				String[] azioniListLabel = null;
 				if ((modeaz != null) && modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
 					if ( servS!=null ) {
-						
-						IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(servS.getAccordoServizioParteComune());
-						AccordoServizioParteComune as = apcCore.getAccordoServizio(idAccordo);
 
 						if(servS.getPortType()!=null){
 							// Bisogna prendere le operations del port type
@@ -668,10 +702,13 @@ public final class PorteDelegateChange extends Action {
 						azioniList, azione, patternAzione, numAzioni,
 						stateless, localForward, ricsim, ricasim, xsd,
 						tipoValidazione, numCorrApp, scadcorr, gestBody,
-						gestManifest,integrazione, nomeauth, nomeautor,autorizzazioneContenuti,
-						idsogg,protocollo,numSA,statoMessageSecurity,statoMessageMTOM,
+						gestManifest,integrazione, autenticazioneOpzionale, autenticazioneCustom, 
+						autorizzazioneCustom,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,autorizzazioneContenuti,
+						idsogg,protocollo,numSA,numRuoli,ruoloMatch,
+						statoMessageSecurity,statoMessageMTOM,
 						numCorrelazioneReq,numCorrelazioneRes,
-						forceWsdlBased,applicaMTOM,riusoID,serviceBinding);
+						forceWsdlBased,applicaMTOM,riusoID,
+						servS, as,serviceBinding);
 
 				pd.setDati(dati);
 
@@ -721,10 +758,7 @@ public final class PorteDelegateChange extends Action {
 				String[] soggettiList = null;
 				String[] soggettiListLabel = null;
 				if (modeSoggettoErogatore.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-					List<IDSoggetto> list = null;
-					try{
-						list = soggettiCore.getAllIdSoggettiRegistro(new FiltroRicercaSoggetti());
-					}catch(DriverRegistroServiziNotFound dNotFound){}
+					List<IDSoggetto> list = soggettiCore.getAllIdSoggettiRegistro(new FiltroRicercaSoggetti());
 					if (list!=null && list.size() > 0) {
 
 						List<String> soggettiListTmp = new ArrayList<String>();
@@ -771,67 +805,73 @@ public final class PorteDelegateChange extends Action {
 					}
 				}
 
+				IDSoggetto idSoggetto = null;
+				IDServizio idServizio = null;
+				AccordoServizioParteSpecifica servS = null;
+				if (	(servid != null && !"".equals(servid) && servid.contains("/"))
+						&& 
+						(idSoggettoErogatore != null && !"".equals(idSoggettoErogatore) && idSoggettoErogatore.contains("/"))
+						) {
+					idSoggetto = new IDSoggetto(idSoggettoErogatore.split("/")[0], idSoggettoErogatore.split("/")[1]);
+					idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(servid.split("/")[0], servid.split("/")[1], idSoggetto, 
+							Integer.parseInt(servid.split("/")[2])); 
+					try{
+						servS = apsCore.getServizio(idServizio);
+					}catch(DriverRegistroServiziNotFound dNotFound){
+					}
+				}
+				
+				AccordoServizioParteComune as = null;
+				if(servS!=null){
+					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(servS.getAccordoServizioParteComune());
+					as = apcCore.getAccordoServizio(idAccordo);
+				}
+				
 				// Se modeaz = register-input, prendo la lista delle azioni
 				// associate a servid e la metto in un array
 				String[] azioniList = null;
 				String[] azioniListLabel = null;
-				if ((modeaz != null) && modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
-					if (	(servid != null && !"".equals(servid) && servid.contains("/"))
-							&& 
-							(idSoggettoErogatore != null && !"".equals(idSoggettoErogatore) && idSoggettoErogatore.contains("/"))
-							) {
-						IDSoggetto idSoggetto = new IDSoggetto(idSoggettoErogatore.split("/")[0], idSoggettoErogatore.split("/")[1]);
-						IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(servid.split("/")[0], servid.split("/")[1], idSoggetto, 
-								Integer.parseInt(servid.split("/")[2])); 
-						AccordoServizioParteSpecifica servS = null;
-						try{
-							servS = apsCore.getServizio(idServizio);
-						}catch(DriverRegistroServiziNotFound dNotFound){
-
-						}
-						if(servS==null){
-							throw new Exception("Servizio ["+idServizio.toString()+"] non riscontrato");
-						}
-						IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(servS.getAccordoServizioParteComune());
-						AccordoServizioParteComune as = apcCore.getAccordoServizio(idAccordo);
-
-						if(servS.getPortType()!=null){
-							// Bisogna prendere le operations del port type
-							PortType pt = null;
-							for (int i = 0; i < as.sizePortTypeList(); i++) {
-								if(as.getPortType(i).getNome().equals(servS.getPortType())){
-									pt = as.getPortType(i);
-									break;
-								}
-							}
-							if(pt==null){
-								throw new Exception("Servizio ["+idServizio.toString()+"] possiede il port type ["+servS.getPortType()+"] che non risulta essere registrato nell'accordo di servizio ["+servS.getAccordoServizioParteComune()+"]");
-							}
-							if(pt.sizeAzioneList()>0){
-								azioniList = new String[pt.sizeAzioneList()];
-								azioniListLabel = new String[pt.sizeAzioneList()];
-								for (int i = 0; i < pt.sizeAzioneList(); i++) {
-									if (azid == null) {
-										azid = pt.getAzione(i).getNome();
-									}
-									azioniList[i] = "" + pt.getAzione(i).getNome();
-									azioniListLabel[i] = pt.getAzione(i).getNome();
-								}
-							}
-						}else{
-							if(as.sizeAzioneList()>0){
-								azioniList = new String[as.sizeAzioneList()];
-								azioniListLabel = new String[as.sizeAzioneList()];
-								for (int i = 0; i < as.sizeAzioneList(); i++) {
-									if (azid == null) {
-										azid = as.getAzione(i).getNome();
-									}
-									azioniList[i] = "" + as.getAzione(i).getNome();
-									azioniListLabel[i] = as.getAzione(i).getNome();
-								}
-							}
-						}				
+				if ((modeaz != null) && modeaz.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {					
+					if(servS==null){
+						throw new Exception("Servizio ["+idServizio.toString()+"] non riscontrato");
 					}
+					
+					if(servS.getPortType()!=null){
+						// Bisogna prendere le operations del port type
+						PortType pt = null;
+						for (int i = 0; i < as.sizePortTypeList(); i++) {
+							if(as.getPortType(i).getNome().equals(servS.getPortType())){
+								pt = as.getPortType(i);
+								break;
+							}
+						}
+						if(pt==null){
+							throw new Exception("Servizio ["+idServizio.toString()+"] possiede il port type ["+servS.getPortType()+"] che non risulta essere registrato nell'accordo di servizio ["+servS.getAccordoServizioParteComune()+"]");
+						}
+						if(pt.sizeAzioneList()>0){
+							azioniList = new String[pt.sizeAzioneList()];
+							azioniListLabel = new String[pt.sizeAzioneList()];
+							for (int i = 0; i < pt.sizeAzioneList(); i++) {
+								if (azid == null) {
+									azid = pt.getAzione(i).getNome();
+								}
+								azioniList[i] = "" + pt.getAzione(i).getNome();
+								azioniListLabel[i] = pt.getAzione(i).getNome();
+							}
+						}
+					}else{
+						if(as.sizeAzioneList()>0){
+							azioniList = new String[as.sizeAzioneList()];
+							azioniListLabel = new String[as.sizeAzioneList()];
+							for (int i = 0; i < as.sizeAzioneList(); i++) {
+								if (azid == null) {
+									azid = as.getAzione(i).getNome();
+								}
+								azioniList[i] = "" + as.getAzione(i).getNome();
+								azioniListLabel[i] = as.getAzione(i).getNome();
+							}
+						}
+					}				
 				}
 				int numAzioni = 0;
 				if (azioniList != null)
@@ -857,9 +897,12 @@ public final class PorteDelegateChange extends Action {
 						azioniListLabel, azioniList, azione, azione,
 						numAzioni,  stateless, localForward, ricsim, ricasim,
 						xsd, tipoValidazione, numCorrApp, scadcorr, gestBody,
-						gestManifest,integrazione, nomeauth, nomeautor,autorizzazioneContenuti,
-						idsogg,protocollo,numSA,statoMessageSecurity,statoMessageMTOM,
-						numCorrelazioneReq,numCorrelazioneRes,forceWsdlBased,applicaMTOM,riusoID,serviceBinding);
+						gestManifest,integrazione, autenticazioneOpzionale, autenticazioneCustom, 
+						autorizzazioneCustom,autorizzazioneAutenticati,autorizzazioneRuoli,autorizzazioneRuoliTipologia,autorizzazioneContenuti,
+						idsogg,protocollo,numSA,numRuoli,ruoloMatch,
+						statoMessageSecurity,statoMessageMTOM,
+						numCorrelazioneReq,numCorrelazioneRes,forceWsdlBased,applicaMTOM,riusoID,
+						servS, as,serviceBinding);
 
 				pd.setDati(dati);
 
@@ -901,14 +944,34 @@ public final class PorteDelegateChange extends Action {
 			oldIDPortaDelegataForUpdate.setNome(oldPD.getNome());
 			portaDelegata.setOldIDPortaDelegataForUpdate(oldIDPortaDelegataForUpdate);
 			portaDelegata.setDescrizione(descr);
-			if (autenticazione == null || !autenticazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_AUTENTICAZIONE_CUSTOM))
+			if (autenticazione == null || !autenticazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM))
 				portaDelegata.setAutenticazione(autenticazione);
 			else
-				portaDelegata.setAutenticazione(nomeauth);
-			if (autorizzazione == null || !autorizzazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_AUTORIZZAZIONE_CUSTOM))
-				portaDelegata.setAutorizzazione(autorizzazione);
+				portaDelegata.setAutenticazione(autenticazioneCustom);
+			if(autenticazioneOpzionale != null){
+				if(ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale))
+					portaDelegata.setAutenticazioneOpzionale(StatoFunzionalita.ABILITATO);
+				else 
+					portaDelegata.setAutenticazioneOpzionale(StatoFunzionalita.DISABILITATO);
+			} else 
+				portaDelegata.setAutenticazioneOpzionale(null);
+			if (autorizzazione == null || !autorizzazione.equals(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM))
+				portaDelegata.setAutorizzazione(AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(autorizzazione, 
+						ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati), ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli), 
+						RuoloTipologia.toEnumConstant(autorizzazioneRuoliTipologia)));
 			else
-				portaDelegata.setAutorizzazione(nomeautor);
+				portaDelegata.setAutorizzazione(autorizzazioneCustom);
+			
+			if(ruoloMatch!=null && !"".equals(ruoloMatch)){
+				RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant(ruoloMatch);
+				if(tipoRuoloMatch!=null){
+					if(portaDelegata.getRuoli()==null){
+						portaDelegata.setRuoli(new AutorizzazioneRuoli());
+					}
+					portaDelegata.getRuoli().setMatch(tipoRuoloMatch);
+				}
+			}
+			
 			if (stateless!=null && stateless.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_STATELESS_DEFAULT))
 				portaDelegata.setStateless(null);
 			else

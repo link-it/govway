@@ -27,11 +27,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 import org.apache.logging.log4j.Level;
+import org.openspcoop2.core.registry.driver.BeanUtilities;
 import org.openspcoop2.core.registry.driver.ValidazioneSemantica;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.registry.driver.uddi.DriverRegistroServiziUDDI;
 import org.openspcoop2.core.registry.driver.web.DriverRegistroServiziWEB;
-import org.openspcoop2.core.registry.driver.ws.DriverRegistroServiziWS;
 import org.openspcoop2.core.registry.driver.xml.DriverRegistroServiziXML;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
@@ -279,16 +279,7 @@ public class TestValidazioneSemantica {
 			if(password!=null)
 				password = password.trim();
 			
-			DriverRegistroServiziWS driver = null;
-			if(username!=null){
-				driver = new DriverRegistroServiziWS(url,username,password,log);
-			}else{
-				driver = new DriverRegistroServiziWS(url,log);
-			}
-			if(driver.create)
-				log.info("Inizializzato Registro dei Servizi WS");
-			else
-				throw new Exception("RegistroServizi WS non inizializzato");
+			BeanUtilities driver = DriverRegistroServiziWSInitUtilities.newInstance(url, username, password, log);
 			
 			registro = driver.getImmagineCompletaRegistroServizi();
 		}

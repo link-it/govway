@@ -101,6 +101,10 @@ public class PolicyDecisionPoint {
 		return this._evaluate(request);
 	}
 
+	public List<ResultType> evaluate(XacmlRequest request) throws PolicyException {
+		return this.evaluate(request.getXacmlRequest());
+	}
+	
 	public List<ResultType> evaluate(RequestType request) throws PolicyException {
 		return this._evaluate(request);
 	}

@@ -145,6 +145,13 @@ public interface IProtocolConfiguration extends IComponentFactory {
 	public boolean isSupportato(FunzionalitaProtocollo funzionalitaProtocollo) throws ProtocolException;
 		
 	/**
+	 * Ritorna l'indicazione se l'autenticazione dei soggetti viene supportato dal protocollo
+	 * 
+	 * @return True se se l'autenticazione dei soggetti viene supportato dal protocollo
+	 */
+	public boolean isSupportoAutenticazioneSoggetti();
+	
+	/**
 	 * Ritorna l'indicazione se il codice IPA viene supportato dal protocollo
 	 * 
 	 * @return True se il codice IPA viene supportato dal protocollo

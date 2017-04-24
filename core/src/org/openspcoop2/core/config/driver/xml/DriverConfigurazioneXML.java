@@ -39,6 +39,7 @@ import org.jibx.runtime.IUnmarshallingContext;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Configurazione;
@@ -346,8 +347,9 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 				ValidazioneSemantica validazioneSemantica = new ValidazioneSemantica(this.openspcoop,this.tipiConnettori,
 						this.tipiSoggetti,this.tipiServiziSoap,this.tipiServiziRest,
 						this.tipoMsgDiagnosticiAppender,this.tipoTracciamentoAppender,
-						this.tipoAutenticazione,this.tipoAutorizzazione,
-						this.tipoAutorizzazioneContenuto,this.tipoAutorizzazioneBusteContenuto,
+						this.tipoAutenticazionePortaDelegata,this.tipoAutenticazionePortaApplicativa,
+						this.tipoAutorizzazionePortaDelegata,this.tipoAutorizzazionePortaApplicativa,
+						this.tipoAutorizzazioneContenutoPortaDelegata,this.tipoAutorizzazioneContenutoPortaApplicativa,
 						this.tipoIntegrazionePD,this.tipoIntegrazionePA,
 						true,
 						this.log);
@@ -375,17 +377,20 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 	private String[] tipiServiziRest = null;
 	private String[] tipoMsgDiagnosticiAppender = null;
 	private String[] tipoTracciamentoAppender = null;
-	private String[] tipoAutenticazione = null;
-	private String[] tipoAutorizzazione = null;
-	private String[] tipoAutorizzazioneContenuto = null;
-	private String[] tipoAutorizzazioneBusteContenuto = null;
+	private String[] tipoAutenticazionePortaDelegata = null;
+	private String[] tipoAutenticazionePortaApplicativa = null;
+	private String[] tipoAutorizzazionePortaDelegata = null;
+	private String[] tipoAutorizzazionePortaApplicativa = null;
+	private String[] tipoAutorizzazioneContenutoPortaDelegata = null;
+	private String[] tipoAutorizzazioneContenutoPortaApplicativa = null;
 	private String[] tipoIntegrazionePD = null;
 	private String[] tipoIntegrazionePA = null;
 	public void abilitazioneValidazioneSemanticaDuranteModificaXML(String[] tipiConnettori,
 			String[] tipiSoggetti,String[] tipiServiziSoap,String[] tipiServiziRest,
 			String[]tipoMsgDiagnosticiAppender,String[]tipoTracciamentoAppender,
-			String[]tipoAutenticazione,String[]tipoAutorizzazione,
-			String[] tipoAutorizzazioneContenuto,String[] tipoAutorizzazioneBusteContenuto,
+			String[]tipoAutenticazionePortaDelegata,String[]tipoAutenticazionePortaApplicativa,
+			String[]tipoAutorizzazionePortaDelegata,String[]tipoAutorizzazionePortaApplicativa,
+			String[]tipoAutorizzazioneContenutoPortaDelegata,String[]tipoAutorizzazioneContenutoPortaApplicativa,
 			String[]tipoIntegrazionePD,String[]tipoIntegrazionePA){
 		this.validazioneSemanticaDuranteModificaXML = true;
 		
@@ -395,10 +400,12 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		this.tipiServiziRest = tipiServiziRest;
 		this.tipoMsgDiagnosticiAppender= tipoMsgDiagnosticiAppender;
 		this.tipoTracciamentoAppender=tipoTracciamentoAppender;
-		this.tipoAutenticazione=tipoAutenticazione;
-		this.tipoAutorizzazione=tipoAutorizzazione;
-		this.tipoAutorizzazioneContenuto=tipoAutorizzazioneContenuto;
-		this.tipoAutorizzazioneBusteContenuto=tipoAutorizzazioneBusteContenuto;
+		this.tipoAutenticazionePortaDelegata=tipoAutenticazionePortaDelegata;
+		this.tipoAutenticazionePortaApplicativa=tipoAutenticazionePortaApplicativa;
+		this.tipoAutorizzazionePortaDelegata=tipoAutorizzazionePortaDelegata;
+		this.tipoAutorizzazionePortaApplicativa=tipoAutorizzazionePortaApplicativa;
+		this.tipoAutorizzazioneContenutoPortaDelegata=tipoAutorizzazioneContenutoPortaDelegata;
+		this.tipoAutorizzazioneContenutoPortaApplicativa=tipoAutorizzazioneContenutoPortaApplicativa;
 		this.tipoIntegrazionePD=tipoIntegrazionePD;
 		this.tipoIntegrazionePA=tipoIntegrazionePA;
 	}
@@ -788,6 +795,22 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 							continue;
 						}
 					}
+					// Filtro By Ruoli
+					if(filtroRicerca.getIdRuolo()!=null && filtroRicerca.getIdRuolo().getNome()!=null){
+						if(pd.getRuoli()==null){
+							continue;
+						}
+						boolean contains = false;
+						for (int z = 0; z < pd.getRuoli().sizeRuoloList(); z++) {
+							if(filtroRicerca.getIdRuolo().getNome().equals(pd.getRuoli().getRuolo(z).getNome())){
+								contains = true;
+								break;
+							}
+						}
+						if(!contains){
+							continue;
+						}
+					}
 				}
 				
 				pd.setTipoSoggettoProprietario(soggetto.getTipo());
@@ -1155,6 +1178,22 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 							continue;
 						}
 					}
+					// Filtro By Ruoli
+					if(filtroRicerca.getIdRuolo()!=null && filtroRicerca.getIdRuolo().getNome()!=null){
+						if(pa.getRuoli()==null){
+							continue;
+						}
+						boolean contains = false;
+						for (int z = 0; z < pa.getRuoli().sizeRuoloList(); z++) {
+							if(filtroRicerca.getIdRuolo().getNome().equals(pa.getRuoli().getRuolo(z).getNome())){
+								contains = true;
+								break;
+							}
+						}
+						if(!contains){
+							continue;
+						}
+					}
 				}
 				
 				pa.setTipoSoggettoProprietario(soggetto.getTipo());
@@ -1289,8 +1328,37 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 		
 		throw new DriverConfigurazioneNotFound("Servizio Applicativo cercato con credenziali ssl non trovato");
 	}
+	
+	@Override
+	public ServizioApplicativo getServizioApplicativoByCredenzialiPrincipal(String aUserPrincipal) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+		
+		if(aUserPrincipal==null){
+			throw new DriverConfigurazioneException("Principal non definito");
+		}
+		
+		for(int i=0; i<this.openspcoop.sizeSoggettoList(); i++){
+			Soggetto soggettoSearch = this.openspcoop.getSoggetto(i);
+			for(int j=0; j<soggettoSearch.sizeServizioApplicativoList(); j++){
+				ServizioApplicativo sa = soggettoSearch.getServizioApplicativo(j);
+				if(sa.getInvocazionePorta()!=null){
+					for(int z=0;z<sa.getInvocazionePorta().sizeCredenzialiList();z++){
+						if(sa.getInvocazionePorta().getCredenziali(z).getTipo()!=null &&
+								CostantiConfigurazione.CREDENZIALE_PRINCIPAL.equals(sa.getInvocazionePorta().getCredenziali(z).getTipo())){
+							if( aUserPrincipal.equals(sa.getInvocazionePorta().getCredenziali(z).getUser()) ){
+								sa.setTipoSoggettoProprietario(soggettoSearch.getTipo());
+								sa.setNomeSoggettoProprietario(soggettoSearch.getNome());
+								return sa;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		throw new DriverConfigurazioneNotFound("Servizio Applicativo cercato con credenziali principal non trovato");
+	}
 
-	    
+	
 	/**
 	 * Restituisce la lista degli identificativi dei servizi applicativi
 	 * 
@@ -1340,6 +1408,25 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 					}
 					if(filtroRicerca.getNomeSoggetto()!=null){
 						if(soggetto.getNome().equals(filtroRicerca.getNomeSoggetto()) == false){
+							continue;
+						}
+					}
+					// Filtro By Ruoli
+					if(filtroRicerca.getIdRuolo()!=null && filtroRicerca.getIdRuolo().getNome()!=null){
+						if(sa.getInvocazionePorta()==null){
+							continue;
+						}
+						if(sa.getInvocazionePorta().getRuoli()==null){
+							continue;
+						}
+						boolean contains = false;
+						for (int z = 0; z < sa.getInvocazionePorta().getRuoli().sizeRuoloList(); z++) {
+							if(filtroRicerca.getIdRuolo().getNome().equals(sa.getInvocazionePorta().getRuoli().getRuolo(z).getNome())){
+								contains = true;
+								break;
+							}
+						}
+						if(!contains){
 							continue;
 						}
 					}
@@ -1444,6 +1531,24 @@ implements IDriverConfigurazioneGet,IMonitoraggioRisorsa{
 			throw new DriverConfigurazioneNotFound("[getAccessoDatiAutorizzazione] Informazioni di accesso ai dati di autorizzazione non trovate");
 		
 		return this.openspcoop.getConfigurazione().getAccessoDatiAutorizzazione();
+		
+	}
+	
+	/**
+	 * Restituisce l'accesso ai dati di autenticazione definiti nella Porta di Dominio 
+	 *
+	 * @return AccessoDatiAutenticazione
+	 * 
+	 */
+	@Override
+	public AccessoDatiAutenticazione getAccessoDatiAutenticazione() throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+		
+		refreshConfigurazioneXML();
+
+		if(this.openspcoop.getConfigurazione().getAccessoDatiAutenticazione()==null)
+			throw new DriverConfigurazioneNotFound("[getAccessoDatiAutenticazione] Informazioni di accesso ai dati di autenticazione non trovate");
+		
+		return this.openspcoop.getConfigurazione().getAccessoDatiAutenticazione();
 		
 	}
 

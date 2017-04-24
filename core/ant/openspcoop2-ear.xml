@@ -291,6 +291,28 @@
 				<include name="${mailcap_info}" />
 			</zipfileset>
 		</war>
+
+		<!-- Creo war per security constraint -->
+		<copy file="${deploy_web_dir}/web_app/WEB-INF/web.xml" todir="${build}/web-module" />
+		<replace file="${build}/web-module/web.xml" token="start OpenSPCoop2Startup -->" value="start OpenSPCoop2Startup"/>
+		<replace file="${build}/web-module/web.xml" token="&lt;!-- end OpenSPCoop2Startup" value="end OpenSPCoop2Startup"/>
+		<replace file="${build}/web-module/web.xml" token="start Security Constraint Authentication Container" value="start Security Constraint Authentication Container -->"/>
+		<replace file="${build}/web-module/web.xml" token="end Security Constraint Authentication Container" value="&lt;!--  end Security Constraint Authentication Container"/>
+
+		<war destfile="${dist}/OpenSPCoop2Sec.war" webxml="${build}/web-module/web.xml">
+			<manifest>
+				<attribute name="Class-Path" value="${manifest.classpath.3parti} ${plugins.classpath} ${manifest.classpath.openspcoop} properties/" />
+			</manifest>
+			<webinf dir="${build}/web-module" />
+			<webinf dir="${src}/META-INF">
+				<include name="${jboss_web_xml}"/>
+			</webinf>
+			<!-- DataContentHandler per application/openspcoop2 -->
+			<zipfileset dir="${data_content_handler_dir}" prefix="META-INF">
+				<include name="${mailcap_info}" />
+			</zipfileset>
+		</war>
+
 		<delete dir="${build}/web-module"/>
 	</target>
 
@@ -716,6 +738,7 @@
 			<!-- Applicazioni proprietarie di OpenSPCoop -->
 			<zipfileset dir="${dist}">
 				<include name="OpenSPCoop2.war" />
+				<include name="OpenSPCoop2Sec.war" />
 				<include name="OpenSPCoop2.jar" />
 				<include name="OpenSPCoop2PropertiesLoader.jar" />
 			</zipfileset>
@@ -869,6 +892,7 @@
 
 		<!-- Elimino archivi intermedi -->
 		<delete file="${dist}/OpenSPCoop2.war" />
+		<delete file="${dist}/OpenSPCoop2Sec.war" />
 		<delete file="${dist}/OpenSPCoop2.jar" />
 		<delete file="${dist}/OpenSPCoop2Threads.war" failonerror="false" />
 		

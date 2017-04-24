@@ -1,22 +1,3 @@
-/*
- * OpenSPCoop - Customizable API Gateway 
- * http://www.openspcoop2.org
- * 
- * Copyright (c) 2005-2017 Link.it srl (http://link.it).
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3, as published by
- * the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
 
 package org.openspcoop2.core.config.ws.client.soggetto.search;
 
@@ -105,7 +86,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getTipo() {
-        return this.tipo;
+        return tipo;
     }
 
     /**
@@ -129,7 +110,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getNome() {
-        return this.nome;
+        return nome;
     }
 
     /**
@@ -153,7 +134,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getIdentificativoPorta() {
-        return this.identificativoPorta;
+        return identificativoPorta;
     }
 
     /**
@@ -177,7 +158,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getDescrizione() {
-        return this.descrizione;
+        return descrizione;
     }
 
     /**
@@ -201,7 +182,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public Boolean isRouter() {
-        return this.router;
+        return router;
     }
 
     /**
@@ -225,7 +206,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getPdUrlPrefixRewriter() {
-        return this.pdUrlPrefixRewriter;
+        return pdUrlPrefixRewriter;
     }
 
     /**
@@ -249,7 +230,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getPaUrlPrefixRewriter() {
-        return this.paUrlPrefixRewriter;
+        return paUrlPrefixRewriter;
     }
 
     /**
@@ -273,7 +254,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMin() {
-        return this.oraRegistrazioneMin;
+        return oraRegistrazioneMin;
     }
 
     /**
@@ -297,7 +278,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMax() {
-        return this.oraRegistrazioneMax;
+        return oraRegistrazioneMax;
     }
 
     /**
@@ -321,7 +302,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public Boolean isOrCondition() {
-        return this.orCondition;
+        return orCondition;
     }
 
     /**
@@ -345,7 +326,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public BigInteger getLimit() {
-        return this.limit;
+        return limit;
     }
 
     /**
@@ -369,7 +350,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public BigInteger getOffset() {
-        return this.offset;
+        return offset;
     }
 
     /**

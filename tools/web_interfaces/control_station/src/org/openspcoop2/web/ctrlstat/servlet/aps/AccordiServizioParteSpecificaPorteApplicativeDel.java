@@ -122,9 +122,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeDel extends Acti
 				// idporta = de.getValue();
 				idporta = idsToRemove.get(i);
 				// Prendo la porta applicativa
-				PortaApplicativa tmpPA = porteApplicativeCore.getPortaApplicativaWithSoggettoAndServizio(idporta, new Long(idSoggettoErogatoreDelServizio), 
-						new Long(idServizio),
-						asps.getTipo(),asps.getNome(),asps.getVersione());
+				PortaApplicativa tmpPA = porteApplicativeCore.getPortaApplicativa(Long.parseLong(idporta));
+
 				// Elimino la porta applicativa
 				apsCore.performDeleteOperation(superUser, apsHelper.smista(), tmpPA);
 			}// for

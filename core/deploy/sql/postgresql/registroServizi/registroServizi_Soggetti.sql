@@ -18,6 +18,10 @@ CREATE TABLE soggetti
 	ora_registrazione TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	profilo VARCHAR(255),
 	codice_ipa VARCHAR(255) NOT NULL,
+	tipoauth VARCHAR(255),
+	utente VARCHAR(255),
+	password VARCHAR(255),
+	subject VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_soggetti') NOT NULL,
 	-- unique constraints
@@ -26,6 +30,25 @@ CREATE TABLE soggetti
 	-- fk/pk keys constraints
 	CONSTRAINT fk_soggetti_1 FOREIGN KEY (id_connettore) REFERENCES connettori(id),
 	CONSTRAINT pk_soggetti PRIMARY KEY (id)
+);
+
+
+
+
+CREATE SEQUENCE seq_soggetti_ruoli start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE soggetti_ruoli
+(
+	id_soggetto BIGINT NOT NULL,
+	id_ruolo BIGINT NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_soggetti_ruoli') NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_soggetti_ruoli_1 UNIQUE (id_soggetto,id_ruolo),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_soggetti_ruoli_1 FOREIGN KEY (id_soggetto) REFERENCES soggetti(id),
+	CONSTRAINT fk_soggetti_ruoli_2 FOREIGN KEY (id_ruolo) REFERENCES ruoli(id),
+	CONSTRAINT pk_soggetti_ruoli PRIMARY KEY (id)
 );
 
 

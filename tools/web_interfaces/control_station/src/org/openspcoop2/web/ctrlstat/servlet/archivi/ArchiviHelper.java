@@ -562,7 +562,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					}
 					
 					if(StatoFunzionalita.ABILITATO.equals(is.getGetMessage())){
-						isOk = saHelper.servizioApplicativoCredenzialiCheckData();
+						isOk = this.credenzialiCheckData();
 						if (!isOk) {
 							return false;
 						}
@@ -605,8 +605,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			try{
 				Credenziali credenziali = this.readCredenzialiSA();
 				if(credenziali!=null){
-					ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(this.request, this.pd, this.session);
-					boolean isOk = saHelper.servizioApplicativoCredenzialiCheckData();
+					ConnettoriHelper connettoriHelper = new ConnettoriHelper(this.request, this.pd, this.session);
+					boolean isOk = connettoriHelper.credenzialiCheckData();
 					if (!isOk) {
 						return false;
 					}
@@ -847,77 +847,69 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 	public org.openspcoop2.core.config.Credenziali readCredenzialiSA(){
 		org.openspcoop2.core.config.Credenziali cis = null;
 
-		String tipoauth = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_SA);
+		String tipoauth = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE);
 		if (tipoauth == null) {
-			//tipoauth = ServiziApplicativiCostanti.DEFAULT_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE;
+			//tipoauth = ServiziApplicativiCostanti.DEFAULT_CREDENZIALI_TIPO_AUTENTICAZIONE;
 			return null;
 		}
-		String utente = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_USERNAME_SA);
-		String password = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_PASSWORD_SA);
-		//String confpw = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_CONFERMA_PASSWORD_SA);
-		String subject = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_SUBJECT_SA);
+		String utente = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+		String password = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+		String subject = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
+		String principal = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
 		
 		if (tipoauth!=null && !tipoauth.equals(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_NONE.toString())) {
 							
 			if (cis == null) {
 				cis = new org.openspcoop2.core.config.Credenziali();
 			}
-			if(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_NESSUNA.equals(tipoauth)){
+			if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA.equals(tipoauth)){
 				//cis.setTipo(CredenzialeTipo.toEnumConstant(CostantiConfigurazione.AUTENTICAZIONE_NONE));
 				cis.setTipo(null);
 			}else
 				cis.setTipo(CredenzialeTipo.toEnumConstant(tipoauth));
-			if (tipoauth.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_BASIC)) {
+			
+			if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC)) {
 				cis.setUser(utente);
 				cis.setPassword(password);
 			} else {
 				cis.setUser("");
 				cis.setPassword("");
 			}
-			if (tipoauth.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_SSL)) {
+			
+			if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)) {
 				cis.setSubject(subject);
 			} else {
 				cis.setSubject("");
+			}
+			
+			if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL)) {
+				cis.setUser(principal);
+			} else {
+				cis.setUser("");
 			}
 		}
 		
 		return  cis;
 	}
 	
-	public org.openspcoop2.core.config.Credenziali readCredenzialiConnettore(){
-		org.openspcoop2.core.config.Credenziali cis = null;
+	public org.openspcoop2.core.config.InvocazioneCredenziali readCredenzialiConnettore(){
+		org.openspcoop2.core.config.InvocazioneCredenziali cis = null;
 
-		String tipoauth = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_CONNETTORE);
+		String tipoauth = this.request.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_TIPO_AUTENTICAZIONE);
 		if (tipoauth == null) {
-			tipoauth = ServiziApplicativiCostanti.DEFAULT_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE;
+			tipoauth = ConnettoriCostanti.DEFAULT_AUTENTICAZIONE_TIPO;
 		}
-		String utente = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_USERNAME_CONNETTORE);
-		String password = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_PASSWORD_CONNETTORE);
-		//String confpw = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_CONFERMA_PASSWORD_CONNETTORE);
-		String subject = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_SUBJECT_CONNETTORE);
+		String utente = this.request.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+		String password = this.request.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 		
-		if (tipoauth!=null && !tipoauth.equals(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_NONE.toString())) {
+		if (tipoauth!=null && tipoauth.equals(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC.toString())) {
 							
 			if (cis == null) {
-				cis = new org.openspcoop2.core.config.Credenziali();
+				cis = new org.openspcoop2.core.config.InvocazioneCredenziali();
 			}
-			if(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_NESSUNA.equals(tipoauth)){
-				//cis.setTipo(CredenzialeTipo.toEnumConstant(CostantiConfigurazione.AUTENTICAZIONE_NONE));
-				cis.setTipo(null);
-			}else
-				cis.setTipo(CredenzialeTipo.toEnumConstant(tipoauth));
-			if (tipoauth.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_BASIC)) {
-				cis.setUser(utente);
-				cis.setPassword(password);
-			} else {
-				cis.setUser("");
-				cis.setPassword("");
-			}
-			if (tipoauth.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_SSL)) {
-				cis.setSubject(subject);
-			} else {
-				cis.setSubject("");
-			}
+			cis.setUser(utente);
+			cis.setPassword(password);
+			
 		}
 		
 		return  cis;
@@ -1855,20 +1847,20 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		String tipoauth = null;
 		String utente = null;
 		String password  = null;
-		String confpw = null;
 		String subject = null;
+		String principal = null;
 		
 		if(readedDatiConnettori==false){
-			tipoauth = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_SA);
+			tipoauth = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE);
 			if (tipoauth == null) {
-				tipoauth = ServiziApplicativiCostanti.DEFAULT_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE;
+				tipoauth = ConnettoriCostanti.DEFAULT_AUTENTICAZIONE_TIPO;
 			}
-			utente = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_USERNAME_SA);
-			password = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_PASSWORD_SA);
-			confpw = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_CONFERMA_PASSWORD_SA);
-			subject = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_SUBJECT_SA);
+			utente = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+			password = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+			subject = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
+			principal = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
 			
-			if(tipoauth==null || tipoauth.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_NESSUNA)){
+			if(tipoauth==null || tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)){
 				tipoauth = this.saCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
 			} 
 				
@@ -1879,15 +1871,15 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			if (password == null) {
 				password = "";
 			}
-			if (confpw == null) {
-				confpw = "";
-			}
 			if (subject == null) {
 				subject = "";
 			}
+			if (principal == null) {
+				principal = "";
+			}
 		}
-		dati = this.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, 
-				ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ADD, showSectionTitle, null, false, true, null);
+		dati = this.addCredenzialiToDati(dati, tipoauth, utente, password, subject, principal,
+				ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ADD, showSectionTitle, null, false, true, null, true);
 	}
 	
 	private void addDatiConnettore(Vector<DataElement> dati, boolean readedDatiConnettori,

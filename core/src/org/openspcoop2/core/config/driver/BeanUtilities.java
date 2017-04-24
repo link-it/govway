@@ -205,7 +205,6 @@ public abstract class BeanUtilities implements IDriverConfigurazioneGet {
 		}
 	}
 	
-
 	
 	/**
 	 * Controlla che il bean presente nel registro, sia uguale al bean passato come parametro

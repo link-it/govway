@@ -33,7 +33,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
-import org.openspcoop2.pdd.core.autenticazione.Credenziali;
+import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.services.RequestInfo;

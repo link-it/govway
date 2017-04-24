@@ -25,16 +25,15 @@ package org.openspcoop2.pdd.config;
 import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.commons.DBMappingUtils;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
-import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
@@ -52,8 +51,6 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.resources.Loader;
-import org.openspcoop2.utils.sql.ISQLQueryObject;
-import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.slf4j.Logger;
 
 /**
@@ -399,13 +396,13 @@ public class OpenSPCoop2DBConfigurationUtility {
 					
 					log.debug("\t dati Fruitore da eliminare ["+tipoSoggettoFruitore+"/"+nomeSoggettoFruitore+"]");
 					IDSoggetto soggettoFruitore = new IDSoggetto(tipoSoggettoFruitore,nomeSoggettoFruitore);
-					org.openspcoop2.core.config.Soggetto soggettoConfig = driverConfigurazione.getSoggetto(soggettoFruitore);
+					//org.openspcoop2.core.config.Soggetto soggettoConfig = driverConfigurazione.getSoggetto(soggettoFruitore);
 					
-					// FRUITORE DAL SERVIZIO (+ politiche di sicurezza)
+					// FRUITORE DAL SERVIZIO (+ mapping fruizioni)
 					if(pddConsoleMode){
-						log.debug("\t- eliminazione politiche di sicurezza ...");
-						OpenSPCoop2DBConfigurationUtility.deletePoliticheSicurezza(connectionConfigurazione, tipoDatabase, asps.getId(), soggettoConfig.getId());
-						log.debug("\t- eliminazione politiche di sicurezza effettuata");
+						log.debug("\t- eliminazione mapping fruizioni ...");
+						DBMappingUtils.deleteMappingFruizione(idServizio, soggettoFruitore, connectionConfigurazione, tipoDatabase);
+						log.debug("\t- eliminazione mapping fruizioni effettuata");
 					}
 					
 					log.debug("\t- eliminazione fruizione dal servizio ...");
@@ -465,11 +462,15 @@ public class OpenSPCoop2DBConfigurationUtility {
 				}
 				else{
 					
-					// FRUITORI (+ politiche di sicurezza)
+					// FRUITORI (+ mapping fruizioni)
 					if(pddConsoleMode){
-						log.debug("\t- eliminazione politiche di sicurezza ("+asps.sizeFruitoreList()+") ...");
-						OpenSPCoop2DBConfigurationUtility.deletePoliticheSicurezza(connectionConfigurazione, tipoDatabase, asps.getId(), null);
-						log.debug("\t- eliminazione politiche di sicurezza effettuata");
+						for (int i = 0; i < asps.sizeFruitoreList(); i++) {
+							Fruitore fr = asps.getFruitore(i);
+							IDSoggetto soggettoFruitore = new IDSoggetto(fr.getTipo(),fr.getNome());
+							log.debug("\t- eliminazione mapping fruizioni ...");
+							DBMappingUtils.deleteMappingFruizione(idServizio, soggettoFruitore, connectionConfigurazione, tipoDatabase);
+							log.debug("\t- eliminazione mapping fruizioni effettuata");
+						}
 					}
 						
 													
@@ -538,6 +539,15 @@ public class OpenSPCoop2DBConfigurationUtility {
 					}
 					log.debug("\t- eliminazione servizi applicativi effettuata");
 
+					
+					
+					// SERVIZI (mapping erogazioni)
+					if(pddConsoleMode){
+						log.debug("\t- eliminazione mapping erogazione ...");
+						DBMappingUtils.deleteMappingErogazione(idServizio, connectionConfigurazione, tipoDatabase);
+						log.debug("\t- eliminazione mapping erogazione effettuata");
+					}
+					
 					
 					// SERVIZI 
 					log.debug("\t- eliminazione servizio ...");
@@ -633,30 +643,5 @@ public class OpenSPCoop2DBConfigurationUtility {
 		
 	}
 	
-	
-	private static void deletePoliticheSicurezza(Connection con,String tipoDatabase,Long idServizio,Long idFruitore) throws Exception{
-		PreparedStatement pstmt = null;
-		try{
-			
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
-			sqlQueryObject.addDeleteTable(CostantiDB.POLITICHE_SICUREZZA);
-			sqlQueryObject.addWhereCondition("id_servizio=?");
-			if(idFruitore!=null){
-				sqlQueryObject.addWhereCondition("id_fruitore=?");
-			}
-			
-			pstmt = con.prepareStatement(sqlQueryObject.createSQLDelete());
-			pstmt.setLong(1, idServizio);
-			if(idFruitore!=null){
-				pstmt.setLong(2, idFruitore);
-			}
-			pstmt.executeUpdate();
-			
-		}finally{
-			try{
-				pstmt.close();
-			}catch(Exception e){}
-		}
-	}
 
 }

@@ -30,12 +30,14 @@ import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
+import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
 
 
@@ -185,6 +187,42 @@ public interface IDriverRegistroServiziGet extends IBeanUtilities{
 	
 	
 	
+	
+	
+	
+	/* Ruoli */
+	
+	/**
+	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Ruolo}, 
+	 * identificato grazie al parametro 
+	 * <var>nome</var> 
+	 *
+	 * @param idRuolo Identificativo del ruolo
+	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Ruolo}.
+	 * 
+	 */
+	public Ruolo getRuolo(
+			IDRuolo idRuolo) throws DriverRegistroServiziException, DriverRegistroServiziNotFound;
+
+	/**
+	 * Ritorna gli identificatori dei Ruoli che rispettano il parametro di ricerca
+	 * 
+	 * @param filtroRicerca
+	 * @return Una lista di ID dei ruoli trovati
+	 * @throws DriverRegistroServiziException
+	 * @throws DriverRegistroServiziNotFound
+	 */
+	public List<IDRuolo> getAllIdRuoli(
+			FiltroRicercaRuoli filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound;
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/* Soggetti */
 	
 	/**
@@ -198,6 +236,40 @@ public interface IDriverRegistroServiziGet extends IBeanUtilities{
 	 */
 	public Soggetto getSoggetto(
 			IDSoggetto idSoggetto) throws DriverRegistroServiziException, DriverRegistroServiziNotFound;
+	
+	/**
+	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Soggetto}, 
+	 * che include le credenziali passate come parametro. 
+	 *
+	 * @param user User utilizzato nell'header HTTP Authentication.
+	 * @param password Password utilizzato nell'header HTTP Authentication.
+	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Soggetto} .
+	 * 
+	 */
+	public Soggetto getSoggettoAutenticatoBasic(
+			String user,String password) throws DriverRegistroServiziException, DriverRegistroServiziNotFound;
+	
+	/**
+	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Soggetto}, 
+	 * che include le credenziali passate come parametro. 
+	 *
+	 * @param subject Subject utilizzato nella connessione HTTPS.
+	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Soggetto} .
+	 * 
+	 */
+	public Soggetto getSoggettoAutenticatoSsl(
+			String subject) throws DriverRegistroServiziException, DriverRegistroServiziNotFound;
+	
+	/**
+	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Soggetto}, 
+	 * che include le credenziali passate come parametro. 
+	 *
+	 * @param principal User Principal
+	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Soggetto} .
+	 * 
+	 */
+	public Soggetto getSoggettoAutenticatoPrincipal(
+			String principal) throws DriverRegistroServiziException, DriverRegistroServiziNotFound;
 
 	
 	/**

@@ -86,8 +86,18 @@ public class ConnettoriCostanti {
 	public final static String PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO = "tipoconn";
 	public final static String PARAMETRO_CONNETTORE_DEBUG = "connettore_debug";
 	public final static String PARAMETRO_CONNETTORE_URL = "url";
-	public final static String PARAMETRO_CONNETTORE_PROVIDER = "provider";
+//	public final static String PARAMETRO_CONNETTORE_PROVIDER = "provider";
 	public final static String PARAMETRO_CONNETTORE_PROFILO = "profilo";
+	
+	public final static String PARAMETRO_INVOCAZIONE_CREDENZIALI_TIPO_AUTENTICAZIONE = "tipoauthInv";
+	public final static String PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME = "utenteInv";
+	public final static String PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD = "passwordInv";
+	
+	public final static String PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE = "tipoauthCredenziali";
+	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME = "utenteCredenziali";
+	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD = "passwordCredenziali";
+	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT = "subjectCredenziali";
+	public final static String PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL = "principalCredenziali";
 	
 	public final static String PARAMETRO_CONNETTORE_PROXY_ENABLED = "connettore_proxy_enabled";
 	public final static String PARAMETRO_CONNETTORE_PROXY_HOSTNAME = "connettore_proxy_host";
@@ -110,8 +120,7 @@ public class ConnettoriCostanti {
 	public final static String PARAMETRO_CONNETTORE_JMS_PROVIDER_URL = "provurl";
 	public final static String PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY = "connfact";
 	public final static String PARAMETRO_CONNETTORE_JMS_TIPO_OGGETTO_JMS = "sendas";
-	
-	
+		
 	public final static String PARAMETRO_CONNETTORE_HTTPS_CLIENT_AUTH = "clientAuth";
 	public final static String PARAMETRO_CONNETTORE_HTTPS_STATO_PACKAGE = "stato";
 	public final static String PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE ="httpstipologia";
@@ -166,6 +175,20 @@ public class ConnettoriCostanti {
 	public final static String LABEL_PARAMETRO_CONNETTORE_URL = "Endpoint";
 	public final static String LABEL_PARAMETRO_CONNETTORE_PROFILO =  "Versione Protocollo";
 	
+	public final static String AUTENTICAZIONE_TIPO_NESSUNA = "nessuna";
+	public final static String AUTENTICAZIONE_TIPO_BASIC = CostantiConfigurazione.CREDENZIALE_BASIC.toString();
+	public final static String AUTENTICAZIONE_TIPO_SSL = CostantiConfigurazione.CREDENZIALE_SSL.toString();
+	public final static String AUTENTICAZIONE_TIPO_PRINCIPAL = CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString();
+	public final static String LABEL_AUTENTICAZIONE_TIPO_BASIC = "http-basic";
+	public final static String LABEL_AUTENTICAZIONE_TIPO_SSL = "https";
+	public final static String LABEL_AUTENTICAZIONE_TIPO_PRINCIPAL = "principal";
+	public final static String DEFAULT_AUTENTICAZIONE_TIPO = AUTENTICAZIONE_TIPO_NESSUNA;
+	
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME = "Utente";
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD = "Password";
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT = "Subject";
+	public final static String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL = "UserId";
+	
 	public final static String LABEL_PARAMETRO_CONNETTORE_PROXY_HOSTNAME = "Hostname";
 	public final static String LABEL_PARAMETRO_CONNETTORE_PROXY_PORT = "Porta";
 	public final static String LABEL_PARAMETRO_CONNETTORE_PROXY_USERNAME = "Username";
@@ -216,6 +239,7 @@ public class ConnettoriCostanti {
 		
 	public final static String LABEL_PARAMETRO_CONNETTORE_CUSTOM_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_CONNETTORE_CUSTOM_VALORE = "Valore";
+	
 	
 	/* DEFAULT VALUE PARAMETRI */
 

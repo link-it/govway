@@ -50,6 +50,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveIdCorrelazione;
 import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
+import org.openspcoop2.protocol.sdk.archive.ArchiveRuolo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
 
@@ -174,6 +175,25 @@ public class EsitoUtils {
 			bfEsito.append("\n");
 		}
 		if(archive.getPdd().size()>0){
+			bfEsito.append("\n");	
+		}
+		
+		// Ruoli
+		if(archive.getRuoli().size()>0){
+			bfEsito.append("Ruoli (").append(archive.getPdd().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getRuoli().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail archiveRuolo = archive.getRuoli().get(i);
+				String nomeRuolo = ((ArchiveRuolo)archiveRuolo.getArchiveObject()).getIdRuolo().getNome();
+				bfEsito.append("\t- [").append(nomeRuolo).append("] ");
+				serializeStato(archiveRuolo, bfEsito, importOperation);
+			}catch(Throwable e){
+				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getRuoli().size()>0){
 			bfEsito.append("\n");	
 		}
 		
@@ -498,6 +518,13 @@ public class EsitoUtils {
 			ArchiveEsitoImportDetail archivePdd = archive.getPdd().get(i);
 			ArchiveIdCorrelazione idCorrelazione = ((ArchivePdd)archivePdd.getArchiveObject()).getIdCorrelazione();
 			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).getPdd().add(archivePdd);
+		}
+		
+		// Ruoli
+		for (int i = 0; i < archive.getRuoli().size(); i++) {
+			ArchiveEsitoImportDetail archiveRuolo = archive.getRuoli().get(i);
+			ArchiveIdCorrelazione idCorrelazione = ((ArchiveRuolo)archiveRuolo.getArchiveObject()).getIdCorrelazione();
+			this.getArchiveEsitoImport(idCorrelazione, map, mapIdCorrelazione).getRuoli().add(archiveRuolo);
 		}
 		
 		// Soggetti

@@ -29,6 +29,7 @@ import java.util.Map;
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Connettore;
@@ -56,8 +57,10 @@ import org.openspcoop2.core.id.IdentificativiErogazione;
 import org.openspcoop2.core.id.IdentificativiFruizione;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
+import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.mapping.IdentificazioneDinamicaException;
@@ -144,24 +147,31 @@ public class ConfigurazionePdDManager {
 	}
 
 	public void validazioneSemantica(String[] tipiConnettori,String[] tipiMsgDiagnosticoAppender,String[] tipiTracciamentoAppender,
-			String [] tipiAutenticazione, String [] tipiAutorizzazione,
-			String [] tipiAutorizzazioneContenuto,String [] tipiAutorizzazioneContenutoBuste,
+			String[]tipoAutenticazionePortaDelegata,String[]tipoAutenticazionePortaApplicativa,
+			String[]tipoAutorizzazionePortaDelegata,String[]tipoAutorizzazionePortaApplicativa,
+			String[]tipoAutorizzazioneContenutoPortaDelegata,String[]tipoAutorizzazioneContenutoPortaApplicativa,
 			String [] tipiIntegrazionePD, String [] tipiIntegrazionePA,
 			boolean validazioneSemanticaAbilitataXML,boolean validazioneSemanticaAbilitataAltreConfigurazioni,boolean validaConfigurazione,
 			Logger logConsole) throws CoreException{
 		this.configurazionePdDReader.validazioneSemantica(tipiConnettori, tipiMsgDiagnosticoAppender, tipiTracciamentoAppender, 
-				tipiAutenticazione, tipiAutorizzazione, tipiAutorizzazioneContenuto, tipiAutorizzazioneContenutoBuste, 
+				tipoAutenticazionePortaDelegata, tipoAutenticazionePortaApplicativa,
+				tipoAutorizzazionePortaDelegata, tipoAutorizzazionePortaApplicativa,
+				tipoAutorizzazioneContenutoPortaDelegata, tipoAutorizzazioneContenutoPortaApplicativa, 
 				tipiIntegrazionePD, tipiIntegrazionePA, validazioneSemanticaAbilitataXML, 
 				validazioneSemanticaAbilitataAltreConfigurazioni, validaConfigurazione, logConsole);
 	}
 	
 	public void setValidazioneSemanticaModificaConfigurazionePdDXML(String[] tipiConnettori,
 			String[]tipoMsgDiagnosticiAppender,String[]tipoTracciamentoAppender,
-			String[]tipoAutenticazione,String[]tipoAutorizzazione,
-			String[]tipiAutorizzazioneContenuto,String [] tipiAutorizzazioneContenutoBuste,
+			String[]tipoAutenticazionePortaDelegata,String[]tipoAutenticazionePortaApplicativa,
+			String[]tipoAutorizzazionePortaDelegata,String[]tipoAutorizzazionePortaApplicativa,
+			String[]tipoAutorizzazioneContenutoPortaDelegata,String[]tipoAutorizzazioneContenutoPortaApplicativa,
 			String[]tipoIntegrazionePD,String[]tipoIntegrazionePA) throws CoreException{
 		this.configurazionePdDReader.setValidazioneSemanticaModificaConfigurazionePdDXML(tipiConnettori, tipoMsgDiagnosticiAppender, tipoTracciamentoAppender,
-				tipoAutenticazione, tipoAutorizzazione, tipiAutorizzazioneContenuto, tipiAutorizzazioneContenutoBuste, tipoIntegrazionePD, tipoIntegrazionePA);
+				tipoAutenticazionePortaDelegata, tipoAutenticazionePortaApplicativa,
+				tipoAutorizzazionePortaDelegata, tipoAutorizzazionePortaApplicativa,
+				tipoAutorizzazioneContenutoPortaDelegata, tipoAutorizzazioneContenutoPortaApplicativa, 
+				tipoIntegrazionePD, tipoIntegrazionePA);
 	}
 	
 	public void verificaConsistenzaConfigurazione() throws DriverConfigurazioneException {
@@ -314,6 +324,10 @@ public class ConfigurazionePdDManager {
 	
 	public String getAutenticazione(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 		return this.configurazionePdDReader.getAutenticazione(pd);
+	}
+	
+	public boolean isAutenticazioneOpzionale(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.isAutenticazioneOpzionale(pd);
 	}
 	
 	public String getAutorizzazione(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
@@ -492,6 +506,22 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getPA_MessageSecurityForReceiver(pa);
 	}
 	
+	public String getAutenticazione(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.getAutenticazione(pa);
+	}
+	
+	public boolean isAutenticazioneOpzionale(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.isAutenticazioneOpzionale(pa);
+	}
+	
+	public String getAutorizzazione(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.getAutorizzazione(pa);
+	}
+	
+	public String getAutorizzazioneContenuto(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.getAutorizzazioneContenuto(pa);
+	}
+	
 	public boolean ricevutaAsincronaSimmetricaAbilitata(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdDReader.ricevutaAsincronaSimmetricaAbilitata(pa);
 	}
@@ -532,13 +562,15 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.isModalitaStateless(pa, profiloCollaborazione);
 	}
 	
-	public String getAutorizzazioneContenuto(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
-		return this.configurazionePdDReader.getAutorizzazioneContenuto(pa);
+	public boolean autorizzazioneRoles(PortaApplicativa pa, Soggetto soggetto, InfoConnettoreIngresso infoConnettoreIngresso,
+			boolean checkRuoloRegistro, boolean checkRuoloEsterno) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.autorizzazioneRoles(pa, soggetto, infoConnettoreIngresso, checkRuoloRegistro, checkRuoloEsterno);
 	}
 	
 	public List<Object> getExtendedInfo(PortaApplicativa pa)throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getExtendedInfo(pa);
 	}
+	
 	
 	
 	/* ********  Servizi Applicativi (Interfaccia)  ******** */
@@ -558,11 +590,20 @@ public class ConfigurazionePdDManager {
 	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiSsl(String aSubject) throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiSsl(this.getConnection(), aSubject);
 	}
+	
+	public IDServizioApplicativo getIdServizioApplicativoByCredenzialiPrincipal(String principal) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getIdServizioApplicativoByCredenzialiPrincipal(this.getConnection(), principal);
+	}
 		
 	public boolean autorizzazione(PortaDelegata pd, String servizio) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 		return this.configurazionePdDReader.autorizzazione(pd, servizio);
 	}
 	
+	public boolean autorizzazioneRoles(PortaDelegata pd, ServizioApplicativo sa, InfoConnettoreIngresso infoConnettoreIngresso,
+			boolean checkRuoloRegistro, boolean checkRuoloEsterno) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.autorizzazioneRoles(pd, sa, infoConnettoreIngresso, checkRuoloRegistro, checkRuoloEsterno);
+	}
+
 	public void aggiornaProprietaGestioneErrorePD(ProprietaErroreApplicativo gestioneErrore, ServizioApplicativo sa) throws DriverConfigurazioneException {
 		this.configurazionePdDReader.aggiornaProprietaGestioneErrorePD(gestioneErrore, sa);
 	}
@@ -666,6 +707,10 @@ public class ConfigurazionePdDManager {
 	
 	public AccessoDatiAutorizzazione getAccessoDatiAutorizzazione(){
 		return this.configurazionePdDReader.getAccessoDatiAutorizzazione(this.getConnection());
+	}
+	
+	public AccessoDatiAutenticazione getAccessoDatiAutenticazione(){
+		return this.configurazionePdDReader.getAccessoDatiAutenticazione(this.getConnection());
 	}
 	
 	public StatoFunzionalitaConWarning getTipoValidazione(String implementazionePdDSoggetto){

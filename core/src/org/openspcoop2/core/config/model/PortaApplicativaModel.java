@@ -44,6 +44,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.SERVIZIO = new org.openspcoop2.core.config.model.PortaApplicativaServizioModel(new Field("servizio",org.openspcoop2.core.config.PortaApplicativaServizio.class,"porta-applicativa",PortaApplicativa.class));
 		this.AZIONE = new org.openspcoop2.core.config.model.PortaApplicativaAzioneModel(new Field("azione",org.openspcoop2.core.config.PortaApplicativaAzione.class,"porta-applicativa",PortaApplicativa.class));
 		this.SERVIZIO_APPLICATIVO = new org.openspcoop2.core.config.model.PortaApplicativaServizioApplicativoModel(new Field("servizio-applicativo",org.openspcoop2.core.config.PortaApplicativaServizioApplicativo.class,"porta-applicativa",PortaApplicativa.class));
+		this.RUOLI = new org.openspcoop2.core.config.model.AutorizzazioneRuoliModel(new Field("ruoli",org.openspcoop2.core.config.AutorizzazioneRuoli.class,"porta-applicativa",PortaApplicativa.class));
 		this.PROPRIETA_INTEGRAZIONE_PROTOCOLLO = new org.openspcoop2.core.config.model.PortaApplicativaProprietaIntegrazioneProtocolloModel(new Field("proprieta-integrazione-protocollo",org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo.class,"porta-applicativa",PortaApplicativa.class));
 		this.MTOM_PROCESSOR = new org.openspcoop2.core.config.model.MtomProcessorModel(new Field("mtom-processor",org.openspcoop2.core.config.MtomProcessor.class,"porta-applicativa",PortaApplicativa.class));
 		this.MESSAGE_SECURITY = new org.openspcoop2.core.config.model.MessageSecurityModel(new Field("message-security",org.openspcoop2.core.config.MessageSecurity.class,"porta-applicativa",PortaApplicativa.class));
@@ -66,6 +67,9 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.GESTIONE_MANIFEST = new Field("gestione-manifest",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.STATELESS = new Field("stateless",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.BEHAVIOUR = new Field("behaviour",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
+		this.AUTENTICAZIONE = new Field("autenticazione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
+		this.AUTENTICAZIONE_OPZIONALE = new Field("autenticazione-opzionale",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
+		this.AUTORIZZAZIONE = new Field("autorizzazione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.AUTORIZZAZIONE_CONTENUTO = new Field("autorizzazione-contenuto",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.ORA_REGISTRAZIONE = new Field("ora-registrazione",java.util.Date.class,"porta-applicativa",PortaApplicativa.class);
 	
@@ -79,6 +83,7 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.SERVIZIO = new org.openspcoop2.core.config.model.PortaApplicativaServizioModel(new ComplexField(father,"servizio",org.openspcoop2.core.config.PortaApplicativaServizio.class,"porta-applicativa",PortaApplicativa.class));
 		this.AZIONE = new org.openspcoop2.core.config.model.PortaApplicativaAzioneModel(new ComplexField(father,"azione",org.openspcoop2.core.config.PortaApplicativaAzione.class,"porta-applicativa",PortaApplicativa.class));
 		this.SERVIZIO_APPLICATIVO = new org.openspcoop2.core.config.model.PortaApplicativaServizioApplicativoModel(new ComplexField(father,"servizio-applicativo",org.openspcoop2.core.config.PortaApplicativaServizioApplicativo.class,"porta-applicativa",PortaApplicativa.class));
+		this.RUOLI = new org.openspcoop2.core.config.model.AutorizzazioneRuoliModel(new ComplexField(father,"ruoli",org.openspcoop2.core.config.AutorizzazioneRuoli.class,"porta-applicativa",PortaApplicativa.class));
 		this.PROPRIETA_INTEGRAZIONE_PROTOCOLLO = new org.openspcoop2.core.config.model.PortaApplicativaProprietaIntegrazioneProtocolloModel(new ComplexField(father,"proprieta-integrazione-protocollo",org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo.class,"porta-applicativa",PortaApplicativa.class));
 		this.MTOM_PROCESSOR = new org.openspcoop2.core.config.model.MtomProcessorModel(new ComplexField(father,"mtom-processor",org.openspcoop2.core.config.MtomProcessor.class,"porta-applicativa",PortaApplicativa.class));
 		this.MESSAGE_SECURITY = new org.openspcoop2.core.config.model.MessageSecurityModel(new ComplexField(father,"message-security",org.openspcoop2.core.config.MessageSecurity.class,"porta-applicativa",PortaApplicativa.class));
@@ -101,6 +106,9 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 		this.GESTIONE_MANIFEST = new ComplexField(father,"gestione-manifest",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.STATELESS = new ComplexField(father,"stateless",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.BEHAVIOUR = new ComplexField(father,"behaviour",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
+		this.AUTENTICAZIONE = new ComplexField(father,"autenticazione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
+		this.AUTENTICAZIONE_OPZIONALE = new ComplexField(father,"autenticazione-opzionale",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
+		this.AUTORIZZAZIONE = new ComplexField(father,"autorizzazione",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.AUTORIZZAZIONE_CONTENUTO = new ComplexField(father,"autorizzazione-contenuto",java.lang.String.class,"porta-applicativa",PortaApplicativa.class);
 		this.ORA_REGISTRAZIONE = new ComplexField(father,"ora-registrazione",java.util.Date.class,"porta-applicativa",PortaApplicativa.class);
 	
@@ -115,6 +123,8 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 	public org.openspcoop2.core.config.model.PortaApplicativaAzioneModel AZIONE = null;
 	 
 	public org.openspcoop2.core.config.model.PortaApplicativaServizioApplicativoModel SERVIZIO_APPLICATIVO = null;
+	 
+	public org.openspcoop2.core.config.model.AutorizzazioneRuoliModel RUOLI = null;
 	 
 	public org.openspcoop2.core.config.model.PortaApplicativaProprietaIntegrazioneProtocolloModel PROPRIETA_INTEGRAZIONE_PROTOCOLLO = null;
 	 
@@ -159,6 +169,12 @@ public class PortaApplicativaModel extends AbstractModel<PortaApplicativa> {
 	public IField STATELESS = null;
 	 
 	public IField BEHAVIOUR = null;
+	 
+	public IField AUTENTICAZIONE = null;
+	 
+	public IField AUTENTICAZIONE_OPZIONALE = null;
+	 
+	public IField AUTORIZZAZIONE = null;
 	 
 	public IField AUTORIZZAZIONE_CONTENUTO = null;
 	 

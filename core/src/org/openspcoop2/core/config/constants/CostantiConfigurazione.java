@@ -87,18 +87,36 @@ public class CostantiConfigurazione {
     public final static InvocazioneServizioTipoAutenticazione INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_NONE = InvocazioneServizioTipoAutenticazione.NONE;
     /** tipo di porta autenticazione: basic */
     public final static InvocazioneServizioTipoAutenticazione INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC = InvocazioneServizioTipoAutenticazione.BASIC;
-    /** tipo di porta autenticazione: ssl */
-    public final static InvocazioneServizioTipoAutenticazione INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_SSL = InvocazioneServizioTipoAutenticazione.SSL;
     
     /** tipo di porta autenticazione: basic */
     public final static CredenzialeTipo CREDENZIALE_BASIC = CredenzialeTipo.BASIC;
     /** tipo di porta autenticazione: ssl */
     public final static CredenzialeTipo CREDENZIALE_SSL = CredenzialeTipo.SSL;
+    /** tipo di porta autenticazione: principal */
+    public final static CredenzialeTipo CREDENZIALE_PRINCIPAL = CredenzialeTipo.PRINCIPAL;
     
-    /** tipo di porta autorizzazione: none */
+    /** tipo di porta autenticazione */
+    public final static String AUTENTICAZIONE_NONE = "none";
+    public final static String AUTENTICAZIONE_BASIC = "basic";
+    public final static String AUTENTICAZIONE_SSL = "ssl";
+    public final static String AUTENTICAZIONE_PRINCIPAL = "principal";
+//    public final static String AUTENTICAZIONE_PRINCIPAL_SSL_BASIC = "principalOrSslOrBasic";
+//    public final static String AUTENTICAZIONE_PRINCIPAL_BASIC = "principalOrBasic";
+//    public final static String AUTENTICAZIONE_PRINCIPAL_SSL = "principalOrSsl";
+//    public final static String AUTENTICAZIONE_SSL_BASIC = "sslOrBasic";
+    
+    /** tipo di porta autorizzazione */
     public final static String AUTORIZZAZIONE_NONE = "none";
-    /** tipo di porta autorizzazione: openspcoop */
-    public final static String AUTORIZZAZIONE_OPENSPCOOP = "openspcoop";
+    public final static String AUTORIZZAZIONE_AUTHENTICATED = "authenticated";
+    public final static String AUTORIZZAZIONE_ROLES = "roles";
+    public final static String AUTORIZZAZIONE_INTERNAL_ROLES = "internalRoles";
+    public final static String AUTORIZZAZIONE_EXTERNAL_ROLES = "externalRoles";
+    public final static String AUTORIZZAZIONE_AUTHENTICATED_OR_ROLES = "authenticatedOrRoles"; 
+    public final static String AUTORIZZAZIONE_AUTHENTICATED_OR_INTERNAL_ROLES = "authenticatedOrInternalRoles";
+    public final static String AUTORIZZAZIONE_AUTHENTICATED_OR_EXTERNAL_ROLES = "authenticatedOrExternalRoles";
+    public final static String AUTORIZZAZIONE_XACML_POLICY = "xacmlPolicy";
+    public final static String AUTORIZZAZIONE_INTERNAL_XACML_POLICY = "internalXacmlPolicy";
+    public final static String AUTORIZZAZIONE_EXTERNAL_XACML_POLICY = "externalXacmlPolicy";
     
     /** tipo di configurazione: xml */
     public final static String CONFIGURAZIONE_XML = "xml";

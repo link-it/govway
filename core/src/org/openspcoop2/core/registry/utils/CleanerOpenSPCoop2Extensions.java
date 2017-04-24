@@ -32,6 +32,7 @@ import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzioneFruitore;
+import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.constants.BindingUse;
 
 /**
@@ -46,6 +47,12 @@ public class CleanerOpenSPCoop2Extensions {
 	public void clean(PortaDominio portaDominio){
 
 		portaDominio.setSuperUser(null);
+		
+	}
+	
+	public void clean(Ruolo ruolo){
+
+		ruolo.setSuperUser(null);
 		
 	}
 		

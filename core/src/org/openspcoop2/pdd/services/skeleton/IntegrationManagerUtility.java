@@ -46,11 +46,22 @@ public class IntegrationManagerUtility {
 		if(protocol!=null){
 			
 			//System.out.println("INIZIALIZZO IM con INPUT PROTOCOL ["+protocol+"]");
+			// verifico che sia un protocollo
 			try{
-				Openspcoop2 manifest = ProtocolFactoryManager.getInstance().getProtocolManifest(protocol);
-				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, manifest.getProtocol().getName());
+				ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
 			} catch(ProtocolException e) {
-				throw new RuntimeException(e);
+				
+				// vedo se quello che mi è errivato è un contesto altrimeni rilancio la prima eccezione
+				boolean ok = false;
+				try{
+					Openspcoop2 manifest = ProtocolFactoryManager.getInstance().getProtocolManifest(protocol);
+					req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOLLO, manifest.getProtocol().getName());
+					ok = true;
+				} catch(ProtocolException eInternal) {}
+				
+				if(ok==false){
+					throw new RuntimeException(e);
+				}
 			}
 			
 		}

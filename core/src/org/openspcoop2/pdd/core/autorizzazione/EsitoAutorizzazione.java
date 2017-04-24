@@ -41,8 +41,8 @@ public abstract class EsitoAutorizzazione implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	/** Indicazione se il servizio e' autorizzato */
-	private boolean servizioAutorizzato;
+	/** Indicazione se il e' autorizzato */
+	private boolean autorizzato;
 	
 	/** Dettagli aggiuntivi */
 	private String details;
@@ -52,12 +52,12 @@ public abstract class EsitoAutorizzazione implements java.io.Serializable {
 	private boolean noCache = false;
 		
 	/**
-	 * Ritorna l'indicazione se il servizio e' autorizzato
+	 * Ritorna l'indicazione se e' autorizzato
 	 * 
-	 * @return indicazione se il servizio e' autorizzato
+	 * @return indicazione se e' autorizzato
 	 */
-	public boolean isServizioAutorizzato() {
-		return this.servizioAutorizzato;
+	public boolean isAutorizzato() {
+		return this.autorizzato;
 	}
 	
 	/**
@@ -65,8 +65,8 @@ public abstract class EsitoAutorizzazione implements java.io.Serializable {
 	 * 
 	 * @param servizioAutorizzato indicazione se il servizio e' autorizzato
 	 */
-	public void setServizioAutorizzato(boolean servizioAutorizzato) {
-		this.servizioAutorizzato = servizioAutorizzato;
+	public void setAutorizzato(boolean servizioAutorizzato) {
+		this.autorizzato = servizioAutorizzato;
 	}
 
 	public String getDetails() {
@@ -81,10 +81,11 @@ public abstract class EsitoAutorizzazione implements java.io.Serializable {
 	}
 	public void setEccezioneProcessamento(Exception eccezioneProcessamento) {
 		this.eccezioneProcessamento = eccezioneProcessamento;
+		this.noCache = true; // per default quando si imposta una eccezione di processamento il risultato non sarà salvato. Se si vuole cacharlo richiamare il metodo setNoCache(false);
 	}
 	
 	public String getHeader(){
-		if(this.servizioAutorizzato){
+		if(this.autorizzato){
 			return "AUTORIZZATO";
 		}
 		else{

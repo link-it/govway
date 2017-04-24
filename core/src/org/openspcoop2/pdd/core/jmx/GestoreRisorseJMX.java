@@ -137,6 +137,21 @@ public class GestoreRisorseJMX extends org.openspcoop2.utils.jmx.GestoreRisorseJ
 	}
 	
 	/**
+	 * Registrazione del MBean per l'autenticazione
+	 * 
+	 * @throws RisorseJMXException
+	 */
+	public void registerMBeanAutenticazione()throws RisorseJMXException{
+		try{
+			this.registerMBean(org.openspcoop2.pdd.core.jmx.EngineAutenticazione.class, CostantiPdD.JMX_AUTENTICAZIONE);
+		}catch(Exception e){
+			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX Autenticazione: "+e.getMessage(),e);
+			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX Autenticazione: "+e.getMessage(),e);
+		}	
+		
+	}
+	
+	/**
 	 * Registrazione del MBean per il repository dei Messaggi
 	 * 
 	 * @throws RisorseJMXException
@@ -228,6 +243,9 @@ public class GestoreRisorseJMX extends org.openspcoop2.utils.jmx.GestoreRisorseJ
 	public Object getAttributeMBeanAutorizzazione(String nomeAttributo)throws RisorseJMXException{
 		return this.getAttribute(CostantiPdD.JMX_AUTORIZZAZIONE, nomeAttributo);
 	}
+	public Object getAttributeMBeanAutenticazione(String nomeAttributo)throws RisorseJMXException{
+		return this.getAttribute(CostantiPdD.JMX_AUTENTICAZIONE, nomeAttributo);
+	}
 	public Object getAttributeMBeanMonitoraggioRisorse(String nomeAttributo)throws RisorseJMXException{
 		return this.getAttribute(CostantiPdD.JMX_MONITORAGGIO_RISORSE, nomeAttributo);
 	}
@@ -270,6 +288,13 @@ public class GestoreRisorseJMX extends org.openspcoop2.utils.jmx.GestoreRisorseJ
 	}
 	public Object invokeMethodMBeanAutorizzazione(String nomeMetodo)throws RisorseJMXException{
 		return invoke(CostantiPdD.JMX_AUTORIZZAZIONE, nomeMetodo, null, null);
+	}
+	
+	public Object invokeMethodMBeanAutenticazione(String nomeMetodo,Object[]params,String[]signature)throws RisorseJMXException{
+		return invoke(CostantiPdD.JMX_AUTENTICAZIONE, nomeMetodo, params, signature);
+	}
+	public Object invokeMethodMBeanAutenticazione(String nomeMetodo)throws RisorseJMXException{
+		return invoke(CostantiPdD.JMX_AUTENTICAZIONE, nomeMetodo, null, null);
 	}
 	
 	public Object invokeMethodMBeanMonitoraggioRisorse(String nomeMetodo,Object[]params,String[]signature)throws RisorseJMXException{

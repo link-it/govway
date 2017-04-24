@@ -1,22 +1,3 @@
-/*
- * OpenSPCoop - Customizable API Gateway 
- * http://www.openspcoop2.org
- * 
- * Copyright (c) 2005-2017 Link.it srl (http://link.it).
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3, as published by
- * the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
 
 package org.openspcoop2.core.config.ws.client.portaapplicativa.crud;
 
@@ -47,6 +28,7 @@ public class ObjectFactory {
     private final static QName _PortaApplicativaSoggettoVirtuale_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "porta-applicativa-soggetto-virtuale");
     private final static QName _PortaApplicativaServizio_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "porta-applicativa-servizio");
     private final static QName _PortaApplicativaAzione_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "porta-applicativa-azione");
+    private final static QName _AutorizzazioneRuoli_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "autorizzazione-ruoli");
     private final static QName _MtomProcessorFlow_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "mtom-processor-flow");
     private final static QName _MtomProcessor_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "mtom-processor");
     private final static QName _ValidazioneContenutiApplicativi_QNAME = new QName("http://www.openspcoop2.org/core/config/management", "validazione-contenuti-applicativi");
@@ -111,6 +93,14 @@ public class ObjectFactory {
      */
     public PortaApplicativaAzione createPortaApplicativaAzione() {
         return new PortaApplicativaAzione();
+    }
+
+    /**
+     * Create an instance of {@link AutorizzazioneRuoli }
+     * 
+     */
+    public AutorizzazioneRuoli createAutorizzazioneRuoli() {
+        return new AutorizzazioneRuoli();
     }
 
     /**
@@ -351,7 +341,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "search-filter-porta-applicativa")
     public JAXBElement<SearchFilterPortaApplicativa> createSearchFilterPortaApplicativa(SearchFilterPortaApplicativa value) {
-        return new JAXBElement<SearchFilterPortaApplicativa>(ObjectFactory._SearchFilterPortaApplicativa_QNAME, SearchFilterPortaApplicativa.class, null, value);
+        return new JAXBElement<SearchFilterPortaApplicativa>(_SearchFilterPortaApplicativa_QNAME, SearchFilterPortaApplicativa.class, null, value);
     }
 
     /**
@@ -360,7 +350,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "porta-applicativa-soggetto-virtuale")
     public JAXBElement<PortaApplicativaSoggettoVirtuale> createPortaApplicativaSoggettoVirtuale(PortaApplicativaSoggettoVirtuale value) {
-        return new JAXBElement<PortaApplicativaSoggettoVirtuale>(ObjectFactory._PortaApplicativaSoggettoVirtuale_QNAME, PortaApplicativaSoggettoVirtuale.class, null, value);
+        return new JAXBElement<PortaApplicativaSoggettoVirtuale>(_PortaApplicativaSoggettoVirtuale_QNAME, PortaApplicativaSoggettoVirtuale.class, null, value);
     }
 
     /**
@@ -369,7 +359,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "porta-applicativa-servizio")
     public JAXBElement<PortaApplicativaServizio> createPortaApplicativaServizio(PortaApplicativaServizio value) {
-        return new JAXBElement<PortaApplicativaServizio>(ObjectFactory._PortaApplicativaServizio_QNAME, PortaApplicativaServizio.class, null, value);
+        return new JAXBElement<PortaApplicativaServizio>(_PortaApplicativaServizio_QNAME, PortaApplicativaServizio.class, null, value);
     }
 
     /**
@@ -378,7 +368,16 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "porta-applicativa-azione")
     public JAXBElement<PortaApplicativaAzione> createPortaApplicativaAzione(PortaApplicativaAzione value) {
-        return new JAXBElement<PortaApplicativaAzione>(ObjectFactory._PortaApplicativaAzione_QNAME, PortaApplicativaAzione.class, null, value);
+        return new JAXBElement<PortaApplicativaAzione>(_PortaApplicativaAzione_QNAME, PortaApplicativaAzione.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link AutorizzazioneRuoli }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "autorizzazione-ruoli")
+    public JAXBElement<AutorizzazioneRuoli> createAutorizzazioneRuoli(AutorizzazioneRuoli value) {
+        return new JAXBElement<AutorizzazioneRuoli>(_AutorizzazioneRuoli_QNAME, AutorizzazioneRuoli.class, null, value);
     }
 
     /**
@@ -387,7 +386,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "mtom-processor-flow")
     public JAXBElement<MtomProcessorFlow> createMtomProcessorFlow(MtomProcessorFlow value) {
-        return new JAXBElement<MtomProcessorFlow>(ObjectFactory._MtomProcessorFlow_QNAME, MtomProcessorFlow.class, null, value);
+        return new JAXBElement<MtomProcessorFlow>(_MtomProcessorFlow_QNAME, MtomProcessorFlow.class, null, value);
     }
 
     /**
@@ -396,7 +395,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "mtom-processor")
     public JAXBElement<MtomProcessor> createMtomProcessor(MtomProcessor value) {
-        return new JAXBElement<MtomProcessor>(ObjectFactory._MtomProcessor_QNAME, MtomProcessor.class, null, value);
+        return new JAXBElement<MtomProcessor>(_MtomProcessor_QNAME, MtomProcessor.class, null, value);
     }
 
     /**
@@ -405,7 +404,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "validazione-contenuti-applicativi")
     public JAXBElement<ValidazioneContenutiApplicativi> createValidazioneContenutiApplicativi(ValidazioneContenutiApplicativi value) {
-        return new JAXBElement<ValidazioneContenutiApplicativi>(ObjectFactory._ValidazioneContenutiApplicativi_QNAME, ValidazioneContenutiApplicativi.class, null, value);
+        return new JAXBElement<ValidazioneContenutiApplicativi>(_ValidazioneContenutiApplicativi_QNAME, ValidazioneContenutiApplicativi.class, null, value);
     }
 
     /**
@@ -414,7 +413,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "wrapperIdSoggetto")
     public JAXBElement<WrapperIdSoggetto> createWrapperIdSoggetto(WrapperIdSoggetto value) {
-        return new JAXBElement<WrapperIdSoggetto>(ObjectFactory._WrapperIdSoggetto_QNAME, WrapperIdSoggetto.class, null, value);
+        return new JAXBElement<WrapperIdSoggetto>(_WrapperIdSoggetto_QNAME, WrapperIdSoggetto.class, null, value);
     }
 
     /**
@@ -423,7 +422,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "wrapperIdPortaDelegata")
     public JAXBElement<WrapperIdPortaDelegata> createWrapperIdPortaDelegata(WrapperIdPortaDelegata value) {
-        return new JAXBElement<WrapperIdPortaDelegata>(ObjectFactory._WrapperIdPortaDelegata_QNAME, WrapperIdPortaDelegata.class, null, value);
+        return new JAXBElement<WrapperIdPortaDelegata>(_WrapperIdPortaDelegata_QNAME, WrapperIdPortaDelegata.class, null, value);
     }
 
     /**
@@ -432,7 +431,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "wrapperIdPortaApplicativa")
     public JAXBElement<WrapperIdPortaApplicativa> createWrapperIdPortaApplicativa(WrapperIdPortaApplicativa value) {
-        return new JAXBElement<WrapperIdPortaApplicativa>(ObjectFactory._WrapperIdPortaApplicativa_QNAME, WrapperIdPortaApplicativa.class, null, value);
+        return new JAXBElement<WrapperIdPortaApplicativa>(_WrapperIdPortaApplicativa_QNAME, WrapperIdPortaApplicativa.class, null, value);
     }
 
     /**
@@ -441,7 +440,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "wrapperIdServizioApplicativo")
     public JAXBElement<WrapperIdServizioApplicativo> createWrapperIdServizioApplicativo(WrapperIdServizioApplicativo value) {
-        return new JAXBElement<WrapperIdServizioApplicativo>(ObjectFactory._WrapperIdServizioApplicativo_QNAME, WrapperIdServizioApplicativo.class, null, value);
+        return new JAXBElement<WrapperIdServizioApplicativo>(_WrapperIdServizioApplicativo_QNAME, WrapperIdServizioApplicativo.class, null, value);
     }
 
     /**
@@ -450,7 +449,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "config-service-exception")
     public JAXBElement<ConfigServiceException> createConfigServiceException(ConfigServiceException value) {
-        return new JAXBElement<ConfigServiceException>(ObjectFactory._ConfigServiceException_QNAME, ConfigServiceException.class, null, value);
+        return new JAXBElement<ConfigServiceException>(_ConfigServiceException_QNAME, ConfigServiceException.class, null, value);
     }
 
     /**
@@ -459,7 +458,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "config-not-found-exception")
     public JAXBElement<ConfigNotFoundException> createConfigNotFoundException(ConfigNotFoundException value) {
-        return new JAXBElement<ConfigNotFoundException>(ObjectFactory._ConfigNotFoundException_QNAME, ConfigNotFoundException.class, null, value);
+        return new JAXBElement<ConfigNotFoundException>(_ConfigNotFoundException_QNAME, ConfigNotFoundException.class, null, value);
     }
 
     /**
@@ -468,7 +467,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "config-multiple-result-exception")
     public JAXBElement<ConfigMultipleResultException> createConfigMultipleResultException(ConfigMultipleResultException value) {
-        return new JAXBElement<ConfigMultipleResultException>(ObjectFactory._ConfigMultipleResultException_QNAME, ConfigMultipleResultException.class, null, value);
+        return new JAXBElement<ConfigMultipleResultException>(_ConfigMultipleResultException_QNAME, ConfigMultipleResultException.class, null, value);
     }
 
     /**
@@ -477,7 +476,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "config-not-implemented-exception")
     public JAXBElement<ConfigNotImplementedException> createConfigNotImplementedException(ConfigNotImplementedException value) {
-        return new JAXBElement<ConfigNotImplementedException>(ObjectFactory._ConfigNotImplementedException_QNAME, ConfigNotImplementedException.class, null, value);
+        return new JAXBElement<ConfigNotImplementedException>(_ConfigNotImplementedException_QNAME, ConfigNotImplementedException.class, null, value);
     }
 
     /**
@@ -486,7 +485,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "config-not-authorized-exception")
     public JAXBElement<ConfigNotAuthorizedException> createConfigNotAuthorizedException(ConfigNotAuthorizedException value) {
-        return new JAXBElement<ConfigNotAuthorizedException>(ObjectFactory._ConfigNotAuthorizedException_QNAME, ConfigNotAuthorizedException.class, null, value);
+        return new JAXBElement<ConfigNotAuthorizedException>(_ConfigNotAuthorizedException_QNAME, ConfigNotAuthorizedException.class, null, value);
     }
 
     /**
@@ -495,7 +494,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "create")
     public JAXBElement<Create> createCreate(Create value) {
-        return new JAXBElement<Create>(ObjectFactory._Create_QNAME, Create.class, null, value);
+        return new JAXBElement<Create>(_Create_QNAME, Create.class, null, value);
     }
 
     /**
@@ -504,7 +503,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "createResponse")
     public JAXBElement<CreateResponse> createCreateResponse(CreateResponse value) {
-        return new JAXBElement<CreateResponse>(ObjectFactory._CreateResponse_QNAME, CreateResponse.class, null, value);
+        return new JAXBElement<CreateResponse>(_CreateResponse_QNAME, CreateResponse.class, null, value);
     }
 
     /**
@@ -513,7 +512,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "update")
     public JAXBElement<Update> createUpdate(Update value) {
-        return new JAXBElement<Update>(ObjectFactory._Update_QNAME, Update.class, null, value);
+        return new JAXBElement<Update>(_Update_QNAME, Update.class, null, value);
     }
 
     /**
@@ -522,7 +521,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "updateResponse")
     public JAXBElement<UpdateResponse> createUpdateResponse(UpdateResponse value) {
-        return new JAXBElement<UpdateResponse>(ObjectFactory._UpdateResponse_QNAME, UpdateResponse.class, null, value);
+        return new JAXBElement<UpdateResponse>(_UpdateResponse_QNAME, UpdateResponse.class, null, value);
     }
 
     /**
@@ -531,7 +530,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "updateOrCreate")
     public JAXBElement<UpdateOrCreate> createUpdateOrCreate(UpdateOrCreate value) {
-        return new JAXBElement<UpdateOrCreate>(ObjectFactory._UpdateOrCreate_QNAME, UpdateOrCreate.class, null, value);
+        return new JAXBElement<UpdateOrCreate>(_UpdateOrCreate_QNAME, UpdateOrCreate.class, null, value);
     }
 
     /**
@@ -540,7 +539,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "updateOrCreateResponse")
     public JAXBElement<UpdateOrCreateResponse> createUpdateOrCreateResponse(UpdateOrCreateResponse value) {
-        return new JAXBElement<UpdateOrCreateResponse>(ObjectFactory._UpdateOrCreateResponse_QNAME, UpdateOrCreateResponse.class, null, value);
+        return new JAXBElement<UpdateOrCreateResponse>(_UpdateOrCreateResponse_QNAME, UpdateOrCreateResponse.class, null, value);
     }
 
     /**
@@ -549,7 +548,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "deleteById")
     public JAXBElement<DeleteById> createDeleteById(DeleteById value) {
-        return new JAXBElement<DeleteById>(ObjectFactory._DeleteById_QNAME, DeleteById.class, null, value);
+        return new JAXBElement<DeleteById>(_DeleteById_QNAME, DeleteById.class, null, value);
     }
 
     /**
@@ -558,7 +557,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "deleteByIdResponse")
     public JAXBElement<DeleteByIdResponse> createDeleteByIdResponse(DeleteByIdResponse value) {
-        return new JAXBElement<DeleteByIdResponse>(ObjectFactory._DeleteByIdResponse_QNAME, DeleteByIdResponse.class, null, value);
+        return new JAXBElement<DeleteByIdResponse>(_DeleteByIdResponse_QNAME, DeleteByIdResponse.class, null, value);
     }
 
     /**
@@ -567,7 +566,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "deleteAll")
     public JAXBElement<DeleteAll> createDeleteAll(DeleteAll value) {
-        return new JAXBElement<DeleteAll>(ObjectFactory._DeleteAll_QNAME, DeleteAll.class, null, value);
+        return new JAXBElement<DeleteAll>(_DeleteAll_QNAME, DeleteAll.class, null, value);
     }
 
     /**
@@ -576,7 +575,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "deleteAllResponse")
     public JAXBElement<DeleteAllResponse> createDeleteAllResponse(DeleteAllResponse value) {
-        return new JAXBElement<DeleteAllResponse>(ObjectFactory._DeleteAllResponse_QNAME, DeleteAllResponse.class, null, value);
+        return new JAXBElement<DeleteAllResponse>(_DeleteAllResponse_QNAME, DeleteAllResponse.class, null, value);
     }
 
     /**
@@ -585,7 +584,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "deleteAllByFilter")
     public JAXBElement<DeleteAllByFilter> createDeleteAllByFilter(DeleteAllByFilter value) {
-        return new JAXBElement<DeleteAllByFilter>(ObjectFactory._DeleteAllByFilter_QNAME, DeleteAllByFilter.class, null, value);
+        return new JAXBElement<DeleteAllByFilter>(_DeleteAllByFilter_QNAME, DeleteAllByFilter.class, null, value);
     }
 
     /**
@@ -594,7 +593,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "deleteAllByFilterResponse")
     public JAXBElement<DeleteAllByFilterResponse> createDeleteAllByFilterResponse(DeleteAllByFilterResponse value) {
-        return new JAXBElement<DeleteAllByFilterResponse>(ObjectFactory._DeleteAllByFilterResponse_QNAME, DeleteAllByFilterResponse.class, null, value);
+        return new JAXBElement<DeleteAllByFilterResponse>(_DeleteAllByFilterResponse_QNAME, DeleteAllByFilterResponse.class, null, value);
     }
 
     /**
@@ -603,7 +602,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "delete")
     public JAXBElement<Delete> createDelete(Delete value) {
-        return new JAXBElement<Delete>(ObjectFactory._Delete_QNAME, Delete.class, null, value);
+        return new JAXBElement<Delete>(_Delete_QNAME, Delete.class, null, value);
     }
 
     /**
@@ -612,7 +611,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.openspcoop2.org/core/config/management", name = "deleteResponse")
     public JAXBElement<DeleteResponse> createDeleteResponse(DeleteResponse value) {
-        return new JAXBElement<DeleteResponse>(ObjectFactory._DeleteResponse_QNAME, DeleteResponse.class, null, value);
+        return new JAXBElement<DeleteResponse>(_DeleteResponse_QNAME, DeleteResponse.class, null, value);
     }
 
 }

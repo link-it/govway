@@ -31,11 +31,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
+import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.Configurazione;
@@ -43,6 +46,7 @@ import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.GestioneErrore;
+import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.InvocazionePortaGestioneErrore;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.MessageSecurity;
@@ -57,7 +61,9 @@ import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.Route;
 import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.RoutingTableDestinazione;
+import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.ServizioApplicativoRuoli;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.StatoServiziPdd;
 import org.openspcoop2.core.config.SystemProperties;
@@ -65,6 +71,7 @@ import org.openspcoop2.core.config.TipoFiltroAbilitazioneServizi;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.driver.BeanUtilities;
@@ -78,14 +85,15 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.RuoliSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.soap.mtom.MtomXomPackageInfo;
-import org.openspcoop2.pdd.core.autenticazione.Credenziali;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.GestoreErroreConnettore;
+import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -380,8 +388,9 @@ public class ConfigurazionePdDReader {
 	 * @throws CoreException eccezione che contiene il motivo della validazione semantica errata
 	 */
 	protected void validazioneSemantica(String[] tipiConnettori,String[] tipiMsgDiagnosticoAppender,String[] tipiTracciamentoAppender,
-			String [] tipiAutenticazione, String [] tipiAutorizzazione,
-			String [] tipiAutorizzazioneContenuto,String [] tipiAutorizzazioneContenutoBuste,
+			String[]tipoAutenticazionePortaDelegata,String[]tipoAutenticazionePortaApplicativa,
+			String[]tipoAutorizzazionePortaDelegata,String[]tipoAutorizzazionePortaApplicativa,
+			String[]tipoAutorizzazioneContenutoPortaDelegata,String[]tipoAutorizzazioneContenutoPortaApplicativa,
 			String [] tipiIntegrazionePD, String [] tipiIntegrazionePA,
 			boolean validazioneSemanticaAbilitataXML,boolean validazioneSemanticaAbilitataAltreConfigurazioni,boolean validaConfigurazione,
 			Logger logConsole) throws CoreException{
@@ -402,8 +411,9 @@ public class ConfigurazionePdDReader {
 						ProtocolFactoryManager.getInstance().getServiceTypesAsArray(org.openspcoop2.protocol.manifest.constants.ServiceBinding.SOAP),
 						ProtocolFactoryManager.getInstance().getServiceTypesAsArray(org.openspcoop2.protocol.manifest.constants.ServiceBinding.REST),
 						tipiMsgDiagnosticoAppender,tipiTracciamentoAppender,
-						tipiAutenticazione,tipiAutorizzazione,
-						tipiAutorizzazioneContenuto,tipiAutorizzazioneContenutoBuste,
+						tipoAutenticazionePortaDelegata, tipoAutenticazionePortaApplicativa,
+						tipoAutorizzazionePortaDelegata, tipoAutorizzazionePortaApplicativa,
+						tipoAutorizzazioneContenutoPortaDelegata, tipoAutorizzazioneContenutoPortaApplicativa, 
 						tipiIntegrazionePD,tipiIntegrazionePA,validaConfigurazione);
 				validazioneSemantica.validazioneSemantica(false);
 				if(logConsole!=null){
@@ -417,8 +427,9 @@ public class ConfigurazionePdDReader {
 
 	protected void setValidazioneSemanticaModificaConfigurazionePdDXML(String[] tipiConnettori,
 			String[]tipoMsgDiagnosticiAppender,String[]tipoTracciamentoAppender,
-			String[]tipoAutenticazione,String[]tipoAutorizzazione,
-			String[]tipiAutorizzazioneContenuto,String [] tipiAutorizzazioneContenutoBuste,
+			String[]tipoAutenticazionePortaDelegata,String[]tipoAutenticazionePortaApplicativa,
+			String[]tipoAutorizzazionePortaDelegata,String[]tipoAutorizzazionePortaApplicativa,
+			String[]tipoAutorizzazioneContenutoPortaDelegata,String[]tipoAutorizzazioneContenutoPortaApplicativa,
 			String[]tipoIntegrazionePD,String[]tipoIntegrazionePA) throws CoreException{
 		try{
 			Object o = this.configurazionePdD.getDriverConfigurazionePdD();
@@ -428,8 +439,10 @@ public class ConfigurazionePdDReader {
 						ProtocolFactoryManager.getInstance().getOrganizationTypesAsArray(),
 						ProtocolFactoryManager.getInstance().getServiceTypesAsArray(org.openspcoop2.protocol.manifest.constants.ServiceBinding.SOAP),
 						ProtocolFactoryManager.getInstance().getServiceTypesAsArray(org.openspcoop2.protocol.manifest.constants.ServiceBinding.REST),
-						tipoMsgDiagnosticiAppender, tipoTracciamentoAppender, tipoAutenticazione, tipoAutorizzazione, 
-						tipiAutorizzazioneContenuto,tipiAutorizzazioneContenutoBuste,
+						tipoMsgDiagnosticiAppender, tipoTracciamentoAppender, 
+						tipoAutenticazionePortaDelegata, tipoAutenticazionePortaApplicativa,
+						tipoAutorizzazionePortaDelegata, tipoAutorizzazionePortaApplicativa,
+						tipoAutorizzazioneContenutoPortaDelegata, tipoAutorizzazioneContenutoPortaApplicativa, 
 						tipoIntegrazionePD, tipoIntegrazionePA);
 			}
 		}catch(Exception e){
@@ -1270,9 +1283,31 @@ public class ConfigurazionePdDReader {
 		}
 
 		if(pd.getAutenticazione() == null || "".equals(pd.getAutenticazione()))
-			return CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_SSL.toString();
+			return CostantiConfigurazione.CREDENZIALE_SSL.toString();
 		else
 			return pd.getAutenticazione();
+	}
+	
+	protected boolean isAutenticazioneOpzionale(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		
+		if(pd==null){
+			throw new DriverConfigurazioneException("Porta Delegata non fornita");
+		}
+		
+		if(pd.getAutenticazioneOpzionale() == null)
+			return false;
+		else{
+			if(StatoFunzionalita.ABILITATO.equals(pd.getAutenticazioneOpzionale())){
+				return true;
+			}
+			else if(StatoFunzionalita.DISABILITATO.equals(pd.getAutenticazioneOpzionale())){
+				return false;
+			}
+			else{
+				return false;
+			}
+		}
+			
 	}
 
 	protected String getAutorizzazione(PortaDelegata pd) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
@@ -1282,7 +1317,7 @@ public class ConfigurazionePdDReader {
 		}
 
 		if(pd.getAutorizzazione() == null || "".equals(pd.getAutorizzazione()) )
-			return CostantiConfigurazione.AUTORIZZAZIONE_OPENSPCOOP;
+			return CostantiConfigurazione.AUTORIZZAZIONE_AUTHENTICATED;
 		else
 			return pd.getAutorizzazione();
 	}
@@ -1699,6 +1734,7 @@ public class ConfigurazionePdDReader {
 	protected List<PortaApplicativa> getPorteApplicative(Connection connectionPdD,IDServizio idServizio, boolean ricercaPuntuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		return this.configurazionePdD.getPorteApplicative(connectionPdD, idServizio, ricercaPuntuale);
 	}
+		
 	
 	protected List<PortaApplicativa> getPorteApplicativeVirtuali(Connection connectionPdD,IDSoggetto idSoggettoVirtuale, IDServizio idServizio, boolean ricercaPuntuale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		return this.configurazionePdD.getPorteApplicativeVirtuali(connectionPdD, idSoggettoVirtuale, idServizio, ricercaPuntuale);
@@ -1851,6 +1887,66 @@ public class ConfigurazionePdDReader {
 
 		return securityConfig; 
 	}
+
+
+	protected String getAutenticazione(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		
+		if(pa==null){
+			throw new DriverConfigurazioneException("Porta Applicativa non fornita");
+		}
+		
+		if(pa.getAutenticazione() == null || "".equals(pa.getAutenticazione()))
+			return CostantiConfigurazione.CREDENZIALE_SSL.toString();
+		else
+			return pa.getAutenticazione();
+	}
+	
+	protected boolean isAutenticazioneOpzionale(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		
+		if(pa==null){
+			throw new DriverConfigurazioneException("Porta Applicativa non fornita");
+		}
+		
+		if(pa.getAutenticazioneOpzionale() == null)
+			return false;
+		else{
+			if(StatoFunzionalita.ABILITATO.equals(pa.getAutenticazioneOpzionale())){
+				return true;
+			}
+			else if(StatoFunzionalita.DISABILITATO.equals(pa.getAutenticazioneOpzionale())){
+				return false;
+			}
+			else{
+				return false;
+			}
+		}
+			
+	}
+
+	protected String getAutorizzazione(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		
+		if(pa==null){
+			throw new DriverConfigurazioneException("Porta Applicativa non fornita");
+		}
+		
+		if(pa.getAutorizzazione() == null || "".equals(pa.getAutorizzazione()) )
+			return CostantiConfigurazione.AUTORIZZAZIONE_AUTHENTICATED;
+		else
+			return pa.getAutorizzazione();
+	}
+	
+	protected String getAutorizzazioneContenuto(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		
+		if(pa==null){
+			throw new DriverConfigurazioneException("Porta Applicativa non fornita");
+		}
+		
+		if(pa.getAutorizzazioneContenuto() == null || "".equals(pa.getAutorizzazioneContenuto()))
+			return CostantiConfigurazione.NONE;
+		else
+			return pa.getAutorizzazioneContenuto();
+	}
+	
 
 	protected boolean ricevutaAsincronaSimmetricaAbilitata(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		if(pa==null)
@@ -2018,16 +2114,74 @@ public class ConfigurazionePdDReader {
 		}
 	}
 
-	protected String getAutorizzazioneContenuto(PortaApplicativa pa) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
+	protected boolean autorizzazioneRoles(PortaApplicativa pa, org.openspcoop2.core.registry.Soggetto soggetto, InfoConnettoreIngresso infoConnettoreIngresso,
+			boolean checkRuoloRegistro, boolean checkRuoloEsterno) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 
-		if(pa==null){
-			throw new DriverConfigurazioneException("Porta Applicativa non fornita");
+		if( (pa == null) || pa.getRuoli()==null || pa.getRuoli().sizeRuoloList()<=0 ){
+			throw new DriverConfigurazioneNotFound("Non sono stati definiti i ruoli necessari a fruire della porta applicativa");
 		}
 
-		if(pa.getAutorizzazioneContenuto() == null || "".equals(pa.getAutorizzazioneContenuto()))
-			return CostantiConfigurazione.NONE;
-		else
-			return pa.getAutorizzazioneContenuto();
+		if(checkRuoloRegistro && !checkRuoloEsterno){
+			if(soggetto==null){
+				throw new DriverConfigurazioneException("Identità soggetto non disponibile; tale informazione è richiesta dall'autorizzazione");
+			}
+		}
+		
+		HttpServletRequest httpServletRequest = null;
+		if(checkRuoloEsterno){
+			if(infoConnettoreIngresso==null ||
+					infoConnettoreIngresso.getUrlProtocolContext()==null ||
+					infoConnettoreIngresso.getUrlProtocolContext().getHttpServletRequest()==null){
+				throw new DriverConfigurazioneException("HttpServletRequest non disponibile; risorsa richiesta dall'autorizzazione");
+			}
+			httpServletRequest = infoConnettoreIngresso.getUrlProtocolContext().getHttpServletRequest();
+		}
+		
+		RuoloTipoMatch ruoloMatch = pa.getRuoli().getMatch();
+		if(ruoloMatch==null){
+			ruoloMatch = RuoloTipoMatch.ALL;
+		}
+		
+		for(int j=0; j<pa.getRuoli().sizeRuoloList(); j++){
+			Ruolo ruolo = pa.getRuoli().getRuolo(j);
+			
+			boolean trovato = false;
+			
+			if(checkRuoloRegistro && soggetto!=null && soggetto.getRuoli()!=null){
+				RuoliSoggetto ruoliSoggetto = soggetto.getRuoli();
+				for (int i = 0; i < ruoliSoggetto.sizeRuoloList(); i++) {
+					if(ruolo.getNome().equals(ruoliSoggetto.getRuolo(i).getNome())){
+						trovato = true;
+						break;
+					}
+				}
+			}
+			
+			if(!trovato && checkRuoloEsterno){
+				if(httpServletRequest.isUserInRole(ruolo.getNome())){
+					trovato = true;
+				}
+			}
+			
+			if(trovato){
+				if(RuoloTipoMatch.ANY.equals(ruoloMatch)){
+					return true; // basta un ruolo
+				}
+			}
+			else{
+				if(RuoloTipoMatch.ALL.equals(ruoloMatch)){
+					return false; // deve possedere tutti i ruoli
+				}
+			}
+		}
+		
+		if(RuoloTipoMatch.ANY.equals(ruoloMatch)){
+			return false; // non è stato trovato alcun ruolo
+		}
+		else{
+			return true; // tutti i ruoli trovati
+		}
+
 	}
 
 	protected List<Object> getExtendedInfo(PortaApplicativa pa)throws DriverConfigurazioneException{
@@ -2037,7 +2191,6 @@ public class ConfigurazionePdDReader {
 
 		return pa.getExtendedInfoList();
 	}
-
 
 
 
@@ -2104,6 +2257,26 @@ public class ConfigurazionePdDReader {
 			return null;
 	}
 	
+	protected IDServizioApplicativo getIdServizioApplicativoByCredenzialiPrincipal(Connection connectionPdD,String principal) throws DriverConfigurazioneException{
+		ServizioApplicativo servizioApplicativo = null;
+		try{
+			servizioApplicativo = this.configurazionePdD.getServizioApplicativoByCredenzialiPrincipal(connectionPdD, principal);
+		}catch(DriverConfigurazioneNotFound e){
+			//this.log.debug("autenticazioneHTTP (not found): "+e.getMessage());
+		}
+
+		if(servizioApplicativo!=null){
+			IDServizioApplicativo idSA = new IDServizioApplicativo();
+			idSA.setNome(servizioApplicativo.getNome());
+			if(servizioApplicativo.getTipoSoggettoProprietario()!=null && servizioApplicativo.getNomeSoggettoProprietario()!=null){
+				idSA.setIdSoggettoProprietario(new IDSoggetto(servizioApplicativo.getTipoSoggettoProprietario(), servizioApplicativo.getNomeSoggettoProprietario()));
+			}
+			return idSA;
+		}
+		else
+			return null;
+	}
+	
 	protected boolean autorizzazione(PortaDelegata pd, String servizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 
 		if( (pd == null) || (servizioApplicativo==null) )
@@ -2115,6 +2288,76 @@ public class ConfigurazionePdDReader {
 		}
 
 		return false;
+
+	}
+	
+	protected boolean autorizzazioneRoles(PortaDelegata pd, ServizioApplicativo sa, InfoConnettoreIngresso infoConnettoreIngresso,
+			boolean checkRuoloRegistro, boolean checkRuoloEsterno) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{ 
+
+		if( (pd == null) || pd.getRuoli()==null || pd.getRuoli().sizeRuoloList()<=0 ){
+			throw new DriverConfigurazioneNotFound("Non sono stati definiti i ruoli necessari a fruire della porta delegata");
+		}
+		
+		if(checkRuoloRegistro && !checkRuoloEsterno){
+			if(sa==null){
+				throw new DriverConfigurazioneException("Identità servizio applicativo non disponibile; tale informazione è richiesta dall'autorizzazione");
+			}
+		}
+		
+		HttpServletRequest httpServletRequest = null;
+		if(checkRuoloEsterno){
+			if(infoConnettoreIngresso==null ||
+					infoConnettoreIngresso.getUrlProtocolContext()==null ||
+					infoConnettoreIngresso.getUrlProtocolContext().getHttpServletRequest()==null){
+				throw new DriverConfigurazioneException("HttpServletRequest non disponibile; risorsa richiesta dall'autorizzazione");
+			}
+			httpServletRequest = infoConnettoreIngresso.getUrlProtocolContext().getHttpServletRequest();
+		}
+		
+		RuoloTipoMatch ruoloMatch = pd.getRuoli().getMatch();
+		if(ruoloMatch==null){
+			ruoloMatch = RuoloTipoMatch.ALL;
+		}
+		
+		for(int j=0; j<pd.getRuoli().sizeRuoloList(); j++){
+			Ruolo ruolo = pd.getRuoli().getRuolo(j);
+			
+			boolean trovato = false;
+			
+			if(checkRuoloRegistro && sa!=null && sa.getInvocazionePorta()!=null && sa.getInvocazionePorta().getRuoli()!=null){
+				ServizioApplicativoRuoli ruoliSA = sa.getInvocazionePorta().getRuoli();
+				for (int i = 0; i < ruoliSA.sizeRuoloList(); i++) {
+					if(ruolo.getNome().equals(ruoliSA.getRuolo(i).getNome())){
+						trovato = true;
+						break;
+					}
+				}
+			}
+			
+			if(!trovato && checkRuoloEsterno){
+				if(httpServletRequest.isUserInRole(ruolo.getNome())){
+					trovato = true;
+				}
+			}
+			
+			if(trovato){
+				if(RuoloTipoMatch.ANY.equals(ruoloMatch)){
+					return true; // basta un ruolo
+				}
+			}
+			else{
+				if(RuoloTipoMatch.ALL.equals(ruoloMatch)){
+					return false; // deve possedere tutti i ruoli
+				}
+			}
+		}
+		
+		if(RuoloTipoMatch.ANY.equals(ruoloMatch)){
+			return false; // non è stato trovato alcun ruolo
+		}
+		else{
+			return true; // tutti i ruoli trovati
+		}
 
 	}
 
@@ -2282,21 +2525,17 @@ public class ConfigurazionePdDReader {
 		if(serv.getAutenticazione()!=null){
 			tmp = serv.getAutenticazione().toString();
 		}
-		if(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_SSL.toString().equalsIgnoreCase(tmp))
-			autenticazione = CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_SSL.toString();
-		if(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC.toString().equalsIgnoreCase(tmp))
+		if(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC.toString().equalsIgnoreCase(tmp)){
 			autenticazione = CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC.toString();
+		}
 
 
 		// Credenziali
-		Credenziali credenziali = null;
-		if(serv.getCredenziali()!=null && serv.getCredenziali().getTipo()!=null){
-			if(autenticazione.equals(serv.getCredenziali().getTipo().toString())){
-				credenziali = new Credenziali();
-				credenziali.setUsername(serv.getCredenziali().getUser());
-				credenziali.setPassword(serv.getCredenziali().getPassword());
-				credenziali.setSubject(serv.getCredenziali().getSubject());
-			}
+		InvocazioneCredenziali credenziali = null;
+		if(serv.getCredenziali()!=null){
+			credenziali = new InvocazioneCredenziali();
+			credenziali.setUser(serv.getCredenziali().getUser());
+			credenziali.setPassword(serv.getCredenziali().getPassword());
 		}
 
 		// Costruisco connettoreMsg
@@ -2464,21 +2703,16 @@ public class ConfigurazionePdDReader {
 		if(serv.getAutenticazione()!=null){
 			tmp = serv.getAutenticazione().toString();
 		}
-		if(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_SSL.toString().equalsIgnoreCase(tmp))
-			autenticazione = CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_SSL.toString();
 		if(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC.toString().equalsIgnoreCase(tmp))
 			autenticazione = CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC.toString();
 
 
 		// Credenziali
-		Credenziali credenziali = null;
-		if(serv.getCredenziali()!=null && serv.getCredenziali().getTipo()!=null){
-			if(autenticazione.equals(serv.getCredenziali().getTipo().toString())){
-				credenziali = new Credenziali();
-				credenziali.setUsername(serv.getCredenziali().getUser());
-				credenziali.setPassword(serv.getCredenziali().getPassword());
-				credenziali.setSubject(serv.getCredenziali().getSubject());
-			}
+		InvocazioneCredenziali credenziali = null;
+		if(serv.getCredenziali()!=null){
+			credenziali = new InvocazioneCredenziali();
+			credenziali.setUser(serv.getCredenziali().getUser());
+			credenziali.setPassword(serv.getCredenziali().getPassword());
 		}
 
 		// Costruisco connettoreMsg
@@ -2555,21 +2789,16 @@ public class ConfigurazionePdDReader {
 		if(serv.getAutenticazione()!=null){
 			tmp = serv.getAutenticazione().toString();
 		}
-		if(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_SSL.toString().equalsIgnoreCase(tmp))
-			autenticazione = CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_SSL.toString();
 		if(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC.toString().equalsIgnoreCase(tmp))
 			autenticazione = CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC.toString();
 
 
 		// Credenziali
-		Credenziali credenziali = null;
-		if(serv.getCredenziali()!=null && serv.getCredenziali().getTipo()!=null){
-			if(autenticazione.equals(serv.getCredenziali().getTipo().toString())){
-				credenziali = new Credenziali();
-				credenziali.setUsername(serv.getCredenziali().getUser());
-				credenziali.setPassword(serv.getCredenziali().getPassword());
-				credenziali.setSubject(serv.getCredenziali().getSubject());
-			}
+		InvocazioneCredenziali credenziali = null;
+		if(serv.getCredenziali()!=null){
+			credenziali = new InvocazioneCredenziali();
+			credenziali.setUser(serv.getCredenziali().getUser());
+			credenziali.setPassword(serv.getCredenziali().getPassword());
 		}
 
 		// Costruisco connettoreMsg
@@ -2767,6 +2996,45 @@ public class ConfigurazionePdDReader {
 		return ConfigurazionePdDReader.accessoDatiAutorizzazione;
 	}
 
+	/**
+	 * Restituisce le informazioni necessarie alla porta di dominio per accedere ai dati di autorizzazione
+	 *
+	 * @return informazioni
+	 * 
+	 */
+	private static AccessoDatiAutenticazione accessoDatiAutenticazione = null;
+	private static Boolean accessoDatiAutenticazioneLetto = false;
+	protected AccessoDatiAutenticazione getAccessoDatiAutenticazione(Connection connectionPdD){
+
+		if( this.configurazioneDinamica || ConfigurazionePdDReader.accessoDatiAutenticazioneLetto==false){
+			AccessoDatiAutenticazione tmp = null;
+			try{
+				tmp = this.configurazionePdD.getAccessoDatiAutenticazione(connectionPdD);
+			}catch(DriverConfigurazioneNotFound e){
+				this.log.debug("getAccessoDatiAutenticazione (not found): "+e.getMessage());
+			}catch(Exception e){
+				this.log.error("getAccessoDatiAutenticazione",e);
+			}
+
+			ConfigurazionePdDReader.accessoDatiAutenticazione = tmp;
+			ConfigurazionePdDReader.accessoDatiAutenticazioneLetto = true;
+		}
+
+		/*
+		if(ConfigurazionePdDReader.accessoDatiAutenticazione.getCache()==null){
+			System.out.println("ACCESSO_DATI_AUTHN CACHE DISABILITATA");
+		}else{
+			System.out.println("ACCESSO_DATI_AUTHN CACHE ABILITATA");
+			System.out.println("ACCESSO_DATI_AUTHN CACHE ALGORITMO: "+ConfigurazionePdDReader.accessoDatiAutenticazione.getCache().getAlgoritmo());
+			System.out.println("ACCESSO_DATI_AUTHN CACHE DIMENSIONE: "+ConfigurazionePdDReader.accessoDatiAutenticazione.getCache().getDimensione());
+			System.out.println("ACCESSO_DATI_AUTHN CACHE ITEM IDLE: "+ConfigurazionePdDReader.accessoDatiAutenticazione.getCache().getItemIdleTime());
+			System.out.println("ACCESSO_DATI_AUTHN CACHE ITEM LIFE SECOND: "+ConfigurazionePdDReader.accessoDatiAutenticazione.getCache().getItemLifeSecond());
+		}
+		*/
+		
+		return ConfigurazionePdDReader.accessoDatiAutenticazione;
+	}
+	
 	/**
 	 * Restituisce il tipo di validazione richiesta alla porta di dominio.
 	 * Se un valore non viene impostato, il tipo ritornato sara' 'attivo'.
@@ -3703,8 +3971,8 @@ public class ConfigurazionePdDReader {
 					this.log.error("getIntegrationManagerAuthentication",e);
 				}
 				if(configurazione == null || configurazione.getIntegrationManager()==null || configurazione.getIntegrationManager().getAutenticazione()==null){
-					ConfigurazionePdDReader.integrationManagerAuthentication = new String [] { CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC.toString(),
-							CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_SSL.toString() };
+					ConfigurazionePdDReader.integrationManagerAuthentication = new String [] { CostantiConfigurazione.CREDENZIALE_BASIC.toString(),
+							CostantiConfigurazione.CREDENZIALE_SSL.toString() };
 				}else {
 
 					String [] values =  configurazione.getIntegrationManager().getAutenticazione().split(",");
@@ -3712,7 +3980,7 @@ public class ConfigurazionePdDReader {
 					ClassNameProperties classNameProperties = ClassNameProperties.getInstance();
 					for(int i=0; i<values.length; i++){
 						values[i] = values[i].trim();
-						if(classNameProperties.getAutenticazione(values[i])==null){
+						if(classNameProperties.getAutenticazionePortaDelegata(values[i])==null){
 							this.log.error("Meccanismo di autenticazione ["+values[i]+"] non registrato nella Porta di Dominio");
 						}else{
 							v.add(values[i]);
@@ -3727,7 +3995,7 @@ public class ConfigurazionePdDReader {
 			}catch(Exception e){
 				this.log.error("Errore durante la lettura del tipo di autenticazione associato al servizio di IntegrationManager: "+e.getMessage());
 				ConfigurazionePdDReader.integrationManagerAuthentication = new String [] { CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC.toString(),
-						CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_SSL.toString() };
+						CostantiConfigurazione.CREDENZIALE_SSL.toString() };
 			}
 		}
 

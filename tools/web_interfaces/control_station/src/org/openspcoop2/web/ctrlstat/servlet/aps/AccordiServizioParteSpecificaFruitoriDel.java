@@ -34,20 +34,21 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaDelegata;
-import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
+import org.openspcoop2.web.ctrlstat.dao.MappingFruizionePortaDelegata;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
-import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -116,7 +117,6 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 			Fruitore fru = null;
 
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore();
-			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
 			
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idServizio);
@@ -142,9 +142,6 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 				for (int j = 0; j < asps.sizeFruitoreList(); j++) {
 					fru = asps.getFruitore(j);
 					if (fru.getId().intValue() == idFru) {
-						// rimuovo le politiche di sicurezza del fruitore
-						Soggetto sogFruitore = soggettiCore.getSoggetto(new IDSoggetto(fru.getTipo(), fru.getNome()));
-						apsCore.deleteAllPoliticheSicurezza(asps.getId(), sogFruitore.getId());
 						asps.removeFruitore(j);
 						break;
 					}
@@ -152,10 +149,17 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 
 				// cancello la porta delegata associata al fruitore
 				// del servizio, se esiste
-				String nomePD = fru.getTipo() + fru.getNome() + "/" + mytipoprov + mynomeprov + "/" + tiposervizio + nomeservizio + "/" +versioneservzio;
-				IDPortaDelegata myidpd = new IDPortaDelegata();
-				myidpd.setNome(nomePD);
-				if (porteDelegateCore.existsPortaDelegata(myidpd)) {
+//				String nomePD = fru.getTipo() + fru.getNome() + "/" + mytipoprov + mynomeprov + "/" + tiposervizio + nomeservizio;
+//				IDPortaDelegata myidpd = new IDPortaDelegata();
+//				IDSoggetto ids = new IDSoggetto(fru.getTipo(), fru.getNome());
+//				myidpd.setSoggettoFruitore(ids);
+//				myidpd.setLocationPD(nomePD);
+//				if (porteDelegateCore.existsPortaDelegata(myidpd)) {
+				IDServizio idServizioObject = IDServizioFactory.getInstance().getIDServizioFromValues(tiposervizio, nomeservizio, mytipoprov, mynomeprov, versioneservzio);
+				IDSoggetto idSoggettoFruitore = new IDSoggetto(fru.getTipo(), fru.getNome());
+				IDPortaDelegata myidpd = porteDelegateCore.getIDPortaDelegataAssociata(idServizioObject, idSoggettoFruitore);
+				
+				if(myidpd!=null){
 					PortaDelegata mypd = porteDelegateCore.getPortaDelegata(myidpd);
 					
 					List<Object> listPerformOperations = new ArrayList<Object>();
@@ -178,6 +182,12 @@ public final class AccordiServizioParteSpecificaFruitoriDel extends Action {
 							}
 						}
 					}
+					
+					MappingFruizionePortaDelegata mappingFruizione = new MappingFruizionePortaDelegata();
+					mappingFruizione.setIdFruitore(idSoggettoFruitore);
+					mappingFruizione.setIdServizio(idServizioObject);
+					mappingFruizione.setIdPortaDelegata(myidpd);
+					listPerformOperations.add(mappingFruizione);
 					
 					listPerformOperations.add(mypd);
 					

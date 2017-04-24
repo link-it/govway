@@ -30,6 +30,7 @@ package org.openspcoop2.core.config.ws.server.filter;
  *         &lt;element name="soggetto-virtuale" type="{http://www.openspcoop2.org/core/config/management}porta-applicativa-soggetto-virtuale" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="servizio" type="{http://www.openspcoop2.org/core/config/management}porta-applicativa-servizio" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="azione" type="{http://www.openspcoop2.org/core/config/management}porta-applicativa-azione" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config/management}autorizzazione-ruoli" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="mtom-processor" type="{http://www.openspcoop2.org/core/config/management}mtom-processor" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="validazione-contenuti-applicativi" type="{http://www.openspcoop2.org/core/config/management}validazione-contenuti-applicativi" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="tipo-soggetto-proprietario" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
@@ -45,6 +46,9 @@ package org.openspcoop2.core.config.ws.server.filter;
  *         &lt;element name="gestione-manifest" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="stateless" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="behaviour" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="autenticazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="autenticazione-opzionale" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="autorizzazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="autorizzazione-contenuto" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ora-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
@@ -65,6 +69,7 @@ import org.openspcoop2.core.config.ws.server.filter.beans.MtomProcessor;
 import org.openspcoop2.core.config.ws.server.filter.beans.PortaApplicativaAzione;
 import org.openspcoop2.core.config.ws.server.filter.beans.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.ws.server.filter.beans.AutorizzazioneRuoli;
 import java.util.Date;
 import org.openspcoop2.core.config.ws.server.filter.beans.PortaApplicativaServizio;
 import org.openspcoop2.core.config.ws.server.filter.beans.ValidazioneContenutiApplicativi;
@@ -82,6 +87,7 @@ import org.openspcoop2.core.config.ws.server.filter.beans.ValidazioneContenutiAp
     "soggettoVirtuale",
     "servizio",
     "azione",
+    "ruoli",
     "mtomProcessor",
     "validazioneContenutiApplicativi",
     "tipoSoggettoProprietario",
@@ -97,6 +103,9 @@ import org.openspcoop2.core.config.ws.server.filter.beans.ValidazioneContenutiAp
     "gestioneManifest",
     "stateless",
     "behaviour",
+    "autenticazione",
+    "autenticazioneOpzionale",
+    "autorizzazione",
     "autorizzazioneContenuto",
     "oraRegistrazioneMin",
     "oraRegistrazioneMax",
@@ -142,6 +151,18 @@ public class SearchFilterPortaApplicativa extends org.openspcoop2.utils.beans.Ba
 	
 	public PortaApplicativaAzione getAzione(){
 		return this.azione;
+	}
+	
+	
+	@XmlElement(name="ruoli",required=false,nillable=false)
+	private AutorizzazioneRuoli ruoli;
+	
+	public void setRuoli(AutorizzazioneRuoli ruoli){
+		this.ruoli = ruoli;
+	}
+	
+	public AutorizzazioneRuoli getRuoli(){
+		return this.ruoli;
 	}
 	
 	
@@ -329,6 +350,44 @@ public class SearchFilterPortaApplicativa extends org.openspcoop2.utils.beans.Ba
 	
 	public String getBehaviour(){
 		return this.behaviour;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="autenticazione",required=false,nillable=false)
+	private String autenticazione;
+	
+	public void setAutenticazione(String autenticazione){
+		this.autenticazione = autenticazione;
+	}
+	
+	public String getAutenticazione(){
+		return this.autenticazione;
+	}
+	
+	
+	@XmlElement(name="autenticazione-opzionale",required=false,nillable=false)
+	private StatoFunzionalita autenticazioneOpzionale;
+	
+	public void setAutenticazioneOpzionale(StatoFunzionalita autenticazioneOpzionale){
+		this.autenticazioneOpzionale = autenticazioneOpzionale;
+	}
+	
+	public StatoFunzionalita getAutenticazioneOpzionale(){
+		return this.autenticazioneOpzionale;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="autorizzazione",required=false,nillable=false)
+	private String autorizzazione;
+	
+	public void setAutorizzazione(String autorizzazione){
+		this.autorizzazione = autorizzazione;
+	}
+	
+	public String getAutorizzazione(){
+		return this.autorizzazione;
 	}
 	
 	

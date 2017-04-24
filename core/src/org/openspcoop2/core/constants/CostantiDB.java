@@ -54,6 +54,9 @@ public final class CostantiDB {
     
     /*REGSERV*/
     public static final String PROTOCOL_PROPERTIES = "protocol_properties";
+    public static final String PDD = "pdd";
+    public static final String RUOLI	= "ruoli";
+    public static final String SOGGETTI_RUOLI = "soggetti_ruoli";
     public static final String SERVIZI = "servizi";
     public static final String SERVIZI_FRUITORI = "servizi_fruitori";
     public static final String SERVIZI_AZIONI = "servizi_azioni";
@@ -71,6 +74,7 @@ public final class CostantiDB {
     
     /*CONFIG*/
     public static final String SERVIZI_APPLICATIVI = "servizi_applicativi";
+    public static final String SERVIZI_APPLICATIVI_RUOLI = "sa_ruoli";
     public static final String PORTE_APPLICATIVE = "porte_applicative";
     public static final String PORTE_APPLICATIVE_SA = "porte_applicative_sa";
     public static final String PORTE_APPLICATIVE_PROP = "pa_properties";
@@ -80,6 +84,7 @@ public final class CostantiDB {
     public static final String PORTE_APPLICATIVE_MTOM_RESPONSE = "pa_mtom_response";
     public static final String PORTE_APPLICATIVE_CORRELAZIONE = "pa_correlazione";
     public static final String PORTE_APPLICATIVE_CORRELAZIONE_RISPOSTA = "pa_correlazione_risposta";
+    public static final String PORTE_APPLICATIVE_RUOLI = "pa_ruoli";
     public static final String PORTE_DELEGATE = "porte_delegate";
     public static final String PORTE_DELEGATE_SA = "porte_delegate_sa";
     public static final String PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST = "pd_ws_request";
@@ -88,6 +93,7 @@ public final class CostantiDB {
     public static final String PORTE_DELEGATE_MTOM_RESPONSE = "pd_mtom_response";
     public static final String PORTE_DELEGATE_CORRELAZIONE = "pd_correlazione";
     public static final String PORTE_DELEGATE_CORRELAZIONE_RISPOSTA = "pd_correlazione_risposta";
+    public static final String PORTE_DELEGATE_RUOLI = "pd_ruoli";
     public static final String REGISTRI = "registri";
     public static final String SERVIZI_PDD = "servizi_pdd";
     public static final String SERVIZI_PDD_FILTRI = "servizi_pdd_filtri";
@@ -146,11 +152,9 @@ public final class CostantiDB {
     public final static String TRACCE_TABLE_FOR_ID = "tracce_init_seq";
     
     /*PddConsole*/
-    public static final String PDD = "pdd";
     public static final String USERS = "users";
-    public static final String POLITICHE_SICUREZZA = "politiche_sicurezza";
-    public static final String RUOLI	= "ruoli";
-    public static final String RUOLI_SA = "ruoli_sa";
+    public static final String MAPPING_FRUIZIONE_PD	= "mapping_fruizione_pd";
+    public static final String MAPPING_EROGAZIONE_PA	= "mapping_erogazione_pa";
     
     /*DB INFO*/
     public static final String DB_INFO = "db_info";

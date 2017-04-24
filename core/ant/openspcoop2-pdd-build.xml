@@ -79,9 +79,12 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.config" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.autenticazione" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.autenticazione.pd" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.autenticazione.pa" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.autorizzazione" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.autorizzazione.pd" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.autorizzazione.pa" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.credenziali" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.connettori" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.handlers" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.handlers.statistics" />

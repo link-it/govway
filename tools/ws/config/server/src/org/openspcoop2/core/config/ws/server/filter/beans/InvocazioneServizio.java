@@ -27,7 +27,7 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
  * <pre>
  * &lt;complexType name="invocazione-servizio">
  *     &lt;sequence>
- *         &lt;element name="credenziali" type="{http://www.openspcoop2.org/core/config/management}credenziali" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="credenziali" type="{http://www.openspcoop2.org/core/config/management}invocazione-credenziali" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="connettore" type="{http://www.openspcoop2.org/core/config/management}connettore" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="sbustamento-soap" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="sbustamento-informazioni-protocollo" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
@@ -47,7 +47,7 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlElement;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
-import org.openspcoop2.core.config.ws.server.filter.beans.Credenziali;
+import org.openspcoop2.core.config.ws.server.filter.beans.InvocazioneCredenziali;
 import org.openspcoop2.core.config.ws.server.filter.beans.Connettore;
 
 /**     
@@ -75,13 +75,13 @@ public class InvocazioneServizio extends org.openspcoop2.utils.beans.BaseBean im
 	private static final long serialVersionUID = -1L;
 	
 	@XmlElement(name="credenziali",required=false,nillable=false)
-	private Credenziali credenziali;
+	private InvocazioneCredenziali credenziali;
 	
-	public void setCredenziali(Credenziali credenziali){
+	public void setCredenziali(InvocazioneCredenziali credenziali){
 		this.credenziali = credenziali;
 	}
 	
-	public Credenziali getCredenziali(){
+	public InvocazioneCredenziali getCredenziali(){
 		return this.credenziali;
 	}
 	

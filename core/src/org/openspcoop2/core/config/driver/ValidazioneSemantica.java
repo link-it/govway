@@ -43,6 +43,7 @@ import org.openspcoop2.core.config.GestioneErroreSoapFault;
 import org.openspcoop2.core.config.IndirizzoRisposta;
 import org.openspcoop2.core.config.InoltroBusteNonRiscontrate;
 import org.openspcoop2.core.config.IntegrationManager;
+import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.InvocazionePortaGestioneErrore;
 import org.openspcoop2.core.config.InvocazioneServizio;
@@ -224,54 +225,80 @@ public class ValidazioneSemantica {
 		return bf.toString();
 	}
 
-	/** Lista di tipi di autenticazione validi */
-	private List<String> tipoAutenticazione = new ArrayList<String>();
-	/** Lista dei tipi di autenticazione ammessi */
-	private String getTipoAutenticazione(){
+	/** Lista di tipi di autenticazione porta delegata validi */
+	private List<String> tipoAutenticazionePortaDelegata = new ArrayList<String>();
+	/** Lista dei tipi di autenticazione porta delegata ammessi */
+	private String getTipoAutenticazionePortaDelegata(){
 		StringBuffer bf = new StringBuffer();
-		for(int i=0; i<this.tipoAutenticazione.size(); i++){
+		for(int i=0; i<this.tipoAutenticazionePortaDelegata.size(); i++){
 			if(i>0)
 				bf.append(",");
-			bf.append(this.tipoAutenticazione.get(i));
+			bf.append(this.tipoAutenticazionePortaDelegata.get(i));
 		}
 		return bf.toString();
 	}
 	
-	/** Lista di tipi di autorizzazione validi */
-	private List<String> tipoAutorizzazione = new ArrayList<String>();
-	/** Lista dei tipi di autorizzazione ammessi */
-	private String getTipoAutorizzazione(){
+	/** Lista di tipi di autenticazione porta applicativa validi */
+	private List<String> tipoAutenticazionePortaApplicativa = new ArrayList<String>();
+	/** Lista dei tipi di autenticazione porta applicativa ammessi */
+	private String getTipoAutenticazionePortaApplicativa(){
 		StringBuffer bf = new StringBuffer();
-		for(int i=0; i<this.tipoAutorizzazione.size(); i++){
+		for(int i=0; i<this.tipoAutenticazionePortaApplicativa.size(); i++){
 			if(i>0)
 				bf.append(",");
-			bf.append(this.tipoAutorizzazione.get(i));
+			bf.append(this.tipoAutenticazionePortaApplicativa.get(i));
 		}
 		return bf.toString();
 	}
 	
-	/** Lista di tipi di autorizzazione per contenuto validi */
-	private List<String> tipoAutorizzazioneContenuto = new ArrayList<String>();
-	/** Lista dei tipi di autorizzazione per contenuto  ammessi */
-	private String getTipoAutorizzazioneContenuto(){
+	/** Lista di tipi di autorizzazione porta delegata validi */
+	private List<String> tipoAutorizzazionePortaDelegata = new ArrayList<String>();
+	/** Lista dei tipi di autorizzazione porta delegata ammessi */
+	private String getTipoAutorizzazionePortaDelegata(){
 		StringBuffer bf = new StringBuffer();
-		for(int i=0; i<this.tipoAutorizzazioneContenuto.size(); i++){
+		for(int i=0; i<this.tipoAutorizzazionePortaDelegata.size(); i++){
 			if(i>0)
 				bf.append(",");
-			bf.append(this.tipoAutorizzazioneContenuto.get(i));
+			bf.append(this.tipoAutorizzazionePortaDelegata.get(i));
 		}
 		return bf.toString();
 	}
 	
-	/** Lista di tipi di autorizzazione per contenuto validi */
-	private List<String> tipoAutorizzazioneBusteContenuto = new ArrayList<String>();
-	/** Lista dei tipi di autorizzazione per contenuto  ammessi */
-	private String getTipoAutorizzazioneBusteContenuto(){
+	/** Lista di tipi di autorizzazione porta applicativa validi */
+	private List<String> tipoAutorizzazionePortaApplicativa = new ArrayList<String>();
+	/** Lista dei tipi di autorizzazione porta applicativa ammessi */
+	private String getTipoAutorizzazionePortaApplicativa(){
 		StringBuffer bf = new StringBuffer();
-		for(int i=0; i<this.tipoAutorizzazioneBusteContenuto.size(); i++){
+		for(int i=0; i<this.tipoAutorizzazionePortaApplicativa.size(); i++){
 			if(i>0)
 				bf.append(",");
-			bf.append(this.tipoAutorizzazioneBusteContenuto.get(i));
+			bf.append(this.tipoAutorizzazionePortaApplicativa.get(i));
+		}
+		return bf.toString();
+	}
+	
+	/** Lista di tipi di autorizzazione per contenuto porta delegata validi */
+	private List<String> tipoAutorizzazioneContenutoPortaDelegata = new ArrayList<String>();
+	/** Lista dei tipi di autorizzazione per contenuto porta delegata  ammessi */
+	private String getTipoAutorizzazioneContenutoPortaDelegata(){
+		StringBuffer bf = new StringBuffer();
+		for(int i=0; i<this.tipoAutorizzazioneContenutoPortaDelegata.size(); i++){
+			if(i>0)
+				bf.append(",");
+			bf.append(this.tipoAutorizzazioneContenutoPortaDelegata.get(i));
+		}
+		return bf.toString();
+	}
+	
+	/** Lista di tipi di autorizzazione per contenuto porta applicativa validi */
+	private List<String> tipoAutorizzazioneContenutoPortaApplicativa = new ArrayList<String>();
+	/** Lista dei tipi di autorizzazione per contenuto porta applicativa  ammessi */
+	private String getTipoAutorizzazioneContenutoPortaApplicativa(){
+		StringBuffer bf = new StringBuffer();
+		for(int i=0; i<this.tipoAutorizzazioneContenutoPortaApplicativa.size(); i++){
+			if(i>0)
+				bf.append(",");
+			bf.append(this.tipoAutorizzazioneContenutoPortaApplicativa.get(i));
 		}
 		return bf.toString();
 	}
@@ -307,8 +334,9 @@ public class ValidazioneSemantica {
 	public ValidazioneSemantica(org.openspcoop2.core.config.Openspcoop2 configurazione,
 			String[]tipoConnettori,String[]tipoSoggetti,String[]tipoServiziSoap,String[]tipoServiziRest,
 			String[]tipoMsgDiagnosticiAppender,String[]tipoTracciamentoAppender,
-			String[]tipoAutenticazione,String[]tipoAutorizzazione,
-			String[]tipoAutorizzazioneContenuto,String[]tipoAutorizzazioneBusteContenuto,
+			String[]tipoAutenticazionePortaDelegata,String[]tipoAutenticazionePortaApplicativa,
+			String[]tipoAutorizzazionePortaDelegata,String[]tipoAutorizzazionePortaApplicativa,
+			String[]tipoAutorizzazioneContenutoPortaDelegata,String[]tipoAutorizzazioneContenutoPortaApplicativa,
 			String[]tipoIntegrazionePD,String[]tipoIntegrazionePA,
 			boolean validazioneConfigurazione,Logger log) throws DriverConfigurazioneException{
 		this.configurazione = configurazione;
@@ -361,33 +389,47 @@ public class ValidazioneSemantica {
 		}else{
 			throw new DriverConfigurazioneException("Tipo di appender ammissibili per le traccie non definiti");
 		}
-		if(tipoAutenticazione!=null && tipoAutenticazione.length>0 ){
-			for(int i=0; i<tipoAutenticazione.length; i++){
-				this.tipoAutenticazione.add(tipoAutenticazione[i]);
+		if(tipoAutenticazionePortaDelegata!=null && tipoAutenticazionePortaDelegata.length>0 ){
+			for(int i=0; i<tipoAutenticazionePortaDelegata.length; i++){
+				this.tipoAutenticazionePortaDelegata.add(tipoAutenticazionePortaDelegata[i]);
 			}
 		}else{
-			throw new DriverConfigurazioneException("Tipo di processi di autenticazione ammissibili non definiti");
+			throw new DriverConfigurazioneException("Tipo di processi di autenticazione porta delegata ammissibili non definiti");
 		}
-		if(tipoAutorizzazione!=null && tipoAutorizzazione.length>0 ){
-			for(int i=0; i<tipoAutorizzazione.length; i++){
-				this.tipoAutorizzazione.add(tipoAutorizzazione[i]);
+		if(tipoAutenticazionePortaApplicativa!=null && tipoAutenticazionePortaApplicativa.length>0 ){
+			for(int i=0; i<tipoAutenticazionePortaApplicativa.length; i++){
+				this.tipoAutenticazionePortaApplicativa.add(tipoAutenticazionePortaApplicativa[i]);
 			}
 		}else{
-			throw new DriverConfigurazioneException("Tipo di processi di autorizzazione ammissibili non definiti");
+			throw new DriverConfigurazioneException("Tipo di processi di autenticazione porta applicativa ammissibili non definiti");
 		}
-		if(tipoAutorizzazioneBusteContenuto!=null && tipoAutorizzazioneBusteContenuto.length>0 ){
-			for(int i=0; i<tipoAutorizzazioneBusteContenuto.length; i++){
-				this.tipoAutorizzazioneBusteContenuto.add(tipoAutorizzazioneBusteContenuto[i]);
+		if(tipoAutorizzazionePortaDelegata!=null && tipoAutorizzazionePortaDelegata.length>0 ){
+			for(int i=0; i<tipoAutorizzazionePortaDelegata.length; i++){
+				this.tipoAutorizzazionePortaDelegata.add(tipoAutorizzazionePortaDelegata[i]);
 			}
 		}else{
-			throw new DriverConfigurazioneException("Tipo di processi di autorizzazione buste contenuto ammissibili non definiti");
+			throw new DriverConfigurazioneException("Tipo di processi di autorizzazione porta delegata ammissibili non definiti");
 		}
-		if(tipoAutorizzazioneContenuto!=null && tipoAutorizzazioneContenuto.length>0 ){
-			for(int i=0; i<tipoAutorizzazioneContenuto.length; i++){
-				this.tipoAutorizzazioneContenuto.add(tipoAutorizzazioneContenuto[i]);
+		if(tipoAutorizzazionePortaApplicativa!=null && tipoAutorizzazionePortaApplicativa.length>0 ){
+			for(int i=0; i<tipoAutorizzazionePortaApplicativa.length; i++){
+				this.tipoAutorizzazionePortaApplicativa.add(tipoAutorizzazionePortaApplicativa[i]);
 			}
 		}else{
-			throw new DriverConfigurazioneException("Tipo di processi di autorizzazione contenuto ammissibili non definiti");
+			throw new DriverConfigurazioneException("Tipo di processi di autorizzazione porta applicativa ammissibili non definiti");
+		}
+		if(tipoAutorizzazioneContenutoPortaDelegata!=null && tipoAutorizzazioneContenutoPortaDelegata.length>0 ){
+			for(int i=0; i<tipoAutorizzazioneContenutoPortaDelegata.length; i++){
+				this.tipoAutorizzazioneContenutoPortaDelegata.add(tipoAutorizzazioneContenutoPortaDelegata[i]);
+			}
+		}else{
+			throw new DriverConfigurazioneException("Tipo di processi di autorizzazione contenuto porta delegata ammissibili non definiti");
+		}
+		if(tipoAutorizzazioneContenutoPortaApplicativa!=null && tipoAutorizzazioneContenutoPortaApplicativa.length>0 ){
+			for(int i=0; i<tipoAutorizzazioneContenutoPortaApplicativa.length; i++){
+				this.tipoAutorizzazioneContenutoPortaApplicativa.add(tipoAutorizzazioneContenutoPortaApplicativa[i]);
+			}
+		}else{
+			throw new DriverConfigurazioneException("Tipo di processi di autorizzazione contenuto porta applicativa ammissibili non definiti");
 		}
 		if(tipoIntegrazionePD!=null && tipoIntegrazionePD.length>0 ){
 			for(int i=0; i<tipoIntegrazionePD.length; i++){
@@ -407,12 +449,16 @@ public class ValidazioneSemantica {
 	public ValidazioneSemantica(org.openspcoop2.core.config.Openspcoop2 configurazione,
 			String[]tipoConnettori,String[]tipoSoggetti,String[]tipoServiziSoap,String[]tipoServiziRest,
 			String[]tipoMsgDiagnosticiAppender,String[]tipoTracciamentoAppender,
-			String[]tipoAutenticazione,String[]tipoAutorizzazione,
-			String[]tipoAutorizzazioneContenuto,String[]tipoAutorizzazioneBusteContenuto,
+			String[]tipoAutenticazionePortaDelegata,String[]tipoAutenticazionePortaApplicativa,
+			String[]tipoAutorizzazionePortaDelegata,String[]tipoAutorizzazionePortaApplicativa,
+			String[]tipoAutorizzazioneContenutoPortaDelegata,String[]tipoAutorizzazioneContenutoPortaApplicativa,
 			String[]tipoIntegrazionePD,String[]tipoIntegrazionePA,
 			boolean validazioneConfigurazione) throws DriverConfigurazioneException{
 		this(configurazione,tipoConnettori,tipoSoggetti,tipoServiziSoap,tipoServiziRest,tipoMsgDiagnosticiAppender,tipoTracciamentoAppender,
-				tipoAutenticazione,tipoAutorizzazione,tipoAutorizzazioneContenuto,tipoAutorizzazioneBusteContenuto,tipoIntegrazionePD,tipoIntegrazionePA,
+				tipoAutenticazionePortaDelegata,tipoAutenticazionePortaApplicativa,
+				tipoAutorizzazionePortaDelegata,tipoAutorizzazionePortaApplicativa,
+				tipoAutorizzazioneContenutoPortaDelegata,tipoAutorizzazioneContenutoPortaApplicativa,
+				tipoIntegrazionePD,tipoIntegrazionePA,
 				validazioneConfigurazione,null);
 	}
 
@@ -676,39 +722,60 @@ public class ValidazioneSemantica {
 		
 	
 		// Check processo di autenticazione della porta delegata
-		String autenticazione = InvocazioneServizioTipoAutenticazione.SSL.toString();
+		String autenticazione = CredenzialeTipo.SSL.toString();
 		if(pd.getAutenticazione()!=null){
 			autenticazione = pd.getAutenticazione();
-			if(this.tipoAutenticazione.contains(pd.getAutenticazione())==false){
-				this.errori.add("Alla porta delegata "+idPortaDelegata+" e' stato associato un processo di autenticazione non valido; tipi conosciuti: "+this.getTipoAutenticazione()); 
+			if(this.tipoAutenticazionePortaDelegata.contains(pd.getAutenticazione())==false){
+				this.errori.add("Alla porta delegata "+idPortaDelegata+" e' stato associato un processo di autenticazione non valido; tipi conosciuti: "+this.getTipoAutenticazionePortaDelegata()); 
 			}
 		}
 		
 		// Autorizzazione
-		String autorizzazione = CostantiConfigurazione.AUTORIZZAZIONE_OPENSPCOOP;
+		String autorizzazione = CostantiConfigurazione.AUTORIZZAZIONE_AUTHENTICATED;
 		if(pd.getAutorizzazione()!=null){
 			autorizzazione = pd.getAutorizzazione();
-			if(this.tipoAutorizzazione.contains(pd.getAutorizzazione())==false){
-				this.errori.add("Alla porta delegata "+idPortaDelegata+" e' stato associato un processo di autorizzazione non valido; tipi conosciuti: "+this.getTipoAutorizzazione()); 
-			}
-		}
-		// Se e' definito un processo di autorizzazione, deve anche essere definito un processo di autenticazione
-		if(CostantiConfigurazione.AUTORIZZAZIONE_NONE.equals(autorizzazione)==false){
-			if(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_NONE.equals(autenticazione)){
-				this.errori.add("Alla porta delegata "+idPortaDelegata+" e' stato associato un processo di autorizzazione ma non un processo di autenticazione: non e' possibile effettuare autorizzazione senza prima autenticare i servizi applicativi"); 
-			}
-		}
-		// Se la porta delegata contiene autorizzazione='openspcoop' devono essere elencati/definiti ALMENO un servizio applicativo. Tutti i servizi elencati DEVONO possedere l'elemento invocazione porta con ALMENO una credenziale
-		if (CostantiConfigurazione.AUTORIZZAZIONE_OPENSPCOOP.equals(autorizzazione)) {
-			if (pd.sizeServizioApplicativoList() == 0){
-				this.errori.add("La porta delegata "+idPortaDelegata+" deve avere almeno un servizio applicativo associato poiche' lo richiede il tipo di autorizzazione "+CostantiConfigurazione.AUTORIZZAZIONE_OPENSPCOOP);
+			if(this.tipoAutorizzazionePortaDelegata.contains(pd.getAutorizzazione())==false){
+				this.errori.add("Alla porta delegata "+idPortaDelegata+" e' stato associato un processo di autorizzazione non valido; tipi conosciuti: "+this.getTipoAutorizzazionePortaDelegata()); 
 			}
 		}
 		
+		if(autorizzazione!=null){
+			if(autorizzazione.toLowerCase().contains(CostantiConfigurazione.AUTORIZZAZIONE_AUTHENTICATED) &&
+					autorizzazione.toLowerCase().contains(CostantiConfigurazione.AUTORIZZAZIONE_ROLES)){
+				// Se e' definito un processo di autorizzazione che prevede sia autenticazione che ruoli l'autenticazione deve essere opzionale
+				if(StatoFunzionalita.ABILITATO.equals(pd.getAutenticazioneOpzionale())==false){
+					this.errori.add("Alla porta delegata "+idPortaDelegata+" e' stato associata un'autorizzazione '"+autorizzazione+"' che richiede una autenticazione dei servizi applicativi opzionali"); 
+				}
+			}
+			if(autorizzazione.toLowerCase().contains("internal") || 
+					(CostantiConfigurazione.AUTORIZZAZIONE_AUTHENTICATED.equals(autorizzazione))){
+				// Se l'autorizzazione prevede una gestione dei ruoli interni, oppure è solamente basata sull'autenticazione dei chiamanti, 
+				// una autenticazione DEVE essere presente e non deve essere opzionale
+				if(CostantiConfigurazione.AUTENTICAZIONE_NONE.equals(autenticazione)){
+					this.errori.add("Alla porta delegata "+idPortaDelegata+" e' stato associata un'autorizzazione '"+autorizzazione+"' che richiede una autenticazione obbligatoria dei servizi applicativi, autenticazione non impostata nella porta delegata"); 
+				}
+				if(StatoFunzionalita.ABILITATO.equals(pd.getAutenticazioneOpzionale())){
+					this.errori.add("Alla porta delegata "+idPortaDelegata+" e' stato associata un'autorizzazione '"+autorizzazione+"' che richiede una autenticazione obbligatoria dei servizi applicativi, autenticazione impostata come opzionale nella porta delegata"); 
+				}
+			}
+		}
+
+		// Vincoli troppo forti nel caso di configurazione su console, la PdD non parte se la configurazione non e' stata ultimata.
+//		if(autorizzazione!=null && autorizzazione.contains(CostantiConfigurazione.AUTORIZZAZIONE_AUTHENTICATED)){
+//			if (pd.sizeServizioApplicativoList() == 0){
+//				this.errori.add("La porta delegata "+idPortaDelegata+" deve avere almeno un servizio applicativo associato poiche' lo richiede il tipo di autorizzazione indicato: "+autorizzazione);
+//			}
+//		}
+//		if(autorizzazione!=null && autorizzazione.toLowerCase().contains(CostantiConfigurazione.AUTORIZZAZIONE_ROLES.toLowerCase())){
+//			if (pd.getRuoli()==null || pd.getRuoli().sizeRuoloList() == 0){
+//				this.errori.add("La porta delegata "+idPortaDelegata+" deve avere almeno un ruolo associato poiche' lo richiede il tipo di autorizzazione indicato: "+autorizzazione);
+//			}
+//		}
+		
 		// Autorizzazione Contenuto
 		if(pd.getAutorizzazioneContenuto()!=null){
-			if(this.tipoAutorizzazioneContenuto.contains(pd.getAutorizzazioneContenuto())==false){
-				this.errori.add("Alla porta delegata "+idPortaDelegata+" e' stato associato un processo di autorizzazione contenuto non valido; tipi conosciuti: "+this.getTipoAutorizzazioneContenuto()); 
+			if(this.tipoAutorizzazioneContenutoPortaDelegata.contains(pd.getAutorizzazioneContenuto())==false){
+				this.errori.add("Alla porta delegata "+idPortaDelegata+" e' stato associato un processo di autorizzazione contenuto non valido; tipi conosciuti: "+this.getTipoAutorizzazioneContenutoPortaDelegata()); 
 			}
 		}
 		
@@ -752,18 +819,6 @@ public class ValidazioneSemantica {
 						}
 						if(!trovato){
 							this.errori.add("La porta delegata "+idPortaDelegata+" possiede un meccanismo di autenticazione ["+autenticazione+"]: il servizio applicativo "+sa.getNome() +" non contiene la definizione di credenziali di accesso di tipo "+CostantiConfigurazione.CREDENZIALE_BASIC.toString());
-						}
-					}
-					else if(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_SSL.equals(autenticazione)){
-						boolean trovato = false;
-						for(int k=0; k<sa.getInvocazionePorta().sizeCredenzialiList(); k++){
-							if(CostantiConfigurazione.CREDENZIALE_SSL.equals(sa.getInvocazionePorta().getCredenziali(k).getTipo())){
-								trovato=true;
-								break;
-							}
-						}
-						if(!trovato){
-							this.errori.add("La porta delegata "+idPortaDelegata+" possiede un meccanismo di autenticazione ["+autenticazione+"]: il servizio applicativo "+sa.getNome() +" non contiene la definizione di credenziali di accesso di tipo "+CostantiConfigurazione.CREDENZIALE_SSL.toString());
 						}
 					}
 				}
@@ -849,6 +904,32 @@ public class ValidazioneSemantica {
 		if ((localForward != null) && !localForward.equals(CostantiConfigurazione.ABILITATO) && !localForward.equals(CostantiConfigurazione.DISABILITATO))
 			this.errori.add("La funzionalita' 'local-forward' della porta delegata "+idPortaDelegata+" deve assumere i valori: "+
 					CostantiConfigurazione.ABILITATO+" o "+CostantiConfigurazione.DISABILITATO);
+		
+		// ruoli
+		if(pd.getRuoli()!=null){
+			for (int i = 0; i < pd.getRuoli().sizeRuoloList(); i++) {
+				String nomeRuolo = pd.getRuoli().getRuolo(i).getNome();
+				try{
+					if (!RegularExpressionEngine.isMatch(nomeRuolo,"^[0-9A-Za-z_]+$")) {
+						this.errori.add("Il ruolo ["+nomeRuolo+"] della porta delegata "+idPortaDelegata+" dev'essere formato solo da caratteri, cifre e '_'");
+					}
+				}catch(Exception e){
+					throw new DriverConfigurazioneException("Errore durante l'analisi tramite espressione regolare del nome del ruolo "+nomeRuolo+" della porta delegata "+idPortaDelegata+" :" +e.getMessage(),e);
+				}
+			}
+			// Ogni ruolo deve avere un nome diverso!
+			for (int i = 0; i < pd.getRuoli().sizeRuoloList(); i++) {
+				int numRuolo = 0;
+				String tmpRuolo = pd.getRuoli().getRuolo(i).getNome();
+				for (int j = 0; j < pd.getRuoli().sizeRuoloList(); j++) {
+					String checkRuolo = pd.getRuoli().getRuolo(j).getNome();
+					if (checkRuolo.equals(tmpRuolo))
+						numRuolo++;	
+				}
+				if (numRuolo > 1)
+					this.errori.add("Non può esistere più di un ruolo con nome "+tmpRuolo+". Trovate "+numRuolo+" occorrenze nella porta delegata "+idPortaDelegata);
+			}
+		}
 	}
 
 	private  void validaPortaApplicativa(PortaApplicativa pa, Soggetto sogg) throws DriverConfigurazioneException {
@@ -1020,10 +1101,61 @@ public class ValidazioneSemantica {
 			}
 		}
 
+		// Check processo di autenticazione della porta delegata
+		String autenticazione = CredenzialeTipo.SSL.toString();
+		if(pa.getAutenticazione()!=null){
+			autenticazione = pa.getAutenticazione();
+			if(this.tipoAutenticazionePortaApplicativa.contains(pa.getAutenticazione())==false){
+				this.errori.add("Alla porta applicativa "+idPortaApplicativa+" e' stato associato un processo di autenticazione non valido; tipi conosciuti: "+this.getTipoAutenticazionePortaApplicativa()); 
+			}
+		}
+		
+		// Autorizzazione
+		String autorizzazione = CostantiConfigurazione.AUTORIZZAZIONE_AUTHENTICATED;
+		if(pa.getAutorizzazione()!=null){
+			autorizzazione = pa.getAutorizzazione();
+			if(this.tipoAutenticazionePortaApplicativa.contains(pa.getAutorizzazione())==false){
+				this.errori.add("Alla porta applicativa "+idPortaApplicativa+" e' stato associato un processo di autorizzazione non valido; tipi conosciuti: "+this.getTipoAutorizzazionePortaApplicativa()); 
+			}
+		}
+		
+		if(autorizzazione!=null){
+		
+			// Questi vincoli non valgono in spcoop e nello sdi
+			if("PROXY".equals(sogg.getTipo())){
+				if(autorizzazione.toLowerCase().contains(CostantiConfigurazione.AUTORIZZAZIONE_AUTHENTICATED) &&
+						autorizzazione.toLowerCase().contains(CostantiConfigurazione.AUTORIZZAZIONE_ROLES)){
+					// Se e' definito un processo di autorizzazione che prevede sia autenticazione che ruoli l'autenticazione deve essere opzionale
+					if(StatoFunzionalita.ABILITATO.equals(pa.getAutenticazioneOpzionale())==false){
+						this.errori.add("Alla porta applicativa "+idPortaApplicativa+" e' stato associata un'autorizzazione '"+autorizzazione+"' che richiede una autenticazione dei soggetti opzionali"); 
+					}
+				}
+				if(autorizzazione.toLowerCase().contains("internal") || 
+						(CostantiConfigurazione.AUTORIZZAZIONE_AUTHENTICATED.equals(autorizzazione))){
+					// Se l'autorizzazione prevede una gestione dei ruoli interni, oppure è solamente basata sull'autenticazione dei chiamanti, 
+					// una autenticazione DEVE essere presente e non deve essere opzionale
+					if(CostantiConfigurazione.AUTENTICAZIONE_NONE.equals(autenticazione)){
+						this.errori.add("Alla porta applicativa "+idPortaApplicativa+" e' stato associata un'autorizzazione '"+autorizzazione+"' che richiede una autenticazione obbligatoria dei soggetti, autenticazione non impostata nella porta applicativa"); 
+					}
+					if(StatoFunzionalita.ABILITATO.equals(pa.getAutenticazioneOpzionale())){
+						this.errori.add("Alla porta applicativa "+idPortaApplicativa+" e' stato associata un'autorizzazione '"+autorizzazione+"' che richiede una autenticazione obbligatoria dei soggetti, autenticazione impostata come opzionale nella porta applicativa"); 
+					}
+				}
+			}
+			
+		}
+
+		// Vincoli troppo forti nel caso di configurazione su console, la PdD non parte se la configurazione non e' stata ultimata.
+//		if(autorizzazione!=null && autorizzazione.toLowerCase().contains(CostantiConfigurazione.AUTORIZZAZIONE_ROLES.toLowerCase())){
+//			if (pa.getRuoli()==null || pa.getRuoli().sizeRuoloList() == 0){
+//				this.errori.add("La porta applicativa "+idPortaApplicativa+" deve avere almeno un ruolo associato poiche' lo richiede il tipo di autorizzazione indicato: "+autorizzazione);
+//			}
+//		}
+		
 		// Autorizzazione Contenuto
 		if(pa.getAutorizzazioneContenuto()!=null){
-			if(this.tipoAutorizzazioneBusteContenuto.contains(pa.getAutorizzazioneContenuto())==false){
-				this.errori.add("Alla porta applicativa "+idPortaApplicativa+" e' stato associato un processo di autorizzazione contenuto non valido; tipi conosciuti: "+this.getTipoAutorizzazioneBusteContenuto()); 
+			if(this.tipoAutorizzazioneContenutoPortaApplicativa.contains(pa.getAutorizzazioneContenuto())==false){
+				this.errori.add("Alla porta applicativa "+idPortaApplicativa+" e' stato associato un processo di autorizzazione contenuto non valido; tipi conosciuti: "+this.getTipoAutorizzazioneContenutoPortaApplicativa()); 
 			}
 		}
 		
@@ -1171,6 +1303,31 @@ public class ValidazioneSemantica {
 			this.errori.add("La funzionalita' 'stateless' della porta applicativa "+idPortaApplicativa+" deve assumere i valori: "+
 					CostantiConfigurazione.ABILITATO+" o "+CostantiConfigurazione.DISABILITATO);
 		
+		// ruoli
+		if(pa.getRuoli()!=null){
+			for (int i = 0; i < pa.getRuoli().sizeRuoloList(); i++) {
+				String nomeRuolo = pa.getRuoli().getRuolo(i).getNome();
+				try{
+					if (!RegularExpressionEngine.isMatch(nomeRuolo,"^[0-9A-Za-z_]+$")) {
+						this.errori.add("Il ruolo ["+nomeRuolo+"] della porta applicativa "+idPortaApplicativa+" dev'essere formato solo da caratteri, cifre e '_'");
+					}
+				}catch(Exception e){
+					throw new DriverConfigurazioneException("Errore durante l'analisi tramite espressione regolare del nome del ruolo "+nomeRuolo+" della porta applicativa "+idPortaApplicativa+" :" +e.getMessage(),e);
+				}
+			}
+			// Ogni ruolo deve avere un nome diverso!
+			for (int i = 0; i < pa.getRuoli().sizeRuoloList(); i++) {
+				int numRuolo = 0;
+				String tmpRuolo = pa.getRuoli().getRuolo(i).getNome();
+				for (int j = 0; j < pa.getRuoli().sizeRuoloList(); j++) {
+					String checkRuolo = pa.getRuoli().getRuolo(j).getNome();
+					if (checkRuolo.equals(tmpRuolo))
+						numRuolo++;	
+				}
+				if (numRuolo > 1)
+					this.errori.add("Non può esistere più di un ruolo con nome "+tmpRuolo+". Trovate "+numRuolo+" occorrenze nella porta applicativa "+idPortaApplicativa);
+			}
+		}
 	}
 
 	private void validaServizioApplicativo(ServizioApplicativo sa, Soggetto sogg) throws DriverConfigurazioneException {
@@ -1198,7 +1355,7 @@ public class ValidazioneSemantica {
 			}
 			for (int j=0; j<ip.sizeCredenzialiList(); j++) {
 				Credenziali c = ip.getCredenziali(j);
-				this.validaCredenziale(c, "servizio applicativo ["+idServizioApplicativo+"] (invocazione porta)",true);
+				this.validaCredenziale(c, "servizio applicativo ["+idServizioApplicativo+"] (invocazione porta)");
 			}
 			
 			// XSD: invio-per-riferimento: abilitato, disabilitato
@@ -1229,7 +1386,31 @@ public class ValidazioneSemantica {
 							CostantiConfigurazione.ABILITATO+" o "+CostantiConfigurazione.DISABILITATO);
 			}
 
-			
+			// ruoli
+			if(ip.getRuoli()!=null){
+				for (int i = 0; i < ip.getRuoli().sizeRuoloList(); i++) {
+					String nomeRuolo = ip.getRuoli().getRuolo(i).getNome();
+					try{
+						if (!RegularExpressionEngine.isMatch(nomeRuolo,"^[0-9A-Za-z_]+$")) {
+							this.errori.add("Il ruolo ["+nomeRuolo+"] dell'invocazione porta del servizio applicativo ["+idServizioApplicativo+"] dev'essere formato solo da caratteri, cifre e '_'");
+						}
+					}catch(Exception e){
+						throw new DriverConfigurazioneException("Errore durante l'analisi tramite espressione regolare del nome del ruolo "+nomeRuolo+" dell'invocazione porta del servizio applicativo ["+idServizioApplicativo+"] :" +e.getMessage(),e);
+					}
+				}
+				// Ogni ruolo deve avere un nome diverso!
+				for (int i = 0; i < ip.getRuoli().sizeRuoloList(); i++) {
+					int numRuolo = 0;
+					String tmpRuolo = ip.getRuoli().getRuolo(i).getNome();
+					for (int j = 0; j < ip.getRuoli().sizeRuoloList(); j++) {
+						String checkRuolo = ip.getRuoli().getRuolo(j).getNome();
+						if (checkRuolo.equals(tmpRuolo))
+							numRuolo++;	
+					}
+					if (numRuolo > 1)
+						this.errori.add("Non può esistere più di un ruolo con nome "+tmpRuolo+". Trovate "+numRuolo+" occorrenze nell'invocazione porta del servizio applicativo ["+idServizioApplicativo+"]");
+				}
+			}
 		}
 
 		// InvocazioneServizio
@@ -1237,9 +1418,9 @@ public class ValidazioneSemantica {
 			InvocazioneServizio is = sa.getInvocazioneServizio();
 			
 			// Valida Credenziali
-			Credenziali c = is.getCredenziali();
+			InvocazioneCredenziali c = is.getCredenziali();
 			if (c != null)
-				this.validaCredenziale(c, "servizio applicativo ["+idServizioApplicativo+"] (invocazione servizio)",false);
+				this.validaCredenziale(c, "servizio applicativo ["+idServizioApplicativo+"] (invocazione servizio)");
 				
 			// Autenticazione
 			// XSD: autenticazione: basic, ssl, none
@@ -1251,9 +1432,6 @@ public class ValidazioneSemantica {
 			if(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC.equals(auth)){
 				if(c==null){
 					this.errori.add("L'autenticazione "+CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC.toString()+" dell'invocazione servizio del servizio applicativo "+idServizioApplicativo+" richiede la presenza di credenziali");
-				}
-				if((CostantiConfigurazione.CREDENZIALE_BASIC.equals(c.getTipo())==false)){
-					this.errori.add("L'autenticazione "+CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC.toString()+" dell'invocazione servizio del servizio applicativo "+idServizioApplicativo+" richiede la presenza di credenziali di tipo "+CostantiConfigurazione.CREDENZIALE_BASIC.toString());
 				}
 			}
 
@@ -1318,9 +1496,9 @@ public class ValidazioneSemantica {
 			RispostaAsincrona ra = sa.getRispostaAsincrona();
 			
 			// Valida Credenziali
-			Credenziali c = ra.getCredenziali();
+			InvocazioneCredenziali c = ra.getCredenziali();
 			if (c != null)
-				this.validaCredenziale(c, "servizio applicativo ["+idServizioApplicativo+"] (risposta asincrona)",false);
+				this.validaCredenziale(c, "servizio applicativo ["+idServizioApplicativo+"] (risposta asincrona)");
 				
 			// Autenticazione
 			// XSD: autenticazione: basic, ssl, none
@@ -1332,9 +1510,6 @@ public class ValidazioneSemantica {
 			if(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC.equals(auth)){
 				if(c==null){
 					this.errori.add("L'autenticazione "+CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC+" della risposta asincrona del servizio applicativo "+idServizioApplicativo+" richiede la presenza di credenziali");
-				}
-				if((CostantiConfigurazione.CREDENZIALE_BASIC.equals(c.getTipo())==false)){
-					this.errori.add("L'autenticazione "+CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC.toString()+" della risposta asincrona del servizio applicativo "+idServizioApplicativo+" richiede la presenza di credenziali di tipo "+CostantiConfigurazione.CREDENZIALE_BASIC.toString());
 				}
 			}
 
@@ -2354,8 +2529,8 @@ public class ValidazioneSemantica {
 			String[]v = im.getAutenticazione().split(",");
 			if(v!=null && v.length>0){
 				for(int l=0;l<v.length;l++){
-					if(this.tipoAutenticazione.contains(v[l].trim())==false){
-						this.errori.add("Processo di autenticazione["+v[l].trim()+"] associato al servizio di IntegrationManager non conosciuto, valori ammessi: "+this.getTipoAutenticazione());
+					if(this.tipoAutenticazionePortaDelegata.contains(v[l].trim())==false){
+						this.errori.add("Processo di autenticazione["+v[l].trim()+"] associato al servizio di IntegrationManager non conosciuto, valori ammessi: "+this.getTipoAutenticazionePortaDelegata());
 					}
 				}
 			}
@@ -2666,48 +2841,54 @@ public class ValidazioneSemantica {
 			*/
 	}
 
-	private  void validaCredenziale(Credenziali c, String oggetto, boolean invocazionePorta) throws DriverConfigurazioneException {
+	private  void validaCredenziale(Credenziali c, String oggetto) throws DriverConfigurazioneException {
 		// Se il tipo e' basic, username e password sono OBBLIGATORI
 		
-		if(invocazionePorta){
-			CredenzialeTipo tipo = CostantiConfigurazione.CREDENZIALE_SSL;
-			if(c.getTipo()!=null){
-				tipo = c.getTipo();
-			}
-			if ( !tipo.equals(CostantiConfigurazione.CREDENZIALE_BASIC) && !tipo.equals(CostantiConfigurazione.CREDENZIALE_SSL))
-				this.errori.add("Il tipo delle credenziali del "+oggetto+" deve possedere i valori: "+CostantiConfigurazione.CREDENZIALE_BASIC.toString()+" o "+CostantiConfigurazione.CREDENZIALE_SSL.toString());
-			
-			
-			if (c.getTipo().equals(CostantiConfigurazione.CREDENZIALE_BASIC)) {
-				if ((c.getUser() == null) || (c.getUser().equals("")) || (c.getPassword() == null) || (c.getPassword().equals("")))
-					this.errori.add("Le credenziali di tipo basic del "+oggetto+" devono avere username e password valorizzati");
-			}
-	
-			// Se il tipo e' ssl, subject e' OBBLIGATORIO
-			if (c.getTipo().equals(CostantiConfigurazione.CREDENZIALE_SSL)){
-				if ((c.getSubject() == null) || (c.getSubject().equals(""))){
-					this.errori.add("Le credenziali di tipo ssl del "+oggetto+" devono avere subject valorizzato");
-				}else{
-					try{
-						Utilities.validaSubject(c.getSubject());
-					}catch(Exception e){
-						this.errori.add("Le credenziali di tipo ssl del "+oggetto+" possiedono un subject non valido: "+e.getMessage());
-					}
+		CredenzialeTipo tipo = CostantiConfigurazione.CREDENZIALE_SSL;
+		if(c.getTipo()!=null){
+			tipo = c.getTipo();
+		}
+		if ( !tipo.equals(CostantiConfigurazione.CREDENZIALE_BASIC) && 
+				!tipo.equals(CostantiConfigurazione.CREDENZIALE_SSL) && 
+				!tipo.equals(CostantiConfigurazione.CREDENZIALE_PRINCIPAL))
+			this.errori.add("Il tipo delle credenziali del "+oggetto+" deve possedere i valori: "+
+				CostantiConfigurazione.CREDENZIALE_BASIC.toString()+" o "+
+					CostantiConfigurazione.CREDENZIALE_SSL.toString()+" o "+
+					CostantiConfigurazione.CREDENZIALE_PRINCIPAL.toString());
+		
+		
+		if (c.getTipo().equals(CostantiConfigurazione.CREDENZIALE_BASIC)) {
+			if ((c.getUser() == null) || (c.getUser().equals("")) || (c.getPassword() == null) || (c.getPassword().equals("")))
+				this.errori.add("Le credenziali di tipo basic del "+oggetto+" devono avere username e password valorizzati");
+		}
+
+		// Se il tipo e' ssl, subject e' OBBLIGATORIO
+		if (c.getTipo().equals(CostantiConfigurazione.CREDENZIALE_SSL)){
+			if ((c.getSubject() == null) || (c.getSubject().equals(""))){
+				this.errori.add("Le credenziali di tipo ssl del "+oggetto+" devono avere subject valorizzato");
+			}else{
+				try{
+					Utilities.validaSubject(c.getSubject());
+				}catch(Exception e){
+					this.errori.add("Le credenziali di tipo ssl del "+oggetto+" possiedono un subject non valido: "+e.getMessage());
 				}
 			}
-				
-			
-			
 		}
-		else{
-			if(CostantiConfigurazione.CREDENZIALE_BASIC.equals(c.getTipo())==false){
-				this.errori.add("Le uniche credenziali utilizzabili per "+oggetto+" devono avere tipo basic");
-			}
-			else{
-				if ((c.getUser() == null) || (c.getUser().equals("")) || (c.getPassword() == null) || (c.getPassword().equals("")))
-					this.errori.add("Le credenziali di tipo basic del "+oggetto+" devono avere username e password valorizzati");
+			
+		// Se il tipo e' principal, user e' OBBLIGATORIO
+		if (c.getTipo().equals(CostantiConfigurazione.CREDENZIALE_PRINCIPAL)){
+			if ((c.getUser() == null) || (c.getUser().equals(""))){
+				this.errori.add("Le credenziali di tipo principal del "+oggetto+" devono avere user valorizzato");
 			}
 		}
+		
+	}
+	
+	private  void validaCredenziale(InvocazioneCredenziali c, String oggetto) throws DriverConfigurazioneException {
+		// Se il tipo e' basic, username e password sono OBBLIGATORI
+		
+		if ((c.getUser() == null) || (c.getUser().equals("")) || (c.getPassword() == null) || (c.getPassword().equals("")))
+			this.errori.add("Le credenziali di tipo basic del "+oggetto+" devono avere username e password valorizzati");
 		
 	}
 

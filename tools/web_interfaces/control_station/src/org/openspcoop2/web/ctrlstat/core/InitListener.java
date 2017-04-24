@@ -38,6 +38,7 @@ import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
 import org.openspcoop2.web.ctrlstat.config.RegistroServiziRemotoProperties;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB_LIB;
+import org.openspcoop2.web.ctrlstat.gestori.GestoreConsistenzaDati;
 import org.openspcoop2.web.ctrlstat.gestori.GestoriStartupThread;
 import org.openspcoop2.web.lib.queue.config.QueueProperties;
 
@@ -68,6 +69,7 @@ public class InitListener implements ServletContextListener {
 	}
 
 	private GestoriStartupThread gestoriStartupThread;
+	private GestoreConsistenzaDati gestoreConsistenzaDati;
 	
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
@@ -78,6 +80,17 @@ public class InitListener implements ServletContextListener {
         // Fermo i Gestori
 		if(this.gestoriStartupThread!=null){
 			this.gestoriStartupThread.stopGestori();
+		}
+		if(this.gestoreConsistenzaDati!=null){
+			this.gestoreConsistenzaDati.setStop(true);
+			int limite = 60;
+			int index = 0;
+			while(GestoreConsistenzaDati.gestoreConsistenzaDatiInEsecuzione && index<limite){
+				try{
+					Thread.sleep(1000);
+				}catch(Exception e){}
+				index++;
+			}
 		}
 
 		InitListener.log.info("Undeploy pddConsole effettuato.");
@@ -199,6 +212,20 @@ public class InitListener implements ServletContextListener {
                 new Thread(this.gestoriStartupThread).start();
 				
 				InitListener.log.info("Inizializzazione Gestori, della pddConsole Centralizzata, effettuata con successo.");
+			}
+		}catch(Exception e){
+			throw new RuntimeException(e.getMessage(),e);
+		}
+		
+		try{
+			if(consoleProperties.isGestoreConsistenzaDatiEnabled()){
+				this.gestoreConsistenzaDati = new GestoreConsistenzaDati(consoleProperties.isGenerazioneAutomaticaPorteApplicative(), 
+						consoleProperties.isGenerazioneAutomaticaPorteDelegate(), consoleProperties.isGestoreConsistenzaDati_forceCheckMapping());
+                new Thread(this.gestoreConsistenzaDati).start();
+                InitListener.log.info("Gestore Controllo Consistenza Dati avviato con successo.");
+			}
+			else{
+				InitListener.log.info("Gestore Controllo Consistenza Dati disabilitato.");
 			}
 		}catch(Exception e){
 			throw new RuntimeException(e.getMessage(),e);

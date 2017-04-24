@@ -47,6 +47,7 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.servlet.pa" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.servlet.pd" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.servlet.pdd" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.servlet.ruoli" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.servlet.sa" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.servlet.soggetti" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.web.ctrlstat.servlet.utenti" />

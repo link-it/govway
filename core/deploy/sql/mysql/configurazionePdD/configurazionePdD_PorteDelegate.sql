@@ -29,8 +29,10 @@ CREATE TABLE porte_delegate
 	pattern_azione VARCHAR(255),
 	-- abilitato/disabilitato
 	force_wsdl_based_azione VARCHAR(255),
-	-- * Configurazione *
+	-- Controllo Accessi
 	autenticazione VARCHAR(255),
+	-- abilitato/disabilitato
+	autenticazione_opzionale VARCHAR(255),
 	autorizzazione VARCHAR(255),
 	autorizzazione_contenuto VARCHAR(255),
 	-- disable/packaging/unpackaging/verify
@@ -69,6 +71,8 @@ CREATE TABLE porte_delegate
 	local_forward VARCHAR(255),
 	-- Nome della PortaApplicativa
 	local_forward_pa VARCHAR(255),
+	-- all/any
+	ruoli_match VARCHAR(255),
 	-- proprietario porta delegata (Soggetto fruitore)
 	id_soggetto BIGINT NOT NULL,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
@@ -217,5 +221,23 @@ CREATE TABLE pd_correlazione_risposta
 	CONSTRAINT pk_pd_correlazione_risposta PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
 
+
+
+
+CREATE TABLE pd_ruoli
+(
+	id_porta BIGINT NOT NULL,
+	ruolo VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
+	-- unique constraints
+	CONSTRAINT unique_pd_ruoli_1 UNIQUE (id_porta,ruolo),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pd_ruoli_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
+	CONSTRAINT pk_pd_ruoli PRIMARY KEY (id)
+)ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs;
+
+-- index
+CREATE UNIQUE INDEX index_pd_ruoli_1 ON pd_ruoli (id_porta,ruolo);
 
 

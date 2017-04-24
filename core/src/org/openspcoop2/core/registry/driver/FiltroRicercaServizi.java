@@ -56,9 +56,16 @@ public class FiltroRicercaServizi extends FiltroRicerca implements Serializable{
 	
 	/** Versione */
 	private Integer versione;
-	
-	
+
+	/** TipologiaServizio */
 	private TipologiaServizio tipologia;
+	
+	/** tipo Soggetto Fruitore */
+	private String tipoSoggettoFruitore;
+	/** nome Soggetto Fruitore */
+	private String nomeSoggettoFruitore;
+	
+
 	
 	public TipologiaServizio getTipologia() {
 		return this.tipologia;
@@ -66,6 +73,8 @@ public class FiltroRicercaServizi extends FiltroRicerca implements Serializable{
 	public void setTipologia(TipologiaServizio tipologiaServizio) {
 		this.tipologia = tipologiaServizio;
 	}
+
+
 	public IDAccordo getIdAccordoServizioParteComune() {
 		return this.idAccordoServizioParteComune;
 	}
@@ -106,6 +115,31 @@ public class FiltroRicercaServizi extends FiltroRicerca implements Serializable{
 		this.tipoSoggettoErogatore = tipoSoggettoErogatore;
 	}
 	
+	/**
+	 * @return the nomeSoggettoFruitore
+	 */
+	public String getNomeSoggettoFruitore() {
+		return this.nomeSoggettoFruitore;
+	}
+	/**
+	 * @param nomeSoggettoFruitore the nomeSoggettoFruitore to set
+	 */
+	public void setNomeSoggettoFruitore(String nomeSoggettoFruitore) {
+		this.nomeSoggettoFruitore = nomeSoggettoFruitore;
+	}
+	/**
+	 * @return the tipoSoggettoFruitore
+	 */
+	public String getTipoSoggettoFruitore() {
+		return this.tipoSoggettoFruitore;
+	}
+	/**
+	 * @param tipoSoggettoFruitore the tipoSoggettoFruitore to set
+	 */
+	public void setTipoSoggettoFruitore(String tipoSoggettoFruitore) {
+		this.tipoSoggettoFruitore = tipoSoggettoFruitore;
+	}
+	
 	
 	
 	@Override
@@ -129,6 +163,10 @@ public class FiltroRicercaServizi extends FiltroRicerca implements Serializable{
 			bf.append(" [tipologia-servizio:"+this.tipologia+"]");
 		if(this.versione!=null)
 			bf.append(" [versione:"+this.versione+"]");
+		if(this.tipoSoggettoFruitore!=null)
+			bf.append(" [tipo-soggetto-fruitore:"+this.tipoSoggettoFruitore+"]");
+		if(this.nomeSoggettoFruitore!=null)
+			bf.append(" [nome-soggetto-fruitore:"+this.nomeSoggettoFruitore+"]");
 		super.addDetails(bf);
 	}
 

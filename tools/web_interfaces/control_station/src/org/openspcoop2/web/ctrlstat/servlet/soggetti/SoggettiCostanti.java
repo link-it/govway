@@ -39,6 +39,8 @@ public class SoggettiCostanti {
 
 	public final static ForwardParams TIPO_OPERAZIONE_ENDPOINT = ForwardParams.OTHER("EndPoint");
 	
+	public final static String OBJECT_NAME_SOGGETTI_RUOLI = "soggettiRuoli";
+	
 	/* SERVLET NAME */
 
 	public final static String SERVLET_NAME_SOGGETTI_ADD = OBJECT_NAME_SOGGETTI
@@ -59,13 +61,26 @@ public class SoggettiCostanti {
 		SERVLET_SOGGETTI.add(SERVLET_NAME_SOGGETTI_LIST);
 		SERVLET_SOGGETTI.add(SERVLET_NAME_SOGGETTI_ENDPOINT);
 	}
+	
+	public final static String SERVLET_NAME_SOGGETTI_RUOLI_ADD = OBJECT_NAME_SOGGETTI_RUOLI
+			+ "Add.do";
+	public final static String SERVLET_NAME_SOGGETTI_RUOLI_DELETE = OBJECT_NAME_SOGGETTI_RUOLI
+			+ "Del.do";
+	public final static String SERVLET_NAME_SOGGETTI_RUOLI_LIST = OBJECT_NAME_SOGGETTI_RUOLI
+			+ "List.do";
+	public final static Vector<String> SERVLET_SOGGETTI_RUOLI = new Vector<String>();
+	static {
+		SERVLET_SOGGETTI_RUOLI.add(SERVLET_NAME_SOGGETTI_RUOLI_ADD);
+		SERVLET_SOGGETTI_RUOLI.add(SERVLET_NAME_SOGGETTI_RUOLI_DELETE);
+		SERVLET_SOGGETTI_RUOLI.add(SERVLET_NAME_SOGGETTI_RUOLI_LIST);
+	}
 
 	/* LABEL GENERALI */
 
 	public final static String LABEL_SOGGETTI = "Soggetti";
 	public final static String LABEL_SOGGETTO = "Soggetto";
-	public final static String LABEL_CLIENT = "Client";
-	public final static String LABEL_SERVER = "Server";
+	public final static String LABEL_CLIENT = "Fruizioni";
+	public final static String LABEL_SERVER = "Erogazioni";
 	public final static String LABEL_SOGGETTI_ESPORTA_SELEZIONATI = "Esporta Selezionati";
 	public final static String LABEL_SOGGETTI_ESPORTA_SELEZIONATI_ONCLICK = "Esporta('"+ArchiveType.SOGGETTO.name()+"')";
 	public final static String LABEL_SOGGETTI_MENU_VISUALE_AGGREGATA = "Soggetti";
@@ -76,6 +91,7 @@ public class SoggettiCostanti {
 	public final static String PARAMETRO_SOGGETTO_PROTOCOLLO = "protocollo";
 	public final static String PARAMETRO_SOGGETTO_NOME = "nomeprov";
 	public final static String PARAMETRO_SOGGETTO_TIPO = "tipoprov";
+	public final static String PARAMETRO_SOGGETTO_TIPOLOGIA = "tipologia";
 	public final static String PARAMETRO_SOGGETTO_CODICE_PORTA = "portadom";
 	public final static String PARAMETRO_SOGGETTO_DESCRIZIONE = "descr";
 	public final static String PARAMETRO_SOGGETTO_VERSIONE_PROTOCOLLO = "profilo";
@@ -86,10 +102,13 @@ public class SoggettiCostanti {
 	public final static String PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER = "pd_url_prefix_rewriter";
 	public final static String PARAMETRO_SOGGETTO_PA_URL_PREFIX_REWRITER = "pa_url_prefix_rewriter";
 	
+	public final static String PARAMETRO_SOGGETTO_RUOLO_ID = "ruoloId";
+	
 	/* LABEL PARAMETRI */
 
 	public final static String LABEL_PARAMETRO_SOGGETTO_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_SOGGETTO_TIPO = "Tipo";
+	public final static String LABEL_PARAMETRO_SOGGETTO_TIPOLOGIA = "Tipologia";
 	public final static String LABEL_PARAMETRO_SOGGETTO_PROTOCOLLO = "Protocollo";
 	public final static String LABEL_PARAMETRO_SOGGETTO_CODICE_PORTA = "Identificativo Porta";
 	public final static String LABEL_PARAMETRO_SOGGETTO_DESCRIZIONE = "Descrizione";
@@ -99,9 +118,15 @@ public class SoggettiCostanti {
 	public final static String LABEL_PARAMETRO_SOGGETTO_CODICE_IPA = "Codice IPA";
 	public final static String LABEL_PARAMETRO_SOGGETTO_PD_URL_PREFIX_REWRITER = "UrlPrefix rewriter";
 	public final static String LABEL_PARAMETRO_SOGGETTO_PA_URL_PREFIX_REWRITER = "UrlPrefix rewriter";
+	
 
 	/* DEFAULT VALUE PARAMETRI */
 
 
+	public final static String SOGGETTO_RUOLO_ENTRAMBI = "Fruitore/Erogatore";
+	public final static String SOGGETTO_RUOLO_FRUITORE = "Fruitore";
+	public final static String SOGGETTO_RUOLO_EROGATORE = "Erogatore";
+	public final static String[] SOGGETTI_RUOLI = { SOGGETTO_RUOLO_EROGATORE, 
+		SOGGETTO_RUOLO_FRUITORE, SOGGETTO_RUOLO_ENTRAMBI };
 
 }

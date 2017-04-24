@@ -22,28 +22,25 @@
 
 package org.openspcoop2.pdd.core.autorizzazione.pd;
 
-import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
 
 /**
- * Classe che implementa una autorizzazione OpenSPCoop.
+ * Classe che implementa una autorizzazione di test che lancia sempre una eccezione.
  *
  * @author Andrea Poli <apoli@link.it>
  * @author $Author$
  * @version $Rev$, $Date$
  */
 
-public class AutorizzazioneTestEccezioneProcessamento extends AbstractCore implements IAutorizzazionePortaDelegata {
-
+public class AutorizzazioneTestEccezioneProcessamento extends AbstractAutorizzazioneBase {
 
     @Override
-	public EsitoAutorizzazioneIntegrazione process(DatiInvocazionePortaDelegata datiInvocazione) throws AutorizzazioneException{
+	public EsitoAutorizzazionePortaDelegata process(DatiInvocazionePortaDelegata datiInvocazione) throws AutorizzazioneException{
 
     	Throwable t1 = new Throwable("Eccezione processamento Test Livello 3");
     	Throwable t2 = new Throwable("Eccezione processamento Test Livello 2",t1);
     	Exception e = new Exception("Eccezione processamento Test Livello 1",t2);
     	throw new AutorizzazioneException("Autorizzazione fallita per verifica Errore Processamento (TestSuiteOpenSPCoop)", e);
-    
     	
     }
    
@@ -51,5 +48,6 @@ public class AutorizzazioneTestEccezioneProcessamento extends AbstractCore imple
 	public boolean saveAuthorizationResultInCache() {
 		return false;
 	}
+	
 }
 

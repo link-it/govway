@@ -255,7 +255,7 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 				String user = null;
 				String password = null;
 				if(this.credenziali!=null){
-					user = this.credenziali.getUsername();
+					user = this.credenziali.getUser();
 					password = this.credenziali.getPassword();
 				}else{
 					user = this.properties.get(CostantiConnettori.CONNETTORE_USERNAME);

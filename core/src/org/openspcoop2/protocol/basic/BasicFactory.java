@@ -225,9 +225,9 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 	/* ** REGISTRY  ** */
 	
 	@Override
-	public IRegistryReader getRegistryReader(IDriverRegistroServiziGet driver) throws ProtocolException{
+	public IRegistryReader getRegistryReader(IDriverRegistroServiziGet driverRegistry) throws ProtocolException{
 		try{
-			return new RegistryReader(driver, this.log);
+			return new RegistryReader(driverRegistry, this.log);
 		}catch(Exception e){
 			throw new ProtocolException(e.getMessage(),e);
 		}

@@ -40,9 +40,9 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 public class AutorizzazioneContenutoOK extends AbstractCore implements IAutorizzazioneContenutoPortaDelegata {
 
 	@Override
-	public EsitoAutorizzazioneIntegrazione process(DatiInvocazionePortaDelegata datiInvocazione,OpenSPCoop2Message msg) throws AutorizzazioneException {
+	public EsitoAutorizzazionePortaDelegata process(DatiInvocazionePortaDelegata datiInvocazione,OpenSPCoop2Message msg) throws AutorizzazioneException {
 
-		EsitoAutorizzazioneIntegrazione esito = new EsitoAutorizzazioneIntegrazione();
+		EsitoAutorizzazionePortaDelegata esito = new EsitoAutorizzazionePortaDelegata();
     	
     	// Autorizzazzione servizio applicativo
     	try{
@@ -54,7 +54,7 @@ public class AutorizzazioneContenutoOK extends AbstractCore implements IAutorizz
     		
     		System.out.println("(TestOK) Messaggio ricevuto: "+bout.toString());
         	
-    		esito.setServizioAutorizzato(true);
+    		esito.setAutorizzato(true);
         	return esito;
     		
     	}catch(Exception e){

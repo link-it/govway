@@ -16,6 +16,7 @@
 				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="accordo-cooperazione"/>
 				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="accordo-servizio-parte-comune"/>
 				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="porta-dominio"/>
+				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="ruolo"/>
 				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="soggetto"/>
 				<xsd:element maxOccurs="unbounded" minOccurs="0" ref="connettore"/>
 			</xsd:sequence>
@@ -350,6 +351,8 @@
 			<!-- Protocol Properties -->
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="protocol-property" type="protocol-property"/>
 			<!-- Accordi Servizio Parte Specifica -->
+			<xsd:element maxOccurs="1" minOccurs="0" name="credenziali" type="credenziali-soggetto"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="ruoli" type="ruoli-soggetto"/>
 			<xsd:element maxOccurs="unbounded" minOccurs="0" ref="accordo-servizio-parte-specifica"/>
 		</xsd:sequence>
 		<!-- start-extensions -->
@@ -376,6 +379,27 @@
 		<xsd:attribute name="versione-protocollo" type="xsd:string"/>
 		<xsd:attribute name="codice-ipa" type="xsd:string"/>
 	</xsd:complexType>
+	
+	<!-- Ruoli di un Soggetto -->
+	<xsd:complexType name="ruoli-soggetto">
+		<xsd:sequence>
+			<xsd:element maxOccurs="unbounded" minOccurs="1" name="ruolo" type="ruolo-soggetto"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ruolo-soggetto">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
+	<!-- Credenziali di un Soggetto -->
+	<xsd:complexType name="credenziali-soggetto">
+		<xsd:attribute default="ssl" name="tipo" type="CredenzialeTipo">
+			
+		</xsd:attribute>
+		<xsd:attribute name="user" type="xsd:string"/>
+		<xsd:attribute name="password" type="xsd:string"/>
+		<xsd:attribute name="subject" type="xsd:string"/>
+	</xsd:complexType>
+	
 	
 	
 	
@@ -602,7 +626,32 @@
 		<!-- end-extensions -->
 	</xsd:complexType>
 	
+	
+	
+	
+	<!-- Ruoli -->
 
+	<xsd:element name="ruolo" type="ruolo"/>
+	<xsd:complexType name="ruolo">
+		
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
+		<xsd:attribute default="qualsiasi" name="tipologia" type="RuoloTipologia" use="optional"/>
+		<xsd:attribute default="qualsiasi" name="contesto-utilizzo" type="RuoloContesto" use="optional"/>
+		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
+			
+		</xsd:attribute>	
+		<!-- start-extensions -->
+		<xsd:attribute name="super-user" type="xsd:string" use="optional">
+			
+		</xsd:attribute>
+		<!-- end-extensions -->
+	</xsd:complexType>
+	
+
+	
+	
+	
 	
 	
 	
@@ -647,6 +696,27 @@
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="normale"/>
 			<xsd:enumeration value="correlato"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RuoloTipologia">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="interno"/>
+			<xsd:enumeration value="esterno"/>
+			<xsd:enumeration value="qualsiasi"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="RuoloContesto">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="portaDelegata"/>
+			<xsd:enumeration value="portaApplicativa"/>
+			<xsd:enumeration value="qualsiasi"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="CredenzialeTipo">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="basic"/>
+			<xsd:enumeration value="ssl"/>
+			<xsd:enumeration value="principal"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	
@@ -725,6 +795,9 @@
 		<xsd:attribute name="tipo" type="xsd:string" use="required"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute default="1" name="versione" type="xsd:unsignedInt" use="optional"/>
+	</xsd:complexType>
+	<xsd:complexType name="id-ruolo">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
 	
 </xsd:schema>

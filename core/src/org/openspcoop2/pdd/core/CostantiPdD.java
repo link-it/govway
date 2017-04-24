@@ -222,6 +222,8 @@ public class CostantiPdD {
     public static final String JMX_MONITORAGGIO_RISORSE = "MonitoraggioRisorse";
     /** MBean per l'Autorizzazione */
     public static final String JMX_AUTORIZZAZIONE = "DatiAutorizzazione";
+    /** MBean per l'Autenticazione */
+    public static final String JMX_AUTENTICAZIONE = "DatiAutenticazione";
     /** MBean per il repository dei messaggi */
     public static final String JMX_REPOSITORY_MESSAGGI = "RepositoryMessaggi";
     /** MBean per lo stato dei servizi PdD */

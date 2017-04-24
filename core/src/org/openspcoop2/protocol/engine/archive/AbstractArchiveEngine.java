@@ -24,6 +24,7 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.core.commons.DBMappingUtils;
 import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.config.Configurazione;
@@ -40,6 +41,7 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -48,10 +50,12 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
+import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
@@ -126,6 +130,53 @@ public abstract class AbstractArchiveEngine {
 			}catch(Exception eClose){}
 		}
 	}
+	
+	
+	
+	
+	// --- RUOLI ---
+	
+	public List<IDRuolo> getAllIdRuoli(FiltroRicercaRuoli filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return this.driverRegistroServizi.getAllIdRuoli(filtroRicerca);
+	}
+	
+	public Ruolo getRuolo(IDRuolo idRuolo) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
+		return this.driverRegistroServizi.getRuolo(idRuolo);
+	}
+	
+	public boolean existsRuolo(IDRuolo idRuolo) throws DriverRegistroServiziException {
+		return this.driverRegistroServizi.existsRuolo(idRuolo);
+	}
+	
+	public void createRuolo(Ruolo ruolo) throws DriverRegistroServiziException {
+		this.driverRegistroServizi.createRuolo(ruolo);
+	}
+	
+	public void updateRuolo(Ruolo ruolo) throws DriverRegistroServiziException {
+		this.driverRegistroServizi.updateRuolo(ruolo);
+	}
+	
+	public void deleteRuolo(Ruolo ruolo) throws DriverRegistroServiziException {
+		this.driverRegistroServizi.deleteRuolo(ruolo);
+	}
+	
+	public boolean isRuoloInUso(IDRuolo idRuolo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("archive.isRuoloInUso");
+			return DBOggettiInUsoUtils.isRuoloInUso(con, this.driverRegistroServizi.getTipoDB(), idRuolo, whereIsInUso);
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
+	
 		
 	
 	
@@ -438,18 +489,109 @@ public abstract class AbstractArchiveEngine {
 	
 	
 	
-	// --- Politiche di Sicurezza ---
 	
-	public void createServizioApplicativoAutorizzato(IDServizio idAccordoServizioParteSpecifica, IDSoggetto idFruitore, String nomeServizioApplicativo) throws DriverRegistroServiziException {
-		this.driverRegistroServizi.createServizioApplicativoAutorizzato(idAccordoServizioParteSpecifica, idFruitore, nomeServizioApplicativo);
+	// --- Mapping Erogazione ---
+	
+	public void createMappingErogazione(IDServizio idServizio, IDPortaApplicativa idPortaApplicativaByNome) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("createMappingErogazione");
+			DBMappingUtils.createMappingErogazione(idServizio, idPortaApplicativaByNome, con, this.driverRegistroServizi.getTipoDB());
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
 	}
 	
-	public List<IDServizioApplicativo> getAllIdServiziApplicativiAutorizzati(IDServizio idAccordoServizioParteSpecifica, IDSoggetto idFruitore) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.driverRegistroServizi.getAllIdServiziApplicativiAutorizzati(idAccordoServizioParteSpecifica, idFruitore);
+	public IDPortaApplicativa getIDPortaApplicativaAssociataErogazione(IDServizio idServizio) throws DriverRegistroServiziException{
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("getIDPortaApplicativaAssociataErogazione");
+			return DBMappingUtils.getIDPortaApplicativaAssociata(idServizio, con, this.driverRegistroServizi.getTipoDB());
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
 	}
 	
-	public void deleteServizioApplicativoAutorizzato(IDServizio idAccordoServizioParteSpecifica, IDSoggetto idFruitore, String nomeServizioApplicativo) throws DriverRegistroServiziException {
-		this.driverRegistroServizi.deleteServizioApplicativoAutorizzato(idAccordoServizioParteSpecifica, idFruitore, nomeServizioApplicativo);
+	public void deleteMappingErogazione(IDServizio idServizio, IDPortaApplicativa idPortaApplicativaByNome) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("deleteMappingErogazione");
+			DBMappingUtils.deleteMappingErogazione(idServizio, idPortaApplicativaByNome, con, this.driverRegistroServizi.getTipoDB());
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
+	
+	
+	
+	
+	// --- Mapping Fruizione ---
+	
+	public void createMappingFruizione(IDServizio idServizio, IDSoggetto idFruitore, IDPortaDelegata idPortaDelegata) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("createMappingFruizione");
+			DBMappingUtils.createMappingFruizione(idServizio, idFruitore, idPortaDelegata, con, this.driverRegistroServizi.getTipoDB());
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
+	public IDPortaDelegata getIDPortaDelegataAssociataFruizione(IDServizio idServizio, IDSoggetto idFruitore) throws DriverRegistroServiziException{
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("getIDPortaDelegataAssociataFruizione");
+			return DBMappingUtils.getIDPortaDelegataAssociata(idServizio, idFruitore, con, this.driverRegistroServizi.getTipoDB());
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
+	public void deleteMappingFruizione(IDServizio idServizio, IDSoggetto idFruitore, IDPortaDelegata idPortaDelegata) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("deleteMappingFruizione");
+			DBMappingUtils.deleteMappingFruizione(idServizio, idFruitore, idPortaDelegata, con, this.driverRegistroServizi.getTipoDB());
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
 	}
 		
 	

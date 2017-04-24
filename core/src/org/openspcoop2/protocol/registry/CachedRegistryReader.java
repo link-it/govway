@@ -180,6 +180,66 @@ public class CachedRegistryReader implements IRegistryReader {
 	}
 	
 	@Override
+	public boolean existsSoggettoByCredenzialiBasic(String username, String password){
+		try{
+			return this.registroServiziManager.getIdSoggettoAutenticatoBasic(username, password, null)!=null;
+		}catch(Exception e){
+			return false;
+		}
+	}
+	
+	@Override
+	public Soggetto getSoggettoByCredenzialiBasic(String username, String password) throws RegistryNotFound{
+		try{
+			return this.registroServiziManager.getSoggettoAutenticatoBasic(username, password, null);
+		} catch (DriverRegistroServiziNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			return null;
+		}
+	}
+	
+	@Override
+	public boolean existsSoggettoByCredenzialiSsl(String subject){
+		try{
+			return this.registroServiziManager.getIdSoggettoAutenticatoSsl(subject, null)!=null;
+		}catch(Exception e){
+			return false;
+		}	
+	}
+	
+	@Override
+	public Soggetto getSoggettoByCredenzialiSsl(String subject) throws RegistryNotFound{
+		try{
+			return this.registroServiziManager.getSoggettoAutenticatoSsl(subject, null);
+		} catch (DriverRegistroServiziNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			return null;
+		}
+	}
+	
+	@Override
+	public boolean existsSoggettoByCredenzialiPrincipal(String principal){
+		try{
+			return this.registroServiziManager.getIdSoggettoAutenticatoPrincipal(principal, null)!=null;
+		}catch(Exception e){
+			return false;
+		}	
+	}
+	
+	@Override
+	public Soggetto getSoggettoByCredenzialiPrincipal(String principal) throws RegistryNotFound{
+		try{
+			return this.registroServiziManager.getSoggettoAutenticatoPrincipal(principal, null);
+		} catch (DriverRegistroServiziNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			return null;
+		}
+	}
+	
+	@Override
 	public List<IDSoggetto> findIdSoggetti(FiltroRicercaSoggetti filtro) throws RegistryNotFound{
 		try{
 			org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti();

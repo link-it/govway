@@ -95,7 +95,6 @@ public class CostantiControlStation {
 	public final static String SESSION_PARAMETRO_MODALITA_INTERFACCIA = "ModalitaInterfaccia";
 	public final static String SESSION_PARAMETRO_SINGLE_PDD = "singlePdD";
 	public final static String SESSION_PARAMETRO_GENERAZIONE_AUTOMATICA_PORTE_DELEGATE = "generazioneAutomaticaPD";
-	public final static String SESSION_PARAMETRO_GESTIONE_RUOLI_SA = "ruoliSA";
 	public final static String SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE = "ConfigurazioniPersonalizzate";
 	public final static String SESSION_PARAMETRO_SAME_DB_WEBUI = "sameDBWebUI";
 	public final static String SESSION_PARAMETRO_TIPO_DB = "tipoDB";
@@ -125,6 +124,24 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PARAMETRI = "Parametri";
 	public final static String LABEL_PARAMETRO_APPLICA_MTOM = "Applica MTOM/XOP-Message";
 	public final static String LABEL_PARAMETRO_ACCETTA_MTOM = "Accetta MTOM/XOP-Message";
+	public final static String LABEL_PARAMETRO_RUOLO = "Nome";
+	public final static String LABEL_PARAMETRO_RUOLO_TIPOLOGIA = "Fonte";
+	public final static String LABEL_PARAMETRO_RUOLO_TIPOLOGIA_XACML_POLICY = "Fonte Ruoli";
+	public final static String LABEL_PARAMETRO_RUOLO_MATCH = "Ruoli Richiesti";
+	public final static String LABEL_PARAMETRO_RUOLO_MATCH_ALL = "tutti";
+	public final static String LABEL_PARAMETRO_RUOLO_MATCH_ANY = "almeno uno";
+	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI = "Controllo degli Accessi";
+	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTENTICAZIONE = "Controllo degli Accessi - Autenticazione";
+	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE = "Controllo degli Accessi - Autorizzazione";
+	public final static String LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI = "Controllo degli Accessi - Autorizzazione Contenuti";
+	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE = "Autenticazione";
+	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE = "Opzionale";
+	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE = "Autorizzazione";
+	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI = "Servizi Applicativi Autenticati";
+	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SOGGETTI = "Soggetti Autenticati";
+	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI = "Ruoli";
+	public final static String LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI = "Autorizzazione Contenuti";
+	
 	
 	/** PARAMETERS **/
 	
@@ -149,6 +166,17 @@ public class CostantiControlStation {
 	public final static String SUFFIX_CONTENT_DISPOSITION = "\"";
 	public final static String PREFIX_FILENAME = "filename=\"";
 	public final static String SUFFIX_FILENAME = "\"";
+	public final static String PARAMETRO_RUOLO = "ruolo";
+	public final static String PARAMETRO_RUOLO_TIPOLOGIA = "ruoloTipologia";
+	public final static String PARAMETRO_RUOLO_MATCH = "ruoloMatch";
+	public final static String PARAMETRO_PORTE_AUTENTICAZIONE = "autenticazione";
+	public final static String PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM = "autenticazioneCustom";
+	public final static String PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE = "autenticazioneOpzionale";
+	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE = "autorizzazione";
+	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM = "autorizzazioneCustom";
+	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE = "autorizzazioneAutenticazione";
+	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_RUOLI = "autorizzazioneRuoli";
+	public final static String PARAMETRO_AUTORIZZAZIONE_CONTENUTI = "autorizzazioneContenuti";
 	
 	
 	/** DEFAULT VALUES **/
@@ -161,7 +189,8 @@ public class CostantiControlStation {
 	public final static String DEFAULT_VALUE_PARAMETRO_MTOM_PACKAGING = "packaging";
 	public final static String DEFAULT_VALUE_PARAMETRO_MTOM_UNPACKAGING = "unpackaging";
 	public final static String DEFAULT_VALUE_PARAMETRO_MTOM_VERIFY = "verify";
-	
+	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM =  "custom";
+	public final static String DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM = "custom";
 	
 	
 	/** OTHER */

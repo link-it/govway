@@ -32,6 +32,7 @@ import java.util.Set;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -107,6 +108,245 @@ public class DBOggettiInUsoUtils  {
 		return prefixString+
 				"- risulta associata ad uno o pi&ugrave; Soggetti: " + whereIsInUso.toString()+separator;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// ***** RUOLI ******
+
+	public static boolean isRuoloConfigInUso(Connection con, String tipoDB, IDRuolo idRuolo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws UtilsException {
+		return _isRuoloInUso(con,tipoDB,idRuolo,false,true,whereIsInUso);
+	}
+	public static boolean isRuoloRegistryInUso(Connection con, String tipoDB, IDRuolo idRuolo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws UtilsException {
+		return _isRuoloInUso(con,tipoDB,idRuolo,true,false,whereIsInUso);
+	}
+	public static boolean isRuoloInUso(Connection con, String tipoDB, IDRuolo idRuolo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws UtilsException {
+		return _isRuoloInUso(con,tipoDB,idRuolo,true,true,whereIsInUso);
+	}
+	private static boolean _isRuoloInUso(Connection con, String tipoDB, IDRuolo idRuolo, boolean registry, boolean config, Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws UtilsException {
+		String nomeMetodo = "_isRuoloInUso";
+
+		PreparedStatement stmt = null;
+		ResultSet risultato = null;
+		String queryString;
+
+		try {
+
+			long idR = DBUtils.getIdRuolo(idRuolo, con, tipoDB);
+			
+			boolean isInUso = false;
+			
+			List<String> soggetti_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_SOGGETTI);
+			List<String> servizi_applicativi_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_SERVIZI_APPLICATIVI);
+			List<String> porte_applicative_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE);
+			List<String> porte_delegate_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_PORTE_DELEGATE);
+			
+			if (soggetti_list == null) {
+				soggetti_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_SOGGETTI, soggetti_list);
+			}
+			if (servizi_applicativi_list == null) {
+				servizi_applicativi_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_SERVIZI_APPLICATIVI, servizi_applicativi_list);
+			}
+			if (porte_applicative_list == null) {
+				porte_applicative_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE, porte_applicative_list);
+			}
+			if (porte_delegate_list == null) {
+				porte_delegate_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_PORTE_DELEGATE, porte_delegate_list);
+			}
+			
+			
+			// Controllo che il ruolo non sia in uso nei soggetti
+			if(registry){
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI_RUOLI);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				sqlQueryObject.addSelectField("tipo_soggetto");
+				sqlQueryObject.addSelectField("nome_soggetto");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI_RUOLI+".id_ruolo = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI_RUOLI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				stmt.setLong(1, idR);
+				risultato = stmt.executeQuery();
+				while (risultato.next()) {
+					String tipo_soggetto = risultato.getString("tipo_soggetto");
+					String nome_soggetto = risultato.getString("nome_soggetto");
+					soggetti_list.add(tipo_soggetto + "/" + nome_soggetto);
+					isInUso = true;
+				}
+				risultato.close();
+				stmt.close();
+
+			}
+			
+			// Controllo che il ruolo non sia in uso nei serviziApplicativi
+			if(config){
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI_RUOLI);
+				sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				sqlQueryObject.addSelectField("tipo_soggetto");
+				sqlQueryObject.addSelectField("nome_soggetto");
+				sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI+".nome");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".ruolo = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".id_servizio_applicativo = "+CostantiDB.SERVIZI_APPLICATIVI+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				stmt.setString(1, idRuolo.getNome());
+				risultato = stmt.executeQuery();
+				while (risultato.next()) {
+					String tipo_soggetto = risultato.getString("tipo_soggetto");
+					String nome_soggetto = risultato.getString("nome_soggetto");
+					String nome = risultato.getString("nome");
+					servizi_applicativi_list.add(tipo_soggetto + "/" + nome_soggetto+"_"+nome);
+					isInUso = true;
+				}
+				risultato.close();
+				stmt.close();
+			}
+			
+			// Controllo che il ruolo non sia in uso nelle porte applicative
+			if(config){
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_RUOLI);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				sqlQueryObject.addSelectField("tipo_soggetto");
+				sqlQueryObject.addSelectField("nome_soggetto");
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE+".nome_porta");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_RUOLI+".ruolo = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_RUOLI+".id_porta = "+CostantiDB.PORTE_APPLICATIVE+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				stmt.setString(1, idRuolo.getNome());
+				risultato = stmt.executeQuery();
+				while (risultato.next()) {
+					String tipo_soggetto = risultato.getString("tipo_soggetto");
+					String nome_soggetto = risultato.getString("nome_soggetto");
+					String nome = risultato.getString("nome_porta");
+					porte_applicative_list.add(tipo_soggetto + "/" + nome_soggetto+"_"+nome);
+					isInUso = true;
+				}
+				risultato.close();
+				stmt.close();
+			}
+			
+			// Controllo che il ruolo non sia in uso nelle porte applicative
+			if(config){
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_RUOLI);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				sqlQueryObject.addSelectField("tipo_soggetto");
+				sqlQueryObject.addSelectField("nome_soggetto");
+				sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE+".nome_porta");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.setSelectDistinct(true);
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_RUOLI+".ruolo = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_RUOLI+".id_porta = "+CostantiDB.PORTE_DELEGATE+".id");
+				sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				stmt.setString(1, idRuolo.getNome());
+				risultato = stmt.executeQuery();
+				while (risultato.next()) {
+					String tipo_soggetto = risultato.getString("tipo_soggetto");
+					String nome_soggetto = risultato.getString("nome_soggetto");
+					String nome = risultato.getString("nome_porta");
+					porte_delegate_list.add(tipo_soggetto + "/" + nome_soggetto+"_"+nome);
+					isInUso = true;
+				}
+				risultato.close();
+				stmt.close();
+			}
+			
+			return isInUso;
+
+		} catch (Exception se) {
+			throw new UtilsException("[DBOggettiInUsoUtils::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
+		} finally {
+			// Chiudo statement and resultset
+			try {
+				if (risultato != null) {
+					risultato.close();
+				}
+				if (stmt != null) {
+					stmt.close();
+				}
+			} catch (Exception e) {
+				// ignore
+			}
+		}
+	}
+
+
+	public static String toString(IDRuolo idRuolo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean prefix, String separator){
+		return toString(idRuolo, whereIsInUso, prefix, separator," non eliminabile perch&egrave; :");
+	}
+	public static String toString(IDRuolo idRuolo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean prefix, String separator, String intestazione){
+		Set<ErrorsHandlerCostant> keys = whereIsInUso.keySet();
+		String msg = idRuolo.getNome() + intestazione+separator;
+		if(prefix==false){
+			msg = "";
+		}
+		for (ErrorsHandlerCostant key : keys) {
+			List<String> messages = whereIsInUso.get(key);
+
+			switch (key) {
+			case IN_USO_IN_SOGGETTI:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "- utilizzato nei Soggetti: " + messages.toString() + separator;
+				}
+				break;
+			case IN_USO_IN_SERVIZI_APPLICATIVI:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "- utilizzato nei Servizi Applicativi: " + messages.toString() + separator;
+				}
+				break;
+			case IN_USO_IN_PORTE_APPLICATIVE:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "- utilizzato nelle Porte Applicative: " + messages.toString() + separator;
+				}
+				break;
+			case IN_USO_IN_PORTE_DELEGATE:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "- utilizzato nelle Porte Delegate: " + messages.toString() + separator;
+				}
+				break;
+			default:
+				msg += "- utilizzato in oggetto non codificato ("+key+")"+separator;
+				break;
+			}
+
+		}// chiudo for
+
+		return msg;
+	}
+
+	
+	
+	
+	
 
 
 
@@ -660,9 +900,9 @@ public class DBOggettiInUsoUtils  {
 
 	// ***** ACCORDI DI SERVIZIO PARTE COMUNE ******
 
-	public static boolean isAccordoServizioParteComuneInUso_soloOggettiRegistro(Connection con, String tipoDB, IDAccordo idAccordo, 
+	public static boolean isAccordoServizioParteComuneInUso(Connection con, String tipoDB, IDAccordo idAccordo, 
 			Map<ErrorsHandlerCostant,List<String>> whereIsInUso) throws UtilsException {
-		String nomeMetodo = "isAccordoServizioParteComuneInUso_soloOggettiRegistro";
+		String nomeMetodo = "isAccordoServizioParteComuneInUso";
 
 		PreparedStatement stmt = null;
 		ResultSet risultato = null;
@@ -723,103 +963,6 @@ public class DBOggettiInUsoUtils  {
 		}
 	}
 
-	public static boolean isAccordoServizioParteComuneInUso(Connection con, String tipoDB, IDAccordo idAccordo, 
-			Map<ErrorsHandlerCostant, List<String>> whereIsInUso) throws UtilsException {
-		String nomeMetodo = "isAccordoServizioParteComuneInUso";
-
-		PreparedStatement stmt = null;
-		ResultSet risultato = null;
-		PreparedStatement stmt2 = null;
-		ResultSet risultato2 = null;
-		String queryString;
-		try {
-			boolean isInUso = false;
-
-			// controllo utilizzando il driver registro
-			isInUso = isAccordoServizioParteComuneInUso_soloOggettiRegistro(con, tipoDB, idAccordo, whereIsInUso);
-
-			long idAccordoServizioParteComune = DBUtils.getIdAccordoServizioParteComune(idAccordo, con, tipoDB);
-			if(idAccordoServizioParteComune<=0){
-				throw new UtilsException("Accordi di Servizio Parte Comune con id ["+idAccordo.toString()+"] non trovato");
-			}
-
-			List<String> saRuoli_list = whereIsInUso.get(ErrorsHandlerCostant.POSSIEDE_RUOLI);
-
-			if (saRuoli_list == null) {
-				saRuoli_list = new ArrayList<String>();
-				whereIsInUso.put(ErrorsHandlerCostant.POSSIEDE_RUOLI, saRuoli_list);
-			}
-
-			// controllo servizi applicativi
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.RUOLI_SA);
-			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
-			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition(CostantiDB.RUOLI_SA + ".id_accordo = ?");
-			sqlQueryObject.addWhereCondition(CostantiDB.RUOLI_SA + ".id_servizio_applicativo = " + CostantiDB.SERVIZI_APPLICATIVI + ".id");
-			sqlQueryObject.setANDLogicOperator(true);
-			queryString = sqlQueryObject.createSQLQuery();
-			stmt = con.prepareStatement(queryString);
-			stmt.setLong(1, idAccordoServizioParteComune);
-			risultato = stmt.executeQuery();
-			while (risultato.next()) {
-				isInUso = true;
-				String nomeSA = risultato.getString("nome");
-
-				long idSoggettoProprietario = risultato.getLong("id_soggetto");
-				String tipoSoggettoProprietario = null;
-				String nomeSoggettoProprietario = null;
-				if(idSoggettoProprietario>0){
-					ISQLQueryObject sqlQueryObjectErogatore = SQLObjectFactory.createSQLQueryObject(tipoDB);
-					sqlQueryObjectErogatore.addFromTable(CostantiDB.SOGGETTI);
-					sqlQueryObjectErogatore.addSelectField("*");
-					sqlQueryObjectErogatore.addWhereCondition("id=?");
-					sqlQueryObjectErogatore.setANDLogicOperator(true);
-					String queryStringProprietario = sqlQueryObjectErogatore.createSQLQuery();
-					stmt2 = con.prepareStatement(queryStringProprietario);
-					stmt2.setLong(1, idSoggettoProprietario);
-					risultato2 = stmt2.executeQuery();
-					if(risultato2.next()){
-						tipoSoggettoProprietario = risultato2.getString("tipo_soggetto");
-						nomeSoggettoProprietario = risultato2.getString("nome_soggetto");
-					}
-					risultato2.close(); risultato2=null;
-					stmt2.close(); stmt2=null;
-				}
-
-				saRuoli_list.add(tipoSoggettoProprietario+"/"+nomeSoggettoProprietario+"_"+nomeSA);
-			}
-			risultato.close();
-			stmt.close();
-
-			return isInUso;
-
-		} catch (Exception se) {
-			throw new UtilsException("[DBOggettiInUsoUtils::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
-		} finally {
-			// Chiudo statement and resultset
-			try {
-				if (risultato2 != null) {
-					risultato2.close();
-				}
-				if (stmt2 != null) {
-					stmt2.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-			try {
-				if (risultato != null) {
-					risultato.close();
-				}
-				if (stmt != null) {
-					stmt.close();
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-		}
-	}
 
 	public static String toString(IDAccordo idAccordo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean prefix, String separator){
 
@@ -838,11 +981,6 @@ public class DBOggettiInUsoUtils  {
 			case IN_USO_IN_SERVIZI:
 				if ( messages!=null && messages.size() > 0) {
 					msg += "- implementato dai Servizi: " + messages.toString() + separator;
-				}
-				break;
-			case POSSIEDE_RUOLI:
-				if ( messages!=null && messages.size() > 0 ) {
-					msg += "- usato come ruolo dai Servizi Applicativi: " + messages.toString() + separator;
 				}
 				break;
 			default:
@@ -883,6 +1021,8 @@ public class DBOggettiInUsoUtils  {
 			List<String> porteDelegate_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_PORTE_DELEGATE);
 			List<String> fruitori_list = whereIsInUso.get(ErrorsHandlerCostant.POSSIEDE_FRUITORI);
 			List<String> servizioComponente_list = whereIsInUso.get(ErrorsHandlerCostant.IS_SERVIZIO_COMPONENTE_IN_ACCORDI);
+			List<String> mappingErogazionePA_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_MAPPING_EROGAZIONE_PA);
+			List<String> mappingFruizionePD_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_MAPPING_FRUIZIONE_PD);
 
 			if (porteApplicative_list == null) {
 				porteApplicative_list = new ArrayList<String>();
@@ -899,6 +1039,10 @@ public class DBOggettiInUsoUtils  {
 			if (servizioComponente_list == null) {
 				servizioComponente_list = new ArrayList<String>();
 				whereIsInUso.put(ErrorsHandlerCostant.IS_SERVIZIO_COMPONENTE_IN_ACCORDI, servizioComponente_list);
+			}
+			if (mappingErogazionePA_list == null) {
+				mappingErogazionePA_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_MAPPING_EROGAZIONE_PA, mappingErogazionePA_list);
 			}
 
 			
@@ -1089,6 +1233,88 @@ public class DBOggettiInUsoUtils  {
 			stmt.close();
 
 			
+			
+			
+			
+			
+			
+			// mapping erogazione pa 
+			
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.addSelectField("tipo_soggetto");
+			sqlQueryObject.addSelectField("nome_soggetto");
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_APPLICATIVE+".nome_porta");
+			sqlQueryObject.setANDLogicOperator(true);
+			sqlQueryObject.setSelectDistinct(true);
+			sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".id_erogazione = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_EROGAZIONE_PA+".id_porta = "+CostantiDB.PORTE_APPLICATIVE+".id");
+			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id_soggetto = "+CostantiDB.SOGGETTI+".id");
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idAccordoServizioParteSpecifica);
+			risultato = stmt.executeQuery();
+			while (risultato.next()) {
+				String tipo_soggetto = risultato.getString("tipo_soggetto");
+				String nome_soggetto = risultato.getString("nome_soggetto");
+				String nome = risultato.getString("nome_porta");
+				if(porteApplicative_list.contains(nome)==false && !nome.equals(nomePAGenerataAutomaticamente)){
+					mappingErogazionePA_list.add("("+tipo_soggetto + "/" + nome_soggetto+")_"+nome);
+					isInUso=true;
+				}
+			}
+			risultato.close();
+			stmt.close();
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			// mapping fruizioni pd
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.MAPPING_FRUIZIONE_PD);
+			sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
+			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.setSelectDistinct(true);
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".tipo_soggetto");
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".nome_soggetto");
+			sqlQueryObject.addSelectField(CostantiDB.PORTE_DELEGATE+".nome_porta");
+			sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI + ".id = " + CostantiDB.SERVIZI_FRUITORI + ".id_soggetto");
+			sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI + ".id_servizio = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.MAPPING_FRUIZIONE_PD+".id_fruizione = "+CostantiDB.SERVIZI_FRUITORI + ".id");
+			sqlQueryObject.setANDLogicOperator(true);
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idAccordoServizioParteSpecifica);
+			risultato = stmt.executeQuery();
+			while (risultato.next()) {
+				String tipo_soggetto = risultato.getString("tipo_soggetto");
+				String nome_soggetto = risultato.getString("nome_soggetto");
+				String nome = risultato.getString("nome_porta");
+				if(porteDelegate_list.contains(nome)==false){
+					mappingFruizionePD_list.add("("+tipo_soggetto + "/" + nome_soggetto+")_"+nome);
+					isInUso=true;
+				}
+			}
+			risultato.close();
+			stmt.close();
+			
+			
+			
+			
+			
+			
+			
+			
+			
 
 
 			return isInUso;
@@ -1159,6 +1385,16 @@ public class DBOggettiInUsoUtils  {
 					msg += "- associato come servizio componente degli Accordi Servizio Composti: " + messages.toString() + separator;
 				}
 				break;
+			case IN_USO_IN_MAPPING_EROGAZIONE_PA:
+				if ( messages!=null && messages.size() > 0 ) {
+					msg += "- associato alla Porta Applicativa: " + messages.toString() + separator;
+				}
+				break;
+			case IN_USO_IN_MAPPING_FRUIZIONE_PD:
+				if ( messages!=null && messages.size() > 0 ) {
+					msg += "- associato alle Porte Delegate: " + messages.toString() + separator;
+				}
+				break;
 			default:
 				msg += "- utilizzato in oggetto non codificato ("+key+")"+separator;
 				break;
@@ -1204,8 +1440,6 @@ public class DBOggettiInUsoUtils  {
 
 			List<String> porte_delegate_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_PORTE_DELEGATE);
 			List<String> porte_applicative_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE);
-			List<String> ruoli_list = whereIsInUso.get(ErrorsHandlerCostant.POSSIEDE_RUOLI);
-			List<String> politiche_sicurezza_list = whereIsInUso.get(ErrorsHandlerCostant.UTILIZZATO_IN_POLITICHE_SICUREZZA);
 
 			if (porte_delegate_list == null) {
 				porte_delegate_list = new ArrayList<String>();
@@ -1215,15 +1449,6 @@ public class DBOggettiInUsoUtils  {
 				porte_applicative_list = new ArrayList<String>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE, porte_applicative_list);
 			}
-			if (ruoli_list == null) {
-				ruoli_list = new ArrayList<String>();
-				whereIsInUso.put(ErrorsHandlerCostant.POSSIEDE_RUOLI, ruoli_list);
-			}
-			if (politiche_sicurezza_list == null) {
-				politiche_sicurezza_list = new ArrayList<String>();
-				whereIsInUso.put(ErrorsHandlerCostant.UTILIZZATO_IN_POLITICHE_SICUREZZA, politiche_sicurezza_list);
-			}
-
 
 
 			// Porte delegate
@@ -1264,129 +1489,6 @@ public class DBOggettiInUsoUtils  {
 				isInUso = true;
 
 				porte_applicative_list.add(risultato.getString("nome_porta"));
-			}
-			risultato.close();
-			stmt.close();
-
-
-
-			if(isRegistroServiziLocale){
-
-				// ruolo
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-				sqlQueryObject.addFromTable(CostantiDB.RUOLI_SA);
-				sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
-				sqlQueryObject.addSelectField("*");
-				sqlQueryObject.addWhereCondition(CostantiDB.RUOLI_SA + ".id_servizio_applicativo=?");
-				sqlQueryObject.addWhereCondition(CostantiDB.RUOLI_SA + ".id_accordo = " + CostantiDB.ACCORDI + ".id");
-				sqlQueryObject.setANDLogicOperator(true);
-				queryString = sqlQueryObject.createSQLQuery();
-				stmt = con.prepareStatement(queryString);
-				stmt.setLong(1, idServizioApplicativoLong);
-				risultato = stmt.executeQuery();
-				while (risultato.next()){
-					isInUso = true;
-
-					String nomeAccordo = risultato.getString("nome");
-					String versione = risultato.getString("versione");
-					long idReferente = risultato.getLong("id_referente");
-
-					StringBuffer bf = new StringBuffer();
-					if(idReferente>0){
-
-						ISQLQueryObject sqlQueryObjectReferente = SQLObjectFactory.createSQLQueryObject(tipoDB);
-						sqlQueryObjectReferente.addFromTable(CostantiDB.SOGGETTI);
-						sqlQueryObjectReferente.addSelectField("*");
-						sqlQueryObjectReferente.addWhereCondition("id=?");
-						sqlQueryObjectReferente.setANDLogicOperator(true);
-						String queryStringReferente = sqlQueryObjectReferente.createSQLQuery();
-						stmt2 = con.prepareStatement(queryStringReferente);
-						stmt2.setLong(1, idReferente);
-						risultato2 = stmt2.executeQuery();
-						if(risultato2.next()){
-							bf.append(risultato2.getString("tipo_soggetto"));
-							bf.append("/");
-							bf.append(risultato2.getString("nome_soggetto"));
-							bf.append(":");
-						}
-						risultato2.close(); risultato2=null;
-						stmt2.close(); stmt2=null;
-
-					}
-
-					bf.append(nomeAccordo);
-
-					if(versione!=null && !"".equals(versione)){
-						bf.append(":");
-						bf.append(versione);
-					}
-
-					ruoli_list.add(bf.toString());
-				}
-				risultato.close();
-				stmt.close();
-
-			}
-
-
-			// politiche di sicurezza
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-			sqlQueryObject.addFromTable(CostantiDB.POLITICHE_SICUREZZA);
-			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-			sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
-			sqlQueryObject.addSelectField("*");
-			sqlQueryObject.addWhereCondition(CostantiDB.POLITICHE_SICUREZZA + ".id_servizio_applicativo=?");
-			sqlQueryObject.addWhereCondition(CostantiDB.POLITICHE_SICUREZZA + ".id_fruitore = " + CostantiDB.SOGGETTI + ".id");
-			sqlQueryObject.addWhereCondition(CostantiDB.POLITICHE_SICUREZZA + ".id_servizio = " + CostantiDB.SERVIZI + ".id");
-			sqlQueryObject.setANDLogicOperator(true);
-			queryString = sqlQueryObject.createSQLQuery();
-			stmt = con.prepareStatement(queryString);
-			stmt.setLong(1, idServizioApplicativoLong);
-			risultato = stmt.executeQuery();
-			while (risultato.next()){
-				isInUso = true;
-
-				String tipoFruitore = risultato.getString("tipo_soggetto");
-				String nomeFruitore = risultato.getString("nome_soggetto");
-
-				String tipoServizio = risultato.getString("tipo_servizio");
-				String nomeServizio = risultato.getString("nome_servizio");
-
-				long idSoggettoErogatore = risultato.getLong("id_soggetto");
-				String tipoSoggettoErogatore = null;
-				String nomeSoggettoErogatore = null;
-				if(idSoggettoErogatore>0){
-					ISQLQueryObject sqlQueryObjectErogatore = SQLObjectFactory.createSQLQueryObject(tipoDB);
-					sqlQueryObjectErogatore.addFromTable(CostantiDB.SOGGETTI);
-					sqlQueryObjectErogatore.addSelectField("*");
-					sqlQueryObjectErogatore.addWhereCondition("id=?");
-					sqlQueryObjectErogatore.setANDLogicOperator(true);
-					String queryStringErogatore = sqlQueryObjectErogatore.createSQLQuery();
-					stmt2 = con.prepareStatement(queryStringErogatore);
-					stmt2.setLong(1, idSoggettoErogatore);
-					risultato2 = stmt2.executeQuery();
-					if(risultato2.next()){
-						tipoSoggettoErogatore = risultato2.getString("tipo_soggetto");
-						nomeSoggettoErogatore = risultato2.getString("nome_soggetto");
-					}
-					risultato2.close(); risultato2=null;
-					stmt2.close(); stmt2=null;
-				}
-
-				StringBuffer bf = new StringBuffer();
-				bf.append(tipoFruitore);
-				bf.append("/");
-				bf.append(nomeFruitore);
-				bf.append("-&gt;");
-				bf.append(tipoSoggettoErogatore);
-				bf.append("/");
-				bf.append(nomeSoggettoErogatore);
-				bf.append("_");
-				bf.append(tipoServizio);
-				bf.append("/");
-				bf.append(nomeServizio);
-				politiche_sicurezza_list.add(bf.toString());
-
 			}
 			risultato.close();
 			stmt.close();
@@ -1439,16 +1541,6 @@ public class DBOggettiInUsoUtils  {
 			case IN_USO_IN_PORTE_APPLICATIVE:
 				if ( messages!=null && messages.size() > 0 ) {
 					msg += "- in uso in Porte Applicative: " + messages.toString() + separator;
-				}
-				break;
-			case POSSIEDE_RUOLI:
-				if ( messages!=null && messages.size() > 0 ) {
-					msg += "- possiede i seguenti ruoli: " + messages.toString() + separator;
-				}
-				break;
-			case UTILIZZATO_IN_POLITICHE_SICUREZZA:
-				if ( messages!=null && messages.size() > 0 ) {
-					msg += "- in uso in Politiche di Sicurezza: " + messages.toString() + separator;
 				}
 				break;
 			default:

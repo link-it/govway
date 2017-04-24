@@ -30,7 +30,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.IntegrationContext;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.ProtocolContext;
-import org.openspcoop2.pdd.core.autenticazione.Credenziali;
+import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;

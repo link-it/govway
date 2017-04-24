@@ -64,7 +64,7 @@ public class ControlStationJMSCore {
 
 		// Estraggo i dati dall'Operazione da smistare, che tanto mi servono
 		// per settare la StringProperty
-		int idTable = operazioneDaSmistare.getIDTable();
+		long idTable = operazioneDaSmistare.getIDTable();
 		Operazione operazione = operazioneDaSmistare.getOperazione();
 		String pdd = operazioneDaSmistare.getPdd();
 		TipoOggettoDaSmistare oggettoDaSmistare = operazioneDaSmistare.getOggetto();

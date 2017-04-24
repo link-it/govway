@@ -162,63 +162,75 @@ public class ClassNameProperties {
 	}
 		
 	/**
-	 * Ritorna una classe 'IAutenticazione' se questa e' stata precedentemente registrata
+	 * Ritorna una classe 'IAutenticazionePortaDelegata' se questa e' stata precedentemente registrata
 	 *
 	 * 
 	 */
-	public String getAutenticazione(String nome){
-		return this.getValue("org.openspcoop2.autenticazione.", nome);
+	public String getAutenticazionePortaDelegata(String nome){
+		return this.getValue("org.openspcoop2.autenticazione.pd.", nome);
 	}
-	public String[] getAutenticazione() throws Exception{
-		return this.getTipiGestiti("org.openspcoop2.autenticazione.",CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_NONE.toString());
+	public String[] getAutenticazionePortaDelegata() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.autenticazione.pd.",CostantiConfigurazione.AUTENTICAZIONE_NONE.toString());
 	}
 
 	/**
-	 * Ritorna una classe 'IAutorizzazione' se questa e' stata precedentemente registrata
+	 * Ritorna una classe 'IAutenticazionePortaApplicativa' se questa e' stata precedentemente registrata
 	 *
 	 * 
 	 */
-	public String getAutorizzazione(String nome){
-		return this.getValue("org.openspcoop2.autorizzazione.", nome);
+	public String getAutenticazionePortaApplicativa(String nome){
+		return this.getValue("org.openspcoop2.autenticazione.pa.", nome);
 	}
-	public String[] getAutorizzazione() throws Exception{
-		return this.getTipiGestiti("org.openspcoop2.autorizzazione.",CostantiConfigurazione.AUTORIZZAZIONE_NONE);
+	public String[] getAutenticazionePortaApplicativa() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.autenticazione.pa.",CostantiConfigurazione.AUTENTICAZIONE_NONE.toString());
 	}
 	
 	/**
-	 * Ritorna una classe 'autorizzazioneBuste' se questa e' stata precedentemente registrata
+	 * Ritorna una classe 'IAutorizzazionePortaDelegata' se questa e' stata precedentemente registrata
 	 *
 	 * 
 	 */
-	public String getAutorizzazioneBuste(String nome){
-		return this.getValue("org.openspcoop2.autorizzazioneBuste.", nome);
+	public String getAutorizzazionePortaDelegata(String nome){
+		return this.getValue("org.openspcoop2.autorizzazione.pd.", nome);
 	}
-	public String[] getAutorizzazioneBuste() throws Exception{
-		return this.getTipiGestiti("org.openspcoop2.autorizzazioneBuste.",CostantiConfigurazione.AUTORIZZAZIONE_NONE);
+	public String[] getAutorizzazionePortaDelegata() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.autorizzazione.pd.",CostantiConfigurazione.AUTORIZZAZIONE_NONE);
 	}
 	
 	/**
-	 * Ritorna una classe 'IAutorizzazioneContenuto' se questa e' stata precedentemente registrata
+	 * Ritorna una classe 'IAutorizzazionePortaApplicativa' se questa e' stata precedentemente registrata
 	 *
 	 * 
 	 */
-	public String getAutorizzazioneContenuto(String nome){
-		return this.getValue("org.openspcoop2.autorizzazioneContenuto.", nome);
+	public String getAutorizzazionePortaApplicativa(String nome){
+		return this.getValue("org.openspcoop2.autorizzazione.pa.", nome);
 	}
-	public String[] getAutorizzazioneContenuto() throws Exception{
-		return this.getTipiGestiti("org.openspcoop2.autorizzazioneContenuto.",CostantiConfigurazione.AUTORIZZAZIONE_NONE);
+	public String[] getAutorizzazionePortaApplicativa() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.autorizzazione.pa.",CostantiConfigurazione.AUTORIZZAZIONE_NONE);
 	}
 	
 	/**
-	 * Ritorna una classe 'IAutorizzazioneContenutoBuste' se questa e' stata precedentemente registrata
+	 * Ritorna una classe 'IAutorizzazioneContenutoPortaDelegata' se questa e' stata precedentemente registrata
 	 *
 	 * 
 	 */
-	public String getAutorizzazioneContenutoBuste(String nome){
-		return this.getValue("org.openspcoop2.autorizzazioneContenutoBuste.", nome);
+	public String getAutorizzazioneContenutoPortaDelegata(String nome){
+		return this.getValue("org.openspcoop2.autorizzazioneContenuto.pd.", nome);
 	}
-	public String[] getAutorizzazioneContenutoBuste() throws Exception{
-		return this.getTipiGestiti("org.openspcoop2.autorizzazioneContenutoBuste.",CostantiConfigurazione.AUTORIZZAZIONE_NONE);
+	public String[] getAutorizzazioneContenutoPortaDelegata() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.autorizzazioneContenuto.pd.",CostantiConfigurazione.AUTORIZZAZIONE_NONE);
+	}
+	
+	/**
+	 * Ritorna una classe 'IAutorizzazioneContenutoPortaApplicativa' se questa e' stata precedentemente registrata
+	 *
+	 * 
+	 */
+	public String getAutorizzazioneContenutoPortaApplicativa(String nome){
+		return this.getValue("org.openspcoop2.autorizzazioneContenuto.pa.", nome);
+	}
+	public String[] getAutorizzazioneContenutoPortaApplicativa() throws Exception{
+		return this.getTipiGestiti("org.openspcoop2.autorizzazioneContenuto.pa.",CostantiConfigurazione.AUTORIZZAZIONE_NONE);
 	}
 	
 	/**

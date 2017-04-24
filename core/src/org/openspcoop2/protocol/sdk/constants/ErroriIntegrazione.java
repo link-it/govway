@@ -72,15 +72,18 @@ public enum ErroriIntegrazione {
 			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_PARAMETRI+": "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
 			CodiceErroreIntegrazione.CODICE_401_PORTA_INESISTENTE),
 	
-	ERRORE_402_AUTENTICAZIONE_FALLITA("Autenticazione del servizio applicativo non riuscita: "+
+	ERRORE_402_AUTENTICAZIONE_FALLITA("Identificazione fallita, "+
 			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
 			CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA),
 			
 	ERRORE_403_AZIONE_NON_IDENTIFICATA("Identificazione dinamica dell'azione associata alla porta delegata fallita",
 			CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA),
 			
-	ERRORE_404_AUTORIZZAZIONE_FALLITA("Il servizio applicativo "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_IDENTITA_SERVIZIO_APPLICATIVO+
-			" non risulta autorizzato a fruire del servizio richiesto",
+	ERRORE_404_AUTORIZZAZIONE_FALLITA_SA("Il servizio applicativo "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_IDENTITA_SERVIZIO_APPLICATIVO+
+			" non risulta autorizzato a fruire del servizio richiesto"+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
+			CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA),
+	
+	ERRORE_404_AUTORIZZAZIONE_FALLITA_SA_ANONIMO("Il chiamante non risulta autorizzato a fruire del servizio richiesto"+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
 			CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA),
 			
 	ERRORE_405_SERVIZIO_NON_TROVATO("Servizio richiesto con la porta delegata non trovato nel Registro dei Servizi",
@@ -274,7 +277,8 @@ public enum ErroriIntegrazione {
 	public ErroreIntegrazione getErroreIntegrazione() {
 		if( this.equals(ERRORE_401_PORTA_INESISTENTE) ||
 			this.equals(ERRORE_402_AUTENTICAZIONE_FALLITA) ||
-			this.equals(ERRORE_404_AUTORIZZAZIONE_FALLITA) ||
+			this.equals(ERRORE_404_AUTORIZZAZIONE_FALLITA_SA) ||
+			this.equals(ERRORE_404_AUTORIZZAZIONE_FALLITA_SA_ANONIMO) ||
 			this.equals(ERRORE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE) ||
 			this.equals(ERRORE_417_COSTRUZIONE_VALIDATORE_WSDL_FALLITA) ||
 			this.equals(ERRORE_418_VALIDAZIONE_WSDL_RICHIESTA_FALLITA) ||
@@ -439,11 +443,14 @@ public enum ErroriIntegrazione {
 	public ErroreIntegrazione getErrore402_AutenticazioneFallita(String msgErrore) {
 		return getErrore402_AutenticazioneFallita(msgErrore, null, null, null);
 	}
-	public ErroreIntegrazione getErrore402_AutenticazioneFallita(String msgErrore,String username,String password) {
+	public ErroreIntegrazione getErrore402_AutenticazioneFallitaBasic(String msgErrore,String username,String password) {
 		return getErrore402_AutenticazioneFallita(msgErrore, username, password, null);
 	}
-	public ErroreIntegrazione getErrore402_AutenticazioneFallita(String msgErrore,String subject) {
+	public ErroreIntegrazione getErrore402_AutenticazioneFallitaSsl(String msgErrore,String subject) {
 		return getErrore402_AutenticazioneFallita(msgErrore, null, null, subject);
+	}
+	public ErroreIntegrazione getErrore402_AutenticazioneFallitaPrincipal(String msgErrore,String userId) {
+		return getErrore402_AutenticazioneFallita(msgErrore, userId, null, null);
 	}
 	public ErroreIntegrazione getErrore402_AutenticazioneFallita(String msgErrore,String username,String password,String subject) {
 		if(!this.equals(ERRORE_402_AUTENTICAZIONE_FALLITA)){
@@ -463,12 +470,38 @@ public enum ErroriIntegrazione {
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 		
-	public ErroreIntegrazione getErrore404_AutorizzazioneFallita(String servizioApplicativo) {
-		if(!this.equals(ERRORE_404_AUTORIZZAZIONE_FALLITA)){
-			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_404_AUTORIZZAZIONE_FALLITA.name());
+	public ErroreIntegrazione getErrore404_AutorizzazioneFallitaServizioApplicativo(String servizioApplicativo) {
+		return getErrore404_AutorizzazioneFallitaServizioApplicativo(servizioApplicativo, null);
+	}
+	public ErroreIntegrazione getErrore404_AutorizzazioneFallitaServizioApplicativo(String servizioApplicativo, String msgErrore) {
+		if(!this.equals(ERRORE_404_AUTORIZZAZIONE_FALLITA_SA)){
+			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.name());
 		}
 		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
 		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_IDENTITA_SERVIZIO_APPLICATIVO,servizioApplicativo));
+		if(msgErrore!=null){
+			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,": "+msgErrore));
+		}
+		else{
+			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,""));
+		}
+		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
+	}
+	
+	public ErroreIntegrazione getErrore404_AutorizzazioneFallitaServizioApplicativoAnonimo() {
+		return getErrore404_AutorizzazioneFallitaServizioApplicativoAnonimo(null);
+	}
+	public ErroreIntegrazione getErrore404_AutorizzazioneFallitaServizioApplicativoAnonimo(String msgErrore) {
+		if(!this.equals(ERRORE_404_AUTORIZZAZIONE_FALLITA_SA_ANONIMO)){
+			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_404_AUTORIZZAZIONE_FALLITA_SA_ANONIMO.name());
+		}
+		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
+		if(msgErrore!=null){
+			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE," "+msgErrore));
+		}
+		else{
+			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,""));
+		}
 		return newErroreIntegrazione(lista.toArray(new KeyValueObject[lista.size()]));
 	}
 	

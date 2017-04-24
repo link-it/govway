@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
@@ -401,5 +402,16 @@ public class PddCore extends ControlStationCore {
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
+	}
+	
+	public boolean isPddEsterna(String nomePdD) throws DriverControlStationException, DriverControlStationNotFound{
+		PdDControlStation pdd = null;
+		if (nomePdD!=null && (!nomePdD.equals("-")) )
+			pdd = this.getPdDControlStation(nomePdD);
+		boolean pddEsterna = false;
+		if( (pdd==null) || PddTipologia.ESTERNO.toString().equals(pdd.getTipo())){
+			pddEsterna = true;
+		}
+		return pddEsterna;
 	}
 }

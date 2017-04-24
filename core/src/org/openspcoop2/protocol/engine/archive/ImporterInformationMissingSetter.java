@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.config.Credenziali;
+import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -509,10 +510,8 @@ public class ImporterInformationMissingSetter {
 						sa.getInvocazioneServizio().setCredenziali(invocazioneServizio.getCredenziali());
 					}
 					else{
-						sa.getInvocazioneServizio().getCredenziali().setTipo(invocazioneServizio.getCredenziali().getTipo());
 						sa.getInvocazioneServizio().getCredenziali().setUser(invocazioneServizio.getCredenziali().getUser());
 						sa.getInvocazioneServizio().getCredenziali().setPassword(invocazioneServizio.getCredenziali().getPassword());
-						sa.getInvocazioneServizio().getCredenziali().setSubject(invocazioneServizio.getCredenziali().getSubject());
 					}
 					
 					if(sa.getInvocazioneServizio().getConnettore()==null){
@@ -975,12 +974,10 @@ public class ImporterInformationMissingSetter {
 			}
 			if(sa.getInvocazioneServizio()!=null){
 				if(sa.getInvocazioneServizio().getCredenziali()!=null){
-					Credenziali c  = sa.getInvocazioneServizio().getCredenziali();
+					InvocazioneCredenziali c  = sa.getInvocazioneServizio().getCredenziali();
 					c.setUser(replaceSoggettoProprietario(c.getUser(), 
 							sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
 					c.setPassword(replaceSoggettoProprietario(c.getPassword(), 
-							sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
-					c.setSubject(replaceSoggettoProprietario(c.getSubject(), 
 							sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
 				}
 				if(sa.getInvocazioneServizio().getConnettore()!=null){
@@ -997,12 +994,10 @@ public class ImporterInformationMissingSetter {
 			}
 			if(sa.getRispostaAsincrona()!=null){
 				if(sa.getRispostaAsincrona().getCredenziali()!=null){
-					Credenziali c  = sa.getRispostaAsincrona().getCredenziali();
+					InvocazioneCredenziali c  = sa.getRispostaAsincrona().getCredenziali();
 					c.setUser(replaceSoggettoProprietario(c.getUser(), 
 							sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
 					c.setPassword(replaceSoggettoProprietario(c.getPassword(), 
-							sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
-					c.setSubject(replaceSoggettoProprietario(c.getSubject(), 
 							sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
 				}
 				if(sa.getRispostaAsincrona().getConnettore()!=null){

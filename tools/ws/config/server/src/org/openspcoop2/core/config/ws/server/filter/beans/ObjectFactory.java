@@ -42,17 +42,17 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link InvocazioneCredenziali }
+     */
+    public InvocazioneCredenziali createInvocazioneCredenziali() {
+        return new InvocazioneCredenziali();
+    }
+    
+    /**
      * Create an instance of {@link PortaApplicativaAzione }
      */
     public PortaApplicativaAzione createPortaApplicativaAzione() {
         return new PortaApplicativaAzione();
-    }
-    
-    /**
-     * Create an instance of {@link Credenziali }
-     */
-    public Credenziali createCredenziali() {
-        return new Credenziali();
     }
     
     /**
@@ -67,6 +67,13 @@ public class ObjectFactory {
      */
     public PortaApplicativaServizio createPortaApplicativaServizio() {
         return new PortaApplicativaServizio();
+    }
+    
+    /**
+     * Create an instance of {@link AutorizzazioneRuoli }
+     */
+    public AutorizzazioneRuoli createAutorizzazioneRuoli() {
+        return new AutorizzazioneRuoli();
     }
     
     /**

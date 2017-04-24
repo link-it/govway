@@ -1,0 +1,117 @@
+/*
+ * OpenSPCoop - Customizable API Gateway 
+ * http://www.openspcoop2.org
+ * 
+ * Copyright (c) 2005-2017 Link.it srl (http://link.it). 
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+package org.openspcoop2.web.ctrlstat.gestori;
+
+import org.slf4j.Logger;
+import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
+
+/**
+ *
+ * GestoreConsistenzaDati
+ * 
+ * @author Andrea Poli (apoli@link.it)
+ * @author $Author: apoli $
+ * @version $Rev: 12564 $, $Date: 2017-01-11 14:31:31 +0100 (Wed, 11 Jan 2017) $
+ * 
+ */
+public class GestoreConsistenzaDati implements Runnable {
+
+	public static boolean gestoreConsistenzaDatiInEsecuzione = false;
+	public static boolean gestoreConsistenzaDatiEseguitoConErrore = false;
+	
+	private Logger log = null;
+
+	private boolean generazioneAutomaticaPorteApplicative;
+	private boolean generazioneAutomaticaPorteDelegate;
+	private boolean initForceMapping;
+	
+	private boolean stop = false;
+	public void setStop(boolean stop) {
+		this.stop = stop;
+	}
+
+	public GestoreConsistenzaDati(boolean generazioneAutomaticaPorteApplicative, boolean generazioneAutomaticaPorteDelegate, boolean initForceMapping) {
+		this.log = ControlStationLogger.getPddConsoleCoreLogger();
+		this.generazioneAutomaticaPorteApplicative = generazioneAutomaticaPorteApplicative;
+		this.generazioneAutomaticaPorteDelegate = generazioneAutomaticaPorteDelegate;
+		this.initForceMapping = initForceMapping;
+	}
+
+	@Override
+	public void run() {
+
+		if(gestoreConsistenzaDatiInEsecuzione){
+			this.log.info("Gestore Consistenza Dati risulta già avviato");
+			return;
+		}
+		
+		gestoreConsistenzaDatiInEsecuzione = true;
+		
+		String statoOperazione = "";
+		try{
+
+			// Controllo inizializzazione risorse
+			// L'inizializzazione del core attende anche che venga inizializzato il datasource
+			ControlStationCore core = null;
+			if(!this.stop){
+				core = new ControlStationCore();
+			}
+
+			// Mapping Erogazione
+			if(!this.stop){
+				if(this.generazioneAutomaticaPorteApplicative){
+					statoOperazione = "[Inizializzazione Mapping Erogazione] ";
+					this.log.debug("Controllo Consistenza Dati Mapping Erogazione-PA ....");
+					core.initMappingErogazione(this.initForceMapping,this.log);
+					this.log.debug("Controllo Consistenza Dati Mapping Erogazione-PA completato con successo");
+				}
+				else{
+					this.log.debug("Consistenza Dati Mapping Erogazione-PA non effettuato (generazione automatica PA disabilitata)");
+				}
+			}
+
+			// Mapping Fruizione
+			if(!this.stop){
+				if(this.generazioneAutomaticaPorteDelegate){
+					statoOperazione = "[Inizializzazione Mapping Fruizione] ";
+					this.log.debug("Controllo Consistenza Dati Mapping Fruizione-PD ....");
+					core.initMappingFruizione(this.initForceMapping,this.log);
+					this.log.debug("Controllo Consistenza Dati Mapping Fruizione-PD completato con successo");
+				}
+				else{
+					this.log.debug("Consistenza Dati Mapping Fruizione-PD non effettuato (generazione automatica PD disabilitata)");
+				}
+			}
+			
+			this.log.info("Attività di Controllo Consistenza Dati completato con successo.");
+
+		}catch(Exception e){
+			gestoreConsistenzaDatiEseguitoConErrore = true;
+			this.log.error(statoOperazione+e.getMessage(),e);
+			throw new RuntimeException(e.getMessage(),e);
+		}finally{
+			gestoreConsistenzaDatiInEsecuzione = false;
+		}
+
+	}
+
+}

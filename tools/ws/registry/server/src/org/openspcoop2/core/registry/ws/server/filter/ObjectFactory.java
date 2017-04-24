@@ -49,6 +49,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link SearchFilterRuolo }
+     */
+    public SearchFilterRuolo createSearchFilterRuolo() {
+        return new SearchFilterRuolo();
+    }
+    
+    /**
      * Create an instance of {@link SearchFilterAccordoServizioParteSpecifica }
      */
     public SearchFilterAccordoServizioParteSpecifica createSearchFilterAccordoServizioParteSpecifica() {

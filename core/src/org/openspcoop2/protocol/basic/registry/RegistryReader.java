@@ -38,6 +38,7 @@ import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.FiltroRicercaProtocolProperty;
@@ -70,11 +71,12 @@ public class RegistryReader implements IRegistryReader {
 	private IDriverRegistroServiziCRUD driverRegistroServiziCRUD;
 	@SuppressWarnings("unused")
 	private Logger log;
-	public RegistryReader(IDriverRegistroServiziGet driverRegistroServizi,Logger log) throws Exception{
+	public RegistryReader(IDriverRegistroServiziGet driverRegistroServizi, Logger log) throws Exception{
 		this.driverRegistroServiziGET = driverRegistroServizi;
 		if(this.driverRegistroServiziGET instanceof IDriverRegistroServiziCRUD){
 			this.driverRegistroServiziCRUD = (IDriverRegistroServiziCRUD) this.driverRegistroServiziGET;
 		}
+		
 		this.log = log;
 	}
 	
@@ -112,10 +114,10 @@ public class RegistryReader implements IRegistryReader {
 			FiltroRicerca filtroRicerca = new FiltroRicerca();
 			if(operativo!=null){
 				if(operativo){
-					filtroRicerca.setTipo("operativo");
+					filtroRicerca.setTipo(PddTipologia.OPERATIVO.toString());
 				}
 				else{
-					filtroRicerca.setTipo("esterno");
+					filtroRicerca.setTipo(PddTipologia.ESTERNO.toString());
 				}
 			}
 			return this.driverRegistroServiziGET.getAllIdPorteDominio(filtroRicerca);
@@ -209,6 +211,66 @@ public class RegistryReader implements IRegistryReader {
 	public Soggetto getSoggetto(IDSoggetto idSoggetto) throws RegistryNotFound {
 		try{
 			return this.driverRegistroServiziGET.getSoggetto(idSoggetto);
+		} catch (DriverRegistroServiziNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			return null;
+		}
+	}
+	
+	@Override
+	public boolean existsSoggettoByCredenzialiBasic(String username, String password){
+		try{
+			return this.driverRegistroServiziGET.getSoggettoAutenticatoBasic(username, password)!=null;
+		}catch(Exception e){
+			return false;
+		}
+	}
+	
+	@Override
+	public Soggetto getSoggettoByCredenzialiBasic(String username, String password) throws RegistryNotFound{
+		try{
+			return this.driverRegistroServiziGET.getSoggettoAutenticatoBasic(username, password);
+		} catch (DriverRegistroServiziNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			return null;
+		}
+	}
+	
+	@Override
+	public boolean existsSoggettoByCredenzialiSsl(String subject){
+		try{
+			return this.driverRegistroServiziGET.getSoggettoAutenticatoSsl(subject)!=null;
+		}catch(Exception e){
+			return false;
+		}
+	}
+	
+	@Override
+	public Soggetto getSoggettoByCredenzialiSsl(String subject) throws RegistryNotFound{
+		try{
+			return this.driverRegistroServiziGET.getSoggettoAutenticatoSsl(subject);
+		} catch (DriverRegistroServiziNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			return null;
+		}
+	}
+	
+	@Override
+	public boolean existsSoggettoByCredenzialiPrincipal(String principal){
+		try{
+			return this.driverRegistroServiziGET.getSoggettoAutenticatoPrincipal(principal)!=null;
+		}catch(Exception e){
+			return false;
+		}
+	}
+	
+	@Override
+	public Soggetto getSoggettoByCredenzialiPrincipal(String principal) throws RegistryNotFound{
+		try{
+			return this.driverRegistroServiziGET.getSoggettoAutenticatoPrincipal(principal);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){
@@ -718,10 +780,5 @@ public class RegistryReader implements IRegistryReader {
 		}
 	}
 
-	
-	
-	
-	
-	
 
 }

@@ -147,20 +147,19 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 			String idServizio = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
 			int idServizioInt = Integer.parseInt(idServizio);
-			String idServizioFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID);// id
-			// row
-			// in
-			// table
-			// servizi_fruitori
+			String idServizioFruitore = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_ID);// id della fruizione
 			int idServizioFruitoreInt = Integer.parseInt(idServizioFruitore);
+
+			// NOTA PARAMETRO_APS_MY_ID e' l'id della fruizoione, mentre PARAMETRO_APS_PROVIDER_FRUITORE e' l'id del soggetto fruitore 
+			String idSoggettoFruitore = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE); 
+			//			String endpointtype = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
+			String correlato = request.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_CORRELATO);
 			
 			String myTipo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_TIPO);
 			if(myTipo == null) myTipo = "";
 			String myNome = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_MY_NOME);
 			if(myNome == null) myNome = "";
-			String provider = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROVIDER);
 			//			String endpointtype = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
-			String correlato = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_CORRELATO);
 
 			String endpointtype = apsHelper.readEndPointType();
 			String tipoconn = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
@@ -329,12 +328,11 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			String tmpTitle = IDServizioFactory.getInstance().getUriFromAccordo(asps);
 
 			String profiloSoggettoFruitore = null;
-			if ((provider != null) && !provider.equals("")) {
-				String [] tmp = provider.split("/");
-				if(tmp!=null && tmp.length==2){
-					Soggetto soggetto = soggettiCore.getSoggettoRegistro(new IDSoggetto(tmp[0], tmp[1]));
-					profiloSoggettoFruitore = soggetto.getVersioneProtocollo();
-				}
+			Soggetto soggettoFruitore = null;
+			if ((idSoggettoFruitore != null) && !idSoggettoFruitore.equals("")) {
+				long idSoggettoFruitoreAsInt = Long.parseLong(idSoggettoFruitore);
+				soggettoFruitore = soggettiCore.getSoggettoRegistro(idSoggettoFruitoreAsInt);
+				profiloSoggettoFruitore = soggettoFruitore.getVersioneProtocollo();
 			} 
 			else {
 				profiloSoggettoFruitore = servFru.getVersioneProtocollo();
@@ -351,24 +349,27 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 			String protocollo = apsCore.getProtocolloAssociatoTipoServizio(tiposervizio);
 			List<String> versioniProtocollo = apsCore.getVersioniProtocollo(protocollo);
-			List<String> tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
+			//List<String> tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
 
 			// Prendo la lista di soggetti (tranne quello del servizio)
 			// e la metto in un array
-			List<Soggetto> soggList = soggettiCore.soggettiRegistroList("", new Search());
-			String[] soggettiList = null;
-			String[] soggettiListLabel = null;
-			List<String> soggettiListVector = new ArrayList<String>();
-			List<String> soggettiListLabelVector = new ArrayList<String>();
-			for (int i = 0; i < soggList.size(); i++) {
-				Soggetto fru = soggList.get(i);
-				if(tipiSoggettiCompatibiliAccordo.contains(fru.getTipo())){
-					soggettiListVector.add("" + fru.getId());
-					soggettiListLabelVector.add(fru.getTipo() + "/" + fru.getNome());
-				}
-			}
-			soggettiList = soggettiListVector.toArray(new String[1]);
-			soggettiListLabel = soggettiListLabelVector.toArray(new String[1]);
+//			List<Soggetto> soggList = soggettiCore.soggettiRegistroList("", new Search());
+//			String[] soggettiList = null;
+//			String[] soggettiListLabel = null;
+//			List<String> soggettiListVector = new ArrayList<String>();
+//			List<String> soggettiListLabelVector = new ArrayList<String>();
+//			for (int i = 0; i < soggList.size(); i++) {
+//				Soggetto fru = soggList.get(i);
+//				if(tipiSoggettiCompatibiliAccordo.contains(fru.getTipo())){
+//					soggettiListVector.add("" + fru.getId());
+//					soggettiListLabelVector.add(fru.getTipo() + "/" + fru.getNome());
+//				}
+//			}
+//			soggettiList = soggettiListVector.toArray(new String[1]);
+//			soggettiListLabel = soggettiListLabelVector.toArray(new String[1]);
+			// Non serve una vera lista. Basta avere una lista di un elemento con la fruizione in corso
+			String[] soggettiList = new String [] { (idSoggettoFruitore+"") };
+			String[] soggettiListLabel = new String [] { (soggettoFruitore.getTipo() + "/" + soggettoFruitore.getNome()) };
 
 			// Versioni
 			String[] versioniValues = new String[versioniProtocollo.size()+1];
@@ -390,7 +391,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			String tipofru = servFru.getTipo();
 			IDSoggetto idSF = new IDSoggetto(tipofru, nomefru);
 			Soggetto soggFru = soggettiCore.getSoggettoRegistro(idSF);
-			provider = "" + soggFru.getId();
+			idSoggettoFruitore = "" + soggFru.getId();
 			if(statoPackage==null)
 				statoPackage = servFru.getStatoPackage();
 			String oldStatoPackage = servFru.getStatoPackage();	
@@ -675,14 +676,15 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, idServizio, null, null, dati);
 
-					dati = apsHelper.addServiziFruitoriToDati(dati, provider, this.wsdlimpler, this.wsdlimplfru, soggettiList, soggettiListLabel, idServizio,
+					dati = apsHelper.addServiziFruitoriToDati(dati, idSoggettoFruitore, this.wsdlimpler, this.wsdlimplfru, soggettiList, soggettiListLabel, idServizio,
 							idServizioFruitore,tipoOp, idSoggettoErogatoreDelServizio, "", "", nomeservizio, tiposervizio, versioneservizio, correlato,
 							statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
-							null,null);
+							null,null,null,null,null,null,null,null,null,null);
 
 					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, profilo, clientAuth, dati, 
 							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio,
-							nomeservizio, tiposervizio, versioneservizio, provider);
+							nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
+							asps, servFru);
 
 					if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
 						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
@@ -724,7 +726,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 			// Controlli sui campi immessi
 			boolean isOk = apsHelper.serviziFruitoriCheckData(tipoOp,
-					soggettiList, idServizio, "", "", null, "", "", provider,
+					soggettiList, idServizio, "", "", null, "", "", idSoggettoFruitore,
 					endpointtype, url, nome, tipo, user, password, initcont,
 					urlpgk, provurl, connfact, sendas, this.wsdlimpler, this.wsdlimplfru,
 					idServizioFruitore, profilo, httpsurl,
@@ -737,6 +739,8 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+					null,null,null,null,null,
+					null, null, null,null,
 					listExtendedConnettore);
 
 			// Validazione base dei parametri custom 
@@ -786,12 +790,14 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 				dati = apsHelper.addHiddenFieldsToDati(tipoOp, idServizio, null, null, dati);
 
-				dati = apsHelper.addServiziFruitoriToDati(dati, provider, this.wsdlimpler, this.wsdlimplfru, soggettiList, soggettiListLabel, idServizio,
+				dati = apsHelper.addServiziFruitoriToDati(dati, idSoggettoFruitore, this.wsdlimpler, this.wsdlimplfru, soggettiList, soggettiListLabel, idServizio,
 						idServizioFruitore, tipoOp, idSoggettoErogatoreDelServizio, "", "", nomeservizio, tiposervizio, versioneservizio,  correlato,
-						statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,null,null);
+						statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
+						null,null,null,null,null,null,null,null,null,null);
 
 				dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, profiloValue, clientAuth, dati, 
-						oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, provider);
+						oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
+						asps, servFru);
 
 				if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
@@ -854,11 +860,11 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, idServizio, null, null, dati);
 
-					dati = apsHelper.addServiziFruitoriToDatiAsHidden(dati, provider, "", "", soggettiList, soggettiListLabel, idServizio,
+					dati = apsHelper.addServiziFruitoriToDatiAsHidden(dati, idSoggettoFruitore, "", "", soggettiList, soggettiListLabel, idServizio,
 							idServizioFruitore, tipoOp, idSoggettoErogatoreDelServizio, "", "", nomeservizio, tiposervizio,  correlato,statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti);
 
 					dati = apsHelper.addFruitoreToDatiAsHidden(tipoOp, versioniLabel, versioniValues, profiloValue, clientAuth, dati, 
-							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, provider);
+							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, idSoggettoFruitore);
 
 					if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
 						dati = apsHelper.addEndPointToDatiAsHidden(dati, endpointtype, url, nome,
@@ -945,7 +951,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 			}
 
 			Fruitore fruitore = new Fruitore();
-			fruitore.setId(new Long(provider));
+			fruitore.setId(new Long(idSoggettoFruitore));
 			fruitore.setConnettore(connettoreNew);
 			fruitore.setTipo(tipofru);
 			fruitore.setNome(nomefru);
@@ -1013,13 +1019,14 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, idServizio, null, null, dati);
 
-					dati = apsHelper.addServiziFruitoriToDati(dati, provider, this.wsdlimpler, this.wsdlimplfru, soggettiList, soggettiListLabel, idServizio, 
+					dati = apsHelper.addServiziFruitoriToDati(dati, idSoggettoFruitore, this.wsdlimpler, this.wsdlimplfru, soggettiList, soggettiListLabel, idServizio, 
 							idServizioFruitore, tipoOp, idSoggettoErogatoreDelServizio, "", "", nomeservizio, tiposervizio, versioneservizio,  
 							correlato,statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
-							null,null);
+							null,null,null,null,null,null,null,null,null,null);
 
 					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, profiloValue, clientAuth, dati, 
-							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, provider);
+							oldStatoPackage, idServizio, idServizioFruitore, idSoggettoErogatoreDelServizio, nomeservizio, tiposervizio, versioneservizio, idSoggettoFruitore,
+							asps, servFru);
 
 					if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
 						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 

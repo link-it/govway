@@ -30,6 +30,8 @@ package org.openspcoop2.protocol.sdk.archive;
 public class ArchiveEsitoImport {
 
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> pdd = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
+	
+	private ArchiveSortedMap<ArchiveEsitoImportDetail> ruoli = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 		
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> soggetti = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 	
@@ -49,6 +51,10 @@ public class ArchiveEsitoImport {
 
 	public ArchiveSortedMap<ArchiveEsitoImportDetail> getPdd() {
 		return this.pdd;
+	}
+	
+	public ArchiveSortedMap<ArchiveEsitoImportDetail> getRuoli() {
+		return this.ruoli;
 	}
 
 	public ArchiveSortedMap<ArchiveEsitoImportDetail> getSoggetti() {

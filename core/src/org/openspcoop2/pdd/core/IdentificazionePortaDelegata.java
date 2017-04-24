@@ -66,6 +66,7 @@ public class IdentificazionePortaDelegata {
 
 	/* ---- Tipo di Autenticazione --- */
 	private String tipoAutenticazione;
+	private boolean autenticazioneOpzionale;
 
 	/* --- Tipo di Autorizzazione --- */
 	private String tipoAutorizzazione;
@@ -201,6 +202,7 @@ public class IdentificazionePortaDelegata {
 			// tipo di Autenticazione
 			try{
 				this.tipoAutenticazione = configurazionePdDReader.getAutenticazione(this.pd);
+				this.autenticazioneOpzionale = configurazionePdDReader.isAutenticazioneOpzionale(this.pd);
 			}catch(DriverConfigurazioneNotFound notFound){
 				this.erroreIntegrazione = 
 						ErroriIntegrazione.ERRORE_401_PORTA_INESISTENTE.
@@ -256,6 +258,10 @@ public class IdentificazionePortaDelegata {
 	 */
 	public String getTipoAutenticazione(){
 		return this.tipoAutenticazione;
+	}
+
+	public boolean isAutenticazioneOpzionale() {
+		return this.autenticazioneOpzionale;
 	}
 
 	/**

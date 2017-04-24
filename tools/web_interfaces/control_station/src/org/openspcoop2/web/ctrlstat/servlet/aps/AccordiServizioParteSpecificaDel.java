@@ -45,7 +45,7 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
-import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
+import org.openspcoop2.web.ctrlstat.dao.MappingErogazionePortaApplicativa;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
 import org.openspcoop2.web.ctrlstat.plugins.WrapperExtendedBean;
@@ -53,7 +53,6 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
-import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -150,30 +149,26 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 					boolean generaPACheckSoggetto = true;
 					IDSoggetto idSoggettoEr = new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore());
 					Soggetto soggetto = soggettiCore.getSoggettoRegistro(idSoggettoEr );
-						
-					if (soggetto.getPortaDominio() != null) {
-						String nomePdd = soggetto.getPortaDominio();
-							
-						PdDControlStation portaDominio = pddCore.getPdDControlStation(nomePdd);
-							
-						if(portaDominio.getTipo().equals(PddTipologia.ESTERNO.toString()))
-							generaPACheckSoggetto = false;
-							
-					} else {
-						// se non ho una porta di domini non devo generare la porta applicativa
-						generaPACheckSoggetto  =false;
-					}
+					if(pddCore.isPddEsterna(soggetto.getPortaDominio())){
+						generaPACheckSoggetto = false;
+					}	
 						
 					if(generaPACheckSoggetto){
 							
-						nomeGenerato = asps.getTipoSoggettoErogatore()+asps.getNomeSoggettoErogatore()+"/"+
-								asps.getTipo()+asps.getNome()+"/"+asps.getVersione().intValue();
-						// provo a vedere se esiste
-						IDPortaApplicativa idPA = new IDPortaApplicativa();
-						idPA.setNome(nomeGenerato);
-						if(porteApplicativeCore.existsPortaApplicativa(idPA)){
+//						nomeGenerato = ss.getTipoSoggettoErogatore()+ss.getNomeSoggettoErogatore()+"/"+
+//								ss.getTipo()+asps.getPortType();
+//						// provo a vedere se esiste
+//						if(porteApplicativeCore.existsPortaApplicativa(nomeGenerato, new IDSoggetto(tiposogg, nomesogg))){
+//							paGenerataAutomcaticamente = porteApplicativeCore.getPortaApplicativa(nomeGenerato, new IDSoggetto(tiposogg, nomesogg));
+//							foundPAGenerataAutomaticamente = true;
+//						}
+						
+						// Verifico se esiste il mapping con l'erogazione
+						IDPortaApplicativa idPA = porteApplicativeCore.getIDPortaApplicativaAssociata(idServizio);
+						if(idPA!=null){
 							paGenerataAutomcaticamente = porteApplicativeCore.getPortaApplicativa(idPA);
 							foundPAGenerataAutomaticamente = true;
+							nomeGenerato = paGenerataAutomcaticamente.getNome();
 						}
 						
 					}
@@ -209,6 +204,17 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 								}
 							}
 						}
+						
+						MappingErogazionePortaApplicativa mappingErogazione = new MappingErogazionePortaApplicativa();
+						IDSoggetto soggettoErogatore = new IDSoggetto(paGenerataAutomcaticamente.getTipoSoggettoProprietario(),paGenerataAutomcaticamente.getNomeSoggettoProprietario());
+						IDPortaApplicativa idPortaApplicativa = new IDPortaApplicativa();
+						idPortaApplicativa.setNome(paGenerataAutomcaticamente.getNome());
+						mappingErogazione.setIdPortaApplicativa(idPortaApplicativa);
+						IDServizio idServizioPA = IDServizioFactory.getInstance().getIDServizioFromValues(paGenerataAutomcaticamente.getServizio().getTipo(),
+								paGenerataAutomcaticamente.getServizio().getNome(), soggettoErogatore, paGenerataAutomcaticamente.getServizio().getVersione());
+						mappingErogazione.setIdServizio(idServizioPA);
+						
+						listaOggettiDaEliminare.add(mappingErogazione);
 						
 						listaOggettiDaEliminare.add(paGenerataAutomcaticamente);
 					}

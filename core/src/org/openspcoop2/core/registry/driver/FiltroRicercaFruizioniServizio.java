@@ -63,18 +63,22 @@ public class FiltroRicercaFruizioniServizio extends FiltroRicercaServizi impleme
 		this.protocolPropertiesFruizione.add(filtro);
 	}
 	
+	@Override
 	public String getTipoSoggettoFruitore() {
 		return this.tipoSoggettoFruitore;
 	}
 
+	@Override
 	public void setTipoSoggettoFruitore(String tipoSoggettoFruitore) {
 		this.tipoSoggettoFruitore = tipoSoggettoFruitore;
 	}
 
+	@Override
 	public String getNomeSoggettoFruitore() {
 		return this.nomeSoggettoFruitore;
 	}
 
+	@Override
 	public void setNomeSoggettoFruitore(String nomeSoggettoFruitore) {
 		this.nomeSoggettoFruitore = nomeSoggettoFruitore;
 	}

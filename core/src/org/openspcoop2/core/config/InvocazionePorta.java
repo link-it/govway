@@ -40,6 +40,7 @@ import java.util.List;
  * &lt;complexType name="invocazione-porta">
  * 		&lt;sequence>
  * 			&lt;element name="credenziali" type="{http://www.openspcoop2.org/core/config}credenziali" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config}servizio-applicativo-ruoli" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="gestione-errore" type="{http://www.openspcoop2.org/core/config}invocazione-porta-gestione-errore" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="invio-per-riferimento" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
@@ -57,6 +58,7 @@ import java.util.List;
 @XmlType(name = "invocazione-porta", 
   propOrder = {
   	"credenziali",
+  	"ruoli",
   	"gestioneErrore"
   }
 )
@@ -103,6 +105,14 @@ public class InvocazionePorta extends org.openspcoop2.utils.beans.BaseBean imple
 
   public int sizeCredenzialiList() {
     return this.credenziali.size();
+  }
+
+  public ServizioApplicativoRuoli getRuoli() {
+    return this.ruoli;
+  }
+
+  public void setRuoli(ServizioApplicativoRuoli ruoli) {
+    this.ruoli = ruoli;
   }
 
   public InvocazionePortaGestioneErrore getGestioneErrore() {
@@ -189,6 +199,9 @@ public class InvocazionePorta extends org.openspcoop2.utils.beans.BaseBean imple
   public int sizeCredenziali() {
   	return this.credenziali.size();
   }
+
+  @XmlElement(name="ruoli",required=false,nillable=false)
+  protected ServizioApplicativoRuoli ruoli;
 
   @XmlElement(name="gestione-errore",required=false,nillable=false)
   protected InvocazionePortaGestioneErrore gestioneErrore;

@@ -41,7 +41,6 @@ import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioCompostoS
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.Documento;
-import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.MessagePart;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
@@ -397,28 +396,6 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
 			return driver.getDriverRegistroServiziDB().accordiAzioniList(idAccordo, profiloCollaborazione, ricerca);
-
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-
-	}
-
-	public List<Fruitore> accordiErogatoriFruitoriList(long idServizio, ISearch ricerca) throws DriverRegistroServiziException {
-		Connection con = null;
-		String nomeMetodo = "accordiErogatoriFruitoriList";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getDriverRegistroServiziDB().accordiErogatoriFruitoriList(idServizio, ricerca);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

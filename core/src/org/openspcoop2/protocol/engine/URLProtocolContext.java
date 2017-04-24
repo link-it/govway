@@ -59,7 +59,7 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 	}
 	public URLProtocolContext(HttpServletRequest req,Logger logCore, boolean debug) throws ProtocolException, UtilsException{
 		super(req, logCore, debug);
-		
+				
 		String servletContext = req.getContextPath();
 		String urlInvocazione = req.getRequestURI();
 		String servizioInvocato = null;

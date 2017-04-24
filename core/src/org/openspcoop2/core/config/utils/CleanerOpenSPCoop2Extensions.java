@@ -78,10 +78,6 @@ public class CleanerOpenSPCoop2Extensions {
 		servizioApplicativo.setTipologiaErogazione(null);
 		servizioApplicativo.setTipologiaFruizione(null);
 		
-		while(servizioApplicativo.sizeRuoloList()>0){
-			servizioApplicativo.removeRuolo(0);
-		}
-		
 		if(servizioApplicativo.getInvocazioneServizio()!=null){
 			if(servizioApplicativo.getInvocazioneServizio().getConnettore()!=null){
 				this.clean(servizioApplicativo.getInvocazioneServizio().getConnettore());	

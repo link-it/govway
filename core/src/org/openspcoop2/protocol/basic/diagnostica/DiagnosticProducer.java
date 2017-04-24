@@ -45,6 +45,7 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoCorrelazione;
@@ -110,6 +111,8 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 		this.forceIndex = forceIndex;
 	}
 	
+	/** IProtocolConfiguration */
+	protected IProtocolConfiguration protocolConfiguration;
 	
 	public DiagnosticProducer(IProtocolFactory<?> factory) throws ProtocolException{
 		super(factory);
@@ -339,6 +342,9 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 				}
 			}
 				
+			// Protocol Configuration
+			this.protocolConfiguration = this.protocolFactory.createProtocolConfiguration();
+			
 		}catch(Exception e){
 			throw new MsgDiagnosticoException("Errore durante l'inizializzazione dell'appender: "+e.getMessage(),e);
 		}
@@ -540,6 +546,14 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 				cr = this.getConnection(conOpenSPCoopPdD,"logCorrelazione");
 				con = cr.getConnection();
 				
+				String fruitoreColumnName = "";
+				String fruitoreColumnValue = "";
+				if(fruitore!=null){
+					fruitoreColumnName = ", tipo_fruitore, fruitore";
+					fruitoreColumnValue = ", ?, ?";
+				}
+				
+				
 				String idTransazioneColumnName = "";
 				String idTransazioneColumnValue = "";
 				if(this.addIdTransazione){
@@ -558,8 +572,8 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 					// in questa versione non viene recuperato l'id long
 				
 					String updateString = "INSERT INTO "+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE
-					+" (idmessaggio, pdd_codice, pdd_tipo_soggetto, pdd_nome_soggetto, gdo, porta, delegata, tipo_fruitore, fruitore, tipo_erogatore, erogatore, tipo_servizio, servizio, versione_servizio, azione, id_correlazione_applicativa, protocollo"+idTransazioneColumnName+")"+
-					" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ? , ? , ? , ?, ?"+idTransazioneColumnValue+")";
+					+" (idmessaggio, pdd_codice, pdd_tipo_soggetto, pdd_nome_soggetto, gdo, porta, delegata"+fruitoreColumnName+", tipo_erogatore, erogatore, tipo_servizio, servizio, versione_servizio, azione, id_correlazione_applicativa, protocollo"+idTransazioneColumnName+")"+
+					" VALUES (?, ?, ?, ?, ?, ?, ?"+fruitoreColumnValue+", ?, ?, ? , ? , ? , ? , ?, ?"+idTransazioneColumnValue+")";
 					stmt = con.prepareStatement(updateString);
 					int index = 1;
 					if(idBusta!=null)
@@ -599,8 +613,11 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 							JDBCUtilities.setSQLStringValue(stmt,index++, fruitore.getNome());
 						else
 							throw new Exception("Nome fruitore non definito");
-					}else
-						throw new Exception("Fruitore non definito");
+					}else{
+						if(this.protocolConfiguration.isSupportoAutenticazioneSoggetti()==false){
+							throw new Exception("Fruitore non definito");
+						}
+					}
 					if(servizio!=null){
 						if(servizio.getSoggettoErogatore()!=null){
 							if(servizio.getSoggettoErogatore().getTipo()!=null)
@@ -678,8 +695,11 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("fruitore", getSQLStringValue(fruitore.getNome()), InsertAndGeneratedKeyJDBCType.STRING) );
 						else
 							throw new Exception("Nome fruitore non definito");
-					}else
-						throw new Exception("Fruitore non definito");
+					}else{
+						if(this.protocolConfiguration.isSupportoAutenticazioneSoggetti()==false){
+							throw new Exception("Fruitore non definito");
+						}
+					}
 					if(servizio!=null){
 						if(servizio.getSoggettoErogatore()!=null){
 							if(servizio.getSoggettoErogatore().getTipo()!=null)

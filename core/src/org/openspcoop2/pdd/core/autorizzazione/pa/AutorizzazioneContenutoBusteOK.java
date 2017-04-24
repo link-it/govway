@@ -39,9 +39,9 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 public class AutorizzazioneContenutoBusteOK extends AbstractCore implements IAutorizzazioneContenutoPortaApplicativa {
 
 	@Override
-	public EsitoAutorizzazioneCooperazione process(DatiInvocazionePortaApplicativa datiInvocazione, OpenSPCoop2Message msg) throws AutorizzazioneException {
+	public EsitoAutorizzazionePortaApplicativa process(DatiInvocazionePortaApplicativa datiInvocazione, OpenSPCoop2Message msg) throws AutorizzazioneException {
 		
-		EsitoAutorizzazioneCooperazione esito = new EsitoAutorizzazioneCooperazione();
+		EsitoAutorizzazionePortaApplicativa esito = new EsitoAutorizzazionePortaApplicativa();
     	
     	// Autorizzazzione servizio applicativo
     	try{
@@ -53,7 +53,7 @@ public class AutorizzazioneContenutoBusteOK extends AbstractCore implements IAut
     		
     		System.out.println("(TestOK) Messaggio ricevuto (Ruolo busta: "+datiInvocazione.getRuoloBusta().toString()+"): "+bout.toString());
         	
-    		esito.setServizioAutorizzato(true);
+    		esito.setAutorizzato(true);
         	return esito;
     		
     	}catch(Exception e){

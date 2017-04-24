@@ -223,6 +223,14 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "generazioneAutomaticaPorteApplicative");
 	}
 	
+	public String getAutenticazione_GenerazioneAutomaticaPorteApplicative() throws UtilsException{
+		return this.readProperty(true, "generazioneAutomaticaPorteApplicative.autenticazione");
+	}
+	
+	public String getAutorizzazione_GenerazioneAutomaticaPorteApplicative() throws UtilsException{
+		return this.readProperty(true, "generazioneAutomaticaPorteApplicative.autorizzazione");
+	}
+	
 	public Boolean isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto() throws UtilsException{
 		return this.readBooleanProperty(true, "accordi.portType.implementazioneUnicaPerSoggetto");
 	}
@@ -237,6 +245,14 @@ public class ConsoleProperties {
 	
 	public boolean isExportArchive_standard() throws UtilsException{
 		return this.readBooleanProperty(true, "exportArchive.standard");
+	}
+	
+	public boolean isGestoreConsistenzaDatiEnabled() throws UtilsException{
+		return this.readBooleanProperty(true, "gestoreConsistenzaDati");
+	}
+	
+	public boolean isGestoreConsistenzaDati_forceCheckMapping() throws UtilsException{
+		return this.readBooleanProperty(true, "gestoreConsistenzaDati.forceCheckMapping");
 	}
 	
 	
@@ -607,10 +623,6 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "console.gestioneSoggettiVirtuali");
 	}
 	
-	public Boolean isConsoleGestioneRuoliServiziApplicativi() throws UtilsException{
-		return this.readBooleanProperty(true, "console.gestioneRuoliServiziApplicativi");
-	}
-	
 	public Boolean isConsoleGestioneWorkflowStatoDocumenti() throws UtilsException{
 		return this.readBooleanProperty(true, "console.gestioneWorkflowStatoDocumenti");
 	}
@@ -735,10 +747,6 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "sincronizzazioneRegistro");
 	}
 	
-	public Boolean isGestioneCentralizzata_SincronizzazioneRepositoryAutorizzazioni() throws UtilsException{
-		return this.readBooleanProperty(true, "sincronizzazioneRepositoryAutorizzazioni");
-	}
-	
 	public Boolean isGestioneCentralizzata_SincronizzazioneGestoreEventi() throws UtilsException{
 		return this.readBooleanProperty(true, "sincronizzazioneGE");
 	}
@@ -813,14 +821,6 @@ public class ConsoleProperties {
 	
 	public String getGestioneCentralizzata_WSConfigurazione_credenzialiBasic_password() throws UtilsException{
 		return this.readProperty(false, "ConfigurazioneWS.password");
-	}
-	
-	public String getGestioneCentralizzata_NomeCodaRepositoryAutorizzazioni() throws UtilsException{
-		return this.readProperty(true, "RepositoryAutorizzazioniQueue");
-	}
-	
-	public String getGestioneCentralizzata_RepositoryAutorizzazioniClassName() throws UtilsException{
-		return this.readProperty(true, "RepositoryAutorizzazioniClassName");
 	}
 	
 	public String getGestioneCentralizzata_NomeCodaGestoreEventi() throws UtilsException{

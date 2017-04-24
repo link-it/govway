@@ -207,7 +207,7 @@ public class ConnettoreJMS extends ConnettoreBase {
 			String password = null;
 			if(this.credenziali!=null){
 				//log.info("credenziali");
-				user = this.credenziali.getUsername();
+				user = this.credenziali.getUser();
 				password = this.credenziali.getPassword();
 			}else{
 				//log.info("propertiesa");

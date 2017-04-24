@@ -18,6 +18,10 @@ CREATE TABLE soggetti
 	ora_registrazione TIMESTAMP,
 	profilo VARCHAR2(255),
 	codice_ipa VARCHAR2(255) NOT NULL,
+	tipoauth VARCHAR2(255),
+	utente VARCHAR2(255),
+	password VARCHAR2(255),
+	subject VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints
@@ -40,6 +44,36 @@ for each row
 begin
    IF (:new.id IS NULL) THEN
       SELECT seq_soggetti.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_soggetti_ruoli MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE soggetti_ruoli
+(
+	id_soggetto NUMBER NOT NULL,
+	id_ruolo NUMBER NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_soggetti_ruoli_1 UNIQUE (id_soggetto,id_ruolo),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_soggetti_ruoli_1 FOREIGN KEY (id_soggetto) REFERENCES soggetti(id),
+	CONSTRAINT fk_soggetti_ruoli_2 FOREIGN KEY (id_ruolo) REFERENCES ruoli(id),
+	CONSTRAINT pk_soggetti_ruoli PRIMARY KEY (id)
+);
+
+CREATE TRIGGER trg_soggetti_ruoli
+BEFORE
+insert on soggetti_ruoli
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_soggetti_ruoli.nextval INTO :new.id
                 FROM DUAL;
    END IF;
 end;

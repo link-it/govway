@@ -20,6 +20,8 @@
 
 package org.openspcoop2.core.registry.driver.utils;
 
+import org.openspcoop2.core.registry.constants.PddTipologia;
+
 /**	
  * PdDConfig
  *
@@ -30,7 +32,7 @@ package org.openspcoop2.core.registry.driver.utils;
 public class PdDConfig {
 
 	private String pddOperativaCtrlstatSinglePdd;
-	private String tipoPdd = "esterno";
+	private String tipoPdd = PddTipologia.ESTERNO.toString();
 	
 	public String getPddOperativaCtrlstatSinglePdd() {
 		return this.pddOperativaCtrlstatSinglePdd;

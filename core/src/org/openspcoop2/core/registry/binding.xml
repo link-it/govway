@@ -11,6 +11,9 @@
     <collection field="portaDominio" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.core.registry.PortaDominio"/>
     </collection>
+    <collection field="ruolo" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.registry.Ruolo"/>
+    </collection>
     <collection field="soggetto" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.core.registry.Soggetto"/>
     </collection>
@@ -216,6 +219,8 @@
     <collection field="protocolProperty" create-type="java.util.ArrayList">
       <structure name="protocol-property" map-as="_ProtocolProperty_Type"/>
     </collection>
+    <structure field="credenziali" usage="optional" map-as="org.openspcoop2.core.registry.CredenzialiSoggetto"/>
+    <structure field="ruoli" usage="optional" map-as="org.openspcoop2.core.registry.RuoliSoggetto"/>
     <collection field="accordoServizioParteSpecifica" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.core.registry.AccordoServizioParteSpecifica"/>
     </collection>
@@ -229,6 +234,23 @@
     <value name="ora-registrazione" field="oraRegistrazione" usage="optional" style="attribute"/>
     <value name="versione-protocollo" field="versioneProtocollo" usage="optional" style="attribute"/>
     <value name="codice-ipa" field="codiceIpa" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="ruoli" class="org.openspcoop2.core.registry.RuoliSoggetto">
+    <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
+    <collection field="ruolo" create-type="java.util.ArrayList">
+      <structure map-as="org.openspcoop2.core.registry.RuoloSoggetto"/>
+    </collection>
+  </mapping>
+  <mapping name="ruolo" class="org.openspcoop2.core.registry.RuoloSoggetto">
+    <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
+    <value name="nome" field="nome" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="credenziali" class="org.openspcoop2.core.registry.CredenzialiSoggetto">
+    <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
+    <value name="tipo" field="tipo" default="ssl" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="user" field="user" usage="optional" style="attribute"/>
+    <value name="password" field="password" usage="optional" style="attribute"/>
+    <value name="subject" field="subject" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="connettore" class="org.openspcoop2.core.registry.Connettore" abstract="false">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
@@ -388,6 +410,15 @@
     <value name="tipo-proprietario" field="tipoProprietario" usage="optional" style="attribute"/>
     <value name="id-proprietario" field="idProprietario" usage="optional" style="attribute"/>
   </mapping>
+  <mapping name="ruolo" class="org.openspcoop2.core.registry.Ruolo">
+    <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
+    <value name="nome" field="nome" usage="required" style="attribute"/>
+    <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
+    <value name="tipologia" field="tipologia" default="qualsiasi" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="contesto-utilizzo" field="contestoUtilizzo" default="qualsiasi" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="ora-registrazione" field="oraRegistrazione" usage="optional" style="attribute"/>
+    <value name="super-user" field="superUser" usage="optional" style="attribute"/>
+  </mapping>
   <mapping name="property" class="org.openspcoop2.core.registry.Property">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
@@ -428,5 +459,9 @@
     <value name="tipo" field="tipo" usage="required" style="attribute"/>
     <value name="nome" field="nome" usage="required" style="attribute"/>
     <value name="versione" field="versione" default="1" usage="optional" style="attribute"/>
+  </mapping>
+  <mapping name="id-ruolo" class="org.openspcoop2.core.registry.IdRuolo">
+    <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
+    <value name="nome" field="nome" usage="required" style="attribute"/>
   </mapping>
 </binding>

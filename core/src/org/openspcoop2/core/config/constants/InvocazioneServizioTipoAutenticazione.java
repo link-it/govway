@@ -38,8 +38,6 @@ public enum InvocazioneServizioTipoAutenticazione implements IEnumeration , Seri
 
 	@javax.xml.bind.annotation.XmlEnumValue("basic")
 	BASIC ("basic"),
-	@javax.xml.bind.annotation.XmlEnumValue("ssl")
-	SSL ("ssl"),
 	@javax.xml.bind.annotation.XmlEnumValue("none")
 	NONE ("none");
 	

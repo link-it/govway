@@ -69,5 +69,12 @@ public class ObjectFactory {
         return new ConfigurazioneServizio();
     }
     
+    /**
+     * Create an instance of {@link CredenzialiSoggetto }
+     */
+    public CredenzialiSoggetto createCredenzialiSoggetto() {
+        return new CredenzialiSoggetto();
+    }
+    
 
 }

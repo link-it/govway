@@ -70,6 +70,7 @@ public class ServiziApplicativiCostanti {
 		SERVLET_SERVIZI_APPLICATIVI_RUOLI.add(SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_DELETE);
 		SERVLET_SERVIZI_APPLICATIVI_RUOLI.add(SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_LIST);
 	}
+
 	
 	
 	/* LABEL GENERALI */
@@ -90,8 +91,6 @@ public class ServiziApplicativiCostanti {
 	public final static String LABEL_INFO_INTEGRAZIONE = "Informazioni di Integrazione";
 	public final static String LABEL_INVOCAZIONE_SERVIZIO = "Invocazione Servizio";
 	public final static String LABEL_RISPOSTA_ASINCRONA = "Risposta Asincrona";
-	public final static String LABEL_RUOLI = "Ruoli";
-	public final static String LABEL_RUOLO = "Ruolo";
 	public final static String LABEL_CONNETTORE_ABILITATO_SOLO_IM =  CostantiConfigurazione.ABILITATO + " (MessageBox)";
 	
 	public final static String LABEL_SA_MENU_VISUALE_AGGREGATA = "Servizi Applicativi";
@@ -111,19 +110,7 @@ public class ServiziApplicativiCostanti {
 	
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RICHIESTA = "sbustamentoInformazioniProtocolloRichiesta";
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RISPOSTA = "sbustamentoInformazioniProtocolloRisposta";
-	
-	public final static String PARAMETRO_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_CONNETTORE = "tipoauth";
-	public final static String PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_USERNAME_CONNETTORE = "utente";
-	public final static String PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_PASSWORD_CONNETTORE = "password";
-	public final static String PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_CONFERMA_PASSWORD_CONNETTORE = "confpw";
-	public final static String PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_SUBJECT_CONNETTORE = "subject";
-	
-	public final static String PARAMETRO_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_SA = "tipoauthSA";
-	public final static String PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_USERNAME_SA = "utenteSA";
-	public final static String PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_PASSWORD_SA = "passwordSA";
-	public final static String PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_CONFERMA_PASSWORD_SA = "confpwSA";
-	public final static String PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_SUBJECT_SA = "subjectSA";
-	
+		
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_FAULT = "fault";
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_FAULT_ACTOR = "faultactor";
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_FAULT_GENERIC_CODE = "genericfault";
@@ -149,9 +136,6 @@ public class ServiziApplicativiCostanti {
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SOGGETTI = "Soggetti";
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER = "Soggetto";
-	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_USERNAME = "Utente";
-	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_PASSWORD = "Password";
-	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_SUBJECT = "Subject";
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP = "Sbustamento SOAP";
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO = "Sbustamento";
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_INFO_PROTOCOLLO = "Sbustamento Protocollo";
@@ -166,6 +150,7 @@ public class ServiziApplicativiCostanti {
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_CORRELATO = "Servizio Correlato";
 	
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI = "Servizi Applicativi di ";
+	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_DI = "Ruoli di ";
 	
 	/* DEFAULT VALUE PARAMETRI */
 	
@@ -187,14 +172,7 @@ public class ServiziApplicativiCostanti {
 	public final static String SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_DISABILITATO = CostantiConfigurazione.DISABILITATO.toString();
 	public final static String[] SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO = { SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_ABILITATO, 
 		SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_DISABILITATO };
-	
-	public final static String SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_NESSUNA = "nessuna";
-	public final static String SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_BASIC = CostantiConfigurazione.CREDENZIALE_BASIC.toString();
-	public final static String SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_SSL = CostantiConfigurazione.CREDENZIALE_SSL.toString();
-	public final static String LABEL_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_BASIC = "http-basic";
-	public final static String LABEL_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_SSL = "https";
-	public final static String DEFAULT_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE = SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_NESSUNA;
-	
+		
 	public final static String SERVIZI_APPLICATIVI_RUOLO_NON_CONFIGURATO = "Non Configurato";
 	public final static String SERVIZI_APPLICATIVI_RUOLO_FRUITORE = "Fruitore";
 	public final static String SERVIZI_APPLICATIVI_RUOLO_EROGATORE = "Erogatore";

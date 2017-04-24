@@ -44,7 +44,7 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.PdDContext;
-import org.openspcoop2.pdd.core.autenticazione.Credenziali;
+import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.connettori.IConnettore;
 import org.openspcoop2.pdd.core.connettori.RepositoryConnettori;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
@@ -369,15 +369,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 
 			String credenzialiFornite = "";
 			if(credenziali!=null){
-				if (credenziali.getUsername() != null || credenziali.getSubject() != null) {
-//					credenzialiFornite = "(";
-//					if (credenziali.getUsername() != null)
-//						credenzialiFornite = credenzialiFornite + " Basic Username: "+ credenziali.getUsername() + " ";
-//					if (credenziali.getSubject() != null)
-//						credenzialiFornite = credenzialiFornite + " SSL Subject: "+ credenziali.getSubject() + " ";
-//					credenzialiFornite = credenzialiFornite + ") ";
-					credenzialiFornite = credenziali.toString();
-				}
+				credenzialiFornite = credenziali.toString();
 				msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_SA_FRUITORE, credenzialiFornite);
 			}
 

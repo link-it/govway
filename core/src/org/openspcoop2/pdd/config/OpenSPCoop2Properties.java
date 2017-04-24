@@ -47,9 +47,9 @@ import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.message.AttachmentsProcessingMode;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.pdd.core.CostantiPdD;
-import org.openspcoop2.pdd.core.autenticazione.IGestoreCredenziali;
-import org.openspcoop2.pdd.core.autenticazione.IGestoreCredenzialiIM;
 import org.openspcoop2.pdd.core.autorizzazione.pa.IAutorizzazionePortaApplicativa;
+import org.openspcoop2.pdd.core.credenziali.IGestoreCredenziali;
+import org.openspcoop2.pdd.core.credenziali.IGestoreCredenzialiIM;
 import org.openspcoop2.pdd.core.handlers.ExitHandler;
 import org.openspcoop2.pdd.core.handlers.InRequestHandler;
 import org.openspcoop2.pdd.core.handlers.InRequestProtocolHandler;
@@ -868,7 +868,7 @@ public class OpenSPCoop2Properties {
 			}else{
 				if(CostantiConfigurazione.AUTORIZZAZIONE_NONE.equals(this.getTipoAutorizzazioneBuste())==false){
 					//	Ricerco connettore
-					String tipoClass = className.getAutorizzazioneBuste(this.getTipoAutorizzazioneBuste());
+					String tipoClass = className.getAutorizzazionePortaApplicativa(this.getTipoAutorizzazioneBuste());
 					if(tipoClass == null){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.autorizzazioneBuste'. \n L'autorizzazione delle buste indicata non esiste ["+this.getTipoAutorizzazioneBuste()+"] nelle classi registrate in OpenSPCoop");
 						return false;

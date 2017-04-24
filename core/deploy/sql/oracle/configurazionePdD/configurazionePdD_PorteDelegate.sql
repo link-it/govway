@@ -31,8 +31,10 @@ CREATE TABLE porte_delegate
 	pattern_azione VARCHAR2(255),
 	-- abilitato/disabilitato
 	force_wsdl_based_azione VARCHAR2(255),
-	-- * Configurazione *
+	-- Controllo Accessi
 	autenticazione VARCHAR2(255),
+	-- abilitato/disabilitato
+	autenticazione_opzionale VARCHAR2(255),
 	autorizzazione VARCHAR2(255),
 	autorizzazione_contenuto VARCHAR2(255),
 	-- disable/packaging/unpackaging/verify
@@ -71,6 +73,8 @@ CREATE TABLE porte_delegate
 	local_forward VARCHAR2(255),
 	-- Nome della PortaApplicativa
 	local_forward_pa VARCHAR2(255),
+	-- all/any
+	ruoli_match VARCHAR2(255),
 	-- proprietario porta delegata (Soggetto fruitore)
 	id_soggetto NUMBER NOT NULL,
 	ora_registrazione TIMESTAMP,
@@ -318,6 +322,35 @@ for each row
 begin
    IF (:new.id IS NULL) THEN
       SELECT seq_pd_correlazione_risposta.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
+
+
+CREATE SEQUENCE seq_pd_ruoli MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
+CREATE TABLE pd_ruoli
+(
+	id_porta NUMBER NOT NULL,
+	ruolo VARCHAR2(255) NOT NULL,
+	-- fk/pk columns
+	id NUMBER NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_pd_ruoli_1 UNIQUE (id_porta,ruolo),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pd_ruoli_1 FOREIGN KEY (id_porta) REFERENCES porte_delegate(id),
+	CONSTRAINT pk_pd_ruoli PRIMARY KEY (id)
+);
+
+CREATE TRIGGER trg_pd_ruoli
+BEFORE
+insert on pd_ruoli
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_pd_ruoli.nextval INTO :new.id
                 FROM DUAL;
    END IF;
 end;

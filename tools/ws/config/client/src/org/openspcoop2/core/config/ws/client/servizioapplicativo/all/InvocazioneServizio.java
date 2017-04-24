@@ -1,22 +1,3 @@
-/*
- * OpenSPCoop - Customizable API Gateway 
- * http://www.openspcoop2.org
- * 
- * Copyright (c) 2005-2017 Link.it srl (http://link.it).
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3, as published by
- * the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
 
 package org.openspcoop2.core.config.ws.client.servizioapplicativo.all;
 
@@ -39,7 +20,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element name="credenziali" type="{http://www.openspcoop2.org/core/config/management}credenziali" minOccurs="0"/&gt;
+ *         &lt;element name="credenziali" type="{http://www.openspcoop2.org/core/config/management}invocazione-credenziali" minOccurs="0"/&gt;
  *         &lt;element name="connettore" type="{http://www.openspcoop2.org/core/config/management}connettore" minOccurs="0"/&gt;
  *         &lt;element name="sbustamento-soap" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0"/&gt;
  *         &lt;element name="sbustamento-informazioni-protocollo" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0"/&gt;
@@ -68,7 +49,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 })
 public class InvocazioneServizio {
 
-    protected Credenziali credenziali;
+    protected InvocazioneCredenziali credenziali;
     protected Connettore connettore;
     @XmlElement(name = "sbustamento-soap")
     @XmlSchemaType(name = "string")
@@ -93,11 +74,11 @@ public class InvocazioneServizio {
      * 
      * @return
      *     possible object is
-     *     {@link Credenziali }
+     *     {@link InvocazioneCredenziali }
      *     
      */
-    public Credenziali getCredenziali() {
-        return this.credenziali;
+    public InvocazioneCredenziali getCredenziali() {
+        return credenziali;
     }
 
     /**
@@ -105,10 +86,10 @@ public class InvocazioneServizio {
      * 
      * @param value
      *     allowed object is
-     *     {@link Credenziali }
+     *     {@link InvocazioneCredenziali }
      *     
      */
-    public void setCredenziali(Credenziali value) {
+    public void setCredenziali(InvocazioneCredenziali value) {
         this.credenziali = value;
     }
 
@@ -121,7 +102,7 @@ public class InvocazioneServizio {
      *     
      */
     public Connettore getConnettore() {
-        return this.connettore;
+        return connettore;
     }
 
     /**
@@ -145,7 +126,7 @@ public class InvocazioneServizio {
      *     
      */
     public StatoFunzionalita getSbustamentoSoap() {
-        return this.sbustamentoSoap;
+        return sbustamentoSoap;
     }
 
     /**
@@ -169,7 +150,7 @@ public class InvocazioneServizio {
      *     
      */
     public StatoFunzionalita getSbustamentoInformazioniProtocollo() {
-        return this.sbustamentoInformazioniProtocollo;
+        return sbustamentoInformazioniProtocollo;
     }
 
     /**
@@ -193,7 +174,7 @@ public class InvocazioneServizio {
      *     
      */
     public StatoFunzionalita getGetMessage() {
-        return this.getMessage;
+        return getMessage;
     }
 
     /**
@@ -217,7 +198,7 @@ public class InvocazioneServizio {
      *     
      */
     public InvocazioneServizioTipoAutenticazione getAutenticazione() {
-        return this.autenticazione;
+        return autenticazione;
     }
 
     /**
@@ -241,7 +222,7 @@ public class InvocazioneServizio {
      *     
      */
     public StatoFunzionalita getInvioPerRiferimento() {
-        return this.invioPerRiferimento;
+        return invioPerRiferimento;
     }
 
     /**
@@ -265,7 +246,7 @@ public class InvocazioneServizio {
      *     
      */
     public StatoFunzionalita getRispostaPerRiferimento() {
-        return this.rispostaPerRiferimento;
+        return rispostaPerRiferimento;
     }
 
     /**

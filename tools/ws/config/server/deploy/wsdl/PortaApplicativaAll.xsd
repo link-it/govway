@@ -16,6 +16,7 @@
  			<xsd:element name="soggetto-virtuale" type="tns:porta-applicativa-soggetto-virtuale" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="servizio" type="tns:porta-applicativa-servizio" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="azione" type="tns:porta-applicativa-azione" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="ruoli" type="tns:autorizzazione-ruoli" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="mtom-processor" type="tns:mtom-processor" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="validazione-contenuti-applicativi" type="tns:validazione-contenuti-applicativi" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="tipo-soggetto-proprietario" type="xsd:string" minOccurs="0" maxOccurs="1" />
@@ -31,6 +32,9 @@
  			<xsd:element name="gestione-manifest" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="stateless" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="behaviour" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="autenticazione" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="autenticazione-opzionale" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="autorizzazione" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="autorizzazione-contenuto" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="ora-registrazione-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="ora-registrazione-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
@@ -64,6 +68,13 @@
  			<xsd:element name="pattern" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="nome" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="force-wsdl-based" type="api:StatoFunzionalita" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:element name="autorizzazione-ruoli" type="tns:autorizzazione-ruoli" />
+	<xsd:complexType name="autorizzazione-ruoli">
+		<xsd:sequence>
+ 			<xsd:element name="match" type="api:RuoloTipoMatch" minOccurs="0" maxOccurs="1" />
 		</xsd:sequence>
 	</xsd:complexType>
 	

@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.openspcoop2.org/pdd_console/mapping_porte" targetNamespace="http://www.openspcoop2.org/pdd_console/mapping_porte"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+    
+    <xsd:annotation>
+        <xsd:appinfo>
+            <linkit:project_generator xmlns:linkit="http://www.link.it/project_generator">
+                <linkit:info version="1.0" project-name="PddConsoleMappingPorte">
+                    <linkit:authors>
+                        <linkit:author name="Poli Andrea" mail="poli@link.it"/>
+                    </linkit:authors>
+                </linkit:info>
+                <linkit:jax-ws xml-annotations="false" ws="false"/>
+            </linkit:project_generator>
+            <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                <linkit:dao>
+                    <linkit:sql>
+                        <linkit:sql-script generate="true">
+                            <linkit:sql-table-list>
+                                <linkit:sql-comment><![CDATA[**** Mapping con Porte ****]]></linkit:sql-comment>
+                                <linkit:sql-table object-name="mapping-fruizione-pd" object-type="mapping-fruizione-pd"/>
+                                <linkit:sql-table object-name="mapping-erogazione-pa" object-type="mapping-erogazione-pa"/>
+                            </linkit:sql-table-list>
+                        </linkit:sql-script>
+                        <linkit:sql-mapping single-table-mapping="false"
+                            on-delete-cascade="false" force-tolowercase-sqlname="false" check-tables-order-list="false"/>
+                    </linkit:sql>
+                </linkit:dao>
+            </linkit:generator>
+        </xsd:appinfo>
+    </xsd:annotation>
+    
+    
+    
+    <xsd:element name="mapping-fruizione-pd">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="mapping_fruizione_pd">
+                        <linkit:sql-table-foreign-key reference-table="servizi_fruitori">
+                            <linkit:sql-table-fk-field name="id_fruizione"/>
+                            <linkit:sql-table-fk-reference-column name="id"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-foreign-key reference-table="porte_delegate">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                            <linkit:sql-table-fk-reference-column name="id"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-field name="id_fruizione"/>
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_fruizione" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_fruizione"/>
+                           </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_porta" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_porta"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    
+    
+    
+    <xsd:element name="mapping-erogazione-pa">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="mapping_erogazione_pa">
+                        <linkit:sql-table-foreign-key reference-table="servizi">
+                            <linkit:sql-table-fk-field name="id_erogazione"/>
+                            <linkit:sql-table-fk-reference-column name="id"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-foreign-key reference-table="porte_applicative">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                            <linkit:sql-table-fk-reference-column name="id"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-field name="id_erogazione"/>
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_erogazione" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_erogazione"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="id_porta" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_porta"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    
+    
+    
+    <!-- TABELLA DI SERVIZIO PER POTER COSTRUIRE LA FOREIGN KEY -->
+   
+    <xsd:element name="servizi">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="servizi">
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="tabella_di_servizio" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="servizi-fruitori">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="servizi_fruitori">
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="tabella_di_servizio" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="porte-delegate">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="porte_delegate">
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="tabella_di_servizio" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="porte-applicative">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="porte_applicative">
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="tabella_di_servizio" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    
+</xsd:schema>

@@ -24,6 +24,8 @@ package org.openspcoop2.core.config.driver;
 
 import java.io.Serializable;
 
+import org.openspcoop2.core.id.IDRuolo;
+
 /**
  * Permette il filtro di ricerca attraverso i driver che implementano l'interfaccia 'get'
  * 
@@ -48,6 +50,8 @@ public class FiltroRicercaServiziApplicativi extends FiltroRicercaBase implement
 	/** NomeSoggetto */
 	private String nomeSoggetto;
 	
+	/** Ruolo */
+	private IDRuolo idRuolo;
 
 	@Override
 	public String toString(){
@@ -57,6 +61,8 @@ public class FiltroRicercaServiziApplicativi extends FiltroRicercaBase implement
 			bf.append(" [tipoSoggetto:"+this.tipoSoggetto+"]");
 		if(this.nomeSoggetto!=null)
 			bf.append(" [nomeSoggetto:"+this.nomeSoggetto+"]");
+		if(this.idRuolo!=null)
+			bf.append(" [ruolo:"+this.idRuolo+"]");
 		if(bf.length()=="Filtro:".length())
 			bf.append(" nessun filtro presente");
 		return bf.toString();
@@ -79,6 +85,14 @@ public class FiltroRicercaServiziApplicativi extends FiltroRicercaBase implement
 
 	public void setNomeSoggetto(String nomeSoggetto) {
 		this.nomeSoggetto = nomeSoggetto;
+	}
+	
+	public IDRuolo getIdRuolo() {
+		return this.idRuolo;
+	}
+
+	public void setIdRuolo(IDRuolo idRuolo) {
+		this.idRuolo = idRuolo;
 	}
 
 }

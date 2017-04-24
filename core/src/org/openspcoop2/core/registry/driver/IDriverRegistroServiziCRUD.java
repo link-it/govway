@@ -25,12 +25,14 @@ package org.openspcoop2.core.registry.driver;
 
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
 
 
@@ -71,7 +73,7 @@ public interface IDriverRegistroServiziCRUD {
      *
      * @param idAccordo dell'accordo da verificare
      * @return true se l'accordo esiste, false altrimenti
-	 * @throws DriverRegistroServiziException TODO
+	 * @throws DriverRegistroServiziException
      */    
     public boolean existsAccordoCooperazione(IDAccordoCooperazione idAccordo) throws DriverRegistroServiziException;
 	
@@ -110,7 +112,7 @@ public interface IDriverRegistroServiziCRUD {
      *
      * @param idAccordo dell'accordo da verificare
      * @return true se l'accordo esiste, false altrimenti
-	 * @throws DriverRegistroServiziException TODO
+	 * @throws DriverRegistroServiziException
      */    
     public boolean existsAccordoServizioParteComune(IDAccordo idAccordo) throws DriverRegistroServiziException;
 	
@@ -151,9 +153,9 @@ public interface IDriverRegistroServiziCRUD {
 	/**
      * Verifica l'esistenza di una Porta di Dominio.
      *
-     * @param nome della porta di dominio da verificare
+     * @param nome nome della porta di dominio da verificare
      * @return true se la porta di dominio esiste, false altrimenti
-	 * @throws DriverRegistroServiziException TODO
+	 * @throws DriverRegistroServiziException
      */    
     public boolean existsPortaDominio(String nome) throws DriverRegistroServiziException;
 	
@@ -183,6 +185,46 @@ public interface IDriverRegistroServiziCRUD {
 	
 	
 	
+	/**
+	 * Crea una nuovo Ruolo
+	 * 
+	 * @param ruolo
+	 * @throws DriverRegistroServiziException
+	 */
+	public void createRuolo(Ruolo ruolo) throws DriverRegistroServiziException;
+	
+	/**
+     * Verifica l'esistenza di un Ruolo
+     *
+     * @param idRuolo idRuolo del ruolo da verificare
+     * @return true se il ruolo esiste, false altrimenti
+	 * @throws DriverRegistroServiziException
+     */    
+    public boolean existsRuolo(IDRuolo idRuolo) throws DriverRegistroServiziException;
+	
+	/**
+	 * Aggiorna il Ruolo con i nuovi valori.
+	 *  
+	 * @param ruolo
+	 * @throws DriverRegistroServiziException
+	 */
+	public void updateRuolo(Ruolo ruolo) throws DriverRegistroServiziException;
+	
+	/**
+	 * Elimina un Ruolo
+	 *  
+	 * @param ruolo
+	 * @throws DriverRegistroServiziException
+	 */
+	public void deleteRuolo(Ruolo ruolo) throws DriverRegistroServiziException;
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	/**
@@ -198,7 +240,7 @@ public interface IDriverRegistroServiziCRUD {
      *
      * @param idSoggetto Identificativo del soggetto
      * @return true se il soggetto esiste, false altrimenti
-	 * @throws DriverRegistroServiziException TODO
+	 * @throws DriverRegistroServiziException
      */    
     public boolean existsSoggetto(IDSoggetto idSoggetto) throws DriverRegistroServiziException;
     
@@ -237,7 +279,7 @@ public interface IDriverRegistroServiziCRUD {
      *
 	 * @param idServizio Identificativo del servizio
      * @return true se il servizio esiste, false altrimenti
-	 * @throws DriverRegistroServiziException TODO
+	 * @throws DriverRegistroServiziException
      */    
     public boolean existsAccordoServizioParteSpecifica(IDServizio idServizio) throws DriverRegistroServiziException;
     

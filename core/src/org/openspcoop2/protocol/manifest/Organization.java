@@ -37,6 +37,7 @@ import java.io.Serializable;
  * 		&lt;sequence>
  * 			&lt;element name="types" type="{http://www.openspcoop2.org/protocol/manifest}OrganizationTypes" minOccurs="1" maxOccurs="1"/>
  * 		&lt;/sequence>
+ * 		&lt;attribute name="authentication" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
  * 		&lt;attribute name="codeIPA" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="replyToAddress" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * &lt;/complexType>
@@ -69,6 +70,18 @@ public class Organization extends org.openspcoop2.utils.beans.BaseBean implement
     this.types = types;
   }
 
+  public boolean isAuthentication() {
+    return this.authentication;
+  }
+
+  public boolean getAuthentication() {
+    return this.authentication;
+  }
+
+  public void setAuthentication(boolean authentication) {
+    this.authentication = authentication;
+  }
+
   public boolean isCodeIPA() {
     return this.codeIPA;
   }
@@ -99,6 +112,10 @@ public class Organization extends org.openspcoop2.utils.beans.BaseBean implement
 
   @XmlElement(name="types",required=true,nillable=false)
   protected OrganizationTypes types;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="authentication",required=false)
+  protected boolean authentication = true;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="codeIPA",required=false)

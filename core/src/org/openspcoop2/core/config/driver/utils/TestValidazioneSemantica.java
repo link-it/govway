@@ -277,50 +277,72 @@ public class TestValidazioneSemantica {
 				tipiTracceAppenderArray[i]=tipiTracceAppenderArray[i].trim();
 			}
 			
-			String tipiAutenticazione = commonProperties.getProperty("openspcoop2.autenticazione");
-			if(tipiAutenticazione==null){
-				throw new Exception("Non sono stati definiti i tipi di autenticazione supportati");
+			String tipiAutenticazionePortaDelegata = commonProperties.getProperty("openspcoop2.autenticazione.pd");
+			if(tipiAutenticazionePortaDelegata==null){
+				throw new Exception("Non sono stati definiti i tipi di autenticazione per la porta delegata supportati");
 			}else{
-				tipiAutenticazione = tipiAutenticazione.trim();
+				tipiAutenticazionePortaDelegata = tipiAutenticazionePortaDelegata.trim();
 			}
-			String [] tipiAutenticazioneArray = tipiAutenticazione.split(",");
-			for (int i = 0; i < tipiAutenticazioneArray.length; i++) {
-				tipiAutenticazioneArray[i]=tipiAutenticazioneArray[i].trim();
+			String [] tipiAutenticazionePortaDelegataArray = tipiAutenticazionePortaDelegata.split(",");
+			for (int i = 0; i < tipiAutenticazionePortaDelegataArray.length; i++) {
+				tipiAutenticazionePortaDelegataArray[i]=tipiAutenticazionePortaDelegataArray[i].trim();
 			}
 			
-			String tipiAutorizzazione = commonProperties.getProperty("openspcoop2.autorizzazione");
-			if(tipiAutorizzazione==null){
-				throw new Exception("Non sono stati definiti i tipi di autorizzazione supportati");
+			String tipiAutenticazionePortaApplicativa = commonProperties.getProperty("openspcoop2.autenticazione.pa");
+			if(tipiAutenticazionePortaApplicativa==null){
+				throw new Exception("Non sono stati definiti i tipi di autenticazione per la porta applicativa supportati");
 			}else{
-				tipiAutorizzazione = tipiAutorizzazione.trim();
+				tipiAutenticazionePortaApplicativa = tipiAutenticazionePortaApplicativa.trim();
 			}
-			String [] tipiAutorizzazioneArray = tipiAutorizzazione.split(",");
-			for (int i = 0; i < tipiAutorizzazioneArray.length; i++) {
-				tipiAutorizzazioneArray[i]=tipiAutorizzazioneArray[i].trim();
+			String [] tipiAutenticazionePortaApplicativaArray = tipiAutenticazionePortaApplicativa.split(",");
+			for (int i = 0; i < tipiAutenticazionePortaApplicativaArray.length; i++) {
+				tipiAutenticazionePortaApplicativaArray[i]=tipiAutenticazionePortaApplicativaArray[i].trim();
 			}
 			
-			String tipiAutorizzazioneContenutoPD = commonProperties.getProperty("openspcoop2.autorizzazioneContenuto.pd");
-			if(tipiAutorizzazioneContenutoPD==null){
-				throw new Exception("Non sono stati definiti i tipi di autorizzazione per contenuto supportati (PD)");
+			String tipiAutorizzazionePortaDelegata = commonProperties.getProperty("openspcoop2.autorizzazione.pd");
+			if(tipiAutorizzazionePortaDelegata==null){
+				throw new Exception("Non sono stati definiti i tipi di autorizzazione per la porta delegata supportati");
 			}else{
-				tipiAutorizzazioneContenutoPD = tipiAutorizzazioneContenutoPD.trim();
+				tipiAutorizzazionePortaDelegata = tipiAutorizzazionePortaDelegata.trim();
 			}
-			String [] tipiAutorizzazioneContenutoPDArray = tipiAutorizzazioneContenutoPD.split(",");
-			for (int i = 0; i < tipiAutorizzazioneContenutoPDArray.length; i++) {
-				tipiAutorizzazioneContenutoPDArray[i]=tipiAutorizzazioneContenutoPDArray[i].trim();
+			String [] tipiAutorizzazionePortaDelegataArray = tipiAutorizzazionePortaDelegata.split(",");
+			for (int i = 0; i < tipiAutorizzazionePortaDelegataArray.length; i++) {
+				tipiAutorizzazionePortaDelegataArray[i]=tipiAutorizzazionePortaDelegataArray[i].trim();
 			}
 			
-			String tipiAutorizzazioneContenutoPA = commonProperties.getProperty("openspcoop2.autorizzazioneContenuto.pa");
-			if(tipiAutorizzazioneContenutoPA==null){
-				throw new Exception("Non sono stati definiti i tipi di autorizzazione per contenuto supportati (PA)");
+			String tipiAutorizzazionePortaApplicativa = commonProperties.getProperty("openspcoop2.autorizzazione.pa");
+			if(tipiAutorizzazionePortaApplicativa==null){
+				throw new Exception("Non sono stati definiti i tipi di autorizzazione per la porta applicativa supportati");
 			}else{
-				tipiAutorizzazioneContenutoPA = tipiAutorizzazioneContenutoPA.trim();
+				tipiAutorizzazionePortaApplicativa = tipiAutorizzazionePortaApplicativa.trim();
 			}
-			String [] tipiAutorizzazioneContenutoPAArray = tipiAutorizzazioneContenutoPA.split(",");
-			for (int i = 0; i < tipiAutorizzazioneContenutoPAArray.length; i++) {
-				tipiAutorizzazioneContenutoPAArray[i]=tipiAutorizzazioneContenutoPAArray[i].trim();
+			String [] tipiAutorizzazionePortaApplicativaArray = tipiAutorizzazionePortaApplicativa.split(",");
+			for (int i = 0; i < tipiAutorizzazionePortaApplicativaArray.length; i++) {
+				tipiAutorizzazionePortaApplicativaArray[i]=tipiAutorizzazionePortaApplicativaArray[i].trim();
 			}
-
+			
+			String tipiAutorizzazioneContenutiPortaDelegata = commonProperties.getProperty("openspcoop2.autorizzazioneContenuto.pd");
+			if(tipiAutorizzazioneContenutiPortaDelegata==null){
+				throw new Exception("Non sono stati definiti i tipi di autorizzazione contenuti per la porta delegata supportati");
+			}else{
+				tipiAutorizzazioneContenutiPortaDelegata = tipiAutorizzazioneContenutiPortaDelegata.trim();
+			}
+			String [] tipiAutorizzazioneContenutiPortaDelegataArray = tipiAutorizzazioneContenutiPortaDelegata.split(",");
+			for (int i = 0; i < tipiAutorizzazioneContenutiPortaDelegataArray.length; i++) {
+				tipiAutorizzazioneContenutiPortaDelegataArray[i]=tipiAutorizzazioneContenutiPortaDelegataArray[i].trim();
+			}
+			
+			String tipiAutorizzazioneContenutiPortaApplicativa = commonProperties.getProperty("openspcoop2.autorizzazioneContenuto.pa");
+			if(tipiAutorizzazioneContenutiPortaApplicativa==null){
+				throw new Exception("Non sono stati definiti i tipi di autorizzazione contenuti per la porta applicativa supportati");
+			}else{
+				tipiAutorizzazioneContenutiPortaApplicativa = tipiAutorizzazioneContenutiPortaApplicativa.trim();
+			}
+			String [] tipiAutorizzazioneContenutiPortaApplicativaArray = tipiAutorizzazioneContenutiPortaApplicativa.split(",");
+			for (int i = 0; i < tipiAutorizzazioneContenutiPortaApplicativaArray.length; i++) {
+				tipiAutorizzazioneContenutiPortaApplicativaArray[i]=tipiAutorizzazioneContenutiPortaApplicativaArray[i].trim();
+			}
+			
 			String tipiIntegrazionePD = commonProperties.getProperty("openspcoop2.integrazione.pd");
 			if(tipiIntegrazionePD==null){
 				throw new Exception("Non sono stati definiti i tipi di Integrazione supportati (PD)");
@@ -346,8 +368,9 @@ public class TestValidazioneSemantica {
 			ValidazioneSemantica validatore = new ValidazioneSemantica(configurazione,tipoConnettoriArray,
 					tipoSoggettiArray,tipoServiziSoapArray,tipoServiziRestArray,
 					tipiDiagnosticiAppenderArray,tipiTracceAppenderArray,
-					tipiAutenticazioneArray,tipiAutorizzazioneArray,
-					tipiAutorizzazioneContenutoPDArray,tipiAutorizzazioneContenutoPAArray,
+					tipiAutenticazionePortaDelegataArray,tipiAutenticazionePortaApplicativaArray,
+					tipiAutorizzazionePortaDelegataArray,tipiAutorizzazionePortaApplicativaArray,
+					tipiAutorizzazioneContenutiPortaDelegataArray,tipiAutorizzazioneContenutiPortaApplicativaArray,
 					tipiIntegrazionePDArray,tipiIntegrazionePAArray,
 					validaSezioneConfigurazione,log);
 			

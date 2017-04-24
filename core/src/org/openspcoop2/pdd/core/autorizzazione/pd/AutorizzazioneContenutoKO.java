@@ -41,9 +41,9 @@ import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 public class AutorizzazioneContenutoKO extends AbstractCore implements IAutorizzazioneContenutoPortaDelegata {
 
 	@Override
-	public EsitoAutorizzazioneIntegrazione process(DatiInvocazionePortaDelegata datiInvocazione,OpenSPCoop2Message msg) throws AutorizzazioneException {
+	public EsitoAutorizzazionePortaDelegata process(DatiInvocazionePortaDelegata datiInvocazione,OpenSPCoop2Message msg) throws AutorizzazioneException {
 
-		EsitoAutorizzazioneIntegrazione esito = new EsitoAutorizzazioneIntegrazione();
+		EsitoAutorizzazionePortaDelegata esito = new EsitoAutorizzazionePortaDelegata();
     	
     	// Autorizzazzione servizio applicativo
     	try{
@@ -60,7 +60,7 @@ public class AutorizzazioneContenutoKO extends AbstractCore implements IAutorizz
     		}
     		
     		esito.setErroreIntegrazione(ErroriIntegrazione.ERRORE_428_AUTORIZZAZIONE_CONTENUTO_FALLITA.getErrore428_AutorizzazioneContenutoFallita(servizioApplicativo));
-    		esito.setServizioAutorizzato(false);
+    		esito.setAutorizzato(false);
     		return esito;
     		
     	}catch(Exception e){

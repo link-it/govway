@@ -1039,7 +1039,6 @@ public class XMLDataConverter {
 			credenziali.setTipo(CredenzialeTipo.toEnumConstant(CostantiConfigurazione.NONE));
 			InvocazioneServizio invServizio = new InvocazioneServizio();
 			invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.toEnumConstant(CostantiConfigurazione.NONE));
-			invServizio.setCredenziali(credenziali);
 			invServizio.setGetMessage(CostantiConfigurazione.DISABILITATO);
 			servizioApplicativo.setInvocazioneServizio(invServizio);
 		}
@@ -1085,7 +1084,6 @@ public class XMLDataConverter {
 			credenziali.setTipo(CredenzialeTipo.toEnumConstant(CostantiConfigurazione.NONE));
 			RispostaAsincrona rispostaAsinc = new RispostaAsincrona();
 			rispostaAsinc.setAutenticazione(InvocazioneServizioTipoAutenticazione.toEnumConstant(CostantiConfigurazione.NONE));
-			rispostaAsinc.setCredenziali(credenziali);
 			rispostaAsinc.setGetMessage(CostantiConfigurazione.DISABILITATO);
 			servizioApplicativo.setRispostaAsincrona(rispostaAsinc);
 		}

@@ -3,6 +3,14 @@
 	<ear-subdeployments-isolated>false</ear-subdeployments-isolated>
 	<!-- This corresponds to the top level deployment. For a war this is the war's module, for an ear -->
 	<!-- This is the top level ear module, which contains all the classes in the EAR's lib folder     -->
+
+	<!-- 
+		In seguito dove sussiste un commento I18N.init indica la soluzione ad un eventuale seguente problema:
+			java.lang.NoSuchMethodError: org.apache.xml.security.utils.I18n.init(Ljava/util/ResourceBundle;)
+		Se si presenta, provare a scommentare tutte le righe che contengono il commento iniziale 'I18N.init'
+	-->
+		
+
 	<deployment>
 		<!-- 
 			Indicazione di BouncyCastle tra le risorse disponibili (necessario per il Security Provider su jboss 7)
@@ -16,10 +24,59 @@
 		<exclusions>
 			<module name="org.slf4j" />
 			<module name="org.apache.log4j" />
-                        <module name="org.apache.commons.logging"/>
+			<module name="org.apache.commons.logging"/>
+                        
+			<!-- I18N.init -->
+			<!-- <module name="javaee.api" /> -->
+			
 		</exclusions>
+		
+		<!-- I18N.init -->
+		<!--
+		<dependencies>
+			<module name="deployment.custom.javaee.api" />
+		</dependencies>
+		-->
+		
 	</deployment>
+	
+	<!-- I18N.init -->
+	<!--
+    <module name="deployment.custom.javaee.api">
+        <dependencies>
+            <module name="javaee.api" export="true">
+                <imports>
+                        <exclude path="org/apache/jcp/**" />
+                        <exclude path="org/apache/xml/security/**" />
+                        <exclude path="org/apache/xml/serializer/**" />
+                        <exclude path="org/apache/bcel/**" />
+                        <exclude path="org/apache/xalan/**" />
+                        <exclude path="org/apache/xml/**" />
+                        <exclude path="org/apache/xpath/**" />
+                        <exclude path="trax/**" />
+                        <exclude path="java_cup/**" />
+                        <exclude path="META-INF/services/javax.xml.transform.TransformerFactory" />
+                        <exclude path="META-INF/services/javax.xml.xpath.XPathFactory" />
+                        <exclude path="META-INF/services/org.apache.xalan.extensions.bsf.BSFManager" />
+                        <exclude path="META-INF/services/org.apache.xml.dtm.DTMManager" />
+                </imports>
+
+           </module>
+        </dependencies>
+
+    </module>
+	-->
+	
 	<sub-deployment name="OpenSPCoop2.war">
+		<exclusions>
+			<module name="org.apache.log4j"/>
+			<module name="org.slf4j" />
+			<module name="org.apache.commons.logging"/>
+			<module name="org.log4j"/>
+			<module name="org.jboss.logging"/>
+		</exclusions>
+	</sub-deployment>
+	<sub-deployment name="OpenSPCoop2Sec.war">
 		<exclusions>
 			<module name="org.apache.log4j"/>
 			<module name="org.slf4j" />

@@ -14,12 +14,6 @@
 	</queue>
 	<!--  GestoreRegistroServizi di OpenSPCoop -->
 
-	<!--  GestoreRepositoryAutorizzazioni -->
-        <queue name="toConfigurazioneGestoreAutorizzazioni">
-           <entry name="/queue/toConfigurazioneGestoreAutorizzazioni"/>
-        </queue>
-	<!--  GestoreRepositoryAutorizzazioni -->
-
 	<!--  Gestore Eventi (Propagazione) -->
         <queue name="toConfigurazioneGestoreEventi">
            <entry name="/queue/toConfigurazioneGestoreEventi"/>

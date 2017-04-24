@@ -56,6 +56,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link FindRuoloResponse }
+     */
+    public FindRuoloResponse createFindRuoloResponse() {
+        return new FindRuoloResponse();
+    }
+    
+    /**
      * Create an instance of {@link CreateSoggetto }
      */
     public CreateSoggetto createCreateSoggetto() {
@@ -91,6 +98,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link FindRuolo }
+     */
+    public FindRuolo createFindRuolo() {
+        return new FindRuolo();
+    }
+    
+    /**
      * Create an instance of {@link GetSoggettoResponse }
      */
     public GetSoggettoResponse createGetSoggettoResponse() {
@@ -109,6 +123,13 @@ public class ObjectFactory {
      */
     public FindAllIdsSoggetto createFindAllIdsSoggetto() {
         return new FindAllIdsSoggetto();
+    }
+    
+    /**
+     * Create an instance of {@link DeleteRuolo }
+     */
+    public DeleteRuolo createDeleteRuolo() {
+        return new DeleteRuolo();
     }
     
     /**
@@ -266,6 +287,20 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link ExistsRuolo }
+     */
+    public ExistsRuolo createExistsRuolo() {
+        return new ExistsRuolo();
+    }
+    
+    /**
+     * Create an instance of {@link DeleteByIdRuoloResponse }
+     */
+    public DeleteByIdRuoloResponse createDeleteByIdRuoloResponse() {
+        return new DeleteByIdRuoloResponse();
+    }
+    
+    /**
      * Create an instance of {@link DeleteAllByFilterAccordoCooperazione }
      */
     public DeleteAllByFilterAccordoCooperazione createDeleteAllByFilterAccordoCooperazione() {
@@ -301,6 +336,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link FindAllIdsRuolo }
+     */
+    public FindAllIdsRuolo createFindAllIdsRuolo() {
+        return new FindAllIdsRuolo();
+    }
+    
+    /**
      * Create an instance of {@link CreateAccordoServizioParteSpecificaResponse }
      */
     public CreateAccordoServizioParteSpecificaResponse createCreateAccordoServizioParteSpecificaResponse() {
@@ -308,10 +350,24 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link GetRuoloResponse }
+     */
+    public GetRuoloResponse createGetRuoloResponse() {
+        return new GetRuoloResponse();
+    }
+    
+    /**
      * Create an instance of {@link FindAllSoggetto }
      */
     public FindAllSoggetto createFindAllSoggetto() {
         return new FindAllSoggetto();
+    }
+    
+    /**
+     * Create an instance of {@link UpdateOrCreateRuolo }
+     */
+    public UpdateOrCreateRuolo createUpdateOrCreateRuolo() {
+        return new UpdateOrCreateRuolo();
     }
     
     /**
@@ -329,6 +385,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link CreateRuoloResponse }
+     */
+    public CreateRuoloResponse createCreateRuoloResponse() {
+        return new CreateRuoloResponse();
+    }
+    
+    /**
      * Create an instance of {@link DeletePortaDominio }
      */
     public DeletePortaDominio createDeletePortaDominio() {
@@ -336,10 +399,24 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link DeleteRuoloResponse }
+     */
+    public DeleteRuoloResponse createDeleteRuoloResponse() {
+        return new DeleteRuoloResponse();
+    }
+    
+    /**
      * Create an instance of {@link FindAllIdsPortaDominioResponse }
      */
     public FindAllIdsPortaDominioResponse createFindAllIdsPortaDominioResponse() {
         return new FindAllIdsPortaDominioResponse();
+    }
+    
+    /**
+     * Create an instance of {@link CreateRuolo }
+     */
+    public CreateRuolo createCreateRuolo() {
+        return new CreateRuolo();
     }
     
     /**
@@ -378,6 +455,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link InUseRuoloResponse }
+     */
+    public InUseRuoloResponse createInUseRuoloResponse() {
+        return new InUseRuoloResponse();
+    }
+    
+    /**
      * Create an instance of {@link DeleteAccordoCooperazioneResponse }
      */
     public DeleteAccordoCooperazioneResponse createDeleteAccordoCooperazioneResponse() {
@@ -396,6 +480,13 @@ public class ObjectFactory {
      */
     public InUsePortaDominio createInUsePortaDominio() {
         return new InUsePortaDominio();
+    }
+    
+    /**
+     * Create an instance of {@link UpdateOrCreateRuoloResponse }
+     */
+    public UpdateOrCreateRuoloResponse createUpdateOrCreateRuoloResponse() {
+        return new UpdateOrCreateRuoloResponse();
     }
     
     /**
@@ -434,6 +525,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link DeleteAllRuoloResponse }
+     */
+    public DeleteAllRuoloResponse createDeleteAllRuoloResponse() {
+        return new DeleteAllRuoloResponse();
+    }
+    
+    /**
      * Create an instance of {@link UpdateOrCreateAccordoServizioParteComuneResponse }
      */
     public UpdateOrCreateAccordoServizioParteComuneResponse createUpdateOrCreateAccordoServizioParteComuneResponse() {
@@ -459,6 +557,20 @@ public class ObjectFactory {
      */
     public ExistsAccordoServizioParteComune createExistsAccordoServizioParteComune() {
         return new ExistsAccordoServizioParteComune();
+    }
+    
+    /**
+     * Create an instance of {@link DeleteAllByFilterRuoloResponse }
+     */
+    public DeleteAllByFilterRuoloResponse createDeleteAllByFilterRuoloResponse() {
+        return new DeleteAllByFilterRuoloResponse();
+    }
+    
+    /**
+     * Create an instance of {@link UpdateRuoloResponse }
+     */
+    public UpdateRuoloResponse createUpdateRuoloResponse() {
+        return new UpdateRuoloResponse();
     }
     
     /**
@@ -553,6 +665,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link ExistsRuoloResponse }
+     */
+    public ExistsRuoloResponse createExistsRuoloResponse() {
+        return new ExistsRuoloResponse();
+    }
+    
+    /**
      * Create an instance of {@link DeleteAccordoServizioParteComuneResponse }
      */
     public DeleteAccordoServizioParteComuneResponse createDeleteAccordoServizioParteComuneResponse() {
@@ -571,6 +690,20 @@ public class ObjectFactory {
      */
     public DeleteByIdSoggettoResponse createDeleteByIdSoggettoResponse() {
         return new DeleteByIdSoggettoResponse();
+    }
+    
+    /**
+     * Create an instance of {@link DeleteAllByFilterRuolo }
+     */
+    public DeleteAllByFilterRuolo createDeleteAllByFilterRuolo() {
+        return new DeleteAllByFilterRuolo();
+    }
+    
+    /**
+     * Create an instance of {@link DeleteByIdRuolo }
+     */
+    public DeleteByIdRuolo createDeleteByIdRuolo() {
+        return new DeleteByIdRuolo();
     }
     
     /**
@@ -641,6 +774,13 @@ public class ObjectFactory {
      */
     public GetAccordoServizioParteSpecificaResponse createGetAccordoServizioParteSpecificaResponse() {
         return new GetAccordoServizioParteSpecificaResponse();
+    }
+    
+    /**
+     * Create an instance of {@link GetRuolo }
+     */
+    public GetRuolo createGetRuolo() {
+        return new GetRuolo();
     }
     
     /**
@@ -721,6 +861,20 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link CountRuoloResponse }
+     */
+    public CountRuoloResponse createCountRuoloResponse() {
+        return new CountRuoloResponse();
+    }
+    
+    /**
+     * Create an instance of {@link FindAllRuoloResponse }
+     */
+    public FindAllRuoloResponse createFindAllRuoloResponse() {
+        return new FindAllRuoloResponse();
+    }
+    
+    /**
      * Create an instance of {@link FindAllSoggettoResponse }
      */
     public FindAllSoggettoResponse createFindAllSoggettoResponse() {
@@ -739,6 +893,13 @@ public class ObjectFactory {
      */
     public DeleteByIdAccordoCooperazione createDeleteByIdAccordoCooperazione() {
         return new DeleteByIdAccordoCooperazione();
+    }
+    
+    /**
+     * Create an instance of {@link CountRuolo }
+     */
+    public CountRuolo createCountRuolo() {
+        return new CountRuolo();
     }
     
     /**
@@ -833,6 +994,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link UpdateRuolo }
+     */
+    public UpdateRuolo createUpdateRuolo() {
+        return new UpdateRuolo();
+    }
+    
+    /**
      * Create an instance of {@link CreateSoggettoResponse }
      */
     public CreateSoggettoResponse createCreateSoggettoResponse() {
@@ -858,6 +1026,20 @@ public class ObjectFactory {
      */
     public FindAllIdsAccordoServizioParteSpecificaResponse createFindAllIdsAccordoServizioParteSpecificaResponse() {
         return new FindAllIdsAccordoServizioParteSpecificaResponse();
+    }
+    
+    /**
+     * Create an instance of {@link FindAllIdsRuoloResponse }
+     */
+    public FindAllIdsRuoloResponse createFindAllIdsRuoloResponse() {
+        return new FindAllIdsRuoloResponse();
+    }
+    
+    /**
+     * Create an instance of {@link FindAllRuolo }
+     */
+    public FindAllRuolo createFindAllRuolo() {
+        return new FindAllRuolo();
     }
     
     /**
@@ -914,6 +1096,13 @@ public class ObjectFactory {
      */
     public CountAccordoServizioParteSpecificaResponse createCountAccordoServizioParteSpecificaResponse() {
         return new CountAccordoServizioParteSpecificaResponse();
+    }
+    
+    /**
+     * Create an instance of {@link DeleteAllRuolo }
+     */
+    public DeleteAllRuolo createDeleteAllRuolo() {
+        return new DeleteAllRuolo();
     }
     
     /**
@@ -1005,6 +1194,13 @@ public class ObjectFactory {
      */
     public InUseAccordoServizioParteSpecificaResponse createInUseAccordoServizioParteSpecificaResponse() {
         return new InUseAccordoServizioParteSpecificaResponse();
+    }
+    
+    /**
+     * Create an instance of {@link InUseRuolo }
+     */
+    public InUseRuolo createInUseRuolo() {
+        return new InUseRuolo();
     }
     
     /**

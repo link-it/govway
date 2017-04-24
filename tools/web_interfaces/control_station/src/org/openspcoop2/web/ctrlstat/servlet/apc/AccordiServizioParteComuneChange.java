@@ -39,11 +39,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
-import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Soggetto;
-import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.id.IDAccordo;
-import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -73,12 +70,10 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
-import org.openspcoop2.web.ctrlstat.dao.Ruolo;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
-import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -220,7 +215,6 @@ public final class AccordiServizioParteComuneChange extends Action {
 		AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore();
 		AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(apcCore);
 		SoggettiCore soggettiCore = new SoggettiCore(apcCore);
-		PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apcCore);
 		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apcCore);
 		AccordiCooperazioneCore acCore = new AccordiCooperazioneCore(apcCore);
 		String labelAccordoServizio = AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(this.tipoAccordo);
@@ -880,62 +874,6 @@ public final class AccordiServizioParteComuneChange extends Action {
 					}
 				}
 
-				// Cerco le porte delegate create automaticamente per il ruolo associato ad un servizio applicativo
-				List<PortaDelegata> porteDelegate = porteDelegateCore.getPorteDelegateByAccordoRuolo(idAccordoOLD);
-				if(porteDelegate!=null && porteDelegate.size()>0){
-
-					IDAccordo idAccordoCorrelatoOLD = idAccordoFactory.getIDAccordoFromValues(idAccordoOLD.getNome()+"Correlato", idAccordoOLD.getSoggettoReferente(), idAccordoOLD.getVersione());
-					IDAccordo idAccordoCorrelatoNEW = idAccordoFactory.getIDAccordoFromValues(idNEW.getNome()+"Correlato", idNEW.getSoggettoReferente(), idNEW.getVersione());
-
-					while(porteDelegate.size()>0){
-						PortaDelegata portaDelegata = porteDelegate.remove(0);
-
-						String oldName = portaDelegata.getNome();
-
-						String newName = null;
-						String nomeRuoloNEW = null;
-						String nomeRuoloOLD = null;
-						String correlatoOLD = Ruolo.getNomeRuoloByIDAccordo(idAccordoCorrelatoOLD);
-						String vecchioOLD = Ruolo.getNomeRuoloByIDAccordo(idAccordoOLD);
-						if( oldName.indexOf(correlatoOLD) >= 0 ){
-							// Il ruolo e' Correlato
-							nomeRuoloNEW = Ruolo.getNomeRuoloByIDAccordo(idAccordoCorrelatoNEW);
-							nomeRuoloOLD = correlatoOLD;
-						}else if( oldName.indexOf(vecchioOLD) >= 0){
-							// Il ruolo non e' Correlato
-							nomeRuoloNEW = Ruolo.getNomeRuoloByIDAccordo(idNEW);
-							nomeRuoloOLD = vecchioOLD;
-						}else{
-							// porta delegata da non considerare. Non dovrei mai entrare in questo caso
-							continue;
-						}
-
-						// nome e location PD
-						IDPortaDelegata oldIDPortaDelegataForUpdate = new IDPortaDelegata();
-						oldIDPortaDelegataForUpdate.setNome(portaDelegata.getNome());
-						portaDelegata.setOldIDPortaDelegataForUpdate(oldIDPortaDelegataForUpdate);
-						newName = oldName.replace(nomeRuoloOLD, nomeRuoloNEW);
-						portaDelegata.setNome(newName);
-
-						// descrizione
-						if(portaDelegata.getDescrizione()!=null){
-							portaDelegata.setDescrizione(portaDelegata.getDescrizione().replace(nomeRuoloOLD, nomeRuoloNEW));
-						}
-
-						// Azione
-						if(portaDelegata.getAzione()!=null && 
-								portaDelegata.getAzione().getPattern()!=null &&
-								PortaDelegataAzioneIdentificazione.URL_BASED.equals(portaDelegata.getAzione().getIdentificazione()) ){
-							portaDelegata.getAzione().setPattern(portaDelegata.getAzione().getPattern().replace(nomeRuoloOLD, nomeRuoloNEW));
-						}else{
-							// porta delegata da non considerare. La porta delegata non rispetti i criteri automatici di creazione.
-							continue;
-						}
-
-						operazioniList.add(portaDelegata);
-
-					}
-				}
 			}
 
 

@@ -37,6 +37,12 @@ import org.slf4j.Logger;
 
 public class HttpServletTransportRequestContext extends org.openspcoop2.utils.transport.TransportRequestContext implements java.io.Serializable {
 
+	private HttpServletRequest httpServletRequest;
+	
+	public HttpServletRequest getHttpServletRequest() {
+		return this.httpServletRequest;
+	}
+	
 
 	/**
 	 * 
@@ -53,6 +59,8 @@ public class HttpServletTransportRequestContext extends org.openspcoop2.utils.tr
 		super();
 		
 		try {
+			
+			this.httpServletRequest = req;
 			
 			// Properties FORM Based
 			this.parametersFormBased = new java.util.Properties();	       

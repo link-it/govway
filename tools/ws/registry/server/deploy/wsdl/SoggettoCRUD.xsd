@@ -14,6 +14,7 @@
 	<xsd:complexType name="search-filter-soggetto">
 		<xsd:sequence>
  			<xsd:element name="connettore" type="tns:connettore" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="credenziali" type="tns:credenziali-soggetto" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="privato" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="tipo" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="nome" type="xsd:string" minOccurs="0" maxOccurs="1" />
@@ -36,6 +37,16 @@
  			<xsd:element name="custom" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="tipo" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="nome" type="xsd:string" minOccurs="0" maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:element name="credenziali-soggetto" type="tns:credenziali-soggetto" />
+	<xsd:complexType name="credenziali-soggetto">
+		<xsd:sequence>
+ 			<xsd:element name="tipo" type="api:CredenzialeTipo" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="user" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="password" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="subject" type="xsd:string" minOccurs="0" maxOccurs="1" />
 		</xsd:sequence>
 	</xsd:complexType>
 
@@ -63,6 +74,7 @@
 			<xsd:enumeration value="PortaDominio"/>
 			<xsd:enumeration value="Soggetto"/>
 			<xsd:enumeration value="AccordoServizioParteSpecifica"/>
+			<xsd:enumeration value="Ruolo"/>
 		</xsd:restriction>
  	</xsd:simpleType>
 	<xsd:complexType name="objectId">
@@ -72,6 +84,7 @@
 			<xsd:element ref="tns:wrapperIdPortaDominio" />
 			<xsd:element ref="tns:wrapperIdSoggetto" />
 			<xsd:element ref="tns:wrapperIdAccordoServizioParteSpecifica" />
+			<xsd:element ref="tns:wrapperIdRuolo" />
 		</xsd:choice>
 	</xsd:complexType>
 	<xsd:element name="wrapperIdAccordoCooperazione" type="tns:wrapperIdAccordoCooperazione"/>
@@ -102,6 +115,12 @@
 	<xsd:complexType name="wrapperIdAccordoServizioParteSpecifica">
 		<xsd:sequence>
 			<xsd:element name="id" type="api:id-accordo-servizio-parte-specifica" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="wrapperIdRuolo" type="tns:wrapperIdRuolo"/>
+	<xsd:complexType name="wrapperIdRuolo">
+		<xsd:sequence>
+			<xsd:element name="id" type="api:id-ruolo" />
 		</xsd:sequence>
 	</xsd:complexType>
 

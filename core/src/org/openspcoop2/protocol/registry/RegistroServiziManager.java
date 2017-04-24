@@ -32,12 +32,14 @@ import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
+import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziAzioneNotFound;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziCorrelatoNotFound;
@@ -51,6 +53,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaAzioni;
 import org.openspcoop2.core.registry.driver.FiltroRicercaFruizioniServizio;
 import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
 import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
+import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper;
@@ -230,12 +233,43 @@ public class RegistroServiziManager {
 	}
 	
 	
+	/* ********  A U T E N T I C A Z I O N E   S O G G E T T I  ******** */ 
+	
+	public Soggetto getSoggettoAutenticatoBasic(String username, String password, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getSoggettoAutenticatoBasic(this.getConnection(), username, password, nomeRegistro);
+	}
+	
+	public Soggetto getSoggettoAutenticatoSsl(String subject, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getSoggettoAutenticatoSsl(this.getConnection(), subject, nomeRegistro);
+	}
+	
+	public Soggetto getSoggettoAutenticatoPrincipal(String principal, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getSoggettoAutenticatoPrincipal(this.getConnection(), principal, nomeRegistro);
+	}
+	
+	public IDSoggetto getIdSoggettoAutenticatoBasic(String username, String password, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getIdSoggettoAutenticatoBasic(this.getConnection(), username, password, nomeRegistro);
+	}
+	
+	public IDSoggetto getIdSoggettoAutenticatoSsl(String subject, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getIdSoggettoAutenticatoSsl(this.getConnection(), subject, nomeRegistro);
+	}
+	
+	public IDSoggetto getIdSoggettoAutenticatoPrincipal(String principal, String nomeRegistro)throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getIdSoggettoAutenticatoPrincipal(this.getConnection(), principal, nomeRegistro);
+	}
+	
+	
 	/* ********  R I C E R C A  E L E M E N T I   P R I M I T I V I  ******** */
 	
 	public PortaDominio getPortaDominio(String nome,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return this.registroServiziReader.getPortaDominio(this.getConnection(), nome, nomeRegistro);
 	}
-	
+
+	public Ruolo getRuolo(String nome,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getRuolo(this.getConnection(), nome, nomeRegistro);
+	}
+
 	public Soggetto getSoggetto(IDSoggetto idSoggetto,String nomeRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		return this.registroServiziReader.getSoggetto(this.getConnection(), idSoggetto, nomeRegistro);
 	}
@@ -258,6 +292,10 @@ public class RegistroServiziManager {
 	
 	public List<String> getAllIdPorteDominio(FiltroRicerca filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		return this.registroServiziReader.getAllIdPorteDominio(this.getConnection(), filtroRicerca, nomeRegistro);
+	}
+
+	public List<IDRuolo> getAllIdRuoli(FiltroRicercaRuoli filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return this.registroServiziReader.getAllIdRuoli(this.getConnection(), filtroRicerca, nomeRegistro);
 	}
 	
 	public List<IDSoggetto> getAllIdSoggetti(FiltroRicercaSoggetti filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{

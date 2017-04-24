@@ -28,6 +28,7 @@
                                 <linkit:sql-table object-name="porte-applicative-ws-response" object-type="NomeValoreAsText"/>
                                 <linkit:sql-table object-name="porte-applicative-correlazione" object-type="porte-applicative-correlazione"/>
                                 <linkit:sql-table object-name="porte-applicative-correlazione-risposta" object-type="porte-applicative-correlazione-risposta"/>
+                                <linkit:sql-table object-name="porte-applicative-ruoli" object-type="porte-applicative-ruoli"/>
                             </linkit:sql-table-list>
                         </linkit:sql-script>
                         <linkit:sql-mapping single-table-mapping="false"
@@ -399,12 +400,55 @@
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="autenticazione" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="autenticazione"/>
+                                <linkit:sql-column-comment><![CDATA[Controllo Accessi]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="autenticazione_opzionale" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="autenticazione_opzionale"/>
+                                <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="autorizzazione" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="autorizzazione"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="autorizzazione_contenuto" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="autorizzazione_contenuto"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ruoli_match" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="ruoli_match"/>
+                                <linkit:sql-column-comment><![CDATA[all/any]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -884,6 +928,55 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
+    
+    
+    
+    <xsd:element name="porte-applicative-ruoli">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="pa_ruoli">
+                        <linkit:sql-table-foreign-key
+                            reference-object-name="porte-applicative"
+                            reference-object-type="porte-applicative"
+                            reference-primary-key="true">
+                            <linkit:sql-table-fk-field name="id_porta"/>
+                        </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-unique create-index="true">
+                            <linkit:sql-table-unique-column name="id_porta" />
+                            <linkit:sql-table-unique-column name="ruolo" />
+                        </linkit:sql-table-unique>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_porta" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_porta"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="ruolo" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="ruolo"/>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
     
     
     <!-- TABELLA DI SERVIZIO PER POTER COSTRUIRE LA FOREIGN KEY -->

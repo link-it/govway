@@ -1,3 +1,8 @@
+2017-03-28  Andrea Poli <apoli@link.it>
+
+	Aggiunta gestione dei Ruoli (ed eliminata versioni primitiva dei ruoli associata agli acccordi)
+	Sostituita gestione delle politiche di sicurezza con il mapping fruizione-pd e erogazione-pa
+
 2016-10-27  Andrea Poli <apoli@link.it>
 
         Attuati i seguenti miglioramenti agli indici:

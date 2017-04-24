@@ -115,11 +115,6 @@
 				</antcall>
 				<antcall target="set_property">
 				    <param name="file" value="${build_pddConsole}/tmp/console.properties"/>
-					<param name="token" value="sincronizzazioneRepositoryAutorizzazioni"/>
-					<param name="value" value="false"/>
-				</antcall>
-				<antcall target="set_property">
-				    <param name="file" value="${build_pddConsole}/tmp/console.properties"/>
 					<param name="token" value="sincronizzazioneGE"/>
 					<param name="value" value="false"/>
 				</antcall>
@@ -154,11 +149,6 @@
 						<antcall target="set_property">
 						    <param name="file" value="${build_pddConsole}/tmp/console.properties"/>
 							<param name="token" value="sincronizzazioneRegistro"/>
-							<param name="value" value="false"/>
-						</antcall>
-						<antcall target="set_property">
-						    <param name="file" value="${build_pddConsole}/tmp/console.properties"/>
-							<param name="token" value="sincronizzazioneRepositoryAutorizzazioni"/>
 							<param name="value" value="false"/>
 						</antcall>
 						<antcall target="set_property">

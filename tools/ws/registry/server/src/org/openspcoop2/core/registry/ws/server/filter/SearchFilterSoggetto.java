@@ -28,6 +28,7 @@ package org.openspcoop2.core.registry.ws.server.filter;
  * &lt;complexType name="search-filter-soggetto">
  *     &lt;sequence>
  *         &lt;element name="connettore" type="{http://www.openspcoop2.org/core/registry/management}connettore" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="credenziali" type="{http://www.openspcoop2.org/core/registry/management}credenziali-soggetto" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="privato" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
@@ -51,6 +52,7 @@ package org.openspcoop2.core.registry.ws.server.filter;
 import java.io.Serializable;
  
 import javax.xml.bind.annotation.XmlElement;
+import org.openspcoop2.core.registry.ws.server.filter.beans.CredenzialiSoggetto;
 import java.util.Date;
 import org.openspcoop2.core.registry.ws.server.filter.beans.Connettore;
 
@@ -65,6 +67,7 @@ import org.openspcoop2.core.registry.ws.server.filter.beans.Connettore;
 @javax.xml.bind.annotation.XmlAccessorType(javax.xml.bind.annotation.XmlAccessType.FIELD)
 @javax.xml.bind.annotation.XmlType(name = "search-filter-soggetto", namespace="http://www.openspcoop2.org/core/registry/management", propOrder = {
     "connettore",
+    "credenziali",
     "privato",
     "tipo",
     "nome",
@@ -93,6 +96,18 @@ public class SearchFilterSoggetto extends org.openspcoop2.utils.beans.BaseBean i
 	
 	public Connettore getConnettore(){
 		return this.connettore;
+	}
+	
+	
+	@XmlElement(name="credenziali",required=false,nillable=false)
+	private CredenzialiSoggetto credenziali;
+	
+	public void setCredenziali(CredenzialiSoggetto credenziali){
+		this.credenziali = credenziali;
+	}
+	
+	public CredenzialiSoggetto getCredenziali(){
+		return this.credenziali;
 	}
 	
 	

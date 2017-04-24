@@ -33,6 +33,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
+import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.web.ctrlstat.core.Search;

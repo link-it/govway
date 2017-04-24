@@ -5,6 +5,7 @@
 -- DROP INDEX INDEX_PA_MTOMTREQ;
 -- DROP INDEX INDEX_PA_PROP;
 -- DROP INDEX INDEX_PA_SA;
+DROP TABLE pa_ruoli;
 DROP TABLE pa_correlazione_risposta;
 DROP TABLE pa_correlazione;
 DROP TABLE pa_ws_response;
@@ -14,6 +15,7 @@ DROP TABLE pa_mtom_request;
 DROP TABLE pa_properties;
 DROP TABLE porte_applicative_sa;
 DROP TABLE porte_applicative;
+DROP SEQUENCE seq_pa_ruoli;
 DROP SEQUENCE seq_pa_correlazione_risposta;
 DROP SEQUENCE seq_pa_correlazione;
 DROP SEQUENCE seq_pa_ws_response;

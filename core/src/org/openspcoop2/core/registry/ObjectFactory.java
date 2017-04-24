@@ -73,6 +73,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link RuoliSoggetto }
+     */
+    public RuoliSoggetto createRuoliSoggetto() {
+        return new RuoliSoggetto();
+    }
+
+    /**
      * Create an instance of {@link MessagePart }
      */
     public MessagePart createMessagePart() {
@@ -192,6 +199,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Ruolo }
+     */
+    public Ruolo createRuolo() {
+        return new Ruolo();
+    }
+
+    /**
      * Create an instance of {@link IdPortaDominio }
      */
     public IdPortaDominio createIdPortaDominio() {
@@ -199,10 +213,31 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link RuoloSoggetto }
+     */
+    public RuoloSoggetto createRuoloSoggetto() {
+        return new RuoloSoggetto();
+    }
+
+    /**
      * Create an instance of {@link ConfigurazioneServizio }
      */
     public ConfigurazioneServizio createConfigurazioneServizio() {
         return new ConfigurazioneServizio();
+    }
+
+    /**
+     * Create an instance of {@link CredenzialiSoggetto }
+     */
+    public CredenzialiSoggetto createCredenzialiSoggetto() {
+        return new CredenzialiSoggetto();
+    }
+
+    /**
+     * Create an instance of {@link IdRuolo }
+     */
+    public IdRuolo createIdRuolo() {
+        return new IdRuolo();
     }
 
     /**

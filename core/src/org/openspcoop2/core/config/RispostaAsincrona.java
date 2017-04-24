@@ -38,7 +38,7 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="risposta-asincrona">
  * 		&lt;sequence>
- * 			&lt;element name="credenziali" type="{http://www.openspcoop2.org/core/config}credenziali" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="credenziali" type="{http://www.openspcoop2.org/core/config}invocazione-credenziali" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="connettore" type="{http://www.openspcoop2.org/core/config}connettore" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="gestione-errore" type="{http://www.openspcoop2.org/core/config}gestione-errore" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
@@ -86,11 +86,11 @@ public class RispostaAsincrona extends org.openspcoop2.utils.beans.BaseBean impl
 		this.id=new Long(-1);
   }
 
-  public Credenziali getCredenziali() {
+  public InvocazioneCredenziali getCredenziali() {
     return this.credenziali;
   }
 
-  public void setCredenziali(Credenziali credenziali) {
+  public void setCredenziali(InvocazioneCredenziali credenziali) {
     this.credenziali = credenziali;
   }
 
@@ -238,7 +238,7 @@ public class RispostaAsincrona extends org.openspcoop2.utils.beans.BaseBean impl
 
 
   @XmlElement(name="credenziali",required=false,nillable=false)
-  protected Credenziali credenziali;
+  protected InvocazioneCredenziali credenziali;
 
   @XmlElement(name="connettore",required=false,nillable=false)
   protected Connettore connettore;

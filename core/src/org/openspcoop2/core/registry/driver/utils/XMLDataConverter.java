@@ -55,6 +55,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ConfigurazioneServizio;
 import org.openspcoop2.core.registry.Connettore;
+import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
@@ -62,6 +63,7 @@ import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
+import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
@@ -758,14 +760,18 @@ public class XMLDataConverter {
 	public static void impostaInformazioniRegistroDB_PortaDominio_update(PortaDominio pdd,
 			String nomePddOperativaCtrlstatSinglePdD,Logger log,DriverRegistroServiziDB driverRegistroServiziDB,String tipoPdd) throws DriverRegistroServiziException{
 		if(pdd.getNome().equals(nomePddOperativaCtrlstatSinglePdD)){
-			log.info("Porta di Dominio "+pdd.getNome()+" aggiornamento tipo[operativo] in corso...");
-			driverRegistroServiziDB.updateTipoPortaDominio(pdd.getNome(), "operativo");
-			log.info("Porta di Dominio "+pdd.getNome()+" aggiornata con tipo operativo.");
+			log.info("Porta di Dominio "+pdd.getNome()+" aggiornamento tipo["+PddTipologia.OPERATIVO.toString()+"] in corso...");
+			driverRegistroServiziDB.updateTipoPortaDominio(pdd.getNome(), PddTipologia.OPERATIVO.toString());
+			log.info("Porta di Dominio "+pdd.getNome()+" aggiornata con tipo "+PddTipologia.OPERATIVO.toString()+".");
 		}else{
-			log.info("Porta di Dominio "+pdd.getNome()+" aggiornamento tipo[esterno] in corso...");
+			log.info("Porta di Dominio "+pdd.getNome()+" aggiornamento tipo["+PddTipologia.ESTERNO.toString()+"] in corso...");
 			driverRegistroServiziDB.updateTipoPortaDominio(pdd.getNome(), tipoPdd);
-			log.info("Porta di Dominio "+pdd.getNome()+" aggiornata con tipo esterno.");
+			log.info("Porta di Dominio "+pdd.getNome()+" aggiornata con tipo "+PddTipologia.ESTERNO.toString()+".");
 		}
+	}
+	
+	public static void impostaInformazioniRegistroDB_Ruolo(Ruolo ruolo) throws DriverRegistroServiziException{
+
 	}
 	
 	private static String getCodiceIPADefault(IDSoggetto idSoggetto) throws DriverRegistroServiziException{

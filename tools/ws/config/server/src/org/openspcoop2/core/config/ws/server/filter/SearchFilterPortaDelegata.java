@@ -30,6 +30,7 @@ package org.openspcoop2.core.config.ws.server.filter;
  *         &lt;element name="soggetto-erogatore" type="{http://www.openspcoop2.org/core/config/management}porta-delegata-soggetto-erogatore" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="servizio" type="{http://www.openspcoop2.org/core/config/management}porta-delegata-servizio" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="azione" type="{http://www.openspcoop2.org/core/config/management}porta-delegata-azione" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config/management}autorizzazione-ruoli" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="local-forward" type="{http://www.openspcoop2.org/core/config/management}porta-delegata-local-forward" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="mtom-processor" type="{http://www.openspcoop2.org/core/config/management}mtom-processor" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="validazione-contenuti-applicativi" type="{http://www.openspcoop2.org/core/config/management}validazione-contenuti-applicativi" minOccurs="0" maxOccurs="1" />
@@ -39,6 +40,7 @@ package org.openspcoop2.core.config.ws.server.filter;
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="autenticazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="autenticazione-opzionale" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="autorizzazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="autorizzazione-contenuto" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="ricevuta-asincrona-simmetrica" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
@@ -67,6 +69,7 @@ import org.openspcoop2.core.config.ws.server.filter.beans.MtomProcessor;
 import org.openspcoop2.core.config.ws.server.filter.beans.PortaDelegataServizio;
 import org.openspcoop2.core.config.ws.server.filter.beans.PortaDelegataSoggettoErogatore;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.ws.server.filter.beans.AutorizzazioneRuoli;
 import org.openspcoop2.core.config.ws.server.filter.beans.PortaDelegataLocalForward;
 import java.util.Date;
 import org.openspcoop2.core.config.ws.server.filter.beans.PortaDelegataAzione;
@@ -85,6 +88,7 @@ import org.openspcoop2.core.config.ws.server.filter.beans.ValidazioneContenutiAp
     "soggettoErogatore",
     "servizio",
     "azione",
+    "ruoli",
     "localForward",
     "mtomProcessor",
     "validazioneContenutiApplicativi",
@@ -94,6 +98,7 @@ import org.openspcoop2.core.config.ws.server.filter.beans.ValidazioneContenutiAp
     "nome",
     "descrizione",
     "autenticazione",
+    "autenticazioneOpzionale",
     "autorizzazione",
     "autorizzazioneContenuto",
     "ricevutaAsincronaSimmetrica",
@@ -147,6 +152,18 @@ public class SearchFilterPortaDelegata extends org.openspcoop2.utils.beans.BaseB
 	
 	public PortaDelegataAzione getAzione(){
 		return this.azione;
+	}
+	
+	
+	@XmlElement(name="ruoli",required=false,nillable=false)
+	private AutorizzazioneRuoli ruoli;
+	
+	public void setRuoli(AutorizzazioneRuoli ruoli){
+		this.ruoli = ruoli;
+	}
+	
+	public AutorizzazioneRuoli getRuoli(){
+		return this.ruoli;
 	}
 	
 	
@@ -261,6 +278,18 @@ public class SearchFilterPortaDelegata extends org.openspcoop2.utils.beans.BaseB
 	
 	public String getAutenticazione(){
 		return this.autenticazione;
+	}
+	
+	
+	@XmlElement(name="autenticazione-opzionale",required=false,nillable=false)
+	private StatoFunzionalita autenticazioneOpzionale;
+	
+	public void setAutenticazioneOpzionale(StatoFunzionalita autenticazioneOpzionale){
+		this.autenticazioneOpzionale = autenticazioneOpzionale;
+	}
+	
+	public StatoFunzionalita getAutenticazioneOpzionale(){
+		return this.autenticazioneOpzionale;
 	}
 	
 	

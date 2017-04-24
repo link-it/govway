@@ -82,11 +82,56 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 	
 	@Override
+	public ServizioApplicativo getServizioApplicativoByCredenzialiBasic(String username, String password) throws RegistryNotFound{
+		try{
+			IDServizioApplicativo idSA = this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiBasic(username, password);
+			return this.configurazionePdDMangager.getServizioApplicativo(idSA);
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			return null;
+		}
+	}
+	
+	@Override
 	public boolean existsServizioApplicativoByCredenzialiSsl(String subject){
 		try{
 			return this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiSsl(subject)!=null;
 		} catch(Exception e){
 			return false;
+		}
+	}
+	
+	@Override
+	public ServizioApplicativo getServizioApplicativoByCredenzialiSsl(String subject) throws RegistryNotFound{
+		try{
+			IDServizioApplicativo idSA = this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiSsl(subject);
+			return this.configurazionePdDMangager.getServizioApplicativo(idSA);
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			return null;
+		}
+	}
+	
+	@Override
+	public boolean existsServizioApplicativoByCredenzialiPrincipal(String principal){
+		try{
+			return this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiPrincipal(principal)!=null;
+		} catch(Exception e){
+			return false;
+		}
+	}
+	
+	@Override
+	public ServizioApplicativo getServizioApplicativoByCredenzialiPrincipal(String principal) throws RegistryNotFound{
+		try{
+			IDServizioApplicativo idSA = this.configurazionePdDMangager.getIdServizioApplicativoByCredenzialiPrincipal(principal);
+			return this.configurazionePdDMangager.getServizioApplicativo(idSA);
+		} catch (DriverConfigurazioneNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			return null;
 		}
 	}
 	

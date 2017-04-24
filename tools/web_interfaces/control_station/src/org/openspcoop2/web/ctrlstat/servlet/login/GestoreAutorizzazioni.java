@@ -40,6 +40,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
@@ -86,6 +87,7 @@ public class GestoreAutorizzazioni {
 	Vector<String> servletAccordiServizio = null;
 	Vector<String> servletAccordiCooperazione = null;
 	Vector<String> servletServizi = null;
+	Vector<String> servletRuoli = null;
 	Vector<String> servletPorteDelegate = null;
 	Vector<String> servletPorteApplicative = null;
 	Vector<String> servletServiziApplicativi = null;
@@ -109,6 +111,7 @@ public class GestoreAutorizzazioni {
 	PermessiUtente permessiAccordiServizio = null;
 	PermessiUtente permessiAccordiCooperazione = null;
 	PermessiUtente permessiServizi = null;
+	PermessiUtente permessiRuoli = null;
 	PermessiUtente permessiPorteDelegate = null;
 	PermessiUtente permessiPorteApplicative = null;
 	PermessiUtente permessiServiziApplicativi = null;
@@ -154,6 +157,7 @@ public class GestoreAutorizzazioni {
 		/** Gruppo di servlet che gestiscono i soggetti */
 		this.servletSoggetti = new Vector<String>();
 		this.servletSoggetti.addAll(SoggettiCostanti.SERVLET_SOGGETTI);
+		this.servletSoggetti.addAll(SoggettiCostanti.SERVLET_SOGGETTI_RUOLI);
 		/** Permessi associati alla gestione dei soggetti */
 		this.permessiSoggetti = new PermessiUtente();
 		this.permessiSoggetti.setServizi(true);
@@ -166,9 +170,7 @@ public class GestoreAutorizzazioni {
 		this.servletAccordiServizio.addAll(AccordiServizioParteComuneCostanti.SERVLET_APC_PORT_TYPE_OPERATIONS);
 		this.servletAccordiServizio.addAll(AccordiServizioParteComuneCostanti.SERVLET_APC_PORT_TYPE_OPERATIONS_MESSAGE);
 		this.servletAccordiServizio.addAll(AccordiServizioParteComuneCostanti.SERVLET_APC_ALLEGATI);
-		this.servletAccordiServizio.addAll(AccordiServizioParteComuneCostanti.SERVLET_APC_SERVIZI_APPLICATIVI);
 		this.servletAccordiServizio.addAll(AccordiServizioParteComuneCostanti.SERVLET_APC_EROGATORI);
-		this.servletAccordiServizio.addAll(AccordiServizioParteComuneCostanti.SERVLET_APC_EROGATORI_FRUITORI);
 		this.servletAccordiServizio.addAll(AccordiServizioParteComuneCostanti.SERVLET_APC_COMPONENTI);
 		this.servletAccordiServizio.add(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT);
 		/** Permessi associati alla gestione degli accordi di servizio */
@@ -190,12 +192,19 @@ public class GestoreAutorizzazioni {
 		this.servletServizi.addAll(AccordiServizioParteSpecificaCostanti.SERVLET_APS);
 		this.servletServizi.addAll(AccordiServizioParteSpecificaCostanti.SERVLET_APS_ALLEGATI);
 		this.servletServizi.addAll(AccordiServizioParteSpecificaCostanti.SERVLET_APS_FRUITORI);
-		this.servletServizi.addAll(AccordiServizioParteSpecificaCostanti.SERVLET_APS_SERVIZI_APPLICATIVI);
+		this.servletServizi.addAll(AccordiServizioParteSpecificaCostanti.SERVLET_APS_FRUITORI_PORTE_DELEGATE);
 		this.servletServizi.addAll(AccordiServizioParteSpecificaCostanti.SERVLET_APS_PORTE_APPLICATIVE);
-		this.servletAccordiServizio.add(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT);
+		this.servletServizi.add(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT);
 		/** Permessi associati alla gestione dei servizi */
 		this.permessiServizi = new PermessiUtente();
 		this.permessiServizi.setServizi(true);
+		
+		/** Gruppo di servlet che gestiscono i ruoli */
+		this.servletRuoli = new Vector<String>();
+		this.servletRuoli.addAll(RuoliCostanti.SERVLET_RUOLI);
+		/** Permessi associati alla gestione dei ruoli */
+		this.permessiRuoli = new PermessiUtente();
+		this.permessiRuoli.setServizi(true);
 		
 		/** Gruppo di servlet che gestiscono le porte delegate */
 		this.servletPorteDelegate = new Vector<String>();
@@ -204,6 +213,7 @@ public class GestoreAutorizzazioni {
 		this.servletPorteDelegate.addAll(PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST);
 		this.servletPorteDelegate.addAll(PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE);
 		this.servletPorteDelegate.addAll(PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_SERVIZIO_APPLICATIVO);
+		this.servletPorteDelegate.addAll(PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_RUOLI);
 		this.servletPorteDelegate.addAll(PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_REQUEST);
 		this.servletPorteDelegate.addAll(PorteDelegateCostanti.SERVLET_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA_RESPONSE);
 		this.servletPorteDelegate.add(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_MTOM);
@@ -221,6 +231,7 @@ public class GestoreAutorizzazioni {
 		this.servletPorteDelegate.addAll(PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_MESSAGE_SECURITY_REQUEST);
 		this.servletPorteDelegate.addAll(PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_MESSAGE_SECURITY_RESPONSE);
 		this.servletPorteDelegate.addAll(PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO);
+		this.servletPorteDelegate.addAll(PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_RUOLI);
 		this.servletPorteDelegate.addAll(PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_REQUEST);
 		this.servletPorteDelegate.addAll(PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_RESPONSE);
 		this.servletPorteDelegate.addAll(PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO);
@@ -408,6 +419,8 @@ public class GestoreAutorizzazioni {
 			return servletOk;
 		}else if(this.servletServizi.contains(nomeServlet)){
 			return this.permessiServizi.or(user.getPermessi());
+		}else if(this.servletRuoli.contains(nomeServlet)){
+			return this.permessiRuoli.or(user.getPermessi());
 		}else if(this.servletPorteDelegate.contains(nomeServlet)){
 			return this.permessiPorteDelegate.or(user.getPermessi());
 		}else if(this.servletPorteApplicative.contains(nomeServlet)){

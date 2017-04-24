@@ -37,12 +37,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Connettore;
-import org.openspcoop2.core.config.Credenziali;
+import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
-import org.openspcoop2.core.config.constants.CredenzialeTipo;
+import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
@@ -108,10 +108,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			
 			String risprif = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
 			
-			String tipoauthRichiesta = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_CONNETTORE);
-			@SuppressWarnings("unused")
-			String confpwRichiesta = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_CONFERMA_PASSWORD_CONNETTORE);
-			String subjectRichiesta = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_SUBJECT_CONNETTORE);
+			String tipoauthRichiesta = request.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_TIPO_AUTENTICAZIONE);
 			
 			String provider = request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			
@@ -203,7 +200,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			ServizioApplicativo sa = saCore.getServizioApplicativo(idSilInt);
 			SoggettiCore soggettiCore = new SoggettiCore(saCore);
 			RispostaAsincrona ra = sa.getRispostaAsincrona();
-			Credenziali cra = ra.getCredenziali();
+			InvocazioneCredenziali cra = ra.getCredenziali();
 			Connettore connra = ra.getConnettore();
 			List<Property> cp = connra.getPropertyList();
 			
@@ -279,9 +276,8 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 					}
 				}
 				
-				if ((tipoauthRichiesta == null) && (cra != null)) {
-					if(cra.getTipo()!=null)
-						tipoauthRichiesta = cra.getTipo().toString();
+				if ((tipoauthRichiesta == null) && (ra != null) && ra.getAutenticazione()!=null) {
+					tipoauthRichiesta = ra.getAutenticazione().getValue();
 				}
 				if ((tipoauthRichiesta == null) || "".equals(tipoauthRichiesta)) {
 					tipoauthRichiesta = CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_NONE.toString();
@@ -289,10 +285,6 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				if ((user == null) && (cra != null)) {
 					user = cra.getUser();
 					password = cra.getPassword();
-					confpwRichiesta = password;
-				}
-				if ((subjectRichiesta == null) && (cra != null)) {
-					subjectRichiesta = cra.getSubject();
 				}
 				if (endpointtype == null) {
 					if ((connra.getCustom()!=null && connra.getCustom()) && 
@@ -629,48 +621,29 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			ra.setGetMessage(StatoFunzionalita.toEnumConstant(getmsg));
 			ra.setInvioPerRiferimento(StatoFunzionalita.toEnumConstant(invrifRichiesta));
 			ra.setRispostaPerRiferimento(StatoFunzionalita.toEnumConstant(risprif));
-			if (tipoauthRichiesta!=null && !tipoauthRichiesta.equals(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_NONE.toString())) {
+			if (tipoauthRichiesta!=null && tipoauthRichiesta.equals(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC.toString())) {
 				if (cra == null) {
-					cra = new Credenziali();
+					cra = new InvocazioneCredenziali();
 				}
-				if(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_NESSUNA.equals(tipoauthRichiesta)){
-					//cra.setTipo(CredenzialeTipo.toEnumConstant(CostantiConfigurazione.AUTENTICAZIONE_NONE));
-					cra.setTipo(null);
-				}else
-					cra.setTipo(CredenzialeTipo.toEnumConstant(tipoauthRichiesta));
-				if (tipoauthRichiesta.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_BASIC)) {
-					cra.setUser(user);
-					cra.setPassword(password);
-				} else {
-					cra.setUser("");
-					cra.setPassword("");
-				}
-				if (tipoauthRichiesta.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_SSL)) {
-					cra.setSubject(subjectRichiesta);
-				} else {
-					cra.setSubject("");
-				}
+				cra.setUser(user);
+				cra.setPassword(password);
 				ra.setCredenziali(cra);
+				ra.setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
 			} 
 			else if(endpointtype.equals(TipiConnettore.JMS.toString())){
-				if (cra == null) {
-					cra = new Credenziali();
-				}
 				if(user!=null && password!=null){
-					cra.setTipo(CredenzialeTipo.BASIC);
+					if (cra == null) {
+						cra = new InvocazioneCredenziali();
+					}
 					cra.setUser(user);
 					cra.setPassword(password);
 				}
-				else{
-					cra.setTipo(null);
-					cra.setUser(user);
-					cra.setPassword(password);
-				}
-				cra.setSubject(null);
 				ra.setCredenziali(cra);
+				ra.setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
 			}
 			else {
 				ra.setCredenziali(null);
+				ra.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
 			}
 			String oldConnT = connra.getTipo();
 			if ((connra.getCustom()!=null && connra.getCustom()) && 

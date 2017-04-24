@@ -22,7 +22,6 @@
 
 package org.openspcoop2.pdd.core.autorizzazione;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -33,20 +32,19 @@ import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.autorizzazione.pa.DatiInvocazionePortaApplicativa;
-import org.openspcoop2.pdd.core.autorizzazione.pa.EsitoAutorizzazioneCooperazione;
+import org.openspcoop2.pdd.core.autorizzazione.pa.EsitoAutorizzazionePortaApplicativa;
 import org.openspcoop2.pdd.core.autorizzazione.pa.IAutorizzazionePortaApplicativa;
 import org.openspcoop2.pdd.core.autorizzazione.pd.DatiInvocazionePortaDelegata;
-import org.openspcoop2.pdd.core.autorizzazione.pd.EsitoAutorizzazioneIntegrazione;
+import org.openspcoop2.pdd.core.autorizzazione.pd.EsitoAutorizzazionePortaDelegata;
 import org.openspcoop2.pdd.core.autorizzazione.pd.IAutorizzazionePortaDelegata;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
-import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
-import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
 import org.openspcoop2.utils.resources.Loader;
+import org.slf4j.Logger;
 
 /**
  * Classe utilizzata per la gestione del processo di autorizzazione Buste
@@ -222,7 +220,7 @@ public class GestoreAutorizzazione {
 			long idleTime, long itemLifeSecond, Logger log) throws Exception {
 		
 		if(log!=null)
-			log.info("Inizializzazione cache Autorizzazione Buste");
+			log.info("Inizializzazione cache Autorizzazione");
 
 		GestoreAutorizzazione.cacheAutorizzazione = new Cache(GestoreAutorizzazione.AUTORIZZAZIONE_CACHE_NAME);
 
@@ -231,7 +229,7 @@ public class GestoreAutorizzazione {
 
 			if( dimensioneCache>0 ){
 				try{
-					String msg = "Dimensione della cache (Autorizzazione Buste) impostata al valore: "+dimensioneCache;
+					String msg = "Dimensione della cache (Autorizzazione) impostata al valore: "+dimensioneCache;
 					if(log!=null)
 						log.info(msg);
 					GestoreAutorizzazione.logConsole.info(msg);
@@ -241,7 +239,7 @@ public class GestoreAutorizzazione {
 				}
 			}
 			if(algoritmoCache != null ){
-				String msg = "Algoritmo di cache (Autorizzazione Buste) impostato al valore: "+algoritmoCache;
+				String msg = "Algoritmo di cache (Autorizzazione) impostato al valore: "+algoritmoCache;
 				if(log!=null)
 					log.info(msg);
 				GestoreAutorizzazione.logConsole.info(msg);
@@ -258,7 +256,7 @@ public class GestoreAutorizzazione {
 
 			if( idleTime > 0  ){
 				try{
-					String msg = "Attributo 'IdleTime' (Autorizzazione Buste) impostato al valore: "+idleTime;
+					String msg = "Attributo 'IdleTime' (Autorizzazione) impostato al valore: "+idleTime;
 					if(log!=null)
 						log.info(msg);
 					GestoreAutorizzazione.logConsole.info(msg);
@@ -269,7 +267,7 @@ public class GestoreAutorizzazione {
 			}
 			if( itemLifeSecond > 0  ){
 				try{
-					String msg = "Attributo 'MaxLifeSecond' (Autorizzazione Buste) impostato al valore: "+itemLifeSecond;
+					String msg = "Attributo 'MaxLifeSecond' (Autorizzazione) impostato al valore: "+itemLifeSecond;
 					if(log!=null)
 						log.info(msg);
 					GestoreAutorizzazione.logConsole.info(msg);
@@ -285,7 +283,7 @@ public class GestoreAutorizzazione {
 
 	// NOTA: le chiamate ad autorizzazione per contenuto non possono essere cachete, poiche' variano sempre i contenuti.
 
-    public static EsitoAutorizzazioneIntegrazione verificaAutorizzazionePortaDelegata(String tipoAutorizzazione, DatiInvocazionePortaDelegata datiInvocazione,
+    public static EsitoAutorizzazionePortaDelegata verificaAutorizzazionePortaDelegata(String tipoAutorizzazione, DatiInvocazionePortaDelegata datiInvocazione,
  		  PdDContext pddContext,IProtocolFactory<?> protocolFactory) throws Exception{
     	
     	checkDatiPortaDelegata(datiInvocazione);
@@ -296,7 +294,7 @@ public class GestoreAutorizzazione {
     		return auth.process(datiInvocazione);
 		}
     	else{
-    		String keyCache = buildCacheKey(true, tipoAutorizzazione, datiInvocazione.getKeyCache());
+    		String keyCache = buildCacheKey(true, tipoAutorizzazione, datiInvocazione.getKeyCache(), auth.getSuffixKeyAuthorizationResultInCache(datiInvocazione) );
 
 			synchronized (GestoreAutorizzazione.cacheAutorizzazione) {
 
@@ -305,7 +303,7 @@ public class GestoreAutorizzazione {
 				if(response != null){
 					if(response.getObject()!=null){
 						GestoreAutorizzazione.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaDelegata) in cache.");
-						return (EsitoAutorizzazioneIntegrazione) response.getObject();
+						return (EsitoAutorizzazionePortaDelegata) response.getObject();
 					}else if(response.getException()!=null){
 						GestoreAutorizzazione.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaDelegata) in cache.");
 						throw (Exception) response.getException();
@@ -316,18 +314,14 @@ public class GestoreAutorizzazione {
 
 				// Effettuo la query
 				GestoreAutorizzazione.logger.debug("oggetto con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaDelegata) ricerco nella configurazione...");
-				EsitoAutorizzazioneIntegrazione esito = auth.process(datiInvocazione);
+				EsitoAutorizzazionePortaDelegata esito = auth.process(datiInvocazione);
 
 				// Aggiungo la risposta in cache (se esiste una cache)	
-				// A meno che non sia un errore di processamento
-				// Quindi aggiungo in cache se:
-				// - servizio e' autorizzato
-				// - servizio non e' autorizzato (Codice 201)
-				// - se la risposta ottenuta e' cachabile (attributo nocache)
-				if(esito!=null && !esito.isNoCache()){
-					if( (esito.isServizioAutorizzato()) || 
-							(CodiceErroreIntegrazione.CODICE_404_AUTORIZZAZIONE_FALLITA.equals(esito.getErroreIntegrazione().getCodiceErrore())) || 
-							(CodiceErroreIntegrazione.CODICE_401_PORTA_INESISTENTE.equals(esito.getErroreIntegrazione().getCodiceErrore())) ){
+				// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
+				// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
+				// - impostare il noCache a true
+				if(esito!=null){
+					if(!esito.isNoCache()){
 						GestoreAutorizzazione.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
 						try{	
 							org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
@@ -345,7 +339,7 @@ public class GestoreAutorizzazione {
     	}
     }
 	
-    public static EsitoAutorizzazioneCooperazione verificaAutorizzazionePortaApplicativa(String tipoAutorizzazione, DatiInvocazionePortaApplicativa datiInvocazione,
+    public static EsitoAutorizzazionePortaApplicativa verificaAutorizzazionePortaApplicativa(String tipoAutorizzazione, DatiInvocazionePortaApplicativa datiInvocazione,
     		PdDContext pddContext,IProtocolFactory<?> protocolFactory) throws Exception{
     	  
     	checkDatiPortaApplicativa(datiInvocazione);
@@ -356,7 +350,7 @@ public class GestoreAutorizzazione {
     		return auth.process(datiInvocazione);
 		}
     	else{
-    		String keyCache = buildCacheKey(false, tipoAutorizzazione, datiInvocazione.getKeyCache());
+    		String keyCache = buildCacheKey(false, tipoAutorizzazione, datiInvocazione.getKeyCache(), auth.getSuffixKeyAuthorizationResultInCache(datiInvocazione));
 
 			synchronized (GestoreAutorizzazione.cacheAutorizzazione) {
 
@@ -365,7 +359,7 @@ public class GestoreAutorizzazione {
 				if(response != null){
 					if(response.getObject()!=null){
 						GestoreAutorizzazione.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaApplicativa) in cache.");
-						return (EsitoAutorizzazioneCooperazione) response.getObject();
+						return (EsitoAutorizzazionePortaApplicativa) response.getObject();
 					}else if(response.getException()!=null){
 						GestoreAutorizzazione.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaApplicativa) in cache.");
 						throw (Exception) response.getException();
@@ -376,17 +370,14 @@ public class GestoreAutorizzazione {
 
 				// Effettuo la query
 				GestoreAutorizzazione.logger.debug("oggetto con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaApplicativa) ricerco nella configurazione...");
-				EsitoAutorizzazioneCooperazione esito = auth.process(datiInvocazione);
+				EsitoAutorizzazionePortaApplicativa esito = auth.process(datiInvocazione);
 
 				// Aggiungo la risposta in cache (se esiste una cache)	
-				// A meno che non sia un errore di processamento
-				// Quindi aggiungo in cache se:
-				// - servizio e' autorizzato
-				// - servizio non e' autorizzato (Codice 201)
-				// - se la risposta ottenuta e' cachabile (attributo nocache)
-				if(esito!=null && !esito.isNoCache()){
-					if( (esito.isServizioAutorizzato()) || 
-							(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA.equals(esito.getErroreCooperazione().getCodiceErrore())) ){
+				// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
+				// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
+				// - impostare il noCache a true
+				if(esito!=null){
+					if(!esito.isNoCache()){
 						GestoreAutorizzazione.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
 						try{	
 							org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
@@ -459,16 +450,17 @@ public class GestoreAutorizzazione {
 //		if(pa==null)
 //			throw new AutorizzazioneException("(Parametri) PortaApplicativa non definito");
 		
-    	IDSoggetto idSoggettoFruitore = datiInvocazione.getIdSoggettoFruitore();
-		if(idSoggettoFruitore==null || idSoggettoFruitore.getTipo()==null || idSoggettoFruitore.getNome()==null)
-			throw new AutorizzazioneException("(Parametri) IDSoggettoFruitore non definito");
+		// In caso di autenticazione dei soggetti abilitata, il parametro soggetto fruitore può non essere definito
+//    	IDSoggetto idSoggettoFruitore = datiInvocazione.getIdSoggettoFruitore();
+//		if(idSoggettoFruitore==null || idSoggettoFruitore.getTipo()==null || idSoggettoFruitore.getNome()==null)
+//			throw new AutorizzazioneException("(Parametri) IDSoggettoFruitore non definito");
 		
 		RuoloBusta ruolo = datiInvocazione.getRuoloBusta();
 		if(ruolo==null)
 			throw new AutorizzazioneException("(Parametri) RuoloBusta non definito");
     }
     
-    private static String buildCacheKey(boolean portaDelegata, String tipoAutorizzazione, String keyCache) throws AutorizzazioneException{
+    private static String buildCacheKey(boolean portaDelegata, String tipoAutorizzazione, String keyCache, String suffixKeyCache) throws AutorizzazioneException{
     	StringBuffer bf = new StringBuffer();
     	
     	if(portaDelegata)
@@ -480,6 +472,11 @@ public class GestoreAutorizzazione {
     	
     	bf.append(keyCache);
     	
+    	if(suffixKeyCache!=null && !"".equals(suffixKeyCache)){
+    		bf.append(" ");
+    		bf.append(suffixKeyCache);
+    	}
+    	
     	return bf.toString();
     }
     
@@ -487,7 +484,7 @@ public class GestoreAutorizzazione {
     	String classType = null; 
 		IAutorizzazionePortaDelegata auth = null;
 		try{
-			classType = GestoreAutorizzazione.className.getAutorizzazione(tipoAutorizzazione);
+			classType = GestoreAutorizzazione.className.getAutorizzazionePortaDelegata(tipoAutorizzazione);
 			auth = (IAutorizzazionePortaDelegata) Loader.getInstance().newInstance(classType);
 			AbstractCore.init(auth, pddContext, protocolFactory);
 			return auth;
@@ -501,7 +498,7 @@ public class GestoreAutorizzazione {
     	String classType = null; 
     	IAutorizzazionePortaApplicativa auth = null;
 		try{
-			classType = GestoreAutorizzazione.className.getAutorizzazioneBuste(tipoAutorizzazione);
+			classType = GestoreAutorizzazione.className.getAutorizzazionePortaApplicativa(tipoAutorizzazione);
 			auth = (IAutorizzazionePortaApplicativa) Loader.getInstance().newInstance(classType);
 			AbstractCore.init(auth, pddContext, protocolFactory);
 			return auth;

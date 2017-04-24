@@ -39,6 +39,7 @@ import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
+import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -48,6 +49,7 @@ import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
@@ -60,6 +62,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaAzioni;
 import org.openspcoop2.core.registry.driver.FiltroRicercaFruizioniServizio;
 import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
 import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
+import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
@@ -68,8 +71,8 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.registry.driver.uddi.DriverRegistroServiziUDDI;
+import org.openspcoop2.core.registry.driver.utils.DriverRegistroServiziWSInitUtilities;
 import org.openspcoop2.core.registry.driver.web.DriverRegistroServiziWEB;
-import org.openspcoop2.core.registry.driver.ws.DriverRegistroServiziWS;
 import org.openspcoop2.core.registry.driver.xml.DriverRegistroServiziXML;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapperUtilities;
@@ -375,17 +378,14 @@ public class RegistroServizi  {
 
 				// inizializzazione WS
 				else if(CostantiConfigurazione.REGISTRO_WS.equals(registro.getTipo())){
-					if( (registro.getUser()!=null) && (registro.getPassword()!=null))
-						driver = new DriverRegistroServiziWS(path,
+					try{
+						driver = DriverRegistroServiziWSInitUtilities.newInstance(registro.getLocation(), 
 								registro.getUser(),
-								registro.getPassword(),this.log);
-					else
-						driver = new DriverRegistroServiziWS(registro.getLocation(),this.log);
-					if( ((DriverRegistroServiziWS)driver).create ){
+								registro.getPassword(), this.log);
 						this.driverRegistroServizi.put(nomeRegistro,driver);
-					}else{
+					}catch(Throwable e){
 						msg ="Riscontrato errore durante l'inizializzazione del registro di tipo "+
-						registro.getTipo()+" con location: "+registro.getLocation();
+								registro.getTipo()+" con location: "+registro.getLocation();
 						this.log.error(msg);
 						if(alogConsole!=null)
 							alogConsole.info(msg);
@@ -1009,7 +1009,7 @@ public class RegistroServizi  {
 		// se e' attiva una cache provo ad utilizzarla
 		String key = null;	
 		if(this.cache!=null){
-			key = "getPortaDominio" + nomePdD;
+			key = "getPortaDominio_" + nomePdD;
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -1037,6 +1037,58 @@ public class RegistroServizi  {
 			return pd;
 		else
 			throw new DriverRegistroServiziNotFound("[getPortaDominio] Porta di dominio ["+nomePdD+"] non Trovata");
+
+
+
+	}
+	
+	
+	/**
+	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.Ruolo}, 
+	 * identificato grazie al parametro 
+	 * <var>nome</var> 
+	 *
+	 * @param nomeRuolo Nome del Ruolo
+	 * @return un oggetto di tipo {@link org.openspcoop2.core.registry.Ruolo}.
+	 * 
+	 */
+	public org.openspcoop2.core.registry.Ruolo getRuolo(Connection connectionPdD,String nomeRegistro,String nomeRuolo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		
+		// Raccolta dati
+		if(nomeRuolo == null)
+			throw new DriverRegistroServiziException("[getRuolo]: Parametro non definito");	
+
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = "getRuolo_" + nomeRuolo;
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverRegistroServiziNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverRegistroServiziNotFound) response.getException();
+					else
+						throw (DriverRegistroServiziException) response.getException();
+				}else{
+					return ((Ruolo) response.getObject());
+				}
+			}
+		}
+
+
+		// Algoritmo CACHE
+		Ruolo ruolo = null;
+		if(this.cache!=null){
+			ruolo = (Ruolo) this.getObjectCache(key,"getRuolo",nomeRegistro,null,connectionPdD,nomeRuolo);
+		}else{
+			ruolo = (Ruolo) this.getObject("getRuolo",nomeRegistro,null,connectionPdD,nomeRuolo);
+		}
+
+		if(ruolo!=null)
+			return ruolo;
+		else
+			throw new DriverRegistroServiziNotFound("[getRuolo] Ruolo ["+nomeRuolo+"] non trovato");
 
 
 
@@ -1096,6 +1148,125 @@ public class RegistroServizi  {
 
 	}
 
+	public Soggetto getSoggettoAutenticatoBasic(Connection connectionPdD,String nomeRegistro,String user,String password) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+
+		// Raccolta dati
+		if(user==null)
+			throw new DriverRegistroServiziException("[getSoggettoAutenticatoBasic] Parametro user Non Valido");
+		if(password==null)
+			throw new DriverRegistroServiziException("[getSoggettoAutenticatoBasic] Parametro password Non Valido");
+
+		//	se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = "getSoggettoAutenticatoBasic_" + user +"_" + password;
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverRegistroServiziNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverRegistroServiziNotFound) response.getException();
+					else
+						throw (DriverRegistroServiziException) response.getException();
+				}else{
+					return ((Soggetto) response.getObject());
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		Soggetto soggetto = null;
+		if(this.cache!=null){
+			soggetto = (Soggetto) this.getObjectCache(key,"getSoggettoAutenticatoBasic",nomeRegistro,null,connectionPdD,user,password);
+		}else{
+			soggetto = (Soggetto) this.getObject("getSoggettoAutenticatoBasic",nomeRegistro,null,connectionPdD,user,password);
+		}
+
+		if(soggetto!=null)
+			return soggetto;
+		else
+			throw new DriverRegistroServiziNotFound("[getSoggettoAutenticatoBasic] Soggetto non Trovato");
+
+	}
+	
+	public Soggetto getSoggettoAutenticatoSsl(Connection connectionPdD,String nomeRegistro,String subject) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+
+		// Raccolta dati
+		if(subject==null)
+			throw new DriverRegistroServiziException("[getSoggettoAutenticatoSsl] Parametro subject Non Valido");
+
+		//	se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = "getSoggettoAutenticatoSsl_" + subject;
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverRegistroServiziNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverRegistroServiziNotFound) response.getException();
+					else
+						throw (DriverRegistroServiziException) response.getException();
+				}else{
+					return ((Soggetto) response.getObject());
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		Soggetto soggetto = null;
+		if(this.cache!=null){
+			soggetto = (Soggetto) this.getObjectCache(key,"getSoggettoAutenticatoSsl",nomeRegistro,null,connectionPdD,subject);
+		}else{
+			soggetto = (Soggetto) this.getObject("getSoggettoAutenticatoSsl",nomeRegistro,null,connectionPdD,subject);
+		}
+
+		if(soggetto!=null)
+			return soggetto;
+		else
+			throw new DriverRegistroServiziNotFound("[getSoggettoAutenticatoSsl] Soggetto non Trovato");
+
+	}
+	
+	public Soggetto getSoggettoAutenticatoPrincipal(Connection connectionPdD,String nomeRegistro,String principal) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+
+		// Raccolta dati
+		if(principal==null)
+			throw new DriverRegistroServiziException("[getSoggettoAutenticatoPrincipal] Parametro principal Non Valido");
+
+		//	se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = "getSoggettoAutenticatoPrincipal_" + principal;
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(DriverRegistroServiziNotFound.class.getName().equals(response.getException().getClass().getName()))
+						throw (DriverRegistroServiziNotFound) response.getException();
+					else
+						throw (DriverRegistroServiziException) response.getException();
+				}else{
+					return ((Soggetto) response.getObject());
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		Soggetto soggetto = null;
+		if(this.cache!=null){
+			soggetto = (Soggetto) this.getObjectCache(key,"getSoggettoAutenticatoPrincipal",nomeRegistro,null,connectionPdD,principal);
+		}else{
+			soggetto = (Soggetto) this.getObject("getSoggettoAutenticatoPrincipal",nomeRegistro,null,connectionPdD,principal);
+		}
+
+		if(soggetto!=null)
+			return soggetto;
+		else
+			throw new DriverRegistroServiziNotFound("[getSoggettoAutenticatoPrincipal] Soggetto non Trovato");
+
+	}
+	
 	/**
 	 * Si occupa di ritornare l'oggetto {@link org.openspcoop2.core.registry.AccordoServizioParteSpecifica}
 	 * contenente le informazioni sulle funzionalita' associate
@@ -1300,6 +1471,11 @@ public class RegistroServizi  {
 		return (List<String>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdPorteDominio");
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<IDRuolo> getAllIdRuoli(Connection connectionPdD,String nomeRegistro,FiltroRicercaRuoli filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return (List<IDRuolo>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdRuoli");
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<IDSoggetto> getAllIdSoggetti(Connection connectionPdD,String nomeRegistro, FiltroRicercaSoggetti filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		return (List<IDSoggetto>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, "getAllIdSoggetti");
@@ -1977,5 +2153,7 @@ public class RegistroServizi  {
 		}
 
 		throw new DriverRegistroServiziNotFound("GenericObject with key ["+keyObject+"] not found");
+
 	}
+
 }

@@ -288,14 +288,16 @@ public class BustaBuilder<BustaRawType> extends BasicComponentFactory implements
 			params.setSoggettoProduceEccezione(soggettoProduceEccezione);
 			params.setDominioPorta(soggettoProduceEccezione);
 			
-			// Mittente
-			IDSoggetto idSoggettoMittente = new IDSoggetto(busta.getTipoDestinatario(), busta.getDestinatario());
-			String idPortaMittente = busta.getIdentificativoPortaDestinatario();
-			if(idPortaMittente==null){
-				idPortaMittente = this.traduttore.getIdentificativoPortaDefault(idSoggettoMittente);
+			// Mittente (può essere non definito in protocollo che supportano l'invocazione anonima)
+			if(busta.getTipoDestinatario()!=null && busta.getDestinatario()!=null){
+				IDSoggetto idSoggettoMittente = new IDSoggetto(busta.getTipoDestinatario(), busta.getDestinatario());
+				String idPortaMittente = busta.getIdentificativoPortaDestinatario();
+				if(idPortaMittente==null){
+					idPortaMittente = this.traduttore.getIdentificativoPortaDefault(idSoggettoMittente);
+				}
+				idSoggettoMittente.setCodicePorta(idPortaMittente);
+				params.setMittente(idSoggettoMittente);
 			}
-			idSoggettoMittente.setCodicePorta(idPortaMittente);
-			params.setMittente(idSoggettoMittente);
 						
 			// Servizio
 			IDServizio idServizio = 

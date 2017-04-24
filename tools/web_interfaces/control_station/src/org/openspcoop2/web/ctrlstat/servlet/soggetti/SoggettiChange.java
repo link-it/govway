@@ -39,6 +39,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Soggetto;
@@ -53,15 +54,17 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
+import org.openspcoop2.core.registry.constants.CredenzialeTipo;
+import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
-import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
@@ -101,6 +104,12 @@ public final class SoggettiChange extends Action {
 	private ConsoleInterfaceType consoleInterfaceType = null;
 	private String protocolPropertiesSet = null;
 
+	private String tipoauthSoggetto = null;
+	private String utenteSoggetto = null;
+	private String passwordSoggetto = null;
+	private String subjectSoggetto = null;
+	private String principalSoggetto = null;
+	
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -142,7 +151,13 @@ public final class SoggettiChange extends Action {
 
 			this.editMode = soggettiHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 			this.protocolPropertiesSet = soggettiHelper.getParameter(ProtocolPropertiesCostanti.PARAMETRO_PP_SET);
-
+			
+			this.tipoauthSoggetto = request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE);
+			this.utenteSoggetto = request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+			this.passwordSoggetto = request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+			this.subjectSoggetto = request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
+			this.principalSoggetto = request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
+	
 			// Preparo il menu
 			soggettiHelper.makeMenu();
 
@@ -197,10 +212,23 @@ public final class SoggettiChange extends Action {
 				this.versioneProtocollo = soggettiCore.getVersioneDefaultProtocollo(this.protocollo);
 				versioniProtocollo.add(this.versioneProtocollo);
 			}
+			boolean isSupportatoAutenticazioneSoggetti = soggettiCore.isSupportatoAutenticazioneSoggetti(this.protocollo);
 
 			boolean isSupportatoCodiceIPA = soggettiCore.isSupportatoCodiceIPA(this.protocollo); 
 
 
+			boolean isPddEsterna = false;
+			if(this.pdd!=null && !"".equals(this.pdd)){
+				isPddEsterna = pddCore.isPddEsterna(this.pdd);
+				if(isSupportatoAutenticazioneSoggetti){
+					if(isPddEsterna){
+						if(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA.equals(this.tipoauthSoggetto)){
+							this.tipoauthSoggetto = soggettiCore.getAutenticazione_generazioneAutomaticaPorteApplicative();
+						}
+					}
+				}
+			}
+			
 			if (contaListe) {
 				// Conto il numero di porte applicative
 				IDSoggetto soggetto = new IDSoggetto(soggettoConfig.getTipo(),soggettoConfig.getNome());
@@ -306,6 +334,23 @@ public final class SoggettiChange extends Action {
 					if(this.codiceIpa==null){
 						this.codiceIpa = soggettoRegistry.getCodiceIpa();
 					}
+					if(isSupportatoAutenticazioneSoggetti){
+						if (this.tipoauthSoggetto == null){
+							CredenzialiSoggetto credenziali = soggettoRegistry.getCredenziali();
+							if (credenziali != null){
+								if(credenziali.getTipo()!=null)
+									this.tipoauthSoggetto = credenziali.getTipo().toString();
+								this.utenteSoggetto = credenziali.getUser();
+								this.passwordSoggetto = credenziali.getPassword();
+								this.subjectSoggetto = credenziali.getSubject();
+								this.principalSoggetto = credenziali.getUser();
+							}
+						}
+						if (this.tipoauthSoggetto == null) {
+							this.tipoauthSoggetto = ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA;
+						}
+					}
+
 				}
 				else{
 					if(this.portadom==null){
@@ -359,7 +404,9 @@ public final class SoggettiChange extends Action {
 				dati = soggettiHelper.addSoggettiToDati(tipoOp,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
 						this.isRouter, tipiSoggetti, this.versioneProtocollo, this.privato, this.codiceIpa, versioniProtocollo,isSupportatoCodiceIPA,
 						pddList,null,this.pdd,this.id,oldnomeprov,oldtipoprov,connettore,
-						numPD,this.pd_url_prefix_rewriter,numPA,this.pa_url_prefix_rewriter,listaTipiProtocollo,this.protocollo);
+						numPD,this.pd_url_prefix_rewriter,numPA,this.pa_url_prefix_rewriter,listaTipiProtocollo,this.protocollo,
+						isSupportatoAutenticazioneSoggetti,this.utenteSoggetto,this.passwordSoggetto,this.subjectSoggetto,this.principalSoggetto,this.tipoauthSoggetto,
+						isPddEsterna,null);
 
 				// aggiunta campi custom
 				dati = soggettiHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType,this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -492,7 +539,9 @@ public final class SoggettiChange extends Action {
 				dati = soggettiHelper.addSoggettiToDati(tipoOp,dati, this.nomeprov, this.tipoprov, this.portadom, this.descr, 
 						this.isRouter, tipiSoggetti, this.versioneProtocollo, this.privato, this.codiceIpa, versioniProtocollo,isSupportatoCodiceIPA,
 						pddList,null,this.pdd,this.id,oldnomeprov,oldtipoprov,connettore,
-						numPD,this.pd_url_prefix_rewriter,numPA,this.pa_url_prefix_rewriter,listaTipiProtocollo,this.protocollo);
+						numPD,this.pd_url_prefix_rewriter,numPA,this.pa_url_prefix_rewriter,listaTipiProtocollo,this.protocollo,
+						isSupportatoAutenticazioneSoggetti,this.utenteSoggetto,this.passwordSoggetto,this.subjectSoggetto,this.principalSoggetto,this.tipoauthSoggetto,
+						isPddEsterna,null);
 
 				// aggiunta campi custom
 				dati = soggettiHelper.addProtocolPropertiesToDati(dati, this.consoleConfiguration,this.consoleOperationType, this.consoleInterfaceType,this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -546,6 +595,23 @@ public final class SoggettiChange extends Action {
 				soggettoRegistry.setPrivato(this.privato);
 				soggettoRegistry.setPortaDominio(this.pdd);
 
+				if(isSupportatoAutenticazioneSoggetti){
+					if(this.tipoauthSoggetto!=null && !"".equals(this.tipoauthSoggetto) && !ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA.equals(this.tipoauthSoggetto)){
+						CredenzialiSoggetto credenziali = new CredenzialiSoggetto();
+						credenziali.setTipo(CredenzialeTipo.toEnumConstant(this.tipoauthSoggetto));
+						credenziali.setUser(this.utenteSoggetto);
+						if(this.principalSoggetto!=null && !"".equals(this.principalSoggetto)){
+							credenziali.setUser(this.principalSoggetto); // al posto di user
+						}
+						credenziali.setPassword(this.passwordSoggetto);
+						credenziali.setSubject(this.subjectSoggetto);
+						soggettoRegistry.setCredenziali(credenziali);
+					}
+					else{
+						soggettoRegistry.setCredenziali(null);
+					}
+				}
+				
 			}
 
 			if(soggettiCore.isRegistroServiziLocale()){

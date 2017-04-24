@@ -34,8 +34,9 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
-import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 
@@ -117,28 +118,6 @@ public class PorteDelegateCore extends ControlStationCore {
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
-	}
-	
-	public List<PortaDelegata> getPorteDelegateByAccordoRuolo(IDAccordo idAccordo) throws DriverConfigurazioneException {
-		Connection con = null;
-		String nomeMetodo = "getPorteDelegateByAccordoRuolo";
-		DriverControlStationDB driver = null;
-
-		try {
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			// istanzio il driver
-			driver = new DriverControlStationDB(con, null, this.tipoDB);
-
-			return driver.getPorteDelegateByAccordoRuolo(idAccordo);
-
-		} catch (Exception e) {
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
-		} finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-
 	}
 	
 	public List<PortaDelegata> getPorteDelegateWithServizio(Long idServizio, String tiposervizio, String nomeservizio, Integer versioneServizio,
@@ -517,4 +496,48 @@ public class PorteDelegateCore extends ControlStationCore {
 
 	}
 	
+	
+	
+	public IDPortaDelegata getIDPortaDelegataAssociata(IDServizio idServizio, IDSoggetto fruitore) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getIDPortaDelegataAssociata";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getIDPortaDelegataAssociata(idServizio,fruitore);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<String> portaDelegataRuoliList(long idPD, ISearch ricerca) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "portaDelegataRuoliList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().portaDelegataRuoliList(idPD, ricerca);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
 }

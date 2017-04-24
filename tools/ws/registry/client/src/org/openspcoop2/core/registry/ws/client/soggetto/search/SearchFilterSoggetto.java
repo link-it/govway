@@ -1,22 +1,3 @@
-/*
- * OpenSPCoop - Customizable API Gateway 
- * http://www.openspcoop2.org
- * 
- * Copyright (c) 2005-2017 Link.it srl (http://link.it).
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3, as published by
- * the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
 
 package org.openspcoop2.core.registry.ws.client.soggetto.search;
 
@@ -40,6 +21,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
  *         &lt;element name="connettore" type="{http://www.openspcoop2.org/core/registry/management}connettore" minOccurs="0"/&gt;
+ *         &lt;element name="credenziali" type="{http://www.openspcoop2.org/core/registry/management}credenziali-soggetto" minOccurs="0"/&gt;
  *         &lt;element name="privato" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/&gt;
  *         &lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
@@ -64,6 +46,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "search-filter-soggetto", propOrder = {
     "connettore",
+    "credenziali",
     "privato",
     "tipo",
     "nome",
@@ -81,6 +64,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 public class SearchFilterSoggetto {
 
     protected Connettore connettore;
+    protected CredenzialiSoggetto credenziali;
     protected Boolean privato;
     protected String tipo;
     protected String nome;
@@ -112,7 +96,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public Connettore getConnettore() {
-        return this.connettore;
+        return connettore;
     }
 
     /**
@@ -128,6 +112,30 @@ public class SearchFilterSoggetto {
     }
 
     /**
+     * Gets the value of the credenziali property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link CredenzialiSoggetto }
+     *     
+     */
+    public CredenzialiSoggetto getCredenziali() {
+        return credenziali;
+    }
+
+    /**
+     * Sets the value of the credenziali property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link CredenzialiSoggetto }
+     *     
+     */
+    public void setCredenziali(CredenzialiSoggetto value) {
+        this.credenziali = value;
+    }
+
+    /**
      * Gets the value of the privato property.
      * 
      * @return
@@ -136,7 +144,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public Boolean isPrivato() {
-        return this.privato;
+        return privato;
     }
 
     /**
@@ -160,7 +168,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getTipo() {
-        return this.tipo;
+        return tipo;
     }
 
     /**
@@ -184,7 +192,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getNome() {
-        return this.nome;
+        return nome;
     }
 
     /**
@@ -208,7 +216,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getIdentificativoPorta() {
-        return this.identificativoPorta;
+        return identificativoPorta;
     }
 
     /**
@@ -232,7 +240,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getDescrizione() {
-        return this.descrizione;
+        return descrizione;
     }
 
     /**
@@ -256,7 +264,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getPortaDominio() {
-        return this.portaDominio;
+        return portaDominio;
     }
 
     /**
@@ -280,7 +288,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMin() {
-        return this.oraRegistrazioneMin;
+        return oraRegistrazioneMin;
     }
 
     /**
@@ -304,7 +312,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMax() {
-        return this.oraRegistrazioneMax;
+        return oraRegistrazioneMax;
     }
 
     /**
@@ -328,7 +336,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getVersioneProtocollo() {
-        return this.versioneProtocollo;
+        return versioneProtocollo;
     }
 
     /**
@@ -352,7 +360,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public String getCodiceIpa() {
-        return this.codiceIpa;
+        return codiceIpa;
     }
 
     /**
@@ -376,7 +384,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public Boolean isOrCondition() {
-        return this.orCondition;
+        return orCondition;
     }
 
     /**
@@ -400,7 +408,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public BigInteger getLimit() {
-        return this.limit;
+        return limit;
     }
 
     /**
@@ -424,7 +432,7 @@ public class SearchFilterSoggetto {
      *     
      */
     public BigInteger getOffset() {
-        return this.offset;
+        return offset;
     }
 
     /**

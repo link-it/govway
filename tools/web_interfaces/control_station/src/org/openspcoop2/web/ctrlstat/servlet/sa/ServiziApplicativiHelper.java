@@ -44,24 +44,20 @@ import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Soggetto;
-import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
-import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
-import org.openspcoop2.web.ctrlstat.dao.Ruolo;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
-import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
+import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
-import org.openspcoop2.web.lib.mvc.GeneralLink;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
@@ -90,15 +86,14 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String sbustamento= this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP);
 			String sbustamentoInformazioniProtocolloRichiesta = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RICHIESTA);
 			String getmsg = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX);
-			String tipoauth = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_CONNETTORE);
+			String tipoauth = this.request.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_TIPO_AUTENTICAZIONE);
 			if (tipoauth == null) {
-				tipoauth = ServiziApplicativiCostanti.DEFAULT_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE;
+				tipoauth = ConnettoriCostanti.DEFAULT_AUTENTICAZIONE_TIPO;
 			}
-			String utente = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_USERNAME_CONNETTORE);
-			String password = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_PASSWORD_CONNETTORE);
+			String utente = this.request.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+			String password = this.request.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			// String confpw = this.request.getParameter("confpw");
-			String subject = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_SUBJECT_CONNETTORE);
-
+			
 			// Campi obbligatori
 			if (tipoauth.equals("")) {
 				this.pd.setMessage("Dati incompleti. E' necessario indicare il Tipo");
@@ -115,13 +110,13 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			 */)) {
 				String tmpElenco = "";
 				if (utente.equals("")) {
-					tmpElenco = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_USERNAME;
+					tmpElenco = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME;
 				}
 				if (password.equals("")) {
 					if (tmpElenco.equals("")) {
-						tmpElenco = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_PASSWORD;
+						tmpElenco = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD;
 					} else {
-						tmpElenco = tmpElenco + ", "+ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_PASSWORD;
+						tmpElenco = tmpElenco + ", "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD;
 					}
 				}
 				/*
@@ -132,17 +127,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
 				return false;
 			}
-			if (tipoauth.equals(CostantiConfigurazione.CREDENZIALE_SSL.toString()) && subject.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare il "+ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_SUBJECT);
-				return false;
-			}
 
 			// Controllo che non ci siano spazi nei campi di testo
 			if (tipoauth.equals(CostantiConfigurazione.CREDENZIALE_BASIC.toString()) && ((utente.indexOf(" ") != -1) || (password.indexOf(" ") != -1))) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo");
-				return false;
-			}
-			if (tipoauth.equals(CostantiConfigurazione.CREDENZIALE_SSL.toString()) && (subject.indexOf(" ") != -1)) {
 				this.pd.setMessage("Non inserire spazi nei campi di testo");
 				return false;
 			}
@@ -188,7 +175,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 	public Vector<DataElement> addServizioApplicativoToDati(Vector<DataElement> dati, String nome, String tipoENomeSoggetto, String fault, TipoOperazione tipoOperazione,  
 			long idSA, Boolean contaListe,String[] soggettiList,String[] soggettiListLabel, String provider, 
-			String utente,String password, String confpw, String subject, String tipoauth,
+			String utente,String password, String subject, String principal, String tipoauth,
 			String faultactor,String genericfault,String prefixfault, String invrif, String sbustamentoInformazioniProtocolloRisposta,
 			String servlet,String id, String nomeProtocollo,
 			String ruoloFruitore, String ruoloErogatore,
@@ -250,7 +237,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		dati.addElement(de);
 
 		ServizioApplicativo sa = null;
-		PdDControlStation pdd = null;
+		String nomePdd = null;
 
 		// se operazione change visualizzo i link per invocazione servizio,
 		// risposta asincrona
@@ -264,7 +251,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(sa.getIdSoggetto());
 				tipoSoggetto = soggetto.getTipo();
 				nomeSoggetto = soggetto.getNome();
-				pdd = this.pddCore.getPdDControlStation(soggetto.getPortaDominio());
+				nomePdd = soggetto.getPortaDominio();
 			}
 			else{
 				org.openspcoop2.core.config.Soggetto soggetto = this.soggettiCore.getSoggetto(sa.getIdSoggetto());
@@ -371,7 +358,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			}
 			else if(!TipologiaFruizione.DISABILITATO.equals(ruoloFruitore)){
 				de.setSelected(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_FRUITORE);
-				if(tipoauth==null || tipoauth.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_NESSUNA)){
+				if(tipoauth==null || tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)){
 					tipoauth = this.saCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
 				} 
 			}
@@ -435,16 +422,48 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			if (password == null) {
 				password = "";
 			}
-			if (confpw == null) {
-				confpw = "";
-			}
 			if (subject == null) {
 				subject = "";
 			}
-			dati = this.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, servlet, true, null, false, true, null);
+			if (principal == null) {
+				principal = "";
+			}
+			dati = this.addCredenzialiToDati(dati, tipoauth, utente, password, subject, principal, servlet, true, null, false, true, null, true);
+			
+			
+			if (TipoOperazione.CHANGE.equals(tipoOperazione)) {
+			
+				de = new DataElement();
+				de.setLabel(RuoliCostanti.LABEL_RUOLI);
+				de.setType(DataElementType.TITLE);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setType(DataElementType.LINK);
+				if(useIdSogg){
+					de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_LIST,
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""),
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,sa.getIdSoggetto()+""));
+				}
+				else{
+					de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_LIST,
+							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""));
+				}
+				if (contaListe) {
+					List<String> lista1 = this.saCore.servizioApplicativoRuoliList(sa.getId(),new Search(true));
+					int numRuoli = lista1.size();
+					ServletUtils.setDataElementVisualizzaLabel(de,(long)numRuoli);
+				} else
+					ServletUtils.setDataElementVisualizzaLabel(de);
+				dati.addElement(de);
+				
+			}
 			
 		}
 
+
+		
+		
 
 		if (InterfaceType.AVANZATA.equals(user.getInterfaceType())) {
 			de = new DataElement();
@@ -595,7 +614,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(ServiziApplicativiCostanti.LABEL_INVOCAZIONE_SERVIZIO);
 			de.setType(DataElementType.LINK);
-			if (pdd!=null && PddTipologia.ESTERNO.toString().equals(pdd.getTipo())) {
+			if(this.pddCore.isPddEsterna(nomePdd)){
 				de.setType(DataElementType.TEXT);
 				de.setValue("(non presente)");
 			} else {
@@ -635,22 +654,6 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 			dati.addElement(de);
 
-			// Ruoli
-			Boolean gestioneRuoliSA = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_RUOLI_SA);
-			Boolean singlePdD = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
-			if(!singlePdD && gestioneRuoliSA){
-				de = new DataElement();
-				de.setType(DataElementType.LINK);
-				if (contaListe) {
-					List<Ruolo> lista = this.saCore.ruoliWithIdServizioApplicativo(idSA);
-					de.setValue(ServiziApplicativiCostanti.LABEL_RUOLI+"(" + lista.size() + ")");
-				} else
-					de.setValue(ServiziApplicativiCostanti.LABEL_RUOLI);
-				de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_LIST,
-						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID,sa.getId()+""),
-						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_ACTION,TipoOperazione.LIST.toString()));
-				dati.addElement(de);
-			}
 		}
 
 		
@@ -676,7 +679,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				if(TipologiaFruizione.DISABILITATO.equals(ruoloFruitore) &&
 						CostantiConfigurazione.ABILITATO.equals(getmsg)){
 					
-					if(tipoauth==null || tipoauth.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_NESSUNA)){
+					if(tipoauth==null || tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)){
 						tipoauth = this.saCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
 					} 
 						
@@ -687,13 +690,13 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					if (password == null) {
 						password = "";
 					}
-					if (confpw == null) {
-						confpw = "";
-					}
 					if (subject == null) {
 						subject = "";
 					}
-					dati = this.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, servlet, true, null, false, true, null);
+					if (principal == null) {
+						principal = "";
+					}
+					dati = this.addCredenzialiToDati(dati, tipoauth, utente, password, subject, principal, servlet, true, null, false, true, null, true);
 					
 				}
 				
@@ -731,78 +734,6 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		return dati;
 	}
 
-
-
-	public boolean servizioApplicativoCredenzialiCheckData(){
-		String tipoauth = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_SA);
-		if (tipoauth == null) {
-			tipoauth = ServiziApplicativiCostanti.DEFAULT_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE;
-		}
-		String utente = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_USERNAME_SA);
-		String password = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_PASSWORD_SA);
-		// String confpw = this.request.getParameter("confpw");
-		String subject = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_SUBJECT_SA);
-		
-		if (tipoauth.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_BASIC) && (utente.equals("") || password.equals("") /*
-		 * ||
-		 * confpw
-		 * .
-		 * equals
-		 * (
-		 * ""
-		 * )
-		 */)) {
-			String tmpElenco = "";
-			if (utente.equals("")) {
-				tmpElenco = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_USERNAME;
-			}
-			if (password.equals("")) {
-				if (tmpElenco.equals("")) {
-					tmpElenco = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_PASSWORD;
-				} else {
-					tmpElenco = tmpElenco + ", "+ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_PASSWORD;
-				}
-			}
-			/*
-			 * if (confpw.equals("")) { if (tmpElenco.equals("")) {
-			 * tmpElenco = "Conferma password"; } else { tmpElenco =
-			 * tmpElenco + ", Conferma password"; } }
-			 */
-			this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
-			return false;
-		}
-		if (tipoauth.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_SSL)){
-			if (subject.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare il "+
-						ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_SUBJECT);
-				return false;
-			}else{
-				try{
-					org.openspcoop2.utils.Utilities.validaSubject(subject);
-				}catch(Exception e){
-					this.pd.setMessage("Le credenziali di tipo ssl  possiedono un subject non valido: "+e.getMessage());
-					return false;
-				}
-			}
-		}
-		
-		if (tipoauth.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_BASIC) && ((utente.indexOf(" ") != -1) || (password.indexOf(" ") != -1))) {
-			this.pd.setMessage("Non inserire spazi nei campi di testo");
-			return false;
-		}
-		
-		if (!tipoauth.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_BASIC) && 
-				!tipoauth.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_SSL) && 
-				!tipoauth.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_NESSUNA)) {
-			this.pd.setMessage("Tipo dev'essere "+
-					ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_BASIC+", "+
-					ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_SSL+" o "+
-					ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_NESSUNA);
-			return false;
-		}
-		
-		return true;
-	}
 
 	public boolean servizioApplicativoCheckData(TipoOperazione tipoOperazione, String[] soggettiList, long idProvOld,
 			String ruoloFruitore, String ruoloErogatore, List<ExtendedConnettore> listExtendedConnettore)
@@ -1019,24 +950,25 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			}
 
 			
-			if(servizioApplicativoCredenzialiCheckData()==false){
+			if(this.credenzialiCheckData()==false){
 				return false;
 			}
 			
-			String tipoauth = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_SA);
+			String tipoauth = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE);
 			if (tipoauth == null) {
-				tipoauth = ServiziApplicativiCostanti.DEFAULT_SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE;
+				tipoauth = ConnettoriCostanti.DEFAULT_AUTENTICAZIONE_TIPO;
 			}
-			String utente = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_USERNAME_SA);
-			String password = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_PASSWORD_SA);
+			String utente = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+			String password = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			// String confpw = this.request.getParameter("confpw");
-			String subject = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_AUTENTICAZIONE_SUBJECT_SA);
+			String subject = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
+			String principal = this.request.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
 			
 			// Se sono presenti credenziali, controllo che non siano gia'
 			// utilizzate da altri soggetti
-			if (tipoauth.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_BASIC)) {
+			if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC)) {
 				// recupera lista servizi applicativi con stesse credenziali
-				List<ServizioApplicativo> saList = this.saCore.servizioApplicativoWithCredenzialiList(utente, password);
+				List<ServizioApplicativo> saList = this.saCore.servizioApplicativoWithCredenzialiBasicList(utente, password);
 
 				String portaDominio = null;
 				if(this.core.isRegistroServiziLocale()){
@@ -1079,8 +1011,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					this.pd.setMessage("Esistono gia' altri servizi applicativi che possiedono le credenziali basic indicate.");
 					return false;
 				}
-			} else if (tipoauth.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_SSL)) {
-				List<ServizioApplicativo> saList = this.saCore.servizioApplicativoWithCredenzialiList(subject);
+			} else if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)) {
+				List<ServizioApplicativo> saList = this.saCore.servizioApplicativoWithCredenzialiSslList(subject);
 
 				String portaDominio = null;
 				if(this.core.isRegistroServiziLocale()){
@@ -1125,6 +1057,52 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					return false;
 				}
 			}
+			else if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL)) {
+				// recupera lista servizi applicativi con stesse credenziali
+				List<ServizioApplicativo> saList = this.saCore.servizioApplicativoWithCredenzialiPrincipalList(principal);
+
+				String portaDominio = null;
+				if(this.core.isRegistroServiziLocale()){
+					Soggetto soggettoToCheck = tipoOperazione.equals(TipoOperazione.CHANGE) ? 
+							this.soggettiCore.getSoggettoRegistro(idProvOld) : this.soggettiCore.getSoggettoRegistro(newProv);
+							portaDominio = soggettoToCheck.getPortaDominio();
+				}
+
+				for (int i = 0; i < saList.size(); i++) {
+					ServizioApplicativo sa = saList.get(i);
+
+					//String tipoNomeSoggetto = null;
+
+					if(this.core.isRegistroServiziLocale()){
+
+						// bugfix #66
+						// controllo se soggetto appartiene a nal diversi, in tal
+						// caso e' possibile
+						// avere stesse credenziali
+						// Raccolgo informazioni soggetto
+						Soggetto tmpSoggettoProprietarioSa = this.soggettiCore.getSoggettoRegistro(sa.getIdSoggetto());
+						//tipoNomeSoggetto = tmpSoggettoProprietarioSa.getTipo() + "/" + tmpSoggettoProprietarioSa.getNome();
+
+						// se appartengono a nal diversi allora va bene continuo
+						if (!portaDominio.equals(tmpSoggettoProprietarioSa.getPortaDominio()))
+							continue;
+					}
+					else{
+
+						//org.openspcoop2.core.config.Soggetto tmpSoggettoProprietarioSa = this.soggettiCore.getSoggetto(sa.getIdSoggetto());
+						//tipoNomeSoggetto = tmpSoggettoProprietarioSa.getTipo() + "/" + tmpSoggettoProprietarioSa.getNome();
+
+					}
+
+					if ((tipoOperazione.equals(TipoOperazione.CHANGE)) && (nome.equals(sa.getNome())) && (idProvOld == sa.getIdSoggetto())) {
+						continue;
+					}
+
+					// Messaggio di errore
+					this.pd.setMessage("Esistono gia' altri servizi applicativi che possiedono il 'principal' indicato.");
+					return false;
+				}
+			} 
 
 			// erogatore
 			if(InterfaceType.STANDARD.equals(user.getInterfaceType())){
@@ -1161,9 +1139,10 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			}else 
 				ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI);
 
+			@SuppressWarnings("unused")
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
-			Boolean gestioneRuoliSA = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_RUOLI_SA);
+			@SuppressWarnings("unused")
 			Boolean singlePdD = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 
 
@@ -1252,9 +1231,6 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			}
 			if(supportAsincroni){
 				labels.add(ServiziApplicativiCostanti.LABEL_RISPOSTA_ASINCRONA);
-			}
-			if(!singlePdD && gestioneRuoliSA){
-				labels.add(ServiziApplicativiCostanti.LABEL_RUOLI);
 			}
 			this.pd.setLabels(labels.toArray(new String[1]));
 
@@ -1359,7 +1335,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						}
 						
 						if (pddEsterna || !supportoAsincronoPuntualeSoggetto) {
-							de.setValue("");// non visualizzo nulla e il link e'
+							de.setValue("-");// non visualizzo nulla e il link e'
 							// disabilitato
 						} else {
 							de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA, 
@@ -1385,20 +1361,6 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 								}
 							}
 						}
-						e.addElement(de);
-					}
-
-					if(!singlePdD && gestioneRuoliSA){
-						de = new DataElement();
-						de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLI);
-						if (contaListe) {
-							List<Ruolo> tmpLista = this.saCore.ruoliWithIdServizioApplicativo(sa.getId());
-							ServletUtils.setDataElementVisualizzaLabel(de,new Long(tmpLista.size()));
-						} else
-							ServletUtils.setDataElementVisualizzaLabel(de);
-						de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_LIST, 
-								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId()+""),
-								new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_ACTION, TipoOperazione.LIST.toString()));
 						e.addElement(de);
 					}
 
@@ -1600,131 +1562,6 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		dati.addElement(de);
 	}
 
-	public Vector<DataElement> addRuoliToDati(Vector<DataElement> dati, List<Ruolo> ruoli, TipoOperazione tipoOp, boolean correlato,
-			String idServizioApplicativo) {
-
-		String[] ruoliValues = new String[ruoli.size()];
-
-		for (int i = 0; i < ruoli.size(); i++) {
-			Ruolo ruolo = ruoli.get(i);
-			ruoliValues[i] = ruolo.getNome();
-		}
-
-		DataElement de = new DataElement();
-		de.setLabel(ServiziApplicativiCostanti.LABEL_RUOLO);
-		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME);
-		de.setValues(ruoliValues);
-		de.setType(DataElementType.SELECT);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_CORRELATO);
-		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_CORRELATO);
-		ServletUtils.setCheckBox(de, correlato);
-		de.setType(DataElementType.CHECKBOX);
-		dati.addElement(de);
-
-		de = new DataElement();
-		de.setLabel(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_ACTION);
-		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_ACTION);
-		de.setType(DataElementType.HIDDEN);
-		de.setValue(tipoOp.toString());
-		dati.addElement(de);
-
-		// id sa
-		if(idServizioApplicativo!=null){
-			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
-			de.setValue(idServizioApplicativo);
-			de.setType(DataElementType.HIDDEN);
-			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
-			dati.addElement(de);
-		}
-
-		return dati;
-	}
-
-	public void prepareRuoliList(List<Ruolo> lista, ISearch ricerca)
-			throws Exception {
-		try {
-			ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_RUOLI);
-
-			int idLista = Liste.RUOLI;
-			int limit = ricerca.getPageSize(idLista);
-			int offset = ricerca.getIndexIniziale(idLista);
-			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
-
-			this.pd.setIndex(offset);
-			this.pd.setPageSize(limit);
-			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
-			// setto la barra del titolo
-			Vector<GeneralLink> titlelist = this.pd.getTitleList();
-
-			if (!search.equals("")) {
-				GeneralLink tl = new GeneralLink();
-				tl.setLabel(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA);
-				titlelist.addElement(tl);
-			}
-			this.pd.setTitleList(titlelist);
-
-			// controllo eventuali risultati ricerca
-			if (!search.equals("")) {
-				ServletUtils.enabledPageDataSearch(this.pd, ServiziApplicativiCostanti.LABEL_RUOLI, search);
-			}
-
-			// setto le label delle colonne
-			String[] labels = { ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME, 
-					ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_CORRELATO};
-			this.pd.setLabels(labels);
-
-			// preparo i dati
-			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
-
-			Iterator<Ruolo> it = lista.iterator();
-			Ruolo ruolo = null;
-			while (it.hasNext()) {
-				ruolo = it.next();
-				Vector<DataElement> e = new Vector<DataElement>();
-
-				// idRuoloSA
-				DataElement de = new DataElement();
-				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID);
-				de.setValue(ruolo.getId() + "");
-				de.setType(DataElementType.HIDDEN);
-				e.addElement(de);
-
-				// nome
-				try {
-					AccordoServizioParteComune as = this.apcCore.getAccordoServizio(this.idAccordoFactory.getIDAccordoFromUri(ruolo.getNome()));
-					de = new DataElement();
-					de.setName(ruolo.getNome());
-					de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_CHANGE, 
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID,as.getId()+""),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME,as.getNome()));
-					de.setValue(ruolo.getNome());
-					de.setIdToRemove(ruolo.getId() + ":" + as.getId());
-					e.addElement(de);
-				} catch (DriverRegistroServiziException drse) {
-					// ok
-				} catch (DriverRegistroServiziNotFound drsnf) {
-					// ok
-				}
-
-				// correlato
-				de = new DataElement();
-				de.setValue("" + ruolo.isCorrelato());
-				e.addElement(de);
-
-				dati.addElement(e);
-			}
-
-			this.pd.setDati(dati);
-			this.pd.setAddButton(true);
-		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
-		}
-	}
 
 	public Vector<DataElement> addHiddenFieldsToDati(Vector<DataElement> dati, String provider){
 
@@ -1737,5 +1574,143 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 
 		return dati;
 
+	}
+
+	public void prepareRuoliList(ISearch ricerca, List<String> lista)
+			throws Exception {
+		try {
+			String idsil = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
+			String idProvider = this.request.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Boolean useIdSogg= ServletUtils.getBooleanAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_USA_ID_SOGGETTO , this.session);
+
+			Parameter pSA = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, idsil); 
+			
+			if(useIdSogg){
+				Parameter pProvider = new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, idProvider); 
+				ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_RUOLI,pSA,pProvider );
+			}else 
+				ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI_RUOLI,pSA);
+			
+			int idLista = Liste.SERVIZIO_APPLICATIVO_RUOLI;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+			String search = ServletUtils.getSearchFromSession(ricerca, idLista);
+		
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setNumEntries(ricerca.getNumEntries(idLista));
+		
+			// Prendo il servizio applicativo
+			int idSilInt = Integer.parseInt(idsil);
+			ServizioApplicativo sa = this.saCore.getServizioApplicativo(idSilInt);
+			String nomeservizioApplicativo = sa.getNome();		
+			
+			// Prendo il soggetto
+			String tipoENomeSoggetto = null;
+			if(useIdSogg){
+				if(this.core.isRegistroServiziLocale()){
+					Soggetto tmpSogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(idProvider));
+					tipoENomeSoggetto = tmpSogg.getTipo() + "/" + tmpSogg.getNome();
+				}else{
+					org.openspcoop2.core.config.Soggetto tmpSogg = this.soggettiCore.getSoggetto(Integer.parseInt(idProvider));
+					tipoENomeSoggetto = tmpSogg.getTipo() + "/" + tmpSogg.getNome();
+				}
+			}
+		
+			// setto la barra del titolo
+			List<Parameter> listSA = new ArrayList<>();
+			listSA.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, idsil));
+			listSA.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, idsil));
+			if(useIdSogg){
+				listSA.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, idProvider));
+			}
+			
+			if(!useIdSogg){
+				if (search.equals("")) {
+					this.pd.setSearchDescription("");
+					ServletUtils.setPageDataTitle(this.pd, 
+							new Parameter(ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI,null),
+							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO,
+									ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST),
+							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_DI + nomeservizioApplicativo, 
+									ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE,
+									listSA),
+							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO,null));
+				}
+				else{
+					ServletUtils.setPageDataTitle(this.pd, 
+							new Parameter(ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI,null),
+							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO,
+									ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST),
+							new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_DI + nomeservizioApplicativo, 
+									ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE,
+									listSA),
+							new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA,null));	
+				}
+			} else {
+				List<Parameter> lstParam = new ArrayList<Parameter>();
+
+				lstParam.add(new Parameter(SoggettiCostanti.LABEL_SOGGETTI, null));
+				lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO, SoggettiCostanti.SERVLET_NAME_SOGGETTI_LIST));
+				lstParam.add(new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_DI + tipoENomeSoggetto,
+						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_LIST,
+						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,idProvider)));
+
+				if(search.equals("")){
+					this.pd.setSearchDescription("");
+					lstParam.add(new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_DI + nomeservizioApplicativo, 
+							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE,
+							listSA));
+					lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_ELENCO,null));
+				}else{
+					lstParam.add(new Parameter(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_DI + nomeservizioApplicativo, 
+							ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CHANGE,
+							listSA));
+					lstParam.add(new Parameter(Costanti.PAGE_DATA_TITLE_LABEL_RISULTATI_RICERCA, null));
+				}
+
+				ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+			}
+			
+		
+			// controllo eventuali risultati ricerca
+			if (!search.equals("")) {
+				this.pd.setSearch("on");
+				this.pd.setSearchDescription("Ruoli contenenti la stringa '" + search + "'");
+			}
+		
+			// setto le label delle colonne
+			String[] labels = { 
+					CostantiControlStation.LABEL_PARAMETRO_RUOLO
+			};
+			this.pd.setLabels(labels);
+		
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+		
+			if (lista != null) {
+				Iterator<String> it = lista.iterator();
+				while (it.hasNext()) {
+					String ruolo = it.next();
+		
+					Vector<DataElement> e = new Vector<DataElement>();
+		
+					DataElement de = new DataElement();
+					de.setValue(ruolo);
+					de.setIdToRemove(ruolo);
+					e.addElement(de);
+		
+					dati.addElement(e);
+				}
+			}
+		
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+		
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
 	}
 }

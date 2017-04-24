@@ -26,8 +26,9 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.pdd.core.autenticazione.Credenziali;
+import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.pdd.core.autorizzazione.AbstractDatiInvocazione;
+import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 
 /**
@@ -52,6 +53,7 @@ public class DatiInvocazionePortaApplicativa extends AbstractDatiInvocazione {
 	private PortaDelegata pd;
 	
 	private IDSoggetto idSoggettoFruitore;
+	private Soggetto soggettoFruitore;
 	
 	private RuoloBusta ruoloBusta;
 	
@@ -120,6 +122,12 @@ public class DatiInvocazionePortaApplicativa extends AbstractDatiInvocazione {
 		this.idSoggettoFruitore = soggettoFruitore;
 	}
 	
+	public Soggetto getSoggettoFruitore() {
+		return this.soggettoFruitore;
+	}
+	public void setSoggettoFruitore(Soggetto soggettoFruitore) {
+		this.soggettoFruitore = soggettoFruitore;
+	}
 	
 	
 	@Override
@@ -183,6 +191,12 @@ public class DatiInvocazionePortaApplicativa extends AbstractDatiInvocazione {
 			bf.append(" IDSoggettoFruitore(");
 			bf.append(this.idSoggettoFruitore.toString());
 			bf.append(")");
+		}
+		
+		if(keyCache==false){
+			if(this.soggettoFruitore!=null){
+				bf.append(" SoggetoFruitore:defined");
+			}
 		}
 		
 		if(keyCache==false){

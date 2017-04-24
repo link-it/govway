@@ -33,7 +33,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.message.MessageElement;
 import org.openspcoop2.pdd.core.CostantiPdD;
-import org.openspcoop2.pdd.core.autenticazione.GestoreCredenzialiTest;
+import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiTest;
 import org.openspcoop2.pdd.mdb.InoltroBuste;
 import org.openspcoop2.pdd.services.axis14.IntegrationManagerException;
 import org.openspcoop2.pdd.services.axis14.IntegrationManagerMessage;

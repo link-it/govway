@@ -37,6 +37,7 @@ import javax.jms.QueueSession;
 import javax.naming.InitialContext;
 
 import org.slf4j.Logger;
+import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
 import org.openspcoop2.utils.transport.jms.ExceptionListenerJMS;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
@@ -49,7 +50,6 @@ import org.openspcoop2.web.ctrlstat.costanti.OperationsParameter;
 import org.openspcoop2.web.ctrlstat.costanti.TipoOggettoDaSmistare;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
-import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
 import org.openspcoop2.web.lib.queue.ClassQueue;
 import org.openspcoop2.web.lib.queue.QueueOperation;
 import org.openspcoop2.web.lib.queue.QueueParameter;
@@ -127,14 +127,12 @@ public class SmistatoreThread extends Thread {
 		Properties jmsConnectionFactoryContext = null;
 		
 		String smistatoreQueue = null;
-		String repositoryAutorizzazioniQueue = null;
 		String registroServiziQueue = null;
 		String gestoreEventiQueue = null;
 		String pddQueuePrefix = null;
 		
 		boolean enginePDD = false;
 		boolean engineRegistro = false;
-		boolean engineRepositoryAutorizzazioni = false;
 		boolean engineGestoreEventi = false;
 		
 		boolean singlePdD = true;
@@ -149,7 +147,6 @@ public class SmistatoreThread extends Thread {
 			
 			// nomi code
 			smistatoreQueue = this.consoleProperties.getGestioneCentralizzata_NomeCodaSmistatore();
-			repositoryAutorizzazioniQueue = this.consoleProperties.getGestioneCentralizzata_NomeCodaRepositoryAutorizzazioni();
 			registroServiziQueue = this.consoleProperties.getGestioneCentralizzata_NomeCodaRegistroServizi();
 			gestoreEventiQueue = this.consoleProperties.getGestioneCentralizzata_NomeCodaGestoreEventi();
 			pddQueuePrefix = this.consoleProperties.getGestioneCentralizzata_PrefissoNomeCodaConfigurazionePdd();
@@ -157,7 +154,6 @@ public class SmistatoreThread extends Thread {
 			// Abilitazione Engine
 			enginePDD = this.consoleProperties.isGestioneCentralizzata_SincronizzazionePdd();
 			engineRegistro = this.consoleProperties.isGestioneCentralizzata_SincronizzazioneRegistro();
-			engineRepositoryAutorizzazioni = this.consoleProperties.isGestioneCentralizzata_SincronizzazioneRepositoryAutorizzazioni();
 			engineGestoreEventi = this.consoleProperties.isGestioneCentralizzata_SincronizzazioneGestoreEventi();
 			
 			// Altre informazioni
@@ -177,7 +173,7 @@ public class SmistatoreThread extends Thread {
 		}
 
 		// Configurazione JMS
-		SmistatoreThread.log.debug("Smistatore: Avvio Servizio di Gestione Operazioni, Registro[" + engineRegistro + "] Pdd[" + enginePDD + "] RepositoryAutorizzazioni[" + engineRepositoryAutorizzazioni + "] GestoreEventi[" + engineGestoreEventi + "]");
+		SmistatoreThread.log.debug("Smistatore: Avvio Servizio di Gestione Operazioni, Registro[" + engineRegistro + "] Pdd[" + enginePDD + "] GestoreEventi[" + engineGestoreEventi + "]");
 		QueueReceiver receiver = null;
 		Queue queue = null;
 		QueueConnectionFactory qcf = null;
@@ -308,7 +304,7 @@ public class SmistatoreThread extends Thread {
 				}
 
 				if (tipoOggettoDaSmistare != null) {
-					int idTable = operazione.getIDTable();
+					long idTable = operazione.getIDTable();
 
 					String filter = "[" + operazione.getIDTable() + "]";
 					filter += "[" + tipoOggettoDaSmistare.name() + "]";
@@ -336,8 +332,11 @@ public class SmistatoreThread extends Thread {
 
 					// Smisto l'operazione
 
+					/* ***** REGISTRO ***** */
+					
 					if (tipoOggettoDaSmistare.equals(TipoOggettoDaSmistare.soggetto) || 
 							tipoOggettoDaSmistare.equals(TipoOggettoDaSmistare.servizio) || 
+							tipoOggettoDaSmistare.equals(TipoOggettoDaSmistare.ruolo) || 
 							tipoOggettoDaSmistare.equals(TipoOggettoDaSmistare.accordo) || 
 							tipoOggettoDaSmistare.equals(TipoOggettoDaSmistare.accordoCooperazione) || 
 //							tipoOggettoDaSmistare.equals(TipoOggettoDaSmistare.fruitore) || 
@@ -358,8 +357,9 @@ public class SmistatoreThread extends Thread {
 						}
 					}
 
-					if ((pdd != null) && !pdd.equals("") && !pdd.equals("-") && 
-							!tipoOggettoDaSmistare.equals(TipoOggettoDaSmistare.politicheSicurezza)) {
+					/* ***** PDD ***** */
+					
+					if ((pdd != null) && !pdd.equals("") && !pdd.equals("-") ) {
 						// Operazione per il pdd
 						if (enginePDD) {
 							// Qualcuno avra' provveduto a creare una coda per
@@ -386,40 +386,13 @@ public class SmistatoreThread extends Thread {
 						}
 					}
 
-					// Inserisco l'operazione nella coda per il RepositoryAutorizzazioni
-					// inserita gestione accordo e ruolo
-					if ( !repositoryAutorizzazioniQueue.equals("") && 
-							(
-							tipoOggettoDaSmistare.equals(TipoOggettoDaSmistare.soggetto) || 
-							tipoOggettoDaSmistare.equals(TipoOggettoDaSmistare.ruolo) || 
-							tipoOggettoDaSmistare.equals(TipoOggettoDaSmistare.accordoRuolo) || 
-							tipoOggettoDaSmistare.equals(TipoOggettoDaSmistare.servizio) || 
-							tipoOggettoDaSmistare.equals(TipoOggettoDaSmistare.servizioApplicativo) || 
-							//(tipoOggettoDaSmistare.equals(TipoOggettoDaSmistare.fruitore) && Operazione.del.equals(operazioneTipologia) ) || 
-							tipoOggettoDaSmistare.equals(TipoOggettoDaSmistare.politicheSicurezza)
-							)
-						){
-						if (engineRepositoryAutorizzazioni) {
-							QueueOperation queueOperationRepositoryAutorizzazioni = (QueueOperation) queueOperation.clone();
-							queueOperationRepositoryAutorizzazioni.setTipoOperazione(TipoOperazione.javaInterface);
-							if (cq.insertQueue(repositoryAutorizzazioniQueue, queueOperationRepositoryAutorizzazioni, filter) == 0) {
-								SmistatoreThread.log.error("Smistatore: Si e' verificato un problema durante l'inserimento in coda.");
-								qs.rollback();
-								this.con.rollback();
-								this.dbm.releaseConnection(this.con);
-								continue;
-							}
-						} else {
-							SmistatoreThread.log.info("Smistatore: sincronizzazione RepositoryAutorizzazioni non abilitata.");
-						}
-					}
-
-					// Gestore Eventi
+					/* ***** Gestore Eventi ***** */
+					
 					if ( ((gestoreEventiQueue != null) && !gestoreEventiQueue.equals("")) && 
 							(
 							tipoOggettoDaSmistare.equals(TipoOggettoDaSmistare.soggetto) || 
 							tipoOggettoDaSmistare.equals(TipoOggettoDaSmistare.servizio) || 
-							tipoOggettoDaSmistare.equals(TipoOggettoDaSmistare.politicheSicurezza)// || 
+							tipoOggettoDaSmistare.equals(TipoOggettoDaSmistare.mappingFruizionePD)// || 
 							//tipoOggettoDaSmistare.equals(TipoOggettoDaSmistare.fruitore) 
 							)
 						){

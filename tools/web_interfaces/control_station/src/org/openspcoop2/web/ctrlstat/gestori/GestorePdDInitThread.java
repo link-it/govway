@@ -27,6 +27,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.slf4j.Logger;
+import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
@@ -34,7 +35,6 @@ import org.openspcoop2.web.ctrlstat.core.DBManager;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
-import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
 
 /**
  * GestorePdDInitThread

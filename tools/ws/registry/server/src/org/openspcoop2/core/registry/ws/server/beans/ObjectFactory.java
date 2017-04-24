@@ -56,6 +56,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link WrapperIdRuolo }
+     */
+    public WrapperIdRuolo createWrapperIdRuolo() {
+        return new WrapperIdRuolo();
+    }
+    
+    /**
      * Create an instance of {@link WrapperIdAccordoServizioParteComune }
      */
     public WrapperIdAccordoServizioParteComune createWrapperIdAccordoServizioParteComune() {

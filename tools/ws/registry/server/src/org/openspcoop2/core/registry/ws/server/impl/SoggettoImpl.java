@@ -21,6 +21,8 @@ package org.openspcoop2.core.registry.ws.server.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.openspcoop2.core.constants.CostantiDB;
@@ -53,6 +55,7 @@ import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotAuthorizedException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.sql.SQLQueryObjectCore;
@@ -254,7 +257,30 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 			sqlQueryObjectCondition.addWhereCondition(CostantiDB.SOGGETTI+".codice_ipa=?");
 			paramTypes.add(new JDBCObject(filter.getCodiceIpa(),String.class));
 		}
-		
+		if(filter.getCredenziali()!=null){
+			if(filter.getCredenziali().getTipo()!=null){
+				sqlQueryObjectCondition.addWhereCondition(CostantiDB.SOGGETTI+".tipoauth=?");
+				paramTypes.add(new JDBCObject(filter.getCredenziali().getTipo().getValue(),String.class));
+			}
+			if(filter.getCredenziali().getUser()!=null){
+				sqlQueryObjectCondition.addWhereCondition(CostantiDB.SOGGETTI+".utente=?");
+				paramTypes.add(new JDBCObject(filter.getCredenziali().getUser(),String.class));
+			}
+			if(filter.getCredenziali().getPassword()!=null){
+				sqlQueryObjectCondition.addWhereCondition(CostantiDB.SOGGETTI+".password=?");
+				paramTypes.add(new JDBCObject(filter.getCredenziali().getPassword(),String.class));
+			}
+			if(filter.getCredenziali().getSubject()!=null){
+				// Autenticazione SSL deve essere LIKE
+				Hashtable<String, String> hashSubject = Utilities.getSubjectIntoHashtable(filter.getCredenziali().getSubject());
+				Enumeration<String> keys = hashSubject.keys();
+				while(keys.hasMoreElements()){
+					String key = keys.nextElement();
+					String value = hashSubject.get(key);
+					sqlQueryObjectCondition.addWhereLikeCondition(CostantiDB.SOGGETTI+".subject", "/"+Utilities.formatKeySubject(key)+"="+Utilities.formatValueSubject(value)+"/", true, true, false);
+				}
+			}
+		}
 		if(filter.getOraRegistrazioneMin()!= null) {
 			sqlQueryObjectCondition.addWhereCondition(CostantiDB.SOGGETTI+".ora_registrazione>=?");
 			paramTypes.add(new JDBCObject(filter.getOraRegistrazioneMin(),Date.class));
@@ -323,7 +349,7 @@ public abstract class SoggettoImpl extends BaseImpl  implements SoggettoSearch, 
 				throw new DriverRegistroServiziNotFound("NotFound");
 			}
 			if(resultList.size()>1){
-				throw new MultipleResultException("Found "+resultList.size()+" accordi");
+				throw new MultipleResultException("Found "+resultList.size()+" soggetti");
 			}
 			Soggetto result = resultList.get(0);
 			this.logEndMethod("find", result);

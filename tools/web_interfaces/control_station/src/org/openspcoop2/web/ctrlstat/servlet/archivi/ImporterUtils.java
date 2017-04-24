@@ -115,13 +115,11 @@ public class ImporterUtils {
 						String tipo = tipi.get(j);
 						FiltroRicercaSoggetti filtro = new FiltroRicercaSoggetti();
 						filtro.setTipo(tipo);
-						try{
-							List<IDSoggetto> idSoggetti = this.soggettiCore.getAllIdSoggettiRegistro(filtro);
-							for (int k = 0; k < idSoggetti.size(); k++) {
-								IDSoggetto id = idSoggetti.get(k);
-								listIdSoggetti.add(id.getTipo()+"/"+id.getNome());
-							}
-						}catch(DriverRegistroServiziNotFound dNotFound){}
+						List<IDSoggetto> idSoggetti = this.soggettiCore.getAllIdSoggettiRegistro(filtro);
+						for (int k = 0; k < idSoggetti.size(); k++) {
+							IDSoggetto id = idSoggetti.get(k);
+							listIdSoggetti.add(id.getTipo()+"/"+id.getNome());
+						}
 					}
 					
 				}

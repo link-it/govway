@@ -1,4 +1,5 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX index_pa_ruoli_1 ON pa_ruoli ;
 -- DROP INDEX index_porte_applicative_1 ON porte_applicative ;
 -- DROP INDEX INDEX_PA_WSSRES ON pa_ws_response ;
 -- DROP INDEX INDEX_PA_WSSREQ ON pa_ws_request ;
@@ -6,6 +7,7 @@
 -- DROP INDEX INDEX_PA_MTOMTREQ ON pa_mtom_request ;
 -- DROP INDEX INDEX_PA_PROP ON pa_properties ;
 -- DROP INDEX INDEX_PA_SA ON porte_applicative_sa ;
+DROP TABLE pa_ruoli;
 DROP TABLE pa_correlazione_risposta;
 DROP TABLE pa_correlazione;
 DROP TABLE pa_ws_response;

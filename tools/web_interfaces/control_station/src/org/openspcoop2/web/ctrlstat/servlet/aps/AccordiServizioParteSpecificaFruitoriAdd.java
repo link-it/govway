@@ -26,7 +26,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
@@ -44,23 +46,32 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.config.AutorizzazioneRuoli;
+import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataAzione;
 import org.openspcoop2.core.config.PortaDelegataServizio;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegataSoggettoErogatore;
+import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
+import org.openspcoop2.core.config.constants.RuoloTipoMatch;
+import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDFruizione;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
@@ -77,11 +88,12 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
+import org.openspcoop2.web.ctrlstat.dao.MappingFruizionePortaDelegata;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
-import org.openspcoop2.web.ctrlstat.dao.PoliticheSicurezza;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationNotFound;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
@@ -89,6 +101,7 @@ import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUti
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
+import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCostanti;
@@ -119,7 +132,7 @@ import org.openspcoop2.web.lib.users.dao.InterfaceType;
 public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 	private String connettoreDebug;
-	private String    id, provider, endpointtype, endpointtype_check, endpointtype_ssl, tipoconn, url, nome, tipo, user,
+	private String    id, idSoggettoFruitore, endpointtype, endpointtype_check, endpointtype_ssl, tipoconn, url, nome, tipo, user,
 	password, initcont, urlpgk, provurl, connfact, sendas, profilo,clientAuth,
 	httpsurl, httpstipologia, httpspath,
 	httpstipo, httpspwd, httpsalgoritmo,
@@ -134,7 +147,12 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 	private String editMode = null;
 	private String correlato = null;
 	private String autenticazioneHttp;
-	private String servizioApplicativo;
+	private String fruizioneServizioApplicativo;
+	private String fruizioneRuolo;
+	private String fruizioneAutenticazione;
+	private String fruizioneAutenticazioneOpzionale;
+	private String fruizioneAutorizzazione;
+	private String fruizioneAutorizzazioneAutenticati, fruizioneAutorizzazioneRuoli, fruizioneAutorizzazioneRuoliTipologia, fruizioneAutorizzazioneRuoliMatch;
 	private Properties parametersPOST;
 
 	private String proxy_enabled, proxy_hostname,proxy_port,proxy_username,proxy_password;
@@ -195,17 +213,26 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			this.editMode = apsHelper.getParameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME);
 
 			this.id = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID);
-			this.provider = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROVIDER);
-			this.servizioApplicativo = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SA);
+			this.idSoggettoFruitore = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE);
 			this.correlato = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_CORRELATO);
 			//			this.endpointtype = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE );
 
+			this.fruizioneServizioApplicativo = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUIZIONE_NOME_SA);
+			this.fruizioneRuolo = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_RUOLO);
+			this.fruizioneAutenticazione = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE);
+			this.fruizioneAutenticazioneOpzionale = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE_OPZIONALE);
+			this.fruizioneAutorizzazione = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE);
+			this.fruizioneAutorizzazioneAutenticati = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_AUTENTICAZIONE);
+			this.fruizioneAutorizzazioneRuoli = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLI);
+			this.fruizioneAutorizzazioneRuoliTipologia = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_TIPOLOGIA);
+			this.fruizioneAutorizzazioneRuoliMatch = request.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_MATCH);
+			
 			this.endpointtype = apsHelper.readEndPointType();
 			this.tipoconn = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO );
 			this.autenticazioneHttp = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
 
 			this.connettoreDebug = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
-
+			
 			// proxy
 			this.proxy_enabled = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
 			this.proxy_hostname = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
@@ -297,10 +324,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			PddCore pddCore = new PddCore(apsCore);
 			SoggettiCore soggettiCore = new SoggettiCore(apsCore);
 			PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
+			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
-
-			String autenticazionePortaDelegataAutomatica = apsCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
-			String autorizzazionePortaDelegataAutomatica = apsCore.getAutorizzazione_generazioneAutomaticaPorteDelegate();
 
 			if(ServletUtils.isEditModeInProgress(this.editMode)){
 				// primo accesso alla servlet
@@ -381,28 +406,92 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			List<String> tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(protocollo);
 
 			// Prendo il nome e il tipo del soggetto erogatore del servizio
-			//			Soggetto soggErogatore = soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggErogatore));
+			Soggetto soggErogatore = soggettiCore.getSoggettoRegistro(Integer.parseInt(idSoggErogatore));
 			//			String tipoSoggettoErogatore = soggErogatore.getTipo();
 			//			String nomesoggettoErogatore = soggErogatore.getNome();
-
+			boolean erogatoreEsterno = pddCore.isPddEsterna(soggErogatore.getPortaDominio());
+			
 			String tmpTitle = IDServizioFactory.getInstance().getUriFromAccordo(asps);
 
+			// Se viene supportata l'autenticazione dei soggetti capire quale sia il tipo di autenticazione richiesto.
+			boolean isSupportatoAutenticazioneSoggetti = soggettiCore.isSupportatoAutenticazioneSoggetti(protocollo);
+			org.openspcoop2.core.registry.constants.CredenzialeTipo credenzialeTipo = null;
+			if(isSupportatoAutenticazioneSoggetti){
+				if(apsCore.filterFruitoriRispettoAutenticazione(asps)){
+					IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(asps.getTipo(), asps.getNome(), 
+							asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore(), asps.getVersione());
+					IDPortaApplicativa idPA = porteApplicativeCore.getIDPortaApplicativaAssociata(idServizio);
+					PortaApplicativa pa = null;
+					if(idPA!=null){
+						pa = porteApplicativeCore.getPortaApplicativa(idPA);
+					}
+					if(pa!=null){
+						if(pa.getAutenticazione()!=null && !TipoAutenticazione.DISABILITATO.equals(pa.getAutenticazione())){
+							// devo escludere custom
+							if(TipoAutenticazione.BASIC.equals(pa.getAutenticazione())){
+								credenzialeTipo = org.openspcoop2.core.registry.constants.CredenzialeTipo.BASIC;
+							}
+							else if(TipoAutenticazione.SSL.equals(pa.getAutenticazione())){
+								credenzialeTipo = org.openspcoop2.core.registry.constants.CredenzialeTipo.SSL;
+							}
+							else if(TipoAutenticazione.PRINCIPAL.equals(pa.getAutenticazione())){
+								credenzialeTipo = org.openspcoop2.core.registry.constants.CredenzialeTipo.PRINCIPAL;
+							}
+						}
+					}
+				}
+			}
+			
 			// Soggetti fruitori
 			// tutti i soggetti anche il soggetto attuale
 			// tranne quelli già registrati come fruitori
 			String[] soggettiList = null;
 			String[] soggettiListLabel = null;
-			List<Fruitore> fruList = apsCore.getSoggettiWithServizioNotFruitori(idInt);
+			boolean escludiSoggettiEsterni = erogatoreEsterno;
+			List<Fruitore> fruList1 = apsCore.getSoggettiWithServizioNotFruitori(idInt,escludiSoggettiEsterni,credenzialeTipo);
+			List<Fruitore> fruList2 = null; 
+			Hashtable<String, Fruitore> mapFruitori = new Hashtable<>();
+			List<String> keyFruitori = new ArrayList<>();
+			if(credenzialeTipo!=null){
+				// sono stati filtrati i soggetti che hanno solo le credenziali richieste dall'erogazione
+				// per' l'utente potrebbe anche voler aggiungere una fruizione operativa per creare la porta delegata
+				// in questo caso il soggetto non ha le credenziali (o può non averle)
+				// recupero i soggetti quindi operativi senza guardare le credenziali
+				fruList2 = apsCore.getSoggettiWithServizioNotFruitori(idInt,true,null);
+			}
+			if(fruList1!=null && fruList1.size()>0){
+				for (Fruitore fr : fruList1) {
+					String key = fr.getTipo()+""+fr.getNome();
+					if(keyFruitori.contains(key)==false){
+						keyFruitori.add(key);
+						mapFruitori.put(key, fr);
+					}
+				}
+			}
+			if(fruList2!=null && fruList2.size()>0){
+				for (Fruitore fr : fruList2) {
+					String key = fr.getTipo()+""+fr.getNome();
+					if(keyFruitori.contains(key)==false){
+						keyFruitori.add(key);
+						mapFruitori.put(key, fr);
+					}
+				}
+			}
+			if(keyFruitori.size()>0){
+				Collections.sort(keyFruitori);
+			}
+			
 			List<String> soggettiListVector = new ArrayList<String>();
 			List<String> soggettiListLabelVector = new ArrayList<String>();
 			IDSoggetto idSoggettoSelected = null;
-			for (int i = 0; i < fruList.size(); i++) {
-				Fruitore fru = fruList.get(i);
+			for (int i = 0; i < keyFruitori.size(); i++) {
+				String tipoNome = keyFruitori.get(i);
+				Fruitore fru = mapFruitori.get(tipoNome);
 				if(tipiSoggettiCompatibiliAccordo.contains(fru.getTipo())){
 					soggettiListVector.add("" + fru.getId());
 					soggettiListLabelVector.add(fru.getTipo() + "/" + fru.getNome());
-					if(this.provider!=null && !"".equals(this.provider)){
-						long idProvider = Long.parseLong(this.provider);
+					if(this.idSoggettoFruitore!=null && !"".equals(this.idSoggettoFruitore)){
+						long idProvider = Long.parseLong(this.idSoggettoFruitore);
 						if(fru.getId()==idProvider){
 							idSoggettoSelected = new IDSoggetto(fru.getTipo(), fru.getNome());
 						}
@@ -439,9 +528,13 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			List<String> saList = new ArrayList<String>();
 			saList.add("-");
 			if(apsCore.isGenerazioneAutomaticaPorteDelegate() && idSoggettoSelected!=null){
-				try{					
+				try{
+					String auth = this.fruizioneAutenticazione;
+					if(auth==null || "".equals(auth)){
+						auth = apsCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
+					}
 					List<ServizioApplicativo> oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoSelected,superUser,
-							CredenzialeTipo.toEnumConstant(autenticazionePortaDelegataAutomatica));
+							CredenzialeTipo.toEnumConstant(auth));
 					if(oldSilList!=null && oldSilList.size()>0){
 						for (int i = 0; i < oldSilList.size(); i++) {
 							saList.add(oldSilList.get(i).getNome());		
@@ -494,9 +587,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				else{
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, this.id, null, null, dati);
 
-					if (this.provider == null) {
-						this.provider = "";
-						this.servizioApplicativo = "-";
+					if (this.idSoggettoFruitore == null) {
+						this.idSoggettoFruitore = "";
 						if(this.wsdlimpler.getValue() == null)
 							this.wsdlimpler.setValue(new byte[1]);
 						if(this.wsdlimplfru.getValue() == null)
@@ -549,7 +641,23 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							this.statoPackage=StatiAccordo.finale.toString();
 						}
 					}
-
+					
+					if(this.fruizioneServizioApplicativo==null || "".equals(this.fruizioneServizioApplicativo))
+						this.fruizioneServizioApplicativo = "-";
+					if(this.fruizioneRuolo==null || "".equals(this.fruizioneRuolo))
+						this.fruizioneRuolo = "-";
+					if(this.fruizioneAutenticazione==null || "".equals(this.fruizioneAutenticazione))
+						this.fruizioneAutenticazione = apsCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
+					if(this.fruizioneAutorizzazione==null || "".equals(this.fruizioneAutorizzazione)){
+						String tipoAutorizzazione = apsCore.getAutorizzazione_generazioneAutomaticaPorteDelegate();
+						this.fruizioneAutorizzazione = AutorizzazioneUtilities.convertToStato(tipoAutorizzazione);
+						if(TipoAutorizzazione.isAuthenticationRequired(tipoAutorizzazione))
+							this.fruizioneAutorizzazioneAutenticati = Costanti.CHECK_BOX_ENABLED;
+						if(TipoAutorizzazione.isRolesRequired(tipoAutorizzazione))
+							this.fruizioneAutorizzazioneRuoli = Costanti.CHECK_BOX_ENABLED;
+						this.fruizioneAutorizzazioneRuoliTipologia = AutorizzazioneUtilities.convertToRuoloTipologia(tipoAutorizzazione).getValue();
+					}
+	
 					// default
 					if(this.httpsalgoritmo==null || "".equals(this.httpsalgoritmo)){
 						this.httpsalgoritmo = TrustManagerFactory.getDefaultAlgorithm();
@@ -571,12 +679,14 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					this.consoleDynamicConfiguration.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(this.consoleConfiguration, this.consoleOperationType, this.consoleInterfaceType, this.protocolProperties, this.registryReader, idFruizione);
 
 
-					dati = apsHelper.addServiziFruitoriToDati(dati, this.provider, this.wsdlimpler, this.wsdlimplfru, soggettiList,
+					dati = apsHelper.addServiziFruitoriToDati(dati, this.idSoggettoFruitore, this.wsdlimpler, this.wsdlimplfru, soggettiList,
 							soggettiListLabel, "0", this.id, tipoOp, "", "", "", nomeservizio, tiposervizio, versioneservizio, this.correlato, this.statoPackage, this.statoPackage,asps.getStatoPackage(), null,this.validazioneDocumenti,
-							this.servizioApplicativo,saList);
-
-					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, this.profilo, this.clientAuth, dati,null
-							,null,null,null,null,null,null,null);
+							this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
+							this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
+							saList);
+	
+					dati = apsHelper.addFruitoreToDati(TipoOperazione.ADD, versioniLabel, versioniValues, this.profilo, this.clientAuth, dati,null
+							,null,null,null,null,null,null,null,null,null);
 
 					String tipoSendas = ConnettoriCostanti.TIPO_SEND_AS[0];
 					String tipoJms = ConnettoriCostanti.TIPI_CODE_JMS[0];
@@ -616,8 +726,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = apsHelper.serviziFruitoriCheckData(tipoOp, soggettiList,
-					this.id, "", "", null, "", "", this.provider,
+			boolean isOk = apsHelper.serviziFruitoriCheckData(TipoOperazione.ADD, soggettiList,
+					this.id, "", "", null, "", "", this.idSoggettoFruitore,
 					this.endpointtype, this.url, this.nome, this.tipo,
 					this.user, this.password, this.initcont, this.urlpgk,
 					this.provurl, this.connfact, this.sendas,
@@ -633,6 +743,8 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					this.opzioniAvanzate, this.transfer_mode, this.transfer_mode_chunk_size, this.redirect_mode, this.redirect_max_hop,
 					this.requestOutputFileName,this.requestOutputFileNameHeaders,this.requestOutputParentDirCreateIfNotExists,this.requestOutputOverwriteIfExists,
 					this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
+					this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
+					this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
 					listExtendedConnettore);
 
 			// Validazione base dei parametri custom 
@@ -687,13 +799,15 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 				dati = apsHelper.addHiddenFieldsToDati(tipoOp, this.id, null, null, dati);
 
-				dati = apsHelper.addServiziFruitoriToDati(dati, this.provider, this.wsdlimpler, this.wsdlimplfru, soggettiList, soggettiListLabel, "0", this.id, tipoOp,
+				dati = apsHelper.addServiziFruitoriToDati(dati, this.idSoggettoFruitore, this.wsdlimpler, this.wsdlimplfru, soggettiList, soggettiListLabel, "0", this.id, tipoOp,
 						"", "", "", nomeservizio, tiposervizio, versioneservizio, this.correlato, this.statoPackage, this.statoPackage,asps.getStatoPackage(),null,this.validazioneDocumenti,
-						this.servizioApplicativo,saList);
+						this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
+						this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
+						saList);
 
 				dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, this.profilo, this.clientAuth,
 						dati,null
-						,null,null,null,null,null,null,null);
+						,null,null,null,null,null,null,null,null,null);
 
 				if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
 					dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
@@ -730,7 +844,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			}
 
 			// Inserisco il fruitore nel db
-			int idProv = Integer.parseInt(this.provider);
+			int idProv = Integer.parseInt(this.idSoggettoFruitore);
 
 			// prendo il nome e il tipo del soggetto proprietario della
 			// porta delegata
@@ -831,13 +945,15 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 					dati = apsHelper.addHiddenFieldsToDati(tipoOp, this.id, null, null, dati);
 
-					dati = apsHelper.addServiziFruitoriToDati(dati, this.provider, this.wsdlimpler, this.wsdlimplfru, 
+					dati = apsHelper.addServiziFruitoriToDati(dati, this.idSoggettoFruitore, this.wsdlimpler, this.wsdlimplfru, 
 							soggettiList, soggettiListLabel, "0", this.id, tipoOp, "", "", "", nomeservizio, tiposervizio, versioneservizio, this.correlato, 
 							this.statoPackage, this.statoPackage,asps.getStatoPackage(),null,this.validazioneDocumenti,
-							this.servizioApplicativo,saList);
+							this.fruizioneServizioApplicativo,this.fruizioneRuolo,this.fruizioneAutenticazione,this.fruizioneAutenticazioneOpzionale,this.fruizioneAutorizzazione,
+							this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
+							saList);
 
-					dati = apsHelper.addFruitoreToDati(tipoOp, versioniLabel, versioniValues, this.profilo, this.clientAuth, dati,null
-							,null,null,null,null,null,null,null);
+					dati = apsHelper.addFruitoreToDati(TipoOperazione.ADD, versioniLabel, versioniValues, this.profilo, this.clientAuth, dati,null
+							,null,null,null,null,null,null,null,null,null);
 
 					if (!InterfaceType.STANDARD.equals(ServletUtils.getUserFromSession(session).getInterfaceType())) {
 						dati = apsHelper.addEndPointToDati(dati, this.connettoreDebug, this.endpointtype, this.autenticazioneHttp, null,
@@ -911,14 +1027,37 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				}
 			}
 			if (generazionePortaDelegata) {
+				
+				List<Object> listaOggettiDaCreare = new ArrayList<Object>();
+				
 				String nomePD = tipoFruitore + nomeFruitore + "/" + mytipoprov + mynomeprov + "/" + tiposervizio + nomeservizio + "/" + versioneservizio;
 				String descr = "Invocazione servizio " + tiposervizio + nomeservizio + ":"+versioneservizio+" erogato da " + mytipoprov + mynomeprov;
+
 
 				PortaDelegata portaDelegata = new PortaDelegata();
 				portaDelegata.setNome(nomePD);
 				portaDelegata.setDescrizione(descr);
-				portaDelegata.setAutenticazione(autenticazionePortaDelegataAutomatica);
-				portaDelegata.setAutorizzazione(autorizzazionePortaDelegataAutomatica);
+				portaDelegata.setAutenticazione(this.fruizioneAutenticazione);
+				if(this.fruizioneAutenticazioneOpzionale != null){
+					if(ServletUtils.isCheckBoxEnabled(this.fruizioneAutenticazioneOpzionale))
+						portaDelegata.setAutenticazioneOpzionale(org.openspcoop2.core.config.constants.StatoFunzionalita.ABILITATO);
+					else 
+						portaDelegata.setAutenticazioneOpzionale(org.openspcoop2.core.config.constants.StatoFunzionalita.DISABILITATO);
+				} else 
+					portaDelegata.setAutenticazioneOpzionale(null);
+				portaDelegata.setAutorizzazione(AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(this.fruizioneAutorizzazione, 
+						ServletUtils.isCheckBoxEnabled(this.fruizioneAutorizzazioneAutenticati), ServletUtils.isCheckBoxEnabled(this.fruizioneAutorizzazioneRuoli), 
+						RuoloTipologia.toEnumConstant(this.fruizioneAutorizzazioneRuoliTipologia)));
+				
+				if(this.fruizioneAutorizzazioneRuoliMatch!=null && !"".equals(this.fruizioneAutorizzazioneRuoliMatch)){
+					RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant(this.fruizioneAutorizzazioneRuoliMatch);
+					if(tipoRuoloMatch!=null){
+						if(portaDelegata.getRuoli()==null){
+							portaDelegata.setRuoli(new AutorizzazioneRuoli());
+						}
+						portaDelegata.getRuoli().setMatch(tipoRuoloMatch);
+					}
+				}
 
 				PortaDelegataSoggettoErogatore pdSogg = new PortaDelegataSoggettoErogatore();
 				pdSogg.setNome(mynomeprov);
@@ -951,24 +1090,37 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 				portaDelegata.setNomeSoggettoProprietario(soggetto.getNome());
 
 				// servizioApplicativo
-				if(this.servizioApplicativo!=null && !"".equals(this.servizioApplicativo) && !"-".equals(this.servizioApplicativo)){
+				if(this.fruizioneServizioApplicativo!=null && !"".equals(this.fruizioneServizioApplicativo) && !"-".equals(this.fruizioneServizioApplicativo)){
 					PortaDelegataServizioApplicativo sa = new PortaDelegataServizioApplicativo();
-					sa.setNome(this.servizioApplicativo);
+					sa.setNome(this.fruizioneServizioApplicativo);
 					portaDelegata.addServizioApplicativo(sa);
-
-					PoliticheSicurezza polSic = new PoliticheSicurezza();
-					polSic.setNomeServizioApplicativo(this.servizioApplicativo);
-					polSic.setIdServizio(idInt);
-					polSic.setIdFruitore(idProv);
-					apsCore.performCreateOperation(superUser, apsHelper.smista(), polSic);
 				}
 
+				// ruolo
+				if(this.fruizioneRuolo!=null && !"".equals(this.fruizioneRuolo) && !"-".equals(this.fruizioneRuolo)){
+					if(portaDelegata.getRuoli()==null){
+						portaDelegata.setRuoli(new AutorizzazioneRuoli());
+					}
+					Ruolo ruolo = new Ruolo();
+					ruolo.setNome(this.fruizioneRuolo);
+					portaDelegata.getRuoli().addRuolo(ruolo);
+				}
+				
 				// Verifico prima che la porta delegata non esista già
 				IDPortaDelegata myidpd = new IDPortaDelegata();
 				myidpd.setNome(nomePD);
 				if (!porteDelegateCore.existsPortaDelegata(myidpd)){
-					porteDelegateCore.performCreateOperation(superUser, apsHelper.smista(), portaDelegata);
+					listaOggettiDaCreare.add(portaDelegata);
 				}
+				
+				MappingFruizionePortaDelegata mappingFruizione = new MappingFruizionePortaDelegata();
+				mappingFruizione.setIdFruitore(new IDSoggetto(tipoFruitore, nomeFruitore));
+				IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(tiposervizio, nomeservizio, mytipoprov, mynomeprov, versioneservizio);
+				mappingFruizione.setIdServizio(idServizio);
+				mappingFruizione.setIdPortaDelegata(myidpd);
+				listaOggettiDaCreare.add(mappingFruizione);
+				
+				porteDelegateCore.performCreateOperation(superUser, apsHelper.smista(), listaOggettiDaCreare.toArray());
 			}
 
 
@@ -1059,13 +1211,45 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					line = dis.readLine();
 					this.id = dis.readLine();
 				}
-				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_PROVIDER+"\"") != -1) {
+				if (line.indexOf("\""+AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_FRUITORE+"\"") != -1) {
 					line = dis.readLine();
-					this.provider = dis.readLine();
+					this.idSoggettoFruitore = dis.readLine();
 				}
-				if (line.indexOf("\""+AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SA+"\"") != -1) {
+				if (line.indexOf("\""+AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUIZIONE_NOME_SA+"\"") != -1) {
 					line = dis.readLine();
-					this.servizioApplicativo = dis.readLine();
+					this.fruizioneServizioApplicativo = dis.readLine();
+				}
+				if (line.indexOf("\""+AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_RUOLO+"\"") != -1) {
+					line = dis.readLine();
+					this.fruizioneRuolo = dis.readLine();
+				}
+				if (line.indexOf("\""+AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE+"\"") != -1) {
+					line = dis.readLine();
+					this.fruizioneAutenticazione = dis.readLine();
+				}
+				if (line.indexOf("\""+AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTENTICAZIONE_OPZIONALE+"\"") != -1) {
+					line = dis.readLine();
+					this.fruizioneAutenticazioneOpzionale = dis.readLine();
+				}
+				if (line.indexOf("\""+AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE+"\"") != -1) {
+					line = dis.readLine();
+					this.fruizioneAutorizzazione = dis.readLine();
+				}
+				if (line.indexOf("\""+AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_AUTENTICAZIONE+"\"") != -1) {
+					line = dis.readLine();
+					this.fruizioneAutorizzazioneAutenticati = dis.readLine();
+				}
+				if (line.indexOf("\""+AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLI+"\"") != -1) {
+					line = dis.readLine();
+					this.fruizioneAutorizzazioneRuoli = dis.readLine();
+				}
+				if (line.indexOf("\""+AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_TIPOLOGIA+"\"") != -1) {
+					line = dis.readLine();
+					this.fruizioneAutorizzazioneRuoliTipologia = dis.readLine();
+				}
+				if (line.indexOf("\""+AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_MATCH+"\"") != -1) {
+					line = dis.readLine();
+					this.fruizioneAutorizzazioneRuoliMatch = dis.readLine();
 				}
 				if (line.indexOf("\""+ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE+"\"") != -1) {
 					line = dis.readLine();

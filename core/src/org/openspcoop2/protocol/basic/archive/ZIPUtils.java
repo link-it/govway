@@ -43,6 +43,8 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.config.utils.ConfigurazionePdDUtils;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -51,6 +53,7 @@ import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.PortaDominio;
+import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.utils.RegistroServiziUtils;
@@ -67,6 +70,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveIdCorrelazione;
 import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
+import org.openspcoop2.protocol.sdk.archive.ArchiveRuolo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
 import org.openspcoop2.protocol.sdk.archive.MapPlaceholder;
@@ -349,6 +353,13 @@ public class ZIPUtils  {
 							this.readPortaDominio(archivio, bin, xml, entryName, validationDocuments, idCorrelazione);
 						}
 						
+						// ********** ruoli ****************
+						else if(entryName.startsWith((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_RUOLI_DIR+File.separatorChar)) ){
+							byte[] xml = placeholder.replace(content);
+							bin = new ByteArrayInputStream(xml);
+							this.readRuolo(archivio, bin, xml, entryName, validationDocuments, idCorrelazione);
+						}
+						
 						// ********** informationMissing ********************
 						else if(entryName.equals((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_INFORMATION_MISSING)) ){
 							byte[] xml = placeholder.replace(content);
@@ -367,7 +378,7 @@ public class ZIPUtils  {
 							if(name.contains((File.separatorChar+""))==false){
 								
 								throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+Costanti.OPENSPCOOP2_ARCHIVE_SOGGETTI_DIR+
-										"] deve essere presenta una ulteriore directory contenente la struttura <tipo>_<nome> che descrive il sogggetto e ulteriori file e/o directory che definiscono gli elementi del soggetto");
+										"] deve essere presenta una ulteriore directory contenente la struttura <tipo>_<nome> che descrive il soggetto e ulteriori file e/o directory che definiscono gli elementi del soggetto");
 								
 							}
 							else{
@@ -376,7 +387,7 @@ public class ZIPUtils  {
 								String tipoNomeSoggetto = name.substring(0,name.indexOf(File.separatorChar));
 								if(tipoNomeSoggetto==null || "".equals(tipoNomeSoggetto) || !tipoNomeSoggetto.contains("_")){
 									throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+Costanti.OPENSPCOOP2_ARCHIVE_SOGGETTI_DIR+
-											"] deve essere presenta una ulteriore directory contenente la struttura <tipo>_<nome> che descrive il sogggetto. Il nome utilizzato per la directory non e' conforme alla struttura attesa <tipo>_<nome>");
+											"] deve essere presenta una ulteriore directory contenente la struttura <tipo>_<nome> che descrive il soggetto. Il nome utilizzato per la directory non e' conforme alla struttura attesa <tipo>_<nome>");
 								}
 								tipoNomeSoggetto = tipoNomeSoggetto.trim();
 								String tipoSoggetto = null;
@@ -398,11 +409,11 @@ public class ZIPUtils  {
 									nomeSoggetto = tipoNomeSoggetto.split("_")[1];
 									if(tipoSoggetto==null || "".equals(tipoSoggetto)){
 										throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+Costanti.OPENSPCOOP2_ARCHIVE_SOGGETTI_DIR+
-												"] deve essere presenta una ulteriore directory contenente la struttura <tipo>_<nome> che descrive il sogggetto. Il nome utilizzato per la directory non e' conforme alla struttura attesa <tipo>_<nome>: tipo non identificato");
+												"] deve essere presenta una ulteriore directory contenente la struttura <tipo>_<nome> che descrive il soggetto. Il nome utilizzato per la directory non e' conforme alla struttura attesa <tipo>_<nome>: tipo non identificato");
 									}
 									if(nomeSoggetto==null || "".equals(nomeSoggetto)){
 										throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+Costanti.OPENSPCOOP2_ARCHIVE_SOGGETTI_DIR+
-												"] deve essere presenta una ulteriore directory contenente la struttura <tipo>_<nome> che descrive il sogggetto. Il nome utilizzato per la directory non e' conforme alla struttura attesa <tipo>_<nome>: nome non identificato");
+												"] deve essere presenta una ulteriore directory contenente la struttura <tipo>_<nome> che descrive il soggetto. Il nome utilizzato per la directory non e' conforme alla struttura attesa <tipo>_<nome>: nome non identificato");
 									}
 								}
 								
@@ -410,7 +421,7 @@ public class ZIPUtils  {
 								String nomeFile = name.substring((tipoNomeSoggetto.length()+1),name.length());
 								if(nomeFile==null){
 									throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+Costanti.OPENSPCOOP2_ARCHIVE_SOGGETTI_DIR+
-											"] deve essere presenta una ulteriore directory contenente la struttura <tipo>_<nome> che descrive il sogggetto e ulteriori file e/o directory che definiscono gli elementi del soggetto: non sono stati trovati ulteriori file");
+											"] deve essere presenta una ulteriore directory contenente la struttura <tipo>_<nome> che descrive il soggetto e ulteriori file e/o directory che definiscono gli elementi del soggetto: non sono stati trovati ulteriori file");
 								}
 								
 								if(nomeFile.contains((File.separatorChar+""))==false){
@@ -720,6 +731,24 @@ public class ZIPUtils  {
 		}catch(Exception eDeserializer){
 			String xmlString = this.toStringXmlElementForErrorMessage(xml);
 			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (porta-dominio) non valida rispetto allo schema (RegistroServizi): "
+					+eDeserializer.getMessage(),eDeserializer);
+		}
+	}
+	
+	public void readRuolo(Archive archivio,InputStream bin,byte[]xml,String entryName,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+		try{
+			if(validationDocuments){
+				org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
+			}
+			Ruolo ruolo = this.jibxRegistryDeserializer.readRuolo(xml);
+			String key = ArchivePdd.buildKey(ruolo.getNome());
+			if(archivio.getRuoli().containsKey(key)){
+				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di un ruolo con key ["+key+"]");
+			}
+			archivio.getRuoli().add(key,new ArchiveRuolo(ruolo,idCorrelazione));
+		}catch(Exception eDeserializer){
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura xml (ruolo) non valida rispetto allo schema (RegistroServizi): "
 					+eDeserializer.getMessage(),eDeserializer);
 		}
 	}
@@ -1194,16 +1223,24 @@ public class ZIPUtils  {
 		else{
 			
 			// recupero archivio precedentemente letto
+			ArchiveAccordoServizioParteSpecifica archiveASPS = null;
 			AccordoServizioParteSpecifica as = null;
 			if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+File.separatorChar)==false){
 				if(archivio.getAccordiServizioParteSpecifica().containsKey(key)==false){
 					throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire dei documenti di un accordo senza fornire la definizione xml dell'accordo");
 				}
-				as = archivio.getAccordiServizioParteSpecifica().get(key).getAccordoServizioParteSpecifica();
+				archiveASPS = archivio.getAccordiServizioParteSpecifica().get(key);
+				as = archiveASPS.getAccordoServizioParteSpecifica();
+			}
+			
+			// mapping PA
+			if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_MAPPING+File.separatorChar) &&
+					nomeFileSenzaAccordo.endsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_SPECIFICA_MAPPING_PA)){
+				readAccordoServizioParteSpecifica_PortaApplicativaAssociata(archiveASPS, bin, xml, entryName);
 			}
 			
 			// wsdl
-			if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_WSDL+File.separatorChar)){
+			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_WSDL+File.separatorChar)){
 				
 				if(nomeFileSenzaAccordo.equalsIgnoreCase(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_WSDL+File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_WSDL_IMPLEMENTATIVO_EROGATORE_WSDL)){
 					as.setByteWsdlImplementativoErogatore(xml);
@@ -1248,9 +1285,9 @@ public class ZIPUtils  {
 			
 			// fruitori (politiche di sicurezza)
 			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+File.separatorChar) &&
-					nomeFileSenzaAccordo.endsWith(Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_SERVIZI_APPLICATIVI_AUTORIZZATI)){
+					nomeFileSenzaAccordo.endsWith(Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_MAPPING_PD)){
 				
-				this.readAccordoServizioParteSpecifica_Fruitore_ServiziApplicativiAutorizzati(archivio, bin, xml, entryName, 
+				this.readAccordoServizioParteSpecifica_Fruitore_PortaDelegataAssociata(archivio, bin, xml, entryName, 
 						nomeFileSenzaAccordo,
 						tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, versioneServizio, 
 						validationDocuments, idCorrelazione);
@@ -1265,6 +1302,36 @@ public class ZIPUtils  {
 			
 		}
 		
+	}
+	
+	public void readAccordoServizioParteSpecifica_PortaApplicativaAssociata(ArchiveAccordoServizioParteSpecifica archiveASPS,InputStream bin,byte[]xml,String entryName) throws ProtocolException{
+		
+		// *** leggo porta applicativa associata ****
+		
+		try{
+			if(archiveASPS==null){
+				throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire il mapping con la PA senza fornire la definizione xml dell'accordo di servizio parte specifica");
+			}
+			
+			String csvLine = new String(xml);
+			String [] line = csvLine.split(" ");
+			if(line==null || line.length<=0){
+				throw new Exception("csv non contiene valori");
+			}
+			if(line.length!=3){
+				throw new Exception("csv wrong format (size:"+line.length+")");
+			}
+			
+			IDPortaApplicativa idPA = new IDPortaApplicativa();
+			idPA.setNome(line[0].trim());
+			//idPA.setSoggetto(new IDSoggetto(line[1].trim(), line[2].trim()));
+			archiveASPS.setIdPortaApplicativaAssociata(idPA);
+			
+		}catch(Exception eDeserializer){
+			String xmlString = this.toStringXmlElementForErrorMessage(xml);
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura csv (mapping asps-pa) non valida: "
+					+eDeserializer.getMessage(),eDeserializer);
+		}
 	}
 	
 	public void readAccordoServizioParteSpecifica_Fruitore(Archive archivio,InputStream bin,byte[]xml,String entryName,
@@ -1311,7 +1378,7 @@ public class ZIPUtils  {
 		}
 	}
 	
-	public void readAccordoServizioParteSpecifica_Fruitore_ServiziApplicativiAutorizzati(Archive archivio,InputStream bin,byte[]xml,String entryName,
+	public void readAccordoServizioParteSpecifica_Fruitore_PortaDelegataAssociata(Archive archivio,InputStream bin,byte[]xml,String entryName,
 			String nomeFileSenzaAccordo,
 			String tipoSoggetto, String nomeSoggetto, String tipoServizio, String nomeServizio, String versioneServizio,
 			boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
@@ -1319,12 +1386,12 @@ public class ZIPUtils  {
 		// *** comprendo tipo e nome fruitore ****
 		
 		String prefixError = "Elemento ["+entryName+"] errato. Dopo la directory ["+Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+
-				"] il file ["+Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_SERVIZI_APPLICATIVI_AUTORIZZATI+
-				"] deve essere contenuto in una directory definita tramite la struttura <tipo>_<nome> che descrive il sogggetto fruitore.";
+				"] il file ["+Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_MAPPING_PD+
+				"] deve essere contenuto in una directory definita tramite la struttura <tipo>_<nome> che descrive il soggetto fruitore.";
 		
 		// comprendo tipo e nome soggetto
 		String tipoNomeSoggettoFruitore = nomeFileSenzaAccordo.substring((Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+File.separatorChar).length(), 
-				nomeFileSenzaAccordo.length()-(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_SERVIZI_APPLICATIVI_AUTORIZZATI).length());
+				nomeFileSenzaAccordo.length()-(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_MAPPING_PD).length());
 		if(tipoNomeSoggettoFruitore==null || "".equals(tipoNomeSoggettoFruitore) || !tipoNomeSoggettoFruitore.contains("_")){
 			throw new ProtocolException(prefixError+" Il nome utilizzato per la directory non e' conforme alla struttura attesa <tipo>_<nome>");
 		}
@@ -1355,7 +1422,7 @@ public class ZIPUtils  {
 		}
 		
 		
-		// *** leggo lista servizi applicativi autorizzati ****
+		// *** leggo porta delegata associata ****
 		
 		Integer versioneServizioInt = null;
 		try{
@@ -1374,24 +1441,28 @@ public class ZIPUtils  {
 		
 		try{
 			String csvLine = new String(xml);
-			String [] line = csvLine.split(",");
+			String [] line = csvLine.split(" ");
 			if(line==null || line.length<=0){
 				throw new Exception("csv non contiene valori");
+			}
+			if(line.length!=3){
+				throw new Exception("csv wrong format (size:"+line.length+")");
 			}
 			
 			String keyFruitore = ArchiveFruitore.buildKey(tipoSoggettoFruitoreKey, nomeSoggettoFruitoreKey, tipoSoggettoKey, nomeSoggettoKey, tipoServizio, nomeServizio, versioneKey);
 			if(archivio.getAccordiFruitori().containsKey(keyFruitore)==false){
-				throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire la lista dei serviziApplicativiAutorizzati senza fornire la definizione xml della fruizione");
+				throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire un mapping con la porta delegata senza fornire la definizione xml della fruizione");
 			}
 			
 			ArchiveFruitore archiveFruitore = archivio.getAccordiFruitori().get(keyFruitore);
-			for (int i = 0; i < line.length; i++) {
-				archiveFruitore.getServiziApplicativiAutorizzati().add(line[i].trim());
-			}
+			IDPortaDelegata idPD = new IDPortaDelegata();
+			idPD.setNome(line[0].trim());
+			//idPD.setSoggettoFruitore(new IDSoggetto(line[1].trim(), line[2].trim()));
+			archiveFruitore.setIdPortaDelegataAssociata(idPD);
 			
 		}catch(Exception eDeserializer){
 			String xmlString = this.toStringXmlElementForErrorMessage(xml);
-			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura csv (serviziApplicativiAutorizzati) non valida: "
+			throw new ProtocolException(xmlString+"Elemento ["+entryName+"] contiene una struttura csv (mapping fruizione-pd) non valida: "
 					+eDeserializer.getMessage(),eDeserializer);
 		}
 	}

@@ -136,6 +136,7 @@
 			<xsd:element name="servizio" type="porta-delegata-servizio" maxOccurs="1" minOccurs="1"/>
 			<xsd:element name="azione" type="porta-delegata-azione" maxOccurs="1" minOccurs="0"/>
 			<xsd:element name="servizio-applicativo" type="porta-delegata-servizio-applicativo" maxOccurs="unbounded" minOccurs="0" />
+			<xsd:element name="ruoli" type="autorizzazione-ruoli" maxOccurs="1" minOccurs="0" />	
 			<xsd:element name="local-forward" type="porta-delegata-local-forward" maxOccurs="1" minOccurs="0"/>
 			<xsd:element name="mtom-processor" type="mtom-processor" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="message-security" type="message-security" maxOccurs="1" minOccurs="0">
@@ -217,7 +218,17 @@
 				</xsd:appinfo>
 			</xsd:annotation>
 		</xsd:attribute>
-		<xsd:attribute name="autorizzazione" type="xsd:string" default="openspcoop">
+		<xsd:attribute name="autenticazione-opzionale" type="StatoFunzionalita" default="disabilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="autorizzazione" type="xsd:string" default="authenticated">
 			<xsd:annotation>
 				<xsd:appinfo>
 					<linkit:generator
@@ -349,6 +360,7 @@
 			<xsd:element name="azione" type="porta-applicativa-azione" maxOccurs="1" minOccurs="0"/>
 			<!-- Modificato in minOccurs=0 per gestire la possibile configurazione incrementale via WS -->
 			<xsd:element name="servizio-applicativo" type="porta-applicativa-servizio-applicativo" maxOccurs="unbounded" minOccurs="0" />
+			<xsd:element name="ruoli" type="autorizzazione-ruoli" maxOccurs="1" minOccurs="0" />	
 			<xsd:element name="proprieta-integrazione-protocollo" type="porta-applicativa-proprieta-integrazione-protocollo" maxOccurs="unbounded" minOccurs="0" />
 			<xsd:element name="mtom-processor" type="mtom-processor" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="message-security" type="message-security" maxOccurs="1" minOccurs="0" >
@@ -464,6 +476,36 @@
 		<xsd:attribute name="gestione-manifest" type="StatoFunzionalita" />
 		<xsd:attribute name="stateless" type="StatoFunzionalita" />
 		<xsd:attribute name="behaviour" type="xsd:string" use="optional"/>
+		<xsd:attribute name="autenticazione" type="xsd:string" default="ssl">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="autenticazione-opzionale" type="StatoFunzionalita" default="disabilitato">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="autorizzazione" type="xsd:string" default="authenticated">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter-use-default="false"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 		<xsd:attribute name="autorizzazione-contenuto" type="xsd:string"/>
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime">
 			<xsd:annotation>
@@ -569,6 +611,7 @@
 	<xsd:complexType name="invocazione-porta">
 		<xsd:sequence>
 			<xsd:element maxOccurs="unbounded" minOccurs="0" name="credenziali" type="credenziali"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="ruoli" type="servizio-applicativo-ruoli"/>
 			<xsd:element name="gestione-errore" type="invocazione-porta-gestione-errore" maxOccurs="1" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="invio-per-riferimento" type="StatoFunzionalita" default="disabilitato">
@@ -601,7 +644,7 @@
 	<!-- ServizioApplicativo.InvocazioneServizio -->
 	<xsd:complexType name="invocazione-servizio">
 		<xsd:sequence>
-			<xsd:element name="credenziali" type="credenziali" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="credenziali" type="invocazione-credenziali" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="connettore" type="connettore" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="gestione-errore"	type="gestione-errore" maxOccurs="1" minOccurs="0" >
 				<xsd:annotation>
@@ -678,7 +721,7 @@
 	<!-- ServizioApplicativo.RispostaAsincrona -->
 	<xsd:complexType name="risposta-asincrona">
 		<xsd:sequence>
-			<xsd:element name="credenziali" type="credenziali" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="credenziali" type="invocazione-credenziali" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="connettore" type="connettore" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="gestione-errore"	type="gestione-errore" maxOccurs="1" minOccurs="0" >
 				<xsd:annotation>
@@ -752,7 +795,11 @@
 			</xsd:annotation>
 		</xsd:attribute>
 	</xsd:complexType>
-
+	<!-- ServizioApplicativo.InvocazioneServizio/RispostaAsincrona.Credenziali -->
+	<xsd:complexType name="invocazione-credenziali">
+		<xsd:attribute name="user" type="xsd:string"/>
+		<xsd:attribute name="password" type="xsd:string"/>
+	</xsd:complexType>
 
 
 
@@ -973,6 +1020,26 @@
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="valore" type="xsd:string" use="required"/>
 	</xsd:complexType>
+	
+	<!-- Ruolo -->
+	<xsd:complexType name="ruolo">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
+	<!-- Ruoli Servizio Applicativo -->
+	<xsd:complexType name="servizio-applicativo-ruoli">
+		<xsd:sequence>
+			<xsd:element name="ruolo" type="ruolo" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- Autorizzazione per Ruoli -->
+	<xsd:complexType name="autorizzazione-ruoli">
+		<xsd:sequence>
+			<xsd:element name="ruolo" type="ruolo" minOccurs="1" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name="match" type="RuoloTipoMatch" use="optional" />
+	</xsd:complexType>
 
 
 	<!-- Configurazione PortaDeiServizi -->
@@ -992,6 +1059,7 @@
 			<xsd:element name="accesso-registro" type="accesso-registro" maxOccurs="1" minOccurs="1" />
 			<xsd:element name="accesso-configurazione" type="accesso-configurazione" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="accesso-dati-autorizzazione" type="accesso-dati-autorizzazione" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="accesso-dati-autenticazione" type="accesso-dati-autenticazione" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="validazione-buste" type="validazione-buste" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="validazione-contenuti-applicativi" type="validazione-contenuti-applicativi" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="indirizzo-risposta" type="indirizzo-risposta" maxOccurs="1" minOccurs="0" />
@@ -1084,6 +1152,13 @@
 	
 	<!-- Informazioni per l'autorizzazione -->
 	<xsd:complexType name="accesso-dati-autorizzazione">
+		<xsd:sequence>
+			<xsd:element name="cache" type="cache" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- Informazioni per l'autenticazione -->
+	<xsd:complexType name="accesso-dati-autenticazione">
 		<xsd:sequence>
 			<xsd:element name="cache" type="cache" maxOccurs="1" minOccurs="0"/>
 		</xsd:sequence>
@@ -1347,6 +1422,7 @@
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="basic"/>
 			<xsd:enumeration value="ssl"/>
+			<xsd:enumeration value="principal"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="GestioneErroreComportamento">
@@ -1364,7 +1440,6 @@
 	<xsd:simpleType name="InvocazioneServizioTipoAutenticazione">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="basic"/>
-			<xsd:enumeration value="ssl"/>
 			<xsd:enumeration value="none"/>
 		</xsd:restriction>
 	</xsd:simpleType>
@@ -1387,6 +1462,12 @@
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="valore" type="xsd:string" use="required"/>
 	</xsd:complexType>
+	<xsd:simpleType name="RuoloTipoMatch">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="all"/>
+			<xsd:enumeration value="any"/>
+		</xsd:restriction>
+	</xsd:simpleType>
 	
 	<!-- Altre costanti utilizzate poi nel core -->
 	<xsd:simpleType name="RicercaTipologiaErogazione">

@@ -1,22 +1,3 @@
-/*
- * OpenSPCoop - Customizable API Gateway 
- * http://www.openspcoop2.org
- * 
- * Copyright (c) 2005-2017 Link.it srl (http://link.it).
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3, as published by
- * the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
 
 package org.openspcoop2.core.registry.ws.client.accordoserviziopartecomune.crud;
 
@@ -40,6 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element ref="{http://www.openspcoop2.org/core/registry/management}wrapperIdPortaDominio"/&gt;
  *         &lt;element ref="{http://www.openspcoop2.org/core/registry/management}wrapperIdSoggetto"/&gt;
  *         &lt;element ref="{http://www.openspcoop2.org/core/registry/management}wrapperIdAccordoServizioParteSpecifica"/&gt;
+ *         &lt;element ref="{http://www.openspcoop2.org/core/registry/management}wrapperIdRuolo"/&gt;
  *       &lt;/choice&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -54,7 +36,8 @@ import javax.xml.bind.annotation.XmlType;
     "wrapperIdAccordoServizioParteComune",
     "wrapperIdPortaDominio",
     "wrapperIdSoggetto",
-    "wrapperIdAccordoServizioParteSpecifica"
+    "wrapperIdAccordoServizioParteSpecifica",
+    "wrapperIdRuolo"
 })
 public class ObjectId {
 
@@ -63,6 +46,7 @@ public class ObjectId {
     protected WrapperIdPortaDominio wrapperIdPortaDominio;
     protected WrapperIdSoggetto wrapperIdSoggetto;
     protected WrapperIdAccordoServizioParteSpecifica wrapperIdAccordoServizioParteSpecifica;
+    protected WrapperIdRuolo wrapperIdRuolo;
 
     /**
      * Gets the value of the wrapperIdAccordoCooperazione property.
@@ -73,7 +57,7 @@ public class ObjectId {
      *     
      */
     public WrapperIdAccordoCooperazione getWrapperIdAccordoCooperazione() {
-        return this.wrapperIdAccordoCooperazione;
+        return wrapperIdAccordoCooperazione;
     }
 
     /**
@@ -97,7 +81,7 @@ public class ObjectId {
      *     
      */
     public WrapperIdAccordoServizioParteComune getWrapperIdAccordoServizioParteComune() {
-        return this.wrapperIdAccordoServizioParteComune;
+        return wrapperIdAccordoServizioParteComune;
     }
 
     /**
@@ -121,7 +105,7 @@ public class ObjectId {
      *     
      */
     public WrapperIdPortaDominio getWrapperIdPortaDominio() {
-        return this.wrapperIdPortaDominio;
+        return wrapperIdPortaDominio;
     }
 
     /**
@@ -145,7 +129,7 @@ public class ObjectId {
      *     
      */
     public WrapperIdSoggetto getWrapperIdSoggetto() {
-        return this.wrapperIdSoggetto;
+        return wrapperIdSoggetto;
     }
 
     /**
@@ -169,7 +153,7 @@ public class ObjectId {
      *     
      */
     public WrapperIdAccordoServizioParteSpecifica getWrapperIdAccordoServizioParteSpecifica() {
-        return this.wrapperIdAccordoServizioParteSpecifica;
+        return wrapperIdAccordoServizioParteSpecifica;
     }
 
     /**
@@ -182,6 +166,30 @@ public class ObjectId {
      */
     public void setWrapperIdAccordoServizioParteSpecifica(WrapperIdAccordoServizioParteSpecifica value) {
         this.wrapperIdAccordoServizioParteSpecifica = value;
+    }
+
+    /**
+     * Gets the value of the wrapperIdRuolo property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link WrapperIdRuolo }
+     *     
+     */
+    public WrapperIdRuolo getWrapperIdRuolo() {
+        return wrapperIdRuolo;
+    }
+
+    /**
+     * Sets the value of the wrapperIdRuolo property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link WrapperIdRuolo }
+     *     
+     */
+    public void setWrapperIdRuolo(WrapperIdRuolo value) {
+        this.wrapperIdRuolo = value;
     }
 
 }

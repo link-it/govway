@@ -81,7 +81,6 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
-import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -92,7 +91,6 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
-import org.openspcoop2.web.ctrlstat.servlet.pdd.PddTipologia;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -578,18 +576,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				// Controllo se il soggetto erogare appartiene ad una pdd di tipo operativo.
 				IDSoggetto idSoggettoEr = new IDSoggetto( tipoSoggettoErogatore,  nomeSoggettoErogatore);
 				Soggetto soggetto = soggettiCore.getSoggettoRegistro(idSoggettoEr );
-
-				if (soggetto.getPortaDominio() != null) {
-					String nomePdd = soggetto.getPortaDominio();
-
-					PdDControlStation portaDominio = pddCore.getPdDControlStation(nomePdd);
-
-					if(portaDominio.getTipo().equals(PddTipologia.ESTERNO.toString()))
-						generaPACheckSoggetto = false;
-
-				} else {
-					// se non ho una porta di domini non devo generare la porta applicativa
-					generaPACheckSoggetto  =false;
+				if(pddCore.isPddEsterna(soggetto.getPortaDominio())){
+					generaPACheckSoggetto = false;
 				}
 
 
@@ -824,7 +812,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList,  privato,uriAccordo, descrizione, 
 							soggettoErogatoreID.getId(),statoPackage,oldStatoPackage
 							,versione,versioniProtocollo,validazioneDocumenti,
-							null,null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili);
+							null,null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili,
+							null,null,null,null,false,
+							null,null,null,null);
 
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp,  null,
 							url,nome, tipo, user, password, initcont, urlpgk,
@@ -883,6 +873,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+					null,null,null,null,null,
+					null, null, null, null,false,
 					listExtendedConnettore);
 			
 			// Validazione base dei parametri custom 
@@ -934,7 +926,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						soggettiListLabel, accordo, accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
 						id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, soggettoErogatoreID.getId(),
 						statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
-						null,null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili);
+						null,null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili,
+						null,null,null,null,false,
+						null,null,null,null);
 
 				dati = apsHelper.addEndPointToDati(dati, connettoreDebug,  endpointtype, autenticazioneHttp, null, 
 						url, nome,
@@ -1166,7 +1160,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							soggettiListLabel, accordo, accordiList, accordiListLabel, servcorr, this.wsdlimpler, this.wsdlimplfru, tipoOp, 
 							id, tipiServizioCompatibiliAccordo, profilo, portType, ptList, privato,uriAccordo, descrizione, 
 							soggettoErogatoreID.getId(),statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
-							null,null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili);
+							null,null,null,protocollo,generaPACheckSoggetto,asParteComuneCompatibili,
+							null,null,null,null,false,
+							null,null,null,null);
 
 					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
 							url,

@@ -9,7 +9,6 @@
 			<address-setting name="jms.queue.toSmistatoreConfigurazioni" redelivery-delay="120000" max-delivery-attempts="-1"/>
 			<!-- Gestori Componenti Centrali -->
 			<address-setting name="jms.queue.toConfigurazioneRegistro" redelivery-delay="120000" max-delivery-attempts="-1"/>
-			<address-setting name="jms.queue.toConfigurazioneGestoreAutorizzazioni" redelivery-delay="120000" max-delivery-attempts="-1"/>
 			<address-setting name="jms.queue.toConfigurazioneGestoreEventi" redelivery-delay="120000" max-delivery-attempts="-1"/>
 			<!--  Gestori Porte di Dominio -->
 			<address-setting name="jms.queue.pdd1" redelivery-delay="120000" max-delivery-attempts="-1"/>
@@ -23,7 +22,6 @@
 			<jms-queue name="toSmistatoreConfigurazioni" entries="/queue/toSmistatoreConfigurazioni"/>
 			<!-- Gestori Componenti Centrali -->
 			<jms-queue name="toConfigurazioneRegistro" entries="/queue/toConfigurazioneRegistro"/>
-			<jms-queue name="toConfigurazioneGestoreAutorizzazioni" entries="/queue/toConfigurazioneGestoreAutorizzazioni"/>
 			<jms-queue name="toConfigurazioneGestoreEventi" entries="/queue/toConfigurazioneGestoreEventi"/>
 			<!--  Gestori Porte di Dominio -->			
 			<jms-queue name="pdd1" entries="/queue/pdd1"/>

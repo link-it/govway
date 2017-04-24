@@ -45,7 +45,7 @@ public interface IAutorizzazioneContenutoPortaDelegata extends ICore {
      * @return Esito dell'autorizzazione.
      * 
      */
-    public EsitoAutorizzazioneIntegrazione process(DatiInvocazionePortaDelegata datiInvocazione,OpenSPCoop2Message msg) throws AutorizzazioneException;
+    public EsitoAutorizzazionePortaDelegata process(DatiInvocazionePortaDelegata datiInvocazione,OpenSPCoop2Message msg) throws AutorizzazioneException;
     
  
 }

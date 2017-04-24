@@ -39,6 +39,7 @@
     <collection field="servizioApplicativo" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.core.config.PortaDelegataServizioApplicativo"/>
     </collection>
+    <structure name="ruoli" field="ruoli" usage="optional" map-as="_AutorizzazioneRuoli_Type"/>
     <structure field="localForward" usage="optional" map-as="org.openspcoop2.core.config.PortaDelegataLocalForward"/>
     <structure name="mtom-processor" field="mtomProcessor" usage="optional" map-as="_MtomProcessor_Type"/>
     <structure name="message-security" field="messageSecurity" usage="optional" map-as="_MessageSecurity_Type"/>
@@ -54,7 +55,8 @@
     <value name="nome" field="nome" usage="required" style="attribute"/>
     <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
     <value name="autenticazione" field="autenticazione" default="ssl" usage="optional" style="attribute"/>
-    <value name="autorizzazione" field="autorizzazione" default="openspcoop" usage="optional" style="attribute"/>
+    <value name="autenticazione-opzionale" field="autenticazioneOpzionale" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="autorizzazione" field="autorizzazione" default="authenticated" usage="optional" style="attribute"/>
     <value name="autorizzazione-contenuto" field="autorizzazioneContenuto" usage="optional" style="attribute"/>
     <value name="ricevuta-asincrona-simmetrica" field="ricevutaAsincronaSimmetrica" default="abilitato" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="ricevuta-asincrona-asimmetrica" field="ricevutaAsincronaAsimmetrica" default="abilitato" usage="optional" enum-value-method="toString" style="attribute"/>
@@ -100,6 +102,7 @@
     <collection field="servizioApplicativo" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.core.config.PortaApplicativaServizioApplicativo"/>
     </collection>
+    <structure name="ruoli" field="ruoli" usage="optional" map-as="_AutorizzazioneRuoli_Type"/>
     <collection field="proprietaIntegrazioneProtocollo" create-type="java.util.ArrayList">
       <structure map-as="org.openspcoop2.core.config.PortaApplicativaProprietaIntegrazioneProtocollo"/>
     </collection>
@@ -124,6 +127,9 @@
     <value name="gestione-manifest" field="gestioneManifest" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="stateless" field="stateless" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="behaviour" field="behaviour" usage="optional" style="attribute"/>
+    <value name="autenticazione" field="autenticazione" default="ssl" usage="optional" style="attribute"/>
+    <value name="autenticazione-opzionale" field="autenticazioneOpzionale" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="autorizzazione" field="autorizzazione" default="authenticated" usage="optional" style="attribute"/>
     <value name="autorizzazione-contenuto" field="autorizzazioneContenuto" usage="optional" style="attribute"/>
     <value name="ora-registrazione" field="oraRegistrazione" usage="optional" style="attribute"/>
   </mapping>
@@ -174,8 +180,9 @@
   <mapping name="invocazione-porta" class="org.openspcoop2.core.config.InvocazionePorta">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
     <collection field="credenziali" create-type="java.util.ArrayList">
-      <structure name="credenziali" map-as="_Credenziali_Type"/>
+      <structure map-as="org.openspcoop2.core.config.Credenziali"/>
     </collection>
+    <structure field="ruoli" usage="optional" map-as="org.openspcoop2.core.config.ServizioApplicativoRuoli"/>
     <structure field="gestioneErrore" usage="optional" map-as="org.openspcoop2.core.config.InvocazionePortaGestioneErrore"/>
     <value name="invio-per-riferimento" field="invioPerRiferimento" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="sbustamento-informazioni-protocollo" field="sbustamentoInformazioniProtocollo" default="abilitato" usage="optional" enum-value-method="toString" style="attribute"/>
@@ -189,7 +196,7 @@
   </mapping>
   <mapping name="invocazione-servizio" class="org.openspcoop2.core.config.InvocazioneServizio">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
-    <structure name="credenziali" field="credenziali" usage="optional" map-as="_Credenziali_Type"/>
+    <structure name="credenziali" field="credenziali" usage="optional" map-as="_InvocazioneCredenziali_Type"/>
     <structure name="connettore" field="connettore" usage="optional" map-as="_Connettore_Type"/>
     <structure name="gestione-errore" field="gestioneErrore" usage="optional" map-as="_GestioneErrore_Type"/>
     <value name="sbustamento-soap" field="sbustamentoSoap" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
@@ -201,7 +208,7 @@
   </mapping>
   <mapping name="risposta-asincrona" class="org.openspcoop2.core.config.RispostaAsincrona">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
-    <structure name="credenziali" field="credenziali" usage="optional" map-as="_Credenziali_Type"/>
+    <structure name="credenziali" field="credenziali" usage="optional" map-as="_InvocazioneCredenziali_Type"/>
     <structure name="connettore" field="connettore" usage="optional" map-as="_Connettore_Type"/>
     <structure name="gestione-errore" field="gestioneErrore" usage="optional" map-as="_GestioneErrore_Type"/>
     <value name="sbustamento-soap" field="sbustamentoSoap" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
@@ -210,6 +217,17 @@
     <value name="autenticazione" field="autenticazione" default="none" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="invio-per-riferimento" field="invioPerRiferimento" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="risposta-per-riferimento" field="rispostaPerRiferimento" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
+  </mapping>
+  <mapping name="credenziali" class="org.openspcoop2.core.config.InvocazioneCredenziali" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
+    <value name="user" field="user" usage="optional" style="attribute"/>
+    <value name="password" field="password" usage="optional" style="attribute"/>
+  </mapping>
+
+  <mapping type-name="_InvocazioneCredenziali_Type" class="org.openspcoop2.core.config.InvocazioneCredenziali" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
+    <value name="user" field="user" usage="optional" style="attribute"/>
+    <value name="password" field="password" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="correlazione-applicativa" class="org.openspcoop2.core.config.CorrelazioneApplicativa" abstract="false">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
@@ -307,15 +325,7 @@
     <value name="comportamento" field="comportamento" usage="required" enum-value-method="toString" style="attribute"/>
     <value name="cadenza-rispedizione" field="cadenzaRispedizione" usage="optional" style="attribute"/>
   </mapping>
-  <mapping name="credenziali" class="org.openspcoop2.core.config.Credenziali" abstract="false">
-    <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
-    <value name="tipo" field="tipo" default="ssl" usage="optional" enum-value-method="toString" style="attribute"/>
-    <value name="user" field="user" usage="optional" style="attribute"/>
-    <value name="password" field="password" usage="optional" style="attribute"/>
-    <value name="subject" field="subject" usage="optional" style="attribute"/>
-  </mapping>
-
-  <mapping type-name="_Credenziali_Type" class="org.openspcoop2.core.config.Credenziali" abstract="true">
+  <mapping name="credenziali" class="org.openspcoop2.core.config.Credenziali">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
     <value name="tipo" field="tipo" default="ssl" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="user" field="user" usage="optional" style="attribute"/>
@@ -411,12 +421,43 @@
     <value name="nome" field="nome" usage="required" style="attribute"/>
     <value name="valore" field="valore" usage="required" style="attribute"/>
   </mapping>
+  <mapping name="ruolo" class="org.openspcoop2.core.config.Ruolo" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
+    <value name="nome" field="nome" usage="required" style="attribute"/>
+  </mapping>
+
+  <mapping type-name="_Ruolo_Type" class="org.openspcoop2.core.config.Ruolo" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
+    <value name="nome" field="nome" usage="required" style="attribute"/>
+  </mapping>
+  <mapping name="ruoli" class="org.openspcoop2.core.config.ServizioApplicativoRuoli">
+    <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
+    <collection field="ruolo" create-type="java.util.ArrayList">
+      <structure name="ruolo" map-as="_Ruolo_Type"/>
+    </collection>
+  </mapping>
+  <mapping name="ruoli" class="org.openspcoop2.core.config.AutorizzazioneRuoli" abstract="false">
+    <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
+    <collection field="ruolo" create-type="java.util.ArrayList">
+      <structure name="ruolo" map-as="_Ruolo_Type"/>
+    </collection>
+    <value name="match" field="match" usage="optional" enum-value-method="toString" style="attribute"/>
+  </mapping>
+
+  <mapping type-name="_AutorizzazioneRuoli_Type" class="org.openspcoop2.core.config.AutorizzazioneRuoli" abstract="true">
+    <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
+    <collection field="ruolo" create-type="java.util.ArrayList">
+      <structure name="ruolo" map-as="_Ruolo_Type"/>
+    </collection>
+    <value name="match" field="match" usage="optional" enum-value-method="toString" style="attribute"/>
+  </mapping>
   <mapping name="configurazione" class="org.openspcoop2.core.config.Configurazione">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
     <structure field="routingTable" usage="optional" map-as="org.openspcoop2.core.config.RoutingTable"/>
     <structure field="accessoRegistro" usage="required" map-as="org.openspcoop2.core.config.AccessoRegistro"/>
     <structure field="accessoConfigurazione" usage="optional" map-as="org.openspcoop2.core.config.AccessoConfigurazione"/>
     <structure field="accessoDatiAutorizzazione" usage="optional" map-as="org.openspcoop2.core.config.AccessoDatiAutorizzazione"/>
+    <structure field="accessoDatiAutenticazione" usage="optional" map-as="org.openspcoop2.core.config.AccessoDatiAutenticazione"/>
     <structure field="validazioneBuste" usage="optional" map-as="org.openspcoop2.core.config.ValidazioneBuste"/>
     <structure name="validazione-contenuti-applicativi" field="validazioneContenutiApplicativi" usage="optional" map-as="_ValidazioneContenutiApplicativi_Type"/>
     <structure field="indirizzoRisposta" usage="optional" map-as="org.openspcoop2.core.config.IndirizzoRisposta"/>
@@ -508,6 +549,10 @@
     <structure name="cache" field="cache" usage="optional" map-as="_Cache_Type"/>
   </mapping>
   <mapping name="accesso-dati-autorizzazione" class="org.openspcoop2.core.config.AccessoDatiAutorizzazione">
+    <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
+    <structure name="cache" field="cache" usage="optional" map-as="_Cache_Type"/>
+  </mapping>
+  <mapping name="accesso-dati-autenticazione" class="org.openspcoop2.core.config.AccessoDatiAutenticazione">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
     <structure name="cache" field="cache" usage="optional" map-as="_Cache_Type"/>
   </mapping>

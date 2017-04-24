@@ -16,6 +16,10 @@ CREATE TABLE soggetti
 	ora_registrazione DATETIME2 DEFAULT CURRENT_TIMESTAMP,
 	profilo VARCHAR(255),
 	codice_ipa VARCHAR(255) NOT NULL,
+	tipoauth VARCHAR(255),
+	utente VARCHAR(255),
+	password VARCHAR(255),
+	subject VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- unique constraints
@@ -29,5 +33,24 @@ CREATE TABLE soggetti
 -- index
 CREATE UNIQUE INDEX index_soggetti_1 ON soggetti (nome_soggetto,tipo_soggetto);
 CREATE UNIQUE INDEX index_soggetti_2 ON soggetti (codice_ipa);
+
+
+
+CREATE TABLE soggetti_ruoli
+(
+	id_soggetto BIGINT NOT NULL,
+	id_ruolo BIGINT NOT NULL,
+	-- fk/pk columns
+	id BIGINT IDENTITY,
+	-- unique constraints
+	CONSTRAINT unique_soggetti_ruoli_1 UNIQUE (id_soggetto,id_ruolo),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_soggetti_ruoli_1 FOREIGN KEY (id_soggetto) REFERENCES soggetti(id),
+	CONSTRAINT fk_soggetti_ruoli_2 FOREIGN KEY (id_ruolo) REFERENCES ruoli(id),
+	CONSTRAINT pk_soggetti_ruoli PRIMARY KEY (id)
+);
+
+-- index
+CREATE UNIQUE INDEX index_soggetti_ruoli_1 ON soggetti_ruoli (id_soggetto,id_ruolo);
 
 

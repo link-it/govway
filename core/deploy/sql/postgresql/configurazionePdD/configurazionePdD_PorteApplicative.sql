@@ -56,7 +56,14 @@ CREATE TABLE porte_applicative
 	-- abilitato/disabilitato
 	stateless VARCHAR(255),
 	behaviour VARCHAR(255),
+	-- Controllo Accessi
+	autenticazione VARCHAR(255),
+	-- abilitato/disabilitato
+	autenticazione_opzionale VARCHAR(255),
+	autorizzazione VARCHAR(255),
 	autorizzazione_contenuto VARCHAR(255),
+	-- all/any
+	ruoli_match VARCHAR(255),
 	-- proprietario porta applicativa
 	id_soggetto BIGINT NOT NULL,
 	ora_registrazione TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -233,6 +240,24 @@ CREATE TABLE pa_correlazione_risposta
 	-- fk/pk keys constraints
 	CONSTRAINT fk_pa_correlazione_risposta_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
 	CONSTRAINT pk_pa_correlazione_risposta PRIMARY KEY (id)
+);
+
+
+
+
+CREATE SEQUENCE seq_pa_ruoli start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
+CREATE TABLE pa_ruoli
+(
+	id_porta BIGINT NOT NULL,
+	ruolo VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_pa_ruoli') NOT NULL,
+	-- unique constraints
+	CONSTRAINT unique_pa_ruoli_1 UNIQUE (id_porta,ruolo),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_ruoli_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
+	CONSTRAINT pk_pa_ruoli PRIMARY KEY (id)
 );
 
 

@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
+import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
@@ -34,6 +35,7 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -41,9 +43,11 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioCompostoServizioComponente;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.IdSoggetto;
+import org.openspcoop2.core.registry.RuoloSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
+import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
@@ -66,6 +70,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveMode;
 import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
+import org.openspcoop2.protocol.sdk.archive.ArchiveRuolo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
 import org.openspcoop2.protocol.sdk.archive.IArchive;
@@ -139,6 +144,11 @@ public class ExporterArchiveUtils {
 		case PDD:
 			for (Object object : listObject) {
 				this.readPdd(archive, (String)object, cascadeConfig, exportSourceArchiveType);
+			}
+			break;
+		case RUOLO:
+			for (Object object : listObject) {
+				this.readRuolo(archive, (IDRuolo)object, cascadeConfig, exportSourceArchiveType);
 			}
 			break;
 		case SOGGETTO:
@@ -257,6 +267,99 @@ public class ExporterArchiveUtils {
 		
 	}
 	
+	private void readRuolo(Archive archive, IDRuolo idRuolo, ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception{
+		this.readRuolo(archive, idRuolo, cascadeConfig, true, provenienza);
+	}
+	private void readRuolo(Archive archive, IDRuolo idRuolo, ArchiveCascadeConfiguration cascadeConfig, boolean cascadeAvanti, ArchiveType provenienza) throws Exception{
+		
+		String key = ArchiveRuolo.buildKey(idRuolo.getNome());
+		if(archive.getRuoli().containsKey(key)){
+			// gia gestito
+		}
+		else{
+			try{
+				if(cascadeConfig.isCascadeRuoli() || ArchiveType.RUOLO.equals(provenienza)){
+					
+					// add
+					org.openspcoop2.core.registry.Ruolo ruolo = this.archiveEngine.getRuolo(idRuolo);
+					ArchiveRuolo archiveRuolo = new ArchiveRuolo(ruolo, this.idCorrelazione);
+					archive.getRuoli().add(archiveRuolo);
+					
+					// *** dipendenze: oggetti necessari per la creazione dell'oggetto sopra aggiunto ***
+					
+					// non vi sono oggetti che possiedono come figlio il ruolo
+					
+				}
+			}catch(Exception e){
+				throw new ProtocolException("(Ruolo "+idRuolo.getNome()+") "+e.getMessage(),e);
+			}
+		}
+		
+		
+		// *** cascade in avanti ***
+		
+		if(cascadeAvanti){
+		
+			// soggetti
+				
+			FiltroRicercaSoggetti filtroSoggetti = new FiltroRicercaSoggetti();
+			filtroSoggetti.setIdRuolo(idRuolo);
+			try{
+				List<IDSoggetto> idsSoggetti = this.archiveEngine.getAllIdSoggettiRegistro(filtroSoggetti);
+				if(idsSoggetti!=null && idsSoggetti.size()>0){
+					for (IDSoggetto idSoggetto : idsSoggetti) {
+						this.readSoggetto(archive, idSoggetto, cascadeConfig, ArchiveType.RUOLO);
+					}
+				}
+			}catch(DriverRegistroServiziNotFound notFound){}
+			
+			
+			// porteDelegate
+			
+			FiltroRicercaPorteDelegate filtroPorteDelegate = new FiltroRicercaPorteDelegate();
+			filtroPorteDelegate.setIdRuolo(idRuolo);
+			try{
+				List<IDPortaDelegata> idsPD = this.archiveEngine.getAllIdPorteDelegate(filtroPorteDelegate);
+				if(idsPD!=null && idsPD.size()>0){
+					for (IDPortaDelegata idPD : idsPD) {
+						this.readPortaDelegata(archive, idPD, cascadeConfig, ArchiveType.RUOLO);
+					}
+				}
+			}catch(DriverRegistroServiziNotFound notFound){}	
+			
+			
+			// porteApplicative
+			
+			FiltroRicercaPorteApplicative filtroPorteApplicative = new FiltroRicercaPorteApplicative();
+			filtroPorteApplicative.setIdRuolo(idRuolo);
+			try{
+				List<IDPortaApplicativa> idsPA = this.archiveEngine.getAllIdPorteApplicative(filtroPorteApplicative);
+				if(idsPA!=null && idsPA.size()>0){
+					for (IDPortaApplicativa idPA : idsPA) {
+						this.readPortaApplicativa(archive, idPA, cascadeConfig, ArchiveType.RUOLO);
+					}
+				}
+			}catch(DriverRegistroServiziNotFound notFound){}
+			
+			
+			// serviziApplicativi
+			
+			FiltroRicercaServiziApplicativi filtroServiziApplicativi = new FiltroRicercaServiziApplicativi();
+			filtroServiziApplicativi.setIdRuolo(idRuolo);
+			try{
+				List<IDServizioApplicativo> idsSA = this.archiveEngine.getAllIdServiziApplicativi(filtroServiziApplicativi);
+				if(idsSA!=null && idsSA.size()>0){
+					for (IDServizioApplicativo idSA : idsSA) {
+						this.readServizioApplicativo(archive, idSA, cascadeConfig, ArchiveType.RUOLO);
+					}
+				}
+			}catch(DriverRegistroServiziNotFound notFound){}
+		}
+		
+		
+	}
+	
+	
 	private void readSoggetto(Archive archive, IDSoggetto idSoggetto, ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception{
 		this.readSoggetto(archive, idSoggetto, cascadeConfig, true, provenienza);
 	}
@@ -289,6 +392,23 @@ public class ExporterArchiveUtils {
 							}
 						}
 					}catch(DriverRegistroServiziNotFound notFound){}
+					
+					// ruoli
+					if(soggettoRegistro.getRuoli()!=null && soggettoRegistro.getRuoli().sizeRuoloList()>0){
+						for (int i = 0; i < soggettoRegistro.getRuoli().sizeRuoloList(); i++) {
+							RuoloSoggetto ruolo = soggettoRegistro.getRuoli().getRuolo(i);
+							FiltroRicercaRuoli filtroRuolo = new FiltroRicercaRuoli();
+							filtroRuolo.setNome(ruolo.getNome());
+							try{
+								List<IDRuolo> idsRuoli = this.archiveEngine.getAllIdRuoli(filtroRuolo);
+								if(idsRuoli!=null && idsRuoli.size()>0){
+									for (IDRuolo idRuolo : idsRuoli) {
+										this.readRuolo(archive, idRuolo, cascadeConfig, false, ArchiveType.SOGGETTO); // per evitare loop
+									}
+								}
+							}catch(DriverRegistroServiziNotFound notFound){}	
+						}
+					}
 				}
 			}catch(Exception e){
 				throw new ProtocolException("(Soggetto "+idSoggetto+") "+e.getMessage(),e);
@@ -455,6 +575,24 @@ public class ExporterArchiveUtils {
 					
 					// soggetto proprietario
 					this.readSoggetto(archive, idServizioApplicativo.getIdSoggettoProprietario(), cascadeConfig, false, ArchiveType.SERVIZIO_APPLICATIVO); // per evitare loop
+					
+					// ruoli
+					if(sa.getInvocazionePorta()!=null && sa.getInvocazionePorta().getRuoli()!=null && 
+							sa.getInvocazionePorta().getRuoli().sizeRuoloList()>0){
+						for (int i = 0; i < sa.getInvocazionePorta().getRuoli().sizeRuoloList(); i++) {
+							Ruolo ruolo = sa.getInvocazionePorta().getRuoli().getRuolo(i);
+							FiltroRicercaRuoli filtroRuolo = new FiltroRicercaRuoli();
+							filtroRuolo.setNome(ruolo.getNome());
+							try{
+								List<IDRuolo> idsRuoli = this.archiveEngine.getAllIdRuoli(filtroRuolo);
+								if(idsRuoli!=null && idsRuoli.size()>0){
+									for (IDRuolo idRuolo : idsRuoli) {
+										this.readRuolo(archive, idRuolo, cascadeConfig, false, ArchiveType.SERVIZIO_APPLICATIVO); // per evitare loop
+									}
+								}
+							}catch(DriverRegistroServiziNotFound notFound){}	
+						}
+					}
 				}
 			}catch(Exception e){
 				throw new ProtocolException("(ServizioApplicativo "+idServizioApplicativo+") "+e.getMessage(),e);
@@ -715,6 +853,14 @@ public class ExporterArchiveUtils {
 					}
 					archive.getAccordiServizioParteSpecifica().add(archiveAs);
 					
+					
+					// portaApplicativa associata
+					IDPortaApplicativa idPA = this.archiveEngine.getIDPortaApplicativaAssociataErogazione(idAccordoServizio);
+					if(idPA!=null){
+						archiveAs.setIdPortaApplicativaAssociata(idPA);
+					}
+					
+					
 					// *** dipendenze: oggetti necessari per la creazione dell'oggetto sopra aggiunto ***
 					
 					// soggetto proprietario
@@ -770,6 +916,12 @@ public class ExporterArchiveUtils {
 				}
 			}catch(DriverConfigurazioneNotFound notFound){}
 			
+			// portaApplicativa associata
+			IDPortaApplicativa idPA_associata = this.archiveEngine.getIDPortaApplicativaAssociataErogazione(idAccordoServizio);
+			if(idPA_associata!=null){
+				this.readPortaApplicativa(archive, idPA_associata, cascadeConfig, ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA);
+			}
+			
 			// porteApplicative "normali"
 			FiltroRicercaPorteApplicative filtroRicercaPorteApplicative = new FiltroRicercaPorteApplicative();
 			filtroRicercaPorteApplicative.setTipoSoggetto(idAccordoServizio.getSoggettoErogatore().getTipo());
@@ -780,6 +932,11 @@ public class ExporterArchiveUtils {
 				List<IDPortaApplicativa> idsPA = this.archiveEngine.getAllIdPorteApplicative(filtroRicercaPorteApplicative);
 				if(idsPA!=null && idsPA.size()>0){
 					for (IDPortaApplicativa idPortaApplicativa : idsPA) {
+						if(idPA_associata!=null){
+							if(idPA_associata.equals(idPortaApplicativa)){
+								continue;
+							}
+						}
 						this.readPortaApplicativa(archive, idPortaApplicativa, cascadeConfig, ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA);
 					}
 				}
@@ -799,7 +956,7 @@ public class ExporterArchiveUtils {
 					}
 				}
 			}catch(DriverConfigurazioneNotFound notFound){}
-			
+						
 		}
 		
 	}
@@ -843,15 +1000,11 @@ public class ExporterArchiveUtils {
 					ArchiveFruitore archiveFruitore = new ArchiveFruitore(idAccordoServizio, fruitore, this.idCorrelazione);
 					archive.getAccordiFruitori().add(archiveFruitore);
 					
-					// serviziApplicativi autorizzati
-					try{
-						List<IDServizioApplicativo> list = this.archiveEngine.getAllIdServiziApplicativiAutorizzati(idAccordoServizio, idFruitore);
-						if(list!=null && list.size()>0){
-							for (IDServizioApplicativo idServizioApplicativo : list) {
-								archiveFruitore.getServiziApplicativiAutorizzati().add(idServizioApplicativo.getNome());
-							}
-						}
-					}catch(DriverRegistroServiziNotFound notFound){}
+					// portaDelegata associata
+					IDPortaDelegata idPD = this.archiveEngine.getIDPortaDelegataAssociataFruizione(idAccordoServizio, idFruitore);
+					if(idPD!=null){
+						archiveFruitore.setIdPortaDelegataAssociata(idPD);
+					}
 					
 					// *** dipendenze: oggetti necessari per la creazione dell'oggetto sopra aggiunto ***
 					
@@ -873,15 +1026,11 @@ public class ExporterArchiveUtils {
 		
 		if(cascadeAvanti){
 		
-			// servizi applicativi autorizzati
-			try{
-				List<IDServizioApplicativo> idSA = this.archiveEngine.getAllIdServiziApplicativiAutorizzati(idAccordoServizio, idFruitore);
-				if(idSA!=null && idSA.size()>0){
-					for (IDServizioApplicativo idServizioApplicativo : idSA) {
-						this.readServizioApplicativo(archive, idServizioApplicativo, cascadeConfig, ArchiveType.FRUITORE);
-					}
-				}
-			}catch(DriverRegistroServiziNotFound notFound){}
+			// portaDelegata associata
+			IDPortaDelegata idPD = this.archiveEngine.getIDPortaDelegataAssociataFruizione(idAccordoServizio, idFruitore);
+			if(idPD!=null){
+				this.readPortaDelegata(archive, idPD, cascadeConfig, ArchiveType.FRUITORE);
+			}
 			
 		}
 		
@@ -939,6 +1088,24 @@ public class ExporterArchiveUtils {
 								pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome(), 
 								pd.getServizio().getVersione()); 
 						this.readAccordoServizioParteSpecifica(archive, idServizio, cascadeConfig, false, ArchiveType.PORTA_DELEGATA); // per evitare loop
+					}
+					
+					// ruoli
+					if(pd!=null && pd.getRuoli()!=null && 
+							pd.getRuoli().sizeRuoloList()>0){
+						for (int i = 0; i < pd.getRuoli().sizeRuoloList(); i++) {
+							Ruolo ruolo = pd.getRuoli().getRuolo(i);
+							FiltroRicercaRuoli filtroRuolo = new FiltroRicercaRuoli();
+							filtroRuolo.setNome(ruolo.getNome());
+							try{
+								List<IDRuolo> idsRuoli = this.archiveEngine.getAllIdRuoli(filtroRuolo);
+								if(idsRuoli!=null && idsRuoli.size()>0){
+									for (IDRuolo idRuolo : idsRuoli) {
+										this.readRuolo(archive, idRuolo, cascadeConfig, false, ArchiveType.PORTA_DELEGATA); // per evitare loop
+									}
+								}
+							}catch(DriverRegistroServiziNotFound notFound){}	
+						}
 					}
 				}
 					
@@ -1038,7 +1205,25 @@ public class ExporterArchiveUtils {
 							this.readAccordoServizioParteSpecifica(archive, idServizio, cascadeConfig, false, ArchiveType.PORTA_APPLICATIVA); // per evitare loop
 							
 						}
-					}	
+					}
+					
+					// ruoli
+					if(pa!=null && pa.getRuoli()!=null && 
+							pa.getRuoli().sizeRuoloList()>0){
+						for (int i = 0; i < pa.getRuoli().sizeRuoloList(); i++) {
+							Ruolo ruolo = pa.getRuoli().getRuolo(i);
+							FiltroRicercaRuoli filtroRuolo = new FiltroRicercaRuoli();
+							filtroRuolo.setNome(ruolo.getNome());
+							try{
+								List<IDRuolo> idsRuoli = this.archiveEngine.getAllIdRuoli(filtroRuolo);
+								if(idsRuoli!=null && idsRuoli.size()>0){
+									for (IDRuolo idRuolo : idsRuoli) {
+										this.readRuolo(archive, idRuolo, cascadeConfig, false, ArchiveType.PORTA_DELEGATA); // per evitare loop
+									}
+								}
+							}catch(DriverRegistroServiziNotFound notFound){}	
+						}
+					}
 
 				}
 			}catch(Exception e){

@@ -44,6 +44,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.SERVIZIO = new org.openspcoop2.core.config.model.PortaDelegataServizioModel(new Field("servizio",org.openspcoop2.core.config.PortaDelegataServizio.class,"porta-delegata",PortaDelegata.class));
 		this.AZIONE = new org.openspcoop2.core.config.model.PortaDelegataAzioneModel(new Field("azione",org.openspcoop2.core.config.PortaDelegataAzione.class,"porta-delegata",PortaDelegata.class));
 		this.SERVIZIO_APPLICATIVO = new org.openspcoop2.core.config.model.PortaDelegataServizioApplicativoModel(new Field("servizio-applicativo",org.openspcoop2.core.config.PortaDelegataServizioApplicativo.class,"porta-delegata",PortaDelegata.class));
+		this.RUOLI = new org.openspcoop2.core.config.model.AutorizzazioneRuoliModel(new Field("ruoli",org.openspcoop2.core.config.AutorizzazioneRuoli.class,"porta-delegata",PortaDelegata.class));
 		this.LOCAL_FORWARD = new org.openspcoop2.core.config.model.PortaDelegataLocalForwardModel(new Field("local-forward",org.openspcoop2.core.config.PortaDelegataLocalForward.class,"porta-delegata",PortaDelegata.class));
 		this.MTOM_PROCESSOR = new org.openspcoop2.core.config.model.MtomProcessorModel(new Field("mtom-processor",org.openspcoop2.core.config.MtomProcessor.class,"porta-delegata",PortaDelegata.class));
 		this.MESSAGE_SECURITY = new org.openspcoop2.core.config.model.MessageSecurityModel(new Field("message-security",org.openspcoop2.core.config.MessageSecurity.class,"porta-delegata",PortaDelegata.class));
@@ -59,6 +60,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.NOME = new Field("nome",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.AUTENTICAZIONE = new Field("autenticazione",java.lang.String.class,"porta-delegata",PortaDelegata.class);
+		this.AUTENTICAZIONE_OPZIONALE = new Field("autenticazione-opzionale",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.AUTORIZZAZIONE = new Field("autorizzazione",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.AUTORIZZAZIONE_CONTENUTO = new Field("autorizzazione-contenuto",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.RICEVUTA_ASINCRONA_SIMMETRICA = new Field("ricevuta-asincrona-simmetrica",java.lang.String.class,"porta-delegata",PortaDelegata.class);
@@ -80,6 +82,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.SERVIZIO = new org.openspcoop2.core.config.model.PortaDelegataServizioModel(new ComplexField(father,"servizio",org.openspcoop2.core.config.PortaDelegataServizio.class,"porta-delegata",PortaDelegata.class));
 		this.AZIONE = new org.openspcoop2.core.config.model.PortaDelegataAzioneModel(new ComplexField(father,"azione",org.openspcoop2.core.config.PortaDelegataAzione.class,"porta-delegata",PortaDelegata.class));
 		this.SERVIZIO_APPLICATIVO = new org.openspcoop2.core.config.model.PortaDelegataServizioApplicativoModel(new ComplexField(father,"servizio-applicativo",org.openspcoop2.core.config.PortaDelegataServizioApplicativo.class,"porta-delegata",PortaDelegata.class));
+		this.RUOLI = new org.openspcoop2.core.config.model.AutorizzazioneRuoliModel(new ComplexField(father,"ruoli",org.openspcoop2.core.config.AutorizzazioneRuoli.class,"porta-delegata",PortaDelegata.class));
 		this.LOCAL_FORWARD = new org.openspcoop2.core.config.model.PortaDelegataLocalForwardModel(new ComplexField(father,"local-forward",org.openspcoop2.core.config.PortaDelegataLocalForward.class,"porta-delegata",PortaDelegata.class));
 		this.MTOM_PROCESSOR = new org.openspcoop2.core.config.model.MtomProcessorModel(new ComplexField(father,"mtom-processor",org.openspcoop2.core.config.MtomProcessor.class,"porta-delegata",PortaDelegata.class));
 		this.MESSAGE_SECURITY = new org.openspcoop2.core.config.model.MessageSecurityModel(new ComplexField(father,"message-security",org.openspcoop2.core.config.MessageSecurity.class,"porta-delegata",PortaDelegata.class));
@@ -95,6 +98,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.AUTENTICAZIONE = new ComplexField(father,"autenticazione",java.lang.String.class,"porta-delegata",PortaDelegata.class);
+		this.AUTENTICAZIONE_OPZIONALE = new ComplexField(father,"autenticazione-opzionale",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.AUTORIZZAZIONE = new ComplexField(father,"autorizzazione",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.AUTORIZZAZIONE_CONTENUTO = new ComplexField(father,"autorizzazione-contenuto",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.RICEVUTA_ASINCRONA_SIMMETRICA = new ComplexField(father,"ricevuta-asincrona-simmetrica",java.lang.String.class,"porta-delegata",PortaDelegata.class);
@@ -117,6 +121,8 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 	public org.openspcoop2.core.config.model.PortaDelegataAzioneModel AZIONE = null;
 	 
 	public org.openspcoop2.core.config.model.PortaDelegataServizioApplicativoModel SERVIZIO_APPLICATIVO = null;
+	 
+	public org.openspcoop2.core.config.model.AutorizzazioneRuoliModel RUOLI = null;
 	 
 	public org.openspcoop2.core.config.model.PortaDelegataLocalForwardModel LOCAL_FORWARD = null;
 	 
@@ -147,6 +153,8 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 	public IField DESCRIZIONE = null;
 	 
 	public IField AUTENTICAZIONE = null;
+	 
+	public IField AUTENTICAZIONE_OPZIONALE = null;
 	 
 	public IField AUTORIZZAZIONE = null;
 	 

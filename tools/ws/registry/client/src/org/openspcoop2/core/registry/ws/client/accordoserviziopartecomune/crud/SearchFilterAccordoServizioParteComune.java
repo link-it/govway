@@ -1,22 +1,3 @@
-/*
- * OpenSPCoop - Customizable API Gateway 
- * http://www.openspcoop2.org
- * 
- * Copyright (c) 2005-2017 Link.it srl (http://link.it).
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3, as published by
- * the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
 
 package org.openspcoop2.core.registry.ws.client.accordoserviziopartecomune.crud;
 
@@ -112,7 +93,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public IdSoggetto getSoggettoReferente() {
-        return this.soggettoReferente;
+        return soggettoReferente;
     }
 
     /**
@@ -136,7 +117,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public AccordoServizioParteComuneServizioComposto getServizioComposto() {
-        return this.servizioComposto;
+        return servizioComposto;
     }
 
     /**
@@ -160,7 +141,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public String getStatoPackage() {
-        return this.statoPackage;
+        return statoPackage;
     }
 
     /**
@@ -184,7 +165,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public Boolean isPrivato() {
-        return this.privato;
+        return privato;
     }
 
     /**
@@ -208,7 +189,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public ServiceBinding getServiceBinding() {
-        return this.serviceBinding;
+        return serviceBinding;
     }
 
     /**
@@ -232,7 +213,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public String getNome() {
-        return this.nome;
+        return nome;
     }
 
     /**
@@ -256,7 +237,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public String getDescrizione() {
-        return this.descrizione;
+        return descrizione;
     }
 
     /**
@@ -280,7 +261,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMin() {
-        return this.oraRegistrazioneMin;
+        return oraRegistrazioneMin;
     }
 
     /**
@@ -304,7 +285,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMax() {
-        return this.oraRegistrazioneMax;
+        return oraRegistrazioneMax;
     }
 
     /**
@@ -328,7 +309,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public Long getVersione() {
-        return this.versione;
+        return versione;
     }
 
     /**
@@ -352,7 +333,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public Boolean isOrCondition() {
-        return this.orCondition;
+        return orCondition;
     }
 
     /**
@@ -376,7 +357,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public BigInteger getLimit() {
-        return this.limit;
+        return limit;
     }
 
     /**
@@ -400,7 +381,7 @@ public class SearchFilterAccordoServizioParteComune {
      *     
      */
     public BigInteger getOffset() {
-        return this.offset;
+        return offset;
     }
 
     /**

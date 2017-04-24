@@ -1,22 +1,3 @@
-/*
- * OpenSPCoop - Customizable API Gateway 
- * http://www.openspcoop2.org
- * 
- * Copyright (c) 2005-2017 Link.it srl (http://link.it).
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3, as published by
- * the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
 
 package org.openspcoop2.core.registry.ws.client.accordoserviziopartespecifica.all;
 
@@ -131,7 +112,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public ConfigurazioneServizio getConfigurazioneServizio() {
-        return this.configurazioneServizio;
+        return configurazioneServizio;
     }
 
     /**
@@ -155,7 +136,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public String getStatoPackage() {
-        return this.statoPackage;
+        return statoPackage;
     }
 
     /**
@@ -179,7 +160,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public Boolean isPrivato() {
-        return this.privato;
+        return privato;
     }
 
     /**
@@ -203,7 +184,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public String getTipoSoggettoErogatore() {
-        return this.tipoSoggettoErogatore;
+        return tipoSoggettoErogatore;
     }
 
     /**
@@ -227,7 +208,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public String getNomeSoggettoErogatore() {
-        return this.nomeSoggettoErogatore;
+        return nomeSoggettoErogatore;
     }
 
     /**
@@ -251,7 +232,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public String getTipo() {
-        return this.tipo;
+        return tipo;
     }
 
     /**
@@ -275,7 +256,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public String getNome() {
-        return this.nome;
+        return nome;
     }
 
     /**
@@ -299,7 +280,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public Long getVersione() {
-        return this.versione;
+        return versione;
     }
 
     /**
@@ -323,7 +304,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public String getAccordoServizioParteComune() {
-        return this.accordoServizioParteComune;
+        return accordoServizioParteComune;
     }
 
     /**
@@ -347,7 +328,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public TipologiaServizio getTipologiaServizio() {
-        return this.tipologiaServizio;
+        return tipologiaServizio;
     }
 
     /**
@@ -371,7 +352,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public String getPortType() {
-        return this.portType;
+        return portType;
     }
 
     /**
@@ -395,7 +376,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMin() {
-        return this.oraRegistrazioneMin;
+        return oraRegistrazioneMin;
     }
 
     /**
@@ -419,7 +400,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public XMLGregorianCalendar getOraRegistrazioneMax() {
-        return this.oraRegistrazioneMax;
+        return oraRegistrazioneMax;
     }
 
     /**
@@ -443,7 +424,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public String getVersioneProtocollo() {
-        return this.versioneProtocollo;
+        return versioneProtocollo;
     }
 
     /**
@@ -467,7 +448,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public String getDescrizione() {
-        return this.descrizione;
+        return descrizione;
     }
 
     /**
@@ -491,7 +472,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public Boolean isOrCondition() {
-        return this.orCondition;
+        return orCondition;
     }
 
     /**
@@ -515,7 +496,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public BigInteger getLimit() {
-        return this.limit;
+        return limit;
     }
 
     /**
@@ -539,7 +520,7 @@ public class SearchFilterAccordoServizioParteSpecifica {
      *     
      */
     public BigInteger getOffset() {
-        return this.offset;
+        return offset;
     }
 
     /**

@@ -46,6 +46,7 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazionePartecipanti;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -55,6 +56,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Connettore;
+import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.IdSoggetto;
@@ -64,13 +66,18 @@ import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.registry.Ruolo;
+import org.openspcoop2.core.registry.RuoloSoggetto;
 import org.openspcoop2.core.registry.constants.BindingStyle;
 import org.openspcoop2.core.registry.constants.BindingUse;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
+import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.ProprietariDocumento;
 import org.openspcoop2.core.registry.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.registry.constants.RuoliDocumento;
+import org.openspcoop2.core.registry.constants.RuoloContesto;
+import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.BeanUtilities;
@@ -78,6 +85,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
@@ -156,6 +164,14 @@ public class DriverRegistroServiziDB_LIB {
 			return use.getValue();
 		}
 	}
+	public static String getValue(CredenzialeTipo tipo){
+		if(tipo==null){
+			return null;
+		}
+		else{
+			return tipo.getValue();
+		}
+	}
 	
 	public static StatoFunzionalita getEnumStatoFunzionalita(String value){
 		if(value==null){
@@ -187,6 +203,14 @@ public class DriverRegistroServiziDB_LIB {
 		}
 		else{
 			return BindingUse.toEnumConstant(value);
+		}
+	}
+	public static CredenzialeTipo getEnumCredenzialeTipo(String value){
+		if(value==null){
+			return null;
+		}
+		else{
+			return CredenzialeTipo.toEnumConstant(value);
 		}
 	}
 
@@ -381,11 +405,11 @@ public class DriverRegistroServiziDB_LIB {
 		} catch (SQLException se) {
 			throw new DriverRegistroServiziException(
 					"[DriverControlStationDB_LIB::CRUDPdd] SQLException ["
-					+ se.getMessage() + "].");
+					+ se.getMessage() + "].",se);
 		} catch (Exception se) {
 			throw new DriverRegistroServiziException(
 					"[DriverControlStationDB_LIB::CRUDPdd] Exception ["
-					+ se.getMessage() + "].");
+					+ se.getMessage() + "].",se);
 		} finally {
 
 			try {
@@ -398,6 +422,190 @@ public class DriverRegistroServiziDB_LIB {
 			}
 		}
 	}
+	
+	
+	public static void CRUDRuolo(int type, Ruolo ruolo, Connection con)
+			throws DriverRegistroServiziException {
+		if (ruolo == null) {
+			throw new DriverRegistroServiziException(
+			"[DriverRegistroServiziDB_LIB::CRUDRuolo] Parametro non valido.");
+		}
+
+		/*if ((type != CostantiDB.CREATE) && (pdd.getId() <= 0)) {
+			throw new DriverRegistroServiziException(
+			"[DriverRegistroServiziDB_LIB::CRUDRuolo] ID Ruolo non valido.");
+		}*/
+
+		String nome = ruolo.getNome();
+		String descrizione = ruolo.getDescrizione();
+		RuoloTipologia ruoloTipologia = ruolo.getTipologia();
+		RuoloContesto ruoloContesto = ruolo.getContestoUtilizzo();
+
+		String superuser = ruolo.getSuperUser();
+
+		PreparedStatement updateStmt = null;
+		String updateQuery = "";
+		PreparedStatement selectStmt = null;
+		String selectQuery = "";
+		ResultSet selectRS = null;
+		int n = 0;
+
+		try {
+
+			// preparo lo statement in base al tipo di operazione
+			switch (type) {
+			case CREATE:
+				// CREATE
+				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addInsertTable(CostantiDB.RUOLI);
+				sqlQueryObject.addInsertField("nome", "?");
+				sqlQueryObject.addInsertField("descrizione", "?");
+				sqlQueryObject.addInsertField("tipologia", "?");
+				sqlQueryObject.addInsertField("contesto_utilizzo", "?");
+				sqlQueryObject.addInsertField("superuser", "?");
+				if(ruolo.getOraRegistrazione()!=null)
+					sqlQueryObject.addInsertField("ora_registrazione", "?");
+
+				updateQuery = sqlQueryObject.createSQLInsert();
+				updateStmt = con.prepareStatement(updateQuery);
+
+				int index = 1;
+				updateStmt.setString(index++, nome);
+				updateStmt.setString(index++, descrizione);
+				updateStmt.setString(index++, ruoloTipologia!=null? ruoloTipologia.getValue() : null);
+				updateStmt.setString(index++, ruoloContesto!=null? ruoloContesto.getValue() : null);
+				updateStmt.setString(index++, superuser);
+				if(ruolo.getOraRegistrazione()!=null)
+					updateStmt.setTimestamp(index++, new Timestamp(ruolo.getOraRegistrazione().getTime()));
+
+				// eseguo lo statement
+				n = updateStmt.executeUpdate();
+
+				updateStmt.close();
+
+				DriverRegistroServiziDB_LIB.log.debug("CRUDRuolo type = " + type
+						+ " row affected =" + n);
+
+				DriverRegistroServiziDB_LIB.log.debug("CRUDRuolo CREATE : \n"
+						+ DriverRegistroServiziDB_LIB.formatSQLString(
+								updateQuery, nome, descrizione,(ruoloTipologia!=null? ruoloTipologia.getValue() : null),
+								(ruoloContesto!=null? ruoloContesto.getValue() : null),superuser));
+
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PDD);
+				sqlQueryObject.addSelectField("id");
+				sqlQueryObject.addWhereCondition("nome = ?");
+				selectQuery = sqlQueryObject.createSQLQuery();
+				selectStmt = con.prepareStatement(selectQuery);
+				selectStmt.setString(1, nome);
+
+				selectRS = selectStmt.executeQuery();
+				if (selectRS.next()) {
+					ruolo.setId(selectRS.getLong("id"));
+				}
+				selectRS.close();
+				selectStmt.close();
+				break;
+
+			case UPDATE:
+				// UPDATE
+
+				String nomeRuolo = ruolo.getOldIDRuoloForUpdate()!=null ? ruolo.getOldIDRuoloForUpdate().getNome() : null;
+				if(nomeRuolo==null || "".equals(nomeRuolo))
+					nomeRuolo = ruolo.getNome();
+				
+				IDRuolo idR = new IDRuolo(nomeRuolo);
+				long idRuolo = DBUtils.getIdRuolo(idR, con, DriverRegistroServiziDB_LIB.tipoDB);
+				if (idRuolo <= 0)
+					throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDRuolo(UPDATE)] Id Ruolo non valido.");
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addUpdateTable(CostantiDB.RUOLI);
+				sqlQueryObject.addUpdateField("nome", "?");
+				sqlQueryObject.addUpdateField("descrizione", "?");
+				sqlQueryObject.addUpdateField("tipologia", "?");
+				sqlQueryObject.addUpdateField("contesto_utilizzo", "?");
+				sqlQueryObject.addUpdateField("superuser", "?");
+				if(ruolo.getOraRegistrazione()!=null)
+					sqlQueryObject.addUpdateField("ora_registrazione", "?");
+				sqlQueryObject.addWhereCondition("id=?");
+				updateQuery = sqlQueryObject.createSQLUpdate();
+				updateStmt = con.prepareStatement(updateQuery);
+
+				index = 1;
+				updateStmt.setString(index++, nome);
+				updateStmt.setString(index++, descrizione);
+				updateStmt.setString(index++, ruoloTipologia!=null? ruoloTipologia.getValue() : null);
+				updateStmt.setString(index++, ruoloContesto!=null? ruoloContesto.getValue() : null);
+				updateStmt.setString(index++, superuser);
+				if(ruolo.getOraRegistrazione()!=null)
+					updateStmt.setTimestamp(index++, new Timestamp(ruolo.getOraRegistrazione().getTime()));
+	
+				updateStmt.setLong(index++, idRuolo);
+
+				// eseguo lo statement
+				n = updateStmt.executeUpdate();
+				updateStmt.close();
+				DriverRegistroServiziDB_LIB.log.debug("CRUDRuolo type = " + type
+						+ " row affected =" + n);
+
+				DriverRegistroServiziDB_LIB.log.debug("CRUDRuolo UPDATE : \n"
+						+ DriverRegistroServiziDB_LIB.formatSQLString(
+								updateQuery, nome, descrizione,(ruoloTipologia!=null? ruoloTipologia.getValue() : null),
+								(ruoloContesto!=null? ruoloContesto.getValue() : null),superuser,idRuolo));
+
+				break;
+
+			case DELETE:
+				// DELETE
+
+				idR = new IDRuolo(nome);
+				idRuolo = DBUtils.getIdRuolo(idR, con, DriverRegistroServiziDB_LIB.tipoDB);
+				if (idRuolo <= 0)
+					throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDRuolo(DELETE)] Id Ruolo non valido.");
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.RUOLI);
+				sqlQueryObject.addWhereCondition("id=?");
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+
+				updateStmt.setLong(1, idRuolo);
+
+				// eseguo lo statement
+				n = updateStmt.executeUpdate();
+				updateStmt.close();
+				DriverRegistroServiziDB_LIB.log.debug("CRUDRuolo type = " + type
+						+ " row affected =" + n);
+
+				DriverRegistroServiziDB_LIB.log.debug("CRUDRuolo DELETE : \n"
+						+ DriverRegistroServiziDB_LIB.formatSQLString(
+								updateQuery, idRuolo));
+
+				break;
+			}
+
+		} catch (SQLException se) {
+			throw new DriverRegistroServiziException(
+					"[DriverControlStationDB_LIB::CRUDRuolo] SQLException ["
+					+ se.getMessage() + "].",se);
+		} catch (Exception se) {
+			throw new DriverRegistroServiziException(
+					"[DriverControlStationDB_LIB::CRUDRuolo] Exception ["
+					+ se.getMessage() + "].",se);
+		} finally {
+
+			try {
+				updateStmt.close();
+				selectRS.close();
+				selectStmt.close();
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
 
 	/**
 	 * CRUD oggetto Connettore. In caso di CREATE inserisce nel db il dati del
@@ -1022,6 +1230,10 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addInsertField("privato", "?");
 				sqlQueryObject.addInsertField("profilo", "?");
 				sqlQueryObject.addInsertField("codice_ipa", "?");
+				sqlQueryObject.addInsertField("tipoauth", "?");
+				sqlQueryObject.addInsertField("utente", "?");
+				sqlQueryObject.addInsertField("password", "?");
+				sqlQueryObject.addInsertField("subject", "?");
 				if(soggetto.getOraRegistrazione()!=null)
 					sqlQueryObject.addInsertField("ora_registrazione", "?");
 				updateQuery = sqlQueryObject.createSQLInsert();
@@ -1040,21 +1252,33 @@ public class DriverRegistroServiziDB_LIB {
 
 				idConnettore = DriverRegistroServiziDB_LIB.CRUDConnettore(CostantiDB.CREATE, connettore, con);
 
-				updateStmt.setString(1, nome);
-				updateStmt.setString(2, descizione);
-				updateStmt.setString(3, identificativoPorta);
-				updateStmt.setString(4, tipo);
-				updateStmt.setLong(5, idConnettore);
-				updateStmt.setString(6, server);
-				updateStmt.setString(7, soggetto.getSuperUser());
+				int index = 1;
+				
+				updateStmt.setString(index++, nome);
+				updateStmt.setString(index++, descizione);
+				updateStmt.setString(index++, identificativoPorta);
+				updateStmt.setString(index++, tipo);
+				updateStmt.setLong(index++, idConnettore);
+				updateStmt.setString(index++, server);
+				updateStmt.setString(index++, soggetto.getSuperUser());
 				if(soggetto.getPrivato()!=null && soggetto.getPrivato())
-					updateStmt.setInt(8, 1);
+					updateStmt.setInt(index++, 1);
 				else
-					updateStmt.setInt(8, 0);
-				updateStmt.setString(9, soggetto.getVersioneProtocollo());
-				updateStmt.setString(10, codiceIPA);
+					updateStmt.setInt(index++, 0);
+				updateStmt.setString(index++, soggetto.getVersioneProtocollo());
+				updateStmt.setString(index++, codiceIPA);
+				
+				CredenzialiSoggetto credenziali = soggetto.getCredenziali();
+				updateStmt.setString(index++, (credenziali != null ? DriverRegistroServiziDB_LIB.getValue(credenziali.getTipo()) : null));
+				updateStmt.setString(index++, (credenziali != null ? credenziali.getUser() : null));
+				updateStmt.setString(index++, (credenziali != null ? credenziali.getPassword() : null));
+				String subject = null;
+				if(credenziali!=null && credenziali.getSubject()!=null && !"".equals(credenziali.getSubject()))
+					subject = credenziali.getSubject();
+				updateStmt.setString(index++, (subject != null ? Utilities.formatSubject(subject) : null));
+				
 				if(soggetto.getOraRegistrazione()!=null){
-					updateStmt.setTimestamp(11, new Timestamp(soggetto.getOraRegistrazione().getTime()));
+					updateStmt.setTimestamp(index++, new Timestamp(soggetto.getOraRegistrazione().getTime()));
 				}
 
 				// eseguo lo statement
@@ -1089,6 +1313,30 @@ public class DriverRegistroServiziDB_LIB {
 				
 				
 
+				
+				if(soggetto.getRuoli()!=null && soggetto.getRuoli().sizeRuoloList()>0){
+					for (int i = 0; i < soggetto.getRuoli().sizeRuoloList(); i++) {
+						RuoloSoggetto ruoloSoggetto = soggetto.getRuoli().getRuolo(i);
+						
+						IDRuolo idRuoloObject= new IDRuolo(ruoloSoggetto.getNome());
+						long idRuolo = DBUtils.getIdRuolo(idRuoloObject, con, DriverRegistroServiziDB_LIB.tipoDB);
+						
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.SOGGETTI_RUOLI);
+						sqlQueryObject.addInsertField("id_soggetto", "?");
+						sqlQueryObject.addInsertField("id_ruolo", "?");
+						updateQuery = sqlQueryObject.createSQLInsert();
+						updateStmt = con.prepareStatement(updateQuery);
+						
+						updateStmt.setLong(1, idSoggetto);
+						updateStmt.setLong(2, idRuolo);
+						
+						n = updateStmt.executeUpdate();
+						updateStmt.close();
+						DriverRegistroServiziDB_LIB.log.debug("CRUDSoggetto type = " + type + " row affected =" + n+" create role ["+ruoloSoggetto.getNome()+"]");
+					}
+				}
+				
 				break;
 
 			case UPDATE:
@@ -1117,6 +1365,10 @@ public class DriverRegistroServiziDB_LIB {
 				sqlQueryObject.addUpdateField("privato", "?");
 				sqlQueryObject.addUpdateField("profilo", "?");
 				sqlQueryObject.addUpdateField("codice_ipa", "?");
+				sqlQueryObject.addUpdateField("tipoauth", "?");
+				sqlQueryObject.addUpdateField("utente", "?");
+				sqlQueryObject.addUpdateField("password", "?");
+				sqlQueryObject.addUpdateField("subject", "?");
 				if(soggetto.getOraRegistrazione()!=null)
 					sqlQueryObject.addUpdateField("ora_registrazione", "?");
 				sqlQueryObject.addWhereCondition("id=?");
@@ -1130,24 +1382,35 @@ public class DriverRegistroServiziDB_LIB {
 				if (idSoggetto <= 0)
 					throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDSoggetto(UPDATE)] Id Soggetto non valido.");
 
-				updateStmt.setString(1, nome);
-				updateStmt.setString(2, descizione);
-				updateStmt.setString(3, identificativoPorta);
-				updateStmt.setString(4, tipo);
-				updateStmt.setString(5, server);
-				updateStmt.setString(6, soggetto.getSuperUser());
+				index = 1;
+				
+				updateStmt.setString(index++, nome);
+				updateStmt.setString(index++, descizione);
+				updateStmt.setString(index++, identificativoPorta);
+				updateStmt.setString(index++, tipo);
+				updateStmt.setString(index++, server);
+				updateStmt.setString(index++, soggetto.getSuperUser());
 				if(soggetto.getPrivato()!=null && soggetto.getPrivato())
-					updateStmt.setInt(7, 1);
+					updateStmt.setInt(index++, 1);
 				else
-					updateStmt.setInt(7, 0);
-				updateStmt.setString(8, soggetto.getVersioneProtocollo());
-				updateStmt.setString(9, codiceIPA);
+					updateStmt.setInt(index++, 0);
+				updateStmt.setString(index++, soggetto.getVersioneProtocollo());
+				updateStmt.setString(index++, codiceIPA);
+				
+				credenziali = soggetto.getCredenziali();
+				updateStmt.setString(index++, (credenziali != null ? DriverRegistroServiziDB_LIB.getValue(credenziali.getTipo()) : null));
+				updateStmt.setString(index++, (credenziali != null ? credenziali.getUser() : null));
+				updateStmt.setString(index++, (credenziali != null ? credenziali.getPassword() : null));
+				subject = null;
+				if(credenziali!=null && credenziali.getSubject()!=null && !"".equals(credenziali.getSubject()))
+					subject = credenziali.getSubject();
+				updateStmt.setString(index++, (subject != null ? Utilities.formatSubject(subject) : null));
+				
 				if(soggetto.getOraRegistrazione()!=null){
-					updateStmt.setTimestamp(10, new Timestamp(soggetto.getOraRegistrazione().getTime()));
-					updateStmt.setLong(11, idSoggetto);
-				}else{
-					updateStmt.setLong(10, idSoggetto);
+					updateStmt.setTimestamp(index++, new Timestamp(soggetto.getOraRegistrazione().getTime()));
 				}
+				updateStmt.setLong(index++, idSoggetto);
+
 				// eseguo lo statement
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
@@ -1161,6 +1424,41 @@ public class DriverRegistroServiziDB_LIB {
 				DriverRegistroServiziDB_LIB.log.debug("CRUDSoggetto UPDATE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(updateQuery, nome, descizione, identificativoPorta, tipo, idSoggetto));
 
 				
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.SOGGETTI_RUOLI);
+				sqlQueryObject.addWhereCondition("id_soggetto=?");
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.setLong(1, idSoggetto);
+				n = updateStmt.executeUpdate();
+				updateStmt.close();
+				DriverRegistroServiziDB_LIB.log.debug("CRUDSoggetto type = " + type + " row affected =" + n+" delete roles");
+				
+				if(soggetto.getRuoli()!=null && soggetto.getRuoli().sizeRuoloList()>0){
+					for (int i = 0; i < soggetto.getRuoli().sizeRuoloList(); i++) {
+						RuoloSoggetto ruoloSoggetto = soggetto.getRuoli().getRuolo(i);
+						
+						IDRuolo idRuoloObject= new IDRuolo(ruoloSoggetto.getNome());
+						long idRuolo = DBUtils.getIdRuolo(idRuoloObject, con, DriverRegistroServiziDB_LIB.tipoDB);
+						
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.SOGGETTI_RUOLI);
+						sqlQueryObject.addInsertField("id_soggetto", "?");
+						sqlQueryObject.addInsertField("id_ruolo", "?");
+						updateQuery = sqlQueryObject.createSQLInsert();
+						updateStmt = con.prepareStatement(updateQuery);
+						
+						updateStmt.setLong(1, idSoggetto);
+						updateStmt.setLong(2, idRuolo);
+						
+						n = updateStmt.executeUpdate();
+						updateStmt.close();
+						DriverRegistroServiziDB_LIB.log.debug("CRUDSoggetto type = " + type + " row affected =" + n+" create role ["+ruoloSoggetto.getNome()+"]");
+					}
+				}
+				
+				
 				// ProtocolProperties
 				DriverRegistroServiziDB_LIB.CRUDProtocolProperty(CostantiDB.UPDATE, soggetto.getProtocolPropertyList(), 
 						idSoggetto, ProprietariProtocolProperty.SOGGETTO, con, tipoDatabase);
@@ -1171,6 +1469,7 @@ public class DriverRegistroServiziDB_LIB {
 			case DELETE:
 								
 				// DELETE
+
 				idSoggetto = DBUtils.getIdSoggetto(nome, tipo, con, DriverRegistroServiziDB_LIB.tipoDB);
 				idConnettore = DriverRegistroServiziDB_LIB.getIdConnettoreSoggetto(nome, tipo, con);
 				if (idSoggetto <= 0)
@@ -1181,6 +1480,16 @@ public class DriverRegistroServiziDB_LIB {
 						idSoggetto, ProprietariProtocolProperty.SOGGETTO, con, tipoDatabase);
 				
 				// elimino il soggetto
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.SOGGETTI_RUOLI);
+				sqlQueryObject.addWhereCondition("id_soggetto=?");
+				updateQuery = sqlQueryObject.createSQLDelete();
+				updateStmt = con.prepareStatement(updateQuery);
+				updateStmt.setLong(1, idSoggetto);
+				n = updateStmt.executeUpdate();
+				updateStmt.close();
+				DriverRegistroServiziDB_LIB.log.debug("CRUDSoggetto type = " + type + " row affected =" + n+" delete roles");
+				
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.SOGGETTI);
 				sqlQueryObject.addWhereCondition("id=?");
@@ -1610,27 +1919,44 @@ public class DriverRegistroServiziDB_LIB {
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
 				DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoServizioParteSpecifica type = " + type + " row affected =" + n);
+				DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoServizioParteSpecifica UPDATE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(updateQuery, nomeServizio, tipoServizio, idSoggetto, idAccordoLong, servizioCorrelato, idConnettore, wsdlImplementativoErogatore, wsdlImplementativoFruitore, superUser, idServizio));
 
+				
 				// aggiorno nome connettore
 				String newNomeConnettore = "CNT_" + tipoProprietario+"/"+nomeProprietario +"_"+ tipoServizio + "/" +nomeServizio+ "/"+versioneServizio;
 				connettore.setNome(newNomeConnettore);
 				DriverRegistroServiziDB_LIB.CRUDConnettore(2, connettore, con);
 
+				
 				//aggiorno fruitori
 				//La lista dei fruitori del servizio contiene tutti e soli i fruitori di questo servizio
 				//prima vengono cancellati i fruitori esistenti e poi vengono riaggiunti
 				sizeFruitori = asps.sizeFruitoreList();
 				fruitore = null;
-				//cancellazione
-				DriverRegistroServiziDB_LIB.deleteAllFruitoriServizio(idServizio, con);
-				//creazione
+				// NON POSSO: esistono i mapping
+//				//cancellazione
+//				DriverRegistroServiziDB_LIB.deleteAllFruitoriServizio(idServizio, con);
+//				//creazione
+//				for (int i = 0; i < sizeFruitori; i++) {
+//					fruitore = asps.getFruitore(i);
+//					DriverRegistroServiziDB_LIB.CRUDAccordoServizioParteSpecificaFruitore(1, fruitore, con, servizio);
+//				}
+				List<Long> idFruitoriEsistenti = new ArrayList<>();
 				for (int i = 0; i < sizeFruitori; i++) {
 					fruitore = asps.getFruitore(i);
-					DriverRegistroServiziDB_LIB.CRUDAccordoServizioParteSpecificaFruitore(1, fruitore, con, asps);
+					
+					long idFruizione = DBUtils.getIdFruizioneServizio(IDServizioFactory.getInstance().getIDServizioFromValues(oldTipoServizio, oldNomeServizio, 
+							new IDSoggetto(oldTipoSoggetto, oldNomeSoggetto), oldVersioneServizio), 
+							new IDSoggetto(fruitore.getTipo(), fruitore.getNome()), con, tipoDatabase);
+					int typeFruitore = 1; // create
+					if(idFruizione>0){
+						typeFruitore = 2; // update
+					}
+					DriverRegistroServiziDB_LIB.CRUDAccordoServizioParteSpecificaFruitore(typeFruitore, fruitore, con, asps);
+					idFruitoriEsistenti.add(DBUtils.getIdSoggetto(fruitore.getNome(), fruitore.getTipo(), con, tipoDatabase));
 				}
-
-				DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoServizioParteSpecifica UPDATE : \n" + DriverRegistroServiziDB_LIB.formatSQLString(updateQuery, nomeServizio, tipoServizio, idSoggetto, idAccordoLong, servizioCorrelato, idConnettore, wsdlImplementativoErogatore, wsdlImplementativoFruitore, superUser, idServizio));
-
+				DriverRegistroServiziDB_LIB.deleteAllFruitoriServizio(idServizio, idFruitoriEsistenti, con);
+	
 
 				//aggiorno azioni
 				//La lista delle azioni del servizio contiene tutti e soli le azioni di questo servizio
@@ -3314,12 +3640,13 @@ public class DriverRegistroServiziDB_LIB {
 	 * @param con
 	 * @throws DriverRegistroServiziException
 	 */
-	private static void deleteAllFruitoriServizio(long idServizio, Connection con) throws DriverRegistroServiziException {
+	private static void deleteAllFruitoriServizio(long idServizio, List<Long> idFruitoriEsistenti, Connection con) throws DriverRegistroServiziException {
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 		try {
 
-			ArrayList<Long> listaConnettori = new ArrayList<Long>();
+			ArrayList<Long> listaFruizioniDaEliminare = new ArrayList<Long>();
+			ArrayList<Long> listaFruizioniDaEliminare_Connettori = new ArrayList<Long>();
 
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
@@ -3332,47 +3659,67 @@ public class DriverRegistroServiziDB_LIB {
 			rs=stm.executeQuery();
 			//recupero i connettori da cancellare
 			while(rs.next()){
-				listaConnettori.add(rs.getLong("id_connettore"));
+				long idSoggettoFruitore = rs.getLong("id_soggetto");
+				boolean find = false;
+				for (int i = 0; i < idFruitoriEsistenti.size(); i++) {
+					if(idSoggettoFruitore == idFruitoriEsistenti.get(i)){
+						find = true;
+						break;
+					}
+				}
+				if(!find){
+					listaFruizioniDaEliminare.add(rs.getLong("id"));
+					listaFruizioniDaEliminare_Connettori.add(rs.getLong("id_connettore"));
+				}
 			}
 			rs.close();
 			stm.close();
 
-			//elimino prima le entry nella tab servizi_fruitori per rispettare le dipendenze
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
-			sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_FRUITORI);
-			sqlQueryObject.addWhereCondition("id_servizio=?");
-			String sqlQuery = sqlQueryObject.createSQLDelete();
-			stm = con.prepareStatement(sqlQuery);
-			stm.setLong(1, idServizio);
-			int n=stm.executeUpdate();
-			stm.close();
-			DriverRegistroServiziDB_LIB.log.debug("Cancellati "+n+" Fruitori del servizio "+idServizio);
-
-			//cancello adesso i connettori custom
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
-			sqlQueryObject.addDeleteTable(CostantiDB.CONNETTORI_CUSTOM);
-			sqlQueryObject.addWhereCondition("id_connettore=?");
-			sqlQuery = sqlQueryObject.createSQLDelete();
-			stm = con.prepareStatement(sqlQuery);
-			for (Long idConnettore : listaConnettori) {
-				stm.setLong(1, idConnettore);
-				stm.executeUpdate();
-			}
-			stm.close();
-			DriverRegistroServiziDB_LIB.log.debug("Cancellati connettori "+listaConnettori.toString()+" associati ai Fruitori del servizio "+idServizio);
+			for (int i = 0; i < listaFruizioniDaEliminare.size(); i++) {
 			
-			//cancello adesso i connettori
-			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
-			sqlQueryObject.addDeleteTable(CostantiDB.CONNETTORI);
-			sqlQueryObject.addWhereCondition("id=?");
-			sqlQuery = sqlQueryObject.createSQLDelete();
-			stm = con.prepareStatement(sqlQuery);
-			for (Long idConnettore : listaConnettori) {
+				long idFruizione = listaFruizioniDaEliminare.get(i);
+				
+				//elimino prima le entry nella tab servizi_fruitori per rispettare le dipendenze
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_FRUITORI);
+				sqlQueryObject.addWhereCondition("id=?");
+				String sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idFruizione);
+				int n=stm.executeUpdate();
+				stm.close();
+				DriverRegistroServiziDB_LIB.log.debug("Cancellata (row:"+n+") fruizione con id:"+idFruizione);
+	
+			}
+			
+			for (int i = 0; i < listaFruizioniDaEliminare_Connettori.size(); i++) {
+				
+				long idFruizione = listaFruizioniDaEliminare.get(i);
+				long idConnettore = listaFruizioniDaEliminare_Connettori.get(i);
+				
+				//cancello adesso i connettori custom
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.CONNETTORI_CUSTOM);
+				sqlQueryObject.addWhereCondition("id_connettore=?");
+				String sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
 				stm.setLong(1, idConnettore);
 				stm.executeUpdate();
+				stm.close();
+				DriverRegistroServiziDB_LIB.log.debug("Cancellato connettore custom associato al connettore con id:"+idConnettore+" associato alla fruizione con id:"+idFruizione);
+				
+				//cancello adesso i connettori
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.CONNETTORI);
+				sqlQueryObject.addWhereCondition("id=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idConnettore);
+				stm.executeUpdate();
+				stm.close();
+				DriverRegistroServiziDB_LIB.log.debug("Cancellati connettoro con id:"+idConnettore+" associato alla fruizione con id:"+idFruizione);
+				
 			}
-			stm.close();
-			DriverRegistroServiziDB_LIB.log.debug("Cancellati connettori "+listaConnettori.toString()+" associati ai Fruitori del servizio "+idServizio);
 
 
 

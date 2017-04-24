@@ -48,10 +48,11 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
         <listener-class> org.springframework.web.context.ContextLoaderListener </listener-class>
     </listener>
 
-    <!-- OpenSPCoop -->
+    <!-- start OpenSPCoop2Startup -->
     <listener>
         <listener-class> org.openspcoop2.pdd.services.OpenSPCoop2Startup </listener-class>
     </listener>
+    <!-- end OpenSPCoop2Startup -->
 
 
     <!-- Servlet: CXF -->
@@ -151,6 +152,41 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
             </web-resource-collection>
     </security-constraint>
     -->
+
+
+
+    <!-- start Security Constraint Authentication Container
+    <security-constraint>
+            <web-resource-collection>
+                    <web-resource-name>AuthenticationContainer</web-resource-name>
+                    <url-pattern>/*</url-pattern>
+            </web-resource-collection>
+            <auth-constraint>
+                    <role-name>*</role-name>
+            </auth-constraint>
+    </security-constraint>
+
+    <security-constraint>
+            <web-resource-collection>
+                    <web-resource-name>AuthenticationContainer</web-resource-name>
+                    <url-pattern>/IntegrationManager/PD</url-pattern>
+		    <url-pattern>/IntegrationManager/MessageBox</url-pattern>
+                    <url-pattern>/spcoop/IntegrationManager/PD</url-pattern>
+                    <url-pattern>/spcoop/IntegrationManager/MessageBox</url-pattern>
+                    <url-pattern>/proxy/IntegrationManager/PD</url-pattern>
+                    <url-pattern>/proxy/IntegrationManager/MessageBox</url-pattern>
+		    <http-method>GET</http-method>
+            </web-resource-collection>
+    </security-constraint>
+
+    <security-role>
+	<role-name>*</role-name>
+    </security-role>
+
+    <login-config>
+	<auth-method>BASIC</auth-method>
+    </login-config>
+    end Security Constraint Authentication Container -->
 
 
 </web-app>
