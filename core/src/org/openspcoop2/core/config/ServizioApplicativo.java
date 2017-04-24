@@ -28,8 +28,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 
 /** <p>Java class for servizio-applicativo complex type.
@@ -39,7 +37,6 @@ import java.util.List;
  * <pre>
  * &lt;complexType name="servizio-applicativo">
  * 		&lt;sequence>
- * 			&lt;element name="ruolo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="invocazione-porta" type="{http://www.openspcoop2.org/core/config}invocazione-porta" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="invocazione-servizio" type="{http://www.openspcoop2.org/core/config}invocazione-servizio" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="risposta-asincrona" type="{http://www.openspcoop2.org/core/config}risposta-asincrona" minOccurs="0" maxOccurs="1"/>
@@ -64,7 +61,6 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "servizio-applicativo", 
   propOrder = {
-  	"ruolo",
   	"invocazionePorta",
   	"invocazioneServizio",
   	"rispostaAsincrona"
@@ -97,30 +93,6 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
 
   public void setOldIDServizioApplicativoForUpdate(IDServizioApplicativo oldIDServizioApplicativoForUpdate) {
     this.oldIDServizioApplicativoForUpdate=oldIDServizioApplicativoForUpdate;
-  }
-
-  public void addRuolo(java.lang.String ruolo) {
-    this.ruolo.add(ruolo);
-  }
-
-  public java.lang.String getRuolo(int index) {
-    return this.ruolo.get( index );
-  }
-
-  public java.lang.String removeRuolo(int index) {
-    return this.ruolo.remove( index );
-  }
-
-  public List<java.lang.String> getRuoloList() {
-    return this.ruolo;
-  }
-
-  public void setRuoloList(List<java.lang.String> ruolo) {
-    this.ruolo=ruolo;
-  }
-
-  public int sizeRuoloList() {
-    return this.ruolo.size();
   }
 
   public InvocazionePorta getInvocazionePorta() {
@@ -232,37 +204,6 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
 
   @javax.xml.bind.annotation.XmlTransient
   protected IDServizioApplicativo oldIDServizioApplicativoForUpdate;
-
-  @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="ruolo",required=true,nillable=false)
-  protected List<java.lang.String> ruolo = new ArrayList<java.lang.String>();
-
-  /**
-   * @deprecated Use method getRuoloList
-   * @return List<java.lang.String>
-  */
-  @Deprecated
-  public List<java.lang.String> getRuolo() {
-  	return this.ruolo;
-  }
-
-  /**
-   * @deprecated Use method setRuoloList
-   * @param ruolo List<java.lang.String>
-  */
-  @Deprecated
-  public void setRuolo(List<java.lang.String> ruolo) {
-  	this.ruolo=ruolo;
-  }
-
-  /**
-   * @deprecated Use method sizeRuoloList
-   * @return lunghezza della lista
-  */
-  @Deprecated
-  public int sizeRuolo() {
-  	return this.ruolo.size();
-  }
 
   @XmlElement(name="invocazione-porta",required=false,nillable=false)
   protected InvocazionePorta invocazionePorta;

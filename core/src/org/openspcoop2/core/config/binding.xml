@@ -162,9 +162,6 @@
   </mapping>
   <mapping name="servizio-applicativo" class="org.openspcoop2.core.config.ServizioApplicativo">
     <namespace uri="http://www.openspcoop2.org/core/config" default="elements"/>
-    <collection field="ruolo" create-type="java.util.ArrayList">
-      <value name="ruolo" type="java.lang.String"/>
-    </collection>
     <structure field="invocazionePorta" usage="optional" map-as="org.openspcoop2.core.config.InvocazionePorta"/>
     <structure field="invocazioneServizio" usage="optional" map-as="org.openspcoop2.core.config.InvocazioneServizio"/>
     <structure field="rispostaAsincrona" usage="optional" map-as="org.openspcoop2.core.config.RispostaAsincrona"/>

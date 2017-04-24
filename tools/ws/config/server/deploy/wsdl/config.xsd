@@ -268,9 +268,6 @@
 	<xsd:complexType name="servizio-applicativo">
 		
 		<xsd:sequence>
-			<!-- start-extensions -->
-			<xsd:element maxOccurs="unbounded" minOccurs="0" name="ruolo" type="xsd:string"/>
-			<!-- end-extensions -->
 			<xsd:element maxOccurs="1" minOccurs="0" name="invocazione-porta" type="invocazione-porta"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="invocazione-servizio" type="invocazione-servizio"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="risposta-asincrona" type="risposta-asincrona"/>

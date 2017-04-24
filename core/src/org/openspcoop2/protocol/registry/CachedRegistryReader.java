@@ -38,6 +38,7 @@ import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.FiltroRicercaProtocolProperty;
@@ -110,10 +111,10 @@ public class CachedRegistryReader implements IRegistryReader {
 			FiltroRicerca filtroDriver = new FiltroRicerca();
 			if(operativo!=null){
 				if(operativo){
-					filtroDriver.setTipo("operativo");
+					filtroDriver.setTipo(PddTipologia.OPERATIVO.toString());
 				}
 				else{
-					filtroDriver.setTipo("esterno");
+					filtroDriver.setTipo(PddTipologia.ESTERNO.toString());
 				}
 			}
 			return this.registroServiziManager.getAllIdPorteDominio(filtroDriver, null);

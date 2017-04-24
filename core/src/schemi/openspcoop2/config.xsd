@@ -571,9 +571,6 @@
 			</xsd:appinfo>
 		</xsd:annotation>
 		<xsd:sequence>
-			<!-- start-extensions -->
-			<xsd:element name="ruolo" type="xsd:string" maxOccurs="unbounded" minOccurs="0" />
-			<!-- end-extensions -->
 			<xsd:element name="invocazione-porta" type="invocazione-porta" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="invocazione-servizio" type="invocazione-servizio" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="risposta-asincrona" type="risposta-asincrona" maxOccurs="1" minOccurs="0" />

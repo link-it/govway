@@ -40,7 +40,6 @@ public class ServizioApplicativoModel extends AbstractModel<ServizioApplicativo>
 	
 		super();
 	
-		this.RUOLO = new Field("ruolo",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.INVOCAZIONE_PORTA = new org.openspcoop2.core.config.model.InvocazionePortaModel(new Field("invocazione-porta",org.openspcoop2.core.config.InvocazionePorta.class,"servizio-applicativo",ServizioApplicativo.class));
 		this.INVOCAZIONE_SERVIZIO = new org.openspcoop2.core.config.model.InvocazioneServizioModel(new Field("invocazione-servizio",org.openspcoop2.core.config.InvocazioneServizio.class,"servizio-applicativo",ServizioApplicativo.class));
 		this.RISPOSTA_ASINCRONA = new org.openspcoop2.core.config.model.RispostaAsincronaModel(new Field("risposta-asincrona",org.openspcoop2.core.config.RispostaAsincrona.class,"servizio-applicativo",ServizioApplicativo.class));
@@ -59,7 +58,6 @@ public class ServizioApplicativoModel extends AbstractModel<ServizioApplicativo>
 	
 		super(father);
 	
-		this.RUOLO = new ComplexField(father,"ruolo",java.lang.String.class,"servizio-applicativo",ServizioApplicativo.class);
 		this.INVOCAZIONE_PORTA = new org.openspcoop2.core.config.model.InvocazionePortaModel(new ComplexField(father,"invocazione-porta",org.openspcoop2.core.config.InvocazionePorta.class,"servizio-applicativo",ServizioApplicativo.class));
 		this.INVOCAZIONE_SERVIZIO = new org.openspcoop2.core.config.model.InvocazioneServizioModel(new ComplexField(father,"invocazione-servizio",org.openspcoop2.core.config.InvocazioneServizio.class,"servizio-applicativo",ServizioApplicativo.class));
 		this.RISPOSTA_ASINCRONA = new org.openspcoop2.core.config.model.RispostaAsincronaModel(new ComplexField(father,"risposta-asincrona",org.openspcoop2.core.config.RispostaAsincrona.class,"servizio-applicativo",ServizioApplicativo.class));
@@ -76,8 +74,6 @@ public class ServizioApplicativoModel extends AbstractModel<ServizioApplicativo>
 	
 	
 
-	public IField RUOLO = null;
-	 
 	public org.openspcoop2.core.config.model.InvocazionePortaModel INVOCAZIONE_PORTA = null;
 	 
 	public org.openspcoop2.core.config.model.InvocazioneServizioModel INVOCAZIONE_SERVIZIO = null;
