@@ -726,7 +726,7 @@ public class ValidazioneSemantica {
 		if(pd.getAutenticazione()!=null){
 			autenticazione = pd.getAutenticazione();
 			if(this.tipoAutenticazionePortaDelegata.contains(pd.getAutenticazione())==false){
-				this.errori.add("Alla porta delegata "+idPortaDelegata+" e' stato associato un processo di autenticazione non valido; tipi conosciuti: "+this.getTipoAutenticazionePortaDelegata()); 
+				this.errori.add("Alla porta delegata "+idPortaDelegata+" e' stato associato un processo di autenticazione ["+pd.getAutenticazione()+"] non valido; tipi conosciuti: "+this.getTipoAutenticazionePortaDelegata()); 
 			}
 		}
 		
@@ -735,7 +735,7 @@ public class ValidazioneSemantica {
 		if(pd.getAutorizzazione()!=null){
 			autorizzazione = pd.getAutorizzazione();
 			if(this.tipoAutorizzazionePortaDelegata.contains(pd.getAutorizzazione())==false){
-				this.errori.add("Alla porta delegata "+idPortaDelegata+" e' stato associato un processo di autorizzazione non valido; tipi conosciuti: "+this.getTipoAutorizzazionePortaDelegata()); 
+				this.errori.add("Alla porta delegata "+idPortaDelegata+" e' stato associato un processo di autorizzazione ["+pd.getAutorizzazione()+"] non valido; tipi conosciuti: "+this.getTipoAutorizzazionePortaDelegata()); 
 			}
 		}
 		
@@ -775,7 +775,7 @@ public class ValidazioneSemantica {
 		// Autorizzazione Contenuto
 		if(pd.getAutorizzazioneContenuto()!=null){
 			if(this.tipoAutorizzazioneContenutoPortaDelegata.contains(pd.getAutorizzazioneContenuto())==false){
-				this.errori.add("Alla porta delegata "+idPortaDelegata+" e' stato associato un processo di autorizzazione contenuto non valido; tipi conosciuti: "+this.getTipoAutorizzazioneContenutoPortaDelegata()); 
+				this.errori.add("Alla porta delegata "+idPortaDelegata+" e' stato associato un processo di autorizzazione contenuto ["+pd.getAutorizzazioneContenuto()+"] non valido; tipi conosciuti: "+this.getTipoAutorizzazioneContenutoPortaDelegata()); 
 			}
 		}
 		
@@ -1106,7 +1106,7 @@ public class ValidazioneSemantica {
 		if(pa.getAutenticazione()!=null){
 			autenticazione = pa.getAutenticazione();
 			if(this.tipoAutenticazionePortaApplicativa.contains(pa.getAutenticazione())==false){
-				this.errori.add("Alla porta applicativa "+idPortaApplicativa+" e' stato associato un processo di autenticazione non valido; tipi conosciuti: "+this.getTipoAutenticazionePortaApplicativa()); 
+				this.errori.add("Alla porta applicativa "+idPortaApplicativa+" e' stato associato un processo di autenticazione ["+pa.getAutenticazione()+"] non valido; tipi conosciuti: "+this.getTipoAutenticazionePortaApplicativa()); 
 			}
 		}
 		
@@ -1114,8 +1114,8 @@ public class ValidazioneSemantica {
 		String autorizzazione = CostantiConfigurazione.AUTORIZZAZIONE_AUTHENTICATED;
 		if(pa.getAutorizzazione()!=null){
 			autorizzazione = pa.getAutorizzazione();
-			if(this.tipoAutenticazionePortaApplicativa.contains(pa.getAutorizzazione())==false){
-				this.errori.add("Alla porta applicativa "+idPortaApplicativa+" e' stato associato un processo di autorizzazione non valido; tipi conosciuti: "+this.getTipoAutorizzazionePortaApplicativa()); 
+			if(this.tipoAutorizzazionePortaApplicativa.contains(pa.getAutorizzazione())==false){
+				this.errori.add("Alla porta applicativa "+idPortaApplicativa+" e' stato associato un processo di autorizzazione ["+pa.getAutorizzazione()+"] non valido; tipi conosciuti: "+this.getTipoAutorizzazionePortaApplicativa()); 
 			}
 		}
 		
@@ -1155,7 +1155,7 @@ public class ValidazioneSemantica {
 		// Autorizzazione Contenuto
 		if(pa.getAutorizzazioneContenuto()!=null){
 			if(this.tipoAutorizzazioneContenutoPortaApplicativa.contains(pa.getAutorizzazioneContenuto())==false){
-				this.errori.add("Alla porta applicativa "+idPortaApplicativa+" e' stato associato un processo di autorizzazione contenuto non valido; tipi conosciuti: "+this.getTipoAutorizzazioneContenutoPortaApplicativa()); 
+				this.errori.add("Alla porta applicativa "+idPortaApplicativa+" e' stato associato un processo di autorizzazione contenuto ["+pa.getAutorizzazioneContenuto()+"] non valido; tipi conosciuti: "+this.getTipoAutorizzazioneContenutoPortaApplicativa()); 
 			}
 		}
 		
