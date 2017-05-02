@@ -14,7 +14,7 @@
 		<c:set var="disabled" value="#{field.disabled}" />
 	</c:if>
 
-	<op2web:prop label="#{field.label}" rendered="#{field.rendered}">
+	<op2web:prop label="#{field.label}" rendered="#{field.rendered}" styleClass="#{field.labelStyleClass}">
 		<h:inputTextarea id="input_#{field.name}" value="#{field.value}"
 			style="#{field.style}" disabled="#{field.disabled}" rows="#{field.rows}"
 			cols="#{field.columns}" styleClass="#{field.styleClass}" />

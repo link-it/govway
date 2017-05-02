@@ -139,7 +139,9 @@ public interface FormField<T> extends Serializable{
 	
 	public String getStyleClass();
 	public void setStyleClass(String styleClass);
-
+	
+	public String getLabelStyleClass();
+	public void setLabelStyleClass(String labelStyleClass);
 
 	public int getWidth();
 	public void setWidth(int width);

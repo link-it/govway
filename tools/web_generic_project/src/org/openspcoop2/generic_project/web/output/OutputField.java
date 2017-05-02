@@ -98,4 +98,8 @@ public interface OutputField<T> extends Serializable{
 	public String getTableColumnStyleClass();
 	public void setTableColumnStyleClass(String tableColumnStyleClass);
 
+	// Classe/i CSS per la label inserita nell'header della colonna della tabella
+	public String getTableHeaderLabelStyleClass();
+	public void setTableHeaderLabelStyleClass(String tableHeaderLabelStyleClass);
+
 }

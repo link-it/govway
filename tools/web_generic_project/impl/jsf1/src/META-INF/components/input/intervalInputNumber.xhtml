@@ -24,7 +24,7 @@
 	</c:if>
 
 	<c:if test="#{empty field.converterType}">
-		<op2web:inlineProp labelEsterna="#{field.label}"
+		<op2web:inlineProp labelEsterna="#{field.label}" styleClassEsterna="#{field.labelStyleClass}"
 			rendered="#{field.rendered}">
 			<ui:define name="prop1">
 				<op2web:prop label="#{commonsMsg['form.component.da']}"
@@ -47,7 +47,7 @@
 
 	<c:if
 		test="#{not empty field.converterType and empty field.currencyCode and empty field.currencySymbol}">
-		<op2web:inlineProp labelEsterna="#{field.label}"
+		<op2web:inlineProp labelEsterna="#{field.label}" styleClassEsterna="#{field.labelStyleClass}"
 			rendered="#{field.rendered}">
 			<ui:define name="prop1">
 				<op2web:prop label="#{commonsMsg['form.component.da']}"
@@ -73,7 +73,7 @@
 
 	<c:if
 		test="#{not empty field.converterType and not empty field.currencySymbol}">
-		<op2web:inlineProp labelEsterna="#{field.label}"
+		<op2web:inlineProp labelEsterna="#{field.label}" styleClassEsterna="#{field.labelStyleClass}"
 			rendered="#{field.rendered}">
 			<ui:define name="prop1">
 				<op2web:prop label="#{commonsMsg['form.component.da']}"
@@ -101,7 +101,7 @@
 
 	<c:if
 		test="#{not empty field.converterType and not empty field.currencyCode}">
-		<op2web:inlineProp labelEsterna="#{field.label}"
+		<op2web:inlineProp labelEsterna="#{field.label}" styleClassEsterna="#{field.labelStyleClass}"
 			rendered="#{field.rendered}">
 			<ui:define name="prop1">
 				<op2web:prop label="#{commonsMsg['form.component.da']}"

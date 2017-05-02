@@ -22,7 +22,7 @@
 		<c:set var="insideRightPropStyleClass" value="insideRightProp" />
 	</c:if>
 
-	<op2web:inlineProp labelEsterna="#{field.label}" rendered="#{field.rendered}">
+	<op2web:inlineProp labelEsterna="#{field.label}" rendered="#{field.rendered}" styleClassEsterna="#{field.labelStyleClass}">
 
 		<ui:define name="prop1">
 			<op2web:prop label="#{commonsMsg['form.component.da']}" styleClass="insideLeftProp"

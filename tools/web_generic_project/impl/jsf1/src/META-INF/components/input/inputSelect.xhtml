@@ -13,7 +13,7 @@
 	</c:if>
 
 	<op2web:prop label="#{field.label}" required="#{field.required == 'true'}"
-		rendered="#{field.rendered == 'true'}">
+		styleClass="#{field.labelStyleClass}" rendered="#{field.rendered == 'true'}">
 
 		<c:if
 			test="#{empty field.fieldsToUpdate}">

@@ -69,9 +69,12 @@ public abstract class BaseOutputField<T> implements OutputField<T> {
 	protected String styleClass = null;
 
 	protected String tableColumnStyleClass = null;
+	
+	protected String tableHeaderLabelStyleClass = null;
 
 	public BaseOutputField(){
 		this.labelStyleClass ="outputFieldLabel";
+		this.tableHeaderLabelStyleClass = "columnHeaderLabel";
 		this.rendered = true;
 		this.columnClasses = ""; //"gridContent verticalAlignTop";
 		this.styleClass = "";
@@ -281,4 +284,16 @@ public abstract class BaseOutputField<T> implements OutputField<T> {
 	public void setId(String id) {
 		this.id  =id;
 	}
+
+	@Override
+	public String getTableHeaderLabelStyleClass() {
+		return this.tableHeaderLabelStyleClass;
+	}
+
+	@Override
+	public void setTableHeaderLabelStyleClass(String tableHeaderLabelStyleClass) {
+		this.tableHeaderLabelStyleClass = tableHeaderLabelStyleClass;
+	}
+	
+	
 }

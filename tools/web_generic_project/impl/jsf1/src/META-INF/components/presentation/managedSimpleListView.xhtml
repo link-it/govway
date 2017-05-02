@@ -59,6 +59,10 @@
 	<c:if test="#{empty footerClass}">
 		<c:set var="footerClass" value="#{table.footerClass}" />
 	</c:if>
+	
+	<c:if test="#{empty tablePanelStyleClass}">
+		<c:set var="tablePanelStyleClass" value="#{table.tablePanelStyleClass}" />
+	</c:if>
 
 	<c:if test="#{empty width}">
 		<c:set var="width" value="100%" />
@@ -74,7 +78,7 @@
 		<c:set var="itemMetadata" value="#{table.metadata}" />
 	</c:if>
 	
-	<a4j:outputPanel id="#{id}" layout="block" rendered="#{rendered}">
+	<a4j:outputPanel id="#{id}" layout="block" rendered="#{rendered}" styleClass="#{tablePanelStyleClass}">
 		<h:form>
 			<rich:dataTable value="#{value}" var="item" rows="#{rowsToDisplay}"
 				id="#{id}_tbl" onRowMouseOver="activeRow(this)"

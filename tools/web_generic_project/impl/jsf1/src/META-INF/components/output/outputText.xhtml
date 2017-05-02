@@ -36,7 +36,7 @@
 		</h:panelGrid>
 	</c:if>
 	
-	<c:if test="#{insideGroup == 'true'}">
+	<c:if test="#{insideGroup == 'true' and field.rendered}">
 			<h:outputText id="out_#{id}_Label" styleClass="#{field.labelStyleClass}"
 				value="#{field.label}:" rendered="#{!empty field.label}" />
 

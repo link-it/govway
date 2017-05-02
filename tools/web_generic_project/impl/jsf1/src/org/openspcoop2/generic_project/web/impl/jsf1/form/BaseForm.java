@@ -52,6 +52,10 @@ public abstract class BaseForm implements Form {
 	protected String nome = null;
 
 	protected boolean closable = false;
+	
+	protected boolean opened = false;
+	
+	protected String switchType= "client";
 
 	protected String id = null;
 
@@ -258,4 +262,22 @@ public abstract class BaseForm implements Form {
 	public void setShowNotaCampiObbligatori(boolean showNotaCampiObbligatori) {
 		this.showNotaCampiObbligatori = showNotaCampiObbligatori;
 	}
+
+	public boolean isOpened() {
+		return this.opened;
+	}
+
+	public void setOpened(boolean opened) {
+		this.opened = opened;
+	}
+
+	public String getSwitchType() {
+		return this.switchType;
+	}
+
+	public void setSwitchType(String switchType) {
+		this.switchType = switchType;
+	}
+	
+	
 }

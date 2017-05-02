@@ -42,10 +42,22 @@ public class DateTimeImpl extends BaseFormField<Date> implements DateTime {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private String buttonIcon = "";
+	
 	public DateTimeImpl(){
 		super();
 
 		this.setType(FieldType.DATE);
 		this.setPattern("dd/MM/yyyy HH:mm:ss");
+		this.setButtonIcon("/images/tema_link/calendar.png"); 
 	}
+
+	public String getButtonIcon() {
+		return this.buttonIcon;
+	}
+
+	public void setButtonIcon(String buttonIcon) {
+		this.buttonIcon = buttonIcon;
+	}
+	
 }

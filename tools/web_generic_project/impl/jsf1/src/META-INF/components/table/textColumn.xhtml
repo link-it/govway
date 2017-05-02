@@ -11,7 +11,7 @@
 	
 	<rich:column styleClass="#{fieldDescriptor.tableColumnStyleClass}">
 		<f:facet name="header">
-			<h:outputText value="#{fieldDescriptor.label}" rendered="#{not empty fieldDescriptor.label}" styleClass="#{fieldDescriptor.labelStyleClass}"/>
+			<h:outputText value="#{fieldDescriptor.label}" rendered="#{not empty fieldDescriptor.label}" styleClass="#{fieldDescriptor.tableHeaderLabelStyleClass}"/>
 		</f:facet>
 
 						<h:outputText id="#{id}NoValue" value="--" styleClass="#{fieldDescriptor.valueStyleClass}"

@@ -22,7 +22,6 @@ package org.openspcoop2.generic_project.web.impl.jsf1.input.factory.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.slf4j.Logger;
 import org.openspcoop2.generic_project.web.factory.FactoryException;
 import org.openspcoop2.generic_project.web.factory.WebGenericProjectFactory;
 import org.openspcoop2.generic_project.web.form.Form;
@@ -60,6 +59,7 @@ import org.openspcoop2.generic_project.web.input.Spinner;
 import org.openspcoop2.generic_project.web.input.Text;
 import org.openspcoop2.generic_project.web.input.TextArea;
 import org.openspcoop2.generic_project.web.input.factory.InputFieldFactory;
+import org.slf4j.Logger;
 
 /***
  * 
@@ -79,7 +79,6 @@ public class Jsf1InputFieldFactoryImpl implements InputFieldFactory{
 	private static final long serialVersionUID = 1L;
 
 
-	@SuppressWarnings("unused")
 	private transient WebGenericProjectFactory webGenericProjectFactory;
 	@SuppressWarnings("unused")
 	private transient Logger log = null;
@@ -115,6 +114,9 @@ public class Jsf1InputFieldFactoryImpl implements InputFieldFactory{
 		input.setRequired(required);
 		input.setName(name);
 		input.setInterval(false);
+		input.setFontName(this.webGenericProjectFactory.getFontName());
+		input.setFontSize(this.webGenericProjectFactory.getFontSize());
+		input.setFontStyle(this.webGenericProjectFactory.getFontStyle());
 
 		if(form != null)
 			form.setField(input);
@@ -140,6 +142,9 @@ public class Jsf1InputFieldFactoryImpl implements InputFieldFactory{
 		input.setRequired(required);
 		input.setName(name);
 		input.setInterval(true);
+		input.setFontName(this.webGenericProjectFactory.getFontName());
+		input.setFontSize(this.webGenericProjectFactory.getFontSize());
+		input.setFontStyle(this.webGenericProjectFactory.getFontStyle());
 
 		if(form != null)
 			form.setField(input);
@@ -175,6 +180,9 @@ public class Jsf1InputFieldFactoryImpl implements InputFieldFactory{
 		input.setRequired(required);
 		input.setName(name);
 		input.setInterval(false);
+		input.setFontName(this.webGenericProjectFactory.getFontName());
+		input.setFontSize(this.webGenericProjectFactory.getFontSize());
+		input.setFontStyle(this.webGenericProjectFactory.getFontStyle());
 
 		if(form != null)
 			form.setField(input);
@@ -211,6 +219,9 @@ public class Jsf1InputFieldFactoryImpl implements InputFieldFactory{
 		input.setRequired(required);
 		input.setName(name);
 		input.setInterval(false);
+		input.setFontName(this.webGenericProjectFactory.getFontName());
+		input.setFontSize(this.webGenericProjectFactory.getFontSize());
+		input.setFontStyle(this.webGenericProjectFactory.getFontStyle());
 
 		if(form != null)
 			form.setField(input);
@@ -246,6 +257,9 @@ public class Jsf1InputFieldFactoryImpl implements InputFieldFactory{
 		input.setRequired(required);
 		input.setName(name);
 		input.setInterval(false);
+		input.setFontName(this.webGenericProjectFactory.getFontName());
+		input.setFontSize(this.webGenericProjectFactory.getFontSize());
+		input.setFontStyle(this.webGenericProjectFactory.getFontStyle());
 
 		if(form != null)
 			form.setField(input);
@@ -296,6 +310,9 @@ public class Jsf1InputFieldFactoryImpl implements InputFieldFactory{
 		input.setName(name);
 		input.setInterval(false);
 		input.setPattern(pattern);
+		input.setFontName(this.webGenericProjectFactory.getFontName());
+		input.setFontSize(this.webGenericProjectFactory.getFontSize());
+		input.setFontStyle(this.webGenericProjectFactory.getFontStyle());
 
 		if(form != null)
 			form.setField(input);
@@ -335,6 +352,9 @@ public class Jsf1InputFieldFactoryImpl implements InputFieldFactory{
 		input.setName(name);
 		input.setInterval(true);
 		input.setPattern(pattern);
+		input.setFontName(this.webGenericProjectFactory.getFontName());
+		input.setFontSize(this.webGenericProjectFactory.getFontSize());
+		input.setFontStyle(this.webGenericProjectFactory.getFontStyle());
 
 		if(form != null)
 			form.setField(input);
@@ -370,6 +390,9 @@ public class Jsf1InputFieldFactoryImpl implements InputFieldFactory{
 		input.setRequired(required);
 		input.setName(name);
 		input.setInterval(false);
+		input.setFontName(this.webGenericProjectFactory.getFontName());
+		input.setFontSize(this.webGenericProjectFactory.getFontSize());
+		input.setFontStyle(this.webGenericProjectFactory.getFontStyle());
 
 		if(form != null)
 			form.setField(input);
@@ -395,6 +418,9 @@ public class Jsf1InputFieldFactoryImpl implements InputFieldFactory{
 		input.setRequired(required);
 		input.setName(name);
 		input.setInterval(true);
+		input.setFontName(this.webGenericProjectFactory.getFontName());
+		input.setFontSize(this.webGenericProjectFactory.getFontSize());
+		input.setFontStyle(this.webGenericProjectFactory.getFontStyle());
 
 		if(form != null)
 			form.setField(input);
@@ -430,6 +456,9 @@ public class Jsf1InputFieldFactoryImpl implements InputFieldFactory{
 		input.setRequired(required);
 		input.setName(name);
 		input.setInterval(false);
+		input.setFontName(this.webGenericProjectFactory.getFontName());
+		input.setFontSize(this.webGenericProjectFactory.getFontSize());
+		input.setFontStyle(this.webGenericProjectFactory.getFontStyle());
 
 		if(form != null)
 			form.setField(input);
@@ -465,6 +494,9 @@ public class Jsf1InputFieldFactoryImpl implements InputFieldFactory{
 		input.setRequired(required);
 		input.setName(name);
 		input.setInterval(false);
+		input.setFontName(this.webGenericProjectFactory.getFontName());
+		input.setFontSize(this.webGenericProjectFactory.getFontSize());
+		input.setFontStyle(this.webGenericProjectFactory.getFontStyle());
 
 		if(form != null)
 			form.setField(input);
@@ -500,6 +532,9 @@ public class Jsf1InputFieldFactoryImpl implements InputFieldFactory{
 		input.setRequired(required);
 		input.setName(name);
 		input.setInterval(false);
+		input.setFontName(this.webGenericProjectFactory.getFontName());
+		input.setFontSize(this.webGenericProjectFactory.getFontSize());
+		input.setFontStyle(this.webGenericProjectFactory.getFontStyle());
 
 		if(form != null)
 			form.setField(input);
@@ -537,6 +572,9 @@ public class Jsf1InputFieldFactoryImpl implements InputFieldFactory{
 		input.setRequired(required);
 		input.setName(name);
 		input.setInterval(false);
+		input.setFontName(this.webGenericProjectFactory.getFontName());
+		input.setFontSize(this.webGenericProjectFactory.getFontSize());
+		input.setFontStyle(this.webGenericProjectFactory.getFontStyle());
 
 		if(form != null)
 			form.setField(input);
@@ -573,6 +611,9 @@ public class Jsf1InputFieldFactoryImpl implements InputFieldFactory{
 		input.setRequired(required);
 		input.setName(name);
 		input.setInterval(false);
+		input.setFontName(this.webGenericProjectFactory.getFontName());
+		input.setFontSize(this.webGenericProjectFactory.getFontSize());
+		input.setFontStyle(this.webGenericProjectFactory.getFontStyle());
 
 		if(form != null)
 			form.setField(input);
@@ -610,6 +651,9 @@ public class Jsf1InputFieldFactoryImpl implements InputFieldFactory{
 		input.setRequired(required);
 		input.setName(name);
 		input.setInterval(false);
+		input.setFontName(this.webGenericProjectFactory.getFontName());
+		input.setFontSize(this.webGenericProjectFactory.getFontSize());
+		input.setFontStyle(this.webGenericProjectFactory.getFontStyle());
 
 		if(form != null)
 			form.setField(input);
@@ -643,6 +687,9 @@ public class Jsf1InputFieldFactoryImpl implements InputFieldFactory{
 		input.setRequired(required);
 		input.setName(name);
 		input.setInterval(false);
+		input.setFontName(this.webGenericProjectFactory.getFontName());
+		input.setFontSize(this.webGenericProjectFactory.getFontSize());
+		input.setFontStyle(this.webGenericProjectFactory.getFontStyle());
 		
 		if(form != null)
 			form.setField(input);
@@ -677,6 +724,9 @@ public class Jsf1InputFieldFactoryImpl implements InputFieldFactory{
 		input.setRequired(required);
 		input.setName(name);
 		input.setInterval(false);
+		input.setFontName(this.webGenericProjectFactory.getFontName());
+		input.setFontSize(this.webGenericProjectFactory.getFontSize());
+		input.setFontStyle(this.webGenericProjectFactory.getFontStyle());
 		
 		if(form != null)
 			form.setField(input);
@@ -712,6 +762,9 @@ public class Jsf1InputFieldFactoryImpl implements InputFieldFactory{
 		input.setRequired(required);
 		input.setName(name);
 		input.setInterval(false);
+		input.setFontName(this.webGenericProjectFactory.getFontName());
+		input.setFontSize(this.webGenericProjectFactory.getFontSize());
+		input.setFontStyle(this.webGenericProjectFactory.getFontStyle());
 		
 		if(form != null)
 			form.setField(input);
@@ -747,6 +800,9 @@ public class Jsf1InputFieldFactoryImpl implements InputFieldFactory{
 		input.setRequired(required);
 		input.setName(name);
 		input.setInterval(false);
+		input.setFontName(this.webGenericProjectFactory.getFontName());
+		input.setFontSize(this.webGenericProjectFactory.getFontSize());
+		input.setFontStyle(this.webGenericProjectFactory.getFontStyle());
 		
 		if(form != null)
 			form.setField(input);

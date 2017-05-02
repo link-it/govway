@@ -14,7 +14,7 @@
 		<c:set var="disabled" value="#{field.disabled}" />
 	</c:if>
 
-	<op2web:prop label="#{field.label}" rendered="#{field.rendered}">
+	<op2web:prop label="#{field.label}" rendered="#{field.rendered}" styleClass="#{field.labelStyleClass}">
 		<c:if test="#{empty field.fieldsToUpdate}">
 			<h:selectManyCheckbox id="input_#{field.name}" 
 				layout="#{field.direzione}" styleClass="#{field.styleClass}" disabled="#{field.disabled}"

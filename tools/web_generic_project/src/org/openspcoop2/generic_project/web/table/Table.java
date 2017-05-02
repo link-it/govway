@@ -85,5 +85,7 @@ public interface Table<V> extends Serializable {
 	public void setStyleClass(String styleClass);
 	
 	
-
+	// Metodi per la definizione della classe CSS per la tabella
+	public String getTablePanelStyleClass(); 
+	public void setTablePanelStyleClass(String styleClass);
 }

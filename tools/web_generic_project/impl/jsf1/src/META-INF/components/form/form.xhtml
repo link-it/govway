@@ -37,7 +37,7 @@
 	</c:if>
 	
 	<c:if test="#{isClosable == false and empty formTitle and rendered == true}">
-		<div class="#{formStyleClass} noborder nopadding nomargin">
+		<div class="#{formStyleClass}">
 			<a4j:form id="#{formId}" prependId="false" ajaxSingle="true" 
 				ajaxSubmit="true">
 				<a4j:region id="#{formId}_regionFormPnl" renderRegionOnly="#{renderRegionOnly}">
@@ -55,7 +55,7 @@
 	</c:if>
 
 	<c:if test="#{isClosable == false and !empty formTitle and rendered == true}">
-		<rich:panel id="panel_#{formId}" bodyClass="nopadding"  styleClass="nopadding">
+		<rich:panel id="panel_#{formId}" bodyClass=""  styleClass="">
 			<f:facet name="header">
 				<h:outputText id="outHeaderForm_#{formId}" value="#{formTitle}" />
 			</f:facet>
@@ -80,9 +80,16 @@
 	</c:if>
 
 	<c:if test="#{isClosable == true and empty formTitle and rendered == true}">
-		<rich:simpleTogglePanel id="panel_#{formId}" opened="true"
-			label="#{commonsMsg['ricerca.header']}" switchType="ajax"
-			bodyClass="nopadding"  styleClass="nopadding">
+		<rich:simpleTogglePanel id="panel_#{formId}" opened="#{formBean.opened}"
+			label="#{commonsMsg['ricerca.header']}" switchType="#{formBean.switchType}"
+			bodyClass=""  styleClass="">
+			<f:facet name="openMarker">
+				<h:graphicImage value="/images/tema_link/down_white.png"/>
+			</f:facet>
+			
+			<f:facet name="closeMarker">
+				<h:graphicImage value="/images/tema_link/up_white.png"/>
+			</f:facet>
 
 			<div class="#{formStyleClass} noborder">
 				<a4j:form id="#{formId}" prependId="false" ajaxSingle="true"
@@ -104,8 +111,15 @@
 	</c:if>
 
 	<c:if test="#{isClosable == true and !empty formTitle and rendered == true}">
-		<rich:simpleTogglePanel id="panel_#{formId}" opened="true"
-			label="#{formTitle}" switchType="ajax" bodyClass="nopadding"  styleClass="nopadding">
+		<rich:simpleTogglePanel id="panel_#{formId}" opened="#{formBean.opened}"
+			label="#{formTitle}" switchType="#{formBean.switchType}" bodyClass=""  styleClass="">
+			<f:facet name="openMarker">
+				<h:graphicImage value="/images/tema_link/down_white.png"/>
+			</f:facet>
+			
+			<f:facet name="closeMarker">
+				<h:graphicImage value="/images/tema_link/up_white.png"/>
+			</f:facet>
 
 			<div class="#{formStyleClass} noborder">
 				<a4j:form id="#{formId}" prependId="false" ajaxSingle="true"

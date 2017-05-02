@@ -101,6 +101,8 @@ public abstract class BaseFormField<T> implements FormField<T>{
 	
 	protected String styleClass;
 	
+	protected String labelStyleClass;
+	
 	protected String pattern;
 
 	protected int width;	
@@ -154,11 +156,12 @@ public abstract class BaseFormField<T> implements FormField<T>{
 		this.enableManualInput =false;
 		this.required = false;
 		this.requiredMessage = "inputField.requiredMessageDefault";
-		this.style ="width:412px;";
+		this.style = "" ; //"width:412px;";
 		this.width = 412;
 		this.fontName = "Verdana";
 		this.fontSize = 11;
 		this.fontStyle = Font.PLAIN;
+		this.labelStyleClass = "";
 	}
 
 	@Override
@@ -599,4 +602,15 @@ public abstract class BaseFormField<T> implements FormField<T>{
 	public void setStyleClass(String styleClass) {
 		this.styleClass = styleClass;
 	}
+
+	@Override
+	public String getLabelStyleClass() {
+		return this.labelStyleClass;
+	}
+
+	@Override
+	public void setLabelStyleClass(String labelStyleClass) {
+		this.labelStyleClass = labelStyleClass;
+	}
+	
 }

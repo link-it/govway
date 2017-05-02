@@ -65,12 +65,25 @@
 		<c:set var="itemMetadata" value="#{mBean.metadata}" />
 	</c:if>
 	
-	<a4j:outputPanel id="#{id}" ajaxRendered="false" layout="block">
+	<c:if test="#{empty tablePanelStyleClass}">
+		<c:set var="tablePanelStyleClass" value="panelLista" />
+	</c:if>
+	
+	<c:if test="#{empty dsTopRenderIfSinglePage}">
+		<c:set var="dsTopRenderIfSinglePage" value="false"/>
+	</c:if>
+		
+	<c:if test="#{empty dsBottomRenderIfSinglePage}">
+		<c:set var="dsBottomRenderIfSinglePage" value="false"/>
+	</c:if>
+	
+	<a4j:outputPanel id="#{id}" ajaxRendered="false" layout="block" styleClass="#{tablePanelStyleClass}">
 		<h:form>
 			<op2web:dataTable value="#{value}" id="#{id}_dt" enableDelete="#{enableDelete}"
 					headerText="#{headerText}" showSelectAll="#{showSelectAll}" mBean="#{mBean}"
 					selectionMapTarget="#{mBean.selectedIds[item]}" rowsToDisplay="#{mBean.search.pageSize}" 
-					styleClass="#{styleClass}"
+					styleClass="#{styleClass}" dsTopRenderIfSinglePage="#{dsTopRenderIfSinglePage}" 
+					dsBottomRenderIfSinglePage="#{dsBottomRenderIfSinglePage}"
 					headerClass="#{headerClass}" footerClass="#{footerClass}">
 				<f:facet name="noData">
 					<h:outputText value="#{noDataText}" />

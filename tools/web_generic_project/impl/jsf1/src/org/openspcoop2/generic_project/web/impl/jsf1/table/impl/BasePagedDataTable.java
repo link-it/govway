@@ -52,6 +52,9 @@ implements PagedDataTable<V,SearchFormType,FormType>{
 	
 	protected boolean showAddButton;
 	
+	protected boolean dsTopRenderIfSinglePage;
+	protected boolean dsBottomRenderIfSinglePage;
+	
 	
 	@Override
 	public boolean isIsList() {
@@ -102,5 +105,20 @@ implements PagedDataTable<V,SearchFormType,FormType>{
 	public void setShowAddButton(boolean showAddButton) {
 		this.showAddButton = showAddButton;
 	}
-
+	@Override
+	public boolean isDsTopRenderIfSinglePage() {
+		return this.dsTopRenderIfSinglePage;
+	}
+	@Override
+	public void setDsTopRenderIfSinglePage(boolean dsTopRenderIfSinglePage) {
+		this.dsTopRenderIfSinglePage = dsTopRenderIfSinglePage;
+	}
+	@Override
+	public boolean isDsBottomRenderIfSinglePage() {
+		return this.dsBottomRenderIfSinglePage;
+	}
+	@Override
+	public void setDsBottomRenderIfSinglePage(boolean dsBottomRenderIfSinglePage) {
+		this.dsBottomRenderIfSinglePage = dsBottomRenderIfSinglePage;
+	}
 }

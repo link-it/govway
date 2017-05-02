@@ -20,6 +20,9 @@
 package org.openspcoop2.generic_project.web.impl.jsf1;
 
 import org.slf4j.Logger;
+
+import java.awt.Font;
+
 import org.openspcoop2.generic_project.web.core.Utils;
 import org.openspcoop2.generic_project.web.factory.FactoryException;
 import org.openspcoop2.generic_project.web.factory.WebGenericProjectFactory;
@@ -49,6 +52,9 @@ public class FactoryJsf1Impl implements WebGenericProjectFactory{
 	private String factoryName = null;
 	private transient Logger log= null;
 	
+	private String fontName = "";
+	private int fontStyle, fontSize;
+	
 	public FactoryJsf1Impl(Logger log){
 		this(CostantiJsf1Impl.FACTORY_NAME, log);
 	}
@@ -57,6 +63,9 @@ public class FactoryJsf1Impl implements WebGenericProjectFactory{
 		this.log = log;
 		this.factoryName = name;
 		this.log.debug("Factory ["+this.factoryName+"] Inizializzata."); 
+		this.fontName = "Verdana";
+		this.fontSize = 11;
+		this.fontStyle = Font.PLAIN;
 	}
 
 	@Override
@@ -89,4 +98,28 @@ public class FactoryJsf1Impl implements WebGenericProjectFactory{
 		return org.openspcoop2.generic_project.web.impl.jsf1.utils.Utils.getInstance();
 	}
 
+	@Override
+	public String getFontName() {
+		return this.fontName;
+	}
+	@Override
+	public void setFontName(String fontName) {
+		this.fontName = fontName;
+	}
+	@Override
+	public int getFontStyle() {
+		return this.fontStyle;
+	}
+	@Override
+	public void setFontStyle(int fontStyle) {
+		this.fontStyle = fontStyle;
+	}
+	@Override
+	public int getFontSize() {
+		return this.fontSize;
+	}
+	@Override
+	public void setFontSize(int fontSize) {
+		this.fontSize = fontSize;
+	}
 }

@@ -22,12 +22,13 @@
 		<c:set var="insideRightPropStyleClass" value="insideRightProp" />
 	</c:if>
 
-	<op2web:inlineProp labelEsterna="#{field.label}" rendered="#{field.rendered}">
+	<op2web:inlineProp labelEsterna="#{field.label}" rendered="#{field.rendered}" styleClassEsterna="#{field.labelStyleClass}">
 
 		<ui:define name="prop1">
 			<op2web:prop label="#{commonsMsg['form.component.dal']}" styleClass="insideLeftProp"
 				rendered="#{field.rendered}">
 				<rich:calendar id="input1_#{field.name}" value="#{field.value}"  disabled="#{disabled}"
+					buttonIcon="#{field.buttonIcon}"
 				 style="#{field.style}" datePattern="#{field.pattern}" defaultTime="00:00" styleClass="#{field.styleClass}" />
 			</op2web:prop>
 		</ui:define>
@@ -36,6 +37,7 @@
 			<op2web:prop label="#{commonsMsg['form.component.al']}" styleClass="insideRightProp"
 				rendered="#{field.rendered}">
 					<rich:calendar id="input2_#{field.name}" value="#{field.value2}"  disabled="#{disabled}"
+					buttonIcon="#{field.buttonIcon}"
 					 style="#{field.style}" datePattern="#{field.pattern}" defaultTime="00:00"  styleClass="#{field.styleClass}" />
 			</op2web:prop>
 		</ui:define>

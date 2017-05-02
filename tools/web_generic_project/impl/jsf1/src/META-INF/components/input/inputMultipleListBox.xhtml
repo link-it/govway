@@ -12,7 +12,7 @@
 		<c:set var="required" value="false" />
 	</c:if>
 
-	<op2web:prop label="#{field.label}" required="#{field.required == 'true'}"
+	<op2web:prop label="#{field.label}" required="#{field.required == 'true'}" styleClass="#{field.labelStyleClass}"
 		rendered="#{field.rendered == 'true'}">
 		<c:if test="#{empty field.fieldsToUpdate}">
 			<h:selectManyListbox value="#{field.value}" id="input_#{field.name}" style="#{field.style}" rendered="#{field.rendered == 'true'}" 

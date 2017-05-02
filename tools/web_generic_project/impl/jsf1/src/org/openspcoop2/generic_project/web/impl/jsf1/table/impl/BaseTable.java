@@ -56,6 +56,7 @@ public class BaseTable<V> implements Table<V> {
 	protected String styleClass;
 	protected String headerClass;
 	protected String footerClass;
+	protected String tablePanelStyleClass = "";
 
 
 	public BaseTable(){
@@ -188,5 +189,13 @@ public class BaseTable<V> implements Table<V> {
 		this.footerClass = footerClass;
 	}
 
-
+	@Override
+	public String getTablePanelStyleClass() {
+		return this.tablePanelStyleClass;
+	}
+	
+	@Override
+	public void setTablePanelStyleClass(String styleClass) {
+		this.tablePanelStyleClass = styleClass;
+	}
 }

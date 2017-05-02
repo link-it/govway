@@ -13,8 +13,9 @@
 		<c:set var="disabled" value="#{field.disabled}" />
 	</c:if>
 
-	<op2web:prop label="#{field.label}" rendered="#{field.rendered}">
+	<op2web:prop label="#{field.label}" rendered="#{field.rendered}" styleClass="#{field.labelStyleClass}">
 		<rich:calendar id="input_#{field.name}" value="#{field.value}"  disabled="#{disabled}" styleClass="#{field.styleClass}"
+			buttonIcon="#{field.buttonIcon}"
 		 style="#{field.style}" datePattern="#{field.pattern}" defaultTime="00:00" />
 	</op2web:prop>
 

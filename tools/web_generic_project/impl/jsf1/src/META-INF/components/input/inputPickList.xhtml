@@ -15,7 +15,7 @@
 		<c:set var="disabled" value="#{field.disabled}" />
 	</c:if>
 
-	<op2web:prop label="#{field.label}" required="#{required}"
+	<op2web:prop label="#{field.label}" required="#{required}" styleClass="#{field.labelStyleClass}"
 		rendered="#{field.rendered}" note="#{field.note}">
 		<a4j:outputPanel id="#{field.name}_pckListCtr" layout="block">
 			
@@ -58,6 +58,158 @@
 						<h:outputText value="#{selectItem.label}"></h:outputText>
 					</rich:column>
 					<a4j:support event="onlistchange" ajaxSingle="true" oncomplete="saveList()"/>
+					
+					<f:facet name="topControl">
+				   		<a4j:outputPanel styleClass="rich-list-shuttle-button" layout="block" onmouseover="this.className='rich-list-shuttle-button-light'" 
+			        			onmousedown="this.className='rich-list-shuttle-button-press'" 
+			        			onmouseup="this.className='rich-list-shuttle-button'" 
+			        			onmouseout="this.className='rich-list-shuttle-button'">
+			        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+			        				<h:graphicImage value="/images/tema_link/move_top.png"/>
+			        			</a4j:outputPanel>
+			        	</a4j:outputPanel>
+			        </f:facet>
+			        
+			        <f:facet name="topControlDisabled">
+			        	<a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
+			        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+			        			 <h:graphicImage value="/images/tema_link/move_top_disabilitato.png"/>
+			        		</a4j:outputPanel>
+			        	</a4j:outputPanel>
+			        </f:facet>
+			        
+			        <f:facet name="bottomControl">
+			    	    <a4j:outputPanel styleClass="rich-list-shuttle-button" layout="block" onmouseover="this.className='rich-list-shuttle-button-light'" 
+			        			onmousedown="this.className='rich-list-shuttle-button-press'" 
+			        			onmouseup="this.className='rich-list-shuttle-button'" 
+			        			onmouseout="this.className='rich-list-shuttle-button'">
+			        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+			        				<h:graphicImage value="/images/tema_link/move_bottom.png"/>
+			        			</a4j:outputPanel>
+			        	 </a4j:outputPanel>
+			        </f:facet>
+			        
+			        <f:facet name="bottomControlDisabled">
+			       		<a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
+			        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+			        			<h:graphicImage value="/images/tema_link/move_bottom_disabilitato.png"/>
+			        		</a4j:outputPanel>
+			        	</a4j:outputPanel>
+			        </f:facet>
+			        
+			        <f:facet name="upControl">
+			       		 <a4j:outputPanel styleClass="rich-list-shuttle-button" layout="block" onmouseover="this.className='rich-list-shuttle-button-light'" 
+			        			onmousedown="this.className='rich-list-shuttle-button-press'" 
+			        			onmouseup="this.className='rich-list-shuttle-button'" 
+			        			onmouseout="this.className='rich-list-shuttle-button'">
+			        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+			        				<h:graphicImage value="/images/tema_link/move_up.png"/>
+			        			</a4j:outputPanel>
+			        	 </a4j:outputPanel>
+			        </f:facet>
+			        
+			        <f:facet name="upControlDisabled">
+			        <a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
+			        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+			        			<h:graphicImage value="/images/tema_link/move_up_disabilitato.png"/>
+			        		</a4j:outputPanel>
+			        	</a4j:outputPanel>
+			        </f:facet>
+			        
+			        <f:facet name="downControl">
+			     	   <a4j:outputPanel styleClass="rich-list-shuttle-button" layout="block" onmouseover="this.className='rich-list-shuttle-button-light'" 
+			        			onmousedown="this.className='rich-list-shuttle-button-press'" 
+			        			onmouseup="this.className='rich-list-shuttle-button'" 
+			        			onmouseout="this.className='rich-list-shuttle-button'">
+			        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+			        				<h:graphicImage value="/images/tema_link/move_down.png"/>
+			        			</a4j:outputPanel>
+			        	 </a4j:outputPanel>
+			        </f:facet>
+			        
+			        <f:facet name="downControlDisabled">
+			        <a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
+			        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+			        			 <h:graphicImage value="/images/tema_link/move_down_disabilitato.png"/>
+			        		</a4j:outputPanel>
+			        	</a4j:outputPanel>
+			        </f:facet>
+			        
+			        <f:facet name="copyControl">
+			        	<a4j:outputPanel styleClass="rich-list-shuttle-button" layout="block" onmouseover="this.className='rich-list-shuttle-button-light'" 
+			        			onmousedown="this.className='rich-list-shuttle-button-press'" 
+			        			onmouseup="this.className='rich-list-shuttle-button'" 
+			        			onmouseout="this.className='rich-list-shuttle-button'">
+			        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+			        				<h:graphicImage value="/images/tema_link/go_next.png"/>
+			        			</a4j:outputPanel>
+			        	 </a4j:outputPanel>
+			        </f:facet>
+			        
+			        <f:facet name="copyControlDisabled">
+			        <a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
+			        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+			        			<h:graphicImage value="/images/tema_link/go_next_disabilitato.png"/>
+			        		</a4j:outputPanel>
+			        	</a4j:outputPanel>
+			        </f:facet>
+			        
+			        <f:facet name="copyAllControl">
+			        		<a4j:outputPanel styleClass="rich-list-shuttle-button" layout="block" onmouseover="this.className='rich-list-shuttle-button-light'" 
+			        			onmousedown="this.className='rich-list-shuttle-button-press'" 
+			        			onmouseup="this.className='rich-list-shuttle-button'" 
+			        			onmouseout="this.className='rich-list-shuttle-button'">
+			        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+			        				 <h:graphicImage value="/images/tema_link/go_end.png"/>
+			        			</a4j:outputPanel>
+			        	 </a4j:outputPanel>
+			        </f:facet>
+			        
+			        <f:facet name="copyAllControlDisabled">
+			        <a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
+			        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+			        			<h:graphicImage value="/images/tema_link/go_end_disabilitato.png"/>
+			        		</a4j:outputPanel>
+			        	</a4j:outputPanel>
+			        </f:facet>
+			        
+			        <f:facet name="removeControl">
+			        	<a4j:outputPanel styleClass="rich-list-shuttle-button" layout="block" onmouseover="this.className='rich-list-shuttle-button-light'" 
+			        			onmousedown="this.className='rich-list-shuttle-button-press'" 
+			        			onmouseup="this.className='rich-list-shuttle-button'" 
+			        			onmouseout="this.className='rich-list-shuttle-button'">
+			        			<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+			        				<h:graphicImage value="/images/tema_link/go_prev.png"/>
+			        			</a4j:outputPanel>
+			        	 </a4j:outputPanel>
+			        </f:facet>
+			        
+			        <f:facet name="removeControlDisabled">
+			        <a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
+			        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+			        			<h:graphicImage value="/images/tema_link/go_prev_disabilitato.png"/>
+			        		</a4j:outputPanel>
+			        	</a4j:outputPanel>
+			        </f:facet>
+			        
+			        <f:facet name="removeAllControl">
+			        	<a4j:outputPanel layout="block" styleClass="rich-list-shuttle-button" onmouseover="this.className='rich-list-shuttle-button-light'" 
+			        			onmousedown="this.className='rich-list-shuttle-button-press'" 
+			        			onmouseup="this.className='rich-list-shuttle-button'" 
+			        			onmouseout="this.className='rich-list-shuttle-button'">
+			        			<a4j:outputPanel layout="block" styleClass="rich-list-shuttle-button-content">
+			        				<h:graphicImage value="/images/tema_link/go_start.png"/>
+			        			</a4j:outputPanel>
+			        	 </a4j:outputPanel>
+			        </f:facet>
+			        
+			        <f:facet name="removeAllControlDisabled">
+			        	<a4j:outputPanel styleClass="rich-list-shuttle-button-disabled" layout="block">
+			        		<a4j:outputPanel styleClass="rich-list-shuttle-button-content" layout="block">
+			        			<h:graphicImage value="/images/tema_link/go_start_disabilitato.png"/>
+			        		</a4j:outputPanel>
+			        	</a4j:outputPanel>
+			        </f:facet>
 				</rich:listShuttle>
 			</h:panelGrid>
 		</a4j:outputPanel>

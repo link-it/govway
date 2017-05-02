@@ -61,5 +61,11 @@ public interface PagedDataTable<V,SearchFormType extends SearchForm,FormType ext
 	// Mostra/Nascondi pulsante nuovo Elemento
 	public boolean isShowAddButton();
 	public void setShowAddButton(boolean showAddButton);
+	
+	// Mostra/Nascondi comandi di paginazione quando il numero di pagine di risultati e' uno
+	public boolean isDsTopRenderIfSinglePage();
+	public void setDsTopRenderIfSinglePage(boolean dsTopRenderIfSinglePage);
+	public boolean isDsBottomRenderIfSinglePage();
+	public void setDsBottomRenderIfSinglePage(boolean dsBottomRenderIfSinglePage);
 
 }

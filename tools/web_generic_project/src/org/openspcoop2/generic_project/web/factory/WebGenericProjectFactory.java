@@ -51,4 +51,14 @@ public interface WebGenericProjectFactory extends Serializable{
 	public TableFactory getTableFactory() throws FactoryException;
 	
 	public Utils getUtils() throws FactoryException;
+	
+	// Informazioni riguardanti il font utilizzato dall'applicazione
+	public String getFontName();
+	public void setFontName(String fontName);
+
+	public int getFontStyle();
+	public void setFontStyle(int fontStyle);
+	
+	public int getFontSize();
+	public void setFontSize(int fontSize);
 }

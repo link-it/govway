@@ -16,7 +16,7 @@
 	
 
 	<op2web:prop label="#{field.label}" required="#{field.required == 'true'}"
-		rendered="#{field.rendered == 'true'}">
+		styleClass="#{field.labelStyleClass}" rendered="#{field.rendered == 'true'}">
 	
 		<c:if test="#{field.autoComplete == 'true'}">
 			<a4j:outputPanel layout="block" id="#{field.name}ComboCtr">

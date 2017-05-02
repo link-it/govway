@@ -45,7 +45,11 @@
 		<c:set var="itemMetadata" value="#{mBean.metadata}" />
 	</c:if>
 	
-	<a4j:outputPanel id="#{id}" layout="block" rendered="#{rendered}">
+	<c:if test="#{empty tablePanelStyleClass}">
+		<c:set var="tablePanelStyleClass" value="panelLista" />
+	</c:if>
+	
+	<a4j:outputPanel id="#{id}" layout="block" rendered="#{rendered}" styleClass="#{tablePanelStyleClass}">
 		<h:form>
 			<rich:dataTable value="#{value}" var="item" rows="#{rowsToDisplay}"
 				id="#{id}_tbl" onRowMouseOver="activeRow(this)"
