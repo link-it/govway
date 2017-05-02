@@ -75,6 +75,7 @@
 			
 		Configurazione Avanzata
 			antinstaller_stateful=false
+			antinstaller_sec_container=false
 
 		Compatibilità interfacce OpenSPCoop-v1
 			antinstaller_backward_compatibility=true
@@ -119,6 +120,42 @@
 		</then>
 		<else>
 			<var name="build_openspcoop_archive_suffix" value="stateful"/>
+		</else>
+	</if>
+	<if>
+		<or>
+			<equals arg1="${antinstaller_sec_container}" arg2="false" />
+			<equals arg1="${antinstaller_sec_container}" arg2="" />
+			<equals arg1="${antinstaller_sec_container}" arg2="$${antinstaller_sec_container}" />
+		</or>
+		<then>
+			<if>
+				<or>
+					<equals arg1="${antinstaller_sec_container}" arg2="" />
+					<equals arg1="${antinstaller_sec_container}" arg2="$${antinstaller_sec_container}" />
+				</or>
+				<then>
+					<!-- Abilitato per Default su jboss7 e wildfly -->
+					<if>
+						<or>
+							<matches string="${build_for_as}" pattern="jboss.*"/>
+							<matches string="${build_for_as}" pattern="wildfly.*"/>
+						</or>
+						<then>	
+							<var name="build_openspcoop_sec_archive" value="true"/>
+						</then>
+						<else>
+							<var name="build_openspcoop_sec_archive" value="false"/>
+						</else>
+					</if>
+				</then>
+				<else>
+					<var name="build_openspcoop_sec_archive" value="false"/>
+				</else>
+			</if>
+		</then>
+		<else>
+			<var name="build_openspcoop_sec_archive" value="true"/>
 		</else>
 	</if>
 
@@ -226,7 +263,20 @@
 						</copy>
 					</then>
 				</if>
-								
+	
+				<!-- openspcoop2sec -->
+				<if>
+					<not>
+						<istrue value="${build_openspcoop_sec_archive}" />
+					</not>
+					<then>
+						<delete file="${tmp_archivi}/OpenSPCoop2.ear/OpenSPCoop2Sec.war" />
+						<replace file="${tmp_archivi}/OpenSPCoop2.ear/META-INF/application.xml" token="start Security Constraint Authentication Container -->" value="start Security Constraint Authentication Container"/>
+						<replace file="${tmp_archivi}/OpenSPCoop2.ear/META-INF/application.xml" token="&lt;!-- end Security Constraint Authentication Container" value="end Security Constraint Authentication Container"/>
+					</then>
+				</if>	
+				
+							
 				<!-- Ripristino jar -->
 				<antcall target="ripristina_jar">
 				    <param name="archiveFile" value="${tmp_archivi}/OpenSPCoop2.ear"/>
@@ -236,63 +286,88 @@
 			<else>
 				<!-- unzip -->
 				<unzip src="${deploy_sw}/${build_for_as}/openspcoop2_${build_openspcoop_archive_suffix}.war" dest="${tmp_archivi}/openspcoop2.war"/>
-				<!-- configuration -->
-				<antcall target="pdd_openspcoop2_properties_settings">
-				    <param name="file" value="${tmp_archivi}/openspcoop2.war/WEB-INF/classes/openspcoop2.properties"/>
+				<!-- configuro openspcoopp2.war -->
+				<antcall target="-create_tomcat_war">
+				    <param name="tomcat_war" value="${tmp_archivi}/openspcoop2.war"/>
 				</antcall>
-				<antcall target="pdd_openspcoop2_log4j_properties_settings">
-				    <param name="file" value="${tmp_archivi}/openspcoop2.war/WEB-INF/classes/openspcoop2.log4j2.properties"/>
-				</antcall>
-				<antcall target="pdd_log4j_properties_settings">
-				    <param name="file" value="${tmp_archivi}/openspcoop2.war/WEB-INF/classes/log4j2.properties"/>
-				</antcall>
-				<antcall target="pdd_openspcoop2_classRegistry_properties_settings">
-				    <param name="file" value="${tmp_archivi}/openspcoop2.war/WEB-INF/classes/openspcoop2.classRegistry.properties"/>
-				</antcall>
-				<antcall target="dos2unix">
-					<param name="dir" value="${tmp_archivi}/openspcoop2.war/WEB-INF/classes"/>
-				    <param name="file" value="*.properties"/>
-				</antcall>
-				<!-- spcoop -->
-				<if>
-					<istrue value="${antinstaller_protocollo_spcoop}" />
-					<then>
-						<copy todir="${tmp_archivi}/openspcoop2.war/WEB-INF/lib">
-						    <fileset dir="${deploy_sw}">
-						      <include name="openspcoop2_spcoop-protocol_*.jar"/>
-						    </fileset>
-						</copy>
-					</then>
-				</if>
-				<!-- sdi -->
-				<if>
-					<istrue value="${antinstaller_protocollo_sdi}" />
-					<then>
-						<copy todir="${tmp_archivi}/openspcoop2.war/WEB-INF/lib">
-						    <fileset dir="${deploy_sw}">
-						      <include name="openspcoop2_sdi-protocol_*.jar"/>
-						    </fileset>
-						</copy>
-					</then>
-				</if>
-				<!-- trasparente -->
-				<if>
-					<istrue value="${antinstaller_protocollo_trasparente}" />
-					<then>
-						<copy todir="${tmp_archivi}/openspcoop2.war/WEB-INF/lib">
-						    <fileset dir="${deploy_sw}">
-						      <include name="openspcoop2_trasparente-protocol_*.jar"/>
-						    </fileset>
-						</copy>
-					</then>
-				</if>
 				<!-- Ripristino jar -->
 				<antcall target="ripristina_jar">
 				    <param name="archiveFile" value="${tmp_archivi}/openspcoop2.war"/>
 					<param name="as" value="${build_for_as}"/>
 				</antcall>
+
+
+				<!-- openspcoop2sec -->
+				<if>
+					<istrue value="${build_openspcoop_sec_archive}" />
+					<then>
+						<!-- unzip -->
+						<unzip src="${deploy_sw}/${build_for_as}/openspcoop2sec_${build_openspcoop_archive_suffix}.war" dest="${tmp_archivi}/openspcoop2sec.war"/>
+						<!-- configuro openspcoopp2.war -->
+						<antcall target="-create_tomcat_war">
+						    <param name="tomcat_war" value="${tmp_archivi}/openspcoop2sec.war"/>
+						</antcall>
+						<!-- Ripristino jar -->
+						<antcall target="ripristina_jar">
+						    <param name="archiveFile" value="${tmp_archivi}/openspcoop2sec.war"/>
+							<param name="as" value="${build_for_as}"/>
+						</antcall>
+					</then>
+				</if>	
 			</else>
 		</if>		
+	</target>
+	<target name="-create_tomcat_war">
+		<!-- configuration -->
+		<antcall target="pdd_openspcoop2_properties_settings">
+		    <param name="file" value="${tomcat_war}/WEB-INF/classes/openspcoop2.properties"/>
+		</antcall>
+		<antcall target="pdd_openspcoop2_log4j_properties_settings">
+		    <param name="file" value="${tomcat_war}/WEB-INF/classes/openspcoop2.log4j2.properties"/>
+		</antcall>
+		<antcall target="pdd_log4j_properties_settings">
+		    <param name="file" value="${tomcat_war}/WEB-INF/classes/log4j2.properties"/>
+		</antcall>
+		<antcall target="pdd_openspcoop2_classRegistry_properties_settings">
+		    <param name="file" value="${tomcat_war}/WEB-INF/classes/openspcoop2.classRegistry.properties"/>
+		</antcall>
+		<antcall target="dos2unix">
+		    <param name="dir" value="${tomcat_war}/WEB-INF/classes"/>
+		    <param name="file" value="*.properties"/>
+		</antcall>
+		<!-- spcoop -->
+		<if>
+			<istrue value="${antinstaller_protocollo_spcoop}" />
+			<then>
+				<copy todir="${tomcat_war}/WEB-INF/lib">
+				    <fileset dir="${deploy_sw}">
+				      <include name="openspcoop2_spcoop-protocol_*.jar"/>
+				    </fileset>
+				</copy>
+			</then>
+		</if>
+		<!-- sdi -->
+		<if>
+			<istrue value="${antinstaller_protocollo_sdi}" />
+			<then>
+				<copy todir="${tomcat_war}/WEB-INF/lib">
+				    <fileset dir="${deploy_sw}">
+				      <include name="openspcoop2_sdi-protocol_*.jar"/>
+				    </fileset>
+				</copy>
+			</then>
+		</if>
+		<!-- trasparente -->
+		<if>
+			<istrue value="${antinstaller_protocollo_trasparente}" />
+			<then>
+				<copy todir="${tomcat_war}/WEB-INF/lib">
+				    <fileset dir="${deploy_sw}">
+				      <include name="openspcoop2_trasparente-protocol_*.jar"/>
+				    </fileset>
+				</copy>
+			</then>
+		</if>
 	</target>
 	
 	<target name="setup_sql" depends="_setup_sql"/>
@@ -488,6 +563,13 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				<antcall target="ds_settings">
 				    <param name="file" value="${tmp_ds}/openspcoop2.xml"/>
 				</antcall>
+				<!-- openspcoop2sec -->
+				<if>
+					<istrue value="${build_openspcoop_sec_archive}" />
+					<then>
+						<copy file="${tmp_ds}/openspcoop2.xml" tofile="${tmp_ds}/openspcoop2sec.xml"/>
+					</then>
+				</if>
 				<copy file="${deploy_ds}/tomcat/${tomcat_datasource_dir_name}/${antinstaller_tipo_database}/pddLoader.xml" todir="${tmp_ds}"/>
 				<antcall target="ds_settings">
 				    <param name="file" value="${tmp_ds}/pddLoader.xml"/>

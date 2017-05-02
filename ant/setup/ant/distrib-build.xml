@@ -401,6 +401,13 @@
 	
 	<target name="_prepareArchivioTomcat">
 		<zip destfile="${dist}/archivi/openspcoop2.war" basedir="${tmp_archivi}/openspcoop2.war"/>
+		<!-- openspcoop2sec -->
+		<if>
+			<istrue value="${build_openspcoop_sec_archive}" />
+			<then>
+				<zip destfile="${dist}/archivi/openspcoop2sec.war" basedir="${tmp_archivi}/openspcoop2sec.war"/>
+			</then>
+		</if>
 		<zip destfile="${dist}/archivi/pddConsole.war" basedir="${tmp_archivi}/pddConsole.war"/>
 		<zip destfile="${dist}/archivi/pddLoader.war" basedir="${tmp_archivi}/pddLoader.war"/>
 	</target>

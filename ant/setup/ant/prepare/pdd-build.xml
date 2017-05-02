@@ -67,6 +67,7 @@
 			<param name="wsdlFolder" value="${core}/deploy/deploy_web/web_app" />
 	 	</antcall>
 		<var name="archiveFile" value="" />
+		<var name="secArchiveFile" value="NOT_DEFINED" />
 		<if>
 			<available file="${deploy_sw}/${TIPO_AS}/dist/OpenSPCoop2.ear"/>
 			<then>
@@ -76,6 +77,8 @@
 			<else>
 				<move file="${deploy_sw}/${TIPO_AS}/dist/openspcoop2.war" tofile="${deploy_sw}/${TIPO_AS}/openspcoop2_${buildPddInternal_tipo}.war"/>
 				<var name="archiveFile" value="${deploy_sw}/${TIPO_AS}/openspcoop2_${buildPddInternal_tipo}.war" />
+				<move file="${deploy_sw}/${TIPO_AS}/dist/openspcoop2sec.war" tofile="${deploy_sw}/${TIPO_AS}/openspcoop2sec_${buildPddInternal_tipo}.war"/>
+				<var name="secArchiveFile" value="${deploy_sw}/${TIPO_AS}/openspcoop2sec_${buildPddInternal_tipo}.war" />
 			</else>
 		</if>
 				
@@ -89,6 +92,18 @@
 		    <param name="archiveFile" value="${archiveFile}"/>
 			<param name="as" value="${TIPO_AS}"/>
 		</antcall>
+
+		<if>
+			<not>
+				<equals arg1="NOT_DEFINED" arg2="${secArchiveFile}"/>
+			</not>
+			<then>
+				<antcall target="read_jar">
+				    <param name="archiveFile" value="${secArchiveFile}"/>
+					<param name="as" value="${TIPO_AS}"/>
+				</antcall>
+			</then>
+		</if>
 		
 	</target>
 	

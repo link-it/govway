@@ -4,9 +4,11 @@
 			<context-root>openspcoop2</context-root>
 		</web>
 	</module>
+	<!-- start Security Constraint Authentication Container -->
 	<module>
 		<web>
 			<web-uri>OpenSPCoop2Sec.war</web-uri>
 			<context-root>openspcoop2sec</context-root>
 		</web>
 	</module>
+	<!-- end Security Constraint Authentication Container -->

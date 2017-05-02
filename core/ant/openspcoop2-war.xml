@@ -63,14 +63,50 @@
 			<param name="openspcoopWeb.webXml" value="${deploy_web_dir}/web_app/WEB-INF/web.xml"/>
 		</antcall>
 
-		<!-- Creo war per security constraint -->
+		<!-- Creo war per security constraint 
+		     (NOTA: a differenza di JBoss, in Tomcat o si utilizza un war con security constraint, oppure uno senza
+			    il classLoader dei due war non e' condiviso. Quindi l'inizializzazione deve essere effettuata.
+			    Per usarli entrambi devono a questo punto essere disattivati puntualmente all'interno di uno dei due war
+			    i servizi comuni (registrazione jmx, timer, ...)) -->
 		<delete dir="${build}/web-module" />
 		<mkdir dir="${build}/web-module" />
 		<copy file="${deploy_web_dir}/web_app/WEB-INF/web.xml" todir="${build}/web-module" />
-		<replace file="${build}/web-module/web.xml" token="start OpenSPCoop2Startup -->" value="start OpenSPCoop2Startup"/>
-		<replace file="${build}/web-module/web.xml" token="&lt;!-- end OpenSPCoop2Startup" value="end OpenSPCoop2Startup"/>
 		<replace file="${build}/web-module/web.xml" token="start Security Constraint Authentication Container" value="start Security Constraint Authentication Container -->"/>
 		<replace file="${build}/web-module/web.xml" token="end Security Constraint Authentication Container" value="&lt;!--  end Security Constraint Authentication Container"/>
+		<concat destfile="${build}/tmp/openspcoop2.properties" append="yes" >
+
+# ----- Personalizzazione Per esecuzione insieme a openspcoop2.war -------------
+		</concat>
+		<antcall target="set_property">
+		    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+			<param name="token" value="org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.enable"/>
+			<param name="value" value="false"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+			<param name="token" value="org.openspcoop2.pdd.timer.gestoreMessaggi.enable"/>
+			<param name="value" value="false"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+			<param name="token" value="org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.enable"/>
+			<param name="value" value="false"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+			<param name="token" value="org.openspcoop2.pdd.timer.gestoreRepositoryBuste.enable"/>
+			<param name="value" value="false"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+			<param name="token" value="org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.enable"/>
+			<param name="value" value="false"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${build}/tmp/openspcoop2.properties"/>
+			<param name="token" value="org.openspcoop2.pdd.core.jmx.enable"/>
+			<param name="value" value="false"/>
+		</antcall>
 		<antcall target="-create_openspcoop_web">
 			<param name="openspcoopWeb.warName" value="${dist}/openspcoop2sec.war"/>
 			<param name="openspcoopWeb.webXml" value="${build}/web-module/web.xml"/>

@@ -161,6 +161,9 @@
 
 	<checkbox defaultValue="false" property="antinstaller_stateful" value="stateful" displayText="Presa in carico"/>
 
+	<comment displayText=""/>
+	<checkbox defaultValue="true" property="antinstaller_sec_container" displayText="Contesto 'openspcoop2sec' con Security Constraint"/>
+
     </page>
 
     <page name="preinstallazioneStato" type="input" displayText="Configurazione Avanzata" ifProperty="(${antinstaller_conf_avanzata_enabled}==true) AND (${antinstaller_as}==tomcat5) OR (${antinstaller_as}==tomcat6) OR (${antinstaller_as}==tomcat7) OR (${antinstaller_as}==tomcat8) OR (${antinstaller_as}==tomcat9)">
@@ -171,6 +174,9 @@
 
 	<comment displayText=""/>
 	<checkbox defaultValue="false" property="antinstaller_stateful" force="true" displayText="Presa in carico"/>
+
+	<comment displayText=""/>
+	<checkbox defaultValue="false" property="antinstaller_sec_container" displayText="Archivio 'openspcoop2sec' con Security Constraint"/>
 
     </page>
 
