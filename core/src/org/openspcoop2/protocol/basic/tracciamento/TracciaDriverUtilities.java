@@ -64,7 +64,7 @@ import org.openspcoop2.utils.sql.SQLQueryObjectException;
 import org.slf4j.Logger;
 
 /**
- * DriverTracciamentoUtilities
+ * TracciaDriverUtilities
  *
  * @author Andrea Poli <apoli@link.it>
  * @author $Author$
@@ -147,8 +147,45 @@ public class TracciaDriverUtilities {
 		}
 		
 		
+		if(TracciaDriverUtilities.isDefined(filtro.getIdBusta()) && 
+				(TracciaDriverUtilities.isDefined(filtro.getIdBustaRichiesta()) || 
+				TracciaDriverUtilities.isDefined(filtro.getIdBustaRisposta()))){
+			throw new SQLQueryObjectException("Non è possibile definire sia il filtro idBusta che uno dei filtri su richiesta e/o risposta)");
+		}
+		
 		if(TracciaDriverUtilities.isDefined(filtro.getIdBusta())){
-			sqlQueryObject.addWhereCondition("id_messaggio=?");
+			sqlQueryObject.addWhereCondition("id_messaggio=?");	// utilizzabile con tipo traccia
+		}
+		else if(TracciaDriverUtilities.isDefined(filtro.getIdBustaRichiesta()) && 
+				TracciaDriverUtilities.isDefined(filtro.getIdBustaRisposta())){
+			if(TracciaDriverUtilities.isDefined(filtro.getTipoTraccia())){
+				throw new SQLQueryObjectException("Non è possibile definire il filtro sul tipo di traccia se si impostano entrambi gli identificativi di richiesta e risposta");
+			}
+			sqlQueryObject.addWhereCondition(false,"tipo_messaggio=? AND id_messaggio=?","tipo_messaggio=? AND id_messaggio=?");	
+		}
+		else if(TracciaDriverUtilities.isDefined(filtro.getIdBustaRichiesta())){
+			if(TracciaDriverUtilities.isDefined(filtro.getTipoTraccia())){
+				if(RuoloMessaggio.RISPOSTA.equals(filtro.getTipoTraccia())){
+					throw new SQLQueryObjectException("Non è possibile definire il filtro sul tipo di traccia a '"+RuoloMessaggio.RISPOSTA.getTipo()+
+							"' ed il filtro sull'identificativo di richiesta");
+				}
+				sqlQueryObject.addWhereCondition("id_messaggio=?");
+			}
+			else{
+				sqlQueryObject.addWhereCondition("tipo_messaggio=? AND id_messaggio=?");
+			}
+		}
+		else if(TracciaDriverUtilities.isDefined(filtro.getIdBustaRisposta())){
+			if(TracciaDriverUtilities.isDefined(filtro.getTipoTraccia())){
+				if(RuoloMessaggio.RICHIESTA.equals(filtro.getTipoTraccia())){
+					throw new SQLQueryObjectException("Non è possibile definire il filtro sul tipo di traccia a '"+RuoloMessaggio.RICHIESTA.getTipo()+
+							"' ed il filtro sull'identificativo di risposta");
+				}
+				sqlQueryObject.addWhereCondition("id_messaggio=?");
+			}
+			else{
+				sqlQueryObject.addWhereCondition("tipo_messaggio=? AND id_messaggio=?");
+			}
 		}
 		if(TracciaDriverUtilities.isDefined(filtro.getRiferimentoMessaggio())){
 			sqlQueryObject.addWhereCondition("rif_messaggio=?");
@@ -348,6 +385,64 @@ public class TracciaDriverUtilities {
 				pstmt.setString(startIndex++, filtro.getIdBusta());
 			if(query!=null)
 				query.replaceFirst("\\?", "'"+filtro.getIdBusta()+"'");
+		}
+		else if(TracciaDriverUtilities.isDefined(filtro.getIdBustaRichiesta()) && 
+				TracciaDriverUtilities.isDefined(filtro.getIdBustaRisposta())){
+			
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, RuoloMessaggio.RICHIESTA.getTipo());
+			if(query!=null)
+				query.replaceFirst("\\?", "'"+RuoloMessaggio.RICHIESTA.getTipo()+"'");
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, filtro.getIdBustaRichiesta());
+			if(query!=null)
+				query.replaceFirst("\\?", "'"+filtro.getIdBustaRichiesta()+"'");
+			
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, RuoloMessaggio.RISPOSTA.getTipo());
+			if(query!=null)
+				query.replaceFirst("\\?", "'"+RuoloMessaggio.RISPOSTA.getTipo()+"'");
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, filtro.getIdBustaRisposta());
+			if(query!=null)
+				query.replaceFirst("\\?", "'"+filtro.getIdBustaRisposta()+"'");
+
+		}
+		else if(TracciaDriverUtilities.isDefined(filtro.getIdBustaRichiesta())){
+			if(TracciaDriverUtilities.isDefined(filtro.getTipoTraccia())){
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, filtro.getIdBustaRichiesta());
+				if(query!=null)
+					query.replaceFirst("\\?", "'"+filtro.getIdBustaRichiesta()+"'");
+			}
+			else{
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, RuoloMessaggio.RICHIESTA.getTipo());
+				if(query!=null)
+					query.replaceFirst("\\?", "'"+RuoloMessaggio.RICHIESTA.getTipo()+"'");
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, filtro.getIdBustaRichiesta());
+				if(query!=null)
+					query.replaceFirst("\\?", "'"+filtro.getIdBustaRichiesta()+"'");
+			}
+		}
+		else if(TracciaDriverUtilities.isDefined(filtro.getIdBustaRisposta())){
+			if(TracciaDriverUtilities.isDefined(filtro.getTipoTraccia())){
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, filtro.getIdBustaRisposta());
+				if(query!=null)
+					query.replaceFirst("\\?", "'"+filtro.getIdBustaRisposta()+"'");
+			}
+			else{
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, RuoloMessaggio.RISPOSTA.getTipo());
+				if(query!=null)
+					query.replaceFirst("\\?", "'"+RuoloMessaggio.RISPOSTA.getTipo()+"'");
+				if(pstmt!=null)
+					pstmt.setString(startIndex++, filtro.getIdBustaRisposta());
+				if(query!=null)
+					query.replaceFirst("\\?", "'"+filtro.getIdBustaRisposta()+"'");
+			}
 		}
 		if(TracciaDriverUtilities.isDefined(filtro.getRiferimentoMessaggio())){
 			if(pstmt!=null)

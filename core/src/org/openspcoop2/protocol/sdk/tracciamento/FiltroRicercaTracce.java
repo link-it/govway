@@ -55,7 +55,9 @@ public class FiltroRicercaTracce implements java.io.Serializable {
 	private TipoPdD tipoPdD;
 	protected IDSoggetto dominio;
 
-	protected String idBusta;
+	protected String idBusta; // utilizzabile con tipo traccia
+	protected String idBustaRichiesta;
+	protected String idBustaRisposta;
 	protected String riferimentoMessaggio;
 	protected boolean ricercaSoloBusteErrore;
 	protected InformazioniProtocollo informazioniProtocollo;
@@ -150,6 +152,54 @@ public class FiltroRicercaTracce implements java.io.Serializable {
 	 */
 	public void setIdBusta(String value) {
 		this.idBusta = value;
+	}
+	
+	/**
+	 * Gets the value of the idBustaRichiesta property.
+	 * 
+	 * @return
+	 *     possible object is
+	 *     {@link String }
+	 *     
+	 */
+	public String getIdBustaRichiesta() {
+		return this.idBustaRichiesta;
+	}
+
+	/**
+	 * Sets the value of the idBustaRichiesta property.
+	 * 
+	 * @param value
+	 *     allowed object is
+	 *     {@link String }
+	 *     
+	 */
+	public void setIdBustaRichiesta(String value) {
+		this.idBustaRichiesta = value;
+	}
+	
+	/**
+	 * Gets the value of the idBustaRichiesta property.
+	 * 
+	 * @return
+	 *     possible object is
+	 *     {@link String }
+	 *     
+	 */
+	public String getIdBustaRisposta() {
+		return this.idBustaRisposta;
+	}
+
+	/**
+	 * Sets the value of the idBustaRichiesta property.
+	 * 
+	 * @param value
+	 *     allowed object is
+	 *     {@link String }
+	 *     
+	 */
+	public void setIdBustaRisposta(String value) {
+		this.idBustaRisposta = value;
 	}
 
 
@@ -391,6 +441,10 @@ public class FiltroRicercaTracce implements java.io.Serializable {
 		}
 		if(this.idBusta!=null)
 			bf.append(" [id-busta:"+this.idBusta+"]");
+		if(this.idBustaRichiesta!=null)
+			bf.append(" [id-busta-richiesta:"+this.idBustaRichiesta+"]");
+		if(this.idBustaRisposta!=null)
+			bf.append(" [id-busta-risposta:"+this.idBustaRisposta+"]");
 		if(this.riferimentoMessaggio!=null)
 			bf.append(" [riferimento-messaggio:"+this.riferimentoMessaggio+"]");
 		if(this.ricercaSoloBusteErrore)
