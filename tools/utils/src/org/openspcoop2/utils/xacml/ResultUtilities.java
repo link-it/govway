@@ -34,8 +34,8 @@ import org.slf4j.Logger;
  * ResultCombining
  *
  * @author Bussu Giovanni (bussu@link.it)
- * @author $Author: apoli $
- * @version $Rev: 12750 $, $Date: 2017-03-07 14:53:49 +0100 (Tue, 07 Mar 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class ResultUtilities {
 

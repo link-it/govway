@@ -23,8 +23,8 @@ package org.openspcoop2.core.registry.constants;
  * PddTipologia
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 12564 $, $Date: 2017-01-11 14:31:31 +0100 (Wed, 11 Jan 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public enum PddTipologia {
 

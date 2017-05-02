@@ -24,8 +24,8 @@ package org.openspcoop2.pdd.core.autenticazione;
  * Contiene la definizione di una eccezione lanciata dai NodeReceiver e NodeSender
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 12564 $, $Date: 2017-01-11 14:31:31 +0100 (Wed, 11 Jan 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 

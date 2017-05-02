@@ -28,8 +28,8 @@ import org.openspcoop2.core.config.constants.TipoAutorizzazione;
  * Classe che implementa una autorizzazione basata sui ruoli
  *
  * @author Andrea Poli <apoli@link.it>
- * @author $Author: apoli $
- * @version $Rev: 12564 $, $Date: 2017-01-11 14:31:31 +0100 (Wed, 11 Jan 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 public class AutorizzazioneAuthenticatedInternalRoles extends AbstractAutorizzazioneAuthenticatedRoles{

@@ -49,8 +49,8 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * ConfigurazioneRuoliAdd
  * 
  * @author Andrea Poli (apoli@link.it)
- * @author $Author: apoli $
- * @version $Rev: 12564 $, $Date: 2017-01-11 14:31:31 +0100 (Wed, 11 Jan 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  * 
  */
 public final class RuoliAdd extends Action {

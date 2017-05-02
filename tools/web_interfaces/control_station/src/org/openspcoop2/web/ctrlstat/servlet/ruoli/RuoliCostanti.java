@@ -30,8 +30,8 @@ import org.openspcoop2.core.registry.constants.RuoloTipologia;
  * RuoliCostanti
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: mergefairy $
- * @version $Rev: 12788 $, $Date: 2017-03-14 17:04:53 +0100 (Tue, 14 Mar 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class RuoliCostanti {
 

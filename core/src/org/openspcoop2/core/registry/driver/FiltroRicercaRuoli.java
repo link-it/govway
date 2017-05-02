@@ -33,8 +33,8 @@ import org.openspcoop2.core.registry.constants.RuoloTipologia;
  * 
  * @author Poli Andrea (apoli@link.it)
  * @author Nardi Lorenzo (nardi@link.it)
- * @author $Author: apoli $
- * @version $Rev: 12564 $, $Date: 2017-01-11 14:31:31 +0100 (Wed, 11 Jan 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 public class FiltroRicercaRuoli extends FiltroRicerca implements Serializable{

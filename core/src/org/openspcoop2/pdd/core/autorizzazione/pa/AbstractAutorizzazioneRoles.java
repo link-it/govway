@@ -33,8 +33,8 @@ import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
  * Interfaccia che definisce un processo di autorizzazione sui ruoli
  *
  * @author Andrea Poli <apoli@link.it>
- * @author $Author: apoli $
- * @version $Rev: 12564 $, $Date: 2017-01-11 14:31:31 +0100 (Wed, 11 Jan 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 
 abstract class AbstractAutorizzazioneRoles extends AbstractAutorizzazioneBase {

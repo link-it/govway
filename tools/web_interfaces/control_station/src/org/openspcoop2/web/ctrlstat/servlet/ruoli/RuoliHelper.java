@@ -44,8 +44,8 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * RuoliHelper
  *
  * @author Poli Andrea (apoli@link.it)
- * @author $Author: mergefairy $
- * @version $Rev: 12788 $, $Date: 2017-03-14 17:04:53 +0100 (Tue, 14 Mar 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class RuoliHelper extends ConsoleHelper{
 
