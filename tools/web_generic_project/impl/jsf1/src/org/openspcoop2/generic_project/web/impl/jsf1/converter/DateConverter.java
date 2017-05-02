@@ -104,7 +104,7 @@ public class DateConverter  implements Converter {
 	}
 
 	public boolean isConsentiDataVuota() {
-		return consentiDataVuota;
+		return this.consentiDataVuota;
 	}
 
 	public void setConsentiDataVuota(boolean consentiDataVuota) {
