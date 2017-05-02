@@ -85,6 +85,8 @@
              <property nome="location" valore="http://127.0.0.1:8080/openspcoop2/proxy/PA" />
         </connettore>
 
+	<credenziali tipo="basic" user="Comune" password="123456" />
+
    </soggetto>
 
 </registro-servizi>

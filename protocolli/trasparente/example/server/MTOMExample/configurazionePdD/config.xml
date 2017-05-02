@@ -32,13 +32,15 @@
 
       <soggetto tipo="PROXY" nome="MinisteroErogatore" > 
 
-          <porta-applicativa nome="MTOMServiceExampleSOAP11" stateless="abilitato">
+          <porta-applicativa nome="MTOMServiceExampleSOAP11" 
+		autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
               <servizio tipo="PROXY" nome="MTOMServiceExampleSOAP11" />
               <azione nome="echo" />
               <servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" /> 
           </porta-applicativa>
 
-          <porta-applicativa nome="MTOMServiceExampleSOAP12" stateless="abilitato">
+          <porta-applicativa nome="MTOMServiceExampleSOAP12" 
+		autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
               <servizio tipo="PROXY" nome="MTOMServiceExampleSOAP12" />
               <azione nome="echo" />
               <servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />

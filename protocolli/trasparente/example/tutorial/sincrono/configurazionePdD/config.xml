@@ -48,25 +48,29 @@
 
       <soggetto tipo="PROXY" nome="CentroAnagrafico" > 
 
-          <porta-applicativa nome="RichiestaStatoFamigliaSOAP11" stateless="abilitato">
+          <porta-applicativa nome="RichiestaStatoFamigliaSOAP11" 
+		autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
               <servizio tipo="PROXY" nome="RichiestaStatoFamigliaSOAP11" />
               <azione nome="Acquisisci" />
               <servizio-applicativo nome="RichiestaStatoFamigliaSOAP11_SA" /> 
           </porta-applicativa>
 
-          <porta-applicativa nome="RichiestaStatoFamigliaSOAP12" stateless="abilitato">
+          <porta-applicativa nome="RichiestaStatoFamigliaSOAP12" 
+		autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
               <servizio tipo="PROXY" nome="RichiestaStatoFamigliaSOAP12" />
               <azione nome="Acquisisci" />
               <servizio-applicativo nome="RichiestaStatoFamigliaSOAP12_SA" />
           </porta-applicativa>
 
-          <porta-applicativa nome="RichiestaStatoFamigliaSOAP11Sec" stateless="abilitato">
+          <porta-applicativa nome="RichiestaStatoFamigliaSOAP11Sec" 
+		autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
               <servizio tipo="PROXY" nome="RichiestaStatoFamigliaSOAP11Sec" />
               <azione nome="Acquisisci" />
               <servizio-applicativo nome="RichiestaStatoFamigliaSOAP11Sec_SA" />
           </porta-applicativa>
 
-          <porta-applicativa nome="RichiestaStatoFamigliaSOAP12Sec" stateless="abilitato">
+          <porta-applicativa nome="RichiestaStatoFamigliaSOAP12Sec" 
+		autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
               <servizio tipo="PROXY" nome="RichiestaStatoFamigliaSOAP12Sec" />
               <azione nome="Acquisisci" />
               <servizio-applicativo nome="RichiestaStatoFamigliaSOAP12Sec_SA" />
