@@ -30,3 +30,9 @@ UPDATE configurazione set auth_statocache='abilitato';
 UPDATE configurazione set auth_dimensionecache='5000';
 UPDATE configurazione set auth_algoritmocache='lru';
 UPDATE configurazione set auth_lifecache='7200';
+
+-- Configurazione Cache Dati Autenticazione
+UPDATE configurazione set authn_statocache='abilitato';
+UPDATE configurazione set authn_dimensionecache='5000';
+UPDATE configurazione set authn_algoritmocache='lru';
+UPDATE configurazione set authn_lifecache='7200';
