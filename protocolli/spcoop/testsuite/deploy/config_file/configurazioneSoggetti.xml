@@ -2574,7 +2574,7 @@
         </porta-delegata>
         
         <!-- Autorizzazione -->
-        <porta-delegata gestione-manifest="abilitato" nome="HelloWorldAutorizzazione" autenticazione="basic" autorizzazione="openspcoop" integrazione="trasporto,urlBased,soap">
+        <porta-delegata gestione-manifest="abilitato" nome="HelloWorldAutorizzazione" autenticazione="basic" autorizzazione="authenticated" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />              
             <servizio tipo="SPC" nome="ComunicazioneVariazione" />
             <servizio-applicativo nome="silX" />
@@ -2622,7 +2622,7 @@
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="serializeAndReturnFile_sbustamentoSOAP" />
         </porta-delegata>
-	<porta-delegata gestione-manifest="abilitato" nome="serializeAndReturnFileAsync" autenticazione="basic" autorizzazione="openspcoop" integrazione="trasporto,urlBased,soap" stateless="disabilitato" >
+	<porta-delegata gestione-manifest="abilitato" nome="serializeAndReturnFileAsync" autenticazione="basic" autorizzazione="authenticated" integrazione="trasporto,urlBased,soap" stateless="disabilitato" >
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />              
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <azione nome="serializeAndReturnFileAsync" />
@@ -2733,7 +2733,7 @@
             l'invocazione di un servizio applicativo definito nell'elemento 'risposta-asincrona'.
             La funzionalita' non e' utilizzabile nel caso di richiesta Asincrona Simmetrica, poichè viene
             utilizzata dal profilo stesso per la gestione della risposta. -->
-        <porta-delegata gestione-manifest="abilitato" nome="RicezioneRispostaAsincrona" autenticazione="basic" autorizzazione="openspcoop" integrazione="trasporto,urlBased,soap">
+        <porta-delegata gestione-manifest="abilitato" nome="RicezioneRispostaAsincrona" autenticazione="basic" autorizzazione="authenticated" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="ricezioneRispostaAsincrona" />
@@ -3818,7 +3818,7 @@
             <azione nome="https_hostname_verify" />
         </porta-delegata>
         <!-- AutenticazioneSIL -->
-        <porta-delegata gestione-manifest="abilitato" nome="https_sil_verify" autenticazione="ssl" autorizzazione="openspcoop" integrazione="trasporto,urlBased,soap">
+        <porta-delegata gestione-manifest="abilitato" nome="https_sil_verify" autenticazione="ssl" autorizzazione="authenticated" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="sil1HTTPS" />
@@ -3902,7 +3902,7 @@
         
         
         <!-- ErroreApplicativoCNIPA provoca errore) -->
-        <porta-delegata gestione-manifest="abilitato" nome="ErroreApplicativoCNIPA" autenticazione="basic" autorizzazione="openspcoop" integrazione="trasporto,urlBased,soap">
+        <porta-delegata gestione-manifest="abilitato" nome="ErroreApplicativoCNIPA" autenticazione="basic" autorizzazione="authenticated" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroFruitore" />
             <servizio tipo="SPC" nome="PROVOCO_ERRORE" />
             <servizio-applicativo nome="erroreApplicativoAsSoapFaultDefault" />
@@ -4421,7 +4421,7 @@
         
         
         <!-- Profilo Sincrono per test invocazione per riferimento messaggio -->
-        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincronaRiferimentoMessaggio" autenticazione="basic" autorizzazione="openspcoop" integrazione="trasporto,urlBased,soap">
+        <porta-delegata gestione-manifest="abilitato" nome="CooperazioneSincronaRiferimentoMessaggio" autenticazione="basic" autorizzazione="authenticated" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroFruitore" />
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="silGop1" /> 
@@ -10508,7 +10508,7 @@
         </porta-delegata>
         
         <!-- AutenticazioneSIL -->
-        <porta-delegata gestione-manifest="abilitato" nome="https_sil_verify_test2" autenticazione="ssl" autorizzazione="openspcoop" integrazione="trasporto,urlBased,soap">
+        <porta-delegata gestione-manifest="abilitato" nome="https_sil_verify_test2" autenticazione="ssl" autorizzazione="authenticated" integrazione="trasporto,urlBased,soap">
             <soggetto-erogatore tipo="SPC" nome="MinisteroErogatore" />
             <servizio tipo="SPC" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="sil1HTTPS_test2" />

@@ -206,6 +206,8 @@ public class RichiesteApplicativeScorrette {
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
+		Date dataInizioTest = DateManager.getDate();
+		
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -247,6 +249,14 @@ public class RichiesteApplicativeScorrette {
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
 		}
+		
+		Date dataFineTest = DateManager.getDate();
+		
+		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+		err.setIntervalloInferiore(dataInizioTest);
+		err.setIntervalloSuperiore(dataFineTest);
+		err.setMsgErrore(CostantiErroriIntegrazione.MSG_402_AUTENTICAZIONE_FALLITA_CREDENZIALI_NON_FORNITE);
+		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	
 	
@@ -269,6 +279,8 @@ public class RichiesteApplicativeScorrette {
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
+		Date dataInizioTest = DateManager.getDate();
+		
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -310,6 +322,14 @@ public class RichiesteApplicativeScorrette {
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
 		}
+		
+		Date dataFineTest = DateManager.getDate();
+		
+		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+		err.setIntervalloInferiore(dataInizioTest);
+		err.setIntervalloSuperiore(dataFineTest);
+		err.setMsgErrore(CostantiErroriIntegrazione.MSG_402_AUTENTICAZIONE_FALLITA);
+		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	
 	
@@ -601,6 +621,8 @@ public class RichiesteApplicativeScorrette {
 		DatabaseComponent dbComponentFruitore = null;
 		DatabaseComponent dbComponentErogatore = null;
 
+		Date dataInizioTest = DateManager.getDate();
+		
 		try{
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -642,6 +664,14 @@ public class RichiesteApplicativeScorrette {
 			dbComponentFruitore.close();
 			dbComponentErogatore.close();
 		}
+		
+		Date dataFineTest = DateManager.getDate();
+		
+		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+		err.setIntervalloInferiore(dataInizioTest);
+		err.setIntervalloSuperiore(dataFineTest);
+		err.setMsgErrore(CostantiErroriIntegrazione.MSG_404_AUTORIZZAZIONE_FALLITA.replace("SERVIZIO_APPLICATIVO", "silY"));
+		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 
 

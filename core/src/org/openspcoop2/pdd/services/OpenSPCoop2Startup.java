@@ -241,33 +241,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
-			/* ------------ 
-			 * Inizializzazione Resource Bundle:
-			 * - org/apache/xml/security/resource/xmlsecurity_en.properties (xmlsec-2.0.7.jar)
-			 * - org/apache/xml/security/resource/xmlsecurity_de.properties (xmlsec-2.0.7.jar)
-			 * - messages/wss4j_errors.properties (wss4j-ws-security-common-2.1.7.jar)
-			 * 
-			 * L'inizializzazione di questa classe DEVE essere all'inizio altrimenti si puo' incorrere in errori tipo il seguente:
-			 * Caused by: org.apache.wss4j.common.ext.WSSecurityException: No message with ID "noUserCertsFound" found in resource bundle "org/apache/xml/security/resource/xmlsecurity"
-			 *
-			 * Il motivo risiede nel fatto che org.apache.wss4j.common.ext.WSSecurityException lancia una eccezione con id "noUserCertsFound".
-			 * Tale eccezione di fatto estende la classe org/apache/xml/security/exceptions/XMLSecurityException che utilizza il proprio resource bundle
-			 * per risolvere l'id. Tale classe utilizza normalmente il properties 'org/apache/xml/security/resource/xmlsecurity_en.properties'
-			 * Mentre l'id 'noUserCertsFound' e' dentro il properties 'messages/wss4j_errors.properties'
-			 * Pero' xmlsec permette di inizializzare il resource bundle da usare anche grazie ad un metodo dove viene fornito l'intero resource bundle.
-			 * Questo avviene in xmlsec-2.0.7/src/main/java/org/apache/xml/security/utils/I18n.java metodo init(ResourceBundle resourceBundle)
-			 * L'inizializzazione avviene pero' solamente una volta. Quindi se qualche altra libreria l'inizializza prima, poi il metodo init diventa una nop.
-			 * Tale init viene quindi richiamata dalla classe org.apache.wss4j.dom.engine.WSSConfig.init che prepara un resource bundle
-			 * contenente sia il contenuto originale del properties 'org/apache/xml/security/resource/xmlsecurity_en.properties' che 
-			 * aggiungendo il contenuto del properties 'messages/wss4j_errors.properties'
-			 *
-			 * -------------------- */
-			try{
-				org.apache.wss4j.dom.engine.WSSConfig.init();
-			}catch(Exception e){
-				this.logError("Inizializzazione org.apache.wss4j.dom.engine.WSSConfig.init",e);
-				return;
-			}
+
 			
 			
 			
@@ -371,6 +345,61 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+			
+			
+			
+			/*
+			 * 	Necessario in jboss7 per evitare errore 'error constructing MAC: java.lang.SecurityException: JCE cannot authenticate the provider BC'
+			 *  se vengono utilizzati keystore P12.
+			 *  Il codice  
+			 *  	<resource-root path="WEB-INF/lib/bcprov-ext-jdk15on-155.jar" use-physical-code-source="true"/>
+			 *  all'interno del file jboss-deployment-structure.xml non è più sufficente da quanto è stato necessario
+			 *  introdurre il codice sottostante 'org.apache.wss4j.dom.engine.WSSConfig.init' 
+			 *  e di conseguenza tutta la configurazione del modulo 'deployment.custom.javaee.api'
+			 *  per risolvere il problema java.lang.NoSuchMethodError: org.apache.xml.security.utils.I18n.init 
+			 */
+			// NOTA: il caricamento di BouncyCastleProvider DEVE essere effettuato prima dell'inizializzazione 'org.apache.wss4j.dom.engine.WSSConfig.init' 
+			if(propertiesReader.isLoadBouncyCastle()){ 
+				Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+				OpenSPCoop2Startup.log.info("Aggiunto Security Provider org.bouncycastle.jce.provider.BouncyCastleProvider");
+			}
+			
+			/* ------------ 
+			 * Inizializzazione Resource Bundle:
+			 * - org/apache/xml/security/resource/xmlsecurity_en.properties (xmlsec-2.0.7.jar)
+			 * - org/apache/xml/security/resource/xmlsecurity_de.properties (xmlsec-2.0.7.jar)
+			 * - messages/wss4j_errors.properties (wss4j-ws-security-common-2.1.7.jar)
+			 * 
+			 * L'inizializzazione di questa classe DEVE essere all'inizio altrimenti si puo' incorrere in errori tipo il seguente:
+			 * Caused by: org.apache.wss4j.common.ext.WSSecurityException: No message with ID "noUserCertsFound" found in resource bundle "org/apache/xml/security/resource/xmlsecurity"
+			 *
+			 * Il motivo risiede nel fatto che org.apache.wss4j.common.ext.WSSecurityException lancia una eccezione con id "noUserCertsFound".
+			 * Tale eccezione di fatto estende la classe org/apache/xml/security/exceptions/XMLSecurityException che utilizza il proprio resource bundle
+			 * per risolvere l'id. Tale classe utilizza normalmente il properties 'org/apache/xml/security/resource/xmlsecurity_en.properties'
+			 * Mentre l'id 'noUserCertsFound' e' dentro il properties 'messages/wss4j_errors.properties'
+			 * Pero' xmlsec permette di inizializzare il resource bundle da usare anche grazie ad un metodo dove viene fornito l'intero resource bundle.
+			 * Questo avviene in xmlsec-2.0.7/src/main/java/org/apache/xml/security/utils/I18n.java metodo init(ResourceBundle resourceBundle)
+			 * L'inizializzazione avviene pero' solamente una volta. Quindi se qualche altra libreria l'inizializza prima, poi il metodo init diventa una nop.
+			 * Tale init viene quindi richiamata dalla classe org.apache.wss4j.dom.engine.WSSConfig.init che prepara un resource bundle
+			 * contenente sia il contenuto originale del properties 'org/apache/xml/security/resource/xmlsecurity_en.properties' che 
+			 * aggiungendo il contenuto del properties 'messages/wss4j_errors.properties'
+			 *
+			 * -------------------- */
+			try{
+				org.apache.wss4j.dom.engine.WSSConfig.init();
+			}catch(Exception e){
+				this.logError("Inizializzazione org.apache.wss4j.dom.engine.WSSConfig.init",e);
+				return;
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
 
 
 
@@ -468,13 +497,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				// MessageFactory
 				OpenSPCoop2MessageFactory.setMessageFactoryImpl(classNameReader.getOpenSPCoop2MessageFactory(propertiesReader.getOpenspcoop2MessageFactory()));
 				OpenSPCoop2MessageFactory.initMessageFactory(true);
-				
-				// BouncyCastleProvider
-				if(propertiesReader.isLoadBouncyCastle()){
-					Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-					OpenSPCoop2Startup.log.info("Aggiunto Security Provider org.bouncycastle.jce.provider.BouncyCastleProvider");
-				}
-				
+								
 				// MessageSecurity
 				MessageSecurityFactory.setMessageSecurityContextClassName(classNameReader.getMessageSecurityContext(propertiesReader.getMessageSecurityContext()));
 				MessageSecurityFactory.setMessageSecurityDigestReaderClassName(classNameReader.getMessageSecurityDigestReader(propertiesReader.getMessageSecurityDigestReader()));

@@ -112,20 +112,20 @@ public class CostantiTestSuite {
 	public static final String PORTA_DELEGATA_PROFILO_SINCRONO_STATELESS_FAULT12_500="PROXYClientSoapFault12500/APIMinisteroErogatoreEsterno/SOAPSincronoStateless";
 	
 	/** Porte Delegate per il test MTOM */
-	public static final String PORTA_DELEGATA_MTOM_SOAP11="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/echo";
-	public static final String PORTA_DELEGATA_MTOM_SOAP12="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/echo";
-	public static final String PORTA_DELEGATA_MTOM_SOAP11_VALIDAZIONE="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/validazione";
-	public static final String PORTA_DELEGATA_MTOM_SOAP12_VALIDAZIONE="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/validazione";
-	public static final String PORTA_DELEGATA_MTOM_SOAP11_PACKAGE_UNPACKAGE="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/packageUnpackage";
-	public static final String PORTA_DELEGATA_MTOM_SOAP12_PACKAGE_UNPACKAGE="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/packageUnpackage";
-	public static final String PORTA_DELEGATA_MTOM_SOAP11_UNPACKAGE_PACKAGE="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/unpackagePackage";
-	public static final String PORTA_DELEGATA_MTOM_SOAP12_UNPACKAGE_PACKAGE="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/unpackagePackage";
-	public static final String PORTA_DELEGATA_MTOM_SOAP11_VERIFY_OK="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/verifyOk";
-	public static final String PORTA_DELEGATA_MTOM_SOAP12_VERIFY_OK="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/verifyOk";
-	public static final String PORTA_DELEGATA_MTOM_SOAP11_VERIFY_KO_REQUEST="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/verifyKoRequest";
-	public static final String PORTA_DELEGATA_MTOM_SOAP12_VERIFY_KO_REQUEST="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/verifyKoRequest";
-	public static final String PORTA_DELEGATA_MTOM_SOAP11_VERIFY_KO_RESPONSE="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/verifyKoResponse";
-	public static final String PORTA_DELEGATA_MTOM_SOAP12_VERIFY_KO_RESPONSE="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/verifyKoResponse";
+	public static final String PORTA_DELEGATA_MTOM_SOAP11="APIMinisteroFruitore/APIMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/echo";
+	public static final String PORTA_DELEGATA_MTOM_SOAP12="APIMinisteroFruitore/APIMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/echo";
+	public static final String PORTA_DELEGATA_MTOM_SOAP11_VALIDAZIONE="APIMinisteroFruitore/APIMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/validazione";
+	public static final String PORTA_DELEGATA_MTOM_SOAP12_VALIDAZIONE="APIMinisteroFruitore/APIMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/validazione";
+	public static final String PORTA_DELEGATA_MTOM_SOAP11_PACKAGE_UNPACKAGE="APIMinisteroFruitore/APIMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/packageUnpackage";
+	public static final String PORTA_DELEGATA_MTOM_SOAP12_PACKAGE_UNPACKAGE="APIMinisteroFruitore/APIMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/packageUnpackage";
+	public static final String PORTA_DELEGATA_MTOM_SOAP11_UNPACKAGE_PACKAGE="APIMinisteroFruitore/APIMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/unpackagePackage";
+	public static final String PORTA_DELEGATA_MTOM_SOAP12_UNPACKAGE_PACKAGE="APIMinisteroFruitore/APIMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/unpackagePackage";
+	public static final String PORTA_DELEGATA_MTOM_SOAP11_VERIFY_OK="APIMinisteroFruitore/APIMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/verifyOk";
+	public static final String PORTA_DELEGATA_MTOM_SOAP12_VERIFY_OK="APIMinisteroFruitore/APIMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/verifyOk";
+	public static final String PORTA_DELEGATA_MTOM_SOAP11_VERIFY_KO_REQUEST="APIMinisteroFruitore/APIMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/verifyKoRequest";
+	public static final String PORTA_DELEGATA_MTOM_SOAP12_VERIFY_KO_REQUEST="APIMinisteroFruitore/APIMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/verifyKoRequest";
+	public static final String PORTA_DELEGATA_MTOM_SOAP11_VERIFY_KO_RESPONSE="APIMinisteroFruitore/APIMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/verifyKoResponse";
+	public static final String PORTA_DELEGATA_MTOM_SOAP12_VERIFY_KO_RESPONSE="APIMinisteroFruitore/APIMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/verifyKoResponse";
 	
 	/** Porte Delegate per il test dei profili di collaborazione: API */
 	public static final String PORTA_DELEGATA_REST_API="APIMinisteroFruitore/APIMinisteroErogatore/RESTAPI";
@@ -137,12 +137,16 @@ public class CostantiTestSuite {
 	
 	
 	/** Porte Applicative per il test dei profili di collaborazione: OneWay */
-	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATEFUL_NON_AUTENTICATO="APIMinisteroErogatore/SOAPOnewayStateful";
-	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATELESS_NON_AUTENTICATO="APIMinisteroErogatore/SOAPOnewayStateless";
+	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATEFUL_NON_AUTENTICATO="NOAUTH_APIMinisteroErogatore/SOAPOnewayStateful";
+	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATELESS_NON_AUTENTICATO="NOAUTH_APIMinisteroErogatore/SOAPOnewayStateless";
+	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATEFUL_AUTENTICATO="AUTH_APIMinisteroErogatore/SOAPOnewayStateful";
+	public static final String PORTA_APPLICATIVA_PROFILO_ONEWAY_STATELESS_AUTENTICATO="AUTH_APIMinisteroErogatore/SOAPOnewayStateless";
 	
 	/** Porte Applicative per il test dei profili di collaborazione: Sincrono */
-	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATEFUL_NON_AUTENTICATO="APIMinisteroErogatore/SOAPSincronoStateful";
-	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATELESS_NON_AUTENTICATO="APIMinisteroErogatore/SOAPSincronoStateless";
+	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATEFUL_NON_AUTENTICATO="NOAUTH_APIMinisteroErogatore/SOAPSincronoStateful";
+	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATELESS_NON_AUTENTICATO="NOAUTH_APIMinisteroErogatore/SOAPSincronoStateless";
+	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATEFUL_AUTENTICATO="AUTH_APIMinisteroErogatore/SOAPSincronoStateful";
+	public static final String PORTA_APPLICATIVA_PROFILO_SINCRONO_STATELESS_AUTENTICATO="AUTH_APIMinisteroErogatore/SOAPSincronoStateless";
 
 	
 	/**
@@ -218,6 +222,7 @@ public class CostantiTestSuite {
 	/** Nome Soggetto Fruitore */
 	public static final String PROXY_NOME_SOGGETTO_FRUITORE="MinisteroFruitore";
 	/** Nome Soggetto Fruitore Anomino*/
+	@Deprecated
 	public static final String PROXY_NOME_SOGGETTO_FRUITORE_ANONIMO="Anonimo";
 	/** Nome Soggetto Fruitore Anomino*/
 	public static final String PROXY_NOME_SOGGETTO_FRUITORE_AUTENTICATO_PORTA_APPLICATIVA="applicativoComunePisa";
@@ -234,6 +239,7 @@ public class CostantiTestSuite {
 	/** IdPorta Soggetto Fruitore */
 	public static final String PROXY_IDPORTA_SOGGETTO_FRUITORE_FAULT12200="ClientSoapFault12PdD";
 	/** IdPorta Soggetto Fruitore */
+	@Deprecated
 	public static final String PROXY_IDPORTA_ANONIMO="AnonimoPdD";
 	
 	/** IDSoggetto */
@@ -252,8 +258,9 @@ public class CostantiTestSuite {
 	public static final IDSoggetto PROXY_SOGGETTO_FRUITORE = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
 			CostantiTestSuite.PROXY_NOME_SOGGETTO_FRUITORE, CostantiTestSuite.PROXY_IDPORTA_SOGGETTO_FRUITORE);
 	/** IDSoggetto Anonimo*/
-	public static final IDSoggetto PROXY_SOGGETTO_FRUITORE_ANONIMO = new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
-			CostantiTestSuite.PROXY_NOME_SOGGETTO_FRUITORE_ANONIMO, CostantiTestSuite.PROXY_IDPORTA_ANONIMO);
+	public static final IDSoggetto PROXY_SOGGETTO_FRUITORE_ANONIMO = null; // volutamente null
+//			new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 
+//			CostantiTestSuite.PROXY_NOME_SOGGETTO_FRUITORE_ANONIMO, CostantiTestSuite.PROXY_IDPORTA_ANONIMO);
 		
 	/** IDSoggetto Autenticato Porta Applicativa */
 	public static final IDSoggetto PROXY_SOGGETTO_FRUITORE_AUTENTICATO_PORTA_APPLICATIVA= new IDSoggetto(CostantiTestSuite.PROXY_TIPO_SOGGETTO, 

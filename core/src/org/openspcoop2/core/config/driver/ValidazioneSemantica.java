@@ -755,7 +755,9 @@ public class ValidazioneSemantica {
 					this.errori.add("Alla porta delegata "+idPortaDelegata+" e' stato associata un'autorizzazione '"+autorizzazione+"' che richiede una autenticazione obbligatoria dei servizi applicativi, autenticazione non impostata nella porta delegata"); 
 				}
 				if(StatoFunzionalita.ABILITATO.equals(pd.getAutenticazioneOpzionale())){
-					this.errori.add("Alla porta delegata "+idPortaDelegata+" e' stato associata un'autorizzazione '"+autorizzazione+"' che richiede una autenticazione obbligatoria dei servizi applicativi, autenticazione impostata come opzionale nella porta delegata"); 
+					if(autorizzazione.toLowerCase().contains("or")==false){
+						this.errori.add("Alla porta delegata "+idPortaDelegata+" e' stato associata un'autorizzazione '"+autorizzazione+"' che richiede una autenticazione obbligatoria dei servizi applicativi, autenticazione impostata come opzionale nella porta delegata");
+					}
 				}
 			}
 		}
@@ -1138,7 +1140,9 @@ public class ValidazioneSemantica {
 						this.errori.add("Alla porta applicativa "+idPortaApplicativa+" e' stato associata un'autorizzazione '"+autorizzazione+"' che richiede una autenticazione obbligatoria dei soggetti, autenticazione non impostata nella porta applicativa"); 
 					}
 					if(StatoFunzionalita.ABILITATO.equals(pa.getAutenticazioneOpzionale())){
-						this.errori.add("Alla porta applicativa "+idPortaApplicativa+" e' stato associata un'autorizzazione '"+autorizzazione+"' che richiede una autenticazione obbligatoria dei soggetti, autenticazione impostata come opzionale nella porta applicativa"); 
+						if(autorizzazione.toLowerCase().contains("or")==false){
+							this.errori.add("Alla porta applicativa "+idPortaApplicativa+" e' stato associata un'autorizzazione '"+autorizzazione+"' che richiede una autenticazione obbligatoria dei soggetti, autenticazione impostata come opzionale nella porta applicativa");
+						}
 					}
 				}
 			}

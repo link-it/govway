@@ -4,7 +4,7 @@
       <soggetto tipo="PROXY" nome="Comune" > 
 
           <porta-delegata nome="PROXYComune/PROXYCentroAnagrafico/PROXYComunicazioneVariazioneSOAP11/Notifica" 
-	      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+	      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
               <soggetto-erogatore tipo="PROXY" nome="CentroAnagrafico" />
               <servizio tipo="PROXY" nome="ComunicazioneVariazioneSOAP11" />
               <azione nome="Notifica" />
@@ -12,7 +12,7 @@
           </porta-delegata>
 
           <porta-delegata nome="PROXYComune/PROXYCentroAnagrafico/PROXYComunicazioneVariazioneSOAP12/Notifica"
-              autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+              autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
               <soggetto-erogatore tipo="PROXY" nome="CentroAnagrafico" />
               <servizio tipo="PROXY" nome="ComunicazioneVariazioneSOAP12" />
               <azione nome="Notifica" />
@@ -20,7 +20,7 @@
           </porta-delegata>
 
           <porta-delegata nome="PROXYComune/PROXYCentroAnagrafico/PROXYComunicazioneVariazioneSOAP11Sec/Notifica"
-              autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+              autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
               <soggetto-erogatore tipo="PROXY" nome="CentroAnagrafico" />
               <servizio tipo="PROXY" nome="ComunicazioneVariazioneSOAP11Sec" />
               <azione nome="Notifica" />
@@ -28,7 +28,7 @@
           </porta-delegata>
 
           <porta-delegata nome="PROXYComune/PROXYCentroAnagrafico/PROXYComunicazioneVariazioneSOAP12Sec/Notifica"
-              autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+              autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
               <soggetto-erogatore tipo="PROXY" nome="CentroAnagrafico" />
               <servizio tipo="PROXY" nome="ComunicazioneVariazioneSOAP12Sec" />
               <azione nome="Notifica" />

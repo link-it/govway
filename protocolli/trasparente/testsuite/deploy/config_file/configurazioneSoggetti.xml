@@ -42,14 +42,14 @@
                          <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStateless/([^/|^?]*).*"/>
                 </porta-delegata>
 
-                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStatefulAutenticato" autenticazione="basic" autorizzazione="openspcoop" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStatefulAutenticato" autenticazione="basic" autorizzazione="authenticated" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
                     <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
                     <servizio tipo="SOAP" nome="Oneway"/>
                     <azione nome="notifica"/>
                     <servizio-applicativo nome="EsempioFruitoreTrasparente"/>
                 </porta-delegata>
 
-		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStatelessAutenticato" autenticazione="basic" autorizzazione="openspcoop" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPOnewayStatelessAutenticato" autenticazione="basic" autorizzazione="authenticated" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
 		    <servizio tipo="SOAP" nome="Oneway"/>
 		    <azione nome="notifica"/>
@@ -85,14 +85,14 @@
                     <azione identificazione="urlBased" pattern=".*APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStateless/([^/|^?]*).*"/>
                 </porta-delegata>
 
-                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStatefulAutenticato" autenticazione="basic" autorizzazione="openspcoop" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                <porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStatefulAutenticato" autenticazione="basic" autorizzazione="authenticated" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
                     <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
                     <servizio tipo="SOAP" nome="Sincrono"/>
                     <azione nome="aggiornamento"/>
                     <servizio-applicativo nome="EsempioFruitoreTrasparente"/>
                 </porta-delegata>
 
-		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStatelessAutenticato" autenticazione="basic" autorizzazione="openspcoop" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatoreEsterno/SOAPSincronoStatelessAutenticato" autenticazione="basic" autorizzazione="authenticated" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
 		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="aggiornamento"/>
@@ -114,10 +114,11 @@
 		</porta-delegata>
 
 
+
 		<!-- MTOM -->
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP11/echo" 
-				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
 				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
 				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
 				      <azione nome="echo" />
@@ -125,7 +126,7 @@
 		</porta-delegata>
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP12/echo"
-				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
 				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
 				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
 				      <azione nome="echo" />
@@ -133,7 +134,7 @@
 		</porta-delegata>
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP11/validazione" 
-				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
 				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
 				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
 				      <azione nome="echo" />
@@ -142,7 +143,7 @@
 		</porta-delegata>
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP12/validazione"
-				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
 				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
 				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
 				      <azione nome="echo" />
@@ -152,7 +153,7 @@
 
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP11/packageUnpackage" 
-				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
 				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
 				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
 				      <azione nome="packageUnpackage" />
@@ -190,7 +191,7 @@
 		</porta-delegata>
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP12/packageUnpackage"
-				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
 				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
 				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
 				      <azione nome="packageUnpackage" />
@@ -228,7 +229,7 @@
 		</porta-delegata>
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP11/unpackagePackage" 
-				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
 				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
 				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
 				      <azione nome="unpackagePackage" />
@@ -266,7 +267,7 @@
 		</porta-delegata>
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP12/unpackagePackage"
-				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
 				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
 				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
 				      <azione nome="unpackagePackage" />
@@ -304,7 +305,7 @@
 		</porta-delegata>
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP11/verifyOk" 
-				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
 				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
 				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
 				      <azione nome="echo" />
@@ -342,7 +343,7 @@
 		</porta-delegata>
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP12/verifyOk"
-				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
 				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
 				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
 				      <azione nome="echo" />
@@ -380,7 +381,7 @@
 		</porta-delegata>
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP11/verifyKoRequest" 
-				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
 				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
 				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
 				      <azione nome="echo" />
@@ -422,7 +423,7 @@
 		</porta-delegata>
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP12/verifyKoRequest"
-				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
 				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
 				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
 				      <azione nome="echo" />
@@ -464,7 +465,7 @@
 		</porta-delegata>
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP11/verifyKoResponse" 
-				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
 				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
 				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
 				      <azione nome="echo" />
@@ -502,7 +503,7 @@
 		</porta-delegata>
 
 		<porta-delegata nome="APIMinisteroFruitore/APIMinisteroErogatore/SOAPMTOMServiceExampleSOAP12/verifyKoResponse"
-				      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+				      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
 				      <soggetto-erogatore tipo="API" nome="MinisteroErogatore" />
 				      <servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
 				      <azione nome="echo" />
@@ -542,6 +543,374 @@
 
 
 
+
+		<!-- Authentication -->
+
+		<porta-delegata nome="AuthenticationBasic" autenticazione="basic" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		</porta-delegata>
+
+		<porta-delegata nome="AuthenticationSsl" autenticazione="ssl" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		</porta-delegata>
+
+		<porta-delegata nome="AuthenticationPrincipal" autenticazione="principal" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		</porta-delegata>
+
+		<porta-delegata nome="AuthenticationOptionalBasic" autenticazione="basic" autenticazione-opzionale="abilitato" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		</porta-delegata>
+
+		<porta-delegata nome="AuthenticationOptionalSsl" autenticazione="ssl" autenticazione-opzionale="abilitato" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		</porta-delegata>
+
+		<porta-delegata nome="AuthenticationOptionalPrincipal" autenticazione="principal" autenticazione-opzionale="abilitato" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		</porta-delegata>
+
+
+
+		<!-- Authorization -->
+
+		<!-- 
+		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparenteBasic ha esito ok
+		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparenteBasic2 ha esito ko
+		-->
+		<porta-delegata nome="AuthorizationAuthenticated" autenticazione="basic" autorizzazione="authenticated" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="EsempioFruitoreTrasparenteBasic" />
+		</porta-delegata>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok
+		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ko
+		-->
+		<porta-delegata nome="AuthorizationRolesAll" autenticazione="principal" autorizzazione="roles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <ruoli match="all">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role2ExtAllOpenSPCoopTest"/>
+			<ruolo nome="role3AllPD_OpenSPCoopTest"/>  
+			<ruolo nome="role5IntAllOpenSPCoopTest"/>   
+		    </ruoli>
+		</porta-delegata>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok
+		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ok
+		-->
+		<porta-delegata nome="AuthorizationRolesAny" autenticazione="principal" autorizzazione="roles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <ruoli match="any">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role2ExtAllOpenSPCoopTest"/>
+			<ruolo nome="role3AllPD_OpenSPCoopTest"/>  
+			<ruolo nome="role5IntAllOpenSPCoopTest"/>   
+		    </ruoli>
+		</porta-delegata>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok
+		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ko
+		-->
+		<porta-delegata nome="AuthorizationInternalRolesAll" autenticazione="principal" autorizzazione="internalRoles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <ruoli match="all">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role3AllPD_OpenSPCoopTest"/>  
+			<ruolo nome="role5IntAllOpenSPCoopTest"/>   
+		    </ruoli>
+		</porta-delegata>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok
+		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ok
+		-->
+		<porta-delegata nome="AuthorizationInternalRolesAny" autenticazione="principal" autorizzazione="internalRoles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <ruoli match="any">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role3AllPD_OpenSPCoopTest"/>  
+			<ruolo nome="role5IntAllOpenSPCoopTest"/>   
+		    </ruoli>
+		</porta-delegata>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok
+		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ko
+		-->
+		<porta-delegata nome="AuthorizationExternalRolesAll" autenticazione="principal" autorizzazione="externalRoles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <ruoli match="all">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role2ExtAllOpenSPCoopTest"/> 
+			<ruolo nome="role3AllPD_OpenSPCoopTest"/>    
+		    </ruoli>
+		</porta-delegata>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok
+		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ok
+		-->
+		<porta-delegata nome="AuthorizationExternalRolesAny" autenticazione="principal" autorizzazione="externalRoles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <ruoli match="any">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role2ExtAllOpenSPCoopTest"/> 
+			<ruolo nome="role3AllPD_OpenSPCoopTest"/>    
+		    </ruoli>
+		</porta-delegata>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione con le credenziali EsempioFruitoreTrasparentePrincipal ha esito ok
+		     2. L'invocazione con le credenziali EsempioFruitoreTrasparentePrincipal2 ha esito ko
+		-->
+		<porta-delegata nome="AuthorizationExternalRolesAll_noAuthentication" autenticazione="none" autorizzazione="externalRoles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <ruoli match="all">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role2ExtAllOpenSPCoopTest"/> 
+			<ruolo nome="role3AllPD_OpenSPCoopTest"/>    
+		    </ruoli>
+		</porta-delegata>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione con le credenziali EsempioFruitoreTrasparentePrincipal ha esito ok
+		     2. L'invocazione con le credenziali EsempioFruitoreTrasparentePrincipal2 ha esito ok
+		-->
+		<porta-delegata nome="AuthorizationExternalRolesAny_noAuthentication" autenticazione="none" autorizzazione="externalRoles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <ruoli match="any">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role2ExtAllOpenSPCoopTest"/> 
+			<ruolo nome="role3AllPD_OpenSPCoopTest"/>    
+		    </ruoli>
+		</porta-delegata>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
+		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ko (ne autenticato, ne ruoli)
+		     3. L'invocazione del servizio applicativo EsempioFruitoreTrasparenteBasic ha esito ok (perchè autenticato)
+		-->
+		<porta-delegata nome="AuthorizationAuthenticatedOrRolesAll" autenticazione="basic" autenticazione-opzionale="abilitato" autorizzazione="authenticatedOrRoles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="EsempioFruitoreTrasparenteBasic" />
+		    <ruoli match="all">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role2ExtAllOpenSPCoopTest"/>
+			<ruolo nome="role3AllPD_OpenSPCoopTest"/>  
+			<ruolo nome="role5IntAllOpenSPCoopTest"/>   
+		    </ruoli>
+		</porta-delegata>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
+		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ok (ruoli)
+		     3. L'invocazione del servizio applicativo EsempioFruitoreTrasparenteBasic ha esito ok (perchè autenticato)
+		-->
+		<porta-delegata nome="AuthorizationAuthenticatedOrRolesAny" autenticazione="basic" autenticazione-opzionale="abilitato" autorizzazione="authenticatedOrRoles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="EsempioFruitoreTrasparenteBasic" />
+		    <ruoli match="any">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role2ExtAllOpenSPCoopTest"/>
+			<ruolo nome="role3AllPD_OpenSPCoopTest"/>  
+			<ruolo nome="role5IntAllOpenSPCoopTest"/>   
+		    </ruoli>
+		</porta-delegata>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
+		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ko (ne autenticato, ne ruoli)
+		     3. L'invocazione del servizio applicativo EsempioFruitoreTrasparenteBasic ha esito ok (perchè autenticato)
+		-->
+		<porta-delegata nome="AuthorizationAuthenticatedOrInternalRolesAll" autenticazione="basic" autenticazione-opzionale="abilitato" 
+				autorizzazione="authenticatedOrInternalRoles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="EsempioFruitoreTrasparenteBasic" />
+		    <ruoli match="all">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role3AllPD_OpenSPCoopTest"/>  
+			<ruolo nome="role5IntAllOpenSPCoopTest"/>    
+		    </ruoli>
+		</porta-delegata>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
+		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ok (ruoli)
+		     3. L'invocazione del servizio applicativo EsempioFruitoreTrasparenteBasic ha esito ok (perchè autenticato)
+		-->
+		<porta-delegata nome="AuthorizationAuthenticatedOrInternalRolesAny" autenticazione="basic" autenticazione-opzionale="abilitato" 
+				autorizzazione="authenticatedOrInternalRoles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="EsempioFruitoreTrasparenteBasic" />
+		    <ruoli match="any">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role3AllPD_OpenSPCoopTest"/>  
+			<ruolo nome="role5IntAllOpenSPCoopTest"/>    
+		    </ruoli>
+		</porta-delegata>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
+		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ko (ne autenticato, ne ruoli)
+		     3. L'invocazione del servizio applicativo EsempioFruitoreTrasparenteBasic ha esito ok (perchè autenticato)
+		-->
+		<porta-delegata nome="AuthorizationAuthenticatedOrExternalRolesAll" autenticazione="basic" autenticazione-opzionale="abilitato" 
+				autorizzazione="authenticatedOrExternalRoles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="EsempioFruitoreTrasparenteBasic" />
+		    <ruoli match="all">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role2ExtAllOpenSPCoopTest"/> 
+			<ruolo nome="role3AllPD_OpenSPCoopTest"/> 
+		    </ruoli>
+		</porta-delegata>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
+		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ok (ruoli)
+		     3. L'invocazione del servizio applicativo EsempioFruitoreTrasparenteBasic ha esito ok (perchè autenticato)
+		-->
+		<porta-delegata nome="AuthorizationAuthenticatedOrExternalRolesAny" autenticazione="basic" autenticazione-opzionale="abilitato" 
+				autorizzazione="authenticatedOrExternalRoles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="EsempioFruitoreTrasparenteBasic" />
+		    <ruoli match="any">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role2ExtAllOpenSPCoopTest"/> 
+			<ruolo nome="role3AllPD_OpenSPCoopTest"/> 
+		    </ruoli>
+		</porta-delegata>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok
+		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ko
+		-->
+		<porta-delegata nome="AuthorizationXacmlPolicy" autenticazione="principal" autorizzazione="xacmlPolicy" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		</porta-delegata>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok
+		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ko
+		-->
+		<porta-delegata nome="AuthorizationInternalXacmlPolicy" autenticazione="principal" autorizzazione="internalXacmlPolicy" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		</porta-delegata>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal ha esito ok
+		     2. L'invocazione del servizio applicativo EsempioFruitoreTrasparentePrincipal2 ha esito ko
+		-->
+		<porta-delegata nome="AuthorizationExternalXacmlPolicy" autenticazione="principal" autorizzazione="externalXacmlPolicy" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		</porta-delegata>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione con le credenziali EsempioFruitoreTrasparentePrincipal ha esito ok
+		     2. L'invocazione con le credenziali EsempioFruitoreTrasparentePrincipal2 ha esito ko
+		-->
+		<porta-delegata nome="AuthorizationExternalXacmlPolicy_noAuthentication" autenticazione="none" autorizzazione="externalXacmlPolicy" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <soggetto-erogatore tipo="API" nome="MinisteroErogatoreEsterno"/>
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		</porta-delegata>
+
+
 		<!-- **** Configurazione SOAP **** -->
 
 		<servizio-applicativo nome="MinisteroFruitore_SA" >
@@ -557,6 +926,48 @@
 		    </invocazione-porta>
 		</servizio-applicativo>
 
+		<servizio-applicativo nome="EsempioFruitoreTrasparenteBasic" >
+		      <invocazione-porta>
+		         <credenziali tipo="basic" user="esempioFruitoreTrasparenteBasic" password="123456" />
+		      </invocazione-porta>
+		</servizio-applicativo>
+
+		<servizio-applicativo nome="EsempioFruitoreTrasparenteBasic2" >
+		      <invocazione-porta>
+		         <credenziali tipo="basic" user="esempioFruitoreTrasparenteBasic2" password="123456" />
+		      </invocazione-porta>
+		</servizio-applicativo>
+
+		<servizio-applicativo nome="EsempioFruitoreTrasparenteSsl" >
+		      <invocazione-porta>
+		         <credenziali tipo="ssl" subject="CN=client,o=trasparente" />
+		      </invocazione-porta>
+		</servizio-applicativo>
+
+		<!-- Utente configurato sul container con password 'Op3nSPC00p2' e ruoli: 
+			'role1AllAllOpenSPCoopTest', 'role2ExtAllOpenSPCoopTest' e 'role3AllPD_OpenSPCoopTest' -->
+		<servizio-applicativo nome="EsempioFruitoreTrasparentePrincipal" >
+		      <invocazione-porta>
+		         <credenziali tipo="principal" user="esempioFruitoreTrasparentePrincipal" />
+			 <ruoli>
+				<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+				<ruolo nome="role5IntAllOpenSPCoopTest"/>
+				<ruolo nome="role3AllPD_OpenSPCoopTest"/>  
+		    	  </ruoli>
+		      </invocazione-porta>
+		</servizio-applicativo>
+
+		<!-- Utente configurato sul container con password 'Op3nSPC00p2' e ruoli: 
+			'role1AllAllOpenSPCoopTest' e 'role8ExtPD_OpenSPCoopTest' -->
+		<servizio-applicativo nome="EsempioFruitoreTrasparentePrincipal2" >
+		      <invocazione-porta>
+		         <credenziali tipo="principal" user="esempioFruitoreTrasparentePrincipal2" />
+			 <ruoli>
+				<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+				<ruolo nome="role6IntPD_OpenSPCoopTest"/> 
+		    	  </ruoli>
+		      </invocazione-porta>
+		</servizio-applicativo>
 	
 	</soggetto>
 
@@ -578,13 +989,33 @@
 
 		<!-- OneWay -->
 
-                <porta-applicativa nome="APIMinisteroErogatore/SOAPOnewayStateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                <porta-applicativa nome="NOAUTH_APIMinisteroErogatore/SOAPOnewayStateful" 
+			autenticazione="none" autorizzazione="none"
+			gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
                     <servizio tipo="SOAP" nome="Oneway"/>
                     <azione nome="notifica"/>
                     <servizio-applicativo nome="ping"/>
                 </porta-applicativa>
 
-                <porta-applicativa nome="APIMinisteroErogatore/SOAPOnewayStateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                <porta-applicativa nome="NOAUTH_APIMinisteroErogatore/SOAPOnewayStateless" 
+			autenticazione="none" autorizzazione="none"
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                    <servizio tipo="SOAP" nome="Oneway"/>
+                    <azione nome="notifica"/>
+                    <servizio-applicativo nome="ping"/>
+                </porta-applicativa>
+
+                <porta-applicativa nome="AUTH_APIMinisteroErogatore/SOAPOnewayStateful" 
+			autenticazione="basic" autorizzazione="authenticated"
+			gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                    <servizio tipo="SOAP" nome="Oneway"/>
+                    <azione nome="notifica"/>
+                    <servizio-applicativo nome="ping"/>
+                </porta-applicativa>
+
+                <porta-applicativa nome="AUTH_APIMinisteroErogatore/SOAPOnewayStateless" 
+			autenticazione="basic" autorizzazione="authenticated"
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
                     <servizio tipo="SOAP" nome="Oneway"/>
                     <azione nome="notifica"/>
                     <servizio-applicativo nome="ping"/>
@@ -602,50 +1033,66 @@
 		    <servizio-applicativo nome="pingSenzaVerifica"/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault11Stateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault11Stateful" 
+			autenticazione="none" autorizzazione="none"
+			gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <servizio tipo="SOAP" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault11"/>
 		    <servizio-applicativo nome="faultPingSoap11"/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault11Stateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault11Stateless" 
+			autenticazione="none" autorizzazione="none"
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <servizio tipo="SOAP" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault11"/>
 		    <servizio-applicativo nome="faultPingSoap11"/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault11500Stateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault11500Stateful" 
+			autenticazione="none" autorizzazione="none"
+			gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <servizio tipo="SOAP" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault11_500"/>
 		    <servizio-applicativo nome="faultPingSoap11_500"/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault11500Stateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault11500Stateless" 
+			autenticazione="none" autorizzazione="none"
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <servizio tipo="SOAP" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault11_500"/>
 		    <servizio-applicativo nome="faultPingSoap11_500"/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault12Stateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault12Stateful" 
+			autenticazione="none" autorizzazione="none"
+			gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <servizio tipo="SOAP" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault12"/>
 		    <servizio-applicativo nome="faultPingSoap12"/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault12Stateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault12Stateless" 
+			autenticazione="none" autorizzazione="none"
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <servizio tipo="SOAP" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault12"/>
 		    <servizio-applicativo nome="faultPingSoap12"/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault12500Stateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault12500Stateful" 
+			autenticazione="none" autorizzazione="none"
+			gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <servizio tipo="SOAP" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault12_500"/>
 		    <servizio-applicativo nome="faultPingSoap12_500"/>
 		    <validazione-contenuti-applicativi/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault12500Stateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPOneway/gestioneSOAPFault12500Stateless" 
+			autenticazione="none" autorizzazione="none"
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <servizio tipo="SOAP" nome="Oneway"/>
 		    <azione nome="gestioneSOAPFault12_500"/>
 		    <servizio-applicativo nome="faultPingSoap12_500"/>
@@ -654,13 +1101,33 @@
 		
 		<!-- Sincrono -->
 
-                <porta-applicativa nome="APIMinisteroErogatore/SOAPSincronoStateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                <porta-applicativa nome="NOAUTH_APIMinisteroErogatore/SOAPSincronoStateful" 
+			autenticazione="none" autorizzazione="none"
+			gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
                     <servizio tipo="SOAP" nome="Sincrono"/>
                     <azione nome="aggiornamento"/>
                     <servizio-applicativo nome="echo"/>
                 </porta-applicativa>
 
-                <porta-applicativa nome="APIMinisteroErogatore/SOAPSincronoStateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                <porta-applicativa nome="NOAUTH_APIMinisteroErogatore/SOAPSincronoStateless" 
+			autenticazione="none" autorizzazione="none"
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                    <servizio tipo="SOAP" nome="Sincrono"/>
+                    <azione nome="aggiornamento"/>
+                    <servizio-applicativo nome="echo"/>
+                </porta-applicativa>
+
+                <porta-applicativa nome="AUTH_APIMinisteroErogatore/SOAPSincronoStateful" 
+			autenticazione="basic" autorizzazione="authenticated"
+			gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                    <servizio tipo="SOAP" nome="Sincrono"/>
+                    <azione nome="aggiornamento"/>
+                    <servizio-applicativo nome="echo"/>
+                </porta-applicativa>
+
+                <porta-applicativa nome="AUTH_APIMinisteroErogatore/SOAPSincronoStateless" 
+			autenticazione="basic" autorizzazione="authenticated"
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
                     <servizio tipo="SOAP" nome="Sincrono"/>
                     <azione nome="aggiornamento"/>
                     <servizio-applicativo nome="echo"/>
@@ -678,86 +1145,110 @@
 		    <servizio-applicativo nome="echoSenzaVerifica"/>
 		</porta-applicativa>		
 		
-		<porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault11Stateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault11Stateful" 
+			autenticazione="none" autorizzazione="none"
+			gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="gestioneSOAPFault11"/>
 		    <servizio-applicativo nome="faultSoap11"/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault11Stateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault11Stateless" 
+			autenticazione="none" autorizzazione="none"
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="gestioneSOAPFault11"/>
 		    <servizio-applicativo nome="faultSoap11"/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault11500Stateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault11500Stateful" 
+			autenticazione="none" autorizzazione="none"
+			gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="gestioneSOAPFault11_500"/>
 		    <servizio-applicativo nome="faultSoap11_500"/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault11500Stateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		<porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault11500Stateless" 
+			autenticazione="none" autorizzazione="none"
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
 		    <servizio tipo="SOAP" nome="Sincrono"/>
 		    <azione nome="gestioneSOAPFault11_500"/>
 		    <servizio-applicativo nome="faultSoap11_500"/>
 		</porta-applicativa>
 
-                <porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault12Stateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                <porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault12Stateful" 
+			autenticazione="none" autorizzazione="none"
+			gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
                     <servizio tipo="SOAP" nome="Sincrono"/>
                     <azione nome="gestioneSOAPFault12"/>
                     <servizio-applicativo nome="faultSoap12"/>
                 </porta-applicativa>
 
-                <porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault12Stateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                <porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault12Stateless" 
+			autenticazione="none" autorizzazione="none"
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
                     <servizio tipo="SOAP" nome="Sincrono"/>
                     <azione nome="gestioneSOAPFault12"/>
                     <servizio-applicativo nome="faultSoap12"/>
                 </porta-applicativa>
 
-                <porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault12500Stateful" gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                <porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault12500Stateful" 
+			autenticazione="none" autorizzazione="none"
+			gestione-manifest="disabilitato" stateless="disabilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
                     <servizio tipo="SOAP" nome="Sincrono"/>
                     <azione nome="gestioneSOAPFault12_500"/>
                     <servizio-applicativo nome="faultSoap12_500"/>
                 </porta-applicativa>
 
-                <porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault12500Stateless" gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+                <porta-applicativa nome="APIMinisteroErogatore/SOAPSincrono/gestioneSOAPFault12500Stateless" 
+			autenticazione="none" autorizzazione="none"
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
                     <servizio tipo="SOAP" nome="Sincrono"/>
                     <azione nome="gestioneSOAPFault12_500"/>
                     <servizio-applicativo nome="faultSoap12_500"/>
                 </porta-applicativa>
-
-
 
 
 		<!-- MTOM -->
 
-		<porta-applicativa nome="MTOMServiceExampleSOAP11" stateless="abilitato">
+		<porta-applicativa nome="MTOMServiceExampleSOAP11" 
+			autenticazione="basic" autorizzazione="authenticated"
+			stateless="abilitato">
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" /> 
 		</porta-applicativa>
 
-		<porta-applicativa nome="MTOMServiceExampleSOAP12" stateless="abilitato">
+		<porta-applicativa nome="MTOMServiceExampleSOAP12" 
+			autenticazione="basic" autorizzazione="authenticated"
+			stateless="abilitato">
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
 		</porta-applicativa>
 
-		<porta-applicativa nome="MTOMServiceExampleSOAP11/validazione" stateless="abilitato">
+		<porta-applicativa nome="MTOMServiceExampleSOAP11/validazione" 
+			autenticazione="basic" autorizzazione="authenticated"
+			stateless="abilitato">
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" /> 
 			<validazione-contenuti-applicativi stato="abilitato" tipo="wsdl" accept-mtom-message="abilitato"/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="MTOMServiceExampleSOAP12/validazione" stateless="abilitato">
+		<porta-applicativa nome="MTOMServiceExampleSOAP12/validazione" 
+			autenticazione="basic" autorizzazione="authenticated"
+			stateless="abilitato">
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
 			<validazione-contenuti-applicativi stato="abilitato" tipo="wsdl" accept-mtom-message="abilitato"/>
 		</porta-applicativa>
 
-		<porta-applicativa nome="MTOMServiceExampleSOAP11/packageUnpackage" stateless="abilitato">
+		<porta-applicativa nome="MTOMServiceExampleSOAP11/packageUnpackage" 
+			autenticazione="basic" autorizzazione="authenticated"
+			stateless="abilitato">
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
 			<azione nome="packageUnpackage" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" /> 
@@ -793,7 +1284,9 @@
 		        </mtom-processor>
 		</porta-applicativa>
 
-		<porta-applicativa nome="MTOMServiceExampleSOAP12/packageUnpackage" stateless="abilitato">
+		<porta-applicativa nome="MTOMServiceExampleSOAP12/packageUnpackage" 
+			autenticazione="basic" autorizzazione="authenticated"
+			stateless="abilitato">
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
 			<azione nome="packageUnpackage" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
@@ -829,7 +1322,9 @@
 		        </mtom-processor>
 		</porta-applicativa>
 
-		<porta-applicativa nome="MTOMServiceExampleSOAP11/unpackagePackage" stateless="abilitato">
+		<porta-applicativa nome="MTOMServiceExampleSOAP11/unpackagePackage" 
+			autenticazione="basic" autorizzazione="authenticated"
+			stateless="abilitato">
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
 			<azione nome="unpackagePackage" />
 			<servizio-applicativo nome="MTOMecho" /> 
@@ -865,7 +1360,9 @@
 		        </mtom-processor>
 		</porta-applicativa>
 
-		<porta-applicativa nome="MTOMServiceExampleSOAP12/unpackagePackage" stateless="abilitato">
+		<porta-applicativa nome="MTOMServiceExampleSOAP12/unpackagePackage" 
+			autenticazione="basic" autorizzazione="authenticated"
+			stateless="abilitato">
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
 			<azione nome="unpackagePackage" />
 			<servizio-applicativo nome="MTOMecho" />
@@ -901,7 +1398,9 @@
 		        </mtom-processor>
 		</porta-applicativa>
 
-		<porta-applicativa nome="MTOMServiceExampleSOAP11/verifyOk" stateless="abilitato">
+		<porta-applicativa nome="MTOMServiceExampleSOAP11/verifyOk" 
+			autenticazione="basic" autorizzazione="authenticated"
+			stateless="abilitato">
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" /> 
@@ -937,7 +1436,9 @@
 		      </mtom-processor>
 		</porta-applicativa>
 
-		<porta-applicativa nome="MTOMServiceExampleSOAP12/verifyOk" stateless="abilitato">
+		<porta-applicativa nome="MTOMServiceExampleSOAP12/verifyOk" 
+			autenticazione="basic" autorizzazione="authenticated"
+			stateless="abilitato">
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
@@ -973,7 +1474,9 @@
 		      </mtom-processor>
 		</porta-applicativa>
 
-		<porta-applicativa nome="MTOMServiceExampleSOAP11/verifyKoRequest" stateless="abilitato">
+		<porta-applicativa nome="MTOMServiceExampleSOAP11/verifyKoRequest" 
+			autenticazione="basic" autorizzazione="authenticated"
+			stateless="abilitato">
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" /> 
@@ -1013,7 +1516,9 @@
 		      </mtom-processor>
 		</porta-applicativa>
 
-		<porta-applicativa nome="MTOMServiceExampleSOAP12/verifyKoRequest" stateless="abilitato">
+		<porta-applicativa nome="MTOMServiceExampleSOAP12/verifyKoRequest" 
+			autenticazione="basic" autorizzazione="authenticated"
+			stateless="abilitato">
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
@@ -1053,7 +1558,9 @@
 		      </mtom-processor>
 		</porta-applicativa>
 
-		<porta-applicativa nome="MTOMServiceExampleSOAP11/verifyKoResponse" stateless="abilitato">
+		<porta-applicativa nome="MTOMServiceExampleSOAP11/verifyKoResponse" 
+			autenticazione="basic" autorizzazione="authenticated"
+			stateless="abilitato">
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP11" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP11_SA" /> 
@@ -1089,7 +1596,9 @@
 		      </mtom-processor>
 		</porta-applicativa>
 
-		<porta-applicativa nome="MTOMServiceExampleSOAP12/verifyKoResponse" stateless="abilitato">
+		<porta-applicativa nome="MTOMServiceExampleSOAP12/verifyKoResponse" 
+			autenticazione="basic" autorizzazione="authenticated"
+			stateless="abilitato">
 			<servizio tipo="SOAP" nome="MTOMServiceExampleSOAP12" />
 			<azione nome="echo" />
 			<servizio-applicativo nome="MTOMServiceExampleSOAP12_SA" />
@@ -1124,6 +1633,375 @@
 				</response-flow>
 		      </mtom-processor>
 		</porta-applicativa>
+	
+
+		<!-- Authentication -->
+
+		<porta-applicativa nome="AuthenticationNone" autenticazione="none" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationBasic" autenticazione="basic" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationSsl" autenticazione="ssl" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationPrincipal" autenticazione="principal" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationOptionalBasic" autenticazione="basic" autenticazione-opzionale="abilitato" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationOptionalSsl" autenticazione="ssl" autenticazione-opzionale="abilitato" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		</porta-applicativa>
+
+		<porta-applicativa nome="AuthenticationOptionalPrincipal" autenticazione="principal" autenticazione-opzionale="abilitato" autorizzazione="none" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		</porta-applicativa>
+
+
+
+		<!-- Authorization -->
+
+		<!-- 
+		     1. L'invocazione del soggetto EsempioFruitoreTrasparenteBasic ha esito ok
+		     2. L'invocazione del soggetto EsempioFruitoreTrasparenteBasic2 ha esito ko
+		-->
+		<porta-applicativa nome="AuthorizationAuthenticated" autenticazione="basic" autorizzazione="authenticated" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		</porta-applicativa>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok
+		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ko
+		-->
+		<porta-applicativa nome="AuthorizationRolesAll" autenticazione="principal" autorizzazione="roles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		    <ruoli match="all">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role2ExtAllOpenSPCoopTest"/>
+			<ruolo nome="role4AllPA_OpenSPCoopTest"/>  
+			<ruolo nome="role5IntAllOpenSPCoopTest"/>   
+		    </ruoli>
+		</porta-applicativa>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok
+		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ok
+		-->
+		<porta-applicativa nome="AuthorizationRolesAny" autenticazione="principal" autorizzazione="roles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		    <ruoli match="any">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role2ExtAllOpenSPCoopTest"/>
+			<ruolo nome="role4AllPA_OpenSPCoopTest"/>  
+			<ruolo nome="role5IntAllOpenSPCoopTest"/>   
+		    </ruoli>
+		</porta-applicativa>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok
+		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ko
+		-->
+		<porta-applicativa nome="AuthorizationInternalRolesAll" autenticazione="principal" autorizzazione="internalRoles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		    <ruoli match="all">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role4AllPA_OpenSPCoopTest"/>  
+			<ruolo nome="role5IntAllOpenSPCoopTest"/>   
+		    </ruoli>
+		</porta-applicativa>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok
+		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ok
+		-->
+		<porta-applicativa nome="AuthorizationInternalRolesAny" autenticazione="principal" autorizzazione="internalRoles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		    <ruoli match="any">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role4AllPA_OpenSPCoopTest"/>  
+			<ruolo nome="role5IntAllOpenSPCoopTest"/>   
+		    </ruoli>
+		</porta-applicativa>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok
+		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ko
+		-->
+		<porta-applicativa nome="AuthorizationExternalRolesAll" autenticazione="principal" autorizzazione="externalRoles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		    <ruoli match="all">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role2ExtAllOpenSPCoopTest"/> 
+			<ruolo nome="role4AllPA_OpenSPCoopTest"/>    
+		    </ruoli>
+		</porta-applicativa>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok
+		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ok
+		-->
+		<porta-applicativa nome="AuthorizationExternalRolesAny" autenticazione="principal" autorizzazione="externalRoles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		    <ruoli match="any">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role2ExtAllOpenSPCoopTest"/> 
+			<ruolo nome="role4AllPA_OpenSPCoopTest"/>    
+		    </ruoli>
+		</porta-applicativa>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione con le credenziali EsempioFruitoreTrasparentePrincipal ha esito ok
+		     2. L'invocazione con le credenziali EsempioFruitoreTrasparentePrincipal2 ha esito ko
+		-->
+		<porta-applicativa nome="AuthorizationExternalRolesAll_noAuthentication" autenticazione="none" autorizzazione="externalRoles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		    <ruoli match="all">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role2ExtAllOpenSPCoopTest"/> 
+			<ruolo nome="role4AllPA_OpenSPCoopTest"/>    
+		    </ruoli>
+		</porta-applicativa>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione con le credenziali EsempioFruitoreTrasparentePrincipal ha esito ok
+		     2. L'invocazione con le credenziali EsempioFruitoreTrasparentePrincipal2 ha esito ok
+		-->
+		<porta-applicativa nome="AuthorizationExternalRolesAny_noAuthentication" autenticazione="none" autorizzazione="externalRoles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		    <ruoli match="any">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role2ExtAllOpenSPCoopTest"/> 
+			<ruolo nome="role4AllPA_OpenSPCoopTest"/>    
+		    </ruoli>
+		</porta-applicativa>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
+		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ko (ne autenticato, ne ruoli)
+		     3. L'invocazione del soggetto EsempioFruitoreTrasparenteBasic ha esito ok (perchè autenticato)
+		-->
+		<porta-applicativa nome="AuthorizationAuthenticatedOrRolesAll" autenticazione="basic" autenticazione-opzionale="abilitato" autorizzazione="authenticatedOrRoles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		    <ruoli match="all">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role2ExtAllOpenSPCoopTest"/>
+			<ruolo nome="role4AllPA_OpenSPCoopTest"/>  
+			<ruolo nome="role5IntAllOpenSPCoopTest"/>   
+		    </ruoli>
+		</porta-applicativa>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
+		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ok (ruoli)
+		     3. L'invocazione del soggetto EsempioFruitoreTrasparenteBasic ha esito ok (perchè autenticato)
+		-->
+		<porta-applicativa nome="AuthorizationAuthenticatedOrRolesAny" autenticazione="basic" autenticazione-opzionale="abilitato" autorizzazione="authenticatedOrRoles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		    <ruoli match="any">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role2ExtAllOpenSPCoopTest"/>
+			<ruolo nome="role4AllPA_OpenSPCoopTest"/>  
+			<ruolo nome="role5IntAllOpenSPCoopTest"/>   
+		    </ruoli>
+		</porta-applicativa>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
+		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ko (ne autenticato, ne ruoli)
+		     3. L'invocazione del soggetto EsempioFruitoreTrasparenteBasic ha esito ok (perchè autenticato)
+		-->
+		<porta-applicativa nome="AuthorizationAuthenticatedOrInternalRolesAll" autenticazione="basic" autenticazione-opzionale="abilitato" 
+				autorizzazione="authenticatedOrInternalRoles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		    <ruoli match="all">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role4AllPA_OpenSPCoopTest"/>  
+			<ruolo nome="role5IntAllOpenSPCoopTest"/>    
+		    </ruoli>
+		</porta-applicativa>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
+		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ok (ruoli)
+		     3. L'invocazione del soggetto EsempioFruitoreTrasparenteBasic ha esito ok (perchè autenticato)
+		-->
+		<porta-applicativa nome="AuthorizationAuthenticatedOrInternalRolesAny" autenticazione="basic" autenticazione-opzionale="abilitato" 
+				autorizzazione="authenticatedOrInternalRoles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		    <ruoli match="any">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role4AllPA_OpenSPCoopTest"/>  
+			<ruolo nome="role5IntAllOpenSPCoopTest"/>    
+		    </ruoli>
+		</porta-applicativa>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
+		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ko (ne autenticato, ne ruoli)
+		     3. L'invocazione del soggetto EsempioFruitoreTrasparenteBasic ha esito ok (perchè autenticato)
+		-->
+		<porta-applicativa nome="AuthorizationAuthenticatedOrExternalRolesAll" autenticazione="basic" autenticazione-opzionale="abilitato" 
+				autorizzazione="authenticatedOrExternalRoles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		    <ruoli match="all">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role2ExtAllOpenSPCoopTest"/> 
+			<ruolo nome="role4AllPA_OpenSPCoopTest"/> 
+		    </ruoli>
+		</porta-applicativa>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok (ruoli)
+		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ok (ruoli)
+		     3. L'invocazione del soggetto EsempioFruitoreTrasparenteBasic ha esito ok (perchè autenticato)
+		-->
+		<porta-applicativa nome="AuthorizationAuthenticatedOrExternalRolesAny" autenticazione="basic" autenticazione-opzionale="abilitato" 
+				autorizzazione="authenticatedOrExternalRoles" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		    <ruoli match="any">
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role2ExtAllOpenSPCoopTest"/> 
+			<ruolo nome="role4AllPA_OpenSPCoopTest"/> 
+		    </ruoli>
+		</porta-applicativa>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok
+		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ko
+		-->
+		<porta-applicativa nome="AuthorizationXacmlPolicy" autenticazione="principal" autorizzazione="xacmlPolicy" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		</porta-applicativa>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok
+		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ko
+		-->
+		<porta-applicativa nome="AuthorizationInternalXacmlPolicy" autenticazione="principal" autorizzazione="internalXacmlPolicy" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		</porta-applicativa>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal ha esito ok
+		     2. L'invocazione del soggetto EsempioFruitoreTrasparentePrincipal2 ha esito ko
+		-->
+		<porta-applicativa nome="AuthorizationExternalXacmlPolicy" autenticazione="principal" autorizzazione="externalXacmlPolicy" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		</porta-applicativa>
+
+		<!-- 
+		     Invocazione da effettuare su openspcoop2sec
+		     1. L'invocazione con le credenziali EsempioFruitoreTrasparentePrincipal ha esito ok
+		     2. L'invocazione con le credenziali EsempioFruitoreTrasparentePrincipal2 ha esito ko
+		-->
+		<porta-applicativa nome="AuthorizationExternalXacmlPolicy_noAuthentication" autenticazione="none" autorizzazione="externalXacmlPolicy" 
+			gestione-manifest="disabilitato" stateless="abilitato" integrazione="trasportoExt,urlBasedExt,soapExt">
+		    <servizio tipo="SOAP" nome="Sincrono"/>
+		    <azione nome="aggiornamento"/>
+		    <servizio-applicativo nome="echo"/>
+		</porta-applicativa>
+
+
 
 
 
@@ -1140,6 +2018,7 @@
 
 
 
+	
 		<!-- **** Configurazione SOAP **** -->
 
 		<!-- OneWay -->

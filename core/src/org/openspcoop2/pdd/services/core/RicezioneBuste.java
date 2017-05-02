@@ -2105,9 +2105,20 @@ public class RicezioneBuste {
 		 * ---------------- Aggiornamento dati raccolti (PostAutenticazione) ---------------------
 		 */
 			
+		Trasmissione trasmissioneSoggettoAutenticato = null; 
 		if(soggettoAutenticato){
 			validatore.getBusta().setTipoMittente(soggettoFruitore.getTipo());
 			validatore.getBusta().setMittente(soggettoFruitore.getNome());
+			if(validatore.getBusta().sizeListaTrasmissioni()>0){
+				for (int i = 0; i < validatore.getBusta().sizeListaTrasmissioni(); i++) {
+					Trasmissione trasmissione = validatore.getBusta().getTrasmissione(i);
+					if(trasmissione.getOrigine()==null && trasmissione.getTipoOrigine()==null && trasmissione.getIdentificativoPortaOrigine()==null){
+						trasmissioneSoggettoAutenticato = trasmissione;
+						trasmissione.setTipoOrigine(soggettoFruitore.getTipo());
+						trasmissione.setOrigine(soggettoFruitore.getNome());
+					}
+				}
+			}
 			validatore.setMittente(soggettoFruitore);
 			bustaRichiesta = validatore.getBusta();
 			msgDiag.addKeywords(validatore.getBusta(), true);
@@ -2125,6 +2136,9 @@ public class RicezioneBuste {
 		if(soggettoFruitore != null){
 			if(soggettoFruitore.getCodicePorta()==null){
 				soggettoFruitore.setCodicePorta(bustaRichiesta.getIdentificativoPortaMittente());
+			}
+			if(trasmissioneSoggettoAutenticato!=null && trasmissioneSoggettoAutenticato.getIdentificativoPortaOrigine()==null){
+				trasmissioneSoggettoAutenticato.setIdentificativoPortaOrigine(bustaRichiesta.getIdentificativoPortaMittente());
 			}
 			msgDiag.setFruitore(soggettoFruitore);
 		}

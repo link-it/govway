@@ -601,6 +601,13 @@ public abstract class AbstractVerificatoreTraccia {
 	}
 
 	private boolean _isTracedMittente(ResultSet res, IDSoggetto mittente, String indirizzoMittente) throws SQLException{
+		
+		if(mittente==null){
+			// creo oggetto vuoto per evitare null pointer.
+			// i controlli rimangono validi
+			mittente = new IDSoggetto();
+		}
+		
 		// Tipo
 		String tipo = res.getString(CostantiDB.TRACCE_COLUMN_MITTENTE_TIPO);
 		//System.out.println("MITT TIPO TROVATO["+tipo+"] ATTESO["+mittente.getTipo()+"]");
@@ -725,6 +732,14 @@ public abstract class AbstractVerificatoreTraccia {
 	}
 
 	private boolean _isTracedDestinatario(ResultSet res, IDSoggetto destinatario, String indirizzoDestinatario) throws SQLException{
+		
+		if(destinatario==null){
+			// creo oggetto vuoto per evitare null pointer.
+			// i controlli rimangono validi
+			// servono nel caso di autenticazione anonima
+			destinatario = new IDSoggetto();
+		}
+		
 		// Tipo
 		String tipo = res.getString(CostantiDB.TRACCE_COLUMN_DESTINATARIO_TIPO);
 		//System.out.println("DEST TIPO TROVATO["+tipo+"] ATTESO["+destinatario.getTipo()+"]");
@@ -2922,6 +2937,14 @@ public abstract class AbstractVerificatoreTraccia {
 	
 	private boolean _isTracedTrasmissione(ResultSet res, IDSoggetto idSoggetto, String indirizzoSoggetto,
 			String columnNome,String columnTipo,String columnIdPorta,String columnIndirizzo) throws SQLException{
+		
+		if(idSoggetto==null){
+			// creo oggetto vuoto per evitare null pointer.
+			// i controlli rimangono validi
+			// serve per il caso del mittente anonimo sul trasparente
+			idSoggetto = new IDSoggetto();
+		}
+		
 		// Tipo
 		String tipo = res.getString(columnTipo);
 		//System.out.println("TIPO TROVATO["+tipo+"] ATTESO["+idSoggetto.getTipo()+"]");

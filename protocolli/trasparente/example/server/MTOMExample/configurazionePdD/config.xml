@@ -4,7 +4,7 @@
       <soggetto tipo="PROXY" nome="MinisteroFruitore" > 
 
           <porta-delegata nome="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP11/echo" 
-	      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+	      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
               <soggetto-erogatore tipo="PROXY" nome="MinisteroErogatore" />
               <servizio tipo="PROXY" nome="MTOMServiceExampleSOAP11" />
               <azione nome="echo" />
@@ -12,7 +12,7 @@
           </porta-delegata>
 
           <porta-delegata nome="PROXYMinisteroFruitore/PROXYMinisteroErogatore/PROXYMTOMServiceExampleSOAP12/echo"
-              autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+              autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
               <soggetto-erogatore tipo="PROXY" nome="MinisteroErogatore" />
               <servizio tipo="PROXY" nome="MTOMServiceExampleSOAP12" />
               <azione nome="echo" />

@@ -3,7 +3,7 @@
     <soggetto tipo="SPC" nome="ENTE">
 
         <porta-delegata nome="SPCENTE/SPCCentroServiziFatturaPA/SPCRiceviNotifica/NotificaEsito"
-            autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+            autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
             <soggetto-erogatore tipo="SPC" nome="CentroServiziFatturaPA"/>
             <servizio tipo="SPC" nome="SdIRiceviNotifica"/>
             <azione nome="NotificaEsito"/>
@@ -63,7 +63,7 @@
     <soggetto tipo="SDI" nome="ENTE">
 
         <porta-delegata nome="SDIENTE/SDICentroServiziFatturaPA/SDIRiceviNotifica/NotificaEsito"
-            autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+            autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
             <soggetto-erogatore tipo="SDI" nome="CentroServiziFatturaPA"/>
             <servizio tipo="SDI" nome="RiceviNotifica"/>
             <azione nome="NotificaEsito"/>

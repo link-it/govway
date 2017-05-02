@@ -4,7 +4,7 @@
     <soggetto tipo="SPC" nome="ENTE">
 
         <porta-delegata nome="SPCENTE/SPCCentroServiziFatturaPA/SPCRiceviFile/RiceviFile"
-            autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+            autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
             <soggetto-erogatore tipo="SPC" nome="CentroServiziFatturaPA"/>
             <servizio tipo="SPC" nome="SdIRiceviFile"/>
             <azione nome="RiceviFile"/>
@@ -85,7 +85,7 @@
     <soggetto tipo="SDI" nome="ENTE">
 
         <porta-delegata nome="SDIENTE/SDICentroServiziFatturaPA/SDIRiceviFile/RiceviFile"
-            autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+            autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
             <soggetto-erogatore tipo="SDI" nome="CentroServiziFatturaPA"/>
             <servizio tipo="SDI" nome="RiceviFile"/>
             <azione nome="RiceviFile"/>

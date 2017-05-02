@@ -60,11 +60,11 @@ public class PortaApplicativa extends Porta {
 			}
 
 		
-			this.setPortaDelegataOneWayAutenticata(CostantiTestSuite.PORTA_APPLICATIVA_PROFILO_ONEWAY_STATEFUL_NON_AUTENTICATO);
+			this.setPortaDelegataOneWayAutenticata(CostantiTestSuite.PORTA_APPLICATIVA_PROFILO_ONEWAY_STATEFUL_AUTENTICATO);
 			this.setUsernameOneWayAutenticata(CostantiTestSuite.USERNAME_PORTA_APPLICATIVA_ONEWAY_AUTENTICATA);
 			this.setPasswordOneWayAutenticata(CostantiTestSuite.PASSWORD_PORTA_DELEGATA_ONEWAY_AUTENTICATA);
 			
-			this.setPortaDelegataSincronoAutenticata(CostantiTestSuite.PORTA_APPLICATIVA_PROFILO_SINCRONO_STATEFUL_NON_AUTENTICATO);
+			this.setPortaDelegataSincronoAutenticata(CostantiTestSuite.PORTA_APPLICATIVA_PROFILO_SINCRONO_STATEFUL_AUTENTICATO);
 			this.setUsernameSincronoAutenticata(CostantiTestSuite.USERNAME_PORTA_APPLICATIVA_SINCRONO_AUTENTICATA);
 			this.setPasswordSincronoAutenticata(CostantiTestSuite.PASSWORD_PORTA_DELEGATA_SINCRONO_AUTENTICATA);
 			
@@ -84,11 +84,11 @@ public class PortaApplicativa extends Porta {
 				this.setPortaDelegataSincronoFault500(CostantiTestSuite.PORTA_APPLICATIVA_PROFILO_SINCRONO_STATELESS_FAULT12_500);
 			}
 
-			this.setPortaDelegataOneWayAutenticata(CostantiTestSuite.PORTA_APPLICATIVA_PROFILO_ONEWAY_STATELESS_NON_AUTENTICATO);
+			this.setPortaDelegataOneWayAutenticata(CostantiTestSuite.PORTA_APPLICATIVA_PROFILO_ONEWAY_STATELESS_AUTENTICATO);
 			this.setUsernameOneWayAutenticata(CostantiTestSuite.USERNAME_PORTA_APPLICATIVA_ONEWAY_AUTENTICATA);
 			this.setPasswordOneWayAutenticata(CostantiTestSuite.PASSWORD_PORTA_DELEGATA_ONEWAY_AUTENTICATA);
 
-			this.setPortaDelegataSincronoAutenticata(CostantiTestSuite.PORTA_APPLICATIVA_PROFILO_SINCRONO_STATELESS_NON_AUTENTICATO);
+			this.setPortaDelegataSincronoAutenticata(CostantiTestSuite.PORTA_APPLICATIVA_PROFILO_SINCRONO_STATELESS_AUTENTICATO);
 			this.setUsernameSincronoAutenticata(CostantiTestSuite.USERNAME_PORTA_APPLICATIVA_SINCRONO_AUTENTICATA);
 			this.setPasswordSincronoAutenticata(CostantiTestSuite.PASSWORD_PORTA_DELEGATA_SINCRONO_AUTENTICATA);
 			

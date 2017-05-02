@@ -45,7 +45,7 @@
 			     profilo-collaborazione="sincrono"
 			     wsdl-concettuale="/etc/openspcoop2/mtom/concettuale.wsdl"
 			     wsdl-logico-erogatore="/etc/openspcoop2/mtom/logicoErogatore.wsdl">
-		<soggetto-referente tipo="PROXY" nome="MinisteroErogatore" />
+		<soggetto-referente tipo="API" nome="MinisteroErogatore" />
 		<port-type nome="MTOMServiceExample" profilo-collaborazione="sincrono" descrizione="Esempio di servizio sincrono">
 		   <azione nome="echo" />
 		   <azione nome="packageUnpackage" />
@@ -61,15 +61,92 @@
 
 	<!-- Configurazione SOAP -->
 
-	<soggetto tipo="API" nome="Anonimo" identificativo-porta="AnonimoPdD">
-    
-		<connettore tipo="disabilitato" nome="CNT_API_Anonimo"/>
+    	<porta-dominio nome="PdDEsempioSoggettoTrasparenteBasic" client-auth="disabilitato"/>
+
+	<porta-dominio nome="PdDEsempioSoggettoTrasparenteBasic2" client-auth="disabilitato"/>
+
+	<porta-dominio nome="PdDEsempioSoggettoTrasparenteSsl" client-auth="disabilitato"/>
+
+    	<porta-dominio nome="PdDEsempioSoggettoTrasparentePrincipal" client-auth="disabilitato"/>
+
+	<porta-dominio nome="PdDEsempioSoggettoTrasparentePrincipal2" client-auth="disabilitato"/>
+
+
+	<ruolo nome="role1AllAllOpenSPCoopTest" />
+	<ruolo nome="role2ExtAllOpenSPCoopTest" tipologia="esterno" />
+	<ruolo nome="role3AllPD_OpenSPCoopTest" contesto-utilizzo="portaDelegata" />
+	<ruolo nome="role4AllPA_OpenSPCoopTest" contesto-utilizzo="portaApplicativa" />
+	<ruolo nome="role5IntAllOpenSPCoopTest" tipologia="interno" />
+	<ruolo nome="role6IntPD_OpenSPCoopTest" tipologia="interno" contesto-utilizzo="portaDelegata" />
+	<ruolo nome="role7IntPA_OpenSPCoopTest" tipologia="interno" contesto-utilizzo="portaApplicativa" />
+	<ruolo nome="role8ExtPD_OpenSPCoopTest" tipologia="esterno" contesto-utilizzo="portaDelegata" />
+	<ruolo nome="role9ExtPA_OpenSPCoopTest" tipologia="esterno" contesto-utilizzo="portaApplicativa" />
+  
+
+
+	<soggetto tipo="API" nome="EsempioSoggettoTrasparenteBasic" porta-dominio="PdDEsempioSoggettoTrasparenteBasic">
+
+		<connettore tipo="disabilitato" nome="CNT_API_EsempioSoggettoTrasparenteBasic"/>
+
+		<credenziali tipo="basic" user="esempioFruitoreTrasparenteBasic" password="123456" />
 	
 	</soggetto>
+
+	<soggetto tipo="API" nome="EsempioSoggettoTrasparenteBasic2" porta-dominio="PdDEsempioSoggettoTrasparenteBasic2">
+    
+		<connettore tipo="disabilitato" nome="CNT_API_EsempioSoggettoTrasparenteBasic2"/>
+
+		<credenziali tipo="basic" user="esempioFruitoreTrasparenteBasic2" password="123456" />
+	
+	</soggetto>
+
+	<soggetto tipo="API" nome="EsempioSoggettoTrasparenteSsl" porta-dominio="PdDEsempioSoggettoTrasparenteSsl">
+    
+		<connettore tipo="disabilitato" nome="CNT_API_EsempioSoggettoTrasparenteSsl"/>
+
+		<credenziali tipo="ssl" subject="CN=client,o=trasparente" />
+	
+	</soggetto>
+
+
+	<!-- Utente configurato sul container con password 'Op3nSPC00p2' e ruoli: 
+		'role1AllAllOpenSPCoopTest', 'role2ExtAllOpenSPCoopTest' e 'role4AllPA_OpenSPCoopTest' -->
+	<soggetto tipo="API" nome="EsempioSoggettoTrasparentePrincipal" porta-dominio="PdDEsempioSoggettoTrasparentePrincipal">
+    
+		<connettore tipo="disabilitato" nome="CNT_API_EsempioSoggettoTrasparentePrincipal"/>
+
+		<credenziali tipo="principal" user="esempioFruitoreTrasparentePrincipal" />
+
+		<ruoli>
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role5IntAllOpenSPCoopTest"/>
+			<ruolo nome="role4AllPA_OpenSPCoopTest"/>  
+	    	</ruoli>
+	
+	</soggetto>
+
+	<!-- Utente configurato sul container con password 'Op3nSPC00p2' e ruoli: 
+		'role1AllAllOpenSPCoopTest' e 'role9ExtPA_OpenSPCoopTest' -->
+	<soggetto tipo="API" nome="EsempioSoggettoTrasparentePrincipal2" porta-dominio="PdDEsempioSoggettoTrasparentePrincipal2">
+    
+		<connettore tipo="disabilitato" nome="CNT_API_EsempioSoggettoTrasparentePrincipal2"/>
+
+		<credenziali tipo="principal" user="esempioFruitoreTrasparentePrincipal2" />
+	
+		<ruoli>
+			<ruolo nome="role1AllAllOpenSPCoopTest"/> 
+			<ruolo nome="role7IntPA_OpenSPCoopTest"/> 
+	    	</ruoli>
+
+	</soggetto>
+
+
 
 	<soggetto tipo="API" nome="applicativoComunePisa" identificativo-porta="applicativoComunePisaPdD">
     
 		<connettore tipo="disabilitato" nome="CNT_API_applicativoComunePisa"/>
+
+		<credenziali tipo="basic" user="applicativoComunePisa" password="123456" />
 
 	</soggetto>
 
@@ -82,6 +159,8 @@
 	<soggetto tipo="API" nome="MinisteroFruitore" identificativo-porta="MinisteroFruitorePdD">
     
 		<connettore tipo="disabilitato" nome="CNT_API_MinisteroFruitore"/>
+
+		<credenziali tipo="basic" user="MinisteroFruitore" password="123456" />
 	
 	</soggetto>
 
@@ -111,7 +190,6 @@
 			            <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/pingService?traceIsArrived=mittente"/>
 			        </connettore>
 			</configurazione-servizio>
-			<fruitore tipo="API" nome="Anonimo" />
 			<fruitore tipo="API" nome="applicativoComunePisa"/>
 		</accordo-servizio-parte-specifica>
 
@@ -121,8 +199,9 @@
                                     <property nome="location" valore="http://localhost:8080/OpenSPCoop2TestSuite/echoService?traceIsArrived=mittente"/>
                                 </connettore>
                         </configurazione-servizio>
-                        <fruitore tipo="API" nome="Anonimo" />
                         <fruitore tipo="API" nome="applicativoComunePisa"/>
+			<fruitore tipo="API" nome="EsempioSoggettoTrasparenteBasic"/>
+			<specifica-sicurezza tipo="XACML-Policy" file="/etc/openspcoop2/xacmlPolicy/OpenSPCoop2TestSuitePolicy.xml"/>
 		</accordo-servizio-parte-specifica>
 
 		<accordo-servizio-parte-specifica

@@ -5,21 +5,32 @@
 	<!-- This is the top level ear module, which contains all the classes in the EAR's lib folder     -->
 
 	<!-- 
-		In seguito dove sussiste un commento I18N.init indica la soluzione ad un eventuale seguente problema:
+		In seguito dove sussiste un commento I18N.init indica la soluzione al seguente problema:
 			java.lang.NoSuchMethodError: org.apache.xml.security.utils.I18n.init(Ljava/util/ResourceBundle;)
-		Se si presenta, provare a scommentare tutte le righe che contengono il commento iniziale 'I18N.init'
+		Si presenta solamente in jboss-as-7.x e non in jboss-eap-6.x poichè ci sono versioni differenti di xmlsec
 	-->
-		
-
+	
 	<deployment>
+		
 		<!-- 
 			Indicazione di BouncyCastle tra le risorse disponibili (necessario per il Security Provider su jboss 7)
 			Utile per keystore di tipo P12 per non far scaturire un errore simile al seguente:
-			Message-Security(Sender): Security processing failed. ; error constructing MAC: java.lang.SecurityException: JCE cannot authenticate the provider BC
+				Message-Security(Sender): Security processing failed. ; error constructing MAC: java.lang.SecurityException: JCE cannot authenticate the provider BC
+			
+			Il fix del resource ha smesso di funzionare da quanto è stato necessario introdurre il seguente codice in OpenSPCoop2Startup:
+				org.apache.wss4j.dom.engine.WSSConfig.init
+			Il codice sopra aveva fatto scaturire il problema 'java.lang.NoSuchMethodError: org.apache.xml.security.utils.I18n.init'
+			risolto con l'introduzione del modulo 'deployment.custom.javaee.api' in questo file.
+			Tale modulo aveva pero' fatto ricomparire il problema 'JCE cannot authenticate the provider BC''
+			risolto aggiungendo in OpenSPCoop2Startup il seguente codice:
+				Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 		-->
+		<!--
         <resources>
         	<resource-root path="lib/bcprov-ext-jdk15on-155.jar" use-physical-code-source="true"/>
         </resources>
+        -->
+        
 		<!-- Exclusions allow you to prevent the server from automatically adding some dependencies     -->
 		<exclusions>
 			<module name="org.slf4j" />
@@ -27,45 +38,46 @@
 			<module name="org.apache.commons.logging"/>
                         
 			<!-- I18N.init -->
-			<!-- <module name="javaee.api" /> -->
+			<module name="javaee.api" />
 			
 		</exclusions>
 		
 		<!-- I18N.init -->
-		<!--
 		<dependencies>
 			<module name="deployment.custom.javaee.api" />
 		</dependencies>
-		-->
 		
 	</deployment>
 	
 	<!-- I18N.init -->
-	<!--
     <module name="deployment.custom.javaee.api">
         <dependencies>
             <module name="javaee.api" export="true">
                 <imports>
-                        <exclude path="org/apache/jcp/**" />
-                        <exclude path="org/apache/xml/security/**" />
-                        <exclude path="org/apache/xml/serializer/**" />
-                        <exclude path="org/apache/bcel/**" />
-                        <exclude path="org/apache/xalan/**" />
-                        <exclude path="org/apache/xml/**" />
-                        <exclude path="org/apache/xpath/**" />
-                        <exclude path="trax/**" />
-                        <exclude path="java_cup/**" />
-                        <exclude path="META-INF/services/javax.xml.transform.TransformerFactory" />
-                        <exclude path="META-INF/services/javax.xml.xpath.XPathFactory" />
-                        <exclude path="META-INF/services/org.apache.xalan.extensions.bsf.BSFManager" />
-                        <exclude path="META-INF/services/org.apache.xml.dtm.DTMManager" />
+	                	<!-- Del modulo javaee.api elimino i seguenti sotto moduli -->
+								 
+						<!-- org.apache.santuario.xmlsec -->
+						<!-- <exclude path="javax/xml/crypto/**" /> per non ottenere errore: java.lang.ClassNotFoundException: javax.xml.crypto.dsig.spec.TransformParameterSpec -->
+						<exclude path="org/apache/jcp/**" />
+						<exclude path="org/apache/xml/security/**" />
+								 
+						<!-- org.apache.xalan (importato da org.apache.santuario.xmlsec) -->
+						<exclude path="org/apache/xml/serializer/**" />
+						<exclude path="org/apache/bcel/**" />
+						<exclude path="org/apache/xalan/**" />
+						<exclude path="org/apache/xml/**" />
+						<exclude path="org/apache/xpath/**" />
+						<exclude path="trax/**" />
+						<exclude path="java_cup/**" />
+						<exclude path="META-INF/services/javax.xml.transform.TransformerFactory" />                         
+						<exclude path="META-INF/services/javax.xml.xpath.XPathFactory" />
+						<exclude path="META-INF/services/org.apache.xalan.extensions.bsf.BSFManager" />
+						<exclude path="META-INF/services/org.apache.xml.dtm.DTMManager" />
                 </imports>
 
            </module>
         </dependencies>
-
     </module>
-	-->
 	
 	<sub-deployment name="OpenSPCoop2.war">
 		<exclusions>

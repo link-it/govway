@@ -60,9 +60,13 @@ public class CooperazioneTrasparenteBase extends CooperazioneBase {
 		
 		if(this.portaDelegata) {
 			try{
-				if(!msgDiagData.isTracedMessaggioWithLike(date, "Ricevuta richiesta di servizio dal Servizio Applicativo ( Basic Username:")) {
+				if(!msgDiagData.isTracedMessaggioWithLike(date, "Ricevuta richiesta di servizio dal Servizio Applicativo") ) {
 					Reporter.log("Diagnostico attestante l'autenticazione non trovato per il messaggio con id: " +id);
 					Assert.fail("Diagnostico attestante l'autenticazione non trovato per il messaggio con id: " +id);
+				}
+				if(!msgDiagData.isTracedMessaggioWithLike(date, "Autenticazione [basic] del servizio applicativo ( BasicUsername") ) {
+					Reporter.log("Diagnostico attestante l'autenticazione basic non trovato per il messaggio con id: " +id);
+					Assert.fail("Diagnostico attestante l'autenticazione basic non trovato per il messaggio con id: " +id);
 				}
 			} catch(Exception e) {
 				Reporter.log("Errore durante la ricerca del diagnostico attestante l'autenticazione non trovato per il messaggio con id: " +id + ". "+e.getMessage());
@@ -97,9 +101,13 @@ public class CooperazioneTrasparenteBase extends CooperazioneBase {
 		this.testSincrono(data, msgDiagData, id, tipoServizio, nomeServizio, checkServizioApplicativo);
 		if(this.portaDelegata) {
 			try{
-				if(!msgDiagData.isTracedMessaggioWithLike(date, "Ricevuta richiesta di servizio dal Servizio Applicativo ( Basic Username:")) {
+				if(!msgDiagData.isTracedMessaggioWithLike(date, "Ricevuta richiesta di servizio dal Servizio Applicativo") ) {
 					Reporter.log("Diagnostico attestante l'autenticazione non trovato per il messaggio con id: " +id);
 					Assert.fail("Diagnostico attestante l'autenticazione non trovato per il messaggio con id: " +id);
+				}
+				if(!msgDiagData.isTracedMessaggioWithLike(date, "Autenticazione [basic] del servizio applicativo ( BasicUsername") ) {
+					Reporter.log("Diagnostico attestante l'autenticazione basic non trovato per il messaggio con id: " +id);
+					Assert.fail("Diagnostico attestante l'autenticazione basic non trovato per il messaggio con id: " +id);
 				}
 			} catch(Exception e) {
 				Reporter.log("Errore durante la ricerca del diagnostico attestante l'autenticazione per il messaggio con id: " +id + ". "+e.getMessage());
@@ -215,7 +223,7 @@ public class CooperazioneTrasparenteBase extends CooperazioneBase {
 				Assert.fail("Attesi messaggi diagnostici con codice 003013.");
 			}
 		} else {
-			if(!msgDiagData.isTracedMessaggio(id, true, "Messaggio applicativo con ID", "generato dal mittente", "consegnato al servizio applicativo", codiceMsg)) {
+			if(!msgDiagData.isTracedMessaggio(id, true, "Messaggio applicativo con ID", "consegnato al servizio applicativo", codiceMsg)) {
 				Reporter.log("Attesi messaggi diagnostici che rilevino l'invio.");
 				Assert.fail("Attesi messaggi diagnostici che rilevino l'invio.");
 			}

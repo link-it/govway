@@ -4,7 +4,7 @@
       <soggetto tipo="PROXY" nome="Comune" > 
 
           <porta-delegata nome="PROXYComune/PROXYCentroAnagrafico/PROXYRichiestaStatoFamigliaSOAP11/Acquisisci" 
-	      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+	      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
               <soggetto-erogatore tipo="PROXY" nome="CentroAnagrafico" />
               <servizio tipo="PROXY" nome="RichiestaStatoFamigliaSOAP11" />
               <azione nome="Acquisisci" />
@@ -12,7 +12,7 @@
           </porta-delegata>
 
           <porta-delegata nome="PROXYComune/PROXYCentroAnagrafico/PROXYRichiestaStatoFamigliaSOAP12/Acquisisci"
-              autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+              autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
               <soggetto-erogatore tipo="PROXY" nome="CentroAnagrafico" />
               <servizio tipo="PROXY" nome="RichiestaStatoFamigliaSOAP12" />
               <azione nome="Acquisisci" />
@@ -20,7 +20,7 @@
           </porta-delegata>
 
           <porta-delegata nome="PROXYComune/PROXYCentroAnagrafico/PROXYRichiestaStatoFamigliaSOAP11Sec/Acquisisci"
-              autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+              autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
               <soggetto-erogatore tipo="PROXY" nome="CentroAnagrafico" />
               <servizio tipo="PROXY" nome="RichiestaStatoFamigliaSOAP11Sec" />
               <azione nome="Acquisisci" />
@@ -28,7 +28,7 @@
           </porta-delegata>
 
           <porta-delegata nome="PROXYComune/PROXYCentroAnagrafico/PROXYRichiestaStatoFamigliaSOAP12Sec/Acquisisci"
-              autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+              autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
               <soggetto-erogatore tipo="PROXY" nome="CentroAnagrafico" />
               <servizio tipo="PROXY" nome="RichiestaStatoFamigliaSOAP12Sec" />
               <azione nome="Acquisisci" />

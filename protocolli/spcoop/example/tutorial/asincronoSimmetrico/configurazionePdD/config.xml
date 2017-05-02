@@ -4,7 +4,7 @@
       <soggetto tipo="SPC" nome="Comune" > 
 
           <porta-delegata nome="SPCComune/SPCCentroAnagrafico/SPCIdentificaSoggetto/Cerca" 
-	      autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+	      autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
               <soggetto-erogatore tipo="SPC" nome="CentroAnagrafico" />
               <servizio tipo="SPC" nome="IdentificaSoggetto" />
               <azione nome="Cerca" />
@@ -31,7 +31,7 @@
       <soggetto tipo="SPC" nome="CentroAnagrafico" > 
 
           <porta-delegata nome="SPCCentroAnagrafico/SPCComune/SPCEsitoIdentificazione/Risultato"
-              autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+              autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
               <soggetto-erogatore tipo="SPC" nome="Comune" />
               <servizio tipo="SPC" nome="EsitoIdentificazione" />
               <azione nome="Risultato" />

@@ -110,13 +110,14 @@ public class HTTPS {
 
 	
 	/** Messaggi */
-	private static final String MESSAGGIO_SPCOOP_RICEVUTO = "Ricevuto messaggio di cooperazione con identificativo [@IDEGOV@] inviata dalla parte mittente [@MITTENTE@] ( SSL Subject: [CN=@CN@, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it] ) ";
-	private static final String AUTORIZZAZIONE_PREFIX = "Controllo Autorizzazione[spcoop] messaggio con identificativo [@IDEGOV@] FR[@MITTENTE@]->ER[@DESTINATARIO@_@SERVIZIO@_@AZIONE@] inviato da una PdD mittente [CN=@CN@, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it]";
+	private static final String MESSAGGIO_SPCOOP_RICEVUTO = "Ricevuto messaggio di cooperazione con identificativo [@IDEGOV@] inviato dalla parte mittente [@MITTENTE@] ( SSL-Subject 'CN=@CN@, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it' ) ";
+	private static final String AUTORIZZAZIONE_PREFIX = "Verifica autorizzazione [authenticated] messaggio con identificativo [@IDEGOV@] fruitore [@MITTENTE@] -> servizio [@DESTINATARIO@_@SERVIZIO@_@AZIONE@] credenzialiMittente ( SSL-Subject 'CN=@CN@, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it' )";
 	private static final String AUTORIZZAZIONE_IN_CORSO = AUTORIZZAZIONE_PREFIX+" ...";
 	private static final String AUTORIZZAZIONE_EFFETTUATA = AUTORIZZAZIONE_PREFIX+": autorizzato";
 	
-	private static final String AUTORIZZAZIONE_BUSTE_FALLITA = "Verifica autorizzazione [registro] messaggio con identificativo [@IDEGOV@] FR[@MITTENTE@]->ER[@DESTINATARIO@--@SERVIZIO@:1--@AZIONE@]@PDD@ fallita (codice: EGOV_IT_201) Il soggetto @MITTENTE@ non e' autorizzato ad invocare il servizio @SERVIZIO@_@AZIONE@ erogato da @DESTINATARIO@";
-	private static final String SOAP_FAULT_AUTORIZZAZIONE_SPCOOP_FALLITA = "@DESTINATARIO@ ha rilevato le seguenti eccezioni: Il soggetto @MITTENTE@ non e' autorizzato ad invocare il servizio @SERVIZIO@_@AZIONE@ erogato da @DESTINATARIO@";
+	private static final String AUTORIZZAZIONE_BUSTE_FALLITA = "Verifica autorizzazione [authenticated] messaggio con identificativo [@IDEGOV@] fruitore [@MITTENTE@] -> servizio [@DESTINATARIO@--@SERVIZIO@:1--@AZIONE@]@PDD@ fallita (codice: EGOV_IT_201) Il soggetto @MITTENTE@ non è autorizzato ad invocare il servizio @SERVIZIO@_@AZIONE@ erogato da @DESTINATARIO@";
+	private static final String NON_AUTORIZZATO = "Il soggetto @MITTENTE@ non è autorizzato ad invocare il servizio @SERVIZIO@_@AZIONE@ erogato da @DESTINATARIO@";
+	private static final String SOAP_FAULT_AUTORIZZAZIONE_SPCOOP_FALLITA = "@DESTINATARIO@ ha rilevato le seguenti eccezioni: "+NON_AUTORIZZATO;
 	
 	private static final String PDD_NON_DISPONIBILE = "Porta di Dominio del soggetto @DESTINATARIO@ non disponibile";
 	private static final String BAD_CERTIFICATE = "bad_certificate";
@@ -125,15 +126,17 @@ public class HTTPS {
 	private static final String HOST_VERIFY = "No subject alternative names present";
 	private static final String HOST_VERIFY_2 = "HTTPS hostname wrong:  should be <127.0.0.1>";
 	
-	private static final String CREDENZIALI_NON_FORNITE = "Autenticazione del servizio applicativo non riuscita: Credenziali non fornite";
+	private static final String CREDENZIALI_NON_FORNITE = "Identificazione fallita, credenziali non fornite";
 	//private static final String CREDENZIALI_NON_CORRETTE = "Autenticazione del servizio applicativo non riuscita ( SSL Subject: CN=@SIL@, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it ) : Credenziali fornite non corrette: subject[CN=@SIL@, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it]";
-	private static final String CREDENZIALI_NON_CORRETTE = "Autenticazione del servizio applicativo non riuscita: Credenziali fornite non corrette";
+	private static final String CREDENZIALI_NON_CORRETTE = "Identificazione fallita, credenziali fornite non corrette";
 	//private static final String CREDENZIALI_NON_CORRETTE = "Autenticazione del servizio applicativo non riuscita ( SSL Subject: [CN=@SIL@, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it] ) : Credenziali fornite non corrette";
 	private static final String AUTORIZZAZIONE_FALLITA = "Il servizio applicativo @SILNAME@ non risulta autorizzato a fruire del servizio richiesto";
 	//private static final String AUTORIZZAZIONE_FALLITA = "Autorizzazione non concessa al servizio applicativo [@SILNAME@] di utilizzare la porta delegata [@PD@]: Servizio non invocabile dal servizio applicativo @SILNAME@";
 	
-	private static final String SIL_RICONOSCIUTO = "Ricevuta richiesta di servizio dal Servizio Applicativo ( SSL Subject: [CN=@SIL@, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it] ) @SILNAME@ verso la porta delegata @PD@";
 
+	private static final String SA_IDENTIFICATO = "Autenticazione [ssl] del servizio applicativo ( SSL-Subject 'CN=@SIL@, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it' ) completata con successo";
+	private static final String SA_RICONOSCIUTO = "Ricevuta richiesta di servizio dal Servizio Applicativo @SILNAME@ verso la porta delegata @PD@";
+	
 
 	/***
 	 * Test https con autenticazione client
@@ -735,6 +738,9 @@ public class HTTPS {
 	Repository repositoryHTTPSautenticazioneSSL=new Repository();
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".CREDENZIALI_NON_CORRETTE"},dataProvider="credenzialiScorrette")
 	public void TestAutenticazioneCredenzialiScorrette(String location,String passwordKeystore,String passwordKey) throws Exception{
+		
+		Date dataInizioTest = DateManager.getDate();
+		
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -796,10 +802,11 @@ public class HTTPS {
 				if(location!=null){
 					String msg2 = CREDENZIALI_NON_CORRETTE.replace("@SIL@", "sil3");
 					msg2 = msg2.replace("@SIL@", "sil3");
-					Reporter.log("Controllo fault string ["+msg2+"]");
+					Reporter.log("Controllo fault string non corrette ["+msg2+"]");
 					Assert.assertTrue(msg2.equals(error.getFaultString()));
 				}else{
 					String msg2 =  CREDENZIALI_NON_FORNITE;
+					Reporter.log("Controllo fault string non fornite ["+msg2+"]");
 					Assert.assertTrue(msg2.equals(error.getFaultString()));
 				}
 				Reporter.log("IDEGOV["+client.getIdMessaggio()+"]");
@@ -818,6 +825,20 @@ public class HTTPS {
 				dbComponentFruitore.close();
 			}catch(Exception e){}
 		}
+		
+		Date dataFineTest = DateManager.getDate();
+		
+		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+		err.setIntervalloInferiore(dataInizioTest);
+		err.setIntervalloSuperiore(dataFineTest);
+		err.setMsgErrore(CREDENZIALI_NON_FORNITE);
+		this.erroriAttesiOpenSPCoopCore.add(err);
+		
+		ErroreAttesoOpenSPCoopLogCore err2 = new ErroreAttesoOpenSPCoopLogCore();
+		err2.setIntervalloInferiore(dataInizioTest);
+		err2.setIntervalloSuperiore(dataFineTest);
+		err2.setMsgErrore(CREDENZIALI_NON_CORRETTE);
+		this.erroriAttesiOpenSPCoopCore.add(err2);
 	}
 	
 	
@@ -912,7 +933,12 @@ public class HTTPS {
 			
 			// Check msgDiag
 			if(dataMsg!=null){
-				String msg1 = SIL_RICONOSCIUTO.replace("@SIL@", "sil1");
+				String msg1 = SA_IDENTIFICATO.replace("@SIL@", "sil1");
+				msg1 = msg1.replace("@SILNAME@", "sil1HTTPS");
+				msg1 = msg1.replace("@PD@", CostantiTestSuite.PORTA_DELEGATA_HTTPS_AUTENTICAZIONE_SSL);
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(this.dataTestAutenticazioneSIL , msg1));
+				
+				msg1 = SA_RICONOSCIUTO.replace("@SIL@", "sil1");
 				msg1 = msg1.replace("@SILNAME@", "sil1HTTPS");
 				msg1 = msg1.replace("@PD@", CostantiTestSuite.PORTA_DELEGATA_HTTPS_AUTENTICAZIONE_SSL);
 				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(this.dataTestAutenticazioneSIL , msg1));
@@ -1026,7 +1052,13 @@ public class HTTPS {
 			
 			// Check msgDiag
 			if(dataMsg!=null){
-				String msg1 = SIL_RICONOSCIUTO.replace("@SIL@", "sil1");
+				String msg1 = SA_IDENTIFICATO.replace("@SIL@", "sil1");
+				msg1 = msg1.replace("@SILNAME@", "sil1HTTPS_test2");
+				msg1 = msg1.replace("@PD@", CostantiTestSuite.PORTA_DELEGATA_HTTPS_AUTENTICAZIONE_SSL_2);
+				Reporter.log("Verifico msg ["+msg1+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(this.dataTestAutenticazioneSIL2, msg1));
+				
+				msg1 = SA_RICONOSCIUTO.replace("@SIL@", "sil1");
 				msg1 = msg1.replace("@SILNAME@", "sil1HTTPS_test2");
 				msg1 = msg1.replace("@PD@", CostantiTestSuite.PORTA_DELEGATA_HTTPS_AUTENTICAZIONE_SSL_2);
 				Reporter.log("Verifico msg ["+msg1+"]");
@@ -1069,6 +1101,9 @@ public class HTTPS {
 	Repository repositoryHTTPSautorizzazioneFallita=new Repository();
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".AUTORIZZAZIONE_FALLITA"},dataProvider="autorizzazioneFallita")
 	public void testAutorizzazioneFallita(String location,String passwordKeystore,String passwordKey) throws Exception{
+		
+		Date dataInizioTest = DateManager.getDate();
+		
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -1143,6 +1178,14 @@ public class HTTPS {
 				dbComponentFruitore.close();
 			}catch(Exception e){}
 		}
+		
+		Date dataFineTest = DateManager.getDate();
+		
+		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+		err.setIntervalloInferiore(dataInizioTest);
+		err.setIntervalloSuperiore(dataFineTest);
+		err.setMsgErrore(AUTORIZZAZIONE_FALLITA.replace("@SILNAME@", "sil2HTTPS"));
+		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	
 	
@@ -1243,6 +1286,9 @@ public class HTTPS {
 	Repository repositoryFruitoreNonPresente=new Repository();
 	@Test(groups={HTTPS.ID_GRUPPO,HTTPS.ID_GRUPPO+".FRUITORE_NON_PRESENTE"},description="Test di tipo sincrono, Viene controllato se i body sono uguali e se gli attachment sono uguali")
 	public void FruitoreNonPresente() throws TestSuiteException, IOException, Exception{
+		
+		Date dataInizioTest = DateManager.getDate();
+						
 		java.io.FileInputStream fin = null;
 		DatabaseComponent dbComponentFruitore = null;
 		try{
@@ -1313,6 +1359,18 @@ public class HTTPS {
 				dbComponentFruitore.close();
 			}catch(Exception e){}
 		}
+		
+		Date dataFineTest = DateManager.getDate();
+		
+		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
+		err.setIntervalloInferiore(dataInizioTest);
+		err.setIntervalloSuperiore(dataFineTest);
+		String msgAuth = NON_AUTORIZZATO.replace("@MITTENTE@", this.collaborazioneSPCoopFruitoreSoggetto1.getMittente().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto1.getMittente().getNome());
+		msgAuth = msgAuth.replace("@DESTINATARIO@", this.collaborazioneSPCoopFruitoreSoggetto1.getDestinatario().getTipo()+"/"+this.collaborazioneSPCoopFruitoreSoggetto1.getDestinatario().getNome());
+		msgAuth = msgAuth.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY);
+		msgAuth = msgAuth.replace("_@AZIONE@", "");
+		err.setMsgErrore(msgAuth);
+		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	@DataProvider (name="FruitoreNonPresente")
 	public Object[][]testFruitoreNonPresente()throws Exception{
@@ -1400,6 +1458,7 @@ public class HTTPS {
 				dataMsg.close();
 			}
 		}
+		
 	}
 	
 	
@@ -1575,12 +1634,11 @@ public class HTTPS {
 				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_SINCRONO+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_SINCRONO);
 				msg2 = msg2.replace("--@AZIONE@", "");
 				msg2 = msg2.replace("_@AZIONE@", "");
-				msg2 = msg2.replace("@PDD@", " inviato da un mittente [( SSL Subject: [CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it] ) ]");
+				msg2 = msg2.replace("@PDD@", " credenzialiMittente ( SSL-Subject 'CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it' )");
 				String XML = msg2 + " (subject estratto dal certificato client [CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it] diverso da quello registrato per la porta di dominio PdDSoggetto2 del mittente [CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it])";
 				String DB = msg2 + " (subject estratto dal certificato client [CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it] diverso da quello registrato per la porta di dominio PdDSoggetto2 del mittente [/l=Pisa/st=Italy/ou=test/emailaddress=apoli@link.it/o=openspcoop.org/c=IT/cn=Soggetto2/])";
 				Reporter.log("Controllo Messaggio (id:"+id+") msgXML["+XML+"] msgDB["+DB+"]");
 				Assert.assertTrue( dataMsg.isTracedMessaggio(id, XML) || dataMsg.isTracedMessaggio(id, DB)  );
-				
 			}
 			
 		}catch(Exception e){
@@ -1776,7 +1834,7 @@ public class HTTPS {
 				msg2 = msg2.replace("@SERVIZIO@", CostantiTestSuite.SPCOOP_TIPO_SERVIZIO_ONEWAY+"/"+CostantiTestSuite.SPCOOP_NOME_SERVIZIO_ONEWAY);
 				msg2 = msg2.replace("--@AZIONE@", "");
 				msg2 = msg2.replace("_@AZIONE@", "");
-				msg2 = msg2.replace("@PDD@", " inviato da un mittente [( SSL Subject: [CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it] ) ]");
+				msg2 = msg2.replace("@PDD@", " credenzialiMittente ( SSL-Subject 'CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it' )");
 				// Versione XML
 				String XML = msg2 + " (subject estratto dal certificato client [CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it] diverso da quello registrato per la porta di dominio PdDSoggettoNonAutenticato del mittente [CN=sil1,OU=test,O=openspcoop.org,L=Pisa,ST=Italy,C=IT,emailaddress=apoli@link.it])";
 				// Versione DB

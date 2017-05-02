@@ -3,7 +3,7 @@
     <soggetto tipo="SDI" nome="ENTE">
 
         <porta-delegata nome="SDIENTE/SDICentroServiziFatturaPA/SDIRiceviNotifica/NotificaEsito"
-            autenticazione="basic" autorizzazione="openspcoop" stateless="abilitato">
+            autenticazione="basic" autorizzazione="authenticated" stateless="abilitato">
             <soggetto-erogatore tipo="SDI" nome="CentroServiziFatturaPA"/>
             <servizio tipo="SDI" nome="RiceviNotifica"/>
             <azione nome="NotificaEsito"/>

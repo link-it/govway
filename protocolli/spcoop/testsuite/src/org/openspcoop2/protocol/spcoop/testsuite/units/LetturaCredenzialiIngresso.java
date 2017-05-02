@@ -102,28 +102,31 @@ public class LetturaCredenzialiIngresso {
 		}
 	} 
 	
-	private final static String MSG_LETTURA_NUOVE_CREDENZIALI_NONE_TO_BASIC = "Ottenute credenziali di accesso ( Basic Username: [@ID1@] ) fornite da GestoreCredenziali di test anonimo";
-	private final static String MSG_LETTURA_NUOVE_CREDENZIALI_NONE_TO_SSL = "Ottenute credenziali di accesso ( SSL Subject: [@ID1@] ) fornite da GestoreCredenziali di test anonimo";
-	private final static String MSG_LETTURA_NUOVE_CREDENZIALI_BASIC_TO_BASIC = "Ottenute credenziali di accesso ( Basic Username: [@ID1@] ) fornite da GestoreCredenziali di test ( Basic Username: [@ID2@] )";
-	private final static String MSG_LETTURA_NUOVE_CREDENZIALI_BASIC_TO_SSL = "Ottenute credenziali di accesso ( SSL Subject: [@ID1@] ) fornite da GestoreCredenziali di test ( Basic Username: [@ID2@] )";
-	private final static String MSG_LETTURA_NUOVE_CREDENZIALI_SSL_TO_BASIC = "Ottenute credenziali di accesso ( Basic Username: [@ID1@] ) fornite da GestoreCredenziali di test ( SSL Subject: [@ID2@] )";
-	private final static String MSG_LETTURA_NUOVE_CREDENZIALI_SSL_TO_SSL = "Ottenute credenziali di accesso ( SSL Subject: [@ID1@] ) fornite da GestoreCredenziali di test ( SSL Subject: [@ID2@] )";
+	private final static String MSG_LETTURA_NUOVE_CREDENZIALI_NONE_TO_BASIC = "Ottenute credenziali di accesso ( BasicUsername '@ID1@' ) fornite da GestoreCredenziali di test anonimo";
+	private final static String MSG_LETTURA_NUOVE_CREDENZIALI_NONE_TO_SSL = "Ottenute credenziali di accesso ( SSL-Subject '@ID1@' ) fornite da GestoreCredenziali di test anonimo";
+	private final static String MSG_LETTURA_NUOVE_CREDENZIALI_BASIC_TO_BASIC = "Ottenute credenziali di accesso ( BasicUsername '@ID1@' ) fornite da GestoreCredenziali di test ( BasicUsername '@ID2@' )";
+	private final static String MSG_LETTURA_NUOVE_CREDENZIALI_BASIC_TO_SSL = "Ottenute credenziali di accesso ( SSL-Subject '@ID1@' ) fornite da GestoreCredenziali di test ( BasicUsername '@ID2@' )";
+	private final static String MSG_LETTURA_NUOVE_CREDENZIALI_SSL_TO_BASIC = "Ottenute credenziali di accesso ( BasicUsername '@ID1@' ) fornite da GestoreCredenziali di test ( SSL-Subject '@ID2@' )";
+	private final static String MSG_LETTURA_NUOVE_CREDENZIALI_SSL_TO_SSL = "Ottenute credenziali di accesso ( SSL-Subject '@ID1@' ) fornite da GestoreCredenziali di test ( SSL-Subject '@ID2@' )";
 	
-	private final static String MSG_LETTURA_NUOVE_CREDENZIALI_ENTERPRISE_TO_BASIC = "Ottenute credenziali di accesso ( Basic Username: [@ID1@] ) fornite da Proxy";
-	private final static String MSG_LETTURA_NUOVE_CREDENZIALI_ENTERPRISE_TO_SSL = "Ottenute credenziali di accesso ( SSL Subject: [@ID1@] ) fornite da Proxy";
+	private final static String MSG_LETTURA_NUOVE_CREDENZIALI_ENTERPRISE_TO_BASIC = "Ottenute credenziali di accesso ( BasicUsername 'ID1@' ) fornite da Proxy";
+	private final static String MSG_LETTURA_NUOVE_CREDENZIALI_ENTERPRISE_TO_SSL = "Ottenute credenziali di accesso ( SSL-Subject '@ID1@' ) fornite da Proxy";
 	
-	private final static String MSG_COMPRENSIONE_IDENTITA_SA_BASIC = "Ricevuta richiesta di servizio dal Servizio Applicativo ( Basic Username: [@ID@] ) @ID_SIL@ verso la porta delegata @PD@";
-	private final static String MSG_COMPRENSIONE_IDENTITA_SA_SSL = "Ricevuta richiesta di servizio dal Servizio Applicativo ( SSL Subject: [@ID@] ) @ID_SIL@ verso la porta delegata @PD@";
+	private final static String MSG_COMPRENSIONE_IDENTITA_SA_BASIC_IDENTIFICAZIONE = "Autenticazione [basic] del servizio applicativo ( BasicUsername '@ID@' ) completata con successo";
+	private final static String MSG_COMPRENSIONE_IDENTITA_SA_BASIC_RICEVUTA = "Ricevuta richiesta di servizio dal Servizio Applicativo @ID_SIL@ verso la porta delegata @PD@";
 	
-	private final static String MSG_COMPRENSIONE_IDENTITA_SOGGETTO_BASIC = "Ricevuto messaggio di cooperazione con identificativo [@IDEGOV@] inviata dalla parte mittente [@TIPO_MITTENTE@/@MITTENTE@] ( Basic Username: [@ID@] )";
-	private final static String MSG_COMPRENSIONE_IDENTITA_SOGGETTO_SSL = "Ricevuto messaggio di cooperazione con identificativo [@IDEGOV@] inviata dalla parte mittente [@TIPO_MITTENTE@/@MITTENTE@] ( SSL Subject: [@ID@] )";
+	private final static String MSG_COMPRENSIONE_IDENTITA_SA_SSL_IDENTIFICAZIONE = "Autenticazione [ssl] del servizio applicativo ( SSL-Subject '@ID@' ) completata con successo";
+	private final static String MSG_COMPRENSIONE_IDENTITA_SA_SSL_RICEVUTA = "Ricevuta richiesta di servizio dal Servizio Applicativo @ID_SIL@ verso la porta delegata @PD@";
 	
-	private final static String MSG_COMPRENSIONE_FALLITO_IM_BASIC = "Autenticazione del servizio applicativo non riuscita ( Basic Username: @ID@ )";
-	private final static String MSG_COMPRENSIONE_FALLITO_IM_SSL = "Autenticazione del servizio applicativo non riuscita ( SSL Subject: @ID@ )";
-	private final static String MSG_COMPRENSIONE_FALLITO_IM_BASIC_CREDENZIALI_NON_CORRETTE = "(Autenticazione basic) Autenticazione del servizio applicativo non riuscita: Credenziali fornite non corrette";	
-	private final static String MSG_COMPRENSIONE_FALLITO_IM_BASIC_CREDENZIALI_NON_FORNITE = "(Autenticazione basic) Autenticazione del servizio applicativo non riuscita: Credenziali non fornite";	
-	private final static String MSG_COMPRENSIONE_FALLITO_IM_SSL_CREDENZIALI_NON_CORRETTE = "(Autenticazione ssl) Autenticazione del servizio applicativo non riuscita: Credenziali fornite non corrette";	
-	private final static String MSG_COMPRENSIONE_FALLITO_IM_SSL_CREDENZIALI_NON_FORNITE = "(Autenticazione ssl) Autenticazione del servizio applicativo non riuscita: Credenziali non fornite";	
+	private final static String MSG_COMPRENSIONE_IDENTITA_SOGGETTO_BASIC = "Ricevuto messaggio di cooperazione con identificativo [@IDEGOV@] inviato dalla parte mittente [@TIPO_MITTENTE@/@MITTENTE@]";
+	private final static String MSG_COMPRENSIONE_IDENTITA_SOGGETTO_SSL = "Ricevuto messaggio di cooperazione con identificativo [@IDEGOV@] inviato dalla parte mittente [@TIPO_MITTENTE@/@MITTENTE@]";
+	
+	private final static String MSG_COMPRENSIONE_FALLITO_IM_BASIC = "Autenticazione del servizio applicativo non riuscita ( BasicUsername '@ID@' )";
+	private final static String MSG_COMPRENSIONE_FALLITO_IM_SSL = "Autenticazione del servizio applicativo non riuscita ( SSL-Subject '@ID@' )";
+	private final static String MSG_COMPRENSIONE_FALLITO_IM_BASIC_CREDENZIALI_NON_CORRETTE = "(Autenticazione basic) Identificazione fallita, credenziali fornite non corrette";	
+	private final static String MSG_COMPRENSIONE_FALLITO_IM_BASIC_CREDENZIALI_NON_FORNITE = "(Autenticazione basic) Identificazione fallita, credenziali non fornite";	
+	private final static String MSG_COMPRENSIONE_FALLITO_IM_SSL_CREDENZIALI_NON_CORRETTE = "(Autenticazione ssl) Identificazione fallita, credenziali fornite non corrette";	
+	private final static String MSG_COMPRENSIONE_FALLITO_IM_SSL_CREDENZIALI_NON_FORNITE = "(Autenticazione ssl) Identificazione fallita, credenziali non fornite";	
 	
 	private boolean checkFaultCode(CodiceErroreIntegrazione faultCodeIntegrazione,Element[] faults) throws ProtocolException{
 		String faultCode = Utilities.toString(faultCodeIntegrazione);
@@ -259,10 +262,16 @@ public class LetturaCredenzialiIngresso {
 				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeNONEtoBASIC_PD, msg1) || 
 						dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeNONEtoBASIC_PD, msg2));
 				
-				String msg = MSG_COMPRENSIONE_IDENTITA_SA_BASIC.replace("@ID@", "adminSilY");
+				String msg = MSG_COMPRENSIONE_IDENTITA_SA_BASIC_IDENTIFICAZIONE.replace("@ID@", "adminSilY");
 				msg = msg.replace("@ID_SIL@", "silY");
 				msg = msg.replace("@PD@", CostantiTestSuite.PORTA_DELEGATA_AUTENTICAZIONE_BASIC);
-				Reporter.log("Verifica log identita ["+msg+"]");
+				Reporter.log("Verifica log identita identificazione ["+msg+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeNONEtoBASIC_PD, msg));
+				
+				msg = MSG_COMPRENSIONE_IDENTITA_SA_BASIC_RICEVUTA.replace("@ID@", "adminSilY");
+				msg = msg.replace("@ID_SIL@", "silY");
+				msg = msg.replace("@PD@", CostantiTestSuite.PORTA_DELEGATA_AUTENTICAZIONE_BASIC);
+				Reporter.log("Verifica log identita ricevuta ["+msg+"]");
 				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeNONEtoBASIC_PD, msg));
 			}
 			
@@ -379,7 +388,9 @@ public class LetturaCredenzialiIngresso {
 				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeNONEtoSSL_PD, msg1) ||
 						dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeNONEtoSSL_PD, msg2));
 				
-				String msg = MSG_COMPRENSIONE_IDENTITA_SA_SSL.replace("@ID@", "CN=clientkey");
+				
+				
+				String msg = MSG_COMPRENSIONE_IDENTITA_SA_SSL_IDENTIFICAZIONE.replace("@ID@", "CN=clientkey");
 				msg = msg.replace("@PD@", CostantiTestSuite.PORTA_DELEGATA_AUTENTICAZIONE_SSL);
 				
 				String configurazioneXml = new String(msg);
@@ -389,10 +400,29 @@ public class LetturaCredenzialiIngresso {
 				configurazioneDb = configurazioneDb.replace("@ID_SIL@", "silX_SSL");
 				
 				boolean identitaXML = dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeNONEtoSSL_PD, configurazioneXml);
-				Reporter.log("Verifica log identita XML:"+identitaXML+" ["+configurazioneXml+"]");
+				Reporter.log("Verifica log identita XML (identificazione):"+identitaXML+" ["+configurazioneXml+"]");
 				
 				boolean identitaDB = dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeNONEtoSSL_PD, configurazioneDb);
-				Reporter.log("Verifica log identita DB:"+identitaDB+" ["+configurazioneDb+"]");
+				Reporter.log("Verifica log identita DB (identificazione):"+identitaDB+" ["+configurazioneDb+"]");
+				
+				Assert.assertTrue(identitaXML || identitaDB);
+				
+				
+				
+				msg = MSG_COMPRENSIONE_IDENTITA_SA_SSL_RICEVUTA.replace("@ID@", "CN=clientkey");
+				msg = msg.replace("@PD@", CostantiTestSuite.PORTA_DELEGATA_AUTENTICAZIONE_SSL);
+				
+				configurazioneXml = new String(msg);
+				configurazioneXml = configurazioneXml.replace("@ID_SIL@", "silX");
+				
+				configurazioneDb = new String(msg);
+				configurazioneDb = configurazioneDb.replace("@ID_SIL@", "silX_SSL");
+				
+				identitaXML = dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeNONEtoSSL_PD, configurazioneXml);
+				Reporter.log("Verifica log identita XML (ricevuta):"+identitaXML+" ["+configurazioneXml+"]");
+				
+				identitaDB = dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeNONEtoSSL_PD, configurazioneDb);
+				Reporter.log("Verifica log identita DB (ricevuta):"+identitaDB+" ["+configurazioneDb+"]");
 				
 				Assert.assertTrue(identitaXML || identitaDB);
 			}
@@ -518,10 +548,17 @@ public class LetturaCredenzialiIngresso {
 				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeBASICtoBASIC_PD, msg1) ||
 						dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeBASICtoBASIC_PD, msg2));
 				
-				String msg = MSG_COMPRENSIONE_IDENTITA_SA_BASIC.replace("@ID@", "adminSilY");
+				String msg = MSG_COMPRENSIONE_IDENTITA_SA_BASIC_IDENTIFICAZIONE.replace("@ID@", "adminSilY");
 				msg = msg.replace("@ID_SIL@", "silY");
 				msg = msg.replace("@PD@", CostantiTestSuite.PORTA_DELEGATA_AUTENTICAZIONE_BASIC);
-				Reporter.log("Verifica log identita ["+msg+"]");
+				Reporter.log("Verifica log identita (identificazione) ["+msg+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeBASICtoBASIC_PD, msg));
+				
+				
+				msg = MSG_COMPRENSIONE_IDENTITA_SA_BASIC_RICEVUTA.replace("@ID@", "adminSilY");
+				msg = msg.replace("@ID_SIL@", "silY");
+				msg = msg.replace("@PD@", CostantiTestSuite.PORTA_DELEGATA_AUTENTICAZIONE_BASIC);
+				Reporter.log("Verifica log identita (ricevuta) ["+msg+"]");
 				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeBASICtoBASIC_PD, msg));
 			}
 			
@@ -644,7 +681,9 @@ public class LetturaCredenzialiIngresso {
 				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeBASICtoSSL_PD, msg1) ||
 						dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeBASICtoSSL_PD, msg2));
 				
-				String msg = MSG_COMPRENSIONE_IDENTITA_SA_SSL.replace("@ID@", "CN=clientkey");
+				
+				
+				String msg = MSG_COMPRENSIONE_IDENTITA_SA_SSL_IDENTIFICAZIONE.replace("@ID@", "CN=clientkey");
 				msg = msg.replace("@PD@", CostantiTestSuite.PORTA_DELEGATA_AUTENTICAZIONE_SSL);
 				
 				String configurazioneXml = new String(msg);
@@ -654,10 +693,30 @@ public class LetturaCredenzialiIngresso {
 				configurazioneDb = configurazioneDb.replace("@ID_SIL@", "silX_SSL");
 				
 				boolean identitaXML = dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeBASICtoSSL_PD, configurazioneXml);
-				Reporter.log("Verifica log identita XML:"+identitaXML+" ["+configurazioneXml+"]");
+				Reporter.log("Verifica log identita XML (identificazione):"+identitaXML+" ["+configurazioneXml+"]");
 				
 				boolean identitaDB = dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeBASICtoSSL_PD, configurazioneDb);
-				Reporter.log("Verifica log identita DB:"+identitaDB+" ["+configurazioneDb+"]");
+				Reporter.log("Verifica log identita DB (identificazione):"+identitaDB+" ["+configurazioneDb+"]");
+				
+				Assert.assertTrue(identitaXML || identitaDB);
+				
+				
+				
+				
+				msg = MSG_COMPRENSIONE_IDENTITA_SA_SSL_RICEVUTA.replace("@ID@", "CN=clientkey");
+				msg = msg.replace("@PD@", CostantiTestSuite.PORTA_DELEGATA_AUTENTICAZIONE_SSL);
+				
+				configurazioneXml = new String(msg);
+				configurazioneXml = configurazioneXml.replace("@ID_SIL@", "silX");
+				
+				configurazioneDb = new String(msg);
+				configurazioneDb = configurazioneDb.replace("@ID_SIL@", "silX_SSL");
+				
+				identitaXML = dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeBASICtoSSL_PD, configurazioneXml);
+				Reporter.log("Verifica log identita XML (ricevuta):"+identitaXML+" ["+configurazioneXml+"]");
+				
+				identitaDB = dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeBASICtoSSL_PD, configurazioneDb);
+				Reporter.log("Verifica log identita DB (ricevuta):"+identitaDB+" ["+configurazioneDb+"]");
 				
 				Assert.assertTrue(identitaXML || identitaDB);
 			}
@@ -792,10 +851,16 @@ public class LetturaCredenzialiIngresso {
 				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeSSLtoBASIC_PD, msg1) ||
 						dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeSSLtoBASIC_PD, msg2));
 				
-				String msg = MSG_COMPRENSIONE_IDENTITA_SA_BASIC.replace("@ID@", "adminSilY");
+				String msg = MSG_COMPRENSIONE_IDENTITA_SA_BASIC_IDENTIFICAZIONE.replace("@ID@", "adminSilY");
 				msg = msg.replace("@ID_SIL@", "silY");
 				msg = msg.replace("@PD@", CostantiTestSuite.PORTA_DELEGATA_AUTENTICAZIONE_BASIC);
-				Reporter.log("Verifica log identita ["+msg+"]");
+				Reporter.log("Verifica log identita (identificazione) ["+msg+"]");
+				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeSSLtoBASIC_PD, msg));
+				
+				msg = MSG_COMPRENSIONE_IDENTITA_SA_BASIC_RICEVUTA.replace("@ID@", "adminSilY");
+				msg = msg.replace("@ID_SIL@", "silY");
+				msg = msg.replace("@PD@", CostantiTestSuite.PORTA_DELEGATA_AUTENTICAZIONE_BASIC);
+				Reporter.log("Verifica log identita (ricevuta) ["+msg+"]");
 				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeSSLtoBASIC_PD, msg));
 			}
 			
@@ -930,7 +995,8 @@ public class LetturaCredenzialiIngresso {
 				Assert.assertTrue(dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeSSLtoSSL_PD, msg1) ||
 						dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeSSLtoSSL_PD, msg2));
 				
-				String msg = MSG_COMPRENSIONE_IDENTITA_SA_SSL.replace("@ID@", "CN=clientkey");
+				
+				String msg = MSG_COMPRENSIONE_IDENTITA_SA_SSL_IDENTIFICAZIONE.replace("@ID@", "CN=clientkey");
 				msg = msg.replace("@PD@", CostantiTestSuite.PORTA_DELEGATA_AUTENTICAZIONE_SSL);
 				
 				String configurazioneXml = new String(msg);
@@ -940,10 +1006,29 @@ public class LetturaCredenzialiIngresso {
 				configurazioneDb = configurazioneDb.replace("@ID_SIL@", "silX_SSL");
 				
 				boolean identitaXML = dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeSSLtoSSL_PD, configurazioneXml);
-				Reporter.log("Verifica log identita XML:"+identitaXML+" ["+configurazioneXml+"]");
+				Reporter.log("Verifica log identita XML (identificazione):"+identitaXML+" ["+configurazioneXml+"]");
 				
 				boolean identitaDB = dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeSSLtoSSL_PD, configurazioneDb);
-				Reporter.log("Verifica log identita DB:"+identitaDB+" ["+configurazioneDb+"]");
+				Reporter.log("Verifica log identita DB (identificazione):"+identitaDB+" ["+configurazioneDb+"]");
+				
+				Assert.assertTrue(identitaXML || identitaDB);
+				
+				
+				
+				msg = MSG_COMPRENSIONE_IDENTITA_SA_SSL_RICEVUTA.replace("@ID@", "CN=clientkey");
+				msg = msg.replace("@PD@", CostantiTestSuite.PORTA_DELEGATA_AUTENTICAZIONE_SSL);
+				
+				configurazioneXml = new String(msg);
+				configurazioneXml = configurazioneXml.replace("@ID_SIL@", "silX");
+				
+				configurazioneDb = new String(msg);
+				configurazioneDb = configurazioneDb.replace("@ID_SIL@", "silX_SSL");
+				
+				identitaXML = dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeSSLtoSSL_PD, configurazioneXml);
+				Reporter.log("Verifica log identita XML (ricevuta):"+identitaXML+" ["+configurazioneXml+"]");
+				
+				identitaDB = dataMsg.isTracedMessaggioWithLike(this.dataLetturaCredenzialeSSLtoSSL_PD, configurazioneDb);
+				Reporter.log("Verifica log identita DB (ricevuta):"+identitaDB+" ["+configurazioneDb+"]");
 				
 				Assert.assertTrue(identitaXML || identitaDB);
 			}
