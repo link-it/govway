@@ -25,7 +25,7 @@
 String iddati = "";
 String ct = request.getContentType();
 if (ct != null && (ct.indexOf("multipart/form-data") != -1)) {
-  iddati = (String) session.getValue("iddati");
+  iddati = (String) session.getAttribute("iddati");
 } else {
   iddati = request.getParameter("iddati");
 }
@@ -37,15 +37,22 @@ if (iddati != null && !iddati.equals("notdefined")) {
 }
 else
   iddati = "notdefined";
-GeneralData gd = (GeneralData) session.getValue(gdString);
+GeneralData gd = (GeneralData) session.getAttribute(gdString);
 PageData pd = (PageData) session.getAttribute(pdString);
-String displayImage = request.getParameter("displayImage");
-if (displayImage == null)
-  displayImage = "true";
 %>
 
 <%
+
+String vBL = request.getParameter("visualizzaBottoneLogin");
+boolean visualizzaBottoneLogin = false;
+
+if(vBL != null){
+	visualizzaBottoneLogin = Boolean.parseBoolean(vBL);
+}
+
+
 boolean mime = false;
+
 Vector dati = pd.getDati();
 for (int i = 0; i < dati.size(); i++) {
   DataElement de = (DataElement) dati.elementAt(i);
@@ -53,45 +60,45 @@ for (int i = 0; i < dati.size(); i++) {
     mime = true;
   }
 }
+String encTypeS = "";
 if (mime) {
-  %><form name=form ENCTYPE='multipart/form-data' action='<%= gd.getUrl() %>' method=post><%
-} else {
-  %><form name=form action='<%= gd.getUrl() %>' method=post><%
+	encTypeS = "ENCTYPE=\"multipart/form-data\"";
 }
 %>
 
-<% if (displayImage.equals("true")) { %>
-  <td valign=top background=images/plugsx.gif class=corpoTesto>
-<% } else { %>
-  <td valign=top class=corpoTesto>
-<% } %>
 
-<p><span class=history>
-
-<jsp:include page="/jsplib/titlelist.jsp" flush="true" />
-
-    <%= pd.getPageDescription() %>
-    </p>
-<%
-String message = pd.getMessage();
-if (!message.equals("")) {
-  %>
-  <%= message %><br><br>
-  <%
-}
-%>
-
-<table border=0 cellspacing=0 cellpadding=2 class=tabella>
+<td valign="top" class="td2PageBody">
+	<form name="form" <%=encTypeS %> action="<%= gd.getUrl() %>" method="post">
+		<!-- Breadcrumbs -->
+		<jsp:include page="/jsplib/titlelist.jsp" flush="true" />
 
 <%
-boolean affiancato = false;
-
+boolean elementsRequired = false;
 boolean elementsRequiredEnabled = true;
 if (pd.getMode().equals("view-noeditbutton")) {
 	elementsRequiredEnabled = false;
 }
 
-boolean elementsRequired = false;
+boolean visualizzaPanelLista = visualizzaBottoneLogin;
+
+if(!visualizzaPanelLista)
+	visualizzaPanelLista = !pd.isPageBodyEmpty();
+String classDivPanelLista = visualizzaPanelLista  ? "panelLista" : "";
+String classTabellaPanelLista = visualizzaPanelLista  ? "tabella" : "";
+%>
+
+
+<table class="tabella-ext">
+	<!-- Riga tabella -->
+		<tr> 
+			<td valign=top>		
+			<div class="<%=classDivPanelLista %>">
+				<table class="<%=classTabellaPanelLista %>">
+
+<%
+
+
+
 if(elementsRequiredEnabled){
 	for (int i = 0; i < dati.size(); i++) {
 	  DataElement de = (DataElement) dati.elementAt(i);
@@ -101,474 +108,366 @@ if(elementsRequiredEnabled){
 	  }
 	}
 	if(elementsRequired){
-		DataElement de = new DataElement();
-		de.setLabel("<BR/>* Campi obbligatori");
-		de.setType("text");
-		de.setName("CampiObbligatori");
-		de.setValue(" ");
-		dati.addElement(de);
+		// inserisco la riga con le note
+		%>
+		<tr class="even" name="row_CampiObbligatori">
+			<td class="campiObbligatori">
+				<p class="legend">
+					<strong>Note: </strong>(<em>*</em>) Campi obbligatori
+				</p>
+			</td>
+			<td class="tdInput">&nbsp;</td>
+		</tr>
+		<%
 	}
 }
 
+%><tr class="even">
+	<td colspan="2">
+<%
+
+
+String classSpanNoEdit="spanNoEdit";
+boolean fieldsetOpen = false;
 for (int i = 0; i < dati.size(); i++) {
-  DataElement de = (DataElement) dati.elementAt(i);
+	DataElement de = (DataElement) dati.elementAt(i);
   
-  String type = de.getType();
-  String rowName="row_"+de.getName();
-  
-  if (!affiancato) {
-    %><tr class=table01pari name=<%= rowName %>><%
-  }
-  
-  if (type.equals("text")) {
-    if (!affiancato) {
-      %><td height=14 class=history><%
-      if (!de.getLabel(elementsRequiredEnabled).equals("")) {
-        %><%= de.getLabel(elementsRequiredEnabled) %>&nbsp;<%
-      } else {
-        %>&nbsp;<%
-      }
-      %></td>
-      <td><%
-    }
-    if (de.getValue() != null && !de.getValue().equals("")) {
-      %><%= de.getValue() %><%
-    } else {
-	if (pd.getMode().equals("view-noeditbutton")) {
-	%><%
+  	String type = de.getType();
+  	String rowName="row_"+de.getName();
+  	String deLabel = !de.getLabel(elementsRequiredEnabled).equals("") ? de.getLabel(elementsRequiredEnabled) : "&nbsp;";
+  	String deNote = de.getNote();
+  	String classInput= de.getStyleClass();
+	
+    	if (type.equals("hidden")) {
+    		%><input type="hidden" name="<%= de.getName()  %>" value="<%= de.getValue()  %>"/><%
+    	} else { // else hidden
+    		if (type.equals("title")){
+    			// se c'e' un altro field set aperto viene chiuso
+    			if(fieldsetOpen){
+    				%>
+    				</fieldset>
+        			<%
+        			fieldsetOpen = false;
+    			}
+    			if(!fieldsetOpen){
+	    			%>
+	    				<fieldset>
+	    					<legend><%=deLabel %></legend>
+	    			<%
+	    			fieldsetOpen = true;
+    			}
+    		} else { // else title
+    			if (type.equals("subtitle")){
+    				%>
+        			<div class="subtitle">
+        				<span class="subtitle"><%=deLabel %>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        			</div>
+        			<%
+        		} else { // else subtitle
+	    			if (type.equals("note")){
+	    				String noteValue = !de.getValue().equals("") ? de.getValue() : "&nbsp;";
+	    				
+	    				%>
+	        			<div class="prop">
+	        				<label><%=deLabel %></label>
+	        				<span><%=noteValue %></span>
+	        			</div>
+	        			<%
+	        		} else { // else note
+	        			if (type.equals("link")){
+	        				%>
+	            			<div class="prop prop-link">
+	            				<label>&nbsp;</label>
+	            				<span><a href="<%= de.getUrl() %>"><%= de.getValue() %></a></span>
+	            			</div>
+	            			<%
+	            		} else { // else link
+	            			if (type.equals("text")){
+	            				String textValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
+	            				%>
+	                			<div class="prop">
+	                				<label><%=deLabel %></label>
+	                				<span class="<%=classSpanNoEdit %>"><%= textValNoEdit %></span>
+	                				<input type="hidden" name="<%= de.getName() %>" value="<%= de.getValue() %>"/>
+	                				<% if(!deNote.equals("")){ %>
+							      		<p class="note"><%=deNote %></p>
+							      	<% } %>
+	                			</div>
+	                			<%
+	                		} else { // else text
+	                			if (type.equals("textedit")){
+	                				%>
+	                    			<div class="prop">
+	                    				<label><%=deLabel %></label>
+	                    				<%
+								    	if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
+								    		String taeditValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
+								    		%><span class="<%=classSpanNoEdit %>"><%= taeditValNoEdit %></span><%
+								    	} else {
+								      		%><input type="text" name="<%= de.getName() %>" value="<%= de.getValue() %>" class="<%= classInput %>">
+								      	<%
+								    	}
+								      	%>
+								      	<% if(!deNote.equals("")){ %>
+								      		<p class="note"><%=deNote %></p>
+								      	<% } %>
+	                    			</div>
+	                    			<%
+	                    		} else { // else textedit
+	                    			if (type.equals("crypt")){
+	                    				%>
+	                        			<div class="prop">
+	                        				<label><%=deLabel %></label>
+	                        				<%
+						          			if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
+												%><span class="<%=classSpanNoEdit %>">********</span><%
+						   					} else {
+												%><input class="<%= classInput %>" type="password" name="<%= de.getName()  %>" value="<%= de.getValue()  %>"><%
+						   					}
+					     					%>
+					     					<% if(!deNote.equals("")){ %>
+								      			<p class="note"><%=deNote %></p>
+								      		<% } %>
+	                        			</div>
+	                        			<%
+	                        		} else { // else crypt
+	                        			if (type.equals("textarea") || type.equals("textarea-noedit")){
+	                        				String inputId = "txtA" + i;
+	            	     					if (type.equals("textarea-noedit")){
+	            								inputId = "txtA_ne" + i; 
+	            	     					}
+	                        				%>
+	                            			<div class="prop">
+	                            				<label><%=deLabel %></label>
+	                            				<%
+						     					if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
+						     						String taValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
+						     						%><span class="<%=classSpanNoEdit %>"><%= taValNoEdit %></span><%
+						     					} else {
+						     						String taNoEdit = type.equals("textarea") ? " " : " readonly ";
+						     						%><textarea id="<%=inputId %>" <%=taNoEdit %> rows='<%= de.getRows() %>' cols='<%= de.getCols() %>' name="<%= de.getName()  %>" class="<%= classInput %>"><%= de.getValue() %></textarea><%
+						     					}
+												%>
+						     					<% if(!deNote.equals("")){ %>
+								      				<p class="note"><%=deNote %></p>
+								      			<% } %>
+	                            			</div>
+	                            			<%
+	                            		} else { // else textarea || textarea-noedit
+	                            			if (type.equals("button")){
+	                            				%>
+	                                			<div class="prop">
+	                                				<label><%=deLabel %></label>
+	                                				<input type="button" onClick="<%= de.getOnClick() %>" value="<%= de.getValue() %>">
+	                                				<% if(!deNote.equals("")){ %>
+								      					<p class="note"><%=deNote %></p>
+								      				<% } %>
+	                                			</div>
+	                                			<%
+	                                		} else { // else button
+	                                			if (type.equals("file")){
+	                                				%>
+	                                    			<div class="prop">
+	                                    				<label><%=deLabel %></label>
+	                                    				<%
+	                                    				if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
+	                                    	     			String fileValue = (de.getValue() != null && !de.getValue().equals("")) ? de.getValue() : "not defined";
+	                                    	            	%> 
+	                                    	            	<span class="<%=classSpanNoEdit %>"><%=fileValue %></span><%
+	                                    	      		} else {
+	                                    	          		%><input size='<%= de.getSize() %>' type=file name="<%= de.getName()  %>" class="<%= classInput %>"  
+										  	<%
+											  if (!de.getOnChange().equals("")) {
+												    %> onChange="postVersion_<%= de.getOnChange() %>"<%
+												  }
+												  %>  	/><%
+	                                    	      		}
+	                                    				%>
+	                                    				<% if(!deNote.equals("")){ %>
+								      						<p class="note"><%=deNote %></p>
+								      					<% } %>
+	                                    			</div>
+	                                    			<%
+	                                    		} else { // else file
+	                                    			if (type.equals("select")){
+	                                    				%>
+	                                        			<div class="prop">
+	                                        				<label><%=deLabel %></label>
+	                                        				<%
+	                                        				if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
+	                                      						String selValNoEdit = (de.getSelected() != "") ? de.getSelected() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
+	                                      						%><span class="<%=classSpanNoEdit %>"><%= selValNoEdit %></span><%
+	                               							} else {
+	                               								String selSubType = !de.getSubType().equals("") ? (" size='"+de.getRows()+"' " + de.getSubType() + " ") : " ";
+	                               								String selEvtOnChange = !de.getOnChange().equals("") ? (" onChange=\"" + de.getOnChange() + "\" " ) : " ";
+	                               								
+	                          									%><select name="<%= de.getName()  %>" <%= selSubType %> <%= selEvtOnChange %> class="<%= classInput %>"><%
+	                          									String [] values = de.getValues();
+	                                        					if (values != null) {
+	                            									String [] labels = de.getLabels();
+	                            									for (int v = 0; v < values.length; v++) {
+	                            										String optionSel = values[v].equals(de.getSelected()) ? " selected " : " ";
+	                            										
+	                            										if (labels != null) {
+	                            											%><option value="<%= values[v]  %>" <%=optionSel %> ><%= labels[v] %></option><%
+	                            										} else {
+	                            											%><option value="<%= values[v]  %>" <%=optionSel %> ><%= values[v] %></option><%
+	                            										}
+	                            									} //end for values
+	                                        					}
+	                          									%></select><%
+	                               							}
+	                                        				%>
+	                                        				<% if(!deNote.equals("")){ %>
+								      							<p class="note"><%=deNote %></p>
+								      						<% } %>
+	                                        			</div>
+	                                        			<%
+	                                        		} else { // else select
+	                                        			if (type.equals("checkbox")){
+	                                        				%>
+	                                            			<div class="prop">
+	                                            				<label><%=deLabel %></label>
+	                                            				<%
+						    									String chkEvtOnClick = !de.getOnClick().equals("") ? (" onClick=\"" + de.getOnClick() + "\" ") :" ";
+						    									String chkValNoEdit = de.getSelected().equals("yes") ? "ON" : "OFF";
+						    									String chkVal = de.getSelected().equals("yes") ? " checked='true' " : " ";
+						    									
+						    									if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
+						    										%><span class="<%=classSpanNoEdit %>"><%=chkValNoEdit %></span><%
+						    									} else {
+						   										%>	<table class="controlset">
+				    													<tr> 
+				    														<td>
+						   														<input type="checkbox" name="<%= de.getName()  %>" value="yes" <%=chkVal %> <%=chkEvtOnClick %> >
+						   													</td>
+					   													</tr>
+					   												</table>
+						   											<%
+						 										}
+						  										%>
+						  										<% if(!deNote.equals("")){ %>
+								      								<p class="note"><%=deNote %></p>
+								      							<% } %>
+	                                            			</div>
+	                                            			<%
+	                                            		} else { // else checkbox
+	                                            			if (type.equals("radio")){
+	                                            				%>
+	                                                			<div class="prop">
+	                                                				<label><%=deLabel %></label>
+	                                                				<%
+				   	        										if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
+				   	        											String radioValNoEdit = !de.getSelected().equals("") ? de.getSelected() : "not defined";
+				    													%><span class="<%=classSpanNoEdit %>"><%=radioValNoEdit %></span><%
+				    												} else {
+				    													%>
+				    													<table class="controlset">
+				    														<tr>
+				    													<%
+					  													String [] values = de.getValues();
+					  													String [] labels = de.getLabels();
+					  													for (int v = 0; v < values.length; v++) {
+					  														String chkVal = values[v].equals(de.getSelected()) ? " checked " : " ";
+					  														String id = de.getName() + "_" + v;
+					  														
+					  														if (labels != null) {
+		                            											%><td><input type="radio" <%=chkVal %> name="<%= de.getName()  %>" value="<%= values[v]  %>" id="<%=id %>" />
+		                            											<label for="<%=id %>"><%= labels[v] %></label></td><%
+		                            										} else {
+		                            											%><td><input type="radio" <%=chkVal %> name="<%= de.getName()  %>" value="<%= values[v]  %>" id="<%=id %>" />
+																				<label for="<%=id %>"><%= values[v] %></label></td><%
+		                            										}
+					  														%><%
+				          												} // end for values
+					  													%></tr>
+				    													</table><%
+																	}
+															    	%>
+															    	<% if(!deNote.equals("")){ %>
+								      									<p class="note"><%=deNote %></p>
+								      								<% } %>
+	                                                			</div>
+	                                                			<%
+	                                                		} else { // else radio
+	                                                			//fineelementi
+	                                                		} // end else radio
+	                                            		} // end else checkbox
+	                                        		} // end else select
+	                                    		} // end else file
+	                                		} // end else button
+	                            		} // end else textarea || textarea-noedit
+	                        		} // end else crypt
+	                    		} // end else textedit
+	                		} // end else text
+	            		} // end else link
+	        		} // end else note
+    		} // end else subtitle
+    		} // end else title
+    	} // end else hidden
+	} // for
+
+	if(fieldsetOpen){ // se c'e' un fieldset aperto ed ho finito gli elementi devo chiudere
+		%>
+		</fieldset>
+		<%
 	}
-	else{
-      %>not defined<%
-	}
-    }
-    %><input type=hidden name="<%= de.getName() %>" value="<%= de.getValue() %>"><%
-    if (!de.getAffiancato()) {
-      %></td><%
-    } else {
-      %>&nbsp;&nbsp;<%
-    }
+	%>
+	</td>
+</tr>
 
-  } else {
+<%
 
-    if (type.equals("textedit")) {
-      if (!affiancato) {
-        %><td height=14 class=history><%= de.getLabel(elementsRequiredEnabled) %>&nbsp;
-        </td>
-        <td><%
-      }
-      if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
-        if (de.getValue() != null && !de.getValue().equals("")) {
-          %><%= de.getValue() %><%
-        } else {
-	  if (pd.getMode().equals("view-noeditbutton")) {
-		%><%
-	  }
-	  else{
-          	%>not defined<%
-	  }
-        }
-      } else {
-        %><input size=<%= de.getSize() %> name="<%= de.getName() %>" value="<%= de.getValue() %>"><%
-      }
-      if (!de.getAffiancato()) {
-        %></td><%
-      } else {
-        %>&nbsp;&nbsp;<%
-      }
-
-    } else {
-
-      if (type.equals("file")) {
-        if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
-          if (!affiancato) {
-            if (de.getAffiancato()) {
-	      // modalita' view, precedente non affiancato, successivo affiancato
-	      // = inizio riga, scrivo label, inizio td dati
-              %><td height=14 class=history><%
-              if (!de.getLabel(elementsRequiredEnabled).equals("")) {
-                %><%= de.getLabel(elementsRequiredEnabled) %>&nbsp;<%
-              } else {
-                %>&nbsp<%
-              }
-              %></td>
-              <td><%= de.getValue() %><%
-            } else {
-	      // modalita' view, precedente non affiancato, successivo non affiancato
-	      // = inizio riga, scrivo label, inizio td dati, scrivo value, chiudo td dati
-              %><td height=14 class=history><%
-              if (!de.getLabel(elementsRequiredEnabled).equals("")) {
-                %><%= de.getLabel(elementsRequiredEnabled) %>&nbsp;<%
-              } else {
-                %>&nbsp<%
-              }
-              %></td>
-              <td><%
-	      if (de.getValue() != null && !de.getValue().equals("")) {
-	        %><%= de.getValue() %><%
-	      } else {
-	        %>not defined<%
-	      }
-	      %></td><%
-	    }
-          } else {
-            if (!de.getAffiancato()) {
-              // modalita' view, precedente affiancato, successivo non affiancato
-              // = scrivo value e chiudo td
-              %><%= de.getValue() %></td><%
-            } else {
-              // modalita' view, precedente affiancato, successivo affiancato
-              // = scrivo value
-	      %><%= de.getValue() %><%
-            }
-          }
-        } else {
-          if (!affiancato) {
-            %><td height=14 class=history><%
-            if (!de.getLabel(elementsRequiredEnabled).equals("")) {
-              %><%= de.getLabel(elementsRequiredEnabled) %>&nbsp;<%
-            } else {
-              %>&nbsp;<%
-            }
-            %></td>
-            <td><%
-          }
-          %><small><input size='<%= de.getSize() %>' type=file name="<%= de.getName()  %>" 
-          	<%
-                  if (!de.getOnChange().equals("")) {
-			    %> onChange="postVersion_<%= de.getOnChange() %>"<%
-			  }
-			  %>  	></small><%
-          if (!de.getAffiancato()) {
-            %></td><%
-          } else {
-            %>&nbsp;&nbsp;<%
-          }
-        }
-
-      } else {
-      
-        if (type.equals("hidden")) {
-	  %><input type=hidden name="<%= de.getName()  %>" value="<%= de.getValue()  %>"><%
-
-	} else {
-
-          if (type.equals("crypt")) {
-            if (!affiancato) {
-              %><td height=14 class=history><%
-              if (!de.getLabel(elementsRequiredEnabled).equals("")) {
-                %><%= de.getLabel(elementsRequiredEnabled) %>&nbsp;<%
-              } else {
-                %>&nbsp;<%
-              }
-              %></td>
-              <td><%
-            }
-            if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
-		%>********<%
-	    } else {
-		%><input size=<%= de.getSize() %> type=password name="<%= de.getName()  %>" value="<%= de.getValue()  %>"><%
-	    }
-            if (!de.getAffiancato()) {
-	      %></td><%
-	    } else {
-	      %>&nbsp;&nbsp;<%
-	    }
-
-	  } else {
-
-            if ( (type.equals("textarea") || type.equals("textarea-noedit")) && de.isLabelAffiancata() ) {
-              String inputId = "txtA" + i;
-	      if (type.equals("textarea-noedit")){
-		inputId = "txtA_ne" + i; 
-	      }
-            	
-	      if (!affiancato) {
-		%><td height=14 class=history><%= de.getLabel(elementsRequiredEnabled) %>&nbsp;
-		</td>
-		<td><%
-	      }
-	      if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
-		if (de.getValue() != null && !de.getValue().equals("")) {
-		  %><%= de.getValue() %><%
-		} else {
-		  if (pd.getMode().equals("view-noeditbutton")) {
-			%><%
-		  }
-		  else{
-		  	%>not defined<%
-		  }
-		}
-	      } else {
-		if (type.equals("textarea")){
-			%><textarea id="<%=inputId %>" rows='<%= de.getRows() %>' cols='<%= de.getCols() %>' name="<%= de.getName()  %>"><%= de.getValue() %></textarea><%
-		}else{
-			%><textarea id="<%=inputId %>" readonly rows='<%= de.getRows() %>' cols='<%= de.getCols() %>' name="<%= de.getName()  %>"><%= de.getValue() %></textarea><%
-		}
-	      }
-	      if (!de.getAffiancato()) {
-		%></td><%
-	      } else {
-		%>&nbsp;&nbsp;<%
-	      }	      
-
-          } else {
-
-            if ( (type.equals("textarea") || type.equals("textarea-noedit")) && !de.isLabelAffiancata() ) {
-               String inputId = "txtA" + i;
-	      if (type.equals("textarea-noedit")){
-		inputId = "txtA_ne" + i; 
-	      }
-            	// <td height=14 class=history><%= de.getLabel(elementsRequiredEnabled) % >&nbsp;</td>
-              if (affiancato) {
-                //il precedente elemento non puo' essere affiancato: chiudo la linea e inizio la nuova
-                %></td></tr><tr class=table01pari><%
-              }
-              %>
-             
-              <td colspan=2 height=14 class=history>
-              <% if(de.getLabel(elementsRequiredEnabled) != null && !de.getLabel(elementsRequiredEnabled).isEmpty() ){%>
-               		<label for="<%=inputId %>" style="display: block;"><%= de.getLabel(elementsRequiredEnabled) %>&nbsp;</label>
-               <% }	
-		if (type.equals("textarea")){
-			%><textarea id="<%=inputId %>" rows='<%= de.getRows() %>' cols='<%= de.getCols() %>' name="<%= de.getName()  %>"><%= de.getValue() %></textarea><%
-		}else{
-			%><textarea id="<%=inputId %>" readonly rows='<%= de.getRows() %>' cols='<%= de.getCols() %>' name="<%= de.getName()  %>"><%= de.getValue() %></textarea><%
-		}%>
-              </td><%
-              
-
-            } else {
-
-              if (type.equals("select")) {
-	        if (!affiancato) {
-		  %><td height=14 class=history><%= de.getLabel(elementsRequiredEnabled) %>&nbsp;
+if (visualizzaBottoneLogin) {
+	  %><tr class="buttonrow">
+		  <td colspan="2">
+		  	<div class="buttonrowform">
+				<input type=submit onClick='CheckDati();return false;' value="Login" />
+			</div>
 		  </td>
-		  <td valign=middle><%
-	        }
-                if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
-	   	  if (de.getSelected() != "") {
-		    %><%= de.getSelected() %><%
-		  } else {
-		    if (pd.getMode().equals("view-noeditbutton")) {
-			 %><%
-		    }else{
-			%>not defined<%
-		    }
-		  }
-	        } else {
-		  %><select name="<%= de.getName()  %>"<%
-                  if (!de.getSubType().equals("")) {
-		    %> size='<%= de.getRows() %>' <%= de.getSubType() %><%
-		  }
-                  if (!de.getOnChange().equals("")) {
-		    %> onChange="<%= de.getOnChange() %>"<%
-		  }
-		  %>><%
-		  String [] values = de.getValues();
-                  if (values != null) {
-		    String [] labels = de.getLabels();
-		    for (int v = 0; v < values.length; v++) {
-		      if (labels != null) {
-			if (values[v].equals(de.getSelected())) {
-                          %><option value="<%= values[v]  %>" selected><%= labels[v] %><%
-                        } else {
-                          %><option value="<%= values[v]  %>"><%= labels[v] %><%
-                        }
-		      } else {
-		        if (values[v].equals(de.getSelected())) {
-		          %><option value="<%= values[v]  %>" selected><%= values[v] %><%
-		        } else {
-		          %><option value="<%= values[v]  %>"><%= values[v] %><%
-		        }
-		      }
-		    }
-                  }
-		  %></select><%
-	        }
-	        if (!de.getAffiancato()) {
-		  %></td><%
-	        } else {
-		  %>&nbsp;&nbsp;<%
-	        }
-
-	      } else {
-
-                if (type.equals("button")) {
-                  if (!affiancato) {
-		    %><td height=14 class=history><%= de.getLabel(elementsRequiredEnabled) %>&nbsp;</td>
-			<td><%
-		  }
-		  %><input type=button onClick="<%= de.getOnClick() %>" value="<%= de.getValue() %>"><%
-	          if (!de.getAffiancato()) {
-		    %></td><%
-		  } else {
-		    %>&nbsp;&nbsp;<%
-		  }
-
-	        } else {
-
-		  if (type.equals("checkbox")) {
-		    if (!affiancato) {
-		      %><td height=14 class=history><%= de.getLabel(elementsRequiredEnabled) %>&nbsp;</td>
-			<td><%
-		    }
-		    if (de.getSelected().equals("yes")) {
-	              if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
-			%>ON<%
-		      } else {
-		        %><input type=checkbox name="<%= de.getName()  %>" value=yes checked='true' 
-		        <% if (!de.getOnClick().equals(""))%> 
-		        		onClick="<%= de.getOnClick() %>"><%
-		      }
-	            } else {
-	              if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
-			%>OFF<%
-		      } else {
-			%><input type=checkbox name="<%= de.getName()  %>" value=yes 
-				<% if (!de.getOnClick().equals(""))%> 
-		        		onClick="<%= de.getOnClick() %>"><%
-		      }
-	            }
-	            if (!de.getAffiancato()) {
-		      %></td><%
-		    } else {
-		      %>&nbsp;&nbsp;<%
-		    }
-
-	          } else {
-		 
-		    if (type.equals("note")) {
-                      if (!affiancato) {
-                        //il precedente elemento non puo' essere affiancato:
-                        //chiudo la linea e inizio la nuova
-                        %></td></tr><tr class=table01pari><%
-                      }
-                      %><td colspan=2 height=14 class=history>
-		      <% if (de.getLabel(elementsRequiredEnabled)!=null){ %>
-			  <%= de.getLabel(elementsRequiredEnabled) %>
-		      <% } %>
-		      <% if (de.getValue()!=null){ %>
-                          <%= de.getValue() %>
-		      <% } %>
-                      </td><%
-
-                    } else {
-
- 
-		    if (type.equals("link")) {
-		      if (!affiancato) {
-			//il precedente elemento non puo' essere affiancato:
-		        //chiudo la linea e inizio la nuova
-			%></td></tr><tr class=table01pari><%
-		      }
-		      %><td colspan=2 height=14 class=history>
-		      <a href="<%= de.getUrl() %>"><%= de.getValue() %></a>
-	    	      </td><%
-
-	            } else {
-		
-		      if (type.equals("radio")) {
-		        if (affiancato) {
-		      	  //il precedente elemento non puo' essere affiancato:
-		          //chiudo la linea e inizio la nuova
-			  %></td></tr><tr class=table01pari><%
-		        }
-		        %><td height=14 class=history><%= de.getLabel(elementsRequiredEnabled) %>&nbsp;
-	    		</td>
-	    		<td><%
-	    	        if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
-			  if (!de.getSelected().equals("")) {
-			    %><%= de.getSelected() %><%
-	 		  } else {
-		   	    %>not defined<%
-			  }
-		    	} else {
-			  String [] values = de.getValues();
-			  String [] labels = de.getLabels();
-			  for (int v = 0; v < values.length; v++) {
-		    	    if (values[v].equals(de.getSelected())) {
-			      %><input type=radio checked name="<%= de.getName()  %>" value="<%= values[v]  %>">&nbsp;&nbsp;<%= labels[v] %><%
-			    } else {
-			      %><input type=radio name="<%= de.getName()  %>" value="<%= values[v]  %>">&nbsp;&nbsp;<%= labels[v] %><%
-		    	    }
-			    if (v<values.length-1) {
-			      %><br><%
-			    }
-		          }
-			}
-		        if (!de.getAffiancato()) {
-		    	  %></td><%
-		        } else {
-		    	  %>&nbsp;&nbsp;<%
-		        }
-
-		      } else {
-
-		        if (type.equals("title")) {
-		          if (affiancato) {
-		      	    //il precedente elemento non puo' essere affiancato:
-		            //chiudo la linea e inizio la nuova
-			    %></td></tr><tr class=table01pari><%
-			  }
-			  %><td colspan=2 height=14 class=table01header>
-	    		  <%= de.getLabel(elementsRequiredEnabled) %>&nbsp;
-			  </td><%
-			}
-
-
-		      } //else radio		 
-                  	} //else label 
-		    } //else link
-		  }  //else checkbutton
-		} //else button
-	      } //else select
-            } //else textarea/textarea-noedit label-affiancata
-            } //else textarea-noedit label-non-affiancata
-          } //else crypt
-        } //else hidden
-      } // else file
-    } // else textedit
-  } // else text
-
-  if (!de.getAffiancato() || de.getType().equals("link") || de.getType().equals("textarea") || de.getType().equals("textarea-noedit")) {
-    %></tr><%
-    affiancato = false;
-  } else {
-    affiancato = true;
-  }
-} // for
-
+	  </tr>
+	  <%
+	}
+else
 if (pd.getMode().equals("view")) {
-  %><tr>
-  <td colspan=2 class=table01footer><div align=right><%
-  String [][] bottoni = pd.getBottoni();
-  if ((bottoni != null) && (bottoni.length > 0)) {
-    for (int i = 0; i < bottoni.length; i++) {
-      %><input type=button onClick="<%= bottoni[i][1] %>" value="<%= bottoni[i][0] %>">&nbsp;<%
-    }
-  } else {
-    %><input type=button onClick=EditPage() value=Edit><%
-  }
-  %></div>
-  </td>
+  %><tr class="buttonrow">
+	  <td colspan="2">
+	  	<div class="buttonrowform"><%
+			  String [][] bottoni = pd.getBottoni();
+			  if ((bottoni != null) && (bottoni.length > 0)) {
+			    for (int i = 0; i < bottoni.length; i++) {
+			      %><input type=button onClick="<%= bottoni[i][1] %>" value="<%= bottoni[i][0] %>"/>&nbsp;<%
+			    }
+			  } else {
+			    %><input type=button onClick="EditPage()" value="Edit" /><%
+			  }
+		  %></div>
+	  </td>
   </tr>
   <%
 } else {
   if (pd.getMode().equals("view-noeditbutton") || pd.getMode().equals("view-nobutton") ) {
-    %><tr>
-    <td colspan=2 class=table01footerNoButtons><img src=images/spacer.gif></td>
+    %><tr class="buttonrownobuttons">
+    	<td colspan="2" >&nbsp;</td>
     </tr><%
   } else {  
-    %><tr>
-    <td colspan=2 class=table01footer>
-    <div align=right><input type=submit onClick='CheckDati();return false;' value=Invia>
-    <input type=button onClick='document.form.reset();' value=Cancella></div>
-    </td>
+    %><tr class="buttonrow">
+	    <td colspan="2" >
+	    	<div class="buttonrowform">
+	    		<input type=submit onClick='CheckDati();return false;' value="Invia" />
+	    		<input type=button onClick='document.form.reset();' value="Cancella" />
+	    	</div>
+	    </td>
     </tr><%
   }
 }
 %>
 
 </table>
+</div>
 </td>
+</tr>
+</table>
 </form>
+</td>
+

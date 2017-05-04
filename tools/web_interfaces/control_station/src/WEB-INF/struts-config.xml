@@ -1943,7 +1943,14 @@
             <forward name="protocolPropertyBinaryPropertyChangeError" path="/jsplib/info.jsp"/>
             <forward name="protocolPropertyBinaryPropertyChangeConfirmForm" path="/jsplib/confermaInvio.jsp"/>
         </action>
+
+    	<!-- About  -->
     
+        <action path="/about" type="org.openspcoop2.web.ctrlstat.servlet.about.About" 
+        	scope="request" validate="true">
+            <forward name="aboutOk" path="/jsplib/addElement.jsp"/>
+            <forward name="aboutError" path="/jsplib/info.jsp"/>
+        </action>
     
     </action-mappings>
 

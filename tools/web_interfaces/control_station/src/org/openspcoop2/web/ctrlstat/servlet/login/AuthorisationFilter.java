@@ -34,13 +34,16 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.about.AboutCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.slf4j.Logger;
 
 /**
  * AuthorisationFilter
@@ -56,6 +59,7 @@ public final class AuthorisationFilter implements Filter {
 
 	private FilterConfig filterConfig = null;
 	private ControlStationCore core = null;
+	private static Logger log = ControlStationLogger.getPddConsoleCoreLogger();
 	
 	
 	@Override
@@ -91,7 +95,8 @@ public final class AuthorisationFilter implements Filter {
 			
 			// Non faccio il filtro sulla pagina di login e sulle immagini
 			String urlRichiesta = request.getRequestURI();
-			if ((urlRichiesta.indexOf("/"+LoginCostanti.SERVLET_NAME_LOGIN) == -1) && (urlRichiesta.indexOf("/"+CostantiControlStation.IMAGES_DIR) == -1)) {
+			log.info("Richiesta Risorsa ["+urlRichiesta+"]"); 
+			if (isRisorsaProtetta(request)) { 
 				
 				String userLogin = ServletUtils.getUserLoginFromSession(session);
 				if (userLogin == null) {
@@ -185,6 +190,21 @@ public final class AuthorisationFilter implements Filter {
 			}
 		}
 
+	}
+	
+	private boolean isRisorsaProtetta(HttpServletRequest request){
+		String urlRichiesta = request.getRequestURI();
+		if ((urlRichiesta.indexOf("/"+LoginCostanti.SERVLET_NAME_LOGIN) == -1) 
+				&& (urlRichiesta.indexOf("/"+CostantiControlStation.IMAGES_DIR) == -1) 
+				&& (urlRichiesta.indexOf("/"+CostantiControlStation.CSS_DIR) == -1)
+				&& (urlRichiesta.indexOf("/"+CostantiControlStation.FONTS_DIR) == -1)
+				&& (urlRichiesta.indexOf("/"+CostantiControlStation.JS_DIR) == -1)
+				&& (urlRichiesta.indexOf("/"+AboutCostanti.SERVLET_NAME_ABOUT) == -1) 
+				) {
+			return true;
+		}
+		
+		return false;
 	}
 
 	@Override

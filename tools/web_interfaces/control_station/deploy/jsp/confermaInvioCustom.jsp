@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
-<SCRIPT LANGUAGE = JavaScript1.2>
+<SCRIPT type="text/javascript">
 
 function EseguiConferma(servlet) {
 		

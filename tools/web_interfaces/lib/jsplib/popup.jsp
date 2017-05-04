@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ page session="true" import="org.openspcoop2.web.lib.mvc.*" %>
 
@@ -24,7 +24,7 @@
 String iddati = "";
 String ct = request.getContentType();
 if (ct != null && (ct.indexOf("multipart/form-data") != -1)) {
-  iddati = (String) session.getValue("iddati");
+  iddati = (String) session.getAttribute("iddati");
 } else {
   iddati = request.getParameter("iddati");
 }
@@ -37,33 +37,35 @@ if (iddati != null && !iddati.equals("notdefined")) {
 else {
   iddati = "notdefined";
 }
-GeneralData gd = (GeneralData) session.getValue(gdString);
+GeneralData gd = (GeneralData) session.getAttribute(gdString);
 PageData pd = (PageData) session.getAttribute(pdString);
 %>
 <html>
 <head>
-<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
-<link rel=stylesheet href=images/<%= gd.getCss() %> type=text/css>
-<script type="text/javascript" src="js/webapps.js"></script>
-
-<script LANGUAGE = JavaScript1.2>
-function exit() {
-  window.close();
-}
-</SCRIPT>
-<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+	<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
+	<link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
+	<script type="text/javascript" src="js/webapps.js"></script>
+	<script type="text/javascript">
+		function exit() {
+		  window.close();
+		}
+	</script>
+	<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
 </head>
 
 <body marginwidth=0 marginheight=0 onLoad="focusText(document.form);">
-<table border=0 cellspacing=0 cellpadding=0 width=100% >
-<tr>
-<form name=form>
-<td valign=top background=images/plugsx.gif class=corpoTesto>
-<%= pd.getMessage() %>
-<br><br>
-<input type=button onClick=exit() value='OK'>&nbsp;</td>
-</form>
-</tr>
-</table>
+	<form name="form">
+		<table class="bodyWrapper">
+			<tbody>
+				<tr class="trPageBody">
+					<td valign="top" class="td2PageBody">
+						<%= pd.getMessage() %>
+						<br/><br/>
+					<input type=button onClick=exit() value='OK'>&nbsp;</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
 </body>
 </html>

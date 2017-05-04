@@ -125,6 +125,7 @@ public class Costanti {
 	
 	/** DATA ELEMENT **/
 	
+	public final static String DATA_ELEMENT_VIEW_NAME = "view";
 	public final static String DATA_ELEMENT_EDIT_MODE_NAME = "edit-mode";
 	public final static String DATA_ELEMENT_EDIT_MODE_DISABLE_NAME = "view-noeditbutton";
 	public final static String DATA_ELEMENT_DISABLE_ONLY_BUTTON = "view-nobutton";
@@ -174,4 +175,14 @@ public class Costanti {
 	
 	public static final String PARAMETER_FILENAME_PREFIX = "__fn__";  
 	public static final String PARAMETER_FILEID_PREFIX = "__fd__";
+	
+	/** PAGE DATA TITLE */
+	
+	public final static String MESSAGE_TYPE_ERROR = "errors";
+	public final static String MESSAGE_TYPE_INFO = "info";
+	
+	/** CLASSI DEFAULT CSS ELEMENTI INPUT */
+	public final static String INPUT_LONG_CSS_CLASS = "inputLinkLong";
+	public final static String INPUT_CSS_CLASS = "inputLink";
+
 }

@@ -17,37 +17,5 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
-<script>
-
-function changePdDType()
-{
-	var selectedIndex = document.form.tipo.selectedIndex;
-	var tipo = document.form.tipo.options[selectedIndex].value;
-	//se tipo esterno allora rendo editabili solo le informazioni
-	//che interessano
-	if(tipo=='esterno')
-	{
-		$("input[name=ip]").hide("slow");
-		$("input[name=password]").hide("slow");
-		$("input[name=confpw]").hide("slow");
-		$("select[name=protocollo]").hide();
-		$("input[name=porta]").hide("slow");
-		$("input[name=ip_gestione]").hide("slow");
-		$("input[name=porta_gestione]").hide("slow");
-		$("select[name=protocollo_gestione]").hide();
-
-	}else
-	{
-		$("input[name=ip]").show("slow");
-		$("input[name=password]").show("slow");
-		$("input[name=confpw]").show("slow");
-		$("select[name=protocollo]").show();
-		$("input[name=porta]").show("slow");
-		$("input[name=ip_gestione]").show("slow");
-		$("input[name=porta_gestione]").show("slow");
-		$("select[name=protocollo_gestione]").show();
-	}
-
-};
-
+<script type="text/javascript">
 </script>

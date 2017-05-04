@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ page session="true" import="java.util.*, org.openspcoop2.web.lib.mvc.*" %>
 <html>
@@ -28,7 +28,7 @@ if (params == null)
 	 params="";
 
 ListElement listElement = 
-	  (org.openspcoop2.web.lib.mvc.ListElement) session.getValue("ListElement");
+	  (org.openspcoop2.web.lib.mvc.ListElement) session.getAttribute("ListElement");
 
 String nomeServlet = listElement.getOggetto();
 String nomeServletAdd = nomeServlet+"Add.do";
@@ -47,7 +47,7 @@ else {
   iddati = "notdefined";
 }
 
-GeneralData gd = (GeneralData) session.getValue(gdString);
+GeneralData gd = (GeneralData) session.getAttribute(gdString);
 PageData pd = (PageData) session.getAttribute(pdString);
 
 Vector v = pd.getDati();
@@ -58,9 +58,14 @@ if (search == null)
 %>
 
 <head>
+<meta charset="UTF-8">
 <jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 <title><%= gd.getTitle() %></title>
-<link rel=stylesheet href=images/<%= gd.getCss() %> type=text/css>
+<link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
+<link rel="stylesheet" href="css/ui.core.css" type="text/css">
+<link rel="stylesheet" href="css/ui.theme.css" type="text/css">
+<link rel="stylesheet" href="css/ui.dialog.css" type="text/css">
 <script type="text/javascript" src="js/webapps.js"></script>
 
 
@@ -75,7 +80,7 @@ var nomeServletList_Custom = '<%= nomeServletList %>';
 
 
 
-<SCRIPT>
+<SCRIPT type="text/javascript">
 var iddati = '<%= iddati %>';
 var params = '<%= params %>';
 var nomeServletAdd = nomeServletAdd_Custom;
@@ -86,6 +91,18 @@ var n = <%= n %>;
 var index = <%= pd.getIndex() %>;
 var pageSize = <%= pd.getPageSize() %>;
 var nr = 0;
+
+function checkAll(){
+	if(n > 1){
+		var chkAll = $("#chkAll:checked").length;
+		
+		if(chkAll > 0) {
+			SelectAll();
+		} else {
+			DeselectAll();
+		}
+	}
+}
 
 function SelectAll() {
   if (n > 1) {
@@ -224,27 +241,71 @@ function Esporta(tipo) {
 		document.location = "<%= request.getContextPath() %>/export.do?tipoExport="+tipo+"&obj="+elemToExport;  
 		  
 };
+
+var panelListaRicercaOpen = false; // controlla l'aperture del pannello di ricerca.
+<%
+if ((pd.getSearch().equals("on") || (pd.getSearch().equals("auto") && pd.getNumEntries() > 10)) || pd.getFilter() != null){
+	String searchDescription = pd.getSearchDescription();
+	if (!searchDescription.equals("")){
+	%>	panelListaRicercaOpen = true; <% 
+	} 
+}%>
+
 </SCRIPT>
 
 <!-- JQuery lib-->
 <script type="text/javascript" src="js/jquery-latest.js"></script>
 <!--Funzioni di utilita -->
-<script type="text/javascript" src="js/jquery.confirm-1.2.js"></script>
+<script type="text/javascript" src="js/ui.core.js"></script>
+<script type="text/javascript" src="js/ui.dialog.js"></script>
+<!-- <script type="text/javascript" src="js/jquery.confirm-1.2.js"></script> -->
+<script type="text/javascript">
+function togglePanelListaRicerca(panelListaRicercaOpen){
+	if(panelListaRicercaOpen) {
+    	$("#searchForm").removeClass('searchFormOff');
+    	$("#searchForm").addClass('searchFormOn');
+    	
+    	$("#iconaPanelLista").removeClass('icon-down-white');
+    	$("#iconaPanelLista").addClass('icon-up-white');
+    } else {
+    	$("#searchForm").removeClass('searchFormOn');
+    	$("#searchForm").addClass('searchFormOff');
+    	
+    	$("#iconaPanelLista").removeClass('icon-up-white');
+    	$("#iconaPanelLista").addClass('icon-down-white');
+    }
+}
+
+	$(document).ready(function(){
+		// pannello ricerca che si apre e chiude iconaPanelLista
+		$("#panelListaRicercaHeader").click(function(){
+			panelListaRicercaOpen = !panelListaRicercaOpen;
+			togglePanelListaRicerca(panelListaRicercaOpen);
+		});
+		
+		togglePanelListaRicerca(panelListaRicercaOpen);
+	 });
+</script>
 <script type="text/javascript" src="js/utils.js"></script>
+<jsp:include page="/jsplib/menuUtente.jsp" flush="true" />
 <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
 </head>
 <body marginwidth=0 marginheight=0 onLoad="focusText(document.form);">
-<table border=0 cellspacing=0 cellpadding=0 width=100%>
-
-<jsp:include page="/jsplib/templateHeader.jsp" flush="true" />
-
-<tr>
-
-<jsp:include page="/jsplib/menu.jsp" flush="true" />
-<jsp:include page="/jsplib/full-list.jsp" flush="true" />
-<jsp:include page="/jsplib/templateFooter.jsp" flush="true" />
-
-</tr>
-</table>
+	<table class="bodyWrapper">
+		<tbody>
+			<jsp:include page="/jsplib/templateHeader.jsp" flush="true" />
+			<tr class="trPageBody">
+				<jsp:include page="/jsplib/menu.jsp" flush="true" />
+				<jsp:include page="/jsplib/full-list.jsp" flush="true" />
+			</tr>
+			<jsp:include page="/jsplib/templateFooter.jsp" flush="true" />
+		</tbody>
+	</table>
+	<div id="confermaModal" title="Conferma Operazione">
+ 		<p class="contenutoModal">
+ 			<img src="images/tema_link/alert_orange.png"/>
+ 			<span>Eliminare gli elementi selezionati?</span>
+ 		</p>
+	</div>
 </body>
 </html>

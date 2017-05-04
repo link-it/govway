@@ -50,6 +50,9 @@ public class Costanti {
 	/* OTHER */
     
 	public final static String IMAGES_DIR = "images";
+	public final static String CSS_DIR = "css";
+	public final static String JS_DIR = "js";
+	public final static String FONTS_DIR = "fonts";
 	public final static String LOGIN_JSP = "/jsplib/login.jsp";
 	public final static String INFO_JSP ="/jsplib/info.jsp";
 	
@@ -133,6 +136,11 @@ public class Costanti {
 	
 	public final static String PARAMETRO_ARCHIVI_TIPO_XML = "tipoxml";
 	public final static String PARAMETRO_ARCHIVI_FILE = "theFile";
+	
+	
+	/* TIPI MESSAGGIO ERRORE */
+	public final static String MESSAGE_TYPE_ERROR = "errors";
+	public final static String MESSAGE_TYPE_INFO = "info";
 	
 	
 	/* LABEL PARAMETRI */

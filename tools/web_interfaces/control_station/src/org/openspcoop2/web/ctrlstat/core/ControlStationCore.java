@@ -206,9 +206,7 @@ public class ControlStationCore {
 	private String consoleNomeEsteso = null;
 	private String consoleNomeEstesoSuffix = null;
 	private String consoleCSS = null;
-	private String consoleIMGNomeApplicazione = null;
 	private String consoleLanguage = null;
-	private boolean consoleUsaIMGNomeApplicazione = true;
 	
 	public String getConsoleNomeSintesi() {
 		return this.consoleNomeSintesi;
@@ -224,16 +222,9 @@ public class ControlStationCore {
 	public String getConsoleCSS() {
 		return this.consoleCSS;
 	}
-	public String getConsoleIMGNomeApplicazione() {
-		return this.consoleIMGNomeApplicazione;
-	}
 	public String getConsoleLanguage() {
 		return this.consoleLanguage;
 	}
-	public boolean isConsoleUsaIMGNomeApplicazione(){
-		return this.consoleUsaIMGNomeApplicazione;
-	}
-
 
 	/** Tipo del Database */
 	protected String tipoDB = "";
@@ -389,9 +380,6 @@ public class ControlStationCore {
 	private boolean showGestioneSoggettiVirtuali = false;
 	private boolean showGestioneWorkflowStatoDocumenti = false;
 	private boolean gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale = false;
-	private boolean showModalitaInterfacciaSwitchRapido = false;
-	private String labelSwitchRapidoModalitaInterfacciaStandard = null;
-	private String labelSwitchRapidoModalitaInterfacciaAvanzata = null;
 	private boolean showMenuAggregatoOggettiRegistro = false;
 	private boolean enableAutoMappingWsdlIntoAccordo = false;
 	private boolean enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = false;
@@ -453,15 +441,6 @@ public class ControlStationCore {
 	}
 	public boolean isGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale() {
 		return this.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale;
-	}
-	public boolean isShowModalitaInterfacciaSwitchRapido() {
-		return this.showModalitaInterfacciaSwitchRapido;
-	}
-	public String getLabelSwitchRapidoModalitaInterfacciaStandard() {
-		return this.labelSwitchRapidoModalitaInterfacciaStandard;
-	}
-	public String getLabelSwitchRapidoModalitaInterfacciaAvanzata() {
-		return this.labelSwitchRapidoModalitaInterfacciaAvanzata;
 	}
 	public boolean isShowMenuAggregatoOggettiRegistro() {
 		return this.showMenuAggregatoOggettiRegistro;
@@ -1096,9 +1075,7 @@ public class ControlStationCore {
 		this.consoleNomeEsteso = core.consoleNomeEsteso;
 		this.consoleNomeEstesoSuffix = core.consoleNomeEstesoSuffix;
 		this.consoleCSS = core.consoleCSS;
-		this.consoleIMGNomeApplicazione = core.consoleIMGNomeApplicazione;
 		this.consoleLanguage = core.consoleLanguage;
-		this.consoleUsaIMGNomeApplicazione = core.consoleUsaIMGNomeApplicazione;
 
 		/** Tipo del Database */
 		this.tipoDB = core.tipoDB;
@@ -1175,9 +1152,6 @@ public class ControlStationCore {
 		this.showGestioneSoggettiVirtuali = core.showGestioneSoggettiVirtuali;
 		this.showGestioneWorkflowStatoDocumenti = core.showGestioneWorkflowStatoDocumenti;
 		this.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale = core.gestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale;
-		this.showModalitaInterfacciaSwitchRapido = core.showModalitaInterfacciaSwitchRapido;
-		this.labelSwitchRapidoModalitaInterfacciaAvanzata = core.labelSwitchRapidoModalitaInterfacciaAvanzata;
-		this.labelSwitchRapidoModalitaInterfacciaStandard = core.labelSwitchRapidoModalitaInterfacciaStandard;
 		this.showMenuAggregatoOggettiRegistro = core.showMenuAggregatoOggettiRegistro;
 		this.enableAutoMappingWsdlIntoAccordo = core.enableAutoMappingWsdlIntoAccordo;
 		this.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = core.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes;
@@ -1379,9 +1353,7 @@ public class ControlStationCore {
 			this.consoleNomeEsteso = consoleProperties.getConsoleNomeEsteso();
 			this.consoleNomeEstesoSuffix = consoleProperties.getConsoleNomeEstesoSuffix();
 			this.consoleCSS = consoleProperties.getConsoleCSS();
-			this.consoleIMGNomeApplicazione = consoleProperties.getConsoleImmagineNomeApplicazione();
 			this.consoleLanguage = consoleProperties.getConsoleLanguage();
-			this.consoleUsaIMGNomeApplicazione = consoleProperties.isUsaConsoleImmagineNomeApplicazione();
 			
 			// Opzioni di Visualizzazione
 			this.showJ2eeOptions = consoleProperties.isShowJ2eeOptions();
@@ -1403,9 +1375,6 @@ public class ControlStationCore {
 			this.showAccordiColonnaAzioni = consoleProperties.isElenchiAccordiVisualizzaColonnaAzioni();
 			this.showAccordiColonnaServizi = consoleProperties.isElenchiAccordiVisualizzaColonnaServizi();
 			this.showPulsantiImportExport = consoleProperties.isElenchiMenuVisualizzazionePulsantiImportExportPackage();
-			this.showModalitaInterfacciaSwitchRapido = consoleProperties.isConsoleModalitaInterfacciaSwitchRapido();
-			this.labelSwitchRapidoModalitaInterfacciaAvanzata = consoleProperties.getLabelConsoleInterfacciaSwitchRapidoModalitaAvanzata();
-			this.labelSwitchRapidoModalitaInterfacciaStandard = consoleProperties.getLabelConsoleInterfacciaSwitchRapidoModalitaStandard();
 			this.showMenuAggregatoOggettiRegistro = consoleProperties.isMenuVisualizzazioneAggregataOggettiRegistro();
 			this.enableAutoMappingWsdlIntoAccordo = consoleProperties.isEnableAutoMappingWsdlIntoAccordo();
 			this.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = consoleProperties.isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes();

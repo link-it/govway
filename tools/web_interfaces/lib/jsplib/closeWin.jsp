@@ -16,13 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%@ page contentType="text/html; charset=UTF-8"%>
 <HTML>
-<HEAD><SCRIPT LANGUAGE = "JavaScript1.2">
+<HEAD>
+<meta charset="UTF-8">
+<script type="text/javascript">
 function closeWin() {
-  window.close(); }
-</SCRIPT></HEAD>
+	  window.close(); }
+</script>
+</HEAD>
 <BODY onLoad="closeWin();">
 </BODY>
 </HTML>

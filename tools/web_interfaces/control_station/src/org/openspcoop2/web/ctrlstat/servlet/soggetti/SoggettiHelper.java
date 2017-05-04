@@ -280,7 +280,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 		User user = ServletUtils.getUserFromSession(this.session);
 		de = new DataElement();
 		de.setLabel(SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_VERSIONE_PROTOCOLLO);
-		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_VERSIONE_PROTOCOLLO);
+		de.setName("percentuale_"+SoggettiCostanti.PARAMETRO_SOGGETTO_VERSIONE_PROTOCOLLO); // [TODO] togliere
 
 		if(this.core.isRegistroServiziLocale() && InterfaceType.AVANZATA.equals(ServletUtils.getUserFromSession(this.session).getInterfaceType())){
 			de.setValues(versioniLabel);

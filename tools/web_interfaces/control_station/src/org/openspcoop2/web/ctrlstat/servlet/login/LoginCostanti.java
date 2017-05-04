@@ -65,13 +65,20 @@ public class LoginCostanti {
 	public final static String LABEL_LOGIN = "Login";
 	public final static String LABEL_LOGOUT = "Logout";
 	public final static String LABEL_LOGIN_ATTUALMENTE_CONNESSO = "Utente: ";
+	public final static String LABEL_LOGIN_ATTUALMENTE_CONNESSO_WITH_PARAM = "Utente: <b>{0}</b>";
 	public final static String LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO = "Login effettuato con successo";
 	public final static String LABEL_LOGOUT_EFFETTUATO_CON_SUCCESSO = "Logout effettuato con successo";
-	public final static String LABEL_LOGIN_SESSIONE_SCADUTA = "La sessione &egrave; scaduta.<BR>Effettuare il login";
+	public final static String LABEL_LOGIN_SESSIONE_SCADUTA = "La sessione &egrave; scaduta. Effettuare il login";
 	public final static String LABEL_LOGIN_AUTORIZZAZIONE_NEGATA = "Autorizzazione negata";
 	public final static String LABEL_LOGIN_ERRORE = "L'ultima operazione effettuata ha provocato un errore che ha reso l'interfaccia non utilizzabile.<BR><BR>Effettuare nuovamente il login";
 	
+	/* LABEL MENU' AZIONI UTENTE */
 	
+	public final static String LABEL_MENU_UTENTE_MODALITA_AVANZATA = "Modalit&agrave; avanzata";
+	public final static String ICONA_MENU_UTENTE_MODALITA_AVANZATA = "check-white";
+	public final static String LABEL_MENU_UTENTE_INFORMAZIONI = "Informazioni";
+	public final static String LABEL_MENU_UTENTE_PROFILO_UTENTE = "Profilo Utente";
+	public final static String LABEL_MENU_UTENTE_LOGOUT = "Logout";
 	
 	
 	/* PARAMETRI */
@@ -85,4 +92,7 @@ public class LoginCostanti {
 	
 	public final static String LOGIN_JSP = "/jsplib/login.jsp";
 	public final static String INFO_JSP ="/jsplib/info.jsp";
+	
+	/* EVENTO PRESSIONE TASTO LOGIN */
+	public final static String LOGIN_JS_FUNCTION = "CheckDati();return false;";
 }

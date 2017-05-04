@@ -403,16 +403,8 @@ public class ConsoleProperties {
 		return this.readProperty(true, "console.css");
 	}
 	
-	public String getConsoleImmagineNomeApplicazione() throws UtilsException{
-		return this.readProperty(true, "console.img.nomeApplicazione");
-	}
-	
 	public String getConsoleLanguage() throws UtilsException{
 		return this.readProperty(true, "console.language");
-	}
-	
-	public Boolean isUsaConsoleImmagineNomeApplicazione() throws UtilsException{
-		return this.readBooleanProperty(true, "console.usaImgNomeApplicazione");
 	}
 	
 	/* ----- Opzioni Accesso JMX della PdD ------- */
@@ -629,18 +621,6 @@ public class ConsoleProperties {
 	
 	public Boolean isConsoleGestioneWorkflowStatoDocumenti_ripristinoStatoOperativoDaFinale() throws UtilsException{
 		return this.readBooleanProperty(true, "console.gestioneWorkflowStatoDocumenti.finale.ripristinoStatoOperativo");
-	}
-	
-	public Boolean isConsoleModalitaInterfacciaSwitchRapido() throws UtilsException{
-		return this.readBooleanProperty(true, "console.modalitaInterfaccia.switchRapido");
-	}
-	
-	public String getLabelConsoleInterfacciaSwitchRapidoModalitaAvanzata() throws UtilsException{
-		return this.readProperty(true, "console.modalitaInterfaccia.switchRapido.modalitaAvanzata.label");
-	}
-	
-	public String getLabelConsoleInterfacciaSwitchRapidoModalitaStandard() throws UtilsException{
-		return this.readProperty(true, "console.modalitaInterfaccia.switchRapido.modalitaStandard.label");
 	}
 	
 	public Boolean isEnableAutoMappingWsdlIntoAccordo() throws UtilsException{

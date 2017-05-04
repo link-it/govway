@@ -153,7 +153,7 @@ public final class UtenteChange extends Action {
 				ServletUtils.setUserIntoSession(session, myS); // update in sessione.
 				LoginSessionUtilities.setLoginParametersSession(session, utentiCore, userLogin);
 
-				pd.setMessage("Modifiche effettuate con successo");
+				pd.setMessage("Modifiche effettuate con successo", Costanti.MESSAGE_TYPE_INFO);
 
 			}//fine modifica user interface
 
@@ -171,7 +171,7 @@ public final class UtenteChange extends Action {
 
 			} else {
 				// provengo dal link presente nell'header della pagina a dx.
-				pd.setMessage("Passaggio all'interfaccia '"+interfaceType.toString().toLowerCase()+"' effettuato con successo.");
+				pd.setMessage("Passaggio all'interfaccia '"+interfaceType.toString().toLowerCase()+"' effettuato con successo.", Costanti.MESSAGE_TYPE_INFO);
 
 				pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
 

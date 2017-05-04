@@ -131,7 +131,7 @@ public class PddHelper extends ConsoleHelper {
 			/** Protocollo (solo in caso di pdd control station) */
 			de = new DataElement();
 			de.setLabel(PddCostanti.LABEL_PDD_PROTOCOLLO);
-			if (tipoOp.equals(TipoOperazione.ADD) || !tipo.equals(PddTipologia.ESTERNO)){
+			if (tipoOp.equals(TipoOperazione.ADD) && !tipo.equals(PddTipologia.ESTERNO)){
 				de.setType(DataElementType.SELECT);
 			}else
 				de.setType(DataElementType.HIDDEN);
@@ -143,7 +143,7 @@ public class PddHelper extends ConsoleHelper {
 			/** Indirizzo Pubblico (solo in caso di pdd control station) */
 			de = new DataElement();
 			de.setLabel(PddCostanti.LABEL_PDD_INDIRIZZO_PUBBLICO);
-			if (tipoOp.equals(TipoOperazione.ADD) || !tipo.equals(PddTipologia.ESTERNO)){
+			if (tipoOp.equals(TipoOperazione.ADD) && !tipo.equals(PddTipologia.ESTERNO)){
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setRequired(true);
 			}else
@@ -156,7 +156,7 @@ public class PddHelper extends ConsoleHelper {
 			/** Porta Pubblica (solo in caso di pdd control station) */
 			de = new DataElement();
 			de.setLabel(PddCostanti.LABEL_PDD_PORTA_PUBBLICA);
-			if (tipoOp.equals(TipoOperazione.ADD) || !tipo.equals(PddTipologia.ESTERNO)){
+			if (tipoOp.equals(TipoOperazione.ADD) && !tipo.equals(PddTipologia.ESTERNO)){
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setRequired(true);
 			}else
@@ -169,7 +169,7 @@ public class PddHelper extends ConsoleHelper {
 			/** Protocollo Gestione (solo in caso di pdd control station) */
 			de = new DataElement();
 			de.setLabel(PddCostanti.LABEL_PDD_PROTOCOLLO_GESTIONE);
-			if (tipoOp.equals(TipoOperazione.ADD) || !tipo.equals(PddTipologia.ESTERNO)){
+			if (tipoOp.equals(TipoOperazione.ADD) && !tipo.equals(PddTipologia.ESTERNO)){
 				de.setType(DataElementType.SELECT);
 			}else
 				de.setType(DataElementType.HIDDEN);
@@ -181,7 +181,7 @@ public class PddHelper extends ConsoleHelper {
 			/** Indirizzo Gestione (solo in caso di pdd control station) */
 			de = new DataElement();
 			de.setLabel(PddCostanti.LABEL_PDD_INDIRIZZO_GESTIONE);
-			if (tipoOp.equals(TipoOperazione.ADD) || !tipo.equals(PddTipologia.ESTERNO)){
+			if (tipoOp.equals(TipoOperazione.ADD) && !tipo.equals(PddTipologia.ESTERNO)){
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setRequired(true);
 			}else
@@ -194,7 +194,7 @@ public class PddHelper extends ConsoleHelper {
 			/** Porta Gestione (solo in caso di pdd control station) */
 			de = new DataElement();
 			de.setLabel(PddCostanti.LABEL_PDD_PORTA_GESTIONE);
-			if (tipoOp.equals(TipoOperazione.ADD) || !tipo.equals(PddTipologia.ESTERNO)){
+			if (tipoOp.equals(TipoOperazione.ADD) && !tipo.equals(PddTipologia.ESTERNO)){
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setRequired(true);
 			}else
@@ -224,12 +224,12 @@ public class PddHelper extends ConsoleHelper {
 				}
 			}
 			de.setSelected(tipo.toString());
-			if(this.core.isSinglePdD()){
+//			if(this.core.isSinglePdD()){
 				de.setPostBack(true);	
-			}
-			else{
-				de.setOnChangeAlternativePostBack("changePdDType()");
-			}
+//			}
+//			else{
+//				de.setOnChangeAlternativePostBack("changePdDType()");
+//			}
 			dati.addElement(de);
 		}else{
 			

@@ -74,7 +74,7 @@ public final class AuthorisationFilter implements Filter {
 			
 			// Non faccio il filtro sulla pagina di login e sulle immagini
 			String urlRichiesta = request.getRequestURI();
-			if ((urlRichiesta.indexOf("/"+Costanti.SERVLET_NAME_LOGIN) == -1) && (urlRichiesta.indexOf("/"+Costanti.IMAGES_DIR) == -1)) {
+			if (isRisorsaProtetta(request)) { 
 			
 				String userLogin = ServletUtils.getUserLoginFromSession(session);
 				if (userLogin == null) {
@@ -122,5 +122,18 @@ public final class AuthorisationFilter implements Filter {
 
 		this.filterConfig.getServletContext().getRequestDispatcher(servletDispatcher).forward(request, response);
 		
+	}
+	
+	private boolean isRisorsaProtetta(HttpServletRequest request){
+		String urlRichiesta = request.getRequestURI();
+		if ((urlRichiesta.indexOf("/"+Costanti.SERVLET_NAME_LOGIN) == -1) 
+				&& (urlRichiesta.indexOf("/"+Costanti.IMAGES_DIR) == -1) 
+				&& (urlRichiesta.indexOf("/"+Costanti.CSS_DIR) == -1)
+				&& (urlRichiesta.indexOf("/"+Costanti.FONTS_DIR) == -1)
+				&& (urlRichiesta.indexOf("/"+Costanti.JS_DIR) == -1)) {
+			return true;
+		}
+		
+		return false;
 	}
 }

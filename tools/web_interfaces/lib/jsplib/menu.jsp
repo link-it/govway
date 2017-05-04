@@ -25,7 +25,7 @@
 String iddati = "";
 String ct = request.getContentType();
 if (ct != null && (ct.indexOf("multipart/form-data") != -1)) {
-  iddati = (String) session.getValue("iddati");
+  iddati = (String) session.getAttribute("iddati");
 } else {
   iddati = request.getParameter("iddati");
 }
@@ -38,40 +38,46 @@ if (iddati != null && !iddati.equals("notdefined")) {
 else {
   iddati = "notdefined";
 }
-GeneralData gd = (GeneralData) session.getValue(gdString);
+GeneralData gd = (GeneralData) session.getAttribute(gdString);
 PageData pd = (PageData) session.getAttribute(pdString);
 %>
 
-<td width='130' height='425' align='right' valign='top' class='menuLeft'>
-	<span>
-		<ul>
-			<% Vector v = pd.getMenu();
-				MenuEntry m;
-				
-				for (int i = 0; i <  v.size(); i++) {
-					  m = (MenuEntry) v.elementAt(i);
-			 %><li>
-			  		<strong><%= m.getTitle() %></strong>
-			 		<img src=images/dothdx.gif>
-			 		<ul>
-			  <%
+<td class="td1PageBody" valign='top'>
+	<div id="menuct">
+		<% 
+			Vector<?> v = pd.getMenu(); 
+			MenuEntry m = null;
+	
+			for (int i = 0; i <  v.size(); i++) {
+				  m = (MenuEntry) v.elementAt(i);
+		%>
+			<div class="sezioneMenu">
+				<div class="titoloSezione">
+					<span><%= m.getTitle() %></span>
+				</div>		
+			
+				<%
 			  		String [][] entries = m.getEntries();
 			  		for (int j = 0; j < entries.length; j++) {
 			  			
-			  			String cssClass = "menuLeft";
+			  			String cssClass = "voceMenu";
 			  			
 			    		if (entries[j].length == 2) {
-			      		%><li><a class='<%= cssClass %>' title='<%= entries[j][0] %>' href='<%= entries[j][1] %>'><%= entries[j][0] %></a></li><%
+			      		%><div class="voceMenu">
+			      				<a class='<%= cssClass %>' title='<%= entries[j][0] %>' href='<%= entries[j][1] %>'><%= entries[j][0] %></a>
+			      			</div>
+			      		<%
 			    		} else if (entries[j].length == 3) {
-			      		%><li><a class='<%= cssClass %>' target='<%= entries[j][2] %>' title='<%= entries[j][0] %>' href='<%= entries[j][1] %>'><%= entries[j][0] %></a></li><%
+			      		%><div class="voceMenu">
+			      			<a class='<%= cssClass %>' target='<%= entries[j][2] %>' title='<%= entries[j][0] %>' href='<%= entries[j][1] %>'><%= entries[j][0] %></a>
+			      			</div>
+			      		<%
 			    		}
 			 	 }
-			 %>	
-			 		</ul>
-			 </li>
-			 <br/>
-			 <% } %>
-		</ul>
-	</span>
+			 %>
+				
+			</div>
+		<% } %>
+	</div>
 </td>
 

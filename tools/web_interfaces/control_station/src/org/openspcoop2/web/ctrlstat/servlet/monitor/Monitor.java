@@ -582,7 +582,7 @@ public final class Monitor extends Action {
 							msg = "Non esistono messaggi corrispondenti ai filtri selezionati:<br>"+msg;
 						pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
 					}
-					pd.setMessage(msg);
+					pd.setMessage(msg, Costanti.MESSAGE_TYPE_INFO);
 
 					// imposto i parametri per l'eventuale richiesta di nextPage
 					//					String params = "method=" + MonitorMethods.ELIMINAZIONE_RICHIESTE_PENDENTI.getNome();
@@ -636,7 +636,7 @@ public final class Monitor extends Action {
 					}
 					try{
 						long n = MonitorUtilities.deleteRichiestePendenti(filter,formBean.getPdd());
-						pd.setMessage("Eliminate " + n + " Richieste Pendenti.");
+						pd.setMessage("Eliminate " + n + " Richieste Pendenti.", Costanti.MESSAGE_TYPE_INFO);
 						if(!auditDisabiltato){
 							core.performAuditComplete(idOperazione, new TipoOperazione []{TipoOperazione.DEL}, userLogin, new Object[] {filter});
 						}
@@ -1769,7 +1769,7 @@ public final class Monitor extends Action {
 			if (lstParamMsg.size() > 0) {
 				StringBuilder sb = new StringBuilder("Filtro: ");
 				sb.append(ServletUtils.getParametersAsString(false, lstParamMsg.toArray(new Parameter[lstParamMsg.size()])).substring(1));
-				pd.setMessage(sb.toString());
+				pd.setMessage(sb.toString(), Costanti.MESSAGE_TYPE_INFO);
 			}
 
 			String[] labels = MonitorCostanti.LABEL_LISTA_MESSAGGI;

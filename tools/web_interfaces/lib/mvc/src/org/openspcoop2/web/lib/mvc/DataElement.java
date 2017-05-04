@@ -67,6 +67,9 @@ public class DataElement {
 	boolean required=false;
 	boolean bold=false;
 	boolean postBack=false;
+	
+	String note = null;
+	String styleClass = null;
 
 	public String getIdToRemove() {
 		return this.idToRemove;
@@ -89,11 +92,13 @@ public class DataElement {
 		this.onChange = "";
 		this.selected = "";
 		this.toolTip="";
-		this.size = 15;
+		this.size = 30;
 		this.cols = 15;
 		this.rows = 5;
 		this.affiancato = false;
 		this.labelAffiancata = true;
+		this.note = "";
+		this.styleClass = Costanti.INPUT_LONG_CSS_CLASS;
 	}
 
 	public void setId(int i) {
@@ -117,7 +122,8 @@ public class DataElement {
 		
 		bf.append(getEscapedValue(checkNull(this.label)));
 		if(elementsRequiredEnabled && this.required){
-			bf.append(" (*)");
+			//	bf.append(" (*)");
+			bf.append(" <em>*</em>");
 		}
 		if(this.bold){
 			bf.append("</B>");
@@ -372,4 +378,22 @@ public class DataElement {
 		
 		return escaped;
 	}
+
+	public String getNote() {
+		return checkNull(this.note);
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
+
+	public String getStyleClass() {
+		return checkNull(this.styleClass);
+	}
+
+	public void setStyleClass(String styleClass) {
+		this.styleClass = styleClass;
+	}
+	
+	
 }

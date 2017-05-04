@@ -26,7 +26,7 @@
 String iddati = "";
 String ct = request.getContentType();
 if (ct != null && (ct.indexOf("multipart/form-data") != -1)) {
-  iddati = (String) session.getValue("iddati");
+  iddati = (String) session.getAttribute("iddati");
 } else {
   iddati = request.getParameter("iddati");
 }
@@ -39,7 +39,7 @@ if (iddati != null && !iddati.equals("notdefined")) {
 else
   iddati = "notdefined";
 
-GeneralData gd = (GeneralData) session.getValue(gdString);
+GeneralData gd = (GeneralData) session.getAttribute(gdString);
 PageData pd = (PageData) session.getAttribute(pdString);
 
 String ghf = request.getParameter("generateHiddenForm");
@@ -52,41 +52,55 @@ if(ghf != null){
 if(generateHiddenForm)
 	hFormMethod = "method='POST'" + "  action='" + gd.getUrl() +"'";
 
+String [][] bottoni = pd.getBottoni();
+boolean visualizzaPanelLista =((bottoni != null) && (bottoni.length > 0));
+
+String classDivPanelLista = visualizzaPanelLista  ? "panelLista" : "";
+String classTabellaPanelLista = visualizzaPanelLista  ? "tabella" : "";
 %>
+<td valign="top" class="td2PageBody">
+	<form name="form"  <%=hFormMethod  %> >
+		<jsp:include page="/jsplib/titlelist.jsp" flush="true" />
+		<table class="tabella-ext">
+		<!-- Riga tabella -->
+			<tr> 
+				<td valign=top>		
+					<div class="<%=classDivPanelLista %>" >
+						<table class="<%=classTabellaPanelLista %>">
+							<tr class="buttonrow">
+	  							<td colspan="2">
+	  								<div class="buttonrowform">
+										<%
+										if(generateHiddenForm){
+											Vector<?> dati = pd.getDati();
+							
+											for(int i = 0; i < dati.size() ; i++){
+												DataElement de = (DataElement) dati.get(i);
+												
+												String type = de.getType();
+												
+												// tutti gli elementi che rappresentano lo stato sono stati convertiti in elementi hidden
+												if(type.equals("hidden")){
+													%><input type="hidden" name="<%= de.getName()  %>" value="<%= de.getValue()  %>"/><%
+												}
+											}
+										}
+										
+										
+										if ((bottoni != null) && (bottoni.length > 0)) {
+										  for (int i = 0; i < bottoni.length; i++) {
+										    %><input type="button" onClick="<%= bottoni[i][1] %>" value="<%= bottoni[i][0] %>"/>&nbsp;<%
+										  }
+										}
+							  			%>
+						  			</div>
+							  	</td>
+  							</tr>
+  						</table>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</form>
+</td>
 
-<form name=form  <%=hFormMethod  %> >
-	<td valign=top background=images/plugsx.gif class=corpoTesto>
-		<p><span class=history>
-
-			<jsp:include page="/jsplib/titlelist.jsp" flush="true" />
-
-			<%= pd.getPageDescription() %>
-		</p>
-
-			<%= pd.getMessage() %><br><br>
-			
-			<%
-			if(generateHiddenForm){
-				Vector<?> dati = pd.getDati();
-
-				for(int i = 0; i < dati.size() ; i++){
-					DataElement de = (DataElement) dati.get(i);
-					
-					String type = de.getType();
-					
-					// tutti gli elementi che rappresentano lo stato sono stati convertiti in elementi hidden
-					if(type.equals("hidden")){
-						%><input type=hidden name="<%= de.getName()  %>" value="<%= de.getValue()  %>"/><%
-					}
-				}
-			}
-			
-			String [][] bottoni = pd.getBottoni();
-			if ((bottoni != null) && (bottoni.length > 0)) {
-			  for (int i = 0; i < bottoni.length; i++) {
-			    %><input type=button onClick="<%= bottoni[i][1] %>" value="<%= bottoni[i][0] %>">&nbsp;<%
-			  }
-			}
-  		%>
-  	</td>
-</form>

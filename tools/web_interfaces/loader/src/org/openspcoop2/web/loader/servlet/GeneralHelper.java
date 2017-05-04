@@ -26,7 +26,6 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -36,6 +35,7 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.loader.core.Costanti;
 import org.openspcoop2.web.loader.core.LoaderCore;
+import org.slf4j.Logger;
 
 
 //Questa classe, volendo, potrebbe essere usata anche dalla Porta di Dominio e
@@ -90,29 +90,36 @@ public class GeneralHelper {
 	}
 	private GeneralData initGeneralData_engine(String baseUrl) {
 		String userLogin = ServletUtils.getUserLoginFromSession(this.session);
-
 		String css = this.loaderCore.getLoaderCSS();
 
+		boolean displayUtente = false;
 		boolean displayLogin = true;
 		boolean displayLogout = true;
-		boolean displayMonitor = true;
 		if ((baseUrl.indexOf("/"+Costanti.SERVLET_NAME_LOGIN) != -1 && userLogin == null) || (baseUrl.indexOf("/"+Costanti.SERVLET_NAME_LOGOUT) != -1)) {
 			displayLogin = false;
 			displayLogout = false;
 		}
-		if (userLogin != null)
+		if (userLogin != null){
 			displayLogin = false;
+			displayUtente = true;
+		}
 
 		GeneralData gd = new GeneralData(Costanti.LABEL_LINKIT_WEB);
-		gd.setTitleImg(this.loaderCore.getLoaderIMGNomeApplicazione());
 		gd.setProduct(this.loaderCore.getLoaderNomeSintesi());
 		gd.setLanguage(this.loaderCore.getLoaderLanguage());
 		gd.setTitle(this.loaderCore.getLoaderNomeEsteso());
-		gd.setUsaTitleImg(this.loaderCore.isLoaderUsaIMGNomeApplicazione()); 
 		gd.setUrl(baseUrl);
 		gd.setCss(css);
-		if (displayLogin || displayLogout || displayMonitor) {
+		if (displayLogin || displayLogout) {
 			Vector<GeneralLink> link = new Vector<GeneralLink>();
+			// 1. Utente collegato
+			if (displayUtente){
+				GeneralLink glUtente = new GeneralLink();
+				glUtente.setLabel(userLogin);
+				glUtente.setUrl("");
+				link.addElement(glUtente);
+			}
+			
 			if (displayLogin) {
 				GeneralLink gl1 = new GeneralLink();
 				gl1.setLabel(Costanti.LABEL_LOGIN);

@@ -42,10 +42,8 @@ public class GeneralData {
 	String css;
 	String language;
 	String title;
-	String titleImg;
-	boolean usaTitleImg;
 	String linkFoot;
-	Vector<?> headerLinks;
+	Vector<GeneralLink> headerLinks;
 	private String contextName;
 
 	public GeneralData(String linkFoot) {
@@ -54,10 +52,8 @@ public class GeneralData {
 		this.css = "";
 		this.language = "";
 		this.title = "";
-		this.titleImg = "";
-		this.usaTitleImg = true;
 		this.linkFoot = linkFoot;
-		this.headerLinks = new Vector<Object>();
+		this.headerLinks = new Vector<GeneralLink>();
 	}
 	public GeneralData() {
 		this("http://www.link.it");
@@ -98,13 +94,6 @@ public class GeneralData {
 		return this.title;
 	}
 
-	public void setTitleImg(String ti) {
-		this.titleImg = ti;
-	}
-	public String getTitleImg() {
-		return this.titleImg;
-	}
-
 	public void setLinkFoot(String s) {
 		this.linkFoot = s;
 	}
@@ -112,27 +101,21 @@ public class GeneralData {
 		return this.linkFoot;
 	}
 
-	public void setHeaderLinks(Vector<?> v) {
+	public void setHeaderLinks(Vector<GeneralLink> v) {
 		this.headerLinks = v;
 	}
-	public Vector<?> getHeaderLinks() {
+	public Vector<GeneralLink> getHeaderLinks() {
 		return this.headerLinks;
 	}
 
 	@Override
 	public String toString() {
-		return "Product: "+this.product+"\nUrl: "+this.url+"\nStyleSheet: "+this.css+"\nLanguage: "+this.language+"\nTitle: "+this.title+"\nTitleImg: "+this.titleImg+"\nFooter Link: "+this.linkFoot;
+		return "Product: "+this.product+"\nUrl: "+this.url+"\nStyleSheet: "+this.css+"\nLanguage: "+this.language+"\nTitle: "+this.title+"\nFooter Link: "+this.linkFoot;
 	}
 	public void setContextName(String contextName) {
 		this.contextName=contextName;
 	}
 	public String getContextName(){
 		return this.contextName;
-	}
-	public boolean isUsaTitleImg() {
-		return this.usaTitleImg;
-	}
-	public void setUsaTitleImg(boolean usaTitleImg) {
-		this.usaTitleImg = usaTitleImg;
 	}
 }

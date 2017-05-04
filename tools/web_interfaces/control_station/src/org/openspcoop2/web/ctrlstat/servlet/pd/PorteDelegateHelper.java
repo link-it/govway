@@ -117,7 +117,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		int alternativeSize = 80;
 		
 		DataElement de = null;
-
+		
 		de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO);
 		de.setValue(idsogg2);
@@ -133,10 +133,12 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		dati.addElement(de);
 
 		
+		// *************** Dati Generali: Nome/Descrizione *********************
 		
-		
-		
-		// *************** Nome/Descrizione *********************
+		de = new DataElement();
+		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_GENERALI);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
 
 		de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME);
@@ -161,8 +163,12 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		dati.addElement(de);
 
 		
+		// *************** Dati Servizio *********************
 		
-		
+		de = new DataElement();
+		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_SERVIZIO);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
 		
 		
 		
@@ -172,7 +178,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		
 		de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SOGGETTO_EROGATORE);
-		de.setType(DataElementType.TITLE);
+		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 
 		String[] tipoMode = {
@@ -299,7 +305,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 		//}else{
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO);
 		//}
-		de.setType(DataElementType.TITLE);
+		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 
 		de = new DataElement();
@@ -413,13 +419,6 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			}
 		}
 		
-		
-		
-		
-		
-		
-		
-		
 		// *************** Azione *********************
 		
 		boolean configurazioneStandardAzione = false;
@@ -482,7 +481,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			
 			de = new DataElement();
 			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONE);
-			de.setType(DataElementType.TITLE);
+			de.setType(DataElementType.SUBTITLE);
 			dati.addElement(de);
 			
 			de = new DataElement();
@@ -540,7 +539,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				
 				de = new DataElement();
 				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONE);
-				de.setType(DataElementType.TITLE);
+				de.setType(DataElementType.SUBTITLE);
 				dati.addElement(de);
 				
 				de = new DataElement();
@@ -606,7 +605,7 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				if (!(modeservizio.equals(IdentificazioneView.REGISTER_INPUT.toString()) && ((modeaz != null) && modeaz.equals(IdentificazioneView.REGISTER_INPUT.toString()) && ((azioniList == null) || (azioniList.length == 0))))) {
 					de = new DataElement();
 					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_AZIONE);
-					de.setType(DataElementType.TITLE);
+					de.setType(DataElementType.SUBTITLE);
 					dati.addElement(de);
 		
 					de = new DataElement();
@@ -1124,7 +1123,8 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			String pattern, String gif, String riusoIdMessaggio, Vector<DataElement> dati, String idcorr) {
 
 		DataElement de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML_BR);
+		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML);
+		de.setNote(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML_NOTE);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML);
 		de.setSize(80);
@@ -1208,7 +1208,8 @@ public class PorteDelegateHelper extends ConsoleHelper {
 			Vector<DataElement> dati, String idcorr) {
 
 		DataElement de = new DataElement();
-		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML_BR);
+		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML);
+		de.setNote(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML_NOTE);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML);
 		de.setSize(80);

@@ -29,8 +29,8 @@ import javax.servlet.http.HttpSession;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.servlet.about.AboutCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.login.LoginCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.monitor.MonitorCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
@@ -45,7 +45,6 @@ import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
-import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.slf4j.Logger;
 
@@ -109,14 +108,11 @@ public class GeneralHelper {
 	}
 	private GeneralData initGeneralData_engine(String baseUrl) {
 		String userLogin = ServletUtils.getUserLoginFromSession(this.session);
-		Boolean singlePdD = this.core.isSinglePdD();
 		String css = this.core.getConsoleCSS();
 
-		PermessiUtente pu = null;
 		User u = null;
 		try {
 			u = this.utentiCore.getUser(userLogin,false);
-			pu = u.getPermessi();
 		} catch (DriverUsersDBException dude) {
 			// Se arrivo qui, è successo qualcosa di strano
 			//this.log.error("initGeneralData: " + dude.getMessage(), dude);
@@ -125,8 +121,6 @@ public class GeneralHelper {
 		boolean displayUtente = false;
 		boolean displayLogin = true;
 		boolean displayLogout = true;
-		boolean displayMonitor = true;
-		boolean displayInterfaceSwitchButton = this.core.isShowModalitaInterfacciaSwitchRapido();
 		if ((baseUrl.indexOf("/"+LoginCostanti.SERVLET_NAME_LOGIN) != -1 && userLogin == null) || (baseUrl.indexOf("/"+LoginCostanti.SERVLET_NAME_LOGOUT) != -1)) {
 			displayLogin = false;
 			displayLogout = false;
@@ -135,72 +129,77 @@ public class GeneralHelper {
 			displayLogin = false;
 			displayUtente = true;
 		}
-		if (singlePdD || !singlePdD || pu == null || !pu.isCodeMessaggi())
-			displayMonitor = false; // aggiunta condizione che viene false forzatamente allo scopo di far comparire la coda messaggi tra gli strumenti
 
 		GeneralData gd = new GeneralData(CostantiControlStation.LABEL_LINKIT_WEB);
-		gd.setTitleImg(this.core.getConsoleIMGNomeApplicazione());
 		gd.setProduct(this.core.getConsoleNomeSintesi());
 		gd.setLanguage(this.core.getConsoleLanguage());
 		gd.setTitle(this.core.getConsoleNomeEsteso());
-		gd.setUsaTitleImg(this.core.isConsoleUsaIMGNomeApplicazione()); 
 		gd.setUrl(baseUrl);
 		gd.setCss(css);
-		if (displayLogin || displayLogout || displayMonitor) {
+		if (displayLogin || displayLogout) {
 			Vector<GeneralLink> link = new Vector<GeneralLink>();
 			if (displayLogin) {
+				// in questo ramo non si dovrebbe mai passare, l'authorizationfilter blocca le chiamate quando l'utente nn e' loggato
 				GeneralLink gl1 = new GeneralLink();
 				gl1.setLabel(LoginCostanti.LABEL_LOGIN);
 				gl1.setUrl(LoginCostanti.SERVLET_NAME_LOGIN);
 				link.addElement(gl1);
 			}else{
-				// Visualizzo il tasto per lo switch dell'interfaccia grafica
-				if(displayInterfaceSwitchButton){
-					GeneralLink glUtente = new GeneralLink();
-					InterfaceType tipoInterfaccia = u.getInterfaceType();
-					if(tipoInterfaccia.equals(InterfaceType.STANDARD)){
-						glUtente.setLabel(  this.core.getLabelSwitchRapidoModalitaInterfacciaStandard());
-						glUtente.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE,
-								new Parameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_GUI, InterfaceType.AVANZATA.toString()),
-								new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
-								new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_GUI,Costanti.CHECK_BOX_ENABLED)
-								);
-					} else {
-						glUtente.setLabel( this.core.getLabelSwitchRapidoModalitaInterfacciaAvanzata());
-						glUtente.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE,
-								new Parameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_GUI, InterfaceType.STANDARD.toString()),
-								new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
-								new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_GUI,Costanti.CHECK_BOX_ENABLED));
-					}
-					link.addElement(glUtente);
-				}
+				// Ordine dei link da visualizzare nel menu'
+				
+				// 1. Utente collegato
 				if (displayUtente){
 					GeneralLink glUtente = new GeneralLink();
-					glUtente.setLabel(LoginCostanti.LABEL_LOGIN_ATTUALMENTE_CONNESSO+userLogin);
-					glUtente.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE);
+					glUtente.setLabel(userLogin);
+					glUtente.setUrl("");
 					link.addElement(glUtente);
 				}
+				
+				// 2. modalita' standard/avanzata
+				GeneralLink glUtente = new GeneralLink();
+				InterfaceType tipoInterfaccia = u.getInterfaceType();
+				if(tipoInterfaccia.equals(InterfaceType.STANDARD)){
+					glUtente.setLabel(LoginCostanti.LABEL_MENU_UTENTE_MODALITA_AVANZATA);
+					glUtente.setIcon("");
+					glUtente.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE,
+							new Parameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_GUI, InterfaceType.AVANZATA.toString()),
+							new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
+							new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_GUI,Costanti.CHECK_BOX_ENABLED)
+							);
+					
+				} else {
+					glUtente.setLabel(LoginCostanti.LABEL_MENU_UTENTE_MODALITA_AVANZATA);
+					glUtente.setIcon(LoginCostanti.ICONA_MENU_UTENTE_MODALITA_AVANZATA);
+					glUtente.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE,
+							new Parameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_GUI, InterfaceType.STANDARD.toString()),
+							new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
+							new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_GUI,Costanti.CHECK_BOX_ENABLED));
+				}
+				link.addElement(glUtente);
+				
+				// 3. informazioni/about
+				GeneralLink glO = new GeneralLink();
+				glO.setLabel(LoginCostanti.LABEL_MENU_UTENTE_INFORMAZIONI);
+				glO.setUrl(AboutCostanti.SERVLET_NAME_ABOUT);
+				link.addElement(glO);
+				
+				// 4. profilo utente
+				if (displayUtente){
+					GeneralLink glProfiloUtente = new GeneralLink();
+					glProfiloUtente.setLabel(LoginCostanti.LABEL_MENU_UTENTE_PROFILO_UTENTE);
+					glProfiloUtente.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE);
+					link.addElement(glProfiloUtente);
+				}
 			}
+			
+			// 5. logout
 			if (displayLogout) {
 				GeneralLink gl2 = new GeneralLink();
-				gl2.setLabel(LoginCostanti.LABEL_LOGOUT);
+				gl2.setLabel(LoginCostanti.LABEL_MENU_UTENTE_LOGOUT);
 				gl2.setUrl(LoginCostanti.SERVLET_NAME_LOGOUT);
 				link.addElement(gl2);
 			}
-			if (displayMonitor) {
-				GeneralLink gl3 = new GeneralLink();
-				gl3.setLabel(MonitorCostanti.LABEL_MONITOR);
-				gl3.setUrl(MonitorCostanti.SERVLET_NAME_MONITOR);
-				link.addElement(gl3);
-			}
-			GeneralLink glO = new GeneralLink();
-			glO.setLabel(CostantiControlStation.LABEL_OPENSPCOOP2);
-			glO.setUrl(CostantiControlStation.LABEL_OPENSPCOOP2_WEB);
-			glO.setTargetNew();
-			link.addElement(glO);
-			GeneralLink gl4 = new GeneralLink();
-			gl4.setLabel("");
-			link.addElement(gl4);
+			
 			gd.setHeaderLinks(link);
 		}
 
@@ -215,17 +214,28 @@ public class GeneralHelper {
 		titlelist.addElement(tl1);
 		pd.setTitleList(titlelist);
 		Vector<DataElement> dati = new Vector<DataElement>();
+		// titolo sezione login 
+		DataElement titoloSezione = new DataElement();
+		titoloSezione.setLabel(LoginCostanti.LABEL_LOGIN);
+		titoloSezione.setType(DataElementType.TITLE);
+		titoloSezione.setName("");
+		
 		DataElement login = new DataElement();
 		login.setLabel(LoginCostanti.LABEL_LOGIN);
 		login.setType(DataElementType.TEXT_EDIT);
 		login.setName(UtentiCostanti.PARAMETRO_UTENTE_LOGIN);
+		login.setStyleClass(Costanti.INPUT_CSS_CLASS);
 		DataElement pwd = new DataElement();
 		pwd.setLabel(UtentiCostanti.LABEL_PASSWORD);
 		pwd.setType(DataElementType.CRYPT);
 		pwd.setName(UtentiCostanti.PARAMETRO_UTENTE_PASSWORD);
+		pwd.setStyleClass(Costanti.INPUT_CSS_CLASS);
+		
+		dati.addElement(titoloSezione);
 		dati.addElement(login);
 		dati.addElement(pwd);
 		pd.setDati(dati);		
+		
 		return pd;
 	}
 

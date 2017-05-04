@@ -27,8 +27,9 @@
       <property name="jsplib" location="../lib/jsplib"/>
       <!-- Javascript lib -->
       <property name="jslib" location="../lib/js"/>
-      <!-- immagini comuni -->
-      <property name="commons_images" location="../lib/images"/>
+      <!-- web-content -->
+      <property name="commons_webcontent" location="../lib/web-content"/>
+
       
       <!-- Specifica se inserire le informazioni di debug nelle classi -->
       <property name="debug" value="true" />

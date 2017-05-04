@@ -93,7 +93,7 @@ public final class Login extends Action {
 			// Preparo il menu
 			loaderHelper.makeMenu();
 	
-			pd.setMessage(Costanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO);
+			pd.setMessage(Costanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO,Costanti.MESSAGE_TYPE_INFO);
 	
 			// Inizializzo di nuovo GeneralData, dopo aver messo
 			// in sessione la login dell'utente

@@ -39,12 +39,14 @@ public class GeneralLink {
     String url;
     String target;
     String onclick;
+    String icon;
 
     public GeneralLink() {
     	this.label = "";
     	this.url = "";
     	this.target = "";
     	this.onclick = "";
+    	this.icon="";
     }
 
     public void setLabel(String s) {
@@ -94,4 +96,12 @@ public class GeneralLink {
     public String getOnClick() {
 	return this.onclick;
     }
+
+	public String getIcon() {
+		return this.icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
+	}
 }

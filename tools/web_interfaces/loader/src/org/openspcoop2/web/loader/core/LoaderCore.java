@@ -63,9 +63,7 @@ public class LoaderCore{
 	private String loaderNomeEsteso = null;
 	private String loaderNomeEstesoSuffix = null;
 	private String loaderCSS = null;
-	private String loaderIMGNomeApplicazione = null;
 	private String loaderLanguage = null;
-	private boolean loaderUsaIMGNomeApplicazione = true;
 	public String getLoaderNomeSintesi() {
 		return this.loaderNomeSintesi;
 	}
@@ -80,14 +78,8 @@ public class LoaderCore{
 	public String getLoaderCSS() {
 		return this.loaderCSS;
 	}
-	public String getLoaderIMGNomeApplicazione() {
-		return this.loaderIMGNomeApplicazione;
-	}
 	public String getLoaderLanguage() {
 		return this.loaderLanguage;
-	}
-	public boolean isLoaderUsaIMGNomeApplicazione(){
-		return this.loaderUsaIMGNomeApplicazione;
 	}
 	
 	private String nomePdDOperativaCtrlstatSinglePdD = null;
@@ -169,9 +161,7 @@ public class LoaderCore{
 			this.loaderNomeEsteso = loaderProperties.getConsoleNomeEsteso();
 			this.loaderNomeEstesoSuffix = loaderProperties.getConsoleNomeEstesoSuffix();
 			this.loaderCSS = loaderProperties.getConsoleCSS();
-			this.loaderIMGNomeApplicazione = loaderProperties.getConsoleImmagineNomeApplicazione();
 			this.loaderLanguage = loaderProperties.getConsoleLanguage();
-			this.loaderUsaIMGNomeApplicazione = loaderProperties.isUsaConsoleImmagineNomeApplicazione();
 			
 		} catch (java.lang.Exception e) {
 			LoaderCore.log.error("[OpenSPCoopLoader::initCore] Impossibile leggere i dati dal file loader.properties:" + e.toString());

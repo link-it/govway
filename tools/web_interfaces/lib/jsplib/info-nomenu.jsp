@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ page session="true" import="org.openspcoop2.web.lib.mvc.*" %>
 
@@ -24,7 +24,7 @@
 String iddati = "";
 String ct = request.getContentType();
 if (ct != null && (ct.indexOf("multipart/form-data") != -1)) {
-  iddati = (String) session.getValue("iddati");
+  iddati = (String) session.getAttribute("iddati");
 } else {
   iddati = request.getParameter("iddati");
 }
@@ -33,28 +33,33 @@ if (iddati != null && !iddati.equals("notdefined"))
   gdString += iddati;
 else
   iddati = "notdefined";
-GeneralData gd = (GeneralData) session.getValue(gdString);
+GeneralData gd = (GeneralData) session.getAttribute(gdString);
 %>
 
 <html>
 <head>
-<title><%= gd.getTitle() %></title>
-<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
-<link rel=stylesheet href=images/<%= gd.getCss() %> type=text/css>
-<script type="text/javascript" src="js/webapps.js"></script>
-<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+	<meta charset="UTF-8">
+	<title><%= gd.getTitle() %></title>
+	<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
+	<link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
+	<script type="text/javascript" src="js/webapps.js"></script>
+	<!-- JQuery lib-->
+	<script type="text/javascript" src="js/jquery-latest.js"></script>
+	<jsp:include page="/jsplib/menuUtente.jsp" flush="true" />
+	<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
 </head>
 <body marginwidth=0 marginheight=0 onLoad="focusText(document.form);">
-<table border=0 cellspacing=0 cellpadding=0 width=100%>
-
-<jsp:include page="/jsplib/templateHeader.jsp" flush="true" />
-
-<tr>
-
-<td width=120 height=425 align=right valign=top class=noMenuLeft>&nbsp;</td>
-<jsp:include page="/jsplib/info-page.jsp" flush="true" />
-<jsp:include page="/jsplib/templateFooter.jsp" flush="true" />
-
-</tr>
-</table>
+	<table class="bodyWrapper">
+		<tbody>
+			<jsp:include page="/jsplib/templateHeader.jsp" flush="true" />
+			<!-- TR3: Body -->
+			<tr class="trPageBody">
+				<td valign=top class="td1PageBodyNoMenu">&nbsp;</td>
+				<jsp:include page="/jsplib/info-page.jsp" flush="true" />
+			</tr>	
+			<jsp:include page="/jsplib/templateFooter.jsp" flush="true" />
+		</tbody>
+	</table>
 </body>
+</html>

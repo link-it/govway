@@ -208,7 +208,7 @@ public final class ImportaXML extends Action {
 			if(errore!=null)
 				pd.setMessage(errore);
 			else
-				pd.setMessage(Costanti.LABEL_IMPORTAZIONE_EFFETTUATA_CORRETTAMENTE);
+				pd.setMessage(Costanti.LABEL_IMPORTAZIONE_EFFETTUATA_CORRETTAMENTE, org.openspcoop2.web.lib.mvc.Costanti.MESSAGE_TYPE_INFO);
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, 

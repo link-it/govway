@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@page import="java.util.*, org.openspcoop2.web.lib.mvc.*" session="true"%>
 
@@ -26,51 +26,54 @@ if(params == null) params="";
 GeneralData gd = (GeneralData) session.getAttribute("GeneralData");
 
 ListElement listElement =
-          (org.openspcoop2.web.lib.mvc.ListElement) session.getValue("ListElement");
+          (org.openspcoop2.web.lib.mvc.ListElement) session.getAttribute("ListElement");
 
 String nomeServlet = listElement.getOggetto()+".do";
 %>
 
 <html>
 <head>
-<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
-<SCRIPT>
-var nomeServlet_Custom = '<%= nomeServlet %>';
-</SCRIPT>
-
-
-<jsp:include page="/jsp/confermaRimozioneCustom.jsp" flush="true" />
-
-<SCRIPT LANGUAGE = JavaScript1.2>
-var params = '<%= params %>';
-
-function EseguiOp() {
-    document.location='<%= request.getContextPath() %>/'+nomeServlet_Custom+'?'+params;
-};
-
-function Annulla() {
-    document.location='<%= request.getContextPath() %>/'+nomeServlet_Custom;
-};
-
-</SCRIPT>
-<title><%= gd.getTitle() %></title>
-<link rel=stylesheet href=images/<%= gd.getCss() %> type=text/css>
-<script type="text/javascript" src="js/webapps.js"></script>
-<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+	<meta charset="UTF-8">
+	<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
+	<SCRIPT type="text/javascript"> 
+	var nomeServlet_Custom = '<%= nomeServlet %>';
+	</SCRIPT>
+	
+	<jsp:include page="/jsp/confermaRimozioneCustom.jsp" flush="true" />
+	
+	<SCRIPT type="text/javascript">
+		var params = '<%= params %>';
+		
+		function EseguiOp() {
+		    document.location='<%= request.getContextPath() %>/'+nomeServlet_Custom+'?'+params;
+		};
+		
+		function Annulla() {
+		    document.location='<%= request.getContextPath() %>/'+nomeServlet_Custom;
+		};
+	
+	</SCRIPT>
+	<title><%= gd.getTitle() %></title>
+	<link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
+	<script type="text/javascript" src="js/webapps.js"></script>
+	<!-- JQuery lib-->
+	<script type="text/javascript" src="js/jquery-latest.js"></script>
+	<jsp:include page="/jsplib/menuUtente.jsp" flush="true" />
+	<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
 </head>
 <body marginwidth=0 marginheight=0 onLoad="focusText(document.form);">
-<table border=0 cellspacing=0 cellpadding=0 width=100%>
-
-<jsp:include page="/jsplib/templateHeader.jsp" flush="true" />
-
-<tr>
-
-<jsp:include page="/jsplib/menu.jsp" flush="true" />
-<jsp:include page="/jsplib/info-page.jsp" flush="true" />
-<jsp:include page="/jsplib/templateFooter.jsp" flush="true" />
-
-</tr>
-</table>
+	<table class="bodyWrapper">
+		<tbody>
+			<jsp:include page="/jsplib/templateHeader.jsp" flush="true" />
+			<!-- TR3: Body -->
+			<tr class="trPageBody">
+				<jsp:include page="/jsplib/menu.jsp" flush="true" />
+				<jsp:include page="/jsplib/info-page.jsp" flush="true" />
+			</tr>
+			<jsp:include page="/jsplib/templateFooter.jsp" flush="true" />
+		</tbody>
+	</table>
 </body>
 </html>
 

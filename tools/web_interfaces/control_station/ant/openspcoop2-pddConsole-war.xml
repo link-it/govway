@@ -286,10 +286,10 @@
 				<include name="COPYING" />
 			</fileset>
 
-			<zipfileset dir="${commons_images}" prefix="images">
-				<exclude name="petracp.gif" />
-			</zipfileset>
-			<zipfileset dir="${images}" prefix="images" />
+			<zipfileset dir="${commons_webcontent}/css" prefix="css" />
+			<zipfileset dir="${commons_webcontent}/fonts" prefix="fonts" />
+			<zipfileset dir="${commons_webcontent}/images" prefix="images" />
+			
 			<zipfileset dir="${jsp}" prefix="jsp" />
 			<zipfileset dir="${jsplib}" prefix="jsplib" />
 			<zipfileset dir="${jslib}" prefix="js" />

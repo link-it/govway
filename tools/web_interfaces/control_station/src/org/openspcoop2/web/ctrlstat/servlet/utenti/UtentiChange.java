@@ -539,7 +539,7 @@ public final class UtentiChange extends Action {
 					
 					utentiHelper.makeMenu();
 
-					pd.setMessage("Utente '"+userLogin+"' modificato con successo");
+					pd.setMessage("Utente '"+userLogin+"' modificato con successo", Costanti.MESSAGE_TYPE_INFO);
 
 					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

@@ -23,7 +23,7 @@
 
 <%
 ListElement listElement = 
-	  (org.openspcoop2.web.lib.mvc.ListElement) session.getValue("ListElement");
+	  (org.openspcoop2.web.lib.mvc.ListElement) session.getAttribute("ListElement");
 
 String nomeServlet = listElement.getOggetto();
 String nomeServletAdd = nomeServlet+"Add.do";
@@ -37,7 +37,7 @@ if (nomeServlet == "monitor" || nomeServlet == "monitorSinglePdD") {
 	  
 %>
 
-<SCRIPT>
+<SCRIPT type="text/javascript">
 nomeServletAdd_Custom = '<%= nomeServletAdd %>';
 nomeServletDel_Custom = '<%= nomeServletDel %>';
 nomeServletList_Custom = '<%= nomeServletList %>';

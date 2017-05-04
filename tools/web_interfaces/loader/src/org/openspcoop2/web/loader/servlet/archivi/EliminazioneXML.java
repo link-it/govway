@@ -203,7 +203,7 @@ public final class EliminazioneXML extends Action {
 			if(errore!=null)
 				pd.setMessage(errore);
 			else
-				pd.setMessage(Costanti.LABEL_ELIMINAZIONE_EFFETTUATA_CORRETTAMENTE);
+				pd.setMessage(Costanti.LABEL_ELIMINAZIONE_EFFETTUATA_CORRETTAMENTE, org.openspcoop2.web.lib.mvc.Costanti.MESSAGE_TYPE_INFO);
 
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, 

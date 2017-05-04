@@ -43,6 +43,7 @@ public class PageData {
     String searchDescription;
     String mode;
     String message;
+    String messageType;
     Vector<GeneralLink> titlelist;
     Vector<?> dati;
     Vector<?> menu;
@@ -65,6 +66,7 @@ public class PageData {
     	this.searchDescription = "";
     	this.mode = "";
     	this.message = "";
+    	this.messageType = Costanti.MESSAGE_TYPE_ERROR;
     	this.page = "";
     	this.op = "";
     	this.titlelist = new Vector<GeneralLink>();
@@ -99,7 +101,18 @@ public class PageData {
     	this.searchDescription = s;
     }
     public String getSearchDescription() {
-	return this.searchDescription;
+    	if(this.searchDescription != null && !this.searchDescription.equals("")){
+    		int idx1 = this.searchDescription.indexOf("'");
+    		int idx2 = this.searchDescription.lastIndexOf("'");
+    		
+    		if(idx1 > -1 && idx2 > -1){
+    			// elimino ' di destra
+    			String s = this.searchDescription.substring(0, idx2);
+    			// elimino ' di sinistra
+    			return s.substring(idx1 +1);    			 
+    		}
+    	}
+    	return this.searchDescription;
     }
 
     public void setMode(String s) {
@@ -116,13 +129,26 @@ public class PageData {
     }
 
     public void setMessage(String s) {
-    	this.message = s;
+    	this.setMessage(s, Costanti.MESSAGE_TYPE_ERROR); 
     }
+    public void setMessage(String s,String type) {
+    	this.message = s;
+    	this.messageType = type;
+    }
+    
     public String getMessage() {
 	return this.message;
     }
 
-    public void setPage(String s) {
+    public String getMessageType() {
+		return this.messageType;
+	}
+
+	public void setMessageType(String messageType) {
+		this.messageType = messageType;
+	}
+
+	public void setPage(String s) {
     	this.page = s;
     }
     public String getPage() {
@@ -257,5 +283,19 @@ public class PageData {
     }
     public int getNumEntries() {
 	return this.numEntries;
+    }
+    
+    public boolean isPageBodyEmpty(){
+    	if(this.dati.size() > 0) 
+    		return false; // dati presenti.
+
+   		if(this.mode.equals(Costanti.DATA_ELEMENT_VIEW_NAME))
+    		return false; // c'e' sempre qualcosa o bottoni o tasto edit
+    	
+   		if(this.mode.equals(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME) || this.mode.equals(Costanti.DATA_ELEMENT_DISABLE_ONLY_BUTTON)){
+    		return true;
+   		}	else{ 
+   			return false; // bottoni invia/cancella
+    	}
     }
 }

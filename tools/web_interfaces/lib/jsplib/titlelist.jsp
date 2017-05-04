@@ -25,7 +25,7 @@
 String iddati = "";
 String ct = request.getContentType();
 if (ct != null && (ct.indexOf("multipart/form-data") != -1)) {
-  iddati = (String) session.getValue("iddati");
+  iddati = (String) session.getAttribute("iddati");
 } else {
   iddati = request.getParameter("iddati");
 }
@@ -37,43 +37,99 @@ if (iddati != null && !iddati.equals("notdefined")) {
 }
 else
   iddati = "notdefined";
-GeneralData gd = (GeneralData) session.getValue(gdString);
+GeneralData gd = (GeneralData) session.getAttribute(gdString);
 PageData pd = (PageData) session.getAttribute(pdString);
 String showListInfos = request.getParameter("showListInfos");
-Vector v = pd.getDati();
-%>
+Vector<?> v = pd.getDati();
 
-<%
-Vector titlelist = pd.getTitleList();
-if (titlelist != null && titlelist.size() > 0) {
-  GeneralLink l;
-  for (int i = 0; i < titlelist.size(); i++) {
-    l = (GeneralLink) titlelist.elementAt(i);
-    if (!l.getLabel().equals("")) {
-      if (i != titlelist.size()-1) {
-        if (!l.getUrl().equals("")) {
-          //non ultimo con url
-          %><a href=<%= l.getUrl() %>><%= l.getLabel() %></a> &gt; <%
-        } else {
-          //non ultimo ma senza url
-          %><%= l.getLabel() %> &gt; <%
-        }
-      } else {
-        //ultimo
-        %><%= l.getLabel() %><%
-	if (showListInfos != null && showListInfos.equals("true")) {
-	  int index = pd.getIndex();
-	  if (pd.getNumEntries() > 0)
-	    index++;
-	  %> [<%= index %>-<%= v.size()+pd.getIndex() %>] su <%= pd.getNumEntries() %><%
-	}
-      }
-    }
-  }
+String message = pd.getMessage();
+String messageType = pd.getMessageType();
+String pageDescription = pd.getPageDescription();
 %>
-</span><br>
-<img src=images/dothdx.gif width=80 height=9><img src=images/dothdx.gif width=80 height=9><br>
-<%
-}
-%>
-
+<table style="width:100%;">
+	<tbody>
+		<tr>
+			<td>
+				<div id="breadcrumb-ct">
+					<div id="crumbs">
+					<%
+					Vector<GeneralLink> titlelist = pd.getTitleList();
+					if (titlelist != null && titlelist.size() > 0) {
+						%>
+						<ul>
+						<%
+						GeneralLink l;
+					  	for (int i = 0; i < titlelist.size(); i++) {
+					    	l = titlelist.elementAt(i);
+						    if (!l.getLabel().equals("")) {
+						    	if (i != titlelist.size()-1) {
+					        		if (!l.getUrl().equals("")) {
+							          //non ultimo con url
+							          %>
+							         	<li><a href="<%= l.getUrl() %>"><span><%= l.getLabel() %></span></a></li>
+							         <%
+							        } else {
+							          //non ultimo ma senza url
+							          %>
+							          <li><span><%= l.getLabel() %></span></li>
+							          <%
+							        }
+					        		// per ogni elemento non ultimo aggiugo la freccia >
+					        		%>
+					        			<li><img alt="" src="images/tema_link/next_white.png"/></li>
+					        		<%
+					     		 } else {
+								    //ultimo
+								    String labelUltimo = l.getLabel();
+								    
+// 								    if (showListInfos != null && showListInfos.equals("true")) {
+// 										int index = pd.getIndex();
+// 									  	if (pd.getNumEntries() > 0){
+// 									    	index++;
+// 										}
+									  	
+// 									  	labelUltimo += " ["+index+"-"+(v.size()+pd.getIndex())+"] su " + pd.getNumEntries();
+// 								    }
+							        %>
+								    <li class="ultimo-path"><span><%=labelUltimo %></span></li>
+								    <%
+					      		}
+					    	}
+						}
+						%>
+						</ul>
+						<%
+					}
+					%>
+					</div>
+				</div>
+			</td>
+		</tr>
+		<%
+		if (!pageDescription.equals("")) {
+		  %>
+			<tr>
+				<td>
+		  			<div class="pageDescription">
+		  				<%= pageDescription %>
+		  			</div>
+		  		</td>
+			</tr>
+		  <%
+		}
+		%>
+		<%
+		if (!message.equals("")) {
+		  %>
+		  	<tr>
+				<td>
+		  			<div class="messages-<%=messageType %>">
+		  				<%= message %>
+		  			</div>
+		  		</td>
+			</tr>
+		  <%
+		}
+		%>
+	</tbody>
+</table>

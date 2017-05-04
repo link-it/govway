@@ -25,7 +25,7 @@
 String iddati = "";
 String ct = request.getContentType();
 if (ct != null && (ct.indexOf("multipart/form-data") != -1)) {
-  iddati = (String) session.getValue("iddati");
+  iddati = (String) session.getAttribute("iddati");
 } else {
   iddati = request.getParameter("iddati");
 }
@@ -34,9 +34,15 @@ if (iddati != null && !iddati.equals("notdefined"))
   gdString += iddati;
 else
   iddati = "notdefined";
-GeneralData gd = (GeneralData) session.getValue(gdString);
+GeneralData gd = (GeneralData) session.getAttribute(gdString);
 %>
-
-<td valign=bottom background=images/plugdx.gif class=bgtopsx>
-<a href=<%= gd.getLinkFoot() %> target=_blank><img src=images/link.gif border=0></a>
-</td>
+<!-- TR4: Footer -->
+<tr class="trPageFooter">
+	<td colspan="2" class="tdPageFooter">
+		<div>
+			<a href="<%= gd.getLinkFoot() %>" target="_blank">
+				<img src="images/tema_link/logo_link_footer.png" />
+			</a>
+		</div>
+	</td>
+</tr>
