@@ -70,6 +70,12 @@
 		<delete dir="${sql_pddConsole}/utilities/postgresql/registroServizi"/>
 		<delete dir="${sql_pddConsole}/utilities/postgresql/runtimePdD"/>
 		<delete dir="${sql_pddConsole}/utilities/postgresql/archiviComunicazioni"/>
+		<delete dir="${sql_pddConsole}/patch/postgresql/configurazionePdD"/>
+		<delete dir="${sql_pddConsole}/patch/postgresql/registroServizi"/>
+		<delete dir="${sql_pddConsole}/patch/postgresql/runtimePdD"/>
+		<delete dir="${sql_pddConsole}/patch/postgresql/archiviComunicazioni"/>
+		<delete file="${sql_pddConsole}/patch/postgresql/2014-12-16-patch.sql"/>
+		<!-- <delete file="${sql_pddConsole}/patch/postgresql/2016-10-27-patch.sql"/> -->
 		
 		<delete dir="${sql_pddConsole}/mysql/configurazionePdD"/>
 		<delete dir="${sql_pddConsole}/mysql/registroServizi"/>
@@ -79,6 +85,12 @@
 		<delete dir="${sql_pddConsole}/utilities/mysql/registroServizi"/>
 		<delete dir="${sql_pddConsole}/utilities/mysql/runtimePdD"/>
 		<delete dir="${sql_pddConsole}/utilities/mysql/archiviComunicazioni"/>
+		<delete dir="${sql_pddConsole}/patch/mysql/configurazionePdD"/>
+		<delete dir="${sql_pddConsole}/patch/mysql/registroServizi"/>
+		<delete dir="${sql_pddConsole}/patch/mysql/runtimePdD"/>
+		<delete dir="${sql_pddConsole}/patch/mysql/archiviComunicazioni"/>
+		<delete file="${sql_pddConsole}/patch/mysql/2014-12-16-patch.sql"/>
+		<!-- <delete file="${sql_pddConsole}/patch/mysql/2016-10-27-patch.sql"/> -->
 		
 		<delete dir="${sql_pddConsole}/oracle/configurazionePdD"/>
 		<delete dir="${sql_pddConsole}/oracle/registroServizi"/>
@@ -88,6 +100,12 @@
 		<delete dir="${sql_pddConsole}/utilities/oracle/registroServizi"/>
 		<delete dir="${sql_pddConsole}/utilities/oracle/runtimePdD"/>
 		<delete dir="${sql_pddConsole}/utilities/oracle/archiviComunicazioni"/>
+		<delete dir="${sql_pddConsole}/patch/oracle/configurazionePdD"/>
+		<delete dir="${sql_pddConsole}/patch/oracle/registroServizi"/>
+		<delete dir="${sql_pddConsole}/patch/oracle/runtimePdD"/>
+		<delete dir="${sql_pddConsole}/patch/oracle/archiviComunicazioni"/>
+		<delete file="${sql_pddConsole}/patch/oracle/2014-12-16-patch.sql"/>
+		<!-- <delete file="${sql_pddConsole}/patch/oracle/2016-10-27-patch.sql"/> -->
 		
 		<delete dir="${sql_pddConsole}/hsql/configurazionePdD"/>
 		<delete dir="${sql_pddConsole}/hsql/registroServizi"/>
@@ -97,6 +115,12 @@
 		<delete dir="${sql_pddConsole}/utilities/hsql/registroServizi"/>
 		<delete dir="${sql_pddConsole}/utilities/hsql/runtimePdD"/>
 		<delete dir="${sql_pddConsole}/utilities/hsql/archiviComunicazioni"/>
+		<delete dir="${sql_pddConsole}/patch/hsql/configurazionePdD"/>
+		<delete dir="${sql_pddConsole}/patch/hsql/registroServizi"/>
+		<delete dir="${sql_pddConsole}/patch/hsql/runtimePdD"/>
+		<delete dir="${sql_pddConsole}/patch/hsql/archiviComunicazioni"/>
+		<delete file="${sql_pddConsole}/patch/hsql/2014-12-16-patch.sql"/>
+		<!-- <delete file="${sql_pddConsole}/patch/hsql/2016-10-27-patch.sql"/> -->
 		
 		<delete dir="${sql_pddConsole}/sqlserver/configurazionePdD"/>
 		<delete dir="${sql_pddConsole}/sqlserver/registroServizi"/>
@@ -106,6 +130,12 @@
 		<delete dir="${sql_pddConsole}/utilities/sqlserver/registroServizi"/>
 		<delete dir="${sql_pddConsole}/utilities/sqlserver/runtimePdD"/>
 		<delete dir="${sql_pddConsole}/utilities/sqlserver/archiviComunicazioni"/>
+		<delete dir="${sql_pddConsole}/patch/sqlserver/configurazionePdD"/>
+		<delete dir="${sql_pddConsole}/patch/sqlserver/registroServizi"/>
+		<delete dir="${sql_pddConsole}/patch/sqlserver/runtimePdD"/>
+		<delete dir="${sql_pddConsole}/patch/sqlserver/archiviComunicazioni"/>
+		<delete file="${sql_pddConsole}/patch/sqlserver/2014-12-16-patch.sql"/>
+		<!-- <delete file="${sql_pddConsole}/patch/sqlserver/2016-10-27-patch.sql"/> -->
 		
 		<delete dir="${sql_pddConsole}/db2/configurazionePdD"/>
 		<delete dir="${sql_pddConsole}/db2/registroServizi"/>
@@ -115,6 +145,12 @@
 		<delete dir="${sql_pddConsole}/utilities/db2/registroServizi"/>
 		<delete dir="${sql_pddConsole}/utilities/db2/runtimePdD"/>
 		<delete dir="${sql_pddConsole}/utilities/db2/archiviComunicazioni"/>
+		<delete dir="${sql_pddConsole}/patch/db2/configurazionePdD"/>
+		<delete dir="${sql_pddConsole}/patch/db2/registroServizi"/>
+		<delete dir="${sql_pddConsole}/patch/db2/runtimePdD"/>
+		<delete dir="${sql_pddConsole}/patch/db2/archiviComunicazioni"/>
+		<delete file="${sql_pddConsole}/patch/db2/2014-12-16-patch.sql"/>
+		<!-- <delete file="${sql_pddConsole}/patch/db2/2016-10-27-patch.sql"/> -->
 			
 	</target>
 	
@@ -131,9 +167,9 @@
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} pddConsole_Soggetti.sql"/>
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} registroServizi/registroServizi_Accordi.sql"/>
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} configurazionePdD/configurazionePdD_ServiziApplicativi.sql"/>
-		<var name="sqlSourceFiles" value="${sqlSourceFiles} pddConsole_MappingPorte.sql"/>
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} configurazionePdD/configurazionePdD_PorteDelegate.sql"/>
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} configurazionePdD/configurazionePdD_PorteApplicative.sql"/>
+		<var name="sqlSourceFiles" value="${sqlSourceFiles} pddConsole_MappingPorte.sql"/>
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} AuditAppender.sql"/>
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} Audit.sql"/>
 		<var name="sqlSourceFiles" value="${sqlSourceFiles} Operations.sql"/>
@@ -187,9 +223,9 @@
 		
 		<var name="sqlSourceFiles_delete" value="Operations_delete.sql"/>			
 		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} AuditAppender_delete.sql"/>
+		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} pddConsole_MappingPorte_delete.sql"/>
 		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} configurazionePdD/configurazionePdD_PorteApplicative_delete.sql"/>
 		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} configurazionePdD/configurazionePdD_PorteDelegate_delete.sql"/>
-		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} pddConsole_MappingPorte_delete.sql"/>
 		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} configurazionePdD/configurazionePdD_ServiziApplicativi_delete.sql"/>
 		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} registroServizi/registroServizi_Accordi_delete.sql"/>
 		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} pddConsole_Soggetti_delete.sql"/>
@@ -223,9 +259,9 @@
 		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} Operations_drop.sql"/>
 		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} Audit_drop.sql"/>			
 		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} AuditAppender_drop.sql"/>
+		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} pddConsole_MappingPorte_drop.sql"/>
 		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} configurazionePdD/configurazionePdD_PorteApplicative_drop.sql"/>
 		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} configurazionePdD/configurazionePdD_PorteDelegate_drop.sql"/>
-		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} pddConsole_MappingPorte_drop.sql"/>
 		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} configurazionePdD/configurazionePdD_ServiziApplicativi_drop.sql"/>
 		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} registroServizi/registroServizi_Accordi_drop.sql"/>
 		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} pddConsole_Soggetti_drop.sql"/>
