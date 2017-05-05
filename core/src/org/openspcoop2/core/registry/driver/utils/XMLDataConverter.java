@@ -55,12 +55,12 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ConfigurazioneServizio;
 import org.openspcoop2.core.registry.Connettore;
+import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
-import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.PddTipologia;
@@ -1495,6 +1495,24 @@ public class XMLDataConverter {
 		}
 		if(mantieniFruitoriEsistenti){
 			mantieniFruitori(old, servizio);
+		}
+		if(servizio.sizeFruitoreList()>0){
+			for (int i = 0; i < servizio.sizeFruitoreList(); i++) {
+				Fruitore fruitore = servizio.getFruitore(i);
+				// cerco fruitore nella vecchia immagine
+				for (int j = 0; j < old.sizeFruitoreList(); j++) {
+					Fruitore oldFruitore = old.getFruitore(j);
+					if(oldFruitore.getTipo().equals(fruitore.getTipo()) &&
+							oldFruitore.getNome().equals(fruitore.getNome())){
+						if(fruitore.getConnettore()==null){
+							fruitore.setConnettore(oldFruitore.getConnettore());
+						}else{
+							fruitore.getConnettore().setId(oldFruitore.getConnettore().getId());
+							fruitore.getConnettore().setNome(oldFruitore.getConnettore().getNome());
+						}		
+					}
+				}
+			}
 		}
 	}
 	
