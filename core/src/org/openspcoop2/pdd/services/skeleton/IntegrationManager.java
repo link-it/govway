@@ -44,6 +44,7 @@ import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.StatoServiziPdD;
 import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
 import org.openspcoop2.pdd.core.autenticazione.pd.EsitoAutenticazionePortaDelegata;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
@@ -118,7 +119,6 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 
 	/** Indicazione se il servizio PD risulta attivo */
 	private static Boolean staticInitialized = false;
-	public static Boolean isActiveIMService = true;
 	
 	private void init(){
 		if(!this.inizializzato){
@@ -128,7 +128,6 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			synchronized (IntegrationManager.staticInitialized) {
 				if(IntegrationManager.staticInitialized==false){
 					IntegrationManager.staticInitialized = true;
-					IntegrationManager.isActiveIMService = ConfigurazionePdDManager.getInstance().isIMServiceActive();
 				}
 			}
 		}
@@ -429,11 +428,24 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
 		}
-		if( IntegrationManager.isActiveIMService == false){
-			logCore.error("["+IntegrationManager.ID_MODULO+"]["+tipoOperazione+"] Servizio IntegrationManager disabilitato");
+		
+		boolean serviceIsEnabled = false;
+		Exception serviceIsEnabledExceptionProcessamento = null;
+		try{
+			serviceIsEnabled = StatoServiziPdD.isEnabledIntegrationManager();
+		}catch(Exception e){
+			serviceIsEnabledExceptionProcessamento = e;
+		}
+		if (!serviceIsEnabled || serviceIsEnabledExceptionProcessamento!=null) {
+			if(serviceIsEnabledExceptionProcessamento!=null){
+				logCore.error("["+ IntegrationManager.ID_MODULO+ "]["+tipoOperazione+"] Comprensione stato servizio IntegrationManager non riuscita: "+serviceIsEnabledExceptionProcessamento.getMessage(),serviceIsEnabledExceptionProcessamento);
+			}else{
+				logCore.error("["+ IntegrationManager.ID_MODULO+ "]["+tipoOperazione+"] Servizio IntegrationManager disabilitato");
+			}
 			throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_552_IM_SERVICE_NOT_ACTIVE));
 		}
+
 	}
 	
 	/* -------- Utility -------------- */

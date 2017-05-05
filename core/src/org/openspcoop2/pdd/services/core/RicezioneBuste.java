@@ -33,7 +33,6 @@ import java.util.Properties;
 
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
-import org.openspcoop2.core.config.TipoFiltroAbilitazioneServizi;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -203,11 +202,6 @@ public class RicezioneBuste {
 
 	/** Indicazione se sono state inizializzate le variabili del servizio */
 	public static boolean initializeService = false;
-	
-	/** Indicazione se il servizio PA risulta attivo */
-	public static Boolean isActivePAService = true;
-	public static List<TipoFiltroAbilitazioneServizi> listaAbilitazioniPAService = null;
-	public static List<TipoFiltroAbilitazioneServizi> listaDisabilitazioniPAService = null;
 
 	/** IGestoreIntegrazionePA: lista di gestori, ordinati per priorita' minore */
 	public static String[] defaultGestoriIntegrazionePA = null;
@@ -226,11 +220,6 @@ public class RicezioneBuste {
 			return; // inizializzato da un altro thread
 
 		Loader loader = Loader.getInstance();
-
-		// Inizializzo stato del servizio PA
-		RicezioneBuste.isActivePAService = configReader.isPAServiceActive();
-		RicezioneBuste.listaAbilitazioniPAService = configReader.getFiltriAbilitazionePAService();
-		RicezioneBuste.listaDisabilitazioniPAService = configReader.getFiltriDisabilitazionePAService();
 		
 		// Inizializzazione NodeSender
 		String classTypeNodeSender = className.getNodeSender(propertiesReader.getNodeSender());
@@ -2190,16 +2179,28 @@ public class RicezioneBuste {
 		/*
 		 * ---------------- Verifico che il servizio di RicezioneBuste sia abilitato ---------------------
 		 */
-		if(StatoServiziPdD.isEnabled(RicezioneBuste.isActivePAService, 
-				RicezioneBuste.listaAbilitazioniPAService, 
-				RicezioneBuste.listaDisabilitazioniPAService, 
-				soggettoFruitore, idServizio) == false){
-			logCore.error("["+ RicezioneBuste.ID_MODULO+ "]  Servizio di ricezione buste disabilitato");
-			msgDiag.logErroreGenerico("Servizio di ricezione buste disabilitato", "PA");
+		boolean serviceIsEnabled = false;
+		Exception serviceIsEnabledExceptionProcessamento = null;
+		try{
+			serviceIsEnabled = StatoServiziPdD.isEnabledPortaApplicativa(soggettoFruitore, idServizio);
+		}catch(Exception e){
+			serviceIsEnabledExceptionProcessamento = e;
+		}
+		if (!serviceIsEnabled || serviceIsEnabledExceptionProcessamento!=null) {
+			String esito = null;
+			if(serviceIsEnabledExceptionProcessamento!=null){
+				logCore.error("["+ RicezioneBuste.ID_MODULO+ "] Comprensione stato servizio di ricezione buste non riuscita: "+serviceIsEnabledExceptionProcessamento.getMessage(),serviceIsEnabledExceptionProcessamento);
+				msgDiag.logErroreGenerico("Comprensione stato servizio di ricezione buste non riuscita", "PA");
+				esito = "["+ RicezioneBuste.ID_MODULO+ "] Comprensione stato servizio di ricezione buste non riuscita";
+			}else{
+				logCore.error("["+ RicezioneBuste.ID_MODULO+ "] Servizio di ricezione buste disabilitato");
+				msgDiag.logErroreGenerico("Servizio di ricezione buste disabilitato", "PA");
+				esito = "["+ RicezioneBuste.ID_MODULO+ "] Servizio di ricezione buste disabilitato";
+			}
 			// Tracciamento richiesta: non ancora registrata
 			if(this.msgContext.isTracciamentoAbilitato()){
 				EsitoElaborazioneMessaggioTracciato esitoTraccia = 
-						EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("["+ RicezioneBuste.ID_MODULO+ "]  Servizio di ricezione buste disabilitato");
+						EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(esito);
 				tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
 						Tracciamento.createLocationString(true,this.msgContext.getFromLocation()),
 						correlazioneApplicativa);
@@ -2208,9 +2209,9 @@ public class RicezioneBuste {
 
 				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);							
 				parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento("["+ RicezioneBuste.ID_MODULO+ "]  Servizio di ricezione buste disabilitato", CodiceErroreIntegrazione.CODICE_551_PA_SERVICE_NOT_ACTIVE));
+						get5XX_ErroreProcessamento(esito, CodiceErroreIntegrazione.CODICE_551_PA_SERVICE_NOT_ACTIVE));
 
-				OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,null);
+				OpenSPCoop2Message errorOpenSPCoopMsg = generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,serviceIsEnabledExceptionProcessamento);
 				
 				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
 				parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);

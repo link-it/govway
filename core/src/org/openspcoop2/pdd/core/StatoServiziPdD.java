@@ -33,9 +33,6 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
-import org.openspcoop2.pdd.services.core.RicezioneBuste;
-import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
-import org.openspcoop2.pdd.services.skeleton.IntegrationManager;
 
 /**
  * StatoServiziPdD
@@ -52,30 +49,66 @@ public class StatoServiziPdD {
 	/* **************** PORTA DELEGATA (GET) ***************** */
 	
 	public static boolean isPDServiceActive() {
-		return configPdDReader.isPDServiceActive();
+		if(activePDService!=null){
+			return activePDService;
+		}
+		else{
+			return configPdDReader.isPDServiceActive();
+		}
 	}
 	
+	public static List<TipoFiltroAbilitazioneServizi> getPDServiceFiltriAbilitazioneAttiviList() throws DriverConfigurazioneException {
+		List<TipoFiltroAbilitazioneServizi> list = null;
+		if(listaAbilitazioniPDService!=null){
+			list = listaAbilitazioniPDService;
+		}
+		else{
+			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
+			if(statoServiziPdd!=null && statoServiziPdd.getPortaDelegata()!=null){
+				list = statoServiziPdd.getPortaDelegata().getFiltroAbilitazioneList();
+			}
+		}
+		return list;
+	}	
 	public static String getPDServiceFiltriAbilitazioneAttivi() throws DriverConfigurazioneException {
-		StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
-		if(statoServiziPdd==null || statoServiziPdd.getPortaDelegata()==null || statoServiziPdd.getPortaDelegata().sizeFiltroAbilitazioneList()<=0){
+		
+		List<TipoFiltroAbilitazioneServizi> list = getPDServiceFiltriAbilitazioneAttiviList();			
+		if(list==null || list.size()<=0){
 			return "";
 		}
 		else{
 			StringBuffer bf = new StringBuffer();
-			for (TipoFiltroAbilitazioneServizi tipo : statoServiziPdd.getPortaDelegata().getFiltroAbilitazioneList()) {
+			for (TipoFiltroAbilitazioneServizi tipo : list) {
 				bf.append(StatoServiziPdD.toString(tipo));
 			}
 			return bf.toString();
 		}
 	}
+	
+	public static List<TipoFiltroAbilitazioneServizi> getPDServiceFiltriDisabilitazioneAttiviList() throws DriverConfigurazioneException {
+		
+		List<TipoFiltroAbilitazioneServizi> list = null;
+		if(listaDisabilitazioniPDService!=null){
+			list = listaDisabilitazioniPDService;
+		}
+		else{
+			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
+			if(statoServiziPdd!=null && statoServiziPdd.getPortaDelegata()!=null){
+				list = statoServiziPdd.getPortaDelegata().getFiltroDisabilitazioneList();
+			}
+		}
+		return list;
+		
+	}
 	public static String getPDServiceFiltriDisabilitazioneAttivi() throws DriverConfigurazioneException {
-		StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
-		if(statoServiziPdd==null || statoServiziPdd.getPortaDelegata()==null || statoServiziPdd.getPortaDelegata().sizeFiltroDisabilitazioneList()<=0){
+		
+		List<TipoFiltroAbilitazioneServizi> list = getPDServiceFiltriDisabilitazioneAttiviList();		
+		if(list==null || list.size()<=0){
 			return "";
 		}
 		else{
 			StringBuffer bf = new StringBuffer();
-			for (TipoFiltroAbilitazioneServizi tipo : statoServiziPdd.getPortaDelegata().getFiltroDisabilitazioneList()) {
+			for (TipoFiltroAbilitazioneServizi tipo : list) {
 				bf.append(StatoServiziPdD.toString(tipo));
 			}
 			return bf.toString();
@@ -84,9 +117,13 @@ public class StatoServiziPdD {
 	
 	/* **************** PORTA DELEGATA (MODIFY) ***************** */
 	
+	private static Integer semaphoreActivePDService = 1;
+	
+	private static Boolean activePDService = null;	
 	public static synchronized void setPDServiceActive(boolean stato) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		synchronized (RicezioneContenutiApplicativi.isActivePDService) {
-			
+		synchronized (semaphoreActivePDService) {
+						
+			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
 			if(statoServiziPdd==null){
 				statoServiziPdd = new StatoServiziPdd();
@@ -101,13 +138,16 @@ public class StatoServiziPdD {
 			}
 			StatoServiziPdD.configPdDReader.updateStatoServiziPdD(statoServiziPdd);
 			
-			RicezioneContenutiApplicativi.isActivePDService = stato;
+			// aggiorno stato in ram
+			activePDService = stato;
 		}
 	}
 	
+	private static List<TipoFiltroAbilitazioneServizi> listaAbilitazioniPDService = null;
 	public static synchronized void addFiltroAbilitazionePD(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		synchronized (RicezioneContenutiApplicativi.isActivePDService) {
-			
+		synchronized (semaphoreActivePDService) {
+					
+			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
 			if(statoServiziPdd==null){
 				statoServiziPdd = new StatoServiziPdd();
@@ -118,28 +158,14 @@ public class StatoServiziPdD {
 			statoServiziPdd.getPortaDelegata().addFiltroAbilitazione(tipo);
 			StatoServiziPdD.configPdDReader.updateStatoServiziPdD(statoServiziPdd);
 			
-			RicezioneContenutiApplicativi.listaAbilitazioniPDService = statoServiziPdd.getPortaDelegata().getFiltroAbilitazioneList();
-		}
-	}
-	public static synchronized void addFiltroDisabilitazionePD(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		synchronized (RicezioneContenutiApplicativi.isActivePDService) {
-			
-			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
-			if(statoServiziPdd==null){
-				statoServiziPdd = new StatoServiziPdd();
-			}
-			if(statoServiziPdd.getPortaDelegata()==null){
-				statoServiziPdd.setPortaDelegata(new StatoServiziPddPortaDelegata());
-			}
-			statoServiziPdd.getPortaDelegata().addFiltroDisabilitazione(tipo);
-			StatoServiziPdD.configPdDReader.updateStatoServiziPdD(statoServiziPdd);
-			
-			RicezioneContenutiApplicativi.listaDisabilitazioniPDService = statoServiziPdd.getPortaDelegata().getFiltroDisabilitazioneList();
+			// aggiorno stato in ram
+			listaAbilitazioniPDService = statoServiziPdd.getPortaDelegata().getFiltroAbilitazioneList();
 		}
 	}
 	public static synchronized void removeFiltroAbilitazionePD(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		synchronized (RicezioneContenutiApplicativi.isActivePDService) {
+		synchronized (semaphoreActivePDService) {
 			
+			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
 			if(statoServiziPdd==null){
 				statoServiziPdd = new StatoServiziPdd();
@@ -157,12 +183,34 @@ public class StatoServiziPdD {
 			}
 			StatoServiziPdD.configPdDReader.updateStatoServiziPdD(statoServiziPdd);
 			
-			RicezioneContenutiApplicativi.listaAbilitazioniPDService = statoServiziPdd.getPortaDelegata().getFiltroAbilitazioneList();
+			// aggiorno stato in ram
+			listaAbilitazioniPDService = statoServiziPdd.getPortaDelegata().getFiltroAbilitazioneList();
+		}
+	}
+	
+	private static List<TipoFiltroAbilitazioneServizi> listaDisabilitazioniPDService = null;
+	public static synchronized void addFiltroDisabilitazionePD(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		synchronized (semaphoreActivePDService) {
+			
+			// rendo persistente modifica
+			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
+			if(statoServiziPdd==null){
+				statoServiziPdd = new StatoServiziPdd();
+			}
+			if(statoServiziPdd.getPortaDelegata()==null){
+				statoServiziPdd.setPortaDelegata(new StatoServiziPddPortaDelegata());
+			}
+			statoServiziPdd.getPortaDelegata().addFiltroDisabilitazione(tipo);
+			StatoServiziPdD.configPdDReader.updateStatoServiziPdD(statoServiziPdd);
+			
+			// aggiorno stato in ram
+			listaDisabilitazioniPDService = statoServiziPdd.getPortaDelegata().getFiltroDisabilitazioneList();
 		}
 	}
 	public static synchronized void removeFiltroDisabilitazionePD(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		synchronized (RicezioneContenutiApplicativi.isActivePDService) {
+		synchronized (semaphoreActivePDService) {
 			
+			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
 			if(statoServiziPdd==null){
 				statoServiziPdd = new StatoServiziPdd();
@@ -180,9 +228,11 @@ public class StatoServiziPdD {
 			}
 			StatoServiziPdD.configPdDReader.updateStatoServiziPdD(statoServiziPdd);
 			
-			RicezioneContenutiApplicativi.listaDisabilitazioniPDService = statoServiziPdd.getPortaDelegata().getFiltroDisabilitazioneList();
+			// aggiorno stato in ram
+			listaDisabilitazioniPDService = statoServiziPdd.getPortaDelegata().getFiltroDisabilitazioneList();
 		}
 	}
+	
 	
 	
 	
@@ -190,42 +240,81 @@ public class StatoServiziPdD {
 	/* **************** PORTA APPLICATIVA (GET) ***************** */
 	
 	public static boolean isPAServiceActive() {
-		return configPdDReader.isPAServiceActive();
+		if(activePAService!=null){
+			return activePAService;
+		}
+		else{
+			return configPdDReader.isPAServiceActive();
+		}
 	}
 	
+	public static List<TipoFiltroAbilitazioneServizi> getPAServiceFiltriAbilitazioneAttiviList() throws DriverConfigurazioneException {
+		List<TipoFiltroAbilitazioneServizi> list = null;
+		if(listaAbilitazioniPAService!=null){
+			list = listaAbilitazioniPAService;
+		}
+		else{
+			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
+			if(statoServiziPdd!=null && statoServiziPdd.getPortaApplicativa()!=null){
+				list = statoServiziPdd.getPortaApplicativa().getFiltroAbilitazioneList();
+			}
+		}
+		return list;
+	}	
 	public static String getPAServiceFiltriAbilitazioneAttivi() throws DriverConfigurazioneException {
-		StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
-		if(statoServiziPdd==null || statoServiziPdd.getPortaApplicativa()==null || statoServiziPdd.getPortaApplicativa().sizeFiltroAbilitazioneList()<=0){
+		
+		List<TipoFiltroAbilitazioneServizi> list = getPAServiceFiltriAbilitazioneAttiviList();			
+		if(list==null || list.size()<=0){
 			return "";
 		}
 		else{
 			StringBuffer bf = new StringBuffer();
-			for (TipoFiltroAbilitazioneServizi tipo : statoServiziPdd.getPortaApplicativa().getFiltroAbilitazioneList()) {
+			for (TipoFiltroAbilitazioneServizi tipo : list) {
 				bf.append(StatoServiziPdD.toString(tipo));
 			}
 			return bf.toString();
 		}
+	}
+	
+	public static List<TipoFiltroAbilitazioneServizi> getPAServiceFiltriDisabilitazioneAttiviList() throws DriverConfigurazioneException {
+		
+		List<TipoFiltroAbilitazioneServizi> list = null;
+		if(listaDisabilitazioniPAService!=null){
+			list = listaDisabilitazioniPAService;
+		}
+		else{
+			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
+			if(statoServiziPdd!=null && statoServiziPdd.getPortaApplicativa()!=null){
+				list = statoServiziPdd.getPortaApplicativa().getFiltroDisabilitazioneList();
+			}
+		}
+		return list;
+		
 	}
 	public static String getPAServiceFiltriDisabilitazioneAttivi() throws DriverConfigurazioneException {
-		StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
-		if(statoServiziPdd==null || statoServiziPdd.getPortaApplicativa()==null || statoServiziPdd.getPortaApplicativa().sizeFiltroDisabilitazioneList()<=0){
+		
+		List<TipoFiltroAbilitazioneServizi> list = getPAServiceFiltriDisabilitazioneAttiviList();		
+		if(list==null || list.size()<=0){
 			return "";
 		}
 		else{
 			StringBuffer bf = new StringBuffer();
-			for (TipoFiltroAbilitazioneServizi tipo : statoServiziPdd.getPortaApplicativa().getFiltroDisabilitazioneList()) {
+			for (TipoFiltroAbilitazioneServizi tipo : list) {
 				bf.append(StatoServiziPdD.toString(tipo));
 			}
 			return bf.toString();
 		}
 	}
 	
-	
 	/* **************** PORTA APPLICATIVA (MODIFY) ***************** */
-
+	
+	private static Integer semaphoreActivePAService = 1;
+	
+	private static Boolean activePAService = null;	
 	public static synchronized void setPAServiceActive(boolean stato) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		synchronized (RicezioneBuste.isActivePAService) {
-			
+		synchronized (semaphoreActivePAService) {
+						
+			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
 			if(statoServiziPdd==null){
 				statoServiziPdd = new StatoServiziPdd();
@@ -240,13 +329,16 @@ public class StatoServiziPdD {
 			}
 			StatoServiziPdD.configPdDReader.updateStatoServiziPdD(statoServiziPdd);
 			
-			RicezioneBuste.isActivePAService = stato;
+			// aggiorno stato in ram
+			activePAService = stato;
 		}
 	}
 	
+	private static List<TipoFiltroAbilitazioneServizi> listaAbilitazioniPAService = null;
 	public static synchronized void addFiltroAbilitazionePA(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		synchronized (RicezioneBuste.isActivePAService) {
-			
+		synchronized (semaphoreActivePAService) {
+					
+			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
 			if(statoServiziPdd==null){
 				statoServiziPdd = new StatoServiziPdd();
@@ -257,28 +349,14 @@ public class StatoServiziPdD {
 			statoServiziPdd.getPortaApplicativa().addFiltroAbilitazione(tipo);
 			StatoServiziPdD.configPdDReader.updateStatoServiziPdD(statoServiziPdd);
 			
-			RicezioneBuste.listaAbilitazioniPAService = statoServiziPdd.getPortaApplicativa().getFiltroAbilitazioneList(); 
-		}
-	}
-	public static synchronized void addFiltroDisabilitazionePA(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		synchronized (RicezioneBuste.isActivePAService) {
-			
-			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
-			if(statoServiziPdd==null){
-				statoServiziPdd = new StatoServiziPdd();
-			}
-			if(statoServiziPdd.getPortaApplicativa()==null){
-				statoServiziPdd.setPortaApplicativa(new StatoServiziPddPortaApplicativa());
-			}
-			statoServiziPdd.getPortaApplicativa().addFiltroDisabilitazione(tipo);
-			StatoServiziPdD.configPdDReader.updateStatoServiziPdD(statoServiziPdd);
-			
-			RicezioneBuste.listaDisabilitazioniPAService = statoServiziPdd.getPortaApplicativa().getFiltroDisabilitazioneList(); 
+			// aggiorno stato in ram
+			listaAbilitazioniPAService = statoServiziPdd.getPortaApplicativa().getFiltroAbilitazioneList();
 		}
 	}
 	public static synchronized void removeFiltroAbilitazionePA(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		synchronized (RicezioneBuste.isActivePAService) {
+		synchronized (semaphoreActivePAService) {
 			
+			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
 			if(statoServiziPdd==null){
 				statoServiziPdd = new StatoServiziPdd();
@@ -296,12 +374,34 @@ public class StatoServiziPdD {
 			}
 			StatoServiziPdD.configPdDReader.updateStatoServiziPdD(statoServiziPdd);
 			
-			RicezioneBuste.listaAbilitazioniPAService = statoServiziPdd.getPortaApplicativa().getFiltroAbilitazioneList(); 
+			// aggiorno stato in ram
+			listaAbilitazioniPAService = statoServiziPdd.getPortaApplicativa().getFiltroAbilitazioneList();
+		}
+	}
+	
+	private static List<TipoFiltroAbilitazioneServizi> listaDisabilitazioniPAService = null;
+	public static synchronized void addFiltroDisabilitazionePA(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		synchronized (semaphoreActivePAService) {
+			
+			// rendo persistente modifica
+			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
+			if(statoServiziPdd==null){
+				statoServiziPdd = new StatoServiziPdd();
+			}
+			if(statoServiziPdd.getPortaApplicativa()==null){
+				statoServiziPdd.setPortaApplicativa(new StatoServiziPddPortaApplicativa());
+			}
+			statoServiziPdd.getPortaApplicativa().addFiltroDisabilitazione(tipo);
+			StatoServiziPdD.configPdDReader.updateStatoServiziPdD(statoServiziPdd);
+			
+			// aggiorno stato in ram
+			listaDisabilitazioniPAService = statoServiziPdd.getPortaApplicativa().getFiltroDisabilitazioneList();
 		}
 	}
 	public static synchronized void removeFiltroDisabilitazionePA(TipoFiltroAbilitazioneServizi tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		synchronized (RicezioneBuste.isActivePAService) {
+		synchronized (semaphoreActivePAService) {
 			
+			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
 			if(statoServiziPdd==null){
 				statoServiziPdd = new StatoServiziPdd();
@@ -319,7 +419,8 @@ public class StatoServiziPdD {
 			}
 			StatoServiziPdD.configPdDReader.updateStatoServiziPdD(statoServiziPdd);
 			
-			RicezioneBuste.listaDisabilitazioniPAService = statoServiziPdd.getPortaApplicativa().getFiltroDisabilitazioneList(); 
+			// aggiorno stato in ram
+			listaDisabilitazioniPAService = statoServiziPdd.getPortaApplicativa().getFiltroDisabilitazioneList();
 		}
 	}
 	
@@ -330,15 +431,26 @@ public class StatoServiziPdD {
 	/* **************** INTEGRATION MANAGER (GET) ***************** */
 	
 	public static boolean isIMServiceActive() {
-		return configPdDReader.isIMServiceActive();
+		if(activeIMService!=null){
+			return activeIMService;
+		}
+		else{
+			return configPdDReader.isIMServiceActive();
+		}
 	}
+	
+
 	
 	
 	/* **************** INTEGRATION MANAGER (MODIFY) ***************** */
 	
+	private static Integer semaphoreActiveIMService = 1;
+	
+	private static Boolean activeIMService = null;	
 	public static synchronized void setIMServiceActive(boolean stato) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
-		synchronized (IntegrationManager.isActiveIMService) {
-			
+		synchronized (semaphoreActiveIMService) {
+						
+			// rendo persistente modifica
 			StatoServiziPdd statoServiziPdd = StatoServiziPdD.configPdDReader.getStatoServiziPdD();
 			if(statoServiziPdd==null){
 				statoServiziPdd = new StatoServiziPdd();
@@ -353,13 +465,19 @@ public class StatoServiziPdD {
 			}
 			StatoServiziPdD.configPdDReader.updateStatoServiziPdD(statoServiziPdd);
 			
-			IntegrationManager.isActiveIMService = stato;
+			// aggiorno stato in ram
+			activeIMService = stato;
 		}
 	}
+
+
+	
+	
 
 	
 	
 	
+	/* **************** UTILITIES ***************** */
 	
 	private static String toString(TipoFiltroAbilitazioneServizi tipo){
 		StringBuffer bf = new StringBuffer();
@@ -415,7 +533,29 @@ public class StatoServiziPdD {
 	
 	
 	
-	public static boolean isEnabled(boolean statoServizioAbilitato,
+	
+	
+	
+	
+	/* **************** IS ENALBED ***************** */
+	
+	public static boolean isEnabledPortaDelegata(IDSoggetto soggettoFruitore,IDServizio idServizio) throws DriverConfigurazioneException{
+		return _isEnabled(isPDServiceActive(), 
+				getPDServiceFiltriAbilitazioneAttiviList(),
+				getPDServiceFiltriDisabilitazioneAttiviList(), 
+				soggettoFruitore, idServizio);
+	}
+	public static boolean isEnabledPortaApplicativa(IDSoggetto soggettoFruitore,IDServizio idServizio) throws DriverConfigurazioneException{
+		return _isEnabled(isPAServiceActive(), 
+				getPAServiceFiltriAbilitazioneAttiviList(),
+				getPAServiceFiltriDisabilitazioneAttiviList(), 
+				soggettoFruitore, idServizio);
+	}
+	public static boolean isEnabledIntegrationManager() throws DriverConfigurazioneException{
+		return _isEnabled(isIMServiceActive(), 
+				null,null,null,null);
+	}
+	private static boolean _isEnabled(boolean statoServizioAbilitato,
 			List<TipoFiltroAbilitazioneServizi> filtriAbilitazioni,
 			List<TipoFiltroAbilitazioneServizi> filtriDisabilitazioni,
 			IDSoggetto soggettoFruitore,IDServizio idServizio){

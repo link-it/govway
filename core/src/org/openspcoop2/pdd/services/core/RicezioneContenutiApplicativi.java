@@ -34,7 +34,6 @@ import org.openspcoop2.core.config.CorrelazioneApplicativa;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
-import org.openspcoop2.core.config.TipoFiltroAbilitazioneServizi;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -177,11 +176,6 @@ public class RicezioneContenutiApplicativi {
 
 	/** Indicazione se sono state inizializzate le variabili del servizio */
 	public static boolean initializeService = false;
-	
-	/** Indicazione se il servizio PD risulta attivo */
-	public static Boolean isActivePDService = true;
-	public static List<TipoFiltroAbilitazioneServizi> listaAbilitazioniPDService = null;
-	public static List<TipoFiltroAbilitazioneServizi> listaDisabilitazioniPDService = null;
 
 	/** IGestoreIntegrazionePD: lista di gestori, ordinati per priorita' minore */
 	private static String[] defaultGestoriIntegrazionePD = null;
@@ -204,11 +198,6 @@ public class RicezioneContenutiApplicativi {
 			return; // inizializzato da un altro thread
 
 		Loader loader = Loader.getInstance();
-		
-		// Inizializzo stato del servizio PA
-		RicezioneContenutiApplicativi.isActivePDService = configReader.isPDServiceActive();
-		RicezioneContenutiApplicativi.listaAbilitazioniPDService = configReader.getFiltriAbilitazionePDService();
-		RicezioneContenutiApplicativi.listaDisabilitazioniPDService = configReader.getFiltriDisabilitazionePDService();
 		
 		// Inizializzazione NodeSender
 		String classTypeNodeSender = className.getNodeSender(propertiesReader.getNodeSender());
@@ -1410,17 +1399,26 @@ public class RicezioneContenutiApplicativi {
 		/*
 		 * ---------------- Verifico che il servizio di RicezioneContenutiApplicativi sia abilitato ---------------------
 		 */
-		if (StatoServiziPdD.isEnabled(RicezioneContenutiApplicativi.isActivePDService,
-				RicezioneContenutiApplicativi.listaAbilitazioniPDService, 
-				RicezioneContenutiApplicativi.listaDisabilitazioniPDService, 
-				soggettoFruitore, richiestaDelegata.getIdServizio()) == false) {
-			logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO+ "]  Servizio di ricezione contenuti applicativi disabilitato");
-			msgDiag.logErroreGenerico("Servizio di ricezione contenuti applicativi disabilitato", "PD");
+		boolean serviceIsEnabled = false;
+		Exception serviceIsEnabledExceptionProcessamento = null;
+		try{
+			serviceIsEnabled = StatoServiziPdD.isEnabledPortaDelegata(soggettoFruitore, richiestaDelegata.getIdServizio());
+		}catch(Exception e){
+			serviceIsEnabledExceptionProcessamento = e;
+		}
+		if (!serviceIsEnabled || serviceIsEnabledExceptionProcessamento!=null) {
+			if(serviceIsEnabledExceptionProcessamento!=null){
+				logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO+ "] Comprensione stato servizio di ricezione contenuti applicativi non riuscita: "+serviceIsEnabledExceptionProcessamento.getMessage(),serviceIsEnabledExceptionProcessamento);
+				msgDiag.logErroreGenerico("Comprensione stato servizio di ricezione contenuti applicativi non riuscita", "PD");
+			}else{
+				logCore.error("["+ RicezioneContenutiApplicativi.ID_MODULO+ "] Servizio di ricezione contenuti applicativi disabilitato");
+				msgDiag.logErroreGenerico("Servizio di ricezione contenuti applicativi disabilitato", "PD");
+			}
 			openspcoopstate.releaseResource();
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_550_PD_SERVICE_NOT_ACTIVE),null,null)));
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_550_PD_SERVICE_NOT_ACTIVE),serviceIsEnabledExceptionProcessamento,null)));
 			}
 			return;
 		}

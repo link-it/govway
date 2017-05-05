@@ -86,16 +86,43 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 
 
 
-	/** Attributi */
-	private String componentePD = CostantiConfigurazione.ABILITATO.getValue();
-	private String componentePD_abilitazioniPuntuali = "";
-	private String componentePD_disabilitazioniPuntuali = "";
+//	/** Attributi */
+//	private String componentePD = CostantiConfigurazione.ABILITATO.getValue();
+//	private String componentePD_abilitazioniPuntuali = "";
+//	private String componentePD_disabilitazioniPuntuali = "";
+//
+//	private String componentePA = CostantiConfigurazione.ABILITATO.getValue();
+//	private String componentePA_abilitazioniPuntuali = "";
+//	private String componentePA_disabilitazioniPuntuali = "";
+//
+//	private String componenteIM = CostantiConfigurazione.ABILITATO.getValue();
+	
+	// uso anzi sempre la lettura effettiva, altrimenti si creano situazioni di stallo quando una cache della configurazione media il salvataggio reale
+	private String getComponentePD(){
+		return StatoServiziPdD.isPDServiceActive() ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+	}
+	private String getComponentePD_abilitazioniPuntuali(){
+		return visualizzaFiltriAbilitazioniServizioPortaDelegata();
+	}
+	private String getComponentePD_disabilitazioniPuntuali(){
+		return visualizzaFiltriDisabilitazioniServizioPortaDelegata();
+	}
+	
+	private String getComponentePA(){
+		return StatoServiziPdD.isPAServiceActive() ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+	}
+	private String getComponentePA_abilitazioniPuntuali(){
+		return visualizzaFiltriAbilitazioniServizioPortaApplicativa();
+	}
+	private String getComponentePA_disabilitazioniPuntuali(){
+		return visualizzaFiltriDisabilitazioniServizioPortaApplicativa();
+	}
+	
+	private String getComponenteIM(){
+		return StatoServiziPdD.isIMServiceActive() ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
+	}
 
-	private String componentePA = CostantiConfigurazione.ABILITATO.getValue();
-	private String componentePA_abilitazioniPuntuali = "";
-	private String componentePA_disabilitazioniPuntuali = "";
 
-	private String componenteIM = CostantiConfigurazione.ABILITATO.getValue();
 
 	/** getAttribute */
 	@Override
@@ -105,21 +132,21 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 			throw new IllegalArgumentException("Il nome dell'attributo e' nullo o vuoto");
 
 		if(attributeName.equals(StatoServiziJMXResource.COMPONENTE_PD))
-			return this.componentePD;
+			return this.getComponentePD();
 		else if(attributeName.equals(StatoServiziJMXResource.COMPONENTE_PD_ABILITAZIONI))
-			return this.componentePD_abilitazioniPuntuali;
+			return this.getComponentePD_abilitazioniPuntuali();
 		else if(attributeName.equals(StatoServiziJMXResource.COMPONENTE_PD_DISABILITAZIONI))
-			return this.componentePD_disabilitazioniPuntuali;
+			return this.getComponentePD_disabilitazioniPuntuali();
 
 		else if(attributeName.equals(StatoServiziJMXResource.COMPONENTE_PA))
-			return this.componentePA;
+			return this.getComponentePA();
 		else if(attributeName.equals(StatoServiziJMXResource.COMPONENTE_PA_ABILITAZIONI))
-			return this.componentePA_abilitazioniPuntuali;
+			return this.getComponentePA_abilitazioniPuntuali();
 		else if(attributeName.equals(StatoServiziJMXResource.COMPONENTE_PA_DISABILITAZIONI))
-			return this.componentePA_disabilitazioniPuntuali;
+			return this.getComponentePA_disabilitazioniPuntuali();
 
 		else if(attributeName.equals(StatoServiziJMXResource.COMPONENTE_IM))
-			return this.componenteIM;
+			return this.getComponenteIM();
 
 		throw new AttributeNotFoundException("Attributo "+attributeName+" non trovato");
 	}
@@ -534,72 +561,47 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 	/* Costruttore */
 	public StatoServiziJMXResource() throws Exception{
 
-		// Configurazione
-		this.componentePD = StatoServiziPdD.isPDServiceActive() ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
-		this.componentePA = StatoServiziPdD.isPAServiceActive() ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
-		this.componenteIM = StatoServiziPdD.isIMServiceActive() ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
-		
-		this.componentePD_abilitazioniPuntuali = visualizzaFiltriAbilitazioniServizioPortaDelegata();
-		this.componentePD_disabilitazioniPuntuali = visualizzaFiltriDisabilitazioniServizioPortaDelegata();
-		
-		this.componentePA_abilitazioniPuntuali = visualizzaFiltriAbilitazioniServizioPortaApplicativa();
-		this.componentePA_disabilitazioniPuntuali = visualizzaFiltriDisabilitazioniServizioPortaApplicativa();
 		
 	}
 
 	/* Metodi di management JMX */
 
 	public String abilitaServizioPortaDelegata(){
-		if(CostantiConfigurazione.ABILITATO.equals(this.componentePD)){
+		if(CostantiConfigurazione.ABILITATO.equals(this.getComponentePD())){
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" il servizio PortaDelegata risulta già abilitato";
 		}else{
-			if(StatoServiziPdD.isPDServiceActive()){
-				return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" il servizio PortaDelegata risulta già abilitato";
-			}else{
-				try{
-					StatoServiziPdD.setPDServiceActive(true);
-					this.componentePD = CostantiConfigurazione.ABILITATO.getValue();
-					return "Abilitazione del servizio PortaDelegata effettuata con successo";
-				}catch(Throwable e){
-					OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Abilitazione del servizio PortaDelegata non riuscita: "+e.getMessage(),e);
-					return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
-				}
+			try{
+				StatoServiziPdD.setPDServiceActive(true);
+				return "Abilitazione del servizio PortaDelegata effettuata con successo";
+			}catch(Throwable e){
+				OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Abilitazione del servizio PortaDelegata non riuscita: "+e.getMessage(),e);
+				return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
 			}
 		}
 	}
 	public String abilitaServizioPortaApplicativa(){
-		if(CostantiConfigurazione.ABILITATO.equals(this.componentePA)){
+		if(CostantiConfigurazione.ABILITATO.equals(this.getComponentePA())){
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" il servizio PortaApplicativa risulta già abilitato";
 		}else{
-			if(StatoServiziPdD.isPAServiceActive()){
-				return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" il servizio PortaApplicativa risulta già abilitato";
-			}else{
-				try{
-					StatoServiziPdD.setPAServiceActive(true);
-					this.componentePA = CostantiConfigurazione.ABILITATO.getValue();
-					return "Abilitazione del servizio PortaApplicativa effettuata con successo";
-				}catch(Throwable e){
-					OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Abilitazione del servizio PortaApplicativa non riuscita: "+e.getMessage(),e);
-					return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
-				}
+			try{
+				StatoServiziPdD.setPAServiceActive(true);
+				return "Abilitazione del servizio PortaApplicativa effettuata con successo";
+			}catch(Throwable e){
+				OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Abilitazione del servizio PortaApplicativa non riuscita: "+e.getMessage(),e);
+				return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
 			}
 		}
 	}
 	public String abilitaServizioIntegrationManager(){
-		if(CostantiConfigurazione.ABILITATO.equals(this.componenteIM)){
+		if(CostantiConfigurazione.ABILITATO.equals(this.getComponenteIM())){
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" il servizio IntegrationManager risulta già abilitato";
 		}else{
-			if(StatoServiziPdD.isIMServiceActive()){
-				return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" il servizio IntegrationManager risulta già abilitato";
-			}else{
-				try{
-					StatoServiziPdD.setIMServiceActive(true);
-					this.componenteIM = CostantiConfigurazione.ABILITATO.getValue();
-					return "Abilitazione del servizio IntegrationManager effettuata con successo";
-				}catch(Throwable e){
-					OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Abilitazione del servizio IntegrationManager non riuscita: "+e.getMessage(),e);
-					return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
-				}
+			try{
+				StatoServiziPdD.setIMServiceActive(true);
+				return "Abilitazione del servizio IntegrationManager effettuata con successo";
+			}catch(Throwable e){
+				OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Abilitazione del servizio IntegrationManager non riuscita: "+e.getMessage(),e);
+				return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
 			}
 		}
 	}
@@ -617,56 +619,41 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 
 
 	public String disabilitaServizioPortaDelegata(){
-		if(CostantiConfigurazione.DISABILITATO.equals(this.componentePD)){
+		if(CostantiConfigurazione.DISABILITATO.equals(this.getComponentePD())){
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" il servizio PortaDelegata risulta già disabilitato";
 		}else{
-			if(!StatoServiziPdD.isPDServiceActive()){
-				return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" il servizio PortaDelegata risulta già disabilitato";
-			}else{
-				try{
-					StatoServiziPdD.setPDServiceActive(false);
-					this.componentePD = CostantiConfigurazione.DISABILITATO.getValue();
-					return "Disabilitazione del servizio PortaDelegata effettuata con successo";
-				}catch(Throwable e){
-					OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Disabilitazione del servizio PortaDelegata non riuscita: "+e.getMessage(),e);
-					return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
-				}
+			try{
+				StatoServiziPdD.setPDServiceActive(false);
+				return "Disabilitazione del servizio PortaDelegata effettuata con successo";
+			}catch(Throwable e){
+				OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Disabilitazione del servizio PortaDelegata non riuscita: "+e.getMessage(),e);
+				return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
 			}
 		}
 	}
 	public String disabilitaServizioPortaApplicativa(){
-		if(CostantiConfigurazione.DISABILITATO.equals(this.componentePA)){
+		if(CostantiConfigurazione.DISABILITATO.equals(this.getComponentePA())){
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" il servizio PortaApplicativa risulta già disabilitato";
 		}else{
-			if(!StatoServiziPdD.isPAServiceActive()){
-				return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" il servizio PortaApplicativa risulta già disabilitato";
-			}else{
-				try{
-					StatoServiziPdD.setPAServiceActive(false);
-					this.componentePA = CostantiConfigurazione.DISABILITATO.getValue();
-					return "Disabilitazione del servizio PortaApplicativa effettuata con successo";
-				}catch(Throwable e){
-					OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Disabilitazione del servizio PortaApplicativa non riuscita: "+e.getMessage(),e);
-					return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
-				}
+			try{
+				StatoServiziPdD.setPAServiceActive(false);
+				return "Disabilitazione del servizio PortaApplicativa effettuata con successo";
+			}catch(Throwable e){
+				OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Disabilitazione del servizio PortaApplicativa non riuscita: "+e.getMessage(),e);
+				return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
 			}
 		}
 	}
 	public String disabilitaServizioIntegrationManager(){
-		if(CostantiConfigurazione.DISABILITATO.equals(this.componenteIM)){
+		if(CostantiConfigurazione.DISABILITATO.equals(this.getComponenteIM())){
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" il servizio IntegrationManager risulta già disabilitato";
 		}else{
-			if(!StatoServiziPdD.isIMServiceActive()){
-				return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" il servizio IntegrationManager risulta già disabilitato";
-			}else{
-				try{
-					StatoServiziPdD.setIMServiceActive(false);
-					this.componenteIM = CostantiConfigurazione.DISABILITATO.getValue();
-					return "Disabilitazione del servizio IntegrationManager effettuata con successo";
-				}catch(Throwable e){
-					OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Disabilitazione del servizio IntegrationManager non riuscita: "+e.getMessage(),e);
-					return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
-				}
+			try{
+				StatoServiziPdD.setIMServiceActive(false);
+				return "Disabilitazione del servizio IntegrationManager effettuata con successo";
+			}catch(Throwable e){
+				OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Disabilitazione del servizio IntegrationManager non riuscita: "+e.getMessage(),e);
+				return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+" sistema non disponibile";
 			}
 		}
 	}
@@ -703,7 +690,6 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 	public String addFiltroAbilitazioneServizioPortaDelegata(TipoFiltroAbilitazioneServizi tipo){
 		try{
 			StatoServiziPdD.addFiltroAbilitazionePD(tipo);
-			this.componentePD_abilitazioniPuntuali = visualizzaFiltriAbilitazioniServizioPortaDelegata();
 			return "Operazione effettuata con successo";
 		}catch(Throwable e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Operazione addFiltroAbilitazioneServizioPortaDelegata non riuscita: "+e.getMessage(),e);
@@ -713,7 +699,6 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 	public String addFiltroDisabilitazioneServizioPortaDelegata(TipoFiltroAbilitazioneServizi tipo){
 		try{
 			StatoServiziPdD.addFiltroDisabilitazionePD(tipo);
-			this.componentePD_disabilitazioniPuntuali = visualizzaFiltriDisabilitazioniServizioPortaDelegata();
 			return "Operazione effettuata con successo";
 		}catch(Throwable e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Operazione addFiltroDisabilitazioneServizioPortaDelegata non riuscita: "+e.getMessage(),e);
@@ -723,7 +708,6 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 	public String removeFiltroAbilitazioneServizioPortaDelegata(TipoFiltroAbilitazioneServizi tipo){
 		try{
 			StatoServiziPdD.removeFiltroAbilitazionePD(tipo);
-			this.componentePD_abilitazioniPuntuali = visualizzaFiltriAbilitazioniServizioPortaDelegata();
 			return "Operazione effettuata con successo";
 		}catch(Throwable e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Operazione removeFiltroAbilitazioneServizioPortaDelegata non riuscita: "+e.getMessage(),e);
@@ -733,7 +717,6 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 	public String removeFiltroDisabilitazioneServizioPortaDelegata(TipoFiltroAbilitazioneServizi tipo){
 		try{
 			StatoServiziPdD.removeFiltroDisabilitazionePD(tipo);
-			this.componentePD_disabilitazioniPuntuali = visualizzaFiltriDisabilitazioniServizioPortaDelegata();
 			return "Operazione effettuata con successo";
 		}catch(Throwable e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Operazione removeFiltroDisabilitazioneServizioPortaDelegata non riuscita: "+e.getMessage(),e);
@@ -760,7 +743,6 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 	public String addFiltroAbilitazioneServizioPortaApplicativa(TipoFiltroAbilitazioneServizi tipo){
 		try{
 			StatoServiziPdD.addFiltroAbilitazionePA(tipo);
-			this.componentePA_abilitazioniPuntuali = visualizzaFiltriAbilitazioniServizioPortaApplicativa();
 			return "Operazione effettuata con successo";
 		}catch(Throwable e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Operazione addFiltroAbilitazioneServizioPortaApplicativa non riuscita: "+e.getMessage(),e);
@@ -770,7 +752,6 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 	public String addFiltroDisabilitazioneServizioPortaApplicativa(TipoFiltroAbilitazioneServizi tipo){
 		try{
 			StatoServiziPdD.addFiltroDisabilitazionePA(tipo);
-			this.componentePA_disabilitazioniPuntuali = visualizzaFiltriDisabilitazioniServizioPortaApplicativa();
 			return "Operazione effettuata con successo";
 		}catch(Throwable e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Operazione addFiltroDisabilitazioneServizioPortaApplicativa non riuscita: "+e.getMessage(),e);
@@ -780,7 +761,6 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 	public String removeFiltroAbilitazioneServizioPortaApplicativa(TipoFiltroAbilitazioneServizi tipo){
 		try{
 			StatoServiziPdD.removeFiltroAbilitazionePA(tipo);
-			this.componentePA_abilitazioniPuntuali = visualizzaFiltriAbilitazioniServizioPortaApplicativa();
 			return "Operazione effettuata con successo";
 		}catch(Throwable e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Operazione removeFiltroAbilitazioneServizioPortaApplicativa non riuscita: "+e.getMessage(),e);
@@ -790,7 +770,6 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 	public String removeFiltroDisabilitazioneServizioPortaApplicativa(TipoFiltroAbilitazioneServizi tipo){
 		try{
 			StatoServiziPdD.removeFiltroDisabilitazionePA(tipo);
-			this.componentePA_disabilitazioniPuntuali = visualizzaFiltriDisabilitazioniServizioPortaApplicativa();
 			return "Operazione effettuata con successo";
 		}catch(Throwable e){
 			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("Operazione removeFiltroDisabilitazioneServizioPortaApplicativa non riuscita: "+e.getMessage(),e);
