@@ -59,6 +59,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.slf4j.Logger;
 
 /**
  *  AbstractArchiveEngine
@@ -540,6 +541,48 @@ public abstract class AbstractArchiveEngine {
 		}
 	}
 	
+	public void deleteMappingErogazione(IDServizio idServizio) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("deleteMappingErogazione");
+			DBMappingUtils.deleteMappingErogazione(idServizio, null, con, this.driverRegistroServizi.getTipoDB());
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
+	boolean existsIDPortaApplicativaAssociata(IDServizio idServizio) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("existsIDPortaApplicativaAssociata");
+			return DBMappingUtils.existsIDPortaApplicativaAssociata(idServizio, con, this.driverRegistroServizi.getTipoDB());
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
+	public void initMappingErogazione(Logger log) throws DriverRegistroServiziException {
+		try{
+			UtilitiesMappingFruizioneErogazione utilities = new UtilitiesMappingFruizioneErogazione(this.driverConfigurazione, this.driverRegistroServizi, log);
+			utilities.initMappingErogazione();
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+	}
+	
 	
 	
 	
@@ -591,6 +634,48 @@ public abstract class AbstractArchiveEngine {
 			try{
 				this.driverRegistroServizi.releaseConnection(con);
 			}catch(Exception eClose){}
+		}
+	}
+	
+	public void deleteMappingFruizione(IDServizio idServizio, IDSoggetto idFruitore) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("deleteMappingFruizione");
+			DBMappingUtils.deleteMappingFruizione(idServizio, idFruitore, null, con, this.driverRegistroServizi.getTipoDB());
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
+	public boolean existsIDPortaDelegataAssociata(IDServizio idServizio, IDSoggetto idFruitore) throws DriverRegistroServiziException {
+		Connection con = null;
+		try{
+			con = this.driverRegistroServizi.getConnection("existsIDPortaDelegataAssociata");
+			return DBMappingUtils.existsIDPortaDelegataAssociata(idServizio, idFruitore, con, this.driverRegistroServizi.getTipoDB());
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		finally{
+			try{
+				this.driverRegistroServizi.releaseConnection(con);
+			}catch(Exception eClose){}
+		}
+	}
+	
+	public void initMappingFruizione(Logger log) throws DriverRegistroServiziException {
+		try{
+			UtilitiesMappingFruizioneErogazione utilities = new UtilitiesMappingFruizioneErogazione(this.driverConfigurazione, this.driverRegistroServizi, log);
+			utilities.initMappingFruizione();
+		}
+		catch(Exception e){
+			throw new DriverRegistroServiziException(e.getMessage(),e);
 		}
 	}
 		

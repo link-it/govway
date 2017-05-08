@@ -41,6 +41,7 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.config.utils.ConfigurazionePdDUtils;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -899,6 +900,12 @@ public class ZIPUtils  {
 				org.openspcoop2.core.config.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
 			}
 			PortaDelegata pd = this.jibxConfigDeserializer.readPortaDelegata(xml);
+			
+			// backward compatibility
+			if("openspcoop".equals(pd.getAutorizzazione())){
+				pd.setAutorizzazione(TipoAutorizzazione.AUTHENTICATED.getValue());
+			}
+			
 			pd.setTipoSoggettoProprietario(tipoSoggetto);
 			pd.setNomeSoggettoProprietario(nomeSoggetto);
 			String nome = pd.getNome();
@@ -1284,6 +1291,13 @@ public class ZIPUtils  {
 			}
 			
 			// fruitori (politiche di sicurezza)
+			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+File.separatorChar) &&
+					nomeFileSenzaAccordo.endsWith(Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_SERVIZI_APPLICATIVI_AUTORIZZATI)){
+				
+				// NOP per backward compatibility
+			}
+			
+			// fruitori (Mapping Fruitore - PortaDelegata)
 			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_DIR+File.separatorChar) &&
 					nomeFileSenzaAccordo.endsWith(Costanti.OPENSPCOOP2_ARCHIVE_FRUITORE_MAPPING_PD)){
 				

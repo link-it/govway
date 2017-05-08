@@ -25,6 +25,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.openspcoop2.core.commons.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.commons.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -260,6 +262,12 @@ public class ImporterArchiveUtils {
 					listAccordiServizioParteSpecifica_serviziComposti.add(archiveAccordoServizioParteSpecifica);	
 				}
 			}
+
+			
+			
+			// Preparo Liste di Mapping da creare una volta registrati sia gli accordi (servizi e fruitori) che le porte (delegate e applicative)
+			List<MappingErogazionePortaApplicativa> listMappingErogazionePA = new ArrayList<MappingErogazionePortaApplicativa>();
+			List<MappingFruizionePortaDelegata> listMappingFruizionePD = new ArrayList<MappingFruizionePortaDelegata>();
 			
 			
 			// Accordi di Servizio Parte Specifica (implementano accordi di servizio parte comune)
@@ -271,7 +279,8 @@ public class ImporterArchiveUtils {
 					this.importAccordoServizioParteSpecifica(archiveAccordoServizioParteSpecifica, false, 
 							isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto,
 							isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto,
-							detail);
+							detail,
+							listMappingErogazionePA);
 				}catch(Exception e){
 					detail.setState(ArchiveStatoImport.ERROR);
 					detail.setException(e);
@@ -304,7 +313,8 @@ public class ImporterArchiveUtils {
 					this.importAccordoServizioParteSpecifica(archiveAccordoServizioParteSpecifica, true, 
 							isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto,
 							isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto,
-							detail);
+							detail,
+							listMappingErogazionePA);
 				}catch(Exception e){
 					detail.setState(ArchiveStatoImport.ERROR);
 					detail.setException(e);
@@ -319,7 +329,7 @@ public class ImporterArchiveUtils {
 				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveFruitore);
 				try{
 					archiveFruitore.update();
-					this.importFruitore(archiveFruitore, detail);
+					this.importFruitore(archiveFruitore, detail, listMappingFruizionePD);
 				}catch(Exception e){
 					detail.setState(ArchiveStatoImport.ERROR);
 					detail.setException(e);
@@ -358,6 +368,34 @@ public class ImporterArchiveUtils {
 			}
 			
 			
+			// Mapping Erogazione - PA  (eventuali errori non provocano il fallimento del loader)
+			if(listMappingErogazionePA.size()>0){
+				for (int i = 0; i < listMappingErogazionePA.size(); i++) {
+					MappingErogazionePortaApplicativa mapping = listMappingErogazionePA.get(i);
+					try{
+						this.importerEngine.createMappingErogazione(mapping.getIdServizio(), mapping.getIdPortaApplicativa());
+					}catch(Exception e){
+						this.log.error("Errore durante la creazione del mapping di erogazione del servizio ["+mapping.getIdServizio()+
+								"] verso la porta applicativa ["+mapping.getIdPortaApplicativa().getNome()+"]: "+e.getMessage(),e);
+					}
+				}
+			}
+			
+			// Mapping Fruizione - PD  (eventuali errori non provocano il fallimento del loader)
+			if(listMappingFruizionePD.size()>0){
+				for (int i = 0; i < listMappingFruizionePD.size(); i++) {
+					MappingFruizionePortaDelegata mapping = listMappingFruizionePD.get(i);
+					try{
+						this.importerEngine.createMappingFruizione(mapping.getIdServizio(), mapping.getIdFruitore(), mapping.getIdPortaDelegata());					
+					}catch(Exception e){
+						this.log.error("Errore durante la creazione del mapping di fruizione del servizio ["+mapping.getIdServizio()+
+								"] verso la porta delegata ["+mapping.getIdPortaDelegata().getNome()+"] da parte del soggetto ["+mapping.getIdFruitore()+"]: "+e.getMessage(),e);
+					}
+				}
+			}
+			
+			
+			
 			
 			// Configurazione
 			if(archive.getConfigurazionePdD()!=null){
@@ -371,9 +409,18 @@ public class ImporterArchiveUtils {
 				}
 				esito.setConfigurazionePdD(detail);
 			}
+
 			
+			// Creazione mapping in caso di importazione package creati prima dell'introduzione dei mapping fruizione ed erogazione
+			if(archive.getPorteApplicative().size()>0){
+				this.importerEngine.initMappingErogazione(this.log);
+			}
+			if(archive.getPorteDelegate().size()>0){
+				this.importerEngine.initMappingFruizione(this.log);
+			}
 			
 			return esito;
+			
 			
 		}catch(Exception e){
 			throw e;
@@ -1482,7 +1529,8 @@ public class ImporterArchiveUtils {
 			boolean servizioComposto,
 			boolean isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto,
 			boolean isAbilitatoControlloUnicitaImplementazionePortTypePerSoggetto,
-			ArchiveEsitoImportDetail detail){
+			ArchiveEsitoImportDetail detail,
+			List<MappingErogazionePortaApplicativa> listMappingErogazionePA){
 		
 		IDAccordo idAccordoServizioParteComune = archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteComune();
 		IDServizio idAccordoServizioParteSpecifica = archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica();
@@ -1678,7 +1726,10 @@ public class ImporterArchiveUtils {
 			// gestione portaApplicativaAssociata
 			if(archiveAccordoServizioParteSpecifica.getIdPortaApplicativaAssociata()!=null){
 				if(idPACheck==null){
-					this.importerEngine.createMappingErogazione(idAccordoServizioParteSpecifica, archiveAccordoServizioParteSpecifica.getIdPortaApplicativaAssociata());
+					MappingErogazionePortaApplicativa mapping = new MappingErogazionePortaApplicativa();
+					mapping.setIdServizio(idAccordoServizioParteSpecifica);
+					mapping.setIdPortaApplicativa(archiveAccordoServizioParteSpecifica.getIdPortaApplicativaAssociata());
+					listMappingErogazionePA.add(mapping);
 				}
 			}
 			
@@ -1700,7 +1751,8 @@ public class ImporterArchiveUtils {
 	
 	
 	public void importFruitore(ArchiveFruitore archiveFruitore,
-			ArchiveEsitoImportDetail detail){
+			ArchiveEsitoImportDetail detail, 
+			List<MappingFruizionePortaDelegata> listMappingFruizionePD){
 		
 		IDServizio idAccordoServizioParteSpecifica = archiveFruitore.getIdAccordoServizioParteSpecifica();
 		IDSoggetto idSoggettoFruitore = archiveFruitore.getIdSoggettoFruitore();
@@ -1821,7 +1873,11 @@ public class ImporterArchiveUtils {
 			if(archiveFruitore.getIdPortaDelegataAssociata()!=null){
 				IDPortaDelegata idPDCheck = this.importerEngine.getIDPortaDelegataAssociataFruizione(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore());
 				if(idPDCheck==null){
-					this.importerEngine.createMappingFruizione(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore(), archiveFruitore.getIdPortaDelegataAssociata());
+					MappingFruizionePortaDelegata mapping = new MappingFruizionePortaDelegata();
+					mapping.setIdServizio(archiveFruitore.getIdAccordoServizioParteSpecifica());
+					mapping.setIdFruitore(archiveFruitore.getIdSoggettoFruitore());
+					mapping.setIdPortaDelegata(archiveFruitore.getIdPortaDelegataAssociata());
+					listMappingFruizionePD.add(mapping);
 				}
 			}
 			

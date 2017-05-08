@@ -31,6 +31,8 @@ import java.util.Properties;
 import java.util.Vector;
 
 import org.openspcoop2.core.commons.DBUtils;
+import org.openspcoop2.core.commons.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.commons.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
@@ -96,8 +98,6 @@ import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.OperationsParameter;
 import org.openspcoop2.web.ctrlstat.costanti.TipoOggettoDaSmistare;
-import org.openspcoop2.web.ctrlstat.dao.MappingErogazionePortaApplicativa;
-import org.openspcoop2.web.ctrlstat.dao.MappingFruizionePortaDelegata;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;

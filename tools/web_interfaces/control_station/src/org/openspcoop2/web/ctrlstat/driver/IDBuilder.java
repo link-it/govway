@@ -23,6 +23,8 @@ package org.openspcoop2.web.ctrlstat.driver;
 
 import java.util.Vector;
 
+import org.openspcoop2.core.commons.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.commons.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
@@ -50,8 +52,6 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.pdd.monitor.driver.FilterSearch;
 import org.openspcoop2.utils.serialization.IOException;
-import org.openspcoop2.web.ctrlstat.dao.MappingErogazionePortaApplicativa;
-import org.openspcoop2.web.ctrlstat.dao.MappingFruizionePortaDelegata;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedBean;

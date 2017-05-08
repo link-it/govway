@@ -200,6 +200,7 @@ public class Costanti {
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_COOPERAZIONE_DIR = "accordiCooperazione";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_COOPERAZIONE_FILE_NAME = "accordo.xml";
 	public static final String OPENSPCOOP2_ARCHIVE_FRUITORE_DIR = "fruitori";
+	public static final String OPENSPCOOP2_ARCHIVE_FRUITORE_SERVIZI_APPLICATIVI_AUTORIZZATI = "serviziApplicativiAutorizzati.csv"; // backward compatibility
 	public static final String OPENSPCOOP2_ARCHIVE_FRUITORE_MAPPING_PD = "mappingFruizionePD.csv";
 	
 	

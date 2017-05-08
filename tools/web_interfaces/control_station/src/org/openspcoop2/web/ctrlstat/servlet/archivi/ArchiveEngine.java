@@ -21,6 +21,8 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.archivi;
 
+import org.openspcoop2.core.commons.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.commons.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -38,8 +40,6 @@ import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
-import org.openspcoop2.web.ctrlstat.dao.MappingErogazionePortaApplicativa;
-import org.openspcoop2.web.ctrlstat.dao.MappingFruizionePortaDelegata;
 
 /**
  * ArchiveEngine

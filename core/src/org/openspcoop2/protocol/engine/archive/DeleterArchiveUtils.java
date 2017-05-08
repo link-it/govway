@@ -26,6 +26,8 @@ import java.util.List;
 
 import org.openspcoop2.core.commons.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
+import org.openspcoop2.core.commons.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.commons.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -93,12 +95,94 @@ public class DeleterArchiveUtils {
 			ArchiveEsitoDelete esito = new ArchiveEsitoDelete();
 			
 			
+			
+			// Preparo Liste di Mapping da creare una volta registrati sia gli accordi (servizi e fruitori) che le porte (delegate e applicative)
+			List<MappingErogazionePortaApplicativa> listMappingErogazionePA = new ArrayList<MappingErogazionePortaApplicativa>();
+			List<MappingFruizionePortaDelegata> listMappingFruizionePD = new ArrayList<MappingFruizionePortaDelegata>();
+			
+			// Servizi
+			for (int i = 0; i < archive.getAccordiServizioParteSpecifica().size(); i++) {
+				ArchiveAccordoServizioParteSpecifica archiveAccordoServizioParteSpecifica = archive.getAccordiServizioParteSpecifica().get(i);
+				archiveAccordoServizioParteSpecifica.update();
+				
+				// gestione portaApplicativaAssociata
+				if(archiveAccordoServizioParteSpecifica.getIdPortaApplicativaAssociata()!=null){
+					IDPortaApplicativa idPACheck = this.importerEngine.getIDPortaApplicativaAssociataErogazione(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica());
+					if(idPACheck!=null){
+						MappingErogazionePortaApplicativa mapping = new MappingErogazionePortaApplicativa();
+						mapping.setIdServizio(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica());
+						mapping.setIdPortaApplicativa(archiveAccordoServizioParteSpecifica.getIdPortaApplicativaAssociata());
+						listMappingErogazionePA.add(mapping);	
+					}
+				}
+			}
+			
+			// Fruitori
+			for (int i = 0; i < archive.getAccordiFruitori().size(); i++) {
+				ArchiveFruitore archiveFruitore = archive.getAccordiFruitori().get(i);
+				archiveFruitore.update();
+			
+				// gestione portaDelegataAssociata
+				if(archiveFruitore.getIdPortaDelegataAssociata()!=null){
+					IDPortaDelegata idPDCheck = this.importerEngine.getIDPortaDelegataAssociataFruizione(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore());
+					if(idPDCheck!=null){
+						MappingFruizionePortaDelegata mapping = new MappingFruizionePortaDelegata();
+						mapping.setIdServizio(archiveFruitore.getIdAccordoServizioParteSpecifica());
+						mapping.setIdFruitore(archiveFruitore.getIdSoggettoFruitore());
+						mapping.setIdPortaDelegata(archiveFruitore.getIdPortaDelegataAssociata());
+						listMappingFruizionePD.add(mapping);
+					}
+				}
+			}
+			
+			// Mapping Erogazione - PA  (eventuali errori non provocano il fallimento del loader, 
+			// cmq sia il mapping viene eliminato dopo quando si procede all'eliminazione puntuale degli oggetti)
+			if(listMappingErogazionePA.size()>0){
+				for (int i = 0; i < listMappingErogazionePA.size(); i++) {
+					MappingErogazionePortaApplicativa mapping = listMappingErogazionePA.get(i);
+					try{
+						this.importerEngine.deleteMappingErogazione(mapping.getIdServizio(), mapping.getIdPortaApplicativa());
+					}catch(Exception e){
+						this.log.error("Errore durante l'eliminazione del mapping di erogazione del servizio ["+mapping.getIdServizio()+
+								"] verso la porta applicativa ["+mapping.getIdPortaApplicativa().getNome()+"]: "+e.getMessage(),e);
+					}
+				}
+			}
+			
+			// Mapping Fruizione - PD  (eventuali errori non provocano il fallimento del loader, 
+			// cmq sia il mapping viene eliminato dopo quando si procede all'eliminazione puntuale degli oggetti)
+			if(listMappingFruizionePD.size()>0){
+				for (int i = 0; i < listMappingFruizionePD.size(); i++) {
+					MappingFruizionePortaDelegata mapping = listMappingFruizionePD.get(i);
+					try{
+						this.importerEngine.deleteMappingFruizione(mapping.getIdServizio(), mapping.getIdFruitore(), mapping.getIdPortaDelegata());					
+					}catch(Exception e){
+						this.log.error("Errore durante l'eliminazione del mapping di fruizione del servizio ["+mapping.getIdServizio()+
+								"] verso la porta delegata ["+mapping.getIdPortaDelegata().getNome()+"] da parte del soggetto ["+mapping.getIdFruitore()+"]: "+e.getMessage(),e);
+					}
+				}
+			}
+			
+
+			
+			
 			// PorteApplicative
 			for (int i = 0; i < archive.getPorteApplicative().size(); i++) {
 				ArchivePortaApplicativa archivePortaApplicativa = archive.getPorteApplicative().get(i);
 				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archivePortaApplicativa);
 				try{
 					archivePortaApplicativa.update();
+					if(archivePortaApplicativa.getIdServizio()!=null){
+						try{
+							// NOTA: anche se esiste una associazione, non e' detto che sia quella con la porta applicativa presente in archivio
+							if(this.importerEngine.existsIDPortaApplicativaAssociata(archivePortaApplicativa.getIdServizio())){
+								this.importerEngine.deleteMappingErogazione(archivePortaApplicativa.getIdServizio(), archivePortaApplicativa.getIdPortaApplicativa());
+							}
+						}catch(Exception e){
+							this.log.debug("Errore durante l'eliminazione del mapping di erogazione del servizio ["+archivePortaApplicativa.getIdServizio()+
+									"] verso la porta applicativa ["+archivePortaApplicativa.getIdPortaApplicativa()+"]: "+e.getMessage(),e);
+						}
+					}
 					this.deletePortaApplicativa(archivePortaApplicativa, detail);
 				}catch(Exception e){
 					detail.setState(ArchiveStatoImport.ERROR);
@@ -114,6 +198,25 @@ public class DeleterArchiveUtils {
 				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archivePortaDelegata);
 				try{
 					archivePortaDelegata.update();
+					if(archivePortaDelegata.getIdSoggettoProprietario()!=null){
+							
+						PortaDelegata pd = archivePortaDelegata.getPortaDelegata();
+						if(pd.getSoggettoErogatore()!=null && pd.getSoggettoErogatore().getNome()!=null &&
+								pd.getServizio()!=null && pd.getServizio().getNome()!=null){
+							IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pd.getServizio().getTipo(), pd.getServizio().getNome(), 
+									new IDSoggetto(pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome()), 
+									pd.getServizio().getVersione()); 
+							try{
+								// NOTA: anche se esiste una associazione, non e' detto che sia quella con la porta applicativa presente in archivio
+								if(this.importerEngine.existsIDPortaDelegataAssociata(idServizio, archivePortaDelegata.getIdSoggettoProprietario())){
+									this.importerEngine.deleteMappingFruizione(idServizio, archivePortaDelegata.getIdSoggettoProprietario(), archivePortaDelegata.getIdPortaDelegata());
+								}
+							}catch(Exception e){
+								this.log.debug("Errore durante l'eliminazione del mapping di fruizione del servizio ["+idServizio+
+										"] verso la porta delegata ["+archivePortaDelegata.getIdPortaDelegata()+"] da parte del soggetto ["+archivePortaDelegata.getIdSoggettoProprietario()+"]: "+e.getMessage(),e);
+							}
+						}
+					}
 					this.deletePortaDelegata(archivePortaDelegata, detail);
 				}catch(Exception e){
 					detail.setState(ArchiveStatoImport.ERROR);
@@ -122,13 +225,19 @@ public class DeleterArchiveUtils {
 				esito.getPorteDelegate().add(detail);
 			}
 			
+					
 			
 			// Fruitori
 			for (int i = 0; i < archive.getAccordiFruitori().size(); i++) {
 				ArchiveFruitore archiveFruitore = archive.getAccordiFruitori().get(i);
 				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveFruitore);
 				try{
-					archiveFruitore.update();
+					//archiveFruitore.update(); effettuato durante la preparazione del mapping Fruizione - PD
+					if(archiveFruitore.getIdAccordoServizioParteSpecifica()!=null){
+						if(this.importerEngine.existsIDPortaDelegataAssociata(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore())){
+							this.importerEngine.deleteMappingFruizione(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore());
+						}
+					}
 					this.deleteFruitore(archiveFruitore, detail);
 				}catch(Exception e){
 					detail.setState(ArchiveStatoImport.ERROR);
@@ -147,7 +256,7 @@ public class DeleterArchiveUtils {
 			for (int i = 0; i < archive.getAccordiServizioParteSpecifica().size(); i++) {
 				ArchiveAccordoServizioParteSpecifica archiveAccordoServizioParteSpecifica =
 						archive.getAccordiServizioParteSpecifica().get(i);
-				archiveAccordoServizioParteSpecifica.update();
+				//archiveAccordoServizioParteSpecifica.update();  effettuato durante la preparazione del mapping Erogazione - PA
 				IDAccordo idAccordo = archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteComune();
 				if(this.importerEngine.existsAccordoServizioParteComune(idAccordo)){
 					// verifico la tipologia
@@ -174,6 +283,11 @@ public class DeleterArchiveUtils {
 				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveAccordoServizioParteSpecifica);
 				try{
 					//archiveAccordoServizioParteSpecifica.update(); eseguito durante la preparazione della lista listAccordiServizioParteSpecifica_serviziComposti
+					if(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica()!=null){
+						if(this.importerEngine.existsIDPortaApplicativaAssociata(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica())){
+							this.importerEngine.deleteMappingErogazione(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica());
+						}
+					}
 					this.deleteAccordoServizioParteSpecifica(archiveAccordoServizioParteSpecifica, true, detail);
 				}catch(Exception e){
 					detail.setState(ArchiveStatoImport.ERROR);
@@ -203,6 +317,11 @@ public class DeleterArchiveUtils {
 				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveAccordoServizioParteSpecifica);
 				try{
 					//archiveAccordoServizioParteSpecifica.update(); eseguito durante la preparazione della lista listAccordiServizioParteSpecifica
+					if(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica()!=null){
+						if(this.importerEngine.existsIDPortaApplicativaAssociata(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica())){
+							this.importerEngine.deleteMappingErogazione(archiveAccordoServizioParteSpecifica.getIdAccordoServizioParteSpecifica());
+						}
+					}
 					this.deleteAccordoServizioParteSpecifica(archiveAccordoServizioParteSpecifica, false, detail);
 				}catch(Exception e){
 					detail.setState(ArchiveStatoImport.ERROR);
@@ -291,6 +410,8 @@ public class DeleterArchiveUtils {
 				}
 				esito.getPdd().add(detail);
 			}
+			
+			
 			
 			return esito;
 			
@@ -684,15 +805,7 @@ public class DeleterArchiveUtils {
 			
 			
 			// --- delete ---
-			
-			// gestione portaApplicativaAssociata
-			if(archiveAccordoServizioParteSpecifica.getIdPortaApplicativaAssociata()!=null){
-				IDPortaApplicativa idPACheck = this.importerEngine.getIDPortaApplicativaAssociataErogazione(idAccordoServizioParteSpecifica);
-				if(idPACheck!=null){
-					this.importerEngine.deleteMappingErogazione(idAccordoServizioParteSpecifica, archiveAccordoServizioParteSpecifica.getIdPortaApplicativaAssociata());
-				}
-			}
-			
+						
 			this.importerEngine.deleteAccordoServizioParteSpecifica(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica());
 			detail.setState(ArchiveStatoImport.DELETED);
 						
@@ -756,15 +869,7 @@ public class DeleterArchiveUtils {
 			
 
 			// --- delete ---
-			
-			// gestione portaDelegataAssociata
-			if(archiveFruitore.getIdPortaDelegataAssociata()!=null){
-				IDPortaDelegata idPDCheck = this.importerEngine.getIDPortaDelegataAssociataFruizione(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore());
-				if(idPDCheck!=null){
-					this.importerEngine.deleteMappingFruizione(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore(), archiveFruitore.getIdPortaDelegataAssociata());
-				}
-			}
-			
+						
 			// prima ho rimosso il fruitore se gia' esisteva.
 			// update
 			IDServizio oldIDServizioForUpdate = IDServizioFactory.getInstance().getIDServizioFromValues(oldAccordo.getTipo(), oldAccordo.getNome(), 

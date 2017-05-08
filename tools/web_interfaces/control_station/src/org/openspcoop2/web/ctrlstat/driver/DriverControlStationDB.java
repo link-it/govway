@@ -39,11 +39,8 @@ import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.PortaDelegata;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
-import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
-import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
+import org.openspcoop2.core.commons.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.commons.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -54,20 +51,14 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
-import org.openspcoop2.core.registry.constants.PddTipologia;
-import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
-import org.openspcoop2.core.registry.driver.FiltroRicerca;
-import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
-import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB_LIB;
+import org.openspcoop2.protocol.engine.archive.UtilitiesMappingFruizioneErogazione;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
-import org.openspcoop2.web.ctrlstat.dao.MappingErogazionePortaApplicativa;
-import org.openspcoop2.web.ctrlstat.dao.MappingFruizionePortaDelegata;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.dao.SoggettoCtrlStat;
 import org.openspcoop2.web.lib.audit.DriverAudit;
@@ -1283,225 +1274,16 @@ public class DriverControlStationDB  {
 				DriverRegistroServiziDB driverRegistry = new DriverRegistroServiziDB(con, this.tipoDB);
 				DriverConfigurazioneDB driverConfig = new DriverConfigurazioneDB(con, this.tipoDB);
 				
-				List<String> tipiPdd = new ArrayList<>();
-				tipiPdd.add(PddTipologia.OPERATIVO.toString());
-				tipiPdd.add(PddTipologia.NONOPERATIVO.toString());
-				
-				for (String tipoPdd : tipiPdd) {
-					
-					log.debug("Pdd (tipo:"+tipoPdd+") ricerca in corso...");
-					FiltroRicerca filtroPdd = new FiltroRicerca();
-					filtroPdd.setTipo(tipoPdd);
-					List<String> listPdD = null;
-					try{
-						listPdD = driverRegistry.getAllIdPorteDominio(filtroPdd);
-					}catch(DriverRegistroServiziNotFound notFound){}
-					if(listPdD==null){
-						listPdD = new ArrayList<>();
-					}
-					log.debug("Pdd (tipo:"+tipoPdd+") trovate: "+listPdD.size());
-					
-					if(listPdD.size()>0){
-						
-						for (String nomePdd : listPdD) {
-							
-							log.debug("Soggetti (pdd:"+nomePdd+") ricerca in corso...");
-							FiltroRicercaSoggetti filtroSoggetti = new FiltroRicercaSoggetti();
-							filtroSoggetti.setNomePdd(nomePdd);
-							List<IDSoggetto> listSoggetti = null;
-							try{
-								listSoggetti = driverRegistry.getAllIdSoggetti(filtroSoggetti);
-							}catch(DriverRegistroServiziNotFound notFound){}
-							if(listSoggetti==null){
-								listSoggetti = new ArrayList<>();
-							}
-							log.debug("Soggetti (pdd:"+nomePdd+") trovati: "+listSoggetti.size());
-							
-							if(listSoggetti.size()>0){
-							
-								for (IDSoggetto idSoggetto : listSoggetti) {
-									
-									if(erogazione){
-									
-										// erogazione
-										
-										log.debug("Servizi (soggetto:"+idSoggetto+") ricerca in corso...");
-										FiltroRicercaServizi filtroServizi = new FiltroRicercaServizi();
-										filtroServizi.setTipoSoggettoErogatore(idSoggetto.getTipo());
-										filtroServizi.setNomeSoggettoErogatore(idSoggetto.getNome());
-										List<IDServizio> listServizi = null;
-										try{
-											listServizi = driverRegistry.getAllIdServizi(filtroServizi);
-										}catch(DriverRegistroServiziNotFound notFound){}
-										if(listServizi==null){
-											listServizi = new ArrayList<>();
-										}
-										log.debug("Servizi (soggetto:"+idSoggetto+") trovati: "+listServizi.size());
-										
-										if(listServizi.size()>0){
-											
-											for (IDServizio idServizio : listServizi) {
-																								
-												if(DBMappingUtils.existsIDPortaApplicativaAssociata(idServizio, con, this.tipoDB)){
-													log.debug("PortaApplicativa (soggetto:"+idSoggetto+" servizio:"+
-															idServizio.getTipo()+"/"+idServizio.getNome()+" versione:"+idServizio.getVersione()+") mapping già esistente");
-													continue;
-												}
-												
-												log.debug("PorteApplicative (soggetto:"+idSoggetto+" servizio:"+
-														idServizio.getTipo()+"/"+idServizio.getNome()+" versione:"+idServizio.getVersione()+") ricerca in corso...");
-												FiltroRicercaPorteApplicative filtroPA = new FiltroRicercaPorteApplicative();
-												filtroPA.setTipoServizio(idServizio.getTipo());
-												filtroPA.setNomeServizio(idServizio.getNome());
-												filtroPA.setTipoSoggetto(idSoggetto.getTipo());
-												filtroPA.setNomeSoggetto(idSoggetto.getNome());
-												List<IDPortaApplicativa> listPA = null;
-												try{
-													listPA = driverConfig.getAllIdPorteApplicative(filtroPA);
-												}catch(DriverConfigurazioneNotFound notFound){}
-												if(listPA==null){
-													listPA = new ArrayList<>();
-												}
-												log.debug("PorteApplicative (soggetto:"+idSoggetto+" servizio:"+
-														idServizio.getTipo()+"/"+idServizio.getNome()+" versione:"+idServizio.getVersione()+") trovate: "+listPA.size());
-												
-												if(listPA.size()==1){
-													IDPortaApplicativa idPA = listPA.get(0);
-													log.debug("Creazione Mapping Erogazione soggetto:"+idSoggetto+" servizio:"+
-															idServizio.getTipo()+"/"+idServizio.getNome()+" versione:"+idServizio.getVersione()+" con pa:"+idPA.getNome()+" in corso...");
-													DBMappingUtils.createMappingErogazione(idServizio, idPA, con, this.tipoDB);
-													log.debug("Creazione Mapping Erogazione soggetto:"+idSoggetto+" servizio:"+
-															idServizio.getTipo()+"/"+idServizio.getNome()+" versione:"+idServizio.getVersione()+" con pa:"+idPA.getNome()+" effettuata con successo");
-												}
-												else if(listPA.size()>1){
-													// cerco se esiste una PA che possiede una azione '*'
-													log.debug("PorteApplicative (soggetto:"+idSoggetto+" servizio:"+
-															idServizio.getTipo()+"/"+idServizio.getNome()+" versione:"+idServizio.getVersione()+") search PA con azione * ...");
-													IDPortaApplicativa idPA = null;
-													for (IDPortaApplicativa idPACheck : listPA) {
-														PortaApplicativa pa = driverConfig.getPortaApplicativa(idPACheck);
-														if(pa.getAzione()==null || pa.getAzione().getNome()==null || "".equals(pa.getAzione().getNome())){
-															idPA = idPACheck;
-															break;
-														}
-													}
-													log.debug("PorteApplicative (soggetto:"+idSoggetto+" servizio:"+
-															idServizio.getTipo()+"/"+idServizio.getNome()+" versione:"+idServizio.getVersione()+") search PA con azione search completato (trovato:"+(idPA!=null)+")");
-													if(idPA!=null){
-														log.debug("Creazione Mapping Erogazione soggetto:"+idSoggetto+" servizio:"+
-																idServizio.getTipo()+"/"+idServizio.getNome()+" versione:"+idServizio.getVersione()+" con pa:"+idPA.getNome()+" in corso...");
-															DBMappingUtils.createMappingErogazione(idServizio, idPA, con, this.tipoDB);
-															log.debug("Creazione Mapping Erogazione soggetto:"+idSoggetto+" servizio:"+
-																	idServizio.getTipo()+"/"+idServizio.getNome()+" versione:"+idServizio.getVersione()+" con pa:"+idPA.getNome()+" effettuata con successo");
-													}
-												}
-												
-											}
-											
-										}
-									}
-									else{
-										
-										// fruizione
-										
-										log.debug("Servizi (fruitore:"+idSoggetto+") ricerca in corso...");
-										FiltroRicercaServizi filtroServizi = new FiltroRicercaServizi();
-										filtroServizi.setTipoSoggettoFruitore(idSoggetto.getTipo());
-										filtroServizi.setNomeSoggettoFruitore(idSoggetto.getNome());
-										List<IDServizio> listServizi = null;
-										try{
-											listServizi = driverRegistry.getAllIdServizi(filtroServizi);
-										}catch(DriverRegistroServiziNotFound notFound){}
-										if(listServizi==null){
-											listServizi = new ArrayList<>();
-										}
-										log.debug("Servizi (fruitore:"+idSoggetto+") trovati: "+listServizi.size());
-										
-										if(listServizi.size()>0){
-											
-											for (IDServizio idServizio : listServizi) {
-											
-												if(DBMappingUtils.existsIDPortaDelegataAssociata(idServizio, idSoggetto, con, this.tipoDB)){
-													log.debug("PortaDelegata (soggetto-fruitore:"+idSoggetto+
-															" soggetto-erogatore:"+idServizio.getSoggettoErogatore()+" servizio:"+
-															idServizio.getTipo()+"/"+idServizio.getNome()+" versione:"+idServizio.getVersione()+") mapping già esistente");
-													continue;
-												}
-												
-												log.debug("PorteDelegate (soggetto-fruitore:"+idSoggetto+
-															" soggetto-erogatore:"+idServizio.getSoggettoErogatore()+" servizio:"+
-															idServizio.getTipo()+"/"+idServizio.getNome()+" versione:"+idServizio.getVersione()+") ricerca in corso...");
-												FiltroRicercaPorteDelegate filtroPD = new FiltroRicercaPorteDelegate();
-												filtroPD.setTipoSoggetto(idSoggetto.getTipo());
-												filtroPD.setNomeSoggetto(idSoggetto.getNome());
-												filtroPD.setTipoSoggettoErogatore(idServizio.getSoggettoErogatore().getTipo());
-												filtroPD.setNomeSoggettoErogatore(idServizio.getSoggettoErogatore().getNome());
-												filtroPD.setTipoServizio(idServizio.getTipo());
-												filtroPD.setNomeServizio(idServizio.getNome());
-												List<IDPortaDelegata> listPD = null;
-												try{
-													listPD = driverConfig.getAllIdPorteDelegate(filtroPD);
-												}catch(DriverConfigurazioneNotFound notFound){}
-												if(listPD==null){
-													listPD = new ArrayList<>();
-												}
-												log.debug("PorteDelegate (soggetto-fruitore:"+idSoggetto+
-															" soggetto-erogatore:"+idServizio.getSoggettoErogatore()+" servizio:"+
-															idServizio.getTipo()+"/"+idServizio.getNome()+" versione:"+idServizio.getVersione()+") trovate: "+listPD.size());
-												
-												if(listPD.size()==1){
-													IDPortaDelegata idPD = listPD.get(0);
-													log.debug("Creazione Mapping Fruizione soggetto-fruitore:"+idSoggetto+
-															" soggetto-erogatore:"+idServizio.getSoggettoErogatore()+" servizio:"+
-															idServizio.getTipo()+"/"+idServizio.getNome()+" versione:"+idServizio.getVersione()+" con pd:"+idPD.getNome()+" in corso...");
-													DBMappingUtils.createMappingFruizione(idServizio, idSoggetto, idPD, con, this.tipoDB);
-													log.debug("Creazione Mapping Fruizione soggetto-fruitore:"+idSoggetto+
-															" soggetto-erogatore:"+idServizio.getSoggettoErogatore()+" servizio:"+
-															idServizio.getTipo()+"/"+idServizio.getNome()+" versione:"+idServizio.getVersione()+" con pd:"+idPD.getNome()+" effettuata con successo");
-												}
-												else if(listPD.size()>1){
-													// cerco se esiste una PD che possiede una azione '*'
-													log.debug("PorteDelegate (soggetto-fruitore:"+idSoggetto+
-															" soggetto-erogatore:"+idServizio.getSoggettoErogatore()+" servizio:"+
-															idServizio.getTipo()+"/"+idServizio.getNome()+" versione:"+idServizio.getVersione()+") search PD con azione * ...");
-													IDPortaDelegata idPD = null;
-													for (IDPortaDelegata idPDCheck : listPD) {
-														PortaDelegata pd = driverConfig.getPortaDelegata(idPDCheck);
-														if(pd.getAzione()==null || pd.getAzione().getNome()==null || "".equals(pd.getAzione().getNome())){
-															idPD = idPDCheck;
-															break;
-														}
-													}
-													log.debug("PorteDelegate (soggetto-fruitore:"+idSoggetto+
-															" soggetto-erogatore:"+idServizio.getSoggettoErogatore()+" servizio:"+
-															idServizio.getTipo()+"/"+idServizio.getNome()+" versione:"+idServizio.getVersione()+") search PD con azione search completato (trovato:"+(idPD!=null)+")");
-													if(idPD!=null){
-														log.debug("Creazione Mapping Fruizione soggetto-fruitore:"+idSoggetto+
-															" soggetto-erogatore:"+idServizio.getSoggettoErogatore()+" servizio:"+
-															idServizio.getTipo()+"/"+idServizio.getNome()+" versione:"+idServizio.getVersione()+" con pd:"+idPD.getNome()+" in corso...");
-															DBMappingUtils.createMappingFruizione(idServizio, idSoggetto, idPD, con, this.tipoDB);
-															log.debug("Creazione Mapping Fruizione soggetto-fruitore:"+idSoggetto+
-															" soggetto-erogatore:"+idServizio.getSoggettoErogatore()+" servizio:"+
-															idServizio.getTipo()+"/"+idServizio.getNome()+" versione:"+idServizio.getVersione()+" con pd:"+idPD.getNome()+" effettuata con successo");
-													}
-												}
-												
-											}
-										}
-										
-									}
-								}
-								
-							}
-						}
-						
-					}
+				UtilitiesMappingFruizioneErogazione utilities = new UtilitiesMappingFruizioneErogazione(driverConfig, driverRegistry, log);
+				if(erogazione){
+					utilities.initMappingErogazione();
+				}else{
+					utilities.initMappingFruizione();
 				}
 	
 				log.debug("Controllo Consistenza Dati ["+nomeMetodo+"] terminato");
 			}			
 			
-
 		} catch (Throwable se) {
 			log.error("Controllo Consistenza Dati ["+nomeMetodo+"] terminato con errore: "+se.getMessage(),se);
 			error = true;
