@@ -15492,6 +15492,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 		if(erogazioneIsBound!=null){
 			
 			ISQLQueryObject sqlQueryObjectConnettore = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObjectConnettore.setANDLogicOperator(true);
 			sqlQueryObjectConnettore.addFromTable(CostantiDB.CONNETTORI);
 			sqlQueryObjectConnettore.addSelectField("id");
 			sqlQueryObjectConnettore.addWhereCondition("id_connettore_inv="+CostantiDB.CONNETTORI+".id");
