@@ -15497,7 +15497,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			sqlQueryObjectConnettore.addWhereCondition("id_connettore_inv="+CostantiDB.CONNETTORI+".id");
 			sqlQueryObjectConnettore.addWhereCondition(false,
 					"endpointtype<>? AND endpointtype<>?",
-					"endpointtype=? AND url is not null AND url <> ?)");
+					"endpointtype=? AND url is not null AND url <> ?");
 			
 			if(erogazioneIsBound){
 				sqlQueryObject.addWhereExistsCondition(false, sqlQueryObjectConnettore);
