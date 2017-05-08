@@ -4,6 +4,9 @@
                  xmlns:f="http://java.sun.com/jsf/core"
                  xmlns:c="http://java.sun.com/jstl/core"
                  xmlns:a4j="http://richfaces.org/a4j">
+    <c:if test="#{empty required}">
+	 	<c:set var="required" value="false"/>
+	</c:if>
     <a4j:outputPanel rendered="#{not empty rendered ? rendered : true}" layout="block">
     	<div class="prop">
 			<label class="#{not empty styleClassEsterna ? styleClassEsterna : ''}">
