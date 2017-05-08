@@ -123,6 +123,7 @@ import org.openspcoop2.core.config.constants.RicercaTipologiaErogazione;
 import org.openspcoop2.core.config.constants.RicercaTipologiaFruizione;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.config.driver.BeanUtilities;
@@ -14875,87 +14876,119 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	// all
 	public int countTipologieServiziApplicativi(ISearch filters) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engineCount(null, null, false, null, false, filters, false);
+		return serviziApplicativiList_engineCount(null, null, false, null, false, filters, false, null, null);
 	}
 	public int countTipologieServiziApplicativi(IDSoggetto proprietario,ISearch filters) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engineCount(proprietario, null, false, null, false, filters, false);
+		return serviziApplicativiList_engineCount(proprietario, null, false, null, false, filters, false, null, null);
 	}
 
 	// fruizione
 
 	public int countTipologieFruizioneServiziApplicativi(ISearch filters) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engineCount(null, null, false, null, true, filters, false);
+		return serviziApplicativiList_engineCount(null, null, false, null, true, filters, false, null, null);
 	}
 	public int countTipologieFruizioneServiziApplicativi(ISearch filters,boolean checkAssociazionePorta) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engineCount(null, null, false, null, true, filters, checkAssociazionePorta);
+		return serviziApplicativiList_engineCount(null, null, false, null, true, filters, checkAssociazionePorta, null, null);
+	}
+	public int countTipologieFruizioneServiziApplicativi(ISearch filters,boolean checkAssociazionePorta, Boolean isBound) throws DriverConfigurazioneException
+	{
+		return serviziApplicativiList_engineCount(null, null, false, null, true, filters, checkAssociazionePorta, isBound, null);
 	}
 
 	public int countTipologieFruizioneServiziApplicativi(RicercaTipologiaFruizione fruizione, ISearch filters) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engineCount(null, null, false, fruizione, true, filters, false);
+		return serviziApplicativiList_engineCount(null, null, false, fruizione, true, filters, false, null, null);
 	}
 	public int countTipologieFruizioneServiziApplicativi(RicercaTipologiaFruizione fruizione, ISearch filters,boolean checkAssociazionePorta) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engineCount(null, null, false, fruizione, true, filters, checkAssociazionePorta);
+		return serviziApplicativiList_engineCount(null, null, false, fruizione, true, filters, checkAssociazionePorta, null, null);
+	}
+	public int countTipologieFruizioneServiziApplicativi(RicercaTipologiaFruizione fruizione, ISearch filters,boolean checkAssociazionePorta, Boolean isBound) throws DriverConfigurazioneException
+	{
+		return serviziApplicativiList_engineCount(null, null, false, fruizione, true, filters, checkAssociazionePorta, isBound, null);
 	}
 
 	public int countTipologieFruizioneServiziApplicativi(IDSoggetto proprietario, ISearch filters) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engineCount(proprietario, null, false, null, true, filters, false);
+		return serviziApplicativiList_engineCount(proprietario, null, false, null, true, filters, false, null, null);
 	}
 	public int countTipologieFruizioneServiziApplicativi(IDSoggetto proprietario, ISearch filters,boolean checkAssociazionePorta) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engineCount(proprietario, null, false, null, true, filters, checkAssociazionePorta);
+		return serviziApplicativiList_engineCount(proprietario, null, false, null, true, filters, checkAssociazionePorta, null, null);
+	}
+	public int countTipologieFruizioneServiziApplicativi(IDSoggetto proprietario, ISearch filters,boolean checkAssociazionePorta, Boolean isBound) throws DriverConfigurazioneException
+	{
+		return serviziApplicativiList_engineCount(proprietario, null, false, null, true, filters, checkAssociazionePorta, isBound, null);
 	}
 
 	public int countTipologieFruizioneServiziApplicativi(IDSoggetto proprietario, RicercaTipologiaFruizione fruizione, ISearch filters) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engineCount(proprietario, null, false, fruizione, true, filters, false);
+		return serviziApplicativiList_engineCount(proprietario, null, false, fruizione, true, filters, false, null, null);
 	}
 	public int countTipologieFruizioneServiziApplicativi(IDSoggetto proprietario, RicercaTipologiaFruizione fruizione, ISearch filters,boolean checkAssociazionePorta) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engineCount(proprietario, null, false, fruizione, true, filters, checkAssociazionePorta);
+		return serviziApplicativiList_engineCount(proprietario, null, false, fruizione, true, filters, checkAssociazionePorta, null, null);
+	}
+	public int countTipologieFruizioneServiziApplicativi(IDSoggetto proprietario, RicercaTipologiaFruizione fruizione, ISearch filters,boolean checkAssociazionePorta, Boolean isBound) throws DriverConfigurazioneException
+	{
+		return serviziApplicativiList_engineCount(proprietario, null, false, fruizione, true, filters, checkAssociazionePorta, isBound, null);
 	}
 
 	// erogazione
 
 	public int countTipologieErogazioneServiziApplicativi(ISearch filters) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engineCount(null, null, true, null, false, filters, false);
+		return serviziApplicativiList_engineCount(null, null, true, null, false, filters, false, null, null);
 	}
 	public int countTipologieErogazioneServiziApplicativi(ISearch filters,boolean checkAssociazionePorta) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engineCount(null, null, true, null, false, filters, checkAssociazionePorta);
+		return serviziApplicativiList_engineCount(null, null, true, null, false, filters, checkAssociazionePorta, null, null);
 	}
-
+	public int countTipologieErogazioneServiziApplicativi(ISearch filters,boolean checkAssociazionePorta, Boolean isBound) throws DriverConfigurazioneException
+	{
+		return serviziApplicativiList_engineCount(null, null, true, null, false, filters, checkAssociazionePorta, null, isBound);
+	}
+	
 	public int countTipologieErogazioneServiziApplicativi(RicercaTipologiaErogazione erogazione, ISearch filters) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engineCount(null, erogazione, true, null, false, filters, false);
+		return serviziApplicativiList_engineCount(null, erogazione, true, null, false, filters, false, null, null);
 	}
 	public int countTipologieErogazioneServiziApplicativi(RicercaTipologiaErogazione erogazione, ISearch filters,boolean checkAssociazionePorta) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engineCount(null, erogazione, true, null, false,  filters, checkAssociazionePorta);
+		return serviziApplicativiList_engineCount(null, erogazione, true, null, false,  filters, checkAssociazionePorta, null, null);
+	}
+	public int countTipologieErogazioneServiziApplicativi(RicercaTipologiaErogazione erogazione, ISearch filters,boolean checkAssociazionePorta, Boolean isBound) throws DriverConfigurazioneException
+	{
+		return serviziApplicativiList_engineCount(null, erogazione, true, null, false,  filters, checkAssociazionePorta, null, isBound);
 	}
 
 	public int countTipologieErogazioneServiziApplicativi(IDSoggetto proprietario, RicercaTipologiaErogazione erogazione, ISearch filters) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engineCount(proprietario, erogazione, true,  null, false, filters, false);
+		return serviziApplicativiList_engineCount(proprietario, erogazione, true,  null, false, filters, false, null, null);
 	}
 	public int countTipologieErogazioneServiziApplicativi(IDSoggetto proprietario, RicercaTipologiaErogazione erogazione, ISearch filters,boolean checkAssociazionePorta) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engineCount(proprietario, erogazione, true, null, false, filters, checkAssociazionePorta);
+		return serviziApplicativiList_engineCount(proprietario, erogazione, true, null, false, filters, checkAssociazionePorta, null, null);
+	}
+	public int countTipologieErogazioneServiziApplicativi(IDSoggetto proprietario, RicercaTipologiaErogazione erogazione, ISearch filters,boolean checkAssociazionePorta, Boolean isBound) throws DriverConfigurazioneException
+	{
+		return serviziApplicativiList_engineCount(proprietario, erogazione, true, null, false, filters, checkAssociazionePorta, null, isBound);
 	}
 
 	public int countTipologieErogazioneServiziApplicativi(IDSoggetto proprietario, ISearch filters) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engineCount(proprietario, null, true, null, false, filters, false);
+		return serviziApplicativiList_engineCount(proprietario, null, true, null, false, filters, false, null, null);
 	}
 	public int countTipologieErogazioneServiziApplicativi(IDSoggetto proprietario, ISearch filters,boolean checkAssociazionePorta) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engineCount(proprietario, null, true, null, false, filters, checkAssociazionePorta);
+		return serviziApplicativiList_engineCount(proprietario, null, true, null, false, filters, checkAssociazionePorta, null, null);
+	}
+	public int countTipologieErogazioneServiziApplicativi(IDSoggetto proprietario, ISearch filters,boolean checkAssociazionePorta, Boolean isBound) throws DriverConfigurazioneException
+	{
+		return serviziApplicativiList_engineCount(proprietario, null, true, null, false, filters, checkAssociazionePorta, null, isBound);
 	}
 
 	// engine
@@ -14963,7 +14996,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	private int serviziApplicativiList_engineCount(IDSoggetto proprietario, 
 			RicercaTipologiaErogazione erogazione, boolean searchSoloErogazione,  
 			RicercaTipologiaFruizione fruizione, boolean serchSoloFruizione, 
-			ISearch filters,boolean checkAssociazionePorta) throws DriverConfigurazioneException {
+			ISearch filters,boolean checkAssociazionePorta,
+			Boolean fruizioneIsBound, Boolean erogazioneIsBound) throws DriverConfigurazioneException {
 
 		String nomeMetodo = "serviziApplicativiList";
 		Connection con = null;
@@ -15002,7 +15036,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			ISQLQueryObject sqlQueryObject = this.getServiziApplicativiSearchFiltratiTipologia(proprietario, 
 					erogazione, searchSoloErogazione,
 					fruizione, 	serchSoloFruizione,  
-					filters, checkAssociazionePorta, search, true);
+					filters, checkAssociazionePorta, search, true,
+					fruizioneIsBound, erogazioneIsBound);
 			String queryString = sqlQueryObject.createSQLQuery();
 			this.log.debug("QueryCount=["+queryString+"]");
 			stmt = con.prepareStatement(queryString);
@@ -15029,6 +15064,18 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					}
 				}
 			}
+			
+			if(fruizioneIsBound!=null){
+				stmt.setString(index++,TipoAutenticazione.DISABILITATO.getValue());
+			}
+			
+			if(erogazioneIsBound!=null){
+				stmt.setString(index++,TipiConnettore.DISABILITATO.getNome());
+				stmt.setString(index++,TipiConnettore.HTTP.getNome());
+				stmt.setString(index++,TipiConnettore.HTTP.getNome());
+				stmt.setString(index++,"");
+			}
+			
 			risultato = stmt.executeQuery();
 			int count = -1;
 			if (risultato.next()){
@@ -15079,87 +15126,119 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	// all
 	public List<TipologiaServizioApplicativo> getTipologieServiziApplicativi(ISearch filters) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engine(null, null, false,  null, false, filters, false);
+		return serviziApplicativiList_engine(null, null, false,  null, false, filters, false, null, null);
 	}
 	public List<TipologiaServizioApplicativo> getTipologieServiziApplicativi(IDSoggetto proprietario,ISearch filters) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engine(proprietario, null, false,  null, false, filters, false);
+		return serviziApplicativiList_engine(proprietario, null, false,  null, false, filters, false, null, null);
 	}
 
 	// fruizione
 
 	public List<TipologiaServizioApplicativo> getTipologieFruizioneServiziApplicativi(ISearch filters) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engine(null, null, false, null, true, filters, false);
+		return serviziApplicativiList_engine(null, null, false, null, true, filters, false, null, null);
 	}
 	public List<TipologiaServizioApplicativo> getTipologieFruizioneServiziApplicativi(ISearch filters,boolean checkAssociazionePorta) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engine(null, null, false,  null, true, filters, checkAssociazionePorta);
+		return serviziApplicativiList_engine(null, null, false,  null, true, filters, checkAssociazionePorta, null, null);
+	}
+	public List<TipologiaServizioApplicativo> getTipologieFruizioneServiziApplicativi(ISearch filters,boolean checkAssociazionePorta, Boolean isBound) throws DriverConfigurazioneException
+	{
+		return serviziApplicativiList_engine(null, null, false,  null, true, filters, checkAssociazionePorta, isBound, null);
 	}
 
 	public List<TipologiaServizioApplicativo> getTipologieFruizioneServiziApplicativi(RicercaTipologiaFruizione fruizione, ISearch filters) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engine(null, null, false, fruizione, true, filters, false);
+		return serviziApplicativiList_engine(null, null, false, fruizione, true, filters, false, null, null);
 	}
 	public List<TipologiaServizioApplicativo> getTipologieFruizioneServiziApplicativi(RicercaTipologiaFruizione fruizione, ISearch filters,boolean checkAssociazionePorta) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engine(null, null, false,  fruizione, true, filters, checkAssociazionePorta);
+		return serviziApplicativiList_engine(null, null, false,  fruizione, true, filters, checkAssociazionePorta, null, null);
+	}
+	public List<TipologiaServizioApplicativo> getTipologieFruizioneServiziApplicativi(RicercaTipologiaFruizione fruizione, ISearch filters,boolean checkAssociazionePorta, Boolean isBound) throws DriverConfigurazioneException
+	{
+		return serviziApplicativiList_engine(null, null, false,  fruizione, true, filters, checkAssociazionePorta, isBound, null);
 	}
 
 	public List<TipologiaServizioApplicativo> getTipologieFruizioneServiziApplicativi(IDSoggetto proprietario, ISearch filters) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engine(proprietario, null, false, null, true, filters, false);
+		return serviziApplicativiList_engine(proprietario, null, false, null, true, filters, false, null, null);
 	}
 	public List<TipologiaServizioApplicativo> getTipologieFruizioneServiziApplicativi(IDSoggetto proprietario, ISearch filters,boolean checkAssociazionePorta) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engine(proprietario, null, false, null, true, filters, checkAssociazionePorta);
+		return serviziApplicativiList_engine(proprietario, null, false, null, true, filters, checkAssociazionePorta, null, null);
+	}
+	public List<TipologiaServizioApplicativo> getTipologieFruizioneServiziApplicativi(IDSoggetto proprietario, ISearch filters,boolean checkAssociazionePorta, Boolean isBound) throws DriverConfigurazioneException
+	{
+		return serviziApplicativiList_engine(proprietario, null, false, null, true, filters, checkAssociazionePorta, isBound, null);
 	}
 
 	public List<TipologiaServizioApplicativo> getTipologieFruizioneServiziApplicativi(IDSoggetto proprietario, RicercaTipologiaFruizione fruizione, ISearch filters) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engine(proprietario, null, false, fruizione, true, filters, false);
+		return serviziApplicativiList_engine(proprietario, null, false, fruizione, true, filters, false, null, null);
 	}
 	public List<TipologiaServizioApplicativo> getTipologieFruizioneServiziApplicativi(IDSoggetto proprietario, RicercaTipologiaFruizione fruizione, ISearch filters,boolean checkAssociazionePorta) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engine(proprietario, null, false,  fruizione, true, filters, checkAssociazionePorta);
+		return serviziApplicativiList_engine(proprietario, null, false,  fruizione, true, filters, checkAssociazionePorta, null, null);
+	}
+	public List<TipologiaServizioApplicativo> getTipologieFruizioneServiziApplicativi(IDSoggetto proprietario, RicercaTipologiaFruizione fruizione, ISearch filters,boolean checkAssociazionePorta, Boolean isBound) throws DriverConfigurazioneException
+	{
+		return serviziApplicativiList_engine(proprietario, null, false,  fruizione, true, filters, checkAssociazionePorta, isBound, null);
 	}
 
 	// erogazione
 
 	public List<TipologiaServizioApplicativo> getTipologieErogazioneServiziApplicativi(ISearch filters) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engine(null, null, true, null, false, filters, false);
+		return serviziApplicativiList_engine(null, null, true, null, false, filters, false, null, null);
 	}
 	public List<TipologiaServizioApplicativo> getTipologieErogazioneServiziApplicativi(ISearch filters,boolean checkAssociazionePorta) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engine(null, null, true, null, false, filters, checkAssociazionePorta);
+		return serviziApplicativiList_engine(null, null, true, null, false, filters, checkAssociazionePorta, null, null);
+	}
+	public List<TipologiaServizioApplicativo> getTipologieErogazioneServiziApplicativi(ISearch filters,boolean checkAssociazionePorta, Boolean isBound) throws DriverConfigurazioneException
+	{
+		return serviziApplicativiList_engine(null, null, true, null, false, filters, checkAssociazionePorta, null, isBound);
 	}
 
 	public List<TipologiaServizioApplicativo> getTipologieErogazioneServiziApplicativi(RicercaTipologiaErogazione erogazione, ISearch filters) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engine(null, erogazione, true, null, false, filters, false);
+		return serviziApplicativiList_engine(null, erogazione, true, null, false, filters, false, null, null);
 	}
 	public List<TipologiaServizioApplicativo> getTipologieErogazioneServiziApplicativi(RicercaTipologiaErogazione erogazione, ISearch filters,boolean checkAssociazionePorta) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engine(null, erogazione, true, null, false, filters, checkAssociazionePorta);
+		return serviziApplicativiList_engine(null, erogazione, true, null, false, filters, checkAssociazionePorta, null, null);
+	}
+	public List<TipologiaServizioApplicativo> getTipologieErogazioneServiziApplicativi(RicercaTipologiaErogazione erogazione, ISearch filters,boolean checkAssociazionePorta, Boolean isBound) throws DriverConfigurazioneException
+	{
+		return serviziApplicativiList_engine(null, erogazione, true, null, false, filters, checkAssociazionePorta, null, isBound);
 	}
 
 	public List<TipologiaServizioApplicativo> getTipologieErogazioneServiziApplicativi(IDSoggetto proprietario, RicercaTipologiaErogazione erogazione, ISearch filters) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engine(proprietario, erogazione, true, null, false, filters, false);
+		return serviziApplicativiList_engine(proprietario, erogazione, true, null, false, filters, false, null, null);
 	}
 	public List<TipologiaServizioApplicativo> getTipologieErogazioneServiziApplicativi(IDSoggetto proprietario, RicercaTipologiaErogazione erogazione, ISearch filters,boolean checkAssociazionePorta) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engine(proprietario, erogazione, true, null, false, filters, checkAssociazionePorta);
+		return serviziApplicativiList_engine(proprietario, erogazione, true, null, false, filters, checkAssociazionePorta, null, null);
+	}
+	public List<TipologiaServizioApplicativo> getTipologieErogazioneServiziApplicativi(IDSoggetto proprietario, RicercaTipologiaErogazione erogazione, ISearch filters,boolean checkAssociazionePorta, Boolean isBound) throws DriverConfigurazioneException
+	{
+		return serviziApplicativiList_engine(proprietario, erogazione, true, null, false, filters, checkAssociazionePorta, null, isBound);
 	}
 
 	public List<TipologiaServizioApplicativo> getTipologieErogazioneServiziApplicativi(IDSoggetto proprietario, ISearch filters) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engine(proprietario, null, true, null, false, filters, false);
+		return serviziApplicativiList_engine(proprietario, null, true, null, false, filters, false, null, null);
 	}
 	public List<TipologiaServizioApplicativo> getTipologieErogazioneServiziApplicativi(IDSoggetto proprietario, ISearch filters,boolean checkAssociazionePorta) throws DriverConfigurazioneException
 	{
-		return serviziApplicativiList_engine(proprietario, null, true, null, false, filters, checkAssociazionePorta);
+		return serviziApplicativiList_engine(proprietario, null, true, null, false, filters, checkAssociazionePorta, null, null);
+	}
+	public List<TipologiaServizioApplicativo> getTipologieErogazioneServiziApplicativi(IDSoggetto proprietario, ISearch filters,boolean checkAssociazionePorta, Boolean isBound) throws DriverConfigurazioneException
+	{
+		return serviziApplicativiList_engine(proprietario, null, true, null, false, filters, checkAssociazionePorta, null, isBound);
 	}
 
 	// engine
@@ -15167,7 +15246,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	private List<TipologiaServizioApplicativo> serviziApplicativiList_engine(IDSoggetto proprietario, 
 			RicercaTipologiaErogazione erogazione, boolean searchSoloErogazione,  
 			RicercaTipologiaFruizione fruizione, boolean serchSoloFruizione, 
-			ISearch filters,boolean checkAssociazionePorta) throws DriverConfigurazioneException {
+			ISearch filters,boolean checkAssociazionePorta,
+			Boolean fruizioneIsBound, Boolean erogazioneIsBound) throws DriverConfigurazioneException {
 
 		String nomeMetodo = "serviziApplicativiList";
 		Connection con = null;
@@ -15206,7 +15286,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			filters.setNumEntries(idLista, this.serviziApplicativiList_engineCount(proprietario, 
 					erogazione, searchSoloErogazione, 
 					fruizione, serchSoloFruizione, 
-					filters, checkAssociazionePorta));
+					filters, checkAssociazionePorta,
+					fruizioneIsBound, erogazioneIsBound));
 
 
 
@@ -15214,7 +15295,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 			ISQLQueryObject sqlQueryObject = this.getServiziApplicativiSearchFiltratiTipologia(proprietario, 
 					erogazione, searchSoloErogazione,
 					fruizione, serchSoloFruizione,  
-					filters, checkAssociazionePorta, search, false);
+					filters, checkAssociazionePorta, search, false,
+					fruizioneIsBound, erogazioneIsBound);
 			// ricavo le entries
 			if (limit == 0) // con limit
 				limit = ISQLQueryObject.LIMIT_DEFAULT_VALUE;
@@ -15248,6 +15330,18 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 					}
 				}
 			}
+			
+			if(fruizioneIsBound!=null){
+				stmt.setString(index++,TipoAutenticazione.DISABILITATO.getValue());
+			}
+			
+			if(erogazioneIsBound!=null){
+				stmt.setString(index++,TipiConnettore.DISABILITATO.getNome());
+				stmt.setString(index++,TipiConnettore.HTTP.getNome());
+				stmt.setString(index++,TipiConnettore.HTTP.getNome());
+				stmt.setString(index++,"");
+			}
+			
 			risultato = stmt.executeQuery();
 			while (risultato.next()){
 
@@ -15315,7 +15409,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 	private ISQLQueryObject getServiziApplicativiSearchFiltratiTipologia(IDSoggetto proprietario, 
 			RicercaTipologiaErogazione erogazione, boolean searchSoloErogazione,  
 			RicercaTipologiaFruizione fruizione, boolean serchSoloFruizione, 
-			ISearch filters,boolean checkAssociazionePorta,String search, boolean count) throws Exception{
+			ISearch filters,boolean checkAssociazionePorta,String search, boolean count,
+			Boolean fruizioneIsBound, Boolean erogazioneIsBound) throws Exception{
 
 		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 		sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
@@ -15383,6 +15478,35 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverConfigura
 				sqlQueryObject.addWhereExistsCondition(false, sqlQueryObjectIn);
 			}
 		}
+		
+		if(fruizioneIsBound!=null){
+			if(fruizioneIsBound){
+				sqlQueryObject.addWhereIsNotNullCondition("tipoauth");
+				sqlQueryObject.addWhereCondition("tipoauth<>?");
+			}
+			else{
+				sqlQueryObject.addWhereCondition(false,"tipoauth is null","tipoauth=?");
+			}
+		}
+		
+		if(erogazioneIsBound!=null){
+			
+			ISQLQueryObject sqlQueryObjectConnettore = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObjectConnettore.addFromTable(CostantiDB.CONNETTORI);
+			sqlQueryObjectConnettore.addSelectField("id");
+			sqlQueryObjectConnettore.addWhereCondition("id_connettore_inv="+CostantiDB.CONNETTORI+".id");
+			sqlQueryObjectConnettore.addWhereCondition(false,
+					"endpointtype<>? AND endpointtype<>?",
+					"endpointtype=? AND url is not null AND url <> ?)");
+			
+			if(erogazioneIsBound){
+				sqlQueryObject.addWhereExistsCondition(false, sqlQueryObjectConnettore);
+			}
+			else{
+				sqlQueryObject.addWhereExistsCondition(true, sqlQueryObjectConnettore);
+			}
+		}
+		
 		sqlQueryObject.setANDLogicOperator(true);
 
 		return sqlQueryObject;
