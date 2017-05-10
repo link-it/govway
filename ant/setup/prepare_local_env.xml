@@ -56,7 +56,7 @@
 	<!-- Libreria Web -->
 	<property name="jsplib" value="${rootDir}/tools/web_interfaces/lib/jsplib" />
 	<property name="jslib" value="${rootDir}/tools/web_interfaces/lib/js" />
-	<property name="commons_images" value="${rootDir}/tools/web_interfaces/lib/images" />
+	<property name="commons_webcontent" location="${rootDir}/tools/web_interfaces/lib/web-content"/>
 	
 	<!-- PddConsole -->
 	<property name="pddConsole" value="${rootDir}/tools/web_interfaces/control_station/" />
