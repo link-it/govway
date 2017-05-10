@@ -7053,6 +7053,11 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(filtroRicerca.getVersione()!=null){
 					this.log.debug("versioneServizio stmt.setString("+filtroRicerca.getVersione()+")");
 					stm.setInt(indexStmt, filtroRicerca.getVersione());
+				}
+				if(filtroRicerca.getTipologia()!=null){
+					StatoFunzionalita servizioCorrelato = (TipologiaServizio.CORRELATO.equals(filtroRicerca.getTipologia()) ? CostantiRegistroServizi.ABILITATO : CostantiRegistroServizi.DISABILITATO);
+					this.log.debug("tipologiaServizio stmt.setString("+servizioCorrelato.getValue()+") original:["+filtroRicerca.getTipologia()+"]");
+					stm.setString(indexStmt, servizioCorrelato.getValue());
 					indexStmt++;
 				}
 				if(filtroRicerca.getTipologia()!=null){
