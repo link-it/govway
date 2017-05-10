@@ -597,6 +597,9 @@ public class ConfigurazionePdD  {
 				else if("getAccessoDatiAutorizzazione".equals(methodName)){
 					obj = this.configLocalProperties.updateAccessoDatiAutorizzazione((AccessoDatiAutorizzazione)obj);
 				}
+				else if("getAccessoDatiAutenticazione".equals(methodName)){
+					obj = this.configLocalProperties.updateAccessoDatiAutenticazione((AccessoDatiAutenticazione)obj);
+				}
 				else if("getGestioneErroreComponenteCooperazione".equals(methodName)){
 					obj = this.configLocalProperties.updateGestioneErroreCooperazione((GestioneErrore)obj);
 				}

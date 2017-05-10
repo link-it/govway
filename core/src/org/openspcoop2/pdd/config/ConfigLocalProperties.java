@@ -26,6 +26,7 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.openspcoop2.core.config.AccessoConfigurazione;
+import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
@@ -597,6 +598,31 @@ public class ConfigLocalProperties extends InstanceProperties {
 		
 	}
 	
+	public AccessoDatiAutenticazione updateAccessoDatiAutenticazione(AccessoDatiAutenticazione accessoDatiConfigurazione)throws Exception{
+		
+		if(!this.configLocal)
+			return accessoDatiConfigurazione;
+		
+		try{
+			
+			// **** Cache *****
+			if(this.isStatoCacheDisabilitata("autenticazione")){
+				accessoDatiConfigurazione.setCache(null);
+			}
+			else{
+				// aggiorno dati
+				accessoDatiConfigurazione.setCache(this.readDatiCache("autenticazione", accessoDatiConfigurazione.getCache()));
+			}
+			
+			return accessoDatiConfigurazione;
+			
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura del file "+CostantiPdD.OPENSPCOOP2_CONFIG_LOCAL_PATH+" (AccessoDatiAutenticazione): "+e.getMessage(),e);
+			throw new Exception("Errore durante la lettura del file "+CostantiPdD.OPENSPCOOP2_CONFIG_LOCAL_PATH+" (AccessoDatiAutenticazione): "+e.getMessage(),e);
+		}
+		
+	}
+	
 	public GestioneErrore updateGestioneErroreCooperazione(GestioneErrore gestioneErrore)throws Exception{
 		
 		if(!this.configLocal)
@@ -1104,6 +1130,22 @@ public class ConfigLocalProperties extends InstanceProperties {
 					throw new Exception("Impostazione sul dump applicativo non corretta");
 				}
 			}
+			String tracciamentoDumpBinarioPortaDelegata = this.getValue("tracciamento.dumpBinarioPortaDelegata");
+			if(tracciamentoDumpBinarioPortaDelegata!=null){
+				tracciamentoDumpBinarioPortaDelegata = tracciamentoDumpBinarioPortaDelegata.trim();
+				if(!CostantiConfigurazione.ABILITATO.equals(tracciamentoDumpBinarioPortaDelegata) && 
+						!CostantiConfigurazione.DISABILITATO.equals(tracciamentoDumpBinarioPortaDelegata)){
+					throw new Exception("Impostazione sul dump binario della porta delegata non corretta");
+				}
+			}
+			String tracciamentoDumpBinarioPortaApplicativa = this.getValue("tracciamento.dumpBinarioPortaApplicativa");
+			if(tracciamentoDumpBinarioPortaApplicativa!=null){
+				tracciamentoDumpBinarioPortaApplicativa = tracciamentoDumpBinarioPortaApplicativa.trim();
+				if(!CostantiConfigurazione.ABILITATO.equals(tracciamentoDumpBinarioPortaApplicativa) && 
+						!CostantiConfigurazione.DISABILITATO.equals(tracciamentoDumpBinarioPortaApplicativa)){
+					throw new Exception("Impostazione sul dump binario della porta applicativa non corretta");
+				}
+			}
 			
 			String tracciamentoAppendersDisabledTmp = this.getValue("tracciamento.appenders.disabled");
 			boolean disabilitatiTracciamentoAppenderOriginali = false;
@@ -1131,7 +1173,9 @@ public class ConfigLocalProperties extends InstanceProperties {
 					}
 				}
 			}
-			if(tracciamentoBuste!=null || tracciamentoDump!=null || tracciamentoAppenders!=null){
+			if(tracciamentoBuste!=null || tracciamentoDump!=null || 
+					tracciamentoDumpBinarioPortaDelegata!=null || tracciamentoDumpBinarioPortaApplicativa!=null || 
+					tracciamentoAppenders!=null){
 				if(configurazione.getTracciamento()==null){
 					configurazione.setTracciamento(new Tracciamento());
 					if(tracciamentoBuste==null){
@@ -1147,6 +1191,12 @@ public class ConfigLocalProperties extends InstanceProperties {
 			}
 			if(tracciamentoDump!=null){
 				configurazione.getTracciamento().setDump(StatoFunzionalita.toEnumConstant(tracciamentoDump));
+			}
+			if(tracciamentoDumpBinarioPortaDelegata!=null){
+				configurazione.getTracciamento().setDumpBinarioPortaDelegata(StatoFunzionalita.toEnumConstant(tracciamentoDumpBinarioPortaDelegata));
+			}
+			if(tracciamentoDumpBinarioPortaApplicativa!=null){
+				configurazione.getTracciamento().setDumpBinarioPortaApplicativa(StatoFunzionalita.toEnumConstant(tracciamentoDumpBinarioPortaApplicativa));
 			}
 			if(tracciamentoAppenders!=null){
 				
