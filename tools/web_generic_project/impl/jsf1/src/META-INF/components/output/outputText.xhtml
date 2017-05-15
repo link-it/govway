@@ -19,7 +19,7 @@
 		columnClasses="#{field.columnClasses}" 
 			rendered="#{field.rendered}"
 			columns="#{!empty field.label ? 2 : 1}">
-			<h:outputText id="out_#{id}_Label" styleClass="#{field.labelStyleClass}"
+			<h:outputText id="out_#{id}_Label" styleClass="#{field.labelStyleClass}" escape="#{field.escapeLabel}"
 				value="#{field.label}:" rendered="#{!empty field.label}" />
  
 			<h:outputText id="out_#{id}_NoValue" value="--" styleClass="#{field.valueStyleClass}"
@@ -37,7 +37,7 @@
 	</c:if>
 	
 	<c:if test="#{insideGroup == 'true' and field.rendered}">
-			<h:outputText id="out_#{id}_Label" styleClass="#{field.labelStyleClass}"
+			<h:outputText id="out_#{id}_Label" styleClass="#{field.labelStyleClass}" escape="#{field.escapeLabel}"
 				value="#{field.label}:" rendered="#{!empty field.label}" />
 
 			<h:outputText id="out_#{id}_NoValue" value="--" styleClass="#{field.valueStyleClass}"

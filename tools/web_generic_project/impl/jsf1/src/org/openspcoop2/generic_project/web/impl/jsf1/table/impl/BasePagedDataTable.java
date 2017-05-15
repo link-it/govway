@@ -47,6 +47,7 @@ implements PagedDataTable<V,SearchFormType,FormType>{
 	private IManagedBean< SearchFormType,FormType> mBean;
 	protected boolean isList;
 	protected boolean showSelectAll;
+	protected boolean showSelectAllCommands = false;
 	protected boolean enableDelete;
 	protected boolean customDelete;
 	
@@ -71,6 +72,14 @@ implements PagedDataTable<V,SearchFormType,FormType>{
 	@Override
 	public void setShowSelectAll(boolean showSelectAll) {
 		this.showSelectAll = showSelectAll;
+	}
+	@Override
+	public boolean isShowSelectAllCommands() {
+		return this.showSelectAllCommands;
+	}
+	@Override
+	public void setShowSelectAllCommands(boolean showSelectAllCommands) {
+		this.showSelectAllCommands = showSelectAllCommands;
 	}
 	@Override
 	public boolean isEnableDelete() {

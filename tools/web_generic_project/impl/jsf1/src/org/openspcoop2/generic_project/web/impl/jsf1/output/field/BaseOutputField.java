@@ -57,6 +57,8 @@ public abstract class BaseOutputField<T> implements OutputField<T> {
 	protected boolean secret ;
 
 	protected boolean escape = true;
+	
+	protected boolean escapeLabel = true;
 
 	protected String pattern;
 
@@ -194,6 +196,16 @@ public abstract class BaseOutputField<T> implements OutputField<T> {
 	@Override
 	public void setEscape(boolean escape) {
 		this.escape = escape;
+	}
+	
+	@Override
+	public boolean isEscapeLabel() {
+		return this.escapeLabel;
+	}
+	
+	@Override
+	public void setEscapeLabel(boolean escapeLabel) {
+		this.escapeLabel = escapeLabel;
 	}
 
 	@Override

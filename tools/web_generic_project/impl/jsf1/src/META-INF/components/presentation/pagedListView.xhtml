@@ -42,6 +42,9 @@
 	<c:if test="#{empty showSelectAll}">
 		<c:set var="showSelectAll" value="true"/>
 	</c:if>
+	<c:if test="#{empty showSelectAllCommands}">
+		<c:set var="showSelectAllCommands" value="false"/>
+	</c:if>
 	<c:if test="#{empty enableDelete}">
 		<c:set var="enableDelete" value="true"/>
 	</c:if>

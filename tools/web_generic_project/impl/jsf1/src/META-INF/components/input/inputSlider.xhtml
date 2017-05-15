@@ -14,26 +14,58 @@
 		<c:set var="disabled" value="#{field.disabled}" />
 	</c:if>
 
-	<c:if test="#{empty field.converterType}">
-		<op2web:prop label="#{field.label}" rendered="#{field.rendered}" styleClass="#{field.labelStyleClass}">
-			<rich:inputNumberSlider value="#{field.value}" showInput="#{field.showInput}"
-	           enableManualInput="#{field.enableManualInput}" showBoundaryValues="#{field.showBoundaryValues}"
-	           showToolTip="#{field.showToolTip}" maxValue="#{field.maxValue}" step="#{field.step}" styleClass="#{field.styleClass}"
-	           	 minValue="#{field.minValue}" maxlength="#{field.maxlength}" orientation="#{field.orientation}" disabled="#{disabled}" 
-	           	  style="#{field.style}"/> 
-		</op2web:prop>
+	<c:if test="#{empty field.fieldsToUpdate}">
+		<c:if test="#{empty field.converterType}">
+			<op2web:prop label="#{field.label}" rendered="#{field.rendered}" styleClass="#{field.labelStyleClass}">
+				<rich:inputNumberSlider value="#{field.value}" showInput="#{field.showInput}"  id="input_#{field.name}"
+	           	enableManualInput="#{field.enableManualInput}" showBoundaryValues="#{field.showBoundaryValues}" inputPosition="#{field.inputPosition}"
+	           	showToolTip="#{field.showToolTip}" maxValue="#{field.maxValue}" step="#{field.step}" styleClass="#{field.styleClass}"
+	           	minValue="#{field.minValue}" maxlength="#{field.maxlength}" orientation="#{field.orientation}" disabled="#{disabled}" 
+	           	style="#{field.style}"/> 
+			</op2web:prop>
+		</c:if>
+	
+		<c:if test="#{not empty field.converterType}">
+			<op2web:prop label="#{field.label}" rendered="#{field.rendered}" styleClass="#{field.labelStyleClass}">
+				<rich:inputNumberSlider value="#{field.value}" showInput="#{field.showInput}"  id="input_#{field.name}"
+	           	enableManualInput="#{field.enableManualInput}" showBoundaryValues="#{field.showBoundaryValues}" inputPosition="#{field.inputPosition}"
+	           	showToolTip="#{field.showToolTip}" maxValue="#{field.maxValue}" step="#{field.step}" styleClass="#{field.styleClass}"
+	           	minValue="#{field.minValue}" maxlength="#{field.maxlength}" orientation="#{field.orientation}" disabled="#{disabled}" 
+	           	style="#{field.style}">
+	        	  	<f:convertNumber type="#{field.converterType}" />
+        	  	</rich:inputNumberSlider> 
+			</op2web:prop>
+		</c:if>
 	</c:if>
 	
-	<c:if test="#{not empty field.converterType}">
-		<op2web:prop label="#{field.label}" rendered="#{field.rendered}" styleClass="#{field.labelStyleClass}">
-			<rich:inputNumberSlider value="#{field.value}" showInput="#{field.showInput}"
-	           enableManualInput="#{field.enableManualInput}" showBoundaryValues="#{field.showBoundaryValues}"
-	           showToolTip="#{field.showToolTip}" maxValue="#{field.maxValue}" step="#{field.step}" styleClass="#{field.styleClass}"
-	           	 minValue="#{field.minValue}" maxlength="#{field.maxlength}" orientation="#{field.orientation}" disabled="#{disabled}" 
-	           	  style="#{field.style}">
-		           	  	<f:convertNumber type="#{field.converterType}" />
-	           	  </rich:inputNumberSlider> 
-		</op2web:prop>
+	<c:if test="#{!empty field.fieldsToUpdate}">
+		<c:if test="#{empty field.converterType}">
+			<op2web:prop label="#{field.label}" rendered="#{field.rendered}" styleClass="#{field.labelStyleClass}">
+				<rich:inputNumberSlider value="#{field.value}" showInput="#{field.showInput}"  id="input_#{field.name}"
+	           	enableManualInput="#{field.enableManualInput}" showBoundaryValues="#{field.showBoundaryValues}" inputPosition="#{field.inputPosition}"
+	           	showToolTip="#{field.showToolTip}" maxValue="#{field.maxValue}" step="#{field.step}" styleClass="#{field.styleClass}"
+	           	minValue="#{field.minValue}" maxlength="#{field.maxlength}" orientation="#{field.orientation}" disabled="#{disabled}" 
+	           	style="#{field.style}"/> 
+	           	<a4j:support status="mainStatus" event="onchange"
+					reRender="#{field.fieldsToUpdate}"
+					actionListener="#{field.valueChanged}" />
+			</op2web:prop>
+		</c:if>
+	
+		<c:if test="#{not empty field.converterType}">
+			<op2web:prop label="#{field.label}" rendered="#{field.rendered}" styleClass="#{field.labelStyleClass}">
+				<rich:inputNumberSlider value="#{field.value}" showInput="#{field.showInput}"  id="input_#{field.name}"
+	           	enableManualInput="#{field.enableManualInput}" showBoundaryValues="#{field.showBoundaryValues}" inputPosition="#{field.inputPosition}"
+	           	showToolTip="#{field.showToolTip}" maxValue="#{field.maxValue}" step="#{field.step}" styleClass="#{field.styleClass}"
+	           	minValue="#{field.minValue}" maxlength="#{field.maxlength}" orientation="#{field.orientation}" disabled="#{disabled}" 
+	           	style="#{field.style}">
+	        	  	<f:convertNumber type="#{field.converterType}" />
+	        	  	<a4j:support status="mainStatus" event="onchange"
+					reRender="#{field.fieldsToUpdate}"
+					actionListener="#{field.valueChanged}" />
+        	  	</rich:inputNumberSlider> 
+			</op2web:prop>
+		</c:if>
 	</c:if>
 	
 </ui:composition>
