@@ -77,6 +77,10 @@ public interface OutputField<T> extends Serializable{
 	// Indica se bisogna fare l'escape html del valore
 	public boolean isEscape();
 	public void setEscape(boolean escape);
+	
+	// Indica se bisogna fare l'escape html della label
+	public boolean isEscapeLabel();
+	public void setEscapeLabel(boolean escapeLabel);
 
 	// Classe/i CSS della Label
 	public String getLabelStyleClass();

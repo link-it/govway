@@ -45,6 +45,10 @@ public interface PagedDataTable<V,SearchFormType extends SearchForm,FormType ext
 	// Mostra/Nascondi check box per la selezione di tutte le righe
 	public boolean isShowSelectAll();
 	public void setShowSelectAll(boolean showSelectAll);
+	
+	// Mostra/Nascondi comandi per l'export di tutti i risultati anche quelli non visualizzati nella pagina corrente
+	public boolean isShowSelectAllCommands();
+	public void setShowSelectAllCommands(boolean showSelectAllCommands);
 
 	// Abilita/disabilita cancellazione righe
 	public boolean isEnableDelete();
