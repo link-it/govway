@@ -240,7 +240,7 @@ for (int i = 0; i < dati.size(); i++) {
 	                            			<div class="prop">
 	                            				<label><%=deLabel %></label>
 	                            				<%
-						     					if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
+						     					if ((pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) && de.isLabelAffiancata()) {
 						     						String taValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
 						     						%><span class="<%=classSpanNoEdit %>"><%= taValNoEdit %></span><%
 						     					} else {

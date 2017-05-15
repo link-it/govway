@@ -103,6 +103,14 @@ select.inputLinkLong {
 	color: #3c3c44;
 }
 
+textarea.inputLinkLong {
+	background-color: #ffffff ;	
+	background-image: none !important;
+/* 	border: 1px solid #c2c2c4 !important; */
+	width: auto;
+	color: #3c3c44;
+}
+
 .spacer {
 	width: 100%;
 	height: 1px;
