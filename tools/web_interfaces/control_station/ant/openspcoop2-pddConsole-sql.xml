@@ -287,8 +287,13 @@
 		<!-- sql DDL -->
 		
 		<var name="sqlSourceFiles" value="configurazionePdD/configurazionePdD.sql"/>
-		<var name="sqlSourceFiles" value="${sqlSourceFiles} archiviComunicazioni/ArchivioTracce.sql"/>
-		<var name="sqlSourceFiles" value="${sqlSourceFiles} archiviComunicazioni/ArchivioMessaggiDiagnostici.sql"/>
+		<if>
+			<equals arg1="${buildSQLSinglePdD_addArchivioComunicazioni}" arg2="true" />
+			<then>
+				<var name="sqlSourceFiles" value="${sqlSourceFiles} archiviComunicazioni/ArchivioTracce.sql"/>
+				<var name="sqlSourceFiles" value="${sqlSourceFiles} archiviComunicazioni/ArchivioMessaggiDiagnostici.sql"/>
+			</then>
+		</if>
 		
 		<var name="sqlDataFiles" value="single_pdd/control_station_data.sql"/>
 		<var name="sqlDataFiles" value="${sqlDataFiles} single_pdd/users_data.sql"/>
@@ -315,8 +320,15 @@
 		
 		<!-- sql Delete (Dati) -->
 		
-		<var name="sqlSourceFiles_delete" value="archiviComunicazioni/ArchivioTracce_delete.sql"/>
-		<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} archiviComunicazioni/ArchivioMessaggiDiagnostici_delete.sql"/>
+		<var name="sqlSourceFiles_delete" value="" />
+		
+		<if>
+			<equals arg1="${buildSQLSinglePdD_addArchivioComunicazioni}" arg2="true" />
+			<then>
+				<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} archiviComunicazioni/ArchivioTracce_delete.sql"/>
+				<var name="sqlSourceFiles_delete" value="${sqlSourceFiles_delete} archiviComunicazioni/ArchivioMessaggiDiagnostici_delete.sql"/>
+			</then>
+		</if>
 		
 		<antcall target="build_sql_utility">
 			<param name="SQLDirectory" value="${sql_pddConsole}"/>
@@ -361,8 +373,16 @@ DELETE FROM pdd where tipo='operativo';]]></replacevalue>
 		
 		<!-- sql Drop -->
 		
-		<var name="sqlSourceFiles_drop" value="archiviComunicazioni/ArchivioTracce_drop.sql"/>
-		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} archiviComunicazioni/ArchivioMessaggiDiagnostici_drop.sql"/>
+		<var name="sqlSourceFiles_drop" value="" />
+
+		<if>
+			<equals arg1="${buildSQLSinglePdD_addArchivioComunicazioni}" arg2="true" />
+			<then>
+				<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} archiviComunicazioni/ArchivioTracce_drop.sql"/>
+				<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} archiviComunicazioni/ArchivioMessaggiDiagnostici_drop.sql"/>
+			</then>
+		</if>
+
 		<var name="sqlSourceFiles_drop" value="${sqlSourceFiles_drop} configurazionePdD/configurazionePdD_drop.sql"/>
 		
 		<antcall target="build_sql_utility">

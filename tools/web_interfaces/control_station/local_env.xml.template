@@ -18,6 +18,7 @@
       <property name="buildAsRelease" value="false"/>
       <property name="buildPddConsole" value="true"/>
       <property name="buildAPI" value="true"/>
+      <property name="buildSQLSinglePdD_addArchivioComunicazioni" value="true"/>
 
       <!-- Dipendenze di compilazione -->
       <property name="mvc" location="../lib/mvc"/>
