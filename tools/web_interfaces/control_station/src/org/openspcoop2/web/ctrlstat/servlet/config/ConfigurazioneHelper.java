@@ -49,7 +49,6 @@ import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.LogLevels;
-import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -1323,13 +1322,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				this.pd.setMessage("Deve essere indicato un valore per la Dimensione della Cache "+nomeCache);
 				return false;
 			}
-			if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) && !dimensionecache.equals("") && !RegularExpressionEngine.isMatch(dimensionecache,"^[0-9]+$")) {
-				this.pd.setMessage("Dimensione della Cache "+nomeCache+" dev'essere numerico");
+			if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) && !dimensionecache.equals("") && 
+					!this.checkNumber(dimensionecache, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE+ "("+nomeCache+")", false)) {
 				return false;
 			}
 			
-			if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) && !idlecache.equals("") && !RegularExpressionEngine.isMatch(idlecache,"^[0-9]+$")) {
-				this.pd.setMessage("Idle time della Cache "+nomeCache+" dev'essere numerico");
+			if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) && !idlecache.equals("") && 
+					!this.checkNumber(idlecache, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_IDLE_CACHE+ "("+nomeCache+")", false)) {
 				return false;
 			}
 			
@@ -1337,8 +1336,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				this.pd.setMessage("Deve essere indicato un valore per l'impostazione 'Life second' della Cache "+nomeCache);
 				return false;
 			}
-			if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) && !lifecache.equals("") && !RegularExpressionEngine.isMatch(lifecache,"^[0-9]+$")) {
-				this.pd.setMessage("Life second della Cache "+nomeCache+" dev'essere numerico");
+			if (statocache.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO) && !lifecache.equals("") && 
+					!this.checkNumber(lifecache, ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIFE_CACHE+ "("+nomeCache+")", false)) {
 				return false;
 			}
 
@@ -1640,8 +1639,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 
 			// inoltromin dev'essere numerico
-			if (!RegularExpressionEngine.isMatch(inoltromin,"^[0-9]+$")) {
-				this.pd.setMessage("Inoltro buste dev'essere numerico");
+			if (!this.checkNumber(inoltromin, ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_INOLTRO_BUSTE_NON_RISCONTRATE, false) ) {
 				return false;
 			}
 

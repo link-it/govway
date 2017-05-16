@@ -47,6 +47,7 @@ import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.protocol.sdk.archive.Archive;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoCooperazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveAccordoServizioComposto;
@@ -443,6 +444,12 @@ public class DeleterArchiveUtils {
 				if(this.userLogin.equals(pddReadFromDb.getSuperUser())==false){
 					throw new Exception("La Porta di Dominio ["+nomePdd+"] non è visibile/eliminabile dall'utente collegato ("+this.userLogin+")");
 				}
+			}
+			
+			
+			// ---- tipo di Pdd ---
+			if(PddTipologia.OPERATIVO.toString().equals(this.importerEngine.getTipoPortaDominio(nomePdd))){
+				throw new Exception("La Porta di Dominio ["+nomePdd+"] non è eliminabile essendo di tipo '"+PddTipologia.OPERATIVO.toString()+"'");
 			}
 			
 			

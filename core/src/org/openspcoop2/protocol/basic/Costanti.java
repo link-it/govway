@@ -77,6 +77,8 @@ public class Costanti {
 	 *  	  il vero nome è dentro la definizione xml.
 	 *
 	 * openspcoop
+	 *      | - archive.info
+	 *      |
 	 *      | - configurazione
 	 *		|		  |
 	 *		|		  | - config.xml
@@ -169,6 +171,8 @@ public class Costanti {
 	 **/
 	public static final String OPENSPCOOP2_ARCHIVE_ROOT_DIR = "openspcoop";
 	
+	public static final String OPENSPCOOP2_ARCHIVE_VERSION_FILE_NAME = "archive.info";
+	
 	public static final String OPENSPCOOP2_ARCHIVE_INFORMATION_MISSING = "informationMissing.xml";
 	
 	public static final String OPENSPCOOP2_ARCHIVE_EXTENDED_DIR = "extended";
@@ -190,18 +194,20 @@ public class Costanti {
 	public static final String OPENSPCOOP2_ARCHIVE_PORTE_DELEGATE_DIR = "porteDelegate";
 	public static final String OPENSPCOOP2_ARCHIVE_PORTE_APPLICATIVE_DIR = "porteApplicative";
 	
+	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME = "accordo.id";
+	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR = "###";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_COMUNE_DIR = "accordiServizioParteComune";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_COMUNE_FILE_NAME = "accordo.xml";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_SPECIFICA_DIR = "accordiServizioParteSpecifica";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_SPECIFICA_FILE_NAME = "accordo.xml";
-	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_SPECIFICA_MAPPING_PA = "mappingErogazionePA.csv";
+	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_SPECIFICA_MAPPING_PA = "mappingErogazionePA.id";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_COMPOSTO_DIR = "accordiServizioComposto";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_COMPOSTO_FILE_NAME = "accordo.xml";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_COOPERAZIONE_DIR = "accordiCooperazione";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_COOPERAZIONE_FILE_NAME = "accordo.xml";
 	public static final String OPENSPCOOP2_ARCHIVE_FRUITORE_DIR = "fruitori";
 	public static final String OPENSPCOOP2_ARCHIVE_FRUITORE_SERVIZI_APPLICATIVI_AUTORIZZATI = "serviziApplicativiAutorizzati.csv"; // backward compatibility
-	public static final String OPENSPCOOP2_ARCHIVE_FRUITORE_MAPPING_PD = "mappingFruizionePD.csv";
+	public static final String OPENSPCOOP2_ARCHIVE_FRUITORE_MAPPING_PD = "mappingFruizionePD.id";
 	
 	
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_WSDL = "wsdl";
@@ -219,6 +225,9 @@ public class Costanti {
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_SPECIFICA_CONVERSIONE_LOGICA_EROGATORE = "ConversazioneLogicaErogatore.xml";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_SPECIFICA_CONVERSIONE_LOGICA_FRUITORE = "ConversazioneLogicaFruitore.xml";
 	
+	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_PREFIX = "attachment_";
+	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_ID = ".id";
+	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_CONTENT = ".raw";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_ALLEGATI = "allegati";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SEMIFORMALI = "specificheSemiformali";
 	public static final String OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_COORDINAMENTO = "specificheCoordinamento";

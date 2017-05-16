@@ -69,6 +69,29 @@
 	</jaxws:endpoint>
 	
 	<jaxws:endpoint 
+		id="Ruolo_PortSoap11"
+		serviceName="RuoloSoap11Service"
+		implementor="org.openspcoop2.core.registry.ws.server.impl.Ruolo@IMPLEMENTOR@Impl_PortSoap11"
+		address="/Ruolo/Soap11" 
+		xmlns="http://www.openspcoop2.org/core/registry/management"
+		wsdlLocation="/WEB-INF/classes/Ruolo@IMPLEMENTOR@_PortSoap11.wsdl" >
+		<jaxws:properties>
+			<bean:entry key="schema-validation-enabled" value="true"/>
+		</jaxws:properties>
+	</jaxws:endpoint>
+	<jaxws:endpoint 
+		id="Ruolo_PortSoap12"
+		serviceName="RuoloSoap12Service"
+		implementor="org.openspcoop2.core.registry.ws.server.impl.Ruolo@IMPLEMENTOR@Impl_PortSoap12"
+		address="/Ruolo/Soap12" 
+		xmlns="http://www.openspcoop2.org/core/registry/management"
+		wsdlLocation="/WEB-INF/classes/Ruolo@IMPLEMENTOR@_PortSoap12.wsdl" >
+		<jaxws:properties>
+			<bean:entry key="schema-validation-enabled" value="true"/>
+		</jaxws:properties>
+	</jaxws:endpoint>
+	
+	<jaxws:endpoint 
 		id="Soggetto_PortSoap11"
 		serviceName="SoggettoSoap11Service"
 		implementor="org.openspcoop2.core.registry.ws.server.impl.Soggetto@IMPLEMENTOR@Impl_PortSoap11"
@@ -109,29 +132,6 @@
 		address="/AccordoServizioParteSpecifica/Soap12" 
 		xmlns="http://www.openspcoop2.org/core/registry/management"
 		wsdlLocation="/WEB-INF/classes/AccordoServizioParteSpecifica@IMPLEMENTOR@_PortSoap12.wsdl" >
-		<jaxws:properties>
-			<bean:entry key="schema-validation-enabled" value="true"/>
-		</jaxws:properties>
-	</jaxws:endpoint>
-	
-	<jaxws:endpoint 
-		id="Ruolo_PortSoap11"
-		serviceName="RuoloSoap11Service"
-		implementor="org.openspcoop2.core.registry.ws.server.impl.Ruolo@IMPLEMENTOR@Impl_PortSoap11"
-		address="/Ruolo/Soap11" 
-		xmlns="http://www.openspcoop2.org/core/registry/management"
-		wsdlLocation="/WEB-INF/classes/Ruolo@IMPLEMENTOR@_PortSoap11.wsdl" >
-		<jaxws:properties>
-			<bean:entry key="schema-validation-enabled" value="true"/>
-		</jaxws:properties>
-	</jaxws:endpoint>
-	<jaxws:endpoint 
-		id="Ruolo_PortSoap12"
-		serviceName="RuoloSoap12Service"
-		implementor="org.openspcoop2.core.registry.ws.server.impl.Ruolo@IMPLEMENTOR@Impl_PortSoap12"
-		address="/Ruolo/Soap12" 
-		xmlns="http://www.openspcoop2.org/core/registry/management"
-		wsdlLocation="/WEB-INF/classes/Ruolo@IMPLEMENTOR@_PortSoap12.wsdl" >
 		<jaxws:properties>
 			<bean:entry key="schema-validation-enabled" value="true"/>
 		</jaxws:properties>

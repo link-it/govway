@@ -101,6 +101,7 @@ public final class Exporter extends Action {
 			String cascade = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE);
 			
 			String cascadePdd = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_PDD);
+			String cascadeRuoli = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_RUOLI);
 			String cascadeSoggetti = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_SOGGETTI);
 			String cascadeServiziApplicativi = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_SERVIZI_APPLICATIVI);
 			String cascadePorteDelegate = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_PORTE_DELEGATE);
@@ -274,6 +275,9 @@ public final class Exporter extends Action {
 					if(cascadeConfig.isCascadePdd()){
 						send = send + "&" + ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_PDD+"="+ (ServletUtils.isCheckBoxEnabled(cascadePdd)?Costanti.CHECK_BOX_ENABLED:Costanti.CHECK_BOX_DISABLED);
 					}
+					if(cascadeConfig.isCascadeRuoli()){
+						send = send + "&" + ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_RUOLI+"="+ (ServletUtils.isCheckBoxEnabled(cascadeRuoli)?Costanti.CHECK_BOX_ENABLED:Costanti.CHECK_BOX_DISABLED);
+					}
 					if(cascadeConfig.isCascadeSoggetti()){
 						send = send + "&" + ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_SOGGETTI+"="+ (ServletUtils.isCheckBoxEnabled(cascadeSoggetti)?Costanti.CHECK_BOX_ENABLED:Costanti.CHECK_BOX_DISABLED);
 					}
@@ -329,6 +333,7 @@ public final class Exporter extends Action {
 					&&
 					(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE.equals(postBackElementName) || ArchiviCostanti.PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO.equals(postBackElementName)) ){
 				cascadePdd = Costanti.CHECK_BOX_ENABLED;
+				cascadeRuoli = Costanti.CHECK_BOX_ENABLED;
 				cascadeSoggetti = Costanti.CHECK_BOX_ENABLED;
 				cascadeServiziApplicativi = Costanti.CHECK_BOX_ENABLED;
 				cascadePorteDelegate = Costanti.CHECK_BOX_ENABLED;
@@ -344,7 +349,7 @@ public final class Exporter extends Action {
 					exportModes, exportMode, 
 					archiveType, objToExport,
 					cascade,tipoConfigurazione,
-					cascadePdd,cascadeSoggetti,
+					cascadePdd,cascadeRuoli,cascadeSoggetti,
 					cascadeServiziApplicativi, cascadePorteDelegate, cascadePorteApplicative,
 					cascadeAccordiCooperazione, cascadeAccordiServizioParteComune, 
 					cascadeAccordiServizioComposto, 

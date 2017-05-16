@@ -2979,7 +2979,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addWhereCondition("id_servizio_applicativo=?");
 				sqlQuery = sqlQueryObject.createSQLDelete();
 				stm = con.prepareStatement(sqlQuery);
-				stm.setLong(1, aSA.getId());
+				stm.setLong(1, idServizioApplicativo);
 				n=stm.executeUpdate();
 				stm.close();
 				if (n > 0)

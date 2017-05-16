@@ -39,7 +39,6 @@ import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
-import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
@@ -118,8 +117,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			}
 
 			// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
-			if (!RegularExpressionEngine.isMatch(nome,"^[0-9A-Za-z_\\-\\.]+$")) {
-				this.pd.setMessage("Il nome dell'accordo di servizio dev'essere formato solo caratteri, cifre, '_' , '-' e '.'");
+			if(this.checkNCName(nome,AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_NOME)==false){
 				return false;
 			}
 
@@ -129,8 +127,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 						this.pd.setMessage("La versione dev'essere scritto come MajorVersion[.MinorVersion*] (MajorVersion [1-9]) (MinorVersion [0-9]) (* [0-9A-Za-z]) ");
 						return false;
 					}*/
-				if (!versione.equals("") && !RegularExpressionEngine.isMatch(versione,"^[1-9]+[0-9]*$")) {
-					this.pd.setMessage("La versione dev'essere rappresentata da un numero intero");
+				if (!versione.equals("") && !this.checkNumber(versione,AccordiCooperazioneCostanti.LABEL_PARAMETRO_ACCORDI_COOPERAZIONE_VERSIONE,false)) {
 					return false;
 				}
 //			}

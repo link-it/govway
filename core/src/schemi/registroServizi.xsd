@@ -202,6 +202,20 @@
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime"/>
 	</xsd:complexType>
 	
+
+
+
+	<!-- Ruoli -->
+	<xsd:element name="ruolo" type="ruolo" />
+	<xsd:complexType name="ruolo">
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
+		<xsd:attribute name="tipologia" type="RuoloTipologia" use="optional" default="qualsiasi"/>
+		<xsd:attribute name="contesto-utilizzo" type="RuoloContesto" use="optional" default="qualsiasi"/>
+		<xsd:attribute name="ora-registrazione" type="xsd:dateTime" use="optional"/>
+	</xsd:complexType>
+
+
 	
 	
 	<!-- un Soggetto contiene: un connettore su cui viene gestito (punto di accesso della sua porta di dominio)
@@ -374,24 +388,7 @@
 	</xsd:complexType>
 	
 	
-	
-	
-	<!-- Ruoli -->
-	<xsd:element name="ruolo" type="ruolo" />
-	<xsd:complexType name="ruolo">
-		<xsd:attribute name="nome" type="xsd:string" use="required"/>
-		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
-		<xsd:attribute name="tipologia" type="RuoloTipologia" use="optional" default="qualsiasi"/>
-		<xsd:attribute name="contesto-utilizzo" type="RuoloContesto" use="optional" default="qualsiasi"/>
-		<xsd:attribute name="ora-registrazione" type="xsd:dateTime" use="optional"/>
-	</xsd:complexType>
-	
 
-	
-	
-	
-	
-	
 	
 	<!-- Enumeration -->
 	<xsd:simpleType name="ServiceBinding">

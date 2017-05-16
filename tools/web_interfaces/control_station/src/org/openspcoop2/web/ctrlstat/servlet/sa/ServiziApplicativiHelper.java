@@ -830,6 +830,12 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				this.pd.setMessage("Non inserire spazi o doppi apici nei campi di testo");
 				return false;
 			}
+			if(this.checkIntegrationEntityName(nome, ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME)==false){
+				return false;
+			}
+			
+			
+			
 //			if (tipoauth.equals(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_AUTENTICAZIONE_BASIC) && ((utente.indexOf(" ") != -1) || (password.indexOf(" ") != -1))) {
 //				this.pd.setMessage("Non inserire spazi nei campi di testo");
 //				return false;

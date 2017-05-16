@@ -42,11 +42,11 @@ public class IdEntity extends org.openspcoop2.utils.beans.BaseBean {
 	
 	@XmlElement(name="wrapperIdPortaDominio", namespace="http://www.openspcoop2.org/core/registry/management", type=WrapperIdPortaDominio.class),
 	
+	@XmlElement(name="wrapperIdRuolo", namespace="http://www.openspcoop2.org/core/registry/management", type=WrapperIdRuolo.class),
+	
 	@XmlElement(name="wrapperIdSoggetto", namespace="http://www.openspcoop2.org/core/registry/management", type=WrapperIdSoggetto.class),
 	
-	@XmlElement(name="wrapperIdAccordoServizioParteSpecifica", namespace="http://www.openspcoop2.org/core/registry/management", type=WrapperIdAccordoServizioParteSpecifica.class),
-	
-	@XmlElement(name="wrapperIdRuolo", namespace="http://www.openspcoop2.org/core/registry/management", type=WrapperIdRuolo.class)
+	@XmlElement(name="wrapperIdAccordoServizioParteSpecifica", namespace="http://www.openspcoop2.org/core/registry/management", type=WrapperIdAccordoServizioParteSpecifica.class)
 	})
 	
 	private Object id;
@@ -64,13 +64,13 @@ public class IdEntity extends org.openspcoop2.utils.beans.BaseBean {
 	public void setId(WrapperIdPortaDominio id) {	
 		this.id = id;
 	}
+	public void setId(WrapperIdRuolo id) {	
+		this.id = id;
+	}
 	public void setId(WrapperIdSoggetto id) {	
 		this.id = id;
 	}
 	public void setId(WrapperIdAccordoServizioParteSpecifica id) {	
-		this.id = id;
-	}
-	public void setId(WrapperIdRuolo id) {	
 		this.id = id;
 	}
 	

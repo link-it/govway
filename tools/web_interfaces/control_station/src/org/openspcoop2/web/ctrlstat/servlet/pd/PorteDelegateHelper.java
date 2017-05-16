@@ -1491,6 +1491,9 @@ public class PorteDelegateHelper extends ConsoleHelper {
 				this.pd.setMessage("Non inserire spazi nei campi di testo");
 				return false;
 			}
+			if(this.checkIntegrationEntityName(nomePD,PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_NOME)==false){
+				return false;
+			}
 			if (!modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT)) {
 				if (modesp.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED)) {
 					if (tiposp.indexOf(" ") != -1) {

@@ -34,11 +34,11 @@ public class ModelFactory {
 	
 	public static PortaDominioModel PORTA_DOMINIO = new PortaDominioModel();
 	
+	public static RuoloModel RUOLO = new RuoloModel();
+	
 	public static SoggettoModel SOGGETTO = new SoggettoModel();
 	
 	public static AccordoServizioParteSpecificaModel ACCORDO_SERVIZIO_PARTE_SPECIFICA = new AccordoServizioParteSpecificaModel();
-	
-	public static RuoloModel RUOLO = new RuoloModel();
 	
 
 }

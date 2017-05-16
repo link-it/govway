@@ -60,7 +60,6 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
-import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
@@ -835,9 +834,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 			// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
-			//if (!this.procToCall.isOk("^[0-9A-Za-z_\\-\\.]+$", nomeop)) {
-			if (!RegularExpressionEngine.isMatch(nomeop,"^[_A-Za-z][\\-\\._A-Za-z0-9]*$")) {
-				this.pd.setMessage("Il nome dell'azione puo' iniziare solo con un carattere [A-Za-z] o il simbolo '_' e dev'essere formato solo da caratteri, cifre, '_' , '-' e '.'");
+			if(this.checkNCName(nomeop, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME)==false){
 				return false;
 			}
 
@@ -869,8 +866,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				}
 
 				// scadenzapt dev'essere numerico
-				if (!scadenzaop.equals("") && !RegularExpressionEngine.isMatch(scadenzaop,"^[0-9]+$")) {
-					this.pd.setMessage("Scadenza dev'essere numerico");
+				if (!scadenzaop.equals("") && !this.checkNumber(scadenzaop, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA, false)) {
 					return false;
 				}
 			}
@@ -1000,7 +996,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 
 			de = new DataElement();
-			de.setLabel(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME);
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME);
 			de.setValue(nomeop);
 			if (tipoOperazione.equals(TipoOperazione.ADD)) {
 				de.setType(DataElementType.TEXT_EDIT);
@@ -1527,11 +1523,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 			// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
-			//if (!this.procToCall.isOk("^[0-9A-Za-z_\\-\\.]+$", nomept)) {
-			if (!RegularExpressionEngine.isMatch(nomept,"^[_A-Za-z][\\-\\._A-Za-z0-9]*$")) {
-				this.pd.setMessage("Il nome del servizio puo' iniziare solo con un carattere [A-Za-z] o il simbolo '_' e dev'essere formato solo da caratteri, cifre, '_' , '-' e '.'");
+			if(this.checkNCName(nomept, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME)==false){
 				return false;
-			}
+			}			
 
 			// Controllo che i campi DataElementType.SELECT abbiano uno dei valori ammessi
 			if (!profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_DEFAULT) && !profProtocollo.equals(AccordiServizioParteComuneCostanti.INFORMAZIONI_PROTOCOLLO_MODALITA_RIDEFINITO)) {
@@ -1560,8 +1554,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				}
 
 				// scadenzapt dev'essere numerico
-				if (!scadenzapt.equals("") && !RegularExpressionEngine.isMatch(scadenzapt,"^[0-9]+$")) {
-					this.pd.setMessage(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA+" dev'essere numerico");
+				if (!scadenzapt.equals("") && !this.checkNumber(scadenzapt, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA, false)) {
 					return false;
 				}
 			}
@@ -2068,9 +2061,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 			// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
-			//if (!this.procToCall.isOk("^[0-9A-Za-z_\\-\\.]+$", nomeaz)) {
-			if (!RegularExpressionEngine.isMatch(nomeaz,"^[_A-Za-z][\\-\\._A-Za-z0-9]*$")) {
-				this.pd.setMessage("Il nome dell'azione puo' iniziare solo con un carattere [A-Za-z] o il simbolo '_' e dev'essere formato solo da caratteri, cifre, '_' , '-' e '.'");
+			if(this.checkNCName(nomeaz, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME)==false){
 				return false;
 			}
 
@@ -2102,8 +2093,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				}
 
 				// scadenzaaz dev'essere numerico
-				if (!scadenzaaz.equals("") && !RegularExpressionEngine.isMatch(scadenzaaz,"^[0-9]+$")) {
-					this.pd.setMessage(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA+" dev'essere numerico");
+				if (!scadenzaaz.equals("") && !this.checkNumber(scadenzaaz, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA, false)) {
 					return false;
 				}
 			}
@@ -3804,8 +3794,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 
 			// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
-			if (!RegularExpressionEngine.isMatch(nome,"^[0-9A-Za-z_\\-\\.]+$")) {
-				this.pd.setMessage("Il nome dell'accordo di servizio dev'essere formato solo caratteri, cifre, '_' , '-' e '.'");
+			if(this.checkNCName(nome, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME)==false){
 				return false;
 			}
 
@@ -3814,8 +3803,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					this.pd.setMessage("La versione dev'essere scritto come MajorVersion[.MinorVersion*] (MajorVersion [1-9]) (MinorVersion [0-9]) (* [0-9A-Za-z]) ");
 					return false;
 				}*/
-			if (!versione.equals("") && !RegularExpressionEngine.isMatch(versione,"^[1-9]+[0-9]*$")) {
-				this.pd.setMessage("La versione dev'essere rappresentata da un numero intero");
+			if (!versione.equals("") && !this.checkNumber(versione, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VERSIONE, false)) {
 				return false;
 			}
 
@@ -3850,8 +3838,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 
 			// scadenza dev'essere numerica
-			if (!scadenza.equals("") && !RegularExpressionEngine.isMatch(scadenza,"^[0-9]+$")) {
-				this.pd.setMessage("Scadenza dev'essere numerico");
+			if (!scadenza.equals("") && !this.checkNumber(scadenza, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SCADENZA, false)) {
 				return false;
 			}
 

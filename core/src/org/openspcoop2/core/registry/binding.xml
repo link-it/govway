@@ -213,6 +213,15 @@
     <value name="client-auth" field="clientAuth" default="disabilitato" usage="optional" enum-value-method="toString" style="attribute"/>
     <value name="ora-registrazione" field="oraRegistrazione" usage="optional" style="attribute"/>
   </mapping>
+  <mapping name="ruolo" class="org.openspcoop2.core.registry.Ruolo">
+    <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
+    <value name="nome" field="nome" usage="required" style="attribute"/>
+    <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
+    <value name="tipologia" field="tipologia" default="qualsiasi" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="contesto-utilizzo" field="contestoUtilizzo" default="qualsiasi" usage="optional" enum-value-method="toString" style="attribute"/>
+    <value name="ora-registrazione" field="oraRegistrazione" usage="optional" style="attribute"/>
+    <value name="super-user" field="superUser" usage="optional" style="attribute"/>
+  </mapping>
   <mapping name="soggetto" class="org.openspcoop2.core.registry.Soggetto">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
     <structure name="connettore" field="connettore" usage="optional" map-as="_Connettore_Type"/>
@@ -409,15 +418,6 @@
     <value name="byte-file" field="byteFile" usage="optional" style="attribute"/>
     <value name="tipo-proprietario" field="tipoProprietario" usage="optional" style="attribute"/>
     <value name="id-proprietario" field="idProprietario" usage="optional" style="attribute"/>
-  </mapping>
-  <mapping name="ruolo" class="org.openspcoop2.core.registry.Ruolo">
-    <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>
-    <value name="nome" field="nome" usage="required" style="attribute"/>
-    <value name="descrizione" field="descrizione" usage="optional" style="attribute"/>
-    <value name="tipologia" field="tipologia" default="qualsiasi" usage="optional" enum-value-method="toString" style="attribute"/>
-    <value name="contesto-utilizzo" field="contestoUtilizzo" default="qualsiasi" usage="optional" enum-value-method="toString" style="attribute"/>
-    <value name="ora-registrazione" field="oraRegistrazione" usage="optional" style="attribute"/>
-    <value name="super-user" field="superUser" usage="optional" style="attribute"/>
   </mapping>
   <mapping name="property" class="org.openspcoop2.core.registry.Property">
     <namespace uri="http://www.openspcoop2.org/core/registry" default="elements"/>

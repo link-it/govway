@@ -24,9 +24,10 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
-import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
@@ -75,7 +76,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
 import org.openspcoop2.protocol.sdk.archive.IArchive;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
-import org.slf4j.Logger;
+
 
 /**
  * ExporterArchiveUtils 
@@ -209,6 +210,51 @@ public class ExporterArchiveUtils {
 			if(exportSourceArchiveType.equals(ArchiveType.ALL)){
 				archive.setConfigurazionePdD(this.archiveEngine.getConfigurazione());
 			}
+			
+			// aggiungo porte di dominio 'zombie'
+			FiltroRicerca filtroRicercaPdd = new FiltroRicerca();
+			List<String> idPdds = null;
+			try{
+				idPdds = this.archiveEngine.getAllIdPorteDominio(filtroRicercaPdd);
+				for (String idPdd : idPdds) {
+					boolean found = false;
+					if(archive.getPdd()!=null && archive.getPdd().size()>0){
+						for (String idArchivePdd : archive.getPdd().keys()) {
+							ArchivePdd archivePdd = archive.getPdd().get(idArchivePdd);
+							if(archivePdd.getNomePdd().equals(idPdd)){
+								found = true;
+								break;
+							}
+						}
+					}
+					if(!found){
+						this.readPdd(archive, idPdd, cascadeConfig, false, ArchiveType.PDD);
+					}
+				}
+			}catch(DriverRegistroServiziNotFound notFound){}
+			
+			// aggiungo ruoli 'zombie'
+			FiltroRicercaRuoli filtroRicercaRuoli = new FiltroRicercaRuoli();
+			List<IDRuolo> idRuoli = null;
+			try{
+				idRuoli = this.archiveEngine.getAllIdRuoli(filtroRicercaRuoli);
+				for (IDRuolo idRuolo : idRuoli) {
+					boolean found = false;
+					if(archive.getRuoli()!=null && archive.getRuoli().size()>0){
+						for (String idArchiveRuolo : archive.getRuoli().keys()) {
+							ArchiveRuolo archiveRuolo = archive.getRuoli().get(idArchiveRuolo);
+							if(archiveRuolo.getIdRuolo().equals(idRuolo)){
+								found = true;
+								break;
+							}
+						}
+					}
+					if(!found){
+						this.readRuolo(archive, idRuolo, cascadeConfig, false, ArchiveType.RUOLO);
+					}
+				}
+			}catch(DriverRegistroServiziNotFound notFound){}
+				
 			break;
 		default:
 			break;

@@ -1797,10 +1797,70 @@ public class ConsoleHelper {
 
 
 
+	
+	// *** Utilities per i nomi ***
+	
+	// In effetti iniziare con un '.' o un '-' e' brutto, per adesso si elimina questa possibilita
+//	public boolean checkName(String name, String object) throws Exception{
+//		// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
+//		if (!RegularExpressionEngine.isMatch(name,"^[0-9A-Za-z_\\-\\.]+$")) {
+//			this.pd.setMessage("Il campo '"+object+"' deve essere formato solo da caratteri, cifre, '_' , '-' e '.'");
+//			return false;
+//		}
+//		return true;
+//	}	
+
+	public boolean checkNCName(String name, String object) throws Exception{
+		// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
+		if (!RegularExpressionEngine.isMatch(name,"^[_A-Za-z][\\-\\._A-Za-z0-9]*$")) {
+			this.pd.setMessage("Il campo '"+object+"' può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e dev'essere formato solo da caratteri, cifre, '_' , '-' e '.'");
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean checkSimpleName(String name, String object) throws Exception{
+		if (!RegularExpressionEngine.isMatch(name,"^[0-9A-Za-z]+$")) {
+			this.pd.setMessage("Il campo '"+object+"' deve essere formato solo da caratteri e cifre");
+			return false;
+		}		
+		return true;
+	}
+	
+	public boolean checkIntegrationEntityName(String name, String object) throws Exception{
+		// Il nome deve contenere solo lettere e numeri e '_' '-' '.' '/'
+		if (!RegularExpressionEngine.isMatch(name,"^[_A-Za-z][\\-\\._/A-Za-z0-9]*$")) {
+			this.pd.setMessage("Il campo '"+object+"' può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e dev'essere formato solo da caratteri, cifre, '_' , '-', '.' e '/'");
+			return false;
+		}
+		return true;
+	}
+	
+	
+	public boolean checkNumber(String value, String object, boolean permitZeroAsValue) throws Exception{
+		if(permitZeroAsValue){
+			if (!RegularExpressionEngine.isMatch(value,"^[0-9]+$")) {
+				this.pd.setMessage("Il campo '"+object+"' deve essere formato solo da cifre");
+				return false;
+			}	
+		}
+		else{
+			if (!RegularExpressionEngine.isMatch(value,"^[1-9]+[0-9]*$")) {
+				if(value.charAt(0) == '0' && value.length()>1){
+					this.pd.setMessage("Il campo '"+object+"' deve contenere un numero intero maggiore di zero e non deve iniziare con la cifra '0'");
+				}else{
+					this.pd.setMessage("Il campo '"+object+"' deve contenere un numero intero maggiore di zero");
+				}
+				return false;
+			}
+		}
+		return true;
+	}
+	
 
 
 	// *** Utilities condivise tra Porte Delegate e Porte Applicative ***
-
+	
 	public Vector<DataElement> addPorteServizioApplicativoToDati(TipoOperazione tipoOp, Vector<DataElement> dati, 
 			String servizioApplicativo, String[] servizioApplicativoList, int sizeAttuale, 
 			boolean addMsgServiziApplicativoNonDisponibili) {

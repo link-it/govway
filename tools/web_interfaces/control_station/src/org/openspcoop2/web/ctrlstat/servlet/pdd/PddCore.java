@@ -366,6 +366,44 @@ public class PddCore extends ControlStationCore {
 		}
 	}
 	
+	public boolean existsPddOperativa() throws DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "existsPddOperativa";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			// Bug: Le porte di dominio in pddList hanno il limit a 20 !!
+			//			List<PdDControlStation> list = driver.pddList(null, new org.openspcoop2.web.ctrlstat.core.Search());
+//			for (PdDControlStation pddControlStation : list) {
+//				if(pddControlStation.getTipo()!=null && PddTipologia.OPERATIVO.toString().equals(pddControlStation.getTipo())){
+//					return pddControlStation.getNome();
+//				}
+//			}
+			
+			FiltroRicerca filtro = new FiltroRicerca();
+			filtro.setTipo(PddTipologia.OPERATIVO.toString());
+			try{
+				List<String> nomi = driver.getDriverRegistroServiziDB().getAllIdPorteDominio(filtro);
+				if(nomi!=null && nomi.size()>0){
+					return true;
+				}
+			}catch(DriverRegistroServiziNotFound notFound){}
+
+			return false;
+			
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
 	public String getNomePddOperativa() throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "getNomePddOperativa";

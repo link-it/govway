@@ -42,12 +42,12 @@ public enum Identified implements IEnumeration , Serializable , Cloneable {
 	ACCORDO_SERVIZIO_PARTE_COMUNE ("AccordoServizioParteComune"),
 	@javax.xml.bind.annotation.XmlEnumValue("PortaDominio")
 	PORTA_DOMINIO ("PortaDominio"),
+	@javax.xml.bind.annotation.XmlEnumValue("Ruolo")
+	RUOLO ("Ruolo"),
 	@javax.xml.bind.annotation.XmlEnumValue("Soggetto")
 	SOGGETTO ("Soggetto"),
 	@javax.xml.bind.annotation.XmlEnumValue("AccordoServizioParteSpecifica")
-	ACCORDO_SERVIZIO_PARTE_SPECIFICA ("AccordoServizioParteSpecifica"),
-	@javax.xml.bind.annotation.XmlEnumValue("Ruolo")
-	RUOLO ("Ruolo");
+	ACCORDO_SERVIZIO_PARTE_SPECIFICA ("AccordoServizioParteSpecifica");
 	
 	
 	/** Value */

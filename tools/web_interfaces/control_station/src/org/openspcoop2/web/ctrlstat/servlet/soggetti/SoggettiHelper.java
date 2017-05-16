@@ -512,13 +512,12 @@ public class SoggettiHelper extends ConnettoriHelper {
 			}
 
 			// Il nome deve contenere solo lettere e numeri
-			if (!RegularExpressionEngine.isMatch(nomeprov,"^[0-9A-Za-z]+$")) {
-				this.pd.setMessage("Il nome del soggetto dev'essere formato solo da caratteri e cifre");
+			if(this.checkSimpleName(nomeprov, SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_NOME)==false){
 				return false;
 			}
+			
 			// Il tipo deve contenere solo lettere e numeri
-			if (!RegularExpressionEngine.isMatch(tipoprov,"^[0-9A-Za-z]+$")) {
-				this.pd.setMessage("Il tipo del soggetto dev'essere formato solo da caratteri e cifre");
+			if(this.checkSimpleName(tipoprov, SoggettiCostanti.LABEL_PARAMETRO_SOGGETTO_TIPO)==false){
 				return false;
 			}
 

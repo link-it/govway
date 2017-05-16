@@ -4002,7 +4002,7 @@ public class DriverRegistroServiziDB_LIB {
 									documentoGiaPresente = true; // non devo fare una insert, ma una update...
 									
 									if(doc.getOraRegistrazione()==null)
-										throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDDocumento] OraRegistrazione non definita per documento, precedentemente gia inserito, ["+doc.getFile()+"]");
+										throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDDocumento] OraRegistrazione non definita per documento, precedentemente gia inserito, ["+doc.getFile()+"] ["+doc.getTipo()+"] ["+tipologiaProprietarioDocumento+"] ["+idProprietario+"]");
 											
 									// rimuovo la vecchia immagine del documento dalla lista dei doc vecchi
 									oldLista.remove(j);
@@ -4019,7 +4019,7 @@ public class DriverRegistroServiziDB_LIB {
 					if( (documentoGiaPresente == false) || (documentoDaAggiornare) ){
 						// Il contenuto ci deve essere
 						if(doc.getByteContenuto()==null || doc.getByteContenuto().length<=0)
-							throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDDocumento] Contenuto non definito per documento ["+doc.getFile()+"]");
+							throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDDocumento] Contenuto non definito per documento ["+doc.getFile()+"] ["+doc.getTipo()+"] ["+tipologiaProprietarioDocumento+"] ["+idProprietario+"]");
 
 						contenuto = doc.getByteContenuto();
 						if(contenuto.length<3){
@@ -4036,7 +4036,7 @@ public class DriverRegistroServiziDB_LIB {
 							// update
 							long idDocumento = doc.getId();
 							if(idDocumento<=0){
-								throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDDocumento] ID non definito per documento da aggiorare ["+doc.getFile()+"]");
+								throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDDocumento] ID non definito per documento da aggiorare ["+doc.getFile()+"] ["+doc.getTipo()+"] ["+tipologiaProprietarioDocumento+"] ["+idProprietario+"]");
 							}
 							ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
 							sqlQueryObject.addUpdateTable(CostantiDB.DOCUMENTI);

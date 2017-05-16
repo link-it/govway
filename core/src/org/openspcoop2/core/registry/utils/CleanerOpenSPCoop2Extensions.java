@@ -27,6 +27,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
@@ -230,6 +231,15 @@ public class CleanerOpenSPCoop2Extensions {
 			for (Documento documento : accordo.getSpecificaSemiformaleList()) {
 				this.clean(documento);
 			}
+		}
+		if(accordo.getElencoPartecipanti()!=null){
+			if(accordo.getElencoPartecipanti().sizeSoggettoPartecipanteList()>0){
+				for (IdSoggetto idSoggetto : accordo.getElencoPartecipanti().getSoggettoPartecipanteList()) {
+					if(idSoggetto.getIdSoggetto()!=null){
+						idSoggetto.setIdSoggetto(null);
+					}
+				}	
+			}	
 		}
 		
 	}

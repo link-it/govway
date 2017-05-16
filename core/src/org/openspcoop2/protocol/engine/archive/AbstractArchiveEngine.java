@@ -100,6 +100,10 @@ public abstract class AbstractArchiveEngine {
 		return this.driverRegistroServizi.getPortaDominio(nomePortaDominio);
 	}
 	
+	public String getTipoPortaDominio(String nomePortaDominio) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
+		return this.driverRegistroServizi.getTipoPortaDominio(nomePortaDominio);
+	}
+	
 	public boolean existsPortaDominio(String nomePortaDominio) throws DriverRegistroServiziException {
 		return this.driverRegistroServizi.existsPortaDominio(nomePortaDominio);
 	}

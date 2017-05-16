@@ -4515,6 +4515,72 @@ IDriverWS ,IMonitoraggioRisorsa{
 			}
 		}
 	}	
+	
+	public String getTipoPortaDominio(String nome) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+
+		if (nome == null)
+			throw new DriverRegistroServiziException("Parametro non valido");
+
+		if (nome.equals(""))
+			throw new DriverRegistroServiziException("Parametro vuoto non valido");
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("getTipoPortaDominio");
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getTipoPortaDominio] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.PDD);
+			sqlQueryObject.addSelectField("tipo");
+			sqlQueryObject.addWhereCondition("nome = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			stm = con.prepareStatement(sqlQuery);
+			stm.setString(1, nome);
+			rs = stm.executeQuery();
+			if (rs.next()){
+				return rs.getString("tipo");
+			}
+			rs.close();
+			stm.close();
+
+			throw new DriverRegistroServiziNotFound("Porta di Dominio ["+nome+"] non esistente");
+			
+		} catch (DriverRegistroServiziNotFound e) {
+			throw e;
+		}catch (Exception e) {
+			this.log.error("Errore durante verifica esistenza porta di dominio :", e);
+			throw new DriverRegistroServiziException(e.getMessage(),e); 
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			if (this.atomica) {
+				try {
+					con.close();
+				} catch (Exception e) {
+				}
+			}
+		}
+
+	}
 
 
 	/**

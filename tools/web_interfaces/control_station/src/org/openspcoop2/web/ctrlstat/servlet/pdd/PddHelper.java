@@ -35,7 +35,6 @@ import org.openspcoop2.core.registry.PortaDominio;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
-import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
@@ -368,17 +367,24 @@ public class PddHelper extends ConsoleHelper {
 					this.pd.setMessage("Dati incompleti. E' necessario indicare il Nome.");
 					return false;
 				}
-
+				
 				// controllo spazi
 				if ((nome.indexOf(" ") != -1)) {
 					this.pd.setMessage("Non inserire spazi nei campi di testo");
 					return false;
 				}
-
+				
 				// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
-				if (!RegularExpressionEngine.isMatch(nome, "^[0-9A-Za-z_\\-\\.]+$")) {
-					this.pd.setMessage("Il nome della pdd dev'essere formato solo caratteri, cifre, '_' , '-' e '.'");
-					return false;
+				if(singlePdd){
+					if(this.checkNCName(nome, PddCostanti.LABEL_PDD_NOME)==false){
+						return false;
+					}
+				}
+				else{
+					// Le code JMS possono avere vincoli sul nome
+					if(this.checkSimpleName(nome, PddCostanti.LABEL_PDD_NOME)==false){
+						return false;
+					}
 				}
 
 			} else {// in caso di operativo o non-operativo
@@ -426,9 +432,8 @@ public class PddHelper extends ConsoleHelper {
 					return false;
 				}
 
-				// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
-				if (!RegularExpressionEngine.isMatch(nome,"^[0-9A-Za-z_\\-\\.]+$")) {
-					this.pd.setMessage("Il nome della pdd dev'essere formato solo caratteri, cifre, '_' , '-' e '.'");
+				// Le code JMS possono avere vincoli sul nome
+				if(this.checkSimpleName(nome, PddCostanti.LABEL_PDD_NOME)==false){
 					return false;
 				}
 
@@ -445,16 +450,15 @@ public class PddHelper extends ConsoleHelper {
 				}
 
 				// La porta deve essere un numero
-				if (!RegularExpressionEngine.isMatch(porta,"^[0-9]+$")) {
-					this.pd.setMessage("La porta della pdd dev'essere formato solo cifre");
+				if(this.checkNumber(porta, PddCostanti.LABEL_PDD_PORTA_PUBBLICA, false)==false){
 					return false;
 				}
 
 				// La porta gestione deve essere un numero
-				if (!RegularExpressionEngine.isMatch(portaGestione,"^[0-9]+$")) {
-					this.pd.setMessage("La porta di gestione della pdd dev'essere formato solo cifre");
+				if(this.checkNumber(portaGestione, PddCostanti.LABEL_PDD_PORTA_GESTIONE, false)==false){
 					return false;
 				}
+				
 			}
 
 			// Se tipoOp = add, controllo che il pdd non sia gia' stato registrato

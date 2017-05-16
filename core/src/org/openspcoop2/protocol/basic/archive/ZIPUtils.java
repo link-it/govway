@@ -76,6 +76,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
 import org.openspcoop2.protocol.sdk.archive.MapPlaceholder;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.sdk.constants.ArchiveVersion;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.io.ZipUtilities;
 import org.slf4j.Logger;
@@ -114,13 +115,13 @@ public class ZIPUtils  {
 	
 	/* ----- Utils  ----- */
 	
-	public String convertCharNonPermessiQualsiasiSistemaOperativo(String nome){
-		return this.convertCharNonPermessiQualsiasiSistemaOperativo(nome, true, null);
+	public String oldMethod_convertCharNonPermessiQualsiasiSistemaOperativo(String nome){
+		return this.oldMethod_convertCharNonPermessiQualsiasiSistemaOperativo(nome, true, null);
 	}
-	public String convertCharNonPermessiQualsiasiSistemaOperativo(String nome,boolean permitUnderscore){
-		return this.convertCharNonPermessiQualsiasiSistemaOperativo(nome, permitUnderscore, null);
+	public String oldMethod_convertCharNonPermessiQualsiasiSistemaOperativo(String nome,boolean permitUnderscore){
+		return this.oldMethod_convertCharNonPermessiQualsiasiSistemaOperativo(nome, permitUnderscore, null);
 	}
-	public String convertCharNonPermessiQualsiasiSistemaOperativo(String nome,boolean permitUnderscore,List<Character> permit){
+	public String oldMethod_convertCharNonPermessiQualsiasiSistemaOperativo(String nome,boolean permitUnderscore,List<Character> permit){
 		StringBuffer bf = new StringBuffer();
 		for (int i = 0; i < nome.length(); i++) {
 			if(Character.isLetterOrDigit(nome.charAt(i))){
@@ -154,8 +155,65 @@ public class ZIPUtils  {
 	}
 	
 	
-	
-	
+	public String convertNameToSistemaOperativoCompatible(String nome){
+		List<Character> permit = new ArrayList<Character>();
+		// Non permetto nessun carattere poiche' alcune versioni del S.O. ad esempio non accettano un dato carattere se e' all'inizio o alla fine...
+		// quindi li maschero con il carattere jolly e sono tranquillo
+//		permit.add('.');
+//		permit.add('_');
+//		permit.add('-');
+		
+		Character cJolly = 'X'; // uso un carattere come jolly almeno non ho problemi
+		
+		return this.convertNameToSistemaOperativoCompatible(nome,true,cJolly,permit,true);
+	}
+	private String convertNameToSistemaOperativoCompatible(String nome,boolean convertCharNotPermitted,Character charJollyCharNotPermitted,
+			List<Character> permit, boolean addUniqueSuffixIfFoundCharNotPermitted){
+		StringBuffer bf = new StringBuffer();
+		boolean charNotPermittedFound = false;
+		for (int i = 0; i < nome.length(); i++) {
+			if(Character.isLetterOrDigit(nome.charAt(i))){
+				bf.append(nome.charAt(i));
+			}
+			else {
+				if(permit!=null){
+					// check che sia nella lista dei caratteri permessi
+					boolean found = false;
+					for (char charPermit : permit) {
+						if(charPermit == nome.charAt(i)){
+							found = true;
+							break;
+						}
+					}
+					if(found){
+						bf.append(nome.charAt(i));
+						continue;
+					}
+				}
+				
+				// Se non e' nella lista dei caratteri permessi, se e' abilitata la conversione, converto il carattere non permesso nel carattere jolly
+				// altrimenti lo "brucio"
+				if(convertCharNotPermitted){
+					// sostituisco tutto con il carattere jolly
+					bf.append(charJollyCharNotPermitted);
+				}
+				charNotPermittedFound = true;
+			}
+		}
+		if(charNotPermittedFound && addUniqueSuffixIfFoundCharNotPermitted){
+			bf.append("_");
+			bf.append(getNextCounterFile());
+		}
+		return bf.toString();
+	}
+	private static int counterFileNameWithCharNotPermitted = 0;
+	private static synchronized int getNextCounterFile(){
+		if(counterFileNameWithCharNotPermitted==Integer.MAX_VALUE){
+			counterFileNameWithCharNotPermitted = 0;
+		}
+		counterFileNameWithCharNotPermitted++;
+		return counterFileNameWithCharNotPermitted;
+	}
 
 	
 	
@@ -268,11 +326,6 @@ public class ZIPUtils  {
 	
 	public static final String ID_CORRELAZIONE_DEFAULT = "@PackageOpenSPCoop@";
 	
-//	public static final List<Character> LIST_CHARACTER_PERMIT_IMPORT_PACKAGES = new ArrayList<Character>();
-//	static{
-//		LIST_CHARACTER_PERMIT_IMPORT_PACKAGES.add('-');
-//		LIST_CHARACTER_PERMIT_IMPORT_PACKAGES.add('.');
-//	}
 	
 	/**
 	 * Ritorna la rappresentazione java di un archivio
@@ -292,12 +345,22 @@ public class ZIPUtils  {
 			ArchiveIdCorrelazione idCorrelazione = new ArchiveIdCorrelazione(ID_CORRELAZIONE_DEFAULT);
 			idCorrelazione.setDescrizione(zip.getName()); // come descrizione viene usato il nome dell'archivio zip
 			
+			// ArchiveVersion
+			ArchiveVersion archiveVersion = ArchiveVersion.V_UNDEFINED;
+			String openspcoopVersion = null;
+						
 			// ExtendedInfoManager
 			ExtendedInfoManager extendedInfoManager = ExtendedInfoManager.getInstance();
 			Hashtable<String, PortaDelegata> mapKeyForExtendedInfo_portaDelegata = new Hashtable<String, PortaDelegata>();
 			boolean existsExtendsConfigForPortaDelegata = extendedInfoManager.newInstanceExtendedInfoPortaDelegata()!=null;
 			Hashtable<String, PortaApplicativa> mapKeyForExtendedInfo_portaApplicativa = new Hashtable<String, PortaApplicativa>();
 			boolean existsExtendsConfigForPortaApplicativa = extendedInfoManager.newInstanceExtendedInfoPortaApplicativa()!=null;
+			
+			// Map per identificativi accordi
+			Hashtable<String, IdentificativoAccordo> mapKeyAccordi = new Hashtable<String, IdentificativoAccordo>();
+			
+			// Map per identificativi documenti
+			Hashtable<String, IdentificativoDocumento> mapKeyDocumenti = new Hashtable<String, IdentificativoDocumento>();
 			
 			String rootDir = null;
 			
@@ -335,8 +398,15 @@ public class ZIPUtils  {
 					ByteArrayInputStream bin = null;
 					try{
 						
+						// ********** archiveVersion ****************
+						if(entryName.equals((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_VERSION_FILE_NAME)) ){
+							archiveVersion = ArchiveVersion.toArchiveVersion(content);
+							openspcoopVersion = ArchiveVersion.toProductVersion(content);
+							this.log.debug("Version ["+archiveVersion+"] product["+openspcoopVersion+"]");
+						}
+												
 						// ********** configurazione ****************
-						if(entryName.startsWith((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_CONFIGURAZIONE_DIR+File.separatorChar)) ){
+						else if(entryName.startsWith((rootDir+Costanti.OPENSPCOOP2_ARCHIVE_CONFIGURAZIONE_DIR+File.separatorChar)) ){
 							byte[] xml = placeholder.replace(content);
 							if(entryName.contains(File.separatorChar+Costanti.OPENSPCOOP2_ARCHIVE_EXTENDED_DIR+File.separatorChar)){
 								this.readConfigurazioneExtended(archivio, bin, xml, entryName, validationDocuments, extendedInfoManager);
@@ -503,7 +573,7 @@ public class ZIPUtils  {
 										}
 										else{
 											
-											// comprendo nome ed eventuale versione dell'accordo
+											// nome file contenente nome accordo e versione (codificati in maniera compatibile al file system)
 											String nomeVersioneAccordo = nomeFileAccordo.substring(0,nomeFileAccordo.indexOf(File.separatorChar));
 											if(nomeVersioneAccordo==null || "".equals(nomeVersioneAccordo) || "_".equals(nomeVersioneAccordo) || 
 													nomeVersioneAccordo.startsWith("_") || nomeVersioneAccordo.endsWith("_")){
@@ -527,95 +597,196 @@ public class ZIPUtils  {
 													nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_COOPERAZIONE_DIR+File.separatorChar))
 													){
 												
-												// Converto nomeVersione nei dati primitivi
+												// comprendo nome ed eventuale versione dell'accordo
 												String versioneAccordo = null;
 												String nomeAccordo = null;
-												if(nomeVersioneAccordo.contains("_")){
-													nomeAccordo = nomeVersioneAccordo.split("_")[0];
-													versioneAccordo = nomeVersioneAccordo.split("_")[1];
-													if(versioneAccordo==null || "".equals(versioneAccordo)){
+												boolean findIdAccordo = false;
+												if(ArchiveVersion.V_UNDEFINED.equals(archiveVersion)){
+													if(nomeVersioneAccordo.contains("_")){
+														nomeAccordo = nomeVersioneAccordo.split("_")[0];
+														versioneAccordo = nomeVersioneAccordo.split("_")[1];
+														if(versioneAccordo==null || "".equals(versioneAccordo)){
+															throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+directoryAccordo+
+																	"] deve essere presenta una ulteriore directory contenente la struttura <nome>[_<versione>] che descrive l'accordo. Il nome utilizzato per la directory non e' conforme alla struttura attesa <nome>[_<versione>]: versione non identificata");
+														}
+													}
+													else{
+														nomeAccordo = nomeVersioneAccordo;
+													}
+													if(nomeAccordo==null || "".equals(nomeAccordo)){
 														throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+directoryAccordo+
-																"] deve essere presenta una ulteriore directory contenente la struttura <nome>[_<versione>] che descrive l'accordo. Il nome utilizzato per la directory non e' conforme alla struttura attesa <nome>[_<versione>]: versione non identificata");
+																"] deve essere presenta una ulteriore directory contenente la struttura <nome>[_<versione>] che descrive l'accordo. Il nome utilizzato per la directory non e' conforme alla struttura attesa <nome>[_<versione>]: nome non identificato");
 													}
 												}
 												else{
-													nomeAccordo = nomeVersioneAccordo;
-												}
-												if(nomeAccordo==null || "".equals(nomeAccordo)){
-													throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+directoryAccordo+
-															"] deve essere presenta una ulteriore directory contenente la struttura <nome>[_<versione>] che descrive l'accordo. Il nome utilizzato per la directory non e' conforme alla struttura attesa <nome>[_<versione>]: nome non identificato");
-												}
+													IdentificativoAccordo idAccordo = null;
+													String keyAccordo = getKeyAccordo(tipoSoggetto, nomeSoggetto, nomeVersioneAccordo, nomeFile);
+													if( nomeFileSenzaAccordo.equals(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME) ){
+														String identificativo = new String(xml);
+														if(identificativo.contains(" ")){
+															nomeAccordo = identificativo.split(" ")[0];
+															versioneAccordo = identificativo.split(" ")[1];
+															if(versioneAccordo==null || "".equals(versioneAccordo)){
+																throw new ProtocolException("Elemento ["+entryName+"] errato. Il Contenuto ["+identificativo+
+																		"] non è corretto, deve essere presente una struttura '<nome> <versione>' che descrive l'identificativo dell'accordo: versione non identificata");
+															}
+														}
+														else{
+															nomeAccordo = identificativo;
+														}
+														if(nomeAccordo==null || "".equals(nomeAccordo)){
+															throw new ProtocolException("Elemento ["+entryName+"] errato. Il Contenuto ["+identificativo+
+																	"] non è corretto, deve essere presenta una struttura '<nome>[ <versione>]' che descrive identificativo dell'accordo: nome non identificato");
+														}
+														idAccordo = new IdentificativoAccordo();
+														idAccordo.nome = nomeAccordo;
+														idAccordo.versione = versioneAccordo;
+														mapKeyAccordi.put(keyAccordo, idAccordo);
+														findIdAccordo = true;
+													}
+													else{
+														idAccordo = mapKeyAccordi.get(keyAccordo);
+														if(idAccordo==null){
+															throw new ProtocolException("Elemento ["+entryName+"] errato. Non è stato trovato precedentemente il file ["+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME+"] contenente l'identificativo dell'accordo");
+														}
+														nomeAccordo = idAccordo.nome;
+														versioneAccordo = idAccordo.versione;
+													}
+												}	
 												
-												// ------------ accordo servizio parte comune -------------------
-												if( nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_COMUNE_DIR+File.separatorChar)) ){
-													this.readAccordoServizioParteComune(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, 
-															nomeFileSenzaAccordo,nomeAccordo,versioneAccordo,false, validationDocuments, idCorrelazione);
-												}
-												// ------------ accordo servizio composto -------------------
-												else if( nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_COMPOSTO_DIR+File.separatorChar)) ){
-													this.readAccordoServizioParteComune(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, 
-															nomeFileSenzaAccordo,nomeAccordo,versioneAccordo,true, validationDocuments, idCorrelazione);
-												}
-												// ------------ accordo cooperazione -------------------
-												else if( nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_COOPERAZIONE_DIR+File.separatorChar)) ){
-													this.readAccordoCooperazione(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, 
-															nomeFileSenzaAccordo,nomeAccordo,versioneAccordo, validationDocuments, idCorrelazione);
+												if(findIdAccordo==false){
+												
+													// ------------ accordo servizio parte comune -------------------
+													if( nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_COMUNE_DIR+File.separatorChar)) ){
+														this.readAccordoServizioParteComune(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, 
+																nomeFileSenzaAccordo,nomeAccordo,versioneAccordo,false, validationDocuments, idCorrelazione,
+																archiveVersion, mapKeyDocumenti);
+													}
+													// ------------ accordo servizio composto -------------------
+													else if( nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_COMPOSTO_DIR+File.separatorChar)) ){
+														this.readAccordoServizioParteComune(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, 
+																nomeFileSenzaAccordo,nomeAccordo,versioneAccordo,true, validationDocuments, idCorrelazione,
+																archiveVersion, mapKeyDocumenti);
+													}
+													// ------------ accordo cooperazione -------------------
+													else if( nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_COOPERAZIONE_DIR+File.separatorChar)) ){
+														this.readAccordoCooperazione(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, 
+																nomeFileSenzaAccordo,nomeAccordo,versioneAccordo, validationDocuments, idCorrelazione,
+																archiveVersion, mapKeyDocumenti);
+													}
+													
 												}
 											}
 											
 											// ------------ accordo servizio parte specifica -------------------
 											else if( nomeFile.startsWith((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_SPECIFICA_DIR+File.separatorChar)) ){
 												
-												// Converto nomeVersione nei dati primitivi
+												// comprendo tipo, nome ed eventuale versione dell'accordo
 												String versioneServizio = null;
 												String nomeServizio = null;
 												String tipoServizio = null;
-												
-												// parte specifica tipo_nome[_versione]
-												if(nomeVersioneAccordo.contains("_")==false){
-													throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+directoryAccordo+
-															"] deve essere presenta una ulteriore directory contenente la struttura tipo_nome[_versione] che descrive l'accordo. Il nome utilizzato per la directory non e' conforme alla struttura attesa tipo_nome[_versione]");
-												}
-												int indexType = nomeVersioneAccordo.indexOf("_");
-												if(indexType<=0){
-													throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+directoryAccordo+
-															"] deve essere presenta una ulteriore directory contenente la struttura tipo_nome[_versione] che descrive l'accordo. Il nome utilizzato per la directory non e' conforme alla struttura attesa tipo_nome[_versione]: tipo non trovato (index:"+indexType+")");
-												}
-												tipoServizio = nomeVersioneAccordo.substring(0, indexType);
-												
-												if(indexType==nomeVersioneAccordo.length()){
-													throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+directoryAccordo+
-															"] deve essere presenta una ulteriore directory contenente la struttura tipo_nome[_versione] che descrive l'accordo. Il nome utilizzato per la directory non e' conforme alla struttura attesa tipo_nome[_versione]: nome e versione non trovati");
-												}
-												String _nomeVersione = nomeVersioneAccordo.substring(indexType, nomeVersioneAccordo.length());
-												if(_nomeVersione==null){
-													throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+directoryAccordo+
-															"] deve essere presenta una ulteriore directory contenente la struttura tipo_nome[_versione] che descrive l'accordo. Il nome utilizzato per la directory non e' conforme alla struttura attesa tipo_nome[_versione]: nome e versione non trovati");
-												}
-												if(_nomeVersione.contains("_")==false){
-													nomeServizio = _nomeVersione;
+												boolean findIdAccordo = false;
+												if(ArchiveVersion.V_UNDEFINED.equals(archiveVersion)){
+													// parte specifica tipo_nome[_versione]
+													if(nomeVersioneAccordo.contains("_")==false){
+														throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+directoryAccordo+
+																"] deve essere presenta una ulteriore directory contenente la struttura tipo_nome[_versione] che descrive l'accordo. Il nome utilizzato per la directory non e' conforme alla struttura attesa tipo_nome[_versione]");
+													}
+													int indexType = nomeVersioneAccordo.indexOf("_");
+													if(indexType<=0){
+														throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+directoryAccordo+
+																"] deve essere presenta una ulteriore directory contenente la struttura tipo_nome[_versione] che descrive l'accordo. Il nome utilizzato per la directory non e' conforme alla struttura attesa tipo_nome[_versione]: tipo non trovato (index:"+indexType+")");
+													}
+													tipoServizio = nomeVersioneAccordo.substring(0, indexType);
+													
+													if(indexType==nomeVersioneAccordo.length()){
+														throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+directoryAccordo+
+																"] deve essere presenta una ulteriore directory contenente la struttura tipo_nome[_versione] che descrive l'accordo. Il nome utilizzato per la directory non e' conforme alla struttura attesa tipo_nome[_versione]: nome e versione non trovati");
+													}
+													String _nomeVersione = nomeVersioneAccordo.substring(indexType, nomeVersioneAccordo.length());
+													if(_nomeVersione==null){
+														throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+directoryAccordo+
+																"] deve essere presenta una ulteriore directory contenente la struttura tipo_nome[_versione] che descrive l'accordo. Il nome utilizzato per la directory non e' conforme alla struttura attesa tipo_nome[_versione]: nome e versione non trovati");
+													}
+													if(_nomeVersione.contains("_")==false){
+														nomeServizio = _nomeVersione;
+													}
+													else{
+														int indexVersione = _nomeVersione.lastIndexOf("_");
+														if(indexVersione<=0){
+															throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+directoryAccordo+
+																	"] deve essere presenta una ulteriore directory contenente la struttura tipo_nome[_versione] che descrive l'accordo. Il nome utilizzato per la directory non e' conforme alla struttura attesa tipo_nome[_versione]: versione non trovata (index:"+indexVersione+")");
+														}
+														nomeServizio = _nomeVersione.substring(0, indexVersione);
+													
+														if(indexVersione==_nomeVersione.length()){
+															throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+directoryAccordo+
+																	"] deve essere presenta una ulteriore directory contenente la struttura tipo_nome[_versione] che descrive l'accordo. Il nome utilizzato per la directory non e' conforme alla struttura attesa tipo_nome[_versione]: versione non trovata dopo aver localizzato il nome");
+														}
+														versioneServizio = _nomeVersione.substring(indexVersione, _nomeVersione.length());
+														if(versioneServizio==null){
+															throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+directoryAccordo+
+																	"] deve essere presenta una ulteriore directory contenente la struttura tipo_nome[_versione] che descrive l'accordo. Il nome utilizzato per la directory non e' conforme alla struttura attesa tipo_nome[_versione]: versione non trovata");
+														}
+													}
 												}
 												else{
-													int indexVersione = _nomeVersione.lastIndexOf("_");
-													if(indexVersione<=0){
-														throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+directoryAccordo+
-																"] deve essere presenta una ulteriore directory contenente la struttura tipo_nome[_versione] che descrive l'accordo. Il nome utilizzato per la directory non e' conforme alla struttura attesa tipo_nome[_versione]: versione non trovata (index:"+indexVersione+")");
+													IdentificativoAccordo idAccordo = null;
+													String keyAccordo = getKeyAccordo(tipoSoggetto, nomeSoggetto, nomeVersioneAccordo, nomeFile);
+													if( nomeFileSenzaAccordo.equals(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME) ){
+														String identificativo = new String(xml);
+														if(!identificativo.contains(" ")){
+															throw new ProtocolException("Elemento ["+entryName+"] errato. Il Contenuto ["+identificativo+
+																	"] non è corretto, deve essere presente una struttura '<tipo> <nome> <versione>' che descrive l'identificativo dell'accordo: ' ' non trovato");
+														}
+														String [] tmp = identificativo.split(" ");
+														if(tmp.length>2){
+															tipoServizio = identificativo.split(" ")[0];
+															nomeServizio = identificativo.split(" ")[1];
+															versioneServizio = identificativo.split(" ")[2];
+															if(versioneServizio==null || "".equals(versioneServizio)){
+																throw new ProtocolException("Elemento ["+entryName+"] errato. Il Contenuto ["+identificativo+
+																		"] non è corretto, deve essere presente una struttura '<tipo> <nome> <versione>' che descrive l'identificativo dell'accordo: versione non identificata");
+															}
+														}
+														else{
+															tipoServizio = identificativo.split(" ")[0];
+															nomeServizio = identificativo.split(" ")[1];
+														}
+														if(tipoServizio==null || "".equals(tipoServizio)){
+															throw new ProtocolException("Elemento ["+entryName+"] errato. Il Contenuto ["+identificativo+
+																	"] non è corretto, deve essere presenta una struttura '<tipo> <nome> [<versione>]' che descrive identificativo dell'accordo: tipo non identificato");
+														}
+														if(nomeServizio==null || "".equals(nomeServizio)){
+															throw new ProtocolException("Elemento ["+entryName+"] errato. Il Contenuto ["+identificativo+
+																	"] non è corretto, deve essere presenta una struttura '<tipo> <nome> [<versione>]' che descrive identificativo dell'accordo: nome non identificato");
+														}
+														idAccordo = new IdentificativoAccordo();
+														idAccordo.tipo = tipoServizio;
+														idAccordo.nome = nomeServizio;
+														idAccordo.versione = versioneServizio;
+														mapKeyAccordi.put(keyAccordo, idAccordo);
+														findIdAccordo = true;
 													}
-													nomeServizio = _nomeVersione.substring(0, indexVersione);
-												
-													if(indexVersione==_nomeVersione.length()){
-														throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+directoryAccordo+
-																"] deve essere presenta una ulteriore directory contenente la struttura tipo_nome[_versione] che descrive l'accordo. Il nome utilizzato per la directory non e' conforme alla struttura attesa tipo_nome[_versione]: versione non trovata dopo aver localizzato il nome");
-													}
-													versioneServizio = _nomeVersione.substring(indexVersione, _nomeVersione.length());
-													if(versioneServizio==null){
-														throw new ProtocolException("Elemento ["+entryName+"] errato. Dopo la directory ["+directoryAccordo+
-																"] deve essere presenta una ulteriore directory contenente la struttura tipo_nome[_versione] che descrive l'accordo. Il nome utilizzato per la directory non e' conforme alla struttura attesa tipo_nome[_versione]: versione non trovata");
+													else{
+														idAccordo = mapKeyAccordi.get(keyAccordo);
+														if(idAccordo==null){
+															throw new ProtocolException("Elemento ["+entryName+"] errato. Non è stato trovato precedentemente il file ["+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME+"] contenente l'identificativo dell'accordo");
+														}
+														tipoServizio = idAccordo.tipo;
+														nomeServizio = idAccordo.nome;
+														versioneServizio = idAccordo.versione;
 													}
 												}
 												
-												this.readAccordoServizioParteSpecifica(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, 
-															nomeFileSenzaAccordo,tipoServizio,nomeServizio,versioneServizio, validationDocuments, idCorrelazione);
+												if(findIdAccordo==false){
+													
+													// ------------ accordo servizio parte specifica -------------------
+													this.readAccordoServizioParteSpecifica(archivio, bin, xml, entryName, tipoSoggetto, nomeSoggetto, 
+																nomeFileSenzaAccordo,tipoServizio,nomeServizio,versioneServizio, validationDocuments, idCorrelazione,
+																archiveVersion, mapKeyDocumenti);
+												}
+												
 											}
 
 										}
@@ -660,6 +831,55 @@ public class ZIPUtils  {
 		}catch(Exception e){
 			throw new ProtocolException(e.getMessage(),e);
 		}
+	}
+	
+	private String getKeyAccordo(String tipoSoggetto, String nomeSoggetto, String nomeVersioneAccordo, String nomeFile){
+		StringBuffer bf = new StringBuffer();
+		bf.append(tipoSoggetto==null?"":tipoSoggetto);
+		bf.append("_");
+		bf.append(nomeSoggetto==null?"":nomeSoggetto);
+		bf.append("_");
+		bf.append(nomeVersioneAccordo==null?"":nomeVersioneAccordo);
+		bf.append("_");
+		if( nomeFile.contains((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_COMUNE_DIR+File.separatorChar)) ){
+			bf.append(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_COMUNE_DIR);
+		}
+		else if( nomeFile.contains((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_COMPOSTO_DIR+File.separatorChar)) ){
+			bf.append(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_COMPOSTO_DIR);
+		}
+		else if( nomeFile.contains((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_SPECIFICA_DIR+File.separatorChar)) ){
+			bf.append(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_SERVIZIO_PARTE_SPECIFICA_DIR);
+		}
+		else if( nomeFile.contains((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_COOPERAZIONE_DIR+File.separatorChar)) ){
+			bf.append(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_COOPERAZIONE_DIR);
+		}
+		return bf.toString();
+	}
+	
+	private String getKeyDocumento(String tipoSoggetto, String nomeSoggetto, String nomeAccordo, String versioneAccordo, String nomeFile, String nomeDocumento){
+		StringBuffer bf = new StringBuffer();
+		bf.append(this.getKeyAccordo(tipoSoggetto, nomeSoggetto, 
+				(nomeAccordo==null?"":nomeAccordo) + (versioneAccordo==null?"":versioneAccordo), 
+				nomeFile));
+		bf.append("_");
+		if(nomeFile.contains(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_ALLEGATI+File.separatorChar)){
+			bf.append(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_ALLEGATI);
+		}
+		else if(nomeFile.contains(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SEMIFORMALI+File.separatorChar)){
+			bf.append(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SEMIFORMALI);
+		}
+		else if(nomeFile.contains(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_LIVELLI_SERVIZIO+File.separatorChar)){
+			bf.append(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_LIVELLI_SERVIZIO);
+		}
+		else if(nomeFile.contains(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SICUREZZA+File.separatorChar)){
+			bf.append(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SICUREZZA);
+		}
+		else if(nomeFile.contains(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_COORDINAMENTO+File.separatorChar)){
+			bf.append(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_COORDINAMENTO);
+		}
+		bf.append("_");
+		bf.append(nomeDocumento);
+		return bf.toString();
 	}
 	
 	private String getKeyPortaForExtendedInfo(String tipoNomeSoggetto, String nomeFile){
@@ -742,7 +962,7 @@ public class ZIPUtils  {
 				org.openspcoop2.core.registry.utils.XSDValidator.getXSDValidator(this.log).valida(bin);
 			}
 			Ruolo ruolo = this.jibxRegistryDeserializer.readRuolo(xml);
-			String key = ArchivePdd.buildKey(ruolo.getNome());
+			String key = ArchiveRuolo.buildKey(ruolo.getNome());
 			if(archivio.getRuoli().containsKey(key)){
 				throw new ProtocolException("Elemento ["+entryName+"] errato. Risulta esistere piu' di un ruolo con key ["+key+"]");
 			}
@@ -978,7 +1198,8 @@ public class ZIPUtils  {
 	public final static String USE_VERSION_XML_BEAN = "USE_VERSION_XML_BEAN";
 	
 	public void readAccordoServizioParteComune(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,
-			String nomeFileSenzaAccordo,String nomeAccordo,String versioneAccordo, boolean servizioComposto,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+			String nomeFileSenzaAccordo,String nomeAccordo,String versioneAccordo, boolean servizioComposto,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione,
+			ArchiveVersion archiveVersion,Hashtable<String, IdentificativoDocumento> mapKeyDocumenti) throws ProtocolException{
 		
 		Integer versioneAccordoInt = null;
 		try{
@@ -1026,20 +1247,38 @@ public class ZIPUtils  {
 				}
 				aspc.getSoggettoReferente().setTipo(tipoSoggetto);
 				aspc.getSoggettoReferente().setNome(nomeSoggetto);
-				
-				// nome e versione
-				//String convertName = convertCharNonPermessiQualsiasiSistemaOperativo(aspc.getNome(),false,LIST_CHARACTER_PERMIT_IMPORT_PACKAGES);
-				String convertName = convertCharNonPermessiQualsiasiSistemaOperativo(aspc.getNome(),false);
-				if(!convertName.equals(nomeAccordo)){
-					throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene un nome ["+
-							aspc.getNome()+"] (fileSystemName:"+convertName+") differente da quello indicato ["+nomeAccordo+"] nella directory che contiene la definizione");
+
+				// nome e versione check quello indicato nell'accordo rispetto a quello indicato 
+				// - nome della directory (old version)
+				// - file idAccordo (new version)
+				if(ArchiveVersion.V_UNDEFINED.equals(archiveVersion)){
+					String convertName = oldMethod_convertCharNonPermessiQualsiasiSistemaOperativo(aspc.getNome(),false);
+					if(!convertName.equals(nomeAccordo)){
+						throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene un nome ["+
+								aspc.getNome()+"] (fileSystemName:"+convertName+") differente da quello indicato ["+nomeAccordo+"] nella directory che contiene la definizione");
+					}
+					if(USE_VERSION_XML_BEAN.equals(versioneAccordo)==false){
+						if(versioneAccordoInt!=null){
+							if(aspc.getVersione()!=null){
+								if(aspc.getVersione()!=null && aspc.getVersione().intValue()!= versioneAccordoInt.intValue()){
+									throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene una versione ["+
+											aspc.getVersione()+"] (fileSystemName:"+versioneAccordo+") differente da quella indicato ["+versioneAccordoInt+"] nella directory che contiene la definizione");
+								}
+							}
+							aspc.setVersione(versioneAccordoInt);
+						}
+					}
 				}
-				if(USE_VERSION_XML_BEAN.equals(versioneAccordo)==false){
-					if(versioneAccordoInt!=null){
-						if(aspc.getVersione()!=null){
+				else{
+					if(!aspc.getNome().equals(nomeAccordo)){
+						throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene un nome ["+
+								aspc.getNome()+"] differente da quello indicato ["+nomeAccordo+"] nel file ["+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME+"]");
+					}
+					if(USE_VERSION_XML_BEAN.equals(versioneAccordo)==false){
+						if(versioneAccordoInt!=null){
 							if(aspc.getVersione()!=null && aspc.getVersione().intValue()!= versioneAccordoInt.intValue()){
 								throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene una versione ["+
-										aspc.getVersione()+"] (fileSystemName:"+versioneAccordo+") differente da quella indicato ["+versioneAccordoInt+"] nella directory che contiene la definizione");
+											aspc.getVersione()+"] differente da quella indicata ["+versioneAccordoInt+"] nel file ["+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME+"]");
 							}
 						}
 						aspc.setVersione(versioneAccordoInt);
@@ -1125,16 +1364,16 @@ public class ZIPUtils  {
 			// allegati
 			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_ALLEGATI+File.separatorChar)){
 				
-				String nomeAllegato = nomeFileSenzaAccordo.substring((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_ALLEGATI+File.separatorChar).length());
-				this.getDocument(as.getAllegatoList(), nomeAllegato, entryName).setByteContenuto(xml);
+				processDocument(nomeFileSenzaAccordo, Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_ALLEGATI, archiveVersion, entryName, xml, 
+						tipoSoggetto, nomeSoggetto, nomeAccordo, versioneAccordo, mapKeyDocumenti, as.getAllegatoList());
 				
 			}
 			
 			// specificheSemiformali
 			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SEMIFORMALI+File.separatorChar)){
 				
-				String nomeAllegato = nomeFileSenzaAccordo.substring((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SEMIFORMALI+File.separatorChar).length());
-				this.getDocument(as.getSpecificaSemiformaleList(), nomeAllegato, entryName).setByteContenuto(xml);
+				processDocument(nomeFileSenzaAccordo, Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SEMIFORMALI, archiveVersion, entryName, xml, 
+						tipoSoggetto, nomeSoggetto, nomeAccordo, versioneAccordo, mapKeyDocumenti, as.getSpecificaSemiformaleList());
 				
 			}
 			
@@ -1145,8 +1384,8 @@ public class ZIPUtils  {
 					throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire dei documenti di specifica di coordinamento per un accordo non registrato come servizio composto");
 				}
 				
-				String nomeAllegato = nomeFileSenzaAccordo.substring((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_COORDINAMENTO+File.separatorChar).length());
-				this.getDocument(as.getServizioComposto().getSpecificaCoordinamentoList(), nomeAllegato, entryName).setByteContenuto(xml);
+				processDocument(nomeFileSenzaAccordo, Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_COORDINAMENTO, archiveVersion, entryName, xml, 
+						tipoSoggetto, nomeSoggetto, nomeAccordo, versioneAccordo, mapKeyDocumenti, as.getServizioComposto().getSpecificaCoordinamentoList());
 				
 			}
 		}
@@ -1154,7 +1393,8 @@ public class ZIPUtils  {
 	}
 	
 	public void readAccordoServizioParteSpecifica(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,
-			String nomeFileSenzaAccordo,String tipoServizio,String nomeServizio,String versioneServizio,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+			String nomeFileSenzaAccordo,String tipoServizio,String nomeServizio,String versioneServizio,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione,
+			ArchiveVersion archiveVersion,Hashtable<String, IdentificativoDocumento> mapKeyDocumenti) throws ProtocolException{
 		
 		Integer versioneServizioInt = null;
 		try{
@@ -1183,31 +1423,51 @@ public class ZIPUtils  {
 				asps.setTipoSoggettoErogatore(tipoSoggetto);
 				asps.setNomeSoggettoErogatore(nomeSoggetto);
 				
-				// nome e versione
-				//String convertName = convertCharNonPermessiQualsiasiSistemaOperativo(asps.getNome(),false,LIST_CHARACTER_PERMIT_IMPORT_PACKAGES);
-				String convertName = convertCharNonPermessiQualsiasiSistemaOperativo(asps.getNome(),false);
-				if(!convertName.equals(nomeServizio)){
-					throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene un nome ["+
-							asps.getNome()+"] (fileSystemName:"+convertName+") differente da quello indicato ["+nomeServizio+"] nella directory che contiene la definizione");
+				// nome e versione check quello indicato nell'accordo rispetto a quello indicato 
+				// - nome della directory (old version)
+				// - file idAccordo (new version)
+				if(ArchiveVersion.V_UNDEFINED.equals(archiveVersion)){				
+					String convertName = oldMethod_convertCharNonPermessiQualsiasiSistemaOperativo(asps.getNome(),false);
+					if(!convertName.equals(nomeServizio)){
+						throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene un nome ["+
+								asps.getNome()+"] (fileSystemName:"+convertName+") differente da quello indicato ["+nomeServizio+"] nella directory che contiene la definizione");
+					}
+					String convertTipo = oldMethod_convertCharNonPermessiQualsiasiSistemaOperativo(asps.getTipo(),false);
+					if(!convertTipo.equals(tipoServizio)){
+						throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene un tipo ["+
+								asps.getTipo()+"] (fileSystemName:"+convertTipo+") differente da quello indicato ["+tipoServizio+"] nella directory che contiene la definizione");
+					}
+					if(USE_VERSION_XML_BEAN.equals(versioneServizio)==false){
+						if(versioneServizioInt!=null){
+							if(asps.getVersione()!=null){
+								if(asps.getVersione()!=null && asps.getVersione().intValue()!= versioneServizioInt.intValue()){
+									throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene una versione ["+
+											asps.getVersione()+"] (fileSystemName:"+versioneServizio+") differente da quella indicato ["+versioneServizioInt+"] nella directory che contiene la definizione");
+								}
+							}
+							asps.setVersione(versioneServizioInt);
+						}
+					}
 				}
-				//String convertTipo = convertCharNonPermessiQualsiasiSistemaOperativo(asps.getTipo(),false,LIST_CHARACTER_PERMIT_IMPORT_PACKAGES);
-				String convertTipo = convertCharNonPermessiQualsiasiSistemaOperativo(asps.getTipo(),false);
-				if(!convertTipo.equals(tipoServizio)){
-					throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene un tipo ["+
-							asps.getTipo()+"] (fileSystemName:"+convertTipo+") differente da quello indicato ["+tipoServizio+"] nella directory che contiene la definizione");
-				}
-				if(USE_VERSION_XML_BEAN.equals(versioneServizio)==false){
-					if(versioneServizioInt!=null){
-						if(asps.getVersione()!=null){
+				else{
+					if(!asps.getNome().equals(nomeServizio)){
+						throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene un nome ["+
+								asps.getNome()+"] differente da quello indicato ["+nomeServizio+"] nel file ["+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME+"]");
+					}
+					if(!asps.getTipo().equals(tipoServizio)){
+						throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene un tipo ["+
+								asps.getNome()+"] differente da quello indicato ["+tipoServizio+"] nel file ["+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME+"]");
+					}
+					if(USE_VERSION_XML_BEAN.equals(versioneServizio)==false){
+						if(versioneServizioInt!=null){
 							if(asps.getVersione()!=null && asps.getVersione().intValue()!= versioneServizioInt.intValue()){
 								throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene una versione ["+
-										asps.getVersione()+"] (fileSystemName:"+versioneServizio+") differente da quella indicato ["+versioneServizioInt+"] nella directory che contiene la definizione");
+										asps.getVersione()+"] differente da quella indicata ["+versioneServizio+"] nel file ["+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME+"]");
 							}
 						}
 						asps.setVersione(versioneServizioInt);
 					}
 				}
-				
 					
 				// check fruizioni
 				if(asps.sizeFruitoreList()>0){
@@ -1261,32 +1521,32 @@ public class ZIPUtils  {
 			// allegati
 			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_ALLEGATI+File.separatorChar)){
 				
-				String nomeAllegato = nomeFileSenzaAccordo.substring((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_ALLEGATI+File.separatorChar).length());
-				this.getDocument(as.getAllegatoList(), nomeAllegato, entryName).setByteContenuto(xml);
+				processDocument(nomeFileSenzaAccordo, Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_ALLEGATI, archiveVersion, entryName, xml, 
+						tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, versioneServizio, mapKeyDocumenti, as.getAllegatoList());
 				
 			}
 			
 			// specificheSemiformali
 			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SEMIFORMALI+File.separatorChar)){
 				
-				String nomeAllegato = nomeFileSenzaAccordo.substring((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SEMIFORMALI+File.separatorChar).length());
-				this.getDocument(as.getSpecificaSemiformaleList(), nomeAllegato, entryName).setByteContenuto(xml);
+				processDocument(nomeFileSenzaAccordo, Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SEMIFORMALI, archiveVersion, entryName, xml, 
+						tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, versioneServizio, mapKeyDocumenti, as.getSpecificaSemiformaleList());
 				
 			}
 			
 			// specificheLivelliServizio
 			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_LIVELLI_SERVIZIO+File.separatorChar)){
 				
-				String nomeAllegato = nomeFileSenzaAccordo.substring((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_LIVELLI_SERVIZIO+File.separatorChar).length());
-				this.getDocument(as.getSpecificaLivelloServizioList(), nomeAllegato, entryName).setByteContenuto(xml);
+				processDocument(nomeFileSenzaAccordo, Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_LIVELLI_SERVIZIO, archiveVersion, entryName, xml, 
+						tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, versioneServizio, mapKeyDocumenti, as.getSpecificaLivelloServizioList());
 				
 			}
 			
 			// specificheSicurezza
 			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SICUREZZA+File.separatorChar)){
 				
-				String nomeAllegato = nomeFileSenzaAccordo.substring((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SICUREZZA+File.separatorChar).length());
-				this.getDocument(as.getSpecificaSicurezzaList(), nomeAllegato, entryName).setByteContenuto(xml);
+				processDocument(nomeFileSenzaAccordo, Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SICUREZZA, archiveVersion, entryName, xml, 
+						tipoSoggetto, nomeSoggetto, tipoServizio, nomeServizio, versioneServizio, mapKeyDocumenti, as.getSpecificaSicurezzaList());
 				
 			}
 			
@@ -1483,7 +1743,8 @@ public class ZIPUtils  {
 	
 	
 	public void readAccordoCooperazione(Archive archivio,InputStream bin,byte[]xml,String entryName,String tipoSoggetto,String nomeSoggetto,
-			String nomeFileSenzaAccordo,String nomeAccordo,String versioneAccordo,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione) throws ProtocolException{
+			String nomeFileSenzaAccordo,String nomeAccordo,String versioneAccordo,boolean validationDocuments, ArchiveIdCorrelazione idCorrelazione,
+			ArchiveVersion archiveVersion,Hashtable<String, IdentificativoDocumento> mapKeyDocumenti) throws ProtocolException{
 		
 		Integer versioneAccordoInt = null;
 		try{
@@ -1527,19 +1788,37 @@ public class ZIPUtils  {
 				ac.getSoggettoReferente().setTipo(tipoSoggetto);
 				ac.getSoggettoReferente().setNome(nomeSoggetto);
 				
-				// nome e versione
-				//String convertName = convertCharNonPermessiQualsiasiSistemaOperativo(ac.getNome(),false,LIST_CHARACTER_PERMIT_IMPORT_PACKAGES);
-				String convertName = convertCharNonPermessiQualsiasiSistemaOperativo(ac.getNome(),false);
-				if(!convertName.equals(nomeAccordo)){
-					throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene un nome ["+
-							ac.getNome()+"] (fileSystemName:"+convertName+") differente da quello indicato ["+nomeAccordo+"] nella directory che contiene la definizione");
+				// nome e versione check quello indicato nell'accordo rispetto a quello indicato 
+				// - nome della directory (old version)
+				// - file idAccordo (new version)
+				if(ArchiveVersion.V_UNDEFINED.equals(archiveVersion)){
+					String convertName = oldMethod_convertCharNonPermessiQualsiasiSistemaOperativo(ac.getNome(),false);
+					if(!convertName.equals(nomeAccordo)){
+						throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene un nome ["+
+								ac.getNome()+"] (fileSystemName:"+convertName+") differente da quello indicato ["+nomeAccordo+"] nella directory che contiene la definizione");
+					}
+					if(USE_VERSION_XML_BEAN.equals(versioneAccordo)==false){
+						if(versioneAccordoInt!=null){
+							if(ac.getVersione()!=null){
+								if(ac.getVersione()!=null && ac.getVersione().intValue()!= versioneAccordoInt.intValue()){
+									throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene una versione ["+
+											ac.getVersione()+"] (fileSystemName:"+versioneAccordo+") differente da quella indicato ["+versioneAccordoInt+"] nella directory che contiene la definizione");
+								}
+							}
+							ac.setVersione(versioneAccordoInt);
+						}
+					}
 				}
-				if(USE_VERSION_XML_BEAN.equals(versioneAccordo)==false){
-					if(versioneAccordoInt!=null){
-						if(ac.getVersione()!=null){
+				else{
+					if(!ac.getNome().equals(nomeAccordo)){
+						throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene un nome ["+
+								ac.getNome()+"] differente da quello indicato ["+nomeAccordo+"] nel file ["+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME+"]");
+					}
+					if(USE_VERSION_XML_BEAN.equals(versioneAccordo)==false){
+						if(versioneAccordoInt!=null){
 							if(ac.getVersione()!=null && ac.getVersione().intValue()!= versioneAccordoInt.intValue()){
 								throw new ProtocolException("Elemento ["+entryName+"] errato. La definizione xml dell'accordo (RegistroServizi) contiene una versione ["+
-										ac.getVersione()+"] (fileSystemName:"+versioneAccordo+") differente da quella indicato ["+versioneAccordoInt+"] nella directory che contiene la definizione");
+										ac.getVersione()+"] differente da quella indicata ["+versioneAccordo+"] nel file ["+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME+"]");
 							}
 						}
 						ac.setVersione(versioneAccordoInt);
@@ -1571,16 +1850,16 @@ public class ZIPUtils  {
 			// allegati
 			if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_ALLEGATI+File.separatorChar)){
 				
-				String nomeAllegato = nomeFileSenzaAccordo.substring((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_ALLEGATI+File.separatorChar).length());
-				this.getDocument(ac.getAllegatoList(), nomeAllegato, entryName).setByteContenuto(xml);
+				processDocument(nomeFileSenzaAccordo, Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_ALLEGATI, archiveVersion, entryName, xml, 
+						tipoSoggetto, nomeSoggetto, nomeAccordo, versioneAccordo, mapKeyDocumenti, ac.getAllegatoList());
 				
 			}
 			
 			// specificheSemiformali
 			else if(nomeFileSenzaAccordo.startsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SEMIFORMALI+File.separatorChar)){
 				
-				String nomeAllegato = nomeFileSenzaAccordo.substring((Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SEMIFORMALI+File.separatorChar).length());
-				this.getDocument(ac.getSpecificaSemiformaleList(), nomeAllegato, entryName).setByteContenuto(xml);
+				processDocument(nomeFileSenzaAccordo, Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_DIR_SPECIFICHE_SEMIFORMALI, archiveVersion, entryName, xml, 
+						tipoSoggetto, nomeSoggetto, nomeAccordo, versioneAccordo, mapKeyDocumenti, ac.getSpecificaSemiformaleList());
 				
 			}
 			
@@ -1588,7 +1867,48 @@ public class ZIPUtils  {
 		
 	}
 	
-	private Documento getDocument(List<Documento> documenti, String nome, String entryName) throws ProtocolException{
+	private void processDocument(String nomeFileSenzaAccordo,String tipoDir, ArchiveVersion archiveVersion, String entryName, byte[] xml,
+			String tipoSoggetto, String nomeSoggetto, String tipoServizio, String nomeServizio, String versioneServizio,
+			Hashtable<String, IdentificativoDocumento> mapKeyDocumenti, List<Documento> documenti) throws ProtocolException{
+		this.processDocument(nomeFileSenzaAccordo, tipoDir, archiveVersion, entryName, xml, tipoSoggetto, nomeSoggetto, 
+				tipoServizio+nomeServizio, versioneServizio, mapKeyDocumenti, documenti);
+	}
+	private void processDocument(String nomeFileSenzaAccordo,String tipoDir, ArchiveVersion archiveVersion, String entryName, byte[] xml,
+			String tipoSoggetto, String nomeSoggetto, String nomeAccordo, String versioneAccordo,
+			Hashtable<String, IdentificativoDocumento> mapKeyDocumenti, List<Documento> documenti) throws ProtocolException{
+		String nomeDocumento = nomeFileSenzaAccordo.substring((tipoDir+File.separatorChar).length());
+		if(ArchiveVersion.V_UNDEFINED.equals(archiveVersion)){
+			
+			this.getDocument(documenti, nomeDocumento, null, entryName, archiveVersion).setByteContenuto(xml);
+			
+		}else{
+			String nomeDocumentoSenzaEstensione = nomeDocumento;
+			if(nomeDocumento.contains(".")==false){
+				throw new ProtocolException("Elemento ["+entryName+"] errato. Per i documenti è attesa una estensione");
+			}
+			nomeDocumentoSenzaEstensione = nomeDocumento.substring(0,nomeDocumento.lastIndexOf("."));
+			String keyDocumento = getKeyDocumento(tipoSoggetto, nomeSoggetto, nomeAccordo, versioneAccordo, entryName, nomeDocumentoSenzaEstensione);
+			if(nomeFileSenzaAccordo.endsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_ID)){
+				String tmp = new String(xml);
+				IdentificativoDocumento identificativoDocumento = new IdentificativoDocumento();
+				identificativoDocumento.tipo = tmp.split(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR)[0]; 
+				identificativoDocumento.nome = tmp.substring(identificativoDocumento.tipo.length()+Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_ID_FILE_NAME_INTERNAL_SEPARATOR.length());
+				mapKeyDocumenti.put(keyDocumento, identificativoDocumento);
+			}
+			else if(nomeFileSenzaAccordo.endsWith(Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_CONTENT)){
+				IdentificativoDocumento identificativoDocumento = mapKeyDocumenti.get(keyDocumento);
+				if(identificativoDocumento==null){
+					throw new ProtocolException("Elemento ["+entryName+"] errato. Non è stato rilevato precedentemente il corrispettivo file contenente l'identificativo (con estensione '"+
+								Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_ATTACHMENT_SUFFIX_ID+"')");
+				}
+				this.getDocument(documenti, identificativoDocumento.nome, identificativoDocumento.tipo, entryName, archiveVersion).setByteContenuto(xml);
+			}
+			else {
+				throw new ProtocolException("Elemento ["+entryName+"] non atteso.");
+			}
+		}
+	}
+	private Documento getDocument(List<Documento> documenti, String nome, String tipo, String entryName, ArchiveVersion archiveVersion) throws ProtocolException{
 		
 		List<Character> permitPoint = new ArrayList<Character>();
 		permitPoint.add('.');
@@ -1596,11 +1916,19 @@ public class ZIPUtils  {
 		for (Documento documento : documenti) {
 			
 			String fileName = documento.getFile();
-			fileName = this.convertCharNonPermessiQualsiasiSistemaOperativo(fileName,true,permitPoint);
-			//fileName = this.convertCharNonPermessiQualsiasiSistemaOperativo(fileName,true,LIST_CHARACTER_PERMIT_IMPORT_PACKAGES);
-			
+			if(ArchiveVersion.V_UNDEFINED.equals(archiveVersion)){
+				fileName = this.oldMethod_convertCharNonPermessiQualsiasiSistemaOperativo(fileName,true,permitPoint);
+			}
+				
 			if(nome.equals(fileName)){
-				return documento;
+				if(ArchiveVersion.V_UNDEFINED.equals(archiveVersion)){
+					return documento;
+				}
+				else{
+					if(tipo.equals(documento.getTipo())){
+						return documento;
+					}
+				}
 			}
 		}
 		throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire un documento di un accordo senza definirlo anche all'interno della definizione xml dell'accordo");
@@ -1609,4 +1937,19 @@ public class ZIPUtils  {
 	protected String toStringXmlElementForErrorMessage(byte[]xml){
 		return xml!=null ? "Xml: ["+new String(xml)+"] \n" : "Xml Undefined. \n";
 	}
+}
+
+class IdentificativoAccordo{
+	
+	protected String tipo; // solo per aps
+	protected String nome;
+	protected String versione;
+	
+}
+
+class IdentificativoDocumento{
+	
+	protected String nome;
+	protected String tipo;
+	
 }

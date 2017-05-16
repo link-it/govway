@@ -110,6 +110,7 @@ public class ArchiviExporter extends HttpServlet {
 			// Cascade
 			String cascade = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE);
 			String cascadePdd = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_PDD);
+			String cascadeRuoli = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_RUOLI);
 			String cascadeSoggetti = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_SOGGETTI);
 			String cascadeServiziApplicativi = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_SERVIZI_APPLICATIVI);
 			String cascadePorteDelegate = request.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_PORTE_DELEGATE);
@@ -165,6 +166,10 @@ public class ArchiviExporter extends HttpServlet {
 				if(archiviCore.isExportArchivi_standard()==false){
 					if(cascadePdd!=null & !"".equals(cascadePdd)){
 						cascadeConfig.setCascadePdd(ServletUtils.isCheckBoxEnabled(cascadePdd));
+					}
+					
+					if(cascadeRuoli!=null & !"".equals(cascadeRuoli)){
+						cascadeConfig.setCascadeRuoli(ServletUtils.isCheckBoxEnabled(cascadeRuoli));
 					}
 					
 					if(cascadeSoggetti!=null & !"".equals(cascadeSoggetti)){

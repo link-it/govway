@@ -119,6 +119,19 @@ public final class Importer extends Action {
 			
 			// TODO: In caso di ControlStation remota, gestire a quale pdd 'operativa' associare i soggetti senza 'pdd'
 			PddCore pddCore = new PddCore(archiviCore);
+			if(pddCore.existsPddOperativa()==false){
+				
+				archiviHelper.makeMenu();
+				
+				pd.setMessage("Non è possibile completare l'operazione: non è stata rilevata una Porta di Dominio operativa");
+				
+				pd.disableEditMode();
+				
+				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+				
+				return ServletUtils.getStrutsForwardEditModeFinished(mapping, ArchiviCostanti.OBJECT_NAME_ARCHIVI_IMPORT, 
+						ArchiviCostanti.TIPO_OPERAZIONE_IMPORT);				
+			}
 			String nomePddOperativa = pddCore.getNomePddOperativa();
 			
 			ImporterUtils importerUtils = new ImporterUtils(archiviCore);

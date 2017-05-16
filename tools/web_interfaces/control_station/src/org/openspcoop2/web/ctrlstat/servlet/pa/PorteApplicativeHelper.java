@@ -167,6 +167,9 @@ public class PorteApplicativeHelper extends ConsoleHelper {
 				this.pd.setMessage("Non inserire spazi nei campi di testo");
 				return false;
 			}
+			if(this.checkIntegrationEntityName(nomePorta,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME)==false){
+				return false;
+			}
 
 			// Controllo che i campi "select" abbiano uno dei valori ammessi
 			if (!xsd.equals("abilitato") && !xsd.equals("disabilitato") && !xsd.equals("warningOnly")) {

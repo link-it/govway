@@ -30,7 +30,7 @@ import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.registry.Ruolo;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
-import org.openspcoop2.utils.regexp.RegularExpressionEngine;
+import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -137,9 +137,7 @@ public class RuoliHelper extends ConsoleHelper{
 				this.pd.setMessage("Non inserire spazi nel campo '"+RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME+"'");
 				return false;
 			}
-			// Il nome deve contenere solo lettere e numeri
-			if (!RegularExpressionEngine.isMatch(nome,"^[0-9A-Za-z_]+$")) {
-				this.pd.setMessage("Il nome del soggetto dev'essere formato solo da caratteri, cifre e '_'");
+			if(this.checkNCName(nome, RuoliCostanti.LABEL_PARAMETRO_RUOLO_NOME)==false){
 				return false;
 			}
 
@@ -252,7 +250,16 @@ public class RuoliHelper extends ConsoleHelper{
 					e.addElement(de);
 
 					de = new DataElement();
-					de.setValue(ruolo.getTipologia().getValue());
+					if(RuoloTipologia.INTERNO.getValue().equals(ruolo.getTipologia().getValue())){
+						de.setValue(RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_INTERNO);
+					}
+					else if(RuoloTipologia.ESTERNO.getValue().equals(ruolo.getTipologia().getValue())){
+						de.setValue(RuoliCostanti.RUOLI_TIPOLOGIA_LABEL_ESTERNO);
+					}
+					else{
+						de.setValue(ruolo.getTipologia().getValue());
+					}
+					
 					e.addElement(de);
 					
 					de = new DataElement();

@@ -60,7 +60,6 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
-import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.IExtendedListServlet;
@@ -324,20 +323,17 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 
 			// Il nome deve contenere solo lettere e numeri e '_' '-' '.'
-			if (!RegularExpressionEngine.isMatch(nomeservizio,"^[0-9A-Za-z_\\-\\.]+$")) {
-				this.pd.setMessage("Il nome del servizio dev'essere formato solo caratteri, cifre, '_' , '-' e '.'");
+			if(this.checkNCName(nomeservizio,AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_NOME_FILE+" Servizio")==false){
 				return false;
 			}
 
 			// Il tipo deve contenere solo lettere e numeri
-			if (!RegularExpressionEngine.isMatch(tiposervizio,"^[0-9A-Za-z_]+$")) {
-				this.pd.setMessage("Il tipo del servizio dev'essere formato solo da caratteri, cifre e '_'");
+			if(this.checkNCName(tiposervizio,AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_TIPO_FILE+" Servizio")==false){
 				return false;
 			}
 
 			// Versione deve essere un numero intero
-			if (!versione.equals("") && !RegularExpressionEngine.isMatch(versione,"^[1-9]+[0-9]*$")) {
-				this.pd.setMessage("La versione dev'essere rappresentata da un numero intero");
+			if (!versione.equals("") && !this.checkNumber(versione, AccordiServizioParteSpecificaCostanti.LABEL_PARAMETRO_APS_VERSIONE, false)) {
 				return false;
 			}
 
@@ -1150,6 +1146,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						versione);
 				
 
+				Soggetto sog = this.soggettiCore.getSoggettoRegistro(asps.getIdSoggetto());
+				boolean isPddEsterna = 
+						this.pddCore.isPddEsterna(sog.getPortaDominio());
+				
 //				DataElement de = new DataElement();
 //				de.setUrl(
 //						AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE,
@@ -1239,18 +1239,24 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 				if(isModalitaAvanzata){
 					de = new DataElement();
-					de.setUrl(
-							AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST,
-							new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""),
-							pNomeServizio, pTipoServizio, pIdsoggErogatore );
-					// +"&nomeprov="+soggErogatore+"&tipoprov="+tipoSoggEr);
-					if (contaListe) {
-						List<PortaApplicativa> lista1 = this.apsCore.serviziPorteAppList(asps.getTipo(),asps.getNome(),asps.getVersione(),
-								asps.getId().intValue(), asps.getIdSoggetto(), new Search(true));
-						int numPA = lista1.size();
-						ServletUtils.setDataElementVisualizzaLabel(de, (long) numPA );
-					} else
-						ServletUtils.setDataElementVisualizzaLabel(de);
+					if(isPddEsterna){
+						de.setType(DataElementType.TEXT);
+						de.setValue("-");
+					}
+					else{
+						de.setUrl(
+								AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_PORTE_APPLICATIVE_LIST,
+								new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID, asps.getId() + ""),
+								pNomeServizio, pTipoServizio, pIdsoggErogatore );
+						// +"&nomeprov="+soggErogatore+"&tipoprov="+tipoSoggEr);
+						if (contaListe) {
+							List<PortaApplicativa> lista1 = this.apsCore.serviziPorteAppList(asps.getTipo(),asps.getNome(),asps.getVersione(),
+									asps.getId().intValue(), asps.getIdSoggetto(), new Search(true));
+							int numPA = lista1.size();
+							ServletUtils.setDataElementVisualizzaLabel(de, (long) numPA );
+						} else
+							ServletUtils.setDataElementVisualizzaLabel(de);
+					}
 					e.addElement(de);
 				}
 

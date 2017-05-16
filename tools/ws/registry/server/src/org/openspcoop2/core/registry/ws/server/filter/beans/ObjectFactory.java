@@ -49,6 +49,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link CredenzialiSoggetto }
+     */
+    public CredenzialiSoggetto createCredenzialiSoggetto() {
+        return new CredenzialiSoggetto();
+    }
+    
+    /**
      * Create an instance of {@link Connettore }
      */
     public Connettore createConnettore() {
@@ -67,13 +74,6 @@ public class ObjectFactory {
      */
     public ConfigurazioneServizio createConfigurazioneServizio() {
         return new ConfigurazioneServizio();
-    }
-    
-    /**
-     * Create an instance of {@link CredenzialiSoggetto }
-     */
-    public CredenzialiSoggetto createCredenzialiSoggetto() {
-        return new CredenzialiSoggetto();
     }
     
 
