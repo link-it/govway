@@ -303,7 +303,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 			IRegistryReader registryReader,IConfigIntegrationReader configIntegrationReader,
 			boolean validationDocuments, MapPlaceholder placeholder) throws ProtocolException {
 		
-		ZIPUtils zipUtils = new ZIPUtils(this.protocolFactory.getLogger(),registryReader);
+		ZIPUtils zipUtils = new ZIPUtils(this.protocolFactory.getLogger(),registryReader,configIntegrationReader);
 		return zipUtils.getArchive(archive,placeholder,validationDocuments);
 		
 	}
@@ -314,7 +314,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 			boolean validationDocuments, MapPlaceholder placeholder) throws ProtocolException {
 		
 		try{
-			ZIPUtils zipUtils = new ZIPUtils(this.protocolFactory.getLogger(),registryReader);
+			ZIPUtils zipUtils = new ZIPUtils(this.protocolFactory.getLogger(),registryReader,configIntegrationReader);
 			return zipUtils.getArchive(archive,placeholder,validationDocuments);
 		}finally{
 			try{
