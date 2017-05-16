@@ -35,8 +35,8 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  *
  * @author Poli Andrea (apoli@link.it)
  * @author Pintori Giuliano (pintori@link.it)
- * @author $Author: pintori $
- * @version $Rev: 12564 $, $Date: 2017-01-11 14:31:31 +0100(mer, 11 gen 2017) $
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 public class AboutHelper extends ConsoleHelper {
 

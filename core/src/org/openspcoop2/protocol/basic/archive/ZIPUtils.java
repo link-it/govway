@@ -326,7 +326,7 @@ public class ZIPUtils  {
 	
 	public static final String ID_CORRELAZIONE_DEFAULT = "@PackageOpenSPCoop@";
 	
-	
+
 	/**
 	 * Ritorna la rappresentazione java di un archivio
 	 * 
