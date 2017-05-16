@@ -1,3 +1,15 @@
+2017-05-16  Andrea Poli <apoli@link.it>
+
+	* [PddConsole]
+	Risolto Bug OP-465
+	Corretto errore in importazione delle configurazioni OpenSPCoop se il nome del servizio contiene '-' o altri caratteri strani.
+	La soluzione è stata quella di creare un nuovo formato degli archivi che risolve la problematica.
+	Rimangono comunque compatibili i vecchi formati, anche se in tale formato non è risolvibile la problematica del '-'.
+	Sono stati anche modificati i vincoli sui nomi degli oggetti sul registro:
+	- Soggetti (solo lettere e numeri)
+	- Pdd, Ruoli, Accordi, Servizi, Azioni (NCName)
+	- Servizi Applicativi, Porte Delegate e Porte Applicative (NCName + '/')
+
 2017-04-10  Andrea Poli <apoli@link.it>
 
 	* [PddConsole]
