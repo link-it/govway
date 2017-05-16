@@ -75,6 +75,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveRuolo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
 import org.openspcoop2.protocol.sdk.archive.MapPlaceholder;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.constants.ArchiveVersion;
 import org.openspcoop2.utils.Utilities;
@@ -101,13 +102,15 @@ public class ZIPUtils  {
 	protected org.openspcoop2.protocol.information_missing.utils.serializer.JibxDeserializer jibxInformationMissingDeserializer = null;
 	
 	protected IRegistryReader registryReader;
+	protected IConfigIntegrationReader configIntegrationReader;
 	
-	public ZIPUtils(Logger log,IRegistryReader registryReader){
+	public ZIPUtils(Logger log,IRegistryReader registryReader,IConfigIntegrationReader configIntegrationReader){
 		this.log = log;
 		this.jibxRegistryDeserializer = new org.openspcoop2.core.registry.utils.serializer.JibxDeserializer();
 		this.jibxConfigDeserializer = new org.openspcoop2.core.config.utils.serializer.JibxDeserializer();
 		this.jibxInformationMissingDeserializer = new org.openspcoop2.protocol.information_missing.utils.serializer.JibxDeserializer();
 		this.registryReader = registryReader;
+		this.configIntegrationReader = configIntegrationReader;
 	}
 	
 	
@@ -1587,18 +1590,13 @@ public class ZIPUtils  {
 				throw new ProtocolException("Elemento ["+entryName+"] non atteso. Non e' possibile fornire il mapping con la PA senza fornire la definizione xml dell'accordo di servizio parte specifica");
 			}
 			
-			String csvLine = new String(xml);
-			String [] line = csvLine.split(" ");
-			if(line==null || line.length<=0){
-				throw new Exception("csv non contiene valori");
-			}
-			if(line.length!=3){
-				throw new Exception("csv wrong format (size:"+line.length+")");
+			String idLine = new String(xml);
+			if(idLine==null || "".equals(idLine)){
+				throw new Exception("id non contiene valori");
 			}
 			
 			IDPortaApplicativa idPA = new IDPortaApplicativa();
-			idPA.setNome(line[0].trim());
-			//idPA.setSoggetto(new IDSoggetto(line[1].trim(), line[2].trim()));
+			idPA.setNome(idLine);
 			archiveASPS.setIdPortaApplicativaAssociata(idPA);
 			
 		}catch(Exception eDeserializer){
@@ -1714,13 +1712,9 @@ public class ZIPUtils  {
 		Integer versioneKey = (versioneServizioInt!=null ? versioneServizioInt : -1 );
 		
 		try{
-			String csvLine = new String(xml);
-			String [] line = csvLine.split(" ");
-			if(line==null || line.length<=0){
-				throw new Exception("csv non contiene valori");
-			}
-			if(line.length!=3){
-				throw new Exception("csv wrong format (size:"+line.length+")");
+			String idLine = new String(xml);
+			if(idLine==null || "".equals(idLine)){
+				throw new Exception("id non contiene valori");
 			}
 			
 			String keyFruitore = ArchiveFruitore.buildKey(tipoSoggettoFruitoreKey, nomeSoggettoFruitoreKey, tipoSoggettoKey, nomeSoggettoKey, tipoServizio, nomeServizio, versioneKey);
@@ -1730,8 +1724,7 @@ public class ZIPUtils  {
 			
 			ArchiveFruitore archiveFruitore = archivio.getAccordiFruitori().get(keyFruitore);
 			IDPortaDelegata idPD = new IDPortaDelegata();
-			idPD.setNome(line[0].trim());
-			//idPD.setSoggettoFruitore(new IDSoggetto(line[1].trim(), line[2].trim()));
+			idPD.setNome(idLine);
 			archiveFruitore.setIdPortaDelegataAssociata(idPD);
 			
 		}catch(Exception eDeserializer){
