@@ -57,7 +57,7 @@ public abstract class BaseDataModel<BeanType, KeyType, DataProvider> extends Ser
 	protected Map<KeyType,BeanType> wrappedData = new HashMap<KeyType,BeanType>();
     protected List<KeyType> wrappedKeys = null;
     protected Integer rowCount;
-//    protected Integer currentPage = 0;
+    protected Integer currentPage = 1;
     
     public abstract KeyType getId(BeanType object);
     /**
@@ -194,4 +194,12 @@ public abstract class BaseDataModel<BeanType, KeyType, DataProvider> extends Ser
             return null;
         }
     }
+	public Integer getCurrentPage() {
+		return this.currentPage;
+	}
+	public void setCurrentPage(Integer currentPage) {
+		this.currentPage = currentPage;
+	}
+    
+    
 }

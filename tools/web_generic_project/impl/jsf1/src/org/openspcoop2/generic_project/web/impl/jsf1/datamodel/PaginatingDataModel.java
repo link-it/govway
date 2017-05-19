@@ -62,6 +62,8 @@ public abstract class PaginatingDataModel<T,U> extends SerializableDataModel {
     protected Integer rowCount;
     /** */
     protected Map<U,T> wrappedData = new HashMap<U,T>();
+    /** */
+    protected Integer currentPage = 1;
  
     /**
      * @see org.ajax4jsf.model.ExtendedDataModel#getRowKey()
@@ -310,4 +312,14 @@ public abstract class PaginatingDataModel<T,U> extends SerializableDataModel {
      * @return int
      */
     public abstract int getNumRecords();
+
+	public Integer getCurrentPage() {
+		return this.currentPage;
+	}
+
+	public void setCurrentPage(Integer currentPage) {
+		this.currentPage = currentPage;
+	}
+    
+    
 }

@@ -62,7 +62,8 @@
 						   maxPages="10"
 						   renderIfSinglePage="#{dsTopRenderIfSinglePage}" 
 						   pagesVar="pages" 
-						   pageIndexVar="page" 
+						   pageIndexVar="page"
+						   page="#{value.currentPage}" 
 						   reRender="#{id}_ds_down" fastControls="hide" 
 						   oncomplete="checkBrowser()" align="#{not empty topScrollerAlign ? topScrollerAlign : 'center'}">
 						   
@@ -178,7 +179,7 @@
 					   for="#{id}_tbl" 
 					   maxPages="15"
 					   renderIfSinglePage="#{dsBottomRenderIfSinglePage}" 
-					   pagesVar="pages" 
+					   pagesVar="pages"   page="#{value.currentPage}" 
 					   pageIndexVar="page" reRender="#{id}_ds_top" fastControls="hide" oncomplete="checkBrowser();">
 					   
 					<f:facet name="previous">

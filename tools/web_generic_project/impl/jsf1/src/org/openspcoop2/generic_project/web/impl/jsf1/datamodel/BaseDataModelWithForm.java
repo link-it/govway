@@ -65,7 +65,7 @@ public abstract class BaseDataModelWithForm< DTOType, KeyType,BeanType extends I
     protected Integer rowCount;
     
     protected FormType form;
-//    protected Integer currentPage = 0;
+    protected Integer currentPage = 1;
     
     
     public KeyType getId(BeanType object){
@@ -216,4 +216,7 @@ public abstract class BaseDataModelWithForm< DTOType, KeyType,BeanType extends I
     public FormType getForm() {
 		return this.form;
 	}
+	public abstract Integer getCurrentPage();
+	public abstract void setCurrentPage(Integer currentPage);
+    
 }

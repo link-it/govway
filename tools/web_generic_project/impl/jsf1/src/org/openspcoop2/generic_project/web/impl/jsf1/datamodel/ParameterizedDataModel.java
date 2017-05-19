@@ -152,4 +152,20 @@ public abstract class ParameterizedDataModel<DTOType, KeyType, BeanType extends 
     	
     	return null;
     }
+    
+    @Override
+	public Integer getCurrentPage() {
+    	if(this.getDataProvider().getForm() != null)
+    		return this.getDataProvider().getForm().getCurrentPage();
+    		
+		return this.currentPage;
+	}
+    
+    @Override
+	public void setCurrentPage(Integer currentPage) {
+    	if(this.getDataProvider().getForm() != null)
+    		this.getDataProvider().getForm().setCurrentPage(currentPage);
+    	
+		this.currentPage = currentPage;
+	}
 }
