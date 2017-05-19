@@ -105,6 +105,9 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 	/** AddGdoInfoAllTables */
 	protected boolean addGdoForAllTables = false;
     
+	/** Emit debug info */
+	protected boolean debug = false;
+
 	/** forceIndex */
 	protected boolean forceIndex = false;
 	public void setForceIndex(boolean forceIndex) {
@@ -159,9 +162,15 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 		Connection con = null;
 		DiagnosticConnectionResult cr = new DiagnosticConnectionResult();
 		cr.setReleaseConnection(false);
+		if(this.debug){
+			this.log.info("@@ ["+methodName+"] SINGLE CONNECTION["+this.singleConnection+"] OPEN["+this.openspcoopConnection+"]");
+		}
 		if(this.singleConnection==false){
 			if(this.openspcoopConnection && conOpenSPCoopPdD!=null){
 				//System.out.println("["+methodName+"]@GET_CONNECTION@ USE CONNECTION OPENSPCOOP");
+				if(this.debug){
+					this.log.info("@@ ["+methodName+"] GET_CONNECTION, USE CONNECTION OPENSPCOOP");
+				}
 				con = conOpenSPCoopPdD;
 			}else{
 				if(this.ds!=null){
@@ -171,6 +180,9 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 							throw new Exception("Connessione non fornita");
 						cr.setReleaseConnection(true);
 						//System.out.println("["+methodName+"]@GET_CONNECTION@ USE CONNECTION FROM DATASOURCE");
+						if(this.debug){
+							this.log.info("@@ ["+methodName+"] GET_CONNECTION, USE CONNECTION FROM DATASOURCE");
+						}
 					}catch(Exception e){
 						throw new Exception("Errore durante il recupero di una connessione dal datasource ["+this.datasource+"]: "+e.getMessage());
 					}
@@ -182,6 +194,9 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 							throw new Exception("Connessione non fornita");
 						cr.setReleaseConnection(true);
 						//System.out.println("["+methodName+"]@GET_CONNECTION@ USE CONNECTION VIA JDBC");
+						if(this.debug){
+							this.log.info("@@ ["+methodName+"] GET_CONNECTION, USE CONNECTION VIA JDBC");
+						}
 					}catch(Exception e){
 						throw new Exception("Errore durante il recupero di una connessione via jdbc url["+this.connectionViaJDBC_url+"] driver["+
 								this.connectionViaJDBC_driverJDBC+"] username["+this.connectionViaJDBC_username+"] password["+this.connectionViaJDBC_password
@@ -195,13 +210,22 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 				throw new Exception("Connessione (singleConnection enabled) non fornita dalla sorgente ["+DiagnosticProducer.singleConnection_source+"]");
 			}
 			//System.out.println("["+methodName+"]@GET_CONNECTION@ SINGLE CONNECTION");
+			if(this.debug){
+				this.log.info("@@ ["+methodName+"] GET_CONNECTION, SINGLE CONNECTION");
+			}
 		}
 		cr.setConnection(con);
 		return cr;
 	}
 	protected void releaseConnection(DiagnosticConnectionResult connectionResult,String methodName) throws SQLException{
+		if(this.debug){
+			this.log.info("@@ ["+methodName+"] RELEASE_CONNECTION ["+connectionResult.isReleaseConnection()+"]?");
+		}
 		if(connectionResult.isReleaseConnection()){
 			//System.out.println("["+methodName+"]@RELEASE_CONNECTION@");
+			if(this.debug){
+				this.log.info("@@ ["+methodName+"] RELEASE_CONNECTION effettuato");
+			}
 			connectionResult.getConnection().close();
 		}
 	}
@@ -341,7 +365,19 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 					this.addGdoForAllTables = true;
 				}
 			}
-				
+			
+			
+			
+			// debug info
+			String debug = this.appenderProperties.getProperty("debug");
+			if(debug!=null){
+				debug = debug.trim();
+				if("true".equals(debug)){
+					this.debug = true;
+				}
+			}
+			
+			
 			// Protocol Configuration
 			this.protocolConfiguration = this.protocolFactory.createProtocolConfiguration();
 			
@@ -384,6 +420,10 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 			
 			String idTransazione = msgDiagnostico.getProperty(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
 			
+			if(this.debug){
+				this.log.debug("@@ log idTransazione["+idTransazione+"] idBusta["+idBusta+"] ....");
+			}
+			
 			TipiDatabase tipo = null;
 			if(this.tipoDatabase!=null){
 				if(!TipiDatabase.isAMember(this.tipoDatabase)){
@@ -396,6 +436,10 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 			cr = this.getConnection(conOpenSPCoopPdD,"log");
 			con = cr.getConnection();
 
+			if(this.debug){
+				this.log.debug("@@ log idTransazione["+idTransazione+"] idBusta["+idBusta+"] (getConnection finished) ....");
+			}
+			
 			String codiceDiagnosticoColumnName = "";
 			String codiceDiagnosticoColumnValue = "";
 			if(codiceDiagnostico!=null){
@@ -425,6 +469,10 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 				// Inserimento della traccia nel DB in modalità retro compatibile
 				// in questa versione non viene recuperato l'id long
 				
+				if(this.debug){
+					this.log.debug("@@ log idTransazione["+idTransazione+"] idBusta["+idBusta+"] (inserimentoDiagnostico BackwardCompatible) ....");
+				}
+				
 				String updateString = "INSERT INTO "+CostantiDB.MSG_DIAGNOSTICI+" (gdo, pdd_codice, pdd_tipo_soggetto, pdd_nome_soggetto, idfunzione, severita, messaggio, idmessaggio, idmessaggio_risposta, protocollo"+codiceDiagnosticoColumnName+idTransazioneColumnName+") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?"+codiceDiagnosticoColumnValue+idTransazioneColumnValue+")";
 				int index = 1;
 				stmt = con.prepareStatement(updateString);
@@ -450,10 +498,18 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 				stmt.executeUpdate();
 				stmt.close();
 				
+				if(this.debug){
+					this.log.debug("@@ log idTransazione["+idTransazione+"] idBusta["+idBusta+"] (inserimentoDiagnostico BackwardCompatible terminato) ....");
+				}
+				
 			}
 			else{
 				
 				// Modalità di inserimento dove viene recuperato l'id long
+				
+				if(this.debug){
+					this.log.debug("@@ log idTransazione["+idTransazione+"] idBusta["+idBusta+"] (inserimentoDiagnostico) ....");
+				}
 				
 				List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
 				java.sql.Timestamp gdoT = null;
@@ -484,6 +540,14 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 					throw new Exception("ID autoincrementale non ottenuto");
 				}
 				msgDiagnostico.setId(iddiagnostico);
+				
+				if(this.debug){
+					this.log.debug("@@ log idTransazione["+idTransazione+"] idBusta["+idBusta+"] (inserimentoDiagnostico terminato) ....");
+				}
+			}
+			
+			if(this.debug){
+				this.log.debug("@@ log idTransazione["+idTransazione+"] idBusta["+idBusta+"] completato");
 			}
 			
 		}catch(Exception e){
@@ -534,6 +598,10 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 				
 				String idTransazione = msgDiagCorrelazione.getProperty(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
 				
+				if(this.debug){
+					this.log.debug("@@ logCorrelazione idTransazione["+idTransazione+"] idBusta["+idBusta+"] ....");
+				}
+				
 				TipiDatabase tipo = null;
 				if(this.tipoDatabase!=null){
 					if(!TipiDatabase.isAMember(this.tipoDatabase)){
@@ -546,13 +614,16 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 				cr = this.getConnection(conOpenSPCoopPdD,"logCorrelazione");
 				con = cr.getConnection();
 				
+				if(this.debug){
+					this.log.debug("@@ logCorrelazione idTransazione["+idTransazione+"] idBusta["+idBusta+"] (getConnection finished) ....");
+				}
+				
 				String fruitoreColumnName = "";
 				String fruitoreColumnValue = "";
 				if(fruitore!=null){
 					fruitoreColumnName = ", tipo_fruitore, fruitore";
 					fruitoreColumnValue = ", ?, ?";
 				}
-				
 				
 				String idTransazioneColumnName = "";
 				String idTransazioneColumnValue = "";
@@ -571,6 +642,10 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 					// Inserimento della traccia nel DB in modalità retro compatibile
 					// in questa versione non viene recuperato l'id long
 				
+					if(this.debug){
+						this.log.debug("@@ logCorrelazione idTransazione["+idTransazione+"] idBusta["+idBusta+"] (inserimento informazione correlazione backwardCompatible) ....");
+					}
+					
 					String updateString = "INSERT INTO "+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE
 					+" (idmessaggio, pdd_codice, pdd_tipo_soggetto, pdd_nome_soggetto, gdo, porta, delegata"+fruitoreColumnName+", tipo_erogatore, erogatore, tipo_servizio, servizio, versione_servizio, azione, id_correlazione_applicativa, protocollo"+idTransazioneColumnName+")"+
 					" VALUES (?, ?, ?, ?, ?, ?, ?"+fruitoreColumnValue+", ?, ?, ? , ? , ? , ? , ?, ?"+idTransazioneColumnValue+")";
@@ -588,11 +663,11 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 						if(idPorta.getTipo()!=null)
 							JDBCUtilities.setSQLStringValue(stmt,index++, idPorta.getTipo());
 						else
-							throw new Exception("IdentificativoPorta.codice non definito");
+							throw new Exception("IdentificativoPorta.tipo non definito");
 						if(idPorta.getNome()!=null)
 							JDBCUtilities.setSQLStringValue(stmt,index++, idPorta.getNome());
 						else
-							throw new Exception("IdentificativoPorta.codice non definito");
+							throw new Exception("IdentificativoPorta.nome non definito");
 					}else
 						throw new Exception("IdentificativoPorta non definito");
 					if(gdo!=null)
@@ -653,8 +728,16 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 					stmt.executeUpdate();
 					stmt.close();
 				
+					if(this.debug){
+						this.log.debug("@@ logCorrelazione idTransazione["+idTransazione+"] idBusta["+idBusta+"] (inserimento informazione correlazione backwardCompatible terminato) ....");
+					}
+					
 				}
 				else{
+					
+					if(this.debug){
+						this.log.debug("@@ logCorrelazione idTransazione["+idTransazione+"] idBusta["+idBusta+"] (inserimento informazione correlazione) ....");
+					}
 					
 					List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
 					
@@ -670,11 +753,11 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 						if(idPorta.getTipo()!=null)
 							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("pdd_tipo_soggetto", getSQLStringValue(idPorta.getTipo()), InsertAndGeneratedKeyJDBCType.STRING) );
 						else
-							throw new Exception("IdentificativoPorta.codice non definito");
+							throw new Exception("IdentificativoPorta.tipo non definito");
 						if(idPorta.getNome()!=null)
 							listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("pdd_nome_soggetto", getSQLStringValue(idPorta.getNome()), InsertAndGeneratedKeyJDBCType.STRING) );
 						else
-							throw new Exception("IdentificativoPorta.codice non definito");
+							throw new Exception("IdentificativoPorta.nome non definito");
 					}else
 						throw new Exception("IdentificativoPorta non definito");
 					if(gdo!=null)
@@ -743,6 +826,14 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 					}
 					msgDiagCorrelazione.setId(iddiagnostico);
 					
+					if(this.debug){
+						this.log.debug("@@ logCorrelazione idTransazione["+idTransazione+"] idBusta["+idBusta+"] (inserimento informazione correlazione terminato) ....");
+					}
+					
+				}
+				
+				if(this.debug){
+					this.log.debug("@@ logCorrelazione idTransazione["+idTransazione+"] idBusta["+idBusta+"] completato");
 				}
 				
 			}catch(Exception e){
@@ -774,9 +865,17 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 			ResultSet rs = null;
 			DiagnosticConnectionResult cr = null;
 			try{
+				if(this.debug){
+					this.log.debug("@@ logCorrelazioneServizioApplicativo idBusta["+msgDiagCorrelazioneSA.getIdBusta()+"] delegata["+msgDiagCorrelazioneSA.isDelegata()+"] ....");
+				}
+				
 				// Connessione al DB
 				cr = this.getConnection(conOpenSPCoopPdD,"logCorrelazioneServizioApplicativo");
 				con = cr.getConnection();
+				
+				if(this.debug){
+					this.log.debug("@@ logCorrelazioneServizioApplicativo idBusta["+msgDiagCorrelazioneSA.getIdBusta()+"] delegata["+msgDiagCorrelazioneSA.isDelegata()+"] (getConnection finished) ....");
+				}
 	
 				// Prendo id di correlazione
 				StringBuffer selectString = new StringBuffer("SELECT ");
@@ -826,6 +925,10 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 					throw new Exception("Non esiste una correlazione con l'id["+id+"] e delegata["+msgDiagCorrelazioneSA.isDelegata()+"]");
 				}
 				
+				if(this.debug){
+					this.log.debug("@@ logCorrelazioneServizioApplicativo idBusta["+msgDiagCorrelazioneSA.getIdBusta()+"] delegata["+msgDiagCorrelazioneSA.isDelegata()+"] (idCorrelazione prelevato) ....");
+				}
+				
 				String gdoColumnName = "";
 				String gdoColumnValue = "";
 				if(this.addGdoForAllTables){
@@ -846,8 +949,16 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 				rs.close();
 				stmt.close();
 								
+				if(this.debug){
+					this.log.debug("@@ logCorrelazioneServizioApplicativo idBusta["+msgDiagCorrelazioneSA.getIdBusta()+"] delegata["+msgDiagCorrelazioneSA.isDelegata()+"] (controllo esistenza) ....");
+				}
+				
 				if(existsAlready==false){
 							
+					if(this.debug){
+						this.log.debug("@@ logCorrelazioneServizioApplicativo idBusta["+msgDiagCorrelazioneSA.getIdBusta()+"] delegata["+msgDiagCorrelazioneSA.isDelegata()+"] (inserimento) ....");
+					}
+					
 					String updateString = "INSERT INTO "+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE_SA
 					+" (id_correlazione, servizio_applicativo"+gdoColumnName+")"+
 					" VALUES (?, ?"+gdoColumnValue+")";
@@ -860,9 +971,16 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 					}
 					stmt.executeUpdate();
 					stmt.close();
+				
+					if(this.debug){
+						this.log.debug("@@ logCorrelazioneServizioApplicativo idBusta["+msgDiagCorrelazioneSA.getIdBusta()+"] delegata["+msgDiagCorrelazioneSA.isDelegata()+"] (inserimento completato) ....");
+					}
 					
 				}
 				
+				if(this.debug){
+					this.log.debug("@@ logCorrelazioneServizioApplicativo idBusta["+msgDiagCorrelazioneSA.getIdBusta()+"] delegata["+msgDiagCorrelazioneSA.isDelegata()+"] completato");
+				}
 				
 			}catch(Exception e){
 				throw new MsgDiagnosticoException("Errore durante la registrazione del msg diagnostico di correlazione: "+e.getMessage(),e);
@@ -897,10 +1015,18 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 			ResultSet rs = null;
 			DiagnosticConnectionResult cr = null;
 			try{
+				if(this.debug){
+					this.log.debug("@@ logCorrelazioneApplicativaRisposta idBusta["+msgDiagCorrelazioneApplicativa.getIdBusta()+"] delegata["+msgDiagCorrelazioneApplicativa.isDelegata()+"] ....");
+				}
+				
 				// Connessione al DB
 				cr = this.getConnection(conOpenSPCoopPdD,"logCorrelazioneApplicativaRisposta");
 				con = cr.getConnection();
 	
+				if(this.debug){
+					this.log.debug("@@ logCorrelazioneApplicativaRisposta idBusta["+msgDiagCorrelazioneApplicativa.getIdBusta()+"] delegata["+msgDiagCorrelazioneApplicativa.isDelegata()+"] (getConnection finished) ....");
+				}
+				
 				// Prendo id di correlazione
 				StringBuffer selectString = new StringBuffer("SELECT ");
 				if(this.forceIndex){
@@ -929,6 +1055,10 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 				rs.close();
 				stmt.close();
 				
+				if(this.debug){
+					this.log.debug("@@ logCorrelazioneApplicativaRisposta idBusta["+msgDiagCorrelazioneApplicativa.getIdBusta()+"] delegata["+msgDiagCorrelazioneApplicativa.isDelegata()+"] (letto idCorrelazione) ....");
+				}
+				
 				String updateString = "UPDATE "+CostantiDB.MSG_DIAGNOSTICI_CORRELAZIONE
 				+" set id_correlazione_risposta=? WHERE id=?";
 				stmt = con.prepareStatement(updateString);
@@ -936,6 +1066,10 @@ public class DiagnosticProducer extends BasicComponentFactory implements IDiagno
 				stmt.setLong(2, idCorrelazione);
 				stmt.executeUpdate();
 				stmt.close();
+				
+				if(this.debug){
+					this.log.debug("@@ logCorrelazioneApplicativaRisposta idBusta["+msgDiagCorrelazioneApplicativa.getIdBusta()+"] delegata["+msgDiagCorrelazioneApplicativa.isDelegata()+"] completato");
+				}
 								
 			}catch(Exception e){
 				throw new MsgDiagnosticoException("Errore durante la registrazione del msg diagnostico di correlazione (id applicativo della risposta): "+e.getMessage(),e);

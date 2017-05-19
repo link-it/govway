@@ -101,6 +101,9 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 	/** AddGdoInfoAllTables */
 	protected boolean addGdoForAllTables = false;
 	
+	/** Emit debug info */
+	protected boolean debug = false;
+
 
 	public TracciaProducer(IProtocolFactory<?> factory) throws ProtocolException{
 		super(factory);
@@ -148,9 +151,15 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 		TracciaConnectionResult cr = new TracciaConnectionResult();
 		cr.setReleaseConnection(false);
 		Connection con = null;
+		if(this.debug){
+			this.log.info("@@ ["+methodName+"] SINGLE CONNECTION["+this.singleConnection+"] OPEN["+this.openspcoopConnection+"]");
+		}
 		if(this.singleConnection==false){
 			if(this.openspcoopConnection && conOpenSPCoopPdD!=null){
 				//System.out.println("["+methodName+"]@GET_CONNECTION@ USE CONNECTION OPENSPCOOP");
+				if(this.debug){
+					this.log.info("@@ ["+methodName+"] GET_CONNECTION, USE CONNECTION OPENSPCOOP");
+				}
 				con = conOpenSPCoopPdD;
 			}else{
 				if(this.ds!=null){
@@ -160,6 +169,9 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 							throw new Exception("Connessione non fornita");
 						cr.setReleaseConnection(true);
 						//System.out.println("["+methodName+"]@GET_CONNECTION@ USE CONNECTION FROM DATASOURCE");
+						if(this.debug){
+							this.log.info("@@ ["+methodName+"] GET_CONNECTION, USE CONNECTION FROM DATASOURCE");
+						}
 					}catch(Exception e){
 						throw new Exception("Errore durante il recupero di una connessione dal datasource ["+this.datasource+"]: "+e.getMessage());
 					}
@@ -171,6 +183,9 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 							throw new Exception("Connessione non fornita");
 						cr.setReleaseConnection(true);
 						//System.out.println("["+methodName+"]@GET_CONNECTION@ USE CONNECTION VIA JDBC");
+						if(this.debug){
+							this.log.info("@@ ["+methodName+"] GET_CONNECTION, USE CONNECTION VIA JDBC");
+						}
 					}catch(Exception e){
 						throw new Exception("Errore durante il recupero di una connessione via jdbc url["+this.connectionViaJDBC_url+"] driver["+
 								this.connectionViaJDBC_driverJDBC+"] username["+this.connectionViaJDBC_username+"] password["+this.connectionViaJDBC_password
@@ -184,13 +199,22 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 				throw new Exception("Connessione (singleConnection enabled) non fornita dalla sorgente ["+TracciaProducer.singleConnection_source+"]");
 			}
 			//System.out.println("["+methodName+"]@GET_CONNECTION@ SINGLE CONNECTION");
+			if(this.debug){
+				this.log.info("@@ ["+methodName+"] GET_CONNECTION, SINGLE CONNECTION");
+			}
 		}
 		cr.setConnection(con);
 		return cr;
 	}
 	protected void releaseConnection(TracciaConnectionResult connectionResult,String methodName) throws SQLException{
+		if(this.debug){
+			this.log.info("@@ ["+methodName+"] RELEASE_CONNECTION ["+connectionResult.isReleaseConnection()+"]?");
+		}
 		if(connectionResult.isReleaseConnection()){
 			//System.out.println("["+methodName+"]@RELEASE_CONNECTION@");
+			if(this.debug){
+				this.log.info("@@ ["+methodName+"] RELEASE_CONNECTION effettuato");
+			}
 			connectionResult.getConnection().close();
 		}
 	}
@@ -318,6 +342,16 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 				}
 			}
 			
+			
+			// debug info
+			String debug = this.appenderProperties.getProperty("debug");
+			if(debug!=null){
+				debug = debug.trim();
+				if("true".equals(debug)){
+					this.debug = true;
+				}
+			}
+			
 
 		}catch(Exception e){
 			throw new TracciamentoException("Errore durante l'inizializzazione dell'appender: "+e.getMessage(),e);
@@ -352,6 +386,9 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 		
 		String idTransazione = traccia.getProperty(org.openspcoop2.core.constants.Costanti.CLUSTER_ID);
 		
+		if(this.debug){
+			this.log.debug("@@ log["+busta.getID()+"] ....");
+		}
 		
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
@@ -362,6 +399,10 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 			cr = this.getConnection(conOpenSPCoopPdD,"traccia.log");
 			con = cr.getConnection();
 
+			if(this.debug){
+				this.log.debug("@@ log["+busta.getID()+"] (getConnection finished) ....");
+			}
+			
 			//Inserimento della traccia nel DB
 			if(!TipiDatabase.isAMember(this.tipoDatabase)){
 				throw new TracciamentoException("Tipo database ["+this.tipoDatabase+"] non supportato");
@@ -403,6 +444,9 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 								*/
 			}
 			
+			if(this.debug){
+				this.log.debug("@@ log["+busta.getID()+"] (prima inserimento traccia) ....");
+			}
 			List<InsertAndGeneratedKeyObject> listInsertAndGeneratedKeyObject = new ArrayList<InsertAndGeneratedKeyObject>();
 			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("gdo", gdoT , InsertAndGeneratedKeyJDBCType.TIMESTAMP) );
 			listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject("gdo_int", gdoT.getTime(), InsertAndGeneratedKeyJDBCType.LONG) );
@@ -462,6 +506,11 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 			}
 			traccia.setId(idtraccia);
 
+			if(this.debug){
+				this.log.debug("@@ log["+busta.getID()+"] (traccia inserita) ....");
+			}
+			
+			
 			
 			String gdoColumnName = "";
 			String gdoColumnValue = "";
@@ -472,6 +521,10 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 			
 
 			String sqlString = null;
+			
+			if(this.debug){
+				this.log.debug("@@ log["+busta.getID()+"] (inserimento "+busta.sizeListaRiscontri()+" riscontri) ....");
+			}
 			for (int i = 0; i < busta.sizeListaRiscontri(); i++) {
 				Riscontro riscontro = busta.getRiscontro(i);
 
@@ -494,7 +547,13 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 				stmt.executeUpdate();
 				stmt.close();
 			}
-
+			if(this.debug){
+				this.log.debug("@@ log["+busta.getID()+"] (inserimento "+busta.sizeListaRiscontri()+" riscontri effettuato) ....");
+			}
+			
+			if(this.debug){
+				this.log.debug("@@ log["+busta.getID()+"] (inserimento "+busta.sizeListaTrasmissioni()+" trasmissioni) ....");
+			}
 			for (int i = 0; i < busta.sizeListaTrasmissioni(); i++) {
 				Trasmissione trasmissione = busta.getTrasmissione(i);
 
@@ -525,7 +584,13 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 				stmt.executeUpdate();
 				stmt.close();
 			}
-
+			if(this.debug){
+				this.log.debug("@@ log["+busta.getID()+"] (inserimento "+busta.sizeListaTrasmissioni()+" trasmissioni effettuato) ....");
+			}
+			
+			if(this.debug){
+				this.log.debug("@@ log["+busta.getID()+"] (inserimento "+busta.sizeListaEccezioni()+" eccezioni) ....");
+			}
 			for (int i = 0; i < busta.sizeListaEccezioni(); i++) {
 				Eccezione eccezione = busta.getEccezione(i);
 
@@ -556,7 +621,13 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 				stmt.executeUpdate();
 				stmt.close();
 			}
+			if(this.debug){
+				this.log.debug("@@ log["+busta.getID()+"] (inserimento "+busta.sizeListaEccezioni()+" eccezioni effettuato) ....");
+			}
 			
+			if(this.debug){
+				this.log.debug("@@ log["+busta.getID()+"] (inserimento "+traccia.sizeListaAllegati()+" allegati) ....");
+			}
 			for (int i = 0; i < traccia.sizeListaAllegati(); i++) {
 				Allegato allegato = traccia.getAllegato(i);
 
@@ -576,9 +647,15 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 				stmt.executeUpdate();
 				stmt.close();
 			}
-
+			if(this.debug){
+				this.log.debug("@@ log["+busta.getID()+"] (inserimento "+traccia.sizeListaAllegati()+" allegati effettuato) ....");
+			}
+						
 			String [] propertiesNames = busta.getPropertiesNames();
 			if(propertiesNames!=null){
+				if(this.debug){
+					this.log.debug("@@ log["+busta.getID()+"] (inserimento "+propertiesNames.length+" ext-protocol-info) ....");
+				}
 				for (int i = 0; i < propertiesNames.length; i++) {
 	
 					//Inserimento nel DB
@@ -595,6 +672,13 @@ public class TracciaProducer extends BasicComponentFactory implements ITracciaPr
 					stmt.close();
 				
 				}
+				if(this.debug){
+					this.log.debug("@@ log["+busta.getID()+"] (inserimento "+propertiesNames.length+" effettuato) ....");
+				}
+			}
+			
+			if(this.debug){
+				this.log.debug("@@ log["+busta.getID()+"] completato");
 			}
 
 		}catch(Exception e){
