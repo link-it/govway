@@ -50,8 +50,10 @@ public class SQLObjectFactory {
 			return new MySQLQueryObject(TipiDatabase.MYSQL);
 		} else if (TipiDatabase.ORACLE.equals(tipoDatabase)) {
 			return new OracleQueryObject(TipiDatabase.ORACLE);
-		}else if(TipiDatabase.HSQL.toString().equals(tipoDatabase)){
+		} else if(TipiDatabase.HSQL.toString().equals(tipoDatabase)){
 			return new HyperSQLQueryObject(TipiDatabase.HSQL);
+		} else if(TipiDatabase.DERBY.toString().equals(tipoDatabase)){
+			return new DerbyQueryObject(TipiDatabase.DERBY);
 		} else if(TipiDatabase.SQLSERVER.toString().equals(tipoDatabase)){
 			return new SQLServerQueryObject(TipiDatabase.SQLSERVER);			
 		} else if(TipiDatabase.DB2.toString().equals(tipoDatabase)){

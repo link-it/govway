@@ -37,6 +37,7 @@ public enum TipiDatabase {
 	MYSQL ("mysql"),
 	ORACLE ("oracle"),
 	HSQL ("hsql"),
+	DERBY ("derby"),
 	SQLSERVER ("sqlserver"),
 	DB2 ("db2"),
 	DEFAULT ("default");
@@ -91,6 +92,8 @@ public enum TipiDatabase {
 			return TipiDatabase.ORACLE;
 		}else if(TipiDatabase.HSQL.toString().equals(val)){
 			return TipiDatabase.HSQL;
+		}else if(TipiDatabase.DERBY.toString().equals(val)){
+			return TipiDatabase.DERBY;
 		}else if(TipiDatabase.SQLSERVER.toString().equals(val)){
 			return TipiDatabase.SQLSERVER;
 		}else if(TipiDatabase.DB2.toString().equals(val)){
