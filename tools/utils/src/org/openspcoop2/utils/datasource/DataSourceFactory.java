@@ -193,7 +193,7 @@ public class DataSourceFactory {
 			if(params.isBindJmx()){
 				if(gestoreRisorse==null){
 					initGestoreRisorseJMX();
-					gestoreRisorse.registerMBean(JmxDataSource.class, params.getJmxDomain(), params.getJmxType(), params.getJmxName());
+					gestoreRisorse.registerMBean(JmxDataSource.class, params.getJmxDomain(), params.getJmxType(), params.getJmxName(), false);
 				}
 			}
 			

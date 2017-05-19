@@ -232,9 +232,12 @@ public class GestoreRisorseJMX {
 	 * @throws RisorseJMXException
 	 */
 	public void registerMBean(Class<?> c,String nome)throws RisorseJMXException{
-		this.registerMBean(c, CostantiJMX.JMX_DOMINIO,CostantiJMX.JMX_TYPE, nome);		
+		this.registerMBean(c, CostantiJMX.JMX_DOMINIO,CostantiJMX.JMX_TYPE, nome, true);		
 	}
 	public void registerMBean(Class<?> c,String dominio,String type,String nome)throws RisorseJMXException{
+		this.registerMBean(c, dominio, type, nome, true);		
+	}
+	public void registerMBean(Class<?> c,String dominio,String type,String nome, boolean throwExceptionAlreadyExists)throws RisorseJMXException{
 		try{
 			javax.management.ObjectName jmxName = 
 				new javax.management.ObjectName(dominio,type,nome);
@@ -244,8 +247,13 @@ public class GestoreRisorseJMX {
 			this.mbeanServer.registerMBean(c.newInstance(), jmxName);
 			this.jmxNames.add(jmxName);
 		}catch(Exception e){
-			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX ["+nome+"]: "+e.getMessage(),e);
-			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX ["+nome+"]: "+e.getMessage(),e);
+			if((e instanceof javax.management.InstanceAlreadyExistsException) && !throwExceptionAlreadyExists){
+				this.log.debug("Risorsa JMX ["+nome+"] già esistente: "+e.getMessage(),e);
+			}
+			else{
+				this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX ["+nome+"]: "+e.getMessage(),e);
+				throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX ["+nome+"]: "+e.getMessage(),e);
+			}
 		}	
 		
 	}
