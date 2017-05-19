@@ -45,6 +45,8 @@ public class JDBCAdapterFactory {
 			jdbcAdapter = new BlobJDBCAdapter(tipoDatabase);
 		} else if (TipiDatabase.HSQL.equals(tipoDatabase)) {
 			jdbcAdapter = new BytesJDBCAdapter(tipoDatabase);
+		} else if (TipiDatabase.DERBY.equals(tipoDatabase)) {
+			jdbcAdapter = new BytesJDBCAdapter(tipoDatabase);
 		} else if ( TipiDatabase.SQLSERVER.equals(tipoDatabase) ) {
 			jdbcAdapter = new StreamJDBCAdapter(tipoDatabase);
 		} else if ( TipiDatabase.DB2.equals(tipoDatabase) ) {

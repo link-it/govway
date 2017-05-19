@@ -47,6 +47,8 @@ public class KeyGeneratorFactory {
 			return new OracleKeyGenerator(connection, object);
 		} else if (TipiDatabase.HSQL.equals(tipoDatabase)) {
 			return new HyperSQLKeyGenerator(connection, object);
+		} else if (TipiDatabase.DERBY.equals(tipoDatabase)) {
+			return new DerbyKeyGenerator(connection, object);
 		} else if(TipiDatabase.SQLSERVER.toString().equals(tipoDatabase)){			
 			return new SQLServerKeyGenerator(connection, object);
 		} else if(TipiDatabase.DB2.toString().equals(tipoDatabase)){			
