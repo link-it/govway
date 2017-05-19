@@ -56,7 +56,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="registri">
+                    <linkit:sql-table-mapping name="registri"
+                                              comment="Elenco dei registri che la Porta di Dominio consulta per ottenere i dati relativi ai servizi ed ai soggetti">
                         <linkit:sql-table-unique>
                             <linkit:sql-table-unique-field name="nome"/>
                         </linkit:sql-table-unique>
@@ -72,6 +73,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Identificativo univoco del registro</linkit:sql-ddl-column-comment>
                            </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -82,6 +84,12 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="location"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[A seconda del tipo di registro (indicato nella colonna 'tipo') l'informazione presente assume un significato differente:
+- tipo='db': nome jndi del datasource
+- tipo='ws': endpoint del web service che permette la consultazione del registro
+- tipo='web': endpoint del web server che permette la consultazione del registro
+- tipo='uddi': endpoint di accesso al registro UDDI
+- tipo='xml': path assoluto su filesystem che individua un file xml che definisce il registro dei servizi]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -92,6 +100,12 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Tipo di Registro dei Servizi:
+- 'db': database relazionale
+- 'ws': web service che permette la consultazione del registro
+- 'web': web server che permette la consultazione del registro
+- 'uddi': registro UDDI
+- 'xml': file xml]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -102,6 +116,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="utente"/>
+                                <linkit:sql-ddl-column-comment>Per i registri che richiedono un'autenticazione, questa colonna contiene l'identità dell'utente</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -112,6 +127,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="password"/>
+                                <linkit:sql-ddl-column-comment>Per i registri che richiedono un'autenticazione, questa colonna contiene la password di accesso</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -126,7 +142,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="routing"/>                  
+                    <linkit:sql-table-mapping name="routing"
+                                              comment="Regole di routing dei messaggi gestiti dalla Porta di Dominio"/>                  
                 </linkit:generator>
             </xsd:appinfo>
         </xsd:annotation>
@@ -138,6 +155,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo"/>
+                                <linkit:sql-ddl-column-comment>Insieme all'informazione presente nella colonna 'nome' rappresenta una regola specifica valida per il soggetto identificato dalla coppia (tipo/nome)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -148,6 +166,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Insieme all'informazione presente nella colonna 'tipo' rappresenta una regola specifica valida per il soggetto identificato dalla coppia (tipo/nome)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -158,6 +177,9 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tiporotta"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Tipo di routing:
+- 'registro': la regola seguente impone alla PdD la consultazione di un registro per comprendere l'indirizzo a cui inoltrare il messaggio
+- 'gateway': la regola indica alla PdD di utilizzare forzatamente l'indirizzo associato al soggetto indicato in questa regola]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[registro/gateway]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -169,6 +191,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tiposoggrotta"/>
+                                <linkit:sql-ddl-column-comment>Colonna utilizzata solamente in presenza di una regola di routing con tiporotta='gateway'; insieme all'informazione presente nella colonna 'nomesoggrotta' identifica un soggetto nel registro verso il quale deve essere inoltrato il messaggio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -179,6 +202,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nomesoggrotta"/>
+                                <linkit:sql-ddl-column-comment>Colonna utilizzata solamente in presenza di una regola di routing con tiporotta='gateway'; insieme all'informazione presente nella colonna 'tiposoggrotta' identifica un soggetto nel registro verso il quale deve essere inoltrato il messaggio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -189,6 +213,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="registrorotta"/>
+                                <linkit:sql-ddl-column-comment>Colonna utilizzata solamente in presenza di una regola di routing con tiporotta='registro', contiene l'identificativo del registro [FK logica verso tabella registri(id)]</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[foreign key per i registri(id)]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -200,6 +225,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="is_default"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la regola è quella di default o meno (1=true, 0=false). Se non è una regola di default, devono essere obbligatoriamente valorizzate le colonne 'tipo' e 'nome'</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -214,7 +240,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="configurazione"/>
+                    <linkit:sql-table-mapping name="configurazione"
+                                              comment="Configurazione generale della Porta di Dominio (la tabella deve contenere una unica entry)"/>
                 </linkit:generator>
             </xsd:appinfo>
         </xsd:annotation>
@@ -226,6 +253,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="cadenza_inoltro"/>
+                                <linkit:sql-ddl-column-comment>Indicazione sul tempo di rispedizione (in minuti) di messaggi non riscontrati o riguardanti i profili asincroni</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Cadenza inoltro Riscontri/BusteAsincrone]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -237,6 +265,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="validazione_stato"/>
+                                <linkit:sql-ddl-column-comment>Modalità di validazione delle informazioni di protocollo (abilitato/disabilitato/warningOnly)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Validazione Buste]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -248,6 +277,9 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="validazione_controllo"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Tipo di validazione delle informazioni di protocollo nel caso in cui la validazione (vedi colonna 'validazione_stato') non è disabilitata:
+- 'normale': viene effettuata dalla PdD una validazione applicativa senza Schema XSD
+- 'rigido': viene effettuata, oltre alla validazione 'normale', una validazione sintattica dell'elemento che contiene le informazioni di protocollo utilizzando lo schema XSD che definisce tale elemento]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -258,6 +290,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="validazione_profilo"/>
+                                <linkit:sql-ddl-column-comment>Verifica di consistenza del profilo di collaborazione tra il valore presente nel messaggio e quello indicato sul registro (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -268,6 +301,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="validazione_manifest"/>
+                                <linkit:sql-ddl-column-comment>Modalità di validazione del manifest degli attachments, se il protocollo lo supporta (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -278,6 +312,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="validazione_contenuti_stato"/>
+                                <linkit:sql-ddl-column-comment>Modalità di validazione del contenuto applicativo (abilitato/disabilitato/warningOnly)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Validazione Contenuti Applicativi
 abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             </linkit:generator>
@@ -290,6 +325,10 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="validazione_contenuti_tipo"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Tipo di validazione del contenuto applicativo nel caso in cui la validazione (vedi colonna 'validazione_contenuti_stato') non è disabilitata
+- 'xsd': il messaggio viene validato rispetto agli schemi XSD registrati nell'accordo di servizio
+- 'wsdl': si tratta di una validazione più rigida rispetto a quella xsd, poichè oltre a verificare che il messaggio sia valido verifica anche che sia quello atteso per l'operazione in corso
+- 'openspcoop': validazione equivalente a quella 'wsdl' dove tutte le informazioni prelevate tipicamente in un wsdl (style,use,soapAction,...) sono invece state indicate direttamente sul registro dei servizi della PdD]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[wsdl/openspcoop/xsd]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -301,6 +340,8 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="validazione_contenuti_mtom"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Tipo di validazione del contenuto applicativo nel caso in cui la validazione (vedi colonna 'validazione_contenuti_stato') non è disabilitata ed il messaggio è nel formato MTOM.
+Indicazione se prima di procedere con la validazione tramite schemi xsd si deve effettuare una trasformazione temporanea degli elementi MTOM/XOP-Message in modo da poter superare una validazione xsd (abilitato/disabilitato)]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -312,6 +353,17 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="msg_diag_severita"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Livello di severità dei messaggi diagnostici emessi dalla PdD tramite gli appender registrati (vedi tabella 'msg-diag-appender'). Di seguito l'elenco dei valori ammissibili:
+- 'off': non viene emesso alcun diagnostico
+- 'fatal': rappresenta un errore che ha compromesso il funzionamento della PdD (es. connessione database non disponibile)
+- 'errorProtocol': rappresenta un errore avvenuto durante la gestione del protocollo di cooperazione tra le PdD
+- 'errorIntegration': rappresenta un errore avvenuto durante la gestione dell'integrazione della PdD con l'applicativo client o server
+- 'infoProtocol': rappresenta una informazione su di un'azione avvenuta durante la gestione del protocollo di cooperazione tra le PdD
+- 'infoIntegration': rappresenta una informazione su di un'azione avvenuta durante la gestione dell'integrazione della PdD con l'applicativo client o server
+- 'lowDebug': rappresente una informazione di debug relativa ad un'azione funzionale di alto livello
+- 'mediumDebug': rappresente una informazione di debug di media importanza
+- 'lowDebug': rappresente una informazione di debug di livello trace, dove vengono registrati i singolo step di un'azione funzionale
+- 'alll': vengono emessi i diagnostici di tutte le severità]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Livello Log Messaggi Diagnostici]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -323,6 +375,17 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="msg_diag_severita_log4j"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Livello di severità dei messaggi diagnostici emesso dalla PdD su filesystem tramite appender log4j2. Di seguito l'elenco dei valori ammissibili:
+- 'off': non viene emesso alcun diagnostico
+- 'fatal': rappresenta un errore che ha compromesso il funzionamento della PdD (es. connessione database non disponibile)
+- 'errorProtocol': rappresenta un errore avvenuto durante la gestione del protocollo di cooperazione tra le PdD
+- 'errorIntegration': rappresenta un errore avvenuto durante la gestione dell'integrazione della PdD con l'applicativo client o server
+- 'infoProtocol': rappresenta una informazione su di un'azione avvenuta durante la gestione del protocollo di cooperazione tra le PdD
+- 'infoIntegration': rappresenta una informazione su di un'azione avvenuta durante la gestione dell'integrazione della PdD con l'applicativo client o server
+- 'lowDebug': rappresente una informazione di debug relativa ad un'azione funzionale di alto livello
+- 'mediumDebug': rappresente una informazione di debug di media importanza
+- 'lowDebug': rappresente una informazione di debug di livello trace, dove vengono registrati i singolo step di un'azione funzionale
+- 'alll': vengono emessi i diagnostici di tutte le severità]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -333,6 +396,7 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tracciamento_buste"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la PdD deve emettere le tracce, relative ai messaggi gestiti, tramite gli appender registrati (vedi tabella 'tracciamento-appender') (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Tracciamento Buste]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -344,6 +408,7 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tracciamento_dump"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la PdD deve registrare il contenuto e gli header di trasporto dei messaggi gestiti. Il dump avviene dopo che la PdD ha 'trattato' i messaggi con il proprio engine di messaggistica (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -354,6 +419,7 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tracciamento_dump_bin_pd"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la PdD deve registrare i dati raw e gli header di trasporto ricevuti (richiesta) o inviati (risposta) tramite la porta delegata (abilitato/disabilitato)</linkit:sql-ddl-column-comment>                               
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -364,6 +430,7 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tracciamento_dump_bin_pa"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la PdD deve registrare i dati raw e gli header di trasporto ricevuti (richiesta) o inviati (risposta) tramite la porta applicativa (abilitato/disabilitato)</linkit:sql-ddl-column-comment>                               
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -374,6 +441,10 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="auth_integration_manager"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Elenco dei tipi di autenticazione (separati da ',') utilizzati dal servizio di I.M. per identificare gli appliicativi che si collegano al servizio di 'MessageBox'. Esempi di credenziali sono:
+- 'basic': autenticazione http basic composta da username e password
+- 'ssl': autenticazione ssl dove viene utilizzato il subject del certificato client
+- 'principal': autenticazione implementata sul container e dove l'identità dell'utente autenticato viaggia attraverso una credenzial principal via HttpServlet]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Autenticazione IntegrationManager]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -385,6 +456,7 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="statocache"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se i dati letti dal registro dei servizi della PdD vengono mantenuti in una cache (abilitato/disabilitato)</linkit:sql-ddl-column-comment>                             
                                 <linkit:sql-column-comment><![CDATA[Cache per l'accesso ai registri]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -396,6 +468,7 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="dimensionecache"/>
+                                <linkit:sql-ddl-column-comment>Numero massimo di elementi che risiedono nella cache dei dati letti dal registro dei servizi della PdD</linkit:sql-ddl-column-comment>                             
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -406,6 +479,7 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="algoritmocache"/>
+                                <linkit:sql-ddl-column-comment>Algoritmo di svecchiamento degli elementi che risiedono nella cache dei dati letti dal registro dei servizi della PdD (LRU/MRU)</linkit:sql-ddl-column-comment>                             
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -416,6 +490,7 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="idlecache"/>
+                                <linkit:sql-ddl-column-comment>Massimo tempo di inutilizzo (in minuti) degli elementi che risiedono nella cache dei dati letti dal registro dei servizi della PdD</linkit:sql-ddl-column-comment>                             
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -426,6 +501,7 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="lifecache"/>
+                                <linkit:sql-ddl-column-comment>Tempo di vita (in minuti) degli elementi che risiedono nella cache dei dati letti dal registro dei servizi della PdD</linkit:sql-ddl-column-comment>                             
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -436,6 +512,7 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="config_statocache"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se i dati letti dalla configurazione della PdD vengono mantenuti in una cache (abilitato/disabilitato)</linkit:sql-ddl-column-comment>                             
                                 <linkit:sql-column-comment><![CDATA[Cache per l'accesso alla configurazione]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -447,6 +524,7 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="config_dimensionecache"/>
+                                <linkit:sql-ddl-column-comment>Numero massimo di elementi che risiedono nella cache dei dati letti dalla configurazione della PdD</linkit:sql-ddl-column-comment>                             
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -457,6 +535,7 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="config_algoritmocache"/>
+                                <linkit:sql-ddl-column-comment>Algoritmo di svecchiamento degli elementi che risiedono nella cache dei dati letti dalla configurazione della PdD (LRU/MRU)</linkit:sql-ddl-column-comment>                             
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -467,6 +546,7 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="config_idlecache"/>
+                                <linkit:sql-ddl-column-comment>Massimo tempo di inutilizzo (in minuti) degli elementi che risiedono nella cache dei dati letti dalla configurazione della PdD (LRU/MRU)</linkit:sql-ddl-column-comment>                             
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -477,6 +557,7 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="config_lifecache"/>
+                                <linkit:sql-ddl-column-comment>Tempo di vita (in minuti) degli elementi che risiedono nella cache dei dati letti dalla configurazione della PdD (LRU/MRU)</linkit:sql-ddl-column-comment>                             
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -487,6 +568,7 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="auth_statocache"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se i dati di autorizzazione ai servizi della PdD vengono mantenuti in una cache (abilitato/disabilitato)</linkit:sql-ddl-column-comment>                             
                                 <linkit:sql-column-comment><![CDATA[Cache per l'accesso ai dati di autorizzazione]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -498,6 +580,7 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="auth_dimensionecache"/>
+                                <linkit:sql-ddl-column-comment>Numero massimo di elementi che risiedono nella cache dei dati di autorizzazione ai servizi della PdD</linkit:sql-ddl-column-comment>                             
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -508,6 +591,7 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="auth_algoritmocache"/>
+                                <linkit:sql-ddl-column-comment>Algoritmo di svecchiamento degli elementi che risiedono nella cache dei dati di autorizzazione ai servizi della PdD (LRU/MRU)</linkit:sql-ddl-column-comment>                             
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -518,6 +602,7 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="auth_idlecache"/>
+                                <linkit:sql-ddl-column-comment>Massimo tempo di inutilizzo (in minuti) degli elementi che risiedono nella cache dei dati di autorizzazione ai servizi della PdD (LRU/MRU)</linkit:sql-ddl-column-comment>                             
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -528,6 +613,7 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="auth_lifecache"/>
+                                <linkit:sql-ddl-column-comment>Tempo di vita (in minuti) degli elementi che risiedono nella cache dei dati di autorizzazione ai servizi della PdD (LRU/MRU)</linkit:sql-ddl-column-comment>                             
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -538,6 +624,7 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="authn_statocache"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se i dati di autenticazione ed identificazione dei servizi applicativi e dei soggetti vengono mantenuti in una cache (abilitato/disabilitato)</linkit:sql-ddl-column-comment>                             
                                 <linkit:sql-column-comment><![CDATA[Cache per l'accesso ai dati di autenticazione]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -549,6 +636,7 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="authn_dimensionecache"/>
+                                <linkit:sql-ddl-column-comment>Numero massimo di elementi che risiedono nella cache dei dati di autenticazione ed identificazione dei servizi applicativi e dei soggetti</linkit:sql-ddl-column-comment>                             
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -559,6 +647,7 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="authn_algoritmocache"/>
+                                <linkit:sql-ddl-column-comment>Algoritmo di svecchiamento degli elementi che risiedono nella cache dei dati di autenticazione ed identificazione dei servizi applicativi e dei soggetti (LRU/MRU)</linkit:sql-ddl-column-comment>                             
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -569,6 +658,7 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="authn_idlecache"/>
+                                <linkit:sql-ddl-column-comment>Massimo tempo di inutilizzo (in minuti) degli elementi che risiedono nella cache dei dati di autenticazione ed identificazione dei servizi applicativi e dei soggetti (LRU/MRU)</linkit:sql-ddl-column-comment>                             
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -579,6 +669,7 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="authn_lifecache"/>
+                                <linkit:sql-ddl-column-comment>Tempo di vita (in minuti) degli elementi che risiedono nella cache dei dati di autenticazione ed identificazione dei servizi applicativi e dei soggetti (LRU/MRU)</linkit:sql-ddl-column-comment>                             
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -589,6 +680,9 @@ abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="mod_risposta"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Modalità di gestione della connessione su cui vengono inviate le risposte
+- 'reply': connessione esistente (es. http reply)
+- 'new': nuova connessione]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[connessione su cui vengono inviate le risposte
 reply: connessione esistente (es. http reply)
 new: nuova connessione]]></linkit:sql-column-comment>
@@ -602,6 +696,7 @@ new: nuova connessione]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="indirizzo_telematico"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la gestione dell'indirizzo telematico è abilitato, se supportato dal protocollo (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Gestione dell'indirizzo]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -613,6 +708,7 @@ new: nuova connessione]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="gestione_manifest"/>
+                                <linkit:sql-ddl-column-comment>Modalità di gestione del manifest degli attachments, se il protocollo lo supporta (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Gestione Manifest]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -624,6 +720,7 @@ new: nuova connessione]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="routing_enabled"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la PdD deve agire da router, in tal caso utilizzerà le regole di routing definite nella tabela 'routing' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Routing Table]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -635,6 +732,7 @@ new: nuova connessione]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_ge_cooperazione"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della modalità di gestione errore di default attuata durante una fruizione di servizio [FK verso tabella gestione_errore(id)]</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Gestione errore di default per la Porta di Dominio
 FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un eventuale tipologia di gestione dell'errore di default durante l'utilizzo di un connettore]]></linkit:sql-column-comment>
                             </linkit:generator>
@@ -647,6 +745,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_ge_integrazione"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della modalità di gestione errore di default attuata durante una erogazione di servizio [FK verso tabella gestione_errore(id)]</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[FOREIGN KEY (id_ge_integrazione) REFERENCES gestione_errore(id) Nota: indica un eventuale tipologia di gestione dell'errore di default durante l'utilizzo di un connettore]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -663,7 +762,8 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="msgdiag_appender"/>
+                    <linkit:sql-table-mapping name="msgdiag_appender"
+                                              comment="Registro degli appender della diagnostica emessa dalla Porta di Dominio. Ogni appender si occupa di rendere persistente i diagnostici nel formato e nelle risorse che gli competono (db, fileSystem, ...)"/>
                 </linkit:generator>
             </xsd:appinfo>
         </xsd:annotation>
@@ -675,6 +775,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'appender per cui è stata effettuata una registrazione nel file 'openspcoop2.classRegistry.properties'</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -689,7 +790,8 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="msgdiag_appender_prop">
+                    <linkit:sql-table-mapping name="msgdiag_appender_prop"
+                                              comment="Definisce le proprietà (nome/valore) che permettono all'appender associato di attivare e poter salvare i diagnostici sul backend di propria competenza">
                         <linkit:sql-table-constraint unique="uniq_msgdiag_app_prop"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="msg-diag-appender"
@@ -714,6 +816,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_appender"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'appender (FK verso tabella msgdiag_appender(id))</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -724,6 +827,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Nome della proprietà</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -734,6 +838,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="valore"/>
+                                <linkit:sql-ddl-column-comment>Valore della proprietà</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -749,7 +854,8 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="tracce_appender"/>
+                    <linkit:sql-table-mapping name="tracce_appender"
+                                              comment="Registro degli appender delle tracce emesse dalla Porta di Dominio. Ogni appender si occupa di rendere persistente le tracce nel formato e nelle risorse che gli competono (db, fileSystem, ...)"/>
                 </linkit:generator>
             </xsd:appinfo>
         </xsd:annotation>
@@ -761,6 +867,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'appender per cui è stata effettuata una registrazione nel file 'openspcoop2.classRegistry.properties'</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -775,7 +882,8 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="tracce_appender_prop">
+                    <linkit:sql-table-mapping name="tracce_appender_prop"
+                                              comment="Definisce le proprietà (nome/valore) che permettono all'appender associato di attivare e poter salvare le tracce sul backend di propria competenza">
                         <linkit:sql-table-constraint unique="uniq_tracce_app_prop"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="tracciamento-appender"
@@ -800,6 +908,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_appender"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'appender (FK verso tabella tracce_appender(id))</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -810,6 +919,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Nome della proprietà</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -820,6 +930,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="valore"/>
+                                <linkit:sql-ddl-column-comment>Valore della proprietà</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -836,7 +947,8 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="msgdiag_ds">
+                    <linkit:sql-table-mapping name="msgdiag_ds"
+                                              comment="Elenco di configurazioni di accesso a database differenti ognuno contenente dei messaggi diagnostici emessi dalla Porta di Dominio">
                         <linkit:sql-table-unique>
                             <linkit:sql-table-unique-field name="nome"/>
                         </linkit:sql-table-unique>
@@ -852,6 +964,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Identificativo univoco della configurazione di accesso al database</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -862,6 +975,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome_jndi"/>
+                                <linkit:sql-ddl-column-comment>Nome jndi del datasource utilizzabile per accedere al database</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -872,6 +986,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo_database"/>
+                                <linkit:sql-ddl-column-comment>Tipo di database (postresql/mysql/oracle/hsql/sqlserver/db2)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -885,7 +1000,8 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="msgdiag_ds_prop">
+                    <linkit:sql-table-mapping name="msgdiag_ds_prop"
+                                              comment="Definisce le proprietà (nome/valore) che permettono alla configurazione associata di poter leggere i diagnostici dal backend di propria competenza">
                         <linkit:sql-table-foreign-key
                             reference-object-name="msgdiag-ds"
                             reference-object-type="msgdiag-ds"
@@ -909,6 +1025,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_prop"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della configurazione di accesso al database (FK verso tabella msgdiag_ds(id))</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -919,6 +1036,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Nome della proprietà</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -929,6 +1047,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="valore"/>
+                                <linkit:sql-ddl-column-comment>Valore della proprietà</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -946,7 +1065,8 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="tracce_ds">
+                    <linkit:sql-table-mapping name="tracce_ds"
+                                              comment="Elenco di configurazioni di accesso a database differenti ognuno contenente delle tracce emesse dalla Porta di Dominio">
                         <linkit:sql-table-unique>
                             <linkit:sql-table-unique-field name="nome"/>
                         </linkit:sql-table-unique>
@@ -962,6 +1082,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Identificativo univoco della configurazione di accesso al database</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -972,6 +1093,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome_jndi"/>
+                                <linkit:sql-ddl-column-comment>Nome jndi del datasource utilizzabile per accedere al database</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -982,6 +1104,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo_database"/>
+                                <linkit:sql-ddl-column-comment>Tipo di database (postresql/mysql/oracle/hsql/sqlserver/db2)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -995,7 +1118,8 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="tracce_ds_prop">
+                    <linkit:sql-table-mapping name="tracce_ds_prop"
+                                              comment="Definisce le proprietà (nome/valore) che permettono alla configurazione associata di poter leggere le tracce dal backend di propria competenza">
                         <linkit:sql-table-foreign-key
                             reference-object-name="tracce-ds"
                             reference-object-type="tracce-ds"
@@ -1019,6 +1143,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_prop"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della configurazione di accesso al database (FK verso tabella tracce_ds(id))</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1029,6 +1154,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Nome della proprietà</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1039,6 +1165,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="valore"/>
+                                <linkit:sql-ddl-column-comment>Valore della proprietà</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1056,7 +1183,8 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="servizi_pdd">
+                    <linkit:sql-table-mapping name="servizi_pdd"
+                                              comment="Stato dei servizi (abilitato/disabilitato) della Porta di Dominio">
                         <linkit:sql-table-unique create-index="true">
                             <linkit:sql-table-unique-field name="componente" />
                         </linkit:sql-table-unique>
@@ -1072,6 +1200,10 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="componente"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Identificativo del componente a cui si riferisce lo stato
+- 'pd': servizio di Porta Delegata
+- 'pa': servizio di Porta Applicativa
+- 'im': servizio Integration Manager]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1082,6 +1214,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="stato"/>
+                                <linkit:sql-ddl-column-comment>Stato del servizio (1=abilitato, 0=disabilitato)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Stato dei servizi attivi sulla Porta di Dominio]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -1097,7 +1230,8 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="servizi_pdd_filtri">
+                    <linkit:sql-table-mapping name="servizi_pdd_filtri"
+                                              comment="Stato (abilitato/disabilitato) di un singolo servizio erogato o fruito tramite la Porta di Dominio identificato tramite i soggetti coinvolti e i dati identificativi del servizio e dell'azione">
                         <linkit:sql-table-constraint unique="uniq_serv_pdd_filtri"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="servizi-pdd"
@@ -1117,6 +1251,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_servizio_pdd"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dello stato di un servizio della PdD (FK verso tabella servizi_pdd(id))</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1127,6 +1262,9 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo_filtro"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Tipologia di filtro definito in questa riga della tabella:
+- 'abilitazione': indica una specifica abilitazione che sovrascrive il comporamento di default definito nella tabella 'servizi_pdd'
+- 'disabilitazione': indica una specifica disabilitazione che sovrascrive il comporamento di default definito nella tabella 'servizi_pdd']]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1137,6 +1275,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo_soggetto_fruitore"/>
+                                <linkit:sql-ddl-column-comment>Tipo del soggetto fruitore</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1147,6 +1286,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="soggetto_fruitore"/>
+                                <linkit:sql-ddl-column-comment>Nome del soggetto fruitore</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1157,6 +1297,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="identificativo_porta_fruitore"/>
+                                <linkit:sql-ddl-column-comment>'Identificativo Porta' del soggetto fruitore</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1167,6 +1308,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo_soggetto_erogatore"/>
+                                <linkit:sql-ddl-column-comment>Tipo del soggetto erogatore</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1177,6 +1319,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="soggetto_erogatore"/>
+                                <linkit:sql-ddl-column-comment>Nome del soggetto erogatore</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1187,6 +1330,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="identificativo_porta_erogatore"/>
+                                <linkit:sql-ddl-column-comment>'Identificativo Porta' del soggetto erogatore</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1197,6 +1341,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo_servizio"/>
+                                <linkit:sql-ddl-column-comment>Tipo del servizio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1207,6 +1352,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="servizio"/>
+                                <linkit:sql-ddl-column-comment>Nome del servizio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1227,6 +1373,7 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="azione"/>
+                                <linkit:sql-ddl-column-comment>Identificativo univoco dell'azione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -1252,7 +1399,8 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="pdd_sys_props">
+                    <linkit:sql-table-mapping name="pdd_sys_props"
+                                              comment="Proprietà java che vengono attivate allo startup della Porta di Dominio">
                         <linkit:sql-table-unique create-index="true">
                             <linkit:sql-table-unique-field name="nome" />
                             <linkit:sql-table-unique-field name="valore" />
@@ -1263,8 +1411,28 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
         </xsd:annotation>
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element name="nome" type="xsd:string"/>
-                <xsd:element name="valore" type="xsd:string"/>
+                <xsd:element name="nome" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Nome della proprietà</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="valore" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="valore"/>
+                                <linkit:sql-ddl-column-comment>Valore della proprietà</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
