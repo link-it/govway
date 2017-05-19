@@ -37,7 +37,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="msgdiagnostici" sequence-cycle="true">
+                    <linkit:sql-table-mapping name="msgdiagnostici" sequence-cycle="true"
+                                              comment="Messaggi diagnostici emessi dalla PdD durante la gestione di una transazione applicativa">
                         <linkit:sql-table-index name="MSG_DIAG_ID">
                             <linkit:sql-table-index-field name="idmessaggio"/>
                         </linkit:sql-table-index>
@@ -56,6 +57,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="gdo"/>
+                                <linkit:sql-ddl-column-comment>Data di emissione del messaggio diagnostico</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -66,6 +68,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="pdd_codice"/>
+                                <linkit:sql-ddl-column-comment>'Identificativo Porta' del Soggetto che ha emesso il messaggio diagnostico</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -76,6 +79,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="pdd_tipo_soggetto"/>
+                                <linkit:sql-ddl-column-comment>'Tipo' del Soggetto che ha emesso il messaggio diagnostico</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -86,6 +90,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="pdd_nome_soggetto"/>
+                                <linkit:sql-ddl-column-comment>'Nome' del Soggetto che ha emesso il messaggio diagnostico</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -96,6 +101,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="idfunzione"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del modulo funzionale che ha emesso il messaggio diagnostico (es. InoltroBuste, ConsegnaContenutiApplicativi, ...)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -106,6 +112,15 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="severita"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Livello di severità del messaggio diagnostico:
+- 0: (fatal) rappresenta un errore che ha compromesso il funzionamento della PdD (es. connessione database non disponibile)
+- 1: (errorProtocol) rappresenta un errore avvenuto durante la gestione del protocollo di cooperazione tra le PdD
+- 2: (errorIntegration) rappresenta un errore avvenuto durante la gestione dell'integrazione della PdD con l'applicativo client o server
+- 3: (infoProtocol) rappresenta una informazione su di un'azione avvenuta durante la gestione del protocollo di cooperazione tra le PdD
+- 4: (infoIntegration) rappresenta una informazione su di un'azione avvenuta durante la gestione dell'integrazione della PdD con l'applicativo client o server
+- 5: (lowDebug) rappresente una informazione di debug relativa ad un'azione funzionale di alto livello
+- 6: (mediumDebug) rappresente una informazione di debug di media importanza
+- 7: (lowDebug) rappresente una informazione di debug di livello trace, dove vengono registrati i singolo step di un'azione funzionale]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -116,6 +131,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="messaggio" text="true"/>
+                                <linkit:sql-ddl-column-comment>Contenuto del messaggio associato al diagnostico</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -126,6 +142,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="idmessaggio"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del messaggio di richiesta [FK logica verso tabella msgdiag_correlazione(idmessaggio)]</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Eventuale id della richiesta in gestione (informazione non definita dalla specifica)]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -137,6 +154,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="idmessaggio_risposta"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del messaggio di risposta</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Eventuale id della risposta correlata alla richiesta (informazione non definita dalla specifica)]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -148,6 +166,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="codice"/>
+                                <linkit:sql-ddl-column-comment>Codice identificativo del messaggio diagnostico</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Codice del diagnostico emesso]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -159,6 +178,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="protocollo"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del protocollo (tale informazione può non essere presente per i diagnostici di 'servizio' della porta)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Protocollo (puo' non essere presente per i diagnostici di 'servizio' della porta)]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -177,7 +197,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="msgdiag_correlazione" sequence-cycle="true">
+                    <linkit:sql-table-mapping name="msgdiag_correlazione" sequence-cycle="true"
+                                              comment="Contiene i dati di una transazione applicativa gestita dalla PdD (Informazioni sui soggetti coinvolti, sui dati del servizio e sugli identificativi unici dei messaggi)">
                         <linkit:sql-table-index name="MSG_CORR_INDEX">
                             <linkit:sql-table-index-field name="idmessaggio"/>
                             <linkit:sql-table-index-field name="delegata"/>
@@ -205,6 +226,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="idmessaggio"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del messaggio di richiesta [FK logica verso tabella msgdiagnostici(idmessaggio)]</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Dati di Correlazione con i messaggi diagnostici]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -216,6 +238,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="pdd_codice"/>
+                                <linkit:sql-ddl-column-comment>'Identificativo Porta' del Soggetto che ha gestito la transazione applicativa</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -226,6 +249,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="pdd_tipo_soggetto"/>
+                                <linkit:sql-ddl-column-comment>'Tipo' del Soggetto che ha gestito la transazione applicativa</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -236,6 +260,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="pdd_nome_soggetto"/>
+                                <linkit:sql-ddl-column-comment>'Nome' del Soggetto che ha gestito la transazione applicativa</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -246,6 +271,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="gdo"/>
+                                <linkit:sql-ddl-column-comment>Data di emissione delle informazioni riguardanti la transazione applicativa</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Data di registrazione]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -257,6 +283,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="porta"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Nome della porta delegata (in caso di fruizione) o della porta applicativa (in caso di erogazione)]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[nome porta delegata/applicativa]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -268,6 +295,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="delegata"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indicazione se la transazione applicativa riguarda una fruzione (porta delegata) od una erogazione (porta applicativa) (1=PortaDelegata, 0=PortaApplicativa)]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[(1/0 true/false) True se siamo in un contesto di porta delegata, False se in un contesto di porta applicativa]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -279,6 +307,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo_fruitore"/>
+                                <linkit:sql-ddl-column-comment>Tipo del soggetto fruitore</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -289,6 +318,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="fruitore"/>
+                                <linkit:sql-ddl-column-comment>Nome del soggetto fruitore</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -299,6 +329,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo_erogatore"/>
+                                <linkit:sql-ddl-column-comment>Tipo del soggetto erogatore</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -309,6 +340,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="erogatore"/>
+                                <linkit:sql-ddl-column-comment>Nome del soggetto erogatore</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -319,6 +351,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo_servizio"/>
+                                <linkit:sql-ddl-column-comment>Tipo del servizio (informazione che rappresenta insieme al nome ed alla versione l'identificatore univoco del servizio)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -329,6 +362,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="servizio"/>
+                                <linkit:sql-ddl-column-comment>Nome del servizio (informazione che rappresenta insieme al tipo ed alla versione l'identificatore univoco del servizio)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -339,6 +373,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="versione_servizio"/>
+                                <linkit:sql-ddl-column-comment>Versione del servizio (informazione che rappresenta insieme al tipo ed al nome l'identificatore univoco del servizio)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -349,6 +384,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="azione"/>
+                                <linkit:sql-ddl-column-comment>Identificativo univoco dell'azione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -359,6 +395,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_correlazione_applicativa"/>
+                                <linkit:sql-ddl-column-comment>Informazione applicativa estratta dal messaggio di richiesta</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Identificatore correlazione applicativa]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -370,6 +407,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_correlazione_risposta"/>
+                                <linkit:sql-ddl-column-comment>Informazione applicativa estratta dal messaggio di risposta</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -380,6 +418,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="protocollo"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del protocollo utilizzato nella transazione applicativa</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Protocollo]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -397,7 +436,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="msgdiag_correlazione_sa" sequence-cycle="true">
+                    <linkit:sql-table-mapping name="msgdiag_correlazione_sa" sequence-cycle="true"
+                                              comment="Contiene gli identificativi degli applicativi (fruitori e erogatori) con cui la PdD ha interagito durante la gestione di una transazione applicativa">
                         <linkit:sql-table-primary-key generate-id="false">
                             <linkit:sql-table-pk-field name="id_correlazione"/>
                             <linkit:sql-table-pk-field name="servizio_applicativo"/>
@@ -420,6 +460,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_correlazione"/>
+                                <linkit:sql-ddl-column-comment>Identificativo delle informazioni sulla transazione [FK verso tabella msgdiag_correlazione(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -430,6 +471,8 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="servizio_applicativo"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Identificativo del servizio applicativo coinvolto dalla PdD durante la transazione applicativa.
+                                Identifica un servizio applicativo fruitore od erogatore a seconda se la transazione riguarda rispettivamente una fruizione od una erogazione di servizio]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Identita ServizioApplicativo]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
