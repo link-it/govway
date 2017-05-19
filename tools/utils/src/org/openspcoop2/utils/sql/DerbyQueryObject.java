@@ -336,6 +336,7 @@ public class DerbyQueryObject extends SQLQueryObjectCore {
 			}
 		}
 		
+		
 		// Offset
 		if((this.offset>=0) && (delete==false) && (update==false) && (conditions==false)){
 			bf.append(" OFFSET ");
@@ -344,12 +345,10 @@ public class DerbyQueryObject extends SQLQueryObjectCore {
 		}
 		
 		// Limit (con offset)
-		if(this.offset>=0){
-			if((this.limit>0) && (delete==false) && (update==false) && (conditions==false)){
-				bf.append(" FETCH NEXT ");
-				bf.append(this.limit);
-				bf.append(" ROWS ONLY ");
-			}
+		if((this.limit>0) && (delete==false) && (update==false) && (conditions==false)){
+			bf.append(" FETCH NEXT ");
+			bf.append(this.limit);
+			bf.append(" ROWS ONLY ");
 		}
 		
 		// ForUpdate
