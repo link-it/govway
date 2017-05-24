@@ -45,7 +45,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="porte_delegate">
+                    <linkit:sql-table-mapping name="porte_delegate"
+                                              comment="Interfacce che permettono la fruizione dei servizi erogati da soggetti esterni al dominio">
                         <linkit:sql-table-foreign-key reference-table="soggetti">
                             <linkit:sql-table-fk-field name="id_soggetto"/>
                             <linkit:sql-table-fk-reference-column name="id"/>
@@ -65,6 +66,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome_porta"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della Porta Delegata</linkit:sql-ddl-column-comment>
                            </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -75,6 +77,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="descrizione"/>
+                                <linkit:sql-ddl-column-comment>Descrizione generica del servizio esposto dalla porta</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -85,6 +88,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_soggetto_erogatore"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del soggetto erogatore [FK logica verso tabella soggetti(id)]</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[* Soggetto Erogatore *
 tipo/nome per le modalita static
 id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
@@ -98,6 +102,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo_soggetto_erogatore"/>
+                                <linkit:sql-ddl-column-comment>'Tipo' del soggetto erogatore</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -108,6 +113,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome_soggetto_erogatore"/>
+                                <linkit:sql-ddl-column-comment>'Nome' del soggetto erogatore</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -118,6 +124,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_servizio"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del servizio erogato tramite la porta [FK logica verso tabella servizi(id)]</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[* Servizio *
 tipo/nome/versione per le modalita static
 id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
@@ -131,6 +138,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo_servizio"/>
+                                <linkit:sql-ddl-column-comment>'Tipo' del servizio erogato tramite la porta</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -141,6 +149,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome_servizio"/>
+                                <linkit:sql-ddl-column-comment>'Nome' del servizio erogato tramite la porta</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -151,6 +160,11 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="versione_servizio"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Modalità di identificazione del servizio:
+- 'static': il servizio viene associato staticamente alla porta indicandolo tramite le colonne 'tipo_servizio' e 'nome_servizio'
+- 'contentBased': il servizio viene identificato attraverso l'estrazione del nome all'interno della richiesta tramite una regola xpath definita nella colonna 'pattern_servizio'
+- 'urlBased': il servizio viene identificato attraverso l'estrazione del nome dalla url di richiesta tramite una espressione regolare definita nella colonna 'pattern_servizio'
+- 'inputBased': il servizio viene identificato tramite gli header di integrazione standard forniti con la porta]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -161,6 +175,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_accordo"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'accordo di servizio parte comune implementato dal servizio erogato tramite la porta [FK logica verso tabella accordi(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -171,6 +186,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_port_type"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del servizio interno all'accordo di servizio parte comune implementato dal servizio erogato tramite la porta [FK logica verso tabella port_type(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -181,6 +197,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_azione"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'azione del servizio interno all'accordo di servizio parte comune implementato dal servizio erogato tramite la porta [FK logica verso tabella port_type_azioni(id) o accordi_azioni(id)]</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[* Azione *
 tipo/nome per le modalita static
 tipo/pattern per la modalita contentBased/urlBased
@@ -195,6 +212,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome_azione"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'azione del servizio erogato tramite la porta</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -205,6 +223,13 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="mode_azione"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Modalità di identificazione dell'azione:
+- 'static': l'azione viene associata staticamente alla porta indicandola tramite la colonna 'nome_azione'
+- 'contentBased': l'azione viene identificata attraverso l'estrazione del nome all'interno della richiesta tramite una regola xpath definita nella colonna 'pattern_azione'
+- 'urlBased': l'azione viene identificata attraverso l'estrazione del nome dalla url di richiesta tramite una espressione regolare definita nella colonna 'pattern_azione'
+- 'inputBased': l'azione viene identificata tramite gli header di integrazione standard forniti con la porta
+- 'soapActionBased': l'azione viene identificata tramite la soapAction
+- 'wsdlBased': l'azione viene identificata relazionando il messaggio di richiesta con quelli registrati nel wsdl del servizio]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -215,6 +240,9 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="pattern_azione"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Lo scopo del valore indicato in questa colonna varia a seconda della modalità impostata nella colonna 'mode_azione':
+- 'contentBased': la colonna 'pattern_azione' definisce una regola xpath
+- 'urlBased': la colonna 'pattern_azione' definisce una espressione regolare]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -225,6 +253,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="force_wsdl_based_azione"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se attuare un riconoscimento wsdlBased dell'azione, in caso di riconoscimento fallito tramite la modalità indicata nella colonna 'mode_azione' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -236,6 +265,12 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="autenticazione"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Modalità di identificazione dei servizi applicativi che desiderano fruire del servizio tramite la porta delegata.
+Il tipo indicato deve essere stato registrato nel file 'openspcoop2.classRegistry.properties'. Di seguito alcune implementazioni di default:
+- 'disabilitato': autenticazione non attiva sulla porta
+- 'basic': autenticazione http basic composta da username e password
+- 'ssl': autenticazione ssl dove viene utilizzato il subject del certificato client
+- 'principal': autenticazione implementata sul container e dove l'identità dell'utente autenticato viaggia attraverso una credenzial principal via HttpServlet]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Controllo Accessi]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -247,6 +282,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="autenticazione_opzionale"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se l'eventuale autenticazione indicata nella colonna 'autenticazione' deve obbligatoriamente identificare il chiamante (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -258,6 +294,12 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="autorizzazione"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Modalità di autorizzazione a fruire del servizio tramite la porta delegata.
+Il tipo indicato deve essere stato registrato nel file 'openspcoop2.classRegistry.properties'. Di seguito alcune implementazioni di default:
+- 'disabilitato': nessuna autorizzazione attiva sulla porta
+- 'authenticated': solo i servizi applicativi autenticati ed associati alla porta (tramite la tabella 'porte_delegate_sa') sono autorizzati.
+- 'roles': solo i servizi applicativi che possiedono i ruoli associati alla porta delegata (tramite tabella pd_ruoli) vengono autorizzati
+- 'xacmlPolicy': solo i servizi applicativi che soddisfano la policy associata al servizio possono fruirlo]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -268,6 +310,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="autorizzazione_contenuto"/>
+                                <linkit:sql-ddl-column-comment>Tipo di autorizzazione del contenuto effettuata dalla PdD; il tipo indicato deve essere stato registrato nel file 'openspcoop2.classRegistry.properties'</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -278,6 +321,11 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="mtom_request_mode"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Modalità di gestione dei messaggi di richiesta per quanto concerne il formato MTOM:
+- 'disable': il messaggio non viene in alcun modo modificato
+- 'packaging': verranno utilizzate le regole associato alla porta, all'interno della tabella 'pd_mtom_request', per effettuare la conversione degli elementi identificati in riferimenti xop + attachment corrispondente
+- 'unpackaging': verranno utilizzate le regole associato alla porta, all'interno della tabella 'pd_mtom_request', per effettuare l'operazione inversa al packaging, ripristinando il contenuto originale (presente come attach) al posto del riferimento xop
+- 'verify': verranno utilizzate le regole associato alla porta, all'interno della tabella 'pd_mtom_request', per verificare la presenza dei riferimenti xop (con attach) attesi]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[disable/packaging/unpackaging/verify]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -289,6 +337,11 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="mtom_response_mode"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Modalità di gestione dei messaggi di risposta per quanto concerne il formato MTOM:
+- 'disable': il messaggio non viene in alcun modo modificato
+- 'packaging': verranno utilizzate le regole associato alla porta, all'interno della tabella 'pd_mtom_response', per effettuare la conversione degli elementi identificati in riferimenti xop + attachment corrispondente
+- 'unpackaging': verranno utilizzate le regole associato alla porta, all'interno della tabella 'pd_mtom_response', per effettuare l'operazione inversa al packaging, ripristinando il contenuto originale (presente come attach) al posto del riferimento xop
+- 'verify': verranno utilizzate le regole associato alla porta, all'interno della tabella 'pd_mtom_response', per verificare la presenza dei riferimenti xop (con attach) attesi]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[disable/packaging/unpackaging/verify]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -300,6 +353,8 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ws_security"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indicazione se è attivo o meno un trattamento del messaggio tramite WSSecurity (abilitato/disabilitato). 
+Se attivo le regole specifiche di trattamento della richiesta e/o della risposta sono definite rispettivamente nella tabella 'pd_ws_request' e 'pd_ws_response' ]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[abilitato/disabilitato (se abilitato le WSSproperties sono presenti nelle tabelle ...._ws_request/response)]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -311,6 +366,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ws_security_mtom_req"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se prima di attuare un processamento WSSecurity sulla richiesta deve essere effettuato il trattamento mtom (se abilitato tramite la colonna 'mtom_request_mode') (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -322,6 +378,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ws_security_mtom_res"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se prima di attuare un processamento WSSecurity sulla risposta deve essere effettuato il trattamento mtom (se abilitato tramite la colonna 'mtom_response_mode') (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -333,6 +390,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ricevuta_asincrona_sim"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se è prevista una ricevuta nell'http reply per il profilo asincrono simmetrico (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -344,6 +402,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ricevuta_asincrona_asim"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se è prevista una ricevuta nell'http reply per il profilo asincrono asimmetrico (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -355,6 +414,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="validazione_contenuti_stato"/>
+                                <linkit:sql-ddl-column-comment>Modalità di validazione del contenuto applicativo (abilitato/disabilitato/warningOnly)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[abilitato/disabilitato/warningOnly]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -366,6 +426,10 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="validazione_contenuti_tipo"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Tipo di validazione del contenuto applicativo nel caso in cui la validazione (vedi colonna 'validazione_contenuti_stato') non è disabilitata
+- 'xsd': il messaggio viene validato rispetto agli schemi XSD registrati nell'accordo di servizio
+- 'wsdl': si tratta di una validazione più rigida rispetto a quella xsd, poichè oltre a verificare che il messaggio sia valido verifica anche che sia quello atteso per l'operazione in corso
+- 'openspcoop': validazione equivalente a quella 'wsdl' dove tutte le informazioni prelevate tipicamente in un wsdl (style,use,soapAction,...) sono invece state indicate direttamente sul registro dei servizi della PdD]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[wsdl/openspcoop/xsd]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -377,6 +441,8 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="validazione_contenuti_mtom"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Tipo di validazione del contenuto applicativo nel caso in cui la validazione (vedi colonna 'validazione_contenuti_stato') non è disabilitata ed il messaggio è nel formato MTOM.
+Indicazione se prima di procedere con la validazione tramite schemi xsd si deve effettuare una trasformazione temporanea degli elementi MTOM/XOP-Message in modo da poter superare una validazione xsd (abilitato/disabilitato)]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -388,6 +454,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="integrazione"/>
+                                <linkit:sql-ddl-column-comment>Lista di interfacce (tipi separati da virgola) per l'integrazione verso l'applicativo fruitore. I tipi indicati devono essere stati registrati nel file 'openspcoop2.classRegistry.properties'</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[lista di tipi separati dalla virgola]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -399,6 +466,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="scadenza_correlazione_appl"/>
+                                <linkit:sql-ddl-column-comment>Indicazione (in minuti) sull'intervallo di validità di una regola di correlazione applicativa che deve preservare l'associazione id-applicativo e id-protocollo</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[scadenza correlazione applicativa]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -410,6 +478,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="allega_body"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la PdD deve attuare la funzionalità 'allega body' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -421,6 +490,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="scarta_body"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la PdD deve attuare la funzionalità 'scarta body' (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -432,6 +502,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="gestione_manifest"/>
+                                <linkit:sql-ddl-column-comment>Modalità di gestione del manifest degli attachments, se il protocollo lo supporta (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -443,6 +514,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="stateless"/>
+                                <linkit:sql-ddl-column-comment>Modalità di gestione delle comunicazioni; per i profili di comunicazione che lo supportano, tramite questa impostazione viene abilitata o meno la presa in carico da parte della PdD (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -454,6 +526,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="local_forward"/>
+                                <linkit:sql-ddl-column-comment>Se viene abilitata questa funzionalità la richiesta ricevuta sulla porta delegata viene cortocircuitata alla porta applicativa (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -476,6 +549,9 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ruoli_match"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indica quali ruoli sono richiesti alla fruizione, se nella porta è stata impostata una autorizzazione basata sui ruoli (vedi colonna 'autorizzazione'):
+- 'all': tutti i ruoli associati alla porta delegata (tramite tabella pd_ruoli) devono essere posseduti dal chiamante
+- 'any': per essere autorizzati ad invocare il servizio è sufficente per il chiamante possedere uno dei ruoli definiti sulla porta delegata]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[all/any]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -487,6 +563,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_soggetto"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del soggetto che possiede la porta delegata [FK verso tabella soggetti(id)]</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[proprietario porta delegata (Soggetto fruitore)]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -498,6 +575,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ora_registrazione" default-current-time="true"/>
+                                <linkit:sql-ddl-column-comment>Data di ultima modifica dei dati della porta delegata, modifica attuata tipicamente attraverso la console di gestione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -511,7 +589,8 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="porte_delegate_sa">
+                    <linkit:sql-table-mapping name="porte_delegate_sa"
+                        comment="Elenco di servizi applicativi che sono autorizzati a fruire della porta delegata, se nella porta è stata impostata una autorizzazione 'authenticated' (vedi colonna 'autorizzazione')">
                         <linkit:sql-table-foreign-key
                             reference-object-name="porte-delegate"
                             reference-object-type="porte-delegate"
@@ -541,6 +620,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_porta"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della porta delegata [FK verso tabella porte_delegate(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -551,6 +631,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_servizio_applicativo"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del servizio applicativo associato alla porta [FK verso tabella servizi_applicativi(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -566,7 +647,8 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="pd_mtom_request">
+                    <linkit:sql-table-mapping name="pd_mtom_request"
+                                              comment="Elenco dei campi (nome,regolaXPath) interni al messaggio di richiesta che saranno gestiti tramite la modalità di elaborazione del messaggio MTOM impostato sulla porta">
                         <linkit:sql-table-constraint unique="uniq_pd_mtom_request" index="idx_pd_mtom_request"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="porte-delegate"
@@ -589,7 +671,8 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="pd_mtom_response">
+                    <linkit:sql-table-mapping name="pd_mtom_response"
+                                                    comment="Elenco dei campi (nome,regolaXPath) interni al messaggio di risposta che saranno gestiti tramite la modalità di elaborazione del messaggio MTOM impostato sulla porta">
                         <linkit:sql-table-constraint unique="uniq_pd_mtom_response" index="idx_pd_mtom_response"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="porte-delegate"
@@ -613,7 +696,8 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="pd_ws_request">
+                    <linkit:sql-table-mapping name="pd_ws_request"
+                                              comment="Elenco di proprietà nome/valore che permettono di configurare la gestione della sicurezza attuata sul messaggio di richiesta (es. ws-security)">
                         <linkit:sql-table-constraint unique="uniq_pd_ws_request" index="idx_pd_ws_request"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="porte-delegate"
@@ -636,7 +720,8 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="pd_ws_response">
+                    <linkit:sql-table-mapping name="pd_ws_response"
+                                              comment="Elenco di proprietà nome/valore che permettono di configurare la gestione della sicurezza attuata sul messaggio di risposta (es. ws-security)">
                         <linkit:sql-table-constraint unique="uniq_pd_ws_response" index="idx_pd_ws_response"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="porte-delegate"
@@ -662,6 +747,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                         <linkit:generator
                             xmlns:linkit="http://www.link.it/project_generator">
                             <linkit:sql-column-mapping name="id_porta"/>
+                            <linkit:sql-ddl-column-comment>Identificativo della porta delegata [FK verso tabella porte_delegate(id)]</linkit:sql-ddl-column-comment>
                         </linkit:generator>
                     </xsd:appinfo>
                 </xsd:annotation>
@@ -672,6 +758,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                         <linkit:generator
                             xmlns:linkit="http://www.link.it/project_generator">
                             <linkit:sql-column-mapping name="nome"/>
+                            <linkit:sql-ddl-column-comment>Nome della proprietà</linkit:sql-ddl-column-comment>
                         </linkit:generator>
                     </xsd:appinfo>
                 </xsd:annotation>
@@ -682,6 +769,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                         <linkit:generator
                             xmlns:linkit="http://www.link.it/project_generator">
                             <linkit:sql-column-mapping name="valore" text="true"/>
+                            <linkit:sql-ddl-column-comment>Valore associato alla proprietà</linkit:sql-ddl-column-comment>
                         </linkit:generator>
                     </xsd:appinfo>
                 </xsd:annotation>
@@ -698,6 +786,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                         <linkit:generator
                             xmlns:linkit="http://www.link.it/project_generator">
                             <linkit:sql-column-mapping name="id_porta"/>
+                            <linkit:sql-ddl-column-comment>Identificativo della porta delegata [FK verso tabella porte_delegate(id)]</linkit:sql-ddl-column-comment>
                         </linkit:generator>
                     </xsd:appinfo>
                 </xsd:annotation>
@@ -708,6 +797,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                         <linkit:generator
                             xmlns:linkit="http://www.link.it/project_generator">
                             <linkit:sql-column-mapping name="nome"/>
+                            <linkit:sql-ddl-column-comment>Nome della risorsa gestita tramite MTOM</linkit:sql-ddl-column-comment>
                         </linkit:generator>
                     </xsd:appinfo>
                 </xsd:annotation>
@@ -718,6 +808,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                         <linkit:generator
                             xmlns:linkit="http://www.link.it/project_generator">
                             <linkit:sql-column-mapping name="pattern" text="true"/>
+                            <linkit:sql-ddl-column-comment>Regola XPath</linkit:sql-ddl-column-comment>
                         </linkit:generator>
                     </xsd:appinfo>
                 </xsd:annotation>
@@ -728,6 +819,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                         <linkit:generator
                             xmlns:linkit="http://www.link.it/project_generator">
                             <linkit:sql-column-mapping name="content_type"/>
+                            <linkit:sql-ddl-column-comment>MediaType della risorsa gestita tramite MTOM</linkit:sql-ddl-column-comment>
                         </linkit:generator>
                     </xsd:appinfo>
                 </xsd:annotation>
@@ -738,6 +830,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                         <linkit:generator
                             xmlns:linkit="http://www.link.it/project_generator">
                             <linkit:sql-column-mapping name="required"/>
+                            <linkit:sql-ddl-column-comment>Indicazione se la risorsa gestita tramite MTOM deve essere obbligatoriamente presente nel messaggio (1:true, 0:false)</linkit:sql-ddl-column-comment>
                         </linkit:generator>
                     </xsd:appinfo>
                 </xsd:annotation>
@@ -771,6 +864,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_porta"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della porta delegata [FK verso tabella porte_delegate(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -781,6 +875,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome_elemento"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'elemento su cui deve essere attuata la regola di correlazione applicativa</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -791,6 +886,11 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="mode_correlazione"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indicazione sulla modalità di estrazione dell'informazione applicativa dal messaggio:
+- 'disabilitato': funzionalità di correlazione applicativa disabilitata
+- 'content-based': l'informazione applicativa viene estratta attraverso una regola xpath indicata nella colonna 'pattern'
+- 'url-based': l'informazione applicativa viene estratta attraverso una espressione regolare indicata nella colonna 'pattern'
+- 'input-based' l'informazione applicativa viene estratta tramite i meccanismi standard di integrazione supportati dalla PdD]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[modalita di scelta user input, content-based, url-based, disabilitato]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -802,6 +902,9 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="pattern" text="true"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Lo scopo del valore indicato in questa colonna varia a seconda della modalità impostata nella colonna 'mode_correlazione':
+- 'content-based': la colonna 'pattern' definisce una regola xpath
+- 'url-based': la colonna 'pattern' definisce una espressione regolare]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[pattern utilizzato solo per content/url based]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -813,6 +916,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="identificazione_fallita"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se, nel caso di estrazione fallita dell'informazione applicativa, la transazione deve essere terminata con errore o meno (blocca/accetta)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[blocca/accetta]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -824,6 +928,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="riuso_id"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se deve essere creata una associazione id-applicativo con id-protocollo in modo da riusare lo stesso id-protocollo se viene rilevato lo stesso id-applicativo (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[abilitato/disabilitato]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -857,6 +962,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_porta"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della porta delegata [FK verso tabella porte_delegate(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -867,6 +973,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome_elemento"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'elemento su cui deve essere attuata la regola di correlazione applicativa</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -877,6 +984,11 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="mode_correlazione"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indicazione sulla modalità di estrazione dell'informazione applicativa dal messaggio:
+- 'disabilitato': funzionalità di correlazione applicativa disabilitata
+- 'content-based': l'informazione applicativa viene estratta attraverso una regola xpath indicata nella colonna 'pattern'
+- 'url-based': l'informazione applicativa viene estratta attraverso una espressione regolare indicata nella colonna 'pattern'
+- 'input-based' l'informazione applicativa viene estratta tramite i meccanismi standard di integrazione supportati dalla PdD]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[modalita di scelta user input, content-based, url-based, disabilitato]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -888,6 +1000,9 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="pattern" text="true" />
+                                <linkit:sql-ddl-column-comment><![CDATA[Lo scopo del valore indicato in questa colonna varia a seconda della modalità impostata nella colonna 'mode_correlazione':
+- 'content-based': la colonna 'pattern' definisce una regola xpath
+- 'url-based': la colonna 'pattern' definisce una espressione regolare]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[pattern utilizzato solo per content/url based]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -899,6 +1014,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="identificazione_fallita"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se, nel caso di estrazione fallita dell'informazione applicativa, la transazione deve essere terminata con errore o meno (blocca/accetta)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[blocca/accetta]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -916,7 +1032,8 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="pd_ruoli">
+                    <linkit:sql-table-mapping name="pd_ruoli"
+                                              comment="Elenco di ruoli richiesti per la fruizione del servizio">
                         <linkit:sql-table-foreign-key
                             reference-object-name="porte-delegate"
                             reference-object-type="porte-delegate"
@@ -939,6 +1056,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_porta"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della porta delegata [FK verso tabella porte_delegate(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -949,6 +1067,7 @@ id utilizzato in caso di registryInput]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ruolo"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del ruolo associato alla porta [FK logica verso tabella ruoli(nome)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
