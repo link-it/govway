@@ -38,7 +38,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="servizi_applicativi">
+                    <linkit:sql-table-mapping name="servizi_applicativi"
+                                              comment="Elenco degli applicativi fruitori o erogatori di servizi">
                         <linkit:sql-table-foreign-key reference-table="soggetti">
                             <linkit:sql-table-fk-field name="id_soggetto"/>
                             <linkit:sql-table-fk-reference-column name="id"/>
@@ -67,6 +68,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Identificativo dell'applicativo</linkit:sql-ddl-column-comment>
                            </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -77,6 +79,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="descrizione"/>
+                                <linkit:sql-ddl-column-comment>Generica descrizione dell'applicativo</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -87,6 +90,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="sbustamentorisp"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se il contenuto inviato all'applicativo che gestisce la risposta asincrona debba essere sbustato della parte soap (1:true, 0:false)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[* Risposta Asincrona *
 valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             </linkit:generator>
@@ -99,6 +103,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="getmsgrisp"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se il contenuto riguardante la risposta asincrona deve essere salvato e mantenuto nella MessageBox della PdD (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -109,6 +114,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_gestione_errore_risp"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della modalità di gestione errore attuata durante la gestione della risposta asincrona [FK verso tabella gestione_errore(id)]</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[FOREIGN KEY (id_gestione_errore_risp) REFERENCES gestione_errore(id) Nota: indica un eventuale tipologia di gestione dell'errore per la risposta asincrona]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -120,6 +126,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipoauthrisp"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se devono essere utilizzate delle credenziali di accesso durante l'invocazione del servizio di risposta asincrona (none/basic)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -130,6 +137,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="utenterisp"/>
+                                <linkit:sql-ddl-column-comment>Username inviato all'applicativo che gestisce la risposta asincrona, in caso di credenziali di tipo 'basic' (vedi colonna 'tipoauthrisp')</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -140,6 +148,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="passwordrisp"/>
+                                <linkit:sql-ddl-column-comment>Password inviata all'applicativo che gestisce la risposta asincrona, in caso di credenziali di tipo 'basic' (vedi colonna 'tipoauthrisp')</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -150,6 +159,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="invio_x_rif_risp"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la PdD deve attuare la funzionalità 'invio per riferimento' durante la gestione della risposta asincrona (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -160,6 +170,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="risposta_x_rif_risp"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la PdD deve attuare la funzionalità 'risposta per riferimento' durante la gestione della risposta asincrona (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -170,6 +181,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_connettore_risp"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del connettore che definisce il servizio di risposta asincrona [FK verso tabella connettori(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -180,6 +192,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="sbustamento_protocol_info_risp"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se il contenuto inviato all'applicativo che gestisce la risposta asincrona debba essere sbustato delle informazioni di protocollo (1:true, 0:false)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -190,6 +203,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="sbustamentoinv"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se il contenuto inviato all'applicativo debba essere sbustato della parte soap (1:true, 0:false)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[* Invocazione Servizio *
 valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             </linkit:generator>
@@ -202,6 +216,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="getmsginv"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se il contenuto per l'applicativo erogatore deve essere salvato e mantenuto nella MessageBox della PdD (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -212,6 +227,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_gestione_errore_inv"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della modalità di gestione errore attuata durante l'invocazione dell'applicativo erogatore [FK verso tabella gestione_errore(id)]</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[FOREIGN KEY (id_gestione_errore_inv) REFERENCES gestione_errore(id) Nota: indica un eventuale tipologia di gestione dell'errore per l'invocazione servizio]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -223,6 +239,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipoauthinv"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se devono essere utilizzate delle credenziali di accesso durante l'invocazione del servizio (none/basic)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -233,6 +250,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="utenteinv"/>
+                                <linkit:sql-ddl-column-comment>Username inviato all'applicativo erogatore, in caso di credenziali di tipo 'basic' (vedi colonna 'tipoauthinv')</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -243,6 +261,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="passwordinv"/>
+                                <linkit:sql-ddl-column-comment>Password inviata all'applicativo erogatore, in caso di credenziali di tipo 'basic' (vedi colonna 'tipoauthinv')</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -253,6 +272,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="invio_x_rif_inv"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la PdD deve attuare la funzionalità 'invio per riferimento' durante l'invocazione dell'applicativo erogatore (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -263,6 +283,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="risposta_x_rif_inv"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la PdD deve attuare la funzionalità 'risposta per riferimento' durante l'invocazione dell'applicativo erogatore (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -273,6 +294,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_connettore_inv"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del connettore che definisce il servizio [FK verso tabella connettori(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -282,6 +304,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-ddl-column-comment>Indicazione se il contenuto inviato all'applicativo erogatore debba essere sbustato delle informazioni di protocollo (1:true, 0:false)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-mapping name="sbustamento_protocol_info_inv"/>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -293,6 +316,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_soggetto"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del soggetto che possiede l'applicativo [FK verso tabella soggetti(id)]</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[* SoggettoErogatore *]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -304,6 +328,9 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="fault"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indicazione sulla modalità di gestione dell'errore ritornato all'applicativo fruitore:
+- ''soap: la descrizione dell'errore viene inserito dalla PdD in un SOAPFault (detail)
+- 'xml': l'intero contenuto applicativo ritornato al client contiene una descrizione dell'errore tramite una rappresentazione xml]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[* Invocazione Porta *]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -315,6 +342,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="fault_actor"/>
+                                <linkit:sql-ddl-column-comment>Indicazione sul fault-actor da utilizzare se la modalità di errore ritornata al client è impostata a 'fault' (vedi colonna 'fault')</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -325,6 +353,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="generic_fault_code"/>
+                                <linkit:sql-ddl-column-comment>Indicazione codice di errore, se il codice debba essere anonimo (400/500) o specifico per l'errore avvenuto (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -335,6 +364,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="prefix_fault_code"/>
+                                <linkit:sql-ddl-column-comment>Prefisso da associare al codice di errore</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -345,6 +375,10 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipoauth"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Tipo di credenziale associata all'applicativo, che lo identifica univocamente. Esempi di credenziali sono:
+- 'basic': autenticazione http basic composta da username e password
+- 'ssl': autenticazione ssl dove viene utilizzato il subject del certificato client
+- 'principal': autenticazione implementata sul container e dove l'identità dell'utente autenticato viaggia attraverso una credenzial principal via HttpServlet]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -355,6 +389,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="utente"/>
+                                <linkit:sql-ddl-column-comment>Username in caso di credenziali di tipo 'basic' o principal-user-id in caso di credenziali di tipo 'principal' (vedi colonna 'tipoauth')</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -365,6 +400,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="password"/>
+                                <linkit:sql-ddl-column-comment>Password in caso di credenziali di tipo 'basic' (vedi colonna 'tipoauth')</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -375,6 +411,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="subject"/>
+                                <linkit:sql-ddl-column-comment>Subject del certificato in caso di credenziali di tipo 'ssl' (vedi colonna 'tipoauth')</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -385,6 +422,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="invio_x_rif"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se la PdD deve attuare la funzionalità 'invio per riferimento' durante l'invocazione dell'applicativo fruitore (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -395,6 +433,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="sbustamento_protocol_info"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se il contenuto inviato come risposta all'applicativo fruitore debba essere sbustato delle informazioni di protocollo (1:true, 0:false)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -405,6 +444,10 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipologia_fruizione"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Tipologia dell'applicativo per quanto concerne il ruolo di fruitore:
+- 'disabilitato': l'applicativo non è utilizzabile come fruitore
+- 'normale': l'applicativo è utilizzabile come fruitore dei servizi attraverso le porte delegate esposte dalla PdD
+- 'asincrona_simmetrica': l'applicativo è utilizzabile per fruire di un servizio con profilo asincrono simmetrico; il profilo richiede che l'applicativo fruitore esponga anche un servizio per ricevere le risposte asincrone]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -415,6 +458,11 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipologia_erogazione"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Tipologia dell'applicativo per quanto concerne il ruolo di erogatore:
+- 'disabilitato': l'applicativo non è utilizzabile come erogatore
+- 'trasparente': l'applicativo espone un servizio utilizzato dalla PdD per inoltre il pacchetto applicativo ricevuto attraverso una porta applicativa
+- 'asincrona_asimmetrica': l'applicativo è utilizzabile come erogatore di un servizio con profilo asincrono asimmetrico; il profilo richiede che l'applicativo esponda un servizio per ricevere la richiesta ed un ulteriore servizio per richiedere la risposta
+- 'message_box': il pacchetto applicativo ricevuto dalla PdD attraverso una porta applicativa non viene consegnato ad un servizio ma viene salvato nella MessageBox e l'applicativo potrà recuperarlo successivamente]]></linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -425,6 +473,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ora_registrazione" default-current-time="true"/>
+                                <linkit:sql-ddl-column-comment>Data di ultima modifica dei dati del Servizio Applicativo, modifica attuata tipicamente attraverso la console di gestione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -439,7 +488,8 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="sa_ruoli">
+                    <linkit:sql-table-mapping name="sa_ruoli"
+                                              comment="Ruoli associati ai servizi applicativi">
                         <linkit:sql-table-foreign-key
                             reference-object-name="servizi-applicativi"
                             reference-object-type="servizi-applicativi"
@@ -462,6 +512,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_servizio_applicativo"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del servizio applicativo che possiede il ruolo indicato nella colonna 'id_ruolo' [FK verso tabella servizi_applicativi(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -472,6 +523,7 @@ valori 0/1 indicano rispettivamente FALSE/TRUE]]></linkit:sql-column-comment>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ruolo"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del ruolo associato al servizio applicativo [FK logica verso tabella ruoli(nome)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
