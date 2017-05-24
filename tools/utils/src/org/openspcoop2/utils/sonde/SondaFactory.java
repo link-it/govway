@@ -215,7 +215,7 @@ public class SondaFactory {
 		Date data_ok = rs.getTimestamp("data_ok");
 		Date data_warn = rs.getTimestamp("data_warn");
 		Date data_error = rs.getTimestamp("data_error");
-		Date data_ultimo_check = rs.getDate("data_ultimo_check");
+		Date data_ultimo_check = rs.getTimestamp("data_ultimo_check");
 		String dati_check = rs.getString("dati_check");
 		Integer stato_ultimo_check = rs.getInt("stato_ultimo_check");
 		Class<?> className = null;

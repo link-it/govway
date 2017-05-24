@@ -53,7 +53,14 @@ public class SondaCoda extends Sonda {
 	@Override
 	public StatoSonda getStatoSonda(){
 		
-		long dimensione_coda = Long.parseLong(super.getParam().getDatiCheck().getProperty("dimensione_coda"));
+		long dimensione_coda = -1;
+		try {
+			dimensione_coda = Long.parseLong(super.getParam().getDatiCheck().getProperty("dimensione_coda"));
+		} catch(NumberFormatException e) {
+			e.printStackTrace(System.err);
+			System.err.println("Errore durante il parsing del parametro dimensione_coda: " + super.getParam().getDatiCheck().getProperty("dimensione_coda") + ". Elimino il valore");
+			super.getParam().getDatiCheck().remove("dimensione_coda");
+		}
 		StatoSonda statoSonda = new StatoSonda();
 		SimpleDateFormat format = new SimpleDateFormat(PATTERN);
 

@@ -45,19 +45,20 @@ public class ParametriSonda {
 
 	/**
 	 * Deserializza una stringa in una lista di properties rappresentanti i dati di check
-	 * @param datiCheck stringa rappresentante una lista di parametri nome=valore 
+	 * @param datiCheck stringa rappresentante una lista di parametri nome:valore 
 	 * @throws Exception
 	 */
-	public void unmarshallDatiCheck(String datiCheck) throws SondaException {
+	public void unmarshallDatiCheck(String datiCheck) {
 		this.datiCheck = new Properties();
 		if(datiCheck != null) {
 			String[] datiList = datiCheck.split("\\\n"); 
 			for(String dato: datiList) {
 				String[] nameValue = dato.split(SEPARATOR); 
 				if(nameValue.length != 2){
-					throw new SondaException("Dato Check ["+dato+"] non nel formato valido nome=valore");
+					System.err.println("Dato Check ["+dato+"] non nel formato valido nome"+SEPARATOR+"valore");
+				} else {
+					this.datiCheck.put(nameValue[0].trim(), nameValue[1].trim());
 				}
-				this.datiCheck.put(nameValue[0].trim(), nameValue[1].trim());	
 			}
 		}
 	}

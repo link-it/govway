@@ -59,7 +59,19 @@ public class SondaBatch extends Sonda {
 		Date data_err = new Date(now.getTime() - super.getParam().getSogliaError());
 
 		StatoSonda statoSonda = new StatoSonda();
-		boolean esito_batch = Boolean.valueOf((String) super.getParam().getDatiCheck().getProperty("esito_batch"));
+		boolean esito_batch = false;
+		if(super.getParam().getDatiCheck().containsKey("esito_batch")) {
+			String esitoBatchString = (String) super.getParam().getDatiCheck().getProperty("esito_batch");
+			try{
+				esito_batch = Boolean.parseBoolean(esitoBatchString);
+			} catch(NumberFormatException e){
+				e.printStackTrace(System.err);
+				System.err.println("Errore durante il parsing del parametro esito_batch: " + super.getParam().getDatiCheck().getProperty("esito_batch") + ". Elimino il valore");
+				super.getParam().getDatiCheck().remove("esito_batch");
+			}
+		} else {
+			System.err.println("Parametro esito_batch non trovato");
+		}
 
 		Long dataUltimoBatchLong = null;
 		if(super.getParam().getDatiCheck().containsKey("data_ultimo_batch")) {
@@ -67,8 +79,12 @@ public class SondaBatch extends Sonda {
 				
 				dataUltimoBatchLong = Long.valueOf(super.getParam().getDatiCheck().getProperty("data_ultimo_batch"));
 			} catch(NumberFormatException e) {
-				e.printStackTrace();
+				e.printStackTrace(System.err);
+				System.err.println("Errore durante il parsing del parametro data_ultimo_batch: " + super.getParam().getDatiCheck().getProperty("data_ultimo_batch") + ". Elimino il valore");
+				super.getParam().getDatiCheck().remove("data_ultimo_batch");
 			}
+		} else {
+			System.err.println("Parametro data_ultimo_batch non trovato");
 		}
 
 		if(dataUltimoBatchLong == null) {
@@ -100,7 +116,19 @@ public class SondaBatch extends Sonda {
 	 
 			return statoSonda;
 		} else {
-			Integer interazioniFallite = Integer.parseInt(super.getParam().getDatiCheck().getProperty("interazioni_fallite"));
+			
+			Integer interazioniFallite = -1;
+			if(super.getParam().getDatiCheck().containsKey("interazioni_fallite")) {
+				try{
+					interazioniFallite = Integer.parseInt(super.getParam().getDatiCheck().getProperty("interazioni_fallite"));
+				} catch(NumberFormatException e) {
+					e.printStackTrace(System.err);
+					System.err.println("Errore durante il parsing del parametro interazioni_fallite: " + super.getParam().getDatiCheck().getProperty("interazioni_fallite") + ". Elimino il valore");
+					super.getParam().getDatiCheck().remove("interazioni_fallite");
+				}
+			} else {
+				System.err.println("Parametro interazioni_fallite non trovato");
+			}
 
 			statoSonda.setStato(2);
 			String descr = null;
@@ -112,13 +140,6 @@ public class SondaBatch extends Sonda {
 		}
 	}
 
-	public static void main(String[] args) {
-		String descrizioneErrore = "aaaaa";
-		String encoded = Base64.encode(descrizioneErrore.getBytes());
-		System.out.println(encoded);
-		byte[] decoded = Base64.decode(encoded);
-		System.out.println(new String(decoded));
-	}
 	/**
 	 * @param esito_batch true se l'esito e' positivo, false altrimenti
 	 * @param data_ultimo_batch ultima data di esecuzione del batch 
