@@ -6,7 +6,7 @@ then
 	IS_SNAPSHOT="$1"
 fi
 
-OPENSPCOOP_VERSION="$(svn info | grep URL | cut -d '/' -f 7)"
+OPENSPCOOP_VERSION="$(svn info | grep URL | grep -v "Relative URL" | cut -d '/' -f 7)"
 #utilizzare per le versioni di svn >= 1.8
 #OPENSPCOOP_VERSION="$(svn info | grep 'URL: svn' | cut -d '/' -f 7)"
 
