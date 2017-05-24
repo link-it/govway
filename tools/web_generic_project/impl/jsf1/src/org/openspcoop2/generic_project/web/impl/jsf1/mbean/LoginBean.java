@@ -65,6 +65,10 @@ public class LoginBean {
 	private List<Locale> lingueSupportate;
 
 	private LanguageForm languageForm = null;
+	
+	private String logoHeaderImage = null;
+	private String logoHeaderTitolo = null;
+	private String logoHeaderLink = null;
 
 //	private static Logger log = LogUtilities.getLogger("console.gui");
 
@@ -91,12 +95,12 @@ public class LoginBean {
 		}
 		
 		
-		impostaLocale(decodeLocal);
+		this.impostaLocale(decodeLocal);
 		
 
 		this.initDao = initDao;
 
-		init();
+		this.init();
 	}
 
 	public void impostaLocale(Locale decodeLocal) {
@@ -321,6 +325,30 @@ public class LoginBean {
 
 	public void setLingueSupportate(List<Locale> lingueSupportate) {
 		this.lingueSupportate = lingueSupportate;
+	}
+
+	public String getLogoHeaderImage() {
+		return this.logoHeaderImage;
+	}
+
+	public void setLogoHeaderImage(String logoHeaderImage) {
+		this.logoHeaderImage = logoHeaderImage;
+	}
+
+	public String getLogoHeaderTitolo() {
+		return this.logoHeaderTitolo;
+	}
+
+	public void setLogoHeaderTitolo(String logoHeaderTitolo) {
+		this.logoHeaderTitolo = logoHeaderTitolo;
+	}
+
+	public String getLogoHeaderLink() {
+		return this.logoHeaderLink;
+	}
+
+	public void setLogoHeaderLink(String logoHeaderLink) {
+		this.logoHeaderLink = logoHeaderLink;
 	}
 
 
