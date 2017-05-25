@@ -39,7 +39,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="connettori">
+                    <linkit:sql-table-mapping name="connettori"
+                                              comment="Definisce i connettori verso le altre PdD o gli applicativi interni al dominio (es. url,coda-jms,....)">
                         <linkit:sql-table-unique create-index="true">
                             <linkit:sql-table-unique-field name="nome_connettore"/>
                         </linkit:sql-table-unique>
@@ -55,6 +56,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="endpointtype"/>
+                                <linkit:sql-ddl-column-comment>Tipo di connettore utilizzato per l'integrazione con una PdD o l'applicativo erogatore. Il tipo deve essere stato registrato nel file 'openspcoop2.classRegistry.properties'</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[(disabilitato,http,jms)]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -66,6 +68,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome_connettore"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del connettore</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -76,6 +79,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="url"/>
+                                <linkit:sql-ddl-column-comment>Definisce una url in caso di connettore di tipo 'http' (tipo indicato nella colonna 'endpointtype')</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[url nel caso http]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -87,6 +91,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="transfer_mode"/>
+                                <linkit:sql-ddl-column-comment>Definisce la modalità di trasferimento dei dati in caso di connettore di tipo 'http' (tipo indicato nella colonna 'endpointtype')</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[nel caso di http indicazione se usare chunking]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -98,6 +103,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="transfer_mode_chunk_size"/>
+                                <linkit:sql-ddl-column-comment>Definisce la dimensione del chunk in caso di modalità di trasferimento dei dati 'chunked' (modalità indicata nella colonna 'transfer_mode')</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -108,6 +114,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="redirect_mode"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se seguire o meno un'eventuale redirect in caso di connettore di tipo 'http' (tipo indicato nella colonna 'endpointtype')</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[nel caso di http indicazione se seguire il redirect o meno]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -119,6 +126,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="redirect_max_hop"/>
+                                <linkit:sql-ddl-column-comment>Definisce il massimo numero di volte che viene seguito un eventuale redirect in caso di connettore di tipo 'http' (tipo indicato nella colonna 'endpointtype')</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -129,6 +137,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Nome della coda jms in caso di connettore di tipo 'jms' (tipo indicato nella colonna 'endpointtype')</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[nome coda jms]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -140,6 +149,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo"/>
+                                <linkit:sql-ddl-column-comment>Tipo della coda jms in caso di connettore di tipo 'jms' (tipo indicato nella colonna 'endpointtype') (queue/topic)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[tipo coda jms (queue,topic)]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -151,6 +161,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="utente"/>
+                                <linkit:sql-ddl-column-comment>Username utilizzato come credenziale di accesso alla coda jms in caso di connettore di tipo 'jms' (tipo indicato nella colonna 'endpointtype')</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[utente di una connessione jms]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -162,6 +173,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="password"/>
+                                <linkit:sql-ddl-column-comment>Password utilizzata come credenziale di accesso alla coda jms in caso di connettore di tipo 'jms' (tipo indicato nella colonna 'endpointtype')</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[password per una connessione jms]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -173,6 +185,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="initcont"/>
+                                <linkit:sql-ddl-column-comment>Proprietà 'InitialContext' utilizzata per l'accesso alla coda jms in caso di connettore di tipo 'jms' (tipo indicato nella colonna 'endpointtype')</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[context property: initial_content]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -184,6 +197,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="urlpkg"/>
+                                <linkit:sql-ddl-column-comment>Proprietà 'UrlPackage' utilizzata per l'accesso alla coda jms in caso di connettore di tipo 'jms' (tipo indicato nella colonna 'endpointtype')</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[context property: url_pkg]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -195,6 +209,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="provurl"/>
+                                <linkit:sql-ddl-column-comment>Proprietà 'ProviderURL' utilizzata per l'accesso alla coda jms in caso di connettore di tipo 'jms' (tipo indicato nella colonna 'endpointtype')</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[context property: provider_url]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -206,6 +221,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="connection_factory"/>
+                                <linkit:sql-ddl-column-comment>'ConnectionFactory' utilizzata per l'accesso alla coda jms in caso di connettore di tipo 'jms' (tipo indicato nella colonna 'endpointtype')</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[ConnectionFactory JMS]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -217,6 +233,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="send_as"/>
+                                <linkit:sql-ddl-column-comment>Tipo di messaggio pubblicato sulla coda jms in caso di connettore di tipo 'jms' (tipo indicato nella colonna 'endpointtype') (text/byte)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[Messaggio JMS inviato come text/byte message]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -228,6 +245,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="debug"/>
+                                <linkit:sql-ddl-column-comment>Se viene abilitato il debug, tutte le operazioni intraprese dal connettore (compresi i log dei messaggi inviati e ricevuti) vengono tracciati nel file log/openspcoop2_connettori.log (1:true, 0:false)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[1/0 (true/false) abilita il debug tramite il connettore]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -239,6 +257,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="proxy"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se deve essere utilizzato un proxy in caso di connettore di tipo 'http' (tipo indicato nella colonna 'endpointtype') (1:true, 0:false)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[1/0 (true/false) abilita l'utilizzo di un proxy tramite il connettore]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -250,6 +269,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="proxy_type"/>
+                                <linkit:sql-ddl-column-comment>Tipo del proxy se abilitato tramite la colonna 'proxy' (http/https)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -260,6 +280,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="proxy_hostname"/>
+                                <linkit:sql-ddl-column-comment>Hostname del proxy (per tipo di connettore 'http') se abilitato tramite la colonna 'proxy'</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -270,6 +291,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="proxy_port"/>
+                                <linkit:sql-ddl-column-comment>Porta del proxy (per tipo di connettore 'http') se abilitato tramite la colonna 'proxy'</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -280,6 +302,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="proxy_username"/>
+                                <linkit:sql-ddl-column-comment>Username da fornire al proxy (per tipo di connettore 'http') se abilitato tramite la colonna 'proxy'</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -290,6 +313,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="proxy_password"/>
+                                <linkit:sql-ddl-column-comment>Password da fornire al proxy (per tipo di connettore 'http') se abilitato tramite la colonna 'proxy'</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -300,6 +324,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="custom"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se il connettore è 'standard' (custom=0) o 'personalizzato' (custom=1). Nel caso di connettore personalizzato le proprietà vengono definite nella tabella associata 'connettori_custom'</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[1/0 (true/false) indica se il connettore e' gestito tramite le proprieta' custom]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -314,7 +339,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="connettori_custom">
+                    <linkit:sql-table-mapping name="connettori_custom"
+                                              comment="Elenco di proprietà nome/valore che definiscono un connettore personalizzato">
                        <linkit:sql-table-foreign-key
                            reference-object-name="connettori"
                            reference-object-type="connettori"
@@ -338,6 +364,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="name"/>
+                                <linkit:sql-ddl-column-comment>Nome della proprietà</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -348,6 +375,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="value"/>
+                                <linkit:sql-ddl-column-comment>Valore associato alla proprietà</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -358,6 +386,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_connettore"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del connettore [FK verso tabella connettori(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -371,7 +400,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="connettori_properties">
+                    <linkit:sql-table-mapping name="connettori_properties"
+                                              comment="Elenco di connettori personalizzati definiti tramite file di properties esterni">
                         <linkit:sql-table-unique create-index="true">
                             <linkit:sql-table-unique-field name="nome_connettore"/>
                         </linkit:sql-table-unique>
@@ -387,6 +417,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome_connettore"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del connettore personalizzato</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[nome connettore personalizzato attraverso file properties]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -398,6 +429,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="path"/>
+                                <linkit:sql-ddl-column-comment>Path su filesystem del file di proprietà che definisce il connettore personalizzato</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[location del file properties]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>

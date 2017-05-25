@@ -37,7 +37,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="soggetti">
+                    <linkit:sql-table-mapping name="soggetti"
+                                              comment="Soggetti operativi sulla Porta di Dominio">
                         <linkit:sql-table-unique create-index="true">
                             <linkit:sql-table-unique-field name="nome_soggetto"/>
                             <linkit:sql-table-unique-field name="tipo_soggetto"/>
@@ -54,7 +55,8 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome_soggetto"/>
-                           </linkit:generator>
+                                <linkit:sql-ddl-column-comment>Nome univoco del soggetto (l'univocità è garantita per stesso tipo)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
@@ -64,6 +66,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="tipo_soggetto"/>
+                                <linkit:sql-ddl-column-comment>Tipo del soggetto (informazione che rappresenta insieme al nome l'identificatore univoco del soggetto)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -74,6 +77,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="descrizione"/>
+                                <linkit:sql-ddl-column-comment>Generica descrizione del soggetto</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -84,6 +88,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="identificativo_porta"/>
+                                <linkit:sql-ddl-column-comment>Rappresenta il dominio del soggetto e tipicamente viene utilizzato all'interno dell'identificatore univoco di un messaggio di protocollo (es. id eGov)</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -94,6 +99,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="is_router"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Indicazione se il soggetto svolge attività di router (1=true, 0=false)]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[1/0 (true/false) svolge attivita di router]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -105,6 +111,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="superuser"/>
+                                <linkit:sql-ddl-column-comment>Utente che ha effettuato l'ultima modifica dei dati del Soggetto, modifica attuata tipicamente attraverso la console di gestione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -115,6 +122,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="pd_url_prefix_rewriter"/>
+                                <linkit:sql-ddl-column-comment>Prefisso da utilizzare nel formato 'http[s]://host:port' che verrà utilizzato dalla PdD per tutte le richieste di fruizione di servizio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -125,6 +133,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="pa_url_prefix_rewriter"/>
+                                <linkit:sql-ddl-column-comment>Prefisso da utilizzare nel formato 'http[s]://host:port' che verrà utilizzato dalla PdD per tutte le erogazioni di servizio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -135,6 +144,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ora_registrazione" default-current-time="true"/>
+                                <linkit:sql-ddl-column-comment>Data di ultima modifica dei dati del Soggetto, modifica attuata tipicamente attraverso la console di gestione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
