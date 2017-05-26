@@ -36,7 +36,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="db_info">   
+                    <linkit:sql-table-mapping name="db_info"
+                                               comment="Contiene informazioni sulla versione del software e su eventuali aggiornamenti">   
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
@@ -49,6 +50,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="major_version"/>
+                                <linkit:sql-ddl-column-comment>Indica la Major version del prodotto</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -59,6 +61,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="minor_version"/>
+                                <linkit:sql-ddl-column-comment>Indica la Minor version del prodotto</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -69,6 +72,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="notes"/>
+                                <linkit:sql-ddl-column-comment>Contiene una descrizione ulteriore sulla versione del prodotto</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

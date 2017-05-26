@@ -39,7 +39,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="gestione_errore">
+                    <linkit:sql-table-mapping name="gestione_errore"
+                                              comment="Contiene le modalità di riconsegna di un messaggio in caso di errore">
                         <linkit:sql-table-unique>
                             <linkit:sql-table-unique-field name="nome"/>
                         </linkit:sql-table-unique>
@@ -55,6 +56,9 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="comportamento_default"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Definisce il comportamento di default in caso di errore durante una consegna; 
+- 'accetta': non viene rischedulata alcuna consegna del messaggio
+- 'rispedisci': viene rischedulata una riconsegna del messaggio]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[accetta/rispedisci]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -65,6 +69,7 @@
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-ddl-column-comment>Indica l'intervallo temporale che deve trascorrere prima di una riconsegna</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-mapping name="cadenza_rispedizione"/>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -76,6 +81,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Identifica la modalità di gestione dell'errore definita in questa riga della tabella</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -89,7 +95,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="gestione_errore_trasporto">
+                    <linkit:sql-table-mapping name="gestione_errore_trasporto"
+                                               comment="Contiene la personalizzazione della gestione dell'errore a seconda del codice di trasporto ottenuto">
                        <linkit:sql-table-foreign-key
                            reference-object-name="gestione-errore"
                            reference-object-type="gestione-errore"
@@ -108,6 +115,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_gestione_errore"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della modalità di gestione dell'errore [FK verso tabella gestione_errore(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -118,6 +126,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="valore_massimo"/>
+                                <linkit:sql-ddl-column-comment>Indica l'intervallo destro che definisce questa regola per quanto concerne il codice di trasporto. Per avere un match con questa riga, il codice di trasporto deve essere minore o uguale al valore indicato nella colonna.</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -128,6 +137,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="valore_minimo"/>
+                                <linkit:sql-ddl-column-comment>Indica l'intervallo sinistro che definisce questa regola per quanto concerne il codice di trasporto. Per avere un match con questa riga, il codice di trasporto deve essere maggiore o uguale al valore indicato nella colonna.</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -138,6 +148,9 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="comportamento"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Definisce il comportamento in caso il codice di trasporto corrisponda alla regola definita in questa riga; 
+- 'accetta': non viene rischedulata alcuna consegna del messaggio
+- 'rispedisci': viene rischedulata una riconsegna del messaggio]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[accetta/rispedisci]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -148,6 +161,7 @@
                         <xsd:appinfo>
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-ddl-column-comment>Indica l'intervallo temporale che deve trascorrere prima di una riconsegna, nel caso il codice di trasporto corrisponda alla regola definita in questa riga</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-mapping name="cadenza_rispedizione"/>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -184,6 +198,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="id_gestione_errore"/>
+                                <linkit:sql-ddl-column-comment>Identificativo della modalità di gestione dell'errore [FK verso tabella gestione_errore(id)]</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -194,6 +209,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="fault_actor"/>
+                                <linkit:sql-ddl-column-comment>Per avere un match con questa riga, il messaggio ottenuto come risposta alla consegna deve contenere un SOAPFault con un actor equivalente al valore indicato in questa colonna.</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -204,6 +220,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="fault_code"/>
+                                <linkit:sql-ddl-column-comment>Per avere un match con questa riga, il messaggio ottenuto come risposta alla consegna deve contenere un SOAPFault con un codice equivalente al valore indicato in questa colonna.</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -214,6 +231,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="fault_string"/>
+                                <linkit:sql-ddl-column-comment>Per avere un match con questa riga, il messaggio ottenuto come risposta alla consegna deve contenere un SOAPFault con un FaultString equivalente al valore indicato in questa colonna.</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -224,6 +242,9 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="comportamento"/>
+                                <linkit:sql-ddl-column-comment><![CDATA[Definisce il comportamento in caso la risposta contenga un SOAPFault compatibile alla regola definita in questa riga; 
+- 'accetta': non viene rischedulata alcuna consegna del messaggio
+- 'rispedisci': viene rischedulata una riconsegna del messaggio]]></linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[accetta/rispedisci]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -235,6 +256,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="cadenza_rispedizione"/>
+                                <linkit:sql-ddl-column-comment>Indica l'intervallo temporale che deve trascorrere prima di una riconsegna, nel caso la risposta contenga un SOAPFault compatibile alla regola definita in questa riga</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

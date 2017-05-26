@@ -37,7 +37,8 @@
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
                     <linkit:interface crud="false" id="xsd:string"/>
-                    <linkit:sql-table-mapping name="pdd">
+                    <linkit:sql-table-mapping name="pdd"
+                                              comment="Elenco delle porte di dominio censite con cui la PdD interagisce">
                         <linkit:sql-table-unique create-index="true">
                             <linkit:sql-table-unique-field name="nome"/>
                         </linkit:sql-table-unique>
@@ -53,6 +54,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="nome"/>
+                                <linkit:sql-ddl-column-comment>Indentificativo univoco della Porta di Dominio</linkit:sql-ddl-column-comment>
                            </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -63,6 +65,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="descrizione"/>
+                                <linkit:sql-ddl-column-comment>Descrizione generica della Porta di Dominio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -73,6 +76,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="implementazione"/>
+                                <linkit:sql-ddl-column-comment>Indica una versione del software che realizza la Porta di Dominio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -83,6 +87,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="subject"/>
+                                <linkit:sql-ddl-column-comment>Subject del certificato client utilizzato dalla Porta di Dominio</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -93,6 +98,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="client_auth"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se è abilitato il controllo sul certificato client utilizzato dalla Porta (abilitato/disabilitato)</linkit:sql-ddl-column-comment>
                                 <linkit:sql-column-comment><![CDATA[client auth: disabilitato/abilitato]]></linkit:sql-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
@@ -104,6 +110,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="ora_registrazione" default-current-time="true"/>
+                                <linkit:sql-ddl-column-comment>Data di ultima modifica dei dati della Porta di Dominio, modifica attuata tipicamente attraverso la console di gestione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
@@ -114,6 +121,7 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="superuser"/>
+                                <linkit:sql-ddl-column-comment>Utente che ha effettuato l'ultima modifica dei dati della Porta di Dominio, modifica attuata tipicamente attraverso la console di gestione</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
