@@ -133,7 +133,7 @@ public class GeneralHelper {
 		GeneralData gd = new GeneralData(CostantiControlStation.LABEL_LINKIT_WEB);
 		gd.setProduct(this.core.getConsoleNomeSintesi());
 		gd.setLanguage(this.core.getConsoleLanguage());
-		gd.setTitle(this.core.getConsoleNomeEsteso());
+		gd.setTitle(this.core.getConsoleNomeEsteso(false));
 		gd.setUrl(baseUrl);
 		gd.setCss(css);
 		if (displayLogin || displayLogout) {

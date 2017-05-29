@@ -104,8 +104,8 @@ public class Costanti {
 	public final static String LABEL_OPENSPCOOP2 = "OpenSPCoop.org";
 	public final static String LABEL_OPENSPCOOP2_WEB = "http://www.openspcoop.org";
 	
-	public final static String LABEL_CONFIGURAZIONI_XML = "Configurazioni XML";
-	public final static String LABEL_TIPOLOGIA_XML = "Tipologia XML";
+	public final static String LABEL_CONFIGURAZIONI_XML = "Strumenti";
+	public final static String LABEL_TIPOLOGIA_XML = "Tipologia";
 	public final static String LABEL_IMPORTA = "Importa";
 	public final static String LABEL_ELIMINA = "Elimina";
 	public final static String LABEL_FILE_NON_VALIDO = "File non valido: ";
@@ -118,7 +118,7 @@ public class Costanti {
 	public final static String LABEL_LOGIN_ATTUALMENTE_CONNESSO = "Utente: ";
 	public final static String LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO = "Login effettuato con successo";
 	public final static String LABEL_LOGOUT_EFFETTUATO_CON_SUCCESSO = "Logout effettuato con successo";
-	public final static String LABEL_LOGIN_SESSIONE_SCADUTA = "La sessione &egrave; scaduta.<BR>Effettuare il login";
+	public final static String LABEL_LOGIN_SESSIONE_SCADUTA = "La sessione &egrave; scaduta. Effettuare il login";
 	public final static String LABEL_LOGIN_AUTORIZZAZIONE_NEGATA = "Autorizzazione negata";
 	public final static String LABEL_LOGIN_ERRORE = "L'ultima operazione effettuata ha provocato un errore che ha reso l'interfaccia non utilizzabile.<BR><BR>Effettuare nuovamente il login";
 	public final static String LABEL_LOGIN_DATI_INCOMPLETI_LOGIN = "Dati incompleti. E' necessario indicare un utente";

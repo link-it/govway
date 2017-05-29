@@ -211,13 +211,24 @@ public class ControlStationCore {
 	public String getConsoleNomeSintesi() {
 		return this.consoleNomeSintesi;
 	}
-	public String getConsoleNomeEsteso() {
-		if(this.consoleNomeEstesoSuffix!=null){
+	public String getConsoleNomeEsteso(boolean addVersion) {
+		if(addVersion && this.consoleNomeEstesoSuffix!=null){
 			return this.consoleNomeEsteso+this.consoleNomeEstesoSuffix;
 		}
 		else{
 			return this.consoleNomeEsteso;
 		}
+	}
+	public String getProductVersion(){
+		if(this.consoleNomeEstesoSuffix!=null){
+			if(this.consoleNomeEstesoSuffix.trim().startsWith("-")){
+				return "PdDOpenSPCoopEnterprise "+ this.consoleNomeEstesoSuffix.trim().substring(1).trim();
+			}
+			else{
+				return this.consoleNomeEstesoSuffix;
+			}
+		}
+		return "PdDOpenSPCoop "+CostantiPdD.OPENSPCOOP2_VERSION;
 	}
 	public String getConsoleCSS() {
 		return this.consoleCSS;

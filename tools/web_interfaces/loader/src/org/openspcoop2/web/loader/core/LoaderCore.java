@@ -67,8 +67,8 @@ public class LoaderCore{
 	public String getLoaderNomeSintesi() {
 		return this.loaderNomeSintesi;
 	}
-	public String getLoaderNomeEsteso() {
-		if(this.loaderNomeEstesoSuffix!=null){
+	public String getLoaderNomeEsteso(boolean addVersione) {
+		if(addVersione && this.loaderNomeEstesoSuffix!=null){
 			return this.loaderNomeEsteso+this.loaderNomeEstesoSuffix;
 		}
 		else{

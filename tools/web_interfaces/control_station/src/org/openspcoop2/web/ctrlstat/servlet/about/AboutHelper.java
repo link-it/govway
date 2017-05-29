@@ -24,6 +24,7 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -51,37 +52,38 @@ public class AboutHelper extends ConsoleHelper {
 
 		// titolo sezione
 		de = new DataElement();
-		de.setLabel(AboutCostanti.LABEL_LICENZA + " TODO");
+		de.setLabel(AboutCostanti.LABEL_PRODOTTO);
 		de.setType(DataElementType.TITLE);
 		dati.addElement(de);
 		
-		// tipo licenza
+		// versione
 		de = new DataElement();
-		de.setLabel(AboutCostanti.LABEL_TIPO);
+		de.setLabel(AboutCostanti.LABEL_VERSIONE);
 		de.setType(DataElementType.TEXT);
-		de.setValue("TODO");
+		de.setValue(this.core.getProductVersion());
 		dati.addElement(de);
 		
-		// numero licenza
+		// sito
 		de = new DataElement();
-		de.setLabel(AboutCostanti.LABEL_NUMERO);
+		de.setLabel(AboutCostanti.LABEL_SITO);
 		de.setType(DataElementType.TEXT);
-		de.setValue("TODO");
+		de.setValue(CostantiControlStation.LABEL_OPENSPCOOP2_WEB);
 		dati.addElement(de);
 		
-		// intestata
+		// copyright
 		de = new DataElement();
-		de.setLabel(AboutCostanti.LABEL_INTESTATA_A);
+		de.setLabel(AboutCostanti.LABEL_COPYRIGHT);
 		de.setType(DataElementType.TEXT);
-		de.setValue("TODO");
+		de.setValue(AboutCostanti.LABEL_COPYRIGHT_VALUE);
 		dati.addElement(de);
 		
 		// sito openspcoop
 		de = new DataElement();
-		de.setLabel(AboutCostanti.LABEL_OPENSPCOOP2);
-		de.setType(DataElementType.LINK);
-		de.setValue(AboutCostanti.LABEL_OPENSPCOOP2);
-		de.setUrl(AboutCostanti.LABEL_OPENSPCOOP2_WEB);
+		de.setLabel(AboutCostanti.LABEL_LICENZA);
+		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+		de.setValue(AboutCostanti.LICENSE);
+		de.setRows(11);
+		de.setCols(60);
 		dati.addElement(de);
 		
 		return dati;

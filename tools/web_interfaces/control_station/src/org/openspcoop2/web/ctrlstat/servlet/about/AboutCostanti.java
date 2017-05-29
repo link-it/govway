@@ -21,7 +21,7 @@ package org.openspcoop2.web.ctrlstat.servlet.about;
 
 import java.util.Vector;
 
-import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 
 /**
@@ -49,15 +49,14 @@ public class AboutCostanti {
 	}
 	
 	/* LABEL */
-	public final static String LABEL_ABOUT = "About";
+	public final static String LABEL_ABOUT = "Informazioni";
+	public final static String LABEL_PRODOTTO = "Prodotto";
 	public final static String LABEL_VERSIONE = "Versione";
-	public final static String LABEL_TIPO = "Tipo";
-	public final static String LABEL_NUMERO = "Numero";
+	public final static String LABEL_SITO = "Sito";
+	
+	public final static String LABEL_COPYRIGHT = "Copyright";
+	public final static String LABEL_COPYRIGHT_VALUE = CostantiPdD.OPENSPCOOP2_COPYRIGHT;
+	
 	public final static String LABEL_LICENZA = "Licenza";
-	public final static String LABEL_INTESTATA_A = "Intestata a ";
-	
-	
-	public final static String LABEL_LINKIT_WEB = CostantiControlStation.LABEL_LINKIT_WEB;
-	public final static String LABEL_OPENSPCOOP2 = CostantiControlStation.LABEL_OPENSPCOOP2;
-	public final static String LABEL_OPENSPCOOP2_WEB = CostantiControlStation.LABEL_OPENSPCOOP2_WEB;
+	public final static String LICENSE = CostantiPdD.OPENSPCOOP2_LICENSE;
 }

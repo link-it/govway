@@ -107,7 +107,7 @@ public class GeneralHelper {
 		GeneralData gd = new GeneralData(Costanti.LABEL_LINKIT_WEB);
 		gd.setProduct(this.loaderCore.getLoaderNomeSintesi());
 		gd.setLanguage(this.loaderCore.getLoaderLanguage());
-		gd.setTitle(this.loaderCore.getLoaderNomeEsteso());
+		gd.setTitle(this.loaderCore.getLoaderNomeEsteso(false));
 		gd.setUrl(baseUrl);
 		gd.setCss(css);
 		if (displayLogin || displayLogout) {
